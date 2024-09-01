@@ -78,9 +78,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = useParams();
 
   // store hooks
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+
   const { allowPermissions } = useUserPermissions();
 
   const { getModuleById, updateModuleDetails, createModuleLink, updateModuleLink, deleteModuleLink, restoreModule } =
@@ -573,7 +571,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                   <Transition show={open}>
                     <Disclosure.Panel>
                       <div className="mt-2 flex min-h-72 w-full flex-col space-y-3 overflow-y-auto">
-                        {currentProjectRole && moduleDetails.link_module && moduleDetails.link_module.length > 0 ? (
+                        {isEditingAllowed && moduleDetails.link_module && moduleDetails.link_module.length > 0 ? (
                           <>
                             {isEditingAllowed && !isArchived && (
                               <div className="flex w-full items-center justify-end">
@@ -592,11 +590,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                                 moduleId={moduleId}
                                 handleEditLink={handleEditLink}
                                 handleDeleteLink={handleDeleteLink}
-                                userAuth={{
-                                  isGuest: currentProjectRole === EUserPermissions.GUEST,
-                                  isMember: currentProjectRole === EUserPermissions.MEMBER,
-                                  isOwner: currentProjectRole === EUserPermissions.ADMIN,
-                                }}
+                                isEditingAllowed={isEditingAllowed}
                                 disabled={isArchived}
                               />
                             )}

@@ -9,7 +9,7 @@ export const WORKSPACE_SETTINGS = {
     key: "general",
     label: "General",
     href: `/settings`,
-    access: EUserPermissions.GUEST,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/`,
     Icon: SettingIcon,
   },
@@ -17,7 +17,7 @@ export const WORKSPACE_SETTINGS = {
     key: "members",
     label: "Members",
     href: `/settings/members`,
-    access: EUserPermissions.MEMBER,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/members/`,
     Icon: SettingIcon,
   },
@@ -25,7 +25,7 @@ export const WORKSPACE_SETTINGS = {
     key: "billing-and-plans",
     label: "Billing and plans",
     href: `/settings/billing`,
-    access: EUserPermissions.ADMIN,
+    access: [EUserPermissions.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/billing/`,
     Icon: SettingIcon,
   },
@@ -33,7 +33,7 @@ export const WORKSPACE_SETTINGS = {
     key: "export",
     label: "Exports",
     href: `/settings/exports`,
-    access: EUserPermissions.MEMBER,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/exports/`,
     Icon: SettingIcon,
   },
@@ -41,7 +41,7 @@ export const WORKSPACE_SETTINGS = {
     key: "webhooks",
     label: "Webhooks",
     href: `/settings/webhooks`,
-    access: EUserPermissions.ADMIN,
+    access: [EUserPermissions.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/webhooks/`,
     Icon: SettingIcon,
   },
@@ -49,7 +49,7 @@ export const WORKSPACE_SETTINGS = {
     key: "api-tokens",
     label: "API tokens",
     href: `/settings/api-tokens`,
-    access: EUserPermissions.ADMIN,
+    access: [EUserPermissions.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/api-tokens/`,
     Icon: SettingIcon,
   },
@@ -59,7 +59,7 @@ export const WORKSPACE_SETTINGS_LINKS: {
   key: string;
   label: string;
   href: string;
-  access: EUserPermissions;
+  access: EUserPermissions[];
   highlight: (pathname: string, baseUrl: string) => boolean;
   Icon: React.FC<Props>;
 }[] = [

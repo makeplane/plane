@@ -9,10 +9,10 @@ import { Loader } from "@plane/ui";
 // components
 import { SidebarNavItem } from "@/components/sidebar";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser, useUserPermissions } from "@/hooks/store";
 // plane web constants
 import { PROJECT_SETTINGS_LINKS } from "@/plane-web/constants/project";
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
+import { EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const ProjectSettingsSidebar = observer(() => {
   const { workspaceSlug, projectId } = useParams();
@@ -21,8 +21,7 @@ export const ProjectSettingsSidebar = observer(() => {
   const {
     membership: { currentProjectRole },
   } = useUser();
-
-  const projectMemberInfo = currentProjectRole || EUserPermissions.GUEST;
+  const { allowPermissions } = useUserPermissions();
 
   if (!currentProjectRole) {
     return (
@@ -46,7 +45,12 @@ export const ProjectSettingsSidebar = observer(() => {
         <div className="flex w-full flex-col gap-1">
           {PROJECT_SETTINGS_LINKS.map(
             (link) =>
-              projectMemberInfo >= link.access && (
+              allowPermissions(
+                link.access,
+                EUserPermissionsLevel.PROJECT,
+                workspaceSlug.toString(),
+                projectId.toString()
+              ) && (
                 <Link key={link.key} href={`/${workspaceSlug}/projects/${projectId}${link.href}`}>
                   <SidebarNavItem
                     key={link.key}

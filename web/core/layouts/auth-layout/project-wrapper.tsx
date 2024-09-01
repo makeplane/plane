@@ -16,7 +16,6 @@ import {
   useProject,
   useProjectState,
   useProjectView,
-  useUser,
   useCommandPalette,
   useUserPermissions,
 } from "@/hooks/store";
@@ -35,10 +34,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // const { fetchInboxes } = useInbox();
   const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
-  const {
-    membership: { projectMemberInfo },
-  } = useUser();
-  const { fetchUserProjectInfo, allowPermissions } = useUserPermissions();
+  const { fetchUserProjectInfo, allowPermissions, projectUserInfo } = useUserPermissions();
   const { loader, getProjectById, fetchProjectDetails } = useProject();
   const { fetchAllCycles } = useCycle();
   const { fetchModules } = useModule();
@@ -51,6 +47,8 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { getProjectEstimates } = useProjectEstimates();
   // router
   const { workspaceSlug, projectId } = useParams();
+
+  const projectMemberInfo = projectUserInfo?.[workspaceSlug.toString()]?.[projectId.toString()];
 
   // fetching project details
   useSWR(

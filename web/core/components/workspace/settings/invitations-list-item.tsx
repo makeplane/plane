@@ -11,7 +11,7 @@ import { ConfirmWorkspaceMemberRemove } from "@/components/workspace";
 // constants
 import { ROLE } from "@/constants/workspace";
 // hooks
-import { useMember, useUser, useUserPermissions } from "@/hooks/store";
+import { useMember, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
@@ -26,10 +26,7 @@ export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
   // router
   const { workspaceSlug } = useParams();
   // store hooks
-  const {
-    membership: { currentWorkspaceMemberInfo, currentWorkspaceRole },
-  } = useUser();
-  const { allowPermissions } = useUserPermissions();
+  const { allowPermissions, workspaceInfoBySlug } = useUserPermissions();
 
   const {
     workspace: { updateMemberInvitation, deleteMemberInvitation, getWorkspaceInvitationDetails },
@@ -37,6 +34,8 @@ export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
   const { isMobile } = usePlatformOS();
   // derived values
   const invitationDetails = getWorkspaceInvitationDetails(invitationId);
+  const currentWorkspaceMemberInfo = workspaceInfoBySlug(workspaceSlug.toString());
+  const currentWorkspaceRole = currentWorkspaceMemberInfo?.role;
 
   const handleRemoveInvitation = async () => {
     if (!workspaceSlug || !invitationDetails) return;

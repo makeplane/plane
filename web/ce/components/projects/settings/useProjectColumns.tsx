@@ -16,11 +16,11 @@ export const useProjectColumns = () => {
 
   const { workspaceSlug, projectId } = useParams();
 
-  const {
-    membership: { currentProjectRole },
-    data: currentUser,
-  } = useUser();
-  const { allowPermissions } = useUserPermissions();
+  const { data: currentUser } = useUser();
+  const { allowPermissions, projectUserInfo } = useUserPermissions();
+
+  const currentProjectRole =
+    projectUserInfo?.[workspaceSlug.toString()]?.[projectId.toString()]?.role ?? EUserPermissions.GUEST;
 
   const getFormattedDate = (dateStr: string) => {
     const date = new Date(dateStr);

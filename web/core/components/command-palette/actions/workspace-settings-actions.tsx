@@ -6,10 +6,10 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane wev constants
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
+import { EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { WORKSPACE_SETTINGS_LINKS } from "@/plane-web/constants/workspace";
 
 type Props = {
@@ -23,11 +23,8 @@ export const CommandPaletteWorkspaceSettingsActions: React.FC<Props> = (props) =
   // router params
   const { workspaceSlug } = useParams();
   // mobx store
-  const {
-    membership: { currentWorkspaceRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
   // derived values
-  const workspaceMemberInfo = currentWorkspaceRole || EUserPermissions.GUEST;
 
   const redirect = (path: string) => {
     closePalette();
@@ -38,7 +35,7 @@ export const CommandPaletteWorkspaceSettingsActions: React.FC<Props> = (props) =
     <>
       {WORKSPACE_SETTINGS_LINKS.map(
         (setting) =>
-          workspaceMemberInfo >= setting.access && (
+          allowPermissions(setting.access, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString()) && (
             <Command.Item
               key={setting.key}
               onSelect={() => redirect(`/${workspaceSlug}${setting.href}`)}

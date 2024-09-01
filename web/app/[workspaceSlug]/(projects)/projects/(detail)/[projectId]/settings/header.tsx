@@ -10,23 +10,19 @@ import { Breadcrumbs, CustomMenu } from "@plane/ui";
 import { BreadcrumbLink, Logo } from "@/components/common";
 // constants
 // hooks
-import { useProject, useUser } from "@/hooks/store";
+import { useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web constants
 import { PROJECT_SETTINGS_LINKS } from "@/plane-web/constants/project";
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
+import { EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const ProjectSettingHeader: FC = observer(() => {
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();
   // store hooks
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
   const { currentProjectDetails, loader } = useProject();
-
-  const projectMemberInfo = currentProjectRole || EUserPermissions.GUEST;
 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
@@ -74,7 +70,12 @@ export const ProjectSettingHeader: FC = observer(() => {
         >
           {PROJECT_SETTINGS_LINKS.map(
             (item) =>
-              projectMemberInfo >= item.access && (
+              allowPermissions(
+                item.access,
+                EUserPermissionsLevel.PROJECT,
+                workspaceSlug.toString(),
+                projectId.toString()
+              ) && (
                 <CustomMenu.MenuItem
                   key={item.key}
                   onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}${item.href}`)}

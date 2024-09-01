@@ -10,7 +10,7 @@ export const PROJECT_SETTINGS = {
     key: "general",
     label: "General",
     href: `/settings`,
-    access: EUserPermissions.GUEST,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/`,
     Icon: SettingIcon,
   },
@@ -18,7 +18,7 @@ export const PROJECT_SETTINGS = {
     key: "members",
     label: "Members",
     href: `/settings/members`,
-    access: EUserPermissions.MEMBER,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/members/`,
     Icon: SettingIcon,
   },
@@ -26,7 +26,7 @@ export const PROJECT_SETTINGS = {
     key: "features",
     label: "Features",
     href: `/settings/features`,
-    access: EUserPermissions.ADMIN,
+    access: [EUserPermissions.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/features/`,
     Icon: SettingIcon,
   },
@@ -34,7 +34,7 @@ export const PROJECT_SETTINGS = {
     key: "states",
     label: "States",
     href: `/settings/states`,
-    access: EUserPermissions.MEMBER,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/states/`,
     Icon: SettingIcon,
   },
@@ -42,7 +42,7 @@ export const PROJECT_SETTINGS = {
     key: "labels",
     label: "Labels",
     href: `/settings/labels`,
-    access: EUserPermissions.MEMBER,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/labels/`,
     Icon: SettingIcon,
   },
@@ -50,7 +50,7 @@ export const PROJECT_SETTINGS = {
     key: "estimates",
     label: "Estimates",
     href: `/settings/estimates`,
-    access: EUserPermissions.ADMIN,
+    access: [EUserPermissions.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/estimates/`,
     Icon: SettingIcon,
   },
@@ -58,7 +58,7 @@ export const PROJECT_SETTINGS = {
     key: "automations",
     label: "Automations",
     href: `/settings/automations`,
-    access: EUserPermissions.ADMIN,
+    access: [EUserPermissions.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/automations/`,
     Icon: SettingIcon,
   },
@@ -68,7 +68,7 @@ export const PROJECT_SETTINGS_LINKS: {
   key: string;
   label: string;
   href: string;
-  access: EUserPermissions;
+  access: EUserPermissions[];
   highlight: (pathname: string, baseUrl: string) => boolean;
   Icon: React.FC<Props>;
 }[] = [

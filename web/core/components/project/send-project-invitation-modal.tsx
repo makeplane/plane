@@ -12,7 +12,7 @@ import { Avatar, Button, CustomSelect, CustomSearchSelect, TOAST_TYPE, setToast 
 import { PROJECT_MEMBER_ADDED } from "@/constants/event-tracker";
 import { ROLE } from "@/constants/workspace";
 // hooks
-import { useEventTracker, useMember, useUser } from "@/hooks/store";
+import { useEventTracker, useMember, useUserPermissions } from "@/hooks/store";
 // plane-web constants
 import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 
@@ -46,9 +46,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { captureEvent } = useEventTracker();
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { projectUserInfo } = useUserPermissions();
   const {
     project: { projectMemberIds, bulkAddMembersToProject },
     workspace: { workspaceMemberIds, getWorkspaceMemberDetails },
@@ -67,6 +65,8 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
     control,
     name: "members",
   });
+
+  const currentProjectRole = projectUserInfo?.[workspaceSlug.toString()]?.[projectId.toString()]?.role;
 
   const uninvitedPeople = workspaceMemberIds?.filter((userId) => {
     const isInvited = projectMemberIds?.find((u) => u === userId);
