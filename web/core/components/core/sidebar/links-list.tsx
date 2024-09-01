@@ -2,7 +2,7 @@
 import { observer } from "mobx-react";
 // icons
 import { Pencil, Trash2, LinkIcon, ExternalLink } from "lucide-react";
-import { ILinkDetails, UserAuth } from "@plane/types";
+import { ILinkDetails } from "@plane/types";
 // ui
 import { Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
@@ -17,12 +17,12 @@ type Props = {
 
   handleDeleteLink: (linkId: string) => void;
   handleEditLink: (link: ILinkDetails) => void;
-  userAuth: UserAuth;
+  isEditingAllowed: boolean;
   disabled?: boolean;
 };
 
 export const LinksList: React.FC<Props> = observer((props) => {
-  const { moduleId, handleDeleteLink, handleEditLink, userAuth, disabled } = props;
+  const { moduleId, handleDeleteLink, handleEditLink, isEditingAllowed, disabled } = props;
   // hooks
   const { getUserDetails } = useMember();
   const { isMobile } = usePlatformOS();
@@ -30,7 +30,7 @@ export const LinksList: React.FC<Props> = observer((props) => {
   // derived values
   const currentModule = getModuleById(moduleId);
   const moduleLinks = currentModule?.link_module || undefined;
-  const isNotAllowed = userAuth.isGuest || disabled;
+  const isNotAllowed = !isEditingAllowed || disabled;
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);

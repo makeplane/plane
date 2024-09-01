@@ -7,9 +7,9 @@ import { useParams, usePathname } from "next/navigation";
 // components
 import { SidebarNavItem } from "@/components/sidebar";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store";
 // plane web constants
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
+import { EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { WORKSPACE_SETTINGS_LINKS } from "@/plane-web/constants/workspace";
 
 export const WorkspaceSettingsSidebar = observer(() => {
@@ -17,11 +17,7 @@ export const WorkspaceSettingsSidebar = observer(() => {
   const { workspaceSlug } = useParams();
   const pathname = usePathname();
   // mobx store
-  const {
-    membership: { currentWorkspaceRole },
-  } = useUser();
-
-  const workspaceMemberInfo = currentWorkspaceRole || EUserPermissions.GUEST;
+  const { allowPermissions } = useUserPermissions();
 
   return (
     <div className="flex w-80 flex-col gap-6 px-5">
@@ -30,7 +26,7 @@ export const WorkspaceSettingsSidebar = observer(() => {
         <div className="flex w-full flex-col gap-1">
           {WORKSPACE_SETTINGS_LINKS.map(
             (link) =>
-              workspaceMemberInfo >= link.access && (
+              allowPermissions(link.access, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString()) && (
                 <Link key={link.key} href={`/${workspaceSlug}${link.href}`}>
                   <SidebarNavItem
                     key={link.key}

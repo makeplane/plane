@@ -254,7 +254,7 @@ export const SIDEBAR_WORKSPACE_MENU_ITEMS: {
   key: string;
   label: string;
   href: string;
-  access: EUserPermissions;
+  access: EUserPermissions[];
   highlight: (pathname: string, baseUrl: string) => boolean;
   Icon: React.FC<Props>;
 }[] = [
@@ -262,7 +262,7 @@ export const SIDEBAR_WORKSPACE_MENU_ITEMS: {
     key: "projects",
     label: "Projects",
     href: `/projects`,
-    access: EUserPermissions.GUEST,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/projects/`,
     Icon: Briefcase,
   },
@@ -270,7 +270,7 @@ export const SIDEBAR_WORKSPACE_MENU_ITEMS: {
     key: "all-issues",
     label: "Views",
     href: `/workspace-views/all-issues`,
-    access: EUserPermissions.GUEST,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
     highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/workspace-views/`),
     Icon: Layers,
   },
@@ -278,7 +278,7 @@ export const SIDEBAR_WORKSPACE_MENU_ITEMS: {
     key: "active-cycles",
     label: "Cycles",
     href: `/active-cycles`,
-    access: EUserPermissions.MEMBER,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/active-cycles/`,
     Icon: ContrastIcon,
   },
@@ -286,7 +286,7 @@ export const SIDEBAR_WORKSPACE_MENU_ITEMS: {
     key: "analytics",
     label: "Analytics",
     href: `/analytics`,
-    access: EUserPermissions.MEMBER,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/analytics/`),
     Icon: BarChart2,
   },
@@ -300,7 +300,7 @@ export const SIDEBAR_USER_MENU_ITEMS: {
   key: string;
   label: string;
   href: string;
-  access: EUserPermissions;
+  access: EUserPermissions[];
   highlight: (pathname: string, baseUrl: string, options?: TLinkOptions) => boolean;
   Icon: React.FC<Props>;
 }[] = [
@@ -308,7 +308,7 @@ export const SIDEBAR_USER_MENU_ITEMS: {
     key: "home",
     label: "Home",
     href: ``,
-    access: EUserPermissions.GUEST,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/`,
     Icon: Home,
   },
@@ -316,7 +316,7 @@ export const SIDEBAR_USER_MENU_ITEMS: {
     key: "your-work",
     label: "Your work",
     href: "/profile",
-    access: EUserPermissions.MEMBER,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     highlight: (pathname: string, baseUrl: string, options?: TLinkOptions) =>
       options?.userId ? pathname.includes(`${baseUrl}/profile/${options?.userId}`) : false,
     Icon: UserActivityIcon,
@@ -325,7 +325,7 @@ export const SIDEBAR_USER_MENU_ITEMS: {
     key: "notifications",
     label: "Inbox",
     href: `/notifications`,
-    access: EUserPermissions.GUEST,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
     highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/notifications/`),
     Icon: Inbox,
   },
