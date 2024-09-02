@@ -8,7 +8,7 @@ import { LiteTextEditor } from "@/components/editor/lite-text-editor/lite-text-e
 import { EIssueCommentAccessSpecifier } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
-import { isEmptyHtmlString } from "@/helpers/string.helper";
+import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks
 import { useIssueDetail, useWorkspace } from "@/hooks/store";
 // editor
@@ -53,10 +53,7 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
     });
 
   const commentHTML = watch("comment_html");
-  const isEmpty =
-    commentHTML?.trim() === "" ||
-    commentHTML === "<p></p>" ||
-    (isEmptyHtmlString(commentHTML ?? "") && !commentHTML?.includes("mention-component"));
+  const isEmpty = isCommentEmpty(commentHTML);
 
   return (
     <div
