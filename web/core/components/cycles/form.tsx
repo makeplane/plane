@@ -8,9 +8,12 @@ import { ICycle } from "@plane/types";
 import { Button, Input, TextArea } from "@plane/ui";
 // components
 import { DateRangeDropdown, ProjectDropdown } from "@/components/dropdowns";
+// constants
+import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { shouldRenderProject } from "@/helpers/project.helper";
+import { getTabIndex } from "@/helpers/tab-indices.helper";
 
 type Props = {
   handleFormSubmit: (values: Partial<ICycle>, dirtyFields: any) => Promise<void>;
@@ -19,6 +22,7 @@ type Props = {
   projectId: string;
   setActiveProject: (projectId: string) => void;
   data?: ICycle | null;
+  isMobile?: boolean;
 };
 
 const defaultValues: Partial<ICycle> = {
@@ -29,7 +33,7 @@ const defaultValues: Partial<ICycle> = {
 };
 
 export const CycleForm: React.FC<Props> = (props) => {
-  const { handleFormSubmit, handleClose, status, projectId, setActiveProject, data } = props;
+  const { handleFormSubmit, handleClose, status, projectId, setActiveProject, data, isMobile = false } = props;
   // form data
   const {
     formState: { errors, isSubmitting, dirtyFields },
@@ -71,7 +75,7 @@ export const CycleForm: React.FC<Props> = (props) => {
                     }}
                     buttonVariant="border-with-text"
                     renderCondition={(project) => shouldRenderProject(project)}
-                    tabIndex={7}
+                    tabIndex={getTabIndex("cover_image", ETabIndices.PROJECT_CYCLE, isMobile)}
                   />
                 </div>
               )}
@@ -120,7 +124,7 @@ export const CycleForm: React.FC<Props> = (props) => {
                   hasError={Boolean(errors?.description)}
                   value={value}
                   onChange={onChange}
-                  tabIndex={2}
+                  tabIndex={getTabIndex("name", ETabIndices.PROJECT_CYCLE, isMobile)}
                 />
               )}
             />
@@ -153,7 +157,7 @@ export const CycleForm: React.FC<Props> = (props) => {
                       hideIcon={{
                         to: true,
                       }}
-                      tabIndex={3}
+                      tabIndex={getTabIndex("date_range", ETabIndices.PROJECT_CYCLE, isMobile)}
                     />
                   )}
                 />
@@ -163,10 +167,21 @@ export const CycleForm: React.FC<Props> = (props) => {
         </div>
       </div>
       <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={4}>
+        <Button
+          variant="neutral-primary"
+          size="sm"
+          onClick={handleClose}
+          tabIndex={getTabIndex("cancel", ETabIndices.PROJECT_CYCLE, isMobile)}
+        >
           Cancel
         </Button>
-        <Button variant="primary" size="sm" type="submit" loading={isSubmitting} tabIndex={5}>
+        <Button
+          variant="primary"
+          size="sm"
+          type="submit"
+          loading={isSubmitting}
+          tabIndex={getTabIndex("submit", ETabIndices.PROJECT_CYCLE, isMobile)}
+        >
           {data ? (isSubmitting ? "Updating" : "Update Cycle") : isSubmitting ? "Creating" : "Create Cycle"}
         </Button>
       </div>

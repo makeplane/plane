@@ -2,8 +2,14 @@ import { ChangeEvent } from "react";
 import { Controller, useFormContext, UseFormSetValue } from "react-hook-form";
 import { Info } from "lucide-react";
 import { cn } from "@plane/editor";
+// ui
 import { Input, TextArea, Tooltip } from "@plane/ui";
+// constants
+import { ETabIndices } from "@/constants/tab-indices";
+// helpers
 import { projectIdentifierSanitizer } from "@/helpers/project.helper";
+import { getTabIndex } from "@/helpers/tab-indices.helper";
+// plane-web types
 import { TProject } from "@/plane-web/types/projects";
 
 type Props = {
@@ -58,7 +64,7 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
               hasError={Boolean(errors.name)}
               placeholder="Project name"
               className="w-full focus:border-blue-400"
-              tabIndex={1}
+              tabIndex={getTabIndex("name", ETabIndices.PROJECT_CREATE, isMobile)}
             />
           )}
         />
@@ -94,7 +100,7 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
               className={cn("w-full text-xs focus:border-blue-400 pr-7", {
                 uppercase: value,
               })}
-              tabIndex={2}
+              tabIndex={getTabIndex("identifier", ETabIndices.PROJECT_CREATE, isMobile)}
             />
           )}
         />
@@ -121,7 +127,7 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
               onChange={onChange}
               className="!h-24 text-sm focus:border-blue-400"
               hasError={Boolean(errors?.description)}
-              tabIndex={3}
+              tabIndex={getTabIndex("description", ETabIndices.PROJECT_CREATE, isMobile)}
             />
           )}
         />

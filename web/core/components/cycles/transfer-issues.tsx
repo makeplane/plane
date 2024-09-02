@@ -39,6 +39,8 @@ export const TransferIssues: React.FC<Props> = (props) => {
     ? cycleDetails.backlog_issues + cycleDetails.unstarted_issues + cycleDetails.started_issues
     : 0;
 
+  console.log("transferableIssuesCount", transferableIssuesCount);
+
   return (
     <div className="-mt-2 mb-4 flex items-center justify-between px-4 pt-6">
       <div className="flex items-center gap-2 text-sm text-custom-text-200">

@@ -1,10 +1,23 @@
+"use client";
+import { FC } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { IProject } from "@plane/types";
+// ui
 import { CustomSelect } from "@plane/ui";
+// components
 import { MemberDropdown } from "@/components/dropdowns";
+// constants
 import { NETWORK_CHOICES } from "@/constants/project";
+import { ETabIndices } from "@/constants/tab-indices";
+// helpers
+import { getTabIndex } from "@/helpers/tab-indices.helper";
 
-const ProjectAttributes = () => {
+type Props = {
+  isMobile?: boolean;
+};
+
+const ProjectAttributes: FC<Props> = (props) => {
+  const { isMobile = false } = props;
   const { control } = useFormContext<IProject>();
   return (
     <div className="flex flex-wrap items-center gap-2">
@@ -15,7 +28,7 @@ const ProjectAttributes = () => {
           const currentNetwork = NETWORK_CHOICES.find((n) => n.key === value);
 
           return (
-            <div className="flex-shrink-0 h-7" tabIndex={4}>
+            <div className="flex-shrink-0 h-7" tabIndex={getTabIndex("network", ETabIndices.PROJECT_CREATE, isMobile)}>
               <CustomSelect
                 value={value}
                 onChange={onChange}
@@ -35,7 +48,7 @@ const ProjectAttributes = () => {
                 className="h-full"
                 buttonClassName="h-full"
                 noChevron
-                tabIndex={4}
+                tabIndex={getTabIndex("network", ETabIndices.PROJECT_CREATE, isMobile)}
               >
                 {NETWORK_CHOICES.map((network) => (
                   <CustomSelect.Option key={network.key} value={network.key}>
@@ -59,7 +72,7 @@ const ProjectAttributes = () => {
         render={({ field: { value, onChange } }) => {
           if (value === undefined || value === null || typeof value === "string")
             return (
-              <div className="flex-shrink-0 h-7" tabIndex={5}>
+              <div className="flex-shrink-0 h-7" tabIndex={getTabIndex("lead", ETabIndices.PROJECT_CREATE, isMobile)}>
                 <MemberDropdown
                   value={value}
                   onChange={(lead) => onChange(lead === value ? null : lead)}

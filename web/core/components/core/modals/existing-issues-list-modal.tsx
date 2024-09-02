@@ -140,6 +140,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                       placeholder="Type to search..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
+                      tabIndex={isMobile ? -1 : 1}
                     />
                   </div>
 

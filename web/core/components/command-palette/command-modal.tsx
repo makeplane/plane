@@ -238,7 +238,7 @@ export const CommandModal: React.FC = observer(() => {
                         value={searchTerm}
                         onValueChange={(e) => setSearchTerm(e)}
                         autoFocus
-                        tabIndex={1}
+                        tabIndex={isMobile ? -1 : 1}
                       />
                     </div>
 

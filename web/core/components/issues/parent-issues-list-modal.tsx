@@ -121,6 +121,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       displayValue={() => ""}
+                      tabIndex={isMobile ? -1 : 1}
                     />
                   </div>
                   <div className="flex p-2 sm:justify-end">

@@ -10,8 +10,10 @@ import { Logo } from "@/components/common";
 // constants
 import { AccessField } from "@/components/common/access-field";
 import { EPageAccess, PAGE_ACCESS_SPECIFIERS } from "@/constants/page";
+import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
+import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
@@ -99,7 +101,7 @@ export const PageForm: React.FC<Props> = (props) => {
               onChange={(e) => handleFormData("name", e.target.value)}
               placeholder="Title"
               className="w-full resize-none text-base"
-              tabIndex={1}
+              tabIndex={getTabIndex("name", ETabIndices.PROJECT_PAGE, isMobile)}
               required
               autoFocus
             />
@@ -122,7 +124,12 @@ export const PageForm: React.FC<Props> = (props) => {
           </h6>
         </div>
         <div className="flex items-center justify-end gap-2">
-          <Button variant="neutral-primary" size="sm" onClick={handleModalClose} tabIndex={4}>
+          <Button
+            variant="neutral-primary"
+            size="sm"
+            onClick={handleModalClose}
+            tabIndex={getTabIndex("cancel", ETabIndices.PROJECT_PAGE, isMobile)}
+          >
             Cancel
           </Button>
           <Button
@@ -131,7 +138,7 @@ export const PageForm: React.FC<Props> = (props) => {
             type="submit"
             loading={isSubmitting}
             disabled={isTitleLengthMoreThan255Character}
-            tabIndex={5}
+            tabIndex={getTabIndex("submit", ETabIndices.PROJECT_PAGE, isMobile)}
           >
             {isSubmitting ? "Creating" : "Create Page"}
           </Button>
