@@ -13,7 +13,8 @@ export interface IIssueStoreActions {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    issueType?: "DEFAULT" | "DRAFT" | "ARCHIVED"
+    issueType?: "DEFAULT" | "DRAFT" | "ARCHIVED",
+    shouldReplace?: boolean
   ) => Promise<TIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
@@ -61,7 +62,13 @@ export class IssueStore implements IIssueStore {
   });
 
   // actions
-  fetchIssue = async (workspaceSlug: string, projectId: string, issueId: string, issueType = "DEFAULT") => {
+  fetchIssue = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    issueType = "DEFAULT",
+    shouldReplace = true
+  ) => {
     const query = {
       expand: "issue_reactions,issue_attachment,issue_link,parent",
     };
@@ -107,7 +114,7 @@ export class IssueStore implements IIssueStore {
       is_subscribed: issue?.is_subscribed,
     };
 
-    this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issuePayload], true);
+    this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issuePayload], shouldReplace);
 
     // store handlers from issue detail
     // parent
