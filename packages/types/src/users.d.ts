@@ -1,5 +1,5 @@
 import { IIssueActivity, TIssuePriorities, TStateGroups } from ".";
-import { EUserProjectRoles } from "./enums";
+import { TUserPermissions } from "./enums";
 
 type TLoginMediums = "email" | "magic-code" | "github" | "gitlab" | "google";
 
@@ -170,7 +170,7 @@ export interface IUserProfileProjectSegregation {
 }
 
 export interface IUserProjectsRole {
-  [projectId: string]: EUserProjectRoles;
+  [projectId: string]: TUserPermissions;
 }
 
 export interface IUserEmailNotificationSettings {

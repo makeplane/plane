@@ -33,7 +33,7 @@ export interface IUserPermissionStore {
   projectPermissionsByWorkspaceSlugAndProjectId: (
     workspaceSlug: string,
     projectId: string
-  ) => IUserProjectsRole | undefined;
+  ) => TUserPermissions | undefined;
   allowPermissions: (
     allowPermissions: TUserPermissions[],
     level: TUserPermissionsLevel,
@@ -95,7 +95,7 @@ export class UserPermissionStore implements IUserPermissionStore {
    * @returns { IUserProjectsRole | undefined }
    */
   projectPermissionsByWorkspaceSlugAndProjectId = computedFn(
-    (workspaceSlug: string, projectId: string): IUserProjectsRole | undefined => {
+    (workspaceSlug: string, projectId: string): TUserPermissions | undefined => {
       if (!workspaceSlug || !projectId) return undefined;
       return this.workspaceProjectsPermissions?.[workspaceSlug]?.[projectId] || undefined;
     }
@@ -122,7 +122,7 @@ export class UserPermissionStore implements IUserPermissionStore {
       if (!workspaceSlug) workspaceSlug = currentWorkspaceSlug;
       if (!projectId) projectId = currentProjectId;
 
-      let currentUserRole: EUserPermissions | undefined = undefined;
+      let currentUserRole: TUserPermissions | undefined = undefined;
 
       if (level === EUserPermissionsLevel.WORKSPACE) {
         const workspaceInfoBySlug = workspaceSlug && this.workspaceInfoBySlug(workspaceSlug);
