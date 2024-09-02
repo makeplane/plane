@@ -61,7 +61,7 @@ const IssueDetailsPage = observer(() => {
     handleToggleIssueDetailSidebar();
     return () => window.removeEventListener("resize", handleToggleIssueDetailSidebar);
   }, [issueDetailSidebarCollapsed, toggleIssueDetailSidebar]);
-  console.log("WASSUP")
+
   return (
     <>
       <PageHead title={pageTitle} />
