@@ -30,6 +30,7 @@ interface ITooltipProps {
   openDelay?: number;
   closeDelay?: number;
   isMobile?: boolean;
+  renderByDefault?: boolean;
 }
 
 export const Tooltip: React.FC<ITooltipProps> = ({
@@ -42,10 +43,11 @@ export const Tooltip: React.FC<ITooltipProps> = ({
   openDelay = 200,
   closeDelay,
   isMobile = false,
+  renderByDefault = true,
 }) => {
   const toolTipRef = useRef<HTMLDivElement | null>(null);
 
-  const [shouldRender, setShouldRender] = useState(false);
+  const [shouldRender, setShouldRender] = useState(renderByDefault);
 
   const onHover = () => {
     setShouldRender(true);
