@@ -91,6 +91,20 @@ services:
       - worker
       - web
 
+  live:
+    build:
+      context: .
+      dockerfile: ./live/Dockerfile.dev
+    restart: unless-stopped
+    networks:
+      - dev_env
+    volumes:
+      - ./live:/app/live
+    depends_on:
+      - api
+      - worker
+      - web
+
   api:
     build:
       context: ./apiserver

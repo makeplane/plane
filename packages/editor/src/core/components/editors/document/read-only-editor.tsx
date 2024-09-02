@@ -9,8 +9,6 @@ import { IssueWidget } from "@/extensions";
 import { getEditorClassNames } from "@/helpers/common";
 // hooks
 import { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
-// plane web types
-import { TEmbedConfig } from "@/plane-editor/types";
 // types
 import { EditorReadOnlyRefApi, IMentionHighlight, TDisplayConfig } from "@/types";
 
@@ -20,7 +18,7 @@ interface IDocumentReadOnlyEditor {
   containerClassName: string;
   displayConfig?: TDisplayConfig;
   editorClassName?: string;
-  embedHandler: TEmbedConfig;
+  embedHandler: any;
   tabIndex?: number;
   handleEditorReady?: (value: boolean) => void;
   mentionHandler: {
@@ -36,33 +34,34 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
     editorClassName = "",
     embedHandler,
     id,
-    initialValue,
     forwardedRef,
-    tabIndex,
     handleEditorReady,
+    initialValue,
     mentionHandler,
   } = props;
+  const extensions = [];
+  if (embedHandler?.issue) {
+    extensions.push(
+      IssueWidget({
+        widgetCallback: embedHandler.issue.widgetCallback,
+      })
+    );
+  }
+
   const editor = useReadOnlyEditor({
     editorClassName,
-    extensions: [
-      embedHandler?.issue &&
-        IssueWidget({
-          widgetCallback: embedHandler?.issue.widgetCallback,
-        }),
-    ],
+    extensions,
     forwardedRef,
     handleEditorReady,
     initialValue,
     mentionHandler,
   });
-
-  if (!editor) {
-    return null;
-  }
 
   const editorContainerClassName = getEditorClassNames({
     containerClassName,
   });
+
+  if (!editor) return null;
 
   return (
     <PageRenderer
@@ -70,7 +69,6 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
       editor={editor}
       editorContainerClassName={editorContainerClassName}
       id={id}
-      tabIndex={tabIndex}
     />
   );
 };

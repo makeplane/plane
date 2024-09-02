@@ -1,11 +1,9 @@
 import { Extensions } from "@tiptap/core";
 import { SlashCommand } from "@/extensions";
-// hooks
-import { TFileHandler } from "@/hooks/use-editor";
 // plane editor types
 import { TIssueEmbedConfig } from "@/plane-editor/types";
 // types
-import { TExtensions } from "@/types";
+import { TExtensions, TFileHandler } from "@/types";
 
 type Props = {
   disabledExtensions?: TExtensions[];

@@ -99,6 +99,16 @@ services:
       - plane-db
       - plane-redis
 
+  live:
+    container_name: plane-live
+    build:
+      context: .
+      dockerfile: ./live/Dockerfile.live
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: always
+    command: node live/dist/server.js
+
   plane-db:
     container_name: plane-db
     image: postgres:15.7-alpine

@@ -1,0 +1,20 @@
+{
+  "extends": "tsconfig/base.json",
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2015"],
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/core/*"],
+      "@/plane-live/*": ["./src/ce/*"]
+    },
+    "removeComments": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["./dist", "./build", "./node_modules"]
+}
