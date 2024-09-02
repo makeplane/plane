@@ -4,7 +4,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
 // constants
-import { CustomHeader, EHeaderVariant } from "@plane/ui";
+import { CustomContainer, CustomHeader, EHeaderVariant } from "@plane/ui";
 import { ENotificationFilterType, FILTER_TYPE_OPTIONS } from "@/constants/notification";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store";
@@ -36,32 +36,29 @@ export const AppliedFilters: FC<TAppliedFilters> = observer((props) => {
 
   if (!isFiltersEnabled || !workspaceSlug) return <></>;
   return (
-    <CustomHeader variant={EHeaderVariant.ternary}>
-      <CustomHeader.LeftItem>
-        {FILTER_TYPE_OPTIONS.map((filter) => {
-          const isSelected = filters?.type?.[filter?.value] || false;
-          if (!isSelected) return <></>;
-          return (
-            <div
-              key={filter.value}
-              className="flex items-center gap-2 cursor-pointer px-2 p-1 transition-all border border-custom-border-200 rounded-sm text-xs"
-              onClick={() => handleFilterTypeChange(filter?.value, !isSelected)}
-            >
-              <div className="whitespace-nowrap text-custom-text-200">{filter.label}</div>
-              <div className="w-4 h-4 flex justify-center items-center transition-all rounded-sm bg-custom-background-90 hover:bg-custom-background-80  text-custom-text-200 hover:text-custom-text-100">
-                <X className="h-3 w-3" />
-              </div>
+    <CustomHeader variant={EHeaderVariant.ternary} className="justify-start flex-wrap gap-2">
+      {FILTER_TYPE_OPTIONS.map((filter) => {
+        const isSelected = filters?.type?.[filter?.value] || false;
+        if (!isSelected) return <></>;
+        return (
+          <CustomContainer
+            key={filter.value}
+            className="flex flex-wrap flex-start"
+            onClick={() => handleFilterTypeChange(filter?.value, !isSelected)}
+          >
+            <div className="whitespace-nowrap text-custom-text-200">{filter.label}</div>
+            <div className="w-4 h-4 flex justify-center items-center transition-all rounded-sm bg-custom-background-90 hover:bg-custom-background-80  text-custom-text-200 hover:text-custom-text-100">
+              <X className="h-3 w-3" />
             </div>
-          );
-        })}
-
-        <div
-          className="flex items-center gap-2 cursor-pointer px-2 p-1 transition-all border border-custom-border-200 rounded-sm text-xs bg-custom-background-90 hover:bg-custom-background-80  text-custom-text-200 hover:text-custom-text-100"
-          onClick={handleClearFilters}
-        >
-          <div className="whitespace-nowrap">Clear all</div>
-        </div>
-      </CustomHeader.LeftItem>
+          </CustomContainer>
+        );
+      })}
+      <button type="button" onClick={handleClearFilters}>
+        <CustomContainer>
+          Clear all
+          <X size={12} strokeWidth={2} />
+        </CustomContainer>
+      </button>
     </CustomHeader>
   );
 });

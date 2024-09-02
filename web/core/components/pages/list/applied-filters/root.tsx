@@ -1,6 +1,7 @@
 import { X } from "lucide-react";
 import { TPageFilterProps } from "@plane/types";
 // components
+import { CustomContainer } from "@plane/ui";
 import { AppliedDateFilters, AppliedMembersFilters } from "@/components/common/applied-filters";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
@@ -33,10 +34,7 @@ export const PageAppliedFiltersList: React.FC<Props> = (props) => {
         if (Array.isArray(value) && value.length === 0) return;
 
         return (
-          <div
-            key={filterKey}
-            className="flex flex-wrap items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1 capitalize"
-          >
+          <CustomContainer key={filterKey} className="gap-1.5">
             <div className="flex flex-wrap items-center gap-1.5">
               <span className="text-xs text-custom-text-300">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
               {DATE_FILTERS.includes(filterKey) && (
@@ -63,17 +61,15 @@ export const PageAppliedFiltersList: React.FC<Props> = (props) => {
                 </button>
               )}
             </div>
-          </div>
+          </CustomContainer>
         );
       })}
       {isEditingAllowed && (
-        <button
-          type="button"
-          onClick={handleClearAllFilters}
-          className="flex items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1 text-xs text-custom-text-300 hover:text-custom-text-200"
-        >
-          Clear all
-          <X size={12} strokeWidth={2} />
+        <button type="button" onClick={handleClearAllFilters}>
+          <CustomContainer>
+            Clear all
+            <X size={12} strokeWidth={2} />
+          </CustomContainer>
         </button>
       )}
     </div>

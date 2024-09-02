@@ -6,9 +6,8 @@ import Link from "next/link";
 import { History } from "lucide-react";
 // types
 import { TRecentActivityWidgetResponse } from "@plane/types";
-// UI
-import { Avatar, getButtonStyling } from "@plane/ui";
 // components
+import { CustomContainer, EContainerVariant, EContainerSize, Avatar, getButtonStyling } from "@plane/ui";
 import { ActivityIcon, ActivityMessage, IssueLink } from "@/components/core";
 import { RecentActivityEmptyState, WidgetLoader, WidgetProps } from "@/components/dashboard/widgets";
 // helpers
@@ -38,7 +37,7 @@ export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
   if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
-    <div className="min-h-96 w-full rounded-xl border-[0.5px] border-custom-border-200 bg-custom-background-100 py-6 duration-300 hover:shadow-custom-shadow-4xl">
+    <CustomContainer variant={EContainerVariant.shadow} className="flex-col" size={EContainerSize.lg}>
       <Link href={redirectionLink} className="mx-7 text-lg font-semibold text-custom-text-300 hover:underline">
         Your issue activities
       </Link>
@@ -104,6 +103,6 @@ export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
           <RecentActivityEmptyState />
         </div>
       )}
-    </div>
+    </CustomContainer>
   );
 });

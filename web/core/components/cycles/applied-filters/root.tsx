@@ -2,6 +2,7 @@ import { observer } from "mobx-react";
 import { X } from "lucide-react";
 import { TCycleFilters } from "@plane/types";
 // hooks
+import { CustomContainer } from "@plane/ui";
 import { AppliedDateFilters, AppliedStatusFilters } from "@/components/cycles";
 import { EUserProjectRoles } from "@/constants/project";
 import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
@@ -42,10 +43,7 @@ export const CycleAppliedFiltersList: React.FC<Props> = observer((props) => {
         if (Array.isArray(value) && value.length === 0) return;
 
         return (
-          <div
-            key={filterKey}
-            className="flex flex-wrap items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1 capitalize"
-          >
+          <CustomContainer key={filterKey}>
             <span className="text-xs text-custom-text-300">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
             <div className="flex flex-wrap items-center gap-1">
               {filterKey === "status" && (
@@ -72,17 +70,15 @@ export const CycleAppliedFiltersList: React.FC<Props> = observer((props) => {
                 </button>
               )}
             </div>
-          </div>
+          </CustomContainer>
         );
       })}
       {isEditingAllowed && (
-        <button
-          type="button"
-          onClick={handleClearAllFilters}
-          className="flex items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1 text-xs text-custom-text-300 hover:text-custom-text-200"
-        >
-          Clear all
-          <X size={12} strokeWidth={2} />
+        <button type="button" onClick={handleClearAllFilters}>
+          <CustomContainer>
+            Clear all
+            <X size={12} strokeWidth={2} />
+          </CustomContainer>
         </button>
       )}
     </div>

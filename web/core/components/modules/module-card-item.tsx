@@ -7,7 +7,16 @@ import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { CalendarCheck2, CalendarClock, Info, MoveRight, SquareUser } from "lucide-react";
 // ui
 import { IModule } from "@plane/types";
-import { FavoriteStar, LayersIcon, LinearProgressIndicator, Tooltip, setPromiseToast } from "@plane/ui";
+import {
+  CustomContainer,
+  EContainerSize,
+  EContainerVariant,
+  FavoriteStar,
+  LayersIcon,
+  LinearProgressIndicator,
+  Tooltip,
+  setPromiseToast,
+} from "@plane/ui";
 // components
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { ModuleQuickActions } from "@/components/modules";
@@ -176,7 +185,12 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   return (
     <div className="relative">
       <Link ref={parentRef} href={`/${workspaceSlug}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}>
-        <div className="flex h-44 w-full flex-col justify-between rounded  border border-custom-border-100 bg-custom-background-100 p-4 text-sm hover:shadow-md">
+        <CustomContainer
+          className="flex-col w-full h-44  flex-grow justify-between rounded text-sm"
+          variant={EContainerVariant.shadow}
+          size={EContainerSize.lg}
+        >
+          {" "}
           <div>
             <div className="flex items-center justify-between gap-2">
               <Tooltip tooltipContent={moduleDetails.name} position="top" isMobile={isMobile}>
@@ -200,7 +214,6 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
               </div>
             </div>
           </div>
-
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 text-custom-text-200">
@@ -232,7 +245,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
               )}
             </div>
           </div>
-        </div>
+        </CustomContainer>
       </Link>
       <div className="absolute right-4 bottom-[18px] flex items-center gap-1.5">
         {isEditingAllowed && (

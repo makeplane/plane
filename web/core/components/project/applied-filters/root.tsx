@@ -4,7 +4,7 @@ import { X } from "lucide-react";
 // types
 import { TProjectAppliedDisplayFilterKeys, TProjectFilters } from "@plane/types";
 // ui
-import { Tooltip } from "@plane/ui";
+import { CustomContainer, Tooltip } from "@plane/ui";
 // components
 import {
   AppliedAccessFilters,
@@ -57,70 +57,58 @@ export const ProjectAppliedFiltersList: React.FC<Props> = (props) => {
           if (Array.isArray(value) && value.length === 0) return;
 
           return (
-            <div
-              key={filterKey}
-              className="flex flex-wrap items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1 capitalize"
-            >
-              <div className="flex flex-wrap items-center gap-1.5">
-                <span className="text-xs text-custom-text-300">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
-                {filterKey === "access" && (
-                  <AppliedAccessFilters
-                    editable={isEditingAllowed}
-                    handleRemove={(val) => handleRemoveFilter("access", val)}
-                    values={value}
-                  />
-                )}
-                {DATE_FILTERS.includes(filterKey) && (
-                  <AppliedDateFilters
-                    editable={isEditingAllowed}
-                    handleRemove={(val) => handleRemoveFilter(filterKey, val)}
-                    values={value}
-                  />
-                )}
-                {MEMBERS_FILTERS.includes(filterKey) && (
-                  <AppliedMembersFilters
-                    editable={isEditingAllowed}
-                    handleRemove={(val) => handleRemoveFilter(filterKey, val)}
-                    values={value}
-                  />
-                )}
-                {isEditingAllowed && (
-                  <button
-                    type="button"
-                    className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
-                    onClick={() => handleRemoveFilter(filterKey, null)}
-                  >
-                    <X size={12} strokeWidth={2} />
-                  </button>
-                )}
-              </div>
-            </div>
+            <CustomContainer key={filterKey} className="gap-1.5 capitalize">
+              <span className="text-xs text-custom-text-300">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
+              {filterKey === "access" && (
+                <AppliedAccessFilters
+                  editable={isEditingAllowed}
+                  handleRemove={(val) => handleRemoveFilter("access", val)}
+                  values={value}
+                />
+              )}
+              {DATE_FILTERS.includes(filterKey) && (
+                <AppliedDateFilters
+                  editable={isEditingAllowed}
+                  handleRemove={(val) => handleRemoveFilter(filterKey, val)}
+                  values={value}
+                />
+              )}
+              {MEMBERS_FILTERS.includes(filterKey) && (
+                <AppliedMembersFilters
+                  editable={isEditingAllowed}
+                  handleRemove={(val) => handleRemoveFilter(filterKey, val)}
+                  values={value}
+                />
+              )}
+              {isEditingAllowed && (
+                <button
+                  type="button"
+                  className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+                  onClick={() => handleRemoveFilter(filterKey, null)}
+                >
+                  <X size={12} strokeWidth={2} />
+                </button>
+              )}
+            </CustomContainer>
           );
         })}
         {/* Applied display filters */}
         {appliedDisplayFilters.length > 0 && (
-          <div
-            key="project_display_filters"
-            className="flex flex-wrap items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1 capitalize"
-          >
-            <div className="flex flex-wrap items-center gap-1.5">
-              <span className="text-xs text-custom-text-300">Projects</span>
-              <AppliedProjectDisplayFilters
-                editable={isEditingAllowed}
-                values={appliedDisplayFilters}
-                handleRemove={(key) => handleRemoveDisplayFilter(key)}
-              />
-            </div>
-          </div>
+          <CustomContainer key="project_display_filters" className="gap-1.5">
+            <span className="text-xs text-custom-text-300">Projects</span>
+            <AppliedProjectDisplayFilters
+              editable={isEditingAllowed}
+              values={appliedDisplayFilters}
+              handleRemove={(key) => handleRemoveDisplayFilter(key)}
+            />
+          </CustomContainer>
         )}
         {isEditingAllowed && (
-          <button
-            type="button"
-            onClick={handleClearAllFilters}
-            className="flex items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1 text-xs text-custom-text-300 hover:text-custom-text-200"
-          >
-            Clear all
-            <X size={12} strokeWidth={2} />
+          <button type="button" onClick={handleClearAllFilters}>
+            <CustomContainer>
+              Clear all
+              <X size={12} strokeWidth={2} />
+            </CustomContainer>
           </button>
         )}
       </div>
