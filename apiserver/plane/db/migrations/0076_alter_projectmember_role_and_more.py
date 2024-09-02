@@ -51,5 +51,10 @@ class Migration(migrations.Migration):
                 default=5,
             ),
         ),
+        migrations.AddField(
+            model_name="project",
+            name="guest_view_all_issues",
+            field=models.BooleanField(default=False),
+        ),
         migrations.RunPython(update_workspace_project_member_role),
     ]
