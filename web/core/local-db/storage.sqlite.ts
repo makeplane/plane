@@ -329,7 +329,7 @@ export class Storage {
     set(this.projectStatus, `${projectId}.issues.sync`, sync);
   };
 
-  getOption = async (name: string, fallback: any) => {
+  getOption = async (name: string, fallback = "") => {
     const options = await runQuery(`select * from options where name='${name}'`);
     if (options.length) {
       return options[0].value;
