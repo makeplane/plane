@@ -1,5 +1,5 @@
-from django.core.exceptions import ValidationError
-from django.core.validators import URLValidator
+# Python Imports
+import re
 
 # Django imports
 from django.utils import timezone
@@ -290,6 +290,15 @@ class LabelSerializer(BaseSerializer):
         ]
 
 
+def check_url_validity(url: str) -> bool:
+    # Regex pattern to match valid URLs or domain names
+    url_pattern = re.compile(
+        r"^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,6}([\/\w .-]*)*\/?(\?[=&\w.-]*)?$",
+        re.IGNORECASE,
+    )
+    return bool(url_pattern.match(url))
+
+
 class IssueLinkSerializer(BaseSerializer):
     class Meta:
         model = IssueLink
@@ -307,15 +316,8 @@ class IssueLinkSerializer(BaseSerializer):
 
     def validate_url(self, value):
         # Check URL format
-        validate_url = URLValidator()
-        try:
-            validate_url(value)
-        except ValidationError:
-            raise serializers.ValidationError("Invalid URL format.")
-
-        # Check URL scheme
-        if not value.startswith(("http://", "https://")):
-            raise serializers.ValidationError("Invalid URL scheme.")
+        if not check_url_validity(value):
+            raise serializers.ValidationError({"error": "Invalid URL format."})
 
         return value
 

@@ -1,3 +1,6 @@
+# Python Imports
+import re
+
 # Third Party imports
 from rest_framework import serializers
 
@@ -14,6 +17,13 @@ from plane.db.models import (
     ModuleUserProperties,
 )
 
+def check_url_validity(url: str) -> bool:
+    # Regex pattern to match valid URLs or domain names
+    url_pattern = re.compile(
+        r"^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,6}([\/\w .-]*)*\/?(\?[=&\w.-]*)?$",
+        re.IGNORECASE,
+    )
+    return bool(url_pattern.match(url))
 
 class ModuleWriteSerializer(BaseSerializer):
     lead_id = serializers.PrimaryKeyRelatedField(
@@ -155,6 +165,13 @@ class ModuleLinkSerializer(BaseSerializer):
             "module",
         ]
 
+    def validate_url(self, value):
+        # Check URL format
+        if not check_url_validity(value):
+            raise serializers.ValidationError({"error": "Invalid URL format."})
+
+        return value
+
     # Validation if url already exists
     def create(self, validated_data):
         if ModuleLink.objects.filter(
@@ -165,6 +182,21 @@ class ModuleLinkSerializer(BaseSerializer):
                 {"error": "URL already exists for this Issue"}
             )
         return ModuleLink.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        if (
+            ModuleLink.objects.filter(
+                url=validated_data.get("url"),
+                module_id=instance.module_id,
+            )
+            .exclude(pk=instance.id)
+            .exists()
+        ):
+            raise serializers.ValidationError(
+                {"error": "URL already exists for this Issue"}
+            )
+
+        return super().update(instance, validated_data)
 
 
 class ModuleSerializer(DynamicBaseSerializer):
