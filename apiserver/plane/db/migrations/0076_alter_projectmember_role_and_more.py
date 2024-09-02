@@ -3,6 +3,15 @@
 from django.db import migrations, models
 
 
+def update_workspace_project_member_role(apps, schema_editor):
+    WorkspaceMember = apps.get_model("db", "WorkspaceMember")
+    ProjectMember = apps.get_model("db", "ProjectMember")
+
+    # update all existing members with role 10 to role 5
+    WorkspaceMember.objects.filter(role=10).update(role=5)
+    ProjectMember.objects.filter(role=10).update(role=5)
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -11,23 +20,36 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterField(
-            model_name='projectmember',
-            name='role',
-            field=models.PositiveSmallIntegerField(choices=[(20, 'Admin'), (15, 'Member'), (5, 'Guest')], default=5),
+            model_name="projectmember",
+            name="role",
+            field=models.PositiveSmallIntegerField(
+                choices=[(20, "Admin"), (15, "Member"), (5, "Guest")],
+                default=5,
+            ),
         ),
         migrations.AlterField(
-            model_name='projectmemberinvite',
-            name='role',
-            field=models.PositiveSmallIntegerField(choices=[(20, 'Admin'), (15, 'Member'), (5, 'Guest')], default=5),
+            model_name="projectmemberinvite",
+            name="role",
+            field=models.PositiveSmallIntegerField(
+                choices=[(20, "Admin"), (15, "Member"), (5, "Guest")],
+                default=5,
+            ),
         ),
         migrations.AlterField(
-            model_name='workspacemember',
-            name='role',
-            field=models.PositiveSmallIntegerField(choices=[(20, 'Admin'), (15, 'Member'), (5, 'Guest')], default=5),
+            model_name="workspacemember",
+            name="role",
+            field=models.PositiveSmallIntegerField(
+                choices=[(20, "Admin"), (15, "Member"), (5, "Guest")],
+                default=5,
+            ),
         ),
         migrations.AlterField(
-            model_name='workspacememberinvite',
-            name='role',
-            field=models.PositiveSmallIntegerField(choices=[(20, 'Admin'), (15, 'Member'), (5, 'Guest')], default=5),
+            model_name="workspacememberinvite",
+            name="role",
+            field=models.PositiveSmallIntegerField(
+                choices=[(20, "Admin"), (15, "Member"), (5, "Guest")],
+                default=5,
+            ),
         ),
+        migrations.RunPython(update_workspace_project_member_role),
     ]
