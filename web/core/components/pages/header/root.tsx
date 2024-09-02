@@ -50,7 +50,7 @@ export const PagesListHeaderRoot: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <CustomHeader variant={EHeaderVariant.secondary} className="flex">
+      <CustomHeader variant={EHeaderVariant.SECONDARY} className="flex">
         <CustomHeader.LeftItem>
           <PageTabNavigation workspaceSlug={workspaceSlug} projectId={projectId} pageType={pageType} />
         </CustomHeader.LeftItem>
@@ -82,7 +82,7 @@ export const PagesListHeaderRoot: React.FC<Props> = observer((props) => {
         </CustomHeader.RightItem>
       </CustomHeader>
       {calculateTotalFilters(filters?.filters ?? {}) !== 0 && (
-        <CustomHeader variant={EHeaderVariant.ternary}>
+        <CustomHeader variant={EHeaderVariant.TERNARY}>
           <PageAppliedFiltersList
             appliedFilters={filters.filters ?? {}}
             handleClearAllFilters={clearAllFilters}

@@ -43,7 +43,7 @@ export const PageEditorMobileHeaderRoot: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <CustomHeader variant={EHeaderVariant.secondary} className="flex justify-between">
+      <CustomHeader variant={EHeaderVariant.SECONDARY} className="flex justify-between">
         <div className="flex-shrink-0 my-auto">
           <PageSummaryPopover
             editorRef={isContentEditable ? editorRef.current : readOnlyEditorRef.current}
@@ -61,7 +61,7 @@ export const PageEditorMobileHeaderRoot: React.FC<Props> = observer((props) => {
           readOnlyEditorRef={readOnlyEditorRef}
         />
       </CustomHeader>
-      <CustomHeader variant={EHeaderVariant.ternary}>
+      <CustomHeader variant={EHeaderVariant.TERNARY}>
         {(editorReady || readOnlyEditorReady) && isContentEditable && editorRef.current && (
           <PageToolbar editorRef={editorRef?.current} />
         )}

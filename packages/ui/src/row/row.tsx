@@ -9,7 +9,7 @@ export interface CustomRowProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const CustomRow = React.forwardRef<HTMLDivElement, CustomRowProps>((props, ref) => {
-  const { variant = ERowVariant.regular, className = "", children, ...rest } = props;
+  const { variant = ERowVariant.REGULAR, className = "", children, ...rest } = props;
 
   const style = rowStyle[variant];
 
@@ -22,4 +22,4 @@ const CustomRow = React.forwardRef<HTMLDivElement, CustomRowProps>((props, ref) 
 
 CustomRow.displayName = "plane-ui-row";
 
-export { CustomRow };
+export { CustomRow, ERowVariant };

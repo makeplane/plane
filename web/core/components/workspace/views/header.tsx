@@ -104,7 +104,7 @@ export const GlobalViewsHeader: React.FC = observer(() => {
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
-    <CustomHeader variant={EHeaderVariant.secondary} className="flex gap-4">
+    <CustomHeader variant={EHeaderVariant.SECONDARY} className="flex gap-4">
       <CreateUpdateWorkspaceViewModal isOpen={createViewModal} onClose={() => setCreateViewModal(false)} />
       <div
         ref={containerRef}

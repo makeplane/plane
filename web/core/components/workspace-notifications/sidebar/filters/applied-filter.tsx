@@ -36,7 +36,7 @@ export const AppliedFilters: FC<TAppliedFilters> = observer((props) => {
 
   if (!isFiltersEnabled || !workspaceSlug) return <></>;
   return (
-    <CustomHeader variant={EHeaderVariant.ternary}>
+    <CustomHeader variant={EHeaderVariant.TERNARY}>
       <CustomHeader.LeftItem>
         {FILTER_TYPE_OPTIONS.map((filter) => {
           const isSelected = filters?.type?.[filter?.value] || false;

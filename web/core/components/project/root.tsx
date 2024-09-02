@@ -75,7 +75,7 @@ const Root = observer(() => {
       <PageHead title={pageTitle} />
       <div className="flex h-full w-full flex-col">
         {(calculateTotalFilters(currentWorkspaceFilters ?? {}) !== 0 || allowedDisplayFilters.length > 0) && (
-          <CustomHeader variant={EHeaderVariant.ternary}>
+          <CustomHeader variant={EHeaderVariant.TERNARY}>
             <ProjectAppliedFiltersList
               appliedFilters={currentWorkspaceFilters ?? {}}
               appliedDisplayFilters={allowedDisplayFilters}

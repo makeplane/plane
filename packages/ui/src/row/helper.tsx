@@ -1,12 +1,12 @@
-export type TRowVariant = "regular" | "hugging";
 export enum ERowVariant {
-  regular = "regular",
-  hugging = "hugging",
+  REGULAR = "regular",
+  HUGGING = "hugging",
 }
+export type TRowVariant = ERowVariant.REGULAR | ERowVariant.HUGGING;
 export interface IRowProperties {
   [key: string]: string;
 }
 export const rowStyle: IRowProperties = {
-  regular: "px-page-x",
-  hugging: "px-0",
+  [ERowVariant.REGULAR]: "px-page-x",
+  [ERowVariant.HUGGING]: "px-0",
 };

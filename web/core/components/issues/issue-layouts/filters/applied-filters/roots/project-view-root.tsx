@@ -114,7 +114,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   const isOwner = viewDetails?.owned_by === data?.id;
 
   return (
-    <CustomHeader variant={EHeaderVariant.ternary}>
+    <CustomHeader variant={EHeaderVariant.TERNARY}>
       <CreateUpdateProjectViewModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
