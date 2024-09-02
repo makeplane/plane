@@ -426,8 +426,7 @@ const ProfileSettingsPage = observer(() => {
                 <Disclosure.Panel>
                   <div className="flex flex-col gap-8">
                     <span className="text-sm tracking-tight">
-                      The danger zone of the profile page is a critical area that requires careful consideration and
-                      attention. When deactivating an account, all of the data and resources within that account will be
+                      When deactivating an account, all of the data and resources within that account will be
                       permanently removed and cannot be recovered.
                     </span>
                     <div>
