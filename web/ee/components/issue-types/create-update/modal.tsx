@@ -1,4 +1,5 @@
 import { FC, useEffect, useState } from "react";
+import { observer } from "mobx-react";
 // ui
 import { EModalPosition, EModalWidth, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
@@ -24,7 +25,7 @@ const defaultIssueTypeData: Partial<TIssueType> = {
   description: "",
 };
 
-export const CreateOrUpdateIssueTypeModal: FC<Props> = (props) => {
+export const CreateOrUpdateIssueTypeModal: FC<Props> = observer((props) => {
   const { issueTypeId, isModalOpen, handleModalClose } = props;
   // states
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -131,4 +132,4 @@ export const CreateOrUpdateIssueTypeModal: FC<Props> = (props) => {
       />
     </ModalCore>
   );
-};
+});

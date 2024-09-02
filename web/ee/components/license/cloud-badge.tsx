@@ -115,7 +115,7 @@ export const CloudEditionBadge = observer(() => {
         <Button
           tabIndex={-1}
           variant="accent-primary"
-          className="w-full cursor-pointer rounded-2xl px-4 py-1.5 text-center text-sm font-medium outline-none"
+          className="w-fit min-w-24 cursor-pointer rounded-2xl px-4 py-1 text-center text-sm font-medium outline-none"
           onClick={handleProPlanPurchaseModalOpen}
         >
           {renderButtonText()}
@@ -126,10 +126,10 @@ export const CloudEditionBadge = observer(() => {
         <Button
           tabIndex={-1}
           variant="accent-primary"
-          className="w-full cursor-pointer rounded-2xl px-3 py-1.5 text-center text-sm font-medium outline-none"
+          className="w-fit cursor-pointer rounded-2xl px-4 py-1 text-center text-sm font-medium outline-none"
           onClick={handlePaidPlanSuccessModalOpen}
         >
-          <Image src={PlaneLogo} alt="Plane Pro" width={14} height={14} />
+          <Image src={PlaneLogo} alt="Plane Pro" width={12} height={12} />
           Plane Pro
         </Button>
       )}

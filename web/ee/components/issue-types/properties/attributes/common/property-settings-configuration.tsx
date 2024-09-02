@@ -1,4 +1,5 @@
 import { get, set } from "lodash";
+import { observer } from "mobx-react";
 // components
 import { RadioInput } from "@/components/estimates";
 // plane web constants
@@ -11,7 +12,7 @@ type TPropertySettingsConfigurationProps<T extends EIssuePropertyType> = {
   onChange: (value: TIssuePropertySettingsMap[T]) => void;
 };
 
-export const PropertyRadioInputSelect = <T extends EIssuePropertyType>(
+export const PropertyRadioInputSelect = observer(<T extends EIssuePropertyType>(
   props: TPropertySettingsConfigurationProps<T>
 ) => {
   const { settings, settingsConfigurations, isDisabled, onChange } = props;
@@ -44,9 +45,9 @@ export const PropertyRadioInputSelect = <T extends EIssuePropertyType>(
       vertical
     />
   );
-};
+});
 
-export const PropertySettingsConfiguration = <T extends EIssuePropertyType>(
+export const PropertySettingsConfiguration = observer(<T extends EIssuePropertyType>(
   props: TPropertySettingsConfigurationProps<T>
 ) => {
   const { settings, settingsConfigurations, isDisabled, onChange } = props;
@@ -64,4 +65,4 @@ export const PropertySettingsConfiguration = <T extends EIssuePropertyType>(
     default:
       return null;
   }
-};
+});

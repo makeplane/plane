@@ -1,3 +1,4 @@
+import { observer } from "mobx-react";
 // plane web components
 import { RadioInput } from "@/components/estimates";
 // plane web constants
@@ -12,7 +13,7 @@ type TPropertyMultiSelectProps = {
   onChange: (value: boolean) => void;
 };
 
-export const PropertyMultiSelect = (props: TPropertyMultiSelectProps) => {
+export const PropertyMultiSelect = observer((props: TPropertyMultiSelectProps) => {
   const { value, variant = "RELATION_ISSUE", isDisabled = false, onChange } = props;
   // derived values
   const MULTI_SELECT_ATTRIBUTES = DROPDOWN_ATTRIBUTES[variant] ?? [];
@@ -42,4 +43,4 @@ export const PropertyMultiSelect = (props: TPropertyMultiSelectProps) => {
       vertical
     />
   );
-};
+});
