@@ -5,7 +5,7 @@ import { useParams, usePathname } from "next/navigation";
 
 // components
 // constants
-import { CustomHeader } from "@plane/ui";
+import { CustomHeader, EHeaderVariant } from "@plane/ui";
 import { PROFILE_ADMINS_TAB, PROFILE_VIEWER_TAB } from "@/constants/profile";
 
 type Props = {
@@ -21,7 +21,7 @@ export const ProfileNavbar: React.FC<Props> = (props) => {
   const tabsList = isAuthorized ? [...PROFILE_VIEWER_TAB, ...PROFILE_ADMINS_TAB] : PROFILE_VIEWER_TAB;
 
   return (
-    <CustomHeader variant="secondary" className="sticky -top-0.5 hidden md:flex md:static">
+    <CustomHeader variant={EHeaderVariant.secondary} className="sticky -top-0.5 hidden md:flex md:static">
       <div className="flex items-center overflow-x-scroll">
         {tabsList.map((tab) => (
           <Link key={tab.route} href={`/${workspaceSlug}/profile/${userId}/${tab.route}`}>

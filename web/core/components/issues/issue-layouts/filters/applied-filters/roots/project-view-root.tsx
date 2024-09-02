@@ -8,7 +8,7 @@ import { useParams } from "next/navigation";
 // types
 import { IIssueFilterOptions } from "@plane/types";
 // components
-import { CustomHeader } from "@plane/ui";
+import { CustomHeader, EHeaderVariant } from "@plane/ui";
 import { AppliedFiltersList } from "@/components/issues";
 import { CreateUpdateProjectViewModal } from "@/components/views";
 import { UpdateViewComponent } from "@/components/views/update-view-component";
@@ -114,7 +114,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   const isOwner = viewDetails?.owned_by === data?.id;
 
   return (
-    <CustomHeader variant="ternary">
+    <CustomHeader variant={EHeaderVariant.ternary}>
       <CreateUpdateProjectViewModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

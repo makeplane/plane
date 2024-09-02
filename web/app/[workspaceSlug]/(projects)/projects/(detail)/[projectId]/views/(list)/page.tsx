@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
 import { TViewFilterProps } from "@plane/types";
-import { CustomHeader } from "@plane/ui";
+import { CustomHeader, EHeaderVariant } from "@plane/ui";
 import { PageHead } from "@/components/core";
 import { EmptyState } from "@/components/empty-state";
 import { ProjectViewsList } from "@/components/views";
@@ -63,7 +63,7 @@ const ProjectViewsPage = observer(() => {
     <>
       <PageHead title={pageTitle} />
       {isFiltersApplied && (
-        <CustomHeader variant="ternary">
+        <CustomHeader variant={EHeaderVariant.ternary}>
           <ViewAppliedFiltersList
             appliedFilters={filters.filters ?? {}}
             handleClearAllFilters={clearAllFilters}

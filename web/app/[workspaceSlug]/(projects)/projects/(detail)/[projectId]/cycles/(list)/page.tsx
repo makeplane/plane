@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 // types
 import { TCycleFilters } from "@plane/types";
 // components
-import { CustomHeader } from "@plane/ui";
+import { CustomHeader, EHeaderVariant } from "@plane/ui";
 import { PageHead } from "@/components/core";
 import { CyclesView, CycleCreateUpdateModal, CycleAppliedFiltersList } from "@/components/cycles";
 import { EmptyState } from "@/components/empty-state";
@@ -82,7 +82,7 @@ const ProjectCyclesPage = observer(() => {
         ) : (
           <>
             {calculateTotalFilters(currentProjectFilters ?? {}) !== 0 && (
-              <CustomHeader variant="ternary">
+              <CustomHeader variant={EHeaderVariant.ternary}>
                 <CycleAppliedFiltersList
                   appliedFilters={currentProjectFilters ?? {}}
                   handleClearAllFilters={() => clearAllFilters(projectId.toString())}
