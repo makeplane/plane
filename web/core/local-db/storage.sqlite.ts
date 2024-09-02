@@ -146,9 +146,14 @@ export class Storage {
     this.syncIssues(projectId);
   };
 
-  syncIssues = (projectId: string) => {
-    const sync = this._syncIssues(projectId);
-    this.setSync(projectId, sync);
+  syncIssues = async (projectId: string) => {
+    try {
+      const sync = this._syncIssues(projectId);
+      this.setSync(projectId, sync);
+      await sync;
+    } catch (e) {
+      this.setStatus(projectId, "error");
+    }
   };
 
   _syncIssues = async (projectId: string) => {
@@ -171,15 +176,16 @@ export class Storage {
     };
 
     const syncedAt = await this.getLastSyncTime(projectId);
+    const projectSync = await this.getOption(projectId);
 
     if (syncedAt) {
       queryParams["updated_at__gte"] = syncedAt;
     }
 
-    this.setStatus(projectId, syncedAt ? "syncing" : "loading");
+    this.setStatus(projectId, projectSync === "ready" ? "syncing" : "loading");
     status = this.getStatus(projectId);
 
-    log(`### ${syncedAt ? "Syncing" : "Loading"} issues to local db for project ${projectId}`);
+    log(`### ${projectSync === "ready" ? "Syncing" : "Loading"} issues to local db for project ${projectId}`);
 
     const start = performance.now();
     const issueService = new IssueService();
@@ -212,6 +218,7 @@ export class Storage {
         type: TOAST_TYPE.SUCCESS,
       });
     }
+    this.setOption(projectId, "ready");
     this.setStatus(projectId, "ready");
     this.setSync(projectId, undefined);
   };
@@ -243,12 +250,17 @@ export class Storage {
   getIssues = async (projectId: string, queries: any, config: any) => {
     console.log("#### Queries", queries);
 
-    if (this.getStatus(projectId) === "loading" || (window as any).DISABLE_LOCAL) {
+    const currentProjectStatus = this.getStatus(projectId);
+    if (
+      !currentProjectStatus ||
+      currentProjectStatus === "loading" ||
+      currentProjectStatus === "error" ||
+      (window as any).DISABLE_LOCAL
+    ) {
       info(`Project ${projectId} is loading, falling back to server`);
       const issueService = new IssueService();
       return await issueService.getIssuesFromServer(this.workspaceSlug, projectId, queries);
     }
-    await this.getSync(projectId);
 
     const { cursor, group_by, sub_group_by } = queries;
 
@@ -329,21 +341,26 @@ export class Storage {
     set(this.projectStatus, `${projectId}.issues.sync`, sync);
   };
 
-  getOption = async (name: string, fallback = "") => {
-    const options = await runQuery(`select * from options where name='${name}'`);
-    if (options.length) {
-      return options[0].value;
+  getOption = async (key: string, fallback = "") => {
+    try {
+      const options = await runQuery(`select * from options where key='${key}'`);
+      if (options.length) {
+        return options[0].value;
+      }
+
+      return fallback;
+    } catch (e) {
+      return fallback;
     }
-    return fallback;
   };
-  setOption = async (name: string, value: string) => {
-    await runQuery(`insert or replace into options (name, value) values ('${name}', '${value}')`);
+  setOption = async (key: string, value: string) => {
+    await runQuery(`insert or replace into options (key, value) values ('${key}', '${value}')`);
   };
 
-  getOptions = async (names: string[]) => {
-    const options = await runQuery(`select * from options where name in ('${names.join("','")}')`);
+  getOptions = async (keys: string[]) => {
+    const options = await runQuery(`select * from options where key in ('${keys.join("','")}')`);
     return options.reduce((acc: any, option: any) => {
-      acc[option.name] = option.value;
+      acc[option.key] = option.value;
       return acc;
     }, {});
   };
