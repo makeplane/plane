@@ -128,3 +128,8 @@ export const memberSchema: Schema = {
   display_name: "TEXT",
   email: "TEXT",
 };
+
+export const optionsSchema: Schema = {
+  key: "TEXT UNIQUE",
+  value: "TEXT",
+};

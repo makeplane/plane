@@ -29,18 +29,34 @@ export const createIssueMetaIndexes = async () => {
   await persistence.db.exec({ sql: `CREATE INDEX issue_meta_all_idx ON issue_meta (issue_id,key,value)` });
 };
 
-export const createLabelIndexes = async () => {
-  const columns = ["name", "id", "project_id"];
+export const createWorkSpaceIndexes = async () => {
   const promises: Promise<any>[] = [];
-  columns.forEach((column) => {
-    promises.push(persistence.db.exec({ sql: `CREATE INDEX labels_${column}_idx ON labels (${column})` }));
-  });
+  // Labels
+  promises.push(persistence.db.exec({ sql: `CREATE INDEX labels_name_idx ON labels (id,name,project_id)` }));
+
+  // Modules
+  promises.push(persistence.db.exec({ sql: `CREATE INDEX modules_name_idx ON modules  (id,name,project_id)` }));
+
+  // States
+  promises.push(persistence.db.exec({ sql: `CREATE INDEX states_name_idx ON states  (id,name,project_id)` }));
+  // Cycles
+  promises.push(persistence.db.exec({ sql: `CREATE INDEX cycles_name_idx ON cycles  (id,name,project_id)` }));
+
+  // Members
+  promises.push(persistence.db.exec({ sql: `CREATE INDEX members_name_idx ON members  (id,first_name)` }));
+
+  // Estimate Points @todo
+  promises.push(persistence.db.exec({ sql: `CREATE INDEX estimate_points_name_idx ON estimate_points  (id,value)` }));
+  // Options
+  promises.push(persistence.db.exec({ sql: `CREATE INDEX options_name_idx ON options  (name)` }));
+
   await Promise.all(promises);
 };
+
 const createIndexes = async () => {
   log("### Creating indexes");
   const start = performance.now();
-  const promises = [createIssueIndexes(), createIssueMetaIndexes(), createLabelIndexes()];
+  const promises = [createIssueIndexes(), createIssueMetaIndexes(), createWorkSpaceIndexes()];
   try {
     await Promise.all(promises);
   } catch (e) {
