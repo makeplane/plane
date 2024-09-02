@@ -67,12 +67,12 @@ export const AssignedUpcomingIssueListItem: React.FC<IssueListItemProps> = obser
           ? blockedByIssues.length > 1
             ? `${blockedByIssues.length} blockers`
             : blockedByIssueProjectDetails && (
-              <IssueIdentifier
-                issueId={blockedByIssues[0]?.id}
-                projectId={blockedByIssueProjectDetails?.id}
-                textContainerClassName="text-xs text-custom-text-200 font-medium"
-              />
-            )
+                <IssueIdentifier
+                  issueId={blockedByIssues[0]?.id}
+                  projectId={blockedByIssueProjectDetails?.id}
+                  textContainerClassName="text-xs text-custom-text-200 font-medium"
+                />
+              )
           : "-"}
       </div>
     </ControlLink>
@@ -126,12 +126,12 @@ export const AssignedOverdueIssueListItem: React.FC<IssueListItemProps> = observ
           ? blockedByIssues.length > 1
             ? `${blockedByIssues.length} blockers`
             : blockedByIssueProjectDetails && (
-              <IssueIdentifier
-                issueId={blockedByIssues[0]?.id}
-                projectId={blockedByIssueProjectDetails?.id}
-                textContainerClassName="text-xs text-custom-text-200 font-medium"
-              />
-            )
+                <IssueIdentifier
+                  issueId={blockedByIssues[0]?.id}
+                  projectId={blockedByIssueProjectDetails?.id}
+                  textContainerClassName="text-xs text-custom-text-200 font-medium"
+                />
+              )
           : "-"}
       </div>
     </ControlLink>
