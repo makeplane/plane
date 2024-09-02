@@ -9,6 +9,8 @@ psycopg==3.1.18
 psycopg-binary==3.1.18
 psycopg-c==3.1.18
 dj-database-url==2.1.0
+# mongo
+pymongo==4.6.3
 # redis
 redis==5.0.4
 django-redis==5.4.0
@@ -26,7 +28,7 @@ django-filter==24.2
 # json model
 jsonmodels==2.7.0
 # sentry
-sentry-sdk==2.8.0
+sentry-sdk==2.10.0
 # storage
 django-storages==1.14.2
 # user management
@@ -61,3 +63,9 @@ zxcvbn==4.4.28
 pytz==2024.1
 # jwt
 PyJWT==2.8.0
+# SAML
+python3-saml==1.16.0
+# feature flag
+openfeature-sdk==0.7.0
+# graphql
+strawberry-graphql-django==0.47.0
