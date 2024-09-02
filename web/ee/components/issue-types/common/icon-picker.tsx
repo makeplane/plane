@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Placement } from "@popperjs/core";
+import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Popover } from "@headlessui/react";
 // types
@@ -21,12 +22,13 @@ export type TIssueTypeIconPicker = {
   disabled?: boolean;
   dropdownClassName?: string;
   icon_props: TLogoProps["icon"];
+  isDefaultIssueType?: boolean;
   onChange: (value: TLogoProps["icon"]) => void;
   placement?: Placement;
   size?: TIssueTypeLogoSize;
 };
 
-export const IssueTypeIconPicker: React.FC<TIssueTypeIconPicker> = (props) => {
+export const IssueTypeIconPicker: React.FC<TIssueTypeIconPicker> = observer((props) => {
   const {
     isOpen,
     handleToggle,
@@ -36,6 +38,7 @@ export const IssueTypeIconPicker: React.FC<TIssueTypeIconPicker> = (props) => {
     disabled = false,
     dropdownClassName,
     icon_props,
+    isDefaultIssueType = false,
     onChange,
     size,
     placement = "bottom-start",
@@ -71,7 +74,12 @@ export const IssueTypeIconPicker: React.FC<TIssueTypeIconPicker> = (props) => {
             disabled={disabled}
             onClick={() => handleToggle(!isOpen)}
           >
-            <IssueTypeLogo icon_props={icon_props} size={size} containerClassName={iconContainerClassName} />
+            <IssueTypeLogo
+              icon_props={icon_props}
+              isDefault={isDefaultIssueType}
+              size={size}
+              containerClassName={iconContainerClassName}
+            />
           </button>
         </Popover.Button>
         {isOpen && (
@@ -104,4 +112,4 @@ export const IssueTypeIconPicker: React.FC<TIssueTypeIconPicker> = (props) => {
       </>
     </Popover>
   );
-};
+});

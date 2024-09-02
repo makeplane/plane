@@ -74,15 +74,17 @@ export const IssueTypeQuickActions: React.FC<Props> = observer((props) => {
             </button>
           </Tooltip>
         </div>
-        <Tooltip
-          className="shadow"
-          tooltipContent={!!isIssueTypeEnabled ? "Click to disable" : "Click to enable"}
-          position="bottom"
-        >
-          <div className="w-12">
-            <ToggleSwitch value={!!isIssueTypeEnabled} onChange={handleEnableDisable} disabled={isLoading} />
-          </div>
-        </Tooltip>
+        {!issueTypeDetail?.is_default && (
+          <Tooltip
+            className="shadow"
+            tooltipContent={!!isIssueTypeEnabled ? "Click to disable" : "Click to enable"}
+            position="bottom"
+          >
+            <div className="w-12">
+              <ToggleSwitch value={!!isIssueTypeEnabled} onChange={handleEnableDisable} disabled={isLoading} />
+            </div>
+          </Tooltip>
+        )}
       </div>
     </>
   );

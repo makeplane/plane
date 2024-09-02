@@ -182,7 +182,7 @@ class IssueTypeEndpoint(BaseAPIView):
         )
 
         # Default cannot be made in active
-        if request.data.get("is_default") and not request.data.get(
+        if issue_type.is_default and not request.data.get(
             "is_active"
         ):
             return Response(

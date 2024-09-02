@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { observer } from "mobx-react";
 // ui
 import { AlertModalCore, Checkbox, Tooltip } from "@plane/ui";
 
@@ -9,7 +10,7 @@ type TPropertyMandatoryFieldToggleProps = {
   onMandatoryFieldChange: (value: boolean) => void;
 };
 
-export const PropertyMandatoryFieldToggle = (props: TPropertyMandatoryFieldToggleProps) => {
+export const PropertyMandatoryFieldToggle = observer((props: TPropertyMandatoryFieldToggleProps) => {
   const { value, defaultValue, isDisabled = false, onMandatoryFieldChange } = props;
   // states
   const [isDefaultResetConfirmationOpen, setIsDefaultResetConfirmationOpen] = useState<boolean>(false);
@@ -69,4 +70,4 @@ export const PropertyMandatoryFieldToggle = (props: TPropertyMandatoryFieldToggl
       </div>
     </>
   );
-};
+});

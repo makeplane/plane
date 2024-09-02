@@ -13,12 +13,8 @@ export const useIssueProperty = <T extends EIssuePropertyType>(
   const context = useContext(StoreContext);
   if (context === undefined) throw new Error("useIssueProperty must be used within StoreProvider");
   if (!propertyId) {
-    console.warn("useIssueProperty: propertyId is not provided");
     return undefined;
   }
   const issueProperty = context.issueTypes.data?.[typeId]?.getPropertyById<T>(propertyId);
-  if (!issueProperty) {
-    console.warn("useIssueProperty: issueProperty is not found");
-  }
   return issueProperty;
 };

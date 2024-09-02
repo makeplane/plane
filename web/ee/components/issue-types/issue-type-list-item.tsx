@@ -74,24 +74,17 @@ export const IssueTypeListItem = observer((props: TIssueTypeListItem) => {
                 </div>
               </div>
               <div className="flex-shrink-0 flex">
-                {issueTypeDetail?.is_default && (
-                  <div
-                    className={cn(
-                      "py-0.5 px-2 text-xs rounded text-custom-primary-100 bg-transparent border border-custom-primary-100 cursor-default font-medium"
-                    )}
-                  >
-                    Default
-                  </div>
-                )}
-                <div>
-                  {!issueTypeDetail?.is_default && (
-                    <IssueTypeQuickActions
-                      issueTypeId={issueTypeId}
-                      onEditIssueTypeIdChange={onEditIssueTypeIdChange}
-                    />
-                  )}
-                </div>
+                <IssueTypeQuickActions issueTypeId={issueTypeId} onEditIssueTypeIdChange={onEditIssueTypeIdChange} />
               </div>
+              {issueTypeDetail?.is_default && (
+                <div
+                  className={cn(
+                    "flex-shrink-0 py-0.5 px-2 text-xs rounded text-custom-primary-100 bg-transparent border border-custom-primary-100 cursor-default font-medium"
+                  )}
+                >
+                  Default
+                </div>
+              )}
             </div>
           }
           className={cn("p-2")}
