@@ -13,6 +13,9 @@ from celery import shared_task
 from plane.db.models import WorkspaceMember
 from plane.ee.models import WorkspaceLicense
 from plane.utils.exception_logger import log_exception
+from plane.payment.utils.workspace_license_request import (
+    resync_workspace_license,
+)
 
 
 @shared_task
@@ -67,6 +70,9 @@ def workspace_billing_task(batch_size=1000, offset=0):
                     "x-api-key": settings.PAYMENT_SERVER_AUTH_TOKEN,
                 },
             )
+
+            # Refresh workspace license
+            resync_workspace_license(workspace_slug, force=True)
 
             # Check if response is successful
             if response.status_code == 200:

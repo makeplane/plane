@@ -48,7 +48,7 @@ def member_sync_task(slug):
             _ = requests.patch(
                 f"{settings.PAYMENT_SERVER_BASE_URL}/api/workspaces/{workspace_id}/subscriptions/",
                 json={
-                    "slug": slug,
+                    "slug": str(workspace.slug),
                     "workspace_id": str(workspace_id),
                     "members_list": list(workspace_members),
                 },
