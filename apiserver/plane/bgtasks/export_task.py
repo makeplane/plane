@@ -174,7 +174,7 @@ def generate_table_row(issue):
             if issue["assignees__first_name"] and issue["assignees__last_name"]
             else ""
         ),
-        issue["labels__name"],
+        issue["labels__name"] if issue["labels__name"] else "",
         issue["issue_cycle__cycle__name"],
         dateConverter(issue["issue_cycle__cycle__start_date"]),
         dateConverter(issue["issue_cycle__cycle__end_date"]),
@@ -207,7 +207,7 @@ def generate_json_row(issue):
             if issue["assignees__first_name"] and issue["assignees__last_name"]
             else ""
         ),
-        "Labels": issue["labels__name"],
+        "Labels": issue["labels__name"] if issue["labels__name"] else "",
         "Cycle Name": issue["issue_cycle__cycle__name"],
         "Cycle Start Date": dateConverter(
             issue["issue_cycle__cycle__start_date"]

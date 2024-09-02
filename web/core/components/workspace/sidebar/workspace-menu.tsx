@@ -70,7 +70,11 @@ export const SidebarWorkspaceMenu = observer(() => {
   return (
     <Disclosure as="div" defaultOpen>
       {!sidebarCollapsed && (
-        <div className="flex px-2 bg-custom-sidebar-background-100 group/workspace-button hover:bg-custom-sidebar-background-90 rounded">
+        <div className={
+          cn("flex px-2 bg-custom-sidebar-background-100 group/workspace-button hover:bg-custom-sidebar-background-90 rounded", {
+            "mt-2.5": !sidebarCollapsed,
+          })
+        }>
           {" "}
           <Disclosure.Button
             as="button"
@@ -85,7 +89,6 @@ export const SidebarWorkspaceMenu = observer(() => {
                 ref={actionSectionRef}
                 className="grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 rounded my-auto"
                 onClick={() => {
-                  console.log("ndkn");
                   setIsMenuActive(!isMenuActive);
                 }}
               >

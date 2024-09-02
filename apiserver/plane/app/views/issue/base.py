@@ -58,6 +58,7 @@ from .. import BaseAPIView, BaseViewSet
 from plane.utils.user_timezone_converter import user_timezone_converter
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.utils.global_paginator import paginate
+from plane.bgtasks.webhook_task import model_activity
 
 
 class IssueListEndpoint(BaseAPIView):
@@ -425,6 +426,16 @@ class IssueViewSet(BaseViewSet):
             issue = user_timezone_converter(
                 issue, datetime_fields, request.user.user_timezone
             )
+            # Send the model activity
+            model_activity.delay(
+                model_name="issue",
+                model_id=str(serializer.data["id"]),
+                requested_data=request.data,
+                current_instance=None,
+                actor_id=request.user.id,
+                slug=slug,
+                origin=request.META.get("HTTP_ORIGIN"),
+            )
             return Response(issue, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -573,7 +584,15 @@ class IssueViewSet(BaseViewSet):
                 notification=True,
                 origin=request.META.get("HTTP_ORIGIN"),
             )
-            issue = self.get_queryset().filter(pk=pk).first()
+            model_activity.delay(
+                model_name="issue",
+                model_id=str(serializer.data.get("id", None)),
+                requested_data=request.data,
+                current_instance=current_instance,
+                actor_id=request.user.id,
+                slug=slug,
+                origin=request.META.get("HTTP_ORIGIN"),
+            )
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
