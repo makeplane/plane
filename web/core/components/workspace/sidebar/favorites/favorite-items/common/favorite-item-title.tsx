@@ -1,6 +1,9 @@
 "use client";
 import React, { FC } from "react";
+import { observer } from "mobx-react";
 import Link from "next/link";
+import { useAppTheme } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
   projectId: string | null;
@@ -10,8 +13,11 @@ type Props = {
   isSidebarCollapsed: boolean;
 };
 
-export const FavoriteItemTitle: FC<Props> = (props) => {
+export const FavoriteItemTitle: FC<Props> = observer((props) => {
   const { projectId, href, title, icon, isSidebarCollapsed } = props;
+  // store hooks
+  const { toggleSidebar } = useAppTheme();
+  const { isMobile } = usePlatformOS();
 
   const linkClass = "flex items-center gap-1.5 truncate w-full";
   const collapsedClass =
@@ -22,6 +28,7 @@ export const FavoriteItemTitle: FC<Props> = (props) => {
       const projectItem = document.getElementById(`${projectId}`);
       projectItem?.scrollIntoView({ behavior: "smooth" });
     }
+    if (isMobile) toggleSidebar();
   };
 
   return (
@@ -30,4 +37,4 @@ export const FavoriteItemTitle: FC<Props> = (props) => {
       {!isSidebarCollapsed && <span className="text-sm leading-5 font-medium flex-1 truncate">{title}</span>}
     </Link>
   );
-};
+});

@@ -98,6 +98,8 @@ from .cycle.base import (
     CycleUserPropertiesEndpoint,
     CycleViewSet,
     TransferCycleIssueEndpoint,
+    CycleAnalyticsEndpoint,
+    CycleProgressEndpoint,
 )
 from .cycle.issue import (
     CycleIssueViewSet,
@@ -112,6 +114,7 @@ from .issue.base import (
     IssueViewSet,
     IssueUserDisplayPropertyEndpoint,
     BulkDeleteIssuesEndpoint,
+    IssuePaginatedViewSet,
 )
 
 from .issue.activity import (

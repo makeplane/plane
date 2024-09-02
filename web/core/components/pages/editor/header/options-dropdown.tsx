@@ -19,11 +19,10 @@ type Props = {
   editorRef: EditorRefApi | EditorReadOnlyRefApi | null;
   handleDuplicatePage: () => void;
   page: IPage;
-  handleSaveDescription: (forceSync?: boolean, initSyncVectorAsUpdate?: Uint8Array | undefined) => Promise<void>;
 };
 
 export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
-  const { editorRef, handleDuplicatePage, page, handleSaveDescription } = props;
+  const { editorRef, handleDuplicatePage, page } = props;
   // router
   const router = useRouter();
   // store values
@@ -82,11 +81,6 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
       })
     );
 
-  const saveDescriptionYJSAndPerformAction = (action: () => void) => async () => {
-    await handleSaveDescription();
-    action();
-  };
-
   // menu items list
   const MENU_ITEMS: {
     key: string;
@@ -131,21 +125,21 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     },
     {
       key: "make-a-copy",
-      action: saveDescriptionYJSAndPerformAction(handleDuplicatePage),
+      action: handleDuplicatePage,
       label: "Make a copy",
       icon: Copy,
       shouldRender: canCurrentUserDuplicatePage,
     },
     {
       key: "lock-unlock-page",
-      action: is_locked ? handleUnlockPage : saveDescriptionYJSAndPerformAction(handleLockPage),
+      action: is_locked ? handleUnlockPage : handleLockPage,
       label: is_locked ? "Unlock page" : "Lock page",
       icon: is_locked ? LockOpen : Lock,
       shouldRender: canCurrentUserLockPage,
     },
     {
       key: "archive-restore-page",
-      action: archived_at ? handleRestorePage : saveDescriptionYJSAndPerformAction(handleArchivePage),
+      action: archived_at ? handleRestorePage : handleArchivePage,
       label: archived_at ? "Restore page" : "Archive page",
       icon: archived_at ? ArchiveRestoreIcon : ArchiveIcon,
       shouldRender: canCurrentUserArchivePage,
@@ -166,7 +160,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   ];
 
   return (
-    <CustomMenu maxHeight="md" placement="bottom-start" verticalEllipsis closeOnSelect>
+    <CustomMenu maxHeight="lg" placement="bottom-start" verticalEllipsis closeOnSelect>
       <CustomMenu.MenuItem
         className="hidden md:flex w-full items-center justify-between gap-2"
         onClick={() => handleFullWidth(!isFullWidth)}
