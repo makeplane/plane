@@ -85,7 +85,7 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
       </WithDisplayPropertiesHOC>
 
       <div className="w-full line-clamp-1 text-sm text-custom-text-100 mb-1.5">
-        <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
+        <Tooltip tooltipContent={issue.name} isMobile={isMobile} renderByDefault={false}>
           <span>{issue.name}</span>
         </Tooltip>
       </div>
