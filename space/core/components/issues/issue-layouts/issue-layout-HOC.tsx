@@ -33,12 +33,12 @@ export const IssueLayoutHOC = observer((props: Props) => {
     );
   }
 
-  if (getGroupIssueCount(undefined, undefined, false) === 0) {
+  if (issueCount === 0) {
     return <div className="flex w-full h-full items-center justify-center">
       {/* No Issues Found */}
       <EmptyState
           image={resolvedTheme === "dark" ? emptyIssueDark : emptyIssueLight}
-          title="Issue does not exist"
+          title="Project does not exist"
           description="The project you are looking for has no issues or has been archived."
         />
       </div>;
