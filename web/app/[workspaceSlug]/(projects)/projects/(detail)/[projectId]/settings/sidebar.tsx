@@ -21,7 +21,7 @@ export const ProjectSettingsSidebar = observer(() => {
   const { allowPermissions, projectUserInfo } = useUserPermissions();
 
   // derived values
-  const currentProjectRole = projectUserInfo?.[workspaceSlug.toString()]?.[projectId.toString()]?.role;
+  const currentProjectRole = projectUserInfo?.[workspaceSlug?.toString()]?.[projectId?.toString()]?.role;
 
   if (!currentProjectRole) {
     return (
