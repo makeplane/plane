@@ -102,12 +102,18 @@ const ButtonContent: React.FC<ButtonContentProps> = (props) => {
                       tooltipContent={moduleDetails?.name}
                       disabled={!showTooltip}
                       isMobile={isMobile}
+                      renderByDefault={false}
                     >
                       <span className="max-w-40 flex-grow truncate text-xs font-medium">{moduleDetails?.name}</span>
                     </Tooltip>
                   )}
                   {!disabled && (
-                    <Tooltip tooltipContent="Remove" disabled={!showTooltip} isMobile={isMobile}>
+                    <Tooltip
+                      tooltipContent="Remove"
+                      disabled={!showTooltip}
+                      isMobile={isMobile}
+                      renderByDefault={false}
+                    >
                       <button
                         type="button"
                         className="flex-shrink-0"

@@ -171,6 +171,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
                   </>
                 }
                 disabled={issue.project_id === projectId}
+                renderByDefault={false}
               >
                 <div className="flex-shrink-0 grid place-items-center w-3.5">
                   <MultipleSelectEntityAction
@@ -229,6 +230,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
               isMobile={isMobile}
               position="top-left"
               disabled={isCurrentBlockDragging}
+              renderByDefault={false}
             >
               <p className="truncate">{issue.name}</p>
             </Tooltip>
@@ -242,7 +244,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
               className="w-full truncate cursor-pointer text-sm text-custom-text-100"
               disabled={!!issue?.tempId}
             >
-              <Tooltip tooltipContent={issue.name} isMobile={isMobile} position="top-left">
+              <Tooltip tooltipContent={issue.name} isMobile={isMobile} position="top-left" renderByDefault={false}>
                 <p className="truncate">{issue.name}</p>
               </Tooltip>
             </ControlLink>
