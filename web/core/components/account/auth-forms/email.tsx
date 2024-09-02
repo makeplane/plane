@@ -69,7 +69,7 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
           {email.length > 0 && (
             <XCircle
               className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-              onClick={() => setEmail("")}
+              onMouseDown={() => setEmail("")}
             />
           )}
         </div>
