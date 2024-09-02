@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useTheme } from "next-themes";
-import { Home, Zap } from "lucide-react";
+import { Home } from "lucide-react";
 // images
 import githubBlackImage from "/public/logos/github-black.png";
 import githubWhiteImage from "/public/logos/github-white.png";
@@ -11,7 +11,7 @@ import { Breadcrumbs } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
 // constants
-import { CHANGELOG_REDIRECTED, GITHUB_REDIRECTED } from "@/constants/event-tracker";
+import { GITHUB_REDIRECTED } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 
@@ -34,20 +34,6 @@ export const WorkspaceDashboardHeader = () => {
           </div>
         </div>
         <div className="flex items-center gap-3 px-3">
-          <a
-            onClick={() =>
-              captureEvent(CHANGELOG_REDIRECTED, {
-                element: "navbar",
-              })
-            }
-            href="https://plane.so/changelog"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex flex-shrink-0 items-center gap-1.5 rounded bg-custom-background-80 px-3 py-1.5"
-          >
-            <Zap size={14} strokeWidth={2} fill="rgb(var(--color-text-100))" />
-            <span className="hidden text-xs font-medium sm:hidden md:block">{"What's new?"}</span>
-          </a>
           <a
             onClick={() =>
               captureEvent(GITHUB_REDIRECTED, {
