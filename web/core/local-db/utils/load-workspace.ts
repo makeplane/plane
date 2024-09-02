@@ -9,7 +9,7 @@ import { WorkspaceService } from "@/services/workspace.service";
 import { persistence } from "../storage.sqlite";
 import { cycleSchema, estimatePointSchema, labelSchema, memberSchema, Schema, stateSchema } from "./schemas";
 
-const stageInserts = (table: string, schema: Schema, data: object) => {
+const stageInserts = (table: string, schema: Schema, data: any) => {
   const keys = Object.keys(schema);
   // Pick only the keys that are in the schema
   const filteredData = keys.reduce((acc: any, key) => {
