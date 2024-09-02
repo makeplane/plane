@@ -64,7 +64,11 @@ export const SidebarWorkspaceMenu = observer(() => {
   return (
     <Disclosure as="div" defaultOpen>
       {!sidebarCollapsed && (
-        <div className="flex px-2 bg-custom-sidebar-background-100 group/workspace-button hover:bg-custom-sidebar-background-90 rounded">
+        <div className={
+          cn("flex px-2 bg-custom-sidebar-background-100 group/workspace-button hover:bg-custom-sidebar-background-90 rounded", {
+            "mt-2.5": !sidebarCollapsed,
+          })
+        }>
           {" "}
           <Disclosure.Button
             as="button"

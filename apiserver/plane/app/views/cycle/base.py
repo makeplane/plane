@@ -1186,8 +1186,8 @@ class CycleAnalyticsEndpoint(BaseAPIView):
             estimate__type="points",
         ).exists()
 
-        assignee_distribution = {}
-        label_distribution = {}
+        assignee_distribution = []
+        label_distribution = []
         completion_chart = {}
 
         if analytic_type == "points" and estimate_type:
