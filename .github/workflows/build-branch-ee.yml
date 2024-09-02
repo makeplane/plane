@@ -313,6 +313,7 @@ jobs:
 
   branch_build_push_live:
     if: ${{ needs.branch_build_setup.outputs.build_live == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
+    name: Build-Push Live Collaboration Docker Image
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
