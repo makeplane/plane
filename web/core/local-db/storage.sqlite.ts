@@ -199,8 +199,9 @@ export class Storage {
       }
     }
 
-    await syncDeletesToLocal(this.workspaceSlug, projectId, { updated_at__gt: syncedAt });
-
+    if (syncedAt) {
+      await syncDeletesToLocal(this.workspaceSlug, projectId, { updated_at__gt: syncedAt });
+    }
     console.log("### Time taken to add issues", performance.now() - start);
 
     if (status === "loading") {
@@ -326,6 +327,25 @@ export class Storage {
   getSync = (projectId: string) => this.projectStatus[projectId]?.issues?.sync;
   setSync = (projectId: string, sync: Promise<void> | undefined) => {
     set(this.projectStatus, `${projectId}.issues.sync`, sync);
+  };
+
+  getOption = async (name: string, fallback = "") => {
+    const options = await runQuery(`select * from options where name='${name}'`);
+    if (options.length) {
+      return options[0].value;
+    }
+    return fallback;
+  };
+  setOption = async (name: string, value: string) => {
+    await runQuery(`insert or replace into options (name, value) values ('${name}', '${value}')`);
+  };
+
+  getOptions = async (names: string[]) => {
+    const options = await runQuery(`select * from options where name in ('${names.join("','")}')`);
+    return options.reduce((acc: any, option: any) => {
+      acc[option.name] = option.value;
+      return acc;
+    }, {});
   };
 }
 

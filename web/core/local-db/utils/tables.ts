@@ -9,6 +9,7 @@ import {
   cycleSchema,
   estimatePointSchema,
   memberSchema,
+  optionsSchema,
 } from "./schemas";
 
 const createTableSQLfromSchema = (tableName: string, schema: Schema) => {
@@ -32,6 +33,7 @@ export const createTables = async () => {
   persistence.db.exec(createTableSQLfromSchema("cycles", cycleSchema));
   persistence.db.exec(createTableSQLfromSchema("estimate_points", estimatePointSchema));
   persistence.db.exec(createTableSQLfromSchema("members", memberSchema));
+  persistence.db.exec(createTableSQLfromSchema("options", optionsSchema));
 
   persistence.db.exec("COMMIT;");
 };
