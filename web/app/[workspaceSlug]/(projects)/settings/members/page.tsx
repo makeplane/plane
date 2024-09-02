@@ -52,7 +52,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
           emails: [
             ...data.emails.map((email) => ({
               email: email.email,
-              role: getUserRole(email.role),
+              role: getUserRole(email.role as unknown as EUserPermissions),
             })),
           ],
           project_id: undefined,
@@ -70,7 +70,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
           emails: [
             ...data.emails.map((email) => ({
               email: email.email,
-              role: getUserRole(email.role),
+              role: getUserRole(email.role as unknown as EUserPermissions),
             })),
           ],
           project_id: undefined,

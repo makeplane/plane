@@ -9,9 +9,9 @@ import JiraLogo from "@/public/services/jira.svg";
 import JSONLogo from "@/public/services/json.svg";
 
 export const ROLE = {
-  5: "Guest",
-  15: "Member",
-  20: "Admin",
+  [EUserPermissions.GUEST]: "Guest",
+  [EUserPermissions.MEMBER]: "Member",
+  [EUserPermissions.ADMIN]: "Admin",
 };
 
 export const ROLE_DETAILS = {

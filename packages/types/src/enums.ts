@@ -1,7 +1,7 @@
 export enum EUserProjectRoles {
-  GUEST = 5,
-  MEMBER = 15,
   ADMIN = 20,
+  MEMBER = 15,
+  GUEST = 5,
 }
 
 // project pages
