@@ -9,11 +9,11 @@ import expressWs, { Application } from "express-ws";
 import {
   fetchPageDescriptionBinary,
   updatePageDescription,
-} from "./lib/page.js";
+} from "./core/lib/page.js";
 // types
-import { TDocumentTypes } from "./types/common.js";
+import { TDocumentTypes } from "./core/types/common.js";
 // helpers
-import { handleAuthentication } from "./lib/authentication.js";
+import { handleAuthentication } from "./core/lib/authentication.js";
 
 const server = Server.configure({
   onAuthenticate: async ({

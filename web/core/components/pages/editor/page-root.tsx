@@ -12,7 +12,6 @@ import { PageEditorHeaderRoot, PageEditorBody, PageVersionsOverlay, PagesVersion
 // hooks
 import { useProjectPages } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { usePageDescription } from "@/hooks/use-page-description";
 import { useQueryParams } from "@/hooks/use-query-params";
 // services
 import { ProjectPageVersionService } from "@/services/page";
@@ -47,13 +46,6 @@ export const PageRoot = observer((props: TPageRootProps) => {
   const { access, description_html, name, isContentEditable } = page;
   // editor markings hook
   const { markings, updateMarkings } = useEditorMarkings();
-  // project-description
-  const { manuallyUpdateDescription } = usePageDescription({
-    editorRef,
-    page,
-    projectId,
-    workspaceSlug,
-  });
   // update query params
   const { updateQueryParams } = useQueryParams();
 
@@ -93,6 +85,11 @@ export const PageRoot = observer((props: TPageRootProps) => {
     router.push(updatedRoute);
   };
 
+  const handleRestoreVersion = async (descriptionHTML: string) => {
+    editorRef.current?.clearEditor();
+    editorRef.current?.setEditorValue(descriptionHTML);
+  };
+
   return (
     <>
       <PageVersionsOverlay
@@ -115,7 +112,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
             versionId
           );
         }}
-        handleRestore={manuallyUpdateDescription}
+        handleRestore={handleRestoreVersion}
         isOpen={isVersionsOverlayOpen}
         onClose={handleCloseVersionsOverlay}
         pageId={page.id ?? ""}
