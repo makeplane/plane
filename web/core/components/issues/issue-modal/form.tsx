@@ -19,13 +19,15 @@ import {
   IssueTitleInput,
 } from "@/components/issues/issue-modal/components";
 import { CreateLabelModal } from "@/components/labels";
+import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { cn } from "@/helpers/common.helper";
-import { getTabIndex } from "@/helpers/issue-modal.helper";
 import { getChangedIssuefields } from "@/helpers/issue.helper";
+import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
 // plane web components
 import { IssueAdditionalProperties, IssueTypeSelect } from "@/plane-web/components/issues/issue-modal";
@@ -84,6 +86,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const { getProjectById } = useProject();
   const { getIssueTypeIdOnProjectChange, getActiveAdditionalPropertiesLength, handlePropertyValuesValidation } =
     useIssueModal();
+  const { isMobile } = usePlatformOS();
 
   const {
     issue: { getIssueById },
@@ -363,7 +366,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                 onKeyDown={(e) => {
                   if (e.key === "Enter") onCreateMoreToggleChange(!isCreateMoreToggleEnabled);
                 }}
-                tabIndex={getTabIndex("create_more")}
+                tabIndex={getTabIndex("create_more", ETabIndices.ISSUE_FORM, isMobile)}
                 role="button"
               >
                 <ToggleSwitch value={isCreateMoreToggleEnabled} onChange={() => {}} size="sm" />
@@ -385,7 +388,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     });
                   }
                 }}
-                tabIndex={getTabIndex("discard_button")}
+                tabIndex={getTabIndex("discard_button", ETabIndices.ISSUE_FORM, isMobile)}
               >
                 Discard
               </Button>
@@ -397,7 +400,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                       size="sm"
                       loading={isSubmitting}
                       onClick={handleSubmit((data) => handleFormSubmit({ ...data, is_draft: false }))}
-                      tabIndex={getTabIndex("draft_button")}
+                      tabIndex={getTabIndex("draft_button", ETabIndices.ISSUE_FORM, isMobile)}
                     >
                       {isSubmitting ? "Moving" : "Move from draft"}
                     </Button>
@@ -407,7 +410,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                       size="sm"
                       loading={isSubmitting}
                       onClick={handleSubmit((data) => handleFormSubmit(data, true))}
-                      tabIndex={getTabIndex("draft_button")}
+                      tabIndex={getTabIndex("draft_button", ETabIndices.ISSUE_FORM, isMobile)}
                     >
                       {isSubmitting ? "Saving" : "Save as draft"}
                     </Button>
@@ -420,7 +423,11 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                 size="sm"
                 ref={submitBtnRef}
                 loading={isSubmitting}
-                tabIndex={isDraft ? getTabIndex("submit_button") : getTabIndex("draft_button")}
+                tabIndex={
+                  isDraft
+                    ? getTabIndex("submit_button", ETabIndices.ISSUE_FORM, isMobile)
+                    : getTabIndex("draft_button", ETabIndices.ISSUE_FORM, isMobile)
+                }
               >
                 {data?.id ? (isSubmitting ? "Updating" : "Update") : isSubmitting ? "Creating" : "Create"}
               </Button>

@@ -7,8 +7,12 @@ import { Control, Controller, FieldErrors } from "react-hook-form";
 import { TIssue } from "@plane/types";
 // ui
 import { Input } from "@plane/ui";
+// constants
+import { ETabIndices } from "@/constants/tab-indices";
 // helpers
-import { getTabIndex } from "@/helpers/issue-modal.helper";
+import { getTabIndex } from "@/helpers/tab-indices.helper";
+// hooks
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type TIssueTitleInputProps = {
   control: Control<TIssue>;
@@ -19,6 +23,8 @@ type TIssueTitleInputProps = {
 
 export const IssueTitleInput: React.FC<TIssueTitleInputProps> = observer((props) => {
   const { control, issueTitleRef, errors, handleFormChange } = props;
+  // store hooks
+  const { isMobile } = usePlatformOS();
 
   return (
     <>
@@ -46,7 +52,7 @@ export const IssueTitleInput: React.FC<TIssueTitleInputProps> = observer((props)
             hasError={Boolean(errors.name)}
             placeholder="Title"
             className="w-full text-base"
-            tabIndex={getTabIndex("name")}
+            tabIndex={getTabIndex("name", ETabIndices.ISSUE_FORM, isMobile)}
             autoFocus
           />
         )}

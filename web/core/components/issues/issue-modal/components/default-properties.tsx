@@ -20,11 +20,14 @@ import {
 } from "@/components/dropdowns";
 import { ParentIssuesListModal } from "@/components/issues";
 import { IssueLabelSelect } from "@/components/issues/select";
+// constants
+import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-import { getTabIndex } from "@/helpers/issue-modal.helper";
+import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useProjectEstimates, useProject } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 
@@ -63,6 +66,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
   // store hooks
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
   const { getProjectById } = useProject();
+  const { isMobile } = usePlatformOS();
   // derived values
   const projectDetails = getProjectById(projectId);
 
@@ -87,7 +91,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
               }}
               projectId={projectId ?? undefined}
               buttonVariant="border-with-text"
-              tabIndex={getTabIndex("state_id")}
+              tabIndex={getTabIndex("state_id", ETabIndices.ISSUE_FORM, isMobile)}
             />
           </div>
         )}
@@ -104,7 +108,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
                 handleFormChange();
               }}
               buttonVariant="border-with-text"
-              tabIndex={getTabIndex("priority")}
+              tabIndex={getTabIndex("priority", ETabIndices.ISSUE_FORM, isMobile)}
             />
           </div>
         )}
@@ -125,7 +129,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
               buttonClassName={value?.length > 0 ? "hover:bg-transparent" : ""}
               placeholder="Assignees"
               multiple
-              tabIndex={getTabIndex("assignee_ids")}
+              tabIndex={getTabIndex("assignee_ids", ETabIndices.ISSUE_FORM, isMobile)}
             />
           </div>
         )}
@@ -143,7 +147,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
                 handleFormChange();
               }}
               projectId={projectId ?? undefined}
-              tabIndex={getTabIndex("label_ids")}
+              tabIndex={getTabIndex("label_ids", ETabIndices.ISSUE_FORM, isMobile)}
             />
           </div>
         )}
@@ -162,7 +166,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
               buttonVariant="border-with-text"
               maxDate={maxDate ?? undefined}
               placeholder="Start date"
-              tabIndex={getTabIndex("start_date")}
+              tabIndex={getTabIndex("start_date", ETabIndices.ISSUE_FORM, isMobile)}
             />
           </div>
         )}
@@ -181,7 +185,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
               buttonVariant="border-with-text"
               minDate={minDate ?? undefined}
               placeholder="Due date"
-              tabIndex={getTabIndex("target_date")}
+              tabIndex={getTabIndex("target_date", ETabIndices.ISSUE_FORM, isMobile)}
             />
           </div>
         )}
@@ -201,7 +205,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
                 placeholder="Cycle"
                 value={value}
                 buttonVariant="border-with-text"
-                tabIndex={getTabIndex("cycle_id")}
+                tabIndex={getTabIndex("cycle_id", ETabIndices.ISSUE_FORM, isMobile)}
               />
             </div>
           )}
@@ -222,7 +226,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
                 }}
                 placeholder="Modules"
                 buttonVariant="border-with-text"
-                tabIndex={getTabIndex("module_ids")}
+                tabIndex={getTabIndex("module_ids", ETabIndices.ISSUE_FORM, isMobile)}
                 multiple
                 showCount
               />
@@ -244,7 +248,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
                 }}
                 projectId={projectId}
                 buttonVariant="border-with-text"
-                tabIndex={getTabIndex("estimate_point")}
+                tabIndex={getTabIndex("estimate_point", ETabIndices.ISSUE_FORM, isMobile)}
                 placeholder="Estimate"
               />
             </div>
@@ -270,7 +274,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
             </button>
           }
           placement="bottom-start"
-          tabIndex={getTabIndex("parent_id")}
+          tabIndex={getTabIndex("parent_id", ETabIndices.ISSUE_FORM, isMobile)}
         >
           <>
             <CustomMenu.MenuItem className="!p-1" onClick={() => setParentIssueListModalOpen(true)}>
