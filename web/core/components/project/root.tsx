@@ -6,7 +6,7 @@ import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { TProjectAppliedDisplayFilterKeys, TProjectFilters } from "@plane/types";
 // components
-import { CustomHeader } from "@plane/ui";
+import { CustomHeader, EHeaderVariant } from "@plane/ui";
 import { PageHead } from "@/components/core";
 import { ProjectAppliedFiltersList, ProjectCardList } from "@/components/project";
 // helpers
@@ -71,7 +71,7 @@ const Root = observer(() => {
       <div className="flex h-full w-full flex-col">
         {(calculateTotalFilters(currentWorkspaceFilters ?? {}) !== 0 ||
           currentWorkspaceAppliedDisplayFilters?.length !== 0) && (
-          <CustomHeader variant="ternary">
+          <CustomHeader variant={EHeaderVariant.ternary}>
             <ProjectAppliedFiltersList
               appliedFilters={currentWorkspaceFilters ?? {}}
               appliedDisplayFilters={currentWorkspaceAppliedDisplayFilters ?? []}

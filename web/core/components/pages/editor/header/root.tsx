@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import { EditorReadOnlyRefApi, EditorRefApi, IMarking } from "@plane/editor";
 // components
-import { CustomHeader } from "@plane/ui";
+import { CustomHeader, EHeaderVariant } from "@plane/ui";
 import { PageEditorMobileHeaderRoot, PageExtraOptions, PageSummaryPopover, PageToolbar } from "@/components/pages";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -45,7 +45,7 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <CustomHeader variant="secondary" className="hidden md:flex justify-between">
+      <CustomHeader variant={EHeaderVariant.secondary} className="hidden md:flex justify-between">
         <div className={cn("flex-shrink-0 my-auto")}>
           <PageSummaryPopover
             editorRef={isContentEditable ? editorRef.current : readOnlyEditorRef.current}

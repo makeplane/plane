@@ -4,7 +4,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
 // constants
-import { CustomHeader } from "@plane/ui";
+import { CustomHeader, EHeaderVariant } from "@plane/ui";
 import { ENotificationFilterType, FILTER_TYPE_OPTIONS } from "@/constants/notification";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store";
@@ -36,7 +36,7 @@ export const AppliedFilters: FC<TAppliedFilters> = observer((props) => {
 
   if (!isFiltersEnabled || !workspaceSlug) return <></>;
   return (
-    <CustomHeader variant="ternary">
+    <CustomHeader variant={EHeaderVariant.ternary}>
       <CustomHeader.LeftItem>
         {FILTER_TYPE_OPTIONS.map((filter) => {
           const isSelected = filters?.type?.[filter?.value] || false;

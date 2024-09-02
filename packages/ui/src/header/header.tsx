@@ -36,4 +36,4 @@ CustomHeader.LeftItem = LeftItem;
 CustomHeader.RightItem = RightItem;
 CustomHeader.displayName = "plane-ui-header";
 
-export { CustomHeader };
+export { CustomHeader, EHeaderVariant };

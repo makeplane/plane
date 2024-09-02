@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { ListFilter } from "lucide-react";
 import { TPageFilterProps, TPageNavigationTabs } from "@plane/types";
 // components
-import { CustomHeader } from "@plane/ui";
+import { CustomHeader, EHeaderVariant } from "@plane/ui";
 import { FiltersDropdown } from "@/components/issues";
 import {
   PageAppliedFiltersList,
@@ -50,7 +50,7 @@ export const PagesListHeaderRoot: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <CustomHeader variant="secondary" className="flex">
+      <CustomHeader variant={EHeaderVariant.secondary} className="flex">
         <CustomHeader.LeftItem>
           <PageTabNavigation workspaceSlug={workspaceSlug} projectId={projectId} pageType={pageType} />
         </CustomHeader.LeftItem>
@@ -82,7 +82,7 @@ export const PagesListHeaderRoot: React.FC<Props> = observer((props) => {
         </CustomHeader.RightItem>
       </CustomHeader>
       {calculateTotalFilters(filters?.filters ?? {}) !== 0 && (
-        <CustomHeader variant="ternary">
+        <CustomHeader variant={EHeaderVariant.ternary}>
           <PageAppliedFiltersList
             appliedFilters={filters.filters ?? {}}
             handleClearAllFilters={clearAllFilters}

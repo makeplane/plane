@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
 import { TModuleDisplayFilters, TModuleFilters } from "@plane/types";
 // components
-import { CustomHeader } from "@plane/ui";
+import { CustomHeader, EHeaderVariant } from "@plane/ui";
 import { AppliedDateFilters, AppliedMembersFilters, AppliedStatusFilters } from "@/components/modules";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
@@ -37,7 +37,7 @@ export const ModuleAppliedFiltersList: React.FC<Props> = (props) => {
   const isEditingAllowed = alwaysAllowEditing;
 
   return (
-    <CustomHeader variant="ternary" className="flex flex-wrap gap-2">
+    <CustomHeader variant={EHeaderVariant.ternary} className="flex flex-wrap gap-2">
       <CustomHeader.LeftItem>
         {Object.entries(appliedFilters).map(([key, value]) => {
           const filterKey = key as keyof TModuleFilters;

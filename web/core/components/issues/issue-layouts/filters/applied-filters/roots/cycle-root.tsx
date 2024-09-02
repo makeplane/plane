@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { IIssueFilterOptions } from "@plane/types";
 // hooks
-import { CustomHeader } from "@plane/ui";
+import { CustomHeader, EHeaderVariant } from "@plane/ui";
 import { AppliedFiltersList, SaveFilterView } from "@/components/issues";
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 import { useIssues, useLabel, useProjectState } from "@/hooks/store";
@@ -77,7 +77,7 @@ export const CycleAppliedFiltersRoot: React.FC = observer(() => {
   if (Object.keys(appliedFilters).length === 0 || !workspaceSlug || !projectId || !cycleId) return null;
 
   return (
-    <CustomHeader variant="ternary">
+    <CustomHeader variant={EHeaderVariant.ternary}>
       <CustomHeader.LeftItem>
         <AppliedFiltersList
           appliedFilters={appliedFilters}
