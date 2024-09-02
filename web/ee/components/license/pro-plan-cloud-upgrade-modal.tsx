@@ -214,9 +214,17 @@ export const ProPlanCloudUpgradeModal: FC<ProPlanCloudUpgradeModalProps> = (prop
       ?.unit_amount || 0) / 1200;
   const yearlyDiscount = calculateYearlyDiscount(monthlyPrice, yearlyPrice);
   const isInTrailPeriod =
-    subscriptionDetail?.has_activated_free_trial && subscriptionDetail?.trial_end_date ? true : false;
+    subscriptionDetail?.has_activated_free_trial &&
+    subscriptionDetail?.subscription &&
+    subscriptionDetail?.trial_end_date &&
+    new Date(subscriptionDetail.trial_end_date) >= new Date();
   const isTrialCompleted =
-    subscriptionDetail?.has_activated_free_trial && !subscriptionDetail?.trial_end_date ? true : false;
+    subscriptionDetail &&
+    !subscriptionDetail.subscription &&
+    subscriptionDetail.has_activated_free_trial &&
+    subscriptionDetail.product === "FREE"
+      ? true
+      : false;
 
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} width={EModalWidth.XXL} className="rounded-xl">
@@ -266,7 +274,9 @@ export const ProPlanCloudUpgradeModal: FC<ProPlanCloudUpgradeModalProps> = (prop
             features={PRO_PLAN_FEATURES_MAP}
             isLoading={isLoading}
             handlePaymentLink={(priceId: string) =>
-              isInTrailPeriod ? handleSubscriptionPageRedirection(priceId) : handlePaymentLink(priceId)
+              isInTrailPeriod && !isTrialCompleted
+                ? handleSubscriptionPageRedirection(priceId)
+                : handlePaymentLink(priceId)
             }
             yearlyPlanOnly={yearlyPlan}
             trialLoader={trialLoader}
