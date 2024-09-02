@@ -370,7 +370,6 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                         </div>
                       </CustomMenu.MenuItem>
                     )}
-                    
                   </CustomMenu>
                 )}
               </>

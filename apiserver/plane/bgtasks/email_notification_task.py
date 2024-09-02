@@ -161,6 +161,8 @@ def process_mention(mention_component):
 
 
 def process_html_content(content):
+    if content is None:
+        return None
     processed_content_list = []
     for html_content in content:
         processed_content = process_mention(html_content)
