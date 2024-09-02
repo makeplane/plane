@@ -14,9 +14,12 @@ type IPrimeMonitorApi interface {
 	GetFeatureFlags(licenseKey string) (*FlagDataResponse, ErrorCode)
 	ActivateInstance() ErrorCode
 	DeactivateInstance() ErrorCode
+	UpdateSubcription(SeatUpdatePayload) (*SeatUpdateResponse, ErrorCode)
 	SyncWorkspace(WorkspaceSyncPayload) (*WorkspaceActivationResponse, ErrorCode)
 	ActivateWorkspace(WorkspaceActivationPayload) (*WorkspaceActivationResponse, ErrorCode)
 	ActivateFreeWorkspace(WorkspaceActivationPayload) (*WorkspaceActivationResponse, ErrorCode)
+	InitializeInstance(CredentialsPayload) (SetupResponse, error)
+	GetSubscriptionDetails(WorkspaceSubscriptionPayload) (*WorkspaceSubscriptionResponse, ErrorCode)
 }
 
 type PrimeMonitorApi struct {
@@ -26,6 +29,30 @@ type PrimeMonitorApi struct {
 	client           string
 	version          string
 	machineSignature string
+}
+
+type CredentialsPayload struct {
+	ServerId string
+	Domain   string
+}
+
+type WorkspaceSubscriptionPayload struct {
+	WorkspaceId string `json:"workspace_id"`
+	LicenseKey  string `json:"license_key"`
+}
+
+type WorkspaceSubscriptionResponse struct {
+	Product            string `json:"product"`
+	CurrentPeriodEnd   string `json:"current_period_end_date"`
+	SubscriptionExists bool   `json:"subscription_exists"`
+	Url                string `json:"url"`
+}
+
+type SetupResponse struct {
+	Domain     string `json:"domain"`
+	InstanceId string `json:"instance_id"`
+	Host       string `json:"prime_host"`
+	Version    string `json:"version"`
 }
 
 type FlagsPayload struct {
@@ -58,6 +85,9 @@ var (
 	FREE_WORKSPACE_ACTIVATE = API_PREFIX + "/licenses/initialize/"
 	WORKSPACE_ACTIVATE      = API_PREFIX + "/licenses/activate/"
 	SYNC_WORKSPACE          = API_PREFIX + "/licenses/sync/"
+	UPDATE_SUBSCRIPTION     = API_PREFIX + "/modify-subscriptions/"
+	SETUP_ENDPOINT          = API_PREFIX + "/instances/initialize/"
+	SUBSCRIPTION_PORTAL     = API_PREFIX + "/subscription-portal/"
 )
 
 /* ----------------------- Controller Methods ------------------------------ */
@@ -150,6 +180,54 @@ func (api *PrimeMonitorApi) UpgradeInstance() ErrorCode {
 		return UNABLE_TO_ACTIVATE_WORKSPACE
 	}
 	return 0
+}
+
+func (api *PrimeMonitorApi) UpdateSubcription(payload SeatUpdatePayload) (*SeatUpdateResponse, ErrorCode) {
+	resp, err := api.post(api.host+UPDATE_SUBSCRIPTION, payload)
+	if err != nil {
+		return nil, UNABLE_TO_UPDATE_SEATS
+	}
+
+	data := SeatUpdateResponse{}
+	err = json.Unmarshal(resp, &data)
+
+	if err != nil {
+		return nil, UNABLE_TO_SYNC_WORKSPACE
+	}
+	return &data, 0
+}
+
+func (api *PrimeMonitorApi) InitializeInstance(payload CredentialsPayload) (SetupResponse, error) {
+	resp, err := api.post(api.host+SETUP_ENDPOINT, map[string]string{
+		"machine_signature": payload.ServerId,
+		"domain":            payload.Domain,
+	})
+
+	if err != nil {
+		return SetupResponse{}, err
+	}
+
+	// Unmarshal the response
+	setupResponse := SetupResponse{}
+	err = json.Unmarshal(resp, &setupResponse)
+	if err != nil {
+		return SetupResponse{}, err
+	}
+	return setupResponse, err
+}
+
+func (api *PrimeMonitorApi) GetSubscriptionDetails(payload WorkspaceSubscriptionPayload) (*WorkspaceSubscriptionResponse, ErrorCode) {
+	resp, err := api.post(api.host+SUBSCRIPTION_PORTAL, payload)
+	if err != nil {
+		return nil, UNABLE_TO_FETCH_WORKSPACE_SUBSCRIPTION
+	}
+
+	data := WorkspaceSubscriptionResponse{}
+	err = json.Unmarshal(resp, &data)
+	if err != nil {
+		return nil, UNABLE_TO_FETCH_WORKSPACE_SUBSCRIPTION
+	}
+	return &data, 0
 }
 
 // ------------------------ Helper Methods ----------------------------------

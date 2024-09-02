@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/go-co-op/gocron/v2"
+	prime_api "github.com/makeplane/plane-ee/monitor/lib/api"
 	prime_cron "github.com/makeplane/plane-ee/monitor/lib/cron"
 	"github.com/makeplane/plane-ee/monitor/lib/healthcheck"
 	"github.com/makeplane/plane-ee/monitor/lib/logger"
@@ -32,15 +33,30 @@ func NewCronHandler(credentials types.Credentials, logger *logger.Handler) *Cron
 
 type SchedulerOptions struct {
 	HealthCheckInterval int64
+	ResyncFlagsInterval int64
 }
 
 // Schedules the cron jobs available for the instance of the prime scheduler
 func (h *CronHandler) ScheduleCronJobs(options SchedulerOptions) {
+	// Schedular HealthCheck Job for Instances
 	h.primeScheduler.RegisterNewHealthCheckJob(
 		context.Background(),
 		gocron.DurationJob(time.Duration(options.HealthCheckInterval)*time.Minute),
 		func(statuses []*healthcheck.HealthCheckStatus, errors []*error) {
 			core.RunHealthCheck(h, statuses, errors)
+		},
+	)
+	// Schedule License Refresh Job for Instances
+	h.primeScheduler.RegisterLicenseRefreshJob(
+		context.Background(),
+		gocron.DurationJob(time.Duration(options.ResyncFlagsInterval)*time.Minute),
+		func(ctx context.Context) {
+			credentials := h.GetCredentials()
+			api := prime_api.NewMonitorApi(credentials.Host, credentials.MachineSignature, credentials.InstanceId, credentials.AppVersion)
+			err := UpdateFlagsHandler(context.Background(), api)
+			if err != nil {
+				h.GetLogger().Error(ctx, err.Error())
+			}
 		},
 	)
 }

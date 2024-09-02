@@ -25,6 +25,10 @@ type WorkspaceProductResponse struct {
 	Subscription         string     `json:"subscription"`
 }
 
+type WorkspaceSubscriptionPayload struct {
+	WorkspaceId string `json:"workspace_id"`
+}
+
 func GetWorkspaceProductHandler(api prime_api.IPrimeMonitorApi, key string) func(*fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) (err error) {
 
@@ -184,5 +188,48 @@ func GetWorkspaceProductHandler(api prime_api.IPrimeMonitorApi, key string) func
 		})
 
 		return nil
+	}
+}
+
+func GetWorkspaceSubscriptionHandler(api prime_api.IPrimeMonitorApi, key string) func(*fiber.Ctx) error {
+	return func(ctx *fiber.Ctx) (err error) {
+
+		//Parse the payload
+
+		var payload WorkspaceSubscriptionPayload
+
+		// Validate the payload sent from the client
+		if err := ctx.BodyParser(&payload); err != nil {
+			ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": "Invalid payload passed for workspace product",
+			})
+			return err
+		}
+
+		// Get the license record for the workspace
+		license := db.License{}
+		record := db.Db.Model(&db.License{}).Where("workspace_id = ?", payload.WorkspaceId).First(&license)
+
+		if record.Error != nil {
+			ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": "Invalid workspace id",
+			})
+		}
+
+		// Get the subscription details for the workspace from the prime server
+		data, errCode := api.GetSubscriptionDetails(prime_api.WorkspaceSubscriptionPayload{
+			WorkspaceId: license.WorkspaceID.String(),
+			LicenseKey:  license.LicenseKey,
+		})
+
+		if errCode != 0 {
+			ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Failed to get subscription details",
+			})
+			return fmt.Errorf("failed to get subscription details: %v", errCode)
+		}
+
+		// Send the response back to the client
+		return ctx.Status(fiber.StatusOK).JSON(data)
 	}
 }

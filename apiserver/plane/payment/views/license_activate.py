@@ -1,5 +1,6 @@
 # Python imports
 import requests
+import os
 
 # Django imports
 from django.conf import settings
@@ -25,6 +26,13 @@ class WorkspaceLicenseEndpoint(BaseAPIView):
 
     def get(self, request, slug):
         try:
+            # Check the multi-tenant environment
+            if os.environ.get("IS_MULTI_TENANT", "0") == "1":
+                return Response(
+                    {"error": "Forbidden"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
             workspace = Workspace.objects.get(slug=slug)
             response = requests.get(
                 f"{settings.PAYMENT_SERVER_BASE_URL}/api/workspaces/{str(workspace.id)}/licenses/",
@@ -48,6 +56,13 @@ class WorkspaceLicenseEndpoint(BaseAPIView):
                 )
 
     def post(self, request, slug):
+        # Check the multi-tenant environment
+        if os.environ.get("IS_MULTI_TENANT", "0") == "1":
+            return Response(
+                {"error": "Forbidden"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         license_key = request.data.get("license_key", False)
 
         if not license_key:

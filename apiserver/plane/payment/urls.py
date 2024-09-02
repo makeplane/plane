@@ -14,6 +14,7 @@ from .views import (
     WorkspaceLicenseSyncEndpoint,
     WorkspaceFreeTrialEndpoint,
     WorkspaceTrialUpgradeEndpoint,
+    PurchaseSubscriptionSeatEndpoint,
 )
 
 urlpatterns = [
@@ -81,5 +82,10 @@ urlpatterns = [
         "workspaces/<str:slug>/trial-subscriptions/upgrade/",
         WorkspaceTrialUpgradeEndpoint.as_view(),
         name="trial-upgrade",
+    ),
+    path(
+        "workspaces/<str:slug>/subscriptions/seats/",
+        PurchaseSubscriptionSeatEndpoint.as_view(),
+        name="purchase-subscription-seats",
     ),
 ]

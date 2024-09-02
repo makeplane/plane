@@ -28,6 +28,11 @@ var StartCmd = &cobra.Command{
 			return err
 		}
 
+		flagResyncInterval, err := cmd.Flags().GetInt(descriptors.FLAG_INTERVAL_RESYNC)
+		if err != nil {
+			return nil
+		}
+
 		db.Initialize()
 		_, err = feat_flag.ParsePrivateKey(PRIVATE_KEY)
 
@@ -68,6 +73,7 @@ var StartCmd = &cobra.Command{
 
 		cronHandler.ScheduleCronJobs(handlers.SchedulerOptions{
 			HealthCheckInterval: int64(healthCheckInterval),
+			ResyncFlagsInterval: int64(flagResyncInterval),
 		})
 
 		/* TODO: If the db has an encrypted cypher then we can instantiate the
@@ -112,5 +118,6 @@ var StartCmd = &cobra.Command{
 
 func init() {
 	StartCmd.Flags().Int(descriptors.FLAG_INTERVAL_HEALTHCHECK, 5, descriptors.FLAG_INTERVAL_HEALTHCHECK_USE)
+	StartCmd.Flags().Int(descriptors.FLAG_INTERVAL_RESYNC, 300, descriptors.FLAG_INTERVAL_RESYNC_USE)
 	rootCmd.AddCommand(StartCmd)
 }

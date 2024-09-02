@@ -49,9 +49,6 @@ from django.views.decorators.cache import cache_control
 from django.views.decorators.vary import vary_on_cookie
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 from plane.payment.bgtasks.member_sync_task import member_sync_task
-from plane.payment.bgtasks.workspace_license_initiate_task import (
-    workspace_license_initiate_task,
-)
 from django.conf import settings
 
 
@@ -136,9 +133,6 @@ class WorkSpaceViewSet(BaseViewSet):
                     role=20,
                     company_role=request.data.get("company_role", ""),
                 )
-
-                # Create workspace license on self hosted instance
-                workspace_license_initiate_task.delay(serializer.data["id"])
 
                 # Sync workspace members
                 member_sync_task.delay(slug)

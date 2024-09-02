@@ -18,6 +18,9 @@ var (
 var (
 	FLAG_INTERVAL_HEALTHCHECK     = "interval-healthcheck"
 	FLAG_INTERVAL_HEALTHCHECK_USE = "Interval (in minutes) to run health check cron job"
+
+	FLAG_INTERVAL_RESYNC     = "interval-resync"
+	FLAG_INTERVAL_RESYNC_USE = "Interval (in minutes) to resync license data and flags"
 )
 
 // --------------------- Worker Descriptors -----------------

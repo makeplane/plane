@@ -93,3 +93,15 @@ type WorkspaceProductPayload struct {
 	MembersList   []WorkspaceMember `json:"members_list"`
 	OwnerEmail    string            `json:"owner_email"`
 }
+
+type SeatUpdatePayload struct {
+	WorkspaceSlug string `json:"workspace_slug"`
+	WorkspaceId   string `json:"workspace_id"`
+	Quantity      int64  `json:"quantity"`
+	LicenseKey    string `json:"license_key"`
+}
+
+type SeatUpdateResponse struct {
+	Status bool  `json:"status"`
+	Seats  int64 `json:"seats"`
+}

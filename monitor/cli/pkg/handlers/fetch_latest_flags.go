@@ -62,12 +62,27 @@ func UpdateFlagsHandler(ctx context.Context, api prime_api.IPrimeMonitorApi) err
 // Verify License, will hit the Instance Initialization Endpoint and will
 // replace the existing data with the new data that is fetched from the API.
 func RefreshLicense(ctx context.Context, api prime_api.IPrimeMonitorApi, license *db.License, tx *gorm.DB) (*db.License, *prime_api.WorkspaceActivationResponse, error) {
+	// Acquire all the members for the license
+	members := []db.UserLicense{}
+	if err := tx.Where("license_id = ?", license.ID).Find(&members).Error; err != nil {
+		return nil, nil, err
+	}
+
+	workspaceMembers := []prime_api.WorkspaceMember{}
+
+	for _, member := range members {
+		workspaceMembers = append(workspaceMembers, prime_api.WorkspaceMember{
+			UserId:   member.UserID.String(),
+			UserRole: member.Role,
+		})
+	}
 
 	// Get the new data from the license
-	data, err := api.ActivateFreeWorkspace(prime_api.WorkspaceActivationPayload{
+	data, err := api.SyncWorkspace(prime_api.WorkspaceSyncPayload{
 		WorkspaceSlug: license.WorkspaceSlug,
 		WorkspaceID:   license.WorkspaceID.String(),
 		LicenceKey:    license.LicenseKey,
+		MembersList:   workspaceMembers,
 	})
 
 	if err != 0 {

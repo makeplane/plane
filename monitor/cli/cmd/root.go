@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 
+	prime_api "github.com/makeplane/plane-ee/monitor/lib/api"
 	"github.com/makeplane/plane-ee/monitor/lib/logger"
 	"github.com/makeplane/plane-ee/monitor/pkg/constants"
 	"github.com/makeplane/plane-ee/monitor/pkg/constants/descriptors"
@@ -48,16 +49,40 @@ var rootCmd = &cobra.Command{
 			PORT = port
 		}
 
-		if instanceId := os.Getenv(constants.INSTANCE_ID); instanceId == "" {
-			return fmt.Errorf(error_msgs.INSTANCE_ID_ABSENT)
-		} else {
-			INSTANCE_ID = instanceId
-		}
-
 		if machineSignature := os.Getenv(constants.MACHINE_SIGNATURE); machineSignature == "" {
 			return fmt.Errorf(error_msgs.MACHINE_SIG_ABSENT)
 		} else {
 			MACHINE_SIGNATURE = machineSignature
+		}
+
+		if instanceId := os.Getenv(constants.INSTANCE_ID); instanceId == "" {
+
+			// If we don't get the instance id, we need to look up for the
+			// DEPLOY_PLATFORM env, such that we can decide, if we the platform is not
+			// docker compose then we need to create the instance on our own. As helm
+			// and kubernetes can't provide the instance id.
+
+			if deployPlatform := os.Getenv(constants.DEPLOY_PLATFORM); deployPlatform == "" {
+				return fmt.Errorf(error_msgs.DEPLOY_PLATFORM_ABSENT)
+			} else {
+				if deployPlatform != constants.DOCKER_COMPOSE {
+					api := prime_api.NewMonitorApi(HOST, MACHINE_SIGNATURE, "", APP_VERSION)
+					setupResponse, err := api.InitializeInstance(prime_api.CredentialsPayload{
+						ServerId: MACHINE_SIGNATURE,
+						Domain:   APP_DOMAIN,
+					})
+
+					if err != nil {
+						return fmt.Errorf(error_msgs.FAILED_INITIALIZATION, APP_DOMAIN)
+					}
+
+					INSTANCE_ID = setupResponse.InstanceId
+				} else {
+					return fmt.Errorf(error_msgs.INSTANCE_ID_ABSENT)
+				}
+			}
+		} else {
+			INSTANCE_ID = instanceId
 		}
 		return nil
 	},

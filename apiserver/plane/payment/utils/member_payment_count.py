@@ -1,55 +1,134 @@
+# Python imports
+import os
+
+# Django imports
+from django.utils import timezone
+
 # Model imports
-from plane.db.models import WorkspaceMember
+from plane.db.models import WorkspaceMember, WorkspaceMemberInvite
 from plane.ee.models import WorkspaceLicense
+from plane.payment.utils.workspace_license_request import (
+    resync_workspace_license,
+)
 
 
-def count_member_payments(members_list):
-    """
-    Count the quantity of admin and member users and calculate the workspace paid quantity based on the members list
-    """
+def handle_free_plan_invite_case(
+    slug, requested_invite_list, workspace_license
+):
+    """This function handles the free plan invite case"""
 
-    # Calculate the quantity of admin and member users based on the members list that is roles greater than 10
-    admin_member_users = len(
-        [member for member in members_list if member.get("user_role") > 10]
+    # Case 1a
+    total_requested_invite_count = len(requested_invite_list)
+
+    # Get the current total invited and current active users in the workspace
+    current_active_users = WorkspaceMember.objects.filter(
+        workspace__slug=slug,
+        is_active=True,
+        member__is_bot=False,
+    ).count()
+
+    # Get the current total invited users in the workspace
+    current_invited_users = WorkspaceMemberInvite.objects.filter(
+        workspace__slug=slug,
+    ).count()
+
+    # Check if the total
+    if (
+        current_active_users
+        + current_invited_users
+        + total_requested_invite_count
+        <= workspace_license.free_seats
+    ):
+        return True, 0, 0
+    else:
+        return False, 0, 0
+
+
+def handle_free_plan_update_case(slug, requested_role, workspace_license):
+    """This function handles the free plan update case"""
+    # Case 1b
+    # Allow update for all roles since the total count of current members and invited members is less than or equal to workspace_license.free_seats
+    return True, 0, 0
+
+
+def handle_member_update_case(requested_role, slug, workspace_license):
+    """Handle the member update case for the workspace"""
+    # Get the current admin and member count
+    active_admin_member_count = WorkspaceMember.objects.filter(
+        workspace__slug=slug,
+        is_active=True,
+        member__is_bot=False,
+        role__gt=10,
+    ).count()
+
+    # Get the current guest and viewer count
+    active_guest_viewer_count = WorkspaceMember.objects.filter(
+        workspace__slug=slug,
+        is_active=True,
+        member__is_bot=False,
+        role__lte=10,
+    ).count()
+
+    # Get the requested invite emails
+    invited_admin_members = WorkspaceMemberInvite.objects.filter(
+        workspace__slug=slug,
+        role__gt=10,
+    ).count()
+
+    # Get the requested invited guest viewers
+    invited_guest_viewers = WorkspaceMemberInvite.objects.filter(
+        workspace__slug=slug,
+        role__lte=10,
+    ).count()
+
+    # total admin member seats
+    total_admin_member_seats = (
+        active_admin_member_count + invited_admin_members
     )
-    # Calculate the quantity of viewers and guest users based on the members list that is roles less than or equal to 10
-    viewers_guest_users = len(
-        [member for member in members_list if member.get("user_role") <= 10]
+
+    # total guest viewer seats
+    total_guest_viewer_seats = (
+        active_guest_viewer_count + invited_guest_viewers
     )
 
-    # Get the workspace paid quantity that is the quantity of admin and member users
-    workspace_paid_quantity = admin_member_users
+    # Check if the requested role is admin
+    if int(requested_role) > 10:
+        if total_admin_member_seats + 1 <= workspace_license.purchased_seats:
+            return True, 0, 0
+        else:
+            return False, 0, 0
 
-    # If the viewers and guest users are more than 5 times the workspace paid quantity then increase the workspace paid quantity by the difference
-    if viewers_guest_users > 5 * workspace_paid_quantity:
-        # Increase the workspace paid quantity by the difference
-        workspace_paid_quantity += (
-            viewers_guest_users - 5 * workspace_paid_quantity
-        )
+    if int(requested_role) <= 10:
+        if (
+            total_guest_viewer_seats + 1
+            <= 5 * workspace_license.purchased_seats
+        ):
+            return True, 0, 0
+        else:
+            return False, 0, 0
+    # Check if the total guest viewer seats are more than the total purchased seats
+    if (
+        int(requested_role) <= 10
+        and total_guest_viewer_seats >= 5 * workspace_license.purchased_seats
+    ):
+        # Check if the requested role is guest or viewer
+        if (
+            total_guest_viewer_seats + 1
+            < 5 * workspace_license.purchased_seats
+        ):
+            return True, 0, 0
+        else:
+            return False, 0, 0
 
-    return workspace_paid_quantity
 
-
-ALLOWED_FREE_USERS = 12
-
-
-def workspace_member_check(current_invite_list, requested_invite_list, slug):
-    """
-    Check if can be invited based on the current members list and the current invite list
-    """
-
-    # Get the current invite emails
-    current_invited_admin_members = len(
-        [invite for invite in current_invite_list if invite.get("role") > 10]
-    )
-    current_invited_guest_viewers = len(
-        [invite for invite in current_invite_list if invite.get("role") <= 10]
-    )
-
+def handle_member_invite_case(requested_invite_list, slug, workspace_license):
+    """Handle the member invite case for the workspace"""
+    # Case 2b i.
     # Get the requested invite emails
     requested_invited_admin_members = len(
         [invite for invite in requested_invite_list if invite.get("role") > 10]
     )
+    # Case the requested invite emails
     requested_invited_guest_viewers = len(
         [
             invite
@@ -58,114 +137,315 @@ def workspace_member_check(current_invite_list, requested_invite_list, slug):
         ]
     )
 
+    # Get the current invited emails for the admin members
     check_admin_members = bool(requested_invited_admin_members)
+    # Get the current invited emails for the guest viewers
     check_guest_viewers = bool(requested_invited_guest_viewers)
 
-    # Current invited admin members and guest viewers
-    # current guest and viewers
-    current_guest_viewers = WorkspaceMember.objects.filter(
+    # check admin members and guest viewers
+    if check_admin_members and check_guest_viewers:
+        # Get the current admin and member count
+        active_admin_member_count = WorkspaceMember.objects.filter(
+            workspace__slug=slug,
+            is_active=True,
+            member__is_bot=False,
+            role__gt=10,
+        ).count()
+        # Get the current invited admin members
+        invited_admin_members = WorkspaceMemberInvite.objects.filter(
+            workspace__slug=slug,
+            role__gt=10,
+        ).count()
+
+        # Get the current guest and viewer count
+        active_guest_viewer_count = WorkspaceMember.objects.filter(
+            workspace__slug=slug,
+            is_active=True,
+            member__is_bot=False,
+            role__lte=10,
+        ).count()
+
+        # Get the  current invited guest viewers
+        invited_guest_viewers = WorkspaceMemberInvite.objects.filter(
+            workspace__slug=slug,
+            role__lte=10,
+        ).count()
+
+        # Get the total admin member seats
+        total_admin_member_seats = (
+            active_admin_member_count
+            + invited_admin_members
+            + requested_invited_admin_members
+        )
+
+        # Get the total guest viewer seats
+        total_guest_viewer_seats = (
+            active_guest_viewer_count
+            + invited_guest_viewers
+            + requested_invited_guest_viewers
+        )
+
+        # Allowed admin members and guest viewers
+        allowed_admin_members = (
+            workspace_license.purchased_seats <= total_admin_member_seats
+        )
+
+        # Allowed guest viewers
+        allowed_guest_viewers = (
+            5 * workspace_license.purchased_seats <= total_guest_viewer_seats
+        )
+
+        # Return the allowed admin members and guest viewers
+        return bool(allowed_admin_members and allowed_guest_viewers), 0, 0
+
+    # Should the check be done for the admin members
+    if check_admin_members:
+        # Get the current admin and member count
+        active_admin_member_count = WorkspaceMember.objects.filter(
+            workspace__slug=slug,
+            is_active=True,
+            member__is_bot=False,
+            role__gt=10,
+        ).count()
+        # Get the current invited admin members
+        invited_admin_members = WorkspaceMemberInvite.objects.filter(
+            workspace__slug=slug,
+            role__gt=10,
+        ).count()
+
+        # Get the total admin member seats
+        total_admin_member_seats = (
+            active_admin_member_count
+            + invited_admin_members
+            + requested_invited_admin_members
+        )
+
+        if total_admin_member_seats <= workspace_license.purchased_seats:
+            return True, 0, 0
+        else:
+            return False, 0, 0
+
+    # Should the check be done for the guest viewers
+    if check_guest_viewers:
+        # Get the current guest and viewer count
+        active_guest_viewer_count = WorkspaceMember.objects.filter(
+            workspace__slug=slug,
+            is_active=True,
+            member__is_bot=False,
+            role__lte=10,
+        ).count()
+
+        # Get the  current invited guest viewers
+        invited_guest_viewers = WorkspaceMemberInvite.objects.filter(
+            workspace__slug=slug,
+            role__lte=10,
+        ).count()
+
+        # Get the total guest viewer seats
+        total_guest_viewer_seats = (
+            active_guest_viewer_count
+            + invited_guest_viewers
+            + requested_invited_guest_viewers
+        )
+
+        if total_guest_viewer_seats <= 5 * workspace_license.purchased_seats:
+            return True, 0, 0
+        else:
+            return False, 0, 0
+
+
+def handle_invite_check_case(slug, workspace_license):
+    # workspace invite check
+    active_admin_member_count = WorkspaceMember.objects.filter(
+        workspace__slug=slug,
+        is_active=True,
+        member__is_bot=False,
+        role__gt=10,
+    ).count()
+
+    active_guest_viewer_count = WorkspaceMember.objects.filter(
         workspace__slug=slug,
         is_active=True,
         member__is_bot=False,
         role__lte=10,
     ).count()
 
-    # current members and admins
-    current_admin_members = WorkspaceMember.objects.filter(
-        workspace__slug=slug, is_active=True, member__is_bot=False, role__gt=10
+    # Get the current workspace invite count
+    current_invited_admin_members = WorkspaceMemberInvite.objects.filter(
+        workspace__slug=slug,
+        role__gt=10,
     ).count()
 
-    # Get the workspace licenses
+    current_invited_guest_viewers = WorkspaceMemberInvite.objects.filter(
+        workspace__slug=slug,
+        role__lte=10,
+    ).count()
+
+    # Get the total admin member seats
+    purchased_seats = workspace_license.purchased_seats
+
+    allowed_admin_members = max(
+        0,
+        purchased_seats
+        - (active_admin_member_count + current_invited_admin_members),
+    )
+
+    allowed_guest_viewers = max(
+        0,
+        5 * purchased_seats
+        - (active_guest_viewer_count + current_invited_guest_viewers),
+    )
+
+    return (
+        bool(allowed_admin_members or allowed_guest_viewers),
+        allowed_admin_members,
+        allowed_guest_viewers,
+    )
+
+
+def handle_cloud_payments(
+    slug, requested_invite_list, requested_role, workspace_license
+):
+    """
+    Case1: Free Plan and Trial Plan
+        a. Invitation case - requested_role is None and requested_invite_list is a list of invite emails with roles
+          - Allowed only if the total count of current users and invited users and requested invite users is less than or equal to workspace_license.free_seats
+        b. Update case - requested_role is a role and requested_invite_list is None
+          - Allowed for all roles since the total count of current members and invited members is less than or equal to workspace_license.free_seats
+    Case2: Paid Plan
+        a. Online Payment case - all allowed - sync back to payment server for calculation
+        b. Offline Payment case
+           i. Invitation case - requested_role is None and requested_invite_list is a list of invite emails with roles
+              - Allowed only if the total count of paid current users and paid invited users and paid requested invite users is less than or equal to workspace_license.purchased_seats
+           ii.Update case - requested_role is a role and requested_invite_list is None
+              - Allowed for roles > 10 if in the purchased seats limit and for roles <= 10 if in the 5 * purchased seats limit
+    """
+
+    # Check the plan of the workspace license and trial
+    if workspace_license.plan == WorkspaceLicense.PlanChoice.FREE or (
+        workspace_license.trial_end_date
+        and workspace_license.trial_end_date > timezone.now()
+        and not workspace_license.has_added_payment_method
+    ):
+        # FREE or Trial Case
+
+        # Check Case 1a or Case 1b
+        if requested_invite_list and not requested_role:
+            return handle_free_plan_invite_case(
+                slug=slug,
+                requested_invite_list=requested_invite_list,
+                workspace_license=workspace_license,
+            )
+        else:
+            # Case 1b
+            # Allow update for all roles since the total count of current members and invited members is less than or equal to workspace_license.free_seats
+            return handle_free_plan_update_case(
+                slug=slug,
+                requested_role=requested_role,
+                workspace_license=workspace_license,
+            )
+
+    else:
+        # Paid Plan Case - PRO Plan
+        if not workspace_license.is_offline_payment:
+            # Online Payment Case
+            return True, 0, 0
+
+        # Case 2b i. or Case 2b ii.
+        if requested_invite_list and not requested_role:
+            return handle_member_invite_case(
+                requested_invite_list=requested_invite_list,
+                slug=slug,
+                workspace_license=workspace_license,
+            )
+        # Update case
+        if requested_role and not requested_invite_list:
+            # Case 2b
+            return handle_member_update_case(
+                requested_role=requested_role,
+                slug=slug,
+                workspace_license=workspace_license,
+            )
+
+        if not requested_invite_list and not requested_role:
+            return handle_invite_check_case(
+                slug=slug, workspace_license=workspace_license
+            )
+
+
+def handle_self_managed_payments(slug, requested_invite_list, requested_role):
+    """
+    Handle the self managed payment cases
+    """
+
+    """
+    Case1: Free Plan and One Time Payment Plan
+        return True for all cases
+    Case2: Subscription Plan
+        a. Invitation case - requested_role is None and requested_invite_list is a list of invite emails with roles
+          - Allowed only if the total count of paid current users and paid invited users and paid requested invite users is less than or equal to workspace_license.purchased_seats
+        b. Update case - requested_role is a role and requested_invite_list is None
+          - Allowed for roles > 10 if in the purchased seats limit and for roles <= 10 if in the 5 * purchased seats limit
+    """
+    # Fetch the workspace license
     workspace_license = WorkspaceLicense.objects.filter(
         workspace__slug=slug
     ).first()
 
-    # For the free plan the allowed users are only 12 including the viewer and guest users
-    if (
-        not workspace_license
-        or workspace_license.plan == WorkspaceLicense.PlanChoice.FREE
-    ):
-        # This is the current workspace count
-        current_workspace_count = current_admin_members + current_guest_viewers
-        # The current invited count
-        current_invited_count = (
-            current_invited_admin_members + current_invited_guest_viewers
-        )
-        # The requested invited count
-        requested_invited_count = (
-            requested_invited_admin_members + requested_invited_guest_viewers
-        )
+    if workspace_license.plan == WorkspaceLicense.PlanChoice.FREE:
+        # Free Plan Case
+        return True, 0, 0
 
-        # The sum of all this should be less than or equal to 12
-        status = (
-            current_workspace_count
-            + current_invited_count
-            + requested_invited_count
-            <= 12
-        )
+    if workspace_license.plan == WorkspaceLicense.PlanChoice.ONE:
+        # One Time Payment Plan Case
+        return True, 0, 0
 
-        # If the status is false then return the allowed invite count
-        if not status:
-            allowed_users = 12 - (
-                current_workspace_count + current_invited_count
+    # Subscription Plan Case
+    if workspace_license.plan == WorkspaceLicense.PlanChoice.PRO:
+        if requested_invite_list and not requested_role:
+            return handle_member_invite_case(
+                requested_invite_list=requested_invite_list,
+                slug=slug,
+                workspace_license=workspace_license,
             )
-            return status, max(0, allowed_users), max(0, allowed_users)
-        else:
-            return status, max(0, allowed_users), max(0, allowed_users)
+        # Update case
+        if requested_role and not requested_invite_list:
+            # Case 2b
+            return handle_member_update_case(
+                requested_role=requested_role,
+                slug=slug,
+                workspace_license=workspace_license,
+            )
 
-    # For the paid plan the allowed users can be increased if the payment is not offline
+        if not requested_invite_list and not requested_role:
+            return handle_invite_check_case(
+                slug=slug, workspace_license=workspace_license
+            )
+
+
+def workspace_member_check(slug, requested_invite_list, requested_role):
+    """
+    Check if can be invited based on the current members list and the current invite list
+    """
+
+    workspace_license = WorkspaceLicense.objects.filter(
+        workspace__slug=slug
+    ).first()
+
+    # If the workspace license is not found then resync the workspace license
+    if not workspace_license:
+        resync_workspace_license(workspace_slug=slug)
+        # Fetch the workspace license
+        workspace_license = WorkspaceLicense.objects.filter(
+            workspace__slug=slug
+        ).first()
+
+    # Get the workspace license
+    if os.environ.get("IS_MULTI_TENANT", "0") == "1":
+        return True, 0, 0
     else:
-        # Count the member payments
-        if workspace_license.is_offline_payment:
-            # Get the workspace members
-            # If the workspace license is offline then the allowed members can be only less than or equal to the purchased seats
-            purchased_seats = workspace_license.purchased_seats
-            # Left over calculated seats
-            left_over_admin_member_seats = (
-                purchased_seats
-                - current_admin_members
-                - current_invited_admin_members
-                - requested_invited_admin_members
-            )
-
-            left_over_guest_viewer_seats = (
-                5 * purchased_seats
-                - current_guest_viewers
-                - current_invited_guest_viewers
-                - requested_invited_guest_viewers
-            )
-
-            # If the left over seats are less than or equal to 0 then return false
-            if check_admin_members and check_guest_viewers:
-                allowed_admin_members = left_over_admin_member_seats > 0
-                allowed_guest_viewers = left_over_guest_viewer_seats > 0
-
-                return (
-                    allowed_admin_members and allowed_guest_viewers,
-                    max(left_over_admin_member_seats, 0),
-                    max(left_over_guest_viewer_seats, 0),
-                )
-
-            # If the left over seats are less than or equal to 0 then return false
-            if check_admin_members:
-                return (
-                    left_over_admin_member_seats > 0,
-                    max(left_over_admin_member_seats, 0),
-                    max(left_over_guest_viewer_seats, 0),
-                )
-
-            if check_guest_viewers:
-                return (
-                    left_over_guest_viewer_seats > 0,
-                    max(left_over_admin_member_seats, 0),
-                    max(left_over_guest_viewer_seats, 0),
-                )
-
-            return (
-                left_over_admin_member_seats > 0
-                and left_over_guest_viewer_seats > 0,
-                max(left_over_admin_member_seats, 0),
-                max(left_over_guest_viewer_seats, 0),
-            )
-        else:
-            return True, 1000, 1000
+        return handle_self_managed_payments(
+            slug=slug,
+            requested_invite_list=requested_invite_list,
+            requested_role=requested_role,
+        )

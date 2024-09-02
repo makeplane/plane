@@ -436,3 +436,55 @@ func convertWorkspaceActivationResponseToLicense(data *prime_api.WorkspaceActiva
 
 	return license, nil
 }
+
+type UpdateSeatsPayload struct {
+	WorkspaceSlug string `json:"workspace_slug"`
+	WorkspaceId   string `json:"workspace_id"`
+	Quantity      int64  `json:"quantity"`
+}
+
+func UpdateLicenseSeats(api prime_api.IPrimeMonitorApi, key string) func(*fiber.Ctx) error {
+	return func(ctx *fiber.Ctx) error {
+		var payload UpdateSeatsPayload
+
+		// Parse the incoming payload
+		if err := ctx.BodyParser(&payload); err != nil {
+			ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": "Invalid payload passed for license update",
+			})
+			return err
+		}
+
+		// Find the license associated with the worksapce id and workspace slug
+		var license db.License
+		record := db.Db.Model(&db.License{}).Where("workspace_id = ? AND workspace_slug = ?", payload.WorkspaceId, payload.WorkspaceSlug).First(&license)
+
+		if record.Error != nil {
+			return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": "No license exist for corresponding workspace sent.",
+			})
+		}
+
+		// Update prime with the quantity asked
+		data, err := api.UpdateSubcription(prime_api.SeatUpdatePayload{
+			WorkspaceSlug: license.WorkspaceSlug,
+			WorkspaceId:   license.WorkspaceID.String(),
+			Quantity:      payload.Quantity,
+			LicenseKey:    license.LicenseKey,
+		})
+
+		if err != 0 {
+			return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Failed to update the license",
+			})
+		}
+
+		// Update the license with the new data
+		license.Seats = int(data.Seats)
+		db.Db.Save(&license)
+
+		return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+			"seats": license.Seats,
+		})
+	}
+}

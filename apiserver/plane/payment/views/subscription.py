@@ -1,5 +1,6 @@
 # Python imports
 import requests
+import os
 
 # Django imports
 from django.conf import settings
@@ -11,7 +12,8 @@ from rest_framework.response import Response
 # Module imports
 from .base import BaseAPIView
 from plane.app.permissions.workspace import WorkspaceOwnerPermission
-from plane.db.models import Workspace
+from plane.db.models import Workspace, WorkspaceMember
+from plane.ee.models import WorkspaceLicense
 from plane.utils.exception_logger import log_exception
 from plane.payment.utils.workspace_license_request import (
     resync_workspace_license,
@@ -115,5 +117,83 @@ class UpgradeSubscriptionEndpoint(BaseAPIView):
             log_exception(e)
             return Response(
                 {"error": "error in upgrading workspace subscription"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class PurchaseSubscriptionSeatEndpoint(BaseAPIView):
+
+    permission_classes = [
+        WorkspaceOwnerPermission,
+    ]
+
+    def post(self, request, slug):
+        try:
+
+            if os.environ.get("IS_MULTI_TENANT", "0") == "1":
+                return Response(
+                    {"error": "Forbidden"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
+            workspace = Workspace.objects.get(slug=slug)
+
+            quantity = request.data.get(
+                "quantity",
+                WorkspaceMember.objects.filter(
+                    workspace__slug=slug,
+                    is_active=True,
+                    member__is_bot=False,
+                    role__lte=10,
+                ).count(),
+            )
+
+            # Fetch the workspace subcription
+            if settings.PAYMENT_SERVER_BASE_URL:
+                # Make a cancel request to the payment server
+                response = requests.post(
+                    f"{settings.PAYMENT_SERVER_BASE_URL}/api/licenses/modify-seats/",
+                    headers={
+                        "content-type": "application/json",
+                        "x-api-key": settings.PAYMENT_SERVER_AUTH_TOKEN,
+                    },
+                    json={
+                        "workspace_id": str(workspace.id),
+                        "quantity": quantity,
+                        "workspace_slug": slug,
+                    },
+                )
+                # Check if the response is successful
+                response.raise_for_status()
+
+                response = response.json()
+
+                # Fetch the workspace subcription
+                workspace_license = WorkspaceLicense.objects.filter(
+                    workspace=workspace
+                ).first()
+
+                # Update the seat count
+                if workspace_license:
+                    # Update the seat count
+                    workspace_license.purchased_seats = response["seats"]
+                    workspace_license.save()
+
+                # Return the response
+                return Response(
+                    {"seats": response["seats"]}, status=status.HTTP_200_OK
+                )
+            return Response(
+                {"error": "error in checking workspace subscription"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except requests.exceptions.RequestException as e:
+            if e.response and e.response.status_code == 400:
+                return Response(
+                    e.response.json(), status=status.HTTP_400_BAD_REQUEST
+                )
+            log_exception(e)
+            return Response(
+                {"error": "error in purchasing workspace subscription"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
