@@ -12,10 +12,11 @@ type TArguments = {
   query?: string;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setQuery?: React.Dispatch<React.SetStateAction<string>>;
+  isMobile?: boolean;
 };
 
 export const useDropdown = (args: TArguments) => {
-  const { dropdownRef, inputRef, isOpen, onClose, onOpen, query, setIsOpen, setQuery } = args;
+  const { dropdownRef, inputRef, isOpen, onClose, onOpen, query, setIsOpen, setQuery, isMobile = false } = args;
 
   /**
    * @description clear the search input when the user presses the escape key, if the search input is not empty
@@ -62,10 +63,10 @@ export const useDropdown = (args: TArguments) => {
 
   // focus the search input when the dropdown is open
   useEffect(() => {
-    if (isOpen && inputRef?.current) {
+    if (isOpen && inputRef?.current && !isMobile) {
       inputRef.current.focus();
     }
-  }, [inputRef, isOpen]);
+  }, [inputRef, isOpen, isMobile]);
 
   return {
     handleClose,

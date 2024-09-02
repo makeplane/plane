@@ -10,6 +10,7 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useCycle } from "@/hooks/store";
 import { useDropdown } from "@/hooks/use-dropdown";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // local components and constants
 import { DropdownButton } from "../buttons";
 import { BUTTON_VARIANTS_WITH_TEXT } from "../constants";
@@ -58,6 +59,8 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+  // store hooks
+  const { isMobile } = usePlatformOS();
 
   const selectedName = value ? getCycleNameById(value) : null;
 
@@ -66,6 +69,7 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
     isOpen,
     onClose,
     setIsOpen,
+    isMobile,
   });
 
   const dropdownOnChange = (val: string | null) => {

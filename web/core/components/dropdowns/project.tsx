@@ -14,6 +14,7 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useProject } from "@/hooks/store";
 import { useDropdown } from "@/hooks/use-dropdown";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
 import { DropdownButton } from "./buttons";
 // constants
@@ -75,6 +76,7 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
     ],
   });
   // store hooks
+  const { isMobile } = usePlatformOS();
   const { joinedProjectIds, getProjectById } = useProject();
 
   const options = joinedProjectIds?.map((projectId) => {
@@ -109,6 +111,7 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
     query,
     setIsOpen,
     setQuery,
+    isMobile,
   });
 
   const dropdownOnChange = (val: string) => {

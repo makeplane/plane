@@ -179,6 +179,8 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+  // store hooks
+  const { isMobile } = usePlatformOS();
 
   const { getModuleNameById } = useModule();
 
@@ -188,6 +190,7 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
     isOpen,
     onClose,
     setIsOpen,
+    isMobile,
   });
 
   const dropdownOnChange = (val: string & string[]) => {
@@ -203,10 +206,10 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
   if (multiple) comboboxProps.multiple = true;
 
   useEffect(() => {
-    if (isOpen && inputRef.current) {
+    if (isOpen && inputRef.current && !isMobile) {
       inputRef.current.focus();
     }
-  }, [isOpen]);
+  }, [isOpen, isMobile]);
 
   const comboButton = (
     <>

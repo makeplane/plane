@@ -13,6 +13,7 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useProjectState } from "@/hooks/store";
 import { useDropdown } from "@/hooks/use-dropdown";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
 import { DropdownButton } from "./buttons";
 // constants
@@ -76,6 +77,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
     ],
   });
   // store hooks
+  const { isMobile } = usePlatformOS();
   const { workspaceSlug } = useParams();
   const { fetchProjectStates, getProjectStates, getStateById } = useProjectState();
   const statesList = getProjectStates(projectId);
@@ -115,6 +117,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
     query,
     setIsOpen,
     setQuery,
+    isMobile,
   });
 
   useEffect(() => {
