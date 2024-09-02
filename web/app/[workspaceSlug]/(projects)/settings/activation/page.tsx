@@ -12,7 +12,7 @@ import { useUser, useWorkspace } from "@/hooks/store";
 // plane web components
 import { SubscriptionActivation } from "@/plane-web/components/workspace";
 // plane web hooks
-import { useSelfHostedSubscription } from "@/plane-web/hooks/store";
+import { useSelfHostedSubscription, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 const ActivationPage = observer(() => {
   // router
@@ -22,14 +22,16 @@ const ActivationPage = observer(() => {
     membership: { currentWorkspaceRole },
   } = useUser();
   const { currentWorkspace } = useWorkspace();
+  const { currentWorkspaceSubscribedPlanDetail: currentWorkspaceSubscribedPlan } = useWorkspaceSubscription();
   const { licenseActivationByWorkspaceSlug } = useSelfHostedSubscription();
   // derived values
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Activation` : undefined;
   const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+  const isSelfManaged = !!currentWorkspaceSubscribedPlan?.is_self_managed;
 
-  if (!workspaceSlug || !currentWorkspace?.id) return <></>;
+  if (!workspaceSlug || !currentWorkspace?.id || !isSelfManaged) return <></>;
 
-  if (!isAdmin || licenseActivationByWorkspaceSlug())
+  if (!isAdmin && licenseActivationByWorkspaceSlug())
     return (
       <>
         <PageHead title={pageTitle} />

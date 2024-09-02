@@ -298,7 +298,11 @@ class ModuleAPIEndpoint(BaseAPIView):
             actor_id=str(request.user.id),
             issue_id=None,
             project_id=str(project_id),
-            current_instance=None,
+            current_instance=json.dumps(
+                {
+                    "module_name": str(module.name),
+                }
+            ),
             epoch=int(timezone.now().timestamp()),
         )
         module.delete()

@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import (
     Q,
     CharField,
+    Func,
 )
 from django.db.models.functions import Cast
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -52,8 +53,11 @@ class IssuePropertyValueEndpoint(BaseAPIView):
                     ),
                     When(
                         property__property_type=PropertyTypeEnum.DATETIME,
-                        then=Cast(
-                            F("value_datetime"), output_field=CharField()
+                        then=Func(
+                            F("value_datetime"),
+                            function="TO_CHAR",
+                            template="%(function)s(%(expressions)s, 'YYYY-MM-DD')",
+                            output_field=CharField(),
                         ),
                     ),
                     When(

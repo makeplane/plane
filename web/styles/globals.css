@@ -715,6 +715,9 @@ html.todesktop body {
 }
 
 html.todesktop .app-container {
+  contain: layout style size;
+  contain-intrinsic-size: 100%;
+  position: relative; /* Ensure it's the containing block */
   border: 1px solid rgb(var(--color-border-200));
   border-radius: 6px;
 }

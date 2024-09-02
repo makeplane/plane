@@ -9,7 +9,7 @@ from strawberry.types import Info
 from strawberry.scalars import JSON
 
 # Module Imports
-from plane.db.models import Module, Issue
+from plane.db.models import Module, Issue, ModuleUserProperties
 from plane.graphql.types.users import UserType
 
 # Third-party library imports
@@ -85,3 +85,38 @@ class ModuleType:
             .count()
         )()
         return issue_assignees_count
+
+
+@strawberry_django.type(Module)
+class ModuleLiteType:
+    id: strawberry.ID
+    name: str
+    project: strawberry.ID
+
+
+@strawberry_django.type(ModuleUserProperties)
+class ModuleUserPropertyType:
+    display_filters: JSON
+    display_properties: JSON
+    filters: JSON
+    id: strawberry.ID
+    user: strawberry.ID
+    workspace: strawberry.ID
+    project: strawberry.ID
+    module: strawberry.ID
+
+    @strawberry.field
+    def user(self) -> int:
+        return self.user_id
+
+    @strawberry.field
+    def workspace(self) -> int:
+        return self.workspace_id
+
+    @strawberry.field
+    def project(self) -> int:
+        return self.project_id
+
+    @strawberry.field
+    def module(self) -> int:
+        return self.module_id

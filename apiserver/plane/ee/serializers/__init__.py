@@ -6,7 +6,12 @@ from plane.app.serializers import (
 
 from .app.issue import IssueLiteSerializer
 from .app.active_cycle import WorkspaceActiveCycleSerializer
-from .app.page import WorkspacePageSerializer, WorkspacePageDetailSerializer
+from .app.page import (
+    WorkspacePageSerializer,
+    WorkspacePageDetailSerializer,
+    WorkspacePageVersionSerializer,
+    WorkspacePageVersionDetailSerializer,
+)
 from .app.issue_property import (
     IssueTypeSerializer,
     IssuePropertySerializer,

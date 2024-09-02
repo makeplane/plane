@@ -5,7 +5,6 @@ import uuid
 
 # Django imports
 from django.conf import settings
-from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.hashers import make_password
 
 # Third Party imports
@@ -13,7 +12,6 @@ from celery import shared_task
 from sentry_sdk import capture_exception
 
 # Module imports
-from plane.app.serializers import ImporterSerializer
 from plane.db.models import (
     Importer,
     WorkspaceMember,
@@ -190,18 +188,6 @@ def service_importer(service, importer_id):
                 member=workspace_integration.actor,
                 role=20,
                 project_id=importer.project_id,
-            )
-
-        if settings.PROXY_BASE_URL:
-            headers = {"Content-Type": "application/json"}
-            import_data_json = json.dumps(
-                ImporterSerializer(importer).data,
-                cls=DjangoJSONEncoder,
-            )
-            _ = requests.post(
-                f"{settings.PROXY_BASE_URL}/hooks/workspaces/{str(importer.workspace_id)}/projects/{str(importer.project_id)}/importers/{str(service)}/",
-                json=import_data_json,
-                headers=headers,
             )
 
         return

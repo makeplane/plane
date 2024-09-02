@@ -3,7 +3,14 @@ from rest_framework import serializers
 
 # Module imports
 from plane.app.serializers.base import BaseSerializer
-from plane.db.models import Project, Page, Label, ProjectPage, PageLabel
+from plane.db.models import (
+    Project,
+    Page,
+    Label,
+    ProjectPage,
+    PageLabel,
+    PageVersion,
+)
 
 
 class WorkspacePageSerializer(BaseSerializer):
@@ -156,4 +163,47 @@ class WorkspacePageDetailSerializer(BaseSerializer):
         fields = WorkspacePageSerializer.Meta.fields + [
             "description_html",
             "anchor",
+        ]
+
+
+class WorkspacePageVersionSerializer(BaseSerializer):
+    class Meta:
+        model = PageVersion
+        fields = [
+            "id",
+            "workspace",
+            "page",
+            "last_saved_at",
+            "owned_by",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "workspace",
+            "page",
+        ]
+
+
+class WorkspacePageVersionDetailSerializer(BaseSerializer):
+    class Meta:
+        model = PageVersion
+        fields = [
+            "id",
+            "workspace",
+            "page",
+            "last_saved_at",
+            "description_html",
+            "description_json",
+            "description_binary",
+            "owned_by",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "workspace",
+            "page",
         ]

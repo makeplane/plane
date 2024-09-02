@@ -19,11 +19,13 @@ from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 
 # Module Imports
-from plane.graphql.types.search import ProjectSearchType
-from plane.db.models import Issue, Project, Page
+from plane.graphql.types.search import GlobalSearchType
+from plane.db.models import Issue, Project, Page, Module, Cycle
 from plane.graphql.types.project import ProjectLiteType
 from plane.graphql.types.issue import IssueLiteType
 from plane.graphql.types.page import PageLiteType
+from plane.graphql.types.module import ModuleLiteType
+from plane.graphql.types.cycle import CycleLiteType
 from plane.graphql.permissions.workspace import WorkspaceBasePermission
 
 
@@ -106,43 +108,60 @@ async def filter_pages(query: str, slug: str, user) -> list[PageLiteType]:
                 projects__project_projectmember__is_active=True,
                 projects__archived_at__isnull=True,
                 workspace__slug=slug,
-            )
-            .annotate(
-                project_ids=Coalesce(
-                    ArrayAgg(
-                        "projects__id",
-                        distinct=True,
-                        filter=~Q(projects__id=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-            )
-            .annotate(
-                project_identifiers=Coalesce(
-                    ArrayAgg(
-                        "projects__identifier",
-                        distinct=True,
-                        filter=~Q(projects__id=True),
-                    ),
-                    Value([], output_field=ArrayField(CharField())),
-                ),
-            )
-        .distinct()
-        .values(
-            "name",
-            "id",
-            "project_ids",
-            # "project_identifiers",
-            # "workspace__slug",
-        )
+            ).distinct()
         )
     )()
-    return [PageLiteType(**page) for page in pages]
+    return pages
+
+
+async def filter_modules(query: str, slug: str, user) -> list[ModuleLiteType]:
+    fields = ["name"]
+    q = Q()
+    for field in fields:
+        q |= Q(**{f"{field}__icontains": query})
+
+    modules = await sync_to_async(
+        lambda: list(
+            Module.objects.filter(
+                q,
+                project__project_projectmember__member=user,
+                project__project_projectmember__is_active=True,
+                workspace__slug=slug,
+                archived_at__isnull=True,
+            )
+            .distinct()
+            .values("id", "name", "project")
+        )
+    )()
+
+    return [ModuleLiteType(**module) for module in modules]
+
+
+async def filter_cycles(query: str, slug: str, user) -> list[CycleLiteType]:
+    fields = ["name"]
+    q = Q()
+    for field in fields:
+        q |= Q(**{f"{field}__icontains": query})
+
+    cycles = await sync_to_async(
+        lambda: list(
+            Cycle.objects.filter(
+                q,
+                project__project_projectmember__member=user,
+                project__project_projectmember__is_active=True,
+                archived_at__isnull=True,
+                workspace__slug=slug,
+            )
+            .distinct()
+            .values("id", "name", "project")
+        )
+    )()
+
+    return [CycleLiteType(**cycle) for cycle in cycles]
 
 
 @strawberry.type
-class ProjectSearchQuery:
-
+class GlobalSearchQuery:
     @strawberry.field(
         extensions=[
             PermissionExtension(permissions=[WorkspaceBasePermission()])
@@ -153,15 +172,22 @@ class ProjectSearchQuery:
         info: Info,
         slug: str,
         query: Optional[str] = None,
-    ) -> ProjectSearchType:
-
+    ) -> GlobalSearchType:
         user = info.context.user
         if not query:
-            return ProjectSearchType(projects=[], issues=[])
+            return GlobalSearchType(projects=[], issues=[])
 
         projects = await filter_projects(query, slug, user)
         issues = await filter_issues(query, slug, user)
         pages = await filter_pages(query, slug, user)
+        modules = await filter_modules(query, slug, user)
+        cycles = await filter_cycles(query, slug, user)
 
-        # Return the ProjectSearchType with the list of ProjectLiteType objects
-        return ProjectSearchType(projects=projects, issues=issues, pages=pages)
+        # Return the GlobalSearchType with the list of ProjectLiteType objects
+        return GlobalSearchType(
+            projects=projects,
+            issues=issues,
+            pages=pages,
+            modules=modules,
+            cycles=cycles,
+        )

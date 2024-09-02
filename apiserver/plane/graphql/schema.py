@@ -30,13 +30,15 @@ from .queries.cycle import (
     CycleQuery,
     CycleIssuesInformationQuery,
     CycleIssueQuery,
+    CycleIssueUserPropertyQuery,
 )
 from .queries.module import (
     ModuleQuery,
     ModuleIssuesInformationQuery,
     ModuleIssueQuery,
+    ModuleIssueUserPropertyQuery,
 )
-from .queries.search import ProjectSearchQuery
+from .queries.search import GlobalSearchQuery
 from .queries.attachment import IssueAttachmentQuery
 from .queries.link import IssueLinkQuery
 from .queries.estimate import EstimatePointQuery
@@ -52,13 +54,21 @@ from .mutations.issue import (
     IssueMutation,
     IssueUserPropertyMutation,
     IssueAttachmentMutation,
-    IssueSubscriptionMutation
+    IssueSubscriptionMutation,
 )
 from .mutations.notification import NotificationMutation
 from .mutations.user import ProfileMutation
 from .mutations.page import PageFavoriteMutation
-from .mutations.cycle import CycleIssueMutation, CycleFavoriteMutation
-from .mutations.module import ModuleIssueMutation, ModuleFavoriteMutation
+from .mutations.cycle import (
+    CycleIssueMutation,
+    CycleFavoriteMutation,
+    CycleIssueUserPropertyMutation,
+)
+from .mutations.module import (
+    ModuleIssueMutation,
+    ModuleFavoriteMutation,
+    ModuleIssueUserPropertyMutation,
+)
 from .mutations.link import IssueLinkMutation
 from .mutations.favorite import UserFavoriteMutation
 
@@ -84,7 +94,7 @@ class Query(
     PageQuery,
     WorkspaceLabelQuery,
     WorkspaceStateQuery,
-    ProjectSearchQuery,
+    GlobalSearchQuery,
     IssueAttachmentQuery,
     CycleQuery,
     CycleIssueQuery,
@@ -102,6 +112,8 @@ class Query(
     IssueTypesTypeQuery,
     EstimatePointQuery,
     UserPageQuery,
+    CycleIssueUserPropertyQuery,
+    ModuleIssueUserPropertyQuery,
 ):
     pass
 
@@ -127,6 +139,8 @@ class Mutation(
     CycleFavoriteMutation,
     ModuleFavoriteMutation,
     UserFavoriteMutation,
+    CycleIssueUserPropertyMutation,
+    ModuleIssueUserPropertyMutation,
 ):
     pass
 

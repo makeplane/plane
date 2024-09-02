@@ -13,6 +13,7 @@ import { BreadcrumbLink, Logo } from "@/components/common";
 // helpers
 import { SPACE_BASE_URL } from "@/helpers/common.helper";
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
+import { getPageName } from "@/helpers/page.helper";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
@@ -93,7 +94,7 @@ export const PageDetailsHeader = observer(() => {
                 type="text"
                 link={
                   <BreadcrumbLink
-                    label={name ?? "Page"}
+                    label={getPageName(name)}
                     icon={
                       <EmojiIconPicker
                         isOpen={isOpen}
