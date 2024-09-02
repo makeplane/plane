@@ -226,7 +226,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
             defaultHeight="100px"
             horizontalOffset={100}
             verticalOffset={200}
-            shouldRenderByDefault={shouldRenderByDefault}
+            defaultValue={shouldRenderByDefault}
           >
             <KanbanIssueDetailsBlock
               cardRef={cardRef}

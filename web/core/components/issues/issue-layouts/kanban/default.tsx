@@ -1,4 +1,5 @@
 import { MutableRefObject } from "react";
+import clone from "lodash/clone";
 import { observer } from "mobx-react";
 import {
   GroupByColumnTypes,
@@ -13,13 +14,16 @@ import {
   TIssueOrderByOptions,
 } from "@plane/types";
 // constants
+// components
+import RenderIfVisible from "@/components/core/render-if-visible-HOC";
+import { KanbanColumnLoader } from "@/components/ui";
 // hooks
 import { useCycle, useKanbanView, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // types
 // parent components
 import { TRenderQuickActions } from "../list/list-view-types";
-import { getGroupByColumns, isWorkspaceLevel, GroupDropLocation } from "../utils";
+import { getGroupByColumns, isWorkspaceLevel, GroupDropLocation, getApproximateKanbanCardHeight } from "../utils";
 // components
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { KanbanGroup } from "./kanban-group";
@@ -132,6 +136,8 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
   };
 
   const isGroupByCreatedBy = group_by === "created_by";
+  const appxCardHeight = getApproximateKanbanCardHeight(displayProperties);
+  const isSubGroup = !!sub_group_id && sub_group_id !== "null";
 
   return (
     <div className={`relative w-full flex gap-2 px-2 ${sub_group_by ? "h-full" : "h-full"}`}>
@@ -139,6 +145,11 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
         list.length > 0 &&
         list.map((subList: IGroupByColumn) => {
           const groupByVisibilityToggle = visibilityGroupBy(subList);
+          const issueIds = isSubGroup
+            ? (groupedIssueIds as TSubGroupedIssues)?.[subList.id]?.[sub_group_id] ?? []
+            : (groupedIssueIds as TGroupedIssues)?.[subList.id] ?? [];
+          const issueLength = issueIds?.length as number;
+          const groupHeight = issueLength * appxCardHeight;
 
           if (groupByVisibilityToggle.showGroup === false) return <></>;
           return (
@@ -167,28 +178,44 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
               )}
 
               {groupByVisibilityToggle.showIssues && (
-                <KanbanGroup
-                  groupId={subList.id}
-                  issuesMap={issuesMap}
-                  groupedIssueIds={groupedIssueIds}
-                  displayProperties={displayProperties}
-                  sub_group_by={sub_group_by}
-                  group_by={group_by}
-                  orderBy={orderBy}
-                  sub_group_id={sub_group_id}
-                  isDragDisabled={isDragDisabled}
-                  isDropDisabled={!!subList.isDropDisabled || !!isDropDisabled}
-                  dropErrorMessage={subList.dropErrorMessage ?? dropErrorMessage}
-                  updateIssue={updateIssue}
-                  quickActions={quickActions}
-                  enableQuickIssueCreate={enableQuickIssueCreate}
-                  quickAddCallback={quickAddCallback}
-                  disableIssueCreation={disableIssueCreation}
-                  canEditProperties={canEditProperties}
-                  scrollableContainerRef={scrollableContainerRef}
-                  loadMoreIssues={loadMoreIssues}
-                  handleOnDrop={handleOnDrop}
-                />
+                <RenderIfVisible
+                  verticalOffset={0}
+                  horizontalOffset={100}
+                  root={scrollableContainerRef}
+                  classNames="relative h-full"
+                  defaultHeight={`${groupHeight}px`}
+                  placeholderChildren={
+                    <KanbanColumnLoader
+                      ignoreHeader
+                      cardHeight={appxCardHeight}
+                      cardsInColumn={issueLength !== undefined && issueLength < 3 ? issueLength : 3}
+                    />
+                  }
+                  useIdletime
+                >
+                  <KanbanGroup
+                    groupId={subList.id}
+                    issuesMap={issuesMap}
+                    groupedIssueIds={groupedIssueIds}
+                    displayProperties={displayProperties}
+                    sub_group_by={sub_group_by}
+                    group_by={group_by}
+                    orderBy={orderBy}
+                    sub_group_id={sub_group_id}
+                    isDragDisabled={isDragDisabled}
+                    isDropDisabled={!!subList.isDropDisabled || !!isDropDisabled}
+                    dropErrorMessage={subList.dropErrorMessage ?? dropErrorMessage}
+                    updateIssue={updateIssue}
+                    quickActions={quickActions}
+                    enableQuickIssueCreate={enableQuickIssueCreate}
+                    quickAddCallback={quickAddCallback}
+                    disableIssueCreation={disableIssueCreation}
+                    canEditProperties={canEditProperties}
+                    scrollableContainerRef={scrollableContainerRef}
+                    loadMoreIssues={loadMoreIssues}
+                    handleOnDrop={handleOnDrop}
+                  />
+                </RenderIfVisible>
               )}
             </div>
           );
@@ -196,3 +223,4 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     </div>
   );
 });
+
