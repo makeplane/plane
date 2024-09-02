@@ -215,6 +215,12 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                             id="search"
                             name="search"
                             type="text"
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                e.preventDefault();
+                                setSearchParams(formData.search);
+                              }
+                            }}
                             value={value}
                             onChange={(e) => setFormData({ ...formData, search: e.target.value })}
                             ref={ref}
