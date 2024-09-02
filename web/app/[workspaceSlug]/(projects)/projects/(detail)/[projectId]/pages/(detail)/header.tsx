@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { FileText } from "lucide-react";
 // types
 import { TLogoProps } from "@plane/types";
 // ui
-import { Breadcrumbs, Button, EmojiIconPicker, EmojiIconPickerTypes, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import { Breadcrumbs, EmojiIconPicker, EmojiIconPickerTypes, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 import { PageEditInformationPopover } from "@/components/pages";
@@ -27,17 +27,14 @@ export interface IPagesHeaderProps {
 export const PageDetailsHeader = observer(() => {
   // router
   const { workspaceSlug, pageId } = useParams();
-  const searchParams = useSearchParams();
   // state
   const [isOpen, setIsOpen] = useState(false);
   // store hooks
   const { currentProjectDetails, loader } = useProject();
   const page = usePage(pageId?.toString() ?? "");
-  const { isContentEditable, isSubmitting, name, logo_props, updatePageLogo } = page;
+  const { name, logo_props, updatePageLogo } = page;
   // use platform
-  const { isMobile, platform } = usePlatformOS();
-  // derived values
-  const isMac = platform === "MacOS";
+  const { isMobile } = usePlatformOS();
 
   const handlePageLogoUpdate = async (data: TLogoProps) => {
     if (data) {
@@ -60,7 +57,6 @@ export const PageDetailsHeader = observer(() => {
   };
 
   const pageTitle = getPageName(name);
-  const isVersionHistoryOverlayActive = !!searchParams.get("version");
 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
@@ -165,25 +161,6 @@ export const PageDetailsHeader = observer(() => {
       </div>
       <PageEditInformationPopover page={page} />
       <PageDetailsHeaderExtraActions />
-      {isContentEditable && !isVersionHistoryOverlayActive && (
-        <Button
-          variant="primary"
-          size="sm"
-          onClick={() => {
-            // ctrl/cmd + s to save the changes
-            const event = new KeyboardEvent("keydown", {
-              key: "s",
-              ctrlKey: !isMac,
-              metaKey: isMac,
-            });
-            window.dispatchEvent(event);
-          }}
-          className="flex-shrink-0 w-24"
-          loading={isSubmitting === "submitting"}
-        >
-          {isSubmitting === "submitting" ? "Saving" : "Save changes"}
-        </Button>
-      )}
     </div>
   );
 });

@@ -36,33 +36,34 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
     editorClassName = "",
     embedHandler,
     id,
-    initialValue,
     forwardedRef,
-    tabIndex,
     handleEditorReady,
+    initialValue,
     mentionHandler,
   } = props;
+  const extensions = [];
+  if (embedHandler?.issue) {
+    extensions.push(
+      IssueWidget({
+        widgetCallback: embedHandler.issue.widgetCallback,
+      })
+    );
+  }
+
   const editor = useReadOnlyEditor({
     editorClassName,
-    extensions: [
-      embedHandler?.issue &&
-        IssueWidget({
-          widgetCallback: embedHandler?.issue.widgetCallback,
-        }),
-    ],
+    extensions,
     forwardedRef,
     handleEditorReady,
     initialValue,
     mentionHandler,
   });
-
-  if (!editor) {
-    return null;
-  }
 
   const editorContainerClassName = getEditorClassNames({
     containerClassName,
   });
+
+  if (!editor) return null;
 
   return (
     <PageRenderer
@@ -70,7 +71,6 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
       editor={editor}
       editorContainerClassName={editorContainerClassName}
       id={id}
-      tabIndex={tabIndex}
     />
   );
 };
