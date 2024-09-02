@@ -43,9 +43,9 @@ export const updateIssue = async (issue: TIssue) => {
   addIssue(issue);
 };
 
-export const syncDeletesToLocal = async (workspaceId: string, projectId: string) => {
+export const syncDeletesToLocal = async (workspaceId: string, projectId: string, queries: any) => {
   const issueService = new IssueService();
-  const response = await issueService.getDeletedIssues(workspaceId, projectId);
+  const response = await issueService.getDeletedIssues(workspaceId, projectId, queries);
   if (Array.isArray(response)) {
     response.map(async (issue) => deleteIssueFromLocal(issue));
   }

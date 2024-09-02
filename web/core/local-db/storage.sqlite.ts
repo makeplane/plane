@@ -8,13 +8,12 @@ import { IssueService } from "@/services/issue/issue.service";
 //
 import { ARRAY_FIELDS } from "./utils/constants";
 import createIndexes from "./utils/indexes";
-import { addIssuesBulk } from "./utils/load-issues";
+import { addIssuesBulk, syncDeletesToLocal } from "./utils/load-issues";
 import { loadWorkSpaceData } from "./utils/load-workspace";
 import { issueFilterCountQueryConstructor, issueFilterQueryConstructor } from "./utils/query-constructor";
 import { runQuery } from "./utils/query-executor";
 import { createTables } from "./utils/tables";
 import { getGroupedIssueResults, getSubGroupedIssueResults } from "./utils/utils";
-
 
 declare module "@sqlite.org/sqlite-wasm" {
   export function sqlite3Worker1Promiser(...args: any): any;
@@ -200,6 +199,8 @@ export class Storage {
       }
     }
 
+    await syncDeletesToLocal(this.workspaceSlug, projectId, { updated_at__gt: syncedAt });
+
     console.log("### Time taken to add issues", performance.now() - start);
 
     if (status === "loading") {
@@ -332,13 +333,13 @@ export const persistence = new Storage();
 
 /**
  * format the issue fetched from local db into an issue
- * @param issue 
- * @returns 
+ * @param issue
+ * @returns
  */
-export const formatLocalIssue = (issue: any)  => {
+export const formatLocalIssue = (issue: any) => {
   const currIssue = issue;
   ARRAY_FIELDS.forEach((field: string) => {
     currIssue[field] = currIssue[field] ? JSON.parse(currIssue[field]) : [];
   });
   return currIssue as TIssue;
-}
+};
