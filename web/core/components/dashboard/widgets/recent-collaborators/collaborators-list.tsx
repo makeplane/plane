@@ -1,7 +1,7 @@
 "use client";
 
-import { observer } from "mobx-react";
 import sortBy from "lodash/sortBy";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
 // types
@@ -80,7 +80,7 @@ export const CollaboratorsList: React.FC<CollaboratorsListProps> = (props) => {
 
   if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
-  const sortedStats = sortBy(widgetStats, [(user) => user.user_id === currentUser?.id]);
+  const sortedStats = sortBy(widgetStats, [(user) => user.user_id !== currentUser?.id]);
 
   const filteredStats = sortedStats.filter((user) => {
     const { display_name, first_name, last_name } = getUserDetails(user.user_id) || {};
