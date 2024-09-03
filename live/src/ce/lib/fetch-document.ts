@@ -9,6 +9,6 @@ type TArgs = {
 }
 
 export const fetchDocument = async (args: TArgs): Promise<Uint8Array | null> => {
-  const {} = args;
-  throw Error("Fetch failed: Invalid document type provided.");
+  const { documentType } = args;
+  throw Error(`Fetch failed: Invalid document type ${documentType} provided.`);
 }

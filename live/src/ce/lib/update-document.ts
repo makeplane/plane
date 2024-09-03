@@ -1,3 +1,6 @@
+// types
+import { TDocumentTypes } from "@/core/types/common.js";
+
 type TArgs = {
   params: URLSearchParams;
   pageId: string;
@@ -6,6 +9,9 @@ type TArgs = {
 }
 
 export const updateDocument = (args: TArgs): Promise<void> => {
-  const {} = args;
-  throw Error("Update failed: Invalid document type provided.");
+  const { params } = args;
+  const documentType = params.get("documentType")?.toString() as
+    | TDocumentTypes
+    | undefined;
+  throw Error(`Update failed: Invalid document type ${documentType} provided.`);
 }
