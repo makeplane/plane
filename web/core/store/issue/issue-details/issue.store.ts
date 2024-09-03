@@ -97,7 +97,7 @@ export class IssueStore implements IIssueStore {
     else issue = await this.issueService.retrieve(workspaceSlug, projectId, issueId, query);
 
     if (!issue) throw new Error("Issue not found");
-
+    this.addIssueToStore(issue);
     const issuePayload: TIssue = {
       id: issue?.id,
       sequence_id: issue?.sequence_id,

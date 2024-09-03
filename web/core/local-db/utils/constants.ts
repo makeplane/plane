@@ -9,6 +9,7 @@ export const GROUP_BY_MAP = {
   issue_module__module_id: "module_ids",
   labels__id: "label_ids",
   assignees__id: "assignee_ids",
+  target_date: "target_date",
 };
 
 export const PRIORITY_MAP = {

@@ -1,3 +1,4 @@
+import { start } from "nprogress";
 import { ARRAY_FIELDS, GROUP_BY_MAP, PRIORITY_MAP } from "./constants";
 import { issueSchema } from "./schemas";
 import { wrapDateTime } from "./utils";
@@ -126,7 +127,11 @@ export const getFilteredRowsForGrouping = (projectId: string, queries: any) => {
   if (!joinsRequired) {
     sql = `WITH fi as (SELECT i.id,i.created_at ${issueTableFilterFields}`;
     if (group_by) {
-      sql += `, i.${group_by} as group_id`;
+      if (group_by === "target_date") {
+        sql += `, date(i.${group_by}) as group_id`;
+      } else {
+        sql += `, i.${group_by} as group_id`;
+      }
     }
     if (sub_group_by) {
       sql += `, i.${sub_group_by} as sub_group_id`;
@@ -140,6 +145,8 @@ export const getFilteredRowsForGrouping = (projectId: string, queries: any) => {
   if (group_by) {
     if (ARRAY_FIELDS.includes(group_by)) {
       sql += `, ${group_by}.value as group_id`;
+    } else if (group_by === "target_date") {
+      sql += `, date(i.${group_by}) as group_id`;
     } else {
       sql += `, i.${group_by} as group_id`;
     }
@@ -178,11 +185,20 @@ export const getFilteredRowsForGrouping = (projectId: string, queries: any) => {
 };
 
 export const singleFilterConstructor = (queries: any) => {
-  const { order_by, cursor, per_page, group_by, sub_group_by, sub_issue, ...filters } = translateQueryParams(queries);
+  const { order_by, cursor, per_page, group_by, sub_group_by, sub_issue, target_date, ...filters } =
+    translateQueryParams(queries);
 
   let sql = "";
   if (!sub_issue) {
     sql += ` AND parent_id IS NOT NULL `;
+  }
+  if (target_date) {
+    // "2024-09-29;after,2024-11-02;before"
+    const dates = target_date.split(",");
+    const start = dates[0].split(";")[0];
+    const end = dates[1].split(";")[0];
+
+    sql += ` AND target_date >= date('${start}') AND target_date <= date('${end}') `;
   }
   const keys = Object.keys(filters);
 
@@ -193,6 +209,8 @@ export const singleFilterConstructor = (queries: any) => {
       sql += ` AND ${key} in ('${value.join("','")}')`;
     }
   });
+  //
+
   return sql;
 };
 
