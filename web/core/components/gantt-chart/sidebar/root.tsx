@@ -1,11 +1,11 @@
 import { RefObject } from "react";
 import { observer } from "mobx-react";
 // components
-import { CustomRow } from "@plane/ui";
+import { Row, ERowVariant } from "@plane/ui";
 import { MultipleSelectGroupAction } from "@/components/core";
 import { ChartDataType, IBlockUpdateData, IGanttBlock } from "@/components/gantt-chart";
 // helpers
-import { cn, ERowVariant } from "@/helpers/common.helper";
+import { cn } from "@/helpers/common.helper";
 // hooks
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 // constants
@@ -45,7 +45,7 @@ export const GanttChartSidebar: React.FC<Props> = observer((props) => {
   const isGroupSelectionEmpty = selectionHelpers.isGroupSelected(GANTT_SELECT_GROUP) === "empty";
 
   return (
-    <CustomRow
+    <Row
       // DO NOT REMOVE THE ID
       id="gantt-sidebar"
       className="sticky left-0 z-10 min-h-full h-max flex-shrink-0 border-r-[0.5px] border-custom-border-200 bg-custom-background-100"
@@ -54,7 +54,7 @@ export const GanttChartSidebar: React.FC<Props> = observer((props) => {
       }}
       variant={ERowVariant.HUGGING}
     >
-      <CustomRow
+      <Row
         className="group/list-header box-border flex-shrink-0 flex items-end justify-between gap-2 border-b-[0.5px] border-custom-border-200 pb-2 pr-4 text-sm font-medium text-custom-text-300 sticky top-0 z-10 bg-custom-background-100"
         style={{
           height: `${HEADER_HEIGHT}px`,
@@ -78,9 +78,9 @@ export const GanttChartSidebar: React.FC<Props> = observer((props) => {
           <h6>{title}</h6>
         </div>
         <h6>Duration</h6>
-      </CustomRow>
+      </Row>
 
-      <CustomRow variant={ERowVariant.HUGGING} className="min-h-full h-max bg-custom-background-100 overflow-hidden">
+      <Row variant={ERowVariant.HUGGING} className="min-h-full h-max bg-custom-background-100 overflow-hidden">
         {sidebarToRender &&
           sidebarToRender({
             title,
@@ -94,8 +94,8 @@ export const GanttChartSidebar: React.FC<Props> = observer((props) => {
             loadMoreBlocks,
             selectionHelpers,
           })}
-      </CustomRow>
+      </Row>
       {quickAdd ? quickAdd : null}
-    </CustomRow>
+    </Row>
   );
 });

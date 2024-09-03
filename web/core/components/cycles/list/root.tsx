@@ -2,10 +2,9 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { Disclosure } from "@headlessui/react";
 // components
-import { ContentWrapper } from "@plane/ui";
+import { ContentWrapper, ERowVariant } from "@plane/ui";
 import { ListLayout } from "@/components/core/list";
 import { ActiveCycleRoot, CycleListGroupHeader, CyclePeekOverview, CyclesListMap } from "@/components/cycles";
-import { ERowVariant } from "@/helpers/common.helper";
 
 export interface ICyclesList {
   completedCycleIds: string[];

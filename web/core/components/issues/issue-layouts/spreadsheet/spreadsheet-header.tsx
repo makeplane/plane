@@ -3,7 +3,7 @@ import { useParams } from "next/navigation";
 // ui
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 // components
-import { CustomRow } from "@plane/ui";
+import { Row } from "@plane/ui";
 import { MultipleSelectGroupAction } from "@/components/core";
 import { SpreadsheetHeaderColumn } from "@/components/issues/issue-layouts";
 // constants
@@ -47,7 +47,7 @@ export const SpreadsheetHeader = observer((props: Props) => {
           className="group/list-header sticky left-0 z-[15] h-11 w-[28rem] flex items-center gap-1 bg-custom-background-90 text-sm font-medium before:absolute before:h-full before:right-0 before:border-custom-border-100"
           tabIndex={-1}
         >
-          <CustomRow>
+          <Row>
             {canSelectIssues && (
               <div className="flex-shrink-0 flex items-center w-3.5 mr-1 absolute left-1.5 py-[11px]">
                 <MultipleSelectGroupAction
@@ -63,7 +63,7 @@ export const SpreadsheetHeader = observer((props: Props) => {
               </div>
             )}
             <span className="flex h-full w-full flex-grow items-center py-2.5">Issues</span>
-          </CustomRow>
+          </Row>
         </th>
 
         {spreadsheetColumnsList.map((property) => (

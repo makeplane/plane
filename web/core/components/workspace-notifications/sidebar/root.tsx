@@ -4,7 +4,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
-import { Header, CustomRow, EHeaderVariant, ContentWrapper } from "@plane/ui";
+import { Header, Row, ERowVariant, EHeaderVariant, ContentWrapper } from "@plane/ui";
 import { CountChip } from "@/components/common";
 import {
   NotificationsLoader,
@@ -16,7 +16,7 @@ import {
 // constants
 import { NOTIFICATION_TABS } from "@/constants/notification";
 // helpers
-import { cn, ERowVariant } from "@/helpers/common.helper";
+import { cn } from "@/helpers/common.helper";
 import { getNumberCount } from "@/helpers/string.helper";
 // hooks
 import { useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
@@ -47,9 +47,9 @@ export const NotificationsSidebar: FC = observer(() => {
       )}
     >
       <div className="relative w-full h-full overflow-hidden flex flex-col">
-        <CustomRow className="h-[3.75rem] border-b border-custom-border-200 flex">
+        <Row className="h-[3.75rem] border-b border-custom-border-200 flex">
           <NotificationSidebarHeader workspaceSlug={workspaceSlug.toString()} />
-        </CustomRow>
+        </Row>
 
         <Header variant={EHeaderVariant.SECONDARY} className="flex">
           {NOTIFICATION_TABS.map((tab) => (

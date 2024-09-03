@@ -37,14 +37,3 @@ export const debounce = (func: any, wait: number, immediate: boolean = false) =>
 };
 
 export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
-
-export enum ERowVariant {
-  REGULAR = "regular",
-  HUGGING = "hugging",
-}
-
-export enum EHeaderVariant {
-  PRIMARY = "primary",
-  SECONDARY = "secondary",
-  TERNARY = "ternary",
-}

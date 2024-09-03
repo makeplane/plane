@@ -7,7 +7,7 @@ import { ChevronRight, MoreHorizontal } from "lucide-react";
 // types
 import { IIssueDisplayProperties, TIssue } from "@plane/types";
 // ui
-import { ControlLink, CustomRow, Tooltip } from "@plane/ui";
+import { ControlLink, Row, Tooltip } from "@plane/ui";
 // components
 import { MultipleSelectEntityAction } from "@/components/core";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
@@ -253,7 +253,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
           )}
           disabled={!!issueDetail?.tempId}
         >
-          <CustomRow className="flex item-center flex-row w-full">
+          <Row className="flex item-center flex-row w-full">
             <div className="flex items-center gap-0.5 min-w-min py-2.5">
               {/* select checkbox */}
               {projectId && canSelectIssues && (
@@ -345,7 +345,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
                 })}
               </div>
             </div>
-          </CustomRow>
+          </Row>
         </ControlLink>
       </td>
       {/* Rest of the columns */}

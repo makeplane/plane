@@ -16,7 +16,7 @@ import {
 // types
 import { IUserLite } from "@plane/types";
 // components
-import { CustomRow } from "@plane/ui";
+import { Row } from "@plane/ui";
 import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
 // helpers
 import { cn, LIVE_URL } from "@/helpers/common.helper";
@@ -136,7 +136,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
 
   return (
     <div className="flex items-center h-full w-full overflow-y-auto">
-      <CustomRow
+      <Row
         className={cn("sticky top-0 hidden h-full flex-shrink-0 -translate-x-full py-5 duration-200 md:block", {
           "translate-x-0": sidePeekVisible,
           "w-[10rem] lg:w-[14rem]": !isFullWidth,
@@ -149,7 +149,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             markings={markings}
           />
         )}
-      </CustomRow>
+      </Row>
       <div
         className={cn("h-full w-full pt-5 duration-200", {
           "md:w-[calc(100%-10rem)] xl:w-[calc(100%-28rem)]": !isFullWidth,

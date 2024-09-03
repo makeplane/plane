@@ -9,7 +9,7 @@ import { ChevronRight } from "lucide-react";
 // types
 import { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
 // ui
-import { Spinner, Tooltip, ControlLink, setToast, TOAST_TYPE, CustomRow } from "@plane/ui";
+import { Spinner, Tooltip, ControlLink, setToast, TOAST_TYPE, Row } from "@plane/ui";
 // components
 import { MultipleSelectEntityAction } from "@/components/core";
 import { IssueProperties } from "@/components/issues/issue-layouts/properties";
@@ -133,7 +133,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
   const keyMinWidth = ((projectIdentifier?.length ?? 0) + 5) * 7;
 
   return (
-    <CustomRow
+    <Row
       ref={issueRef}
       className={cn(
         "group/list-block min-h-11 relative flex flex-col gap-3 bg-custom-background-100 hover:bg-custom-background-90 py-3 text-sm transition-colors border border-transparent",
@@ -293,6 +293,6 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
           </div>
         )}
       </div>
-    </CustomRow>
+    </Row>
   );
 });

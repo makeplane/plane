@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 // types
 import { TIssue } from "@plane/types";
 // helpers
-import { CustomRow } from "@plane/ui";
+import { Row } from "@plane/ui";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -29,7 +29,7 @@ export const SpreadsheetSubIssueColumn: React.FC<Props> = observer((props: Props
   };
 
   return (
-    <CustomRow
+    <Row
       onClick={subIssueCount ? redirectToIssueDetail : () => {}}
       className={cn(
         "flex h-11 w-full items-center border-b-[0.5px] border-custom-border-200 py-1 text-xs hover:bg-custom-background-80 group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10",
@@ -39,6 +39,6 @@ export const SpreadsheetSubIssueColumn: React.FC<Props> = observer((props: Props
       )}
     >
       {subIssueCount} {subIssueCount === 1 ? "sub-issue" : "sub-issues"}
-    </CustomRow>
+    </Row>
   );
 });

@@ -1,7 +1,7 @@
 "use client";
 import React, { FC } from "react";
 // ui
-import { ControlLink, CustomRow, Tooltip } from "@plane/ui";
+import { ControlLink, Row, Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -51,7 +51,7 @@ export const ListItem: FC<IListItemProps> = (props) => {
 
   return (
     <div ref={parentRef} className="relative">
-      <CustomRow
+      <Row
         className={cn(
           "group min-h-[52px] flex w-full flex-col items-center justify-between gap-3 py-4 text-sm border-b border-custom-border-200 bg-custom-background-100 hover:bg-custom-background-90 ",
           {
@@ -93,7 +93,7 @@ export const ListItem: FC<IListItemProps> = (props) => {
             {actionableItems}
           </div>
         )}
-      </CustomRow>
+      </Row>
     </div>
   );
 };

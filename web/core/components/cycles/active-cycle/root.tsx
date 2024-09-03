@@ -5,7 +5,7 @@ import { Disclosure } from "@headlessui/react";
 // types
 import { IIssueFilterOptions } from "@plane/types";
 // ui
-import { CustomRow, Loader } from "@plane/ui";
+import { Row, Loader } from "@plane/ui";
 // components
 import {
   ActiveCycleProductivity,
@@ -57,7 +57,7 @@ export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) =
                       className="!border-b-transparent"
                     />
                   )}
-                  <CustomRow className="bg-custom-background-100 pt-3 pb-6">
+                  <Row className="bg-custom-background-100 pt-3 pb-6">
                     <div className="grid grid-cols-1 bg-custom-background-100 gap-3 lg:grid-cols-2 xl:grid-cols-3">
                       <ActiveCycleProgress
                         handleFiltersUpdate={handleFiltersUpdate}
@@ -79,7 +79,7 @@ export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) =
                         cycleIssueDetails={cycleIssueDetails as ActiveCycleIssueDetails}
                       />
                     </div>
-                  </CustomRow>
+                  </Row>
                 </div>
               )}
             </Disclosure.Panel>

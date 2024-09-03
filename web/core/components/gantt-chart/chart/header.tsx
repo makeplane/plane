@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import { Expand, Shrink } from "lucide-react";
 // hooks
 // helpers
-import { CustomRow } from "@plane/ui";
+import { Row } from "@plane/ui";
 import { VIEWS_LIST } from "@/components/gantt-chart/data";
 import { cn } from "@/helpers/common.helper";
 // types
@@ -27,7 +27,7 @@ export const GanttChartHeader: React.FC<Props> = observer((props) => {
   const { currentView } = useGanttChart();
 
   return (
-    <CustomRow className="relative flex w-full flex-shrink-0 flex-wrap items-center gap-2 whitespace-nowrap py-2">
+    <Row className="relative flex w-full flex-shrink-0 flex-wrap items-center gap-2 whitespace-nowrap py-2">
       <div className="ml-auto">
         <div className="ml-auto text-sm font-medium">
           {blockIds ? `${blockIds.length} ${loaderTitle}` : "Loading..."}
@@ -66,6 +66,6 @@ export const GanttChartHeader: React.FC<Props> = observer((props) => {
       >
         {fullScreenMode ? <Shrink className="h-4 w-4" /> : <Expand className="h-4 w-4" />}
       </button>
-    </CustomRow>
+    </Row>
   );
 });

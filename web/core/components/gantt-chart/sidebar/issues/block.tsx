@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 // components
-import { CustomRow } from "@plane/ui";
+import { Row } from "@plane/ui";
 import { MultipleSelectEntityAction } from "@/components/core";
 import { useGanttChart } from "@/components/gantt-chart/hooks";
 import { IssueGanttSidebarBlock } from "@/components/issues";
@@ -46,7 +46,7 @@ export const IssuesSidebarBlock = observer((props: Props) => {
       onMouseEnter={() => updateActiveBlockId(block.id)}
       onMouseLeave={() => updateActiveBlockId(null)}
     >
-      <CustomRow
+      <Row
         className={cn("group w-full flex items-center gap-2 pr-4", {
           "bg-custom-background-90": isBlockHoveredOn,
           "bg-custom-primary-100/5 hover:bg-custom-primary-100/10": isIssueSelected,
@@ -83,7 +83,7 @@ export const IssuesSidebarBlock = observer((props: Props) => {
             </div>
           )}
         </div>
-      </CustomRow>
+      </Row>
     </div>
   );
 });

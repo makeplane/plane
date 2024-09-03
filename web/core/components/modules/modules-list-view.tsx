@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 import { useParams, useSearchParams } from "next/navigation";
 // components
-import { ContentWrapper, CustomRow } from "@plane/ui";
+import { ContentWrapper, Row, ERowVariant } from "@plane/ui";
 import { ListLayout } from "@/components/core/list";
 import { EmptyState } from "@/components/empty-state";
 import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "@/components/modules";
@@ -10,7 +10,6 @@ import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 // hooks
-import { ERowVariant } from "@/helpers/common.helper";
 import { useCommandPalette, useEventTracker, useModule, useModuleFilter } from "@/hooks/store";
 import AllFiltersImage from "@/public/empty-state/module/all-filters.svg";
 import NameFilterImage from "@/public/empty-state/module/name-filter.svg";
@@ -81,7 +80,7 @@ export const ModulesListView: React.FC = observer(() => {
         </div>
       )}
       {displayFilters?.layout === "board" && (
-        <CustomRow className="flex h-full w-full justify-between py-page-y">
+        <Row className="flex h-full w-full justify-between py-page-y">
           <div
             className={`grid h-full w-full grid-cols-1 gap-6 overflow-y-auto ${
               peekModule
@@ -94,7 +93,7 @@ export const ModulesListView: React.FC = observer(() => {
             ))}
           </div>
           <ModulePeekOverview projectId={projectId?.toString() ?? ""} workspaceSlug={workspaceSlug?.toString() ?? ""} />
-        </CustomRow>
+        </Row>
       )}
       {displayFilters?.layout === "gantt" && <ModulesListGanttChartView />}
     </ContentWrapper>

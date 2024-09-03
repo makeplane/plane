@@ -1,6 +1,6 @@
 import * as React from "react";
 import { cn } from "../../helpers";
-import { CustomRow } from "../row";
+import { Row } from "../row";
 import { ERowVariant, TRowVariant } from "../row/helper";
 
 export interface ContentWrapperProps {
@@ -13,7 +13,7 @@ const ContentWrapper = (props: ContentWrapperProps) => {
   const { variant = ERowVariant.REGULAR, className = "", children, ...rest } = props;
 
   return (
-    <CustomRow
+    <Row
       variant={variant}
       className={cn(
         "flex flex-col vertical-scrollbar scrollbar-lg h-full w-full overflow-y-auto",
@@ -25,7 +25,7 @@ const ContentWrapper = (props: ContentWrapperProps) => {
       {...rest}
     >
       {children}
-    </CustomRow>
+    </Row>
   );
 };
 

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cn } from "../../helpers";
 import { EHeaderVariant, getHeaderStyle, THeaderVariant } from "./helper";
-import { ERowVariant, CustomRow } from "../row";
+import { ERowVariant, Row } from "../row";
 
 export interface HeaderProps {
   variant?: THeaderVariant;
@@ -15,13 +15,13 @@ const Header = (props: HeaderProps) => {
 
   const style = getHeaderStyle(variant, setHeight);
   return (
-    <CustomRow
+    <Row
       variant={variant === EHeaderVariant.PRIMARY ? ERowVariant.HUGGING : ERowVariant.REGULAR}
       className={cn(style, className)}
       {...rest}
     >
       {children}
-    </CustomRow>
+    </Row>
   );
 };
 

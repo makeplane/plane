@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // mobx store
 // components
-import { CustomRow } from "@plane/ui";
+import { Row, ERowVariant } from "@plane/ui";
 import {
   IssuePeekOverview,
   ModuleAppliedFiltersRoot,
@@ -16,7 +16,6 @@ import {
 } from "@/components/issues";
 // constants
 import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
-import { ERowVariant } from "@/helpers/common.helper";
 import { useIssues } from "@/hooks/store";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 // types
@@ -64,9 +63,9 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
     <IssuesStoreContext.Provider value={EIssuesStoreType.MODULE}>
       <div className="relative flex h-full w-full flex-col overflow-hidden">
         <ModuleAppliedFiltersRoot />
-        <CustomRow variant={ERowVariant.HUGGING} className="h-full w-full overflow-auto">
+        <Row variant={ERowVariant.HUGGING} className="h-full w-full overflow-auto">
           <ModuleIssueLayout activeLayout={activeLayout} moduleId={moduleId?.toString()} />
-        </CustomRow>
+        </Row>
         {/* peek overview */}
         <IssuePeekOverview />
       </div>
