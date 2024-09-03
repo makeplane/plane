@@ -76,6 +76,18 @@ services:
       - worker
       - web
 
+  live:
+    <<: *app-env
+    image: registry.plane.tools/plane/live-enterprise:${APP_RELEASE_VERSION}
+    pull_policy: if_not_present
+    restart: unless-stopped
+    command: node live/dist/server.js live
+    deploy:
+      replicas: ${LIVE_REPLICAS:-1}
+    depends_on:
+      - api
+      - web
+
   api:
     <<: *app-env
     image: registry.plane.tools/plane/backend-enterprise:${APP_RELEASE_VERSION}
@@ -144,6 +156,14 @@ services:
     restart: unless-stopped
     volumes:
       - ${INSTALL_DIR}/data/redis:/data
+
+  plane-mq:
+    <<: *app-env
+    image: registry.plane.tools/plane/rabbitmq:3.13.6-management-alpine
+    pull_policy: if_not_present
+    restart: unless-stopped
+    volumes:
+      - ${INSTALL_DIR}/data/mq:/var/lib/rabbitmq
 
   plane-minio:
     <<: *app-env
