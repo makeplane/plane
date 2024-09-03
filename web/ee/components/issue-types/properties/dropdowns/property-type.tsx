@@ -1,3 +1,4 @@
+import { observer } from "mobx-react";
 // ui
 import { CustomSearchSelect } from "@plane/ui";
 // helpers
@@ -25,7 +26,7 @@ type TPropertyTypeDropdownProps = {
   error?: string;
 };
 
-export const PropertyTypeDropdown = (props: TPropertyTypeDropdownProps) => {
+export const PropertyTypeDropdown = observer((props: TPropertyTypeDropdownProps) => {
   const {
     issueTypeId,
     propertyType,
@@ -76,4 +77,4 @@ export const PropertyTypeDropdown = (props: TPropertyTypeDropdownProps) => {
   ) : (
     <span className="px-2">{getIssuePropertyTypeDisplayName(propertyType, propertyRelationType)}</span>
   );
-};
+});

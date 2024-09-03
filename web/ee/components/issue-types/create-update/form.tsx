@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { observer } from "mobx-react";
 // ui
 import { Button, Input, TextArea } from "@plane/ui";
 // helpers
@@ -18,7 +19,7 @@ type Props = {
   handleFormSubmit: () => Promise<void>;
 };
 
-export const CreateOrUpdateIssueTypeForm: React.FC<Props> = (props) => {
+export const CreateOrUpdateIssueTypeForm: React.FC<Props> = observer((props) => {
   const { formData, isSubmitting, handleFormDataChange, handleModalClose, handleFormSubmit } = props;
   // state
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
@@ -54,7 +55,8 @@ export const CreateOrUpdateIssueTypeForm: React.FC<Props> = (props) => {
             isOpen={isEmojiPickerOpen}
             handleToggle={(val: boolean) => setIsEmojiPickerOpen(val)}
             icon_props={formData?.logo_props?.icon}
-            className="flex items-center justify-center flex-shrink0"
+            isDefaultIssueType={!!formData?.is_default}
+            className="flex items-center justify-center flex-shrink-0"
             iconContainerClassName="flex items-center justify-center"
             onChange={(value) => {
               handleFormDataChange("logo_props", {
@@ -103,4 +105,4 @@ export const CreateOrUpdateIssueTypeForm: React.FC<Props> = (props) => {
       </div>
     </form>
   );
-};
+});

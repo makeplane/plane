@@ -33,6 +33,7 @@ export const IssueTypeLogo: FC<Props> = (props) => {
   const { icon_props, size = "sm", containerClassName, isDefault = false } = props;
   // derived values
   const LucideIcon = LUCIDE_ICONS_LIST.find((item) => item.name === icon_props?.name);
+  const renderDefaultIcon = isDefault && (!icon_props?.name || !icon_props?.background_color);
 
   // if no value, return empty fragment
   if (!icon_props?.name && !isDefault) return <></>;
@@ -47,7 +48,7 @@ export const IssueTypeLogo: FC<Props> = (props) => {
         }}
         className={cn("flex-shrink-0 grid place-items-center rounded bg-custom-background-80", containerClassName)} // fallback background color
       >
-        {isDefault ? (
+        {renderDefaultIcon ? (
           <LayersIcon
             width={iconSizeMap[size]}
             height={iconSizeMap[size]}
