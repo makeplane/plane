@@ -40,9 +40,9 @@ export const getOrderByFragment = (order_by: string) => {
   if (!order_by) return orderByString;
 
   if (order_by.startsWith("-")) {
-    orderByString += ` ORDER BY ${wrapDateTime(order_by.slice(1))} DESC NULLS LAST, created_at DESC`;
+    orderByString += ` ORDER BY ${wrapDateTime(order_by.slice(1))} DESC NULLS LAST, i.created_at DESC`;
   } else {
-    orderByString += ` ORDER BY ${wrapDateTime(order_by)} ASC NULLS LAST, created_at DESC`;
+    orderByString += ` ORDER BY ${wrapDateTime(order_by)} ASC NULLS LAST, i.created_at DESC`;
   }
   return orderByString;
 };
