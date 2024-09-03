@@ -39,6 +39,7 @@ export interface IModuleStore {
   updateModuleDistribution: (distributionUpdates: DistributionUpdates, moduleId: string) => void;
   fetchWorkspaceModules: (workspaceSlug: string) => Promise<IModule[]>;
   fetchModules: (workspaceSlug: string, projectId: string) => Promise<undefined | IModule[]>;
+  fetchModulesSlim: (workspaceSlug: string, projectId: string) => Promise<undefined  | IModule[]>
   fetchArchivedModules: (workspaceSlug: string, projectId: string) => Promise<undefined | IModule[]>;
   fetchArchivedModuleDetails: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<IModule>;
   fetchModuleDetails: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<IModule>;
@@ -274,6 +275,32 @@ export class ModulesStore implements IModuleStore {
           this.loader = false;
         });
         return response;
+      });
+    } catch (error) {
+      this.loader = false;
+      return undefined;
+    }
+  };
+
+  /**
+   * @description fetch all modules
+   * @param workspaceSlug
+   * @param projectId
+   * @returns IModule[]
+   */
+  fetchModulesSlim = async (workspaceSlug: string, projectId: string) => {
+    try {
+      this.loader = true;
+      await this.moduleService.getWorkspaceModules(workspaceSlug).then((response) => {
+        const projectModules = response.filter((module) => module.project_id === projectId);
+        runInAction(() => {
+          projectModules.forEach((module) => {
+            set(this.moduleMap, [module.id], { ...this.moduleMap[module.id], ...module });
+          });
+          set(this.fetchedMap, projectId, true);
+          this.loader = false;
+        });
+        return projectModules;
       });
     } catch (error) {
       this.loader = false;
