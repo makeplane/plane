@@ -14,9 +14,9 @@ import { UserService } from "@/services/user.service";
 import { CoreRootStore } from "@/store/root.store";
 import { IAccountStore } from "@/store/user/account.store";
 import { ProfileStore, IUserProfileStore } from "@/store/user/profile.store";
-import { IUserMembershipStore, UserMembershipStore } from "@/store/user/user-membership.store";
 import { IUserPermissionStore, UserPermissionStore } from "./permissions.store";
 import { IUserSettingsStore, UserSettingsStore } from "./settings.store";
+import { TUserPermissions } from "@plane/types/src/enums";
 
 type TUserErrorStatus = {
   status: string;
@@ -33,7 +33,6 @@ export interface IUserStore {
   userProfile: IUserProfileStore;
   userSettings: IUserSettingsStore;
   accounts: Record<string, IAccountStore>;
-  membership: IUserMembershipStore;
   permission: IUserPermissionStore;
   // actions
   fetchCurrentUser: () => Promise<IUser | undefined>;
@@ -57,7 +56,6 @@ export class UserStore implements IUserStore {
   userProfile: IUserProfileStore;
   userSettings: IUserSettingsStore;
   accounts: Record<string, IAccountStore> = {};
-  membership: IUserMembershipStore;
   permission: IUserPermissionStore;
   // service
   userService: UserService;
@@ -67,7 +65,6 @@ export class UserStore implements IUserStore {
     // stores
     this.userProfile = new ProfileStore(store);
     this.userSettings = new UserSettingsStore();
-    this.membership = new UserMembershipStore(store);
     this.permission = new UserPermissionStore(store);
     // service
     this.userService = new UserService();
@@ -83,7 +80,7 @@ export class UserStore implements IUserStore {
       userProfile: observable,
       userSettings: observable,
       accounts: observable,
-      membership: observable,
+      permission: observable,
       // actions
       fetchCurrentUser: action,
       updateCurrentUser: action,
@@ -138,26 +135,6 @@ export class UserStore implements IUserStore {
       throw error;
     }
   };
-
-  /**
-   * @description fetches the prjects with write permissions
-   * @returns {{[projectId: string]: number} || null}
-   */
-  fetchProjectsWithCreatePermissions() {
-    const allWorkspaceRoles =
-      this.membership.workspaceProjectsRole &&
-      this.membership.workspaceProjectsRole[this.membership.router.workspaceSlug || ""];
-    return (
-      (allWorkspaceRoles &&
-        Object.keys(allWorkspaceRoles)
-          .filter((key) => allWorkspaceRoles[key] >= EUserPermissions.MEMBER)
-          .reduce(
-            (res: { [projectId: string]: number }, key: string) => ((res[key] = allWorkspaceRoles[key]), res),
-            {}
-          )) ||
-      null
-    );
-  }
 
   /**
    * @description updates the current user
@@ -239,7 +216,6 @@ export class UserStore implements IUserStore {
       this.data = undefined;
       this.userProfile = new ProfileStore(this.store);
       this.userSettings = new UserSettingsStore();
-      this.membership = new UserMembershipStore(this.store);
       this.permission = new UserPermissionStore(this.store);
     });
   };
@@ -251,6 +227,30 @@ export class UserStore implements IUserStore {
   signOut = async (): Promise<void> => {
     await this.authService.signOut(API_BASE_URL);
     this.store.resetOnSignOut();
+  };
+
+  // helper actions
+  /**
+   * @description fetches the prjects with write permissions
+   * @returns {{[projectId: string]: number} || null}
+   */
+  fetchProjectsWithCreatePermissions = (): { [key: string]: TUserPermissions } => {
+    const { workspaceSlug } = this.store.router;
+
+    const allWorkspaceProjectRoles =
+      this.permission.workspaceProjectsPermissions && this.permission.workspaceProjectsPermissions[workspaceSlug || ""];
+
+    const userPermissions =
+      (allWorkspaceProjectRoles &&
+        Object.keys(allWorkspaceProjectRoles)
+          .filter((key) => allWorkspaceProjectRoles[key] >= EUserPermissions.MEMBER)
+          .reduce(
+            (res: { [projectId: string]: number }, key: string) => ((res[key] = allWorkspaceProjectRoles[key]), res),
+            {}
+          )) ||
+      null;
+
+    return userPermissions;
   };
 
   /**

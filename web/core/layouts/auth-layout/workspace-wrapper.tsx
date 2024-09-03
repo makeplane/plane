@@ -32,7 +32,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   // next themes
   const { resolvedTheme } = useTheme();
   // store hooks
-  const { membership, signOut, data: currentUser } = useUser();
+  const { signOut, data: currentUser } = useUser();
   const { fetchProjects } = useProject();
   const { fetchFavorite } = useFavorite();
   const {
@@ -40,7 +40,8 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   } = useMember();
   const { workspaces } = useWorkspace();
   const { isMobile } = usePlatformOS();
-  const { fetchUserWorkspaceInfo, fetchUserProjectPermissions, allowPermissions } = useUserPermissions();
+  const { workspaceInfoBySlug, fetchUserWorkspaceInfo, fetchUserProjectPermissions, allowPermissions } =
+    useUserPermissions();
   // derived values
   const canPerformWorkspaceMemberActions = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -76,14 +77,6 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     workspaceSlug && currentWorkspace ? () => fetchWorkspaceMembers(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
-  // fetch workspace user projects role
-  useSWR(
-    workspaceSlug && currentWorkspace ? `WORKSPACE_PROJECTS_ROLE_${workspaceSlug}` : null,
-    workspaceSlug && currentWorkspace
-      ? () => membership.fetchUserWorkspaceProjectsRole(workspaceSlug.toString())
-      : null,
-    { revalidateIfStale: false, revalidateOnFocus: false }
-  );
   // fetch workspace favorite
   useSWR(
     workspaceSlug && currentWorkspace && canPerformWorkspaceMemberActions
@@ -105,6 +98,9 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     );
   };
 
+  // derived values
+  const currentWorkspaceInfo = workspaceSlug && workspaceInfoBySlug(workspaceSlug.toString());
+
   // if list of workspaces are not there then we have to render the spinner
   if (allWorkspaces === undefined) {
     return (
@@ -117,11 +113,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   }
 
   // if workspaces are there and we are trying to access the workspace that we are not part of then show the existing workspaces
-  if (
-    currentWorkspace === undefined &&
-    !membership.currentWorkspaceMemberInfo &&
-    membership.hasPermissionToCurrentWorkspace === undefined
-  ) {
+  if (currentWorkspace === undefined && !currentWorkspaceInfo) {
     return (
       <div className="relative flex h-screen w-full flex-col items-center justify-center bg-custom-background-90 ">
         <div className="container relative mx-auto flex h-full w-full flex-col overflow-hidden overflow-y-auto px-5 py-14 md:px-0">
@@ -168,10 +160,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   }
 
   // while user does not have access to view that workspace
-  if (
-    membership.hasPermissionToCurrentWorkspace !== undefined &&
-    membership.hasPermissionToCurrentWorkspace === false
-  ) {
+  if (currentWorkspaceInfo === undefined) {
     return (
       <div className={`h-screen w-full overflow-hidden bg-custom-background-100`}>
         <div className="grid h-full place-items-center p-4">
