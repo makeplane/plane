@@ -18,8 +18,6 @@ type Props = {
 export const handleAuthentication = async (props: Props) => {
   const { connection, cookie, params, token } = props;
   // params
-  const workspaceSlug = params.get("workspaceSlug")?.toString();
-  const projectId = params.get("projectId")?.toString();
   const documentType = params.get("documentType")?.toString() as
     | TDocumentTypes
     | undefined;
@@ -36,6 +34,9 @@ export const handleAuthentication = async (props: Props) => {
   }
 
   if (documentType === "project_page") {
+    // params
+    const workspaceSlug = params.get("workspaceSlug")?.toString();
+    const projectId = params.get("projectId")?.toString();
     if (!workspaceSlug || !projectId) {
       throw Error(
         "Authentication failed: Incomplete query params. Either workspaceSlug or projectId is missing."
@@ -56,6 +57,7 @@ export const handleAuthentication = async (props: Props) => {
     await authenticateUser({
       connection,
       cookie,
+      documentType,
       params
     });
   }
