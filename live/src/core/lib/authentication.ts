@@ -1,8 +1,10 @@
 import { ConnectionConfiguration } from "@hocuspocus/server";
 // services
-import { UserService } from "../services/user.service.js";
+import { UserService } from "@/core/services/user.service.js";
 // types
-import { TDocumentTypes } from "../types/common.js";
+import { TDocumentTypes } from "@/core/types/common.js";
+// plane live lib
+import { authenticateUser } from "@/plane-live/lib/authentication.js";
 
 const userService = new UserService();
 
@@ -51,7 +53,11 @@ export const handleAuthentication = async (props: Props) => {
       connection.readOnly = true;
     }
   } else {
-    throw Error("Authentication failed: Invalid document type provided.");
+    await authenticateUser({
+      connection,
+      cookie,
+      params
+    });
   }
 
   return {

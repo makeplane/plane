@@ -1,7 +1,7 @@
 // helpers
-import { getAllDocumentFormatsFromBinaryData, getBinaryDataFromHTMLString } from "../../core/helpers/page.js";
+import { getAllDocumentFormatsFromBinaryData, getBinaryDataFromHTMLString } from "@/core/helpers/page.js";
 // services
-import { PageService } from "../services/page.service.js";
+import { PageService } from "@/core/services/page.service.js";
 const pageService = new PageService();
 
 export const updatePageDescription = async (
