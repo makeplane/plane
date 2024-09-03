@@ -1,5 +1,3 @@
-# Python imports
-
 # Django imports
 from django.db.models import Q
 
@@ -97,6 +95,7 @@ class IssueSearchEndpoint(BaseAPIView):
                 "state__name",
                 "state__group",
                 "state__color",
+                "type_id",
             ),
             status=status.HTTP_200_OK,
         )

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import useSWR from "swr";
 import { Search } from "lucide-react";
 // types
 import { IWorkspaceBulkInviteFormData } from "@plane/types";
@@ -19,10 +20,14 @@ import { cn } from "@/helpers/common.helper";
 import { getUserRole } from "@/helpers/user.helper";
 // hooks
 import { useEventTracker, useMember, useUser, useWorkspace } from "@/hooks/store";
+// services
+import { UpdateWorkspaceSeatsModal } from "@/plane-web/components/workspace";
+import selfHostedSubscriptionService from "@/plane-web/services/self-hosted-subscription.service";
 
 const WorkspaceMembersSettingsPage = observer(() => {
   // states
   const [inviteModal, setInviteModal] = useState(false);
+  const [updateWorkspaceSeatsModal, setUpdateWorkspaceSeatsModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   // router
   const { workspaceSlug } = useParams();
@@ -38,6 +43,11 @@ const WorkspaceMembersSettingsPage = observer(() => {
     workspace: { inviteMembersToWorkspace },
   } = useMember();
   const { currentWorkspace } = useWorkspace();
+  // swr
+  const { data: memberInviteCheckData } = useSWR(
+    workspaceSlug ? `SELF_HOSTED_MEMBER_INVITE_CHECK_${workspaceSlug}` : null,
+    () => (workspaceSlug ? selfHostedSubscriptionService.memberInviteCheck(workspaceSlug?.toString()) : null)
+  );
 
   const handleWorkspaceInvite = (data: IWorkspaceBulkInviteFormData) => {
     if (!workspaceSlug) return;
@@ -90,6 +100,16 @@ const WorkspaceMembersSettingsPage = observer(() => {
     return <NotAuthorizedView section="settings" />;
   }
 
+  if (!memberInviteCheckData) return null;
+
+  const handleAddMember = () => {
+    if (memberInviteCheckData?.invite_allowed) {
+      setInviteModal(true);
+    } else {
+      setUpdateWorkspaceSeatsModal(true);
+    }
+  };
+
   return (
     <>
       <PageHead title={pageTitle} />
@@ -97,6 +117,10 @@ const WorkspaceMembersSettingsPage = observer(() => {
         isOpen={inviteModal}
         onClose={() => setInviteModal(false)}
         onSubmit={handleWorkspaceInvite}
+      />
+      <UpdateWorkspaceSeatsModal
+        isOpen={updateWorkspaceSeatsModal}
+        onClose={() => setUpdateWorkspaceSeatsModal(false)}
       />
       <section
         className={cn("w-full overflow-y-auto md:pr-9 pr-4", {
@@ -116,7 +140,12 @@ const WorkspaceMembersSettingsPage = observer(() => {
             />
           </div>
           {canPerformWorkspaceAdminActions && (
-            <Button variant="primary" size="sm" onClick={() => setInviteModal(true)}>
+            <Button variant="primary" size="sm" onClick={() => setUpdateWorkspaceSeatsModal(true)}>
+              Add seats
+            </Button>
+          )}
+          {canPerformWorkspaceAdminActions && (
+            <Button variant="primary" size="sm" onClick={handleAddMember}>
               Add member
             </Button>
           )}
