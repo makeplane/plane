@@ -105,7 +105,7 @@ export const CycleForm: React.FC<Props> = (props) => {
                   inputSize="md"
                   onChange={onChange}
                   hasError={Boolean(errors?.name)}
-                  tabIndex={1}
+                  tabIndex={getTabIndex("description", ETabIndices.PROJECT_CYCLE, isMobile)}
                   autoFocus
                 />
               )}
@@ -124,7 +124,7 @@ export const CycleForm: React.FC<Props> = (props) => {
                   hasError={Boolean(errors?.description)}
                   value={value}
                   onChange={onChange}
-                  tabIndex={getTabIndex("name", ETabIndices.PROJECT_CYCLE, isMobile)}
+                  tabIndex={getTabIndex("description", ETabIndices.PROJECT_CYCLE, isMobile)}
                 />
               )}
             />

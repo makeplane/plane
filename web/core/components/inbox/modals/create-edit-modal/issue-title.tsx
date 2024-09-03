@@ -4,6 +4,12 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { TIssue } from "@plane/types";
 import { Input } from "@plane/ui";
+// constants
+import { ETabIndices } from "@/constants/tab-indices";
+// helpers
+import { getTabIndex } from "@/helpers/tab-indices.helper";
+// hooks
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type TInboxIssueTitle = {
   data: Partial<TIssue>;
@@ -13,7 +19,8 @@ type TInboxIssueTitle = {
 
 export const InboxIssueTitle: FC<TInboxIssueTitle> = observer((props) => {
   const { data, handleData, isTitleLengthMoreThan255Character } = props;
-
+  // hooks
+  const { isMobile } = usePlatformOS();
   return (
     <div className="space-y-1">
       <Input
@@ -24,6 +31,7 @@ export const InboxIssueTitle: FC<TInboxIssueTitle> = observer((props) => {
         onChange={(e) => handleData("name", e.target.value)}
         placeholder="Title"
         className="w-full text-base"
+        tabIndex={getTabIndex("name", ETabIndices.INTAKE_ISSUE_FORM, isMobile)}
         required
       />
       {isTitleLengthMoreThan255Character && (

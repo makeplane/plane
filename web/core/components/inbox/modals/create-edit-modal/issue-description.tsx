@@ -10,10 +10,14 @@ import { TIssue } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text-editor/rich-text-editor";
+// constants
+import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
+import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useProjectInbox } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type TInboxIssueDescription = {
   containerClassName?: string;
@@ -32,6 +36,7 @@ export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props
     props;
   // hooks
   const { loader } = useProjectInbox();
+  const { isMobile } = usePlatformOS();
 
   if (loader === "issue-loading")
     return (
@@ -53,6 +58,7 @@ export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props
       placeholder={getDescriptionPlaceholder}
       containerClassName={containerClassName}
       onEnterKeyPress={onEnterKeyPress}
+      tabIndex={getTabIndex("description_html", ETabIndices.INTAKE_ISSUE_FORM, isMobile)}
     />
   );
 });

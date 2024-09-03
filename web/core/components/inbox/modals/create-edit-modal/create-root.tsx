@@ -16,12 +16,15 @@ import {
 } from "@/components/inbox/modals/create-edit-modal";
 // constants
 import { ISSUE_CREATED } from "@/constants/event-tracker";
+import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useEventTracker, useProjectInbox, useWorkspace } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useKeypress from "@/hooks/use-keypress";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type TInboxIssueCreateRoot = {
   workspaceSlug: string;
@@ -53,6 +56,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
   const { createInboxIssue } = useProjectInbox();
   const { getWorkspaceBySlug } = useWorkspace();
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
+  const { isMobile } = usePlatformOS();
   // states
   const [createMore, setCreateMore] = useState<boolean>(false);
   const [formSubmitting, setFormSubmitting] = useState(false);
@@ -180,6 +184,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
           className="inline-flex items-center gap-1.5 cursor-pointer"
           onClick={() => setCreateMore((prevData) => !prevData)}
           role="button"
+          tabIndex={getTabIndex("create_more", ETabIndices.INTAKE_ISSUE_FORM, isMobile)}
         >
           <ToggleSwitch value={createMore} onChange={() => {}} size="sm" />
           <span className="text-xs">Create more</span>
@@ -200,6 +205,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
                 });
               }
             }}
+            tabIndex={getTabIndex("discard_button", ETabIndices.INTAKE_ISSUE_FORM, isMobile)}
           >
             Discard
           </Button>
@@ -210,6 +216,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
             type="submit"
             loading={formSubmitting}
             disabled={isTitleLengthMoreThan255Character}
+            tabIndex={getTabIndex("submit_button", ETabIndices.INTAKE_ISSUE_FORM, isMobile)}
           >
             {formSubmitting ? "Creating" : "Create Issue"}
           </Button>

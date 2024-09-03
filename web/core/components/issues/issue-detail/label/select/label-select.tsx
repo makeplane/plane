@@ -5,6 +5,7 @@ import { Check, Search, Tag } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // hooks
 import { useLabel } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
 
 export interface IIssueLabelSelect {
@@ -18,6 +19,7 @@ export interface IIssueLabelSelect {
 export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) => {
   const { workspaceSlug, projectId, issueId, values, onSelect } = props;
   // store hooks
+  const { isMobile } = usePlatformOS();
   const { fetchProjectLabels, getProjectLabels } = useLabel();
   // states
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
@@ -123,6 +125,7 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
                   placeholder="Search"
                   displayValue={(assigned: any) => assigned?.name}
                   onKeyDown={searchInputKeyDown}
+                  tabIndex={isMobile ? -1 : 1}
                 />
               </div>
             </div>
