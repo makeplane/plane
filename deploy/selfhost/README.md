@@ -55,14 +55,14 @@ Installing plane is a very easy and minimal step process.
 - User context used must have access to docker services. In most cases, use sudo su to switch as root user
 - Use the terminal (or gitbash) window to run all the future steps
 
-### Downloading Latest Stable Release
+### Downloading Latest Release
 
 ```
-mkdir plane-selfhost
+mkdir -p plane-selfhost && cd plane-selfhost
 
-cd plane-selfhost
+RELEASE_VERSION=<vX.XX-dev>
 
-curl -fsSL -o setup.sh https://raw.githubusercontent.com/makeplane/plane/master/deploy/selfhost/install.sh
+curl -fsSL -o setup.sh https://github.com/makeplane/plane/releases/download/${RELEASE_VERSION}/setup.sh
 
 chmod +x setup.sh
 ```
@@ -106,11 +106,15 @@ Again the `options [1-8]` will be popped up and this time hit `8` to exit.
 Before proceeding, we suggest used to review `.env` file and set the values.
 Below are the most import keys you must refer to. _<span style="color: #fcba03">You can use any text editor to edit this file</span>_.
 
-> `NGINX_PORT` - This is default set to `80`. Make sure the port you choose to use is not preoccupied. (e.g `NGINX_PORT=8080`)
+> `APP_DOMAIN` - Set the Fully Qualified Domain Name here. (eg. `plane.example.com`)
 
-> `WEB_URL` - This is default set to `http://localhost`. Change this to the FQDN you plan to use along with NGINX_PORT (eg. `https://plane.example.com:8080` or `http://[IP-ADDRESS]:8080`)
+> `LISTEN_PORT` - This is default set to `80`. Make sure the port you choose to use is not preoccupied. (e.g `LISTEN_PORT=8080`)
 
-> `CORS_ALLOWED_ORIGINS` - This is default set to `http://localhost`. Change this to the FQDN you plan to use along with NGINX_PORT (eg. `https://plane.example.com:8080` or `http://[IP-ADDRESS]:8080`)
+> `LISTEN_SSL_PORT` - This is default set to `443`. Make sure the port you choose to use is not preoccupied. (e.g `LISTEN_SSL_PORT=8443`)
+
+> `WEB_URL` - This is default set to `http://localhost`. Change this to the FQDN you plan to use along with LISTEN_PORT/LISTEN_SSL_PORT (eg. `https://plane.example.com:8443` or `http://[IP-ADDRESS]:8080`)
+
+> `CORS_ALLOWED_ORIGINS` - This is default set to `http://${APP_DOMAIN},https://${APP_DOMAIN}`. Change this to the FQDN you plan to use along with LISTEN_PORT and  LISTEN_SSL_PORT (eg. `http://plane.example.com:8080,https://plane.example.com:8443`)
 
 There are many other settings you can play with, but we suggest you configure `EMAIL SETTINGS` as it will enable you to invite your teammates onto the platform.
 
@@ -133,6 +137,8 @@ Select a Action you want to perform:
 
 Action [2]: 2
 ```
+
+> You can also choose to run `./setup.sh start` as direct command.
 
 Expect something like this.  
 ![Downloading docker images](images/download.png)
@@ -167,6 +173,8 @@ Select a Action you want to perform:
 Action [2]: 3
 ```
 
+> You can also choose to run `./setup.sh stop` as direct command.
+
 If all goes well, you must see something like this
 
 ![Stop Services](images/stopped.png)
@@ -193,6 +201,8 @@ Select a Action you want to perform:
 Action [2]: 4
 ```
 
+> You can also choose to run `./setup.sh restart` as direct command.
+
 If all goes well, you must see something like this
 
 ![Restart Services](images/restart.png)
@@ -218,6 +228,8 @@ Select a Action you want to perform:
 
 Action [2]: 5
 ```
+
+> You can also choose to run `./setup.sh upgrade` as direct command.
 
 By choosing this, it will stop the services and then will download the latest `docker-compose.yaml` and `plane.env`.
 
@@ -253,6 +265,7 @@ Select a Action you want to perform:
 Action [2]: 6
 ```
 
+> You can also choose to run `./setup.sh logs` as direct command.
 
 This will further open sub-menu with list of services
 ```bash
@@ -343,6 +356,8 @@ Select a Action you want to perform:
 Action [2]: 7
 ```
 
+> You can also choose to run `./setup.sh backup` as direct command.
+
 In response, you can find the backup folder
 
 ```bash
@@ -364,7 +379,8 @@ When you want to restore the previously backed-up data, follow the instructions 
 1. Download the restore script using the command below. We suggest downloading it in the same folder as `setup.sh`.
 
    ```bash
-   curl -fsSL -o restore.sh https://raw.githubusercontent.com/makeplane/plane/master/deploy/selfhost/restore.sh
+   RELEASE_VERSION=<vX.XX-dev>
+   curl -fsSL -o restore.sh https://github.com/makeplane/plane/releases/download/${RELEASE_VERSION}/restore.sh
    chmod +x restore.sh
    ```
 

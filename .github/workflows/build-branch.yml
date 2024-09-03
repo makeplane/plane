@@ -388,3 +388,13 @@ jobs:
           asset_path: ./deploy/selfhost/install.sh
           asset_name: setup.sh
           asset_content_type: application/octet-stream
+
+      - name: Upload restore.sh
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./deploy/selfhost/restore.sh
+          asset_name: restore.sh
+          asset_content_type: application/octet-stream
