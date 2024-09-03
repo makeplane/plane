@@ -107,13 +107,13 @@ Before proceeding, we suggest used to review `.env` file and set the values.
 Below are the most import keys you must refer to. _<span style="color: #fcba03">You can use any text editor to edit this file</span>_.
 
 > `APP_DOMAIN` - Set the Fully Qualified Domain Name here. (eg. `plane.example.com`)
-
+> 
 > `LISTEN_PORT` - This is default set to `80`. Make sure the port you choose to use is not preoccupied. (e.g `LISTEN_PORT=8080`)
-
+> 
 > `LISTEN_SSL_PORT` - This is default set to `443`. Make sure the port you choose to use is not preoccupied. (e.g `LISTEN_SSL_PORT=8443`)
-
+> 
 > `WEB_URL` - This is default set to `http://localhost`. Change this to the FQDN you plan to use along with LISTEN_PORT/LISTEN_SSL_PORT (eg. `https://plane.example.com:8443` or `http://[IP-ADDRESS]:8080`)
-
+> 
 > `CORS_ALLOWED_ORIGINS` - This is default set to `http://${APP_DOMAIN},https://${APP_DOMAIN}`. Change this to the FQDN you plan to use along with LISTEN_PORT and  LISTEN_SSL_PORT (eg. `http://plane.example.com:8080,https://plane.example.com:8443`)
 
 There are many other settings you can play with, but we suggest you configure `EMAIL SETTINGS` as it will enable you to invite your teammates onto the platform.
