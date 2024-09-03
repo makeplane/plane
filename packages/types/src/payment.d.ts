@@ -29,4 +29,10 @@ export type IWorkspaceProductSubscription = {
   has_activated_free_trial: boolean;
   has_added_payment_method: boolean;
   subscription: string | undefined;
+  is_on_trial: boolean;
+  is_trial_allowed: boolean;
+  remaining_trial_days: number | null;
+  has_upgraded: boolean;
+  show_payment_button: boolean;
+  show_trial_banner: boolean;
 };

@@ -213,35 +213,26 @@ export const ProPlanCloudUpgradeModal: FC<ProPlanCloudUpgradeModalProps> = (prop
     (orderBy(proProduct?.prices || [], ["recurring"], ["desc"])?.find((price) => price.recurring === "year")
       ?.unit_amount || 0) / 1200;
   const yearlyDiscount = calculateYearlyDiscount(monthlyPrice, yearlyPrice);
-  const isInTrailPeriod =
-    subscriptionDetail?.has_activated_free_trial &&
-    subscriptionDetail?.subscription &&
-    subscriptionDetail?.trial_end_date &&
-    new Date(subscriptionDetail.trial_end_date) >= new Date();
-  const isTrialCompleted =
-    subscriptionDetail &&
-    !subscriptionDetail.subscription &&
-    subscriptionDetail.has_activated_free_trial &&
-    subscriptionDetail.product === "FREE"
-      ? true
-      : false;
 
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} width={EModalWidth.XXL} className="rounded-xl">
       <div className="py-6 px-10 max-h-[90vh] sm:max-h-[95vh] overflow-auto">
-        {isInTrailPeriod && (
+        {subscriptionDetail?.is_on_trial && (
           <div className="relative flex justify-center items-center">
-            <div className="p-1 px-2 uppercase bg-custom-primary-100/20 text-custom-primary-100 text-xs rounded-full font-medium">
-              Free Trial
+            <div className="p-1 px-2 bg-custom-primary-100/20 text-custom-primary-100 text-xs rounded-full font-medium">
+              Pro trial in progress
             </div>
           </div>
         )}
-        <Dialog.Title as="h2" className="text-2xl font-bold leading-6 mt-6 flex justify-center items-center">
+        <Dialog.Title
+          as="h2"
+          className="text-2xl font-bold leading-6 mt-4 flex justify-center items-center text-center"
+        >
           Upgrade to Pro, yearly for flat {yearlyDiscount}% off.
         </Dialog.Title>
-        <div className="mt-3 mb-12">
+        <div className="mt-3 mb-8">
           <p className="text-center text-sm mb-4 px-10 text-custom-text-100">
-            Pro unlocks everything that teams need to make progress and move work forward.Upgrade today and get&nbsp;
+            Pro unlocks everything that teams need to make progress and move work forward. Upgrade today and get&nbsp;
             {yearlyDiscount}% off on your yearly bill.
           </p>
           <p className="text-center text-sm text-custom-primary-200 font-semibold underline">
@@ -274,15 +265,13 @@ export const ProPlanCloudUpgradeModal: FC<ProPlanCloudUpgradeModalProps> = (prop
             features={PRO_PLAN_FEATURES_MAP}
             isLoading={isLoading}
             handlePaymentLink={(priceId: string) =>
-              isInTrailPeriod && !isTrialCompleted
-                ? handleSubscriptionPageRedirection(priceId)
-                : handlePaymentLink(priceId)
+              subscriptionDetail?.is_on_trial ? handleSubscriptionPageRedirection(priceId) : handlePaymentLink(priceId)
             }
             yearlyPlanOnly={yearlyPlan}
             trialLoader={trialLoader}
             handleTrial={handleTrial}
             yearlyDiscount={yearlyDiscount}
-            showTrialButton={!isInTrailPeriod && !isTrialCompleted}
+            showTrialButton={subscriptionDetail?.is_trial_allowed}
           />
         )}
       </div>

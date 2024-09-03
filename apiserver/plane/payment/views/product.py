@@ -165,6 +165,7 @@ class WorkspaceProductEndpoint(BaseAPIView):
 
 
 class WorkspaceLicenseRefreshEndpoint(BaseAPIView):
+
     def post(self, request, slug):
         # Resync the workspace license
         _ = resync_workspace_license(workspace_slug=slug, force=True)
