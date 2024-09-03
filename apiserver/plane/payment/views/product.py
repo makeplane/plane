@@ -21,6 +21,8 @@ from plane.ee.models import WorkspaceLicense
 from plane.utils.exception_logger import log_exception
 from plane.payment.utils.workspace_license_request import (
     resync_workspace_license,
+    is_billing_active,
+    is_on_trial,
 )
 
 
@@ -93,36 +95,55 @@ class WebsiteUserWorkspaceEndpoint(BaseAPIView):
     def get(self, request):
         try:
             # Get all the workspaces where the user is admin
-            workspace_ids = WorkspaceMember.objects.filter(
-                member=request.user,
-                is_active=True,
-                role=20,
-            ).values_list("workspace_id", flat=True)
-
-            # Fetch the workspaces from the workspace license
-            workspace_licenses = (
-                WorkspaceLicense.objects.filter(workspace_id__in=workspace_ids)
-                .annotate(slug=F("workspace__slug"))
-                .annotate(name=F("workspace__name"))
-                .annotate(logo=F("workspace__logo"))
-                .annotate(product=F("plan"))
+            workspaces = (
+                WorkspaceMember.objects.filter(
+                    member=request.user,
+                    is_active=True,
+                    role=20,
+                )
+                .annotate(
+                    slug=F("workspace__slug"),
+                    logo=F("workspace__logo"),
+                    name=F("workspace__name"),
+                )
                 .values(
                     "workspace_id",
                     "slug",
                     "name",
                     "logo",
-                    "product",
-                    "trial_end_date",
-                    "has_activated_free_trial",
-                    "has_added_payment_method",
-                    "current_period_end_date",
-                    "is_offline_payment",
-                    "subscription",
                 )
             )
 
+            workspace_ids = [workspace["workspace_id"] for workspace in workspaces]
+            
+
+            # Fetch the workspaces from the workspace license
+            workspace_licenses = WorkspaceLicense.objects.filter(
+                workspace_id__in=workspace_ids
+            )
+
+            for workspace in workspaces:
+                licenses = [
+                    license
+                    for license in workspace_licenses
+                    if str(license.workspace_id) == str(workspace["workspace_id"])
+                ]
+
+                if licenses:
+                    workspace["product"] = licenses[0].plan
+                    workspace["is_on_trial"] = is_on_trial(
+                        licenses[0]
+                    )
+                    workspace["is_billing_active"] = is_billing_active(
+                        licenses[0]
+                    )
+                else:
+                    workspace["product"] = "FREE"
+                    workspace["is_on_trial"] = False
+                    workspace["is_billing_active"] = False
+
             # Get the workspace details
-            return Response(workspace_licenses, status=status.HTTP_200_OK)
+            return Response(workspaces, status=status.HTTP_200_OK)
 
         except requests.exceptions.RequestException as e:
             if e.response.status_code == 400:
@@ -165,7 +186,6 @@ class WorkspaceProductEndpoint(BaseAPIView):
 
 
 class WorkspaceLicenseRefreshEndpoint(BaseAPIView):
-
     def post(self, request, slug):
         # Resync the workspace license
         _ = resync_workspace_license(workspace_slug=slug, force=True)

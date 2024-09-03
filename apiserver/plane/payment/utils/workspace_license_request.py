@@ -13,7 +13,6 @@ from plane.ee.models import WorkspaceLicense
 
 
 def fetch_workspace_license(workspace_id, workspace_slug, free_seats=12):
-
     # If the number of free seats is less than 12, set it to 12
     workspace_free_seats = 12 if free_seats <= 12 else free_seats
     owner_email = Workspace.objects.get(slug=workspace_slug).owner.email
@@ -78,6 +77,7 @@ def is_on_trial(workspace_license):
     "Check if the workspace is on a trial"
     if (
         workspace_license.subscription
+        and not has_upgraded(workspace_license)
         and workspace_license.trial_end_date
         and workspace_license.trial_end_date >= timezone.now()
     ):
@@ -89,11 +89,27 @@ def trial_remaining_days(workspace_license):
     """Calculate the remaining days of the trial"""
     if (
         workspace_license.subscription
+        and not has_upgraded(workspace_license)
         and workspace_license.trial_end_date
         and workspace_license.trial_end_date >= timezone.now()
     ):
         return (workspace_license.trial_end_date - timezone.now()).days
     return None
+
+
+def is_billing_active(workspace_license):
+    """Check if the billing is active"""
+
+    if workspace_license.plan == WorkspaceLicense.PlanChoice.FREE:
+        return False
+
+    if (
+        workspace_license.plan == WorkspaceLicense.PlanChoice.PRO
+        and is_on_trial(workspace_license)
+    ):
+        return False
+
+    return True
 
 
 def show_payment_button(workspace_license):
@@ -135,7 +151,6 @@ def resync_workspace_license(workspace_slug, force=False):
         if (
             workspace_license.last_synced_at - timezone.now()
         ).total_seconds() > 3600 or force:
-
             # Fetch the workspace license
             response = fetch_workspace_license(
                 workspace_id=str(workspace.id),
