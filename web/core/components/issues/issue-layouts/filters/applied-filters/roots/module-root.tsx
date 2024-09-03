@@ -76,7 +76,7 @@ export const ModuleAppliedFiltersRoot: React.FC = observer(() => {
   if (!workspaceSlug || !projectId || !moduleId || Object.keys(appliedFilters).length === 0) return null;
 
   return (
-    <CustomHeader variant={EHeaderVariant.ternary}>
+    <CustomHeader variant={EHeaderVariant.TERNARY}>
       <CustomHeader.LeftItem>
         <AppliedFiltersList
           appliedFilters={appliedFilters}

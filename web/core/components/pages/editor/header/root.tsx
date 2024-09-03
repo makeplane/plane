@@ -11,30 +11,30 @@ import { usePageFilters } from "@/hooks/use-page-filters";
 import { IPage } from "@/store/pages/page";
 
 type Props = {
+  editorReady: boolean;
   editorRef: React.RefObject<EditorRefApi>;
-  readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
   handleDuplicatePage: () => void;
+  hasConnectionFailed: boolean;
   markings: IMarking[];
   page: IPage;
-  sidePeekVisible: boolean;
-  setSidePeekVisible: (sidePeekState: boolean) => void;
-  editorReady: boolean;
   readOnlyEditorReady: boolean;
-  handleSaveDescription: (forceSync?: boolean, initSyncVectorAsUpdate?: Uint8Array | undefined) => Promise<void>;
+  readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
+  setSidePeekVisible: (sidePeekState: boolean) => void;
+  sidePeekVisible: boolean;
 };
 
 export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
   const {
-    editorRef,
-    readOnlyEditorRef,
     editorReady,
-    markings,
-    readOnlyEditorReady,
+    editorRef,
     handleDuplicatePage,
+    hasConnectionFailed,
+    markings,
     page,
-    sidePeekVisible,
+    readOnlyEditorReady,
+    readOnlyEditorRef,
     setSidePeekVisible,
-    handleSaveDescription,
+    sidePeekVisible,
   } = props;
   // derived values
   const { isContentEditable } = page;
@@ -45,7 +45,7 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <CustomHeader variant={EHeaderVariant.secondary} className="hidden md:flex justify-between">
+      <CustomHeader variant={EHeaderVariant.SECONDARY} className="hidden md:flex justify-between">
         <div className={cn("flex-shrink-0 my-auto")}>
           <PageSummaryPopover
             editorRef={isContentEditable ? editorRef.current : readOnlyEditorRef.current}
@@ -61,20 +61,20 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
         <PageExtraOptions
           editorRef={editorRef}
           handleDuplicatePage={handleDuplicatePage}
-          handleSaveDescription={handleSaveDescription}
+          hasConnectionFailed={hasConnectionFailed}
           page={page}
           readOnlyEditorRef={readOnlyEditorRef}
         />
       </CustomHeader>
       <div className="md:hidden">
         <PageEditorMobileHeaderRoot
-          handleSaveDescription={handleSaveDescription}
           editorRef={editorRef}
           readOnlyEditorRef={readOnlyEditorRef}
           editorReady={editorReady}
           readOnlyEditorReady={readOnlyEditorReady}
           markings={markings}
           handleDuplicatePage={handleDuplicatePage}
+          hasConnectionFailed={hasConnectionFailed}
           page={page}
           sidePeekVisible={sidePeekVisible}
           setSidePeekVisible={setSidePeekVisible}

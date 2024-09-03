@@ -5,6 +5,7 @@ import { Disclosure } from "@headlessui/react";
 import { ContentWrapper } from "@plane/ui";
 import { ListLayout } from "@/components/core/list";
 import { ActiveCycleRoot, CycleListGroupHeader, CyclePeekOverview, CyclesListMap } from "@/components/cycles";
+import { ERowVariant } from "@/helpers/common.helper";
 
 export interface ICyclesList {
   completedCycleIds: string[];
@@ -19,7 +20,7 @@ export const CyclesList: FC<ICyclesList> = observer((props) => {
   const { completedCycleIds, upcomingCycleIds, cycleIds, workspaceSlug, projectId, isArchived = false } = props;
 
   return (
-    <ContentWrapper variant="hugging">
+    <ContentWrapper variant={ERowVariant.HUGGING}>
       <ListLayout>
         {isArchived ? (
           <>

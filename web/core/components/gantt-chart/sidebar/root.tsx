@@ -5,7 +5,7 @@ import { CustomRow } from "@plane/ui";
 import { MultipleSelectGroupAction } from "@/components/core";
 import { ChartDataType, IBlockUpdateData, IGanttBlock } from "@/components/gantt-chart";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn, ERowVariant } from "@/helpers/common.helper";
 // hooks
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 // constants
@@ -52,7 +52,7 @@ export const GanttChartSidebar: React.FC<Props> = observer((props) => {
       style={{
         width: `${SIDEBAR_WIDTH}px`,
       }}
-      variant="hugging"
+      variant={ERowVariant.HUGGING}
     >
       <CustomRow
         className="group/list-header box-border flex-shrink-0 flex items-end justify-between gap-2 border-b-[0.5px] border-custom-border-200 pb-2 pr-4 text-sm font-medium text-custom-text-300 sticky top-0 z-10 bg-custom-background-100"
@@ -80,7 +80,7 @@ export const GanttChartSidebar: React.FC<Props> = observer((props) => {
         <h6>Duration</h6>
       </CustomRow>
 
-      <CustomRow variant="hugging" className="min-h-full h-max bg-custom-background-100 overflow-hidden">
+      <CustomRow variant={ERowVariant.HUGGING} className="min-h-full h-max bg-custom-background-100 overflow-hidden">
         {sidebarToRender &&
           sidebarToRender({
             title,

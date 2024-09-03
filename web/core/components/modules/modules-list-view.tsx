@@ -10,6 +10,7 @@ import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 // hooks
+import { ERowVariant } from "@/helpers/common.helper";
 import { useCommandPalette, useEventTracker, useModule, useModuleFilter } from "@/hooks/store";
 import AllFiltersImage from "@/public/empty-state/module/all-filters.svg";
 import NameFilterImage from "@/public/empty-state/module/name-filter.svg";
@@ -68,7 +69,7 @@ export const ModulesListView: React.FC = observer(() => {
     );
 
   return (
-    <ContentWrapper variant="hugging" className="h-full overflow-y-auto">
+    <ContentWrapper variant={ERowVariant.HUGGING} className="h-full overflow-y-auto">
       {displayFilters?.layout === "list" && (
         <div className="flex h-full w-full justify-between">
           <ListLayout>

@@ -63,7 +63,7 @@ const ProjectViewsPage = observer(() => {
     <>
       <PageHead title={pageTitle} />
       {isFiltersApplied && (
-        <CustomHeader variant={EHeaderVariant.ternary}>
+        <CustomHeader variant={EHeaderVariant.TERNARY}>
           <ViewAppliedFiltersList
             appliedFilters={filters.filters ?? {}}
             handleClearAllFilters={clearAllFilters}

@@ -33,7 +33,6 @@ type Props = {
   cycleId: string;
   handleClose: () => void;
   isArchived?: boolean;
-  isPeekMode?: boolean;
 };
 
 const defaultValues: Partial<ICycle> = {
@@ -46,7 +45,7 @@ const cycleService = new CycleService();
 
 // TODO: refactor the whole component
 export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
-  const { cycleId, handleClose, isArchived, isPeekMode = false } = props;
+  const { cycleId, handleClose, isArchived } = props;
   // states
   const [archiveCycleModal, setArchiveCycleModal] = useState(false);
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);

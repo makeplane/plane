@@ -111,7 +111,7 @@ export const ProjectsBaseHeader = observer(() => {
         <div className="hidden md:flex">
           <HeaderFilters />
         </div>
-        {isAuthorizedUser ? (
+        {isAuthorizedUser && !isArchived ? (
           <Button
             size="sm"
             onClick={() => {

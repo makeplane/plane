@@ -37,7 +37,7 @@ export const ModuleAppliedFiltersList: React.FC<Props> = (props) => {
   const isEditingAllowed = alwaysAllowEditing;
 
   return (
-    <CustomHeader variant={EHeaderVariant.ternary} className="flex flex-wrap gap-2 justify-start">
+    <CustomHeader variant={EHeaderVariant.TERNARY} className="flex flex-wrap gap-2 justify-start">
       {Object.entries(appliedFilters).map(([key, value]) => {
         const filterKey = key as keyof TModuleFilters;
 

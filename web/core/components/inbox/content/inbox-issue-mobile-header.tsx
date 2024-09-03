@@ -80,7 +80,7 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
   if (!issue || !inboxIssue) return null;
 
   return (
-    <CustomHeader variant={EHeaderVariant.secondary} className="flex">
+    <CustomHeader variant={EHeaderVariant.SECONDARY} className="flex">
       {isNotificationEmbed && (
         <button onClick={embedRemoveCurrentNotification}>
           <MoveRight className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />

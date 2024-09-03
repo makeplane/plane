@@ -82,7 +82,7 @@ const ProjectCyclesPage = observer(() => {
         ) : (
           <>
             {calculateTotalFilters(currentProjectFilters ?? {}) !== 0 && (
-              <CustomHeader variant={EHeaderVariant.ternary}>
+              <CustomHeader variant={EHeaderVariant.TERNARY}>
                 <CycleAppliedFiltersList
                   appliedFilters={currentProjectFilters ?? {}}
                   handleClearAllFilters={() => clearAllFilters(projectId.toString())}

@@ -36,7 +36,7 @@ export const WorkspaceAnalyticsHeader = observer(() => {
   }, [toggleWorkspaceAnalyticsSidebar, workspaceAnalyticsSidebarCollapsed]);
 
   return (
-    <CustomHeader variant="primary">
+    <CustomHeader>
       <CustomHeader.LeftItem>
         <Breadcrumbs>
           <Breadcrumbs.BreadcrumbItem

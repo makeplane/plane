@@ -1,15 +1,16 @@
 import * as React from "react";
 import { cn } from "../../helpers";
 import { CustomRow } from "../row";
+import { ERowVariant, TRowVariant } from "../row/helper";
 
 export interface ContentWrapperProps {
-  variant?: "regular" | "hugging";
+  variant?: TRowVariant;
   className?: string;
   children: React.ReactNode;
 }
 
 const ContentWrapper = (props: ContentWrapperProps) => {
-  const { variant = "regular", className = "", children, ...rest } = props;
+  const { variant = ERowVariant.REGULAR, className = "", children, ...rest } = props;
 
   return (
     <CustomRow
@@ -17,7 +18,7 @@ const ContentWrapper = (props: ContentWrapperProps) => {
       className={cn(
         "flex flex-col vertical-scrollbar scrollbar-lg h-full w-full overflow-y-auto",
         {
-          "py-page-y": variant === "regular",
+          "py-page-y": variant === ERowVariant.REGULAR,
         },
         className
       )}

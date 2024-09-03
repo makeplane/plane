@@ -63,12 +63,11 @@ type Props = {
   moduleId: string;
   handleClose: () => void;
   isArchived?: boolean;
-  isPeekMode?: boolean;
 };
 
 // TODO: refactor this component
 export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
-  const { moduleId, handleClose, isArchived, isPeekMode = false } = props;
+  const { moduleId, handleClose, isArchived } = props;
   // states
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
   const [archiveModuleModal, setArchiveModuleModal] = useState(false);

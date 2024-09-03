@@ -18,7 +18,7 @@ export const InboxIssueAppliedFilters: FC = observer(() => {
 
   if (getAppliedFiltersCount === 0) return <></>;
   return (
-    <CustomHeader variant={EHeaderVariant.ternary} className="flex-wrap items-center gap-1 min-h-none">
+    <CustomHeader variant={EHeaderVariant.TERNARY} className="flex-wrap items-center gap-1 min-h-none">
       {/* status */}
       <InboxIssueAppliedFiltersStatus />
       {/* state */}
