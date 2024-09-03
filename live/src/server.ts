@@ -14,6 +14,13 @@ import {
 import { TDocumentTypes } from "./core/types/common.js";
 // helpers
 import { handleAuthentication } from "./core/lib/authentication.js";
+// utils
+import { parseRedisUrl } from "./core/lib/utils.js";
+
+const { redisHost, redisPort } = parseRedisUrl(process.env.REDIS_URL || "") || {
+  redisHost: "localhost",
+  redisPort: 6379,
+};
 
 const server = Server.configure({
   onAuthenticate: async ({
@@ -45,8 +52,8 @@ const server = Server.configure({
   },
   extensions: [
     new Redis({
-      host: process.env.REDIS_HOST || "localhost",
-      port: Number(process.env.REDIS_PORT || 6379),
+      host: redisHost,
+      port: redisPort,
     }),
     new Logger(),
     new Database({
