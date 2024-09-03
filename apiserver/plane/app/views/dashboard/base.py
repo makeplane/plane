@@ -600,6 +600,7 @@ def dashboard_recent_collaborators(self, request, slug):
             user_id=F("member_id"),
         )
         .values("user_id", "active_issue_count")
+        .order_by("-active_issue_count")
         .distinct()
     )
     return Response(
