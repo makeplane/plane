@@ -5,15 +5,17 @@ import { Database } from "@hocuspocus/extension-database";
 import { Logger } from "@hocuspocus/extension-logger";
 import express from "express";
 import expressWs, { Application } from "express-ws";
-// page actions
+// lib
+import { handleAuthentication } from "@/core/lib/authentication.js";
 import {
   fetchPageDescriptionBinary,
   updatePageDescription,
-} from "./core/lib/page.js";
+} from "@/core/lib/page.js";
 // types
-import { TDocumentTypes } from "./core/types/common.js";
-// helpers
-import { handleAuthentication } from "./core/lib/authentication.js";
+import { TDocumentTypes } from "@/core/types/common.js";
+// plane live lib
+import { fetchDocument } from "@/plane-live/lib/fetch-document.js";
+import { updateDocument } from "@/plane-live/lib/update-document.js";
 
 const server = Server.configure({
   onAuthenticate: async ({
@@ -65,14 +67,22 @@ const server = Server.configure({
 
         return new Promise(async (resolve) => {
           try {
+            let fetchedData = null;
             if (documentType === "project_page") {
-              const fetchedData = await fetchPageDescriptionBinary(
+              fetchedData = await fetchPageDescriptionBinary(
                 params,
                 pageId,
                 cookie,
               );
-              resolve(fetchedData);
+            } else {
+              fetchedData = await fetchDocument({
+                cookie,
+                documentType,
+                pageId,
+                params,
+              });
             }
+            resolve(fetchedData);
           } catch (error) {
             console.error("Error in fetching document", error);
           }
@@ -96,6 +106,13 @@ const server = Server.configure({
           try {
             if (documentType === "project_page") {
               await updatePageDescription(params, pageId, state, cookie);
+            } else {
+              await updateDocument({
+                params,
+                pageId,
+                updatedDescription: state,
+                cookie,
+              })
             }
           } catch (error) {
             console.error("Error in updating document", error);
