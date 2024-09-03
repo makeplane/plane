@@ -64,7 +64,6 @@ export const CloudEditionBadge = observer(() => {
       <ProPlanCloudUpgradeModal
         isOpen={isProPlanModalOpen}
         handleClose={() => toggleProPlanModal(false)}
-        yearlyPlan={false}
         handleSuccessModal={() => handleSuccessModalToggle(true)}
       />
 

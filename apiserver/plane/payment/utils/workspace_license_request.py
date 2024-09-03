@@ -77,7 +77,8 @@ def has_upgraded(workspace_license):
 def is_on_trial(workspace_license):
     "Check if the workspace is on a trial"
     if (
-        workspace_license.trial_end_date
+        workspace_license.subscription
+        and workspace_license.trial_end_date
         and workspace_license.trial_end_date >= timezone.now()
     ):
         return True
@@ -87,8 +88,9 @@ def is_on_trial(workspace_license):
 def trial_remaining_days(workspace_license):
     """Calculate the remaining days of the trial"""
     if (
-        workspace_license.trial_end_date
-        and workspace_license.trial_end_date > timezone.now()
+        workspace_license.subscription
+        and workspace_license.trial_end_date
+        and workspace_license.trial_end_date >= timezone.now()
     ):
         return (workspace_license.trial_end_date - timezone.now()).days
     return None

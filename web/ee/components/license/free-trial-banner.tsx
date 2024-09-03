@@ -26,11 +26,7 @@ export const FreeTrialBanner: FC = observer(() => {
   return (
     <>
       {/* This modal is intentionally placed inside the condition to avoid unnecessary calls to list product endpoint.  */}
-      <ProPlanCloudUpgradeModal
-        isOpen={pricingModalOpen}
-        handleClose={() => setPricingModalOpen(false)}
-        yearlyPlan={false}
-      />
+      <ProPlanCloudUpgradeModal isOpen={pricingModalOpen} handleClose={() => setPricingModalOpen(false)} />
 
       <div className="bg-custom-primary-100/10 text-custom-primary-100 py-2 px-5">
         <div className="relative container mx-auto flex justify-center items-center gap-2">

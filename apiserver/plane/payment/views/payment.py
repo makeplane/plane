@@ -15,6 +15,9 @@ from plane.app.permissions.workspace import WorkspaceOwnerPermission
 from plane.db.models import WorkspaceMember, Workspace
 from plane.authentication.utils.host import base_host
 from plane.utils.exception_logger import log_exception
+from plane.payment.utils.workspace_license_request import (
+    resync_workspace_license,
+)
 
 
 class PaymentLinkEndpoint(BaseAPIView):
@@ -54,25 +57,53 @@ class PaymentLinkEndpoint(BaseAPIView):
                 )
 
             if settings.PAYMENT_SERVER_BASE_URL:
-                response = requests.post(
-                    f"{settings.PAYMENT_SERVER_BASE_URL}/api/payment-link/",
-                    headers={
-                        "content-type": "application/json",
-                        "x-api-key": settings.PAYMENT_SERVER_AUTH_TOKEN,
-                    },
-                    json={
-                        "workspace_id": str(workspace.id),
-                        "slug": slug,
-                        "stripe_product_id": product_id,
-                        "stripe_price_id": price_id,
-                        "customer_email": request.user.email,
-                        "members_list": list(workspace_members),
-                        "host": base_host(request=request, is_app=True),
-                    },
+                # Fetch the workspace license
+                workspace_license_response = resync_workspace_license(
+                    workspace_slug=slug
                 )
-                response.raise_for_status()
-                response = response.json()
-                return Response(response, status=status.HTTP_200_OK)
+                # Check if the workspace is on trial
+                if workspace_license_response.get("is_on_trial"):
+                    response = requests.post(
+                        f"{settings.PAYMENT_SERVER_BASE_URL}/api/trial-subscriptions/upgrade/",
+                        headers={
+                            "content-type": "application/json",
+                            "x-api-key": settings.PAYMENT_SERVER_AUTH_TOKEN,
+                        },
+                        json={
+                            "workspace_id": str(workspace.id),
+                            "stripe_price_id": price_id,
+                            "members_list": list(workspace_members),
+                            "slug": slug,
+                        },
+                    )
+                    # Check if the response is successful
+                    response.raise_for_status()
+                    # Convert the response to json
+                    response = response.json()
+                    return Response(response, status=status.HTTP_200_OK)
+
+                # Check if the workspace is on a paid plan
+                else:
+                    # Create the payment link
+                    response = requests.post(
+                        f"{settings.PAYMENT_SERVER_BASE_URL}/api/payment-link/",
+                        headers={
+                            "content-type": "application/json",
+                            "x-api-key": settings.PAYMENT_SERVER_AUTH_TOKEN,
+                        },
+                        json={
+                            "workspace_id": str(workspace.id),
+                            "slug": slug,
+                            "stripe_product_id": product_id,
+                            "stripe_price_id": price_id,
+                            "customer_email": request.user.email,
+                            "members_list": list(workspace_members),
+                        },
+                    )
+                    response.raise_for_status()
+                    # Convert the response to json
+                    response = response.json()
+                    return Response(response, status=status.HTTP_200_OK)
             else:
                 return Response(
                     {"error": "error fetching payment link"},

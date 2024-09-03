@@ -63,7 +63,7 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
       runInAction(() => {
         set(this.subscribedPlan, workspaceSlug, {
           product: response?.product ?? "FREE",
-          is_canceled: response?.is_canceled ?? false,
+          is_cancelled: response?.is_cancelled ?? false,
           is_self_managed: response?.is_self_managed ?? false,
           interval: response?.interval ?? null,
           current_period_end_date: response?.current_period_end_date,
@@ -86,7 +86,7 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
       runInAction(() => {
         set(this.subscribedPlan, workspaceSlug, {
           product: "FREE",
-          is_canceled: false,
+          is_cancelled: false,
           is_self_managed: false,
           interval: null,
           current_period_end_date: null,
