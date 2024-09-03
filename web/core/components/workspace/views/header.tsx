@@ -6,7 +6,7 @@ import { Plus } from "lucide-react";
 // types
 import { TStaticViewTypes } from "@plane/types";
 // components
-import { CustomHeader, EHeaderVariant } from "@plane/ui";
+import { Header, EHeaderVariant } from "@plane/ui";
 import {
   CreateUpdateWorkspaceViewModal,
   DefaultWorkspaceViewQuickActions,
@@ -104,7 +104,7 @@ export const GlobalViewsHeader: React.FC = observer(() => {
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
-    <CustomHeader variant={EHeaderVariant.SECONDARY} className="flex gap-4">
+    <Header variant={EHeaderVariant.SECONDARY} className="flex gap-4">
       <CreateUpdateWorkspaceViewModal isOpen={createViewModal} onClose={() => setCreateViewModal(false)} />
       <div
         ref={containerRef}
@@ -128,6 +128,6 @@ export const GlobalViewsHeader: React.FC = observer(() => {
       ) : (
         <></>
       )}
-    </CustomHeader>
+    </Header>
   );
 });

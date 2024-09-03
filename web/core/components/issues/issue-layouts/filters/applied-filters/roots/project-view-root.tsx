@@ -8,7 +8,7 @@ import { useParams } from "next/navigation";
 // types
 import { IIssueFilterOptions } from "@plane/types";
 // components
-import { CustomHeader, EHeaderVariant } from "@plane/ui";
+import { Header, EHeaderVariant } from "@plane/ui";
 import { AppliedFiltersList } from "@/components/issues";
 import { CreateUpdateProjectViewModal } from "@/components/views";
 import { UpdateViewComponent } from "@/components/views/update-view-component";
@@ -114,7 +114,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   const isOwner = viewDetails?.owned_by === data?.id;
 
   return (
-    <CustomHeader variant={EHeaderVariant.TERNARY}>
+    <Header variant={EHeaderVariant.TERNARY}>
       <CreateUpdateProjectViewModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -128,7 +128,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
           ...viewFilters,
         }}
       />
-      <CustomHeader.LeftItem>
+      <Header.LeftItem>
         <AppliedFiltersList
           appliedFilters={appliedFilters ?? {}}
           handleClearAllFilters={handleClearAllFilters}
@@ -137,7 +137,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
           states={projectStates}
           disableEditing={isLocked}
         />
-      </CustomHeader.LeftItem>
+      </Header.LeftItem>
       <UpdateViewComponent
         isLocked={isLocked}
         areFiltersEqual={!!areFiltersEqual}
@@ -146,6 +146,6 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
         setIsModalOpen={setIsModalOpen}
         handleUpdateView={handleUpdateView}
       />
-    </CustomHeader>
+    </Header>
   );
 });

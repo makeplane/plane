@@ -1,6 +1,6 @@
 // ui
 import { IUserProfileData, IUserStateDistribution } from "@plane/types";
-import { CustomContainer, EContainerSize, EContainerVariant } from "@plane/ui";
+import { Card } from "@plane/ui";
 import { ProfileEmptyState, PieGraph } from "@/components/ui";
 
 // image
@@ -20,7 +20,7 @@ export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, u
   return (
     <div className="flex flex-col space-y-2">
       <h3 className="text-lg font-medium">Issues by state</h3>
-      <CustomContainer className="block flex-grow rounded" variant={EContainerVariant.shadow} size={EContainerSize.lg}>
+      <Card>
         {userProfile.state_distribution.length > 0 ? (
           <div className="grid grid-cols-1 gap-x-6 md:grid-cols-2">
             <div>
@@ -82,7 +82,7 @@ export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, u
             image={stateGraph}
           />
         )}
-      </CustomContainer>
+      </Card>
     </div>
   );
 };

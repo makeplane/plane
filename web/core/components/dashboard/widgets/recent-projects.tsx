@@ -7,7 +7,7 @@ import { Plus } from "lucide-react";
 // types
 import { TRecentProjectsWidgetResponse } from "@plane/types";
 // ui
-import { Avatar, AvatarGroup, CustomContainer, EContainerVariant, EContainerSize } from "@plane/ui";
+import { Avatar, AvatarGroup, Card } from "@plane/ui";
 
 // components
 import { Logo } from "@/components/common";
@@ -83,8 +83,11 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
   if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
-    <CustomContainer variant={EContainerVariant.shadow} className="flex-col" size={EContainerSize.lg}>
-      <Link href={`/${workspaceSlug}/projects`} className="text-lg font-semibold text-custom-text-300 hover:underline">
+    <Card>
+      <Link
+        href={`/${workspaceSlug}/projects`}
+        className="text-lg font-semibold text-custom-text-300 hover:underline mb-4"
+      >
         Recent projects
       </Link>
       <div className="mt-4 space-y-8">
@@ -111,6 +114,6 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
           <ProjectListItem key={projectId} projectId={projectId} workspaceSlug={workspaceSlug} />
         ))}
       </div>
-    </CustomContainer>
+    </Card>
   );
 });

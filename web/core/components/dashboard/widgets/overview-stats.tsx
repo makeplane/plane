@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { TOverviewStatsWidgetResponse } from "@plane/types";
 // hooks
-import { CustomContainer, EContainerVariant } from "@plane/ui";
+import { Card, ECardSize } from "@plane/ui";
 import { WidgetLoader } from "@/components/dashboard/widgets";
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
@@ -64,9 +64,9 @@ export const OverviewStatsWidget: React.FC<WidgetProps> = observer((props) => {
   if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
-    <CustomContainer
-      variant={EContainerVariant.shadow}
-      className="grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-2 grid-cols-2
+    <Card
+      size={ECardSize.SM}
+      className="flex-row grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-2 grid-cols-2 space-y-0
         [&>div>a>div]:border-r
         [&>div:last-child>a>div]:border-0
         [&>div>a>div]:border-custom-border-200
@@ -95,6 +95,6 @@ export const OverviewStatsWidget: React.FC<WidgetProps> = observer((props) => {
           </Link>
         </div>
       ))}
-    </CustomContainer>
+    </Card>
   );
 });

@@ -7,16 +7,7 @@ import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { CalendarCheck2, CalendarClock, Info, MoveRight, SquareUser } from "lucide-react";
 // ui
 import { IModule } from "@plane/types";
-import {
-  CustomContainer,
-  EContainerSize,
-  EContainerVariant,
-  FavoriteStar,
-  LayersIcon,
-  LinearProgressIndicator,
-  Tooltip,
-  setPromiseToast,
-} from "@plane/ui";
+import { Card, FavoriteStar, LayersIcon, LinearProgressIndicator, Tooltip, setPromiseToast } from "@plane/ui";
 // components
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { ModuleQuickActions } from "@/components/modules";
@@ -185,12 +176,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   return (
     <div className="relative">
       <Link ref={parentRef} href={`/${workspaceSlug}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}>
-        <CustomContainer
-          className="flex-col w-full h-44  flex-grow justify-between rounded text-sm"
-          variant={EContainerVariant.shadow}
-          size={EContainerSize.lg}
-        >
-          {" "}
+        <Card>
           <div>
             <div className="flex items-center justify-between gap-2">
               <Tooltip tooltipContent={moduleDetails.name} position="top" isMobile={isMobile}>
@@ -245,7 +231,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
               )}
             </div>
           </div>
-        </CustomContainer>
+        </Card>
       </Link>
       <div className="absolute right-4 bottom-[18px] flex items-center gap-1.5">
         {isEditingAllowed && (

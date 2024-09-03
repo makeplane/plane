@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 import { Search, Briefcase, X } from "lucide-react";
 // ui
-import { Breadcrumbs, Button, CustomHeader } from "@plane/ui";
+import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
 // constants
@@ -52,8 +52,8 @@ export const ProjectsBaseHeader = observer(() => {
   }, [searchQuery]);
 
   return (
-    <CustomHeader>
-      <CustomHeader.LeftItem>
+    <Header>
+      <Header.LeftItem>
         <Breadcrumbs>
           <Breadcrumbs.BreadcrumbItem
             type="text"
@@ -61,8 +61,8 @@ export const ProjectsBaseHeader = observer(() => {
           />
           {isArchived && <Breadcrumbs.BreadcrumbItem type="text" link={<BreadcrumbLink label="Archived" />} />}
         </Breadcrumbs>
-      </CustomHeader.LeftItem>
-      <CustomHeader.RightItem>
+      </Header.LeftItem>
+      <Header.RightItem>
         <div className="flex items-center">
           {!isSearchOpen && (
             <button
@@ -125,7 +125,7 @@ export const ProjectsBaseHeader = observer(() => {
         ) : (
           <></>
         )}
-      </CustomHeader.RightItem>
-    </CustomHeader>
+      </Header.RightItem>
+    </Header>
   );
 });

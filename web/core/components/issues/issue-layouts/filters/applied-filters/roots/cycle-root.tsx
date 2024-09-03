@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { IIssueFilterOptions } from "@plane/types";
 // hooks
-import { CustomHeader, EHeaderVariant } from "@plane/ui";
+import { Header, EHeaderVariant } from "@plane/ui";
 import { AppliedFiltersList, SaveFilterView } from "@/components/issues";
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 import { useIssues, useLabel, useProjectState } from "@/hooks/store";
@@ -77,8 +77,8 @@ export const CycleAppliedFiltersRoot: React.FC = observer(() => {
   if (Object.keys(appliedFilters).length === 0 || !workspaceSlug || !projectId || !cycleId) return null;
 
   return (
-    <CustomHeader variant={EHeaderVariant.TERNARY}>
-      <CustomHeader.LeftItem>
+    <Header variant={EHeaderVariant.TERNARY}>
+      <Header.LeftItem>
         <AppliedFiltersList
           appliedFilters={appliedFilters}
           handleClearAllFilters={handleClearAllFilters}
@@ -86,7 +86,7 @@ export const CycleAppliedFiltersRoot: React.FC = observer(() => {
           labels={projectLabels ?? []}
           states={projectStates}
         />
-      </CustomHeader.LeftItem>
+      </Header.LeftItem>
       <SaveFilterView
         workspaceSlug={workspaceSlug.toString()}
         projectId={projectId.toString()}
@@ -96,6 +96,6 @@ export const CycleAppliedFiltersRoot: React.FC = observer(() => {
           display_properties: issueFilters?.displayProperties,
         }}
       />
-    </CustomHeader>
+    </Header>
   );
 });

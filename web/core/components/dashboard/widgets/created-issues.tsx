@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Tab } from "@headlessui/react";
 import { TCreatedIssuesWidgetFilters, TCreatedIssuesWidgetResponse } from "@plane/types";
 // hooks
-import { CustomContainer, EContainerVariant, EContainerSize } from "@plane/ui";
+import { Card } from "@plane/ui";
 import {
   DurationFilterDropdown,
   IssuesErrorState,
@@ -77,7 +77,7 @@ export const CreatedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
   if ((!widgetDetails || !widgetStats) && !widgetStatsError) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
-    <CustomContainer variant={EContainerVariant.shadow} className="flex-col" size={EContainerSize.lg}>
+    <Card>
       {widgetStatsError ? (
         <IssuesErrorState
           isRefreshing={fetching}
@@ -91,7 +91,7 @@ export const CreatedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
       ) : (
         widgetStats && (
           <>
-            <div className="flex items-center justify-between gap-2 mb-6">
+            <div className="flex items-center justify-between gap-2 mb-4">
               <Link
                 href={`/${workspaceSlug}/workspace-views/created/${filterParams}`}
                 className="text-lg font-semibold text-custom-text-300 hover:underline"
@@ -157,6 +157,6 @@ export const CreatedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
           </>
         )
       )}
-    </CustomContainer>
+    </Card>
   );
 });

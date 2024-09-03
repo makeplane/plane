@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 // types
 import { IIssueFilterOptions, IIssueLabel, IState } from "@plane/types";
 // components
-import { CustomContainer } from "@plane/ui";
+import { Tag } from "@plane/ui";
 import {
   AppliedCycleFilters,
   AppliedDateFilters,
@@ -68,7 +68,7 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
         if (Array.isArray(value) && value.length === 0) return;
 
         return (
-          <CustomContainer key={filterKey} className="gap-1.5">
+          <Tag key={filterKey}>
             <span className="text-xs text-custom-text-300">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
             {membersFilters.includes(filterKey) && (
               <AppliedMembersFilters
@@ -143,15 +143,15 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
                 <X size={12} strokeWidth={2} />
               </button>
             )}
-          </CustomContainer>
+          </Tag>
         );
       })}
       {isEditingAllowed && (
         <button type="button" onClick={handleClearAllFilters}>
-          <CustomContainer>
+          <Tag>
             Clear all
             <X size={12} strokeWidth={2} />
-          </CustomContainer>
+          </Tag>
         </button>
       )}
     </div>

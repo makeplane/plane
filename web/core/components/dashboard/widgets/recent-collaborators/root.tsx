@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Search } from "lucide-react";
 // types
-import { CustomContainer, EContainerVariant, EContainerSize } from "@plane/ui";
+import { Card } from "@plane/ui";
 import { WidgetProps } from "@/components/dashboard/widgets";
 // components
 import { DefaultCollaboratorsList } from "./default-list";
@@ -15,7 +15,7 @@ export const RecentCollaboratorsWidget: React.FC<WidgetProps> = (props) => {
   const [searchQuery, setSearchQuery] = useState("");
 
   return (
-    <CustomContainer variant={EContainerVariant.shadow} className="flex-col" size={EContainerSize.lg}>
+    <Card>
       <div className="flex flex-col sm:flex-row items-start justify-between mb-6">
         <div>
           <h4 className="text-lg font-semibold text-custom-text-300">Collaborators</h4>
@@ -43,6 +43,6 @@ export const RecentCollaboratorsWidget: React.FC<WidgetProps> = (props) => {
       ) : (
         <DefaultCollaboratorsList dashboardId={dashboardId} perPage={PER_PAGE} workspaceSlug={workspaceSlug} />
       )}
-    </CustomContainer>
+    </Card>
   );
 };

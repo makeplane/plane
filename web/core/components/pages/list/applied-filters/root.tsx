@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
 import { TPageFilterProps } from "@plane/types";
 // components
-import { CustomContainer } from "@plane/ui";
+import { Tag } from "@plane/ui";
 import { AppliedDateFilters, AppliedMembersFilters } from "@/components/common/applied-filters";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
@@ -34,7 +34,7 @@ export const PageAppliedFiltersList: React.FC<Props> = (props) => {
         if (Array.isArray(value) && value.length === 0) return;
 
         return (
-          <CustomContainer key={filterKey} className="gap-1.5">
+          <Tag key={filterKey}>
             <div className="flex flex-wrap items-center gap-1.5">
               <span className="text-xs text-custom-text-300">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
               {DATE_FILTERS.includes(filterKey) && (
@@ -61,15 +61,15 @@ export const PageAppliedFiltersList: React.FC<Props> = (props) => {
                 </button>
               )}
             </div>
-          </CustomContainer>
+          </Tag>
         );
       })}
       {isEditingAllowed && (
         <button type="button" onClick={handleClearAllFilters}>
-          <CustomContainer>
+          <Tag>
             Clear all
             <X size={12} strokeWidth={2} />
-          </CustomContainer>
+          </Tag>
         </button>
       )}
     </div>

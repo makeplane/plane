@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
 import { TModuleDisplayFilters, TModuleFilters } from "@plane/types";
 // components
-import { CustomContainer, CustomHeader, EHeaderVariant } from "@plane/ui";
+import { Header, EHeaderVariant, Tag } from "@plane/ui";
 import { AppliedDateFilters, AppliedMembersFilters, AppliedStatusFilters } from "@/components/modules";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
@@ -37,7 +37,7 @@ export const ModuleAppliedFiltersList: React.FC<Props> = (props) => {
   const isEditingAllowed = alwaysAllowEditing;
 
   return (
-    <CustomHeader variant={EHeaderVariant.TERNARY} className="flex flex-wrap gap-2 justify-start">
+    <Header variant={EHeaderVariant.TERNARY} className="flex flex-wrap gap-2 justify-start">
       {Object.entries(appliedFilters).map(([key, value]) => {
         const filterKey = key as keyof TModuleFilters;
 
@@ -45,7 +45,7 @@ export const ModuleAppliedFiltersList: React.FC<Props> = (props) => {
         if (Array.isArray(value) && value.length === 0) return;
 
         return (
-          <CustomContainer key={filterKey} className="gap-1.5">
+          <Tag key={filterKey}>
             <div className="flex flex-wrap items-center gap-1.5">
               <span className="text-xs text-custom-text-300">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
               {filterKey === "status" && (
@@ -79,7 +79,7 @@ export const ModuleAppliedFiltersList: React.FC<Props> = (props) => {
                 </button>
               )}
             </div>
-          </CustomContainer>
+          </Tag>
         );
       })}
       {!isArchived && isFavoriteFilterApplied && (
@@ -111,12 +111,12 @@ export const ModuleAppliedFiltersList: React.FC<Props> = (props) => {
       )}
       {isEditingAllowed && (
         <button type="button" onClick={handleClearAllFilters}>
-          <CustomContainer>
+          <Tag>
             Clear all
             <X size={12} strokeWidth={2} />
-          </CustomContainer>
+          </Tag>
         </button>
       )}
-    </CustomHeader>
+    </Header>
   );
 };

@@ -1,6 +1,6 @@
 // ui
 import { IDefaultAnalyticsUser } from "@plane/types";
-import { CustomContainer, EContainerSize, EContainerVariant } from "@plane/ui";
+import { Card } from "@plane/ui";
 import { BarGraph, ProfileEmptyState } from "@/components/ui";
 // image
 import emptyBarGraph from "@/public/empty-state/empty_bar_graph.svg";
@@ -12,7 +12,7 @@ type Props = {
 };
 
 export const AnalyticsScope: React.FC<Props> = ({ pendingUnAssignedIssuesUser, pendingAssignedIssues }) => (
-  <CustomContainer className="block flex-grow rounded" variant={EContainerVariant.shadow} size={EContainerSize.lg}>
+  <Card>
     <div className="divide-y divide-custom-border-200">
       <div>
         <div className="flex items-center justify-between">
@@ -88,5 +88,5 @@ export const AnalyticsScope: React.FC<Props> = ({ pendingUnAssignedIssuesUser, p
         )}
       </div>
     </div>
-  </CustomContainer>
+  </Card>
 );

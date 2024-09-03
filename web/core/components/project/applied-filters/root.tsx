@@ -4,7 +4,7 @@ import { X } from "lucide-react";
 // types
 import { TProjectAppliedDisplayFilterKeys, TProjectFilters } from "@plane/types";
 // ui
-import { CustomContainer, Tooltip } from "@plane/ui";
+import { Tag, Tooltip } from "@plane/ui";
 // components
 import {
   AppliedAccessFilters,
@@ -57,7 +57,7 @@ export const ProjectAppliedFiltersList: React.FC<Props> = (props) => {
           if (Array.isArray(value) && value.length === 0) return;
 
           return (
-            <CustomContainer key={filterKey} className="gap-1.5 capitalize">
+            <Tag key={filterKey}>
               <span className="text-xs text-custom-text-300">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
               {filterKey === "access" && (
                 <AppliedAccessFilters
@@ -89,26 +89,26 @@ export const ProjectAppliedFiltersList: React.FC<Props> = (props) => {
                   <X size={12} strokeWidth={2} />
                 </button>
               )}
-            </CustomContainer>
+            </Tag>
           );
         })}
         {/* Applied display filters */}
         {appliedDisplayFilters.length > 0 && (
-          <CustomContainer key="project_display_filters" className="gap-1.5">
+          <Tag key="project_display_filters">
             <span className="text-xs text-custom-text-300">Projects</span>
             <AppliedProjectDisplayFilters
               editable={isEditingAllowed}
               values={appliedDisplayFilters}
               handleRemove={(key) => handleRemoveDisplayFilter(key)}
             />
-          </CustomContainer>
+          </Tag>
         )}
         {isEditingAllowed && (
           <button type="button" onClick={handleClearAllFilters}>
-            <CustomContainer>
+            <Tag>
               Clear all
               <X size={12} strokeWidth={2} />
-            </CustomContainer>
+            </Tag>
           </button>
         )}
       </div>

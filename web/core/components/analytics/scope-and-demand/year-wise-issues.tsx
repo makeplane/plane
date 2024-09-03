@@ -1,6 +1,6 @@
 // ui
 import { IDefaultAnalyticsResponse } from "@plane/types";
-import { CustomContainer, EContainerSize, EContainerVariant } from "@plane/ui";
+import { Card } from "@plane/ui";
 import { LineGraph, ProfileEmptyState } from "@/components/ui";
 // image
 import { MONTHS_LIST } from "@/constants/calendar";
@@ -13,7 +13,7 @@ type Props = {
 };
 
 export const AnalyticsYearWiseIssues: React.FC<Props> = ({ defaultAnalytics }) => (
-  <CustomContainer variant={EContainerVariant.shadow} size={EContainerSize.lg} className="flex-col">
+  <Card>
     <h1 className="py-3 text-base font-medium">Issues closed in a year</h1>
     {defaultAnalytics.issue_completed_month_wise.length > 0 ? (
       <LineGraph
@@ -56,5 +56,5 @@ export const AnalyticsYearWiseIssues: React.FC<Props> = ({ defaultAnalytics }) =
         />
       </div>
     )}
-  </CustomContainer>
+  </Card>
 );

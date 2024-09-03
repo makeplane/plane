@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import { Tab } from "@headlessui/react";
 // components
-import { CustomHeader, EHeaderVariant } from "@plane/ui";
+import { Header, EHeaderVariant } from "@plane/ui";
 import { CustomAnalytics, ScopeAndDemand } from "@/components/analytics";
 import { PageHead } from "@/components/core";
 import { EmptyState } from "@/components/empty-state";
@@ -35,7 +35,7 @@ const AnalyticsPage = observer(() => {
           {workspaceProjectIds.length > 0 || loader ? (
             <div className="flex h-full flex-col overflow-hidden bg-custom-background-100">
               <Tab.Group as={Fragment} defaultIndex={analytics_tab === "custom" ? 1 : 0}>
-                <CustomHeader variant={EHeaderVariant.SECONDARY}>
+                <Header variant={EHeaderVariant.SECONDARY}>
                   <Tab.List as="div" className="flex space-x-2 border-b h-[50px] border-custom-border-200">
                     {ANALYTICS_TABS.map((tab) => (
                       <Tab key={tab.key} as={Fragment}>
@@ -54,7 +54,7 @@ const AnalyticsPage = observer(() => {
                       </Tab>
                     ))}
                   </Tab.List>
-                </CustomHeader>
+                </Header>
                 <Tab.Panels as={Fragment}>
                   <Tab.Panel as={Fragment}>
                     <ScopeAndDemand fullScreen />

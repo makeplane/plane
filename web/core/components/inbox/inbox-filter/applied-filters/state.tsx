@@ -3,7 +3,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
-import { CustomContainer, StateGroupIcon } from "@plane/ui";
+import { StateGroupIcon, Tag } from "@plane/ui";
 // hooks
 import { useProjectInbox, useProjectState } from "@/hooks/store";
 
@@ -22,7 +22,7 @@ export const InboxIssueAppliedFiltersState: FC = observer(() => {
 
   if (filteredValues.length === 0) return <></>;
   return (
-    <CustomContainer>
+    <Tag>
       <div className="text-xs text-custom-text-200">State</div>
       {filteredValues.map((value) => {
         const optionDetail = currentOptionDetail(value);
@@ -49,6 +49,6 @@ export const InboxIssueAppliedFiltersState: FC = observer(() => {
       >
         <X className={`w-3 h-3`} />
       </div>
-    </CustomContainer>
+    </Tag>
   );
 });

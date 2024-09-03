@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { RefreshCcw } from "lucide-react";
 // ui
-import { Breadcrumbs, Button, Intake, CustomHeader } from "@plane/ui";
+import { Breadcrumbs, Button, Intake, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 import { InboxIssueCreateEditModalRoot } from "@/components/inbox";
@@ -30,8 +30,8 @@ export const ProjectInboxHeader: FC = observer(() => {
   const isViewer = currentProjectRole === EUserProjectRoles.VIEWER;
 
   return (
-    <CustomHeader>
-      <CustomHeader.LeftItem>
+    <Header>
+      <Header.LeftItem>
         <div className="flex items-center gap-4">
           <Breadcrumbs isLoading={currentProjectDetailsLoader}>
             <Breadcrumbs.BreadcrumbItem
@@ -64,8 +64,8 @@ export const ProjectInboxHeader: FC = observer(() => {
             </div>
           )}
         </div>
-      </CustomHeader.LeftItem>
-      <CustomHeader.RightItem>
+      </Header.LeftItem>
+      <Header.RightItem>
         {currentProjectDetails?.inbox_view && workspaceSlug && projectId && !isViewer ? (
           <div className="flex items-center gap-2">
             <InboxIssueCreateEditModalRoot
@@ -83,7 +83,7 @@ export const ProjectInboxHeader: FC = observer(() => {
         ) : (
           <></>
         )}
-      </CustomHeader.RightItem>
-    </CustomHeader>
+      </Header.RightItem>
+    </Header>
   );
 });

@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
 import { TViewFilterProps } from "@plane/types";
 // components
-import { CustomContainer } from "@plane/ui";
+import { Tag } from "@plane/ui";
 import { AppliedDateFilters, AppliedMembersFilters } from "@/components/common/applied-filters";
 // constants
 import { EViewAccess } from "@/constants/views";
@@ -38,7 +38,7 @@ export const ViewAppliedFiltersList: React.FC<Props> = (props) => {
         if (Array.isArray(value) && value.length === 0) return;
 
         return (
-          <CustomContainer key={filterKey} className="gap-1.5">
+          <Tag key={filterKey}>
             <span className="text-xs text-custom-text-300">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
             {VIEW_ACCESS_FILTERS.includes(filterKey) && (
               <AppliedAccessFilters
@@ -70,15 +70,15 @@ export const ViewAppliedFiltersList: React.FC<Props> = (props) => {
                 <X size={12} strokeWidth={2} />
               </button>
             )}
-          </CustomContainer>
+          </Tag>
         );
       })}
       {isEditingAllowed && (
         <button type="button" onClick={handleClearAllFilters}>
-          <CustomContainer>
+          <Tag>
             Clear all
             <X size={12} strokeWidth={2} />
-          </CustomContainer>
+          </Tag>
         </button>
       )}
     </div>

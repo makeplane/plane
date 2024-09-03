@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { X } from "lucide-react";
 import { TInboxIssueStatus } from "@plane/types";
 // constants
-import { CustomContainer } from "@plane/ui";
+import { Tag } from "@plane/ui";
 import { INBOX_STATUS } from "@/constants/inbox";
 // hooks
 import { useProjectInbox } from "@/hooks/store";
@@ -20,7 +20,7 @@ export const InboxIssueAppliedFiltersStatus: FC = observer(() => {
 
   if (filteredValues.length === 0) return <></>;
   return (
-    <CustomContainer>
+    <Tag>
       <div className="text-xs text-custom-text-200">Status</div>
       {filteredValues.map((value) => {
         const optionDetail = currentOptionDetail(value);
@@ -42,6 +42,6 @@ export const InboxIssueAppliedFiltersStatus: FC = observer(() => {
           </div>
         );
       })}
-    </CustomContainer>
+    </Tag>
   );
 });

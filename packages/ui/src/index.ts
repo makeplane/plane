@@ -26,4 +26,5 @@ export * from "./tables";
 export * from "./header";
 export * from "./row";
 export * from "./content-wrapper";
-export * from "./container";
+export * from "./card";
+export * from "./tag";

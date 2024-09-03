@@ -4,7 +4,7 @@ import Link from "next/link";
 // types
 import { TIssuesByStateGroupsWidgetFilters, TIssuesByStateGroupsWidgetResponse, TStateGroups } from "@plane/types";
 // components
-import { CustomContainer, EContainerVariant, EContainerSize } from "@plane/ui";
+import { Card } from "@plane/ui";
 import {
   DurationFilterDropdown,
   IssuesByStateGroupEmptyState,
@@ -135,8 +135,8 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
   };
 
   return (
-    <CustomContainer variant={EContainerVariant.shadow} className="flex-col" size={EContainerSize.lg}>
-      <div className="flex items-center justify-between gap-2 mb-6">
+    <Card>
+      <div className="flex items-center justify-between gap-2 mb-4">
         <Link
           href={`/${workspaceSlug}/workspace-views/assigned`}
           className="text-lg font-semibold text-custom-text-300 hover:underline"
@@ -216,6 +216,6 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
           <IssuesByStateGroupEmptyState />
         </div>
       )}
-    </CustomContainer>
+    </Card>
   );
 });

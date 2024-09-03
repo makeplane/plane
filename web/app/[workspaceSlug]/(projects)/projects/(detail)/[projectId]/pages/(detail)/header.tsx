@@ -7,15 +7,7 @@ import { FileText } from "lucide-react";
 // types
 import { TLogoProps } from "@plane/types";
 // ui
-import {
-  Breadcrumbs,
-  EmojiIconPicker,
-  EmojiIconPickerTypes,
-  TOAST_TYPE,
-  Tooltip,
-  setToast,
-  CustomHeader,
-} from "@plane/ui";
+import { Breadcrumbs, EmojiIconPicker, EmojiIconPickerTypes, TOAST_TYPE, Tooltip, setToast, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 import { PageEditInformationPopover } from "@/components/pages";
@@ -67,8 +59,8 @@ export const PageDetailsHeader = observer(() => {
   const pageTitle = getPageName(name);
 
   return (
-    <CustomHeader>
-      <CustomHeader.LeftItem>
+    <Header>
+      <Header.LeftItem>
         <div>
           <Breadcrumbs isLoading={loader}>
             <Breadcrumbs.BreadcrumbItem
@@ -166,11 +158,11 @@ export const PageDetailsHeader = observer(() => {
             />
           </Breadcrumbs>
         </div>
-      </CustomHeader.LeftItem>
-      <CustomHeader.RightItem>
+      </Header.LeftItem>
+      <Header.RightItem>
         <PageEditInformationPopover page={page} />
         <PageDetailsHeaderExtraActions />
-      </CustomHeader.RightItem>
-    </CustomHeader>
+      </Header.RightItem>
+    </Header>
   );
 });
