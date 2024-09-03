@@ -1,6 +1,7 @@
 "use client";
 
 import { observer } from "mobx-react";
+import sortBy from "lodash/sortBy";
 import Link from "next/link";
 import useSWR from "swr";
 // types
@@ -63,6 +64,7 @@ export const CollaboratorsList: React.FC<CollaboratorsListProps> = (props) => {
   // store hooks
   const { fetchWidgetStats } = useDashboard();
   const { getUserDetails } = useMember();
+  const { data: currentUser } = useUser();
 
   const { data: widgetStats } = useSWR(
     workspaceSlug && dashboardId ? `WIDGET_STATS_${workspaceSlug}_${dashboardId}` : null,
@@ -78,7 +80,9 @@ export const CollaboratorsList: React.FC<CollaboratorsListProps> = (props) => {
 
   if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
-  const filteredStats = widgetStats.filter((user) => {
+  const sortedStats = sortBy(widgetStats, [(user) => user.user_id === currentUser?.id]);
+
+  const filteredStats = sortedStats.filter((user) => {
     const { display_name, first_name, last_name } = getUserDetails(user.user_id) || {};
 
     const searchLower = searchQuery.toLowerCase();
