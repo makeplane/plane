@@ -72,16 +72,11 @@ const CloudUpgradePage = observer(() => {
   };
 
   const workspaceSubscription = (workspace: TWorkspaceWithProductDetails): "FREE" | "PRO" | "TRIAL" => {
-    if (!workspace.subscription) return "FREE";
     switch (workspace.product) {
       case "PRO":
-        if (workspace.is_offline_payment) {
-          return "PRO";
-        } else if (workspace.trial_end_date && workspace.has_added_payment_method) {
-          return "PRO";
-        } else if (workspace.trial_end_date && !workspace.has_added_payment_method) {
+        if (workspace.is_on_trial) {
           return "TRIAL";
-        }
+        } else return "PRO";
       case "FREE":
         return "FREE";
       default:
@@ -95,7 +90,7 @@ const CloudUpgradePage = observer(() => {
         name="workspace-upgrade-radio-input"
         label={
           <div className="flex flex-col items-center gap-2 pb-4">
-            <div className="text-3xl font-semibold">
+            <div className="text-center text-3xl font-semibold">
               {isAnyWorkspaceAvailable
                 ? "Choose your workspace"
                 : "We didn't find an eligible workspace for this upgrade. Try another email address."}
@@ -164,7 +159,7 @@ const CloudUpgradePage = observer(() => {
                   </div>
                 ),
                 value: workspace.slug,
-                disabled: ["PRO"].includes(workspaceSubscription(workspace)),
+                disabled: workspace.is_billing_active,
               }))
             : []
         }

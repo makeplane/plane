@@ -22,7 +22,6 @@ const paymentService = new PaymentService();
 export type ProPlanCloudUpgradeModalProps = {
   isOpen: boolean;
   handleClose: () => void;
-  yearlyPlan?: boolean;
   handleSuccessModal?: () => void;
   canFetchProducts?: boolean;
 };
@@ -37,7 +36,7 @@ export const calculateYearlyDiscount = (monthlyPrice: number, yearlyPricePerMont
 };
 
 export const ProPlanCloudUpgradeModal: FC<ProPlanCloudUpgradeModalProps> = (props) => {
-  const { isOpen, handleClose, yearlyPlan, handleSuccessModal, canFetchProducts = true } = props;
+  const { isOpen, handleClose, handleSuccessModal, canFetchProducts = true } = props;
   // params
   const { workspaceSlug } = useParams();
   // states
@@ -48,11 +47,8 @@ export const ProPlanCloudUpgradeModal: FC<ProPlanCloudUpgradeModalProps> = (prop
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
-  const {
-    currentWorkspaceSubscribedPlanDetail: subscriptionDetail,
-    fetchWorkspaceSubscribedPlan,
-    freeTrialSubscription,
-  } = useWorkspaceSubscription();
+  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, freeTrialSubscription } =
+    useWorkspaceSubscription();
   // derived values
   const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
   // fetch products
@@ -75,8 +71,8 @@ export const ProPlanCloudUpgradeModal: FC<ProPlanCloudUpgradeModalProps> = (prop
         product_id: proProduct?.id,
       })
       .then((response) => {
-        if (response.payment_link) {
-          window.open(response.payment_link, "_self");
+        if (response.url) {
+          window.open(response.url, "_self");
         }
       })
       .catch((error) => {
@@ -84,34 +80,6 @@ export const ProPlanCloudUpgradeModal: FC<ProPlanCloudUpgradeModalProps> = (prop
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: error?.detail ?? "Failed to generate payment link. Please try again.",
-        });
-      })
-      .finally(() => {
-        setLoading(false);
-        handleClose();
-      });
-  };
-
-  const handlePlanUpgrade = (priceId: string) => {
-    setLoading(true);
-    paymentService
-      .upgradeCurrentWorkspaceSubscription(workspaceSlug.toString(), {
-        price_id: priceId,
-        product_id: proProduct?.id,
-      })
-      .then(async () => {
-        await fetchWorkspaceSubscribedPlan(workspaceSlug.toString());
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Your workspace has been upgraded to Pro yearly plan.",
-        });
-      })
-      .catch((error) => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: error?.detail ?? "Failed to upgrade. Please try again.",
         });
       })
       .finally(() => {
@@ -144,44 +112,7 @@ export const ProPlanCloudUpgradeModal: FC<ProPlanCloudUpgradeModalProps> = (prop
 
     captureEvent("pro_plan_payment_link_clicked", { workspaceSlug });
 
-    if (yearlyPlan) {
-      handlePlanUpgrade(priceId);
-    } else {
-      handleStripeCheckout(priceId);
-    }
-  };
-
-  // handling the payment link when the free trial is enabled
-  const handleSubscriptionPageRedirection = (priceId: string) => {
-    if (!workspaceSlug) return;
-
-    if (!isAdmin) {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Unauthorized!",
-        message: "You don't have permission to perform this action.",
-      });
-      return;
-    }
-
-    setLoading(true);
-    paymentService
-      .modifyTrailSubscription(workspaceSlug.toString(), { price_id: priceId })
-      .then((response) => {
-        if (response.session_url) {
-          window.open(response.session_url, "_blank");
-        }
-      })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Failed to redirect to subscription page. Please try again.",
-        });
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    handleStripeCheckout(priceId);
   };
 
   // handle trial
@@ -213,35 +144,26 @@ export const ProPlanCloudUpgradeModal: FC<ProPlanCloudUpgradeModalProps> = (prop
     (orderBy(proProduct?.prices || [], ["recurring"], ["desc"])?.find((price) => price.recurring === "year")
       ?.unit_amount || 0) / 1200;
   const yearlyDiscount = calculateYearlyDiscount(monthlyPrice, yearlyPrice);
-  const isInTrailPeriod =
-    subscriptionDetail?.has_activated_free_trial &&
-    subscriptionDetail?.subscription &&
-    subscriptionDetail?.trial_end_date &&
-    new Date(subscriptionDetail.trial_end_date) >= new Date();
-  const isTrialCompleted =
-    subscriptionDetail &&
-    !subscriptionDetail.subscription &&
-    subscriptionDetail.has_activated_free_trial &&
-    subscriptionDetail.product === "FREE"
-      ? true
-      : false;
 
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} width={EModalWidth.XXL} className="rounded-xl">
       <div className="py-6 px-10 max-h-[90vh] sm:max-h-[95vh] overflow-auto">
-        {isInTrailPeriod && (
+        {subscriptionDetail?.is_on_trial && (
           <div className="relative flex justify-center items-center">
-            <div className="p-1 px-2 uppercase bg-custom-primary-100/20 text-custom-primary-100 text-xs rounded-full font-medium">
-              Free Trial
+            <div className="p-1 px-2 bg-custom-primary-100/20 text-custom-primary-100 text-xs rounded-full font-medium">
+              Pro trial in progress
             </div>
           </div>
         )}
-        <Dialog.Title as="h2" className="text-2xl font-bold leading-6 mt-6 flex justify-center items-center">
+        <Dialog.Title
+          as="h2"
+          className="text-2xl font-bold leading-6 mt-4 flex justify-center items-center text-center"
+        >
           Upgrade to Pro, yearly for flat {yearlyDiscount}% off.
         </Dialog.Title>
-        <div className="mt-3 mb-12">
+        <div className="mt-3 mb-8">
           <p className="text-center text-sm mb-4 px-10 text-custom-text-100">
-            Pro unlocks everything that teams need to make progress and move work forward.Upgrade today and get&nbsp;
+            Pro unlocks everything that teams need to make progress and move work forward. Upgrade today and get&nbsp;
             {yearlyDiscount}% off on your yearly bill.
           </p>
           <p className="text-center text-sm text-custom-primary-200 font-semibold underline">
@@ -273,16 +195,11 @@ export const ProPlanCloudUpgradeModal: FC<ProPlanCloudUpgradeModalProps> = (prop
             basePlan="Free"
             features={PRO_PLAN_FEATURES_MAP}
             isLoading={isLoading}
-            handlePaymentLink={(priceId: string) =>
-              isInTrailPeriod && !isTrialCompleted
-                ? handleSubscriptionPageRedirection(priceId)
-                : handlePaymentLink(priceId)
-            }
-            yearlyPlanOnly={yearlyPlan}
+            handlePaymentLink={handlePaymentLink}
             trialLoader={trialLoader}
             handleTrial={handleTrial}
             yearlyDiscount={yearlyDiscount}
-            showTrialButton={!isInTrailPeriod && !isTrialCompleted}
+            showTrialButton={subscriptionDetail?.is_trial_allowed}
           />
         )}
       </div>

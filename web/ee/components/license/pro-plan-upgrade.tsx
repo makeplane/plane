@@ -13,7 +13,6 @@ export type ProPlanUpgradeProps = {
   features: { label: string; comingSoon: boolean }[];
   handlePaymentLink: (priceId: string) => void;
   isLoading?: boolean;
-  yearlyPlanOnly?: boolean;
   verticalFeatureList?: boolean;
   extraFeatures?: string | React.ReactNode;
   trialLoader?: boolean;
@@ -29,7 +28,6 @@ export const ProPlanUpgrade: FC<ProPlanUpgradeProps> = (props) => {
     features,
     handlePaymentLink,
     isLoading = false,
-    yearlyPlanOnly = false,
     verticalFeatureList = false,
     extraFeatures,
     trialLoader = false,
@@ -38,14 +36,7 @@ export const ProPlanUpgrade: FC<ProPlanUpgradeProps> = (props) => {
     showTrialButton = false,
   } = props;
   // derived values
-  const yearlyPrice = orderBy(proProduct?.prices || [], ["recurring"], ["desc"]).find(
-    (price) => price.recurring === "year"
-  );
-  const proProductPrices = yearlyPlanOnly
-    ? yearlyPrice
-      ? [yearlyPrice]
-      : []
-    : orderBy(proProduct?.prices || [], ["recurring"], ["asc"]);
+  const proProductPrices = orderBy(proProduct?.prices || [], ["recurring"], ["asc"]);
 
   const renderPricing = (unitAmount: number, recurring: string): number => {
     let price = 0;
@@ -58,33 +49,31 @@ export const ProPlanUpgrade: FC<ProPlanUpgradeProps> = (props) => {
     <div className="py-4 px-2 border border-custom-primary-200/30 rounded-xl bg-custom-primary-200/5">
       <Tab.Group defaultIndex={1}>
         <div className="flex w-full justify-center">
-          {!yearlyPlanOnly && (
-            <Tab.List className="flex space-x-1 rounded-lg bg-custom-primary-200/10 p-1 w-60">
-              {proProductPrices.map((price: IPaymentProductPrice) => (
-                <Tab
-                  key={price?.id}
-                  className={({ selected }) =>
-                    cn(
-                      "w-full rounded-lg py-1.5 text-sm font-medium leading-5",
-                      selected
-                        ? "bg-custom-background-100 text-custom-primary-300 shadow"
-                        : "hover:bg-custom-primary-100/5 text-custom-text-300 hover:text-custom-text-200"
-                    )
-                  }
-                >
-                  <>
-                    {price.recurring === "month" && ("Monthly" as string)}
-                    {price.recurring === "year" && ("Yearly" as string)}
-                    {price.recurring === "year" && yearlyDiscount && (
-                      <span className="bg-gradient-to-r from-[#C78401] to-[#896828] text-white rounded-full px-2 py-1 ml-1 text-xs">
-                        -{yearlyDiscount}%
-                      </span>
-                    )}
-                  </>
-                </Tab>
-              ))}
-            </Tab.List>
-          )}
+          <Tab.List className="flex space-x-1 rounded-lg bg-custom-primary-200/10 p-1 w-60">
+            {proProductPrices.map((price: IPaymentProductPrice) => (
+              <Tab
+                key={price?.id}
+                className={({ selected }) =>
+                  cn(
+                    "w-full rounded-lg py-1.5 text-sm font-medium leading-5",
+                    selected
+                      ? "bg-custom-background-100 text-custom-primary-300 shadow"
+                      : "hover:bg-custom-primary-100/5 text-custom-text-300 hover:text-custom-text-200"
+                  )
+                }
+              >
+                <>
+                  {price.recurring === "month" && ("Monthly" as string)}
+                  {price.recurring === "year" && ("Yearly" as string)}
+                  {price.recurring === "year" && yearlyDiscount && (
+                    <span className="bg-gradient-to-r from-[#C78401] to-[#896828] text-white rounded-full px-2 py-1 ml-1 text-xs">
+                      -{yearlyDiscount}%
+                    </span>
+                  )}
+                </>
+              </Tab>
+            ))}
+          </Tab.List>
         </div>
         <Tab.Panels>
           {proProductPrices?.map((price: IPaymentProductPrice) => (
@@ -104,11 +93,7 @@ export const ProPlanUpgrade: FC<ProPlanUpgradeProps> = (props) => {
                   onClick={() => handlePaymentLink(price.id)}
                   disabled={isLoading}
                 >
-                  {isLoading
-                    ? yearlyPlanOnly
-                      ? "Upgrading your plan..."
-                      : "Redirecting to Stripe..."
-                    : "Upgrade to Pro"}
+                  {isLoading ? "Redirecting to Stripe..." : "Upgrade to Pro"}
                 </button>
 
                 {/* trail button */}
@@ -121,12 +106,6 @@ export const ProPlanUpgrade: FC<ProPlanUpgradeProps> = (props) => {
                     <span>Start free trial</span>
                     <div className="w-3 h-3">{trialLoader && <Loader size={12} className="animate-spin" />}</div>
                   </button>
-                )}
-                {yearlyPlanOnly && (
-                  <div className="text-[9px] text-custom-text-300 w-64 pt-1">
-                    We will charge your card on file at <b>$5 per user per month</b> for the total number of users in
-                    your workspace and update your subscription from <b>Pro, monthly</b> or <b>Pro, yearly.</b>
-                  </div>
                 )}
               </div>
               <div className="px-2 pt-6 pb-2">
