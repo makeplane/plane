@@ -1,5 +1,5 @@
 // helpers
-import { getAllDocumentFormsFromBinaryData, getBinaryDataFromHTMLString } from "../../core/helpers/page.js";
+import { getAllDocumentFormatsFromBinaryData, getBinaryDataFromHTMLString } from "../../core/helpers/page.js";
 // services
 import { PageService } from "../services/page.service.js";
 const pageService = new PageService();
@@ -24,7 +24,7 @@ export const updatePageDescription = async (
     contentBinaryEncoded,
     contentHTML,
     contentJSON
-  } =  getAllDocumentFormsFromBinaryData(updatedDescription);
+  } =  getAllDocumentFormatsFromBinaryData(updatedDescription);
   try {
     const payload = {
       description_binary: contentBinaryEncoded,

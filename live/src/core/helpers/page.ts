@@ -11,7 +11,7 @@ const DOCUMENT_EDITOR_EXTENSIONS = [
 ];
 const documentEditorSchema = getSchema(DOCUMENT_EDITOR_EXTENSIONS);
 
-export const getAllDocumentFormsFromBinaryData =  (description: Uint8Array): {
+export const getAllDocumentFormatsFromBinaryData =  (description: Uint8Array): {
   contentBinaryEncoded: string;
   contentJSON: object;
   contentHTML: string;
