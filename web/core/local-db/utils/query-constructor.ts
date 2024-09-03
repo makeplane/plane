@@ -65,7 +65,7 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
     if (order_by.includes("assignee")) {
       sql = `SELECT  ${fieldsFragment} , s.first_name as ${name} from issues i`;
     } else {
-      sql = `SELECT  ${fieldsFragment} , s.name as ${name} from issues i`;
+      sql = `SELECT  ${fieldsFragment} , group_concat(s.name) as ${name} from issues i`;
     }
   } else {
     sql = `SELECT ${fieldsFragment} from issues i`;
