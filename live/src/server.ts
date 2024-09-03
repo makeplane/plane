@@ -11,6 +11,8 @@ import {
   fetchPageDescriptionBinary,
   updatePageDescription,
 } from "@/core/lib/page.js";
+// config
+import { getRedisConfig } from "./core/config/redis-config.js";
 // types
 import { TDocumentTypes } from "@/core/types/common.js";
 // plane live lib
@@ -46,10 +48,8 @@ const server = Server.configure({
     }
   },
   extensions: [
-    new Redis({
-      host: process.env.REDIS_HOST || "localhost",
-      port: Number(process.env.REDIS_PORT || 6379),
-    }),
+    // @ts-expect-error - redis from hocuspocus is not typed properly
+    new Redis(getRedisConfig()),
     new Logger(),
     new Database({
       fetch: async ({
