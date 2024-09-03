@@ -27,6 +27,7 @@ jobs:
       build_admin: ${{ steps.changed_files.outputs.admin_any_changed }}
       build_space: ${{ steps.changed_files.outputs.space_any_changed }}
       build_web: ${{ steps.changed_files.outputs.web_any_changed }}
+      build_live: ${{ steps.changed_files.outputs.live_any_changed }}
 
     steps:
       - id: set_env_variables
@@ -74,6 +75,13 @@ jobs:
               - 'turbo.json'
             web:
               - web/**
+              - packages/**
+              - 'package.json'
+              - 'yarn.lock'
+              - 'tsconfig.json'
+              - 'turbo.json'
+            live:
+              - live/**
               - packages/**
               - 'package.json'
               - 'yarn.lock'
@@ -283,6 +291,58 @@ jobs:
           platforms: ${{ env.BUILDX_PLATFORMS }}
           push: true
           tags: ${{ env.BACKEND_TAG }}
+        env:
+          DOCKER_BUILDKIT: 1
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  branch_build_push_live:
+    if: ${{ needs.branch_build_setup.outputs.build_live == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
+    runs-on: ubuntu-20.04
+    needs: [branch_build_setup]
+    env:
+      LIVE_TAG: makeplane/plane-live:${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      TARGET_BRANCH: ${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
+      BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
+      BUILDX_PLATFORMS: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
+      BUILDX_ENDPOINT: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+    steps:
+      - name: Set Live Docker Tag
+        run: |
+          if [ "${{ github.event_name }}" == "release" ]; then
+            TAG=makeplane/plane-live:stable,makeplane/plane-live:${{ github.event.release.tag_name }}
+          elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
+            TAG=makeplane/plane-live:latest
+          else
+            TAG=${{ env.LIVE_TAG }}
+          fi
+          echo "LIVE_TAG=${TAG}" >> $GITHUB_ENV
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: ${{ env.BUILDX_DRIVER }}
+          version: ${{ env.BUILDX_VERSION }}
+          endpoint: ${{ env.BUILDX_ENDPOINT }}
+
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Build and Push Live Server to Docker Hub
+        uses: docker/build-push-action@v5.1.0
+        with:
+          context: .
+          file: ./live/Dockerfile.live
+          platforms: ${{ env.BUILDX_PLATFORMS }}
+          tags: ${{ env.LIVE_TAG }}
+          push: true
         env:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}

@@ -1,11 +1,10 @@
 "use client";
 
-import { Fragment, ReactNode, useRef, useState } from "react";
+import { ReactNode, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown } from "lucide-react";
-import { Combobox } from "@headlessui/react";
 // ui
-import { ContrastIcon } from "@plane/ui";
+import { ComboDropDown, ContrastIcon } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -26,6 +25,7 @@ type Props = TDropdownProps & {
   projectId: string | undefined;
   value: string | null;
   canRemoveCycle?: boolean;
+  renderByDefault?: boolean;
 };
 
 export const CycleDropdown: React.FC<Props> = observer((props) => {
@@ -48,6 +48,7 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
     tabIndex,
     value,
     canRemoveCycle = true,
+    renderByDefault = true,
   } = props;
   // states
 
@@ -72,8 +73,57 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
     handleClose();
   };
 
+  const comboButton = (
+    <>
+      {button ? (
+        <button
+          ref={setReferenceElement}
+          type="button"
+          className={cn(
+            "clickable block h-full w-full outline-none hover:bg-custom-background-80",
+            buttonContainerClassName
+          )}
+          onClick={handleOnClick}
+        >
+          {button}
+        </button>
+      ) : (
+        <button
+          ref={setReferenceElement}
+          type="button"
+          className={cn(
+            "clickable block h-full max-w-full outline-none hover:bg-custom-background-80",
+            {
+              "cursor-not-allowed text-custom-text-200": disabled,
+              "cursor-pointer": !disabled,
+            },
+            buttonContainerClassName
+          )}
+          onClick={handleOnClick}
+        >
+          <DropdownButton
+            className={buttonClassName}
+            isActive={isOpen}
+            tooltipHeading="Cycle"
+            tooltipContent={selectedName ?? placeholder}
+            showTooltip={showTooltip}
+            variant={buttonVariant}
+          >
+            {!hideIcon && <ContrastIcon className="h-3 w-3 flex-shrink-0" />}
+            {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (!!selectedName || !!placeholder) && (
+              <span className="max-w-40 flex-grow truncate">{selectedName ?? placeholder}</span>
+            )}
+            {dropdownArrow && (
+              <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+            )}
+          </DropdownButton>
+        </button>
+      )}
+    </>
+  );
+
   return (
-    <Combobox
+    <ComboDropDown
       as="div"
       ref={dropdownRef}
       tabIndex={tabIndex}
@@ -82,53 +132,9 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
       onChange={dropdownOnChange}
       disabled={disabled}
       onKeyDown={handleKeyDown}
+      button={comboButton}
+      renderByDefault={renderByDefault}
     >
-      <Combobox.Button as={Fragment}>
-        {button ? (
-          <button
-            ref={setReferenceElement}
-            type="button"
-            className={cn(
-              "clickable block h-full w-full outline-none hover:bg-custom-background-80",
-              buttonContainerClassName
-            )}
-            onClick={handleOnClick}
-          >
-            {button}
-          </button>
-        ) : (
-          <button
-            ref={setReferenceElement}
-            type="button"
-            className={cn(
-              "clickable block h-full max-w-full outline-none hover:bg-custom-background-80",
-              {
-                "cursor-not-allowed text-custom-text-200": disabled,
-                "cursor-pointer": !disabled,
-              },
-              buttonContainerClassName
-            )}
-            onClick={handleOnClick}
-          >
-            <DropdownButton
-              className={buttonClassName}
-              isActive={isOpen}
-              tooltipHeading="Cycle"
-              tooltipContent={selectedName ?? placeholder}
-              showTooltip={showTooltip}
-              variant={buttonVariant}
-            >
-              {!hideIcon && <ContrastIcon className="h-3 w-3 flex-shrink-0" />}
-              {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (!!selectedName || !!placeholder) && (
-                <span className="max-w-40 flex-grow truncate">{selectedName ?? placeholder}</span>
-              )}
-              {dropdownArrow && (
-                <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
-              )}
-            </DropdownButton>
-          </button>
-        )}
-      </Combobox.Button>
       {isOpen && projectId && (
         <CycleOptions
           isOpen={isOpen}
@@ -138,6 +144,6 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
           canRemoveCycle={canRemoveCycle}
         />
       )}
-    </Combobox>
+    </ComboDropDown>
   );
 });

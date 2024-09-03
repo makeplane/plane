@@ -64,7 +64,7 @@ export const WorkspaceDashboardView = observer(() => {
         <>
           {joinedProjectIds.length > 0 || loader ? (
             <>
-              <IssuePeekOverview />
+              <IssuePeekOverview shouldReplaceIssueOnFetch={false} />
               <div
                 className={cn(
                   "space-y-7 md:p-7 p-3 bg-custom-background-90 h-full w-full flex flex-col overflow-y-auto",

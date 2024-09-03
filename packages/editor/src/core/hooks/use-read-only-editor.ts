@@ -12,7 +12,7 @@ import { CoreReadOnlyEditorProps } from "@/props";
 import { EditorReadOnlyRefApi, IMentionHighlight } from "@/types";
 
 interface CustomReadOnlyEditorProps {
-  initialValue: string;
+  initialValue?: string;
   editorClassName: string;
   forwardedRef?: MutableRefObject<EditorReadOnlyRefApi | null>;
   extensions?: any;

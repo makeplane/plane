@@ -17,6 +17,12 @@ services:
       context: ./
       dockerfile: ./admin/Dockerfile.admin
 
+  live:
+    image: ${DOCKERHUB_USER:-local}/plane-live:${APP_RELEASE:-latest}
+    build:
+      context: .
+      dockerfile: ./live/Dockerfile.live
+
   api:
     image: ${DOCKERHUB_USER:-local}/plane-backend:${APP_RELEASE:-latest}
     build:

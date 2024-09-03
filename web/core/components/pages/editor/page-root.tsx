@@ -1,18 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
-// plane editor
+// editor
 import { EditorRefApi, useEditorMarkings } from "@plane/editor";
-// plane types
+// types
 import { TPage } from "@plane/types";
-// plane ui
+// ui
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { PageEditorHeaderRoot, PageEditorBody, PageVersionsOverlay, PagesVersionEditor } from "@/components/pages";
 // hooks
 import { useProjectPages } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { usePageDescription } from "@/hooks/use-page-description";
 import { useQueryParams } from "@/hooks/use-query-params";
 // services
 import { ProjectPageVersionService } from "@/services/page";
@@ -31,6 +30,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
   // states
   const [editorReady, setEditorReady] = useState(false);
   const [readOnlyEditorReady, setReadOnlyEditorReady] = useState(false);
+  const [hasConnectionFailed, setHasConnectionFailed] = useState(false);
   const [sidePeekVisible, setSidePeekVisible] = useState(window.innerWidth >= 768);
   const [isVersionsOverlayOpen, setIsVersionsOverlayOpen] = useState(false);
   // refs
@@ -46,19 +46,6 @@ export const PageRoot = observer((props: TPageRootProps) => {
   const { access, description_html, name, isContentEditable } = page;
   // editor markings hook
   const { markings, updateMarkings } = useEditorMarkings();
-  // project-description
-  const {
-    handleDescriptionChange,
-    isDescriptionReady,
-    pageDescriptionYJS,
-    handleSaveDescription,
-    manuallyUpdateDescription,
-  } = usePageDescription({
-    editorRef,
-    page,
-    projectId,
-    workspaceSlug,
-  });
   // update query params
   const { updateQueryParams } = useQueryParams();
 
@@ -98,6 +85,11 @@ export const PageRoot = observer((props: TPageRootProps) => {
     router.push(updatedRoute);
   };
 
+  const handleRestoreVersion = async (descriptionHTML: string) => {
+    editorRef.current?.clearEditor();
+    editorRef.current?.setEditorValue(descriptionHTML);
+  };
+
   return (
     <>
       <PageVersionsOverlay
@@ -120,36 +112,34 @@ export const PageRoot = observer((props: TPageRootProps) => {
             versionId
           );
         }}
-        handleRestore={manuallyUpdateDescription}
+        handleRestore={handleRestoreVersion}
         isOpen={isVersionsOverlayOpen}
         onClose={handleCloseVersionsOverlay}
         pageId={page.id ?? ""}
         restoreEnabled={isContentEditable}
       />
       <PageEditorHeaderRoot
-        editorRef={editorRef}
-        readOnlyEditorRef={readOnlyEditorRef}
         editorReady={editorReady}
-        readOnlyEditorReady={readOnlyEditorReady}
+        editorRef={editorRef}
         handleDuplicatePage={handleDuplicatePage}
-        handleSaveDescription={handleSaveDescription}
+        hasConnectionFailed={hasConnectionFailed}
         markings={markings}
         page={page}
-        sidePeekVisible={sidePeekVisible}
+        readOnlyEditorReady={readOnlyEditorReady}
+        readOnlyEditorRef={readOnlyEditorRef}
         setSidePeekVisible={(state) => setSidePeekVisible(state)}
+        sidePeekVisible={sidePeekVisible}
       />
       <PageEditorBody
         editorRef={editorRef}
+        handleConnectionStatus={(status) => setHasConnectionFailed(status)}
         handleEditorReady={(val) => setEditorReady(val)}
-        readOnlyEditorRef={readOnlyEditorRef}
         handleReadOnlyEditorReady={() => setReadOnlyEditorReady(true)}
         markings={markings}
         page={page}
+        readOnlyEditorRef={readOnlyEditorRef}
         sidePeekVisible={sidePeekVisible}
         updateMarkings={updateMarkings}
-        handleDescriptionChange={handleDescriptionChange}
-        isDescriptionReady={isDescriptionReady}
-        pageDescriptionYJS={pageDescriptionYJS}
       />
     </>
   );
