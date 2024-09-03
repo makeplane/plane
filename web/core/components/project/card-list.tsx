@@ -45,7 +45,7 @@ export const ProjectCardList = observer(() => {
           <p className="whitespace-pre-line text-base text-custom-text-400">
             {searchQuery.trim() === ""
               ? "Remove the filters to see all projects"
-              : "No projects detected with the matching\ncriteria. Create a new project instead"}
+              : "No projects detected with the matching criteria.\nCreate a new project instead"}
           </p>
         </div>
       </div>

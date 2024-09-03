@@ -8,6 +8,6 @@ export const useEditorFlagging = (): {
   documentEditor: TExtensions[];
   richTextEditor: TExtensions[];
 } => ({
-  documentEditor: ["ai"],
-  richTextEditor: ["ai"],
+  documentEditor: ["ai", "collaboration-cursor"],
+  richTextEditor: ["ai", "collaboration-cursor"],
 });

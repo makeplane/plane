@@ -1,1 +1,1 @@
-export type TExtensions = "ai" | "issue-embed";
+export type TExtensions = "ai" | "collaboration-cursor" | "issue-embed";
