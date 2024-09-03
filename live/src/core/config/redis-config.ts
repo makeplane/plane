@@ -10,10 +10,7 @@ export function getRedisConfig(): RedisConfig {
   }
 
   if (redisHost && redisPort && !isNaN(Number(redisPort))) {
-    return {
-      host: redisHost,
-      port: Number(redisPort),
-    };
+    return `redis://${redisHost}:${redisPort}`;
   }
 
   return "redis://localhost:6379";
