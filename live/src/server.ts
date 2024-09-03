@@ -1,6 +1,5 @@
 import { Server } from "@hocuspocus/server";
 import { Redis } from "@hocuspocus/extension-redis";
-
 import { Database } from "@hocuspocus/extension-database";
 import { Logger } from "@hocuspocus/extension-logger";
 import express from "express";

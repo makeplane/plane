@@ -1,22 +1,25 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // document-editor
 import {
-  DocumentEditorWithRef,
-  DocumentReadOnlyEditorWithRef,
+  CollaborativeDocumentEditorWithRef,
+  CollaborativeDocumentReadOnlyEditorWithRef,
   EditorReadOnlyRefApi,
   EditorRefApi,
   IMarking,
   TAIMenuProps,
   TDisplayConfig,
+  TRealtimeConfig,
+  TServerHandler,
 } from "@plane/editor";
 // types
 import { IUserLite } from "@plane/types";
 // components
 import { PageContentBrowser, PageEditorTitle, PageContentLoader } from "@/components/pages";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn, LIVE_URL } from "@/helpers/common.helper";
+import { generateRandomColor } from "@/helpers/string.helper";
 // hooks
 import { useMember, useUser, useWorkspace } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
@@ -35,34 +38,30 @@ const fileService = new FileService();
 
 type Props = {
   editorRef: React.RefObject<EditorRefApi>;
-  readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
-  markings: IMarking[];
-  page: IWorkspacePageDetails;
-  sidePeekVisible: boolean;
-  handleDescriptionChange: (update: Uint8Array, source?: string | undefined) => void;
+  handleConnectionStatus: (status: boolean) => void;
   handleEditorReady: (value: boolean) => void;
   handleReadOnlyEditorReady: (value: boolean) => void;
+  markings: IMarking[];
+  page: IWorkspacePageDetails;
+  readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
+  sidePeekVisible: boolean;
   updateMarkings: (description_html: string) => void;
-  isDescriptionReady: boolean;
-  pageDescriptionYJS: Uint8Array | undefined;
 };
 
 export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
   const {
-    handleReadOnlyEditorReady,
-    handleEditorReady,
     editorRef,
+    handleConnectionStatus,
+    handleEditorReady,
+    handleReadOnlyEditorReady,
     markings,
-    readOnlyEditorRef,
     page,
+    readOnlyEditorRef,
     sidePeekVisible,
     updateMarkings,
-    handleDescriptionChange,
-    isDescriptionReady,
-    pageDescriptionYJS,
   } = props;
   // router
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug } = useParams();
   // store hooks
   const { data: currentUser } = useUser();
   const { getWorkspaceBySlug } = useWorkspace();
@@ -100,16 +99,42 @@ export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
     [editorRef]
   );
 
+  const handleServerConnect = useCallback(() => {
+    handleConnectionStatus(false);
+  }, []);
+  const handleServerError = useCallback(() => {
+    handleConnectionStatus(true);
+  }, []);
+
+  const serverHandler: TServerHandler = useMemo(
+    () => ({
+      onConnect: handleServerConnect,
+      onServerError: handleServerError,
+    }),
+    []
+  );
+
   useEffect(() => {
     updateMarkings(pageDescription ?? "<p></p>");
   }, [pageDescription, updateMarkings]);
 
-  if (pageId === undefined || !pageDescriptionYJS || !isDescriptionReady) return <PageContentLoader />;
+  const realtimeConfig: TRealtimeConfig = useMemo(
+    () => ({
+      url: `${LIVE_URL}/collaboration`,
+      queryParams: {
+        workspaceSlug: workspaceSlug?.toString(),
+        documentType: "workspace_page",
+      },
+    }),
+    [workspaceSlug]
+  );
 
   const handleIssueSearch = async (searchQuery: string) => {
     const response = await fetchIssues(searchQuery);
     return response;
   };
+
+  if (pageId === undefined) return <PageContentLoader />;
 
   if (pageDescription === undefined) return <PageContentLoader />;
 
@@ -145,7 +170,7 @@ export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
             />
           </div>
           {isContentEditable ? (
-            <DocumentEditorWithRef
+            <CollaborativeDocumentEditorWithRef
               id={pageId}
               fileHandler={{
                 cancel: fileService.cancelUpload,
@@ -154,12 +179,10 @@ export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
                 upload: fileService.getUploadFileFunction(workspaceSlug as string, setIsSubmitting),
               }}
               handleEditorReady={handleEditorReady}
-              value={pageDescriptionYJS}
               ref={editorRef}
               containerClassName="p-0 pb-64"
               displayConfig={displayConfig}
               editorClassName="pl-10"
-              onChange={handleDescriptionChange}
               mentionHandler={{
                 highlights: mentionHighlights,
                 suggestions: mentionSuggestions,
@@ -183,7 +206,7 @@ export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
                     projectId: projectIdFromEmbed,
                     workspaceSlug: workspaceSlugFromEmbed,
                   }) => {
-                    const resolvedProjectId = projectIdFromEmbed ?? projectId?.toString() ?? "";
+                    const resolvedProjectId = projectIdFromEmbed ?? "";
                     const resolvedWorkspaceSlug = workspaceSlugFromEmbed ?? workspaceSlug?.toString() ?? "";
                     return (
                       <IssueEmbedCard
@@ -195,16 +218,22 @@ export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
                   },
                 },
               }}
+              realtimeConfig={realtimeConfig}
+              serverHandler={serverHandler}
+              user={{
+                id: currentUser?.id ?? "",
+                name: currentUser?.display_name ?? "",
+                color: generateRandomColor(currentUser?.id ?? ""),
+              }}
               disabledExtensions={documentEditor}
               aiHandler={{
                 menu: getAIMenu,
               }}
             />
           ) : (
-            <DocumentReadOnlyEditorWithRef
-              ref={readOnlyEditorRef}
+            <CollaborativeDocumentReadOnlyEditorWithRef
               id={pageId}
-              initialValue={pageDescription ?? "<p></p>"}
+              ref={readOnlyEditorRef}
               handleEditorReady={handleReadOnlyEditorReady}
               containerClassName="p-0 pb-64 border-none"
               displayConfig={displayConfig}
@@ -219,7 +248,7 @@ export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
                     projectId: projectIdFromEmbed,
                     workspaceSlug: workspaceSlugFromEmbed,
                   }) => {
-                    const resolvedProjectId = projectIdFromEmbed ?? projectId?.toString() ?? "";
+                    const resolvedProjectId = projectIdFromEmbed ?? "";
                     const resolvedWorkspaceSlug = workspaceSlugFromEmbed ?? workspaceSlug?.toString() ?? "";
 
                     return (
@@ -231,6 +260,13 @@ export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
                     );
                   },
                 },
+              }}
+              realtimeConfig={realtimeConfig}
+              serverHandler={serverHandler}
+              user={{
+                id: currentUser?.id ?? "",
+                name: currentUser?.display_name ?? "",
+                color: generateRandomColor(currentUser?.id ?? ""),
               }}
             />
           )}

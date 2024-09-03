@@ -1,27 +1,31 @@
+import { HocuspocusProvider } from "@hocuspocus/provider";
 import { Extensions } from "@tiptap/core";
 // ui
 import { LayersIcon } from "@plane/ui";
 // extensions
 import { SlashCommand } from "@/extensions";
-// hooks
-import { TFileHandler } from "@/hooks/use-editor";
 // plane editor extensions
 import { IssueEmbedSuggestions, IssueListRenderer } from "@/plane-editor/extensions";
 // plane editor types
 import { TIssueEmbedConfig } from "@/plane-editor/types";
 // types
-import { ISlashCommandItem, TExtensions } from "@/types";
+import { ISlashCommandItem, TExtensions, TFileHandler, TUserDetails } from "@/types";
+// local extensions
+import { CustomCollaborationCursor } from "./collaboration-cursor";
 
 type Props = {
   disabledExtensions?: TExtensions[];
   fileHandler: TFileHandler;
   issueEmbedConfig: TIssueEmbedConfig | undefined;
+  provider: HocuspocusProvider;
+  userDetails: TUserDetails;
 };
 
 export const DocumentEditorAdditionalExtensions = (props: Props) => {
-  const { disabledExtensions, fileHandler, issueEmbedConfig } = props;
+  const { disabledExtensions, fileHandler, issueEmbedConfig, provider, userDetails } = props;
 
   const isIssueEmbedDisabled = !!disabledExtensions?.includes("issue-embed");
+  const isCollaborationCursorDisabled = !!disabledExtensions?.includes("collaboration-cursor");
 
   const extensions: Extensions = [];
 
@@ -49,6 +53,15 @@ export const DocumentEditorAdditionalExtensions = (props: Props) => {
         suggestion: {
           render: () => issueEmbedConfig.searchCallback && IssueListRenderer(issueEmbedConfig.searchCallback),
         },
+      })
+    );
+  }
+
+  if (!isCollaborationCursorDisabled) {
+    extensions.push(
+      CustomCollaborationCursor({
+        provider,
+        userDetails,
       })
     );
   }
