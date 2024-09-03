@@ -1,5 +1,5 @@
 // types
-import type { IUser, IUserProjectsRole } from "@plane/types";
+import type { IProjectMember, IUser } from "@plane/types";
 // services
 import { API_BASE_URL, APIService } from "./api.service.js";
 
@@ -26,21 +26,36 @@ export class UserService extends APIService {
       });
   }
 
-  async getUserAllProjectsRole(
+  async getUserWorkspaceMembership(
     workspaceSlug: string,
     cookie: string
-  ): Promise<IUserProjectsRole> {
-    return this.get(
-      `/api/users/me/workspaces/${workspaceSlug}/project-roles/`,
+  ): Promise<IProjectMember> {
+    return this.get(`/api/workspaces/${workspaceSlug}/workspace-members/me/`,
       {
         headers: {
           Cookie: cookie,
         },
-      }
-    )
+      })
       .then((response) => response?.data)
       .catch((error) => {
-        throw error?.response?.data;
+        throw error?.response;
+      });
+  }
+
+  async getUserProjectMembership(
+    workspaceSlug: string,
+    projectId: string,
+    cookie: string
+  ): Promise<IProjectMember> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/project-members/me/`,
+      {
+        headers: {
+          Cookie: cookie,
+        },
+      })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
       });
   }
 }
