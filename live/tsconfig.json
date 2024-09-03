@@ -9,7 +9,7 @@
     "baseUrl": ".",
     "paths": {
       "@/core/*": ["./src/core/*"],
-      "@/plane-live/*": ["./src/ce/*"]
+      "@/plane-live/*": ["./src/ee/*"]
     },
     "removeComments": true,
     "esModuleInterop": true,
