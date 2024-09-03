@@ -8,7 +8,7 @@ import { useSearchParams } from "next/navigation";
 import { AlertCircle, ChevronUp, ChevronDown } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 import { ICycle, IIssueFilterOptions, TCyclePlotType, TProgressSnapshot } from "@plane/types";
-import { CustomSelect, Spinner } from "@plane/ui";
+import { CustomSelect, Loader, Spinner } from "@plane/ui";
 // components
 import ProgressChart from "@/components/core/sidebar/progress-chart";
 import { CycleProgressStats } from "@/components/cycles";
@@ -231,7 +231,7 @@ export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((pro
                       <span>Current</span>
                     </div>
                   </div>
-                  {cycleStartDate && cycleEndDate && completionChartDistributionData && (
+                  {cycleStartDate && cycleEndDate && completionChartDistributionData ? (
                     <Fragment>
                       {plotType === "points" ? (
                         <ProgressChart
@@ -251,6 +251,10 @@ export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((pro
                         />
                       )}
                     </Fragment>
+                  ) : (
+                    <Loader className="w-full h-[160px] mt-4">
+                      <Loader.Item width="100%" height="100%" />
+                    </Loader>
                   )}
                 </div>
 

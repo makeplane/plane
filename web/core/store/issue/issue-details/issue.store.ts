@@ -4,7 +4,6 @@ import { computedFn } from "mobx-utils";
 import { TIssue } from "@plane/types";
 // local
 import { persistence } from "@/local-db/storage.sqlite";
-import { updateIssue } from "@/local-db/utils/load-issues";
 // services
 import { IssueArchiveService, IssueDraftService, IssueService } from "@/services/issue";
 // types
@@ -16,7 +15,8 @@ export interface IIssueStoreActions {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    issueType?: "DEFAULT" | "DRAFT" | "ARCHIVED"
+    issueType?: "DEFAULT" | "DRAFT" | "ARCHIVED",
+    shouldReplace?: boolean
   ) => Promise<TIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
@@ -68,7 +68,13 @@ export class IssueStore implements IIssueStore {
   });
 
   // actions
-  fetchIssue = async (workspaceSlug: string, projectId: string, issueId: string, issueType = "DEFAULT") => {
+  fetchIssue = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    issueType = "DEFAULT",
+    shouldReplace = true
+  ) => {
     const query = {
       expand: "issue_reactions,issue_attachment,issue_link,parent",
     };
@@ -92,7 +98,38 @@ export class IssueStore implements IIssueStore {
 
     if (!issue) throw new Error("Issue not found");
 
-    this.addIssueToStore(issue);
+    const issuePayload: TIssue = {
+      id: issue?.id,
+      sequence_id: issue?.sequence_id,
+      name: issue?.name,
+      description_html: issue?.description_html,
+      sort_order: issue?.sort_order,
+      state_id: issue?.state_id,
+      priority: issue?.priority,
+      label_ids: issue?.label_ids,
+      assignee_ids: issue?.assignee_ids,
+      estimate_point: issue?.estimate_point,
+      sub_issues_count: issue?.sub_issues_count,
+      attachment_count: issue?.attachment_count,
+      link_count: issue?.link_count,
+      project_id: issue?.project_id,
+      parent_id: issue?.parent_id,
+      cycle_id: issue?.cycle_id,
+      module_ids: issue?.module_ids,
+      type_id: issue?.type_id,
+      created_at: issue?.created_at,
+      updated_at: issue?.updated_at,
+      start_date: issue?.start_date,
+      target_date: issue?.target_date,
+      completed_at: issue?.completed_at,
+      archived_at: issue?.archived_at,
+      created_by: issue?.created_by,
+      updated_by: issue?.updated_by,
+      is_draft: issue?.is_draft,
+      is_subscribed: issue?.is_subscribed,
+    };
+
+    this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issuePayload], shouldReplace);
 
     // store handlers from issue detail
     // parent

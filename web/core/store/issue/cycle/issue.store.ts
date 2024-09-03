@@ -142,16 +142,20 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
   };
 
   updateParentStats = (prevIssueState?: TIssue, nextIssueState?: TIssue, id?: string | undefined) => {
-    const distributionUpdates = getDistributionPathsPostUpdate(
-      prevIssueState,
-      nextIssueState,
-      this.rootIssueStore.rootStore.state.stateMap,
-      this.rootIssueStore.rootStore.projectEstimate?.currentActiveEstimate?.estimatePointById
-    );
+    try {
+      const distributionUpdates = getDistributionPathsPostUpdate(
+        prevIssueState,
+        nextIssueState,
+        this.rootIssueStore.rootStore.state.stateMap,
+        this.rootIssueStore.rootStore.projectEstimate?.currentActiveEstimate?.estimatePointById
+      );
 
-    const cycleId = id ?? this.cycleId;
+      const cycleId = id ?? this.cycleId;
 
-    cycleId && this.rootIssueStore.rootStore.cycle.updateCycleDistribution(distributionUpdates, cycleId);
+      cycleId && this.rootIssueStore.rootStore.cycle.updateCycleDistribution(distributionUpdates, cycleId);
+    } catch (e) {
+      console.warn("could not update cycle statistics");
+    }
   };
 
   /**

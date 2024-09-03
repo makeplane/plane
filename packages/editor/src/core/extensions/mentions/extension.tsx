@@ -7,7 +7,7 @@ import { MentionList, MentionNodeView } from "@/extensions";
 // types
 import { IMentionHighlight, IMentionSuggestion } from "@/types";
 
-export interface CustomMentionOptions extends MentionOptions {
+interface CustomMentionOptions extends MentionOptions {
   mentionHighlights: () => Promise<IMentionHighlight[]>;
   readonly?: boolean;
 }
