@@ -108,10 +108,11 @@ const server = Server.configure({
               await updatePageDescription(params, pageId, state, cookie);
             } else {
               await updateDocument({
-                params,
-                pageId,
-                updatedDescription: state,
                 cookie,
+                documentType,
+                pageId,
+                params,
+                updatedDescription: state,
               })
             }
           } catch (error) {
