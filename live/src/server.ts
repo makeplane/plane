@@ -14,6 +14,7 @@ import {
 import { TDocumentTypes } from "./core/types/common.js";
 // helpers
 import { handleAuthentication } from "./core/lib/authentication.js";
+import { getRedisConfig } from "./core/config/redis-config.js";
 
 const server = Server.configure({
   onAuthenticate: async ({
@@ -45,7 +46,7 @@ const server = Server.configure({
   },
   extensions: [
     // @ts-expect-error - redis from hocuspocus is not typed properly
-    new Redis(process.env.REDIS_URL || "redis://localhost:6379"),
+    new Redis(getRedisConfig()),
     new Logger(),
     new Database({
       fetch: async ({
