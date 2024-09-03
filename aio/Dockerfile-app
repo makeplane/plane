@@ -87,6 +87,8 @@ RUN chmod +x ./api/bin/*
 RUN chmod -R 777 ./api/
 
 # NEXTJS BUILDS
+COPY --from=installer /app/node_modules ./node_modules/
+
 COPY --from=installer /app/web/next.config.js ./web/
 COPY --from=installer /app/web/package.json ./web/
 COPY --from=installer /app/web/.next/standalone ./web
@@ -107,7 +109,7 @@ COPY --from=installer /app/admin/public ./admin/admin/public
 
 COPY --from=installer /app/live/package.json ./live/
 COPY --from=installer /app/live/dist ./live/dist
-COPY --from=installer /app/live/node_modules ./live/node_modules
+# COPY --from=installer /app/live/node_modules ./live/node_modules
 
 ARG NEXT_PUBLIC_API_BASE_URL=""
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
