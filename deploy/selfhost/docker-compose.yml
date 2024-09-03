@@ -104,7 +104,7 @@ services:
     restart: unless-stopped
     command: node live/dist/server.js live
     environment:
-      <<: [ *live-env ]
+      <<: [ *live-env, *redis-env ]
     deploy:
       replicas: ${LIVE_REPLICAS:-1}
     depends_on:
