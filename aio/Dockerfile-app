@@ -11,7 +11,7 @@ WORKDIR /app
 RUN yarn global add turbo
 COPY . .
 
-RUN turbo prune --scope=web --scope=space --scope=admin --docker
+RUN turbo prune --scope=web --scope=space --scope=admin --scope=live --docker
 
 # *****************************************************************************
 # STAGE 2: Install dependencies & build the project
@@ -53,7 +53,7 @@ ENV NEXT_PUBLIC_WEB_BASE_URL=$NEXT_PUBLIC_WEB_BASE_URL
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV TURBO_TELEMETRY_DISABLED=1
 
-RUN yarn turbo run build --filter=web --filter=space --filter=admin
+RUN yarn turbo run build --filter=web --filter=space --filter=admin --filter=live
 
 # *****************************************************************************
 # STAGE 3: Copy the project and start it
@@ -104,6 +104,10 @@ COPY --from=installer /app/admin/package.json ./admin/
 COPY --from=installer /app/admin/.next/standalone ./admin
 COPY --from=installer /app/admin/.next/static ./admin/admin/.next/static
 COPY --from=installer /app/admin/public ./admin/admin/public
+
+COPY --from=installer /app/live/package.json ./live/
+COPY --from=installer /app/live/dist ./live/dist
+COPY --from=installer /app/live/node_modules ./live/node_modules
 
 ARG NEXT_PUBLIC_API_BASE_URL=""
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL

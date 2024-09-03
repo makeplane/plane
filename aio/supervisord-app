@@ -29,6 +29,16 @@ stderr_logfile=/dev/stdout
 stderr_logfile_maxbytes=0
 environment=PORT=3003,HOSTNAME=0.0.0.0
 
+[program:live]
+command=node /app/live/dist/server.js
+autostart=true
+autorestart=true
+stdout_logfile=/dev/stdout
+stdout_logfile_maxbytes=0
+stderr_logfile=/dev/stdout
+stderr_logfile_maxbytes=0
+environment=PORT=3004,HOSTNAME=0.0.0.0,API_BASE_URL="http://localhost:8000"
+
 [program:migrator]
 directory=/app/api
 command=sh -c "./bin/docker-entrypoint-migrator.sh"
