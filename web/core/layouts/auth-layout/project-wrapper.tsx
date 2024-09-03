@@ -42,7 +42,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   } = useUser();
   const { loader, getProjectById, fetchProjectDetails } = useProject();
   const { fetchAllCycles } = useCycle();
-  const { fetchModulesSlim } = useModule();
+  const { fetchModulesSlim, fetchModules } = useModule();
   const { fetchViews } = useProjectView();
   const {
     project: { fetchProjectMembers },
@@ -111,7 +111,12 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // fetching project modules
   useSWR(
     workspaceSlug && projectId ? `PROJECT_MODULES_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchModulesSlim(workspaceSlug.toString(), projectId.toString()) : null,
+    workspaceSlug && projectId
+      ? async () => {
+          await fetchModulesSlim(workspaceSlug.toString(), projectId.toString());
+          await fetchModules(workspaceSlug.toString(), projectId.toString());
+        }
+      : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching project views
