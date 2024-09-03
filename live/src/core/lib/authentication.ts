@@ -39,14 +39,15 @@ export const handleAuthentication = async (props: Props) => {
         "Authentication failed: Incomplete query params. Either workspaceSlug or projectId is missing."
       );
     }
-    // fetch current user's roles
-    const workspaceRoles = await userService.getUserAllProjectsRole(
+    // fetch current user's project membership info
+    const projectMembershipInfo = await userService.getUserProjectMembership(
       workspaceSlug,
+      projectId,
       cookie
     );
-    const currentProjectRole = workspaceRoles[projectId];
+    const projectRole = projectMembershipInfo.role;
     // make the connection read only for roles lower than a member
-    if (currentProjectRole < 15) {
+    if (projectRole < 15) {
       connection.readOnly = true;
     }
   } else {

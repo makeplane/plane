@@ -1,24 +1,8 @@
-import { getSchema } from "@tiptap/core";
-import { generateHTML, generateJSON } from "@tiptap/html";
-import * as Y from "yjs";
-import {
-  prosemirrorJSONToYDoc,
-  yXmlFragmentToProseMirrorRootNode,
-} from "y-prosemirror";
-// editor
-import {
-  CoreEditorExtensionsWithoutProps,
-  DocumentEditorExtensionsWithoutProps,
-} from "@plane/editor/lib";
+// helpers
+import { getAllDocumentFormatsFromBinaryData, getBinaryDataFromHTMLString } from "../../core/helpers/page.js";
 // services
 import { PageService } from "../services/page.service.js";
 const pageService = new PageService();
-
-const DOCUMENT_EDITOR_EXTENSIONS = [
-  ...CoreEditorExtensionsWithoutProps,
-  ...DocumentEditorExtensionsWithoutProps,
-];
-const documentEditorSchema = getSchema(DOCUMENT_EDITOR_EXTENSIONS);
 
 export const updatePageDescription = async (
   params: URLSearchParams,
@@ -35,22 +19,15 @@ export const updatePageDescription = async (
   const workspaceSlug = params.get("workspaceSlug")?.toString();
   const projectId = params.get("projectId")?.toString();
   if (!workspaceSlug || !projectId || !cookie) return;
-  // encode binary description data
-  const base64Data = Buffer.from(updatedDescription).toString("base64");
-  const yDoc = new Y.Doc();
-  Y.applyUpdate(yDoc, updatedDescription);
-  // convert to JSON
-  const type = yDoc.getXmlFragment("default");
-  const contentJSON = yXmlFragmentToProseMirrorRootNode(
-    type,
-    documentEditorSchema
-  ).toJSON();
-  // convert to HTML
-  const contentHTML = generateHTML(contentJSON, DOCUMENT_EDITOR_EXTENSIONS);
 
+  const {
+    contentBinaryEncoded,
+    contentHTML,
+    contentJSON
+  } =  getAllDocumentFormatsFromBinaryData(updatedDescription);
   try {
     const payload = {
-      description_binary: base64Data,
+      description_binary: contentBinaryEncoded,
       description_html: contentHTML,
       description: contentJSON,
     };
@@ -83,23 +60,8 @@ const fetchDescriptionHTMLAndTransform = async (
       pageId,
       cookie
     );
-    // convert already existing html to json
-    const contentJSON = generateJSON(
-      pageDetails.description_html ?? "<p></p>",
-      DOCUMENT_EDITOR_EXTENSIONS
-    );
-    // get editor schema from the DOCUMENT_EDITOR_EXTENSIONS array
-    const schema = getSchema(DOCUMENT_EDITOR_EXTENSIONS);
-    // convert json to Y.Doc format
-    const transformedData = prosemirrorJSONToYDoc(
-      schema,
-      contentJSON,
-      "default"
-    );
-    // convert Y.Doc to Uint8Array format
-    const encodedData = Y.encodeStateAsUpdate(transformedData);
-
-    return encodedData;
+    const { contentBinary } = getBinaryDataFromHTMLString(pageDetails.description_html ?? "<p></p>")
+    return contentBinary;
   } catch (error) {
     console.error("Error while transforming from HTML to Uint8Array", error);
     throw error;
