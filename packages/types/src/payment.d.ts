@@ -14,6 +14,7 @@ export type IPaymentProduct = {
   id: string;
   name: string;
   type: Omit<TProductSubscriptionType, "FREE">;
+  payment_quantity: number;
   prices: IPaymentProductPrice[];
 };
 

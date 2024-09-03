@@ -12,11 +12,9 @@ import { Button, Loader, setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // services
-import { WorkspaceService } from "@/plane-web/services";
 import { PaymentService } from "@/plane-web/services/payment.service";
 
 const paymentService = new PaymentService();
-const workspaceService = new WorkspaceService();
 
 const calculateYearlyDiscount = (monthlyPrice: number, yearlyPricePerMonth: number): number => {
   const monthlyCost = monthlyPrice * 12;
@@ -39,13 +37,6 @@ const CloudUpgradePlanPage = observer(() => {
 
   const { selectedWorkspace: workspaceSlug } = useParams();
 
-  // fetch workspace members
-  const { data: workspaceMembers, isLoading: isFetching } = useSWR(
-    workspaceSlug ? `CLOUD_PRO_WORKSPACE_MEMBER_DETAILS` : null,
-    workspaceSlug ? () => workspaceService.fetchWorkspaceMembers(workspaceSlug.toString()) : null,
-    { revalidateIfStale: false, revalidateOnFocus: false }
-  );
-
   // fetch products
   const { data: products, isLoading: isLoadingProduct } = useSWR(
     workspaceSlug ? `CLOUD_PRO_PRODUCTS_${workspaceSlug?.toString()}` : null,
@@ -58,11 +49,10 @@ const CloudUpgradePlanPage = observer(() => {
   );
 
   // derived values
-  const totalWorkspaceMembers = (workspaceMembers || [])?.filter((member) => member.role >= 15)?.length;
   const proProduct = (products || [])?.find((product: IPaymentProduct) => product?.type === "PRO");
-
   const monthlyPlan = proProduct?.prices?.find((price) => price.recurring === "month");
   const yearlyPlan = proProduct?.prices?.find((price) => price.recurring === "year");
+  const totalPaidMembers = proProduct?.payment_quantity ?? 1;
 
   const monthlyPlanUnitPrice = (monthlyPlan?.unit_amount || 0) / 100;
   const yearlyPlanUnitPrice = (yearlyPlan?.unit_amount || 0) / 1200;
@@ -108,7 +98,7 @@ const CloudUpgradePlanPage = observer(() => {
         )}
       </div>
 
-      {isFetching || isLoadingProduct ? (
+      {isLoadingProduct ? (
         <div className="flex flex-col rounded gap-1 w-full">
           <Loader.Item height="90px" />
           <Loader.Item height="90px" />
@@ -137,13 +127,13 @@ const CloudUpgradePlanPage = observer(() => {
                     {plan.recurring === selectedPlan?.recurring && <Check className="size-4 stroke-2" />}
                   </span>
                   <div className="flex flex-col">
-                    {totalWorkspaceMembers && (
+                    {totalPaidMembers && (
                       <div className="flex items-center gap-2">
                         <span className="text-2xl font-semibold leading-7">
                           ${renderPlanPricing(plan.unit_amount, 1, plan.recurring)}
                         </span>
                         <span className="text-sm text-custom-text-300">
-                          {` per user per ${plan.recurring} x ${totalWorkspaceMembers}`}
+                          {` per user per ${plan.recurring} x ${totalPaidMembers}`}
                         </span>
                       </div>
                     )}
@@ -153,9 +143,9 @@ const CloudUpgradePlanPage = observer(() => {
                   </div>
                 </div>
                 <div className="flex flex-col text-right">
-                  {totalWorkspaceMembers && (
+                  {totalPaidMembers && (
                     <span className="text-2xl font-semibold leading-7">
-                      ${renderPlanPricing(plan.unit_amount, totalWorkspaceMembers, plan.recurring)}
+                      ${renderPlanPricing(plan.unit_amount, totalPaidMembers, plan.recurring)}
                     </span>
                   )}
                   <span className="text-sm text-custom-text-300">
@@ -172,7 +162,7 @@ const CloudUpgradePlanPage = observer(() => {
           <Button className="w-full px-2 my-4" onClick={() => handleStripeCheckout(selectedPlan.id)}>
             {isLoading
               ? "Redirecting to Stripe..."
-              : `Pay $${renderPlanPricing(selectedPlan.unit_amount, totalWorkspaceMembers, selectedPlan.recurring)} every ${selectedPlan?.recurring}`}
+              : `Pay $${renderPlanPricing(selectedPlan.unit_amount, totalPaidMembers, selectedPlan.recurring)} every ${selectedPlan?.recurring}`}
           </Button>
         </>
       ) : (
