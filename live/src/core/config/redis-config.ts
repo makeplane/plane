@@ -1,4 +1,4 @@
-export type RedisConfig = string | { host: string; port: number };
+type RedisConfig = string | { host: string; port: number } | null;
 
 export function getRedisConfig(): RedisConfig {
   const redisUrl = process.env.REDIS_URL?.trim();
@@ -9,9 +9,9 @@ export function getRedisConfig(): RedisConfig {
     return redisUrl;
   }
 
-  if (redisHost && redisPort && !isNaN(Number(redisPort))) {
+  if (redisHost && redisPort && !Number.isNaN(Number(redisPort))) {
     return `redis://${redisHost}:${redisPort}`;
   }
 
-  return "redis://localhost:6379";
+  return "";
 }
