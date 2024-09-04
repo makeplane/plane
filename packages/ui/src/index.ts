@@ -23,3 +23,5 @@ export * from "./loader";
 export * from "./collapsible";
 export * from "./popovers";
 export * from "./tables";
+export * from "./header";
+export * from "./row";
