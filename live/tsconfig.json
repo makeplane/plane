@@ -8,7 +8,7 @@
     "rootDir": "./src",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/core/*"],
+      "@/core/*": ["./src/core/*"],
       "@/plane-live/*": ["./src/ce/*"]
     },
     "removeComments": true,

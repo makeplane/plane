@@ -1,29 +1,23 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
-import { Search, Briefcase, X, ListFilter } from "lucide-react";
-// types
-import { TProjectFilters } from "@plane/types";
+import { usePathname } from "next/navigation";
+import { Search, Briefcase, X } from "lucide-react";
 // ui
-import { Breadcrumbs, Button } from "@plane/ui";
+import { Breadcrumbs, Button, CustomHeader } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
-import { FiltersDropdown } from "@/components/issues";
-import { ProjectFiltersSelection, ProjectOrderByDropdown } from "@/components/project";
 // constants
 import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helpers
 import { cn } from "@/helpers/common.helper";
-import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
-import { useCommandPalette, useEventTracker, useMember, useProjectFilter, useUser } from "@/hooks/store";
+import { useCommandPalette, useEventTracker, useProjectFilter, useUser } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import HeaderFilters from "./filters";
 
 export const ProjectsBaseHeader = observer(() => {
-  // router
-  const { workspaceSlug } = useParams();
   // states
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   // refs
@@ -36,17 +30,8 @@ export const ProjectsBaseHeader = observer(() => {
   } = useUser();
   const pathname = usePathname();
 
-  const {
-    currentWorkspaceDisplayFilters: displayFilters,
-    currentWorkspaceFilters: filters,
-    updateFilters,
-    updateDisplayFilters,
-    searchQuery,
-    updateSearchQuery,
-  } = useProjectFilter();
-  const {
-    workspace: { workspaceMemberIds },
-  } = useMember();
+  const { searchQuery, updateSearchQuery } = useProjectFilter();
+
   // outside click detector hook
   useOutsideClickDetector(inputRef, () => {
     if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
@@ -54,29 +39,6 @@ export const ProjectsBaseHeader = observer(() => {
   // auth
   const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
   const isArchived = pathname.includes("/archives");
-
-  const handleFilters = useCallback(
-    (key: keyof TProjectFilters, value: string | string[]) => {
-      if (!workspaceSlug) return;
-      let newValues = filters?.[key] ?? [];
-      if (Array.isArray(value)) {
-        if (key === "created_at" && newValues.find((v) => v.includes("custom"))) newValues = [];
-        value.forEach((val) => {
-          if (!newValues.includes(val)) newValues.push(val);
-          else newValues.splice(newValues.indexOf(val), 1);
-        });
-      } else {
-        if (filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-        else {
-          if (key === "created_at") newValues = [value];
-          else newValues.push(value);
-        }
-      }
-
-      updateFilters(workspaceSlug.toString(), { [key]: newValues });
-    },
-    [filters, updateFilters, workspaceSlug]
-  );
 
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Escape") {
@@ -89,22 +51,18 @@ export const ProjectsBaseHeader = observer(() => {
     if (searchQuery.trim() !== "") setIsSearchOpen(true);
   }, [searchQuery]);
 
-  const isFiltersApplied = calculateTotalFilters(filters ?? {}) !== 0;
-
   return (
-    <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
-      <div className="flex flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
-        <div>
-          <Breadcrumbs>
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={<BreadcrumbLink label="Projects" icon={<Briefcase className="h-4 w-4 text-custom-text-300" />} />}
-            />
-            {isArchived && <Breadcrumbs.BreadcrumbItem type="text" link={<BreadcrumbLink label="Archived" />} />}
-          </Breadcrumbs>
-        </div>
-      </div>
-      <div className="w-full flex items-center justify-end gap-3">
+    <CustomHeader>
+      <CustomHeader.LeftItem>
+        <Breadcrumbs>
+          <Breadcrumbs.BreadcrumbItem
+            type="text"
+            link={<BreadcrumbLink label="Projects" icon={<Briefcase className="h-4 w-4 text-custom-text-300" />} />}
+          />
+          {isArchived && <Breadcrumbs.BreadcrumbItem type="text" link={<BreadcrumbLink label="Archived" />} />}
+        </Breadcrumbs>
+      </CustomHeader.LeftItem>
+      <CustomHeader.RightItem>
         <div className="flex items-center">
           {!isSearchOpen && (
             <button
@@ -149,35 +107,11 @@ export const ProjectsBaseHeader = observer(() => {
             )}
           </div>
         </div>
-        <div className="hidden md:flex gap-3">
-          <ProjectOrderByDropdown
-            value={displayFilters?.order_by}
-            onChange={(val) => {
-              if (!workspaceSlug || val === displayFilters?.order_by) return;
-              updateDisplayFilters(workspaceSlug.toString(), {
-                order_by: val,
-              });
-            }}
-          />
-          <FiltersDropdown
-            icon={<ListFilter className="h-3 w-3" />}
-            title="Filters"
-            placement="bottom-end"
-            isFiltersApplied={isFiltersApplied}
-          >
-            <ProjectFiltersSelection
-              displayFilters={displayFilters ?? {}}
-              filters={filters ?? {}}
-              handleFiltersUpdate={handleFilters}
-              handleDisplayFiltersUpdate={(val) => {
-                if (!workspaceSlug) return;
-                updateDisplayFilters(workspaceSlug.toString(), val);
-              }}
-              memberIds={workspaceMemberIds ?? undefined}
-            />
-          </FiltersDropdown>
+
+        <div className="hidden md:flex">
+          <HeaderFilters />
         </div>
-        {isAuthorizedUser && !isArchived && (
+        {isAuthorizedUser && !isArchived ? (
           <Button
             size="sm"
             onClick={() => {
@@ -188,8 +122,10 @@ export const ProjectsBaseHeader = observer(() => {
           >
             <span className="hidden sm:inline-block">Add</span> Project
           </Button>
+        ) : (
+          <></>
         )}
-      </div>
-    </div>
+      </CustomHeader.RightItem>
+    </CustomHeader>
   );
 });
