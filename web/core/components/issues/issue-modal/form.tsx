@@ -192,7 +192,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     if (formData.hasOwnProperty("is_draft")) submitData.is_draft = formData.is_draft;
         
     await onSubmit(submitData, is_draft_issue)
-      .then((e) =>{
+      .then(() =>{
         setGptAssistantModal(false);
         reset({
           ...defaultValues,
@@ -203,7 +203,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
         });
         editorRef?.current?.clearEditor();
       })
-      .catch((e) => {})
+      .catch((error) => {})
 
   };
 

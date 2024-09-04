@@ -224,7 +224,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
         payload: { ...payload, state: "FAILED" },
         path: pathname,
       });
-      throw new Error();
+      throw error;
     }
   };
 
@@ -279,7 +279,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       if (!data?.id) response = await handleCreateIssue(payload, is_draft_issue);
       else response = await handleUpdateIssue(payload);
     }catch(error){
-      throw new Error();
+      throw error;
     }finally{
       if (response != undefined && onSubmit) await onSubmit(response)
     }   
