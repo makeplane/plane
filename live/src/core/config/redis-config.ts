@@ -1,6 +1,4 @@
-type RedisConfig = string | { host: string; port: number } | null;
-
-export function getRedisConfig(): RedisConfig {
+export function getRedisUrl() {
   const redisUrl = process.env.REDIS_URL?.trim();
   const redisHost = process.env.REDIS_HOST?.trim();
   const redisPort = process.env.REDIS_PORT?.trim();
