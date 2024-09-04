@@ -1,6 +1,7 @@
 "use client";
 
 import { FC } from "react";
+import { isDesktopApp } from "@todesktop/client-core/platform/todesktop";
 import { observer } from "mobx-react";
 import { Inbox } from "lucide-react";
 import { Breadcrumbs, CustomHeader } from "@plane/ui";
@@ -20,9 +21,11 @@ export const NotificationSidebarHeader: FC<TNotificationSidebarHeader> = observe
   return (
     <CustomHeader className="my-auto">
       <CustomHeader.LeftItem>
-        <div className="block bg-custom-sidebar-background-100 md:hidden">
-          <SidebarHamburgerToggle />
-        </div>
+        {!isDesktopApp() && (
+          <div className="block bg-custom-sidebar-background-100 md:hidden">
+            <SidebarHamburgerToggle />
+          </div>
+        )}
         <Breadcrumbs>
           <Breadcrumbs.BreadcrumbItem
             type="text"

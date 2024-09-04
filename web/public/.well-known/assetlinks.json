@@ -1,0 +1,38 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.plane.so",
+      "sha256_cert_fingerprints": [
+        "DD:E9:89:59:B2:EA:17:9A:71:21:DB:A9:5B:A4:6E:18:63:D6:56:51:EA:47:AB:8C:9D:41:6A:3C:3E:C3:33:43"
+      ]
+    }
+  },
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.plane.so.stg",
+      "sha256_cert_fingerprints": [
+        "E4:85:03:DC:23:DC:DF:44:6E:81:D6:52:47:B6:CA:0B:66:34:F6:A8:68:38:B6:33:75:B3:5D:B3:D1:B4:2A:4D"
+      ]
+    }
+  },
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.plane.so.development",
+      "sha256_cert_fingerprints": [
+        "5E:79:E9:02:1E:4D:A4:2E:01:71:F5:A6:3A:A1:AA:1E:57:24:34:C0:B7:A3:9B:CE:46:4B:07:54:DC:17:8F:00"
+      ]
+    }
+  }
+]

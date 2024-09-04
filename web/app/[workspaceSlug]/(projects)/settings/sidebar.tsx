@@ -12,6 +12,8 @@ import { EUserWorkspaceRoles } from "@/constants/workspace";
 import { useUser } from "@/hooks/store";
 // plane web constants
 import { WORKSPACE_SETTINGS_LINKS } from "@/plane-web/constants/workspace";
+// plane web hooks
+import { useSelfHostedSubscription } from "@/plane-web/hooks/store";
 
 export const WorkspaceSettingsSidebar = observer(() => {
   // router
@@ -21,8 +23,19 @@ export const WorkspaceSettingsSidebar = observer(() => {
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
+  const { licenseActivationByWorkspaceSlug } = useSelfHostedSubscription();
 
+  // derived values
   const workspaceMemberInfo = currentWorkspaceRole || EUserWorkspaceRoles.GUEST;
+  const isSelfHostedLicenseActivated = licenseActivationByWorkspaceSlug() || false;
+
+  // validate subscription for license activation
+  const validateSubscription = (setting: string) => {
+    if (setting === "activation" && isSelfHostedLicenseActivated) {
+      return false;
+    }
+    return true;
+  };
 
   return (
     <div className="flex w-80 flex-col gap-6 px-5">
@@ -31,6 +44,7 @@ export const WorkspaceSettingsSidebar = observer(() => {
         <div className="flex w-full flex-col gap-1">
           {WORKSPACE_SETTINGS_LINKS.map(
             (link) =>
+              validateSubscription(link.key) &&
               workspaceMemberInfo >= link.access && (
                 <Link key={link.key} href={`/${workspaceSlug}${link.href}`}>
                   <SidebarNavItem
