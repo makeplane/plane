@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { TProject } from "ee/types";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
@@ -19,6 +18,9 @@ import {
 import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import { useLabel, useProjectState, useMember, useIssues } from "@/hooks/store";
+// plane web types
+import { TProject } from "@/plane-web/types";
+// local components
 import { ProjectAnalyticsModal } from "../analytics";
 
 type Props = {
