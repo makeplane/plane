@@ -45,7 +45,7 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <Header variant={EHeaderVariant.SECONDARY} className="hidden md:flex justify-between">
+      <Header variant={EHeaderVariant.SECONDARY} showOnMobile={false}>
         <div className={cn("flex-shrink-0 my-auto")}>
           <PageSummaryPopover
             editorRef={isContentEditable ? editorRef.current : readOnlyEditorRef.current}

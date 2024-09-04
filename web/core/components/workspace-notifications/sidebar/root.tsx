@@ -51,7 +51,7 @@ export const NotificationsSidebar: FC = observer(() => {
           <NotificationSidebarHeader workspaceSlug={workspaceSlug.toString()} />
         </Row>
 
-        <Header variant={EHeaderVariant.SECONDARY} className="flex">
+        <Header variant={EHeaderVariant.SECONDARY} className="justify-start">
           {NOTIFICATION_TABS.map((tab) => (
             <div
               key={tab.value}

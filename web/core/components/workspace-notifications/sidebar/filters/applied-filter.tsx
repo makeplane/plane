@@ -36,7 +36,7 @@ export const AppliedFilters: FC<TAppliedFilters> = observer((props) => {
 
   if (!isFiltersEnabled || !workspaceSlug) return <></>;
   return (
-    <Header variant={EHeaderVariant.TERNARY} className="justify-start flex-wrap gap-2">
+    <Header variant={EHeaderVariant.TERNARY}>
       {FILTER_TYPE_OPTIONS.map((filter) => {
         const isSelected = filters?.type?.[filter?.value] || false;
         if (!isSelected) return <></>;

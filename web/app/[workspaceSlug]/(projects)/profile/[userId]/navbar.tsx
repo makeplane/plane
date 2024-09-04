@@ -21,7 +21,7 @@ export const ProfileNavbar: React.FC<Props> = (props) => {
   const tabsList = isAuthorized ? [...PROFILE_VIEWER_TAB, ...PROFILE_ADMINS_TAB] : PROFILE_VIEWER_TAB;
 
   return (
-    <Header variant={EHeaderVariant.SECONDARY} className="sticky -top-0.5 hidden md:flex md:static">
+    <Header variant={EHeaderVariant.SECONDARY} showOnMobile={false}>
       <div className="flex items-center overflow-x-scroll">
         {tabsList.map((tab) => (
           <Link key={tab.route} href={`/${workspaceSlug}/profile/${userId}/${tab.route}`}>

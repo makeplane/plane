@@ -8,6 +8,7 @@ export interface ContentWrapperProps {
   className?: string;
   children: React.ReactNode;
 }
+const DEFAULT_STYLE = "flex flex-col vertical-scrollbar scrollbar-lg h-full w-full overflow-y-auto";
 
 const ContentWrapper = (props: ContentWrapperProps) => {
   const { variant = ERowVariant.REGULAR, className = "", children, ...rest } = props;
@@ -16,7 +17,7 @@ const ContentWrapper = (props: ContentWrapperProps) => {
     <Row
       variant={variant}
       className={cn(
-        "flex flex-col vertical-scrollbar scrollbar-lg h-full w-full overflow-y-auto",
+        DEFAULT_STYLE,
         {
           "py-page-y": variant === ERowVariant.REGULAR,
         },

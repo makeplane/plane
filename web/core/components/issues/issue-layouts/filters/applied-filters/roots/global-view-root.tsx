@@ -133,7 +133,7 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
   if (areAppliedFiltersEmpty && areFiltersEqual) return null;
 
   return (
-    <Header variant={EHeaderVariant.TERNARY} className="gap-2">
+    <Header variant={EHeaderVariant.TERNARY}>
       <CreateUpdateWorkspaceViewModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

@@ -50,7 +50,7 @@ export const PagesListHeaderRoot: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <Header variant={EHeaderVariant.SECONDARY} className="flex">
+      <Header variant={EHeaderVariant.SECONDARY}>
         <Header.LeftItem>
           <PageTabNavigation workspaceSlug={workspaceSlug} projectId={projectId} pageType={pageType} />
         </Header.LeftItem>

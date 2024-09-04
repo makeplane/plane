@@ -68,7 +68,7 @@ export const ModulesListView: React.FC = observer(() => {
     );
 
   return (
-    <ContentWrapper variant={ERowVariant.HUGGING} className="h-full overflow-y-auto">
+    <ContentWrapper variant={ERowVariant.HUGGING}>
       {displayFilters?.layout === "list" && (
         <div className="flex h-full w-full justify-between">
           <ListLayout>

@@ -68,7 +68,7 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
   if (Object.keys(appliedFilters).length === 0) return null;
 
   return (
-    <Header variant={EHeaderVariant.TERNARY} className="gap-2">
+    <Header variant={EHeaderVariant.TERNARY}>
       <AppliedFiltersList
         appliedFilters={appliedFilters}
         handleClearAllFilters={handleClearAllFilters}

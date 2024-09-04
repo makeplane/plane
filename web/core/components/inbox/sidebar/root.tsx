@@ -76,7 +76,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
   return (
     <div className="bg-custom-background-100 flex-shrink-0 w-full h-full border-r border-custom-border-300 ">
       <div className="relative w-full h-full flex flex-col overflow-hidden">
-        <Header variant={EHeaderVariant.SECONDARY} className="flex">
+        <Header variant={EHeaderVariant.SECONDARY}>
           {tabNavigationOptions.map((option) => (
             <div
               key={option?.key}

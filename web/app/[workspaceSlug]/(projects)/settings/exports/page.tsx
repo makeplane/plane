@@ -31,7 +31,7 @@ const ExportsPage = observer(() => {
     <>
       <PageHead title={pageTitle} />
       <div
-        className={cn("w-full overflow-y-auto md:pr-9 pr-4", {
+        className={cn("w-full overflow-y-auto", {
           "opacity-60": !canPerformWorkspaceMemberActions,
         })}
       >

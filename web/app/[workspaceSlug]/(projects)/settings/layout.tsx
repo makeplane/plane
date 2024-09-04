@@ -19,15 +19,13 @@ export default function WorkspaceSettingLayout(props: IWorkspaceSettingLayout) {
   return (
     <>
       <AppHeader header={<WorkspaceSettingHeader />} />
-      <ContentWrapper className="flex-row inset-y-0 z-20 flex h-full w-full gap-4">
+      <MobileWorkspaceSettingsTabs />
+      <ContentWrapper className="flex-row inset-y-0 z-20 gap-4">
         <div className="w-80 flex-shrink-0 overflow-y-hidden sm:hidden hidden md:block lg:block">
           <WorkspaceSettingsSidebar />
         </div>
         <div className="flex flex-col relative w-full overflow-hidden">
-          <MobileWorkspaceSettingsTabs />
-          <div className="w-full pl-4 md:pl-0 overflow-x-hidden overflow-y-scroll vertical-scrollbar scrollbar-md">
-            {children}
-          </div>
+          <div className="w-full overflow-x-hidden overflow-y-scroll vertical-scrollbar scrollbar-md">{children}</div>
         </div>
       </ContentWrapper>
     </>

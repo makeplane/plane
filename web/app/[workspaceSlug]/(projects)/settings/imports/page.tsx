@@ -33,7 +33,7 @@ const ImportsPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <section className="w-full overflow-y-auto pr-9">
+      <section className="w-full overflow-y-auto">
         <div className="flex items-center border-b border-custom-border-100 pb-3.5">
           <h3 className="text-xl font-medium">Imports</h3>
         </div>

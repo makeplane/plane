@@ -8,12 +8,20 @@ export interface HeaderProps {
   setHeight?: boolean;
   className?: string;
   children: React.ReactNode;
+  showOnMobile?: boolean;
 }
 
 const Header = (props: HeaderProps) => {
-  const { variant = EHeaderVariant.PRIMARY, className = "", setHeight = true, children, ...rest } = props;
+  const {
+    variant = EHeaderVariant.PRIMARY,
+    className = "",
+    showOnMobile = true,
+    setHeight = true,
+    children,
+    ...rest
+  } = props;
 
-  const style = getHeaderStyle(variant, setHeight);
+  const style = getHeaderStyle(variant, setHeight, showOnMobile);
   return (
     <Row
       variant={variant === EHeaderVariant.PRIMARY ? ERowVariant.HUGGING : ERowVariant.REGULAR}

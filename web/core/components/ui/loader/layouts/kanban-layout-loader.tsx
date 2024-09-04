@@ -8,7 +8,7 @@ export const KanbanIssueBlockLoader = forwardRef<HTMLSpanElement>((props, ref) =
 KanbanIssueBlockLoader.displayName = "KanbanIssueBlockLoader";
 
 export const KanbanLayoutLoader = ({ cardsInEachColumn = [2, 3, 2, 4, 3] }: { cardsInEachColumn?: number[] }) => (
-  <ContentWrapper className="flex flex-row gap-5 py-1.5 overflow-x-auto">
+  <ContentWrapper className="flex-row gap-5 py-1.5 overflow-x-auto">
     {cardsInEachColumn.map((cardsInColumn, columnIndex) => (
       <div key={columnIndex} className="flex flex-col gap-3">
         <div className="flex items-center justify-between h-9 w-80">
