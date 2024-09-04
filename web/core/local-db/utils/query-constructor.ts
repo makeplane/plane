@@ -92,18 +92,18 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
     if (order_by.includes("label")) {
       sql += ` 
       LEFT JOIN issue_meta sm ON i.id = sm.issue_id AND sm.key = 'label_ids'
-      INNER JOIN labels s ON s.id = sm.value`;
+      LEFT JOIN labels s ON s.id = sm.value`;
     }
     if (order_by.includes("module")) {
       sql += ` 
       LEFT JOIN issue_meta sm ON i.id = sm.issue_id AND sm.key = 'module_ids'
-      INNER JOIN modules s ON s.id = sm.value`;
+      LEFT JOIN modules s ON s.id = sm.value`;
     }
 
     if (order_by.includes("assignee")) {
       sql += ` 
       LEFT JOIN issue_meta sm ON i.id = sm.issue_id AND sm.key = 'assignee_ids'
-      INNER JOIN members s ON s.id = sm.value`;
+      LEFT JOIN members s ON s.id = sm.value`;
     }
   }
   sql += ` WHERE i.project_id = '${projectId}'    ${singleFilterConstructor(otherProps)} group by i.id  `;
