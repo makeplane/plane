@@ -1,4 +1,3 @@
-import { start } from "nprogress";
 import { ARRAY_FIELDS, GROUP_BY_MAP, PRIORITY_MAP } from "./constants";
 import { issueSchema } from "./schemas";
 import { wrapDateTime } from "./utils";
