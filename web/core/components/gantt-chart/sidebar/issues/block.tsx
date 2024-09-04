@@ -57,7 +57,7 @@ export const IssuesSidebarBlock = observer((props: Props) => {
         }}
       >
         {enableSelection && selectionHelpers && (
-          <div className="flex items-center gap-2 absolute left-1.5">
+          <div className="flex items-center gap-2 absolute left-1">
             <MultipleSelectEntityAction
               className={cn(
                 "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto transition-opacity",

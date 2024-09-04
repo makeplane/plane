@@ -173,7 +173,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
                 disabled={issue.project_id === projectId}
                 renderByDefault={false}
               >
-                <div className="flex-shrink-0 grid place-items-center w-3.5 absolute left-1.5">
+                <div className="flex-shrink-0 grid place-items-center w-3.5 absolute left-1">
                   <MultipleSelectEntityAction
                     className={cn(
                       "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto transition-opacity",

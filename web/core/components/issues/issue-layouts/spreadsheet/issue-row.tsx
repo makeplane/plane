@@ -267,7 +267,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
                   }
                   disabled={issueDetail.project_id === projectId}
                 >
-                  <div className="flex-shrink-0 grid place-items-center w-3.5 mr-1 absolute left-1.5">
+                  <div className="flex-shrink-0 grid place-items-center w-3.5 mr-1 absolute left-1">
                     <MultipleSelectEntityAction
                       className={cn(
                         "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto transition-opacity",
