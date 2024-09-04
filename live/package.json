@@ -27,6 +27,7 @@
     "express": "^4.19.2",
     "express-ws": "^5.0.2",
     "lodash": "^4.17.21",
+    "redis": "^4.7.0",
     "y-prosemirror": "^1.2.9",
     "y-protocols": "^1.0.6",
     "yjs": "^13.6.14"
