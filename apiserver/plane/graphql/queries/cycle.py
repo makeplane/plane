@@ -97,16 +97,17 @@ class CycleIssueUserPropertyQuery:
         project: strawberry.ID,
         cycle: strawberry.ID,
     ) -> CycleUserPropertyType:
+        def get_cycle_issue_user_property():
+            cycle_properties, _ = CycleUserProperties.objects.get_or_create(
+                workspace__slug=slug,
+                project_id=project,
+                cycle_id=cycle,
+                user=info.context.user,
+            )
+            return cycle_properties
+
         cycle_issue_property = await sync_to_async(
-            lambda: CycleUserProperties.objects.filter(
-                workspace__slug=slug, project_id=project, cycle_id=cycle
-            )
-            .filter(
-                project__project_projectmember__member=info.context.user,
-                project__project_projectmember__is_active=True,
-            )
-            .order_by("-created_at")
-            .first()
+            lambda: get_cycle_issue_user_property()
         )()
 
         return cycle_issue_property

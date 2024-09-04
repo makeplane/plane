@@ -106,16 +106,17 @@ class ModuleIssueUserPropertyQuery:
         project: strawberry.ID,
         module: strawberry.ID,
     ) -> ModuleUserPropertyType:
+        def get_module_issue_user_property():
+            module_properties, _ = ModuleUserProperties.objects.get_or_create(
+                workspace__slug=slug,
+                project_id=project,
+                module_id=module,
+                user=info.context.user,
+            )
+            return module_properties
+
         module_issue_property = await sync_to_async(
-            lambda: ModuleUserProperties.objects.filter(
-                workspace__slug=slug, project_id=project, module_id=module
-            )
-            .filter(
-                project__project_projectmember__member=info.context.user,
-                project__project_projectmember__is_active=True,
-            )
-            .order_by("-created_at")
-            .first()
+            lambda: get_module_issue_user_property()
         )()
 
         return module_issue_property
