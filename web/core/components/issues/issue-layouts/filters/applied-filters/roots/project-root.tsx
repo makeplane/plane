@@ -3,6 +3,7 @@ import { useParams } from "next/navigation";
 import { IIssueFilterOptions } from "@plane/types";
 // hooks
 // components
+import { CustomHeader, EHeaderVariant } from "@plane/ui";
 import { AppliedFiltersList, SaveFilterView } from "@/components/issues";
 // constants
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
@@ -67,7 +68,7 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
   if (Object.keys(appliedFilters).length === 0) return null;
 
   return (
-    <div className="flex justify-between p-4 gap-2.5">
+    <CustomHeader variant={EHeaderVariant.TERNARY}>
       <AppliedFiltersList
         appliedFilters={appliedFilters}
         handleClearAllFilters={handleClearAllFilters}
@@ -86,6 +87,6 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
           }}
         />
       )}
-    </div>
+    </CustomHeader>
   );
 });

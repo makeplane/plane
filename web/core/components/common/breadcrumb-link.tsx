@@ -25,7 +25,7 @@ export const BreadcrumbLink: React.FC<Props> = (props) => {
               href={href}
             >
               {icon && (
-                <div className="flex h-5 w-5 items-center justify-center overflow-hidden !text-[1rem]">{icon}</div>
+                <div className="flex h-5 w-5 items-center justify-start overflow-hidden !text-[1rem]">{icon}</div>
               )}
               {label && (
                 <div className="relative line-clamp-1 block max-w-[150px] overflow-hidden truncate">{label}</div>

@@ -6,10 +6,10 @@ import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
-import { cn } from "@plane/editor";
 import { IIssueFilterOptions, TStaticViewTypes } from "@plane/types";
 //ui
 // components
+import { CustomHeader, EHeaderVariant } from "@plane/ui";
 import { AppliedFiltersList } from "@/components/issues";
 import { UpdateViewComponent } from "@/components/views/update-view-component";
 import { CreateUpdateWorkspaceViewModal } from "@/components/workspace";
@@ -133,7 +133,7 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
   if (areAppliedFiltersEmpty && areFiltersEqual) return null;
 
   return (
-    <>
+    <CustomHeader variant={EHeaderVariant.TERNARY}>
       <CreateUpdateWorkspaceViewModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -144,31 +144,28 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
           ...viewFilters,
         }}
       />
-      <div
-        className={cn("flex items-start justify-between gap-4 p-4", {
-          "justify-end": areAppliedFiltersEmpty,
-        })}
-      >
-        <AppliedFiltersList
-          labels={workspaceLabels ?? undefined}
-          appliedFilters={appliedFilters ?? {}}
-          handleClearAllFilters={handleClearAllFilters}
-          handleRemoveFilter={handleRemoveFilter}
-          disableEditing={isLocked}
-          alwaysAllowEditing
-        />
 
-        {!isDefaultView && (
-          <UpdateViewComponent
-            isLocked={isLocked}
-            areFiltersEqual={!!areFiltersEqual}
-            isOwner={isOwner}
-            isAuthorizedUser={isAuthorizedUser}
-            setIsModalOpen={setIsModalOpen}
-            handleUpdateView={handleUpdateView}
-          />
-        )}
-      </div>
-    </>
+      <AppliedFiltersList
+        labels={workspaceLabels ?? undefined}
+        appliedFilters={appliedFilters ?? {}}
+        handleClearAllFilters={handleClearAllFilters}
+        handleRemoveFilter={handleRemoveFilter}
+        disableEditing={isLocked}
+        alwaysAllowEditing
+      />
+
+      {!isDefaultView ? (
+        <UpdateViewComponent
+          isLocked={isLocked}
+          areFiltersEqual={!!areFiltersEqual}
+          isOwner={isOwner}
+          isAuthorizedUser={isAuthorizedUser}
+          setIsModalOpen={setIsModalOpen}
+          handleUpdateView={handleUpdateView}
+        />
+      ) : (
+        <></>
+      )}
+    </CustomHeader>
   );
 });
