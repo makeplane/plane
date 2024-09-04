@@ -7,10 +7,6 @@ export type TWorkspaceWithProductDetails = {
   name: string;
   logo: string;
   product: TProductSubscriptionType;
-  current_period_end_date: string;
-  has_activated_free_trial: boolean;
-  has_added_payment_method: boolean;
-  trial_end_date: string;
-  is_offline_payment: boolean;
-  subscription: string;
+  is_on_trial: boolean;
+  is_billing_active: boolean;
 };

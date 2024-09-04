@@ -37,6 +37,7 @@ export const ProPlanSelfHostUpgradeModal: FC<ProPlanSelfHostUpgradeModalProps> =
     name: "Pro",
     type: "PRO",
     description: "Pro plan details for self-hosted users",
+    payment_quantity: 1,
     prices: [
       {
         id: "pro_monthly",

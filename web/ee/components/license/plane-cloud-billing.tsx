@@ -25,10 +25,9 @@ export const PlaneCloudBilling: React.FC = observer(() => {
   const { currentWorkspaceSubscribedPlanDetail, toggleProPlanModal } = useWorkspaceSubscription();
   // derived values
   const endDate = currentWorkspaceSubscribedPlanDetail?.current_period_end_date;
-  const isSubscriptionCancelled = currentWorkspaceSubscribedPlanDetail?.is_canceled;
+  const isSubscriptionCancelled = currentWorkspaceSubscribedPlanDetail?.is_cancelled;
   const isInTrialPeriod =
-    !currentWorkspaceSubscribedPlanDetail?.has_added_payment_method &&
-    !!currentWorkspaceSubscribedPlanDetail?.trial_end_date;
+    currentWorkspaceSubscribedPlanDetail?.is_on_trial && !currentWorkspaceSubscribedPlanDetail.has_upgraded;
 
   const handleSubscriptionPageRedirection = () => {
     setIsLoading(true);
@@ -109,11 +108,11 @@ export const PlaneCloudBilling: React.FC = observer(() => {
                   <>
                     {isInTrialPeriod && (
                       <>
-                        <div className="flex-shrink-0 p-1 px-2 uppercase bg-custom-primary-100/20 text-custom-primary-100 text-xs rounded-full font-medium">
-                          Free Trial
+                        <div className="flex-shrink-0 p-1 px-2 bg-custom-primary-100/20 text-custom-primary-100 text-xs rounded-full font-medium">
+                          Pro Trial
                         </div>
                         <div className="text-center text-sm text-custom-text-200 font-medium">
-                          (Free trial ends on:{" "}
+                          (Pro trial ends on:{" "}
                           {renderFormattedDate(currentWorkspaceSubscribedPlanDetail?.trial_end_date)})
                         </div>
                       </>
