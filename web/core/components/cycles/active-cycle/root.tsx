@@ -2,10 +2,8 @@
 
 import { observer } from "mobx-react";
 import { Disclosure } from "@headlessui/react";
-// types
-import { IIssueFilterOptions } from "@plane/types";
 // ui
-import { Row, Loader } from "@plane/ui";
+import { Row } from "@plane/ui";
 // components
 import {
   ActiveCycleProductivity,

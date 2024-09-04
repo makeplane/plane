@@ -34,10 +34,12 @@ const Header = (props: HeaderProps) => {
 };
 
 const LeftItem = (props: HeaderProps) => (
-  <div className="flex flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">{props.children}</div>
+  <div className={cn("flex flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap", props.className)}>
+    {props.children}
+  </div>
 );
 const RightItem = (props: HeaderProps) => (
-  <div className="w-full flex items-center justify-end gap-3">{props.children}</div>
+  <div className={cn("w-full flex items-center justify-end gap-3", props.className)}>{props.children}</div>
 );
 
 Header.LeftItem = LeftItem;

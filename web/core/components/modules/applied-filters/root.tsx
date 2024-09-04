@@ -79,6 +79,26 @@ export const ModuleAppliedFiltersList: React.FC<Props> = (props) => {
                 </button>
               )}
             </div>
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="text-xs text-custom-text-300">Modules</span>
+              <div className="flex items-center gap-1 rounded p-1 text-xs bg-custom-background-80">
+                Favorite
+                {isEditingAllowed && (
+                  <button
+                    type="button"
+                    className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+                    onClick={() =>
+                      handleDisplayFiltersUpdate &&
+                      handleDisplayFiltersUpdate({
+                        favorites: !isFavoriteFilterApplied,
+                      })
+                    }
+                  >
+                    <X size={10} strokeWidth={2} />
+                  </button>
+                )}
+              </div>
+            </div>
           </Tag>
         );
       })}

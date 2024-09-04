@@ -46,18 +46,25 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
   return (
     <>
       <Header variant={EHeaderVariant.SECONDARY} showOnMobile={false}>
-        <div className={cn("flex-shrink-0 my-auto")}>
-          <PageSummaryPopover
-            editorRef={isContentEditable ? editorRef.current : readOnlyEditorRef.current}
-            isFullWidth={isFullWidth}
-            markings={markings}
-            sidePeekVisible={sidePeekVisible}
-            setSidePeekVisible={setSidePeekVisible}
-          />
-        </div>
-        {(editorReady || readOnlyEditorReady) && isContentEditable && editorRef.current && (
-          <PageToolbar editorRef={editorRef?.current} />
-        )}
+        <Header.LeftItem className="gap-0">
+          <div
+            className={cn("flex-shrink-0 my-auto", {
+              "w-40 lg:w-56": !isFullWidth,
+              "w-[5%]": isFullWidth,
+            })}
+          >
+            <PageSummaryPopover
+              editorRef={isContentEditable ? editorRef.current : readOnlyEditorRef.current}
+              isFullWidth={isFullWidth}
+              markings={markings}
+              sidePeekVisible={sidePeekVisible}
+              setSidePeekVisible={setSidePeekVisible}
+            />
+          </div>
+          {(editorReady || readOnlyEditorReady) && isContentEditable && editorRef.current && (
+            <PageToolbar editorRef={editorRef?.current} />
+          )}
+        </Header.LeftItem>
         <PageExtraOptions
           editorRef={editorRef}
           handleDuplicatePage={handleDuplicatePage}

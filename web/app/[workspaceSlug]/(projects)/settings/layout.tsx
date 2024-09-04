@@ -20,7 +20,7 @@ export default function WorkspaceSettingLayout(props: IWorkspaceSettingLayout) {
     <>
       <AppHeader header={<WorkspaceSettingHeader />} />
       <MobileWorkspaceSettingsTabs />
-      <ContentWrapper className="flex-row inset-y-0 z-20 gap-4">
+      <ContentWrapper className="flex-row inset-y-0 gap-4">
         <div className="w-80 flex-shrink-0 overflow-y-hidden sm:hidden hidden md:block lg:block">
           <WorkspaceSettingsSidebar />
         </div>
