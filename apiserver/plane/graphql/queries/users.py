@@ -103,7 +103,7 @@ class UserRecentVisitQuery:
         recent_visits = await sync_to_async(list)(
             UserRecentVisit.objects.filter(
                 workspace__slug=slug, user=info.context.user
-            ).order_by("-created_at")
+            ).order_by("-visited_at")
         )
 
         if limit:

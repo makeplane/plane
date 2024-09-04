@@ -37,6 +37,7 @@ from plane.graphql.permissions.project import ProjectBasePermission
 from plane.graphql.types.paginator import PaginatorResponse
 from plane.graphql.utils.paginator import paginate
 from plane.graphql.utils.issue import issue_information_query_execute
+from plane.graphql.bgtasks.recent_visited_task import recent_visited_task
 
 
 # issues information query
@@ -111,6 +112,16 @@ class IssuesInformationQuery:
             ),
         )
 
+        # Background task to update recent visited project
+        user_id = info.context.user.id
+        recent_visited_task.delay(
+            slug=slug,
+            project_id=project,
+            user_id=user_id,
+            entity_name="project",
+            entity_identifier=project,
+        )
+
         return issue_information
 
 
@@ -170,6 +181,16 @@ class IssueQuery:
             id=issue,
             project__project_projectmember__member=info.context.user,
             project__project_projectmember__is_active=True,
+        )
+
+        # Background task to update recent visited project
+        user_id = info.context.user.id
+        recent_visited_task.delay(
+            slug=slug,
+            project_id=project,
+            user_id=user_id,
+            entity_name="issue",
+            entity_identifier=issue,
         )
         return issue
 

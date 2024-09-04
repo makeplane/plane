@@ -17,6 +17,7 @@ from plane.graphql.permissions.workspace import WorkspaceBasePermission
 from plane.graphql.permissions.project import ProjectBasePermission
 from plane.graphql.types.paginator import PaginatorResponse
 from plane.graphql.utils.paginator import paginate
+from plane.graphql.bgtasks.recent_visited_task import recent_visited_task
 
 
 @strawberry.type
@@ -113,6 +114,17 @@ class ProjectQuery:
             )
 
         project = await sync_to_async(get_project)()
+
+        # Background task to update recent visited project
+        user_id = info.context.user.id
+        recent_visited_task.delay(
+            slug=slug,
+            project_id=project,
+            user_id=user_id,
+            entity_name="project",
+            entity_identifier=project,
+        )
+
         return project
 
 
