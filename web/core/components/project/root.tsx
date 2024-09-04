@@ -6,6 +6,7 @@ import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { TProjectAppliedDisplayFilterKeys, TProjectFilters } from "@plane/types";
 // components
+import { CustomHeader, EHeaderVariant } from "@plane/ui";
 import { PageHead } from "@/components/core";
 import { ProjectAppliedFiltersList, ProjectCardList } from "@/components/project";
 // helpers
@@ -32,9 +33,8 @@ const Root = observer(() => {
 
   const isArchived = pathname.includes("/archives");
 
-  const allowedDisplayFilters = currentWorkspaceAppliedDisplayFilters?.filter(
-    (filter) => filter !== "archived_projects"
-  ) ?? [];
+  const allowedDisplayFilters =
+    currentWorkspaceAppliedDisplayFilters?.filter((filter) => filter !== "archived_projects") ?? [];
 
   const handleRemoveFilter = useCallback(
     (key: keyof TProjectFilters, value: string | null) => {
@@ -65,17 +65,17 @@ const Root = observer(() => {
   }, [clearAllFilters, clearAllAppliedDisplayFilters, workspaceSlug]);
 
   useEffect(() => {
-    isArchived ? updateDisplayFilters(workspaceSlug.toString(), { archived_projects: true }) :
-    updateDisplayFilters(workspaceSlug.toString(), { archived_projects: false });
+    isArchived
+      ? updateDisplayFilters(workspaceSlug.toString(), { archived_projects: true })
+      : updateDisplayFilters(workspaceSlug.toString(), { archived_projects: false });
   }, [pathname]);
 
   return (
     <>
       <PageHead title={pageTitle} />
       <div className="flex h-full w-full flex-col">
-        {(calculateTotalFilters(currentWorkspaceFilters ?? {}) !== 0 ||
-          (allowedDisplayFilters.length>0)) && (
-          <div className="border-b border-custom-border-200 px-5 py-3">
+        {(calculateTotalFilters(currentWorkspaceFilters ?? {}) !== 0 || allowedDisplayFilters.length > 0) && (
+          <CustomHeader variant={EHeaderVariant.TERNARY}>
             <ProjectAppliedFiltersList
               appliedFilters={currentWorkspaceFilters ?? {}}
               appliedDisplayFilters={allowedDisplayFilters}
@@ -86,7 +86,7 @@ const Root = observer(() => {
               totalProjects={totalProjectIds?.length ?? 0}
               alwaysAllowEditing
             />
-          </div>
+          </CustomHeader>
         )}
         <ProjectCardList />
       </div>

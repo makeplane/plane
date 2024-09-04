@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ChevronDown, PanelRight } from "lucide-react";
 import { IUserProfileProjectSegregation } from "@plane/types";
-import { Breadcrumbs, CustomMenu, UserActivityIcon } from "@plane/ui";
+import { Breadcrumbs, CustomHeader, CustomMenu, UserActivityIcon } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common";
 // components
 import { ProfileIssuesFilter } from "@/components/profile";
@@ -46,8 +46,8 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
   const breadcrumbLabel = `${isCurrentUser ? "Your" : userName} Work`;
 
   return (
-    <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
-      <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
+    <CustomHeader>
+      <CustomHeader.LeftItem>
         <div className="flex w-full justify-between">
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
@@ -104,7 +104,7 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
             </button>
           </div>
         </div>
-      </div>
-    </div>
+      </CustomHeader.LeftItem>
+    </CustomHeader>
   );
 });

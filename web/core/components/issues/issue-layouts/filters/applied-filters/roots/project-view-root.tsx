@@ -8,6 +8,7 @@ import { useParams } from "next/navigation";
 // types
 import { IIssueFilterOptions } from "@plane/types";
 // components
+import { CustomHeader, EHeaderVariant } from "@plane/ui";
 import { AppliedFiltersList } from "@/components/issues";
 import { CreateUpdateProjectViewModal } from "@/components/views";
 import { UpdateViewComponent } from "@/components/views/update-view-component";
@@ -113,7 +114,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   const isOwner = viewDetails?.owned_by === data?.id;
 
   return (
-    <div className="flex justify-between gap-4 p-4">
+    <CustomHeader variant={EHeaderVariant.TERNARY}>
       <CreateUpdateProjectViewModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -127,7 +128,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
           ...viewFilters,
         }}
       />
-      <div>
+      <CustomHeader.LeftItem>
         <AppliedFiltersList
           appliedFilters={appliedFilters ?? {}}
           handleClearAllFilters={handleClearAllFilters}
@@ -136,7 +137,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
           states={projectStates}
           disableEditing={isLocked}
         />
-      </div>
+      </CustomHeader.LeftItem>
       <UpdateViewComponent
         isLocked={isLocked}
         areFiltersEqual={!!areFiltersEqual}
@@ -145,6 +146,6 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
         setIsModalOpen={setIsModalOpen}
         handleUpdateView={handleUpdateView}
       />
-    </div>
+    </CustomHeader>
   );
 });

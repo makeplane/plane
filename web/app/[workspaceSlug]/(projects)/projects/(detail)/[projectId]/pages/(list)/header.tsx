@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
 import { FileText } from "lucide-react";
 // ui
-import { Breadcrumbs, Button } from "@plane/ui";
+import { Breadcrumbs, Button, CustomHeader } from "@plane/ui";
 // helpers
 import { BreadcrumbLink, Logo } from "@/components/common";
 // constants
@@ -30,8 +30,8 @@ export const PagesListHeader = observer(() => {
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   return (
-    <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
-      <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
+    <CustomHeader>
+      <CustomHeader.LeftItem>
         <div>
           <Breadcrumbs isLoading={loader}>
             <Breadcrumbs.BreadcrumbItem
@@ -56,24 +56,28 @@ export const PagesListHeader = observer(() => {
             />
           </Breadcrumbs>
         </div>
-      </div>
-      {canUserCreatePage && (
-        <div className="flex items-center gap-2">
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => {
-              setTrackElement("Project pages page");
-              toggleCreatePageModal({
-                isOpen: true,
-                pageAccess: pageType === "private" ? EPageAccess.PRIVATE : EPageAccess.PUBLIC,
-              });
-            }}
-          >
-            Add page
-          </Button>
-        </div>
-      )}
-    </div>
+      </CustomHeader.LeftItem>
+      <CustomHeader.RightItem>
+        {canUserCreatePage ? (
+          <div className="flex items-center gap-2">
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => {
+                setTrackElement("Project pages page");
+                toggleCreatePageModal({
+                  isOpen: true,
+                  pageAccess: pageType === "private" ? EPageAccess.PRIVATE : EPageAccess.PUBLIC,
+                });
+              }}
+            >
+              Add page
+            </Button>
+          </div>
+        ) : (
+          <></>
+        )}
+      </CustomHeader.RightItem>
+    </CustomHeader>
   );
 });
