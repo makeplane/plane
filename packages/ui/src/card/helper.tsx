@@ -2,17 +2,17 @@ export enum ECardVariant {
   WITHOUT_SHADOW = "without-shadow",
   WITH_SHADOW = "with-shadow",
 }
-export enum ECardFlow {
+export enum ECardDirection {
   ROW = "row",
   COLUMN = "column",
 }
-export enum ECardSize {
+export enum ECardSpacing {
   SM = "sm",
   LG = "lg",
 }
 export type TCardVariant = ECardVariant.WITHOUT_SHADOW | ECardVariant.WITH_SHADOW;
-export type TCardFlow = ECardFlow.ROW | ECardFlow.COLUMN;
-export type TCardSize = ECardSize.SM | ECardSize.LG;
+export type TCardDirection = ECardDirection.ROW | ECardDirection.COLUMN;
+export type TCardSpacing = ECardSpacing.SM | ECardSpacing.LG;
 
 export interface ICardProperties {
   [key: string]: string;
@@ -24,13 +24,13 @@ export const containerStyle: ICardProperties = {
   [ECardVariant.WITHOUT_SHADOW]: "",
   [ECardVariant.WITH_SHADOW]: "hover:shadow-custom-shadow-4xl duration-300",
 };
-export const sizes = {
-  [ECardSize.SM]: "p-4",
-  [ECardSize.LG]: "p-6",
+export const spacings = {
+  [ECardSpacing.SM]: "p-4",
+  [ECardSpacing.LG]: "p-6",
 };
-export const flows = {
-  [ECardFlow.ROW]: "flex-row space-x-3",
-  [ECardFlow.COLUMN]: "flex-col space-y-3",
+export const directions = {
+  [ECardDirection.ROW]: "flex-row space-x-3",
+  [ECardDirection.COLUMN]: "flex-col space-y-3",
 };
-export const getCardStyle = (variant: TCardVariant, size: TCardSize, flow: TCardFlow) =>
-  DEFAULT_STYLE + " " + flows[flow] + " " + containerStyle[variant] + " " + sizes[size];
+export const getCardStyle = (variant: TCardVariant, spacing: TCardSpacing, direction: TCardDirection) =>
+  DEFAULT_STYLE + " " + directions[direction] + " " + containerStyle[variant] + " " + spacings[spacing];

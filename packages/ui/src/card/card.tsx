@@ -1,11 +1,19 @@
 import * as React from "react";
 import { cn } from "../../helpers";
-import { ECardFlow, ECardSize, ECardVariant, getCardStyle, TCardFlow, TCardSize, TCardVariant } from "./helper";
+import {
+  ECardDirection,
+  ECardSpacing,
+  ECardVariant,
+  getCardStyle,
+  TCardDirection,
+  TCardSpacing,
+  TCardVariant,
+} from "./helper";
 
 export interface CardProps {
   variant?: TCardVariant;
-  size?: TCardSize;
-  flow?: TCardFlow;
+  spacing?: TCardSpacing;
+  direction?: TCardDirection;
   className?: string;
   children: React.ReactNode;
 }
@@ -13,14 +21,14 @@ export interface CardProps {
 const Card = React.forwardRef<HTMLDivElement, CardProps>((props, ref) => {
   const {
     variant = ECardVariant.WITH_SHADOW,
-    flow = ECardFlow.COLUMN,
+    direction = ECardDirection.COLUMN,
     className = "",
-    size = ECardSize.LG,
+    spacing = ECardSpacing.LG,
     children,
     ...rest
   } = props;
 
-  const style = getCardStyle(variant, size, flow);
+  const style = getCardStyle(variant, spacing, direction);
   return (
     <div ref={ref} className={cn(style, className)} {...rest}>
       {children}
@@ -30,4 +38,4 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>((props, ref) => {
 
 Card.displayName = "plane-ui-card";
 
-export { Card, ECardVariant, ECardSize, ECardFlow };
+export { Card, ECardVariant, ECardSpacing, ECardDirection };

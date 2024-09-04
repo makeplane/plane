@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 // ui
 import { UserCircle2 } from "lucide-react";
 import { IUserProfileData } from "@plane/types";
-import { CreateIcon, LayerStackIcon, Loader, Card, ECardSize, ECardFlow } from "@plane/ui";
+import { CreateIcon, LayerStackIcon, Loader, Card, ECardSpacing, ECardDirection } from "@plane/ui";
 // types
 
 type Props = {
@@ -44,7 +44,7 @@ export const ProfileStats: React.FC<Props> = ({ userProfile }) => {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {overviewCards.map((card) => (
             <Link key={card.route} href={`/${workspaceSlug}/profile/${userId}/${card.route}`}>
-              <Card flow={ECardFlow.ROW} size={ECardSize.SM} className="h-full">
+              <Card direction={ECardDirection.ROW} spacing={ECardSpacing.SM} className="h-full">
                 <div className="grid h-11 w-11 place-items-center rounded bg-custom-background-90">
                   <card.icon className="h-5 w-5" />
                 </div>

@@ -69,24 +69,28 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
 
   return (
     <Header variant={EHeaderVariant.TERNARY}>
-      <AppliedFiltersList
-        appliedFilters={appliedFilters}
-        handleClearAllFilters={handleClearAllFilters}
-        handleRemoveFilter={handleRemoveFilter}
-        labels={projectLabels ?? []}
-        states={projectStates}
-      />
-      {isEditingAllowed && (
-        <SaveFilterView
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          filterParams={{
-            filters: appliedFilters,
-            display_filters: issueFilters?.displayFilters,
-            display_properties: issueFilters?.displayProperties,
-          }}
+      <Header.LeftItem>
+        <AppliedFiltersList
+          appliedFilters={appliedFilters}
+          handleClearAllFilters={handleClearAllFilters}
+          handleRemoveFilter={handleRemoveFilter}
+          labels={projectLabels ?? []}
+          states={projectStates}
         />
-      )}
+      </Header.LeftItem>
+      <Header.RightItem>
+        {isEditingAllowed && (
+          <SaveFilterView
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            filterParams={{
+              filters: appliedFilters,
+              display_filters: issueFilters?.displayFilters,
+              display_properties: issueFilters?.displayProperties,
+            }}
+          />
+        )}
+      </Header.RightItem>
     </Header>
   );
 });

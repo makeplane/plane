@@ -128,7 +128,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
           ...viewFilters,
         }}
       />
-      <Header.LeftItem>
+      <Header.LeftItem className="w-[70%]">
         <AppliedFiltersList
           appliedFilters={appliedFilters ?? {}}
           handleClearAllFilters={handleClearAllFilters}
@@ -138,14 +138,16 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
           disableEditing={isLocked}
         />
       </Header.LeftItem>
-      <UpdateViewComponent
-        isLocked={isLocked}
-        areFiltersEqual={!!areFiltersEqual}
-        isOwner={isOwner}
-        isAuthorizedUser={isAuthorizedUser}
-        setIsModalOpen={setIsModalOpen}
-        handleUpdateView={handleUpdateView}
-      />
+      <Header.RightItem>
+        <UpdateViewComponent
+          isLocked={isLocked}
+          areFiltersEqual={!!areFiltersEqual}
+          isOwner={isOwner}
+          isAuthorizedUser={isAuthorizedUser}
+          setIsModalOpen={setIsModalOpen}
+          handleUpdateView={handleUpdateView}
+        />
+      </Header.RightItem>
     </Header>
   );
 });

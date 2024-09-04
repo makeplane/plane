@@ -54,7 +54,7 @@ export const PagesListHeaderRoot: React.FC<Props> = observer((props) => {
         <Header.LeftItem>
           <PageTabNavigation workspaceSlug={workspaceSlug} projectId={projectId} pageType={pageType} />
         </Header.LeftItem>
-        <Header.RightItem>
+        <Header.RightItem className="items-center">
           <PageSearchInput
             searchQuery={filters.searchQuery}
             updateSearchQuery={(val) => updateFilters("searchQuery", val)}

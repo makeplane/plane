@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { TOverviewStatsWidgetResponse } from "@plane/types";
 // hooks
-import { Card, ECardSize } from "@plane/ui";
+import { Card, ECardSpacing } from "@plane/ui";
 import { WidgetLoader } from "@/components/dashboard/widgets";
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
@@ -65,7 +65,7 @@ export const OverviewStatsWidget: React.FC<WidgetProps> = observer((props) => {
 
   return (
     <Card
-      size={ECardSize.SM}
+      spacing={ECardSpacing.SM}
       className="flex-row grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-2 grid-cols-2 space-y-0
         [&>div>a>div]:border-r
         [&>div:last-child>a>div]:border-0

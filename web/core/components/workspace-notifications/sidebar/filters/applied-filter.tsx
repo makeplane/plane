@@ -37,28 +37,30 @@ export const AppliedFilters: FC<TAppliedFilters> = observer((props) => {
   if (!isFiltersEnabled || !workspaceSlug) return <></>;
   return (
     <Header variant={EHeaderVariant.TERNARY}>
-      {FILTER_TYPE_OPTIONS.map((filter) => {
-        const isSelected = filters?.type?.[filter?.value] || false;
-        if (!isSelected) return <></>;
-        return (
-          <Tag
-            key={filter.value}
-            className="flex flex-wrap flex-start"
-            onClick={() => handleFilterTypeChange(filter?.value, !isSelected)}
-          >
-            <div className="whitespace-nowrap text-custom-text-200">{filter.label}</div>
-            <div className="w-4 h-4 flex justify-center items-center transition-all rounded-sm text-custom-text-200 hover:text-custom-text-100">
-              <X className="h-3 w-3" />
-            </div>
+      <Header.LeftItem className="w-full">
+        {FILTER_TYPE_OPTIONS.map((filter) => {
+          const isSelected = filters?.type?.[filter?.value] || false;
+          if (!isSelected) return <></>;
+          return (
+            <Tag
+              key={filter.value}
+              className="flex flex-wrap flex-start"
+              onClick={() => handleFilterTypeChange(filter?.value, !isSelected)}
+            >
+              <div className="whitespace-nowrap text-custom-text-200">{filter.label}</div>
+              <div className="w-4 h-4 flex justify-center items-center transition-all rounded-sm text-custom-text-200 hover:text-custom-text-100">
+                <X className="h-3 w-3" />
+              </div>
+            </Tag>
+          );
+        })}
+        <button type="button" onClick={handleClearFilters}>
+          <Tag>
+            Clear all
+            <X size={12} strokeWidth={2} />
           </Tag>
-        );
-      })}
-      <button type="button" onClick={handleClearFilters}>
-        <Tag>
-          Clear all
-          <X size={12} strokeWidth={2} />
-        </Tag>
-      </button>
+        </button>
+      </Header.LeftItem>
     </Header>
   );
 });

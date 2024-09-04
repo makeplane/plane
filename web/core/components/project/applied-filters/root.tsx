@@ -4,7 +4,7 @@ import { X } from "lucide-react";
 // types
 import { TProjectAppliedDisplayFilterKeys, TProjectFilters } from "@plane/types";
 // ui
-import { Tag, Tooltip } from "@plane/ui";
+import { EHeaderVariant, Header, Tag, Tooltip } from "@plane/ui";
 // components
 import {
   AppliedAccessFilters,
@@ -47,8 +47,8 @@ export const ProjectAppliedFiltersList: React.FC<Props> = (props) => {
   const isEditingAllowed = alwaysAllowEditing;
 
   return (
-    <div className="flex items-start justify-between gap-1.5 my-auto w-full">
-      <div className="flex flex-wrap items-stretch gap-2 bg-custom-background-100">
+    <Header variant={EHeaderVariant.TERNARY}>
+      <Header.LeftItem>
         {/* Applied filters */}
         {Object.entries(appliedFilters ?? {}).map(([key, value]) => {
           const filterKey = key as keyof TProjectFilters;
@@ -111,19 +111,21 @@ export const ProjectAppliedFiltersList: React.FC<Props> = (props) => {
             </Tag>
           </button>
         )}
-      </div>
-      <Tooltip
-        tooltipContent={
-          <p>
-            <span className="font-semibold">{filteredProjects}</span> of{" "}
-            <span className="font-semibold">{totalProjects}</span> projects match the applied filters.
-          </p>
-        }
-      >
-        <span className="bg-custom-background-80 rounded-full text-sm font-medium py-1 px-2.5 my-auto">
-          {filteredProjects}/{totalProjects}
-        </span>
-      </Tooltip>
-    </div>
+      </Header.LeftItem>
+      <Header.RightItem>
+        <Tooltip
+          tooltipContent={
+            <p>
+              <span className="font-semibold">{filteredProjects}</span> of{" "}
+              <span className="font-semibold">{totalProjects}</span> projects match the applied filters.
+            </p>
+          }
+        >
+          <span className="bg-custom-background-80 rounded-full text-sm font-medium py-1 px-2.5">
+            {filteredProjects}/{totalProjects}
+          </span>
+        </Tooltip>
+      </Header.RightItem>
+    </Header>
   );
 };

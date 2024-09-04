@@ -46,7 +46,7 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
   return (
     <>
       <Header variant={EHeaderVariant.SECONDARY} showOnMobile={false}>
-        <Header.LeftItem className="gap-0">
+        <Header.LeftItem className="gap-0 w-full">
           <div
             className={cn("flex-shrink-0 my-auto", {
               "w-40 lg:w-56": !isFullWidth,

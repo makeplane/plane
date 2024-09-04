@@ -1,6 +1,6 @@
 // types
 import { IUserStateDistribution } from "@plane/types";
-import { Card, ECardFlow, ECardSize } from "@plane/ui";
+import { Card, ECardDirection, ECardSpacing } from "@plane/ui";
 import { STATE_GROUPS } from "@/constants/state";
 // constants
 
@@ -15,7 +15,7 @@ export const ProfileWorkload: React.FC<Props> = ({ stateDistribution }) => (
       {stateDistribution.map((group) => (
         <div key={group.state_group}>
           <a>
-            <Card flow={ECardFlow.ROW} size={ECardSize.SM}>
+            <Card direction={ECardDirection.ROW} spacing={ECardSpacing.SM}>
               <div
                 className="h-3 w-3 rounded-sm my-2"
                 style={{
