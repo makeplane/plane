@@ -19,13 +19,18 @@ export const SPECIAL_ORDER_BY = {
   "-state__name": "states",
 };
 export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: string, queries: any) => {
-  const { order_by, cursor, per_page, group_by, sub_group_by, ...otherProps } = translateQueryParams(queries);
+  const { cursor, per_page, group_by, sub_group_by, ...rest } = translateQueryParams(queries);
+  // eslint-disable-next-line prefer-const
+  let { order_by, ...otherProps } = rest;
   const [pageSize, page, offset] = cursor.split(":");
 
   let sql = "";
 
   const fieldsFragment = getIssueFieldsFragment();
 
+  if ((group_by || sub_group_by) && Object.keys(SPECIAL_ORDER_BY).includes(order_by)) {
+    order_by = "sort_order";
+  }
   if (sub_group_by) {
     const orderByString = getOrderByFragment(order_by);
     sql = getFilteredRowsForGrouping(projectId, queries);
