@@ -71,15 +71,19 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     onCreateMoreToggleChange,
     isDraft,
   } = props;
+
   // states
   const [labelModal, setLabelModal] = useState(false);
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
+
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   const submitBtnRef = useRef<HTMLButtonElement | null>(null);
+
   // router
   const { workspaceSlug, projectId: routeProjectId } = useParams();
+
   // store hooks
   const { getProjectById } = useProject();
   const { getIssueTypeIdOnProjectChange, getActiveAdditionalPropertiesLength, handlePropertyValuesValidation } =
@@ -90,6 +94,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   } = useIssueDetail();
   const { fetchCycles } = useProjectIssueProperties();
   const { getStateById } = useProjectState();
+
   // form info
   const {
     formState: { errors, isDirty, isSubmitting, dirtyFields },
@@ -153,6 +158,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   }, [data, projectId]);
 
   const handleFormSubmit = async (formData: Partial<TIssue>, is_draft_issue = false) => {
+    
     // Check if the editor is ready to discard
     if (!editorRef.current?.isEditorReadyToDiscard()) {
       setToast({
@@ -184,19 +190,21 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
 
     // this condition helps to move the issues from draft to project issues
     if (formData.hasOwnProperty("is_draft")) submitData.is_draft = formData.is_draft;
+        
+    await onSubmit(submitData, is_draft_issue)
+      .then(() =>{
+        setGptAssistantModal(false);
+        reset({
+          ...defaultValues,
+          ...(isCreateMoreToggleEnabled ? { ...data } : {}),
+          project_id: getValues<"project_id">("project_id"),
+          type_id: getValues<"type_id">("type_id"),
+          description_html: data?.description_html ?? "<p></p>",
+        });
+        editorRef?.current?.clearEditor();
+      })
+      .catch((error) => {})
 
-    await onSubmit(submitData, is_draft_issue);
-
-    setGptAssistantModal(false);
-
-    reset({
-      ...defaultValues,
-      ...(isCreateMoreToggleEnabled ? { ...data } : {}),
-      project_id: getValues<"project_id">("project_id"),
-      type_id: getValues<"type_id">("type_id"),
-      description_html: data?.description_html ?? "<p></p>",
-    });
-    editorRef?.current?.clearEditor();
   };
 
   const condition =

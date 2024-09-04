@@ -51,7 +51,7 @@ beautifulsoup4==4.12.3
 # analytics
 posthog==3.5.0
 # crypto
-cryptography==42.0.5
+cryptography==43.0.1
 # html validator
 lxml==5.2.1
 # s3

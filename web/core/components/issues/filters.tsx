@@ -20,6 +20,7 @@ import { isIssueFilterActive } from "@/helpers/filter.helper";
 import { useLabel, useProjectState, useMember, useIssues } from "@/hooks/store";
 // plane web types
 import { TProject } from "@/plane-web/types";
+// local components
 import { ProjectAnalyticsModal } from "../analytics";
 
 type Props = {

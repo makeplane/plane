@@ -224,6 +224,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
         payload: { ...payload, state: "FAILED" },
         path: pathname,
       });
+      throw error;
     }
   };
 
@@ -273,10 +274,15 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     if (data?.sourceIssueId) delete data.sourceIssueId;
 
     let response: TIssue | undefined = undefined;
-    if (!data?.id) response = await handleCreateIssue(payload, is_draft_issue);
-    else response = await handleUpdateIssue(payload);
 
-    if (response != undefined && onSubmit) await onSubmit(response);
+    try{
+      if (!data?.id) response = await handleCreateIssue(payload, is_draft_issue);
+      else response = await handleUpdateIssue(payload);
+    }catch(error){
+      throw error;
+    }finally{
+      if (response != undefined && onSubmit) await onSubmit(response)
+    }   
   };
 
   const handleFormChange = (formData: Partial<TIssue> | null) => setChangesMade(formData);
