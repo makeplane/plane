@@ -1,5 +1,5 @@
-import { Server } from "@hocuspocus/server";
 import { Redis } from "@hocuspocus/extension-redis";
+import { Extension, Server } from "@hocuspocus/server";
 import { createClient } from "redis";
 
 import { Database } from "@hocuspocus/extension-database";
@@ -12,14 +12,12 @@ import {
   fetchPageDescriptionBinary,
   updatePageDescription,
 } from "@/core/lib/page.js";
-// config
 import { getRedisUrl } from "@/core/lib/utils/redis-url.js";
 // types
 import { TDocumentTypes } from "@/core/types/common.js";
 // plane live lib
 import { fetchDocument } from "@/plane-live/lib/fetch-document.js";
 import { updateDocument } from "@/plane-live/lib/update-document.js";
-import { Extension } from "@hocuspocus/server";
 
 const extensions: Extension[] = [
   new Logger(),
@@ -96,14 +94,13 @@ const extensions: Extension[] = [
 ];
 
 const redisUrl = getRedisUrl();
-let redisClient;
 
 // Add the Redis extension only if configured
 if (redisUrl) {
   try {
-    redisClient = await createClient({ url: redisUrl })
+    const redisClient = await createClient({ url: redisUrl })
       .on("ready", () => console.log("Redis Client is ready"))
-      .on("error", (err) => console.log("Redis Client Error", err))
+      .on("error", (err) => console.log("Redis Client Error:", err))
       .connect();
     console.log("Redis Client has connected");
     extensions.push(new Redis({ redis: redisClient }));
