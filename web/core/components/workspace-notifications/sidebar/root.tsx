@@ -4,7 +4,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
-import { CustomHeader, CustomRow, EHeaderVariant, ERowVariant } from "@plane/ui";
+import { CustomHeader, CustomRow, EHeaderVariant } from "@plane/ui";
 import { CountChip } from "@/components/common";
 import {
   NotificationsLoader,
