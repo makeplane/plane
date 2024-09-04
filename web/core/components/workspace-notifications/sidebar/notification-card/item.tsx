@@ -68,7 +68,7 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
       onClick={handleNotificationIssuePeekOverview}
     >
       {notification.read_at === null && (
-        <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-custom-primary-100" />
+        <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-custom-primary-100 absolute top-[50%] left-2" />
       )}
 
       <div className="relative w-full flex gap-2">

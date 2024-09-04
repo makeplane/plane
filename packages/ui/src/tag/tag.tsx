@@ -2,7 +2,7 @@ import * as React from "react";
 import { cn } from "../../helpers";
 import { ETagSize, ETagVariant, getTagStyle, TTagSize, TTagVariant } from "./helper";
 
-export interface TagProps {
+export interface TagProps extends React.ComponentProps<"div"> {
   variant?: TTagVariant;
   size?: TTagSize;
   className?: string;

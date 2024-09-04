@@ -8,17 +8,17 @@ export interface RowProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
 }
 
-const Row = (props: RowProps) => {
+const Row = React.forwardRef<HTMLDivElement, RowProps>((props, ref) => {
   const { variant = ERowVariant.REGULAR, className = "", children, ...rest } = props;
 
   const style = rowStyle[variant];
 
   return (
-    <div className={cn(style, className)} {...rest}>
+    <div ref={ref} className={cn(style, className)} {...rest}>
       {children}
     </div>
   );
-};
+});
 
 Row.displayName = "plane-ui-row";
 
