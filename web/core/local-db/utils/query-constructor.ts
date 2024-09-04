@@ -59,53 +59,67 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
     return sql;
   }
 
-  const filterJoinFields = getMetaKeys(queries);
   if (order_by && Object.keys(SPECIAL_ORDER_BY).includes(order_by)) {
     const name = order_by.replace("-", "");
+
+    sql = `WITH sorted_issues AS (`;
+    sql += getFilteredRowsForGrouping(projectId, queries);
+    sql += `SELECT fi.* , `;
     if (order_by.includes("assignee")) {
-      sql = `SELECT  ${fieldsFragment} , s.first_name as ${name} from issues i`;
+      sql += ` s.first_name as ${name} `;
     } else {
-      sql = `SELECT  ${fieldsFragment} , group_concat(s.name) as ${name} from issues i`;
+      sql += `  s.name as ${name} `;
     }
-  } else {
-    sql = `SELECT ${fieldsFragment} from issues i`;
+    sql += `FROM fi `;
+    if (order_by && Object.keys(SPECIAL_ORDER_BY).includes(order_by)) {
+      if (order_by.includes("cycle")) {
+        sql += ` 
+        LEFT JOIN cycles s on fi.cycle_id = s.id`;
+      }
+      if (order_by.includes("estimate_point")) {
+        sql += `
+        LEFT JOIN estimate_points s on fi.estimate_point = s.id`;
+      }
+      if (order_by.includes("state")) {
+        sql += `
+        LEFT JOIN states s on fi.state_id = s.id`;
+      }
+      if (order_by.includes("label")) {
+        sql += ` 
+        LEFT JOIN issue_meta sm ON fi.id = sm.issue_id AND sm.key = 'label_ids'
+        LEFT JOIN labels s ON s.id = sm.value`;
+      }
+      if (order_by.includes("module")) {
+        sql += ` 
+        LEFT JOIN issue_meta sm ON fi.id = sm.issue_id AND sm.key = 'module_ids'
+        LEFT JOIN modules s ON s.id = sm.value`;
+      }
+
+      if (order_by.includes("assignee")) {
+        sql += ` 
+        LEFT JOIN issue_meta sm ON fi.id = sm.issue_id AND sm.key = 'assignee_ids'
+        LEFT JOIN members s ON s.id = sm.value`;
+      }
+
+      sql += ` ORDER BY ${name} ASC NULLS LAST`;
+    }
+    sql += `)`;
+
+    sql += `SELECT ${fieldsFragment}, group_concat(si.${name}) as ${name} from sorted_issues si JOIN issues i ON si.id = i.id   group by i.id ${orderByString} LIMIT ${pageSize} OFFSET ${offset * 1 + page * pageSize};`;
+
+    console.log("######$$$", sql);
+    return sql;
   }
+  const filterJoinFields = getMetaKeys(queries);
+
+  sql = `SELECT ${fieldsFragment} from issues i`;
+
   filterJoinFields.forEach((field: string) => {
     const value = otherProps[field] || "";
     sql += ` INNER JOIN issue_meta ${field} ON i.id = ${field}.issue_id AND ${field}.key = '${field}' AND ${field}.value  IN ('${value.split(",").join("','")}')
     `;
   });
 
-  if (order_by && Object.keys(SPECIAL_ORDER_BY).includes(order_by)) {
-    if (order_by.includes("cycle")) {
-      sql += ` 
-      LEFT JOIN cycles s on i.cycle_id = s.id`;
-    }
-    if (order_by.includes("estimate_point")) {
-      sql += `
-      LEFT JOIN estimate_points s on i.estimate_point = s.id`;
-    }
-    if (order_by.includes("state")) {
-      sql += `
-      LEFT JOIN states s on i.state_id = s.id`;
-    }
-    if (order_by.includes("label")) {
-      sql += ` 
-      LEFT JOIN issue_meta sm ON i.id = sm.issue_id AND sm.key = 'label_ids'
-      LEFT JOIN labels s ON s.id = sm.value`;
-    }
-    if (order_by.includes("module")) {
-      sql += ` 
-      LEFT JOIN issue_meta sm ON i.id = sm.issue_id AND sm.key = 'module_ids'
-      LEFT JOIN modules s ON s.id = sm.value`;
-    }
-
-    if (order_by.includes("assignee")) {
-      sql += ` 
-      LEFT JOIN issue_meta sm ON i.id = sm.issue_id AND sm.key = 'assignee_ids'
-      LEFT JOIN members s ON s.id = sm.value`;
-    }
-  }
   sql += ` WHERE i.project_id = '${projectId}'    ${singleFilterConstructor(otherProps)} group by i.id  `;
   sql += orderByString;
 

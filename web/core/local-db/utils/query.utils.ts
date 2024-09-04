@@ -1,4 +1,5 @@
 import { ARRAY_FIELDS, GROUP_BY_MAP, PRIORITY_MAP } from "./constants";
+import { SPECIAL_ORDER_BY } from "./query-constructor";
 import { issueSchema } from "./schemas";
 import { wrapDateTime } from "./utils";
 
@@ -218,7 +219,9 @@ const getSingleFilterFields = (queries: any) => {
     translateQueryParams(queries);
 
   const fields = new Set();
-  if (order_by && !order_by.includes("created_at")) fields.add(order_by.replace("-", ""));
+
+  if (order_by && !order_by.includes("created_at") && !Object.keys(SPECIAL_ORDER_BY).includes(order_by))
+    fields.add(order_by.replace("-", ""));
 
   const keys = Object.keys(otherProps);
 
@@ -228,12 +231,27 @@ const getSingleFilterFields = (queries: any) => {
     }
   });
 
+  if (order_by.includes("state__name")) {
+    fields.add("state_id");
+  }
+  if (order_by.includes("cycle__name")) {
+    fields.add("cycle_id");
+  }
+
   return Array.from(fields);
 };
 
 export const getIssueFieldsFragment = () => {
   const { description_html, ...filtered } = issueSchema;
   const keys = Object.keys(filtered);
-  const sql = `  ${keys.map((key) => `i.${key}`).join(",")}`;
+  const sql = `  ${keys
+    .map((key, index) => {
+      if (index % 5 === 0) {
+        return `i.${key}
+      `;
+      }
+      return `i.${key}`;
+    })
+    .join(",")}`;
   return sql;
 };
