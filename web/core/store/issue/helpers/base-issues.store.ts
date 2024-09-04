@@ -1773,7 +1773,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       }
     }
 
-    return isDataIdsArray ? (order ? orderBy(dataValues, undefined, [order])[0] : dataValues) : dataValues[0];
+    return isDataIdsArray ? (order ? orderBy(dataValues, undefined, [order]) : dataValues) : dataValues;
   }
 
   issuesSortWithOrderBy = (issueIds: string[], key: TIssueOrderByOptions | undefined): string[] => {
