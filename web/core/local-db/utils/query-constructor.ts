@@ -20,7 +20,6 @@ export const SPECIAL_ORDER_BY = {
 };
 export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: string, queries: any) => {
   const { order_by, cursor, per_page, group_by, sub_group_by, ...otherProps } = translateQueryParams(queries);
-  const orderByString = getOrderByFragment(order_by);
   const [pageSize, page, offset] = cursor.split(":");
 
   let sql = "";
@@ -28,6 +27,7 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
   const fieldsFragment = getIssueFieldsFragment();
 
   if (sub_group_by) {
+    const orderByString = getOrderByFragment(order_by);
     sql = getFilteredRowsForGrouping(projectId, queries);
     sql += `, ranked_issues AS ( SELECT fi.*,
     ROW_NUMBER() OVER (PARTITION BY group_id, sub_group_id ${orderByString}) as rank,
@@ -44,6 +44,7 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
     return sql;
   }
   if (group_by) {
+    const orderByString = getOrderByFragment(order_by);
     sql = getFilteredRowsForGrouping(projectId, queries);
     sql += `, ranked_issues AS ( SELECT fi.*,
     ROW_NUMBER() OVER (PARTITION BY group_id ${orderByString}) as rank,
@@ -61,6 +62,7 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
 
   if (order_by && Object.keys(SPECIAL_ORDER_BY).includes(order_by)) {
     const name = order_by.replace("-", "");
+    const orderByString = getOrderByFragment(order_by, "i.");
 
     sql = `WITH sorted_issues AS (`;
     sql += getFilteredRowsForGrouping(projectId, queries);
@@ -105,12 +107,16 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
     }
     sql += `)`;
 
-    sql += `SELECT ${fieldsFragment}, group_concat(si.${name}) as ${name} from sorted_issues si JOIN issues i ON si.id = i.id   group by i.id ${orderByString} LIMIT ${pageSize} OFFSET ${offset * 1 + page * pageSize};`;
+    sql += `SELECT ${fieldsFragment}, group_concat(si.${name}) as ${name} from sorted_issues si JOIN issues i ON si.id = i.id
+    `;
+    sql += ` group by i.id ${orderByString} LIMIT ${pageSize} OFFSET ${offset * 1 + page * pageSize};`;
 
     console.log("######$$$", sql);
     return sql;
   }
+
   const filterJoinFields = getMetaKeys(queries);
+  const orderByString = getOrderByFragment(order_by);
 
   sql = `SELECT ${fieldsFragment} from issues i`;
 

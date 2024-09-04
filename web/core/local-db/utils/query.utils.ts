@@ -35,14 +35,14 @@ export const translateQueryParams = (queries: any) => {
   return otherProps;
 };
 
-export const getOrderByFragment = (order_by: string) => {
+export const getOrderByFragment = (order_by: string, table = "") => {
   let orderByString = "";
   if (!order_by) return orderByString;
 
   if (order_by.startsWith("-")) {
-    orderByString += ` ORDER BY ${wrapDateTime(order_by.slice(1))} DESC NULLS LAST, i.created_at DESC`;
+    orderByString += ` ORDER BY ${wrapDateTime(order_by.slice(1))} DESC NULLS LAST, ${table}created_at DESC`;
   } else {
-    orderByString += ` ORDER BY ${wrapDateTime(order_by)} ASC NULLS LAST, i.created_at DESC`;
+    orderByString += ` ORDER BY ${wrapDateTime(order_by)} ASC NULLS LAST, ${table}created_at DESC`;
   }
   return orderByString;
 };
@@ -136,7 +136,10 @@ export const getFilteredRowsForGrouping = (projectId: string, queries: any) => {
     if (sub_group_by) {
       sql += `, i.${sub_group_by} as sub_group_id`;
     }
-    sql += ` FROM issues i WHERE project_id = '${projectId}' ${singleFilterConstructor(otherProps)}) `;
+    sql += ` FROM issues i WHERE project_id = '${projectId}'
+    `;
+    sql += `${singleFilterConstructor(otherProps)}) 
+    `;
     return sql;
   }
 
@@ -144,18 +147,23 @@ export const getFilteredRowsForGrouping = (projectId: string, queries: any) => {
   sql += `SELECT i.id,i.created_at ${issueTableFilterFields} `;
   if (group_by) {
     if (ARRAY_FIELDS.includes(group_by)) {
-      sql += `, ${group_by}.value as group_id`;
+      sql += `, ${group_by}.value as group_id
+      `;
     } else if (group_by === "target_date") {
-      sql += `, date(i.${group_by}) as group_id`;
+      sql += `, date(i.${group_by}) as group_id
+      `;
     } else {
-      sql += `, i.${group_by} as group_id`;
+      sql += `, i.${group_by} as group_id
+      `;
     }
   }
   if (sub_group_by) {
     if (ARRAY_FIELDS.includes(sub_group_by)) {
-      sql += `, ${sub_group_by}.value as sub_group_id`;
+      sql += `, ${sub_group_by}.value as sub_group_id
+      `;
     } else {
-      sql += `, i.${sub_group_by} as sub_group_id`;
+      sql += `, i.${sub_group_by} as sub_group_id
+      `;
     }
   }
 
@@ -176,8 +184,9 @@ export const getFilteredRowsForGrouping = (projectId: string, queries: any) => {
     `;
   }
 
-  sql += ` WHERE i.project_id = '${projectId}' ${singleFilterConstructor(otherProps)} 
+  sql += ` WHERE i.project_id = '${projectId}'
   `;
+  sql += singleFilterConstructor(otherProps);
 
   sql += `)
   `;
@@ -190,7 +199,8 @@ export const singleFilterConstructor = (queries: any) => {
 
   let sql = "";
   if (!sub_issue) {
-    sql += ` AND parent_id IS NOT NULL `;
+    sql += ` AND parent_id IS NOT NULL 
+    `;
   }
   if (target_date) {
     // "2024-09-29;after,2024-11-02;before"
@@ -198,7 +208,8 @@ export const singleFilterConstructor = (queries: any) => {
     const start = dates[0].split(";")[0];
     const end = dates[1].split(";")[0];
 
-    sql += ` AND target_date >= date('${start}') AND target_date <= date('${end}') `;
+    sql += ` AND target_date >= date('${start}') AND target_date <= date('${end}') 
+    `;
   }
   const keys = Object.keys(filters);
 
@@ -206,7 +217,8 @@ export const singleFilterConstructor = (queries: any) => {
     const value = filters[key] ? filters[key].split(",") : "";
     if (!value) return;
     if (!ARRAY_FIELDS.includes(key)) {
-      sql += ` AND ${key} in ('${value.join("','")}')`;
+      sql += ` AND ${key} in ('${value.join("','")}')
+      `;
     }
   });
   //
@@ -244,14 +256,7 @@ const getSingleFilterFields = (queries: any) => {
 export const getIssueFieldsFragment = () => {
   const { description_html, ...filtered } = issueSchema;
   const keys = Object.keys(filtered);
-  const sql = `  ${keys
-    .map((key, index) => {
-      if (index % 5 === 0) {
-        return `i.${key}
-      `;
-      }
-      return `i.${key}`;
-    })
-    .join(",")}`;
+  const sql = `  ${keys.map((key, index) => `i.${key}`).join(`,
+    `)}`;
   return sql;
 };
