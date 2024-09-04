@@ -13,7 +13,7 @@ import { useUser } from "@/hooks/store";
 // plane web constants
 import { WORKSPACE_SETTINGS_LINKS } from "@/plane-web/constants/workspace";
 // plane web helpers
-import { filterWorkspaceSettingLinks } from "@/plane-web/helpers/workspace.helper";
+import { shouldRenderSettingLink } from "@/plane-web/helpers/workspace.helper";
 
 export const WorkspaceSettingsSidebar = observer(() => {
   // router
@@ -34,7 +34,7 @@ export const WorkspaceSettingsSidebar = observer(() => {
         <div className="flex w-full flex-col gap-1">
           {WORKSPACE_SETTINGS_LINKS.map(
             (link) =>
-              filterWorkspaceSettingLinks(link.key) &&
+              shouldRenderSettingLink(link.key) &&
               workspaceMemberInfo >= link.access && (
                 <Link key={link.key} href={`/${workspaceSlug}${link.href}`}>
                   <SidebarNavItem

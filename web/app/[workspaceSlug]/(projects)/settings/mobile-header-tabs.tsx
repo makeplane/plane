@@ -7,7 +7,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 // plane web constants
 import { WORKSPACE_SETTINGS_LINKS } from "@/plane-web/constants/workspace";
 // plane web helpers
-import { filterWorkspaceSettingLinks } from "@/plane-web/helpers/workspace.helper";
+import { shouldRenderSettingLink } from "@/plane-web/helpers/workspace.helper";
 
 export const MobileWorkspaceSettingsTabs = () => {
   const router = useAppRouter();
@@ -25,7 +25,7 @@ export const MobileWorkspaceSettingsTabs = () => {
     <div className="flex-shrink-0 md:hidden sticky inset-0 flex overflow-x-auto bg-custom-background-100 z-10">
       {WORKSPACE_SETTINGS_LINKS.map(
         (item, index) =>
-          filterWorkspaceSettingLinks(item.key) &&
+          shouldRenderSettingLink(item.key) &&
           workspaceMemberInfo >= item.access && (
             <div
               className={`${item.highlight(pathname, `/${workspaceSlug}`)
