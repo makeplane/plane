@@ -101,6 +101,7 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
       // set loader and clear store
       runInAction(() => {
         this.setLoader(loadType);
+        if(!options.canGroup) this.clear(!isExistingPaginationOptions);
       });
 
       // get params from pagination options

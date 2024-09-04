@@ -136,6 +136,7 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
       // set loader and clear store
       runInAction(() => {
         this.setLoader(loadType);
+        if(!options.canGroup) this.clear(!isExistingPaginationOptions);
       });
 
       // get params from pagination options

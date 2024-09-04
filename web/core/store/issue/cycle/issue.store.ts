@@ -179,6 +179,7 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
       // set loader and clear store
       runInAction(() => {
         this.setLoader(loadType);
+        if(!options.canGroup) this.clear(!isExistingPaginationOptions);
       });
 
       // get params from pagination options
