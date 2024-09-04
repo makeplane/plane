@@ -13,14 +13,14 @@ import {
   updatePageDescription,
 } from "@/core/lib/page.js";
 // config
-import { getRedisConfig } from "@/core/config/redis-config.js";
+import { getRedisUrl } from "@/core/config/redis-config.js";
 // types
 import { TDocumentTypes } from "@/core/types/common.js";
 // plane live lib
 import { fetchDocument } from "@/plane-live/lib/fetch-document.js";
 import { updateDocument } from "@/plane-live/lib/update-document.js";
 
-const redisUrl = getRedisConfig();
+const redisUrl = getRedisUrl();
 const redisClient = await createClient({ url: redisUrl })
   .on("error", (err) => console.log("Redis Client Error", err))
   .connect();
