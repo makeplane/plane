@@ -57,7 +57,7 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
 
   return (
     <div
-      className={cn("sticky bottom-0 z-10 bg-custom-background-100 sm:static", {
+      className={cn("sticky bottom-0 z-[4] bg-custom-background-100 sm:static", {
         "-bottom-5": !peekIssue,
       })}
       onKeyDown={(e) => {
