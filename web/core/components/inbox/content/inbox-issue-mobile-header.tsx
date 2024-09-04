@@ -15,7 +15,7 @@ import {
   PanelLeft,
   MoveRight,
 } from "lucide-react";
-import { CustomMenu } from "@plane/ui";
+import { CustomHeader, CustomMenu, EHeaderVariant } from "@plane/ui";
 // components
 import { InboxIssueStatus } from "@/components/inbox";
 import { IssueUpdateStatus } from "@/components/issues";
@@ -80,7 +80,7 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
   if (!issue || !inboxIssue) return null;
 
   return (
-    <div className="h-12 relative flex border-custom-border-200 w-full items-center gap-2 px-4">
+    <CustomHeader variant={EHeaderVariant.SECONDARY} className="flex">
       {isNotificationEmbed && (
         <button onClick={embedRemoveCurrentNotification}>
           <MoveRight className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
@@ -89,7 +89,7 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
       <PanelLeft
         onClick={() => setIsMobileSidebar(!isMobileSidebar)}
         className={cn(
-          "w-4 h-4 flex-shrink-0 mr-2",
+          "w-4 h-4 flex-shrink-0 mr-2 my-auto",
           isMobileSidebar ? "text-custom-primary-100" : "text-custom-text-200"
         )}
       />
@@ -181,6 +181,6 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
           </CustomMenu>
         </div>
       </div>
-    </div>
+    </CustomHeader>
   );
 });

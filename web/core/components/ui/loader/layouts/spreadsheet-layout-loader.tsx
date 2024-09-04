@@ -21,7 +21,7 @@ export const SpreadsheetIssueRowLoader = (props: { columnCount: number }) => (
 );
 
 export const SpreadsheetLayoutLoader = () => (
-  <div className="horizontal-scroll-enable h-full w-full ">
+  <div className="horizontal-scroll-enable h-full w-full overflow-y-auto ">
     <table>
       <thead>
         <tr>
