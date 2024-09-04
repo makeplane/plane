@@ -327,11 +327,16 @@ jobs:
       - name: Set Live Docker Tag
         run: |
           if [ "${{ github.event_name }}" == "release" ]; then
-            TAG=makeplane/live-enterprise:stable,makeplane/live-enterprise:${{ github.event.release.tag_name }}
+            TAG=makeplane/live-enterprise:stable
+            TAG=${TAG},makeplane/live-enterprise:${{ github.event.release.tag_name }}
+            TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/live-enterprise:stable
+            TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/live-enterprise:${{ github.event.release.tag_name }}
           elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
             TAG=makeplane/live-enterprise:latest
+            TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/live-enterprise:latest
           else
             TAG=${{ env.LIVE_TAG }}
+            TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/live-enterprise:${{ needs.branch_build_setup.outputs.gh_branch_name }}
           fi
           echo "LIVE_TAG=${TAG}" >> $GITHUB_ENV
 
@@ -340,6 +345,13 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
+      - name: Login to Harbor
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.HARBOR_USERNAME }}
+          password: ${{ secrets.HARBOR_TOKEN }}
+          registry: ${{ vars.HARBOR_REGISTRY }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
