@@ -1,20 +1,17 @@
 "use client";
 
-import { useState } from "react";
 import { observer } from "mobx-react";
-import { CircleAlert, Sparkle } from "lucide-react";
+import { CircleAlert } from "lucide-react";
 // editor
 import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
 // ui
-import { ArchiveIcon, Tooltip } from "@plane/ui";
+import { ArchiveIcon, FavoriteStar, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 // components
-import { GptAssistantPopover } from "@/components/core";
 import { LockedComponent } from "@/components/icons/locked-component";
 import { PageInfoPopover, PageOptionsDropdown } from "@/components/pages";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
-import { useInstance } from "@/hooks/store";
 import useOnlineStatus from "@/hooks/use-online-status";
 // store
 import { IPage } from "@/store/pages/page";
@@ -29,18 +26,37 @@ type Props = {
 
 export const PageExtraOptions: React.FC<Props> = observer((props) => {
   const { editorRef, handleDuplicatePage, hasConnectionFailed, page, readOnlyEditorRef } = props;
-  // states
-  const [gptModalOpen, setGptModal] = useState(false);
-  // store hooks
-  const { config } = useInstance();
   // derived values
-  const { archived_at, isContentEditable, is_locked } = page;
+  const {
+    archived_at,
+    isContentEditable,
+    is_favorite,
+    is_locked,
+    canCurrentUserFavoritePage,
+    addToFavorites,
+    removePageFromFavorites,
+  } = page;
   // use online status
   const { isOnline } = useOnlineStatus();
-
-  const handleAiAssistance = async (response: string) => {
-    if (!editorRef) return;
-    editorRef.current?.setEditorValueAtCursorPosition(response);
+  // favorite handler
+  const handleFavorite = () => {
+    if (is_favorite) {
+      removePageFromFavorites().then(() =>
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: "Page removed from favorites.",
+        })
+      );
+    } else {
+      addToFavorites().then(() =>
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: "Page added to favorites.",
+        })
+      );
+    }
   };
 
   return (
@@ -74,28 +90,8 @@ export const PageExtraOptions: React.FC<Props> = observer((props) => {
           </div>
         </Tooltip>
       )}
-      {isContentEditable && config?.has_openai_configured && (
-        <GptAssistantPopover
-          isOpen={gptModalOpen}
-          handleClose={() => {
-            setGptModal((prevData) => !prevData);
-            // this is done so that the title do not reset after gpt popover closed
-            // reset(getValues());
-          }}
-          onResponse={handleAiAssistance}
-          placement="top-end"
-          button={
-            <button
-              type="button"
-              className="flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-90"
-              onClick={() => setGptModal((prevData) => !prevData)}
-            >
-              <Sparkle className="h-4 w-4" />
-              AI
-            </button>
-          }
-          className="!min-w-[38rem]"
-        />
+      {canCurrentUserFavoritePage && (
+        <FavoriteStar selected={is_favorite} onClick={handleFavorite} iconClassName="text-custom-text-100" />
       )}
       <PageInfoPopover editorRef={isContentEditable ? editorRef.current : readOnlyEditorRef.current} />
       <PageOptionsDropdown
