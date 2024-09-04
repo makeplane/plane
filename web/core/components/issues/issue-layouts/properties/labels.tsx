@@ -162,6 +162,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
                   tooltipHeading="Labels"
                   tooltipContent={label?.name ?? ""}
                   isMobile={isMobile}
+                  renderByDefault={false}
                 >
                   <div
                     key={label?.id}
@@ -196,6 +197,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
                 ?.filter((l) => value.includes(l?.id))
                 .map((l) => l?.name)
                 .join(", ")}
+              renderByDefault={false}
             >
               <div className="flex h-full items-center gap-1.5 text-custom-text-200">
                 <span className="h-2 w-2 flex-shrink-0 rounded-full bg-custom-primary" />
@@ -205,7 +207,13 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
           </div>
         )
       ) : (
-        <Tooltip position="top" tooltipHeading="Labels" tooltipContent="None" isMobile={isMobile}>
+        <Tooltip
+          position="top"
+          tooltipHeading="Labels"
+          tooltipContent="None"
+          isMobile={isMobile}
+          renderByDefault={false}
+        >
           <div
             className={`flex h-full items-center justify-center gap-2 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80 ${
               noLabelBorder ? "" : "border-[0.5px] border-custom-border-300"

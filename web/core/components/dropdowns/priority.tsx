@@ -76,6 +76,7 @@ const BorderButton = (props: ButtonProps) => {
       tooltipContent={priorityDetails?.title ?? "None"}
       disabled={!showTooltip}
       isMobile={isMobile}
+      renderByDefault={false}
     >
       <div
         className={cn(
@@ -156,6 +157,7 @@ const BackgroundButton = (props: ButtonProps) => {
       tooltipContent={priorityDetails?.title ?? "None"}
       disabled={!showTooltip}
       isMobile={isMobile}
+      renderByDefault={false}
     >
       <div
         className={cn(
@@ -237,6 +239,7 @@ const TransparentButton = (props: ButtonProps) => {
       tooltipContent={priorityDetails?.title ?? "None"}
       disabled={!showTooltip}
       isMobile={isMobile}
+      renderByDefault={false}
     >
       <div
         className={cn(
