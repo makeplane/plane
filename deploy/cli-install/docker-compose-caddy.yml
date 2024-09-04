@@ -40,6 +40,14 @@ x-app-env: &app-env
     - REDIS_HOST=${REDIS_HOST:-plane-redis}
     - REDIS_PORT=${REDIS_PORT:-6379}
     - REDIS_URL=${REDIS_URL:-redis://plane-redis:6379/}
+    # RabbitMQ Settings
+    - RABBITMQ_HOST=${RABBITMQ_HOST:-plane-mq}
+    - RABBITMQ_PORT=${RABBITMQ_PORT:-5672}
+    - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER:-plane}
+    - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD:-plane}
+    - RABBITMQ_DEFAULT_VHOST=${RABBITMQ_VHOST:-plane}
+    - RABBITMQ_VHOST=${RABBITMQ_VHOST:-plane}
+    - AMQP_URL=${AMQP_URL:-amqp://plane:plane@plane-mq:5672/plane}
     # Application secret
     - SECRET_KEY=${SECRET_KEY:-60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5}
     # DATA STORE SETTINGS
@@ -96,7 +104,7 @@ services:
     <<: *app-env
     image: registry.plane.tools/plane/live-enterprise:${APP_RELEASE_VERSION}
     restart: unless-stopped
-    command: node live/server.js live
+    command: node live/dist/server.js live
     deploy:
       replicas: ${LIVE_REPLICAS:-1}
     depends_on:

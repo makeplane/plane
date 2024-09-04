@@ -11,6 +11,8 @@
 
 	reverse_proxy /auth/* api:8000
 
+	reverse_proxy /live/* live:3000
+
 	reverse_proxy /{$BUCKET_NAME}/* plane-minio:9000
 
 	reverse_proxy /* web:3000
