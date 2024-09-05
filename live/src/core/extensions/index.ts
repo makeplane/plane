@@ -119,7 +119,7 @@ export const getExtensions: () => Extension[] = () => {
           redisClient.disconnect();
         }
         manualLogger.error(
-          `Redis Client wasn't able to connect, continuing without Redis (you won't be able to sync betwen multiple plane live servers`,
+          `Redis Client wasn't able to connect, continuing without Redis (you won't be able to sync data betwen multiple plane live servers)`,
         );
         manualLogger.error(error);
       });
