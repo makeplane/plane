@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { SyntheticEvent, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
-import { CalendarCheck2, CalendarClock, Info, MoveRight, SquareUser } from "lucide-react";
+import { Info, SquareUser } from "lucide-react";
 // ui
 import { IModule } from "@plane/types";
-import { Card, FavoriteStar, LayersIcon, LinearProgressIndicator, Tooltip, setPromiseToast } from "@plane/ui";
+import { Card, FavoriteStar, LayersIcon, LinearProgressIndicator, TOAST_TYPE, Tooltip, setPromiseToast, setToast } from "@plane/ui";
 // components
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { ModuleQuickActions } from "@/components/modules";
@@ -17,7 +17,7 @@ import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker"
 import { MODULE_STATUS } from "@/constants/module";
 import { EUserProjectRoles } from "@/constants/project";
 // helpers
-import { getDate, renderFormattedDate } from "@/helpers/date-time.helper";
+import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { generateQueryParams } from "@/helpers/router.helper";
 // hooks
 import { useEventTracker, useMember, useModule, useProjectEstimates, useUser } from "@/hooks/store";
@@ -25,6 +25,8 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web constants
 import { EEstimateSystem } from "@/plane-web/constants/estimates";
+import { DateRangeDropdown } from "@/components/dropdowns";
+import { ModuleStatusSelection } from  "@/components/modules/module-status-dropdown";
 
 type Props = {
   moduleId: string;
@@ -43,6 +45,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   const {
     membership: { currentProjectRole },
   } = useUser();
+  const { updateModuleDetails } = useModule();
   const { getModuleById, addModuleToFavorites, removeModuleFromFavorites } = useModule();
   const { getUserDetails } = useMember();
   const { captureEvent } = useEventTracker();
@@ -51,6 +54,10 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   // derived values
   const moduleDetails = getModuleById(moduleId);
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isDisabled = !isEditingAllowed || (moduleDetails?.archived_at ? true : false) ;
+  const renderIcon = Boolean(moduleDetails?.start_date) || Boolean(moduleDetails?.target_date);
+
+
   const { isMobile } = usePlatformOS();
   const handleAddToFavorites = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -110,6 +117,31 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     });
   };
 
+  const handleEventPropagation = (e: SyntheticEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
+  };
+
+  const handleModuleDetailsChange = async (payload: Partial<IModule>) => {
+    if (!workspaceSlug || !projectId) return;
+
+    await updateModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId, payload)
+      .then((res) => {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: "Module updated successfully.",
+        });
+      })
+      .catch((err) => {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: err?.detail ?? "Module could not be updated. Please try again.",
+        });
+      });
+  };
+
   const openModuleOverview = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
@@ -147,10 +179,6 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     ? moduleDetails?.completed_estimate_points || 0
     : moduleDetails.completed_issues;
 
-  const endDate = getDate(moduleDetails.target_date);
-  const startDate = getDate(moduleDetails.start_date);
-
-  const isDateValid = moduleDetails.target_date || moduleDetails.start_date;
 
   // const areYearsEqual = startDate.getFullYear() === endDate.getFullYear();
 
@@ -174,7 +202,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   }));
 
   return (
-    <div className="relative">
+    <div className="relative" data-prevent-nprogress>
       <Link ref={parentRef} href={`/${workspaceSlug}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}>
         <Card>
           <div>
@@ -182,17 +210,13 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
               <Tooltip tooltipContent={moduleDetails.name} position="top" isMobile={isMobile}>
                 <span className="truncate text-base font-medium">{moduleDetails.name}</span>
               </Tooltip>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2" onClick={handleEventPropagation}>
                 {moduleStatus && (
-                  <span
-                    className="flex h-6 w-20 items-center justify-center rounded-sm text-center text-xs"
-                    style={{
-                      color: moduleStatus.color,
-                      backgroundColor: `${moduleStatus.color}20`,
-                    }}
-                  >
-                    {moduleStatus.label}
-                  </span>
+                  <ModuleStatusSelection
+                  isEditingAllowed={isEditingAllowed}
+                  moduleDetails={moduleDetails}
+                  handleModuleDetailsChange={handleModuleDetailsChange}
+                  />
                 )}
                 <button onClick={openModuleOverview}>
                   <Info className="h-4 w-4 text-custom-text-400" />
@@ -217,18 +241,28 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
               )}
             </div>
             <LinearProgressIndicator size="lg" data={progressIndicatorData} />
-            <div className="flex items-center justify-between py-0.5">
-              {isDateValid ? (
-                <div className="h-6 flex items-center gap-1.5 text-custom-text-300 border-[0.5px] border-custom-border-300 rounded text-xs px-2 cursor-default">
-                  <CalendarClock className="h-3 w-3 flex-shrink-0" />
-                  <span className="flex-grow truncate">{renderFormattedDate(startDate)}</span>
-                  <MoveRight className="h-3 w-3 flex-shrink-0" />
-                  <CalendarCheck2 className="h-3 w-3 flex-shrink-0" />
-                  <span className="flex-grow truncate">{renderFormattedDate(endDate)}</span>
-                </div>
-              ) : (
-                <span className="text-xs text-custom-text-400">No due date</span>
-              )}
+            <div className="flex items-center justify-between py-0.5" onClick={handleEventPropagation}>
+              <DateRangeDropdown
+                buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-custom-text-300 border-[0.5px] border-custom-border-300 rounded text-xs`}
+                buttonVariant="transparent-with-text"
+                className="h-7"
+                value={{
+                  from: getDate(moduleDetails.start_date),
+                  to: getDate(moduleDetails.target_date),
+                }}
+                onSelect={(val) => {
+                  handleModuleDetailsChange({
+                    start_date: (val?.from ? renderFormattedPayloadDate(val.from) : null),
+                    target_date: (val?.to ? renderFormattedPayloadDate(val.to) : null)
+                  })
+                }}
+                placeholder={{
+                  from: "Start date",
+                  to: "End date",
+                }}
+                disabled={isDisabled}
+                hideIcon={{ from: renderIcon ?? true, to: renderIcon }}
+              />
             </div>
           </div>
         </Card>
