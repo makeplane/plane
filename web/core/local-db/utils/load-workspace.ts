@@ -13,7 +13,7 @@ const stageInserts = (table: string, schema: Schema, data: any) => {
   const keys = Object.keys(schema);
   // Pick only the keys that are in the schema
   const filteredData = keys.reduce((acc: any, key) => {
-    if (typeof data[key] !== "undefined") {
+    if (data[key] || data[key] === 0) {
       acc[key] = data[key];
     }
     return acc;

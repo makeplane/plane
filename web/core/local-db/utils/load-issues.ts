@@ -57,7 +57,7 @@ export const stageIssueInserts = (issue: any) => {
 
   const keys = Object.keys(issueSchema);
   const sanitizedIssue = keys.reduce((acc: any, key) => {
-    if (typeof issue[key] !== "undefined") {
+    if (issue[key] || issue[key] === 0) {
       acc[key] = issue[key];
     }
     return acc;
