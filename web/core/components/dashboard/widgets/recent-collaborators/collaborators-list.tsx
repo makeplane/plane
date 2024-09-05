@@ -78,7 +78,12 @@ export const CollaboratorsList: React.FC<CollaboratorsListProps> = (props) => {
     data: TRecentCollaboratorsWidgetResponse[] | undefined;
   };
 
-  if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
+  if (!widgetStats)
+    return (
+      <div className="mt-7 mb-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 xl:grid-cols-8 gap-2 gap-y-8">
+        <WidgetLoader widgetKey={WIDGET_KEY} />
+      </div>
+    );
 
   const sortedStats = sortBy(widgetStats, [(user) => user?.user_id !== currentUser?.id]);
 
