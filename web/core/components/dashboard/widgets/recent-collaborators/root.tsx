@@ -4,10 +4,7 @@ import { Search } from "lucide-react";
 import { Card } from "@plane/ui";
 import { WidgetProps } from "@/components/dashboard/widgets";
 // components
-import { DefaultCollaboratorsList } from "./default-list";
-import { SearchedCollaboratorsList } from "./search-list";
-
-const PER_PAGE = 8;
+import { CollaboratorsList } from "./collaborators-list";
 
 export const RecentCollaboratorsWidget: React.FC<WidgetProps> = (props) => {
   const { dashboardId, workspaceSlug } = props;
@@ -33,16 +30,7 @@ export const RecentCollaboratorsWidget: React.FC<WidgetProps> = (props) => {
           />
         </div>
       </div>
-      {searchQuery.trim() !== "" ? (
-        <SearchedCollaboratorsList
-          dashboardId={dashboardId}
-          perPage={PER_PAGE}
-          searchQuery={searchQuery}
-          workspaceSlug={workspaceSlug}
-        />
-      ) : (
-        <DefaultCollaboratorsList dashboardId={dashboardId} perPage={PER_PAGE} workspaceSlug={workspaceSlug} />
-      )}
+      <CollaboratorsList dashboardId={dashboardId} searchQuery={searchQuery} workspaceSlug={workspaceSlug} />
     </Card>
   );
 };
