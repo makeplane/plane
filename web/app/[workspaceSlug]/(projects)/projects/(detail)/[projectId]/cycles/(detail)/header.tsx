@@ -237,79 +237,74 @@ export const CycleIssuesHeader: React.FC = observer(() => {
           </div>
         </Header.LeftItem>
         <Header.RightItem>
-          <div className="hidden items-center gap-2 md:flex ">
-            <LayoutSelection
-              layouts={[
-                EIssueLayoutTypes.LIST,
-                EIssueLayoutTypes.KANBAN,
-                EIssueLayoutTypes.CALENDAR,
-                EIssueLayoutTypes.SPREADSHEET,
-                EIssueLayoutTypes.GANTT,
-              ]}
-              onChange={(layout) => handleLayoutChange(layout)}
-              selectedLayout={activeLayout}
+          <LayoutSelection
+            layouts={[
+              EIssueLayoutTypes.LIST,
+              EIssueLayoutTypes.KANBAN,
+              EIssueLayoutTypes.CALENDAR,
+              EIssueLayoutTypes.SPREADSHEET,
+              EIssueLayoutTypes.GANTT,
+            ]}
+            onChange={(layout) => handleLayoutChange(layout)}
+            selectedLayout={activeLayout}
+          />
+          <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={isIssueFilterActive(issueFilters)}>
+            <FilterSelection
+              filters={issueFilters?.filters ?? {}}
+              handleFiltersUpdate={handleFiltersUpdate}
+              layoutDisplayFiltersOptions={
+                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
+              }
+              displayFilters={issueFilters?.displayFilters ?? {}}
+              handleDisplayFiltersUpdate={handleDisplayFilters}
+              labels={projectLabels}
+              memberIds={projectMemberIds ?? undefined}
+              states={projectStates}
+              cycleViewDisabled={!currentProjectDetails?.cycle_view}
+              moduleViewDisabled={!currentProjectDetails?.module_view}
             />
-            <FiltersDropdown
-              title="Filters"
-              placement="bottom-end"
-              isFiltersApplied={isIssueFilterActive(issueFilters)}
-            >
-              <FilterSelection
-                filters={issueFilters?.filters ?? {}}
-                handleFiltersUpdate={handleFiltersUpdate}
-                layoutDisplayFiltersOptions={
-                  activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
-                }
-                displayFilters={issueFilters?.displayFilters ?? {}}
-                handleDisplayFiltersUpdate={handleDisplayFilters}
-                labels={projectLabels}
-                memberIds={projectMemberIds ?? undefined}
-                states={projectStates}
-                cycleViewDisabled={!currentProjectDetails?.cycle_view}
-                moduleViewDisabled={!currentProjectDetails?.module_view}
-              />
-            </FiltersDropdown>
-            <FiltersDropdown title="Display" placement="bottom-end">
-              <DisplayFiltersSelection
-                layoutDisplayFiltersOptions={
-                  activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
-                }
-                displayFilters={issueFilters?.displayFilters ?? {}}
-                handleDisplayFiltersUpdate={handleDisplayFilters}
-                displayProperties={issueFilters?.displayProperties ?? {}}
-                handleDisplayPropertiesUpdate={handleDisplayProperties}
-                ignoreGroupedFilters={["cycle"]}
-                cycleViewDisabled={!currentProjectDetails?.cycle_view}
-                moduleViewDisabled={!currentProjectDetails?.module_view}
-              />
-            </FiltersDropdown>
+          </FiltersDropdown>
+          <FiltersDropdown title="Display" placement="bottom-end">
+            <DisplayFiltersSelection
+              layoutDisplayFiltersOptions={
+                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
+              }
+              displayFilters={issueFilters?.displayFilters ?? {}}
+              handleDisplayFiltersUpdate={handleDisplayFilters}
+              displayProperties={issueFilters?.displayProperties ?? {}}
+              handleDisplayPropertiesUpdate={handleDisplayProperties}
+              ignoreGroupedFilters={["cycle"]}
+              cycleViewDisabled={!currentProjectDetails?.cycle_view}
+              moduleViewDisabled={!currentProjectDetails?.module_view}
+            />
+          </FiltersDropdown>
 
-            {canUserCreateIssue && (
-              <>
-                <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
-                  Analytics
+          {canUserCreateIssue && (
+            <>
+              <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
+                Analytics
+              </Button>
+              {!isCompletedCycle && (
+                <Button
+                  className="h-full"
+                  onClick={() => {
+                    setTrackElement("Cycle issues page");
+                    toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
+                  }}
+                  size="sm"
+                >
+                  Add issue
                 </Button>
-                {!isCompletedCycle && (
-                  <Button
-                    onClick={() => {
-                      setTrackElement("Cycle issues page");
-                      toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
-                    }}
-                    size="sm"
-                  >
-                    Add issue
-                  </Button>
-                )}
-              </>
-            )}
-            <button
-              type="button"
-              className="grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80"
-              onClick={toggleSidebar}
-            >
-              <ArrowRight className={`h-4 w-4 duration-300 ${isSidebarCollapsed ? "-rotate-180" : ""}`} />
-            </button>
-          </div>
+              )}
+            </>
+          )}
+          <button
+            type="button"
+            className="grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80"
+            onClick={toggleSidebar}
+          >
+            <ArrowRight className={`h-4 w-4 duration-300 ${isSidebarCollapsed ? "-rotate-180" : ""}`} />
+          </button>
           <button
             type="button"
             className="grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80 md:hidden"
