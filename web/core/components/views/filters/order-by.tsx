@@ -27,7 +27,7 @@ export const ViewOrderByDropdown: React.FC<Props> = (props) => {
   ];
 
   const buttonClassName = isMobile
-    ? "flex items-center text-sm text-custom-text-200"
+    ? "flex items-center text-sm text-custom-text-200 gap-2"
     : `${getButtonStyling("neutral-primary", "sm")} px-2 text-custom-text-300`;
 
   const chevronClassName = isMobile ? "h-4 w-4 text-custom-text-200" : "h-3 w-3";
@@ -38,10 +38,11 @@ export const ViewOrderByDropdown: React.FC<Props> = (props) => {
         <span className={buttonClassName}>
           {!isMobile && <ArrowDownWideNarrow className="h-3 w-3" />}
           <span className="flex-shrink-0"> {orderByDetails?.label}</span>
-          <ChevronDown className={chevronClassName} strokeWidth={2} />
+          <ChevronDown className={chevronClassName} strokeWidth={1} />
         </span>
       }
       placement="bottom-end"
+      className="w-full"
       maxHeight="lg"
       closeOnSelect
     >

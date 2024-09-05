@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Layers } from "lucide-react";
 // ui
-import { Breadcrumbs, Button, CustomHeader } from "@plane/ui";
+import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 import { ViewListHeader } from "@/components/views";
@@ -20,8 +20,8 @@ export const ProjectViewsHeader = observer(() => {
 
   return (
     <>
-      <CustomHeader>
-        <CustomHeader.LeftItem>
+      <Header>
+        <Header.LeftItem>
           <Breadcrumbs isLoading={loader}>
             <Breadcrumbs.BreadcrumbItem
               type="text"
@@ -44,16 +44,16 @@ export const ProjectViewsHeader = observer(() => {
               link={<BreadcrumbLink label="Views" icon={<Layers className="h-4 w-4 text-custom-text-300" />} />}
             />
           </Breadcrumbs>
-        </CustomHeader.LeftItem>
-        <CustomHeader.RightItem>
+        </Header.LeftItem>
+        <Header.RightItem>
           <ViewListHeader />
           <div>
             <Button variant="primary" size="sm" onClick={() => toggleCreateViewModal(true)}>
               Add view
             </Button>
           </div>
-        </CustomHeader.RightItem>
-      </CustomHeader>
+        </Header.RightItem>
+      </Header>
     </>
   );
 });

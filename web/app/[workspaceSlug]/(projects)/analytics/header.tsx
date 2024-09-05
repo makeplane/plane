@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 // icons
 import { BarChart2, PanelRight } from "lucide-react";
 // ui
-import { Breadcrumbs, CustomHeader } from "@plane/ui";
+import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
 // helpers
@@ -36,8 +36,8 @@ export const WorkspaceAnalyticsHeader = observer(() => {
   }, [toggleWorkspaceAnalyticsSidebar, workspaceAnalyticsSidebarCollapsed]);
 
   return (
-    <CustomHeader>
-      <CustomHeader.LeftItem>
+    <Header>
+      <Header.LeftItem>
         <Breadcrumbs>
           <Breadcrumbs.BreadcrumbItem
             type="text"
@@ -61,7 +61,7 @@ export const WorkspaceAnalyticsHeader = observer(() => {
         ) : (
           <></>
         )}
-      </CustomHeader.LeftItem>
-    </CustomHeader>
+      </Header.LeftItem>
+    </Header>
   );
 });

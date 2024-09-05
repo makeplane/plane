@@ -4,7 +4,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
-import { ArchiveIcon, Breadcrumbs, Tooltip, CustomHeader } from "@plane/ui";
+import { ArchiveIcon, Breadcrumbs, Tooltip, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 // constants
@@ -38,8 +38,8 @@ export const ProjectArchivesHeader: FC<TProps> = observer((props: TProps) => {
     PROJECT_ARCHIVES_BREADCRUMB_LIST[activeTab as keyof typeof PROJECT_ARCHIVES_BREADCRUMB_LIST];
 
   return (
-    <CustomHeader>
-      <CustomHeader.LeftItem>
+    <Header>
+      <Header.LeftItem>
         <div className="flex items-center gap-2.5">
           <Breadcrumbs onBack={router.back} isLoading={loader}>
             <Breadcrumbs.BreadcrumbItem
@@ -92,7 +92,7 @@ export const ProjectArchivesHeader: FC<TProps> = observer((props: TProps) => {
             </Tooltip>
           ) : null}
         </div>
-      </CustomHeader.LeftItem>
-    </CustomHeader>
+      </Header.LeftItem>
+    </Header>
   );
 });

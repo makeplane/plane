@@ -1,39 +1,51 @@
 import * as React from "react";
 import { cn } from "../../helpers";
 import { EHeaderVariant, getHeaderStyle, THeaderVariant } from "./helper";
-import { ERowVariant, CustomRow } from "../row";
+import { ERowVariant, Row } from "../row";
 
-export interface CustomHeaderProps {
+export interface HeaderProps {
   variant?: THeaderVariant;
   setHeight?: boolean;
   className?: string;
   children: React.ReactNode;
+  showOnMobile?: boolean;
 }
 
-const CustomHeader = (props: CustomHeaderProps) => {
-  const { variant = EHeaderVariant.PRIMARY, className = "", setHeight = true, children, ...rest } = props;
+const Header = (props: HeaderProps) => {
+  const {
+    variant = EHeaderVariant.PRIMARY,
+    className = "",
+    showOnMobile = true,
+    setHeight = true,
+    children,
+    ...rest
+  } = props;
 
-  const style = getHeaderStyle(variant, setHeight);
+  const style = getHeaderStyle(variant, setHeight, showOnMobile);
   return (
-    <CustomRow
+    <Row
       variant={variant === EHeaderVariant.PRIMARY ? ERowVariant.HUGGING : ERowVariant.REGULAR}
       className={cn(style, className)}
       {...rest}
     >
       {children}
-    </CustomRow>
+    </Row>
   );
 };
 
-const LeftItem = (props: CustomHeaderProps) => (
-  <div className="flex flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">{props.children}</div>
+const LeftItem = (props: HeaderProps) => (
+  <div
+    className={cn("flex flex-wrap items-center gap-2 overflow-ellipsis whitespace-nowrap max-w-[80%]", props.className)}
+  >
+    {props.children}
+  </div>
 );
-const RightItem = (props: CustomHeaderProps) => (
-  <div className="w-full flex items-center justify-end gap-3">{props.children}</div>
+const RightItem = (props: HeaderProps) => (
+  <div className={cn("flex justify-end gap-3 w-auto items-baseline", props.className)}>{props.children}</div>
 );
 
-CustomHeader.LeftItem = LeftItem;
-CustomHeader.RightItem = RightItem;
-CustomHeader.displayName = "plane-ui-header";
+Header.LeftItem = LeftItem;
+Header.RightItem = RightItem;
+Header.displayName = "plane-ui-header";
 
-export { CustomHeader, EHeaderVariant };
+export { Header, EHeaderVariant };

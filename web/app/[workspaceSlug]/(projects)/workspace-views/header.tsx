@@ -7,7 +7,7 @@ import { useParams } from "next/navigation";
 import { Layers } from "lucide-react";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
-import { Breadcrumbs, Button, CustomHeader } from "@plane/ui";
+import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection } from "@/components/issues";
@@ -98,17 +98,17 @@ export const GlobalIssuesHeader = observer(() => {
   return (
     <>
       <CreateUpdateWorkspaceViewModal isOpen={createViewModal} onClose={() => setCreateViewModal(false)} />
-      <CustomHeader>
-        <CustomHeader.LeftItem>
+      <Header>
+        <Header.LeftItem>
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
               type="text"
               link={<BreadcrumbLink label={`Views`} icon={<Layers className="h-4 w-4 text-custom-text-300" />} />}
             />
           </Breadcrumbs>
-        </CustomHeader.LeftItem>
+        </Header.LeftItem>
 
-        <CustomHeader.RightItem>
+        <Header.RightItem>
           {!isLocked ? (
             <>
               <FiltersDropdown
@@ -143,8 +143,8 @@ export const GlobalIssuesHeader = observer(() => {
           <Button variant="primary" size="sm" onClick={() => setCreateViewModal(true)}>
             Add view
           </Button>
-        </CustomHeader.RightItem>
-      </CustomHeader>
+        </Header.RightItem>
+      </Header>
     </>
   );
 });

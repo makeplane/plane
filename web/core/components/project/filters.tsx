@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ListFilter } from "lucide-react";
 // types
@@ -19,7 +20,7 @@ type Props = {
   isMobile?: boolean;
 };
 
-const HeaderFilters = ({ filterMenuButton, isMobile, classname = "", filterClassname = "" }: Props) => {
+const HeaderFilters = observer(({ filterMenuButton, isMobile, classname = "", filterClassname = "" }: Props) => {
   // router
   const { workspaceSlug } = useParams();
   const {
@@ -89,5 +90,5 @@ const HeaderFilters = ({ filterMenuButton, isMobile, classname = "", filterClass
       </div>
     </div>
   );
-};
+});
 export default HeaderFilters;

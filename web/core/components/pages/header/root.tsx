@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { ListFilter } from "lucide-react";
 import { TPageFilterProps, TPageNavigationTabs } from "@plane/types";
 // components
-import { CustomHeader, EHeaderVariant } from "@plane/ui";
+import { Header, EHeaderVariant } from "@plane/ui";
 import { FiltersDropdown } from "@/components/issues";
 import {
   PageAppliedFiltersList,
@@ -50,11 +50,11 @@ export const PagesListHeaderRoot: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <CustomHeader variant={EHeaderVariant.SECONDARY} className="flex">
-        <CustomHeader.LeftItem>
+      <Header variant={EHeaderVariant.SECONDARY}>
+        <Header.LeftItem>
           <PageTabNavigation workspaceSlug={workspaceSlug} projectId={projectId} pageType={pageType} />
-        </CustomHeader.LeftItem>
-        <CustomHeader.RightItem>
+        </Header.LeftItem>
+        <Header.RightItem className="items-center">
           <PageSearchInput
             searchQuery={filters.searchQuery}
             updateSearchQuery={(val) => updateFilters("searchQuery", val)}
@@ -79,17 +79,17 @@ export const PagesListHeaderRoot: React.FC<Props> = observer((props) => {
               memberIds={workspaceMemberIds ?? undefined}
             />
           </FiltersDropdown>
-        </CustomHeader.RightItem>
-      </CustomHeader>
+        </Header.RightItem>
+      </Header>
       {calculateTotalFilters(filters?.filters ?? {}) !== 0 && (
-        <CustomHeader variant={EHeaderVariant.TERNARY}>
+        <Header variant={EHeaderVariant.TERNARY}>
           <PageAppliedFiltersList
             appliedFilters={filters.filters ?? {}}
             handleClearAllFilters={clearAllFilters}
             handleRemoveFilter={handleRemoveFilter}
             alwaysAllowEditing
           />
-        </CustomHeader>
+        </Header>
       )}
     </>
   );

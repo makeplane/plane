@@ -9,7 +9,7 @@ import { useParams } from "next/navigation";
 import { IIssueFilterOptions, TStaticViewTypes } from "@plane/types";
 //ui
 // components
-import { CustomHeader, EHeaderVariant } from "@plane/ui";
+import { Header, EHeaderVariant } from "@plane/ui";
 import { AppliedFiltersList } from "@/components/issues";
 import { UpdateViewComponent } from "@/components/views/update-view-component";
 import { CreateUpdateWorkspaceViewModal } from "@/components/workspace";
@@ -133,7 +133,7 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
   if (areAppliedFiltersEmpty && areFiltersEqual) return null;
 
   return (
-    <CustomHeader variant={EHeaderVariant.TERNARY}>
+    <Header variant={EHeaderVariant.TERNARY}>
       <CreateUpdateWorkspaceViewModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -166,6 +166,6 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
       ) : (
         <></>
       )}
-    </CustomHeader>
+    </Header>
   );
 });

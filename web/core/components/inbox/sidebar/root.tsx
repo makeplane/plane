@@ -3,7 +3,7 @@
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { TInboxIssueCurrentTab } from "@plane/types";
-import { CustomHeader, Loader, EHeaderVariant } from "@plane/ui";
+import { Header, Loader, EHeaderVariant } from "@plane/ui";
 // components
 import { EmptyState } from "@/components/empty-state";
 import { FiltersRoot, InboxIssueAppliedFilters, InboxIssueList } from "@/components/inbox";
@@ -76,7 +76,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
   return (
     <div className="bg-custom-background-100 flex-shrink-0 w-full h-full border-r border-custom-border-300 ">
       <div className="relative w-full h-full flex flex-col overflow-hidden">
-        <CustomHeader variant={EHeaderVariant.SECONDARY} className="flex">
+        <Header variant={EHeaderVariant.SECONDARY}>
           {tabNavigationOptions.map((option) => (
             <div
               key={option?.key}
@@ -108,7 +108,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
           <div className="m-auto mr-0">
             <FiltersRoot />
           </div>
-        </CustomHeader>
+        </Header>
         <InboxIssueAppliedFilters />
 
         {loader != undefined && loader === "filter-loading" && !inboxIssuePaginationInfo?.next_page_results ? (

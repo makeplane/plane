@@ -4,7 +4,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
-import { CustomHeader, CustomRow, EHeaderVariant } from "@plane/ui";
+import { Header, Row, ERowVariant, EHeaderVariant, ContentWrapper } from "@plane/ui";
 import { CountChip } from "@/components/common";
 import {
   NotificationsLoader,
@@ -47,11 +47,11 @@ export const NotificationsSidebar: FC = observer(() => {
       )}
     >
       <div className="relative w-full h-full overflow-hidden flex flex-col">
-        <CustomRow className="h-[3.75rem] border-b border-custom-border-200 flex">
+        <Row className="h-[3.75rem] border-b border-custom-border-200 flex">
           <NotificationSidebarHeader workspaceSlug={workspaceSlug.toString()} />
-        </CustomRow>
+        </Row>
 
-        <CustomHeader variant={EHeaderVariant.SECONDARY} className="flex">
+        <Header variant={EHeaderVariant.SECONDARY} className="justify-start">
           {NOTIFICATION_TABS.map((tab) => (
             <div
               key={tab.value}
@@ -76,7 +76,7 @@ export const NotificationsSidebar: FC = observer(() => {
               )}
             </div>
           ))}
-        </CustomHeader>
+        </Header>
 
         {/* applied filters */}
         <AppliedFilters workspaceSlug={workspaceSlug.toString()} />
@@ -89,9 +89,9 @@ export const NotificationsSidebar: FC = observer(() => {
         ) : (
           <>
             {notificationIds && notificationIds.length > 0 ? (
-              <div className="relative w-full h-full overflow-hidden overflow-y-auto">
+              <ContentWrapper variant={ERowVariant.HUGGING}>
                 <NotificationCardListRoot workspaceSlug={workspaceSlug.toString()} workspaceId={workspace?.id} />
-              </div>
+              </ContentWrapper>
             ) : (
               <div className="relative w-full h-full flex justify-center items-center">
                 <NotificationEmptyState />
