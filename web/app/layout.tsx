@@ -75,7 +75,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <div id="context-menu-portal" />
         <AppProvider>
-          <div className={`h-screen w-full overflow-hidden bg-custom-background-100`}>{children}</div>
+          <div className={`app-container bg-custom-background-100 relative flex flex-col`}>
+            <div className="w-full h-full overflow-hidden relative">{children}</div>
+          </div>
         </AppProvider>
       </body>
       {process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN && (
