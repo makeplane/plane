@@ -1,17 +1,14 @@
 import { pinoHttp } from "pino-http";
 
-const transport =
-  process.env.NODE_ENV !== "production"
-    ? {
-        target: "pino-pretty",
-        options: {
-          colorize: true,
-        },
-      }
-    : undefined;
+const transport = {
+  target: "pino-pretty",
+  options: {
+    colorize: true,
+  },
+};
 
 export const logger = pinoHttp({
-  level: process.env.NODE_ENV === "production" ? "info" : "debug",
+  level: "info",
   transport: transport,
 });
 
