@@ -1,146 +1,54 @@
-import { Server } from "@hocuspocus/server";
-import { Redis } from "@hocuspocus/extension-redis";
-import { createClient } from "redis";
+import "@/core/config/sentry-config.js";
 
-import { Database } from "@hocuspocus/extension-database";
-import { Logger } from "@hocuspocus/extension-logger";
 import express from "express";
-import expressWs, { Application } from "express-ws";
-// lib
-import { handleAuthentication } from "@/core/lib/authentication.js";
-import {
-  fetchPageDescriptionBinary,
-  updatePageDescription,
-} from "@/core/lib/page.js";
-// config
-import { getRedisUrl } from "@/core/config/redis-config.js";
-// types
-import { TDocumentTypes } from "@/core/types/common.js";
-// plane live lib
-import { fetchDocument } from "@/plane-live/lib/fetch-document.js";
-import { updateDocument } from "@/plane-live/lib/update-document.js";
+import expressWs from "express-ws";
+import * as Sentry from "@sentry/node";
 
-const redisUrl = getRedisUrl();
-const redisClient = await createClient({ url: redisUrl })
-  .on("error", (err) => console.log("Redis Client Error", err))
-  .connect();
+// cors
+import cors from "cors";
 
-const server = Server.configure({
-  onAuthenticate: async ({
-    requestHeaders,
-    requestParameters,
-    connection,
-    // user id used as token for authentication
-    token,
-  }) => {
-    // request headers
-    const cookie = requestHeaders.cookie?.toString();
-    // params
-    const params = requestParameters;
+// core hocuspocus server
+import { HocusPocusServer } from "@/core/hocuspocus-server.js";
 
-    if (!cookie) {
-      throw Error("Credentials not provided");
-    }
+// helpers
+import { logger, manualLogger } from "@/core/helpers/logger.js";
+import { errorHandler } from "@/core/helpers/error-handler.js";
 
-    try {
-      await handleAuthentication({
-        connection,
-        cookie,
-        params,
-        token,
-      });
-    } catch (error) {
-      throw Error("Authentication unsuccessful!");
-    }
-  },
-  extensions: [
-    new Redis({ redis: redisClient }),
-    new Logger(),
-    new Database({
-      fetch: async ({
-        documentName: pageId,
-        requestHeaders,
-        requestParameters,
-      }) => {
-        // request headers
-        const cookie = requestHeaders.cookie?.toString();
-        // query params
-        const params = requestParameters;
-        const documentType = params.get("documentType")?.toString() as
-          | TDocumentTypes
-          | undefined;
-
-        return new Promise(async (resolve) => {
-          try {
-            let fetchedData = null;
-            if (documentType === "project_page") {
-              fetchedData = await fetchPageDescriptionBinary(
-                params,
-                pageId,
-                cookie,
-              );
-            } else {
-              fetchedData = await fetchDocument({
-                cookie,
-                documentType,
-                pageId,
-                params,
-              });
-            }
-            resolve(fetchedData);
-          } catch (error) {
-            console.error("Error in fetching document", error);
-          }
-        });
-      },
-      store: async ({
-        state,
-        documentName: pageId,
-        requestHeaders,
-        requestParameters,
-      }) => {
-        // request headers
-        const cookie = requestHeaders.cookie?.toString();
-        // query params
-        const params = requestParameters;
-        const documentType = params.get("documentType")?.toString() as
-          | TDocumentTypes
-          | undefined;
-
-        return new Promise(async () => {
-          try {
-            if (documentType === "project_page") {
-              await updatePageDescription(params, pageId, state, cookie);
-            } else {
-              await updateDocument({
-                cookie,
-                documentType,
-                pageId,
-                params,
-                updatedDescription: state,
-              });
-            }
-          } catch (error) {
-            console.error("Error in updating document", error);
-          }
-        });
-      },
-    }),
-  ],
-});
-
-const { app }: { app: Application } = expressWs(express());
+const app = express();
+expressWs(app);
 
 app.set("port", process.env.PORT || 3000);
 
-app.get("/health", (_request, response) => {
-  response.status(200);
+// Logging middleware
+app.use(logger);
+
+// Body parsing middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// cors middleware
+app.use(cors());
+
+const router = express.Router();
+
+router.get("/health", (_req, res) => {
+  res.status(200).json({ status: "OK" });
 });
 
-app.ws("/collaboration", (websocket, request) => {
-  server.handleConnection(websocket, request);
+router.ws("/collaboration", (ws, req) => {
+  HocusPocusServer.handleConnection(ws, req);
 });
+
+app.use(process.env.LIVE_BASE_PATH || "/live", router);
+
+app.use((_req, res, _next) => {
+  res.status(404).send("Not Found");
+});
+
+Sentry.setupExpressErrorHandler(app);
+
+app.use(errorHandler);
 
 app.listen(app.get("port"), () => {
-  console.log("Live server has started at port", app.get("port"));
+  manualLogger.info(`Plane Live server has started at port ${app.get("port")}`);
 });
