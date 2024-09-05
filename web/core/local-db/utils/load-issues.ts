@@ -57,7 +57,7 @@ export const stageIssueInserts = (issue: any) => {
 
   const keys = Object.keys(issueSchema);
   const sanitizedIssue = keys.reduce((acc: any, key) => {
-    if (issue[key]) {
+    if (typeof issue[key] !== "undefined") {
       acc[key] = issue[key];
     }
     return acc;
@@ -81,6 +81,7 @@ export const stageIssueInserts = (issue: any) => {
     .join(", ");
 
   const query = `INSERT OR REPLACE INTO issues (${columns}) VALUES (${values});`;
+  debugger;
   persistence.db.exec(query);
 
   persistence.db.exec({
