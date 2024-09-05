@@ -373,7 +373,9 @@ def handle_cloud_payments(
             )
 
 
-def handle_self_managed_payments(slug, requested_invite_list, requested_role):
+def handle_self_managed_payments(
+    slug, requested_invite_list, requested_role, workspace_license
+):
     """
     Handle the self managed payment cases
     """
@@ -387,10 +389,6 @@ def handle_self_managed_payments(slug, requested_invite_list, requested_role):
         b. Update case - requested_role is a role and requested_invite_list is None
           - Allowed for roles > 10 if in the purchased seats limit and for roles <= 10 if in the 5 * purchased seats limit
     """
-    # Fetch the workspace license
-    workspace_license = WorkspaceLicense.objects.filter(
-        workspace__slug=slug
-    ).first()
 
     if workspace_license.plan == WorkspaceLicense.PlanChoice.FREE:
         # Free Plan Case
@@ -442,10 +440,16 @@ def workspace_member_check(slug, requested_invite_list, requested_role):
 
     # Get the workspace license
     if os.environ.get("IS_MULTI_TENANT", "0") == "1":
-        return True, 0, 0
+        return handle_cloud_payments(
+            slug=slug,
+            requested_invite_list=requested_invite_list,
+            requested_role=requested_role,
+            workspace_license=workspace_license,
+        )
     else:
         return handle_self_managed_payments(
             slug=slug,
             requested_invite_list=requested_invite_list,
             requested_role=requested_role,
+            workspace_license=workspace_license,
         )
