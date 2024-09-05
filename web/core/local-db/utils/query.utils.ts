@@ -25,6 +25,10 @@ export const translateQueryParams = (queries: any) => {
     otherProps.order_by = order_by.replace("priority", "priority_proxy");
   }
 
+  // Fix invalid orderby when switching from spreadsheet layout
+  if ((group_by || sub_group_by) && Object.keys(SPECIAL_ORDER_BY).includes(order_by)) {
+    otherProps.order_by = "sort_order";
+  }
   // For each property value, replace None with empty string
   Object.keys(otherProps).forEach((key) => {
     if (otherProps[key] === "None") {
