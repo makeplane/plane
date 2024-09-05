@@ -2,6 +2,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { Disclosure } from "@headlessui/react";
 // components
+import { ContentWrapper, ERowVariant } from "@plane/ui";
 import { ListLayout } from "@/components/core/list";
 import { ActiveCycleRoot, CycleListGroupHeader, CyclePeekOverview, CyclesListMap } from "@/components/cycles";
 
@@ -18,7 +19,7 @@ export const CyclesList: FC<ICyclesList> = observer((props) => {
   const { completedCycleIds, upcomingCycleIds, cycleIds, workspaceSlug, projectId, isArchived = false } = props;
 
   return (
-    <div className="flex h-full w-full justify-between ">
+    <ContentWrapper variant={ERowVariant.HUGGING}>
       <ListLayout>
         {isArchived ? (
           <>
@@ -32,7 +33,7 @@ export const CyclesList: FC<ICyclesList> = observer((props) => {
               <Disclosure as="div" className="flex flex-shrink-0 flex-col" defaultOpen>
                 {({ open }) => (
                   <>
-                    <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 px-7 py-1 cursor-pointer">
+                    <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 cursor-pointer">
                       <CycleListGroupHeader
                         title="Upcoming cycle"
                         type="upcoming"
@@ -52,7 +53,7 @@ export const CyclesList: FC<ICyclesList> = observer((props) => {
             <Disclosure as="div" className="flex flex-shrink-0 flex-col pb-7">
               {({ open }) => (
                 <>
-                  <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 px-7 py-1 cursor-pointer">
+                  <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 cursor-pointer">
                     <CycleListGroupHeader
                       title="Completed cycle"
                       type="completed"
@@ -71,6 +72,6 @@ export const CyclesList: FC<ICyclesList> = observer((props) => {
         )}
       </ListLayout>
       <CyclePeekOverview projectId={projectId} workspaceSlug={workspaceSlug} isArchived={isArchived} />
-    </div>
+    </ContentWrapper>
   );
 });

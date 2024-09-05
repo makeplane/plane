@@ -4,14 +4,12 @@ import { TDocumentTypes } from "@/core/types/common.js";
 
 type TArgs = {
   connection: ConnectionConfiguration
-  cookie: string | undefined;
+  cookie: string;
+  documentType: TDocumentTypes | undefined;
   params: URLSearchParams;
 }
 
-export const authenticateUser = (args: TArgs): Promise<void> => {
-  const { params } = args;
-  const documentType = params.get("documentType")?.toString() as
-    | TDocumentTypes
-    | undefined;
+export const authenticateUser = async (args: TArgs): Promise<void> => {
+  const { documentType } = args;
   throw Error(`Authentication failed: Invalid document type ${documentType} provided.`);
 }
