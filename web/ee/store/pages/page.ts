@@ -24,6 +24,7 @@ export interface IWorkspacePageDetails extends TPage {
   canCurrentUserChangeAccess: boolean;
   canCurrentUserArchivePage: boolean;
   canCurrentUserDeletePage: boolean;
+  canCurrentUserFavoritePage: boolean;
   isContentEditable: boolean;
   // helpers
   oldName: string;
@@ -132,6 +133,7 @@ export class WorkspacePageDetails implements IWorkspacePageDetails {
       canCurrentUserChangeAccess: computed,
       canCurrentUserArchivePage: computed,
       canCurrentUserDeletePage: computed,
+      canCurrentUserFavoritePage: computed,
       isContentEditable: computed,
       // actions
       update: action,
@@ -258,6 +260,14 @@ export class WorkspacePageDetails implements IWorkspacePageDetails {
   get canCurrentUserDeletePage() {
     const currentUserWorkspaceRole = this.store.user.membership.currentWorkspaceRole;
     return this.isCurrentUserOwner || currentUserWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+  }
+
+  /**
+   * @description returns true if the current logged in user can favorite the page
+   */
+  get canCurrentUserFavoritePage() {
+    const currentUserWorkspaceRole = this.store.user.membership.currentWorkspaceRole;
+    return !!currentUserWorkspaceRole && currentUserWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
   }
 
   /**
