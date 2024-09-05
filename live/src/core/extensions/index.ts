@@ -126,8 +126,11 @@ export const getExtensions: () => Extension[] = () => {
       });
       redisClient.on("ready", () => {
         manualLogger.info("Redis Client connected");
-        extensions.push(new HocusPocusRedis({ redis: redisClient }));
       });
+      if (!redisClient) {
+        throw new Error("Redis client is not defined");
+      }
+      extensions.push(new HocusPocusRedis({ redis: redisClient }));
     } catch (error) {
       manualLogger.error("Failed to connect to Redis:", error);
     }
