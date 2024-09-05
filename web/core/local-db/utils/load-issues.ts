@@ -81,7 +81,6 @@ export const stageIssueInserts = (issue: any) => {
     .join(", ");
 
   const query = `INSERT OR REPLACE INTO issues (${columns}) VALUES (${values});`;
-  debugger;
   persistence.db.exec(query);
 
   persistence.db.exec({
