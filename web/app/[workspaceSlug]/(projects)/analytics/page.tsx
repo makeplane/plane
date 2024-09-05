@@ -36,12 +36,12 @@ const AnalyticsPage = observer(() => {
             <div className="flex h-full flex-col overflow-hidden bg-custom-background-100">
               <Tab.Group as={Fragment} defaultIndex={analytics_tab === "custom" ? 1 : 0}>
                 <Header variant={EHeaderVariant.SECONDARY}>
-                  <Tab.List as="div" className="flex space-x-2 border-b h-[50px] border-custom-border-200">
+                  <Tab.List as="div" className="flex space-x-2 h-full">
                     {ANALYTICS_TABS.map((tab) => (
                       <Tab key={tab.key} as={Fragment}>
                         {({ selected }) => (
                           <button
-                            className={`text-sm group relative flex items-center gap-1 h-[50px] px-3 cursor-pointer transition-all font-medium outline-none  ${
+                            className={`text-sm group relative flex items-center gap-1 h-full px-3 cursor-pointer transition-all font-medium outline-none  ${
                               selected ? "text-custom-primary-100 " : "hover:text-custom-text-200"
                             }`}
                           >
