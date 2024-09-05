@@ -2,15 +2,15 @@
 
 import { observer } from "mobx-react";
 // ui
-import { Breadcrumbs, ContrastIcon, CustomHeader } from "@plane/ui";
+import { Breadcrumbs, ContrastIcon, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
 // plane web components
 import { UpgradeBadge } from "@/plane-web/components/workspace";
 
 export const WorkspaceActiveCycleHeader = observer(() => (
-  <CustomHeader>
-    <CustomHeader.LeftItem>
+  <Header>
+    <Header.LeftItem>
       <Breadcrumbs>
         <Breadcrumbs.BreadcrumbItem
           type="text"
@@ -23,6 +23,6 @@ export const WorkspaceActiveCycleHeader = observer(() => (
         />
       </Breadcrumbs>
       <UpgradeBadge size="md" />
-    </CustomHeader.LeftItem>
-  </CustomHeader>
+    </Header.LeftItem>
+  </Header>
 ));

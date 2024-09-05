@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
 import { FileText } from "lucide-react";
 // ui
-import { Breadcrumbs, Button, CustomHeader } from "@plane/ui";
+import { Breadcrumbs, Button, Header } from "@plane/ui";
 // helpers
 import { BreadcrumbLink, Logo } from "@/components/common";
 // constants
@@ -30,8 +30,8 @@ export const PagesListHeader = observer(() => {
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   return (
-    <CustomHeader>
-      <CustomHeader.LeftItem>
+    <Header>
+      <Header.LeftItem>
         <div>
           <Breadcrumbs isLoading={loader}>
             <Breadcrumbs.BreadcrumbItem
@@ -56,8 +56,8 @@ export const PagesListHeader = observer(() => {
             />
           </Breadcrumbs>
         </div>
-      </CustomHeader.LeftItem>
-      <CustomHeader.RightItem>
+      </Header.LeftItem>
+      <Header.RightItem>
         {canUserCreatePage ? (
           <div className="flex items-center gap-2">
             <Button
@@ -77,7 +77,7 @@ export const PagesListHeader = observer(() => {
         ) : (
           <></>
         )}
-      </CustomHeader.RightItem>
-    </CustomHeader>
+      </Header.RightItem>
+    </Header>
   );
 });

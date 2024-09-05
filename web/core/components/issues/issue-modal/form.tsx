@@ -158,7 +158,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   }, [data, projectId]);
 
   const handleFormSubmit = async (formData: Partial<TIssue>, is_draft_issue = false) => {
-    
     // Check if the editor is ready to discard
     if (!editorRef.current?.isEditorReadyToDiscard()) {
       setToast({
@@ -190,9 +189,9 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
 
     // this condition helps to move the issues from draft to project issues
     if (formData.hasOwnProperty("is_draft")) submitData.is_draft = formData.is_draft;
-        
+
     await onSubmit(submitData, is_draft_issue)
-      .then(() =>{
+      .then(() => {
         setGptAssistantModal(false);
         reset({
           ...defaultValues,
@@ -203,8 +202,9 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
         });
         editorRef?.current?.clearEditor();
       })
-      .catch((error) => {})
-
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   const condition =

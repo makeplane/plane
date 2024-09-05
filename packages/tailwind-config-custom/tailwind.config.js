@@ -440,8 +440,8 @@ module.exports = {
     const newUtilities = {
       // Mobile screens
       '.px-page-x': {
-        paddingLeft: '0.675rem',
-        paddingRight: '0.675rem',
+        paddingLeft: '1.25rem',
+        paddingRight: '1.25rem',
       },
       // Medium screens (768px and up)
       '@media (min-width: 768px)': {

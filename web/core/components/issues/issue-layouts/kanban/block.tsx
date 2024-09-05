@@ -192,7 +192,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
       <DropIndicator isVisible={!isCurrentBlockDragging && isDraggingOverBlock} />
       <div
         // make Z-index higher at the beginning of drag, to have a issue drag image of issue block without any overlaps
-        className={cn("group/kanban-block relative p-1.5", { "z-[1]": isCurrentBlockDragging })}
+        className={cn("group/kanban-block relative mb-2", { "z-[1]": isCurrentBlockDragging })}
         onDragStart={() => {
           if (isDragAllowed) setIsCurrentBlockDragging(true);
           else

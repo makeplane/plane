@@ -17,7 +17,7 @@ export const AppliedAccessFilters: React.FC<Props> = observer((props) => {
       {values.map((status) => {
         const accessDetails = NETWORK_CHOICES.find((s) => `${s.key}` === status);
         return (
-          <div key={status} className="flex items-center gap-1 rounded p-1 text-xs bg-custom-background-80">
+          <div key={status} className="flex items-center gap-1 rounded px-1.5 py-1 text-xs bg-custom-background-80">
             {accessDetails?.label}
             {editable && (
               <button

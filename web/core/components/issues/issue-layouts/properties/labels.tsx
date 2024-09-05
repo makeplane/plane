@@ -33,6 +33,7 @@ export interface IIssuePropertyLabels {
   placeholderText?: string;
   onClose?: () => void;
   renderByDefault?: boolean;
+  fullWidth?: boolean;
 }
 
 export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((props) => {
@@ -52,6 +53,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
     noLabelBorder = false,
     placeholderText,
     renderByDefault = true,
+    fullWidth = false,
   } = props;
   // router
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
@@ -149,7 +151,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
     query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
   const label = (
-    <div className="flex h-5 w-full flex-wrap items-center gap-2 overflow-hidden">
+    <div className="flex h-full w-full flex-wrap items-center gap-2 overflow-hidden">
       {value.length > 0 ? (
         value.length <= maxRender ? (
           <>
@@ -168,7 +170,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
                     key={label?.id}
                     className={`flex overflow-hidden hover:bg-custom-background-80 ${
                       !disabled && "cursor-pointer"
-                    } h-full max-w-full flex-shrink-0 items-center rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs`}
+                    } h-full ${fullWidth && "w-full"} max-w-full flex-shrink-0 items-center rounded px-2.5 text-xs ${noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300"}`}
                   >
                     <div className="flex max-w-full items-center gap-1.5 overflow-hidden text-custom-text-200">
                       <span
@@ -185,9 +187,9 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
           </>
         ) : (
           <div
-            className={`flex h-full flex-shrink-0 items-center rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs ${
+            className={`flex h-full ${fullWidth && "w-full"} flex-shrink-0 items-center rounded px-2.5 text-xs ${
               disabled ? "cursor-not-allowed" : "cursor-pointer"
-            }`}
+            } ${noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300"}`}
           >
             <Tooltip
               isMobile={isMobile}
@@ -215,8 +217,8 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
           renderByDefault={false}
         >
           <div
-            className={`flex h-full items-center justify-center gap-2 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80 ${
-              noLabelBorder ? "" : "border-[0.5px] border-custom-border-300"
+            className={`flex h-full ${fullWidth && "w-full"} items-center justify-center gap-2 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80 ${
+              noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300"
             }`}
           >
             <Tags className="h-3.5 w-3.5" strokeWidth={2} />
@@ -231,7 +233,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
     <button
       ref={setReferenceElement}
       type="button"
-      className={`clickable flex w-full items-center justify-between gap-1 text-xs ${
+      className={`clickable flex w-full h-full items-center justify-between gap-1 text-xs ${fullWidth && "hover:bg-custom-background-80"} ${
         disabled
           ? "cursor-not-allowed text-custom-text-200"
           : value.length <= maxRender
@@ -249,7 +251,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
     <ComboDropDown
       as="div"
       ref={dropdownRef}
-      className={`w-auto max-w-full flex-shrink-0 text-left ${className}`}
+      className={`w-auto max-w-full h-full flex-shrink-0 text-left ${className}`}
       value={value}
       onChange={onChange}
       disabled={disabled}
@@ -261,7 +263,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
       {isOpen && (
         <Combobox.Options className="fixed z-10" static>
           <div
-            className={`z-10 my-1 w-48 whitespace-nowrap rounded border border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none ${optionsClassName}`}
+            className={`z-10 my-1 w-48 h-auto whitespace-nowrap rounded border border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none ${optionsClassName}`}
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}

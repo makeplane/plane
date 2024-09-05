@@ -14,7 +14,7 @@ import {
   TIssue,
   IIssueDisplayProperties,
 } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
+import { Row, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { ListLoaderItemRow } from "@/components/ui";
 // constants
@@ -230,7 +230,7 @@ export const ListGroup = observer((props: Props) => {
         "border-custom-error-200": isDraggingOverColumn && !!group.isDropDisabled,
       })}
     >
-      <div className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 pl-2 pr-3 py-1">
+      <Row className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 pr-3 py-1">
         <HeaderGroupByCard
           groupID={group.id}
           icon={group.icon}
@@ -243,7 +243,7 @@ export const ListGroup = observer((props: Props) => {
           selectionHelpers={selectionHelpers}
           toggleListGroup={toggleListGroup}
         />
-      </div>
+      </Row>
       {shouldExpand && (
         <div className="relative">
           <GroupDragOverlay

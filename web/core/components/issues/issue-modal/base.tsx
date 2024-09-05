@@ -275,14 +275,14 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
 
     let response: TIssue | undefined = undefined;
 
-    try{
+    try {
       if (!data?.id) response = await handleCreateIssue(payload, is_draft_issue);
       else response = await handleUpdateIssue(payload);
-    }catch(error){
+    } catch (error) {
       throw error;
-    }finally{
-      if (response != undefined && onSubmit) await onSubmit(response)
-    }   
+    } finally {
+      if (response != undefined && onSubmit) await onSubmit(response);
+    }
   };
 
   const handleFormChange = (formData: Partial<TIssue> | null) => setChangesMade(formData);

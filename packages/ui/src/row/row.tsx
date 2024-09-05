@@ -2,13 +2,13 @@ import * as React from "react";
 import { cn } from "../../helpers";
 import { ERowVariant, rowStyle, TRowVariant } from "./helper";
 
-export interface CustomRowProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface RowProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: TRowVariant;
   className?: string;
   children: React.ReactNode;
 }
 
-const CustomRow = React.forwardRef<HTMLDivElement, CustomRowProps>((props, ref) => {
+const Row = React.forwardRef<HTMLDivElement, RowProps>((props, ref) => {
   const { variant = ERowVariant.REGULAR, className = "", children, ...rest } = props;
 
   const style = rowStyle[variant];
@@ -20,6 +20,6 @@ const CustomRow = React.forwardRef<HTMLDivElement, CustomRowProps>((props, ref) 
   );
 });
 
-CustomRow.displayName = "plane-ui-row";
+Row.displayName = "plane-ui-row";
 
-export { CustomRow, ERowVariant };
+export { Row, ERowVariant };
