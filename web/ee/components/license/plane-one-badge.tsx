@@ -32,7 +32,7 @@ export const PlaneOneEditionBadge = observer(() => {
         <Button
           variant="accent-primary"
           tabIndex={-1}
-          className="w-full cursor-pointer rounded-2xl px-3 py-1.5 text-center text-sm font-medium outline-none text-custom-primary-300"
+          className="w-fit cursor-pointer rounded-2xl px-4 py-1 text-center text-sm font-medium outline-none text-custom-primary-300"
           onClick={handlePlaneOneModalOpen}
         >
           <Image src={PlaneOneLogo} alt="Plane One" width={24} height={24} />
