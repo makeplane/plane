@@ -7,7 +7,7 @@ import { useParams } from "next/navigation";
 // ui
 import useSWR from "swr";
 import { ICycle } from "@plane/types";
-import { Button, Loader } from "@plane/ui";
+import { Button, ContentWrapper, Loader } from "@plane/ui";
 // components
 import { EmptyState } from "@/components/empty-state";
 // constants
@@ -83,22 +83,20 @@ export const WorkspaceActiveCyclesList = observer(() => {
   }
 
   return (
-    <div
-      ref={containerRef}
-      className="h-full w-full overflow-y-scroll bg-custom-background-90 vertical-scrollbar scrollbar-md"
-    >
-      <div>
-        {cycles.slice(0, cyclesInView).map((cycle: any) => (
-          <div key={cycle.id} className="px-5 pt-5 last:pb-5">
-            <ActiveCycleInfoCard workspaceSlug={workspaceSlug?.toString()} projectId={cycle.project_id} cycle={cycle} />
-          </div>
-        ))}
-        {cyclesInView < cycles.length && cycles.length > 0 && (
-          <div ref={setElementRef} className="p-5">
-            <div className="flex h-10 md:h-8 w-full items-center justify-between gap-1.5 rounded md:px-1 px-4 py-1.5 bg-custom-background-80 animate-pulse" />
-          </div>
-        )}
-      </div>
+    <ContentWrapper ref={containerRef} className="space-y-4">
+      {cycles.slice(0, cyclesInView).map((cycle: any) => (
+        <ActiveCycleInfoCard
+          key={cycle.id}
+          workspaceSlug={workspaceSlug?.toString()}
+          projectId={cycle.project_id}
+          cycle={cycle}
+        />
+      ))}
+      {cyclesInView < cycles.length && cycles.length > 0 && (
+        <div ref={setElementRef} className="p-5">
+          <div className="flex h-10 md:h-8 w-full items-center justify-between gap-1.5 rounded md:px-1 px-4 py-1.5 bg-custom-background-80 animate-pulse" />
+        </div>
+      )}
       {pageCount + 1 < totalPages && cycles.length !== 0 && (
         <div className="flex items-center justify-center gap-4 text-xs w-full py-5">
           <Button variant="outline-primary" size="sm" onClick={handleLoadMore}>
@@ -108,6 +106,6 @@ export const WorkspaceActiveCyclesList = observer(() => {
       )}
 
       {!isLoading && cycles.length === 0 && <EmptyState type={EmptyStateType.WORKSPACE_ACTIVE_CYCLES} />}
-    </div>
+    </ContentWrapper>
   );
 });

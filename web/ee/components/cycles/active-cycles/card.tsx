@@ -3,6 +3,7 @@ import useSWR from "swr";
 // types
 import { IActiveCycle } from "@plane/types";
 // plane web components
+import { Card } from "@plane/ui";
 import {
   ActiveCyclesProjectTitle,
   ActiveCycleHeader,
@@ -43,10 +44,7 @@ export const ActiveCycleInfoCard: FC<ActiveCycleInfoCardProps> = (props) => {
   }, [progress, cycle]);
 
   return (
-    <div
-      key={cycle.id}
-      className="flex flex-col gap-4 p-4 rounded-xl border border-custom-border-200 bg-custom-background-100"
-    >
+    <Card key={cycle.id}>
       <ActiveCyclesProjectTitle project={cycle.project_detail} />
 
       <ActiveCycleHeader cycle={cycle} workspaceSlug={workspaceSlug} projectId={projectId} />
@@ -56,6 +54,6 @@ export const ActiveCycleInfoCard: FC<ActiveCycleInfoCardProps> = (props) => {
         <ActiveCycleProductivity cycle={cycleData} workspaceSlug={workspaceSlug} />
         <ActiveCyclePriorityIssues cycle={cycle} workspaceSlug={workspaceSlug} projectId={projectId} />
       </div>
-    </div>
+    </Card>
   );
 };

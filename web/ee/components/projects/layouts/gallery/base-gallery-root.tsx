@@ -1,5 +1,6 @@
 import { observer } from "mobx-react";
 // assets
+import { ContentWrapper } from "@plane/ui";
 import { useProject } from "@/hooks/store";
 import { useProjectFilter } from "@/plane-web/hooks/store/workspace-project-states/use-project-filters";
 import { TProject } from "@/plane-web/types/projects";
@@ -16,7 +17,7 @@ export const BaseProjectRoot = observer(() => {
 
   return (
     <ProjectLayoutHOC layout={EProjectLayouts.GALLERY}>
-      <div className="vertical-scrollbar scrollbar-lg h-full w-full overflow-y-auto p-8">
+      <ContentWrapper>
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 3xl:grid-cols-5">
           {filteredProjectIds &&
             filteredProjectIds.map((projectId) => {
@@ -25,7 +26,7 @@ export const BaseProjectRoot = observer(() => {
               return <ProjectCard key={projectDetails.id} project={projectDetails as TProject} />;
             })}
         </div>
-      </div>
+      </ContentWrapper>
     </ProjectLayoutHOC>
   );
 });

@@ -6,7 +6,7 @@ import Image from "next/image";
 // icons
 import { Crown } from "lucide-react";
 // ui
-import { Button } from "@plane/ui";
+import { Button, ContentWrapper } from "@plane/ui";
 // constants
 import { WORKSPACE_ACTIVE_CYCLES_DETAILS } from "@/constants/cycle";
 // helper
@@ -25,7 +25,7 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
   const isDarkMode = userProfile?.theme.theme === "dark";
 
   return (
-    <div className="vertical-scrollbar scrollbar-lg flex h-full flex-col gap-10 rounded-xl px-8 pt-8">
+    <ContentWrapper>
       <div
         className={cn("item-center flex min-h-[25rem] justify-between rounded-xl", {
           "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": userProfile?.theme.theme === "dark",
@@ -85,6 +85,6 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
           </div>
         ))}
       </div>
-    </div>
+    </ContentWrapper>
   );
 });

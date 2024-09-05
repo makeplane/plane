@@ -3,6 +3,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // plane web components
+import { ContentWrapper } from "@plane/ui";
 import { ProjectBoardGroup } from "@/plane-web/components/projects/layouts/board";
 // plane web hooks
 import { useProjectFilter } from "@/plane-web/hooks/store";
@@ -17,9 +18,9 @@ export const ProjectBoardLayout: FC = observer(() => {
 
   return (
     <ProjectLayoutHOC layout={EProjectLayouts.BOARD}>
-      <div className="w-full h-full overflow-hidden">
+      <ContentWrapper className="!py-0">
         <ProjectBoardGroup groupByProjectIds={groupByProjectIds || {}} />
-      </div>
+      </ContentWrapper>
     </ProjectLayoutHOC>
   );
 });

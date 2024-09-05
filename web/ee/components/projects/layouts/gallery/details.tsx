@@ -131,7 +131,7 @@ const Details: React.FC<Props> = observer((props) => {
   ];
 
   return (
-    <div className=" w-full rounded-t ">
+    <div className="w-full rounded-t ">
       <div className="relative ">
         <div>
           <img
@@ -206,7 +206,7 @@ const Details: React.FC<Props> = observer((props) => {
           )}
         </div>
       </div>
-      <div className="flex h-10 w-full items-center justify-between gap-3 mt-3 p-2">
+      <div className="flex h-10 w-full items-center justify-between gap-3 mt-3 p-4">
         <div className="flex flex-grow items-center gap-2.5 truncate">
           <div className="h-9 w-9 flex-shrink-0 grid place-items-center rounded bg-custom-background-90">
             <Logo logo={project.logo_props} size={18} />

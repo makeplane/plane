@@ -100,12 +100,12 @@ export const ProjectGanttSidebarBlock: React.FC<SidebarProps> = observer((props)
   return projectDetails.is_member ? (
     <Link
       href={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
-      className=" w-full cursor-pointer text-sm text-custom-text-100 flex justify-between px-4 h-11"
+      className="px-page-x w-full cursor-pointer text-sm text-custom-text-100 flex justify-between h-11"
     >
       {children}
     </Link>
   ) : (
-    <div className="w-full cursor-not-allowed text-sm text-custom-text-100 flex justify-between px-4 h-11">
+    <div className="px-page-x w-full cursor-not-allowed text-sm text-custom-text-100 flex justify-between h-11">
       {children}
     </div>
   );
