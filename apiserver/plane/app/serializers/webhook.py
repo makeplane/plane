@@ -40,7 +40,7 @@ class WebhookSerializer(DynamicBaseSerializer):
 
         for addr in ip_addresses:
             ip = ipaddress.ip_address(addr[4][0])
-            if ip.is_private or ip.is_loopback:
+            if ip.is_loopback:
                 raise serializers.ValidationError(
                     {"url": "URL resolves to a blocked IP address."}
                 )
@@ -92,7 +92,7 @@ class WebhookSerializer(DynamicBaseSerializer):
 
             for addr in ip_addresses:
                 ip = ipaddress.ip_address(addr[4][0])
-                if ip.is_private or ip.is_loopback:
+                if ip.is_loopback:
                     raise serializers.ValidationError(
                         {"url": "URL resolves to a blocked IP address."}
                     )
