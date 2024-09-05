@@ -2,10 +2,8 @@
 
 # Python imports
 import os
-import ssl
 from urllib.parse import urlparse
 
-import certifi
 
 # Third party imports
 import dj_database_url
