@@ -27,6 +27,7 @@ import { updateDocument } from "@/plane-live/lib/update-document.js";
 export const getExtensions: () => Extension[] = () => {
   const extensions: Extension[] = [
     new Logger({
+      onChange: false,
       log: (message) => {
         manualLogger.info(message);
       },
