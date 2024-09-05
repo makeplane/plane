@@ -247,10 +247,10 @@ const getSingleFilterFields = (queries: any) => {
     }
   });
 
-  if (order_by.includes("state__name")) {
+  if (order_by?.includes("state__name")) {
     fields.add("state_id");
   }
-  if (order_by.includes("cycle__name")) {
+  if (order_by?.includes("cycle__name")) {
     fields.add("cycle_id");
   }
 
