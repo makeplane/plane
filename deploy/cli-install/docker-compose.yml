@@ -4,6 +4,7 @@ x-app-env: &app-env
   environment:
     - LISTEN_HTTP_PORT=${LISTEN_HTTP_PORT:-80}
     - WEB_URL=${WEB_URL:-http://localhost}
+    - API_BASE_URL=${API_BASE_URL:-http://api:8000}
     - DEBUG=${DEBUG:-0}
     - SENTRY_DSN=${SENTRY_DSN:-""}
     - SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT:-"production"}
