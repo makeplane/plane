@@ -8,7 +8,7 @@ import * as Sentry from "@sentry/node";
 import cors from "cors";
 
 // core hocuspocus server
-import { HocusPocusServer } from "@/core/hocuspocus-server.js";
+import { getHocusPocusServer } from "@/core/hocuspocus-server.js";
 
 // helpers
 import { logger, manualLogger } from "@/core/helpers/logger.js";
@@ -35,7 +35,9 @@ router.get("/health", (_req, res) => {
   res.status(200).json({ status: "OK" });
 });
 
-router.ws("/collaboration", (ws, req) => {
+router.ws("/collaboration", async (ws, req) => {
+  const HocusPocusServer = await getHocusPocusServer();
+
   HocusPocusServer.handleConnection(ws, req);
 });
 
