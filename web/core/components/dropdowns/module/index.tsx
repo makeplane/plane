@@ -196,7 +196,6 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
     isOpen,
     onClose,
     setIsOpen,
-    isMobile,
   });
 
   const dropdownOnChange = (val: string & string[]) => {

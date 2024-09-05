@@ -19,6 +19,7 @@ type Props = {
 const ProjectAttributes: FC<Props> = (props) => {
   const { isMobile = false } = props;
   const { control } = useFormContext<IProject>();
+  const { getIndex } = getTabIndex(ETabIndices.PROJECT_CREATE, isMobile);
   return (
     <div className="flex flex-wrap items-center gap-2">
       <Controller
@@ -28,7 +29,7 @@ const ProjectAttributes: FC<Props> = (props) => {
           const currentNetwork = NETWORK_CHOICES.find((n) => n.key === value);
 
           return (
-            <div className="flex-shrink-0 h-7" tabIndex={getTabIndex("network", ETabIndices.PROJECT_CREATE, isMobile)}>
+            <div className="flex-shrink-0 h-7" tabIndex={getIndex("network")}>
               <CustomSelect
                 value={value}
                 onChange={onChange}
@@ -48,7 +49,7 @@ const ProjectAttributes: FC<Props> = (props) => {
                 className="h-full"
                 buttonClassName="h-full"
                 noChevron
-                tabIndex={getTabIndex("network", ETabIndices.PROJECT_CREATE, isMobile)}
+                tabIndex={getIndex("network")}
               >
                 {NETWORK_CHOICES.map((network) => (
                   <CustomSelect.Option key={network.key} value={network.key}>
@@ -72,7 +73,7 @@ const ProjectAttributes: FC<Props> = (props) => {
         render={({ field: { value, onChange } }) => {
           if (value === undefined || value === null || typeof value === "string")
             return (
-              <div className="flex-shrink-0 h-7" tabIndex={getTabIndex("lead", ETabIndices.PROJECT_CREATE, isMobile)}>
+              <div className="flex-shrink-0 h-7" tabIndex={getIndex("lead")}>
                 <MemberDropdown
                   value={value}
                   onChange={(lead) => onChange(lead === value ? null : lead)}

@@ -53,6 +53,8 @@ export const ModuleForm: React.FC<Props> = (props) => {
     },
   });
 
+  const { getIndex } = getTabIndex(ETabIndices.PROJECT_MODULE, isMobile);
+
   const handleCreateUpdateModule = async (formData: Partial<IModule>) => {
     await handleFormSubmit(formData, dirtyFields);
 
@@ -86,7 +88,7 @@ export const ModuleForm: React.FC<Props> = (props) => {
                     }}
                     buttonVariant="border-with-text"
                     renderCondition={(project) => shouldRenderProject(project)}
-                    tabIndex={getTabIndex("cover_image", ETabIndices.PROJECT_MODULE, isMobile)}
+                    tabIndex={getIndex("cover_image")}
                   />
                 </div>
               )}
@@ -116,7 +118,7 @@ export const ModuleForm: React.FC<Props> = (props) => {
                   hasError={Boolean(errors?.name)}
                   placeholder="Title"
                   className="w-full text-base"
-                  tabIndex={getTabIndex("name", ETabIndices.PROJECT_MODULE, isMobile)}
+                  tabIndex={getIndex("name")}
                   autoFocus
                 />
               )}
@@ -136,7 +138,7 @@ export const ModuleForm: React.FC<Props> = (props) => {
                   placeholder="Description"
                   className="w-full text-base resize-none min-h-24"
                   hasError={Boolean(errors?.description)}
-                  tabIndex={getTabIndex("description", ETabIndices.PROJECT_MODULE, isMobile)}
+                  tabIndex={getIndex("description")}
                 />
               )}
             />
@@ -168,18 +170,14 @@ export const ModuleForm: React.FC<Props> = (props) => {
                       hideIcon={{
                         to: true,
                       }}
-                      tabIndex={getTabIndex("date_range", ETabIndices.PROJECT_MODULE, isMobile)}
+                      tabIndex={getIndex("date_range")}
                     />
                   )}
                 />
               )}
             />
             <div className="h-7">
-              <ModuleStatusSelect
-                control={control}
-                error={errors.status}
-                tabIndex={getTabIndex("status", ETabIndices.PROJECT_MODULE, isMobile)}
-              />
+              <ModuleStatusSelect control={control} error={errors.status} tabIndex={getIndex("status")} />
             </div>
             <Controller
               control={control}
@@ -193,7 +191,7 @@ export const ModuleForm: React.FC<Props> = (props) => {
                     multiple={false}
                     buttonVariant="border-with-text"
                     placeholder="Lead"
-                    tabIndex={getTabIndex("lead", ETabIndices.PROJECT_MODULE, isMobile)}
+                    tabIndex={getIndex("lead")}
                   />
                 </div>
               )}
@@ -211,7 +209,7 @@ export const ModuleForm: React.FC<Props> = (props) => {
                     buttonVariant={value && value.length > 0 ? "transparent-without-text" : "border-with-text"}
                     buttonClassName={value && value.length > 0 ? "hover:bg-transparent px-0" : ""}
                     placeholder="Members"
-                    tabIndex={getTabIndex("member_ids", ETabIndices.PROJECT_MODULE, isMobile)}
+                    tabIndex={getIndex("member_ids")}
                   />
                 </div>
               )}
@@ -220,21 +218,10 @@ export const ModuleForm: React.FC<Props> = (props) => {
         </div>
       </div>
       <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
-        <Button
-          variant="neutral-primary"
-          size="sm"
-          onClick={handleClose}
-          tabIndex={getTabIndex("cancel", ETabIndices.PROJECT_MODULE, isMobile)}
-        >
+        <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={getIndex("cancel")}>
           Cancel
         </Button>
-        <Button
-          variant="primary"
-          size="sm"
-          type="submit"
-          loading={isSubmitting}
-          tabIndex={getTabIndex("submit", ETabIndices.PROJECT_MODULE, isMobile)}
-        >
+        <Button variant="primary" size="sm" type="submit" loading={isSubmitting} tabIndex={getIndex("submit")}>
           {status ? (isSubmitting ? "Updating" : "Update Module") : isSubmitting ? "Creating" : "Create Module"}
         </Button>
       </div>

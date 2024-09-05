@@ -53,6 +53,8 @@ export const CreateLabelModal: React.FC<Props> = observer((props) => {
     defaultValues,
   });
 
+  const { getIndex } = getTabIndex(ETabIndices.CREATE_LABEL, isMobile);
+
   /**
    * For setting focus on name input
    */
@@ -188,7 +190,7 @@ export const CreateLabelModal: React.FC<Props> = observer((props) => {
                               value={value}
                               onChange={onChange}
                               ref={ref}
-                              tabIndex={getTabIndex("name", ETabIndices.CREATE_LABEL, isMobile)}
+                              tabIndex={getIndex("name")}
                               hasError={Boolean(errors.name)}
                               placeholder="Label title"
                               className="w-full resize-none text-xl"

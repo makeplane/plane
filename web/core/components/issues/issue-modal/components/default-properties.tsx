@@ -70,6 +70,8 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
   // derived values
   const projectDetails = getProjectById(projectId);
 
+  const { getIndex } = getTabIndex(ETabIndices.ISSUE_FORM, isMobile);
+
   const minDate = getDate(startDate);
   minDate?.setDate(minDate.getDate());
 
@@ -91,7 +93,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
               }}
               projectId={projectId ?? undefined}
               buttonVariant="border-with-text"
-              tabIndex={getTabIndex("state_id", ETabIndices.ISSUE_FORM, isMobile)}
+              tabIndex={getIndex("state_id")}
             />
           </div>
         )}
@@ -108,7 +110,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
                 handleFormChange();
               }}
               buttonVariant="border-with-text"
-              tabIndex={getTabIndex("priority", ETabIndices.ISSUE_FORM, isMobile)}
+              tabIndex={getIndex("priority")}
             />
           </div>
         )}
@@ -129,7 +131,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
               buttonClassName={value?.length > 0 ? "hover:bg-transparent" : ""}
               placeholder="Assignees"
               multiple
-              tabIndex={getTabIndex("assignee_ids", ETabIndices.ISSUE_FORM, isMobile)}
+              tabIndex={getIndex("assignee_ids")}
             />
           </div>
         )}
@@ -147,7 +149,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
                 handleFormChange();
               }}
               projectId={projectId ?? undefined}
-              tabIndex={getTabIndex("label_ids", ETabIndices.ISSUE_FORM, isMobile)}
+              tabIndex={getIndex("label_ids")}
             />
           </div>
         )}
@@ -166,7 +168,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
               buttonVariant="border-with-text"
               maxDate={maxDate ?? undefined}
               placeholder="Start date"
-              tabIndex={getTabIndex("start_date", ETabIndices.ISSUE_FORM, isMobile)}
+              tabIndex={getIndex("start_date")}
             />
           </div>
         )}
@@ -185,7 +187,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
               buttonVariant="border-with-text"
               minDate={minDate ?? undefined}
               placeholder="Due date"
-              tabIndex={getTabIndex("target_date", ETabIndices.ISSUE_FORM, isMobile)}
+              tabIndex={getIndex("target_date")}
             />
           </div>
         )}
@@ -205,7 +207,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
                 placeholder="Cycle"
                 value={value}
                 buttonVariant="border-with-text"
-                tabIndex={getTabIndex("cycle_id", ETabIndices.ISSUE_FORM, isMobile)}
+                tabIndex={getIndex("cycle_id")}
               />
             </div>
           )}
@@ -226,7 +228,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
                 }}
                 placeholder="Modules"
                 buttonVariant="border-with-text"
-                tabIndex={getTabIndex("module_ids", ETabIndices.ISSUE_FORM, isMobile)}
+                tabIndex={getIndex("module_ids")}
                 multiple
                 showCount
               />
@@ -248,7 +250,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
                 }}
                 projectId={projectId}
                 buttonVariant="border-with-text"
-                tabIndex={getTabIndex("estimate_point", ETabIndices.ISSUE_FORM, isMobile)}
+                tabIndex={getIndex("estimate_point")}
                 placeholder="Estimate"
               />
             </div>
@@ -274,7 +276,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
             </button>
           }
           placement="bottom-start"
-          tabIndex={getTabIndex("parent_id", ETabIndices.ISSUE_FORM, isMobile)}
+          tabIndex={getIndex("parent_id")}
         >
           <>
             <CustomMenu.MenuItem className="!p-1" onClick={() => setParentIssueListModalOpen(true)}>

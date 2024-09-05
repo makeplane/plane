@@ -50,6 +50,8 @@ export const CycleForm: React.FC<Props> = (props) => {
     },
   });
 
+  const { getIndex } = getTabIndex(ETabIndices.PROJECT_CYCLE, isMobile);
+
   useEffect(() => {
     reset({
       ...defaultValues,
@@ -75,7 +77,7 @@ export const CycleForm: React.FC<Props> = (props) => {
                     }}
                     buttonVariant="border-with-text"
                     renderCondition={(project) => shouldRenderProject(project)}
-                    tabIndex={getTabIndex("cover_image", ETabIndices.PROJECT_CYCLE, isMobile)}
+                    tabIndex={getIndex("cover_image")}
                   />
                 </div>
               )}
@@ -105,7 +107,7 @@ export const CycleForm: React.FC<Props> = (props) => {
                   inputSize="md"
                   onChange={onChange}
                   hasError={Boolean(errors?.name)}
-                  tabIndex={getTabIndex("description", ETabIndices.PROJECT_CYCLE, isMobile)}
+                  tabIndex={getIndex("description")}
                   autoFocus
                 />
               )}
@@ -124,7 +126,7 @@ export const CycleForm: React.FC<Props> = (props) => {
                   hasError={Boolean(errors?.description)}
                   value={value}
                   onChange={onChange}
-                  tabIndex={getTabIndex("description", ETabIndices.PROJECT_CYCLE, isMobile)}
+                  tabIndex={getIndex("description")}
                 />
               )}
             />
@@ -157,7 +159,7 @@ export const CycleForm: React.FC<Props> = (props) => {
                       hideIcon={{
                         to: true,
                       }}
-                      tabIndex={getTabIndex("date_range", ETabIndices.PROJECT_CYCLE, isMobile)}
+                      tabIndex={getIndex("date_range")}
                     />
                   )}
                 />
@@ -167,21 +169,10 @@ export const CycleForm: React.FC<Props> = (props) => {
         </div>
       </div>
       <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
-        <Button
-          variant="neutral-primary"
-          size="sm"
-          onClick={handleClose}
-          tabIndex={getTabIndex("cancel", ETabIndices.PROJECT_CYCLE, isMobile)}
-        >
+        <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={getIndex("cancel")}>
           Cancel
         </Button>
-        <Button
-          variant="primary"
-          size="sm"
-          type="submit"
-          loading={isSubmitting}
-          tabIndex={getTabIndex("submit", ETabIndices.PROJECT_CYCLE, isMobile)}
-        >
+        <Button variant="primary" size="sm" type="submit" loading={isSubmitting} tabIndex={getIndex("submit")}>
           {data ? (isSubmitting ? "Updating" : "Update Cycle") : isSubmitting ? "Creating" : "Create Cycle"}
         </Button>
       </div>

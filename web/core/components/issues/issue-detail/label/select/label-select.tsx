@@ -3,6 +3,8 @@ import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Check, Search, Tag } from "lucide-react";
 import { Combobox } from "@headlessui/react";
+// helpers
+import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useLabel } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -28,6 +30,8 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
   const [query, setQuery] = useState("");
 
   const projectLabels = getProjectLabels(projectId);
+
+  const { baseTabIndex } = getTabIndex(undefined, isMobile);
 
   const fetchLabels = () => {
     setIsLoading(true);
@@ -125,7 +129,7 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
                   placeholder="Search"
                   displayValue={(assigned: any) => assigned?.name}
                   onKeyDown={searchInputKeyDown}
-                  tabIndex={isMobile ? -1 : 1}
+                  tabIndex={baseTabIndex}
                 />
               </div>
             </div>

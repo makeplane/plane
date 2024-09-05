@@ -38,6 +38,8 @@ export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props
   const { loader } = useProjectInbox();
   const { isMobile } = usePlatformOS();
 
+  const { getIndex } = getTabIndex(ETabIndices.INTAKE_ISSUE_FORM, isMobile);
+
   if (loader === "issue-loading")
     return (
       <Loader className="min-h-[6rem] rounded-md border border-custom-border-200">
@@ -58,7 +60,7 @@ export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props
       placeholder={getDescriptionPlaceholder}
       containerClassName={containerClassName}
       onEnterKeyPress={onEnterKeyPress}
-      tabIndex={getTabIndex("description_html", ETabIndices.INTAKE_ISSUE_FORM, isMobile)}
+      tabIndex={getIndex("description_html")}
     />
   );
 });

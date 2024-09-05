@@ -71,6 +71,8 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
     [formData]
   );
 
+  const { getIndex } = getTabIndex(ETabIndices.INTAKE_ISSUE_FORM, isMobile);
+
   const handleEscKeyDown = (event: KeyboardEvent) => {
     if (descriptionEditorRef.current?.isEditorReadyToDiscard()) {
       handleModalClose();
@@ -184,7 +186,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
           className="inline-flex items-center gap-1.5 cursor-pointer"
           onClick={() => setCreateMore((prevData) => !prevData)}
           role="button"
-          tabIndex={getTabIndex("create_more", ETabIndices.INTAKE_ISSUE_FORM, isMobile)}
+          tabIndex={getIndex("create_more")}
         >
           <ToggleSwitch value={createMore} onChange={() => {}} size="sm" />
           <span className="text-xs">Create more</span>
@@ -205,7 +207,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
                 });
               }
             }}
-            tabIndex={getTabIndex("discard_button", ETabIndices.INTAKE_ISSUE_FORM, isMobile)}
+            tabIndex={getIndex("discard_button")}
           >
             Discard
           </Button>
@@ -216,7 +218,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
             type="submit"
             loading={formSubmitting}
             disabled={isTitleLengthMoreThan255Character}
-            tabIndex={getTabIndex("submit_button", ETabIndices.INTAKE_ISSUE_FORM, isMobile)}
+            tabIndex={getIndex("submit_button")}
           >
             {formSubmitting ? "Creating" : "Create Issue"}
           </Button>

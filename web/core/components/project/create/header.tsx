@@ -21,6 +21,7 @@ const ProjectCreateHeader: React.FC<Props> = (props) => {
   const { watch, control } = useFormContext<IProject>();
 
   const [isOpen, setIsOpen] = useState(false);
+  const { getIndex } = getTabIndex(ETabIndices.PROJECT_CREATE, isMobile);
 
   return (
     <div className="group relative h-44 w-full rounded-lg bg-custom-background-80">
@@ -33,12 +34,7 @@ const ProjectCreateHeader: React.FC<Props> = (props) => {
       )}
 
       <div className="absolute right-2 top-2 p-2">
-        <button
-          data-posthog="PROJECT_MODAL_CLOSE"
-          type="button"
-          onClick={handleClose}
-          tabIndex={getTabIndex("close", ETabIndices.PROJECT_CREATE, isMobile)}
-        >
+        <button data-posthog="PROJECT_MODAL_CLOSE" type="button" onClick={handleClose} tabIndex={getIndex("close")}>
           <X className="h-5 w-5 text-white" />
         </button>
       </div>
@@ -52,7 +48,7 @@ const ProjectCreateHeader: React.FC<Props> = (props) => {
               onChange={onChange}
               control={control}
               value={value}
-              tabIndex={getTabIndex("cover_image", ETabIndices.PROJECT_CREATE, isMobile)}
+              tabIndex={getIndex("cover_image")}
             />
           )}
         />

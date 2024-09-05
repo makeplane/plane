@@ -11,7 +11,6 @@ import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate, getDate } from "@/helpers/date-time.helper";
 // hooks
 import { useDropdown } from "@/hooks/use-dropdown";
-import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
 import { DropdownButton } from "./buttons";
 // constants
@@ -76,8 +75,6 @@ export const DateDropdown: React.FC<Props> = (props) => {
       },
     ],
   });
-  // store hooks
-  const { isMobile } = usePlatformOS();
 
   const isDateSelected = value && value.toString().trim() !== "";
 
@@ -91,7 +88,6 @@ export const DateDropdown: React.FC<Props> = (props) => {
     onClose,
     onOpen,
     setIsOpen,
-    isMobile,
   });
 
   const dropdownOnChange = (val: Date | null) => {

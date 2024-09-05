@@ -21,6 +21,8 @@ export const InboxIssueTitle: FC<TInboxIssueTitle> = observer((props) => {
   const { data, handleData, isTitleLengthMoreThan255Character } = props;
   // hooks
   const { isMobile } = usePlatformOS();
+
+  const { getIndex } = getTabIndex(ETabIndices.INTAKE_ISSUE_FORM, isMobile);
   return (
     <div className="space-y-1">
       <Input
@@ -31,7 +33,7 @@ export const InboxIssueTitle: FC<TInboxIssueTitle> = observer((props) => {
         onChange={(e) => handleData("name", e.target.value)}
         placeholder="Title"
         className="w-full text-base"
-        tabIndex={getTabIndex("name", ETabIndices.INTAKE_ISSUE_FORM, isMobile)}
+        tabIndex={getIndex("name")}
         required
       />
       {isTitleLengthMoreThan255Character && (

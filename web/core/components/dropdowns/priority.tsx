@@ -317,8 +317,6 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  // store hooks
-  const { isMobile } = usePlatformOS();
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -365,7 +363,6 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
     query,
     setIsOpen,
     setQuery,
-    isMobile,
   });
 
   const ButtonToRender = BORDER_BUTTON_VARIANTS.includes(buttonVariant)

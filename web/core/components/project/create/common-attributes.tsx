@@ -25,6 +25,8 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
     control,
   } = useFormContext<TProject>();
 
+  const { getIndex } = getTabIndex(ETabIndices.PROJECT_CREATE, isMobile);
+
   const handleNameChange = (onChange: (...event: any[]) => void) => (e: ChangeEvent<HTMLInputElement>) => {
     if (!isChangeInIdentifierRequired) {
       onChange(e);
@@ -64,7 +66,7 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
               hasError={Boolean(errors.name)}
               placeholder="Project name"
               className="w-full focus:border-blue-400"
-              tabIndex={getTabIndex("name", ETabIndices.PROJECT_CREATE, isMobile)}
+              tabIndex={getIndex("name")}
             />
           )}
         />
@@ -100,7 +102,7 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
               className={cn("w-full text-xs focus:border-blue-400 pr-7", {
                 uppercase: value,
               })}
-              tabIndex={getTabIndex("identifier", ETabIndices.PROJECT_CREATE, isMobile)}
+              tabIndex={getIndex("identifier")}
             />
           )}
         />
@@ -127,7 +129,7 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
               onChange={onChange}
               className="!h-24 text-sm focus:border-blue-400"
               hasError={Boolean(errors?.description)}
-              tabIndex={getTabIndex("description", ETabIndices.PROJECT_CREATE, isMobile)}
+              tabIndex={getIndex("description")}
             />
           )}
         />

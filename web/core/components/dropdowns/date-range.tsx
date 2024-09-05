@@ -13,7 +13,6 @@ import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
 import { useDropdown } from "@/hooks/use-dropdown";
-import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
 import { DropdownButton } from "./buttons";
 // types
@@ -104,8 +103,6 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
       },
     ],
   });
-  // store hooks
-  const { isMobile } = usePlatformOS();
 
   const onOpen = () => {
     if (referenceElement) referenceElement.focus();
@@ -116,7 +113,6 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
     isOpen,
     onOpen,
     setIsOpen,
-    isMobile,
   });
 
   const handleClose = () => {

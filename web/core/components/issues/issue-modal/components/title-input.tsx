@@ -26,6 +26,8 @@ export const IssueTitleInput: React.FC<TIssueTitleInputProps> = observer((props)
   // store hooks
   const { isMobile } = usePlatformOS();
 
+  const { getIndex } = getTabIndex(ETabIndices.ISSUE_FORM, isMobile);
+
   return (
     <>
       <Controller
@@ -52,7 +54,7 @@ export const IssueTitleInput: React.FC<TIssueTitleInputProps> = observer((props)
             hasError={Boolean(errors.name)}
             placeholder="Title"
             className="w-full text-base"
-            tabIndex={getTabIndex("name", ETabIndices.ISSUE_FORM, isMobile)}
+            tabIndex={getIndex("name")}
             autoFocus
           />
         )}

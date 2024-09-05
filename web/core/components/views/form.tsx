@@ -67,6 +67,8 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
 
   const logoValue = watch("logo_props");
 
+  const { getIndex } = getTabIndex(ETabIndices.PROJECT_VIEW, isMobile);
+
   const selectedFilters: IIssueFilterOptions = {};
   Object.entries(watch("filters") ?? {}).forEach(([key, value]) => {
     if (!value) return;
@@ -199,7 +201,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                     hasError={Boolean(errors.name)}
                     placeholder="Title"
                     className="w-full text-base"
-                    tabIndex={getTabIndex("name", ETabIndices.PROJECT_VIEW, isMobile)}
+                    tabIndex={getIndex("name")}
                     autoFocus
                   />
                 )}
@@ -220,7 +222,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                   hasError={Boolean(errors?.description)}
                   value={value}
                   onChange={onChange}
-                  tabIndex={getTabIndex("descriptions", ETabIndices.PROJECT_VIEW, isMobile)}
+                  tabIndex={getIndex("descriptions")}
                 />
               )}
             />
@@ -248,10 +250,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                     control={control}
                     name="filters"
                     render={({ field: { onChange, value: filters } }) => (
-                      <FiltersDropdown
-                        title="Filters"
-                        tabIndex={getTabIndex("filters", ETabIndices.PROJECT_VIEW, isMobile)}
-                      >
+                      <FiltersDropdown title="Filters" tabIndex={getIndex("filters")}>
                         <FilterSelection
                           filters={filters ?? {}}
                           handleFiltersUpdate={(key, value) => {
@@ -330,21 +329,10 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
         </div>
       </div>
       <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
-        <Button
-          variant="neutral-primary"
-          size="sm"
-          onClick={handleClose}
-          tabIndex={getTabIndex("cancel", ETabIndices.PROJECT_VIEW, isMobile)}
-        >
+        <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={getIndex("cancel")}>
           Cancel
         </Button>
-        <Button
-          variant="primary"
-          size="sm"
-          type="submit"
-          tabIndex={getTabIndex("submit", ETabIndices.PROJECT_VIEW, isMobile)}
-          loading={isSubmitting}
-        >
+        <Button variant="primary" size="sm" type="submit" tabIndex={getIndex("submit")} loading={isSubmitting}>
           {data ? (isSubmitting ? "Updating" : "Update View") : isSubmitting ? "Creating" : "Create View"}
         </Button>
       </div>

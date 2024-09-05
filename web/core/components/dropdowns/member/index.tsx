@@ -8,7 +8,6 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useMember } from "@/hooks/store";
 import { useDropdown } from "@/hooks/use-dropdown";
-import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
 import { DropdownButton } from "../buttons";
 import { BUTTON_VARIANTS_WITH_TEXT } from "../constants";
@@ -58,7 +57,6 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
 
   const { getUserDetails } = useMember();
-  const { isMobile } = usePlatformOS();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const comboboxProps: any = {
@@ -73,7 +71,6 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
     isOpen,
     onClose,
     setIsOpen,
-    isMobile,
   });
 
   const dropdownOnChange = (val: string & string[]) => {

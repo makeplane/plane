@@ -27,6 +27,8 @@ export const IssueParentTag: React.FC<TIssueParentTagProps> = observer((props) =
   // store hooks
   const { isMobile } = usePlatformOS();
 
+  const { getIndex } = getTabIndex(ETabIndices.ISSUE_FORM, isMobile);
+
   return (
     <Controller
       control={control}
@@ -60,7 +62,7 @@ export const IssueParentTag: React.FC<TIssueParentTagProps> = observer((props) =
                 handleFormChange();
                 setSelectedParentIssue(null);
               }}
-              tabIndex={getTabIndex("remove_parent", ETabIndices.ISSUE_FORM, isMobile)}
+              tabIndex={getIndex("remove_parent")}
             >
               <X className="h-3 w-3 cursor-pointer" />
             </button>

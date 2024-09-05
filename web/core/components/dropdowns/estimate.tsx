@@ -15,7 +15,6 @@ import {
   //  useEstimate
 } from "@/hooks/store";
 import { useDropdown } from "@/hooks/use-dropdown";
-import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
 import { DropdownButton } from "./buttons";
 import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
@@ -90,7 +89,6 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
   const { estimatePointIds, estimatePointById } = useEstimate(
     projectId ? currentActiveEstimateIdByProjectId(projectId) : undefined
   );
-  const { isMobile } = usePlatformOS();
 
   const currentActiveEstimateId = projectId ? currentActiveEstimateIdByProjectId(projectId) : undefined;
 
@@ -141,7 +139,6 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
     query,
     setIsOpen,
     setQuery,
-    isMobile,
   });
 
   const dropdownOnChange = (val: string | undefined) => {

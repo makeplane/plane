@@ -28,6 +28,8 @@ export const IssueProjectSelect: React.FC<TIssueProjectSelectProps> = observer((
   const { projectsWithCreatePermissions } = useUser();
   const { isMobile } = usePlatformOS();
 
+  const { getIndex } = getTabIndex(ETabIndices.ISSUE_FORM, isMobile);
+
   return (
     <Controller
       control={control}
@@ -46,7 +48,7 @@ export const IssueProjectSelect: React.FC<TIssueProjectSelectProps> = observer((
               }}
               buttonVariant="border-with-text"
               renderCondition={(project) => shouldRenderProject(project)}
-              tabIndex={getTabIndex("project_id", ETabIndices.ISSUE_FORM, isMobile)}
+              tabIndex={getIndex("project_id")}
               disabled={disabled}
             />
           </div>

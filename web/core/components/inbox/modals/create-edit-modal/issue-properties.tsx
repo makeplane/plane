@@ -39,7 +39,8 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
   // states
   const [parentIssueModalOpen, setParentIssueModalOpen] = useState(false);
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | undefined>(undefined);
-  true;
+
+  const { getIndex } = getTabIndex(ETabIndices.INTAKE_ISSUE_FORM, isMobile);
 
   const startDate = data?.start_date;
   const targetDate = data?.target_date;
@@ -59,7 +60,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
           onChange={(stateId) => handleData("state_id", stateId)}
           projectId={projectId}
           buttonVariant="border-with-text"
-          tabIndex={getTabIndex("state_id", ETabIndices.INTAKE_ISSUE_FORM, isMobile)}
+          tabIndex={getIndex("state_id")}
         />
       </div>
 
@@ -69,7 +70,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
           value={data?.priority}
           onChange={(priority) => handleData("priority", priority)}
           buttonVariant="border-with-text"
-          tabIndex={getTabIndex("priority", ETabIndices.INTAKE_ISSUE_FORM, isMobile)}
+          tabIndex={getIndex("priority")}
         />
       </div>
 
@@ -83,7 +84,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
           buttonClassName={(data?.assignee_ids || [])?.length > 0 ? "hover:bg-transparent" : ""}
           placeholder="Assignees"
           multiple
-          tabIndex={getTabIndex("assignee_ids", ETabIndices.INTAKE_ISSUE_FORM, isMobile)}
+          tabIndex={getIndex("assignee_ids")}
         />
       </div>
 
@@ -95,7 +96,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
           value={data?.label_ids || []}
           onChange={(labelIds) => handleData("label_ids", labelIds)}
           projectId={projectId}
-          tabIndex={getTabIndex("label_ids", ETabIndices.INTAKE_ISSUE_FORM, isMobile)}
+          tabIndex={getIndex("label_ids")}
         />
       </div>
 
@@ -108,7 +109,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
             buttonVariant="border-with-text"
             minDate={minDate ?? undefined}
             placeholder="Start date"
-            tabIndex={getTabIndex("start_date", ETabIndices.INTAKE_ISSUE_FORM, isMobile)}
+            tabIndex={getIndex("start_date")}
           />
         </div>
       )}
@@ -121,7 +122,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
           buttonVariant="border-with-text"
           minDate={minDate ?? undefined}
           placeholder="Due date"
-          tabIndex={getTabIndex("target_date", ETabIndices.INTAKE_ISSUE_FORM, isMobile)}
+          tabIndex={getIndex("target_date")}
         />
       </div>
 
@@ -134,7 +135,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
             projectId={projectId}
             placeholder="Cycle"
             buttonVariant="border-with-text"
-            tabIndex={getTabIndex("cycle_id", ETabIndices.INTAKE_ISSUE_FORM, isMobile)}
+            tabIndex={getIndex("cycle_id")}
           />
         </div>
       )}
@@ -150,7 +151,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
             buttonVariant="border-with-text"
             multiple
             showCount
-            tabIndex={getTabIndex("module_ids", ETabIndices.INTAKE_ISSUE_FORM, isMobile)}
+            tabIndex={getIndex("module_ids")}
           />
         </div>
       )}
@@ -164,7 +165,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
             projectId={projectId}
             buttonVariant="border-with-text"
             placeholder="Estimate"
-            tabIndex={getTabIndex("estimate_point", ETabIndices.INTAKE_ISSUE_FORM, isMobile)}
+            tabIndex={getIndex("estimate_point")}
           />
         </div>
       )}
@@ -188,7 +189,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
                 </button>
               }
               placement="bottom-start"
-              tabIndex={getTabIndex("parent_id", ETabIndices.INTAKE_ISSUE_FORM, isMobile)}
+              tabIndex={getIndex("parent_id")}
             >
               <>
                 <CustomMenu.MenuItem className="!p-1" onClick={() => setParentIssueModalOpen(true)}>
