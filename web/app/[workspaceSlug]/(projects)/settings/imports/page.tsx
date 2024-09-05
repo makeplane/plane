@@ -105,8 +105,8 @@ const ImportsPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <section className="flex flex-col justify-start flex-grow h-full w-full overflow-y-auto md:pr-9 pr-4">
-        <div className="flex items-center border-b border-custom-border-100 py-3.5 flex-shrink-0">
+      <section className="w-full overflow-y-auto">
+        <div className="flex items-center border-b border-custom-border-100 pb-3.5">
           <h3 className="text-xl font-medium">Imports</h3>
         </div>
         <IntegrationGuide />

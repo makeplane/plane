@@ -4,7 +4,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { Settings } from "lucide-react";
 // ui
-import { Breadcrumbs, CustomHeader } from "@plane/ui";
+import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
 // hooks
@@ -14,8 +14,8 @@ export const WorkspaceSettingHeader: FC = observer(() => {
   const { currentWorkspace, loader } = useWorkspace();
 
   return (
-    <CustomHeader>
-      <CustomHeader.LeftItem>
+    <Header>
+      <Header.LeftItem>
         <Breadcrumbs isLoading={loader}>
           <Breadcrumbs.BreadcrumbItem
             type="text"
@@ -29,7 +29,7 @@ export const WorkspaceSettingHeader: FC = observer(() => {
           />
           <Breadcrumbs.BreadcrumbItem type="text" link={<BreadcrumbLink label="Settings" />} />
         </Breadcrumbs>
-      </CustomHeader.LeftItem>
-    </CustomHeader>
+      </Header.LeftItem>
+    </Header>
   );
 });

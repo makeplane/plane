@@ -43,7 +43,7 @@ const WorkspaceIntegrationsPage = observer(() => {
     return (
       <>
         <PageHead title={pageTitle} />
-        <div className="mt-10 flex h-full w-full justify-center p-4">
+        <div className="mt-10 flex h-full w-full justify-center">
           <p className="text-sm text-custom-text-300">You are not authorized to access this page.</p>
         </div>
       </>
@@ -105,7 +105,7 @@ const WorkspaceIntegrationsPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <section className="w-full overflow-y-auto py-8 pr-9">
+      <section className="w-full overflow-y-auto">
         <IntegrationAndImportExportBanner bannerName="Integrations" />
         <div>
           {appIntegrations ? (

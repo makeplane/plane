@@ -9,7 +9,7 @@ import { ArrowRight, PanelRight } from "lucide-react";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
-import { Breadcrumbs, Button, ContrastIcon, CustomMenu, Tooltip, CustomHeader } from "@plane/ui";
+import { Breadcrumbs, Button, ContrastIcon, CustomMenu, Tooltip, Header } from "@plane/ui";
 // components
 import { ProjectAnalyticsModal } from "@/components/analytics";
 import { BreadcrumbLink, Logo } from "@/components/common";
@@ -161,8 +161,8 @@ export const CycleIssuesHeader: React.FC = observer(() => {
         onClose={() => setAnalyticsModal(false)}
         cycleDetails={cycleDetails ?? undefined}
       />
-      <CustomHeader>
-        <CustomHeader.LeftItem>
+      <Header>
+        <Header.LeftItem>
           <div className="flex items-center gap-2">
             <Breadcrumbs onBack={router.back} isLoading={loader}>
               <Breadcrumbs.BreadcrumbItem
@@ -235,8 +235,8 @@ export const CycleIssuesHeader: React.FC = observer(() => {
               />
             </Breadcrumbs>
           </div>
-        </CustomHeader.LeftItem>
-        <CustomHeader.RightItem>
+        </Header.LeftItem>
+        <Header.RightItem>
           <div className="hidden items-center gap-2 md:flex ">
             <LayoutSelection
               layouts={[
@@ -317,8 +317,8 @@ export const CycleIssuesHeader: React.FC = observer(() => {
           >
             <PanelRight className={cn("h-4 w-4", !isSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200")} />
           </button>
-        </CustomHeader.RightItem>
-      </CustomHeader>
+        </Header.RightItem>
+      </Header>
     </>
   );
 });

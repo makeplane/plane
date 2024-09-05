@@ -4,7 +4,7 @@ import { FC } from "react";
 import { isDesktopApp } from "@todesktop/client-core/platform/todesktop";
 import { observer } from "mobx-react";
 import { Inbox } from "lucide-react";
-import { Breadcrumbs, CustomHeader } from "@plane/ui";
+import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
 import { SidebarHamburgerToggle } from "@/components/core";
@@ -19,8 +19,8 @@ export const NotificationSidebarHeader: FC<TNotificationSidebarHeader> = observe
 
   if (!workspaceSlug) return <></>;
   return (
-    <CustomHeader className="my-auto">
-      <CustomHeader.LeftItem>
+    <Header className="my-auto">
+      <Header.LeftItem>
         {!isDesktopApp() && (
           <div className="block bg-custom-sidebar-background-100 md:hidden">
             <SidebarHamburgerToggle />
@@ -34,10 +34,10 @@ export const NotificationSidebarHeader: FC<TNotificationSidebarHeader> = observe
             }
           />
         </Breadcrumbs>
-      </CustomHeader.LeftItem>
-      <CustomHeader.RightItem>
+      </Header.LeftItem>
+      <Header.RightItem>
         <NotificationSidebarHeaderOptions workspaceSlug={workspaceSlug} />
-      </CustomHeader.RightItem>
-    </CustomHeader>
+      </Header.RightItem>
+    </Header>
   );
 });

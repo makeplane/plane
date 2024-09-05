@@ -54,7 +54,7 @@ const ApiTokensPage = observer(() => {
     <>
       <PageHead title={pageTitle} />
       <CreateApiTokenModal isOpen={isCreateTokenModalOpen} onClose={() => setIsCreateTokenModalOpen(false)} />
-      <section className="w-full overflow-y-auto md:pr-9 pr-4">
+      <section className="w-full overflow-y-auto">
         {tokens.length > 0 ? (
           <>
             <div className="flex items-center justify-between border-b border-custom-border-200 py-3.5">

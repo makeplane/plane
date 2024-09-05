@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // ui
-import { Loader } from "@plane/ui";
+import { Loader, Card } from "@plane/ui";
 // components
 import { ActivityMessage, IssueLink } from "@/components/core";
 import { ProfileEmptyState } from "@/components/ui";
@@ -39,7 +39,7 @@ export const ProfileActivity = observer(() => {
   return (
     <div className="space-y-2">
       <h3 className="text-lg font-medium">Recent activity</h3>
-      <div className="rounded border border-custom-border-100 p-6">
+      <Card>
         {userProfileActivity ? (
           userProfileActivity.results.length > 0 ? (
             <div className="space-y-5">
@@ -94,7 +94,7 @@ export const ProfileActivity = observer(() => {
             <Loader.Item height="40px" />
           </Loader>
         )}
-      </div>
+      </Card>
     </div>
   );
 });

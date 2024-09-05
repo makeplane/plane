@@ -3,7 +3,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
-import { Breadcrumbs, Button, DiceIcon, CustomHeader } from "@plane/ui";
+import { Breadcrumbs, Button, DiceIcon, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 import { ModuleViewHeader } from "@/components/modules";
@@ -30,8 +30,8 @@ export const ModulesListHeader: React.FC = observer(() => {
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   return (
-    <CustomHeader>
-      <CustomHeader.LeftItem>
+    <Header>
+      <Header.LeftItem>
         <div>
           <Breadcrumbs onBack={router.back} isLoading={loader}>
             <Breadcrumbs.BreadcrumbItem
@@ -56,8 +56,8 @@ export const ModulesListHeader: React.FC = observer(() => {
             />
           </Breadcrumbs>
         </div>
-      </CustomHeader.LeftItem>
-      <CustomHeader.RightItem>
+      </Header.LeftItem>
+      <Header.RightItem>
         <ModuleViewHeader />
         {canUserCreateModule ? (
           <Button
@@ -73,7 +73,7 @@ export const ModulesListHeader: React.FC = observer(() => {
         ) : (
           <></>
         )}
-      </CustomHeader.RightItem>
-    </CustomHeader>
+      </Header.RightItem>
+    </Header>
   );
 });

@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
 import { Settings } from "lucide-react";
-import { Breadcrumbs, CustomMenu, CustomHeader } from "@plane/ui";
+import { Breadcrumbs, CustomMenu, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 // constants
@@ -29,8 +29,8 @@ export const ProjectSettingHeader: FC = observer(() => {
   const projectMemberInfo = currentProjectRole || EUserProjectRoles.GUEST;
 
   return (
-    <CustomHeader>
-      <CustomHeader.LeftItem>
+    <Header>
+      <Header.LeftItem>
         <div>
           <div className="z-50">
             <Breadcrumbs onBack={router.back} isLoading={loader}>
@@ -84,7 +84,7 @@ export const ProjectSettingHeader: FC = observer(() => {
               )
           )}
         </CustomMenu>
-      </CustomHeader.LeftItem>
-    </CustomHeader>
+      </Header.LeftItem>
+    </Header>
   );
 });

@@ -7,7 +7,8 @@ import { Plus } from "lucide-react";
 // types
 import { TRecentProjectsWidgetResponse } from "@plane/types";
 // ui
-import { Avatar, AvatarGroup } from "@plane/ui";
+import { Avatar, AvatarGroup, Card } from "@plane/ui";
+
 // components
 import { Logo } from "@/components/common";
 import { WidgetLoader, WidgetProps } from "@/components/dashboard/widgets";
@@ -82,14 +83,14 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
   if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
-    <div className="min-h-96 w-full rounded-xl border-[0.5px] border-custom-border-200 bg-custom-background-100 py-6 duration-300 hover:shadow-custom-shadow-4xl">
+    <Card>
       <Link
         href={`/${workspaceSlug}/projects`}
-        className="mx-7 text-lg font-semibold text-custom-text-300 hover:underline"
+        className="text-lg font-semibold text-custom-text-300 hover:underline mb-4"
       >
         Recent projects
       </Link>
-      <div className="mx-7 mt-4 space-y-8">
+      <div className="mt-4 space-y-8">
         {canCreateProject && (
           <button
             type="button"
@@ -113,6 +114,6 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
           <ProjectListItem key={projectId} projectId={projectId} workspaceSlug={workspaceSlug} />
         ))}
       </div>
-    </div>
+    </Card>
   );
 });

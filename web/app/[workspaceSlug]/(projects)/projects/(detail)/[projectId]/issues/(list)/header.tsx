@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 // icons
 import { Briefcase, Circle, ExternalLink } from "lucide-react";
 // ui
-import { Breadcrumbs, Button, LayersIcon, Tooltip, CustomHeader } from "@plane/ui";
+import { Breadcrumbs, Button, LayersIcon, Tooltip, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink, CountChip, Logo } from "@/components/common";
 // constants
@@ -47,8 +47,8 @@ export const ProjectIssuesHeader = observer(() => {
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   return (
-    <CustomHeader>
-      <CustomHeader.LeftItem>
+    <Header>
+      <Header.LeftItem>
         <div className="flex items-center gap-2.5">
           <Breadcrumbs onBack={() => router.back()} isLoading={loader}>
             <Breadcrumbs.BreadcrumbItem
@@ -103,8 +103,8 @@ export const ProjectIssuesHeader = observer(() => {
         ) : (
           <></>
         )}
-      </CustomHeader.LeftItem>
-      <CustomHeader.RightItem>
+      </Header.LeftItem>
+      <Header.RightItem>
         <div className="hidden gap-3 md:flex">
           <HeaderFilters
             projectId={projectId}
@@ -126,7 +126,7 @@ export const ProjectIssuesHeader = observer(() => {
         ) : (
           <></>
         )}
-      </CustomHeader.RightItem>
-    </CustomHeader>
+      </Header.RightItem>
+    </Header>
   );
 });
