@@ -3,18 +3,30 @@
   "compilerOptions": {
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "lib": ["ES2015"],
+    "lib": [
+      "ES2015"
+    ],
     "outDir": "./dist",
     "rootDir": "./src",
     "baseUrl": ".",
     "paths": {
-      "@/core/*": ["./src/core/*"],
-      "@/plane-live/*": ["./src/ce/*"]
+      "@/*": [
+        "./src/*"
+      ],
+      "@/plane-live/*": [
+        "./src/ce/*"
+      ]
     },
     "removeComments": true,
     "esModuleInterop": true,
     "skipLibCheck": true
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["./dist", "./build", "./node_modules"]
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "./dist",
+    "./build",
+    "./node_modules"
+  ]
 }
