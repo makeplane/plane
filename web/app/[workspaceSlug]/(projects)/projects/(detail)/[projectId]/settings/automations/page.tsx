@@ -45,9 +45,9 @@ const AutomationSettingsPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <section className={`w-full overflow-y-auto py-8 pr-9 ${canPerformProjectAdminActions ? "" : "opacity-60"}`}>
-        <div className="flex items-center border-b border-custom-border-100 py-3.5">
-          <h3 className="text-xl font-medium">Automations</h3>
+      <section className={`w-full overflow-y-auto ${canPerformProjectAdminActions ? "" : "opacity-60"}`}>
+        <div className="flex flex-col items-start border-b border-custom-border-100 pb-3.5">
+          <h3 className="text-xl font-medium leading-normal">Automations</h3>
         </div>
         <AutoArchiveAutomation handleChange={handleChange} />
         <AutoCloseAutomation handleChange={handleChange} />

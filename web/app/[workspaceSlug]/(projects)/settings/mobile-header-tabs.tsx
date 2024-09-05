@@ -28,10 +28,11 @@ export const MobileWorkspaceSettingsTabs = () => {
           shouldRenderSettingLink(item.key) &&
           workspaceMemberInfo >= item.access && (
             <div
-              className={`${item.highlight(pathname, `/${workspaceSlug}`)
-                ? "text-custom-primary-100 text-sm py-2 px-3 whitespace-nowrap flex flex-grow cursor-pointer justify-around border-b border-custom-primary-200"
-                : "text-custom-text-200 flex flex-grow cursor-pointer justify-around border-b border-custom-border-200 text-sm py-2 px-3 whitespace-nowrap"
-                }`}
+              className={`${
+                item.highlight(pathname, `/${workspaceSlug}`)
+                  ? "text-custom-primary-100 text-sm py-2 px-3 whitespace-nowrap flex flex-grow cursor-pointer justify-around border-b border-custom-primary-200"
+                  : "text-custom-text-200 flex flex-grow cursor-pointer justify-around border-b border-custom-border-200 text-sm py-2 px-3 whitespace-nowrap"
+              }`}
               key={index}
               onClick={() => router.push(`/${workspaceSlug}${item.href}`)}
             >

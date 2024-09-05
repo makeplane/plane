@@ -42,7 +42,7 @@ const LabelsSettingsPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <div ref={scrollableContainerRef} className="h-full w-full gap-10 overflow-y-auto py-2 pr-9">
+      <div ref={scrollableContainerRef} className="h-full w-full gap-10 overflow-y-auto">
         <ProjectSettingsLabelList />
       </div>
     </>
