@@ -17,8 +17,9 @@ import {
   Users,
 } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
+// plane types
 import { ILinkDetails, IModule, ModuleLink } from "@plane/types";
-// ui
+// plane ui
 import {
   CustomMenu,
   Loader,
@@ -31,9 +32,14 @@ import {
   TextArea,
 } from "@plane/ui";
 // components
-import { LinkModal, LinksList } from "@/components/core";
 import { DateRangeDropdown, MemberDropdown } from "@/components/dropdowns";
-import { ArchiveModuleModal, DeleteModuleModal, ModuleAnalyticsProgress } from "@/components/modules";
+import {
+  ArchiveModuleModal,
+  DeleteModuleModal,
+  CreateUpdateModuleLinkModal,
+  ModuleAnalyticsProgress,
+  ModuleLinksList,
+} from "@/components/modules";
 import {
   MODULE_LINK_CREATED,
   MODULE_LINK_DELETED,
@@ -287,16 +293,18 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
 
   return (
     <div className="relative">
-      <LinkModal
+      <CreateUpdateModuleLinkModal
         isOpen={moduleLinkModal}
         handleClose={() => {
           setModuleLinkModal(false);
-          setSelectedLinkToUpdate(null);
+          const timeoutId = setTimeout(() => {
+            setSelectedLinkToUpdate(null);
+            clearTimeout(timeoutId);
+          }, 500);
         }}
         data={selectedLinkToUpdate}
-        status={selectedLinkToUpdate ? true : false}
-        createIssueLink={handleCreateLink}
-        updateIssueLink={handleUpdateLink}
+        createLink={handleCreateLink}
+        updateLink={handleUpdateLink}
       />
       {workspaceSlug && projectId && (
         <ArchiveModuleModal
@@ -583,7 +591,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                             )}
 
                             {moduleId && (
-                              <LinksList
+                              <ModuleLinksList
                                 moduleId={moduleId}
                                 handleEditLink={handleEditLink}
                                 handleDeleteLink={handleDeleteLink}
