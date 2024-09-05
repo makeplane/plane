@@ -12,7 +12,7 @@ import { FavoriteStar, TOAST_TYPE, Tooltip, setPromiseToast, setToast } from "@p
 // components
 import { ModuleQuickActions } from "@/components/modules";
 // constants
-import { MODULE_FAVORITED, MODULE_UNFAVORITED, MODULE_UPDATED } from "@/constants/event-tracker";
+import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker";
 import { EUserProjectRoles } from "@/constants/project";
 // hooks
 import { useEventTracker, useMember, useModule, useUser } from "@/hooks/store";
@@ -46,7 +46,7 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
 
   const moduleStatus = MODULE_STATUS.find((status) => status.value === moduleDetails.status);
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
-  const isDisabled = !isEditingAllowed || (moduleDetails.archived_at ? true : false) ;
+  const isDisabled = isEditingAllowed || (moduleDetails.archived_at ? true : false) ;
   const renderIcon = Boolean(moduleDetails.start_date) || Boolean(moduleDetails.target_date);
 
   // handlers
@@ -157,7 +157,7 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
 
       {moduleStatus && (
         <ModuleStatusSelection
-        isEditingAllowed={isEditingAllowed}
+        isDisabled={isDisabled}
         moduleDetails={moduleDetails}
         handleModuleDetailsChange={handleModuleDetailsChange}
         />

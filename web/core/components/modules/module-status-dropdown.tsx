@@ -5,13 +5,13 @@ import { observer } from 'mobx-react';
 import React, { FC } from 'react'
 
 type Props = {
-    isEditingAllowed: boolean;
+    isDisabled: boolean;
     moduleDetails: IModule;
     handleModuleDetailsChange: (payload: Partial<IModule>) => Promise<void>;
 };
 
 export const ModuleStatusSelection : FC<Props> = observer((props : Props) => {
-    const {isEditingAllowed, moduleDetails, handleModuleDetailsChange} = props;
+    const {isDisabled, moduleDetails, handleModuleDetailsChange} = props;
     const moduleStatus = MODULE_STATUS.find((status) => status.value === moduleDetails.status);
 
     if(!moduleStatus) return <></>
@@ -21,7 +21,7 @@ return (
         customButton={
             <span
             className={`flex h-6 w-20 items-center justify-center rounded-sm text-center text-xs ${
-                isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
+                isDisabled ? "cursor-not-allowed" : "cursor-pointer"
             }`}
             style={{
                 color: moduleStatus ? moduleStatus.color : "#a3a3a2",
@@ -35,7 +35,7 @@ return (
         onChange={(val: TModuleStatus)=>{
             handleModuleDetailsChange({status: val})
         }}
-        disabled={!isEditingAllowed}
+        disabled={isDisabled}
     >
         {MODULE_STATUS.map((status) => (
             <CustomSelect.Option key={status.value} value={status.value}>

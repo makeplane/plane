@@ -213,7 +213,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
               <div className="flex items-center gap-2" onClick={handleEventPropagation}>
                 {moduleStatus && (
                   <ModuleStatusSelection
-                  isEditingAllowed={isEditingAllowed}
+                  isDisabled={isDisabled}
                   moduleDetails={moduleDetails}
                   handleModuleDetailsChange={handleModuleDetailsChange}
                   />
