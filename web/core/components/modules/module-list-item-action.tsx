@@ -46,7 +46,7 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
 
   const moduleStatus = MODULE_STATUS.find((status) => status.value === moduleDetails.status);
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
-  const isDisabled = isEditingAllowed || (moduleDetails.archived_at ? true : false) ;
+  const isDisabled = !isEditingAllowed || (moduleDetails.archived_at ? true : false) ;
   const renderIcon = Boolean(moduleDetails.start_date) || Boolean(moduleDetails.target_date);
 
   // handlers
