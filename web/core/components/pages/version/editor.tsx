@@ -92,12 +92,13 @@ export const PagesVersionEditor: React.FC<Props> = observer((props) => {
       </div>
     );
 
+  const description = isCurrentVersionActive ? currentPageDetails.description_html : versionDetails?.description_html;
+  if (description === undefined || description?.trim() === "") return null;
+
   return (
     <DocumentReadOnlyEditorWithRef
       id={activeVersion ?? ""}
-      initialValue={
-        (isCurrentVersionActive ? currentPageDetails.description_html : versionDetails?.description_html) ?? "<p></p>"
-      }
+      initialValue={description ?? "<p></p>"}
       containerClassName="p-0 pb-64 border-none"
       displayConfig={displayConfig}
       editorClassName="pl-10"

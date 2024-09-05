@@ -13,9 +13,9 @@ import {
   Link,
   Trash2,
   MoveRight,
-  Copy
+  Copy,
 } from "lucide-react";
-import { Button, ControlLink, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, ControlLink, CustomMenu, Row, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import {
   DeclineIssueModal,
@@ -245,7 +245,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
         />
       </>
 
-      <div className="hidden relative lg:flex h-full w-full items-center justify-between gap-2 px-4">
+      <Row className="hidden relative lg:flex h-full w-full items-center justify-between gap-2">
         <div className="flex items-center gap-4">
           {isNotificationEmbed && (
             <button onClick={embedRemoveCurrentNotification}>
@@ -376,7 +376,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
             )}
           </div>
         </div>
-      </div>
+      </Row>
 
       <div className="lg:hidden">
         <InboxIssueActionsMobileHeader

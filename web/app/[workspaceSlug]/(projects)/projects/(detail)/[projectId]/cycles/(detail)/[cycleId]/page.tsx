@@ -70,7 +70,7 @@ const CycleDetailPage = observer(() => {
             {cycleId && !isSidebarCollapsed && (
               <div
                 className={cn(
-                  "flex h-full w-[24rem] flex-shrink-0 flex-col gap-3.5 overflow-y-auto border-l border-custom-border-100 bg-custom-sidebar-background-100 px-6 duration-300 vertical-scrollbar scrollbar-sm absolute right-0 top-0 z-[13]"
+                  "flex h-full w-[24rem] flex-shrink-0 flex-col gap-3.5 overflow-y-auto border-l border-custom-border-100 bg-custom-sidebar-background-100 px-6 duration-300 vertical-scrollbar scrollbar-sm absolute right-0 z-[13]"
                 )}
                 style={{
                   boxShadow:

@@ -66,7 +66,7 @@ export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
     <>
       <div className="h-full">
         {isLoading ? (
-          <Loader className="space-y-4 mx-6 mt-7">
+          <Loader className="space-y-4 mt-7">
             <Loader.Item height="25px" />
             <Loader.Item height="25px" />
             <Loader.Item height="25px" />
@@ -74,7 +74,7 @@ export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
           </Loader>
         ) : issuesList.length > 0 ? (
           <>
-            <div className="mt-7 mx-6 border-b-[0.5px] border-custom-border-200 grid grid-cols-12 gap-1 text-xs text-custom-text-300 pb-1">
+            <div className="mt-7 border-b-[0.5px] border-custom-border-200 grid grid-cols-12 gap-1 text-xs text-custom-text-300 pb-1">
               <h6
                 className={cn("pl-1 flex items-center gap-1 col-span-7", {
                   "col-span-11": type === "assigned" && tab === "completed",
@@ -92,7 +92,7 @@ export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
               {type === "assigned" && tab !== "completed" && <h6 className="text-center col-span-2">Blocked by</h6>}
               {type === "created" && <h6 className="text-center col-span-2">Assigned to</h6>}
             </div>
-            <div className="px-4 pb-3 mt-2">
+            <div className="pb-3 mt-2">
               {issuesList.map((issue) => {
                 const IssueListItem = ISSUE_LIST_ITEM[type][tab];
 

@@ -31,11 +31,11 @@ const ExportsPage = observer(() => {
     <>
       <PageHead title={pageTitle} />
       <div
-        className={cn("w-full overflow-y-auto md:pr-9 pr-4", {
+        className={cn("w-full overflow-y-auto", {
           "opacity-60": !canPerformWorkspaceMemberActions,
         })}
       >
-        <div className="flex items-center border-b border-custom-border-100 py-3.5">
+        <div className="flex items-center border-b border-custom-border-100 pb-3.5">
           <h3 className="text-xl font-medium">Exports</h3>
         </div>
         <ExportGuide />

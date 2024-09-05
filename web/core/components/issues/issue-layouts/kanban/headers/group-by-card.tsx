@@ -103,11 +103,11 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
         />
       )}
       <div
-        className={`relative flex flex-shrink-0 gap-2 p-1.5 ${
+        className={`relative flex flex-shrink-0 gap-2 py-1.5 ${
           verticalAlignPosition ? `w-[44px] flex-col items-center` : `w-full flex-row items-center`
         }`}
       >
-        <div className="flex h-[20px] w-[20px] flex-shrink-0 items-center justify-center overflow-hidden rounded-sm">
+        <div className="flex h-[20px] flex-shrink-0 items-center justify-center overflow-hidden rounded-sm">
           {icon ? icon : <Circle width={14} strokeWidth={2} />}
         </div>
 

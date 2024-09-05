@@ -24,7 +24,7 @@ class WorkspaceFavoriteEndpoint(BaseAPIView):
             workspace__slug=slug,
             parent__isnull=True,
         ).filter(
-            Q(project__isnull=True)
+            Q(project__isnull=True) & ~Q(entity_type="page")
             | (
                 Q(project__isnull=False)
                 & Q(project__project_projectmember__member=request.user)

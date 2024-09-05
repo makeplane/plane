@@ -1,5 +1,6 @@
 import { Server } from "@hocuspocus/server";
 import { Redis } from "@hocuspocus/extension-redis";
+import { createClient } from "redis";
 
 import { Database } from "@hocuspocus/extension-database";
 import { Logger } from "@hocuspocus/extension-logger";
@@ -12,12 +13,17 @@ import {
   updatePageDescription,
 } from "@/core/lib/page.js";
 // config
-import { getRedisConfig } from "./core/config/redis-config.js";
+import { getRedisUrl } from "@/core/config/redis-config.js";
 // types
 import { TDocumentTypes } from "@/core/types/common.js";
 // plane live lib
 import { fetchDocument } from "@/plane-live/lib/fetch-document.js";
 import { updateDocument } from "@/plane-live/lib/update-document.js";
+
+const redisUrl = getRedisUrl();
+const redisClient = await createClient({ url: redisUrl })
+  .on("error", (err) => console.log("Redis Client Error", err))
+  .connect();
 
 const server = Server.configure({
   onAuthenticate: async ({
@@ -48,8 +54,7 @@ const server = Server.configure({
     }
   },
   extensions: [
-    // @ts-expect-error - redis from hocuspocus is not typed properly
-    new Redis(getRedisConfig()),
+    new Redis({ redis: redisClient }),
     new Logger(),
     new Database({
       fetch: async ({
@@ -113,7 +118,7 @@ const server = Server.configure({
                 pageId,
                 params,
                 updatedDescription: state,
-              })
+              });
             }
           } catch (error) {
             console.error("Error in updating document", error);

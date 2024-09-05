@@ -8,7 +8,7 @@ import { Calendar, ChevronDown, Kanban, List } from "lucide-react";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
-import { CustomMenu } from "@plane/ui";
+import { CustomMenu, Row } from "@plane/ui";
 // components
 import { ProjectAnalyticsModal } from "@/components/analytics";
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues/issue-layouts";
@@ -106,7 +106,12 @@ export const ProjectIssuesMobileHeader = observer(() => {
           maxHeight={"md"}
           className="flex flex-grow justify-center text-sm text-custom-text-200"
           placement="bottom-start"
-          customButton={<span className="flex flex-grow justify-center text-sm text-custom-text-200">Layout</span>}
+          customButton={
+            <Row className="flex flex-start text-sm text-custom-text-200">
+              Layout
+              <ChevronDown className="ml-2  h-4 w-4 text-custom-text-200 my-auto" strokeWidth={1} />
+            </Row>
+          }
           customButtonClassName="flex flex-grow justify-center text-custom-text-200 text-sm"
           closeOnSelect
         >
