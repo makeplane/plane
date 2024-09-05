@@ -43,6 +43,7 @@ export interface IKanBan {
   isDropDisabled?: boolean;
   dropErrorMessage?: string | undefined;
   sub_group_id?: string;
+  sub_group_index?: number
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   kanbanFilters: TIssueKanbanFilters;
@@ -83,6 +84,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     orderBy,
     isDropDisabled,
     dropErrorMessage,
+    sub_group_index = 0,
   } = props;
 
   const storeType = useIssueStoreType();
@@ -143,7 +145,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     <div className={`relative w-full flex gap-2 px-2 ${sub_group_by ? "h-full" : "h-full"}`}>
       {list &&
         list.length > 0 &&
-        list.map((subList: IGroupByColumn) => {
+        list.map((subList: IGroupByColumn, index) => {
           const groupByVisibilityToggle = visibilityGroupBy(subList);
           const issueIds = isSubGroup
             ? (groupedIssueIds as TSubGroupedIssues)?.[subList.id]?.[sub_group_id] ?? []
@@ -191,6 +193,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
                       cardsInColumn={issueLength !== undefined && issueLength < 3 ? issueLength : 3}
                     />
                   }
+                  defaultValue={index < 5 && sub_group_index < 2}
                   useIdletime
                 >
                   <KanbanGroup
