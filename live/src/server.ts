@@ -1,11 +1,18 @@
-import cors from "cors";
+import "@/core/config/sentry-config.js";
 
 import express from "express";
 import expressWs from "express-ws";
-// lib
+import * as Sentry from "@sentry/node";
+
+// cors
+import cors from "cors";
+
+// core hocuspocus server
+import { HocusPocusServer } from "@/core/hocuspocus-server.js";
+
+// helpers
 import { logger, manualLogger } from "@/core/helpers/logger.js";
 import { errorHandler } from "@/core/helpers/error-handler.js";
-import { HocusPocusServer } from "./core/hocuspocus-server.js";
 
 const app = express();
 expressWs(app);
@@ -37,6 +44,8 @@ app.use(process.env.API_BASE_PATH || "/live", router);
 app.use((_req, res, _next) => {
   res.status(404).send("Not Found");
 });
+
+Sentry.setupExpressErrorHandler(app);
 
 app.use(errorHandler);
 

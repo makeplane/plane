@@ -7,8 +7,7 @@
   "type": "module",
   "scripts": {
     "build": "babel src --out-dir dist --extensions \".ts,.js\"",
-    "start": "node dist/server.js",
-    "dev": "PORT=3003 nodemon --exec \"node -r esbuild-register ./src/server.ts\" -e .ts"
+    "start": "node dist/server.js"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +19,8 @@
     "@hocuspocus/server": "^2.11.3",
     "@plane/editor": "*",
     "@plane/types": "*",
+    "@sentry/node": "^8.28.0",
+    "@sentry/profiling-node": "^8.28.0",
     "@tiptap/core": "^2.4.0",
     "@tiptap/html": "^2.3.0",
     "axios": "^1.7.2",
