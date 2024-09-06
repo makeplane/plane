@@ -13,10 +13,12 @@ import {
   IssueTitleInput,
   IssueDescriptionInput,
   IssueDetailWidgets,
+  PeekOverviewProperties,
 } from "@/components/issues";
 // hooks
 import { useIssueDetail, useUser } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
+import useSize from "@/hooks/use-window-size";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 // types
@@ -37,6 +39,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
   // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   // hooks
+  const windowSize = useSize();
   const { data: currentUser } = useUser();
   const {
     issue: { getIssueById },
@@ -114,6 +117,16 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
         issueId={issueId}
         disabled={!isEditable || isArchived}
       />
+
+      {windowSize[0] < 768 && (
+        <PeekOverviewProperties
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          issueId={issueId}
+          issueOperations={issueOperations}
+          disabled={!isEditable || isArchived}
+        />
+      )}
 
       <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={isArchived} />
     </>
