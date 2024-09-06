@@ -20,8 +20,9 @@ import {
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getRedirectionFilters } from "@/helpers/dashboard.helper";
-import { useIssueDetail } from "@/hooks/store";
-// types
+// hooks
+import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 export type WidgetIssuesListProps = {
   isLoading: boolean;
@@ -33,11 +34,12 @@ export type WidgetIssuesListProps = {
 
 export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
   const { isLoading, tab, type, widgetStats, workspaceSlug } = props;
-  // store hooks
-  const { setPeekIssue } = useIssueDetail();
+  // hooks
+  const { isMobile } = usePlatformOS();
+  const { handleRedirection } = useIssuePeekOverviewRedirection();
 
-  const handleIssuePeekOverview = (issue: TIssue) =>
-    issue.project_id && setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
+  // handlers
+  const handleIssuePeekOverview = (issue: TIssue) => handleRedirection(workspaceSlug, issue, isMobile);
 
   const filterParams = getRedirectionFilters(tab);
 
