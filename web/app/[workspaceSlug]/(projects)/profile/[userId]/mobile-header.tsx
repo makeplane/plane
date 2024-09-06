@@ -8,7 +8,7 @@ import { ChevronDown } from "lucide-react";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // ui
-import { CustomMenu, Row } from "@plane/ui";
+import { CustomMenu } from "@plane/ui";
 // components
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
 // constants
