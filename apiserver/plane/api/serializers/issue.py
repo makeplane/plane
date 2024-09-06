@@ -27,6 +27,9 @@ from .module import ModuleLiteSerializer, ModuleSerializer
 from .state import StateLiteSerializer
 from .user import UserLiteSerializer
 
+# Django imports
+from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
 
 class IssueSerializer(BaseSerializer):
     assignees = serializers.ListField(
@@ -312,6 +315,20 @@ class IssueLinkSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
+    
+    def validate_url(self, value):
+        # Check URL format
+        validate_url = URLValidator()
+        try:
+            validate_url(value)
+        except ValidationError:
+            raise serializers.ValidationError("Invalid URL format.")
+
+        # Check URL scheme
+        if not value.startswith(("http://", "https://")):
+            raise serializers.ValidationError("Invalid URL scheme.")
+
+        return value
 
     # Validation if url already exists
     def create(self, validated_data):
