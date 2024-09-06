@@ -13,6 +13,7 @@ import { CYCLE_CREATED, CYCLE_UPDATED } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker, useCycle, useProject } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
 import { CycleService } from "@/services/cycle.service";
 
@@ -35,6 +36,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
   const { captureCycleEvent } = useEventTracker();
   const { workspaceProjectIds } = useProject();
   const { createCycle, updateCycleDetails } = useCycle();
+  const { isMobile } = usePlatformOS();
 
   const { setValue: setCycleTab } = useLocalStorage<TCycleTabOptions>("cycle_tab", "active");
 
@@ -186,6 +188,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
         projectId={activeProject ?? ""}
         setActiveProject={setActiveProject}
         data={data}
+        isMobile={isMobile}
       />
     </ModalCore>
   );

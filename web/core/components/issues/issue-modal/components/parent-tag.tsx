@@ -6,8 +6,12 @@ import { Control, Controller } from "react-hook-form";
 import { X } from "lucide-react";
 // types
 import { ISearchIssueResponse, TIssue } from "@plane/types";
+// constants
+import { ETabIndices } from "@/constants/tab-indices";
 // helpers
-import { getTabIndex } from "@/helpers/issue-modal.helper";
+import { getTabIndex } from "@/helpers/tab-indices.helper";
+// hooks
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 
@@ -20,6 +24,10 @@ type TIssueParentTagProps = {
 
 export const IssueParentTag: React.FC<TIssueParentTagProps> = observer((props) => {
   const { control, selectedParentIssue, handleFormChange, setSelectedParentIssue } = props;
+  // store hooks
+  const { isMobile } = usePlatformOS();
+
+  const { getIndex } = getTabIndex(ETabIndices.ISSUE_FORM, isMobile);
 
   return (
     <Controller
@@ -54,7 +62,7 @@ export const IssueParentTag: React.FC<TIssueParentTagProps> = observer((props) =
                 handleFormChange();
                 setSelectedParentIssue(null);
               }}
-              tabIndex={getTabIndex("remove_parent")}
+              tabIndex={getIndex("remove_parent")}
             >
               <X className="h-3 w-3 cursor-pointer" />
             </button>

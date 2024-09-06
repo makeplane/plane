@@ -15,10 +15,14 @@ import {
 } from "@/components/dropdowns";
 import { ParentIssuesListModal } from "@/components/issues";
 import { IssueLabelSelect } from "@/components/issues/select";
+// constants
+import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
+import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useProjectEstimates } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type TInboxIssueProperties = {
   projectId: string;
@@ -31,10 +35,12 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
   const { projectId, data, handleData, isVisible = false } = props;
   // hooks
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
+  const { isMobile } = usePlatformOS();
   // states
   const [parentIssueModalOpen, setParentIssueModalOpen] = useState(false);
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | undefined>(undefined);
-  true;
+
+  const { getIndex } = getTabIndex(ETabIndices.INTAKE_ISSUE_FORM, isMobile);
 
   const startDate = data?.start_date;
   const targetDate = data?.target_date;
@@ -54,6 +60,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
           onChange={(stateId) => handleData("state_id", stateId)}
           projectId={projectId}
           buttonVariant="border-with-text"
+          tabIndex={getIndex("state_id")}
         />
       </div>
 
@@ -63,6 +70,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
           value={data?.priority}
           onChange={(priority) => handleData("priority", priority)}
           buttonVariant="border-with-text"
+          tabIndex={getIndex("priority")}
         />
       </div>
 
@@ -76,6 +84,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
           buttonClassName={(data?.assignee_ids || [])?.length > 0 ? "hover:bg-transparent" : ""}
           placeholder="Assignees"
           multiple
+          tabIndex={getIndex("assignee_ids")}
         />
       </div>
 
@@ -87,6 +96,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
           value={data?.label_ids || []}
           onChange={(labelIds) => handleData("label_ids", labelIds)}
           projectId={projectId}
+          tabIndex={getIndex("label_ids")}
         />
       </div>
 
@@ -99,6 +109,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
             buttonVariant="border-with-text"
             minDate={minDate ?? undefined}
             placeholder="Start date"
+            tabIndex={getIndex("start_date")}
           />
         </div>
       )}
@@ -111,6 +122,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
           buttonVariant="border-with-text"
           minDate={minDate ?? undefined}
           placeholder="Due date"
+          tabIndex={getIndex("target_date")}
         />
       </div>
 
@@ -123,6 +135,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
             projectId={projectId}
             placeholder="Cycle"
             buttonVariant="border-with-text"
+            tabIndex={getIndex("cycle_id")}
           />
         </div>
       )}
@@ -138,6 +151,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
             buttonVariant="border-with-text"
             multiple
             showCount
+            tabIndex={getIndex("module_ids")}
           />
         </div>
       )}
@@ -151,6 +165,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
             projectId={projectId}
             buttonVariant="border-with-text"
             placeholder="Estimate"
+            tabIndex={getIndex("estimate_point")}
           />
         </div>
       )}
@@ -174,6 +189,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
                 </button>
               }
               placement="bottom-start"
+              tabIndex={getIndex("parent_id")}
             >
               <>
                 <CustomMenu.MenuItem className="!p-1" onClick={() => setParentIssueModalOpen(true)}>
