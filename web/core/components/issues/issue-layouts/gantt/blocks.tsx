@@ -8,6 +8,7 @@ import { Tooltip, ControlLink } from "@plane/ui";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
 import { useIssueDetail, useProjectState } from "@/hooks/store";
+import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
@@ -25,22 +26,17 @@ export const IssueGanttBlock: React.FC<Props> = observer((props) => {
   const { getProjectStates } = useProjectState();
   const {
     issue: { getIssueById },
-    getIsIssuePeeked,
-    setPeekIssue,
   } = useIssueDetail();
+  // hooks
+  const { isMobile } = usePlatformOS();
+  const { handleRedirection } = useIssuePeekOverviewRedirection();
+
   // derived values
   const issueDetails = getIssueById(issueId);
   const stateDetails =
     issueDetails && getProjectStates(issueDetails?.project_id)?.find((state) => state?.id == issueDetails?.state_id);
 
-  const handleIssuePeekOverview = () =>
-    workspaceSlug &&
-    issueDetails &&
-    !issueDetails.tempId &&
-    issueDetails.project_id &&
-    !getIsIssuePeeked(issueDetails.id) &&
-    setPeekIssue({ workspaceSlug, projectId: issueDetails.project_id, issueId: issueDetails.id });
-  const { isMobile } = usePlatformOS();
+  const handleIssuePeekOverview = () => handleRedirection(workspaceSlug, issueDetails, isMobile);
 
   return (
     <div
@@ -82,17 +78,16 @@ export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
   // store hooks
   const {
     issue: { getIssueById },
-    setPeekIssue,
   } = useIssueDetail();
+  const { isMobile } = usePlatformOS();
+
+  // handlers
+  const { handleRedirection } = useIssuePeekOverviewRedirection();
+
   // derived values
   const issueDetails = getIssueById(issueId);
 
-  const handleIssuePeekOverview = () =>
-    workspaceSlug &&
-    issueDetails &&
-    issueDetails.project_id &&
-    setPeekIssue({ workspaceSlug, projectId: issueDetails.project_id, issueId: issueDetails.id });
-  const { isMobile } = usePlatformOS();
+  const handleIssuePeekOverview = () => handleRedirection(workspaceSlug, issueDetails, isMobile);
 
   return (
     <ControlLink

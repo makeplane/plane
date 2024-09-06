@@ -17,6 +17,7 @@ import { SPREADSHEET_SELECT_GROUP } from "@/constants/spreadsheet";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
+import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -171,21 +172,13 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   const { workspaceSlug, projectId } = useParams();
   // hooks
   const { getProjectIdentifierById } = useProject();
-  const { getIsIssuePeeked, peekIssue, setPeekIssue } = useIssueDetail();
+  const { getIsIssuePeeked, peekIssue } = useIssueDetail();
+  const { handleRedirection } = useIssuePeekOverviewRedirection();
   const { isMobile } = usePlatformOS();
 
+  // handlers
   const handleIssuePeekOverview = (issue: TIssue) =>
-    workspaceSlug &&
-    issue &&
-    issue.project_id &&
-    issue.id &&
-    !getIsIssuePeeked(issue.id) &&
-    setPeekIssue({
-      workspaceSlug: workspaceSlug.toString(),
-      projectId: issue.project_id,
-      issueId: issue.id,
-      nestingLevel: nestingLevel,
-    });
+    handleRedirection(workspaceSlug?.toString(), issue, isMobile, nestingLevel);
 
   const { subIssues: subIssuesStore, issue } = useIssueDetail();
 
