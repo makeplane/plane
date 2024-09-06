@@ -119,8 +119,16 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
   const filterJoinFields = getMetaKeys(queries);
   const orderByString = getOrderByFragment(order_by);
 
-  sql = `SELECT ${fieldsFragment} from issues i`;
+  sql = `SELECT ${fieldsFragment}`;
+  if (otherProps.state_group) {
+    sql += `, states.'group' as state_group`;
+  }
+  sql += ` from issues i
+  `;
 
+  if (otherProps.state_group) {
+    sql += `LEFT JOIN states ON i.state_id = states.id `;
+  }
   filterJoinFields.forEach((field: string) => {
     const value = otherProps[field] || "";
     sql += ` INNER JOIN issue_meta ${field} ON i.id = ${field}.issue_id AND ${field}.key = '${field}' AND ${field}.value  IN ('${value.split(",").join("','")}')

@@ -242,7 +242,9 @@ const createDateFilter = (key: string, q: string) => {
     if (from) {
       // Assuming type is always after
       let after = "";
-      const [length, unit] = date.split("_");
+      const [_length, unit] = date.split("_");
+      const length = parseInt(_length);
+
       if (unit === "weeks") {
         // get date in yyyy-mm-dd format one week from now
         after = new Date(new Date().setDate(new Date().getDate() + length * 7)).toISOString().split("T")[0];
