@@ -21,6 +21,7 @@ import { getGroupByColumns, isWorkspaceLevel, GroupDropLocation } from "../utils
 import { KanBan } from "./default";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { HeaderSubGroupByCard } from "./headers/sub-group-by-card";
+import { Row } from "@plane/ui";
 // types
 // constants
 
@@ -160,7 +161,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
           return (
             <div key={_list.id} className="flex flex-shrink-0 flex-col">
               <div className="sticky top-[50px] z-[3] py-1 flex w-full items-center bg-custom-background-100 border-y-[0.5px] border-custom-border-200">
-                <div className="sticky left-0 flex-shrink-0">
+                <Row className="sticky left-0 flex-shrink-0">
                   <HeaderSubGroupByCard
                     column_id={_list.id}
                     icon={_list.icon}
@@ -169,7 +170,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                     kanbanFilters={kanbanFilters}
                     handleKanbanFilters={handleKanbanFilters}
                   />
-                </div>
+                </Row>
               </div>
 
               {subGroupByVisibilityToggle.showIssues && (
@@ -295,7 +296,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
 
   return (
     <div className="relative">
-      <div className="sticky top-0 z-[4] h-[50px] bg-custom-background-90 px-2">
+      <Row className="sticky top-0 z-[4] h-[50px] bg-custom-background-90">
         <SubGroupSwimlaneHeader
           getGroupIssueCount={getGroupIssueCount}
           group_by={group_by}
@@ -305,7 +306,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           list={groupByList}
           showEmptyGroup={showEmptyGroup}
         />
-      </div>
+      </Row>
 
       {sub_group_by && (
         <SubGroupSwimlane
