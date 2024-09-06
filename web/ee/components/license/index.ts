@@ -9,3 +9,4 @@ export * from "./pro-plan-upgrade";
 export * from "./pro-plan-cloud-upgrade-modal";
 export * from "./pro-plan-self-host-upgrade-modal";
 export * from "./paid-plan-success-modal";
+export * from "./seats-banner";

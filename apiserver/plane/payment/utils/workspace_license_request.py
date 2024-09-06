@@ -212,6 +212,7 @@ def resync_workspace_license(workspace_slug, force=False):
                 "has_upgraded": has_upgraded(workspace_license),
                 "show_payment_button": show_payment_button(workspace_license),
                 "show_trial_banner": show_trial_banner(workspace_license),
+                "free_seats": workspace_license.free_seats,
             }
         else:
             return {
@@ -235,6 +236,7 @@ def resync_workspace_license(workspace_slug, force=False):
                 "has_upgraded": has_upgraded(workspace_license),
                 "show_payment_button": show_payment_button(workspace_license),
                 "show_trial_banner": show_trial_banner(workspace_license),
+                "free_seats": workspace_license.free_seats,
             }
     # If the license is not present, then fetch the license from the payment server and create it
     else:
@@ -288,4 +290,5 @@ def resync_workspace_license(workspace_slug, force=False):
             "has_upgraded": has_upgraded(workspace_license),
             "show_payment_button": show_payment_button(workspace_license),
             "show_trial_banner": show_trial_banner(workspace_license),
+            "free_seats": workspace_license.free_seats,
         }
