@@ -42,7 +42,7 @@ class IssueActivityEndpoint(BaseAPIView):
         issue_activities = (
             IssueActivity.objects.filter(issue_id=issue_id)
             .filter(
-                ~Q(field__in=["comment", "vote", "reaction", "draft"]),
+                ~Q(field__in=["comment", "vote", "reaction"]),
                 project__project_projectmember__member=self.request.user,
                 project__project_projectmember__is_active=True,
                 project__archived_at__isnull=True,

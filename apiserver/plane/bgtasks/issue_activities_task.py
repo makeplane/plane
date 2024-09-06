@@ -1530,19 +1530,7 @@ def update_draft_issue_activity(
                 workspace_id=workspace_id,
                 comment="created the issue",
                 verb="updated",
-                actor_id=actor_id,
-                epoch=epoch,
-            )
-        )
-    else:
-        issue_activities.append(
-            IssueActivity(
-                issue_id=issue_id,
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment="updated the draft issue",
                 field="draft",
-                verb="updated",
                 actor_id=actor_id,
                 epoch=epoch,
             )
