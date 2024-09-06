@@ -1,72 +1,87 @@
 "use client";
 
 import { FC, useEffect } from "react";
-import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane types
-import type { TIssueLinkEditableFields } from "@plane/types";
+import type { ILinkDetails, ModuleLink } from "@plane/types";
 // plane ui
-import { Button, Input, ModalCore } from "@plane/ui";
+import { Button, Input, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
 import { checkURLValidity } from "@/helpers/string.helper";
-// hooks
-import { useIssueDetail } from "@/hooks/store";
-// types
-import { TLinkOperations } from "./root";
 
-export type TLinkOperationsModal = Exclude<TLinkOperations, "remove">;
-
-export type TIssueLinkCreateFormFieldOptions = TIssueLinkEditableFields & {
-  id?: string;
+type Props = {
+  createLink: (formData: ModuleLink) => Promise<void>;
+  data?: ILinkDetails | null;
+  isOpen: boolean;
+  handleClose: () => void;
+  updateLink: (formData: ModuleLink, linkId: string) => Promise<void>;
 };
 
-export type TIssueLinkCreateEditModal = {
-  isModalOpen: boolean;
-  handleOnClose?: () => void;
-  linkOperations: TLinkOperationsModal;
-};
-
-const defaultValues: TIssueLinkCreateFormFieldOptions = {
+const defaultValues: ModuleLink = {
   title: "",
   url: "",
 };
 
-export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = observer((props) => {
-  // props
-  const { isModalOpen, handleOnClose, linkOperations } = props;
-  // react hook form
+export const CreateUpdateModuleLinkModal: FC<Props> = (props) => {
+  const { isOpen, handleClose, createLink, updateLink, data } = props;
+  // form info
   const {
     formState: { errors, isSubmitting },
     handleSubmit,
     control,
     reset,
-  } = useForm<TIssueLinkCreateFormFieldOptions>({
+  } = useForm<ModuleLink>({
     defaultValues,
   });
-  // store hooks
-  const { issueLinkData: preloadedData, setIssueLinkData } = useIssueDetail();
 
   const onClose = () => {
-    setIssueLinkData(null);
-    reset();
-    if (handleOnClose) handleOnClose();
+    handleClose();
   };
 
-  const handleFormSubmit = async (formData: TIssueLinkCreateFormFieldOptions) => {
-    if (!formData || !formData.id) await linkOperations.create({ title: formData.title, url: formData.url });
-    else await linkOperations.update(formData.id as string, { title: formData.title, url: formData.url });
-    onClose();
+  const handleFormSubmit = async (formData: ModuleLink) => {
+    const payload = {
+      title: formData.title,
+      url: formData.url,
+    };
+
+    try {
+      if (!data) {
+        await createLink(payload);
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: "Module link created successfully.",
+        });
+      } else {
+        await updateLink(payload, data.id);
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: "Module link updated successfully.",
+        });
+      }
+      onClose();
+    } catch (error: any) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: error?.data?.error ?? "Some error occurred. Please try again.",
+      });
+    }
   };
 
   useEffect(() => {
-    if (isModalOpen) reset({ ...defaultValues, ...preloadedData });
-  }, [preloadedData, reset, isModalOpen]);
+    reset({
+      ...defaultValues,
+      ...data,
+    });
+  }, [data, isOpen, reset]);
 
   return (
-    <ModalCore isOpen={isModalOpen} handleClose={onClose}>
+    <ModalCore isOpen={isOpen} handleClose={onClose}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="space-y-5 p-5">
-          <h3 className="text-xl font-medium text-custom-text-200">{preloadedData?.id ? "Update" : "Add"} link</h3>
+          <h3 className="text-xl font-medium text-custom-text-200">{data ? "Update" : "Add"} link</h3>
           <div className="mt-2 space-y-3">
             <div>
               <label htmlFor="url" className="mb-2 text-custom-text-200">
@@ -92,7 +107,6 @@ export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = observe
                   />
                 )}
               />
-              {errors.url && <span className="text-xs text-red-500">URL is invalid</span>}
             </div>
             <div>
               <label htmlFor="title" className="mb-2 text-custom-text-200">
@@ -123,10 +137,10 @@ export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = observe
             Cancel
           </Button>
           <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
-            {preloadedData?.id ? (isSubmitting ? "Updating" : "Update") : isSubmitting ? "Adding" : "Add"} link
+            {data ? (isSubmitting ? "Updating link" : "Update link") : isSubmitting ? "Adding link" : "Add link"}
           </Button>
         </div>
       </form>
     </ModalCore>
   );
-});
+};
