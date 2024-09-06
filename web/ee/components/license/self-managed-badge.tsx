@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 // ui
@@ -12,24 +11,23 @@ import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import PlaneLogo from "@/public/plane-logos/blue-without-text.png";
 
 export const SelfManagedEditionBadge = observer(() => {
-  // states
-  const [isPaidPlanPurchaseModalOpen, setIsPaidPlanPurchaseModalOpen] = useState(false);
   // hooks
-  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, handleSuccessModalToggle } =
-    useWorkspaceSubscription();
+  const {
+    isPaidPlanModalOpen,
+    currentWorkspaceSubscribedPlanDetail: subscriptionDetail,
+    togglePaidPlanModal,
+    handleSuccessModalToggle,
+  } = useWorkspaceSubscription();
 
   if (!subscriptionDetail || subscriptionDetail.product === "FREE")
     return (
       <>
-        <PaidPlanUpgradeModal
-          isOpen={isPaidPlanPurchaseModalOpen}
-          handleClose={() => setIsPaidPlanPurchaseModalOpen(false)}
-        />
+        <PaidPlanUpgradeModal isOpen={isPaidPlanModalOpen} handleClose={() => togglePaidPlanModal(false)} />
         <Button
           tabIndex={-1}
           variant="accent-primary"
           className="w-fit min-w-24 cursor-pointer rounded-2xl px-4 py-1 text-center text-sm font-medium outline-none"
-          onClick={() => setIsPaidPlanPurchaseModalOpen(true)}
+          onClick={() => togglePaidPlanModal(true)}
         >
           Upgrade
         </Button>

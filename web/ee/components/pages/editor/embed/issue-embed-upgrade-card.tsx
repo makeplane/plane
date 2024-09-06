@@ -4,7 +4,7 @@ import { Button } from "@plane/ui";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 export const IssueEmbedUpgradeCard: React.FC<any> = (props) => {
-  const { toggleProPlanModal } = useWorkspaceSubscription();
+  const { togglePaidPlanModal } = useWorkspaceSubscription();
   return (
     <div
       className={`${props.selected ? "border-custom-primary-200 border-[2px]" : ""
@@ -23,7 +23,7 @@ export const IssueEmbedUpgradeCard: React.FC<any> = (props) => {
               Embed and access issues in pages seamlessly, upgrade to plane pro now.
             </div>
           </div>
-          <Button variant="primary" onClick={() => toggleProPlanModal(true)}>
+          <Button variant="primary" onClick={() => togglePaidPlanModal(true)}>
             Upgrade
           </Button>
         </div>

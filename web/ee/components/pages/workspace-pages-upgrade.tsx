@@ -15,11 +15,11 @@ export const WorkspacePagesUpgrade: FC = observer(() => {
   // router
   const { workspaceSlug } = useParams();
   // states
-  const [isProPlanModalOpen, toggleProPlanModal] = useState(false);
+  const [isPaidPlanModalOpen, togglePaidPlanModal] = useState(false);
 
   return (
     <>
-      <ProPlanCloudUpgradeModal isOpen={isProPlanModalOpen} handleClose={() => toggleProPlanModal(false)} />
+      <ProPlanCloudUpgradeModal isOpen={isPaidPlanModalOpen} handleClose={() => togglePaidPlanModal(false)} />
       <div className="relative flex h-screen w-full items-center justify-center overflow-hidden">
         <div className="text-center px-4">
           <h3 className="text-2xl font-medium mb-4">Workspace Pages are on our Pro plan.</h3>
@@ -32,7 +32,7 @@ export const WorkspacePagesUpgrade: FC = observer(() => {
             >
               Go Home
             </Link>
-            <Button onClick={() => toggleProPlanModal(true)}>Upgrade</Button>
+            <Button onClick={() => togglePaidPlanModal(true)}>Upgrade</Button>
           </div>
         </div>
       </div>

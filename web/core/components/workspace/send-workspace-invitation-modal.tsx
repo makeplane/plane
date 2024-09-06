@@ -2,22 +2,28 @@
 
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
+import useSWR from "swr";
 import { Plus, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 import { IWorkspaceBulkInviteFormData } from "@plane/types";
 // ui
-import { Button, CustomSelect, Input } from "@plane/ui";
+import { Button, CustomSelect, Input, Loader } from "@plane/ui";
 // constants
 import { EUserWorkspaceRoles, ROLE } from "@/constants/workspace";
 // hooks
 import { useUser } from "@/hooks/store";
-// types
+// plane web services
+import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
+// plane web services
+import selfHostedSubscriptionService from "@/plane-web/services/self-hosted-subscription.service";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: IWorkspaceBulkInviteFormData) => Promise<void> | undefined;
+  toggleUpdateWorkspaceSeatsModal: () => void;
 };
 
 type EmailRole = {
@@ -39,11 +45,25 @@ const defaultValues: FormValues = {
 };
 
 export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) => {
-  const { isOpen, onClose, onSubmit } = props;
+  const { isOpen, onClose, onSubmit, toggleUpdateWorkspaceSeatsModal } = props;
+  // router
+  const { workspaceSlug } = useParams();
   // mobx store
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
+  // plane web hooks
+  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
+  // derived values
+  const isSelfHostedProWorkspace = subscriptionDetail?.is_self_managed && subscriptionDetail?.product === "PRO";
+  // swr
+  const {
+    isLoading: isMemberInviteCheckLoading,
+    data: memberInviteCheckData,
+    mutate: mutateMemberInviteCheck,
+  } = useSWR(workspaceSlug ? `SELF_HOSTED_MEMBER_INVITE_CHECK_${workspaceSlug}` : null, () =>
+    workspaceSlug ? selfHostedSubscriptionService.memberInviteCheck(workspaceSlug?.toString()) : null
+  );
   // form info
   const {
     control,
@@ -76,9 +96,24 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
     });
   };
 
+  const handleToggleUpdateWorkspaceSeatsModal = () => {
+    onClose();
+    toggleUpdateWorkspaceSeatsModal();
+  };
+
   useEffect(() => {
     if (fields.length === 0) append([{ email: "", role: 15 }]);
   }, [fields, append]);
+
+  useEffect(() => {
+    if (isOpen) mutateMemberInviteCheck();
+  }, [isOpen, mutateMemberInviteCheck]);
+
+  const isInviteDisabled = isSelfHostedProWorkspace
+    ? isMemberInviteCheckLoading ||
+      !memberInviteCheckData?.invite_allowed ||
+      (memberInviteCheckData.allowed_admin_members === 0 && memberInviteCheckData.allowed_guests === 0)
+    : false;
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
@@ -113,12 +148,36 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
                     if (e.code === "Enter") e.preventDefault();
                   }}
                 >
-                  <div className="space-y-5">
+                  <div className="space-y-4">
                     <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
                       Invite people to collaborate
                     </Dialog.Title>
-                    <div className="mt-2">
-                      <p className="text-sm text-custom-text-200">Invite members to work on your workspace.</p>
+                    <div>
+                      {isSelfHostedProWorkspace ? (
+                        <>
+                          {isMemberInviteCheckLoading ? (
+                            <Loader className="w-full h-10">
+                              <Loader.Item height="100%" width="100%" />
+                            </Loader>
+                          ) : (
+                            <p className="text-sm text-custom-text-200">
+                              You are allowed to invite <b>{memberInviteCheckData?.allowed_admin_members}</b> admin(s)
+                              or member(s) and <b>{memberInviteCheckData?.allowed_guests}</b> guest(s) or viewer(s) to
+                              this workspace. To invite more, please purchase{" "}
+                              <Button
+                                variant="link-neutral"
+                                onClick={handleToggleUpdateWorkspaceSeatsModal}
+                                className="inline p-0 hover:underline"
+                              >
+                                additional seats
+                              </Button>
+                              .
+                            </p>
+                          )}
+                        </>
+                      ) : (
+                        <p className="text-sm text-custom-text-200">Invite members to work on your workspace.</p>
+                      )}
                     </div>
 
                     <div className="mb-3 space-y-4">
@@ -217,7 +276,13 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
                       <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                         Cancel
                       </Button>
-                      <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        type="submit"
+                        loading={isSubmitting}
+                        disabled={isInviteDisabled}
+                      >
                         {isSubmitting ? "Sending invitation" : "Send invitation"}
                       </Button>
                     </div>

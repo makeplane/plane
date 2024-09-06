@@ -106,7 +106,10 @@ class WorkspaceInvitationsViewset(BaseViewSet):
 
         # Get current existing workspace invitations where accepted is False
         allowed, _, _ = workspace_member_check(
-            slug=slug, requested_invite_list=emails, requested_role=False
+            slug=slug,
+            requested_invite_list=emails,
+            requested_role=False,
+            current_role=False,
         )
 
         if not allowed:
@@ -169,12 +172,15 @@ class WorkspaceInvitationsViewset(BaseViewSet):
         )
 
     def partial_update(self, request, slug, pk):
-
+        workspace_member_invite = WorkspaceMemberInvite.objects.get(
+            pk=pk, workspace__slug=slug
+        )
         # Check if the role is being updated
         if "role" in request.data:
             allowed, _, _ = workspace_member_check(
                 slug=slug,
                 requested_role=request.data["role"],
+                current_role=workspace_member_invite.role,
                 requested_invite_list=[],
             )
             if not allowed:

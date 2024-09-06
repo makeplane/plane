@@ -1,5 +1,5 @@
 /* eslint-disable no-useless-catch */
-import { set } from "lodash";
+import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // types
 import { IWorkspaceProductSubscription } from "@plane/types";
@@ -16,10 +16,11 @@ type TWorkspaceSubscriptionMap = {
 
 export interface IWorkspaceSubscriptionStore {
   subscribedPlan: TWorkspaceSubscriptionMap;
-  isProPlanModalOpen: boolean;
+  isPaidPlanModalOpen: boolean;
   isSuccessPlanModalOpen: boolean;
   currentWorkspaceSubscribedPlanDetail: IWorkspaceProductSubscription | undefined;
-  toggleProPlanModal: (value?: boolean) => void;
+  updateSubscribedPlan: (workspaceSlug: string, payload: Partial<IWorkspaceProductSubscription>) => void;
+  togglePaidPlanModal: (value?: boolean) => void;
   handleSuccessModalToggle: (isOpen?: boolean) => void;
   fetchWorkspaceSubscribedPlan: (workspaceSlug: string) => Promise<IWorkspaceProductSubscription>;
   refreshWorkspaceSubscribedPlan: (workspaceSlug: string) => Promise<void>;
@@ -28,16 +29,17 @@ export interface IWorkspaceSubscriptionStore {
 
 export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
   subscribedPlan: TWorkspaceSubscriptionMap = {};
-  isProPlanModalOpen = false;
+  isPaidPlanModalOpen = false;
   isSuccessPlanModalOpen: boolean = false;
 
   constructor(private rootStore: RootStore) {
     makeObservable(this, {
       subscribedPlan: observable,
-      isProPlanModalOpen: observable.ref,
+      isPaidPlanModalOpen: observable.ref,
       isSuccessPlanModalOpen: observable,
       currentWorkspaceSubscribedPlanDetail: computed,
-      toggleProPlanModal: action,
+      updateSubscribedPlan: action,
+      togglePaidPlanModal: action,
       fetchWorkspaceSubscribedPlan: action,
       refreshWorkspaceSubscribedPlan: action,
       freeTrialSubscription: action,
@@ -49,8 +51,15 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
     return this.subscribedPlan[this.rootStore.router.workspaceSlug] || undefined;
   }
 
-  toggleProPlanModal = (value?: boolean) => {
-    this.isProPlanModalOpen = value ?? !this.isProPlanModalOpen;
+  updateSubscribedPlan = (workspaceSlug: string, payload: Partial<IWorkspaceProductSubscription>) => {
+    set(this.subscribedPlan, workspaceSlug, {
+      ...this.subscribedPlan[workspaceSlug],
+      ...payload,
+    });
+  };
+
+  togglePaidPlanModal = (value?: boolean) => {
+    this.isPaidPlanModalOpen = value ?? !this.isPaidPlanModalOpen;
   };
 
   handleSuccessModalToggle = (isOpen?: boolean) => {
@@ -64,7 +73,7 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
         set(this.subscribedPlan, workspaceSlug, {
           product: response?.product ?? "FREE",
           is_cancelled: response?.is_cancelled ?? false,
-          is_self_managed: response?.is_self_managed ?? false,
+          is_self_managed: response?.is_self_managed ?? true,
           interval: response?.interval ?? null,
           current_period_end_date: response?.current_period_end_date,
           is_offline_payment: response?.is_offline_payment ?? false,
@@ -87,7 +96,7 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
         set(this.subscribedPlan, workspaceSlug, {
           product: "FREE",
           is_cancelled: false,
-          is_self_managed: false,
+          is_self_managed: true,
           interval: null,
           current_period_end_date: null,
           show_payment_button: true,

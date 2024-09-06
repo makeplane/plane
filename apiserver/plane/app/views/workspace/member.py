@@ -145,6 +145,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             allowed, _, _ = workspace_member_check(
                 slug=slug,
                 requested_role=request.data.get("role"),
+                current_role=workspace_member.role,
                 requested_invite_list=[],
             )
             if not allowed:

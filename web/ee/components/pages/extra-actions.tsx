@@ -27,7 +27,7 @@ export const PageDetailsHeaderExtraActions = observer(() => {
   const { anchor, isCurrentUserOwner } = usePage(pageId.toString());
   const { fetchProjectPagePublishSettings, getPagePublishSettings, publishProjectPage, unpublishProjectPage } =
     usePublishPage();
-  const { toggleProPlanModal } = useWorkspaceSubscription();
+  const { togglePaidPlanModal } = useWorkspaceSubscription();
   const isPagePublishEnabled = useFlag(workspaceSlug?.toString(), "PAGE_PUBLISH");
   // derived values
   const isDeployed = !!anchor;
@@ -40,7 +40,7 @@ export const PageDetailsHeaderExtraActions = observer(() => {
 
   if (!isPagePublishEnabled)
     return (
-      <Button variant="accent-primary" size="sm" onClick={() => toggleProPlanModal(true)}>
+      <Button variant="accent-primary" size="sm" onClick={() => togglePaidPlanModal(true)}>
         Upgrade to publish
       </Button>
     );

@@ -51,7 +51,9 @@ def handle_free_plan_update_case(slug, requested_role, workspace_license):
     return True, 0, 0
 
 
-def handle_member_update_case(requested_role, slug, workspace_license):
+def handle_member_update_case(
+    requested_role, slug, workspace_license, current_role
+):
     """Handle the member update case for the workspace"""
     # Get the current admin and member count
     active_admin_member_count = WorkspaceMember.objects.filter(
@@ -93,32 +95,38 @@ def handle_member_update_case(requested_role, slug, workspace_license):
 
     # Check if the requested role is admin
     if int(requested_role) > 10:
-        if total_admin_member_seats + 1 <= workspace_license.purchased_seats:
-            return True, 0, 0
+        # Check the current role of the user if the user is already an admin or member the count does not change
+        if current_role > 10:
+            return (
+                total_admin_member_seats <= workspace_license.purchased_seats,
+                0,
+                0,
+            )
         else:
-            return False, 0, 0
+            return (
+                total_admin_member_seats + 1
+                <= workspace_license.purchased_seats,
+                0,
+                0,
+            )
 
+    #  Check if the requested role is guest or viewer
     if int(requested_role) <= 10:
-        if (
-            total_guest_viewer_seats + 1
-            <= 5 * workspace_license.purchased_seats
-        ):
-            return True, 0, 0
+        # Check the current role of the user if the user is already a guest or viewer the count does not change
+        if current_role <= 10:
+            return (
+                total_guest_viewer_seats
+                <= 5 * workspace_license.purchased_seats,
+                0,
+                0,
+            )
         else:
-            return False, 0, 0
-    # Check if the total guest viewer seats are more than the total purchased seats
-    if (
-        int(requested_role) <= 10
-        and total_guest_viewer_seats >= 5 * workspace_license.purchased_seats
-    ):
-        # Check if the requested role is guest or viewer
-        if (
-            total_guest_viewer_seats + 1
-            < 5 * workspace_license.purchased_seats
-        ):
-            return True, 0, 0
-        else:
-            return False, 0, 0
+            return (
+                total_guest_viewer_seats + 1
+                <= 5 * workspace_license.purchased_seats,
+                0,
+                0,
+            )
 
 
 def handle_member_invite_case(requested_invite_list, slug, workspace_license):
@@ -304,7 +312,11 @@ def handle_invite_check_case(slug, workspace_license):
 
 
 def handle_cloud_payments(
-    slug, requested_invite_list, requested_role, workspace_license
+    slug,
+    requested_invite_list,
+    requested_role,
+    workspace_license,
+    current_role,
 ):
     """
     Case1: Free Plan and Trial Plan
@@ -365,6 +377,7 @@ def handle_cloud_payments(
                 requested_role=requested_role,
                 slug=slug,
                 workspace_license=workspace_license,
+                current_role=current_role,
             )
 
         if not requested_invite_list and not requested_role:
@@ -374,7 +387,11 @@ def handle_cloud_payments(
 
 
 def handle_self_managed_payments(
-    slug, requested_invite_list, requested_role, workspace_license
+    slug,
+    requested_invite_list,
+    requested_role,
+    workspace_license,
+    current_role,
 ):
     """
     Handle the self managed payment cases
@@ -411,6 +428,7 @@ def handle_self_managed_payments(
             # Case 2b
             return handle_member_update_case(
                 requested_role=requested_role,
+                current_role=current_role,
                 slug=slug,
                 workspace_license=workspace_license,
             )
@@ -421,7 +439,9 @@ def handle_self_managed_payments(
             )
 
 
-def workspace_member_check(slug, requested_invite_list, requested_role):
+def workspace_member_check(
+    slug, requested_invite_list, requested_role, current_role
+):
     """
     Check if can be invited based on the current members list and the current invite list
     """
@@ -444,6 +464,7 @@ def workspace_member_check(slug, requested_invite_list, requested_role):
             slug=slug,
             requested_invite_list=requested_invite_list,
             requested_role=requested_role,
+            current_role=current_role,
             workspace_license=workspace_license,
         )
     else:
@@ -451,5 +472,6 @@ def workspace_member_check(slug, requested_invite_list, requested_role):
             slug=slug,
             requested_invite_list=requested_invite_list,
             requested_role=requested_role,
+            current_role=current_role,
             workspace_license=workspace_license,
         )

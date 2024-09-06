@@ -64,14 +64,13 @@ export class SelfHostedSubscriptionService extends APIService {
    * @returns { Promise<{ seats: number }> }
    */
   async updateWorkspaceSeats(workspaceSlug: string, quantity: number): Promise<{ seats: number }> {
-    try {
-      const { data } = await this.post(`/api/payments/workspaces/${workspaceSlug}/subscriptions/seats/`, {
-        quantity,
+    return this.post(`/api/payments/workspaces/${workspaceSlug}/subscriptions/seats/`, {
+      quantity,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
       });
-      return data;
-    } catch (error) {
-      throw error;
-    }
   }
 }
 

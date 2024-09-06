@@ -20,7 +20,7 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
   const {
     userProfile: { data: userProfile },
   } = useUser();
-  const { toggleProPlanModal } = useWorkspaceSubscription();
+  const { togglePaidPlanModal } = useWorkspaceSubscription();
 
   const isDarkMode = userProfile?.theme.theme === "dark";
 
@@ -40,7 +40,7 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <Button variant="primary" onClick={() => toggleProPlanModal(true)}>
+            <Button variant="primary" onClick={() => togglePaidPlanModal(true)}>
               <Crown className="h-3.5 w-3.5" />
               Upgrade
             </Button>

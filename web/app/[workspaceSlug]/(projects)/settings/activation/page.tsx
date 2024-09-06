@@ -28,10 +28,11 @@ const ActivationPage = observer(() => {
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Activation` : undefined;
   const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
   const isSelfManaged = !!currentWorkspaceSubscribedPlan?.is_self_managed;
+  const isLicenseActivated = licenseActivationByWorkspaceSlug();
+  const isAccessRestricted =
+    !workspaceSlug || !currentWorkspace?.id || !isSelfManaged || !isAdmin || isLicenseActivated;
 
-  if (!workspaceSlug || !currentWorkspace?.id || !isSelfManaged) return <></>;
-
-  if (!isAdmin && licenseActivationByWorkspaceSlug())
+  if (isAccessRestricted)
     return (
       <>
         <PageHead title={pageTitle} />

@@ -1,6 +1,7 @@
 export * from "./plane-one-modal";
 export * from "./plane-one-billing";
 export * from "./plane-cloud-billing";
+export * from "./plane-self-hosted-billing";
 export * from "./plane-one-badge";
 export * from "./cloud-badge";
 export * from "./self-managed-badge";

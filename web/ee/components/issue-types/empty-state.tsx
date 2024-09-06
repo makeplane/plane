@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 // ui
-import { AlertModalCore, Button, setToast, TOAST_TYPE } from "@plane/ui";
+import { AlertModalCore, Button, getButtonStyling, setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // plane web hooks
@@ -21,10 +21,11 @@ export const IssueTypeEmptyState: FC<TIssueTypeEmptyState> = observer((props) =>
   const { resolvedTheme } = useTheme();
   // store hooks
   const { enableIssueTypes } = useIssueTypes();
-  const { toggleProPlanModal } = useWorkspaceSubscription();
+  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, togglePaidPlanModal } = useWorkspaceSubscription();
   // states
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [enableIssueTypeConfirmation, setEnableIssueTypeConfirmation] = useState<boolean>(false);
+  const isSelfManagedUpgradeDisabled = subscriptionDetail?.is_self_managed && subscriptionDetail?.product !== "FREE";
   // derived values
   const isIssueTypeSettingsEnabled = useFlag(workspaceSlug, "ISSUE_TYPE_SETTINGS");
   const resolvedEmptyStatePath = `/empty-state/issue-types/issue-type-${resolvedTheme === "light" ? "light" : "dark"}.svg`;
@@ -83,7 +84,11 @@ export const IssueTypeEmptyState: FC<TIssueTypeEmptyState> = observer((props) =>
         <div className={cn("flex flex-col gap-5 md:min-w-[24rem] max-w-[45rem]")}>
           <div className="flex flex-col gap-1.5 flex-shrink">
             <h3 className="text-xl font-semibold">
-              {isIssueTypeSettingsEnabled ? "Enable Issue Types" : "Upgrade to enable Issue Types."}
+              {isIssueTypeSettingsEnabled
+                ? "Enable Issue Types"
+                : isSelfManagedUpgradeDisabled
+                  ? "Get Pro to enable Issue Types."
+                  : "Upgrade to enable Issue Types."}
             </h3>
             <p className="text-sm text-custom-text-200">
               Shape issues to your work with Issue Types. Customize with icons, backgrounds, and properties and
@@ -103,8 +108,12 @@ export const IssueTypeEmptyState: FC<TIssueTypeEmptyState> = observer((props) =>
               <Button disabled={isLoading} onClick={() => setEnableIssueTypeConfirmation(true)}>
                 Enable
               </Button>
+            ) : isSelfManagedUpgradeDisabled ? (
+              <a href="https://prime.plane.so/" target="_blank" className={getButtonStyling("primary", "md")}>
+                Get Pro
+              </a>
             ) : (
-              <Button disabled={isLoading} onClick={() => toggleProPlanModal(true)}>
+              <Button disabled={isLoading} onClick={() => togglePaidPlanModal(true)}>
                 Upgrade
               </Button>
             )}

@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import useSWR from "swr";
 import { Search } from "lucide-react";
 // types
 import { IWorkspaceBulkInviteFormData } from "@plane/types";
@@ -20,9 +19,10 @@ import { cn } from "@/helpers/common.helper";
 import { getUserRole } from "@/helpers/user.helper";
 // hooks
 import { useEventTracker, useMember, useUser, useWorkspace } from "@/hooks/store";
-// services
+// plane web components
 import { UpdateWorkspaceSeatsModal } from "@/plane-web/components/workspace";
-import selfHostedSubscriptionService from "@/plane-web/services/self-hosted-subscription.service";
+// plane web hooks
+import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 const WorkspaceMembersSettingsPage = observer(() => {
   // states
@@ -43,11 +43,9 @@ const WorkspaceMembersSettingsPage = observer(() => {
     workspace: { inviteMembersToWorkspace },
   } = useMember();
   const { currentWorkspace } = useWorkspace();
-  // swr
-  const { data: memberInviteCheckData } = useSWR(
-    workspaceSlug ? `SELF_HOSTED_MEMBER_INVITE_CHECK_${workspaceSlug}` : null,
-    () => (workspaceSlug ? selfHostedSubscriptionService.memberInviteCheck(workspaceSlug?.toString()) : null)
-  );
+  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
+  // derived values
+  const isSelfHostedProWorkspace = subscriptionDetail?.is_self_managed && subscriptionDetail?.product === "PRO";
 
   const handleWorkspaceInvite = (data: IWorkspaceBulkInviteFormData) => {
     if (!workspaceSlug) return;
@@ -89,6 +87,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
           title: "Error!",
           message: `${err.error ?? "Something went wrong. Please try again."}`,
         });
+        throw err;
       });
   };
 
@@ -100,16 +99,6 @@ const WorkspaceMembersSettingsPage = observer(() => {
     return <NotAuthorizedView section="settings" />;
   }
 
-  if (!memberInviteCheckData) return null;
-
-  const handleAddMember = () => {
-    if (memberInviteCheckData?.invite_allowed) {
-      setInviteModal(true);
-    } else {
-      setUpdateWorkspaceSeatsModal(true);
-    }
-  };
-
   return (
     <>
       <PageHead title={pageTitle} />
@@ -117,11 +106,14 @@ const WorkspaceMembersSettingsPage = observer(() => {
         isOpen={inviteModal}
         onClose={() => setInviteModal(false)}
         onSubmit={handleWorkspaceInvite}
+        toggleUpdateWorkspaceSeatsModal={() => setUpdateWorkspaceSeatsModal(true)}
       />
-      <UpdateWorkspaceSeatsModal
-        isOpen={updateWorkspaceSeatsModal}
-        onClose={() => setUpdateWorkspaceSeatsModal(false)}
-      />
+      {isSelfHostedProWorkspace && (
+        <UpdateWorkspaceSeatsModal
+          isOpen={updateWorkspaceSeatsModal}
+          onClose={() => setUpdateWorkspaceSeatsModal(false)}
+        />
+      )}
       <section
         className={cn("w-full overflow-y-auto", {
           "opacity-60": !canPerformWorkspaceMemberActions,
@@ -139,13 +131,13 @@ const WorkspaceMembersSettingsPage = observer(() => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          {canPerformWorkspaceAdminActions && (
+          {isSelfHostedProWorkspace && canPerformWorkspaceAdminActions && (
             <Button variant="primary" size="sm" onClick={() => setUpdateWorkspaceSeatsModal(true)}>
-              Add seats
+              Add more seats
             </Button>
           )}
           {canPerformWorkspaceAdminActions && (
-            <Button variant="primary" size="sm" onClick={handleAddMember}>
+            <Button variant="primary" size="sm" onClick={() => setInviteModal(true)}>
               Add member
             </Button>
           )}

@@ -194,6 +194,6 @@ class PurchaseSubscriptionSeatEndpoint(BaseAPIView):
                 )
             log_exception(e)
             return Response(
-                {"error": "error in purchasing workspace subscription"},
+                {"error": "Error in purchasing workspace subscription"},
                 status=status.HTTP_400_BAD_REQUEST,
             )

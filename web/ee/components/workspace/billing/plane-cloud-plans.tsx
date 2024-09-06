@@ -48,7 +48,7 @@ const enterprisePlanFeatures = [
 export const PlaneCloudPlans: FC = observer(() => {
   // hooks
   const { sidebarCollapsed } = useAppTheme();
-  const { toggleProPlanModal } = useWorkspaceSubscription();
+  const { togglePaidPlanModal } = useWorkspaceSubscription();
 
   const planePlans: TPlanCard[] = [
     {
@@ -96,7 +96,7 @@ export const PlaneCloudPlans: FC = observer(() => {
       callToAction: {
         variant: "button",
         label: "Get Pro",
-        onClick: () => toggleProPlanModal(true),
+        onClick: () => togglePaidPlanModal(true),
       },
       baseFeature: "Everything in One +",
       features: proPlanFeatures,

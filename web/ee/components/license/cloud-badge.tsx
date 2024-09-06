@@ -22,9 +22,9 @@ export const CloudEditionBadge = observer(() => {
   // hooks
   const { captureEvent } = useEventTracker();
   const {
-    isProPlanModalOpen,
+    isPaidPlanModalOpen,
     currentWorkspaceSubscribedPlanDetail: subscriptionDetail,
-    toggleProPlanModal,
+    togglePaidPlanModal,
     handleSuccessModalToggle,
   } = useWorkspaceSubscription();
 
@@ -37,7 +37,7 @@ export const CloudEditionBadge = observer(() => {
   }, [pathname, router, searchParams, subscriptionDetail?.product, handleSuccessModalToggle]);
 
   const handleProPlanPurchaseModalOpen = () => {
-    toggleProPlanModal(true);
+    togglePaidPlanModal(true);
     captureEvent("pro_plan_modal_opened", {});
   };
 
@@ -62,8 +62,8 @@ export const CloudEditionBadge = observer(() => {
   return (
     <>
       <ProPlanCloudUpgradeModal
-        isOpen={isProPlanModalOpen}
-        handleClose={() => toggleProPlanModal(false)}
+        isOpen={isPaidPlanModalOpen}
+        handleClose={() => togglePaidPlanModal(false)}
         handleSuccessModal={() => handleSuccessModalToggle(true)}
       />
 

@@ -1,18 +1,18 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { ScrollText } from "lucide-react";
-// hooks
-import { useInstance } from "@/hooks/store";
+// plane web hooks
+import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // local components
 import { PlaneOneModal } from "../license";
 
 export const PlaneChangelogs = observer(() => {
   // store hooks
-  const { instance } = useInstance();
+  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
   // states
   const [isPlaneOneModalOpen, setIsPlaneOneModalOpen] = useState(false);
 
-  if (instance?.product === "plane-one") {
+  if (subscriptionDetail?.product === "ONE") {
     return (
       <span>
         <PlaneOneModal isOpen={isPlaneOneModalOpen} handleClose={() => setIsPlaneOneModalOpen(false)} />

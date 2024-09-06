@@ -1,6 +1,5 @@
 // ce constants
 import { WORKSPACE_SETTINGS as WORKSPACE_SETTINGS_CE } from "ce/constants/workspace";
-import { Timer } from "lucide-react";
 // components
 import { SettingIcon } from "@/components/icons/attachment";
 // constants
@@ -32,7 +31,7 @@ export const WORKSPACE_SETTINGS = {
     href: `/settings/worklogs`,
     access: EUserWorkspaceRoles.ADMIN,
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/worklogs/`,
-    Icon: Timer,
+    Icon: SettingIcon,
   },
   activation: {
     key: "activation",
@@ -40,7 +39,7 @@ export const WORKSPACE_SETTINGS = {
     href: `/settings/activation`,
     access: EUserWorkspaceRoles.ADMIN,
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/activation/`,
-    Icon: Timer,
+    Icon: SettingIcon,
   },
   project_states: {
     key: "project_states",
@@ -48,7 +47,7 @@ export const WORKSPACE_SETTINGS = {
     href: `/settings/project-states`,
     access: EUserWorkspaceRoles.ADMIN,
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/project-states/`,
-    Icon: Timer,
+    Icon: SettingIcon,
   },
 };
 

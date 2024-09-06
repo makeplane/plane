@@ -22,7 +22,10 @@ class WorkspaceInviteCheckEndpoint(BaseAPIView):
         # Get the current invite list
         invite_allowed, allowed_members, allowed_guests = (
             workspace_member_check(
-                slug=slug, requested_invite_list=[], requested_role=False
+                slug=slug,
+                requested_invite_list=[],
+                requested_role=False,
+                current_role=False,
             )
         )
 

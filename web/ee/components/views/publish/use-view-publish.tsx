@@ -10,7 +10,7 @@ export const useViewPublish = (isPublished: boolean, isAuthorized: boolean) => {
   // router
   const { workspaceSlug } = useParams();
   // store hooks
-  const { toggleProPlanModal } = useWorkspaceSubscription();
+  const { togglePaidPlanModal } = useWorkspaceSubscription();
   const isViewsPublishEnabled = useFlag(workspaceSlug?.toString(), "VIEW_PUBLISH");
 
   const publishContextMenu = {
@@ -22,7 +22,7 @@ export const useViewPublish = (isPublished: boolean, isAuthorized: boolean) => {
 
   const upgradeContextMenu = {
     key: "publish",
-    action: () => toggleProPlanModal(true),
+    action: () => togglePaidPlanModal(true),
     title: "Upgrade to publish",
     icon: Share2,
   };
@@ -36,7 +36,7 @@ export const useViewPublish = (isPublished: boolean, isAuthorized: boolean) => {
 
   return {
     isPublishModalOpen: false,
-    setPublishModalOpen: toggleProPlanModal,
+    setPublishModalOpen: togglePaidPlanModal,
     publishContextMenu: isAuthorized ? upgradeContextMenu : undefined,
   };
 };
