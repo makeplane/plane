@@ -17,6 +17,7 @@ export interface IDropdownProps {
   optionsClassName?: string;
   placement?: Placement;
   tabIndex?: number;
+  useCaptureForOutsideClick?: boolean;
 }
 
 export interface ICustomMenuDropdownProps extends IDropdownProps {

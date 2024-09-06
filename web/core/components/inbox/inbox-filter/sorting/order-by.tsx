@@ -16,19 +16,27 @@ export const InboxIssueOrderByDropdown: FC = observer(() => {
   const { inboxSorting, handleInboxIssueSorting } = useProjectInbox();
   const orderByDetails =
     INBOX_ISSUE_ORDER_BY_OPTIONS.find((option) => inboxSorting?.order_by?.includes(option.key)) || undefined;
+  const smallButton =
+    inboxSorting?.sort_by === "asc" ? <ArrowUpWideNarrow className="h-3 " /> : <ArrowDownWideNarrow className="h-3 " />;
+  const largeButton = (
+    <div className={cn(getButtonStyling("neutral-primary", "sm"), "text-custom-text-300")}>
+      {inboxSorting?.sort_by === "asc" ? (
+        <ArrowUpWideNarrow className="h-3 " />
+      ) : (
+        <ArrowDownWideNarrow className="h-3 " />
+      )}
+      {orderByDetails?.label || "Order By"}
 
+      <ChevronDown className="h-3 w-3" strokeWidth={2} />
+    </div>
+  );
   return (
     <CustomMenu
       customButton={
-        <div className={cn(getButtonStyling("neutral-primary", "sm"), "px-2 text-custom-text-300")}>
-          {inboxSorting?.sort_by === "asc" ? (
-            <ArrowUpWideNarrow className="h-3 w-3" />
-          ) : (
-            <ArrowDownWideNarrow className="h-3 w-3" />
-          )}
-          {orderByDetails?.label || "Order By"}
-          <ChevronDown className="h-3 w-3" strokeWidth={2} />
-        </div>
+        <>
+          <div className="hidden 2xl:flex">{largeButton}</div>
+          <div className="flex 2xl:hidden">{smallButton}</div>
+        </>
       }
       placement="bottom-end"
       maxHeight="lg"

@@ -14,6 +14,7 @@ import {
 } from "@plane/types";
 // constants
 // hooks
+import { ContentWrapper } from "@plane/ui";
 import { useCycle, useKanbanView, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // types
@@ -134,7 +135,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
   const isGroupByCreatedBy = group_by === "created_by";
 
   return (
-    <div className={`relative w-full flex gap-2 px-2 ${sub_group_by ? "h-full" : "h-full"}`}>
+    <ContentWrapper className={`flex-row relative gap-4`}>
       {list &&
         list.length > 0 &&
         list.map((subList: IGroupByColumn) => {
@@ -149,7 +150,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
               } `}
             >
               {sub_group_by === null && (
-                <div className="sticky top-0 z-[2] w-full flex-shrink-0 bg-custom-background-90 py-1">
+                <div className="sticky top-0 z-[2] w-full flex-shrink-0 bg-custom-background-90 py-1 mb-1">
                   <HeaderGroupByCard
                     sub_group_by={sub_group_by}
                     group_by={group_by}
@@ -193,6 +194,6 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
             </div>
           );
         })}
-    </div>
+    </ContentWrapper>
   );
 });

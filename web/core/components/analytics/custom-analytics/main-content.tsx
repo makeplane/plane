@@ -51,7 +51,7 @@ export const CustomAnalyticsMainContent: React.FC<Props> = (props) => {
             </div>
           )
         ) : (
-          <Loader className="space-y-6 p-5">
+          <Loader className="space-y-6">
             <Loader.Item height="300px" />
             <Loader className="space-y-4">
               <Loader.Item height="30px" />

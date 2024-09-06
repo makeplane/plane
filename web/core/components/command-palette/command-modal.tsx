@@ -28,6 +28,8 @@ import { EmptyState } from "@/components/empty-state";
 import { EmptyStateType } from "@/constants/empty-state";
 // fetch-keys
 import { ISSUE_DETAILS } from "@/constants/fetch-keys";
+// helpers
+import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -79,6 +81,8 @@ export const CommandModal: React.FC = observer(() => {
   const page = pages[pages.length - 1];
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
+  const { baseTabIndex } = getTabIndex(undefined, isMobile);
 
   // TODO: update this to mobx store
   const { data: issueDetails } = useSWR(
@@ -238,7 +242,7 @@ export const CommandModal: React.FC = observer(() => {
                         value={searchTerm}
                         onValueChange={(e) => setSearchTerm(e)}
                         autoFocus
-                        tabIndex={1}
+                        tabIndex={baseTabIndex}
                       />
                     </div>
 

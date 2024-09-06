@@ -20,10 +20,17 @@ interface IIssuePeekOverview {
   embedRemoveCurrentNotification?: () => void;
   is_archived?: boolean;
   is_draft?: boolean;
+  shouldReplaceIssueOnFetch?: boolean;
 }
 
 export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
-  const { embedIssue = false, embedRemoveCurrentNotification, is_archived = false, is_draft = false } = props;
+  const {
+    embedIssue = false,
+    embedRemoveCurrentNotification,
+    is_archived = false,
+    is_draft = false,
+    shouldReplaceIssueOnFetch = true,
+  } = props;
   // router
   const pathname = usePathname();
   const {
@@ -60,7 +67,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             workspaceSlug,
             projectId,
             issueId,
-            is_archived ? "ARCHIVED" : is_draft ? "DRAFT" : "DEFAULT"
+            is_archived ? "ARCHIVED" : is_draft ? "DRAFT" : "DEFAULT",
+            shouldReplaceIssueOnFetch
           );
           setLoader(false);
           setError(false);

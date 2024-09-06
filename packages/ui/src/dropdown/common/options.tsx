@@ -26,6 +26,7 @@ export const DropdownOptions: React.FC<IMultiSelectDropdownOptions | ISingleSele
     value,
     renderItem,
     loader,
+    isMobile = false,
   } = props;
   return (
     <>
@@ -38,6 +39,7 @@ export const DropdownOptions: React.FC<IMultiSelectDropdownOptions | ISingleSele
           inputPlaceholder={inputPlaceholder}
           inputClassName={inputClassName}
           inputContainerClassName={inputContainerClassName}
+          isMobile={isMobile}
         />
       )}
       <div className="mt-2 max-h-48 space-y-1 overflow-y-scroll">

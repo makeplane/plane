@@ -8,6 +8,7 @@ import { FilterOption } from "@/components/issues";
 // constants
 import { EViewAccess } from "@/constants/views";
 import { FilterByAccess } from "@/plane-web/components/views/filters/access-filter";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
   filters: TViewFilters;
@@ -19,6 +20,8 @@ export const ViewFiltersSelection: React.FC<Props> = observer((props) => {
   const { filters, handleFiltersUpdate, memberIds } = props;
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
+  // store
+  const { isMobile } = usePlatformOS();
 
   // handles filter update
   const handleFilters = (key: keyof TViewFilterProps, value: boolean | string | EViewAccess | string[]) => {
@@ -55,7 +58,7 @@ export const ViewFiltersSelection: React.FC<Props> = observer((props) => {
             placeholder="Search"
             value={filtersSearchQuery}
             onChange={(e) => setFiltersSearchQuery(e.target.value)}
-            autoFocus
+            autoFocus={!isMobile}
           />
           {filtersSearchQuery !== "" && (
             <button type="button" className="grid place-items-center" onClick={() => setFiltersSearchQuery("")}>
