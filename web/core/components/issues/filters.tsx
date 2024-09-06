@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { observer } from "mobx-react";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
@@ -29,7 +30,7 @@ type Props = {
   workspaceSlug: string;
   canUserCreateIssue: boolean | undefined;
 };
-const HeaderFilters = ({ currentProjectDetails, projectId, workspaceSlug, canUserCreateIssue }: Props) => {
+const HeaderFilters = observer(({ currentProjectDetails, projectId, workspaceSlug, canUserCreateIssue }: Props) => {
   // states
   const [analyticsModal, setAnalyticsModal] = useState(false);
   // store hooks
@@ -140,6 +141,6 @@ const HeaderFilters = ({ currentProjectDetails, projectId, workspaceSlug, canUse
       )}
     </>
   );
-};
+});
 
 export default HeaderFilters;
