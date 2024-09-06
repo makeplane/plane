@@ -19,7 +19,14 @@ export const SPECIAL_ORDER_BY = {
   "-state__name": "states",
 };
 export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: string, queries: any) => {
-  const { cursor, per_page, group_by, sub_group_by, order_by, ...otherProps } = translateQueryParams(queries);
+  const {
+    cursor,
+    per_page,
+    group_by,
+    sub_group_by,
+    order_by = "created_at",
+    ...otherProps
+  } = translateQueryParams(queries);
 
   const [pageSize, page, offset] = cursor.split(":");
 

@@ -4,7 +4,7 @@ import { issueSchema } from "./schemas";
 import { wrapDateTime } from "./utils";
 
 export const translateQueryParams = (queries: any) => {
-  const { group_by, sub_group_by, labels, assignees, state, cycle, module, priority, ...otherProps } = queries;
+  const { group_by, sub_group_by, labels, assignees, state, cycle, module, priority, type, ...otherProps } = queries;
 
   const order_by = queries.order_by;
   if (state) otherProps.state_id = state;
@@ -19,6 +19,9 @@ export const translateQueryParams = (queries: any) => {
       .split(",")
       .map((priority: string) => PRIORITY_MAP[priority as keyof typeof PRIORITY_MAP])
       .join(",");
+  }
+  if (type) {
+    otherProps.state_group = type === "backlog" ? "backlog" : "unstarted,started";
   }
 
   if (order_by?.includes("priority")) {
@@ -140,7 +143,11 @@ export const getFilteredRowsForGrouping = (projectId: string, queries: any) => {
     if (sub_group_by) {
       sql += `, i.${sub_group_by} as sub_group_id`;
     }
-    sql += ` FROM issues i WHERE project_id = '${projectId}'
+    sql += ` FROM issues i `;
+    if (otherProps.state_group) {
+      sql += `LEFT JOIN states ON i.state_id = states.id `;
+    }
+    sql += `WHERE i.project_id = '${projectId}'
     `;
     sql += `${singleFilterConstructor(otherProps)}) 
     `;
@@ -173,6 +180,9 @@ export const getFilteredRowsForGrouping = (projectId: string, queries: any) => {
 
   sql += ` from issues i
   `;
+  if (otherProps.state_group) {
+    sql += `LEFT JOIN states ON i.state_id = states.id `;
+  }
   filterJoinFields.forEach((field: string) => {
     sql += ` INNER JOIN issue_meta ${field} ON i.id = ${field}.issue_id AND ${field}.key = '${field}' AND ${field}.value  IN ('${otherProps[field].split(",").join("','")}')
     `;
@@ -198,8 +208,18 @@ export const getFilteredRowsForGrouping = (projectId: string, queries: any) => {
 };
 
 export const singleFilterConstructor = (queries: any) => {
-  const { order_by, cursor, per_page, group_by, sub_group_by, sub_issue, target_date, start_date, ...filters } =
-    translateQueryParams(queries);
+  const {
+    order_by,
+    cursor,
+    per_page,
+    group_by,
+    sub_group_by,
+    state_group,
+    sub_issue,
+    target_date,
+    start_date,
+    ...filters
+  } = translateQueryParams(queries);
 
   let sql = "";
   if (!sub_issue) {
@@ -211,6 +231,10 @@ export const singleFilterConstructor = (queries: any) => {
   }
   if (start_date) {
     sql += createDateFilter("start_date", start_date);
+  }
+  if (state_group) {
+    sql += ` AND state_group in ('${state_group.split(",").join("','")}')
+    `;
   }
   const keys = Object.keys(filters);
 
@@ -267,11 +291,14 @@ const createDateFilter = (key: string, q: string) => {
       sql += ` ${isAnd ? "AND" : "OR"} ${key} BETWEEN date('${start}') AND date('${end}')`;
     }
   }
+  if (customRange.length === 1) {
+    sql += ` AND ${key}=date('${customRange[0].split(";")[0]}')`;
+  }
 
   return sql;
 };
 const getSingleFilterFields = (queries: any) => {
-  const { order_by, cursor, per_page, group_by, sub_group_by, sub_issue, ...otherProps } =
+  const { order_by, cursor, per_page, group_by, sub_group_by, sub_issue, state_group, ...otherProps } =
     translateQueryParams(queries);
 
   const fields = new Set();
@@ -293,7 +320,9 @@ const getSingleFilterFields = (queries: any) => {
   if (order_by?.includes("cycle__name")) {
     fields.add("cycle_id");
   }
-
+  if (state_group) {
+    fields.add("states.'group' as state_group");
+  }
   return Array.from(fields);
 };
 
