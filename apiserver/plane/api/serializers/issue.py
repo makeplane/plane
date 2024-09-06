@@ -1,6 +1,3 @@
-# Python Imports
-import re
-
 # Django imports
 from django.utils import timezone
 from lxml import html
@@ -301,15 +298,6 @@ class LabelSerializer(BaseSerializer):
         ]
 
 
-def check_url_validity(url: str) -> bool:
-    # Regex pattern to match valid URLs or domain names
-    url_pattern = re.compile(
-        r"^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,6}([\/\w .-]*)*\/?(\?[=&\w.-]*)?$",
-        re.IGNORECASE,
-    )
-    return bool(url_pattern.match(url))
-
-
 class IssueLinkSerializer(BaseSerializer):
     class Meta:
         model = IssueLink
@@ -324,13 +312,6 @@ class IssueLinkSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
-
-    def validate_url(self, value):
-        # Check URL format
-        if not check_url_validity(value):
-            raise serializers.ValidationError({"error": "Invalid URL format."})
-
-        return value
 
     # Validation if url already exists
     def create(self, validated_data):
