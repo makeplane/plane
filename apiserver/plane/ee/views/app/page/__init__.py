@@ -3,4 +3,5 @@ from .workspace import (
     WorkspacePageViewSet,
     WorkspacePagesDescriptionViewSet,
     WorkspacePageVersionEndpoint,
+    WorkspacePageFavoriteEndpoint,
 )
