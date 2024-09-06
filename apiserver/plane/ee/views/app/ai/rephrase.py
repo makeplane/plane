@@ -97,6 +97,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
             4. Keep the title brief, ideally no more than 6-8 words.
             5. Do not include any information in the title that is not present in or implied by the text.
             6. If the text is clearly part of a larger work or series, reflect that in the title if appropriate.
+            7. Return ONLY the generated title, without any quotation marks, explanations, or additional text.
             """,
             )
 
