@@ -49,21 +49,28 @@ export const CreateUpdateModuleLinkModal: FC<Props> = (props) => {
     };
 
     try {
-      if (!data) await createLink(payload);
-      else await updateLink(payload, data.id);
+      if (!data) {
+        await createLink(payload);
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: "Module link created successfully.",
+        });
+      } else {
+        await updateLink(payload, data.id);
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: "Module link updated successfully.",
+        });
+      }
       onClose();
       reset(defaultValues);
-
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: "Link created",
-        message: "The link has been created successfully.",
-      });
     } catch (error: any) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Link not created",
-        message: error?.data?.error ?? "The link could not be created.",
+        title: "Error!",
+        message: error?.data?.error ?? "Some error occurred. Please try again.",
       });
     }
   };

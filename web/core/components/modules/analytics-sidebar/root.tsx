@@ -127,25 +127,12 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
 
     const payload = { metadata: {}, ...formData };
 
-    createModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), payload)
-      .then(() => {
-        captureEvent(MODULE_LINK_CREATED, {
-          module_id: moduleId,
-          state: "SUCCESS",
-        });
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Module link created successfully.",
-        });
+    await createModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), payload).then(() =>
+      captureEvent(MODULE_LINK_CREATED, {
+        module_id: moduleId,
+        state: "SUCCESS",
       })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Some error occurred",
-        });
-      });
+    );
   };
 
   const handleUpdateLink = async (formData: ModuleLink, linkId: string) => {
@@ -153,25 +140,13 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
 
     const payload = { metadata: {}, ...formData };
 
-    updateModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId, payload)
-      .then(() => {
+    await updateModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId, payload).then(
+      () =>
         captureEvent(MODULE_LINK_UPDATED, {
           module_id: moduleId,
           state: "SUCCESS",
-        });
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Module link updated successfully.",
-        });
-      })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Some error occurred",
-        });
-      });
+        })
+    );
   };
 
   const handleDeleteLink = async (linkId: string) => {
