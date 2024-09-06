@@ -1,6 +1,3 @@
-# Python Imports
-import re
-
 # Third Party imports
 from rest_framework import serializers
 

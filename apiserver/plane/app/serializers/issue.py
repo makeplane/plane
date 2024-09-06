@@ -1,6 +1,3 @@
-# Python Imports
-import re
-
 # Django imports
 from django.utils import timezone
 from django.core.validators import URLValidator
