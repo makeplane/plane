@@ -4,6 +4,7 @@ import express from "express";
 import expressWs from "express-ws";
 import * as Sentry from "@sentry/node";
 import compression from "compression";
+import helmet from "helmet";
 
 // cors
 import cors from "cors";
@@ -19,6 +20,9 @@ const app = express();
 expressWs(app);
 
 app.set("port", process.env.PORT || 3000);
+
+// Security middleware
+app.use(helmet());
 
 // Middleware for response compression
 app.use(
