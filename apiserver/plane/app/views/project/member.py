@@ -261,7 +261,7 @@ class ProjectMemberViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @allow_permission([ROLE.ADMIN])
     def destroy(self, request, slug, project_id, pk):
         project_member = ProjectMember.objects.get(
             workspace__slug=slug,

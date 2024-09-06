@@ -71,13 +71,6 @@ class ProjectViewSet(BaseViewSet):
             super()
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(
-                Q(
-                    project_projectmember__member=self.request.user,
-                    project_projectmember__is_active=True,
-                )
-                | Q(network=2)
-            )
             .select_related(
                 "workspace",
                 "workspace__owner",
@@ -165,6 +158,31 @@ class ProjectViewSet(BaseViewSet):
             if field
         ]
         projects = self.get_queryset().order_by("sort_order", "name")
+        if WorkspaceMember.objects.filter(
+            member=request.user,
+            workspace__slug=slug,
+            is_active=True,
+            role=5,
+        ).exists():
+            projects = projects.filter(
+                project_projectmember__member=self.request.user,
+                project_projectmember__is_active=True,
+            )
+
+        if WorkspaceMember.objects.filter(
+            member=request.user,
+            workspace__slug=slug,
+            is_active=True,
+            role=10,
+        ).exists():
+            projects = projects.filter(
+                Q(
+                    project_projectmember__member=self.request.user,
+                    project_projectmember__is_active=True,
+                )
+                | Q(network=2)
+            )
+
         if request.GET.get("per_page", False) and request.GET.get(
             "cursor", False
         ):
@@ -175,17 +193,6 @@ class ProjectViewSet(BaseViewSet):
                 on_results=lambda projects: ProjectListSerializer(
                     projects, many=True
                 ).data,
-            )
-
-        if WorkspaceMember.objects.filter(
-            member=request.user,
-            workspace__slug=slug,
-            is_active=True,
-            role=5,
-        ).exists():
-            projects = projects.filter(
-                project_projectmember__member=self.request.user,
-                project_projectmember__is_active=True,
             )
 
         projects = ProjectListSerializer(

@@ -41,7 +41,7 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
         )
 
     @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST],
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER],
         level="WORKSPACE",
     )
     def list(self, request, slug):
