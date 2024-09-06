@@ -39,7 +39,6 @@ export const AppSidebar: FC<IAppSidebar> = observer(() => {
 
   useEffect(() => {
     if (windowSize[0] < 768) !sidebarCollapsed && toggleSidebar();
-    else sidebarCollapsed && toggleSidebar();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [windowSize]);
 
