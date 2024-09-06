@@ -16,6 +16,7 @@ import { HIGHLIGHT_CLASS } from "@/components/issues/issue-layouts/utils";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail, useKanbanView } from "@/hooks/store";
+import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
@@ -121,15 +122,12 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
   const workspaceSlug = routerWorkspaceSlug?.toString();
   // hooks
-  const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
+  const { getIsIssuePeeked } = useIssueDetail();
+  const { handleRedirection } = useIssuePeekOverviewRedirection();
+  const { isMobile } = usePlatformOS();
 
-  const handleIssuePeekOverview = (issue: TIssue) =>
-    workspaceSlug &&
-    issue &&
-    issue.project_id &&
-    issue.id &&
-    !getIsIssuePeeked(issue.id) &&
-    setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
+  // handlers
+  const handleIssuePeekOverview = (issue: TIssue) => handleRedirection(workspaceSlug, issue, isMobile);
 
   const issue = issuesMap[issueId];
 

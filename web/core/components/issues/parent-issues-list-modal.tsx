@@ -19,6 +19,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { IssueIdentifier } from "@/plane-web/components/issues";
 // services
 import { ProjectService } from "@/services/project";
+import { getTabIndex } from "@/helpers/tab-indices.helper";
 
 type Props = {
   isOpen: boolean;
@@ -49,6 +50,8 @@ export const ParentIssuesListModal: React.FC<Props> = ({
   const debouncedSearchTerm: string = useDebounce(searchTerm, 500);
 
   const { workspaceSlug } = useParams();
+
+  const { baseTabIndex } = getTabIndex(undefined, isMobile);
 
   const handleClose = () => {
     onClose();
@@ -121,6 +124,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       displayValue={() => ""}
+                      tabIndex={baseTabIndex}
                     />
                   </div>
                   <div className="flex p-2 sm:justify-end">

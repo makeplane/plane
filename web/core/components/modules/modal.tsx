@@ -13,6 +13,7 @@ import { ModuleForm } from "@/components/modules";
 import { MODULE_CREATED, MODULE_UPDATED } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker, useModule, useProject } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
   isOpen: boolean;
@@ -38,6 +39,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
   const { captureModuleEvent } = useEventTracker();
   const { workspaceProjectIds } = useProject();
   const { createModule, updateModuleDetails } = useModule();
+  const { isMobile } = usePlatformOS();
 
   const handleClose = () => {
     reset(defaultValues);
@@ -149,6 +151,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
         projectId={activeProject ?? ""}
         setActiveProject={setActiveProject}
         data={data}
+        isMobile={isMobile}
       />
     </ModalCore>
   );
