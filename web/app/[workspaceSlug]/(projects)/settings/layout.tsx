@@ -4,12 +4,12 @@ import { ReactNode } from "react";
 // components
 import { ContentWrapper } from "@plane/ui";
 import { AppHeader } from "@/components/core";
+// plane web components
+import { LicenseSeatsBanner } from "@/plane-web/components/license";
 // local components
 import { WorkspaceSettingHeader } from "./header";
 import { MobileWorkspaceSettingsTabs } from "./mobile-header-tabs";
 import { WorkspaceSettingsSidebar } from "./sidebar";
-// plane web components
-import { LicenseSeatsBanner } from "@/plane-web/components/license";
 
 export interface IWorkspaceSettingLayout {
   children: ReactNode;
