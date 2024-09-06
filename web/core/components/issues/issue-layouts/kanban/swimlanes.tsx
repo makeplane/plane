@@ -12,6 +12,8 @@ import {
   TIssueGroupByOptions,
   TIssueOrderByOptions,
 } from "@plane/types";
+// UI
+import { Row } from "@plane/ui";
 // hooks
 import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
@@ -21,7 +23,6 @@ import { getGroupByColumns, isWorkspaceLevel, GroupDropLocation } from "../utils
 import { KanBan } from "./default";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { HeaderSubGroupByCard } from "./headers/sub-group-by-card";
-import { Row } from "@plane/ui";
 // types
 // constants
 

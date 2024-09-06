@@ -45,6 +45,7 @@ const LeftItem = (props: HeaderProps) => (
 );
 const RightItem = (props: HeaderProps) => {
   const variant = React.useContext(HeaderContext);
+  if (variant === undefined) throw new Error("RightItem must be used within Header");
   return (
     <div
       className={cn(
