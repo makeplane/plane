@@ -1,8 +1,8 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
-import { ArchiveRestoreIcon, Clipboard, Copy, Link, Lock, LockOpen } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import { ArchiveRestoreIcon, Clipboard, Copy, History, Link, Lock, LockOpen } from "lucide-react";
 // document editor
 import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
 // ui
@@ -11,6 +11,7 @@ import { ArchiveIcon, CustomMenu, TOAST_TYPE, ToggleSwitch, setToast } from "@pl
 import { copyTextToClipboard, copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { usePageFilters } from "@/hooks/use-page-filters";
+import { useQueryParams } from "@/hooks/use-query-params";
 // store
 import { IPage } from "@/store/pages/page";
 
@@ -18,11 +19,12 @@ type Props = {
   editorRef: EditorRefApi | EditorReadOnlyRefApi | null;
   handleDuplicatePage: () => void;
   page: IPage;
-  handleSaveDescription: (forceSync?: boolean, initSyncVectorAsUpdate?: Uint8Array | undefined) => Promise<void>;
 };
 
 export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
-  const { editorRef, handleDuplicatePage, page, handleSaveDescription } = props;
+  const { editorRef, handleDuplicatePage, page } = props;
+  // router
+  const router = useRouter();
   // store values
   const {
     archived_at,
@@ -40,6 +42,8 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = useParams();
   // page filters
   const { isFullWidth, handleFullWidth } = usePageFilters();
+  // update query params
+  const { updateQueryParams } = useQueryParams();
 
   const handleArchivePage = async () =>
     await archive().catch(() =>
@@ -76,11 +80,6 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
         message: "Page could not be unlocked. Please try again later.",
       })
     );
-
-  const saveDescriptionYJSAndPerformAction = (action: () => void) => async () => {
-    await handleSaveDescription();
-    action();
-  };
 
   // menu items list
   const MENU_ITEMS: {
@@ -126,29 +125,42 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     },
     {
       key: "make-a-copy",
-      action: saveDescriptionYJSAndPerformAction(handleDuplicatePage),
+      action: handleDuplicatePage,
       label: "Make a copy",
       icon: Copy,
       shouldRender: canCurrentUserDuplicatePage,
     },
     {
       key: "lock-unlock-page",
-      action: is_locked ? handleUnlockPage : saveDescriptionYJSAndPerformAction(handleLockPage),
+      action: is_locked ? handleUnlockPage : handleLockPage,
       label: is_locked ? "Unlock page" : "Lock page",
       icon: is_locked ? LockOpen : Lock,
       shouldRender: canCurrentUserLockPage,
     },
     {
       key: "archive-restore-page",
-      action: archived_at ? handleRestorePage : saveDescriptionYJSAndPerformAction(handleArchivePage),
+      action: archived_at ? handleRestorePage : handleArchivePage,
       label: archived_at ? "Restore page" : "Archive page",
       icon: archived_at ? ArchiveRestoreIcon : ArchiveIcon,
       shouldRender: canCurrentUserArchivePage,
     },
+    {
+      key: "version-history",
+      action: () => {
+        // add query param, version=current to the route
+        const updatedRoute = updateQueryParams({
+          paramsToAdd: { version: "current" },
+        });
+        router.push(updatedRoute);
+      },
+      label: "Version history",
+      icon: History,
+      shouldRender: true,
+    },
   ];
 
   return (
-    <CustomMenu maxHeight="md" placement="bottom-start" verticalEllipsis closeOnSelect>
+    <CustomMenu maxHeight="lg" placement="bottom-start" verticalEllipsis closeOnSelect>
       <CustomMenu.MenuItem
         className="hidden md:flex w-full items-center justify-between gap-2"
         onClick={() => handleFullWidth(!isFullWidth)}

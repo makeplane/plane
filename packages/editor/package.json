@@ -14,6 +14,12 @@
       "types": "./dist/index.d.mts",
       "import": "./dist/index.mjs",
       "module": "./dist/index.mjs"
+    },
+    "./lib": {
+      "require": "./dist/lib.js",
+      "types": "./dist/lib.d.mts",
+      "import": "./dist/lib.mjs",
+      "module": "./dist/lib.mjs"
     }
   },
   "scripts": {
@@ -29,9 +35,11 @@
   },
   "dependencies": {
     "@floating-ui/react": "^0.26.4",
+    "@hocuspocus/provider": "^2.13.5",
     "@plane/ui": "*",
     "@tiptap/core": "^2.1.13",
     "@tiptap/extension-blockquote": "^2.1.13",
+    "@tiptap/extension-character-count": "^2.6.5",
     "@tiptap/extension-collaboration": "^2.3.2",
     "@tiptap/extension-image": "^2.1.13",
     "@tiptap/extension-list-item": "^2.1.13",

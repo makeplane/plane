@@ -136,6 +136,7 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
     target_date: filters?.target_date || null,
     project: filters?.project || null,
     subscriber: filters?.subscriber || null,
+    issue_type: filters?.issue_type || null,
   });
 
   /**

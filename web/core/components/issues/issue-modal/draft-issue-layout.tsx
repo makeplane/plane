@@ -74,7 +74,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
           if (
             issueKey === "description_html" &&
             changesMade.description_html &&
-            isEmptyHtmlString(changesMade.description_html)
+            isEmptyHtmlString(changesMade.description_html, ["img"])
           )
             delete changesMade.description_html;
         });

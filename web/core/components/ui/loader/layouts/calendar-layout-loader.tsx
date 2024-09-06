@@ -17,7 +17,7 @@ const CalendarDay = () => {
 };
 
 export const CalendarLayoutLoader = () => (
-  <div className="h-full w-full overflow-y-auto bg-custom-background-100 pt-4 animate-pulse">
+  <div className="h-full w-full overflow-y-auto bg-custom-background-100 animate-pulse">
     <span className="relative grid divide-x-[0.5px] divide-custom-border-200 text-sm font-medium grid-cols-5">
       {[...Array(5)].map((_, index) => (
         <span key={index} className="h-11 w-full bg-custom-background-80" />

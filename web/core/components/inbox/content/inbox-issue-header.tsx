@@ -13,8 +13,9 @@ import {
   Link,
   Trash2,
   MoveRight,
+  Copy,
 } from "lucide-react";
-import { Button, ControlLink, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, ControlLink, CustomMenu, Row, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import {
   DeclineIssueModal,
@@ -85,8 +86,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   const canMarkAsDeclined = isAllowed && (inboxIssue?.status === 0 || inboxIssue?.status === -2);
   // can delete only if admin or is creator of the issue
   const canDelete =
-    (!!currentProjectRole && currentProjectRole >= EUserProjectRoles.ADMIN) ||
-    inboxIssue?.created_by === currentUser?.id;
+    (!!currentProjectRole && currentProjectRole >= EUserProjectRoles.ADMIN) || issue?.created_by === currentUser?.id;
   const isAcceptedOrDeclined = inboxIssue?.status ? [-1, 1, 2].includes(inboxIssue.status) : undefined;
   // days left for snooze
   const numberOfDaysLeft = findHowManyDaysLeft(inboxIssue?.snoozed_till);
@@ -94,6 +94,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   const currentInboxIssueId = inboxIssue?.issue?.id;
 
   const issueLink = `${workspaceSlug}/projects/${issue?.project_id}/issues/${currentInboxIssueId}`;
+  const intakeIssueLink = `${workspaceSlug}/projects/${issue?.project_id}/inbox/?currentTab=${currentTab}&inboxIssueId=${currentInboxIssueId}`;
 
   const redirectIssue = (): string | undefined => {
     let nextOrPreviousIssueId: string | undefined = undefined;
@@ -158,8 +159,8 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
     }
   };
 
-  const handleCopyIssueLink = () =>
-    copyUrlToClipboard(issueLink).then(() =>
+  const handleCopyIssueLink = (path: string) =>
+    copyUrlToClipboard(path).then(() =>
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Link copied",
@@ -244,7 +245,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
         />
       </>
 
-      <div className="hidden relative lg:flex h-full w-full items-center justify-between gap-2 px-4">
+      <Row className="hidden relative lg:flex h-full w-full items-center justify-between gap-2">
         <div className="flex items-center gap-4">
           {isNotificationEmbed && (
             <button onClick={embedRemoveCurrentNotification}>
@@ -317,7 +318,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                   variant="neutral-primary"
                   prependIcon={<Link className="h-2.5 w-2.5" />}
                   size="sm"
-                  onClick={handleCopyIssueLink}
+                  onClick={() => handleCopyIssueLink(issueLink)}
                 >
                   Copy issue link
                 </Button>
@@ -355,6 +356,12 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                         </div>
                       </CustomMenu.MenuItem>
                     )}
+                    <CustomMenu.MenuItem onClick={() => handleCopyIssueLink(intakeIssueLink)}>
+                      <div className="flex items-center gap-2">
+                        <Copy size={14} strokeWidth={2} />
+                        Copy issue link
+                      </div>
+                    </CustomMenu.MenuItem>
                     {canDelete && (
                       <CustomMenu.MenuItem onClick={() => setDeleteIssueModal(true)}>
                         <div className="flex items-center gap-2">
@@ -369,13 +376,13 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
             )}
           </div>
         </div>
-      </div>
+      </Row>
 
       <div className="lg:hidden">
         <InboxIssueActionsMobileHeader
           inboxIssue={inboxIssue}
           isSubmitting={isSubmitting}
-          handleCopyIssueLink={handleCopyIssueLink}
+          handleCopyIssueLink={() => handleCopyIssueLink(issueLink)}
           setAcceptIssueModal={setAcceptIssueModal}
           setDeclineIssueModal={setDeclineIssueModal}
           handleIssueSnoozeAction={handleIssueSnoozeAction}

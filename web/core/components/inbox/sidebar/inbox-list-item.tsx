@@ -4,7 +4,7 @@ import { FC, MouseEvent } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Tooltip, PriorityIcon } from "@plane/ui";
+import { Tooltip, PriorityIcon, Row } from "@plane/ui";
 // components
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { InboxIssueStatus } from "@/components/inbox";
@@ -53,9 +53,9 @@ export const InboxIssueListItem: FC<InboxIssueListItemProps> = observer((props) 
         href={`/${workspaceSlug}/projects/${projectId}/inbox?currentTab=${currentTab}&inboxIssueId=${issue.id}`}
         onClick={(e) => handleIssueRedirection(e, issue.id)}
       >
-        <div
+        <Row
           className={cn(
-            `flex flex-col gap-2 relative border border-t-transparent border-l-transparent border-r-transparent border-b-custom-border-200 p-4 hover:bg-custom-primary/5 cursor-pointer transition-all`,
+            `flex flex-col gap-2 relative border border-t-transparent border-l-transparent border-r-transparent border-b-custom-border-200 py-4 hover:bg-custom-primary/5 cursor-pointer transition-all`,
             { "border-custom-primary-100 border": selectedInboxIssueId === issue.id }
           )}
         >
@@ -118,7 +118,7 @@ export const InboxIssueListItem: FC<InboxIssueListItemProps> = observer((props) 
             {/* created by */}
             {createdByDetails && <ButtonAvatars showTooltip={false} userIds={createdByDetails?.id} />}
           </div>
-        </div>
+        </Row>
       </Link>
     </>
   );
