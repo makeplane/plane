@@ -7,7 +7,7 @@ import { Home } from "lucide-react";
 import githubBlackImage from "/public/logos/github-black.png";
 import githubWhiteImage from "/public/logos/github-white.png";
 // ui
-import { Breadcrumbs, CustomHeader } from "@plane/ui";
+import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
 // constants
@@ -22,8 +22,8 @@ export const WorkspaceDashboardHeader = () => {
 
   return (
     <>
-      <CustomHeader>
-        <CustomHeader.LeftItem>
+      <Header>
+        <Header.LeftItem>
           <div>
             <Breadcrumbs>
               <Breadcrumbs.BreadcrumbItem
@@ -32,8 +32,8 @@ export const WorkspaceDashboardHeader = () => {
               />
             </Breadcrumbs>
           </div>
-        </CustomHeader.LeftItem>
-        <CustomHeader.RightItem>
+        </Header.LeftItem>
+        <Header.RightItem>
           <a
             onClick={() =>
               captureEvent(GITHUB_REDIRECTED, {
@@ -53,8 +53,8 @@ export const WorkspaceDashboardHeader = () => {
             />
             <span className="hidden text-xs font-medium sm:hidden md:block">Star us on GitHub</span>
           </a>
-        </CustomHeader.RightItem>
-      </CustomHeader>
+        </Header.RightItem>
+      </Header>
     </>
   );
 };

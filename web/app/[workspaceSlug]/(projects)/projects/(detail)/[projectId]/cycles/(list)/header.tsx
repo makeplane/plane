@@ -4,7 +4,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
-import { Breadcrumbs, Button, ContrastIcon, CustomHeader } from "@plane/ui";
+import { Breadcrumbs, Button, ContrastIcon, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 import { CyclesViewHeader } from "@/components/cycles";
@@ -30,8 +30,8 @@ export const CyclesListHeader: FC = observer(() => {
     currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
 
   return (
-    <CustomHeader>
-      <CustomHeader.LeftItem>
+    <Header>
+      <Header.LeftItem>
         <Breadcrumbs onBack={router.back} isLoading={loader}>
           <Breadcrumbs.BreadcrumbItem
             type="text"
@@ -54,8 +54,8 @@ export const CyclesListHeader: FC = observer(() => {
             link={<BreadcrumbLink label="Cycles" icon={<ContrastIcon className="h-4 w-4 text-custom-text-300" />} />}
           />
         </Breadcrumbs>
-      </CustomHeader.LeftItem>
-      <CustomHeader.RightItem>
+      </Header.LeftItem>
+      <Header.RightItem>
         {canUserCreateCycle && currentProjectDetails ? (
           <div className="flex items-center gap-3">
             <CyclesViewHeader projectId={currentProjectDetails.id} />
@@ -73,7 +73,7 @@ export const CyclesListHeader: FC = observer(() => {
         ) : (
           <></>
         )}
-      </CustomHeader.RightItem>
-    </CustomHeader>
+      </Header.RightItem>
+    </Header>
   );
 });

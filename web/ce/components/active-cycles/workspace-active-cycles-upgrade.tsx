@@ -4,7 +4,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 // ui
-import { getButtonStyling } from "@plane/ui";
+import { ContentWrapper, getButtonStyling } from "@plane/ui";
 // components
 import { ProIcon } from "@/components/common";
 // constants
@@ -24,7 +24,7 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
   const isDarkMode = userProfile?.theme.theme === "dark";
 
   return (
-    <div className="vertical-scrollbar scrollbar-lg flex h-full flex-col gap-10 rounded-xl px-8 pt-8">
+    <ContentWrapper className="gap-10">
       <div
         className={cn("item-center flex min-h-[25rem] justify-between rounded-xl", {
           "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": userProfile?.theme.theme === "dark",
@@ -89,6 +89,6 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
           </div>
         ))}
       </div>
-    </div>
+    </ContentWrapper>
   );
 });

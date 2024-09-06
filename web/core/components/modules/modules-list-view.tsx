@@ -2,6 +2,7 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 import { useParams, useSearchParams } from "next/navigation";
 // components
+import { ContentWrapper, Row, ERowVariant } from "@plane/ui";
 import { ListLayout } from "@/components/core/list";
 import { EmptyState } from "@/components/empty-state";
 import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "@/components/modules";
@@ -67,44 +68,34 @@ export const ModulesListView: React.FC = observer(() => {
     );
 
   return (
-    <>
+    <ContentWrapper variant={ERowVariant.HUGGING}>
       {displayFilters?.layout === "list" && (
-        <div className="h-full overflow-y-auto">
-          <div className="flex h-full w-full justify-between">
-            <ListLayout>
-              {filteredModuleIds.map((moduleId) => (
-                <ModuleListItem key={moduleId} moduleId={moduleId} />
-              ))}
-            </ListLayout>
-            <ModulePeekOverview
-              projectId={projectId?.toString() ?? ""}
-              workspaceSlug={workspaceSlug?.toString() ?? ""}
-            />
-          </div>
+        <div className="flex h-full w-full justify-between">
+          <ListLayout>
+            {filteredModuleIds.map((moduleId) => (
+              <ModuleListItem key={moduleId} moduleId={moduleId} />
+            ))}
+          </ListLayout>
+          <ModulePeekOverview projectId={projectId?.toString() ?? ""} workspaceSlug={workspaceSlug?.toString() ?? ""} />
         </div>
       )}
       {displayFilters?.layout === "board" && (
-        <div className="h-full w-full">
-          <div className="flex h-full w-full justify-between">
-            <div
-              className={`grid h-full w-full grid-cols-1 gap-6 overflow-y-auto p-8 ${
-                peekModule
-                  ? "lg:grid-cols-1 xl:grid-cols-2 3xl:grid-cols-3"
-                  : "lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4"
-              } auto-rows-max transition-all vertical-scrollbar scrollbar-lg`}
-            >
-              {filteredModuleIds.map((moduleId) => (
-                <ModuleCardItem key={moduleId} moduleId={moduleId} />
-              ))}
-            </div>
-            <ModulePeekOverview
-              projectId={projectId?.toString() ?? ""}
-              workspaceSlug={workspaceSlug?.toString() ?? ""}
-            />
+        <Row className="flex h-full w-full justify-between py-page-y">
+          <div
+            className={`grid h-full w-full grid-cols-1 gap-6 overflow-y-auto ${
+              peekModule
+                ? "lg:grid-cols-1 xl:grid-cols-2 3xl:grid-cols-3"
+                : "lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4"
+            } auto-rows-max transition-all vertical-scrollbar scrollbar-lg`}
+          >
+            {filteredModuleIds.map((moduleId) => (
+              <ModuleCardItem key={moduleId} moduleId={moduleId} />
+            ))}
           </div>
-        </div>
+          <ModulePeekOverview projectId={projectId?.toString() ?? ""} workspaceSlug={workspaceSlug?.toString() ?? ""} />
+        </Row>
       )}
       {displayFilters?.layout === "gantt" && <ModulesListGanttChartView />}
-    </>
+    </ContentWrapper>
   );
 });

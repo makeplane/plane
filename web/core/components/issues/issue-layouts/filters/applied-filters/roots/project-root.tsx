@@ -3,7 +3,7 @@ import { useParams } from "next/navigation";
 import { IIssueFilterOptions } from "@plane/types";
 // hooks
 // components
-import { CustomHeader, EHeaderVariant } from "@plane/ui";
+import { Header, EHeaderVariant } from "@plane/ui";
 import { AppliedFiltersList, SaveFilterView } from "@/components/issues";
 // constants
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
@@ -68,25 +68,29 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
   if (Object.keys(appliedFilters).length === 0) return null;
 
   return (
-    <CustomHeader variant={EHeaderVariant.TERNARY}>
-      <AppliedFiltersList
-        appliedFilters={appliedFilters}
-        handleClearAllFilters={handleClearAllFilters}
-        handleRemoveFilter={handleRemoveFilter}
-        labels={projectLabels ?? []}
-        states={projectStates}
-      />
-      {isEditingAllowed && (
-        <SaveFilterView
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          filterParams={{
-            filters: appliedFilters,
-            display_filters: issueFilters?.displayFilters,
-            display_properties: issueFilters?.displayProperties,
-          }}
+    <Header variant={EHeaderVariant.TERNARY}>
+      <Header.LeftItem>
+        <AppliedFiltersList
+          appliedFilters={appliedFilters}
+          handleClearAllFilters={handleClearAllFilters}
+          handleRemoveFilter={handleRemoveFilter}
+          labels={projectLabels ?? []}
+          states={projectStates}
         />
-      )}
-    </CustomHeader>
+      </Header.LeftItem>
+      <Header.RightItem>
+        {isEditingAllowed && (
+          <SaveFilterView
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            filterParams={{
+              filters: appliedFilters,
+              display_filters: issueFilters?.displayFilters,
+              display_properties: issueFilters?.displayProperties,
+            }}
+          />
+        )}
+      </Header.RightItem>
+    </Header>
   );
 });

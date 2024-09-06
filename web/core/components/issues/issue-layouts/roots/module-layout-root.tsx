@@ -1,9 +1,10 @@
-import React from "react"
+import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // mobx store
 // components
+import { Row, ERowVariant } from "@plane/ui";
 import {
   IssuePeekOverview,
   ModuleAppliedFiltersRoot,
@@ -62,9 +63,9 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
     <IssuesStoreContext.Provider value={EIssuesStoreType.MODULE}>
       <div className="relative flex h-full w-full flex-col overflow-hidden">
         <ModuleAppliedFiltersRoot />
-        <div className="h-full w-full overflow-auto">
+        <Row variant={ERowVariant.HUGGING} className="h-full w-full overflow-auto">
           <ModuleIssueLayout activeLayout={activeLayout} moduleId={moduleId?.toString()} />
-        </div>
+        </Row>
         {/* peek overview */}
         <IssuePeekOverview />
       </div>

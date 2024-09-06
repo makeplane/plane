@@ -3,7 +3,7 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { Clock } from "lucide-react";
-import { Avatar } from "@plane/ui";
+import { Avatar, Row } from "@plane/ui";
 // components
 import { NotificationOption } from "@/components/workspace-notifications";
 // helpers
@@ -59,16 +59,16 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
   if (!workspaceSlug || !notificationId || !notification?.id || !notificationField) return <></>;
 
   return (
-    <div
+    <Row
       className={cn(
-        "relative p-3 py-4 flex items-center gap-2 border-b border-custom-border-200 cursor-pointer transition-all group",
+        "relative py-4 flex items-center gap-2 border-b border-custom-border-200 cursor-pointer transition-all group",
         currentSelectedNotificationId === notification?.id ? "bg-custom-background-80/30" : "",
         notification.read_at === null ? "bg-custom-primary-100/5" : ""
       )}
       onClick={handleNotificationIssuePeekOverview}
     >
       {notification.read_at === null && (
-        <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-custom-primary-100" />
+        <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-custom-primary-100 absolute top-[50%] left-2" />
       )}
 
       <div className="relative w-full flex gap-2">
@@ -171,6 +171,6 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
           </div>
         </div>
       </div>
-    </div>
+    </Row>
   );
 });

@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
 import { TModuleDisplayFilters, TModuleFilters } from "@plane/types";
 // components
-import { CustomHeader, EHeaderVariant } from "@plane/ui";
+import { Header, EHeaderVariant, Tag } from "@plane/ui";
 import { AppliedDateFilters, AppliedMembersFilters, AppliedStatusFilters } from "@/components/modules";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
@@ -37,8 +37,8 @@ export const ModuleAppliedFiltersList: React.FC<Props> = (props) => {
   const isEditingAllowed = alwaysAllowEditing;
 
   return (
-    <CustomHeader variant={EHeaderVariant.TERNARY} className="flex flex-wrap gap-2">
-      <CustomHeader.LeftItem>
+    <Header variant={EHeaderVariant.TERNARY}>
+      <div className="flex gap-2 flex-wrap">
         {Object.entries(appliedFilters).map(([key, value]) => {
           const filterKey = key as keyof TModuleFilters;
 
@@ -46,10 +46,7 @@ export const ModuleAppliedFiltersList: React.FC<Props> = (props) => {
           if (Array.isArray(value) && value.length === 0) return;
 
           return (
-            <div
-              key={filterKey}
-              className="flex flex-wrap items-center gap-2 rounded-md border border-custom-border-200 px-2 capitalize"
-            >
+            <Tag key={filterKey}>
               <div className="flex flex-wrap items-center gap-1.5">
                 <span className="text-xs text-custom-text-300">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
                 {filterKey === "status" && (
@@ -83,7 +80,7 @@ export const ModuleAppliedFiltersList: React.FC<Props> = (props) => {
                   </button>
                 )}
               </div>
-            </div>
+            </Tag>
           );
         })}
         {!isArchived && isFavoriteFilterApplied && (
@@ -114,16 +111,14 @@ export const ModuleAppliedFiltersList: React.FC<Props> = (props) => {
           </div>
         )}
         {isEditingAllowed && (
-          <button
-            type="button"
-            onClick={handleClearAllFilters}
-            className="flex items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1 text-xs text-custom-text-300 hover:text-custom-text-200"
-          >
-            Clear all
-            <X size={12} strokeWidth={2} />
+          <button type="button" onClick={handleClearAllFilters}>
+            <Tag>
+              Clear all
+              <X size={12} strokeWidth={2} />
+            </Tag>
           </button>
         )}
-      </CustomHeader.LeftItem>
-    </CustomHeader>
+      </div>
+    </Header>
   );
 };

@@ -8,7 +8,7 @@ import { useParams } from "next/navigation";
 // types
 import { IIssueFilterOptions } from "@plane/types";
 // components
-import { CustomHeader, EHeaderVariant } from "@plane/ui";
+import { Header, EHeaderVariant } from "@plane/ui";
 import { AppliedFiltersList } from "@/components/issues";
 import { CreateUpdateProjectViewModal } from "@/components/views";
 import { UpdateViewComponent } from "@/components/views/update-view-component";
@@ -114,7 +114,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   const isOwner = viewDetails?.owned_by === data?.id;
 
   return (
-    <CustomHeader variant={EHeaderVariant.TERNARY}>
+    <Header variant={EHeaderVariant.TERNARY}>
       <CreateUpdateProjectViewModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -128,7 +128,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
           ...viewFilters,
         }}
       />
-      <CustomHeader.LeftItem>
+      <Header.LeftItem className="w-[70%]">
         <AppliedFiltersList
           appliedFilters={appliedFilters ?? {}}
           handleClearAllFilters={handleClearAllFilters}
@@ -137,15 +137,17 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
           states={projectStates}
           disableEditing={isLocked}
         />
-      </CustomHeader.LeftItem>
-      <UpdateViewComponent
-        isLocked={isLocked}
-        areFiltersEqual={!!areFiltersEqual}
-        isOwner={isOwner}
-        isAuthorizedUser={isAuthorizedUser}
-        setIsModalOpen={setIsModalOpen}
-        handleUpdateView={handleUpdateView}
-      />
-    </CustomHeader>
+      </Header.LeftItem>
+      <Header.RightItem>
+        <UpdateViewComponent
+          isLocked={isLocked}
+          areFiltersEqual={!!areFiltersEqual}
+          isOwner={isOwner}
+          isAuthorizedUser={isAuthorizedUser}
+          setIsModalOpen={setIsModalOpen}
+          handleUpdateView={handleUpdateView}
+        />
+      </Header.RightItem>
+    </Header>
   );
 });

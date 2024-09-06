@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // components
-import { CustomHeader, EHeaderVariant } from "@plane/ui";
+import { Header, EHeaderVariant } from "@plane/ui";
 import {
   InboxIssueAppliedFiltersStatus,
   InboxIssueAppliedFiltersPriority,
@@ -18,7 +18,7 @@ export const InboxIssueAppliedFilters: FC = observer(() => {
 
   if (getAppliedFiltersCount === 0) return <></>;
   return (
-    <CustomHeader variant={EHeaderVariant.TERNARY} className="flex-wrap items-center gap-1 min-h-none">
+    <Header variant={EHeaderVariant.TERNARY}>
       {/* status */}
       <InboxIssueAppliedFiltersStatus />
       {/* state */}
@@ -35,6 +35,6 @@ export const InboxIssueAppliedFilters: FC = observer(() => {
       <InboxIssueAppliedFiltersDate filterKey="created_at" label="Created date" />
       {/* updated_at */}
       <InboxIssueAppliedFiltersDate filterKey="updated_at" label="Updated date" />
-    </CustomHeader>
+    </Header>
   );
 });

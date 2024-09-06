@@ -274,6 +274,17 @@ class IssueSerializer(BaseSerializer):
         return data
 
 
+class IssueLiteSerializer(BaseSerializer):
+    class Meta:
+        model = Issue
+        fields = [
+            "id",
+            "sequence_id",
+            "project_id",
+        ]
+        read_only_fields = fields
+
+
 class LabelSerializer(BaseSerializer):
     class Meta:
         model = Label
