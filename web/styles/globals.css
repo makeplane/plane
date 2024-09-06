@@ -704,11 +704,16 @@ div.web-view-spinner div.bar12 {
 
 /* Desktop application */
 html.todesktop body {
+  height: 100vh;
+  width: 100%;
   padding: 8px;
   padding-top: 36px;
 }
 
 html.todesktop .app-container {
+  height: 100%;
+  width: 100%;
+  overflow: unset;
   contain: layout style size;
   contain-intrinsic-size: 100%;
   position: relative; /* Ensure it's the containing block */
