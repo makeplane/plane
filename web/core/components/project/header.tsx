@@ -118,7 +118,7 @@ export const ProjectsBaseHeader = observer(() => {
               setTrackElement("Projects page");
               toggleCreateProjectModal(true);
             }}
-            className="items-center gap-1 my-auto"
+            className="items-center gap-1"
           >
             <span className="hidden sm:inline-block">Add</span> Project
           </Button>

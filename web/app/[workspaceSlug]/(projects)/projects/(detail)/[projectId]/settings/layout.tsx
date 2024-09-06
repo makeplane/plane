@@ -2,11 +2,11 @@
 
 import { FC, ReactNode } from "react";
 // components
+import { ContentWrapper } from "@plane/ui";
 import { AppHeader } from "@/components/core";
 // local components
 import { ProjectSettingHeader } from "./header";
 import { ProjectSettingsSidebar } from "./sidebar";
-import { ContentWrapper } from "@plane/ui";
 
 export interface IProjectSettingLayout {
   children: ReactNode;
