@@ -272,9 +272,8 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
         isOpen={moduleLinkModal}
         handleClose={() => {
           setModuleLinkModal(false);
-          const timeoutId = setTimeout(() => {
+          setTimeout(() => {
             setSelectedLinkToUpdate(null);
-            clearTimeout(timeoutId);
           }, 500);
         }}
         data={selectedLinkToUpdate}

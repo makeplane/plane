@@ -36,9 +36,8 @@ export const CreateUpdateModuleLinkModal: FC<Props> = (props) => {
 
   const onClose = () => {
     handleClose();
-    const timeoutId = setTimeout(() => {
-      reset(defaultValues);
-      clearTimeout(timeoutId);
+    setTimeout(() => {
+      reset();
     }, 500);
   };
 
@@ -65,7 +64,7 @@ export const CreateUpdateModuleLinkModal: FC<Props> = (props) => {
         });
       }
       onClose();
-      reset(defaultValues);
+      reset();
     } catch (error: any) {
       setToast({
         type: TOAST_TYPE.ERROR,
