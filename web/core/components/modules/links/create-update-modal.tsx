@@ -36,9 +36,6 @@ export const CreateUpdateModuleLinkModal: FC<Props> = (props) => {
 
   const onClose = () => {
     handleClose();
-    setTimeout(() => {
-      reset();
-    }, 500);
   };
 
   const handleFormSubmit = async (formData: ModuleLink) => {
@@ -64,7 +61,6 @@ export const CreateUpdateModuleLinkModal: FC<Props> = (props) => {
         });
       }
       onClose();
-      reset();
     } catch (error: any) {
       setToast({
         type: TOAST_TYPE.ERROR,
@@ -75,12 +71,11 @@ export const CreateUpdateModuleLinkModal: FC<Props> = (props) => {
   };
 
   useEffect(() => {
-    if (!data) return;
     reset({
       ...defaultValues,
       ...data,
     });
-  }, [data, reset]);
+  }, [data, isOpen, reset]);
 
   return (
     <ModalCore isOpen={isOpen} handleClose={onClose}>
