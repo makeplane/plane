@@ -167,7 +167,6 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
                   </>
                 }
                 disabled={issue.project_id === projectId}
-                renderByDefault={false}
               >
                 <div className="flex-shrink-0 grid place-items-center w-3.5 absolute left-1">
                   <MultipleSelectEntityAction
