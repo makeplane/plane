@@ -1,14 +1,12 @@
 "use client";
+import { useCallback } from "react";
 import { observer } from "mobx-react";
 // plane types
 import { ILinkDetails, UserAuth } from "@plane/types";
-// ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ModulesLinksListItem } from "@/components/modules";
 // hooks
-import { useMember, useModule } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useModule } from "@/hooks/store";
 
 type Props = {
   disabled?: boolean;
@@ -25,6 +23,9 @@ export const ModuleLinksList: React.FC<Props> = observer((props) => {
   // derived values
   const currentModule = getModuleById(moduleId);
   const moduleLinks = currentModule?.link_module;
+  // memoized link handlers
+  const memoizedDeleteLink = useCallback((id: string) => handleDeleteLink(id), [handleDeleteLink]);
+  const memoizedEditLink = useCallback((link: ILinkDetails) => handleEditLink(link), [handleEditLink]);
 
   if (!moduleLinks) return null;
 
@@ -33,8 +34,8 @@ export const ModuleLinksList: React.FC<Props> = observer((props) => {
       {moduleLinks.map((link) => (
         <ModulesLinksListItem
           key={link.id}
-          handleDeleteLink={() => handleDeleteLink(link.id)}
-          handleEditLink={() => handleEditLink(link)}
+          handleDeleteLink={() => memoizedDeleteLink(link.id)}
+          handleEditLink={() => memoizedEditLink(link)}
           isEditingAllowed={(userAuth.isMember || userAuth.isOwner) && !disabled}
           link={link}
         />
