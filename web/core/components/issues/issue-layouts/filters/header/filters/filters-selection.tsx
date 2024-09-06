@@ -22,9 +22,10 @@ import {
 } from "@/components/issues";
 // constants
 import { ILayoutDisplayFiltersOptions } from "@/constants/issue";
+// hooks
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { FilterIssueTypes } from "@/plane-web/components/issues";
-import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
   filters: IIssueFilterOptions;

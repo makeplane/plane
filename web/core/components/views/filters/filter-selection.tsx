@@ -7,8 +7,10 @@ import { FilterCreatedBy, FilterCreatedDate } from "@/components/common/filters"
 import { FilterOption } from "@/components/issues";
 // constants
 import { EViewAccess } from "@/constants/views";
-import { FilterByAccess } from "@/plane-web/components/views/filters/access-filter";
+// hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web components
+import { FilterByAccess } from "@/plane-web/components/views/filters/access-filter";
 
 type Props = {
   filters: TViewFilters;
