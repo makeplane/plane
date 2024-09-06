@@ -57,7 +57,7 @@ const ApiTokensPage = observer(() => {
       <section className="w-full overflow-y-auto">
         {tokens.length > 0 ? (
           <>
-            <div className="flex items-center justify-between border-b border-custom-border-200 py-3.5">
+            <div className="flex items-center justify-between border-b border-custom-border-200 pb-3.5">
               <h3 className="text-xl font-medium">API tokens</h3>
               <Button variant="primary" onClick={() => setIsCreateTokenModalOpen(true)}>
                 Add API token

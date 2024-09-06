@@ -57,27 +57,25 @@ export const PagesListHeader = observer(() => {
           </Breadcrumbs>
         </div>
       </Header.LeftItem>
-      <Header.RightItem>
-        {canUserCreatePage ? (
-          <div className="flex items-center gap-2">
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={() => {
-                setTrackElement("Project pages page");
-                toggleCreatePageModal({
-                  isOpen: true,
-                  pageAccess: pageType === "private" ? EPageAccess.PRIVATE : EPageAccess.PUBLIC,
-                });
-              }}
-            >
-              Add page
-            </Button>
-          </div>
-        ) : (
-          <></>
-        )}
-      </Header.RightItem>
+      {canUserCreatePage ? (
+        <Header.RightItem>
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={() => {
+              setTrackElement("Project pages page");
+              toggleCreatePageModal({
+                isOpen: true,
+                pageAccess: pageType === "private" ? EPageAccess.PRIVATE : EPageAccess.PUBLIC,
+              });
+            }}
+          >
+            Add page
+          </Button>
+        </Header.RightItem>
+      ) : (
+        <></>
+      )}
     </Header>
   );
 });

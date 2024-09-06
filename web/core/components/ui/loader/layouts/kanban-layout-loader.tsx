@@ -2,7 +2,7 @@ import { forwardRef } from "react";
 import { ContentWrapper } from "@plane/ui";
 
 export const KanbanIssueBlockLoader = forwardRef<HTMLSpanElement>((props, ref) => (
-  <span ref={ref} className="block h-28 m-1.5 animate-pulse bg-custom-background-80 rounded" />
+  <span ref={ref} className="block h-28 animate-pulse bg-custom-background-80 rounded" />
 ));
 
 KanbanIssueBlockLoader.displayName = "KanbanIssueBlockLoader";

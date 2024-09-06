@@ -112,7 +112,7 @@ export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
             </div>
           </>
         ) : (
-          <div className="h-full grid place-items-center">
+          <div className="h-full grid place-items-center my-6">
             {type === "assigned" && <AssignedIssuesEmptyState type={tab} />}
             {type === "created" && <CreatedIssuesEmptyState type={tab} />}
           </div>

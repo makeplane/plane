@@ -56,12 +56,12 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
   if (!currentUser) return <></>;
 
   return (
-    <div className="mx-4 space-y-6">
+    <div className="space-y-6">
       {Object.keys(PROJECT_FEATURES_LIST).map((featureSectionKey) => {
         const feature = PROJECT_FEATURES_LIST[featureSectionKey];
         return (
           <div key={featureSectionKey} className="">
-            <div className="flex flex-col justify-center border-b border-custom-border-100 py-3">
+            <div className="flex flex-col justify-center border-b border-custom-border-100">
               <h3 className="text-xl font-medium">{feature.title}</h3>
               <h4 className="text-sm leading-5 text-custom-text-200">{feature.description}</h4>
             </div>

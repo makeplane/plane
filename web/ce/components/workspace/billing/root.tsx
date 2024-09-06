@@ -10,7 +10,7 @@ export const BillingRoot = () => (
         <h3 className="text-xl font-medium">Billing and Plans</h3>
       </div>
     </div>
-    <div className="px-4 py-6">
+    <div className="py-6">
       <div>
         <h4 className="text-md mb-1 leading-6">Current plan</h4>
         <p className="mb-3 text-sm text-custom-text-200">You are currently using the free plan</p>

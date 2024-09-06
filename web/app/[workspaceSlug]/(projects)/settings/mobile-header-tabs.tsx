@@ -1,3 +1,4 @@
+import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 // constants
 import { EUserWorkspaceRoles } from "@/constants/workspace";
@@ -9,7 +10,7 @@ import { WORKSPACE_SETTINGS_LINKS } from "@/plane-web/constants/workspace";
 // plane web helpers
 import { shouldRenderSettingLink } from "@/plane-web/helpers/workspace.helper";
 
-export const MobileWorkspaceSettingsTabs = () => {
+export const MobileWorkspaceSettingsTabs = observer(() => {
   const router = useAppRouter();
   const { workspaceSlug } = useParams();
   const pathname = usePathname();
@@ -28,10 +29,11 @@ export const MobileWorkspaceSettingsTabs = () => {
           shouldRenderSettingLink(item.key) &&
           workspaceMemberInfo >= item.access && (
             <div
-              className={`${item.highlight(pathname, `/${workspaceSlug}`)
-                ? "text-custom-primary-100 text-sm py-2 px-3 whitespace-nowrap flex flex-grow cursor-pointer justify-around border-b border-custom-primary-200"
-                : "text-custom-text-200 flex flex-grow cursor-pointer justify-around border-b border-custom-border-200 text-sm py-2 px-3 whitespace-nowrap"
-                }`}
+              className={`${
+                item.highlight(pathname, `/${workspaceSlug}`)
+                  ? "text-custom-primary-100 text-sm py-2 px-3 whitespace-nowrap flex flex-grow cursor-pointer justify-around border-b border-custom-primary-200"
+                  : "text-custom-text-200 flex flex-grow cursor-pointer justify-around border-b border-custom-border-200 text-sm py-2 px-3 whitespace-nowrap"
+              }`}
               key={index}
               onClick={() => router.push(`/${workspaceSlug}${item.href}`)}
             >
@@ -41,4 +43,4 @@ export const MobileWorkspaceSettingsTabs = () => {
       )}
     </div>
   );
-};
+});

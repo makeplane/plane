@@ -55,25 +55,23 @@ export const CyclesListHeader: FC = observer(() => {
           />
         </Breadcrumbs>
       </Header.LeftItem>
-      <Header.RightItem>
-        {canUserCreateCycle && currentProjectDetails ? (
-          <div className="flex items-center gap-3">
-            <CyclesViewHeader projectId={currentProjectDetails.id} />
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={() => {
-                setTrackElement("Cycles page");
-                toggleCreateCycleModal(true);
-              }}
-            >
-              <div className="hidden sm:block">Add</div> Cycle
-            </Button>
-          </div>
-        ) : (
-          <></>
-        )}
-      </Header.RightItem>
+      {canUserCreateCycle && currentProjectDetails ? (
+        <Header.RightItem>
+          <CyclesViewHeader projectId={currentProjectDetails.id} />
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={() => {
+              setTrackElement("Cycles page");
+              toggleCreateCycleModal(true);
+            }}
+          >
+            <div className="hidden sm:block">Add</div> Cycle
+          </Button>
+        </Header.RightItem>
+      ) : (
+        <></>
+      )}
     </Header>
   );
 });

@@ -291,6 +291,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                 </Button>
                 {!isCompletedCycle && (
                   <Button
+                    className="h-full self-start"
                     onClick={() => {
                       setTrackElement("Cycle issues page");
                       toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
