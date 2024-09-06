@@ -61,7 +61,7 @@ export const LicenseSeatsBanner: FC = observer(() => {
 
   const planMessages = {
     free_plan: `Your workspace has been grandfathered to ${freeSeats} over the 12-member limit on the Free plan. To add more members, upgrade to Pro.`,
-    near_limit: `You’ve already ${totalMembersCount} out of ${freeSeats} members allowed on the Free plan. You can only add 4 more members. To remove the limit, upgrade to Pro.`,
+    near_limit: `You’ve already ${totalMembersCount} out of ${freeSeats} members allowed on the Free plan. You can only add ${freeSeats - totalMembersCount} more members. To remove the limit, upgrade to Pro.`,
     limit_reached:
       totalMembersCount > freeSeats
         ? `You’ve reached the members limit on this plan. To add more members, upgrade to Pro`
@@ -78,15 +78,13 @@ export const LicenseSeatsBanner: FC = observer(() => {
       <div
         className={cn(
           "relative flex justify-center items-center gap-2 p-2 px-4",
-          currentVariant === "primary"
-            ? "bg-custom-primary-100/10 text-custom-primary-100"
-            : "bg-red-500/10 text-red-500"
+          currentVariant === "primary" ? "bg-green-500/10 text-green-500" : "bg-red-500/10 text-red-500"
         )}
       >
         <div className="text-sm font-medium text-center">{planMessages[currentPlanKey]}</div>
         <div className="flex-shrink-0">
           <Button
-            variant={currentVariant === "primary" ? "outline-primary" : "outline-danger"}
+            variant={currentVariant === "primary" ? "primary" : "outline-danger"}
             size="sm"
             onClick={() => setPricingModalOpen(true)}
           >
