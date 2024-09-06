@@ -198,22 +198,19 @@ export const getFilteredRowsForGrouping = (projectId: string, queries: any) => {
 };
 
 export const singleFilterConstructor = (queries: any) => {
-  const { order_by, cursor, per_page, group_by, sub_group_by, sub_issue, target_date, ...filters } =
+  const { order_by, cursor, per_page, group_by, sub_group_by, sub_issue, target_date, start_date, ...filters } =
     translateQueryParams(queries);
 
   let sql = "";
   if (!sub_issue) {
-    sql += ` AND parent_id IS NOT NULL 
+    sql += ` AND parent_id IS NULL 
     `;
   }
   if (target_date) {
-    // "2024-09-29;after,2024-11-02;before"
-    const dates = target_date.split(",");
-    const start = dates[0].split(";")[0];
-    const end = dates[1].split(";")[0];
-
-    sql += ` AND target_date >= date('${start}') AND target_date <= date('${end}') 
-    `;
+    sql += createDateFilter("target_date", target_date);
+  }
+  if (start_date) {
+    sql += createDateFilter("start_date", start_date);
   }
   const keys = Object.keys(filters);
 
@@ -230,6 +227,47 @@ export const singleFilterConstructor = (queries: any) => {
   return sql;
 };
 
+// let q = '2_months;after;fromnow,1_months;after;fromnow,2024-09-01;after,2024-10-06;after,2_weeks;after;fromnow'
+
+// ["2_months;after;fromnow", "1_months;after;fromnow", "2024-09-01;after", "2024-10-06;before", "2_weeks;after;fromnow"];
+
+const createDateFilter = (key: string, q: string) => {
+  let sql = "  ";
+  // get todays date in YYYY-MM-DD format
+  const queries = q.split(",");
+  const customRange: string[] = [];
+  let isAnd = true;
+  queries.forEach((query: string) => {
+    const [date, type, from] = query.split(";");
+    if (from) {
+      // Assuming type is always after
+      let after = "";
+      const [length, unit] = date.split("_");
+      if (unit === "weeks") {
+        // get date in yyyy-mm-dd format one week from now
+        after = new Date(new Date().setDate(new Date().getDate() + length * 7)).toISOString().split("T")[0];
+      }
+      if (unit === "months") {
+        after = new Date(new Date().setDate(new Date().getDate() + length * 30)).toISOString().split("T")[0];
+      }
+      sql += ` ${isAnd ? "AND" : "OR"} ${key} >= date('${after}')`;
+      isAnd = false;
+      // sql += ` AND ${key} ${type === "after" ? ">=" : "<="} date('${date}', '${today}')`;
+    } else {
+      customRange.push(query);
+    }
+  });
+
+  if (customRange.length === 2) {
+    const end = customRange.find((date) => date.includes("before"))?.split(";")[0];
+    const start = customRange.find((date) => date.includes("after"))?.split(";")[0];
+    if (end && start) {
+      sql += ` ${isAnd ? "AND" : "OR"} ${key} BETWEEN date('${start}') AND date('${end}')`;
+    }
+  }
+
+  return sql;
+};
 const getSingleFilterFields = (queries: any) => {
   const { order_by, cursor, per_page, group_by, sub_group_by, sub_issue, ...otherProps } =
     translateQueryParams(queries);
