@@ -31,14 +31,22 @@ app.use(cors());
 
 const router = express.Router();
 
-const HocusPocusServer = await getHocusPocusServer();
+const HocusPocusServer = await getHocusPocusServer().catch(err => {
+  manualLogger.error("Failed to initialize HocusPocusServer:", err);
+  process.exit(1);
+});
 
 router.get("/health", (_req, res) => {
   res.status(200).json({ status: "OK" });
 });
 
 router.ws("/collaboration", (ws, req) => {
-  HocusPocusServer.handleConnection(ws, req);
+  try {
+    HocusPocusServer.handleConnection(ws, req);
+  } catch (err) {
+    manualLogger.error("WebSocket connection error:", err);
+    ws.close();
+  }
 });
 
 app.use(process.env.LIVE_BASE_PATH || "/live", router);
@@ -51,6 +59,45 @@ Sentry.setupExpressErrorHandler(app);
 
 app.use(errorHandler);
 
-app.listen(app.get("port"), () => {
+const liveServer = app.listen(app.get("port"), () => {
   manualLogger.info(`Plane Live server has started at port ${app.get("port")}`);
+});
+
+const gracefulShutdown = async () => {
+  manualLogger.info("Starting graceful shutdown...");
+
+  try {
+    // Close the HocusPocus server WebSocket connections
+    await HocusPocusServer.destroy();
+    manualLogger.info("HocusPocus server WebSocket connections closed gracefully.");
+
+    // Close the Express server
+    liveServer.close(() => {
+      manualLogger.info("Express server closed gracefully.");
+      process.exit(1);
+    });
+  } catch (err) {
+    manualLogger.error("Error during shutdown:", err);
+    process.exit(1);
+  }
+
+  // Forcefully shut down after 10 seconds if not closed
+  setTimeout(() => {
+    manualLogger.error("Forcing shutdown...");
+    process.exit(1);
+  }, 10000);
+};
+
+// Graceful shutdown on unhandled rejection
+process.on("unhandledRejection", (err: any) => {
+  manualLogger.info("Unhandled Rejection: ", err);
+  manualLogger.info(`UNHANDLED REJECTION! 💥 Shutting down...`);
+  gracefulShutdown();
+});
+
+// Graceful shutdown on uncaught exception
+process.on("uncaughtException", (err: any) => {
+  manualLogger.info("Uncaught Exception: ", err);
+  manualLogger.info(`UNCAUGHT EXCEPTION! 💥 Shutting down...`);
+  gracefulShutdown();
 });

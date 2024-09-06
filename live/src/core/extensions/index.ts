@@ -97,8 +97,7 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
               });
             }
           } catch (error) {
-            manualLogger.error("Error in updating document:");
-            manualLogger.error(error);
+            manualLogger.error("Error in updating document:", error);
           }
         });
       },
@@ -120,22 +119,29 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
           ) {
             redisClient.disconnect();
           }
-          manualLogger.error(
+          manualLogger.warn(
             `Redis Client wasn't able to connect, continuing without Redis (you won't be able to sync data between multiple plane live servers)`,
+            error,
           );
-          manualLogger.error(error);
           reject(error);
         });
 
         redisClient.on("ready", () => {
           extensions.push(new HocusPocusRedis({ redis: redisClient }));
-          manualLogger.info("Redis Client connected");
+          manualLogger.info("Redis Client connected ✅");
           resolve();
         });
       });
     } catch (error) {
-      manualLogger.error("Failed to connect to Redis:", error);
+      manualLogger.warn(
+        `Redis Client wasn't able to connect, continuing without Redis (you won't be able to sync data between multiple plane live servers)`,
+        error,
+      );
     }
+  } else {
+    manualLogger.warn(
+      "Redis URL is not set, continuing without Redis (you won't be able to sync data between multiple plane live servers)",
+    );
   }
 
   return extensions;

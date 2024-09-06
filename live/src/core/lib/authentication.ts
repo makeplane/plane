@@ -41,19 +41,24 @@ export const handleAuthentication = async (props: Props) => {
     const projectId = params.get("projectId")?.toString();
     if (!workspaceSlug || !projectId) {
       throw Error(
-        "Authentication failed: Incomplete query params. Either workspaceSlug or projectId is missing.",
+        "Authentication failed: Incomplete query params. Either workspaceSlug or projectId is missing."
       );
     }
     // fetch current user's project membership info
-    const projectMembershipInfo = await userService.getUserProjectMembership(
-      workspaceSlug,
-      projectId,
-      cookie,
-    );
-    const projectRole = projectMembershipInfo.role;
-    // make the connection read only for roles lower than a member
-    if (projectRole < 15) {
-      connection.readOnly = true;
+    try {
+      const projectMembershipInfo = await userService.getUserProjectMembership(
+        workspaceSlug,
+        projectId,
+        cookie
+      );
+      const projectRole = projectMembershipInfo.role;
+      // make the connection read only for roles lower than a member
+      if (projectRole < 15) {
+        connection.readOnly = true;
+      }
+    } catch (error) {
+      manualLogger.error("Failed to fetch project membership info:", error);
+      throw error;
     }
   } else {
     await authenticateUser({
