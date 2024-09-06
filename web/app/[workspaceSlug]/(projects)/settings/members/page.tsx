@@ -19,10 +19,15 @@ import { cn } from "@/helpers/common.helper";
 import { getUserRole } from "@/helpers/user.helper";
 // hooks
 import { useEventTracker, useMember, useUser, useWorkspace } from "@/hooks/store";
+// plane web components
+import { UpdateWorkspaceSeatsModal } from "@/plane-web/components/workspace";
+// plane web hooks
+import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 const WorkspaceMembersSettingsPage = observer(() => {
   // states
   const [inviteModal, setInviteModal] = useState(false);
+  const [updateWorkspaceSeatsModal, setUpdateWorkspaceSeatsModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   // router
   const { workspaceSlug } = useParams();
@@ -38,6 +43,9 @@ const WorkspaceMembersSettingsPage = observer(() => {
     workspace: { inviteMembersToWorkspace },
   } = useMember();
   const { currentWorkspace } = useWorkspace();
+  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
+  // derived values
+  const isSelfHostedProWorkspace = subscriptionDetail?.is_self_managed && subscriptionDetail?.product === "PRO";
 
   const handleWorkspaceInvite = (data: IWorkspaceBulkInviteFormData) => {
     if (!workspaceSlug) return;
@@ -79,6 +87,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
           title: "Error!",
           message: `${err.error ?? "Something went wrong. Please try again."}`,
         });
+        throw err;
       });
   };
 
@@ -97,7 +106,14 @@ const WorkspaceMembersSettingsPage = observer(() => {
         isOpen={inviteModal}
         onClose={() => setInviteModal(false)}
         onSubmit={handleWorkspaceInvite}
+        toggleUpdateWorkspaceSeatsModal={() => setUpdateWorkspaceSeatsModal(true)}
       />
+      {isSelfHostedProWorkspace && (
+        <UpdateWorkspaceSeatsModal
+          isOpen={updateWorkspaceSeatsModal}
+          onClose={() => setUpdateWorkspaceSeatsModal(false)}
+        />
+      )}
       <section
         className={cn("w-full overflow-y-auto", {
           "opacity-60": !canPerformWorkspaceMemberActions,
@@ -115,6 +131,11 @@ const WorkspaceMembersSettingsPage = observer(() => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
+          {isSelfHostedProWorkspace && canPerformWorkspaceAdminActions && (
+            <Button variant="primary" size="sm" onClick={() => setUpdateWorkspaceSeatsModal(true)}>
+              Add more seats
+            </Button>
+          )}
           {canPerformWorkspaceAdminActions && (
             <Button variant="primary" size="sm" onClick={() => setInviteModal(true)}>
               Add member

@@ -1,4 +1,4 @@
-// types
+import { Timer } from "lucide-react";
 import { TStaticViewTypes } from "@plane/types";
 // services images
 import CSVLogo from "@/public/services/csv.svg";
