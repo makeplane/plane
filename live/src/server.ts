@@ -37,7 +37,7 @@ router.get("/health", (_req, res) => {
   res.status(200).json({ status: "OK" });
 });
 
-router.ws("/collaboration", async (ws, req) => {
+router.ws("/collaboration", (ws, req) => {
   HocusPocusServer.handleConnection(ws, req);
 });
 
