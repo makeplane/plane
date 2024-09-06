@@ -3,6 +3,7 @@ import "@/core/config/sentry-config.js";
 import express from "express";
 import expressWs from "express-ws";
 import * as Sentry from "@sentry/node";
+import compression from "compression";
 
 // cors
 import cors from "cors";
@@ -19,6 +20,14 @@ expressWs(app);
 
 app.set("port", process.env.PORT || 3000);
 
+// Middleware for response compression
+app.use(
+  compression({
+    level: 6,
+    threshold: 5 * 1000,
+  }),
+);
+
 // Logging middleware
 app.use(logger);
 
@@ -31,7 +40,7 @@ app.use(cors());
 
 const router = express.Router();
 
-const HocusPocusServer = await getHocusPocusServer().catch(err => {
+const HocusPocusServer = await getHocusPocusServer().catch((err) => {
   manualLogger.error("Failed to initialize HocusPocusServer:", err);
   process.exit(1);
 });
@@ -69,7 +78,9 @@ const gracefulShutdown = async () => {
   try {
     // Close the HocusPocus server WebSocket connections
     await HocusPocusServer.destroy();
-    manualLogger.info("HocusPocus server WebSocket connections closed gracefully.");
+    manualLogger.info(
+      "HocusPocus server WebSocket connections closed gracefully.",
+    );
 
     // Close the Express server
     liveServer.close(() => {
