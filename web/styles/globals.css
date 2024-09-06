@@ -359,12 +359,6 @@ body {
   color: rgba(var(--color-text-100));
 }
 
-.app-container {
-  height: 100vh;
-  width: 100%;
-  overflow: hidden;
-}
-
 /* scrollbar style */
 ::-webkit-scrollbar {
   display: none;
