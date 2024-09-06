@@ -3,14 +3,14 @@ import React from "react";
 import { PageRenderer } from "@/components/editors";
 // constants
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
+// extensions
+import { IssueWidget } from "@/extensions";
 // helpers
 import { getEditorClassNames } from "@/helpers/common";
-// plane editor types
-import { TEmbedConfig } from "@/plane-editor/types";
+// hooks
+import { useCollaborativeEditor } from "@/hooks/use-collaborative-editor";
 // types
 import { EditorRefApi, ICollaborativeDocumentEditor } from "@/types";
-import { useCollaborativeEditor } from "@/hooks/use-collaborative-editor";
-import { IssueWidget } from "@/extensions";
 
 const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
   const {
