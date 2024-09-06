@@ -3,6 +3,8 @@ import re
 
 # Django imports
 from django.utils import timezone
+from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
 
 # Third Party imports
 from rest_framework import serializers
@@ -447,9 +449,20 @@ class IssueLinkSerializer(BaseSerializer):
             "issue",
         ]
 
+    def to_internal_value(self, data):
+        # Modify the URL before validation by appending http:// if missing
+        url = data.get("url", "")
+        if url and not url.startswith(("http://", "https://")):
+            data["url"] = "http://" + url
+
+        return super().to_internal_value(data)
+
     def validate_url(self, value):
-        # Check URL format
-        if not check_url_validity(value):
+        # Use Django's built-in URLValidator for validation
+        url_validator = URLValidator()
+        try:
+            url_validator(value)
+        except ValidationError:
             raise serializers.ValidationError({"error": "Invalid URL format."})
 
         return value
