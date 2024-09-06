@@ -40,7 +40,7 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
 
   const isButtonDisabled = email.length === 0 || Boolean(emailError?.email) || isSubmitting;
 
-  const [isSel, setIsSel] = useState(true)
+  const [isFocus, setIsFocus] = useState(true)
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
@@ -52,11 +52,11 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
         <div
           className={cn(
             `relative flex items-center rounded-md bg-onboarding-background-200 border`,
-            !isSel && Boolean(emailError?.email) ? `border-red-500` : `border-onboarding-border-100`
+            !isFocus && Boolean(emailError?.email) ? `border-red-500` : `border-onboarding-border-100`
           )}
           tabIndex={-1}
-          onFocus={() => {setIsSel(true)}}
-          onBlur={() => {setIsSel(false)}}
+          onFocus={() => {setIsFocus(true)}}
+          onBlur={() => {setIsFocus(false)}}
         >
           <Input
             id="email"
@@ -82,7 +82,7 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
             </button>
             )}
         </div>
-        {emailError?.email && !isSel && (
+        {emailError?.email && !isFocus && (
           <p className="flex items-center gap-1 text-xs text-red-600 px-0.5">
             <CircleAlert height={12} width={12} />
             {emailError.email}
