@@ -97,7 +97,8 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
               });
             }
           } catch (error) {
-            console.error("Error in updating document", error);
+            manualLogger.error("Error in updating document:");
+            manualLogger.error(error);
           }
         });
       },
