@@ -424,15 +424,6 @@ class IssueModuleDetailSerializer(BaseSerializer):
         ]
 
 
-def check_url_validity(url: str) -> bool:
-    # Regex pattern to match valid URLs or domain names
-    url_pattern = re.compile(
-        r"^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,6}([\/\w .-]*)*\/?(\?[=&\w.-]*)?$",
-        re.IGNORECASE,
-    )
-    return bool(url_pattern.match(url))
-
-
 class IssueLinkSerializer(BaseSerializer):
     created_by_detail = UserLiteSerializer(read_only=True, source="created_by")
 
