@@ -201,6 +201,7 @@ func (api *PrimeMonitorApi) InitializeInstance(payload CredentialsPayload) (Setu
 	resp, err := api.post(api.host+SETUP_ENDPOINT, map[string]string{
 		"machine_signature": payload.ServerId,
 		"domain":            payload.Domain,
+		"deploy_platform":   "KUBERNETES",
 	})
 
 	if err != nil {
