@@ -139,7 +139,8 @@ export const IssueListRenderer = (searchCallback: (searchQuery: string) => Promi
 
   return {
     onStart: (props: { editor: Editor; clientRect?: (() => DOMRect | null) | null }) => {
-      const tippyContainer = document.querySelector(".active-editor") ?? document.querySelector("#editor-container");
+      const tippyContainer =
+        document.querySelector(".active-editor") ?? document.querySelector('[id^="editor-container"]');
 
       component = new ReactRenderer(IssueSuggestionList, {
         props: {
