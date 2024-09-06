@@ -202,6 +202,7 @@ class SAMLAdapter(Adapter):
                     "first_name": first_name,
                     "last_name": last_name,
                     "email": email,
+                    "is_password_autoset": True,
                 },
             }
         )
