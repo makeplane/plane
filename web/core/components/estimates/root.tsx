@@ -41,10 +41,10 @@ export const EstimateRoot: FC<TEstimateRoot> = observer((props) => {
       {loader === "init-loader" || isSWRLoading ? (
         <EstimateLoaderScreen />
       ) : (
-        <div className="space-y-12">
+        <div className="space-y-2">
           {/* header */}
-          <div className="text-xl font-medium text-custom-text-100 border-b border-custom-border-200 py-3.5">
-            Estimates
+          <div className="flex flex-col items-start border-b border-custom-border-100 pb-3.5">
+            <h3 className="text-xl font-medium leading-normal">Estimates</h3>
           </div>
 
           {/* current active estimate section */}

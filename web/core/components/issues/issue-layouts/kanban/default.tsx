@@ -135,7 +135,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
   const isGroupByCreatedBy = group_by === "created_by";
 
   return (
-    <ContentWrapper className={`flex-row relative gap-4`}>
+    <ContentWrapper className={`flex-row relative gap-4 py-4`}>
       {list &&
         list.length > 0 &&
         list.map((subList: IGroupByColumn) => {

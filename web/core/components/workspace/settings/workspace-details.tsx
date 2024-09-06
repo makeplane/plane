@@ -171,7 +171,7 @@ export const WorkspaceDetails: FC = observer(() => {
         )}
       />
       <div className={`w-full overflow-y-auto md:pr-9 pr-4 ${isAdmin ? "" : "opacity-60"}`}>
-        <div className="flex items-center gap-5 border-b border-custom-border-100 pb-7">
+        <div className="flex gap-5 border-b border-custom-border-100 pb-7 items-start">
           <div className="flex flex-col gap-1">
             <button type="button" onClick={() => setIsImageUploadModalOpen(true)} disabled={!isAdmin}>
               {watch("logo") && watch("logo") !== null && watch("logo") !== "" ? (
@@ -190,7 +190,7 @@ export const WorkspaceDetails: FC = observer(() => {
             </button>
           </div>
           <div className="flex flex-col gap-1">
-            <h3 className="text-lg font-semibold leading-6">{watch("name")}</h3>
+            <div className="text-lg font-semibold leading-6 mb:-my-5">{watch("name")}</div>
             <button type="button" onClick={handleCopyUrl} className="text-sm tracking-tight text-left">{`${
               typeof window !== "undefined" && window.location.origin.replace("http://", "").replace("https://", "")
             }/${currentWorkspace.slug}`}</button>
@@ -212,7 +212,7 @@ export const WorkspaceDetails: FC = observer(() => {
           </div>
         </div>
 
-        <div className="my-10 flex flex-col gap-8">
+        <div className="my-8 flex flex-col gap-8">
           <div className="grid-col grid w-full grid-cols-1 items-center justify-between gap-10 xl:grid-cols-2 2xl:grid-cols-3">
             <div className="flex flex-col gap-1">
               <h4 className="text-sm">Workspace name</h4>

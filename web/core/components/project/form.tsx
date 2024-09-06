@@ -141,7 +141,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="relative mt-6 h-44 w-full">
+      <div className="relative h-44 w-full">
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
         <img src={watch("cover_image")!} alt={watch("cover_image")!} className="h-44 w-full rounded-md object-cover" />
         <div className="z-5 absolute bottom-4 flex w-full items-end justify-between gap-3 px-4">

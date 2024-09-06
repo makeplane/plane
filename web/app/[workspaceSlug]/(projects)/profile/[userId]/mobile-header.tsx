@@ -8,7 +8,7 @@ import { ChevronDown } from "lucide-react";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // ui
-import { CustomMenu, Row } from "@plane/ui";
+import { CustomMenu } from "@plane/ui";
 // components
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
 // constants
@@ -109,18 +109,18 @@ export const ProfileIssuesMobileHeader = observer(() => {
   );
 
   return (
-    <div className="flex justify-start border-b border-custom-border-200 py-2 md:hidden">
+    <div className="flex justify-evenly border-b border-custom-border-200 py-2 md:hidden">
       <CustomMenu
         maxHeight={"md"}
-        className="flex justify-center text-sm text-custom-text-200"
+        className="flex flex-grow justify-center text-sm text-custom-text-200"
         placement="bottom-start"
         customButton={
-          <Row className="flex flex-start text-sm text-custom-text-200">
+          <div className="flex flex-center text-sm text-custom-text-200">
             Layout
-            <ChevronDown className="ml-2  h-4 w-4 text-custom-text-200 my-auto" strokeWidth={1} />
-          </Row>
+            <ChevronDown className="ml-2  h-4 w-4 text-custom-text-200 my-auto" strokeWidth={2} />
+          </div>
         }
-        customButtonClassName="flex flex-start text-custom-text-200 text-sm"
+        customButtonClassName="flex flex-center text-custom-text-200 text-sm"
         closeOnSelect
       >
         {ISSUE_LAYOUTS.map((layout, index) => {
@@ -139,15 +139,15 @@ export const ProfileIssuesMobileHeader = observer(() => {
           );
         })}
       </CustomMenu>
-      <div className="flex items-center justify-start border-l border-custom-border-200 text-sm text-custom-text-200">
+      <div className="flex flex-grow items-center justify-center border-l border-custom-border-200 text-sm text-custom-text-200">
         <FiltersDropdown
           title="Filters"
           placement="bottom-end"
           menuButton={
-            <Row className="flex flex-start text-sm text-custom-text-200">
+            <div className="flex flex-center text-sm text-custom-text-200">
               Filters
-              <ChevronDown className="ml-2  h-4 w-4 text-custom-text-200" strokeWidth={1} />
-            </Row>
+              <ChevronDown className="ml-2  h-4 w-4 text-custom-text-200" strokeWidth={2} />
+            </div>
           }
           isFiltersApplied={isIssueFilterActive(issueFilters)}
         >
@@ -165,15 +165,15 @@ export const ProfileIssuesMobileHeader = observer(() => {
           />
         </FiltersDropdown>
       </div>
-      <div className="flex items-center justify-start border-l border-custom-border-200 text-sm text-custom-text-200">
+      <div className="flex flex-grow items-center justify-center border-l border-custom-border-200 text-sm text-custom-text-200">
         <FiltersDropdown
           title="Display"
           placement="bottom-end"
           menuButton={
-            <Row className="flex flex-start text-sm text-custom-text-200">
+            <div className="flex flex-center text-sm text-custom-text-200">
               Display
-              <ChevronDown className="ml-2 h-4 w-4 text-custom-text-200" strokeWidth={1} />
-            </Row>
+              <ChevronDown className="ml-2 h-4 w-4 text-custom-text-200" strokeWidth={2} />
+            </div>
           }
         >
           <DisplayFiltersSelection
