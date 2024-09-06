@@ -71,7 +71,7 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
             ref={inputRef}
           />
             {email.length > 0 && (
-              <button className="h-[46px] items-center content-center px-3 bg-red-500"
+              <button className="h-[46px] items-center content-center px-3"
               onClick={() => {
                 setEmail("")
                 inputRef.current?.focus()
