@@ -31,13 +31,13 @@ app.use(cors());
 
 const router = express.Router();
 
+const HocusPocusServer = await getHocusPocusServer();
+
 router.get("/health", (_req, res) => {
   res.status(200).json({ status: "OK" });
 });
 
 router.ws("/collaboration", async (ws, req) => {
-  const HocusPocusServer = await getHocusPocusServer();
-
   HocusPocusServer.handleConnection(ws, req);
 });
 

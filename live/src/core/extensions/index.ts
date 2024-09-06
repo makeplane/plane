@@ -65,7 +65,7 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
             }
             resolve(fetchedData);
           } catch (error) {
-            console.error("Error in fetching document", error);
+            manualLogger.error("Error in fetching document", error);
           }
         });
       },

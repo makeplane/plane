@@ -5,6 +5,8 @@ import { UserService } from "@/core/services/user.service.js";
 import { TDocumentTypes } from "@/core/types/common.js";
 // plane live lib
 import { authenticateUser } from "@/plane-live/lib/authentication.js";
+// core helpers
+import { manualLogger } from "@/core/helpers/logger.js";
 
 const userService = new UserService();
 
@@ -26,7 +28,7 @@ export const handleAuthentication = async (props: Props) => {
   try {
     response = await userService.currentUser(cookie);
   } catch (error) {
-    console.error("Failed to fetch current user:", error);
+    manualLogger.error("Failed to fetch current user:", error);
     throw error;
   }
   if (response.id !== token) {
@@ -39,14 +41,14 @@ export const handleAuthentication = async (props: Props) => {
     const projectId = params.get("projectId")?.toString();
     if (!workspaceSlug || !projectId) {
       throw Error(
-        "Authentication failed: Incomplete query params. Either workspaceSlug or projectId is missing."
+        "Authentication failed: Incomplete query params. Either workspaceSlug or projectId is missing.",
       );
     }
     // fetch current user's project membership info
     const projectMembershipInfo = await userService.getUserProjectMembership(
       workspaceSlug,
       projectId,
-      cookie
+      cookie,
     );
     const projectRole = projectMembershipInfo.role;
     // make the connection read only for roles lower than a member
@@ -58,7 +60,7 @@ export const handleAuthentication = async (props: Props) => {
       connection,
       cookie,
       documentType,
-      params
+      params,
     });
   }
 
