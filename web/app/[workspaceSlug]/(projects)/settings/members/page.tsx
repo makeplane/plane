@@ -119,7 +119,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
           "opacity-60": !canPerformWorkspaceMemberActions,
         })}
       >
-        <div className="flex justify-between gap-4 pb-3.5 items-start	">
+        <div className="flex justify-between gap-4 pb-3.5 items-start">
           <h4 className="text-xl font-medium">Members</h4>
           <div className="ml-auto flex items-center gap-1.5 rounded-md border border-custom-border-200 bg-custom-background-100 px-2.5 py-1.5">
             <Search className="h-3.5 w-3.5 text-custom-text-400" />
@@ -131,14 +131,14 @@ const WorkspaceMembersSettingsPage = observer(() => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          {isSelfHostedProWorkspace && canPerformWorkspaceAdminActions && (
-            <Button variant="primary" size="sm" onClick={() => setUpdateWorkspaceSeatsModal(true)}>
-              Add more seats
-            </Button>
-          )}
           {canPerformWorkspaceAdminActions && (
             <Button variant="primary" size="sm" onClick={() => setInviteModal(true)}>
               Add member
+            </Button>
+          )}
+          {isSelfHostedProWorkspace && canPerformWorkspaceAdminActions && (
+            <Button variant="neutral-primary" size="sm" onClick={() => setUpdateWorkspaceSeatsModal(true)}>
+              Manage seats
             </Button>
           )}
         </div>

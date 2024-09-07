@@ -148,6 +148,24 @@ class PurchaseSubscriptionSeatEndpoint(BaseAPIView):
                 ).count(),
             )
 
+            # Check the active paid users in the workspace
+            workspace_member_count = WorkspaceMember.objects.filter(
+                workspace__slug=slug,
+                is_active=True,
+                member__is_bot=False,
+                member__gt=10,
+            ).count()
+
+            # Check if the quantity is less than the active paid users in the workspace
+            if quantity < workspace_member_count:
+                # Return an error response
+                return Response(
+                    {
+                        "error": "The number of seats cannot be less than the number of active paid users in the workspace"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             # Fetch the workspace subcription
             if settings.PAYMENT_SERVER_BASE_URL:
                 # Make a cancel request to the payment server

@@ -43,7 +43,7 @@ const ActivationPage = observer(() => {
     );
 
   return (
-    <div className="container mx-auto pr-10">
+    <div className="container mx-auto">
       <PageHead title={pageTitle} />
       <SubscriptionActivation workspaceSlug={workspaceSlug.toString()} />
     </div>

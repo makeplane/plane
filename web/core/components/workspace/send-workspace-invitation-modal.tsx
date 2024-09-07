@@ -150,7 +150,7 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
                 >
                   <div className="space-y-4">
                     <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
-                      Invite people to collaborate
+                      Add coworkers, clients, and consultants
                     </Dialog.Title>
                     <div>
                       {isSelfHostedProWorkspace ? (
@@ -161,17 +161,17 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
                             </Loader>
                           ) : (
                             <p className="text-sm text-custom-text-200">
-                              You are allowed to invite <b>{memberInviteCheckData?.allowed_admin_members}</b> admin(s)
-                              or member(s) and <b>{memberInviteCheckData?.allowed_guests}</b> guest(s) or viewer(s) to
-                              this workspace. To invite more, please purchase{" "}
+                              You can add <b>{memberInviteCheckData?.allowed_admin_members}</b> more users as Admins or
+                              Members and <b>{memberInviteCheckData?.allowed_guests}</b> more users as Guests to this
+                              workspace.{" "}
                               <Button
                                 variant="link-neutral"
                                 onClick={handleToggleUpdateWorkspaceSeatsModal}
                                 className="inline p-0 hover:underline"
                               >
-                                additional seats
-                              </Button>
-                              .
+                                Click here
+                              </Button>{" "}
+                              to get more seats.
                             </p>
                           )}
                         </>
@@ -191,7 +191,7 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
                               control={control}
                               name={`emails.${index}.email`}
                               rules={{
-                                required: "Email ID is required",
+                                required: "We need an email address to invite them.",
                                 pattern: {
                                   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                                   message: "Invalid Email ID",
@@ -207,7 +207,7 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
                                     onChange={onChange}
                                     ref={ref}
                                     hasError={Boolean(errors.emails?.[index]?.email)}
-                                    placeholder="Enter their email..."
+                                    placeholder="name@company.com"
                                     className="w-full text-xs sm:text-sm"
                                   />
                                   {errors.emails?.[index]?.email && (
@@ -283,7 +283,7 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
                         loading={isSubmitting}
                         disabled={isInviteDisabled}
                       >
-                        {isSubmitting ? "Sending invitation" : "Send invitation"}
+                        {isSubmitting ? "Sending invitation" : "Invite"}
                       </Button>
                     </div>
                   </div>

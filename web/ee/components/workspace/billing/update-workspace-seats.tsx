@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { Info, Minus, Plus } from "lucide-react";
 import { Dialog } from "@headlessui/react";
 // ui
 import { Button, EModalPosition, EModalWidth, Input, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
@@ -16,22 +17,46 @@ type Props = {
   onClose: () => void;
 };
 
+type TUpdateSeatButtonProps = {
+  children: React.ReactNode;
+  onClick: () => void;
+};
+
+const UpdateSeatButton: React.FC<TUpdateSeatButtonProps> = (props) => {
+  const { children, onClick } = props;
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="flex items-center justify-center size-7 bg-custom-background-90 hover:bg-custom-background-80 rounded cursor-pointer select-none"
+    >
+      {children}
+    </button>
+  );
+};
+
 export const UpdateWorkspaceSeatsModal: React.FC<Props> = observer((props) => {
   const { isOpen, onClose } = props;
   // router
   const { workspaceSlug } = useParams();
-  // states
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [numberOfSeats, setNumberOfSeats] = useState<string>("1");
-  const [error, setError] = useState<string>("");
   // mobx store
   const { currentWorkspaceSubscribedPlanDetail: subscribedPlan, updateSubscribedPlan } = useWorkspaceSubscription();
+  // states
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [numberOfSeats, setNumberOfSeats] = useState<string>(subscribedPlan?.purchased_seats?.toString() || "1");
+  const [error, setError] = useState<string>("");
+
+  useEffect(() => {
+    if (error) setError("");
+  }, [numberOfSeats]);
 
   const handleClose = () => {
     onClose();
 
     const timeout = setTimeout(() => {
-      setNumberOfSeats("1");
+      setNumberOfSeats(subscribedPlan?.purchased_seats?.toString() || "1");
+      setError("");
       clearTimeout(timeout);
     }, 350);
   };
@@ -39,16 +64,12 @@ export const UpdateWorkspaceSeatsModal: React.FC<Props> = observer((props) => {
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // validate number of seats
-    if (!numberOfSeats) {
-      setError("Number of seats is required");
+    if (!numberOfSeats || Number(numberOfSeats) <= 0) {
+      setError("You need to add at least one seat.");
       return;
     }
-    if (isNaN(Number(numberOfSeats))) {
-      setError("Number of seats must be a number");
-      return;
-    }
-    if (Number(numberOfSeats) <= 0) {
-      setError("Number of seats must be greater than 0");
+    if (isNaN(Number(numberOfSeats)) || Number(numberOfSeats) > 10000) {
+      setError("We take a number from 1 to 10,000 here.");
       return;
     }
 
@@ -58,8 +79,8 @@ export const UpdateWorkspaceSeatsModal: React.FC<Props> = observer((props) => {
       .then((response) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Seats added successfully",
-          message: "You have successfully added seats to your workspace",
+          title: "Congratulations.",
+          message: `Your workspace in now update to ${response?.seats} seats.`,
         });
         updateSubscribedPlan(workspaceSlug?.toString(), {
           purchased_seats: response?.seats,
@@ -69,13 +90,31 @@ export const UpdateWorkspaceSeatsModal: React.FC<Props> = observer((props) => {
       .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Request failed",
-          message: err?.error || "Something went wrong",
+          title: "We couldn't update seats.",
+          message: err?.error || "Try again.",
         });
       })
       .finally(() => {
         setIsSubmitting(false);
       });
+  };
+
+  const handleSeatChange = (action: "add" | "remove") => {
+    if (isNaN(Number(numberOfSeats))) {
+      setNumberOfSeats("1");
+      return;
+    }
+    if (action === "add") {
+      setNumberOfSeats((prev) => {
+        const newSeats = Number(prev) + 1;
+        return newSeats > 10000 ? "10000" : newSeats.toString();
+      });
+    } else {
+      setNumberOfSeats((prev) => {
+        const newSeats = Number(prev) - 1;
+        return newSeats < 1 ? "1" : newSeats.toString();
+      });
+    }
   };
 
   return (
@@ -89,35 +128,52 @@ export const UpdateWorkspaceSeatsModal: React.FC<Props> = observer((props) => {
       >
         <div className="space-y-2">
           <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
-            Add more seats
+            Manage seats on your current plan
           </Dialog.Title>
           <p className="text-sm text-custom-text-200">
-            Your current plan allows for <b>{subscribedPlan?.purchased_seats}</b> Admin/Member seats and{" "}
-            <b>{(subscribedPlan?.purchased_seats || 0) * 5}</b> Guest/Viewer seats. To accommodate more users, please
-            increase your seat allocation.
+            Your current plan lets you have{" "}
+            <span className="text-custom-text-100 font-medium">
+              {subscribedPlan?.purchased_seats} Admins or Members
+            </span>{" "}
+            and{" "}
+            <span className="text-custom-text-100 font-medium">
+              {(subscribedPlan?.purchased_seats || 0) * 5} Guests
+            </span>
+            .
           </p>
-          <div className="py-4 space-y-1">
-            <div className="flex items-start gap-2">
-              <span className="text-sm font-medium text-custom-text-200 pt-1">Additional seats to purchase: </span>
-              <div className="flex flex-col w-full gap-0.5">
-                <Input
-                  id="number_of_seats"
-                  type="number"
-                  value={numberOfSeats}
-                  onChange={(e) => {
-                    if (Boolean(error)) setError("");
-                    setNumberOfSeats(e.target.value);
-                  }}
-                  onWheel={(e) => e.currentTarget.blur()}
-                  placeholder="Add number of seats"
-                  inputSize="xs"
-                  hasError={Boolean(error)}
-                />
-                {Boolean(error) && <p className="text-xs text-red-500">{error}</p>}
-                <p className="text-xs text-custom-text-200">
-                  This action will update your current plan, and you&apos;ll be billed for the additional seats. Please
-                  ensure you have an active internet connection to connect with our billing services.
-                </p>
+          <div className="py-2 space-y-4">
+            <div className="flex w-full items-center gap-1.5">
+              <div className="text-sm text-custom-text-200 pr-2">Number of paid seats</div>
+              <UpdateSeatButton onClick={() => handleSeatChange("remove")}>
+                <Minus className="size-4 text-custom-text-100" />
+              </UpdateSeatButton>
+              <Input
+                id="number_of_seats"
+                type="text"
+                value={numberOfSeats}
+                onChange={(e) => {
+                  if (Boolean(error)) setError("");
+                  if (!isNaN(Number(e.target.value))) setNumberOfSeats(e.target.value);
+                }}
+                onWheel={(e) => e.currentTarget.blur()}
+                placeholder="Seats"
+                className="w-14 text-right"
+                inputSize="xs"
+                hasError={Boolean(error)}
+                tabIndex={-1}
+              />
+              <UpdateSeatButton onClick={() => handleSeatChange("add")}>
+                <Plus className="size-4 text-custom-text-100" />
+              </UpdateSeatButton>
+              {Boolean(error) && <p className="text-xs text-red-500">{error}</p>}
+            </div>
+            <div className="flex gap-1.5 py-2 px-3 rounded bg-custom-primary-100/10 text-xs text-custom-text-200">
+              <div className="flex-shirk-0">
+                <Info className="size-3 mt-0.5" />
+              </div>
+              <div>
+                <p>Ensure you are online and connected until this goes through successfully.</p>
+                <p>We will charge your card on file for the additional seats.</p>
               </div>
             </div>
           </div>
@@ -127,7 +183,7 @@ export const UpdateWorkspaceSeatsModal: React.FC<Props> = observer((props) => {
             Cancel
           </Button>
           <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
-            {isSubmitting ? "Adding seats" : "Add seats"}
+            {isSubmitting ? "Confirming" : "Change"}
           </Button>
         </div>
       </form>

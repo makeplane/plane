@@ -57,20 +57,29 @@ export const PlaneSelfHostedBilling: React.FC = observer(() => {
     <>
       {subscriptionDetail.product === "FREE" && (
         <div>
-          <div className="flex gap-2 font-medium justify-between">
-            <div className="flex items-center gap-2">
-              <Image src={PlaneLogo} alt="Plane" width={24} height={24} />
-              <h4 className="text-xl mb-1 leading-6 font-bold">Free plan</h4>
+          <div className="flex flex-col sm:flex-row gap-4 items-end sm:items-center justify-between">
+            <div className="flex gap-2.5">
+              <div className="flex-shrink-0 mt-0.5">
+                <Image src={PlaneLogo} alt="Plane" width={20} height={20} />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <div className="flex items-center gap-2">
+                  <h4 className="text-xl leading-6 font-semibold">Free</h4>
+                  <span className="px-2 py-0.5 bg-green-600/10 text-green-700 text-xs font-medium rounded">
+                    Current plan
+                  </span>
+                </div>
+                <div className="text-sm text-custom-text-200">
+                  Your Plane license can only be used to unlock features for one workspace.
+                </div>
+              </div>
             </div>
             <div>
               <Link
                 href={`/${workspaceSlug?.toString()}/settings/activation`}
-                className={cn(
-                  getButtonStyling("accent-primary", "md"),
-                  "w-full cursor-pointer rounded-2xl px-4 py-1.5 text-center text-sm font-medium outline-none"
-                )}
+                className={cn(getButtonStyling("primary", "md"), "cursor-pointer outline-none")}
               >
-                Activate your license
+                Activate this workspace
               </Link>
             </div>
           </div>

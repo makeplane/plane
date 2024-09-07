@@ -127,7 +127,7 @@ class WorkspaceLicenseEndpoint(BaseAPIView):
                         status=status.HTTP_400_BAD_REQUEST,
                     )
                 return Response(
-                    {"error": "Failed to activate license"},
+                    {"error": "Invalid license key"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         else:

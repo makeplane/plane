@@ -2,14 +2,14 @@
 
 import { FC, useState, FormEvent } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { Button, Input, setToast, TOAST_TYPE } from "@plane/ui";
+// components
+import { WorkspaceLogo } from "@/components/workspace";
 // hooks
+import { useWorkspace } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
 import { useSelfHostedSubscription, useWorkspaceSubscription } from "@/plane-web/hooks/store";
-// assets
-import PlaneLogo from "@/public/plane-logos/blue-without-text.png";
 
 type TSubscriptionActivation = {
   workspaceSlug: string;
@@ -20,6 +20,7 @@ export const SubscriptionActivation: FC<TSubscriptionActivation> = observer((pro
   // router
   const router = useAppRouter();
   // hooks
+  const { currentWorkspace } = useWorkspace();
   const { handleSuccessModalToggle } = useWorkspaceSubscription();
   const { activateSubscription } = useSelfHostedSubscription();
   // states
@@ -61,23 +62,25 @@ export const SubscriptionActivation: FC<TSubscriptionActivation> = observer((pro
   };
 
   return (
-    <form className="bg-custom-background-100 rounded-lg py-4 space-y-4" onSubmit={submitActivateLicense}>
-      <div className="px-4 space-y-1">
-        <h3 className="flex items-center whitespace-nowrap flex-wrap gap-2 text-2xl font-medium">
+    <form className="bg-custom-background-100 rounded-lg space-y-4" onSubmit={submitActivateLicense}>
+      <div className="px-4 space-y-1.5">
+        <h3 className="flex items-center whitespace-nowrap flex-wrap gap-2 text-xl font-medium">
           Activate
-          <div>
-            <Image src={PlaneLogo} alt="Plane logo" height="22" width="22" />
-          </div>
-          Plane Powers
+          <WorkspaceLogo
+            logo={currentWorkspace?.logo}
+            name={currentWorkspace?.name}
+            classNames="text-lg font-medium h-5 w-5"
+          />
+          {currentWorkspace?.name}
         </h3>
-        <p className="text-sm text-custom-text-200">
-          The Plane One license key you have will activate this workspace on your instance. Any other workspaces will
-          continue to be on the Community Edition.
-        </p>
+        <div className="text-sm text-custom-text-300">
+          The Plane license key you enter below will activate the associated plan for this workspace on your instance.
+          Any other workspaces without a license key will continue to be on the Free plan.
+        </div>
       </div>
 
-      <div className="px-4 space-y-1">
-        <label htmlFor="activity-key" className="text-sm text-custom-text-200">
+      <div className="px-4">
+        <label htmlFor="activity-key" className="text-sm font-medium text-custom-text-200 px-0.5">
           Enter license key
         </label>
         <Input
@@ -94,12 +97,19 @@ export const SubscriptionActivation: FC<TSubscriptionActivation> = observer((pro
         <div className="text-sm text-red-500">{errors}</div>
       </div>
 
-      <div className="flex justify-end items-center gap-2 px-4">
-        <Button onClick={() => setActivationKey("")} variant="neutral-primary" size="sm">
+      <div className="flex justify-end items-center gap-2 p-4">
+        <Button
+          onClick={() => {
+            setActivationKey("");
+            setErrors(undefined);
+          }}
+          variant="neutral-primary"
+          size="sm"
+        >
           Clear
         </Button>
         <Button type="submit" size="sm" disabled={loader}>
-          {loader ? "Activating..." : "Activate"}
+          {loader ? "Activating" : "Activate"}
         </Button>
       </div>
     </form>
