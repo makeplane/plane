@@ -71,7 +71,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: err?.detail ?? "Module could not be created. Please try again.",
+          message: err?.detail ?? err?.error ?? "Module could not be created. Please try again.",
         });
         captureModuleEvent({
           eventName: MODULE_CREATED,
@@ -102,7 +102,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: err?.detail ?? "Module could not be updated. Please try again.",
+          message: err?.detail ?? err?.error ?? "Module could not be updated. Please try again.",
         });
         captureModuleEvent({
           eventName: MODULE_UPDATED,

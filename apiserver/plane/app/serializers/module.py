@@ -68,6 +68,16 @@ class ModuleWriteSerializer(BaseSerializer):
         members = validated_data.pop("member_ids", None)
         project = self.context["project"]
 
+        module_name = validated_data.get("name")
+        if module_name:
+            # Lookup for the module name in the module table for that project
+            if Module.objects.filter(
+                name=module_name, project=project
+            ).exists():
+                raise serializers.ValidationError(
+                    {"error": "Module with this name already exists"}
+                )
+
         module = Module.objects.create(**validated_data, project=project)
         if members is not None:
             ModuleMember.objects.bulk_create(
@@ -90,6 +100,19 @@ class ModuleWriteSerializer(BaseSerializer):
 
     def update(self, instance, validated_data):
         members = validated_data.pop("member_ids", None)
+        module_name = validated_data.get("name")
+        if module_name:
+            # Lookup for the module name in the module table for that project
+            if (
+                Module.objects.filter(
+                    name=module_name, project=instance.project
+                )
+                .exclude(id=instance.id)
+                .exists()
+            ):
+                raise serializers.ValidationError(
+                    {"error": "Module with this name already exists"}
+                )
 
         if members is not None:
             ModuleMember.objects.filter(module=instance).delete()
