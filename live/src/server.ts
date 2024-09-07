@@ -41,7 +41,7 @@ router.ws("/collaboration", (ws, req) => {
 
 app.use(process.env.LIVE_BASE_PATH || "/live", router);
 
-app.use((_req, res, _next) => {
+app.use((_req, res) => {
   res.status(404).send("Not Found");
 });
 
