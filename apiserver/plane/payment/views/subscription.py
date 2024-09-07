@@ -12,7 +12,7 @@ from rest_framework.response import Response
 # Module imports
 from .base import BaseAPIView
 from plane.app.permissions.workspace import WorkspaceOwnerPermission
-from plane.db.models import Workspace, WorkspaceMember
+from plane.db.models import Workspace, WorkspaceMember, WorkspaceMemberInvite
 from plane.ee.models import WorkspaceLicense
 from plane.utils.exception_logger import log_exception
 from plane.payment.utils.workspace_license_request import (
@@ -156,12 +156,17 @@ class PurchaseSubscriptionSeatEndpoint(BaseAPIView):
                 member__gt=10,
             ).count()
 
+            invited_member_count = WorkspaceMemberInvite.objects.filter(
+                workspace__slug=slug,
+                role__gt=10,
+            )
+
             # Check if the quantity is less than the active paid users in the workspace
-            if quantity < workspace_member_count:
+            if quantity < (workspace_member_count + invited_member_count):
                 # Return an error response
                 return Response(
                     {
-                        "error": "The number of seats cannot be less than the number of active paid users in the workspace"
+                        "error": "The number of seats cannot be less than the number of active paid users in the workspace including the invites"
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )

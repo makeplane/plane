@@ -44,12 +44,16 @@ export const UpdateWorkspaceSeatsModal: React.FC<Props> = observer((props) => {
   const { currentWorkspaceSubscribedPlanDetail: subscribedPlan, updateSubscribedPlan } = useWorkspaceSubscription();
   // states
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [numberOfSeats, setNumberOfSeats] = useState<string>(subscribedPlan?.purchased_seats?.toString() || "1");
+  const [numberOfSeats, setNumberOfSeats] = useState<string>("1");
   const [error, setError] = useState<string>("");
 
   useEffect(() => {
     if (error) setError("");
   }, [numberOfSeats]);
+
+  useEffect(() => {
+    if (subscribedPlan) setNumberOfSeats(subscribedPlan?.purchased_seats?.toString() || "1");
+  }, [subscribedPlan]);
 
   const handleClose = () => {
     onClose();
@@ -80,7 +84,7 @@ export const UpdateWorkspaceSeatsModal: React.FC<Props> = observer((props) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Congratulations.",
-          message: `Your workspace in now update to ${response?.seats} seats.`,
+          message: `Your workspace in now updated to ${response?.seats} seats.`,
         });
         updateSubscribedPlan(workspaceSlug?.toString(), {
           purchased_seats: response?.seats,
