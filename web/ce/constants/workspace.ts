@@ -33,7 +33,7 @@ export const WORKSPACE_SETTINGS = {
     key: "export",
     label: "Exports",
     href: `/settings/exports`,
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    access: [EUserPermissions.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/exports/`,
     Icon: SettingIcon,
   },
