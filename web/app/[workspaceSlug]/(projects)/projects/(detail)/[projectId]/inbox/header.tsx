@@ -26,7 +26,7 @@ export const ProjectInboxHeader: FC = observer(() => {
 
   // derived value
   const isAuthorized = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
     EUserPermissionsLevel.PROJECT
   );
 
