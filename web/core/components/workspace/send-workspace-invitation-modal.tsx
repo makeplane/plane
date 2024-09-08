@@ -5,13 +5,15 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import useSWR from "swr";
-import { Plus, X } from "lucide-react";
+import { Info, Plus, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 import { IWorkspaceBulkInviteFormData } from "@plane/types";
 // ui
 import { Button, CustomSelect, Input, Loader } from "@plane/ui";
 // constants
 import { EUserWorkspaceRoles, ROLE } from "@/constants/workspace";
+// helpers
+import { cn } from "@/helpers/common.helper";
 // hooks
 import { useUser } from "@/hooks/store";
 // plane web services
@@ -68,6 +70,7 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
   const {
     control,
     reset,
+    watch,
     handleSubmit,
     formState: { isSubmitting, errors },
   } = useForm<FormValues>();
@@ -109,11 +112,27 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
     if (isOpen) mutateMemberInviteCheck();
   }, [isOpen, mutateMemberInviteCheck]);
 
-  const isInviteDisabled = isSelfHostedProWorkspace
-    ? isMemberInviteCheckLoading ||
-      !memberInviteCheckData?.invite_allowed ||
-      (memberInviteCheckData.allowed_admin_members === 0 && memberInviteCheckData.allowed_guests === 0)
-    : false;
+  const memberDetails = watch("emails");
+  // count total admins and members from the input fields
+  const totalAdminAndMembers = memberDetails?.filter(
+    (member) => !!member.email && (member.role === 15 || member.role === 20)
+  ).length;
+  // count total guests from the input fields
+  const totalGuests = memberDetails?.filter(
+    (member) => !!member.email && (member.role === 5 || member.role === 10)
+  ).length;
+  // check if the invite status is disabled from the backend
+  const isInviteStatusDisabled =
+    !memberInviteCheckData?.invite_allowed ||
+    (memberInviteCheckData?.allowed_admin_members === 0 && memberInviteCheckData?.allowed_guests === 0);
+  // check if the invitation limit is reached
+  const isInvitationLimitReached =
+    isSelfHostedProWorkspace &&
+    (isInviteStatusDisabled ||
+      totalAdminAndMembers > (memberInviteCheckData?.allowed_admin_members ?? 0) ||
+      totalGuests > (memberInviteCheckData?.allowed_guests ?? 0));
+
+  const isInviteDisabled = isSelfHostedProWorkspace ? isMemberInviteCheckLoading || isInvitationLimitReached : false;
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
@@ -161,17 +180,10 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
                             </Loader>
                           ) : (
                             <p className="text-sm text-custom-text-200">
-                              You can add <b>{memberInviteCheckData?.allowed_admin_members}</b> more users as Admins or
-                              Members and <b>{memberInviteCheckData?.allowed_guests}</b> more users as Guests to this
-                              workspace.{" "}
-                              <Button
-                                variant="link-neutral"
-                                onClick={handleToggleUpdateWorkspaceSeatsModal}
-                                className="inline p-0 hover:underline"
-                              >
-                                Click here
-                              </Button>{" "}
-                              to get more seats.
+                              You can add <b>{memberInviteCheckData?.allowed_admin_members}</b> more users as{" "}
+                              <span className="text-custom-text-100 font-medium">Admins or Members</span> and{" "}
+                              <b>{memberInviteCheckData?.allowed_guests}</b> more users as{" "}
+                              <span className="text-custom-text-100 font-medium">Guests</span> to this workspace.
                             </p>
                           )}
                         </>
@@ -261,16 +273,46 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
                         </div>
                       ))}
                     </div>
+                    {isInvitationLimitReached && (
+                      <div className="flex gap-1.5 py-2 px-3 rounded bg-custom-background-90 text-xs text-custom-text-200">
+                        <div className="flex-shirk-0">
+                          <Info className="size-3 mt-0.5" />
+                        </div>
+                        <div>
+                          <p className="font-medium">You are out of seats for this workspace.</p>
+                          <p className="pt-1">
+                            You have hit the member limit for this workspace. To add more admins and members to this
+                            workspace, please remove members or add more seats.
+                          </p>
+                        </div>
+                        <div className="flex-shirk-0 flex items-end pl-2">
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            className="py-1 px-2"
+                            onClick={handleToggleUpdateWorkspaceSeatsModal}
+                          >
+                            Manage seats
+                          </Button>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <div className="mt-5 flex items-center justify-between gap-2">
                     <button
                       type="button"
-                      className="flex items-center gap-2 bg-transparent py-2 pr-3 text-sm font-medium text-custom-primary outline-custom-primary"
+                      className={cn(
+                        "flex items-center gap-1 bg-transparent py-2 pr-3 text-xs font-medium text-custom-primary outline-custom-primary",
+                        {
+                          "cursor-not-allowed opacity-60": isInviteDisabled,
+                        }
+                      )}
                       onClick={appendField}
+                      disabled={isInviteDisabled}
                     >
-                      <Plus className="h-4 w-4" />
-                      Add more
+                      <Plus className="h-3.5 w-3.5" />
+                      Add another
                     </button>
                     <div className="flex items-center gap-2">
                       <Button variant="neutral-primary" size="sm" onClick={handleClose}>
