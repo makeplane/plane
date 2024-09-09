@@ -92,7 +92,7 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
     if (!workspaceSlug || !projectId) return;
 
     updateProject(workspaceSlug.toString(), projectId.toString(), {
-      guest_view_all_issues: value,
+      guest_view_all_features: value,
     })
       .then(() => {
         setToast({
@@ -174,8 +174,8 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
             </p>
           </div>
           <ToggleSwitch
-            value={currentProjectDetails?.guest_view_all_issues}
-            onChange={() => toggleGuestViewAllIssues(!currentProjectDetails?.guest_view_all_issues)}
+            value={currentProjectDetails?.guest_view_all_features}
+            onChange={() => toggleGuestViewAllIssues(!currentProjectDetails?.guest_view_all_features)}
             disabled={!isAdmin}
             size="md"
           />

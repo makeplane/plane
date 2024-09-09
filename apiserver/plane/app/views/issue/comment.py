@@ -16,7 +16,7 @@ from plane.app.serializers import (
     IssueCommentSerializer,
     CommentReactionSerializer,
 )
-from plane.app.permissions import ProjectLitePermission, allow_permission, ROLE
+from plane.app.permissions import allow_permission, ROLE
 from plane.db.models import (
     IssueComment,
     ProjectMember,
@@ -67,7 +67,6 @@ class IssueCommentViewSet(BaseViewSet):
         [
             ROLE.ADMIN,
             ROLE.MEMBER,
-            ROLE.GUEST,
         ]
     )
     def create(self, request, slug, project_id, issue_id):
@@ -162,9 +161,6 @@ class IssueCommentViewSet(BaseViewSet):
 class CommentReactionViewSet(BaseViewSet):
     serializer_class = CommentReactionSerializer
     model = CommentReaction
-    permission_classes = [
-        ProjectLitePermission,
-    ]
 
     def get_queryset(self):
         return (
@@ -182,6 +178,12 @@ class CommentReactionViewSet(BaseViewSet):
             .distinct()
         )
 
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+        ]
+    )
     def create(self, request, slug, project_id, comment_id):
         serializer = CommentReactionSerializer(data=request.data)
         if serializer.is_valid():
@@ -204,6 +206,12 @@ class CommentReactionViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+        ]
+    )
     def destroy(self, request, slug, project_id, comment_id, reaction_code):
         comment_reaction = CommentReaction.objects.get(
             workspace__slug=slug,

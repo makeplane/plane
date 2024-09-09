@@ -234,6 +234,7 @@ class IssueViewSet(BaseViewSet):
     @method_decorator(gzip_page)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
         filters = issue_filters(request.query_params, "GET")
         order_by_param = request.GET.get("order_by", "-created_at")
 
@@ -264,13 +265,16 @@ class IssueViewSet(BaseViewSet):
             entity_identifier=project_id,
             user_id=request.user.id,
         )
-        if ProjectMember.objects.filter(
-            workspace__slug=slug,
-            project_id=project_id,
-            member=request.user,
-            role=5,
-            is_active=True,
-        ).exists():
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=request.user,
+                role=5,
+                is_active=True,
+            ).exists()
+            and not project.guest_view_all_features
+        ):
             issue_queryset = issue_queryset.filter(created_by=request.user)
 
         if group_by:
@@ -440,17 +444,21 @@ class IssueViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @allow_permission(
-        [
+        allowed_roles=[
             ROLE.ADMIN,
             ROLE.MEMBER,
+            ROLE.GUEST,
         ],
         creator=True,
         model=Issue,
     )
     def retrieve(self, request, slug, project_id, pk=None):
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
+
         issue = (
             self.get_queryset()
             .filter(pk=pk)
+            .filter(project__guest_view_all_features=True)
             .annotate(
                 label_ids=Coalesce(
                     ArrayAgg(
@@ -527,7 +535,9 @@ class IssueViewSet(BaseViewSet):
         serializer = IssueDetailSerializer(issue, expand=self.expand)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], creator=True, model=Issue
+    )
     def partial_update(self, request, slug, project_id, pk=None):
         issue = (
             self.get_queryset()

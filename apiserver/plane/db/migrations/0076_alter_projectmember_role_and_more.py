@@ -15,7 +15,7 @@ def update_workspace_project_member_role(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('db', '0075_alter_fileasset_asset'),
+        ("db", "0075_alter_fileasset_asset"),
     ]
 
     operations = [
@@ -53,7 +53,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name="project",
-            name="guest_view_all_issues",
+            name="guest_view_all_features",
             field=models.BooleanField(default=False),
         ),
         migrations.RunPython(update_workspace_project_member_role),

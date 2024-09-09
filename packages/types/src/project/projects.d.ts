@@ -30,7 +30,7 @@ export interface IProject {
   draft_issues: number;
   draft_sub_issues: number;
   estimate: string | null;
-  guest_view_all_issues: boolean;
+  guest_view_all_features: boolean;
   id: string;
   identifier: string;
   anchor: string | null;

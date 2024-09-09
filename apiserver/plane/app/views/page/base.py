@@ -32,6 +32,7 @@ from plane.db.models import (
     UserFavorite,
     ProjectMember,
     ProjectPage,
+    Project,
 )
 from plane.utils.error_codes import ERROR_CODES
 
@@ -213,6 +214,7 @@ class PageViewSet(BaseViewSet):
         [
             ROLE.ADMIN,
             ROLE.MEMBER,
+            ROLE.GUEST,
         ]
     )
     def retrieve(self, request, slug, project_id, pk=None):
@@ -288,10 +290,23 @@ class PageViewSet(BaseViewSet):
         [
             ROLE.ADMIN,
             ROLE.MEMBER,
+            ROLE.GUEST,
         ]
     )
     def list(self, request, slug, project_id):
         queryset = self.get_queryset()
+        project = Project.objects.get(pk=project_id)
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=request.user,
+                role=5,
+                is_active=True,
+            ).exists()
+            and not project.guest_view_all_features
+        ):
+            queryset = queryset.filter(owned_by=request.user)
         pages = PageSerializer(queryset, many=True).data
         return Response(pages, status=status.HTTP_200_OK)
 
@@ -492,6 +507,7 @@ class PagesDescriptionViewSet(BaseViewSet):
         [
             ROLE.ADMIN,
             ROLE.MEMBER,
+            ROLE.GUEST,
         ]
     )
     def retrieve(self, request, slug, project_id, pk):
