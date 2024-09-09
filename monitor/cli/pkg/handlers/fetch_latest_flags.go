@@ -175,6 +175,7 @@ func RefreshFeatureFlags(ctx context.Context, api prime_api.IPrimeMonitorApi, li
 	flags, err := api.GetFeatureFlags(license.LicenseKey)
 	if err != 0 {
 		fmt.Println("Failed to fetch flags for license", license.LicenseKey)
+		return fmt.Errorf(F2_LICENSE_VERFICATION_FAILED, license.LicenseKey, license.WorkspaceSlug)
 	}
 
 	flagData := db.Flags{
