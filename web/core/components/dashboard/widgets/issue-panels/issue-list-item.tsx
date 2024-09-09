@@ -67,12 +67,14 @@ export const AssignedUpcomingIssueListItem: React.FC<IssueListItemProps> = obser
           ? blockedByIssues.length > 1
             ? `${blockedByIssues.length} blockers`
             : blockedByIssueProjectDetails && (
-              <IssueIdentifier
-                issueId={blockedByIssues[0]?.id}
-                projectId={blockedByIssueProjectDetails?.id}
-                textContainerClassName="text-xs text-custom-text-200 font-medium"
-              />
-            )
+                <IssueIdentifier
+                  projectIdentifier={blockedByIssueProjectDetails?.identifier}
+                  projectId={blockedByIssueProjectDetails?.id}
+                  issueSequenceId={blockedByIssues[0]?.sequence_id}
+                  issueTypeId={blockedByIssues[0]?.type_id}
+                  textContainerClassName="text-xs text-custom-text-200 font-medium"
+                />
+              )
           : "-"}
       </div>
     </ControlLink>

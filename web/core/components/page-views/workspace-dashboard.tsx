@@ -65,7 +65,7 @@ export const WorkspaceDashboardView = observer(() => {
         <>
           {joinedProjectIds.length > 0 || loader ? (
             <>
-              <IssuePeekOverview />
+              <IssuePeekOverview shouldReplaceIssueOnFetch={false} />
               <ContentWrapper
                 className={cn("gap-7", {
                   "vertical-scrollbar scrollbar-lg": windowWidth >= 768,
