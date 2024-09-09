@@ -3,11 +3,12 @@ import TaskList from "@tiptap/extension-task-list";
 import TextStyle from "@tiptap/extension-text-style";
 import TiptapUnderline from "@tiptap/extension-underline";
 import StarterKit from "@tiptap/starter-kit";
-// extensions
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
+// extensions
 import { CustomCodeBlockExtensionWithoutProps } from "./code/without-props";
 import { CustomCodeInlineExtension } from "./code-inline";
+import { ColorHighlighter } from "./color-highlighter";
 import { CustomLinkExtension } from "./custom-link";
 import { CustomHorizontalRule } from "./horizontal-rule";
 import { ImageExtensionWithoutProps } from "./image";
@@ -81,6 +82,7 @@ export const CoreEditorExtensionsWithoutProps = [
   TableCell,
   TableRow,
   CustomMentionWithoutProps(),
+  ColorHighlighter,
 ];
 
 export const DocumentEditorExtensionsWithoutProps = [IssueWidgetWithoutProps()];

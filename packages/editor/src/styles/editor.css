@@ -458,3 +458,24 @@ ul[data-type="taskList"] ul[data-type="taskList"] {
   margin-top: 0;
 }
 /* end tailwind typography */
+
+/* color swatch */
+.editor-color-swatch {
+  white-space: nowrap;
+
+  &::before {
+    background-color: var(--color);
+    border: 1px solid rgba(128, 128, 128, 0.3);
+    border-radius: 4px;
+    content: "";
+    display: inline-block;
+    height: var(--font-size-regular);
+    width: var(--font-size-regular);
+    aspect-ratio: 1 / 1;
+    margin-bottom: 0.15em;
+    margin-right: 0.1em;
+    vertical-align: middle;
+    flex-shrink: 0;
+  }
+}
+/* end color swatch */
