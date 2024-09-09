@@ -7,7 +7,7 @@ import { Controller, useForm } from "react-hook-form";
 import useSWR from "swr";
 import { IProject, IUserLite, IWorkspace } from "@plane/types";
 // ui
-import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
+import { Loader, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 // components
 import { MemberSelect } from "@/components/project";
 // constants
@@ -72,9 +72,27 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
       default_assignee:
         formData.default_assignee === "none"
           ? null
-          : formData.default_assignee ?? currentProjectDetails?.default_assignee,
+          : (formData.default_assignee ?? currentProjectDetails?.default_assignee),
       project_lead:
-        formData.project_lead === "none" ? null : formData.project_lead ?? currentProjectDetails?.project_lead,
+        formData.project_lead === "none" ? null : (formData.project_lead ?? currentProjectDetails?.project_lead),
+    })
+      .then(() => {
+        setToast({
+          title: "Success!",
+          type: TOAST_TYPE.SUCCESS,
+          message: "Project updated successfully",
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  const toggleGuestViewAllIssues = async (value: boolean) => {
+    if (!workspaceSlug || !projectId) return;
+
+    updateProject(workspaceSlug.toString(), projectId.toString(), {
+      guest_view_all_issues: value,
     })
       .then(() => {
         setToast({
@@ -147,6 +165,22 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
           </div>
         </div>
       </div>
+      {currentProjectDetails && (
+        <div className="relative pb-4 flex justify-between items-center gap-3">
+          <div className="space-y-1">
+            <h3 className="text-lg font-medium text-custom-text-100">Guests can view all issues:</h3>
+            <p className="text-sm text-custom-text-200">
+              Guest user will have view-only access to all issues within the project.
+            </p>
+          </div>
+          <ToggleSwitch
+            value={currentProjectDetails?.guest_view_all_issues}
+            onChange={() => toggleGuestViewAllIssues(!currentProjectDetails?.guest_view_all_issues)}
+            disabled={!isAdmin}
+            size="md"
+          />
+        </div>
+      )}
     </>
   );
 });
