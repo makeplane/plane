@@ -24,7 +24,7 @@ import { TDocumentTypes } from "@/core/types/common.js";
 import { fetchDocument } from "@/plane-live/lib/fetch-document.js";
 import { updateDocument } from "@/plane-live/lib/update-document.js";
 
-export const getExtensions: () => Extension[] = () => {
+export const getExtensions: () => Promise<Extension[]> = async () => {
   const extensions: Extension[] = [
     new Logger({
       onChange: false,
@@ -65,7 +65,7 @@ export const getExtensions: () => Extension[] = () => {
             }
             resolve(fetchedData);
           } catch (error) {
-            console.error("Error in fetching document", error);
+            manualLogger.error("Error in fetching document", error);
           }
         });
       },
@@ -97,7 +97,7 @@ export const getExtensions: () => Extension[] = () => {
               });
             }
           } catch (error) {
-            console.error("Error in updating document", error);
+            manualLogger.error("Error in updating document:", error);
           }
         });
       },
@@ -106,34 +106,42 @@ export const getExtensions: () => Extension[] = () => {
 
   const redisUrl = getRedisUrl();
 
-  // Add the Redis extension only if configured
   if (redisUrl) {
     try {
       const redisClient = new Redis(redisUrl);
-      redisClient.on("error", (error: any) => {
-        // if auth fails or the server is down, disconnect redis
-        if (
-          error?.code === "ENOTFOUND" ||
-          error.message.includes("WRONGPASS") ||
-          error.message.includes("NOAUTH")
-        ) {
-          redisClient.disconnect();
-        }
-        manualLogger.error(
-          `Redis Client wasn't able to connect, continuing without Redis (you won't be able to sync data betwen multiple plane live servers)`,
-        );
-        manualLogger.error(error);
+
+      await new Promise<void>((resolve, reject) => {
+        redisClient.on("error", (error: any) => {
+          if (
+            error?.code === "ENOTFOUND" ||
+            error.message.includes("WRONGPASS") ||
+            error.message.includes("NOAUTH")
+          ) {
+            redisClient.disconnect();
+          }
+          manualLogger.warn(
+            `Redis Client wasn't able to connect, continuing without Redis (you won't be able to sync data between multiple plane live servers)`,
+            error,
+          );
+          reject(error);
+        });
+
+        redisClient.on("ready", () => {
+          extensions.push(new HocusPocusRedis({ redis: redisClient }));
+          manualLogger.info("Redis Client connected ✅");
+          resolve();
+        });
       });
-      redisClient.on("ready", () => {
-        manualLogger.info("Redis Client connected");
-      });
-      if (!redisClient) {
-        throw new Error("Redis client is not defined");
-      }
-      extensions.push(new HocusPocusRedis({ redis: redisClient }));
     } catch (error) {
-      manualLogger.error("Failed to connect to Redis:", error);
+      manualLogger.warn(
+        `Redis Client wasn't able to connect, continuing without Redis (you won't be able to sync data between multiple plane live servers)`,
+        error,
+      );
     }
+  } else {
+    manualLogger.warn(
+      "Redis URL is not set, continuing without Redis (you won't be able to sync data between multiple plane live servers)",
+    );
   }
 
   return extensions;
