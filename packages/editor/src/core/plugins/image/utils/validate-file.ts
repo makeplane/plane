@@ -6,7 +6,7 @@ export function isFileValid(file: File): boolean {
 
   const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
   if (!allowedTypes.includes(file.type)) {
-    alert("Invalid file type. Please select a JPEG, JPG, PNG, WEBP, or SVG image file.");
+    alert("Invalid file type. Please select a JPEG, JPG, PNG, or WEBP image file.");
     return false;
   }
 
