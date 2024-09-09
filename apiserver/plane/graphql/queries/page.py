@@ -47,6 +47,7 @@ class UserPageQuery:
                 projects__project_projectmember__is_active=True,
                 projects__archived_at__isnull=True,
             )
+            .filter(projects__isnull=False)
             .filter(parent__isnull=True)
             .filter(Q(owned_by=info.context.user))
             .select_related("workspace", "owned_by")
