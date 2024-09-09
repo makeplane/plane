@@ -12,6 +12,7 @@ from plane.license.api.views import (
     InstanceAdminSignOutEndpoint,
     InstanceAdminUserSessionEndpoint,
     ChangeLogEndpoint,
+    AdminFeatureFlagEndpoint,
 )
 
 urlpatterns = [
@@ -74,5 +75,10 @@ urlpatterns = [
         "email-credentials-check/",
         EmailCredentialCheckEndpoint.as_view(),
         name="email-credential-check",
+    ),
+    path(
+        "admins/feature-flags/",
+        AdminFeatureFlagEndpoint.as_view(),
+        name="admin-feature-flags",
     ),
 ]

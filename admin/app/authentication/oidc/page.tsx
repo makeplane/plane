@@ -1,25 +1,30 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { observer } from "mobx-react-lite";
+import Image from "next/image";
 import useSWR from "swr";
-// hooks
-import { useInstance } from "@/hooks/store";
 // ui
 import { Loader, ToggleSwitch, setPromiseToast } from "@plane/ui";
 // components
-import { PageHeader } from "@/components/common";
 import { AuthenticationMethodCard } from "@/components/authentication";
-import { InstanceOIDCConfigForm } from "./form";
+import { PageHeader } from "@/components/common";
+// hooks
+import { useInstance } from "@/hooks/store";
 // icons
 import OIDCLogo from "/public/logos/oidc-logo.svg";
+// plane admin hooks
+import { useInstanceFlag } from "@/plane-admin/hooks/store/use-instance-flag";
+// local components
+import { InstanceOIDCConfigForm } from "./form";
 
 const InstanceOIDCAuthenticationPage = observer(() => {
-  // store
-  const { fetchInstanceConfigurations, formattedConfig, updateInstanceConfigurations } = useInstance();
   // state
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  // store
+  const { fetchInstanceConfigurations, formattedConfig, updateInstanceConfigurations } = useInstance();
+  // plane admin store
+  const isOIDCEnabled = useInstanceFlag("OIDC_SAML_AUTH");
   // config
   const enableOIDCConfig = formattedConfig?.IS_OIDC_ENABLED ?? "";
 
@@ -55,6 +60,19 @@ const InstanceOIDCAuthenticationPage = observer(() => {
         setIsSubmitting(false);
       });
   };
+
+  if (isOIDCEnabled === false) {
+    return (
+      <div className="relative container mx-auto w-full h-full p-4 py-4 my-6 space-y-6 flex flex-col">
+        <PageHeader title="Authentication - God Mode" />
+        <div className="text-center text-lg text-gray-500">
+          <p>OpenID Connect (OIDC) authentication is not enabled for this instance.</p>
+          <p>Activate any of your workspace to get this feature.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <PageHeader title="Authentication - God Mode" />

@@ -7,8 +7,8 @@ from .instance import (
 from .configuration import (
     EmailCredentialCheckEndpoint,
     InstanceConfigurationEndpoint,
+    AdminFeatureFlagEndpoint,
 )
-
 
 from .admin import (
     InstanceAdminEndpoint,
