@@ -153,11 +153,24 @@ export const useEditor = (props: CustomEditorProps) => {
         const item = getEditorMenuItem(itemName);
         return item ? item.isActive() : false;
       },
+      onHeadingChange: (callback: (headings: IMarking[]) => void) => {
+        // Subscribe to update event emitted from headers extension
+        editorRef.current?.on("update", () => {
+          callback(editorRef.current?.storage.headingList.headings);
+        });
+        // Return a function to unsubscribe to the continuous transactions of
+        // the editor on unmounting the component that has subscribed to this
+        // method
+        return () => {
+          editorRef.current?.off("update");
+        };
+      },
       onStateChange: (callback: () => void) => {
         // Subscribe to editor state changes
         editorRef.current?.on("transaction", () => {
           callback();
         });
+
         // Return a function to unsubscribe to the continuous transactions of
         // the editor on unmounting the component that has subscribed to this
         // method
@@ -214,7 +227,6 @@ export const useEditor = (props: CustomEditorProps) => {
           }
         });
         const selection = nodesArray.join("");
-        console.log(selection);
         return selection;
       },
       insertText: (contentHTML, insertOnNextLine) => {
@@ -236,7 +248,7 @@ export const useEditor = (props: CustomEditorProps) => {
         words: editorRef.current?.storage?.characterCount?.words?.() ?? 0,
       },
     }),
-    [editorRef, savedSelection, fileHandler.upload]
+    [editorRef, savedSelection, fileHandler.upload, editor]
   );
 
   if (!editor) {

@@ -2,22 +2,21 @@ import { useState } from "react";
 import { usePopper } from "react-popper";
 import { List } from "lucide-react";
 // document editor
-import { EditorReadOnlyRefApi, EditorRefApi, IMarking } from "@plane/editor";
+import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // components
 import { PageContentBrowser } from "./content-browser";
 
 type Props = {
-  editorRef: EditorRefApi | EditorReadOnlyRefApi | null;
+  editorRef: EditorRefApi & EditorReadOnlyRefApi;
   isFullWidth: boolean;
-  markings: IMarking[];
   sidePeekVisible: boolean;
   setSidePeekVisible: (sidePeekState: boolean) => void;
 };
 
 export const PageSummaryPopover: React.FC<Props> = (props) => {
-  const { editorRef, markings, sidePeekVisible, setSidePeekVisible } = props;
+  const { editorRef, sidePeekVisible, setSidePeekVisible } = props;
   // refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -54,7 +53,7 @@ export const PageSummaryPopover: React.FC<Props> = (props) => {
             style={summaryPopoverStyles.popper}
             {...summaryPopoverAttributes.popper}
           >
-            <PageContentBrowser setSidePeekVisible={setSidePeekVisible} editorRef={editorRef} markings={markings} />
+            <PageContentBrowser setSidePeekVisible={setSidePeekVisible} editorRef={editorRef} />
           </div>
         )}
       </div>
@@ -66,7 +65,7 @@ export const PageSummaryPopover: React.FC<Props> = (props) => {
             style={summaryPopoverStyles.popper}
             {...summaryPopoverAttributes.popper}
           >
-            <PageContentBrowser editorRef={editorRef} markings={markings} />
+            <PageContentBrowser editorRef={editorRef} />
           </div>
         )}
       </div>
