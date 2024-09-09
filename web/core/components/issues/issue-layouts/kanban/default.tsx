@@ -138,7 +138,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
   };
 
   const isGroupByCreatedBy = group_by === "created_by";
-  const appxCardHeight = getApproximateCardHeight(displayProperties);
+  const approximateCardHeight = getApproximateCardHeight(displayProperties);
   const isSubGroup = !!sub_group_id && sub_group_id !== "null";
 
   return (
@@ -154,7 +154,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
             ? ((groupedIssueIds as TSubGroupedIssues)?.[subList.id]?.[sub_group_id] ?? [])
             : ((groupedIssueIds as TGroupedIssues)?.[subList.id] ?? []);
           const issueLength = issueIds?.length as number;
-          const groupHeight = issueLength * appxCardHeight;
+          const groupHeight = issueLength * approximateCardHeight;
 
           return (
             <div
@@ -191,7 +191,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
                   placeholderChildren={
                     <KanbanColumnLoader
                       ignoreHeader
-                      cardHeight={appxCardHeight}
+                      cardHeight={approximateCardHeight}
                       cardsInColumn={issueLength !== undefined && issueLength < 3 ? issueLength : 3}
                     />
                   }
