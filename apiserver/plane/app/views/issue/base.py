@@ -748,7 +748,7 @@ class IssuePaginatedViewSet(BaseViewSet):
     def list(self, request, slug, project_id):
         cursor = request.GET.get("cursor", None)
         is_description_required = request.GET.get("description", False)
-        updated_at = request.GET.get("updated_at__gte", None)
+        updated_at = request.GET.get("updated_at__gt", None)
 
         # required fields
         required_fields = [
@@ -791,8 +791,8 @@ class IssuePaginatedViewSet(BaseViewSet):
 
         # filtering issues by greater then updated_at given by the user
         if updated_at:
-            base_queryset = base_queryset.filter(updated_at__gte=updated_at)
-            queryset = queryset.filter(updated_at__gte=updated_at)
+            base_queryset = base_queryset.filter(updated_at__gt=updated_at)
+            queryset = queryset.filter(updated_at__gt=updated_at)
 
         queryset = queryset.annotate(
             label_ids=Coalesce(
