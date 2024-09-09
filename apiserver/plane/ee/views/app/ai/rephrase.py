@@ -30,75 +30,93 @@ class RephraseGrammarEndpoint(BaseAPIView):
 
     # Function to get system prompt based on task
     def get_system_prompt(self, task, casual_score=5, formal_score=5):
+        format_instructions = """
+        Strictly follow these instructions for formatting the response:
+            1. Preserve all HTML tags and formatting present in the input text, where applicable.
+            2. RETURN ONLY the response text with the original HTML structure intact, where applicable.
+            3. Do not include any explanations, comments, or additional text in your response.
+            4. Do not add any prefixes or suffixes (such as "Question:" or "Answer:" or "Content:") to your response.
+            5. If there are cases where input doesn't seem to be absolutely coherent or meaningful where you can't perform the intended task just provide the input back without any additional text and explanations.
+            """
         if task == Task.PARAPHRASE.value:
             return (
                 True,
                 """
-            Correct the grammar of the following text and return the output in same structure as input but just changing the text by strictly following these instructions:
-            1. Ensure the new text is grammatically correct.
-            2. Maintain the original meaning of the text.
-            3. Keep the same person in the text. First person remains first person, etc. If no person is mentioned, keep it the same as in the input text, whether third person or neutral.
-            4. Do not provide any unrelated data apart from the grammatically correct original text.
-            """,
+        Correct the grammar and spelling of the following text, adhering strictly to these instructions:
+        1. Fix all grammatical and spelling errors in the text.
+        2. Preserve the original meaning, tone, and intent of the text.
+        3. Maintain the original perspective and pronouns. Do not change from third person to first person or vice versa.
+        4. Keep the same tense, unless it's grammatically incorrect in context.
+        5. Do not add, remove, or alter any information beyond grammatical and spelling corrections.
+        6. If the original text uses incorrect pronouns (e.g., "women" instead of "woman"), correct them while maintaining the original subject.
+        """
+                + format_instructions,
             )
 
         elif task == Task.SIMPLIFY.value:
             return (
                 True,
                 """
-            Simplify the following text and return the output in same structure as input but just changing the text by strictly adhering to these guidelines:
-            1. Make the text more concise without losing its core meaning.
-            2. Remove unnecessary words and phrases.
-            3. Break down complex sentences into simpler ones.
-            4. Use simpler vocabulary where appropriate, without changing the overall tone.
-            5. Ensure the simplified text is still grammatically correct.
-            6. Do not add any new information not present in the original text.
-            """,
+        Simplify the following text while adhering strictly to these guidelines:
+        1. Make the text more concise without losing its core meaning.
+        2. Remove unnecessary words and phrases.
+        3. Break down complex sentences into simpler ones.
+        4. Use simpler vocabulary where appropriate, without changing the overall tone.
+        5. Ensure the simplified text is still grammatically correct.
+        6. Do not add any new information not present in the original text.
+        7. Maintain the original perspective (e.g., first person, third person).
+        8. Keep the same tense unless it's grammatically incorrect in context.
+        """
+                + format_instructions,
             )
 
         elif task == Task.ELABORATE.value:
             return (
                 True,
                 """
-            Elaborate on the following text and return the output in same structure as input but just changing the text by carefully following these instructions:
-            1. Add relevant details, examples, or explanations to enrich the content.
-            2. Expand on the main ideas while maintaining the original meaning and tone.
-            3. Provide context where needed to enhance understanding.
-            4. Ensure that your elaborations flow naturally with the existing text.
-            5. Keep the overall structure and key points of the original text intact.
-            6. Do not contradict any information in the original text.
-            """,
+        Elaborate on the following text by carefully following these instructions:
+        1. Add relevant details, examples, or explanations to enrich the content.
+        2. Expand on the main ideas while maintaining the original meaning and tone.
+        3. Provide context where needed to enhance understanding.
+        4. Ensure that your elaborations flow naturally with the existing text.
+        5. Keep the overall structure and key points of the original text intact.
+        6. Do not contradict any information in the original text.
+        7. Maintain the original perspective (e.g., first person, third person).
+        """
+                + format_instructions,
             )
 
         elif task == Task.SUMMARIZE.value:
             return (
                 True,
                 """
-            Summarize the following text and return the output in same structure as input but just changing the text by strictly adhering to these guidelines:
-            1. Condense the text into a highly concise summary that is approximately 10-15 percent of the length of the input text.
-            2. Capture only the most essential information and main ideas.
-            3. Use clear, straightforward language.
-            4. Avoid detailed examples or minor points.
-            5. Maintain the original tone and perspective of the text.
-            6. Do not introduce any new information not present in the original text.
-            7. Ensure the summary provides a quick, easily digestible overview of the text's content.
-            8. If the input text is very short (less than 100 words), aim for a summary of 1-2 sentences.
-            """,
+        Summarize the following text by strictly adhering to these guidelines:
+        1. Condense the text into a highly concise summary that is approximately 10-15 percent of the length of the input text.
+        2. Capture only the most essential information and main ideas.
+        3. Use clear, straightforward language.
+        4. Avoid detailed examples or minor points.
+        5. Maintain the original tone and perspective of the text.
+        6. Do not introduce any new information not present in the original text.
+        7. Ensure the summary provides a quick, easily digestible overview of the text's content.
+        8. If the input text is very short (less than 100 words), aim for a summary of 1-2 sentences.
+        """
+                + format_instructions,
             )
 
         elif task == Task.GET_TITLE.value:
             return (
                 True,
                 """
-            Generate an appropriate title for the following text and return the output in same structure as input but just changing the text by strictly following these instructions:
-            1. Create a concise and engaging title that captures the main theme or purpose of the content.
-            2. Ensure the title is relevant and accurately represents the text's subject matter.
-            3. Make the title attention-grabbing while maintaining accuracy.
-            4. Keep the title brief, ideally no more than 6-8 words.
-            5. Do not include any information in the title that is not present in or implied by the text.
-            6. If the text is clearly part of a larger work or series, reflect that in the title if appropriate.
-            7. Return ONLY the generated title, without any quotation marks, explanations, or additional text.
-            """,
+        Generate an appropriate title for the following text, strictly following these instructions:
+        1. Create a concise and engaging title that captures the main theme or purpose of the content.
+        2. Ensure the title is relevant and accurately represents the text's subject matter.
+        3. Make the title attention-grabbing while maintaining accuracy.
+        4. Keep the title brief, ideally no more than 6-8 words.
+        5. Do not include any information in the title that is not present in or implied by the text.
+        6. If the text is clearly part of a larger work or series, reflect that in the title if appropriate.
+        7. Return ONLY the generated title, without any quotation marks, explanations, or additional text.
+        """
+                + format_instructions,
             )
 
         elif task == Task.TONE.value:
@@ -229,26 +247,32 @@ class RephraseGrammarEndpoint(BaseAPIView):
 
             return True, base_instructions + tone_specific_instructions.get(
                 (casual_score, formal_score)
-            )
+            ) + format_instructions
 
         elif task == Task.ASK_AI.value:
             return (
                 True,
                 """
-                You are an advanced AI assistant designed to provide optimal responses by integrating given context with your broad knowledge base. Your primary objectives are:
-
-                1. Thoroughly analyze and understand the provided context, which may include context, specific questions, code snippets, or any relevant information.
-                2. Treat the given context as a critical input, using it to inform and guide your response.
-                3. Leverage your extensive knowledge to complement and enhance your understanding of the context and to provide comprehensive, accurate answers.
-                4. Seamlessly blend insights from the given context with your general knowledge, ensuring a cohesive and informative response.
-                5. Adapt your response style and depth based on the nature of the context and the question asked.
-                6. When dealing with code or technical context, provide explanations or solutions that are directly relevant and technically sound.
-                7. Maintain clarity and conciseness in your responses while ensuring they are complete and informative.
-                8. Use appropriate HTML tags for formatting only when it enhances readability or structure of the response.
-                9. Respect privacy and avoid sensationalism when addressing sensitive topics.
-
-                Your goal is to deliver the most relevant, accurate, and helpful response possible, considering both the provided content and your broader understanding.
-                """,
+        You are an advanced AI assistant designed to provide optimal responses by integrating given context with your broad knowledge base. Your primary objectives are:
+        1. Thoroughly analyze and understand the provided content, which may include context, specific questions, code snippets, or any relevant information.
+        2. Treat the given content as a critical input, using it to inform and guide your response.
+        3. Leverage your extensive knowledge to complement and enhance your understanding of the content and to provide comprehensive, accurate answers.
+        4. Seamlessly blend insights from the given content with your general knowledge, ensuring a cohesive and informative response.
+        5. Adapt your response style and depth based on the nature of the content and the question asked.
+        6. When dealing with code or technical content, provide explanations or solutions that are directly relevant and technically sound.
+        7. Maintain clarity and conciseness in your responses while ensuring they are complete and informative.
+        8. Use appropriate HTML tags for formatting where it enhances readability or structure of the response. Specifically:
+            - Use <strong> tags for bold text instead of Markdown asterisks.
+            - Use <em> tags for italicized text instead of Markdown underscores.
+            - Use <ul> and <li> tags for unordered lists.
+            - Use <ol> and <li> tags for ordered lists.
+            - Use <code> tags for inline code.
+            - Use <pre> tags for code blocks.        
+        9. Respect privacy and avoid sensationalism when addressing sensitive topics.
+        10. Provide DIRECT answers without introductory phrases or explanations of your role.
+        11. Do not include any prefixes (such as "Answer:" or "Response:") in your response.
+        Your goal is to deliver the most relevant, accurate, and helpful response possible, considering both the provided content and your broader understanding.
+        """,
             )
 
         else:
@@ -309,7 +333,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
                 },
                 {
                     "key": "GPT_ENGINE",
-                    "default": os.environ.get("GPT_ENGINE", "gpt-3.5-turbo"),
+                    "default": os.environ.get("GPT_ENGINE", "gpt-4o-mini"),
                 },
             ]
         )
