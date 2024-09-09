@@ -6,7 +6,7 @@ import { EUserStatus, TUserStatus } from "@/helpers/user.helper";
 import { AuthService } from "@/services/auth.service";
 import { UserService } from "@/services/user.service";
 // root store
-import { RootStore } from "@/store/root.store";
+import { CoreRootStore } from "@/store/root.store";
 
 export interface IUserStore {
   // observables
@@ -31,7 +31,7 @@ export class UserStore implements IUserStore {
   userService;
   authService;
 
-  constructor(private store: RootStore) {
+  constructor(private store: CoreRootStore) {
     makeObservable(this, {
       // observables
       isLoading: observable.ref,
