@@ -11,6 +11,8 @@ import { useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane wev constants
 import { WORKSPACE_SETTINGS_LINKS } from "@/plane-web/constants/workspace";
+// plane web helpers
+import { shouldRenderSettingLink } from "@/plane-web/helpers/workspace.helper";
 
 type Props = {
   closePalette: () => void;
@@ -38,7 +40,8 @@ export const CommandPaletteWorkspaceSettingsActions: React.FC<Props> = (props) =
     <>
       {WORKSPACE_SETTINGS_LINKS.map(
         (setting) =>
-          workspaceMemberInfo >= setting.access && (
+          workspaceMemberInfo >= setting.access &&
+          shouldRenderSettingLink(setting.key) && (
             <Command.Item
               key={setting.key}
               onSelect={() => redirect(`/${workspaceSlug}${setting.href}`)}

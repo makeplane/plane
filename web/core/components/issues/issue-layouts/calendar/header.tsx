@@ -8,6 +8,7 @@ import {
   IIssueFilterOptions,
   TIssueKanbanFilters,
 } from "@plane/types";
+import { Row } from "@plane/ui";
 import { CalendarMonthsDropdown, CalendarOptionsDropdown } from "@/components/issues";
 // icons
 import { EIssueFilterType } from "@/constants/issue";
@@ -96,7 +97,7 @@ export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
   };
 
   return (
-    <div className="mb-4 flex items-center justify-between gap-2 px-3">
+    <Row className="mb-4 flex items-center justify-between gap-2">
       <div className="flex items-center gap-1.5">
         <button type="button" className="grid place-items-center" onClick={handlePrevious}>
           <ChevronLeft size={16} strokeWidth={2} />
@@ -116,6 +117,6 @@ export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
         </button>
         <CalendarOptionsDropdown issuesFilterStore={issuesFilterStore} updateFilters={updateFilters} />
       </div>
-    </div>
+    </Row>
   );
 });

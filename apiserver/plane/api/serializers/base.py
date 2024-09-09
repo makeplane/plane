@@ -67,6 +67,7 @@ class BaseSerializer(serializers.ModelSerializer):
                     # Import all the expandable serializers
                     from . import (
                         IssueSerializer,
+                        IssueLiteSerializer,
                         ProjectLiteSerializer,
                         StateLiteSerializer,
                         UserLiteSerializer,
@@ -86,6 +87,7 @@ class BaseSerializer(serializers.ModelSerializer):
                         "actor": UserLiteSerializer,
                         "owned_by": UserLiteSerializer,
                         "members": UserLiteSerializer,
+                        "parent": IssueLiteSerializer,
                     }
                     # Check if field in expansion  then expand the field
                     if expand in expansion:

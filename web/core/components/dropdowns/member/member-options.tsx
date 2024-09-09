@@ -13,6 +13,7 @@ import { cn } from "@plane/editor";
 import { Avatar } from "@plane/ui";
 //store
 import { useUser, useMember } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 interface Props {
   className? : string;
@@ -37,6 +38,7 @@ export const MemberOptions = observer((props: Props) => {
     workspace: { workspaceMemberIds },
   } = useMember();
   const { data: currentUser } = useUser();
+  const { isMobile } = usePlatformOS();
   // popper-js init
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "bottom-start",
@@ -53,9 +55,11 @@ export const MemberOptions = observer((props: Props) => {
   useEffect(() => {
     if (isOpen) {
       onOpen();
-      inputRef.current && inputRef.current.focus();
+      if (!isMobile) {
+        inputRef.current && inputRef.current.focus();
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, isMobile]);
 
   const memberIds = projectId ? getProjectMemberIds(projectId) : workspaceMemberIds;
   const onOpen = () => {

@@ -32,8 +32,8 @@ import useDynamicDropdownPosition from "@/hooks/use-dynamic-dropdown";
 // services
 import { WorkspaceService } from "@/plane-web/services";
 // assets
-import InviteMembersDark from "@/public/onboarding/invite-members-dark.svg";
-import InviteMembersLight from "@/public/onboarding/invite-members-light.svg";
+import InviteMembersDark from "@/public/onboarding/invite-members-dark.webp";
+import InviteMembersLight from "@/public/onboarding/invite-members-light.webp";
 // components
 import { OnboardingHeader } from "./header";
 import { SwitchAccountDropdown } from "./switch-account-dropdown";

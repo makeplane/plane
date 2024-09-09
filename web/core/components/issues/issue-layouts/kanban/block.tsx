@@ -16,6 +16,7 @@ import { HIGHLIGHT_CLASS } from "@/components/issues/issue-layouts/utils";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail, useKanbanView } from "@/hooks/store";
+import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
@@ -84,11 +85,11 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
         </div>
       </WithDisplayPropertiesHOC>
 
-      <div className="w-full line-clamp-1 text-sm text-custom-text-100 mb-1.5">
-        <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
+      <Tooltip tooltipContent={issue.name} isMobile={isMobile} renderByDefault={false}>
+        <div className="w-full line-clamp-1 text-sm text-custom-text-100">
           <span>{issue.name}</span>
-        </Tooltip>
-      </div>
+        </div>
+      </Tooltip>
 
       <IssueProperties
         className="flex flex-wrap items-center gap-2 whitespace-nowrap text-custom-text-300 pt-1.5"
@@ -121,16 +122,12 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
   const workspaceSlug = routerWorkspaceSlug?.toString();
   // hooks
-  const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
+  const { getIsIssuePeeked } = useIssueDetail();
+  const { handleRedirection } = useIssuePeekOverviewRedirection();
   const { isMobile } = usePlatformOS();
 
-  const handleIssuePeekOverview = (issue: TIssue) =>
-    workspaceSlug &&
-    issue &&
-    issue.project_id &&
-    issue.id &&
-    !getIsIssuePeeked(issue.id) &&
-    setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
+  // handlers
+  const handleIssuePeekOverview = (issue: TIssue) => handleRedirection(workspaceSlug, issue, isMobile);
 
   const issue = issuesMap[issueId];
 
@@ -193,7 +190,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
       <DropIndicator isVisible={!isCurrentBlockDragging && isDraggingOverBlock} />
       <div
         // make Z-index higher at the beginning of drag, to have a issue drag image of issue block without any overlaps
-        className={cn("group/kanban-block relative p-1.5", { "z-[1]": isCurrentBlockDragging })}
+        className={cn("group/kanban-block relative mb-2", { "z-[1]": isCurrentBlockDragging })}
         onDragStart={() => {
           if (isDragAllowed) setIsCurrentBlockDragging(true);
           else
@@ -217,7 +214,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
             { "bg-custom-background-80 z-[100]": isCurrentBlockDragging }
           )}
           onClick={() => handleIssuePeekOverview(issue)}
-          disabled={!!issue?.tempId || isMobile}
+          disabled={!!issue?.tempId}
         >
           <RenderIfVisible
             classNames="space-y-2 px-3 py-2"
