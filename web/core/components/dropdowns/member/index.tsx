@@ -153,6 +153,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
       </Combobox.Button>
       {isOpen && (
         <MemberOptions
+          className={className}
           isOpen={isOpen}
           projectId={projectId}
           placement={placement}
