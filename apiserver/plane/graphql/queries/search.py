@@ -100,14 +100,19 @@ async def filter_issues(
             )
             .distinct()
             .values(
-                "name",
                 "id",
                 "sequence_id",
-                "project__identifier",
+                "name",
                 "project",
+                "project__identifier",
             )
         )
     )()
+
+    for issue in issues:
+        issue["project_identifier"] = issue["project__identifier"]
+        del issue["project__identifier"]
+
     return [IssueLiteType(**issue) for issue in issues]
 
 

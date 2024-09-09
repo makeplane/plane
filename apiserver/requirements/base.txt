@@ -69,4 +69,4 @@ python3-saml==1.16.0
 # feature flag
 openfeature-sdk==0.7.0
 # graphql
-strawberry-graphql-django==0.47.0
+strawberry-graphql-django==0.47.2

@@ -68,6 +68,7 @@ class IssuesType:
     cycle: Optional[strawberry.ID]
     modules: Optional[list[strawberry.ID]]
     type: Optional[strawberry.ID]
+    project_identifier: Optional[str]
 
     @strawberry.field
     def state(self) -> int:
@@ -129,6 +130,10 @@ class IssuesType:
 
         # Return the module IDs as strings
         return [str(module_id) for module_id in module_issues]
+
+    @strawberry.field
+    def project_identifier(self) -> Optional[str]:
+        return self.project.identifier
 
 
 @strawberry_django.type(IssueUserProperty)
@@ -236,7 +241,7 @@ class IssueLiteType:
     sequence_id: int
     workspace: strawberry.ID
     project: strawberry.ID
-    project__identifier: str
+    project_identifier: Optional[str]
 
     @strawberry.field
     def workspace(self) -> int:

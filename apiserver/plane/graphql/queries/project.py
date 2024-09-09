@@ -173,7 +173,7 @@ class ProjectQuery:
                 .first()
             )
 
-        project = await sync_to_async(get_project)()
+        project_detail = await sync_to_async(get_project)()
 
         # Background task to update recent visited project
         user_id = info.context.user.id
@@ -185,7 +185,7 @@ class ProjectQuery:
             entity_identifier=project,
         )
 
-        return project
+        return project_detail
 
 
 @strawberry.type
