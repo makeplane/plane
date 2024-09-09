@@ -9,9 +9,11 @@ import { Info, SquareUser } from "lucide-react";
 import { IModule } from "@plane/types";
 import { Card, FavoriteStar, LayersIcon, LinearProgressIndicator, TOAST_TYPE, Tooltip, setPromiseToast, setToast } from "@plane/ui";
 // components
+import { DateRangeDropdown } from "@/components/dropdowns";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { ModuleQuickActions } from "@/components/modules";
 // constants
+import { ModuleStatusSelection } from  "@/components/modules/module-status-dropdown";
 import { PROGRESS_STATE_GROUPS_DETAILS } from "@/constants/common";
 import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker";
 import { MODULE_STATUS } from "@/constants/module";
@@ -25,8 +27,6 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web constants
 import { EEstimateSystem } from "@/plane-web/constants/estimates";
-import { DateRangeDropdown } from "@/components/dropdowns";
-import { ModuleStatusSelection } from  "@/components/modules/module-status-dropdown";
 
 type Props = {
   moduleId: string;
@@ -54,7 +54,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   // derived values
   const moduleDetails = getModuleById(moduleId);
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
-  const isDisabled = !isEditingAllowed || (moduleDetails?.archived_at ? true : false) ;
+  const isDisabled = !isEditingAllowed || !!moduleDetails?.archived_at;
   const renderIcon = Boolean(moduleDetails?.start_date) || Boolean(moduleDetails?.target_date);
 
 
@@ -126,7 +126,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     if (!workspaceSlug || !projectId) return;
 
     await updateModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId, payload)
-      .then((res) => {
+      .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",

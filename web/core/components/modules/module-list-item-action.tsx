@@ -10,18 +10,17 @@ import { IModule } from "@plane/types";
 // ui
 import { FavoriteStar, TOAST_TYPE, Tooltip, setPromiseToast, setToast } from "@plane/ui";
 // components
+import { DateRangeDropdown } from "@/components/dropdowns";
 import { ModuleQuickActions } from "@/components/modules";
 // constants
+import { ModuleStatusSelection } from  "@/components/modules/module-status-dropdown";
 import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker";
+import { MODULE_STATUS } from "@/constants/module";
 import { EUserProjectRoles } from "@/constants/project";
 // hooks
+import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
 import { useEventTracker, useMember, useModule, useUser } from "@/hooks/store";
 import { ButtonAvatars } from "../dropdowns/member/avatar";
-import { ModuleStatusSelection } from  "@/components/modules/module-status-dropdown";
-import { DateRangeDropdown } from "@/components/dropdowns";
-import { getDate } from '@/helpers/date-time.helper';
-import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-import { MODULE_STATUS } from "@/constants/module";
 
 type Props = {
   moduleId: string;
@@ -46,7 +45,7 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
 
   const moduleStatus = MODULE_STATUS.find((status) => status.value === moduleDetails.status);
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
-  const isDisabled = !isEditingAllowed || (moduleDetails.archived_at ? true : false) ;
+  const isDisabled = !isEditingAllowed || !!moduleDetails?.archived_at;
   const renderIcon = Boolean(moduleDetails.start_date) || Boolean(moduleDetails.target_date);
 
   // handlers
@@ -112,7 +111,7 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
     if (!workspaceSlug || !projectId) return;
 
     await updateModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId, payload)
-      .then((res) => {
+      .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
@@ -127,7 +126,7 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
         });
       });
   };
-  
+
   const moduleLeadDetails = moduleDetails.lead_id ? getUserDetails(moduleDetails.lead_id) : undefined;
 
   return (
