@@ -12,8 +12,8 @@ import { Card, FavoriteStar, LayersIcon, LinearProgressIndicator, TOAST_TYPE, To
 import { DateRangeDropdown } from "@/components/dropdowns";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { ModuleQuickActions } from "@/components/modules";
+import { ModuleStatusDropdown } from  "@/components/modules/module-status-dropdown";
 // constants
-import { ModuleStatusSelection } from  "@/components/modules/module-status-dropdown";
 import { PROGRESS_STATE_GROUPS_DETAILS } from "@/constants/common";
 import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker";
 import { MODULE_STATUS } from "@/constants/module";
@@ -45,8 +45,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const { updateModuleDetails } = useModule();
-  const { getModuleById, addModuleToFavorites, removeModuleFromFavorites } = useModule();
+  const { getModuleById, addModuleToFavorites, removeModuleFromFavorites, updateModuleDetails } = useModule();
   const { getUserDetails } = useMember();
   const { captureEvent } = useEventTracker();
   const { currentActiveEstimateId, areEstimateEnabledByProjectId, estimateById } = useProjectEstimates();
@@ -212,7 +211,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
               </Tooltip>
               <div className="flex items-center gap-2" onClick={handleEventPropagation}>
                 {moduleStatus && (
-                  <ModuleStatusSelection
+                  <ModuleStatusDropdown
                   isDisabled={isDisabled}
                   moduleDetails={moduleDetails}
                   handleModuleDetailsChange={handleModuleDetailsChange}

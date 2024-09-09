@@ -1,8 +1,8 @@
-import { MODULE_STATUS } from '@/constants/module'
+import React, { FC } from 'react'
+import { observer } from 'mobx-react';
 import { IModule } from '@plane/types';
 import { CustomSelect, TModuleStatus, ModuleStatusIcon } from '@plane/ui'
-import { observer } from 'mobx-react';
-import React, { FC } from 'react'
+import { MODULE_STATUS } from '@/constants/module'
 
 type Props = {
     isDisabled: boolean;
@@ -10,7 +10,7 @@ type Props = {
     handleModuleDetailsChange: (payload: Partial<IModule>) => Promise<void>;
 };
 
-export const ModuleStatusSelection : FC<Props> = observer((props : Props) => {
+export const ModuleStatusDropdown : FC<Props> = observer((props : Props) => {
     const {isDisabled, moduleDetails, handleModuleDetailsChange} = props;
     const moduleStatus = MODULE_STATUS.find((status) => status.value === moduleDetails.status);
 

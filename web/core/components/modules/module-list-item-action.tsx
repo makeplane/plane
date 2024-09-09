@@ -12,8 +12,8 @@ import { FavoriteStar, TOAST_TYPE, Tooltip, setPromiseToast, setToast } from "@p
 // components
 import { DateRangeDropdown } from "@/components/dropdowns";
 import { ModuleQuickActions } from "@/components/modules";
+import { ModuleStatusDropdown } from  "@/components/modules/module-status-dropdown";
 // constants
-import { ModuleStatusSelection } from  "@/components/modules/module-status-dropdown";
 import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker";
 import { MODULE_STATUS } from "@/constants/module";
 import { EUserProjectRoles } from "@/constants/project";
@@ -33,11 +33,10 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
   // router
   const { workspaceSlug, projectId } = useParams();
   //   store hooks
-  const { updateModuleDetails } = useModule();
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const { addModuleToFavorites, removeModuleFromFavorites } = useModule();
+  const { addModuleToFavorites, removeModuleFromFavorites, updateModuleDetails } = useModule();
   const { getUserDetails } = useMember();
   const { captureEvent } = useEventTracker();
 
@@ -131,7 +130,6 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
 
   return (
     <>
-
       <DateRangeDropdown
         buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-custom-text-300 border-[0.5px] border-custom-border-300 rounded text-xs`}
         buttonVariant="transparent-with-text"
@@ -155,7 +153,7 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
       />
 
       {moduleStatus && (
-        <ModuleStatusSelection
+        <ModuleStatusDropdown
         isDisabled={isDisabled}
         moduleDetails={moduleDetails}
         handleModuleDetailsChange={handleModuleDetailsChange}
