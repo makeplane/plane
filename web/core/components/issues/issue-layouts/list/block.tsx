@@ -132,7 +132,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
     <Row
       ref={issueRef}
       className={cn(
-        "group/list-block min-h-11 relative flex flex-col gap-3 bg-custom-background-100 hover:bg-custom-background-90 py-3 text-sm transition-colors border border-transparent",
+        "min-h-11 relative flex flex-col gap-3 bg-custom-background-100 py-3 text-sm transition-colors border border-transparent",
         {
           "border-custom-primary-70": getIsIssuePeeked(issue.id) && peekIssue?.nestingLevel === nestingLevel,
           "border-custom-border-400": isIssueActive,
@@ -141,6 +141,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
           "bg-custom-background-80": isCurrentBlockDragging,
           "md:flex-row md:items-center": isSidebarCollapsed,
           "lg:flex-row lg:items-center": !isSidebarCollapsed,
+          "group/list-block hover:bg-custom-background-90": !isMobile,
         }
       )}
       onDragStart={() => {
@@ -170,12 +171,11 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
               >
                 <div className="flex-shrink-0 grid place-items-center w-3.5 absolute left-1">
                   <MultipleSelectEntityAction
-                    className={cn(
-                      "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto transition-opacity",
-                      {
-                        "opacity-100 pointer-events-auto": isIssueSelected,
-                      }
-                    )}
+                    className={cn("pointer-events-auto transition-opacity", {
+                      "opacity-100 pointer-events-auto": isIssueSelected,
+                      "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto":
+                        !isMobile,
+                    })}
                     groupId={groupId}
                     id={issue.id}
                     selectionHelpers={selectionHelpers}

@@ -72,7 +72,7 @@ export const CalendarIssueBlock = observer(
         href={`/${workspaceSlug?.toString()}/projects/${projectId?.toString()}/issues/${issue.id}`}
         onClick={() => handleIssuePeekOverview(issue)}
         className="block w-full text-sm text-custom-text-100 rounded border-b md:border-[1px] border-custom-border-200 hover:border-custom-border-400"
-        disabled={!!issue?.tempId || isMobile}
+        disabled={!!issue?.tempId}
         ref={ref}
       >
         <>
@@ -83,11 +83,12 @@ export const CalendarIssueBlock = observer(
           <div
             ref={blockRef}
             className={cn(
-              "group/calendar-block flex h-10 md:h-8 w-full items-center justify-between gap-1.5 rounded  md:px-1 px-4 py-1.5 ",
+              "flex h-10 md:h-8 w-full items-center justify-between gap-1.5 rounded  md:px-1 px-4 py-1.5 ",
               {
                 "bg-custom-background-90 shadow-custom-shadow-rg border-custom-primary-100": isDragging,
                 "bg-custom-background-100 hover:bg-custom-background-90": !isDragging,
                 "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issue.id),
+                "group/calendar-block": !isMobile,
               }
             )}
           >
