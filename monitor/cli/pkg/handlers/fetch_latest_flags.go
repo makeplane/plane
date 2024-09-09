@@ -41,9 +41,10 @@ func UpdateFlagsHandler(ctx context.Context, api prime_api.IPrimeMonitorApi) err
 				return err
 			}
 
-			// Job Three: Update the feature flags to the latest version
-			if err := RefreshFeatureFlags(ctx, api, *updatedLicense, tx); err != nil {
-				return err
+			if updatedLicense.ProductType != "FREE" {
+				if err := RefreshFeatureFlags(ctx, api, *updatedLicense, tx); err != nil {
+					return err
+				}
 			}
 
 			return nil
@@ -51,7 +52,7 @@ func UpdateFlagsHandler(ctx context.Context, api prime_api.IPrimeMonitorApi) err
 
 		// Continue to the next license if there is an error
 		if err != nil {
-			fmt.Println("Failed to update flags for license", license.LicenseKey)
+			fmt.Println("Failed to update flags for license", license.LicenseKey, license.WorkspaceSlug, err)
 		}
 	}
 
