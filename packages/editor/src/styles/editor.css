@@ -170,13 +170,13 @@ ul[data-type="taskList"] li > label input[type="checkbox"]:hover {
   background-color: rgba(var(--color-background-80)) !important;
 }
 
-ul[data-type="taskList"] li > label input[type="checkbox"]:checked {
+ul[data-type="taskList"] li > label input[type="checkbox"][checked] {
   background-color: rgba(var(--color-primary-100)) !important;
   border-color: rgba(var(--color-primary-100)) !important;
   color: white !important;
 }
 
-ul[data-type="taskList"] li > label input[type="checkbox"]:checked:hover {
+ul[data-type="taskList"] li > label input[type="checkbox"][checked]:hover {
   background-color: rgba(var(--color-primary-300)) !important;
   border-color: rgba(var(--color-primary-300)) !important;
 }
@@ -229,7 +229,7 @@ ul[data-type="taskList"] li > label input[type="checkbox"] {
     clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
   }
 
-  &:checked::before {
+  &[checked]::before {
     transform: scale(1) translate(-50%, -50%);
   }
 }

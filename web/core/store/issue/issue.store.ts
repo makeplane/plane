@@ -1,3 +1,4 @@
+import update from "lodash/update";
 import isEmpty from "lodash/isEmpty";
 import set from "lodash/set";
 import { action, makeObservable, observable, runInAction } from "mobx";
@@ -14,7 +15,7 @@ export type IIssueStore = {
   issuesMap: Record<string, TIssue>; // Record defines issue_id as key and TIssue as value
   // actions
   getIssues(workspaceSlug: string, projectId: string, issueIds: string[]): Promise<TIssue[]>;
-  addIssue(issues: TIssue[], shouldReplace?: boolean): void;
+  addIssue(issues: TIssue[]): void;
   updateIssue(issueId: string, issue: Partial<TIssue>): void;
   removeIssue(issueId: string): void;
   // helper methods
@@ -47,11 +48,12 @@ export class IssueStore implements IIssueStore {
    * @param {TIssue[]} issues
    * @returns {void}
    */
-  addIssue = (issues: TIssue[], shouldReplace = false) => {
+  addIssue = (issues: TIssue[]) => {
     if (issues && issues.length <= 0) return;
     runInAction(() => {
       issues.forEach((issue) => {
-        if (!this.issuesMap[issue.id] || shouldReplace) set(this.issuesMap, issue.id, issue);
+        if (!this.issuesMap[issue.id]) set(this.issuesMap, issue.id, issue);
+        else update(this.issuesMap, issue.id, (prevIssue) => ({ ...prevIssue, ...issue }));
       });
     });
   };
