@@ -8,6 +8,7 @@ import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 // ui
 import { Button, Loader, ToggleSwitch, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
+import { cn } from "@/helpers/common.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import useDebounce from "@/hooks/use-debounce";
@@ -244,9 +245,9 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                                   htmlFor={`issue-${issue.id}`}
                                   value={issue}
                                   className={({ active }) =>
-                                    `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 my-0.5 text-custom-text-200 ${
+                                    `flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 my-0.5 text-custom-text-200 ${
                                       active ? "bg-custom-background-80 text-custom-text-100" : ""
-                                    } ${selected ? "text-custom-text-100" : ""}`
+                                    } ${selected ? "text-custom-text-100" : ""} ${!isMobile ? "group" : ""}`
                                   }
                                 >
                                   <div className="flex items-center gap-2">
@@ -271,7 +272,9 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                                   <a
                                     href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
                                     target="_blank"
-                                    className="z-1 relative hidden text-custom-text-200 hover:text-custom-text-100 group-hover:block"
+                                    className={cn("z-1 relative block text-custom-text-200", {
+                                      "hidden group-hover:block hover:text-custom-text-100": !isMobile,
+                                    })}
                                     rel="noopener noreferrer"
                                     onClick={(e) => e.stopPropagation()}
                                   >

@@ -13,6 +13,7 @@ import { Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // components
 import { IssueSearchModalEmptyState } from "@/components/core";
 // helpers
+import { cn } from "@/helpers/common.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import useDebounce from "@/hooks/use-debounce";
@@ -96,7 +97,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
             <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
           </Transition.Child>
 
-          <div className="fixed inset-0 z-20 overflow-y-auto p-4 sm:p-6 md:p-20">
+          <div className="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20">
             <Transition.Child
               as={React.Fragment}
               enter="ease-out duration-300"
@@ -189,9 +190,9 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                                 key={issue.id}
                                 value={issue}
                                 className={({ active, selected }) =>
-                                  `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 my-0.5 text-custom-text-200 ${
+                                  `flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 my-0.5 text-custom-text-200 ${
                                     active ? "bg-custom-background-80 text-custom-text-100" : ""
-                                  } ${selected ? "text-custom-text-100" : ""}`
+                                  } ${selected ? "text-custom-text-100" : ""} ${!isMobile ? "group" : ""}`
                                 }
                               >
                                 <div className="flex flex-grow items-center gap-2 truncate">
@@ -215,7 +216,9 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                                 <a
                                   href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
                                   target="_blank"
-                                  className="z-1 relative hidden flex-shrink-0 text-custom-text-200 hover:text-custom-text-100 group-hover:block"
+                                  className={cn("z-1 relative block flex-shrink-0 text-custom-text-200 ", {
+                                    "hidden hover:text-custom-text-100 group-hover:block": !isMobile,
+                                  })}
                                   rel="noopener noreferrer"
                                   onClick={(e) => e.stopPropagation()}
                                 >
