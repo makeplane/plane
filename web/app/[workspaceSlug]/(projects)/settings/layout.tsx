@@ -5,7 +5,7 @@ import { ReactNode } from "react";
 import { ContentWrapper } from "@plane/ui";
 import { AppHeader } from "@/components/core";
 // plane web components
-import { LicenseSeatsBanner } from "@/plane-web/components/license";
+// import { LicenseSeatsBanner } from "@/plane-web/components/license";
 // local components
 import { WorkspaceSettingHeader } from "./header";
 import { MobileWorkspaceSettingsTabs } from "./mobile-header-tabs";
@@ -23,9 +23,7 @@ export default function WorkspaceSettingLayout(props: IWorkspaceSettingLayout) {
       <AppHeader header={<WorkspaceSettingHeader />} />
       <div className="w-full h-full overflow-hidden">
         {/* free banner */}
-        <div className="flex-shrink-0">
-          <LicenseSeatsBanner />
-        </div>
+        <div className="flex-shrink-0">{/* <LicenseSeatsBanner /> */}</div>
         {/* workspace settings */}
         <div className="w-full h-full overflow-hidden">
           <MobileWorkspaceSettingsTabs />

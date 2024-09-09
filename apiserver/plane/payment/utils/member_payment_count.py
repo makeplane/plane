@@ -321,15 +321,15 @@ def handle_cloud_payments(
     """
     Case1: Free Plan and Trial Plan
         a. Invitation case - requested_role is None and requested_invite_list is a list of invite emails with roles
-          - Allowed only if the total count of current users and invited users and requested invite users is less than or equal to workspace_license.free_seats
+            - Allowed only if the total count of current users and invited users and requested invite users is less than or equal to workspace_license.free_seats
         b. Update case - requested_role is a role and requested_invite_list is None
-          - Allowed for all roles since the total count of current members and invited members is less than or equal to workspace_license.free_seats
+            - Allowed for all roles since the total count of current members and invited members is less than or equal to workspace_license.free_seats
     Case2: Paid Plan
         a. Online Payment case - all allowed - sync back to payment server for calculation
         b. Offline Payment case
-           i. Invitation case - requested_role is None and requested_invite_list is a list of invite emails with roles
-              - Allowed only if the total count of paid current users and paid invited users and paid requested invite users is less than or equal to workspace_license.purchased_seats
-           ii.Update case - requested_role is a role and requested_invite_list is None
+            i. Invitation case - requested_role is None and requested_invite_list is a list of invite emails with roles
+                - Allowed only if the total count of paid current users and paid invited users and paid requested invite users is less than or equal to workspace_license.purchased_seats
+            ii. Update case - requested_role is a role and requested_invite_list is None
               - Allowed for roles > 10 if in the purchased seats limit and for roles <= 10 if in the 5 * purchased seats limit
     """
 
@@ -402,9 +402,9 @@ def handle_self_managed_payments(
         return True for all cases
     Case2: Subscription Plan
         a. Invitation case - requested_role is None and requested_invite_list is a list of invite emails with roles
-          - Allowed only if the total count of paid current users and paid invited users and paid requested invite users is less than or equal to workspace_license.purchased_seats
+            - Allowed only if the total count of paid current users and paid invited users and paid requested invite users is less than or equal to workspace_license.purchased_seats
         b. Update case - requested_role is a role and requested_invite_list is None
-          - Allowed for roles > 10 if in the purchased seats limit and for roles <= 10 if in the 5 * purchased seats limit
+            - Allowed for roles > 10 if in the purchased seats limit and for roles <= 10 if in the 5 * purchased seats limit
     """
 
     if workspace_license.plan == WorkspaceLicense.PlanChoice.FREE:
@@ -460,13 +460,14 @@ def workspace_member_check(
 
     # Get the workspace license
     if os.environ.get("IS_MULTI_TENANT", "0") == "1":
-        return handle_cloud_payments(
-            slug=slug,
-            requested_invite_list=requested_invite_list,
-            requested_role=requested_role,
-            current_role=current_role,
-            workspace_license=workspace_license,
-        )
+        # return handle_cloud_payments(
+        #     slug=slug,
+        #     requested_invite_list=requested_invite_list,
+        #     requested_role=requested_role,
+        #     current_role=current_role,
+        #     workspace_license=workspace_license,
+        # )
+        return True, 0, 0
     else:
         return handle_self_managed_payments(
             slug=slug,
