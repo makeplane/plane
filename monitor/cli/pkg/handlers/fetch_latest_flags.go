@@ -3,7 +3,6 @@ package handlers
 import (
 	"context"
 	"fmt"
-	"sync"
 	"time"
 
 	"github.com/google/uuid"
@@ -25,37 +24,37 @@ func UpdateFlagsHandler(ctx context.Context, api prime_api.IPrimeMonitorApi) err
 		return err
 	}
 
-	var wg sync.WaitGroup
-
+	// Concurrency has been removed from here, as when we make concurrent request
+	// to the API and attempt to save the data in the database, there are cases
+	// where the database is locked and we are not able to save the data.
 	for _, license := range licenses {
-		wg.Add(1)
-		go func(license db.License) error {
-			defer wg.Done()
+		err := db.Db.Transaction(func(tx *gorm.DB) error {
+			// Job One: Verify the license and update the license data
+			updatedLicense, activationReponse, err := RefreshLicense(ctx, api, &license, tx)
+			// If the license is paid, update the users with the member list provided
+			if err != nil {
+				return err
+			}
 
-			return db.Db.Transaction(func(tx *gorm.DB) error {
-				// Job One: Verify the license and update the license data
-				updatedLicense, activationReponse, err := RefreshLicense(ctx, api, &license, tx)
-				// If the license is paid, update the users with the member list provided
-				if err != nil {
-					return err
-				}
+			// Job Two: Update the users with the member list provided
+			if err := RefreshLicenseUsers(ctx, updatedLicense, *activationReponse, tx); err != nil {
+				return err
+			}
 
-				// Job Two: Update the users with the member list provided
-				if err := RefreshLicenseUsers(ctx, updatedLicense, *activationReponse, tx); err != nil {
-					return err
-				}
+			// Job Three: Update the feature flags to the latest version
+			if err := RefreshFeatureFlags(ctx, api, *updatedLicense, tx); err != nil {
+				return err
+			}
 
-				// Job Three: Update the feature flags to the latest version
-				if err := RefreshFeatureFlags(ctx, api, *updatedLicense, tx); err != nil {
-					return err
-				}
+			return nil
+		})
 
-				return nil
-			})
-		}(license)
+		// Continue to the next license if there is an error
+		if err != nil {
+			fmt.Println("Failed to update flags for license", license.LicenseKey)
+		}
 	}
 
-	wg.Wait()
 	return nil
 }
 

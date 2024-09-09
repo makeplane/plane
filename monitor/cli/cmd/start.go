@@ -92,17 +92,17 @@ var StartCmd = &cobra.Command{
 			worker.Shutdown()
 		}()
 
-		// Registering the Jobs to the cron handler
-		worker.RegisterJob("Resync Instance Licenses", func(ctx context.Context) {
-			err := handlers.UpdateFlagsHandler(ctx, api)
-			if err != nil {
-				CmdLogger.Error(ctx, err.Error())
-			}
-		})
 		worker.RegisterJob("Prime Scheduler", cronHandler.Start)
 		worker.RegisterJob("Prime Monitor Router", httpHandler.StartHttpServer)
 		worker.RegisterJob("Activate Current Instance", func(ctx context.Context) {
 			err := instanceHandler.Activate()
+			if err != nil {
+				CmdLogger.Error(ctx, err.Error())
+			}
+		})
+		// Registering the Jobs to the cron handler
+		worker.RegisterJob("Resync Instance Licenses", func(ctx context.Context) {
+			err := handlers.UpdateFlagsHandler(ctx, api)
 			if err != nil {
 				CmdLogger.Error(ctx, err.Error())
 			}
