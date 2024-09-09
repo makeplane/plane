@@ -83,7 +83,7 @@ const IntegrationGuide = observer(() => {
             {EXPORTERS_LIST.map((service) => (
               <div
                 key={service.provider}
-                className="flex items-center justify-between gap-2 border-b border-custom-border-100 bg-custom-background-100 px-4 py-6"
+                className="flex items-center justify-between gap-2 border-b border-custom-border-100 bg-custom-background-100 py-6"
               >
                 <div className="flex w-full items-start justify-between gap-4">
                   <div className="item-center flex gap-2.5">

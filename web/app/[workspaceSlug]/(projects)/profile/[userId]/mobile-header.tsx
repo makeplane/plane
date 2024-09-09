@@ -114,8 +114,13 @@ export const ProfileIssuesMobileHeader = observer(() => {
         maxHeight={"md"}
         className="flex flex-grow justify-center text-sm text-custom-text-200"
         placement="bottom-start"
-        customButton={<span className="flex flex-grow justify-center text-sm text-custom-text-200">Layout</span>}
-        customButtonClassName="flex flex-grow justify-center text-custom-text-200 text-sm"
+        customButton={
+          <div className="flex flex-center text-sm text-custom-text-200">
+            Layout
+            <ChevronDown className="ml-2  h-4 w-4 text-custom-text-200 my-auto" strokeWidth={2} />
+          </div>
+        }
+        customButtonClassName="flex flex-center text-custom-text-200 text-sm"
         closeOnSelect
       >
         {ISSUE_LAYOUTS.map((layout, index) => {
@@ -139,10 +144,10 @@ export const ProfileIssuesMobileHeader = observer(() => {
           title="Filters"
           placement="bottom-end"
           menuButton={
-            <span className="flex items-center text-sm text-custom-text-200">
+            <div className="flex flex-center text-sm text-custom-text-200">
               Filters
-              <ChevronDown className="ml-2  h-4 w-4 text-custom-text-200" />
-            </span>
+              <ChevronDown className="ml-2  h-4 w-4 text-custom-text-200" strokeWidth={2} />
+            </div>
           }
           isFiltersApplied={isIssueFilterActive(issueFilters)}
         >
@@ -165,10 +170,10 @@ export const ProfileIssuesMobileHeader = observer(() => {
           title="Display"
           placement="bottom-end"
           menuButton={
-            <span className="flex items-center text-sm text-custom-text-200">
+            <div className="flex flex-center text-sm text-custom-text-200">
               Display
-              <ChevronDown className="ml-2 h-4 w-4 text-custom-text-200" />
-            </span>
+              <ChevronDown className="ml-2 h-4 w-4 text-custom-text-200" strokeWidth={2} />
+            </div>
           }
         >
           <DisplayFiltersSelection

@@ -29,7 +29,7 @@ export const AppliedMembersFilters: React.FC<Props> = observer((props) => {
 
         return (
           <div key={memberId} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
-            <Avatar name={memberDetails.display_name} src={memberDetails.avatar} showTooltip={false} />
+            <Avatar name={memberDetails.display_name} src={memberDetails.avatar} showTooltip={false} size={"sm"} />
             <span className="normal-case">{memberDetails.display_name}</span>
             {editable && (
               <button

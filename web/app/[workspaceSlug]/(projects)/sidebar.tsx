@@ -39,7 +39,6 @@ export const AppSidebar: FC<IAppSidebar> = observer(() => {
 
   useEffect(() => {
     if (windowSize[0] < 768) !sidebarCollapsed && toggleSidebar();
-    else sidebarCollapsed && toggleSidebar();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [windowSize]);
 
@@ -74,7 +73,7 @@ export const AppSidebar: FC<IAppSidebar> = observer(() => {
           })}
         />
         <div
-          className={cn("overflow-x-hidden scrollbar-sm h-full w-full overflow-y-auto px-2", {
+          className={cn("overflow-x-hidden scrollbar-sm h-full w-full overflow-y-auto px-2 py-0.5", {
             "vertical-scrollbar px-4": !sidebarCollapsed,
           })}
         >

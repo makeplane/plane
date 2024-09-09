@@ -41,7 +41,7 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
         handleClose={() => setmonthModal(false)}
         handleChange={handleChange}
       />
-      <div className="flex flex-col gap-4 border-b border-custom-border-100 px-4 py-6">
+      <div className="flex flex-col gap-4 border-b border-custom-border-100 py-6">
         <div className="flex items-center justify-between">
           <div className="flex items-start gap-3">
             <div className="flex items-center justify-center rounded bg-custom-background-90 p-3">
@@ -68,7 +68,7 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
 
         {currentProjectDetails ? (
           currentProjectDetails.archive_in !== 0 && (
-            <div className="ml-12">
+            <div className="mx-6">
               <div className="flex w-full items-center justify-between gap-2 rounded border border-custom-border-200 bg-custom-background-90 px-5 py-4">
                 <div className="w-1/2 text-sm font-medium">Auto-archive issues that are closed for</div>
                 <div className="w-1/2">
@@ -104,7 +104,7 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
             </div>
           )
         ) : (
-          <Loader className="ml-12">
+          <Loader className="mx-6">
             <Loader.Item height="50px" />
           </Loader>
         )}

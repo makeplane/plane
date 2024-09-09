@@ -50,14 +50,12 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
     );
 
   return (
-    <>
-      <CyclesList
-        completedCycleIds={filteredCompletedCycleIds ?? []}
-        upcomingCycleIds={filteredUpcomingCycleIds}
-        cycleIds={filteredCycleIds}
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
-      />
-    </>
+    <CyclesList
+      completedCycleIds={filteredCompletedCycleIds ?? []}
+      upcomingCycleIds={filteredUpcomingCycleIds}
+      cycleIds={filteredCycleIds}
+      workspaceSlug={workspaceSlug}
+      projectId={projectId}
+    />
   );
 });

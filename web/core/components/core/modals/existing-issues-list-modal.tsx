@@ -7,6 +7,8 @@ import { Combobox, Dialog, Transition } from "@headlessui/react";
 import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 // ui
 import { Button, Loader, ToggleSwitch, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+// helpers
+import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -51,6 +53,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
   const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
   const { isMobile } = usePlatformOS();
   const debouncedSearchTerm: string = useDebounce(searchTerm, 500);
+  const { baseTabIndex } = getTabIndex(undefined, isMobile);
 
   const handleClose = () => {
     onClose();
@@ -140,6 +143,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                       placeholder="Type to search..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
+                      tabIndex={baseTabIndex}
                     />
                   </div>
 

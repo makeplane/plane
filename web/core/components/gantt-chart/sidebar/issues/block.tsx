@@ -1,5 +1,6 @@
 import { observer } from "mobx-react";
 // components
+import { Row } from "@plane/ui";
 import { MultipleSelectEntityAction } from "@/components/core";
 import { useGanttChart } from "@/components/gantt-chart/hooks";
 import { IssueGanttSidebarBlock } from "@/components/issues";
@@ -45,8 +46,8 @@ export const IssuesSidebarBlock = observer((props: Props) => {
       onMouseEnter={() => updateActiveBlockId(block.id)}
       onMouseLeave={() => updateActiveBlockId(null)}
     >
-      <div
-        className={cn("group w-full flex items-center gap-2 pl-2 pr-4", {
+      <Row
+        className={cn("group w-full flex items-center gap-2 pr-4", {
           "bg-custom-background-90": isBlockHoveredOn,
           "bg-custom-primary-100/5 hover:bg-custom-primary-100/10": isIssueSelected,
           "bg-custom-primary-100/10": isIssueSelected && isBlockHoveredOn,
@@ -55,8 +56,8 @@ export const IssuesSidebarBlock = observer((props: Props) => {
           height: `${BLOCK_HEIGHT}px`,
         }}
       >
-        <div className="flex items-center gap-2">
-          {enableSelection && selectionHelpers && (
+        {enableSelection && selectionHelpers && (
+          <div className="flex items-center gap-2 absolute left-1">
             <MultipleSelectEntityAction
               className={cn(
                 "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto transition-opacity",
@@ -68,8 +69,8 @@ export const IssuesSidebarBlock = observer((props: Props) => {
               id={block.id}
               selectionHelpers={selectionHelpers}
             />
-          )}
-        </div>
+          </div>
+        )}
         <div className="flex h-full flex-grow items-center justify-between gap-2 truncate">
           <div className="flex-grow truncate">
             <IssueGanttSidebarBlock issueId={block.data.id} />
@@ -82,7 +83,7 @@ export const IssuesSidebarBlock = observer((props: Props) => {
             </div>
           )}
         </div>
-      </div>
+      </Row>
     </div>
   );
 });

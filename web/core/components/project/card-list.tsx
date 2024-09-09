@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 import Image from "next/image";
 // components
+import { ContentWrapper } from "@plane/ui";
 import { EmptyState } from "@/components/empty-state";
 import { ProjectCard } from "@/components/project";
 import { ProjectsLoader } from "@/components/ui";
@@ -45,14 +46,14 @@ export const ProjectCardList = observer(() => {
           <p className="whitespace-pre-line text-base text-custom-text-400">
             {searchQuery.trim() === ""
               ? "Remove the filters to see all projects"
-              : "No projects detected with the matching\ncriteria. Create a new project instead"}
+              : "No projects detected with the matching criteria.\nCreate a new project instead"}
           </p>
         </div>
       </div>
     );
 
   return (
-    <div className="vertical-scrollbar scrollbar-lg h-full w-full overflow-y-auto p-8">
+    <ContentWrapper>
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
         {filteredProjectIds.map((projectId) => {
           const projectDetails = getProjectById(projectId);
@@ -60,6 +61,6 @@ export const ProjectCardList = observer(() => {
           return <ProjectCard key={projectDetails.id} project={projectDetails} />;
         })}
       </div>
-    </div>
+    </ContentWrapper>
   );
 });

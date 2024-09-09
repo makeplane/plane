@@ -8,7 +8,7 @@ import { Combobox } from "@headlessui/react";
 // types
 import { TIssuePriorities } from "@plane/types";
 // ui
-import { PriorityIcon, Tooltip } from "@plane/ui";
+import { ComboDropDown, PriorityIcon, Tooltip } from "@plane/ui";
 // constants
 import { ISSUE_PRIORITIES } from "@/constants/issue";
 // helpers
@@ -29,6 +29,7 @@ type Props = TDropdownProps & {
   onChange: (val: TIssuePriorities) => void;
   onClose?: () => void;
   value: TIssuePriorities | undefined | null;
+  renderByDefault?: boolean;
 };
 
 type ButtonProps = {
@@ -75,6 +76,7 @@ const BorderButton = (props: ButtonProps) => {
       tooltipContent={priorityDetails?.title ?? "None"}
       disabled={!showTooltip}
       isMobile={isMobile}
+      renderByDefault={false}
     >
       <div
         className={cn(
@@ -155,6 +157,7 @@ const BackgroundButton = (props: ButtonProps) => {
       tooltipContent={priorityDetails?.title ?? "None"}
       disabled={!showTooltip}
       isMobile={isMobile}
+      renderByDefault={false}
     >
       <div
         className={cn(
@@ -236,10 +239,11 @@ const TransparentButton = (props: ButtonProps) => {
       tooltipContent={priorityDetails?.title ?? "None"}
       disabled={!showTooltip}
       isMobile={isMobile}
+      renderByDefault={false}
     >
       <div
         className={cn(
-          "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
+          "h-full w-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
           priorityClasses[priority ?? "none"],
           {
             // compact the icons if text is hidden
@@ -305,6 +309,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
     showTooltip = false,
     tabIndex,
     value = "none",
+    renderByDefault = true,
   } = props;
   // states
   const [query, setQuery] = useState("");
@@ -363,11 +368,54 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
   const ButtonToRender = BORDER_BUTTON_VARIANTS.includes(buttonVariant)
     ? BorderButton
     : BACKGROUND_BUTTON_VARIANTS.includes(buttonVariant)
-    ? BackgroundButton
-    : TransparentButton;
+      ? BackgroundButton
+      : TransparentButton;
+
+  const comboButton = (
+    <>
+      {button ? (
+        <button
+          ref={setReferenceElement}
+          type="button"
+          className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
+          onClick={handleOnClick}
+        >
+          {button}
+        </button>
+      ) : (
+        <button
+          ref={setReferenceElement}
+          type="button"
+          className={cn(
+            "clickable block h-full max-w-full outline-none",
+            {
+              "cursor-not-allowed text-custom-text-200": disabled,
+              "cursor-pointer": !disabled,
+            },
+            buttonContainerClassName
+          )}
+          onClick={handleOnClick}
+        >
+          <ButtonToRender
+            priority={value ?? undefined}
+            className={cn(buttonClassName, {
+              "text-custom-text-200": resolvedTheme?.includes("dark") || resolvedTheme === "custom",
+            })}
+            highlightUrgent={highlightUrgent}
+            dropdownArrow={dropdownArrow && !disabled}
+            dropdownArrowClassName={dropdownArrowClassName}
+            hideIcon={hideIcon}
+            placeholder={placeholder}
+            showTooltip={showTooltip}
+            hideText={BUTTON_VARIANTS_WITHOUT_TEXT.includes(buttonVariant)}
+          />
+        </button>
+      )}
+    </>
+  );
 
   return (
-    <Combobox
+    <ComboDropDown
       as="div"
       ref={dropdownRef}
       tabIndex={tabIndex}
@@ -382,47 +430,9 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
       onChange={dropdownOnChange}
       disabled={disabled}
       onKeyDown={handleKeyDown}
+      button={comboButton}
+      renderByDefault={renderByDefault}
     >
-      <Combobox.Button as={Fragment}>
-        {button ? (
-          <button
-            ref={setReferenceElement}
-            type="button"
-            className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
-            onClick={handleOnClick}
-          >
-            {button}
-          </button>
-        ) : (
-          <button
-            ref={setReferenceElement}
-            type="button"
-            className={cn(
-              "clickable block h-full max-w-full outline-none",
-              {
-                "cursor-not-allowed text-custom-text-200": disabled,
-                "cursor-pointer": !disabled,
-              },
-              buttonContainerClassName
-            )}
-            onClick={handleOnClick}
-          >
-            <ButtonToRender
-              priority={value ?? undefined}
-              className={cn(buttonClassName, {
-                "text-custom-text-200": resolvedTheme?.includes("dark") || resolvedTheme === "custom",
-              })}
-              highlightUrgent={highlightUrgent}
-              dropdownArrow={dropdownArrow && !disabled}
-              dropdownArrowClassName={dropdownArrowClassName}
-              hideIcon={hideIcon}
-              placeholder={placeholder}
-              showTooltip={showTooltip}
-              hideText={BUTTON_VARIANTS_WITHOUT_TEXT.includes(buttonVariant)}
-            />
-          </button>
-        )}
-      </Combobox.Button>
       {isOpen && (
         <Combobox.Options className="fixed z-10" static>
           <div
@@ -471,6 +481,6 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
           </div>
         </Combobox.Options>
       )}
-    </Combobox>
+    </ComboDropDown>
   );
 };

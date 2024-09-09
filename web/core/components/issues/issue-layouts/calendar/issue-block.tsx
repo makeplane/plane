@@ -13,6 +13,7 @@ import { Tooltip, ControlLink } from "@plane/ui";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail, useProjectState } from "@/hooks/store";
+import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
@@ -37,18 +38,14 @@ export const CalendarIssueBlock = observer(
     // hooks
     const { workspaceSlug, projectId } = useParams();
     const { getProjectStates } = useProjectState();
-    const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
+    const { getIsIssuePeeked } = useIssueDetail();
+    const { handleRedirection } = useIssuePeekOverviewRedirection();
     const { isMobile } = usePlatformOS();
 
     const stateColor = getProjectStates(issue?.project_id)?.find((state) => state?.id == issue?.state_id)?.color || "";
 
-    const handleIssuePeekOverview = (issue: TIssue) =>
-      workspaceSlug &&
-      issue &&
-      issue.project_id &&
-      issue.id &&
-      !getIsIssuePeeked(issue.id) &&
-      setPeekIssue({ workspaceSlug: workspaceSlug.toString(), projectId: issue.project_id, issueId: issue.id });
+    // handlers
+    const handleIssuePeekOverview = (issue: TIssue) => handleRedirection(workspaceSlug.toString(), issue, isMobile);
 
     useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
 

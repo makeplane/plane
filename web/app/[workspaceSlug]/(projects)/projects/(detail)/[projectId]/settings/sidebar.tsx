@@ -27,7 +27,7 @@ export const ProjectSettingsSidebar = observer(() => {
 
   if (!currentProjectRole) {
     return (
-      <div className="flex w-80 flex-col gap-6 px-5">
+      <div className="flex w-[280px] flex-col gap-6">
         <div className="flex flex-col gap-2">
           <span className="text-xs font-semibold text-custom-sidebar-text-400">SETTINGS</span>
           <Loader className="flex w-full flex-col gap-2">
@@ -41,7 +41,7 @@ export const ProjectSettingsSidebar = observer(() => {
   }
 
   return (
-    <div className="flex w-80 flex-col gap-6 px-5">
+    <div className="flex w-[280px] flex-col gap-6">
       <div className="flex flex-col gap-2">
         <span className="text-xs font-semibold text-custom-sidebar-text-400">SETTINGS</span>
         <div className="flex w-full flex-col gap-1">
