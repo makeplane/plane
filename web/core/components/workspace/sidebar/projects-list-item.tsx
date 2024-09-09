@@ -301,13 +301,11 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
         >
           <DropIndicator classNames="absolute top-0" isVisible={instruction === "DRAG_OVER"} />
           <div
-            className={cn(
-              "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-90",
-              {
-                "bg-custom-sidebar-background-90": isMenuActive,
-                "p-0 size-8 aspect-square justify-center mx-auto": isSidebarCollapsed,
-              }
-            )}
+            className={cn("relative w-full px-2 py-1.5 flex items-center rounded-md text-custom-sidebar-text-100", {
+              "bg-custom-sidebar-background-90": isMenuActive,
+              "p-0 size-8 aspect-square justify-center mx-auto": isSidebarCollapsed,
+              "group/project-item hover:bg-custom-sidebar-background-90": !isMobile,
+            })}
             id={`${project?.id}`}
           >
             {!disableDrag && (
@@ -385,12 +383,11 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                       <MoreHorizontal className="size-4" />
                     </span>
                   }
-                  className={cn(
-                    "opacity-0 pointer-events-none flex-shrink-0 group-hover/project-item:opacity-100 group-hover/project-item:pointer-events-auto",
-                    {
-                      "opacity-100 pointer-events-auto": isMenuActive,
-                    }
-                  )}
+                  className={cn("flex-shrink-0 pointer-events-auto", {
+                    "opacity-100 pointer-events-auto": isMenuActive,
+                    "opacity-0 pointer-events-none group-hover/project-item:opacity-100 group-hover/project-item:pointer-events-auto":
+                      !isMobile,
+                  })}
                   customButtonClassName="grid place-items-center"
                   placement="bottom-start"
                   useCaptureForOutsideClick
@@ -468,12 +465,10 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                 <Disclosure.Button
                   as="button"
                   type="button"
-                  className={cn(
-                    "hidden group-hover/project-item:inline-block p-0.5 rounded hover:bg-custom-sidebar-background-80",
-                    {
-                      "inline-block": isMenuActive,
-                    }
-                  )}
+                  className={cn("inline-block p-0.5 rounded", {
+                    "inline-block": isMenuActive,
+                    "hidden group-hover/project-item:inline-block hover:bg-custom-sidebar-background-80": !isMobile,
+                  })}
                   onClick={() => setIsProjectListOpen(!isProjectListOpen)}
                 >
                   <ChevronRight

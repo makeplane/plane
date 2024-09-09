@@ -22,6 +22,7 @@ import { orderJoinedProjects } from "@/helpers/project.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useAppTheme, useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 export const SidebarProjectsList: FC = observer(() => {
   // get local storage data for isFavoriteProjectsListOpen and isAllProjectsListOpen
@@ -40,6 +41,7 @@ export const SidebarProjectsList: FC = observer(() => {
   const {
     membership: { currentWorkspaceRole },
   } = useUser();
+  const { isMobile } = usePlatformOS();
   const { getProjectById, joinedProjectIds: joinedProjects, updateProjectView } = useProject();
   // router params
   const { workspaceSlug } = useParams();
@@ -155,10 +157,11 @@ export const SidebarProjectsList: FC = observer(() => {
           <Disclosure as="div" className="flex flex-col" defaultOpen={isAllProjectsListOpen}>
             <div
               className={cn(
-                "group w-full flex items-center justify-between px-2 py-1.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90",
+                "w-full flex items-center justify-between px-2 py-1.5 rounded text-custom-sidebar-text-400",
                 {
                   "p-0 justify-center w-fit mx-auto bg-custom-sidebar-background-90 hover:bg-custom-sidebar-background-80":
                     isCollapsed,
+                  "group hover:bg-custom-sidebar-background-90": !isMobile,
                 }
               )}
             >
@@ -166,7 +169,7 @@ export const SidebarProjectsList: FC = observer(() => {
                 as="button"
                 type="button"
                 className={cn(
-                  "group w-full flex items-center gap-1 whitespace-nowrap text-left text-sm font-semibold text-custom-sidebar-text-400",
+                  "w-full flex items-center gap-1 whitespace-nowrap text-left text-sm font-semibold text-custom-sidebar-text-400",
                   {
                     "!text-center w-8 px-2 py-1.5 justify-center": isCollapsed,
                   }
@@ -184,7 +187,11 @@ export const SidebarProjectsList: FC = observer(() => {
                 </Tooltip>
               </Disclosure.Button>
               {!isCollapsed && (
-                <div className="flex items-center opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
+                <div
+                  className={cn("flex items-center pointer-events-auto", {
+                    "opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto": !isMobile,
+                  })}
+                >
                   {isAuthorizedUser && (
                     <Tooltip tooltipHeading="Create project" tooltipContent="">
                       <button

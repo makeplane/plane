@@ -70,11 +70,12 @@ export const SidebarWorkspaceMenu = observer(() => {
   return (
     <Disclosure as="div" defaultOpen>
       {!sidebarCollapsed && (
-        <div className={
-          cn("flex px-2 bg-custom-sidebar-background-100 group/workspace-button hover:bg-custom-sidebar-background-90 rounded", {
+        <div
+          className={cn("flex px-2 bg-custom-sidebar-background-100 rounded", {
             "mt-2.5": !sidebarCollapsed,
-          })
-        }>
+            "group/workspace-button hover:bg-custom-sidebar-background-90": !isMobile,
+          })}
+        >
           {" "}
           <Disclosure.Button
             as="button"
@@ -95,12 +96,11 @@ export const SidebarWorkspaceMenu = observer(() => {
                 <MoreHorizontal className="size-4" />
               </span>
             }
-            className={cn(
-              "h-full flex items-center opacity-0 z-20 pointer-events-none flex-shrink-0 group-hover/workspace-button:opacity-100 group-hover/workspace-button:pointer-events-auto my-auto",
-              {
-                "opacity-100 pointer-events-auto": isMenuActive,
-              }
-            )}
+            className={cn("h-full flex items-center z-20 flex-shrink-0  my-auto pointer-events-auto", {
+              "opacity-100 pointer-events-auto": isMenuActive,
+              "opacity-0 pointer-events-none group-hover/workspace-button:opacity-100 group-hover/workspace-button:pointer-events-auto":
+                !isMobile,
+            })}
             customButtonClassName="grid place-items-center"
             placement="bottom-start"
           >
@@ -124,11 +124,20 @@ export const SidebarWorkspaceMenu = observer(() => {
           </CustomMenu>
           <Disclosure.Button
             as="button"
-            className="sticky top-0 z-10 group/workspace-button px-0.5 py-1.5 flex items-center justify-between gap-1 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90 rounded text-xs font-semibold"
+            className={cn(
+              "sticky top-0 z-10 px-0.5 py-1.5 flex items-center justify-between gap-1 text-custom-sidebar-text-400 rounded text-xs font-semibold",
+              {
+                "group/workspace-button hover:bg-custom-sidebar-background-90": !isMobile,
+              }
+            )}
             onClick={() => toggleWorkspaceMenu(!isWorkspaceMenuOpen)}
           >
-            {" "}
-            <span className="flex-shrink-0 opacity-0 pointer-events-none group-hover/workspace-button:opacity-100 group-hover/workspace-button:pointer-events-auto rounded hover:bg-custom-sidebar-background-80">
+            <span
+              className={cn("flex-shrink-0 pointer-events-auto rounded", {
+                "opacity-0 pointer-events-none group-hover/workspace-button:opacity-100 group-hover/workspace-button:pointer-events-auto hover:bg-custom-sidebar-background-80":
+                  !isMobile,
+              })}
+            >
               <ChevronRight
                 className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
                   "rotate-90": isWorkspaceMenuOpen,
