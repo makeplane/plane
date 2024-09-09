@@ -170,7 +170,7 @@ export class Storage {
       return;
     }
 
-    const queryParams: { cursor: string; updated_at__gte?: string; description: boolean } = {
+    const queryParams: { cursor: string; updated_at__gt?: string; description: boolean } = {
       cursor: `${PAGE_SIZE}:0:0`,
       description: true,
     };
@@ -179,7 +179,7 @@ export class Storage {
     const projectSync = await this.getOption(projectId);
 
     if (syncedAt) {
-      queryParams["updated_at__gte"] = syncedAt;
+      queryParams["updated_at__gt"] = syncedAt;
     }
 
     this.setStatus(projectId, projectSync === "ready" ? "syncing" : "loading");
