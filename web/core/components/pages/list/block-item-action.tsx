@@ -7,12 +7,10 @@ import { Earth, Info, Lock, Minus } from "lucide-react";
 import { Avatar, FavoriteStar, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
 import { PageQuickActions } from "@/components/pages/dropdowns";
-// constants
-import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
-import { useMember, usePage, useProject } from "@/hooks/store";
+import { useMember, usePage } from "@/hooks/store";
 
 type Props = {
   workspaceSlug: string;
@@ -23,24 +21,24 @@ type Props = {
 
 export const BlockItemAction: FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, pageId, parentRef } = props;
-
   // store hooks
   const page = usePage(pageId);
   const { getUserDetails } = useMember();
-  const { getProjectById } = useProject();
-
   // derived values
-  const { access, created_at, is_favorite, owned_by, addToFavorites, removePageFromFavorites } = page;
-
-  // derived values
-  const project = getProjectById(projectId);
-  const isViewerOrGuest =
-    project?.member_role && [EUserProjectRoles.VIEWER, EUserProjectRoles.GUEST].includes(project.member_role);
+  const {
+    access,
+    created_at,
+    is_favorite,
+    owned_by,
+    canCurrentUserFavoritePage,
+    addToFavorites,
+    removePageFromFavorites,
+  } = page;
   const ownerDetails = owned_by ? getUserDetails(owned_by) : undefined;
 
   // handlers
   const handleFavorites = () => {
-    if (is_favorite)
+    if (is_favorite) {
       removePageFromFavorites().then(() =>
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -48,7 +46,7 @@ export const BlockItemAction: FC<Props> = observer((props) => {
           message: "Page removed from favorites.",
         })
       );
-    else
+    } else {
       addToFavorites().then(() =>
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -56,7 +54,9 @@ export const BlockItemAction: FC<Props> = observer((props) => {
           message: "Page added to favorites.",
         })
       );
+    }
   };
+
   return (
     <>
       {/* page details */}
@@ -81,7 +81,7 @@ export const BlockItemAction: FC<Props> = observer((props) => {
       </Tooltip>
 
       {/* favorite/unfavorite */}
-      {!isViewerOrGuest && (
+      {canCurrentUserFavoritePage && (
         <FavoriteStar
           onClick={(e) => {
             e.preventDefault();

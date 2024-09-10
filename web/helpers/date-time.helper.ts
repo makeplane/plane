@@ -344,3 +344,16 @@ export const convertMinutesToHoursMinutesString = (totalMinutes: number): string
 
   return `${hours ? `${hours}h ` : ``}${minutes ? `${minutes}m ` : ``}`;
 };
+
+/**
+ * @description calculates the read time for a document using the words count
+ * @param {number} wordsCount
+ * @returns {number} total number of seconds
+ * @example getReadTimeFromWordsCount(400) // Output: 120
+ * @example getReadTimeFromWordsCount(100) // Output: 30s
+ */
+export const getReadTimeFromWordsCount = (wordsCount: number): number => {
+  const wordsPerMinute = 200;
+  const minutes = wordsCount / wordsPerMinute;
+  return minutes * 60;
+};

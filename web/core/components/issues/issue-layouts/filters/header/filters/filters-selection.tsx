@@ -22,6 +22,8 @@ import {
 } from "@/components/issues";
 // constants
 import { ILayoutDisplayFiltersOptions } from "@/constants/issue";
+// hooks
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { FilterIssueTypes } from "@/plane-web/components/issues";
 
@@ -52,6 +54,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
     moduleViewDisabled = false,
   } = props;
   // hooks
+  const { isMobile } = usePlatformOS();
   const { moduleId, cycleId } = useParams();
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
@@ -72,7 +75,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
             placeholder="Search"
             value={filtersSearchQuery}
             onChange={(e) => setFiltersSearchQuery(e.target.value)}
-            autoFocus
+            autoFocus={!isMobile}
           />
           {filtersSearchQuery !== "" && (
             <button type="button" className="grid place-items-center" onClick={() => setFiltersSearchQuery("")}>

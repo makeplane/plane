@@ -17,6 +17,7 @@ django-cors-headers==4.3.1
 # celery
 celery==5.4.0
 django_celery_beat==2.6.0
+django-celery-results==2.5.1
 # file serve
 whitenoise==6.6.0
 # fake data
@@ -50,7 +51,7 @@ beautifulsoup4==4.12.3
 # analytics
 posthog==3.5.0
 # crypto
-cryptography==42.0.5
+cryptography==43.0.1
 # html validator
 lxml==5.2.1
 # s3
@@ -61,4 +62,3 @@ zxcvbn==4.4.28
 pytz==2024.1
 # jwt
 PyJWT==2.8.0
-

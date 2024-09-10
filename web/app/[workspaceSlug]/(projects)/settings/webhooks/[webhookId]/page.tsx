@@ -90,8 +90,8 @@ const WebhookDetailsPage = observer(() => {
     <>
       <PageHead title={pageTitle} />
       <DeleteWebhookModal isOpen={deleteWebhookModal} onClose={() => setDeleteWebhookModal(false)} />
-      <div className="w-full space-y-8 overflow-y-auto md:py-8 py-4 md:pr-9 pr-4">
-        <div className="-m-5">
+      <div className="w-full space-y-8 overflow-y-auto">
+        <div className="">
           <WebhookForm onSubmit={async (data) => await handleUpdateWebhook(data)} data={currentWebhook} />
         </div>
         {currentWebhook && <WebhookDeleteSection openDeleteModal={() => setDeleteWebhookModal(true)} />}

@@ -27,14 +27,12 @@ const StatesSettingsPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <div className="py-8 pr-9">
-        <div className="flex items-center border-b border-custom-border-100 py-3.5">
-          <h3 className="text-xl font-medium">States</h3>
-        </div>
-        {workspaceSlug && projectId && (
-          <ProjectStateRoot workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
-        )}
+      <div className="flex items-center border-b border-custom-border-100">
+        <h3 className="text-xl font-medium">States</h3>
       </div>
+      {workspaceSlug && projectId && (
+        <ProjectStateRoot workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
+      )}
     </>
   );
 });

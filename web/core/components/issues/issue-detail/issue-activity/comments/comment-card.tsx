@@ -13,7 +13,7 @@ import { LiteTextEditor, LiteTextReadOnlyEditor } from "@/components/editor";
 // constants
 import { EIssueCommentAccessSpecifier } from "@/constants/issue";
 // helpers
-import { isEmptyHtmlString } from "@/helpers/string.helper";
+import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks
 import { useIssueDetail, useUser, useWorkspace } from "@/hooks/store";
 // components
@@ -80,10 +80,8 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
     isEditing && setFocus("comment_html");
   }, [isEditing, setFocus]);
 
-  const isEmpty =
-    watch("comment_html")?.trim() === "" ||
-    watch("comment_html") === "<p></p>" ||
-    isEmptyHtmlString(watch("comment_html") ?? "");
+  const commentHTML = watch("comment_html");
+  const isEmpty = isCommentEmpty(commentHTML);
 
   if (!comment || !currentUser) return <></>;
   return (
@@ -148,7 +146,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
               workspaceSlug={workspaceSlug}
               ref={editorRef}
               id={comment.id}
-              initialValue={watch("comment_html") ?? ""}
+              initialValue={commentHTML ?? ""}
               value={null}
               onChange={(comment_json, comment_html) => setValue("comment_html", comment_html)}
               onEnterKeyPress={(e) => {

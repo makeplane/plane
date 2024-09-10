@@ -35,8 +35,8 @@ export const InboxIssueContentProperties: React.FC<Props> = observer((props) => 
   if (!issue || !issue?.id) return <></>;
 
   return (
-    <div className="flex h-min w-full flex-col divide-y-2 divide-custom-border-200 overflow-hidden">
-      <div className="h-min w-full overflow-y-auto px-3">
+    <div className="flex w-full flex-col divide-y-2 divide-custom-border-200">
+      <div className="w-full overflow-y-auto">
         <h5 className="text-sm font-medium my-4">Properties</h5>
         <div className={`divide-y-2 divide-custom-border-200 ${!isEditable ? "opacity-60" : ""}`}>
           <div className="flex flex-col gap-3">

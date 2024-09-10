@@ -98,17 +98,21 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
    * @param id
    */
   updateParentStats = (prevIssueState?: TIssue, nextIssueState?: TIssue, id?: string | undefined) => {
-    // get distribution updates
-    const distributionUpdates = getDistributionPathsPostUpdate(
-      prevIssueState,
-      nextIssueState,
-      this.rootIssueStore.rootStore.state.stateMap,
-      this.rootIssueStore.rootStore.projectEstimate?.currentActiveEstimate?.estimatePointById
-    );
+    try {
+      // get distribution updates
+      const distributionUpdates = getDistributionPathsPostUpdate(
+        prevIssueState,
+        nextIssueState,
+        this.rootIssueStore.rootStore.state.stateMap,
+        this.rootIssueStore.rootStore.projectEstimate?.currentActiveEstimate?.estimatePointById
+      );
 
-    const moduleId = id ?? this.moduleId;
+      const moduleId = id ?? this.moduleId;
 
-    moduleId && this.rootIssueStore.rootStore.module.updateModuleDistribution(distributionUpdates, moduleId);
+      moduleId && this.rootIssueStore.rootStore.module.updateModuleDistribution(distributionUpdates, moduleId);
+    } catch (e) {
+      console.warn("could not update module statistics");
+    }
   };
 
   /**

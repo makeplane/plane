@@ -61,7 +61,7 @@ export const WebhookForm: FC<Props> = observer((props) => {
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)}>
-      <div className="space-y-5 p-5">
+      <div className="space-y-5 ">
         <div className="text-xl font-medium text-custom-text-200">{data ? "Webhook details" : "Create webhook"}</div>
         <div className="space-y-3">
           <div className="space-y-1">
@@ -85,7 +85,7 @@ export const WebhookForm: FC<Props> = observer((props) => {
         </div>
       </div>
       {data ? (
-        <div className="p-5 pt-0 space-y-5">
+        <div className="pt-0 space-y-5">
           <WebhookSecretKey data={data} />
           <Button type="submit" loading={isSubmitting}>
             {isSubmitting ? "Updating" : "Update"}

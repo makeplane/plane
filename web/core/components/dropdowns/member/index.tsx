@@ -1,8 +1,8 @@
-import { Fragment, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, LucideIcon } from "lucide-react";
-// headless ui
-import { Combobox } from "@headlessui/react";
+// ui
+import { ComboDropDown } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -21,6 +21,7 @@ type Props = {
   projectId?: string;
   icon?: LucideIcon;
   onClose?: () => void;
+  renderByDefault?: boolean;
 } & MemberDropdownProps;
 
 export const MemberDropdown: React.FC<Props> = observer((props) => {
@@ -46,6 +47,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
     tabIndex,
     value,
     icon,
+    renderByDefault = true,
   } = props;
   // states
   const [isOpen, setIsOpen] = useState(false);
@@ -96,61 +98,66 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
     }
   };
 
+  const comboButton = (
+    <>
+      {button ? (
+        <button
+          ref={setReferenceElement}
+          type="button"
+          className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
+          onClick={handleOnClick}
+        >
+          {button}
+        </button>
+      ) : (
+        <button
+          ref={setReferenceElement}
+          type="button"
+          className={cn(
+            "clickable block h-full max-w-full outline-none",
+            {
+              "cursor-not-allowed text-custom-text-200": disabled,
+              "cursor-pointer": !disabled,
+            },
+            buttonContainerClassName
+          )}
+          onClick={handleOnClick}
+        >
+          <DropdownButton
+            className={cn("text-xs", buttonClassName)}
+            isActive={isOpen}
+            tooltipHeading={placeholder}
+            tooltipContent={tooltipContent ?? `${value?.length ?? 0} assignee${value?.length !== 1 ? "s" : ""}`}
+            showTooltip={showTooltip}
+            variant={buttonVariant}
+          >
+            {!hideIcon && <ButtonAvatars showTooltip={showTooltip} userIds={value} icon={icon} />}
+            {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
+              <span className="flex-grow truncate leading-5">
+                {getDisplayName(value, showUserDetails, placeholder)}
+              </span>
+            )}
+            {dropdownArrow && (
+              <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+            )}
+          </DropdownButton>
+        </button>
+      )}
+    </>
+  );
+
   return (
-    <Combobox
+    <ComboDropDown
       as="div"
       ref={dropdownRef}
       tabIndex={tabIndex}
       className={cn("h-full", className)}
       onChange={dropdownOnChange}
       onKeyDown={handleKeyDown}
+      button={comboButton}
+      renderByDefault={renderByDefault}
       {...comboboxProps}
     >
-      <Combobox.Button as={Fragment}>
-        {button ? (
-          <button
-            ref={setReferenceElement}
-            type="button"
-            className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
-            onClick={handleOnClick}
-          >
-            {button}
-          </button>
-        ) : (
-          <button
-            ref={setReferenceElement}
-            type="button"
-            className={cn(
-              "clickable block h-full max-w-full outline-none",
-              {
-                "cursor-not-allowed text-custom-text-200": disabled,
-                "cursor-pointer": !disabled,
-              },
-              buttonContainerClassName
-            )}
-            onClick={handleOnClick}
-          >
-            <DropdownButton
-              className={cn("text-xs", buttonClassName)}
-              isActive={isOpen}
-              tooltipHeading={placeholder}
-              tooltipContent={tooltipContent ?? `${value?.length ?? 0} assignee${value?.length !== 1 ? "s" : ""}`}
-              showTooltip={showTooltip}
-              variant={buttonVariant}
-            >
-              {!hideIcon && <ButtonAvatars showTooltip={showTooltip} userIds={value} icon={icon} />}
-              {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-                <span className="flex-grow truncate leading-5">
-                  {getDisplayName(value, showUserDetails, placeholder)}
-                </span>
-              )}
-              {dropdownArrow && (
-                <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
-              )}
-            </DropdownButton>
-          </button>
-        )}
-      </Combobox.Button>
       {isOpen && (
         <MemberOptions
           isOpen={isOpen}
@@ -159,6 +166,6 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
           referenceElement={referenceElement}
         />
       )}
-    </Combobox>
+    </ComboDropDown>
   );
 });

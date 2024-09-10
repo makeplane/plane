@@ -298,7 +298,11 @@ class ModuleAPIEndpoint(BaseAPIView):
             actor_id=str(request.user.id),
             issue_id=None,
             project_id=str(project_id),
-            current_instance=None,
+            current_instance=json.dumps(
+                {
+                    "module_name": str(module.name),
+                }
+            ),
             epoch=int(timezone.now().timestamp()),
         )
         module.delete()
@@ -634,6 +638,12 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             )
         module.archived_at = timezone.now()
         module.save()
+        UserFavorite.objects.filter(
+            entity_type="module",
+            entity_identifier=pk,
+            project_id=project_id,
+            workspace__slug=slug,
+        ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def delete(self, request, slug, project_id, pk):

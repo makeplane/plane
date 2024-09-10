@@ -27,6 +27,18 @@ x-proxy-env: &proxy-env
   NGINX_PORT: ${NGINX_PORT:-80}
   FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
 
+x-mg-env: &mg-env
+  # RabbitMQ Settings
+  RABBITMQ_HOST: ${RABBITMQ_HOST:-plane-mq}
+  RABBITMQ_PORT: ${RABBITMQ_PORT:-5672}
+  RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-plane}
+  RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-plane}
+  RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST:-plane}
+  RABBITMQ_VHOST: ${RABBITMQ_VHOST:-plane}
+
+x-live-env: &live-env
+  API_BASE_URL: ${API_BASE_URL:-http://api:8000}
+
 x-app-env: &app-env
   WEB_URL: ${WEB_URL:-http://localhost}
   DEBUG: ${DEBUG:-0}
@@ -39,6 +51,8 @@ x-app-env: &app-env
   ADMIN_BASE_URL: ${ADMIN_BASE_URL}
   SPACE_BASE_URL: ${SPACE_BASE_URL}
   APP_BASE_URL: ${APP_BASE_URL}
+  AMQP_URL: ${AMQP_URL:-amqp://plane:plane@plane-mq:5672/plane}
+
 
 services:
   web:
@@ -78,6 +92,20 @@ services:
       - api
       - web
 
+  live:
+    image: ${DOCKERHUB_USER:-makeplane}/plane-live:${APP_RELEASE:-stable}
+    platform: ${DOCKER_PLATFORM:-}
+    pull_policy: if_not_present
+    restart: unless-stopped
+    command: node live/dist/server.js live
+    environment:
+      <<: [ *live-env ]
+    deploy:
+      replicas: ${LIVE_REPLICAS:-1}
+    depends_on:
+      - api
+      - web
+
   api:
     image: ${DOCKERHUB_USER:-makeplane}/plane-backend:${APP_RELEASE:-stable}
     platform: ${DOCKER_PLATFORM:-}
@@ -93,6 +121,7 @@ services:
     depends_on:
       - plane-db
       - plane-redis
+      - plane-mq
 
   worker:
     image: ${DOCKERHUB_USER:-makeplane}/plane-backend:${APP_RELEASE:-stable}
@@ -108,6 +137,7 @@ services:
       - api
       - plane-db
       - plane-redis
+      - plane-mq
 
   beat-worker:
     image: ${DOCKERHUB_USER:-makeplane}/plane-backend:${APP_RELEASE:-stable}
@@ -123,6 +153,7 @@ services:
       - api
       - plane-db
       - plane-redis
+      - plane-mq
 
   migrator:
     image: ${DOCKERHUB_USER:-makeplane}/plane-backend:${APP_RELEASE:-stable}
@@ -157,6 +188,14 @@ services:
     volumes:
       - redisdata:/data
 
+  plane-mq:
+    image: rabbitmq:3.13.6-management-alpine
+    restart: always
+    environment:
+      <<: *mg-env
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
   plane-minio:
     image: minio/minio:latest
     pull_policy: if_not_present
@@ -185,8 +224,10 @@ services:
 volumes:
   pgdata:
   redisdata:
+  
   uploads:
   logs_api:
   logs_worker:
   logs_beat-worker:
   logs_migrator:
+  rabbitmq_data:

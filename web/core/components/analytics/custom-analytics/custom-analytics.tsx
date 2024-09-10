@@ -5,6 +5,7 @@ import useSWR from "swr";
 import { IAnalyticsParams } from "@plane/types";
 // services
 // components
+import { ContentWrapper } from "@plane/ui";
 import { CustomAnalyticsSelectBar, CustomAnalyticsMainContent, CustomAnalyticsSidebar } from "@/components/analytics";
 // types
 // fetch-keys
@@ -53,7 +54,7 @@ export const CustomAnalytics: React.FC<Props> = observer((props) => {
 
   return (
     <div className={cn("relative flex h-full w-full overflow-hidden", isProjectLevel ? "flex-col-reverse" : "")}>
-      <div className="flex h-full w-full flex-col overflow-hidden">
+      <ContentWrapper>
         <CustomAnalyticsSelectBar
           control={control}
           setValue={setValue}
@@ -67,7 +68,7 @@ export const CustomAnalytics: React.FC<Props> = observer((props) => {
           params={params}
           fullScreen={fullScreen}
         />
-      </div>
+      </ContentWrapper>
 
       <div
         className={cn(

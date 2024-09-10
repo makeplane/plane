@@ -107,7 +107,7 @@ export class IssueStore implements IIssueStore {
       is_subscribed: issue?.is_subscribed,
     };
 
-    this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issuePayload], true);
+    this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issuePayload]);
 
     // store handlers from issue detail
     // parent
