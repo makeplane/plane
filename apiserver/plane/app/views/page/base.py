@@ -265,7 +265,7 @@ class PageViewSet(BaseViewSet):
                 status=status.HTTP_200_OK,
             )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def lock(self, request, slug, project_id, pk):
         page = Page.objects.filter(
             pk=pk, workspace__slug=slug, projects__id=project_id
@@ -275,7 +275,7 @@ class PageViewSet(BaseViewSet):
         page.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def unlock(self, request, slug, project_id, pk):
         page = Page.objects.filter(
             pk=pk, workspace__slug=slug, projects__id=project_id
@@ -286,7 +286,7 @@ class PageViewSet(BaseViewSet):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def access(self, request, slug, project_id, pk):
         access = request.data.get("access", 0)
         page = Page.objects.filter(
@@ -333,7 +333,7 @@ class PageViewSet(BaseViewSet):
         pages = PageSerializer(queryset, many=True).data
         return Response(pages, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def archive(self, request, slug, project_id, pk):
         page = Page.objects.get(
             pk=pk, workspace__slug=slug, projects__id=project_id
@@ -368,7 +368,7 @@ class PageViewSet(BaseViewSet):
             status=status.HTTP_200_OK,
         )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def unarchive(self, request, slug, project_id, pk):
         page = Page.objects.get(
             pk=pk, workspace__slug=slug, projects__id=project_id
