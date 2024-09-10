@@ -50,7 +50,7 @@ export const convertResponseToBarGraphData = (
           ? renderMonthAndYear(item.dimension)
           : params.x_axis === "priority" || params.x_axis === "state__group"
             ? capitalizeFirstLetter(item.dimension ?? "None")
-            : item.dimension ?? "None",
+            : (item.dimension ?? "None"),
         [yAxisKey]: item[yAxisKey] ?? 0,
       });
     }
@@ -137,7 +137,7 @@ export const renderMonthAndYear = (date: string | number | null): string => {
   const monthNumber = parseInt(`${date}`.split("-")[1], 10);
   const year = `${date}`.split("-")[0];
 
-  return (MONTHS_LIST[monthNumber]?.shortTitle ?? "None") + ` ${year}` ?? "";
+  return (MONTHS_LIST[monthNumber]?.shortTitle || "None") + ` ${year ? year : ""}`;
 };
 
 export const MAX_CHART_LABEL_LENGTH = 15;
