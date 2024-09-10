@@ -68,7 +68,7 @@ const WorklogsPage = observer(() => {
         fallback={<WorkspaceProjectStatesUpgrade />}
         workspaceSlug={workspaceSlug?.toString()}
       >
-        <main className="container mx-auto pr-5 space-y-4">
+        <main className="container mx-auto space-y-4">
           <div className="flex items-center justify-between gap-2 border-b border-custom-border-200 pb-3">
             <div>
               <h3 className="text-xl font-medium">See progress overview for all projects.</h3>

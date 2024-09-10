@@ -31,7 +31,7 @@ export const IssueTypesRoot = observer(() => {
 
   return (
     <div className="container mx-auto h-full pb-8">
-      <div className="flex items-center justify-between border-b border-custom-border-100 py-3.5 pr-4 gap-14">
+      <div className="flex items-center justify-between border-b border-custom-border-100 pb-3.5 gap-14">
         <h3 className="text-xl font-medium">Issue Types</h3>
         {isIssueTypeSettingsEnabled && (
           <Button variant="primary" size="sm" onClick={() => setIsModalOpen(true)}>
@@ -39,7 +39,7 @@ export const IssueTypesRoot = observer(() => {
           </Button>
         )}
       </div>
-      <div className="my-2 pr-4 h-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
+      <div className="my-2 h-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
         {isIssueTypeSettingsEnabled ? (
           <IssueTypesList onEditIssueTypeIdChange={handleEditIssueTypeIdChange} />
         ) : (

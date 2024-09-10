@@ -25,7 +25,7 @@ const IssueTypesSettingsPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <div className={`w-full h-full overflow-hidden py-8 pr-4`}>
+      <div className={`w-full h-full overflow-hidden `}>
         <IssueTypesRoot />
       </div>
     </>

@@ -50,7 +50,7 @@ const ImportsPage = observer(() => {
     return (
       <>
         <PageHead title={pageTitle} />
-        <div className="flex h-full flex-col gap-10 rounded-xl md:pr-9 pr-4">
+        <div className="flex h-full flex-col gap-10 rounded-xl">
           <div className="flex items-center border-b border-custom-border-100 py-3.5">
             <h3 className="text-xl font-medium">Imports</h3>
           </div>
