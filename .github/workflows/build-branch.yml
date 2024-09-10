@@ -403,7 +403,7 @@ jobs:
   publish_assets:
     if : ${{ github.event_name == 'release' }}
     runs-on: ubuntu-latest
-    needs: [branch_build_push_web, branch_build_push_admin, branch_build_push_space, branch_build_push_apiserver, branch_build_push_proxy]
+    needs: [branch_build_push_web, branch_build_push_admin, branch_build_push_space, branch_build_push_apiserver, branch_build_push_proxy, branch_build_push_live]
     steps:
       - id: checkout_files
         name: Checkout Files
