@@ -19,10 +19,15 @@ import { cn } from "@/helpers/common.helper";
 import { getUserRole } from "@/helpers/user.helper";
 // hooks
 import { useEventTracker, useMember, useUser, useWorkspace } from "@/hooks/store";
+// plane web components
+import { UpdateWorkspaceSeatsModal } from "@/plane-web/components/workspace";
+// plane web hooks
+import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 const WorkspaceMembersSettingsPage = observer(() => {
   // states
   const [inviteModal, setInviteModal] = useState(false);
+  const [updateWorkspaceSeatsModal, setUpdateWorkspaceSeatsModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   // router
   const { workspaceSlug } = useParams();
@@ -38,6 +43,9 @@ const WorkspaceMembersSettingsPage = observer(() => {
     workspace: { inviteMembersToWorkspace },
   } = useMember();
   const { currentWorkspace } = useWorkspace();
+  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
+  // derived values
+  const isSelfHostedProWorkspace = subscriptionDetail?.is_self_managed && subscriptionDetail?.product === "PRO";
 
   const handleWorkspaceInvite = (data: IWorkspaceBulkInviteFormData) => {
     if (!workspaceSlug) return;
@@ -79,6 +87,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
           title: "Error!",
           message: `${err.error ?? "Something went wrong. Please try again."}`,
         });
+        throw err;
       });
   };
 
@@ -97,13 +106,20 @@ const WorkspaceMembersSettingsPage = observer(() => {
         isOpen={inviteModal}
         onClose={() => setInviteModal(false)}
         onSubmit={handleWorkspaceInvite}
+        toggleUpdateWorkspaceSeatsModal={() => setUpdateWorkspaceSeatsModal(true)}
       />
+      {isSelfHostedProWorkspace && (
+        <UpdateWorkspaceSeatsModal
+          isOpen={updateWorkspaceSeatsModal}
+          onClose={() => setUpdateWorkspaceSeatsModal(false)}
+        />
+      )}
       <section
         className={cn("w-full overflow-y-auto", {
           "opacity-60": !canPerformWorkspaceMemberActions,
         })}
       >
-        <div className="flex justify-between gap-4 pb-3.5 items-start	">
+        <div className="flex justify-between gap-4 pb-3.5 items-start">
           <h4 className="text-xl font-medium">Members</h4>
           <div className="ml-auto flex items-center gap-1.5 rounded-md border border-custom-border-200 bg-custom-background-100 px-2.5 py-1.5">
             <Search className="h-3.5 w-3.5 text-custom-text-400" />
@@ -118,6 +134,11 @@ const WorkspaceMembersSettingsPage = observer(() => {
           {canPerformWorkspaceAdminActions && (
             <Button variant="primary" size="sm" onClick={() => setInviteModal(true)}>
               Add member
+            </Button>
+          )}
+          {isSelfHostedProWorkspace && canPerformWorkspaceAdminActions && (
+            <Button variant="neutral-primary" size="sm" onClick={() => setUpdateWorkspaceSeatsModal(true)}>
+              Manage seats
             </Button>
           )}
         </div>
