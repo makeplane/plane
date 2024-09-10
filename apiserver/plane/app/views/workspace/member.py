@@ -35,8 +35,9 @@ from plane.db.models import (
     WorkspaceMember,
 )
 from plane.utils.cache import cache_response, invalidate_cache
-
+from plane.payment.bgtasks.member_sync_task import member_sync_task
 from .. import BaseViewSet
+from plane.payment.utils.member_payment_count import workspace_member_check
 
 
 class WorkSpaceMemberViewSet(BaseViewSet):
@@ -140,12 +141,29 @@ class WorkSpaceMemberViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        if "role" in request.data:
+            allowed, _, _ = workspace_member_check(
+                slug=slug,
+                requested_role=request.data.get("role"),
+                current_role=workspace_member.role,
+                requested_invite_list=[],
+            )
+            if not allowed:
+                return Response(
+                    {
+                        "error": "Cannot update the role as it exceeds the purchased seat limit"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
         serializer = WorkSpaceMemberSerializer(
             workspace_member, data=request.data, partial=True
         )
 
         if serializer.is_valid():
             serializer.save()
+            # Sync workspace members
+            member_sync_task.delay(slug)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -221,6 +239,10 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
         workspace_member.is_active = False
         workspace_member.save()
+
+        # Sync workspace members
+        member_sync_task.delay(slug)
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @invalidate_cache(
@@ -288,6 +310,9 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         # # Deactivate the user
         workspace_member.is_active = False
         workspace_member.save()
+
+        # # Sync workspace members
+        member_sync_task.delay(slug)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

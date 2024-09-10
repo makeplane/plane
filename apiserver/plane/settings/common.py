@@ -32,7 +32,7 @@ INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
-    # Inhouse apps
+    # In house apps
     "plane.analytics",
     "plane.app",
     "plane.space",
@@ -44,7 +44,11 @@ INSTALLED_APPS = [
     "plane.license",
     "plane.api",
     "plane.authentication",
+    "plane.ee",
+    "plane.graphql",
+    "plane.payment",
     # Third-party things
+    "strawberry.django",
     "rest_framework",
     "corsheaders",
     "django_celery_beat",
@@ -279,6 +283,9 @@ CELERY_IMPORTS = (
     "plane.bgtasks.file_asset_task",
     "plane.bgtasks.email_notification_task",
     "plane.bgtasks.api_logs_task",
+    "plane.license.bgtasks.version_check_task",
+    # payment tasks
+    "plane.payment.bgtasks.workspace_subscription_sync_task",
     # management tasks
     "plane.bgtasks.dummy_data_task",
 )
@@ -304,6 +311,8 @@ if bool(os.environ.get("SENTRY_DSN", False)) and os.environ.get(
     )
 
 
+# Application Envs
+SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN", False)
 FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
 
 # Unsplash Access key
@@ -330,6 +339,9 @@ INSTANCE_KEY = os.environ.get(
 SKIP_ENV_VAR = os.environ.get("SKIP_ENV_VAR", "1") == "1"
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
+
+# MongoDB Settings
+MONGO_DB_URL = os.environ.get("MONGO_DB_URL", False)
 
 # Cookie Settings
 SESSION_COOKIE_SECURE = secure_origins
@@ -359,3 +371,19 @@ SPACE_BASE_URL = os.environ.get("SPACE_BASE_URL", None)
 APP_BASE_URL = os.environ.get("APP_BASE_URL")
 
 HARD_DELETE_AFTER_DAYS = int(os.environ.get("HARD_DELETE_AFTER_DAYS", 60))
+
+# Prime Server Base url
+PRIME_SERVER_BASE_URL = os.environ.get("PRIME_SERVER_BASE_URL", False)
+PRIME_SERVER_AUTH_TOKEN = os.environ.get("PRIME_SERVER_AUTH_TOKEN", "")
+
+# payment server base url
+PAYMENT_SERVER_BASE_URL = os.environ.get("PAYMENT_SERVER_BASE_URL", False)
+PAYMENT_SERVER_AUTH_TOKEN = os.environ.get("PAYMENT_SERVER_AUTH_TOKEN", "")
+
+# feature flag server base urls
+FEATURE_FLAG_SERVER_BASE_URL = os.environ.get(
+    "FEATURE_FLAG_SERVER_BASE_URL", False
+)
+FEATURE_FLAG_SERVER_AUTH_TOKEN = os.environ.get(
+    "FEATURE_FLAG_SERVER_AUTH_TOKEN", ""
+)
