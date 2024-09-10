@@ -168,9 +168,11 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
       {currentProjectDetails && (
         <div className="relative pb-4 flex justify-between items-center gap-3">
           <div className="space-y-1">
-            <h3 className="text-lg font-medium text-custom-text-100">Guests can view all issues:</h3>
+            <h3 className="text-lg font-medium text-custom-text-100">
+              Grant view access to all issues for guest users:
+            </h3>
             <p className="text-sm text-custom-text-200">
-              Guest user will have view-only access to all issues within the project.
+              This will allow guests to have view access to all the project issues.
             </p>
           </div>
           <ToggleSwitch
