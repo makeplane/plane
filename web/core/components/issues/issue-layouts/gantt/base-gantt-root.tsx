@@ -28,7 +28,7 @@ interface IBaseGanttRoot {
   isCompletedCycle?: boolean;
 }
 
-type GanttStoreType =
+export type GanttStoreType =
   | EIssuesStoreType.PROJECT
   | EIssuesStoreType.MODULE
   | EIssuesStoreType.CYCLE
