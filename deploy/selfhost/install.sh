@@ -235,24 +235,16 @@ function download() {
         mv $PLANE_INSTALL_DIR/docker-compose.yaml $PLANE_INSTALL_DIR/archive/$TS.docker-compose.yaml
     fi
 
-    curl -H 'Cache-Control: no-cache, no-store' -s -o $PLANE_INSTALL_DIR/docker-compose.yaml  https://github.com/makeplane/plane/releases/download/$RELEASE_TAG/docker-compose.yaml?$(date +%s)
+    curl -H 'Cache-Control: no-cache, no-store' -s -o $PLANE_INSTALL_DIR/docker-compose.yaml  https://raw.githubusercontent.com/makeplane/plane/$BRANCH/deploy/selfhost/docker-compose.yml?$(date +%s)
     if [ $? -ne 0 ]; then
-        # 2nd attempt to download the file for backward compatibility
-        curl -H 'Cache-Control: no-cache, no-store' -s -o $PLANE_INSTALL_DIR/docker-compose.yaml  https://raw.githubusercontent.com/makeplane/plane/$BRANCH/deploy/selfhost/docker-compose.yml?$(date +%s)
-        if [ $? -ne 0 ]; then
-            echo "Failed to download the docker-compose.yaml file. Exiting..."
-            exit 1
-        fi
+        echo "Failed to download the docker-compose.yaml file. Exiting..."
+        exit 1
     fi
 
-    curl -H 'Cache-Control: no-cache, no-store' -s -o $PLANE_INSTALL_DIR/variables-upgrade.env https://github.com/makeplane/plane/releases/download/$RELEASE_TAG/variables.env?$(date +%s)
+    curl -H 'Cache-Control: no-cache, no-store' -s -o $PLANE_INSTALL_DIR/variables-upgrade.env https://raw.githubusercontent.com/makeplane/plane/$BRANCH/deploy/selfhost/variables.env?$(date +%s)
     if [ $? -ne 0 ]; then
-        # 2nd attempt to download the file for backward compatibility
-        curl -H 'Cache-Control: no-cache, no-store' -s -o $PLANE_INSTALL_DIR/variables-upgrade.env https://raw.githubusercontent.com/makeplane/plane/$BRANCH/deploy/selfhost/variables.env?$(date +%s)
-        if [ $? -ne 0 ]; then
-            echo "Failed to download the variables.env file. Exiting..."
-            exit 1
-        fi
+        echo "Failed to download the variables.env file. Exiting..."
+        exit 1
     fi
 
     if [ -f "$DOCKER_ENV_PATH" ];
