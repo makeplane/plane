@@ -61,19 +61,13 @@ export class IssueSubscriptionStore implements IIssueSubscriptionStore {
   };
 
   fetchSubscriptions = async (workspaceSlug: string, projectId: string, issueId: string) => {
-    try {
-      const subscription = await this.issueService.getIssueNotificationSubscriptionStatus(
-        workspaceSlug,
-        projectId,
-        issueId
-      );
-
-      this.addSubscription(issueId, subscription?.subscribed);
-
-      return subscription?.subscribed;
-    } catch (error) {
-      throw error;
-    }
+    const subscription = await this.issueService.getIssueNotificationSubscriptionStatus(
+      workspaceSlug,
+      projectId,
+      issueId
+    );
+    this.addSubscription(issueId, subscription?.subscribed);
+    return subscription?.subscribed;
   };
 
   createSubscription = async (workspaceSlug: string, projectId: string, issueId: string) => {

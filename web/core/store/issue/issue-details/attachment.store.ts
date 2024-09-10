@@ -99,62 +99,48 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
   };
 
   fetchAttachments = async (workspaceSlug: string, projectId: string, issueId: string) => {
-    try {
-      const response = await this.issueAttachmentService.getIssueAttachment(workspaceSlug, projectId, issueId);
-
-      this.addAttachments(issueId, response);
-
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    const response = await this.issueAttachmentService.getIssueAttachment(workspaceSlug, projectId, issueId);
+    this.addAttachments(issueId, response);
+    return response;
   };
 
   createAttachment = async (workspaceSlug: string, projectId: string, issueId: string, data: FormData) => {
-    try {
-      const response = await this.issueAttachmentService.uploadIssueAttachment(workspaceSlug, projectId, issueId, data);
-      const issueAttachmentsCount = this.getAttachmentsByIssueId(issueId)?.length ?? 0;
+    const response = await this.issueAttachmentService.uploadIssueAttachment(workspaceSlug, projectId, issueId, data);
+    const issueAttachmentsCount = this.getAttachmentsByIssueId(issueId)?.length ?? 0;
 
-      if (response && response.id) {
-        runInAction(() => {
-          update(this.attachments, [issueId], (attachmentIds = []) => uniq(concat(attachmentIds, [response.id])));
-          set(this.attachmentMap, response.id, response);
-          this.rootIssueStore.issues.updateIssue(issueId, {
-            attachment_count: issueAttachmentsCount + 1, // increment attachment count
-          });
+    if (response && response.id) {
+      runInAction(() => {
+        update(this.attachments, [issueId], (attachmentIds = []) => uniq(concat(attachmentIds, [response.id])));
+        set(this.attachmentMap, response.id, response);
+        this.rootIssueStore.issues.updateIssue(issueId, {
+          attachment_count: issueAttachmentsCount + 1, // increment attachment count
         });
-      }
-
-      return response;
-    } catch (error) {
-      throw error;
+      });
     }
+
+    return response;
   };
 
   removeAttachment = async (workspaceSlug: string, projectId: string, issueId: string, attachmentId: string) => {
-    try {
-      const response = await this.issueAttachmentService.deleteIssueAttachment(
-        workspaceSlug,
-        projectId,
-        issueId,
-        attachmentId
-      );
-      const issueAttachmentsCount = this.getAttachmentsByIssueId(issueId)?.length ?? 1;
+    const response = await this.issueAttachmentService.deleteIssueAttachment(
+      workspaceSlug,
+      projectId,
+      issueId,
+      attachmentId
+    );
+    const issueAttachmentsCount = this.getAttachmentsByIssueId(issueId)?.length ?? 1;
 
-      runInAction(() => {
-        update(this.attachments, [issueId], (attachmentIds = []) => {
-          if (attachmentIds.includes(attachmentId)) pull(attachmentIds, attachmentId);
-          return attachmentIds;
-        });
-        delete this.attachmentMap[attachmentId];
-        this.rootIssueStore.issues.updateIssue(issueId, {
-          attachment_count: issueAttachmentsCount - 1, // decrement attachment count
-        });
+    runInAction(() => {
+      update(this.attachments, [issueId], (attachmentIds = []) => {
+        if (attachmentIds.includes(attachmentId)) pull(attachmentIds, attachmentId);
+        return attachmentIds;
       });
+      delete this.attachmentMap[attachmentId];
+      this.rootIssueStore.issues.updateIssue(issueId, {
+        attachment_count: issueAttachmentsCount - 1, // decrement attachment count
+      });
+    });
 
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    return response;
   };
 }
