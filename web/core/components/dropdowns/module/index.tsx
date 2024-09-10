@@ -27,6 +27,7 @@ type Props = TDropdownProps & {
   showCount?: boolean;
   onClose?: () => void;
   renderByDefault?: boolean;
+  itemClassName?: string;
 } & (
     | {
         multiple: false;
@@ -51,6 +52,7 @@ type ButtonContentProps = {
   showCount: boolean;
   showTooltip?: boolean;
   value: string | string[] | null;
+  className?: string;
 };
 
 const ButtonContent: React.FC<ButtonContentProps> = (props) => {
@@ -65,6 +67,7 @@ const ButtonContent: React.FC<ButtonContentProps> = (props) => {
     showCount,
     showTooltip = false,
     value,
+    className,
   } = props;
   // store hooks
   const { getModuleById } = useModule();
@@ -87,13 +90,16 @@ const ButtonContent: React.FC<ButtonContentProps> = (props) => {
             )}
           </div>
         ) : value.length > 0 ? (
-          <div className="flex max-w-full flex-grow flex-wrap items-center gap-2 truncate py-0.5">
+          <div className="flex max-w-full flex-grow flex-wrap items-center gap-2 truncate py-0.5 ">
             {value.map((moduleId) => {
               const moduleDetails = getModuleById(moduleId);
               return (
                 <div
                   key={moduleId}
-                  className="flex max-w-full items-center gap-1 rounded bg-custom-background-80 py-1 text-custom-text-200"
+                  className={cn(
+                    "flex max-w-full items-center gap-1 rounded bg-custom-background-80 py-1 text-custom-text-200",
+                    className
+                  )}
                 >
                   {!hideIcon && <DiceIcon className="h-2.5 w-2.5 flex-shrink-0" />}
                   {!hideText && (
@@ -159,6 +165,7 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
   const {
     button,
     buttonClassName,
+    itemClassName = "",
     buttonContainerClassName,
     buttonVariant,
     className = "",
@@ -270,6 +277,7 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
               showTooltip={showTooltip}
               value={value}
               onChange={onChange as any}
+              className={itemClassName}
             />
           </DropdownButton>
         </button>
