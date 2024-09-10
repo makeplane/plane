@@ -1,56 +1,34 @@
-import { getSchema } from "@tiptap/core";
-import { generateHTML, generateJSON } from "@tiptap/html";
-import * as Y from "yjs";
+// helpers
 import {
-  prosemirrorJSONToYDoc,
-  yXmlFragmentToProseMirrorRootNode,
-} from "y-prosemirror";
-// editor
-import {
-  CoreEditorExtensionsWithoutProps,
-  DocumentEditorExtensionsWithoutProps,
-} from "@plane/editor/lib";
+  getAllDocumentFormatsFromBinaryData,
+  getBinaryDataFromHTMLString,
+} from "@/core/helpers/page.js";
 // services
-import { PageService } from "../services/page.service.js";
+import { PageService } from "@/core/services/page.service.js";
+import { manualLogger } from "../helpers/logger.js";
 const pageService = new PageService();
-
-const DOCUMENT_EDITOR_EXTENSIONS = [
-  ...CoreEditorExtensionsWithoutProps,
-  ...DocumentEditorExtensionsWithoutProps,
-];
-const documentEditorSchema = getSchema(DOCUMENT_EDITOR_EXTENSIONS);
 
 export const updatePageDescription = async (
   params: URLSearchParams,
   pageId: string,
   updatedDescription: Uint8Array,
-  cookie: string | undefined
+  cookie: string | undefined,
 ) => {
   if (!(updatedDescription instanceof Uint8Array)) {
     throw new Error(
-      "Invalid updatedDescription: must be an instance of Uint8Array"
+      "Invalid updatedDescription: must be an instance of Uint8Array",
     );
   }
 
   const workspaceSlug = params.get("workspaceSlug")?.toString();
   const projectId = params.get("projectId")?.toString();
   if (!workspaceSlug || !projectId || !cookie) return;
-  // encode binary description data
-  const base64Data = Buffer.from(updatedDescription).toString("base64");
-  const yDoc = new Y.Doc();
-  Y.applyUpdate(yDoc, updatedDescription);
-  // convert to JSON
-  const type = yDoc.getXmlFragment("default");
-  const contentJSON = yXmlFragmentToProseMirrorRootNode(
-    type,
-    documentEditorSchema
-  ).toJSON();
-  // convert to HTML
-  const contentHTML = generateHTML(contentJSON, DOCUMENT_EDITOR_EXTENSIONS);
 
+  const { contentBinaryEncoded, contentHTML, contentJSON } =
+    getAllDocumentFormatsFromBinaryData(updatedDescription);
   try {
     const payload = {
-      description_binary: base64Data,
+      description_binary: contentBinaryEncoded,
       description_html: contentHTML,
       description: contentJSON,
     };
@@ -60,10 +38,10 @@ export const updatePageDescription = async (
       projectId,
       pageId,
       payload,
-      cookie
+      cookie,
     );
   } catch (error) {
-    console.error("Update error:", error);
+    manualLogger.error("Update error:", error);
     throw error;
   }
 };
@@ -72,7 +50,7 @@ const fetchDescriptionHTMLAndTransform = async (
   workspaceSlug: string,
   projectId: string,
   pageId: string,
-  cookie: string
+  cookie: string,
 ) => {
   if (!workspaceSlug || !projectId || !cookie) return;
 
@@ -81,27 +59,17 @@ const fetchDescriptionHTMLAndTransform = async (
       workspaceSlug,
       projectId,
       pageId,
-      cookie
+      cookie,
     );
-    // convert already existing html to json
-    const contentJSON = generateJSON(
+    const { contentBinary } = getBinaryDataFromHTMLString(
       pageDetails.description_html ?? "<p></p>",
-      DOCUMENT_EDITOR_EXTENSIONS
     );
-    // get editor schema from the DOCUMENT_EDITOR_EXTENSIONS array
-    const schema = getSchema(DOCUMENT_EDITOR_EXTENSIONS);
-    // convert json to Y.Doc format
-    const transformedData = prosemirrorJSONToYDoc(
-      schema,
-      contentJSON,
-      "default"
-    );
-    // convert Y.Doc to Uint8Array format
-    const encodedData = Y.encodeStateAsUpdate(transformedData);
-
-    return encodedData;
+    return contentBinary;
   } catch (error) {
-    console.error("Error while transforming from HTML to Uint8Array", error);
+    manualLogger.error(
+      "Error while transforming from HTML to Uint8Array",
+      error,
+    );
     throw error;
   }
 };
@@ -109,7 +77,7 @@ const fetchDescriptionHTMLAndTransform = async (
 export const fetchPageDescriptionBinary = async (
   params: URLSearchParams,
   pageId: string,
-  cookie: string | undefined
+  cookie: string | undefined,
 ) => {
   const workspaceSlug = params.get("workspaceSlug")?.toString();
   const projectId = params.get("projectId")?.toString();
@@ -120,7 +88,7 @@ export const fetchPageDescriptionBinary = async (
       workspaceSlug,
       projectId,
       pageId,
-      cookie
+      cookie,
     );
     const binaryData = new Uint8Array(response);
 
@@ -129,7 +97,7 @@ export const fetchPageDescriptionBinary = async (
         workspaceSlug,
         projectId,
         pageId,
-        cookie
+        cookie,
       );
       if (binary) {
         return binary;
@@ -138,7 +106,7 @@ export const fetchPageDescriptionBinary = async (
 
     return binaryData;
   } catch (error) {
-    console.error("Fetch error:", error);
+    manualLogger.error("Fetch error:", error);
     throw error;
   }
 };

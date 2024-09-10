@@ -2,13 +2,14 @@ import { useEffect, useLayoutEffect, useMemo } from "react";
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import Collaboration from "@tiptap/extension-collaboration";
 import { IndexeddbPersistence } from "y-indexeddb";
+// extensions
+import { SideMenuExtension } from "@/extensions";
 // hooks
 import { useEditor } from "@/hooks/use-editor";
 // plane editor extensions
 import { DocumentEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
 import { TCollaborativeEditorProps } from "@/types";
-import { SideMenuExtension } from "@/extensions";
 
 export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
   const {
@@ -84,6 +85,8 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
         disabledExtensions,
         fileHandler,
         issueEmbedConfig: embedHandler?.issue,
+        provider,
+        userDetails: user,
       }),
     ],
     placeholder,

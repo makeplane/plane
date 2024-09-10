@@ -93,7 +93,7 @@ const ButtonContent: React.FC<ButtonContentProps> = (props) => {
               return (
                 <div
                   key={moduleId}
-                  className="flex max-w-full items-center gap-1 rounded bg-custom-background-80 px-1.5 py-1 text-custom-text-200"
+                  className="flex max-w-full items-center gap-1 rounded bg-custom-background-80 py-1 text-custom-text-200"
                 >
                   {!hideIcon && <DiceIcon className="h-2.5 w-2.5 flex-shrink-0" />}
                   {!hideText && (
@@ -185,6 +185,8 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+  // store hooks
+  const { isMobile } = usePlatformOS();
 
   const { getModuleNameById } = useModule();
 
@@ -209,10 +211,10 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
   if (multiple) comboboxProps.multiple = true;
 
   useEffect(() => {
-    if (isOpen && inputRef.current) {
+    if (isOpen && inputRef.current && !isMobile) {
       inputRef.current.focus();
     }
-  }, [isOpen]);
+  }, [isOpen, isMobile]);
 
   const comboButton = (
     <>

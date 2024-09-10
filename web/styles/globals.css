@@ -359,12 +359,6 @@ body {
   color: rgba(var(--color-text-100));
 }
 
-.app-container {
-  contain: layout style size;
-  contain-intrinsic-size: 100%;
-  position: relative; /* Ensure it's the containing block */
-}
-
 /* scrollbar style */
 ::-webkit-scrollbar {
   display: none;

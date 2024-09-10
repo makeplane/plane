@@ -1,123 +1,118 @@
-import { Server } from "@hocuspocus/server";
-import { Redis } from "@hocuspocus/extension-redis";
+import "@/core/config/sentry-config.js";
 
-import { Database } from "@hocuspocus/extension-database";
-import { Logger } from "@hocuspocus/extension-logger";
 import express from "express";
-import expressWs, { Application } from "express-ws";
-// page actions
-import {
-  fetchPageDescriptionBinary,
-  updatePageDescription,
-} from "./core/lib/page.js";
-// types
-import { TDocumentTypes } from "./core/types/common.js";
+import expressWs from "express-ws";
+import * as Sentry from "@sentry/node";
+import compression from "compression";
+import helmet from "helmet";
+
+// cors
+import cors from "cors";
+
+// core hocuspocus server
+import { getHocusPocusServer } from "@/core/hocuspocus-server.js";
+
 // helpers
-import { handleAuthentication } from "./core/lib/authentication.js";
+import { logger, manualLogger } from "@/core/helpers/logger.js";
+import { errorHandler } from "@/core/helpers/error-handler.js";
 
-const server = Server.configure({
-  onAuthenticate: async ({
-    requestHeaders,
-    requestParameters,
-    connection,
-    // user id used as token for authentication
-    token,
-  }) => {
-    // request headers
-    const cookie = requestHeaders.cookie?.toString();
-    // params
-    const params = requestParameters;
-
-    if (!cookie) {
-      throw Error("Credentials not provided");
-    }
-
-    try {
-      await handleAuthentication({
-        connection,
-        cookie,
-        params,
-        token,
-      });
-    } catch (error) {
-      throw Error("Authentication unsuccessful!");
-    }
-  },
-  extensions: [
-    new Redis({
-      host: process.env.REDIS_HOST || "localhost",
-      port: Number(process.env.REDIS_PORT || 6379),
-    }),
-    new Logger(),
-    new Database({
-      fetch: async ({
-        documentName: pageId,
-        requestHeaders,
-        requestParameters,
-      }) => {
-        // request headers
-        const cookie = requestHeaders.cookie?.toString();
-        // query params
-        const params = requestParameters;
-        const documentType = params.get("documentType")?.toString() as
-          | TDocumentTypes
-          | undefined;
-
-        return new Promise(async (resolve) => {
-          try {
-            if (documentType === "project_page") {
-              const fetchedData = await fetchPageDescriptionBinary(
-                params,
-                pageId,
-                cookie,
-              );
-              resolve(fetchedData);
-            }
-          } catch (error) {
-            console.error("Error in fetching document", error);
-          }
-        });
-      },
-      store: async ({
-        state,
-        documentName: pageId,
-        requestHeaders,
-        requestParameters,
-      }) => {
-        // request headers
-        const cookie = requestHeaders.cookie?.toString();
-        // query params
-        const params = requestParameters;
-        const documentType = params.get("documentType")?.toString() as
-          | TDocumentTypes
-          | undefined;
-
-        return new Promise(async () => {
-          try {
-            if (documentType === "project_page") {
-              await updatePageDescription(params, pageId, state, cookie);
-            }
-          } catch (error) {
-            console.error("Error in updating document", error);
-          }
-        });
-      },
-    }),
-  ],
-});
-
-const { app }: { app: Application } = expressWs(express());
+const app = express();
+expressWs(app);
 
 app.set("port", process.env.PORT || 3000);
 
-app.get("/health", (_request, response) => {
-  response.status(200);
+// Security middleware
+app.use(helmet());
+
+// Middleware for response compression
+app.use(
+  compression({
+    level: 6,
+    threshold: 5 * 1000,
+  }),
+);
+
+// Logging middleware
+app.use(logger);
+
+// Body parsing middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// cors middleware
+app.use(cors());
+
+const router = express.Router();
+
+const HocusPocusServer = await getHocusPocusServer().catch((err) => {
+  manualLogger.error("Failed to initialize HocusPocusServer:", err);
+  process.exit(1);
 });
 
-app.ws("/collaboration", (websocket, request) => {
-  server.handleConnection(websocket, request);
+router.get("/health", (_req, res) => {
+  res.status(200).json({ status: "OK" });
 });
 
-app.listen(app.get("port"), () => {
-  console.log("Live server has started at port", app.get("port"));
+router.ws("/collaboration", (ws, req) => {
+  try {
+    HocusPocusServer.handleConnection(ws, req);
+  } catch (err) {
+    manualLogger.error("WebSocket connection error:", err);
+    ws.close();
+  }
+});
+
+app.use(process.env.LIVE_BASE_PATH || "/live", router);
+
+app.use((_req, res) => {
+  res.status(404).send("Not Found");
+});
+
+Sentry.setupExpressErrorHandler(app);
+
+app.use(errorHandler);
+
+const liveServer = app.listen(app.get("port"), () => {
+  manualLogger.info(`Plane Live server has started at port ${app.get("port")}`);
+});
+
+const gracefulShutdown = async () => {
+  manualLogger.info("Starting graceful shutdown...");
+
+  try {
+    // Close the HocusPocus server WebSocket connections
+    await HocusPocusServer.destroy();
+    manualLogger.info(
+      "HocusPocus server WebSocket connections closed gracefully.",
+    );
+
+    // Close the Express server
+    liveServer.close(() => {
+      manualLogger.info("Express server closed gracefully.");
+      process.exit(1);
+    });
+  } catch (err) {
+    manualLogger.error("Error during shutdown:", err);
+    process.exit(1);
+  }
+
+  // Forcefully shut down after 10 seconds if not closed
+  setTimeout(() => {
+    manualLogger.error("Forcing shutdown...");
+    process.exit(1);
+  }, 10000);
+};
+
+// Graceful shutdown on unhandled rejection
+process.on("unhandledRejection", (err: any) => {
+  manualLogger.info("Unhandled Rejection: ", err);
+  manualLogger.info(`UNHANDLED REJECTION! 💥 Shutting down...`);
+  gracefulShutdown();
+});
+
+// Graceful shutdown on uncaught exception
+process.on("uncaughtException", (err: any) => {
+  manualLogger.info("Uncaught Exception: ", err);
+  manualLogger.info(`UNCAUGHT EXCEPTION! 💥 Shutting down...`);
+  gracefulShutdown();
 });

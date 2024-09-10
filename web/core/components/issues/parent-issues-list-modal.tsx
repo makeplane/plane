@@ -12,6 +12,8 @@ import { ISearchIssueResponse } from "@plane/types";
 import { Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // components
 import { IssueSearchModalEmptyState } from "@/components/core";
+// helpers
+import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -49,6 +51,8 @@ export const ParentIssuesListModal: React.FC<Props> = ({
   const debouncedSearchTerm: string = useDebounce(searchTerm, 500);
 
   const { workspaceSlug } = useParams();
+
+  const { baseTabIndex } = getTabIndex(undefined, isMobile);
 
   const handleClose = () => {
     onClose();
@@ -121,6 +125,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       displayValue={() => ""}
+                      tabIndex={baseTabIndex}
                     />
                   </div>
                   <div className="flex p-2 sm:justify-end">

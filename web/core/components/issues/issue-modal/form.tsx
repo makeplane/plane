@@ -19,13 +19,15 @@ import {
   IssueTitleInput,
 } from "@/components/issues/issue-modal/components";
 import { CreateLabelModal } from "@/components/labels";
+import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { cn } from "@/helpers/common.helper";
-import { getTabIndex } from "@/helpers/issue-modal.helper";
 import { getChangedIssuefields } from "@/helpers/issue.helper";
+import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
 // plane web components
 import { IssueAdditionalProperties, IssueTypeSelect } from "@/plane-web/components/issues/issue-modal";
@@ -71,25 +73,31 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     onCreateMoreToggleChange,
     isDraft,
   } = props;
+
   // states
   const [labelModal, setLabelModal] = useState(false);
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
+
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   const submitBtnRef = useRef<HTMLButtonElement | null>(null);
+
   // router
   const { workspaceSlug, projectId: routeProjectId } = useParams();
+
   // store hooks
   const { getProjectById } = useProject();
   const { getIssueTypeIdOnProjectChange, getActiveAdditionalPropertiesLength, handlePropertyValuesValidation } =
     useIssueModal();
+  const { isMobile } = usePlatformOS();
 
   const {
     issue: { getIssueById },
   } = useIssueDetail();
   const { fetchCycles } = useProjectIssueProperties();
   const { getStateById } = useProjectState();
+
   // form info
   const {
     formState: { errors, isDirty, isSubmitting, dirtyFields },
@@ -110,6 +118,8 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     workspaceSlug: workspaceSlug?.toString(),
     watch: watch,
   });
+
+  const { getIndex } = getTabIndex(ETabIndices.ISSUE_FORM, isMobile);
 
   //reset few fields on projectId change
   useEffect(() => {
@@ -185,18 +195,21 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     // this condition helps to move the issues from draft to project issues
     if (formData.hasOwnProperty("is_draft")) submitData.is_draft = formData.is_draft;
 
-    await onSubmit(submitData, is_draft_issue);
-
-    setGptAssistantModal(false);
-
-    reset({
-      ...defaultValues,
-      ...(isCreateMoreToggleEnabled ? { ...data } : {}),
-      project_id: getValues<"project_id">("project_id"),
-      type_id: getValues<"type_id">("type_id"),
-      description_html: data?.description_html ?? "<p></p>",
-    });
-    editorRef?.current?.clearEditor();
+    await onSubmit(submitData, is_draft_issue)
+      .then(() => {
+        setGptAssistantModal(false);
+        reset({
+          ...defaultValues,
+          ...(isCreateMoreToggleEnabled ? { ...data } : {}),
+          project_id: getValues<"project_id">("project_id"),
+          type_id: getValues<"type_id">("type_id"),
+          description_html: data?.description_html ?? "<p></p>",
+        });
+        editorRef?.current?.clearEditor();
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   const condition =
@@ -363,7 +376,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                 onKeyDown={(e) => {
                   if (e.key === "Enter") onCreateMoreToggleChange(!isCreateMoreToggleEnabled);
                 }}
-                tabIndex={getTabIndex("create_more")}
+                tabIndex={getIndex("create_more")}
                 role="button"
               >
                 <ToggleSwitch value={isCreateMoreToggleEnabled} onChange={() => {}} size="sm" />
@@ -385,7 +398,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     });
                   }
                 }}
-                tabIndex={getTabIndex("discard_button")}
+                tabIndex={getIndex("discard_button")}
               >
                 Discard
               </Button>
@@ -397,7 +410,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                       size="sm"
                       loading={isSubmitting}
                       onClick={handleSubmit((data) => handleFormSubmit({ ...data, is_draft: false }))}
-                      tabIndex={getTabIndex("draft_button")}
+                      tabIndex={getIndex("draft_button")}
                     >
                       {isSubmitting ? "Moving" : "Move from draft"}
                     </Button>
@@ -407,7 +420,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                       size="sm"
                       loading={isSubmitting}
                       onClick={handleSubmit((data) => handleFormSubmit(data, true))}
-                      tabIndex={getTabIndex("draft_button")}
+                      tabIndex={getIndex("draft_button")}
                     >
                       {isSubmitting ? "Saving" : "Save as draft"}
                     </Button>
@@ -420,7 +433,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                 size="sm"
                 ref={submitBtnRef}
                 loading={isSubmitting}
-                tabIndex={isDraft ? getTabIndex("submit_button") : getTabIndex("draft_button")}
+                tabIndex={isDraft ? getIndex("submit_button") : getIndex("draft_button")}
               >
                 {data?.id ? (isSubmitting ? "Updating" : "Update") : isSubmitting ? "Creating" : "Create"}
               </Button>

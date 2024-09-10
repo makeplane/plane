@@ -17,8 +17,9 @@ import {
   Users,
 } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
+// plane types
 import { ILinkDetails, IModule, ModuleLink } from "@plane/types";
-// ui
+// plane ui
 import {
   CustomMenu,
   Loader,
@@ -31,9 +32,14 @@ import {
   TextArea,
 } from "@plane/ui";
 // components
-import { LinkModal, LinksList } from "@/components/core";
 import { DateRangeDropdown, MemberDropdown } from "@/components/dropdowns";
-import { ArchiveModuleModal, DeleteModuleModal, ModuleAnalyticsProgress } from "@/components/modules";
+import {
+  ArchiveModuleModal,
+  DeleteModuleModal,
+  CreateUpdateModuleLinkModal,
+  ModuleAnalyticsProgress,
+  ModuleLinksList,
+} from "@/components/modules";
 import {
   MODULE_LINK_CREATED,
   MODULE_LINK_DELETED,
@@ -121,25 +127,12 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
 
     const payload = { metadata: {}, ...formData };
 
-    createModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), payload)
-      .then(() => {
-        captureEvent(MODULE_LINK_CREATED, {
-          module_id: moduleId,
-          state: "SUCCESS",
-        });
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Module link created successfully.",
-        });
+    await createModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), payload).then(() =>
+      captureEvent(MODULE_LINK_CREATED, {
+        module_id: moduleId,
+        state: "SUCCESS",
       })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Some error occurred",
-        });
-      });
+    );
   };
 
   const handleUpdateLink = async (formData: ModuleLink, linkId: string) => {
@@ -147,25 +140,13 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
 
     const payload = { metadata: {}, ...formData };
 
-    updateModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId, payload)
-      .then(() => {
+    await updateModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId, payload).then(
+      () =>
         captureEvent(MODULE_LINK_UPDATED, {
           module_id: moduleId,
           state: "SUCCESS",
-        });
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Module link updated successfully.",
-        });
-      })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Some error occurred",
-        });
-      });
+        })
+    );
   };
 
   const handleDeleteLink = async (linkId: string) => {
@@ -287,16 +268,17 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
 
   return (
     <div className="relative">
-      <LinkModal
+      <CreateUpdateModuleLinkModal
         isOpen={moduleLinkModal}
         handleClose={() => {
           setModuleLinkModal(false);
-          setSelectedLinkToUpdate(null);
+          setTimeout(() => {
+            setSelectedLinkToUpdate(null);
+          }, 500);
         }}
         data={selectedLinkToUpdate}
-        status={selectedLinkToUpdate ? true : false}
-        createIssueLink={handleCreateLink}
-        updateIssueLink={handleUpdateLink}
+        createLink={handleCreateLink}
+        updateLink={handleUpdateLink}
       />
       {workspaceSlug && projectId && (
         <ArchiveModuleModal
@@ -583,7 +565,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                             )}
 
                             {moduleId && (
-                              <LinksList
+                              <ModuleLinksList
                                 moduleId={moduleId}
                                 handleEditLink={handleEditLink}
                                 handleDeleteLink={handleDeleteLink}

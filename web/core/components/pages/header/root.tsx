@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import { ListFilter } from "lucide-react";
 import { TPageFilterProps, TPageNavigationTabs } from "@plane/types";
 // components
+import { Header, EHeaderVariant } from "@plane/ui";
 import { FiltersDropdown } from "@/components/issues";
 import {
   PageAppliedFiltersList,
@@ -49,9 +50,11 @@ export const PagesListHeaderRoot: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <div className="flex-shrink-0 h-[50px] w-full border-b border-custom-border-200 px-6 relative flex items-center gap-4 justify-between">
-        <PageTabNavigation workspaceSlug={workspaceSlug} projectId={projectId} pageType={pageType} />
-        <div className="h-full flex items-center gap-2 self-end">
+      <Header variant={EHeaderVariant.SECONDARY}>
+        <Header.LeftItem>
+          <PageTabNavigation workspaceSlug={workspaceSlug} projectId={projectId} pageType={pageType} />
+        </Header.LeftItem>
+        <Header.RightItem className="items-center">
           <PageSearchInput
             searchQuery={filters.searchQuery}
             updateSearchQuery={(val) => updateFilters("searchQuery", val)}
@@ -76,17 +79,17 @@ export const PagesListHeaderRoot: React.FC<Props> = observer((props) => {
               memberIds={workspaceMemberIds ?? undefined}
             />
           </FiltersDropdown>
-        </div>
-      </div>
+        </Header.RightItem>
+      </Header>
       {calculateTotalFilters(filters?.filters ?? {}) !== 0 && (
-        <div className="border-b border-custom-border-200 px-5 py-3">
+        <Header variant={EHeaderVariant.TERNARY}>
           <PageAppliedFiltersList
             appliedFilters={filters.filters ?? {}}
             handleClearAllFilters={clearAllFilters}
             handleRemoveFilter={handleRemoveFilter}
             alwaysAllowEditing
           />
-        </div>
+        </Header>
       )}
     </>
   );

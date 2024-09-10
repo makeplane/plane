@@ -7,14 +7,18 @@ import { TwitterPicker } from "react-color";
 import { Controller, useForm } from "react-hook-form";
 import { ChevronDown } from "lucide-react";
 import { Dialog, Popover, Transition } from "@headlessui/react";
-import type { IIssueLabel, IState } from "@plane/types";
-// hooks
-import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
-import { LABEL_COLOR_OPTIONS, getRandomLabelColor } from "@/constants/label";
-import { useLabel } from "@/hooks/store";
-// ui
 // types
+import type { IIssueLabel, IState } from "@plane/types";
+// ui
+import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
+import { LABEL_COLOR_OPTIONS, getRandomLabelColor } from "@/constants/label";
+import { ETabIndices } from "@/constants/tab-indices";
+// helpers
+import { getTabIndex } from "@/helpers/tab-indices.helper";
+// hooks
+import { useLabel } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 // types
 type Props = {
@@ -35,6 +39,7 @@ export const CreateLabelModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = useParams();
   // store hooks
   const { createLabel } = useLabel();
+  const { isMobile } = usePlatformOS();
   // form info
   const {
     formState: { errors, isSubmitting },
@@ -47,6 +52,8 @@ export const CreateLabelModal: React.FC<Props> = observer((props) => {
   } = useForm<IIssueLabel>({
     defaultValues,
   });
+
+  const { getIndex } = getTabIndex(ETabIndices.CREATE_LABEL, isMobile);
 
   /**
    * For setting focus on name input
@@ -183,7 +190,7 @@ export const CreateLabelModal: React.FC<Props> = observer((props) => {
                               value={value}
                               onChange={onChange}
                               ref={ref}
-                              tabIndex={1}
+                              tabIndex={getIndex("name")}
                               hasError={Boolean(errors.name)}
                               placeholder="Label title"
                               className="w-full resize-none text-xl"
