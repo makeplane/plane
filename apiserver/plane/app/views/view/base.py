@@ -436,13 +436,16 @@ class IssueViewViewSet(BaseViewSet):
     def list(self, request, slug, project_id):
         queryset = self.get_queryset()
         project = Project.objects.get(id=project_id)
-        if ProjectMember.objects.filter(
-            workspace__slug=slug,
-            project_id=project_id,
-            member=request.user,
-            role=5,
-            is_active=True,
-        ).exists() and not project.guest_view_all_features:
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=request.user,
+                role=5,
+                is_active=True,
+            ).exists()
+            and not project.guest_view_all_features
+        ):
             queryset = queryset.filter(owned_by=request.user)
         fields = [
             field
@@ -460,6 +463,28 @@ class IssueViewViewSet(BaseViewSet):
         issue_view = (
             self.get_queryset().filter(pk=pk, project_id=project_id).first()
         )
+        project = Project.objects.get(id=project_id)
+        """
+        if the role is guest and guest_view_all_features is false and owned by is not 
+        the requesting user then dont show the view
+        """
+
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=request.user,
+                role=5,
+                is_active=True,
+            ).exists()
+            and not project.guest_view_all_features
+            and not issue_view.owned_by == request.user
+        ):
+            return Response(
+                {"error": "You are not allowed to view this issue"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         serializer = IssueViewSerializer(issue_view)
         recent_visited_task.delay(
             slug=slug,

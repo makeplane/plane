@@ -524,6 +524,27 @@ class IssueViewSet(BaseViewSet):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
+        """
+        if the role is guest and guest_view_all_features is false and owned by is not 
+        the requesting user then dont show the issue
+        """
+
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=request.user,
+                role=5,
+                is_active=True,
+            ).exists()
+            and not project.guest_view_all_features
+            and not issue.created_by == request.user
+        ):
+            return Response(
+                {"error": "You are not allowed to view this issue"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         recent_visited_task.delay(
             slug=slug,
             entity_name="issue",
