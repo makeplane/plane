@@ -502,7 +502,7 @@ const emptyStateDetails = {
       text: "Create your first page",
     },
     accessType: "project",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
   },
   [EmptyStateType.PROJECT_PAGE_PRIVATE]: {
     key: EmptyStateType.PROJECT_PAGE_PRIVATE,
@@ -513,7 +513,7 @@ const emptyStateDetails = {
       text: "Create your first page",
     },
     accessType: "project",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
   },
   [EmptyStateType.PROJECT_PAGE_PUBLIC]: {
     key: EmptyStateType.PROJECT_PAGE_PUBLIC,
@@ -524,7 +524,7 @@ const emptyStateDetails = {
       text: "Create your first page",
     },
     accessType: "project",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
   },
   [EmptyStateType.PROJECT_PAGE_ARCHIVED]: {
     key: EmptyStateType.PROJECT_PAGE_ARCHIVED,

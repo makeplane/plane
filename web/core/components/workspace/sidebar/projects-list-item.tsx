@@ -94,7 +94,7 @@ const navigation = (workspaceSlug: string, projectId: string) => [
     name: "Pages",
     href: `/${workspaceSlug}/projects/${projectId}/pages`,
     Icon: FileText,
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
   },
   {
     name: "Intake",
