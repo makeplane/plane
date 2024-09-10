@@ -27,7 +27,7 @@ x-proxy-env: &proxy-env
   NGINX_PORT: ${NGINX_PORT:-80}
   FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
 
-x-mg-env: &mg-env
+x-mq-env: &mq-env
   # RabbitMQ Settings
   RABBITMQ_HOST: ${RABBITMQ_HOST:-plane-mq}
   RABBITMQ_PORT: ${RABBITMQ_PORT:-5672}
@@ -192,7 +192,7 @@ services:
     image: rabbitmq:3.13.6-management-alpine
     restart: always
     environment:
-      <<: *mg-env
+      <<: *mq-env
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
 
