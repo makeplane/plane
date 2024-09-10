@@ -27,7 +27,7 @@ export const AppliedAccessFilters: React.FC<Props> = observer((props) => {
         if (!label) return null;
 
         return (
-          <div key={access} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
+          <div key={access} className="flex items-center gap-1 rounded bg-custom-background-80 py-1 px-1.5 text-xs">
             <span className="normal-case">{label}</span>
             {editable && (
               <button

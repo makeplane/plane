@@ -1,6 +1,8 @@
 // ui
 import { IUserProfileData, IUserStateDistribution } from "@plane/types";
+import { Card } from "@plane/ui";
 import { ProfileEmptyState, PieGraph } from "@/components/ui";
+
 // image
 import { STATE_GROUPS } from "@/constants/state";
 import stateGraph from "@/public/empty-state/state_graph.svg";
@@ -18,7 +20,7 @@ export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, u
   return (
     <div className="flex flex-col space-y-2">
       <h3 className="text-lg font-medium">Issues by state</h3>
-      <div className="flex-grow rounded border border-custom-border-100 p-7">
+      <Card className="h-full">
         {userProfile.state_distribution.length > 0 ? (
           <div className="grid grid-cols-1 gap-x-6 md:grid-cols-2">
             <div>
@@ -80,7 +82,7 @@ export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, u
             image={stateGraph}
           />
         )}
-      </div>
+      </Card>
     </div>
   );
 };

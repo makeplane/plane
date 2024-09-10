@@ -24,6 +24,7 @@ export interface IPage extends TPage {
   canCurrentUserChangeAccess: boolean;
   canCurrentUserArchivePage: boolean;
   canCurrentUserDeletePage: boolean;
+  canCurrentUserFavoritePage: boolean;
   isContentEditable: boolean;
   // helpers
   oldName: string;
@@ -133,6 +134,7 @@ export class Page implements IPage {
       canCurrentUserChangeAccess: computed,
       canCurrentUserArchivePage: computed,
       canCurrentUserDeletePage: computed,
+      canCurrentUserFavoritePage: computed,
       isContentEditable: computed,
       // actions
       update: action,
@@ -278,6 +280,19 @@ export class Page implements IPage {
       projectId?.toString() || ""
     );
     return this.isCurrentUserOwner || currentUserProjectRole === EUserPermissions.ADMIN;
+  }
+
+  /**
+   * @description returns true if the current logged in user can favorite the page
+   */
+  get canCurrentUserFavoritePage() {
+    const { workspaceSlug, projectId } = this.store.router;
+
+    const currentUserProjectRole = this.store.user.permission.projectPermissionsByWorkspaceSlugAndProjectId(
+      workspaceSlug?.toString() || "",
+      projectId?.toString() || ""
+    );
+    return !!currentUserProjectRole && currentUserProjectRole >= EUserPermissions.MEMBER;
   }
 
   /**

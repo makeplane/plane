@@ -2,6 +2,7 @@ import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
+import { ContentWrapper } from "@plane/ui";
 import { InboxIssueActionsHeader, InboxIssueMainContent } from "@/components/inbox";
 // hooks
 import { useProjectInbox, useUserPermissions } from "@/hooks/store";
@@ -81,7 +82,7 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
             embedRemoveCurrentNotification={embedRemoveCurrentNotification}
           />
         </div>
-        <div className="h-full w-full space-y-5 divide-y-2 divide-custom-border-200 overflow-y-auto px-6 py-5 vertical-scrollbar scrollbar-md">
+        <ContentWrapper className="space-y-5 divide-y-2 divide-custom-border-200">
           <InboxIssueMainContent
             workspaceSlug={workspaceSlug}
             projectId={projectId}
@@ -90,7 +91,7 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
             isSubmitting={isSubmitting}
             setIsSubmitting={setIsSubmitting}
           />
-        </div>
+        </ContentWrapper>
       </div>
     </>
   );

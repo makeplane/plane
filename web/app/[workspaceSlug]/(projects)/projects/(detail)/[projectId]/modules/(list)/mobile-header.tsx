@@ -1,7 +1,8 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { CustomMenu } from "@plane/ui";
+import { ChevronDown } from "lucide-react";
+import { CustomMenu, Row } from "@plane/ui";
 import { MODULE_VIEW_LAYOUTS } from "@/constants/module";
 import { useModuleFilter, useProject } from "@/hooks/store";
 
@@ -10,12 +11,16 @@ export const ModulesListMobileHeader = observer(() => {
   const { updateDisplayFilters } = useModuleFilter();
 
   return (
-    <div className="flex justify-center md:hidden">
+    <div className="flex justify-start md:hidden">
       <CustomMenu
         maxHeight={"md"}
-        className="flex flex-grow justify-center text-custom-text-200 text-sm py-2 border-b border-custom-border-200 bg-custom-sidebar-background-100"
+        className="flex flex-grow justify-start text-custom-text-200 text-sm py-2 border-b border-custom-border-200 bg-custom-sidebar-background-100"
         // placement="bottom-start"
-        customButton={<span className="flex flex-grow justify-center text-custom-text-200 text-sm">Layout</span>}
+        customButton={
+          <Row className="flex flex-grow justify-center text-custom-text-200 text-sm gap-2">
+            <span>Layout</span> <ChevronDown className="h-4 w-4 text-custom-text-200 my-auto" strokeWidth={1} />
+          </Row>
+        }
         customButtonClassName="flex flex-grow justify-center items-center text-custom-text-200 text-sm"
         closeOnSelect
       >

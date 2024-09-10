@@ -1,6 +1,7 @@
 // types
 import { IDefaultAnalyticsResponse, TStateGroups } from "@plane/types";
 // constants
+import { Card } from "@plane/ui";
 import { STATE_GROUPS } from "@/constants/state";
 
 type Props = {
@@ -8,7 +9,7 @@ type Props = {
 };
 
 export const AnalyticsDemand: React.FC<Props> = ({ defaultAnalytics }) => (
-  <div className="space-y-3 rounded-[10px] border border-custom-border-200 p-3">
+  <Card>
     <div>
       <h4 className="text-base font-medium text-custom-text-100">Total open tasks</h4>
       <h3 className="mt-1 text-xl font-semibold">{defaultAnalytics.open_issues}</h3>
@@ -47,5 +48,5 @@ export const AnalyticsDemand: React.FC<Props> = ({ defaultAnalytics }) => (
         );
       })}
     </div>
-  </div>
+  </Card>
 );

@@ -57,22 +57,20 @@ export const ModulesListGanttChartView: React.FC = observer(() => {
   if (!filteredModuleIds) return null;
 
   return (
-    <div className="h-full w-full overflow-y-auto">
-      <GanttChartRoot
-        title="Modules"
-        loaderTitle="Modules"
-        blockIds={filteredModuleIds}
-        getBlockById={getBlockById}
-        sidebarToRender={(props) => <ModuleGanttSidebar {...props} />}
-        blockUpdateHandler={(block, payload) => handleModuleUpdate(block, payload)}
-        blockToRender={(data: IModule) => <ModuleGanttBlock moduleId={data.id} />}
-        enableBlockLeftResize={isAllowed}
-        enableBlockRightResize={isAllowed}
-        enableBlockMove={isAllowed}
-        enableReorder={isAllowed && displayFilters?.order_by === "sort_order"}
-        enableAddBlock={isAllowed}
-        showAllBlocks
-      />
-    </div>
+    <GanttChartRoot
+      title="Modules"
+      loaderTitle="Modules"
+      blockIds={filteredModuleIds}
+      getBlockById={getBlockById}
+      sidebarToRender={(props) => <ModuleGanttSidebar {...props} />}
+      blockUpdateHandler={(block, payload) => handleModuleUpdate(block, payload)}
+      blockToRender={(data: IModule) => <ModuleGanttBlock moduleId={data.id} />}
+      enableBlockLeftResize={isAllowed}
+      enableBlockRightResize={isAllowed}
+      enableBlockMove={isAllowed}
+      enableReorder={isAllowed && displayFilters?.order_by === "sort_order"}
+      enableAddBlock={isAllowed}
+      showAllBlocks
+    />
   );
 });

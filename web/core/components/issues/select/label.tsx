@@ -12,6 +12,7 @@ import { cn } from "@/helpers/common.helper";
 import { useLabel } from "@/hooks/store";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -41,6 +42,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = useParams();
   // store hooks
   const { getProjectLabels, fetchProjectLabels } = useLabel();
+  const { isMobile } = usePlatformOS();
   // states
   const [query, setQuery] = useState("");
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
@@ -91,10 +93,10 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
   useOutsideClickDetector(dropdownRef, handleClose);
 
   useEffect(() => {
-    if (isDropdownOpen && inputRef.current) {
+    if (isDropdownOpen && inputRef.current && !isMobile) {
       inputRef.current.focus();
     }
-  }, [isDropdownOpen]);
+  }, [isDropdownOpen, isMobile]);
 
   return (
     <Combobox

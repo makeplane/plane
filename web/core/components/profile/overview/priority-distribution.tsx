@@ -2,7 +2,7 @@
 
 // ui
 import { IUserProfileData } from "@plane/types";
-import { Loader } from "@plane/ui";
+import { Loader, Card } from "@plane/ui";
 import { BarGraph, ProfileEmptyState } from "@/components/ui";
 // image
 import { capitalizeFirstLetter } from "@/helpers/string.helper";
@@ -18,7 +18,7 @@ export const ProfilePriorityDistribution: React.FC<Props> = ({ userProfile }) =>
   <div className="flex flex-col space-y-2">
     <h3 className="text-lg font-medium">Issues by Priority</h3>
     {userProfile ? (
-      <div className="flex-grow rounded border border-custom-border-100">
+      <Card>
         {userProfile.priority_distribution.length > 0 ? (
           <BarGraph
             data={userProfile.priority_distribution.map((priority) => ({
@@ -74,7 +74,7 @@ export const ProfilePriorityDistribution: React.FC<Props> = ({ userProfile }) =>
             />
           </div>
         )}
-      </div>
+      </Card>
     ) : (
       <div className="grid place-items-center p-7">
         <Loader className="flex items-end gap-12">

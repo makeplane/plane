@@ -10,6 +10,7 @@ from .issue import (
     IssueAttachmentSerializer,
     IssueActivitySerializer,
     IssueExpandSerializer,
+    IssueLiteSerializer,
 )
 from .state import StateLiteSerializer, StateSerializer
 from .cycle import CycleSerializer, CycleIssueSerializer, CycleLiteSerializer

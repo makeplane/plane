@@ -1,7 +1,7 @@
 // types
 import type { IProjectMember, IUser } from "@plane/types";
 // services
-import { API_BASE_URL, APIService } from "./api.service.js";
+import { API_BASE_URL, APIService } from "@/core/services/api.service.js";
 
 export class UserService extends APIService {
   constructor() {
