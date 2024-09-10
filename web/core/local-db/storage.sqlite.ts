@@ -62,6 +62,8 @@ export class Storage {
   };
 
   initialize = async (workspaceSlug: string): Promise<boolean> => {
+    if (document.hidden) return false; // return if the window gets hidden
+
     if (workspaceSlug !== this.workspaceSlug) {
       this.reset();
     }
@@ -143,23 +145,29 @@ export class Storage {
       await this.setOption("DB_VERSION", DB_VERSION);
     } catch (err) {
       error(err);
+      throw err;
     }
 
     return true;
   };
 
   syncWorkspace = async () => {
+    if (document.hidden) return; // return if the window gets hidden
+
     await this.workspaceInitPromise;
     loadWorkSpaceData(this.workspaceSlug);
   };
 
   syncProject = (projectId: string) => {
-    // Load labels, members, states, modules, cycles
+    if (document.hidden) return false; // return if the window gets hidden
 
+    // Load labels, members, states, modules, cycles
     this.syncIssues(projectId);
   };
 
   syncIssues = async (projectId: string) => {
+    if (document.hidden) return false; // return if the window gets hidden
+
     try {
       await this.workspaceInitPromise;
       const sync = this._syncIssues(projectId);
