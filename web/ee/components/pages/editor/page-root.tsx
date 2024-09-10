@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 // plane editor
-import { EditorRefApi, useEditorMarkings } from "@plane/editor";
+import { EditorReadOnlyRefApi, EditorRefApi, useEditorMarkings } from "@plane/editor";
 // plane types
 import { TPage } from "@plane/types";
 // plane ui
@@ -37,7 +37,7 @@ export const WorkspacePageRoot = observer((props: TPageRootProps) => {
   const [isVersionsOverlayOpen, setIsVersionsOverlayOpen] = useState(false);
   // refs
   const editorRef = useRef<EditorRefApi>(null);
-  const readOnlyEditorRef = useRef<EditorRefApi>(null);
+  const readOnlyEditorRef = useRef<EditorReadOnlyRefApi>(null);
   // router
   const router = useAppRouter();
   // search params
@@ -91,11 +91,15 @@ export const WorkspacePageRoot = observer((props: TPageRootProps) => {
     editorRef.current?.clearEditor();
     editorRef.current?.setEditorValue(descriptionHTML);
   };
+  const currentVersionDescription = isContentEditable
+    ? editorRef.current?.getHTML()
+    : readOnlyEditorRef.current?.getHTML();
 
   return (
     <>
       <PageVersionsOverlay
         activeVersion={version}
+        currentVersionDescription={currentVersionDescription ?? null}
         editorComponent={WorkspacePagesVersionEditor}
         fetchAllVersions={async (pageId) => {
           if (!workspaceSlug) return;
