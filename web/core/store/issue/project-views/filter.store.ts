@@ -264,7 +264,7 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
 
           const currentUserId = this.rootIssueStore.currentUserId;
           if (currentUserId)
-            this.handleIssuesLocalFilters.set(EIssuesStoreType.PROJECT, type, workspaceSlug, viewId, currentUserId, {
+            this.handleIssuesLocalFilters.set(EIssuesStoreType.PROJECT_VIEW, type, workspaceSlug, viewId, currentUserId, {
               kanban_filters: _filters.kanbanFilters,
             });
 
