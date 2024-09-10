@@ -344,7 +344,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                           </div>
                         )}
 
-                        <input {...getInputProps()} type="text" />
+                        <input {...getInputProps()} />
                       </div>
                     </div>
                     {fileRejections.length > 0 && (
