@@ -2,18 +2,14 @@ import { observer } from "mobx-react";
 // plane types
 import { TPageVersion } from "@plane/types";
 // components
-import { PageVersionsMainContent, PageVersionsSidebarRoot } from "@/components/pages";
+import { PageVersionsMainContent, PageVersionsSidebarRoot, TVersionEditorProps } from "@/components/pages";
 // helpers
 import { cn } from "@/helpers/common.helper";
 
 type Props = {
   activeVersion: string | null;
-  editorComponent: React.FC<{
-    activeVersion: string | null;
-    isCurrentVersionActive: boolean;
-    pageId: string;
-    versionDetails: TPageVersion | undefined;
-  }>;
+  currentVersionDescription: string | null;
+  editorComponent: React.FC<TVersionEditorProps>;
   fetchAllVersions: (pageId: string) => Promise<TPageVersion[] | undefined>;
   fetchVersionDetails: (pageId: string, versionId: string) => Promise<TPageVersion | undefined>;
   handleRestore: (descriptionHTML: string) => Promise<void>;
@@ -26,6 +22,7 @@ type Props = {
 export const PageVersionsOverlay: React.FC<Props> = observer((props) => {
   const {
     activeVersion,
+    currentVersionDescription,
     editorComponent,
     fetchAllVersions,
     fetchVersionDetails,
@@ -51,6 +48,7 @@ export const PageVersionsOverlay: React.FC<Props> = observer((props) => {
     >
       <PageVersionsMainContent
         activeVersion={activeVersion}
+        currentVersionDescription={currentVersionDescription}
         editorComponent={editorComponent}
         fetchVersionDetails={fetchVersionDetails}
         handleClose={handleClose}

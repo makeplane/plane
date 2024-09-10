@@ -89,11 +89,15 @@ export const PageRoot = observer((props: TPageRootProps) => {
     editorRef.current?.clearEditor();
     editorRef.current?.setEditorValue(descriptionHTML);
   };
+  const currentVersionDescription = isContentEditable
+    ? editorRef.current?.getHTML()
+    : readOnlyEditorRef.current?.getHTML();
 
   return (
     <>
       <PageVersionsOverlay
         activeVersion={version}
+        currentVersionDescription={currentVersionDescription ?? null}
         editorComponent={PagesVersionEditor}
         fetchAllVersions={async (pageId) => {
           if (!workspaceSlug || !projectId) return;
