@@ -61,7 +61,7 @@ class ModuleQuery:
         project: strawberry.ID,
         module: strawberry.ID,
     ) -> ModuleType:
-        module = await sync_to_async(Module.objects.get)(
+        module_details = await sync_to_async(Module.objects.get)(
             workspace__slug=slug,
             project_id=project,
             id=module,
@@ -79,7 +79,7 @@ class ModuleQuery:
             entity_identifier=module,
         )
 
-        return module
+        return module_details
 
     @strawberry.field(
         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]

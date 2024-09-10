@@ -75,7 +75,7 @@ class CycleQuery:
         project: strawberry.ID,
         cycle: strawberry.ID,
     ) -> CycleType:
-        cycle = await sync_to_async(Cycle.objects.get)(
+        cycle_details = await sync_to_async(Cycle.objects.get)(
             workspace__slug=slug,
             project_id=project,
             id=cycle,
@@ -93,7 +93,7 @@ class CycleQuery:
             entity_identifier=cycle,
         )
 
-        return cycle
+        return cycle_details
 
 
 # cycle issue user properties
