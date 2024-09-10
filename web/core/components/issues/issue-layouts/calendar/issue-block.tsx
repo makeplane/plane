@@ -12,7 +12,8 @@ import { Tooltip, ControlLink } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useIssueDetail, useProjectState } from "@/hooks/store";
+import { useIssueDetail, useIssues, useProjectState } from "@/hooks/store";
+import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -20,6 +21,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details";
 // local components
 import { TRenderQuickActions } from "../list/list-view-types";
+import { CalendarStoreType } from "./base-calendar-root";
 
 type Props = {
   issue: TIssue;
@@ -41,6 +43,8 @@ export const CalendarIssueBlock = observer(
     const { getIsIssuePeeked } = useIssueDetail();
     const { handleRedirection } = useIssuePeekOverviewRedirection();
     const { isMobile } = usePlatformOS();
+    const storeType = useIssueStoreType() as CalendarStoreType;
+    const { issuesFilter } = useIssues(storeType);
 
     const stateColor = getProjectStates(issue?.project_id)?.find((state) => state?.id == issue?.state_id)?.color || "";
 
@@ -103,6 +107,7 @@ export const CalendarIssueBlock = observer(
                   issueId={issue.id}
                   projectId={issue.project_id}
                   textContainerClassName="text-sm md:text-xs text-custom-text-300"
+                  displayProperties={issuesFilter?.issueFilters?.displayProperties}
                 />
               )}
               <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
