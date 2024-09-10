@@ -458,7 +458,6 @@ class IssueViewSet(BaseViewSet):
         issue = (
             self.get_queryset()
             .filter(pk=pk)
-            .filter(project__guest_view_all_features=True)
             .annotate(
                 label_ids=Coalesce(
                     ArrayAgg(
