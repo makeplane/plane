@@ -31,6 +31,7 @@ export interface ICalendarStore {
 
 export class CalendarStore implements ICalendarStore {
   loader: boolean = false;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   error: any | null = null;
 
   // observables

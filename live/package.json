@@ -27,7 +27,7 @@
     "compression": "^1.7.4",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "express": "^4.19.2",
+    "express": "^4.20.0",
     "express-ws": "^5.0.2",
     "helmet": "^7.1.0",
     "ioredis": "^5.4.1",
