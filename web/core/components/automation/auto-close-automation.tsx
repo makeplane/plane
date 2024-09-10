@@ -49,7 +49,7 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
 
   const defaultState = projectStates?.find((s) => s.group === "cancelled")?.id || null;
 
-  const selectedOption = projectStates?.find((s) => s.id === currentProjectDetails?.default_state ?? defaultState);
+  const selectedOption = projectStates?.find((s) => s.id === (currentProjectDetails?.default_state ?? defaultState));
   const currentDefaultState = projectStates?.find((s) => s.id === defaultState);
 
   const initialValues: Partial<IProject> = {
