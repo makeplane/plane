@@ -3,7 +3,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
-import { Breadcrumbs, Button, DiceIcon } from "@plane/ui";
+import { Breadcrumbs, Button, DiceIcon, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 import { ModuleViewHeader } from "@/components/modules";
@@ -31,8 +31,8 @@ export const ModulesListHeader: React.FC = observer(() => {
   );
 
   return (
-    <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
-      <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
+    <Header>
+      <Header.LeftItem>
         <div>
           <Breadcrumbs onBack={router.back} isLoading={loader}>
             <Breadcrumbs.BreadcrumbItem
@@ -57,10 +57,10 @@ export const ModulesListHeader: React.FC = observer(() => {
             />
           </Breadcrumbs>
         </div>
-      </div>
-      <div className="flex items-center gap-2">
+      </Header.LeftItem>
+      <Header.RightItem>
         <ModuleViewHeader />
-        {canUserCreateModule && (
+        {canUserCreateModule ? (
           <Button
             variant="primary"
             size="sm"
@@ -71,8 +71,10 @@ export const ModulesListHeader: React.FC = observer(() => {
           >
             <div className="hidden sm:block">Add</div> Module
           </Button>
+        ) : (
+          <></>
         )}
-      </div>
-    </div>
+      </Header.RightItem>
+    </Header>
   );
 });

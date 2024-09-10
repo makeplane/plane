@@ -48,7 +48,7 @@ export const SpreadsheetDueDateColumn: React.FC<Props> = observer((props: Props)
         buttonVariant="transparent-with-text"
         buttonContainerClassName="w-full"
         buttonClassName={cn(
-          "rounded-none text-left group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10",
+          "rounded-none text-left group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10 px-page-x",
           {
             "text-red-500": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
           }

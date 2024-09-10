@@ -1,5 +1,6 @@
 import { observer } from "mobx-react";
 // hooks
+import { Row } from "@plane/ui";
 import { BLOCK_HEIGHT } from "@/components/gantt-chart/constants";
 import { useGanttChart } from "@/components/gantt-chart/hooks";
 // components
@@ -31,9 +32,9 @@ export const ModulesSidebarBlock: React.FC<Props> = observer((props) => {
       onMouseEnter={() => updateActiveBlockId(block.id)}
       onMouseLeave={() => updateActiveBlockId(null)}
     >
-      <div
+      <Row
         id={`sidebar-block-${block.id}`}
-        className={cn("group w-full flex items-center gap-2 pl-2 pr-4", {
+        className={cn("group w-full flex items-center gap-2 pr-4", {
           "bg-custom-background-90": isBlockActive(block.id),
         })}
         style={{
@@ -50,7 +51,7 @@ export const ModulesSidebarBlock: React.FC<Props> = observer((props) => {
             </div>
           )}
         </div>
-      </div>
+      </Row>
     </div>
   );
 });

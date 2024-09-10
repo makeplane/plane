@@ -1,21 +1,29 @@
 "use client";
 
+import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
+import { TViewFilterProps } from "@plane/types";
+import { Header, EHeaderVariant } from "@plane/ui";
 import { PageHead } from "@/components/core";
 import { EmptyState } from "@/components/empty-state";
 import { ProjectViewsList } from "@/components/views";
-// constants
+import { ViewAppliedFiltersList } from "@/components/views/applied-filters";
 import { EmptyStateType } from "@/constants/empty-state";
+// constants
+import { EViewAccess } from "@/constants/views";
+// helpers
+import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject, useProjectView } from "@/hooks/store";
 
 const ProjectViewsPage = observer(() => {
   // router
   const { workspaceSlug, projectId } = useParams();
   // store
   const { getProjectById, currentProjectDetails } = useProject();
+  const { filters, updateFilters, clearAllFilters } = useProjectView();
   // derived values
   const project = projectId ? getProjectById(projectId.toString()) : undefined;
   const pageTitle = project?.name ? `${project?.name} - Views` : undefined;
@@ -32,10 +40,38 @@ const ProjectViewsPage = observer(() => {
         />
       </div>
     );
+  const handleRemoveFilter = useCallback(
+    (key: keyof TViewFilterProps, value: string | EViewAccess | null) => {
+      let newValues = filters.filters?.[key];
+
+      if (key === "favorites") {
+        newValues = !!value;
+      }
+      if (Array.isArray(newValues)) {
+        if (!value) newValues = [];
+        else newValues = newValues.filter((val) => val !== value) as string[];
+      }
+
+      updateFilters("filters", { [key]: newValues });
+    },
+    [filters.filters, updateFilters]
+  );
+
+  const isFiltersApplied = calculateTotalFilters(filters?.filters ?? {}) !== 0;
 
   return (
     <>
       <PageHead title={pageTitle} />
+      {isFiltersApplied && (
+        <Header variant={EHeaderVariant.TERNARY}>
+          <ViewAppliedFiltersList
+            appliedFilters={filters.filters ?? {}}
+            handleClearAllFilters={clearAllFilters}
+            handleRemoveFilter={handleRemoveFilter}
+            alwaysAllowEditing
+          />
+        </Header>
+      )}
       <ProjectViewsList />
     </>
   );

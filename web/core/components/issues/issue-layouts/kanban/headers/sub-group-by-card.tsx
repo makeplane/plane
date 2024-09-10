@@ -17,7 +17,7 @@ export const HeaderSubGroupByCard: FC<IHeaderSubGroupByCard> = observer((props) 
   const { icon, title, count, column_id, kanbanFilters, handleKanbanFilters } = props;
   return (
     <div
-      className={`relative flex w-full flex-shrink-0 flex-row items-center gap-2 rounded-sm p-1.5 cursor-pointer`}
+      className={`relative flex w-full flex-shrink-0 flex-row items-center gap-1 rounded-sm py-1.5 cursor-pointer`}
       onClick={() => handleKanbanFilters("sub_group_by", column_id)}
     >
       <div className="flex h-[20px] w-[20px] flex-shrink-0 items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80">

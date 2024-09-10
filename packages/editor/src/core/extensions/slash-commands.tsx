@@ -63,7 +63,7 @@ const Command = Extension.create<SlashCommandOptions>({
           const { selection } = editor.state;
 
           const parentNode = selection.$from.node(selection.$from.depth);
-          const blockType = parentNode.type.name;
+          const blockType = parentNode?.type?.name;
 
           if (blockType === "codeBlock") {
             return false;

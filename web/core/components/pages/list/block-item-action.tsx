@@ -10,9 +10,7 @@ import { PageQuickActions } from "@/components/pages/dropdowns";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
-import { useMember, usePage, useProject } from "@/hooks/store";
-// plane-web constants
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
+import { useMember, usePage } from "@/hooks/store";
 
 type Props = {
   workspaceSlug: string;
@@ -23,23 +21,24 @@ type Props = {
 
 export const BlockItemAction: FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, pageId, parentRef } = props;
-
   // store hooks
   const page = usePage(pageId);
   const { getUserDetails } = useMember();
-  const { getProjectById } = useProject();
-
   // derived values
-  const { access, created_at, is_favorite, owned_by, addToFavorites, removePageFromFavorites } = page;
-
-  // derived values
-  const project = getProjectById(projectId);
-  const isViewerOrGuest = project?.member_role && [EUserPermissions.GUEST].includes(project.member_role);
+  const {
+    access,
+    created_at,
+    is_favorite,
+    owned_by,
+    canCurrentUserFavoritePage,
+    addToFavorites,
+    removePageFromFavorites,
+  } = page;
   const ownerDetails = owned_by ? getUserDetails(owned_by) : undefined;
 
   // handlers
   const handleFavorites = () => {
-    if (is_favorite)
+    if (is_favorite) {
       removePageFromFavorites().then(() =>
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -47,7 +46,7 @@ export const BlockItemAction: FC<Props> = observer((props) => {
           message: "Page removed from favorites.",
         })
       );
-    else
+    } else {
       addToFavorites().then(() =>
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -55,7 +54,9 @@ export const BlockItemAction: FC<Props> = observer((props) => {
           message: "Page added to favorites.",
         })
       );
+    }
   };
+
   return (
     <>
       {/* page details */}
@@ -80,7 +81,7 @@ export const BlockItemAction: FC<Props> = observer((props) => {
       </Tooltip>
 
       {/* favorite/unfavorite */}
-      {!isViewerOrGuest && (
+      {canCurrentUserFavoritePage && (
         <FavoriteStar
           onClick={(e) => {
             e.preventDefault();

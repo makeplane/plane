@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import { X } from "lucide-react";
 import { TInboxIssueFilterDateKeys } from "@plane/types";
 // helpers
+import { Tag } from "@plane/ui";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // constants
 import { PAST_DURATION_FILTER_OPTIONS } from "@/helpers/inbox.helper";
@@ -37,7 +38,7 @@ export const InboxIssueAppliedFiltersDate: FC<InboxIssueAppliedFiltersDate> = ob
 
   if (filteredValues.length === 0) return <></>;
   return (
-    <div className="relative flex flex-wrap items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1">
+    <Tag>
       <div className="text-xs text-custom-text-200">{label}</div>
       {filteredValues.map((value) => {
         const optionDetail = currentOptionDetail(value);
@@ -61,6 +62,6 @@ export const InboxIssueAppliedFiltersDate: FC<InboxIssueAppliedFiltersDate> = ob
       >
         <X className={`w-3 h-3`} />
       </div>
-    </div>
+    </Tag>
   );
 });

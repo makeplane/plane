@@ -8,7 +8,7 @@ import "@/styles/react-day-picker.css";
 // meta data info
 import { SITE_NAME, SITE_DESCRIPTION } from "@/constants/meta";
 // helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
+import { API_BASE_URL, cn } from "@/helpers/common.helper";
 // local
 import { AppProvider } from "./provider";
 
@@ -72,11 +72,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           crossOrigin="use-credentials"
         />
       </head>
-      <body className={`h-screen w-screen`}>
+      <body>
+        <div id="context-menu-portal" />
         <AppProvider>
-          <div className={`app-container h-full w-full flex flex-col overflow-hidden`}>
-            <div id="context-menu-portal" />
-            <div className="h-full w-full overflow-hidden bg-custom-background-100">{children}</div>
+          <div
+            className={cn(
+              "h-screen w-full overflow-hidden bg-custom-background-100 relative flex flex-col",
+              "app-container"
+            )}
+          >
+            <div className="w-full h-full overflow-hidden relative">{children}</div>
           </div>
         </AppProvider>
       </body>
