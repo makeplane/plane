@@ -19,6 +19,7 @@ declare module "@sqlite.org/sqlite-wasm" {
   export function sqlite3Worker1Promiser(...args: any): any;
 }
 
+const DB_VERSION = "1";
 const PAGE_SIZE = 1000;
 const log = console.log;
 const error = console.error;
@@ -121,6 +122,16 @@ export class Storage {
           return promiser("exec", { dbId, ...val });
         },
       };
+
+      // dump DB of db version is matching
+      const dbVersion = await this.getOption("DB_VERSION");
+      if (dbVersion !== "" && dbVersion !== DB_VERSION) {
+        await this.clearStorage();
+        this.reset();
+        this.workspaceInitPromise = this._initialize(workspaceSlug);
+        return false;
+      }
+
       log(
         "OPFS is available, created persisted database at",
         openResponse.result.filename.replace(/^file:(.*?)\?vfs=opfs$/, "$1")
@@ -128,6 +139,8 @@ export class Storage {
       this.status = "ready";
       // Your SQLite code here.
       await createTables();
+
+      await this.setOption("DB_VERSION", DB_VERSION);
     } catch (err) {
       error(err);
     }
@@ -148,6 +161,7 @@ export class Storage {
 
   syncIssues = async (projectId: string) => {
     try {
+      await this.workspaceInitPromise;
       const sync = this._syncIssues(projectId);
       this.setSync(projectId, sync);
       await sync;
@@ -251,10 +265,12 @@ export class Storage {
     console.log("#### Queries", queries);
 
     const currentProjectStatus = this.getStatus(projectId);
+    const dbVersion = await this.getOption("DB_VERSION");
     if (
       !currentProjectStatus ||
       currentProjectStatus === "loading" ||
       currentProjectStatus === "error" ||
+      dbVersion !== DB_VERSION ||
       (window as any).DISABLE_LOCAL
     ) {
       info(`Project ${projectId} is loading, falling back to server`);
