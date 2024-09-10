@@ -1,4 +1,5 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
+import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
@@ -24,6 +25,7 @@ type Props = {
   tabIndex?: number;
   createLabelEnabled?: boolean;
   buttonClassName?: string;
+  placement?: Placement;
 };
 
 export const IssueLabelSelect: React.FC<Props> = observer((props) => {
@@ -37,6 +39,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
     tabIndex,
     createLabelEnabled = true,
     buttonClassName,
+    placement,
   } = props;
   // router
   const { workspaceSlug } = useParams();
@@ -53,7 +56,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   // popper
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "bottom-start",
+    placement: placement ?? "bottom-start",
   });
 
   const projectLabels = getProjectLabels(projectId);

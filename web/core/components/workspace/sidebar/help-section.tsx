@@ -41,7 +41,7 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
       <ProductUpdatesModal isOpen={isChangeLogOpen} handleClose={() => setIsChangeLogOpen(false)} />
       <div
         className={cn(
-          "flex w-full items-center justify-between px-2 gap-1 self-baseline border-t border-custom-border-200 bg-custom-sidebar-background-100 h-12 flex-shrink-0",
+          "flex w-full items-center justify-between px-2 self-baseline border-t border-custom-border-200 bg-custom-sidebar-background-100 h-12 flex-shrink-0",
           {
             "flex-col h-auto py-1.5": isCollapsed,
           }
