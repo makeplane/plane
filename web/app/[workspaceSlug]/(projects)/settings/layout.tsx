@@ -2,7 +2,6 @@
 
 import { ReactNode } from "react";
 // components
-import { ContentWrapper } from "@plane/ui";
 import { AppHeader } from "@/components/core";
 // plane web components
 // import { LicenseSeatsBanner } from "@/plane-web/components/license";
@@ -27,18 +26,18 @@ export default function WorkspaceSettingLayout(props: IWorkspaceSettingLayout) {
         {/* workspace settings */}
         <div className="w-full h-full overflow-hidden">
           <MobileWorkspaceSettingsTabs />
-          <ContentWrapper className="flex-row inset-y-0 gap-4">
-            <div className="w-80 flex-shrink-0 overflow-hidden overflow-y-auto sm:hidden hidden md:block lg:block">
-              <WorkspaceSettingsSidebar />
-            </div>
-            <div className="flex flex-col relative w-full overflow-hidden">
-              <div className="w-full overflow-x-hidden overflow-y-scroll vertical-scrollbar scrollbar-md">
-                {children}
-              </div>
-            </div>
-          </ContentWrapper>
+          <div className="inset-y-0 flex flex-row vertical-scrollbar scrollbar-lg h-full w-full overflow-y-auto">
+          <div className="px-page-x !pr-0 py-page-y flex-shrink-0 overflow-y-hidden sm:hidden hidden md:block lg:block">
+          <WorkspaceSettingsSidebar />
+          </div>
+          <div className="flex flex-col relative w-full overflow-hidden">
+          <div className="w-full  h-full overflow-x-hidden overflow-y-scroll vertical-scrollbar scrollbar-md px-page-x md:px-9 py-page-y">
+            {children}
+          </div>
+        </div>
         </div>
       </div>
+     </div>
     </>
   );
 }

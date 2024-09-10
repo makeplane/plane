@@ -18,9 +18,9 @@ export function clickHandler(options: ClickHandlerOptions): Plugin {
         let a = event.target as HTMLElement;
         const els = [];
 
-        while (a.nodeName !== "DIV") {
+        while (a?.nodeName !== "DIV") {
           els.push(a);
-          a = a.parentNode as HTMLElement;
+          a = a?.parentNode as HTMLElement;
         }
 
         if (!els.find((value) => value.nodeName === "A")) {
