@@ -276,6 +276,7 @@ export class Storage {
     const dbVersion = await this.getOption("DB_VERSION");
     if (
       !currentProjectStatus ||
+      this.status !== "ready" ||
       currentProjectStatus === "loading" ||
       currentProjectStatus === "error" ||
       dbVersion !== DB_VERSION ||
@@ -349,10 +350,15 @@ export class Storage {
   };
 
   getIssue = async (issueId: string) => {
-    const issues = await runQuery(`select * from issues where id='${issueId}'`);
-    if (issues.length) {
-      return formatLocalIssue(issues[0]);
+    try {
+      const issues = await runQuery(`select * from issues where id='${issueId}'`);
+      if (issues.length) {
+        return formatLocalIssue(issues[0]);
+      }
+    } catch (err) {
+      console.warn("unable to fetch issue from local db");
     }
+
     return;
   };
   getStatus = (projectId: string) => this.projectStatus[projectId]?.issues?.status || undefined;
