@@ -20,8 +20,25 @@ from plane.graphql.types.paginator import PaginatorResponse
 from plane.graphql.utils.paginator import paginate
 from plane.graphql.bgtasks.recent_visited_task import recent_visited_task
 
+
 @strawberry.type
 class ProjectQuery:
+    @strawberry.field(
+        extensions=[
+            PermissionExtension(permissions=[WorkspaceBasePermission()])
+        ]
+    )
+    async def all_projects(
+        self,
+        info: Info,
+        slug: str,
+    ) -> list[ProjectType]:
+        project_query = Project.objects.filter(
+            workspace__slug=slug, archived_at__isnull=True
+        )
+        projects = await sync_to_async(list)(project_query)
+        return projects
+
     @strawberry.field(
         extensions=[
             PermissionExtension(permissions=[WorkspaceBasePermission()])
@@ -35,7 +52,6 @@ class ProjectQuery:
         cursor: Optional[str] = None,
         projects: Optional[JSON] = [],
     ) -> PaginatorResponse[ProjectType]:
-
         project_query = Project.objects.filter(
             workspace__slug=slug, archived_at__isnull=True
         )
@@ -123,11 +139,7 @@ class ProjectQuery:
             project_list = [
                 p
                 for p in project_list
-                if ProjectMember.objects.filter(
-                    member=info.context.user,
-                    project_id=p.pk,
-                    is_active=True,
-                ).exists()
+                if p.is_member and p.created_by != info.context.user
             ]
 
         return paginate(results_object=project_list, cursor=cursor)
