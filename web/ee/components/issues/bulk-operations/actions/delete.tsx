@@ -6,8 +6,9 @@ import { Trash2 } from "lucide-react";
 import { cn } from "@plane/editor";
 import { setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 // plane web components
-import { useUser } from "@/hooks/store";
+import { useUser, useUserPermissions } from "@/hooks/store";
 import { BulkDeleteConfirmationModal } from "@/plane-web/components/issues";
+import { EUserPermissions, EUserPermissionsLevel } from "@/ce/constants/user-permissions";
 
 type Props = {
   handleClearSelection: () => void;
@@ -20,7 +21,11 @@ export const BulkDeleteIssues: React.FC<Props> = observer((props) => {
   const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false);
   // store hooks
   const { projectId, workspaceSlug } = useParams();
-  const { canPerformProjectAdminActions } = useUser();
+  const { allowPermissions } = useUserPermissions();
+
+  // derived values
+
+  const canPerformProjectAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
 
   return (
     <>

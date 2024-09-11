@@ -8,9 +8,9 @@ import { IPaymentProduct } from "@plane/types";
 // ui
 import { EModalWidth, Loader, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
 // plane web constants
-import { EUserWorkspaceRoles } from "@/constants/workspace";
-import { useEventTracker, useUser } from "@/hooks/store";
+import { useEventTracker, useUser, useUserPermissions } from "@/hooks/store";
 import { PRO_PLAN_FEATURES_MAP } from "@/plane-web/constants/license";
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // plane web services
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { PaymentService } from "@/plane-web/services/payment.service";
@@ -44,13 +44,13 @@ export const ProPlanCloudUpgradeModal: FC<ProPlanCloudUpgradeModalProps> = (prop
   const [trialLoader, setTrialLoader] = useState(false);
   // store hooks
   const { captureEvent } = useEventTracker();
-  const {
-    membership: { currentWorkspaceRole },
-  } = useUser();
+  const { workspaceInfoBySlug } = useUserPermissions();
+
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, freeTrialSubscription } =
     useWorkspaceSubscription();
   // derived values
-  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+  const currentWorkspaceRole = workspaceInfoBySlug(workspaceSlug.toString())?.role;
+  const isAdmin = currentWorkspaceRole === EUserPermissions.ADMIN;
   // fetch products
   const { isLoading: isProductsAPILoading, data } = useSWR(
     workspaceSlug && canFetchProducts ? `CLOUD_PAYMENT_PRODUCTS_${workspaceSlug?.toString()}` : null,

@@ -10,12 +10,13 @@ import { PageHead } from "@/components/core";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useInstance, useUserPermissions, useWorkspace } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+import { useUserProfile } from "@/hooks/store/use-user-profile";
 // plane web components
 import IntegrationGuide from "@/plane-web/components/integration/guide";
+// plane web constants
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web hooks
 import { useFlag } from "@/plane-web/hooks/store";
-import { useUserProfile } from "@/hooks/store/use-user-profile";
 
 const ImportsPage = observer(() => {
   // router

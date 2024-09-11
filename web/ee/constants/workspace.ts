@@ -2,10 +2,9 @@
 import { WORKSPACE_SETTINGS as WORKSPACE_SETTINGS_CE } from "ce/constants/workspace";
 // components
 import { SettingIcon } from "@/components/icons/attachment";
-// constants
-import { EUserWorkspaceRoles } from "@/constants/workspace";
 // logos
 import JiraLogo from "@/public/services/jira.svg";
+import { EUserPermissions } from "./user-permissions";
 
 export const WORKSPACE_SETTINGS = {
   ...WORKSPACE_SETTINGS_CE,
@@ -13,7 +12,7 @@ export const WORKSPACE_SETTINGS = {
     key: "integrations",
     label: "Integrations",
     href: `/settings/integrations`,
-    access: EUserWorkspaceRoles.ADMIN,
+    access: [EUserPermissions.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/integrations/`,
     Icon: SettingIcon,
   },
@@ -21,7 +20,7 @@ export const WORKSPACE_SETTINGS = {
     key: "import",
     label: "Imports",
     href: `/settings/imports`,
-    access: EUserWorkspaceRoles.ADMIN,
+    access: [EUserPermissions.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/settings/imports/`),
     Icon: SettingIcon,
   },
@@ -29,7 +28,7 @@ export const WORKSPACE_SETTINGS = {
     key: "worklogs",
     label: "Worklogs",
     href: `/settings/worklogs`,
-    access: EUserWorkspaceRoles.ADMIN,
+    access: [EUserPermissions.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/worklogs/`,
     Icon: SettingIcon,
   },
@@ -37,7 +36,7 @@ export const WORKSPACE_SETTINGS = {
     key: "activation",
     label: "Activation",
     href: `/settings/activation`,
-    access: EUserWorkspaceRoles.ADMIN,
+    access: [EUserPermissions.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/activation/`,
     Icon: SettingIcon,
   },
@@ -45,7 +44,7 @@ export const WORKSPACE_SETTINGS = {
     key: "project_states",
     label: "Project States",
     href: `/settings/project-states`,
-    access: EUserWorkspaceRoles.ADMIN,
+    access: [EUserPermissions.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/project-states/`,
     Icon: SettingIcon,
   },
