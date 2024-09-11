@@ -1,1 +1,1 @@
-web: ./bin/www yarn start --filter=live 
+web: ./bin/www cd live/dist && node server.js
