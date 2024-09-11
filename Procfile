@@ -1,1 +1,1 @@
-web: ./bin/www cd live/dist && node server.js
+web: cd live/dist && node server.js
