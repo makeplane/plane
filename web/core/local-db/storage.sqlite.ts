@@ -275,13 +275,11 @@ export class Storage {
     console.log("#### Queries", queries);
 
     const currentProjectStatus = this.getStatus(projectId);
-    const dbVersion = await this.getOption("DB_VERSION");
     if (
       !currentProjectStatus ||
       this.status !== "ready" ||
       currentProjectStatus === "loading" ||
       currentProjectStatus === "error" ||
-      dbVersion !== DB_VERSION ||
       !rootStore.user.localDBEnabled
     ) {
       info(`Project ${projectId} is loading, falling back to server`);
