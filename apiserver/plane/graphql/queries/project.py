@@ -132,15 +132,13 @@ class ProjectQuery:
             project_list = await sync_to_async(list)(project_query)
 
         if type == "created":
-            project_list = [
-                p for p in project_list if p.created_by == info.context.user
-            ]
+            project_list = await sync_to_async(list)(
+                project_query.filter(created_by=info.context.user)
+            )
         elif type == "joined":
-            project_list = [
-                p
-                for p in project_list
-                if p.is_member and p.created_by != info.context.user
-            ]
+            project_list = await sync_to_async(list)(
+                project_query.filter(Q(is_member=True))
+            )
 
         return paginate(results_object=project_list, cursor=cursor)
 
