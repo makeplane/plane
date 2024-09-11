@@ -150,7 +150,7 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
                           </div>
                         )}
 
-                        <input {...getInputProps()}/>
+                        <input {...getInputProps()} />
                       </div>
                     </div>
                     {fileRejections.length > 0 && (
@@ -162,9 +162,7 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
                     )}
                   </div>
                 </div>
-                <p className="my-4 text-sm text-custom-text-200">
-                  File formats supported- .jpeg, .jpg, .png, .webp, .svg
-                </p>
+                <p className="my-4 text-sm text-custom-text-200">File formats supported- .jpeg, .jpg, .png, .webp</p>
                 <div className="flex items-center justify-between">
                   {handleRemove && (
                     <Button variant="danger" size="sm" onClick={handleRemove} disabled={!value}>
