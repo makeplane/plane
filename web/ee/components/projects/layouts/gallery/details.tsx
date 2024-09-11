@@ -15,12 +15,12 @@ import {
 // components
 import { Logo } from "@/components/common";
 // constants
-import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useProject } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 import { TProject } from "@/plane-web/types/projects";
 
 type Props = {
@@ -37,8 +37,8 @@ const Details: React.FC<Props> = observer((props) => {
   // router
   const router = useAppRouter();
   // auth
-  const isOwner = project.member_role === EUserProjectRoles.ADMIN;
-  const isMember = project.member_role === EUserProjectRoles.MEMBER;
+  const isOwner = project.member_role === EUserPermissions.ADMIN;
+  const isMember = project.member_role === EUserPermissions.MEMBER;
   // archive
   const isArchived = !!project.archived_at;
 

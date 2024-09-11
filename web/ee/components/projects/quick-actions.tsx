@@ -5,8 +5,8 @@ import { ArchiveRestoreIcon, LinkIcon, MoreHorizontal, PenSquare, Settings, Tras
 import { cn } from "@plane/editor";
 import { ArchiveIcon, CustomMenu, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
 import { ArchiveRestoreProjectModal, DeleteProjectModal, JoinProjectModal } from "@/components/project";
-import { EUserProjectRoles } from "@/constants/project";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 import { TProject } from "@/plane-web/types/projects";
 
 type Props = {
@@ -25,8 +25,8 @@ const QuickActions: React.FC<Props> = (props) => {
   const projectLink = `${workspaceSlug}/projects/${project.id}/issues`;
   const isArchived = project.archived_at !== null;
   // auth
-  const isOwner = project.member_role === EUserProjectRoles.ADMIN;
-  const isMember = project.member_role === EUserProjectRoles.MEMBER;
+  const isOwner = project.member_role === EUserPermissions.ADMIN;
+  const isMember = project.member_role === EUserPermissions.MEMBER;
 
   const handleCopyText = () =>
     copyUrlToClipboard(projectLink).then(() =>
