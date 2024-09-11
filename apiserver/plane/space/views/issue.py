@@ -60,6 +60,7 @@ from plane.db.models import (
     IssueVote,
     ProjectPublicMember,
     IssueAttachment,
+    Project,
 )
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.issue_filters import issue_filters
@@ -77,6 +78,15 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
         deploy_board = DeployBoard.objects.filter(
             anchor=anchor, entity_name="project"
         ).first()
+
+        project = Project.objects.get(pk=deploy_board.project_id)
+
+        if project.archived_at:
+            return Response(
+                {"error": "Project is archived"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+    
         if not deploy_board:
             return Response(
                 {"error": "Project is not published"},
