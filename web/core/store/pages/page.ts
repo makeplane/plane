@@ -4,7 +4,7 @@ import { action, computed, makeObservable, observable, reaction, runInAction } f
 import { TLogoProps, TPage } from "@plane/types";
 // constants
 import { EPageAccess } from "@/constants/page";
-import { EUserProjectRoles } from "@/constants/project";
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // services
 import { ProjectPageService } from "@/services/page";
 // store
@@ -24,6 +24,7 @@ export interface IPage extends TPage {
   canCurrentUserChangeAccess: boolean;
   canCurrentUserArchivePage: boolean;
   canCurrentUserDeletePage: boolean;
+  canCurrentUserFavoritePage: boolean;
   isContentEditable: boolean;
   // helpers
   oldName: string;
@@ -133,6 +134,7 @@ export class Page implements IPage {
       canCurrentUserChangeAccess: computed,
       canCurrentUserArchivePage: computed,
       canCurrentUserDeletePage: computed,
+      canCurrentUserFavoritePage: computed,
       isContentEditable: computed,
       // actions
       update: action,
@@ -212,24 +214,39 @@ export class Page implements IPage {
    * @description returns true if the current logged in user can edit the page
    */
   get canCurrentUserEditPage() {
-    const currentUserProjectRole = this.store.user.membership.currentProjectRole;
-    return this.isCurrentUserOwner || (!!currentUserProjectRole && currentUserProjectRole >= EUserProjectRoles.MEMBER);
+    const { workspaceSlug, projectId } = this.store.router;
+
+    const currentUserProjectRole = this.store.user.permission.projectPermissionsByWorkspaceSlugAndProjectId(
+      workspaceSlug?.toString() || "",
+      projectId?.toString() || ""
+    );
+    return this.isCurrentUserOwner || (!!currentUserProjectRole && currentUserProjectRole >= EUserPermissions.MEMBER);
   }
 
   /**
    * @description returns true if the current logged in user can create a duplicate the page
    */
   get canCurrentUserDuplicatePage() {
-    const currentUserProjectRole = this.store.user.membership.currentProjectRole;
-    return this.isCurrentUserOwner || (!!currentUserProjectRole && currentUserProjectRole >= EUserProjectRoles.MEMBER);
+    const { workspaceSlug, projectId } = this.store.router;
+
+    const currentUserProjectRole = this.store.user.permission.projectPermissionsByWorkspaceSlugAndProjectId(
+      workspaceSlug?.toString() || "",
+      projectId?.toString() || ""
+    );
+    return this.isCurrentUserOwner || (!!currentUserProjectRole && currentUserProjectRole >= EUserPermissions.MEMBER);
   }
 
   /**
    * @description returns true if the current logged in user can lock the page
    */
   get canCurrentUserLockPage() {
-    const currentUserProjectRole = this.store.user.membership.currentProjectRole;
-    return this.isCurrentUserOwner || (!!currentUserProjectRole && currentUserProjectRole >= EUserProjectRoles.MEMBER);
+    const { workspaceSlug, projectId } = this.store.router;
+
+    const currentUserProjectRole = this.store.user.permission.projectPermissionsByWorkspaceSlugAndProjectId(
+      workspaceSlug?.toString() || "",
+      projectId?.toString() || ""
+    );
+    return this.isCurrentUserOwner || (!!currentUserProjectRole && currentUserProjectRole >= EUserPermissions.MEMBER);
   }
 
   /**
@@ -243,24 +260,52 @@ export class Page implements IPage {
    * @description returns true if the current logged in user can archive the page
    */
   get canCurrentUserArchivePage() {
-    const currentUserProjectRole = this.store.user.membership.currentProjectRole;
-    return this.isCurrentUserOwner || currentUserProjectRole === EUserProjectRoles.ADMIN;
+    const { workspaceSlug, projectId } = this.store.router;
+
+    const currentUserProjectRole = this.store.user.permission.projectPermissionsByWorkspaceSlugAndProjectId(
+      workspaceSlug?.toString() || "",
+      projectId?.toString() || ""
+    );
+    return this.isCurrentUserOwner || currentUserProjectRole === EUserPermissions.ADMIN;
   }
 
   /**
    * @description returns true if the current logged in user can delete the page
    */
   get canCurrentUserDeletePage() {
-    const currentUserProjectRole = this.store.user.membership.currentProjectRole;
-    return this.isCurrentUserOwner || currentUserProjectRole === EUserProjectRoles.ADMIN;
+    const { workspaceSlug, projectId } = this.store.router;
+
+    const currentUserProjectRole = this.store.user.permission.projectPermissionsByWorkspaceSlugAndProjectId(
+      workspaceSlug?.toString() || "",
+      projectId?.toString() || ""
+    );
+    return this.isCurrentUserOwner || currentUserProjectRole === EUserPermissions.ADMIN;
+  }
+
+  /**
+   * @description returns true if the current logged in user can favorite the page
+   */
+  get canCurrentUserFavoritePage() {
+    const { workspaceSlug, projectId } = this.store.router;
+
+    const currentUserProjectRole = this.store.user.permission.projectPermissionsByWorkspaceSlugAndProjectId(
+      workspaceSlug?.toString() || "",
+      projectId?.toString() || ""
+    );
+    return !!currentUserProjectRole && currentUserProjectRole >= EUserPermissions.MEMBER;
   }
 
   /**
    * @description returns true if the page can be edited
    */
   get isContentEditable() {
+    const { workspaceSlug, projectId } = this.store.router;
+
     const isOwner = this.isCurrentUserOwner;
-    const currentUserRole = this.store.user.membership.currentProjectRole;
+    const currentUserRole = this.store.user.permission.projectPermissionsByWorkspaceSlugAndProjectId(
+      workspaceSlug?.toString() || "",
+      projectId?.toString() || ""
+    );
     const isPublic = this.access === EPageAccess.PUBLIC;
     const isArchived = this.archived_at;
     const isLocked = this.is_locked;
@@ -268,7 +313,7 @@ export class Page implements IPage {
     return (
       !isArchived &&
       !isLocked &&
-      (isOwner || (isPublic && !!currentUserRole && currentUserRole >= EUserProjectRoles.MEMBER))
+      (isOwner || (isPublic && !!currentUserRole && currentUserRole >= EUserPermissions.MEMBER))
     );
   }
 

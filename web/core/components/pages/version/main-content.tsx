@@ -6,13 +6,15 @@ import { TriangleAlert } from "lucide-react";
 import { TPageVersion } from "@plane/types";
 // plane ui
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
+// components
+import { TVersionEditorProps } from "@/components/pages";
 // helpers
 import { renderFormattedDate, renderFormattedTime } from "@/helpers/date-time.helper";
-// plane web components
-import { PagesVersionEditor } from "@/plane-web/components/pages";
 
 type Props = {
   activeVersion: string | null;
+  currentVersionDescription: string | null;
+  editorComponent: React.FC<TVersionEditorProps>;
   fetchVersionDetails: (pageId: string, versionId: string) => Promise<TPageVersion | undefined>;
   handleClose: () => void;
   handleRestore: (descriptionHTML: string) => Promise<void>;
@@ -21,7 +23,16 @@ type Props = {
 };
 
 export const PageVersionsMainContent: React.FC<Props> = observer((props) => {
-  const { activeVersion, fetchVersionDetails, handleClose, handleRestore, pageId, restoreEnabled } = props;
+  const {
+    activeVersion,
+    currentVersionDescription,
+    editorComponent,
+    fetchVersionDetails,
+    handleClose,
+    handleRestore,
+    pageId,
+    restoreEnabled,
+  } = props;
   // states
   const [isRestoring, setIsRestoring] = useState(false);
   const [isRetrying, setIsRetrying] = useState(false);
@@ -63,8 +74,10 @@ export const PageVersionsMainContent: React.FC<Props> = observer((props) => {
     setIsRetrying(false);
   };
 
+  const VersionEditor = editorComponent;
+
   return (
-    <div className="flex-grow flex flex-col">
+    <div className="flex-grow flex flex-col overflow-hidden">
       {versionDetailsError ? (
         <div className="flex-grow grid place-items-center">
           <div className="flex flex-col items-center gap-4 text-center">
@@ -103,10 +116,10 @@ export const PageVersionsMainContent: React.FC<Props> = observer((props) => {
             )}
           </div>
           <div className="pt-8 h-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
-            <PagesVersionEditor
+            <VersionEditor
               activeVersion={activeVersion}
+              currentVersionDescription={currentVersionDescription}
               isCurrentVersionActive={isCurrentVersionActive}
-              pageId={pageId}
               versionDetails={versionDetails}
             />
           </div>

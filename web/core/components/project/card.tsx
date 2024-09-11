@@ -24,7 +24,6 @@ import {
 import { Logo } from "@/components/common";
 import { ArchiveRestoreProjectModal, DeleteProjectModal, JoinProjectModal } from "@/components/project";
 // constants
-import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
@@ -33,6 +32,8 @@ import { copyUrlToClipboard } from "@/helpers/string.helper";
 import { useProject } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane-web constants
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   project: IProject;
@@ -57,8 +58,8 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
   // derived values
   const projectMembersIds = project.members?.map((member) => member.member_id);
   // auth
-  const isOwner = project.member_role === EUserProjectRoles.ADMIN;
-  const isMember = project.member_role === EUserProjectRoles.MEMBER;
+  const isOwner = project.member_role === EUserPermissions.ADMIN;
+  const isMember = project.member_role === EUserPermissions.MEMBER;
   // archive
   const isArchived = !!project.archived_at;
 

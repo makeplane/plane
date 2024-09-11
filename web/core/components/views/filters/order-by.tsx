@@ -27,7 +27,7 @@ export const ViewOrderByDropdown: React.FC<Props> = (props) => {
   ];
 
   const buttonClassName = isMobile
-    ? "flex items-center text-sm text-custom-text-200"
+    ? "flex items-center text-sm text-custom-text-200 gap-2 w-full"
     : `${getButtonStyling("neutral-primary", "sm")} px-2 text-custom-text-300`;
 
   const chevronClassName = isMobile ? "h-4 w-4 text-custom-text-200" : "h-3 w-3";
@@ -42,6 +42,7 @@ export const ViewOrderByDropdown: React.FC<Props> = (props) => {
         </span>
       }
       placement="bottom-end"
+      className="w-full flex justify-center"
       maxHeight="lg"
       closeOnSelect
     >

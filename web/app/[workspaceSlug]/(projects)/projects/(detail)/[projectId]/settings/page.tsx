@@ -15,7 +15,8 @@ import {
   ProjectDetailsFormLoader,
 } from "@/components/project";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const GeneralSettingsPage = observer(() => {
   // states
@@ -25,6 +26,8 @@ const GeneralSettingsPage = observer(() => {
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { currentProjectDetails, fetchProjectDetails } = useProject();
+  const { allowPermissions } = useUserPermissions();
+
   // api call to fetch project details
   // TODO: removed this API if not necessary
   const { isLoading } = useSWR(
@@ -32,7 +35,13 @@ const GeneralSettingsPage = observer(() => {
     workspaceSlug && projectId ? () => fetchProjectDetails(workspaceSlug.toString(), projectId.toString()) : null
   );
   // derived values
-  const isAdmin = currentProjectDetails?.member_role === 20;
+  const isAdmin = allowPermissions(
+    [EUserPermissions.ADMIN],
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug.toString(),
+    projectId.toString()
+  );
+
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - General Settings` : undefined;
   // const currentNetwork = NETWORK_CHOICES.find((n) => n.key === projectDetails?.network);
   // const selectedNetwork = NETWORK_CHOICES.find((n) => n.key === watch("network"));
@@ -57,7 +66,7 @@ const GeneralSettingsPage = observer(() => {
         </>
       )}
 
-      <div className={`w-full overflow-y-auto py-8 pr-9 ${isAdmin ? "" : "opacity-60"}`}>
+      <div className={`w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
         {currentProjectDetails && workspaceSlug && projectId && !isLoading ? (
           <ProjectDetailsForm
             project={currentProjectDetails}
@@ -69,7 +78,7 @@ const GeneralSettingsPage = observer(() => {
           <ProjectDetailsFormLoader />
         )}
 
-        {isAdmin && (
+        {isAdmin && currentProjectDetails && (
           <>
             <ArchiveProjectSelection
               projectDetails={currentProjectDetails}

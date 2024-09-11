@@ -100,7 +100,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <div className="rounded-lg space-y-4 pl-3">
+      <div className="rounded-lg space-y-4">
         <IssueTitleInput
           workspaceSlug={workspaceSlug}
           projectId={issue.project_id}
@@ -141,14 +141,12 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
         )}
       </div>
 
-      <div className="pl-3">
-        <IssueAttachmentRoot
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          issueId={issue.id}
-          disabled={!isEditable}
-        />
-      </div>
+      <IssueAttachmentRoot
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
+        issueId={issue.id}
+        disabled={!isEditable}
+      />
 
       <InboxIssueContentProperties
         workspaceSlug={workspaceSlug}
@@ -159,9 +157,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
         duplicateIssueDetails={inboxIssue?.duplicate_issue_detail}
       />
 
-      <div className="pb-12 pl-3">
-        <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issue.id} isIntakeIssue />
-      </div>
+      <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issue.id} isIntakeIssue />
     </>
   );
 });

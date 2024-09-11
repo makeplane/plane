@@ -35,6 +35,7 @@ from plane.db.models import (
     Workspace,
     WorkspaceMember,
     ProjectMember,
+    Project,
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -75,7 +76,7 @@ class WorkspaceViewViewSet(BaseViewSet):
         )
 
     @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST],
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST],
         level="WORKSPACE",
     )
     def list(self, request, slug):
@@ -259,7 +260,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
 
     @method_decorator(gzip_page)
     @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST],
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST],
         level="WORKSPACE",
     )
     def list(self, request, slug):
@@ -272,15 +273,24 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
         )
 
-        if WorkspaceMember.objects.filter(
-            workspace__slug=slug,
-            member=request.user,
-            role=5,
-            is_active=True,
-        ).exists():
-            issue_queryset = issue_queryset.filter(
-                created_by=request.user,
+        # check for the project member role, if the role is 5 then check for the guest_view_all_features if it is true then show all the issues else show only the issues created by the user
+
+        issue_queryset = issue_queryset.filter(
+            Q(
+                project__project_projectmember__role=5,
+                project__guest_view_all_features=True,
             )
+            | Q(
+                project__project_projectmember__role=5,
+                project__guest_view_all_features=False,
+                created_by=self.request.user,
+            )
+            |
+            # For other roles (role < 5), show all issues
+            Q(project__project_projectmember__role__gt=5),
+            project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
+        )
 
         # Issue queryset
         issue_queryset, order_by_param = order_issue_queryset(
@@ -421,19 +431,21 @@ class IssueViewViewSet(BaseViewSet):
             .distinct()
         )
 
-    allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST]
-    )
+    allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
 
     def list(self, request, slug, project_id):
         queryset = self.get_queryset()
-        if ProjectMember.objects.filter(
-            workspace__slug=slug,
-            project_id=project_id,
-            member=request.user,
-            role=5,
-            is_active=True,
-        ).exists():
+        project = Project.objects.get(id=project_id)
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=request.user,
+                role=5,
+                is_active=True,
+            ).exists()
+            and not project.guest_view_all_features
+        ):
             queryset = queryset.filter(owned_by=request.user)
         fields = [
             field
@@ -445,14 +457,34 @@ class IssueViewViewSet(BaseViewSet):
         ).data
         return Response(views, status=status.HTTP_200_OK)
 
-    allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST]
-    )
+    allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
 
     def retrieve(self, request, slug, project_id, pk):
         issue_view = (
             self.get_queryset().filter(pk=pk, project_id=project_id).first()
         )
+        project = Project.objects.get(id=project_id)
+        """
+        if the role is guest and guest_view_all_features is false and owned by is not 
+        the requesting user then dont show the view
+        """
+
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=request.user,
+                role=5,
+                is_active=True,
+            ).exists()
+            and not project.guest_view_all_features
+            and not issue_view.owned_by == request.user
+        ):
+            return Response(
+                {"error": "You are not allowed to view this issue"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         serializer = IssueViewSerializer(issue_view)
         recent_visited_task.delay(
             slug=slug,

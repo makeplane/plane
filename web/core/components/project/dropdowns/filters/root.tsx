@@ -5,6 +5,7 @@ import { TProjectDisplayFilters, TProjectFilters } from "@plane/types";
 // components
 import { FilterOption } from "@/components/issues";
 import { FilterAccess, FilterCreatedDate, FilterLead, FilterMembers } from "@/components/project";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
 
 type Props = {
@@ -19,6 +20,8 @@ export const ProjectFiltersSelection: React.FC<Props> = observer((props) => {
   const { displayFilters, filters, handleFiltersUpdate, handleDisplayFiltersUpdate, memberIds } = props;
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
+  // store
+  const { isMobile } = usePlatformOS();
 
   return (
     <div className="flex h-full w-full flex-col overflow-hidden">
@@ -31,7 +34,7 @@ export const ProjectFiltersSelection: React.FC<Props> = observer((props) => {
             placeholder="Search"
             value={filtersSearchQuery}
             onChange={(e) => setFiltersSearchQuery(e.target.value)}
-            autoFocus
+            autoFocus={!isMobile}
           />
           {filtersSearchQuery !== "" && (
             <button type="button" className="grid place-items-center" onClick={() => setFiltersSearchQuery("")}>
@@ -50,15 +53,6 @@ export const ProjectFiltersSelection: React.FC<Props> = observer((props) => {
               })
             }
             title="My projects"
-          />
-          <FilterOption
-            isChecked={!!displayFilters.archived_projects}
-            onClick={() =>
-              handleDisplayFiltersUpdate({
-                archived_projects: !displayFilters.archived_projects,
-              })
-            }
-            title="Archived"
           />
         </div>
 

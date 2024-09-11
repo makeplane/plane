@@ -127,39 +127,35 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
   );
 
   fetchFilters = async (workspaceSlug: string, projectId: string, cycleId: string) => {
-    try {
-      const _filters = await this.issueFilterService.fetchCycleIssueFilters(workspaceSlug, projectId, cycleId);
+    const _filters = await this.issueFilterService.fetchCycleIssueFilters(workspaceSlug, projectId, cycleId);
 
-      const filters: IIssueFilterOptions = this.computedFilters(_filters?.filters);
-      const displayFilters: IIssueDisplayFilterOptions = this.computedDisplayFilters(_filters?.display_filters);
-      const displayProperties: IIssueDisplayProperties = this.computedDisplayProperties(_filters?.display_properties);
+    const filters: IIssueFilterOptions = this.computedFilters(_filters?.filters);
+    const displayFilters: IIssueDisplayFilterOptions = this.computedDisplayFilters(_filters?.display_filters);
+    const displayProperties: IIssueDisplayProperties = this.computedDisplayProperties(_filters?.display_properties);
 
-      // fetching the kanban toggle helpers in the local storage
-      const kanbanFilters = {
-        group_by: [],
-        sub_group_by: [],
-      };
-      const currentUserId = this.rootIssueStore.currentUserId;
-      if (currentUserId) {
-        const _kanbanFilters = this.handleIssuesLocalFilters.get(
-          EIssuesStoreType.CYCLE,
-          workspaceSlug,
-          cycleId,
-          currentUserId
-        );
-        kanbanFilters.group_by = _kanbanFilters?.kanban_filters?.group_by || [];
-        kanbanFilters.sub_group_by = _kanbanFilters?.kanban_filters?.sub_group_by || [];
-      }
-
-      runInAction(() => {
-        set(this.filters, [cycleId, "filters"], filters);
-        set(this.filters, [cycleId, "displayFilters"], displayFilters);
-        set(this.filters, [cycleId, "displayProperties"], displayProperties);
-        set(this.filters, [cycleId, "kanbanFilters"], kanbanFilters);
-      });
-    } catch (error) {
-      throw error;
+    // fetching the kanban toggle helpers in the local storage
+    const kanbanFilters = {
+      group_by: [],
+      sub_group_by: [],
+    };
+    const currentUserId = this.rootIssueStore.currentUserId;
+    if (currentUserId) {
+      const _kanbanFilters = this.handleIssuesLocalFilters.get(
+        EIssuesStoreType.CYCLE,
+        workspaceSlug,
+        cycleId,
+        currentUserId
+      );
+      kanbanFilters.group_by = _kanbanFilters?.kanban_filters?.group_by || [];
+      kanbanFilters.sub_group_by = _kanbanFilters?.kanban_filters?.sub_group_by || [];
     }
+
+    runInAction(() => {
+      set(this.filters, [cycleId, "filters"], filters);
+      set(this.filters, [cycleId, "displayFilters"], displayFilters);
+      set(this.filters, [cycleId, "displayProperties"], displayProperties);
+      set(this.filters, [cycleId, "kanbanFilters"], kanbanFilters);
+    });
   };
 
   updateFilters = async (

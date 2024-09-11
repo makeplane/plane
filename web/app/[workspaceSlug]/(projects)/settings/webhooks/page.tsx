@@ -15,7 +15,8 @@ import { WebhooksList, CreateWebhookModal } from "@/components/web-hooks";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 // hooks
-import { useUser, useWebhook, useWorkspace } from "@/hooks/store";
+import { useUserPermissions, useWebhook, useWorkspace } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const WebhooksListPage = observer(() => {
   // states
@@ -23,12 +24,12 @@ const WebhooksListPage = observer(() => {
   // router
   const { workspaceSlug } = useParams();
   // mobx store
-  const {
-    canPerformWorkspaceAdminActions,
-    membership: { currentWorkspaceRole },
-  } = useUser();
+  const { workspaceUserInfo, allowPermissions } = useUserPermissions();
+
   const { fetchWebhooks, webhooks, clearSecretKey, webhookSecretKey, createWebhook } = useWebhook();
   const { currentWorkspace } = useWorkspace();
+
+  const canPerformWorkspaceAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
   useSWR(
     workspaceSlug && canPerformWorkspaceAdminActions ? `WEBHOOKS_LIST_${workspaceSlug}` : null,
@@ -42,7 +43,7 @@ const WebhooksListPage = observer(() => {
     if (!showCreateWebhookModal && webhookSecretKey) clearSecretKey();
   }, [showCreateWebhookModal, webhookSecretKey, clearSecretKey]);
 
-  if (currentWorkspaceRole && !canPerformWorkspaceAdminActions) {
+  if (workspaceUserInfo && !canPerformWorkspaceAdminActions) {
     return <NotAuthorizedView section="settings" />;
   }
 
@@ -51,7 +52,7 @@ const WebhooksListPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <div className="w-full overflow-y-auto md:pr-9 pr-4">
+      <div className="w-full overflow-y-auto">
         <CreateWebhookModal
           createWebhook={createWebhook}
           clearSecretKey={clearSecretKey}
@@ -63,7 +64,7 @@ const WebhooksListPage = observer(() => {
         />
         {Object.keys(webhooks).length > 0 ? (
           <div className="flex h-full w-full flex-col">
-            <div className="flex items-center justify-between gap-4 border-b border-custom-border-200 py-3.5">
+            <div className="flex items-center justify-between gap-4 border-b border-custom-border-200 pb-3.5">
               <div className="text-xl font-medium">Webhooks</div>
               <Button variant="primary" size="sm" onClick={() => setShowCreateWebhookModal(true)}>
                 Add webhook

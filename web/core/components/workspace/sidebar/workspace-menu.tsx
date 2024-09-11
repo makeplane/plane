@@ -13,16 +13,16 @@ import { SidebarNavItem } from "@/components/sidebar";
 // constants
 import { SIDEBAR_WORKSPACE_MENU_ITEMS } from "@/constants/dashboard";
 import { SIDEBAR_CLICKED } from "@/constants/event-tracker";
-import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useAppTheme, useEventTracker, useUser } from "@/hooks/store";
+import { useAppTheme, useEventTracker, useUserPermissions } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { UpgradeBadge } from "@/plane-web/components/workspace";
+import { EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const SidebarWorkspaceMenu = observer(() => {
   // state
@@ -33,9 +33,7 @@ export const SidebarWorkspaceMenu = observer(() => {
   const { toggleSidebar, sidebarCollapsed } = useAppTheme();
   const { captureEvent } = useEventTracker();
   const { isMobile } = usePlatformOS();
-  const {
-    membership: { currentWorkspaceRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
   // router params
   const { workspaceSlug } = useParams();
   // pathname
@@ -44,8 +42,6 @@ export const SidebarWorkspaceMenu = observer(() => {
   const { setValue: toggleWorkspaceMenu, storedValue } = useLocalStorage<boolean>("is_workspace_menu_open", true);
   // derived values
   const isWorkspaceMenuOpen = !!storedValue;
-  // auth
-  const workspaceMemberInfo = currentWorkspaceRole || EUserWorkspaceRoles.GUEST;
 
   const handleLinkClick = (itemKey: string) => {
     if (window.innerWidth < 768) {
@@ -70,7 +66,11 @@ export const SidebarWorkspaceMenu = observer(() => {
   return (
     <Disclosure as="div" defaultOpen>
       {!sidebarCollapsed && (
-        <div className="flex px-2 bg-custom-sidebar-background-100 group/workspace-button hover:bg-custom-sidebar-background-90 rounded">
+        <div className={
+          cn("flex px-2 bg-custom-sidebar-background-100 group/workspace-button hover:bg-custom-sidebar-background-90 rounded", {
+            "mt-2.5": !sidebarCollapsed,
+          })
+        }>
           {" "}
           <Disclosure.Button
             as="button"
@@ -85,7 +85,6 @@ export const SidebarWorkspaceMenu = observer(() => {
                 ref={actionSectionRef}
                 className="grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 rounded my-auto"
                 onClick={() => {
-                  console.log("ndkn");
                   setIsMenuActive(!isMenuActive);
                 }}
               >
@@ -154,7 +153,7 @@ export const SidebarWorkspaceMenu = observer(() => {
           >
             {SIDEBAR_WORKSPACE_MENU_ITEMS.map(
               (link) =>
-                workspaceMemberInfo >= link.access && (
+                allowPermissions(link.access, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString()) && (
                   <Tooltip
                     key={link.key}
                     tooltipContent={link.label}

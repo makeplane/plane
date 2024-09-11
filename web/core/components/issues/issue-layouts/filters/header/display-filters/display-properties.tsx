@@ -1,29 +1,50 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { IIssueDisplayProperties } from "@plane/types";
-// components
-import { ISSUE_DISPLAY_PROPERTIES } from "@/constants/issue";
-import { FilterHeader } from "../helpers/filter-header";
+import { useParams } from "next/navigation";
 // types
+import { IIssueDisplayProperties } from "@plane/types";
 // constants
+import { ISSUE_DISPLAY_PROPERTIES } from "@/constants/issue";
+// plane web helpers
+import { shouldRenderDisplayProperty } from "@/plane-web/helpers/issue-filter.helper";
+// components
+import { FilterHeader } from "../helpers/filter-header";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
+  displayPropertiesToRender: (keyof IIssueDisplayProperties)[];
   handleUpdate: (updatedDisplayProperties: Partial<IIssueDisplayProperties>) => void;
   cycleViewDisabled?: boolean;
   moduleViewDisabled?: boolean;
 };
 
 export const FilterDisplayProperties: React.FC<Props> = observer((props) => {
-  const { displayProperties, handleUpdate, cycleViewDisabled = false, moduleViewDisabled = false } = props;
-
+  const {
+    displayProperties,
+    displayPropertiesToRender,
+    handleUpdate,
+    cycleViewDisabled = false,
+    moduleViewDisabled = false,
+  } = props;
+  // router
+  const { workspaceSlug, projectId: routerProjectId } = useParams();
+  // states
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
+  // derived values
+  const projectId = !!routerProjectId ? routerProjectId?.toString() : undefined;
 
   // Filter out "cycle" and "module" keys if cycleViewDisabled or moduleViewDisabled is true
+  // Also filter out display properties that should not be rendered
   const filteredDisplayProperties = ISSUE_DISPLAY_PROPERTIES.filter((property) => {
-    if (cycleViewDisabled && property.key === "cycle") return false;
-    if (moduleViewDisabled && property.key === "modules") return false;
-    return true;
+    if (!displayPropertiesToRender.includes(property.key)) return false;
+    switch (property.key) {
+      case "cycle":
+        return !cycleViewDisabled;
+      case "modules":
+        return !moduleViewDisabled;
+      default:
+        return shouldRenderDisplayProperty({ workspaceSlug: workspaceSlug?.toString(), projectId, key: property.key });
+    }
   });
 
   return (

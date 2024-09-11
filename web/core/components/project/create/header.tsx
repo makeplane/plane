@@ -2,18 +2,26 @@ import { useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { X } from "lucide-react";
 import { IProject } from "@plane/types";
+// ui
 import { CustomEmojiIconPicker, EmojiIconPickerTypes, Logo } from "@plane/ui";
+// components
 import { ImagePickerPopover } from "@/components/core";
+// constants
+import { ETabIndices } from "@/constants/tab-indices";
+// helpers
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
+import { getTabIndex } from "@/helpers/tab-indices.helper";
 
 type Props = {
   handleClose: () => void;
+  isMobile?: boolean;
 };
 const ProjectCreateHeader: React.FC<Props> = (props) => {
-  const { handleClose } = props;
+  const { handleClose, isMobile = false } = props;
   const { watch, control } = useFormContext<IProject>();
 
   const [isOpen, setIsOpen] = useState(false);
+  const { getIndex } = getTabIndex(ETabIndices.PROJECT_CREATE, isMobile);
 
   return (
     <div className="group relative h-44 w-full rounded-lg bg-custom-background-80">
@@ -26,7 +34,7 @@ const ProjectCreateHeader: React.FC<Props> = (props) => {
       )}
 
       <div className="absolute right-2 top-2 p-2">
-        <button data-posthog="PROJECT_MODAL_CLOSE" type="button" onClick={handleClose} tabIndex={8}>
+        <button data-posthog="PROJECT_MODAL_CLOSE" type="button" onClick={handleClose} tabIndex={getIndex("close")}>
           <X className="h-5 w-5 text-white" />
         </button>
       </div>
@@ -35,7 +43,13 @@ const ProjectCreateHeader: React.FC<Props> = (props) => {
           name="cover_image"
           control={control}
           render={({ field: { value, onChange } }) => (
-            <ImagePickerPopover label="Change Cover" onChange={onChange} control={control} value={value} tabIndex={9} />
+            <ImagePickerPopover
+              label="Change Cover"
+              onChange={onChange}
+              control={control}
+              value={value}
+              tabIndex={getIndex("cover_image")}
+            />
           )}
         />
       </div>

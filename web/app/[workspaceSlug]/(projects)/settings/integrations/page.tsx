@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -8,9 +8,9 @@ import { SingleIntegrationCard } from "@/components/integration";
 import { IntegrationAndImportExportBanner, IntegrationsSettingsLoader } from "@/components/ui";
 // constants
 import { APP_INTEGRATIONS } from "@/constants/fetch-keys";
-import { EUserWorkspaceRoles } from "@/constants/workspace";
 // hooks
-import { useUser, useWorkspace } from "@/hooks/store";
+import { useUserPermissions, useWorkspace } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // services
 import { IntegrationService } from "@/services/integrations";
 
@@ -20,20 +20,18 @@ const WorkspaceIntegrationsPage = observer(() => {
   // router
   const { workspaceSlug } = useParams();
   // store hooks
-  const {
-    membership: { currentWorkspaceRole },
-  } = useUser();
   const { currentWorkspace } = useWorkspace();
+  const { allowPermissions } = useUserPermissions();
 
   // derived values
-  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Integrations` : undefined;
 
   if (!isAdmin)
     return (
       <>
         <PageHead title={pageTitle} />
-        <div className="mt-10 flex h-full w-full justify-center p-4">
+        <div className="mt-10 flex h-full w-full justify-center">
           <p className="text-sm text-custom-text-300">You are not authorized to access this page.</p>
         </div>
       </>
@@ -46,7 +44,7 @@ const WorkspaceIntegrationsPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <section className="w-full overflow-y-auto py-8 pr-9">
+      <section className="w-full overflow-y-auto">
         <IntegrationAndImportExportBanner bannerName="Integrations" />
         <div>
           {appIntegrations ? (
