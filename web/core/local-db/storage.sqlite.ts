@@ -3,6 +3,8 @@ import set from "lodash/set";
 import { EIssueGroupBYServerToProperty } from "@plane/constants";
 import { TIssue } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
+// lib
+import { rootStore } from "@/lib/store-context";
 // services
 import { IssueService } from "@/services/issue/issue.service";
 //
@@ -62,7 +64,7 @@ export class Storage {
   };
 
   initialize = async (workspaceSlug: string): Promise<boolean> => {
-    if (document.hidden) return false; // return if the window gets hidden
+    if (document.hidden || !rootStore.user.localDBEnabled) return false; // return if the window gets hidden
 
     if (workspaceSlug !== this.workspaceSlug) {
       this.reset();
@@ -152,21 +154,21 @@ export class Storage {
   };
 
   syncWorkspace = async () => {
-    if (document.hidden) return; // return if the window gets hidden
+    if (document.hidden || !rootStore.user.localDBEnabled) return; // return if the window gets hidden
 
     await this.workspaceInitPromise;
     loadWorkSpaceData(this.workspaceSlug);
   };
 
   syncProject = (projectId: string) => {
-    if (document.hidden) return false; // return if the window gets hidden
+    if (document.hidden || !rootStore.user.localDBEnabled) return false; // return if the window gets hidden
 
     // Load labels, members, states, modules, cycles
     this.syncIssues(projectId);
   };
 
   syncIssues = async (projectId: string) => {
-    if (document.hidden) return false; // return if the window gets hidden
+    if (document.hidden || !rootStore.user.localDBEnabled) return false; // return if the window gets hidden
 
     try {
       await this.workspaceInitPromise;
@@ -269,7 +271,7 @@ export class Storage {
     return issue.updated_at;
   };
 
-  getIssues = async (projectId: string, queries: any, config: any) => {
+  getIssues = async (workspaceSlug: string, projectId: string, queries: any, config: any) => {
     console.log("#### Queries", queries);
 
     const currentProjectStatus = this.getStatus(projectId);
@@ -280,11 +282,11 @@ export class Storage {
       currentProjectStatus === "loading" ||
       currentProjectStatus === "error" ||
       dbVersion !== DB_VERSION ||
-      (window as any).DISABLE_LOCAL
+      !rootStore.user.localDBEnabled
     ) {
       info(`Project ${projectId} is loading, falling back to server`);
       const issueService = new IssueService();
-      return await issueService.getIssuesFromServer(this.workspaceSlug, projectId, queries);
+      return await issueService.getIssuesFromServer(workspaceSlug, projectId, queries);
     }
 
     const { cursor, group_by, sub_group_by } = queries;
@@ -351,6 +353,8 @@ export class Storage {
 
   getIssue = async (issueId: string) => {
     try {
+      if (!rootStore.user.localDBEnabled) return;
+
       const issues = await runQuery(`select * from issues where id='${issueId}'`);
       if (issues.length) {
         return formatLocalIssue(issues[0]);

@@ -44,7 +44,7 @@ export interface IUserStore {
   reset: () => void;
   signOut: () => Promise<void>;
   // computed
-
+  localDBEnabled: boolean;
   // workspace level
   canPerformWorkspaceAdminActions: boolean;
   canPerformWorkspaceMemberActions: boolean;
@@ -115,6 +115,8 @@ export class UserStore implements IUserStore {
 
       canPerformAnyCreateAction: computed,
       projectsWithCreatePermissions: computed,
+
+      localDBEnabled: computed,
     });
   }
 
@@ -355,5 +357,9 @@ export class UserStore implements IUserStore {
    */
   get canPerformProjectGuestActions() {
     return !!this.membership.currentProjectRole && this.membership.currentProjectRole >= EUserProjectRoles.GUEST;
+  }
+
+  get localDBEnabled() {
+    return this.userSettings.canUseLocalDB;
   }
 }
