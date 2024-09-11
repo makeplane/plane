@@ -1,4 +1,4 @@
-// types
+import { Timer } from "lucide-react";
 import { TStaticViewTypes } from "@plane/types";
 import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // services images
