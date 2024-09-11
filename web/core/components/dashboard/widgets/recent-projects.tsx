@@ -14,9 +14,9 @@ import { Logo } from "@/components/common";
 import { WidgetLoader, WidgetProps } from "@/components/dashboard/widgets";
 // constants
 import { PROJECT_BACKGROUND_COLORS } from "@/constants/dashboard";
-import { EUserWorkspaceRoles } from "@/constants/workspace";
 // hooks
-import { useEventTracker, useDashboard, useProject, useUser, useCommandPalette } from "@/hooks/store";
+import { useEventTracker, useDashboard, useProject, useCommandPalette, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const WIDGET_KEY = "recent_projects";
 
@@ -65,13 +65,14 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
   // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
-  const {
-    membership: { currentWorkspaceRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
   const { fetchWidgetStats, getWidgetStats } = useDashboard();
   // derived values
   const widgetStats = getWidgetStats<TRecentProjectsWidgetResponse>(workspaceSlug, dashboardId, WIDGET_KEY);
-  const canCreateProject = currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+  const canCreateProject = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
 
   useEffect(() => {
     fetchWidgetStats(workspaceSlug, dashboardId, {

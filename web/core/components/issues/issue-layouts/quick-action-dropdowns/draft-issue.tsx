@@ -13,11 +13,11 @@ import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
 // constant
 import { EIssuesStoreType } from "@/constants/issue";
-import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useEventTracker, useIssues, useUser } from "@/hooks/store";
+import { useEventTracker, useIssues, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // types
 import { IQuickActionProps } from "../list/list-view-types";
 
@@ -37,15 +37,14 @@ export const DraftIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
   const [issueToEdit, setIssueToEdit] = useState<TIssue | undefined>(undefined);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   // store hooks
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
   const { setTrackElement } = useEventTracker();
   const { issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
   // derived values
   const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
   // auth
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER && !readOnly;
+  const isEditingAllowed =
+    allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT) && !readOnly;
   const isDeletingAllowed = isEditingAllowed;
 
   const duplicateIssuePayload = omit(

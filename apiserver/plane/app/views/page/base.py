@@ -32,9 +32,11 @@ from plane.db.models import (
     UserFavorite,
     ProjectMember,
     ProjectPage,
+    Project,
     DeployBoard,
 )
 from plane.utils.error_codes import ERROR_CODES
+
 # Module imports
 from ..base import BaseAPIView, BaseViewSet
 
@@ -128,7 +130,7 @@ class PageViewSet(BaseViewSet):
             .distinct()
         )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def create(self, request, slug, project_id):
         serializer = PageSerializer(
             data=request.data,
@@ -150,7 +152,7 @@ class PageViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def partial_update(self, request, slug, project_id, pk):
         try:
             page = Page.objects.get(
@@ -216,9 +218,38 @@ class PageViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER])
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+            ROLE.GUEST,
+        ]
+    )
     def retrieve(self, request, slug, project_id, pk=None):
         page = self.get_queryset().filter(pk=pk).first()
+        project = Project.objects.get(pk=project_id)
+
+        """
+        if the role is guest and guest_view_all_features is false and owned by is not 
+        the requesting user then dont show the page
+        """
+
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=request.user,
+                role=5,
+                is_active=True,
+            ).exists()
+            and not project.guest_view_all_features
+            and not page.owned_by == request.user
+        ):
+            return Response(
+                {"error": "You are not allowed to view this page"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         if page is None:
             return Response(
                 {"error": "Page not found"},
@@ -242,7 +273,7 @@ class PageViewSet(BaseViewSet):
                 status=status.HTTP_200_OK,
             )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def lock(self, request, slug, project_id, pk):
         page = Page.objects.filter(
             pk=pk, workspace__slug=slug, projects__id=project_id
@@ -252,7 +283,7 @@ class PageViewSet(BaseViewSet):
         page.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def unlock(self, request, slug, project_id, pk):
         page = Page.objects.filter(
             pk=pk, workspace__slug=slug, projects__id=project_id
@@ -263,7 +294,7 @@ class PageViewSet(BaseViewSet):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def access(self, request, slug, project_id, pk):
         access = request.data.get("access", 0)
         page = Page.objects.filter(
@@ -286,13 +317,31 @@ class PageViewSet(BaseViewSet):
         page.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER])
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+            ROLE.GUEST,
+        ]
+    )
     def list(self, request, slug, project_id):
         queryset = self.get_queryset()
+        project = Project.objects.get(pk=project_id)
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=request.user,
+                role=5,
+                is_active=True,
+            ).exists()
+            and not project.guest_view_all_features
+        ):
+            queryset = queryset.filter(owned_by=request.user)
         pages = PageSerializer(queryset, many=True).data
         return Response(pages, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def archive(self, request, slug, project_id, pk):
         page = Page.objects.get(
             pk=pk, workspace__slug=slug, projects__id=project_id
@@ -327,7 +376,7 @@ class PageViewSet(BaseViewSet):
             status=status.HTTP_200_OK,
         )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def unarchive(self, request, slug, project_id, pk):
         page = Page.objects.get(
             pk=pk, workspace__slug=slug, projects__id=project_id
@@ -491,7 +540,13 @@ class SubPagesEndpoint(BaseAPIView):
 
 class PagesDescriptionViewSet(BaseViewSet):
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER])
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+            ROLE.GUEST,
+        ]
+    )
     def retrieve(self, request, slug, project_id, pk):
         page = (
             Page.objects.filter(
@@ -521,7 +576,7 @@ class PagesDescriptionViewSet(BaseViewSet):
         )
         return response
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def partial_update(self, request, slug, project_id, pk):
         page = (
             Page.objects.filter(

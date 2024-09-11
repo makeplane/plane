@@ -5,13 +5,13 @@ import { Trash2 } from "lucide-react";
 import { Disclosure } from "@headlessui/react";
 import { IUser, IWorkspaceMember } from "@plane/types";
 import { CustomSelect, PopoverMenu, TOAST_TYPE, setToast } from "@plane/ui";
-import { EUserProjectRoles } from "@/constants/project";
-import { EUserWorkspaceRoles, ROLE } from "@/constants/workspace";
+import { ROLE } from "@/constants/workspace";
 import { useMember, useUser } from "@/hooks/store";
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 
 export interface RowData {
   member: IWorkspaceMember;
-  role: EUserWorkspaceRoles;
+  role: EUserPermissions;
 }
 
 type NameProps = {
@@ -24,7 +24,7 @@ type NameProps = {
 
 type AccountTypeProps = {
   rowData: RowData;
-  currentProjectRole: EUserProjectRoles | undefined;
+  currentProjectRole: EUserPermissions | undefined;
   workspaceSlug: string;
   projectId: string;
 };
@@ -97,16 +97,14 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
 
   // derived values
   const isCurrentUser = currentUser?.id === rowData.member.id;
-  const isAdminRole = currentProjectRole === EUserProjectRoles.ADMIN;
+  const isAdminRole = currentProjectRole === EUserPermissions.ADMIN;
   const isRoleNonEditable = isCurrentUser || !isAdminRole;
 
   const checkCurrentOptionWorkspaceRole = (value: string) => {
-    const currentMemberWorkspaceRole = getWorkspaceMemberDetails(value)?.role;
+    const currentMemberWorkspaceRole = getWorkspaceMemberDetails(value)?.role as EUserPermissions | undefined;
     if (!value || !currentMemberWorkspaceRole) return ROLE;
 
-    const isGuestOrViewer = [EUserWorkspaceRoles.GUEST, EUserWorkspaceRoles.VIEWER].includes(
-      currentMemberWorkspaceRole
-    );
+    const isGuestOrViewer = [EUserPermissions.GUEST].includes(currentMemberWorkspaceRole);
 
     return Object.fromEntries(
       Object.entries(ROLE).filter(([key]) => !isGuestOrViewer || [5, 10].includes(parseInt(key)))
@@ -127,11 +125,11 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
           render={({ field: { value } }) => (
             <CustomSelect
               value={value}
-              onChange={(value: EUserProjectRoles) => {
+              onChange={(value: EUserPermissions) => {
                 if (!workspaceSlug) return;
 
                 updateMember(workspaceSlug.toString(), projectId.toString(), rowData.member.id, {
-                  role: value as unknown as EUserProjectRoles, // Cast value to unknown first, then to EUserWorkspaceRoles
+                  role: value as unknown as EUserPermissions, // Cast value to unknown first, then to EUserPermissions
                 }).catch((err) => {
                   console.log(err, "err");
                   const error = err.error;
@@ -155,7 +153,7 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
               input
             >
               {Object.entries(checkCurrentOptionWorkspaceRole(rowData.member.id)).map(([key, label]) => {
-                if (parseInt(key) > (currentProjectRole ?? EUserProjectRoles.GUEST)) return null;
+                if (parseInt(key) > (currentProjectRole ?? EUserPermissions.GUEST)) return null;
                 return (
                   <CustomSelect.Option key={key} value={key}>
                     {label}

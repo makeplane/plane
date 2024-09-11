@@ -14,9 +14,10 @@ import {
 } from "@/components/workspace";
 // constants
 import { GLOBAL_VIEW_OPENED } from "@/constants/event-tracker";
-import { DEFAULT_GLOBAL_VIEWS_LIST, EUserWorkspaceRoles } from "@/constants/workspace";
+import { DEFAULT_GLOBAL_VIEWS_LIST } from "@/constants/workspace";
 // store hooks
-import { useEventTracker, useGlobalView, useUser } from "@/hooks/store";
+import { useEventTracker, useGlobalView, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const ViewTab = observer((props: { viewId: string }) => {
   const { viewId } = props;
@@ -77,9 +78,8 @@ export const GlobalViewsHeader: React.FC = observer(() => {
   const { globalViewId } = useParams();
   // store hooks
   const { currentWorkspaceViews } = useGlobalView();
-  const {
-    membership: { currentWorkspaceRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
+
   const { captureEvent } = useEventTracker();
 
   // bring the active view to the centre of the header
@@ -101,7 +101,10 @@ export const GlobalViewsHeader: React.FC = observer(() => {
     }
   }, [globalViewId, currentWorkspaceViews, containerRef, captureEvent]);
 
-  const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+  const isAuthorizedUser = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
 
   return (
     <Header variant={EHeaderVariant.SECONDARY} className="min-h-[44px]">

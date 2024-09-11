@@ -71,7 +71,7 @@ class ProjectInvitationsViewset(BaseViewSet):
             [
                 email
                 for email in emails
-                if int(email.get("role", 10)) > requesting_user.role
+                if int(email.get("role", 5)) > requesting_user.role
             ]
         ):
             return Response(
@@ -98,7 +98,7 @@ class ProjectInvitationsViewset(BaseViewSet):
                             settings.SECRET_KEY,
                             algorithm="HS256",
                         ),
-                        role=email.get("role", 10),
+                        role=email.get("role", 5),
                         created_by=request.user,
                     )
                 )
@@ -171,7 +171,7 @@ class UserProjectInvitationsViewset(BaseViewSet):
                 ProjectMember(
                     project_id=project_id,
                     member=request.user,
-                    role=15 if workspace_role >= 15 else 10,
+                    role=15 if workspace_role >= 15 else 5,
                     workspace=workspace,
                     created_by=request.user,
                 )

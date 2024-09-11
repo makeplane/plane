@@ -9,14 +9,13 @@ import { ArchiveRestoreIcon, ExternalLink, LinkIcon, Pencil, Trash2 } from "luci
 import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ArchiveModuleModal, CreateUpdateModuleModal, DeleteModuleModal } from "@/components/modules";
-// constants
-import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useModule, useEventTracker, useUser } from "@/hooks/store";
+import { useModule, useEventTracker, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   parentRef: React.RefObject<HTMLDivElement>;
@@ -35,16 +34,19 @@ export const ModuleQuickActions: React.FC<Props> = observer((props) => {
   const [deleteModal, setDeleteModal] = useState(false);
   // store hooks
   const { setTrackElement } = useEventTracker();
-  const {
-    membership: { currentWorkspaceAllProjectsRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
+
   const { getModuleById, restoreModule } = useModule();
   // derived values
   const moduleDetails = getModuleById(moduleId);
   const isArchived = !!moduleDetails?.archived_at;
   // auth
-  const isEditingAllowed =
-    !!currentWorkspaceAllProjectsRole && currentWorkspaceAllProjectsRole[projectId] >= EUserProjectRoles.MEMBER;
+  const isEditingAllowed = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug,
+    projectId
+  );
 
   const moduleState = moduleDetails?.status?.toLocaleLowerCase();
   const isInArchivableGroup = !!moduleState && ["completed", "cancelled"].includes(moduleState);

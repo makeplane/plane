@@ -18,7 +18,8 @@ import { MEMBER_INVITED } from "@/constants/event-tracker";
 import { cn } from "@/helpers/common.helper";
 import { getUserRole } from "@/helpers/user.helper";
 // hooks
-import { useEventTracker, useMember, useUser, useWorkspace } from "@/hooks/store";
+import { useEventTracker, useMember, useUserPermissions, useWorkspace } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web components
 import { UpdateWorkspaceSeatsModal } from "@/plane-web/components/workspace";
 // plane web hooks
@@ -32,17 +33,19 @@ const WorkspaceMembersSettingsPage = observer(() => {
   // router
   const { workspaceSlug } = useParams();
   // store hooks
+  const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { captureEvent } = useEventTracker();
-  const {
-    canPerformWorkspaceAdminActions,
-    canPerformWorkspaceViewerActions,
-    canPerformWorkspaceMemberActions,
-    membership: { currentWorkspaceRole },
-  } = useUser();
   const {
     workspace: { inviteMembersToWorkspace },
   } = useMember();
   const { currentWorkspace } = useWorkspace();
+
+  // derived values
+  const canPerformWorkspaceAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const canPerformWorkspaceMemberActions = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
   // derived values
   const isSelfHostedProWorkspace = subscriptionDetail?.is_self_managed && subscriptionDetail?.product === "PRO";
@@ -57,7 +60,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
           emails: [
             ...data.emails.map((email) => ({
               email: email.email,
-              role: getUserRole(email.role),
+              role: getUserRole(email.role as unknown as EUserPermissions),
             })),
           ],
           project_id: undefined,
@@ -75,7 +78,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
           emails: [
             ...data.emails.map((email) => ({
               email: email.email,
-              role: getUserRole(email.role),
+              role: getUserRole(email.role as unknown as EUserPermissions),
             })),
           ],
           project_id: undefined,
@@ -95,7 +98,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Members` : undefined;
 
   // if user is not authorized to view this page
-  if (currentWorkspaceRole && !canPerformWorkspaceViewerActions) {
+  if (workspaceUserInfo && !canPerformWorkspaceMemberActions) {
     return <NotAuthorizedView section="settings" />;
   }
 

@@ -16,7 +16,8 @@ import { APITokenSettingsLoader } from "@/components/ui";
 import { EmptyStateType } from "@/constants/empty-state";
 import { API_TOKENS_LIST } from "@/constants/fetch-keys";
 // store hooks
-import { useUser, useWorkspace } from "@/hooks/store";
+import { useUserPermissions, useWorkspace } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // services
 import { APITokenService } from "@/services/api_token.service";
 
@@ -28,11 +29,10 @@ const ApiTokensPage = observer(() => {
   // router
   const { workspaceSlug } = useParams();
   // store hooks
-  const {
-    canPerformWorkspaceAdminActions,
-    membership: { currentWorkspaceRole },
-  } = useUser();
   const { currentWorkspace } = useWorkspace();
+  const { workspaceUserInfo, allowPermissions } = useUserPermissions();
+  // derived values
+  const canPerformWorkspaceAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
   const { data: tokens } = useSWR(
     workspaceSlug && canPerformWorkspaceAdminActions ? API_TOKENS_LIST(workspaceSlug.toString()) : null,
@@ -42,7 +42,7 @@ const ApiTokensPage = observer(() => {
 
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - API Tokens` : undefined;
 
-  if (currentWorkspaceRole && !canPerformWorkspaceAdminActions) {
+  if (workspaceUserInfo && !canPerformWorkspaceAdminActions) {
     return <NotAuthorizedView section="settings" />;
   }
 

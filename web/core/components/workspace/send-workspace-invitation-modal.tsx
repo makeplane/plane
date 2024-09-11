@@ -11,11 +11,12 @@ import { IWorkspaceBulkInviteFormData } from "@plane/types";
 // ui
 import { Button, CustomSelect, Input, Loader } from "@plane/ui";
 // constants
-import { EUserWorkspaceRoles, ROLE } from "@/constants/workspace";
+import { ROLE } from "@/constants/workspace";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store";
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // plane web services
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web services
@@ -30,7 +31,7 @@ type Props = {
 
 type EmailRole = {
   email: string;
-  role: EUserWorkspaceRoles;
+  role: EUserPermissions;
 };
 
 type FormValues = {
@@ -50,10 +51,8 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
   const { isOpen, onClose, onSubmit, toggleUpdateWorkspaceSeatsModal } = props;
   // router
   const { workspaceSlug } = useParams();
-  // mobx store
-  const {
-    membership: { currentWorkspaceRole },
-  } = useUser();
+  // store hooks
+  const { workspaceInfoBySlug } = useUserPermissions();
   // plane web hooks
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
   // derived values
@@ -79,6 +78,8 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
     control,
     name: "emails",
   });
+
+  const currentWorkspaceRole = workspaceInfoBySlug(workspaceSlug.toString())?.role;
 
   const handleClose = () => {
     onClose();
@@ -118,9 +119,7 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
     (member) => !!member.email && (member.role === 15 || member.role === 20)
   ).length;
   // count total guests from the input fields
-  const totalGuests = memberDetails?.filter(
-    (member) => !!member.email && (member.role === 5 || member.role === 10)
-  ).length;
+  const totalGuests = memberDetails?.filter((member) => !!member.email && member.role === 5).length;
   // check if the invite status is disabled from the backend
   const isInviteStatusDisabled =
     !memberInviteCheckData?.invite_allowed ||

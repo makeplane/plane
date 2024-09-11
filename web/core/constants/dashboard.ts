@@ -8,6 +8,7 @@ import { TIssuesListTypes, TStateGroups } from "@plane/types";
 // ui
 import { ContrastIcon, UserActivityIcon } from "@plane/ui";
 import { Props } from "@/components/icons/types";
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // assets
 import CompletedIssuesDark from "@/public/empty-state/dashboard/dark/completed-issues.svg";
 import OverdueIssuesDark from "@/public/empty-state/dashboard/dark/overdue-issues.svg";
@@ -15,8 +16,6 @@ import UpcomingIssuesDark from "@/public/empty-state/dashboard/dark/upcoming-iss
 import CompletedIssuesLight from "@/public/empty-state/dashboard/light/completed-issues.svg";
 import OverdueIssuesLight from "@/public/empty-state/dashboard/light/overdue-issues.svg";
 import UpcomingIssuesLight from "@/public/empty-state/dashboard/light/upcoming-issues.svg";
-// constants
-import { EUserWorkspaceRoles } from "./workspace";
 
 // gradients for issues by priority widget graph bars
 export const PRIORITY_GRAPH_GRADIENTS = [
@@ -255,7 +254,7 @@ export const SIDEBAR_WORKSPACE_MENU_ITEMS: {
   key: string;
   label: string;
   href: string;
-  access: EUserWorkspaceRoles;
+  access: EUserPermissions[];
   highlight: (pathname: string, baseUrl: string) => boolean;
   Icon: React.FC<Props>;
 }[] = [
@@ -263,7 +262,7 @@ export const SIDEBAR_WORKSPACE_MENU_ITEMS: {
     key: "projects",
     label: "Projects",
     href: `/projects`,
-    access: EUserWorkspaceRoles.GUEST,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/projects/`,
     Icon: Briefcase,
   },
@@ -271,7 +270,7 @@ export const SIDEBAR_WORKSPACE_MENU_ITEMS: {
     key: "all-issues",
     label: "Views",
     href: `/workspace-views/all-issues`,
-    access: EUserWorkspaceRoles.GUEST,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
     highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/workspace-views/`),
     Icon: Layers,
   },
@@ -279,7 +278,7 @@ export const SIDEBAR_WORKSPACE_MENU_ITEMS: {
     key: "active-cycles",
     label: "Cycles",
     href: `/active-cycles`,
-    access: EUserWorkspaceRoles.MEMBER,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/active-cycles/`,
     Icon: ContrastIcon,
   },
@@ -287,7 +286,7 @@ export const SIDEBAR_WORKSPACE_MENU_ITEMS: {
     key: "analytics",
     label: "Analytics",
     href: `/analytics`,
-    access: EUserWorkspaceRoles.MEMBER,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/analytics/`),
     Icon: BarChart2,
   },
@@ -301,7 +300,7 @@ export const SIDEBAR_USER_MENU_ITEMS: {
   key: string;
   label: string;
   href: string;
-  access: EUserWorkspaceRoles;
+  access: EUserPermissions[];
   highlight: (pathname: string, baseUrl: string, options?: TLinkOptions) => boolean;
   Icon: React.FC<Props>;
 }[] = [
@@ -309,7 +308,7 @@ export const SIDEBAR_USER_MENU_ITEMS: {
     key: "home",
     label: "Home",
     href: ``,
-    access: EUserWorkspaceRoles.GUEST,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/`,
     Icon: Home,
   },
@@ -317,7 +316,7 @@ export const SIDEBAR_USER_MENU_ITEMS: {
     key: "your-work",
     label: "Your work",
     href: "/profile",
-    access: EUserWorkspaceRoles.MEMBER,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     highlight: (pathname: string, baseUrl: string, options?: TLinkOptions) =>
       options?.userId ? pathname.includes(`${baseUrl}/profile/${options?.userId}`) : false,
     Icon: UserActivityIcon,
@@ -326,7 +325,7 @@ export const SIDEBAR_USER_MENU_ITEMS: {
     key: "notifications",
     label: "Inbox",
     href: `/notifications`,
-    access: EUserWorkspaceRoles.GUEST,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/notifications/`),
     Icon: Inbox,
   },

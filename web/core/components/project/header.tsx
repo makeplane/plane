@@ -8,13 +8,12 @@ import { Search, Briefcase, X } from "lucide-react";
 import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
-// constants
-import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useCommandPalette, useEventTracker, useProjectFilter, useUser } from "@/hooks/store";
+import { useCommandPalette, useEventTracker, useProjectFilter, useUserPermissions } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import HeaderFilters from "./filters";
 
 export const ProjectsBaseHeader = observer(() => {
@@ -25,9 +24,8 @@ export const ProjectsBaseHeader = observer(() => {
   // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
-  const {
-    membership: { currentWorkspaceRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
+
   const pathname = usePathname();
 
   const { searchQuery, updateSearchQuery } = useProjectFilter();
@@ -37,7 +35,10 @@ export const ProjectsBaseHeader = observer(() => {
     if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
   });
   // auth
-  const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+  const isAuthorizedUser = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
   const isArchived = pathname.includes("/archives");
 
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

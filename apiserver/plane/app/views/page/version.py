@@ -15,7 +15,7 @@ from plane.app.permissions import allow_permission, ROLE
 class PageVersionEndpoint(BaseAPIView):
 
     @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST]
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST]
     )
     def get(self, request, slug, project_id, page_id, pk=None):
         # Check if pk is provided

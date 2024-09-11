@@ -17,16 +17,16 @@ import { ModuleStatusDropdown } from  "@/components/modules/module-status-dropdo
 import { PROGRESS_STATE_GROUPS_DETAILS } from "@/constants/common";
 import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker";
 import { MODULE_STATUS } from "@/constants/module";
-import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { generateQueryParams } from "@/helpers/router.helper";
 // hooks
-import { useEventTracker, useMember, useModule, useProjectEstimates, useUser } from "@/hooks/store";
+import { useEventTracker, useMember, useModule, useProjectEstimates, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web constants
 import { EEstimateSystem } from "@/plane-web/constants/estimates";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   moduleId: string;
@@ -42,9 +42,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   // store hooks
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
   const { getModuleById, addModuleToFavorites, removeModuleFromFavorites, updateModuleDetails } = useModule();
   const { getUserDetails } = useMember();
   const { captureEvent } = useEventTracker();
@@ -52,7 +50,10 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
 
   // derived values
   const moduleDetails = getModuleById(moduleId);
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditingAllowed = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
   const isDisabled = !isEditingAllowed || !!moduleDetails?.archived_at;
   const renderIcon = Boolean(moduleDetails?.start_date) || Boolean(moduleDetails?.target_date);
 
