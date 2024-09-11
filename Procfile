@@ -1,1 +1,1 @@
-web: yarn start --filter=live
+web: ./bin/www yarn start --filter=live 
