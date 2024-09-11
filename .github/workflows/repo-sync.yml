@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
+      - fix-workflow-sync
       - preview
 
 env:
@@ -36,7 +37,7 @@ jobs:
           GH_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         run: |
           TARGET_REPO="${{ vars.SYNC_TARGET_REPO }}"
-          TARGET_BRANCH="${{ vars.SYNC_TARGET_BRANCH_NAME }}"
+          TARGET_BRANCH="sync/${{ github.head_ref }}"
           SOURCE_BRANCH="${{ env.SOURCE_BRANCH_NAME }}"
 
           git checkout $SOURCE_BRANCH
