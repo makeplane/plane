@@ -1,7 +1,6 @@
 import { ChangeEvent, useCallback, useEffect } from "react";
 import { Editor } from "@tiptap/core";
 import { ImageIcon } from "lucide-react";
-import { Spinner } from "@plane/ui";
 import { cn } from "@/helpers/common";
 import { useDropZone, useFileUpload, useUploader } from "../../../hooks/use-file-upload";
 
@@ -31,14 +30,6 @@ export const ImageUploader = ({
     }
   }, [existingFile, uploadFile]);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center p-8 rounded-lg bg-opacity-80 bg-custom-background-90 border-custom-border-400">
-        <Spinner />
-      </div>
-    );
-  }
-
   const wrapperClass = cn(
     "flex justify-start px-2 py-2 rounded-lg bg-opacity-80 border-2 border-dotted border-custom-border-400 cursor-pointer gap-2",
     "transition-all duration-200 ease-in-out",
@@ -55,11 +46,9 @@ export const ImageUploader = ({
       contentEditable={false}
       onClick={handleUploadClick}
     >
-      <ImageIcon name="Image" className="h-4 w-4 text-custom-text-200 " />
-      <div className="flex flex-col items-center justify-center gap-2 text-custom-text-300">
-        <div className="text-sm font-medium text-center">
-          {draggedInside ? "Drop image here" : existingFile ? "Uploading..." : "Add an image"}
-        </div>
+      <ImageIcon name="Image" className="h-4 w-4 text-custom-text-200" />
+      <div className="text-sm font-medium text-center">
+        {loading ? "Uploading..." : draggedInside ? "Drop image here" : existingFile ? "Uploading..." : "Add an image"}
       </div>
       <input
         className="w-0 h-0 overflow-hidden opacity-0"

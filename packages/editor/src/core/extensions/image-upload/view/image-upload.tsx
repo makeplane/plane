@@ -96,7 +96,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({ getPos, editor, node, 
                 ...node.attrs,
               },
             }}
-            updateAttributes={(attrs) => editor.commands.updateAttributes("imageBlock", attrs)}
+            updateAttributes={updateAttributes}
           />
         ) : (
           <ImageUploader onUpload={onUpload} editor={editor} fileInputRef={fileInputRef} existingFile={existingFile} />
