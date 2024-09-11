@@ -39,14 +39,14 @@ class IssueMutation:
     async def createIssue(
         self,
         info: Info,
-        name: str,
-        project: str,
-        state: str,
         slug: str,
+        project: str,
+        name: str,
+        state: str,
         priority: str,
         labels: Optional[list[strawberry.ID]] = None,
         assignees: Optional[list[strawberry.ID]] = None,
-        description: Optional[str] = {},
+        descriptionHtml: Optional[str] = {},
         parent: Optional[str] = None,
         estimatePoint: Optional[str] = None,
         startDate: Optional[datetime] = None,
@@ -58,7 +58,7 @@ class IssueMutation:
             project_id=project,
             priority=priority,
             state_id=state,
-            description=description,
+            description_html=descriptionHtml,
             parent_id=parent,
             estimate_point_id=estimatePoint,
             start_date=startDate,
@@ -131,7 +131,7 @@ class IssueMutation:
         priority: Optional[str] = None,
         labels: Optional[list[strawberry.ID]] = None,
         assignees: Optional[list[strawberry.ID]] = None,
-        description: Optional[str] = None,
+        descriptionHtml: Optional[str] = None,
         parent: Optional[str] = None,
         estimatePoint: Optional[str] = None,
         startDate: Optional[datetime] = None,
@@ -145,8 +145,8 @@ class IssueMutation:
             issue.priority = priority
         if state is not None:
             issue.state_id = state
-        if description is not None:
-            issue.description = description
+        if descriptionHtml is not None:
+            issue.description_html = descriptionHtml
         if parent is not None:
             issue.parent_id = parent
         if estimatePoint is not None:
@@ -262,24 +262,23 @@ class IssueUserPropertyMutation:
 
 @strawberry.type
 class IssueAttachmentMutation:
-
     # @strawberry.mutation(
     #     extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
     # )
     # def upload_file(self, file: Upload, info: Info) -> bool:
     #     content = file.read()
     #     filename = file.filename
-#     @strawberry.mutation(
-#         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-#     )
-#     async def upload_file(self, file: Upload, info: Info) -> bool:
-#         content = await sync_to_async(file.read)()
-#         filename = file.filename
+    #     @strawberry.mutation(
+    #         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
+    #     )
+    #     async def upload_file(self, file: Upload, info: Info) -> bool:
+    #         content = await sync_to_async(file.read)()
+    #         filename = file.filename
 
-#         # Save the file using Django's file storage
-#         await sync_to_async(default_storage.save)(filename, content)
+    #         # Save the file using Django's file storage
+    #         await sync_to_async(default_storage.save)(filename, content)
 
-#         return True
+    #         return True
 
     @strawberry.mutation(
         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
