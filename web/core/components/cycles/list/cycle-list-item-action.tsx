@@ -15,13 +15,14 @@ import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 // constants
 import { CYCLE_STATUS } from "@/constants/cycle";
 import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "@/constants/event-tracker";
-import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { findHowManyDaysLeft, getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // hooks
-import { useCycle, useEventTracker, useMember, useUser } from "@/hooks/store";
+import { useCycle, useEventTracker, useMember, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { CycleService } from "@/services/cycle.service";
+
 const cycleService = new CycleService();
 
 type Props = {
@@ -44,9 +45,8 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
   // store hooks
   const { addCycleToFavorites, removeCycleFromFavorites, updateCycleDetails } = useCycle();
   const { captureEvent } = useEventTracker();
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
+
   const { getUserDetails } = useMember();
 
   // form
@@ -56,7 +56,10 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
 
   // derived values
   const cycleStatus = cycleDetails.status ? (cycleDetails.status.toLocaleLowerCase() as TCycleGroups) : "draft";
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditingAllowed = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
   const renderIcon = Boolean(cycleDetails.start_date) || Boolean(cycleDetails.end_date);
   const currentCycle = CYCLE_STATUS.find((status) => status.value === cycleStatus);
   const daysLeft = findHowManyDaysLeft(cycleDetails.end_date) ?? 0;

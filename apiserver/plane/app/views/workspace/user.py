@@ -288,7 +288,7 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
             is_active=True,
         )
         projects = []
-        if requesting_workspace_member.role >= 10:
+        if requesting_workspace_member.role >= 15:
             projects = (
                 Project.objects.filter(
                     workspace__slug=slug,

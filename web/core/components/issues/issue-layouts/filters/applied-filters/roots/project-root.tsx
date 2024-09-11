@@ -7,9 +7,10 @@ import { Header, EHeaderVariant } from "@plane/ui";
 import { AppliedFiltersList, SaveFilterView } from "@/components/issues";
 // constants
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
-import { EUserProjectRoles } from "@/constants/project";
-import { useLabel, useProjectState, useUser } from "@/hooks/store";
+import { useLabel, useProjectState, useUserPermissions } from "@/hooks/store";
 import { useIssues } from "@/hooks/store/use-issues";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+
 // types
 
 export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
@@ -23,12 +24,14 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
   const {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.PROJECT);
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
+
   const { projectStates } = useProjectState();
   // derived values
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditingAllowed = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
   const userFilters = issueFilters?.filters;
   // filters whose value not null or empty array
   const appliedFilters: IIssueFilterOptions = {};

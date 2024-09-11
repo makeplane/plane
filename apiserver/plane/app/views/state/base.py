@@ -9,7 +9,8 @@ from rest_framework import status
 from .. import BaseViewSet
 from plane.app.serializers import StateSerializer
 from plane.app.permissions import (
-    ProjectEntityPermission,
+    ROLE,
+    allow_permission
 )
 from plane.db.models import State, Issue
 from plane.utils.cache import invalidate_cache
@@ -18,9 +19,6 @@ from plane.utils.cache import invalidate_cache
 class StateViewSet(BaseViewSet):
     serializer_class = StateSerializer
     model = State
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
 
     def get_queryset(self):
         return self.filter_queryset(
@@ -42,6 +40,7 @@ class StateViewSet(BaseViewSet):
     @invalidate_cache(
         path="workspaces/:slug/states/", url_params=True, user=False
     )
+    @allow_permission([ROLE.ADMIN])
     def create(self, request, slug, project_id):
         serializer = StateSerializer(data=request.data)
         if serializer.is_valid():
@@ -49,6 +48,7 @@ class StateViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
         states = StateSerializer(self.get_queryset(), many=True).data
         grouped = request.GET.get("grouped", False)
@@ -65,6 +65,7 @@ class StateViewSet(BaseViewSet):
     @invalidate_cache(
         path="workspaces/:slug/states/", url_params=True, user=False
     )
+    @allow_permission([ROLE.ADMIN])
     def mark_as_default(self, request, slug, project_id, pk):
         # Select all the states which are marked as default
         _ = State.objects.filter(
@@ -78,6 +79,7 @@ class StateViewSet(BaseViewSet):
     @invalidate_cache(
         path="workspaces/:slug/states/", url_params=True, user=False
     )
+    @allow_permission([ROLE.ADMIN])
     def destroy(self, request, slug, project_id, pk):
         state = State.objects.get(
             is_triage=False,

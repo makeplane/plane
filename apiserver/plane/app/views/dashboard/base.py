@@ -52,23 +52,28 @@ from .. import BaseAPIView
 
 
 def dashboard_overview_stats(self, request, slug):
-    extra_filters = {}
-    if WorkspaceMember.objects.filter(
-        workspace__slug=slug,
-        member=request.user,
-        role=5,
-        is_active=True,
-    ).exists():
-        extra_filters = {"created_by": request.user}
-
     assigned_issues = (
         Issue.issue_objects.filter(
             project__project_projectmember__is_active=True,
             project__project_projectmember__member=request.user,
             workspace__slug=slug,
             assignees__in=[request.user],
+        ).filter(
+            Q(
+                project__project_projectmember__role=5,
+                project__guest_view_all_features=True,
+            )
+            | Q(
+                project__project_projectmember__role=5,
+                project__guest_view_all_features=False,
+                created_by=self.request.user,
+            )
+            |
+            # For other roles (role < 5), show all issues
+            Q(project__project_projectmember__role__gt=5),
+            project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
         )
-        .filter(**extra_filters)
         .count()
     )
 
@@ -80,8 +85,22 @@ def dashboard_overview_stats(self, request, slug):
             project__project_projectmember__member=request.user,
             workspace__slug=slug,
             assignees__in=[request.user],
+        ).filter(
+            Q(
+                project__project_projectmember__role=5,
+                project__guest_view_all_features=True,
+            )
+            | Q(
+                project__project_projectmember__role=5,
+                project__guest_view_all_features=False,
+                created_by=self.request.user,
+            )
+            |
+            # For other roles (role < 5), show all issues
+            Q(project__project_projectmember__role__gt=5),
+            project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
         )
-        .filter(**extra_filters)
         .count()
     )
 
@@ -91,8 +110,22 @@ def dashboard_overview_stats(self, request, slug):
             project__project_projectmember__is_active=True,
             project__project_projectmember__member=request.user,
             created_by_id=request.user.id,
+        ).filter(
+            Q(
+                project__project_projectmember__role=5,
+                project__guest_view_all_features=True,
+            )
+            | Q(
+                project__project_projectmember__role=5,
+                project__guest_view_all_features=False,
+                created_by=self.request.user,
+            )
+            |
+            # For other roles (role < 5), show all issues
+            Q(project__project_projectmember__role__gt=5),
+            project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
         )
-        .filter(**extra_filters)
         .count()
     )
 
@@ -103,8 +136,22 @@ def dashboard_overview_stats(self, request, slug):
             project__project_projectmember__member=request.user,
             assignees__in=[request.user],
             state__group="completed",
+        ).filter(
+            Q(
+                project__project_projectmember__role=5,
+                project__guest_view_all_features=True,
+            )
+            | Q(
+                project__project_projectmember__role=5,
+                project__guest_view_all_features=False,
+                created_by=self.request.user,
+            )
+            |
+            # For other roles (role < 5), show all issues
+            Q(project__project_projectmember__role__gt=5),
+            project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
         )
-        .filter(**extra_filters)
         .count()
     )
 

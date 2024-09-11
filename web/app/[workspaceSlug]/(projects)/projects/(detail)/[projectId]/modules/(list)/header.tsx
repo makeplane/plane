@@ -7,11 +7,11 @@ import { Breadcrumbs, Button, DiceIcon, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 import { ModuleViewHeader } from "@/components/modules";
-// constants
-import { EUserProjectRoles } from "@/constants/project";
 // hooks
-import { useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
+import { useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
+// constants
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const ModulesListHeader: React.FC = observer(() => {
   // router
@@ -20,14 +20,15 @@ export const ModulesListHeader: React.FC = observer(() => {
   // store hooks
   const { toggleCreateModuleModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
+
   const { currentProjectDetails, loader } = useProject();
 
   // auth
-  const canUserCreateModule =
-    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
+  const canUserCreateModule = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
 
   return (
     <Header>

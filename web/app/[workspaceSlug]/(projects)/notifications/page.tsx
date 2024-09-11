@@ -14,7 +14,7 @@ import { IssuePeekOverview } from "@/components/issues";
 import { EmptyStateType } from "@/constants/empty-state";
 import { ENotificationLoader, ENotificationQueryParamType } from "@/constants/notification";
 // hooks
-import { useIssueDetail, useUser, useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
+import { useIssueDetail, useUserPermissions, useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 
 const WorkspaceDashboardPage = observer(() => {
@@ -28,9 +28,7 @@ const WorkspaceDashboardPage = observer(() => {
     notificationIdsByWorkspaceId,
     getNotifications,
   } = useWorkspaceNotifications();
-  const {
-    membership: { fetchUserProjectInfo },
-  } = useUser();
+  const { fetchUserProjectInfo } = useUserPermissions();
   const { setPeekIssue } = useIssueDetail();
   // derived values
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Inbox` : undefined;

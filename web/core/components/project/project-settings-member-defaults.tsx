@@ -7,14 +7,15 @@ import { Controller, useForm } from "react-hook-form";
 import useSWR from "swr";
 import { IProject, IUserLite, IWorkspace } from "@plane/types";
 // ui
-import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
+import { Loader, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 // components
 import { MemberSelect } from "@/components/project";
 // constants
 import { PROJECT_MEMBERS } from "@/constants/fetch-keys";
-import { EUserProjectRoles } from "@/constants/project";
 // hooks
-import { useProject, useUser } from "@/hooks/store";
+import { useProject, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+
 // types
 
 const defaultValues: Partial<IProject> = {
@@ -26,12 +27,16 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
   // router
   const { workspaceSlug, projectId } = useParams();
   // store hooks
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
+
   const { currentProjectDetails, fetchProjectDetails, updateProject } = useProject();
   // derived values
-  const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
+  const isAdmin = allowPermissions(
+    [EUserPermissions.ADMIN],
+    EUserPermissionsLevel.PROJECT,
+    currentProjectDetails?.workspace_detail?.slug,
+    currentProjectDetails?.id
+  );
   // form info
   const { reset, control } = useForm<IProject>({ defaultValues });
   // fetching user members
@@ -70,6 +75,24 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
           : (formData.default_assignee ?? currentProjectDetails?.default_assignee),
       project_lead:
         formData.project_lead === "none" ? null : (formData.project_lead ?? currentProjectDetails?.project_lead),
+    })
+      .then(() => {
+        setToast({
+          title: "Success!",
+          type: TOAST_TYPE.SUCCESS,
+          message: "Project updated successfully",
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  const toggleGuestViewAllIssues = async (value: boolean) => {
+    if (!workspaceSlug || !projectId) return;
+
+    updateProject(workspaceSlug.toString(), projectId.toString(), {
+      guest_view_all_features: value,
     })
       .then(() => {
         setToast({
@@ -142,6 +165,24 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
           </div>
         </div>
       </div>
+      {currentProjectDetails && (
+        <div className="relative pb-4 flex justify-between items-center gap-3">
+          <div className="space-y-1">
+            <h3 className="text-lg font-medium text-custom-text-100">
+              Grant view access to all issues for guest users:
+            </h3>
+            <p className="text-sm text-custom-text-200">
+              This will allow guests to have view access to all the project issues.
+            </p>
+          </div>
+          <ToggleSwitch
+            value={currentProjectDetails?.guest_view_all_features}
+            onChange={() => toggleGuestViewAllIssues(!currentProjectDetails?.guest_view_all_features)}
+            disabled={!isAdmin}
+            size="md"
+          />
+        </div>
+      )}
     </>
   );
 });

@@ -2,13 +2,6 @@
 import { Globe2, Lock, LucideIcon } from "lucide-react";
 import { TProjectAppliedDisplayFilterKeys, TProjectOrderByOptions } from "@plane/types";
 
-export enum EUserProjectRoles {
-  GUEST = 5,
-  VIEWER = 10,
-  MEMBER = 15,
-  ADMIN = 20,
-}
-
 export const NETWORK_CHOICES: {
   key: 0 | 2;
   label: string;

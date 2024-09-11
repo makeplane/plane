@@ -11,9 +11,11 @@ import { LogOut } from "lucide-react";
 // hooks
 import { Button, TOAST_TYPE, setToast, Tooltip } from "@plane/ui";
 import { LogoSpinner } from "@/components/common";
-import { useMember, useProject, useUser, useWorkspace } from "@/hooks/store";
+import { useMember, useProject, useUser, useUserPermissions, useWorkspace } from "@/hooks/store";
 import { useFavorite } from "@/hooks/store/use-favorite";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// constants
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // images
 import PlaneBlackLogo from "@/public/plane-logos/black-horizontal-with-blue-logo.png";
 import PlaneWhiteLogo from "@/public/plane-logos/white-horizontal-with-blue-logo.png";
@@ -30,7 +32,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   // next themes
   const { resolvedTheme } = useTheme();
   // store hooks
-  const { membership, signOut, data: currentUser, canPerformWorkspaceMemberActions } = useUser();
+  const { signOut, data: currentUser } = useUser();
   const { fetchProjects } = useProject();
   const { fetchFavorite } = useFavorite();
   const {
@@ -38,6 +40,13 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   } = useMember();
   const { workspaces } = useWorkspace();
   const { isMobile } = usePlatformOS();
+  const { workspaceInfoBySlug, fetchUserWorkspaceInfo, fetchUserProjectPermissions, allowPermissions } =
+    useUserPermissions();
+  // derived values
+  const canPerformWorkspaceMemberActions = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
 
   const planeLogo = resolvedTheme === "dark" ? PlaneWhiteLogo : PlaneBlackLogo;
   const allWorkspaces = workspaces ? Object.values(workspaces) : undefined;
@@ -46,10 +55,16 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
 
   // fetching user workspace information
   useSWR(
-    workspaceSlug && currentWorkspace ? `WORKSPACE_MEMBERS_ME_${workspaceSlug}` : null,
-    workspaceSlug && currentWorkspace ? () => membership.fetchUserWorkspaceInfo(workspaceSlug.toString()) : null,
+    workspaceSlug && currentWorkspace ? `WORKSPACE_MEMBER_ME_INFORMATION_${workspaceSlug}` : null,
+    workspaceSlug && currentWorkspace ? () => fetchUserWorkspaceInfo(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
+  useSWR(
+    workspaceSlug && currentWorkspace ? `WORKSPACE_PROJECTS_ROLES_INFORMATION_${workspaceSlug}` : null,
+    workspaceSlug && currentWorkspace ? () => fetchUserProjectPermissions(workspaceSlug.toString()) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+
   // fetching workspace projects
   useSWR(
     workspaceSlug && currentWorkspace ? `WORKSPACE_PROJECTS_${workspaceSlug}` : null,
@@ -60,14 +75,6 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   useSWR(
     workspaceSlug && currentWorkspace ? `WORKSPACE_MEMBERS_${workspaceSlug}` : null,
     workspaceSlug && currentWorkspace ? () => fetchWorkspaceMembers(workspaceSlug.toString()) : null,
-    { revalidateIfStale: false, revalidateOnFocus: false }
-  );
-  // fetch workspace user projects role
-  useSWR(
-    workspaceSlug && currentWorkspace ? `WORKSPACE_PROJECTS_ROLE_${workspaceSlug}` : null,
-    workspaceSlug && currentWorkspace
-      ? () => membership.fetchUserWorkspaceProjectsRole(workspaceSlug.toString())
-      : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetch workspace favorite
@@ -91,6 +98,9 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     );
   };
 
+  // derived values
+  const currentWorkspaceInfo = workspaceSlug && workspaceInfoBySlug(workspaceSlug.toString());
+
   // if list of workspaces are not there then we have to render the spinner
   if (allWorkspaces === undefined) {
     return (
@@ -103,11 +113,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   }
 
   // if workspaces are there and we are trying to access the workspace that we are not part of then show the existing workspaces
-  if (
-    currentWorkspace === undefined &&
-    !membership.currentWorkspaceMemberInfo &&
-    membership.hasPermissionToCurrentWorkspace === undefined
-  ) {
+  if (currentWorkspace === undefined && !currentWorkspaceInfo) {
     return (
       <div className="relative flex h-screen w-full flex-col items-center justify-center bg-custom-background-90 ">
         <div className="container relative mx-auto flex h-full w-full flex-col overflow-hidden overflow-y-auto px-5 py-14 md:px-0">
@@ -154,10 +160,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   }
 
   // while user does not have access to view that workspace
-  if (
-    membership.hasPermissionToCurrentWorkspace !== undefined &&
-    membership.hasPermissionToCurrentWorkspace === false
-  ) {
+  if (currentWorkspaceInfo === undefined) {
     return (
       <div className={`h-screen w-full overflow-hidden bg-custom-background-100`}>
         <div className="grid h-full place-items-center p-4">
