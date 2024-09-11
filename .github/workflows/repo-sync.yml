@@ -36,7 +36,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         run: |
-          REF="${{ github.head_ref }}"
+          REF="${{ github.ref }}"
           TARGET_REPO="${{ vars.SYNC_TARGET_REPO }}"
           TARGET_BRANCH="sync/${REF}"
           SOURCE_BRANCH="${{ env.SOURCE_BRANCH_NAME }}"
