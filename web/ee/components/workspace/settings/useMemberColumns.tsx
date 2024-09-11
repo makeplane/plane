@@ -1,6 +1,6 @@
 import { useMemberColumns as useCeMemberColumns } from "ce/components/workspace/settings/useMemberColumns";
 import { RowData } from "@/components/workspace/settings/member-columns";
-import { EUserWorkspaceRoles } from "@/constants/workspace";
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 export const useMemberColumns = () => {
@@ -15,7 +15,7 @@ export const useMemberColumns = () => {
       key: "Billing Status",
       content: "Billing Status",
       tdRender: (rowData: RowData) => (
-        <div className="w-36">{rowData.role < EUserWorkspaceRoles.MEMBER ? "Inactive" : "Active"}</div>
+        <div className="w-36">{rowData.role < EUserPermissions.MEMBER ? "Inactive" : "Active"}</div>
       ),
     },
     joiningDate,

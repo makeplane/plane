@@ -4,7 +4,8 @@ import { action, computed, makeObservable, observable, reaction, runInAction } f
 import { TLogoProps, TPage } from "@plane/types";
 // constants
 import { EPageAccess } from "@/constants/page";
-import { EUserWorkspaceRoles } from "@/constants/workspace";
+// plane web constants
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // plane web services
 import { WorkspacePageService } from "@/plane-web/services/page";
 // plane web store
@@ -213,9 +214,13 @@ export class WorkspacePageDetails implements IWorkspacePageDetails {
    * @description returns true if the current logged in user can edit the page
    */
   get canCurrentUserEditPage() {
-    const currentUserWorkspaceRole = this.store.user.membership.currentWorkspaceRole;
+    const { workspaceSlug } = this.store.router;
+
+    const currentUserWorkspaceRole = this.store.user.permission.workspaceInfoBySlug(
+      workspaceSlug?.toString() || ""
+    )?.role;
     return (
-      this.isCurrentUserOwner || (!!currentUserWorkspaceRole && currentUserWorkspaceRole >= EUserWorkspaceRoles.MEMBER)
+      this.isCurrentUserOwner || (!!currentUserWorkspaceRole && currentUserWorkspaceRole >= EUserPermissions.MEMBER)
     );
   }
 
@@ -223,9 +228,13 @@ export class WorkspacePageDetails implements IWorkspacePageDetails {
    * @description returns true if the current logged in user can create a duplicate the page
    */
   get canCurrentUserDuplicatePage() {
-    const currentUserWorkspaceRole = this.store.user.membership.currentWorkspaceRole;
+    const { workspaceSlug } = this.store.router;
+
+    const currentUserWorkspaceRole = this.store.user.permission.workspaceInfoBySlug(
+      workspaceSlug?.toString() || ""
+    )?.role;
     return (
-      this.isCurrentUserOwner || (!!currentUserWorkspaceRole && currentUserWorkspaceRole >= EUserWorkspaceRoles.MEMBER)
+      this.isCurrentUserOwner || (!!currentUserWorkspaceRole && currentUserWorkspaceRole >= EUserPermissions.MEMBER)
     );
   }
 
@@ -233,9 +242,13 @@ export class WorkspacePageDetails implements IWorkspacePageDetails {
    * @description returns true if the current logged in user can lock the page
    */
   get canCurrentUserLockPage() {
-    const currentUserWorkspaceRole = this.store.user.membership.currentWorkspaceRole;
+    const { workspaceSlug } = this.store.router;
+
+    const currentUserWorkspaceRole = this.store.user.permission.workspaceInfoBySlug(
+      workspaceSlug?.toString() || ""
+    )?.role;
     return (
-      this.isCurrentUserOwner || (!!currentUserWorkspaceRole && currentUserWorkspaceRole >= EUserWorkspaceRoles.MEMBER)
+      this.isCurrentUserOwner || (!!currentUserWorkspaceRole && currentUserWorkspaceRole >= EUserPermissions.MEMBER)
     );
   }
 
@@ -250,32 +263,48 @@ export class WorkspacePageDetails implements IWorkspacePageDetails {
    * @description returns true if the current logged in user can archive the page
    */
   get canCurrentUserArchivePage() {
-    const currentUserWorkspaceRole = this.store.user.membership.currentWorkspaceRole;
-    return this.isCurrentUserOwner || currentUserWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+    const { workspaceSlug } = this.store.router;
+
+    const currentUserWorkspaceRole = this.store.user.permission.workspaceInfoBySlug(
+      workspaceSlug?.toString() || ""
+    )?.role;
+
+    return this.isCurrentUserOwner || currentUserWorkspaceRole === EUserPermissions.ADMIN;
   }
 
   /**
    * @description returns true if the current logged in user can delete the page
    */
   get canCurrentUserDeletePage() {
-    const currentUserWorkspaceRole = this.store.user.membership.currentWorkspaceRole;
-    return this.isCurrentUserOwner || currentUserWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+    const { workspaceSlug } = this.store.router;
+
+    const currentUserWorkspaceRole = this.store.user.permission.workspaceInfoBySlug(
+      workspaceSlug?.toString() || ""
+    )?.role;
+    return this.isCurrentUserOwner || currentUserWorkspaceRole === EUserPermissions.ADMIN;
   }
 
   /**
    * @description returns true if the current logged in user can favorite the page
    */
   get canCurrentUserFavoritePage() {
-    const currentUserWorkspaceRole = this.store.user.membership.currentWorkspaceRole;
-    return !!currentUserWorkspaceRole && currentUserWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+    const { workspaceSlug } = this.store.router;
+
+    const currentUserWorkspaceRole = this.store.user.permission.workspaceInfoBySlug(
+      workspaceSlug?.toString() || ""
+    )?.role;
+
+    return !!currentUserWorkspaceRole && currentUserWorkspaceRole >= EUserPermissions.MEMBER;
   }
 
   /**
    * @description returns true if the page can be edited
    */
   get isContentEditable() {
+    const { workspaceSlug } = this.store.router;
+
     const isOwner = this.isCurrentUserOwner;
-    const currentUserRole = this.store.user.membership.currentWorkspaceRole;
+    const currentUserRole = this.store.user.permission.workspaceInfoBySlug(workspaceSlug?.toString() || "")?.role;
     const isPublic = this.access === EPageAccess.PUBLIC;
     const isArchived = this.archived_at;
     const isLocked = this.is_locked;
@@ -283,7 +312,7 @@ export class WorkspacePageDetails implements IWorkspacePageDetails {
     return (
       !isArchived &&
       !isLocked &&
-      (isOwner || (isPublic && !!currentUserRole && currentUserRole >= EUserWorkspaceRoles.MEMBER))
+      (isOwner || (isPublic && !!currentUserRole && currentUserRole >= EUserPermissions.MEMBER))
     );
   }
 

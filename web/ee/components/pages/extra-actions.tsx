@@ -3,14 +3,14 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
 import { Button } from "@plane/ui";
-//
-import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
 // hooks
-import { usePage, useUser } from "@/hooks/store";
+import { usePage, useUser, useUserPermissions } from "@/hooks/store";
 // plane web components
 import { PublishPageModal } from "@/plane-web/components/pages";
+// plane web constants
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web hooks
 import { usePublishPage, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
@@ -21,9 +21,7 @@ export const PageDetailsHeaderExtraActions = observer(() => {
   // params
   const { workspaceSlug, projectId, pageId } = useParams();
   // store hooks
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
   const { anchor, isCurrentUserOwner } = usePage(pageId.toString());
   const { fetchProjectPagePublishSettings, getPagePublishSettings, publishProjectPage, unpublishProjectPage } =
     usePublishPage();
@@ -33,7 +31,10 @@ export const PageDetailsHeaderExtraActions = observer(() => {
   const isDeployed = !!anchor;
   const pagePublishSettings = getPagePublishSettings(pageId.toString());
 
-  const isPublishAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isPublishAllowed = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
 
   const SPACE_APP_URL = SPACE_BASE_URL.trim() === "" ? window.location.origin : SPACE_BASE_URL;
   const publishLink = `${SPACE_APP_URL}${SPACE_BASE_PATH}/pages/${anchor}`;
