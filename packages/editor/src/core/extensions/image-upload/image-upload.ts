@@ -95,12 +95,12 @@ export const ImageUpload = ({
           ({ commands }) => {
             const fileId = uuidv4();
             if (props?.file && props?.event === "drop") {
-              (this.editor.storage.imageUpload as UploadImageExtensionStorage).fileMap.set(fileId, {
+              (this.editor.storage.imageBlock as UploadImageExtensionStorage).fileMap.set(fileId, {
                 file: props.file,
                 event: props.event,
               });
             } else if (props.event !== "drop") {
-              (this.editor.storage.imageUpload as UploadImageExtensionStorage).fileMap.set(fileId, {
+              (this.editor.storage.imageBlock as UploadImageExtensionStorage).fileMap.set(fileId, {
                 event: props.event,
               });
             }

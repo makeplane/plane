@@ -1,6 +1,6 @@
 import React, { useRef, useState, useCallback, useEffect } from "react";
 import { Node as ProsemirrorNode } from "@tiptap/pm/model";
-import { Editor, NodeViewWrapper } from "@tiptap/react";
+import { Editor } from "@tiptap/react";
 
 interface ImageBlockViewProps {
   editor: Editor;
@@ -96,26 +96,24 @@ export const ImageBlockView: React.FC<ImageBlockViewProps> = (props) => {
   }, [handleResize, handleResizeEnd]);
 
   return (
-    <NodeViewWrapper>
-      <div ref={containerRef} className="relative inline-block" onMouseDown={handleMouseDown} data-drag-handle>
-        <img
-          ref={imageRef}
-          src={src}
-          alt=""
-          className="max-w-full object-contain"
-          style={{ width: size.width, height: size.height }}
-        />
-        {isSelected && (
-          <>
-            <div className="absolute inset-0 border-2 border-blue-500 pointer-events-none" />
-            <div
-              className="absolute bottom-0 right-0 w-4 h-4 bg-blue-500 cursor-se-resize"
-              onMouseDown={handleResizeStart}
-            />
-          </>
-        )}
-      </div>
-    </NodeViewWrapper>
+    <div ref={containerRef} className="relative inline-block" onMouseDown={handleMouseDown} data-drag-handle>
+      <img
+        ref={imageRef}
+        src={src}
+        alt=""
+        className="max-w-full object-contain"
+        style={{ width: size.width, height: size.height }}
+      />
+      {isSelected && (
+        <>
+          <div className="absolute inset-0 border-2 border-blue-500 pointer-events-none" />
+          <div
+            className="absolute bottom-0 right-0 w-4 h-4 bg-blue-500 cursor-se-resize"
+            onMouseDown={handleResizeStart}
+          />
+        </>
+      )}
+    </div>
   );
 };
 

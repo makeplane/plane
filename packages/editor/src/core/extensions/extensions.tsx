@@ -110,7 +110,7 @@ export const CoreEditorExtensions = ({
       class: "rounded-md",
     },
   }),
-  ImageUpload({
+  ImageBlock({
     deleteFile,
     restoreFile,
     uploadFile,
@@ -118,7 +118,6 @@ export const CoreEditorExtensions = ({
   }).configure({
     clientId: provider?.document?.clientID,
   }),
-  ImageBlock,
   TiptapUnderline,
   TextStyle,
   TaskList.configure({

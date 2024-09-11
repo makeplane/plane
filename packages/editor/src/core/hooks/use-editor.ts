@@ -223,7 +223,6 @@ export const useEditor = (props: CustomEditorProps) => {
           }
         });
         const selection = nodesArray.join("");
-        console.log(selection);
         return selection;
       },
       insertText: (contentHTML, insertOnNextLine) => {
