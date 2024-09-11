@@ -15,15 +15,14 @@ import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/u
 import IntegrationGuide from "@/plane-web/components/integration/guide";
 // plane web hooks
 import { useFlag } from "@/plane-web/hooks/store";
+import { useUserProfile } from "@/hooks/store/use-user-profile";
 
 const ImportsPage = observer(() => {
   // router
   const { workspaceSlug } = useParams();
   // store hooks
-  const {
-    userProfile: { data: userProfile },
-    membership: { currentWorkspaceRole },
-  } = useUser();
+  const { data: currentUserProfile } = useUserProfile();
+
   const { config } = useInstance();
 
   const { currentWorkspace } = useWorkspace();
@@ -31,7 +30,7 @@ const ImportsPage = observer(() => {
 
   // derived values
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
-  const isDarkMode = userProfile?.theme.theme === "dark";
+  const isDarkMode = currentUserProfile?.theme.theme === "dark";
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Imports` : undefined;
 
   const isSiloIntegrationEnabled = useFlag(workspaceSlug?.toString(), "SILO_INTEGRATION");
@@ -56,8 +55,8 @@ const ImportsPage = observer(() => {
           </div>
           <div
             className={cn("item-center flex min-h-[25rem] justify-between rounded-xl", {
-              "bg-gradient-to-l from-[#343434] via-[#484848]  to-[#1E1E1E]": userProfile?.theme.theme === "dark",
-              "bg-gradient-to-l from-[#3b5ec6] to-[#f5f7fe]": userProfile?.theme.theme === "light",
+              "bg-gradient-to-l from-[#343434] via-[#484848]  to-[#1E1E1E]": currentUserProfile?.theme.theme === "dark",
+              "bg-gradient-to-l from-[#3b5ec6] to-[#f5f7fe]": currentUserProfile?.theme.theme === "light",
             })}
           >
             <div className="relative flex flex-col justify-center gap-7 pl-8 lg:w-1/2">

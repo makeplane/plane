@@ -3,7 +3,6 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { useParams } from "next/navigation";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import useSWR from "swr";
 import { Info, Plus, X } from "lucide-react";
@@ -54,8 +53,6 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
   const { workspaceSlug } = useParams();
   // store hooks
   const { workspaceInfoBySlug } = useUserPermissions();
-  // router
-  const { workspaceSlug } = useParams();
   // plane web hooks
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
   // derived values
@@ -122,9 +119,7 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
     (member) => !!member.email && (member.role === 15 || member.role === 20)
   ).length;
   // count total guests from the input fields
-  const totalGuests = memberDetails?.filter(
-    (member) => !!member.email && (member.role === 5 || member.role === 10)
-  ).length;
+  const totalGuests = memberDetails?.filter((member) => !!member.email && member.role === 5).length;
   // check if the invite status is disabled from the backend
   const isInviteStatusDisabled =
     !memberInviteCheckData?.invite_allowed ||

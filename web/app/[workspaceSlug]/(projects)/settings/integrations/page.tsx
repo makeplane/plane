@@ -13,7 +13,7 @@ import { APP_INTEGRATIONS } from "@/constants/fetch-keys";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useUserPermissions, useWorkspace } from "@/hooks/store";
+import { useUserPermissions, useUserProfile, useWorkspace } from "@/hooks/store";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // services
 import { IntegrationService } from "@/services/integrations";
@@ -24,15 +24,13 @@ const WorkspaceIntegrationsPage = observer(() => {
   // router
   const { workspaceSlug } = useParams();
   // store hooks
-  const {
-    userProfile: { data: userProfile },
-    membership: { currentWorkspaceRole },
-  } = useUser();
+  const { data: currentUserProfile } = useUserProfile();
+
   const { currentWorkspace } = useWorkspace();
   const { allowPermissions } = useUserPermissions();
 
   // derived values
-  const isDarkMode = userProfile?.theme.theme === "dark";
+  const isDarkMode = currentUserProfile?.theme.theme === "dark";
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Integrations` : undefined;
 
@@ -58,8 +56,8 @@ const WorkspaceIntegrationsPage = observer(() => {
         </div>
         <div
           className={cn("item-center flex min-h-[25rem] justify-between rounded-xl", {
-            "bg-gradient-to-l from-[#343434] via-[#484848]  to-[#1E1E1E]": userProfile?.theme.theme === "dark",
-            "bg-gradient-to-l from-[#3b5ec6] to-[#f5f7fe]": userProfile?.theme.theme === "light",
+            "bg-gradient-to-l from-[#343434] via-[#484848]  to-[#1E1E1E]": currentUserProfile?.theme.theme === "dark",
+            "bg-gradient-to-l from-[#3b5ec6] to-[#f5f7fe]": currentUserProfile?.theme.theme === "light",
           })}
         >
           <div className="relative flex flex-col justify-center gap-7 pl-8 lg:w-1/2">
