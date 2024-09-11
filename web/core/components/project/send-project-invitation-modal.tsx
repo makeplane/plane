@@ -6,15 +6,15 @@ import { useParams } from "next/navigation";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { ChevronDown, Plus, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
-// hooks
 // ui
 import { Avatar, Button, CustomSelect, CustomSearchSelect, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { PROJECT_MEMBER_ADDED } from "@/constants/event-tracker";
-import { EUserProjectRoles } from "@/constants/project";
-import { EUserWorkspaceRoles, ROLE } from "@/constants/workspace";
-import { useEventTracker, useMember, useUser } from "@/hooks/store";
-// constants
+import { ROLE } from "@/constants/workspace";
+// hooks
+import { useEventTracker, useMember, useUserPermissions } from "@/hooks/store";
+// plane-web constants
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   isOpen: boolean;
@@ -23,7 +23,7 @@ type Props = {
 };
 
 type member = {
-  role: EUserProjectRoles;
+  role: EUserPermissions;
   member_id: string;
 };
 
@@ -46,9 +46,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { captureEvent } = useEventTracker();
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { projectUserInfo } = useUserPermissions();
   const {
     project: { projectMemberIds, bulkAddMembersToProject },
     workspace: { workspaceMemberIds, getWorkspaceMemberDetails },
@@ -67,6 +65,8 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
     control,
     name: "members",
   });
+
+  const currentProjectRole = projectUserInfo?.[workspaceSlug?.toString()]?.[projectId?.toString()]?.role;
 
   const uninvitedPeople = workspaceMemberIds?.filter((userId) => {
     const isInvited = projectMemberIds?.find((u) => u === userId);
@@ -173,12 +173,10 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
     const currentMemberWorkspaceRole = getWorkspaceMemberDetails(value)?.role;
     if (!value || !currentMemberWorkspaceRole) return ROLE;
 
-    const isGuestOrViewer = [EUserWorkspaceRoles.GUEST, EUserWorkspaceRoles.VIEWER].includes(
-      currentMemberWorkspaceRole
-    );
+    const isGuest = [EUserPermissions.GUEST].includes(currentMemberWorkspaceRole);
 
     return Object.fromEntries(
-      Object.entries(ROLE).filter(([key]) => !isGuestOrViewer || [5, 10].includes(parseInt(key)))
+      Object.entries(ROLE).filter(([key]) => !isGuest || [5].includes(parseInt(key)))
     );
   };
 
@@ -258,7 +256,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                                       const newValue = ROLE[workspaceRole].toUpperCase();
                                       setValue(
                                         `members.${index}.role`,
-                                        EUserProjectRoles[newValue as keyof typeof EUserProjectRoles]
+                                        EUserPermissions[newValue as keyof typeof EUserPermissions]
                                       );
                                     }}
                                     options={options}
@@ -297,7 +295,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                                     {Object.entries(
                                       checkCurrentOptionWorkspaceRole(watch(`members.${index}.member_id`))
                                     ).map(([key, label]) => {
-                                      if (parseInt(key) > (currentProjectRole ?? EUserProjectRoles.GUEST)) return null;
+                                      if (parseInt(key) > (currentProjectRole ?? EUserPermissions.GUEST)) return null;
 
                                       return (
                                         <CustomSelect.Option key={key} value={key}>

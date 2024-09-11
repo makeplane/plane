@@ -8,6 +8,7 @@ import { TModuleDisplayFilters, TModuleFilters } from "@plane/types";
 import { TModuleStatus } from "@plane/ui";
 import { FilterOption } from "@/components/issues";
 import { FilterLead, FilterMembers, FilterStartDate, FilterStatus, FilterTargetDate } from "@/components/modules";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
 
 type Props = {
@@ -30,6 +31,8 @@ export const ModuleFiltersSelection: React.FC<Props> = observer((props) => {
   } = props;
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
+  // store
+  const { isMobile } = usePlatformOS();
 
   return (
     <div className="flex h-full w-full flex-col overflow-hidden">
@@ -42,7 +45,7 @@ export const ModuleFiltersSelection: React.FC<Props> = observer((props) => {
             placeholder="Search"
             value={filtersSearchQuery}
             onChange={(e) => setFiltersSearchQuery(e.target.value)}
-            autoFocus
+            autoFocus={!isMobile}
           />
           {filtersSearchQuery !== "" && (
             <button type="button" className="grid place-items-center" onClick={() => setFiltersSearchQuery("")}>

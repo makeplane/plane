@@ -22,8 +22,10 @@ export const PageInfoPopover: React.FC<Props> = (props) => {
     placement: "bottom-start",
   });
 
+  const documentsInfo = editorRef?.getDocumentInfo() || { words: 0, characters: 0, paragraphs: 0 };
+
   const secondsToReadableTime = () => {
-    const wordsCount = editorRef?.documentInfo.words || 0;
+    const wordsCount = documentsInfo.words;
     const readTimeInSeconds = Number(getReadTimeFromWordsCount(wordsCount).toFixed(0));
     return readTimeInSeconds < 60 ? `${readTimeInSeconds}s` : `${Math.ceil(readTimeInSeconds / 60)}m`;
   };
@@ -32,17 +34,17 @@ export const PageInfoPopover: React.FC<Props> = (props) => {
     {
       key: "words-count",
       title: "Words",
-      info: editorRef?.documentInfo.words,
+      info: documentsInfo.words,
     },
     {
       key: "characters-count",
       title: "Characters",
-      info: editorRef?.documentInfo.characters,
+      info: documentsInfo.characters,
     },
     {
       key: "paragraphs-count",
       title: "Paragraphs",
-      info: editorRef?.documentInfo.paragraphs,
+      info: documentsInfo.paragraphs,
     },
     {
       key: "read-time",

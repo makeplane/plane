@@ -16,6 +16,7 @@ import { HIGHLIGHT_CLASS } from "@/components/issues/issue-layouts/utils";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail, useKanbanView } from "@/hooks/store";
+import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
@@ -23,7 +24,6 @@ import { IssueIdentifier } from "@/plane-web/components/issues";
 // local components
 import { TRenderQuickActions } from "../list/list-view-types";
 import { IssueProperties } from "../properties/all-properties";
-import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { getIssueBlockId } from "../utils";
 
 interface IssueBlockProps {
@@ -61,28 +61,27 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
 
   return (
     <>
-      <WithDisplayPropertiesHOC displayProperties={displayProperties || {}} displayPropertyKey="key">
-        <div className="relative">
-          {issue.project_id && (
-            <IssueIdentifier
-              issueId={issue.id}
-              projectId={issue.project_id}
-              textContainerClassName="line-clamp-1 text-xs text-custom-text-300"
-            />
-          )}
-          <div
-            className={cn("absolute -top-1 right-0", {
-              "hidden group-hover/kanban-block:block": !isMobile,
-            })}
-            onClick={handleEventPropagation}
-          >
-            {quickActions({
-              issue,
-              parentRef: cardRef,
-            })}
-          </div>
+      <div className="relative">
+        {issue.project_id && (
+          <IssueIdentifier
+            issueId={issue.id}
+            projectId={issue.project_id}
+            textContainerClassName="line-clamp-1 text-xs text-custom-text-300"
+            displayProperties={displayProperties}
+          />
+        )}
+        <div
+          className={cn("absolute -top-1 right-0", {
+            "hidden group-hover/kanban-block:block": !isMobile,
+          })}
+          onClick={handleEventPropagation}
+        >
+          {quickActions({
+            issue,
+            parentRef: cardRef,
+          })}
         </div>
-      </WithDisplayPropertiesHOC>
+      </div>
 
       <Tooltip tooltipContent={issue.name} isMobile={isMobile} renderByDefault={false}>
         <div className="w-full line-clamp-1 text-sm text-custom-text-100">
@@ -121,15 +120,12 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
   const workspaceSlug = routerWorkspaceSlug?.toString();
   // hooks
-  const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
+  const { getIsIssuePeeked } = useIssueDetail();
+  const { handleRedirection } = useIssuePeekOverviewRedirection();
+  const { isMobile } = usePlatformOS();
 
-  const handleIssuePeekOverview = (issue: TIssue) =>
-    workspaceSlug &&
-    issue &&
-    issue.project_id &&
-    issue.id &&
-    !getIsIssuePeeked(issue.id) &&
-    setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
+  // handlers
+  const handleIssuePeekOverview = (issue: TIssue) => handleRedirection(workspaceSlug, issue, isMobile);
 
   const issue = issuesMap[issueId];
 

@@ -14,10 +14,12 @@ interface IInputSearch {
   inputContainerClassName?: string;
   inputClassName?: string;
   inputPlaceholder?: string;
+  isMobile: boolean;
 }
 
 export const InputSearch: FC<IInputSearch> = (props) => {
-  const { isOpen, query, updateQuery, inputIcon, inputContainerClassName, inputClassName, inputPlaceholder } = props;
+  const { isOpen, query, updateQuery, inputIcon, inputContainerClassName, inputClassName, inputPlaceholder, isMobile } =
+    props;
 
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -29,10 +31,10 @@ export const InputSearch: FC<IInputSearch> = (props) => {
   };
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && !isMobile) {
       inputRef.current && inputRef.current.focus();
     }
-  }, [isOpen]);
+  }, [isOpen, isMobile]);
   return (
     <div
       className={cn(

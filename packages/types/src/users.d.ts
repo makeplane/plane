@@ -1,9 +1,5 @@
-import {
-  EUserProjectRoles,
-  IIssueActivity,
-  TIssuePriorities,
-  TStateGroups,
-} from ".";
+import { IIssueActivity, TIssuePriorities, TStateGroups } from ".";
+import { TUserPermissions } from "./enums";
 
 type TLoginMediums = "email" | "magic-code" | "github" | "gitlab" | "google";
 
@@ -134,7 +130,6 @@ export interface IUserActivityResponse {
 export type UserAuth = {
   isMember: boolean;
   isOwner: boolean;
-  isViewer: boolean;
   isGuest: boolean;
 };
 
@@ -175,7 +170,7 @@ export interface IUserProfileProjectSegregation {
 }
 
 export interface IUserProjectsRole {
-  [projectId: string]: EUserProjectRoles;
+  [projectId: string]: TUserPermissions;
 }
 
 export interface IUserEmailNotificationSettings {

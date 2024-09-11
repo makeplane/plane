@@ -13,7 +13,8 @@ from rest_framework.response import Response
 from plane.app.permissions import (
     WorkSpaceAdminPermission,
     WorkspaceEntityPermission,
-    WorkspaceUserPermission,
+    allow_permission,
+    ROLE
 )
 
 # Module imports
@@ -43,21 +44,6 @@ class WorkSpaceMemberViewSet(BaseViewSet):
     serializer_class = WorkspaceMemberAdminSerializer
     model = WorkspaceMember
 
-    permission_classes = [
-        WorkspaceEntityPermission,
-    ]
-
-    def get_permissions(self):
-        if self.action == "leave":
-            self.permission_classes = [
-                WorkspaceUserPermission,
-            ]
-        else:
-            self.permission_classes = [
-                WorkspaceEntityPermission,
-            ]
-
-        return super(WorkSpaceMemberViewSet, self).get_permissions()
 
     search_fields = [
         "member__display_name",
@@ -77,6 +63,9 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         )
 
     @cache_response(60 * 60 * 2)
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
+    )
     def list(self, request, slug):
         workspace_member = WorkspaceMember.objects.get(
             member=request.user,
@@ -87,7 +76,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         # Get all active workspace members
         workspace_members = self.get_queryset()
 
-        if workspace_member.role > 10:
+        if workspace_member.role > 5:
             serializer = WorkspaceMemberAdminSerializer(
                 workspace_members,
                 fields=("id", "member", "role"),
@@ -106,6 +95,9 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         url_params=True,
         user=False,
         multiple=True,
+    )
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN], level="WORKSPACE"
     )
     def partial_update(self, request, slug, pk):
         workspace_member = WorkspaceMember.objects.get(
@@ -158,6 +150,9 @@ class WorkSpaceMemberViewSet(BaseViewSet):
     @invalidate_cache(path="/api/users/me/settings/", multiple=True)
     @invalidate_cache(
         path="/api/users/me/workspaces/", user=False, multiple=True
+    )
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN], level="WORKSPACE"
     )
     def destroy(self, request, slug, pk):
         # Check the user role who is deleting the user
@@ -232,6 +227,9 @@ class WorkSpaceMemberViewSet(BaseViewSet):
     @invalidate_cache(path="/api/users/me/settings/")
     @invalidate_cache(
         path="api/users/me/workspaces/", user=False, multiple=True
+    )
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
     )
     def leave(self, request, slug):
         workspace_member = WorkspaceMember.objects.get(

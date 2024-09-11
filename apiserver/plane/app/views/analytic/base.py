@@ -21,7 +21,11 @@ from plane.app.permissions import allow_permission, ROLE
 class AnalyticsEndpoint(BaseAPIView):
 
     @allow_permission(
-        [ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER], level="WORKSPACE"
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+        ],
+        level="WORKSPACE",
     )
     def get(self, request, slug):
         x_axis = request.GET.get("x_axis", False)
@@ -203,7 +207,11 @@ class AnalyticViewViewset(BaseViewSet):
 class SavedAnalyticEndpoint(BaseAPIView):
 
     @allow_permission(
-        [ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER], level="WORKSPACE"
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+        ],
+        level="WORKSPACE",
     )
     def get(self, request, slug, analytic_id):
         analytic_view = AnalyticView.objects.get(
@@ -236,7 +244,11 @@ class SavedAnalyticEndpoint(BaseAPIView):
 class ExportAnalyticsEndpoint(BaseAPIView):
 
     @allow_permission(
-        [ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER], level="WORKSPACE"
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+        ],
+        level="WORKSPACE",
     )
     def post(self, request, slug):
         x_axis = request.data.get("x_axis", False)
@@ -302,9 +314,7 @@ class ExportAnalyticsEndpoint(BaseAPIView):
 
 class DefaultAnalyticsEndpoint(BaseAPIView):
 
-    @allow_permission(
-        [ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST], level="WORKSPACE"
-    )
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug):
         filters = issue_filters(request.GET, "GET")
         base_issues = Issue.issue_objects.filter(

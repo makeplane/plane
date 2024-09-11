@@ -34,8 +34,8 @@ export const InboxIssueOrderByDropdown: FC = observer(() => {
     <CustomMenu
       customButton={
         <>
-          <div className="hidden 2xl:flex">{largeButton}</div>
-          <div className="flex 2xl:hidden">{smallButton}</div>
+          <div className="hidden xl:flex">{largeButton}</div>
+          <div className="flex xl:hidden">{smallButton}</div>
         </>
       }
       placement="bottom-end"

@@ -10,7 +10,7 @@ const smallButton = <ListFilter className="h-3 " />;
 const largeButton = (
   <div className={cn(getButtonStyling("neutral-primary", "sm"), "text-custom-text-300")}>
     <ListFilter className="h-3 " />
-    <span className="hidden lg:flex">Filters</span>
+    <span className="hidden xl:flex">Filters</span>
 
     <ChevronDown className="h-3 w-3" strokeWidth={2} />
   </div>
@@ -21,8 +21,8 @@ export const FiltersRoot: FC = () => (
       <FiltersDropdown
         menuButton={
           <>
-            <div className="hidden 2xl:flex">{largeButton}</div>
-            <div className="flex 2xl:hidden">{smallButton}</div>
+            <div className="hidden xl:flex">{largeButton}</div>
+            <div className="flex xl:hidden">{smallButton}</div>
           </>
         }
         title=""

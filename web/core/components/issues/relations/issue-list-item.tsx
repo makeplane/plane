@@ -9,6 +9,7 @@ import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
 import { RelationIssueProperty } from "@/components/issues/relations";
 // hooks
 import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
+import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
@@ -41,14 +42,13 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
   // store hooks
   const {
     issue: { getIssueById },
-    getIsIssuePeeked,
-    setPeekIssue,
     removeRelation,
     toggleCreateIssueModal,
     toggleDeleteIssueModal,
   } = useIssueDetail();
   const project = useProject();
   const { getProjectStates } = useProjectState();
+  const { handleRedirection } = useIssuePeekOverviewRedirection();
   const { isMobile } = usePlatformOS();
 
   // derived values
@@ -61,13 +61,7 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
   if (!issue) return <></>;
 
   // handlers
-  const handleIssuePeekOverview = (issue: TIssue) =>
-    workspaceSlug &&
-    issue &&
-    issue.project_id &&
-    issue.id &&
-    !getIsIssuePeeked(issue.id) &&
-    setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
+  const handleIssuePeekOverview = (issue: TIssue) => handleRedirection(workspaceSlug, issue, isMobile);
 
   const handleEditIssue = () => {
     handleIssueCrudState("update", relationIssueId, { ...issue });
