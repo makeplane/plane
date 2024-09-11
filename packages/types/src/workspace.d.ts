@@ -1,4 +1,3 @@
-import {EUserWorkspaceRoles} from "@/constants/workspace";
 import type {
   ICycle,
   IProjectMember,
@@ -6,6 +5,7 @@ import type {
   IUserLite,
   IWorkspaceViewProps,
 } from "@plane/types";
+import { TUserPermissions } from "./enums";
 
 export interface IWorkspace {
   readonly id: string;
@@ -36,7 +36,7 @@ export interface IWorkspaceMemberInvitation {
   id: string;
   message: string;
   responded_at: Date;
-  role: EUserWorkspaceRoles;
+  role: TUserPermissions;
   token: string;
   workspace: {
     id: string;
@@ -47,7 +47,7 @@ export interface IWorkspaceMemberInvitation {
 }
 
 export interface IWorkspaceBulkInviteFormData {
-  emails: {email: string; role: EUserWorkspaceRoles}[];
+  emails: { email: string; role: TUserPermissions }[];
 }
 
 export type Properties = {
@@ -69,7 +69,7 @@ export type Properties = {
 export interface IWorkspaceMember {
   id: string;
   member: IUserLite;
-  role: EUserWorkspaceRoles;
+  role: TUserPermissions;
   created_at?: string;
   avatar?: string;
   email?: string;
@@ -86,7 +86,7 @@ export interface IWorkspaceMemberMe {
   default_props: IWorkspaceViewProps;
   id: string;
   member: string;
-  role: EUserWorkspaceRoles;
+  role: TUserPermissions;
   updated_at: Date;
   updated_by: string;
   view_props: IWorkspaceViewProps;

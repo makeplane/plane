@@ -5,12 +5,11 @@ import { Dialog } from "@headlessui/react";
 import { IPaymentProduct } from "@plane/types";
 // ui
 import { EModalWidth, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
-// constants
-import { EUserWorkspaceRoles } from "@/constants/workspace";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store";
 // plane web constants
 import { ONE_TO_PRO_PLAN_FEATURES_MAP } from "@/plane-web/constants/license";
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // local components
 import { ProPlanUpgrade } from "./pro-plan-upgrade";
 
@@ -23,11 +22,10 @@ export const ProPlanSelfHostUpgradeModal: FC<ProPlanSelfHostUpgradeModalProps> =
   const { isOpen, handleClose } = props;
   // params
   const { workspaceSlug } = useParams();
-  const {
-    membership: { currentWorkspaceRole },
-  } = useUser();
+  const { workspaceInfoBySlug } = useUserPermissions();
   // derived values
-  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+  const currentWorkspaceRole = workspaceInfoBySlug(workspaceSlug.toString())?.role;
+  const isAdmin = currentWorkspaceRole === EUserPermissions.ADMIN;
   // env
   const PRO_PLAN_MONTHLY_PAYMENT_URL = process.env.NEXT_PUBLIC_PRO_PLAN_MONTHLY_PAYMENT_URL ?? "https://plane.so/pro";
   const PRO_PLAN_YEARLY_PAYMENT_URL = process.env.NEXT_PUBLIC_PRO_PLAN_YEARLY_PAYMENT_URL ?? "https://plane.so/pro";

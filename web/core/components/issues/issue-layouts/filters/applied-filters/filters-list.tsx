@@ -16,13 +16,13 @@ import {
   AppliedStateGroupFilters,
 } from "@/components/issues";
 // constants
-import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store";
 // plane web components
 import { AppliedIssueTypeFilters } from "@/plane-web/components/issues";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   appliedFilters: IIssueFilterOptions;
@@ -48,16 +48,16 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
     disableEditing = false,
   } = props;
   // store hooks
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
 
   if (!appliedFilters) return null;
 
   if (Object.keys(appliedFilters).length === 0) return null;
 
   const isEditingAllowed =
-    !disableEditing && (alwaysAllowEditing || (currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER));
+    !disableEditing &&
+    (alwaysAllowEditing ||
+      allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT));
 
   return (
     <div className="flex flex-wrap items-stretch gap-2 bg-custom-background-100 truncate my-auto">

@@ -6,16 +6,16 @@ import { useParams } from "next/navigation";
 // component
 import { ToggleSwitch } from "@plane/ui";
 import { PageHead } from "@/components/core";
-// constants
-import { EUserWorkspaceRoles } from "@/constants/workspace";
 // store hooks
-import { useUser, useWorkspace } from "@/hooks/store";
+import { useUserPermissions, useWorkspace } from "@/hooks/store";
 // plane web components
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import {
   WorkspaceProjectStatesUpgrade,
   WorkspaceProjectStatesRoot,
 } from "@/plane-web/components/workspace-project-states";
+// plane web constants
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // plane web hooks
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { E_FEATURE_FLAGS } from "@/plane-web/hooks/store/use-flag";
@@ -25,16 +25,15 @@ const WorklogsPage = observer(() => {
   // router
   const { workspaceSlug } = useParams();
   // store hooks
-  const {
-    membership: { currentWorkspaceRole },
-  } = useUser();
+  const { workspaceInfoBySlug } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
   const { isWorkspaceFeatureEnabled, updateWorkspaceFeature } = useWorkspaceFeatures();
   const isFeatureEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.PROJECT_GROUPING);
 
   // derived values
+  const currentWorkspaceDetail = workspaceInfoBySlug(workspaceSlug.toString());
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Project States` : undefined;
-  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+  const isAdmin = currentWorkspaceDetail?.role === EUserPermissions.ADMIN;
   const isProjectGroupingEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED);
 
   if (!workspaceSlug || !currentWorkspace?.id) return <></>;

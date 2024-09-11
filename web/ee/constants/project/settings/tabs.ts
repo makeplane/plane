@@ -4,8 +4,8 @@ import { PROJECT_SETTINGS as PROJECT_SETTINGS_CE } from "@/ce/constants/project"
 import { SettingIcon } from "@/components/icons/attachment";
 // types
 import { Props } from "@/components/icons/types";
+import { EUserPermissions } from "@plane/types/src/enums";
 // constants
-import { EUserProjectRoles } from "@/constants/project";
 
 export const PROJECT_SETTINGS = {
   ...PROJECT_SETTINGS_CE,
@@ -13,7 +13,7 @@ export const PROJECT_SETTINGS = {
     key: "issue-types",
     label: "Issue Types",
     href: `/settings/issue-types/`,
-    access: EUserProjectRoles.ADMIN,
+    access: [EUserPermissions.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/issue-types/`,
     Icon: SettingIcon,
   },
@@ -23,7 +23,7 @@ export const PROJECT_SETTINGS_LINKS: {
   key: string;
   label: string;
   href: string;
-  access: EUserProjectRoles;
+  access: EUserPermissions[];
   highlight: (pathname: string, baseUrl: string) => boolean;
   Icon: React.FC<Props>;
 }[] = [

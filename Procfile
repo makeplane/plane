@@ -1,0 +1,1 @@
+web: ./bin/www cd live/dist && node server.js

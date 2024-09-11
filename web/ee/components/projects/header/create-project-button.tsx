@@ -3,21 +3,22 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { Button } from "@plane/ui";
-// constants
-import { EUserWorkspaceRoles } from "@/constants/workspace";
 // hooks
-import { useCommandPalette, useEventTracker, useUser } from "@/hooks/store";
+import { useCommandPalette, useEventTracker, useUser, useUserPermissions } from "@/hooks/store";
+// plane web constants
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const ProjectCreateButton: FC = observer((props) => {
   const {} = props;
   // hooks
   const { setTrackElement } = useEventTracker();
   const { toggleCreateProjectModal } = useCommandPalette();
-  const {
-    membership: { currentWorkspaceRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
 
-  const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+  const isAuthorizedUser = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
 
   if (!isAuthorizedUser) return <></>;
   return (

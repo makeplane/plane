@@ -165,7 +165,7 @@ class InboxIssueViewSet(BaseViewSet):
             )
         ).distinct()
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
         inbox_id = Inbox.objects.get(
             workspace__slug=slug, project_id=project_id
@@ -338,7 +338,7 @@ class InboxIssueViewSet(BaseViewSet):
             is_active=True,
         )
         # Only project members admins and created_by users can access this endpoint
-        if project_member.role <= 10 and str(inbox_issue.created_by_id) != str(
+        if project_member.role <= 5 and str(inbox_issue.created_by_id) != str(
             request.user.id
         ):
             return Response(
@@ -371,9 +371,8 @@ class InboxIssueViewSet(BaseViewSet):
                 workspace__slug=slug,
                 project_id=project_id,
             )
-            # Only allow guests and viewers to edit name and description
-            if project_member.role <= 10:
-                # viewers and guests since only viewers and guests
+            # Only allow guests to edit name and description
+            if project_member.role <= 5:
                 issue_data = {
                     "name": issue_data.get("name", issue.name),
                     "description_html": issue_data.get(
@@ -415,7 +414,7 @@ class InboxIssueViewSet(BaseViewSet):
                 )
 
         # Only project admins and members can edit inbox issue attributes
-        if project_member.role > 10:
+        if project_member.role > 5:
             serializer = InboxIssueSerializer(
                 inbox_issue, data=request.data, partial=True
             )
@@ -515,7 +514,10 @@ class InboxIssueViewSet(BaseViewSet):
             return Response(serializer, status=status.HTTP_200_OK)
 
     @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER],
+        allowed_roles=[
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+        ],
         creator=True,
         model=Issue,
     )

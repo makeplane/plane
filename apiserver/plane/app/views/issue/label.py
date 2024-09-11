@@ -43,7 +43,7 @@ class LabelViewSet(BaseViewSet):
     @invalidate_cache(
         path="/api/workspaces/:slug/labels/", url_params=True, user=False
     )
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @allow_permission([ROLE.ADMIN])
     def create(self, request, slug, project_id):
         try:
             serializer = LabelSerializer(data=request.data)
@@ -66,14 +66,14 @@ class LabelViewSet(BaseViewSet):
     @invalidate_cache(
         path="/api/workspaces/:slug/labels/", url_params=True, user=False
     )
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @allow_permission([ROLE.ADMIN])
     def partial_update(self, request, *args, **kwargs):
         return super().partial_update(request, *args, **kwargs)
 
     @invalidate_cache(
         path="/api/workspaces/:slug/labels/", url_params=True, user=False
     )
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @allow_permission([ROLE.ADMIN])
     def destroy(self, request, *args, **kwargs):
         return super().destroy(request, *args, **kwargs)
 
