@@ -24,7 +24,6 @@ import { IssueIdentifier } from "@/plane-web/components/issues";
 // local components
 import { TRenderQuickActions } from "../list/list-view-types";
 import { IssueProperties } from "../properties/all-properties";
-import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { getIssueBlockId } from "../utils";
 
 interface IssueBlockProps {
@@ -62,28 +61,27 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
 
   return (
     <>
-      <WithDisplayPropertiesHOC displayProperties={displayProperties || {}} displayPropertyKey="key">
-        <div className="relative">
-          {issue.project_id && (
-            <IssueIdentifier
-              issueId={issue.id}
-              projectId={issue.project_id}
-              textContainerClassName="line-clamp-1 text-xs text-custom-text-300"
-            />
-          )}
-          <div
-            className={cn("absolute -top-1 right-0", {
-              "hidden group-hover/kanban-block:block": !isMobile,
-            })}
-            onClick={handleEventPropagation}
-          >
-            {quickActions({
-              issue,
-              parentRef: cardRef,
-            })}
-          </div>
+      <div className="relative">
+        {issue.project_id && (
+          <IssueIdentifier
+            issueId={issue.id}
+            projectId={issue.project_id}
+            textContainerClassName="line-clamp-1 text-xs text-custom-text-300"
+            displayProperties={displayProperties}
+          />
+        )}
+        <div
+          className={cn("absolute -top-1 right-0", {
+            "hidden group-hover/kanban-block:block": !isMobile,
+          })}
+          onClick={handleEventPropagation}
+        >
+          {quickActions({
+            issue,
+            parentRef: cardRef,
+          })}
         </div>
-      </WithDisplayPropertiesHOC>
+      </div>
 
       <Tooltip tooltipContent={issue.name} isMobile={isMobile} renderByDefault={false}>
         <div className="w-full line-clamp-1 text-sm text-custom-text-100">

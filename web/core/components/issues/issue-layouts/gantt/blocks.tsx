@@ -7,11 +7,14 @@ import { Tooltip, ControlLink } from "@plane/ui";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
-import { useIssueDetail, useProjectState } from "@/hooks/store";
+import { useIssueDetail, useIssues, useProjectState } from "@/hooks/store";
+import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
+// local types
+import { GanttStoreType } from "./base-gantt-root";
 
 type Props = {
   issueId: string;
@@ -80,6 +83,8 @@ export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
     issue: { getIssueById },
   } = useIssueDetail();
   const { isMobile } = usePlatformOS();
+  const storeType = useIssueStoreType() as GanttStoreType;
+  const { issuesFilter } = useIssues(storeType);
 
   // handlers
   const { handleRedirection } = useIssuePeekOverviewRedirection();
@@ -102,6 +107,7 @@ export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
             issueId={issueDetails.id}
             projectId={issueDetails.project_id}
             textContainerClassName="text-xs text-custom-text-300"
+            displayProperties={issuesFilter?.issueFilters?.displayProperties}
           />
         )}
         <Tooltip tooltipContent={issueDetails?.name} isMobile={isMobile}>

@@ -25,7 +25,6 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { IssueIdentifier } from "@/plane-web/components/issues";
 // local components
 import { TRenderQuickActions } from "../list/list-view-types";
-import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { IssueColumn } from "./issue-column";
 
 interface Props {
@@ -222,7 +221,9 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   const canSelectIssues = !disableUserActions && !selectionHelpers.isSelectionDisabled;
 
   //TODO: add better logic. This is to have a min width for ID/Key based on the length of project identifier
-  const keyMinWidth = (getProjectIdentifierById(issueDetail.project_id)?.length ?? 0 + 5) * 7;
+  const keyMinWidth = displayProperties?.key
+    ? (getProjectIdentifierById(issueDetail.project_id)?.length ?? 0 + 5) * 7
+    : 0;
 
   return (
     <>
@@ -280,7 +281,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
               {/* sub issues indentation */}
               {nestingLevel !== 0 && <div style={{ width: subIssueIndentation }} />}
 
-              <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="key">
+              {(displayProperties?.key || displayProperties?.issue_type) && (
                 <div className="relative flex cursor-pointer items-center text-center text-xs hover:text-custom-text-100">
                   <p className={`flex font-medium leading-7`} style={{ minWidth: `${keyMinWidth}px` }}>
                     {issueDetail.project_id && (
@@ -288,11 +289,12 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
                         issueId={issueDetail.id}
                         projectId={issueDetail.project_id}
                         textContainerClassName="text-sm md:text-xs text-custom-text-300"
+                        displayProperties={displayProperties}
                       />
                     )}
                   </p>
                 </div>
-              </WithDisplayPropertiesHOC>
+              )}
 
               {/* sub-issues chevron */}
               <div className="grid place-items-center size-4">
