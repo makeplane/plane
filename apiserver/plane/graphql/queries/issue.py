@@ -175,7 +175,7 @@ class IssueQuery:
         project: strawberry.ID,
         issue: strawberry.ID,
     ) -> IssuesType:
-        issue = await sync_to_async(Issue.issue_objects.get)(
+        issue_detail = await sync_to_async(Issue.issue_objects.get)(
             workspace__slug=slug,
             project_id=project,
             id=issue,
@@ -192,7 +192,7 @@ class IssueQuery:
             entity_name="issue",
             entity_identifier=issue,
         )
-        return issue
+        return issue_detail
 
 
 @strawberry.type
