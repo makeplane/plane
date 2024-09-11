@@ -16,7 +16,7 @@ export const addIssue = async (issue: any) => {
 };
 
 export const addIssuesBulk = async (issues: any, batchSize = 100) => {
-  if (document.hidden || !rootStore.user.localDBEnabled) return;
+  if (!rootStore.user.localDBEnabled) return;
 
   for (let i = 0; i < issues.length; i += batchSize) {
     const batch = issues.slice(i, i + batchSize);
@@ -32,7 +32,7 @@ export const addIssuesBulk = async (issues: any, batchSize = 100) => {
   }
 };
 export const deleteIssueFromLocal = async (issue_id: any) => {
-  if (document.hidden || !rootStore.user.localDBEnabled) return;
+  if (!rootStore.user.localDBEnabled) return;
 
   const deleteQuery = `delete from issues where id='${issue_id}'`;
   const deleteMetaQuery = `delete from issue_meta where issue_id='${issue_id}'`;
@@ -53,7 +53,7 @@ export const updateIssue = async (issue: TIssue) => {
 };
 
 export const syncDeletesToLocal = async (workspaceId: string, projectId: string, queries: any) => {
-  if (document.hidden || !rootStore.user.localDBEnabled) return;
+  if (!rootStore.user.localDBEnabled) return;
 
   const issueService = new IssueService();
   const response = await issueService.getDeletedIssues(workspaceId, projectId, queries);

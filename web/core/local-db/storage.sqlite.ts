@@ -21,7 +21,7 @@ declare module "@sqlite.org/sqlite-wasm" {
   export function sqlite3Worker1Promiser(...args: any): any;
 }
 
-const DB_VERSION = "1";
+const DB_VERSION = 1;
 const PAGE_SIZE = 1000;
 const log = console.log;
 const error = console.error;
@@ -38,7 +38,6 @@ export class Storage {
   dbName = "plane";
   projectStatus: Record<string, TProjectStatus> = {};
   workspaceSlug: string = "";
-  workspaceInitPromise: Promise<boolean> | undefined;
 
   constructor() {
     this.db = null;
@@ -49,7 +48,6 @@ export class Storage {
     this.status = undefined;
     this.projectStatus = {};
     this.workspaceSlug = "";
-    this.workspaceInitPromise = undefined;
   };
 
   clearStorage = async () => {
@@ -69,12 +67,8 @@ export class Storage {
     if (workspaceSlug !== this.workspaceSlug) {
       this.reset();
     }
-    if (this.workspaceInitPromise) {
-      return this.workspaceInitPromise;
-    }
-    this.workspaceInitPromise = this._initialize(workspaceSlug);
     try {
-      await this.workspaceInitPromise;
+      await this._initialize(workspaceSlug);
       return true;
     } catch (err) {
       error(err);
@@ -129,10 +123,10 @@ export class Storage {
 
       // dump DB of db version is matching
       const dbVersion = await this.getOption("DB_VERSION");
-      if (dbVersion !== "" && dbVersion !== DB_VERSION) {
+      if (dbVersion !== "" && parseInt(dbVersion) !== DB_VERSION) {
         await this.clearStorage();
         this.reset();
-        this.workspaceInitPromise = this._initialize(workspaceSlug);
+        await this._initialize(workspaceSlug);
         return false;
       }
 
@@ -144,7 +138,7 @@ export class Storage {
       // Your SQLite code here.
       await createTables();
 
-      await this.setOption("DB_VERSION", DB_VERSION);
+      await this.setOption("DB_VERSION", DB_VERSION.toString());
     } catch (err) {
       error(err);
       throw err;
@@ -155,8 +149,6 @@ export class Storage {
 
   syncWorkspace = async () => {
     if (document.hidden || !rootStore.user.localDBEnabled) return; // return if the window gets hidden
-
-    await this.workspaceInitPromise;
     loadWorkSpaceData(this.workspaceSlug);
   };
 
@@ -171,7 +163,6 @@ export class Storage {
     if (document.hidden || !rootStore.user.localDBEnabled) return false; // return if the window gets hidden
 
     try {
-      await this.workspaceInitPromise;
       const sync = this._syncIssues(projectId);
       this.setSync(projectId, sync);
       await sync;
