@@ -4,6 +4,7 @@ import { useParams, usePathname } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 // hooks
 import { useWorkspace } from "@/hooks/store";
+import { useProjectFilter } from "@/plane-web/hooks/store";
 import { ProjectScopeDropdown } from "./dropdowns";
 import { ProjectAttributesDropdown, ProjectDisplayFiltersDropdown, ProjectLayoutSelection } from "./header";
 
@@ -12,9 +13,11 @@ export const ProjectsListMobileHeader = observer(() => {
   const { workspaceSlug } = useParams();
   const { currentWorkspace } = useWorkspace();
   const pathname = usePathname();
+  const { filters } = useProjectFilter();
 
   const workspaceId = currentWorkspace?.id || undefined;
   const isArchived = pathname.includes("/archives");
+  const selectedScope = filters?.scope;
 
   const customButton = (label: string) => (
     <div className="flex text-sm items-center gap-2 neutral-primary text-custom-text-200">
@@ -30,7 +33,7 @@ export const ProjectsListMobileHeader = observer(() => {
           <ProjectLayoutSelection workspaceSlug={workspaceSlug.toString()} />
         </div>
       )}
-      {!isArchived && (
+      {!isArchived && selectedScope && (
         <div className="border-l border-custom-border-200 flex justify-around w-full">
           <ProjectScopeDropdown workspaceSlug={workspaceSlug.toString()} className={"border-none"} />
         </div>

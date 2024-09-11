@@ -9,6 +9,7 @@ import { IProjectFilterHelper, ProjectFilterHelper } from "@/plane-web/store/wor
 // plane web types
 import { TProject } from "@/plane-web/types/projects";
 import {
+  EProjectFilters,
   EProjectLayouts,
   EProjectScope,
   TProjectAttributes,
@@ -39,7 +40,7 @@ export interface IProjectFilterStore extends IProjectFilterHelper {
   ) => TProjectsLayoutStructure[T] | undefined;
   // helpers actions
   // actions
-  initWorkspaceFilters: (workspaceSlug: string, scope?: EProjectScope) => void;
+  initWorkspaceFilters: (workspaceSlug: string, scope?: EProjectScope, filtersToInit?: EProjectFilters[]) => void;
   updateScope: (workspaceSlug: string, scope: TProjectScope, setLocalStorage?: boolean) => void;
   updateLayout: (workspaceSlug: string, layout: TProjectLayouts, setLocalStorage?: boolean) => void;
   updateAttributes: <T extends keyof TProjectAttributes>(
@@ -205,28 +206,29 @@ export class ProjectFilterStore extends ProjectFilterHelper implements IProjectF
    * @param { string } workspaceSlug
    * @returns { void }
    */
-  initWorkspaceFilters = (workspaceSlug: string, scope?: EProjectScope): void => {
+  initWorkspaceFilters = (workspaceSlug: string, scope?: EProjectScope, filtersToInit?: EProjectFilters[]): void => {
     const savedFilters = this.handleProjectLocalFilters.get(workspaceSlug);
 
-    this.updateScope(
-      workspaceSlug,
-      scope ||
-        (this.scopeProjectsCount[EProjectScope.MY_PROJECTS] > 0
-          ? EProjectScope.MY_PROJECTS
-          : EProjectScope.ALL_PROJECTS)
-    );
+    filtersToInit?.includes(EProjectFilters.SCOPE) &&
+      this.updateScope(
+        workspaceSlug,
+        scope ||
+          (this.scopeProjectsCount[EProjectScope.MY_PROJECTS] > 0
+            ? EProjectScope.MY_PROJECTS
+            : EProjectScope.ALL_PROJECTS)
+      );
 
-    if (!this.layoutMap[workspaceSlug]) {
+    if (!this.layoutMap[workspaceSlug] && filtersToInit?.includes(EProjectFilters.LAYOUT)) {
       this.updateLayout(workspaceSlug, savedFilters?.layout || EProjectLayouts.GALLERY, false);
     }
-    if (!this.attributesMap[workspaceSlug]) {
+    if (!this.attributesMap[workspaceSlug] && filtersToInit?.includes(EProjectFilters.ATTRIBUTES)) {
       this.updateAttributes(workspaceSlug, "priority", savedFilters?.attributes?.priority || [], false);
       this.updateAttributes(workspaceSlug, "state", savedFilters?.attributes?.state || [], false);
       this.updateAttributes(workspaceSlug, "lead", savedFilters?.attributes?.lead || [], false);
       this.updateAttributes(workspaceSlug, "members", savedFilters?.attributes?.members || [], false);
       this.updateAttributes(workspaceSlug, "access", savedFilters?.attributes?.access || [], false);
     }
-    if (!this.displayFiltersMap[workspaceSlug]) {
+    if (!this.displayFiltersMap[workspaceSlug] && filtersToInit?.includes(EProjectFilters.DISPLAY_FILTERS)) {
       this.updateDisplayFilters(workspaceSlug, "group_by", savedFilters?.display_filters?.group_by || "states", false);
       this.updateDisplayFilters(workspaceSlug, "sort_by", savedFilters?.display_filters?.sort_by || "manual", false);
       this.updateDisplayFilters(workspaceSlug, "sort_order", savedFilters?.display_filters?.sort_order || "asc", false);

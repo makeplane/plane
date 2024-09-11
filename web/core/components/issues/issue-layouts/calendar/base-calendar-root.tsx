@@ -19,7 +19,7 @@ import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { IQuickActionProps } from "../list/list-view-types";
 import { handleDragDrop } from "./utils";
 
-type CalendarStoreType =
+export type CalendarStoreType =
   | EIssuesStoreType.PROJECT
   | EIssuesStoreType.MODULE
   | EIssuesStoreType.CYCLE

@@ -1,4 +1,6 @@
 import { observer } from "mobx-react";
+// types
+import { IIssueDisplayProperties } from "@plane/types";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -8,6 +10,7 @@ type TIssueIdentifierBaseProps = {
   projectId: string;
   size?: "xs" | "sm" | "md" | "lg";
   textContainerClassName?: string;
+  displayProperties?: IIssueDisplayProperties | undefined;
 };
 
 type TIssueIdentifierFromStore = TIssueIdentifierBaseProps & {
@@ -22,7 +25,7 @@ type TIssueIdentifierWithDetails = TIssueIdentifierBaseProps & {
 
 type TIssueIdentifierProps = TIssueIdentifierFromStore | TIssueIdentifierWithDetails;
 export const IssueIdentifier: React.FC<TIssueIdentifierProps> = observer((props) => {
-  const { projectId, textContainerClassName } = props;
+  const { projectId, textContainerClassName, displayProperties } = props;
   // store hooks
   const { getProjectIdentifierById } = useProject();
   const {
@@ -34,6 +37,9 @@ export const IssueIdentifier: React.FC<TIssueIdentifierProps> = observer((props)
   const issue = isUsingStoreData ? getIssueById(props.issueId) : null;
   const projectIdentifier = isUsingStoreData ? getProjectIdentifierById(projectId) : props.projectIdentifier;
   const issueSequenceId = isUsingStoreData ? issue?.sequence_id : props.issueSequenceId;
+  const shouldRenderIssueID = displayProperties ? displayProperties.key : true;
+
+  if (!shouldRenderIssueID) return null;
 
   return (
     <div className="flex items-center space-x-2">
