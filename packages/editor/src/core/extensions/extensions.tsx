@@ -29,6 +29,10 @@ import {
 import { isValidHttpUrl } from "@/helpers/common";
 // types
 import { DeleteImage, IMentionHighlight, IMentionSuggestion, RestoreImage, UploadImage } from "@/types";
+import { TrailingNode } from "./trailing-node";
+import { ImageBlock } from "./image-block";
+import { ImageUpload } from "./image-upload";
+import { HocuspocusProvider } from "@hocuspocus/provider";
 
 type TArguments = {
   enableHistory: boolean;
@@ -44,6 +48,7 @@ type TArguments = {
   };
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
+  provider?: HocuspocusProvider | null;
 };
 
 export const CoreEditorExtensions = ({
@@ -52,6 +57,7 @@ export const CoreEditorExtensions = ({
   mentionConfig,
   placeholder,
   tabIndex,
+  provider,
 }: TArguments) => [
   StarterKit.configure({
     bulletList: {
@@ -104,6 +110,15 @@ export const CoreEditorExtensions = ({
       class: "rounded-md",
     },
   }),
+  ImageUpload({
+    deleteFile,
+    restoreFile,
+    uploadFile,
+    cancelUploadImage,
+  }).configure({
+    clientId: provider?.document?.clientID,
+  }),
+  ImageBlock,
   TiptapUnderline,
   TextStyle,
   TaskList.configure({
@@ -142,7 +157,7 @@ export const CoreEditorExtensions = ({
     placeholder: ({ editor, node }) => {
       if (node.type.name === "heading") return `Heading ${node.attrs.level}`;
 
-      if (editor.storage.image.uploadInProgress) return "";
+      // if (editor.storage.image.uploadInProgress) return "";
 
       const shouldHidePlaceholder =
         editor.isActive("table") || editor.isActive("codeBlock") || editor.isActive("image");

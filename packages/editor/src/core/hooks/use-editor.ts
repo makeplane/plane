@@ -15,6 +15,7 @@ import { IMarking, scrollSummary } from "@/helpers/scroll-to-node";
 import { CoreEditorProps } from "@/props";
 // types
 import { EditorRefApi, IMentionHighlight, IMentionSuggestion, TEditorCommands, TFileHandler } from "@/types";
+import { HocuspocusProvider } from "@hocuspocus/provider";
 
 export interface CustomEditorProps {
   editorClassName: string;
@@ -36,6 +37,7 @@ export interface CustomEditorProps {
   // undefined when prop is not passed, null if intentionally passed to stop
   // swr syncing
   value?: string | null | undefined;
+  provider?: HocuspocusProvider | null;
 }
 
 export const useEditor = (props: CustomEditorProps) => {
@@ -54,6 +56,7 @@ export const useEditor = (props: CustomEditorProps) => {
     placeholder,
     tabIndex,
     value,
+    provider,
   } = props;
   // states
   const [savedSelection, setSavedSelection] = useState<Selection | null>(null);
@@ -66,6 +69,11 @@ export const useEditor = (props: CustomEditorProps) => {
         editorClassName,
       }),
       ...editorProps,
+    },
+    shouldRerenderOnTransaction: false,
+    immediatelyRender: true,
+    onContentError: (error) => {
+      console.error("Error rendering content:", error);
     },
     extensions: [
       ...CoreEditorExtensions({
@@ -82,6 +90,7 @@ export const useEditor = (props: CustomEditorProps) => {
         },
         placeholder,
         tabIndex,
+        provider,
       }),
       ...extensions,
     ],
@@ -218,16 +227,22 @@ export const useEditor = (props: CustomEditorProps) => {
         return selection;
       },
       insertText: (contentHTML, insertOnNextLine) => {
-        if (!editor) return;
+        if (!editorRef.current) return;
         // get selection
-        const { from, to, empty } = editor.state.selection;
+        const { from, to, empty } = editorRef.current.state.selection;
         if (empty) return;
         if (insertOnNextLine) {
           // move cursor to the end of the selection and insert a new line
-          editor.chain().focus().setTextSelection(to).insertContent("<br />").insertContent(contentHTML).run();
+          editorRef.current
+            .chain()
+            .focus()
+            .setTextSelection(to)
+            .insertContent("<br />")
+            .insertContent(contentHTML)
+            .run();
         } else {
           // replace selected text with the content provided
-          editor.chain().focus().deleteRange({ from, to }).insertContent(contentHTML).run();
+          editorRef.current.chain().focus().deleteRange({ from, to }).insertContent(contentHTML).run();
         }
       },
       documentInfo: {

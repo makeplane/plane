@@ -156,3 +156,23 @@ export const insertImageCommand = (
   };
   input.click();
 };
+
+export const insertImageNewCommand = (editor: Editor, saveSelection?: Selection | null, range?: Range) => {
+  // if (range) editor.chain().focus().deleteRange(range).setImageUpload(saveSelection).run();
+  // const input = document.createElement("input");
+  // input.type = "file";
+  // input.accept = ".jpeg, .jpg, .png, .webp";
+  // input.onchange = async () => {
+  //   if (input.files?.length) {
+  //     const file = input.files[0];
+  //     const pos = saveSelection?.anchor ?? editor.view.state.selection.from;
+  //     const url = await (editor?.commands.uploadImage(file) as unknown as Promise<string>);
+  //     if (!url) {
+  //       throw new Error("Something went wrong while uploading the image");
+  //     }
+  //     editor.chain().setImageBlock({ src: url }).focus().run();
+  //     // startImageUpload(editor, file, editor.view, pos, uploadFile);
+  //   }
+  // };
+  // input.click();
+};

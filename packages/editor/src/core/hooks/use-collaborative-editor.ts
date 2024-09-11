@@ -72,6 +72,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     handleEditorReady,
     forwardedRef,
     mentionHandler,
+    provider,
     extensions: [
       SideMenuExtension({
         aiEnabled: !disabledExtensions?.includes("ai"),

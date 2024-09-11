@@ -8,7 +8,7 @@ type Props = {
 };
 
 const getImageElement = (editorId: string): HTMLImageElement | null =>
-  document.querySelector(`#editor-container-${editorId}.active-editor .ProseMirror-selectednode`);
+  document.querySelector(`#editor-container-${editorId} .ProseMirror-selectednode`);
 
 export const ImageResizer = (props: Props) => {
   const { editor, id } = props;

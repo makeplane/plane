@@ -28,13 +28,13 @@ import {
   toggleBulletList,
   toggleOrderedList,
   toggleTaskList,
-  insertImageCommand,
   toggleHeadingOne,
   toggleHeadingTwo,
   toggleHeadingThree,
   toggleHeadingFour,
   toggleHeadingFive,
   toggleHeadingSix,
+  insertImageCommand,
 } from "@/helpers/editor-commands";
 // types
 import { CommandProps, ISlashCommandItem, UploadImage } from "@/types";
@@ -224,11 +224,11 @@ const getSuggestionItems =
       {
         key: "image",
         title: "Image",
-        description: "Upload an image from your computer.",
-        searchTerms: ["img", "photo", "picture", "media"],
         icon: <ImageIcon className="size-3.5" />,
+        description: "Insert an image",
+        searchTerms: ["img", "photo", "picture", "media", "upload"],
         command: ({ editor, range }: CommandProps) => {
-          insertImageCommand(editor, uploadFile, null, range);
+          editor.chain().focus().deleteRange(range).setImageUpload({ event: "insert" }).run();
         },
       },
       {

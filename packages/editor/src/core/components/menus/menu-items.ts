@@ -194,7 +194,7 @@ export const ImageItem = (editor: Editor, uploadFile: UploadImage) =>
     key: "image",
     name: "Image",
     isActive: () => editor?.isActive("image"),
-    command: (savedSelection: Selection | null) => insertImageCommand(editor, uploadFile, savedSelection),
+    command: (savedSelection: Selection | null) => editor?.commands.setImageUpload({ event: "insert" }),
     icon: ImageIcon,
   }) as const;
 
