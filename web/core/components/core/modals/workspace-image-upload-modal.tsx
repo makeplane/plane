@@ -43,7 +43,7 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
   const { getRootProps, getInputProps, isDragActive, fileRejections } = useDropzone({
     onDrop,
     accept: {
-      "image/*": [".png", ".jpg", ".jpeg", ".svg", ".webp"],
+      "image/*": [".png", ".jpg", ".jpeg", ".webp"],
     },
     maxSize: config?.file_size_limit ?? MAX_FILE_SIZE,
     multiple: false,
