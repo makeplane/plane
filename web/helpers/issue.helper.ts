@@ -305,4 +305,5 @@ export const getComputedDisplayProperties = (
   updated_on: displayProperties?.updated_on ?? true,
   modules: displayProperties?.modules ?? true,
   cycle: displayProperties?.cycle ?? true,
+  issue_type: displayProperties?.issue_type ?? true,
 });

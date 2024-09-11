@@ -239,6 +239,9 @@ export class UserMembershipStore implements IUserMembershipStore {
           ...this.hasPermissionToProject,
           ...newPermissions,
         };
+        projectIds.forEach((projectId) => {
+          set(this.workspaceProjectsRole, [workspaceSlug, projectId], EUserProjectRoles.MEMBER);
+        });
       });
     });
 
