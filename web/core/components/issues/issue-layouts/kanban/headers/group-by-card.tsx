@@ -25,7 +25,7 @@ interface IHeaderGroupByCard {
   title: string;
   count: number;
   kanbanFilters: TIssueKanbanFilters;
-  handleKanbanFilters: any;
+  handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
   issuePayload: Partial<TIssue>;
   disableIssueCreation?: boolean;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;

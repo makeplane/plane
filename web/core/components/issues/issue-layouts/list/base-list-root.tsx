@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 // types
 import { GroupByColumnTypes, TGroupedIssues } from "@plane/types";
 // constants
-import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
+import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useIssues, useUserPermissions } from "@/hooks/store";
 // hooks
@@ -16,6 +16,7 @@ import { IssueLayoutHOC } from "../issue-layout-HOC";
 import { List } from "./default";
 // types
 import { IQuickActionProps, TRenderQuickActions } from "./list-view-types";
+import { useParams } from "next/navigation";
 
 type ListStoreType =
   | EIssuesStoreType.PROJECT
@@ -58,6 +59,10 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
 
   const group_by = (displayFilters?.group_by || null) as GroupByColumnTypes | null;
   const showEmptyGroup = displayFilters?.show_empty_groups ?? false;
+
+  const { workspaceSlug, projectId } = useParams();
+  const {updateFilters} = useIssuesActions(storeType);
+  const stateGroups = issuesFilter?.issueFilters?.kanbanFilters || { group_by: [], sub_group_by: [] };
 
   useEffect(() => {
     fetchIssues("init-loader", { canGroup: true, perPageCount: group_by ? 50 : 100 }, viewId);
@@ -107,6 +112,20 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
     [fetchNextIssues]
   );
 
+  const handleStateGroups = (toggle: "group_by" | "sub_group_by", value: string) => {
+    if (workspaceSlug) {
+      let stateGroups = issuesFilter?.issueFilters?.kanbanFilters?.[toggle] || [];
+      if (stateGroups.includes(value)) {
+        stateGroups = stateGroups.filter((_value) => _value != value);
+      } else {
+        stateGroups.push(value);
+      }
+      updateFilters(projectId?.toString() ?? "", EIssueFilterType.KANBAN_FILTERS, {
+        [toggle]: stateGroups,
+      });
+    }
+  };
+
   return (
     <IssueLayoutHOC layout={EIssueLayoutTypes.LIST}>
       <div className={`relative size-full bg-custom-background-90`}>
@@ -127,6 +146,8 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
           addIssuesToView={addIssuesToView}
           isCompletedCycle={isCompletedCycle}
           handleOnDrop={handleOnDrop}
+          handleStateGroups={handleStateGroups}
+          stateGroups={stateGroups}
         />
       </div>
     </IssueLayoutHOC>

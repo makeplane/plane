@@ -13,6 +13,7 @@ import {
   TIssueOrderByOptions,
   TIssue,
   IIssueDisplayProperties,
+  TIssueKanbanFilters,
 } from "@plane/types";
 import { Row, setToast, TOAST_TYPE } from "@plane/ui";
 // components
@@ -59,6 +60,8 @@ interface Props {
   showEmptyGroup?: boolean;
   loadMoreIssues: (groupId?: string) => void;
   selectionHelpers: TSelectionHelper;
+  handleStateGroups: (toggle: "group_by" | "sub_group_by", value: string) => void;
+  stateGroups: TIssueKanbanFilters;
 }
 
 export const ListGroup = observer((props: Props) => {
@@ -83,11 +86,13 @@ export const ListGroup = observer((props: Props) => {
     showEmptyGroup,
     loadMoreIssues,
     selectionHelpers,
+    handleStateGroups,
+    stateGroups
   } = props;
 
   const [isDraggingOverColumn, setIsDraggingOverColumn] = useState(false);
   const [dragColumnOrientation, setDragColumnOrientation] = useState<"justify-start" | "justify-end">("justify-start");
-  const [isExpanded, setIsExpanded] = useState(true);
+  const isExpanded = !(stateGroups?.group_by.includes(group.id))
   const groupRef = useRef<HTMLDivElement | null>(null);
 
   const projectState = useProjectState();
@@ -125,10 +130,6 @@ export const ListGroup = observer((props: Props) => {
   const validateEmptyIssueGroups = (issueCount: number = 0) => {
     if (!showEmptyGroup && issueCount <= 0) return false;
     return true;
-  };
-
-  const toggleListGroup = () => {
-    setIsExpanded((prevState) => !prevState);
   };
 
   const prePopulateQuickAddData = (groupByKey: string | null, value: any) => {
@@ -211,6 +212,10 @@ export const ListGroup = observer((props: Props) => {
           handleOnDrop(source, destination);
 
           highlightIssueOnDrop(getIssueBlockId(source.id, destination?.groupId), orderBy !== "sort_order");
+
+          if(!isExpanded){
+            handleStateGroups("group_by", group.id)
+          }
         },
       })
     );
@@ -241,7 +246,7 @@ export const ListGroup = observer((props: Props) => {
           disableIssueCreation={disableIssueCreation || isGroupByCreatedBy || isCompletedCycle}
           addIssuesToView={addIssuesToView}
           selectionHelpers={selectionHelpers}
-          toggleListGroup={toggleListGroup}
+          handleStateGroups={handleStateGroups}
         />
       </Row>
       {shouldExpand && (
