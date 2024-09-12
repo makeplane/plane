@@ -37,7 +37,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
     label,
     disabled = false,
     tabIndex,
-    createLabelEnabled = true,
+    createLabelEnabled = false,
     buttonClassName,
     placement,
   } = props;

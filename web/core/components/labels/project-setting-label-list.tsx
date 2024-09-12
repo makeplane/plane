@@ -14,7 +14,8 @@ import {
   ProjectSettingLabelItem,
 } from "@/components/labels";
 import { EmptyStateType } from "@/constants/empty-state";
-import { useLabel } from "@/hooks/store";
+import { useLabel, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // components
 // ui
 // types
@@ -31,6 +32,10 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { projectLabels, updateLabelPosition, projectLabelsTree } = useLabel();
+  const { allowPermissions } = useUserPermissions();
+
+  // derived values
+  const isEditable = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
 
   const newLabel = () => {
     setIsUpdating(false);
@@ -65,9 +70,11 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
       />
       <div className="flex items-center justify-between border-b border-custom-border-100 pb-3.5">
         <h3 className="text-xl font-medium">Labels</h3>
-        <Button variant="primary" onClick={newLabel} size="sm">
-          Add label
-        </Button>
+        {isEditable && (
+          <Button variant="primary" onClick={newLabel} size="sm">
+            Add label
+          </Button>
+        )}
       </div>
       <div className="w-full py-2">
         {showLabelForm && (
