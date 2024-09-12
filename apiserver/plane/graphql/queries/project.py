@@ -32,10 +32,24 @@ class ProjectQuery:
         self,
         info: Info,
         slug: str,
+        type: Optional[str] = "all",
     ) -> list[ProjectType]:
         project_query = Project.objects.filter(
             workspace__slug=slug, archived_at__isnull=True
         )
+
+        if type == "joined":
+            project_query = project_query.filter(
+                Q(
+                    project_projectmember__member=info.context.user,
+                    project_projectmember__is_active=True,
+                )
+                | Q(
+                    created_by=info.context.user,
+                    project_projectmember__is_active=True,
+                )
+            )
+
         projects = await sync_to_async(list)(project_query)
         return projects
 
