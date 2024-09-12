@@ -4,6 +4,8 @@ import React, { FC, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // ui
 import { IFavorite } from "@plane/types";
 // components
@@ -16,7 +18,6 @@ import {
 // hooks
 import { useAppTheme } from "@/hooks/store";
 import { useFavoriteItemDetails } from "@/hooks/use-favorite-item-details";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 
 type Props = {
   workspaceSlug: string;

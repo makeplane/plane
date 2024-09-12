@@ -1,6 +1,8 @@
 import { FC, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { UseFormRegister, UseFormSetFocus } from "react-hook-form";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // types
 import { TIssue } from "@plane/types";
 // components
@@ -17,7 +19,6 @@ import { EIssueLayoutTypes } from "@/constants/issue";
 // hooks
 import { useProject } from "@/hooks/store";
 import useKeypress from "@/hooks/use-keypress";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 
 export type TQuickAddIssueFormRoot = {
   isOpen: boolean;

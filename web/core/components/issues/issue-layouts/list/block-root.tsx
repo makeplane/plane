@@ -5,6 +5,8 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { attachInstruction, extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import { observer } from "mobx-react";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // types
 import { IIssueDisplayProperties, TIssue, TIssueMap } from "@plane/types";
 // components
@@ -14,7 +16,6 @@ import { IssueBlock } from "@/components/issues/issue-layouts/list";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // types
 import { HIGHLIGHT_CLASS, getIssueBlockId, isIssueNew } from "../utils";
 import { TRenderQuickActions } from "./list-view-types";

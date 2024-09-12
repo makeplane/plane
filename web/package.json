@@ -27,6 +27,7 @@
     "@nivo/scatterplot": "0.80.0",
     "@plane/constants": "*",
     "@plane/editor": "*",
+    "@plane/helpers": "*",
     "@plane/types": "*",
     "@plane/ui": "*",
     "@popperjs/core": "^2.11.8",
