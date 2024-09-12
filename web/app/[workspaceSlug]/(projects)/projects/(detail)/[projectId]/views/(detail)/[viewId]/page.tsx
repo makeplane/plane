@@ -25,14 +25,14 @@ const ProjectViewIssuesPage = observer(() => {
   const project = projectId ? getProjectById(projectId.toString()) : undefined;
   const pageTitle = project?.name && projectView?.name ? `${project?.name} - ${projectView?.name}` : undefined;
 
-  const { error } = useSWR(
+  const { error, isLoading } = useSWR(
     workspaceSlug && projectId && viewId ? `VIEW_DETAILS_${viewId.toString()}` : null,
     workspaceSlug && projectId && viewId
       ? () => fetchViewDetails(workspaceSlug.toString(), projectId.toString(), viewId.toString())
       : null
   );
 
-  if (error) {
+  if (error && !isLoading) {
     return (
       <EmptyState
         image={emptyView}
