@@ -26,6 +26,7 @@
     "@blueprintjs/popover2": "^1.13.3",
     "@headlessui/react": "^1.7.3",
     "@popperjs/core": "^2.11.8",
+    "@plane/helpers": "*",
     "clsx": "^2.0.0",
     "emoji-picker-react": "^4.5.16",
     "lodash": "^4.17.21",
