@@ -24,10 +24,11 @@ type TStateItem = {
   groupedStates: Record<string, IState[]>;
   totalStates: number;
   state: IState;
+  disabled?: boolean;
 };
 
 export const StateItem: FC<TStateItem> = observer((props) => {
-  const { workspaceSlug, projectId, groupKey, groupedStates, totalStates, state } = props;
+  const { workspaceSlug, projectId, groupKey, groupedStates, totalStates, state, disabled = false } = props;
   // hooks
   const { moveStatePosition } = useProjectState();
   // states
@@ -131,7 +132,7 @@ export const StateItem: FC<TStateItem> = observer((props) => {
         )}
       >
         {/* draggable indicator */}
-        {totalStates != 1 && (
+        {!disabled && totalStates != 1 && (
           <div className="flex-shrink-0 w-3 h-3 rounded-sm absolute left-0 hidden group-hover:flex justify-center items-center transition-colors bg-custom-background-90 cursor-pointer text-custom-text-200 hover:text-custom-text-100">
             <GripVertical className="w-3 h-3" />
           </div>
@@ -148,28 +149,35 @@ export const StateItem: FC<TStateItem> = observer((props) => {
           <p className="text-xs text-custom-text-200">{state.description}</p>
         </div>
 
-        <div className="hidden group-hover:flex items-center gap-2">
-          {/* state mark as default option */}
-          <div className="flex-shrink-0 text-xs transition-all">
-            <StateMarksAsDefault
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              stateId={state.id}
-              isDefault={state.default ? true : false}
-            />
-          </div>
+        {!disabled && (
+          <div className="hidden group-hover:flex items-center gap-2">
+            {/* state mark as default option */}
+            <div className="flex-shrink-0 text-xs transition-all">
+              <StateMarksAsDefault
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                stateId={state.id}
+                isDefault={state.default ? true : false}
+              />
+            </div>
 
-          {/* state edit options */}
-          <div className="flex items-center gap-1 transition-all">
-            <button
-              className="flex-shrink-0 w-5 h-5 rounded flex justify-center items-center overflow-hidden transition-colors hover:bg-custom-background-80 cursor-pointer text-custom-text-200 hover:text-custom-text-100"
-              onClick={() => setUpdateStateModal(true)}
-            >
-              <Pencil className="w-3 h-3" />
-            </button>
-            <StateDelete workspaceSlug={workspaceSlug} projectId={projectId} totalStates={totalStates} state={state} />
+            {/* state edit options */}
+            <div className="flex items-center gap-1 transition-all">
+              <button
+                className="flex-shrink-0 w-5 h-5 rounded flex justify-center items-center overflow-hidden transition-colors hover:bg-custom-background-80 cursor-pointer text-custom-text-200 hover:text-custom-text-100"
+                onClick={() => setUpdateStateModal(true)}
+              >
+                <Pencil className="w-3 h-3" />
+              </button>
+              <StateDelete
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                totalStates={totalStates}
+                state={state}
+              />
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* draggable drop bottom indicator */}
