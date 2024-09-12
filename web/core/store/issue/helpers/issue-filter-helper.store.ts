@@ -248,7 +248,7 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
             [filterType]: filters[filterType],
           },
         };
-
+      // All group_by "filters" are stored in a single array, will cause inconsistency in case of duplicated values
       storage.set("issue_local_filters", JSON.stringify(storageFilters));
     },
   };
