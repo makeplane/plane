@@ -21,7 +21,6 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({ getPos, editor, node, 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const hasTriggeredFilePickerRef = useRef(false);
   const [isUploaded, setIsUploaded] = useState(!!node.attrs.src);
-  const [uploadedImageUrl, setUploadedImageUrl] = useState("");
 
   const id = node.attrs.id as string;
   const editorStorage = editor.storage.imageBlock as UploadImageExtensionStorage | undefined;
@@ -34,9 +33,8 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({ getPos, editor, node, 
   const onUpload = useCallback(
     (url: string) => {
       if (url) {
-        setUploadedImageUrl(url);
         setIsUploaded(true);
-        // Update the node attributes with the new image URL
+        // Update the node view's src attribute
         updateAttributes({ src: url });
         editorStorage?.fileMap.delete(id);
       }
@@ -99,7 +97,13 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({ getPos, editor, node, 
             updateAttributes={updateAttributes}
           />
         ) : (
-          <ImageUploader onUpload={onUpload} editor={editor} fileInputRef={fileInputRef} existingFile={existingFile} />
+          <ImageUploader
+            onUpload={onUpload}
+            editor={editor}
+            fileInputRef={fileInputRef}
+            existingFile={existingFile}
+            id={id}
+          />
         )}
       </div>
     </NodeViewWrapper>

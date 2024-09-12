@@ -1,8 +1,9 @@
-import { UploadImage, DeleteImage, RestoreImage } from "@/types";
 import { mergeAttributes, Range } from "@tiptap/core";
 import { Image } from "@tiptap/extension-image";
 import { ReactNodeViewRenderer } from "@tiptap/react";
 import { v4 as uuidv4 } from "uuid";
+import { UploadImage, DeleteImage, RestoreImage } from "@/types";
+
 import { UploadImageExtensionStorage } from "../image-upload";
 import { ImageUpload } from "../image-upload/view";
 
@@ -108,9 +109,16 @@ export const ImageBlock = ({
                 event: props.event,
               });
             }
-            return commands.insertContent(
-              `<image-block data-type="${this.name}" id="${fileId}" ${props?.file ? `data-file="${props.file}"` : ""} />`
-            );
+            const attributes = {
+              "data-type": this.name,
+              id: fileId,
+              "data-file": props?.file ? `data-file="${props.file}"` : "",
+            };
+
+            return commands.insertContent({
+              type: this.name,
+              attrs: attributes,
+            });
           },
         uploadImage: (file: File) => async () => {
           const fileUrl = await uploadFile(file);

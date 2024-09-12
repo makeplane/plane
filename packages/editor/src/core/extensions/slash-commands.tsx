@@ -34,10 +34,9 @@ import {
   toggleHeadingFour,
   toggleHeadingFive,
   toggleHeadingSix,
-  insertImageCommand,
 } from "@/helpers/editor-commands";
 // types
-import { CommandProps, ISlashCommandItem, UploadImage } from "@/types";
+import { CommandProps, ISlashCommandItem } from "@/types";
 
 interface CommandItemProps {
   key: string;
