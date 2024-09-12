@@ -40,6 +40,7 @@ export const SpreadsheetStartDateColumn: React.FC<Props> = observer((props: Prop
         buttonVariant="transparent-with-text"
         buttonClassName="text-left rounded-none group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10 px-page-x"
         buttonContainerClassName="w-full"
+        className="z-9"
         onClose={onClose}
       />
     </div>
