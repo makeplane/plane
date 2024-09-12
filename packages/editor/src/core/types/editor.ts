@@ -20,7 +20,7 @@ export type EditorReadOnlyRefApi = {
   clearEditor: (emitUpdate?: boolean) => void;
   setEditorValue: (content: string) => void;
   scrollSummary: (marking: IMarking) => void;
-  documentInfo: {
+  getDocumentInfo: () => {
     characters: number;
     paragraphs: number;
     words: number;

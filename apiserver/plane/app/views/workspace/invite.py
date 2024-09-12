@@ -74,7 +74,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
             [
                 email
                 for email in emails
-                if int(email.get("role", 10)) > requesting_user.role
+                if int(email.get("role", 5)) > requesting_user.role
             ]
         ):
             return Response(
@@ -119,7 +119,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
                             settings.SECRET_KEY,
                             algorithm="HS256",
                         ),
-                        role=email.get("role", 10),
+                        role=email.get("role", 5),
                         created_by=request.user,
                     )
                 )

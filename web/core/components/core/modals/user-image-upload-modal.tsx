@@ -39,7 +39,7 @@ export const UserImageUploadModal: React.FC<Props> = observer((props) => {
   const { getRootProps, getInputProps, isDragActive, fileRejections } = useDropzone({
     onDrop,
     accept: {
-      "image/*": [".png", ".jpg", ".jpeg", ".svg", ".webp"],
+      "image/*": [".png", ".jpg", ".jpeg", ".webp"],
     },
     maxSize: config?.file_size_limit ?? MAX_FILE_SIZE,
     multiple: false,
@@ -144,7 +144,7 @@ export const UserImageUploadModal: React.FC<Props> = observer((props) => {
                           </div>
                         )}
 
-                        <input {...getInputProps()} type="text" />
+                        <input {...getInputProps()} />
                       </div>
                     </div>
                     {fileRejections.length > 0 && (
@@ -156,9 +156,7 @@ export const UserImageUploadModal: React.FC<Props> = observer((props) => {
                     )}
                   </div>
                 </div>
-                <p className="my-4 text-sm text-custom-text-200">
-                  File formats supported- .jpeg, .jpg, .png, .webp, .svg
-                </p>
+                <p className="my-4 text-sm text-custom-text-200">File formats supported- .jpeg, .jpg, .png, .webp</p>
                 <div className="flex items-center justify-between">
                   {handleDelete && (
                     <Button variant="danger" size="sm" onClick={handleDelete} disabled={!value}>

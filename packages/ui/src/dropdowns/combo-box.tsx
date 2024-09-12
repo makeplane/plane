@@ -58,7 +58,7 @@ const ComboDropDown = forwardRef((props: Props, ref) => {
   }
 
   return (
-    //@ts-ignore
+    // @ts-ignore
     <Combobox {...rest} ref={ref}>
       <Combobox.Button as={Fragment}>{button}</Combobox.Button>
       {children}
@@ -69,5 +69,7 @@ const ComboDropDown = forwardRef((props: Props, ref) => {
 const ComboOptions = Combobox.Options;
 const ComboOption = Combobox.Option;
 const ComboInput = Combobox.Input;
+
+ComboDropDown.displayName = "ComboDropDown";
 
 export { ComboDropDown, ComboOptions, ComboOption, ComboInput };

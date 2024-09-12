@@ -1,11 +1,10 @@
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-// constants
-import { EUserWorkspaceRoles } from "@/constants/workspace";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web constants
+import { EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { WORKSPACE_SETTINGS_LINKS } from "@/plane-web/constants/workspace";
 // plane web helpers
 import { shouldRenderSettingLink } from "@/plane-web/helpers/workspace.helper";
@@ -15,19 +14,14 @@ export const MobileWorkspaceSettingsTabs = observer(() => {
   const { workspaceSlug } = useParams();
   const pathname = usePathname();
   // mobx store
-  const {
-    membership: { currentWorkspaceRole },
-  } = useUser();
-
-  // derived values
-  const workspaceMemberInfo = currentWorkspaceRole || EUserWorkspaceRoles.GUEST;
+  const { allowPermissions } = useUserPermissions();
 
   return (
     <div className="flex-shrink-0 md:hidden sticky inset-0 flex overflow-x-auto bg-custom-background-100 z-10">
       {WORKSPACE_SETTINGS_LINKS.map(
         (item, index) =>
           shouldRenderSettingLink(item.key) &&
-          workspaceMemberInfo >= item.access && (
+          allowPermissions(item.access, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString()) && (
             <div
               className={`${
                 item.highlight(pathname, `/${workspaceSlug}`)

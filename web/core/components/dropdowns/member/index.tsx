@@ -106,6 +106,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
           type="button"
           className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
           onClick={handleOnClick}
+          disabled={disabled}
         >
           {button}
         </button>
@@ -122,6 +123,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
             buttonContainerClassName
           )}
           onClick={handleOnClick}
+          disabled={disabled}
         >
           <DropdownButton
             className={cn("text-xs", buttonClassName)}
@@ -160,6 +162,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
     >
       {isOpen && (
         <MemberOptions
+          className={className}
           isOpen={isOpen}
           projectId={projectId}
           placement={placement}

@@ -6,17 +6,15 @@ import { TriangleAlert } from "lucide-react";
 import { TPageVersion } from "@plane/types";
 // plane ui
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
+// components
+import { TVersionEditorProps } from "@/components/pages";
 // helpers
 import { renderFormattedDate, renderFormattedTime } from "@/helpers/date-time.helper";
 
 type Props = {
   activeVersion: string | null;
-  editorComponent: React.FC<{
-    activeVersion: string | null;
-    isCurrentVersionActive: boolean;
-    pageId: string;
-    versionDetails: TPageVersion | undefined;
-  }>;
+  currentVersionDescription: string | null;
+  editorComponent: React.FC<TVersionEditorProps>;
   fetchVersionDetails: (pageId: string, versionId: string) => Promise<TPageVersion | undefined>;
   handleClose: () => void;
   handleRestore: (descriptionHTML: string) => Promise<void>;
@@ -25,8 +23,16 @@ type Props = {
 };
 
 export const PageVersionsMainContent: React.FC<Props> = observer((props) => {
-  const { activeVersion, editorComponent, fetchVersionDetails, handleClose, handleRestore, pageId, restoreEnabled } =
-    props;
+  const {
+    activeVersion,
+    currentVersionDescription,
+    editorComponent,
+    fetchVersionDetails,
+    handleClose,
+    handleRestore,
+    pageId,
+    restoreEnabled,
+  } = props;
   // states
   const [isRestoring, setIsRestoring] = useState(false);
   const [isRetrying, setIsRetrying] = useState(false);
@@ -112,8 +118,8 @@ export const PageVersionsMainContent: React.FC<Props> = observer((props) => {
           <div className="pt-8 h-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
             <VersionEditor
               activeVersion={activeVersion}
+              currentVersionDescription={currentVersionDescription}
               isCurrentVersionActive={isCurrentVersionActive}
-              pageId={pageId}
               versionDetails={versionDetails}
             />
           </div>
