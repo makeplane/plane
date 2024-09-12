@@ -29,7 +29,7 @@ interface IHeaderGroupByCard {
   disableIssueCreation?: boolean;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   selectionHelpers: TSelectionHelper;
-  handleStateGroups: (toggle: "group_by" | "sub_group_by", value: string) => void;
+  handleListGroups: (toggle: "group_by" | "sub_group_by", value: string) => void;
 }
 
 export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
@@ -43,7 +43,7 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
     disableIssueCreation,
     addIssuesToView,
     selectionHelpers,
-    handleStateGroups
+    handleListGroups
   } = props;
   // states
   const [isOpen, setIsOpen] = useState(false);
@@ -108,7 +108,7 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
 
         <div
           className="relative flex w-full flex-row items-center gap-1 overflow-hidden cursor-pointer"
-          onClick={() => handleStateGroups("group_by", groupID)}
+          onClick={() => handleListGroups("group_by", groupID)}
         >
           <div className="inline-block line-clamp-1 truncate font-medium text-custom-text-100">{title}</div>
           <div className="pl-2 text-sm font-medium text-custom-text-300">{count || 0}</div>

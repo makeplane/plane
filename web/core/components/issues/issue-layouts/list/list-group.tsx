@@ -60,8 +60,8 @@ interface Props {
   showEmptyGroup?: boolean;
   loadMoreIssues: (groupId?: string) => void;
   selectionHelpers: TSelectionHelper;
-  handleStateGroups: (toggle: "group_by" | "sub_group_by", value: string) => void;
-  stateGroups: TIssueKanbanFilters;
+  handleListGroups: (toggle: "group_by" | "sub_group_by", value: string) => void;
+  listGroups: TIssueKanbanFilters;
 }
 
 export const ListGroup = observer((props: Props) => {
@@ -86,13 +86,13 @@ export const ListGroup = observer((props: Props) => {
     showEmptyGroup,
     loadMoreIssues,
     selectionHelpers,
-    handleStateGroups,
-    stateGroups
+    handleListGroups,
+    listGroups,
   } = props;
 
   const [isDraggingOverColumn, setIsDraggingOverColumn] = useState(false);
   const [dragColumnOrientation, setDragColumnOrientation] = useState<"justify-start" | "justify-end">("justify-start");
-  const isExpanded = !(stateGroups?.group_by.includes(group.id))
+  const isExpanded = !(listGroups?.group_by.includes(group.id))
   const groupRef = useRef<HTMLDivElement | null>(null);
 
   const projectState = useProjectState();
@@ -214,7 +214,7 @@ export const ListGroup = observer((props: Props) => {
           highlightIssueOnDrop(getIssueBlockId(source.id, destination?.groupId), orderBy !== "sort_order");
 
           if(!isExpanded){
-            handleStateGroups("group_by", group.id)
+            handleListGroups("group_by", group.id)
           }
         },
       })
@@ -246,7 +246,7 @@ export const ListGroup = observer((props: Props) => {
           disableIssueCreation={disableIssueCreation || isGroupByCreatedBy || isCompletedCycle}
           addIssuesToView={addIssuesToView}
           selectionHelpers={selectionHelpers}
-          handleStateGroups={handleStateGroups}
+          handleListGroups={handleListGroups}
         />
       </Row>
       {shouldExpand && (

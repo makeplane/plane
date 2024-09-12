@@ -48,8 +48,8 @@ export interface IList {
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   isCompletedCycle?: boolean;
   loadMoreIssues: (groupId?: string) => void;
-  handleStateGroups: (toggle: "group_by" | "sub_group_by", value: string) => void;
-  stateGroups : TIssueKanbanFilters;
+  handleListGroups: (toggle: "group_by" | "sub_group_by", value: string) => void;
+  listGroups : TIssueKanbanFilters;
 }
 
 export const List: React.FC<IList> = observer((props) => {
@@ -70,8 +70,8 @@ export const List: React.FC<IList> = observer((props) => {
     addIssuesToView,
     isCompletedCycle = false,
     loadMoreIssues,
-    handleStateGroups,
-    stateGroups
+    handleListGroups,
+    listGroups
   } = props;
 
   const storeType = useIssueStoreType();
@@ -167,8 +167,8 @@ export const List: React.FC<IList> = observer((props) => {
                     loadMoreIssues={loadMoreIssues}
                     containerRef={containerRef}
                     selectionHelpers={helpers}
-                    handleStateGroups={handleStateGroups}
-                    stateGroups={stateGroups}
+                    handleListGroups={handleListGroups}
+                    listGroups={listGroups}
                   />
                 ))}
               </div>

@@ -62,7 +62,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
 
   const { workspaceSlug, projectId } = useParams();
   const {updateFilters} = useIssuesActions(storeType);
-  const stateGroups = issuesFilter?.issueFilters?.kanbanFilters || { group_by: [], sub_group_by: [] };
+  const listGroups = issuesFilter?.issueFilters?.kanbanFilters || { group_by: [], sub_group_by: [] };
 
   useEffect(() => {
     fetchIssues("init-loader", { canGroup: true, perPageCount: group_by ? 50 : 100 }, viewId);
@@ -112,16 +112,16 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
     [fetchNextIssues]
   );
 
-  const handleStateGroups = (toggle: "group_by" | "sub_group_by", value: string) => {
+  const handleListGroups = (toggle: "group_by" | "sub_group_by", value: string) => {
     if (workspaceSlug) {
-      let stateGroups = issuesFilter?.issueFilters?.kanbanFilters?.[toggle] || [];
-      if (stateGroups.includes(value)) {
-        stateGroups = stateGroups.filter((_value) => _value != value);
+      let listGroups = issuesFilter?.issueFilters?.kanbanFilters?.[toggle] || [];
+      if (listGroups.includes(value)) {
+        listGroups = listGroups.filter((_value) => _value != value);
       } else {
-        stateGroups.push(value);
+        listGroups.push(value);
       }
       updateFilters(projectId?.toString() ?? "", EIssueFilterType.KANBAN_FILTERS, {
-        [toggle]: stateGroups,
+        [toggle]: listGroups,
       });
     }
   };
@@ -146,8 +146,8 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
           addIssuesToView={addIssuesToView}
           isCompletedCycle={isCompletedCycle}
           handleOnDrop={handleOnDrop}
-          handleStateGroups={handleStateGroups}
-          stateGroups={stateGroups}
+          handleListGroups={handleListGroups}
+          listGroups={listGroups}
         />
       </div>
     </IssueLayoutHOC>
