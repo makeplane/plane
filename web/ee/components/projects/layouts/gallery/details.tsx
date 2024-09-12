@@ -18,9 +18,9 @@ import { Logo } from "@/components/common";
 // helpers
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { TProject } from "@/plane-web/types/projects";
 
 type Props = {
@@ -34,11 +34,16 @@ const Details: React.FC<Props> = observer((props) => {
   const { project, workspaceSlug, setArchiveRestoreProject, setDeleteProjectModal } = props;
   // store hooks
   const { addProjectToFavorites, removeProjectFromFavorites } = useProject();
+  const { allowPermissions } = useUserPermissions();
   // router
   const router = useAppRouter();
   // auth
   const isOwner = project.member_role === EUserPermissions.ADMIN;
   const isMember = project.member_role === EUserPermissions.MEMBER;
+  const shouldRenderFavorite = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
   // archive
   const isArchived = !!project.archived_at;
 
@@ -182,7 +187,7 @@ const Details: React.FC<Props> = observer((props) => {
             </CustomMenu>
           )}
 
-          {project.is_member && !isArchived && (
+          {project.is_member && !isArchived && shouldRenderFavorite && (
             <div data-prevent-nprogress>
               {" "}
               <FavoriteStar
