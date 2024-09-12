@@ -2,7 +2,7 @@ from django.urls import path
 
 
 from plane.space.views import (
-    ProjectDeployBoardPublicSettingsEndpoint,
+    DeployBoardPublicSettingsEndpoint,
     ProjectIssuesPublicEndpoint,
     WorkspaceProjectAnchorEndpoint,
     ProjectCyclesEndpoint,
@@ -15,7 +15,7 @@ from plane.space.views import (
 urlpatterns = [
     path(
         "anchor/<str:anchor>/settings/",
-        ProjectDeployBoardPublicSettingsEndpoint.as_view(),
+        DeployBoardPublicSettingsEndpoint.as_view(),
         name="project-deploy-board-settings",
     ),
     path(
