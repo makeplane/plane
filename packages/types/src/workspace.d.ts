@@ -221,3 +221,4 @@ export interface IWorkspaceProgressResponse {
 export interface IWorkspaceAnalyticsResponse {
   completion_chart: any;
 }
+
