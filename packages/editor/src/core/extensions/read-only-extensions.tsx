@@ -19,6 +19,7 @@ import {
   TableRow,
   Table,
   CustomMention,
+  HeadingListExtension,
 } from "@/extensions";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
@@ -106,4 +107,5 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
     readonly: true,
   }),
   CharacterCount,
+  HeadingListExtension,
 ];

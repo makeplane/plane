@@ -25,6 +25,7 @@ export type EditorReadOnlyRefApi = {
     paragraphs: number;
     words: number;
   };
+  onHeadingChange: (callback: (headings: IMarking[]) => void) => () => void;
 };
 
 export interface EditorRefApi extends EditorReadOnlyRefApi {
@@ -32,7 +33,6 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
   executeMenuItemCommand: (itemKey: TEditorCommands) => void;
   isMenuItemActive: (itemKey: TEditorCommands) => boolean;
   onStateChange: (callback: () => void) => () => void;
-  onHeadingChange: (callback: (headings: IMarking[]) => void) => () => void;
   setFocusAtPosition: (position: number) => void;
   isEditorReadyToDiscard: () => boolean;
   getSelectedText: () => string | null;

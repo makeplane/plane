@@ -89,6 +89,18 @@ export const useReadOnlyEditor = ({
         words: editorRef?.current?.storage?.characterCount?.words?.() ?? 0,
       };
     },
+    onHeadingChange: (callback: (headings: IMarking[]) => void) => {
+      // Subscribe to update event emitted from headers extension
+      editorRef.current?.on("update", () => {
+        callback(editorRef.current?.storage.headingList.headings);
+      });
+      // Return a function to unsubscribe to the continuous transactions of
+      // the editor on unmounting the component that has subscribed to this
+      // method
+      return () => {
+        editorRef.current?.off("update");
+      };
+    },
   }));
 
   if (!editor) {

@@ -9,7 +9,7 @@ import { cn } from "@/helpers/common.helper";
 import { PageContentBrowser } from "./content-browser";
 
 type Props = {
-  editorRef: EditorRefApi & EditorReadOnlyRefApi;
+  editorRef: EditorRefApi | EditorReadOnlyRefApi | null;
   isFullWidth: boolean;
   sidePeekVisible: boolean;
   setSidePeekVisible: (sidePeekState: boolean) => void;

@@ -1,15 +1,17 @@
-// types
 import { useState, useEffect } from "react";
+// plane editor
 import { EditorReadOnlyRefApi, EditorRefApi, IMarking } from "@plane/editor";
+// components
 import { OutlineHeading1, OutlineHeading2, OutlineHeading3 } from "./heading-components";
 
 type Props = {
-  editorRef: EditorRefApi & EditorReadOnlyRefApi;
+  editorRef: EditorRefApi | EditorReadOnlyRefApi | null;
   setSidePeekVisible?: (sidePeekState: boolean) => void;
 };
 
 export const PageContentBrowser: React.FC<Props> = (props) => {
   const { editorRef, setSidePeekVisible } = props;
+  // states
   const [headings, setHeadings] = useState<IMarking[]>([]);
 
   useEffect(() => {
