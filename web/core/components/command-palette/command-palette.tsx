@@ -256,11 +256,9 @@ export const CommandPalette: FC = observer(() => {
         toggleShortcutModal(true);
       }
 
-      if (deleteKey) {
-        if(canPerformProjectAdminActions){
-          performProjectBulkDeleteActions()
-          shortcutsList.project.delete.action();
-        }
+      if (deleteKey && canPerformProjectAdminActions) {
+        performProjectBulkDeleteActions()
+        shortcutsList.project.delete.action();
       } else if (cmdClicked) {
         if (keyPressed === "c" && ((platform === "MacOS" && ctrlKey) || altKey)) {
           e.preventDefault();
