@@ -53,7 +53,7 @@ export const SpreadsheetDueDateColumn: React.FC<Props> = observer((props: Props)
             "text-red-500": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
           }
         )}
-        optionsClassName="z-[9px]"
+        optionsClassName="z-[9]"
         clearIconClassName="!text-custom-text-100"
         onClose={onClose}
       />
