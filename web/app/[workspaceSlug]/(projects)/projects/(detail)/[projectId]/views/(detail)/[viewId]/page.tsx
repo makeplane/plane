@@ -32,7 +32,7 @@ const ProjectViewIssuesPage = observer(() => {
       : null
   );
 
-  if (error && !isLoading) {
+  if (error) {
     return (
       <EmptyState
         image={emptyView}
