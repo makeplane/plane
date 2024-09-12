@@ -257,7 +257,8 @@ export const CommandPalette: FC = observer(() => {
       }
 
       if (deleteKey) {
-        if (performProjectBulkDeleteActions()) {
+        if(canPerformProjectAdminActions){
+          performProjectBulkDeleteActions()
           shortcutsList.project.delete.action();
         }
       } else if (cmdClicked) {
