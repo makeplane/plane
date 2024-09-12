@@ -101,14 +101,17 @@ export const ImageBlockView: React.FC<ImageBlockViewProps> = (props) => {
         ref={imageRef}
         src={src}
         alt=""
-        className="max-w-full object-contain"
-        style={{ width: size.width, height: size.height }}
+        className="max-w-full object-contain rounded-md"
+        style={{
+          width: size.width,
+          height: size.height,
+        }}
       />
       {isSelected && (
         <>
-          <div className="absolute inset-0 border-2 border-blue-500 pointer-events-none" />
+          <div className="absolute inset-0 border-2 border-custom-primary-100 pointer-events-none rounded-md" />
           <div
-            className="absolute bottom-0 right-0 w-4 h-4 bg-blue-500 cursor-se-resize"
+            className="absolute bottom-0 right-0 translate-y-1/2 translate-x-1/2 size-4 rounded-full bg-custom-primary-100 border-2 border-white cursor-nwse-resize"
             onMouseDown={handleResizeStart}
           />
         </>
