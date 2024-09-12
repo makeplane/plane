@@ -49,7 +49,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
 
   const { fetchAllIssueTypes } = useIssueTypes();
   const { isMobile } = usePlatformOS();
-  const { workspaceInfoBySlug, fetchUserWorkspaceInfo, fetchUserProjectPermissions, allowPermissions } =
+  const { loader, workspaceInfoBySlug, fetchUserWorkspaceInfo, fetchUserProjectPermissions, allowPermissions } =
     useUserPermissions();
   // derived values
   const canPerformWorkspaceMemberActions = allowPermissions(
@@ -141,7 +141,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const currentWorkspaceInfo = workspaceSlug && workspaceInfoBySlug(workspaceSlug.toString());
 
   // if list of workspaces are not there then we have to render the spinner
-  if ((flagsLoader && !flagsError) || allWorkspaces === undefined) {
+  if ((flagsLoader && !flagsError) || allWorkspaces === undefined || loader) {
     return (
       <div className="grid h-screen place-items-center bg-custom-background-100 p-4">
         <div className="flex flex-col items-center gap-3 text-center">
