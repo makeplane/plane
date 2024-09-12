@@ -241,6 +241,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
             : "cursor-pointer hover:bg-custom-background-80"
       }  ${buttonClassName}`}
       onClick={handleOnClick}
+      disabled={disabled}
     >
       {label}
       {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}

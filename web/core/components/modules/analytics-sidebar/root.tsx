@@ -47,15 +47,15 @@ import {
   MODULE_UPDATED,
 } from "@/constants/event-tracker";
 import { MODULE_STATUS } from "@/constants/module";
-import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useModule, useUser, useEventTracker, useProjectEstimates } from "@/hooks/store";
+import { useModule, useEventTracker, useProjectEstimates, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web constants
 import { EEstimateSystem } from "@/plane-web/constants/estimates";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const defaultValues: Partial<IModule> = {
   lead_id: "",
@@ -84,9 +84,9 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = useParams();
 
   // store hooks
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+
+  const { allowPermissions } = useUserPermissions();
+
   const { getModuleById, updateModuleDetails, createModuleLink, updateModuleLink, deleteModuleLink, restoreModule } =
     useModule();
   const { setTrackElement, captureModuleEvent, captureEvent } = useEventTracker();
@@ -264,7 +264,10 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
       ? "0 Issue"
       : `${moduleDetails.completed_estimate_points}/${moduleDetails.total_estimate_points}`;
 
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditingAllowed = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
 
   return (
     <div className="relative">
@@ -550,7 +553,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                   <Transition show={open}>
                     <Disclosure.Panel>
                       <div className="mt-2 flex min-h-72 w-full flex-col space-y-3 overflow-y-auto">
-                        {currentProjectRole && moduleDetails.link_module && moduleDetails.link_module.length > 0 ? (
+                        {isEditingAllowed && moduleDetails.link_module && moduleDetails.link_module.length > 0 ? (
                           <>
                             {isEditingAllowed && !isArchived && (
                               <div className="flex w-full items-center justify-end">
@@ -569,13 +572,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                                 moduleId={moduleId}
                                 handleEditLink={handleEditLink}
                                 handleDeleteLink={handleDeleteLink}
-                                userAuth={{
-                                  isGuest: currentProjectRole === EUserProjectRoles.GUEST,
-                                  isViewer: currentProjectRole === EUserProjectRoles.VIEWER,
-                                  isMember: currentProjectRole === EUserProjectRoles.MEMBER,
-                                  isOwner: currentProjectRole === EUserProjectRoles.ADMIN,
-                                }}
-                                disabled={isArchived}
+                                disabled={!isEditingAllowed || isArchived}
                               />
                             )}
                           </>

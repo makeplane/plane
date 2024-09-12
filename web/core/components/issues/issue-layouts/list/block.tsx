@@ -126,7 +126,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
   };
 
   //TODO: add better logic. This is to have a min width for ID/Key based on the length of project identifier
-  const keyMinWidth = (projectIdentifier?.length ?? 0) * 7;
+  const keyMinWidth = displayProperties?.key ? (projectIdentifier?.length ?? 0) * 7 : 0;
 
   return (
     <Row
@@ -184,13 +184,14 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
                 </div>
               </Tooltip>
             )}
-            {displayProperties && displayProperties?.key && (
+            {displayProperties && (displayProperties.key || displayProperties.issue_type) && (
               <div className="flex-shrink-0" style={{ minWidth: `${keyMinWidth}px` }}>
                 {issue.project_id && (
                   <IssueIdentifier
                     issueId={issueId}
                     projectId={issue.project_id}
                     textContainerClassName="text-xs font-medium text-custom-text-300"
+                    displayProperties={displayProperties}
                   />
                 )}
               </div>

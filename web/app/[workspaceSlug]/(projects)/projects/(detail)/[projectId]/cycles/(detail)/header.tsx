@@ -21,7 +21,6 @@ import {
   EIssuesStoreType,
   ISSUE_DISPLAY_FILTERS_BY_LAYOUT,
 } from "@/constants/issue";
-import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { isIssueFilterActive } from "@/helpers/filter.helper";
@@ -34,13 +33,14 @@ import {
   useMember,
   useProject,
   useProjectState,
-  useUser,
   useIssues,
   useCommandPalette,
+  useUserPermissions,
 } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const CycleDropdownOption: React.FC<{ cycleId: string }> = ({ cycleId }) => {
   // router
@@ -81,9 +81,6 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   const { currentProjectCycleIds, getCycleById } = useCycle();
   const { toggleCreateIssueModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
   const { currentProjectDetails, loader } = useProject();
   const { projectStates } = useProjectState();
   const { projectLabels } = useLabel();
@@ -91,6 +88,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
     project: { projectMemberIds },
   } = useMember();
   const { isMobile } = usePlatformOS();
+  const { allowPermissions } = useUserPermissions();
 
   const activeLayout = issueFilters?.displayFilters?.layout;
 
@@ -149,8 +147,10 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   // derived values
   const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : undefined;
   const isCompletedCycle = cycleDetails?.status?.toLocaleLowerCase() === "completed";
-  const canUserCreateIssue =
-    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
+  const canUserCreateIssue = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
 
   const issuesCount = getGroupIssueCount(undefined, undefined, false);
 

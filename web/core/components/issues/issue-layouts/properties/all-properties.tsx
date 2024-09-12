@@ -332,6 +332,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
             className="z-10"
             disabled={isReadOnly}
+            className="z-10"
             renderByDefault={isMobile}
             showTooltip
           />
@@ -352,6 +353,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             clearIconClassName="!text-custom-text-100"
             className="z-10"
             disabled={isReadOnly}
+            className="z-10"
             renderByDefault={isMobile}
             showTooltip
           />

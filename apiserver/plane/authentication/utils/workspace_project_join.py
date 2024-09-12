@@ -49,7 +49,7 @@ def process_workspace_project_invitations(user):
                 workspace_id=project_member_invite.workspace_id,
                 role=(
                     project_member_invite.role
-                    if project_member_invite.role in [5, 10, 15]
+                    if project_member_invite.role in [5, 15]
                     else 15
                 ),
                 member=user,
@@ -67,7 +67,7 @@ def process_workspace_project_invitations(user):
                 workspace_id=project_member_invite.workspace_id,
                 role=(
                     project_member_invite.role
-                    if project_member_invite.role in [5, 10, 15]
+                    if project_member_invite.role in [5, 15]
                     else 15
                 ),
                 member=user,

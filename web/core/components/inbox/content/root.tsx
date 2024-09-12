@@ -4,11 +4,10 @@ import useSWR from "swr";
 // components
 import { ContentWrapper } from "@plane/ui";
 import { InboxIssueActionsHeader, InboxIssueMainContent } from "@/components/inbox";
-// constants
-import { EUserProjectRoles } from "@/constants/project";
 // hooks
-import { useProjectInbox, useUser } from "@/hooks/store";
+import { useProjectInbox, useUser, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type TInboxContentRoot = {
   workspaceSlug: string;
@@ -35,11 +34,11 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
   // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   // hooks
+  const { data: currentUser } = useUser();
   const { currentTab, fetchInboxIssueById, getIssueInboxByIssueId, getIsIssueAvailable } = useProjectInbox();
   const inboxIssue = getIssueInboxByIssueId(inboxIssueId);
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions, projectPermissionsByWorkspaceSlugAndProjectId } = useUserPermissions();
+
   // derived values
   const isIssueAvailable = getIsIssueAvailable(inboxIssueId?.toString() || "");
 
@@ -63,7 +62,13 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
     }
   );
 
-  const isEditable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditable = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    EUserPermissionsLevel.PROJECT
+  );
+  const isGuest = projectPermissionsByWorkspaceSlugAndProjectId(workspaceSlug, projectId) === EUserPermissions.GUEST;
+  const isOwner = inboxIssue.issue.created_by === currentUser?.id;
+  const readOnly = !isOwner && isGuest;
 
   if (!inboxIssue) return <></>;
 
@@ -89,7 +94,7 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
             workspaceSlug={workspaceSlug}
             projectId={projectId}
             inboxIssue={inboxIssue}
-            isEditable={isEditable && !isIssueDisabled}
+            isEditable={isEditable && !isIssueDisabled && !readOnly}
             isSubmitting={isSubmitting}
             setIsSubmitting={setIsSubmitting}
           />

@@ -109,6 +109,7 @@ export type TWidgetIssue = TIssue & {
     project_id: string;
     relation_type: TIssueRelationTypes;
     sequence_id: number;
+    type_id: string | null;
   }[];
 };
 

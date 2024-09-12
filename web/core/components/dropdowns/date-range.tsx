@@ -146,6 +146,7 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
         buttonContainerClassName
       )}
       onClick={handleOnClick}
+      disabled={disabled}
     >
       <DropdownButton
         className={buttonClassName}

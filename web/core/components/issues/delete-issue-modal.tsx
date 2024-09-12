@@ -8,8 +8,8 @@ import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { PROJECT_ERROR_MESSAGES } from "@/constants/project";
 // hooks
-import { useIssues, useProject, useUser } from "@/hooks/store";
-
+import { useIssues, useProject, useUser, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
@@ -26,7 +26,12 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
   // store hooks
   const { issueMap } = useIssues();
   const { getProjectById } = useProject();
-  const { data: currentUser, canPerformProjectAdminActions } = useUser();
+  const { allowPermissions } = useUserPermissions();
+
+  const { data: currentUser } = useUser();
+
+  // derived values
+  const canPerformProjectAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
 
   useEffect(() => {
     setIsDeleting(false);

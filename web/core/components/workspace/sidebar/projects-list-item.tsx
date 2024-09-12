@@ -41,15 +41,14 @@ import {
 import { Logo } from "@/components/common";
 import { LeaveProjectModal, PublishProjectModal } from "@/components/project";
 import { SidebarNavItem } from "@/components/sidebar";
-// constants
-import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useAppTheme, useEventTracker, useProject, useUser } from "@/hooks/store";
+import { useAppTheme, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
 import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // constants
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { HIGHLIGHT_CLASS, highlightIssueOnDrop } from "../../issues/issue-layouts/utils";
 
 type Props = {
@@ -71,37 +70,37 @@ const navigation = (workspaceSlug: string, projectId: string) => [
     name: "Issues",
     href: `/${workspaceSlug}/projects/${projectId}/issues`,
     Icon: LayersIcon,
-    access: EUserProjectRoles.GUEST,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
   },
   {
     name: "Cycles",
     href: `/${workspaceSlug}/projects/${projectId}/cycles`,
     Icon: ContrastIcon,
-    access: EUserProjectRoles.VIEWER,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   {
     name: "Modules",
     href: `/${workspaceSlug}/projects/${projectId}/modules`,
     Icon: DiceIcon,
-    access: EUserProjectRoles.VIEWER,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   {
     name: "Views",
     href: `/${workspaceSlug}/projects/${projectId}/views`,
     Icon: Layers,
-    access: EUserProjectRoles.GUEST,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
   },
   {
     name: "Pages",
     href: `/${workspaceSlug}/projects/${projectId}/pages`,
     Icon: FileText,
-    access: EUserProjectRoles.VIEWER,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
   },
   {
     name: "Intake",
     href: `/${workspaceSlug}/projects/${projectId}/inbox`,
     Icon: Intake,
-    access: EUserProjectRoles.GUEST,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
   },
 ];
 
@@ -113,9 +112,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
   const { setTrackElement } = useEventTracker();
   const { addProjectToFavorites, removeProjectFromFavorites, getProjectById } = useProject();
   const { isMobile } = usePlatformOS();
-  const {
-    membership: { currentWorkspaceAllProjectsRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
   // states
   const [leaveProjectModalOpen, setLeaveProjectModal] = useState(false);
   const [publishModalOpen, setPublishModal] = useState(false);
@@ -135,9 +132,18 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
   // derived values
   const project = getProjectById(projectId);
   // auth
-  const isAdmin = project?.member_role === EUserProjectRoles.ADMIN;
-  const isViewerOrGuest =
-    project?.member_role && [EUserProjectRoles.VIEWER, EUserProjectRoles.GUEST].includes(project.member_role);
+  const isAdmin = allowPermissions(
+    [EUserPermissions.ADMIN],
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug.toString(),
+    project?.id
+  );
+  const isAuthorized = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug.toString(),
+    project?.id
+  );
 
   const handleAddToFavorites = () => {
     if (!workspaceSlug || !project) return;
@@ -395,7 +401,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                   placement="bottom-start"
                   useCaptureForOutsideClick
                 >
-                  {!isViewerOrGuest && (
+                  {isAuthorized && (
                     <CustomMenu.MenuItem
                       onClick={project.is_favorite ? handleRemoveFromFavorites : handleAddToFavorites}
                     >
@@ -421,7 +427,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                       </div>
                     </CustomMenu.MenuItem>
                   )}
-                  {!isViewerOrGuest && (
+                  {isAuthorized && (
                     <CustomMenu.MenuItem>
                       <Link href={`/${workspaceSlug}/projects/${project?.id}/draft-issues/`}>
                         <div className="flex items-center justify-start gap-2">
@@ -437,7 +443,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                       <span>Copy link</span>
                     </span>
                   </CustomMenu.MenuItem>
-                  {!isViewerOrGuest && (
+                  {isAuthorized && (
                     <CustomMenu.MenuItem>
                       <Link href={`/${workspaceSlug}/projects/${project?.id}/archives/issues`}>
                         <div className="flex items-center justify-start gap-2">
@@ -456,7 +462,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                     </Link>
                   </CustomMenu.MenuItem>
                   {/* leave project */}
-                  {isViewerOrGuest && (
+                  {!isAuthorized && (
                     <CustomMenu.MenuItem onClick={handleLeaveProject}>
                       <div className="flex items-center justify-start gap-2">
                         <LogOut className="h-3.5 w-3.5 stroke-[1.5]" />
@@ -505,12 +511,14 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                     (item.name === "Intake" && !project.inbox_view)
                   )
                     return;
-                  const currentRole = currentWorkspaceAllProjectsRole
-                    ? currentWorkspaceAllProjectsRole[projectId]
-                    : undefined;
                   return (
                     <>
-                      {currentRole >= item.access && (
+                      {allowPermissions(
+                        item.access,
+                        EUserPermissionsLevel.PROJECT,
+                        workspaceSlug.toString(),
+                        project.id
+                      ) && (
                         <Tooltip
                           key={item.name}
                           isMobile={isMobile}
