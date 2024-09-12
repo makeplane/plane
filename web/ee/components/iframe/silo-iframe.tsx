@@ -1,12 +1,17 @@
 "use client";
+
 import { useRef, useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
+// ui
 import { Spinner } from "@plane/ui";
+// helpers
 import { cn } from "@/helpers/common.helper";
-import { ServiceAPITokenService } from "@/plane-web/services/api_token.service";
+// hooks
 import { useUser } from "@/hooks/store";
+// plane web services
+import { ServiceAPITokenService } from "@/plane-web/services/api_token.service";
 
 interface CustomIframeProps {
   srcBase: string;

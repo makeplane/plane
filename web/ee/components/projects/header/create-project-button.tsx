@@ -4,7 +4,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { Button } from "@plane/ui";
 // hooks
-import { useCommandPalette, useEventTracker, useUser, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette, useEventTracker, useUserPermissions } from "@/hooks/store";
 // plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 

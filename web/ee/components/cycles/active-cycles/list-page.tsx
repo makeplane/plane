@@ -52,11 +52,12 @@ export const ActiveCyclesListPage: FC<ActiveCyclesListPageProps> = (props) => {
     }
   }, [updateTotalPages, updateResultsCount, workspaceActiveCycles]);
 
+  useIntersectionObserver(containerRef, elementRef, handleLoadMore);
+
   if (error) {
     if (error.error_code === 1999) return <WorkspaceActiveCyclesUpgrade />;
     else throw Error(error.error);
   }
-  useIntersectionObserver(containerRef, elementRef, handleLoadMore);
 
   if (!workspaceActiveCycles) {
     return Array.from({ length: 3 }).map((_, index) => (

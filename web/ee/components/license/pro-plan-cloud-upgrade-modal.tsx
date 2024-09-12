@@ -8,7 +8,7 @@ import { IPaymentProduct } from "@plane/types";
 // ui
 import { EModalWidth, Loader, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
 // plane web constants
-import { useEventTracker, useUser, useUserPermissions } from "@/hooks/store";
+import { useEventTracker, useUserPermissions } from "@/hooks/store";
 import { PRO_PLAN_FEATURES_MAP } from "@/plane-web/constants/license";
 import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // plane web services

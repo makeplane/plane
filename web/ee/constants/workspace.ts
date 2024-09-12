@@ -1,5 +1,5 @@
 // ce constants
-import { WORKSPACE_SETTINGS as WORKSPACE_SETTINGS_CE } from "ce/constants/workspace";
+import { WORKSPACE_SETTINGS as WORKSPACE_SETTINGS_CE } from "@/ce/constants/workspace";
 // components
 import { SettingIcon } from "@/components/icons/attachment";
 // logos

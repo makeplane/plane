@@ -1,11 +1,11 @@
+// plane types
+import { EUserPermissions } from "@plane/types/src/enums";
 // ce constants
 import { PROJECT_SETTINGS as PROJECT_SETTINGS_CE } from "@/ce/constants/project";
 // icons
 import { SettingIcon } from "@/components/icons/attachment";
-// types
+// components
 import { Props } from "@/components/icons/types";
-import { EUserPermissions } from "@plane/types/src/enums";
-// constants
 
 export const PROJECT_SETTINGS = {
   ...PROJECT_SETTINGS_CE,

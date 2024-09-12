@@ -9,7 +9,8 @@ import { useUser, useAppTheme, useCommandPalette, useUserPermissions } from "@/h
 // plane web components
 import { PagesAppCommandModal, PagesAppShortcutsModal } from "@/plane-web/components/command-palette";
 import { PagesAppCreatePageModal } from "@/plane-web/components/pages";
-import { EUserPermissions, EUserPermissionsLevel } from "@/ce/constants/user-permissions";
+// plane web constants
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const PagesAppCommandPalette: React.FC = observer(() => {
   // params

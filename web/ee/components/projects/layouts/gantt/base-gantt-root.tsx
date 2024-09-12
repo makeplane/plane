@@ -5,7 +5,7 @@ import { ChartDataType, GanttChartRoot, IBlockUpdateData, IGanttBlock } from "@/
 import { getMonthChartItemPositionWidthInMonth } from "@/components/gantt-chart/views";
 import { getDate } from "@/helpers/date-time.helper";
 //hooks
-import { useProject, useUser, useUserPermissions } from "@/hooks/store";
+import { useProject, useUserPermissions } from "@/hooks/store";
 import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // plane web hooks
 import { useProjectFilter } from "@/plane-web/hooks/store/workspace-project-states/use-project-filters";

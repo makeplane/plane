@@ -7,7 +7,7 @@ import { Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useAppTheme, useUser, useUserPermissions } from "@/hooks/store";
+import { useAppTheme, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 

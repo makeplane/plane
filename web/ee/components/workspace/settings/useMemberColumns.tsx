@@ -1,6 +1,10 @@
-import { useMemberColumns as useCeMemberColumns } from "ce/components/workspace/settings/useMemberColumns";
+// ce components
+import { useMemberColumns as useCeMemberColumns } from "@/ce/components/workspace/settings/useMemberColumns";
+// components
 import { RowData } from "@/components/workspace/settings/member-columns";
+// constants
 import { EUserPermissions } from "@/plane-web/constants/user-permissions";
+// plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 export const useMemberColumns = () => {
