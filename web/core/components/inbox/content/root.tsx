@@ -67,7 +67,8 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
     EUserPermissionsLevel.PROJECT
   );
   const isGuest = projectPermissionsByWorkspaceSlugAndProjectId(workspaceSlug, projectId) === EUserPermissions.GUEST;
-  const readOnly = inboxIssue.created_by === currentUser?.id && isGuest;
+  const isOwner = inboxIssue.issue.created_by === currentUser?.id;
+  const readOnly = !isOwner && isGuest;
 
   if (!inboxIssue) return <></>;
 
