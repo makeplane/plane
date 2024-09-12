@@ -100,7 +100,7 @@ export const PROJECT_ERROR_MESSAGES = {
   },
   cycleDeleteError: {
     title: "Error",
-    message: "Failed to delete project",
+    message: "Failed to delete cycle",
   },
   moduleDeleteError: {
     title: "Error",
