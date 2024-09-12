@@ -2,10 +2,10 @@ import { mergeAttributes } from "@tiptap/core";
 import { Image } from "@tiptap/extension-image";
 import { ReactNodeViewRenderer } from "@tiptap/react";
 import { v4 as uuidv4 } from "uuid";
-import { UploadImage, DeleteImage, RestoreImage } from "@/types";
 
-import { UploadImageExtensionStorage } from "../image-upload";
-import { CustomImage } from "../image-upload/view";
+import { TFileHandler } from "@/types";
+
+import { CustomImage } from "./image-upload";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -16,18 +16,19 @@ declare module "@tiptap/core" {
   }
 }
 
-export const CustomImageComponent = ({
-  uploadFile,
-}: {
-  uploadFile: UploadImage;
-  deleteFile: DeleteImage;
-  restoreFile: RestoreImage;
-  cancelUploadImage?: () => void;
-}) =>
-  Image.extend<{}, UploadImageExtensionStorage>({
+export interface UploadImageExtensionStorage {
+  fileMap: Map<string, UploadEntity>;
+}
+
+export type UploadEntity = { event: "insert" } | { event: "drop"; file: File };
+
+export const CustomImageComponent = (props: TFileHandler) => {
+  const { upload } = props;
+
+  return Image.extend<{}, UploadImageExtensionStorage>({
     name: "imageComponent",
+    selectable: true,
     group: "inline",
-    draggable: true,
 
     addAttributes() {
       return {
@@ -108,7 +109,7 @@ export const CustomImageComponent = ({
             });
           },
         uploadImage: (file: File) => async () => {
-          const fileUrl = await uploadFile(file);
+          const fileUrl = await upload(file);
           return fileUrl;
         },
       };
@@ -120,5 +121,6 @@ export const CustomImageComponent = ({
   }).configure({
     inline: true,
   });
+};
 
 export default CustomImageComponent;

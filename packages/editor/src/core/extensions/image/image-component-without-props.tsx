@@ -1,12 +1,13 @@
 import { mergeAttributes } from "@tiptap/core";
 import { Image } from "@tiptap/extension-image";
-import { UploadImageExtensionStorage } from "../image-upload";
+import { UploadImageExtensionStorage } from "@/extensions/custom-image-component";
 
 export const CustomImageComponentWithoutProps = () =>
   Image.extend<{}, UploadImageExtensionStorage>({
     name: "imageComponent",
     group: "inline",
     draggable: true,
+    selectable: true,
 
     addAttributes() {
       return {

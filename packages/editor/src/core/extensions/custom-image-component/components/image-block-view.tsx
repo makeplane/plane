@@ -14,40 +14,33 @@ interface ImageBlockViewProps {
     };
   };
   updateAttributes: (attrs: Record<string, any>) => void;
+  selected: boolean;
 }
 
-const MIN_SIZE = 100;
+const MIN_SIZE = 200;
 
 export const ImageComponent: React.FC<ImageBlockViewProps> = (props) => {
-  const { node, updateAttributes } = props;
+  const { node, updateAttributes, selected } = props;
   const { src, width, height } = node.attrs;
 
-  const [size, setSize] = useState({ width, height });
+  const [size, setSize] = useState({ width: width || "35%", height: height || "auto" });
   const [isSelected, setIsSelected] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   const isResizing = useRef(false);
   const aspectRatio = useRef(1);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (imageRef.current) {
-      // Set the size of the image for realtime resizing whenever width or height changes
-      setSize({ width, height });
-
       const img = imageRef.current;
       img.onload = () => {
         aspectRatio.current = img.naturalWidth / img.naturalHeight;
-        if (width === "35%" && height === "auto") {
-          const containerWidth = containerRef.current?.offsetWidth || 0;
-          const newWidth = Math.max(containerWidth * 0.35, MIN_SIZE);
-          const newHeight = newWidth / aspectRatio.current;
-          setSize({ width: `${newWidth}px`, height: `${newHeight}px` });
-        }
         setIsLoading(false);
       };
     }
-  }, [src, width, height]);
+  }, [src]);
 
   const handleResizeStart = useCallback((e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault();
@@ -55,6 +48,10 @@ export const ImageComponent: React.FC<ImageBlockViewProps> = (props) => {
     isResizing.current = true;
     setIsSelected(true);
   }, []);
+
+  useEffect(() => {
+    setIsSelected(selected);
+  }, [selected]);
 
   const handleResize = useCallback((e: MouseEvent | TouchEvent) => {
     if (!isResizing.current || !containerRef.current) return;
@@ -102,16 +99,19 @@ export const ImageComponent: React.FC<ImageBlockViewProps> = (props) => {
   }, [handleResize, handleResizeEnd]);
 
   return (
-    <div ref={containerRef} className="relative inline-block" onMouseDown={handleMouseDown} data-drag-handle>
-      {isLoading ? <ImageShimmer width={size.width} height={size.height} /> : null}
+    <div
+      ref={containerRef}
+      className="relative inline-block"
+      onMouseDown={handleMouseDown}
+      style={{ width: size.width, height: size.height }}
+    >
+      {isLoading && <ImageShimmer width={size.width} height={size.height} />}
       <img
         ref={imageRef}
         src={src}
         alt=""
-        className="max-w-full object-contain rounded-md"
+        className="max-w-full h-auto object-contain rounded-md"
         style={{
-          width: size.width,
-          height: size.height,
           display: isLoading ? "none" : "block",
         }}
       />

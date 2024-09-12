@@ -47,7 +47,7 @@ export const ImageUploader = ({
   return (
     <div
       className={cn(
-        "flex items-center justify-start gap-2 py-3 px-2 rounded-lg text-custom-text-300 hover:text-custom-text-200 bg-custom-background-90 hover:bg-custom-background-80 border border-dashed border-custom-border-300 cursor-pointer transition-all duration-200 ease-in-out",
+        "image-upload-component flex items-center justify-start gap-2 py-3 px-2 rounded-lg text-custom-text-300 hover:text-custom-text-200 bg-custom-background-90 hover:bg-custom-background-80 border border-dashed border-custom-border-300 cursor-pointer transition-all duration-200 ease-in-out",
         {
           "bg-custom-background-80 text-custom-text-200": draggedInside,
         }
@@ -63,12 +63,13 @@ export const ImageUploader = ({
         {loading ? "Uploading..." : draggedInside ? "Drop image here" : existingFile ? "Uploading..." : "Add an image"}
       </div>
       <input
-        className="size-0 overflow-hidden opacity-0"
+        className="size-0 overflow-hidden"
         ref={(element) => {
           localRef.current = element;
           assignRef(fileInputRef, element);
           assignRef(internalRef as RefType, element);
         }}
+        hidden
         type="file"
         accept=".jpg,.jpeg,.png,.webp"
         onChange={onFileChange}

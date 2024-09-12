@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Node as ProsemirrorNode } from "@tiptap/pm/model";
 import { Editor, NodeViewWrapper } from "@tiptap/react";
-import ImageComponent from "@/extensions/image-block/components/image-block-view";
-import { UploadImageExtensionStorage, UploadEntity } from "../image-upload";
+import { UploadEntity, UploadImageExtensionStorage } from "@/extensions/custom-image-component";
+import ImageComponent from "@/extensions/custom-image-component/components/image-block-view";
 import { ImageUploader } from "./image-uploader";
 
 interface ImageUploadProps {
@@ -16,9 +16,12 @@ interface ImageUploadProps {
     };
   };
   updateAttributes: (attrs: Record<string, any>) => void;
+  selected: boolean;
 }
 
-export const CustomImage: React.FC<ImageUploadProps> = ({ getPos, editor, node, updateAttributes }) => {
+export const CustomImage = (props: ImageUploadProps) => {
+  const { getPos, editor, node, updateAttributes, selected } = props;
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const hasTriggeredFilePickerRef = useRef(false);
   const [isUploaded, setIsUploaded] = useState(!!node.attrs.src);
@@ -86,7 +89,13 @@ export const CustomImage: React.FC<ImageUploadProps> = ({ getPos, editor, node, 
     <NodeViewWrapper>
       <div className="p-0 mx-0 my-2" data-drag-handle>
         {isUploaded ? (
-          <ImageComponent editor={editor} getPos={getPos} node={node} updateAttributes={updateAttributes} />
+          <ImageComponent
+            editor={editor}
+            getPos={getPos}
+            node={node}
+            updateAttributes={updateAttributes}
+            selected={selected}
+          />
         ) : (
           <ImageUploader onUpload={onUpload} editor={editor} fileInputRef={fileInputRef} existingFile={existingFile} />
         )}
