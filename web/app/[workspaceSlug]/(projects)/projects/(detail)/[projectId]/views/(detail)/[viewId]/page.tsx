@@ -25,7 +25,7 @@ const ProjectViewIssuesPage = observer(() => {
   const project = projectId ? getProjectById(projectId.toString()) : undefined;
   const pageTitle = project?.name && projectView?.name ? `${project?.name} - ${projectView?.name}` : undefined;
 
-  const { error, isLoading } = useSWR(
+  const { error } = useSWR(
     workspaceSlug && projectId && viewId ? `VIEW_DETAILS_${viewId.toString()}` : null,
     workspaceSlug && projectId && viewId
       ? () => fetchViewDetails(workspaceSlug.toString(), projectId.toString(), viewId.toString())
