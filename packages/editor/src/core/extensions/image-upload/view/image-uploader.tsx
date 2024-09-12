@@ -1,8 +1,18 @@
-import { ChangeEvent, useCallback, useEffect } from "react";
+import { ChangeEvent, useCallback, useEffect, useRef } from "react";
 import { Editor } from "@tiptap/core";
 import { ImageIcon } from "lucide-react";
 import { cn } from "@/helpers/common";
-import { useDropZone, useFileUpload, useUploader } from "../../../hooks/use-file-upload";
+import { useUploader, useFileUpload, useDropZone } from "@/hooks/use-file-upload";
+
+type RefType = React.RefObject<HTMLInputElement> | ((instance: HTMLInputElement | null) => void);
+
+const assignRef = (ref: RefType, value: HTMLInputElement | null) => {
+  if (typeof ref === "function") {
+    ref(value);
+  } else if (ref && typeof ref === "object") {
+    (ref as React.MutableRefObject<HTMLInputElement | null>).current = value;
+  }
+};
 
 export const ImageUploader = ({
   onUpload,
@@ -12,12 +22,14 @@ export const ImageUploader = ({
 }: {
   onUpload: (url: string) => void;
   editor: Editor;
-  fileInputRef: React.RefObject<HTMLInputElement> | ((ref: HTMLInputElement) => void);
+  fileInputRef: RefType;
   existingFile?: File;
 }) => {
   const { loading, uploadFile } = useUploader({ onUpload, editor });
   const { handleUploadClick, ref: internalRef } = useFileUpload();
   const { draggedInside, onDrop, onDragEnter, onDragLeave } = useDropZone({ uploader: uploadFile });
+
+  const localRef = useRef<HTMLInputElement | null>(null);
 
   const onFileChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => (e.target.files ? uploadFile(e.target.files[0]) : null),
@@ -31,7 +43,7 @@ export const ImageUploader = ({
   }, [existingFile, uploadFile]);
 
   const wrapperClass = cn(
-    "flex justify-start px-2 py-2 rounded-lg bg-opacity-80 border-2 border-dotted border-custom-border-400 cursor-pointer gap-2",
+    "flex items-center justify-start px-2 py-2 rounded-lg bg-opacity-80 border-2 border-dotted border-custom-border-400 cursor-pointer gap-2",
     "transition-all duration-200 ease-in-out",
     "hover:bg-custom-background-80 hover:border-custom-border-200",
     draggedInside && "bg-custom-background-80"
@@ -52,13 +64,10 @@ export const ImageUploader = ({
       </div>
       <input
         className="w-0 h-0 overflow-hidden opacity-0"
-        ref={(el) => {
-          internalRef.current = el;
-          if (typeof fileInputRef === "function") {
-            fileInputRef(el);
-          } else if (fileInputRef) {
-            fileInputRef.current = el;
-          }
+        ref={(element) => {
+          localRef.current = element;
+          assignRef(fileInputRef, element);
+          assignRef(internalRef as RefType, element);
         }}
         type="file"
         accept=".jpg,.jpeg,.png,.webp"
