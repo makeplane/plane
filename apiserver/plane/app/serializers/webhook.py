@@ -2,6 +2,7 @@
 import socket
 import ipaddress
 from urllib.parse import urlparse
+import os
 
 # Third party imports
 from rest_framework import serializers
@@ -41,6 +42,12 @@ class WebhookSerializer(DynamicBaseSerializer):
         for addr in ip_addresses:
             ip = ipaddress.ip_address(addr[4][0])
             if ip.is_loopback:
+                raise serializers.ValidationError(
+                    {"url": "URL resolves to a blocked IP address."}
+                )
+
+            # if in cloud environment, private IP addresses are also not allowed
+            if os.environ.get("IS_MULTI_TENANT", "0") == "1" and ip.is_private:
                 raise serializers.ValidationError(
                     {"url": "URL resolves to a blocked IP address."}
                 )
@@ -93,6 +100,15 @@ class WebhookSerializer(DynamicBaseSerializer):
             for addr in ip_addresses:
                 ip = ipaddress.ip_address(addr[4][0])
                 if ip.is_loopback:
+                    raise serializers.ValidationError(
+                        {"url": "URL resolves to a blocked IP address."}
+                    )
+
+                # if in cloud environment, private IP addresses are also not allowed
+                if (
+                    os.environ.get("IS_MULTI_TENANT", "0") == "1"
+                    and ip.is_private
+                ):
                     raise serializers.ValidationError(
                         {"url": "URL resolves to a blocked IP address."}
                     )
