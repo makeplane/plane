@@ -7,7 +7,7 @@
     "develop": "next dev --port 3000",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint --dir .",
+    "lint": "next lint",
     "export": "next export",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
@@ -80,6 +80,6 @@
     "prettier": "^3.2.5",
     "tailwind-config-custom": "*",
     "tsconfig": "*",
-    "typescript": "^5.4.2"
+    "typescript": "5.4.5"
   }
 }

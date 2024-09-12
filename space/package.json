@@ -17,10 +17,10 @@
     "@emotion/styled": "^11.11.0",
     "@headlessui/react": "^1.7.13",
     "@mui/material": "^5.14.1",
+    "@plane/constants": "*",
     "@plane/editor": "*",
     "@plane/types": "*",
     "@plane/ui": "*",
-    "@plane/constants": "*",
     "@sentry/nextjs": "^8",
     "axios": "^1.7.4",
     "clsx": "^2.0.0",
@@ -44,7 +44,6 @@
     "react-popper": "^2.3.0",
     "swr": "^2.2.2",
     "tailwind-merge": "^2.0.0",
-    "typescript": "4.9.5",
     "uuid": "^9.0.0",
     "zxcvbn": "^4.4.2"
   },
@@ -61,6 +60,7 @@
     "@typescript-eslint/eslint-plugin": "^5.48.2",
     "eslint-config-custom": "*",
     "tailwind-config-custom": "*",
-    "tsconfig": "*"
+    "tsconfig": "*",
+    "typescript": "5.4.5"
   }
 }
