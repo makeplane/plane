@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import useSWR from "swr";
 // document-editor
 import {
   CollaborativeDocumentEditorWithRef,
@@ -130,6 +131,14 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
       },
     }),
     [projectId, workspaceSlug]
+  );
+
+  useSWR(
+    "LIVE_SERVER_HEALTH_CHECK",
+    async () =>
+      await fetch(`${LIVE_URL}/health`, {
+        credentials: "include",
+      })
   );
 
   if (pageId === undefined) return <PageContentLoader />;
