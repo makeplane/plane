@@ -38,6 +38,5 @@ class APITokenLogMiddleware:
 
             except Exception as e:
                 print(e)
-                # If the token does not exist, you can decide whether to log this as an invalid attempt
 
         return None
