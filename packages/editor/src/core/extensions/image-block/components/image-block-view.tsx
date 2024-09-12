@@ -1,6 +1,7 @@
 import React, { useRef, useState, useCallback, useEffect } from "react";
 import { Node as ProsemirrorNode } from "@tiptap/pm/model";
 import { Editor } from "@tiptap/react";
+import { ImageShimmer } from "./image-loader";
 
 interface ImageBlockViewProps {
   editor: Editor;
@@ -27,6 +28,7 @@ export const ImageBlockView: React.FC<ImageBlockViewProps> = (props) => {
   const imageRef = useRef<HTMLImageElement>(null);
   const isResizing = useRef(false);
   const aspectRatio = useRef(1);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (imageRef.current) {
@@ -39,6 +41,7 @@ export const ImageBlockView: React.FC<ImageBlockViewProps> = (props) => {
           const newHeight = newWidth / aspectRatio.current;
           setSize({ width: `${newWidth}px`, height: `${newHeight}px` });
         }
+        setIsLoading(false);
       };
     }
   }, [src, width, height]);
@@ -97,6 +100,7 @@ export const ImageBlockView: React.FC<ImageBlockViewProps> = (props) => {
 
   return (
     <div ref={containerRef} className="relative inline-block" onMouseDown={handleMouseDown} data-drag-handle>
+      {isLoading ? <ImageShimmer width={size.width} height={size.height} /> : null}
       <img
         ref={imageRef}
         src={src}
@@ -105,6 +109,7 @@ export const ImageBlockView: React.FC<ImageBlockViewProps> = (props) => {
         style={{
           width: size.width,
           height: size.height,
+          display: isLoading ? "none" : "block",
         }}
       />
       {isSelected && (

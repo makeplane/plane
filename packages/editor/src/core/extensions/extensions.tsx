@@ -30,7 +30,7 @@ import {
 import { isValidHttpUrl } from "@/helpers/common";
 // types
 import { DeleteImage, IMentionHighlight, IMentionSuggestion, RestoreImage, UploadImage } from "@/types";
-import { ImageBlock } from "./image-block";
+import { CustomImageComponent } from "./image-block";
 
 type TArguments = {
   enableHistory: boolean;
@@ -108,7 +108,7 @@ export const CoreEditorExtensions = ({
       class: "rounded-md",
     },
   }),
-  ImageBlock({
+  CustomImageComponent({
     deleteFile,
     restoreFile,
     uploadFile,

@@ -3,30 +3,11 @@ import { v4 as uuidv4 } from "uuid";
 import { DeleteImage, RestoreImage, UploadImage } from "@/types";
 import { ImageUpload as ImageUploadComponent } from "./view/image-upload";
 
-declare module "@tiptap/core" {
-  interface Commands<ReturnType> {
-    imageUpload: {
-      setImageUpload: ({
-        file,
-        pos,
-        event,
-      }: {
-        file?: File;
-        pos?: number;
-        event: "insert" | "replace" | "drop";
-      }) => ReturnType;
-      uploadImage: (file: File) => () => Promise<string> | undefined;
-      restoreImage: (assetUrlWithWorkspaceId: string) => Promise<ReturnType>;
-      deleteImage: (assetUrlWithWorkspaceId: string) => Promise<ReturnType>;
-    };
-  }
-}
-
 export interface UploadImageExtensionStorage {
   fileMap: Map<string, UploadEntity>;
 }
 
-export type UploadEntity = ({ event: "insert" } | { event: "replace" } | { event: "drop"; file: File }) & {
+export type UploadEntity = ({ event: "insert" } | { event: "drop"; file: File }) & {
   pos?: number;
 };
 
@@ -91,16 +72,16 @@ export const ImageUpload = ({
     addCommands() {
       return {
         setImageUpload:
-          (props: { file?: File; pos?: number; event: "insert" | "replace" | "drop" }) =>
+          (props: { file?: File; pos?: number; event: "insert" | "drop" }) =>
           ({ commands }) => {
             const fileId = uuidv4();
             if (props?.file && props?.event === "drop") {
-              (this.editor.storage.imageBlock as UploadImageExtensionStorage).fileMap.set(fileId, {
+              (this.editor.storage.imageComponent as UploadImageExtensionStorage).fileMap.set(fileId, {
                 file: props.file,
                 event: props.event,
               });
             } else if (props.event !== "drop") {
-              (this.editor.storage.imageBlock as UploadImageExtensionStorage).fileMap.set(fileId, {
+              (this.editor.storage.imageComponent as UploadImageExtensionStorage).fileMap.set(fileId, {
                 event: props.event,
               });
             }

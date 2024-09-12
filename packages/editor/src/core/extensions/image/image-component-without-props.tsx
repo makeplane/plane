@@ -1,24 +1,10 @@
-import { mergeAttributes, Range } from "@tiptap/core";
+import { mergeAttributes } from "@tiptap/core";
 import { Image } from "@tiptap/extension-image";
 import { UploadImageExtensionStorage } from "../image-upload";
 
-declare module "@tiptap/core" {
-  interface Commands<ReturnType> {
-    imageBlock: {
-      setImageBlock: (attributes: { src: string; width?: number; height?: number }) => ReturnType;
-      setImageBlockAt: (attributes: {
-        src: string;
-        pos: number | Range;
-        width?: number;
-        height?: number;
-      }) => ReturnType;
-    };
-  }
-}
-
-export const ImageBlockWithoutProps = () =>
+export const CustomImageComponentWithoutProps = () =>
   Image.extend<{}, UploadImageExtensionStorage>({
-    name: "imageBlock",
+    name: "imageComponent",
     group: "inline",
     draggable: true,
 
@@ -49,13 +35,13 @@ export const ImageBlockWithoutProps = () =>
     parseHTML() {
       return [
         {
-          tag: "image-block",
+          tag: "image-component",
         },
       ];
     },
 
     renderHTML({ HTMLAttributes }) {
-      return ["image-block", mergeAttributes(HTMLAttributes)];
+      return ["image-component", mergeAttributes(HTMLAttributes)];
     },
 
     addStorage() {
@@ -67,4 +53,4 @@ export const ImageBlockWithoutProps = () =>
     inline: true,
   });
 
-export default ImageBlockWithoutProps;
+export default CustomImageComponentWithoutProps;

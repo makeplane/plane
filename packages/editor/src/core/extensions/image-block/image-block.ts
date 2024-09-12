@@ -1,4 +1,4 @@
-import { mergeAttributes, Range } from "@tiptap/core";
+import { mergeAttributes } from "@tiptap/core";
 import { Image } from "@tiptap/extension-image";
 import { ReactNodeViewRenderer } from "@tiptap/react";
 import { v4 as uuidv4 } from "uuid";
@@ -9,19 +9,14 @@ import { ImageUpload } from "../image-upload/view";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
-    imageBlock: {
-      setImageBlock: (attributes: { src: string; width?: number; height?: number }) => ReturnType;
-      setImageBlockAt: (attributes: {
-        src: string;
-        pos: number | Range;
-        width?: number;
-        height?: number;
-      }) => ReturnType;
+    imageComponent: {
+      setImageUpload: ({ file, pos, event }: { file?: File; pos?: number; event: "insert" | "drop" }) => ReturnType;
+      uploadImage: (file: File) => () => Promise<string> | undefined;
     };
   }
 }
 
-export const ImageBlock = ({
+export const CustomImageComponent = ({
   uploadFile,
   // deleteFile,
   // restoreFile,
@@ -33,7 +28,7 @@ export const ImageBlock = ({
   cancelUploadImage?: () => void;
 }) =>
   Image.extend<{}, UploadImageExtensionStorage>({
-    name: "imageBlock",
+    name: "imageComponent",
     group: "inline",
     draggable: true,
 
@@ -64,13 +59,13 @@ export const ImageBlock = ({
     parseHTML() {
       return [
         {
-          tag: "image-block",
+          tag: "image-component",
         },
       ];
     },
 
     renderHTML({ HTMLAttributes }) {
-      return ["image-block", mergeAttributes(HTMLAttributes)];
+      return ["image-component", mergeAttributes(HTMLAttributes)];
     },
 
     addStorage() {
@@ -81,31 +76,17 @@ export const ImageBlock = ({
 
     addCommands() {
       return {
-        setImageBlock:
-          (attrs) =>
-          ({ commands }) =>
-            commands.insertContent({
-              type: this.name,
-              attrs: { src: attrs.src },
-            }),
-        setImageBlockAt:
-          (attrs) =>
-          ({ commands }) =>
-            commands.insertContentAt(attrs.pos, {
-              type: this.name,
-              attrs: { src: attrs.src },
-            }),
         setImageUpload:
-          (props: { file?: File; pos?: number; event: "insert" | "replace" | "drop" }) =>
+          (props: { file?: File; pos?: number; event: "insert" | "drop" }) =>
           ({ commands }) => {
             const fileId = uuidv4();
-            if (props?.file && props?.event === "drop") {
-              (this.editor.storage.imageBlock as UploadImageExtensionStorage).fileMap.set(fileId, {
+            if (props?.event === "drop" && props.file) {
+              (this.editor.storage.imageComponent as UploadImageExtensionStorage).fileMap.set(fileId, {
                 file: props.file,
                 event: props.event,
               });
-            } else if (props.event !== "drop") {
-              (this.editor.storage.imageBlock as UploadImageExtensionStorage).fileMap.set(fileId, {
+            } else if (props.event === "insert") {
+              (this.editor.storage.imageComponent as UploadImageExtensionStorage).fileMap.set(fileId, {
                 event: props.event,
               });
             }
@@ -115,6 +96,12 @@ export const ImageBlock = ({
               "data-file": props?.file ? `data-file="${props.file}"` : "",
             };
 
+            if (props.pos) {
+              return commands.insertContentAt(props.pos, {
+                type: this.name,
+                attrs: attributes,
+              });
+            }
             return commands.insertContent({
               type: this.name,
               attrs: attributes,
@@ -134,4 +121,4 @@ export const ImageBlock = ({
     inline: true,
   });
 
-export default ImageBlock;
+export default CustomImageComponent;

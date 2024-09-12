@@ -24,7 +24,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({ getPos, editor, node, 
   const [isUploaded, setIsUploaded] = useState(!!node.attrs.src);
 
   const id = node.attrs.id as string;
-  const editorStorage = editor.storage.imageBlock as UploadImageExtensionStorage | undefined;
+  const editorStorage = editor.storage.imageComponent as UploadImageExtensionStorage | undefined;
 
   const getUploadEntity = useCallback(
     (): UploadEntity | undefined => editorStorage?.fileMap.get(id),

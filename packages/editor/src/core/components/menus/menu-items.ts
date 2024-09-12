@@ -189,16 +189,17 @@ export const TableItem = (editor: Editor): EditorMenuItem => ({
   icon: TableIcon,
 });
 
-export const ImageItem = (editor: Editor, uploadFile: UploadImage) =>
+export const ImageItem = (editor: Editor) =>
   ({
     key: "image",
     name: "Image",
     isActive: () => editor?.isActive("image"),
-    command: (savedSelection: Selection | null) => editor?.commands.setImageUpload({ event: "insert" }),
+    command: (savedSelection: Selection | null) =>
+      editor?.commands.setImageUpload({ event: "insert", pos: savedSelection?.from }),
     icon: ImageIcon,
   }) as const;
 
-export function getEditorMenuItems(editor: Editor | null, uploadFile: UploadImage) {
+export function getEditorMenuItems(editor: Editor | null) {
   if (!editor) {
     return [];
   }
@@ -220,6 +221,6 @@ export function getEditorMenuItems(editor: Editor | null, uploadFile: UploadImag
     NumberedListItem(editor),
     QuoteItem(editor),
     TableItem(editor),
-    ImageItem(editor, uploadFile),
+    ImageItem(editor),
   ];
 }

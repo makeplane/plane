@@ -64,7 +64,7 @@
     pointer-events: none;
   }
 
-  &.node-imageUpload {
+  &.node-imageComponent {
     --horizontal-offset: 0px;
 
     &::after {
@@ -104,7 +104,7 @@ ol > li:nth-child(n + 100).ProseMirror-selectednode:not(.dragging)::after {
   margin-left: -35px;
 }
 
-.ProseMirror node-imageBlock {
+.ProseMirror node-imageComponent {
   transition: filter 0.1s ease-in-out;
   cursor: pointer;
 
