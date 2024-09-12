@@ -160,6 +160,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
     >
       {isOpen && (
         <MemberOptions
+          className={className}
           isOpen={isOpen}
           projectId={projectId}
           placement={placement}
