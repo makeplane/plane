@@ -6,6 +6,8 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { ArchiveIcon, ChevronRight, MoreHorizontal, Settings } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // ui
 import { CustomMenu, Tooltip } from "@plane/ui";
 // components
@@ -18,7 +20,6 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useEventTracker, useUserPermissions } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { UpgradeBadge } from "@/plane-web/components/workspace";

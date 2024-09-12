@@ -1,5 +1,7 @@
 import { FC, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // components
 import {
   SidebarDropdown,
@@ -14,7 +16,6 @@ import { SidebarFavoritesMenu } from "@/components/workspace/sidebar/favorites/f
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useUserPermissions } from "@/hooks/store";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // plane web components
 import useSize from "@/hooks/use-window-size";
 import { SidebarAppSwitcher } from "@/plane-web/components/sidebar";

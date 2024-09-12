@@ -9,6 +9,8 @@ import { Control, Controller } from "react-hook-form";
 import useSWR from "swr";
 // headless ui
 import { Tab, Popover } from "@headlessui/react";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // ui
 import { Button, Input, Loader } from "@plane/ui";
 // constants
@@ -16,7 +18,6 @@ import { MAX_FILE_SIZE } from "@/constants/common";
 // hooks
 import { useWorkspace, useInstance } from "@/hooks/store";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // services
 import { FileService } from "@/services/file.service";
 

@@ -23,6 +23,8 @@ import {
   Layers,
 } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // ui
 import {
   CustomMenu,
@@ -45,7 +47,6 @@ import { SidebarNavItem } from "@/components/sidebar";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
