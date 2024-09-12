@@ -206,7 +206,7 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
           // Ensure "id" is always included in the payload
           return { id: option.id, ...changedFields };
         })
-        .filter((item) => !!item);
+        .filter((item) => !!item) as Partial<TIssuePropertyOption>[];
     }
 
     if (isEmpty(payload) && isEmpty(optionsPayload)) return;
