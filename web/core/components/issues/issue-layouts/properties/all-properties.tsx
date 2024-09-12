@@ -371,7 +371,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             buttonClassName={issue.assignee_ids?.length > 0 ? "hover:bg-transparent px-0" : ""}
             showTooltip={issue?.assignee_ids?.length === 0}
             placeholder="Assignees"
-            className="z-10"
+            optionsClassName="z-10"
             tooltipContent=""
             renderByDefault={isMobile}
           />
