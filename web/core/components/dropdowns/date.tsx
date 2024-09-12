@@ -161,7 +161,10 @@ export const DateDropdown: React.FC<Props> = (props) => {
         createPortal(
           <Combobox.Options data-prevent-outside-click static>
             <div
-              className="my-1 bg-custom-background-100 shadow-custom-shadow-rg rounded-md overflow-hidden p-3 z-20"
+              className={cn(
+                "my-1 bg-custom-background-100 shadow-custom-shadow-rg rounded-md overflow-hidden p-3 z-20",
+                className
+              )}
               ref={setPopperElement}
               style={styles.popper}
               {...attributes.popper}

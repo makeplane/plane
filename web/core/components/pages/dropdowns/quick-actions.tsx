@@ -48,7 +48,26 @@ export const PageQuickActions: React.FC<Props> = observer((props) => {
   const MENU_ITEMS: TContextMenuItem[] = [
     {
       key: "make-public-private",
-      action: access === 0 ? makePrivate : makePublic,
+      action: async () => {
+        const changedPageType = access === 0 ? "private" : "public";
+
+        try {
+          if (access === 0) await makePrivate();
+          else await makePublic();
+
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: "Success!",
+            message: `The page has been marked ${changedPageType} and moved to the ${changedPageType} section.`,
+          });
+        } catch (err) {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: "Error!",
+            message: `The page couldn't be marked ${changedPageType}. Please try again.`,
+          });
+        }
+      },
       title: access === 0 ? "Make private" : "Make public",
       icon: access === 0 ? Lock : UsersRound,
       shouldRender: canCurrentUserChangeAccess && !archived_at,

@@ -9,12 +9,14 @@ import { usePopper } from "react-popper";
 import { Check, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 //components
+import { cn } from "@plane/editor";
 import { Avatar } from "@plane/ui";
 //store
 import { useUser, useMember } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 interface Props {
+  className? : string;
   projectId?: string;
   referenceElement: HTMLButtonElement | null;
   placement: Placement | undefined;
@@ -22,7 +24,7 @@ interface Props {
 }
 
 export const MemberOptions = observer((props: Props) => {
-  const { projectId, referenceElement, placement, isOpen } = props;
+  const { projectId, referenceElement, placement, isOpen, className="" } = props;
   // states
   const [query, setQuery] = useState("");
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -92,7 +94,8 @@ export const MemberOptions = observer((props: Props) => {
   return createPortal(
     <Combobox.Options data-prevent-outside-click static>
       <div
-        className="my-1 w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none z-20"
+        className={cn("my-1 w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none z-20",
+          className)}
         ref={setPopperElement}
         style={{
           ...styles.popper,
