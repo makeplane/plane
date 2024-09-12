@@ -80,7 +80,7 @@ export const FilterUser: React.FC<TFilterUser> = observer((props) => {
                 .slice(0, itemsToRender)
                 .map(
                   (member) =>
-                    member.id &&
+                    member?.id &&
                     member.display_name && (
                       <FilterOption
                         key={member.id}

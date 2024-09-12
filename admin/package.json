@@ -12,10 +12,10 @@
   },
   "dependencies": {
     "@headlessui/react": "^1.7.19",
-    "@plane/types": "*",
-    "@plane/ui": "*",
     "@plane/constants": "*",
     "@plane/helpers": "*",
+    "@plane/types": "*",
+    "@plane/ui": "*",
     "@tailwindcss/typography": "^0.5.9",
     "@types/lodash": "^4.17.0",
     "autoprefixer": "10.4.14",
@@ -46,6 +46,6 @@
     "eslint-config-custom": "*",
     "tailwind-config-custom": "*",
     "tsconfig": "*",
-    "typescript": "^5.4.2"
+    "typescript": "5.4.5"
   }
 }
