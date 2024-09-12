@@ -26,7 +26,7 @@ export const PagesListHeader = observer(() => {
   const { setTrackElement } = useEventTracker();
 
   const canUserCreatePage = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
     EUserPermissionsLevel.PROJECT
   );
 

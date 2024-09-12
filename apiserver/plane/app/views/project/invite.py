@@ -17,7 +17,7 @@ from rest_framework.permissions import AllowAny
 from .base import BaseViewSet, BaseAPIView
 from plane.app.serializers import ProjectMemberInviteSerializer
 
-from plane.app.permissions import ProjectBasePermission
+from plane.app.permissions import allow_permission, ROLE
 
 from plane.db.models import (
     ProjectMember,
@@ -35,10 +35,6 @@ class ProjectInvitationsViewset(BaseViewSet):
 
     search_fields = []
 
-    permission_classes = [
-        ProjectBasePermission,
-    ]
-
     def get_queryset(self):
         return self.filter_queryset(
             super()
@@ -49,6 +45,7 @@ class ProjectInvitationsViewset(BaseViewSet):
             .select_related("workspace", "workspace__owner")
         )
 
+    @allow_permission([ROLE.ADMIN])
     def create(self, request, slug, project_id):
         emails = request.data.get("emails", [])
 
@@ -59,24 +56,21 @@ class ProjectInvitationsViewset(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        requesting_user = ProjectMember.objects.get(
-            workspace__slug=slug,
-            project_id=project_id,
-            member_id=request.user.id,
-        )
+        for email in emails:
+            workspace_role = WorkspaceMember.objects.filter(
+                workspace__slug=slug,
+                member__email=email.get("email"),
+                is_active=True,
+            ).role
 
-        # Check if any invited user has an higher role
-        if len(
-            [
-                email
-                for email in emails
-                if int(email.get("role", 5)) > requesting_user.role
-            ]
-        ):
-            return Response(
-                {"error": "You cannot invite a user with higher role"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            if workspace_role in [5, 20] and workspace_role != email.get(
+                "role", 5
+            ):
+                return Response(
+                    {
+                        "error": "You cannot invite a user with different role than workspace role"
+                    },
+                )
 
         workspace = Workspace.objects.get(slug=slug)
 
