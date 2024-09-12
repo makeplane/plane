@@ -112,6 +112,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
     [fetchNextIssues]
   );
 
+  //kanbanFilters and EIssueFilterType.KANBAN_FILTERS are used becuase the state is shared between kanban view and list view
   const handleListGroups = (toggle: "group_by" | "sub_group_by", value: string) => {
     if (workspaceSlug) {
       let listGroups = issuesFilter?.issueFilters?.kanbanFilters?.[toggle] || [];
