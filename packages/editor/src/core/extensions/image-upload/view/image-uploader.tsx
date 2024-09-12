@@ -1,7 +1,9 @@
 import { ChangeEvent, useCallback, useEffect, useRef } from "react";
 import { Editor } from "@tiptap/core";
 import { ImageIcon } from "lucide-react";
+// helpers
 import { cn } from "@/helpers/common";
+// hooks
 import { useUploader, useFileUpload, useDropZone } from "@/hooks/use-file-upload";
 
 type RefType = React.RefObject<HTMLInputElement> | ((instance: HTMLInputElement | null) => void);
@@ -42,28 +44,26 @@ export const ImageUploader = ({
     }
   }, [existingFile, uploadFile]);
 
-  const wrapperClass = cn(
-    "flex items-center justify-start px-2 py-2 rounded-lg bg-opacity-80 border-2 border-dotted border-custom-border-400 cursor-pointer gap-2",
-    "transition-all duration-200 ease-in-out",
-    "hover:bg-custom-background-80 hover:border-custom-border-200",
-    draggedInside && "bg-custom-background-80"
-  );
-
   return (
     <div
-      className={wrapperClass}
+      className={cn(
+        "flex items-center justify-start gap-2 py-3 px-2 rounded-lg text-custom-text-300 hover:text-custom-text-200 bg-custom-background-90 hover:bg-custom-background-80 border border-dashed border-custom-border-300 cursor-pointer transition-all duration-200 ease-in-out",
+        {
+          "bg-custom-background-80 text-custom-text-200": draggedInside,
+        }
+      )}
       onDrop={onDrop}
       onDragOver={onDragEnter}
       onDragLeave={onDragLeave}
       contentEditable={false}
       onClick={handleUploadClick}
     >
-      <ImageIcon name="Image" className="h-4 w-4 text-custom-text-200" />
-      <div className="text-sm font-medium text-center">
+      <ImageIcon className="size-4" />
+      <div className="text-base font-medium">
         {loading ? "Uploading..." : draggedInside ? "Drop image here" : existingFile ? "Uploading..." : "Add an image"}
       </div>
       <input
-        className="w-0 h-0 overflow-hidden opacity-0"
+        className="size-0 overflow-hidden opacity-0"
         ref={(element) => {
           localRef.current = element;
           assignRef(fileInputRef, element);

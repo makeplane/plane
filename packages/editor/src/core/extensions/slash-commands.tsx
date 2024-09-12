@@ -89,7 +89,7 @@ const Command = Extension.create<SlashCommandOptions>({
 });
 
 const getSuggestionItems =
-  (uploadFile: UploadImage, additionalOptions?: Array<ISlashCommandItem>) =>
+  (additionalOptions?: Array<ISlashCommandItem>) =>
   ({ query }: { query: string }) => {
     let slashCommands: ISlashCommandItem[] = [
       {
@@ -415,10 +415,10 @@ const renderItems = () => {
   };
 };
 
-export const SlashCommand = (uploadFile: UploadImage, additionalOptions?: Array<ISlashCommandItem>) =>
+export const SlashCommand = (additionalOptions?: Array<ISlashCommandItem>) =>
   Command.configure({
     suggestion: {
-      items: getSuggestionItems(uploadFile, additionalOptions),
+      items: getSuggestionItems(additionalOptions),
       render: renderItems,
     },
   });
