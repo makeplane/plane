@@ -269,7 +269,7 @@ if AMQP_URL:
     CELERY_BROKER_URL = AMQP_URL
 else:
     CELERY_BROKER_URL = f"amqp://{RABBITMQ_USER}:{RABBITMQ_PASSWORD}@{RABBITMQ_HOST}:{RABBITMQ_PORT}/{RABBITMQ_VHOST}"
- 
+
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
@@ -353,6 +353,14 @@ SESSION_COOKIE_DOMAIN = os.environ.get("COOKIE_DOMAIN", None)
 SESSION_SAVE_EVERY_REQUEST = (
     os.environ.get("SESSION_SAVE_EVERY_REQUEST", "0") == "1"
 )
+# If on cloud, set the session cookie domain to the cloud domain else None
+if os.environ.get("IS_MULTI_TENANT", "0") == "1":
+    SESSION_COOKIE_DOMAIN = os.environ.get(
+        "SESSION_COOKIE_DOMAIN", ".plane.so"
+    )
+else:
+    SESSION_COOKIE_DOMAIN = None
+
 
 # Admin Cookie
 ADMIN_SESSION_COOKIE_NAME = "plane-admin-session-id"
