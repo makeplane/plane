@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import { UploadImage, DeleteImage, RestoreImage } from "@/types";
 
 import { UploadImageExtensionStorage } from "../image-upload";
-import { ImageUpload } from "../image-upload/view";
+import { CustomImage } from "../image-upload/view";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -18,9 +18,6 @@ declare module "@tiptap/core" {
 
 export const CustomImageComponent = ({
   uploadFile,
-  // deleteFile,
-  // restoreFile,
-  // cancelUploadImage,
 }: {
   uploadFile: UploadImage;
   deleteFile: DeleteImage;
@@ -79,6 +76,8 @@ export const CustomImageComponent = ({
         setImageUpload:
           (props: { file?: File; pos?: number; event: "insert" | "drop" }) =>
           ({ commands }) => {
+            // generate a unique id for the image to keep track of dropped
+            // files' file data
             const fileId = uuidv4();
             if (props?.event === "drop" && props.file) {
               (this.editor.storage.imageComponent as UploadImageExtensionStorage).fileMap.set(fileId, {
@@ -90,6 +89,7 @@ export const CustomImageComponent = ({
                 event: props.event,
               });
             }
+
             const attributes = {
               "data-type": this.name,
               id: fileId,
@@ -115,7 +115,7 @@ export const CustomImageComponent = ({
     },
 
     addNodeView() {
-      return ReactNodeViewRenderer(ImageUpload);
+      return ReactNodeViewRenderer(CustomImage);
     },
   }).configure({
     inline: true,

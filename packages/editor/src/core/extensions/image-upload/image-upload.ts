@@ -1,7 +1,7 @@
 import { mergeAttributes, Node, ReactNodeViewRenderer } from "@tiptap/react";
 import { v4 as uuidv4 } from "uuid";
 import { DeleteImage, RestoreImage, UploadImage } from "@/types";
-import { ImageUpload as ImageUploadComponent } from "./view/image-upload";
+import { CustomImage } from "./view/image-upload";
 
 export interface UploadImageExtensionStorage {
   fileMap: Map<string, UploadEntity>;
@@ -13,9 +13,6 @@ export type UploadEntity = ({ event: "insert" } | { event: "drop"; file: File })
 
 export const ImageUpload = ({
   uploadFile,
-  // deleteFile,
-  // restoreFile,
-  // cancelUploadImage,
 }: {
   uploadFile: UploadImage;
   deleteFile: DeleteImage;
@@ -93,17 +90,11 @@ export const ImageUpload = ({
           const fileUrl = await uploadFile(file);
           return fileUrl;
         },
-        // restoreImage: (assetUrlWithWorkspaceId: string) => () => {
-        //   restoreFile(assetUrlWithWorkspaceId);
-        // },
-        // deleteImage: (assetUrlWithWorkspaceId: string) => () => {
-        //   deleteFile(assetUrlWithWorkspaceId);
-        // },
       };
     },
 
     addNodeView() {
-      return ReactNodeViewRenderer(ImageUploadComponent);
+      return ReactNodeViewRenderer(CustomImage);
     },
   });
 

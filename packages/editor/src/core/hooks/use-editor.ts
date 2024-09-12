@@ -15,7 +15,6 @@ import { IMarking, scrollSummary } from "@/helpers/scroll-to-node";
 import { CoreEditorProps } from "@/props";
 // types
 import { EditorRefApi, IMentionHighlight, IMentionSuggestion, TEditorCommands, TFileHandler } from "@/types";
-import { HocuspocusProvider } from "@hocuspocus/provider";
 
 export interface CustomEditorProps {
   editorClassName: string;
@@ -37,7 +36,6 @@ export interface CustomEditorProps {
   // undefined when prop is not passed, null if intentionally passed to stop
   // swr syncing
   value?: string | null | undefined;
-  provider?: HocuspocusProvider | null;
 }
 
 export const useEditor = (props: CustomEditorProps) => {
@@ -56,7 +54,6 @@ export const useEditor = (props: CustomEditorProps) => {
     placeholder,
     tabIndex,
     value,
-    provider,
   } = props;
   // states
   const [savedSelection, setSavedSelection] = useState<Selection | null>(null);
@@ -70,8 +67,8 @@ export const useEditor = (props: CustomEditorProps) => {
       }),
       ...editorProps,
     },
-    shouldRerenderOnTransaction: false,
     immediatelyRender: true,
+    shouldRerenderOnTransaction: false,
     onContentError: (error) => {
       console.error("Error rendering content:", error);
     },
@@ -90,7 +87,6 @@ export const useEditor = (props: CustomEditorProps) => {
         },
         placeholder,
         tabIndex,
-        provider,
       }),
       ...extensions,
     ],
@@ -100,6 +96,7 @@ export const useEditor = (props: CustomEditorProps) => {
     onUpdate: ({ editor }) => onChange?.(editor.getJSON(), editor.getHTML()),
     onDestroy: () => handleEditorReady?.(false),
   });
+
   // Update the ref whenever savedSelection changes
   useEffect(() => {
     savedSelectionRef.current = savedSelection;
@@ -140,7 +137,7 @@ export const useEditor = (props: CustomEditorProps) => {
         }
       },
       executeMenuItemCommand: (itemKey: TEditorCommands) => {
-        const editorItems = getEditorMenuItems(editorRef.current, fileHandler.upload);
+        const editorItems = getEditorMenuItems(editorRef.current);
 
         const getEditorMenuItem = (itemKey: TEditorCommands) => editorItems.find((item) => item.key === itemKey);
 
@@ -156,7 +153,7 @@ export const useEditor = (props: CustomEditorProps) => {
         }
       },
       isMenuItemActive: (itemName: TEditorCommands): boolean => {
-        const editorItems = getEditorMenuItems(editorRef.current, fileHandler.upload);
+        const editorItems = getEditorMenuItems(editorRef.current);
 
         const getEditorMenuItem = (itemName: TEditorCommands) => editorItems.find((item) => item.key === itemName);
         const item = getEditorMenuItem(itemName);
@@ -250,7 +247,7 @@ export const useEditor = (props: CustomEditorProps) => {
         words: editorRef.current?.storage?.characterCount?.words?.() ?? 0,
       },
     }),
-    [editorRef, savedSelection, fileHandler.upload]
+    [editorRef, savedSelection]
   );
 
   if (!editor) {

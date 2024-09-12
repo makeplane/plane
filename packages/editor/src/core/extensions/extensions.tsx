@@ -46,7 +46,6 @@ type TArguments = {
   };
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
-  provider?: HocuspocusProvider | null;
 };
 
 export const CoreEditorExtensions = ({
@@ -55,7 +54,6 @@ export const CoreEditorExtensions = ({
   mentionConfig,
   placeholder,
   tabIndex,
-  provider,
 }: TArguments) => [
   StarterKit.configure({
     bulletList: {
@@ -113,8 +111,6 @@ export const CoreEditorExtensions = ({
     restoreFile,
     uploadFile,
     cancelUploadImage,
-  }).configure({
-    clientId: provider?.document?.clientID,
   }),
   TiptapUnderline,
   TextStyle,

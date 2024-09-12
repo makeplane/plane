@@ -18,7 +18,7 @@ interface ImageBlockViewProps {
 
 const MIN_SIZE = 100;
 
-export const ImageBlockView: React.FC<ImageBlockViewProps> = (props) => {
+export const ImageComponent: React.FC<ImageBlockViewProps> = (props) => {
   const { node, updateAttributes } = props;
   const { src, width, height } = node.attrs;
 
@@ -32,6 +32,9 @@ export const ImageBlockView: React.FC<ImageBlockViewProps> = (props) => {
 
   useEffect(() => {
     if (imageRef.current) {
+      // Set the size of the image for realtime resizing whenever width or height changes
+      setSize({ width, height });
+
       const img = imageRef.current;
       img.onload = () => {
         aspectRatio.current = img.naturalWidth / img.naturalHeight;
@@ -125,4 +128,4 @@ export const ImageBlockView: React.FC<ImageBlockViewProps> = (props) => {
   );
 };
 
-export default ImageBlockView;
+export default ImageComponent;
