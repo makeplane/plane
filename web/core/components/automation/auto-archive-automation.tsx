@@ -33,7 +33,7 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
   const isAdmin = allowPermissions(
     [EUserPermissions.ADMIN],
     EUserPermissionsLevel.PROJECT,
-    currentProjectDetails?.workspace_detail.slug,
+    currentProjectDetails?.workspace_detail?.slug,
     currentProjectDetails?.id
   );
 

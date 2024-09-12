@@ -6,7 +6,7 @@ import { Button } from "@plane/ui";
 // helpers
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
 // hooks
-import { usePage, useUser, useUserPermissions } from "@/hooks/store";
+import { usePage, useUserPermissions } from "@/hooks/store";
 // plane web components
 import { PublishPageModal } from "@/plane-web/components/pages";
 // plane web constants

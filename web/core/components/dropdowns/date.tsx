@@ -115,6 +115,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
       )}
       ref={setReferenceElement}
       onClick={handleOnClick}
+      disabled={disabled}
     >
       <DropdownButton
         className={buttonClassName}

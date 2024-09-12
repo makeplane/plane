@@ -35,8 +35,9 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         run: |
+          RUN_ID="${{ github.run_id }}"
           TARGET_REPO="${{ vars.SYNC_TARGET_REPO }}"
-          TARGET_BRANCH="${{ vars.SYNC_TARGET_BRANCH_NAME }}"
+          TARGET_BRANCH="sync/${RUN_ID}"
           SOURCE_BRANCH="${{ env.SOURCE_BRANCH_NAME }}"
 
           git checkout $SOURCE_BRANCH

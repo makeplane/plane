@@ -5,6 +5,8 @@ import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 import { Check, Component, Plus, Search, Tag } from "lucide-react";
 import { Combobox } from "@headlessui/react";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // components
 import { IssueLabelsList } from "@/components/ui";
 // helpers
@@ -12,7 +14,6 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useLabel } from "@/hooks/store";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
@@ -37,7 +38,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
     label,
     disabled = false,
     tabIndex,
-    createLabelEnabled = true,
+    createLabelEnabled = false,
     buttonClassName,
     placement,
   } = props;

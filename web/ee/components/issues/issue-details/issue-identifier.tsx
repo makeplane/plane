@@ -1,11 +1,11 @@
-import { IssueIdentifier as BaseIssueIdentifier } from "ce/components/issues/issue-details/issue-identifier";
-
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
 import { IIssueDisplayProperties } from "@plane/types";
 // ui
 import { Loader, Tooltip } from "@plane/ui";
+// ce components
+import { IssueIdentifier as BaseIssueIdentifier } from "@/ce/components/issues/issue-details/issue-identifier";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks

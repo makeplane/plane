@@ -4,12 +4,11 @@ import { FC, useRef, Fragment, useState } from "react";
 import { usePopper } from "react-popper";
 import { Info, Check, ChevronDown } from "lucide-react";
 import { Listbox, Transition } from "@headlessui/react";
+import { useOutsideClickDetector } from "@plane/helpers";
 import { TEstimatePointsObject } from "@plane/types";
 import { Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
-// hooks
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 
 type TEstimatePointDropdown = {
   options: TEstimatePointsObject[];

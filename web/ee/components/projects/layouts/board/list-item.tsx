@@ -7,12 +7,13 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // hooks
 import { setToast, TOAST_TYPE } from "@plane/ui";
-import { useProject, useUser, useUserPermissions } from "@/hooks/store";
+import { useProject, useUserPermissions } from "@/hooks/store";
 // plane web components
 import { ProjectCard } from "@/plane-web/components/projects/layouts/gallery/card";
+// plane web constants
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // plane web types
 import { TProject } from "@/plane-web/types/projects";
-import { EUserPermissions } from "@/ce/constants/user-permissions";
 
 type ProjectBoardListItem = {
   groupByKey: string;

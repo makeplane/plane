@@ -3,14 +3,14 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { Button } from "@plane/ui";
-// hooks
-import { useInstance, useMember, useWorkspace } from "@/hooks/store";
 // helpers
 import { cn } from "@/helpers/common.helper";
-// plane web hooks
-import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
+// hooks
+import { useInstance, useMember, useWorkspace } from "@/hooks/store";
 // plane web components
 import { ProPlanCloudUpgradeModal } from "@/plane-web/components/license";
+// plane web hooks
+import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 enum EPlanMessageKeys {
   FREE_PLAN = "free_plan",

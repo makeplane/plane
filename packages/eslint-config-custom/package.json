@@ -4,7 +4,6 @@
   "version": "0.22.0",
   "main": "index.js",
   "license": "MIT",
-  "devDependencies": {},
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^7.1.1",
     "@typescript-eslint/parser": "^7.1.1",
@@ -14,6 +13,6 @@
     "eslint-config-turbo": "^1.12.4",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-react": "^7.33.2",
-    "typescript": "^5.3.3"
+    "typescript": "5.4.5"
   }
 }

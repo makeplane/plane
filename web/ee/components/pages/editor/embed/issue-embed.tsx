@@ -10,10 +10,11 @@ import { IssueProperties } from "@/components/issues/issue-layouts/properties/al
 // constants
 import { ISSUE_DISPLAY_PROPERTIES } from "@/constants/issue";
 // hooks
-import { useIssueDetail, useUser, useUserPermissions } from "@/hooks/store";
+import { useIssueDetail, useUserPermissions } from "@/hooks/store";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
-import { EUserPermissions } from "@/ce/constants/user-permissions";
+// plane web constants
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   issueId: string;

@@ -1,10 +1,10 @@
 import { useRef } from "react";
 import { observer } from "mobx-react";
 // types
+import { EUserPermissions } from "@plane/types/src/enums";
 import { useUserPermissions } from "@/hooks/store";
 import { IProjectDisplayProperties, SPREADSHEET_PROPERTY_DETAILS } from "@/plane-web/constants/project/spreadsheet";
 import { TProject } from "@/plane-web/types/projects";
-import { EUserPermissions } from "@plane/types/src/enums";
 
 type Props = {
   projectDetails: TProject;

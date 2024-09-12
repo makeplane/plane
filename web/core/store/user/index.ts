@@ -3,6 +3,7 @@ import set from "lodash/set";
 import { action, makeObservable, observable, runInAction, computed } from "mobx";
 // types
 import { IUser } from "@plane/types";
+import { TUserPermissions } from "@plane/types/src/enums";
 // constants
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
@@ -16,7 +17,6 @@ import { IAccountStore } from "@/store/user/account.store";
 import { ProfileStore, IUserProfileStore } from "@/store/user/profile.store";
 import { IUserPermissionStore, UserPermissionStore } from "./permissions.store";
 import { IUserSettingsStore, UserSettingsStore } from "./settings.store";
-import { TUserPermissions } from "@plane/types/src/enums";
 
 type TUserErrorStatus = {
   status: string;

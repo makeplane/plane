@@ -6,7 +6,7 @@ import { IWorkspace } from "@plane/types";
 import { Avatar, PriorityIcon, Tooltip } from "@plane/ui";
 import { DateRangeDropdown, MemberDropdown } from "@/components/dropdowns";
 import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
-import { useMember, useUser, useUserPermissions } from "@/hooks/store";
+import { useMember, useUserPermissions } from "@/hooks/store";
 import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 import { TProject } from "@/plane-web/types/projects";
 import { EProjectPriority } from "@/plane-web/types/workspace-project-states";

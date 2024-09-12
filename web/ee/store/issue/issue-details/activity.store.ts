@@ -1,20 +1,19 @@
-import {
-  IIssueActivityStoreActions as IIssueActivityStoreActionsCe,
-  IIssueActivityStore as IIssueActivityStoreCe,
-  IssueActivityStore as IssueActivityStoreCe,
-} from "ce/store/issue/issue-details/activity.store";
-
 import sortBy from "lodash/sortBy";
 import { makeObservable } from "mobx";
 import { computedFn } from "mobx-utils";
 import { TIssueActivityComment } from "@plane/types";
+// ce store
+import {
+  IIssueActivityStoreActions as IIssueActivityStoreActionsCe,
+  IIssueActivityStore as IIssueActivityStoreCe,
+  IssueActivityStore as IssueActivityStoreCe,
+} from "@/ce/store/issue/issue-details/activity.store";
 // plane web constants
 import { EActivityFilterType, EActivityFilterTypeEE } from "@/plane-web/constants/issues";
 // plane web store types
 import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { IssueActivityService } from "@/services/issue";
-// ce store
 
 export type TActivityLoader = "fetch" | "mutate" | undefined;
 

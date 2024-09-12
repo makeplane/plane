@@ -6,9 +6,10 @@ import { Trash2 } from "lucide-react";
 import { cn } from "@plane/editor";
 import { setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 // plane web components
-import { useUser, useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store";
 import { BulkDeleteConfirmationModal } from "@/plane-web/components/issues";
-import { EUserPermissions, EUserPermissionsLevel } from "@/ce/constants/user-permissions";
+// plane web constants
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   handleClearSelection: () => void;
