@@ -15,6 +15,7 @@ interface ImageUploadProps {
       height: string;
     };
   };
+  updateAttributes: (attrs: Record<string, any>) => void;
 }
 
 export const ImageUpload: React.FC<ImageUploadProps> = ({ getPos, editor, node, updateAttributes }) => {
@@ -85,25 +86,9 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({ getPos, editor, node, 
     <NodeViewWrapper>
       <div className="p-0 mx-0 my-2" data-drag-handle>
         {isUploaded ? (
-          <ImageBlockView
-            editor={editor}
-            getPos={getPos}
-            node={{
-              ...node,
-              attrs: {
-                ...node.attrs,
-              },
-            }}
-            updateAttributes={updateAttributes}
-          />
+          <ImageBlockView editor={editor} getPos={getPos} node={node} updateAttributes={updateAttributes} />
         ) : (
-          <ImageUploader
-            onUpload={onUpload}
-            editor={editor}
-            fileInputRef={fileInputRef}
-            existingFile={existingFile}
-            id={id}
-          />
+          <ImageUploader onUpload={onUpload} editor={editor} fileInputRef={fileInputRef} existingFile={existingFile} />
         )}
       </div>
     </NodeViewWrapper>
