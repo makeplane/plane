@@ -1,4 +1,5 @@
 {
+  "name": "plane",
   "repository": "https://github.com/makeplane/plane.git",
   "version": "0.22.0",
   "license": "AGPL-3.0",
@@ -20,6 +21,7 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev --concurrency=13",
+    "heroku-postbuild": "turbo run build --filter=live",
     "start": "turbo run start",
     "lint": "turbo run lint",
     "clean": "turbo run clean",
@@ -41,6 +43,8 @@
   "resolutions": {
     "@types/react": "18.2.48"
   },
-  "packageManager": "yarn@1.22.22",
-  "name": "plane"
+  "engines": {
+    "node": "18.x"
+  },
+  "packageManager": "yarn@1.22.22"
 }

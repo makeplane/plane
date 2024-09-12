@@ -1,2 +1,1 @@
-export * from "./ask-pi-menu";
-export * from "./menu";
+export * from "ee/components/pages/editor/ai";
