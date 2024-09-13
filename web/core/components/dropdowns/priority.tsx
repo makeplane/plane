@@ -414,6 +414,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
             placeholder={placeholder}
             showTooltip={showTooltip}
             hideText={BUTTON_VARIANTS_WITHOUT_TEXT.includes(buttonVariant)}
+            renderToolTipByDefault={renderByDefault}
           />
         </button>
       )}
