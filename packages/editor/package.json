@@ -65,10 +65,7 @@
     "tailwind-merge": "^1.14.0",
     "tippy.js": "^6.3.7",
     "tiptap-markdown": "^0.8.9",
-    "y-indexeddb": "^9.0.12",
-    "y-prosemirror": "^1.2.5",
-    "y-protocols": "^1.0.6",
-    "yjs": "^13.6.15"
+    "y-indexeddb": "^9.0.12"
   },
   "devDependencies": {
     "@types/node": "18.15.3",
