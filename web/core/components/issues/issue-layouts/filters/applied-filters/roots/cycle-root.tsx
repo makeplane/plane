@@ -14,7 +14,7 @@ export const CycleAppliedFiltersRoot: React.FC = observer(() => {
   const { workspaceSlug, projectId, cycleId } = useParams();
   // store hooks
   const {
-    issuesFilter: { issueFilters, updateFilters },
+    issuesFilter: { issueFilters, updateFilters, orderBy },
   } = useIssues(EIssuesStoreType.CYCLE);
 
   const { projectLabels } = useLabel();
@@ -92,7 +92,7 @@ export const CycleAppliedFiltersRoot: React.FC = observer(() => {
         projectId={projectId.toString()}
         filterParams={{
           filters: { ...appliedFilters, cycle: [cycleId?.toString()] },
-          display_filters: issueFilters?.displayFilters,
+          display_filters: { ...issueFilters?.displayFilters, order_by: orderBy },
           display_properties: issueFilters?.displayProperties,
         }}
       />

@@ -120,7 +120,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           enableBlockLeftResize={isAllowed}
           enableBlockRightResize={isAllowed}
           enableBlockMove={isAllowed}
-          enableReorder={appliedDisplayFilters?.order_by === "sort_order" && isAllowed}
+          enableReorder={issuesFilter?.orderBy === "sort_order" && isAllowed}
           enableAddBlock={isAllowed}
           enableSelection={isBulkOperationsEnabled && isAllowed}
           quickAdd={quickAdd}

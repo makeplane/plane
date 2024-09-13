@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { observer } from "mobx-react";
 // types
-import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
+import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssueOrderByOptions } from "@plane/types";
 // components
 import { LogoSpinner } from "@/components/common";
 import { MultipleSelectGroup } from "@/components/core";
@@ -21,7 +21,7 @@ import { SpreadsheetTable } from "./spreadsheet-table";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
-  displayFilters: IIssueDisplayFilterOptions;
+  orderBy: TIssueOrderByOptions;
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
   issueIds: string[] | undefined;
   quickActions: TRenderQuickActions;
@@ -39,7 +39,7 @@ type Props = {
 export const SpreadsheetView: React.FC<Props> = observer((props) => {
   const {
     displayProperties,
-    displayFilters,
+    orderBy,
     handleDisplayFilterUpdate,
     issueIds,
     quickActions,
@@ -92,7 +92,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
             <div ref={containerRef} className="vertical-scrollbar horizontal-scrollbar scrollbar-lg h-full w-full">
               <SpreadsheetTable
                 displayProperties={displayProperties}
-                displayFilters={displayFilters}
+                orderBy={orderBy}
                 handleDisplayFilterUpdate={handleDisplayFilterUpdate}
                 issueIds={issueIds}
                 isEstimateEnabled={isEstimateEnabled}

@@ -22,7 +22,7 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
   // store hooks
   const { projectLabels } = useLabel();
   const {
-    issuesFilter: { issueFilters, updateFilters },
+    issuesFilter: { issueFilters, updateFilters, orderBy },
   } = useIssues(EIssuesStoreType.PROJECT);
   const { allowPermissions } = useUserPermissions();
 
@@ -88,7 +88,7 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
             projectId={projectId}
             filterParams={{
               filters: appliedFilters,
-              display_filters: issueFilters?.displayFilters,
+              display_filters: { ...issueFilters?.displayFilters, order_by: orderBy },
               display_properties: issueFilters?.displayProperties,
             }}
           />

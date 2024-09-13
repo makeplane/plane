@@ -201,6 +201,7 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
                       <DisplayFiltersSelection
                         layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
                         displayFilters={displayFilters ?? {}}
+                        orderBy={displayFilters?.order_by ?? "-created_at"}
                         handleDisplayFiltersUpdate={(updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
                           onDisplayFiltersChange({
                             ...displayFilters,

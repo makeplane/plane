@@ -1,7 +1,12 @@
 import React from "react";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssueGroupByOptions } from "@plane/types";
+import {
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  TIssueGroupByOptions,
+  TIssueOrderByOptions,
+} from "@plane/types";
 // components
 import {
   FilterDisplayProperties,
@@ -15,6 +20,7 @@ import { ILayoutDisplayFiltersOptions } from "@/constants/issue";
 
 type Props = {
   displayFilters: IIssueDisplayFilterOptions | undefined;
+  orderBy: TIssueOrderByOptions;
   displayProperties: IIssueDisplayProperties;
   handleDisplayFiltersUpdate: (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => void;
   handleDisplayPropertiesUpdate: (updatedDisplayProperties: Partial<IIssueDisplayProperties>) => void;
@@ -27,6 +33,7 @@ type Props = {
 export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
   const {
     displayFilters,
+    orderBy,
     displayProperties,
     handleDisplayFiltersUpdate,
     handleDisplayPropertiesUpdate,
@@ -100,7 +107,7 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
       {isDisplayFilterEnabled("order_by") && !isEmpty(layoutDisplayFiltersOptions?.display_filters?.order_by) && (
         <div className="py-2">
           <FilterOrderBy
-            selectedOrderBy={displayFilters?.order_by}
+            selectedOrderBy={orderBy}
             handleUpdate={(val) =>
               handleDisplayFiltersUpdate({
                 order_by: val,

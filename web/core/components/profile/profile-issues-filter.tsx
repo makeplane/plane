@@ -22,7 +22,7 @@ export const ProfileIssuesFilter = observer(() => {
   const { workspaceSlug, userId } = useParams();
   // store hook
   const {
-    issuesFilter: { issueFilters, updateFilters },
+    issuesFilter: { issueFilters, updateFilters, orderBy },
   } = useIssues(EIssuesStoreType.PROFILE);
 
   const { workspaceLabels } = useLabel();
@@ -129,6 +129,7 @@ export const ProfileIssuesFilter = observer(() => {
             activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.profile_issues[activeLayout] : undefined
           }
           displayFilters={issueFilters?.displayFilters ?? {}}
+          orderBy={orderBy}
           handleDisplayFiltersUpdate={handleDisplayFilters}
           displayProperties={issueFilters?.displayProperties ?? {}}
           handleDisplayPropertiesUpdate={handleDisplayProperties}

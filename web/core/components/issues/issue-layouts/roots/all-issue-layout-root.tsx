@@ -52,7 +52,7 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props: Props) => {
   useWorkspaceIssueProperties(workspaceSlug);
   // store
   const {
-    issuesFilter: { filters, fetchFilters, updateFilters },
+    issuesFilter: { filters, orderBy, fetchFilters, updateFilters },
     issues: { clear, getIssueLoader, getPaginationData, groupedIssueIds, fetchIssues, fetchNextIssues },
   } = useIssues(EIssuesStoreType.GLOBAL);
   const { updateIssue, removeIssue, archiveIssue } = useIssuesActions(EIssuesStoreType.GLOBAL);
@@ -202,7 +202,7 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props: Props) => {
       <IssueLayoutHOC layout={EIssueLayoutTypes.SPREADSHEET}>
         <SpreadsheetView
           displayProperties={issueFilters?.displayProperties ?? {}}
-          displayFilters={issueFilters?.displayFilters ?? {}}
+          orderBy={orderBy}
           handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
           issueIds={Array.isArray(issueIds) ? issueIds : []}
           quickActions={renderQuickActions}

@@ -26,7 +26,7 @@ export const GlobalIssuesHeader = observer(() => {
   const { workspaceSlug, globalViewId } = useParams();
   // store hooks
   const {
-    issuesFilter: { filters, updateFilters },
+    issuesFilter: { filters, updateFilters, orderBy },
   } = useIssues(EIssuesStoreType.GLOBAL);
   const { getViewDetailsById } = useGlobalView();
   const { workspaceLabels } = useLabel();
@@ -130,6 +130,7 @@ export const GlobalIssuesHeader = observer(() => {
                 <DisplayFiltersSelection
                   layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
                   displayFilters={issueFilters?.displayFilters ?? {}}
+                  orderBy={orderBy}
                   handleDisplayFiltersUpdate={handleDisplayFilters}
                   displayProperties={issueFilters?.displayProperties ?? {}}
                   handleDisplayPropertiesUpdate={handleDisplayProperties}

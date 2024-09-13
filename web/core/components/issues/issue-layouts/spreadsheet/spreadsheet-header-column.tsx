@@ -1,7 +1,7 @@
 import { useRef } from "react";
 //types
 import { observer } from "mobx-react";
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssueOrderByOptions } from "@plane/types";
 //components
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { HeaderColumn } from "./columns/header-column";
@@ -10,11 +10,11 @@ interface Props {
   displayProperties: IIssueDisplayProperties;
   property: keyof IIssueDisplayProperties;
   isEstimateEnabled: boolean;
-  displayFilters: IIssueDisplayFilterOptions;
+  orderBy: TIssueOrderByOptions;
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
 }
 export const SpreadsheetHeaderColumn = observer((props: Props) => {
-  const { displayProperties, displayFilters, property, isEstimateEnabled, handleDisplayFilterUpdate } = props;
+  const { displayProperties, orderBy, property, isEstimateEnabled, handleDisplayFilterUpdate } = props;
 
   //hooks
   const tableHeaderCellRef = useRef<HTMLTableCellElement | null>(null);
@@ -33,7 +33,7 @@ export const SpreadsheetHeaderColumn = observer((props: Props) => {
         tabIndex={0}
       >
         <HeaderColumn
-          displayFilters={displayFilters}
+          orderBy={orderBy}
           handleDisplayFilterUpdate={handleDisplayFilterUpdate}
           property={property}
           onClose={() => {

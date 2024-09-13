@@ -42,7 +42,7 @@ export const ProjectIssuesMobileHeader = observer(() => {
 
   // store hooks
   const {
-    issuesFilter: { issueFilters, updateFilters },
+    issuesFilter: { issueFilters, updateFilters, orderBy },
   } = useIssues(EIssuesStoreType.PROJECT);
   const {
     project: { projectMemberIds },
@@ -172,6 +172,7 @@ export const ProjectIssuesMobileHeader = observer(() => {
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
               }
               displayFilters={issueFilters?.displayFilters ?? {}}
+              orderBy={orderBy}
               handleDisplayFiltersUpdate={handleDisplayFilters}
               displayProperties={issueFilters?.displayProperties ?? {}}
               handleDisplayPropertiesUpdate={handleDisplayProperties}

@@ -19,7 +19,7 @@ export const ArchivedIssuesHeader: FC = observer(() => {
   // store hooks
   const { currentProjectDetails } = useProject();
   const {
-    issuesFilter: { issueFilters, updateFilters },
+    issuesFilter: { issueFilters, updateFilters, orderBy },
   } = useIssues(EIssuesStoreType.ARCHIVED);
   const { projectStates } = useProjectState();
   const { projectLabels } = useLabel();
@@ -87,6 +87,7 @@ export const ArchivedIssuesHeader: FC = observer(() => {
         <FiltersDropdown title="Display" placement="bottom-end">
           <DisplayFiltersSelection
             displayFilters={issueFilters?.displayFilters || {}}
+            orderBy={orderBy}
             displayProperties={issueFilters?.displayProperties || {}}
             handleDisplayFiltersUpdate={handleDisplayFiltersUpdate}
             handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}

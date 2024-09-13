@@ -14,7 +14,7 @@ export const ModuleAppliedFiltersRoot: React.FC = observer(() => {
   const { workspaceSlug, projectId, moduleId } = useParams();
   // store hooks
   const {
-    issuesFilter: { issueFilters, updateFilters },
+    issuesFilter: { issueFilters, updateFilters, orderBy },
   } = useIssues(EIssuesStoreType.MODULE);
   const { projectLabels } = useLabel();
   const { projectStates } = useProjectState();
@@ -91,7 +91,7 @@ export const ModuleAppliedFiltersRoot: React.FC = observer(() => {
         projectId={projectId.toString()}
         filterParams={{
           filters: { ...appliedFilters, module: [moduleId.toString()] },
-          display_filters: issueFilters?.displayFilters,
+          display_filters: { ...issueFilters?.displayFilters, order_by: orderBy },
           display_properties: issueFilters?.displayProperties,
         }}
       />

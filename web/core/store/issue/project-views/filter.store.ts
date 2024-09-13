@@ -60,6 +60,7 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
       // computed
       issueFilters: computed,
       appliedFilters: computed,
+      orderBy: computed,
       // actions
       fetchFilters: action,
       updateFilters: action,
@@ -84,6 +85,19 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
     return this.getAppliedFilters(viewId);
   }
 
+  get orderBy() {
+    const viewId = this.rootIssueStore.viewId;
+    if (!viewId) return "sort_order";
+
+    return this.getOrderBy(viewId);
+  }
+
+  getOrderBy(viewId: string) {
+    const filters = this.filters[viewId] ?? undefined;
+
+    return this.computedOrderByFromLayout(filters?.displayFilters, "issues");
+  }
+
   getIssueFilters(viewId: string) {
     const displayFilters = this.filters[viewId] || undefined;
     if (isEmpty(displayFilters)) return undefined;
@@ -100,9 +114,12 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
     const filteredParams = handleIssueQueryParamsByLayout(userFilters?.displayFilters?.layout, "issues");
     if (!filteredParams) return undefined;
 
+    const orderBy = this.getOrderBy(viewId);
+
     const filteredRouteParams: Partial<Record<TIssueParams, string | boolean>> = this.computedFilteredParams(
       userFilters?.filters as IIssueFilterOptions,
       userFilters?.displayFilters as IIssueDisplayFilterOptions,
+      orderBy,
       filteredParams
     );
 

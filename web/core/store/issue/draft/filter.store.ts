@@ -59,6 +59,7 @@ export class DraftIssuesFilter extends IssueFilterHelperStore implements IDraftI
       // computed
       issueFilters: computed,
       appliedFilters: computed,
+      orderBy: computed,
       // actions
       fetchFilters: action,
       updateFilters: action,
@@ -83,6 +84,19 @@ export class DraftIssuesFilter extends IssueFilterHelperStore implements IDraftI
     return this.getAppliedFilters(projectId);
   }
 
+  get orderBy() {
+    const projectId = this.rootIssueStore.projectId;
+    if (!projectId) return "sort_order";
+
+    return this.getOrderBy(projectId);
+  }
+
+  getOrderBy(projectId: string) {
+    const filters = this.filters[projectId] ?? undefined;
+
+    return this.computedOrderByFromLayout(filters?.displayFilters, "issues");
+  }
+
   getIssueFilters(projectId: string) {
     const displayFilters = this.filters[projectId] || undefined;
     if (!projectId || isEmpty(displayFilters)) return undefined;
@@ -99,9 +113,12 @@ export class DraftIssuesFilter extends IssueFilterHelperStore implements IDraftI
     const filteredParams = handleIssueQueryParamsByLayout(userFilters?.displayFilters?.layout, "issues");
     if (!filteredParams) return undefined;
 
+    const orderBy = this.getOrderBy(projectId);
+
     const filteredRouteParams: Partial<Record<TIssueParams, string | boolean>> = this.computedFilteredParams(
       userFilters?.filters as IIssueFilterOptions,
       userFilters?.displayFilters as IIssueDisplayFilterOptions,
+      orderBy,
       filteredParams
     );
 

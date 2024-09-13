@@ -38,7 +38,7 @@ const HeaderFilters = observer(({ currentProjectDetails, projectId, workspaceSlu
     project: { projectMemberIds },
   } = useMember();
   const {
-    issuesFilter: { issueFilters, updateFilters },
+    issuesFilter: { issueFilters, updateFilters, orderBy },
   } = useIssues(EIssuesStoreType.PROJECT);
 
   const { projectStates } = useProjectState();
@@ -124,6 +124,7 @@ const HeaderFilters = observer(({ currentProjectDetails, projectId, workspaceSlu
       <FiltersDropdown title="Display" placement="bottom-end">
         <DisplayFiltersSelection
           layoutDisplayFiltersOptions={activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined}
+          orderBy={orderBy}
           displayFilters={issueFilters?.displayFilters ?? {}}
           handleDisplayFiltersUpdate={handleDisplayFilters}
           displayProperties={issueFilters?.displayProperties ?? {}}

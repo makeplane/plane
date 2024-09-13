@@ -25,7 +25,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   const { workspaceSlug, projectId, viewId } = useParams();
   // store hooks
   const {
-    issuesFilter: { issueFilters, updateFilters },
+    issuesFilter: { issueFilters, updateFilters, orderBy },
   } = useIssues(EIssuesStoreType.PROJECT_VIEW);
   const { projectLabels } = useLabel();
   const { projectStates } = useProjectState();
@@ -94,7 +94,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   const areFiltersEqual = getAreFiltersEqual(appliedFilters ?? {}, issueFilters, viewDetails);
   const viewFilters = {
     filters: cloneDeep(appliedFilters ?? {}),
-    display_filters: cloneDeep(issueFilters?.displayFilters),
+    display_filters: cloneDeep({ ...issueFilters?.displayFilters, order_by: orderBy }),
     display_properties: cloneDeep(issueFilters?.displayProperties),
   };
   // return if no filters are applied

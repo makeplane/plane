@@ -76,7 +76,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const { isMobile } = usePlatformOS();
   // store hooks
   const {
-    issuesFilter: { issueFilters },
+    issuesFilter: { issueFilters, orderBy },
     issues: { getGroupIssueCount },
   } = useIssues(EIssuesStoreType.MODULE);
   const { updateFilters } = useIssuesActions(EIssuesStoreType.MODULE);
@@ -273,6 +273,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                   activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
                 }
                 displayFilters={issueFilters?.displayFilters ?? {}}
+                orderBy={orderBy}
                 handleDisplayFiltersUpdate={handleDisplayFilters}
                 displayProperties={issueFilters?.displayProperties ?? {}}
                 handleDisplayPropertiesUpdate={handleDisplayProperties}

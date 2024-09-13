@@ -43,7 +43,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   const { workspaceSlug, projectId, viewId } = useParams();
   // store hooks
   const {
-    issuesFilter: { issueFilters, updateFilters },
+    issuesFilter: { issueFilters, updateFilters, orderBy },
   } = useIssues(EIssuesStoreType.PROJECT_VIEW);
   const { setTrackElement } = useEventTracker();
   const { toggleCreateIssueModal } = useCommandPalette();
@@ -275,6 +275,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                   activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
                 }
                 displayFilters={issueFilters?.displayFilters ?? {}}
+                orderBy={orderBy}
                 handleDisplayFiltersUpdate={handleDisplayFilters}
                 displayProperties={issueFilters?.displayProperties ?? {}}
                 handleDisplayPropertiesUpdate={handleDisplayProperties}

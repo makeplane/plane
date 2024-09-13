@@ -64,6 +64,7 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
       // computed
       issueFilters: computed,
       appliedFilters: computed,
+      orderBy: computed,
       // actions
       fetchFilters: action,
       updateFilters: action,
@@ -88,6 +89,19 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
     return this.getAppliedFilters(userId);
   }
 
+  get orderBy() {
+    const userId = this.rootIssueStore.userId;
+    if (!userId) return "sort_order";
+
+    return this.getOrderBy(userId);
+  }
+
+  getOrderBy(userId: string) {
+    const filters = this.filters[userId] ?? undefined;
+
+    return this.computedOrderByFromLayout(filters?.displayFilters, "profile_issues");
+  }
+
   getIssueFilters(userId: string) {
     const displayFilters = this.filters[userId] || undefined;
     if (isEmpty(displayFilters)) return undefined;
@@ -104,9 +118,12 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
     const filteredParams = handleIssueQueryParamsByLayout(userFilters?.displayFilters?.layout, "profile_issues");
     if (!filteredParams) return undefined;
 
+    const orderBy = this.getOrderBy(userId);
+
     const filteredRouteParams: Partial<Record<TIssueParams, string | boolean>> = this.computedFilteredParams(
       userFilters?.filters as IIssueFilterOptions,
       userFilters?.displayFilters as IIssueDisplayFilterOptions,
+      orderBy,
       filteredParams
     );
 

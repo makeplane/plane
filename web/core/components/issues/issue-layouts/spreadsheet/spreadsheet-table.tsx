@@ -1,7 +1,7 @@
 import { MutableRefObject, useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssue } from "@plane/types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssue, TIssueOrderByOptions } from "@plane/types";
 import { SpreadsheetIssueRowLoader } from "@/components/ui/loader";
 //hooks
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
@@ -16,7 +16,7 @@ import { SpreadsheetHeader } from "./spreadsheet-header";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
-  displayFilters: IIssueDisplayFilterOptions;
+  orderBy: TIssueOrderByOptions;
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
   issueIds: string[];
   isEstimateEnabled: boolean;
@@ -34,7 +34,7 @@ type Props = {
 export const SpreadsheetTable = observer((props: Props) => {
   const {
     displayProperties,
-    displayFilters,
+    orderBy,
     handleDisplayFilterUpdate,
     issueIds,
     isEstimateEnabled,
@@ -104,7 +104,7 @@ export const SpreadsheetTable = observer((props: Props) => {
     <table className="overflow-y-auto bg-custom-background-100" onKeyDown={handleKeyBoardNavigation}>
       <SpreadsheetHeader
         displayProperties={displayProperties}
-        displayFilters={displayFilters}
+        orderBy={orderBy}
         handleDisplayFilterUpdate={handleDisplayFilterUpdate}
         canEditProperties={canEditProperties}
         isEstimateEnabled={isEstimateEnabled}

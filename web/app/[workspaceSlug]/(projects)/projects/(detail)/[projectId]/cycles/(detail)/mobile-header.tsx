@@ -38,7 +38,7 @@ export const CycleIssuesMobileHeader = () => {
   // store hooks
   const { currentProjectDetails } = useProject();
   const {
-    issuesFilter: { issueFilters, updateFilters },
+    issuesFilter: { issueFilters, updateFilters, orderBy },
   } = useIssues(EIssuesStoreType.CYCLE);
   const activeLayout = issueFilters?.displayFilters?.layout;
 
@@ -188,6 +188,7 @@ export const CycleIssuesMobileHeader = () => {
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
               }
               displayFilters={issueFilters?.displayFilters ?? {}}
+              orderBy={orderBy}
               handleDisplayFiltersUpdate={handleDisplayFilters}
               displayProperties={issueFilters?.displayProperties ?? {}}
               handleDisplayPropertiesUpdate={handleDisplayProperties}

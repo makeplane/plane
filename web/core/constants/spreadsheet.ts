@@ -178,6 +178,38 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
   },
 };
 
+export const SPREADSHEET_ORDERBY_PROPERTY: Record<TIssueOrderByOptions, keyof IIssueDisplayProperties> = {
+  created_at: "created_on",
+  "-created_at": "created_on",
+  updated_at: "updated_on",
+  "-updated_at": "updated_on",
+  priority: "priority",
+  "-priority": "priority",
+  state__name: "state",
+  "-state__name": "state",
+  assignees__first_name: "assignee",
+  "-assignees__first_name": "assignee",
+  labels__name: "labels",
+  "-labels__name": "labels",
+  issue_module__module__name: "modules",
+  "-issue_module__module__name": "modules",
+  issue_cycle__cycle__name: "cycle",
+  "-issue_cycle__cycle__name": "cycle",
+  target_date: "due_date",
+  "-target_date": "due_date",
+  estimate_point: "estimate",
+  "-estimate_point": "estimate",
+  start_date: "start_date",
+  "-start_date": "start_date",
+  link_count: "link",
+  "-link_count": "link",
+  attachment_count: "attachment_count",
+  "-attachment_count": "attachment_count",
+  sub_issues_count: "sub_issue_count",
+  "-sub_issues_count": "sub_issue_count",
+  sort_order: "key",
+};
+
 export const SPREADSHEET_PROPERTY_LIST: (keyof IIssueDisplayProperties)[] = [
   "state",
   "priority",

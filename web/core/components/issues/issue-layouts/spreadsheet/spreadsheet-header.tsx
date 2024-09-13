@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssueOrderByOptions } from "@plane/types";
 // components
 import { Row } from "@plane/ui";
 import { MultipleSelectGroupAction } from "@/components/core";
@@ -15,7 +15,7 @@ import { TSelectionHelper } from "@/hooks/use-multiple-select";
 
 interface Props {
   displayProperties: IIssueDisplayProperties;
-  displayFilters: IIssueDisplayFilterOptions;
+  orderBy: TIssueOrderByOptions;
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
   canEditProperties: (projectId: string | undefined) => boolean;
   isEstimateEnabled: boolean;
@@ -26,7 +26,7 @@ interface Props {
 export const SpreadsheetHeader = observer((props: Props) => {
   const {
     displayProperties,
-    displayFilters,
+    orderBy,
     handleDisplayFilterUpdate,
     canEditProperties,
     isEstimateEnabled,
@@ -71,7 +71,7 @@ export const SpreadsheetHeader = observer((props: Props) => {
             key={property}
             property={property}
             displayProperties={displayProperties}
-            displayFilters={displayFilters}
+            orderBy={orderBy}
             handleDisplayFilterUpdate={handleDisplayFilterUpdate}
             isEstimateEnabled={isEstimateEnabled}
           />

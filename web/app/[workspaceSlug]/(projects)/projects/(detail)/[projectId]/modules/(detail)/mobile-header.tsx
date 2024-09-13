@@ -42,7 +42,7 @@ export const ModuleIssuesMobileHeader = observer(() => {
   const moduleDetails = moduleId ? getModuleById(moduleId.toString()) : undefined;
 
   const {
-    issuesFilter: { issueFilters, updateFilters },
+    issuesFilter: { issueFilters, updateFilters, orderBy },
   } = useIssues(EIssuesStoreType.MODULE);
   const activeLayout = issueFilters?.displayFilters?.layout;
   const { projectStates } = useProjectState();
@@ -169,6 +169,7 @@ export const ModuleIssuesMobileHeader = observer(() => {
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
               }
               displayFilters={issueFilters?.displayFilters ?? {}}
+              orderBy={orderBy}
               handleDisplayFiltersUpdate={handleDisplayFilters}
               displayProperties={issueFilters?.displayProperties ?? {}}
               handleDisplayPropertiesUpdate={handleDisplayProperties}

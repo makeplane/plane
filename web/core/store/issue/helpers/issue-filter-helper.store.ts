@@ -9,11 +9,12 @@ import {
   IIssueFiltersResponse,
   IssuePaginationOptions,
   TIssueKanbanFilters,
+  TIssueOrderByOptions,
   TIssueParams,
   TStaticViewTypes,
 } from "@plane/types";
 // constants
-import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 // helpers
 import { getComputedDisplayFilters, getComputedDisplayProperties } from "@/helpers/issue.helper";
 // lib
@@ -33,13 +34,18 @@ export interface IBaseIssueFilterStore {
   //computed
   appliedFilters: Partial<Record<TIssueParams, string | boolean>> | undefined;
   issueFilters: IIssueFilters | undefined;
+  orderBy: TIssueOrderByOptions;
 }
 
 export interface IIssueFilterHelperStore {
-  computedIssueFilters(filters: IIssueFilters): IIssueFilters;
+  computedIssueFilters(
+    filters: IIssueFilters,
+    viewType: "my_issues" | "issues" | "profile_issues" | "archived_issues" | "draft_issues"
+  ): IIssueFilters;
   computedFilteredParams(
     filters: IIssueFilterOptions,
     displayFilters: IIssueDisplayFilterOptions,
+    orderBy: TIssueOrderByOptions,
     filteredParams: TIssueParams[]
   ): Partial<Record<TIssueParams, string | boolean>>;
   computedFilters(filters: IIssueFilterOptions): IIssueFilterOptions;
@@ -65,6 +71,28 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
     kanbanFilters: isEmpty(filters?.kanbanFilters) ? undefined : filters?.kanbanFilters,
   });
 
+  computedOrderByFromLayout = (
+    displayFilters: IIssueDisplayFilterOptions | undefined,
+    viewType: "my_issues" | "issues" | "profile_issues"
+  ): TIssueOrderByOptions => {
+    const activeLayout = displayFilters?.layout;
+
+    const layoutOptions = ISSUE_DISPLAY_FILTERS_BY_LAYOUT?.[viewType]?.[activeLayout];
+
+    //@ts-ignore
+    const currentOrderBy = displayFilters?.order_by ?? "sort_order";
+
+    if (!layoutOptions) return currentOrderBy;
+
+    const allowedOrderByOptions = layoutOptions?.display_filters?.order_by;
+
+    if (!allowedOrderByOptions) return currentOrderBy;
+
+    // check if the order by from display filters can be used,
+    // if not use the appropriate order by from the layout's list
+    return currentOrderBy && allowedOrderByOptions.includes(currentOrderBy) ? currentOrderBy : allowedOrderByOptions[0];
+  };
+
   /**
    * @description This method is used to convert the filters array params to string params
    * @param {IIssueFilterOptions} filters
@@ -75,6 +103,7 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
   computedFilteredParams = (
     filters: IIssueFilterOptions,
     displayFilters: IIssueDisplayFilterOptions,
+    orderBy: TIssueOrderByOptions,
     acceptableParamsByLayout: TIssueParams[]
   ) => {
     const computedFilters: Partial<Record<TIssueParams, undefined | string[] | boolean | string>> = {
@@ -98,7 +127,7 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
       sub_group_by: displayFilters?.sub_group_by
         ? EIssueGroupByToServerOptions[displayFilters.sub_group_by]
         : undefined,
-      order_by: displayFilters?.order_by || undefined,
+      order_by: orderBy || undefined,
       type: displayFilters?.type || undefined,
       sub_issue: displayFilters?.sub_issue ?? true,
     };
@@ -122,7 +151,7 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
    * @param {IIssueFilterOptions} filters
    * @returns {IIssueFilterOptions}
    */
-  computedFilters = (filters: IIssueFilterOptions): IIssueFilterOptions => ({
+  computedFilters = (filters: IIssueFilterOptions | undefined): IIssueFilterOptions => ({
     priority: filters?.priority || null,
     state: filters?.state || null,
     state_group: filters?.state_group || null,

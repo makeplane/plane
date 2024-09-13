@@ -271,10 +271,10 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
   // current Order by value
   get orderBy() {
-    const displayFilters = this.issueFilterStore?.issueFilters?.displayFilters;
-    if (!displayFilters) return;
+    const orderBy = this.issueFilterStore?.orderBy;
+    if (!orderBy) return;
 
-    return displayFilters?.order_by;
+    return orderBy;
   }
 
   // current Group by value

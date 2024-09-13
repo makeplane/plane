@@ -78,7 +78,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const sub_group_by = displayFilters?.sub_group_by;
   const group_by = displayFilters?.group_by;
 
-  const orderBy = displayFilters?.order_by;
+  const orderBy = issuesFilter?.orderBy;
 
   useEffect(() => {
     fetchIssues("init-loader", { canGroup: true, perPageCount: sub_group_by ? 10 : 30 }, viewId);

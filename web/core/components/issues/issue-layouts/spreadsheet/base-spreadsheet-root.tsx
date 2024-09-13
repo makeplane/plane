@@ -112,7 +112,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
     <IssueLayoutHOC layout={EIssueLayoutTypes.SPREADSHEET}>
       <SpreadsheetView
         displayProperties={issuesFilter.issueFilters?.displayProperties ?? {}}
-        displayFilters={issuesFilter.issueFilters?.displayFilters ?? {}}
+        orderBy={issuesFilter?.orderBy}
         handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
         issueIds={issueIds}
         quickActions={renderQuickActions}

@@ -60,6 +60,7 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
       // computed
       issueFilters: computed,
       appliedFilters: computed,
+      orderBy: computed,
       // actions
       fetchFilters: action,
       updateFilters: action,
@@ -84,6 +85,19 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
     return this.getAppliedFilters(cycleId);
   }
 
+  get orderBy() {
+    const cycleId = this.rootIssueStore.cycleId;
+    if (!cycleId) return "sort_order";
+
+    return this.getOrderBy(cycleId);
+  }
+
+  getOrderBy(cycleId: string) {
+    const filters = this.filters[cycleId] ?? undefined;
+
+    return this.computedOrderByFromLayout(filters?.displayFilters, "issues");
+  }
+
   getIssueFilters(cycleId: string) {
     const displayFilters = this.filters[cycleId] || undefined;
     if (isEmpty(displayFilters)) return undefined;
@@ -100,11 +114,14 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
     const filteredParams = handleIssueQueryParamsByLayout(userFilters?.displayFilters?.layout, "issues");
     if (!filteredParams) return undefined;
 
+    const orderBy = this.getOrderBy(cycleId);
+
     if (filteredParams.includes("cycle")) filteredParams.splice(filteredParams.indexOf("cycle"), 1);
 
     const filteredRouteParams: Partial<Record<TIssueParams, string | boolean>> = this.computedFilteredParams(
       userFilters?.filters as IIssueFilterOptions,
       userFilters?.displayFilters as IIssueDisplayFilterOptions,
+      orderBy,
       filteredParams
     );
 

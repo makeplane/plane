@@ -290,6 +290,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                         <DisplayFiltersSelection
                           layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[displayFilters.layout]}
                           displayFilters={displayFilters ?? {}}
+                          orderBy={displayFilters.order_by ?? "sort_order"}
                           handleDisplayFiltersUpdate={(updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
                             onDisplayFiltersChange({
                               ...displayFilters,

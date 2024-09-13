@@ -14,6 +14,7 @@ import {
   TIssueParams,
   TStaticViewTypes,
   IssuePaginationOptions,
+  TIssueOrderByOptions,
 } from "@plane/types";
 import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 // services
@@ -48,6 +49,7 @@ export interface IWorkspaceIssuesFilter extends IBaseIssueFilterStore {
     groupId: string | undefined,
     subGroupId: string | undefined
   ) => Partial<Record<TIssueParams, string | boolean>>;
+  getOrderBy(viewId: string): TIssueOrderByOptions;
 }
 
 export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWorkspaceIssuesFilter {
@@ -66,6 +68,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
       // computed
       issueFilters: computed,
       appliedFilters: computed,
+      orderBy: computed,
       // fetch actions
       fetchFilters: action,
       updateFilters: action,
@@ -74,6 +77,19 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
     this.rootIssueStore = _rootStore;
     // services
     this.issueFilterService = new WorkspaceService();
+  }
+
+  get orderBy() {
+    const viewId = this.rootIssueStore.globalViewId;
+    if (!viewId) return "sort_order";
+
+    return this.getOrderBy(viewId);
+  }
+
+  getOrderBy(viewId: string) {
+    const filters = this.filters[viewId] ?? undefined;
+
+    return this.computedOrderByFromLayout(filters?.displayFilters, "my_issues");
   }
 
   getIssueFilters = (viewId: string | undefined) => {
@@ -96,9 +112,12 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
     const filteredParams = handleIssueQueryParamsByLayout(EIssueLayoutTypes.SPREADSHEET, "my_issues");
     if (!filteredParams) return undefined;
 
+    const orderBy = this.getOrderBy(viewId);
+
     const filteredRouteParams: Partial<Record<TIssueParams, string | boolean>> = this.computedFilteredParams(
       userFilters?.filters as IIssueFilterOptions,
       userFilters?.displayFilters as IIssueDisplayFilterOptions,
+      orderBy,
       filteredParams
     );
 
