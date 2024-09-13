@@ -129,7 +129,7 @@ export const useEditor = (props: CustomEditorProps) => {
         editorRef.current?.commands.clearContent(emitUpdate);
       },
       setEditorValue: (content: string) => {
-        editorRef.current?.commands.setContent(content);
+        editorRef.current?.commands.setContent(content, false, { preserveWhitespace: "full" });
       },
       setEditorValueAtCursorPosition: (content: string) => {
         if (savedSelection) {

@@ -5,9 +5,10 @@ import { UploadImageExtensionStorage } from "@/extensions/custom-image";
 export const CustomImageComponentWithoutProps = () =>
   Image.extend<{}, UploadImageExtensionStorage>({
     name: "imageComponent",
-    group: "inline",
-    draggable: true,
     selectable: true,
+    group: "block",
+    atom: true,
+    draggable: true,
 
     addAttributes() {
       return {
@@ -21,12 +22,6 @@ export const CustomImageComponentWithoutProps = () =>
         height: {
           default: "auto",
         },
-        ["data-type"]: {
-          default: this.name,
-        },
-        ["data-file"]: {
-          default: null,
-        },
         ["id"]: {
           default: null,
         },
@@ -37,6 +32,9 @@ export const CustomImageComponentWithoutProps = () =>
       return [
         {
           tag: "image-component",
+        },
+        {
+          tag: "img",
         },
       ];
     },
@@ -50,8 +48,6 @@ export const CustomImageComponentWithoutProps = () =>
         fileMap: new Map(),
       };
     },
-  }).configure({
-    inline: true,
   });
 
 export default CustomImageComponentWithoutProps;
