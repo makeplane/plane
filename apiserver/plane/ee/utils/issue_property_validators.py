@@ -116,9 +116,20 @@ def validate_file(issue_property, value):
 def save_text(
     issue_property, values, existing_values, issue_id, project_id, workspace_id
 ):
+    if values:
+        # Case 1 - The property is updated
+        if existing_values and values[0] != existing_values[0]:
+            return [
+                IssuePropertyValue(
+                    property=issue_property,
+                    value_text=values[0],
+                    issue_id=issue_id,
+                    project_id=project_id,
+                    workspace_id=workspace_id,
+                )
+            ]
 
-    # Case 1 - The property is updated
-    if existing_values and values[0] != existing_values[0]:
+        # Case 2 - The property is created
         return [
             IssuePropertyValue(
                 property=issue_property,
@@ -126,19 +137,11 @@ def save_text(
                 issue_id=issue_id,
                 project_id=project_id,
                 workspace_id=workspace_id,
-            )
+            ),
         ]
-
-    # Case 2 - The property is created
-    return [
-        IssuePropertyValue(
-            property=issue_property,
-            value_text=values[0],
-            issue_id=issue_id,
-            project_id=project_id,
-            workspace_id=workspace_id,
-        ),
-    ]
+    else:
+        # Case 3 - The property is deleted
+        return []
 
 
 def save_datetime(
