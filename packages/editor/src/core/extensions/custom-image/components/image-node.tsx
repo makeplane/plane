@@ -1,11 +1,15 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Node as ProsemirrorNode } from "@tiptap/pm/model";
 import { Editor, NodeViewWrapper } from "@tiptap/react";
-import { UploadEntity, UploadImageExtensionStorage } from "@/extensions/custom-image-component";
-import ImageComponent from "@/extensions/custom-image-component/components/image-block-view";
-import { ImageUploader } from "./image-uploader";
+// extensions
+import {
+  CustomImageBlock,
+  CustomImageUploader,
+  UploadEntity,
+  UploadImageExtensionStorage,
+} from "@/extensions/custom-image";
 
-interface ImageUploadProps {
+export type CustomImageNodeViewProps = {
   getPos: () => number;
   editor: Editor;
   node: ProsemirrorNode & {
@@ -17,9 +21,9 @@ interface ImageUploadProps {
   };
   updateAttributes: (attrs: Record<string, any>) => void;
   selected: boolean;
-}
+};
 
-export const CustomImage = (props: ImageUploadProps) => {
+export const CustomImageNode = (props: CustomImageNodeViewProps) => {
   const { getPos, editor, node, updateAttributes, selected } = props;
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -89,7 +93,7 @@ export const CustomImage = (props: ImageUploadProps) => {
     <NodeViewWrapper>
       <div className="p-0 mx-0 my-2" data-drag-handle>
         {isUploaded ? (
-          <ImageComponent
+          <CustomImageBlock
             editor={editor}
             getPos={getPos}
             node={node}
@@ -97,7 +101,7 @@ export const CustomImage = (props: ImageUploadProps) => {
             selected={selected}
           />
         ) : (
-          <ImageUploader
+          <CustomImageUploader
             onUpload={onUpload}
             editor={editor}
             fileInputRef={fileInputRef}
@@ -109,5 +113,3 @@ export const CustomImage = (props: ImageUploadProps) => {
     </NodeViewWrapper>
   );
 };
-
-export default CustomImage;

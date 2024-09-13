@@ -2,11 +2,12 @@ import { mergeAttributes } from "@tiptap/core";
 import { Image } from "@tiptap/extension-image";
 import { ReactNodeViewRenderer } from "@tiptap/react";
 import { v4 as uuidv4 } from "uuid";
-
-import { TFileHandler } from "@/types";
-
-import { CustomImage } from "./image-upload";
+// extensions
+import { CustomImageNode } from "@/extensions/custom-image";
+// plugins
 import { isFileValid } from "@/plugins/image";
+// types
+import { TFileHandler } from "@/types";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -23,7 +24,7 @@ export interface UploadImageExtensionStorage {
 
 export type UploadEntity = { event: "insert" } | { event: "drop"; file: File };
 
-export const CustomImageComponent = (props: TFileHandler) => {
+export const CustomImageExtension = (props: TFileHandler) => {
   const { upload } = props;
 
   return Image.extend<{}, UploadImageExtensionStorage>({
@@ -124,9 +125,7 @@ export const CustomImageComponent = (props: TFileHandler) => {
     },
 
     addNodeView() {
-      return ReactNodeViewRenderer(CustomImage);
+      return ReactNodeViewRenderer(CustomImageNode);
     },
   });
 };
-
-export default CustomImageComponent;

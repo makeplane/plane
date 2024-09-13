@@ -1,13 +1,16 @@
 import { mergeAttributes } from "@tiptap/core";
 import { Image } from "@tiptap/extension-image";
-import { UploadImageExtensionStorage } from "@/extensions/custom-image";
+import { ReactNodeViewRenderer } from "@tiptap/react";
+// components
+import { CustomImageNode, UploadImageExtensionStorage } from "@/extensions/custom-image";
 
-export const CustomImageComponentWithoutProps = () =>
+export const CustomReadOnlyImageExtension = () =>
   Image.extend<{}, UploadImageExtensionStorage>({
     name: "imageComponent",
-    group: "inline",
-    draggable: true,
     selectable: true,
+    group: "block",
+    atom: true,
+    draggable: true,
 
     addAttributes() {
       return {
@@ -50,8 +53,8 @@ export const CustomImageComponentWithoutProps = () =>
         fileMap: new Map(),
       };
     },
-  }).configure({
-    inline: true,
-  });
 
-export default CustomImageComponentWithoutProps;
+    addNodeView() {
+      return ReactNodeViewRenderer(CustomImageNode);
+    },
+  });

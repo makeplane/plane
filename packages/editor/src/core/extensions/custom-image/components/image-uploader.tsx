@@ -5,6 +5,7 @@ import { ImageIcon } from "lucide-react";
 import { cn } from "@/helpers/common";
 // hooks
 import { useUploader, useFileUpload, useDropZone } from "@/hooks/use-file-upload";
+// plugins
 import { isFileValid } from "@/plugins/image";
 
 type RefType = React.RefObject<HTMLInputElement> | ((instance: HTMLInputElement | null) => void);
@@ -17,7 +18,7 @@ const assignRef = (ref: RefType, value: HTMLInputElement | null) => {
   }
 };
 
-export const ImageUploader = (props: {
+export const CustomImageUploader = (props: {
   onUpload: (url: string) => void;
   editor: Editor;
   fileInputRef: RefType;
@@ -87,5 +88,3 @@ export const ImageUploader = (props: {
     </div>
   );
 };
-
-export default ImageUploader;

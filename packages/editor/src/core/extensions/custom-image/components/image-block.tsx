@@ -1,29 +1,13 @@
 import React, { useRef, useState, useCallback, useLayoutEffect } from "react";
-import { Node as ProsemirrorNode } from "@tiptap/pm/model";
 import { NodeSelection } from "@tiptap/pm/state";
-import { Editor } from "@tiptap/react";
+// extensions
+import { CustomImageNodeViewProps } from "@/extensions/custom-image";
 // helpers
 import { cn } from "@/helpers/common";
-// components
-import { ImageShimmer } from "./image-loader";
-
-interface ImageBlockViewProps {
-  editor: Editor;
-  getPos: () => number;
-  node: ProsemirrorNode & {
-    attrs: {
-      src: string;
-      width: string;
-      height: string;
-    };
-  };
-  updateAttributes: (attrs: Record<string, any>) => void;
-  selected: boolean;
-}
 
 const MIN_SIZE = 100;
 
-export const ImageComponent: React.FC<ImageBlockViewProps> = (props) => {
+export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
   const { node, updateAttributes, selected, getPos, editor } = props;
   const { src, width, height } = node.attrs;
 
@@ -111,7 +95,7 @@ export const ImageComponent: React.FC<ImageBlockViewProps> = (props) => {
         height: size.height,
       }}
     >
-      {isLoading && <ImageShimmer width={size.width} height={size.height} />}
+      {isLoading && <div className="animate-pulse bg-custom-background-80 rounded-md" style={{ width, height }} />}
       <img
         ref={imageRef}
         src={src}
@@ -123,7 +107,7 @@ export const ImageComponent: React.FC<ImageBlockViewProps> = (props) => {
           height: size.height,
         }}
       />
-      {selected && <div className="absolute inset-0 size-full bg-custom-primary-500/30" />}
+      {editor.isEditable && selected && <div className="absolute inset-0 size-full bg-custom-primary-500/30" />}
       <>
         <div className="opacity-0 group-hover/image-component:opacity-100 absolute inset-0 border-2 border-custom-primary-100 pointer-events-none rounded-md transition-opacity duration-100 ease-in-out" />
         <div
@@ -134,5 +118,3 @@ export const ImageComponent: React.FC<ImageBlockViewProps> = (props) => {
     </div>
   );
 };
-
-export default ImageComponent;
