@@ -2,6 +2,9 @@ import React, { useRef, useState, useCallback, useLayoutEffect } from "react";
 import { Node as ProsemirrorNode } from "@tiptap/pm/model";
 import { NodeSelection } from "@tiptap/pm/state";
 import { Editor } from "@tiptap/react";
+// helpers
+import { cn } from "@/helpers/common";
+// components
 import { ImageShimmer } from "./image-loader";
 
 interface ImageBlockViewProps {
@@ -101,31 +104,33 @@ export const ImageComponent: React.FC<ImageBlockViewProps> = (props) => {
   return (
     <div
       ref={containerRef}
-      className="relative inline-block"
+      className="group/image-component relative inline-block max-w-full"
       onMouseDown={handleMouseDown}
-      style={{ width: size.width, height: size.height }}
+      style={{
+        width: size.width,
+        height: size.height,
+      }}
     >
       {isLoading && <ImageShimmer width={size.width} height={size.height} />}
       <img
         ref={imageRef}
         src={src}
-        alt=""
-        className="max-w-full h-auto object-contain rounded-md"
+        className={cn("block rounded-md", {
+          hidden: isLoading,
+        })}
         style={{
-          display: isLoading ? "none" : "block",
           width: size.width,
           height: size.height,
         }}
       />
-      {selected && (
-        <>
-          <div className="absolute inset-0 border-2 border-custom-primary-100 pointer-events-none rounded-md" />
-          <div
-            className="absolute bottom-0 right-0 translate-y-1/2 translate-x-1/2 size-4 rounded-full bg-custom-primary-100 border-2 border-white cursor-nwse-resize"
-            onMouseDown={handleResizeStart}
-          />
-        </>
-      )}
+      {selected && <div className="absolute inset-0 size-full bg-custom-primary-500/30" />}
+      <>
+        <div className="opacity-0 group-hover/image-component:opacity-100 absolute inset-0 border-2 border-custom-primary-100 pointer-events-none rounded-md transition-opacity duration-100 ease-in-out" />
+        <div
+          className="opacity-0 pointer-events-none group-hover/image-component:opacity-100 group-hover/image-component:pointer-events-auto absolute bottom-0 right-0 translate-y-1/2 translate-x-1/2 size-4 rounded-full bg-custom-primary-100 border-2 border-white cursor-nwse-resize transition-opacity duration-100 ease-in-out"
+          onMouseDown={handleResizeStart}
+        />
+      </>
     </div>
   );
 };
