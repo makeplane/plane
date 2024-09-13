@@ -13,7 +13,7 @@ import { API_BASE_URL } from "@/helpers/common.helper";
 import { persistence } from "@/local-db/storage.sqlite";
 // services
 
-import { addIssue, addIssuesBulk, deleteIssueFromLocal, updateIssue } from "@/local-db/utils/load-issues";
+import { addIssue, addIssuesBulk, deleteIssueFromLocal } from "@/local-db/utils/load-issues";
 import { updatePersistentLayer } from "@/local-db/utils/utils";
 import { APIService } from "@/services/api.service";
 
@@ -310,7 +310,10 @@ export class IssueService extends APIService {
 
   async bulkOperations(workspaceSlug: string, projectId: string, data: TBulkOperationsPayload): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/bulk-operation-issues/`, data)
-      .then((response) => response?.data)
+      .then((response) => {
+        persistence.syncIssues(projectId);
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -324,7 +327,10 @@ export class IssueService extends APIService {
     }
   ): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/bulk-delete-issues/`, data)
-      .then((response) => response?.data)
+      .then((response) => {
+        persistence.syncIssues(projectId);
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -340,7 +346,10 @@ export class IssueService extends APIService {
     archived_at: string;
   }> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/bulk-archive-issues/`, data)
-      .then((response) => response?.data)
+      .then((response) => {
+        persistence.syncIssues(projectId);
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
