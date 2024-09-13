@@ -172,7 +172,7 @@ export class IssueStore implements IIssueStore {
       is_subscribed: issue?.is_subscribed,
     };
 
-    this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issuePayload], true);
+    this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issuePayload]);
     this.isFetchingIssueDetails = false;
 
     return issuePayload;

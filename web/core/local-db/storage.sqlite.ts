@@ -164,7 +164,7 @@ export class Storage {
     const projects = await getProjectIds();
 
     // Exclude the one we just synced
-    const projectsToSync = projects.filter((p) => p !== projectId);
+    const projectsToSync = projects.filter((p: string) => p !== projectId);
     for (const project of projectsToSync) {
       await delay(8000);
       await this.syncIssues(project);
