@@ -267,6 +267,7 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
             }
             showTooltip={showTooltip}
             variant={buttonVariant}
+            renderToolTipByDefault={renderByDefault}
           >
             <ButtonContent
               disabled={disabled}

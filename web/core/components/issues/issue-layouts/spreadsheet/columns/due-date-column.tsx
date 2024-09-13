@@ -56,6 +56,7 @@ export const SpreadsheetDueDateColumn: React.FC<Props> = observer((props: Props)
         optionsClassName="z-[9]"
         clearIconClassName="!text-custom-text-100"
         onClose={onClose}
+        renderByDefault={false}
       />
     </div>
   );

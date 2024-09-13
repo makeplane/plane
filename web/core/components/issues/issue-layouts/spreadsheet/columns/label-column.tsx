@@ -35,6 +35,7 @@ export const SpreadsheetLabelColumn: React.FC<Props> = observer((props: Props) =
         disabled={disabled}
         placeholderText="Select labels"
         onClose={onClose}
+        renderByDefault={false}
         noLabelBorder
         fullWidth
       />

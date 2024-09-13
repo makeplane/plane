@@ -150,6 +150,7 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
             tooltipContent={selectedProject?.name ?? placeholder}
             showTooltip={showTooltip}
             variant={buttonVariant}
+            renderToolTipByDefault={renderByDefault}
           >
             {!hideIcon && selectedProject && (
               <span className="grid place-items-center flex-shrink-0 h-4 w-4">
