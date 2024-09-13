@@ -357,3 +357,21 @@ export const getReadTimeFromWordsCount = (wordsCount: number): number => {
   const minutes = wordsCount / wordsPerMinute;
   return minutes * 60;
 };
+
+/**
+ * @description calculates today's date
+ * @param {boolean} format
+ * @returns {Date | string} today's date
+ * @example getToday() // Output: 2024-09-29T00:00:00.000Z
+ * @example getToday(true) // Output: 2024-09-29
+ */
+export const getToday = (format: boolean = false) => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  if (!format) return today;
+
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0"); // Months are 0-based, so add 1
+  const day = String(today.getDate()).padStart(2, "0"); // Add leading zero for single digits
+  return `${year}-${month}-${day}`;
+};

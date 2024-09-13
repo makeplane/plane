@@ -3,7 +3,7 @@
 import React, { FC, MouseEvent, useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { Users } from "lucide-react";
+import { Eye, Users } from "lucide-react";
 // types
 import { ICycle, TCycleGroups } from "@plane/types";
 // ui
@@ -22,7 +22,7 @@ import { findHowManyDaysLeft, getDate, renderFormattedPayloadDate } from "@/help
 import { useCycle, useEventTracker, useMember, useUser } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { CycleService } from "@/services/cycle.service";
-const cycleService = new CycleService();
+import Link from "next/link";
 
 type Props = {
   workspaceSlug: string;
@@ -39,27 +39,20 @@ const defaultValues: Partial<ICycle> = {
 
 export const CycleListItemAction: FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, cycleId, cycleDetails, parentRef } = props;
-  // hooks
-  const { isMobile } = usePlatformOS();
   // store hooks
-  const { addCycleToFavorites, removeCycleFromFavorites, updateCycleDetails } = useCycle();
+  const { addCycleToFavorites, removeCycleFromFavorites } = useCycle();
   const { captureEvent } = useEventTracker();
   const {
     membership: { currentProjectRole },
   } = useUser();
-  const { getUserDetails } = useMember();
 
   // form
-  const { control, reset } = useForm({
+  const { reset } = useForm({
     defaultValues,
   });
 
   // derived values
-  const cycleStatus = cycleDetails.status ? (cycleDetails.status.toLocaleLowerCase() as TCycleGroups) : "draft";
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
-  const renderIcon = Boolean(cycleDetails.start_date) || Boolean(cycleDetails.end_date);
-  const currentCycle = CYCLE_STATUS.find((status) => status.value === cycleStatus);
-  const daysLeft = findHowManyDaysLeft(cycleDetails.end_date) ?? 0;
 
   // handlers
   const handleAddToFavorites = (e: MouseEvent<HTMLButtonElement>) => {
@@ -118,136 +111,21 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
     });
   };
 
-  const submitChanges = (data: Partial<ICycle>) => {
-    if (!workspaceSlug || !projectId || !cycleId) return;
-    updateCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), data);
-  };
-
-  const dateChecker = async (payload: any) => {
-    try {
-      const res = await cycleService.cycleDateCheck(workspaceSlug as string, projectId as string, payload);
-      return res.status;
-    } catch (err) {
-      return false;
-    }
-  };
-
-  const handleDateChange = async (startDate: Date | undefined, endDate: Date | undefined) => {
-    if (!startDate || !endDate) return;
-
-    let isDateValid = false;
-
-    const payload = {
-      start_date: renderFormattedPayloadDate(startDate),
-      end_date: renderFormattedPayloadDate(endDate),
-    };
-
-    if (cycleDetails && cycleDetails.start_date && cycleDetails.end_date)
-      isDateValid = await dateChecker({
-        ...payload,
-        cycle_id: cycleDetails.id,
-      });
-    else isDateValid = await dateChecker(payload);
-
-    if (isDateValid) {
-      submitChanges(payload);
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: "Success!",
-        message: "Cycle updated successfully.",
-      });
-    } else {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message:
-          "You already have a cycle on the given dates, if you want to create a draft cycle, you can do that by removing both the dates.",
-      });
-      reset({ ...cycleDetails });
-    }
-  };
-
-  const createdByDetails = cycleDetails.created_by ? getUserDetails(cycleDetails.created_by) : undefined;
-
   useEffect(() => {
     if (cycleDetails)
       reset({
         ...cycleDetails,
       });
   }, [cycleDetails, reset]);
-
-  const isArchived = Boolean(cycleDetails.archived_at);
-  const isCompleted = cycleStatus === "completed";
-
-  const isDisabled = !isEditingAllowed || isArchived || isCompleted;
-
   return (
     <>
-      <Controller
-        control={control}
-        name="start_date"
-        render={({ field: { value: startDateValue, onChange: onChangeStartDate } }) => (
-          <Controller
-            control={control}
-            name="end_date"
-            render={({ field: { value: endDateValue, onChange: onChangeEndDate } }) => (
-              <DateRangeDropdown
-                buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-custom-text-300 border-[0.5px] border-custom-border-300 rounded text-xs`}
-                buttonVariant="transparent-with-text"
-                minDate={new Date()}
-                value={{
-                  from: getDate(startDateValue),
-                  to: getDate(endDateValue),
-                }}
-                onSelect={(val) => {
-                  onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);
-                  onChangeEndDate(val?.to ? renderFormattedPayloadDate(val.to) : null);
-                  handleDateChange(val?.from, val?.to);
-                }}
-                placeholder={{
-                  from: "Start date",
-                  to: "End date",
-                }}
-                required={cycleDetails.status !== "draft"}
-                disabled={isDisabled}
-                hideIcon={{ from: renderIcon ?? true, to: renderIcon }}
-              />
-            )}
-          />
-        )}
-      />
-      {currentCycle && (
-        <div
-          className="relative flex h-6 w-20 flex-shrink-0 items-center justify-center rounded-sm text-center text-xs"
-          style={{
-            color: currentCycle.color,
-            backgroundColor: `${currentCycle.color}20`,
-          }}
-        >
-          {currentCycle.value === "current"
-            ? `${daysLeft} ${daysLeft > 1 ? "days" : "day"} left`
-            : `${currentCycle.label}`}
-        </div>
-      )}
-
-      {/* created by */}
-      {createdByDetails && <ButtonAvatars showTooltip={false} userIds={createdByDetails?.id} />}
-
-      <Tooltip tooltipContent={`${cycleDetails.assignee_ids?.length} Members`} isMobile={isMobile}>
-        <div className="flex w-10 cursor-default items-center justify-center">
-          {cycleDetails.assignee_ids && cycleDetails.assignee_ids?.length > 0 ? (
-            <AvatarGroup showTooltip={false}>
-              {cycleDetails.assignee_ids?.map((assignee_id) => {
-                const member = getUserDetails(assignee_id);
-                return <Avatar key={member?.id} name={member?.display_name} src={member?.avatar} />;
-              })}
-            </AvatarGroup>
-          ) : (
-            <Users className="h-4 w-4 text-custom-text-300" />
-          )}
-        </div>
-      </Tooltip>
-
+      <Link
+        className="flex text-sm gap-1 mr-2 text-custom-primary-200"
+        href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}`}
+      >
+        <Eye className="h-4 w-4 my-auto" />
+        <span>More details</span>
+      </Link>
       {isEditingAllowed && !cycleDetails.archived_at && (
         <FavoriteStar
           onClick={(e) => {

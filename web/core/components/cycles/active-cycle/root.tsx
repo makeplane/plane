@@ -18,6 +18,11 @@ import { EmptyStateType } from "@/constants/empty-state";
 import { useCycle } from "@/hooks/store";
 import { ActiveCycleIssueDetails } from "@/store/issue/cycle";
 import useCyclesDetails from "./use-cycles-details";
+import { CycleProgressHeader } from "./progress-header";
+import ActiveCycleChart from "./cycle-chart/chart";
+import { useState } from "react";
+import Summary from "./summary";
+import Selection from "./selection";
 
 interface IActiveCycleDetails {
   workspaceSlug: string;
@@ -32,50 +37,26 @@ export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) =
     cycle: activeCycle,
     cycleIssueDetails,
   } = useCyclesDetails({ workspaceSlug, projectId, cycleId: currentProjectActiveCycleId });
-
+  const [areaToHighlight, setAreaToHighlight] = useState<string>("");
+  if (!activeCycle) return null;
   return (
     <>
       <Disclosure as="div" className="flex flex-shrink-0 flex-col" defaultOpen>
         {({ open }) => (
           <>
             <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 cursor-pointer">
-              <CycleListGroupHeader title="Active cycle" type="current" isExpanded={open} />
+              <CycleProgressHeader cycleDetails={activeCycle} />
             </Disclosure.Button>
             <Disclosure.Panel>
               {!currentProjectActiveCycle ? (
                 <EmptyState type={EmptyStateType.PROJECT_CYCLE_ACTIVE} size="sm" />
               ) : (
                 <div className="flex flex-col border-b border-custom-border-200">
-                  {currentProjectActiveCycleId && (
-                    <CyclesListItem
-                      key={currentProjectActiveCycleId}
-                      cycleId={currentProjectActiveCycleId}
-                      workspaceSlug={workspaceSlug}
-                      projectId={projectId}
-                      className="!border-b-transparent"
-                    />
-                  )}
-                  <Row className="bg-custom-background-100 pt-3 pb-6">
-                    <div className="grid grid-cols-1 bg-custom-background-100 gap-3 lg:grid-cols-2 xl:grid-cols-3">
-                      <ActiveCycleProgress
-                        handleFiltersUpdate={handleFiltersUpdate}
-                        projectId={projectId}
-                        workspaceSlug={workspaceSlug}
-                        cycle={activeCycle}
-                      />
-                      <ActiveCycleProductivity
-                        workspaceSlug={workspaceSlug}
-                        projectId={projectId}
-                        cycle={activeCycle}
-                      />
-                      <ActiveCycleStats
-                        workspaceSlug={workspaceSlug}
-                        projectId={projectId}
-                        cycle={activeCycle}
-                        cycleId={currentProjectActiveCycleId}
-                        handleFiltersUpdate={handleFiltersUpdate}
-                        cycleIssueDetails={cycleIssueDetails as ActiveCycleIssueDetails}
-                      />
+                  <Row className="flex bg-custom-background-100 h-[420px] justify-between !pr-0">
+                    <Summary setAreaToHighlight={setAreaToHighlight} />
+                    <div className="h-full w-full flex-1">
+                      <Selection />
+                      <ActiveCycleChart areaToHighlight={areaToHighlight} />
                     </div>
                   </Row>
                 </div>
