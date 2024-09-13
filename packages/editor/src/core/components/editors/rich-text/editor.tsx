@@ -11,7 +11,7 @@ const RichTextEditor = (props: IRichTextEditor) => {
   const { dragDropEnabled, fileHandler } = props;
 
   const getExtensions = useCallback(() => {
-    const extensions = [SlashCommand(fileHandler.upload)];
+    const extensions = [SlashCommand()];
 
     extensions.push(
       SideMenuExtension({

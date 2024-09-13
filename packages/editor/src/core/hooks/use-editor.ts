@@ -67,6 +67,11 @@ export const useEditor = (props: CustomEditorProps) => {
       }),
       ...editorProps,
     },
+    immediatelyRender: true,
+    shouldRerenderOnTransaction: false,
+    onContentError: (error) => {
+      console.error("Error rendering content:", error);
+    },
     extensions: [
       ...CoreEditorExtensions({
         enableHistory,
@@ -91,6 +96,7 @@ export const useEditor = (props: CustomEditorProps) => {
     onUpdate: ({ editor }) => onChange?.(editor.getJSON(), editor.getHTML()),
     onDestroy: () => handleEditorReady?.(false),
   });
+
   // Update the ref whenever savedSelection changes
   useEffect(() => {
     savedSelectionRef.current = savedSelection;
@@ -131,7 +137,7 @@ export const useEditor = (props: CustomEditorProps) => {
         }
       },
       executeMenuItemCommand: (itemKey: TEditorCommands) => {
-        const editorItems = getEditorMenuItems(editorRef.current, fileHandler.upload);
+        const editorItems = getEditorMenuItems(editorRef.current);
 
         const getEditorMenuItem = (itemKey: TEditorCommands) => editorItems.find((item) => item.key === itemKey);
 
@@ -147,7 +153,7 @@ export const useEditor = (props: CustomEditorProps) => {
         }
       },
       isMenuItemActive: (itemName: TEditorCommands): boolean => {
-        const editorItems = getEditorMenuItems(editorRef.current, fileHandler.upload);
+        const editorItems = getEditorMenuItems(editorRef.current);
 
         const getEditorMenuItem = (itemName: TEditorCommands) => editorItems.find((item) => item.key === itemName);
         const item = getEditorMenuItem(itemName);
@@ -214,31 +220,34 @@ export const useEditor = (props: CustomEditorProps) => {
           }
         });
         const selection = nodesArray.join("");
-        console.log(selection);
         return selection;
       },
       insertText: (contentHTML, insertOnNextLine) => {
-        if (!editor) return;
+        if (!editorRef.current) return;
         // get selection
-        const { from, to, empty } = editor.state.selection;
+        const { from, to, empty } = editorRef.current.state.selection;
         if (empty) return;
         if (insertOnNextLine) {
           // move cursor to the end of the selection and insert a new line
-          editor.chain().focus().setTextSelection(to).insertContent("<br />").insertContent(contentHTML).run();
+          editorRef.current
+            .chain()
+            .focus()
+            .setTextSelection(to)
+            .insertContent("<br />")
+            .insertContent(contentHTML)
+            .run();
         } else {
           // replace selected text with the content provided
-          editor.chain().focus().deleteRange({ from, to }).insertContent(contentHTML).run();
+          editorRef.current.chain().focus().deleteRange({ from, to }).insertContent(contentHTML).run();
         }
       },
-      getDocumentInfo: () => {
-        return {
-          characters: editorRef?.current?.storage?.characterCount?.characters?.() ?? 0,
-          paragraphs: getParagraphCount(editorRef?.current?.state),
-          words: editorRef?.current?.storage?.characterCount?.words?.() ?? 0,
-        };
+      documentInfo: {
+        characters: editorRef.current?.storage?.characterCount?.characters?.() ?? 0,
+        paragraphs: getParagraphCount(editorRef.current?.state),
+        words: editorRef.current?.storage?.characterCount?.words?.() ?? 0,
       },
     }),
-    [editorRef, savedSelection, fileHandler.upload]
+    [editorRef, savedSelection]
   );
 
   if (!editor) {
