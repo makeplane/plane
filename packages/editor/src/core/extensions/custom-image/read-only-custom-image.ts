@@ -24,12 +24,6 @@ export const CustomReadOnlyImageExtension = () =>
         height: {
           default: "auto",
         },
-        ["data-type"]: {
-          default: this.name,
-        },
-        ["data-file"]: {
-          default: null,
-        },
         ["id"]: {
           default: null,
         },

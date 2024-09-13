@@ -22,7 +22,7 @@ export interface UploadImageExtensionStorage {
   fileMap: Map<string, UploadEntity>;
 }
 
-export type UploadEntity = { event: "insert" } | { event: "drop"; file: File };
+export type UploadEntity = ({ event: "insert" } | { event: "drop"; file: File }) & { hasOpenedFileInputOnce: boolean };
 
 export const CustomImageExtension = (props: TFileHandler) => {
   const { upload } = props;
@@ -46,12 +46,6 @@ export const CustomImageExtension = (props: TFileHandler) => {
         height: {
           default: "auto",
         },
-        ["data-type"]: {
-          default: this.name,
-        },
-        ["data-file"]: {
-          default: null,
-        },
         ["id"]: {
           default: null,
         },
@@ -62,6 +56,9 @@ export const CustomImageExtension = (props: TFileHandler) => {
       return [
         {
           tag: "image-component",
+        },
+        {
+          tag: "img",
         },
       ];
     },
@@ -101,9 +98,7 @@ export const CustomImageExtension = (props: TFileHandler) => {
             }
 
             const attributes = {
-              "data-type": this.name,
               id: fileId,
-              "data-file": props.file ? `data-file="${props.file}"` : "",
             };
 
             if (props.pos) {

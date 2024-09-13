@@ -72,8 +72,12 @@ export const CustomImageNode = (props: CustomImageNodeViewProps) => {
       if (uploadEntity.event === "drop" && "file" in uploadEntity) {
         uploadFile(uploadEntity.file);
       } else if (uploadEntity.event === "insert" && fileInputRef.current && !hasTriggeredFilePickerRef.current) {
+        const entity = editorStorage?.fileMap.get(id);
+        if (entity && entity.hasOpenedFileInputOnce) return;
         fileInputRef.current.click();
         hasTriggeredFilePickerRef.current = true;
+        if (!entity) return;
+        editorStorage?.fileMap.set(id, { ...entity, hasOpenedFileInputOnce: true });
       }
     }
   }, [getUploadEntity, uploadFile]);
