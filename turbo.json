@@ -1,0 +1,65 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalEnv": [
+    "NODE_ENV",
+    "NEXT_PUBLIC_API_BASE_URL",
+    "NEXT_PUBLIC_ADMIN_BASE_URL",
+    "NEXT_PUBLIC_ADMIN_BASE_PATH",
+    "NEXT_PUBLIC_SPACE_BASE_URL",
+    "NEXT_PUBLIC_SPACE_BASE_PATH",
+    "NEXT_PUBLIC_WEB_BASE_URL",
+    "NEXT_PUBLIC_LIVE_BASE_URL",
+    "NEXT_PUBLIC_PLAUSIBLE_DOMAIN",
+    "NEXT_PUBLIC_CRISP_ID",
+    "NEXT_PUBLIC_ENABLE_SESSION_RECORDER",
+    "NEXT_PUBLIC_SESSION_RECORDER_KEY",
+    "NEXT_PUBLIC_EXTRA_IMAGE_DOMAINS",
+    "NEXT_PUBLIC_POSTHOG_KEY",
+    "NEXT_PUBLIC_POSTHOG_HOST",
+    "NEXT_PUBLIC_GOD_MODE",
+    "NEXT_PUBLIC_POSTHOG_DEBUG",
+    "NEXT_PUBLIC_SUPPORT_EMAIL",
+    "SENTRY_AUTH_TOKEN",
+    "SENTRY_ORG_ID",
+    "SENTRY_PROJECT_ID",
+    "NEXT_PUBLIC_SENTRY_ENVIRONMENT",
+    "NEXT_PUBLIC_SENTRY_DSN",
+    "SENTRY_MONITORING_ENABLED",
+    "NEXT_PUBLIC_PRO_PLAN_MONTHLY_PAYMENT_URL",
+    "NEXT_PUBLIC_PRO_PLAN_YEARLY_PAYMENT_URL",
+    "NEXT_PUBLIC_PLANE_ONE_PAYMENT_URL",
+    "NEXT_PUBLIC_PRO_PLAN_MONTHLY_REDIRECT_URL",
+    "NEXT_PUBLIC_PRO_PLAN_YEARLY_REDIRECT_URL",
+    "NEXT_PUBLIC_PRO_SELF_HOSTED_PAYMENT_URL",
+    "NEXT_PUBLIC_PRO_SELF_HOSTED_MONTHLY_PAYMENT_URL"
+  ],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "dist/**"]
+    },
+    "develop": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": ["^build"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": ["^build"]
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "lint": {
+      "outputs": []
+    },
+    "start": {
+      "cache": false
+    },
+    "clean": {
+      "cache": false
+    }
+  }
+}
