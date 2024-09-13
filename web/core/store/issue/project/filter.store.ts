@@ -1,6 +1,4 @@
-import isArray from "lodash/isArray";
 import isEmpty from "lodash/isEmpty";
-import pickBy from "lodash/pickBy";
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // base class
@@ -221,6 +219,10 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
               );
             });
           });
+
+          if (this.getShouldClearIssues(updatedDisplayFilters)) {
+            this.rootIssueStore.projectIssues.clear(true, true); // clear issues for local db when some filters like layout changes
+          }
 
           if (this.getShouldReFetchIssues(updatedDisplayFilters)) {
             this.rootIssueStore.projectIssues.fetchIssuesWithExistingPagination(workspaceSlug, projectId, "mutation");

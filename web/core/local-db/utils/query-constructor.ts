@@ -19,7 +19,14 @@ export const SPECIAL_ORDER_BY = {
   "-state__name": "states",
 };
 export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: string, queries: any) => {
-  const { cursor, per_page, group_by, sub_group_by, order_by, ...otherProps } = translateQueryParams(queries);
+  const {
+    cursor,
+    per_page,
+    group_by,
+    sub_group_by,
+    order_by = "created_at",
+    ...otherProps
+  } = translateQueryParams(queries);
 
   const [pageSize, page, offset] = cursor.split(":");
 
@@ -119,8 +126,16 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
   const filterJoinFields = getMetaKeys(queries);
   const orderByString = getOrderByFragment(order_by);
 
-  sql = `SELECT ${fieldsFragment} from issues i`;
+  sql = `SELECT ${fieldsFragment}`;
+  if (otherProps.state_group) {
+    sql += `, states.'group' as state_group`;
+  }
+  sql += ` from issues i
+  `;
 
+  if (otherProps.state_group) {
+    sql += `LEFT JOIN states ON i.state_id = states.id `;
+  }
   filterJoinFields.forEach((field: string) => {
     const value = otherProps[field] || "";
     sql += ` INNER JOIN issue_meta ${field} ON i.id = ${field}.issue_id AND ${field}.key = '${field}' AND ${field}.value  IN ('${value.split(",").join("','")}')

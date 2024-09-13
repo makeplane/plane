@@ -1,6 +1,4 @@
-import isArray from "lodash/isArray";
 import isEmpty from "lodash/isEmpty";
-import pickBy from "lodash/pickBy";
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // base class
@@ -195,12 +193,12 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
             });
           });
 
-         this.rootIssueStore.cycleIssues.fetchIssuesWithExistingPagination(
-           workspaceSlug,
-           projectId,
-           "mutation",
-           cycleId
-         );
+          this.rootIssueStore.cycleIssues.fetchIssuesWithExistingPagination(
+            workspaceSlug,
+            projectId,
+            "mutation",
+            cycleId
+          );
           await this.issueFilterService.patchCycleIssueFilters(workspaceSlug, projectId, cycleId, {
             filters: _filters.filters,
           });
@@ -238,6 +236,10 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
               );
             });
           });
+
+          if (this.getShouldClearIssues(updatedDisplayFilters)) {
+            this.rootIssueStore.cycleIssues.clear(true, true); // clear issues for local db when some filters like layout changes
+          }
 
           if (this.getShouldReFetchIssues(updatedDisplayFilters)) {
             this.rootIssueStore.cycleIssues.fetchIssuesWithExistingPagination(

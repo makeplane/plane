@@ -1,4 +1,5 @@
 import { TIssue } from "@plane/types";
+import { rootStore } from "@/lib/store-context";
 import { IssueService } from "@/services/issue";
 import { persistence } from "../storage.sqlite";
 import { ARRAY_FIELDS, PRIORITY_MAP } from "./constants";
@@ -7,12 +8,16 @@ import { issueSchema } from "./schemas";
 export const PROJECT_OFFLINE_STATUS: Record<string, boolean> = {};
 
 export const addIssue = async (issue: any) => {
+  if (document.hidden || !rootStore.user.localDBEnabled) return;
+
   persistence.db.exec("BEGIN TRANSACTION;");
   stageIssueInserts(issue);
   persistence.db.exec("COMMIT;");
 };
 
 export const addIssuesBulk = async (issues: any, batchSize = 100) => {
+  if (!rootStore.user.localDBEnabled) return;
+
   for (let i = 0; i < issues.length; i += batchSize) {
     const batch = issues.slice(i, i + batchSize);
 
@@ -27,6 +32,8 @@ export const addIssuesBulk = async (issues: any, batchSize = 100) => {
   }
 };
 export const deleteIssueFromLocal = async (issue_id: any) => {
+  if (!rootStore.user.localDBEnabled) return;
+
   const deleteQuery = `delete from issues where id='${issue_id}'`;
   const deleteMetaQuery = `delete from issue_meta where issue_id='${issue_id}'`;
 
@@ -37,6 +44,8 @@ export const deleteIssueFromLocal = async (issue_id: any) => {
 };
 
 export const updateIssue = async (issue: TIssue) => {
+  if (document.hidden || !rootStore.user.localDBEnabled) return;
+
   const issue_id = issue.id;
   // delete the issue and its meta data
   await deleteIssueFromLocal(issue_id);
@@ -44,6 +53,8 @@ export const updateIssue = async (issue: TIssue) => {
 };
 
 export const syncDeletesToLocal = async (workspaceId: string, projectId: string, queries: any) => {
+  if (!rootStore.user.localDBEnabled) return;
+
   const issueService = new IssueService();
   const response = await issueService.getDeletedIssues(workspaceId, projectId, queries);
   if (Array.isArray(response)) {
@@ -51,7 +62,7 @@ export const syncDeletesToLocal = async (workspaceId: string, projectId: string,
   }
 };
 
-export const stageIssueInserts = (issue: any) => {
+const stageIssueInserts = (issue: any) => {
   const issue_id = issue.id;
   issue.priority_proxy = PRIORITY_MAP[issue.priority as keyof typeof PRIORITY_MAP];
 

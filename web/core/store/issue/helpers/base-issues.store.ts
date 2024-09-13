@@ -65,6 +65,7 @@ export interface IBaseIssuesStore {
 
   //actions
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  clear(shouldClearPaginationOptions?: boolean, clearForLocal?: boolean): void;
   // helper methods
   getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined;
   issuesSortWithOrderBy(issueIds: string[], key: Partial<TIssueOrderByOptions>): string[];
@@ -466,7 +467,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
     // Update all the GroupIds to this Store's groupedIssueIds and update Individual group issue counts
     runInAction(() => {
-      this.clear(shouldClearPaginationOptions);
+      this.clear(shouldClearPaginationOptions, true);
       this.updateGroupedIssueIds(groupedIssues, groupedIssueCount);
       this.loader[getGroupKey()] = undefined;
     });
@@ -1218,17 +1219,22 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   /**
    * Method called to clear out the current store
    */
-  clear(shouldClearPaginationOptions = true) {
-    runInAction(() => {
-      this.groupedIssueIds = undefined;
-      this.issuePaginationData = {};
-      this.groupedIssueCount = {};
-      if (shouldClearPaginationOptions) {
-        this.paginationOptions = undefined;
-      }
-    });
-    this.controller.abort();
-    this.controller = new AbortController();
+  clear(shouldClearPaginationOptions = true, clearForLocal = false) {
+    if (
+      (this.rootIssueStore.rootStore.user?.localDBEnabled && clearForLocal) ||
+      (!this.rootIssueStore.rootStore.user?.localDBEnabled && !clearForLocal)
+    ) {
+      runInAction(() => {
+        this.groupedIssueIds = undefined;
+        this.issuePaginationData = {};
+        this.groupedIssueCount = {};
+        if (shouldClearPaginationOptions) {
+          this.paginationOptions = undefined;
+        }
+      });
+      this.controller.abort();
+      this.controller = new AbortController();
+    }
   }
 
   /**

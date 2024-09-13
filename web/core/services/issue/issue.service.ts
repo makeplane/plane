@@ -58,8 +58,9 @@ export class IssueService extends APIService {
     queries?: any,
     config = {}
   ): Promise<TIssuesResponse> {
+    queries.project_id = projectId;
     return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/v2/issues/`,
+      `/api/workspaces/${workspaceSlug}/v2/issues/`,
       {
         params: queries,
       },
@@ -72,7 +73,7 @@ export class IssueService extends APIService {
   }
 
   async getIssues(workspaceSlug: string, projectId: string, queries?: any, config = {}): Promise<TIssuesResponse> {
-    const response = await persistence.getIssues(projectId, queries, config);
+    const response = await persistence.getIssues(workspaceSlug, projectId, queries, config);
     return response as TIssuesResponse;
   }
 
