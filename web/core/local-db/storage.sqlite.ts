@@ -9,13 +9,14 @@ import { rootStore } from "@/lib/store-context";
 import { IssueService } from "@/services/issue/issue.service";
 //
 import { ARRAY_FIELDS } from "./utils/constants";
+import { getProjectIds, getSubIssuesWithDistribution } from "./utils/data.utils";
 import createIndexes from "./utils/indexes";
 import { addIssuesBulk, syncDeletesToLocal } from "./utils/load-issues";
 import { loadWorkSpaceData } from "./utils/load-workspace";
 import { issueFilterCountQueryConstructor, issueFilterQueryConstructor } from "./utils/query-constructor";
 import { runQuery } from "./utils/query-executor";
 import { createTables } from "./utils/tables";
-import { getGroupedIssueResults, getSubGroupedIssueResults } from "./utils/utils";
+import { delay, getGroupedIssueResults, getSubGroupedIssueResults } from "./utils/utils";
 
 declare module "@sqlite.org/sqlite-wasm" {
   export function sqlite3Worker1Promiser(...args: any): any;
@@ -23,6 +24,7 @@ declare module "@sqlite.org/sqlite-wasm" {
 
 const DB_VERSION = 1;
 const PAGE_SIZE = 1000;
+const BATCH_SIZE = 200;
 const log = console.log;
 const error = console.error;
 const info = console.info;
@@ -54,7 +56,7 @@ export class Storage {
     try {
       const storageManager = window.navigator.storage;
       const fileSystemDirectoryHandle = await storageManager.getDirectory();
-      //@ts-ignore
+      //@ts-expect-error
       await fileSystemDirectoryHandle.remove({ recursive: true });
     } catch (e) {
       console.error("Error clearing sqlite sync storage", e);
@@ -152,11 +154,22 @@ export class Storage {
     loadWorkSpaceData(this.workspaceSlug);
   };
 
-  syncProject = (projectId: string) => {
+  syncProject = async (projectId: string) => {
     if (document.hidden || !rootStore.user.localDBEnabled) return false; // return if the window gets hidden
 
     // Load labels, members, states, modules, cycles
-    this.syncIssues(projectId);
+    await this.syncIssues(projectId);
+
+    // Sync rest of the projects
+    const projects = await getProjectIds();
+
+    // Exclude the one we just synced
+    const projectsToSync = projects.filter((p) => p !== projectId);
+    for (const project of projectsToSync) {
+      await delay(8000);
+      await this.syncIssues(project);
+    }
+    this.setOption("workspace_synced_at", new Date().toISOString());
   };
 
   syncIssues = async (projectId: string) => {
@@ -206,7 +219,7 @@ export class Storage {
     const issueService = new IssueService();
 
     const response = await issueService.getIssuesForSync(this.workspaceSlug, projectId, queryParams);
-    addIssuesBulk(response.results, 500);
+    addIssuesBulk(response.results, BATCH_SIZE);
 
     if (response.total_pages > 1) {
       const promiseArray = [];
@@ -216,7 +229,7 @@ export class Storage {
       }
       const pages = await Promise.all(promiseArray);
       for (const page of pages) {
-        await addIssuesBulk(page.results, 500);
+        await addIssuesBulk(page.results, BATCH_SIZE);
       }
     }
 
@@ -298,9 +311,7 @@ export class Storage {
       EIssueGroupBYServerToProperty[sub_group_by as keyof typeof EIssueGroupBYServerToProperty];
 
     const parsingStart = performance.now();
-    let issueResults = issuesRaw.map((issue: any) => {
-      return formatLocalIssue(issue);
-    });
+    let issueResults = issuesRaw.map((issue: any) => formatLocalIssue(issue));
 
     console.log("#### Issue Results", issueResults.length);
 
@@ -354,6 +365,16 @@ export class Storage {
 
     return;
   };
+
+  getSubIssues = async (workspaceSlug: string, projectId: string, issueId: string) => {
+    const workspace_synced_at = await this.getOption("workspace_synced_at");
+    if (!workspace_synced_at) {
+      const issueService = new IssueService();
+      return await issueService.subIssues(workspaceSlug, projectId, issueId);
+    }
+    return await getSubIssuesWithDistribution(issueId);
+  };
+
   getStatus = (projectId: string) => this.projectStatus[projectId]?.issues?.status || undefined;
   setStatus = (projectId: string, status: "loading" | "ready" | "error" | "syncing" | undefined = undefined) => {
     set(this.projectStatus, `${projectId}.issues.status`, status);
