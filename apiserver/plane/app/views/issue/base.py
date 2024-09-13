@@ -720,7 +720,7 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
 
 
 class DeletedIssuesListViewSet(BaseAPIView):
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST, ROLE.VIEWER])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id):
         filters = {}
         if request.GET.get("updated_at__gt", None) is not None:
