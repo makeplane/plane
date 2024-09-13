@@ -129,7 +129,7 @@ export const CommandPalette: FC = observer(() => {
 
   const performProjectBulkDeleteActions = useCallback(
     (showToast: boolean = true) => {
-      if (!canPerformProjectAdminActions && showToast)
+      if (!canPerformProjectAdminActions && projectId && showToast)
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "You don't have permission to perform this action.",
@@ -137,7 +137,7 @@ export const CommandPalette: FC = observer(() => {
 
       return canPerformProjectAdminActions;
     },
-    [canPerformProjectAdminActions]
+    [canPerformProjectAdminActions, projectId]
   );
 
   const performWorkspaceCreateActions = useCallback(
@@ -256,9 +256,10 @@ export const CommandPalette: FC = observer(() => {
         toggleShortcutModal(true);
       }
 
-      if (deleteKey && canPerformProjectAdminActions) {
-        performProjectBulkDeleteActions()
-        shortcutsList.project.delete.action();
+      if (deleteKey) {
+        if (performProjectBulkDeleteActions()) {
+          shortcutsList.project.delete.action();
+        }
       } else if (cmdClicked) {
         if (keyPressed === "c" && ((platform === "MacOS" && ctrlKey) || altKey)) {
           e.preventDefault();
