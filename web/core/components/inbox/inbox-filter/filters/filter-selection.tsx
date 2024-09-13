@@ -12,9 +12,11 @@ import {
 } from "@/components/inbox/inbox-filter/filters";
 // hooks
 import { useMember, useLabel, useProjectState } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 export const InboxIssueFilterSelection: FC = observer(() => {
   // hooks
+  const { isMobile } = usePlatformOS();
   const {
     project: { projectMemberIds },
   } = useMember();
@@ -34,7 +36,7 @@ export const InboxIssueFilterSelection: FC = observer(() => {
             placeholder="Search"
             value={filtersSearchQuery}
             onChange={(e) => setFiltersSearchQuery(e.target.value)}
-            autoFocus
+            autoFocus={!isMobile}
           />
           {filtersSearchQuery !== "" && (
             <button type="button" className="grid place-items-center" onClick={() => setFiltersSearchQuery("")}>

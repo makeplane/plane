@@ -5,6 +5,8 @@ import { UserService } from "@/core/services/user.service.js";
 import { TDocumentTypes } from "@/core/types/common.js";
 // plane live lib
 import { authenticateUser } from "@/plane-live/lib/authentication.js";
+// core helpers
+import { manualLogger } from "@/core/helpers/logger.js";
 
 const userService = new UserService();
 
@@ -26,7 +28,7 @@ export const handleAuthentication = async (props: Props) => {
   try {
     response = await userService.currentUser(cookie);
   } catch (error) {
-    console.error("Failed to fetch current user:", error);
+    manualLogger.error("Failed to fetch current user:", error);
     throw error;
   }
   if (response.id !== token) {
@@ -43,22 +45,27 @@ export const handleAuthentication = async (props: Props) => {
       );
     }
     // fetch current user's project membership info
-    const projectMembershipInfo = await userService.getUserProjectMembership(
-      workspaceSlug,
-      projectId,
-      cookie
-    );
-    const projectRole = projectMembershipInfo.role;
-    // make the connection read only for roles lower than a member
-    if (projectRole < 15) {
-      connection.readOnly = true;
+    try {
+      const projectMembershipInfo = await userService.getUserProjectMembership(
+        workspaceSlug,
+        projectId,
+        cookie
+      );
+      const projectRole = projectMembershipInfo.role;
+      // make the connection read only for roles lower than a member
+      if (projectRole < 15) {
+        connection.readOnly = true;
+      }
+    } catch (error) {
+      manualLogger.error("Failed to fetch project membership info:", error);
+      throw error;
     }
   } else {
     await authenticateUser({
       connection,
       cookie,
       documentType,
-      params
+      params,
     });
   }
 

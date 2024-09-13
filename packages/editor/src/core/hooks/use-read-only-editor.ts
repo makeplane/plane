@@ -82,10 +82,12 @@ export const useReadOnlyEditor = ({
       if (!editorRef.current) return;
       scrollSummary(editorRef.current, marking);
     },
-    documentInfo: {
-      characters: editorRef.current?.storage?.characterCount?.characters?.() ?? 0,
-      paragraphs: getParagraphCount(editorRef.current?.state),
-      words: editorRef.current?.storage?.characterCount?.words?.() ?? 0,
+    getDocumentInfo: () => {
+      return {
+        characters: editorRef?.current?.storage?.characterCount?.characters?.() ?? 0,
+        paragraphs: getParagraphCount(editorRef?.current?.state),
+        words: editorRef?.current?.storage?.characterCount?.words?.() ?? 0,
+      };
     },
   }));
 

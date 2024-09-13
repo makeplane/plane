@@ -9,9 +9,9 @@ import { Breadcrumbs, Button, Header } from "@plane/ui";
 import { BreadcrumbLink, Logo } from "@/components/common";
 // constants
 import { EPageAccess } from "@/constants/page";
-import { EUserProjectRoles } from "@/constants/project";
 // hooks
-import { useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
+import { useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const PagesListHeader = observer(() => {
   // router
@@ -20,14 +20,15 @@ export const PagesListHeader = observer(() => {
   const pageType = searchParams.get("type");
   // store hooks
   const { toggleCreatePageModal } = useCommandPalette();
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
+
   const { currentProjectDetails, loader } = useProject();
   const { setTrackElement } = useEventTracker();
 
-  const canUserCreatePage =
-    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
+  const canUserCreatePage = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    EUserPermissionsLevel.PROJECT
+  );
 
   return (
     <Header>
@@ -57,27 +58,25 @@ export const PagesListHeader = observer(() => {
           </Breadcrumbs>
         </div>
       </Header.LeftItem>
-      <Header.RightItem>
-        {canUserCreatePage ? (
-          <div className="flex items-center gap-2">
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={() => {
-                setTrackElement("Project pages page");
-                toggleCreatePageModal({
-                  isOpen: true,
-                  pageAccess: pageType === "private" ? EPageAccess.PRIVATE : EPageAccess.PUBLIC,
-                });
-              }}
-            >
-              Add page
-            </Button>
-          </div>
-        ) : (
-          <></>
-        )}
-      </Header.RightItem>
+      {canUserCreatePage ? (
+        <Header.RightItem>
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={() => {
+              setTrackElement("Project pages page");
+              toggleCreatePageModal({
+                isOpen: true,
+                pageAccess: pageType === "private" ? EPageAccess.PRIVATE : EPageAccess.PUBLIC,
+              });
+            }}
+          >
+            Add page
+          </Button>
+        </Header.RightItem>
+      ) : (
+        <></>
+      )}
     </Header>
   );
 });

@@ -13,12 +13,16 @@ import { Logo } from "@/components/common";
 import { AppliedFiltersList, DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
 // constants
 import { EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { ETabIndices } from "@/constants/tab-indices";
 import { EViewAccess } from "@/constants/views";
 // helpers
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 import { getComputedDisplayFilters, getComputedDisplayProperties } from "@/helpers/issue.helper";
+import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+
 import { AccessController } from "@/plane-web/components/views/access-controller";
 import { LayoutDropDown } from "../dropdowns/layout";
 
@@ -48,6 +52,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
   const {
     project: { projectMemberIds },
   } = useMember();
+  const { isMobile } = usePlatformOS();
   // form info
   const {
     control,
@@ -61,6 +66,8 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
   });
 
   const logoValue = watch("logo_props");
+
+  const { getIndex } = getTabIndex(ETabIndices.PROJECT_VIEW, isMobile);
 
   const selectedFilters: IIssueFilterOptions = {};
   Object.entries(watch("filters") ?? {}).forEach(([key, value]) => {
@@ -194,7 +201,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                     hasError={Boolean(errors.name)}
                     placeholder="Title"
                     className="w-full text-base"
-                    tabIndex={1}
+                    tabIndex={getIndex("name")}
                     autoFocus
                   />
                 )}
@@ -215,7 +222,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                   hasError={Boolean(errors?.description)}
                   value={value}
                   onChange={onChange}
-                  tabIndex={2}
+                  tabIndex={getIndex("descriptions")}
                 />
               )}
             />
@@ -243,7 +250,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                     control={control}
                     name="filters"
                     render={({ field: { onChange, value: filters } }) => (
-                      <FiltersDropdown title="Filters" tabIndex={3}>
+                      <FiltersDropdown title="Filters" tabIndex={getIndex("filters")}>
                         <FilterSelection
                           filters={filters ?? {}}
                           handleFiltersUpdate={(key, value) => {
@@ -322,10 +329,10 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
         </div>
       </div>
       <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={4}>
+        <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={getIndex("cancel")}>
           Cancel
         </Button>
-        <Button variant="primary" size="sm" type="submit" tabIndex={5} loading={isSubmitting}>
+        <Button variant="primary" size="sm" type="submit" tabIndex={getIndex("submit")} loading={isSubmitting}>
           {data ? (isSubmitting ? "Updating" : "Update View") : isSubmitting ? "Creating" : "Create View"}
         </Button>
       </div>

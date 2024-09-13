@@ -4,20 +4,17 @@ import { observer } from "mobx-react";
 // components
 import { PageHead } from "@/components/core";
 import IntegrationGuide from "@/components/integration/guide";
-// constants
-import { EUserWorkspaceRoles } from "@/constants/workspace";
 // hooks
-import { useUser, useWorkspace } from "@/hooks/store";
+import { useUserPermissions, useWorkspace } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const ImportsPage = observer(() => {
   // store hooks
-  const {
-    membership: { currentWorkspaceRole },
-  } = useUser();
   const { currentWorkspace } = useWorkspace();
+  const { allowPermissions } = useUserPermissions();
 
   // derived values
-  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Imports` : undefined;
 
   if (!isAdmin)

@@ -8,7 +8,6 @@ on:
 
 env:
   CURRENT_BRANCH: ${{ github.ref_name }}
-  SOURCE_BRANCH: ${{ vars.SYNC_SOURCE_BRANCH_NAME }} # The sync branch such as "sync/ce"
   TARGET_BRANCH: ${{ vars.SYNC_TARGET_BRANCH_NAME }} # The target branch that you would like to merge changes like develop
   GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }} # Personal access token required to modify contents and workflows
   REVIEWER: ${{ vars.SYNC_PR_REVIEWER }}
@@ -16,22 +15,7 @@ env:
   ACCOUNT_USER_EMAIL: ${{ vars.ACCOUNT_USER_EMAIL }}
 
 jobs:
-  Check_Branch:
-    runs-on: ubuntu-latest
-    outputs:
-      BRANCH_MATCH: ${{ steps.check-branch.outputs.MATCH }}
-    steps:
-      - name: Check if current branch matches the secret
-        id: check-branch
-        run: |
-          if [ "$CURRENT_BRANCH" = "$SOURCE_BRANCH" ]; then
-            echo "MATCH=true" >> $GITHUB_OUTPUT
-          else
-            echo "MATCH=false" >> $GITHUB_OUTPUT
-          fi
   Create_PR:
-    if: ${{ needs.Check_Branch.outputs.BRANCH_MATCH == 'true' }}
-    needs: [Check_Branch]
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -59,11 +43,11 @@ jobs:
       - name: Create PR to Target Branch
         run: |
           # get all pull requests and check if there is already a PR
-          PR_EXISTS=$(gh pr list --base $TARGET_BRANCH --head $SOURCE_BRANCH --state open --json number | jq '.[] | .number')
+          PR_EXISTS=$(gh pr list --base $TARGET_BRANCH --head $CURRENT_BRANCH --state open --json number | jq '.[] | .number')
           if [ -n "$PR_EXISTS" ]; then
             echo "Pull Request already exists: $PR_EXISTS"
           else
             echo "Creating new pull request"
-            PR_URL=$(gh pr create --base $TARGET_BRANCH --head $SOURCE_BRANCH --title "sync: community changes" --body "")
+            PR_URL=$(gh pr create --base $TARGET_BRANCH --head $CURRENT_BRANCH --title "sync: community changes" --body "")
             echo "Pull Request created: $PR_URL"
           fi

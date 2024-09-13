@@ -2,10 +2,10 @@ import sortBy from "lodash/sortBy";
 // types
 import { IProject, TProjectDisplayFilters, TProjectFilters, TProjectOrderByOptions } from "@plane/types";
 // constants
-import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { getDate } from "@/helpers/date-time.helper";
 import { satisfiesDateFilter } from "@/helpers/filter.helper";
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 
 /**
  * Updates the sort order of the project.
@@ -53,7 +53,7 @@ export const projectIdentifierSanitizer = (identifier: string): string =>
  * @returns {boolean}
  */
 export const shouldRenderProject = (project: IProject): boolean =>
-  !!project.member_role && project.member_role >= EUserProjectRoles.MEMBER;
+  !!project.member_role && project.member_role >= EUserPermissions.MEMBER;
 
 /**
  * @description filters projects based on the filter

@@ -83,7 +83,7 @@ export const CycleLayoutRoot: React.FC = observer(() => {
           <TransferIssues
             handleClick={() => setTransferIssuesModal(true)}
             canTransferIssues={canTransferIssues}
-            disabled={!isEmpty(cycleDetails?.progress_snapshot) ?? false}
+            disabled={!isEmpty(cycleDetails?.progress_snapshot)}
           />
         )}
         <CycleAppliedFiltersRoot />

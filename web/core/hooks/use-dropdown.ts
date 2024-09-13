@@ -1,7 +1,9 @@
 import { useEffect } from "react";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // hooks
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { usePlatformOS } from "./use-platform-os";
 
 type TArguments = {
   dropdownRef: React.RefObject<HTMLDivElement>;
@@ -16,6 +18,8 @@ type TArguments = {
 
 export const useDropdown = (args: TArguments) => {
   const { dropdownRef, inputRef, isOpen, onClose, onOpen, query, setIsOpen, setQuery } = args;
+
+  const { isMobile } = usePlatformOS();
 
   /**
    * @description clear the search input when the user presses the escape key, if the search input is not empty
@@ -62,10 +66,10 @@ export const useDropdown = (args: TArguments) => {
 
   // focus the search input when the dropdown is open
   useEffect(() => {
-    if (isOpen && inputRef?.current) {
+    if (isOpen && inputRef?.current && !isMobile) {
       inputRef.current.focus();
     }
-  }, [inputRef, isOpen]);
+  }, [inputRef, isOpen, isMobile]);
 
   return {
     handleClose,

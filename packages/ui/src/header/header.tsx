@@ -11,6 +11,7 @@ export interface HeaderProps {
   showOnMobile?: boolean;
 }
 
+const HeaderContext = React.createContext<THeaderVariant | null>(null);
 const Header = (props: HeaderProps) => {
   const {
     variant = EHeaderVariant.PRIMARY,
@@ -23,13 +24,15 @@ const Header = (props: HeaderProps) => {
 
   const style = getHeaderStyle(variant, setHeight, showOnMobile);
   return (
-    <Row
-      variant={variant === EHeaderVariant.PRIMARY ? ERowVariant.HUGGING : ERowVariant.REGULAR}
-      className={cn(style, className)}
-      {...rest}
-    >
-      {children}
-    </Row>
+    <HeaderContext.Provider value={variant}>
+      <Row
+        variant={variant === EHeaderVariant.PRIMARY ? ERowVariant.HUGGING : ERowVariant.REGULAR}
+        className={cn(style, className)}
+        {...rest}
+      >
+        {children}
+      </Row>
+    </HeaderContext.Provider>
   );
 };
 
@@ -40,9 +43,23 @@ const LeftItem = (props: HeaderProps) => (
     {props.children}
   </div>
 );
-const RightItem = (props: HeaderProps) => (
-  <div className={cn("flex justify-end gap-3 w-auto items-baseline", props.className)}>{props.children}</div>
-);
+const RightItem = (props: HeaderProps) => {
+  const variant = React.useContext(HeaderContext);
+  if (variant === undefined) throw new Error("RightItem must be used within Header");
+  return (
+    <div
+      className={cn(
+        "flex justify-end gap-3 w-auto items-start",
+        {
+          "items-baseline": variant === EHeaderVariant.TERNARY,
+        },
+        props.className
+      )}
+    >
+      {props.children}
+    </div>
+  );
+};
 
 Header.LeftItem = LeftItem;
 Header.RightItem = RightItem;

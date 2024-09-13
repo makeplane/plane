@@ -4,9 +4,9 @@ import { PlusIcon } from "lucide-react";
 import { EmptyState } from "@/components/common";
 // constants
 import { EIssuesStoreType } from "@/constants/issue";
-import { EUserProjectRoles } from "@/constants/project";
 // hooks
-import { useCommandPalette, useEventTracker, useUser } from "@/hooks/store";
+import { useCommandPalette, useEventTracker, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // assets
 import emptyIssue from "@/public/empty-state/issue.svg";
 
@@ -14,11 +14,13 @@ export const ProjectViewEmptyState: React.FC = observer(() => {
   // store hooks
   const { toggleCreateIssueModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
+
   // auth
-  const isCreatingIssueAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isCreatingIssueAllowed = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
 
   return (
     <div className="grid h-full w-full place-items-center">

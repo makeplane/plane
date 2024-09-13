@@ -5,7 +5,7 @@ export const KanbanIssueBlockLoader = forwardRef<HTMLSpanElement, { cardHeight?:
   ({ cardHeight = 100 }, ref) => (
     <span
       ref={ref}
-      className={`block m-1.5 animate-pulse bg-custom-background-80 rounded`}
+      className={`block animate-pulse bg-custom-background-80 rounded`}
       style={{ height: `${cardHeight}px` }}
     />
   )

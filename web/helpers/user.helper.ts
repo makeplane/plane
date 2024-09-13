@@ -1,15 +1,12 @@
-import { EUserProjectRoles } from "@/constants/project";
-import { EUserWorkspaceRoles } from "@/constants/workspace";
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 
-export const getUserRole = (role: EUserWorkspaceRoles | EUserProjectRoles) => {
+export const getUserRole = (role: EUserPermissions) => {
   switch (role) {
-    case EUserWorkspaceRoles.GUEST:
+    case EUserPermissions.GUEST:
       return "GUEST";
-    case EUserWorkspaceRoles.VIEWER:
-      return "VIEWER";
-    case EUserWorkspaceRoles.MEMBER:
+    case EUserPermissions.MEMBER:
       return "MEMBER";
-    case EUserWorkspaceRoles.ADMIN:
+    case EUserPermissions.ADMIN:
       return "ADMIN";
   }
 };

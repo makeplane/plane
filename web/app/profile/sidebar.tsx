@@ -6,6 +6,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 // icons
 import { ChevronLeft, LogOut, MoveLeft, Plus, UserPlus } from "lucide-react";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // ui
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
@@ -16,7 +18,6 @@ import { PROFILE_ACTION_LINKS } from "@/constants/profile";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useUser, useUserSettings, useWorkspace } from "@/hooks/store";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 const WORKSPACE_ACTION_LINKS = [

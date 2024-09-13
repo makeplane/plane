@@ -97,7 +97,12 @@ class IssueArchiveViewSet(BaseViewSet):
         )
 
     @method_decorator(gzip_page)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER])
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+        ]
+    )
     def list(self, request, slug, project_id):
         filters = issue_filters(request.query_params, "GET")
         show_sub_issues = request.GET.get("show_sub_issues", "true")
@@ -213,7 +218,12 @@ class IssueArchiveViewSet(BaseViewSet):
                 ),
             )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER])
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+        ]
+    )
     def retrieve(self, request, slug, project_id, pk=None):
         issue = (
             self.get_queryset()

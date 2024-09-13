@@ -10,32 +10,25 @@ import { IssueView, TIssueOperations } from "@/components/issues";
 // constants
 import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED, ISSUE_RESTORED } from "@/constants/event-tracker";
 import { EIssuesStoreType } from "@/constants/issue";
-import { EUserProjectRoles } from "@/constants/project";
 // hooks
-import { useEventTracker, useIssueDetail, useIssues, useUser } from "@/hooks/store";
+import { useEventTracker, useIssueDetail, useIssues, useUserPermissions } from "@/hooks/store";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 interface IIssuePeekOverview {
   embedIssue?: boolean;
   embedRemoveCurrentNotification?: () => void;
   is_archived?: boolean;
   is_draft?: boolean;
-  shouldReplaceIssueOnFetch?: boolean;
 }
 
 export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
-  const {
-    embedIssue = false,
-    embedRemoveCurrentNotification,
-    is_archived = false,
-    is_draft = false,
-    shouldReplaceIssueOnFetch = true,
-  } = props;
+  const { embedIssue = false, embedRemoveCurrentNotification, is_archived = false, is_draft = false } = props;
   // router
   const pathname = usePathname();
-  const {
-    membership: { currentWorkspaceAllProjectsRole },
-  } = useUser();
+  // store hook
+  const { allowPermissions } = useUserPermissions();
+
   const {
     issues: { restoreIssue },
   } = useIssues(EIssuesStoreType.ARCHIVED);
@@ -65,8 +58,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             workspaceSlug,
             projectId,
             issueId,
-            is_archived ? "ARCHIVED" : is_draft ? "DRAFT" : "DEFAULT",
-            shouldReplaceIssueOnFetch
+            is_archived ? "ARCHIVED" : is_draft ? "DRAFT" : "DEFAULT"
           );
           setError(false);
         } catch (error) {
@@ -339,9 +331,13 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
 
   if (!peekIssue?.workspaceSlug || !peekIssue?.projectId || !peekIssue?.issueId) return <></>;
 
-  const currentProjectRole = currentWorkspaceAllProjectsRole?.[peekIssue?.projectId];
   // Check if issue is editable, based on user role
-  const isEditable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditable = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT,
+    peekIssue?.workspaceSlug,
+    peekIssue?.projectId
+  );
 
   return (
     <IssueView

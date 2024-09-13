@@ -10,9 +10,10 @@ import { CustomSelect, Loader, ToggleSwitch } from "@plane/ui";
 // component
 import { SelectMonthModal } from "@/components/automation";
 // constants
-import { EUserProjectRoles, PROJECT_AUTOMATION_MONTHS } from "@/constants/project";
+import { PROJECT_AUTOMATION_MONTHS } from "@/constants/project";
 // hooks
-import { useProject, useUser } from "@/hooks/store";
+import { useProject, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   handleChange: (formData: Partial<IProject>) => Promise<void>;
@@ -25,12 +26,16 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
   // states
   const [monthModal, setmonthModal] = useState(false);
   // store hooks
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
+
   const { currentProjectDetails } = useProject();
 
-  const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
+  const isAdmin = allowPermissions(
+    [EUserPermissions.ADMIN],
+    EUserPermissionsLevel.PROJECT,
+    currentProjectDetails?.workspace_detail?.slug,
+    currentProjectDetails?.id
+  );
 
   return (
     <>
@@ -41,7 +46,7 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
         handleClose={() => setmonthModal(false)}
         handleChange={handleChange}
       />
-      <div className="flex flex-col gap-4 border-b border-custom-border-100 px-4 py-6">
+      <div className="flex flex-col gap-4 border-b border-custom-border-100 py-6">
         <div className="flex items-center justify-between">
           <div className="flex items-start gap-3">
             <div className="flex items-center justify-center rounded bg-custom-background-90 p-3">
@@ -68,7 +73,7 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
 
         {currentProjectDetails ? (
           currentProjectDetails.archive_in !== 0 && (
-            <div className="ml-12">
+            <div className="mx-6">
               <div className="flex w-full items-center justify-between gap-2 rounded border border-custom-border-200 bg-custom-background-90 px-5 py-4">
                 <div className="w-1/2 text-sm font-medium">Auto-archive issues that are closed for</div>
                 <div className="w-1/2">
@@ -104,7 +109,7 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
             </div>
           )
         ) : (
-          <Loader className="ml-12">
+          <Loader className="mx-6">
             <Loader.Item height="50px" />
           </Loader>
         )}

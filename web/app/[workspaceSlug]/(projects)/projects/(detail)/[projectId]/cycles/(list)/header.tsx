@@ -8,11 +8,11 @@ import { Breadcrumbs, Button, ContrastIcon, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 import { CyclesViewHeader } from "@/components/cycles";
-// constants
-import { EUserProjectRoles } from "@/constants/project";
 // hooks
-import { useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
+import { useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
+// constants
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const CyclesListHeader: FC = observer(() => {
   // router
@@ -21,13 +21,13 @@ export const CyclesListHeader: FC = observer(() => {
   // store hooks
   const { toggleCreateCycleModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
   const { currentProjectDetails, loader } = useProject();
 
-  const canUserCreateCycle =
-    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
+  const canUserCreateCycle = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
 
   return (
     <Header>
@@ -55,25 +55,23 @@ export const CyclesListHeader: FC = observer(() => {
           />
         </Breadcrumbs>
       </Header.LeftItem>
-      <Header.RightItem>
-        {canUserCreateCycle && currentProjectDetails ? (
-          <div className="flex items-center gap-3">
-            <CyclesViewHeader projectId={currentProjectDetails.id} />
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={() => {
-                setTrackElement("Cycles page");
-                toggleCreateCycleModal(true);
-              }}
-            >
-              <div className="hidden sm:block">Add</div> Cycle
-            </Button>
-          </div>
-        ) : (
-          <></>
-        )}
-      </Header.RightItem>
+      {canUserCreateCycle && currentProjectDetails ? (
+        <Header.RightItem>
+          <CyclesViewHeader projectId={currentProjectDetails.id} />
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={() => {
+              setTrackElement("Cycles page");
+              toggleCreateCycleModal(true);
+            }}
+          >
+            <div className="hidden sm:block">Add</div> Cycle
+          </Button>
+        </Header.RightItem>
+      ) : (
+        <></>
+      )}
     </Header>
   );
 });

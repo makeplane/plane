@@ -5,6 +5,8 @@ import { useState, useRef, forwardRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { MoreHorizontal } from "lucide-react";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // types
 import { TIssue } from "@plane/types";
 // ui
@@ -12,13 +14,15 @@ import { Tooltip, ControlLink } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useIssueDetail, useProjectState } from "@/hooks/store";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { useIssueDetail, useIssues, useProjectState } from "@/hooks/store";
+import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
+import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details";
 // local components
 import { TRenderQuickActions } from "../list/list-view-types";
+import { CalendarStoreType } from "./base-calendar-root";
 
 type Props = {
   issue: TIssue;
@@ -37,18 +41,16 @@ export const CalendarIssueBlock = observer(
     // hooks
     const { workspaceSlug, projectId } = useParams();
     const { getProjectStates } = useProjectState();
-    const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
+    const { getIsIssuePeeked } = useIssueDetail();
+    const { handleRedirection } = useIssuePeekOverviewRedirection();
     const { isMobile } = usePlatformOS();
+    const storeType = useIssueStoreType() as CalendarStoreType;
+    const { issuesFilter } = useIssues(storeType);
 
     const stateColor = getProjectStates(issue?.project_id)?.find((state) => state?.id == issue?.state_id)?.color || "";
 
-    const handleIssuePeekOverview = (issue: TIssue) =>
-      workspaceSlug &&
-      issue &&
-      issue.project_id &&
-      issue.id &&
-      !getIsIssuePeeked(issue.id) &&
-      setPeekIssue({ workspaceSlug: workspaceSlug.toString(), projectId: issue.project_id, issueId: issue.id });
+    // handlers
+    const handleIssuePeekOverview = (issue: TIssue) => handleRedirection(workspaceSlug.toString(), issue, isMobile);
 
     useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
 
@@ -106,6 +108,7 @@ export const CalendarIssueBlock = observer(
                   issueId={issue.id}
                   projectId={issue.project_id}
                   textContainerClassName="text-sm md:text-xs text-custom-text-300"
+                  displayProperties={issuesFilter?.issueFilters?.displayProperties}
                 />
               )}
               <Tooltip tooltipContent={issue.name} isMobile={isMobile}>

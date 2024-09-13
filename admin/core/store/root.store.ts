@@ -6,7 +6,7 @@ import { IUserStore, UserStore } from "./user.store";
 
 enableStaticRendering(typeof window === "undefined");
 
-export class RootStore {
+export abstract class CoreRootStore {
   theme: IThemeStore;
   instance: IInstanceStore;
   user: IUserStore;

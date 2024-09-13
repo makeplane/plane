@@ -80,7 +80,12 @@ class CycleIssueViewSet(BaseViewSet):
         )
 
     @method_decorator(gzip_page)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER])
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+        ]
+    )
     def list(self, request, slug, project_id, cycle_id):
         order_by_param = request.GET.get("order_by", "created_at")
         filters = issue_filters(request.query_params, "GET")

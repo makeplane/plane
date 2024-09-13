@@ -17,6 +17,7 @@ import { IssueProperties } from "@/components/issues/issue-layouts/properties";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useIssueDetail, useProject } from "@/hooks/store";
+import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
@@ -69,20 +70,15 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
   // hooks
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
   const { getProjectIdentifierById } = useProject();
-  const { getIsIssuePeeked, peekIssue, setPeekIssue, subIssues: subIssuesStore } = useIssueDetail();
+  const { getIsIssuePeeked, peekIssue, subIssues: subIssuesStore } = useIssueDetail();
+  const { handleRedirection } = useIssuePeekOverviewRedirection();
+  const { isMobile } = usePlatformOS();
 
-  const handleIssuePeekOverview = (issue: TIssue) =>
-    workspaceSlug &&
-    issue &&
-    issue.project_id &&
-    issue.id &&
-    !getIsIssuePeeked(issue.id) &&
-    setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id, nestingLevel: nestingLevel });
+  // handlers
+  const handleIssuePeekOverview = (issue: TIssue) => handleRedirection(workspaceSlug, issue, isMobile, nestingLevel);
 
   const issue = issuesMap[issueId];
   const subIssuesCount = issue?.sub_issues_count ?? 0;
-
-  const { isMobile } = usePlatformOS();
 
   useEffect(() => {
     const element = issueRef.current;
@@ -130,7 +126,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
   };
 
   //TODO: add better logic. This is to have a min width for ID/Key based on the length of project identifier
-  const keyMinWidth = (projectIdentifier?.length ?? 0) * 7;
+  const keyMinWidth = displayProperties?.key ? (projectIdentifier?.length ?? 0) * 7 : 0;
 
   return (
     <Row
@@ -171,7 +167,6 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
                   </>
                 }
                 disabled={issue.project_id === projectId}
-                renderByDefault={false}
               >
                 <div className="flex-shrink-0 grid place-items-center w-3.5 absolute left-1">
                   <MultipleSelectEntityAction
@@ -189,13 +184,14 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
                 </div>
               </Tooltip>
             )}
-            {displayProperties && displayProperties?.key && (
+            {displayProperties && (displayProperties.key || displayProperties.issue_type) && (
               <div className="flex-shrink-0" style={{ minWidth: `${keyMinWidth}px` }}>
                 {issue.project_id && (
                   <IssueIdentifier
                     issueId={issueId}
                     projectId={issue.project_id}
                     textContainerClassName="text-xs font-medium text-custom-text-300"
+                    displayProperties={displayProperties}
                   />
                 )}
               </div>

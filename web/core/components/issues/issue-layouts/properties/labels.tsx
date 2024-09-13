@@ -7,6 +7,8 @@ import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Search, Tags } from "lucide-react";
 import { Combobox } from "@headlessui/react";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // types
 import { IIssueLabel } from "@plane/types";
 // ui
@@ -14,7 +16,6 @@ import { ComboDropDown, Tooltip } from "@plane/ui";
 // hooks
 import { useLabel } from "@/hooks/store";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 export interface IIssuePropertyLabels {
@@ -109,10 +110,10 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
   };
 
   useEffect(() => {
-    if (isOpen && inputRef.current) {
+    if (isOpen && inputRef.current && !isMobile) {
       inputRef.current.focus();
     }
-  }, [isOpen]);
+  }, [isOpen, isMobile]);
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "bottom-start",
@@ -241,6 +242,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
             : "cursor-pointer hover:bg-custom-background-80"
       }  ${buttonClassName}`}
       onClick={handleOnClick}
+      disabled={disabled}
     >
       {label}
       {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}

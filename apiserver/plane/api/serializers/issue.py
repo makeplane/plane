@@ -1,6 +1,3 @@
-from django.core.exceptions import ValidationError
-from django.core.validators import URLValidator
-
 # Django imports
 from django.utils import timezone
 from lxml import html
@@ -30,6 +27,9 @@ from .module import ModuleLiteSerializer, ModuleSerializer
 from .state import StateLiteSerializer
 from .user import UserLiteSerializer
 
+# Django imports
+from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
 
 class IssueSerializer(BaseSerializer):
     assignees = serializers.ListField(
@@ -315,7 +315,7 @@ class IssueLinkSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
-
+    
     def validate_url(self, value):
         # Check URL format
         validate_url = URLValidator()

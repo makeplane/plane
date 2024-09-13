@@ -4,6 +4,8 @@ import { Dispatch, MouseEvent, MutableRefObject, SetStateAction, useRef, useStat
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronRight, MoreHorizontal } from "lucide-react";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // types
 import { IIssueDisplayProperties, TIssue } from "@plane/types";
 // ui
@@ -17,14 +19,13 @@ import { SPREADSHEET_SELECT_GROUP } from "@/constants/spreadsheet";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
+import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 // local components
 import { TRenderQuickActions } from "../list/list-view-types";
-import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { IssueColumn } from "./issue-column";
 
 interface Props {
@@ -171,21 +172,13 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   const { workspaceSlug, projectId } = useParams();
   // hooks
   const { getProjectIdentifierById } = useProject();
-  const { getIsIssuePeeked, peekIssue, setPeekIssue } = useIssueDetail();
+  const { getIsIssuePeeked, peekIssue } = useIssueDetail();
+  const { handleRedirection } = useIssuePeekOverviewRedirection();
   const { isMobile } = usePlatformOS();
 
+  // handlers
   const handleIssuePeekOverview = (issue: TIssue) =>
-    workspaceSlug &&
-    issue &&
-    issue.project_id &&
-    issue.id &&
-    !getIsIssuePeeked(issue.id) &&
-    setPeekIssue({
-      workspaceSlug: workspaceSlug.toString(),
-      projectId: issue.project_id,
-      issueId: issue.id,
-      nestingLevel: nestingLevel,
-    });
+    handleRedirection(workspaceSlug?.toString(), issue, isMobile, nestingLevel);
 
   const { subIssues: subIssuesStore, issue } = useIssueDetail();
 
@@ -229,7 +222,9 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
   const canSelectIssues = !disableUserActions && !selectionHelpers.isSelectionDisabled;
 
   //TODO: add better logic. This is to have a min width for ID/Key based on the length of project identifier
-  const keyMinWidth = (getProjectIdentifierById(issueDetail.project_id)?.length ?? 0 + 5) * 7;
+  const keyMinWidth = displayProperties?.key
+    ? (getProjectIdentifierById(issueDetail.project_id)?.length ?? 0 + 5) * 7
+    : 0;
 
   return (
     <>
@@ -287,7 +282,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
               {/* sub issues indentation */}
               {nestingLevel !== 0 && <div style={{ width: subIssueIndentation }} />}
 
-              <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="key">
+              {(displayProperties?.key || displayProperties?.issue_type) && (
                 <div className="relative flex cursor-pointer items-center text-center text-xs hover:text-custom-text-100">
                   <p className={`flex font-medium leading-7`} style={{ minWidth: `${keyMinWidth}px` }}>
                     {issueDetail.project_id && (
@@ -295,11 +290,12 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
                         issueId={issueDetail.id}
                         projectId={issueDetail.project_id}
                         textContainerClassName="text-sm md:text-xs text-custom-text-300"
+                        displayProperties={displayProperties}
                       />
                     )}
                   </p>
                 </div>
-              </WithDisplayPropertiesHOC>
+              )}
 
               {/* sub-issues chevron */}
               <div className="grid place-items-center size-4">

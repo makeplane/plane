@@ -18,7 +18,8 @@ import { MEMBER_INVITED } from "@/constants/event-tracker";
 import { cn } from "@/helpers/common.helper";
 import { getUserRole } from "@/helpers/user.helper";
 // hooks
-import { useEventTracker, useMember, useUser, useWorkspace } from "@/hooks/store";
+import { useEventTracker, useMember, useUserPermissions, useWorkspace } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const WorkspaceMembersSettingsPage = observer(() => {
   // states
@@ -27,17 +28,19 @@ const WorkspaceMembersSettingsPage = observer(() => {
   // router
   const { workspaceSlug } = useParams();
   // store hooks
+  const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { captureEvent } = useEventTracker();
-  const {
-    canPerformWorkspaceAdminActions,
-    canPerformWorkspaceViewerActions,
-    canPerformWorkspaceMemberActions,
-    membership: { currentWorkspaceRole },
-  } = useUser();
   const {
     workspace: { inviteMembersToWorkspace },
   } = useMember();
   const { currentWorkspace } = useWorkspace();
+
+  // derived values
+  const canPerformWorkspaceAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const canPerformWorkspaceMemberActions = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
 
   const handleWorkspaceInvite = (data: IWorkspaceBulkInviteFormData) => {
     if (!workspaceSlug) return;
@@ -49,7 +52,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
           emails: [
             ...data.emails.map((email) => ({
               email: email.email,
-              role: getUserRole(email.role),
+              role: getUserRole(email.role as unknown as EUserPermissions),
             })),
           ],
           project_id: undefined,
@@ -67,7 +70,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
           emails: [
             ...data.emails.map((email) => ({
               email: email.email,
-              role: getUserRole(email.role),
+              role: getUserRole(email.role as unknown as EUserPermissions),
             })),
           ],
           project_id: undefined,
@@ -86,7 +89,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Members` : undefined;
 
   // if user is not authorized to view this page
-  if (currentWorkspaceRole && !canPerformWorkspaceViewerActions) {
+  if (workspaceUserInfo && !canPerformWorkspaceMemberActions) {
     return <NotAuthorizedView section="settings" />;
   }
 
@@ -103,7 +106,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
           "opacity-60": !canPerformWorkspaceMemberActions,
         })}
       >
-        <div className="flex items-center justify-between gap-4 pb-3.5">
+        <div className="flex justify-between gap-4 pb-3.5 items-start	">
           <h4 className="text-xl font-medium">Members</h4>
           <div className="ml-auto flex items-center gap-1.5 rounded-md border border-custom-border-200 bg-custom-background-100 px-2.5 py-1.5">
             <Search className="h-3.5 w-3.5 text-custom-text-400" />
