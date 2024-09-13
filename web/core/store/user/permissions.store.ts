@@ -243,13 +243,10 @@ export class UserPermissionStore implements IUserPermissionStore {
   joinProject = async (workspaceSlug: string, projectId: string): Promise<void | undefined> => {
     try {
       const response = await userService.joinProject(workspaceSlug, [projectId]);
+      const projectMemberRole = this.workspaceInfoBySlug(workspaceSlug)?.role ?? EUserPermissions.MEMBER;
       if (response) {
         runInAction(() => {
-          set(
-            this.workspaceProjectsPermissions,
-            [workspaceSlug, projectId],
-            this.workspaceInfoBySlug(workspaceSlug)?.role
-          );
+          set(this.workspaceProjectsPermissions, [workspaceSlug, projectId], projectMemberRole);
         });
       }
       return response;
@@ -271,6 +268,7 @@ export class UserPermissionStore implements IUserPermissionStore {
       runInAction(() => {
         unset(this.workspaceProjectsPermissions, [workspaceSlug, projectId]);
         unset(this.projectUserInfo, [workspaceSlug, projectId]);
+        unset(this.store.projectRoot.project.projectMap, [projectId]);
       });
     } catch (error) {
       console.error("Error user leaving the project", error);
