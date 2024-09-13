@@ -43,8 +43,5 @@
   "resolutions": {
     "@types/react": "18.2.48"
   },
-  "engines": {
-    "node": "18.x"
-  },
   "packageManager": "yarn@1.22.22"
 }
