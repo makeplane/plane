@@ -245,7 +245,11 @@ export class UserPermissionStore implements IUserPermissionStore {
       const response = await userService.joinProject(workspaceSlug, [projectId]);
       if (response) {
         runInAction(() => {
-          set(this.workspaceProjectsPermissions, [workspaceSlug, projectId], response);
+          set(
+            this.workspaceProjectsPermissions,
+            [workspaceSlug, projectId],
+            this.workspaceInfoBySlug(workspaceSlug)?.role
+          );
         });
       }
       return response;
