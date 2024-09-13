@@ -700,13 +700,21 @@ class DeletedIssuesListViewSet(BaseAPIView):
 class IssuePaginatedViewSet(BaseViewSet):
     def get_queryset(self):
         workspace_slug = self.kwargs.get("slug")
-        project_id = self.kwargs.get("project_id")
+
+        # getting the project_id from the request params
+        project_id = self.request.GET.get("project_id", None)
+
+        issue_queryset = Issue.issue_objects.filter(
+            workspace__slug=workspace_slug
+        )
+
+        if project_id:
+            issue_queryset = issue_queryset.filter(project_id=project_id)
 
         return (
-            Issue.issue_objects.filter(
-                workspace__slug=workspace_slug, project_id=project_id
+            issue_queryset.select_related(
+                "workspace", "project", "state", "parent"
             )
-            .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
             .annotate(
@@ -744,8 +752,8 @@ class IssuePaginatedViewSet(BaseViewSet):
 
         return paginated_data
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST])
-    def list(self, request, slug, project_id):
+    def list(self, request, slug):
+        project_id = self.request.GET.get("project_id", None)
         cursor = request.GET.get("cursor", None)
         is_description_required = request.GET.get("description", False)
         updated_at = request.GET.get("updated_at__gt", None)
@@ -784,9 +792,12 @@ class IssuePaginatedViewSet(BaseViewSet):
             required_fields.append("description_html")
 
         # querying issues
-        base_queryset = Issue.issue_objects.filter(
-            workspace__slug=slug, project_id=project_id
-        ).order_by("updated_at")
+        base_queryset = Issue.issue_objects.filter(workspace__slug=slug)
+
+        if project_id:
+            base_queryset = base_queryset.filter(project_id=project_id)
+
+        base_queryset = base_queryset.order_by("updated_at")
         queryset = self.get_queryset().order_by("updated_at")
 
         # filtering issues by greater then updated_at given by the user
