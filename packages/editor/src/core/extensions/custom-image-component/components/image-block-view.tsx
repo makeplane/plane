@@ -1,4 +1,4 @@
-import React, { useRef, useState, useCallback, useLayoutEffect, useEffect } from "react";
+import React, { useRef, useState, useCallback, useLayoutEffect } from "react";
 import { Node as ProsemirrorNode } from "@tiptap/pm/model";
 import { NodeSelection } from "@tiptap/pm/state";
 import { Editor } from "@tiptap/react";
@@ -25,7 +25,6 @@ export const ImageComponent: React.FC<ImageBlockViewProps> = (props) => {
   const { src, width, height } = node.attrs;
 
   const [size, setSize] = useState({ width: width || "35%", height: height || "auto" });
-  // const [isSelected, setIsSelected] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const containerRef = useRef<HTMLDivElement>(null);
