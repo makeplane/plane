@@ -2,9 +2,12 @@ import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
+// plane ui
 import { FavoriteFolderIcon, Input, setToast, TOAST_TYPE } from "@plane/ui";
+// hooks
 import { useFavorite } from "@/hooks/store/use-favorite";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 
 type TForm = {
   name: string;

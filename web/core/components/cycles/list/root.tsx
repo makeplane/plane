@@ -19,7 +19,7 @@ export const CyclesList: FC<ICyclesList> = observer((props) => {
   const { completedCycleIds, upcomingCycleIds, cycleIds, workspaceSlug, projectId, isArchived = false } = props;
 
   return (
-    <ContentWrapper variant={ERowVariant.HUGGING}>
+    <ContentWrapper variant={ERowVariant.HUGGING} className="flex-row">
       <ListLayout>
         {isArchived ? (
           <>

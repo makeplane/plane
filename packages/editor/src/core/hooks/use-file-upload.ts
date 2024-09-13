@@ -1,5 +1,6 @@
 import { DragEvent, useCallback, useEffect, useRef, useState } from "react";
 import { Editor } from "@tiptap/core";
+import { isFileValid } from "@/plugins/image";
 
 export const useUploader = ({ onUpload, editor }: { onUpload: (url: string) => void; editor: Editor }) => {
   const [loading, setLoading] = useState(false);
@@ -40,6 +41,7 @@ export const useFileUpload = () => {
 export const useDropZone = ({ uploader }: { uploader: (file: File) => void }) => {
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [draggedInside, setDraggedInside] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const dragStartHandler = () => {
@@ -62,6 +64,7 @@ export const useDropZone = ({ uploader }: { uploader: (file: File) => void }) =>
   const onDrop = useCallback(
     (e: DragEvent<HTMLDivElement>) => {
       setDraggedInside(false);
+      setErrorMessage(null);
       if (e.dataTransfer.files.length === 0) {
         return;
       }
@@ -88,7 +91,10 @@ export const useDropZone = ({ uploader }: { uploader: (file: File) => void }) =>
       const file = filteredFiles.length > 0 ? filteredFiles[0] : undefined;
 
       if (file) {
-        uploader(file);
+        const isValid = isFileValid(file);
+        if (isValid) {
+          uploader(file);
+        }
       }
     },
     [uploader]

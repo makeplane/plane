@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { AccountTypeColumn, NameColumn, RowData } from "@/components/workspace/settings/member-columns";
-import { EUserWorkspaceRoles } from "@/constants/workspace";
-import { useUser } from "@/hooks/store";
+import { useUser, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const useMemberColumns = () => {
   // states
@@ -10,10 +10,8 @@ export const useMemberColumns = () => {
 
   const { workspaceSlug } = useParams();
 
-  const {
-    membership: { currentWorkspaceRole },
-    data: currentUser,
-  } = useUser();
+  const { data: currentUser } = useUser();
+  const { allowPermissions } = useUserPermissions();
 
   const getFormattedDate = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -22,7 +20,8 @@ export const useMemberColumns = () => {
     return date.toLocaleDateString("en-US", options);
   };
 
-  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+  // derived values
+  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
   const columns = [
     {
@@ -48,13 +47,7 @@ export const useMemberColumns = () => {
     {
       key: "Account Type",
       content: "Account Type",
-      tdRender: (rowData: RowData) => (
-        <AccountTypeColumn
-          rowData={rowData}
-          currentWorkspaceRole={currentWorkspaceRole}
-          workspaceSlug={workspaceSlug as string}
-        />
-      ),
+      tdRender: (rowData: RowData) => <AccountTypeColumn rowData={rowData} workspaceSlug={workspaceSlug as string} />,
     },
 
     {

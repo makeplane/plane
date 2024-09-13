@@ -20,10 +20,11 @@ import { ISSUE_DETAILS } from "@/constants/fetch-keys";
 // helpers
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useEventTracker, useUser, useAppTheme, useCommandPalette } from "@/hooks/store";
+import { useEventTracker, useUser, useAppTheme, useCommandPalette, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // services
 import { IssueService } from "@/services/issue";
 
@@ -43,10 +44,10 @@ export const CommandPalette: FC = observer(() => {
   const { platform } = usePlatformOS();
   const {
     data: currentUser,
-    canPerformProjectMemberActions,
-    canPerformWorkspaceMemberActions,
+    // canPerformProjectMemberActions,
+    // canPerformWorkspaceMemberActions,
     canPerformAnyCreateAction,
-    canPerformProjectAdminActions,
+    // canPerformProjectAdminActions,
   } = useUser();
   const {
     issues: { removeIssue },
@@ -73,6 +74,7 @@ export const CommandPalette: FC = observer(() => {
     toggleDeleteIssueModal,
     isAnyModalOpen,
   } = useCommandPalette();
+  const { allowPermissions } = useUserPermissions();
 
   const { data: issueDetails } = useSWR(
     workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
@@ -80,6 +82,17 @@ export const CommandPalette: FC = observer(() => {
       ? () => issueService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
       : null
   );
+
+  // derived values
+  const canPerformWorkspaceMemberActions = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
+  const canPerformProjectMemberActions = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
+  const canPerformProjectAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
 
   const copyIssueUrlToClipboard = useCallback(() => {
     if (!issueId) return;

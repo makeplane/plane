@@ -1,5 +1,6 @@
-import React, { useRef, useState, useCallback, useEffect } from "react";
+import React, { useRef, useState, useCallback, useLayoutEffect, useEffect } from "react";
 import { Node as ProsemirrorNode } from "@tiptap/pm/model";
+import { NodeSelection } from "@tiptap/pm/state";
 import { Editor } from "@tiptap/react";
 import { ImageShimmer } from "./image-loader";
 
@@ -17,14 +18,14 @@ interface ImageBlockViewProps {
   selected: boolean;
 }
 
-const MIN_SIZE = 200;
+const MIN_SIZE = 100;
 
 export const ImageComponent: React.FC<ImageBlockViewProps> = (props) => {
-  const { node, updateAttributes, selected } = props;
+  const { node, updateAttributes, selected, getPos, editor } = props;
   const { src, width, height } = node.attrs;
 
   const [size, setSize] = useState({ width: width || "35%", height: height || "auto" });
-  const [isSelected, setIsSelected] = useState(false);
+  // const [isSelected, setIsSelected] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -32,11 +33,14 @@ export const ImageComponent: React.FC<ImageBlockViewProps> = (props) => {
   const isResizing = useRef(false);
   const aspectRatio = useRef(1);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (imageRef.current) {
       const img = imageRef.current;
       img.onload = () => {
         aspectRatio.current = img.naturalWidth / img.naturalHeight;
+        const initialWidth = Math.max(img.naturalWidth * 0.35, MIN_SIZE);
+        const initialHeight = initialWidth / aspectRatio.current;
+        setSize({ width: `${initialWidth}px`, height: `${initialHeight}px` });
         setIsLoading(false);
       };
     }
@@ -46,12 +50,12 @@ export const ImageComponent: React.FC<ImageBlockViewProps> = (props) => {
     e.preventDefault();
     e.stopPropagation();
     isResizing.current = true;
-    setIsSelected(true);
   }, []);
 
-  useEffect(() => {
-    setIsSelected(selected);
-  }, [selected]);
+  useLayoutEffect(() => {
+    // for realtime resizing and undo/redo
+    setSize({ width, height });
+  }, [width, height]);
 
   const handleResize = useCallback((e: MouseEvent | TouchEvent) => {
     if (!isResizing.current || !containerRef.current) return;
@@ -72,27 +76,24 @@ export const ImageComponent: React.FC<ImageBlockViewProps> = (props) => {
     }
   }, [size, updateAttributes]);
 
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsSelected(true);
-  }, []);
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      const pos = getPos();
+      const nodeSelection = NodeSelection.create(editor.state.doc, pos);
+      editor.view.dispatch(editor.state.tr.setSelection(nodeSelection));
+    },
+    [editor, getPos]
+  );
 
-  useEffect(() => {
-    const handleGlobalMouseDown = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Element)) {
-        setIsSelected(false);
-      }
-    };
-
+  useLayoutEffect(() => {
     const handleGlobalMouseMove = (e: MouseEvent) => handleResize(e);
     const handleGlobalMouseUp = () => handleResizeEnd();
 
-    document.addEventListener("mousedown", handleGlobalMouseDown);
     document.addEventListener("mousemove", handleGlobalMouseMove);
     document.addEventListener("mouseup", handleGlobalMouseUp);
 
     return () => {
-      document.removeEventListener("mousedown", handleGlobalMouseDown);
       document.removeEventListener("mousemove", handleGlobalMouseMove);
       document.removeEventListener("mouseup", handleGlobalMouseUp);
     };
@@ -113,9 +114,11 @@ export const ImageComponent: React.FC<ImageBlockViewProps> = (props) => {
         className="max-w-full h-auto object-contain rounded-md"
         style={{
           display: isLoading ? "none" : "block",
+          width: size.width,
+          height: size.height,
         }}
       />
-      {isSelected && (
+      {selected && (
         <>
           <div className="absolute inset-0 border-2 border-custom-primary-100 pointer-events-none rounded-md" />
           <div

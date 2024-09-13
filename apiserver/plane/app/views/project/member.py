@@ -95,9 +95,21 @@ class ProjectMemberViewSet(BaseViewSet):
                 member=member,
                 is_active=True,
             ).role
-            if workspace_member_role in [5, 10] and member_roles.get(
-                member
-            ) in [15, 20]:
+            if workspace_member_role in [20] and member_roles.get(member) in [
+                5,
+                15,
+            ]:
+                return Response(
+                    {
+                        "error": "You cannot add a user with role lower than the workspace role"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            if workspace_member_role in [5] and member_roles.get(member) in [
+                15,
+                20,
+            ]:
                 return Response(
                     {
                         "error": "You cannot add a user with role higher than the workspace role"
@@ -143,7 +155,7 @@ class ProjectMemberViewSet(BaseViewSet):
             bulk_project_members.append(
                 ProjectMember(
                     member_id=member.get("member_id"),
-                    role=member.get("role", 10),
+                    role=member.get("role", 5),
                     project_id=project_id,
                     workspace_id=project.workspace_id,
                     sort_order=(
@@ -189,7 +201,7 @@ class ProjectMemberViewSet(BaseViewSet):
         # Return the serialized data
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
         # Get the list of project members for the project
         project_members = ProjectMember.objects.filter(
@@ -230,7 +242,7 @@ class ProjectMemberViewSet(BaseViewSet):
             member=project_member.member,
             is_active=True,
         ).role
-        if workspace_role in [5, 10] and int(
+        if workspace_role in [5] and int(
             request.data.get("role", project_member.role)
         ) in [15, 20]:
             return Response(
@@ -261,7 +273,7 @@ class ProjectMemberViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @allow_permission([ROLE.ADMIN])
     def destroy(self, request, slug, project_id, pk):
         project_member = ProjectMember.objects.get(
             workspace__slug=slug,
@@ -298,7 +310,7 @@ class ProjectMemberViewSet(BaseViewSet):
         project_member.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def leave(self, request, slug, project_id):
         project_member = ProjectMember.objects.get(
             workspace__slug=slug,

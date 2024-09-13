@@ -97,7 +97,13 @@ export const CustomImage = (props: ImageUploadProps) => {
             selected={selected}
           />
         ) : (
-          <ImageUploader onUpload={onUpload} editor={editor} fileInputRef={fileInputRef} existingFile={existingFile} />
+          <ImageUploader
+            onUpload={onUpload}
+            editor={editor}
+            fileInputRef={fileInputRef}
+            existingFile={existingFile}
+            selected={selected}
+          />
         )}
       </div>
     </NodeViewWrapper>

@@ -18,6 +18,7 @@ export const AdminLayout: FC<TAdminLayout> = observer((props) => {
   const { children } = props;
   // router
   const router = useRouter();
+  // store hooks
   const { isUserLoggedIn } = useUser();
 
   useEffect(() => {

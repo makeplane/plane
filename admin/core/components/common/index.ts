@@ -8,4 +8,3 @@ export * from "./empty-state";
 export * from "./logo-spinner";
 export * from "./page-header";
 export * from "./code-block";
-export * from "./upgrade-button";

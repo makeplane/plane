@@ -379,6 +379,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
           type="button"
           className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
           onClick={handleOnClick}
+          disabled={disabled}
         >
           {button}
         </button>
@@ -395,6 +396,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
             buttonContainerClassName
           )}
           onClick={handleOnClick}
+          disabled={disabled}
         >
           <ButtonToRender
             priority={value ?? undefined}

@@ -61,7 +61,7 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
         const feature = PROJECT_FEATURES_LIST[featureSectionKey];
         return (
           <div key={featureSectionKey} className="">
-            <div className="flex flex-col justify-center border-b border-custom-border-100">
+            <div className="flex flex-col justify-center pb-2 border-b border-custom-border-100">
               <h3 className="text-xl font-medium">{feature.title}</h3>
               <h4 className="text-sm leading-5 text-custom-text-200">{feature.description}</h4>
             </div>

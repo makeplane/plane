@@ -133,7 +133,7 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
             workspace_member = WorkspaceMember.objects.create(
                 workspace=workspace,
                 member=user,
-                role=request.data.get("role", 10),
+                role=request.data.get("role", 5),
             )
             workspace_member.save()
 
@@ -142,7 +142,7 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
             project_member = ProjectMember.objects.create(
                 project=project,
                 member=user,
-                role=request.data.get("role", 10),
+                role=request.data.get("role", 5),
             )
             project_member.save()
 

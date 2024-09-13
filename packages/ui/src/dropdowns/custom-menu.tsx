@@ -3,9 +3,10 @@ import ReactDOM from "react-dom";
 import { Menu } from "@headlessui/react";
 import { usePopper } from "react-popper";
 import { ChevronDown, MoreHorizontal } from "lucide-react";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // hooks
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "../hooks/use-outside-click-detector";
 // helpers
 import { cn } from "../../helpers";
 // types

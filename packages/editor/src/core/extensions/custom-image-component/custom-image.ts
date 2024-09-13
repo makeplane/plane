@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import { TFileHandler } from "@/types";
 
 import { CustomImage } from "./image-upload";
+import { isFileValid } from "@/plugins/image";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -28,7 +29,9 @@ export const CustomImageComponent = (props: TFileHandler) => {
   return Image.extend<{}, UploadImageExtensionStorage>({
     name: "imageComponent",
     selectable: true,
-    group: "inline",
+    group: "block",
+    atom: true,
+    draggable: true,
 
     addAttributes() {
       return {
@@ -77,6 +80,11 @@ export const CustomImageComponent = (props: TFileHandler) => {
         setImageUpload:
           (props: { file?: File; pos?: number; event: "insert" | "drop" }) =>
           ({ commands }) => {
+            // Early return if there's an invalid file being dropped
+            if (props?.file && !isFileValid(props.file)) {
+              return false;
+            }
+
             // generate a unique id for the image to keep track of dropped
             // files' file data
             const fileId = uuidv4();
@@ -94,7 +102,7 @@ export const CustomImageComponent = (props: TFileHandler) => {
             const attributes = {
               "data-type": this.name,
               id: fileId,
-              "data-file": props?.file ? `data-file="${props.file}"` : "",
+              "data-file": props.file ? `data-file="${props.file}"` : "",
             };
 
             if (props.pos) {
@@ -118,8 +126,6 @@ export const CustomImageComponent = (props: TFileHandler) => {
     addNodeView() {
       return ReactNodeViewRenderer(CustomImage);
     },
-  }).configure({
-    inline: true,
   });
 };
 
