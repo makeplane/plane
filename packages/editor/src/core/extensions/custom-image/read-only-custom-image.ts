@@ -7,10 +7,10 @@ import { CustomImageNode, UploadImageExtensionStorage } from "@/extensions/custo
 export const CustomReadOnlyImageExtension = () =>
   Image.extend<{}, UploadImageExtensionStorage>({
     name: "imageComponent",
-    selectable: true,
+    selectable: false,
     group: "block",
     atom: true,
-    draggable: true,
+    draggable: false,
 
     addAttributes() {
       return {

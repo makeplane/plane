@@ -101,6 +101,7 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
         src={src}
         className={cn("block rounded-md", {
           hidden: isLoading,
+          "read-only-image": !editor.isEditable,
         })}
         style={{
           width: size.width,
@@ -108,13 +109,15 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
         }}
       />
       {editor.isEditable && selected && <div className="absolute inset-0 size-full bg-custom-primary-500/30" />}
-      <>
-        <div className="opacity-0 group-hover/image-component:opacity-100 absolute inset-0 border-2 border-custom-primary-100 pointer-events-none rounded-md transition-opacity duration-100 ease-in-out" />
-        <div
-          className="opacity-0 pointer-events-none group-hover/image-component:opacity-100 group-hover/image-component:pointer-events-auto absolute bottom-0 right-0 translate-y-1/2 translate-x-1/2 size-4 rounded-full bg-custom-primary-100 border-2 border-white cursor-nwse-resize transition-opacity duration-100 ease-in-out"
-          onMouseDown={handleResizeStart}
-        />
-      </>
+      {editor.isEditable && (
+        <>
+          <div className="opacity-0 group-hover/image-component:opacity-100 absolute inset-0 border-2 border-custom-primary-100 pointer-events-none rounded-md transition-opacity duration-100 ease-in-out" />
+          <div
+            className="opacity-0 pointer-events-none group-hover/image-component:opacity-100 group-hover/image-component:pointer-events-auto absolute bottom-0 right-0 translate-y-1/2 translate-x-1/2 size-4 rounded-full bg-custom-primary-100 border-2 border-white cursor-nwse-resize transition-opacity duration-100 ease-in-out"
+            onMouseDown={handleResizeStart}
+          />
+        </>
+      )}
     </div>
   );
 };

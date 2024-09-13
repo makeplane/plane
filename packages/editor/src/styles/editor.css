@@ -122,18 +122,21 @@
 
 /* Custom image styles */
 .ProseMirror img {
-  transition: filter 0.1s ease-in-out;
   margin-top: 0 !important;
   margin-bottom: 0;
 
-  &:hover {
-    cursor: pointer;
-    filter: brightness(90%);
-  }
+  &:not(.read-only-image) {
+    transition: filter 0.1s ease-in-out;
 
-  &.ProseMirror-selectednode {
-    outline: 3px solid rgba(var(--color-primary-100));
-    filter: brightness(90%);
+    &:hover {
+      cursor: pointer;
+      filter: brightness(90%);
+    }
+
+    &.ProseMirror-selectednode {
+      outline: 3px solid rgba(var(--color-primary-100));
+      filter: brightness(90%);
+    }
   }
 }
 
