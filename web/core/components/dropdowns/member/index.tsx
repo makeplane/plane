@@ -22,6 +22,7 @@ type Props = {
   icon?: LucideIcon;
   onClose?: () => void;
   renderByDefault?: boolean;
+  optionsClassName? : string;
 } & MemberDropdownProps;
 
 export const MemberDropdown: React.FC<Props> = observer((props) => {
@@ -34,6 +35,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
     disabled = false,
     dropdownArrow = false,
     dropdownArrowClassName = "",
+    optionsClassName = "",
     hideIcon = false,
     multiple,
     onChange,
@@ -162,7 +164,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
     >
       {isOpen && (
         <MemberOptions
-          className={className}
+          optionsClassName={optionsClassName}
           isOpen={isOpen}
           projectId={projectId}
           placement={placement}
