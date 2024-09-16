@@ -3,16 +3,16 @@
 import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 // components
-import { AppHeader } from "@/components/core";
 // plane web components
 // import { LicenseSeatsBanner } from "@/plane-web/components/license";
 // local components
+import { NotAuthorizedView } from "@/components/auth-screens";
+import { AppHeader } from "@/components/core";
+import { useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { WorkspaceSettingHeader } from "./header";
 import { MobileWorkspaceSettingsTabs } from "./mobile-header-tabs";
 import { WorkspaceSettingsSidebar } from "./sidebar";
-import { NotAuthorizedView } from "@/components/auth-screens";
-import { useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export interface IWorkspaceSettingLayout {
   children: ReactNode;
