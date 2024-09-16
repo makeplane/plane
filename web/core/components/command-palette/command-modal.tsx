@@ -86,7 +86,7 @@ export const CommandModal: React.FC = observer(() => {
 
   const { baseTabIndex } = getTabIndex(undefined, isMobile);
 
-  const canPerformWorkspaceAction = allowPermissions(
+  const canPerformWorkspaceActions = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
