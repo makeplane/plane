@@ -15,6 +15,7 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
   const [isLoading, setIsLoading] = useState(true);
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const containerRect = useRef<DOMRect | null>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   const isResizing = useRef(false);
   const aspectRatio = useRef(1);
@@ -23,10 +24,12 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
     if (imageRef.current) {
       const img = imageRef.current;
       img.onload = () => {
-        aspectRatio.current = img.naturalWidth / img.naturalHeight;
-        const initialWidth = Math.max(img.naturalWidth * 0.35, MIN_SIZE);
-        const initialHeight = initialWidth / aspectRatio.current;
-        setSize({ width: `${initialWidth}px`, height: `${initialHeight}px` });
+        if (node.attrs.width === "35%" && node.attrs.height === "auto") {
+          aspectRatio.current = img.naturalWidth / img.naturalHeight;
+          const initialWidth = Math.max(img.naturalWidth * 0.35, MIN_SIZE);
+          const initialHeight = initialWidth / aspectRatio.current;
+          setSize({ width: `${initialWidth}px`, height: `${initialHeight}px` });
+        }
         setIsLoading(false);
       };
     }
@@ -36,6 +39,9 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
     e.preventDefault();
     e.stopPropagation();
     isResizing.current = true;
+    if (containerRef.current) {
+      containerRect.current = containerRef.current.getBoundingClientRect();
+    }
   }, []);
 
   useLayoutEffect(() => {
@@ -44,12 +50,11 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
   }, [width, height]);
 
   const handleResize = useCallback((e: MouseEvent | TouchEvent) => {
-    if (!isResizing.current || !containerRef.current) return;
+    if (!isResizing.current || !containerRef.current || !containerRect.current) return;
 
-    const containerRect = containerRef.current.getBoundingClientRect();
     const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
 
-    const newWidth = Math.max(clientX - containerRect.left, MIN_SIZE);
+    const newWidth = Math.max(clientX - containerRect.current.left, MIN_SIZE);
     const newHeight = newWidth / aspectRatio.current;
 
     setSize({ width: `${newWidth}px`, height: `${newHeight}px` });
