@@ -48,7 +48,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // router
   const { workspaceSlug, projectId } = useParams();
 
-  const projectMemberInfo = projectUserInfo?.[workspaceSlug.toString()]?.[projectId.toString()];
+  const projectMemberInfo = projectUserInfo?.[workspaceSlug?.toString()]?.[projectId?.toString()];
 
   // fetching project details
   useSWR(

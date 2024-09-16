@@ -23,7 +23,7 @@ import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { UpgradeBadge } from "@/plane-web/components/workspace";
-import { EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const SidebarWorkspaceMenu = observer(() => {
   // state
@@ -43,6 +43,7 @@ export const SidebarWorkspaceMenu = observer(() => {
   const { setValue: toggleWorkspaceMenu, storedValue } = useLocalStorage<boolean>("is_workspace_menu_open", true);
   // derived values
   const isWorkspaceMenuOpen = !!storedValue;
+  const isAdmin = allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.WORKSPACE);
 
   const handleLinkClick = (itemKey: string) => {
     if (window.innerWidth < 768) {
@@ -67,11 +68,14 @@ export const SidebarWorkspaceMenu = observer(() => {
   return (
     <Disclosure as="div" defaultOpen>
       {!sidebarCollapsed && (
-        <div className={
-          cn("flex px-2 bg-custom-sidebar-background-100 group/workspace-button hover:bg-custom-sidebar-background-90 rounded", {
-            "mt-2.5": !sidebarCollapsed,
-          })
-        }>
+        <div
+          className={cn(
+            "flex px-2 bg-custom-sidebar-background-100 group/workspace-button hover:bg-custom-sidebar-background-90 rounded",
+            {
+              "mt-2.5": !sidebarCollapsed,
+            }
+          )}
+        >
           {" "}
           <Disclosure.Button
             as="button"
@@ -80,45 +84,47 @@ export const SidebarWorkspaceMenu = observer(() => {
           >
             <span>WORKSPACE</span>
           </Disclosure.Button>
-          <CustomMenu
-            customButton={
-              <span
-                ref={actionSectionRef}
-                className="grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 rounded my-auto"
-                onClick={() => {
-                  setIsMenuActive(!isMenuActive);
-                }}
-              >
-                <MoreHorizontal className="size-4" />
-              </span>
-            }
-            className={cn(
-              "h-full flex items-center opacity-0 z-20 pointer-events-none flex-shrink-0 group-hover/workspace-button:opacity-100 group-hover/workspace-button:pointer-events-auto my-auto",
-              {
-                "opacity-100 pointer-events-auto": isMenuActive,
+          {isAdmin && (
+            <CustomMenu
+              customButton={
+                <span
+                  ref={actionSectionRef}
+                  className="grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 rounded my-auto"
+                  onClick={() => {
+                    setIsMenuActive(!isMenuActive);
+                  }}
+                >
+                  <MoreHorizontal className="size-4" />
+                </span>
               }
-            )}
-            customButtonClassName="grid place-items-center"
-            placement="bottom-start"
-          >
-            <CustomMenu.MenuItem>
-              <Link href={`/${workspaceSlug}/projects/archives`}>
-                <div className="flex items-center justify-start gap-2">
-                  <ArchiveIcon className="h-3.5 w-3.5 stroke-[1.5]" />
-                  <span>Archives</span>
-                </div>
-              </Link>
-            </CustomMenu.MenuItem>
+              className={cn(
+                "h-full flex items-center opacity-0 z-20 pointer-events-none flex-shrink-0 group-hover/workspace-button:opacity-100 group-hover/workspace-button:pointer-events-auto my-auto",
+                {
+                  "opacity-100 pointer-events-auto": isMenuActive,
+                }
+              )}
+              customButtonClassName="grid place-items-center"
+              placement="bottom-start"
+            >
+              <CustomMenu.MenuItem>
+                <Link href={`/${workspaceSlug}/projects/archives`}>
+                  <div className="flex items-center justify-start gap-2">
+                    <ArchiveIcon className="h-3.5 w-3.5 stroke-[1.5]" />
+                    <span>Archives</span>
+                  </div>
+                </Link>
+              </CustomMenu.MenuItem>
 
-            <CustomMenu.MenuItem>
-              <Link href={`/${workspaceSlug}/settings`}>
-                <div className="flex items-center justify-start gap-2">
-                  <Settings className="h-3.5 w-3.5 stroke-[1.5]" />
-                  <span>Settings</span>
-                </div>
-              </Link>
-            </CustomMenu.MenuItem>
-          </CustomMenu>
+              <CustomMenu.MenuItem>
+                <Link href={`/${workspaceSlug}/settings`}>
+                  <div className="flex items-center justify-start gap-2">
+                    <Settings className="h-3.5 w-3.5 stroke-[1.5]" />
+                    <span>Settings</span>
+                  </div>
+                </Link>
+              </CustomMenu.MenuItem>
+            </CustomMenu>
+          )}
           <Disclosure.Button
             as="button"
             className="sticky top-0 z-10 group/workspace-button px-0.5 py-1.5 flex items-center justify-between gap-1 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90 rounded text-xs font-semibold"
