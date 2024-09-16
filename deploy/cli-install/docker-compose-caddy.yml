@@ -107,7 +107,6 @@ services:
       replicas: ${SPACE_REPLICAS:-1}
     depends_on:
       - api
-      - worker
       - web
 
   live:
@@ -119,7 +118,6 @@ services:
       replicas: ${LIVE_REPLICAS:-1}
     depends_on:
       - api
-      - worker
       - web
 
   monitor:
@@ -224,3 +222,5 @@ services:
       - web
       - api
       - space
+      - admin
+      - live
