@@ -31,7 +31,7 @@ import { ISSUE_DETAILS } from "@/constants/fetch-keys";
 // helpers
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
-import { useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
+import { useCommandPalette, useEventTracker, useProject, useUser, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -41,6 +41,7 @@ import { IssueIdentifier } from "@/plane-web/components/issues";
 import { WorkspaceService } from "@/plane-web/services";
 // services
 import { IssueService } from "@/services/issue";
+import { EUserPermissions, EUserPermissionsLevel } from "ee/constants/user-permissions";
 
 const workspaceService = new WorkspaceService();
 const issueService = new IssueService();
@@ -71,6 +72,7 @@ export const CommandModal: React.FC = observer(() => {
   const [pages, setPages] = useState<string[]>([]);
   const { isCommandPaletteOpen, toggleCommandPaletteModal, toggleCreateIssueModal, toggleCreateProjectModal } =
     useCommandPalette();
+  const { allowPermissions } = useUserPermissions();
   const { setTrackElement } = useEventTracker();
 
   // router
@@ -83,6 +85,11 @@ export const CommandModal: React.FC = observer(() => {
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   const { baseTabIndex } = getTabIndex(undefined, isMobile);
+
+  const canPerformWorkspaceActions = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
 
   // TODO: update this to mobx store
   const { data: issueDetails } = useSWR(
@@ -314,8 +321,7 @@ export const CommandModal: React.FC = observer(() => {
                                 </Command.Item>
                               </Command.Group>
                             )}
-
-                          {workspaceSlug && (
+                          {workspaceSlug && canPerformWorkspaceActions && (
                             <Command.Group heading="Project">
                               <Command.Item
                                 onSelect={() => {
@@ -335,23 +341,26 @@ export const CommandModal: React.FC = observer(() => {
                           )}
 
                           {/* project actions */}
-                          {projectId && <CommandPaletteProjectActions closePalette={closePalette} />}
-
-                          <Command.Group heading="Workspace Settings">
-                            <Command.Item
-                              onSelect={() => {
-                                setPlaceholder("Search workspace settings...");
-                                setSearchTerm("");
-                                setPages([...pages, "settings"]);
-                              }}
-                              className="focus:outline-none"
-                            >
-                              <div className="flex items-center gap-2 text-custom-text-200">
-                                <Settings className="h-3.5 w-3.5" />
-                                Search settings...
-                              </div>
-                            </Command.Item>
-                          </Command.Group>
+                          {projectId && canPerformAnyCreateAction && (
+                            <CommandPaletteProjectActions closePalette={closePalette} />
+                          )}
+                          {canPerformWorkspaceAction && (
+                            <Command.Group heading="Workspace Settings">
+                              <Command.Item
+                                onSelect={() => {
+                                  setPlaceholder("Search workspace settings...");
+                                  setSearchTerm("");
+                                  setPages([...pages, "settings"]);
+                                }}
+                                className="focus:outline-none"
+                              >
+                                <div className="flex items-center gap-2 text-custom-text-200">
+                                  <Settings className="h-3.5 w-3.5" />
+                                  Search settings...
+                                </div>
+                              </Command.Item>
+                            </Command.Group>
+                          )}
                           <Command.Group heading="Account">
                             <Command.Item onSelect={createNewWorkspace} className="focus:outline-none">
                               <div className="flex items-center gap-2 text-custom-text-200">
