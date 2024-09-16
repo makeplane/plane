@@ -54,7 +54,7 @@ export const CustomAnalytics: React.FC<Props> = observer((props) => {
 
   return (
     <div className={cn("relative flex h-full w-full overflow-hidden", isProjectLevel ? "flex-col-reverse" : "")}>
-      <ContentWrapper>
+      <div className="flex h-full w-full flex-col overflow-hidden">
         <CustomAnalyticsSelectBar
           control={control}
           setValue={setValue}
@@ -68,7 +68,7 @@ export const CustomAnalytics: React.FC<Props> = observer((props) => {
           params={params}
           fullScreen={fullScreen}
         />
-      </ContentWrapper>
+      </div>
 
       <div
         className={cn(
