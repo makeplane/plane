@@ -19,15 +19,11 @@ import useSize from "@/hooks/use-window-size";
 
 export const WorkspaceDashboardView = observer(() => {
   // store hooks
-  const {
-    //  captureEvent,
-    setTrackElement,
-  } = useEventTracker();
+  const { captureEvent, setTrackElement } = useEventTracker();
   const { toggleCreateProjectModal } = useCommandPalette();
   const { workspaceSlug } = useParams();
   const { data: currentUser } = useUser();
   const { data: currentUserProfile, updateTourCompleted } = useUserProfile();
-  const { captureEvent } = useEventTracker();
   const { homeDashboardId, fetchHomeDashboardWidgets } = useDashboard();
   const { joinedProjectIds, loader } = useProject();
 
