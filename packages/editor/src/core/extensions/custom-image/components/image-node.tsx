@@ -89,7 +89,7 @@ export const CustomImageNode = (props: CustomImageNodeViewProps) => {
     if (node.attrs.src) {
       setIsUploaded(true);
     }
-  }, [node.attrs]);
+  }, [node.attrs.src]);
 
   const existingFile = React.useMemo(() => {
     const entity = getUploadEntity();
