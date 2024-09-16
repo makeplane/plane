@@ -1,6 +1,8 @@
 import { mergeAttributes } from "@tiptap/core";
+import { ReactNodeViewRenderer } from "@tiptap/react";
 import { Image } from "@tiptap/extension-image";
-import { UploadImageExtensionStorage } from "@/extensions/custom-image";
+// extensions
+import { CustomImageNode, UploadImageExtensionStorage } from "@/extensions";
 
 export const CustomImageComponentWithoutProps = () =>
   Image.extend<{}, UploadImageExtensionStorage>({
@@ -33,9 +35,6 @@ export const CustomImageComponentWithoutProps = () =>
         {
           tag: "image-component",
         },
-        {
-          tag: "img",
-        },
       ];
     },
 
@@ -46,7 +45,12 @@ export const CustomImageComponentWithoutProps = () =>
     addStorage() {
       return {
         fileMap: new Map(),
+        deletedImageSet: new Map<string, boolean>(),
       };
+    },
+
+    addNodeView() {
+      return ReactNodeViewRenderer(CustomImageNode);
     },
   });
 

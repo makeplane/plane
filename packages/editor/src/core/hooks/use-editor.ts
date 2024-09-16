@@ -67,11 +67,6 @@ export const useEditor = (props: CustomEditorProps) => {
       }),
       ...editorProps,
     },
-    immediatelyRender: true,
-    shouldRerenderOnTransaction: false,
-    onContentError: (error) => {
-      console.error("Error rendering content:", error);
-    },
     extensions: [
       ...CoreEditorExtensions({
         enableHistory,

@@ -23,7 +23,6 @@ import {
 } from "lucide-react";
 // helpers
 import {
-  insertImageCommand,
   insertTableCommand,
   setText,
   toggleBlockquote,
@@ -43,7 +42,7 @@ import {
   toggleUnderline,
 } from "@/helpers/editor-commands";
 // types
-import { TEditorCommands, UploadImage } from "@/types";
+import { TEditorCommands } from "@/types";
 
 export interface EditorMenuItem {
   key: TEditorCommands;

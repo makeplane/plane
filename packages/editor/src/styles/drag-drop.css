@@ -39,7 +39,7 @@
 }
 /* end ai handle */
 
-.ProseMirror:not(.dragging) .ProseMirror-selectednode:not(.node-imageBlock) {
+.ProseMirror:not(.dragging) .ProseMirror-selectednode:not(.node-imageComponent):not(.node-image) {
   position: relative;
   cursor: grab;
   outline: none !important;
@@ -64,7 +64,8 @@
     pointer-events: none;
   }
 
-  &.node-imageComponent {
+  &.node-imageComponent,
+  &.node-image {
     --horizontal-offset: 0px;
 
     &::after {
@@ -104,6 +105,7 @@ ol > li:nth-child(n + 100).ProseMirror-selectednode:not(.dragging)::after {
   margin-left: -35px;
 }
 
+.ProseMirror node-image,
 .ProseMirror node-imageComponent {
   transition: filter 0.1s ease-in-out;
   cursor: pointer;

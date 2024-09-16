@@ -5,9 +5,11 @@ import { v4 as uuidv4 } from "uuid";
 // extensions
 import { CustomImageNode } from "@/extensions/custom-image";
 // plugins
-import { isFileValid } from "@/plugins/image";
+import { TrackImageDeletionPlugin, TrackImageRestorationPlugin, isFileValid } from "@/plugins/image";
 // types
 import { TFileHandler } from "@/types";
+// helpers
+import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -22,10 +24,10 @@ export interface UploadImageExtensionStorage {
   fileMap: Map<string, UploadEntity>;
 }
 
-export type UploadEntity = ({ event: "insert" } | { event: "drop"; file: File }) & { hasOpenedFileInputOnce: boolean };
+export type UploadEntity = ({ event: "insert" } | { event: "drop"; file: File }) & { hasOpenedFileInputOnce?: boolean };
 
 export const CustomImageExtension = (props: TFileHandler) => {
-  const { upload } = props;
+  const { upload, delete: deleteImage, restore: restoreImage } = props;
 
   return Image.extend<{}, UploadImageExtensionStorage>({
     name: "imageComponent",
@@ -57,9 +59,6 @@ export const CustomImageExtension = (props: TFileHandler) => {
         {
           tag: "image-component",
         },
-        {
-          tag: "img",
-        },
       ];
     },
 
@@ -67,9 +66,42 @@ export const CustomImageExtension = (props: TFileHandler) => {
       return ["image-component", mergeAttributes(HTMLAttributes)];
     },
 
+    onCreate(this) {
+      const imageSources = new Set<string>();
+      this.editor.state.doc.descendants((node) => {
+        if (node.type.name === this.name) {
+          imageSources.add(node.attrs.src);
+        }
+      });
+      imageSources.forEach(async (src) => {
+        try {
+          const assetUrlWithWorkspaceId = new URL(src).pathname.substring(1);
+          console.log("assetUrlWithWorkspaceId restore ", this.name, assetUrlWithWorkspaceId);
+          await restoreImage(assetUrlWithWorkspaceId);
+        } catch (error) {
+          console.error("Error restoring image: ", error);
+        }
+      });
+    },
+
+    addKeyboardShortcuts() {
+      return {
+        ArrowDown: insertEmptyParagraphAtNodeBoundaries("down", this.name),
+        ArrowUp: insertEmptyParagraphAtNodeBoundaries("up", this.name),
+      };
+    },
+
+    addProseMirrorPlugins() {
+      return [
+        TrackImageDeletionPlugin(this.editor, deleteImage, this.name),
+        TrackImageRestorationPlugin(this.editor, restoreImage, this.name),
+      ];
+    },
+
     addStorage() {
       return {
         fileMap: new Map(),
+        deletedImageSet: new Map<string, boolean>(),
       };
     },
 
