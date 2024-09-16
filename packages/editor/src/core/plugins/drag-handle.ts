@@ -237,9 +237,9 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
       const frameRenderer = document.querySelector(".frame-renderer");
       if (!frameRenderer) return;
       if (e.clientY < options.scrollThreshold.up) {
-        frameRenderer.scrollBy({ top: -70, behavior: "smooth" });
+        frameRenderer.scrollBy({ top: -150, behavior: "smooth" });
       } else if (window.innerHeight - e.clientY < options.scrollThreshold.down) {
-        frameRenderer.scrollBy({ top: 70, behavior: "smooth" });
+        frameRenderer.scrollBy({ top: 150, behavior: "smooth" });
       }
     });
 
