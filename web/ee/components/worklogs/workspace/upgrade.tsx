@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useTheme } from "next-themes";
 import { Button } from "@plane/ui";
 // plane web components
-import { ProPlanCloudUpgradeModal } from "@/plane-web/components/license";
+import { CloudUpgradeModal } from "@/plane-web/components/license";
 
 export const WorkspaceWorklogsUpgrade: FC = observer(() => {
   const { resolvedTheme } = useTheme();
@@ -18,7 +18,7 @@ export const WorkspaceWorklogsUpgrade: FC = observer(() => {
 
   return (
     <Fragment>
-      <ProPlanCloudUpgradeModal isOpen={isPaidPlanModalOpen} handleClose={() => togglePaidPlanModal(false)} />
+      <CloudUpgradeModal isOpen={isPaidPlanModalOpen} handleClose={() => togglePaidPlanModal(false)} />
       <div className="flex flex-col gap-5 items-center justify-center min-h-full min-w-full overflow-y-auto py-10 md:px-20 px-5">
         <div className="flex flex-col gap-1.5 flex-shrink">
           <h3 className="text-xl font-semibold">Get detailed time-tracking reports from your workspace</h3>

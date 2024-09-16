@@ -395,3 +395,9 @@ FEATURE_FLAG_SERVER_BASE_URL = os.environ.get(
 FEATURE_FLAG_SERVER_AUTH_TOKEN = os.environ.get(
     "FEATURE_FLAG_SERVER_AUTH_TOKEN", ""
 )
+
+# Check if multi tenant
+IS_MULTI_TENANT = os.environ.get("IS_MULTI_TENANT", "0") == "1"
+
+# Instance Changelog URL
+INSTANCE_CHANGELOG_URL = os.environ.get("INSTANCE_CHANGELOG_URL", "")

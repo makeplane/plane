@@ -1,3 +1,5 @@
+"use client";
+
 import { FC } from "react";
 import orderBy from "lodash/orderBy";
 import { CheckCircle, Loader } from "lucide-react";

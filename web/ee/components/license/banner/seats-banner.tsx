@@ -8,7 +8,7 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useInstance, useMember, useWorkspace } from "@/hooks/store";
 // plane web components
-import { ProPlanCloudUpgradeModal } from "@/plane-web/components/license";
+import { CloudUpgradeModal } from "@/plane-web/components/license";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
@@ -74,7 +74,7 @@ export const LicenseSeatsBanner: FC = observer(() => {
 
   return (
     <>
-      <ProPlanCloudUpgradeModal isOpen={pricingModalOpen} handleClose={() => setPricingModalOpen(false)} />
+      <CloudUpgradeModal isOpen={pricingModalOpen} handleClose={() => setPricingModalOpen(false)} />
       <div
         className={cn(
           "relative flex justify-center items-center gap-2 p-2 px-4",

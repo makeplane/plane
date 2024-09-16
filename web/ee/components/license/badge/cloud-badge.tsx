@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
@@ -8,7 +10,7 @@ import { Button } from "@plane/ui";
 import { useEventTracker } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web components
-import { ProPlanCloudUpgradeModal } from "@/plane-web/components/license";
+import { CloudUpgradeModal } from "@/plane-web/components/license";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // assets
@@ -51,9 +53,13 @@ export const CloudEditionBadge = observer(() => {
   const renderButtonText = () => {
     switch (subscriptionDetail.product) {
       case "FREE":
-        return "Upgrade to Pro";
+        return "Upgrade plan";
       case "PRO":
-        return `Pro trial ends ${subscriptionDetail.remaining_trial_days}d`;
+        return `Pro trial ends
+            ${
+              subscriptionDetail.remaining_trial_days === 0 ? "today" : `in ${subscriptionDetail.remaining_trial_days}d`
+            }
+            `;
       default:
         return "Upgrade";
     }
@@ -61,7 +67,7 @@ export const CloudEditionBadge = observer(() => {
 
   return (
     <>
-      <ProPlanCloudUpgradeModal
+      <CloudUpgradeModal
         isOpen={isPaidPlanModalOpen}
         handleClose={() => togglePaidPlanModal(false)}
         handleSuccessModal={() => handleSuccessModalToggle(true)}
@@ -85,7 +91,7 @@ export const CloudEditionBadge = observer(() => {
           className="w-fit cursor-pointer rounded-2xl px-4 py-1 text-center text-sm font-medium outline-none"
           onClick={handlePaidPlanSuccessModalOpen}
         >
-          <Image src={PlaneLogo} alt="Plane Pro" width={14} height={14} />
+          <Image src={PlaneLogo} alt="Plane Pro" width={12} height={12} />
           Plane Pro
         </Button>
       )}
