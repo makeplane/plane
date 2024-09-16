@@ -22,7 +22,7 @@ type Props = {
 };
 
 export const DocumentEditorAdditionalExtensions = (props: Props) => {
-  const { disabledExtensions, fileHandler, issueEmbedConfig, provider, userDetails } = props;
+  const { disabledExtensions, issueEmbedConfig, provider, userDetails } = props;
 
   const isIssueEmbedDisabled = !!disabledExtensions?.includes("issue-embed");
   const isCollaborationCursorDisabled = !!disabledExtensions?.includes("collaboration-cursor");
@@ -42,9 +42,9 @@ export const DocumentEditorAdditionalExtensions = (props: Props) => {
         },
       },
     ];
-    extensions.push(SlashCommand(fileHandler.upload, slashCommandAdditionalOptions));
+    extensions.push(SlashCommand(slashCommandAdditionalOptions));
   } else {
-    extensions.push(SlashCommand(fileHandler.upload));
+    extensions.push(SlashCommand());
   }
 
   if (issueEmbedConfig && !isIssueEmbedDisabled) {
