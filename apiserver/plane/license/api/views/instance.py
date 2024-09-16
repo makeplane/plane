@@ -208,7 +208,7 @@ class InstanceEndpoint(BaseAPIView):
         #
         data["payment_server_base_url"] = (
             settings.PAYMENT_SERVER_BASE_URL
-            if os.environ.get("IS_MULTI_TENANT", "0") == "1"
+            if settings.IS_MULTI_TENANT
             else ""
         )
         data["prime_server_base_url"] = settings.PRIME_SERVER_BASE_URL
@@ -216,6 +216,7 @@ class InstanceEndpoint(BaseAPIView):
             settings.FEATURE_FLAG_SERVER_BASE_URL
         )
         data["silo_base_url"] = SILO_BASE_URL
+        data["instance_changelog_url"] = settings.INSTANCE_CHANGELOG_URL
 
         instance_data = serializer.data
         instance_data["workspaces_exist"] = Workspace.objects.count() >= 1

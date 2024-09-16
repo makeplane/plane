@@ -1,6 +1,5 @@
 # Python imports
 import requests
-import os
 
 # Django imports
 from django.conf import settings
@@ -27,7 +26,7 @@ class WorkspaceLicenseEndpoint(BaseAPIView):
     def get(self, request, slug):
         try:
             # Check the multi-tenant environment
-            if os.environ.get("IS_MULTI_TENANT", "0") == "1":
+            if settings.IS_MULTI_TENANT:
                 return Response(
                     {"error": "Forbidden"},
                     status=status.HTTP_403_FORBIDDEN,
@@ -57,7 +56,7 @@ class WorkspaceLicenseEndpoint(BaseAPIView):
 
     def post(self, request, slug):
         # Check the multi-tenant environment
-        if os.environ.get("IS_MULTI_TENANT", "0") == "1":
+        if settings.IS_MULTI_TENANT:
             return Response(
                 {"error": "Forbidden"},
                 status=status.HTTP_403_FORBIDDEN,

@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, useState } from "react";
 import orderBy from "lodash/orderBy";
 import { useParams } from "next/navigation";
@@ -19,7 +21,7 @@ import { ProPlanUpgrade } from "./pro-plan-upgrade";
 
 const paymentService = new PaymentService();
 
-export type ProPlanCloudUpgradeModalProps = {
+export type CloudUpgradeModalProps = {
   isOpen: boolean;
   handleClose: () => void;
   handleSuccessModal?: () => void;
@@ -35,7 +37,7 @@ export const calculateYearlyDiscount = (monthlyPrice: number, yearlyPricePerMont
   return Math.floor(discountPercentage);
 };
 
-export const ProPlanCloudUpgradeModal: FC<ProPlanCloudUpgradeModalProps> = (props) => {
+export const CloudUpgradeModal: FC<CloudUpgradeModalProps> = (props) => {
   const { isOpen, handleClose, handleSuccessModal, canFetchProducts = true } = props;
   // params
   const { workspaceSlug } = useParams();
@@ -153,6 +155,11 @@ export const ProPlanCloudUpgradeModal: FC<ProPlanCloudUpgradeModalProps> = (prop
             <div className="p-1 px-2 bg-custom-primary-100/20 text-custom-primary-100 text-xs rounded-full font-medium">
               Pro trial in progress
             </div>
+          </div>
+        )}
+        {subscriptionDetail?.is_trial_ended && (
+          <div className="relative flex justify-center items-center">
+            <div className="p-1 px-2 bg-red-500/20 text-red-600 text-xs rounded-full font-medium">Pro trial ended</div>
           </div>
         )}
         <Dialog.Title

@@ -1,5 +1,5 @@
 // types
-import type { IInstanceInfo, IInstanceChangeLog } from "@plane/types";
+import type { IInstanceInfo, TPage } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
@@ -26,8 +26,8 @@ export class InstanceService extends APIService {
       });
   }
 
-  async getInstanceChangeLog(): Promise<IInstanceChangeLog[]> {
-    return this.get("/api/instances/changelog/")
+  async getInstanceChangeLog(changelogUrl: string): Promise<TPage> {
+    return this.get(changelogUrl)
       .then((response) => response.data)
       .catch((error) => {
         throw error;

@@ -1,6 +1,5 @@
 # Python imports
 import requests
-import os
 
 # Django imports
 from django.conf import settings
@@ -56,7 +55,8 @@ def fetch_workspace_license(workspace_id, workspace_slug, free_seats=12):
 def is_trial_allowed(workspace_license):
     """The free trial is only allowed if the workspace has not activated the free trial and the workspace does not have a subscription"""
     if (
-        not workspace_license.subscription
+        settings.IS_MULTI_TENANT
+        and not workspace_license.subscription
         and not workspace_license.has_activated_free_trial
     ):
         return True
@@ -136,6 +136,14 @@ def show_trial_banner(workspace_license):
     return False
 
 
+def is_trial_ended(workspace_license):
+    """Check if the trial has ended"""
+    if workspace_license.plan == WorkspaceLicense.PlanChoice.FREE:
+        # If the workspace is on free product then check if the trial is allowed
+        return not is_trial_allowed(workspace_license)
+    return False
+
+
 def resync_workspace_license(workspace_slug, force=False):
     # Fetch the workspace
     workspace = Workspace.objects.get(slug=workspace_slug)
@@ -186,6 +194,9 @@ def resync_workspace_license(workspace_slug, force=False):
                 "has_added_payment_method", False
             )
             workspace_license.subscription = response.get("subscription")
+            workspace_license.current_period_start_date = response.get(
+                "current_period_start_date"
+            )
             workspace_license.save()
 
             workspace_license = WorkspaceLicense.objects.get(
@@ -202,8 +213,7 @@ def resync_workspace_license(workspace_slug, force=False):
                 "has_activated_free_trial": workspace_license.has_activated_free_trial,
                 "has_added_payment_method": workspace_license.has_added_payment_method,
                 "subscription": workspace_license.subscription,
-                "is_self_managed": os.environ.get("IS_MULTI_TENANT", "0")
-                == "0",
+                "is_self_managed": (not settings.IS_MULTI_TENANT),
                 "is_on_trial": is_on_trial(workspace_license),
                 "is_trial_allowed": is_trial_allowed(workspace_license),
                 "remaining_trial_days": trial_remaining_days(
@@ -213,6 +223,8 @@ def resync_workspace_license(workspace_slug, force=False):
                 "show_payment_button": show_payment_button(workspace_license),
                 "show_trial_banner": show_trial_banner(workspace_license),
                 "free_seats": workspace_license.free_seats,
+                "current_period_start_date": workspace_license.current_period_start_date,
+                "is_trial_ended": is_trial_ended(workspace_license),
             }
         else:
             return {
@@ -226,8 +238,7 @@ def resync_workspace_license(workspace_slug, force=False):
                 "has_activated_free_trial": workspace_license.has_activated_free_trial,
                 "has_added_payment_method": workspace_license.has_added_payment_method,
                 "subscription": workspace_license.subscription,
-                "is_self_managed": os.environ.get("IS_MULTI_TENANT", "0")
-                == "0",
+                "is_self_managed": (not settings.IS_MULTI_TENANT),
                 "is_on_trial": is_on_trial(workspace_license),
                 "is_trial_allowed": is_trial_allowed(workspace_license),
                 "remaining_trial_days": trial_remaining_days(
@@ -237,6 +248,8 @@ def resync_workspace_license(workspace_slug, force=False):
                 "show_payment_button": show_payment_button(workspace_license),
                 "show_trial_banner": show_trial_banner(workspace_license),
                 "free_seats": workspace_license.free_seats,
+                "current_period_start_date": workspace_license.current_period_start_date,
+                "is_trial_ended": is_trial_ended(workspace_license),
             }
     # If the license is not present, then fetch the license from the payment server and create it
     else:
@@ -250,6 +263,7 @@ def resync_workspace_license(workspace_slug, force=False):
                 member__is_bot=False,
             ).count(),
         )
+
         # Create the workspace license
         _ = WorkspaceLicense.objects.create(
             workspace=workspace,
@@ -268,6 +282,9 @@ def resync_workspace_license(workspace_slug, force=False):
                 "has_added_payment_method", False
             ),
             subscription=response.get("subscription"),
+            current_period_start_date=response.get(
+                "current_period_start_date"
+            ),
         )
 
         workspace_license = WorkspaceLicense.objects.get(workspace=workspace)
@@ -283,7 +300,7 @@ def resync_workspace_license(workspace_slug, force=False):
             "has_activated_free_trial": workspace_license.has_activated_free_trial,
             "has_added_payment_method": workspace_license.has_added_payment_method,
             "subscription": workspace_license.subscription,
-            "is_self_managed": os.environ.get("IS_MULTI_TENANT", "0") == "0",
+            "is_self_managed": (not settings.IS_MULTI_TENANT),
             "is_on_trial": is_on_trial(workspace_license),
             "is_trial_allowed": is_trial_allowed(workspace_license),
             "remaining_trial_days": trial_remaining_days(workspace_license),
@@ -291,4 +308,6 @@ def resync_workspace_license(workspace_slug, force=False):
             "show_payment_button": show_payment_button(workspace_license),
             "show_trial_banner": show_trial_banner(workspace_license),
             "free_seats": workspace_license.free_seats,
+            "current_period_start_date": workspace_license.current_period_start_date,
+            "is_trial_ended": is_trial_ended(workspace_license),
         }

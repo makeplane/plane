@@ -114,8 +114,9 @@ class WebsiteUserWorkspaceEndpoint(BaseAPIView):
                 )
             )
 
-            workspace_ids = [workspace["workspace_id"] for workspace in workspaces]
-            
+            workspace_ids = [
+                workspace["workspace_id"] for workspace in workspaces
+            ]
 
             # Fetch the workspaces from the workspace license
             workspace_licenses = WorkspaceLicense.objects.filter(
@@ -126,14 +127,13 @@ class WebsiteUserWorkspaceEndpoint(BaseAPIView):
                 licenses = [
                     license
                     for license in workspace_licenses
-                    if str(license.workspace_id) == str(workspace["workspace_id"])
+                    if str(license.workspace_id)
+                    == str(workspace["workspace_id"])
                 ]
 
                 if licenses:
                     workspace["product"] = licenses[0].plan
-                    workspace["is_on_trial"] = is_on_trial(
-                        licenses[0]
-                    )
+                    workspace["is_on_trial"] = is_on_trial(licenses[0])
                     workspace["is_billing_active"] = is_billing_active(
                         licenses[0]
                     )
@@ -252,6 +252,9 @@ class WorkspaceLicenseSyncEndpoint(BaseAPIView):
                 "has_added_payment_method", False
             )
             workspace_license.subscription = request.data.get("subscription")
+            workspace_license.current_period_start_date = request.data.get(
+                "current_period_start_date"
+            )
             workspace_license.save()
         # If the workspace license is not present, then fetch the license from the payment server and create it
         else:
@@ -275,6 +278,9 @@ class WorkspaceLicenseSyncEndpoint(BaseAPIView):
                     "has_added_payment_method", False
                 ),
                 subscription=request.data.get("subscription"),
+                current_period_start_date=request.data.get(
+                    "current_period_start_date"
+                ),
             )
 
         # Return the response

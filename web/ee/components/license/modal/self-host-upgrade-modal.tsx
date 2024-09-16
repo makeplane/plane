@@ -1,3 +1,5 @@
+"use client";
+
 import { FC } from "react";
 import { useParams } from "next/navigation";
 import { Dialog } from "@headlessui/react";
@@ -13,12 +15,12 @@ import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // local components
 import { ProPlanUpgrade } from "./pro-plan-upgrade";
 
-export type ProPlanSelfHostUpgradeModalProps = {
+export type SelfHostUpgradeModalProps = {
   isOpen: boolean;
   handleClose: () => void;
 };
 
-export const ProPlanSelfHostUpgradeModal: FC<ProPlanSelfHostUpgradeModalProps> = (props) => {
+export const SelfHostUpgradeModal: FC<SelfHostUpgradeModalProps> = (props) => {
   const { isOpen, handleClose } = props;
   // params
   const { workspaceSlug } = useParams();
@@ -27,8 +29,8 @@ export const ProPlanSelfHostUpgradeModal: FC<ProPlanSelfHostUpgradeModalProps> =
   const currentWorkspaceRole = workspaceInfoBySlug(workspaceSlug.toString())?.role;
   const isAdmin = currentWorkspaceRole === EUserPermissions.ADMIN;
   // env
-  const PRO_PLAN_MONTHLY_PAYMENT_URL = process.env.NEXT_PUBLIC_PRO_PLAN_MONTHLY_PAYMENT_URL ?? "https://plane.so/pro";
-  const PRO_PLAN_YEARLY_PAYMENT_URL = process.env.NEXT_PUBLIC_PRO_PLAN_YEARLY_PAYMENT_URL ?? "https://plane.so/pro";
+  const PRO_PLAN_MONTHLY_PAYMENT_URL = "https://app.plane.so/upgrade/pro/self-hosted?plan=month";
+  const PRO_PLAN_YEARLY_PAYMENT_URL = "https://app.plane.so/upgrade/pro/self-hosted?plan=year";
   // pro product detail for self-hosted users
   const proProduct: IPaymentProduct = {
     id: "pro_product",

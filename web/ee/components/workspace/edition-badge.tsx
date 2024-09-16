@@ -4,7 +4,7 @@ import useSWR from "swr";
 // ui
 import { Loader } from "@plane/ui";
 // plane web components
-import { CloudEditionBadge, PaidPlanSuccessModal, SelfManagedEditionBadge } from "@/plane-web/components/license";
+import { CloudEditionBadge, PaidPlanSuccessModal, SelfHostedEditionBadge } from "@/plane-web/components/license";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
@@ -46,7 +46,7 @@ export const WorkspaceEditionBadge = observer(() => {
           handleClose={() => handleSuccessModalToggle(false)}
         />
       )}
-      {subscriptionDetail.is_self_managed ? <SelfManagedEditionBadge /> : <CloudEditionBadge />}
+      {subscriptionDetail.is_self_managed ? <SelfHostedEditionBadge /> : <CloudEditionBadge />}
     </>
   );
 });

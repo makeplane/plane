@@ -1,5 +1,4 @@
 # Python imports
-import os
 import requests
 
 # Django imports
@@ -17,7 +16,7 @@ from plane.db.models import Workspace, WorkspaceMember
 def workspace_license_initiate_task(workspace_id):
     """Create a free license for the workspace."""
 
-    if os.environ.get("IS_MULTI_TENANT", "0") == "0":
+    if settings.IS_MULTI_TENANT:
         # Get all active workspace members
         workspace_members = (
             WorkspaceMember.objects.filter(

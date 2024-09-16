@@ -2,7 +2,9 @@
 import socket
 import ipaddress
 from urllib.parse import urlparse
-import os
+
+# Django imports
+from django.conf import settings
 
 # Third party imports
 from rest_framework import serializers
@@ -47,7 +49,7 @@ class WebhookSerializer(DynamicBaseSerializer):
                 )
 
             # if in cloud environment, private IP addresses are also not allowed
-            if os.environ.get("IS_MULTI_TENANT", "0") == "1" and ip.is_private:
+            if settings.IS_MULTI_TENANT and ip.is_private:
                 raise serializers.ValidationError(
                     {"url": "URL resolves to a blocked IP address."}
                 )
@@ -105,10 +107,7 @@ class WebhookSerializer(DynamicBaseSerializer):
                     )
 
                 # if in cloud environment, private IP addresses are also not allowed
-                if (
-                    os.environ.get("IS_MULTI_TENANT", "0") == "1"
-                    and ip.is_private
-                ):
+                if settings.IS_MULTI_TENANT and ip.is_private:
                     raise serializers.ValidationError(
                         {"url": "URL resolves to a blocked IP address."}
                     )

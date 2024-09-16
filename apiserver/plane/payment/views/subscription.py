@@ -1,6 +1,5 @@
 # Python imports
 import requests
-import os
 
 # Django imports
 from django.conf import settings
@@ -130,7 +129,7 @@ class PurchaseSubscriptionSeatEndpoint(BaseAPIView):
     def post(self, request, slug):
         try:
 
-            if os.environ.get("IS_MULTI_TENANT", "0") == "1":
+            if settings.IS_MULTI_TENANT:
                 return Response(
                     {"error": "Forbidden"},
                     status=status.HTTP_403_FORBIDDEN,
@@ -159,7 +158,7 @@ class PurchaseSubscriptionSeatEndpoint(BaseAPIView):
             invited_member_count = WorkspaceMemberInvite.objects.filter(
                 workspace__slug=slug,
                 role__gt=10,
-            )
+            ).count()
 
             # Check if the quantity is less than the active paid users in the workspace
             if quantity < (workspace_member_count + invited_member_count):

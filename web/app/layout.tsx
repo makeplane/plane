@@ -11,7 +11,7 @@ import { SITE_NAME, SITE_DESCRIPTION } from "@/constants/meta";
 import { API_BASE_URL, cn } from "@/helpers/common.helper";
 // plane web components
 import { DesktopAppProviderRoot } from "@/plane-web/components/desktop";
-import { FreeTrialBanner } from "@/plane-web/components/license/free-trial-banner";
+import { FreeTrialBanner } from "@/plane-web/components/license";
 // local
 import { AppProvider } from "./provider";
 

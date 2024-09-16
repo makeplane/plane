@@ -1,8 +1,6 @@
-# Python imports
-import os
-
 # Django imports
 from django.utils import timezone
+from django.conf import settings
 
 # Model imports
 from plane.db.models import WorkspaceMember, WorkspaceMemberInvite
@@ -459,7 +457,7 @@ def workspace_member_check(
         ).first()
 
     # Get the workspace license
-    if os.environ.get("IS_MULTI_TENANT", "0") == "1":
+    if settings.IS_MULTI_TENANT:
         # return handle_cloud_payments(
         #     slug=slug,
         #     requested_invite_list=requested_invite_list,
