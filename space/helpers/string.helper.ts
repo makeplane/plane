@@ -69,7 +69,9 @@ export const isCommentEmpty = (comment: string | undefined): boolean => {
   // return true if comment is undefined
   if (!comment) return true;
   return (
-    comment?.trim() === "" || comment === "<p></p>" || isEmptyHtmlString(comment ?? "", ["img", "mention-component"])
+    comment?.trim() === "" ||
+    comment === "<p></p>" ||
+    isEmptyHtmlString(comment ?? "", ["img", "mention-component", "image-component"])
   );
 };
 

@@ -8,10 +8,10 @@ import { SideMenuExtension, SlashCommand } from "@/extensions";
 import { EditorRefApi, IRichTextEditor } from "@/types";
 
 const RichTextEditor = (props: IRichTextEditor) => {
-  const { dragDropEnabled, fileHandler } = props;
+  const { dragDropEnabled } = props;
 
   const getExtensions = useCallback(() => {
-    const extensions = [SlashCommand(fileHandler.upload)];
+    const extensions = [SlashCommand()];
 
     extensions.push(
       SideMenuExtension({
@@ -21,7 +21,7 @@ const RichTextEditor = (props: IRichTextEditor) => {
     );
 
     return extensions;
-  }, [dragDropEnabled, fileHandler.upload]);
+  }, [dragDropEnabled]);
 
   return (
     <EditorWrapper {...props} extensions={getExtensions()}>
