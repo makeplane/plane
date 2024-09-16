@@ -21,6 +21,8 @@ import {
 } from "@/hooks/store";
 // plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+// plane web hooks
+import { useIssueTypes } from "@/plane-web/hooks/store";
 // images
 import emptyProject from "@/public/empty-state/onboarding/dashboard-light.webp";
 
@@ -45,6 +47,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { fetchProjectStates } = useProjectState();
   const { fetchProjectLabels } = useLabel();
   const { getProjectEstimates } = useProjectEstimates();
+  const { isIssueTypeEnabledForProject, fetchAllPropertiesAndOptions } = useIssueTypes();
   // router
   const { workspaceSlug, projectId } = useParams();
 
@@ -104,7 +107,22 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   );
 
   // derived values
-  const projectExists = projectId ? getProjectById(projectId.toString()) : null;
+
+  const isIssueTypeEnabled = isIssueTypeEnabledForProject(
+    workspaceSlug?.toString(),
+    projectId?.toString(),
+    "ISSUE_TYPE_DISPLAY"
+  );
+  // fetching all issue types and properties
+  useSWR(
+    workspaceSlug && projectId && isIssueTypeEnabled
+      ? `ISSUE_TYPES_AND_PROPERTIES_${workspaceSlug}_${projectId}_${isIssueTypeEnabled}`
+      : null,
+    workspaceSlug && projectId && isIssueTypeEnabled
+      ? () => fetchAllPropertiesAndOptions(workspaceSlug.toString(), projectId.toString())
+      : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
   const hasPermissionToCurrentProject = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
     EUserPermissionsLevel.PROJECT,
@@ -122,6 +140,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
       </div>
     );
 
+  const projectExists = projectId ? getProjectById(projectId.toString()) : null;
   // check if the user don't have permission to access the project
   if (projectExists && projectId && hasPermissionToCurrentProject === false) return <JoinProject />;
 
