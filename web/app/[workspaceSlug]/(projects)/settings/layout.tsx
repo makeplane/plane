@@ -8,7 +8,9 @@ import { observer } from "mobx-react";
 // local components
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { AppHeader } from "@/components/core";
+// hooks
 import { useUserPermissions } from "@/hooks/store";
+// plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { WorkspaceSettingHeader } from "./header";
 import { MobileWorkspaceSettingsTabs } from "./mobile-header-tabs";
