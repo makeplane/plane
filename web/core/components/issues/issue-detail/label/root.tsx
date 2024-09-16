@@ -6,10 +6,11 @@ import { IIssueLabel, TIssue } from "@plane/types";
 // components
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { useIssueDetail, useLabel, useProjectInbox } from "@/hooks/store";
+import { useIssueDetail, useLabel, useProjectInbox, useUserPermissions } from "@/hooks/store";
 // ui
 // types
 import { LabelList, LabelCreate, IssueLabelSelectRoot } from "./";
+import { EUserPermissions, EUserPermissionsLevel } from "ee/constants/user-permissions";
 
 export type TIssueLabel = {
   workspaceSlug: string;
@@ -34,7 +35,9 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
     issue: { getIssueById },
   } = useIssueDetail();
   const { getIssueInboxByIssueId } = useProjectInbox();
+  const { allowPermissions } = useUserPermissions();
 
+  const canCreateLabel = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
   const issue = isInboxIssue ? getIssueInboxByIssueId(issueId)?.issue : getIssueById(issueId);
 
   const labelOperations: TLabelOperations = useMemo(
@@ -99,7 +102,7 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
         />
       )}
 
-      {!disabled && (
+      {!disabled && canCreateLabel && (
         <LabelCreate
           workspaceSlug={workspaceSlug}
           projectId={projectId}
