@@ -344,7 +344,7 @@ export const CommandModal: React.FC = observer(() => {
                           {projectId && canPerformAnyCreateAction && (
                             <CommandPaletteProjectActions closePalette={closePalette} />
                           )}
-                          {canPerformWorkspaceAction && (
+                          {canPerformWorkspaceActions && (
                             <Command.Group heading="Workspace Settings">
                               <Command.Item
                                 onSelect={() => {
