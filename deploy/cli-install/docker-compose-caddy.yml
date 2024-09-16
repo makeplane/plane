@@ -67,6 +67,14 @@ x-app-env: &app-env
     - FEATURE_FLAG_SERVER_BASE_URL=${FEATURE_FLAG_SERVER_BASE_URL:-http://monitor:8080}
     - PAYMENT_SERVER_BASE_URL=${PAYMENT_SERVER_BASE_URL:-http://monitor:8080}
 
+x-live-env: &live-env
+  environment:
+    - LIVE_BASE_PATH=${LIVE_BASE_PATH:-"/live"}
+    - API_BASE_URL=${API_BASE_URL:-http://api:8000}
+    - REDIS_HOST=${REDIS_HOST:-plane-redis}
+    - REDIS_PORT=${REDIS_PORT:-6379}
+    - REDIS_URL=${REDIS_URL:-redis://plane-redis:6379/}
+
 services:
   admin:
     <<: *app-env
@@ -103,7 +111,7 @@ services:
       - web
 
   live:
-    <<: *app-env
+    <<: *live-env
     image: registry.plane.tools/plane/live-enterprise:${APP_RELEASE_VERSION}
     restart: unless-stopped
     command: node live/dist/server.js live
