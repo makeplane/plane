@@ -56,7 +56,6 @@ export const CustomImageNode = (props: CustomImageNodeViewProps) => {
         // @ts-expect-error - TODO: fix typings, and don't remove await from
         // here for now
         const url: string = await editor?.commands.uploadImage(file);
-        console.log("url drop", url);
 
         if (!url) {
           throw new Error("Something went wrong while uploading the image");

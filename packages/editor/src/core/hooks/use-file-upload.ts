@@ -12,7 +12,6 @@ export const useUploader = ({ onUpload, editor }: { onUpload: (url: string) => v
         // @ts-expect-error - TODO: fix typings, and don't remove await from
         // here for now
         const url: string = await editor?.commands.uploadImage(file);
-        console.log("url upload", url);
 
         if (!url) {
           throw new Error("Something went wrong while uploading the image");
@@ -40,7 +39,6 @@ export const useFileUpload = () => {
 
   return { ref: fileInput, handleUploadClick };
 };
-
 export const useDropZone = ({ uploader }: { uploader: (file: File) => void }) => {
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [draggedInside, setDraggedInside] = useState<boolean>(false);

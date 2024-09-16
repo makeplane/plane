@@ -34,7 +34,6 @@ export const ImageExtension = (deleteImage: DeleteImage, restoreImage: RestoreIm
       imageSources.forEach(async (src) => {
         try {
           const assetUrlWithWorkspaceId = new URL(src).pathname.substring(1);
-          console.log("assetUrlWithWorkspaceId restore ", this.name, assetUrlWithWorkspaceId);
           await restoreImage(assetUrlWithWorkspaceId);
         } catch (error) {
           console.error("Error restoring image: ", error);
