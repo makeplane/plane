@@ -321,7 +321,7 @@ export const CommandModal: React.FC = observer(() => {
                                 </Command.Item>
                               </Command.Group>
                             )}
-                          {workspaceSlug && canPerformWorkspaceAction && (
+                          {workspaceSlug && canPerformWorkspaceActions && (
                             <Command.Group heading="Project">
                               <Command.Item
                                 onSelect={() => {
