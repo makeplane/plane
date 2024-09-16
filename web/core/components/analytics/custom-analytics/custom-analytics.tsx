@@ -5,7 +5,6 @@ import useSWR from "swr";
 import { IAnalyticsParams } from "@plane/types";
 // services
 // components
-import { ContentWrapper } from "@plane/ui";
 import { CustomAnalyticsSelectBar, CustomAnalyticsMainContent, CustomAnalyticsSidebar } from "@/components/analytics";
 // types
 // fetch-keys
