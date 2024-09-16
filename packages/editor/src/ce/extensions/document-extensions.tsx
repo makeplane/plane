@@ -13,9 +13,7 @@ type Props = {
   userDetails: TUserDetails;
 };
 
-export const DocumentEditorAdditionalExtensions = (props: Props) => {
-  const {} = props;
-
+export const DocumentEditorAdditionalExtensions = (_props: Props) => {
   const extensions: Extensions = [SlashCommand()];
 
   return extensions;

@@ -164,7 +164,7 @@ class UserProjectInvitationsViewset(BaseViewSet):
                 ProjectMember(
                     project_id=project_id,
                     member=request.user,
-                    role=15 if workspace_role >= 15 else 5,
+                    role=workspace_role,
                     workspace=workspace,
                     created_by=request.user,
                 )

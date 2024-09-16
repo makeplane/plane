@@ -15,7 +15,8 @@ import { IWorkspace } from "@plane/types";
 import { Avatar, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 import { GOD_MODE_URL, cn } from "@/helpers/common.helper";
 // hooks
-import { useAppTheme, useUser, useUserProfile, useWorkspace } from "@/hooks/store";
+import { useAppTheme, useUser, useUserPermissions, useUserProfile, useWorkspace } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { WorkspaceLogo } from "../logo";
 
 // Static Data
@@ -25,12 +26,14 @@ const userLinks = (workspaceSlug: string) => [
     name: "Workspace invites",
     href: "/invitations",
     icon: Mails,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
   },
   {
     key: "settings",
     name: "Workspace settings",
     href: `/${workspaceSlug}/settings`,
     icon: Settings,
+    access: [EUserPermissions.ADMIN],
   },
 ];
 
@@ -46,6 +49,7 @@ export const SidebarDropdown = observer(() => {
     signOut,
   } = useUser();
   const { updateUserProfile } = useUserProfile();
+  const { allowPermissions } = useUserPermissions();
 
   const isUserInstanceAdmin = false;
   const { currentWorkspace: activeWorkspace, workspaces } = useWorkspace();
@@ -168,7 +172,7 @@ export const SidebarDropdown = observer(() => {
                                       alt="Workspace Logo"
                                     />
                                   ) : (
-                                    workspace?.name?.charAt(0) ?? "..."
+                                    (workspace?.name?.charAt(0) ?? "...")
                                   )}
                                 </span>
                                 <h5
@@ -207,24 +211,27 @@ export const SidebarDropdown = observer(() => {
                         Create workspace
                       </Menu.Item>
                     </Link>
-                    {userLinks(workspaceSlug?.toString() ?? "").map((link, index) => (
-                      <Link
-                        key={link.key}
-                        href={link.href}
-                        className="w-full"
-                        onClick={() => {
-                          if (index > 0) handleItemClick();
-                        }}
-                      >
-                        <Menu.Item
-                          as="div"
-                          className="flex items-center gap-2 rounded px-2 py-1 text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
-                        >
-                          <link.icon className="h-4 w-4 flex-shrink-0" />
-                          {link.name}
-                        </Menu.Item>
-                      </Link>
-                    ))}
+                    {userLinks(workspaceSlug?.toString() ?? "").map(
+                      (link, index) =>
+                        allowPermissions(link.access, EUserPermissionsLevel.WORKSPACE) && (
+                          <Link
+                            key={link.key}
+                            href={link.href}
+                            className="w-full"
+                            onClick={() => {
+                              if (index > 0) handleItemClick();
+                            }}
+                          >
+                            <Menu.Item
+                              as="div"
+                              className="flex items-center gap-2 rounded px-2 py-1 text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
+                            >
+                              <link.icon className="h-4 w-4 flex-shrink-0" />
+                              {link.name}
+                            </Menu.Item>
+                          </Link>
+                        )
+                    )}
                   </div>
                   <div className="w-full px-4 py-2">
                     <Menu.Item

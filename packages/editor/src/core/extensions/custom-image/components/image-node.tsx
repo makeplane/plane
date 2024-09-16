@@ -63,7 +63,6 @@ export const CustomImageNode = (props: CustomImageNodeViewProps) => {
         onUpload(url);
       } catch (error) {
         console.error("Error uploading file:", error);
-        // Handle error state here if needed
       }
     },
     [editor.commands, onUpload]

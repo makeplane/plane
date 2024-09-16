@@ -1,4 +1,3 @@
-import { HocuspocusProvider } from "@hocuspocus/provider";
 import CharacterCount from "@tiptap/extension-character-count";
 import Placeholder from "@tiptap/extension-placeholder";
 import TaskItem from "@tiptap/extension-task-item";
