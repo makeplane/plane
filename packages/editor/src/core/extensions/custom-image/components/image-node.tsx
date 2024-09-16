@@ -53,10 +53,15 @@ export const CustomImageNode = (props: CustomImageNodeViewProps) => {
   const uploadFile = useCallback(
     async (file: File) => {
       try {
-        const result = await editor.commands.uploadImage(file)();
-        if (result) {
-          onUpload(result);
+        // @ts-expect-error - TODO: fix typings, and don't remove await from
+        // here for now
+        const url: string = await editor?.commands.uploadImage(file);
+        console.log("url drop", url);
+
+        if (!url) {
+          throw new Error("Something went wrong while uploading the image");
         }
+        onUpload(url);
       } catch (error) {
         console.error("Error uploading file:", error);
         // Handle error state here if needed

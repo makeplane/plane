@@ -29,7 +29,7 @@ export type UploadEntity = ({ event: "insert" } | { event: "drop"; file: File })
 export const CustomImageExtension = (props: TFileHandler) => {
   const { upload, delete: deleteImage, restore: restoreImage } = props;
 
-  return Image.extend<{}, UploadImageExtensionStorage>({
+  return Image.extend<Record<string, unknown>, UploadImageExtensionStorage>({
     name: "imageComponent",
     selectable: true,
     group: "block",

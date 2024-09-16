@@ -5,7 +5,7 @@ import { ReactNodeViewRenderer } from "@tiptap/react";
 import { CustomImageNode, UploadImageExtensionStorage } from "@/extensions/custom-image";
 
 export const CustomReadOnlyImageExtension = () =>
-  Image.extend<{}, UploadImageExtensionStorage>({
+  Image.extend<Record<string, unknown>, UploadImageExtensionStorage>({
     name: "imageComponent",
     selectable: false,
     group: "block",

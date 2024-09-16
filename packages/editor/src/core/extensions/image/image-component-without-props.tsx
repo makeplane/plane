@@ -5,7 +5,7 @@ import { Image } from "@tiptap/extension-image";
 import { CustomImageNode, UploadImageExtensionStorage } from "@/extensions";
 
 export const CustomImageComponentWithoutProps = () =>
-  Image.extend<{}, UploadImageExtensionStorage>({
+  Image.extend<Record<string, unknown>, UploadImageExtensionStorage>({
     name: "imageComponent",
     selectable: true,
     group: "block",
