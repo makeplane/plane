@@ -9,11 +9,12 @@ import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 export const useMemberColumns = () => {
   const { columns, workspaceSlug, removeMemberModal, setRemoveMemberModal } = useCeMemberColumns();
-  const [fullName, display_name, accountType, joiningDate] = columns;
+  const [fullName, display_name, email, accountType, authentication, joiningDate] = columns;
   const { currentWorkspaceSubscribedPlanDetail } = useWorkspaceSubscription();
   const eeColumns = [
     fullName,
     display_name,
+    email,
     accountType,
     {
       key: "Billing Status",
@@ -22,6 +23,7 @@ export const useMemberColumns = () => {
         <div className="w-36">{rowData.role < EUserPermissions.MEMBER ? "Inactive" : "Active"}</div>
       ),
     },
+    authentication,
     joiningDate,
   ];
 
