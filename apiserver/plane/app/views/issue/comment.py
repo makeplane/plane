@@ -73,8 +73,8 @@ class IssueCommentViewSet(BaseViewSet):
         ]
     )
     def create(self, request, slug, project_id, issue_id):
-        project = Project.objects.filter(pk=project_id)
-        issue = Issue.objects.filter(pk=issue_id)
+        project = Project.objects.get(pk=project_id)
+        issue = Issue.objects.get(pk=issue_id)
         if (
             ProjectMember.objects.filter(
                 workspace__slug=slug,
