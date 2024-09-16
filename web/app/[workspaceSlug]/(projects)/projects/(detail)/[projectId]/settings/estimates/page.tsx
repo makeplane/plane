@@ -7,22 +7,22 @@ import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
 import { EstimateRoot } from "@/components/estimates";
 // hooks
-import { useUser, useProject } from "@/hooks/store";
+import { useProject, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const EstimatesSettingsPage = observer(() => {
   const { workspaceSlug, projectId } = useParams();
-  const {
-    canPerformProjectAdminActions,
-    membership: { currentProjectRole },
-  } = useUser();
+  // store
   const { currentProjectDetails } = useProject();
+  const { workspaceUserInfo, allowPermissions } = useUserPermissions();
 
   // derived values
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Estimates` : undefined;
+  const canPerformProjectAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
 
   if (!workspaceSlug || !projectId) return <></>;
 
-  if (currentProjectRole && !canPerformProjectAdminActions) {
+  if (workspaceUserInfo && !canPerformProjectAdminActions) {
     return <NotAuthorizedView section="settings" isProjectView />;
   }
 
@@ -30,7 +30,7 @@ const EstimatesSettingsPage = observer(() => {
     <>
       <PageHead title={pageTitle} />
       <div
-        className={`w-full overflow-y-auto py-8 pr-9 ${canPerformProjectAdminActions ? "" : "pointer-events-none opacity-60"}`}
+        className={`w-full overflow-y-auto ${canPerformProjectAdminActions ? "" : "pointer-events-none opacity-60"}`}
       >
         <EstimateRoot
           workspaceSlug={workspaceSlug?.toString()}

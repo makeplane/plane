@@ -4,7 +4,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
 import { TInboxIssueFilterMemberKeys } from "@plane/types";
-import { Avatar } from "@plane/ui";
+import { Avatar, Tag } from "@plane/ui";
 // hooks
 import { useMember, useProjectInbox } from "@/hooks/store";
 
@@ -29,7 +29,7 @@ export const InboxIssueAppliedFiltersMember: FC<InboxIssueAppliedFiltersMember> 
 
   if (filteredValues.length === 0) return <></>;
   return (
-    <div className="relative flex flex-wrap items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1">
+    <Tag>
       <div className="text-xs text-custom-text-200">{label}</div>
       {filteredValues.map((value) => {
         const optionDetail = currentOptionDetail(value);
@@ -56,6 +56,6 @@ export const InboxIssueAppliedFiltersMember: FC<InboxIssueAppliedFiltersMember> 
       >
         <X className={`w-3 h-3`} />
       </div>
-    </div>
+    </Tag>
   );
 });

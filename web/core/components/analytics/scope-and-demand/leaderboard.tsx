@@ -1,4 +1,5 @@
 // ui
+import { Card } from "@plane/ui";
 import { ProfileEmptyState } from "@/components/ui";
 // image
 import emptyUsers from "@/public/empty-state/empty_users.svg";
@@ -18,7 +19,7 @@ type Props = {
 };
 
 export const AnalyticsLeaderBoard: React.FC<Props> = ({ users, title, emptyStateMessage, workspaceSlug }) => (
-  <div className="rounded-[10px] border border-custom-border-200 p-3">
+  <Card>
     <h6 className="text-base font-medium">{title}</h6>
     {users.length > 0 ? (
       <div className="mt-3 space-y-3">
@@ -57,5 +58,5 @@ export const AnalyticsLeaderBoard: React.FC<Props> = ({ users, title, emptyState
         <ProfileEmptyState title="No Data yet" description={emptyStateMessage} image={emptyUsers} />
       </div>
     )}
-  </div>
+  </Card>
 );

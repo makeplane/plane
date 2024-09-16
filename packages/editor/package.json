@@ -14,6 +14,12 @@
       "types": "./dist/index.d.mts",
       "import": "./dist/index.mjs",
       "module": "./dist/index.mjs"
+    },
+    "./lib": {
+      "require": "./dist/lib.js",
+      "types": "./dist/lib.d.mts",
+      "import": "./dist/lib.mjs",
+      "module": "./dist/lib.mjs"
     }
   },
   "scripts": {
@@ -29,9 +35,11 @@
   },
   "dependencies": {
     "@floating-ui/react": "^0.26.4",
+    "@hocuspocus/provider": "^2.13.5",
     "@plane/ui": "*",
     "@tiptap/core": "^2.1.13",
     "@tiptap/extension-blockquote": "^2.1.13",
+    "@tiptap/extension-character-count": "^2.6.5",
     "@tiptap/extension-collaboration": "^2.3.2",
     "@tiptap/extension-image": "^2.1.13",
     "@tiptap/extension-list-item": "^2.1.13",
@@ -57,10 +65,7 @@
     "tailwind-merge": "^1.14.0",
     "tippy.js": "^6.3.7",
     "tiptap-markdown": "^0.8.9",
-    "y-indexeddb": "^9.0.12",
-    "y-prosemirror": "^1.2.5",
-    "y-protocols": "^1.0.6",
-    "yjs": "^13.6.15"
+    "y-indexeddb": "^9.0.12"
   },
   "devDependencies": {
     "@types/node": "18.15.3",
@@ -71,7 +76,7 @@
     "tailwind-config-custom": "*",
     "tsconfig": "*",
     "tsup": "^7.2.0",
-    "typescript": "4.9.5"
+    "typescript": "5.4.5"
   },
   "keywords": [
     "editor",

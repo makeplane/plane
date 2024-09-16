@@ -442,10 +442,10 @@ function backupData() {
     local BACKUP_FOLDER=$PLANE_INSTALL_DIR/backup/$datetime
     mkdir -p "$BACKUP_FOLDER"
 
-    volumes=$(docker volume ls -f "name=plane-app" --format "{{.Name}}" | grep -E "_pgdata|_redisdata|_uploads")
+    volumes=$(docker volume ls -f "name=$SERVICE_FOLDER" --format "{{.Name}}" | grep -E "_pgdata|_redisdata|_uploads")
     # Check if there are any matching volumes
     if [ -z "$volumes" ]; then
-        echo "No volumes found starting with 'plane-app'"
+        echo "No volumes found starting with '$SERVICE_FOLDER'"
         exit 1
     fi
 

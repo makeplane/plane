@@ -5,21 +5,20 @@ import { observer } from "mobx-react";
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
 // hooks
-import { useUser, useWorkspace } from "@/hooks/store";
+import { useUserPermissions, useWorkspace } from "@/hooks/store";
 // plane web components
 import { BillingRoot } from "@/plane-web/components/workspace";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const BillingSettingsPage = observer(() => {
   // store hooks
-  const {
-    canPerformWorkspaceAdminActions,
-    membership: { currentWorkspaceRole },
-  } = useUser();
+  const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
   // derived values
+  const canPerformWorkspaceAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Billing & Plans` : undefined;
 
-  if (currentWorkspaceRole && !canPerformWorkspaceAdminActions) {
+  if (workspaceUserInfo && !canPerformWorkspaceAdminActions) {
     return <NotAuthorizedView section="settings" />;
   }
 

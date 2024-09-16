@@ -109,6 +109,7 @@ export type TWidgetIssue = TIssue & {
     project_id: string;
     relation_type: TIssueRelationTypes;
     sequence_id: number;
+    type_id: string | null;
   }[];
 };
 
@@ -145,17 +146,8 @@ export type TRecentActivityWidgetResponse = IIssueActivity;
 export type TRecentProjectsWidgetResponse = string[];
 
 export type TRecentCollaboratorsWidgetResponse = {
-  count: number;
-  extra_stats: Object | null;
-  next_cursor: string;
-  next_page_results: boolean;
-  prev_cursor: string;
-  prev_page_results: boolean;
-  results: {
-    active_issue_count: number;
-    user_id: string;
-  }[];
-  total_pages: number;
+  active_issue_count: number;
+  user_id: string;
 };
 
 export type TWidgetStatsResponse =
@@ -166,7 +158,7 @@ export type TWidgetStatsResponse =
   | TCreatedIssuesWidgetResponse
   | TRecentActivityWidgetResponse[]
   | TRecentProjectsWidgetResponse
-  | TRecentCollaboratorsWidgetResponse;
+  | TRecentCollaboratorsWidgetResponse[];
 
 // dashboard
 export type TDashboard = {

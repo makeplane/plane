@@ -5,14 +5,13 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { RefreshCcw } from "lucide-react";
 // ui
-import { Breadcrumbs, Button, Intake } from "@plane/ui";
+import { Breadcrumbs, Button, Intake, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 import { InboxIssueCreateEditModalRoot } from "@/components/inbox";
-// constants
-import { EUserProjectRoles } from "@/constants/project";
 // hooks
-import { useProject, useProjectInbox, useUser } from "@/hooks/store";
+import { useProject, useProjectInbox, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const ProjectInboxHeader: FC = observer(() => {
   // states
@@ -20,18 +19,20 @@ export const ProjectInboxHeader: FC = observer(() => {
   // router
   const { workspaceSlug, projectId } = useParams();
   // store hooks
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
+
   const { currentProjectDetails, loader: currentProjectDetailsLoader } = useProject();
   const { loader } = useProjectInbox();
 
   // derived value
-  const isViewer = currentProjectRole === EUserProjectRoles.VIEWER;
+  const isAuthorized = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    EUserPermissionsLevel.PROJECT
+  );
 
   return (
-    <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
-      <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
+    <Header>
+      <Header.LeftItem>
         <div className="flex items-center gap-4">
           <Breadcrumbs isLoading={currentProjectDetailsLoader}>
             <Breadcrumbs.BreadcrumbItem
@@ -64,23 +65,26 @@ export const ProjectInboxHeader: FC = observer(() => {
             </div>
           )}
         </div>
-      </div>
+      </Header.LeftItem>
+      <Header.RightItem>
+        {currentProjectDetails?.inbox_view && workspaceSlug && projectId && isAuthorized ? (
+          <div className="flex items-center gap-2">
+            <InboxIssueCreateEditModalRoot
+              workspaceSlug={workspaceSlug.toString()}
+              projectId={projectId.toString()}
+              modalState={createIssueModal}
+              handleModalClose={() => setCreateIssueModal(false)}
+              issue={undefined}
+            />
 
-      {currentProjectDetails?.inbox_view && workspaceSlug && projectId && !isViewer && (
-        <div className="flex items-center gap-2">
-          <InboxIssueCreateEditModalRoot
-            workspaceSlug={workspaceSlug.toString()}
-            projectId={projectId.toString()}
-            modalState={createIssueModal}
-            handleModalClose={() => setCreateIssueModal(false)}
-            issue={undefined}
-          />
-
-          <Button variant="primary" size="sm" onClick={() => setCreateIssueModal(true)}>
-            Add issue
-          </Button>
-        </div>
-      )}
-    </div>
+            <Button variant="primary" size="sm" onClick={() => setCreateIssueModal(true)}>
+              Add issue
+            </Button>
+          </div>
+        ) : (
+          <></>
+        )}
+      </Header.RightItem>
+    </Header>
   );
 });

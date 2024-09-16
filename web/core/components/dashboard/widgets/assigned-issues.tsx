@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Tab } from "@headlessui/react";
 import { TAssignedIssuesWidgetFilters, TAssignedIssuesWidgetResponse } from "@plane/types";
 // hooks
+import { Card } from "@plane/ui";
 import {
   DurationFilterDropdown,
   IssuesErrorState,
@@ -79,7 +80,7 @@ export const AssignedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
   if ((!widgetDetails || !widgetStats) && !widgetStatsError) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
-    <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full hover:shadow-custom-shadow-4xl duration-300 flex flex-col min-h-96">
+    <Card>
       {widgetStatsError ? (
         <IssuesErrorState
           isRefreshing={fetching}
@@ -93,7 +94,7 @@ export const AssignedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
       ) : (
         widgetStats && (
           <>
-            <div className="flex items-center justify-between gap-2 p-6 pl-7">
+            <div className="flex items-center justify-between gap-2 mb-4">
               <Link
                 href={`/${workspaceSlug}/workspace-views/assigned/${filterParams}`}
                 className="text-lg font-semibold text-custom-text-300 hover:underline"
@@ -137,9 +138,7 @@ export const AssignedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
               }}
               className="h-full flex flex-col"
             >
-              <div className="px-6">
-                <TabsList durationFilter={selectedDurationFilter} selectedTab={selectedTab} />
-              </div>
+              <TabsList durationFilter={selectedDurationFilter} selectedTab={selectedTab} />
               <Tab.Panels as="div" className="h-full">
                 {tabsList.map((tab) => {
                   if (tab.key !== selectedTab) return null;
@@ -161,6 +160,6 @@ export const AssignedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
           </>
         )
       )}
-    </div>
+    </Card>
   );
 });

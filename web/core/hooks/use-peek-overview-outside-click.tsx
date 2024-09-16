@@ -7,14 +7,13 @@ const usePeekOverviewOutsideClickDetector = (
 ) => {
   const handleClick = (event: MouseEvent) => {
     if (ref.current && !ref.current.contains(event.target as Node)) {
-      // get all the element with attribute name data-prevent-outside-click
-      const preventOutsideClickElements = document.querySelectorAll("[data-prevent-outside-click]");
-      // check if the click target is any of the elements with attribute name data-prevent-outside-click
-      for (let i = 0; i < preventOutsideClickElements.length; i++) {
-        if (preventOutsideClickElements[i].contains(event.target as Node)) {
-          // if the click target is any of the elements with attribute name data-prevent-outside-click, return
-          return;
-        }
+      // check for the closest element with attribute name data-prevent-outside-click
+      const preventOutsideClickElement = (event.target as HTMLElement | undefined)?.closest(
+        "[data-prevent-outside-click]"
+      );
+      // if the closest element with attribute name data-prevent-outside-click is found, return
+      if (preventOutsideClickElement) {
+        return;
       }
       // check if the click target is the current issue element or its children
       let targetElement = event.target as HTMLElement | null;
@@ -25,17 +24,13 @@ const usePeekOverviewOutsideClickDetector = (
         }
         targetElement = targetElement.parentElement;
       }
-      // get all the element with attribute name data-prevent-outside-click
-      const delayOutsideClickElements = document.querySelectorAll("[data-delay-outside-click]");
-      // check if the click target is any of the elements with attribute name data-delay-outside-click
-      for (let i = 0; i < delayOutsideClickElements.length; i++) {
-        if (delayOutsideClickElements[i].contains(event.target as Node)) {
-          // if the click target is any of the elements with attribute name data-delay-outside-click, delay the callback
-          setTimeout(() => {
-            callback();
-          }, 1);
-          return;
-        }
+      const delayOutsideClickElement = (event.target as HTMLElement | undefined)?.closest("[data-delay-outside-click]");
+      if (delayOutsideClickElement) {
+        // if the click target is the closest element with attribute name data-delay-outside-click, delay the callback
+        setTimeout(() => {
+          callback();
+        }, 0);
+        return;
       }
       // else, call the callback immediately
       callback();

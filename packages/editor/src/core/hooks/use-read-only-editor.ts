@@ -4,6 +4,7 @@ import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
 // extensions
 import { CoreReadOnlyEditorExtensions } from "@/extensions";
 // helpers
+import { getParagraphCount } from "@/helpers/common";
 import { IMarking, scrollSummary } from "@/helpers/scroll-to-node";
 // props
 import { CoreReadOnlyEditorProps } from "@/props";
@@ -11,7 +12,7 @@ import { CoreReadOnlyEditorProps } from "@/props";
 import { EditorReadOnlyRefApi, IMentionHighlight } from "@/types";
 
 interface CustomReadOnlyEditorProps {
-  initialValue: string;
+  initialValue?: string;
   editorClassName: string;
   forwardedRef?: MutableRefObject<EditorReadOnlyRefApi | null>;
   extensions?: any;
@@ -80,6 +81,13 @@ export const useReadOnlyEditor = ({
     scrollSummary: (marking: IMarking): void => {
       if (!editorRef.current) return;
       scrollSummary(editorRef.current, marking);
+    },
+    getDocumentInfo: () => {
+      return {
+        characters: editorRef?.current?.storage?.characterCount?.characters?.() ?? 0,
+        paragraphs: getParagraphCount(editorRef?.current?.state),
+        words: editorRef?.current?.storage?.characterCount?.words?.() ?? 0,
+      };
     },
   }));
 

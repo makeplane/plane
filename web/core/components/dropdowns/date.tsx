@@ -4,6 +4,8 @@ import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
 import { CalendarDays, X } from "lucide-react";
 import { Combobox } from "@headlessui/react";
+// ui
+import { ComboDropDown } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate, getDate } from "@/helpers/date-time.helper";
@@ -18,6 +20,7 @@ import { TDropdownProps } from "./types";
 
 type Props = TDropdownProps & {
   clearIconClassName?: string;
+  optionsClassName?: string;
   icon?: React.ReactNode;
   isClearable?: boolean;
   minDate?: Date;
@@ -27,6 +30,7 @@ type Props = TDropdownProps & {
   value: Date | string | null;
   closeOnSelect?: boolean;
   formatToken?: string;
+  renderByDefault?: boolean;
 };
 
 export const DateDropdown: React.FC<Props> = (props) => {
@@ -36,6 +40,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
     buttonVariant,
     className = "",
     clearIconClassName = "",
+    optionsClassName = "",
     closeOnSelect = true,
     disabled = false,
     hideIcon = false,
@@ -51,6 +56,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
     tabIndex,
     value,
     formatToken,
+    renderByDefault = true,
   } = props;
   // states
   const [isOpen, setIsOpen] = useState(false);
@@ -98,8 +104,49 @@ export const DateDropdown: React.FC<Props> = (props) => {
   if (minDate) disabledDays.push({ before: minDate });
   if (maxDate) disabledDays.push({ after: maxDate });
 
+  const comboButton = (
+    <button
+      type="button"
+      className={cn(
+        "clickable block h-full max-w-full outline-none",
+        {
+          "cursor-not-allowed text-custom-text-200": disabled,
+          "cursor-pointer": !disabled,
+        },
+        buttonContainerClassName
+      )}
+      ref={setReferenceElement}
+      onClick={handleOnClick}
+      disabled={disabled}
+    >
+      <DropdownButton
+        className={buttonClassName}
+        isActive={isOpen}
+        tooltipHeading={placeholder}
+        tooltipContent={value ? renderFormattedDate(value, formatToken) : "None"}
+        showTooltip={showTooltip}
+        variant={buttonVariant}
+      >
+        {!hideIcon && icon}
+        {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
+          <span className="flex-grow truncate">{value ? renderFormattedDate(value, formatToken) : placeholder}</span>
+        )}
+        {isClearable && !disabled && isDateSelected && (
+          <X
+            className={cn("h-2.5 w-2.5 flex-shrink-0", clearIconClassName)}
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              onChange(null);
+            }}
+          />
+        )}
+      </DropdownButton>
+    </button>
+  );
+
   return (
-    <Combobox
+    <ComboDropDown
       as="div"
       ref={dropdownRef}
       tabIndex={tabIndex}
@@ -109,54 +156,18 @@ export const DateDropdown: React.FC<Props> = (props) => {
           if (!isOpen) handleKeyDown(e);
         } else handleKeyDown(e);
       }}
+      button={comboButton}
       disabled={disabled}
+      renderByDefault={renderByDefault}
     >
-      <Combobox.Button as={React.Fragment}>
-        <button
-          type="button"
-          className={cn(
-            "clickable block h-full max-w-full outline-none",
-            {
-              "cursor-not-allowed text-custom-text-200": disabled,
-              "cursor-pointer": !disabled,
-            },
-            buttonContainerClassName
-          )}
-          ref={setReferenceElement}
-          onClick={handleOnClick}
-        >
-          <DropdownButton
-            className={buttonClassName}
-            isActive={isOpen}
-            tooltipHeading={placeholder}
-            tooltipContent={value ? renderFormattedDate(value, formatToken) : "None"}
-            showTooltip={showTooltip}
-            variant={buttonVariant}
-          >
-            {!hideIcon && icon}
-            {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-              <span className="flex-grow truncate">
-                {value ? renderFormattedDate(value, formatToken) : placeholder}
-              </span>
-            )}
-            {isClearable && !disabled && isDateSelected && (
-              <X
-                className={cn("h-2.5 w-2.5 flex-shrink-0", clearIconClassName)}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                  onChange(null);
-                }}
-              />
-            )}
-          </DropdownButton>
-        </button>
-      </Combobox.Button>
       {isOpen &&
         createPortal(
           <Combobox.Options data-prevent-outside-click static>
             <div
-              className="my-1 bg-custom-background-100 shadow-custom-shadow-rg rounded-md overflow-hidden p-3 z-20"
+              className={cn(
+                "my-1 bg-custom-background-100 shadow-custom-shadow-rg rounded-md overflow-hidden p-3 z-20",
+                optionsClassName
+              )}
               ref={setPopperElement}
               style={styles.popper}
               {...attributes.popper}
@@ -176,6 +187,6 @@ export const DateDropdown: React.FC<Props> = (props) => {
           </Combobox.Options>,
           document.body
         )}
-    </Combobox>
+    </ComboDropDown>
   );
 };

@@ -7,11 +7,14 @@ import { Control, Controller } from "react-hook-form";
 import { TIssue } from "@plane/types";
 // components
 import { ProjectDropdown } from "@/components/dropdowns";
+// constants
+import { ETabIndices } from "@/constants/tab-indices";
 // helpers
-import { getTabIndex } from "@/helpers/issue-modal.helper";
 import { shouldRenderProject } from "@/helpers/project.helper";
+import { getTabIndex } from "@/helpers/tab-indices.helper";
 // store hooks
 import { useUser } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type TIssueProjectSelectProps = {
   control: Control<TIssue>;
@@ -23,6 +26,9 @@ export const IssueProjectSelect: React.FC<TIssueProjectSelectProps> = observer((
   const { control, disabled = false, handleFormChange } = props;
   // store hooks
   const { projectsWithCreatePermissions } = useUser();
+  const { isMobile } = usePlatformOS();
+
+  const { getIndex } = getTabIndex(ETabIndices.ISSUE_FORM, isMobile);
 
   return (
     <Controller
@@ -42,7 +48,7 @@ export const IssueProjectSelect: React.FC<TIssueProjectSelectProps> = observer((
               }}
               buttonVariant="border-with-text"
               renderCondition={(project) => shouldRenderProject(project)}
-              tabIndex={getTabIndex("project_id")}
+              tabIndex={getIndex("project_id")}
               disabled={disabled}
             />
           </div>

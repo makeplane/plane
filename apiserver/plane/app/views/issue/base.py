@@ -57,11 +57,12 @@ from plane.utils.paginator import (
 from .. import BaseAPIView, BaseViewSet
 from plane.utils.user_timezone_converter import user_timezone_converter
 from plane.bgtasks.recent_visited_task import recent_visited_task
+from plane.utils.global_paginator import paginate
+from plane.bgtasks.webhook_task import model_activity
 
 
 class IssueListEndpoint(BaseAPIView):
-
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id):
         issue_ids = request.GET.get("issues", False)
 
@@ -231,8 +232,9 @@ class IssueViewSet(BaseViewSet):
         ).distinct()
 
     @method_decorator(gzip_page)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
         filters = issue_filters(request.query_params, "GET")
         order_by_param = request.GET.get("order_by", "-created_at")
 
@@ -263,13 +265,16 @@ class IssueViewSet(BaseViewSet):
             entity_identifier=project_id,
             user_id=request.user.id,
         )
-        if ProjectMember.objects.filter(
-            workspace__slug=slug,
-            project_id=project_id,
-            member=request.user,
-            role=5,
-            is_active=True,
-        ).exists():
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=request.user,
+                role=5,
+                is_active=True,
+            ).exists()
+            and not project.guest_view_all_features
+        ):
             issue_queryset = issue_queryset.filter(created_by=request.user)
 
         if group_by:
@@ -425,13 +430,31 @@ class IssueViewSet(BaseViewSet):
             issue = user_timezone_converter(
                 issue, datetime_fields, request.user.user_timezone
             )
+            # Send the model activity
+            model_activity.delay(
+                model_name="issue",
+                model_id=str(serializer.data["id"]),
+                requested_data=request.data,
+                current_instance=None,
+                actor_id=request.user.id,
+                slug=slug,
+                origin=request.META.get("HTTP_ORIGIN"),
+            )
             return Response(issue, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @allow_permission(
-        [ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER], creator=True, model=Issue
+        allowed_roles=[
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+            ROLE.GUEST,
+        ],
+        creator=True,
+        model=Issue,
     )
     def retrieve(self, request, slug, project_id, pk=None):
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
+
         issue = (
             self.get_queryset()
             .filter(pk=pk)
@@ -500,6 +523,27 @@ class IssueViewSet(BaseViewSet):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
+        """
+        if the role is guest and guest_view_all_features is false and owned by is not 
+        the requesting user then dont show the issue
+        """
+
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=request.user,
+                role=5,
+                is_active=True,
+            ).exists()
+            and not project.guest_view_all_features
+            and not issue.created_by == request.user
+        ):
+            return Response(
+                {"error": "You are not allowed to view this issue"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         recent_visited_task.delay(
             slug=slug,
             entity_name="issue",
@@ -511,7 +555,9 @@ class IssueViewSet(BaseViewSet):
         serializer = IssueDetailSerializer(issue, expand=self.expand)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], creator=True, model=Issue
+    )
     def partial_update(self, request, slug, project_id, pk=None):
         issue = (
             self.get_queryset()
@@ -573,7 +619,15 @@ class IssueViewSet(BaseViewSet):
                 notification=True,
                 origin=request.META.get("HTTP_ORIGIN"),
             )
-            issue = self.get_queryset().filter(pk=pk).first()
+            model_activity.delay(
+                model_name="issue",
+                model_id=str(serializer.data.get("id", None)),
+                requested_data=request.data,
+                current_instance=current_instance,
+                actor_id=request.user.id,
+                slug=slug,
+                origin=request.META.get("HTTP_ORIGIN"),
+            )
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -599,8 +653,7 @@ class IssueViewSet(BaseViewSet):
 
 
 class IssueUserDisplayPropertyEndpoint(BaseAPIView):
-
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST, ROLE.VIEWER])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def patch(self, request, slug, project_id):
         issue_property = IssueUserProperty.objects.get(
             user=request.user,
@@ -620,7 +673,13 @@ class IssueUserDisplayPropertyEndpoint(BaseAPIView):
         serializer = IssueUserPropertySerializer(issue_property)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST, ROLE.VIEWER])
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+            ROLE.GUEST,
+        ]
+    )
     def get(self, request, slug, project_id):
         issue_property, _ = IssueUserProperty.objects.get_or_create(
             user=request.user, project_id=project_id
@@ -630,10 +689,8 @@ class IssueUserDisplayPropertyEndpoint(BaseAPIView):
 
 
 class BulkDeleteIssuesEndpoint(BaseAPIView):
-
     @allow_permission([ROLE.ADMIN])
     def delete(self, request, slug, project_id):
-
         issue_ids = request.data.get("issue_ids", [])
 
         if not len(issue_ids):
@@ -654,3 +711,141 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
             {"message": f"{total_issues} issues were deleted"},
             status=status.HTTP_200_OK,
         )
+
+
+class IssuePaginatedViewSet(BaseViewSet):
+    def get_queryset(self):
+        workspace_slug = self.kwargs.get("slug")
+        project_id = self.kwargs.get("project_id")
+
+        return (
+            Issue.issue_objects.filter(
+                workspace__slug=workspace_slug, project_id=project_id
+            )
+            .select_related("workspace", "project", "state", "parent")
+            .prefetch_related("assignees", "labels", "issue_module__module")
+            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(
+                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                attachment_count=IssueAttachment.objects.filter(
+                    issue=OuterRef("id")
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("id")
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+        ).distinct()
+
+    def process_paginated_result(self, fields, results, timezone):
+        paginated_data = results.values(*fields)
+
+        # converting the datetime fields in paginated data
+        datetime_fields = ["created_at", "updated_at"]
+        paginated_data = user_timezone_converter(
+            paginated_data, datetime_fields, timezone
+        )
+
+        return paginated_data
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def list(self, request, slug, project_id):
+        cursor = request.GET.get("cursor", None)
+        is_description_required = request.GET.get("description", False)
+        updated_at = request.GET.get("updated_at__gte", None)
+
+        # required fields
+        required_fields = [
+            "id",
+            "name",
+            "state_id",
+            "sort_order",
+            "completed_at",
+            "estimate_point",
+            "priority",
+            "start_date",
+            "target_date",
+            "sequence_id",
+            "project_id",
+            "parent_id",
+            "cycle_id",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+            "is_draft",
+            "archived_at",
+            "deleted_at",
+            "module_ids",
+            "label_ids",
+            "assignee_ids",
+            "link_count",
+            "attachment_count",
+            "sub_issues_count",
+        ]
+
+        if is_description_required:
+            required_fields.append("description_html")
+
+        # querying issues
+        base_queryset = Issue.issue_objects.filter(
+            workspace__slug=slug, project_id=project_id
+        ).order_by("updated_at")
+        queryset = self.get_queryset().order_by("updated_at")
+
+        # filtering issues by greater then updated_at given by the user
+        if updated_at:
+            base_queryset = base_queryset.filter(updated_at__gte=updated_at)
+            queryset = queryset.filter(updated_at__gte=updated_at)
+
+        queryset = queryset.annotate(
+            label_ids=Coalesce(
+                ArrayAgg(
+                    "labels__id",
+                    distinct=True,
+                    filter=~Q(labels__id__isnull=True),
+                ),
+                Value([], output_field=ArrayField(UUIDField())),
+            ),
+            assignee_ids=Coalesce(
+                ArrayAgg(
+                    "assignees__id",
+                    distinct=True,
+                    filter=~Q(assignees__id__isnull=True)
+                    & Q(assignees__member_project__is_active=True),
+                ),
+                Value([], output_field=ArrayField(UUIDField())),
+            ),
+            module_ids=Coalesce(
+                ArrayAgg(
+                    "issue_module__module_id",
+                    distinct=True,
+                    filter=~Q(issue_module__module_id__isnull=True)
+                    & Q(issue_module__module__archived_at__isnull=True),
+                ),
+                Value([], output_field=ArrayField(UUIDField())),
+            ),
+        )
+
+        paginated_data = paginate(
+            base_queryset=base_queryset,
+            queryset=queryset,
+            cursor=cursor,
+            on_result=lambda results: self.process_paginated_result(
+                required_fields, results, request.user.user_timezone
+            ),
+        )
+
+        return Response(paginated_data, status=status.HTTP_200_OK)

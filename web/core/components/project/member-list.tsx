@@ -9,8 +9,9 @@ import { Button } from "@plane/ui";
 import { ProjectMemberListItem, SendProjectInvitationModal } from "@/components/project";
 // ui
 import { MembersSettingsLoader } from "@/components/ui";
-import { EUserProjectRoles } from "@/constants/project";
-import { useEventTracker, useMember, useUser } from "@/hooks/store";
+import { useEventTracker, useMember, useUserPermissions } from "@/hooks/store";
+// plane-web constants
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const ProjectMemberList: React.FC = observer(() => {
   // states
@@ -21,9 +22,7 @@ export const ProjectMemberList: React.FC = observer(() => {
   const {
     project: { projectMemberIds, getProjectMemberDetails },
   } = useMember();
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
   const searchedMembers = (projectMemberIds ?? []).filter((userId) => {
     const memberDetails = getProjectMemberDetails(userId);
 
@@ -35,6 +34,8 @@ export const ProjectMemberList: React.FC = observer(() => {
     return displayName?.includes(searchQuery.toLowerCase()) || fullName.includes(searchQuery.toLowerCase());
   });
   const memberDetails = searchedMembers?.map((memberId) => getProjectMemberDetails(memberId));
+
+  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
 
   return (
     <>
@@ -52,7 +53,7 @@ export const ProjectMemberList: React.FC = observer(() => {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        {currentProjectRole === EUserProjectRoles.ADMIN && (
+        {isAdmin && (
           <Button
             variant="primary"
             onClick={() => {

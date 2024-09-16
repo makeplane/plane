@@ -42,7 +42,7 @@ export const CommandPaletteThemeActions: FC<Props> = observer((props) => {
 
   return (
     <>
-      {THEME_OPTIONS.filter((t) => t.value !== "custom").map((theme) => (
+      {THEME_OPTIONS.map((theme) => (
         <Command.Item
           key={theme.value}
           onSelect={() => {

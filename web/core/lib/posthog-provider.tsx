@@ -3,6 +3,7 @@
 import { FC, ReactNode, useEffect } from "react";
 import { observer } from "mobx-react";
 import dynamic from "next/dynamic";
+import { useParams } from "next/navigation";
 import posthog from "posthog-js";
 import { PostHogProvider as PHProvider } from "posthog-js/react";
 // constants
@@ -10,7 +11,7 @@ import { GROUP_WORKSPACE } from "@/constants/event-tracker";
 // helpers
 import { getUserRole } from "@/helpers/user.helper";
 // hooks
-import { useWorkspace, useUser, useInstance } from "@/hooks/store";
+import { useWorkspace, useUser, useInstance, useUserPermissions } from "@/hooks/store";
 // dynamic imports
 const PostHogPageView = dynamic(() => import("@/lib/posthog-view"), { ssr: false });
 
@@ -20,13 +21,14 @@ export interface IPosthogWrapper {
 
 const PostHogProvider: FC<IPosthogWrapper> = observer((props) => {
   const { children } = props;
-  const {
-    data: user,
-    membership: { currentProjectRole, currentWorkspaceRole },
-  } = useUser();
+  const { data: user } = useUser();
   const { currentWorkspace } = useWorkspace();
   const { instance } = useInstance();
+  const { workspaceSlug, projectId } = useParams();
+  const { workspaceInfoBySlug, projectUserInfo } = useUserPermissions();
 
+  const currentProjectRole = projectUserInfo?.[workspaceSlug?.toString()]?.[projectId?.toString()]?.role;
+  const currentWorkspaceRole = workspaceInfoBySlug(workspaceSlug?.toString())?.role;
   const is_telemetry_enabled = instance?.is_telemetry_enabled || false;
 
   useEffect(() => {

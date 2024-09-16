@@ -4,6 +4,7 @@ import { Search, X } from "lucide-react";
 import { TCycleFilters, TCycleGroups } from "@plane/types";
 // components
 import { FilterEndDate, FilterStartDate, FilterStatus } from "@/components/cycles";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
 
 type Props = {
@@ -16,6 +17,8 @@ export const CycleFiltersSelection: React.FC<Props> = observer((props) => {
   const { filters, handleFiltersUpdate, isArchived = false } = props;
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
+  // hooks
+  const { isMobile } = usePlatformOS();
 
   return (
     <div className="flex h-full w-full flex-col overflow-hidden">
@@ -28,7 +31,7 @@ export const CycleFiltersSelection: React.FC<Props> = observer((props) => {
             placeholder="Search"
             value={filtersSearchQuery}
             onChange={(e) => setFiltersSearchQuery(e.target.value)}
-            autoFocus
+            autoFocus={!isMobile}
           />
           {filtersSearchQuery !== "" && (
             <button type="button" className="grid place-items-center" onClick={() => setFiltersSearchQuery("")}>

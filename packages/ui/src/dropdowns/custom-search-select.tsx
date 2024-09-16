@@ -3,9 +3,10 @@ import { usePopper } from "react-popper";
 import { Combobox } from "@headlessui/react";
 import { Check, ChevronDown, Search } from "lucide-react";
 import { createPortal } from "react-dom";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // hooks
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "../hooks/use-outside-click-detector";
 // helpers
 import { cn } from "../../helpers";
 // types

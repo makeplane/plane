@@ -14,6 +14,7 @@ import { TCycleGroups } from "@plane/types";
 import { ContrastIcon, CycleGroupIcon } from "@plane/ui";
 // store hooks
 import { useCycle } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
 
 type DropdownOptions =
@@ -41,13 +42,16 @@ export const CycleOptions: FC<CycleOptionsProps> = observer((props) => {
   // store hooks
   const { workspaceSlug } = useParams();
   const { getProjectCycleIds, fetchAllCycles, getCycleById } = useCycle();
+  const { isMobile } = usePlatformOS();
 
   useEffect(() => {
     if (isOpen) {
       onOpen();
-      inputRef.current && inputRef.current.focus();
+      if (!isMobile) {
+        inputRef.current && inputRef.current.focus();
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, isMobile]);
 
   // popper-js init
   const { styles, attributes } = usePopper(referenceElement, popperElement, {

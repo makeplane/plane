@@ -17,8 +17,9 @@ import {
   Users,
 } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
+// plane types
 import { ILinkDetails, IModule, ModuleLink } from "@plane/types";
-// ui
+// plane ui
 import {
   CustomMenu,
   Loader,
@@ -31,9 +32,14 @@ import {
   TextArea,
 } from "@plane/ui";
 // components
-import { LinkModal, LinksList } from "@/components/core";
 import { DateRangeDropdown, MemberDropdown } from "@/components/dropdowns";
-import { ArchiveModuleModal, DeleteModuleModal, ModuleAnalyticsProgress } from "@/components/modules";
+import {
+  ArchiveModuleModal,
+  DeleteModuleModal,
+  CreateUpdateModuleLinkModal,
+  ModuleAnalyticsProgress,
+  ModuleLinksList,
+} from "@/components/modules";
 import {
   MODULE_LINK_CREATED,
   MODULE_LINK_DELETED,
@@ -41,15 +47,15 @@ import {
   MODULE_UPDATED,
 } from "@/constants/event-tracker";
 import { MODULE_STATUS } from "@/constants/module";
-import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useModule, useUser, useEventTracker, useProjectEstimates } from "@/hooks/store";
+import { useModule, useEventTracker, useProjectEstimates, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web constants
 import { EEstimateSystem } from "@/plane-web/constants/estimates";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const defaultValues: Partial<IModule> = {
   lead_id: "",
@@ -63,12 +69,11 @@ type Props = {
   moduleId: string;
   handleClose: () => void;
   isArchived?: boolean;
-  isPeekMode?: boolean;
 };
 
 // TODO: refactor this component
 export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
-  const { moduleId, handleClose, isArchived, isPeekMode = false } = props;
+  const { moduleId, handleClose, isArchived } = props;
   // states
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
   const [archiveModuleModal, setArchiveModuleModal] = useState(false);
@@ -79,9 +84,9 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = useParams();
 
   // store hooks
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+
+  const { allowPermissions } = useUserPermissions();
+
   const { getModuleById, updateModuleDetails, createModuleLink, updateModuleLink, deleteModuleLink, restoreModule } =
     useModule();
   const { setTrackElement, captureModuleEvent, captureEvent } = useEventTracker();
@@ -122,25 +127,12 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
 
     const payload = { metadata: {}, ...formData };
 
-    createModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), payload)
-      .then(() => {
-        captureEvent(MODULE_LINK_CREATED, {
-          module_id: moduleId,
-          state: "SUCCESS",
-        });
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Module link created successfully.",
-        });
+    await createModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), payload).then(() =>
+      captureEvent(MODULE_LINK_CREATED, {
+        module_id: moduleId,
+        state: "SUCCESS",
       })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Some error occurred",
-        });
-      });
+    );
   };
 
   const handleUpdateLink = async (formData: ModuleLink, linkId: string) => {
@@ -148,25 +140,13 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
 
     const payload = { metadata: {}, ...formData };
 
-    updateModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId, payload)
-      .then(() => {
+    await updateModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId, payload).then(
+      () =>
         captureEvent(MODULE_LINK_UPDATED, {
           module_id: moduleId,
           state: "SUCCESS",
-        });
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Module link updated successfully.",
-        });
-      })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Some error occurred",
-        });
-      });
+        })
+    );
   };
 
   const handleDeleteLink = async (linkId: string) => {
@@ -284,20 +264,24 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
       ? "0 Issue"
       : `${moduleDetails.completed_estimate_points}/${moduleDetails.total_estimate_points}`;
 
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditingAllowed = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
 
   return (
     <div className="relative">
-      <LinkModal
+      <CreateUpdateModuleLinkModal
         isOpen={moduleLinkModal}
         handleClose={() => {
           setModuleLinkModal(false);
-          setSelectedLinkToUpdate(null);
+          setTimeout(() => {
+            setSelectedLinkToUpdate(null);
+          }, 500);
         }}
         data={selectedLinkToUpdate}
-        status={selectedLinkToUpdate ? true : false}
-        createIssueLink={handleCreateLink}
-        updateIssueLink={handleUpdateLink}
+        createLink={handleCreateLink}
+        updateLink={handleUpdateLink}
       />
       {workspaceSlug && projectId && (
         <ArchiveModuleModal
@@ -311,7 +295,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
       <DeleteModuleModal isOpen={moduleDeleteModal} onClose={() => setModuleDeleteModal(false)} data={moduleDetails} />
       <>
         <div
-          className={`sticky z-10 top-0 flex items-center justify-between bg-custom-sidebar-background-100 pb-5 ${isPeekMode ? "pt-5" : "pt-20"}`}
+          className={`sticky z-10 top-0 flex items-center justify-between bg-custom-sidebar-background-100 pb-5 pt-5`}
         >
           <div>
             <button
@@ -569,7 +553,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                   <Transition show={open}>
                     <Disclosure.Panel>
                       <div className="mt-2 flex min-h-72 w-full flex-col space-y-3 overflow-y-auto">
-                        {currentProjectRole && moduleDetails.link_module && moduleDetails.link_module.length > 0 ? (
+                        {isEditingAllowed && moduleDetails.link_module && moduleDetails.link_module.length > 0 ? (
                           <>
                             {isEditingAllowed && !isArchived && (
                               <div className="flex w-full items-center justify-end">
@@ -584,17 +568,11 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                             )}
 
                             {moduleId && (
-                              <LinksList
+                              <ModuleLinksList
                                 moduleId={moduleId}
                                 handleEditLink={handleEditLink}
                                 handleDeleteLink={handleDeleteLink}
-                                userAuth={{
-                                  isGuest: currentProjectRole === EUserProjectRoles.GUEST,
-                                  isViewer: currentProjectRole === EUserProjectRoles.VIEWER,
-                                  isMember: currentProjectRole === EUserProjectRoles.MEMBER,
-                                  isOwner: currentProjectRole === EUserProjectRoles.ADMIN,
-                                }}
-                                disabled={isArchived}
+                                disabled={!isEditingAllowed || isArchived}
                               />
                             )}
                           </>
