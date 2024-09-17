@@ -1,3 +1,4 @@
+import set from "lodash/set";
 import { observable, action, makeObservable, runInAction, computed } from "mobx";
 // types
 import { IInstance, IInstanceConfig } from "@plane/types";
@@ -21,6 +22,8 @@ export interface IInstanceStore {
   error: TError | undefined;
   // computed
   isUpdateAvailable: boolean;
+  // helper action
+  updateInstanceInfo: (payload: Partial<IInstance>) => void;
   // action
   fetchInstanceInfo: () => Promise<void>;
 }
@@ -42,6 +45,8 @@ export class InstanceStore implements IInstanceStore {
       error: observable,
       // computed
       isUpdateAvailable: computed,
+      // helper actions
+      updateInstanceInfo: action,
       // actions
       fetchInstanceInfo: action,
     });
@@ -53,6 +58,15 @@ export class InstanceStore implements IInstanceStore {
     if (!this.instance || !this.instance.latest_version) return false;
     return this.instance.current_version !== this.instance.latest_version;
   }
+
+  /**
+   * @description updating instance information
+   */
+  updateInstanceInfo = (payload: Partial<IInstance>) => {
+    runInAction(() => {
+      set(this, "instance", { ...this.instance, ...payload });
+    });
+  };
 
   /**
    * @description fetching instance information

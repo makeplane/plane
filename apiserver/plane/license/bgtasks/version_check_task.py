@@ -15,7 +15,7 @@ from plane.utils.exception_logger import log_exception
 
 def get_instance_me(machine_signature, license_key, prime_host):
     response = requests.get(
-        f"{prime_host}/api/instance/me/",
+        f"{prime_host}/api/v2/instances/me/",
         headers={
             "Content-Type": "application/json",
             "X-Machine-Signature": str(machine_signature),
@@ -81,7 +81,6 @@ def update_change_log(release_notes=[]):
 def version_check():
     try:
         # Get the environment variables
-        license_version = os.environ.get("LICENSE_VERSION", False)
         prime_host = os.environ.get("PRIME_HOST", False)
         license_key = os.environ.get("LICENSE_KEY", False)
         machine_signature = os.environ.get("MACHINE_SIGNATURE", False)
@@ -91,7 +90,7 @@ def version_check():
 
         # If license version is not provided then read from package.json
 
-        if license_version and license_key and prime_host:
+        if prime_host and machine_signature:
             # Get the instance data
             data = get_instance_me(machine_signature, license_key, prime_host)
             # Update the instance data

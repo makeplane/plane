@@ -1,12 +1,12 @@
-import { FC, useRef } from "react";
+import { FC, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
 import useSWR from "swr";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, RefreshCw } from "lucide-react";
 // editor
 import { DocumentReadOnlyEditorWithRef, EditorRefApi } from "@plane/editor";
 // ui
-import { EModalPosition, EModalWidth, getButtonStyling, ModalCore } from "@plane/ui";
+import { Button, EModalPosition, EModalWidth, getButtonStyling, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
 import { LogoSpinner } from "@/components/common";
 import { cn } from "@/helpers/common.helper";
@@ -27,8 +27,10 @@ const instanceService = new InstanceService();
 
 export const ProductUpdatesModal: FC<ProductUpdatesModalProps> = observer((props) => {
   const { isOpen, handleClose } = props;
+  // states
+  const [isCheckingForUpdates, setIsCheckingForUpdates] = useState(false);
   // store
-  const { config, isUpdateAvailable } = useInstance();
+  const { config, isUpdateAvailable, updateInstanceInfo } = useInstance();
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
   // refs
   const editorRef = useRef<EditorRefApi>(null);
@@ -39,17 +41,39 @@ export const ProductUpdatesModal: FC<ProductUpdatesModalProps> = observer((props
     PLANE_CHANGELOG_URL ? instanceService.getInstanceChangeLog(PLANE_CHANGELOG_URL) : null
   );
 
+  const handleCheckForUpdates = () => {
+    setIsCheckingForUpdates(true);
+    instanceService
+      .checkForUpdates()
+      .then((response) => {
+        updateInstanceInfo({
+          current_version: response.current_version,
+          latest_version: response.latest_version,
+        });
+      })
+      .catch(() => {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error",
+          message: "Failed to check for updates",
+        });
+      })
+      .finally(() => {
+        setIsCheckingForUpdates(false);
+      });
+  };
+
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
       <div className="flex gap-2 mx-6 my-4 items-center justify-between flex-shrink-0">
-        <div className="flex w-full items-center gap-2">
+        <div className="flex w-full items-center">
           <div className="flex gap-2 text-xl font-medium">Product updates</div>
           {isUpdateAvailable ? (
             <a
               tabIndex={-1}
               href="https://docs.plane.so/plane-one/self-host/manage/prime-cli"
               className={cn(
-                "flex gap-1 items-center px-2 py-0.5 text-center text-xs font-medium rounded-full bg-yellow-500/10 text-yellow-500 hover:text-yellow-600"
+                "flex gap-1 items-center px-2 mx-2 py-0.5 text-center text-xs font-medium rounded-full bg-yellow-500/10 hover:bg-yellow-500/15 text-yellow-600"
               )}
               target="_blank"
               rel="noreferrer noopener"
@@ -60,11 +84,22 @@ export const ProductUpdatesModal: FC<ProductUpdatesModalProps> = observer((props
           ) : (
             <div
               className={cn(
-                "px-2 py-0.5 text-center text-xs font-medium rounded-full bg-custom-primary-100/20 text-custom-primary-100"
+                "px-2 mx-2 py-0.5 text-center text-xs font-medium rounded-full bg-custom-primary-100/20 text-custom-primary-100"
               )}
             >
               Latest
             </div>
+          )}
+          {!isUpdateAvailable && (
+            <Button
+              variant="link-neutral"
+              size="sm"
+              className="font-medium outline-none px-1"
+              onClick={handleCheckForUpdates}
+            >
+              Check for updates
+              <RefreshCw size={10} className={cn("animate-spin", { "opacity-0": !isCheckingForUpdates })} />
+            </Button>
           )}
         </div>
         <div className="flex flex-shrink-0 items-center gap-8">

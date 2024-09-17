@@ -13,6 +13,7 @@ from plane.license.api.views import (
     InstanceAdminUserSessionEndpoint,
     ChangeLogEndpoint,
     AdminFeatureFlagEndpoint,
+    CheckUpdateEndpoint,
 )
 
 urlpatterns = [
@@ -25,6 +26,11 @@ urlpatterns = [
         "changelog/",
         ChangeLogEndpoint.as_view(),
         name="instance-changelog",
+    ),
+    path(
+        "check-updates/",
+        CheckUpdateEndpoint.as_view(),
+        name="check-update",
     ),
     path(
         "admins/",

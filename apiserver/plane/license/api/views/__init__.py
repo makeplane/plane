@@ -19,4 +19,4 @@ from .admin import (
     InstanceAdminUserSessionEndpoint,
 )
 
-from .changelog import ChangeLogEndpoint
+from .changelog import ChangeLogEndpoint, CheckUpdateEndpoint

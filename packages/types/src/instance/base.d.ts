@@ -74,6 +74,11 @@ export interface IInstanceConfig {
   silo_base_url: string | undefined;
 }
 
+export interface IInstanceUpdate {
+  current_version: string;
+  latest_version: string;
+}
+
 export interface IInstanceAdmin {
   created_at: string;
   created_by: string;
