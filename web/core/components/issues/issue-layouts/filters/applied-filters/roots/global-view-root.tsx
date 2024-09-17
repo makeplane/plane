@@ -135,6 +135,7 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
   if (areAppliedFiltersEmpty && areFiltersEqual) return null;
 
   return (
+    <div className="z-[12] bg-custom-background-100">
     <Header variant={EHeaderVariant.TERNARY}>
       <CreateUpdateWorkspaceViewModal
         isOpen={isModalOpen}
@@ -169,5 +170,6 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
         <></>
       )}
     </Header>
+    </div>
   );
 });
