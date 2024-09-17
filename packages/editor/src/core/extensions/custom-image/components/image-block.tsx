@@ -48,11 +48,8 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
 
           setSize(newSize);
           updateAttributes(newSize);
-          setInitialResizeComplete(true);
-        } else {
-          setInitialResizeComplete(true);
         }
-
+        setInitialResizeComplete(true);
         setIsLoading(false);
       };
     }
