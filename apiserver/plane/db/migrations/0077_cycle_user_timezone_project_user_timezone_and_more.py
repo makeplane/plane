@@ -151,7 +151,6 @@ class Migration(migrations.Migration):
                 'verbose_name_plural': 'Cycle Issue State Progress',
                 'db_table': 'cycle_issue_state_progress',
                 'ordering': ('-created_at',),
-                'unique_together': {("cycle", "date")},
             },
         ),
         migrations.CreateModel(
@@ -186,6 +185,7 @@ class Migration(migrations.Migration):
                 'verbose_name_plural': 'Cycle Analytics',
                 'db_table': 'cycle_analytics',
                 'ordering': ('-created_at',),
+                'unique_together': {("cycle", "date")},
             },
         ),
         migrations.RunPython(populate_cycle_issue_state_progress)
