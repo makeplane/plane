@@ -43,7 +43,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   const [description, setDescription] = useState<string | undefined>(undefined);
   // store hooks
   const { captureIssueEvent } = useEventTracker();
-  const { workspaceSlug, projectId, cycleId, moduleId } = useParams();
+  const { workspaceSlug, projectId: routerProjectId, cycleId, moduleId } = useParams();
   const { workspaceProjectIds } = useProject();
   const { fetchCycleDetails } = useCycle();
   const { fetchModuleDetails } = useModule();
@@ -60,6 +60,8 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   >("draftedIssue", {});
   // current store details
   const { createIssue, updateIssue } = useIssuesActions(storeType);
+  // derived values
+  const projectId = data?.project_id ?? routerProjectId?.toString();
 
   const fetchIssueDetail = async (issueId: string | undefined) => {
     setDescription(undefined);
