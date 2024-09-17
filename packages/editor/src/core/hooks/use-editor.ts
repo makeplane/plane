@@ -254,6 +254,11 @@ export const useEditor = (props: CustomEditorProps) => {
           words: editorRef?.current?.storage?.characterCount?.words?.() ?? 0,
         };
       },
+      setProviderDocument: (value) => {
+        const document = provider?.document;
+        if (!document) return;
+        Y.applyUpdate(document, value);
+      },
     }),
     [editorRef, savedSelection]
   );
