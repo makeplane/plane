@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Search } from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
 // types
 import { IWorkspaceBulkInviteFormData } from "@plane/types";
 // ui
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
@@ -20,7 +20,11 @@ import { getUserRole } from "@/helpers/user.helper";
 // hooks
 import { useEventTracker, useMember, useUserPermissions, useWorkspace } from "@/hooks/store";
 // plane web components
-import { UpdateWorkspaceSeatsModal } from "@/plane-web/components/workspace";
+import {
+  TUpdateSeatVariant,
+  RemoveUnusedSeatsModal,
+  UpdateWorkspaceSeatsModal,
+} from "@/plane-web/components/workspace";
 // plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web hooks
@@ -30,6 +34,8 @@ const WorkspaceMembersSettingsPage = observer(() => {
   // states
   const [inviteModal, setInviteModal] = useState(false);
   const [updateWorkspaceSeatsModal, setUpdateWorkspaceSeatsModal] = useState(false);
+  const [updateWorkspaceSeatVariant, setUpdateWorkspaceSeatVariant] = useState<TUpdateSeatVariant | null>(null);
+  const [removeUnusedSeatsConfirmationModal, setRemoveUnusedSeatsConfirmationModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   // router
   const { workspaceSlug } = useParams();
@@ -110,12 +116,25 @@ const WorkspaceMembersSettingsPage = observer(() => {
         isOpen={inviteModal}
         onClose={() => setInviteModal(false)}
         onSubmit={handleWorkspaceInvite}
-        toggleUpdateWorkspaceSeatsModal={() => setUpdateWorkspaceSeatsModal(true)}
+        toggleUpdateWorkspaceSeatsModal={() => {
+          setUpdateWorkspaceSeatVariant("ADD_SEATS");
+          setUpdateWorkspaceSeatsModal(true);
+        }}
       />
-      {isSelfHostedProWorkspace && (
+      {isSelfHostedProWorkspace && updateWorkspaceSeatVariant && (
         <UpdateWorkspaceSeatsModal
           isOpen={updateWorkspaceSeatsModal}
-          onClose={() => setUpdateWorkspaceSeatsModal(false)}
+          variant={updateWorkspaceSeatVariant}
+          onClose={() => {
+            setUpdateWorkspaceSeatsModal(false);
+            setUpdateWorkspaceSeatVariant(null);
+          }}
+        />
+      )}
+      {isSelfHostedProWorkspace && (
+        <RemoveUnusedSeatsModal
+          isOpen={removeUnusedSeatsConfirmationModal}
+          handleClose={() => setRemoveUnusedSeatsConfirmationModal(false)}
         />
       )}
       <section
@@ -141,9 +160,31 @@ const WorkspaceMembersSettingsPage = observer(() => {
             </Button>
           )}
           {isSelfHostedProWorkspace && canPerformWorkspaceAdminActions && (
-            <Button variant="neutral-primary" size="sm" onClick={() => setUpdateWorkspaceSeatsModal(true)}>
-              Manage seats
-            </Button>
+            <CustomMenu
+              customButton={
+                <Button variant="neutral-primary" size="sm" className="flex items-center justify-center gap-1">
+                  Manage seats
+                  <ChevronDown className="h-3 w-3" />
+                </Button>
+              }
+              closeOnSelect
+            >
+              <CustomMenu.MenuItem
+                onClick={() => {
+                  setUpdateWorkspaceSeatsModal(true);
+                  setUpdateWorkspaceSeatVariant("ADD_SEATS");
+                }}
+              >
+                Add seats
+              </CustomMenu.MenuItem>
+              <CustomMenu.MenuItem
+                onClick={() => {
+                  setRemoveUnusedSeatsConfirmationModal(true);
+                }}
+              >
+                Remove unused seats
+              </CustomMenu.MenuItem>
+            </CustomMenu>
           )}
         </div>
         <WorkspaceMembersList searchQuery={searchQuery} isAdmin={canPerformWorkspaceAdminActions} />

@@ -102,7 +102,7 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
 
   const handleToggleUpdateWorkspaceSeatsModal = () => {
     onClose();
-    toggleUpdateWorkspaceSeatsModal();
+    setTimeout(() => toggleUpdateWorkspaceSeatsModal(), 150);
   };
 
   useEffect(() => {
@@ -291,7 +291,7 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
                             className="py-1 px-2"
                             onClick={handleToggleUpdateWorkspaceSeatsModal}
                           >
-                            Manage seats
+                            Add more seats
                           </Button>
                         </div>
                       </div>

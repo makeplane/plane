@@ -7,29 +7,41 @@ import { Info, Minus, Plus } from "lucide-react";
 import { Dialog } from "@headlessui/react";
 // ui
 import { Button, EModalPosition, EModalWidth, Input, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
+// helpers
+import { cn } from "@/helpers/common.helper";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web services
 import selfHostedSubscriptionService from "@/plane-web/services/self-hosted-subscription.service";
 
+export type TUpdateSeatVariant = "ADD_SEATS" | "REMOVE_SEATS";
+
 type Props = {
   isOpen: boolean;
+  variant: TUpdateSeatVariant;
   onClose: () => void;
 };
 
 type TUpdateSeatButtonProps = {
   children: React.ReactNode;
+  disabled?: boolean;
   onClick: () => void;
 };
 
 const UpdateSeatButton: React.FC<TUpdateSeatButtonProps> = (props) => {
-  const { children, onClick } = props;
+  const { children, onClick, disabled } = props;
 
   return (
     <button
       type="button"
       onClick={onClick}
-      className="flex items-center justify-center size-7 bg-custom-background-90 hover:bg-custom-background-80 rounded cursor-pointer select-none"
+      className={cn(
+        "flex items-center justify-center size-7 bg-custom-background-90 hover:bg-custom-background-80 rounded cursor-pointer select-none",
+        {
+          "opacity-60 cursor-not-allowed hover:bg-custom-background-90 text-custom-text-400": disabled,
+        }
+      )}
+      disabled={disabled}
     >
       {children}
     </button>
@@ -37,7 +49,7 @@ const UpdateSeatButton: React.FC<TUpdateSeatButtonProps> = (props) => {
 };
 
 export const UpdateWorkspaceSeatsModal: React.FC<Props> = observer((props) => {
-  const { isOpen, onClose } = props;
+  const { isOpen, variant, onClose } = props;
   // router
   const { workspaceSlug } = useParams();
   // mobx store
@@ -51,15 +63,11 @@ export const UpdateWorkspaceSeatsModal: React.FC<Props> = observer((props) => {
     if (error) setError("");
   }, [numberOfSeats]);
 
-  useEffect(() => {
-    if (subscribedPlan) setNumberOfSeats(subscribedPlan?.purchased_seats?.toString() || "1");
-  }, [subscribedPlan]);
-
   const handleClose = () => {
     onClose();
 
     const timeout = setTimeout(() => {
-      setNumberOfSeats(subscribedPlan?.purchased_seats?.toString() || "1");
+      setNumberOfSeats("1");
       setError("");
       clearTimeout(timeout);
     }, 350);
@@ -67,6 +75,12 @@ export const UpdateWorkspaceSeatsModal: React.FC<Props> = observer((props) => {
 
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    // validate purchased seats
+    if (!subscribedPlan?.purchased_seats) return;
+    // derive updated seats
+    const purchasedSeats = subscribedPlan?.purchased_seats;
+    const updatedSeats =
+      variant === "ADD_SEATS" ? purchasedSeats + Number(numberOfSeats) : purchasedSeats - Number(numberOfSeats);
     // validate number of seats
     if (!numberOfSeats || Number(numberOfSeats) <= 0) {
       setError("You need to add at least one seat.");
@@ -76,10 +90,18 @@ export const UpdateWorkspaceSeatsModal: React.FC<Props> = observer((props) => {
       setError("We take a number from 1 to 10,000 here.");
       return;
     }
+    if (variant === "REMOVE_SEATS" && Number(numberOfSeats) > subscribedPlan?.purchased_seats) {
+      setError("You can't remove more seats than you have.");
+      return;
+    }
+    if (variant === "REMOVE_SEATS" && Number(numberOfSeats) === subscribedPlan?.purchased_seats) {
+      setError("You can't remove all seats.");
+      return;
+    }
 
     setIsSubmitting(true);
     await selfHostedSubscriptionService
-      .updateWorkspaceSeats(workspaceSlug?.toString(), Number(numberOfSeats))
+      .updateWorkspaceSeats(workspaceSlug?.toString(), updatedSeats)
       .then((response) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -132,7 +154,7 @@ export const UpdateWorkspaceSeatsModal: React.FC<Props> = observer((props) => {
       >
         <div className="space-y-2">
           <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
-            Manage seats on your current plan
+            {variant === "ADD_SEATS" ? "Add more seats to" : "Remove seats from"} your current plan
           </Dialog.Title>
           <p className="text-sm text-custom-text-200">
             Your current plan lets you have{" "}
@@ -147,8 +169,11 @@ export const UpdateWorkspaceSeatsModal: React.FC<Props> = observer((props) => {
           </p>
           <div className="py-2 space-y-4">
             <div className="flex w-full items-center gap-1.5">
-              <div className="text-sm text-custom-text-200 pr-2">Number of paid seats</div>
-              <UpdateSeatButton onClick={() => handleSeatChange("remove")}>
+              <div className="text-sm text-custom-text-200 pr-2">
+                Number of paid seats <br />
+                {variant === "ADD_SEATS" ? " you want to add" : " you want to remove"}
+              </div>
+              <UpdateSeatButton onClick={() => handleSeatChange("remove")} disabled={Number(numberOfSeats) <= 1}>
                 <Minus className="size-4 text-custom-text-100" />
               </UpdateSeatButton>
               <Input
@@ -166,7 +191,7 @@ export const UpdateWorkspaceSeatsModal: React.FC<Props> = observer((props) => {
                 hasError={Boolean(error)}
                 tabIndex={-1}
               />
-              <UpdateSeatButton onClick={() => handleSeatChange("add")}>
+              <UpdateSeatButton onClick={() => handleSeatChange("add")} disabled={Number(numberOfSeats) >= 10000}>
                 <Plus className="size-4 text-custom-text-100" />
               </UpdateSeatButton>
               {Boolean(error) && <p className="text-xs text-red-500">{error}</p>}

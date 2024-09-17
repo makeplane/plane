@@ -72,6 +72,19 @@ export class SelfHostedSubscriptionService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  /**
+   * @description removing unused seats
+   * @param { string } workspaceSlug
+   * @returns { Promise<{ seats: number }> }
+   */
+  async removeUnusedSeats(workspaceSlug: string): Promise<{ seats: number }> {
+    return this.post(`/api/payments/workspaces/${workspaceSlug}/subscriptions/seats/remove-unused/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }
 
 const selfHostedSubscriptionService = new SelfHostedSubscriptionService();
