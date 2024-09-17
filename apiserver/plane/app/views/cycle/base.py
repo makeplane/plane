@@ -31,6 +31,7 @@ from plane.app.permissions import allow_permission, ROLE
 from plane.app.serializers import (
     CycleSerializer,
     CycleUserPropertiesSerializer,
+    CycleAnalyticsSerializer,
     CycleWriteSerializer,
 )
 from plane.bgtasks.issue_activities_task import issue_activity
@@ -44,6 +45,8 @@ from plane.db.models import (
     User,
     Project,
     ProjectMember,
+    CycleAnalytics,
+    CycleIssueStateProgress,
 )
 from plane.utils.analytics_plot import burndown_plot
 from plane.bgtasks.recent_visited_task import recent_visited_task
@@ -958,6 +961,37 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             updated_cycles, ["cycle_id"], batch_size=100
         )
 
+        estimate_type = Project.objects.filter(
+            workspace__slug=slug,
+            pk=project_id,
+            estimate__isnull=False,
+            estimate__type="points",
+        ).exists()
+
+        CycleIssueStateProgress.objects.bulk_create(
+            [
+                CycleIssueStateProgress(
+                    cycle_id=new_cycle_id,
+                    state_id=cycle_issue.issue.state_id,
+                    issue_id=cycle_issue.issue_id,
+                    state_group=cycle_issue.issue.state.group,
+                    type="ADDED",
+                    estimate_id=cycle_issue.issue.estimate_point_id,
+                    estimate_value=(
+                        cycle_issue.issue.estimate_point.value
+                        if estimate_type
+                        else None
+                    ),
+                    project_id=project_id,
+                    workspace_id=cycle_issue.workspace_id,
+                    created_by_id=request.user.id,
+                    updated_by_id=request.user.id,
+                )
+                for cycle_issue in cycle_issues
+            ],
+            batch_size=10,
+        )
+
         # Capture Issue Activity
         issue_activity.delay(
             type="cycle.activity.created",
@@ -1147,6 +1181,7 @@ class CycleProgressEndpoint(BaseAPIView):
             },
             status=status.HTTP_200_OK,
         )
+
 
 class CycleAnalyticsEndpoint(BaseAPIView):
 
@@ -1365,5 +1400,21 @@ class CycleAnalyticsEndpoint(BaseAPIView):
                 "labels": label_distribution,
                 "completion_chart": completion_chart,
             },
+            status=status.HTTP_200_OK,
+        )
+
+
+class CycleIssueStateAnalyticsEndpoint(BaseAPIView):
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def get(self, request, slug, project_id, cycle_id):
+        cycle_state_progress = CycleAnalytics.objects.filter(
+            cycle_id=cycle_id,
+            project_id=project_id,
+            workspace__slug=slug,
+        )
+
+        return Response(
+            CycleAnalyticsSerializer(cycle_state_progress, many=True).data,
             status=status.HTTP_200_OK,
         )

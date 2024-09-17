@@ -100,10 +100,9 @@ from .cycle.base import (
     TransferCycleIssueEndpoint,
     CycleAnalyticsEndpoint,
     CycleProgressEndpoint,
+    CycleIssueStateAnalyticsEndpoint,
 )
-from .cycle.issue import (
-    CycleIssueViewSet,
-)
+from .cycle.issue import CycleIssueViewSet
 from .cycle.archive import (
     CycleArchiveUnarchiveEndpoint,
 )

@@ -42,6 +42,7 @@ from plane.db.models import (
     IssueSubscriber,
     Project,
     ProjectMember,
+    CycleIssueStateProgress,
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -544,6 +545,8 @@ class IssueViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+
+
         recent_visited_task.delay(
             slug=slug,
             entity_name="issue",
@@ -601,6 +604,29 @@ class IssueViewSet(BaseViewSet):
         current_instance = json.dumps(
             IssueSerializer(issue).data, cls=DjangoJSONEncoder
         )
+        estimate_type = Project.objects.filter(
+            workspace__slug=slug,
+            pk=project_id,
+            estimate__isnull=False,
+            estimate__type="points",
+        ).exists()
+
+        if issue.cycle_id:
+            CycleIssueStateProgress.objects.create(
+                cycle_id=issue.cycle_id,
+                state_id=issue.state_id,
+                issue_id=issue.id,
+                state_group=issue.state.group,
+                type="UPDATED",
+                estimate_id=issue.estimate_point_id,
+                estimate_value=(
+                    issue.estimate_point.value if estimate_type else None
+                ),
+                project_id=project_id,
+                workspace_id=issue.workspace_id,
+                created_by_id=request.user.id,
+                updated_by_id=request.user.id,
+            )
 
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         serializer = IssueCreateSerializer(

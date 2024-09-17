@@ -24,6 +24,8 @@ from plane.db.models import (
     Issue,
     IssueAttachment,
     IssueLink,
+    CycleIssueStateProgress,
+    Project,
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -268,6 +270,10 @@ class CycleIssueViewSet(BaseViewSet):
         ]
         new_issues = list(set(issues) - set(existing_issues))
 
+        # Fetch issue details
+        issue_objects = Issue.objects.filter(id__in=new_issues)
+        issue_dict = {issue.id: issue for issue in issue_objects}
+
         # New issues to create
         created_records = CycleIssue.objects.bulk_create(
             [
@@ -283,6 +289,42 @@ class CycleIssueViewSet(BaseViewSet):
             ],
             batch_size=10,
         )
+
+        # estimate_type = Project.objects.filter(
+        #     workspace__slug=slug,
+        #     pk=project_id,
+        #     estimate__isnull=False,
+        #     estimate__type="points",
+        # ).exists()
+
+        # for issue_id in new_issues:
+        #     print(issue_id, "issue id")
+        #     print(issue_dict[issue_id].state_id, "state_id")
+
+        # CycleIssueStateProgress.objects.bulk_create(
+        #     [
+        #         CycleIssueStateProgress(
+        #             cycle_id=cycle_id,
+        #             state_id=str(issue_dict[issue_id].state_id),
+        #             issue_id=issue_id,
+        #             state_group=issue_dict[issue_id].state.group,
+        #             type="ADDED",
+        #             estimate_id=issue_dict[issue_id].estimate_id,
+        #             estimate_value=(
+        #                 issue_dict[issue_id].estimate_point.value
+        #                 if estimate_type
+        #                 else None
+        #             ),
+        #             project_id=project_id,
+        #             workspace_id=cycle.workspace_id,
+        #             created_by_id=request.user.id,
+        #             updated_by_id=request.user.id,
+        #         )
+        #         print(issue_id, "issue id")
+        #         for issue_id in new_issues
+        #     ],
+        #     batch_size=10,
+        # )
 
         # Updated Issues
         updated_records = []
@@ -335,6 +377,28 @@ class CycleIssueViewSet(BaseViewSet):
             workspace__slug=slug,
             project_id=project_id,
             cycle_id=cycle_id,
+        )
+        issue = Issue.objects.get(pk=issue_id)
+        estimate_type = Project.objects.filter(
+            workspace__slug=slug,
+            pk=project_id,
+            estimate__isnull=False,
+            estimate__type="points",
+        ).exists()
+
+        CycleIssueStateProgress.objects.create(
+            cycle_id=cycle_id,
+            state_id=issue.state_id,
+            issue_id=issue_id,
+            state_group=issue.state.group,
+            type="REMOVED",
+            estimate_id=issue.estimate_id,
+            estimate_value=(
+                issue.estimate_point.value if estimate_type else None
+            ),
+            project_id=project_id,
+            created_by_id=request.user.id,
+            updated_by_id=request.user.id,
         )
         issue_activity.delay(
             type="cycle.activity.deleted",
