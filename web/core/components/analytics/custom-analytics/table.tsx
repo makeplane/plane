@@ -19,7 +19,7 @@ type Props = {
 };
 
 export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, params, yAxisKey }) => (
-  <div className="w-full overflow-hidden overflow-x-auto absolute left-0">
+  <div className="w-full overflow-hidden overflow-x-auto">
     <table className="w-full overflow-hidden divide-y divide-custom-border-200 whitespace-nowrap border-y border-custom-border-200">
       <thead className="bg-custom-background-80">
         <tr className="divide-x divide-custom-border-200 text-sm text-custom-text-100">

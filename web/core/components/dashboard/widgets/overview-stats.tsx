@@ -66,7 +66,7 @@ export const OverviewStatsWidget: React.FC<WidgetProps> = observer((props) => {
   return (
     <Card
       spacing={ECardSpacing.SM}
-      className="flex-row grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-2 grid-cols-2 space-y-0
+      className="flex-row grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-2 grid-cols-2 space-y-0 p-0.5
         [&>div>a>div]:border-r
         [&>div:last-child>a>div]:border-0
         [&>div>a>div]:border-custom-border-200
@@ -79,8 +79,8 @@ export const OverviewStatsWidget: React.FC<WidgetProps> = observer((props) => {
           key={stat.key}
           className={cn(
             `w-full flex flex-col gap-2 hover:bg-custom-background-80`,
-            index === 0 ? "rounded-tl-xl lg:rounded-l-xl" : "",
-            index === STATS_LIST.length - 1 ? "rounded-br-xl lg:rounded-r-xl" : "",
+            index === 0 ? "rounded-l-md" : "",
+            index === STATS_LIST.length - 1 ? "rounded-r-md" : "",
             index === 1 ? "rounded-tr-xl lg:rounded-[0px]" : "",
             index == 2 ? "rounded-bl-xl lg:rounded-[0px]" : ""
           )}
