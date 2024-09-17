@@ -28,7 +28,12 @@ def generate_random_name(length=10):
 
 class ProjectEstimatePointEndpoint(BaseAPIView):
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER])
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+        ]
+    )
     def get(self, request, slug, project_id):
         project = Project.objects.get(workspace__slug=slug, pk=project_id)
         if project.estimate_id is not None:

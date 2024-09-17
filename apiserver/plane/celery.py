@@ -40,6 +40,10 @@ app.conf.beat_schedule = {
         "task": "plane.bgtasks.deletion_task.hard_delete",
         "schedule": crontab(hour=0, minute=0),
     },
+    "track-cycle-issue-state-progress": {
+        "task": "plane.bgtasks.cycle_issue_state_progress_task.track_cycle_issue_state_progress",
+        "schedule": crontab(hour=9, minute=6),
+    },
 }
 
 # Load task modules from all registered Django app configs.

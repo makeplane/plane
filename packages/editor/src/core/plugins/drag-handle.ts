@@ -30,7 +30,7 @@ const createDragHandleElement = (): HTMLElement => {
   return dragHandleElement;
 };
 
-const nodeDOMAtCoords = (coords: { x: number; y: number }) => {
+export const nodeDOMAtCoords = (coords: { x: number; y: number }) => {
   const elements = document.elementsFromPoint(coords.x, coords.y);
   const generalSelectors = [
     "li",
@@ -42,10 +42,31 @@ const nodeDOMAtCoords = (coords: { x: number; y: number }) => {
     "[data-type=horizontalRule]",
     ".table-wrapper",
     ".issue-embed",
+    ".image-upload-component",
   ].join(", ");
 
+  const hasNestedImg = (el: Element): boolean => {
+    if (el.tagName.toLowerCase() === "img") return true;
+    // @ts-expect-error todo
+    for (const child of el.children) {
+      if (hasNestedImg(child)) return true;
+    }
+    return false;
+  };
+
   for (const elem of elements) {
+    const elemHasNestedImg = hasNestedImg(elem);
     if (elem.matches("p:first-child") && elem.parentElement?.matches(".ProseMirror")) {
+      return elem;
+    }
+
+    // if the element is a <p> tag and has a nested img i.e. the new image
+    // component
+    if (elem.matches("p") && elemHasNestedImg) {
+      return null;
+    }
+
+    if (elem.matches("div") && elemHasNestedImg) {
       return elem;
     }
 

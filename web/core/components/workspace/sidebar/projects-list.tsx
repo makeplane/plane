@@ -14,14 +14,13 @@ import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
 import { CreateProjectModal } from "@/components/project";
 import { SidebarProjectsListItem } from "@/components/workspace";
-// constants
-import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { orderJoinedProjects } from "@/helpers/project.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useAppTheme, useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
+import { useAppTheme, useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const SidebarProjectsList: FC = observer(() => {
   // get local storage data for isFavoriteProjectsListOpen and isAllProjectsListOpen
@@ -37,16 +36,18 @@ export const SidebarProjectsList: FC = observer(() => {
   const { toggleCreateProjectModal } = useCommandPalette();
   const { sidebarCollapsed } = useAppTheme();
   const { setTrackElement } = useEventTracker();
-  const {
-    membership: { currentWorkspaceRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
+
   const { getProjectById, joinedProjectIds: joinedProjects, updateProjectView } = useProject();
   // router params
   const { workspaceSlug } = useParams();
   const pathname = usePathname();
 
   // auth
-  const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+  const isAuthorizedUser = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
 
   const handleCopyText = (projectId: string) => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/issues`).then(() => {

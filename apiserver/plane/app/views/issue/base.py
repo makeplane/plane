@@ -42,6 +42,7 @@ from plane.db.models import (
     IssueSubscriber,
     Project,
     ProjectMember,
+    CycleIssueStateProgress,
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -62,7 +63,7 @@ from plane.bgtasks.webhook_task import model_activity
 
 
 class IssueListEndpoint(BaseAPIView):
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id):
         issue_ids = request.GET.get("issues", False)
 
@@ -232,8 +233,9 @@ class IssueViewSet(BaseViewSet):
         ).distinct()
 
     @method_decorator(gzip_page)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
         filters = issue_filters(request.query_params, "GET")
         order_by_param = request.GET.get("order_by", "-created_at")
 
@@ -264,13 +266,16 @@ class IssueViewSet(BaseViewSet):
             entity_identifier=project_id,
             user_id=request.user.id,
         )
-        if ProjectMember.objects.filter(
-            workspace__slug=slug,
-            project_id=project_id,
-            member=request.user,
-            role=5,
-            is_active=True,
-        ).exists():
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=request.user,
+                role=5,
+                is_active=True,
+            ).exists()
+            and not project.guest_view_all_features
+        ):
             issue_queryset = issue_queryset.filter(created_by=request.user)
 
         if group_by:
@@ -440,9 +445,17 @@ class IssueViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @allow_permission(
-        [ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER], creator=True, model=Issue
+        allowed_roles=[
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+            ROLE.GUEST,
+        ],
+        creator=True,
+        model=Issue,
     )
     def retrieve(self, request, slug, project_id, pk=None):
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
+
         issue = (
             self.get_queryset()
             .filter(pk=pk)
@@ -511,6 +524,29 @@ class IssueViewSet(BaseViewSet):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
+        """
+        if the role is guest and guest_view_all_features is false and owned by is not 
+        the requesting user then dont show the issue
+        """
+
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=request.user,
+                role=5,
+                is_active=True,
+            ).exists()
+            and not project.guest_view_all_features
+            and not issue.created_by == request.user
+        ):
+            return Response(
+                {"error": "You are not allowed to view this issue"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+
         recent_visited_task.delay(
             slug=slug,
             entity_name="issue",
@@ -522,7 +558,9 @@ class IssueViewSet(BaseViewSet):
         serializer = IssueDetailSerializer(issue, expand=self.expand)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], creator=True, model=Issue
+    )
     def partial_update(self, request, slug, project_id, pk=None):
         issue = (
             self.get_queryset()
@@ -566,6 +604,29 @@ class IssueViewSet(BaseViewSet):
         current_instance = json.dumps(
             IssueSerializer(issue).data, cls=DjangoJSONEncoder
         )
+        estimate_type = Project.objects.filter(
+            workspace__slug=slug,
+            pk=project_id,
+            estimate__isnull=False,
+            estimate__type="points",
+        ).exists()
+
+        if issue.cycle_id:
+            CycleIssueStateProgress.objects.create(
+                cycle_id=issue.cycle_id,
+                state_id=issue.state_id,
+                issue_id=issue.id,
+                state_group=issue.state.group,
+                type="UPDATED",
+                estimate_id=issue.estimate_point_id,
+                estimate_value=(
+                    issue.estimate_point.value if estimate_type else None
+                ),
+                project_id=project_id,
+                workspace_id=issue.workspace_id,
+                created_by_id=request.user.id,
+                updated_by_id=request.user.id,
+            )
 
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         serializer = IssueCreateSerializer(
@@ -618,7 +679,7 @@ class IssueViewSet(BaseViewSet):
 
 
 class IssueUserDisplayPropertyEndpoint(BaseAPIView):
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST, ROLE.VIEWER])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def patch(self, request, slug, project_id):
         issue_property = IssueUserProperty.objects.get(
             user=request.user,
@@ -638,7 +699,13 @@ class IssueUserDisplayPropertyEndpoint(BaseAPIView):
         serializer = IssueUserPropertySerializer(issue_property)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST, ROLE.VIEWER])
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+            ROLE.GUEST,
+        ]
+    )
     def get(self, request, slug, project_id):
         issue_property, _ = IssueUserProperty.objects.get_or_create(
             user=request.user, project_id=project_id
@@ -719,7 +786,7 @@ class IssuePaginatedViewSet(BaseViewSet):
 
         return paginated_data
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
         cursor = request.GET.get("cursor", None)
         is_description_required = request.GET.get("description", False)

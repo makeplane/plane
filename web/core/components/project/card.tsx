@@ -24,15 +24,16 @@ import {
 import { Logo } from "@/components/common";
 import { ArchiveRestoreProjectModal, DeleteProjectModal, JoinProjectModal } from "@/components/project";
 // constants
-import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane-web constants
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   project: IProject;
@@ -51,14 +52,19 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = useParams();
   // store hooks
   const { addProjectToFavorites, removeProjectFromFavorites } = useProject();
+  const { allowPermissions } = useUserPermissions();
   // hooks
   const { isMobile } = usePlatformOS();
   project.member_role;
   // derived values
   const projectMembersIds = project.members?.map((member) => member.member_id);
+  const shouldRenderFavorite = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
   // auth
-  const isOwner = project.member_role === EUserProjectRoles.ADMIN;
-  const isMember = project.member_role === EUserProjectRoles.MEMBER;
+  const isOwner = project.member_role === EUserPermissions.ADMIN;
+  const isMember = project.member_role === EUserPermissions.MEMBER;
   // archive
   const isArchived = !!project.archived_at;
 
@@ -232,19 +238,21 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
                 >
                   <LinkIcon className="h-3 w-3 text-white" />
                 </button>
-                <FavoriteStar
-                  buttonClassName="h-6 w-6 bg-white/10"
-                  iconClassName={cn("h-3 w-3", {
-                    "text-white": !project.is_favorite,
-                  })}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if (project.is_favorite) handleRemoveFromFavorites();
-                    else handleAddToFavorites();
-                  }}
-                  selected={project.is_favorite}
-                />
+                {shouldRenderFavorite && (
+                  <FavoriteStar
+                    buttonClassName="h-6 w-6 bg-white/10"
+                    iconClassName={cn("h-3 w-3", {
+                      "text-white": !project.is_favorite,
+                    })}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (project.is_favorite) handleRemoveFromFavorites();
+                      else handleAddToFavorites();
+                    }}
+                    selected={project.is_favorite}
+                  />
+                )}
               </div>
             )}
           </div>

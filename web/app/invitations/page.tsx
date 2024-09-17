@@ -27,6 +27,9 @@ import { useEventTracker, useUser, useUserProfile, useWorkspace } from "@/hooks/
 import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { AuthenticationWrapper } from "@/lib/wrappers";
+// plane web constants
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
+// plane web services
 import { WorkspaceService } from "@/plane-web/services";
 // images
 import emptyInvitation from "@/public/empty-state/invitation.svg";
@@ -88,7 +91,7 @@ const UserInvitationsPage = observer(() => {
         captureEvent(MEMBER_ACCEPTED, {
           member_id: invitation?.id,
           // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-          role: getUserRole(invitation?.role!),
+          role: getUserRole((invitation?.role as unknown as EUserPermissions)!),
           project_id: undefined,
           accepted_from: "App",
           state: "SUCCESS",

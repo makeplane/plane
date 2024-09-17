@@ -39,7 +39,7 @@
 }
 /* end ai handle */
 
-.ProseMirror:not(.dragging) .ProseMirror-selectednode {
+.ProseMirror:not(.dragging) .ProseMirror-selectednode:not(.node-imageComponent):not(.node-image) {
   position: relative;
   cursor: grab;
   outline: none !important;
@@ -62,6 +62,15 @@
     background-color: rgba(var(--color-primary-100), 0.2);
     border-radius: 4px;
     pointer-events: none;
+  }
+
+  &.node-imageComponent,
+  &.node-image {
+    --horizontal-offset: 0px;
+
+    &::after {
+      background-color: rgba(var(--color-background-100), 0.2);
+    }
   }
 }
 
@@ -96,7 +105,8 @@ ol > li:nth-child(n + 100).ProseMirror-selectednode:not(.dragging)::after {
   margin-left: -35px;
 }
 
-.ProseMirror img {
+.ProseMirror node-image,
+.ProseMirror node-imageComponent {
   transition: filter 0.1s ease-in-out;
   cursor: pointer;
 

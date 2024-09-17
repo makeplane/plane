@@ -31,6 +31,7 @@ from plane.app.permissions import allow_permission, ROLE
 from plane.app.serializers import (
     CycleSerializer,
     CycleUserPropertiesSerializer,
+    CycleAnalyticsSerializer,
     CycleWriteSerializer,
 )
 from plane.bgtasks.issue_activities_task import issue_activity
@@ -44,6 +45,8 @@ from plane.db.models import (
     User,
     Project,
     ProjectMember,
+    CycleAnalytics,
+    CycleIssueStateProgress,
 )
 from plane.utils.analytics_plot import burndown_plot
 from plane.bgtasks.recent_visited_task import recent_visited_task
@@ -150,7 +153,7 @@ class CycleViewSet(BaseViewSet):
             .distinct()
         )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
         queryset = self.get_queryset().filter(archived_at__isnull=True)
         cycle_view = request.GET.get("cycle_view", "all")
@@ -370,7 +373,12 @@ class CycleViewSet(BaseViewSet):
             return Response(cycle, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER])
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+        ]
+    )
     def retrieve(self, request, slug, project_id, pk):
         queryset = (
             self.get_queryset().filter(archived_at__isnull=True).filter(pk=pk)
@@ -497,7 +505,6 @@ class CycleViewSet(BaseViewSet):
 
 
 class CycleDateCheckEndpoint(BaseAPIView):
-
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id):
         start_date = request.data.get("start_date", False)
@@ -566,7 +573,6 @@ class CycleFavoriteViewSet(BaseViewSet):
 
 
 class TransferCycleIssueEndpoint(BaseAPIView):
-
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id, cycle_id):
         new_cycle_id = request.data.get("new_cycle_id", False)
@@ -955,6 +961,37 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             updated_cycles, ["cycle_id"], batch_size=100
         )
 
+        estimate_type = Project.objects.filter(
+            workspace__slug=slug,
+            pk=project_id,
+            estimate__isnull=False,
+            estimate__type="points",
+        ).exists()
+
+        CycleIssueStateProgress.objects.bulk_create(
+            [
+                CycleIssueStateProgress(
+                    cycle_id=new_cycle_id,
+                    state_id=cycle_issue.issue.state_id,
+                    issue_id=cycle_issue.issue_id,
+                    state_group=cycle_issue.issue.state.group,
+                    type="ADDED",
+                    estimate_id=cycle_issue.issue.estimate_point_id,
+                    estimate_value=(
+                        cycle_issue.issue.estimate_point.value
+                        if estimate_type
+                        else None
+                    ),
+                    project_id=project_id,
+                    workspace_id=cycle_issue.workspace_id,
+                    created_by_id=request.user.id,
+                    updated_by_id=request.user.id,
+                )
+                for cycle_issue in cycle_issues
+            ],
+            batch_size=10,
+        )
+
         # Capture Issue Activity
         issue_activity.delay(
             type="cycle.activity.created",
@@ -977,8 +1014,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
 
 
 class CycleUserPropertiesEndpoint(BaseAPIView):
-
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def patch(self, request, slug, project_id, cycle_id):
         cycle_properties = CycleUserProperties.objects.get(
             user=request.user,
@@ -1001,7 +1037,7 @@ class CycleUserPropertiesEndpoint(BaseAPIView):
         serializer = CycleUserPropertiesSerializer(cycle_properties)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, cycle_id):
         cycle_properties, _ = CycleUserProperties.objects.get_or_create(
             user=request.user,
@@ -1014,10 +1050,8 @@ class CycleUserPropertiesEndpoint(BaseAPIView):
 
 
 class CycleProgressEndpoint(BaseAPIView):
-
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, cycle_id):
-
         aggregate_estimates = (
             Issue.issue_objects.filter(
                 estimate_point__estimate__type="points",
@@ -1151,7 +1185,7 @@ class CycleProgressEndpoint(BaseAPIView):
 
 class CycleAnalyticsEndpoint(BaseAPIView):
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, cycle_id):
         analytic_type = request.GET.get("type", "issues")
         cycle = (
@@ -1366,5 +1400,21 @@ class CycleAnalyticsEndpoint(BaseAPIView):
                 "labels": label_distribution,
                 "completion_chart": completion_chart,
             },
+            status=status.HTTP_200_OK,
+        )
+
+
+class CycleIssueStateAnalyticsEndpoint(BaseAPIView):
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def get(self, request, slug, project_id, cycle_id):
+        cycle_state_progress = CycleAnalytics.objects.filter(
+            cycle_id=cycle_id,
+            project_id=project_id,
+            workspace__slug=slug,
+        )
+
+        return Response(
+            CycleAnalyticsSerializer(cycle_state_progress, many=True).data,
             status=status.HTTP_200_OK,
         )

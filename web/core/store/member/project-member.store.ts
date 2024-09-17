@@ -10,8 +10,8 @@ import {
   IProjectMembership,
   IUserLite,
 } from "@plane/types";
-// constants
-import { EUserProjectRoles } from "@/constants/project";
+// plane-web constants
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // services
 import { ProjectMemberService } from "@/services/project";
 // store
@@ -25,7 +25,7 @@ import { IMemberRootStore } from ".";
 export interface IProjectMemberDetails {
   id: string;
   member: IUserLite;
-  role: EUserProjectRoles;
+  role: EUserPermissions;
 }
 
 export interface IProjectMemberStore {
@@ -51,7 +51,7 @@ export interface IProjectMemberStore {
     workspaceSlug: string,
     projectId: string,
     userId: string,
-    data: { role: EUserProjectRoles }
+    data: { role: EUserPermissions }
   ) => Promise<IProjectMember>;
   removeMemberFromProject: (workspaceSlug: string, projectId: string, userId: string) => Promise<void>;
 }
@@ -182,12 +182,7 @@ export class ProjectMemberStore implements IProjectMemberStore {
    * @param userId
    * @param data
    */
-  updateMember = async (
-    workspaceSlug: string,
-    projectId: string,
-    userId: string,
-    data: { role: EUserProjectRoles }
-  ) => {
+  updateMember = async (workspaceSlug: string, projectId: string, userId: string, data: { role: EUserPermissions }) => {
     const memberDetails = this.getProjectMemberDetails(userId);
     if (!memberDetails) throw new Error("Member not found");
     // original data to revert back in case of error

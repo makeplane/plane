@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, useState } from "react";
 import { CheckCircle } from "lucide-react";
 import { Tab } from "@headlessui/react";
@@ -43,8 +45,8 @@ export const ProPlanUpgrade: FC<ProPlanUpgradeProps> = (props) => {
   const yearlyPrice = PRO_PLAN_PRICES.find((price) => price.recurring === "year")?.price ?? 0;
   const yearlyDiscount = calculateYearlyDiscount(monthlyPrice, yearlyPrice);
   // env
-  const PRO_PLAN_MONTHLY_PAYMENT_URL = process.env.NEXT_PUBLIC_PRO_PLAN_MONTHLY_PAYMENT_URL ?? "https://plane.so/pro";
-  const PRO_PLAN_YEARLY_PAYMENT_URL = process.env.NEXT_PUBLIC_PRO_PLAN_YEARLY_PAYMENT_URL ?? "https://plane.so/pro";
+  const PRO_PLAN_MONTHLY_PAYMENT_URL = "https://app.plane.so/upgrade/pro/self-hosted?plan=month";
+  const PRO_PLAN_YEARLY_PAYMENT_URL = "https://app.plane.so/upgrade/pro/self-hosted?plan=year";
 
   return (
     <div className="py-4 px-2 border border-custom-primary-200/30 rounded-xl bg-custom-primary-200/5">

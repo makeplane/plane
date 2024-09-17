@@ -1,4 +1,5 @@
 # Python imports
+import pytz
 from uuid import uuid4
 
 # Django imports
@@ -16,7 +17,6 @@ from .base import BaseModel
 ROLE_CHOICES = (
     (20, "Admin"),
     (15, "Member"),
-    (10, "Viewer"),
     (5, "Guest"),
 )
 
@@ -98,6 +98,7 @@ class Project(BaseModel):
     inbox_view = models.BooleanField(default=False)
     is_time_tracking_enabled = models.BooleanField(default=False)
     is_issue_type_enabled = models.BooleanField(default=False)
+    guest_view_all_features = models.BooleanField(default=False)
     cover_image = models.URLField(blank=True, null=True, max_length=800)
     estimate = models.ForeignKey(
         "db.Estimate",
@@ -119,6 +120,11 @@ class Project(BaseModel):
         related_name="default_state",
     )
     archived_at = models.DateTimeField(null=True)
+    # timezone
+    USER_TIMEZONE_CHOICES = tuple(zip(pytz.all_timezones, pytz.all_timezones))
+    user_timezone = models.CharField(
+        max_length=255, default="UTC", choices=USER_TIMEZONE_CHOICES
+    )
 
     def __str__(self):
         """Return name of the project"""
@@ -173,7 +179,7 @@ class ProjectMemberInvite(ProjectBaseModel):
     token = models.CharField(max_length=255)
     message = models.TextField(null=True)
     responded_at = models.DateTimeField(null=True)
-    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=10)
+    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=5)
 
     class Meta:
         verbose_name = "Project Member Invite"
@@ -194,7 +200,7 @@ class ProjectMember(ProjectBaseModel):
         related_name="member_project",
     )
     comment = models.TextField(blank=True, null=True)
-    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=10)
+    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=5)
     view_props = models.JSONField(default=get_default_props)
     default_props = models.JSONField(default=get_default_props)
     preferences = models.JSONField(default=get_default_preferences)
