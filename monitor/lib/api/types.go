@@ -23,10 +23,9 @@ type StatusPayload struct {
 }
 
 type WorkspaceMember struct {
-	UserId    string `json:"user_id"`
-	UserRole  int    `json:"user_role"`
-	IsActive  bool   `json:"is_active"`
-	UserEmail string `json:"user_email"`
+	UserId   string `json:"user_id"`
+	UserRole int    `json:"user_role"`
+	IsActive bool   `json:"is_active"`
 }
 
 type WorkspaceActivationResponse struct {
