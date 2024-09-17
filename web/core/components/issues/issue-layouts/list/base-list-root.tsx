@@ -62,7 +62,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
 
   const { workspaceSlug, projectId } = useParams();
   const {updateFilters} = useIssuesActions(storeType);
-  const listGroups = issuesFilter?.issueFilters?.kanbanFilters || { group_by: [], sub_group_by: [] };
+  const collapsedGroups = issuesFilter?.issueFilters?.kanbanFilters || { group_by: [], sub_group_by: [] };
 
   useEffect(() => {
     fetchIssues("init-loader", { canGroup: true, perPageCount: group_by ? 50 : 100 }, viewId);
@@ -113,16 +113,16 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
   );
 
   //kanbanFilters and EIssueFilterType.KANBAN_FILTERS are used becuase the state is shared between kanban view and list view
-  const handleListGroups = (toggle: "group_by" | "sub_group_by", value: string) => {
+  const handleCollapsedGroups = (toggle: "group_by" | "sub_group_by", value: string) => {
     if (workspaceSlug) {
-      let listGroups = issuesFilter?.issueFilters?.kanbanFilters?.[toggle] || [];
-      if (listGroups.includes(value)) {
-        listGroups = listGroups.filter((_value) => _value != value);
+      let collapsedGroups = issuesFilter?.issueFilters?.kanbanFilters?.[toggle] || [];
+      if (collapsedGroups.includes(value)) {
+        collapsedGroups = collapsedGroups.filter((_value) => _value != value);
       } else {
-        listGroups.push(value);
+        collapsedGroups.push(value);
       }
       updateFilters(projectId?.toString() ?? "", EIssueFilterType.KANBAN_FILTERS, {
-        [toggle]: listGroups,
+        [toggle]: collapsedGroups,
       });
     }
   };
@@ -147,8 +147,8 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
           addIssuesToView={addIssuesToView}
           isCompletedCycle={isCompletedCycle}
           handleOnDrop={handleOnDrop}
-          handleListGroups={handleListGroups}
-          listGroups={listGroups}
+          handleCollapsedGroups={handleCollapsedGroups}
+          collapsedGroups={collapsedGroups}
         />
       </div>
     </IssueLayoutHOC>
