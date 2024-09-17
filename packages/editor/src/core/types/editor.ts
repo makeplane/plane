@@ -1,3 +1,4 @@
+import { JSONContent } from "@tiptap/core";
 // helpers
 import { IMarking } from "@/helpers/scroll-to-node";
 // types
@@ -16,7 +17,11 @@ import {
 // editor refs
 export type EditorReadOnlyRefApi = {
   getMarkDown: () => string;
-  getHTML: () => string;
+  getDocument: () => {
+    binary: Uint8Array | null;
+    html: string;
+    json: JSONContent | null;
+  };
   clearEditor: (emitUpdate?: boolean) => void;
   setEditorValue: (content: string) => void;
   scrollSummary: (marking: IMarking) => void;

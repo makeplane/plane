@@ -12,7 +12,6 @@ type Props = {
   editorReady: boolean;
   editorRef: React.RefObject<EditorRefApi>;
   handleDuplicatePage: () => void;
-  hasConnectionFailed: boolean;
   markings: IMarking[];
   page: IPage;
   readOnlyEditorReady: boolean;
@@ -26,7 +25,6 @@ export const PageEditorMobileHeaderRoot: React.FC<Props> = observer((props) => {
     editorReady,
     editorRef,
     handleDuplicatePage,
-    hasConnectionFailed,
     markings,
     page,
     readOnlyEditorReady,
@@ -56,7 +54,6 @@ export const PageEditorMobileHeaderRoot: React.FC<Props> = observer((props) => {
         <PageExtraOptions
           editorRef={editorRef}
           handleDuplicatePage={handleDuplicatePage}
-          hasConnectionFailed={hasConnectionFailed}
           page={page}
           readOnlyEditorRef={readOnlyEditorRef}
         />

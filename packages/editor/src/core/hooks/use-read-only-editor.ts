@@ -1,6 +1,8 @@
 import { useImperativeHandle, useRef, MutableRefObject, useEffect } from "react";
+import { HocuspocusProvider } from "@hocuspocus/provider";
 import { EditorProps } from "@tiptap/pm/view";
 import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
+import * as Y from "yjs";
 // extensions
 import { CoreReadOnlyEditorExtensions } from "@/extensions";
 // helpers
@@ -21,17 +23,21 @@ interface CustomReadOnlyEditorProps {
   mentionHandler: {
     highlights: () => Promise<IMentionHighlight[]>;
   };
+  provider?: HocuspocusProvider;
 }
 
-export const useReadOnlyEditor = ({
-  initialValue,
-  editorClassName,
-  forwardedRef,
-  extensions = [],
-  editorProps = {},
-  handleEditorReady,
-  mentionHandler,
-}: CustomReadOnlyEditorProps) => {
+export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
+  const {
+    initialValue,
+    editorClassName,
+    forwardedRef,
+    extensions = [],
+    editorProps = {},
+    handleEditorReady,
+    mentionHandler,
+    provider,
+  } = props;
+
   const editor = useCustomEditor({
     editable: false,
     content: typeof initialValue === "string" && initialValue.trim() !== "" ? initialValue : "<p></p>",
@@ -74,9 +80,16 @@ export const useReadOnlyEditor = ({
       const markdownOutput = editorRef.current?.storage.markdown.getMarkdown();
       return markdownOutput;
     },
-    getHTML: (): string => {
-      const htmlOutput = editorRef.current?.getHTML() ?? "<p></p>";
-      return htmlOutput;
+    getDocument: () => {
+      const documentBinary = provider?.document ? Y.encodeStateAsUpdate(provider?.document) : null;
+      const documentHTML = editorRef.current?.getHTML() ?? "<p></p>";
+      const documentJSON = editorRef.current?.getJSON() ?? null;
+
+      return {
+        binary: documentBinary,
+        html: documentHTML,
+        json: documentJSON,
+      };
     },
     scrollSummary: (marking: IMarking): void => {
       if (!editorRef.current) return;
