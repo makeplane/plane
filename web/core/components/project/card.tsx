@@ -213,7 +213,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
 
           <div className="absolute bottom-4 z-[1] flex h-10 w-full items-center justify-between gap-3 px-4">
             <div className="flex flex-grow items-center gap-2.5 truncate">
-              <div className="h-9 w-9 flex-shrink-0 grid place-items-center rounded bg-white/90">
+              <div className="h-9 w-9 flex-shrink-0 grid place-items-center rounded bg-white/10">
                 <Logo logo={project.logo_props} size={18} />
               </div>
 
