@@ -69,7 +69,6 @@ x-app-env: &app-env
 
 x-live-env: &live-env
   environment:
-    - LIVE_BASE_PATH=${LIVE_BASE_PATH:-"/live"}
     - API_BASE_URL=${API_BASE_URL:-http://api:8000}
     - REDIS_HOST=${REDIS_HOST:-plane-redis}
     - REDIS_PORT=${REDIS_PORT:-6379}
