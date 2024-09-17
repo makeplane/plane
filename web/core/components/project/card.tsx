@@ -240,7 +240,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
                 </button>
                 {shouldRenderFavorite && (
                   <FavoriteStar
-                    buttonClassName="h-6 w-6 bg-white/10"
+                    buttonClassName="h-6 w-6 bg-white/10 rounded"
                     iconClassName={cn("h-3 w-3", {
                       "text-white": !project.is_favorite,
                     })}
