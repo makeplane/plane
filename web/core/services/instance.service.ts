@@ -26,8 +26,8 @@ export class InstanceService extends APIService {
       });
   }
 
-  async getInstanceChangeLog(changelogUrl: string): Promise<TPage> {
-    return this.get(changelogUrl)
+  async getInstanceChangeLog(): Promise<TPage> {
+    return this.get("/api/instances/changelog/")
       .then((response) => response.data)
       .catch((error) => {
         throw error;

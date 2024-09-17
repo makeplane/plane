@@ -4,6 +4,7 @@ import os
 
 # Django imports
 from django.utils import timezone
+from django.conf import settings
 
 # Third party imports
 from rest_framework.response import Response
@@ -14,8 +15,7 @@ from rest_framework.permissions import AllowAny
 from .base import BaseAPIView
 
 # plane license imports
-from plane.license.models import ChangeLog, Instance
-from plane.license.api.serializers import ChangeLogSerializer
+from plane.license.models import Instance
 
 
 class ChangeLogEndpoint(BaseAPIView):
@@ -23,10 +23,21 @@ class ChangeLogEndpoint(BaseAPIView):
         AllowAny,
     ]
 
+    def fetch_change_logs(self):
+        response = requests.get(settings.INSTANCE_CHANGELOG_URL)
+        response.raise_for_status()
+        return response.json()
+
     def get(self, request):
-        changelogs = ChangeLog.objects.all().order_by("-release_date")
-        serializer = ChangeLogSerializer(changelogs, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        # Fetch the changelog
+        if settings.INSTANCE_CHANGELOG_URL:
+            data = self.fetch_change_logs()
+            return Response(data, status=status.HTTP_200_OK)
+        else:
+            return Response(
+                {"error": "could not fetch changelog please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 
 class CheckUpdateEndpoint(BaseAPIView):

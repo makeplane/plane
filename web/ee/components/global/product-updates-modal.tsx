@@ -30,16 +30,12 @@ export const ProductUpdatesModal: FC<ProductUpdatesModalProps> = observer((props
   // states
   const [isCheckingForUpdates, setIsCheckingForUpdates] = useState(false);
   // store
-  const { config, isUpdateAvailable, updateInstanceInfo } = useInstance();
+  const { isUpdateAvailable, updateInstanceInfo } = useInstance();
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
   // refs
   const editorRef = useRef<EditorRefApi>(null);
-  // derived values
-  const PLANE_CHANGELOG_URL = config?.instance_changelog_url ?? "";
   // swr
-  const { data, isLoading, error } = useSWR(`INSTANCE_CHANGELOG_${PLANE_CHANGELOG_URL}`, () =>
-    PLANE_CHANGELOG_URL ? instanceService.getInstanceChangeLog(PLANE_CHANGELOG_URL) : null
-  );
+  const { data, isLoading, error } = useSWR(`INSTANCE_CHANGELOG`, () => instanceService.getInstanceChangeLog());
 
   const handleCheckForUpdates = () => {
     setIsCheckingForUpdates(true);
@@ -112,7 +108,7 @@ export const ProductUpdatesModal: FC<ProductUpdatesModalProps> = observer((props
         </div>
       </div>
       <div className="flex flex-col h-[60vh] vertical-scrollbar scrollbar-xs overflow-hidden overflow-y-scroll px-6 mx-0.5">
-        {!PLANE_CHANGELOG_URL || !!error ? (
+        {!isLoading && !!error ? (
           <div className="flex flex-col items-center justify-center w-full h-full mb-8">
             <div className="text-lg font-medium">We are having trouble fetching the updates.</div>
             <div className="text-sm text-custom-text-200">
