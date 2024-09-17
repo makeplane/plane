@@ -12,7 +12,7 @@ export class InstanceFeatureFlagService extends APIService {
   }
 
   async getInstanceFeatureFlags(): Promise<TInstanceFeatureFlagsResponse> {
-    return this.get<TInstanceFeatureFlagsResponse>("api/instances/admins/feature-flags/")
+    return this.get<TInstanceFeatureFlagsResponse>("/api/instances/admins/feature-flags/")
       .then((response) => response.data)
       .catch((error) => {
         throw error;

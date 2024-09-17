@@ -63,7 +63,7 @@ export const ProductUpdatesModal: FC<ProductUpdatesModalProps> = observer((props
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
       <div className="flex gap-2 mx-6 my-4 items-center justify-between flex-shrink-0">
         <div className="flex w-full items-center">
-          <div className="flex gap-2 text-xl font-medium">Product updates</div>
+          <div className="flex gap-2 text-xl font-medium">What&apos;s new</div>
           {isUpdateAvailable ? (
             <a
               tabIndex={-1}
