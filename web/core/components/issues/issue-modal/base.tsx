@@ -13,7 +13,7 @@ import { ISSUE_CREATED, ISSUE_UPDATED } from "@/constants/event-tracker";
 import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
-import { useEventTracker, useCycle, useIssues, useModule, useProject, useIssueDetail } from "@/hooks/store";
+import { useEventTracker, useCycle, useIssues, useModule, useProject, useIssueDetail, useUser } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import useLocalStorage from "@/hooks/use-local-storage";
@@ -44,7 +44,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   // store hooks
   const { captureIssueEvent } = useEventTracker();
   const { workspaceSlug, projectId, cycleId, moduleId } = useParams();
-  const { workspaceProjectIds } = useProject();
+  const { projectsWithCreatePermissions } = useUser();
   const { fetchCycleDetails } = useCycle();
   const { fetchModuleDetails } = useModule();
   const { issues } = useIssues(storeType);
@@ -60,6 +60,8 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   >("draftedIssue", {});
   // current store details
   const { createIssue, updateIssue } = useIssuesActions(storeType);
+  // derived values
+  const projectIdsWithCreatePermissions = Object.keys(projectsWithCreatePermissions ?? {});
 
   const fetchIssueDetail = async (issueId: string | undefined) => {
     setDescription(undefined);
@@ -98,8 +100,8 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
 
     // if data is not present, set active project to the project
     // in the url. This has the least priority.
-    if (workspaceProjectIds && workspaceProjectIds.length > 0 && !activeProjectId)
-      setActiveProjectId(projectId?.toString() ?? workspaceProjectIds?.[0]);
+    if (projectIdsWithCreatePermissions && projectIdsWithCreatePermissions.length > 0 && !activeProjectId)
+      setActiveProjectId(projectId?.toString() ?? projectIdsWithCreatePermissions?.[0]);
 
     // clearing up the description state when we leave the component
     return () => setDescription(undefined);
@@ -288,7 +290,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   const handleFormChange = (formData: Partial<TIssue> | null) => setChangesMade(formData);
 
   // don't open the modal if there are no projects
-  if (!workspaceProjectIds || workspaceProjectIds.length === 0 || !activeProjectId) return null;
+  if (!projectIdsWithCreatePermissions || projectIdsWithCreatePermissions.length === 0 || !activeProjectId) return null;
 
   return (
     <ModalCore
