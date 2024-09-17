@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useTheme } from "next-themes";
-import { Home, Zap } from "lucide-react";
+import { Home } from "lucide-react";
 // images
 import githubBlackImage from "/public/logos/github-black.png";
 import githubWhiteImage from "/public/logos/github-white.png";
