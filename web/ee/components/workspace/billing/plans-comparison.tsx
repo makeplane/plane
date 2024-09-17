@@ -4,7 +4,7 @@ import { ArrowDown, ArrowUp, CheckCircle2, LoaderIcon, Minus, MinusCircle } from
 // constants
 import { EProductSubscriptionTier } from "@plane/constants";
 // types
-import { IPaymentProduct } from "@plane/types";
+import { TProductSubscriptionType } from "@plane/types";
 // ui
 import { Button, Loader } from "@plane/ui";
 // constants
@@ -20,11 +20,10 @@ type TPlansComparisonProps = {
   isProductsAPILoading: boolean;
   trialLoader: boolean;
   upgradeLoader: boolean;
-  proProduct: IPaymentProduct | undefined;
   selectedFrequency: "month" | "year";
   setSelectedFrequency: (frequency: "month" | "year") => void;
   handleTrial: () => void;
-  handleUpgrade: () => void;
+  handleUpgrade: (productType: TProductSubscriptionType) => void;
 };
 
 const renderPlanData = (data: TPlanFeatureData) => {
@@ -45,7 +44,6 @@ export const PlansComparison: FC<TPlansComparisonProps> = observer((props: TPlan
     isProductsAPILoading,
     trialLoader,
     upgradeLoader,
-    proProduct,
     selectedFrequency,
     setSelectedFrequency,
     handleTrial,
@@ -63,8 +61,6 @@ export const PlansComparison: FC<TPlansComparisonProps> = observer((props: TPlan
   const isOnTrialPeriod = subscriptionDetail?.is_on_trial;
   const isTrialEnded = subscriptionDetail?.is_trial_ended;
   const isTrialDetailVisible = !isSelfManaged && (isTrialAllowed || isOnTrialPeriod || isTrialEnded);
-  // env
-  const PLANE_ONE_PAYMENT_URL = "https://prime.plane.so/";
 
   const shouldRenderPlanDetail = (planKey: TPlanePlans) => {
     switch (planKey) {
@@ -91,10 +87,10 @@ export const PlansComparison: FC<TPlansComparisonProps> = observer((props: TPlan
   const handlePlanButtonClick = (planKey: TPlanePlans) => {
     switch (planKey) {
       case "one":
-        window.open(PLANE_ONE_PAYMENT_URL, "_blank");
+        handleUpgrade("ONE");
         break;
       case "pro":
-        handleUpgrade();
+        handleUpgrade("PRO");
         break;
       case "business":
       case "enterprise":
@@ -250,7 +246,7 @@ export const PlansComparison: FC<TPlansComparisonProps> = observer((props: TPlan
 
   return (
     <div className="w-full overflow-x-auto horizontal-scrollbar scrollbar-sm px-1">
-      <div className="max-w-full p-2" style={{ minWidth: `${numberOfPlansToRender * 220}px` }}>
+      <div className="max-w-full p-2" style={{ minWidth: `${numberOfPlansToRender * 240}px` }}>
         <div className="flex flex-col space-y-10">
           <section>
             <div

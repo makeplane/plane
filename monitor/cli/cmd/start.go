@@ -40,7 +40,10 @@ var StartCmd = &cobra.Command{
 			return err
 		}
 
-		feat_flag.ParsePrivateKey(PRIVATE_KEY)
+		_, err = feat_flag.ParsePrivateKey(PRIVATE_KEY)
+		if err != nil {
+			return err
+		}
 
 		// If we are upgraded, we need to update all the licenses present inside the
 		// DB to the current version

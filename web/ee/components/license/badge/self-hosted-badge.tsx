@@ -7,8 +7,9 @@ import { Button } from "@plane/ui";
 // plane web components
 import { PaidPlanUpgradeModal } from "@/ce/components/workspace/upgrade";
 import { PlaneOneEditionBadge } from "@/plane-web/components/license";
+import { SubscriptionActivationModal } from "@/plane-web/components/workspace";
 // plane web hooks
-import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
+import { useSelfHostedSubscription, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // assets
 import PlaneLogo from "@/public/plane-logos/blue-without-text.png";
 
@@ -20,10 +21,15 @@ export const SelfHostedEditionBadge = observer(() => {
     togglePaidPlanModal,
     handleSuccessModalToggle,
   } = useWorkspaceSubscription();
+  const { isActivationModalOpen, toggleLicenseActivationModal } = useSelfHostedSubscription();
 
   if (!subscriptionDetail || subscriptionDetail.product === "FREE")
     return (
       <>
+        <SubscriptionActivationModal
+          isOpen={isActivationModalOpen}
+          handleClose={() => toggleLicenseActivationModal(false)}
+        />
         <PaidPlanUpgradeModal isOpen={isPaidPlanModalOpen} handleClose={() => togglePaidPlanModal(false)} />
         <Button
           tabIndex={-1}

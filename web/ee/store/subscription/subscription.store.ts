@@ -91,6 +91,7 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
           show_payment_button: response?.show_payment_button ?? true,
           show_trial_banner: response?.show_trial_banner ?? false,
           free_seats: response?.free_seats ?? 0,
+          billable_members: response?.billable_members ?? 1,
         });
       });
       return response;
@@ -105,6 +106,7 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
           current_period_end_date: null,
           show_payment_button: true,
           free_seats: 0,
+          billable_members: 1,
         });
       });
       throw error;

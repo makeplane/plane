@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"encoding/pem"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/youmark/pkcs8"
@@ -32,7 +33,8 @@ func GetDecryptedJson(base64EncodedKey string, encryptedFeatureFlag EncryptedDat
 	// Decrypt the feature flag
 	decryptedData, err := decryptWithPrivateKey(encryptedFeatureFlag, rsaPrivateKey)
 	if err != nil {
-		return fmt.Errorf("failed to decrypt feature flag: %v", err)
+		fmt.Printf("failed to decrypt feature flag: %v", err)
+		os.Exit(1)
 	}
 
 	// Return the error from the unmarshal function

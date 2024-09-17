@@ -125,7 +125,7 @@ services:
   monitor:
     <<: *monitor-env
     image: registry.plane.tools/plane/monitor-enterprise:${APP_RELEASE_VERSION}
-    restart: unless-stopped
+    restart: on-failure:5
     volumes:
       - ${INSTALL_DIR}/data/monitor:/app
 

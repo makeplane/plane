@@ -44,4 +44,5 @@ export type IWorkspaceProductSubscription = {
   show_payment_button: boolean;
   show_trial_banner: boolean;
   free_seats: number | null;
+  billable_members: number | null;
 };

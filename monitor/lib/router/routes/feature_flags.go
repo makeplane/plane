@@ -33,6 +33,7 @@ func RegisterFeatureFlags(router *fiber.Router, plogger *primelogger.Handler, ap
 	addWorkspaceProductRoutes(ffController, api, key)
 	addWorkspaceSubscriptionRoutes(ffController, api, key)
 	addInstanceLicenseRoutes(ffController, api, key)
+	addPlansLicenseHandler(ffController, api, key)
 }
 
 func addFreeWorkspace(routes fiber.Router, api *prime_api.IPrimeMonitorApi, key string) {
@@ -66,4 +67,9 @@ func addWorkspaceSubscriptionRoutes(controller *fiber.App, api *prime_api.IPrime
 
 func addInstanceLicenseRoutes(controller *fiber.App, api *prime_api.IPrimeMonitorApi, key string) {
 	controller.Post("/workspaces/licenses/", handlers.GetInstanceLicenses(*api, key))
+}
+
+func addPlansLicenseHandler(controller *fiber.App, api *prime_api.IPrimeMonitorApi, key string) {
+	controller.Get("/products/", handlers.GetPlansHandler(*api, key))
+	controller.Post("/payment-link/", handlers.GetPaymentLinkHandler(*api, key))
 }

@@ -3,6 +3,8 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { Loader as LoaderIcon } from "lucide-react";
+// types
+import { TProductSubscriptionType } from "@plane/types";
 // ui
 import { Button, Loader } from "@plane/ui";
 // plane web components
@@ -15,7 +17,7 @@ type TCloudFreePlanCardProps = {
   trialLoader: boolean;
   upgradeLoader: boolean;
   handleTrial: () => void;
-  handleUpgrade: () => void;
+  handleUpgrade: (productType: TProductSubscriptionType) => void;
 };
 
 export const CloudFreePlanCard: FC<TCloudFreePlanCardProps> = observer((props: TCloudFreePlanCardProps) => {
@@ -31,6 +33,9 @@ export const CloudFreePlanCard: FC<TCloudFreePlanCardProps> = observer((props: T
           <div className="text-sm font-medium text-custom-text-200">
             12 members, unlimited projects, issues, cycles, modules, and pages
           </div>
+          <div className="text-sm font-medium text-custom-text-300">
+            Billable seats when you upgrade: {subscriptionDetail?.billable_members}
+          </div>
         </>
       }
       button={
@@ -39,7 +44,7 @@ export const CloudFreePlanCard: FC<TCloudFreePlanCardProps> = observer((props: T
             tabIndex={-1}
             variant="primary"
             className="w-fit cursor-pointer px-4 py-1.5 text-center text-sm font-medium outline-none"
-            onClick={handleUpgrade}
+            onClick={() => handleUpgrade("PRO")}
             disabled={upgradeLoader}
           >
             {upgradeLoader ? "Redirecting to Stripe..." : "Upgrade to Pro"}

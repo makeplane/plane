@@ -105,3 +105,45 @@ type SeatUpdateResponse struct {
 	Status bool  `json:"status"`
 	Seats  int64 `json:"seats"`
 }
+
+type Product struct {
+	CreatedAt   time.Time              `json:"created_at"`
+	UpdatedAt   time.Time              `json:"updated_at"`
+	CreatedByID string                 `json:"created_by_id"`
+	UpdatedByID string                 `json:"updated_by_id"`
+	ID          string                 `json:"id"`
+	Name        string                 `json:"name"`
+	Slug        string                 `json:"slug"`
+	Description *string                `json:"description"`
+	Metadata    map[string]interface{} `json:"metadata"`
+	Type        string                 `json:"type"`
+	StripeID    string                 `json:"stripe_id"`
+	IsActive    bool                   `json:"is_active"`
+	Prices      []Price                `json:"prices"`
+}
+
+type Price struct {
+	ID                string                 `json:"id"`
+	ProductID         string                 `json:"product_id"`
+	StripePriceID     string                 `json:"stripe_price_id"`
+	RecurringInterval string                 `json:"recurring"`
+	IsActive          bool                   `json:"is_active"`
+	UnitAmount        float64                `json:"unit_amount"`
+	Currency          string                 `json:"currency"`
+	Metadata          map[string]interface{} `json:"metadata"`
+}
+
+type RetrievePaymentLinkPayload struct {
+	WorkspaceID     string            `json:"workspace_id"`
+	Slug            string            `json:"slug"`
+	StripeProductID string            `json:"stripe_product_id"`
+	StripePriceID   string            `json:"stripe_price_id"`
+	CustomerEmail   string            `json:"customer_email"`
+	MembersList     []WorkspaceMember `json:"members_list"`
+	RequiredSeats   int               `json:"required_seats"`
+}
+
+type RetrievePaymentLinkResponse struct {
+	Message     string `json:"message"`
+	PaymentLink string `json:"url"`
+}

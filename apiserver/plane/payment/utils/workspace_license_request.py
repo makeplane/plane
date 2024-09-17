@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.db.models import F
 
 # Module imports
-from plane.db.models import Workspace, WorkspaceMember
+from plane.db.models import Workspace, WorkspaceMember, WorkspaceMemberInvite
 from plane.ee.models import WorkspaceLicense
 
 
@@ -144,6 +144,25 @@ def is_trial_ended(workspace_license):
     return False
 
 
+def count_billable_members(workspace_license):
+    """Count the number of billable members in the workspace"""
+    # Check the active paid users in the workspace
+    workspace_member_count = WorkspaceMember.objects.filter(
+        workspace=workspace_license.workspace,
+        is_active=True,
+        member__is_bot=False,
+        member__gt=10,
+    ).count()
+
+    # Check the active paid users in the workspace
+    invited_member_count = WorkspaceMemberInvite.objects.filter(
+        workspace=workspace_license.workspace,
+        role__gt=10,
+    ).count()
+
+    return workspace_member_count + invited_member_count
+
+
 def resync_workspace_license(workspace_slug, force=False):
     # Fetch the workspace
     workspace = Workspace.objects.get(slug=workspace_slug)
@@ -225,6 +244,7 @@ def resync_workspace_license(workspace_slug, force=False):
                 "free_seats": workspace_license.free_seats,
                 "current_period_start_date": workspace_license.current_period_start_date,
                 "is_trial_ended": is_trial_ended(workspace_license),
+                "billable_members": count_billable_members(workspace_license),
             }
         else:
             return {
@@ -250,6 +270,7 @@ def resync_workspace_license(workspace_slug, force=False):
                 "free_seats": workspace_license.free_seats,
                 "current_period_start_date": workspace_license.current_period_start_date,
                 "is_trial_ended": is_trial_ended(workspace_license),
+                "billable_members": count_billable_members(workspace_license),
             }
     # If the license is not present, then fetch the license from the payment server and create it
     else:
@@ -310,4 +331,5 @@ def resync_workspace_license(workspace_slug, force=False):
             "free_seats": workspace_license.free_seats,
             "current_period_start_date": workspace_license.current_period_start_date,
             "is_trial_ended": is_trial_ended(workspace_license),
+            "billable_members": count_billable_members(workspace_license),
         }

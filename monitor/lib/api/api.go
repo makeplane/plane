@@ -14,6 +14,8 @@ type IPrimeMonitorApi interface {
 	GetFeatureFlags(licenseKey string) (*FlagDataResponse, ErrorCode)
 	ActivateInstance() ErrorCode
 	DeactivateInstance() ErrorCode
+	RetrievePlans(string) (*[]Product, ErrorCode)
+	RetrievePaymentLink(RetrievePaymentLinkPayload) (*RetrievePaymentLinkResponse, ErrorCode)
 	UpdateSubcription(SeatUpdatePayload) (*SeatUpdateResponse, ErrorCode)
 	SyncWorkspace(WorkspaceSyncPayload) (*WorkspaceActivationResponse, ErrorCode)
 	ActivateWorkspace(WorkspaceActivationPayload) (*WorkspaceActivationResponse, ErrorCode)
@@ -88,6 +90,8 @@ var (
 	UPDATE_SUBSCRIPTION     = API_PREFIX + "/modify-subscriptions/"
 	SETUP_ENDPOINT          = API_PREFIX + "/instances/initialize/"
 	SUBSCRIPTION_PORTAL     = API_PREFIX + "/subscription-portal/"
+	RETRIEVE_PLANS          = API_PREFIX + "/instances/products/"
+	RETRIEVE_PAYMENT_LINK   = API_PREFIX + "/instances/payment-link/"
 )
 
 /* ----------------------- Controller Methods ------------------------------ */
@@ -140,6 +144,34 @@ func (api *PrimeMonitorApi) GetFeatureFlags(licenseKey string) (*FlagDataRespons
 	err = json.Unmarshal(flagData, &data)
 	if err != nil {
 		return nil, UNABLE_TO_PARSE_FEATURE_FLAGS
+	}
+	return &data, 0
+}
+
+func (api *PrimeMonitorApi) RetrievePlans(quantity string) (*[]Product, ErrorCode) {
+	resp, err := api.get(api.host+RETRIEVE_PLANS, map[string]string{
+		"quantity": quantity,
+	})
+	if err != nil {
+		return nil, UNABLE_TO_RETRIEVE_PLANS
+	}
+	data := []Product{}
+	err = json.Unmarshal(resp, &data)
+	if err != nil {
+		return nil, UNABLE_TO_PARSE_PLANS
+	}
+	return &data, 0
+}
+
+func (api *PrimeMonitorApi) RetrievePaymentLink(payload RetrievePaymentLinkPayload) (*RetrievePaymentLinkResponse, ErrorCode) {
+	resp, err := api.post(api.host+RETRIEVE_PAYMENT_LINK, payload)
+	if err != nil {
+		return nil, UNABLE_TO_RETRIEVE_PLANS
+	}
+	data := RetrievePaymentLinkResponse{}
+	err = json.Unmarshal(resp, &data)
+	if err != nil {
+		return nil, UNABLE_TO_PARSE_PLANS
 	}
 	return &data, 0
 }

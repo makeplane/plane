@@ -6,7 +6,7 @@ import orderBy from "lodash/orderBy";
 // ui
 import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
 // types
-import { IPaymentProduct } from "@plane/types";
+import { IPaymentProduct, TProductSubscriptionType } from "@plane/types";
 // plane web components
 import { PlansComparison } from "@/plane-web/components/workspace/billing";
 import { CloudFreePlanCard, OnePlanCard, ProPlanCard, SelfHostedFreePlanCard } from "@/plane-web/components/license";
@@ -31,10 +31,9 @@ export const BillingRoot = observer(() => {
     handleSuccessModalToggle,
   } = useWorkspaceSubscription();
   // fetch products
-  const isCloudInstance = subscriptionDetail?.is_self_managed === false;
   const { isLoading: isProductsAPILoading, data } = useSWR(
-    workspaceSlug ? `CLOUD_PAYMENT_PRODUCTS_${workspaceSlug?.toString()}_${isCloudInstance}` : null,
-    workspaceSlug && isCloudInstance ? () => paymentService.listProducts(workspaceSlug.toString()) : null,
+    workspaceSlug ? `PAYMENT_PRODUCTS_${workspaceSlug?.toString()}` : null,
+    workspaceSlug ? () => paymentService.listProducts(workspaceSlug.toString()) : null,
     {
       errorRetryCount: 2,
       revalidateIfStale: false,
@@ -43,6 +42,8 @@ export const BillingRoot = observer(() => {
   );
   // derived values
   const isSelfManaged = subscriptionDetail?.is_self_managed;
+  const oneProduct = (data || [])?.find((product: IPaymentProduct) => product?.type === "ONE");
+  const oneProductPrice = oneProduct?.prices?.[0];
   const proProduct = (data || [])?.find((product: IPaymentProduct) => product?.type === "PRO");
   const monthlyPrice = orderBy(proProduct?.prices || [], ["recurring"], ["desc"])?.find(
     (price) => price.recurring === "month"
@@ -50,9 +51,6 @@ export const BillingRoot = observer(() => {
   const yearlyPrice = orderBy(proProduct?.prices || [], ["recurring"], ["desc"])?.find(
     (price) => price.recurring === "year"
   );
-  // env
-  const PRO_PLAN_MONTHLY_PAYMENT_URL = "https://app.plane.so/upgrade/pro/self-hosted?plan=month";
-  const PRO_PLAN_YEARLY_PAYMENT_URL = "https://app.plane.so/upgrade/pro/self-hosted?plan=year";
 
   // handlers
   const handleTrial = async () => {
@@ -77,40 +75,56 @@ export const BillingRoot = observer(() => {
     }
   };
 
-  const handleStripeCheckout = () => {
-    // if the user is self-managed then open the payment link from env
-    if (isSelfManaged) {
-      setUpgradeLoader(true);
-      if (selectedFrequency === "month") {
-        window.open(PRO_PLAN_MONTHLY_PAYMENT_URL, "_blank");
-      } else if (selectedFrequency === "year") {
-        window.open(PRO_PLAN_YEARLY_PAYMENT_URL, "_blank");
-      } else {
-        window.open(PRO_PLAN_YEARLY_PAYMENT_URL, "_blank");
-      }
-      setUpgradeLoader(false);
+  const getProductId = (productType: TProductSubscriptionType) => {
+    switch (productType) {
+      case "ONE":
+        return oneProduct?.id;
+      case "PRO":
+        return proProduct?.id;
+      default:
+        return null;
+    }
+  };
+
+  const getPriceId = (productType: TProductSubscriptionType) => {
+    switch (productType) {
+      case "ONE":
+        return oneProductPrice?.id;
+      case "PRO":
+        return selectedFrequency === "year" ? yearlyPrice?.id : monthlyPrice?.id;
+      default:
+        return null;
+    }
+  };
+
+  const handleStripeCheckout = (productType: TProductSubscriptionType) => {
+    // Redirect to the payment link from the payment server
+    const selectedProductId = getProductId(productType);
+    const selectedPriceId = getPriceId(productType);
+    if (!selectedProductId || !selectedPriceId) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Unable to get the product id or price id. Please try again.",
+      });
       return;
     }
-
-    // if the user is on cloud, then redirect to the payment link from the payment server
-    const selectedPriceId = selectedFrequency === "year" ? yearlyPrice?.id : monthlyPrice?.id;
-    if (!proProduct || !selectedPriceId) return;
     setUpgradeLoader(true);
     paymentService
       .getCurrentWorkspacePaymentLink(workspaceSlug.toString(), {
         price_id: selectedPriceId,
-        product_id: proProduct?.id,
+        product_id: selectedProductId,
       })
       .then((response) => {
         if (response.url) {
-          window.open(response.url, "_self");
+          window.open(response.url, isSelfManaged ? "_blank" : "_self");
         }
       })
       .catch((error) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: error?.detail ?? "Failed to generate payment link. Please try again.",
+          message: error?.error ?? "Failed to generate payment link. Please try again.",
         });
       })
       .finally(() => {
@@ -160,7 +174,6 @@ export const BillingRoot = observer(() => {
         isProductsAPILoading={isProductsAPILoading}
         trialLoader={trialLoader}
         upgradeLoader={upgradeLoader}
-        proProduct={proProduct}
         selectedFrequency={selectedFrequency}
         setSelectedFrequency={setSelectedFrequency}
         handleTrial={handleTrial}

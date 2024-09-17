@@ -233,3 +233,49 @@ func GetWorkspaceSubscriptionHandler(api prime_api.IPrimeMonitorApi, key string)
 		return ctx.Status(fiber.StatusOK).JSON(data)
 	}
 }
+
+func GetPlansHandler(api prime_api.IPrimeMonitorApi, key string) func(*fiber.Ctx) error {
+	return func(ctx *fiber.Ctx) (err error) {
+		// Get params from the URL
+		quantity := ctx.Params("quantity", "1")
+
+		// Get the plans from the prime server
+		data, errCode := api.RetrievePlans(quantity)
+
+		if errCode != 0 {
+			ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Failed to get plans",
+			})
+			return fmt.Errorf("failed to get plans: %v", errCode)
+		}
+
+		// Send the response back to the client
+		return ctx.Status(fiber.StatusOK).JSON(data)
+	}
+}
+
+func GetPaymentLinkHandler(api prime_api.IPrimeMonitorApi, key string) func(*fiber.Ctx) error {
+	return func(ctx *fiber.Ctx) (err error) {
+		var payload prime_api.RetrievePaymentLinkPayload
+
+		// Validate the payload sent from the client
+		if err := ctx.BodyParser(&payload); err != nil {
+			ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": "Invalid payload passed for workspace product",
+			})
+			return err
+		}
+		// Get the payment link from the prime server
+		data, errCode := api.RetrievePaymentLink(payload)
+
+		if errCode != 0 {
+			ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Failed to get payment link",
+			})
+			return fmt.Errorf("failed to get payment link: %v", errCode)
+		}
+
+		// Send the response back to the client
+		return ctx.Status(fiber.StatusOK).JSON(data)
+	}
+}

@@ -4,9 +4,12 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ExternalLink } from "lucide-react";
+// types
+import { TProductSubscriptionType } from "@plane/types";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // store hooks
+import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // plane web components
 import { PlanCard } from "@/plane-web/components/license";
@@ -14,13 +17,12 @@ import { PlanCard } from "@/plane-web/components/license";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // services
 import { PaymentService } from "@/plane-web/services/payment.service";
-import { cn } from "@/helpers/common.helper";
 
 const paymentService = new PaymentService();
 
 type TProPlanCardProps = {
   upgradeLoader: boolean;
-  handleUpgrade: () => void;
+  handleUpgrade: (productType: TProductSubscriptionType) => void;
 };
 
 export const ProPlanCard: React.FC<TProPlanCardProps> = observer((props: TProPlanCardProps) => {
@@ -71,13 +73,16 @@ export const ProPlanCard: React.FC<TProPlanCardProps> = observer((props: TProPla
       planDescription={
         !subscriptionDetail.is_offline_payment && (
           <>
-            <div>Unlimited members, 1 : 5 Guests, Issue Types, Active Cycles, and more</div>
+            <div>Unlimited members, 1:5 Guests, Issue Types, Active Cycles, and more</div>
             {isInTrialPeriod && (
               <div className={cn("text-custom-text-300", subscriptionDetail.show_trial_banner && "text-red-500")}>
                 Pro trial ends{" "}
                 {subscriptionDetail.remaining_trial_days === 0
                   ? "today"
-                  : `in ${subscriptionDetail.remaining_trial_days} days`}
+                  : `in ${subscriptionDetail.remaining_trial_days} days`}{" "}
+                <span className="text-sm font-medium text-custom-text-300">
+                  • Billable seats when you upgrade: {subscriptionDetail?.billable_members}
+                </span>
               </div>
             )}
             {!isInTrialPeriod &&
@@ -87,7 +92,8 @@ export const ProPlanCard: React.FC<TProPlanCardProps> = observer((props: TProPla
                 <div>
                   {startDate
                     ? `Current billing cycle: ${renderFormattedDate(startDate)} - ${renderFormattedDate(endDate)}`
-                    : `Your billing cycle renews on ${renderFormattedDate(endDate)}.`}
+                    : `Your billing cycle renews on ${renderFormattedDate(endDate)}`}{" "}
+                  • Billable seats: {subscriptionDetail?.billable_members}
                 </div>
               ))}
           </>
@@ -98,7 +104,7 @@ export const ProPlanCard: React.FC<TProPlanCardProps> = observer((props: TProPla
           <Button
             variant="primary"
             className="cursor-pointer px-3 py-1.5 text-center text-sm font-medium outline-none"
-            onClick={!isSelfManaged && isInTrialPeriod ? handleUpgrade : handleSubscriptionPageRedirection}
+            onClick={!isSelfManaged && isInTrialPeriod ? () => handleUpgrade("PRO") : handleSubscriptionPageRedirection}
             disabled={isLoading}
           >
             {isLoading ? "Redirecting to Stripe..." : isInTrialPeriod ? "Upgrade to Pro" : "Manage your subscription"}
