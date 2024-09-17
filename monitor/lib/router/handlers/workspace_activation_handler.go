@@ -150,6 +150,7 @@ func GetSyncFeatureFlagHandler(api prime_api.IPrimeMonitorApi, key string) func(
 		} else {
 			// Update the existing license from the recieved data
 			updateLicense, _ := convertWorkspaceActivationResponseToLicense(data)
+			updateLicense.ID = workspaceLicense.ID
 			db.Db.Model(&db.License{}).Where("license_key = ?", payload.LicenceKey).Updates(updateLicense)
 		}
 
