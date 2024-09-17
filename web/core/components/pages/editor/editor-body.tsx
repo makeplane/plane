@@ -38,6 +38,7 @@ const fileService = new FileService();
 
 type Props = {
   editorRef: React.RefObject<EditorRefApi>;
+  handleConnectionStatus: (status: boolean) => void;
   handleEditorReady: (value: boolean) => void;
   handleReadOnlyEditorReady: (value: boolean) => void;
   markings: IMarking[];
@@ -50,6 +51,7 @@ type Props = {
 export const PageEditorBody: React.FC<Props> = observer((props) => {
   const {
     editorRef,
+    handleConnectionStatus,
     handleEditorReady,
     handleReadOnlyEditorReady,
     markings,
@@ -97,6 +99,21 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const getAIMenu = useCallback(
     ({ isOpen, onClose }: TAIMenuProps) => <EditorAIMenu editorRef={editorRef} isOpen={isOpen} onClose={onClose} />,
     [editorRef]
+  );
+
+  const handleServerConnect = useCallback(() => {
+    handleConnectionStatus(false);
+  }, []);
+  const handleServerError = useCallback(() => {
+    handleConnectionStatus(true);
+  }, []);
+
+  const serverHandler: TServerHandler = useMemo(
+    () => ({
+      onConnect: handleServerConnect,
+      onServerError: handleServerError,
+    }),
+    []
   );
 
   useEffect(() => {
@@ -170,6 +187,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                 issue: issueEmbedProps,
               }}
               realtimeConfig={realtimeConfig}
+              serverHandler={serverHandler}
               user={{
                 id: currentUser?.id ?? "",
                 name: currentUser?.display_name ?? "",

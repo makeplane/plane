@@ -12,20 +12,25 @@ import useAutoSave from "@/hooks/use-auto-save";
 type TArgs = {
   editorRef: React.RefObject<EditorRefApi>;
   fetchPageDescription: () => Promise<any>;
+  hasConnectionFailed: boolean;
   updatePageDescription: (data: TDocumentPayload) => Promise<void>;
 };
 
 export const usePageFallback = (args: TArgs) => {
-  const { editorRef, fetchPageDescription, updatePageDescription } = args;
+  const { editorRef, fetchPageDescription, hasConnectionFailed, updatePageDescription } = args;
 
-  const { error } = useSWR("LIVE_SERVER_HEALTH_CHECK", async () => await fetch(`${LIVE_URL}/collaboration/health`), {
-    errorRetryCount: 5,
-    revalidateOnFocus: true,
-    revalidateOnReconnect: true,
-  });
+  const { error } = useSWR(
+    hasConnectionFailed ? "LIVE_SERVER_HEALTH_CHECK" : null,
+    hasConnectionFailed ? async () => await fetch(`${LIVE_URL}/collaboration/health`) : null,
+    {
+      shouldRetryOnError: false,
+      revalidateOnFocus: true,
+      revalidateOnReconnect: true,
+    }
+  );
 
   const handleUpdateDescription = useCallback(async () => {
-    if (!error) return;
+    if (!error || !hasConnectionFailed) return;
     const editor = editorRef.current;
     if (!editor) return;
 

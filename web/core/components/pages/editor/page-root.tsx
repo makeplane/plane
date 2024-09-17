@@ -31,6 +31,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
   const { projectId, workspaceSlug, page } = props;
   // states
   const [editorReady, setEditorReady] = useState(false);
+  const [hasConnectionFailed, setHasConnectionFailed] = useState(false);
   const [readOnlyEditorReady, setReadOnlyEditorReady] = useState(false);
   const [sidePeekVisible, setSidePeekVisible] = useState(window.innerWidth >= 768);
   const [isVersionsOverlayOpen, setIsVersionsOverlayOpen] = useState(false);
@@ -52,6 +53,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
       if (!page.id) return;
       return await projectPageService.fetchDescriptionBinary(workspaceSlug, projectId, page.id);
     },
+    hasConnectionFailed,
     updatePageDescription: async (data) => await updateDescription(data),
   });
   // editor markings hook
@@ -145,6 +147,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
       />
       <PageEditorBody
         editorRef={editorRef}
+        handleConnectionStatus={(status) => setHasConnectionFailed(status)}
         handleEditorReady={(val) => setEditorReady(val)}
         handleReadOnlyEditorReady={() => setReadOnlyEditorReady(true)}
         markings={markings}
