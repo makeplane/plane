@@ -60,10 +60,10 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
     if (data) {
       if (data.projectName === project?.name) {
         if (data.confirmLeave === "Leave Project") {
+          router.push(`/${workspaceSlug}/projects`);
           return leaveProject(workspaceSlug.toString(), project.id)
             .then(() => {
               handleClose();
-              router.push(`/${workspaceSlug}/projects`);
               captureEvent(PROJECT_MEMBER_LEAVE, {
                 state: "SUCCESS",
                 element: "Project settings members page",

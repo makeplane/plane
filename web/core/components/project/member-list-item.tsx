@@ -38,6 +38,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
     if (!workspaceSlug || !projectId || !memberId) return;
 
     if (memberId === currentUser?.id) {
+      router.push(`/${workspaceSlug}/projects`);
       await leaveProject(workspaceSlug.toString(), projectId.toString())
         .then(async () => {
           captureEvent(PROJECT_MEMBER_LEAVE, {
@@ -45,7 +46,6 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
             element: "Project settings members page",
           });
           await fetchProjects(workspaceSlug.toString());
-          router.push(`/${workspaceSlug}/projects`);
         })
         .catch((err) =>
           setToast({
