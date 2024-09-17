@@ -25,6 +25,8 @@ export type EditorReadOnlyRefApi = {
     paragraphs: number;
     words: number;
   };
+  emitRealTimeUpdate: (message: string) => void;
+  listenToRealTimeUpdate: () => any;
 };
 
 export interface EditorRefApi extends EditorReadOnlyRefApi {

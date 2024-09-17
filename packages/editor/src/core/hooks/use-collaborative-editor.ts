@@ -43,6 +43,10 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
         onClose: (data) => {
           if (data.event.code === 1006) serverHandler?.onServerError?.();
         },
+        onSynced: () => {
+          console.log("ran", id);
+          provider.sendStateless("Hello from client");
+        },
       }),
     [id, realtimeConfig, serverHandler, user.id]
   );
@@ -90,6 +94,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     ],
     placeholder,
     tabIndex,
+    provider,
   });
 
   return { editor };

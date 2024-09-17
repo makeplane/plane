@@ -2,6 +2,7 @@
 
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import { ArchiveRestoreIcon, Clipboard, Copy, History, Link, Lock, LockOpen } from "lucide-react";
 // document editor
 import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
@@ -23,6 +24,40 @@ type Props = {
 
 export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   const { editorRef, handleDuplicatePage, page } = props;
+  const [localAction, setLocalAction] = useState<string | null>(null);
+
+  useEffect(() => {
+    const provider = editorRef?.listenToRealTimeUpdate();
+
+    const handleStatelessMessage = (message: { payload: string }) => {
+      if (localAction === message.payload) {
+        setLocalAction(null);
+        return;
+      }
+
+      switch (message.payload) {
+        case "locked":
+          handleLockPage(false);
+          break;
+        case "unlocked":
+          handleUnlockPage(false);
+          break;
+        case "archived":
+          handleArchivePage(false);
+          break;
+        case "unarchived":
+          handleRestorePage(false);
+          break;
+      }
+    };
+
+    provider?.on("stateless", handleStatelessMessage);
+
+    return () => {
+      provider?.off("stateless", handleStatelessMessage);
+    };
+  }, [editorRef, localAction]);
+
   // router
   const router = useRouter();
   // store values
@@ -45,7 +80,11 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   // update query params
   const { updateQueryParams } = useQueryParams();
 
-  const handleArchivePage = async () =>
+  const handleArchivePage = async (isLocal: boolean = true) => {
+    if (isLocal) {
+      setLocalAction("archived");
+      editorRef?.emitRealTimeUpdate("archive");
+    }
     await archive().catch(() =>
       setToast({
         type: TOAST_TYPE.ERROR,
@@ -53,8 +92,13 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
         message: "Page could not be archived. Please try again later.",
       })
     );
+  };
 
-  const handleRestorePage = async () =>
+  const handleRestorePage = async (isLocal: boolean = true) => {
+    if (isLocal) {
+      setLocalAction("unarchived");
+      editorRef?.emitRealTimeUpdate("unarchive");
+    }
     await restore().catch(() =>
       setToast({
         type: TOAST_TYPE.ERROR,
@@ -62,8 +106,13 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
         message: "Page could not be restored. Please try again later.",
       })
     );
+  };
 
-  const handleLockPage = async () =>
+  const handleLockPage = async (isLocal: boolean = true) => {
+    if (isLocal) {
+      setLocalAction("locked");
+      editorRef?.emitRealTimeUpdate("lock");
+    }
     await lock().catch(() =>
       setToast({
         type: TOAST_TYPE.ERROR,
@@ -71,8 +120,13 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
         message: "Page could not be locked. Please try again later.",
       })
     );
+  };
 
-  const handleUnlockPage = async () =>
+  const handleUnlockPage = async (isLocal: boolean = true) => {
+    if (isLocal) {
+      setLocalAction("unlocked");
+      editorRef?.emitRealTimeUpdate("unlock");
+    }
     await unlock().catch(() =>
       setToast({
         type: TOAST_TYPE.ERROR,
@@ -80,6 +134,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
         message: "Page could not be unlocked. Please try again later.",
       })
     );
+  };
 
   // menu items list
   const MENU_ITEMS: {
@@ -132,14 +187,14 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     },
     {
       key: "lock-unlock-page",
-      action: is_locked ? handleUnlockPage : handleLockPage,
+      action: is_locked ? () => handleUnlockPage() : () => handleLockPage(),
       label: is_locked ? "Unlock page" : "Lock page",
       icon: is_locked ? LockOpen : Lock,
       shouldRender: canCurrentUserLockPage,
     },
     {
       key: "archive-restore-page",
-      action: archived_at ? handleRestorePage : handleArchivePage,
+      action: archived_at ? () => handleRestorePage() : () => handleArchivePage(),
       label: archived_at ? "Restore page" : "Archive page",
       icon: archived_at ? ArchiveRestoreIcon : ArchiveIcon,
       shouldRender: canCurrentUserArchivePage,

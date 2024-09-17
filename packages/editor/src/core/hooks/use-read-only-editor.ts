@@ -10,6 +10,7 @@ import { IMarking, scrollSummary } from "@/helpers/scroll-to-node";
 import { CoreReadOnlyEditorProps } from "@/props";
 // types
 import { EditorReadOnlyRefApi, IMentionHighlight } from "@/types";
+import { HocuspocusProvider } from "@hocuspocus/provider";
 
 interface CustomReadOnlyEditorProps {
   initialValue?: string;
@@ -21,6 +22,7 @@ interface CustomReadOnlyEditorProps {
   mentionHandler: {
     highlights: () => Promise<IMentionHighlight[]>;
   };
+  provider?: HocuspocusProvider;
 }
 
 export const useReadOnlyEditor = ({
@@ -31,6 +33,7 @@ export const useReadOnlyEditor = ({
   editorProps = {},
   handleEditorReady,
   mentionHandler,
+  provider,
 }: CustomReadOnlyEditorProps) => {
   const editor = useCustomEditor({
     editable: false,
@@ -88,6 +91,14 @@ export const useReadOnlyEditor = ({
         paragraphs: getParagraphCount(editorRef?.current?.state),
         words: editorRef?.current?.storage?.characterCount?.words?.() ?? 0,
       };
+    },
+    emitRealTimeUpdate: (message: string) => {
+      if (provider) {
+        provider.sendStateless(message);
+      }
+    },
+    listenToRealTimeUpdate: () => {
+      return provider;
     },
   }));
 

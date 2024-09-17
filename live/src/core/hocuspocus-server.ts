@@ -33,6 +33,20 @@ export const getHocusPocusServer = async () => {
         throw Error("Authentication unsuccessful!");
       }
     },
+    async onStateless({ payload, document }) {
+      if (payload === "lock") {
+        document.broadcastStateless("locked");
+      }
+      if (payload === "unlock") {
+        document.broadcastStateless("unlocked");
+      }
+      if (payload === "archive") {
+        document.broadcastStateless("archived");
+      }
+      if (payload === "unarchive") {
+        document.broadcastStateless("unarchived");
+      }
+    },
     extensions,
   });
 };

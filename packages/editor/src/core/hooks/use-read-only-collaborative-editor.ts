@@ -32,9 +32,13 @@ export const useReadOnlyCollaborativeEditor = (props: TReadOnlyCollaborativeEdit
         onClose: (data) => {
           if (data.event.code === 1006) serverHandler?.onServerError?.();
         },
+        onSynced: () => {
+          console.log("ran", id);
+        },
       }),
-    [id, realtimeConfig, user.id]
+    [id, realtimeConfig, serverHandler, user.id]
   );
+
   // destroy and disconnect connection on unmount
   useEffect(
     () => () => {
@@ -63,6 +67,7 @@ export const useReadOnlyCollaborativeEditor = (props: TReadOnlyCollaborativeEdit
         document: provider.document,
       }),
     ],
+    provider,
   });
 
   return { editor, isIndexedDbSynced: true };

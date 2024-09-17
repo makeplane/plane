@@ -15,6 +15,7 @@ import { IMarking, scrollSummary } from "@/helpers/scroll-to-node";
 import { CoreEditorProps } from "@/props";
 // types
 import { EditorRefApi, IMentionHighlight, IMentionSuggestion, TEditorCommands, TFileHandler } from "@/types";
+import { HocuspocusProvider } from "@hocuspocus/provider";
 
 export interface CustomEditorProps {
   editorClassName: string;
@@ -36,6 +37,7 @@ export interface CustomEditorProps {
   // undefined when prop is not passed, null if intentionally passed to stop
   // swr syncing
   value?: string | null | undefined;
+  provider?: HocuspocusProvider;
 }
 
 export const useEditor = (props: CustomEditorProps) => {
@@ -54,6 +56,7 @@ export const useEditor = (props: CustomEditorProps) => {
     placeholder,
     tabIndex,
     value,
+    provider,
   } = props;
   // states
   const [savedSelection, setSavedSelection] = useState<Selection | null>(null);
@@ -243,6 +246,8 @@ export const useEditor = (props: CustomEditorProps) => {
           words: editorRef?.current?.storage?.characterCount?.words?.() ?? 0,
         };
       },
+      emitRealTimeUpdate: (message: string) => provider?.sendStateless(message),
+      listenToRealTimeUpdate: () => provider,
     }),
     [editorRef, savedSelection]
   );
