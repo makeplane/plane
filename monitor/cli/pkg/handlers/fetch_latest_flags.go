@@ -110,6 +110,7 @@ func RefreshLicense(ctx context.Context, api prime_api.IPrimeMonitorApi, license
 
 	// Update the db for license with the new data
 	licenseNew := &db.License{
+		ID:                    license.ID,
 		LicenseKey:            data.LicenceKey,
 		InstanceID:            instanceUUID,
 		WorkspaceID:           workspaceUUID,
