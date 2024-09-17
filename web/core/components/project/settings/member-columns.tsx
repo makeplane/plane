@@ -98,7 +98,8 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
   // derived values
   const isCurrentUser = currentUser?.id === rowData.member.id;
   const isAdminOrGuest = [EUserPermissions.ADMIN, EUserPermissions.GUEST].includes(rowData.role);
-  const isRoleNonEditable = isCurrentUser || isAdminOrGuest;
+  const userWorkspaceRole = getWorkspaceMemberDetails(rowData.member.id)?.role;
+  const isRoleNonEditable = isCurrentUser || (isAdminOrGuest && userWorkspaceRole !== EUserPermissions.MEMBER);
 
   const checkCurrentOptionWorkspaceRole = (value: string) => {
     const currentMemberWorkspaceRole = getWorkspaceMemberDetails(value)?.role as EUserPermissions | undefined;

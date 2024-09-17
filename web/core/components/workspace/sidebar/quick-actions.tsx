@@ -10,8 +10,9 @@ import { CreateUpdateIssueModal } from "@/components/issues";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useAppTheme, useCommandPalette, useEventTracker, useProject } from "@/hooks/store";
+import { useAppTheme, useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const SidebarQuickActions = observer(() => {
   // states
@@ -28,11 +29,16 @@ export const SidebarQuickActions = observer(() => {
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
   const { setTrackElement } = useEventTracker();
   const { joinedProjectIds } = useProject();
+  const { allowPermissions } = useUserPermissions();
   // local storage
   const { storedValue, setValue } = useLocalStorage<Record<string, Partial<TIssue>>>("draftedIssue", {});
   // derived values
-  const disabled = joinedProjectIds.length === 0;
-  const workspaceDraftIssue = workspaceSlug ? storedValue?.[workspaceSlug] ?? undefined : undefined;
+  const canCreateIssue = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );  
+  const disabled = joinedProjectIds.length === 0 || !canCreateIssue;
+  const workspaceDraftIssue = workspaceSlug ? (storedValue?.[workspaceSlug] ?? undefined) : undefined;
 
   const handleMouseEnter = () => {
     // if enter before time out clear the timeout

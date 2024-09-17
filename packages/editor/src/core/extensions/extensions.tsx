@@ -12,6 +12,7 @@ import {
   CustomCodeInlineExtension,
   CustomCodeMarkPlugin,
   CustomHorizontalRule,
+  CustomImageExtension,
   CustomKeymap,
   CustomLinkExtension,
   CustomMention,
@@ -79,7 +80,7 @@ export const CoreEditorExtensions = ({
     ...(enableHistory ? {} : { history: false }),
   }),
   CustomQuoteExtension,
-  DropHandlerExtension(uploadFile),
+  DropHandlerExtension(),
   CustomHorizontalRule.configure({
     HTMLAttributes: {
       class: "my-4 border-custom-border-400",
@@ -103,6 +104,12 @@ export const CoreEditorExtensions = ({
     HTMLAttributes: {
       class: "rounded-md",
     },
+  }),
+  CustomImageExtension({
+    delete: deleteFile,
+    restore: restoreFile,
+    upload: uploadFile,
+    cancel: cancelUploadImage ?? (() => {}),
   }),
   TiptapUnderline,
   TextStyle,
@@ -142,7 +149,7 @@ export const CoreEditorExtensions = ({
     placeholder: ({ editor, node }) => {
       if (node.type.name === "heading") return `Heading ${node.attrs.level}`;
 
-      if (editor.storage.image.uploadInProgress) return "";
+      // if (editor.storage.image.uploadInProgress) return "";
 
       const shouldHidePlaceholder =
         editor.isActive("table") || editor.isActive("codeBlock") || editor.isActive("image");

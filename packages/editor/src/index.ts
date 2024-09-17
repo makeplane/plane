@@ -21,9 +21,7 @@ export { isCellSelection } from "@/extensions/table/table/utilities/is-cell-sele
 // helpers
 export * from "@/helpers/common";
 export * from "@/helpers/editor-commands";
-export * from "@/helpers/yjs";
 export * from "@/extensions/table/table";
-export { startImageUpload } from "@/plugins/image";
 
 // components
 export * from "@/components/menus";
