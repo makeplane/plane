@@ -30,6 +30,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     user,
   } = props;
   // initialize Hocuspocus provider
+  console.log("afdafd");
   const provider = useMemo(
     () =>
       new HocuspocusProvider({
@@ -44,8 +45,8 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
           if (data.event.code === 1006) serverHandler?.onServerError?.();
         },
         onSynced: () => {
-          console.log("ran", id);
-          provider.sendStateless("Hello from client");
+          console.log("ran");
+          serverHandler?.onSynced?.();
         },
       }),
     [id, realtimeConfig, serverHandler, user.id]

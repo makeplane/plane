@@ -21,6 +21,7 @@ export const useReadOnlyCollaborativeEditor = (props: TReadOnlyCollaborativeEdit
     user,
   } = props;
   // initialize Hocuspocus provider
+  console.log("afdafd read only");
   const provider = useMemo(
     () =>
       new HocuspocusProvider({
@@ -33,7 +34,8 @@ export const useReadOnlyCollaborativeEditor = (props: TReadOnlyCollaborativeEdit
           if (data.event.code === 1006) serverHandler?.onServerError?.();
         },
         onSynced: () => {
-          console.log("ran", id);
+          console.log("ran");
+          serverHandler?.onSynced?.();
         },
       }),
     [id, realtimeConfig, serverHandler, user.id]

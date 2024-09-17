@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // document-editor
@@ -60,6 +60,9 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     sidePeekVisible,
     updateMarkings,
   } = props;
+  // states
+  const [isSynced, setIsSynced] = useState(false);
+
   // router
   const { workspaceSlug, projectId } = useParams();
   // store hooks
@@ -108,10 +111,16 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     handleConnectionStatus(true);
   }, []);
 
+  const handleServerSynced = useCallback(() => {
+    console.log("handleServerSynced called");
+    setIsSynced(true);
+  }, []);
+
   const serverHandler: TServerHandler = useMemo(
     () => ({
       onConnect: handleServerConnect,
       onServerError: handleServerError,
+      onSynced: handleServerSynced,
     }),
     []
   );
@@ -131,6 +140,8 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     }),
     [projectId, workspaceSlug]
   );
+
+  console.log("isSynced", isSynced);
 
   if (pageId === undefined) return <PageContentLoader />;
 
