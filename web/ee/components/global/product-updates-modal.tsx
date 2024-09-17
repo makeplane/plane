@@ -134,7 +134,7 @@ export const ProductUpdatesModal: FC<ProductUpdatesModalProps> = observer((props
                 ref={editorRef}
                 id={data.id}
                 initialValue={data.description_html ?? "<p></p>"}
-                containerClassName="p-0 pb-64 border-none"
+                containerClassName="p-0 border-none"
                 mentionHandler={{
                   highlights: () => Promise.resolve([]),
                 }}
