@@ -59,19 +59,6 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
     setSize({ width, height });
   }, [width, height]);
 
-  const handleResizeStart = useCallback(
-    (e: React.MouseEvent | React.TouchEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      isResizing.current = true;
-      if (containerRef.current && editorContainer) {
-        aspectRatioRef.current = Number(size.width.replace("px", "")) / Number(size.height.replace("px", ""));
-        containerRect.current = containerRef.current.getBoundingClientRect();
-      }
-    },
-    [size, editorContainer]
-  );
-
   const handleResize = useCallback(
     (e: MouseEvent | TouchEvent) => {
       if (!isResizing.current || !containerRef.current || !containerRect.current) return;
@@ -96,10 +83,32 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
     if (isResizing.current) {
       isResizing.current = false;
       updateAttributes(size);
+
+      window.removeEventListener("mousemove", handleResize);
+      window.removeEventListener("mouseup", handleResizeEnd);
+      window.removeEventListener("mouseleave", handleResizeEnd);
     }
   }, [size, updateAttributes]);
 
-  const handleMouseDown = useCallback(
+  const handleResizeStart = useCallback(
+    (e: React.MouseEvent | React.TouchEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      isResizing.current = true;
+
+      window.addEventListener("mousemove", handleResize);
+      window.addEventListener("mouseup", handleResizeEnd);
+      window.addEventListener("mouseleave", handleResizeEnd);
+
+      if (containerRef.current && editorContainer) {
+        aspectRatioRef.current = Number(size.width.replace("px", "")) / Number(size.height.replace("px", ""));
+        containerRect.current = containerRef.current.getBoundingClientRect();
+      }
+    },
+    [size, editorContainer]
+  );
+
+  const handleImageMouseDown = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
       const pos = getPos();
@@ -109,29 +118,11 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
     [editor, getPos]
   );
 
-  useEffect(() => {
-    if (!editorContainer) return;
-
-    const handleMouseMove = (e: MouseEvent) => handleResize(e);
-    const handleMouseUp = () => handleResizeEnd();
-    const handleMouseLeave = () => handleResizeEnd();
-
-    editorContainer.addEventListener("mousemove", handleMouseMove);
-    editorContainer.addEventListener("mouseup", handleMouseUp);
-    editorContainer.addEventListener("mouseleave", handleMouseLeave);
-
-    return () => {
-      editorContainer.removeEventListener("mousemove", handleMouseMove);
-      editorContainer.removeEventListener("mouseup", handleMouseUp);
-      editorContainer.removeEventListener("mouseleave", handleMouseLeave);
-    };
-  }, [handleResize, handleResizeEnd, editorContainer]);
-
   return (
     <div
       ref={containerRef}
       className="group/image-component relative inline-block max-w-full"
-      onMouseDown={handleMouseDown}
+      onMouseDown={handleImageMouseDown}
       style={{
         width: size.width,
         height: size.height,
