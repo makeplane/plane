@@ -107,36 +107,22 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
   const redisUrl = getRedisUrl();
 
   if (redisUrl) {
+    let redisClient: Redis | null = null;
     try {
-      const redisClient = new Redis(redisUrl);
+      redisClient = new Redis(redisUrl, { maxRetriesPerRequest: 3 });
 
-      await new Promise<void>((resolve, reject) => {
-        redisClient.on("error", (error: any) => {
-          if (
-            error?.code === "ENOTFOUND" ||
-            error.message.includes("WRONGPASS") ||
-            error.message.includes("NOAUTH")
-          ) {
-            redisClient.disconnect();
-          }
-          manualLogger.warn(
-            `Redis Client wasn't able to connect, continuing without Redis (you won't be able to sync data between multiple plane live servers)`,
-            error,
-          );
-          reject(error);
-        });
+      await redisClient.info();
 
-        redisClient.on("ready", () => {
-          extensions.push(new HocusPocusRedis({ redis: redisClient }));
-          manualLogger.info("Redis Client connected ✅");
-          resolve();
-        });
-      });
+      if (redisClient.status === "ready") {
+        extensions.push(new HocusPocusRedis({ redis: redisClient }));
+        manualLogger.info("Redis Client connected ✅");
+      }
     } catch (error) {
       manualLogger.warn(
         `Redis Client wasn't able to connect, continuing without Redis (you won't be able to sync data between multiple plane live servers)`,
         error,
       );
+      redisClient?.disconnect();
     }
   } else {
     manualLogger.warn(
