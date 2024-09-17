@@ -1,4 +1,4 @@
-import type {TIssue, IIssueFilterOptions} from "@plane/types";
+import type { TIssue, IIssueFilterOptions } from "@plane/types";
 
 export type TCycleGroups = "current" | "upcoming" | "completed" | "draft";
 
@@ -107,7 +107,7 @@ export interface CycleIssueResponse {
 }
 
 export type SelectCycleType =
-  | (ICycle & {actionType: "edit" | "delete" | "create-issue"})
+  | (ICycle & { actionType: "edit" | "delete" | "create-issue" })
   | undefined;
 
 export type CycleDateCheckData = {
@@ -116,4 +116,5 @@ export type CycleDateCheckData = {
   cycle_id?: string;
 };
 
-export type TCyclePlotType = "burndown" | "points";
+export type TCycleEstimateType = "issues" | "points";
+export type TCyclePlotType = "burndown" | "burnup";

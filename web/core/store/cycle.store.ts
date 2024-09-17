@@ -11,6 +11,7 @@ import {
   TProgressSnapshot,
   TCycleEstimateDistribution,
   TCycleDistribution,
+  TCycleEstimateType,
 } from "@plane/types";
 // helpers
 import { orderCycles, shouldFilterCycle } from "@/helpers/cycle.helper";
@@ -31,6 +32,7 @@ export interface ICycleStore {
   fetchedMap: Record<string, boolean>;
   cycleMap: Record<string, ICycle>;
   plotType: Record<string, TCyclePlotType>;
+  estimatedType: Record<string, TCycleEstimateType>;
   activeCycleIdMap: Record<string, boolean>;
   // computed
   currentProjectCycleIds: string[] | null;
@@ -51,10 +53,12 @@ export interface ICycleStore {
   getActiveCycleById: (cycleId: string) => ICycle | null;
   getProjectCycleIds: (projectId: string) => string[] | null;
   getPlotTypeByCycleId: (cycleId: string) => TCyclePlotType;
+  getEstimateTypeByCycleId: (cycleId: string) => TCycleEstimateType;
   // actions
   updateCycleDistribution: (distributionUpdates: DistributionUpdates, cycleId: string) => void;
   validateDate: (workspaceSlug: string, projectId: string, payload: CycleDateCheckData) => Promise<any>;
   setPlotType: (cycleId: string, plotType: TCyclePlotType) => void;
+  setEstimateType: (cycleId: string, estimateType: TCycleEstimateType) => void;
   // fetch
   fetchWorkspaceCycles: (workspaceSlug: string) => Promise<ICycle[]>;
   fetchAllCycles: (workspaceSlug: string, projectId: string) => Promise<undefined | ICycle[]>;
@@ -91,6 +95,7 @@ export class CycleStore implements ICycleStore {
   loader: boolean = false;
   cycleMap: Record<string, ICycle> = {};
   plotType: Record<string, TCyclePlotType> = {};
+  estimatedType: Record<string, TCycleEstimateType> = {};
   activeCycleIdMap: Record<string, boolean> = {};
   //loaders
   fetchedMap: Record<string, boolean> = {};
@@ -108,6 +113,7 @@ export class CycleStore implements ICycleStore {
       loader: observable.ref,
       cycleMap: observable,
       plotType: observable,
+      estimatedType: observable,
       activeCycleIdMap: observable,
       fetchedMap: observable,
       // computed
@@ -122,6 +128,7 @@ export class CycleStore implements ICycleStore {
 
       // actions
       setPlotType: action,
+      setEstimateType: action,
       fetchWorkspaceCycles: action,
       fetchAllCycles: action,
       fetchActiveCycle: action,
@@ -377,9 +384,19 @@ export class CycleStore implements ICycleStore {
   getPlotTypeByCycleId = (cycleId: string) => {
     const { projectId } = this.rootStore.router;
 
+    return this.plotType[cycleId] || "burndown";
+  };
+
+  /**
+   * @description gets the estimate type for the module store
+   * @param {TCycleEstimateType} estimateType
+   */
+  getEstimateTypeByCycleId = (cycleId: string) => {
+    const { projectId } = this.rootStore.router;
+
     return projectId && this.rootStore.projectEstimate.areEstimateEnabledByProjectId(projectId)
-      ? this.plotType[cycleId] || "burndown"
-      : "burndown";
+      ? this.estimatedType[cycleId] || "points"
+      : "points";
   };
 
   /**
@@ -388,6 +405,14 @@ export class CycleStore implements ICycleStore {
    */
   setPlotType = (cycleId: string, plotType: TCyclePlotType) => {
     set(this.plotType, [cycleId], plotType);
+  };
+
+  /**
+   * @description updates the estimate type for the module store
+   * @param {TCycleEstimateType} estimateType
+   */
+  setEstimateType = (cycleId: string, estimateType: TCycleEstimateType) => {
+    set(this.estimatedType, [cycleId], estimateType);
   };
 
   /**

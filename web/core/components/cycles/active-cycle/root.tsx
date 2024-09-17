@@ -4,14 +4,6 @@ import { observer } from "mobx-react";
 import { Disclosure } from "@headlessui/react";
 // ui
 import { Row } from "@plane/ui";
-// components
-import {
-  ActiveCycleProductivity,
-  ActiveCycleProgress,
-  ActiveCycleStats,
-  CycleListGroupHeader,
-  CyclesListItem,
-} from "@/components/cycles";
 import { EmptyState } from "@/components/empty-state";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
@@ -23,6 +15,7 @@ import ActiveCycleChart from "./cycle-chart/chart";
 import { useState } from "react";
 import Summary from "./summary";
 import Selection from "./selection";
+import useActiveCycle from "./use-active-cycle";
 
 interface IActiveCycleDetails {
   workspaceSlug: string;
@@ -31,14 +24,17 @@ interface IActiveCycleDetails {
 
 export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) => {
   const { workspaceSlug, projectId } = props;
-  const { currentProjectActiveCycle, currentProjectActiveCycleId } = useCycle();
   const {
-    handleFiltersUpdate,
+    plotType,
+    estimateType,
+    handlePlotChange,
+    handleEstimateChange,
     cycle: activeCycle,
-    cycleIssueDetails,
-  } = useCyclesDetails({ workspaceSlug, projectId, cycleId: currentProjectActiveCycleId });
+  } = useActiveCycle(workspaceSlug, projectId);
   const [areaToHighlight, setAreaToHighlight] = useState<string>("");
-  if (!activeCycle) return null;
+
+  if (!activeCycle) return;
+
   return (
     <>
       <Disclosure as="div" className="flex flex-shrink-0 flex-col" defaultOpen>
@@ -48,14 +44,19 @@ export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) =
               <CycleProgressHeader cycleDetails={activeCycle} />
             </Disclosure.Button>
             <Disclosure.Panel>
-              {!currentProjectActiveCycle ? (
+              {!activeCycle ? (
                 <EmptyState type={EmptyStateType.PROJECT_CYCLE_ACTIVE} size="sm" />
               ) : (
                 <div className="flex flex-col border-b border-custom-border-200">
-                  <Row className="flex bg-custom-background-100 h-[420px] justify-between !pr-0">
+                  <Row className="flex bg-custom-background-100 md:h-[420px] justify-between !pr-0 flex-col md:flex-row">
                     <Summary setAreaToHighlight={setAreaToHighlight} />
                     <div className="h-full w-full flex-1">
-                      <Selection />
+                      <Selection
+                        plotType={plotType}
+                        estimateType={estimateType}
+                        handlePlotChange={handlePlotChange}
+                        handleEstimateChange={handleEstimateChange}
+                      />
                       <ActiveCycleChart areaToHighlight={areaToHighlight} />
                     </div>
                   </Row>

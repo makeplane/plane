@@ -3,7 +3,7 @@ import { Info, TrendingDown } from "lucide-react";
 const Summary = (props) => {
   const { setAreaToHighlight } = props;
   return (
-    <div className="w-[350px] border-r border-custom-border-200 py-4 pr-6">
+    <div className="md:w-[350px] md:border-r border-custom-border-200 py-4 pr-6">
       <div className="text-xs text-custom-text-400 font-medium">Summary of cycle issues</div>
       <div className="border-b border-custom-border-200 w-full flex text-red-500 pb-2">
         <TrendingDown className="my-auto mr-2" />
