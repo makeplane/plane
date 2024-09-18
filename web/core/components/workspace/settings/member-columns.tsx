@@ -114,9 +114,7 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
             <CustomSelect
               value={value}
               onChange={(value: EUserPermissions) => {
-                console.log({ value, workspaceSlug }, "onChange");
                 if (!workspaceSlug) return;
-
                 updateMember(workspaceSlug.toString(), rowData.member.id, {
                   role: value as unknown as EUserPermissions, // Cast value to unknown first, then to EUserPermissions
                 }).catch((err) => {

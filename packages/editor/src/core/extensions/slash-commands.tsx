@@ -28,7 +28,6 @@ import {
   toggleBulletList,
   toggleOrderedList,
   toggleTaskList,
-  insertImageCommand,
   toggleHeadingOne,
   toggleHeadingTwo,
   toggleHeadingThree,
@@ -37,7 +36,7 @@ import {
   toggleHeadingSix,
 } from "@/helpers/editor-commands";
 // types
-import { CommandProps, ISlashCommandItem, UploadImage } from "@/types";
+import { CommandProps, ISlashCommandItem } from "@/types";
 
 interface CommandItemProps {
   key: string;
@@ -63,7 +62,7 @@ const Command = Extension.create<SlashCommandOptions>({
           const { selection } = editor.state;
 
           const parentNode = selection.$from.node(selection.$from.depth);
-          const blockType = parentNode?.type?.name;
+          const blockType = parentNode.type.name;
 
           if (blockType === "codeBlock") {
             return false;
@@ -89,7 +88,7 @@ const Command = Extension.create<SlashCommandOptions>({
 });
 
 const getSuggestionItems =
-  (uploadFile: UploadImage, additionalOptions?: Array<ISlashCommandItem>) =>
+  (additionalOptions?: Array<ISlashCommandItem>) =>
   ({ query }: { query: string }) => {
     let slashCommands: ISlashCommandItem[] = [
       {
@@ -224,11 +223,11 @@ const getSuggestionItems =
       {
         key: "image",
         title: "Image",
-        description: "Upload an image from your computer.",
-        searchTerms: ["img", "photo", "picture", "media"],
         icon: <ImageIcon className="size-3.5" />,
+        description: "Insert an image",
+        searchTerms: ["img", "photo", "picture", "media", "upload"],
         command: ({ editor, range }: CommandProps) => {
-          insertImageCommand(editor, uploadFile, null, range);
+          editor.chain().focus().deleteRange(range).setImageUpload({ event: "insert" }).run();
         },
       },
       {
@@ -415,10 +414,10 @@ const renderItems = () => {
   };
 };
 
-export const SlashCommand = (uploadFile: UploadImage, additionalOptions?: Array<ISlashCommandItem>) =>
+export const SlashCommand = (additionalOptions?: Array<ISlashCommandItem>) =>
   Command.configure({
     suggestion: {
-      items: getSuggestionItems(uploadFile, additionalOptions),
+      items: getSuggestionItems(additionalOptions),
       render: renderItems,
     },
   });
