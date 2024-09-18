@@ -15,7 +15,7 @@ import {
   HeadingFourItem,
   HeadingFiveItem,
   HeadingSixItem,
-  BubbleMenuItem,
+  EditorMenuItem,
 } from "@/components/menus";
 // helpers
 import { cn } from "@/helpers/common";
@@ -27,7 +27,7 @@ type Props = {
 };
 
 export const BubbleMenuNodeSelector: FC<Props> = ({ editor, isOpen, setIsOpen }) => {
-  const items: BubbleMenuItem[] = [
+  const items: EditorMenuItem[] = [
     TextItem(editor),
     HeadingOneItem(editor),
     HeadingTwoItem(editor),
@@ -42,7 +42,7 @@ export const BubbleMenuNodeSelector: FC<Props> = ({ editor, isOpen, setIsOpen })
     CodeItem(editor),
   ];
 
-  const activeItem = items.filter((item) => item.isActive()).pop() ?? {
+  const activeItem = items.filter((item) => item.isActive("")).pop() ?? {
     name: "Multiple",
   };
 

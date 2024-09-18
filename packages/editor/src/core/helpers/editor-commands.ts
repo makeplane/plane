@@ -156,3 +156,42 @@ export const insertImageCommand = (
   };
   input.click();
 };
+
+export const toggleTextColor = (color: string | undefined, editor: Editor, range?: Range) => {
+  if (color) {
+    if (range) editor.chain().focus().deleteRange(range).setColor(color).run();
+    else editor.chain().focus().setColor(color).run();
+  } else {
+    if (range) editor.chain().focus().deleteRange(range).unsetColor().run();
+    else editor.chain().focus().unsetColor().run();
+  }
+};
+
+export const toggleBackgroundColor = (color: string | undefined, editor: Editor, range?: Range) => {
+  if (color) {
+    if (range) {
+      editor
+        .chain()
+        .focus()
+        .deleteRange(range)
+        .setHighlight({
+          color,
+        })
+        .run();
+    } else {
+      editor
+        .chain()
+        .focus()
+        .setHighlight({
+          color,
+        })
+        .run();
+    }
+  } else {
+    if (range) {
+      editor.chain().focus().deleteRange(range).unsetHighlight().run();
+    } else {
+      editor.chain().focus().unsetHighlight().run();
+    }
+  }
+};

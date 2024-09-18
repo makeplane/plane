@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 // editor
-import { EditorRefApi, TEditorCommands } from "@plane/editor";
+import { EditorRefApi, TEditorCommands, TNonColorEditorCommands } from "@plane/editor";
 // ui
 import { Button, Tooltip } from "@plane/ui";
 // constants
@@ -34,7 +34,9 @@ export const IssueCommentToolbar: React.FC<Props> = (props) => {
         .flat()
         .forEach((item) => {
           // Assert that editorRef.current is not null
-          newActiveStates[item.key] = (editorRef.current as EditorRefApi).isMenuItemActive(item.key);
+          newActiveStates[item.key] = (editorRef.current as EditorRefApi).isMenuItemActive({
+            itemKey: item.key as TNonColorEditorCommands,
+          });
         });
       setActiveStates(newActiveStates);
     }

@@ -1,12 +1,12 @@
 import { FC, useEffect, useState } from "react";
 import { BubbleMenu, BubbleMenuProps, isNodeSelection } from "@tiptap/react";
-import { LucideIcon } from "lucide-react";
 // components
 import {
   BoldItem,
   BubbleMenuLinkSelector,
   BubbleMenuNodeSelector,
   CodeItem,
+  EditorMenuItem,
   ItalicItem,
   StrikeThroughItem,
   UnderLineItem,
@@ -16,18 +16,10 @@ import { isCellSelection } from "@/extensions/table/table/utilities/is-cell-sele
 // helpers
 import { cn } from "@/helpers/common";
 
-export interface BubbleMenuItem {
-  key: string;
-  name: string;
-  isActive: () => boolean;
-  command: () => void;
-  icon: LucideIcon;
-}
-
 type EditorBubbleMenuProps = Omit<BubbleMenuProps, "children">;
 
 export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
-  const items: BubbleMenuItem[] = [
+  const items: EditorMenuItem[] = [
     ...(props.editor.isActive("code")
       ? []
       : [
@@ -129,7 +121,7 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
           <div className="flex">
             {items.map((item) => (
               <button
-                key={item.name}
+                key={item.key}
                 type="button"
                 onClick={(e) => {
                   item.command();
@@ -138,13 +130,13 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
                 className={cn(
                   "p-2 text-custom-text-300 transition-colors hover:bg-custom-primary-100/5 active:bg-custom-primary-100/5",
                   {
-                    "bg-custom-primary-100/5 text-custom-text-100": item.isActive(),
+                    "bg-custom-primary-100/5 text-custom-text-100": item.isActive(""),
                   }
                 )}
               >
                 <item.icon
                   className={cn("h-4 w-4", {
-                    "text-custom-text-100": item.isActive(),
+                    "text-custom-text-100": item.isActive(""),
                   })}
                 />
               </button>

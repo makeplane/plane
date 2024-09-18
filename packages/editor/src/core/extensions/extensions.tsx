@@ -1,4 +1,6 @@
 import CharacterCount from "@tiptap/extension-character-count";
+import { Color } from "@tiptap/extension-color";
+import Highlight from "@tiptap/extension-highlight";
 import Placeholder from "@tiptap/extension-placeholder";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
@@ -166,4 +168,8 @@ export const CoreEditorExtensions = ({
     includeChildren: true,
   }),
   CharacterCount,
+  Color,
+  Highlight.configure({
+    multicolor: true,
+  }),
 ];
