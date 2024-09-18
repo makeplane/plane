@@ -2,11 +2,12 @@
 
 import { FC, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
-// hooks
-import { HelpSection, SidebarMenu, SidebarDropdown } from "@/components/admin-sidebar";
-import { useTheme } from "@/hooks/store";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // components
+import { HelpSection, SidebarMenu, SidebarDropdown } from "@/components/admin-sidebar";
+// hooks
+import { useTheme } from "@/hooks/store";
 
 export interface IInstanceSidebar {}
 

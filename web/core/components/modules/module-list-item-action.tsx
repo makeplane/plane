@@ -12,14 +12,14 @@ import { FavoriteStar, TOAST_TYPE, Tooltip, setPromiseToast, setToast } from "@p
 // components
 import { DateRangeDropdown } from "@/components/dropdowns";
 import { ModuleQuickActions } from "@/components/modules";
-import { ModuleStatusDropdown } from  "@/components/modules/module-status-dropdown";
+import { ModuleStatusDropdown } from "@/components/modules/module-status-dropdown";
 // constants
 import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker";
 import { MODULE_STATUS } from "@/constants/module";
-import { EUserProjectRoles } from "@/constants/project";
 // hooks
 import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
-import { useEventTracker, useMember, useModule, useUser } from "@/hooks/store";
+import { useEventTracker, useMember, useModule, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { ButtonAvatars } from "../dropdowns/member/avatar";
 
 type Props = {
@@ -33,9 +33,7 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
   // router
   const { workspaceSlug, projectId } = useParams();
   //   store hooks
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
   const { addModuleToFavorites, removeModuleFromFavorites, updateModuleDetails } = useModule();
   const { getUserDetails } = useMember();
   const { captureEvent } = useEventTracker();
@@ -43,7 +41,10 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
   // derived values
 
   const moduleStatus = MODULE_STATUS.find((status) => status.value === moduleDetails.status);
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditingAllowed = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
   const isDisabled = !isEditingAllowed || !!moduleDetails?.archived_at;
   const renderIcon = Boolean(moduleDetails.start_date) || Boolean(moduleDetails.target_date);
 
@@ -140,9 +141,9 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
         }}
         onSelect={(val) => {
           handleModuleDetailsChange({
-            start_date: (val?.from ? renderFormattedPayloadDate(val.from) : null),
-            target_date: (val?.to ? renderFormattedPayloadDate(val.to) : null)
-          })
+            start_date: val?.from ? renderFormattedPayloadDate(val.from) : null,
+            target_date: val?.to ? renderFormattedPayloadDate(val.to) : null,
+          });
         }}
         placeholder={{
           from: "Start date",
@@ -154,9 +155,9 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
 
       {moduleStatus && (
         <ModuleStatusDropdown
-        isDisabled={isDisabled}
-        moduleDetails={moduleDetails}
-        handleModuleDetailsChange={handleModuleDetailsChange}
+          isDisabled={isDisabled}
+          moduleDetails={moduleDetails}
+          handleModuleDetailsChange={handleModuleDetailsChange}
         />
       )}
 

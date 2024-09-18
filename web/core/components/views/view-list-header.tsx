@@ -2,11 +2,12 @@ import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // icons
 import { ListFilter, Search, X } from "lucide-react";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useMember, useProjectView } from "@/hooks/store";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { FiltersDropdown } from "../issues";
 import { ViewFiltersSelection } from "./filters/filter-selection";
 import { ViewOrderByDropdown } from "./filters/order-by";

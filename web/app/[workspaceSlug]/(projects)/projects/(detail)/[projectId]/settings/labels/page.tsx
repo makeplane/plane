@@ -9,18 +9,23 @@ import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
 import { ProjectSettingsLabelList } from "@/components/labels";
 // hooks
-import { useProject, useUser } from "@/hooks/store";
+import { useProject, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const LabelsSettingsPage = observer(() => {
   // store hooks
   const { currentProjectDetails } = useProject();
-  const {
-    canPerformProjectMemberActions,
-    membership: { currentProjectRole },
-  } = useUser();
+  const { workspaceUserInfo, allowPermissions } = useUserPermissions();
+
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Labels` : undefined;
 
   const scrollableContainerRef = useRef<HTMLDivElement | null>(null);
+
+  // derived values
+  const canPerformProjectMemberActions = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
 
   // Enable Auto Scroll for Labels list
   useEffect(() => {
@@ -35,7 +40,7 @@ const LabelsSettingsPage = observer(() => {
     );
   }, [scrollableContainerRef?.current]);
 
-  if (currentProjectRole && !canPerformProjectMemberActions) {
+  if (workspaceUserInfo && !canPerformProjectMemberActions) {
     return <NotAuthorizedView section="settings" isProjectView />;
   }
 

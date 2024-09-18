@@ -234,6 +234,7 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
             buttonContainerClassName
           )}
           onClick={handleOnClick}
+          disabled={disabled}
         >
           {button}
         </button>
@@ -250,6 +251,7 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
             buttonContainerClassName
           )}
           onClick={handleOnClick}
+          disabled={disabled}
         >
           <DropdownButton
             className={buttonClassName}

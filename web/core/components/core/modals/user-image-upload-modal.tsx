@@ -144,7 +144,6 @@ export const UserImageUploadModal: React.FC<Props> = observer((props) => {
                             </span>
                           </div>
                         )}
-
                         <input {...getInputProps()} />
                       </div>
                     </div>

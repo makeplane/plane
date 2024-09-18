@@ -14,7 +14,8 @@
     "packages/tsconfig",
     "packages/ui",
     "packages/types",
-    "packages/constants"
+    "packages/constants",
+    "packages/helpers"
   ],
   "scripts": {
     "build": "turbo run build",

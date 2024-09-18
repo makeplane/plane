@@ -27,15 +27,14 @@ import {
   SelectDuplicateInboxIssueModal,
 } from "@/components/inbox";
 import { IssueUpdateStatus } from "@/components/issues";
-// constants
-import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { findHowManyDaysLeft } from "@/helpers/date-time.helper";
 import { EInboxIssueStatus } from "@/helpers/inbox.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useUser, useProjectInbox, useProject } from "@/hooks/store";
+import { useUser, useProjectInbox, useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // store types
 import type { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
 
@@ -70,23 +69,26 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   // store
   const { currentTab, deleteInboxIssue, filteredInboxIssueIds } = useProjectInbox();
   const { data: currentUser } = useUser();
-  const {
-    membership: { currentProjectRoleByProjectId },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
 
   const router = useAppRouter();
   const { getProjectById } = useProject();
 
   const issue = inboxIssue?.issue;
   // derived values
-  const currentProjectRole = currentProjectRoleByProjectId(projectId) || undefined;
-  const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isAllowed = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug,
+    projectId
+  );
   const canMarkAsDuplicate = isAllowed && (inboxIssue?.status === 0 || inboxIssue?.status === -2);
   const canMarkAsAccepted = isAllowed && (inboxIssue?.status === 0 || inboxIssue?.status === -2);
   const canMarkAsDeclined = isAllowed && (inboxIssue?.status === 0 || inboxIssue?.status === -2);
   // can delete only if admin or is creator of the issue
   const canDelete =
-    (!!currentProjectRole && currentProjectRole >= EUserProjectRoles.ADMIN) || issue?.created_by === currentUser?.id;
+    allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId) ||
+    issue?.created_by === currentUser?.id;
   const isAcceptedOrDeclined = inboxIssue?.status ? [-1, 1, 2].includes(inboxIssue.status) : undefined;
   // days left for snooze
   const numberOfDaysLeft = findHowManyDaysLeft(inboxIssue?.snoozed_till);

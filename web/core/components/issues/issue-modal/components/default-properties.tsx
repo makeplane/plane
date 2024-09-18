@@ -26,10 +26,11 @@ import { ETabIndices } from "@/constants/tab-indices";
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
-import { useProjectEstimates, useProject } from "@/hooks/store";
+import { useProjectEstimates, useProject, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type TIssueDefaultPropertiesProps = {
   control: Control<TIssue>;
@@ -67,10 +68,13 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
   const { getProjectById } = useProject();
   const { isMobile } = usePlatformOS();
+  const { allowPermissions } = useUserPermissions();
   // derived values
   const projectDetails = getProjectById(projectId);
 
   const { getIndex } = getTabIndex(ETabIndices.ISSUE_FORM, isMobile);
+
+  const canCreateLabel = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
 
   const minDate = getDate(startDate);
   minDate?.setDate(minDate.getDate());
@@ -150,6 +154,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
               }}
               projectId={projectId ?? undefined}
               tabIndex={getIndex("label_ids")}
+              createLabelEnabled={canCreateLabel}
             />
           </div>
         )}

@@ -210,7 +210,7 @@ class InboxIssueAPIEndpoint(BaseAPIView):
         )
 
         # Only project members admins and created_by users can access this endpoint
-        if project_member.role <= 10 and str(inbox_issue.created_by_id) != str(
+        if project_member.role <= 5 and str(inbox_issue.created_by_id) != str(
             request.user.id
         ):
             return Response(
@@ -244,9 +244,8 @@ class InboxIssueAPIEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 project_id=project_id,
             )
-            # Only allow guests and viewers to edit name and description
-            if project_member.role <= 10:
-                # viewers and guests since only viewers and guests
+            # Only allow guests to edit name and description
+            if project_member.role <= 5:
                 issue_data = {
                     "name": issue_data.get("name", issue.name),
                     "description_html": issue_data.get(
@@ -286,7 +285,7 @@ class InboxIssueAPIEndpoint(BaseAPIView):
                 )
 
         # Only project admins and members can edit inbox issue attributes
-        if project_member.role > 10:
+        if project_member.role > 5:
             serializer = InboxIssueSerializer(
                 inbox_issue, data=request.data, partial=True
             )
