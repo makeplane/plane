@@ -9,14 +9,14 @@ import { rootStore } from "@/lib/store-context";
 import { IssueService } from "@/services/issue/issue.service";
 //
 import { ARRAY_FIELDS } from "./utils/constants";
-import { getProjectIds, getSubIssuesWithDistribution } from "./utils/data.utils";
+import { getSubIssuesWithDistribution } from "./utils/data.utils";
 import createIndexes from "./utils/indexes";
 import { addIssuesBulk, syncDeletesToLocal } from "./utils/load-issues";
 import { loadWorkSpaceData } from "./utils/load-workspace";
 import { issueFilterCountQueryConstructor, issueFilterQueryConstructor } from "./utils/query-constructor";
 import { runQuery } from "./utils/query-executor";
 import { createTables } from "./utils/tables";
-import { delay, getGroupedIssueResults, getSubGroupedIssueResults } from "./utils/utils";
+import { getGroupedIssueResults, getSubGroupedIssueResults } from "./utils/utils";
 
 declare module "@sqlite.org/sqlite-wasm" {
   export function sqlite3Worker1Promiser(...args: any): any;
@@ -160,16 +160,16 @@ export class Storage {
     // Load labels, members, states, modules, cycles
     await this.syncIssues(projectId);
 
-    // Sync rest of the projects
-    const projects = await getProjectIds();
+    // // Sync rest of the projects
+    // const projects = await getProjectIds();
 
-    // Exclude the one we just synced
-    const projectsToSync = projects.filter((p: string) => p !== projectId);
-    for (const project of projectsToSync) {
-      await delay(8000);
-      await this.syncIssues(project);
-    }
-    this.setOption("workspace_synced_at", new Date().toISOString());
+    // // Exclude the one we just synced
+    // const projectsToSync = projects.filter((p: string) => p !== projectId);
+    // for (const project of projectsToSync) {
+    //   await delay(8000);
+    //   await this.syncIssues(project);
+    // }
+    // this.setOption("workspace_synced_at", new Date().toISOString());
   };
 
   syncIssues = async (projectId: string) => {
