@@ -25,7 +25,7 @@ const GlobalViewIssuesPage = observer(() => {
     <>
       <PageHead title={pageTitle} />
       <div className="h-full overflow-hidden bg-custom-background-100">
-        <div className="flex h-full w-full flex-col border-b border-custom-border-300 bg-custom-background-100 z-[12]">
+        <div className="flex h-full w-full flex-col border-b border-custom-border-300">
           <GlobalViewsHeader />
           {globalViewId && <GlobalViewsAppliedFiltersRoot globalViewId={globalViewId.toString()} />}
           <AllIssueLayoutRoot isDefaultView={!!defaultView} />
