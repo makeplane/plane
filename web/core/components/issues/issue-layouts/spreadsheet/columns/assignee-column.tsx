@@ -40,7 +40,6 @@ export const SpreadsheetAssigneeColumn: React.FC<Props> = observer((props: Props
         buttonContainerClassName="w-full"
         optionsClassName="z-[9]"
         onClose={onClose}
-        renderByDefault={false}
       />
     </div>
   );

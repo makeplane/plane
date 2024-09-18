@@ -42,7 +42,6 @@ export const SpreadsheetStartDateColumn: React.FC<Props> = observer((props: Prop
         buttonContainerClassName="w-full"
         optionsClassName="z-[9]"
         onClose={onClose}
-        renderByDefault={false}
       />
     </div>
   );

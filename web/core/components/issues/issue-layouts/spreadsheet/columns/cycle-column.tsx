@@ -57,7 +57,6 @@ export const SpreadsheetCycleColumn: React.FC<Props> = observer((props) => {
         buttonContainerClassName="w-full relative flex items-center p-2 group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10 px-page-x"
         buttonClassName="relative leading-4 h-4.5 bg-transparent hover:bg-transparent px-0"
         onClose={onClose}
-        renderByDefault={false}
       />
     </div>
   );

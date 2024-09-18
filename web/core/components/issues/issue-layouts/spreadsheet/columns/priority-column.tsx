@@ -25,7 +25,6 @@ export const SpreadsheetPriorityColumn: React.FC<Props> = observer((props: Props
         buttonClassName="text-left rounded-none group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10 px-page-x"
         buttonContainerClassName="w-full"
         onClose={onClose}
-        renderByDefault={false}
       />
     </div>
   );
