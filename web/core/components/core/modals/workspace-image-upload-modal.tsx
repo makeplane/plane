@@ -43,7 +43,7 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
   const { getRootProps, getInputProps, isDragActive, fileRejections } = useDropzone({
     onDrop,
     accept: {
-      "image/*": [".png", ".jpg", ".jpeg", ".webp"],
+      "image/*": [".png", ".jpg", ".jpeg"],
     },
     maxSize: config?.file_size_limit ?? MAX_FILE_SIZE,
     multiple: false,
@@ -162,7 +162,7 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
                     )}
                   </div>
                 </div>
-                <p className="my-4 text-sm text-custom-text-200">File formats supported- .jpeg, .jpg, .png, .webp</p>
+                <p className="my-4 text-sm text-custom-text-200">File formats supported- .jpeg, .jpg, .png</p>
                 <div className="flex items-center justify-between">
                   {handleRemove && (
                     <Button variant="danger" size="sm" onClick={handleRemove} disabled={!value}>
