@@ -111,6 +111,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
                         setIsUpdating={setIsUpdating}
                         isLastChild={index === projectLabelsTree.length - 1}
                         onDrop={onDrop}
+                        isEditable={isEditable}
                       />
                     );
                   }
@@ -123,6 +124,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
                       isChild={false}
                       isLastChild={index === projectLabelsTree.length - 1}
                       onDrop={onDrop}
+                      isEditable={isEditable}
                     />
                   );
                 })}
