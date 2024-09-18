@@ -36,6 +36,8 @@ export const ProductUpdatesModal: FC<ProductUpdatesModalProps> = observer((props
   const editorRef = useRef<EditorRefApi>(null);
   // swr
   const { data, isLoading, error } = useSWR(`INSTANCE_CHANGELOG`, () => instanceService.getInstanceChangeLog());
+  // derived values
+  const isSelfManaged = subscriptionDetail?.is_self_managed;
 
   const handleCheckForUpdates = () => {
     setIsCheckingForUpdates(true);
@@ -86,7 +88,7 @@ export const ProductUpdatesModal: FC<ProductUpdatesModalProps> = observer((props
               Latest
             </div>
           )}
-          {!isUpdateAvailable && (
+          {isSelfManaged && !isUpdateAvailable && (
             <Button
               variant="link-neutral"
               size="sm"
@@ -99,7 +101,7 @@ export const ProductUpdatesModal: FC<ProductUpdatesModalProps> = observer((props
           )}
         </div>
         <div className="flex flex-shrink-0 items-center gap-8">
-          {subscriptionDetail?.is_self_managed && subscriptionDetail?.product === "ONE" && (
+          {isSelfManaged && subscriptionDetail?.product === "ONE" && (
             <div className="cursor-default rounded-md bg-green-500/10 px-2 py-0.5 text-center text-xs font-medium text-green-500 outline-none leading-6">
               Perpetual license
             </div>
