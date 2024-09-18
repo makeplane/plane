@@ -233,7 +233,11 @@ export const ListGroup = observer((props: Props) => {
         "border-custom-error-200": isDraggingOverColumn && !!group.isDropDisabled,
       })}
     >
-      <Row className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 pr-3 py-1">
+      <Row
+        className={cn("w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 pr-3 py-1", {
+          "sticky top-0 z-[2]": isExpanded && groupIssueCount > 0,
+        })}
+      >
         <HeaderGroupByCard
           groupID={group.id}
           icon={group.icon}
