@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 // ui
-import { InfoIcon } from "lucide-react";
-import { Button, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { RadioInput } from "@/components/estimates";
 // hooks
