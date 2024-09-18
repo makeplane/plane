@@ -38,7 +38,7 @@ export const InboxIssueOrderByDropdown: FC = observer(() => {
   );
   return (
     <CustomMenu
-      customButton={<>{windowSize[0] > 1280 ? largeButton : smallButton}</>}
+      customButton={windowSize[0] > 1280 ? largeButton : smallButton}
       placement="bottom-end"
       maxHeight="lg"
       closeOnSelect
