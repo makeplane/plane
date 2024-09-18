@@ -15,7 +15,7 @@ export const ProductUpdates: FC<ProductUpdatesProps> = observer(() => (
       target="_blank"
       className="flex w-full items-center justify-start text-xs hover:bg-custom-background-80"
     >
-      <span className="text-xs">What&apos;s new?</span>
+      <span className="text-xs">What&apos;s new</span>
     </Link>
   </CustomMenu.MenuItem>
 ));
