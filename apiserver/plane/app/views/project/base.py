@@ -173,7 +173,7 @@ class ProjectViewSet(BaseViewSet):
             member=request.user,
             workspace__slug=slug,
             is_active=True,
-            role=10,
+            role=15,
         ).exists():
             projects = projects.filter(
                 Q(
