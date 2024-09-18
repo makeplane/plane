@@ -13,7 +13,7 @@ import { ISSUE_CREATED, ISSUE_UPDATED } from "@/constants/event-tracker";
 import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
-import { useEventTracker, useCycle, useIssues, useModule, useProject, useIssueDetail, useUser } from "@/hooks/store";
+import { useEventTracker, useCycle, useIssues, useModule, useIssueDetail, useUser } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import useLocalStorage from "@/hooks/use-local-storage";
@@ -43,7 +43,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   const [description, setDescription] = useState<string | undefined>(undefined);
   // store hooks
   const { captureIssueEvent } = useEventTracker();
-  const { workspaceSlug, projectId, cycleId, moduleId } = useParams();
+  const { workspaceSlug, projectId: routerProjectId, cycleId, moduleId } = useParams();
   const { projectsWithCreatePermissions } = useUser();
   const { fetchCycleDetails } = useCycle();
   const { fetchModuleDetails } = useModule();
@@ -61,6 +61,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   // current store details
   const { createIssue, updateIssue } = useIssuesActions(storeType);
   // derived values
+  const projectId = data?.project_id ?? routerProjectId?.toString();
   const projectIdsWithCreatePermissions = Object.keys(projectsWithCreatePermissions ?? {});
 
   const fetchIssueDetail = async (issueId: string | undefined) => {
