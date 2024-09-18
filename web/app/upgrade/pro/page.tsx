@@ -59,14 +59,6 @@ export default function UpgradePlanPage() {
             <div className="flex flex-col gap-2">
               <div className="flex gap-2 text-base font-medium">
                 <div>{PLANE_EDITIONS[edition].title}</div>
-                {edition === "self-hosted" && (
-                  <Tooltip position="right" tooltipContent="ETA: Mid-September">
-                    <div className="flex items-center gap-1 px-2 bg-custom-primary-100/20 text-custom-primary-100 text-xs rounded-full">
-                      Coming soon
-                      <InfoIcon className="w-3 h-3" />
-                    </div>
-                  </Tooltip>
-                )}
               </div>
               <div className="text-sm text-onboarding-text-300">{PLANE_EDITIONS[edition].description}</div>
             </div>
