@@ -39,7 +39,8 @@ export const UserImageUploadModal: React.FC<Props> = observer((props) => {
   const { getRootProps, getInputProps, isDragActive, fileRejections } = useDropzone({
     onDrop,
     accept: {
-      "image/*": [".png", ".jpg", ".jpeg"],
+      "image/jpeg": [],
+      "image/png": [],
     },
     maxSize: config?.file_size_limit ?? MAX_FILE_SIZE,
     multiple: false,
