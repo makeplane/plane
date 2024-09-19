@@ -1,9 +1,12 @@
 {
-  "name": "eslint-config-custom",
+  "name": "@plane/eslint-config",
   "private": true,
   "version": "0.22.0",
-  "main": "index.js",
-  "license": "MIT",
+  "files": [
+    "library.js",
+    "next.js",
+    "server.js"
+  ],
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^7.1.1",
     "@typescript-eslint/parser": "^7.1.1",

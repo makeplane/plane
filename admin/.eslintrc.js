@@ -1,52 +1,16 @@
+const path = require("path");
+
 module.exports = {
   root: true,
-  extends: ["custom"],
+  extends: ["@plane/eslint-config/next.js"],
   parser: "@typescript-eslint/parser",
+  parserOptions: {
+    project: path.resolve(__dirname, "./tsconfig.json"),
+    tsconfigRootDir: __dirname,
+  },
   settings: {
-    "import/resolver": {
-      typescript: {},
-      node: {
-        moduleDirectory: ["node_modules", "."],
-      },
+    next: {
+      rootDir: __dirname,
     },
   },
-  rules: {
-    "import/order": [
-      "error",
-      {
-        groups: ["builtin", "external", "internal", "parent", "sibling",],
-        pathGroups: [
-          {
-            pattern: "react",
-            group: "external",
-            position: "before",
-          },
-          {
-            pattern: "lucide-react",
-            group: "external",
-            position: "after",
-          },
-          {
-            pattern: "@headlessui/**",
-            group: "external",
-            position: "after",
-          },
-          {
-            pattern: "@plane/**",
-            group: "external",
-            position: "after",
-          },
-          {
-            pattern: "@/**",
-            group: "internal",
-          }
-        ],
-        pathGroupsExcludedImportTypes: ["builtin", "internal", "react"],
-        alphabetize: {
-          order: "asc",
-          caseInsensitive: true,
-        },
-      },
-    ],
-  },
-}
+};

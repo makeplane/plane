@@ -76,7 +76,7 @@
     "@types/react-dom": "^18.2.18",
     "@types/uuid": "^8.3.4",
     "@types/zxcvbn": "^4.4.4",
-    "eslint-config-custom": "*",
+    "@plane/eslint-config": "*",
     "prettier": "^3.2.5",
     "tailwind-config-custom": "*",
     "tsconfig": "*",

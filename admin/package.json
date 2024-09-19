@@ -43,7 +43,7 @@
     "@types/react-dom": "^18.2.18",
     "@types/uuid": "^9.0.8",
     "@types/zxcvbn": "^4.4.4",
-    "eslint-config-custom": "*",
+    "@plane/eslint-config": "*",
     "tailwind-config-custom": "*",
     "tsconfig": "*",
     "typescript": "5.4.5"

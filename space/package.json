@@ -58,7 +58,7 @@
     "@types/uuid": "^9.0.1",
     "@types/zxcvbn": "^4.4.4",
     "@typescript-eslint/eslint-plugin": "^5.48.2",
-    "eslint-config-custom": "*",
+    "@plane/eslint-config": "*",
     "tailwind-config-custom": "*",
     "tsconfig": "*",
     "typescript": "5.4.5"

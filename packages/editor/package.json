@@ -74,7 +74,7 @@
     "@types/node": "18.15.3",
     "@types/react": "^18.2.42",
     "@types/react-dom": "^18.2.17",
-    "eslint-config-custom": "*",
+    "@plane/eslint-config": "*",
     "postcss": "^8.4.38",
     "tailwind-config-custom": "*",
     "tsconfig": "*",
