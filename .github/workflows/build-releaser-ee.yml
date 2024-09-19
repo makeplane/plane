@@ -3,21 +3,21 @@ name: Branch Build Enterprise Releaser
 on:
   workflow_dispatch:
     inputs:
-      buildType: 
-        description: 'Build Type'
+      buildType:
+        description: "Build Type"
         type: choice
         required: true
         options:
-          - 'Cloud'
-          - 'Enterprise'
-        default: 'Cloud'
+          - "Cloud"
+          - "Enterprise"
+        default: "Cloud"
       releaseVersion:
-        description: 'Release Version'
+        description: "Release Version"
         type: string
         default: v1.x.x-cloud
         required: true
       isPrerelease:
-        description: 'Is Pre-release'
+        description: "Is Pre-release"
         type: boolean
         default: false
         required: true
@@ -247,7 +247,7 @@ jobs:
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_backend }}
           build-context: ./apiserver
-          dockerfile-path: ./apiserver/Dockerfile.backend
+          dockerfile-path: ./apiserver/Dockerfile.api
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
@@ -327,7 +327,7 @@ jobs:
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
           build-args: |
             PRIVATE_KEY=${{ env.PRIVATE_KEY }}
-          
+
   upload_artifacts_s3:
     if: ${{ needs.branch_build_setup.outputs.artifact_upload_to_s3 == 'true' }}
     name: Upload artifacts to S3 Bucket
@@ -364,7 +364,18 @@ jobs:
   publish_release:
     name: Build Release
     runs-on: ubuntu-20.04
-    needs: [branch_build_setup, branch_build_push_admin, branch_build_push_web, branch_build_push_space, branch_build_push_live, branch_build_push_apiserver, branch_build_push_proxy, branch_build_push_monitor, upload_artifacts_s3]
+    needs:
+      [
+        branch_build_setup,
+        branch_build_push_admin,
+        branch_build_push_web,
+        branch_build_push_space,
+        branch_build_push_live,
+        branch_build_push_apiserver,
+        branch_build_push_proxy,
+        branch_build_push_monitor,
+        upload_artifacts_s3,
+      ]
     env:
       REL_VERSION: ${{ needs.branch_build_setup.outputs.release_version }}
     steps:
@@ -387,4 +398,3 @@ jobs:
             ${{ github.workspace }}/deploy/cli-install/Caddyfile
             ${{ github.workspace }}/deploy/cli-install/docker-compose.yml
             ${{ github.workspace }}/deploy/cli-install/docker-compose-caddy.yml
-  
