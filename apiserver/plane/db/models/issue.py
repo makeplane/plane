@@ -153,7 +153,7 @@ class Issue(ProjectBaseModel):
         through_fields=("issue", "assignee"),
     )
     sequence_id = models.IntegerField(
-        default=1, verbose_name="Issue Sequence ID"
+        default=1, verbose_name="Issue Sequence ID", null=True, blank=True
     )
     labels = models.ManyToManyField(
         "db.Label", blank=True, related_name="labels", through="IssueLabel"

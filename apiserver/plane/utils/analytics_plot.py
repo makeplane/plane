@@ -163,7 +163,7 @@ def burndown_plot(
         if queryset.end_date and queryset.start_date:
             # Get all dates between the two dates
             date_range = [
-                queryset.start_date + timedelta(days=x)
+                (queryset.start_date + timedelta(days=x)).date()
                 for x in range(
                     (queryset.end_date - queryset.start_date).days + 1
                 )
@@ -201,9 +201,11 @@ def burndown_plot(
             )
 
     if module_id:
+#         start_date = queryset.start_date.date()
+# target_date = queryset.target_date.date()
         # Get all dates between the two dates
         date_range = [
-            queryset.start_date + timedelta(days=x)
+            (queryset.start_date + timedelta(days=x)).date()
             for x in range(
                 (queryset.target_date - queryset.start_date).days + 1
             )
@@ -254,6 +256,7 @@ def burndown_plot(
                 chart_data[str(date)] = cumulative_pending_issues
     else:
         for date in date_range:
+            print(date, "date")
             cumulative_pending_issues = total_issues
             total_completed = 0
             total_completed = sum(

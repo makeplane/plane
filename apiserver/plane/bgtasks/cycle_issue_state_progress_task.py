@@ -1,9 +1,7 @@
 # Django imports
 from django.db.models import Sum
 from django.utils import timezone
-from django.db.models import F
-from django.db.models.functions import RowNumber
-from django.db.models import Max, Subquery, OuterRef
+from django.db.models import Subquery, OuterRef
 
 # Third party imports
 from celery import shared_task
@@ -21,39 +19,17 @@ def track_cycle_issue_state_progress():
     current_date = timezone.now().date()
 
     for cycle_id, project_id, workspace_id in active_cycles:
-        # Subquery to get the latest id for each issue_id
-        # Subquery to get the latest created_at for each issue_id
-        # latest_created_at = CycleIssueStateProgress.objects.filter(
-        #     cycle_id=cycle_id,
-        #     type__in=["ADDED", "UPDATED"],
-        #     issue_id=OuterRef("issue_id"),
-        #     created_at__lte=timezone.now(),
-        # ).values('issue_id').annotate(
-        #     latest_created=Max('created_at')
-        # ).values('latest_created')
-
-        # # Main query to get the latest unique issues
-        # cycle_issues = CycleIssueStateProgress.objects.filter(
-        #     cycle_id=cycle_id,
-        #     type__in=["ADDED", "UPDATED"],
-        #     created_at=Subquery(latest_created_at),
-        #     issue_id=OuterRef("issue_id")
-        # ).order_by("issue_id")
-
         cycle_issues = CycleIssueStateProgress.objects.filter(
             id=Subquery(
                 CycleIssueStateProgress.objects.filter(
-                    cycle_id=cycle_id,
-                    type__in=["ADDED", "UPDATED"],
+                    cycle_id="bbc67c04-9796-4773-a598-28c170567ddb",
                     issue=OuterRef("issue"),
                 )
                 .order_by("-created_at")
                 .values("id")[:1]
-            )
+            ),
+            type__in=["ADDED", "UPDATED"],
         )
-        # print()
-        for issue in cycle_issues.values():
-            print(issue, "issues")
 
         total_issues = cycle_issues.count()
         total_estimate_points = (
