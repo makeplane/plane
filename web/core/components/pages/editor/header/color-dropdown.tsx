@@ -21,21 +21,32 @@ export const ColorDropdown: React.FC<Props> = memo((props) => {
 
   return (
     <Popover as="div" className="h-7 px-2">
-      <Popover.Button as="button" type="button" className="h-full">
+      <Popover.Button
+        as="button"
+        type="button"
+        className={({ open }) =>
+          cn("h-full", {
+            "outline-none": open,
+          })
+        }
+      >
         {({ open }) => (
           <span
             className={cn(
               "h-full px-2 text-custom-text-300 text-sm flex items-center gap-1.5 rounded hover:bg-custom-background-80",
               {
-                "text-custom-text-100 bg-custom-background-80 outline-none": open,
+                "text-custom-text-100 bg-custom-background-80": open,
               }
             )}
           >
             Color
             <span
-              className={cn("flex-shrink-0 size-6 grid place-items-center rounded border border-custom-border-300", {
-                "bg-custom-background-100": !activeBackgroundColor,
-              })}
+              className={cn(
+                "flex-shrink-0 size-6 grid place-items-center rounded border-[0.5px] border-custom-border-300",
+                {
+                  "bg-custom-background-100": !activeBackgroundColor,
+                }
+              )}
               style={
                 activeBackgroundColor
                   ? {

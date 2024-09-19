@@ -62,6 +62,7 @@ ToolbarButton.displayName = "ToolbarButton";
 const toolbarItems = TOOLBAR_ITEMS.document;
 
 export const PageToolbar: React.FC<Props> = ({ editorRef }) => {
+  // states
   const [activeStates, setActiveStates] = useState<Record<string, boolean>>({});
 
   const updateActiveStates = useCallback(() => {
