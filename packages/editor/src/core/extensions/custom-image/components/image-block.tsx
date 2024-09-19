@@ -23,13 +23,14 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
 
   const [isLoading, setIsLoading] = useState(true);
   const [initialResizeComplete, setInitialResizeComplete] = useState(false);
-  const isShimmerVisible = isLoading || !initialResizeComplete;
   const [editorContainer, setEditorContainer] = useState<HTMLElement | null>(null);
+  const [isResizing, setIsResizing] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const containerRect = useRef<DOMRect | null>(null);
   const imageRef = useRef<HTMLImageElement>(null);
-  const [isResizing, setIsResizing] = useState(false);
+
+  const isShimmerVisible = isLoading || !initialResizeComplete;
 
   const handleImageLoad = useCallback(() => {
     const img = imageRef.current;

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { Node as ProsemirrorNode } from "@tiptap/pm/model";
 import { Editor, NodeViewWrapper } from "@tiptap/react";
 // extensions
@@ -33,16 +33,14 @@ export const CustomImageNode = (props: CustomImageNodeViewProps) => {
   const id = node.attrs.id as string;
   const editorStorage = editor.storage.imageComponent as UploadImageExtensionStorage | undefined;
 
-  const getUploadEntity = useCallback(
-    (): UploadEntity | undefined => editorStorage?.fileMap.get(id),
-    [editorStorage, id]
-  );
+  const getUploadEntity = useCallback((): UploadEntity | undefined => {
+    return editorStorage?.fileMap.get(id);
+  }, [editorStorage, id]);
 
   const onUpload = useCallback(
     (url: string) => {
       if (url) {
         setIsUploaded(true);
-        // Update the node view's src attribute
         updateAttributes({ src: url });
         editorStorage?.fileMap.delete(id);
       }
@@ -65,16 +63,16 @@ export const CustomImageNode = (props: CustomImageNodeViewProps) => {
         console.error("Error uploading file:", error);
       }
     },
-    [editor.commands, onUpload]
+    [editor, onUpload]
   );
 
   useEffect(() => {
     const uploadEntity = getUploadEntity();
 
-    if (uploadEntity) {
+    if (uploadEntity && !hasTriggeredFilePickerRef.current) {
       if (uploadEntity.event === "drop" && "file" in uploadEntity) {
         uploadFile(uploadEntity.file);
-      } else if (uploadEntity.event === "insert" && fileInputRef.current && !hasTriggeredFilePickerRef.current) {
+      } else if (uploadEntity.event === "insert" && fileInputRef.current) {
         const entity = editorStorage?.fileMap.get(id);
         if (entity && entity.hasOpenedFileInputOnce) return;
         fileInputRef.current.click();
@@ -83,7 +81,7 @@ export const CustomImageNode = (props: CustomImageNodeViewProps) => {
         editorStorage?.fileMap.set(id, { ...entity, hasOpenedFileInputOnce: true });
       }
     }
-  }, [getUploadEntity, uploadFile]);
+  }, [getUploadEntity, uploadFile, editorStorage?.fileMap, id]);
 
   useEffect(() => {
     if (node.attrs.src) {
@@ -91,7 +89,7 @@ export const CustomImageNode = (props: CustomImageNodeViewProps) => {
     }
   }, [node.attrs.src]);
 
-  const existingFile = React.useMemo(() => {
+  const existingFile = useMemo(() => {
     const entity = getUploadEntity();
     return entity && entity.event === "drop" ? entity.file : undefined;
   }, [getUploadEntity]);

@@ -53,7 +53,6 @@ export const CustomImageUploader = (props: {
       const file = e.target.files?.[0];
       if (file) {
         if (isFileValid(file)) {
-          editor.storage.image.uploadInProgress = true;
           const reader = new FileReader();
           reader.onload = () => {
             setPreviewUrl(reader.result as string);
