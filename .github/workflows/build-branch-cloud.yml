@@ -1,0 +1,358 @@
+name: Branch Build Enterprise Cloud
+
+on:
+  workflow_dispatch:
+  release:
+    types: [released, prereleased]
+
+env:
+  TARGET_BRANCH: ${{ github.ref_name || github.event.release.target_commitish }}
+  VAULT_KP_PREFIX: plane-ee-cloud-builds
+
+jobs:
+  branch_build_setup:
+    name: Build Setup
+    runs-on: ubuntu-22.04
+    outputs:
+      gh_branch_name: ${{ steps.set_env_variables.outputs.TARGET_BRANCH }}
+      flat_branch_name: ${{ steps.set_env_variables.outputs.FLAT_BRANCH_NAME }}
+      gh_buildx_driver: ${{ steps.set_env_variables.outputs.BUILDX_DRIVER }}
+      gh_buildx_version: ${{ steps.set_env_variables.outputs.BUILDX_VERSION }}
+      gh_buildx_platforms: ${{ steps.set_env_variables.outputs.BUILDX_PLATFORMS }}
+      gh_buildx_endpoint: ${{ steps.set_env_variables.outputs.BUILDX_ENDPOINT }}
+
+    steps:
+      - id: set_env_variables
+        name: Set Environment Variables
+        run: |
+          echo "BUILDX_DRIVER=docker-container" >> $GITHUB_OUTPUT
+          echo "BUILDX_VERSION=latest" >> $GITHUB_OUTPUT
+          echo "BUILDX_PLATFORMS=linux/amd64" >> $GITHUB_OUTPUT
+          echo "BUILDX_ENDPOINT=" >> $GITHUB_OUTPUT
+
+          FLAT_BRANCH_NAME=$(echo "${{ env.TARGET_BRANCH }}" | sed 's/[^a-zA-Z0-9]/-/g')
+          echo "FLAT_BRANCH_NAME=$FLAT_BRANCH_NAME" >> $GITHUB_OUTPUT
+
+      - id: checkout_files
+        name: Checkout Files
+        uses: actions/checkout@v4
+
+      - name: Generate Keypair
+        run: |
+          if [ "${{ github.event_name }}" == "release" ]; then 
+            ssh-keygen -t ed25519 -m PEM -f monitor/prime.key -N ""
+            echo "-----------------"
+            echo ""
+            cat monitor/prime.key.pub
+            echo ""
+            echo "-----------------"
+          else
+            echo "${{ secrets.DEFAULT_PRIME_PRIVATE_KEY }}"  > monitor/prime.key
+          fi
+
+  branch_build_push_admin:
+    name: Build-Push Admin Docker Image
+    runs-on: ${{vars.ACTION_RUNS_ON}}
+    needs: [branch_build_setup]
+    env:
+      ADMIN_CLOUD_TAG: makeplane/admin-enterprise-cloud:${{ needs.branch_build_setup.outputs.flat_branch_name }}
+      TARGET_BRANCH: ${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
+      BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
+      BUILDX_PLATFORMS: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
+      BUILDX_ENDPOINT: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+    steps:
+      - name: Set Admin Docker Tag
+        run: |
+          if [ "${{ github.event_name }}" == "release" ]; then
+            CLOUD_TAG=makeplane/admin-enterprise-cloud:stable
+            CLOUD_TAG=${CLOUD_TAG},makeplane/admin-enterprise-cloud:${{ github.event.release.tag_name }}
+          elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
+            CLOUD_TAG=makeplane/admin-enterprise-cloud:latest
+          else
+            CLOUD_TAG=${{ env.ADMIN_CLOUD_TAG }}
+          fi
+          echo "ADMIN_CLOUD_TAG=${CLOUD_TAG}" >> $GITHUB_ENV
+
+      - name: Tailscale
+        uses: tailscale/github-action@v2
+        with:
+          oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TAILSCALE_OAUTH_SECRET }}
+          tags: tag:ci
+      
+      - name: Get the ENV values from Vault
+        run: |
+          if [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
+            ENV_NAME="prod"
+          else
+            ENV_NAME="stage"
+          fi
+
+          curl -fsSL \
+            --header "X-Vault-Token: ${{ secrets.VAULT_TOKEN }}" \
+            --request GET \
+            ${{ vars.VAULT_HOST }}/v1/kv/git-builds/data/${{ env.VAULT_KP_PREFIX }}-${ENV_NAME} | jq .data.data > values.json
+
+          jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' values.json >> $GITHUB_ENV
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: ${{ env.BUILDX_DRIVER }}
+          version: ${{ env.BUILDX_VERSION }}
+          endpoint: ${{ env.BUILDX_ENDPOINT }}
+
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Build and Push Admin-Cloud to Docker Container Registry
+        uses: docker/build-push-action@v5.1.0
+        with:
+          context: .
+          file: ./admin/Dockerfile.admin
+          platforms: ${{ env.BUILDX_PLATFORMS }}
+          tags: ${{ env.ADMIN_CLOUD_TAG }}
+          push: true
+          build-args: |
+            NEXT_PUBLIC_WEB_BASE_URL=${{ env.NEXT_PUBLIC_WEB_BASE_URL }}
+            NEXT_PUBLIC_SPACE_BASE_URL=${{ env.NEXT_PUBLIC_SPACE_BASE_URL }}
+            NEXT_PUBLIC_ADMIN_BASE_URL=${{ env.NEXT_PUBLIC_ADMIN_BASE_URL }}
+            NEXT_PUBLIC_API_BASE_URL=${{ env.NEXT_PUBLIC_API_BASE_URL }}
+            NEXT_PUBLIC_ADMIN_BASE_PATH=${{ env.NEXT_PUBLIC_ADMIN_BASE_PATH }}
+            NEXT_PUBLIC_SPACE_BASE_PATH=${{ env.NEXT_PUBLIC_SPACE_BASE_PATH }}
+            NEXT_PUBLIC_API_BASE_PATH=${{ env.NEXT_PUBLIC_API_BASE_PATH }}
+        env:
+          DOCKER_BUILDKIT: 1
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  branch_build_push_web:
+    name: Build-Push Web Docker Image
+    runs-on: ${{vars.ACTION_RUNS_ON}}
+    needs: [branch_build_setup]
+    env:
+      WEB_CLOUD_IMAGE: makeplane/web-enterprise-cloud
+      WEB_CLOUD_TAG: makeplane/web-enterprise-cloud:${{ needs.branch_build_setup.outputs.flat_branch_name }}
+      TARGET_BRANCH: ${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
+      BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
+      BUILDX_PLATFORMS: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
+      BUILDX_ENDPOINT: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+    steps:
+      - name: Set Web Docker Tag
+        run: |
+          if [ "${{ github.event_name }}" == "release" ]; then
+            CLOUD_TAG=${{env.WEB_CLOUD_IMAGE}}:stable
+            CLOUD_TAG=${CLOUD_TAG},${{env.WEB_CLOUD_IMAGE}}:${{ github.event.release.tag_name }}
+          elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
+            CLOUD_TAG=${{env.WEB_CLOUD_IMAGE}}:latest
+          else
+            CLOUD_TAG=${{ env.WEB_CLOUD_TAG }}
+          fi
+          echo "WEB_CLOUD_TAG=${CLOUD_TAG}" >> $GITHUB_ENV
+
+      - name: Tailscale
+        uses: tailscale/github-action@v2
+        with:
+          oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TAILSCALE_OAUTH_SECRET }}
+          tags: tag:ci
+      
+      - name: Get the ENV values from Vault
+        run: |
+          if [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
+            ENV_NAME="prod"
+          else
+            ENV_NAME="stage"
+          fi
+
+          curl -fsSL \
+            --header "X-Vault-Token: ${{ secrets.VAULT_TOKEN }}" \
+            --request GET \
+            ${{ vars.VAULT_HOST }}/v1/kv/git-builds/data/${{ env.VAULT_KP_PREFIX }}-${ENV_NAME} | jq .data.data > values.json
+
+          jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' values.json >> $GITHUB_ENV
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: ${{ env.BUILDX_DRIVER }}
+          version: ${{ env.BUILDX_VERSION }}
+          endpoint: ${{ env.BUILDX_ENDPOINT }}
+
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Build and Push Web Cloud to Docker Container Registry
+        uses: docker/build-push-action@v5.1.0
+        with:
+          context: .
+          file: ./web/Dockerfile.web
+          platforms: ${{ env.BUILDX_PLATFORMS }}
+          tags: ${{ env.WEB_CLOUD_TAG }}
+          push: true
+          build-args: |
+            NEXT_PUBLIC_WEB_BASE_URL=${{ env.NEXT_PUBLIC_WEB_BASE_URL }}
+            NEXT_PUBLIC_SPACE_BASE_URL=${{ env.NEXT_PUBLIC_SPACE_BASE_URL }}
+            NEXT_PUBLIC_ADMIN_BASE_URL=${{ env.NEXT_PUBLIC_ADMIN_BASE_URL }}
+            NEXT_PUBLIC_API_BASE_URL=${{ env.NEXT_PUBLIC_API_BASE_URL }}
+            NEXT_PUBLIC_ADMIN_BASE_PATH=${{ env.NEXT_PUBLIC_ADMIN_BASE_PATH }}
+            NEXT_PUBLIC_SPACE_BASE_PATH=${{ env.NEXT_PUBLIC_SPACE_BASE_PATH }}
+            NEXT_PUBLIC_API_BASE_PATH=${{ env.NEXT_PUBLIC_API_BASE_PATH }}
+        env:
+          DOCKER_BUILDKIT: 1
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+          
+  branch_build_push_space:
+    name: Build-Push Space Docker Image
+    runs-on: ${{vars.ACTION_RUNS_ON}}
+    needs: [branch_build_setup]
+    env:
+      SPACE_CLOUD_IMAGE: makeplane/space-enterprise-cloud
+      SPACE_CLOUD_TAG: makeplane/space-enterprise-cloud:${{ needs.branch_build_setup.outputs.flat_branch_name }}
+      TARGET_BRANCH: ${{ needs.branch_build_setup.outputs.flat_branch_name }}
+      BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
+      BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
+      BUILDX_PLATFORMS: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
+      BUILDX_ENDPOINT: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+    steps:
+      - name: Set Space Docker Tag
+        run: |
+          if [ "${{ github.event_name }}" == "release" ]; then
+            CLOUD_TAG=${{env.SPACE_CLOUD_IMAGE}}:stable
+            CLOUD_TAG=${CLOUD_TAG},${{env.SPACE_CLOUD_IMAGE}}:${{ github.event.release.tag_name }}
+          elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
+            CLOUD_TAG=${{env.SPACE_CLOUD_IMAGE}}:latest
+          else
+            CLOUD_TAG=${{ env.SPACE_CLOUD_TAG }}
+          fi
+          echo "SPACE_CLOUD_TAG=${CLOUD_TAG}" >> $GITHUB_ENV
+
+      - name: Tailscale
+        uses: tailscale/github-action@v2
+        with:
+          oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TAILSCALE_OAUTH_SECRET }}
+          tags: tag:ci
+      
+      - name: Get the ENV values from Vault
+        run: |
+          if [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
+            ENV_NAME="prod"
+          else
+            ENV_NAME="stage"
+          fi
+
+          curl -fsSL \
+            --header "X-Vault-Token: ${{ secrets.VAULT_TOKEN }}" \
+            --request GET \
+            ${{ vars.VAULT_HOST }}/v1/kv/git-builds/data/${{ env.VAULT_KP_PREFIX }}-${ENV_NAME} | jq .data.data > values.json
+
+          jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' values.json >> $GITHUB_ENV
+      
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: ${{ env.BUILDX_DRIVER }}
+          version: ${{ env.BUILDX_VERSION }}
+          endpoint: ${{ env.BUILDX_ENDPOINT }}
+
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Build and Push Space-Cloud to Docker Container Registry
+        uses: docker/build-push-action@v5.1.0
+        with:
+          context: .
+          file: ./space/Dockerfile.space
+          platforms: ${{ env.BUILDX_PLATFORMS }}
+          tags: ${{ env.SPACE_CLOUD_TAG }}
+          push: true
+          build-args: |
+            NEXT_PUBLIC_WEB_BASE_URL=${{ env.NEXT_PUBLIC_WEB_BASE_URL }}
+            NEXT_PUBLIC_SPACE_BASE_URL=${{ env.NEXT_PUBLIC_SPACE_BASE_URL }}
+            NEXT_PUBLIC_ADMIN_BASE_URL=${{ env.NEXT_PUBLIC_ADMIN_BASE_URL }}
+            NEXT_PUBLIC_API_BASE_URL=${{ env.NEXT_PUBLIC_API_BASE_URL }}
+            NEXT_PUBLIC_ADMIN_BASE_PATH=${{ env.NEXT_PUBLIC_ADMIN_BASE_PATH }}
+            NEXT_PUBLIC_SPACE_BASE_PATH=${{ env.NEXT_PUBLIC_SPACE_BASE_PATH }}
+            NEXT_PUBLIC_API_BASE_PATH=${{ env.NEXT_PUBLIC_API_BASE_PATH }}
+        env:
+          DOCKER_BUILDKIT: 1
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  branch_build_push_apiserver:
+    name: Build-Push API Server Docker Image
+    runs-on: ${{vars.ACTION_RUNS_ON}}
+    needs: [branch_build_setup]
+    env:
+      BACKEND_CLOUD_IMAGE: makeplane/backend-enterprise-cloud
+      BACKEND_CLOUD_TAG: makeplane/backend-enterprise-cloud:${{ needs.branch_build_setup.outputs.flat_branch_name }}
+      TARGET_BRANCH: ${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
+      BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
+      BUILDX_PLATFORMS: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
+      BUILDX_ENDPOINT: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+    steps:
+      - name: Set Backend Docker Tag
+        run: |
+          if [ "${{ github.event_name }}" == "release" ]; then
+            CLOUD_TAG=${{env.BACKEND_CLOUD_IMAGE}}:stable
+            CLOUD_TAG=${CLOUD_TAG},${{env.BACKEND_CLOUD_IMAGE}}:${{ github.event.release.tag_name }}
+          elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
+            CLOUD_TAG=${{env.BACKEND_CLOUD_IMAGE}}:latest
+          else
+            CLOUD_TAG=${{ env.BACKEND_CLOUD_TAG }}
+          fi
+          echo "BACKEND_CLOUD_TAG=${CLOUD_TAG}" >> $GITHUB_ENV
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: ${{ env.BUILDX_DRIVER }}
+          version: ${{ env.BUILDX_VERSION }}
+          endpoint: ${{ env.BUILDX_ENDPOINT }}
+
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Build and Push Backend-Cloud to Docker Hub
+        uses: docker/build-push-action@v5.1.0
+        with:
+          context: ./apiserver
+          file: ./apiserver/Dockerfile.api
+          platforms: ${{ env.BUILDX_PLATFORMS }}
+          push: true
+          tags: ${{ env.BACKEND_CLOUD_TAG }}
+        env:
+          DOCKER_BUILDKIT: 1
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+
