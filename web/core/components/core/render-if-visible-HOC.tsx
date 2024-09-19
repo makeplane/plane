@@ -11,6 +11,7 @@ type Props = {
   classNames?: string;
   placeholderChildren?: ReactNode;
   defaultValue?: boolean;
+  useIdletime?: boolean;
 };
 
 const RenderIfVisible: React.FC<Props> = (props) => {
@@ -21,9 +22,10 @@ const RenderIfVisible: React.FC<Props> = (props) => {
     horizontalOffset = 0,
     as = "div",
     children,
-    defaultValue = false,
     classNames = "",
     placeholderChildren = null, //placeholder children
+    defaultValue = false,
+    useIdletime = false,
   } = props;
   const [shouldVisible, setShouldVisible] = useState<boolean>(defaultValue);
   const placeholderHeight = useRef<string>(defaultHeight);
@@ -37,14 +39,13 @@ const RenderIfVisible: React.FC<Props> = (props) => {
       const observer = new IntersectionObserver(
         (entries) => {
           //DO no remove comments for future
-          // if (typeof window !== undefined && window.requestIdleCallback) {
-          //   window.requestIdleCallback(() => setShouldVisible(entries[0].isIntersecting), {
-          //     timeout: 300,
-          //   });
-          // } else {
-          //   setShouldVisible(entries[0].isIntersecting);
-          // }
-          setShouldVisible(entries[entries.length - 1].isIntersecting);
+          if (typeof window !== undefined && window.requestIdleCallback && useIdletime) {
+            window.requestIdleCallback(() => setShouldVisible(entries[entries.length - 1].isIntersecting), {
+              timeout: 300,
+            });
+          } else {
+            setShouldVisible(entries[entries.length - 1].isIntersecting);
+          }
         },
         {
           root: root?.current,
@@ -69,8 +70,10 @@ const RenderIfVisible: React.FC<Props> = (props) => {
   }, [isVisible, intersectionRef]);
 
   const child = isVisible ? <>{children}</> : placeholderChildren;
-  const style = isVisible ? {} : { height: placeholderHeight.current, width: "100%" };
-  const className = isVisible ? classNames : cn(classNames, "bg-custom-background-80");
+  const style: { width?: string; height?: string } = isVisible
+    ? {}
+    : { height: placeholderHeight.current, width: "100%" };
+  const className = isVisible || placeholderChildren ? classNames : cn(classNames, "bg-custom-background-80");
 
   return React.createElement(as, { ref: intersectionRef, style, className }, child);
 };
