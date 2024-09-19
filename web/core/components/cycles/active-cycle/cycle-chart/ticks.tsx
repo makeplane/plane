@@ -1,10 +1,9 @@
 import { getToday } from "@/helpers/date-time.helper";
 
 const CustomizedXAxisTicks = (props) => {
-  const { x, y, payload, data } = props;
+  const { x, y, payload, data, endDate } = props;
   const [year, month, day] = payload.value.split("-");
   const monthName = new Date(payload.value).toLocaleString("default", { month: "short" });
-  const endDate = "2024-09-29";
   return (
     <g transform={`translate(${x},${y})`}>
       {(day === "01" || payload.index === 0 || payload.value === endDate) && (

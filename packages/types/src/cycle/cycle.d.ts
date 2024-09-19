@@ -43,6 +43,19 @@ export type TCycleEstimateDistribution = {
   completion_chart: TCycleCompletionChartDistribution;
   labels: (TCycleLabelsDistribution & TCycleEstimateDistributionBase)[];
 };
+export type TCycleProgress = {
+  date: string;
+  started: number;
+  actual: number;
+  pending: number;
+  ideal: number;
+  scope: number;
+  completed: number;
+  actual: number;
+  unstarted: number;
+  backlog: number;
+  cancelled: number;
+};
 
 export type TProgressSnapshot = {
   total_issues: number;
@@ -90,6 +103,7 @@ export interface ICycle extends TProgressSnapshot {
   };
   workspace_id: string;
   project_detail: IProjectDetails;
+  progress: any[];
 }
 
 export interface CycleIssueResponse {

@@ -375,3 +375,30 @@ export const getToday = (format: boolean = false) => {
   const day = String(today.getDate()).padStart(2, "0"); // Add leading zero for single digits
   return `${year}-${month}-${day}`;
 };
+
+/**
+ * @description calculates the date of the day before today
+ * @param {boolean} format
+ * @returns {Date | string} date of the day before today
+ * @example dateFormatter() // Output: "Sept 20, 2024"
+ */
+export const dateFormatter = (dateString: string) => {
+  // Convert to Date object
+  let date = new Date(dateString);
+
+  // Options for the desired format (Month Day, Year)
+  let options = { year: "numeric", month: "short", day: "numeric" };
+
+  // Format the date
+  let formattedDate = date.toLocaleDateString("en-US", options);
+
+  return formattedDate;
+};
+
+/**
+ * @description calculates days left from today to the end date
+ * @returns {Date | string} number of days left
+ */
+export const daysLeft = (end_date: string) => {
+  return end_date ? Math.ceil((new Date(end_date).getTime() - new Date().getTime()) / (1000 * 3600 * 24)) : 0;
+};

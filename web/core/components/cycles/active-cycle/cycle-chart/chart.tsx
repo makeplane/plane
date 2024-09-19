@@ -15,20 +15,25 @@ import {
   LabelList,
 } from "recharts";
 
-import { chartHelper, data, maxScope } from "./helper";
+import { chartHelper, maxScope } from "./helper";
 import CustomTooltip from "./tooltip";
 import { CustomizedXAxisTicks, CustomizedYAxisTicks } from "./ticks";
 import { renderScopeLabel, renderYAxisLabel } from "./labels";
 import { getToday } from "@/helpers/date-time.helper";
+import { ICycle } from "@plane/types";
 
 type Props = {
   areaToHighlight: string;
+  cycle: ICycle;
+  data: any;
 };
 
 export const ActiveCycleChart = (props: Props) => {
-  const { areaToHighlight } = props;
-  const { diffGradient, dataWithRange } = chartHelper(data);
-  const endDate = "2024-09-29";
+  const { areaToHighlight, data, cycle } = props;
+  let endDate: Date | string = new Date(cycle.end_date!);
+
+  const { diffGradient, dataWithRange } = chartHelper(data, endDate);
+  endDate = endDate.toISOString().split("T")[0];
 
   return (
     <ResponsiveContainer width="100%">
@@ -52,7 +57,7 @@ export const ActiveCycleChart = (props: Props) => {
             height="8"
             patternTransform="rotate(-45 2 2)"
           >
-            <path d="M -1,2 l 6,0" stroke="#E0EAFF" stroke-width=".5" />{" "}
+            <path d="M -1,2 l 6,0" stroke="#E0EAFF" stroke-width=".5" />
           </pattern>
 
           {/* Beyond Time */}
@@ -63,10 +68,10 @@ export const ActiveCycleChart = (props: Props) => {
             height="8"
             patternTransform="rotate(-45 2 2)"
           >
-            <path d="M -1,2 l 6,0" stroke="#FF9999" stroke-width=".5" />{" "}
+            <path d="M -1,2 l 6,0" stroke="#FF9999" stroke-width=".5" />
           </pattern>
 
-          {/* Pending */}
+          {/* actual */}
           <linearGradient id="fillPending" x1="0" y1="0" x2="0" y2="1">
             <stop offset="5%" stopColor="#26D950" stopOpacity={1} />
             <stop offset="95%" stopColor="#26D950" stopOpacity={0.05} />
@@ -90,16 +95,16 @@ export const ActiveCycleChart = (props: Props) => {
             <stop offset="95%" stopColor="rgba(var(--color-primary-100))" stopOpacity={0.05} />
           </linearGradient>
 
-          {/* Ideal - Pending */}
+          {/* Ideal - Actual */}
           <linearGradient id="diff">{diffGradient}</linearGradient>
         </defs>
         <Tooltip content={<CustomTooltip />} />
         {/* Cartesian axis */}
         <XAxis
-          dataKey="month"
+          dataKey="date"
           stroke="#C2C8D6"
           style={{ fontSize: "12px" }}
-          tick={<CustomizedXAxisTicks data={data} />}
+          tick={<CustomizedXAxisTicks data={data} endDate={endDate} />}
           tickLine={false}
           interval={0}
         />
@@ -111,6 +116,7 @@ export const ActiveCycleChart = (props: Props) => {
           stroke="#C2C8D6"
           label={renderYAxisLabel}
           style={{ fontSize: "10px" }}
+          domain={["dataMin", "dataMax + 2"]}
           tick={<CustomizedYAxisTicks />}
         >
           {/* <Label
@@ -130,7 +136,13 @@ export const ActiveCycleChart = (props: Props) => {
 
         {/* Beyond Time */}
         <Area dataKey="beyondTime" stroke="#FF9999" strokeWidth={0} fill={`url(#fillTimeBeyond)`} />
-        <ReferenceArea x1={endDate} x2={data[data.length - 1].month} y2={maxScope} stroke="#EBF1FF" fill="#FFE5E5">
+        <ReferenceArea
+          x1={endDate}
+          x2={dataWithRange[dataWithRange.length - 1].date}
+          y2={maxScope(data)}
+          stroke="#EBF1FF"
+          fill="#FFE5E5"
+        >
           <Label
             fontSize={14}
             className="font-medium"
@@ -157,11 +169,11 @@ export const ActiveCycleChart = (props: Props) => {
             isAnimationActive={false}
           />
         )}
-        {/* Pending */}
-        <Line type="linear" dataKey="pending" strokeWidth={3} stroke="#26D950" dot={false} isAnimationActive={false} />
-        {areaToHighlight === "pending" && (
+        {/* Actual */}
+        <Line type="linear" dataKey="actual" strokeWidth={3} stroke="#26D950" dot={false} isAnimationActive={false} />
+        {areaToHighlight === "actual" && (
           <Area
-            dataKey="pending"
+            dataKey="actual"
             fill="url(#fillPending)"
             fillOpacity={0.4}
             stroke="#26D950"
@@ -214,7 +226,7 @@ export const ActiveCycleChart = (props: Props) => {
             isAnimationActive={false}
           />
         )}
-        {/* Ideal - Pending */}
+        {/* Ideal - Actual */}
         <Area dataKey="range" stroke="#8884d8" strokeWidth={0} fill={`url(#diff)`} isAnimationActive={false} />
       </ComposedChart>
     </ResponsiveContainer>

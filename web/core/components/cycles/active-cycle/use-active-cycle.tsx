@@ -1,12 +1,11 @@
 import { useCycle } from "@/hooks/store";
-import { ICycle, TCycleEstimateType, TCyclePlotType } from "@plane/types";
+import { TCycleEstimateType, TCyclePlotType } from "@plane/types";
 import useCyclesDetails from "./use-cycles-details";
-import { useState } from "react";
 
 const useActiveCycle = (workspaceSlug: string, projectId: string) => {
   const { getPlotTypeByCycleId, getEstimateTypeByCycleId, setPlotType, setEstimateType, currentProjectActiveCycleId } =
     useCycle();
-  const { handleFiltersUpdate, cycle, cycleIssueDetails } = useCyclesDetails({
+  const { cycle } = useCyclesDetails({
     workspaceSlug,
     projectId,
     cycleId: currentProjectActiveCycleId,

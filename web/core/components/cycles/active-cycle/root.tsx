@@ -8,8 +8,6 @@ import { EmptyState } from "@/components/empty-state";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 import { useCycle } from "@/hooks/store";
-import { ActiveCycleIssueDetails } from "@/store/issue/cycle";
-import useCyclesDetails from "./use-cycles-details";
 import { CycleProgressHeader } from "./progress-header";
 import ActiveCycleChart from "./cycle-chart/chart";
 import { useState } from "react";
@@ -31,6 +29,8 @@ export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) =
     handleEstimateChange,
     cycle: activeCycle,
   } = useActiveCycle(workspaceSlug, projectId);
+  const { activeCycleProgress } = useCycle();
+
   const [areaToHighlight, setAreaToHighlight] = useState<string>("");
 
   if (!activeCycle) return;
@@ -41,25 +41,42 @@ export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) =
         {({ open }) => (
           <>
             <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 cursor-pointer">
-              <CycleProgressHeader cycleDetails={activeCycle} />
+              <CycleProgressHeader
+                cycleDetails={activeCycle}
+                progress={activeCycleProgress}
+                projectId={projectId}
+                cycleId={activeCycle.id}
+                workspaceSlug={workspaceSlug}
+              />
             </Disclosure.Button>
             <Disclosure.Panel>
               {!activeCycle ? (
                 <EmptyState type={EmptyStateType.PROJECT_CYCLE_ACTIVE} size="sm" />
               ) : (
                 <div className="flex flex-col border-b border-custom-border-200">
-                  <Row className="flex bg-custom-background-100 md:h-[420px] justify-between !pr-0 flex-col md:flex-row">
-                    <Summary setAreaToHighlight={setAreaToHighlight} />
-                    <div className="h-full w-full flex-1">
-                      <Selection
+                  {activeCycleProgress && (
+                    <Row className="flex bg-custom-background-100 md:h-[420px] justify-between !pr-0 flex-col md:flex-row">
+                      <Summary
+                        setAreaToHighlight={setAreaToHighlight}
+                        data={activeCycleProgress}
                         plotType={plotType}
                         estimateType={estimateType}
-                        handlePlotChange={handlePlotChange}
-                        handleEstimateChange={handleEstimateChange}
                       />
-                      <ActiveCycleChart areaToHighlight={areaToHighlight} />
-                    </div>
-                  </Row>
+                      <div className="h-full w-full flex-1">
+                        <Selection
+                          plotType={plotType}
+                          estimateType={estimateType}
+                          handlePlotChange={handlePlotChange}
+                          handleEstimateChange={handleEstimateChange}
+                        />
+                        <ActiveCycleChart
+                          areaToHighlight={areaToHighlight}
+                          data={activeCycleProgress}
+                          cycle={activeCycle}
+                        />
+                      </div>
+                    </Row>
+                  )}
                 </div>
               )}
             </Disclosure.Panel>

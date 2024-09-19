@@ -12,6 +12,7 @@ import {
   TCycleEstimateDistribution,
   TCycleDistribution,
   TCycleEstimateType,
+  TCycleProgress,
 } from "@plane/types";
 // helpers
 import { orderCycles, shouldFilterCycle } from "@/helpers/cycle.helper";
@@ -34,6 +35,7 @@ export interface ICycleStore {
   plotType: Record<string, TCyclePlotType>;
   estimatedType: Record<string, TCycleEstimateType>;
   activeCycleIdMap: Record<string, boolean>;
+
   // computed
   currentProjectCycleIds: string[] | null;
   currentProjectCompletedCycleIds: string[] | null;
@@ -43,6 +45,7 @@ export interface ICycleStore {
   currentProjectActiveCycleId: string | null;
   currentProjectArchivedCycleIds: string[] | null;
   currentProjectActiveCycle: ICycle | null;
+  activeCycleProgress: TCycleProgress[] | null;
 
   // computed actions
   getFilteredCycleIds: (projectId: string, sortByManual: boolean) => string[] | null;
@@ -125,6 +128,7 @@ export class CycleStore implements ICycleStore {
       currentProjectActiveCycleId: computed,
       currentProjectArchivedCycleIds: computed,
       currentProjectActiveCycle: computed,
+      activeCycleProgress: computed,
 
       // actions
       setPlotType: action,
@@ -243,6 +247,40 @@ export class CycleStore implements ICycleStore {
         this.cycleMap?.[cycleId]?.status?.toLowerCase() === "current"
     );
     return activeCycle || null;
+  }
+
+  /**
+   * returns active cycle progress for a project
+   */
+  get activeCycleProgress() {
+    const activeCycle = this.currentProjectActiveCycle;
+    if (!activeCycle?.progress) return null;
+
+    const isTypeIssue = this.getEstimateTypeByCycleId(activeCycle.id) === "issues";
+    const isBurnDown = this.getPlotTypeByCycleId(activeCycle.id) === "burndown";
+    let progress = activeCycle?.progress.map((p) => {
+      const pending = isTypeIssue
+        ? p.total_issues - p.completed_issues - p.cancelled_issues
+        : p.total_estimate_points - p.completed_estimate_points - p.cancelled_estimate_points;
+      const completed = isTypeIssue ? p.completed_issues : p.completed_estimate_points;
+      return {
+        date: p.date,
+        scope: isTypeIssue ? p.total_issues : p.total_estimate_points,
+        completed,
+        backlog: isTypeIssue ? p.backlog_issues : p.backlog_estimate_points,
+        started: isTypeIssue ? p.started_issues : p.started_estimate_points,
+        unstarted: isTypeIssue ? p.unstarted_issues : p.unstarted_estimate_points,
+        cancelled: isTypeIssue ? p.cancelled_issues : p.cancelled_estimate_points,
+        pending: pending,
+        // TODO: This is a temporary logic to show the ideal line in the cycle chart
+        ideal: isTypeIssue
+          ? p.total_issues - p.completed_issues + (Math.random() < 0.5 ? -1 : 1)
+          : p.total_estimate_points - p.completed_estimate_points + (Math.random() < 0.5 ? -1 : 1),
+        actual: isBurnDown ? pending : completed,
+      };
+    });
+
+    return progress;
   }
 
   /**
@@ -395,8 +433,8 @@ export class CycleStore implements ICycleStore {
     const { projectId } = this.rootStore.router;
 
     return projectId && this.rootStore.projectEstimate.areEstimateEnabledByProjectId(projectId)
-      ? this.estimatedType[cycleId] || "points"
-      : "points";
+      ? this.estimatedType[cycleId] || "issues"
+      : "issues";
   };
 
   /**
@@ -509,7 +547,7 @@ export class CycleStore implements ICycleStore {
   fetchActiveCycleProgress = async (workspaceSlug: string, projectId: string, cycleId: string) =>
     await this.cycleService.workspaceActiveCyclesProgress(workspaceSlug, projectId, cycleId).then((progress) => {
       runInAction(() => {
-        set(this.cycleMap, [cycleId], { ...this.cycleMap[cycleId], ...progress });
+        set(this.cycleMap, [cycleId], { ...this.cycleMap[cycleId], progress });
       });
       return progress;
     });

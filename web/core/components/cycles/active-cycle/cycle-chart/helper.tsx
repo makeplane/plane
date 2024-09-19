@@ -1,44 +1,5 @@
 import { getToday } from "@/helpers/date-time.helper";
-
-export const data = [
-  { month: "2024-08-30", started: 0, pending: 70, ideal: 70, scope: 95 },
-  { month: "2024-09-01", started: 0, pending: 70, ideal: 70, scope: 95 },
-  { month: "2024-09-02", started: 11, pending: 42, ideal: 49, scope: 95 },
-  { month: "2024-09-03", started: 12, pending: 51, ideal: 47, scope: 95 },
-  { month: "2024-09-04", started: 13, pending: 45, ideal: 46, scope: 95 },
-  { month: "2024-09-05", started: 14, pending: 46, ideal: 44, scope: 87 },
-  { month: "2024-09-06", started: 15, pending: 42, ideal: 43, scope: 87 },
-  { month: "2024-09-07", started: 16, pending: 44, ideal: 42, scope: 87 },
-  { month: "2024-09-08", started: 17, pending: 41, ideal: 41, scope: 91 },
-  { month: "2024-09-09", started: 17, pending: 42, ideal: 39, scope: 91 },
-  { month: "2024-09-10", started: 19, pending: 38, ideal: 38, scope: 91 },
-  { month: "2024-09-11", started: 20, pending: 37, ideal: 37, scope: 91 },
-  { month: "2024-09-12", started: 21, pending: 36, ideal: 36, scope: 90 },
-
-  // After 12th September: started and pending undefined, scope constant at 90
-  { month: "2024-09-13", started: 21, pending: 36, ideal: 36, scope: 90 },
-  { month: "2024-09-14", started: undefined, pending: undefined, ideal: 33, scope: 90 },
-  { month: "2024-09-15", started: undefined, pending: undefined, ideal: 32, scope: 90 },
-  { month: "2024-09-16", started: undefined, pending: undefined, ideal: 31, scope: 90 },
-  { month: "2024-09-17", started: undefined, pending: undefined, ideal: 30, scope: 90 },
-  { month: "2024-09-18", started: undefined, pending: undefined, ideal: 29, scope: 90 },
-  { month: "2024-09-19", started: undefined, pending: undefined, ideal: 28, scope: 90 },
-  { month: "2024-09-20", started: undefined, pending: undefined, ideal: 27, scope: 90 },
-  { month: "2024-09-21", started: undefined, pending: undefined, ideal: 26, scope: 90 },
-  { month: "2024-09-22", started: undefined, pending: undefined, ideal: 25, scope: 90 },
-  { month: "2024-09-23", started: undefined, pending: undefined, ideal: 24, scope: 90 },
-  { month: "2024-09-24", started: undefined, pending: undefined, ideal: 23, scope: 90 },
-  { month: "2024-09-25", started: undefined, pending: undefined, ideal: 22, scope: 90 },
-  { month: "2024-09-26", started: undefined, pending: undefined, ideal: 21, scope: 90 },
-  { month: "2024-09-27", started: undefined, pending: undefined, ideal: 20, scope: 90 },
-  { month: "2024-09-28", started: undefined, pending: undefined, ideal: 19, scope: 90 },
-  { month: "2024-09-29", started: undefined, pending: undefined, ideal: 19, scope: 90 },
-  { month: "2024-09-30", started: undefined, pending: undefined, ideal: undefined, scope: undefined },
-
-  // { month: "2024-10-01", started: undefined, pending: 17, ideal: 16, scope: 90 },
-];
-
-// { month: "X", started: undefined, pending: undefined, ideal: undefined, scope: undefined },
+import { TCycleProgress } from "@plane/types";
 
 const getIntersectionColor = (_intersection, isLast = false) => {
   if (isLast) {
@@ -81,25 +42,53 @@ const intersect = (x1: number, y1: number, x2: number, y2: number, x3: number, y
 
   return { x, y, line1isHigher, line1isHigherNext };
 };
-export const maxScope = Math.max(...data.map((d) => d.scope || 0));
-export const chartHelper = (data) => {
+export const maxScope = (data: TCycleProgress[]) => Math.max(...data.map((d) => d.scope || 0));
+
+const generateDateArray = (startDate: Date, endDate: Date) => {
+  // Convert the start and end dates to Date objects if they aren't already
+  let start = new Date(startDate);
+  start.setDate(start.getDate() + 1);
+  let end = new Date(endDate);
+  end.setDate(end.getDate() + 1);
+
+  // Create an empty array to store the dates
+  let dateArray = [];
+
+  // Use a while loop to generate dates between the range
+  while (start <= end) {
+    // Increment the date by 1 day (86400000 milliseconds)
+    start.setDate(start.getDate() + 1);
+    // Push the current date (converted to ISO string for consistency)
+    dateArray.push({
+      date: new Date(start).toISOString().split("T")[0],
+    });
+  }
+
+  return dateArray;
+};
+
+export const chartHelper = (data: TCycleProgress[], endDate: Date) => {
   // Get today's date
   const today = getToday();
-  const endDate = "2024-09-29";
+  const scopeToday = data[data.length - 1].scope;
+  const idealToday = data[data.length - 1].ideal;
+  const extendedArray = generateDateArray(today as Date, endDate);
 
   // add `range` to data for Area
-  const dataWithRange = data.map((d, i: number) => {
+  const dataWithRange = [...data, ...extendedArray].map((d: Partial<TCycleProgress>) => {
     return {
       ...d,
-      range: d.pending !== undefined && d.ideal !== undefined ? [d.pending, d.ideal] : [],
-      timeLeft: new Date(d.month) < today || i === data.length - 1 ? [] : [0, maxScope],
-      beyondTime: new Date(endDate) <= new Date(d.month) ? [0, maxScope] : [],
+      range: d.actual !== undefined && d.ideal !== undefined ? [d.actual, d.ideal] : [],
+      timeLeft: new Date(d.date!) < today ? [] : [0, maxScope(data)],
+      ideal: new Date(d.date!) < today ? d.ideal : endDate >= new Date(d.date!) ? idealToday : null,
+      scope: new Date(d.date!) < today ? d.scope : endDate >= new Date(d.date!) ? scopeToday : null,
+      beyondTime: endDate <= new Date(d.date!) ? [0, maxScope(data)] : [],
     };
   });
 
   // need to find intersections as points where we to change fill color
   const intersections = data
-    .map((d, i: number) => intersect(i, d.pending, i + 1, data[i + 1]?.pending, i, d.ideal, i + 1, data[i + 1]?.ideal))
+    .map((d, i: number) => intersect(i, d.actual, i + 1, data[i + 1]?.actual, i, d.ideal, i + 1, data[i + 1]?.ideal))
     .filter((d) => d && !isNaN(d.x));
 
   // filtering out segments without intersections & duplicates (in case end current 2 segments are also
@@ -125,7 +114,7 @@ export const chartHelper = (data) => {
         startColor = getIntersectionColor(nextIntersection);
       }
 
-      const offset = intersection.x / (data.filter((d) => d.pending !== undefined && d.ideal !== undefined).length - 1);
+      const offset = intersection.x / (data.filter((d) => d.actual !== undefined && d.ideal !== undefined).length - 1);
       return (
         <>
           <stop offset={offset} stopColor={closeColor} stopOpacity={0.9} />
@@ -134,7 +123,7 @@ export const chartHelper = (data) => {
       );
     })
   ) : (
-    <stop offset={0} stopColor={data[0].pending > data[0].ideal ? "red" : "blue"} />
+    <stop offset={0} stopColor={data[0].actual > data[0].ideal ? "red" : "blue"} />
   );
 
   return { diffGradient, dataWithRange };
