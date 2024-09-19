@@ -157,7 +157,7 @@ export const ISSUE_EXTRA_OPTIONS: {
 
 export const ISSUE_LAYOUT_MAP = {
   [EIssueLayoutTypes.LIST]: { key: EIssueLayoutTypes.LIST, title: "List Layout", label: "List", icon: List },
-  [EIssueLayoutTypes.KANBAN]: { key: EIssueLayoutTypes.KANBAN, title: "Kanban Layout", label: "Kanban", icon: Kanban },
+  [EIssueLayoutTypes.KANBAN]: { key: EIssueLayoutTypes.KANBAN, title: "Board Layout", label: "Board", icon: Kanban },
   [EIssueLayoutTypes.CALENDAR]: {
     key: EIssueLayoutTypes.CALENDAR,
     title: "Calendar Layout",
@@ -166,14 +166,14 @@ export const ISSUE_LAYOUT_MAP = {
   },
   [EIssueLayoutTypes.SPREADSHEET]: {
     key: EIssueLayoutTypes.SPREADSHEET,
-    title: "Spreadsheet Layout",
-    label: "Spreadsheet",
+    title: "Table Layout",
+    label: "Table",
     icon: Sheet,
   },
   [EIssueLayoutTypes.GANTT]: {
     key: EIssueLayoutTypes.GANTT,
-    title: "Gantt Chart Layout",
-    label: "Gantt",
+    title: "Timeline Layout",
+    label: "Timeline",
     icon: GanttChartSquare,
   },
 };
