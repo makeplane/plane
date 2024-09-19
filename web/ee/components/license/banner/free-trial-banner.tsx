@@ -20,9 +20,7 @@ export const FreeTrialBanner: FC = observer(() => {
   const { config } = useInstance();
   const { allowPermissions } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
-  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
-  // states
-  const [pricingModalOpen, setPricingModalOpen] = useState(false);
+  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, togglePaidPlanModal } = useWorkspaceSubscription();
   // derived values
   const canPerformWorkspaceAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
@@ -34,10 +32,7 @@ export const FreeTrialBanner: FC = observer(() => {
   if (!subscriptionDetail.show_trial_banner) return <></>;
 
   return (
-    <>
-      {/* This modal is intentionally placed inside the condition to avoid unnecessary calls to list product endpoint.  */}
-      <CloudUpgradeModal isOpen={pricingModalOpen} handleClose={() => setPricingModalOpen(false)} />
-
+    <div className="flex-shrink-0 w-full z-[20] bg-custom-background-100">
       <div className="bg-custom-primary-100/10 text-custom-primary-100 py-2 px-5">
         <div className="relative container mx-auto flex justify-center items-center gap-2">
           <div className="text-sm font-medium">
@@ -48,7 +43,7 @@ export const FreeTrialBanner: FC = observer(() => {
             .
           </div>
           <div className="flex gap-2 flex-shrink-0">
-            <Button variant="outline-primary" size="sm" className="py-1" onClick={() => setPricingModalOpen(true)}>
+            <Button variant="outline-primary" size="sm" className="py-1" onClick={() => togglePaidPlanModal(true)}>
               <Crown className="w-3.5 h-3.5" />
               Upgrade to Pro
             </Button>
@@ -56,7 +51,6 @@ export const FreeTrialBanner: FC = observer(() => {
               href="https://cal.com/plane/"
               target="_blank"
               className={cn(getButtonStyling("neutral-primary", "sm"), "py-1")}
-              onClick={() => setPricingModalOpen(true)}
             >
               <Phone className="w-3.5 h-3.5" />
               Get 1:1 help
@@ -64,6 +58,6 @@ export const FreeTrialBanner: FC = observer(() => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 });
