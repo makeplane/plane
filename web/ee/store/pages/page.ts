@@ -242,14 +242,7 @@ export class WorkspacePageDetails implements IWorkspacePageDetails {
    * @description returns true if the current logged in user can lock the page
    */
   get canCurrentUserLockPage() {
-    const { workspaceSlug } = this.store.router;
-
-    const currentUserWorkspaceRole = this.store.user.permission.workspaceInfoBySlug(
-      workspaceSlug?.toString() || ""
-    )?.role;
-    return (
-      this.isCurrentUserOwner || (!!currentUserWorkspaceRole && currentUserWorkspaceRole >= EUserPermissions.MEMBER)
-    );
+    return this.isCurrentUserOwner;
   }
 
   /**
