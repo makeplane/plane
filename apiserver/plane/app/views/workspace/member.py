@@ -14,7 +14,7 @@ from plane.app.permissions import (
     WorkSpaceAdminPermission,
     WorkspaceEntityPermission,
     allow_permission,
-    ROLE
+    ROLE,
 )
 
 # Module imports
@@ -43,7 +43,6 @@ from .. import BaseViewSet
 class WorkSpaceMemberViewSet(BaseViewSet):
     serializer_class = WorkspaceMemberAdminSerializer
     model = WorkspaceMember
-
 
     search_fields = [
         "member__display_name",
@@ -96,9 +95,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         user=False,
         multiple=True,
     )
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN], level="WORKSPACE"
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
     def partial_update(self, request, slug, pk):
         workspace_member = WorkspaceMember.objects.get(
             pk=pk,
@@ -112,25 +109,10 @@ class WorkSpaceMemberViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Get the requested user role
-        requested_workspace_member = WorkspaceMember.objects.get(
-            workspace__slug=slug,
-            member=request.user,
-            is_active=True,
-        )
-        # Check if role is being updated
-        # One cannot update role higher than his own role
-        if (
-            "role" in request.data
-            and int(request.data.get("role", workspace_member.role))
-            > requested_workspace_member.role
-        ):
-            return Response(
-                {
-                    "error": "You cannot update a role that is higher than your own role"
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        if workspace_member.role > int(request.data.get("role")):
+            _ = ProjectMember.objects.filter(
+                workspace__slug=slug, member_id=workspace_member.member_id
+            ).update(role=int(request.data.get("role")))
 
         serializer = WorkSpaceMemberSerializer(
             workspace_member, data=request.data, partial=True
@@ -151,9 +133,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
     @invalidate_cache(
         path="/api/users/me/workspaces/", user=False, multiple=True
     )
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN], level="WORKSPACE"
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
     def destroy(self, request, slug, pk):
         # Check the user role who is deleting the user
         workspace_member = WorkspaceMember.objects.get(

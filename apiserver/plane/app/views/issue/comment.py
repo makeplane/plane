@@ -21,6 +21,8 @@ from plane.db.models import (
     IssueComment,
     ProjectMember,
     CommentReaction,
+    Project,
+    Issue,
 )
 from plane.bgtasks.issue_activities_task import issue_activity
 
@@ -67,9 +69,27 @@ class IssueCommentViewSet(BaseViewSet):
         [
             ROLE.ADMIN,
             ROLE.MEMBER,
+            ROLE.GUEST,
         ]
     )
     def create(self, request, slug, project_id, issue_id):
+        project = Project.objects.get(pk=project_id)
+        issue = Issue.objects.get(pk=issue_id)
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=request.user,
+                role=5,
+                is_active=True,
+            ).exists()
+            and not project.guest_view_all_features
+            and not issue.created_by == request.user
+        ):
+            return Response(
+                {"error": "You are not allowed to comment on the issue"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         serializer = IssueCommentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(
@@ -94,7 +114,7 @@ class IssueCommentViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER],
+        allowed_roles=[ROLE.ADMIN],
         creator=True,
         model=IssueComment,
     )
@@ -182,6 +202,7 @@ class CommentReactionViewSet(BaseViewSet):
         [
             ROLE.ADMIN,
             ROLE.MEMBER,
+            ROLE.GUEST,
         ]
     )
     def create(self, request, slug, project_id, comment_id):
@@ -210,6 +231,7 @@ class CommentReactionViewSet(BaseViewSet):
         [
             ROLE.ADMIN,
             ROLE.MEMBER,
+            ROLE.GUEST,
         ]
     )
     def destroy(self, request, slug, project_id, comment_id, reaction_code):

@@ -77,6 +77,7 @@ export interface IWorkspaceMember {
   last_name?: string;
   joining_date?: string;
   display_name?: string;
+  last_login_medium?: string;
 }
 
 export interface IWorkspaceMemberMe {

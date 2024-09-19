@@ -20,6 +20,7 @@ import { TDropdownProps } from "./types";
 
 type Props = TDropdownProps & {
   clearIconClassName?: string;
+  optionsClassName?: string;
   icon?: React.ReactNode;
   isClearable?: boolean;
   minDate?: Date;
@@ -39,6 +40,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
     buttonVariant,
     className = "",
     clearIconClassName = "",
+    optionsClassName = "",
     closeOnSelect = true,
     disabled = false,
     hideIcon = false,
@@ -164,7 +166,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
             <div
               className={cn(
                 "my-1 bg-custom-background-100 shadow-custom-shadow-rg rounded-md overflow-hidden p-3 z-20",
-                className
+                optionsClassName
               )}
               ref={setPopperElement}
               style={styles.popper}

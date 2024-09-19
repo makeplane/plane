@@ -101,7 +101,8 @@ export const BlockMenu = (props: BlockMenuProps) => {
       icon: Copy,
       key: "duplicate",
       label: "Duplicate",
-      isDisabled: editor.state.selection.content().content.firstChild?.type.name === "image",
+      isDisabled:
+        editor.state.selection.content().content.firstChild?.type.name === "image" || editor.isActive("imageComponent"),
       onClick: (e) => {
         e.preventDefault();
         e.stopPropagation();

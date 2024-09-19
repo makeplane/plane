@@ -48,7 +48,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // router
   const { workspaceSlug, projectId } = useParams();
 
-  const projectMemberInfo = projectUserInfo?.[workspaceSlug.toString()]?.[projectId.toString()];
+  const projectMemberInfo = projectUserInfo?.[workspaceSlug?.toString()]?.[projectId?.toString()];
 
   // fetching project details
   useSWR(
@@ -105,12 +105,12 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
 
   // derived values
   const projectExists = projectId ? getProjectById(projectId.toString()) : null;
-  const hasPermissionToCurrentProject = projectId
-    ? allowPermissions(
-        [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
-        EUserPermissionsLevel.PROJECT
-      )
-    : undefined;
+  const hasPermissionToCurrentProject = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug.toString(),
+    projectId?.toString()
+  );
 
   // check if the project member apis is loading
   if (!projectMemberInfo && projectId && hasPermissionToCurrentProject === null)

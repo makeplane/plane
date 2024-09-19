@@ -20,6 +20,7 @@ import {
   Table,
   CustomMention,
   HeadingListExtension,
+  CustomReadOnlyImageExtension,
 } from "@/extensions";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
@@ -75,6 +76,7 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
       class: "rounded-md",
     },
   }),
+  CustomReadOnlyImageExtension(),
   TiptapUnderline,
   TextStyle,
   TaskList.configure({

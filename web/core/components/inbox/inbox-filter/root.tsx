@@ -5,34 +5,30 @@ import { cn } from "@plane/editor";
 import { getButtonStyling } from "@plane/ui";
 import { InboxIssueFilterSelection, InboxIssueOrderByDropdown } from "@/components/inbox/inbox-filter";
 import { FiltersDropdown } from "@/components/issues";
+import useSize from "@/hooks/use-window-size";
 
-const smallButton = <ListFilter className="h-3 " />;
+const smallButton = <ListFilter className="size-3 " />;
+
 const largeButton = (
-  <div className={cn(getButtonStyling("neutral-primary", "sm"), "text-custom-text-300")}>
-    <ListFilter className="h-3 " />
-    <span className="hidden xl:flex">Filters</span>
+  <div className={cn(getButtonStyling("neutral-primary", "sm"), "px-2 text-custom-text-300")}>
+    <ListFilter className="size-3 " />
+    <span>Filters</span>
+    <ChevronDown className="size-3" strokeWidth={2} />
+  </div>
+);
+export const FiltersRoot: FC = () => {
+  const windowSize = useSize();
 
-    <ChevronDown className="h-3 w-3" strokeWidth={2} />
-  </div>
-);
-export const FiltersRoot: FC = () => (
-  <div className="relative flex items-center gap-2">
-    <div>
-      <FiltersDropdown
-        menuButton={
-          <>
-            <div className="hidden xl:flex">{largeButton}</div>
-            <div className="flex xl:hidden">{smallButton}</div>
-          </>
-        }
-        title=""
-        placement="bottom-end"
-      >
-        <InboxIssueFilterSelection />
-      </FiltersDropdown>
+  return (
+    <div className="relative flex items-center gap-2">
+      <div>
+        <FiltersDropdown menuButton={windowSize[0] > 1280 ? largeButton : smallButton} title="" placement="bottom-end">
+          <InboxIssueFilterSelection />
+        </FiltersDropdown>
+      </div>
+      <div>
+        <InboxIssueOrderByDropdown />
+      </div>
     </div>
-    <div>
-      <InboxIssueOrderByDropdown />
-    </div>
-  </div>
-);
+  );
+};

@@ -5,6 +5,7 @@ import { IAnalyticsParams } from "@plane/types";
 import { SelectProject, SelectSegment, SelectXAxis, SelectYAxis } from "@/components/analytics";
 import { ANALYTICS_X_AXIS_VALUES } from "@/constants/analytics";
 import { useProject } from "@/hooks/store";
+import { Row } from "@plane/ui";
 // components
 // types
 
@@ -30,10 +31,10 @@ export const CustomAnalyticsSelectBar: React.FC<Props> = observer((props) => {
     : ANALYTICS_X_AXIS_VALUES;
 
   return (
-    <div
-      className={`grid items-center gap-4 pb-2.5 ${
+    <Row
+      className={`grid items-center gap-4 py-2.5 ${
         isProjectLevel ? "grid-cols-1 sm:grid-cols-3" : "grid-cols-2"
-      } ${fullScreen ? "md:pb-5 lg:grid-cols-4" : ""}`}
+      } ${fullScreen ? "md:py-5 lg:grid-cols-4" : ""}`}
     >
       {!isProjectLevel && (
         <div>
@@ -88,6 +89,6 @@ export const CustomAnalyticsSelectBar: React.FC<Props> = observer((props) => {
           )}
         />
       </div>
-    </div>
+    </Row>
   );
 });

@@ -67,7 +67,7 @@ export const WorkspaceDashboardView = observer(() => {
             <>
               <IssuePeekOverview />
               <ContentWrapper
-                className={cn("gap-7", {
+                className={cn("gap-7 bg-custom-background-90", {
                   "vertical-scrollbar scrollbar-lg": windowWidth >= 768,
                 })}
               >
