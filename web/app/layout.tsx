@@ -9,6 +9,9 @@ import "@/styles/react-day-picker.css";
 import { SITE_NAME, SITE_DESCRIPTION } from "@/constants/meta";
 // helpers
 import { API_BASE_URL, cn } from "@/helpers/common.helper";
+// plane web components
+import { DesktopAppProviderRoot } from "@/plane-web/components/desktop";
+import { FreeTrialBanner } from "@/plane-web/components/license";
 // local
 import { AppProvider } from "./provider";
 
@@ -75,12 +78,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <div id="context-menu-portal" />
         <AppProvider>
+          <DesktopAppProviderRoot />
           <div
             className={cn(
               "h-screen w-full overflow-hidden bg-custom-background-100 relative flex flex-col",
               "app-container"
             )}
           >
+            <div className="flex-shrink-0">
+              {/* free trial banner */}
+              <FreeTrialBanner />
+            </div>
             <div className="w-full h-full overflow-hidden relative">{children}</div>
           </div>
         </AppProvider>
