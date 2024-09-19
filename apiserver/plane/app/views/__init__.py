@@ -102,6 +102,7 @@ from .cycle.base import (
     CycleProgressEndpoint,
     CycleIssueStateAnalyticsEndpoint,
 )
+from .cycle.updates import CycleUpdatesViewSet, CycleUpdatesReactionViewSet
 from .cycle.issue import CycleIssueViewSet
 from .cycle.archive import (
     CycleArchiveUnarchiveEndpoint,

@@ -43,6 +43,8 @@ from .cycle import (
     CycleSerializer,
     CycleIssueSerializer,
     CycleWriteSerializer,
+    CycleUpdatesSerializer,
+    CycleUpdateReactionSerializer,
     CycleUserPropertiesSerializer,
     CycleAnalyticsSerializer,
 )

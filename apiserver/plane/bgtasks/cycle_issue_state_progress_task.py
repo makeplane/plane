@@ -9,21 +9,23 @@ from plane.db.models import Cycle, CycleIssueStateProgress, CycleAnalytics
 
 
 @shared_task
-def track_cycle_issue_state_progress():
+def track_cycle_issue_state_progress(
+    current_date=timezone.now().date() - timezone.timedelta(days=1),
+):
 
     active_cycles = Cycle.objects.filter(
         start_date__lte=timezone.now(), end_date__gte=timezone.now()
     ).values_list("id", "project_id", "workspace_id")
 
     analytics_records = []
-    current_date = timezone.now().date()
 
     for cycle_id, project_id, workspace_id in active_cycles:
         cycle_issues = CycleIssueStateProgress.objects.filter(
             id=Subquery(
                 CycleIssueStateProgress.objects.filter(
-                    cycle_id="bbc67c04-9796-4773-a598-28c170567ddb",
+                    cycle_id=cycle_id,
                     issue=OuterRef("issue"),
+                    created_at__date__lte=current_date,
                 )
                 .order_by("-created_at")
                 .values("id")[:1]

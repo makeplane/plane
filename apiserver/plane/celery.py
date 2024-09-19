@@ -42,7 +42,7 @@ app.conf.beat_schedule = {
     },
     "track-cycle-issue-state-progress": {
         "task": "plane.bgtasks.cycle_issue_state_progress_task.track_cycle_issue_state_progress",
-        "schedule": crontab(hour=0, minute=0),
+        "schedule": crontab(hour=7, minute=32),
     },
 }
 

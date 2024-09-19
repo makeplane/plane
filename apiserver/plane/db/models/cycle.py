@@ -192,7 +192,7 @@ class TypeEnum(models.TextChoices):
     ADDED = "ADDED", "Added"
     UPDATED = "UPDATED", "Updated"
     REMOVED = "REMOVED", "Removed"
-    TRANSFER = "TRANSFER", "Transfer"
+    # TRANSFER = "TRANSFER", "Transfer"
 
 
 class CycleIssueStateProgress(ProjectBaseModel):
@@ -282,6 +282,13 @@ class CycleUpdates(ProjectBaseModel):
         max_length=30,
         choices=UpdatesEnum.choices,
     )
+    parent = models.ForeignKey(
+        "db.CycleUpdates",
+        on_delete=models.CASCADE,
+        related_name="cycle_updates",
+        null=True,
+        blank=True,
+    )
     completed_issues = models.FloatField(default=0)
     total_issues = models.FloatField(default=0)
     total_estimate_points = models.FloatField(default=0)
@@ -294,7 +301,7 @@ class CycleUpdates(ProjectBaseModel):
         ordering = ("-created_at",)
 
     def __str__(self):
-        return f"{self.cycle.name}"
+        return f"{self.cycle.name} {self.status}"
 
 
 class CycleUpdateReaction(ProjectBaseModel):
