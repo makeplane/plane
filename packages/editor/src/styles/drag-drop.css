@@ -4,10 +4,7 @@
   display: flex;
   align-items: center;
   opacity: 1;
-  transition:
-    opacity 0.2s ease 0.2s,
-    top 0.2s ease,
-    left 0.2s ease;
+  transition: opacity 0.2s ease 0.2s;
   transform: translateX(-50%);
 
   &.side-menu-hidden {
