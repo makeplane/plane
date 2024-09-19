@@ -109,7 +109,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
     EUserPermissionsLevel.PROJECT,
     workspaceSlug.toString(),
-    projectId.toString()
+    projectId?.toString()
   );
 
   // check if the project member apis is loading
