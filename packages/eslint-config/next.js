@@ -1,5 +1,4 @@
 const { resolve } = require("node:path");
-const { parserOptions } = require("../../admin/.eslintrc");
 const project = resolve(process.cwd(), "tsconfig.json");
 
 module.exports = {
@@ -10,17 +9,14 @@ module.exports = {
   },
   env: {
     node: true,
+    browser: true,
   },
   plugins: ["react", "@typescript-eslint", "import"],
-  parser: "@typescript-eslint/parser",
   settings: {
     "import/resolver": {
       typescript: {
         project,
       },
-    },
-    next: {
-      rootDir: ["."],
     },
   },
   ignorePatterns: [".*.js", "node_modules/"],
@@ -42,18 +38,18 @@ module.exports = {
     "react/jsx-boolean-value": "error",
     "react/jsx-no-duplicate-props": "error",
     "react-hooks/exhaustive-deps": "warn",
-    // "@typescript-eslint/no-unused-vars": ["error"],
+    "@typescript-eslint/no-unused-vars": ["error"],
     "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/no-useless-empty-export": "error",
     "@typescript-eslint/prefer-ts-expect-error": "error",
-    // "@typescript-eslint/naming-convention": [
-    //   "error",
-    //   {
-    //     selector: "variable",
-    //     format: ["camelCase", "snake_case", "UPPER_CASE", "PascalCase"],
-    //     leadingUnderscore: "allow",
-    //   },
-    // ],
+    "@typescript-eslint/naming-convention": [
+      "error",
+      {
+        selector: "variable",
+        format: ["camelCase", "snake_case", "UPPER_CASE", "PascalCase"],
+        leadingUnderscore: "allow",
+      },
+    ],
     "import/order": [
       "error",
       {

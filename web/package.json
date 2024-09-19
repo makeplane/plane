@@ -79,7 +79,7 @@
     "@plane/eslint-config": "*",
     "prettier": "^3.2.5",
     "tailwind-config-custom": "*",
-    "tsconfig": "*",
+    "@plane/typescript-config": "*",
     "typescript": "5.4.5"
   }
 }

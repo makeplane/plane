@@ -60,7 +60,7 @@
     "@typescript-eslint/eslint-plugin": "^5.48.2",
     "@plane/eslint-config": "*",
     "tailwind-config-custom": "*",
-    "tsconfig": "*",
+    "@plane/typescript-config": "*",
     "typescript": "5.4.5"
   }
 }

@@ -1,24 +1,18 @@
 {
-  "extends": "tsconfig/base.json",
+  "extends": "@plane/typescript-config/base.json",
   "compilerOptions": {
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
 
-    "lib": [
-      "ES2015"
-    ],
+    "lib": ["ES2015"],
 
     "outDir": "./dist",
     "rootDir": "./src",
     "baseUrl": ".",
 
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@/plane-live/*": [
-        "./src/ce/*"
-      ]
+      "@/*": ["./src/*"],
+      "@/plane-live/*": ["./src/ce/*"]
     },
 
     "removeComments": true,
@@ -32,12 +26,6 @@
     // This improves issue grouping in Sentry.
     "sourceRoot": "/"
   },
-  "include": [
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "./dist",
-    "./build",
-    "./node_modules"
-  ]
+  "include": ["src/**/*.ts"],
+  "exclude": ["./dist", "./build", "./node_modules"]
 }

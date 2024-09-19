@@ -1,5 +1,5 @@
 {
-  "name": "tsconfig",
+  "name": "@plane/typescript-config",
   "version": "0.22.0",
   "private": true,
   "files": [

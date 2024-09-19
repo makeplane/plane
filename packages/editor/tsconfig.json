@@ -1,7 +1,5 @@
 {
-  "extends": "tsconfig/react-library.json",
-  "include": ["src/**/*", "index.d.ts"],
-  "exclude": ["dist", "build", "node_modules"],
+  "extends": "@plane/typescript-config/react-library.json",
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
@@ -9,5 +7,7 @@
       "@/styles/*": ["src/styles/*"],
       "@/plane-editor/*": ["src/ce/*"]
     }
-  }
+  },
+  "include": ["src/**/*", "index.d.ts"],
+  "exclude": ["dist", "build", "node_modules"]
 }

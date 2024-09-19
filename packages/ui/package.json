@@ -64,7 +64,7 @@
     "storybook": "^8.1.1",
     "tailwind-config-custom": "*",
     "tailwindcss": "^3.4.3",
-    "tsconfig": "*",
+    "@plane/typescript-config": "*",
     "tsup": "^7.2.0",
     "typescript": "5.4.5"
   }
