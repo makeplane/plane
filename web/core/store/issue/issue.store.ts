@@ -1,5 +1,6 @@
 import isEmpty from "lodash/isEmpty";
 import set from "lodash/set";
+import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
@@ -14,7 +15,7 @@ export type IIssueStore = {
   issuesMap: Record<string, TIssue>; // Record defines issue_id as key and TIssue as value
   // actions
   getIssues(workspaceSlug: string, projectId: string, issueIds: string[]): Promise<TIssue[]>;
-  addIssue(issues: TIssue[], shouldReplace?: boolean): void;
+  addIssue(issues: TIssue[]): void;
   updateIssue(issueId: string, issue: Partial<TIssue>): void;
   removeIssue(issueId: string): void;
   // helper methods
@@ -47,11 +48,12 @@ export class IssueStore implements IIssueStore {
    * @param {TIssue[]} issues
    * @returns {void}
    */
-  addIssue = (issues: TIssue[], shouldReplace = false) => {
+  addIssue = (issues: TIssue[]) => {
     if (issues && issues.length <= 0) return;
     runInAction(() => {
       issues.forEach((issue) => {
-        if (!this.issuesMap[issue.id] || shouldReplace) set(this.issuesMap, issue.id, issue);
+        if (!this.issuesMap[issue.id]) set(this.issuesMap, issue.id, issue);
+        else update(this.issuesMap, issue.id, (prevIssue) => ({ ...prevIssue, ...issue }));
       });
     });
   };
@@ -75,7 +77,7 @@ export class IssueStore implements IIssueStore {
    * @returns {void}
    */
   updateIssue = (issueId: string, issue: Partial<TIssue>) => {
-    if (!issue || !issueId || isEmpty(this.issuesMap) || !this.issuesMap[issueId]) return;
+    if (!issue || !issueId || !this.issuesMap[issueId]) return;
     runInAction(() => {
       set(this.issuesMap, [issueId, "updated_at"], getCurrentDateTimeInISO());
       Object.keys(issue).forEach((key) => {
@@ -90,7 +92,7 @@ export class IssueStore implements IIssueStore {
    * @returns {void}
    */
   removeIssue = (issueId: string) => {
-    if (!issueId || isEmpty(this.issuesMap) || !this.issuesMap[issueId]) return;
+    if (!issueId || !this.issuesMap[issueId]) return;
     runInAction(() => {
       delete this.issuesMap[issueId];
     });
@@ -103,7 +105,7 @@ export class IssueStore implements IIssueStore {
    * @returns {TIssue | undefined}
    */
   getIssueById = computedFn((issueId: string) => {
-    if (!issueId || isEmpty(this.issuesMap) || !this.issuesMap[issueId]) return undefined;
+    if (!issueId || !this.issuesMap[issueId]) return undefined;
     return this.issuesMap[issueId];
   });
 
@@ -114,7 +116,7 @@ export class IssueStore implements IIssueStore {
    * @returns {Record<string, TIssue> | undefined}
    */
   getIssuesByIds = computedFn((issueIds: string[], type: "archived" | "un-archived") => {
-    if (!issueIds || issueIds.length <= 0 || isEmpty(this.issuesMap)) return [];
+    if (!issueIds || issueIds.length <= 0) return [];
     const filteredIssues: TIssue[] = [];
     Object.values(issueIds).forEach((issueId) => {
       // if type is archived then check archived_at is not null

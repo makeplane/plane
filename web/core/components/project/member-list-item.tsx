@@ -9,7 +9,7 @@ import { ConfirmProjectMemberRemove } from "@/components/project";
 import { PROJECT_MEMBER_LEAVE } from "@/constants/event-tracker";
 
 // hooks
-import { useEventTracker, useMember, useProject, useUser } from "@/hooks/store";
+import { useEventTracker, useMember, useProject, useUser, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useProjectColumns } from "@/plane-web/components/projects/settings/useProjectColumns";
 import { IProjectMemberDetails } from "@/store/member/project-member.store";
@@ -25,9 +25,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
   // router
   const router = useAppRouter();
   // store hooks
-  const {
-    membership: { leaveProject },
-  } = useUser();
+  const { leaveProject } = useUserPermissions();
   const { data: currentUser } = useUser();
   const { fetchProjects } = useProject();
   const {
@@ -40,6 +38,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
     if (!workspaceSlug || !projectId || !memberId) return;
 
     if (memberId === currentUser?.id) {
+      router.push(`/${workspaceSlug}/projects`);
       await leaveProject(workspaceSlug.toString(), projectId.toString())
         .then(async () => {
           captureEvent(PROJECT_MEMBER_LEAVE, {
@@ -47,7 +46,6 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
             element: "Project settings members page",
           });
           await fetchProjects(workspaceSlug.toString());
-          router.push(`/${workspaceSlug}/projects`);
         })
         .catch((err) =>
           setToast({

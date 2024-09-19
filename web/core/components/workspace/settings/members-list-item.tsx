@@ -12,7 +12,7 @@ import { ConfirmWorkspaceMemberRemove } from "@/components/workspace";
 // constants
 import { WORKSPACE_MEMBER_LEAVE } from "@/constants/event-tracker";
 // hooks
-import { useEventTracker, useMember, useUser } from "@/hooks/store";
+import { useEventTracker, useMember, useUser, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useMemberColumns } from "@/plane-web/components/workspace/settings/useMemberColumns";
 
@@ -26,13 +26,11 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
   // router
   const router = useAppRouter();
   // store hooks
-  const {
-    membership: { leaveWorkspace },
-  } = useUser();
   const { data: currentUser } = useUser();
   const {
     workspace: { removeMemberFromWorkspace },
   } = useMember();
+  const { leaveWorkspace } = useUserPermissions();
   const { captureEvent } = useEventTracker();
   // derived values
 

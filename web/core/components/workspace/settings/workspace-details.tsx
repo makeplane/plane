@@ -12,13 +12,14 @@ import { LogoSpinner } from "@/components/common";
 import { WorkspaceImageUploadModal } from "@/components/core";
 // constants
 import { WORKSPACE_UPDATED } from "@/constants/event-tracker";
-import { EUserWorkspaceRoles, ORGANIZATION_SIZE } from "@/constants/workspace";
+import { ORGANIZATION_SIZE } from "@/constants/workspace";
 // helpers
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useEventTracker, useUser, useWorkspace } from "@/hooks/store";
+import { useEventTracker, useUserPermissions, useWorkspace } from "@/hooks/store";
 // plane web components
 import { DeleteWorkspaceSection } from "@/plane-web/components/workspace";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // services
 import { FileService } from "@/services/file.service";
 
@@ -39,10 +40,9 @@ export const WorkspaceDetails: FC = observer(() => {
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   // store hooks
   const { captureWorkspaceEvent } = useEventTracker();
-  const {
-    membership: { currentWorkspaceRole },
-  } = useUser();
   const { currentWorkspace, updateWorkspace } = useWorkspace();
+  const { allowPermissions } = useUserPermissions();
+
   // form info
   const {
     handleSubmit,
@@ -141,7 +141,7 @@ export const WorkspaceDetails: FC = observer(() => {
     if (currentWorkspace) reset({ ...currentWorkspace });
   }, [currentWorkspace, reset]);
 
-  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
   if (!currentWorkspace)
     return (

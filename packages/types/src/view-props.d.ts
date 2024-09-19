@@ -127,6 +127,7 @@ export interface IIssueDisplayProperties {
   updated_on?: boolean;
   modules?: boolean;
   cycle?: boolean;
+  issue_type?: boolean;
 }
 
 export type TIssueKanbanFilters = {

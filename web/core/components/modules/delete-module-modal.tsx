@@ -56,7 +56,7 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
         });
       })
       .catch((errors) => {
-        const isPermissionError = errors?.error === "Only admin or creator can delete the module";
+        const isPermissionError = errors?.error === "You don't have the required permissions.";
         const currentError = isPermissionError
           ? PROJECT_ERROR_MESSAGES.permissionError
           : PROJECT_ERROR_MESSAGES.moduleDeleteError;

@@ -4,7 +4,7 @@ import React, { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // ui
-import { Button, getButtonStyling } from "@plane/ui";
+import { Button, getButtonStyling, Row } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
 import { ProjectFeaturesList } from "@/components/project/settings";
@@ -28,9 +28,9 @@ export const ProjectFeatureUpdate: FC<Props> = observer((props) => {
 
   return (
     <>
-      <div className="p-2">
+      <Row className="py-6">
         <ProjectFeaturesList workspaceSlug={workspaceSlug} projectId={projectId} isAdmin />
-      </div>
+      </Row>
       <div className="flex items-center justify-between gap-2 mt-4 px-6 py-4 border-t border-custom-border-100">
         <div className="flex gap-1 text-sm text-custom-text-300 font-medium">
           Congrats! Project <Logo logo={currentProjectDetails.logo_props} />{" "}

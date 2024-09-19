@@ -58,7 +58,7 @@ export const useReadOnlyEditor = ({
   // for syncing swr data on tab refocus etc
   useEffect(() => {
     if (initialValue === null || initialValue === undefined) return;
-    if (editor && !editor.isDestroyed) editor?.commands.setContent(initialValue);
+    if (editor && !editor.isDestroyed) editor?.commands.setContent(initialValue, false, { preserveWhitespace: "full" });
   }, [editor, initialValue]);
 
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
@@ -68,7 +68,7 @@ export const useReadOnlyEditor = ({
       editorRef.current?.commands.clearContent();
     },
     setEditorValue: (content: string) => {
-      editorRef.current?.commands.setContent(content);
+      editorRef.current?.commands.setContent(content, false, { preserveWhitespace: "full" });
     },
     getMarkDown: (): string => {
       const markdownOutput = editorRef.current?.storage.markdown.getMarkdown();
@@ -82,10 +82,12 @@ export const useReadOnlyEditor = ({
       if (!editorRef.current) return;
       scrollSummary(editorRef.current, marking);
     },
-    documentInfo: {
-      characters: editorRef.current?.storage?.characterCount?.characters?.() ?? 0,
-      paragraphs: getParagraphCount(editorRef.current?.state),
-      words: editorRef.current?.storage?.characterCount?.words?.() ?? 0,
+    getDocumentInfo: () => {
+      return {
+        characters: editorRef?.current?.storage?.characterCount?.characters?.() ?? 0,
+        paragraphs: getParagraphCount(editorRef?.current?.state),
+        words: editorRef?.current?.storage?.characterCount?.words?.() ?? 0,
+      };
     },
   }));
 

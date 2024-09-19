@@ -5,6 +5,8 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // types
 import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 // ui
@@ -17,14 +19,12 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail, useKanbanView } from "@/hooks/store";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 // local components
 import { TRenderQuickActions } from "../list/list-view-types";
 import { IssueProperties } from "../properties/all-properties";
-import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { getIssueBlockId } from "../utils";
 
 interface IssueBlockProps {
@@ -62,28 +62,27 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
 
   return (
     <>
-      <WithDisplayPropertiesHOC displayProperties={displayProperties || {}} displayPropertyKey="key">
-        <div className="relative">
-          {issue.project_id && (
-            <IssueIdentifier
-              issueId={issue.id}
-              projectId={issue.project_id}
-              textContainerClassName="line-clamp-1 text-xs text-custom-text-300"
-            />
-          )}
-          <div
-            className={cn("absolute -top-1 right-0", {
-              "hidden group-hover/kanban-block:block": !isMobile,
-            })}
-            onClick={handleEventPropagation}
-          >
-            {quickActions({
-              issue,
-              parentRef: cardRef,
-            })}
-          </div>
+      <div className="relative">
+        {issue.project_id && (
+          <IssueIdentifier
+            issueId={issue.id}
+            projectId={issue.project_id}
+            textContainerClassName="line-clamp-1 text-xs text-custom-text-300"
+            displayProperties={displayProperties}
+          />
+        )}
+        <div
+          className={cn("absolute -top-1 right-0", {
+            "hidden group-hover/kanban-block:block": !isMobile,
+          })}
+          onClick={handleEventPropagation}
+        >
+          {quickActions({
+            issue,
+            parentRef: cardRef,
+          })}
         </div>
-      </WithDisplayPropertiesHOC>
+      </div>
 
       <Tooltip tooltipContent={issue.name} isMobile={isMobile} renderByDefault={false}>
         <div className="w-full line-clamp-1 text-sm text-custom-text-100">
@@ -189,6 +188,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
     <>
       <DropIndicator isVisible={!isCurrentBlockDragging && isDraggingOverBlock} />
       <div
+        id={`issue-${issueId}`}
         // make Z-index higher at the beginning of drag, to have a issue drag image of issue block without any overlaps
         className={cn("group/kanban-block relative mb-2", { "z-[1]": isCurrentBlockDragging })}
         onDragStart={() => {

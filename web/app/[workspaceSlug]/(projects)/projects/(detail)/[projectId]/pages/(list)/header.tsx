@@ -12,9 +12,10 @@ import { Breadcrumbs, Button, Header, setToast, TOAST_TYPE } from "@plane/ui";
 import { BreadcrumbLink, Logo } from "@/components/common";
 // constants
 import { EPageAccess } from "@/constants/page";
-import { EUserProjectRoles } from "@/constants/project";
 // hooks
-import { useEventTracker, useProject, useProjectPages, useUser } from "@/hooks/store";
+import { useEventTracker, useProject, useProjectPages, useUserPermissions } from "@/hooks/store";
+// plane web hooks
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const PagesListHeader = observer(() => {
   // states
@@ -25,15 +26,16 @@ export const PagesListHeader = observer(() => {
   const searchParams = useSearchParams();
   const pageType = searchParams.get("type");
   // store hooks
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
+
   const { currentProjectDetails, loader } = useProject();
   const { createPage } = useProjectPages();
   const { setTrackElement } = useEventTracker();
   // auth
-  const canUserCreatePage =
-    !!currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
+  const canUserCreatePage = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    EUserPermissionsLevel.PROJECT
+  );
   // handle page create
   const handleCreatePage = async () => {
     setIsCreatingPage(true);
