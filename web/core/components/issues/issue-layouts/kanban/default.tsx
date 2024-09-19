@@ -14,17 +14,17 @@ import {
   TIssueOrderByOptions,
 } from "@plane/types";
 // constants
+import { ContentWrapper } from "@plane/ui";
 // components
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { KanbanColumnLoader } from "@/components/ui";
 // hooks
-import { ContentWrapper } from "@plane/ui";
 import { useCycle, useKanbanView, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // types
 // parent components
 import { TRenderQuickActions } from "../list/list-view-types";
-import { getGroupByColumns, isWorkspaceLevel, GroupDropLocation, getApproximateKanbanCardHeight } from "../utils";
+import { getGroupByColumns, isWorkspaceLevel, GroupDropLocation, getApproximateCardHeight } from "../utils";
 // components
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { KanbanGroup } from "./kanban-group";
@@ -44,7 +44,7 @@ export interface IKanBan {
   isDropDisabled?: boolean;
   dropErrorMessage?: string | undefined;
   sub_group_id?: string;
-  sub_group_index?: number
+  sub_group_index?: number;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   kanbanFilters: TIssueKanbanFilters;
@@ -58,6 +58,7 @@ export interface IKanBan {
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
   handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   showEmptyGroup?: boolean;
+  subGroupIndex?: number;
 }
 
 export const KanBan: React.FC<IKanBan> = observer((props) => {
@@ -85,7 +86,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     orderBy,
     isDropDisabled,
     dropErrorMessage,
-    sub_group_index = 0,
+    subGroupIndex = 0,
   } = props;
 
   const storeType = useIssueStoreType();
@@ -139,22 +140,24 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
   };
 
   const isGroupByCreatedBy = group_by === "created_by";
-  const appxCardHeight = getApproximateKanbanCardHeight(displayProperties);
+  const approximateCardHeight = getApproximateCardHeight(displayProperties);
   const isSubGroup = !!sub_group_id && sub_group_id !== "null";
 
   return (
     <ContentWrapper className={`flex-row relative gap-4 py-4`}>
       {list &&
         list.length > 0 &&
-        list.map((subList: IGroupByColumn, index) => {
+        list.map((subList: IGroupByColumn, groupIndex) => {
           const groupByVisibilityToggle = visibilityGroupBy(subList);
-          const issueIds = isSubGroup
-            ? (groupedIssueIds as TSubGroupedIssues)?.[subList.id]?.[sub_group_id] ?? []
-            : (groupedIssueIds as TGroupedIssues)?.[subList.id] ?? [];
-          const issueLength = issueIds?.length as number;
-          const groupHeight = issueLength * appxCardHeight;
 
           if (groupByVisibilityToggle.showGroup === false) return <></>;
+
+          const issueIds = isSubGroup
+            ? ((groupedIssueIds as TSubGroupedIssues)?.[subList.id]?.[sub_group_id] ?? [])
+            : ((groupedIssueIds as TGroupedIssues)?.[subList.id] ?? []);
+          const issueLength = issueIds?.length as number;
+          const groupHeight = issueLength * approximateCardHeight;
+
           return (
             <div
               key={subList.id}
@@ -190,11 +193,11 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
                   placeholderChildren={
                     <KanbanColumnLoader
                       ignoreHeader
-                      cardHeight={appxCardHeight}
+                      cardHeight={approximateCardHeight}
                       cardsInColumn={issueLength !== undefined && issueLength < 3 ? issueLength : 3}
                     />
                   }
-                  defaultValue={index < 5 && sub_group_index < 2}
+                  defaultValue={groupIndex < 5 && subGroupIndex < 2}
                   useIdletime
                 >
                   <KanbanGroup
@@ -227,4 +230,3 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     </ContentWrapper>
   );
 });
-

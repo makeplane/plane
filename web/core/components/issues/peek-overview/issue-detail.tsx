@@ -74,8 +74,6 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
         projectId={issue.project_id}
         issueId={issue.id}
         initialValue={issueDescription}
-        // for now peek overview doesn't have live syncing while tab changes
-        swrIssueDescription={issueDescription}
         disabled={disabled}
         issueOperations={issueOperations}
         setIsSubmitting={(value) => setIsSubmitting(value)}

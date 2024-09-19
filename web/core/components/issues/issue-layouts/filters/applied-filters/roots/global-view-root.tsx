@@ -18,6 +18,8 @@ import { GLOBAL_VIEW_UPDATED } from "@/constants/event-tracker";
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 import { EViewAccess } from "@/constants/views";
 import { DEFAULT_GLOBAL_VIEWS_LIST } from "@/constants/workspace";
+// helpers
+import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEventTracker, useGlobalView, useIssues, useLabel, useUser, useUserPermissions } from "@/hooks/store";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
@@ -135,7 +137,12 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
   if (areAppliedFiltersEmpty && areFiltersEqual) return null;
 
   return (
-    <Header variant={EHeaderVariant.TERNARY}>
+    <Header
+      variant={EHeaderVariant.TERNARY}
+      className={cn({
+        "justify-end": areAppliedFiltersEmpty,
+      })}
+    >
       <CreateUpdateWorkspaceViewModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

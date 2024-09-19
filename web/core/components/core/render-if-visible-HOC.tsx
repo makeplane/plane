@@ -11,6 +11,7 @@ type Props = {
   classNames?: string;
   placeholderChildren?: ReactNode;
   defaultValue?: boolean;
+  shouldRecordHeights?: boolean;
   useIdletime?: boolean;
 };
 
@@ -23,6 +24,8 @@ const RenderIfVisible: React.FC<Props> = (props) => {
     as = "div",
     children,
     classNames = "",
+    shouldRecordHeights = true,
+    //placeholder children
     placeholderChildren = null, //placeholder children
     defaultValue = false,
     useIdletime = false,
@@ -64,15 +67,15 @@ const RenderIfVisible: React.FC<Props> = (props) => {
 
   //Set height after render
   useEffect(() => {
-    if (intersectionRef.current && isVisible) {
-      placeholderHeight.current = `${intersectionRef.current.offsetHeight}px`;
+    if (intersectionRef.current && isVisible && shouldRecordHeights) {
+      window.requestIdleCallback(() => {
+        if (intersectionRef.current) placeholderHeight.current = `${intersectionRef.current.offsetHeight}px`;
+      });
     }
-  }, [isVisible, intersectionRef]);
+  }, [isVisible, intersectionRef, shouldRecordHeights]);
 
   const child = isVisible ? <>{children}</> : placeholderChildren;
-  const style: { width?: string; height?: string } = isVisible
-    ? {}
-    : { height: placeholderHeight.current, width: "100%" };
+  const style = isVisible || placeholderChildren ? {} : { height: placeholderHeight.current, width: "100%" };
   const className = isVisible || placeholderChildren ? classNames : cn(classNames, "bg-custom-background-80");
 
   return React.createElement(as, { ref: intersectionRef, style, className }, child);
