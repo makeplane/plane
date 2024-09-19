@@ -165,6 +165,9 @@ export const useEditor = (props: CustomEditorProps) => {
           editorRef.current?.off("update");
         };
       },
+      getHeadings: () => {
+        return editorRef?.current?.storage.headingList.headings;
+      },
       onStateChange: (callback: () => void) => {
         // Subscribe to editor state changes
         editorRef.current?.on("transaction", () => {

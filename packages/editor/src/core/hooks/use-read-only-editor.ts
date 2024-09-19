@@ -101,6 +101,9 @@ export const useReadOnlyEditor = ({
         editorRef.current?.off("update");
       };
     },
+    getHeadings: () => {
+      return editorRef?.current?.storage.headingList.headings;
+    },
   }));
 
   if (!editor) {
