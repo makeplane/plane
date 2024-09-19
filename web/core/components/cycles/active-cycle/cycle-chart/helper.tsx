@@ -47,7 +47,7 @@ export const maxScope = (data: TCycleProgress[]) => Math.max(...data.map((d) => 
 const generateDateArray = (startDate: Date, endDate: Date) => {
   // Convert the start and end dates to Date objects if they aren't already
   let start = new Date(startDate);
-  start.setDate(start.getDate() + 1);
+  // start.setDate(start.getDate() + 1);
   let end = new Date(endDate);
   end.setDate(end.getDate() + 1);
 
