@@ -1,4 +1,4 @@
-import React, { useRef, useState, useCallback, useLayoutEffect } from "react";
+import React, { useRef, useState, useCallback, useLayoutEffect, useEffect } from "react";
 import { NodeSelection } from "@tiptap/pm/state";
 // extensions
 import { CustomImageNodeViewProps } from "@/extensions/custom-image";
@@ -13,52 +13,84 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
 
   const [size, setSize] = useState({ width: width || "35%", height: height || "auto" });
   const [isLoading, setIsLoading] = useState(true);
+  const [initialResizeComplete, setInitialResizeComplete] = useState(false);
+  const isShimmerVisible = isLoading || !initialResizeComplete;
+  const [editorContainer, setEditorContainer] = useState<HTMLElement | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const containerRect = useRef<DOMRect | null>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   const isResizing = useRef(false);
-  const aspectRatio = useRef(1);
+  const aspectRatioRef = useRef<number | null>(null);
 
   useLayoutEffect(() => {
     if (imageRef.current) {
       const img = imageRef.current;
       img.onload = () => {
-        if (node.attrs.width === "35%" && node.attrs.height === "auto") {
-          aspectRatio.current = img.naturalWidth / img.naturalHeight;
-          const initialWidth = Math.max(img.naturalWidth * 0.35, MIN_SIZE);
-          const initialHeight = initialWidth / aspectRatio.current;
-          setSize({ width: `${initialWidth}px`, height: `${initialHeight}px` });
+        const closestEditorContainer = img.closest(".editor-container");
+        if (!closestEditorContainer) {
+          console.error("Editor container not found");
+          return;
         }
+
+        setEditorContainer(closestEditorContainer as HTMLElement);
+
+        if (width === "35%") {
+          const editorWidth = closestEditorContainer.clientWidth;
+          const initialWidth = Math.max(editorWidth * 0.35, MIN_SIZE);
+          const aspectRatio = img.naturalWidth / img.naturalHeight;
+          const initialHeight = initialWidth / aspectRatio;
+
+          const newSize = {
+            width: `${Math.round(initialWidth)}px`,
+            height: `${Math.round(initialHeight)}px`,
+          };
+
+          setSize(newSize);
+          updateAttributes(newSize);
+        }
+        setInitialResizeComplete(true);
         setIsLoading(false);
       };
     }
-  }, [src]);
-
-  const handleResizeStart = useCallback((e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    isResizing.current = true;
-    if (containerRef.current) {
-      containerRect.current = containerRef.current.getBoundingClientRect();
-    }
-  }, []);
+  }, [width, height, updateAttributes]);
 
   useLayoutEffect(() => {
-    // for realtime resizing and undo/redo
     setSize({ width, height });
   }, [width, height]);
 
-  const handleResize = useCallback((e: MouseEvent | TouchEvent) => {
-    if (!isResizing.current || !containerRef.current || !containerRect.current) return;
+  const handleResizeStart = useCallback(
+    (e: React.MouseEvent | React.TouchEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      isResizing.current = true;
+      if (containerRef.current && editorContainer) {
+        aspectRatioRef.current = Number(size.width.replace("px", "")) / Number(size.height.replace("px", ""));
+        containerRect.current = containerRef.current.getBoundingClientRect();
+      }
+    },
+    [size, editorContainer]
+  );
 
-    const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
+  const handleResize = useCallback(
+    (e: MouseEvent | TouchEvent) => {
+      if (!isResizing.current || !containerRef.current || !containerRect.current) return;
 
-    const newWidth = Math.max(clientX - containerRect.current.left, MIN_SIZE);
-    const newHeight = newWidth / aspectRatio.current;
+      if (size) {
+        aspectRatioRef.current = Number(size.width.replace("px", "")) / Number(size.height.replace("px", ""));
+      }
 
-    setSize({ width: `${newWidth}px`, height: `${newHeight}px` });
-  }, []);
+      if (!aspectRatioRef.current) return;
+
+      const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
+
+      const newWidth = Math.max(clientX - containerRect.current.left, MIN_SIZE);
+      const newHeight = newWidth / aspectRatioRef.current;
+
+      setSize({ width: `${newWidth}px`, height: `${newHeight}px` });
+    },
+    [size]
+  );
 
   const handleResizeEnd = useCallback(() => {
     if (isResizing.current) {
@@ -77,18 +109,23 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
     [editor, getPos]
   );
 
-  useLayoutEffect(() => {
-    const handleGlobalMouseMove = (e: MouseEvent) => handleResize(e);
-    const handleGlobalMouseUp = () => handleResizeEnd();
+  useEffect(() => {
+    if (!editorContainer) return;
 
-    document.addEventListener("mousemove", handleGlobalMouseMove);
-    document.addEventListener("mouseup", handleGlobalMouseUp);
+    const handleMouseMove = (e: MouseEvent) => handleResize(e);
+    const handleMouseUp = () => handleResizeEnd();
+    const handleMouseLeave = () => handleResizeEnd();
+
+    editorContainer.addEventListener("mousemove", handleMouseMove);
+    editorContainer.addEventListener("mouseup", handleMouseUp);
+    editorContainer.addEventListener("mouseleave", handleMouseLeave);
 
     return () => {
-      document.removeEventListener("mousemove", handleGlobalMouseMove);
-      document.removeEventListener("mouseup", handleGlobalMouseUp);
+      editorContainer.removeEventListener("mousemove", handleMouseMove);
+      editorContainer.removeEventListener("mouseup", handleMouseUp);
+      editorContainer.removeEventListener("mouseleave", handleMouseLeave);
     };
-  }, [handleResize, handleResizeEnd]);
+  }, [handleResize, handleResizeEnd, editorContainer]);
 
   return (
     <div
@@ -100,12 +137,16 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
         height: size.height,
       }}
     >
-      {isLoading && <div className="animate-pulse bg-custom-background-80 rounded-md" style={{ width, height }} />}
+      {isShimmerVisible && (
+        <div className="animate-pulse bg-custom-background-80 rounded-md" style={{ width, height }} />
+      )}
       <img
         ref={imageRef}
         src={src}
+        width={size.width}
+        height={size.height}
         className={cn("block rounded-md", {
-          hidden: isLoading,
+          hidden: isShimmerVisible,
           "read-only-image": !editor.isEditable,
         })}
         style={{

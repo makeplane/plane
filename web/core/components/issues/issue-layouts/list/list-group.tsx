@@ -4,6 +4,7 @@ import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { cn } from "@plane/editor";
 // plane packages
 import {
@@ -90,6 +91,7 @@ export const ListGroup = observer((props: Props) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const groupRef = useRef<HTMLDivElement | null>(null);
 
+  const { projectId } = useParams();
   const projectState = useProjectState();
 
   const {
@@ -216,7 +218,8 @@ export const ListGroup = observer((props: Props) => {
     );
   }, [groupRef?.current, group, orderBy, getGroupIndex, setDragColumnOrientation, setIsDraggingOverColumn]);
 
-  const isDragAllowed = !!group_by && DRAG_ALLOWED_GROUPS.includes(group_by);
+  const isDragAllowed =
+    !!group_by && DRAG_ALLOWED_GROUPS.includes(group_by) && canEditProperties(projectId?.toString());
   const canOverlayBeVisible = orderBy !== "sort_order" || !!group.isDropDisabled;
 
   const isGroupByCreatedBy = group_by === "created_by";
@@ -230,7 +233,11 @@ export const ListGroup = observer((props: Props) => {
         "border-custom-error-200": isDraggingOverColumn && !!group.isDropDisabled,
       })}
     >
-      <Row className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 pr-3 py-1">
+      <Row
+        className={cn("w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 pr-3 py-1", {
+          "sticky top-0 z-[2]": isExpanded && groupIssueCount > 0,
+        })}
+      >
         <HeaderGroupByCard
           groupID={group.id}
           icon={group.icon}

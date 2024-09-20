@@ -99,6 +99,7 @@ export const CreateWebhookModal: React.FC<ICreateWebhookModal> = (props) => {
       }}
       position={EModalPosition.TOP}
       width={EModalWidth.XXL}
+      className="p-4 pb-0"
     >
       {!generatedWebhook ? (
         <WebhookForm onSubmit={handleCreateWebhook} handleClose={handleClose} />
