@@ -107,7 +107,7 @@ export const GlobalViewsHeader: React.FC = observer(() => {
   );
 
   return (
-    <Header variant={EHeaderVariant.SECONDARY} className="min-h-[44px] z-[12] bg-custom-background-100">
+    <Header variant={EHeaderVariant.SECONDARY} className="min-h-[44px]">
       <CreateUpdateWorkspaceViewModal isOpen={createViewModal} onClose={() => setCreateViewModal(false)} />
       <div
         ref={containerRef}
