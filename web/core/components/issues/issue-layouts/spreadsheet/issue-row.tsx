@@ -39,7 +39,6 @@ interface Props {
   issueId: string;
   isScrolled: MutableRefObject<boolean>;
   containerRef: MutableRefObject<HTMLTableElement | null>;
-  issueIds: string[];
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
   spacingLeft?: number;
   selectionHelpers: TSelectionHelper;
@@ -57,7 +56,6 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
     canEditProperties,
     isScrolled,
     containerRef,
-    issueIds,
     spreadsheetColumnsList,
     spacingLeft = 6,
     selectionHelpers,
@@ -124,7 +122,6 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
             portalElement={portalElement}
             isScrolled={isScrolled}
             containerRef={containerRef}
-            issueIds={issueIds}
             spreadsheetColumnsList={spreadsheetColumnsList}
             selectionHelpers={selectionHelpers}
           />

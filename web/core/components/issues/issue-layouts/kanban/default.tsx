@@ -183,7 +183,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
 
               {groupByVisibilityToggle.showIssues && (
                 <RenderIfVisible
-                  verticalOffset={0}
+                  verticalOffset={100}
                   horizontalOffset={100}
                   root={scrollableContainerRef}
                   classNames="relative h-full"
