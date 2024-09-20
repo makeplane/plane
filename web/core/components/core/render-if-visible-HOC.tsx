@@ -75,7 +75,7 @@ const RenderIfVisible: React.FC<Props> = (props) => {
   }, [isVisible, intersectionRef, shouldRecordHeights]);
 
   const child = isVisible ? <>{children}</> : placeholderChildren;
-  const style = isVisible || placeholderChildren ? {} : { height: placeholderHeight.current, width: "100%" };
+  const style = isVisible || !shouldRecordHeights ? {} : { height: placeholderHeight.current, width: "100%" };
   const className = isVisible || placeholderChildren ? classNames : cn(classNames, "bg-custom-background-80");
 
   return React.createElement(as, { ref: intersectionRef, style, className }, child);
