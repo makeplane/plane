@@ -23,7 +23,6 @@ import { HIGHLIGHT_CLASS, getIssueBlockId, isIssueNew } from "../utils";
 import { TRenderQuickActions } from "./list-view-types";
 
 type Props = {
-  issueIds: string[];
   issueId: string;
   issuesMap: TIssueMap;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
@@ -44,7 +43,6 @@ type Props = {
 
 export const IssueBlockRoot: FC<Props> = observer((props) => {
   const {
-    issueIds,
     issueId,
     issuesMap,
     groupId,
@@ -161,7 +159,6 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
         subIssues?.map((subIssueId) => (
           <IssueBlockRoot
             key={`${subIssueId}`}
-            issueIds={issueIds}
             issueId={subIssueId}
             issuesMap={issuesMap}
             updateIssue={updateIssue}
