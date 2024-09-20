@@ -240,13 +240,7 @@ export class Page implements IPage {
    * @description returns true if the current logged in user can lock the page
    */
   get canCurrentUserLockPage() {
-    const { workspaceSlug, projectId } = this.store.router;
-
-    const currentUserProjectRole = this.store.user.permission.projectPermissionsByWorkspaceSlugAndProjectId(
-      workspaceSlug?.toString() || "",
-      projectId?.toString() || ""
-    );
-    return this.isCurrentUserOwner || (!!currentUserProjectRole && currentUserProjectRole >= EUserPermissions.MEMBER);
+    return this.isCurrentUserOwner;
   }
 
   /**

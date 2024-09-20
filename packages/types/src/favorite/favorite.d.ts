@@ -1,14 +1,4 @@
-type TLogoProps = {
-  in_use: "emoji" | "icon";
-  emoji?: {
-    value?: string;
-    url?: string;
-  };
-  icon?: {
-    name?: string;
-    color?: string;
-  };
-};
+import { TLogoProps } from "../common";
 
 export type IFavorite = {
   id: string;
