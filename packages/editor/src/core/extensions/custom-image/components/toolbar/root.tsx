@@ -1,0 +1,39 @@
+import { useState } from "react";
+// helpers
+import { cn } from "@/helpers/common";
+// components
+import { ImageFullScreenAction } from "./full-screen";
+
+type Props = {
+  containerClassName?: string;
+  image: {
+    src: string;
+    height: string;
+    width: string;
+  };
+};
+
+export const ImageToolbarRoot: React.FC<Props> = (props) => {
+  const { containerClassName, image } = props;
+  // state
+  const [isFullScreenEnabled, setIsFullScreenEnabled] = useState(false);
+
+  return (
+    <>
+      <div
+        className={cn(
+          {
+            "opacity-100 pointer-events-auto": isFullScreenEnabled,
+          },
+          containerClassName
+        )}
+      >
+        <ImageFullScreenAction
+          image={image}
+          isOpen={isFullScreenEnabled}
+          toggleFullScreenMode={(val) => setIsFullScreenEnabled(val)}
+        />
+      </div>
+    </>
+  );
+};
