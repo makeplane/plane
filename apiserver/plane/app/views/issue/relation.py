@@ -267,7 +267,7 @@ class IssueRelationViewSet(BaseViewSet):
             IssueRelationSerializer(issue_relation).data,
             cls=DjangoJSONEncoder,
         )
-        issue_relation.delete()
+        issue_relation.delete(soft=False)
         issue_activity.delay(
             type="issue_relation.activity.deleted",
             requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
