@@ -3,11 +3,11 @@ export const COLORS_LIST: {
   textColor: string;
   label: string;
 }[] = [
-  {
-    backgroundColor: "#1c202426",
-    textColor: "#1c2024",
-    label: "Black",
-  },
+  // {
+  //   backgroundColor: "#1c202426",
+  //   textColor: "#1c2024",
+  //   label: "Black",
+  // },
   {
     backgroundColor: "#5c5e6326",
     textColor: "#5c5e63",

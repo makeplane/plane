@@ -194,6 +194,22 @@ const SLASH_COMMAND_SECTIONS: TSlashCommandSection[] = [
     key: "text-color",
     title: "Colors",
     items: [
+      {
+        commandKey: "text-color",
+        key: "text-color-default",
+        title: "Default",
+        description: "Change text color",
+        searchTerms: ["color", "text", "default"],
+        icon: (
+          <ALargeSmall
+            className="size-3.5"
+            style={{
+              color: "rgba(var(--color-text-100))",
+            }}
+          />
+        ),
+        command: ({ editor, range }) => toggleTextColor(undefined, editor, range),
+      },
       ...COLORS_LIST.map(
         (color) =>
           ({
@@ -213,28 +229,26 @@ const SLASH_COMMAND_SECTIONS: TSlashCommandSection[] = [
             command: ({ editor, range }) => toggleTextColor(color.textColor, editor, range),
           }) as ISlashCommandItem
       ),
-      {
-        commandKey: "text-color",
-        key: "text-color-default",
-        title: "Default",
-        description: "Change text color",
-        searchTerms: ["color", "text", "default"],
-        icon: (
-          <ALargeSmall
-            className="size-3.5"
-            style={{
-              color: "rgba(var(--color-text-100))",
-            }}
-          />
-        ),
-        command: ({ editor, range }) => toggleTextColor(undefined, editor, range),
-      },
     ],
   },
   {
     key: "background-color",
     title: "Background colors",
     items: [
+      {
+        commandKey: "background-color",
+        key: "background-color-default",
+        title: "Default background",
+        description: "Change background color",
+        searchTerms: ["color", "bg", "background", "default"],
+        icon: <ALargeSmall className="size-3.5" />,
+        iconContainerStyle: {
+          borderRadius: "4px",
+          backgroundColor: "rgba(var(--color-background-100))",
+          border: "1px solid rgba(var(--color-border-300))",
+        },
+        command: ({ editor, range }) => toggleTextColor(undefined, editor, range),
+      },
       ...COLORS_LIST.map(
         (color) =>
           ({
@@ -251,20 +265,6 @@ const SLASH_COMMAND_SECTIONS: TSlashCommandSection[] = [
             command: ({ editor, range }) => toggleBackgroundColor(color.backgroundColor, editor, range),
           }) as ISlashCommandItem
       ),
-      {
-        commandKey: "background-color",
-        key: "background-color-default",
-        title: "Default background",
-        description: "Change background color",
-        searchTerms: ["color", "bg", "background", "default"],
-        icon: <ALargeSmall className="size-3.5" />,
-        iconContainerStyle: {
-          borderRadius: "4px",
-          backgroundColor: "rgba(var(--color-background-100))",
-          border: "1px solid rgba(var(--color-border-300))",
-        },
-        command: ({ editor, range }) => toggleTextColor(undefined, editor, range),
-      },
     ],
   },
 ];
