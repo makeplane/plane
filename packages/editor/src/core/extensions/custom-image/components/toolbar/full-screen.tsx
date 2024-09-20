@@ -67,16 +67,14 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
 
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [handleKeyDown]);
-  // remove keydown listener
-  useEffect(() => {
     if (!isFullScreenEnabled) {
       document.removeEventListener("keydown", handleKeyDown);
     }
-  }, [handleKeyDown]);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleKeyDown, isFullScreenEnabled]);
 
   return (
     <>
