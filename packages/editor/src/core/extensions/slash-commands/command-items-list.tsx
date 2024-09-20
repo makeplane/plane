@@ -290,5 +290,5 @@ export const getSlashCommandFilteredSections =
       }),
     }));
 
-    return filteredSlashSections;
+    return filteredSlashSections.filter((s) => s.items.length !== 0);
   };
