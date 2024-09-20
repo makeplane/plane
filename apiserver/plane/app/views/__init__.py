@@ -115,6 +115,7 @@ from .issue.base import (
     IssueUserDisplayPropertyEndpoint,
     BulkDeleteIssuesEndpoint,
     IssuePaginatedViewSet,
+    IssueDetailEndpoint,
 )
 
 from .issue.activity import (

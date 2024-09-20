@@ -21,6 +21,7 @@ from plane.app.views import (
     LabelViewSet,
     BulkArchiveIssuesEndpoint,
     IssuePaginatedViewSet,
+    IssueDetailEndpoint,
 )
 
 urlpatterns = [
@@ -38,6 +39,11 @@ urlpatterns = [
             }
         ),
         name="project-issue",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues-detail/",
+        IssueDetailEndpoint.as_view(),
+        name="project-issue-detail",
     ),
     # updated v1 paginated issues
     path(
