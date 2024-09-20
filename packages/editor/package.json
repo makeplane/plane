@@ -79,7 +79,7 @@
     "tailwind-config-custom": "*",
     "@plane/typescript-config": "*",
     "tsup": "^7.2.0",
-    "typescript": "5.4.5"
+    "typescript": "5.3.3"
   },
   "keywords": [
     "editor",

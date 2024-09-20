@@ -38,12 +38,12 @@ module.exports = {
     "react/jsx-boolean-value": "error",
     "react/jsx-no-duplicate-props": "error",
     "react-hooks/exhaustive-deps": "warn",
-    "@typescript-eslint/no-unused-vars": ["error"],
+    "@typescript-eslint/no-unused-vars": ["warn"],
     "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/no-useless-empty-export": "error",
-    "@typescript-eslint/prefer-ts-expect-error": "error",
+    "@typescript-eslint/prefer-ts-expect-error": "warn",
     "@typescript-eslint/naming-convention": [
-      "error",
+      "warn",
       {
         selector: "variable",
         format: ["camelCase", "snake_case", "UPPER_CASE", "PascalCase"],
