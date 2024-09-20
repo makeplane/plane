@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ExternalLink, Maximize, Minus, Plus, X } from "lucide-react";
 // helpers
 import { cn } from "@/helpers/common";
@@ -21,9 +21,9 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
   // states
   const [magnification, setMagnification] = useState(1);
   // derived values
-  const widthInNumber = Number(width.replace("px", ""));
-  const heightInNumber = Number(height.replace("px", ""));
-  const aspectRatio = widthInNumber / heightInNumber;
+  const widthInNumber = useMemo(() => Number(width.replace("px", "")), [width]);
+  const heightInNumber = useMemo(() => Number(height.replace("px", "")), [height]);
+  const aspectRatio = useMemo(() => widthInNumber / heightInNumber, [heightInNumber, widthInNumber]);
   // close handler
   const handleClose = useCallback(() => {
     toggleFullScreenMode(false);
