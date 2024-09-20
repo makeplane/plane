@@ -21,12 +21,9 @@ export const ImageToolbarRoot: React.FC<Props> = (props) => {
   return (
     <>
       <div
-        className={cn(
-          {
-            "opacity-100 pointer-events-auto": isFullScreenEnabled,
-          },
-          containerClassName
-        )}
+        className={cn(containerClassName, {
+          "opacity-100 pointer-events-auto": isFullScreenEnabled,
+        })}
       >
         <ImageFullScreenAction
           image={image}
