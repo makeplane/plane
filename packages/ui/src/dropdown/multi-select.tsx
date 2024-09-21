@@ -105,7 +105,6 @@ export const MultiSelectDropdown: FC<IMultiSelectDropdown> = (props) => {
       (option) => !(value ?? []).includes(option.data[option.value]),
       () => sortByKey && sortByKey.toLowerCase(),
     ]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, options]);
 
   // hooks

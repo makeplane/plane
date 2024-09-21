@@ -17,7 +17,8 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "postcss": "postcss styles/globals.css -o styles/output.css --watch"
+    "postcss": "postcss styles/globals.css -o styles/output.css --watch",
+    "lint": "eslint src --ext .ts,.tsx"
   },
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "^1.1.10",

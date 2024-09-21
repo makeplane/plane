@@ -236,13 +236,11 @@ export const useEditor = (props: CustomEditorProps) => {
           editorRef.current.chain().focus().deleteRange({ from, to }).insertContent(contentHTML).run();
         }
       },
-      getDocumentInfo: () => {
-        return {
-          characters: editorRef?.current?.storage?.characterCount?.characters?.() ?? 0,
-          paragraphs: getParagraphCount(editorRef?.current?.state),
-          words: editorRef?.current?.storage?.characterCount?.words?.() ?? 0,
-        };
-      },
+      getDocumentInfo: () => ({
+        characters: editorRef?.current?.storage?.characterCount?.characters?.() ?? 0,
+        paragraphs: getParagraphCount(editorRef?.current?.state),
+        words: editorRef?.current?.storage?.characterCount?.words?.() ?? 0,
+      }),
     }),
     [editorRef, savedSelection]
   );

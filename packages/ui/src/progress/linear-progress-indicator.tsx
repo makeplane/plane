@@ -27,7 +27,7 @@ export const LinearProgressIndicator: React.FC<Props> = ({
       backgroundColor: item.color,
     };
     progress += item.value;
-    if (noTooltip) return <div style={style} />;
+    if (noTooltip) return <div style={style} key={item.id} />;
     else
       return (
         <Tooltip key={item.id} tooltipContent={`${item.name} ${Math.round(item.value)}${inPercentage ? "%" : ""}`}>

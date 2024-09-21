@@ -26,6 +26,7 @@
     "build": "tsup --minify",
     "dev": "tsup --watch",
     "check-types": "tsc --noEmit",
+    "lint": "eslint src --ext .ts,.tsx",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "peerDependencies": {
