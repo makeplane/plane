@@ -205,7 +205,7 @@ export const SidebarDropdown = observer(() => {
                     <Link href="/create-workspace" className="w-full">
                       <Menu.Item
                         as="div"
-                        className="flex items-center gap-2 rounded px-2 py-1 text-sm font-medium text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-80"
+                        className="flex items-center gap-2 rounded px-2 py-1 text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
                       >
                         <PlusSquare strokeWidth={1.75} className="h-4 w-4 flex-shrink-0" />
                         Create workspace
