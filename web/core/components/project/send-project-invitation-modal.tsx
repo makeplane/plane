@@ -210,7 +210,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="space-y-5">
                     <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
-                      Invite Members
+                      Invite members
                     </Dialog.Title>
                     <div className="mt-2">
                       <p className="text-sm text-custom-text-200">Invite members to work on your project.</p>

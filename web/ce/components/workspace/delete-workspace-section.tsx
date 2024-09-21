@@ -34,7 +34,7 @@ export const DeleteWorkspaceSection: FC<TDeleteWorkspace> = observer((props) => 
             buttonClassName="flex w-full items-center justify-between py-4"
             title={
               <>
-                <span className="text-lg tracking-tight">Delete Workspace</span>
+                <span className="text-lg tracking-tight">Delete workspace</span>
                 {isOpen ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
               </>
             }
