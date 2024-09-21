@@ -1,5 +1,7 @@
 import { FC, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // components
 import {
   SidebarDropdown,
@@ -13,21 +15,27 @@ import {
 import { SidebarFavoritesMenu } from "@/components/workspace/sidebar/favorites/favorites-menu";
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useAppTheme, useUser } from "@/hooks/store";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { useAppTheme, useUserPermissions } from "@/hooks/store";
 // plane web components
 import useSize from "@/hooks/use-window-size";
 import { SidebarAppSwitcher } from "@/plane-web/components/sidebar";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export interface IAppSidebar {}
 
 export const AppSidebar: FC<IAppSidebar> = observer(() => {
   // store hooks
-  const { canPerformWorkspaceMemberActions } = useUser();
+  const { allowPermissions } = useUserPermissions();
   const { toggleSidebar, sidebarCollapsed } = useAppTheme();
   const windowSize = useSize();
   // refs
   const ref = useRef<HTMLDivElement>(null);
+
+  // derived values
+  const canPerformWorkspaceMemberActions = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
 
   useOutsideClickDetector(ref, () => {
     if (sidebarCollapsed === false) {
@@ -39,7 +47,6 @@ export const AppSidebar: FC<IAppSidebar> = observer(() => {
 
   useEffect(() => {
     if (windowSize[0] < 768) !sidebarCollapsed && toggleSidebar();
-    else sidebarCollapsed && toggleSidebar();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [windowSize]);
 
@@ -65,7 +72,7 @@ export const AppSidebar: FC<IAppSidebar> = observer(() => {
         >
           <SidebarDropdown />
           <div className="flex-shrink-0 h-4" />
-          <SidebarAppSwitcher />
+          {canPerformWorkspaceMemberActions && <SidebarAppSwitcher />}
           <SidebarQuickActions />
         </div>
         <hr

@@ -24,7 +24,7 @@ export const WorkspaceEditionBadge = observer(() => {
         <Button
           tabIndex={-1}
           variant="accent-primary"
-          className="w-full cursor-pointer rounded-2xl px-4 py-1.5 text-center text-sm font-medium outline-none"
+          className="w-fit min-w-24 cursor-pointer rounded-2xl px-2 py-1 text-center text-sm font-medium outline-none"
           onClick={() => setIsPaidPlanPurchaseModalOpen(true)}
         >
           Upgrade

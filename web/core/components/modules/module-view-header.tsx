@@ -5,8 +5,10 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
 import { ListFilter, Search, X } from "lucide-react";
-// helpers
+// editor
 import { cn } from "@plane/editor";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // types
 import { TModuleFilters } from "@plane/types";
 // ui
@@ -20,7 +22,6 @@ import { MODULE_VIEW_LAYOUTS } from "@/constants/module";
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useMember, useModuleFilter } from "@/hooks/store";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 export const ModuleViewHeader: FC = observer(() => {

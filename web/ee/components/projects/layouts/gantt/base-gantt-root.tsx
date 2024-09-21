@@ -3,10 +3,10 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChartDataType, GanttChartRoot, IBlockUpdateData, IGanttBlock } from "@/components/gantt-chart";
 import { getMonthChartItemPositionWidthInMonth } from "@/components/gantt-chart/views";
-import { EUserProjectRoles } from "@/constants/project";
 import { getDate } from "@/helpers/date-time.helper";
 //hooks
-import { useProject, useUser } from "@/hooks/store";
+import { useProject, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // plane web hooks
 import { useProjectFilter } from "@/plane-web/hooks/store/workspace-project-states/use-project-filters";
 import { TProject } from "@/plane-web/types/projects";
@@ -21,9 +21,7 @@ export const BaseGanttRoot: React.FC = observer(() => {
   const { projectMap } = useProject();
   const { workspaceSlug } = useParams();
 
-  const {
-    membership: { currentWorkspaceAllProjectsRole },
-  } = useUser();
+  const { workspaceProjectsPermissions } = useUserPermissions();
   const { updateProject } = useProject();
 
   const filteredProjectIds = getFilteredProjectsByLayout(EProjectLayouts.TIMELINE);
@@ -59,9 +57,9 @@ export const BaseGanttRoot: React.FC = observer(() => {
   };
 
   const isAllowed = (projectId: string) =>
-    currentWorkspaceAllProjectsRole &&
-    currentWorkspaceAllProjectsRole[projectId] &&
-    currentWorkspaceAllProjectsRole[projectId] >= EUserProjectRoles.ADMIN;
+    workspaceProjectsPermissions &&
+    workspaceProjectsPermissions[workspaceSlug.toString()][projectId] &&
+    workspaceProjectsPermissions[workspaceSlug.toString()][projectId] >= EUserPermissions.ADMIN;
 
   return (
     <ProjectLayoutHOC layout={EProjectLayouts.TIMELINE}>

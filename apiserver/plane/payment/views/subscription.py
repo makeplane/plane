@@ -11,7 +11,8 @@ from rest_framework.response import Response
 # Module imports
 from .base import BaseAPIView
 from plane.app.permissions.workspace import WorkspaceOwnerPermission
-from plane.db.models import Workspace
+from plane.db.models import Workspace, WorkspaceMember, WorkspaceMemberInvite
+from plane.ee.models import WorkspaceLicense
 from plane.utils.exception_logger import log_exception
 from plane.payment.utils.workspace_license_request import (
     resync_workspace_license,
@@ -115,5 +116,198 @@ class UpgradeSubscriptionEndpoint(BaseAPIView):
             log_exception(e)
             return Response(
                 {"error": "error in upgrading workspace subscription"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class PurchaseSubscriptionSeatEndpoint(BaseAPIView):
+
+    permission_classes = [
+        WorkspaceOwnerPermission,
+    ]
+
+    def post(self, request, slug):
+        try:
+
+            if settings.IS_MULTI_TENANT:
+                return Response(
+                    {"error": "Forbidden"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
+            workspace = Workspace.objects.get(slug=slug)
+
+            quantity = request.data.get(
+                "quantity",
+                WorkspaceMember.objects.filter(
+                    workspace__slug=slug,
+                    is_active=True,
+                    member__is_bot=False,
+                    role__lte=10,
+                ).count(),
+            )
+
+            # Check the active paid users in the workspace
+            workspace_member_count = WorkspaceMember.objects.filter(
+                workspace__slug=slug,
+                is_active=True,
+                member__is_bot=False,
+                member__gt=10,
+            ).count()
+
+            invited_member_count = WorkspaceMemberInvite.objects.filter(
+                workspace__slug=slug,
+                role__gt=10,
+            ).count()
+
+            # Check if the quantity is less than the active paid users in the workspace
+            if quantity < (workspace_member_count + invited_member_count):
+                # Return an error response
+                return Response(
+                    {
+                        "error": "The number of seats cannot be less than the number of active paid users in the workspace including the invites"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Fetch the workspace subcription
+            if settings.PAYMENT_SERVER_BASE_URL:
+                # Make a cancel request to the payment server
+                response = requests.post(
+                    f"{settings.PAYMENT_SERVER_BASE_URL}/api/licenses/modify-seats/",
+                    headers={
+                        "content-type": "application/json",
+                        "x-api-key": settings.PAYMENT_SERVER_AUTH_TOKEN,
+                    },
+                    json={
+                        "workspace_id": str(workspace.id),
+                        "quantity": quantity,
+                        "workspace_slug": slug,
+                    },
+                )
+                # Check if the response is successful
+                response.raise_for_status()
+
+                response = response.json()
+
+                # Fetch the workspace subcription
+                workspace_license = WorkspaceLicense.objects.filter(
+                    workspace=workspace
+                ).first()
+
+                # Update the seat count
+                if workspace_license:
+                    # Update the seat count
+                    workspace_license.purchased_seats = response["seats"]
+                    workspace_license.save()
+
+                # Return the response
+                return Response(
+                    {"seats": response["seats"]}, status=status.HTTP_200_OK
+                )
+            return Response(
+                {"error": "error in checking workspace subscription"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except requests.exceptions.RequestException as e:
+            if e.response and e.response.status_code == 400:
+                return Response(
+                    e.response.json(), status=status.HTTP_400_BAD_REQUEST
+                )
+            log_exception(e)
+            return Response(
+                {"error": "Error in purchasing workspace subscription"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class RemoveUnusedSeatsEndpoint(BaseAPIView):
+
+    permission_classes = [
+        WorkspaceOwnerPermission,
+    ]
+
+    def post(self, request, slug):
+        try:
+
+            if settings.IS_MULTI_TENANT:
+                return Response(
+                    {"error": "Forbidden"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
+            workspace = Workspace.objects.get(slug=slug)
+
+            # Check the active paid users in the workspace
+            workspace_member_count = WorkspaceMember.objects.filter(
+                workspace__slug=slug,
+                is_active=True,
+                member__is_bot=False,
+                member__gt=10,
+            ).count()
+
+            invited_member_count = WorkspaceMemberInvite.objects.filter(
+                workspace__slug=slug,
+                role__gt=10,
+            ).count()
+
+            # Fetch the workspace subcription
+            workspace_license = WorkspaceLicense.objects.filter(
+                workspace=workspace
+            ).first()
+
+            # Check the required seats
+            required_seats = workspace_member_count + invited_member_count
+
+            # Check if the required seats is equal to the purchased seats
+            if workspace_license.purchased_seats == required_seats:
+                return Response(
+                    {"error": "No unused seats to remove"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Fetch the workspace subcription
+            if settings.PAYMENT_SERVER_BASE_URL:
+                # Make a cancel request to the payment server
+                response = requests.post(
+                    f"{settings.PAYMENT_SERVER_BASE_URL}/api/licenses/modify-seats/",
+                    headers={
+                        "content-type": "application/json",
+                        "x-api-key": settings.PAYMENT_SERVER_AUTH_TOKEN,
+                    },
+                    json={
+                        "workspace_id": str(workspace.id),
+                        "quantity": required_seats,
+                        "workspace_slug": slug,
+                    },
+                )
+                # Check if the response is successful
+                response.raise_for_status()
+
+                # Fetch the workspace subcription
+                response = response.json()
+
+                # Update the seat count
+                if workspace_license:
+                    # Update the seat count
+                    workspace_license.purchased_seats = response["seats"]
+                    workspace_license.save()
+
+                # Return the response
+                return Response(
+                    {"seats": response["seats"]}, status=status.HTTP_200_OK
+                )
+            return Response(
+                {"error": "error in checking workspace subscription"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except requests.exceptions.RequestException as e:
+            if e.response and e.response.status_code == 400:
+                return Response(
+                    e.response.json(), status=status.HTTP_400_BAD_REQUEST
+                )
+            log_exception(e)
+            return Response(
+                {"error": "Error in purchasing workspace subscription"},
                 status=status.HTTP_400_BAD_REQUEST,
             )

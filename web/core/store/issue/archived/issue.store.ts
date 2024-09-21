@@ -179,22 +179,18 @@ export class ArchivedIssues extends BaseIssuesStore implements IArchivedIssues {
    * @returns
    */
   restoreIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
-    try {
-      // call API to restore the issue
-      const response = await this.issueArchiveService.restoreIssue(workspaceSlug, projectId, issueId);
+    // call API to restore the issue
+    const response = await this.issueArchiveService.restoreIssue(workspaceSlug, projectId, issueId);
 
-      // update the store and remove from the archived issues list once restored
-      runInAction(() => {
-        this.rootIssueStore.issues.updateIssue(issueId, {
-          archived_at: null,
-        });
-        this.removeIssueFromList(issueId);
+    // update the store and remove from the archived issues list once restored
+    runInAction(() => {
+      this.rootIssueStore.issues.updateIssue(issueId, {
+        archived_at: null,
       });
+      this.removeIssueFromList(issueId);
+    });
 
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    return response;
   };
 
   // Setting them as undefined as they can not performed on Archived issues

@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 // ui
-import { Spinner, Tooltip, setToast, TOAST_TYPE, Logo } from "@plane/ui";
+import { Spinner, Tooltip, setToast, TOAST_TYPE, Logo, Row } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -43,10 +43,10 @@ export const ProjectBlock = observer((props: ProjectBlockProps) => {
   const projectDetails = getProjectById(projectId);
   if (!projectDetails || !currentWorkspace) return <Spinner />;
   return (
-    <div
+    <Row
       ref={projectRef}
       className={cn(
-        "group/list-block min-h-[52px] relative flex flex-col gap-2 bg-custom-background-100 hover:bg-custom-background-90 p-3 px-4 py-4 text-sm transition-colors border border-transparent border-b border-b-custom-border-200 md:py-0",
+        "group/list-block min-h-[52px] relative flex flex-col gap-2 bg-custom-background-100 hover:bg-custom-background-90 py-4 text-sm transition-colors border border-transparent border-b border-b-custom-border-200 md:py-0",
         {
           "bg-custom-background-80": isCurrentBlockDragging,
           "md:flex-row md:items-center": isSidebarCollapsed,
@@ -127,6 +127,6 @@ export const ProjectBlock = observer((props: ProjectBlockProps) => {
           </div>
         </>
       </div>
-    </div>
+    </Row>
   );
 });

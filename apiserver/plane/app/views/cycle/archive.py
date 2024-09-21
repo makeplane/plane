@@ -288,7 +288,12 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
             .distinct()
         )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER])
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+        ]
+    )
     def get(self, request, slug, project_id, pk=None):
         if pk is None:
             queryset = (

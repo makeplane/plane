@@ -2,6 +2,7 @@ x-monitor-env: &monitor-env
   environment:
     - SERVICE_HTTP_WEB=web:3000
     - SERVICE_HTTP_API=api:8000
+    - SERVICE_HTTP_LIVE=live:3000
     - SERVICE_HTTP_PROXY=proxy:80
     - SERVICE_HTTP_MINIO=plane-minio:9090
     - SERVICE_TCP_REDIS=plane-redis:6379
@@ -26,6 +27,7 @@ x-app-env: &app-env
     - SENTRY_DSN=${SENTRY_DSN:-""}
     - SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT:-"production"}
     - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-}
+    - API_BASE_URL=${API_BASE_URL:-http://api:8000}
     # Gunicorn Workers
     - GUNICORN_WORKERS=${GUNICORN_WORKERS:-2}
     #DB SETTINGS
@@ -40,6 +42,14 @@ x-app-env: &app-env
     - REDIS_HOST=${REDIS_HOST:-plane-redis}
     - REDIS_PORT=${REDIS_PORT:-6379}
     - REDIS_URL=${REDIS_URL:-redis://plane-redis:6379/}
+    # RabbitMQ Settings
+    - RABBITMQ_HOST=${RABBITMQ_HOST:-plane-mq}
+    - RABBITMQ_PORT=${RABBITMQ_PORT:-5672}
+    - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER:-plane}
+    - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD:-plane}
+    - RABBITMQ_DEFAULT_VHOST=${RABBITMQ_VHOST:-plane}
+    - RABBITMQ_VHOST=${RABBITMQ_VHOST:-plane}
+    - AMQP_URL=${AMQP_URL:-amqp://plane:plane@plane-mq:5672/plane}
     # Application secret
     - SECRET_KEY=${SECRET_KEY:-60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5}
     # DATA STORE SETTINGS
@@ -56,6 +66,13 @@ x-app-env: &app-env
     - SSL_VERIFY=${SSL_VERIFY:-1}
     - FEATURE_FLAG_SERVER_BASE_URL=${FEATURE_FLAG_SERVER_BASE_URL:-http://monitor:8080}
     - PAYMENT_SERVER_BASE_URL=${PAYMENT_SERVER_BASE_URL:-http://monitor:8080}
+
+x-live-env: &live-env
+  environment:
+    - API_BASE_URL=${API_BASE_URL:-http://api:8000}
+    - REDIS_HOST=${REDIS_HOST:-plane-redis}
+    - REDIS_PORT=${REDIS_PORT:-6379}
+    - REDIS_URL=${REDIS_URL:-redis://plane-redis:6379/}
 
 services:
   admin:
@@ -80,13 +97,6 @@ services:
       - api
       - worker
 
-  monitor:
-    <<: *monitor-env
-    image: registry.plane.tools/plane/monitor-enterprise:${APP_RELEASE_VERSION}
-    restart: unless-stopped
-    volumes:
-      - ${INSTALL_DIR}/data/monitor:/app
-
   space:
     <<: *app-env
     image: registry.plane.tools/plane/space-enterprise:${APP_RELEASE_VERSION}
@@ -96,8 +106,25 @@ services:
       replicas: ${SPACE_REPLICAS:-1}
     depends_on:
       - api
-      - worker
       - web
+
+  live:
+    <<: *live-env
+    image: registry.plane.tools/plane/live-enterprise:${APP_RELEASE_VERSION}
+    restart: unless-stopped
+    command: node live/dist/server.js live
+    deploy:
+      replicas: ${LIVE_REPLICAS:-1}
+    depends_on:
+      - api
+      - web
+
+  monitor:
+    <<: *monitor-env
+    image: registry.plane.tools/plane/monitor-enterprise:${APP_RELEASE_VERSION}
+    restart: on-failure:5
+    volumes:
+      - ${INSTALL_DIR}/data/monitor:/app
 
   api:
     <<: *app-env
@@ -162,6 +189,13 @@ services:
     volumes:
       - ${INSTALL_DIR}/data/redis:/data
 
+  plane-mq:
+    <<: *app-env
+    image: registry.plane.tools/plane/rabbitmq:3.13.6-management-alpine
+    restart: unless-stopped
+    volumes:
+      - ${INSTALL_DIR}/data/mq:/var/lib/rabbitmq
+
   plane-minio:
     <<: *app-env
     image: registry.plane.tools/plane/minio:latest
@@ -187,3 +221,5 @@ services:
       - web
       - api
       - space
+      - admin
+      - live

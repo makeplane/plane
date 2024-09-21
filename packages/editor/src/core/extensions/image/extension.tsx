@@ -1,37 +1,33 @@
 import ImageExt from "@tiptap/extension-image";
+import { ReactNodeViewRenderer } from "@tiptap/react";
 // helpers
 import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
 // plugins
-import {
-  IMAGE_NODE_TYPE,
-  ImageExtensionStorage,
-  TrackImageDeletionPlugin,
-  TrackImageRestorationPlugin,
-  UploadImagesPlugin,
-} from "@/plugins/image";
+import { ImageExtensionStorage, TrackImageDeletionPlugin, TrackImageRestorationPlugin } from "@/plugins/image";
 // types
 import { DeleteImage, RestoreImage } from "@/types";
+// extensions
+import { CustomImageNode } from "@/extensions";
 
 export const ImageExtension = (deleteImage: DeleteImage, restoreImage: RestoreImage, cancelUploadImage?: () => void) =>
   ImageExt.extend<any, ImageExtensionStorage>({
     addKeyboardShortcuts() {
       return {
-        ArrowDown: insertEmptyParagraphAtNodeBoundaries("down", "image"),
-        ArrowUp: insertEmptyParagraphAtNodeBoundaries("up", "image"),
+        ArrowDown: insertEmptyParagraphAtNodeBoundaries("down", this.name),
+        ArrowUp: insertEmptyParagraphAtNodeBoundaries("up", this.name),
       };
     },
     addProseMirrorPlugins() {
       return [
-        UploadImagesPlugin(this.editor, cancelUploadImage),
-        TrackImageDeletionPlugin(this.editor, deleteImage),
-        TrackImageRestorationPlugin(this.editor, restoreImage),
+        TrackImageDeletionPlugin(this.editor, deleteImage, this.name),
+        TrackImageRestorationPlugin(this.editor, restoreImage, this.name),
       ];
     },
 
     onCreate(this) {
       const imageSources = new Set<string>();
       this.editor.state.doc.descendants((node) => {
-        if (node.type.name === IMAGE_NODE_TYPE) {
+        if (node.type.name === this.name) {
           imageSources.add(node.attrs.src);
         }
       });
@@ -63,5 +59,10 @@ export const ImageExtension = (deleteImage: DeleteImage, restoreImage: RestoreIm
           default: null,
         },
       };
+    },
+
+    // render custom image node
+    addNodeView() {
+      return ReactNodeViewRenderer(CustomImageNode);
     },
   });

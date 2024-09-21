@@ -9,12 +9,15 @@ module.exports = {
         moduleDirectory: ["node_modules", "."],
       },
     },
+    next: {
+      rootDir: ["."],
+    },
   },
   rules: {
     "import/order": [
       "error",
       {
-        groups: ["builtin", "external", "internal", "parent", "sibling",],
+        groups: ["builtin", "external", "internal", "parent", "sibling"],
         pathGroups: [
           {
             pattern: "react",
@@ -39,7 +42,7 @@ module.exports = {
           {
             pattern: "@/**",
             group: "internal",
-          }
+          },
         ],
         pathGroupsExcludedImportTypes: ["builtin", "internal", "react"],
         alphabetize: {

@@ -1,5 +1,4 @@
 # Third party imports
-from asgiref.sync import sync_to_async
 from typing import Optional
 
 # Strawberry imports

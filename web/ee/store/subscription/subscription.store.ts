@@ -1,5 +1,5 @@
 /* eslint-disable no-useless-catch */
-import { set } from "lodash";
+import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // types
 import { IWorkspaceProductSubscription } from "@plane/types";
@@ -16,10 +16,11 @@ type TWorkspaceSubscriptionMap = {
 
 export interface IWorkspaceSubscriptionStore {
   subscribedPlan: TWorkspaceSubscriptionMap;
-  isProPlanModalOpen: boolean;
+  isPaidPlanModalOpen: boolean;
   isSuccessPlanModalOpen: boolean;
   currentWorkspaceSubscribedPlanDetail: IWorkspaceProductSubscription | undefined;
-  toggleProPlanModal: (value?: boolean) => void;
+  updateSubscribedPlan: (workspaceSlug: string, payload: Partial<IWorkspaceProductSubscription>) => void;
+  togglePaidPlanModal: (value?: boolean) => void;
   handleSuccessModalToggle: (isOpen?: boolean) => void;
   fetchWorkspaceSubscribedPlan: (workspaceSlug: string) => Promise<IWorkspaceProductSubscription>;
   refreshWorkspaceSubscribedPlan: (workspaceSlug: string) => Promise<void>;
@@ -28,16 +29,17 @@ export interface IWorkspaceSubscriptionStore {
 
 export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
   subscribedPlan: TWorkspaceSubscriptionMap = {};
-  isProPlanModalOpen = false;
+  isPaidPlanModalOpen = false;
   isSuccessPlanModalOpen: boolean = false;
 
   constructor(private rootStore: RootStore) {
     makeObservable(this, {
       subscribedPlan: observable,
-      isProPlanModalOpen: observable.ref,
+      isPaidPlanModalOpen: observable.ref,
       isSuccessPlanModalOpen: observable,
       currentWorkspaceSubscribedPlanDetail: computed,
-      toggleProPlanModal: action,
+      updateSubscribedPlan: action,
+      togglePaidPlanModal: action,
       fetchWorkspaceSubscribedPlan: action,
       refreshWorkspaceSubscribedPlan: action,
       freeTrialSubscription: action,
@@ -49,8 +51,15 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
     return this.subscribedPlan[this.rootStore.router.workspaceSlug] || undefined;
   }
 
-  toggleProPlanModal = (value?: boolean) => {
-    this.isProPlanModalOpen = value ?? !this.isProPlanModalOpen;
+  updateSubscribedPlan = (workspaceSlug: string, payload: Partial<IWorkspaceProductSubscription>) => {
+    set(this.subscribedPlan, workspaceSlug, {
+      ...this.subscribedPlan[workspaceSlug],
+      ...payload,
+    });
+  };
+
+  togglePaidPlanModal = (value?: boolean) => {
+    this.isPaidPlanModalOpen = value ?? !this.isPaidPlanModalOpen;
   };
 
   handleSuccessModalToggle = (isOpen?: boolean) => {
@@ -64,8 +73,9 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
         set(this.subscribedPlan, workspaceSlug, {
           product: response?.product ?? "FREE",
           is_cancelled: response?.is_cancelled ?? false,
-          is_self_managed: response?.is_self_managed ?? false,
+          is_self_managed: response?.is_self_managed ?? true,
           interval: response?.interval ?? null,
+          current_period_start_date: response?.current_period_start_date,
           current_period_end_date: response?.current_period_end_date,
           is_offline_payment: response?.is_offline_payment ?? false,
           trial_end_date: response?.trial_end_date ?? undefined,
@@ -76,9 +86,12 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
           is_on_trial: response?.is_on_trial ?? false,
           is_trial_allowed: response?.is_trial_allowed ?? false,
           remaining_trial_days: response?.remaining_trial_days ?? null,
+          is_trial_ended: response?.is_trial_ended ?? false,
           has_upgraded: response?.has_upgraded ?? false,
           show_payment_button: response?.show_payment_button ?? true,
           show_trial_banner: response?.show_trial_banner ?? false,
+          free_seats: response?.free_seats ?? 0,
+          billable_members: response?.billable_members ?? 1,
         });
       });
       return response;
@@ -87,10 +100,13 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
         set(this.subscribedPlan, workspaceSlug, {
           product: "FREE",
           is_cancelled: false,
-          is_self_managed: false,
+          is_self_managed: true,
           interval: null,
+          current_period_start_date: null,
           current_period_end_date: null,
           show_payment_button: true,
+          free_seats: 0,
+          billable_members: 1,
         });
       });
       throw error;

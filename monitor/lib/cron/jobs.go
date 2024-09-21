@@ -31,3 +31,11 @@ func (s *PrimeScheduler) RegisterNewHealthCheckJob(ctx context.Context, definati
 
 	s.RegisterJob(defination, healthCheckTask, gocron.WithName("Service Health Check"))
 }
+
+func (s *PrimeScheduler) RegisterLicenseRefreshJob(ctx context.Context, defination gocron.JobDefinition, task func(ctx context.Context)) {
+	licenseRefreshTask := gocron.NewTask(func() {
+		task(context.Background())
+	})
+
+	s.RegisterJob(defination, licenseRefreshTask, gocron.WithName("Service License Refresh"))
+}

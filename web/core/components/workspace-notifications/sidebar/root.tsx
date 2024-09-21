@@ -4,6 +4,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
+import { Header, Row, ERowVariant, EHeaderVariant, ContentWrapper } from "@plane/ui";
 import { CountChip } from "@/components/common";
 import {
   NotificationsLoader,
@@ -46,15 +47,15 @@ export const NotificationsSidebar: FC = observer(() => {
       )}
     >
       <div className="relative w-full h-full overflow-hidden flex flex-col">
-        <div className="border-b border-custom-border-200">
+        <Row className="h-[3.75rem] border-b border-custom-border-200 flex">
           <NotificationSidebarHeader workspaceSlug={workspaceSlug.toString()} />
-        </div>
+        </Row>
 
-        <div className="flex-shrink-0 w-full h-[46px] border-b border-custom-border-200 px-5 relative flex items-center gap-2">
+        <Header variant={EHeaderVariant.SECONDARY} className="justify-start">
           {NOTIFICATION_TABS.map((tab) => (
             <div
               key={tab.value}
-              className="h-full px-3 relative flex flex-col cursor-pointer"
+              className="h-full px-3 relative cursor-pointer"
               onClick={() => currentNotificationTab != tab.value && setCurrentNotificationTab(tab.value)}
             >
               <div
@@ -75,12 +76,10 @@ export const NotificationsSidebar: FC = observer(() => {
               )}
             </div>
           ))}
-        </div>
+        </Header>
 
         {/* applied filters */}
-        <div className="flex-shrink-0">
-          <AppliedFilters workspaceSlug={workspaceSlug.toString()} />
-        </div>
+        <AppliedFilters workspaceSlug={workspaceSlug.toString()} />
 
         {/* rendering notifications */}
         {loader === "init-loader" ? (
@@ -90,9 +89,9 @@ export const NotificationsSidebar: FC = observer(() => {
         ) : (
           <>
             {notificationIds && notificationIds.length > 0 ? (
-              <div className="relative w-full h-full overflow-hidden overflow-y-auto">
+              <ContentWrapper variant={ERowVariant.HUGGING}>
                 <NotificationCardListRoot workspaceSlug={workspaceSlug.toString()} workspaceId={workspace?.id} />
-              </div>
+              </ContentWrapper>
             ) : (
               <div className="relative w-full h-full flex justify-center items-center">
                 <NotificationEmptyState />

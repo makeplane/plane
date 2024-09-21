@@ -18,12 +18,15 @@ from plane.db.models import UserFavorite, Page
 from plane.graphql.permissions.workspace import WorkspaceBasePermission
 from plane.graphql.types.paginator import PaginatorResponse
 from plane.graphql.utils.paginator import paginate
+from plane.graphql.bgtasks.recent_visited_task import recent_visited_task
 
 
 @strawberry.type
 class UserPageQuery:
     @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
+        extensions=[
+            PermissionExtension(permissions=[WorkspaceBasePermission()])
+        ]
     )
     async def userPages(
         self,
@@ -44,6 +47,7 @@ class UserPageQuery:
                 projects__project_projectmember__is_active=True,
                 projects__archived_at__isnull=True,
             )
+            .filter(projects__isnull=False)
             .filter(parent__isnull=True)
             .filter(Q(owned_by=info.context.user))
             .select_related("workspace", "owned_by")
@@ -56,7 +60,6 @@ class UserPageQuery:
 
 @strawberry.type
 class PageQuery:
-
     @strawberry.field(
         extensions=[
             PermissionExtension(permissions=[WorkspaceBasePermission()])
@@ -132,5 +135,15 @@ class PageQuery:
 
         # Fetch the page asynchronously
         page_result = await sync_to_async(query.get, thread_sensitive=True)()
+
+        # Background task to update recent visited project
+        user_id = info.context.user.id
+        recent_visited_task.delay(
+            slug=slug,
+            project_id=project,
+            user_id=user_id,
+            entity_name="page",
+            entity_identifier=page,
+        )
 
         return page_result

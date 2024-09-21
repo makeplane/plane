@@ -29,6 +29,7 @@ from plane.graphql.types.paginator import PaginatorResponse
 from plane.graphql.utils.issue_filters import issue_filters
 from plane.graphql.utils.paginator import paginate
 from plane.graphql.utils.issue import issue_information_query_execute
+from plane.graphql.bgtasks.recent_visited_task import recent_visited_task
 
 
 @strawberry.type
@@ -74,14 +75,25 @@ class CycleQuery:
         project: strawberry.ID,
         cycle: strawberry.ID,
     ) -> CycleType:
-        cycle = await sync_to_async(Cycle.objects.get)(
+        cycle_details = await sync_to_async(Cycle.objects.get)(
             workspace__slug=slug,
             project_id=project,
             id=cycle,
             project__project_projectmember__member=info.context.user,
             project__project_projectmember__is_active=True,
         )
-        return cycle
+
+        # Background task to update recent visited project
+        user_id = info.context.user.id
+        recent_visited_task.delay(
+            slug=slug,
+            project_id=project,
+            user_id=user_id,
+            entity_name="cycle",
+            entity_identifier=cycle,
+        )
+
+        return cycle_details
 
 
 # cycle issue user properties
@@ -97,16 +109,17 @@ class CycleIssueUserPropertyQuery:
         project: strawberry.ID,
         cycle: strawberry.ID,
     ) -> CycleUserPropertyType:
+        def get_cycle_issue_user_property():
+            cycle_properties, _ = CycleUserProperties.objects.get_or_create(
+                workspace__slug=slug,
+                project_id=project,
+                cycle_id=cycle,
+                user=info.context.user,
+            )
+            return cycle_properties
+
         cycle_issue_property = await sync_to_async(
-            lambda: CycleUserProperties.objects.filter(
-                workspace__slug=slug, project_id=project, cycle_id=cycle
-            )
-            .filter(
-                project__project_projectmember__member=info.context.user,
-                project__project_projectmember__is_active=True,
-            )
-            .order_by("-created_at")
-            .first()
+            lambda: get_cycle_issue_user_property()
         )()
 
         return cycle_issue_property

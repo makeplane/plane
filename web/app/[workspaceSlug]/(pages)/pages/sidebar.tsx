@@ -2,13 +2,14 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // components
 import { SidebarHelpSection } from "@/components/workspace";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme } from "@/hooks/store";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // plane web components
 import {
   PagesAppSidebarDropdown,

@@ -17,16 +17,16 @@ import { DateRangeDropdown } from "@/components/dropdowns";
 // constants
 import { CYCLE_STATUS } from "@/constants/cycle";
 import { CYCLE_UPDATED } from "@/constants/event-tracker";
-import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helpers
 import { findHowManyDaysLeft, getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useEventTracker, useCycle, useUser, useMember, useProjectEstimates } from "@/hooks/store";
+import { useEventTracker, useCycle, useMember, useProjectEstimates, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web constants
 import { EEstimateSystem } from "@/plane-web/constants/estimates";
 // services
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { CycleService } from "@/services/cycle.service";
 
 type Props = {
@@ -55,9 +55,8 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   // store hooks
   const { setTrackElement, captureCycleEvent } = useEventTracker();
   const { areEstimateEnabledByProjectId, currentActiveEstimateId, estimateById } = useProjectEstimates();
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
+
   const { getCycleById, updateCycleDetails, restoreCycle } = useCycle();
   const { getUserDetails } = useMember();
   // derived values
@@ -236,7 +235,10 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const daysLeft = findHowManyDaysLeft(cycleDetails.end_date);
 
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditingAllowed = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
 
   return (
     <div className="relative">

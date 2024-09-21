@@ -1,12 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
+import { usePathname, useSearchParams } from "next/navigation";
 import { Check } from "lucide-react";
 // ui
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
+// hooks
+import { useAppRouter } from "@/hooks/use-app-router";
 
 type TSelfHostedProduct = {
   recurring: "month" | "year";
@@ -28,8 +31,23 @@ const selfHostedProducts: TSelfHostedProduct[] = [
 ];
 
 const SelfHostedUpgradePlanPage = observer(() => {
+  // router
+  const router = useAppRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   // states
   const [selectedPlan, setSelectedPlan] = useState<TSelfHostedProduct | undefined>(undefined);
+
+  useEffect(() => {
+    const planDetail = searchParams.get("plan");
+    if (planDetail === "month") {
+      router.replace(pathname, {}, { showProgressBar: false });
+      setSelectedPlan(selfHostedProducts.find((product) => product.recurring === "month"));
+    } else if (planDetail === "year") {
+      router.replace(pathname, {}, { showProgressBar: false });
+      setSelectedPlan(selfHostedProducts.find((product) => product.recurring === "year"));
+    }
+  }, [pathname, router, searchParams]);
 
   const handleStripeRedirection = () => {
     if (selectedPlan?.redirection_link) {

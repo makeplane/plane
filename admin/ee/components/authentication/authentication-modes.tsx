@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
+import { getAuthenticationModes as getCEAuthenticationModes } from "@/ce/components/authentication/authentication-modes";
 // types
 import {
   TInstanceAuthenticationMethodKeys as TBaseAuthenticationMethods,
@@ -16,6 +17,8 @@ import { OIDCConfiguration, SAMLConfiguration } from "@/plane-admin/components/a
 // images
 import OIDCLogo from "@/public/logos/oidc-logo.svg";
 import SAMLLogo from "@/public/logos/saml-logo.svg";
+// plane admin hooks
+import { useInstanceFlag } from "@/plane-admin/hooks/store/use-instance-flag";
 
 type TInstanceAuthenticationMethodKeys = TBaseAuthenticationMethods | TInstanceEnterpriseAuthenticationMethodKeys;
 
@@ -36,31 +39,37 @@ export const getAuthenticationModes: (props: TGetAuthenticationModeProps) => TIn
   updateConfig,
   resolvedTheme,
 }) => [
-    ...getBaseAuthenticationModes({ disabled, updateConfig, resolvedTheme }),
-    {
-      key: "oidc",
-      name: "OIDC",
-      description: "Authenticate your users via the OpenID Connect protocol.",
-      icon: <Image src={OIDCLogo} height={22} width={22} alt="OIDC Logo" />,
-      config: <OIDCConfiguration disabled={disabled} updateConfig={updateConfig} />,
-    },
-    {
-      key: "saml",
-      name: "SAML",
-      description: "Authenticate your users via the Security Assertion Markup Language protocol.",
-      icon: <Image src={SAMLLogo} height={22} width={22} alt="SAML Logo" className="pl-0.5" />,
-      config: <SAMLConfiguration disabled={disabled} updateConfig={updateConfig} />,
-    },
-  ];
+  ...getBaseAuthenticationModes({ disabled, updateConfig, resolvedTheme }),
+  {
+    key: "oidc",
+    name: "OIDC",
+    description: "Authenticate your users via the OpenID Connect protocol.",
+    icon: <Image src={OIDCLogo} height={22} width={22} alt="OIDC Logo" />,
+    config: <OIDCConfiguration disabled={disabled} updateConfig={updateConfig} />,
+  },
+  {
+    key: "saml",
+    name: "SAML",
+    description: "Authenticate your users via the Security Assertion Markup Language protocol.",
+    icon: <Image src={SAMLLogo} height={22} width={22} alt="SAML Logo" className="pl-0.5" />,
+    config: <SAMLConfiguration disabled={disabled} updateConfig={updateConfig} />,
+  },
+];
 
 export const AuthenticationModes: React.FC<TAuthenticationModeProps> = observer((props) => {
   const { disabled, updateConfig } = props;
   // next-themes
   const { resolvedTheme } = useTheme();
+  // plane admin hooks
+  const isOIDCSAMLEnabled = useInstanceFlag("OIDC_SAML_AUTH");
+
+  const authenticationModes = isOIDCSAMLEnabled
+    ? getAuthenticationModes({ disabled, updateConfig, resolvedTheme })
+    : getCEAuthenticationModes({ disabled, updateConfig, resolvedTheme });
 
   return (
     <>
-      {getAuthenticationModes({ disabled, updateConfig, resolvedTheme }).map((method) => (
+      {authenticationModes.map((method) => (
         <AuthenticationMethodCard
           key={method.key}
           name={method.name}

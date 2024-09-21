@@ -106,7 +106,12 @@ export const ProjectIssuesMobileHeader = observer(() => {
           maxHeight={"md"}
           className="flex flex-grow justify-center text-sm text-custom-text-200"
           placement="bottom-start"
-          customButton={<span className="flex flex-grow justify-center text-sm text-custom-text-200">Layout</span>}
+          customButton={
+            <div className="flex flex-start text-sm text-custom-text-200">
+              Layout
+              <ChevronDown className="ml-2  h-4 w-4 text-custom-text-200 my-auto" strokeWidth={2} />
+            </div>
+          }
           customButtonClassName="flex flex-grow justify-center text-custom-text-200 text-sm"
           closeOnSelect
         >

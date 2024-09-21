@@ -9,11 +9,12 @@ import { Loader } from "@plane/ui";
 import { IssueProperties } from "@/components/issues/issue-layouts/properties/all-properties";
 // constants
 import { ISSUE_DISPLAY_PROPERTIES } from "@/constants/issue";
-import { EUserProjectRoles } from "@/constants/project";
 // hooks
-import { useIssueDetail, useUser } from "@/hooks/store";
+import { useIssueDetail, useUserPermissions } from "@/hooks/store";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
+// plane web constants
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   issueId: string;
@@ -28,20 +29,18 @@ export const IssueEmbedCard: React.FC<Props> = observer((props) => {
   const [error, setError] = useState<any | null>(null);
 
   // store hooks
-  const {
-    membership: { currentWorkspaceAllProjectsRole },
-  } = useUser();
+  const { workspaceProjectsPermissions } = useUserPermissions();
   const {
     setPeekIssue,
     issue: { fetchIssue, getIssueById, updateIssue },
   } = useIssueDetail();
 
   // derived values
-  const projectRole = currentWorkspaceAllProjectsRole?.[projectId];
+  const projectRole = workspaceProjectsPermissions?.[workspaceSlug][projectId];
   const issueDetails = getIssueById(issueId);
 
   // auth
-  const isReadOnly = !!projectRole && projectRole < EUserProjectRoles.MEMBER;
+  const isReadOnly = !!projectRole && projectRole < EUserPermissions.MEMBER;
 
   // issue display properties
   const displayProperties: IIssueDisplayProperties = {};

@@ -17,7 +17,7 @@ export const ProjectBoardGroup: FC<ProjectBoardGroup> = observer((props) => {
   const [verticalAlign, setVerticalAlign] = useState<{ [key: string]: boolean }>({});
 
   return (
-    <div className="w-full h-full overflow-hidden overflow-x-auto relative flex px-3 space-x-3 horizontal-scrollbar scrollbar-lg">
+    <div className="w-full h-full overflow-hidden overflow-x-auto relative flex space-x-3 horizontal-scrollbar scrollbar-lg">
       {Object.entries(groupByProjectIds)?.map(([groupKey, projectIds]) => (
         <div
           key={groupKey}

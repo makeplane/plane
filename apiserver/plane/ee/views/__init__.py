@@ -16,6 +16,7 @@ from plane.ee.views.app.page import (
     WorkspacePageViewSet,
     WorkspacePagesDescriptionViewSet,
     WorkspacePageVersionEndpoint,
+    WorkspacePageFavoriteEndpoint,
 )
 from plane.ee.views.app.views import (
     IssueViewEEViewSet,

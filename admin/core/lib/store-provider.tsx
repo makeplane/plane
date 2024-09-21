@@ -1,8 +1,8 @@
 "use client";
 
 import { ReactNode, createContext } from "react";
-// store
-import { RootStore } from "@/store/root.store";
+// plane admin store
+import { RootStore } from "@/plane-admin/store/root.store";
 
 let rootStore = new RootStore();
 

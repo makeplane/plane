@@ -64,7 +64,13 @@ class IssueAttachmentEndpoint(BaseAPIView):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST, ROLE.VIEWER])
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+            ROLE.GUEST,
+        ]
+    )
     def get(self, request, slug, project_id, issue_id):
         issue_attachments = IssueAttachment.objects.filter(
             issue_id=issue_id, workspace__slug=slug, project_id=project_id

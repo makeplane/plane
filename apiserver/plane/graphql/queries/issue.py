@@ -37,6 +37,7 @@ from plane.graphql.permissions.project import ProjectBasePermission
 from plane.graphql.types.paginator import PaginatorResponse
 from plane.graphql.utils.paginator import paginate
 from plane.graphql.utils.issue import issue_information_query_execute
+from plane.graphql.bgtasks.recent_visited_task import recent_visited_task
 
 
 # issues information query
@@ -111,6 +112,16 @@ class IssuesInformationQuery:
             ),
         )
 
+        # Background task to update recent visited project
+        user_id = info.context.user.id
+        recent_visited_task.delay(
+            slug=slug,
+            project_id=project,
+            user_id=user_id,
+            entity_name="project",
+            entity_identifier=project,
+        )
+
         return issue_information
 
 
@@ -164,14 +175,24 @@ class IssueQuery:
         project: strawberry.ID,
         issue: strawberry.ID,
     ) -> IssuesType:
-        issue = await sync_to_async(Issue.issue_objects.get)(
+        issue_detail = await sync_to_async(Issue.issue_objects.get)(
             workspace__slug=slug,
             project_id=project,
             id=issue,
             project__project_projectmember__member=info.context.user,
             project__project_projectmember__is_active=True,
         )
-        return issue
+
+        # Background task to update recent visited project
+        user_id = info.context.user.id
+        recent_visited_task.delay(
+            slug=slug,
+            project_id=project,
+            user_id=user_id,
+            entity_name="issue",
+            entity_identifier=issue,
+        )
+        return issue_detail
 
 
 @strawberry.type
@@ -222,16 +243,16 @@ class IssueUserPropertyQuery:
         slug: str,
         project: strawberry.ID,
     ) -> IssueUserPropertyType:
+        def get_issue_user_property():
+            issue_properties, _ = IssueUserProperty.objects.get_or_create(
+                workspace__slug=slug,
+                project_id=project,
+                user=info.context.user,
+            )
+            return issue_properties
+
         issue_property = await sync_to_async(
-            lambda: IssueUserProperty.objects.filter(
-                workspace__slug=slug, project_id=project
-            )
-            .filter(
-                project__project_projectmember__member=info.context.user,
-                project__project_projectmember__is_active=True,
-            )
-            .order_by("-created_at")
-            .first()
+            lambda: get_issue_user_property()
         )()
 
         return issue_property

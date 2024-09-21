@@ -4,6 +4,7 @@ x-app-env: &app-env
   environment:
     - LISTEN_HTTP_PORT=${LISTEN_HTTP_PORT:-80}
     - WEB_URL=${WEB_URL:-http://localhost}
+    - API_BASE_URL=${API_BASE_URL:-http://api:8000}
     - DEBUG=${DEBUG:-0}
     - SENTRY_DSN=${SENTRY_DSN:-""}
     - SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT:-"production"}
@@ -22,6 +23,14 @@ x-app-env: &app-env
     - REDIS_HOST=${REDIS_HOST:-plane-redis}
     - REDIS_PORT=${REDIS_PORT:-6379}
     - REDIS_URL=${REDIS_URL:-redis://plane-redis:6379/}
+    # RabbitMQ Settings
+    - RABBITMQ_HOST=${RABBITMQ_HOST:-plane-mq}
+    - RABBITMQ_PORT=${RABBITMQ_PORT:-5672}
+    - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER:-plane}
+    - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD:-plane}
+    - RABBITMQ_DEFAULT_VHOST=${RABBITMQ_VHOST:-plane}
+    - RABBITMQ_VHOST=${RABBITMQ_VHOST:-plane}
+    - AMQP_URL=${AMQP_URL:-amqp://plane:plane@plane-mq:5672/plane}
     # Application secret
     - SECRET_KEY=${SECRET_KEY:-60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5}
     # DATA STORE SETTINGS
@@ -74,6 +83,18 @@ services:
     depends_on:
       - api
       - worker
+      - web
+
+  live:
+    <<: *app-env
+    image: registry.plane.tools/plane/live-enterprise:${APP_RELEASE_VERSION}
+    pull_policy: if_not_present
+    restart: unless-stopped
+    command: node live/dist/server.js live
+    deploy:
+      replicas: ${LIVE_REPLICAS:-1}
+    depends_on:
+      - api
       - web
 
   api:
@@ -144,6 +165,14 @@ services:
     restart: unless-stopped
     volumes:
       - ${INSTALL_DIR}/data/redis:/data
+
+  plane-mq:
+    <<: *app-env
+    image: registry.plane.tools/plane/rabbitmq:3.13.6-management-alpine
+    pull_policy: if_not_present
+    restart: unless-stopped
+    volumes:
+      - ${INSTALL_DIR}/data/mq:/var/lib/rabbitmq
 
   plane-minio:
     <<: *app-env

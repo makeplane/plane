@@ -9,7 +9,7 @@ import { ChevronRight } from "lucide-react";
 // types
 import { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
 // ui
-import { Spinner, Tooltip, ControlLink, setToast, TOAST_TYPE } from "@plane/ui";
+import { Spinner, Tooltip, ControlLink, setToast, TOAST_TYPE, Row } from "@plane/ui";
 // components
 import { MultipleSelectEntityAction } from "@/components/core";
 import { IssueProperties } from "@/components/issues/issue-layouts/properties";
@@ -17,6 +17,7 @@ import { IssueProperties } from "@/components/issues/issue-layouts/properties";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useIssueDetail, useProject } from "@/hooks/store";
+import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
@@ -69,20 +70,15 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
   // hooks
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
   const { getProjectIdentifierById } = useProject();
-  const { getIsIssuePeeked, peekIssue, setPeekIssue, subIssues: subIssuesStore } = useIssueDetail();
+  const { getIsIssuePeeked, peekIssue, subIssues: subIssuesStore } = useIssueDetail();
+  const { handleRedirection } = useIssuePeekOverviewRedirection();
+  const { isMobile } = usePlatformOS();
 
-  const handleIssuePeekOverview = (issue: TIssue) =>
-    workspaceSlug &&
-    issue &&
-    issue.project_id &&
-    issue.id &&
-    !getIsIssuePeeked(issue.id) &&
-    setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id, nestingLevel: nestingLevel });
+  // handlers
+  const handleIssuePeekOverview = (issue: TIssue) => handleRedirection(workspaceSlug, issue, isMobile, nestingLevel);
 
   const issue = issuesMap[issueId];
   const subIssuesCount = issue?.sub_issues_count ?? 0;
-
-  const { isMobile } = usePlatformOS();
 
   useEffect(() => {
     const element = issueRef.current;
@@ -130,13 +126,13 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
   };
 
   //TODO: add better logic. This is to have a min width for ID/Key based on the length of project identifier
-  const keyMinWidth = ((projectIdentifier?.length ?? 0) + 5) * 7;
+  const keyMinWidth = displayProperties?.key ? (projectIdentifier?.length ?? 0) * 7 : 0;
 
   return (
-    <div
+    <Row
       ref={issueRef}
       className={cn(
-        "group/list-block min-h-11 relative flex flex-col gap-3 bg-custom-background-100 hover:bg-custom-background-90 p-3 pl-1.5 text-sm transition-colors border border-transparent",
+        "group/list-block min-h-11 relative flex flex-col gap-3 bg-custom-background-100 hover:bg-custom-background-90 py-3 text-sm transition-colors border border-transparent",
         {
           "border-custom-primary-70": getIsIssuePeeked(issue.id) && peekIssue?.nestingLevel === nestingLevel,
           "border-custom-border-400": isIssueActive,
@@ -172,7 +168,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
                 }
                 disabled={issue.project_id === projectId}
               >
-                <div className="flex-shrink-0 grid place-items-center w-3.5">
+                <div className="flex-shrink-0 grid place-items-center w-3.5 absolute left-1">
                   <MultipleSelectEntityAction
                     className={cn(
                       "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto transition-opacity",
@@ -188,13 +184,14 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
                 </div>
               </Tooltip>
             )}
-            {displayProperties && displayProperties?.key && (
-              <div className="flex-shrink-0 pl-2" style={{ minWidth: `${keyMinWidth}px` }}>
+            {displayProperties && (displayProperties.key || displayProperties.issue_type) && (
+              <div className="flex-shrink-0" style={{ minWidth: `${keyMinWidth}px` }}>
                 {issue.project_id && (
                   <IssueIdentifier
                     issueId={issueId}
                     projectId={issue.project_id}
                     textContainerClassName="text-xs font-medium text-custom-text-300"
+                    displayProperties={displayProperties}
                   />
                 )}
               </div>
@@ -229,6 +226,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
               isMobile={isMobile}
               position="top-left"
               disabled={isCurrentBlockDragging}
+              renderByDefault={false}
             >
               <p className="truncate">{issue.name}</p>
             </Tooltip>
@@ -242,7 +240,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
               className="w-full truncate cursor-pointer text-sm text-custom-text-100"
               disabled={!!issue?.tempId}
             >
-              <Tooltip tooltipContent={issue.name} isMobile={isMobile} position="top-left">
+              <Tooltip tooltipContent={issue.name} isMobile={isMobile} position="top-left" renderByDefault={false}>
                 <p className="truncate">{issue.name}</p>
               </Tooltip>
             </ControlLink>
@@ -291,6 +289,6 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
           </div>
         )}
       </div>
-    </div>
+    </Row>
   );
 });

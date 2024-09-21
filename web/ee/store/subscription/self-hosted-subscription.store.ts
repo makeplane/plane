@@ -13,8 +13,11 @@ import { TSelfHostedSubscription } from "@/plane-web/types/self-hosted-subscript
 export interface ISelfHostedSubscriptionStore {
   // observables
   licenses: Record<string, TSelfHostedSubscription>;
+  isActivationModalOpen: boolean;
   // computed function
   licenseActivationByWorkspaceSlug: () => boolean;
+  // helper actions
+  toggleLicenseActivationModal: (isOpen?: boolean) => void;
   // actions
   fetchSubscription: (workspaceSlug: string) => Promise<TSelfHostedSubscription | undefined>;
   activateSubscription: (workspaceSlug: string, license_key: string) => Promise<TSelfHostedSubscription | undefined>;
@@ -23,11 +26,15 @@ export interface ISelfHostedSubscriptionStore {
 export class SelfHostedSubscriptionStore implements ISelfHostedSubscriptionStore {
   // observables
   licenses: Record<string, TSelfHostedSubscription> = {};
+  isActivationModalOpen = false;
 
   constructor(private rootStore: RootStore) {
     makeObservable(this, {
       // observables
-      licenses: observable.ref,
+      licenses: observable,
+      isActivationModalOpen: observable.ref,
+      // helper actions
+      toggleLicenseActivationModal: action,
       // actions
       fetchSubscription: action,
       activateSubscription: action,
@@ -49,6 +56,10 @@ export class SelfHostedSubscriptionStore implements ISelfHostedSubscriptionStore
   });
 
   // actions
+  toggleLicenseActivationModal = (isOpen?: boolean) => {
+    this.isActivationModalOpen = isOpen ?? !this.isActivationModalOpen;
+  };
+
   /**
    * @description fetch workspace activation
    * @param { string } workspaceSlug

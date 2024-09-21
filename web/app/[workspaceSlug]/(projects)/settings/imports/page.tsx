@@ -6,14 +6,15 @@ import { useParams } from "next/navigation";
 import { getButtonStyling } from "@plane/ui";
 // components
 import { PageHead } from "@/components/core";
-// constants
-import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useInstance, useUser, useWorkspace } from "@/hooks/store";
+import { useInstance, useUserPermissions, useWorkspace } from "@/hooks/store";
+import { useUserProfile } from "@/hooks/store/use-user-profile";
 // plane web components
 import IntegrationGuide from "@/plane-web/components/integration/guide";
+// plane web constants
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web hooks
 import { useFlag } from "@/plane-web/hooks/store";
 
@@ -21,17 +22,16 @@ const ImportsPage = observer(() => {
   // router
   const { workspaceSlug } = useParams();
   // store hooks
-  const {
-    userProfile: { data: userProfile },
-    membership: { currentWorkspaceRole },
-  } = useUser();
+  const { data: currentUserProfile } = useUserProfile();
+
   const { config } = useInstance();
 
   const { currentWorkspace } = useWorkspace();
+  const { allowPermissions } = useUserPermissions();
 
   // derived values
-  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
-  const isDarkMode = userProfile?.theme.theme === "dark";
+  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const isDarkMode = currentUserProfile?.theme.theme === "dark";
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Imports` : undefined;
 
   const isSiloIntegrationEnabled = useFlag(workspaceSlug?.toString(), "SILO_INTEGRATION");
@@ -50,14 +50,14 @@ const ImportsPage = observer(() => {
     return (
       <>
         <PageHead title={pageTitle} />
-        <div className="flex h-full flex-col gap-10 rounded-xl md:pr-9 pr-4">
+        <div className="flex h-full flex-col gap-10 rounded-xl">
           <div className="flex items-center border-b border-custom-border-100 py-3.5">
             <h3 className="text-xl font-medium">Imports</h3>
           </div>
           <div
             className={cn("item-center flex min-h-[25rem] justify-between rounded-xl", {
-              "bg-gradient-to-l from-[#343434] via-[#484848]  to-[#1E1E1E]": userProfile?.theme.theme === "dark",
-              "bg-gradient-to-l from-[#3b5ec6] to-[#f5f7fe]": userProfile?.theme.theme === "light",
+              "bg-gradient-to-l from-[#343434] via-[#484848]  to-[#1E1E1E]": currentUserProfile?.theme.theme === "dark",
+              "bg-gradient-to-l from-[#3b5ec6] to-[#f5f7fe]": currentUserProfile?.theme.theme === "light",
             })}
           >
             <div className="relative flex flex-col justify-center gap-7 pl-8 lg:w-1/2">
@@ -105,8 +105,8 @@ const ImportsPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <section className="flex flex-col justify-start flex-grow h-full w-full overflow-y-auto md:pr-9 pr-4">
-        <div className="flex items-center border-b border-custom-border-100 py-3.5 flex-shrink-0">
+      <section className="w-full overflow-y-auto">
+        <div className="flex items-center border-b border-custom-border-100 pb-3.5">
           <h3 className="text-xl font-medium">Imports</h3>
         </div>
         <IntegrationGuide />

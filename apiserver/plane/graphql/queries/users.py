@@ -76,6 +76,7 @@ class UserFavoritesQuery:
                     )
                     & Q(project__project_projectmember__is_active=True)
                 ),
+                ~Q(entity_type="view"),
             )
             .order_by("-created_at")
         )
@@ -102,8 +103,10 @@ class UserRecentVisitQuery:
     ) -> list[UserRecentVisitType]:
         recent_visits = await sync_to_async(list)(
             UserRecentVisit.objects.filter(
-                workspace__slug=slug, user=info.context.user
-            ).order_by("-created_at")
+                Q(workspace__slug=slug),
+                Q(user=info.context.user),
+                ~Q(entity_name="view"),
+            ).order_by("-visited_at")
         )
 
         if limit:

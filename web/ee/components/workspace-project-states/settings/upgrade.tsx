@@ -1,21 +1,28 @@
 "use client";
 
 import { FC } from "react";
+import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { Crown } from "lucide-react";
-import { Button } from "@plane/ui";
+// ui
+import { Button, getButtonStyling } from "@plane/ui";
+// helpers
 import { cn } from "@/helpers/common.helper";
+// plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
+// assets
 import StateDark from "@/public/projects/dark-upgrade.svg";
 import StateLight from "@/public/projects/light-upgrade.svg";
 import StateDarkStandalone from "@/public/projects/states-dark.svg";
 import StateLightStandalone from "@/public/projects/states-light.svg";
 
-const Upgrade = () => {
+const Upgrade = observer(() => {
   const { resolvedTheme } = useTheme();
-  const { toggleProPlanModal } = useWorkspaceSubscription();
+  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, togglePaidPlanModal } = useWorkspaceSubscription();
+  // derived values
+  const isSelfManagedUpgradeDisabled = subscriptionDetail?.is_self_managed && subscriptionDetail?.product !== "FREE";
 
   return (
     <div
@@ -31,10 +38,17 @@ const Upgrade = () => {
             Group Projects like you group issues—by state, priority, or any other—and track their progress in one click.
           </div>
           <div className="flex mt-6 gap-4 flex-wrap">
-            <Button variant="primary" onClick={() => toggleProPlanModal(true)}>
-              <Crown className="h-3.5 w-3.5" />
-              Upgrade
-            </Button>
+            {isSelfManagedUpgradeDisabled ? (
+              <a href="https://prime.plane.so/" target="_blank" className={getButtonStyling("primary", "md")}>
+                <Crown className="h-3.5 w-3.5" />
+                Get Pro
+              </a>
+            ) : (
+              <Button variant="primary" onClick={() => togglePaidPlanModal(true)}>
+                <Crown className="h-3.5 w-3.5" />
+                Upgrade
+              </Button>
+            )}
             <Link
               target="_blank"
               href="https://plane.so/contact"
@@ -58,7 +72,7 @@ const Upgrade = () => {
       />
     </div>
   );
-};
+});
 
 export const WorkspaceProjectStatesUpgrade: FC = () => (
   <div className="pr-10">

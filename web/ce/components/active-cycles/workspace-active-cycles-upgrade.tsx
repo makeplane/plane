@@ -4,7 +4,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 // ui
-import { getButtonStyling } from "@plane/ui";
+import { ContentWrapper, getButtonStyling } from "@plane/ui";
 // components
 import { ProIcon } from "@/components/common";
 // constants
@@ -22,7 +22,7 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
   const isDarkMode = userProfile?.theme.theme === "dark";
 
   return (
-    <div className="vertical-scrollbar scrollbar-lg flex h-full flex-col gap-10 rounded-xl px-8 pt-8">
+    <ContentWrapper className="gap-10">
       <div
         className={cn("item-center flex min-h-[25rem] justify-between rounded-xl", {
           "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": userProfile?.theme.theme === "dark",
@@ -79,7 +79,7 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
       <div className="grid h-full grid-cols-1 gap-5 pb-8 lg:grid-cols-2 xl:grid-cols-3">
         {WORKSPACE_ACTIVE_CYCLES_DETAILS.map((item) => (
           <div key={item.title} className="flex min-h-32 w-full flex-col gap-2 rounded-md bg-custom-background-80 p-4">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 justify-between">
               <h3 className="font-medium">{item.title}</h3>
               <item.icon className="h-4 w-4 text-blue-500" />
             </div>
@@ -87,6 +87,6 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
           </div>
         ))}
       </div>
-    </div>
+    </ContentWrapper>
   );
 });

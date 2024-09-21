@@ -120,7 +120,7 @@ export const CreateProjectForm: FC<Props> = observer((props) => {
 
   return (
     <FormProvider {...methods}>
-      <ProjectCreateHeader handleClose={handleClose} />
+      <ProjectCreateHeader handleClose={handleClose} isMobile={isMobile} />
 
       <form onSubmit={handleSubmit(onSubmit)} className="px-3">
         <div className="mt-9 space-y-6 pb-5">
@@ -130,7 +130,7 @@ export const CreateProjectForm: FC<Props> = observer((props) => {
             isChangeInIdentifierRequired={isChangeInIdentifierRequired}
             setIsChangeInIdentifierRequired={setIsChangeInIdentifierRequired}
           />
-          <ProjectAttributes />
+          <ProjectAttributes isMobile={isMobile} />
         </div>
         <ProjectCreateButtons handleClose={handleClose} />
       </form>

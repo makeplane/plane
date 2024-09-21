@@ -42,6 +42,7 @@ class WorkspaceLicense(BaseModel):
         null=True,
     )
     current_period_end_date = models.DateTimeField(null=True, blank=True)
+    current_period_start_date = models.DateTimeField(null=True, blank=True)
     purchased_seats = models.IntegerField(default=0)
     free_seats = models.IntegerField(default=12)
     plan = models.CharField(choices=PlanChoice.choices, max_length=255)

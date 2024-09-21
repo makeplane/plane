@@ -9,12 +9,13 @@ import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 import ProjectCommonAttributes from "@/components/project/create/common-attributes";
 import ProjectCreateHeader from "@/components/project/create/header";
 import { PROJECT_CREATED } from "@/constants/event-tracker";
-import { EUserProjectRoles, PROJECT_UNSPLASH_COVERS } from "@/constants/project";
+import { PROJECT_UNSPLASH_COVERS } from "@/constants/project";
 // helpers
 import { getRandomEmoji } from "@/helpers/emoji.helper";
 // hooks
 import { useEventTracker, useMember, useProject, useUser, useWorkspace } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 import { E_FEATURE_FLAGS, useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { TProject } from "@/plane-web/types/projects";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
@@ -95,7 +96,7 @@ export const CreateProjectForm: FC<Props> = observer((props) => {
         .map((id: any) => ({
           id,
           member_id: id,
-          role: EUserProjectRoles.MEMBER,
+          role: EUserPermissions.MEMBER,
           member__avatar: memberMap[id]?.avatar,
           member__display_name: memberMap[id]?.display_name,
         }));

@@ -14,8 +14,6 @@ class FeatureFlag(Enum):
     VIEW_LOCKING = "VIEW_LOCKING"
     # Workspace level pages
     WORKSPACE_PAGES = "WORKSPACE_PAGES"
-    # OIDC SAML Auth
-    OIDC_SAML_AUTH = "OIDC_SAML_AUTH"
     # Page level issue embeds
     PAGE_ISSUE_EMBEDS = "PAGE_ISSUE_EMBEDS"
     # Page Publish
@@ -30,3 +28,8 @@ class FeatureFlag(Enum):
     ISSUE_WORKLOG = "ISSUE_WORKLOG"
     # Project Grouping
     PROJECT_GROUPING = "PROJECT_GROUPING"
+
+
+class AdminFeatureFlag(Enum):
+    # OIDC SAML Auth
+    OIDC_SAML_AUTH = "OIDC_SAML_AUTH"

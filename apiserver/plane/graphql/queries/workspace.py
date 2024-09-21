@@ -174,7 +174,7 @@ class YourWorkQuery:
                 Q(
                     project__project_projectmember__member=info.context.user,
                     project__project_projectmember__is_active=True,
-                    state__group__in=["unstarted", "started"],
+                    # state__group__in=["unstarted", "started"],
                     assignees__in=[info.context.user],
                 ),
             )

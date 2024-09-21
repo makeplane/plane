@@ -1,17 +1,23 @@
-export function isFileValid(file: File): boolean {
+export function isFileValid(file: File, showAlert = true): boolean {
   if (!file) {
-    alert("No file selected. Please select a file to upload.");
+    if (showAlert) {
+      alert("No file selected. Please select a file to upload.");
+    }
     return false;
   }
 
-  const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/svg+xml"];
+  const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
   if (!allowedTypes.includes(file.type)) {
-    alert("Invalid file type. Please select a JPEG, JPG, PNG, WEBP, or SVG image file.");
+    if (showAlert) {
+      alert("Invalid file type. Please select a JPEG, JPG, PNG, or WEBP image file.");
+    }
     return false;
   }
 
   if (file.size > 5 * 1024 * 1024) {
-    alert("File size too large. Please select a file smaller than 5MB.");
+    if (showAlert) {
+      alert("File size too large. Please select a file smaller than 5MB.");
+    }
     return false;
   }
 

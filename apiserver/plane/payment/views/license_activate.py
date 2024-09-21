@@ -25,6 +25,13 @@ class WorkspaceLicenseEndpoint(BaseAPIView):
 
     def get(self, request, slug):
         try:
+            # Check the multi-tenant environment
+            if settings.IS_MULTI_TENANT:
+                return Response(
+                    {"error": "Forbidden"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
             workspace = Workspace.objects.get(slug=slug)
             response = requests.get(
                 f"{settings.PAYMENT_SERVER_BASE_URL}/api/workspaces/{str(workspace.id)}/licenses/",
@@ -48,6 +55,13 @@ class WorkspaceLicenseEndpoint(BaseAPIView):
                 )
 
     def post(self, request, slug):
+        # Check the multi-tenant environment
+        if settings.IS_MULTI_TENANT:
+            return Response(
+                {"error": "Forbidden"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         license_key = request.data.get("license_key", False)
 
         if not license_key:
@@ -112,7 +126,7 @@ class WorkspaceLicenseEndpoint(BaseAPIView):
                         status=status.HTTP_400_BAD_REQUEST,
                     )
                 return Response(
-                    {"error": "Failed to activate license"},
+                    {"error": "Invalid license key"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         else:

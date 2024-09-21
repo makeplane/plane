@@ -5,9 +5,9 @@ import { cn } from "@plane/editor";
 import { IWorkspace } from "@plane/types";
 import { Avatar, PriorityIcon, Tooltip } from "@plane/ui";
 import { DateRangeDropdown, MemberDropdown } from "@/components/dropdowns";
-import { EUserProjectRoles } from "@/constants/project";
 import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
-import { useMember, useUser } from "@/hooks/store";
+import { useMember, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 import { TProject } from "@/plane-web/types/projects";
 import { EProjectPriority } from "@/plane-web/types/workspace-project-states";
 import { StateDropdown, PriorityDropdown } from "../dropdowns";
@@ -38,20 +38,18 @@ const Attributes: React.FC<Props> = observer((props) => {
 
   const { getUserDetails } = useMember();
   const lead = getUserDetails(project.project_lead as string);
-  const {
-    membership: { currentWorkspaceAllProjectsRole },
-  } = useUser();
+  const { workspaceProjectsPermissions } = useUserPermissions();
   const isEditingAllowed =
-    currentWorkspaceAllProjectsRole &&
-    currentWorkspaceAllProjectsRole[project.id] &&
-    currentWorkspaceAllProjectsRole[project.id] >= EUserProjectRoles.ADMIN;
+    workspaceProjectsPermissions &&
+    workspaceProjectsPermissions[workspaceSlug][project.id] &&
+    workspaceProjectsPermissions[workspaceSlug][project.id] >= EUserPermissions.ADMIN;
 
   const handleEventPropagation = (e: SyntheticEvent<HTMLDivElement>) => {
     e.stopPropagation();
     e.preventDefault();
   };
   return (
-    <div className={cn("flex gap-2 flex-wrap p-2", containerClass)} data-prevent-nprogress>
+    <div className={cn("flex gap-2 flex-wrap p-4", containerClass)} data-prevent-nprogress>
       <div className="h-5 my-auto" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
         <StateDropdown
           value={project.state_id || ""}

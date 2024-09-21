@@ -7,6 +7,8 @@ const (
 	APP_DOMAIN_ABSENT      = "expecting a domain to be available in OS Env under 'APP_DOMAIN', none found"
 	MACHINE_SIG_ABSENT     = "expecting a signature to be available in OS Env under 'MACHINE_SIGNATURE', none found"
 	LICENSE_VERSION_ABSENT = "expecting a version to be available in OS Env under 'LICENSE_VERSION', none found"
+	DEPLOY_PLATFORM_ABSENT = "expecting a deploy platform to be available in OS Env under 'DEPLOY_PLATFORM', none found"
+	FAILED_INITIALIZATION  = "failed to initialize the instance, with domain %v"
 )
 
 // ------------------ Worker Errors -------------------

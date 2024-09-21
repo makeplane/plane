@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@plane/editor";
-import { CustomMenu } from "@plane/ui";
+import { CustomMenu, Loader } from "@plane/ui";
 // plane web constants
 import { PROJECT_SCOPES } from "@/plane-web/constants/project";
 // plane web hooks
@@ -25,14 +25,13 @@ export const ProjectScopeDropdown: FC<TProjectScopeDropdown> = observer((props) 
   const router = useRouter();
 
   // derived values
-  const selectedScope = filters?.scope || EProjectScope.ALL_PROJECTS;
-  const selectedScopeCount = scopeProjectsCount?.[selectedScope];
+  const selectedScope = filters?.scope;
+  const selectedScopeCount = selectedScope && scopeProjectsCount?.[selectedScope];
 
   const DropdownLabel = () => (
     <>
       <div className="hidden md:flex relative items-center gap-2 w-[150px]">
         <div className="flex gap-2 flex-1 my-auto">
-          {" "}
           <div className="whitespace-nowrap font-medium my-auto">
             {(PROJECT_SCOPES || []).find((scope) => selectedScope === scope.key)?.label}
           </div>
@@ -48,7 +47,6 @@ export const ProjectScopeDropdown: FC<TProjectScopeDropdown> = observer((props) 
       </div>
     </>
   );
-
   const DropdownOptions = () =>
     (PROJECT_SCOPES || []).map((scope) => (
       <CustomMenu.MenuItem
@@ -72,7 +70,7 @@ export const ProjectScopeDropdown: FC<TProjectScopeDropdown> = observer((props) 
       </CustomMenu.MenuItem>
     ));
 
-  return (
+  return selectedScope ? (
     <CustomMenu
       maxHeight={"md"}
       className={cn(
@@ -86,5 +84,9 @@ export const ProjectScopeDropdown: FC<TProjectScopeDropdown> = observer((props) 
     >
       <DropdownOptions />
     </CustomMenu>
+  ) : (
+    <Loader>
+      <Loader.Item width="150px" height="32px" />
+    </Loader>
   );
 });

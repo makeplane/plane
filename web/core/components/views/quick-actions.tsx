@@ -9,14 +9,13 @@ import { IProjectView } from "@plane/types";
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { CreateUpdateProjectViewModal, DeleteProjectViewModal } from "@/components/views";
-// constants
-import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser, useUserPermissions } from "@/hooks/store";
 import { PublishViewModal, useViewPublish } from "@/plane-web/components/views/publish";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   parentRef: React.RefObject<HTMLElement>;
@@ -31,13 +30,15 @@ export const ViewQuickActions: React.FC<Props> = observer((props) => {
   const [createUpdateViewModal, setCreateUpdateViewModal] = useState(false);
   const [deleteViewModal, setDeleteViewModal] = useState(false);
   // store hooks
-  const {
-    membership: { currentProjectRole },
-    data,
-  } = useUser();
+  const { data } = useUser();
+  const { allowPermissions } = useUserPermissions();
   // auth
   const isOwner = view?.owned_by === data?.id;
-  const isAdmin = !!currentProjectRole && currentProjectRole == EUserProjectRoles.ADMIN;
+  const canPublishView = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.ADMIN],
+    EUserPermissionsLevel.PROJECT
+  );
+  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId);
 
   const { isPublishModalOpen, setPublishModalOpen, publishContextMenu } = useViewPublish(
     !!view.anchor,
@@ -101,6 +102,7 @@ export const ViewQuickActions: React.FC<Props> = observer((props) => {
       <CustomMenu ellipsis placement="bottom-end" closeOnSelect>
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;
+          if (item.key === "publish" && !canPublishView) return null;
           return (
             <CustomMenu.MenuItem
               key={item.key}

@@ -8,9 +8,8 @@ from .base import BaseModel
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 
 ROLE_CHOICES = (
-    (20, "Owner"),
-    (15, "Admin"),
-    (10, "Member"),
+    (20, "Admin"),
+    (15, "Member"),
     (5, "Guest"),
 )
 
@@ -177,7 +176,7 @@ class WorkspaceMember(BaseModel):
         on_delete=models.CASCADE,
         related_name="member_workspace",
     )
-    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=10)
+    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=5)
     company_role = models.TextField(null=True, blank=True)
     view_props = models.JSONField(default=get_default_props)
     default_props = models.JSONField(default=get_default_props)
@@ -214,7 +213,7 @@ class WorkspaceMemberInvite(BaseModel):
     token = models.CharField(max_length=255)
     message = models.TextField(null=True)
     responded_at = models.DateTimeField(null=True)
-    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=10)
+    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=5)
 
     class Meta:
         unique_together = ["email", "workspace", "deleted_at"]

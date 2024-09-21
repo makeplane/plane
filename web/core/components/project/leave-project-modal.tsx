@@ -14,7 +14,7 @@ import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { PROJECT_MEMBER_LEAVE } from "@/constants/event-tracker";
 // hooks
-import { useEventTracker, useUser } from "@/hooks/store";
+import { useEventTracker, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 type FormData = {
@@ -40,9 +40,7 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
   const { workspaceSlug } = useParams();
   // store hooks
   const { captureEvent } = useEventTracker();
-  const {
-    membership: { leaveProject },
-  } = useUser();
+  const { leaveProject } = useUserPermissions();
 
   const {
     control,
@@ -62,10 +60,10 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
     if (data) {
       if (data.projectName === project?.name) {
         if (data.confirmLeave === "Leave Project") {
+          router.push(`/${workspaceSlug}/projects`);
           return leaveProject(workspaceSlug.toString(), project.id)
             .then(() => {
               handleClose();
-              router.push(`/${workspaceSlug}/projects`);
               captureEvent(PROJECT_MEMBER_LEAVE, {
                 state: "SUCCESS",
                 element: "Project settings members page",

@@ -6,9 +6,8 @@ import Link from "next/link";
 import { History } from "lucide-react";
 // types
 import { TRecentActivityWidgetResponse } from "@plane/types";
-// UI
-import { Avatar, getButtonStyling } from "@plane/ui";
 // components
+import { Card, Avatar, getButtonStyling } from "@plane/ui";
 import { ActivityIcon, ActivityMessage, IssueLink } from "@/components/core";
 import { RecentActivityEmptyState, WidgetLoader, WidgetProps } from "@/components/dashboard/widgets";
 // helpers
@@ -38,12 +37,12 @@ export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
   if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
-    <div className="min-h-96 w-full rounded-xl border-[0.5px] border-custom-border-200 bg-custom-background-100 py-6 duration-300 hover:shadow-custom-shadow-4xl">
-      <Link href={redirectionLink} className="mx-7 text-lg font-semibold text-custom-text-300 hover:underline">
+    <Card>
+      <Link href={redirectionLink} className="text-lg font-semibold text-custom-text-300 hover:underline mb-4">
         Your issue activities
       </Link>
       {widgetStats.length > 0 ? (
-        <div className="mx-7 mt-4 space-y-6">
+        <div className="mt-4 space-y-6">
           {widgetStats.map((activity) => (
             <div key={activity.id} className="flex gap-5">
               <div className="flex-shrink-0">
@@ -104,6 +103,6 @@ export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
           <RecentActivityEmptyState />
         </div>
       )}
-    </div>
+    </Card>
   );
 });

@@ -4,12 +4,14 @@ import { FC, useEffect, useRef } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 // hooks
 import { setToast, TOAST_TYPE } from "@plane/ui";
-import { EUserProjectRoles } from "@/constants/project";
-import { useProject, useUser } from "@/hooks/store";
+import { useProject, useUserPermissions } from "@/hooks/store";
 // plane web components
 import { ProjectCard } from "@/plane-web/components/projects/layouts/gallery/card";
+// plane web constants
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // plane web types
 import { TProject } from "@/plane-web/types/projects";
 
@@ -20,18 +22,19 @@ type ProjectBoardListItem = {
 
 export const ProjectBoardListItem: FC<ProjectBoardListItem> = observer((props) => {
   const { projectId } = props;
+  // router
+  const { workspaceSlug } = useParams();
   // hooks
   const { getProjectById } = useProject();
-  const {
-    membership: { currentWorkspaceAllProjectsRole },
-  } = useUser();
+  const { workspaceProjectsPermissions } = useUserPermissions();
+
   // derived values
   const project = getProjectById(projectId) as TProject;
   const cardRef = useRef<HTMLDivElement | null>(null);
   const isDragAllowed =
-    currentWorkspaceAllProjectsRole &&
-    currentWorkspaceAllProjectsRole[projectId] &&
-    currentWorkspaceAllProjectsRole[projectId] >= EUserProjectRoles.ADMIN;
+    workspaceProjectsPermissions &&
+    workspaceProjectsPermissions[workspaceSlug.toString()][projectId] &&
+    workspaceProjectsPermissions[workspaceSlug.toString()][projectId] >= EUserPermissions.ADMIN;
   if (!project) return <></>;
 
   useEffect(() => {

@@ -4,22 +4,21 @@ import { useParams } from "next/navigation";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { EUserWorkspaceRoles } from "@/constants/workspace";
 // hooks
-import { useUser, useAppTheme, useCommandPalette } from "@/hooks/store";
+import { useUser, useAppTheme, useCommandPalette, useUserPermissions } from "@/hooks/store";
 // plane web components
 import { PagesAppCommandModal, PagesAppShortcutsModal } from "@/plane-web/components/command-palette";
 import { PagesAppCreatePageModal } from "@/plane-web/components/pages";
+// plane web constants
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const PagesAppCommandPalette: React.FC = observer(() => {
   // params
   const { workspaceSlug } = useParams();
   // store hooks
   const { toggleSidebar } = useAppTheme();
-  const {
-    membership: { currentWorkspaceRole },
-    data: currentUser,
-  } = useUser();
+  const { data: currentUser } = useUser();
+  const { allowPermissions } = useUserPermissions();
   const {
     createPageModal,
     toggleCommandPaletteModal,
@@ -30,18 +29,18 @@ export const PagesAppCommandPalette: React.FC = observer(() => {
   } = useCommandPalette();
 
   // auth
-  const canPerformWorkspaceCreateActions = useCallback(
-    (showToast: boolean = true) => {
-      const isAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
-      if (!isAllowed && showToast)
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "You don't have permission to perform this action.",
-        });
-      return isAllowed;
-    },
-    [currentWorkspaceRole]
-  );
+  const canPerformWorkspaceCreateActions = useCallback((showToast: boolean = true) => {
+    const isAllowed = allowPermissions(
+      [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+      EUserPermissionsLevel.WORKSPACE
+    );
+    if (!isAllowed && showToast)
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "You don't have permission to perform this action.",
+      });
+    return isAllowed;
+  }, []);
 
   const shortcutsList: {
     global: Record<string, { title: string; description: string; action: () => void }>;

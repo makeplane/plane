@@ -57,19 +57,17 @@ const ProjectModulesPage = observer(() => {
       <PageHead title={pageTitle} />
       <div className="h-full w-full flex flex-col">
         {(calculateTotalFilters(currentProjectFilters ?? {}) !== 0 || currentProjectDisplayFilters?.favorites) && (
-          <div className="border-b border-custom-border-200 px-5 py-3">
-            <ModuleAppliedFiltersList
-              appliedFilters={currentProjectFilters ?? {}}
-              isFavoriteFilterApplied={currentProjectDisplayFilters?.favorites ?? false}
-              handleClearAllFilters={() => clearAllFilters(`${projectId}`)}
-              handleRemoveFilter={handleRemoveFilter}
-              handleDisplayFiltersUpdate={(val) => {
-                if (!projectId) return;
-                updateDisplayFilters(projectId.toString(), val);
-              }}
-              alwaysAllowEditing
-            />
-          </div>
+          <ModuleAppliedFiltersList
+            appliedFilters={currentProjectFilters ?? {}}
+            isFavoriteFilterApplied={currentProjectDisplayFilters?.favorites ?? false}
+            handleClearAllFilters={() => clearAllFilters(`${projectId}`)}
+            handleRemoveFilter={handleRemoveFilter}
+            handleDisplayFiltersUpdate={(val) => {
+              if (!projectId) return;
+              updateDisplayFilters(projectId.toString(), val);
+            }}
+            alwaysAllowEditing
+          />
         )}
         <ModulesListView />
       </div>

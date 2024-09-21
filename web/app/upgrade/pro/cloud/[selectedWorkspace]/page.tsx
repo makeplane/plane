@@ -81,7 +81,7 @@ const CloudUpgradePlanPage = observer(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: error?.detail ?? "Failed to generate payment link. Please try again.",
+          message: error?.error ?? "Failed to generate payment link. Please try again.",
         });
       })
       .finally(() => {

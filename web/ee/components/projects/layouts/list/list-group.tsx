@@ -6,6 +6,7 @@ import { cn } from "@plane/editor";
 // plane
 import { TIssueGroupByOptions, IIssueDisplayProperties } from "@plane/types";
 //
+import { Row } from "@plane/ui";
 import { useMember, useWorkspace } from "@/hooks/store";
 import { useProjectFilter, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { groupDetails } from "../board/utils";
@@ -70,7 +71,7 @@ export const ListGroup = observer((props: Props) => {
 
   return groupedProjectIds.length > 0 ? (
     <div ref={groupRef} className={cn(`relative flex flex-shrink-0 flex-col border-[1px] border-transparent`)}>
-      <div className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 pl-4 pr-3 py-1">
+      <Row className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 py-1">
         <HeaderGroupByCard
           groupID={group}
           icon={details?.icon}
@@ -78,7 +79,7 @@ export const ListGroup = observer((props: Props) => {
           toggleListGroup={toggleListGroup}
           count={groupedProjectIds.length}
         />
-      </div>
+      </Row>
       {shouldExpand && (
         <div className="relative">{groupedProjectIds && <ProjectBlocksList projectIds={groupedProjectIds} />}</div>
       )}

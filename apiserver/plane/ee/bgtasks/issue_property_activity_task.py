@@ -1,3 +1,6 @@
+# Django imports
+from django.utils import timezone
+
 # Third party imports
 from celery import shared_task
 
@@ -385,6 +388,10 @@ def issue_property_activity(
 
     # Get the issue
     issue = Issue.objects.get(id=issue_id)
+
+    # update the issue
+    issue.updated_at = timezone.now()
+    issue.save(update_fields=["updated_at"])
 
     # Get the issue type
     properties = IssueProperty.objects.filter(

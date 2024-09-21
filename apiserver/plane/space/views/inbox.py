@@ -157,7 +157,8 @@ class InboxIssuePublicViewSet(BaseViewSet):
         )
 
         issue_type = IssueType.objects.filter(
-            project_id=project_deploy_board.project_id, is_default=True
+            project_issue_types__project_id=project_deploy_board.project_id,
+            is_default=True,
         ).first()
 
         # create an issue

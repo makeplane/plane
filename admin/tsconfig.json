@@ -10,7 +10,8 @@
       "@/*": ["core/*"],
       "@/helpers/*": ["helpers/*"],
       "@/public/*": ["public/*"],
-      "@/plane-admin/*": ["ee/*"]
+      "@/plane-admin/*": ["ee/*"],
+      "@/ce/*": ["ce/*"]
     },
     "plugins": [
       {

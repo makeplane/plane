@@ -11,8 +11,6 @@ import { CoreEditorExtensions } from "@/extensions";
 import { getParagraphCount } from "@/helpers/common";
 import { insertContentAtSavedSelection } from "@/helpers/insert-content-at-cursor-position";
 import { IMarking, scrollSummary } from "@/helpers/scroll-to-node";
-// plane editor providers
-import { CollaborationProvider } from "@/plane-editor/providers";
 // props
 import { CoreEditorProps } from "@/props";
 // types
@@ -34,7 +32,6 @@ export interface CustomEditorProps {
   };
   onChange?: (json: object, html: string) => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
-  provider?: CollaborationProvider;
   tabIndex?: number;
   // undefined when prop is not passed, null if intentionally passed to stop
   // swr syncing
@@ -55,11 +52,14 @@ export const useEditor = (props: CustomEditorProps) => {
     mentionHandler,
     onChange,
     placeholder,
-    provider,
     tabIndex,
     value,
   } = props;
-
+  // states
+  const [savedSelection, setSavedSelection] = useState<Selection | null>(null);
+  // refs
+  const editorRef: MutableRefObject<Editor | null> = useRef(null);
+  const savedSelectionRef = useRef(savedSelection);
   const editor = useTiptapEditor({
     editorProps: {
       ...CoreEditorProps({
@@ -91,13 +91,6 @@ export const useEditor = (props: CustomEditorProps) => {
     onUpdate: ({ editor }) => onChange?.(editor.getJSON(), editor.getHTML()),
     onDestroy: () => handleEditorReady?.(false),
   });
-
-  const editorRef: MutableRefObject<Editor | null> = useRef(null);
-
-  const [savedSelection, setSavedSelection] = useState<Selection | null>(null);
-
-  // Inside your component or hook
-  const savedSelectionRef = useRef(savedSelection);
 
   // Update the ref whenever savedSelection changes
   useEffect(() => {
@@ -131,7 +124,7 @@ export const useEditor = (props: CustomEditorProps) => {
         editorRef.current?.commands.clearContent(emitUpdate);
       },
       setEditorValue: (content: string) => {
-        editorRef.current?.commands.setContent(content);
+        editorRef.current?.commands.setContent(content, false, { preserveWhitespace: "full" });
       },
       setEditorValueAtCursorPosition: (content: string) => {
         if (savedSelection) {
@@ -139,7 +132,7 @@ export const useEditor = (props: CustomEditorProps) => {
         }
       },
       executeMenuItemCommand: (itemKey: TEditorCommands) => {
-        const editorItems = getEditorMenuItems(editorRef.current, fileHandler.upload);
+        const editorItems = getEditorMenuItems(editorRef.current);
 
         const getEditorMenuItem = (itemKey: TEditorCommands) => editorItems.find((item) => item.key === itemKey);
 
@@ -155,7 +148,7 @@ export const useEditor = (props: CustomEditorProps) => {
         }
       },
       isMenuItemActive: (itemName: TEditorCommands): boolean => {
-        const editorItems = getEditorMenuItems(editorRef.current, fileHandler.upload);
+        const editorItems = getEditorMenuItems(editorRef.current);
 
         const getEditorMenuItem = (itemName: TEditorCommands) => editorItems.find((item) => item.key === itemName);
         const item = getEditorMenuItem(itemName);
@@ -184,18 +177,6 @@ export const useEditor = (props: CustomEditorProps) => {
       scrollSummary: (marking: IMarking): void => {
         if (!editorRef.current) return;
         scrollSummary(editorRef.current, marking);
-      },
-      setSynced: () => {
-        if (provider) {
-          provider.setSynced();
-        }
-      },
-      hasUnsyncedChanges: () => {
-        if (provider) {
-          return provider.hasUnsyncedChanges();
-        } else {
-          return false;
-        }
       },
       isEditorReadyToDiscard: () => editorRef.current?.storage.image.uploadInProgress === false,
       setFocusAtPosition: (position: number) => {
@@ -234,29 +215,36 @@ export const useEditor = (props: CustomEditorProps) => {
           }
         });
         const selection = nodesArray.join("");
-        console.log(selection);
         return selection;
       },
       insertText: (contentHTML, insertOnNextLine) => {
-        if (!editor) return;
+        if (!editorRef.current) return;
         // get selection
-        const { from, to, empty } = editor.state.selection;
+        const { from, to, empty } = editorRef.current.state.selection;
         if (empty) return;
         if (insertOnNextLine) {
           // move cursor to the end of the selection and insert a new line
-          editor.chain().focus().setTextSelection(to).insertContent("<br />").insertContent(contentHTML).run();
+          editorRef.current
+            .chain()
+            .focus()
+            .setTextSelection(to)
+            .insertContent("<br />")
+            .insertContent(contentHTML)
+            .run();
         } else {
           // replace selected text with the content provided
-          editor.chain().focus().deleteRange({ from, to }).insertContent(contentHTML).run();
+          editorRef.current.chain().focus().deleteRange({ from, to }).insertContent(contentHTML).run();
         }
       },
-      documentInfo: {
-        characters: editorRef.current?.storage?.characterCount?.characters?.() ?? 0,
-        paragraphs: getParagraphCount(editorRef.current?.state),
-        words: editorRef.current?.storage?.characterCount?.words?.() ?? 0,
+      getDocumentInfo: () => {
+        return {
+          characters: editorRef?.current?.storage?.characterCount?.characters?.() ?? 0,
+          paragraphs: getParagraphCount(editorRef?.current?.state),
+          words: editorRef?.current?.storage?.characterCount?.words?.() ?? 0,
+        };
       },
     }),
-    [editorRef, savedSelection, fileHandler.upload]
+    [editorRef, savedSelection]
   );
 
   if (!editor) {

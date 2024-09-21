@@ -4,19 +4,18 @@ import { useParams, usePathname } from "next/navigation";
 import { Home, LucideIcon, Settings } from "lucide-react";
 // ui
 import { Tooltip } from "@plane/ui";
-// constants
-import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useAppTheme, useUser } from "@/hooks/store";
+import { useAppTheme, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const SIDEBAR_MENU_ITEMS: {
   key: string;
   label: string;
   href: string;
-  access: EUserWorkspaceRoles;
+  access: EUserPermissions[];
   highlight: (pathname: string, baseUrl: string) => boolean;
   Icon: LucideIcon;
 }[] = [
@@ -24,7 +23,7 @@ export const SIDEBAR_MENU_ITEMS: {
     key: "home",
     label: "Home",
     href: `/pages`,
-    access: EUserWorkspaceRoles.GUEST,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}`,
     Icon: Home,
   },
@@ -32,7 +31,8 @@ export const SIDEBAR_MENU_ITEMS: {
     key: "settings",
     label: "Settings",
     href: `/settings`,
-    access: EUserWorkspaceRoles.GUEST,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}`,
     Icon: Settings,
   },
@@ -44,16 +44,14 @@ export const PagesAppSidebarMenu = observer(() => {
   const pathname = usePathname();
   // store hooks
   const { sidebarCollapsed } = useAppTheme();
-  const {
-    membership: { currentWorkspaceRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
   // platform os
   const { isMobile } = usePlatformOS();
 
   return (
     <div className="w-full space-y-1">
       {SIDEBAR_MENU_ITEMS.map((link) => {
-        if (currentWorkspaceRole && currentWorkspaceRole < link.access) return null;
+        if (allowPermissions(link.access, EUserPermissionsLevel.WORKSPACE)) return null;
 
         return (
           <Link key={link.key} href={`/${workspaceSlug}${link.href}`} className="block">

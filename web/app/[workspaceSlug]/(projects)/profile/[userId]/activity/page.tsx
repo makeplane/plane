@@ -2,16 +2,15 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // ui
 import { Button } from "@plane/ui";
 // components
 import { PageHead } from "@/components/core";
 import { DownloadActivityButton, WorkspaceActivityListPage } from "@/components/profile";
-// constants
-import { EUserWorkspaceRoles } from "@/constants/workspace";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store";
+// plane-web constants
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const PER_PAGE = 100;
 
@@ -21,13 +20,7 @@ const ProfileActivityPage = observer(() => {
   const [totalPages, setTotalPages] = useState(0);
   const [resultsCount, setResultsCount] = useState(0);
   // router
-
-  const { userId } = useParams();
-  // store hooks
-  const { data: currentUser } = useUser();
-  const {
-    membership: { currentWorkspaceRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
 
   const updateTotalPages = (count: number) => setTotalPages(count);
 
@@ -47,8 +40,10 @@ const ProfileActivityPage = observer(() => {
       />
     );
 
-  const canDownloadActivity =
-    currentUser?.id === userId && !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+  const canDownloadActivity = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
 
   return (
     <>

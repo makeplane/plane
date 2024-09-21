@@ -133,7 +133,7 @@ class Command(BaseCommand):
             },
             {
                 "key": "GPT_ENGINE",
-                "value": os.environ.get("GPT_ENGINE", "gpt-3.5-turbo"),
+                "value": os.environ.get("GPT_ENGINE", "gpt-4o-mini"),
                 "category": "SMTP",
                 "is_encrypted": False,
             },

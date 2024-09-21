@@ -3,12 +3,11 @@ import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Popover } from "@headlessui/react";
+import { useOutsideClickDetector } from "@plane/helpers";
 // types
 import { TLogoProps } from "@plane/types";
 // helpers
 import { cn } from "@/helpers/common.helper";
-// hooks
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // local components
 import { IssueTypeLogo, TIssueTypeLogoSize } from "./issue-type-logo";
 import { LucideIconsList } from "./lucide-icons-list";

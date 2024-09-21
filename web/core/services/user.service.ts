@@ -258,3 +258,7 @@ export class UserService extends APIService {
       });
   }
 }
+
+const userService = new UserService();
+
+export default userService;

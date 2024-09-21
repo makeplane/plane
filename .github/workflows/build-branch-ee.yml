@@ -33,6 +33,7 @@ jobs:
       build_web: ${{ steps.changed_files.outputs.web_any_changed }}
       build_admin: ${{ steps.changed_files.outputs.admin_any_changed }}
       build_space: ${{ steps.changed_files.outputs.space_any_changed }}
+      build_live: ${{ steps.changed_files.outputs.live_any_changed }}
       build_apiserver: ${{ steps.changed_files.outputs.apiserver_any_changed }}
       build_proxy: ${{ steps.changed_files.outputs.proxy_any_changed }}
       build_monitor: ${{ steps.changed_files.outputs.monitor_any_changed }}
@@ -105,9 +106,15 @@ jobs:
               - "yarn.lock"
               - "tsconfig.json"
               - "turbo.json"
+            live:
+              - live/**
+              - packages/**
+              - 'package.json'
+              - 'yarn.lock'
+              - 'tsconfig.json'
+              - 'turbo.json'
             monitor:
               - monitor/**
-
 
   branch_build_push_admin:
     if: ${{ needs.branch_build_setup.outputs.build_admin== 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
@@ -125,10 +132,12 @@ jobs:
       - name: Set Admin Docker Tag
         run: |
           if [ "${{ github.event_name }}" == "release" ]; then
-            TAG=makeplane/admin-enterprise:stable
-            TAG=${TAG},makeplane/admin-enterprise:${{ github.event.release.tag_name }}
-            TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/admin-enterprise:stable
+            TAG=makeplane/admin-enterprise:${{ github.event.release.tag_name }}
             TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/admin-enterprise:${{ github.event.release.tag_name }}
+            if [ "${{ env.IS_PRERELEASE }}" != "true" ]; then
+              TAG=${TAG},makeplane/admin-enterprise:stable
+              TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/admin-enterprise:stable
+            fi
           elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
             TAG=makeplane/admin-enterprise:latest
             TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/admin-enterprise:latest
@@ -190,10 +199,12 @@ jobs:
       - name: Set Web Docker Tag
         run: |
           if [ "${{ github.event_name }}" == "release" ]; then
-            TAG=makeplane/web-enterprise:stable
-            TAG=${TAG},makeplane/web-enterprise:${{ github.event.release.tag_name }}
-            TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/web-enterprise:stable
+            TAG=makeplane/web-enterprise:${{ github.event.release.tag_name }}
             TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/web-enterprise:${{ github.event.release.tag_name }}
+            if [ "${{ env.IS_PRERELEASE }}" != "true" ]; then
+              TAG=${TAG},makeplane/web-enterprise:stable
+              TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/web-enterprise:stable
+            fi
           elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
             TAG=makeplane/web-enterprise:latest
             TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/web-enterprise:latest
@@ -255,10 +266,12 @@ jobs:
       - name: Set Space Docker Tag
         run: |
           if [ "${{ github.event_name }}" == "release" ]; then
-            TAG=makeplane/space-enterprise:stable
-            TAG=${TAG},makeplane/space-enterprise:${{ github.event.release.tag_name }}
-            TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/space-enterprise:stable
+            TAG=makeplane/space-enterprise:${{ github.event.release.tag_name }}
             TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/space-enterprise:${{ github.event.release.tag_name }}
+            if [ "${{ env.IS_PRERELEASE }}" != "true" ]; then
+              TAG=${TAG},makeplane/space-enterprise:stable
+              TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/space-enterprise:stable
+            fi
           elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
             TAG=makeplane/space-enterprise:latest
             TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/space-enterprise:latest
@@ -304,6 +317,73 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
+  branch_build_push_live:
+    if: ${{ needs.branch_build_setup.outputs.build_live == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
+    name: Build-Push Live Collaboration Docker Image
+    runs-on: ubuntu-20.04
+    needs: [branch_build_setup]
+    env:
+      LIVE_TAG: makeplane/live-enterprise:${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      TARGET_BRANCH: ${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
+      BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
+      BUILDX_PLATFORMS: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
+      BUILDX_ENDPOINT: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+    steps:
+      - name: Set Live Docker Tag
+        run: |
+          if [ "${{ github.event_name }}" == "release" ]; then
+            TAG=makeplane/live-enterprise:${{ github.event.release.tag_name }}
+            TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/live-enterprise:${{ github.event.release.tag_name }}
+            if [ "${{ env.IS_PRERELEASE }}" != "true" ]; then
+              TAG=${TAG},makeplane/live-enterprise:stable
+              TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/live-enterprise:stable
+            fi
+          elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
+            TAG=makeplane/live-enterprise:latest
+            TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/live-enterprise:latest
+          else
+            TAG=${{ env.LIVE_TAG }}
+            TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/live-enterprise:${{ needs.branch_build_setup.outputs.gh_branch_name }}
+          fi
+          echo "LIVE_TAG=${TAG}" >> $GITHUB_ENV
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
+      - name: Login to Harbor
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.HARBOR_USERNAME }}
+          password: ${{ secrets.HARBOR_TOKEN }}
+          registry: ${{ vars.HARBOR_REGISTRY }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: ${{ env.BUILDX_DRIVER }}
+          version: ${{ env.BUILDX_VERSION }}
+          endpoint: ${{ env.BUILDX_ENDPOINT }}
+
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Build and Push Live Server to Docker Hub
+        uses: docker/build-push-action@v5.1.0
+        with:
+          context: .
+          file: ./live/Dockerfile.live
+          platforms: ${{ env.BUILDX_PLATFORMS }}
+          tags: ${{ env.LIVE_TAG }}
+          push: true
+        env:
+          DOCKER_BUILDKIT: 1
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+
   branch_build_push_apiserver:
     if: ${{ needs.branch_build_setup.outputs.build_apiserver == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     name: Build-Push API Server Docker Image
@@ -320,10 +400,12 @@ jobs:
       - name: Set Backend Docker Tag
         run: |
           if [ "${{ github.event_name }}" == "release" ]; then
-            TAG=makeplane/backend-enterprise:stable
-            TAG=${TAG},makeplane/backend-enterprise:${{ github.event.release.tag_name }}
-            TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/backend-enterprise:stable
+            TAG=makeplane/backend-enterprise:${{ github.event.release.tag_name }}
             TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/backend-enterprise:${{ github.event.release.tag_name }}
+            if [ "${{ env.IS_PRERELEASE }}" != "true" ]; then
+              TAG=${TAG},makeplane/backend-enterprise:stable
+              TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/backend-enterprise:stable
+            fi
           elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
             TAG=makeplane/backend-enterprise:latest
             TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/backend-enterprise:latest
@@ -385,10 +467,12 @@ jobs:
       - name: Set Proxy Docker Tag
         run: |
           if [ "${{ github.event_name }}" == "release" ]; then
-            TAG=makeplane/proxy-enterprise:stable
-            TAG=${TAG},makeplane/proxy-enterprise:${{ github.event.release.tag_name }}
-            TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/proxy-enterprise:stable
+            TAG=makeplane/proxy-enterprise:${{ github.event.release.tag_name }}
             TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/proxy-enterprise:${{ github.event.release.tag_name }}
+            if [ "${{ env.IS_PRERELEASE }}" != "true" ]; then
+              TAG=${TAG},makeplane/proxy-enterprise:stable
+              TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/proxy-enterprise:stable
+            fi
           elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
             TAG=makeplane/proxy-enterprise:latest
             TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/proxy-enterprise:latest
@@ -450,10 +534,12 @@ jobs:
       - name: Set Monitor Docker Tag
         run: |
           if [ "${{ github.event_name }}" == "release" ]; then
-            TAG=makeplane/monitor-enterprise:stable
-            TAG=${TAG},makeplane/monitor-enterprise:${{ github.event.release.tag_name }}
-            TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/monitor-enterprise:stable
+            TAG=makeplane/monitor-enterprise:${{ github.event.release.tag_name }}
             TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/monitor-enterprise:${{ github.event.release.tag_name }}
+            if [ "${{ env.IS_PRERELEASE }}" != "true" ]; then
+              TAG=${TAG},makeplane/monitor-enterprise:stable
+              TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/monitor-enterprise:stable
+            fi
           elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
             TAG=makeplane/monitor-enterprise:latest
             TAG=${TAG},${{ vars.HARBOR_REGISTRY }}/${{ vars.HARBOR_PROJECT }}/monitor-enterprise:latest
@@ -548,4 +634,3 @@ jobs:
           sed -e 's@${APP_RELEASE_VERSION}@'${{ env.ARTIFACT_SUFFIX }}'@' deploy/cli-install/docker-compose-caddy.yml > ~/${{ env.ARTIFACT_SUFFIX }}/docker-compose-caddy.yml
 
           aws s3 cp ~/${{ env.ARTIFACT_SUFFIX }} s3://${{ vars.SELF_HOST_BUCKET_NAME }}/plane-enterprise/${{ env.ARTIFACT_SUFFIX }} --recursive
-

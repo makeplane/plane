@@ -1,0 +1,15 @@
+FROM node:18-alpine
+RUN apk add --no-cache libc6-compat
+# Set working directory
+WORKDIR /app
+
+COPY . .
+RUN yarn global add turbo
+RUN yarn install
+EXPOSE 3003
+
+ENV TURBO_TELEMETRY_DISABLED 1
+
+VOLUME [ "/app/node_modules", "/app/live/node_modules"]
+
+CMD ["yarn","dev", "--filter=live"]

@@ -14,5 +14,10 @@ from .payment import (
 from .payment import PaymentLinkEndpoint, WebsitePaymentLinkEndpoint
 from .subscription import SubscriptionEndpoint
 from .license_activate import WorkspaceLicenseEndpoint
-from .subscription import SubscriptionEndpoint, UpgradeSubscriptionEndpoint
+from .subscription import (
+    SubscriptionEndpoint,
+    UpgradeSubscriptionEndpoint,
+    PurchaseSubscriptionSeatEndpoint,
+    RemoveUnusedSeatsEndpoint,
+)
 from .feature_flag import FeatureFlagProxyEndpoint

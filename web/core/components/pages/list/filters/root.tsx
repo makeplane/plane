@@ -5,6 +5,7 @@ import { TPageFilterProps, TPageFilters } from "@plane/types";
 // components
 import { FilterCreatedBy, FilterCreatedDate } from "@/components/common/filters";
 import { FilterOption } from "@/components/issues";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
   filters: TPageFilters;
@@ -16,6 +17,8 @@ export const PageFiltersSelection: React.FC<Props> = observer((props) => {
   const { filters, handleFiltersUpdate, memberIds } = props;
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
+  // store
+  const { isMobile } = usePlatformOS();
 
   const handleFilters = (key: keyof TPageFilterProps, value: boolean | string | string[]) => {
     const newValues = filters.filters?.[key] ?? [];
@@ -51,7 +54,7 @@ export const PageFiltersSelection: React.FC<Props> = observer((props) => {
             placeholder="Search"
             value={filtersSearchQuery}
             onChange={(e) => setFiltersSearchQuery(e.target.value)}
-            autoFocus
+            autoFocus={!isMobile}
           />
           {filtersSearchQuery !== "" && (
             <button type="button" className="grid place-items-center" onClick={() => setFiltersSearchQuery("")}>

@@ -10,6 +10,7 @@ import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
+import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
@@ -51,8 +52,6 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
   } = props;
 
   const {
-    getIsIssuePeeked,
-    setPeekIssue,
     issue: { getIssueById },
     subIssues: { subIssueHelpersByIssueId, setSubIssueHelpers },
     toggleCreateIssueModal,
@@ -60,8 +59,11 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
   } = useIssueDetail();
   const project = useProject();
   const { getProjectStates } = useProjectState();
+  const { handleRedirection } = useIssuePeekOverviewRedirection();
   const { isMobile } = usePlatformOS();
   const issue = getIssueById(issueId);
+
+  // derived values
   const projectDetail = (issue && issue.project_id && project.getProjectById(issue.project_id)) || undefined;
   const currentIssueStateDetail =
     (issue?.project_id && getProjectStates(issue?.project_id)?.find((state) => issue?.state_id == state.id)) ||
@@ -70,13 +72,8 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
   const subIssueHelpers = subIssueHelpersByIssueId(parentIssueId);
   const subIssueCount = issue?.sub_issues_count ?? 0;
 
-  const handleIssuePeekOverview = (issue: TIssue) =>
-    workspaceSlug &&
-    issue &&
-    issue.project_id &&
-    issue.id &&
-    !getIsIssuePeeked(issue.id) &&
-    setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
+  //
+  const handleIssuePeekOverview = (issue: TIssue) => handleRedirection(workspaceSlug, issue, isMobile);
 
   if (!issue) return <></>;
 

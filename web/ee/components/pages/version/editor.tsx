@@ -3,27 +3,21 @@ import { useParams } from "next/navigation";
 // plane editor
 import { DocumentReadOnlyEditorWithRef, TDisplayConfig } from "@plane/editor";
 // plane types
-import { IUserLite, TPageVersion } from "@plane/types";
+import { IUserLite } from "@plane/types";
 // plane ui
 import { Loader } from "@plane/ui";
+// components
+import { TVersionEditorProps } from "@/components/pages";
 // hooks
 import { useMember, useUser } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web components
 import { IssueEmbedCard } from "@/plane-web/components/pages";
 // plane web hooks
-import { useWorkspacePageDetails } from "@/plane-web/hooks/store";
 import { useWorkspaceMention } from "@/plane-web/hooks/use-workspace-mention";
 
-type Props = {
-  activeVersion: string | null;
-  isCurrentVersionActive: boolean;
-  pageId: string;
-  versionDetails: TPageVersion | undefined;
-};
-
-export const WorkspacePagesVersionEditor: React.FC<Props> = observer((props) => {
-  const { activeVersion, isCurrentVersionActive, pageId, versionDetails } = props;
+export const WorkspacePagesVersionEditor: React.FC<TVersionEditorProps> = observer((props) => {
+  const { activeVersion, currentVersionDescription, isCurrentVersionActive, versionDetails } = props;
   // params
   const { workspaceSlug } = useParams();
   // store hooks
@@ -32,7 +26,6 @@ export const WorkspacePagesVersionEditor: React.FC<Props> = observer((props) => 
     getUserDetails,
     workspace: { workspaceMemberIds },
   } = useMember();
-  const currentPageDetails = useWorkspacePageDetails(pageId);
   // derived values
   const workspaceMemberDetails = workspaceMemberIds?.map((id) => getUserDetails(id) as IUserLite);
   // use-mention
@@ -91,7 +84,7 @@ export const WorkspacePagesVersionEditor: React.FC<Props> = observer((props) => 
       </div>
     );
 
-  const description = isCurrentVersionActive ? currentPageDetails.description_html : versionDetails?.description_html;
+  const description = isCurrentVersionActive ? currentVersionDescription : versionDetails?.description_html;
   if (description === undefined || description?.trim() === "") return null;
 
   return (

@@ -1,5 +1,6 @@
 export * from "./code";
 export * from "./code-inline";
+export * from "./custom-image";
 export * from "./custom-link";
 export * from "./custom-list-keymap";
 export * from "./image";
@@ -8,7 +9,6 @@ export * from "./mentions";
 export * from "./table";
 export * from "./typography";
 export * from "./core-without-props";
-export * from "./document-without-props";
 export * from "./custom-code-inline";
 export * from "./drop";
 export * from "./enter-key-extension";

@@ -13,6 +13,6 @@ from plane.graphql.types.cycle import CycleLiteType
 class GlobalSearchType:
     projects: list[ProjectLiteType]
     issues: list[IssueLiteType]
-    pages: list[PageLiteType]
     modules: list[ModuleLiteType]
     cycles: list[CycleLiteType]
+    pages: list[PageLiteType]

@@ -455,3 +455,31 @@ class WorkspacePageVersionEndpoint(BaseAPIView):
         # Serialize the page versions
         serializer = WorkspacePageVersionSerializer(page_versions, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class WorkspacePageFavoriteEndpoint(BaseAPIView):
+
+    model = UserFavorite
+
+    @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
+    def post(self, request, slug, pk):
+        workspace = Workspace.objects.get(slug=slug)
+        _ = UserFavorite.objects.create(
+            entity_identifier=pk,
+            entity_type="page",
+            user=request.user,
+            workspace_id=workspace.id,
+        )
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
+    def delete(self, request, slug, pk):
+        page_favorite = UserFavorite.objects.get(
+            project__isnull=True,
+            user=request.user,
+            workspace__slug=slug,
+            entity_identifier=pk,
+            entity_type="page",
+        )
+        page_favorite.delete(soft=False)
+        return Response(status=status.HTTP_204_NO_CONTENT)

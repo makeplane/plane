@@ -59,6 +59,12 @@ export type TProjectFilters = {
   attributes: TProjectAttributes;
   display_filters: TProjectDisplayFilters;
 };
+export enum EProjectFilters {
+  SCOPE = "scope",
+  LAYOUT = "layout",
+  ATTRIBUTES = "attributes",
+  DISPLAY_FILTERS = "display_filters",
+}
 
 // project_is structure based on the display filter group_by
 export type TProjectsBoardLayoutStructure = {

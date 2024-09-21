@@ -174,7 +174,7 @@ def generate_table_row(issue):
             if issue["assignees__first_name"] and issue["assignees__last_name"]
             else ""
         ),
-        issue["labels__name"],
+        issue["labels__name"] if issue["labels__name"] else "",
         issue["issue_cycle__cycle__name"],
         dateConverter(issue["issue_cycle__cycle__start_date"]),
         dateConverter(issue["issue_cycle__cycle__end_date"]),
@@ -207,7 +207,7 @@ def generate_json_row(issue):
             if issue["assignees__first_name"] and issue["assignees__last_name"]
             else ""
         ),
-        "Labels": issue["labels__name"],
+        "Labels": issue["labels__name"] if issue["labels__name"] else "",
         "Cycle Name": issue["issue_cycle__cycle__name"],
         "Cycle Start Date": dateConverter(
             issue["issue_cycle__cycle__start_date"]
@@ -244,9 +244,13 @@ def update_json_row(rows, row):
         )
         assignee, label = row["Assignee"], row["Labels"]
 
-        if assignee is not None and assignee not in existing_assignees:
+        if assignee is not None and (
+            existing_assignees is None or label not in existing_assignees
+        ):
             rows[matched_index]["Assignee"] += f", {assignee}"
-        if label is not None and label not in existing_labels:
+        if label is not None and (
+            existing_labels is None or label not in existing_labels
+        ):
             rows[matched_index]["Labels"] += f", {label}"
     else:
         rows.append(row)
@@ -266,9 +270,13 @@ def update_table_row(rows, row):
         existing_assignees, existing_labels = rows[matched_index][7:9]
         assignee, label = row[7:9]
 
-        if assignee is not None and assignee not in existing_assignees:
-            rows[matched_index][7] += f", {assignee}"
-        if label is not None and label not in existing_labels:
+        if assignee is not None and (
+            existing_assignees is None or label not in existing_assignees
+        ):
+            rows[matched_index][8] += f", {assignee}"
+        if label is not None and (
+            existing_labels is None or label not in existing_labels
+        ):
             rows[matched_index][8] += f", {label}"
     else:
         rows.append(row)

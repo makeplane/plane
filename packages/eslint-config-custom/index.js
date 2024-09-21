@@ -8,7 +8,7 @@ module.exports = {
   plugins: ["react", "@typescript-eslint", "import"],
   settings: {
     next: {
-      rootDir: ["web/", "space/", "admin/", "packages/*/"],
+      rootDir: ["."],
     },
   },
   globals: {

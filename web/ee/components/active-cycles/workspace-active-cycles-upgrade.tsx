@@ -6,7 +6,7 @@ import Image from "next/image";
 // icons
 import { Crown } from "lucide-react";
 // ui
-import { Button } from "@plane/ui";
+import { Button, ContentWrapper } from "@plane/ui";
 // constants
 import { WORKSPACE_ACTIVE_CYCLES_DETAILS } from "@/constants/cycle";
 // helper
@@ -20,12 +20,12 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
   const {
     userProfile: { data: userProfile },
   } = useUser();
-  const { toggleProPlanModal } = useWorkspaceSubscription();
+  const { togglePaidPlanModal } = useWorkspaceSubscription();
 
   const isDarkMode = userProfile?.theme.theme === "dark";
 
   return (
-    <div className="vertical-scrollbar scrollbar-lg flex h-full flex-col gap-10 rounded-xl px-8 pt-8">
+    <ContentWrapper>
       <div
         className={cn("item-center flex min-h-[25rem] justify-between rounded-xl", {
           "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": userProfile?.theme.theme === "dark",
@@ -40,7 +40,7 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <Button variant="primary" onClick={() => toggleProPlanModal(true)}>
+            <Button variant="primary" onClick={() => togglePaidPlanModal(true)}>
               <Crown className="h-3.5 w-3.5" />
               Upgrade
             </Button>
@@ -85,6 +85,6 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
           </div>
         ))}
       </div>
-    </div>
+    </ContentWrapper>
   );
 });

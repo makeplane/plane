@@ -13,7 +13,8 @@ from rest_framework.response import Response
 from plane.app.permissions import (
     WorkSpaceAdminPermission,
     WorkspaceEntityPermission,
-    WorkspaceUserPermission,
+    allow_permission,
+    ROLE,
 )
 
 # Module imports
@@ -37,27 +38,12 @@ from plane.db.models import (
 from plane.utils.cache import cache_response, invalidate_cache
 from plane.payment.bgtasks.member_sync_task import member_sync_task
 from .. import BaseViewSet
+from plane.payment.utils.member_payment_count import workspace_member_check
 
 
 class WorkSpaceMemberViewSet(BaseViewSet):
     serializer_class = WorkspaceMemberAdminSerializer
     model = WorkspaceMember
-
-    permission_classes = [
-        WorkspaceEntityPermission,
-    ]
-
-    def get_permissions(self):
-        if self.action == "leave":
-            self.permission_classes = [
-                WorkspaceUserPermission,
-            ]
-        else:
-            self.permission_classes = [
-                WorkspaceEntityPermission,
-            ]
-
-        return super(WorkSpaceMemberViewSet, self).get_permissions()
 
     search_fields = [
         "member__display_name",
@@ -77,6 +63,9 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         )
 
     @cache_response(60 * 60 * 2)
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
+    )
     def list(self, request, slug):
         workspace_member = WorkspaceMember.objects.get(
             member=request.user,
@@ -87,7 +76,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         # Get all active workspace members
         workspace_members = self.get_queryset()
 
-        if workspace_member.role > 10:
+        if workspace_member.role > 5:
             serializer = WorkspaceMemberAdminSerializer(
                 workspace_members,
                 fields=("id", "member", "role"),
@@ -107,6 +96,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         user=False,
         multiple=True,
     )
+    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
     def partial_update(self, request, slug, pk):
         workspace_member = WorkspaceMember.objects.get(
             pk=pk,
@@ -120,59 +110,25 @@ class WorkSpaceMemberViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Get the requested user role
-        requested_workspace_member = WorkspaceMember.objects.get(
-            workspace__slug=slug,
-            member=request.user,
-            is_active=True,
-        )
-        # Check if role is being updated
-        # One cannot update role higher than his own role
-        if (
-            "role" in request.data
-            and int(request.data.get("role", workspace_member.role))
-            > requested_workspace_member.role
-        ):
-            return Response(
-                {
-                    "error": "You cannot update a role that is higher than your own role"
-                },
-                status=status.HTTP_400_BAD_REQUEST,
+        if workspace_member.role > int(request.data.get("role")):
+            _ = ProjectMember.objects.filter(
+                workspace__slug=slug, member_id=workspace_member.member_id
+            ).update(role=int(request.data.get("role")))
+
+        if "role" in request.data:
+            allowed, _, _ = workspace_member_check(
+                slug=slug,
+                requested_role=request.data.get("role"),
+                current_role=workspace_member.role,
+                requested_invite_list=[],
             )
-
-        # TODO: Check if the workspace has reached the maximum limit of admins or guests
-        # allowed, allowed_admins, allowed_guests = workspace_member_check(
-        #     slug=slug,
-        #     current_invite_list=[],
-        #     requested_invite_list=[],
-        # )
-
-        # if "role" in request.data:
-        #     requested_role = int(request.data.get("role"))
-
-        #     if (
-        #         requested_role > 10
-        #         and allowed_admins is not None
-        #         and allowed_admins - 1 < 0
-        #     ):
-        #         return Response(
-        #             {
-        #                 "error": "You cannot update the role to admin as the workspace has reached the maximum limit of admins"
-        #             },
-        #             status=status.HTTP_400_BAD_REQUEST,
-        #         )
-
-        #     if (
-        #         requested_role <= 10
-        #         and allowed_guests is not None
-        #         and allowed_guests - 1 < 0
-        #     ):
-        #         return Response(
-        #             {
-        #                 "error": "You cannot update the role to guest or viewer as the workspace has reached the maximum limit of guests"
-        #             },
-        #             status=status.HTTP_400_BAD_REQUEST,
-        #         )
+            if not allowed:
+                return Response(
+                    {
+                        "error": "Cannot update the role as it exceeds the purchased seat limit"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
         serializer = WorkSpaceMemberSerializer(
             workspace_member, data=request.data, partial=True
@@ -195,6 +151,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
     @invalidate_cache(
         path="/api/users/me/workspaces/", user=False, multiple=True
     )
+    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
     def destroy(self, request, slug, pk):
         # Check the user role who is deleting the user
         workspace_member = WorkspaceMember.objects.get(
@@ -272,6 +229,9 @@ class WorkSpaceMemberViewSet(BaseViewSet):
     @invalidate_cache(path="/api/users/me/settings/")
     @invalidate_cache(
         path="api/users/me/workspaces/", user=False, multiple=True
+    )
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
     )
     def leave(self, request, slug):
         workspace_member = WorkspaceMember.objects.get(

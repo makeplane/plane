@@ -12,7 +12,7 @@ from rest_framework.response import Response
 # Module imports
 from .base import BaseAPIView
 from plane.app.permissions.workspace import WorkspaceOwnerPermission
-from plane.db.models import WorkspaceMember, Workspace
+from plane.db.models import WorkspaceMember, Workspace, WorkspaceMemberInvite
 from plane.authentication.utils.host import base_host
 from plane.utils.exception_logger import log_exception
 from plane.payment.utils.workspace_license_request import (
@@ -84,6 +84,21 @@ class PaymentLinkEndpoint(BaseAPIView):
 
                 # Check if the workspace is on a paid plan
                 else:
+                    # Check the active paid users in the workspace - for self hosted plans
+                    workspace_member_count = WorkspaceMember.objects.filter(
+                        workspace__slug=slug,
+                        is_active=True,
+                        member__is_bot=False,
+                        member__gt=10,
+                    ).count()
+
+                    invited_member_count = (
+                        WorkspaceMemberInvite.objects.filter(
+                            workspace__slug=slug,
+                            role__gt=10,
+                        ).count()
+                    )
+
                     # Create the payment link
                     response = requests.post(
                         f"{settings.PAYMENT_SERVER_BASE_URL}/api/payment-link/",
@@ -98,6 +113,9 @@ class PaymentLinkEndpoint(BaseAPIView):
                             "stripe_price_id": price_id,
                             "customer_email": request.user.email,
                             "members_list": list(workspace_members),
+                            "required_seats": (
+                                workspace_member_count + invited_member_count
+                            ),
                         },
                     )
                     response.raise_for_status()

@@ -25,7 +25,7 @@ export const IssueBulkOperationsRoot: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = useParams();
   // store hooks
   const { isSelectionActive, selectedEntityIds } = useMultipleSelectStore();
-  const { toggleProPlanModal } = useWorkspaceSubscription();
+  const { togglePaidPlanModal } = useWorkspaceSubscription();
   // derived values
   const isBulkOpsEnabled = useFlag(workspaceSlug?.toString(), "BULK_OPS");
   const { handleClearSelection } = selectionHelpers;
@@ -77,7 +77,7 @@ export const IssueBulkOperationsRoot: React.FC<Props> = observer((props) => {
             </div>
             {!isBulkOpsEnabled && (
               <div className="flex-shrink-0">
-                <Button variant="accent-primary" size="sm" onClick={() => toggleProPlanModal(true)}>
+                <Button variant="accent-primary" size="sm" onClick={() => togglePaidPlanModal(true)}>
                   Upgrade
                 </Button>
               </div>

@@ -92,33 +92,24 @@ export class IssueLinkStore implements IIssueLinkStore {
   };
 
   fetchLinks = async (workspaceSlug: string, projectId: string, issueId: string) => {
-    try {
-      const response = await this.issueService.fetchIssueLinks(workspaceSlug, projectId, issueId);
-      this.addLinks(issueId, response);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    const response = await this.issueService.fetchIssueLinks(workspaceSlug, projectId, issueId);
+    this.addLinks(issueId, response);
+    return response;
   };
 
   createLink = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssueLink>) => {
-    try {
-      const response = await this.issueService.createIssueLink(workspaceSlug, projectId, issueId, data);
-      const issueLinkCount = this.getLinksByIssueId(issueId)?.length ?? 0;
-      runInAction(() => {
-        this.links[issueId].push(response.id);
-        set(this.linkMap, response.id, response);
-        this.rootIssueDetailStore.rootIssueStore.issues.updateIssue(issueId, {
-          link_count: issueLinkCount + 1, // increment link count
-        });
+    const response = await this.issueService.createIssueLink(workspaceSlug, projectId, issueId, data);
+    const issueLinkCount = this.getLinksByIssueId(issueId)?.length ?? 0;
+    runInAction(() => {
+      this.links[issueId].push(response.id);
+      set(this.linkMap, response.id, response);
+      this.rootIssueDetailStore.rootIssueStore.issues.updateIssue(issueId, {
+        link_count: issueLinkCount + 1, // increment link count
       });
-
-      // fetching activity
-      this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    });
+    // fetching activity
+    this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
+    return response;
   };
 
   updateLink = async (
@@ -128,43 +119,34 @@ export class IssueLinkStore implements IIssueLinkStore {
     linkId: string,
     data: Partial<TIssueLink>
   ) => {
-    try {
-      runInAction(() => {
-        Object.keys(data).forEach((key) => {
-          set(this.linkMap, [linkId, key], data[key as keyof TIssueLink]);
-        });
+    runInAction(() => {
+      Object.keys(data).forEach((key) => {
+        set(this.linkMap, [linkId, key], data[key as keyof TIssueLink]);
       });
+    });
 
-      const response = await this.issueService.updateIssueLink(workspaceSlug, projectId, issueId, linkId, data);
+    const response = await this.issueService.updateIssueLink(workspaceSlug, projectId, issueId, linkId, data);
 
-      // fetching activity
-      this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
-      return response;
-    } catch (error) {
-      // TODO: fetch issue detail
-      throw error;
-    }
+    // fetching activity
+    this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
+    return response;
   };
 
   removeLink = async (workspaceSlug: string, projectId: string, issueId: string, linkId: string) => {
-    try {
-      const issueLinkCount = this.getLinksByIssueId(issueId)?.length ?? 0;
-      await this.issueService.deleteIssueLink(workspaceSlug, projectId, issueId, linkId);
+    const issueLinkCount = this.getLinksByIssueId(issueId)?.length ?? 0;
+    await this.issueService.deleteIssueLink(workspaceSlug, projectId, issueId, linkId);
 
-      const linkIndex = this.links[issueId].findIndex((_comment) => _comment === linkId);
-      if (linkIndex >= 0)
-        runInAction(() => {
-          this.links[issueId].splice(linkIndex, 1);
-          delete this.linkMap[linkId];
-          this.rootIssueDetailStore.rootIssueStore.issues.updateIssue(issueId, {
-            link_count: issueLinkCount - 1, // decrement link count
-          });
+    const linkIndex = this.links[issueId].findIndex((_comment) => _comment === linkId);
+    if (linkIndex >= 0)
+      runInAction(() => {
+        this.links[issueId].splice(linkIndex, 1);
+        delete this.linkMap[linkId];
+        this.rootIssueDetailStore.rootIssueStore.issues.updateIssue(issueId, {
+          link_count: issueLinkCount - 1, // decrement link count
         });
+      });
 
-      // fetching activity
-      this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
-    } catch (error) {
-      throw error;
-    }
+    // fetching activity
+    this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
   };
 }

@@ -7,19 +7,24 @@ import useSWR from "swr";
 // ui
 import { Loader, ToggleSwitch, setPromiseToast } from "@plane/ui";
 // components
-import { PageHeader } from "@/components/common";
 import { AuthenticationMethodCard } from "@/components/authentication";
-import { InstanceSAMLConfigForm } from "./form";
+import { PageHeader } from "@/components/common";
 // hooks
 import { useInstance } from "@/hooks/store";
 // icons
 import SAMLLogo from "/public/logos/saml-logo.svg";
+// plane admin hooks
+import { useInstanceFlag } from "@/plane-admin/hooks/store/use-instance-flag";
+// local components
+import { InstanceSAMLConfigForm } from "./form";
 
 const InstanceSAMLAuthenticationPage = observer(() => {
-  // store
-  const { fetchInstanceConfigurations, formattedConfig, updateInstanceConfigurations } = useInstance();
   // state
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  // store
+  const { fetchInstanceConfigurations, formattedConfig, updateInstanceConfigurations } = useInstance();
+  // plane admin store
+  const isSAMLEnabled = useInstanceFlag("OIDC_SAML_AUTH");
   // config
   const enableSAMLConfig = formattedConfig?.IS_SAML_ENABLED ?? "";
 
@@ -55,6 +60,19 @@ const InstanceSAMLAuthenticationPage = observer(() => {
         setIsSubmitting(false);
       });
   };
+
+  if (isSAMLEnabled === false) {
+    return (
+      <div className="relative container mx-auto w-full h-full p-4 py-4 my-6 space-y-6 flex flex-col">
+        <PageHeader title="Authentication - God Mode" />
+        <div className="text-center text-lg text-gray-500">
+          <p>Security Assertion Markup Language (SAML) authentication is not enabled for this instance.</p>
+          <p>Activate any of your workspace to get this feature.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <PageHeader title="Authentication - God Mode" />

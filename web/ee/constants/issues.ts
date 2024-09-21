@@ -1,11 +1,11 @@
+// types
+import { TIssueActivityComment } from "@plane/types";
 // ce constants
 import {
   TActivityFilters as TActivityFiltersCe,
   EActivityFilterType,
   ACTIVITY_FILTER_TYPE_OPTIONS as ACTIVITY_FILTER_TYPE_OPTIONS_CE,
-} from "ce/constants/issues";
-// types
-import { TIssueActivityComment } from "@plane/types";
+} from "@/ce/constants/issues";
 
 export enum EActivityFilterTypeEE {
   WORKLOG = "WORKLOG",

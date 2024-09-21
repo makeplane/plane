@@ -7,10 +7,14 @@ import { Tooltip, ControlLink } from "@plane/ui";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
-import { useIssueDetail, useProjectState } from "@/hooks/store";
+import { useIssueDetail, useIssues, useProjectState } from "@/hooks/store";
+import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
+import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
+// local types
+import { GanttStoreType } from "./base-gantt-root";
 
 type Props = {
   issueId: string;
@@ -25,22 +29,17 @@ export const IssueGanttBlock: React.FC<Props> = observer((props) => {
   const { getProjectStates } = useProjectState();
   const {
     issue: { getIssueById },
-    getIsIssuePeeked,
-    setPeekIssue,
   } = useIssueDetail();
+  // hooks
+  const { isMobile } = usePlatformOS();
+  const { handleRedirection } = useIssuePeekOverviewRedirection();
+
   // derived values
   const issueDetails = getIssueById(issueId);
   const stateDetails =
     issueDetails && getProjectStates(issueDetails?.project_id)?.find((state) => state?.id == issueDetails?.state_id);
 
-  const handleIssuePeekOverview = () =>
-    workspaceSlug &&
-    issueDetails &&
-    !issueDetails.tempId &&
-    issueDetails.project_id &&
-    !getIsIssuePeeked(issueDetails.id) &&
-    setPeekIssue({ workspaceSlug, projectId: issueDetails.project_id, issueId: issueDetails.id });
-  const { isMobile } = usePlatformOS();
+  const handleIssuePeekOverview = () => handleRedirection(workspaceSlug, issueDetails, isMobile);
 
   return (
     <div
@@ -82,20 +81,22 @@ export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
   // store hooks
   const {
     issue: { getIssueById },
-    setPeekIssue,
   } = useIssueDetail();
+  const { isMobile } = usePlatformOS();
+  const storeType = useIssueStoreType() as GanttStoreType;
+  const { issuesFilter } = useIssues(storeType);
+
+  // handlers
+  const { handleRedirection } = useIssuePeekOverviewRedirection();
+
   // derived values
   const issueDetails = getIssueById(issueId);
 
-  const handleIssuePeekOverview = () =>
-    workspaceSlug &&
-    issueDetails &&
-    issueDetails.project_id &&
-    setPeekIssue({ workspaceSlug, projectId: issueDetails.project_id, issueId: issueDetails.id });
-  const { isMobile } = usePlatformOS();
+  const handleIssuePeekOverview = () => handleRedirection(workspaceSlug, issueDetails, isMobile);
 
   return (
     <ControlLink
+      id={`issue-${issueId}`}
       href={`/${workspaceSlug}/projects/${issueDetails?.project_id}/issues/${issueDetails?.id}`}
       onClick={handleIssuePeekOverview}
       className="line-clamp-1 w-full cursor-pointer text-sm text-custom-text-100"
@@ -107,6 +108,7 @@ export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
             issueId={issueDetails.id}
             projectId={issueDetails.project_id}
             textContainerClassName="text-xs text-custom-text-300"
+            displayProperties={issuesFilter?.issueFilters?.displayProperties}
           />
         )}
         <Tooltip tooltipContent={issueDetails?.name} isMobile={isMobile}>

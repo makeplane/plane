@@ -4,13 +4,13 @@ import { observer } from "mobx-react";
 import { GroupByColumnTypes, TGroupedIssues } from "@plane/types";
 // constants
 import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
-import { EUserProjectRoles } from "@/constants/project";
 // hooks
-import { useIssues, useUser } from "@/hooks/store";
+import { useIssues, useUserPermissions } from "@/hooks/store";
 // hooks
 import { useGroupIssuesDragNDrop } from "@/hooks/use-group-dragndrop";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // components
 import { IssueLayoutHOC } from "../issue-layout-HOC";
 import { List } from "./default";
@@ -49,9 +49,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
     restoreIssue,
   } = useIssuesActions(storeType);
   // mobx store
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
   const { issueMap } = useIssues();
 
   const displayFilters = issuesFilter?.issueFilters?.displayFilters;
@@ -67,7 +65,10 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
 
   const groupedIssueIds = issues?.groupedIssueIds as TGroupedIssues | undefined;
   // auth
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditingAllowed = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
   const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issues?.viewFlags || {};
 
   const canEditProperties = useCallback(
