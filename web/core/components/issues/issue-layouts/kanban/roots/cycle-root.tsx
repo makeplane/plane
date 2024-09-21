@@ -11,8 +11,6 @@ import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/u
 // components
 import { BaseKanBanRoot } from "../base-kanban-root";
 
-export interface ICycleKanBanLayout {}
-
 export const CycleKanBanLayout: React.FC = observer(() => {
   const { workspaceSlug, projectId, cycleId } = useParams();
 

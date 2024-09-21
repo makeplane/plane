@@ -7,7 +7,9 @@
   "type": "module",
   "scripts": {
     "build": "babel src --out-dir dist --extensions \".ts,.js\"",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:errors": "eslint . --ext .ts,.tsx --quiet"
   },
   "keywords": [],
   "author": "",

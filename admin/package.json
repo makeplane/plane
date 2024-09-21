@@ -8,7 +8,8 @@
     "build": "next build",
     "preview": "next build && next start",
     "start": "next start",
-    "lint": "eslint . --ext .ts,.tsx"
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:errors": "eslint . --ext .ts,.tsx --quiet"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.19",

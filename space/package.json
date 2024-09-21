@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint . --ext .ts,.tsx",
+    "lint:errors": "eslint . --ext .ts,.tsx --quiet",
     "export": "next export"
   },
   "dependencies": {

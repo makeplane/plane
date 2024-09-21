@@ -15,6 +15,7 @@
     "dev": "turbo run dev --concurrency=13",
     "start": "turbo run start",
     "lint": "turbo run lint",
+    "lint:errors": "turbo run lint:errors",
     "clean": "turbo run clean",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
