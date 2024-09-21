@@ -15,7 +15,6 @@ import { CustomCollaborationCursor } from "./collaboration-cursor";
 
 type Props = {
   disabledExtensions?: TExtensions[];
-  fileHandler: TFileHandler;
   issueEmbedConfig: TIssueEmbedConfig | undefined;
   provider: HocuspocusProvider;
   userDetails: TUserDetails;
