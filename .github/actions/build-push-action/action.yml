@@ -95,16 +95,16 @@ runs:
       run: |
         FLAT_BRANCH_VERSION=$(echo "${{ github.ref_name }}" | sed 's/[^a-zA-Z0-9.-]//g')
 
-        semver_regex="^v([0-9]+)\.([0-9]+)\.([0-9]+)(-[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*)?$"
-        if [[ ! ${{ env.REL_VERSION }} =~ $semver_regex ]]; then
-          echo "Invalid Release Version Format : ${{ env.REL_VERSION }}"
-          echo "Please provide a valid SemVer version"
-          echo "e.g. v1.2.3 or v1.2.3-alpha-1"
-          echo "Exiting the build process"
-          exit 1  # Exit with status 1 to fail the step
-        fi
-
         if [ "${{ env.BUILD_RELEASE }}" == "true" ]; then
+          semver_regex="^v([0-9]+)\.([0-9]+)\.([0-9]+)(-[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*)?$"
+          if [[ ! ${{ env.REL_VERSION }} =~ $semver_regex ]]; then
+            echo "Invalid Release Version Format : ${{ env.REL_VERSION }}"
+            echo "Please provide a valid SemVer version"
+            echo "e.g. v1.2.3 or v1.2.3-alpha-1"
+            echo "Exiting the build process"
+            exit 1  # Exit with status 1 to fail the step
+          fi
+
           TAG=${{ env.IMG_OWNER }}/${{ env.IMG_NAME }}:${{ env.REL_VERSION }}
 
           if [ "${{ env.HARBOR_PUSH }}" == "true" ]; then
