@@ -1,12 +1,15 @@
 "use client";
 
+import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { ChevronRight, Globe2, Lock, Plus } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import { ChevronRight, Globe2, LoaderCircle, Lock, Plus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
-// types
-import { TPageNavigationTabs } from "@plane/types";
+// plane types
+import { TPage, TPageNavigationTabs } from "@plane/types";
+// plane ui
+import { setToast, TOAST_TYPE } from "@plane/ui";
 // ui
 import { ArchiveIcon, Tooltip } from "@plane/ui";
 // constants
@@ -21,15 +24,40 @@ import { PagesAppSidebarListItem } from "@/plane-web/components/pages";
 import { useWorkspacePages } from "@/plane-web/hooks/store";
 
 export const PagesAppSidebarList = observer(() => {
+  // states
+  const [isCreatingPage, setIsCreatingPage] = useState<TPageNavigationTabs | null>(null);
   // params
+  const router = useRouter();
   const { workspaceSlug } = useParams();
   // store hooks
   const { sidebarCollapsed } = useAppTheme();
   const { setTrackElement } = useEventTracker();
   const { toggleCreatePageModal } = useCommandPalette();
-  const { getCurrentWorkspacePageIdsByType } = useWorkspacePages();
+  const { getCurrentWorkspacePageIdsByType, createPage } = useWorkspacePages();
   // derived values
   const isCollapsed = sidebarCollapsed || false;
+  // handle page create
+  const handleCreatePage = async (pageType: TPageNavigationTabs) => {
+    setIsCreatingPage(pageType);
+
+    const payload: Partial<TPage> = {
+      access: pageType === "private" ? EPageAccess.PRIVATE : EPageAccess.PUBLIC,
+    };
+
+    await createPage(payload)
+      .then((res) => {
+        const pageId = `/${workspaceSlug}/pages/${res?.id}`;
+        router.push(pageId);
+      })
+      .catch((err) =>
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: err?.data?.error || "Page could not be created. Please try again.",
+        })
+      )
+      .finally(() => setIsCreatingPage(null));
+  };
 
   const sectionsList: {
     [key in TPageNavigationTabs]: {
@@ -93,13 +121,14 @@ export const PagesAppSidebarList = observer(() => {
                       className="grid place-items-center hover:bg-custom-background-80 p-0.5 rounded"
                       onClick={() => {
                         setTrackElement("Sidebar");
-                        toggleCreatePageModal({
-                          isOpen: true,
-                          pageAccess: section.key === "public" ? EPageAccess.PUBLIC : EPageAccess.PRIVATE,
-                        });
+                        handleCreatePage(section.key);
                       }}
                     >
-                      <Plus className="size-3.5" />
+                      {isCreatingPage === section.key ? (
+                        <LoaderCircle className="size-3.5 animate-spin" />
+                      ) : (
+                        <Plus className="size-3.5" />
+                      )}
                     </button>
                   )}
                   <Disclosure.Button
