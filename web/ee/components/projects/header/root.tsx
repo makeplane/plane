@@ -70,7 +70,7 @@ export const ProjectsListHeader = observer(() => {
             <ProjectDisplayFiltersDropdown workspaceSlug={workspaceSlug.toString()} />
           </div>
           {/* create project button */}
-          <ProjectCreateButton />
+          {!isArchived && <ProjectCreateButton />}
         </div>
       </div>
     </div>
