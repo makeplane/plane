@@ -1,6 +1,7 @@
 "use client";
 
 import { FC } from "react";
+import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Dialog } from "@headlessui/react";
 // types
@@ -20,7 +21,7 @@ export type SelfHostUpgradeModalProps = {
   handleClose: () => void;
 };
 
-export const SelfHostUpgradeModal: FC<SelfHostUpgradeModalProps> = (props) => {
+export const SelfHostUpgradeModal: FC<SelfHostUpgradeModalProps> = observer((props) => {
   const { isOpen, handleClose } = props;
   // params
   const { workspaceSlug } = useParams();
@@ -105,4 +106,4 @@ export const SelfHostUpgradeModal: FC<SelfHostUpgradeModalProps> = (props) => {
       </div>
     </ModalCore>
   );
-};
+});
