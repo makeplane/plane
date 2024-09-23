@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 // editor
-import { EditorReadOnlyRefApi, EditorRefApi, useEditorMarkings } from "@plane/editor";
+import { EditorRefApi } from "@plane/editor";
 // types
 import { TPage } from "@plane/types";
 // ui
@@ -44,8 +44,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
   const { createPage } = useProjectPages();
   // derived values
   const { access, description_html, name, isContentEditable } = page;
-  // editor markings hook
-  const { markings, updateMarkings } = useEditorMarkings();
+
   // update query params
   const { updateQueryParams } = useQueryParams();
 
@@ -127,7 +126,6 @@ export const PageRoot = observer((props: TPageRootProps) => {
         editorRef={editorRef}
         handleDuplicatePage={handleDuplicatePage}
         hasConnectionFailed={hasConnectionFailed}
-        markings={markings}
         page={page}
         readOnlyEditorReady={readOnlyEditorReady}
         readOnlyEditorRef={readOnlyEditorRef}
@@ -135,15 +133,14 @@ export const PageRoot = observer((props: TPageRootProps) => {
         sidePeekVisible={sidePeekVisible}
       />
       <PageEditorBody
+        editorReady={editorReady}
         editorRef={editorRef}
         handleConnectionStatus={(status) => setHasConnectionFailed(status)}
         handleEditorReady={(val) => setEditorReady(val)}
         handleReadOnlyEditorReady={() => setReadOnlyEditorReady(true)}
-        markings={markings}
         page={page}
         readOnlyEditorRef={readOnlyEditorRef}
         sidePeekVisible={sidePeekVisible}
-        updateMarkings={updateMarkings}
       />
     </>
   );
