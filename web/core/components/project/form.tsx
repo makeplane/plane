@@ -155,7 +155,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                   isOpen={isOpen}
                   handleToggle={(val: boolean) => setIsOpen(val)}
                   className="flex items-center justify-center"
-                  buttonClassName="flex h-[52px] w-[52px] flex-shrink-0 items-center justify-center rounded-lg bg-custom-background-90"
+                  buttonClassName="flex h-[52px] w-[52px] flex-shrink-0 items-center justify-center rounded-lg bg-white/10"
                   label={<Logo logo={value} size={28} />}
                   onChange={(val) => {
                     let logoValue = {};
