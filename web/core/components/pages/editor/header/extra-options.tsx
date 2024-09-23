@@ -68,8 +68,8 @@ export const PageExtraOptions: React.FC<Props> = observer((props) => {
       )}
       {isContentEditable && !isOnline && (
         <Tooltip
-          tooltipHeading="You are offline"
-          tooltipContent="All changes made will be saved locally and will be synced when the internet connection is re-established."
+          tooltipHeading="You are offline."
+          tooltipContent="You can continue making changes. They will be synced when you are back online."
         >
           <div className="flex-shrink-0 flex h-7 items-center gap-2 rounded-full bg-custom-background-80 px-3 py-0.5 text-xs font-medium text-custom-text-300">
             <span className="flex-shrink-0 size-1.5 rounded-full bg-custom-text-300" />
