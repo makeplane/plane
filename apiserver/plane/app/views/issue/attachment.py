@@ -27,7 +27,11 @@ class IssueAttachmentEndpoint(BaseAPIView):
     def post(self, request, slug, project_id, issue_id):
         serializer = IssueAttachmentSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(project_id=project_id, issue_id=issue_id)
+            serializer.save(
+                project_id=project_id,
+                entity_identifier=issue_id,
+                entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+            )
             issue_activity.delay(
                 type="attachment.activity.created",
                 requested_data=None,
