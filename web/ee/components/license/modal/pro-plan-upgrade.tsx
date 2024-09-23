@@ -1,6 +1,7 @@
 "use client";
 
 import { FC } from "react";
+import { observer } from "mobx-react";
 import orderBy from "lodash/orderBy";
 import { CheckCircle, Loader } from "lucide-react";
 import { Tab } from "@headlessui/react";
@@ -23,7 +24,7 @@ export type ProPlanUpgradeProps = {
   showTrialButton?: boolean;
 };
 
-export const ProPlanUpgrade: FC<ProPlanUpgradeProps> = (props) => {
+export const ProPlanUpgrade: FC<ProPlanUpgradeProps> = observer((props) => {
   const {
     proProduct,
     basePlan,
@@ -142,4 +143,4 @@ export const ProPlanUpgrade: FC<ProPlanUpgradeProps> = (props) => {
       </Tab.Group>
     </div>
   );
-};
+});

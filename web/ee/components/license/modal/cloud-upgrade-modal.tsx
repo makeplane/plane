@@ -1,6 +1,7 @@
 "use client";
 
 import { FC, useState } from "react";
+import { observer } from "mobx-react";
 import orderBy from "lodash/orderBy";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -37,7 +38,7 @@ export const calculateYearlyDiscount = (monthlyPrice: number, yearlyPricePerMont
   return Math.floor(discountPercentage);
 };
 
-export const CloudUpgradeModal: FC<CloudUpgradeModalProps> = (props) => {
+export const CloudUpgradeModal: FC<CloudUpgradeModalProps> = observer((props) => {
   const { isOpen, handleClose, handleSuccessModal, canFetchProducts = true } = props;
   // params
   const { workspaceSlug } = useParams();
@@ -47,6 +48,8 @@ export const CloudUpgradeModal: FC<CloudUpgradeModalProps> = (props) => {
   // store hooks
   const { captureEvent } = useEventTracker();
   const { workspaceInfoBySlug } = useUserPermissions();
+
+  if (!workspaceSlug) return <></>;
 
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, freeTrialSubscription } =
     useWorkspaceSubscription();
@@ -212,4 +215,4 @@ export const CloudUpgradeModal: FC<CloudUpgradeModalProps> = (props) => {
       </div>
     </ModalCore>
   );
-};
+});
