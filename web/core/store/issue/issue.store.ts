@@ -77,7 +77,7 @@ export class IssueStore implements IIssueStore {
    * @returns {void}
    */
   updateIssue = (issueId: string, issue: Partial<TIssue>) => {
-    if (!issue || !issueId || isEmpty(this.issuesMap) || !this.issuesMap[issueId]) return;
+    if (!issue || !issueId || !this.issuesMap[issueId]) return;
     runInAction(() => {
       set(this.issuesMap, [issueId, "updated_at"], getCurrentDateTimeInISO());
       Object.keys(issue).forEach((key) => {
@@ -92,7 +92,7 @@ export class IssueStore implements IIssueStore {
    * @returns {void}
    */
   removeIssue = (issueId: string) => {
-    if (!issueId || isEmpty(this.issuesMap) || !this.issuesMap[issueId]) return;
+    if (!issueId || !this.issuesMap[issueId]) return;
     runInAction(() => {
       delete this.issuesMap[issueId];
     });
@@ -105,7 +105,7 @@ export class IssueStore implements IIssueStore {
    * @returns {TIssue | undefined}
    */
   getIssueById = computedFn((issueId: string) => {
-    if (!issueId || isEmpty(this.issuesMap) || !this.issuesMap[issueId]) return undefined;
+    if (!issueId || !this.issuesMap[issueId]) return undefined;
     return this.issuesMap[issueId];
   });
 
@@ -116,7 +116,7 @@ export class IssueStore implements IIssueStore {
    * @returns {Record<string, TIssue> | undefined}
    */
   getIssuesByIds = computedFn((issueIds: string[], type: "archived" | "un-archived") => {
-    if (!issueIds || issueIds.length <= 0 || isEmpty(this.issuesMap)) return [];
+    if (!issueIds || issueIds.length <= 0) return [];
     const filteredIssues: TIssue[] = [];
     Object.values(issueIds).forEach((issueId) => {
       // if type is archived then check archived_at is not null

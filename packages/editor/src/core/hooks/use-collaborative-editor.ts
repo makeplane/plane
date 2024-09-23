@@ -73,10 +73,6 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     editorProps,
     editorClassName,
     enableHistory: false,
-    fileHandler,
-    handleEditorReady,
-    forwardedRef,
-    mentionHandler,
     extensions: [
       SideMenuExtension({
         aiEnabled: !disabledExtensions?.includes("ai"),
@@ -93,7 +89,12 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
         userDetails: user,
       }),
     ],
+    fileHandler,
+    handleEditorReady,
+    forwardedRef,
+    mentionHandler,
     placeholder,
+    provider,
     tabIndex,
     provider,
   });

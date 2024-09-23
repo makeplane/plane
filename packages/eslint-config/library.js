@@ -1,19 +1,25 @@
+const { resolve } = require("node:path");
+
+const project = resolve(process.cwd(), "tsconfig.json");
+
+/** @type {import("eslint").Linter.Config} */
 module.exports = {
-  extends: ["next", "prettier", "plugin:@typescript-eslint/recommended"],
-  parser: "@typescript-eslint/parser",
-  parserOptions: {
-    ecmaVersion: 2021, // Or the ECMAScript version you are using
-    sourceType: "module", // Or 'script' if you're using CommonJS or other modules
-  },
+  extends: ["prettier", "plugin:@typescript-eslint/recommended"],
   plugins: ["react", "@typescript-eslint", "import"],
-  settings: {
-    next: {
-      rootDir: ["."],
-    },
-  },
   globals: {
-    React: "readonly",
-    JSX: "readonly",
+    React: true,
+    JSX: true,
+  },
+  env: {
+    node: true,
+    browser: true,
+  },
+  settings: {
+    "import/resolver": {
+      typescript: {
+        project,
+      },
+    },
   },
   rules: {
     "no-useless-escape": "off",
@@ -32,18 +38,12 @@ module.exports = {
     "react/self-closing-comp": ["error", { component: true, html: true }],
     "react/jsx-boolean-value": "error",
     "react/jsx-no-duplicate-props": "error",
-    "react-hooks/exhaustive-deps": "warn",
-    "@typescript-eslint/no-unused-vars": ["error"],
+    // "react-hooks/exhaustive-deps": "warn",
+    "@typescript-eslint/no-unused-expressions": "warn",
+    "@typescript-eslint/no-unused-vars": ["warn"],
     "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/no-useless-empty-export": "error",
-    "@typescript-eslint/prefer-ts-expect-error": "error",
-    "@typescript-eslint/naming-convention": [
-      "error",
-      {
-        selector: ["function", "variable"],
-        format: ["camelCase", "snake_case", "UPPER_CASE", "PascalCase"],
-        leadingUnderscore: "allow",
-      },
-    ],
+    "@typescript-eslint/prefer-ts-expect-error": "warn",
   },
+  ignorePatterns: [".*.js", "node_modules/", "dist/"],
 };

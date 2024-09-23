@@ -17,7 +17,6 @@ import { IssueProperties } from "@/components/issues/issue-layouts/properties";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useIssueDetail, useProject } from "@/hooks/store";
-import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
@@ -70,15 +69,20 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
   // hooks
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
   const { getProjectIdentifierById } = useProject();
-  const { getIsIssuePeeked, peekIssue, subIssues: subIssuesStore } = useIssueDetail();
-  const { handleRedirection } = useIssuePeekOverviewRedirection();
-  const { isMobile } = usePlatformOS();
+  const { getIsIssuePeeked, peekIssue, setPeekIssue, subIssues: subIssuesStore } = useIssueDetail();
 
-  // handlers
-  const handleIssuePeekOverview = (issue: TIssue) => handleRedirection(workspaceSlug, issue, isMobile, nestingLevel);
+  const handleIssuePeekOverview = (issue: TIssue) =>
+    workspaceSlug &&
+    issue &&
+    issue.project_id &&
+    issue.id &&
+    !getIsIssuePeeked(issue.id) &&
+    setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id, nestingLevel: nestingLevel });
 
   const issue = issuesMap[issueId];
   const subIssuesCount = issue?.sub_issues_count ?? 0;
+
+  const { isMobile } = usePlatformOS();
 
   useEffect(() => {
     const element = issueRef.current;
@@ -126,155 +130,128 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
   };
 
   //TODO: add better logic. This is to have a min width for ID/Key based on the length of project identifier
-  const keyMinWidth = displayProperties?.key ? (projectIdentifier?.length ?? 0) * 7 : 0;
+  const keyMinWidth = (projectIdentifier?.length ?? 0) * 7;
 
   return (
-    <Row
-      ref={issueRef}
-      className={cn(
-        "group/list-block min-h-11 relative flex flex-col gap-3 bg-custom-background-100 hover:bg-custom-background-90 py-3 text-sm transition-colors border border-transparent",
-        {
-          "border-custom-primary-70": getIsIssuePeeked(issue.id) && peekIssue?.nestingLevel === nestingLevel,
-          "border-custom-border-400": isIssueActive,
-          "last:border-b-transparent": !getIsIssuePeeked(issue.id) && !isIssueActive,
-          "bg-custom-primary-100/5 hover:bg-custom-primary-100/10": isIssueSelected,
-          "bg-custom-background-80": isCurrentBlockDragging,
-          "md:flex-row md:items-center": isSidebarCollapsed,
-          "lg:flex-row lg:items-center": !isSidebarCollapsed,
-        }
-      )}
-      onDragStart={() => {
-        if (!canDrag) {
-          setToast({
-            type: TOAST_TYPE.WARNING,
-            title: "Cannot move issue",
-            message: "Drag and drop is disabled for the current grouping",
-          });
-        }
-      }}
+    <ControlLink
+      id={`issue-${issue.id}`}
+      href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${issue.id}`}
+      onClick={() => handleIssuePeekOverview(issue)}
+      className="w-full truncate cursor-pointer text-sm text-custom-text-100"
+      disabled={!!issue?.tempId}
     >
-      <div className="flex w-full truncate">
-        <div className="flex flex-grow items-center gap-0.5 truncate">
-          <div className="flex items-center gap-1" style={isSubIssue ? { marginLeft } : {}}>
-            {/* select checkbox */}
-            {projectId && canSelectIssues && (
-              <Tooltip
-                tooltipContent={
-                  <>
-                    Only issues within the current
-                    <br />
-                    project can be selected.
-                  </>
-                }
-                disabled={issue.project_id === projectId}
-              >
-                <div className="flex-shrink-0 grid place-items-center w-3.5 absolute left-1">
-                  <MultipleSelectEntityAction
-                    className={cn(
-                      "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto transition-opacity",
-                      {
-                        "opacity-100 pointer-events-auto": isIssueSelected,
-                      }
-                    )}
-                    groupId={groupId}
-                    id={issue.id}
-                    selectionHelpers={selectionHelpers}
-                    disabled={issue.project_id !== projectId}
-                  />
+      <Row
+        ref={issueRef}
+        className={cn(
+          "group/list-block min-h-11 relative flex flex-col gap-3 bg-custom-background-100 hover:bg-custom-background-90 py-3 text-sm transition-colors border border-transparent",
+          {
+            "border-custom-primary-70": getIsIssuePeeked(issue.id) && peekIssue?.nestingLevel === nestingLevel,
+            "border-custom-border-400": isIssueActive,
+            "last:border-b-transparent": !getIsIssuePeeked(issue.id) && !isIssueActive,
+            "bg-custom-primary-100/5 hover:bg-custom-primary-100/10": isIssueSelected,
+            "bg-custom-background-80": isCurrentBlockDragging,
+            "md:flex-row md:items-center": isSidebarCollapsed,
+            "lg:flex-row lg:items-center": !isSidebarCollapsed,
+          }
+        )}
+        onDragStart={() => {
+          if (!canDrag) {
+            setToast({
+              type: TOAST_TYPE.WARNING,
+              title: "Cannot move issue",
+              message: "Drag and drop is disabled for the current grouping",
+            });
+          }
+        }}
+      >
+        <div className="flex w-full truncate">
+          <div className="flex flex-grow items-center gap-0.5 truncate">
+            <div className="flex items-center gap-1" style={isSubIssue ? { marginLeft } : {}}>
+              {/* select checkbox */}
+              {projectId && canSelectIssues && (
+                <Tooltip
+                  tooltipContent={
+                    <>
+                      Only issues within the current
+                      <br />
+                      project can be selected.
+                    </>
+                  }
+                  disabled={issue.project_id === projectId}
+                  renderByDefault={false}
+                >
+                  <div className="flex-shrink-0 grid place-items-center w-3.5 absolute left-1">
+                    <MultipleSelectEntityAction
+                      className={cn(
+                        "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto transition-opacity",
+                        {
+                          "opacity-100 pointer-events-auto": isIssueSelected,
+                        }
+                      )}
+                      groupId={groupId}
+                      id={issue.id}
+                      selectionHelpers={selectionHelpers}
+                      disabled={issue.project_id !== projectId}
+                    />
+                  </div>
+                </Tooltip>
+              )}
+              {displayProperties && displayProperties?.key && (
+                <div className="flex-shrink-0" style={{ minWidth: `${keyMinWidth}px` }}>
+                  {issue.project_id && (
+                    <IssueIdentifier
+                      issueId={issueId}
+                      projectId={issue.project_id}
+                      textContainerClassName="text-xs font-medium text-custom-text-300"
+                    />
+                  )}
                 </div>
-              </Tooltip>
-            )}
-            {displayProperties && (displayProperties.key || displayProperties.issue_type) && (
-              <div className="flex-shrink-0" style={{ minWidth: `${keyMinWidth}px` }}>
-                {issue.project_id && (
-                  <IssueIdentifier
-                    issueId={issueId}
-                    projectId={issue.project_id}
-                    textContainerClassName="text-xs font-medium text-custom-text-300"
-                    displayProperties={displayProperties}
-                  />
+              )}
+
+              {/* sub-issues chevron */}
+              <div className="size-4 grid place-items-center flex-shrink-0">
+                {subIssuesCount > 0 && (
+                  <button
+                    type="button"
+                    className="size-4 grid place-items-center rounded-sm text-custom-text-400 hover:text-custom-text-300"
+                    onClick={handleToggleExpand}
+                  >
+                    <ChevronRight
+                      className={cn("size-4", {
+                        "rotate-90": isExpanded,
+                      })}
+                      strokeWidth={2.5}
+                    />
+                  </button>
                 )}
               </div>
-            )}
 
-            {/* sub-issues chevron */}
-            <div className="size-4 grid place-items-center flex-shrink-0">
-              {subIssuesCount > 0 && (
-                <button
-                  type="button"
-                  className="size-4 grid place-items-center rounded-sm text-custom-text-400 hover:text-custom-text-300"
-                  onClick={handleToggleExpand}
-                >
-                  <ChevronRight
-                    className={cn("size-4", {
-                      "rotate-90": isExpanded,
-                    })}
-                    strokeWidth={2.5}
-                  />
-                </button>
+              {issue?.tempId !== undefined && (
+                <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
               )}
             </div>
 
-            {issue?.tempId !== undefined && (
-              <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
-            )}
-          </div>
-
-          {issue?.is_draft ? (
-            <Tooltip
-              tooltipContent={issue.name}
-              isMobile={isMobile}
-              position="top-left"
-              disabled={isCurrentBlockDragging}
-              renderByDefault={false}
-            >
-              <p className="truncate">{issue.name}</p>
-            </Tooltip>
-          ) : (
-            <ControlLink
-              id={`issue-${issue.id}`}
-              href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${
-                issue.id
-              }`}
-              onClick={() => handleIssuePeekOverview(issue)}
-              className="w-full truncate cursor-pointer text-sm text-custom-text-100"
-              disabled={!!issue?.tempId}
-            >
+            {issue?.is_draft ? (
+              <Tooltip
+                tooltipContent={issue.name}
+                isMobile={isMobile}
+                position="top-left"
+                disabled={isCurrentBlockDragging}
+                renderByDefault={false}
+              >
+                <p className="truncate">{issue.name}</p>
+              </Tooltip>
+            ) : (
               <Tooltip tooltipContent={issue.name} isMobile={isMobile} position="top-left" renderByDefault={false}>
                 <p className="truncate">{issue.name}</p>
               </Tooltip>
-            </ControlLink>
-          )}
-        </div>
-        {!issue?.tempId && (
-          <div
-            className={cn("block border border-custom-border-300 rounded", {
-              "md:hidden": isSidebarCollapsed,
-              "lg:hidden": !isSidebarCollapsed,
-            })}
-          >
-            {quickActions({
-              issue,
-              parentRef: issueRef,
-            })}
+            )}
           </div>
-        )}
-      </div>
-      <div className="flex flex-shrink-0 items-center gap-2">
-        {!issue?.tempId ? (
-          <>
-            <IssueProperties
-              className={`relative flex flex-wrap ${isSidebarCollapsed ? "md:flex-grow md:flex-shrink-0" : "lg:flex-grow lg:flex-shrink-0"} items-center gap-2 whitespace-nowrap`}
-              issue={issue}
-              isReadOnly={!canEditIssueProperties}
-              updateIssue={updateIssue}
-              displayProperties={displayProperties}
-              activeLayout="List"
-            />
+          {!issue?.tempId && (
             <div
-              className={cn("hidden", {
-                "md:flex": isSidebarCollapsed,
-                "lg:flex": !isSidebarCollapsed,
+              className={cn("block border border-custom-border-300 rounded", {
+                "md:hidden": isSidebarCollapsed,
+                "lg:hidden": !isSidebarCollapsed,
               })}
             >
               {quickActions({
@@ -282,13 +259,38 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
                 parentRef: issueRef,
               })}
             </div>
-          </>
-        ) : (
-          <div className="h-4 w-4">
-            <Spinner className="h-4 w-4" />
-          </div>
-        )}
-      </div>
-    </Row>
+          )}
+        </div>
+        <div className="flex flex-shrink-0 items-center gap-2">
+          {!issue?.tempId ? (
+            <>
+              <IssueProperties
+                className={`relative flex flex-wrap ${isSidebarCollapsed ? "md:flex-grow md:flex-shrink-0" : "lg:flex-grow lg:flex-shrink-0"} items-center gap-2 whitespace-nowrap`}
+                issue={issue}
+                isReadOnly={!canEditIssueProperties}
+                updateIssue={updateIssue}
+                displayProperties={displayProperties}
+                activeLayout="List"
+              />
+              <div
+                className={cn("hidden", {
+                  "md:flex": isSidebarCollapsed,
+                  "lg:flex": !isSidebarCollapsed,
+                })}
+              >
+                {quickActions({
+                  issue,
+                  parentRef: issueRef,
+                })}
+              </div>
+            </>
+          ) : (
+            <div className="h-4 w-4">
+              <Spinner className="h-4 w-4" />
+            </div>
+          )}
+        </div>
+      </Row>
+    </ControlLink>
   );
 });

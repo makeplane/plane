@@ -1,21 +1,15 @@
 {
-  "extends": "tsconfig/nextjs.json",
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"],
+  "extends": "@plane/typescript-config/nextjs.json",
   "compilerOptions": {
+    "plugins": [{ "name": "next" }],
     "baseUrl": ".",
-    "jsx": "preserve",
-    "esModuleInterop": true,
     "paths": {
       "@/*": ["core/*"],
       "@/helpers/*": ["helpers/*"],
       "@/public/*": ["public/*"],
       "@/plane-admin/*": ["ce/*"]
-    },
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ]
-  }
+    }
+  },
+  "include": ["next-env.d.ts", "next.config.js", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
 }

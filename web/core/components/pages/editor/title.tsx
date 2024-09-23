@@ -56,6 +56,7 @@ export const PageEditorTitle: React.FC<Props> = observer((props) => {
             maxLength={255}
             onFocus={() => setIsLengthVisible(true)}
             onBlur={() => setIsLengthVisible(false)}
+            autoFocus
           />
           <div
             className={cn(

@@ -49,6 +49,7 @@ export const TrackImageRestorationPlugin = (editor: Editor, restoreImage: Restor
 
 async function onNodeRestored(src: string, restoreImage: RestoreImage): Promise<void> {
   try {
+    if (!src) return;
     const assetUrlWithWorkspaceId = new URL(src).pathname.substring(1);
     await restoreImage(assetUrlWithWorkspaceId);
   } catch (error) {
