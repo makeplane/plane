@@ -17,6 +17,8 @@ def move_attachment_to_fileasset(apps, schema_editor):
         "external_source",
         "external_id",
         "deleted_at",
+        "created_by_id",
+        "updated_by_id",
     ):
         bulk_issue_attachment.append(
             FileAsset(
@@ -29,6 +31,9 @@ def move_attachment_to_fileasset(apps, schema_editor):
                 external_source=issue_attachment["external_source"],
                 external_id=issue_attachment["external_id"],
                 deleted_at=issue_attachment["deleted_at"],
+                created_by_id=issue_attachment["created_by_id"],
+                updated_by_id=issue_attachment["updated_by_id"],
+                size=issue_attachment["attributes"].get("size", 0),
             )
         )
 
