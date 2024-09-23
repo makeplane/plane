@@ -78,7 +78,7 @@ export const useEditor = (props: CustomEditorProps) => {
         },
         mentionConfig: {
           mentionSuggestions: mentionHandler.suggestions ?? (() => Promise.resolve<IMentionSuggestion[]>([])),
-          mentionHighlights: mentionHandler.highlights ?? [],
+          mentionHighlights: mentionHandler.highlights,
         },
         placeholder,
         tabIndex,
