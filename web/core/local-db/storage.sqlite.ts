@@ -2,7 +2,6 @@ import set from "lodash/set";
 // plane
 import { EIssueGroupBYServerToProperty } from "@plane/constants";
 import { TIssue } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
 // lib
 import { rootStore } from "@/lib/store-context";
 // services
@@ -240,11 +239,6 @@ export class Storage {
 
     if (status === "loading") {
       await createIndexes();
-      setToast({
-        title: "Project synced",
-        message: `in ${Math.round((performance.now() - start) / 1000)}s`,
-        type: TOAST_TYPE.SUCCESS,
-      });
     }
     this.setOption(projectId, "ready");
     this.setStatus(projectId, "ready");

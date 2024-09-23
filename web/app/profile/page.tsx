@@ -417,6 +417,7 @@ const ProfileSettingsPage = observer(() => {
             </div>
           </div>
         </form>
+
         <Disclosure as="div" className="border-t border-custom-border-100 md:px-8">
           {({ open }) => (
             <>
@@ -436,7 +437,8 @@ const ProfileSettingsPage = observer(() => {
                 <Disclosure.Panel>
                   <div className="flex justify-between pb-4">
                     <span className="text-sm tracking-tight">
-                      Enabling this will let the application cache data on system for faster loading experience
+                      Toggled on by default to keep Plane performant. Disable this if you are facing any issues with
+                      Plane. Applicable only to this device.
                     </span>
                     <ToggleSwitch value={canUseLocalDB} onChange={() => toggleLocalDB()} />
                   </div>
