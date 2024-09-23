@@ -4,6 +4,10 @@ import { v4 as uuidv4 } from "uuid";
 import { handleAuthentication } from "@/core/lib/authentication.js";
 // extensions
 import { getExtensions } from "@/core/extensions/index.js";
+import {
+  DocumentEventsServer,
+  documentEventResponses,
+} from "@plane/editor/lib";
 
 export const getHocusPocusServer = async () => {
   const extensions = await getExtensions();
@@ -38,20 +42,12 @@ export const getHocusPocusServer = async () => {
       }
     },
     async onStateless({ payload, document }) {
-      if (payload === "lock") {
-        document.broadcastStateless("locked");
-      }
-      if (payload === "unlock") {
-        document.broadcastStateless("unlocked");
-      }
-      if (payload === "archive") {
-        document.broadcastStateless("archived");
-      }
-      if (payload === "unarchive") {
-        document.broadcastStateless("unarchived");
+      const response = documentEventResponses[payload as DocumentEventsServer];
+      if (response) {
+        document.broadcastStateless(response);
       }
     },
     extensions,
-    debounce: 10000
+    debounce: 10000,
   });
 };

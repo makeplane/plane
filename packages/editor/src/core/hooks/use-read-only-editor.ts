@@ -12,7 +12,6 @@ import { IMarking, scrollSummary } from "@/helpers/scroll-to-node";
 import { CoreReadOnlyEditorProps } from "@/props";
 // types
 import { EditorReadOnlyRefApi, IMentionHighlight } from "@/types";
-import { HocuspocusProvider } from "@hocuspocus/provider";
 
 interface CustomReadOnlyEditorProps {
   initialValue?: string;

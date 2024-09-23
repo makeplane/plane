@@ -17,7 +17,7 @@ import { IMarking, scrollSummary } from "@/helpers/scroll-to-node";
 import { CoreEditorProps } from "@/props";
 // types
 import { EditorRefApi, IMentionHighlight, IMentionSuggestion, TEditorCommands, TFileHandler } from "@/types";
-import { HocuspocusProvider } from "@hocuspocus/provider";
+import { DocumentEventsServer } from "src/lib";
 
 export interface CustomEditorProps {
   editorClassName: string;
@@ -35,7 +35,6 @@ export interface CustomEditorProps {
   };
   onChange?: (json: object, html: string) => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
-  provider?: HocuspocusProvider;
   tabIndex?: number;
   // undefined when prop is not passed, null if intentionally passed to stop
   // swr syncing
@@ -57,7 +56,6 @@ export const useEditor = (props: CustomEditorProps) => {
     mentionHandler,
     onChange,
     placeholder,
-    provider,
     tabIndex,
     value,
     provider,
@@ -233,7 +231,7 @@ export const useEditor = (props: CustomEditorProps) => {
         if (empty) return null;
 
         const nodesArray: string[] = [];
-        state.doc.nodesBetween(from, to, (node, pos, parent) => {
+        state.doc.nodesBetween(from, to, (node, _pos, parent) => {
           if (parent === state.doc && editorRef.current) {
             const serializer = DOMSerializer.fromSchema(editorRef.current?.schema);
             const dom = serializer.serializeNode(node);
@@ -274,7 +272,7 @@ export const useEditor = (props: CustomEditorProps) => {
         if (!document) return;
         Y.applyUpdate(document, value);
       },
-      emitRealTimeUpdate: (message: string) => provider?.sendStateless(message),
+      emitRealTimeUpdate: (message: DocumentEventsServer) => provider?.sendStateless(message),
       listenToRealTimeUpdate: () => provider,
     }),
     [editorRef, savedSelection]

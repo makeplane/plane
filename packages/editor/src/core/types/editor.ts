@@ -13,6 +13,8 @@ import {
   TFileHandler,
   TServerHandler,
 } from "@/types";
+import { DocumentEventsServer } from "src/lib";
+import { HocuspocusProvider } from "@hocuspocus/provider";
 
 // editor refs
 export type EditorReadOnlyRefApi = {
@@ -30,8 +32,8 @@ export type EditorReadOnlyRefApi = {
     paragraphs: number;
     words: number;
   };
-  emitRealTimeUpdate: (message: string) => void;
-  listenToRealTimeUpdate: () => any;
+  emitRealTimeUpdate: (message: DocumentEventsServer) => void;
+  listenToRealTimeUpdate: () => HocuspocusProvider;
 };
 
 export interface EditorRefApi extends EditorReadOnlyRefApi {
