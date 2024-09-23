@@ -1,7 +1,7 @@
 import React, { useRef, useState, useCallback, useLayoutEffect, useEffect } from "react";
 import { NodeSelection } from "@tiptap/pm/state";
 // extensions
-import { CustomImageNodeViewProps } from "@/extensions/custom-image";
+import { CustomImageNodeViewProps, ImageToolbarRoot } from "@/extensions/custom-image";
 // helpers
 import { cn } from "@/helpers/common";
 
@@ -152,6 +152,14 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
         style={{
           width: size.width,
           height: size.height,
+        }}
+      />
+      <ImageToolbarRoot
+        containerClassName="absolute top-1 right-1 z-20 bg-black/40 rounded opacity-0 pointer-events-none group-hover/image-component:opacity-100 group-hover/image-component:pointer-events-auto transition-opacity"
+        image={{
+          src,
+          height,
+          width,
         }}
       />
       {editor.isEditable && selected && <div className="absolute inset-0 size-full bg-custom-primary-500/30" />}
