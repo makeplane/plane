@@ -10,6 +10,7 @@ export type TActivityFilterRoot = {
   selectedFilters: TActivityFilters[];
   toggleFilter: (filter: TActivityFilters) => void;
   isIntakeIssue?: boolean;
+  projectId?: string;
 };
 
 export const ActivityFilterRoot: FC<TActivityFilterRoot> = (props) => {
