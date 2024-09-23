@@ -169,7 +169,7 @@ export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
               }}
               handleEditorReady={handleEditorReady}
               ref={editorRef}
-              containerClassName="p-0 pb-64"
+              containerClassName="h-full p-0 pb-64"
               displayConfig={displayConfig}
               editorClassName="pl-10"
               mentionHandler={{
