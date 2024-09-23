@@ -183,7 +183,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
 
               {groupByVisibilityToggle.showIssues && (
                 <RenderIfVisible
-                  verticalOffset={0}
+                  verticalOffset={100}
                   horizontalOffset={100}
                   root={scrollableContainerRef}
                   classNames="relative h-full"
@@ -193,6 +193,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
                       ignoreHeader
                       cardHeight={approximateCardHeight}
                       cardsInColumn={issueLength !== undefined && issueLength < 3 ? issueLength : 3}
+                      shouldAnimate={false}
                     />
                   }
                   defaultValue={groupIndex < 5 && subGroupIndex < 2}

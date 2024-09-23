@@ -123,7 +123,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
               disabled={disabled}
             />
           )}
-          <ActivityFilterRoot selectedFilters={selectedFilters} toggleFilter={toggleFilter} />
+          <ActivityFilterRoot selectedFilters={selectedFilters} toggleFilter={toggleFilter} isIntakeIssue={isIntakeIssue}/>
         </div>
       </div>
 

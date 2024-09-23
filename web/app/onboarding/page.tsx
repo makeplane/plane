@@ -156,7 +156,7 @@ const OnboardingPage = observer(() => {
             />
           ) : step === EOnboardingSteps.WORKSPACE_CREATE_OR_JOIN ? (
             <CreateOrJoinWorkspaces
-                invitations={invitations ?? []}
+              invitations={invitations ?? []}
               totalSteps={totalSteps}
               stepChange={stepChange}
               finishOnboarding={finishOnboarding}

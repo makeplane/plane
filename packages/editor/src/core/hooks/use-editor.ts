@@ -154,11 +154,27 @@ export const useEditor = (props: CustomEditorProps) => {
         const item = getEditorMenuItem(itemName);
         return item ? item.isActive() : false;
       },
+      onHeadingChange: (callback: (headings: IMarking[]) => void) => {
+        // Subscribe to update event emitted from headers extension
+        editorRef.current?.on("update", () => {
+          callback(editorRef.current?.storage.headingList.headings);
+        });
+        // Return a function to unsubscribe to the continuous transactions of
+        // the editor on unmounting the component that has subscribed to this
+        // method
+        return () => {
+          editorRef.current?.off("update");
+        };
+      },
+      getHeadings: () => {
+        return editorRef?.current?.storage.headingList.headings;
+      },
       onStateChange: (callback: () => void) => {
         // Subscribe to editor state changes
         editorRef.current?.on("transaction", () => {
           callback();
         });
+
         // Return a function to unsubscribe to the continuous transactions of
         // the editor on unmounting the component that has subscribed to this
         // method
