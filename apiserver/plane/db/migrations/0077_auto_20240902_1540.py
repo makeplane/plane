@@ -58,7 +58,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="fileasset",
             name="size",
-            field=models.PositiveIntegerField(default=0),
+            field=models.FloatField(default=0),
         ),
         migrations.AlterField(
             model_name="integration",

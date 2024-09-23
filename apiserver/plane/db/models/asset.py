@@ -66,7 +66,7 @@ class FileAsset(BaseModel):
         null=True,
         related_name="assets",
     )
-    size = models.PositiveIntegerField(default=0)
+    size = models.FloatField(default=0)
 
     class Meta:
         verbose_name = "File Asset"
