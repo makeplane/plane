@@ -81,7 +81,7 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
             <div className="">
               <h4 className="text-sm font-medium">Auto-close issues</h4>
               <p className="text-sm tracking-tight text-custom-text-200">
-                Plane will automatically close issue that haven{"'"}t been completed or canceled.
+                Plane will automatically close issues that haven{"'"}t been completed or canceled.
               </p>
             </div>
           </div>
@@ -134,7 +134,7 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
                 </div>
 
                 <div className="flex w-full items-center justify-between gap-2 px-5 py-4">
-                  <div className="w-1/2 text-sm font-medium">Auto-close Status</div>
+                  <div className="w-1/2 text-sm font-medium">Auto-close status</div>
                   <div className="w-1/2 ">
                     <CustomSearchSelect
                       value={currentProjectDetails?.default_state ?? defaultState}
