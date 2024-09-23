@@ -118,7 +118,7 @@ def slug_validator(value):
 
 class Workspace(BaseModel):
     name = models.CharField(max_length=80, verbose_name="Workspace Name")
-    logo = models.URLField(verbose_name="Logo", blank=True, null=True)
+    logo = models.TextField(verbose_name="Logo", blank=True, null=True)
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

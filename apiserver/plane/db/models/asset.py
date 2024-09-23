@@ -28,6 +28,13 @@ class FileAsset(BaseModel):
     A file asset.
     """
 
+    class EntityTypeContext(models.TextChoices):
+        ISSUE_ATTACHMENT = "ISSUE_ATTACHMENT"
+        ISSUE_DESCRIPTION = "ISSUE_DESCRIPTION"
+        COMMENT_DESCRIPTION = "COMMENT_DESCRIPTION"
+        PAGE_DESCRIPTION = "PAGE_DESCRIPTION"
+        COVER_IMAGE = "COVER_IMAGE"
+
     attributes = models.JSONField(default=dict)
     asset = models.FileField(
         upload_to=get_upload_path,
@@ -44,6 +51,22 @@ class FileAsset(BaseModel):
     )
     is_deleted = models.BooleanField(default=False)
     is_archived = models.BooleanField(default=False)
+    entity_identifier = models.UUIDField(null=True, blank=True)
+    entity_type = models.CharField(
+        max_length=255,
+        choices=EntityTypeContext.choices,
+        null=True,
+        blank=True,
+    )
+    external_id = models.CharField(max_length=255, null=True, blank=True)
+    external_source = models.CharField(max_length=255, null=True, blank=True)
+    project = models.ForeignKey(
+        "db.Project",
+        on_delete=models.CASCADE,
+        null=True,
+        related_name="assets",
+    )
+    size = models.PositiveIntegerField(default=0)
 
     class Meta:
         verbose_name = "File Asset"
