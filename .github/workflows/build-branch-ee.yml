@@ -4,13 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       build_type:
-        description: 'Type of build to run'
+        description: "Type of build to run"
         required: true
         type: choice
-        default: 'Build'
+        default: "Build"
         options:
-          - 'Build'
-          - 'Release'
+          - "Build"
+          - "Release"
       releaseVersion:
         description: "Release Version"
         type: string
@@ -441,3 +441,41 @@ jobs:
           sed -e 's@${APP_RELEASE_VERSION}@'${{ env.ARTIFACT_SUFFIX }}'@' deploy/cli-install/docker-compose-caddy.yml > ~/${{ env.ARTIFACT_SUFFIX }}/docker-compose-caddy.yml
 
           aws s3 cp ~/${{ env.ARTIFACT_SUFFIX }} s3://${{ vars.SELF_HOST_BUCKET_NAME }}/plane-enterprise/${{ env.ARTIFACT_SUFFIX }} --recursive
+
+  publish_release:
+    name: Build Release
+    runs-on: ubuntu-20.04
+    needs:
+      [
+        branch_build_setup,
+        branch_build_push_admin,
+        branch_build_push_web,
+        branch_build_push_space,
+        branch_build_push_live,
+        branch_build_push_apiserver,
+        branch_build_push_proxy,
+        branch_build_push_monitor,
+        upload_artifacts_s3,
+      ]
+    env:
+      REL_VERSION: ${{ needs.branch_build_setup.outputs.release_version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v2.0.8
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ env.REL_VERSION }}
+          name: ${{ env.REL_VERSION }}
+          draft: false
+          prerelease: ${{ env.IS_PRERELEASE }}
+          generate_release_notes: true
+          files: |
+            ${{ github.workspace }}/deploy/cli-install/variables.env
+            ${{ github.workspace }}/deploy/cli-install/Caddyfile
+            ${{ github.workspace }}/deploy/cli-install/docker-compose.yml
+            ${{ github.workspace }}/deploy/cli-install/docker-compose-caddy.yml
