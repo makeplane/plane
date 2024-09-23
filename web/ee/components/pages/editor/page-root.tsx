@@ -11,13 +11,15 @@ import { setToast, TOAST_TYPE } from "@plane/ui";
 import { PageEditorHeaderRoot, PageVersionsOverlay } from "@/components/pages";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
+import { usePageFallback } from "@/hooks/use-page-fallback";
 import { useQueryParams } from "@/hooks/use-query-params";
 // plane web components
 import { WorkspacePageEditorBody, WorkspacePagesVersionEditor } from "@/plane-web/components/pages";
 // plane web hooks
 import { useWorkspacePages } from "@/plane-web/hooks/store";
 // plane web services
-import { WorkspacePageVersionService } from "@/plane-web/services/page";
+import { WorkspacePageService, WorkspacePageVersionService } from "@/plane-web/services/page";
+const workspacePageService = new WorkspacePageService();
 const workspacePageVersionService = new WorkspacePageVersionService();
 // plane web store
 import { IWorkspacePageDetails } from "@/plane-web/store/pages/page";
@@ -45,9 +47,18 @@ export const WorkspacePageRoot = observer((props: TPageRootProps) => {
   // store hooks
   const { createPage } = useWorkspacePages();
   // derived values
-  const { access, description_html, name, isContentEditable } = page;
+  const { access, description_html, name, isContentEditable, updateDescription } = page; // page fallback
+  usePageFallback({
+    editorRef,
+    fetchPageDescription: async () => {
+      if (!page.id) return;
+      return await workspacePageService.fetchDescriptionBinary(workspaceSlug, page.id);
+    },
+    hasConnectionFailed,
+    updatePageDescription: async (data) => await updateDescription(data),
+  });
   // editor markings hook
-  const { markings, updateMarkings } = useEditorMarkings();
+  const { updateMarkings } = useEditorMarkings();
   // update query params
   const { updateQueryParams } = useQueryParams();
 
@@ -56,7 +67,7 @@ export const WorkspacePageRoot = observer((props: TPageRootProps) => {
   const handleDuplicatePage = async () => {
     const formData: Partial<TPage> = {
       name: "Copy of " + name,
-      description_html: editorRef.current?.getHTML() ?? description_html ?? "<p></p>",
+      description_html: editorRef.current?.getDocument().html ?? description_html ?? "<p></p>",
       access,
     };
 
@@ -92,8 +103,8 @@ export const WorkspacePageRoot = observer((props: TPageRootProps) => {
     editorRef.current?.setEditorValue(descriptionHTML);
   };
   const currentVersionDescription = isContentEditable
-    ? editorRef.current?.getHTML()
-    : readOnlyEditorRef.current?.getHTML();
+    ? editorRef.current?.getDocument().html
+    : readOnlyEditorRef.current?.getDocument().html;
 
   return (
     <>
@@ -119,8 +130,6 @@ export const WorkspacePageRoot = observer((props: TPageRootProps) => {
         editorReady={editorReady}
         editorRef={editorRef}
         handleDuplicatePage={handleDuplicatePage}
-        hasConnectionFailed={hasConnectionFailed}
-        markings={markings}
         page={page}
         readOnlyEditorReady={readOnlyEditorReady}
         readOnlyEditorRef={readOnlyEditorRef}
@@ -132,11 +141,9 @@ export const WorkspacePageRoot = observer((props: TPageRootProps) => {
         handleConnectionStatus={(status) => setHasConnectionFailed(status)}
         handleEditorReady={(val) => setEditorReady(val)}
         handleReadOnlyEditorReady={() => setReadOnlyEditorReady(true)}
-        markings={markings}
         page={page}
         readOnlyEditorRef={readOnlyEditorRef}
         sidePeekVisible={sidePeekVisible}
-        updateMarkings={updateMarkings}
       />
     </>
   );

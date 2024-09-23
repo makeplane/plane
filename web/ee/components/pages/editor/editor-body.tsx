@@ -41,11 +41,9 @@ type Props = {
   handleConnectionStatus: (status: boolean) => void;
   handleEditorReady: (value: boolean) => void;
   handleReadOnlyEditorReady: (value: boolean) => void;
-  markings: IMarking[];
   page: IWorkspacePageDetails;
   readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
   sidePeekVisible: boolean;
-  updateMarkings: (description_html: string) => void;
 };
 
 export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
@@ -54,11 +52,9 @@ export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
     handleConnectionStatus,
     handleEditorReady,
     handleReadOnlyEditorReady,
-    markings,
     page,
     readOnlyEditorRef,
     sidePeekVisible,
-    updateMarkings,
   } = props;
   // router
   const { workspaceSlug } = useParams();
@@ -114,10 +110,6 @@ export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
     []
   );
 
-  useEffect(() => {
-    updateMarkings(pageDescription ?? "<p></p>");
-  }, [pageDescription, updateMarkings]);
-
   const realtimeConfig: TRealtimeConfig = useMemo(
     () => ({
       url: `${LIVE_URL}/collaboration`,
@@ -148,10 +140,7 @@ export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
         })}
       >
         {!isFullWidth && (
-          <PageContentBrowser
-            editorRef={(isContentEditable ? editorRef : readOnlyEditorRef)?.current}
-            markings={markings}
-          />
+          <PageContentBrowser editorRef={(isContentEditable ? editorRef : readOnlyEditorRef)?.current} />
         )}
       </div>
       <div

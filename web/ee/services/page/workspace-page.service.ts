@@ -1,5 +1,5 @@
 // types
-import { TPage, TPageEmbedType } from "@plane/types";
+import { TDocumentPayload, TPage, TPageEmbedType } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
@@ -111,7 +111,7 @@ export class WorkspacePageService extends APIService {
       });
   }
 
-  async fetchDescriptionYJS(workspaceSlug: string, pageId: string): Promise<any> {
+  async fetchDescriptionBinary(workspaceSlug: string, pageId: string): Promise<any> {
     return this.get(`/api/workspaces/${workspaceSlug}/pages/${pageId}/description/`, {
       headers: {
         "Content-Type": "application/octet-stream",
@@ -124,14 +124,7 @@ export class WorkspacePageService extends APIService {
       });
   }
 
-  async updateDescriptionYJS(
-    workspaceSlug: string,
-    pageId: string,
-    data: {
-      description_binary: string;
-      description_html: string;
-    }
-  ): Promise<any> {
+  async updateDescriptionBinary(workspaceSlug: string, pageId: string, data: TDocumentPayload): Promise<any> {
     return this.patch(`/api/workspaces/${workspaceSlug}/pages/${pageId}/description/`, data)
       .then((response) => response?.data)
       .catch((error) => {
