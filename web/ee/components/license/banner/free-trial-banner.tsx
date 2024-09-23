@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState } from "react";
+import { FC } from "react";
 import { observer } from "mobx-react";
 import { Crown, Phone } from "lucide-react";
 import { Button, getButtonStyling } from "@plane/ui";
@@ -8,8 +8,6 @@ import { Button, getButtonStyling } from "@plane/ui";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useInstance, useUserPermissions, useWorkspace } from "@/hooks/store";
-// plane web components
-import { CloudUpgradeModal } from "@/plane-web/components/license";
 // plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web hooks
