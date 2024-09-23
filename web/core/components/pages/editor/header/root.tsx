@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { EditorReadOnlyRefApi, EditorRefApi, IMarking } from "@plane/editor";
+import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
 // components
 import { Header, EHeaderVariant } from "@plane/ui";
 import { PageEditorMobileHeaderRoot, PageExtraOptions, PageSummaryPopover, PageToolbar } from "@/components/pages";
@@ -14,7 +14,6 @@ type Props = {
   editorReady: boolean;
   editorRef: React.RefObject<EditorRefApi>;
   handleDuplicatePage: () => void;
-  markings: IMarking[];
   page: IPage;
   readOnlyEditorReady: boolean;
   readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
@@ -27,7 +26,6 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
     editorReady,
     editorRef,
     handleDuplicatePage,
-    markings,
     page,
     readOnlyEditorReady,
     readOnlyEditorRef,
@@ -45,20 +43,21 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
     <>
       <Header variant={EHeaderVariant.SECONDARY} showOnMobile={false}>
         <Header.LeftItem className="gap-0 w-full">
-          <div
-            className={cn("flex-shrink-0 my-auto", {
-              "w-40 lg:w-56": !isFullWidth,
-              "w-[5%]": isFullWidth,
-            })}
-          >
-            <PageSummaryPopover
-              editorRef={isContentEditable ? editorRef.current : readOnlyEditorRef.current}
-              isFullWidth={isFullWidth}
-              markings={markings}
-              sidePeekVisible={sidePeekVisible}
-              setSidePeekVisible={setSidePeekVisible}
-            />
-          </div>
+          {(editorReady || readOnlyEditorReady) && (
+            <div
+              className={cn("flex-shrink-0 my-auto", {
+                "w-40 lg:w-56": !isFullWidth,
+                "w-[5%]": isFullWidth,
+              })}
+            >
+              <PageSummaryPopover
+                editorRef={isContentEditable ? editorRef.current : readOnlyEditorRef.current}
+                isFullWidth={isFullWidth}
+                sidePeekVisible={sidePeekVisible}
+                setSidePeekVisible={setSidePeekVisible}
+              />
+            </div>
+          )}
           {(editorReady || readOnlyEditorReady) && isContentEditable && editorRef.current && (
             <PageToolbar editorRef={editorRef?.current} />
           )}
@@ -76,7 +75,6 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
           readOnlyEditorRef={readOnlyEditorRef}
           editorReady={editorReady}
           readOnlyEditorReady={readOnlyEditorReady}
-          markings={markings}
           handleDuplicatePage={handleDuplicatePage}
           page={page}
           sidePeekVisible={sidePeekVisible}

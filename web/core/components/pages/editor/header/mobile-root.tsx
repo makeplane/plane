@@ -12,7 +12,6 @@ type Props = {
   editorReady: boolean;
   editorRef: React.RefObject<EditorRefApi>;
   handleDuplicatePage: () => void;
-  markings: IMarking[];
   page: IPage;
   readOnlyEditorReady: boolean;
   readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
@@ -25,7 +24,6 @@ export const PageEditorMobileHeaderRoot: React.FC<Props> = observer((props) => {
     editorReady,
     editorRef,
     handleDuplicatePage,
-    markings,
     page,
     readOnlyEditorReady,
     readOnlyEditorRef,
@@ -46,7 +44,6 @@ export const PageEditorMobileHeaderRoot: React.FC<Props> = observer((props) => {
           <PageSummaryPopover
             editorRef={isContentEditable ? editorRef.current : readOnlyEditorRef.current}
             isFullWidth={isFullWidth}
-            markings={markings}
             sidePeekVisible={sidePeekVisible}
             setSidePeekVisible={setSidePeekVisible}
           />

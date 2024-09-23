@@ -30,6 +30,8 @@ export type EditorReadOnlyRefApi = {
     paragraphs: number;
     words: number;
   };
+  onHeadingChange: (callback: (headings: IMarking[]) => void) => () => void;
+  getHeadings: () => IMarking[];
 };
 
 export interface EditorRefApi extends EditorReadOnlyRefApi {

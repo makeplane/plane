@@ -22,7 +22,7 @@ type Props = {
   icon?: LucideIcon;
   onClose?: () => void;
   renderByDefault?: boolean;
-  optionsClassName? : string;
+  optionsClassName?: string;
 } & MemberDropdownProps;
 
 export const MemberDropdown: React.FC<Props> = observer((props) => {
@@ -134,6 +134,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
             tooltipContent={tooltipContent ?? `${value?.length ?? 0} assignee${value?.length !== 1 ? "s" : ""}`}
             showTooltip={showTooltip}
             variant={buttonVariant}
+            renderToolTipByDefault={renderByDefault}
           >
             {!hideIcon && <ButtonAvatars showTooltip={showTooltip} userIds={value} icon={icon} />}
             {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (

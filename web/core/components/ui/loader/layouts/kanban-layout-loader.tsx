@@ -1,11 +1,12 @@
 import { forwardRef } from "react";
+import { cn } from "@plane/editor";
 import { ContentWrapper } from "@plane/ui";
 
-export const KanbanIssueBlockLoader = forwardRef<HTMLSpanElement, { cardHeight?: number }>(
-  ({ cardHeight = 100 }, ref) => (
+export const KanbanIssueBlockLoader = forwardRef<HTMLSpanElement, { cardHeight?: number; shouldAnimate?: boolean }>(
+  ({ cardHeight = 100, shouldAnimate = true }, ref) => (
     <span
       ref={ref}
-      className={`block animate-pulse bg-custom-background-80 rounded`}
+      className={cn(`block bg-custom-background-80 rounded`, { " animate-pulse": shouldAnimate })}
       style={{ height: `${cardHeight}px` }}
     />
   )
@@ -15,22 +16,24 @@ export const KanbanColumnLoader = ({
   cardsInColumn = 3,
   ignoreHeader = false,
   cardHeight = 100,
+  shouldAnimate = true,
 }: {
   cardsInColumn?: number;
   ignoreHeader?: boolean;
   cardHeight?: number;
+  shouldAnimate?: boolean;
 }) => (
   <div className="flex flex-col gap-3">
     {!ignoreHeader && (
       <div className="flex items-center justify-between h-9 w-80">
         <div className="flex item-center gap-3">
-          <span className="h-6 w-6 bg-custom-background-80 rounded animate-pulse" />
-          <span className="h-6 w-24 bg-custom-background-80 rounded animate-pulse" />
+          <span className={cn("h-6 w-6 bg-custom-background-80 rounded", { " animate-pulse": shouldAnimate })} />
+          <span className={cn("h-6 w-24 bg-custom-background-80 rounded", { " animate-pulse": shouldAnimate })} />
         </div>
       </div>
     )}
     {Array.from({ length: cardsInColumn }, (_, cardIndex) => (
-      <KanbanIssueBlockLoader key={cardIndex} cardHeight={cardHeight} />
+      <KanbanIssueBlockLoader key={cardIndex} cardHeight={cardHeight} shouldAnimate={shouldAnimate} />
     ))}
   </div>
 );

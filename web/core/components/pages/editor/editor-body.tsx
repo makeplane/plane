@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // document-editor
@@ -38,14 +38,13 @@ const fileService = new FileService();
 
 type Props = {
   editorRef: React.RefObject<EditorRefApi>;
+  editorReady: boolean;
   handleConnectionStatus: (status: boolean) => void;
   handleEditorReady: (value: boolean) => void;
   handleReadOnlyEditorReady: (value: boolean) => void;
-  markings: IMarking[];
   page: IPage;
   readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
   sidePeekVisible: boolean;
-  updateMarkings: (description_html: string) => void;
 };
 
 export const PageEditorBody: React.FC<Props> = observer((props) => {
@@ -54,11 +53,9 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     handleConnectionStatus,
     handleEditorReady,
     handleReadOnlyEditorReady,
-    markings,
     page,
     readOnlyEditorRef,
     sidePeekVisible,
-    updateMarkings,
   } = props;
   // router
   const { workspaceSlug, projectId } = useParams();
@@ -70,10 +67,9 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     project: { getProjectMemberIds },
   } = useMember();
   // derived values
-  const workspaceId = workspaceSlug ? (getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "") : "";
+  const workspaceId = workspaceSlug ? getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "" : "";
   const pageId = page?.id;
   const pageTitle = page?.name ?? "";
-  const pageDescription = page?.description_html;
   const { isContentEditable, updateTitle, setIsSubmitting } = page;
   const projectMemberIds = projectId ? getProjectMemberIds(projectId.toString()) : [];
   const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
@@ -104,6 +100,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const handleServerConnect = useCallback(() => {
     handleConnectionStatus(false);
   }, []);
+
   const handleServerError = useCallback(() => {
     handleConnectionStatus(true);
   }, []);
@@ -115,10 +112,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     }),
     []
   );
-
-  useEffect(() => {
-    updateMarkings(pageDescription ?? "<p></p>");
-  }, [pageDescription, updateMarkings]);
 
   const realtimeConfig: TRealtimeConfig = useMemo(
     () => ({
@@ -144,10 +137,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
         })}
       >
         {!isFullWidth && (
-          <PageContentBrowser
-            editorRef={(isContentEditable ? editorRef : readOnlyEditorRef)?.current}
-            markings={markings}
-          />
+          <PageContentBrowser editorRef={(isContentEditable ? editorRef : readOnlyEditorRef)?.current} />
         )}
       </Row>
       <div
