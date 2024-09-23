@@ -1,7 +1,6 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { CircleAlert } from "lucide-react";
 // editor
 import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
 // ui
@@ -19,13 +18,12 @@ import { IPage } from "@/store/pages/page";
 type Props = {
   editorRef: React.RefObject<EditorRefApi>;
   handleDuplicatePage: () => void;
-  hasConnectionFailed: boolean;
   page: IPage;
   readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
 };
 
 export const PageExtraOptions: React.FC<Props> = observer((props) => {
-  const { editorRef, handleDuplicatePage, hasConnectionFailed, page, readOnlyEditorRef } = props;
+  const { editorRef, handleDuplicatePage, page, readOnlyEditorRef } = props;
   // derived values
   const {
     archived_at,
@@ -76,17 +74,6 @@ export const PageExtraOptions: React.FC<Props> = observer((props) => {
           <div className="flex-shrink-0 flex h-7 items-center gap-2 rounded-full bg-custom-background-80 px-3 py-0.5 text-xs font-medium text-custom-text-300">
             <span className="flex-shrink-0 size-1.5 rounded-full bg-custom-text-300" />
             <span>Offline</span>
-          </div>
-        </Tooltip>
-      )}
-      {hasConnectionFailed && isOnline && (
-        <Tooltip
-          tooltipHeading="Connection failed"
-          tooltipContent="All changes made will be saved locally and will be synced when the connection is re-established."
-        >
-          <div className="flex-shrink-0 flex h-7 items-center gap-2 rounded-full bg-red-500/20 px-3 py-0.5 text-xs font-medium text-red-500">
-            <CircleAlert className="flex-shrink-0 size-3" />
-            <span>Server error</span>
           </div>
         </Tooltip>
       )}
