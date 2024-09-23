@@ -40,6 +40,14 @@ app.conf.beat_schedule = {
         "task": "plane.bgtasks.deletion_task.hard_delete",
         "schedule": crontab(hour=0, minute=0),
     },
+    "check-every-12-hr-instance-version": {
+        "task": "plane.license.bgtasks.version_check_task.version_check",
+        "schedule": crontab(hour="*/12", minute=0),
+    },
+    "check-every-day-to-sync-workspace-members": {
+        "task": "plane.payment.bgtasks.workspace_subscription_sync_task.schedule_workspace_billing_task",
+        "schedule": crontab(hour=0, minute=0),
+    },
 }
 
 # Load task modules from all registered Django app configs.
