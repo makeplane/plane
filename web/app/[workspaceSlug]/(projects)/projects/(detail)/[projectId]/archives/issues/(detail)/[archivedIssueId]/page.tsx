@@ -24,7 +24,7 @@ const ArchivedIssueDetailsPage = observer(() => {
 
   const { getProjectById } = useProject();
 
-  const { isLoading } = useSWR(
+  useSWR(
     workspaceSlug && projectId && archivedIssueId
       ? `ARCHIVED_ISSUE_DETAIL_${workspaceSlug}_${projectId}_${archivedIssueId}`
       : null,
