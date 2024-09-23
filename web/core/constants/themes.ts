@@ -14,7 +14,7 @@ export interface I_THEME_OPTION {
 export const THEME_OPTIONS: I_THEME_OPTION[] = [
   {
     value: "system",
-    label: "System Preference",
+    label: "System preference",
     type: "light",
     icon: {
       border: "#DEE2E6",
@@ -44,7 +44,7 @@ export const THEME_OPTIONS: I_THEME_OPTION[] = [
   },
   {
     value: "light-contrast",
-    label: "Light High Contrast",
+    label: "Light high contrast",
     type: "light",
     icon: {
       border: "#000000",
@@ -54,7 +54,7 @@ export const THEME_OPTIONS: I_THEME_OPTION[] = [
   },
   {
     value: "dark-contrast",
-    label: "Dark High Contrast",
+    label: "Dark high contrast",
     type: "dark",
     icon: {
       border: "#FFFFFF",
@@ -64,7 +64,7 @@ export const THEME_OPTIONS: I_THEME_OPTION[] = [
   },
   {
     value: "custom",
-    label: "Custom Theming",
+    label: "Custom theme",
     type: "light",
     icon: {
       border: "#FFC9C9",
