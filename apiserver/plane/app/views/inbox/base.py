@@ -167,10 +167,10 @@ class InboxIssueViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
-        inbox_id = Inbox.objects.get(
+        inbox_id = Inbox.objects.filter(
             workspace__slug=slug, project_id=project_id
-        )
-        project = Project.objects.get(pk=project_id) 
+        ).first()
+        project = Project.objects.get(pk=project_id)
         filters = issue_filters(request.GET, "GET", "issue__")
         inbox_issue = (
             InboxIssue.objects.filter(
@@ -527,9 +527,9 @@ class InboxIssueViewSet(BaseViewSet):
         model=Issue,
     )
     def retrieve(self, request, slug, project_id, pk):
-        inbox_id = Inbox.objects.get(
+        inbox_id = Inbox.objects.filter(
             workspace__slug=slug, project_id=project_id
-        )
+        ).first()
         project = Project.objects.get(pk=project_id)
         inbox_issue = (
             InboxIssue.objects.select_related("issue")

@@ -173,7 +173,7 @@ class ProjectViewSet(BaseViewSet):
             member=request.user,
             workspace__slug=slug,
             is_active=True,
-            role=10,
+            role=15,
         ).exists():
             projects = projects.filter(
                 Q(
@@ -439,7 +439,7 @@ class ProjectViewSet(BaseViewSet):
                 serializer.save()
                 if serializer.data["inbox_view"]:
                     Inbox.objects.get_or_create(
-                        name=f"{project.name} Inbox",
+                        defaults={"name": f"{project.name} Inbox"},
                         project=project,
                         is_default=True,
                     )

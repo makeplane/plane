@@ -25,10 +25,20 @@ type Props = {
     droppedLabelId: string | undefined,
     dropAtEndOfList: boolean
   ) => void;
+  isEditable?: boolean;
 };
 
 export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
-  const { label, labelChildren, handleLabelDelete, isUpdating, setIsUpdating, isLastChild, onDrop } = props;
+  const {
+    label,
+    labelChildren,
+    handleLabelDelete,
+    isUpdating,
+    setIsUpdating,
+    isLastChild,
+    onDrop,
+    isEditable = false,
+  } = props;
 
   // states
   const [isEditLabelForm, setEditLabelForm] = useState(false);
@@ -123,6 +133,7 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
                                   isChild
                                   isLastChild={index === labelChildren.length - 1}
                                   onDrop={onDrop}
+                                  isEditable={isEditable}
                                 />
                               </div>
                             </div>

@@ -9,6 +9,7 @@ import { TActivityFilters, ACTIVITY_FILTER_TYPE_OPTIONS, TActivityFilterOption }
 export type TActivityFilterRoot = {
   selectedFilters: TActivityFilters[];
   toggleFilter: (filter: TActivityFilters) => void;
+  isIntakeIssue?: boolean;
 };
 
 export const ActivityFilterRoot: FC<TActivityFilterRoot> = (props) => {
