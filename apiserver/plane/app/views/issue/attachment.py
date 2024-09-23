@@ -13,14 +13,14 @@ from rest_framework.parsers import MultiPartParser, FormParser
 # Module imports
 from .. import BaseAPIView
 from plane.app.serializers import IssueAttachmentSerializer
-from plane.db.models import IssueAttachment
+from plane.db.models import FileAsset
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.app.permissions import allow_permission, ROLE
 
 
 class IssueAttachmentEndpoint(BaseAPIView):
     serializer_class = IssueAttachmentSerializer
-    model = IssueAttachment
+    model = FileAsset
     parser_classes = (MultiPartParser, FormParser)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
@@ -45,9 +45,9 @@ class IssueAttachmentEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission([ROLE.ADMIN], creator=True, model=IssueAttachment)
+    @allow_permission([ROLE.ADMIN], creator=True, model=FileAsset)
     def delete(self, request, slug, project_id, issue_id, pk):
-        issue_attachment = IssueAttachment.objects.get(pk=pk)
+        issue_attachment = FileAsset.objects.get(pk=pk)
         issue_attachment.asset.delete(save=False)
         issue_attachment.delete()
         issue_activity.delay(
@@ -72,7 +72,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
         ]
     )
     def get(self, request, slug, project_id, issue_id):
-        issue_attachments = IssueAttachment.objects.filter(
+        issue_attachments = FileAsset.objects.filter(
             issue_id=issue_id, workspace__slug=slug, project_id=project_id
         )
         serializer = IssueAttachmentSerializer(issue_attachments, many=True)

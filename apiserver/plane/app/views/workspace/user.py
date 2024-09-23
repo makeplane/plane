@@ -40,7 +40,7 @@ from plane.db.models import (
     CycleIssue,
     Issue,
     IssueActivity,
-    IssueAttachment,
+    FileAsset,
     IssueLink,
     IssueSubscriber,
     Project,
@@ -128,8 +128,9 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    entity_identifier=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))

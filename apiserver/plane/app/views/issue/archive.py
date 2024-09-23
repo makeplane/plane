@@ -30,7 +30,7 @@ from plane.app.serializers import (
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
-    IssueAttachment,
+    FileAsset,
     IssueLink,
     IssueSubscriber,
     IssueReaction,
@@ -79,8 +79,9 @@ class IssueArchiveViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    entity_identifier=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -239,7 +240,10 @@ class IssueArchiveViewSet(BaseViewSet):
             .prefetch_related(
                 Prefetch(
                     "issue_attachment",
-                    queryset=IssueAttachment.objects.select_related("issue"),
+                    queryset=FileAsset.objects.filter(
+                        entity_identifier=OuterRef("id"),
+                        entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+                    ),
                 )
             )
             .prefetch_related(
