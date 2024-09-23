@@ -35,6 +35,7 @@ import { useUser, useUserSettings } from "@/hooks/store";
 // import { ProfileSettingsLayout } from "@/layouts/settings-layout";
 // layouts
 import { FileService } from "@/services/file.service";
+import { ENABLE_LOCAL_DB_CACHE } from "ee/constants/issues";
 // services
 // types
 
@@ -417,36 +418,37 @@ const ProfileSettingsPage = observer(() => {
             </div>
           </div>
         </form>
-
-        <Disclosure as="div" className="border-t border-custom-border-100 md:px-8">
-          {({ open }) => (
-            <>
-              <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between py-4">
-                <span className="text-lg tracking-tight">Local Cache</span>
-                <ChevronDown className={`h-5 w-5 transition-all ${open ? "rotate-180" : ""}`} />
-              </Disclosure.Button>
-              <Transition
-                show={open}
-                enter="transition duration-100 ease-out"
-                enterFrom="transform opacity-0"
-                enterTo="transform opacity-100"
-                leave="transition duration-75 ease-out"
-                leaveFrom="transform opacity-100"
-                leaveTo="transform opacity-0"
-              >
-                <Disclosure.Panel>
-                  <div className="flex justify-between pb-4">
-                    <span className="text-sm tracking-tight">
-                      Toggled on by default to keep Plane performant. Disable this if you are facing any issues with
-                      Plane. Applicable only to this device.
-                    </span>
-                    <ToggleSwitch value={canUseLocalDB} onChange={() => toggleLocalDB()} />
-                  </div>
-                </Disclosure.Panel>
-              </Transition>
-            </>
-          )}
-        </Disclosure>
+        {ENABLE_LOCAL_DB_CACHE && (
+          <Disclosure as="div" className="border-t border-custom-border-100 md:px-8">
+            {({ open }) => (
+              <>
+                <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between py-4">
+                  <span className="text-lg tracking-tight">Local Cache</span>
+                  <ChevronDown className={`h-5 w-5 transition-all ${open ? "rotate-180" : ""}`} />
+                </Disclosure.Button>
+                <Transition
+                  show={open}
+                  enter="transition duration-100 ease-out"
+                  enterFrom="transform opacity-0"
+                  enterTo="transform opacity-100"
+                  leave="transition duration-75 ease-out"
+                  leaveFrom="transform opacity-100"
+                  leaveTo="transform opacity-0"
+                >
+                  <Disclosure.Panel>
+                    <div className="flex justify-between pb-4">
+                      <span className="text-sm tracking-tight">
+                        Toggled on by default to keep Plane performant. Disable this if you are facing any issues with
+                        Plane. Applicable only to this device.
+                      </span>
+                      <ToggleSwitch value={canUseLocalDB} onChange={() => toggleLocalDB()} />
+                    </div>
+                  </Disclosure.Panel>
+                </Transition>
+              </>
+            )}
+          </Disclosure>
+        )}
         <Disclosure as="div" className="border-t border-custom-border-100 md:px-8">
           {({ open }) => (
             <>

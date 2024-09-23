@@ -19,6 +19,7 @@ import { IAccountStore } from "@/store/user/account.store";
 import { ProfileStore, IUserProfileStore } from "@/store/user/profile.store";
 import { IUserPermissionStore, UserPermissionStore } from "./permissions.store";
 import { IUserSettingsStore, UserSettingsStore } from "./settings.store";
+import { ENABLE_LOCAL_DB_CACHE } from "@/plane-web/constants/issues";
 
 type TUserErrorStatus = {
   status: string;
@@ -277,6 +278,6 @@ export class UserStore implements IUserStore {
   }
 
   get localDBEnabled() {
-    return this.userSettings.canUseLocalDB;
+    return ENABLE_LOCAL_DB_CACHE && this.userSettings.canUseLocalDB;
   }
 }
