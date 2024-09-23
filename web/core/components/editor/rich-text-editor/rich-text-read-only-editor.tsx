@@ -6,7 +6,7 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useMention } from "@/hooks/store";
 
-interface RichTextReadOnlyEditorWrapperProps extends Omit<IRichTextReadOnlyEditor, "mentionHandler"> {}
+type RichTextReadOnlyEditorWrapperProps = Omit<IRichTextReadOnlyEditor, "mentionHandler">;
 
 export const RichTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, RichTextReadOnlyEditorWrapperProps>(
   ({ ...props }, ref) => {

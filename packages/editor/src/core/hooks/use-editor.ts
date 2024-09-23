@@ -82,7 +82,7 @@ export const useEditor = (props: CustomEditorProps) => {
         },
         mentionConfig: {
           mentionSuggestions: mentionHandler.suggestions ?? (() => Promise.resolve<IMentionSuggestion[]>([])),
-          mentionHighlights: mentionHandler.highlights ?? [],
+          mentionHighlights: mentionHandler.highlights,
         },
         placeholder,
         tabIndex,
@@ -170,9 +170,7 @@ export const useEditor = (props: CustomEditorProps) => {
           editorRef.current?.off("update");
         };
       },
-      getHeadings: () => {
-        return editorRef?.current?.storage.headingList.headings;
-      },
+      getHeadings: () => editorRef?.current?.storage.headingList.headings,
       onStateChange: (callback: () => void) => {
         // Subscribe to editor state changes
         editorRef.current?.on("transaction", () => {
@@ -263,13 +261,11 @@ export const useEditor = (props: CustomEditorProps) => {
           editorRef.current.chain().focus().deleteRange({ from, to }).insertContent(contentHTML).run();
         }
       },
-      getDocumentInfo: () => {
-        return {
-          characters: editorRef?.current?.storage?.characterCount?.characters?.() ?? 0,
-          paragraphs: getParagraphCount(editorRef?.current?.state),
-          words: editorRef?.current?.storage?.characterCount?.words?.() ?? 0,
-        };
-      },
+      getDocumentInfo: () => ({
+        characters: editorRef?.current?.storage?.characterCount?.characters?.() ?? 0,
+        paragraphs: getParagraphCount(editorRef?.current?.state),
+        words: editorRef?.current?.storage?.characterCount?.words?.() ?? 0,
+      }),
       setProviderDocument: (value) => {
         const document = provider?.document;
         if (!document) return;

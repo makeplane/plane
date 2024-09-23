@@ -17,7 +17,8 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "postcss": "postcss styles/globals.css -o styles/output.css --watch"
+    "postcss": "postcss styles/globals.css -o styles/output.css --watch",
+    "lint": "eslint src --ext .ts,.tsx"
   },
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "^1.1.10",
@@ -57,15 +58,15 @@
     "@types/react-dom": "^18.2.17",
     "autoprefixer": "^10.4.19",
     "classnames": "^2.3.2",
-    "eslint-config-custom": "*",
+    "@plane/eslint-config": "*",
     "postcss-cli": "^11.0.0",
     "postcss-nested": "^6.0.1",
     "react": "^18.2.0",
     "storybook": "^8.1.1",
     "tailwind-config-custom": "*",
     "tailwindcss": "^3.4.3",
-    "tsconfig": "*",
+    "@plane/typescript-config": "*",
     "tsup": "^7.2.0",
-    "typescript": "5.4.5"
+    "typescript": "5.3.3"
   }
 }

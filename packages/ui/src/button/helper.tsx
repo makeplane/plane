@@ -33,7 +33,7 @@ enum buttonIconStyling {
   sm = "h-3 w-3 flex justify-center items-center overflow-hidden my-0.5 flex-shrink-0",
   md = "h-3.5 w-3.5 flex justify-center items-center overflow-hidden my-0.5 flex-shrink-0",
   lg = "h-4 w-4 flex justify-center items-center overflow-hidden my-0.5 flex-shrink-0",
-  xl = "h-4 w-4 flex justify-center items-center overflow-hidden my-0.5 flex-shrink-0",
+  xl = "h-4 w-4 flex justify-center items-center overflow-hidden my-0.5 flex-shrink-0 ",
 }
 
 export const buttonStyling: IButtonStyling = {

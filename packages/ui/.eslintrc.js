@@ -1,10 +1,10 @@
 /** @type {import("eslint").Linter.Config} */
 module.exports = {
   root: true,
-  extends: ["@plane/eslint-config/next.js"],
+  extends: ["@plane/eslint-config/library.js"],
   parser: "@typescript-eslint/parser",
   parserOptions: {
-    project: true,
+    project: "./tsconfig.json",
+    tsconfigRootDir: __dirname,
   },
-  rules: {},
 };

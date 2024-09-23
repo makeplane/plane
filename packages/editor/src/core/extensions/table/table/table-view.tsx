@@ -198,6 +198,7 @@ function createToolbox({
   onSelectColor: (color: { backgroundColor: string; textColor: string }) => void;
   colors: { [key: string]: { backgroundColor: string; textColor: string; icon?: string } };
 }): Instance<Props> {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error
   const toolbox = tippy(triggerButton, {
     content: h(
