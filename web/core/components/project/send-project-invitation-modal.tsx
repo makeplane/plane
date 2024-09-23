@@ -220,7 +220,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                       {fields.map((field, index) => (
                         <div
                           key={field.id}
-                          className="group mb-1 flex items-center justify-between gap-x-4 text-sm w-full"
+                          className="group mb-1 flex items-start justify-between gap-x-4 text-sm w-full"
                         >
                           <div className="flex flex-col gap-1 flex-grow w-full">
                             <Controller
