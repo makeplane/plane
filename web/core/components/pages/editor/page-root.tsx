@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 // editor
-import { EditorRefApi } from "@plane/editor";
+import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
 // types
 import { TPage } from "@plane/types";
 // ui
@@ -12,9 +12,11 @@ import { PageEditorHeaderRoot, PageEditorBody, PageVersionsOverlay, PagesVersion
 // hooks
 import { useProjectPages } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { usePageFallback } from "@/hooks/use-page-fallback";
 import { useQueryParams } from "@/hooks/use-query-params";
 // services
-import { ProjectPageVersionService } from "@/services/page";
+import { ProjectPageService, ProjectPageVersionService } from "@/services/page";
+const projectPageService = new ProjectPageService();
 const projectPageVersionService = new ProjectPageVersionService();
 // store
 import { IPage } from "@/store/pages/page";
@@ -29,8 +31,8 @@ export const PageRoot = observer((props: TPageRootProps) => {
   const { projectId, workspaceSlug, page } = props;
   // states
   const [editorReady, setEditorReady] = useState(false);
-  const [readOnlyEditorReady, setReadOnlyEditorReady] = useState(false);
   const [hasConnectionFailed, setHasConnectionFailed] = useState(false);
+  const [readOnlyEditorReady, setReadOnlyEditorReady] = useState(false);
   const [sidePeekVisible, setSidePeekVisible] = useState(window.innerWidth >= 768);
   const [isVersionsOverlayOpen, setIsVersionsOverlayOpen] = useState(false);
   // refs
@@ -43,8 +45,17 @@ export const PageRoot = observer((props: TPageRootProps) => {
   // store hooks
   const { createPage } = useProjectPages();
   // derived values
-  const { access, description_html, name, isContentEditable } = page;
-
+  const { access, description_html, name, isContentEditable, updateDescription } = page;
+  // page fallback
+  usePageFallback({
+    editorRef,
+    fetchPageDescription: async () => {
+      if (!page.id) return;
+      return await projectPageService.fetchDescriptionBinary(workspaceSlug, projectId, page.id);
+    },
+    hasConnectionFailed,
+    updatePageDescription: async (data) => await updateDescription(data),
+  });
   // update query params
   const { updateQueryParams } = useQueryParams();
 
@@ -53,7 +64,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
   const handleDuplicatePage = async () => {
     const formData: Partial<TPage> = {
       name: "Copy of " + name,
-      description_html: editorRef.current?.getHTML() ?? description_html ?? "<p></p>",
+      description_html: editorRef.current?.getDocument().html ?? description_html ?? "<p></p>",
       access,
     };
 
@@ -89,8 +100,8 @@ export const PageRoot = observer((props: TPageRootProps) => {
     editorRef.current?.setEditorValue(descriptionHTML);
   };
   const currentVersionDescription = isContentEditable
-    ? editorRef.current?.getHTML()
-    : readOnlyEditorRef.current?.getHTML();
+    ? editorRef.current?.getDocument().html
+    : readOnlyEditorRef.current?.getDocument().html;
 
   return (
     <>
@@ -125,7 +136,6 @@ export const PageRoot = observer((props: TPageRootProps) => {
         editorReady={editorReady}
         editorRef={editorRef}
         handleDuplicatePage={handleDuplicatePage}
-        hasConnectionFailed={hasConnectionFailed}
         page={page}
         readOnlyEditorReady={readOnlyEditorReady}
         readOnlyEditorRef={readOnlyEditorRef}

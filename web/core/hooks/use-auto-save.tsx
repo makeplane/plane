@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react";
 import { debounce } from "lodash";
 
-const AUTO_SAVE_TIME = 10000;
+const AUTO_SAVE_TIME = 30000;
 
-const useAutoSave = (handleSaveDescription: (forceSync?: boolean, yjsAsUpdate?: Uint8Array) => void) => {
+const useAutoSave = (handleSaveDescription: () => void) => {
   const intervalIdRef = useRef<any>(null);
   const handleSaveDescriptionRef = useRef(handleSaveDescription);
 
@@ -16,7 +16,7 @@ const useAutoSave = (handleSaveDescription: (forceSync?: boolean, yjsAsUpdate?: 
   useEffect(() => {
     intervalIdRef.current = setInterval(() => {
       try {
-        handleSaveDescriptionRef.current(true);
+        handleSaveDescriptionRef.current();
       } catch (error) {
         console.error("Autosave before manual save failed:", error);
       }
@@ -43,7 +43,7 @@ const useAutoSave = (handleSaveDescription: (forceSync?: boolean, yjsAsUpdate?: 
         clearInterval(intervalIdRef.current);
         intervalIdRef.current = setInterval(() => {
           try {
-            handleSaveDescriptionRef.current(true);
+            handleSaveDescriptionRef.current();
           } catch (error) {
             console.error("Autosave after manual save failed:", error);
           }

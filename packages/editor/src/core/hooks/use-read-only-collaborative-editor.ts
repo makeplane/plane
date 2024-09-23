@@ -54,15 +54,16 @@ export const useReadOnlyCollaborativeEditor = (props: TReadOnlyCollaborativeEdit
   const editor = useReadOnlyEditor({
     editorProps,
     editorClassName,
-    forwardedRef,
-    handleEditorReady,
-    mentionHandler,
     extensions: [
       ...(extensions ?? []),
       Collaboration.configure({
         document: provider.document,
       }),
     ],
+    forwardedRef,
+    handleEditorReady,
+    mentionHandler,
+    provider,
   });
 
   return { editor, isIndexedDbSynced: true };
