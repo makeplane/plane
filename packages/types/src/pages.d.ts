@@ -66,6 +66,12 @@ export type TPageVersion = {
   workspace: string;
 }
 
+export type TDocumentPayload = {
+  description_binary: string;
+  description_html: string;
+  description: object;
+}
+
 export type TPageEmbedResponse = {
   id: string;
   name: string;

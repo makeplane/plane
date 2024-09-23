@@ -38,5 +38,6 @@ export const getHocusPocusServer = async () => {
       }
     },
     extensions,
+    debounce: 10000
   });
 };

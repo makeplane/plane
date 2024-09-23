@@ -205,7 +205,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                 },
               }}
               realtimeConfig={realtimeConfig}
-              serverHandler={serverHandler}
               user={{
                 id: currentUser?.id ?? "",
                 name: currentUser?.display_name ?? "",
