@@ -4,9 +4,7 @@ import { FC } from "react";
 // components
 import { Loader } from "@plane/ui";
 
-export interface IProjectDetailsFormLoader {}
-
-export const ProjectDetailsFormLoader: FC<IProjectDetailsFormLoader> = () => (
+export const ProjectDetailsFormLoader: FC = () => (
   <>
     <div className="relative mt-6 h-44 w-full">
       <Loader>

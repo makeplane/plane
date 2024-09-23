@@ -7,7 +7,8 @@
     "develop": "next dev --port 3000",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:errors": "eslint . --ext .ts,.tsx --quiet",
     "export": "next export",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
@@ -76,10 +77,10 @@
     "@types/react-dom": "^18.2.18",
     "@types/uuid": "^8.3.4",
     "@types/zxcvbn": "^4.4.4",
-    "eslint-config-custom": "*",
+    "@plane/eslint-config": "*",
     "prettier": "^3.2.5",
     "tailwind-config-custom": "*",
-    "tsconfig": "*",
-    "typescript": "5.4.5"
+    "@plane/typescript-config": "*",
+    "typescript": "5.3.3"
   }
 }

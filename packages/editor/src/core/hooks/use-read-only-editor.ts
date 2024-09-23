@@ -95,13 +95,11 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
       if (!editorRef.current) return;
       scrollSummary(editorRef.current, marking);
     },
-    getDocumentInfo: () => {
-      return {
-        characters: editorRef?.current?.storage?.characterCount?.characters?.() ?? 0,
-        paragraphs: getParagraphCount(editorRef?.current?.state),
-        words: editorRef?.current?.storage?.characterCount?.words?.() ?? 0,
-      };
-    },
+    getDocumentInfo: () => ({
+      characters: editorRef?.current?.storage?.characterCount?.characters?.() ?? 0,
+      paragraphs: getParagraphCount(editorRef?.current?.state),
+      words: editorRef?.current?.storage?.characterCount?.words?.() ?? 0,
+    }),
     onHeadingChange: (callback: (headings: IMarking[]) => void) => {
       // Subscribe to update event emitted from headers extension
       editorRef.current?.on("update", () => {
@@ -114,9 +112,7 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
         editorRef.current?.off("update");
       };
     },
-    getHeadings: () => {
-      return editorRef?.current?.storage.headingList.headings;
-    },
+    getHeadings: () => editorRef?.current?.storage.headingList.headings,
   }));
 
   if (!editor) {
