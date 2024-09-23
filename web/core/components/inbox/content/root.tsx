@@ -77,7 +77,7 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
   return (
     <>
       <div className="w-full h-full overflow-hidden relative flex flex-col">
-        <div className="flex-shrink-0 min-h-[50px] border-b border-custom-border-300">
+        <div className="flex-shrink-0 min-h-[52px] z-[11]">
           <InboxIssueActionsHeader
             setIsMobileSidebar={setIsMobileSidebar}
             isMobileSidebar={isMobileSidebar}
