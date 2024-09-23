@@ -44,6 +44,7 @@ export type CustomImageBlockProps = {
   uploadFile: (file: File) => Promise<void>;
   isFileUploading: boolean;
   initialEditorContainerWidth: number;
+  uploadEntity?: UploadEntity;
 };
 
 const MIN_SIZE = 100;
@@ -62,6 +63,7 @@ export const CustomImageBlockNew = (props: CustomImageBlockProps) => {
     uploadFile,
     initialEditorContainerWidth,
     updateAttributes,
+    uploadEntity,
   } = props;
   const { handleUploadClick, ref: internalRef } = useFileUpload();
   const { draggedInside, onDrop, onDragEnter, onDragLeave } = useDropZone({
@@ -224,6 +226,14 @@ export const CustomImageBlockNew = (props: CustomImageBlockProps) => {
 
   const isRemoteImageBeingUploaded = node.attrs.width === "35%" && node.attrs.height === "auto" && !node.attrs.src;
 
+  console.log(
+    "uploadEntity",
+    !displayedSrc,
+    !isRemoteImageBeingUploaded,
+    uploadEntity?.event == "insert",
+    !displayedSrc || (!isRemoteImageBeingUploaded && uploadEntity?.event === "insert")
+  );
+
   return (
     <>
       <div
@@ -290,39 +300,40 @@ export const CustomImageBlockNew = (props: CustomImageBlockProps) => {
         )}
       </div>
       {/* if there is no src (remote or local), show the upload button */}
-      {!displayedSrc && !isRemoteImageBeingUploaded && (
-        <div
-          className={cn(
-            "image-upload-component flex items-center justify-start gap-2 py-3 px-2 rounded-lg text-custom-text-300 hover:text-custom-text-200 bg-custom-background-90 hover:bg-custom-background-80 border border-dashed border-custom-border-300 cursor-pointer transition-all duration-200 ease-in-out",
-            {
-              "bg-custom-background-80 text-custom-text-200": draggedInside,
-            },
-            {
-              "text-custom-primary-200 bg-custom-primary-100/10": selected,
-            }
-          )}
-          onDrop={onDrop}
-          onDragOver={onDragEnter}
-          onDragLeave={onDragLeave}
-          contentEditable={false}
-          onClick={handleUploadClick}
-        >
-          <ImageIcon className="size-4" />
-          <div className="text-base font-medium">{draggedInside ? "Drop image here" : "Add an image"}</div>
-          <input
-            className="size-0 overflow-hidden"
-            ref={(element) => {
-              localRef.current = element;
-              assignRef(fileInputRef, element);
-              assignRef(internalRef as RefType, element);
-            }}
-            hidden
-            type="file"
-            accept=".jpg,.jpeg,.png,.webp"
-            onChange={onFileChange}
-          />
-        </div>
-      )}
+      {!displayedSrc ||
+        (isRemoteImageBeingUploaded && uploadEntity?.event === "insert" && (
+          <div
+            className={cn(
+              "image-upload-component flex items-center justify-start gap-2 py-3 px-2 rounded-lg text-custom-text-300 hover:text-custom-text-200 bg-custom-background-90 hover:bg-custom-background-80 border border-dashed border-custom-border-300 cursor-pointer transition-all duration-200 ease-in-out",
+              {
+                "bg-custom-background-80 text-custom-text-200": draggedInside,
+              },
+              {
+                "text-custom-primary-200 bg-custom-primary-100/10": selected,
+              }
+            )}
+            onDrop={onDrop}
+            onDragOver={onDragEnter}
+            onDragLeave={onDragLeave}
+            contentEditable={false}
+            onClick={handleUploadClick}
+          >
+            <ImageIcon className="size-4" />
+            <div className="text-base font-medium">{draggedInside ? "Drop image here" : "Add an image"}</div>
+            <input
+              className="size-0 overflow-hidden"
+              ref={(element) => {
+                localRef.current = element;
+                assignRef(fileInputRef, element);
+                assignRef(internalRef as RefType, element);
+              }}
+              hidden
+              type="file"
+              accept=".jpg,.jpeg,.png,.webp"
+              onChange={onFileChange}
+            />
+          </div>
+        ))}
     </>
   );
 };
