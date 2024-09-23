@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowDownWideNarrow, Check, ChevronDown } from "lucide-react";
+import { ArrowDownWideNarrow, ArrowUpWideNarrow, Check, ChevronDown } from "lucide-react";
 // types
 import { TViewFiltersSortBy, TViewFiltersSortKey } from "@plane/types";
 // ui
@@ -31,12 +31,14 @@ export const ViewOrderByDropdown: React.FC<Props> = (props) => {
     : `${getButtonStyling("neutral-primary", "sm")} px-2 text-custom-text-300`;
 
   const chevronClassName = isMobile ? "h-4 w-4 text-custom-text-200" : "h-3 w-3";
-
+  const icon = (
+    <>{!isDescending ? <ArrowUpWideNarrow className="size-3 " /> : <ArrowDownWideNarrow className="size-3 " />}</>
+  );
   return (
     <CustomMenu
       customButton={
         <span className={buttonClassName}>
-          {!isMobile && <ArrowDownWideNarrow className="h-3 w-3" />}
+          {!isMobile && icon}
           <span className="flex-shrink-0"> {orderByDetails?.label}</span>
           <ChevronDown className={chevronClassName} strokeWidth={2} />
         </span>
