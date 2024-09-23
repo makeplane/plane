@@ -1,0 +1,400 @@
+name: Branch Build Enterprise Releaser
+
+on:
+  workflow_dispatch:
+    inputs:
+      buildType:
+        description: "Build Type"
+        type: choice
+        required: true
+        options:
+          - "Cloud"
+          - "Enterprise"
+        default: "Cloud"
+      releaseVersion:
+        description: "Release Version"
+        type: string
+        default: v1.x.x-cloud
+        required: true
+      isPrerelease:
+        description: "Is Pre-release"
+        type: boolean
+        default: false
+        required: true
+      arm64:
+        description: "Build for ARM64 architecture"
+        required: false
+        default: false
+        type: boolean
+
+env:
+  TARGET_BRANCH: ${{ github.ref_name }}
+  IS_PRERELEASE: ${{ github.event.inputs.isPrerelease }}
+  BUILD_TYPE: ${{ github.event.inputs.buildType }}
+  RELEASE_VERSION: ${{ github.event.inputs.releaseVersion }}
+  ARM64_BUILD: ${{ github.event.inputs.arm64 }}
+
+jobs:
+  branch_build_setup:
+    name: Build Setup
+    runs-on: ubuntu-20.04
+    outputs:
+      gh_buildx_driver: ${{ steps.set_env_variables.outputs.BUILDX_DRIVER }}
+      gh_buildx_version: ${{ steps.set_env_variables.outputs.BUILDX_VERSION }}
+      gh_buildx_platforms: ${{ steps.set_env_variables.outputs.BUILDX_PLATFORMS }}
+      gh_buildx_endpoint: ${{ steps.set_env_variables.outputs.BUILDX_ENDPOINT }}
+      artifact_upload_to_s3: ${{ steps.set_env_variables.outputs.artifact_upload_to_s3 }}
+      artifact_s3_suffix: ${{ steps.set_env_variables.outputs.artifact_s3_suffix }}
+
+      dh_img_web: ${{ steps.set_env_variables.outputs.DH_IMG_WEB }}
+      dh_img_space: ${{ steps.set_env_variables.outputs.DH_IMG_SPACE }}
+      dh_img_admin: ${{ steps.set_env_variables.outputs.DH_IMG_ADMIN }}
+      dh_img_live: ${{ steps.set_env_variables.outputs.DH_IMG_LIVE }}
+      dh_img_backend: ${{ steps.set_env_variables.outputs.DH_IMG_BACKEND }}
+      dh_img_proxy: ${{ steps.set_env_variables.outputs.DH_IMG_PROXY }}
+      dh_img_monitor: ${{ steps.set_env_variables.outputs.DH_IMG_MONITOR }}
+      harbor_push: ${{ steps.set_env_variables.outputs.HARBOR_PUSH }}
+      release_version: ${{ steps.set_env_variables.outputs.FLAT_RELEASE_VERSION }}
+
+    steps:
+      - id: set_env_variables
+        name: Set Environment Variables
+        run: |
+          if [ "${{ env.ARM64_BUILD }}" == "true" ] || [ "${{ env.IS_PRERELEASE }}" != "true" ]; then
+            echo "BUILDX_DRIVER=cloud" >> $GITHUB_OUTPUT
+            echo "BUILDX_VERSION=lab:latest" >> $GITHUB_OUTPUT
+            echo "BUILDX_PLATFORMS=linux/amd64,linux/arm64" >> $GITHUB_OUTPUT
+            echo "BUILDX_ENDPOINT=makeplane/plane-dev" >> $GITHUB_OUTPUT
+          else
+            echo "BUILDX_DRIVER=docker-container" >> $GITHUB_OUTPUT
+            echo "BUILDX_VERSION=latest" >> $GITHUB_OUTPUT
+            echo "BUILDX_PLATFORMS=linux/amd64" >> $GITHUB_OUTPUT
+            echo "BUILDX_ENDPOINT=" >> $GITHUB_OUTPUT
+          fi
+
+          FLAT_RELEASE_VERSION=$(echo "${{ env.RELEASE_VERSION }}" | sed 's/[^a-zA-Z0-9.-]//g')
+          echo "FLAT_RELEASE_VERSION=${FLAT_RELEASE_VERSION}" >> $GITHUB_OUTPUT
+          echo "artifact_upload_to_s3=true" >> $GITHUB_OUTPUT
+          echo "artifact_s3_suffix=$FLAT_RELEASE_VERSION" >> $GITHUB_OUTPUT
+
+          semver_regex="^v([0-9]+)\.([0-9]+)\.([0-9]+)(-[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*)?$"
+          if [[ ! $FLAT_RELEASE_VERSION =~ $semver_regex ]]; then
+            echo "Invalid Release Version Format : $FLAT_RELEASE_VERSION"
+            echo "Please provide a valid SemVer version"
+            echo "e.g. v1.2.3 or v1.2.3-alpha-1"
+            echo "Exiting the build process"
+            exit 1  # Exit with status 1 to fail the step
+          fi
+
+          if [ "${{ env.BUILD_TYPE }}" == "Cloud" ]; then
+            echo "DH_IMG_WEB=web-cloud" >> $GITHUB_OUTPUT
+            echo "DH_IMG_SPACE=space-cloud" >> $GITHUB_OUTPUT
+            echo "DH_IMG_ADMIN=admin-cloud" >> $GITHUB_OUTPUT
+            echo "DH_IMG_LIVE=live-cloud" >> $GITHUB_OUTPUT
+            echo "DH_IMG_BACKEND=backend-cloud" >> $GITHUB_OUTPUT
+            echo "DH_IMG_PROXY=proxy-cloud" >> $GITHUB_OUTPUT
+            echo "DH_IMG_MONITOR=monitor-cloud" >> $GITHUB_OUTPUT
+            echo "HARBOR_PUSH=false" >> $GITHUB_OUTPUT
+          else
+            echo "DH_IMG_WEB=web-enterprise" >> $GITHUB_OUTPUT
+            echo "DH_IMG_SPACE=space-enterprise" >> $GITHUB_OUTPUT
+            echo "DH_IMG_ADMIN=admin-enterprise" >> $GITHUB_OUTPUT
+            echo "DH_IMG_LIVE=live-enterprise" >> $GITHUB_OUTPUT
+            echo "DH_IMG_BACKEND=backend-enterprise" >> $GITHUB_OUTPUT
+            echo "DH_IMG_PROXY=proxy-enterprise" >> $GITHUB_OUTPUT
+            echo "DH_IMG_MONITOR=monitor-enterprise" >> $GITHUB_OUTPUT
+            echo "HARBOR_PUSH=true" >> $GITHUB_OUTPUT
+          fi
+
+  branch_build_push_admin:
+    name: Build-Push Admin Docker Image
+    runs-on: ubuntu-20.04
+    needs: [branch_build_setup]
+    steps:
+      - id: checkout_files
+        name: Checkout Files
+        uses: actions/checkout@v4
+      - name: Admin Build and Push
+        uses: ./.github/actions/build-push-action
+        with:
+          docker-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+          harbor-push: ${{ needs.branch_build_setup.outputs.harbor_push }}
+          harbor-username: ${{ secrets.HARBOR_USERNAME }}
+          harbor-token: ${{ secrets.HARBOR_TOKEN }}
+          harbor-registry: ${{ vars.HARBOR_REGISTRY }}
+          harbor-project: ${{ vars.HARBOR_PROJECT }}
+          docker-image-owner: makeplane
+          docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_admin }}
+          build-context: .
+          dockerfile-path: ./admin/Dockerfile.admin
+          buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
+          buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
+          buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
+          buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+          build-release: true
+          build-prerelease: ${{ env.IS_PRERELEASE }}
+          release-version: ${{ needs.branch_build_setup.outputs.release_version }}
+
+  branch_build_push_web:
+    name: Build-Push Web Docker Image
+    runs-on: ubuntu-20.04
+    needs: [branch_build_setup]
+    steps:
+      - id: checkout_files
+        name: Checkout Files
+        uses: actions/checkout@v4
+      - name: Web Build and Push
+        uses: ./.github/actions/build-push-action
+        with:
+          docker-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+          harbor-push: ${{ needs.branch_build_setup.outputs.harbor_push }}
+          harbor-username: ${{ secrets.HARBOR_USERNAME }}
+          harbor-token: ${{ secrets.HARBOR_TOKEN }}
+          harbor-registry: ${{ vars.HARBOR_REGISTRY }}
+          harbor-project: ${{ vars.HARBOR_PROJECT }}
+          docker-image-owner: makeplane
+          docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_web }}
+          build-context: .
+          dockerfile-path: ./web/Dockerfile.web
+          buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
+          buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
+          buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
+          buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+          build-release: true
+          build-prerelease: ${{ env.IS_PRERELEASE }}
+          release-version: ${{ needs.branch_build_setup.outputs.release_version }}
+
+  branch_build_push_space:
+    name: Build-Push Space Docker Image
+    runs-on: ubuntu-20.04
+    needs: [branch_build_setup]
+    steps:
+      - id: checkout_files
+        name: Checkout Files
+        uses: actions/checkout@v4
+      - name: Space Build and Push
+        uses: ./.github/actions/build-push-action
+        with:
+          docker-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+          harbor-push: ${{ needs.branch_build_setup.outputs.harbor_push }}
+          harbor-username: ${{ secrets.HARBOR_USERNAME }}
+          harbor-token: ${{ secrets.HARBOR_TOKEN }}
+          harbor-registry: ${{ vars.HARBOR_REGISTRY }}
+          harbor-project: ${{ vars.HARBOR_PROJECT }}
+          docker-image-owner: makeplane
+          docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_space }}
+          build-context: .
+          dockerfile-path: ./space/Dockerfile.space
+          buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
+          buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
+          buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
+          buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+          build-release: true
+          build-prerelease: ${{ env.IS_PRERELEASE }}
+          release-version: ${{ needs.branch_build_setup.outputs.release_version }}
+
+  branch_build_push_live:
+    name: Build-Push Live Collaboration Docker Image
+    runs-on: ubuntu-20.04
+    needs: [branch_build_setup]
+    steps:
+      - id: checkout_files
+        name: Checkout Files
+        uses: actions/checkout@v4
+      - name: Live Build and Push
+        uses: ./.github/actions/build-push-action
+        with:
+          docker-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+          harbor-push: ${{ needs.branch_build_setup.outputs.harbor_push }}
+          harbor-username: ${{ secrets.HARBOR_USERNAME }}
+          harbor-token: ${{ secrets.HARBOR_TOKEN }}
+          harbor-registry: ${{ vars.HARBOR_REGISTRY }}
+          harbor-project: ${{ vars.HARBOR_PROJECT }}
+          docker-image-owner: makeplane
+          docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_live }}
+          build-context: .
+          dockerfile-path: ./live/Dockerfile.live
+          buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
+          buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
+          buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
+          buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+          build-release: true
+          build-prerelease: ${{ env.IS_PRERELEASE }}
+          release-version: ${{ needs.branch_build_setup.outputs.release_version }}
+
+  branch_build_push_apiserver:
+    name: Build-Push API Server Docker Image
+    runs-on: ubuntu-20.04
+    needs: [branch_build_setup]
+    steps:
+      - id: checkout_files
+        name: Checkout Files
+        uses: actions/checkout@v4
+      - name: Backend Build and Push
+        uses: ./.github/actions/build-push-action
+        with:
+          docker-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+          harbor-push: ${{ needs.branch_build_setup.outputs.harbor_push }}
+          harbor-username: ${{ secrets.HARBOR_USERNAME }}
+          harbor-token: ${{ secrets.HARBOR_TOKEN }}
+          harbor-registry: ${{ vars.HARBOR_REGISTRY }}
+          harbor-project: ${{ vars.HARBOR_PROJECT }}
+          docker-image-owner: makeplane
+          docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_backend }}
+          build-context: ./apiserver
+          dockerfile-path: ./apiserver/Dockerfile.api
+          buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
+          buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
+          buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
+          buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+          build-release: true
+          build-prerelease: ${{ env.IS_PRERELEASE }}
+          release-version: ${{ needs.branch_build_setup.outputs.release_version }}
+
+  branch_build_push_proxy:
+    name: Build-Push Proxy Docker Image
+    runs-on: ubuntu-20.04
+    needs: [branch_build_setup]
+    steps:
+      - id: checkout_files
+        name: Checkout Files
+        uses: actions/checkout@v4
+      - name: Proxy Build and Push
+        uses: ./.github/actions/build-push-action
+        with:
+          docker-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+          harbor-push: ${{ needs.branch_build_setup.outputs.harbor_push }}
+          harbor-username: ${{ secrets.HARBOR_USERNAME }}
+          harbor-token: ${{ secrets.HARBOR_TOKEN }}
+          harbor-registry: ${{ vars.HARBOR_REGISTRY }}
+          harbor-project: ${{ vars.HARBOR_PROJECT }}
+          docker-image-owner: makeplane
+          docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_proxy }}
+          build-context: ./nginx
+          dockerfile-path: ./nginx/Dockerfile
+          buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
+          buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
+          buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
+          buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+          build-release: true
+          build-prerelease: ${{ env.IS_PRERELEASE }}
+          release-version: ${{ needs.branch_build_setup.outputs.release_version }}
+
+  branch_build_push_monitor:
+    name: Build-Push Monitor Docker Image
+    runs-on: ubuntu-20.04
+    needs: [branch_build_setup]
+    steps:
+      - id: checkout_files
+        name: Checkout Files
+        uses: actions/checkout@v4
+      - name: Generate Keypair
+        run: |
+          openssl genrsa -out private_key.pem 2048            
+          openssl rsa -in private_key.pem -pubout -out public_key.pem
+          cat public_key.pem
+
+          # Generating the private key env for the generated keys
+          PRIVATE_KEY=$(cat private_key.pem | base64 -w 0)
+          echo "PRIVATE_KEY=${PRIVATE_KEY}" >> $GITHUB_ENV
+
+      - name: Monitor Build and Push
+        uses: ./.github/actions/build-push-action
+        with:
+          docker-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+          harbor-push: ${{ needs.branch_build_setup.outputs.harbor_push }}
+          harbor-username: ${{ secrets.HARBOR_USERNAME }}
+          harbor-token: ${{ secrets.HARBOR_TOKEN }}
+          harbor-registry: ${{ vars.HARBOR_REGISTRY }}
+          harbor-project: ${{ vars.HARBOR_PROJECT }}
+          docker-image-owner: makeplane
+          docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_monitor }}
+          build-context: ./monitor
+          dockerfile-path: ./monitor/Dockerfile
+          buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
+          buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
+          buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
+          buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+          build-release: true
+          build-prerelease: ${{ env.IS_PRERELEASE }}
+          release-version: ${{ needs.branch_build_setup.outputs.release_version }}
+          build-args: |
+            PRIVATE_KEY=${{ env.PRIVATE_KEY }}
+
+  upload_artifacts_s3:
+    if: ${{ needs.branch_build_setup.outputs.artifact_upload_to_s3 == 'true' }}
+    name: Upload artifacts to S3 Bucket
+    runs-on: ubuntu-20.04
+    needs: [branch_build_setup]
+    container:
+      image: docker:20.10.7
+      credentials:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    env:
+      ARTIFACT_SUFFIX: ${{ needs.branch_build_setup.outputs.artifact_s3_suffix }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.SELF_HOST_BUCKET_ACCESS_KEY }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.SELF_HOST_BUCKET_SECRET_KEY }}
+    steps:
+      - id: checkout_files
+        name: Checkout Files
+        uses: actions/checkout@v4
+
+      - name: Upload artifacts
+        run: |
+          apk update
+          apk add --no-cache aws-cli
+
+          mkdir -p ~/${{ env.ARTIFACT_SUFFIX }}
+
+          cp deploy/cli-install/variables.env ~/${{ env.ARTIFACT_SUFFIX }}/variables.env
+          cp deploy/cli-install/Caddyfile ~/${{ env.ARTIFACT_SUFFIX }}/Caddyfile
+          sed -e 's@${APP_RELEASE_VERSION}@'${{ env.ARTIFACT_SUFFIX }}'@' deploy/cli-install/docker-compose.yml > ~/${{ env.ARTIFACT_SUFFIX }}/docker-compose.yml
+          sed -e 's@${APP_RELEASE_VERSION}@'${{ env.ARTIFACT_SUFFIX }}'@' deploy/cli-install/docker-compose-caddy.yml > ~/${{ env.ARTIFACT_SUFFIX }}/docker-compose-caddy.yml
+
+          aws s3 cp ~/${{ env.ARTIFACT_SUFFIX }} s3://${{ vars.SELF_HOST_BUCKET_NAME }}/plane-enterprise/${{ env.ARTIFACT_SUFFIX }} --recursive
+
+  publish_release:
+    name: Build Release
+    runs-on: ubuntu-20.04
+    needs:
+      [
+        branch_build_setup,
+        branch_build_push_admin,
+        branch_build_push_web,
+        branch_build_push_space,
+        branch_build_push_live,
+        branch_build_push_apiserver,
+        branch_build_push_proxy,
+        branch_build_push_monitor,
+        upload_artifacts_s3,
+      ]
+    env:
+      REL_VERSION: ${{ needs.branch_build_setup.outputs.release_version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v2.0.8
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ env.REL_VERSION }}
+          name: ${{ env.REL_VERSION }}
+          draft: false
+          prerelease: ${{ env.IS_PRERELEASE }}
+          generate_release_notes: true
+          files: |
+            ${{ github.workspace }}/deploy/cli-install/variables.env
+            ${{ github.workspace }}/deploy/cli-install/Caddyfile
+            ${{ github.workspace }}/deploy/cli-install/docker-compose.yml
+            ${{ github.workspace }}/deploy/cli-install/docker-compose-caddy.yml
