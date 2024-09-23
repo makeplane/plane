@@ -134,7 +134,7 @@ const emptyStateDetails = {
       "See scope versus demand, estimates, and scope creep. Get performance by team members and teams, and make sure your project runs on time.",
     path: "/empty-state/onboarding/analytics",
     primaryButton: {
-      text: "Create Cycles and Modules first",
+      text: "Start your first project",
       comicBox: {
         title: "Analytics works best with Cycles + Modules",
         description:
