@@ -7,8 +7,14 @@ import { cn } from "@/helpers/common";
 
 const MIN_SIZE = 100;
 
-export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
-  const { node, updateAttributes, selected, getPos, editor } = props;
+export const CustomImageBlock: React.FC<
+  CustomImageNodeViewProps & {
+    isImageLoaded: boolean;
+    displayedSrc: string | null;
+    isLoading: boolean;
+  }
+> = (props) => {
+  const { node, updateAttributes, selected, getPos, editor, displayedSrc, isImageLoaded } = props;
   const { src, width, height } = node.attrs;
 
   const [size, setSize] = useState<{
@@ -34,7 +40,11 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
 
   const handleImageLoad = useCallback(() => {
     const img = imageRef.current;
-    if (!img) return;
+
+    if (!img) {
+      console.error("Image reference is undefined");
+      return;
+    }
 
     const closestEditorContainer = img.closest(".editor-container");
     if (!closestEditorContainer) {
@@ -63,7 +73,7 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
     }
     setInitialResizeComplete(true);
     setIsLoading(false);
-  }, [width, updateAttributes, imageRef]);
+  }, [width, updateAttributes]);
 
   useLayoutEffect(() => {
     setSize((prevSize) => ({ ...prevSize, width, height }));
@@ -143,13 +153,14 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
       )}
       <img
         ref={imageRef}
-        src={src}
+        src={displayedSrc ?? src}
         width={size.width}
         height={size.height}
         onLoad={handleImageLoad}
         className={cn("block rounded-md", {
           hidden: isShimmerVisible,
           "read-only-image": !editor.isEditable,
+          "blur-sm opacity-80": isLoading || !isImageLoaded,
         })}
         style={{
           width: size.width,

@@ -1,78 +1,74 @@
-import { useCallback, useEffect, useRef, useState, useMemo } from "react";
+import { useCallback, useEffect, useRef, useMemo, useState } from "react";
 import { Node as ProsemirrorNode } from "@tiptap/pm/model";
 import { Editor, NodeViewWrapper } from "@tiptap/react";
 // extensions
-import {
-  CustomImageBlock,
-  CustomImageUploader,
-  UploadEntity,
-  UploadImageExtensionStorage,
-} from "@/extensions/custom-image";
+import { UploadImageExtensionStorage } from "@/extensions/custom-image";
+import { CustomImageBlockNew, ImageAttributes } from "./image-block-new";
+import { useUploader } from "@/hooks/use-file-upload";
+import { useEditorContainerWidth } from "@/hooks/use-editor-container";
 
 export type CustomImageNodeViewProps = {
-  getPos: () => number;
   editor: Editor;
+  getPos: () => number;
   node: ProsemirrorNode & {
-    attrs: {
-      src: string;
-      width: string;
-      height: string;
-    };
+    attrs: ImageAttributes;
   };
-  updateAttributes: (attrs: Record<string, any>) => void;
+  updateAttributes: (attrs: Partial<ImageAttributes>) => void;
   selected: boolean;
 };
 
 export const CustomImageNode = (props: CustomImageNodeViewProps) => {
   const { getPos, editor, node, updateAttributes, selected } = props;
+  const { id } = node.attrs;
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const hasTriggeredFilePickerRef = useRef(false);
-  const [isUploaded, setIsUploaded] = useState(!!node.attrs.src);
 
-  const id = node.attrs.id as string;
-  const editorStorage = editor.storage.imageComponent as UploadImageExtensionStorage | undefined;
+  // if the image is dropped onto the editor, we need to store the blob
+  const [droppedFileBlob, setDroppedFileBlob] = useState<string | undefined>(undefined);
 
-  const getUploadEntity = useCallback((): UploadEntity | undefined => {
-    return editorStorage?.fileMap.get(id);
+  // the imageComponent's storage
+  const editorStorage = useMemo(
+    () => editor.storage.imageComponent as UploadImageExtensionStorage | undefined,
+    [editor.storage]
+  );
+
+  // the imageComponent's entity (it depicts how the image was added, either by
+  // dropping the image onto the editor or by inserting the image)
+  const uploadEntity = useMemo(() => {
+    if (id) {
+      return editorStorage?.fileMap.get(id);
+    }
   }, [editorStorage, id]);
 
   const onUpload = useCallback(
     (url: string) => {
       if (url) {
-        setIsUploaded(true);
         updateAttributes({ src: url });
-        editorStorage?.fileMap.delete(id);
+        // after uploading the image, we need to remove the entity from the storage
+        if (id) {
+          editorStorage?.fileMap.delete(id);
+        }
       }
     },
     [editorStorage?.fileMap, id, updateAttributes]
   );
 
-  const uploadFile = useCallback(
-    async (file: File) => {
-      try {
-        // @ts-expect-error - TODO: fix typings, and don't remove await from
-        // here for now
-        const url: string = await editor?.commands.uploadImage(file);
-
-        if (!url) {
-          throw new Error("Something went wrong while uploading the image");
-        }
-        onUpload(url);
-      } catch (error) {
-        console.error("Error uploading file:", error);
-      }
-    },
-    [editor, onUpload]
-  );
+  const { loading: isFileUploading, uploadFile } = useUploader({ onUpload, editor });
 
   useEffect(() => {
-    const uploadEntity = getUploadEntity();
-
     if (uploadEntity && !hasTriggeredFilePickerRef.current) {
       if (uploadEntity.event === "drop" && "file" in uploadEntity) {
-        uploadFile(uploadEntity.file);
-      } else if (uploadEntity.event === "insert" && fileInputRef.current) {
+        const file = uploadEntity.file;
+        const reader = new FileReader();
+        reader.onload = () => {
+          const result = reader.result as string;
+          setDroppedFileBlob(result);
+        };
+        reader.readAsDataURL(file);
+        uploadFile(file);
+      } else if (uploadEntity.event === "insert" && fileInputRef.current && id) {
         const entity = editorStorage?.fileMap.get(id);
         if (entity && entity.hasOpenedFileInputOnce) return;
         fileInputRef.current.click();
@@ -81,39 +77,26 @@ export const CustomImageNode = (props: CustomImageNodeViewProps) => {
         editorStorage?.fileMap.set(id, { ...entity, hasOpenedFileInputOnce: true });
       }
     }
-  }, [getUploadEntity, uploadFile, editorStorage?.fileMap, id]);
+  }, [uploadEntity, uploadFile, editorStorage?.fileMap, id]);
 
-  useEffect(() => {
-    if (node.attrs.src) {
-      setIsUploaded(true);
-    }
-  }, [node.attrs.src]);
-
-  const existingFile = useMemo(() => {
-    const entity = getUploadEntity();
-    return entity && entity.event === "drop" ? entity.file : undefined;
-  }, [getUploadEntity]);
+  const initialEditorContainerWidth = useEditorContainerWidth(containerRef);
 
   return (
     <NodeViewWrapper>
-      <div className="p-0 mx-0 my-2" data-drag-handle>
-        {isUploaded ? (
-          <CustomImageBlock
-            editor={editor}
-            getPos={getPos}
-            node={node}
-            updateAttributes={updateAttributes}
-            selected={selected}
-          />
-        ) : (
-          <CustomImageUploader
-            onUpload={onUpload}
-            editor={editor}
-            fileInputRef={fileInputRef}
-            existingFile={existingFile}
-            selected={selected}
-          />
-        )}
+      <div className="p-0 mx-0 my-2" data-drag-handle ref={containerRef}>
+        <CustomImageBlockNew
+          fileInputRef={fileInputRef}
+          uploadFile={uploadFile}
+          editor={editor}
+          droppedFileBlob={droppedFileBlob}
+          isFileUploading={isFileUploading}
+          initialEditorContainerWidth={initialEditorContainerWidth}
+          getPos={getPos}
+          node={node}
+          updateAttributes={updateAttributes}
+          selected={selected}
+          uploadEntity={uploadEntity}
+        />
       </div>
     </NodeViewWrapper>
   );

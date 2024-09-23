@@ -1,7 +1,5 @@
 import ImageExt from "@tiptap/extension-image";
-import { ReactNodeViewRenderer } from "@tiptap/react";
 // extensions
-import { CustomImageNode } from "@/extensions";
 
 export const ImageExtensionWithoutProps = () =>
   ImageExt.extend({
@@ -15,9 +13,5 @@ export const ImageExtensionWithoutProps = () =>
           default: null,
         },
       };
-    },
-
-    addNodeView() {
-      return ReactNodeViewRenderer(CustomImageNode);
     },
   });
