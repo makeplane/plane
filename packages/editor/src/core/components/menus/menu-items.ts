@@ -192,7 +192,7 @@ export const ImageItem = (editor: Editor) =>
   ({
     key: "image",
     name: "Image",
-    isActive: () => editor?.isActive("image"),
+    isActive: () => editor?.isActive("image") || editor?.isActive("imageComponent"),
     command: (savedSelection: Selection | null) =>
       editor?.commands.setImageUpload({ event: "insert", pos: savedSelection?.from }),
     icon: ImageIcon,

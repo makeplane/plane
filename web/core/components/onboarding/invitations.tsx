@@ -1,14 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import useSWR from "swr";;
 // types
 import { IWorkspaceMemberInvitation } from "@plane/types";
 // ui
 import { Button, Checkbox, Spinner } from "@plane/ui";
 // constants
 import { MEMBER_ACCEPTED } from "@/constants/event-tracker";
-import { USER_WORKSPACE_INVITATIONS } from "@/constants/fetch-keys";
 import { ROLE } from "@/constants/workspace";
 // helpers
 import { truncateText } from "@/helpers/string.helper";
@@ -19,13 +17,14 @@ import { useEventTracker, useUserSettings, useWorkspace } from "@/hooks/store";
 import { WorkspaceService } from "@/plane-web/services";
 
 type Props = {
+  invitations: IWorkspaceMemberInvitation[];
   handleNextStep: () => Promise<void>;
   handleCurrentViewChange: () => void;
 };
 const workspaceService = new WorkspaceService();
 
 export const Invitations: React.FC<Props> = (props) => {
-  const { handleNextStep, handleCurrentViewChange } = props;
+  const { invitations, handleNextStep, handleCurrentViewChange } = props;
   // states
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
@@ -33,8 +32,6 @@ export const Invitations: React.FC<Props> = (props) => {
   const { captureEvent } = useEventTracker();
   const { fetchWorkspaces } = useWorkspace();
   const { fetchCurrentUserSettings } = useUserSettings();
-
-  const { data: invitations } = useSWR(USER_WORKSPACE_INVITATIONS, () => workspaceService.userWorkspaceInvitations());
 
   const handleInvitation = (workspace_invitation: IWorkspaceMemberInvitation, action: "accepted" | "withdraw") => {
     if (action === "accepted") {

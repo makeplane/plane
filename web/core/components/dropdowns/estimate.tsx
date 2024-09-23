@@ -180,6 +180,7 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
             tooltipContent={selectedEstimate ? selectedEstimate?.value : placeholder}
             showTooltip={showTooltip}
             variant={buttonVariant}
+            renderToolTipByDefault={renderByDefault}
           >
             {!hideIcon && <Triangle className="h-3 w-3 flex-shrink-0" />}
             {(selectedEstimate || placeholder) && BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (

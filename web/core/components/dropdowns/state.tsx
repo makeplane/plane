@@ -161,6 +161,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
             tooltipContent={selectedState?.name ?? "State"}
             showTooltip={showTooltip}
             variant={buttonVariant}
+            renderToolTipByDefault={renderByDefault}
           >
             {stateLoader ? (
               <Spinner className="h-3.5 w-3.5" />
