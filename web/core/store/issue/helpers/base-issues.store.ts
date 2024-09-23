@@ -1744,11 +1744,11 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
         );
 
       // custom
-      case "priority": {
+      case "-priority": {
         const sortArray = ISSUE_PRIORITIES.map((i) => i.key);
         return getIssueIds(orderBy(array, (currentIssue: TIssue) => indexOf(sortArray, currentIssue?.priority)));
       }
-      case "-priority": {
+      case "priority": {
         const sortArray = ISSUE_PRIORITIES.map((i) => i.key);
         return getIssueIds(
           orderBy(array, (currentIssue: TIssue) => indexOf(sortArray, currentIssue?.priority), ["desc"])
