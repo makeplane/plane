@@ -85,10 +85,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               "app-container"
             )}
           >
-            <div className="flex-shrink-0">
               {/* free trial banner */}
               <FreeTrialBanner />
-            </div>
             <div className="w-full h-full overflow-hidden relative">{children}</div>
           </div>
         </AppProvider>
