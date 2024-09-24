@@ -35,7 +35,6 @@ interface IssueBlockProps {
   displayProperties: IIssueDisplayProperties | undefined;
   draggableId: string;
   canDropOverIssue: boolean;
-  shouldRenderByDefault?: boolean;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   canEditProperties: (projectId: string | undefined) => boolean;
