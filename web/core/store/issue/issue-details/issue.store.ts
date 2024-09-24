@@ -2,6 +2,8 @@ import { makeObservable, observable } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
 import { TIssue } from "@plane/types";
+// local
+import { persistence } from "@/local-db/storage.sqlite";
 // services
 import { IssueArchiveService, IssueDraftService, IssueService } from "@/services/issue";
 // types
@@ -33,12 +35,14 @@ export interface IIssueStoreActions {
 
 export interface IIssueStore extends IIssueStoreActions {
   isFetchingIssueDetails: boolean;
+  isLocalDBIssueDescription: boolean;
   // helper methods
   getIssueById: (issueId: string) => TIssue | undefined;
 }
 
 export class IssueStore implements IIssueStore {
   isFetchingIssueDetails: boolean = false;
+  isLocalDBIssueDescription: boolean = false;
   // root store
   rootIssueDetailStore: IIssueDetail;
   // services
@@ -72,7 +76,15 @@ export class IssueStore implements IIssueStore {
 
     let issue: TIssue | undefined;
 
+    // fetch issue from local db
+    issue = await persistence.getIssue(issueId);
+
     this.isFetchingIssueDetails = true;
+
+    if (issue) {
+      this.addIssueToStore(issue);
+      this.isLocalDBIssueDescription = true;
+    }
 
     if (issueType === "ARCHIVED")
       issue = await this.issueArchiveService.retrieveArchivedIssue(workspaceSlug, projectId, issueId, query);
@@ -82,7 +94,10 @@ export class IssueStore implements IIssueStore {
 
     if (!issue) throw new Error("Issue not found");
 
-    this.addIssueToStore(issue);
+    const issuePayload = this.addIssueToStore(issue);
+    this.isLocalDBIssueDescription = false;
+
+    this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issuePayload]);
 
     // store handlers from issue detail
     // parent

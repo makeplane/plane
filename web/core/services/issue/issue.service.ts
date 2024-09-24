@@ -1,16 +1,20 @@
 // types
 import type {
-  TIssue,
   IIssueDisplayProperties,
-  TIssueLink,
-  TIssueSubIssues,
-  TIssueActivity,
-  TIssuesResponse,
   TBulkOperationsPayload,
+  TIssue,
+  TIssueActivity,
+  TIssueLink,
+  TIssuesResponse,
+  TIssueSubIssues,
 } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
+import { persistence } from "@/local-db/storage.sqlite";
 // services
+
+import { addIssue, addIssuesBulk, deleteIssueFromLocal } from "@/local-db/utils/load-issues";
+import { updatePersistentLayer } from "@/local-db/utils/utils";
 import { APIService } from "@/services/api.service";
 
 export class IssueService extends APIService {
@@ -20,13 +24,21 @@ export class IssueService extends APIService {
 
   async createIssue(workspaceSlug: string, projectId: string, data: Partial<TIssue>): Promise<TIssue> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/`, data)
-      .then((response) => response?.data)
+      .then((response) => {
+        updatePersistentLayer(response?.data?.id);
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async getIssues(workspaceSlug: string, projectId: string, queries?: any, config = {}): Promise<TIssuesResponse> {
+  async getIssuesFromServer(
+    workspaceSlug: string,
+    projectId: string,
+    queries?: any,
+    config = {}
+  ): Promise<TIssuesResponse> {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/`,
       {
@@ -34,6 +46,41 @@ export class IssueService extends APIService {
       },
       config
     )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getIssuesForSync(
+    workspaceSlug: string,
+    projectId: string,
+    queries?: any,
+    config = {}
+  ): Promise<TIssuesResponse> {
+    queries.project_id = projectId;
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/v2/issues/`,
+      {
+        params: queries,
+      },
+      config
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getIssues(workspaceSlug: string, projectId: string, queries?: any, config = {}): Promise<TIssuesResponse> {
+    const response = await persistence.getIssues(workspaceSlug, projectId, queries, config);
+    return response as TIssuesResponse;
+  }
+
+  async getDeletedIssues(workspaceSlug: string, projectId: string, queries?: any): Promise<TIssuesResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/deleted-issues/`, {
+      params: queries,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -58,7 +105,12 @@ export class IssueService extends APIService {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/`, {
       params: queries,
     })
-      .then((response) => response?.data)
+      .then((response) => {
+        if (response.data) {
+          addIssue(response?.data);
+        }
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -68,7 +120,12 @@ export class IssueService extends APIService {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/list/`, {
       params: { issues: issueIds.join(",") },
     })
-      .then((response) => response?.data)
+      .then((response) => {
+        if (response?.data && Array.isArray(response?.data)) {
+          addIssuesBulk(response.data);
+        }
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -90,6 +147,7 @@ export class IssueService extends APIService {
       issues: string[];
     }
   ) {
+    updatePersistentLayer(data.issues);
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -119,6 +177,7 @@ export class IssueService extends APIService {
       relation?: "blocking" | null;
     }
   ) {
+    updatePersistentLayer(issueId);
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-relation/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -159,6 +218,7 @@ export class IssueService extends APIService {
   }
 
   async patchIssue(workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>): Promise<any> {
+    updatePersistentLayer(issueId);
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -167,6 +227,7 @@ export class IssueService extends APIService {
   }
 
   async deleteIssue(workspaceSlug: string, projectId: string, issuesId: string): Promise<any> {
+    deleteIssueFromLocal(issuesId);
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issuesId}/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -188,6 +249,7 @@ export class IssueService extends APIService {
     issueId: string,
     data: { sub_issue_ids: string[] }
   ): Promise<TIssueSubIssues> {
+    updatePersistentLayer([issueId, ...data.sub_issue_ids]);
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/sub-issues/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -209,6 +271,7 @@ export class IssueService extends APIService {
     issueId: string,
     data: Partial<TIssueLink>
   ): Promise<TIssueLink> {
+    updatePersistentLayer(issueId);
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-links/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -223,6 +286,7 @@ export class IssueService extends APIService {
     linkId: string,
     data: Partial<TIssueLink>
   ): Promise<TIssueLink> {
+    updatePersistentLayer(issueId);
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-links/${linkId}/`,
       data
@@ -234,6 +298,7 @@ export class IssueService extends APIService {
   }
 
   async deleteIssueLink(workspaceSlug: string, projectId: string, issueId: string, linkId: string): Promise<any> {
+    updatePersistentLayer(issueId);
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-links/${linkId}/`
     )
@@ -245,7 +310,10 @@ export class IssueService extends APIService {
 
   async bulkOperations(workspaceSlug: string, projectId: string, data: TBulkOperationsPayload): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/bulk-operation-issues/`, data)
-      .then((response) => response?.data)
+      .then((response) => {
+        persistence.syncIssues(projectId);
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -259,7 +327,10 @@ export class IssueService extends APIService {
     }
   ): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/bulk-delete-issues/`, data)
-      .then((response) => response?.data)
+      .then((response) => {
+        persistence.syncIssues(projectId);
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -275,7 +346,10 @@ export class IssueService extends APIService {
     archived_at: string;
   }> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/bulk-archive-issues/`, data)
-      .then((response) => response?.data)
+      .then((response) => {
+        persistence.syncIssues(projectId);
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });

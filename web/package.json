@@ -33,7 +33,11 @@
     "@plane/ui": "*",
     "@popperjs/core": "^2.11.8",
     "@sentry/nextjs": "^8",
+<<<<<<< HEAD
+    "@sqlite.org/sqlite-wasm": "^3.46.0-build2",
+=======
     "@todesktop/client-core": "^1.9.0",
+>>>>>>> 4ec52d5a6c3ca41e5c6b0c0069dd02a36fd3467f
     "axios": "^1.7.4",
     "clsx": "^2.0.0",
     "cmdk": "^1.0.0",

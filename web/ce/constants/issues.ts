@@ -30,3 +30,6 @@ export const filterActivityOnSelectedFilters = (
   filter: TActivityFilters[]
 ): TIssueActivityComment[] =>
   activity.filter((activity) => filter.includes(activity.activity_type as TActivityFilters));
+
+// boolean to decide if the local db cache is enabled
+export const ENABLE_LOCAL_DB_CACHE = false;
