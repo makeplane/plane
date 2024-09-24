@@ -40,6 +40,12 @@ def move_attachment_to_fileasset(apps, schema_editor):
     FileAsset.objects.bulk_create(bulk_issue_attachment, batch_size=1000)
 
 
+def mark_existing_file_uploads(apps, schema_editor):
+    FileAsset = apps.get_model("db", "FileAsset")
+    # Mark all existing file uploads as uploaded
+    FileAsset.objects.update(is_uploaded=True)
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -49,6 +55,10 @@ class Migration(migrations.Migration):
     operations = [  # This migration is to move all existing IssueAttachment to FileAsset
         migrations.RunPython(
             move_attachment_to_fileasset,
+            reverse_code=migrations.RunPython.noop,
+        ),
+        migrations.RunPython(
+            mark_existing_file_uploads,
             reverse_code=migrations.RunPython.noop,
         ),
     ]

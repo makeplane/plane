@@ -9,6 +9,7 @@ from django.core.validators import FileExtensionValidator
 
 # Module import
 from .base import BaseModel
+from plane.settings.storage import S3Storage
 
 
 def get_upload_path(instance, filename):
@@ -67,6 +68,8 @@ class FileAsset(BaseModel):
         related_name="assets",
     )
     size = models.FloatField(default=0)
+    is_uploaded = models.BooleanField(default=False)
+    storage_metadata = models.JSONField(default=dict, null=True, blank=True)
 
     class Meta:
         verbose_name = "File Asset"
@@ -76,3 +79,8 @@ class FileAsset(BaseModel):
 
     def __str__(self):
         return str(self.asset)
+
+    @property
+    def signed_url(self):
+        storage = S3Storage()
+        return storage.generate_presigned_url(self.asset.name)

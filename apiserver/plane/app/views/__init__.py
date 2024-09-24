@@ -108,7 +108,11 @@ from .cycle.archive import (
     CycleArchiveUnarchiveEndpoint,
 )
 
-from .asset.base import FileAssetEndpoint, UserAssetsEndpoint, FileAssetViewSet
+from .asset.base import (
+    FileAssetEndpoint,
+    UserAssetsEndpoint,
+    FileAssetViewSet,
+)
 from .issue.base import (
     IssueListEndpoint,
     IssueViewSet,

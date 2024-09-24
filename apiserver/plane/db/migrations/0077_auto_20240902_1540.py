@@ -75,4 +75,14 @@ class Migration(migrations.Migration):
             name="logo",
             field=models.TextField(blank=True, null=True, verbose_name="Logo"),
         ),
+        migrations.AddField(
+            model_name="fileasset",
+            name="is_uploaded",
+            field=models.BooleanField(default=False),
+        ),
+        migrations.AddField(
+            model_name="fileasset",
+            name="storage_metadata",
+            field=models.JSONField(blank=True, default=dict, null=True),
+        ),
     ]
