@@ -45,6 +45,11 @@ from .views import (
     SignInAuthSpaceEndpoint,
     SignUpAuthSpaceEndpoint,
     SignOutAuthSpaceEndpoint,
+    # mobile web view authentication
+    MobileSignInAuthEndpoint,
+    MobileMagicSignInEndpoint,
+    MobileSessionTokenCheckEndpoint,
+    MobileSignOutAuthEndpoint,
 )
 
 urlpatterns = [
@@ -263,5 +268,26 @@ urlpatterns = [
         "saml/logout/",
         SAMLLogoutEndpoint.as_view(),
         name="saml",
+    ),
+    # mobile web view authentication
+    path(
+        "mobile/sign-in/",
+        MobileSignInAuthEndpoint.as_view(),
+        name="mobile-sign-in",
+    ),
+    path(
+        "mobile/magic-sign-in/",
+        MobileMagicSignInEndpoint.as_view(),
+        name="mobile-magic-sign-in",
+    ),
+    path(
+        "mobile/token-check/",
+        MobileSessionTokenCheckEndpoint.as_view(),
+        name="mobile-token-check",
+    ),
+    path(
+        "mobile/sign-out/",
+        MobileSignOutAuthEndpoint.as_view(),
+        name="mobile-sign-out",
     ),
 ]

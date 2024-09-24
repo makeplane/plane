@@ -69,11 +69,13 @@ AUTHENTICATION_ERROR_CODES = {
     "RATE_LIMIT_EXCEEDED": 5900,
     # Unknown
     "AUTHENTICATION_FAILED": 5999,
+    # user not onboarded
+    "USER_NOT_ONBOARDED": 6000,
+    "TOKEN_NOT_SET": 6005,
 }
 
 
 class AuthenticationException(Exception):
-
     error_code = None
     error_message = None
     payload = {}
