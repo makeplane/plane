@@ -179,8 +179,9 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
       // set loader and clear store
       runInAction(() => {
         this.setLoader(loadType);
+        this.clear(!isExistingPaginationOptions, false); // clear while fetching from server.
+        if (!this.groupBy) this.clear(!isExistingPaginationOptions, true); // clear while using local to have the no load effect.
       });
-      this.clear(!isExistingPaginationOptions);
 
       // get params from pagination options
       const params = this.issueFilterStore?.getFilterParams(options, cycleId, undefined, undefined, undefined);
@@ -190,7 +191,7 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
       });
 
       // after fetching issues, call the base method to process the response further
-      this.onfetchIssues(response, options, workspaceSlug, projectId, cycleId);
+      this.onfetchIssues(response, options, workspaceSlug, projectId, cycleId, !isExistingPaginationOptions);
       return response;
     } catch (error) {
       // set loader to undefined once errored out
@@ -233,7 +234,7 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
         subGroupId
       );
       // call the fetch issues API with the params for next page in issues
-      const response = await this.issueService.getIssues(workspaceSlug, projectId, cycleId, params);
+      const response = await this.issueService.getIssues(workspaceSlug, projectId, params);
 
       // after the next page of issues are fetched, call the base method to process the response
       this.onfetchNexIssues(response, groupId, subGroupId);

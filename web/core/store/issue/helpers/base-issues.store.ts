@@ -65,6 +65,7 @@ export interface IBaseIssuesStore {
 
   //actions
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  clear(shouldClearPaginationOptions?: boolean, clearForLocal?: boolean): void;
   // helper methods
   getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined;
   issuesSortWithOrderBy(issueIds: string[], key: Partial<TIssueOrderByOptions>): string[];
@@ -455,7 +456,8 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     options: IssuePaginationOptions,
     workspaceSlug: string,
     projectId?: string,
-    id?: string
+    id?: string,
+    shouldClearPaginationOptions = true
   ) {
     // Process the Issue Response to get the following data from it
     const { issueList, groupedIssues, groupedIssueCount } = this.processIssueResponse(issuesResponse);
@@ -465,6 +467,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
     // Update all the GroupIds to this Store's groupedIssueIds and update Individual group issue counts
     runInAction(() => {
+      this.clear(shouldClearPaginationOptions, true);
       this.updateGroupedIssueIds(groupedIssues, groupedIssueCount);
       this.loader[getGroupKey()] = undefined;
     });
@@ -1139,17 +1142,22 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   /**
    * Method called to clear out the current store
    */
-  clear(shouldClearPaginationOptions = true) {
-    runInAction(() => {
-      this.groupedIssueIds = undefined;
-      this.issuePaginationData = {};
-      this.groupedIssueCount = {};
-      if (shouldClearPaginationOptions) {
-        this.paginationOptions = undefined;
-      }
-    });
-    this.controller.abort();
-    this.controller = new AbortController();
+  clear(shouldClearPaginationOptions = true, clearForLocal = false) {
+    if (
+      (this.rootIssueStore.rootStore.user?.localDBEnabled && clearForLocal) ||
+      (!this.rootIssueStore.rootStore.user?.localDBEnabled && !clearForLocal)
+    ) {
+      runInAction(() => {
+        this.groupedIssueIds = undefined;
+        this.issuePaginationData = {};
+        this.groupedIssueCount = {};
+        if (shouldClearPaginationOptions) {
+          this.paginationOptions = undefined;
+        }
+      });
+      this.controller.abort();
+      this.controller = new AbortController();
+    }
   }
 
   /**
@@ -1694,7 +1702,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       }
     }
 
-    return isDataIdsArray ? (order ? orderBy(dataValues, undefined, [order])[0] : dataValues) : dataValues[0];
+    return isDataIdsArray ? (order ? orderBy(dataValues, undefined, [order]) : dataValues) : dataValues;
   }
 
   issuesSortWithOrderBy = (issueIds: string[], key: TIssueOrderByOptions | undefined): string[] => {
