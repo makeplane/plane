@@ -12,7 +12,6 @@ from plane.authentication.adapter.saml import SAMLAdapter
 
 
 class SignOutAuthEndpoint(View):
-
     def post(self, request):
         # Get user
         try:
