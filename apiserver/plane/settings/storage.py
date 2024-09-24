@@ -1,5 +1,6 @@
 # Python imports
 import os
+import json
 
 # Third party imports
 import boto3
@@ -94,3 +95,25 @@ class S3Storage(object):
 
         # The response contains the presigned URL
         return response
+
+    def get_object_metadata(self, object_name):
+        """Get the metadata for an S3 object"""
+        try:
+            response = self.s3_client.head_object(
+                Bucket=self.aws_storage_bucket_name, Key=object_name
+            )
+        except ClientError as e:
+            log_exception(e)
+            return None
+
+        return {
+            "ContentType": response.get("ContentType"),
+            "ContentLength": response.get("ContentLength"),
+            "LastModified": (
+                response.get("LastModified").isoformat()
+                if response.get("LastModified")
+                else None
+            ),
+            "ETag": response.get("ETag"),
+            "Metadata": response.get("Metadata", {}),
+        }

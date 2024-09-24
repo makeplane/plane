@@ -113,6 +113,12 @@ from .asset.base import (
     UserAssetsEndpoint,
     FileAssetViewSet,
 )
+from .asset.v2 import (
+    WorkspaceFileAssetEndpoint,
+    UserAssetsV2Endpoint,
+    StaticFileAssetEndpoint,
+    AssetRestoreEndpoint,
+)
 from .issue.base import (
     IssueListEndpoint,
     IssueViewSet,
