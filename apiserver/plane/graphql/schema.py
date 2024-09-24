@@ -42,6 +42,7 @@ from .queries.search import GlobalSearchQuery
 from .queries.attachment import IssueAttachmentQuery
 from .queries.link import IssueLinkQuery
 from .queries.estimate import EstimatePointQuery
+from .queries.issues import IssueRelationQuery, IssuesSearchQuery
 
 # mutations
 from .mutations.workspace import WorkspaceMutation, WorkspaceInviteMutation
@@ -71,6 +72,7 @@ from .mutations.module import (
 )
 from .mutations.link import IssueLinkMutation
 from .mutations.favorite import UserFavoriteMutation
+from .mutations.issues import IssueRelationMutation, IssueCommentMutation
 
 
 # combined query class for all
@@ -114,6 +116,8 @@ class Query(
     UserPageQuery,
     CycleIssueUserPropertyQuery,
     ModuleIssueUserPropertyQuery,
+    IssueRelationQuery,
+    IssuesSearchQuery,
 ):
     pass
 
@@ -141,6 +145,8 @@ class Mutation(
     UserFavoriteMutation,
     CycleIssueUserPropertyMutation,
     ModuleIssueUserPropertyMutation,
+    IssueRelationMutation,
+    IssueCommentMutation,
 ):
     pass
 
