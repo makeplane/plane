@@ -4,7 +4,6 @@ import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
-import debounce from "lodash/debounce";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { DeleteIssueModal } from "@/components/issues";
