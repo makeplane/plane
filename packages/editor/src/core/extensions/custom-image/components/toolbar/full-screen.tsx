@@ -21,8 +21,8 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
   // states
   const [magnification, setMagnification] = useState(1);
   // derived values
-  const widthInNumber = useMemo(() => Number(width.replace("px", "")), [width]);
-  const heightInNumber = useMemo(() => Number(height.replace("px", "")), [height]);
+  const widthInNumber = useMemo(() => Number(width?.replace("px", "")), [width]);
+  const heightInNumber = useMemo(() => Number(height?.replace("px", "")), [height]);
   const aspectRatio = useMemo(() => widthInNumber / heightInNumber, [heightInNumber, widthInNumber]);
   // close handler
   const handleClose = useCallback(() => {
