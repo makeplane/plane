@@ -21,9 +21,11 @@ from plane.db.models import (
     IssueSubscriber,
     WorkspaceMember,
 )
+from plane.graphql.types.paginator import PaginatorResponse
+from plane.graphql.utils.paginator import paginate
 
 # Typing Imports
-from typing import Optional, List
+from typing import Optional
 
 
 @strawberry.type
@@ -42,7 +44,8 @@ class NotificationQuery:
         archived: Optional[bool] = None,
         read: Optional[str] = None,
         mentioned: Optional[bool] = False,
-    ) -> List[NotificationType]:
+        cursor: Optional[str] = None,
+    ) -> PaginatorResponse[NotificationType]:
         type_list = type.split(",")
         q_filters = Q()
         filters = Q(
@@ -149,4 +152,5 @@ class NotificationQuery:
 
         queryset = queryset.filter(q_filters)
         notifications = await sync_to_async(list)(queryset)
-        return notifications
+
+        return paginate(results_object=notifications, cursor=cursor)
