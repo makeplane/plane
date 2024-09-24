@@ -93,12 +93,6 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     [fetchNextIssues]
   );
 
-  const debouncedFetchMoreIssues = debounce(
-    (groupId?: string, subgroupId?: string) => fetchMoreIssues(groupId, subgroupId),
-    300,
-    { leading: true, trailing: false }
-  );
-
   const groupedIssueIds = issues?.groupedIssueIds;
 
   const userDisplayFilters = displayFilters || null;
@@ -275,7 +269,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               addIssuesToView={addIssuesToView}
               scrollableContainerRef={scrollableContainerRef}
               handleOnDrop={handleOnDrop}
-              loadMoreIssues={debouncedFetchMoreIssues}
+              loadMoreIssues={fetchMoreIssues}
             />
           </div>
         </div>
