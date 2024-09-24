@@ -162,7 +162,9 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
               <CustomMenu placement="bottom-end" ellipsis>
                 {disabled && (
                   <CustomMenu.MenuItem
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
                       handleIssueCrudState("update", parentIssueId, { ...issue });
                       toggleCreateIssueModal(true);
                     }}
@@ -175,9 +177,11 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
                 )}
 
                 <CustomMenu.MenuItem
-                  onClick={() =>
-                    subIssueOperations.copyText(`${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`)
-                  }
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    subIssueOperations.copyText(`${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`);
+                  }}
                 >
                   <div className="flex items-center gap-2">
                     <LinkIcon className="h-3.5 w-3.5" strokeWidth={2} />
@@ -187,8 +191,10 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
 
                 {disabled && (
                   <CustomMenu.MenuItem
-                    onClick={() => {
-                      issue.project_id &&
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      if (issue.project_id)
                         subIssueOperations.removeSubIssue(workspaceSlug, issue.project_id, parentIssueId, issue.id);
                     }}
                   >
@@ -201,7 +207,9 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
 
                 {disabled && (
                   <CustomMenu.MenuItem
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
                       handleIssueCrudState("delete", parentIssueId, issue);
                       toggleDeleteIssueModal(issue.id);
                     }}
