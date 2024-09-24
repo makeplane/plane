@@ -145,7 +145,7 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
         src={src}
         width={size.width}
         height={size.height}
-        className={cn("block rounded-md", {
+        className={cn("image-component block rounded-md", {
           hidden: isShimmerVisible,
           "read-only-image": !editor.isEditable,
         })}
