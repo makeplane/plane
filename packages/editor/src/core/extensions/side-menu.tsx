@@ -114,6 +114,10 @@ const SideMenu = (options: SideMenuPluginProps) => {
           rect.top += (lineHeight - 20) / 2;
           rect.top += paddingTop;
 
+          if (handlesConfig.ai) {
+            rect.left -= 20;
+          }
+
           if (node.parentElement?.parentElement?.matches("td") || node.parentElement?.parentElement?.matches("th")) {
             if (node.matches("ul:not([data-type=taskList]) li, ol li")) {
               rect.left -= 5;
