@@ -13,7 +13,6 @@ from plane.app.permissions import allow_permission, ROLE
 
 
 class WorkspaceFavoriteEndpoint(BaseAPIView):
-
     @allow_permission(
         allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE"
     )
@@ -76,7 +75,6 @@ class WorkspaceFavoriteEndpoint(BaseAPIView):
 
 
 class WorkspaceFavoriteGroupEndpoint(BaseAPIView):
-
     @allow_permission(
         allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE"
     )
