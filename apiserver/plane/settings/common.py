@@ -359,3 +359,6 @@ SPACE_BASE_URL = os.environ.get("SPACE_BASE_URL", None)
 APP_BASE_URL = os.environ.get("APP_BASE_URL")
 
 HARD_DELETE_AFTER_DAYS = int(os.environ.get("HARD_DELETE_AFTER_DAYS", 60))
+
+# Instance Changelog URL
+INSTANCE_CHANGELOG_URL = os.environ.get("INSTANCE_CHANGELOG_URL", "")

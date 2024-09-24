@@ -5,13 +5,15 @@ import { observer } from "mobx-react";
 import { FileText, HelpCircle, MessagesSquare, MoveLeft, User } from "lucide-react";
 // ui
 import { CustomMenu, Tooltip } from "@plane/ui";
+// components
+import { ProductUpdatesModal } from "@/components/global";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useCommandPalette, useInstance, useTransient } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
-import { PlaneVersionNumber, ProductUpdates, ProductUpdatesModal } from "@/plane-web/components/global";
+import { PlaneVersionNumber } from "@/plane-web/components/global";
 import { WorkspaceEditionBadge } from "@/plane-web/components/workspace";
 
 export interface WorkspaceHelpSectionProps {
@@ -114,7 +116,15 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
                 <span className="text-xs">Keyboard shortcuts</span>
               </button>
             </CustomMenu.MenuItem>
-            <ProductUpdates setIsChangeLogOpen={setIsChangeLogOpen} />
+            <CustomMenu.MenuItem>
+              <button
+                type="button"
+                onClick={() => setIsChangeLogOpen(true)}
+                className="flex w-full items-center justify-start text-xs hover:bg-custom-background-80"
+              >
+                <span className="text-xs">What&apos;s new</span>
+              </button>
+            </CustomMenu.MenuItem>
             <CustomMenu.MenuItem>
               <a
                 href="https://go.plane.so/p-discord"

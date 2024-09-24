@@ -177,6 +177,8 @@ class InstanceEndpoint(BaseAPIView):
         data["space_base_url"] = settings.SPACE_BASE_URL
         data["app_base_url"] = settings.APP_BASE_URL
 
+        data["instance_changelog_url"] = settings.INSTANCE_CHANGELOG_URL
+
         instance_data = serializer.data
         instance_data["workspaces_exist"] = Workspace.objects.count() >= 1
 
