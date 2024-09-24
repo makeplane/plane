@@ -142,7 +142,7 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
       // get params from pagination options
       const params = this.issueFilterStore?.getFilterParams(options, moduleId, undefined, undefined, undefined);
       // call the fetch issues API with the params
-      const response = await this.moduleService.getModuleIssues(workspaceSlug, projectId, moduleId, params, {
+      const response = await this.issueService.getIssues(workspaceSlug, projectId, params, {
         signal: this.controller.signal,
       });
 
@@ -190,7 +190,7 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
         subGroupId
       );
       // call the fetch issues API with the params for next page in issues
-      const response = await this.moduleService.getModuleIssues(workspaceSlug, projectId, moduleId, params);
+      const response = await this.issueService.getIssues(workspaceSlug, projectId, params);
 
       // after the next page of issues are fetched, call the base method to process the response
       this.onfetchNexIssues(response, groupId, subGroupId);

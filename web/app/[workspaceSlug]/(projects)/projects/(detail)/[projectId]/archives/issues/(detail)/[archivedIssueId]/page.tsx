@@ -19,12 +19,12 @@ const ArchivedIssueDetailsPage = observer(() => {
   // hooks
   const {
     fetchIssue,
-    issue: { getIssueById },
+    issue: { getIssueById, isFetchingIssueDetails },
   } = useIssueDetail();
 
   const { getProjectById } = useProject();
 
-  const { isLoading } = useSWR(
+  useSWR(
     workspaceSlug && projectId && archivedIssueId
       ? `ARCHIVED_ISSUE_DETAIL_${workspaceSlug}_${projectId}_${archivedIssueId}`
       : null,
@@ -40,7 +40,7 @@ const ArchivedIssueDetailsPage = observer(() => {
 
   if (!issue) return <></>;
 
-  const issueLoader = !issue || isLoading ? true : false;
+  const issueLoader = !issue || isFetchingIssueDetails ? true : false;
 
   return (
     <>
