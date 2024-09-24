@@ -10,7 +10,16 @@ import { Disclosure, Transition } from "@headlessui/react";
 // layouts
 // components
 import type { IUser } from "@plane/types";
-import { Button, CustomSelect, CustomSearchSelect, Input, TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
+import {
+  Button,
+  CustomSelect,
+  CustomSearchSelect,
+  Input,
+  TOAST_TYPE,
+  setPromiseToast,
+  setToast,
+  ToggleSwitch,
+} from "@plane/ui";
 import { DeactivateAccountModal } from "@/components/account";
 import { LogoSpinner } from "@/components/common";
 import { ImagePickerPopover, UserImageUploadModal, PageHead } from "@/components/core";
@@ -22,10 +31,11 @@ import { ProfileSettingContentWrapper } from "@/components/profile";
 import { TIME_ZONES } from "@/constants/timezones";
 import { USER_ROLES } from "@/constants/workspace";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser, useUserSettings } from "@/hooks/store";
 // import { ProfileSettingsLayout } from "@/layouts/settings-layout";
 // layouts
 import { FileService } from "@/services/file.service";
+import { ENABLE_LOCAL_DB_CACHE } from "@/plane-web/constants/issues";
 // services
 // types
 
@@ -59,6 +69,7 @@ const ProfileSettingsPage = observer(() => {
   } = useForm<IUser>({ defaultValues });
   // store hooks
   const { data: currentUser, updateCurrentUser } = useUser();
+  const { canUseLocalDB, toggleLocalDB } = useUserSettings();
 
   useEffect(() => {
     reset({ ...defaultValues, ...currentUser });
@@ -387,7 +398,7 @@ const ProfileSettingsPage = observer(() => {
                   render={({ field: { value, onChange } }) => (
                     <CustomSearchSelect
                       value={value}
-                      label={value ? TIME_ZONES.find((t) => t.value === value)?.label ?? value : "Select a timezone"}
+                      label={value ? (TIME_ZONES.find((t) => t.value === value)?.label ?? value) : "Select a timezone"}
                       options={timeZoneOptions}
                       onChange={onChange}
                       buttonClassName={errors.user_timezone ? "border-red-500" : "border-none"}
@@ -407,6 +418,37 @@ const ProfileSettingsPage = observer(() => {
             </div>
           </div>
         </form>
+        {ENABLE_LOCAL_DB_CACHE && (
+          <Disclosure as="div" className="border-t border-custom-border-100 md:px-8">
+            {({ open }) => (
+              <>
+                <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between py-4">
+                  <span className="text-lg tracking-tight">Local Cache</span>
+                  <ChevronDown className={`h-5 w-5 transition-all ${open ? "rotate-180" : ""}`} />
+                </Disclosure.Button>
+                <Transition
+                  show={open}
+                  enter="transition duration-100 ease-out"
+                  enterFrom="transform opacity-0"
+                  enterTo="transform opacity-100"
+                  leave="transition duration-75 ease-out"
+                  leaveFrom="transform opacity-100"
+                  leaveTo="transform opacity-0"
+                >
+                  <Disclosure.Panel>
+                    <div className="flex justify-between pb-4">
+                      <span className="text-sm tracking-tight">
+                        Toggled on by default to keep Plane performant. Disable this if you are facing any issues with
+                        Plane. Applicable only to this device.
+                      </span>
+                      <ToggleSwitch value={canUseLocalDB} onChange={() => toggleLocalDB()} />
+                    </div>
+                  </Disclosure.Panel>
+                </Transition>
+              </>
+            )}
+          </Disclosure>
+        )}
         <Disclosure as="div" className="border-t border-custom-border-100 md:px-8">
           {({ open }) => (
             <>

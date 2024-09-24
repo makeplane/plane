@@ -145,8 +145,7 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
         src={src}
         width={size.width}
         height={size.height}
-        onLoad={handleImageLoad}
-        className={cn("block rounded-md", {
+        className={cn("image-component block rounded-md", {
           hidden: isShimmerVisible,
           "read-only-image": !editor.isEditable,
         })}
@@ -159,8 +158,8 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
         containerClassName="absolute top-1 right-1 z-20 bg-black/40 rounded opacity-0 pointer-events-none group-hover/image-component:opacity-100 group-hover/image-component:pointer-events-auto transition-opacity"
         image={{
           src,
-          height,
-          width,
+          height: size.height,
+          width: size.width,
         }}
       />
       {editor.isEditable && selected && !isShimmerVisible && (

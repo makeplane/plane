@@ -23,8 +23,8 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
   // refs
   const modalRef = useRef<HTMLDivElement>(null);
   // derived values
-  const widthInNumber = useMemo(() => Number(width.replace("px", "")), [width]);
-  const heightInNumber = useMemo(() => Number(height.replace("px", "")), [height]);
+  const widthInNumber = useMemo(() => Number(width?.replace("px", "")), [width]);
+  const heightInNumber = useMemo(() => Number(height?.replace("px", "")), [height]);
   const aspectRatio = useMemo(() => widthInNumber / heightInNumber, [heightInNumber, widthInNumber]);
   // close handler
   const handleClose = useCallback(() => {
