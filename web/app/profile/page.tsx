@@ -35,7 +35,7 @@ import { useUser, useUserSettings } from "@/hooks/store";
 // import { ProfileSettingsLayout } from "@/layouts/settings-layout";
 // layouts
 import { FileService } from "@/services/file.service";
-import { ENABLE_LOCAL_DB_CACHE } from "ee/constants/issues";
+import { ENABLE_LOCAL_DB_CACHE } from "@/plane-web/constants/issues";
 // services
 // types
 
