@@ -59,7 +59,11 @@ export const HeaderColumn = (props: Props) => {
           <div className="ml-3 flex">
             {activeSortingProperty === property && (
               <div className="flex h-3.5 w-3.5 items-center justify-center rounded-full">
-                <ListFilter className="h-3 w-3" />
+                {propertyDetails.ascendingOrderKey === displayFilters.order_by ? (
+                  <ArrowDownWideNarrow className="h-3 w-3" />
+                ) : (
+                  <ArrowUpNarrowWide className="h-3 w-3" />
+                )}
               </div>
             )}
             <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
