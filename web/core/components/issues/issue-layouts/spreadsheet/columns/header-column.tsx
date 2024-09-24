@@ -1,15 +1,7 @@
 "use client";
 
 //ui
-import {
-  ArrowDownWideNarrow,
-  ArrowUpNarrowWide,
-  CheckIcon,
-  ChevronDownIcon,
-  Eraser,
-  ListFilter,
-  MoveRight,
-} from "lucide-react";
+import { ArrowDownWideNarrow, ArrowUpNarrowWide, CheckIcon, ChevronDownIcon, Eraser, MoveRight } from "lucide-react";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssueOrderByOptions } from "@plane/types";
 import { CustomMenu, Row } from "@plane/ui";
 //hooks
