@@ -267,10 +267,12 @@ jobs:
             NEXT_PUBLIC_WEB_BASE_URL=${{ env.NEXT_PUBLIC_WEB_BASE_URL }}
             NEXT_PUBLIC_SPACE_BASE_URL=${{ env.NEXT_PUBLIC_SPACE_BASE_URL }}
             NEXT_PUBLIC_ADMIN_BASE_URL=${{ env.NEXT_PUBLIC_ADMIN_BASE_URL }}
+            NEXT_PUBLIC_LIVE_BASE_URL=${{ env.NEXT_PUBLIC_LIVE_BASE_URL }}
             NEXT_PUBLIC_API_BASE_URL=${{ env.NEXT_PUBLIC_API_BASE_URL }}
             NEXT_PUBLIC_ADMIN_BASE_PATH=${{ env.NEXT_PUBLIC_ADMIN_BASE_PATH }}
             NEXT_PUBLIC_SPACE_BASE_PATH=${{ env.NEXT_PUBLIC_SPACE_BASE_PATH }}
             NEXT_PUBLIC_API_BASE_PATH=${{ env.NEXT_PUBLIC_API_BASE_PATH }}
+            NEXT_PUBLIC_LIVE_BASE_PATH=${{ env.NEXT_PUBLIC_LIVE_BASE_PATH }}
 
   branch_build_push_space:
     if: ${{ needs.branch_build_setup.outputs.build_space == 'true' || github.event_name == 'workflow_dispatch' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
