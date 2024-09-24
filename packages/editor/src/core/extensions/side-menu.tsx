@@ -78,10 +78,11 @@ const SideMenu = (options: SideMenuPluginProps) => {
       hideSideMenu();
       view?.dom.parentElement?.appendChild(editorSideMenu);
       // side menu elements' initialization
-      if (handlesConfig.ai) {
+      if (handlesConfig.ai && !editorSideMenu.querySelector("#ai-handle")) {
         aiHandleView(view, editorSideMenu);
       }
-      if (handlesConfig.dragDrop) {
+
+      if (handlesConfig.dragDrop && !editorSideMenu.querySelector("#drag-handle")) {
         dragHandleView(view, editorSideMenu);
       }
 
