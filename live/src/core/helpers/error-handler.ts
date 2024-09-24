@@ -1,7 +1,7 @@
 import { ErrorRequestHandler } from "express";
 import { manualLogger } from "@/core/helpers/logger.js";
 
-export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
+export const errorHandler: ErrorRequestHandler = (err, _req, res) => {
   // Log the error
   manualLogger.error(err);
 

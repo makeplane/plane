@@ -8,7 +8,8 @@
     "build": "next build",
     "preview": "next build && next start",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:errors": "eslint . --ext .ts,.tsx --quiet"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.19",
@@ -43,9 +44,9 @@
     "@types/react-dom": "^18.2.18",
     "@types/uuid": "^9.0.8",
     "@types/zxcvbn": "^4.4.4",
-    "eslint-config-custom": "*",
+    "@plane/eslint-config": "*",
     "tailwind-config-custom": "*",
-    "tsconfig": "*",
-    "typescript": "5.4.5"
+    "@plane/typescript-config": "*",
+    "typescript": "5.3.3"
   }
 }

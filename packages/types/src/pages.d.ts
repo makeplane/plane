@@ -64,3 +64,9 @@ export type TPageVersion = {
   updated_by: string;
   workspace: string;
 }
+
+export type TDocumentPayload = {
+  description_binary: string;
+  description_html: string;
+  description: object;
+}

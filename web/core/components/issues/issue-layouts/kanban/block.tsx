@@ -39,6 +39,7 @@ interface IssueBlockProps {
   quickActions: TRenderQuickActions;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
+  shouldRenderByDefault?: boolean;
 }
 
 interface IssueDetailsBlockProps {
@@ -114,6 +115,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
     quickActions,
     canEditProperties,
     scrollableContainerRef,
+    shouldRenderByDefault,
   } = props;
 
   const cardRef = useRef<HTMLAnchorElement | null>(null);
@@ -222,6 +224,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
             defaultHeight="100px"
             horizontalOffset={100}
             verticalOffset={200}
+            defaultValue={shouldRenderByDefault}
           >
             <KanbanIssueDetailsBlock
               cardRef={cardRef}

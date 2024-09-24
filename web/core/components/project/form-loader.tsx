@@ -4,9 +4,7 @@ import { FC } from "react";
 // components
 import { Loader } from "@plane/ui";
 
-export interface IProjectDetailsFormLoader {}
-
-export const ProjectDetailsFormLoader: FC<IProjectDetailsFormLoader> = () => (
+export const ProjectDetailsFormLoader: FC = () => (
   <>
     <div className="relative mt-6 h-44 w-full">
       <Loader>
@@ -29,7 +27,7 @@ export const ProjectDetailsFormLoader: FC<IProjectDetailsFormLoader> = () => (
     </div>
     <div className="my-8 flex flex-col gap-8">
       <div className="flex flex-col gap-1">
-        <h4 className="text-sm">Project Name</h4>
+        <h4 className="text-sm">Project name</h4>
         <Loader>
           <Loader.Item height="46px" width="100%" />
         </Loader>

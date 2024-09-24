@@ -7,6 +7,8 @@ import { TUserPermissions } from "@plane/types/src/enums";
 // constants
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
+// local
+import { persistence } from "@/local-db/storage.sqlite";
 import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // services
 import { AuthService } from "@/services/auth.service";
@@ -17,6 +19,7 @@ import { IAccountStore } from "@/store/user/account.store";
 import { ProfileStore, IUserProfileStore } from "@/store/user/profile.store";
 import { IUserPermissionStore, UserPermissionStore } from "./permissions.store";
 import { IUserSettingsStore, UserSettingsStore } from "./settings.store";
+import { ENABLE_LOCAL_DB_CACHE } from "@/plane-web/constants/issues";
 
 type TUserErrorStatus = {
   status: string;
@@ -42,6 +45,7 @@ export interface IUserStore {
   reset: () => void;
   signOut: () => Promise<void>;
   // computed
+  localDBEnabled: boolean;
   canPerformAnyCreateAction: boolean;
   projectsWithCreatePermissions: { [projectId: string]: number } | null;
 }
@@ -91,6 +95,8 @@ export class UserStore implements IUserStore {
       // computed
       canPerformAnyCreateAction: computed,
       projectsWithCreatePermissions: computed,
+
+      localDBEnabled: computed,
     });
   }
 
@@ -226,6 +232,7 @@ export class UserStore implements IUserStore {
    */
   signOut = async (): Promise<void> => {
     await this.authService.signOut(API_BASE_URL);
+    await persistence.clearStorage();
     this.store.resetOnSignOut();
   };
 
@@ -268,5 +275,9 @@ export class UserStore implements IUserStore {
   get canPerformAnyCreateAction() {
     const filteredProjects = this.fetchProjectsWithCreatePermissions();
     return filteredProjects ? Object.keys(filteredProjects).length > 0 : false;
+  }
+
+  get localDBEnabled() {
+    return ENABLE_LOCAL_DB_CACHE && this.userSettings.canUseLocalDB;
   }
 }

@@ -1,7 +1,7 @@
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
 // types
-import { TLogoProps, TPage } from "@plane/types";
+import { TDocumentPayload, TLogoProps, TPage } from "@plane/types";
 // constants
 import { EPageAccess } from "@/constants/page";
 import { EUserPermissions } from "@/plane-web/constants/user-permissions";
@@ -33,7 +33,7 @@ export interface IPage extends TPage {
   // actions
   update: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
   updateTitle: (title: string) => void;
-  updateDescription: (binaryString: string, descriptionHTML: string) => Promise<void>;
+  updateDescription: (document: TDocumentPayload) => Promise<void>;
   makePublic: () => Promise<void>;
   makePrivate: () => Promise<void>;
   lock: () => Promise<void>;
@@ -367,23 +367,19 @@ export class Page implements IPage {
 
   /**
    * @description update the page description
-   * @param {string} binaryString
-   * @param {string} descriptionHTML
+   * @param {TDocumentPayload} document
    */
-  updateDescription = async (binaryString: string, descriptionHTML: string) => {
+  updateDescription = async (document: TDocumentPayload) => {
     const { workspaceSlug, projectId } = this.store.router;
     if (!workspaceSlug || !projectId || !this.id) return undefined;
 
     const currentDescription = this.description_html;
     runInAction(() => {
-      this.description_html = descriptionHTML;
+      this.description_html = document.description_html;
     });
 
     try {
-      await this.pageService.updateDescriptionYJS(workspaceSlug, projectId, this.id, {
-        description_binary: binaryString,
-        description_html: descriptionHTML,
-      });
+      await this.pageService.updateDescriptionYJS(workspaceSlug, projectId, this.id, document);
     } catch (error) {
       runInAction(() => {
         this.description_html = currentDescription;
