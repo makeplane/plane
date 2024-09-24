@@ -37,7 +37,6 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
         setLocalAction(null);
         return;
       }
-      console.log("message", message.payload);
 
       switch (message.payload) {
         case "locked":
@@ -89,7 +88,6 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
       .then(() => {
         if (isLocal) {
           setLocalAction("archived");
-          console.log("archivinggg");
         }
       })
       .catch(() => {
@@ -101,7 +99,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
       });
   };
 
-  // Add this useEffect hook to watch for changes in localAction
+  // watch for changes in localAction
   useEffect(() => {
     if (localAction === "archived") {
       editorRef?.emitRealTimeUpdate("archive");
@@ -216,14 +214,14 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     },
     {
       key: "lock-unlock-page",
-      action: is_locked ? () => handleUnlockPage() : () => handleLockPage(),
+      action: is_locked ? handleUnlockPage : handleLockPage,
       label: is_locked ? "Unlock page" : "Lock page",
       icon: is_locked ? LockOpen : Lock,
       shouldRender: canCurrentUserLockPage,
     },
     {
       key: "archive-restore-page",
-      action: archived_at ? () => handleRestorePage() : () => handleArchivePage(),
+      action: archived_at ? handleRestorePage : handleArchivePage,
       label: archived_at ? "Restore page" : "Archive page",
       icon: archived_at ? ArchiveRestoreIcon : ArchiveIcon,
       shouldRender: canCurrentUserArchivePage,

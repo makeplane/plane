@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // document-editor
@@ -7,7 +7,6 @@ import {
   CollaborativeDocumentReadOnlyEditorWithRef,
   EditorReadOnlyRefApi,
   EditorRefApi,
-  IMarking,
   TAIMenuProps,
   TDisplayConfig,
   TRealtimeConfig,
@@ -70,7 +69,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     project: { getProjectMemberIds },
   } = useMember();
   // derived values
-  const workspaceId = workspaceSlug ? getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "" : "";
+  const workspaceId = workspaceSlug ? (getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "") : "";
   const pageId = page?.id;
   const pageTitle = page?.name ?? "";
   const { isContentEditable, updateTitle, setIsSubmitting } = page;
@@ -109,7 +108,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   }, []);
 
   const handleServerSynced = useCallback(() => {
-    console.log("handleServerSynced called");
     setIsSynced(true);
   }, []);
 
@@ -133,8 +131,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     }),
     [projectId, workspaceSlug]
   );
-
-  console.log("isSynced", isSynced);
 
   if (pageId === undefined) return <PageContentLoader />;
 
