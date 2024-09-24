@@ -22,11 +22,8 @@ import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/u
 import { useFlag, useIssueTypes, useWorkspaceFeatures, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { useFeatureFlags } from "@/plane-web/hooks/store/use-feature-flags";
 // images
-<<<<<<< HEAD
 import { persistence } from "@/local-db/storage.sqlite";
-=======
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
->>>>>>> 4ec52d5a6c3ca41e5c6b0c0069dd02a36fd3467f
 import PlaneBlackLogo from "@/public/plane-logos/black-horizontal-with-blue-logo.png";
 import PlaneWhiteLogo from "@/public/plane-logos/white-horizontal-with-blue-logo.png";
 import WorkSpaceNotAvailable from "@/public/workspace/workspace-not-available.png";
@@ -125,7 +122,6 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-<<<<<<< HEAD
   // initialize the local database
   const { isLoading: isDBInitializing } = useSWRImmutable(
     workspaceSlug ? `WORKSPACE_DB_${workspaceSlug}` : null,
@@ -138,14 +134,14 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
           return true;
         }
       : null
-=======
+  );
+
   const isIssueTypesEnabled = useFlag(workspaceSlug?.toString(), "ISSUE_TYPE_DISPLAY", false);
   // fetching all issue types for the workspace
   useSWR(
     workspaceSlug && isIssueTypesEnabled ? `WORKSPACE_ISSUE_TYPES_${workspaceSlug}_${isIssueTypesEnabled}` : null,
     workspaceSlug && isIssueTypesEnabled ? () => fetchAllIssueTypes(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
->>>>>>> 4ec52d5a6c3ca41e5c6b0c0069dd02a36fd3467f
   );
 
   const handleSignOut = async () => {
@@ -162,11 +158,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const currentWorkspaceInfo = workspaceSlug && workspaceInfoBySlug(workspaceSlug.toString());
 
   // if list of workspaces are not there then we have to render the spinner
-<<<<<<< HEAD
-  if (allWorkspaces === undefined || loader || isDBInitializing) {
-=======
-  if ((flagsLoader && !flagsError) || allWorkspaces === undefined || loader) {
->>>>>>> 4ec52d5a6c3ca41e5c6b0c0069dd02a36fd3467f
+  if ((flagsLoader && !flagsError) || allWorkspaces === undefined || loader || isDBInitializing) {
     return (
       <div className="grid h-screen place-items-center bg-custom-background-100 p-4">
         <div className="flex flex-col items-center gap-3 text-center">
