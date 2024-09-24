@@ -11,7 +11,16 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
   const { node, updateAttributes, selected, getPos, editor } = props;
   const { src, width, height } = node.attrs;
 
-  const [size, setSize] = useState({ width: width || "35%", height: height || "auto" });
+  const [size, setSize] = useState<{
+    width: string;
+    height: string;
+    aspectRatio: number | null;
+  }>({
+    width: width || "35%",
+    height: height || "auto",
+    aspectRatio: null,
+  });
+
   const [isLoading, setIsLoading] = useState(true);
   const [initialResizeComplete, setInitialResizeComplete] = useState(false);
   const isShimmerVisible = isLoading || !initialResizeComplete;
@@ -20,86 +29,92 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const containerRect = useRef<DOMRect | null>(null);
   const imageRef = useRef<HTMLImageElement>(null);
-  const isResizing = useRef(false);
-  const aspectRatioRef = useRef<number | null>(null);
+  const [isResizing, setIsResizing] = useState(false);
 
-  useLayoutEffect(() => {
-    if (imageRef.current) {
-      const img = imageRef.current;
-      img.onload = () => {
-        const closestEditorContainer = img.closest(".editor-container");
-        if (!closestEditorContainer) {
-          console.error("Editor container not found");
-          return;
-        }
+  const handleImageLoad = useCallback(() => {
+    const img = imageRef.current;
+    if (!img) return;
 
-        setEditorContainer(closestEditorContainer as HTMLElement);
-
-        if (width === "35%") {
-          const editorWidth = closestEditorContainer.clientWidth;
-          const initialWidth = Math.max(editorWidth * 0.35, MIN_SIZE);
-          const aspectRatio = img.naturalWidth / img.naturalHeight;
-          const initialHeight = initialWidth / aspectRatio;
-
-          const newSize = {
-            width: `${Math.round(initialWidth)}px`,
-            height: `${Math.round(initialHeight)}px`,
-          };
-
-          setSize(newSize);
-          updateAttributes(newSize);
-        }
-        setInitialResizeComplete(true);
-        setIsLoading(false);
-      };
+    const closestEditorContainer = img.closest(".editor-container");
+    if (!closestEditorContainer) {
+      console.error("Editor container not found");
+      return;
     }
-  }, [width, height, updateAttributes]);
+
+    setEditorContainer(closestEditorContainer as HTMLElement);
+    const aspectRatio = img.naturalWidth / img.naturalHeight;
+
+    if (width === "35%") {
+      const editorWidth = closestEditorContainer.clientWidth;
+      const initialWidth = Math.max(editorWidth * 0.35, MIN_SIZE);
+      const initialHeight = initialWidth / aspectRatio;
+
+      const newSize = {
+        width: `${Math.round(initialWidth)}px`,
+        height: `${Math.round(initialHeight)}px`,
+        aspectRatio: aspectRatio,
+      };
+
+      setSize(newSize);
+      updateAttributes(newSize);
+    } else {
+      setSize((prevSize) => ({ ...prevSize, aspectRatio }));
+    }
+    setInitialResizeComplete(true);
+    setIsLoading(false);
+  }, [width, updateAttributes, imageRef]);
 
   useLayoutEffect(() => {
-    setSize({ width, height });
+    setSize((prevSize) => ({ ...prevSize, width, height }));
   }, [width, height]);
-
-  const handleResizeStart = useCallback(
-    (e: React.MouseEvent | React.TouchEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      isResizing.current = true;
-      if (containerRef.current && editorContainer) {
-        aspectRatioRef.current = Number(size.width.replace("px", "")) / Number(size.height.replace("px", ""));
-        containerRect.current = containerRef.current.getBoundingClientRect();
-      }
-    },
-    [size, editorContainer]
-  );
 
   const handleResize = useCallback(
     (e: MouseEvent | TouchEvent) => {
-      if (!isResizing.current || !containerRef.current || !containerRect.current) return;
-
-      if (size) {
-        aspectRatioRef.current = Number(size.width.replace("px", "")) / Number(size.height.replace("px", ""));
-      }
-
-      if (!aspectRatioRef.current) return;
+      if (!containerRef.current || !containerRect.current || !size.aspectRatio) return;
 
       const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
 
       const newWidth = Math.max(clientX - containerRect.current.left, MIN_SIZE);
-      const newHeight = newWidth / aspectRatioRef.current;
+      const newHeight = newWidth / size.aspectRatio;
 
-      setSize({ width: `${newWidth}px`, height: `${newHeight}px` });
+      setSize((prevSize) => ({ ...prevSize, width: `${newWidth}px`, height: `${newHeight}px` }));
     },
     [size]
   );
 
   const handleResizeEnd = useCallback(() => {
-    if (isResizing.current) {
-      isResizing.current = false;
-      updateAttributes(size);
-    }
+    setIsResizing(false);
+    updateAttributes(size);
   }, [size, updateAttributes]);
 
-  const handleMouseDown = useCallback(
+  const handleResizeStart = useCallback(
+    (e: React.MouseEvent | React.TouchEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsResizing(true);
+
+      if (containerRef.current && editorContainer) {
+        containerRect.current = containerRef.current.getBoundingClientRect();
+      }
+    },
+    [editorContainer]
+  );
+
+  useEffect(() => {
+    if (isResizing) {
+      window.addEventListener("mousemove", handleResize);
+      window.addEventListener("mouseup", handleResizeEnd);
+      window.addEventListener("mouseleave", handleResizeEnd);
+
+      return () => {
+        window.removeEventListener("mousemove", handleResize);
+        window.removeEventListener("mouseup", handleResizeEnd);
+        window.removeEventListener("mouseleave", handleResizeEnd);
+      };
+    }
+  }, [isResizing, handleResize, handleResizeEnd]);
+
+  const handleImageMouseDown = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
       const pos = getPos();
@@ -109,49 +124,35 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
     [editor, getPos]
   );
 
-  useEffect(() => {
-    if (!editorContainer) return;
-
-    const handleMouseMove = (e: MouseEvent) => handleResize(e);
-    const handleMouseUp = () => handleResizeEnd();
-    const handleMouseLeave = () => handleResizeEnd();
-
-    editorContainer.addEventListener("mousemove", handleMouseMove);
-    editorContainer.addEventListener("mouseup", handleMouseUp);
-    editorContainer.addEventListener("mouseleave", handleMouseLeave);
-
-    return () => {
-      editorContainer.removeEventListener("mousemove", handleMouseMove);
-      editorContainer.removeEventListener("mouseup", handleMouseUp);
-      editorContainer.removeEventListener("mouseleave", handleMouseLeave);
-    };
-  }, [handleResize, handleResizeEnd, editorContainer]);
-
   return (
     <div
       ref={containerRef}
       className="group/image-component relative inline-block max-w-full"
-      onMouseDown={handleMouseDown}
+      onMouseDown={handleImageMouseDown}
       style={{
         width: size.width,
-        height: size.height,
+        aspectRatio: size.aspectRatio ?? undefined,
       }}
     >
       {isShimmerVisible && (
-        <div className="animate-pulse bg-custom-background-80 rounded-md" style={{ width, height }} />
+        <div
+          className="animate-pulse bg-custom-background-80 rounded-md"
+          style={{ width: size.width, height: size.height }}
+        />
       )}
       <img
         ref={imageRef}
         src={src}
         width={size.width}
         height={size.height}
+        onLoad={handleImageLoad}
         className={cn("block rounded-md", {
           hidden: isShimmerVisible,
           "read-only-image": !editor.isEditable,
         })}
         style={{
           width: size.width,
-          height: size.height,
+          aspectRatio: size.aspectRatio ?? undefined,
         }}
       />
       <ImageToolbarRoot
@@ -162,12 +163,29 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
           width,
         }}
       />
-      {editor.isEditable && selected && <div className="absolute inset-0 size-full bg-custom-primary-500/30" />}
-      {editor.isEditable && (
+      {editor.isEditable && selected && !isShimmerVisible && (
+        <div className="absolute inset-0 size-full bg-custom-primary-500/30" />
+      )}
+      {editor.isEditable && !isShimmerVisible && (
         <>
-          <div className="opacity-0 group-hover/image-component:opacity-100 absolute inset-0 border-2 border-custom-primary-100 pointer-events-none rounded-md transition-opacity duration-100 ease-in-out" />
           <div
-            className="opacity-0 pointer-events-none group-hover/image-component:opacity-100 group-hover/image-component:pointer-events-auto absolute bottom-0 right-0 translate-y-1/2 translate-x-1/2 size-4 rounded-full bg-custom-primary-100 border-2 border-white cursor-nwse-resize transition-opacity duration-100 ease-in-out"
+            className={cn(
+              "absolute inset-0 border-2 border-custom-primary-100 pointer-events-none rounded-md transition-opacity duration-100 ease-in-out",
+              {
+                "opacity-100": isResizing,
+                "opacity-0 group-hover/image-component:opacity-100": !isResizing,
+              }
+            )}
+          />
+          <div
+            className={cn(
+              "absolute bottom-0 right-0 translate-y-1/2 translate-x-1/2 size-4 rounded-full bg-custom-primary-100 border-2 border-white cursor-nwse-resize transition-opacity duration-100 ease-in-out",
+              {
+                "opacity-100 pointer-events-auto": isResizing,
+                "opacity-0 pointer-events-none group-hover/image-component:opacity-100 group-hover/image-component:pointer-events-auto":
+                  !isResizing,
+              }
+            )}
             onMouseDown={handleResizeStart}
           />
         </>

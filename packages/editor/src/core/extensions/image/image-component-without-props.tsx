@@ -27,6 +27,9 @@ export const CustomImageComponentWithoutProps = () =>
         ["id"]: {
           default: null,
         },
+        aspectRatio: {
+          default: null,
+        },
       };
     },
 

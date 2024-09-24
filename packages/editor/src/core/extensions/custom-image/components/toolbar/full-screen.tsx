@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ExternalLink, Maximize, Minus, Plus, X } from "lucide-react";
 // helpers
 import { cn } from "@/helpers/common";
@@ -20,6 +20,8 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
   const { height, src, width } = image;
   // states
   const [magnification, setMagnification] = useState(1);
+  // refs
+  const modalRef = useRef<HTMLDivElement>(null);
   // derived values
   const widthInNumber = useMemo(() => Number(width.replace("px", "")), [width]);
   const heightInNumber = useMemo(() => Number(height.replace("px", "")), [height]);
@@ -63,18 +65,24 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
     },
     [handleClose, handleDecreaseMagnification, handleIncreaseMagnification]
   );
+  // click outside handler
+  const handleClickOutside = useCallback(
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      console.log("click outside", modalRef.current, e.target);
+      if (modalRef.current && e.target === modalRef.current) {
+        handleClose();
+      }
+    },
+    [handleClose]
+  );
   // register keydown listener
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
 
-    if (!isFullScreenEnabled) {
-      document.removeEventListener("keydown", handleKeyDown);
-    }
-
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [handleKeyDown, isFullScreenEnabled]);
+  }, [handleKeyDown]);
 
   return (
     <>
@@ -86,7 +94,7 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
           }
         )}
       >
-        <div className="relative size-full grid place-items-center">
+        <div ref={modalRef} onClick={handleClickOutside} className="relative size-full grid place-items-center">
           <button
             type="button"
             onClick={handleClose}
@@ -103,7 +111,7 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
             }}
           />
         </div>
-        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1 rounded-md border border-white/20 py-2 divide-x divide-white/20">
+        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1 rounded-md border border-white/20 py-2 divide-x divide-white/20 bg-black">
           <div className="flex items-center">
             <button
               type="button"
