@@ -4,7 +4,6 @@ import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
-import debounce from "lodash/debounce";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { DeleteIssueModal } from "@/components/issues";
@@ -91,12 +90,6 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
       }
     },
     [fetchNextIssues]
-  );
-
-  const debouncedFetchMoreIssues = debounce(
-    (groupId?: string, subgroupId?: string) => fetchMoreIssues(groupId, subgroupId),
-    300,
-    { leading: true, trailing: false }
   );
 
   const groupedIssueIds = issues?.groupedIssueIds;
@@ -275,7 +268,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               addIssuesToView={addIssuesToView}
               scrollableContainerRef={scrollableContainerRef}
               handleOnDrop={handleOnDrop}
-              loadMoreIssues={debouncedFetchMoreIssues}
+              loadMoreIssues={fetchMoreIssues}
             />
           </div>
         </div>

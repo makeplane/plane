@@ -40,6 +40,7 @@ interface IssueBlockProps {
   quickActions: TRenderQuickActions;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
+  shouldRenderByDefault?: boolean;
 }
 
 interface IssueDetailsBlockProps {

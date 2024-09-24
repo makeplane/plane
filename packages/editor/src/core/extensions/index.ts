@@ -19,3 +19,4 @@ export * from "./quote";
 export * from "./read-only-extensions";
 export * from "./side-menu";
 export * from "./slash-commands";
+export * from "./headers";

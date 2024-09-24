@@ -10,6 +10,8 @@ import { useIssueDetail, useLabel, useProjectInbox, useUserPermissions } from "@
 // ui
 // types
 import { LabelList, LabelCreate, IssueLabelSelectRoot } from "./";
+// TODO: Fix this import statement, as core should not import from ee
+// eslint-disable-next-line import/order
 import { EUserPermissions, EUserPermissionsLevel } from "ee/constants/user-permissions";
 
 export type TIssueLabel = {

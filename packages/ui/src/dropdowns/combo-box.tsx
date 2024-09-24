@@ -38,7 +38,7 @@ const ComboDropDown = forwardRef((props: Props, ref) => {
   };
 
   useEffect(() => {
-    const element = dropDownButtonRef.current;
+    const element = dropDownButtonRef.current as any;
 
     if (!element) return;
 
@@ -58,7 +58,8 @@ const ComboDropDown = forwardRef((props: Props, ref) => {
   }
 
   return (
-    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/prefer-ts-expect-error, @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     <Combobox {...rest} ref={ref}>
       <Combobox.Button as={Fragment}>{button}</Combobox.Button>
       {children}

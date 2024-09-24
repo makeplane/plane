@@ -23,7 +23,6 @@ import { HIGHLIGHT_CLASS, getIssueBlockId, isIssueNew } from "../utils";
 import { TRenderQuickActions } from "./list-view-types";
 
 type Props = {
-  issueIds: string[];
   issueId: string;
   issuesMap: TIssueMap;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
@@ -44,7 +43,6 @@ type Props = {
 
 export const IssueBlockRoot: FC<Props> = observer((props) => {
   const {
-    issueIds,
     issueId,
     issuesMap,
     groupId,
@@ -133,9 +131,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
         classNames={`relative ${isLastChild && !isExpanded ? "" : "border-b border-b-custom-border-200"}`}
         verticalOffset={100}
         defaultValue={shouldRenderByDefault || isIssueNew(issuesMap[issueId])}
-        placeholderChildren={
-          <ListLoaderItemRow shouldAnimate={false} renderForPlaceHolder={true} defaultPropertyCount={4} />
-        }
+        placeholderChildren={<ListLoaderItemRow shouldAnimate={false} renderForPlaceHolder defaultPropertyCount={4} />}
         shouldRecordHeights={isMobile}
       >
         <IssueBlock
@@ -161,7 +157,6 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
         subIssues?.map((subIssueId) => (
           <IssueBlockRoot
             key={`${subIssueId}`}
-            issueIds={issueIds}
             issueId={subIssueId}
             issuesMap={issuesMap}
             updateIssue={updateIssue}

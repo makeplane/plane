@@ -7,7 +7,8 @@
     "develop": "next dev -p 3002",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:errors": "eslint . --ext .ts,.tsx --quiet",
     "export": "next export"
   },
   "dependencies": {
@@ -58,9 +59,9 @@
     "@types/uuid": "^9.0.1",
     "@types/zxcvbn": "^4.4.4",
     "@typescript-eslint/eslint-plugin": "^5.48.2",
-    "eslint-config-custom": "*",
+    "@plane/eslint-config": "*",
     "tailwind-config-custom": "*",
-    "tsconfig": "*",
-    "typescript": "5.4.5"
+    "@plane/typescript-config": "*",
+    "typescript": "5.3.3"
   }
 }

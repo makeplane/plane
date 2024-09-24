@@ -176,7 +176,7 @@ export const TourRoot: React.FC<Props> = observer((props) => {
                       toggleCreateProjectModal(true);
                     }}
                   >
-                    Create my first project
+                    Create your first project
                   </Button>
                 )}
               </div>
