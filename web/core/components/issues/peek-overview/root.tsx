@@ -35,14 +35,13 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   const {
     peekIssue,
     setPeekIssue,
-    issue: { fetchIssue },
+    issue: { fetchIssue, isFetchingIssueDetails },
     fetchActivities,
   } = useIssueDetail();
 
   const { issues } = useIssuesStore();
   const { captureIssueEvent } = useEventTracker();
   // state
-  const [loader, setLoader] = useState(true);
   const [error, setError] = useState(false);
 
   const removeRoutePeekId = () => {
@@ -54,7 +53,6 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     () => ({
       fetch: async (workspaceSlug: string, projectId: string, issueId: string, loader = true) => {
         try {
-          setLoader(loader);
           setError(false);
           await fetchIssue(
             workspaceSlug,
@@ -62,10 +60,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             issueId,
             is_archived ? "ARCHIVED" : is_draft ? "DRAFT" : "DEFAULT"
           );
-          setLoader(false);
           setError(false);
         } catch (error) {
-          setLoader(false);
           setError(true);
           console.error("Error fetching the parent issue");
         }
@@ -348,7 +344,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       workspaceSlug={peekIssue.workspaceSlug}
       projectId={peekIssue.projectId}
       issueId={peekIssue.issueId}
-      isLoading={loader}
+      isLoading={isFetchingIssueDetails}
       isError={error}
       is_archived={is_archived}
       disabled={!isEditable}

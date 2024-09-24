@@ -186,7 +186,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
                   verticalOffset={100}
                   horizontalOffset={100}
                   root={scrollableContainerRef}
-                  classNames="relative h-full"
+                  classNames="h-full min-h-[120px]"
                   defaultHeight={`${groupHeight}px`}
                   placeholderChildren={
                     <KanbanColumnLoader
