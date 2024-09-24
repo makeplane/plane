@@ -1,5 +1,4 @@
 import { MutableRefObject } from "react";
-import clone from "lodash/clone";
 import { observer } from "mobx-react";
 import {
   GroupByColumnTypes,

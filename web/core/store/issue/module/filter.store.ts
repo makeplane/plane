@@ -237,7 +237,7 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
           });
 
           if (this.getShouldClearIssues(updatedDisplayFilters)) {
-            this.rootIssueStore.moduleIssues.clear(true, true); // clear issues for local db when some filters like layout changes
+            this.rootIssueStore.moduleIssues.clear(true, true); // clear issues for local store when some filters like layout changes
           }
 
           if (this.getShouldReFetchIssues(updatedDisplayFilters)) {

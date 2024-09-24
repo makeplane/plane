@@ -234,7 +234,7 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
           });
 
           if (this.getShouldClearIssues(updatedDisplayFilters)) {
-            this.rootIssueStore.cycleIssues.clear(true, true); // clear issues for local db when some filters like layout changes
+            this.rootIssueStore.cycleIssues.clear(true, true); // clear issues for local store when some filters like layout changes
           }
 
           if (this.getShouldReFetchIssues(updatedDisplayFilters)) {
