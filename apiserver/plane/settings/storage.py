@@ -1,6 +1,5 @@
 # Python imports
 import os
-import json
 
 # Third party imports
 import boto3
