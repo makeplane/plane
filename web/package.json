@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "0.22.0",
+  "version": "1.3.1",
   "private": true,
   "scripts": {
     "dev": "turbo run develop",
@@ -33,7 +33,11 @@
     "@plane/ui": "*",
     "@popperjs/core": "^2.11.8",
     "@sentry/nextjs": "^8",
+<<<<<<< HEAD
     "@sqlite.org/sqlite-wasm": "^3.46.0-build2",
+=======
+    "@todesktop/client-core": "^1.9.0",
+>>>>>>> 4ec52d5a6c3ca41e5c6b0c0069dd02a36fd3467f
     "axios": "^1.7.4",
     "clsx": "^2.0.0",
     "cmdk": "^1.0.0",
@@ -58,7 +62,7 @@
     "react-hook-form": "7.51.5",
     "react-markdown": "^8.0.7",
     "react-popper": "^2.3.0",
-    "sharp": "^0.32.1",
+    "sharp": "^0.33.4",
     "smooth-scroll-into-view-if-needed": "^2.0.2",
     "swr": "^2.1.3",
     "tailwind-merge": "^2.0.0",

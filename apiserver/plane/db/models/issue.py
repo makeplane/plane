@@ -68,6 +68,7 @@ def get_default_display_properties():
         "due_date": True,
         "estimate": True,
         "key": True,
+        "issue_type": True,
         "labels": True,
         "link": True,
         "priority": True,
