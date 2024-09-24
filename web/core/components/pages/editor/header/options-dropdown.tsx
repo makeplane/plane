@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { ArchiveRestoreIcon, Clipboard, Copy, History, Link, Lock, LockOpen } from "lucide-react";
 // document editor
 import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
+import { DocumentEventsClient } from "@plane/editor/lib";
 // ui
 import { ArchiveIcon, CustomMenu, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 // helpers
@@ -24,16 +25,19 @@ type Props = {
 
 export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   const { editorRef, handleDuplicatePage, page } = props;
+  // create a local state to track if the current action is being processed
   const [localAction, setLocalAction] = useState<string | null>(null);
 
+  // listen to real time updates from the live server
   useEffect(() => {
     const provider = editorRef?.listenToRealTimeUpdate();
 
-    const handleStatelessMessage = (message: { payload: string }) => {
+    const handleStatelessMessage = (message: { payload: DocumentEventsClient }) => {
       if (localAction === message.payload) {
         setLocalAction(null);
         return;
       }
+      console.log("message", message.payload);
 
       switch (message.payload) {
         case "locked":
@@ -81,59 +85,84 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   const { updateQueryParams } = useQueryParams();
 
   const handleArchivePage = async (isLocal: boolean = true) => {
-    if (isLocal) {
-      setLocalAction("archived");
-      editorRef?.emitRealTimeUpdate("archive");
-    }
-    await archive().catch(() =>
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Page could not be archived. Please try again later.",
+    await archive()
+      .then(() => {
+        if (isLocal) {
+          setLocalAction("archived");
+          console.log("archivinggg");
+        }
       })
-    );
+      .catch(() => {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Page could not be archived. Please try again later.",
+        });
+      });
   };
 
-  const handleRestorePage = async (isLocal: boolean = true) => {
-    if (isLocal) {
-      setLocalAction("unarchived");
+  // Add this useEffect hook to watch for changes in localAction
+  useEffect(() => {
+    if (localAction === "archived") {
+      editorRef?.emitRealTimeUpdate("archive");
+    }
+    if (localAction === "unarchived") {
       editorRef?.emitRealTimeUpdate("unarchive");
     }
-    await restore().catch(() =>
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Page could not be restored. Please try again later.",
+    if (localAction === "locked") {
+      editorRef?.emitRealTimeUpdate("lock");
+    }
+    if (localAction === "unlocked") {
+      editorRef?.emitRealTimeUpdate("unlock");
+    }
+  }, [localAction, editorRef]);
+
+  const handleRestorePage = async (isLocal: boolean = true) => {
+    await restore()
+      .then(() => {
+        if (isLocal) {
+          setLocalAction("unarchived");
+        }
       })
-    );
+      .catch(() =>
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Page could not be restored. Please try again later.",
+        })
+      );
   };
 
   const handleLockPage = async (isLocal: boolean = true) => {
-    if (isLocal) {
-      setLocalAction("locked");
-      editorRef?.emitRealTimeUpdate("lock");
-    }
-    await lock().catch(() =>
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Page could not be locked. Please try again later.",
+    await lock()
+      .then(() => {
+        if (isLocal) {
+          setLocalAction("locked");
+        }
       })
-    );
+      .catch(() =>
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Page could not be locked. Please try again later.",
+        })
+      );
   };
 
   const handleUnlockPage = async (isLocal: boolean = true) => {
-    if (isLocal) {
-      setLocalAction("unlocked");
-      editorRef?.emitRealTimeUpdate("unlock");
-    }
-    await unlock().catch(() =>
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Page could not be unlocked. Please try again later.",
+    await unlock()
+      .then(() => {
+        if (isLocal) {
+          setLocalAction("unlocked");
+        }
       })
-    );
+      .catch(() =>
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Page could not be unlocked. Please try again later.",
+        })
+      );
   };
 
   // menu items list
