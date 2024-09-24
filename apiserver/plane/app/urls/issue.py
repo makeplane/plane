@@ -11,7 +11,6 @@ from plane.app.views import (
     IssueActivityEndpoint,
     IssueArchiveViewSet,
     IssueCommentViewSet,
-    IssueDraftViewSet,
     IssueListEndpoint,
     IssueReactionViewSet,
     IssueRelationViewSet,
@@ -289,26 +288,4 @@ urlpatterns = [
         name="issue-relation",
     ),
     ## End Issue Relation
-    ## Issue Drafts
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issue-drafts/",
-        IssueDraftViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
-        name="project-issue-draft",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issue-drafts/<uuid:pk>/",
-        IssueDraftViewSet.as_view(
-            {
-                "get": "retrieve",
-                "patch": "partial_update",
-                "delete": "destroy",
-            }
-        ),
-        name="project-issue-draft",
-    ),
 ]
