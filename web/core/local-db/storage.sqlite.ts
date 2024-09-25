@@ -252,7 +252,7 @@ export class Storage {
 
   getLastUpdatedIssue = async (projectId: string) => {
     const lastUpdatedIssue = await runQuery(
-      `select id, name, updated_at , sequence_id from issues WHERE project_id='${projectId}' AND is_local_update != 1 order by datetime(updated_at) desc limit 1 `
+      `select id, name, updated_at , sequence_id from issues WHERE project_id='${projectId}' AND is_local_update IS NULL order by datetime(updated_at) desc limit 1 `
     );
 
     if (lastUpdatedIssue.length) {
