@@ -1,7 +1,6 @@
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { Editor } from "@tiptap/core";
 import { ImageIcon } from "lucide-react";
-import { Spinner } from "@plane/ui";
 
 // helpers
 import { cn } from "@/helpers/common";
@@ -129,11 +128,6 @@ export const CustomImageUploader = (props: {
               "blur-sm opacity-80": loading,
             })}
           />
-          {loading && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <Spinner height="20px" width="20px" />
-            </div>
-          )}
         </div>
       )}
     </>

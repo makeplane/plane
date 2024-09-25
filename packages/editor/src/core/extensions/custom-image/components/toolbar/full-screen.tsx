@@ -57,11 +57,14 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
   // keydown handler
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      if (e.key === "Escape") handleClose();
-      if (e.key === "+" || e.key === "=") handleIncreaseMagnification();
-      if (e.key === "-") handleDecreaseMagnification();
+      if (e.key === "Escape" || e.key === "+" || e.key === "=" || e.key === "-") {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (e.key === "Escape") handleClose();
+        if (e.key === "+" || e.key === "=") handleIncreaseMagnification();
+        if (e.key === "-") handleDecreaseMagnification();
+      }
     },
     [handleClose, handleDecreaseMagnification, handleIncreaseMagnification]
   );

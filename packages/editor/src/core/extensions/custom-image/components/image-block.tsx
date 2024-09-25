@@ -1,7 +1,7 @@
 import React, { useRef, useState, useCallback, useLayoutEffect, useEffect } from "react";
 import { NodeSelection } from "@tiptap/pm/state";
 // extensions
-import { CustomImageNodeViewProps } from "@/extensions/custom-image";
+import { CustomImageNodeViewProps, ImageToolbarRoot } from "@/extensions/custom-image";
 // helpers
 import { cn } from "@/helpers/common";
 
@@ -10,7 +10,6 @@ const MIN_SIZE = 100;
 export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
   const { node, updateAttributes, selected, getPos, editor } = props;
   const { src, width, height } = node.attrs;
-  console.log("loaded, props", src);
 
   const [size, setSize] = useState<{
     width: string;
@@ -32,73 +31,40 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
   const imageRef = useRef<HTMLImageElement>(null);
   const [isResizing, setIsResizing] = useState(false);
 
-  useLayoutEffect(() => {
-    console.log("ran", imageRef.current);
-    if (imageRef.current) {
-      const img = imageRef.current;
-      img.onload = () => {
-        if (width === "35%") {
-          const closestEditorContainer = img.closest(".editor-container");
-          if (!closestEditorContainer) {
-            console.error("Editor container not found");
-            return;
-          }
+  const handleImageLoad = useCallback(() => {
+    const img = imageRef.current;
+    if (!img) return;
 
-          setEditorContainer(closestEditorContainer as HTMLElement);
-
-          const editorWidth = closestEditorContainer.clientWidth;
-          const initialWidth = Math.max(editorWidth * 0.35, MIN_SIZE);
-          const aspectRatio = img.naturalWidth / img.naturalHeight;
-          const initialHeight = initialWidth / aspectRatio;
-
-          const newSize = {
-            width: `${Math.round(initialWidth)}px`,
-            height: `${Math.round(initialHeight)}px`,
-            aspectRatio: aspectRatio,
-          };
-
-          setSize(newSize);
-          updateAttributes(newSize);
-        }
-        setInitialResizeComplete(true);
-        setIsLoading(false);
-      };
+    const closestEditorContainer = img.closest(".editor-container");
+    if (!closestEditorContainer) {
+      console.error("Editor container not found");
+      return;
     }
-  }, [width, height, updateAttributes]);
 
-  // const handleImageLoad = useCallback(() => {
-  //   const img = imageRef.current;
-  //   if (!img) return;
-  //
-  //   const closestEditorContainer = img.closest(".editor-container");
-  //   if (!closestEditorContainer) {
-  //     console.error("Editor container not found");
-  //     return;
-  //   }
-  //
-  //   setEditorContainer(closestEditorContainer as HTMLElement);
-  //   const aspectRatio = img.naturalWidth / img.naturalHeight;
-  //
-  //   if (width === "35%") {
-  //     const editorWidth = closestEditorContainer.clientWidth;
-  //     const initialWidth = Math.max(editorWidth * 0.35, MIN_SIZE);
-  //     const initialHeight = initialWidth / aspectRatio;
-  //
-  //     const newSize = {
-  //       width: `${Math.round(initialWidth)}px`,
-  //       height: `${Math.round(initialHeight)}px`,
-  //       aspectRatio: aspectRatio,
-  //     };
-  //
-  //     setSize(newSize);
-  //     updateAttributes(newSize);
-  //   } else {
-  //     setSize((prevSize) => ({ ...prevSize, aspectRatio }));
-  //   }
-  //   setInitialResizeComplete(true);
-  //   setIsLoading(false);
-  // }, [width, updateAttributes, imageRef]);
+    setEditorContainer(closestEditorContainer as HTMLElement);
+    const aspectRatio = img.naturalWidth / img.naturalHeight;
 
+    if (width === "35%") {
+      const editorWidth = closestEditorContainer.clientWidth;
+      const initialWidth = Math.max(editorWidth * 0.35, MIN_SIZE);
+      const initialHeight = initialWidth / aspectRatio;
+
+      const newSize = {
+        width: `${Math.round(initialWidth)}px`,
+        height: `${Math.round(initialHeight)}px`,
+        aspectRatio: aspectRatio,
+      };
+
+      setSize(newSize);
+      updateAttributes(newSize);
+    } else {
+      setSize((prevSize) => ({ ...prevSize, aspectRatio }));
+    }
+    setInitialResizeComplete(true);
+    setIsLoading(false);
+  }, [width, updateAttributes, imageRef]);
+
+  // for real time resizing
   useLayoutEffect(() => {
     setSize((prevSize) => ({ ...prevSize, width, height }));
   }, [width, height]);
@@ -178,15 +144,23 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
       <img
         ref={imageRef}
         src={src}
+        onLoad={handleImageLoad}
         width={size.width}
-        // crossOrigin="anonymous"
-        className={cn("block rounded-md", {
+        className={cn("image-component block rounded-md", {
           hidden: isShimmerVisible,
           "read-only-image": !editor.isEditable,
         })}
         style={{
           width: size.width,
           aspectRatio: size.aspectRatio ?? undefined,
+        }}
+      />
+      <ImageToolbarRoot
+        containerClassName="absolute top-1 right-1 z-20 bg-black/40 rounded opacity-0 pointer-events-none group-hover/image-component:opacity-100 group-hover/image-component:pointer-events-auto transition-opacity"
+        image={{
+          src,
+          height: size.height,
+          width: size.width,
         }}
       />
       {editor.isEditable && selected && !isShimmerVisible && (
