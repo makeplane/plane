@@ -827,6 +827,7 @@ class IssuePaginatedViewSet(BaseViewSet):
             "link_count",
             "attachment_count",
             "sub_issues_count",
+            "type",
         ]
 
         if is_description_required:
