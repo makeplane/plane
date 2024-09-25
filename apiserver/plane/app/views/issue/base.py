@@ -948,6 +948,13 @@ class IssueDetailEndpoint(BaseAPIView):
                 .values("count")
             )
         )
-
-        serializer = IssueSerializer(issue, expand=self.expand, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return self.paginate(
+            request=request,
+            queryset=(issue),
+            on_results=lambda issue: IssueSerializer(
+                issue,
+                many=True,
+                fields=self.fields,
+                expand=self.expand,
+            ).data,
+        )
