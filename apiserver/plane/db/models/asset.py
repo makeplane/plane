@@ -84,3 +84,22 @@ class FileAsset(BaseModel):
     def signed_url(self):
         storage = S3Storage()
         return storage.generate_presigned_url(self.asset.name)
+
+    @property
+    def asset_url(self):
+        if self.entity_type == self.EntityTypeContext.COVER_IMAGE:
+            return f"/api/v2/assets/{self.id}/"
+
+        if self.entity_type == self.EntityTypeContext.ISSUE_ATTACHMENT:
+            return f"/api/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/issues/{self.entity_identifier}/attachments/{self.id}/"
+
+        if self.entity_type == self.EntityTypeContext.ISSUE_DESCRIPTION:
+            return f"/api/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/issues/{self.entity_identifier}/assets/{self.id}/"
+
+        if self.entity_type == self.EntityTypeContext.COMMENT_DESCRIPTION:
+            return f"/api/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/comments/{self.entity_identifier}/assets/{self.id}/"
+
+        if self.entity_type == self.EntityTypeContext.PAGE_DESCRIPTION:
+            return f"/api/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/pages/{self.entity_identifier}/assets/{self.id}/"
+
+        return None
