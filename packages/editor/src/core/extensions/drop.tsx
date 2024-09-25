@@ -1,6 +1,6 @@
 import { Extension } from "@tiptap/core";
-import { Plugin, PluginKey } from "prosemirror-state";
-import { EditorView } from "prosemirror-view";
+import { Plugin, PluginKey } from "@tiptap/pm/state";
+import { EditorView } from "@tiptap/pm/view";
 
 export const DropHandlerExtension = () =>
   Extension.create({

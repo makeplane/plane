@@ -1,3 +1,4 @@
+import { JSONContent } from "@tiptap/core";
 // helpers
 import { IMarking } from "@/helpers/scroll-to-node";
 // types
@@ -16,7 +17,11 @@ import {
 // editor refs
 export type EditorReadOnlyRefApi = {
   getMarkDown: () => string;
-  getHTML: () => string;
+  getDocument: () => {
+    binary: Uint8Array | null;
+    html: string;
+    json: JSONContent | null;
+  };
   clearEditor: (emitUpdate?: boolean) => void;
   setEditorValue: (content: string) => void;
   scrollSummary: (marking: IMarking) => void;
@@ -25,6 +30,8 @@ export type EditorReadOnlyRefApi = {
     paragraphs: number;
     words: number;
   };
+  onHeadingChange: (callback: (headings: IMarking[]) => void) => () => void;
+  getHeadings: () => IMarking[];
 };
 
 export interface EditorRefApi extends EditorReadOnlyRefApi {
@@ -36,6 +43,7 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
   isEditorReadyToDiscard: () => boolean;
   getSelectedText: () => string | null;
   insertText: (contentHTML: string, insertOnNextLine?: boolean) => void;
+  setProviderDocument: (value: Uint8Array) => void;
 }
 
 // editor props
@@ -58,7 +66,7 @@ export interface IEditorProps {
   value?: string | null;
 }
 
-export interface ILiteTextEditor extends IEditorProps {}
+export type ILiteTextEditor = IEditorProps;
 
 export interface IRichTextEditor extends IEditorProps {
   dragDropEnabled?: boolean;
@@ -89,9 +97,9 @@ export interface IReadOnlyEditorProps {
   };
 }
 
-export interface ILiteTextReadOnlyEditor extends IReadOnlyEditorProps {}
+export type ILiteTextReadOnlyEditor = IReadOnlyEditorProps;
 
-export interface IRichTextReadOnlyEditor extends IReadOnlyEditorProps {}
+export type IRichTextReadOnlyEditor = IReadOnlyEditorProps;
 
 export interface ICollaborativeDocumentReadOnlyEditor extends Omit<IReadOnlyEditorProps, "initialValue"> {
   embedHandler: TEmbedConfig;

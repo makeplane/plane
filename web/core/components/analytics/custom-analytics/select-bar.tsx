@@ -1,13 +1,14 @@
 import { observer } from "mobx-react";
 import { Control, Controller, UseFormSetValue } from "react-hook-form";
+// types
 import { IAnalyticsParams } from "@plane/types";
-// hooks
-import { SelectProject, SelectSegment, SelectXAxis, SelectYAxis } from "@/components/analytics";
-import { ANALYTICS_X_AXIS_VALUES } from "@/constants/analytics";
-import { useProject } from "@/hooks/store";
+// ui
 import { Row } from "@plane/ui";
 // components
-// types
+import { SelectProject, SelectSegment, SelectXAxis, SelectYAxis } from "@/components/analytics";
+import { ANALYTICS_X_AXIS_VALUES } from "@/constants/analytics";
+// hooks
+import { useProject } from "@/hooks/store";
 
 type Props = {
   control: Control<IAnalyticsParams, any>;

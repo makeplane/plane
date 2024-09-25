@@ -165,7 +165,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
                   tooltipHeading="Labels"
                   tooltipContent={label?.name ?? ""}
                   isMobile={isMobile}
-                  renderByDefault={false}
+                  renderByDefault={renderByDefault}
                 >
                   <div
                     key={label?.id}

@@ -12,6 +12,8 @@ import { SWR_CONFIG } from "@/constants/swr-config";
 import { resolveGeneralTheme } from "@/helpers/theme.helper";
 // nprogress
 import { AppProgressBar } from "@/lib/n-progress";
+// polyfills
+import "@/lib/polyfills";
 // mobx store provider
 import { StoreProvider } from "@/lib/store-context";
 // wrappers

@@ -194,7 +194,7 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
           </Button>
           {estimatePoints && (
             <Button variant="primary" size="sm" onClick={handleCreateEstimate} disabled={buttonLoader}>
-              {buttonLoader ? `Creating` : `Create Estimate`}
+              {buttonLoader ? `Creating` : `Create estimate`}
             </Button>
           )}
         </div>

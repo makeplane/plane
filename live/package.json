@@ -7,7 +7,9 @@
   "type": "module",
   "scripts": {
     "build": "babel src --out-dir dist --extensions \".ts,.js\"",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:errors": "eslint . --ext .ts,.tsx --quiet"
   },
   "keywords": [],
   "author": "",
@@ -35,6 +37,7 @@
     "morgan": "^1.10.0",
     "pino-http": "^10.3.0",
     "pino-pretty": "^11.2.2",
+    "uuid": "^10.0.0",
     "y-prosemirror": "^1.2.9",
     "y-protocols": "^1.0.6",
     "yjs": "^13.6.14"
@@ -54,6 +57,6 @@
     "nodemon": "^3.1.0",
     "ts-node": "^10.9.2",
     "tsup": "^7.2.0",
-    "typescript": "5.4.5"
+    "typescript": "5.3.3"
   }
 }
