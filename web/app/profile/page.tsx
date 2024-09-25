@@ -34,8 +34,8 @@ import { USER_ROLES } from "@/constants/workspace";
 import { useUser, useUserSettings } from "@/hooks/store";
 // import { ProfileSettingsLayout } from "@/layouts/settings-layout";
 // layouts
-import { FileService } from "@/services/file.service";
 import { ENABLE_LOCAL_DB_CACHE } from "@/plane-web/constants/issues";
+import { FileService } from "@/services/file.service";
 // services
 // types
 
