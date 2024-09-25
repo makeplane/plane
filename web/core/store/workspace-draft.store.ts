@@ -1,14 +1,14 @@
-import { ViewFlags, TLoader, IssuePaginationOptions, TIssuesResponse, TIssue, TBulkOperationsPayload } from "@plane/types";
-import { BaseIssuesStore, IBaseIssuesStore } from "./issue/helpers/base-issues.store";
 import { makeObservable, runInAction } from "mobx";
-import { IIssueRootStore } from "./issue/root.store";
-import { IDraftIssuesFilter } from "./issue/draft";
+import { ViewFlags, TLoader, TIssue } from "@plane/types";
 import { WorkspaceDraftService } from "@/services/workspace-draft.service";
+import { IDraftIssuesFilter } from "./issue/draft";
+import { BaseIssuesStore, IBaseIssuesStore } from "./issue/helpers/base-issues.store";
+import { IIssueRootStore } from "./issue/root.store";
 
 export interface IWorkspaceDraftIssues extends IBaseIssuesStore {
   viewFlags: ViewFlags;
   createWorkspaceDraft(workspaceSlug: string, data: Partial<TIssue>, shouldUpdateList: boolean): Promise<TIssue>;
-  getWorkspaceDrafts(workspaceSlug: string, loadType: TLoader) : Promise<TIssuesResponse>;
+  getWorkspaceDrafts(workspaceSlug: string, loadType: TLoader) : Promise<TIssue[]>;
   getWorkspaceDraftById: (workspaceSlug: string, issueId: string, loadType?: TLoader) => Promise<TIssue>;
   deleteWorkspaceDraft: (workspaceSlug: string, issueId: string) => Promise<void>;
 }
@@ -56,11 +56,11 @@ export class WorkspaceDraftIssues extends BaseIssuesStore implements IWorkspaceD
     // add Issue to Store
     this.addIssue(response, shouldUpdateList);
 
-    return response; 
+    return response;
   }
 
   getWorkspaceDrafts = async (
-    workspaceSlug: string, 
+    workspaceSlug: string,
     loadType: TLoader = "init-loader",
   ) => {
     try{

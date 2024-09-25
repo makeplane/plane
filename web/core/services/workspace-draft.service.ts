@@ -1,13 +1,13 @@
+import { TIssue } from "@plane/types";
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { APIService } from "./api.service";
-import { TIssue, TIssuesResponse } from "@plane/types";
 
 export class WorkspaceDraftService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
 
-  async getDraftIssues(workspaceSlug: string, query?: any, config = {}): Promise<TIssuesResponse> { // TODO:: VERIFY IF THIS IS PAGINATED OR NOT ? 
+  async getDraftIssues(workspaceSlug: string, query?: any, config = {}): Promise<TIssue[]> {
     return this.get(
       `/api/workspaces/${workspaceSlug}/draft-issues/`,
       {
