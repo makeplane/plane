@@ -142,7 +142,7 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
       onMouseDown={handleImageMouseDown}
       style={{
         width: size.width,
-        aspectRatio: size.aspectRatio ?? 1,
+        aspectRatio: size.aspectRatio,
       }}
     >
       {!hasRemoteImageFullyLoaded && (
@@ -156,14 +156,13 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
         src={src}
         onLoad={handleImageLoad}
         width={size.width}
-        crossOrigin="anonymous"
         className={cn("image-component block rounded-md", {
           hidden: !hasRemoteImageFullyLoaded,
           "read-only-image": !editor.isEditable,
         })}
         style={{
           width: size.width,
-          aspectRatio: size.aspectRatio ?? 1,
+          aspectRatio: size.aspectRatio,
         }}
       />
       {hasRemoteImageFullyLoaded && (
@@ -173,7 +172,7 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
           }
           image={{
             src,
-            aspectRatio: size.aspectRatio ?? 1,
+            aspectRatio: size.aspectRatio,
             height: size.height,
             width: size.width,
           }}

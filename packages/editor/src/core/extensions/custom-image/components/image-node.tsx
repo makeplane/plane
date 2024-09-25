@@ -92,8 +92,7 @@ export const CustomImageNode = (props: CustomImageNodeViewProps) => {
   return (
     <NodeViewWrapper>
       <div className="p-0 mx-0 my-2" data-drag-handle>
-        {/* don't show the remote image until we have it fully loaded or if it has src in node attrs */}
-        {isUploaded && (
+        {isUploaded ? (
           <CustomImageBlock
             setHasRemoteImageFullyLoaded={setHasRemoteImageFullyLoaded}
             hasRemoteImageFullyLoaded={hasRemoteImageFullyLoaded}
@@ -103,9 +102,7 @@ export const CustomImageNode = (props: CustomImageNodeViewProps) => {
             updateAttributes={updateAttributes}
             selected={selected}
           />
-        )}
-        {/* only show the uploader with the preview images if the remote image is not fully loaded */}
-        {!hasRemoteImageFullyLoaded && (
+        ) : (
           <CustomImageUploader
             onUpload={onUpload}
             editor={editor}
