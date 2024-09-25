@@ -353,36 +353,6 @@ class WorkspaceIssuesQuery:
 
 
 @strawberry.type
-class SubIssuesQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def sub_issues(
-        self,
-        info: Info,
-        slug: str,
-        project: strawberry.ID,
-        issue: strawberry.ID,
-        cursor: Optional[str] = None,
-    ) -> PaginatorResponse[IssuesType]:
-        sub_issues = await sync_to_async(list)(
-            Issue.issue_objects.filter(
-                workspace__slug=slug,
-                parent_id=issue,
-            )
-            .filter(
-                project__project_projectmember__member=info.context.user,
-                project__project_projectmember__is_active=True,
-            )
-            .select_related("workspace", "project", "state", "parent")
-            .prefetch_related("assignees", "labels")
-            .order_by("-created_at")
-        )
-
-        return paginate(results_object=sub_issues, cursor=cursor)
-
-
-@strawberry.type
 class IssueTypesTypeQuery:
     @strawberry.field(
         extensions=[
