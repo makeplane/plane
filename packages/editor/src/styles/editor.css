@@ -44,7 +44,7 @@
   }
 
   &.sans-serif {
-    --font-style: sans-serif;
+    --font-style: "Inter", sans-serif;
   }
 
   &.serif {
