@@ -34,15 +34,15 @@ export interface IIssueStoreActions {
 }
 
 export interface IIssueStore extends IIssueStoreActions {
-  isFetchingIssueDetails: boolean;
-  isLocalDBIssueDescription: boolean;
+  getIsFetchingIssueDetails: (issueId: string | undefined) => boolean;
+  getIsLocalDBIssueDescription: (issueId: string | undefined) => boolean;
   // helper methods
   getIssueById: (issueId: string) => TIssue | undefined;
 }
 
 export class IssueStore implements IIssueStore {
-  isFetchingIssueDetails: boolean = false;
-  isLocalDBIssueDescription: boolean = false;
+  fetchingIssueDetails: string | undefined = undefined;
+  localDBIssueDescription: string | undefined = undefined;
   // root store
   rootIssueDetailStore: IIssueDetail;
   // services
@@ -52,7 +52,8 @@ export class IssueStore implements IIssueStore {
 
   constructor(rootStore: IIssueDetail) {
     makeObservable(this, {
-      isFetchingIssueDetails: observable.ref,
+      fetchingIssueDetails: observable.ref,
+      localDBIssueDescription: observable.ref,
     });
     // root store
     this.rootIssueDetailStore = rootStore;
@@ -61,6 +62,18 @@ export class IssueStore implements IIssueStore {
     this.issueArchiveService = new IssueArchiveService();
     this.issueDraftService = new IssueDraftService();
   }
+
+  getIsFetchingIssueDetails = computedFn((issueId: string | undefined) => {
+    if (!issueId) return false;
+
+    return this.fetchingIssueDetails === issueId;
+  });
+
+  getIsLocalDBIssueDescription = computedFn((issueId: string | undefined) => {
+    if (!issueId) return false;
+
+    return this.localDBIssueDescription === issueId;
+  });
 
   // helper methods
   getIssueById = computedFn((issueId: string) => {
@@ -79,11 +92,11 @@ export class IssueStore implements IIssueStore {
     // fetch issue from local db
     issue = await persistence.getIssue(issueId);
 
-    this.isFetchingIssueDetails = true;
+    this.fetchingIssueDetails = issueId;
 
     if (issue) {
       this.addIssueToStore(issue);
-      this.isLocalDBIssueDescription = true;
+      this.localDBIssueDescription = issueId;
     }
 
     if (issueType === "ARCHIVED")
@@ -95,7 +108,7 @@ export class IssueStore implements IIssueStore {
     if (!issue) throw new Error("Issue not found");
 
     const issuePayload = this.addIssueToStore(issue);
-    this.isLocalDBIssueDescription = false;
+    this.localDBIssueDescription = undefined;
 
     this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issuePayload]);
 
@@ -173,7 +186,7 @@ export class IssueStore implements IIssueStore {
     };
 
     this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issuePayload]);
-    this.isFetchingIssueDetails = false;
+    this.fetchingIssueDetails = undefined;
 
     return issuePayload;
   };

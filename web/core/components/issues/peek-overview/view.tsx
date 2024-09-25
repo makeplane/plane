@@ -60,7 +60,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     isArchiveIssueModalOpen,
     toggleDeleteIssueModal,
     toggleArchiveIssueModal,
-    issue: { getIssueById, isLocalDBIssueDescription },
+    issue: { getIssueById, getIsLocalDBIssueDescription },
   } = useIssueDetail();
   const issue = getIssueById(issueId);
   // remove peek id
@@ -68,6 +68,8 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     setPeekIssue(undefined);
     if (embedIssue) embedRemoveCurrentNotification && embedRemoveCurrentNotification();
   };
+
+  const isLocalDBIssueDescription = getIsLocalDBIssueDescription(issueId);
 
   usePeekOverviewOutsideClickDetector(
     issuePeekOverviewRef,
