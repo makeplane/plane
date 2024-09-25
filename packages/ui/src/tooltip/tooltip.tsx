@@ -54,7 +54,7 @@ export const Tooltip: React.FC<ITooltipProps> = ({
   };
 
   useEffect(() => {
-    const element = toolTipRef.current;
+    const element = toolTipRef.current as any;
 
     if (!element) return;
 

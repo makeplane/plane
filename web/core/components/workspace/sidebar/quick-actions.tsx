@@ -36,7 +36,7 @@ export const SidebarQuickActions = observer(() => {
   const canCreateIssue = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.WORKSPACE
-  );  
+  );
   const disabled = joinedProjectIds.length === 0 || !canCreateIssue;
   const workspaceDraftIssue = workspaceSlug ? (storedValue?.[workspaceSlug] ?? undefined) : undefined;
 
@@ -121,7 +121,7 @@ export const SidebarQuickActions = observer(() => {
                       className="flex w-full flex-shrink-0 items-center rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-3 py-[10px] text-sm text-custom-text-300 shadow"
                     >
                       <PenSquare size={16} className="mr-2 !text-lg !leading-4 text-custom-sidebar-text-300" />
-                      Last Drafted Issue
+                      Last drafted issue
                     </button>
                   </div>
                 </div>

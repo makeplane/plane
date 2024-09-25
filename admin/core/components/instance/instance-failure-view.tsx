@@ -7,11 +7,7 @@ import { Button } from "@plane/ui";
 import InstanceFailureDarkImage from "@/public/instance/instance-failure-dark.svg";
 import InstanceFailureImage from "@/public/instance/instance-failure.svg";
 
-type InstanceFailureViewProps = {
-  // mutate: () => void;
-};
-
-export const InstanceFailureView: FC<InstanceFailureViewProps> = () => {
+export const InstanceFailureView: FC = () => {
   const { resolvedTheme } = useTheme();
 
   const instanceImage = resolvedTheme === "dark" ? InstanceFailureDarkImage : InstanceFailureImage;
