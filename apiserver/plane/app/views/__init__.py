@@ -135,6 +135,8 @@ from .issue.archive import IssueArchiveViewSet, BulkArchiveIssuesEndpoint
 
 from .issue.attachment import (
     IssueAttachmentEndpoint,
+    # V2
+    IssueAtachmentURLV2Endpoint,
 )
 
 from .issue.comment import (

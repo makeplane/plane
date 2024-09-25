@@ -88,10 +88,10 @@ class FileAsset(BaseModel):
     @property
     def asset_url(self):
         if self.entity_type == self.EntityTypeContext.COVER_IMAGE:
-            return f"/api/v2/assets/{self.id}/"
+            return f"/api/assets/{self.id}/"
 
         if self.entity_type == self.EntityTypeContext.ISSUE_ATTACHMENT:
-            return f"/api/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/issues/{self.entity_identifier}/attachments/{self.id}/"
+            return f"/api/workspaces/{self.workspace.slug}/projects/{self.project_id}/issues/{self.entity_identifier}/attachments/{self.id}/"
 
         if self.entity_type == self.EntityTypeContext.ISSUE_DESCRIPTION:
             return f"/api/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/issues/{self.entity_identifier}/assets/{self.id}/"

@@ -6,6 +6,7 @@ import uuid
 from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
+from django.http import HttpResponseRedirect
 
 # Third Party imports
 from rest_framework.response import Response
@@ -29,10 +30,12 @@ class IssueAttachmentEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def post(self, request, slug, project_id, issue_id):
         serializer = IssueAttachmentSerializer(data=request.data)
+        workspace = Workspace.objects.get(slug=slug)
         if serializer.is_valid():
             serializer.save(
                 project_id=project_id,
                 entity_identifier=issue_id,
+                workspace_id=workspace.id,
                 entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
             )
             issue_activity.delay(
@@ -121,7 +124,7 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
             },
             asset=asset_key,
             size=size,
-            workspace=workspace,
+            workspace_id=workspace.id,
             created_by=request.user,
             entity_identifier=issue_id,
             project_id=project_id,
@@ -176,7 +179,4 @@ class IssueAtachmentURLV2Endpoint(BaseAPIView):
         )
         storage = S3Storage()
         presigned_url = storage.generate_presigned_url(asset.asset.name)
-        return Response(
-            {"url": presigned_url, "status": True},
-            status=status.HTTP_200_OK,
-        )
+        return HttpResponseRedirect(presigned_url)
