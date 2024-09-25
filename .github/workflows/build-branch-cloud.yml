@@ -379,37 +379,6 @@ jobs:
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
 
-  branch_build_push_proxy:
-    if: ${{ needs.branch_build_setup.outputs.build_proxy == 'true' || github.event_name == 'workflow_dispatch' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
-    name: Build-Push Proxy Docker Image
-    runs-on: ubuntu-20.04
-    needs: [branch_build_setup]
-    steps:
-      - id: checkout_files
-        name: Checkout Files
-        uses: actions/checkout@v4
-      - name: Proxy Build and Push
-        uses: ./.github/actions/build-push-action
-        with:
-          build-release: ${{ needs.branch_build_setup.outputs.build_release }}
-          build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
-          release-version: ${{ needs.branch_build_setup.outputs.release_version }}
-          docker-username: ${{ secrets.DOCKERHUB_USERNAME }}
-          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          harbor-push: ${{ needs.branch_build_setup.outputs.harbor_push }}
-          harbor-username: ${{ secrets.HARBOR_USERNAME }}
-          harbor-token: ${{ secrets.HARBOR_TOKEN }}
-          harbor-registry: ${{ vars.HARBOR_REGISTRY }}
-          harbor-project: ${{ vars.HARBOR_PROJECT }}
-          docker-image-owner: makeplane
-          docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_proxy }}
-          build-context: ./nginx
-          dockerfile-path: ./nginx/Dockerfile
-          buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
-          buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
-          buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
-          buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
-
   publish_release:
     name: Build Release
     runs-on: ubuntu-20.04
@@ -421,7 +390,6 @@ jobs:
         branch_build_push_space,
         branch_build_push_live,
         branch_build_push_apiserver,
-        branch_build_push_proxy,
       ]
     env:
       REL_VERSION: ${{ needs.branch_build_setup.outputs.release_version }}
