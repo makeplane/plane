@@ -38,14 +38,16 @@ export const CustomImageUploader = (props: {
 
   useEffect(() => {
     if (previewUrl) {
-      const closestEditorContainer = imageRef.current?.closest(".editor-container");
+      const img = imageRef.current;
+      if (!img) return;
+      const closestEditorContainer = img.closest(".editor-container");
       if (closestEditorContainer) {
         const editorWidth = closestEditorContainer?.clientWidth;
         const initialWidth = Math.max(editorWidth * 0.35, 100);
         setWidth(initialWidth);
       }
     }
-  }, [previewUrl, imageRef.current]);
+  }, [previewUrl]);
 
   const onFileChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -127,6 +129,7 @@ export const CustomImageUploader = (props: {
             className={cn("w-full h-auto rounded-md blur-50", {
               "blur-sm opacity-80": loading,
             })}
+            style={{ width: `${width}px` }}
           />
         </div>
       )}

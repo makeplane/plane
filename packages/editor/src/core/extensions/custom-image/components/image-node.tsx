@@ -1,11 +1,11 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Node as ProsemirrorNode } from "@tiptap/pm/model";
 import { Editor, NodeViewWrapper } from "@tiptap/react";
 // extensions
 import {
   CustomImageBlock,
   CustomImageUploader,
-  UploadEntity,
+  ImageAttributes,
   UploadImageExtensionStorage,
 } from "@/extensions/custom-image";
 
@@ -13,14 +13,12 @@ export type CustomImageNodeViewProps = {
   getPos: () => number;
   editor: Editor;
   node: ProsemirrorNode & {
-    attrs: {
-      src: string;
-      width: string;
-      height: string;
-    };
+    attrs: ImageAttributes;
   };
   updateAttributes: (attrs: Record<string, any>) => void;
   selected: boolean;
+  setHasRemoteImageFullyLoaded: React.Dispatch<React.SetStateAction<boolean>>;
+  hasRemoteImageFullyLoaded: boolean;
 };
 
 export const CustomImageNode = (props: CustomImageNodeViewProps) => {
@@ -32,11 +30,9 @@ export const CustomImageNode = (props: CustomImageNodeViewProps) => {
 
   const id = node.attrs.id as string;
   const editorStorage = editor.storage.imageComponent as UploadImageExtensionStorage | undefined;
+  const [hasRemoteImageFullyLoaded, setHasRemoteImageFullyLoaded] = useState(false);
 
-  const getUploadEntity = useCallback(
-    (): UploadEntity | undefined => editorStorage?.fileMap.get(id),
-    [editorStorage, id]
-  );
+  const uploadEntity = useMemo(() => editorStorage?.fileMap.get(id), [editorStorage?.fileMap, id]);
 
   const onUpload = useCallback(
     (url: string) => {
@@ -65,25 +61,22 @@ export const CustomImageNode = (props: CustomImageNodeViewProps) => {
         console.error("Error uploading file:", error);
       }
     },
-    [editor.commands, onUpload]
+    [onUpload]
   );
 
   useEffect(() => {
-    const uploadEntity = getUploadEntity();
-
     if (uploadEntity) {
       if (uploadEntity.event === "drop" && "file" in uploadEntity) {
         uploadFile(uploadEntity.file);
       } else if (uploadEntity.event === "insert" && fileInputRef.current && !hasTriggeredFilePickerRef.current) {
-        const entity = editorStorage?.fileMap.get(id);
-        if (entity && entity.hasOpenedFileInputOnce) return;
+        if (uploadEntity && uploadEntity.hasOpenedFileInputOnce) return;
         fileInputRef.current.click();
         hasTriggeredFilePickerRef.current = true;
-        if (!entity) return;
-        editorStorage?.fileMap.set(id, { ...entity, hasOpenedFileInputOnce: true });
+        if (!uploadEntity) return;
+        editorStorage?.fileMap.set(id, { ...uploadEntity, hasOpenedFileInputOnce: true });
       }
     }
-  }, [getUploadEntity, uploadFile]);
+  }, [uploadEntity, uploadFile, editorStorage?.fileMap]);
 
   useEffect(() => {
     if (node.attrs.src) {
@@ -91,23 +84,28 @@ export const CustomImageNode = (props: CustomImageNodeViewProps) => {
     }
   }, [node.attrs.src]);
 
-  const existingFile = React.useMemo(() => {
-    const entity = getUploadEntity();
-    return entity && entity.event === "drop" ? entity.file : undefined;
-  }, [getUploadEntity]);
+  const existingFile = useMemo(
+    () => (uploadEntity && uploadEntity.event === "drop" ? uploadEntity.file : undefined),
+    [uploadEntity]
+  );
 
   return (
     <NodeViewWrapper>
       <div className="p-0 mx-0 my-2" data-drag-handle>
-        {isUploaded ? (
+        {/* don't show the remote image until we have it fully loaded or if it has src in node attrs */}
+        {isUploaded && (
           <CustomImageBlock
+            setHasRemoteImageFullyLoaded={setHasRemoteImageFullyLoaded}
+            hasRemoteImageFullyLoaded={hasRemoteImageFullyLoaded}
             editor={editor}
             getPos={getPos}
             node={node}
             updateAttributes={updateAttributes}
             selected={selected}
           />
-        ) : (
+        )}
+        {/* only show the uploader with the preview images if the remote image is not fully loaded */}
+        {!hasRemoteImageFullyLoaded && (
           <CustomImageUploader
             onUpload={onUpload}
             editor={editor}

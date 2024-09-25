@@ -7,29 +7,34 @@ import { cn } from "@/helpers/common";
 
 const MIN_SIZE = 100;
 
-export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
-  const { node, updateAttributes, selected, getPos, editor } = props;
-  const { src, width, height } = node.attrs;
+type Pixel = `${number}px`;
 
-  const [size, setSize] = useState<{
-    width: string;
-    height: string;
-    aspectRatio: number | null;
-  }>({
+export type ImageAttributes = {
+  src: string | null;
+  width: Pixel | "35%";
+  height: Pixel | "auto";
+  aspectRatio: number | null;
+  id: string | null;
+};
+
+type Size = Omit<ImageAttributes, "src" | "id">;
+
+export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
+  const { node, updateAttributes, selected, getPos, editor, setHasRemoteImageFullyLoaded, hasRemoteImageFullyLoaded } =
+    props;
+  const { src, width, height, aspectRatio } = node.attrs;
+  // states
+  const [size, setSize] = useState<Size>({
     width: width || "35%",
     height: height || "auto",
-    aspectRatio: null,
+    aspectRatio: aspectRatio || 1,
   });
-
-  const [isLoading, setIsLoading] = useState(true);
-  const [initialResizeComplete, setInitialResizeComplete] = useState(false);
-  const isShimmerVisible = isLoading || !initialResizeComplete;
   const [editorContainer, setEditorContainer] = useState<HTMLElement | null>(null);
-
+  const [isResizing, setIsResizing] = useState(false);
+  // refs
   const containerRef = useRef<HTMLDivElement>(null);
   const containerRect = useRef<DOMRect | null>(null);
   const imageRef = useRef<HTMLImageElement>(null);
-  const [isResizing, setIsResizing] = useState(false);
 
   const handleImageLoad = useCallback(() => {
     const img = imageRef.current;
@@ -49,20 +54,25 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
       const initialWidth = Math.max(editorWidth * 0.35, MIN_SIZE);
       const initialHeight = initialWidth / aspectRatio;
 
-      const newSize = {
-        width: `${Math.round(initialWidth)}px`,
-        height: `${Math.round(initialHeight)}px`,
+      const initialComputedSize = {
+        width: `${Math.round(initialWidth)}px` satisfies Pixel,
+        height: `${Math.round(initialHeight)}px` satisfies Pixel,
         aspectRatio: aspectRatio,
       };
 
-      setSize(newSize);
-      updateAttributes(newSize);
+      setSize(initialComputedSize);
+      updateAttributes(initialComputedSize);
     } else {
-      setSize((prevSize) => ({ ...prevSize, aspectRatio }));
+      // as the aspect ratio in not stored for old images, we need to update the attrs
+      let newSize: Size;
+      setSize((prevSize) => {
+        newSize = { ...prevSize, aspectRatio };
+        return newSize;
+      });
+      updateAttributes(newSize);
     }
-    setInitialResizeComplete(true);
-    setIsLoading(false);
-  }, [width, updateAttributes, imageRef]);
+    setHasRemoteImageFullyLoaded(true);
+  }, [width, updateAttributes]);
 
   // for real time resizing
   useLayoutEffect(() => {
@@ -132,10 +142,10 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
       onMouseDown={handleImageMouseDown}
       style={{
         width: size.width,
-        aspectRatio: size.aspectRatio ?? undefined,
+        aspectRatio: size.aspectRatio ?? 1,
       }}
     >
-      {isShimmerVisible && (
+      {!hasRemoteImageFullyLoaded && (
         <div
           className="animate-pulse bg-custom-background-80 rounded-md"
           style={{ width: size.width, height: size.height }}
@@ -146,27 +156,33 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
         src={src}
         onLoad={handleImageLoad}
         width={size.width}
+        crossOrigin="anonymous"
         className={cn("image-component block rounded-md", {
-          hidden: isShimmerVisible,
+          hidden: !hasRemoteImageFullyLoaded,
           "read-only-image": !editor.isEditable,
         })}
         style={{
           width: size.width,
-          aspectRatio: size.aspectRatio ?? undefined,
+          aspectRatio: size.aspectRatio ?? 1,
         }}
       />
-      <ImageToolbarRoot
-        containerClassName="absolute top-1 right-1 z-20 bg-black/40 rounded opacity-0 pointer-events-none group-hover/image-component:opacity-100 group-hover/image-component:pointer-events-auto transition-opacity"
-        image={{
-          src,
-          height: size.height,
-          width: size.width,
-        }}
-      />
-      {editor.isEditable && selected && !isShimmerVisible && (
+      {hasRemoteImageFullyLoaded && (
+        <ImageToolbarRoot
+          containerClassName={
+            "absolute top-1 right-1 z-20 bg-black/40 rounded opacity-0 pointer-events-none group-hover/image-component:opacity-100 group-hover/image-component:pointer-events-auto transition-opacity"
+          }
+          image={{
+            src,
+            aspectRatio: size.aspectRatio ?? 1,
+            height: size.height,
+            width: size.width,
+          }}
+        />
+      )}
+      {editor.isEditable && selected && hasRemoteImageFullyLoaded && (
         <div className="absolute inset-0 size-full bg-custom-primary-500/30" />
       )}
-      {editor.isEditable && !isShimmerVisible && (
+      {editor.isEditable && hasRemoteImageFullyLoaded && (
         <>
           <div
             className={cn(

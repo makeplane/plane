@@ -8,6 +8,7 @@ type Props = {
     src: string;
     height: string;
     width: string;
+    aspectRatio: number;
   };
   isOpen: boolean;
   toggleFullScreenMode: (val: boolean) => void;
@@ -17,15 +18,13 @@ const MAGNIFICATION_VALUES = [0.5, 0.75, 1, 1.5, 1.75, 2];
 
 export const ImageFullScreenAction: React.FC<Props> = (props) => {
   const { image, isOpen: isFullScreenEnabled, toggleFullScreenMode } = props;
-  const { height, src, width } = image;
+  const { src, width, aspectRatio } = image;
   // states
   const [magnification, setMagnification] = useState(1);
   // refs
   const modalRef = useRef<HTMLDivElement>(null);
   // derived values
   const widthInNumber = useMemo(() => Number(width?.replace("px", "")), [width]);
-  const heightInNumber = useMemo(() => Number(height?.replace("px", "")), [height]);
-  const aspectRatio = useMemo(() => widthInNumber / heightInNumber, [heightInNumber, widthInNumber]);
   // close handler
   const handleClose = useCallback(() => {
     toggleFullScreenMode(false);
