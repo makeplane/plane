@@ -6,7 +6,6 @@ from strawberry.permission import PermissionExtension
 # Third-party imports
 from asgiref.sync import sync_to_async
 
-
 # Module imports
 from plane.graphql.permissions.project import ProjectBasePermission
 from plane.db.models import Workspace, IssueRelation

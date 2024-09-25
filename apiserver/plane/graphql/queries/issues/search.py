@@ -37,10 +37,11 @@ class IssuesSearchQuery:
         info: Info,
         slug: str,
         project: Optional[strawberry.ID] = None,
-        module: Optional[strawberry.ID] = None,
-        cycle: Optional[strawberry.ID] = None,
         issue: Optional[strawberry.ID] = None,
-        relation_type: Optional[bool] = False,
+        module: Optional[strawberry.ID] = False,
+        cycle: Optional[bool] = False,
+        relationType: Optional[bool] = False,
+        subIssues: Optional[bool] = False,
         search: Optional[str] = None,
     ) -> list[IssueLiteType]:
         issue_queryset = Issue.issue_objects.filter(
@@ -56,16 +57,16 @@ class IssuesSearchQuery:
 
         # module issues
         if module:
-            issue_queryset = issue_queryset.filter(
-                issue_module__module_id=module
+            issue_queryset = issue_queryset.exclude(
+                issue_module__module=module
             )
 
         # cycle issues
         if cycle:
-            issue_queryset = issue_queryset.filter(issue_cycle__cycle_id=cycle)
+            issue_queryset = issue_queryset.exclude(issue_cycle__isnull=False)
 
         # issue relation issues
-        if relation_type and issue:
+        if relationType and issue:
             issue_queryset = issue_queryset.filter(
                 ~Q(pk=issue),
                 ~Q(
@@ -77,6 +78,19 @@ class IssuesSearchQuery:
                     issue_related__deleted_at__isnull=True,
                 ),
             )
+
+        # sub issues
+        if subIssues and issue:
+            current_issue = await sync_to_async(Issue.issue_objects.get)(
+                pk=issue
+            )
+            issue_queryset = issue_queryset.filter(
+                Q(parent__isNull=True), ~Q(parent=issue)
+            )
+            if current_issue.parent:
+                issue_queryset = issue_queryset.filter(
+                    ~Q(parent=current_issue.parent)
+                )
 
         # apply search filter
         q = Q()
