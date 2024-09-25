@@ -44,7 +44,7 @@ export const updatePersistentLayer = async (issueIds: string | string[]) => {
         "module_ids",
         "type_id",
       ]);
-      updateIssue(issuePartial);
+      updateIssue({ ...issuePartial, is_local_update: 1 });
     }
   });
 };

@@ -13,6 +13,7 @@ import {
   TSubIssuesStateDistribution,
 } from "@plane/types";
 // services
+import { updatePersistentLayer } from "@/local-db/utils/utils";
 import { IssueService } from "@/services/issue";
 // store
 import { IIssueDetail } from "./root.store";
@@ -180,6 +181,7 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
       [parentIssueId, "sub_issues_count"],
       this.subIssues[parentIssueId].length
     );
+    updatePersistentLayer([parentIssueId, ...issueIds]);
 
     return;
   };
@@ -277,6 +279,8 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
       );
     });
 
+    updatePersistentLayer([parentIssueId]);
+
     return;
   };
 
@@ -309,6 +313,8 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
         this.subIssues[parentIssueId].length
       );
     });
+
+    updatePersistentLayer([parentIssueId]);
 
     return;
   };

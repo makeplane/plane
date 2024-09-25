@@ -43,7 +43,7 @@ export const deleteIssueFromLocal = async (issue_id: any) => {
   persistence.db.exec("COMMIT;");
 };
 
-export const updateIssue = async (issue: TIssue) => {
+export const updateIssue = async (issue: TIssue & { is_local_update: number }) => {
   if (document.hidden || !rootStore.user.localDBEnabled) return;
 
   const issue_id = issue.id;
