@@ -63,18 +63,25 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
   // handlers
   const handleIssuePeekOverview = (issue: TIssue) => handleRedirection(workspaceSlug, issue, isMobile);
 
-  const handleEditIssue = () => {
+  const handleEditIssue = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation();
+    e.preventDefault();
     handleIssueCrudState("update", relationIssueId, { ...issue });
     toggleCreateIssueModal(true);
   };
 
-  const handleDeleteIssue = () => {
+  const handleDeleteIssue = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation();
+    e.preventDefault();
     handleIssueCrudState("delete", relationIssueId, issue);
     toggleDeleteIssueModal(relationIssueId);
   };
 
-  const handleCopyIssueLink = () =>
+  const handleCopyIssueLink = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation();
+    e.preventDefault();
     issueOperations.copyText(`${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`);
+  };
 
   const handleRemoveRelation = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
