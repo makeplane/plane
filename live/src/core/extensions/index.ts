@@ -45,7 +45,8 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
         const documentType = params.get("documentType")?.toString() as
           | TDocumentTypes
           | undefined;
-
+        // TODO: Fix this lint error.
+        // eslint-disable-next-line no-async-promise-executor
         return new Promise(async (resolve) => {
           try {
             let fetchedData = null;
@@ -53,7 +54,7 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
               fetchedData = await fetchPageDescriptionBinary(
                 params,
                 pageId,
-                cookie,
+                cookie
               );
             } else {
               fetchedData = await fetchDocument({
@@ -83,6 +84,8 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
           | TDocumentTypes
           | undefined;
 
+        // TODO: Fix this lint error.
+        // eslint-disable-next-line no-async-promise-executor
         return new Promise(async () => {
           try {
             if (documentType === "project_page") {
@@ -121,7 +124,7 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
           }
           manualLogger.warn(
             `Redis Client wasn't able to connect, continuing without Redis (you won't be able to sync data between multiple plane live servers)`,
-            error,
+            error
           );
           reject(error);
         });
@@ -135,12 +138,12 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
     } catch (error) {
       manualLogger.warn(
         `Redis Client wasn't able to connect, continuing without Redis (you won't be able to sync data between multiple plane live servers)`,
-        error,
+        error
       );
     }
   } else {
     manualLogger.warn(
-      "Redis URL is not set, continuing without Redis (you won't be able to sync data between multiple plane live servers)",
+      "Redis URL is not set, continuing without Redis (you won't be able to sync data between multiple plane live servers)"
     );
   }
 

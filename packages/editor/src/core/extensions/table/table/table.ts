@@ -204,11 +204,8 @@ export const Table = Node.create({
         ({ tr, dispatch }) => {
           if (dispatch) {
             const selection = CellSelection.create(tr.doc, position.anchorCell, position.headCell);
-
-            // @ts-ignore
             tr.setSelection(selection);
           }
-
           return true;
         },
     };
@@ -247,7 +244,7 @@ export const Table = Node.create({
     return ({ editor, getPos, node, decorations }) => {
       const { cellMinWidth } = this.options;
 
-      return new TableView(node, cellMinWidth, decorations, editor, getPos as () => number);
+      return new TableView(node, cellMinWidth, decorations as any, editor, getPos as () => number);
     };
   },
 
@@ -267,8 +264,6 @@ export const Table = Node.create({
           handleWidth: this.options.handleWidth,
           cellMinWidth: this.options.cellMinWidth,
           // View: TableView,
-
-          // @ts-ignore
           lastColumnResizable: this.options.lastColumnResizable,
         })
       );

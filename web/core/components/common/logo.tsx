@@ -3,12 +3,12 @@
 import { FC } from "react";
 // emoji-picker-react
 import { Emoji } from "emoji-picker-react";
-// import { icons } from "lucide-react";
-import useFontFaceObserver from "use-font-face-observer";
 import { TLogoProps } from "@plane/types";
 // helpers
 import { LUCIDE_ICONS_LIST } from "@plane/ui";
 import { emojiCodeToUnicode } from "@/helpers/emoji.helper";
+// import { icons } from "lucide-react";
+import useFontFaceObserver from "use-font-face-observer";
 
 type Props = {
   logo: TLogoProps;

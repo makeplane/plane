@@ -114,7 +114,7 @@ const IntegrationGuide = observer(() => {
           <div>
             <div className="flex items-center justify-between border-b border-custom-border-100 pb-3.5 pt-7">
               <div className="flex items-center gap-2">
-                <h3 className="flex gap-2 text-xl font-medium">Previous Exports</h3>
+                <h3 className="flex gap-2 text-xl font-medium">Previous exports</h3>
 
                 <button
                   type="button"

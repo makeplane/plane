@@ -60,7 +60,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     isArchiveIssueModalOpen,
     toggleDeleteIssueModal,
     toggleArchiveIssueModal,
-    issue: { getIssueById },
+    issue: { getIssueById, isLocalDBIssueDescription },
   } = useIssueDetail();
   const issue = getIssueById(issueId);
   // remove peek id
@@ -178,7 +178,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         projectId={projectId}
                         issueId={issueId}
                         issueOperations={issueOperations}
-                        disabled={disabled || is_archived}
+                        disabled={disabled || is_archived || isLocalDBIssueDescription}
                         isArchived={is_archived}
                         isSubmitting={isSubmitting}
                         setIsSubmitting={(value) => setIsSubmitting(value)}
@@ -217,7 +217,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                             projectId={projectId}
                             issueId={issueId}
                             issueOperations={issueOperations}
-                            disabled={disabled || is_archived}
+                            disabled={disabled || is_archived || isLocalDBIssueDescription}
                             isArchived={is_archived}
                             isSubmitting={isSubmitting}
                             setIsSubmitting={(value) => setIsSubmitting(value)}

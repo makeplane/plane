@@ -131,9 +131,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
         classNames={`relative ${isLastChild && !isExpanded ? "" : "border-b border-b-custom-border-200"}`}
         verticalOffset={100}
         defaultValue={shouldRenderByDefault || isIssueNew(issuesMap[issueId])}
-        placeholderChildren={
-          <ListLoaderItemRow shouldAnimate={false} renderForPlaceHolder={true} defaultPropertyCount={4} />
-        }
+        placeholderChildren={<ListLoaderItemRow shouldAnimate={false} renderForPlaceHolder defaultPropertyCount={4} />}
         shouldRecordHeights={isMobile}
       >
         <IssueBlock

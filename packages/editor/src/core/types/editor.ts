@@ -66,7 +66,7 @@ export interface IEditorProps {
   value?: string | null;
 }
 
-export interface ILiteTextEditor extends IEditorProps {}
+export type ILiteTextEditor = IEditorProps;
 
 export interface IRichTextEditor extends IEditorProps {
   dragDropEnabled?: boolean;
@@ -97,9 +97,9 @@ export interface IReadOnlyEditorProps {
   };
 }
 
-export interface ILiteTextReadOnlyEditor extends IReadOnlyEditorProps {}
+export type ILiteTextReadOnlyEditor = IReadOnlyEditorProps;
 
-export interface IRichTextReadOnlyEditor extends IReadOnlyEditorProps {}
+export type IRichTextReadOnlyEditor = IReadOnlyEditorProps;
 
 export interface ICollaborativeDocumentReadOnlyEditor extends Omit<IReadOnlyEditorProps, "initialValue"> {
   embedHandler: TEmbedConfig;

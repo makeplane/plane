@@ -10,8 +10,6 @@ import { useIssues } from "@/hooks/store";
 // constants
 import { BaseListRoot } from "../base-list-root";
 
-export interface IModuleListLayout {}
-
 export const ModuleListLayout: React.FC = observer(() => {
   const { workspaceSlug, projectId, moduleId } = useParams();
 

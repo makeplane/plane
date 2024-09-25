@@ -213,7 +213,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       </div>
       <div className="my-8 flex flex-col gap-8">
         <div className="flex flex-col gap-1">
-          <h4 className="text-sm">Project Name</h4>
+          <h4 className="text-sm">Project name</h4>
           <Controller
             control={control}
             name="name"
@@ -234,7 +234,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                 onChange={onChange}
                 hasError={Boolean(errors.name)}
                 className="rounded-md !p-3 font-medium"
-                placeholder="Project Name"
+                placeholder="Project name"
                 disabled={!isAdmin}
               />
             )}
@@ -290,7 +290,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                     onChange={handleIdentifierChange}
                     ref={ref}
                     hasError={Boolean(errors.identifier)}
-                    placeholder="Enter Project ID"
+                    placeholder="Enter project ID"
                     className="w-full font-medium"
                     disabled={!isAdmin}
                   />
