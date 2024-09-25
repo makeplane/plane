@@ -5,11 +5,9 @@ from uuid import uuid4
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.core.validators import FileExtensionValidator
 
 # Module import
 from .base import BaseModel
-from plane.settings.storage import S3Storage
 
 
 def get_upload_path(instance, filename):
@@ -34,15 +32,14 @@ class FileAsset(BaseModel):
         ISSUE_DESCRIPTION = "ISSUE_DESCRIPTION"
         COMMENT_DESCRIPTION = "COMMENT_DESCRIPTION"
         PAGE_DESCRIPTION = "PAGE_DESCRIPTION"
-        COVER_IMAGE = "COVER_IMAGE"
+        USER_COVER = "USER_COVER_IMAGE"
+        USER_AVATAR = "USER_AVATAR"
+        WORKSPACE_LOGO = "WORKSPACE_LOGO"
+        PROJECT_COVER = "PROJECT_COVER"
 
     attributes = models.JSONField(default=dict)
     asset = models.FileField(
         upload_to=get_upload_path,
-        validators=[
-            FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png"]),
-            file_size,
-        ],
     )
     workspace = models.ForeignKey(
         "db.Workspace",
@@ -81,14 +78,14 @@ class FileAsset(BaseModel):
         return str(self.asset)
 
     @property
-    def signed_url(self):
-        storage = S3Storage()
-        return storage.generate_presigned_url(self.asset.name)
-
-    @property
     def asset_url(self):
-        if self.entity_type == self.EntityTypeContext.COVER_IMAGE:
-            return f"/api/assets/{self.id}/"
+        if (
+            self.entity_type == self.EntityTypeContext.WORKSPACE_LOGO
+            or self.entity_type == self.EntityTypeContext.USER_AVATAR
+            or self.entity_type == self.EntityTypeContext.USER_COVER
+            or self.entity_type == self.EntityTypeContext.PROJECT_COVER
+        ):
+            return f"/api/assets/static/{self.id}/"
 
         if self.entity_type == self.EntityTypeContext.ISSUE_ATTACHMENT:
             return f"/api/workspaces/{self.workspace.slug}/projects/{self.project_id}/issues/{self.entity_identifier}/attachments/{self.id}/"

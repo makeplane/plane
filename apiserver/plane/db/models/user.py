@@ -17,6 +17,7 @@ from django.dispatch import receiver
 from django.utils import timezone
 
 # Module imports
+from plane.db.models import FileAsset
 from ..mixins import TimeAuditModel
 
 
@@ -48,8 +49,24 @@ class User(AbstractBaseUser, PermissionsMixin):
     display_name = models.CharField(max_length=255, default="")
     first_name = models.CharField(max_length=255, blank=True)
     last_name = models.CharField(max_length=255, blank=True)
+    # avatar
     avatar = models.TextField(blank=True)
+    avatar_asset = models.ForeignKey(
+        FileAsset,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="user_avatar",
+    )
+    # cover image
     cover_image = models.URLField(blank=True, null=True, max_length=800)
+    cover_image_asset = models.ForeignKey(
+        FileAsset,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="user_cover_image",
+    )
 
     # tracking metrics
     date_joined = models.DateTimeField(
@@ -182,7 +199,11 @@ class Account(TimeAuditModel):
     )
     provider_account_id = models.CharField(max_length=255)
     provider = models.CharField(
-        choices=(("google", "Google"), ("github", "Github"), ("gitlab", "GitLab")),
+        choices=(
+            ("google", "Google"),
+            ("github", "Github"),
+            ("gitlab", "GitLab"),
+        ),
     )
     access_token = models.TextField()
     access_token_expired_at = models.DateTimeField(null=True)

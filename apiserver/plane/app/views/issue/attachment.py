@@ -132,7 +132,7 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
         )
 
         # Get the presigned URL
-        storage = S3Storage()
+        storage = S3Storage(request=request)
         # Generate a presigned URL to share an S3 object
         presigned_url = storage.generate_presigned_post(
             object_name=asset_key,
@@ -177,6 +177,6 @@ class IssueAtachmentURLV2Endpoint(BaseAPIView):
         asset = FileAsset.objects.get(
             id=asset_id, workspace__slug=slug, project_id=project_id
         )
-        storage = S3Storage()
+        storage = S3Storage(request=request)
         presigned_url = storage.generate_presigned_url(asset.asset.name)
         return HttpResponseRedirect(presigned_url)

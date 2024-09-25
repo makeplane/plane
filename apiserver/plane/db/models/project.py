@@ -99,6 +99,13 @@ class Project(BaseModel):
     is_issue_type_enabled = models.BooleanField(default=False)
     guest_view_all_features = models.BooleanField(default=False)
     cover_image = models.TextField(blank=True, null=True)
+    cover_image_asset = models.ForeignKey(
+        "db.FileAsset",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="project_cover_image",
+    )
     estimate = models.ForeignKey(
         "db.Estimate",
         on_delete=models.SET_NULL,
