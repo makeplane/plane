@@ -44,6 +44,7 @@ const COMMENT_ACCESS_SPECIFIERS: TCommentAccessType[] = [
 ];
 
 const toolbarItems = TOOLBAR_ITEMS.lite;
+console.log(toolbarItems);
 
 export const IssueCommentToolbar: React.FC<Props> = (props) => {
   const {
@@ -118,7 +119,6 @@ export const IssueCommentToolbar: React.FC<Props> = (props) => {
               key={key}
               className={cn("flex items-stretch gap-0.5 border-r border-custom-border-200 px-2.5", {
                 "pl-0": index === 0,
-                "pr-0": index === Object.keys(toolbarItems).length - 1,
               })}
             >
               {toolbarItems[key].map((item) => (
