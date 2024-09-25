@@ -4,7 +4,6 @@ import { makeObservable, runInAction } from "mobx";
 import { IIssueRootStore } from "./issue/root.store";
 import { IDraftIssuesFilter } from "./issue/draft";
 import { WorkspaceDraftService } from "@/services/workspace-draft.service";
-import clone from "lodash/clone";
 
 export interface IWorkspaceDraftIssues extends IBaseIssuesStore {
   viewFlags: ViewFlags;
@@ -23,7 +22,7 @@ export class WorkspaceDraftIssues extends BaseIssuesStore implements IWorkspaceD
   };
   // filter store
   issueFilterStore: IDraftIssuesFilter; // TODO:: VERIFY IF THIS IS CORRECT OR NOT
-  workspaceDraftService;
+  workspaceDraftService: WorkspaceDraftService;
 
   constructor(_rootStore: IIssueRootStore, issueFilterStore: IDraftIssuesFilter) {
     super(_rootStore, issueFilterStore);    // issueFilterStore is required for the super constructor
