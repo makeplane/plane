@@ -68,7 +68,6 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
   // click outside handler
   const handleClickOutside = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      console.log("click outside", modalRef.current, e.target);
       if (modalRef.current && e.target === modalRef.current) {
         handleClose();
       }
@@ -77,12 +76,14 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
   );
   // register keydown listener
   useEffect(() => {
-    document.addEventListener("keydown", handleKeyDown);
+    if (isFullScreenEnabled) {
+      document.addEventListener("keydown", handleKeyDown);
 
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [handleKeyDown]);
+      return () => {
+        document.removeEventListener("keydown", handleKeyDown);
+      };
+    }
+  }, [handleKeyDown, isFullScreenEnabled]);
 
   return (
     <>
