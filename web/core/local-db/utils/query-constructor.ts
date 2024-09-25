@@ -6,6 +6,7 @@ import {
   singleFilterConstructor,
   translateQueryParams,
 } from "./query.utils";
+import { log } from "./utils";
 export const SPECIAL_ORDER_BY = {
   labels__name: "labels",
   "-labels__name": "labels",
@@ -47,7 +48,7 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
 
     `;
 
-    console.log("###", sql);
+    log("###", sql);
 
     return sql;
   }
@@ -63,7 +64,7 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
         WHERE rank <= ${per_page}
     `;
 
-    console.log("###", sql);
+    log("###", sql);
 
     return sql;
   }
@@ -119,7 +120,7 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
     `;
     sql += ` group by i.id ${orderByString} LIMIT ${pageSize} OFFSET ${offset * 1 + page * pageSize};`;
 
-    console.log("######$$$", sql);
+    log("######$$$", sql);
     return sql;
   }
 
@@ -148,7 +149,7 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
   // Add offset and paging to query
   sql += ` LIMIT  ${pageSize} OFFSET ${offset * 1 + page * pageSize};`;
 
-  console.log("$$$", sql);
+  log("$$$", sql);
   return sql;
 };
 

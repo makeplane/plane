@@ -3,9 +3,13 @@ import { TIssue } from "@plane/types";
 import { rootStore } from "@/lib/store-context";
 import { updateIssue } from "./load-issues";
 
-export const log = console.log;
-
-// export const log = () => {};
+export const log = (...args: any) => {
+  if ((window as any).DEBUG) {
+    console.log(...args);
+  }
+};
+export const logError = console.error;
+export const logInfo = console.info;
 
 export const updatePersistentLayer = async (issueIds: string | string[]) => {
   if (typeof issueIds === "string") {
