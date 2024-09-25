@@ -1,0 +1,58 @@
+import { API_BASE_URL } from "@/helpers/common.helper";
+import { APIService } from "./api.service";
+import { TIssue, TIssuesResponse } from "@plane/types";
+
+export class WorkspaceDraftService extends APIService {
+  constructor() {
+    super(API_BASE_URL);
+  }
+
+  async getDraftIssues(workspaceSlug: string, query?: any, config = {}): Promise<TIssuesResponse> { // TODO:: VERIFY IF THIS IS PAGINATED OR NOT ? 
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/draft-issues/`,
+      {
+        params: { ...query },   //NOTE TO SELF:: GET THIS REVIEWED BY SENIORS
+      },
+      config
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getDraftIssueById(workspaceSlug: string, issueId: string, queries?: any): Promise<TIssue> {
+    return this.get(`/api/workspaces/${workspaceSlug}/draft-issues/${issueId}/`, {
+      params: queries,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async createDraftIssue(workspaceSlug: string, data: any): Promise<TIssue> {
+    return this.post(`/api/workspaces/${workspaceSlug}/draft-issues/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async updateDraftIssue(workspaceSlug: string, issueId: string, data: any): Promise<void> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/draft-issues/${issueId}/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async deleteDraftIssue(workspaceSlug: string, issueId: string): Promise<void> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/draft-issues/${issueId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+}
