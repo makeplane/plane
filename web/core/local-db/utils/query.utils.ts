@@ -77,9 +77,7 @@ export const getMetaKeysFragment = (queries: any) => {
     }
   });
 
-  let sql;
-
-  sql = `  ('${Array.from(fields).join("','")}')`;
+  const sql = `  ('${Array.from(fields).join("','")}')`;
 
   return sql;
 };

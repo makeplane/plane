@@ -4,7 +4,6 @@ import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import useSWRImmutable from "swr/immutable";
 
 // components
 import { JoinProject } from "@/components/auth-screens";
@@ -23,12 +22,13 @@ import {
   useProjectView,
   useUserPermissions,
 } from "@/hooks/store";
+// local
+import { persistence } from "@/local-db/storage.sqlite";
 // plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web hooks
 import { useIssueTypes } from "@/plane-web/hooks/store";
 // images
-import { persistence } from "@/local-db/storage.sqlite";
 import emptyProject from "@/public/empty-state/onboarding/dashboard-light.webp";
 
 interface IProjectAuthWrapper {

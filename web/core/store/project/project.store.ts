@@ -408,6 +408,7 @@ export class ProjectStore implements IProjectStore {
     } catch (error) {
       console.log("Failed to delete project from project store");
       this.fetchProjects(workspaceSlug);
+      throw error;
     }
   };
 

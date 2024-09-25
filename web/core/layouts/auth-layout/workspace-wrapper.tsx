@@ -16,13 +16,14 @@ import { LogoSpinner } from "@/components/common";
 import { useMember, useProject, useUser, useUserPermissions, useWorkspace } from "@/hooks/store";
 import { useFavorite } from "@/hooks/store/use-favorite";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// local
+import { persistence } from "@/local-db/storage.sqlite";
 // constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web hooks
 import { useFlag, useIssueTypes, useWorkspaceFeatures, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { useFeatureFlags } from "@/plane-web/hooks/store/use-feature-flags";
 // images
-import { persistence } from "@/local-db/storage.sqlite";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import PlaneBlackLogo from "@/public/plane-logos/black-horizontal-with-blue-logo.png";
 import PlaneWhiteLogo from "@/public/plane-logos/white-horizontal-with-blue-logo.png";
