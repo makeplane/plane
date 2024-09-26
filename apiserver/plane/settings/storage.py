@@ -51,7 +51,9 @@ class S3Storage(object):
         self, object_name, file_type, file_size, expiration=3600
     ):
         """Generate a presigned URL to upload an S3 object"""
-        fields = {"Content-Type": file_type}
+        fields = {
+            "Content-Type": file_type,
+        }
 
         conditions = [
             {"bucket": self.aws_storage_bucket_name},

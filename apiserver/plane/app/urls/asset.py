@@ -43,33 +43,34 @@ urlpatterns = [
         ),
         name="file-assets-restore",
     ),
+    # V2 Endpoints
     path(
-        "assets/workspaces/<str:slug>/assets/",
+        "assets/v2/workspaces/<str:slug>/",
         WorkspaceFileAssetEndpoint.as_view(),
         name="workspace-file-assets",
     ),
     path(
-        "assets/workspaces/<str:slug>/workspace-assets/<uuid:asset_id>/",
+        "assets/v2/workspaces/<str:slug>/<uuid:asset_id>/",
         WorkspaceFileAssetEndpoint.as_view(),
         name="workspace-file-assets",
     ),
     path(
-        "assets/user-assets/",
+        "assets/v2/user-assets/",
         UserAssetsV2Endpoint.as_view(),
         name="user-file-assets",
     ),
     path(
-        "assets/user-assets/<uuid:asset_id>/",
+        "assets/v2/user-assets/<uuid:asset_id>/",
         UserAssetsV2Endpoint.as_view(),
         name="user-file-assets",
     ),
     path(
-        "assets/<uuid:asset_id>/restore/",
+        "assets/v2/<uuid:asset_id>/restore/",
         AssetRestoreEndpoint.as_view(),
         name="asset-restore",
     ),
     path(
-        "assets/static/<uuid:asset_id>/",
+        "assets/v2/static/<uuid:asset_id>/",
         StaticFileAssetEndpoint.as_view(),
         name="static-file-asset",
     ),

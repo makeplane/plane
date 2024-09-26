@@ -32,7 +32,7 @@ class FileAsset(BaseModel):
         ISSUE_DESCRIPTION = "ISSUE_DESCRIPTION"
         COMMENT_DESCRIPTION = "COMMENT_DESCRIPTION"
         PAGE_DESCRIPTION = "PAGE_DESCRIPTION"
-        USER_COVER = "USER_COVER_IMAGE"
+        USER_COVER = "USER_COVER"
         USER_AVATAR = "USER_AVATAR"
         WORKSPACE_LOGO = "WORKSPACE_LOGO"
         PROJECT_COVER = "PROJECT_COVER"
@@ -85,13 +85,13 @@ class FileAsset(BaseModel):
             or self.entity_type == self.EntityTypeContext.USER_COVER
             or self.entity_type == self.EntityTypeContext.PROJECT_COVER
         ):
-            return f"/api/assets/static/{self.id}/"
+            return f"/api/assets/v2/static/{self.id}/"
 
         if self.entity_type == self.EntityTypeContext.ISSUE_ATTACHMENT:
             return f"/api/workspaces/{self.workspace.slug}/projects/{self.project_id}/issues/{self.entity_identifier}/attachments/{self.id}/"
 
         if self.entity_type == self.EntityTypeContext.ISSUE_DESCRIPTION:
-            return f"/api/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/issues/{self.entity_identifier}/assets/{self.id}/"
+            return f"/api/v2/assets/workspaces/{self.workspace.slug}/projects/{self.project_id}/issues/{self.entity_identifier}/{self.id}/"
 
         if self.entity_type == self.EntityTypeContext.COMMENT_DESCRIPTION:
             return f"/api/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/comments/{self.entity_identifier}/assets/{self.id}/"

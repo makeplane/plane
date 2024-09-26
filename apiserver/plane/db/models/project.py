@@ -127,6 +127,12 @@ class Project(BaseModel):
     )
     archived_at = models.DateTimeField(null=True)
 
+    @property
+    def cover_image_url(self):
+        if self.cover_image_asset:
+            return self.cover_image_asset.asset_url
+        return None
+
     def __str__(self):
         """Return name of the project"""
         return f"{self.name} <{self.workspace.name}>"

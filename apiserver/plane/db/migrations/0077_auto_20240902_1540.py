@@ -2,6 +2,7 @@
 
 from django.db import migrations, models
 import django.db.models.deletion
+import plane.db.models.asset
 
 
 class Migration(migrations.Migration):
@@ -29,7 +30,7 @@ class Migration(migrations.Migration):
                     ("ISSUE_DESCRIPTION", "Issue Description"),
                     ("COMMENT_DESCRIPTION", "Comment Description"),
                     ("PAGE_DESCRIPTION", "Page Description"),
-                    ("USER_COVER_IMAGE", "User Cover"),
+                    ("USER_COVER", "User Cover"),
                     ("USER_AVATAR", "User Avatar"),
                     ("WORKSPACE_LOGO", "Workspace Logo"),
                     ("PROJECT_COVER", "Project Cover"),
@@ -130,6 +131,13 @@ class Migration(migrations.Migration):
                 on_delete=django.db.models.deletion.SET_NULL,
                 related_name="workspace_logo",
                 to="db.fileasset",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="fileasset",
+            name="asset",
+            field=models.FileField(
+                upload_to=plane.db.models.asset.get_upload_path
             ),
         ),
     ]
