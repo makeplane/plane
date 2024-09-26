@@ -53,7 +53,7 @@ export class RootStore extends CoreRootStore {
     this.workspaceSubscription = new WorkspaceSubscriptionStore(this);
     this.workspaceWorklogs = new WorkspaceWorklogStore(this);
     this.workspaceWorklogDownloads = new WorkspaceWorklogDownloadStore(this);
-    this.featureFlags = new FeatureFlagsStore();
+    this.featureFlags = new FeatureFlagsStore(this);
     this.selfHostedSubscription = new SelfHostedSubscriptionStore(this);
     this.workspaceFeatures = new WorkspaceFeatureStore(this);
     this.workspaceProjectStates = new WorkspaceProjectStatesStore(this);
@@ -69,7 +69,7 @@ export class RootStore extends CoreRootStore {
     this.workspaceSubscription = new WorkspaceSubscriptionStore(this);
     this.workspaceWorklogs = new WorkspaceWorklogStore(this);
     this.workspaceWorklogDownloads = new WorkspaceWorklogDownloadStore(this);
-    this.featureFlags = new FeatureFlagsStore();
+    this.featureFlags = new FeatureFlagsStore(this);
     this.selfHostedSubscription = new SelfHostedSubscriptionStore(this);
     this.workspaceFeatures = new WorkspaceFeatureStore(this);
     this.workspaceProjectStates = new WorkspaceProjectStatesStore(this);
