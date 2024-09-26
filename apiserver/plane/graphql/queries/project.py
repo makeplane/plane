@@ -44,10 +44,6 @@ class ProjectQuery:
                     project_projectmember__member=info.context.user,
                     project_projectmember__is_active=True,
                 )
-                | Q(
-                    created_by=info.context.user,
-                    project_projectmember__is_active=True,
-                )
             )
 
         projects = await sync_to_async(list)(project_query)

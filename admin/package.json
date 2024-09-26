@@ -17,6 +17,7 @@
     "@plane/helpers": "*",
     "@plane/types": "*",
     "@plane/ui": "*",
+    "@sentry/nextjs": "^8.32.0",
     "@tailwindcss/typography": "^0.5.9",
     "@types/lodash": "^4.17.0",
     "autoprefixer": "10.4.14",
@@ -38,15 +39,15 @@
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
+    "@plane/eslint-config": "*",
+    "@plane/typescript-config": "*",
     "@types/js-cookie": "^3.0.6",
     "@types/node": "18.16.1",
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",
     "@types/uuid": "^9.0.8",
     "@types/zxcvbn": "^4.4.4",
-    "@plane/eslint-config": "*",
     "tailwind-config-custom": "*",
-    "@plane/typescript-config": "*",
     "typescript": "5.3.3"
   }
 }
