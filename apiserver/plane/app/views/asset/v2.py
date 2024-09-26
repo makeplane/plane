@@ -18,11 +18,37 @@ from plane.settings.storage import S3Storage
 class UserAssetsV2Endpoint(BaseAPIView):
     """This endpoint is used to upload user profile images."""
 
+    def entity_asset_save(self, asset_id, entity_type, entity_id):
+        # User Avatar
+        if entity_type == FileAsset.EntityTypeContext.USER_AVATAR:
+            user = User.objects.get(id=entity_id)
+            user.avatar_asset_id = asset_id
+            user.save()
+            return
+        # User Cover
+        if entity_type == FileAsset.EntityTypeContext.USER_COVER:
+            user = User.objects.get(id=entity_id)
+            user.cover_image_asset_id = asset_id
+            user.save()
+            return
+        return
+
     def post(self, request):
         # get the asset key
         name = request.data.get("name")
         type = request.data.get("type", "image/jpeg")
         size = int(request.data.get("size", settings.FILE_SIZE_LIMIT))
+        entity_type = request.data.get("entity_type", False)
+
+        #  Check if the entity type is allowed
+        if not entity_type or entity_type not in ["USER_AVATAR", "USER_COVER"]:
+            return Response(
+                {
+                    "error": "Invalid entity type.",
+                    "status": False,
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         # Check if the file type is allowed
         allowed_types = ["image/jpeg", "image/png"]
@@ -48,7 +74,8 @@ class UserAssetsV2Endpoint(BaseAPIView):
             asset=asset_key,
             size=size,
             created_by=request.user,
-            entity_type=FileAsset.EntityTypeContext.COVER_IMAGE,
+            entity_type=entity_type,
+            entity_identifier=request.user.id,
         )
 
         # Get the presigned URL
@@ -61,24 +88,41 @@ class UserAssetsV2Endpoint(BaseAPIView):
         )
         # Return the presigned URL
         return Response(
-            {"url": presigned_url, "asset_id": str(asset.id)},
+            {
+                "url": presigned_url,
+                "asset_id": str(asset.id),
+                "asset_url": asset.asset_url,
+            },
             status=status.HTTP_200_OK,
         )
 
     def patch(self, request, asset_id):
         # get the asset id
-        asset = FileAsset.objects.get(id=asset_id)
-        asset.is_uploaded = request.data.get("is_uploaded", asset.is_uploaded)
-        # get the storage metadata
+        asset = FileAsset.objects.get(
+            id=asset_id, entity_identifier=request.user.id
+        )
         storage = S3Storage(request=request)
-        storage_metadata = storage.get_object_metadata(asset.asset.name)
-        asset.storage_metadata = storage_metadata
+        # get the storage metadata
+        if "is_uploaded" in request.data and request.data["is_uploaded"]:
+            asset.is_uploaded = True
+            # get the storage metadata
+            asset.storage_metadata = storage.get_object_metadata(
+                asset.asset.name
+            )
+            # get the entity and save the asset id for the request field
+            self.entity_asset_save(
+                asset_id, asset.entity_type, asset.entity_identifier
+            )
+        # update the attributes
+        asset.attributes = request.data.get("attributes", asset.attributes)
         # save the asset
         asset.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def delete(self, request, asset_id):
-        asset = FileAsset.objects.get(id=asset_id)
+        asset = FileAsset.objects.get(
+            id=asset_id, entity_identifier=request.user.id
+        )
         asset.is_deleted = True
         asset.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -176,18 +220,6 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             project = Project.objects.get(id=entity_id)
             project.cover_image_asset_id = asset_id
             project.save()
-            return
-        # User Avatar
-        elif entity_type == FileAsset.EntityTypeContext.USER_AVATAR:
-            user = User.objects.get(id=entity_id)
-            user.avatar_asset_id = asset_id
-            user.save()
-            return
-        # User Cover
-        elif entity_type == FileAsset.EntityTypeContext.USER_COVER:
-            user = User.objects.get(id=entity_id)
-            user.cover_image_asset_id = asset_id
-            user.save()
             return
         else:
             return
