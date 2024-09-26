@@ -1,13 +1,13 @@
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
-import { getAuthenticationModes as getCEAuthenticationModes } from "@/ce/components/authentication/authentication-modes";
-// types
 import {
   TInstanceAuthenticationMethodKeys as TBaseAuthenticationMethods,
   TInstanceAuthenticationModes,
   TInstanceEnterpriseAuthenticationMethodKeys,
 } from "@plane/types";
+import { getAuthenticationModes as getCEAuthenticationModes } from "@/ce/components/authentication/authentication-modes";
+// types
 // components
 import { AuthenticationMethodCard } from "@/components/authentication";
 // helpers
@@ -15,10 +15,10 @@ import { getBaseAuthenticationModes } from "@/helpers/authentication.helper";
 // plane admin components
 import { OIDCConfiguration, SAMLConfiguration } from "@/plane-admin/components/authentication";
 // images
+import { useInstanceFlag } from "@/plane-admin/hooks/store/use-instance-flag";
 import OIDCLogo from "@/public/logos/oidc-logo.svg";
 import SAMLLogo from "@/public/logos/saml-logo.svg";
 // plane admin hooks
-import { useInstanceFlag } from "@/plane-admin/hooks/store/use-instance-flag";
 
 type TInstanceAuthenticationMethodKeys = TBaseAuthenticationMethods | TInstanceEnterpriseAuthenticationMethodKeys;
 
