@@ -238,7 +238,10 @@ export const singleFilterConstructor = (queries: any) => {
 
   keys.forEach((key) => {
     const value = filters[key] ? filters[key].split(",") : "";
-    if (!value) return;
+    if (!value) {
+      sql += ` AND ${key} IS NULL`;
+      return;
+    }
     if (!ARRAY_FIELDS.includes(key)) {
       sql += ` AND ${key} in ('${value.join("','")}')
       `;
