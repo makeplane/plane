@@ -42,7 +42,7 @@ export const deleteIssueFromLocal = async (issue_id: any) => {
   persistence.db.exec(deleteMetaQuery);
   persistence.db.exec("COMMIT;");
 };
-
+// @todo: Update deletes the issue description from local. Implement a separate update.
 export const updateIssue = async (issue: TIssue & { is_local_update: number }) => {
   if (document.hidden || !rootStore.user.localDBEnabled) return;
 
