@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { ChevronDown, CircleUserRound } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
@@ -35,6 +36,7 @@ import { useUser, useUserSettings } from "@/hooks/store";
 // import { ProfileSettingsLayout } from "@/layouts/settings-layout";
 // layouts
 import { ENABLE_LOCAL_DB_CACHE } from "@/plane-web/constants/issues";
+import { useFlag } from "@/plane-web/hooks/store";
 import { FileService } from "@/services/file.service";
 // services
 // types
@@ -53,6 +55,8 @@ const defaultValues: Partial<IUser> = {
 const fileService = new FileService();
 
 const ProfileSettingsPage = observer(() => {
+  // router
+  const { workspaceSlug } = useParams();
   // states
   const [isLoading, setIsLoading] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
@@ -70,6 +74,7 @@ const ProfileSettingsPage = observer(() => {
   // store hooks
   const { data: currentUser, updateCurrentUser } = useUser();
   const { canUseLocalDB, toggleLocalDB } = useUserSettings();
+  const isLocalDBCacheEnabled = useFlag(workspaceSlug?.toString(), "NO_LOAD");
 
   useEffect(() => {
     reset({ ...defaultValues, ...currentUser });
@@ -418,7 +423,7 @@ const ProfileSettingsPage = observer(() => {
             </div>
           </div>
         </form>
-        {ENABLE_LOCAL_DB_CACHE && (
+        {ENABLE_LOCAL_DB_CACHE && isLocalDBCacheEnabled && (
           <Disclosure as="div" className="border-t border-custom-border-100 md:px-8">
             {({ open }) => (
               <>

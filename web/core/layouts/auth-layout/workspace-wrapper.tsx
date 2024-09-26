@@ -125,8 +125,8 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
 
   // initialize the local database
   const { isLoading: isDBInitializing } = useSWRImmutable(
-    workspaceSlug ? `WORKSPACE_DB_${workspaceSlug}` : null,
-    workspaceSlug
+    workspaceSlug && !flagsLoader ? `WORKSPACE_DB_${workspaceSlug}` : null,
+    workspaceSlug && !flagsLoader
       ? async () => {
           // persistence.reset();
           await persistence.initialize(workspaceSlug.toString());
