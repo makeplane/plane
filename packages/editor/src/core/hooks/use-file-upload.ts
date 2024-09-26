@@ -15,7 +15,9 @@ export const useUploader = ({
 
   const uploadFile = useCallback(
     async (file: File) => {
-      const isValid = isFileValid(file);
+      const fileNameTrimmed = trimFileName(file.name);
+      const fileWithTrimmedName = new File([file], fileNameTrimmed, { type: file.type });
+      const isValid = isFileValid(fileWithTrimmedName);
       if (!isValid) {
         return;
       }
@@ -25,10 +27,10 @@ export const useUploader = ({
         reader.onload = () => {
           setLocalImage(reader.result as string);
         };
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(fileWithTrimmedName);
         // @ts-expect-error - TODO: fix typings, and don't remove await from
         // here for now
-        const url: string = await editor?.commands.uploadImage(file);
+        const url: string = await editor?.commands.uploadImage(fileWithTrimmedName);
 
         if (!url) {
           throw new Error("Something went wrong while uploading the image");
@@ -112,3 +114,14 @@ export const useDropZone = ({ uploader }: { uploader: (file: File) => void }) =>
 
   return { isDragging, draggedInside, onDragEnter, onDragLeave, onDrop };
 };
+
+function trimFileName(fileName: string, maxLength = 100) {
+  if (fileName.length > maxLength) {
+    const extension = fileName.split(".").pop();
+    const nameWithoutExtension = fileName.slice(0, -(extension?.length ?? 0 + 1));
+    const allowedNameLength = maxLength - (extension?.length ?? 0) - 1; // -1 for the dot
+    return `${nameWithoutExtension.slice(0, allowedNameLength)}.${extension}`;
+  }
+
+  return fileName;
+}

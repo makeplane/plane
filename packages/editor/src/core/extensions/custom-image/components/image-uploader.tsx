@@ -21,8 +21,9 @@ export const CustomImageUploader = (props: {
     attrs: ImageAttributes;
   };
   updateAttributes: (attrs: Record<string, any>) => void;
+  getPos: () => number;
 }) => {
-  const { selected, editor, setLocalImage, node, setIsUploaded, updateAttributes } = props;
+  const { selected, editor, setLocalImage, node, setIsUploaded, updateAttributes, getPos } = props;
   // ref
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -36,6 +37,18 @@ export const CustomImageUploader = (props: {
         // Update the node view's src attribute post upload
         updateAttributes({ src: url });
         editorStorage?.fileMap.delete(id);
+
+        // control cursor position after upload
+        const pos = getPos();
+        const nextNode = editor.state.doc.nodeAt(pos + 1);
+
+        if (nextNode && nextNode.type.name === "paragraph") {
+          // If there is a paragraph node after the image component, move the focus to the next node
+          editor.commands.setTextSelection(pos + 1);
+        } else {
+          // create a new paragraph after the image component post upload
+          editor.commands.createParagraphNear();
+        }
       }
     },
     [editorStorage?.fileMap, id, updateAttributes]
@@ -57,10 +70,9 @@ export const CustomImageUploader = (props: {
       if (meta.event === "drop" && "file" in meta) {
         uploadFile(meta.file);
       } else if (meta.event === "insert" && fileInputRef.current && !hasTriggeredFilePickerRef.current) {
-        if (meta && meta.hasOpenedFileInputOnce) return;
+        if (meta.hasOpenedFileInputOnce) return;
         fileInputRef.current.click();
         hasTriggeredFilePickerRef.current = true;
-        if (!meta) return;
         editorStorage?.fileMap.set(id, { ...meta, hasOpenedFileInputOnce: true });
       }
     }

@@ -11,10 +11,16 @@ import { TFileHandler } from "@/types";
 // helpers
 import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
 
+export type InsertImageComponentProps = {
+  file?: File;
+  pos?: number;
+  event: "insert" | "drop";
+};
+
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
     imageComponent: {
-      setImageUpload: ({ file, pos, event }: { file?: File; pos?: number; event: "insert" | "drop" }) => ReturnType;
+      insertImageComponent: ({ file, pos, event }: InsertImageComponentProps) => ReturnType;
       uploadImage: (file: File) => () => Promise<string> | undefined;
     };
   }
@@ -109,7 +115,7 @@ export const CustomImageExtension = (props: TFileHandler) => {
 
     addCommands() {
       return {
-        setImageUpload:
+        insertImageComponent:
           (props: { file?: File; pos?: number; event: "insert" | "drop" }) =>
           ({ commands }) => {
             // Early return if there's an invalid file being dropped
@@ -128,6 +134,7 @@ export const CustomImageExtension = (props: TFileHandler) => {
             } else if (props.event === "insert") {
               (this.editor.storage.imageComponent as UploadImageExtensionStorage).fileMap.set(fileId, {
                 event: props.event,
+                hasOpenedFileInputOnce: false,
               });
             }
 

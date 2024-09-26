@@ -43,6 +43,7 @@ export const CustomImageNode = (props: CustomImageNodeViewProps) => {
         ) : (
           <CustomImageUploader
             updateAttributes={updateAttributes}
+            getPos={getPos}
             setIsUploaded={setIsUploaded}
             node={node}
             editor={editor}
