@@ -15,7 +15,7 @@ import { loadWorkSpaceData } from "./utils/load-workspace";
 import { issueFilterCountQueryConstructor, issueFilterQueryConstructor } from "./utils/query-constructor";
 import { runQuery } from "./utils/query-executor";
 import { createTables } from "./utils/tables";
-import { getGroupedIssueResults, getSubGroupedIssueResults } from "./utils/utils";
+import { logError, getGroupedIssueResults, getSubGroupedIssueResults, logInfo, log } from "./utils/utils";
 
 declare module "@sqlite.org/sqlite-wasm" {
   export function sqlite3Worker1Promiser(...args: any): any;
@@ -24,9 +24,6 @@ declare module "@sqlite.org/sqlite-wasm" {
 const DB_VERSION = 1;
 const PAGE_SIZE = 1000;
 const BATCH_SIZE = 200;
-const log = console.log;
-const error = console.error;
-const info = console.info;
 
 type TProjectStatus = {
   issues: { status: undefined | "loading" | "ready" | "error" | "syncing"; sync: Promise<void> | undefined };
@@ -72,7 +69,7 @@ export class Storage {
       await this._initialize(workspaceSlug);
       return true;
     } catch (err) {
-      error(err);
+      logError(err);
       this.status = "error";
       return false;
     }
@@ -92,7 +89,7 @@ export class Storage {
       return false;
     }
 
-    info("Loading and initializing SQLite3 module...");
+    logInfo("Loading and initializing SQLite3 module...");
 
     this.workspaceSlug = workspaceSlug;
     this.dbName = workspaceSlug;
@@ -141,7 +138,7 @@ export class Storage {
 
       await this.setOption("DB_VERSION", DB_VERSION.toString());
     } catch (err) {
-      error(err);
+      logError(err);
       throw err;
     }
 
@@ -179,15 +176,16 @@ export class Storage {
       this.setSync(projectId, sync);
       await sync;
     } catch (e) {
+      logError(e);
       this.setStatus(projectId, "error");
     }
   };
 
   _syncIssues = async (projectId: string) => {
-    console.log("### Sync started");
+    log("### Sync started");
     let status = this.getStatus(projectId);
     if (status === "loading" || status === "syncing") {
-      info(`Project ${projectId} is already loading or syncing`);
+      logInfo(`Project ${projectId} is already loading or syncing`);
       return;
     }
     const syncPromise = this.getSync(projectId);
@@ -235,7 +233,7 @@ export class Storage {
     if (syncedAt) {
       await syncDeletesToLocal(this.workspaceSlug, projectId, { updated_at__gt: syncedAt });
     }
-    console.log("### Time taken to add issues", performance.now() - start);
+    log("### Time taken to add issues", performance.now() - start);
 
     if (status === "loading") {
       await createIndexes();
@@ -252,7 +250,7 @@ export class Storage {
 
   getLastUpdatedIssue = async (projectId: string) => {
     const lastUpdatedIssue = await runQuery(
-      `select id, name, updated_at , sequence_id from issues where project_id='${projectId}' order by datetime(updated_at) desc limit 1`
+      `select id, name, updated_at , sequence_id from issues WHERE project_id='${projectId}' AND is_local_update IS NULL order by datetime(updated_at) desc limit 1 `
     );
 
     if (lastUpdatedIssue.length) {
@@ -270,7 +268,7 @@ export class Storage {
   };
 
   getIssues = async (workspaceSlug: string, projectId: string, queries: any, config: any) => {
-    console.log("#### Queries", queries);
+    log("#### Queries", queries);
 
     const currentProjectStatus = this.getStatus(projectId);
     if (
@@ -280,7 +278,7 @@ export class Storage {
       currentProjectStatus === "error" ||
       !rootStore.user.localDBEnabled
     ) {
-      info(`Project ${projectId} is loading, falling back to server`);
+      logInfo(`Project ${projectId} is loading, falling back to server`);
       const issueService = new IssueService();
       return await issueService.getIssuesFromServer(workspaceSlug, projectId, queries);
     }
@@ -307,7 +305,7 @@ export class Storage {
     const parsingStart = performance.now();
     let issueResults = issuesRaw.map((issue: any) => formatLocalIssue(issue));
 
-    console.log("#### Issue Results", issueResults.length);
+    log("#### Issue Results", issueResults.length);
 
     const parsingEnd = performance.now();
 
@@ -326,7 +324,7 @@ export class Storage {
       Parsing: parsingEnd - parsingStart,
       Grouping: groupingEnd - grouping,
     };
-    console.log(issueResults);
+    log(issueResults);
     console.table(times);
 
     const total_pages = Math.ceil(total_count / Number(pageSize));

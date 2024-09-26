@@ -11,6 +11,7 @@ import {
   memberSchema,
   optionsSchema,
 } from "./schemas";
+import { log } from "./utils";
 
 const createTableSQLfromSchema = (tableName: string, schema: Schema) => {
   let sql = `CREATE TABLE IF NOT EXISTS ${tableName} (`;
@@ -18,7 +19,7 @@ const createTableSQLfromSchema = (tableName: string, schema: Schema) => {
     .map((key) => `'${key}' ${schema[key]}`)
     .join(", ");
   sql += `);`;
-  console.log("#####", sql);
+  log("#####", sql);
   return sql;
 };
 
