@@ -59,7 +59,6 @@ export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer(
             <span className="flex-shrink-0 text-custom-text-400">{convertBytesToSize(attachment.attributes.size)}</span>
           </div>
 
-
           {(getFileExtension(attachment.asset) === "wav" || getFileExtension(attachment.asset) == "mp3") && (
             <>
             <audio controls style={{height: "20px"}}>
