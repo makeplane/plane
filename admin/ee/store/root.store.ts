@@ -1,11 +1,11 @@
 import { enableStaticRendering } from "mobx-react";
 // stores
-import { CoreRootStore } from "@/store/root.store";
-// plane admin store
 import {
   IInstanceFeatureFlagsStore,
   InstanceFeatureFlagsStore,
 } from "@/plane-admin/store/instance-feature-flags.store";
+import { CoreRootStore } from "@/store/root.store";
+// plane admin store
 
 enableStaticRendering(typeof window === "undefined");
 
