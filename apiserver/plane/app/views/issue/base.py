@@ -169,6 +169,7 @@ class IssueListEndpoint(BaseAPIView):
                 "is_draft",
                 "archived_at",
                 "deleted_at",
+                "type_id",
             )
             datetime_fields = ["created_at", "updated_at"]
             issues = user_timezone_converter(
@@ -429,6 +430,7 @@ class IssueViewSet(BaseViewSet):
                     "is_draft",
                     "archived_at",
                     "deleted_at",
+                    "type_id",
                 )
                 .first()
             )
@@ -827,6 +829,7 @@ class IssuePaginatedViewSet(BaseViewSet):
             "link_count",
             "attachment_count",
             "sub_issues_count",
+            "type_id",
         ]
 
         if is_description_required:
