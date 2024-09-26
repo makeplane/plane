@@ -73,7 +73,7 @@ class Command(BaseCommand):
 
                 from plane.bgtasks.dummy_data_task import create_dummy_data
 
-                create_dummy_data.delay(
+                create_dummy_data(
                     slug=workspace_slug,
                     email=creator,
                     members=members,
