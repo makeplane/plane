@@ -137,8 +137,8 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
       id={`issue-${issue.id}`}
       href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${issue.id}`}
       onClick={() => handleIssuePeekOverview(issue)}
-      className="w-full truncate cursor-pointer text-sm text-custom-text-100"
-      disabled={!!issue?.tempId}
+      className="w-full cursor-pointer"
+      disabled={!!issue?.tempId || issue?.is_draft}
     >
       <Row
         ref={issueRef}
@@ -231,21 +231,15 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
               )}
             </div>
 
-            {issue?.is_draft ? (
-              <Tooltip
-                tooltipContent={issue.name}
-                isMobile={isMobile}
-                position="top-left"
-                disabled={isCurrentBlockDragging}
-                renderByDefault={false}
-              >
-                <p className="truncate">{issue.name}</p>
-              </Tooltip>
-            ) : (
-              <Tooltip tooltipContent={issue.name} isMobile={isMobile} position="top-left" renderByDefault={false}>
-                <p className="truncate">{issue.name}</p>
-              </Tooltip>
-            )}
+            <Tooltip
+              tooltipContent={issue.name}
+              isMobile={isMobile}
+              position="top-left"
+              disabled={isCurrentBlockDragging}
+              renderByDefault={false}
+            >
+              <p className="w-full truncate cursor-pointer text-sm text-custom-text-100">{issue.name}</p>
+            </Tooltip>
           </div>
           {!issue?.tempId && (
             <div
