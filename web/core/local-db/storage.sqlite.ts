@@ -69,7 +69,7 @@ export class Storage {
       await this._initialize(workspaceSlug);
       return true;
     } catch (err) {
-      error(err);
+      logError(err);
       this.status = "error";
       return false;
     }
@@ -138,7 +138,7 @@ export class Storage {
 
       await this.setOption("DB_VERSION", DB_VERSION.toString());
     } catch (err) {
-      error(err);
+      logError(err);
       throw err;
     }
 
