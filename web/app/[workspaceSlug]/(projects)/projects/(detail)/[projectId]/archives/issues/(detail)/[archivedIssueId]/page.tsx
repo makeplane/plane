@@ -19,7 +19,7 @@ const ArchivedIssueDetailsPage = observer(() => {
   // hooks
   const {
     fetchIssue,
-    issue: { getIssueById, isFetchingIssueDetails },
+    issue: { getIssueById, getIsFetchingIssueDetails },
   } = useIssueDetail();
 
   const { getProjectById } = useProject();
@@ -40,7 +40,7 @@ const ArchivedIssueDetailsPage = observer(() => {
 
   if (!issue) return <></>;
 
-  const issueLoader = !issue || isFetchingIssueDetails ? true : false;
+  const issueLoader = !issue || getIsFetchingIssueDetails(issue?.id) ? true : false;
 
   return (
     <>

@@ -27,7 +27,7 @@ const IssueDetailsPage = observer(() => {
   // store hooks
   const {
     fetchIssue,
-    issue: { getIssueById, isFetchingIssueDetails },
+    issue: { getIssueById, getIsFetchingIssueDetails },
   } = useIssueDetail();
   const { getProjectById } = useProject();
   const { toggleIssueDetailSidebar, issueDetailSidebarCollapsed } = useAppTheme();
@@ -41,7 +41,7 @@ const IssueDetailsPage = observer(() => {
   // derived values
   const issue = getIssueById(issueId?.toString() || "") || undefined;
   const project = (issue?.project_id && getProjectById(issue?.project_id)) || undefined;
-  const issueLoader = !issue || isFetchingIssueDetails ? true : false;
+  const issueLoader = !issue || getIsFetchingIssueDetails(issue?.id) ? true : false;
   const pageTitle = project && issue ? `${project?.identifier}-${issue?.sequence_id} ${issue?.name}` : undefined;
 
   useEffect(() => {
