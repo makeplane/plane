@@ -10,6 +10,7 @@ import {
 } from "@/extensions/custom-image";
 
 export type CustomImageNodeViewProps = {
+  localImage: string | undefined;
   getPos: () => number;
   editor: Editor;
   node: ProsemirrorNode & {
@@ -33,6 +34,8 @@ export const CustomImageNode = (props: CustomImageNodeViewProps) => {
   const [hasRemoteImageFullyLoaded, setHasRemoteImageFullyLoaded] = useState(false);
 
   const uploadEntity = useMemo(() => editorStorage?.fileMap.get(id), [editorStorage?.fileMap, id]);
+
+  const [localImage, setLocalImage] = useState<string | undefined>(undefined);
 
   const onUpload = useCallback(
     (url: string) => {
@@ -89,13 +92,26 @@ export const CustomImageNode = (props: CustomImageNodeViewProps) => {
     [uploadEntity]
   );
 
+  useEffect(() => {
+    if (existingFile) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setLocalImage(reader.result as string);
+      };
+      reader.readAsDataURL(existingFile);
+      uploadFile(existingFile);
+    }
+  }, [existingFile, uploadFile]);
+
+  console.log("is uploaded", isUploaded, localImage);
   return (
     <NodeViewWrapper>
       <div className="p-0 mx-0 my-2" data-drag-handle>
-        {isUploaded ? (
+        {isUploaded || localImage ? (
           <CustomImageBlock
             setHasRemoteImageFullyLoaded={setHasRemoteImageFullyLoaded}
             hasRemoteImageFullyLoaded={hasRemoteImageFullyLoaded}
+            localImage={localImage}
             editor={editor}
             getPos={getPos}
             node={node}
@@ -106,6 +122,7 @@ export const CustomImageNode = (props: CustomImageNodeViewProps) => {
           <CustomImageUploader
             onUpload={onUpload}
             editor={editor}
+            setLocalImage={setLocalImage}
             fileInputRef={fileInputRef}
             existingFile={existingFile}
             selected={selected}
@@ -115,3 +132,6 @@ export const CustomImageNode = (props: CustomImageNodeViewProps) => {
     </NodeViewWrapper>
   );
 };
+
+// 1. Whenever there's local image, we don't want to show the upload button
+// 2. Whenever there's remote image, we don't want to show the local image

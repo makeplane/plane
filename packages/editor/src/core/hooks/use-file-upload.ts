@@ -24,7 +24,7 @@ export const useUploader = ({ onUpload, editor }: { onUpload: (url: string) => v
       }
       setLoading(false);
     },
-    [onUpload, editor]
+    [onUpload]
   );
 
   return { loading, uploadFile };
