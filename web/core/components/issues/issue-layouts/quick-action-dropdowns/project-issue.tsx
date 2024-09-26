@@ -21,6 +21,7 @@ import { copyUrlToClipboard } from "@/helpers/string.helper";
 import { useEventTracker, useIssues, useProjectState, useUserPermissions } from "@/hooks/store";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // types
+import { useIssueType } from "@/plane-web/hooks/store";
 import { IQuickActionProps } from "../list/list-view-types";
 
 export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((props) => {
@@ -48,6 +49,8 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
   const { setTrackElement } = useEventTracker();
   const { issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
   const { getStateById } = useProjectState();
+  // plane web hooks
+  const issueTypeDetail = useIssueType(issue.type_id);
   // derived values
   const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
   const stateDetails = getStateById(issue.state_id);
@@ -101,7 +104,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
         setTrackElement(activeLayout);
         setCreateUpdateIssueModal(true);
       },
-      shouldRender: isEditingAllowed,
+      shouldRender: isEditingAllowed && issueTypeDetail?.is_active,
     },
     {
       key: "open-in-new-tab",
