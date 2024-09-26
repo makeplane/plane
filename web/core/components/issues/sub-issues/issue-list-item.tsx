@@ -86,7 +86,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
         id={`issue-${issue.id}`}
         href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
         onClick={() => handleIssuePeekOverview(issue)}
-        className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
+        className="w-full cursor-pointer"
       >
         {issue && (
           <div
@@ -104,7 +104,9 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
                   ) : (
                     <div
                       className="flex h-full w-full cursor-pointer items-center justify-center text-custom-text-400 hover:text-custom-text-300"
-                      onClick={async () => {
+                      onClick={async (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
                         if (!subIssueHelpers.issue_visibility.includes(issueId)) {
                           setSubIssueHelpers(parentIssueId, "preview_loader", issueId);
                           await subIssueOperations.fetchSubIssues(workspaceSlug, projectId, issueId);
@@ -125,7 +127,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
               )}
             </div>
 
-            <div className="flex w-full cursor-pointer items-center gap-3">
+            <div className="flex w-full truncate cursor-pointer items-center gap-3">
               <div
                 className="h-2 w-2 flex-shrink-0 rounded-full"
                 style={{
@@ -144,11 +146,17 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
                 )}
               </div>
               <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
-                <span>{issue.name}</span>
+                <span className="w-full truncate text-sm text-custom-text-100">{issue.name}</span>
               </Tooltip>
             </div>
 
-            <div className="flex-shrink-0 text-sm">
+            <div
+              className="flex-shrink-0 text-sm"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+            >
               <IssueProperty
                 workspaceSlug={workspaceSlug}
                 parentIssueId={parentIssueId}
@@ -224,24 +232,24 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
             </div>
           </div>
         )}
-
-        {/* should not expand the current issue if it is also the root issue*/}
-        {subIssueHelpers.issue_visibility.includes(issueId) &&
-          issue.project_id &&
-          subIssueCount > 0 &&
-          !isCurrentIssueRoot && (
-            <IssueList
-              workspaceSlug={workspaceSlug}
-              projectId={issue.project_id}
-              parentIssueId={issue.id}
-              rootIssueId={rootIssueId}
-              spacingLeft={spacingLeft + 22}
-              disabled={disabled}
-              handleIssueCrudState={handleIssueCrudState}
-              subIssueOperations={subIssueOperations}
-            />
-          )}
       </ControlLink>
+
+      {/* should not expand the current issue if it is also the root issue*/}
+      {subIssueHelpers.issue_visibility.includes(issueId) &&
+        issue.project_id &&
+        subIssueCount > 0 &&
+        !isCurrentIssueRoot && (
+          <IssueList
+            workspaceSlug={workspaceSlug}
+            projectId={issue.project_id}
+            parentIssueId={issue.id}
+            rootIssueId={rootIssueId}
+            spacingLeft={spacingLeft + 22}
+            disabled={disabled}
+            handleIssueCrudState={handleIssueCrudState}
+            subIssueOperations={subIssueOperations}
+          />
+        )}
     </div>
   );
 });
