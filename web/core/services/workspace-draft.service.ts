@@ -11,7 +11,7 @@ export class WorkspaceDraftService extends APIService {
     return this.get(
       `/api/workspaces/${workspaceSlug}/draft-issues/`,
       {
-        params: { ...query },   //NOTE TO SELF:: GET THIS REVIEWED BY SENIORS
+        params: { ...query },
       },
       config
     )
