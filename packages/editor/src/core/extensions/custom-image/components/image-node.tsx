@@ -1,13 +1,8 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Node as ProsemirrorNode } from "@tiptap/pm/model";
 import { Editor, NodeViewWrapper } from "@tiptap/react";
 // extensions
-import {
-  CustomImageBlock,
-  CustomImageUploader,
-  ImageAttributes,
-  UploadImageExtensionStorage,
-} from "@/extensions/custom-image";
+import { CustomImageBlock, CustomImageUploader, ImageAttributes } from "@/extensions/custom-image";
 
 export type CustomImageNodeViewProps = {
   localImage: string | undefined;
@@ -18,99 +13,26 @@ export type CustomImageNodeViewProps = {
   };
   updateAttributes: (attrs: Record<string, any>) => void;
   selected: boolean;
-  setHasRemoteImageFullyLoaded: React.Dispatch<React.SetStateAction<boolean>>;
-  hasRemoteImageFullyLoaded: boolean;
 };
 
 export const CustomImageNode = (props: CustomImageNodeViewProps) => {
   const { getPos, editor, node, updateAttributes, selected } = props;
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const hasTriggeredFilePickerRef = useRef(false);
   const [isUploaded, setIsUploaded] = useState(!!node.attrs.src);
-
-  const id = node.attrs.id as string;
-  const editorStorage = editor.storage.imageComponent as UploadImageExtensionStorage | undefined;
-  const [hasRemoteImageFullyLoaded, setHasRemoteImageFullyLoaded] = useState(false);
-
-  const uploadEntity = useMemo(() => editorStorage?.fileMap.get(id), [editorStorage?.fileMap, id]);
-
   const [localImage, setLocalImage] = useState<string | undefined>(undefined);
 
-  const onUpload = useCallback(
-    (url: string) => {
-      if (url) {
-        setIsUploaded(true);
-        // Update the node view's src attribute
-        updateAttributes({ src: url });
-        editorStorage?.fileMap.delete(id);
-      }
-    },
-    [editorStorage?.fileMap, id, updateAttributes]
-  );
-
-  const uploadFile = useCallback(
-    async (file: File) => {
-      try {
-        // @ts-expect-error - TODO: fix typings, and don't remove await from
-        // here for now
-        const url: string = await editor?.commands.uploadImage(file);
-
-        if (!url) {
-          throw new Error("Something went wrong while uploading the image");
-        }
-        onUpload(url);
-      } catch (error) {
-        console.error("Error uploading file:", error);
-      }
-    },
-    [onUpload]
-  );
-
-  useEffect(() => {
-    if (uploadEntity) {
-      if (uploadEntity.event === "drop" && "file" in uploadEntity) {
-        uploadFile(uploadEntity.file);
-      } else if (uploadEntity.event === "insert" && fileInputRef.current && !hasTriggeredFilePickerRef.current) {
-        if (uploadEntity && uploadEntity.hasOpenedFileInputOnce) return;
-        fileInputRef.current.click();
-        hasTriggeredFilePickerRef.current = true;
-        if (!uploadEntity) return;
-        editorStorage?.fileMap.set(id, { ...uploadEntity, hasOpenedFileInputOnce: true });
-      }
-    }
-  }, [uploadEntity, uploadFile, editorStorage?.fileMap]);
-
+  // the image is already uploaded if the image-component node has src attribute
   useEffect(() => {
     if (node.attrs.src) {
       setIsUploaded(true);
     }
   }, [node.attrs.src]);
 
-  const existingFile = useMemo(
-    () => (uploadEntity && uploadEntity.event === "drop" ? uploadEntity.file : undefined),
-    [uploadEntity]
-  );
-
-  useEffect(() => {
-    if (existingFile) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setLocalImage(reader.result as string);
-      };
-      reader.readAsDataURL(existingFile);
-      uploadFile(existingFile);
-    }
-  }, [existingFile, uploadFile]);
-
-  console.log("is uploaded", isUploaded, localImage);
   return (
     <NodeViewWrapper>
       <div className="p-0 mx-0 my-2" data-drag-handle>
         {isUploaded || localImage ? (
           <CustomImageBlock
-            setHasRemoteImageFullyLoaded={setHasRemoteImageFullyLoaded}
-            hasRemoteImageFullyLoaded={hasRemoteImageFullyLoaded}
             localImage={localImage}
             editor={editor}
             getPos={getPos}
@@ -120,11 +42,11 @@ export const CustomImageNode = (props: CustomImageNodeViewProps) => {
           />
         ) : (
           <CustomImageUploader
-            onUpload={onUpload}
+            updateAttributes={updateAttributes}
+            setIsUploaded={setIsUploaded}
+            node={node}
             editor={editor}
             setLocalImage={setLocalImage}
-            fileInputRef={fileInputRef}
-            existingFile={existingFile}
             selected={selected}
           />
         )}
@@ -132,6 +54,3 @@ export const CustomImageNode = (props: CustomImageNodeViewProps) => {
     </NodeViewWrapper>
   );
 };
-
-// 1. Whenever there's local image, we don't want to show the upload button
-// 2. Whenever there's remote image, we don't want to show the local image

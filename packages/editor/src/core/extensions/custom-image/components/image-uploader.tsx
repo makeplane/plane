@@ -1,39 +1,77 @@
-import { ChangeEvent, useCallback, useRef } from "react";
+import { ChangeEvent, useCallback, useEffect, useMemo, useRef } from "react";
+import { Node as ProsemirrorNode } from "@tiptap/pm/model";
 import { Editor } from "@tiptap/core";
 import { ImageIcon } from "lucide-react";
 
 // helpers
 import { cn } from "@/helpers/common";
 // hooks
-import { useUploader, useFileUpload, useDropZone } from "@/hooks/use-file-upload";
+import { useUploader, useDropZone } from "@/hooks/use-file-upload";
 // plugins
 import { isFileValid } from "@/plugins/image";
-
-type RefType = React.RefObject<HTMLInputElement> | ((instance: HTMLInputElement | null) => void);
-
-const assignRef = (ref: RefType, value: HTMLInputElement | null) => {
-  if (typeof ref === "function") {
-    ref(value);
-  } else if (ref && typeof ref === "object") {
-    (ref as React.MutableRefObject<HTMLInputElement | null>).current = value;
-  }
-};
+import { UploadImageExtensionStorage } from "../custom-image";
+import { ImageAttributes } from "./image-block";
 
 export const CustomImageUploader = (props: {
-  onUpload: (url: string) => void;
   editor: Editor;
-  fileInputRef: RefType;
-  existingFile?: File;
   selected: boolean;
   setLocalImage: (file: string) => void;
+  setIsUploaded: (isUploaded: boolean) => void;
+  node: ProsemirrorNode & {
+    attrs: ImageAttributes;
+  };
+  updateAttributes: (attrs: Record<string, any>) => void;
 }) => {
-  const { selected, onUpload, editor, fileInputRef, existingFile, setLocalImage } = props;
-  // hooks
-  const { loading, uploadFile } = useUploader({ onUpload, editor });
-  const { handleUploadClick, ref: internalRef } = useFileUpload();
-  const { draggedInside, onDrop, onDragEnter, onDragLeave } = useDropZone({ uploader: uploadFile });
+  const { selected, editor, setLocalImage, node, setIsUploaded, updateAttributes } = props;
   // ref
-  const localRef = useRef<HTMLInputElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const hasTriggeredFilePickerRef = useRef(false);
+  const id = node.attrs.id as string;
+  const editorStorage = editor.storage.imageComponent as UploadImageExtensionStorage | undefined;
+  const onUpload = useCallback(
+    (url: string) => {
+      if (url) {
+        setIsUploaded(true);
+        // Update the node view's src attribute post upload
+        updateAttributes({ src: url });
+        editorStorage?.fileMap.delete(id);
+      }
+    },
+    [editorStorage?.fileMap, id, updateAttributes]
+  );
+  // hooks
+  const { loading, uploadFile } = useUploader({ onUpload, editor, setLocalImage });
+  const { draggedInside, onDrop, onDragEnter, onDragLeave } = useDropZone({ uploader: uploadFile });
+
+  // the meta data of the image component
+  const meta = useMemo(() => editorStorage?.fileMap.get(id), [editorStorage?.fileMap, id]);
+
+  // if the image component is dropped, we check if it has an existing file
+  const existingFile = useMemo(() => (meta && meta.event === "drop" ? meta.file : undefined), [meta]);
+
+  // after the image component is mounted we start the upload process based on
+  // it's uploaded
+  useEffect(() => {
+    if (meta) {
+      if (meta.event === "drop" && "file" in meta) {
+        uploadFile(meta.file);
+      } else if (meta.event === "insert" && fileInputRef.current && !hasTriggeredFilePickerRef.current) {
+        if (meta && meta.hasOpenedFileInputOnce) return;
+        fileInputRef.current.click();
+        hasTriggeredFilePickerRef.current = true;
+        if (!meta) return;
+        editorStorage?.fileMap.set(id, { ...meta, hasOpenedFileInputOnce: true });
+      }
+    }
+  }, [meta, uploadFile, editorStorage?.fileMap]);
+
+  // check if the image is dropped and set the local image as the existing file
+  useEffect(() => {
+    if (existingFile) {
+      uploadFile(existingFile);
+    }
+  }, [existingFile, uploadFile]);
 
   const onFileChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -41,11 +79,6 @@ export const CustomImageUploader = (props: {
       if (file) {
         if (isFileValid(file)) {
           editor.storage.image.uploadInProgress = true;
-          const reader = new FileReader();
-          reader.onload = () => {
-            setLocalImage(reader.result as string);
-          };
-          reader.readAsDataURL(file);
           uploadFile(file);
         }
       }
@@ -68,7 +101,7 @@ export const CustomImageUploader = (props: {
       onDragOver={onDragEnter}
       onDragLeave={onDragLeave}
       contentEditable={false}
-      onClick={handleUploadClick}
+      onClick={() => fileInputRef.current?.click()}
     >
       <ImageIcon className="size-4" />
       <div className="text-base font-medium">
@@ -76,11 +109,7 @@ export const CustomImageUploader = (props: {
       </div>
       <input
         className="size-0 overflow-hidden"
-        ref={(element) => {
-          localRef.current = element;
-          assignRef(fileInputRef, element);
-          assignRef(internalRef as RefType, element);
-        }}
+        ref={fileInputRef}
         hidden
         type="file"
         accept=".jpg,.jpeg,.png,.webp"

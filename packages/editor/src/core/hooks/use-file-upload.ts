@@ -1,14 +1,31 @@
-import { DragEvent, useCallback, useEffect, useRef, useState } from "react";
+import { DragEvent, useCallback, useEffect, useState } from "react";
 import { Editor } from "@tiptap/core";
 import { isFileValid } from "@/plugins/image";
 
-export const useUploader = ({ onUpload, editor }: { onUpload: (url: string) => void; editor: Editor }) => {
+export const useUploader = ({
+  onUpload,
+  editor,
+  setLocalImage,
+}: {
+  onUpload: (url: string) => void;
+  editor: Editor;
+  setLocalImage: (file: string) => void;
+}) => {
   const [loading, setLoading] = useState(false);
 
   const uploadFile = useCallback(
     async (file: File) => {
+      const isValid = isFileValid(file);
+      if (!isValid) {
+        return;
+      }
       setLoading(true);
       try {
+        const reader = new FileReader();
+        reader.onload = () => {
+          setLocalImage(reader.result as string);
+        };
+        reader.readAsDataURL(file);
         // @ts-expect-error - TODO: fix typings, and don't remove await from
         // here for now
         const url: string = await editor?.commands.uploadImage(file);
@@ -30,15 +47,6 @@ export const useUploader = ({ onUpload, editor }: { onUpload: (url: string) => v
   return { loading, uploadFile };
 };
 
-export const useFileUpload = () => {
-  const fileInput = useRef<HTMLInputElement>(null);
-
-  const handleUploadClick = useCallback(() => {
-    fileInput.current?.click();
-  }, []);
-
-  return { ref: fileInput, handleUploadClick };
-};
 export const useDropZone = ({ uploader }: { uploader: (file: File) => void }) => {
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [draggedInside, setDraggedInside] = useState<boolean>(false);
@@ -89,12 +97,7 @@ export const useDropZone = ({ uploader }: { uploader: (file: File) => void }) =>
 
       const file = filteredFiles.length > 0 ? filteredFiles[0] : undefined;
 
-      if (file) {
-        const isValid = isFileValid(file);
-        if (isValid) {
-          uploader(file);
-        }
-      }
+      uploader(file);
     },
     [uploader]
   );
