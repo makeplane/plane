@@ -44,7 +44,6 @@ const COMMENT_ACCESS_SPECIFIERS: TCommentAccessType[] = [
 ];
 
 const toolbarItems = TOOLBAR_ITEMS.lite;
-console.log(toolbarItems);
 
 export const IssueCommentToolbar: React.FC<Props> = (props) => {
   const {
