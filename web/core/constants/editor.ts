@@ -237,32 +237,12 @@ const EDITOR_PDF_LIST_STYLES: Styles = {
     backgroundColor: "#3f76ff",
     borderColor: "#3f76ff",
   },
+  "ul li[data-checked='true'] p": {
+    color: "#a3a3a3",
+  },
 };
 
-export const EDITOR_PDF_DOCUMENT_STYLESHEET = StyleSheet.create({
-  ...EDITOR_PDF_FONT_FAMILY_STYLES,
-  ...EDITOR_PDF_TYPOGRAPHY_STYLES,
-  ...EDITOR_PDF_LIST_STYLES,
-  // quote block
-  blockquote: {
-    borderLeft: "3px solid gray",
-    paddingLeft: convertRemToPixel(1),
-    marginTop: convertRemToPixel(0.625),
-    marginBottom: 0,
-    marginHorizontal: 0,
-  },
-  // image
-  img: {
-    marginVertical: 0,
-    borderRadius: convertRemToPixel(0.375),
-  },
-  // divider
-  "div[data-type='horizontalRule']": {
-    marginVertical: convertRemToPixel(1),
-    height: 1,
-    width: "100%",
-    backgroundColor: "gray",
-  },
+const EDITOR_PDF_CODE_STYLES: Styles = {
   // code block
   "[data-node-type='code-block']": {
     marginVertical: convertRemToPixel(0.5),
@@ -283,12 +263,39 @@ export const EDITOR_PDF_DOCUMENT_STYLESHEET = StyleSheet.create({
     color: "#f97316",
     fontSize: convertRemToPixel(0.7),
   },
+};
+
+export const EDITOR_PDF_DOCUMENT_STYLESHEET = StyleSheet.create({
+  ...EDITOR_PDF_FONT_FAMILY_STYLES,
+  ...EDITOR_PDF_TYPOGRAPHY_STYLES,
+  ...EDITOR_PDF_LIST_STYLES,
+  ...EDITOR_PDF_CODE_STYLES,
+  // quote block
+  blockquote: {
+    borderLeft: "3px solid gray",
+    paddingLeft: convertRemToPixel(1),
+    marginTop: convertRemToPixel(0.625),
+    marginBottom: 0,
+    marginHorizontal: 0,
+  },
+  // image
+  img: {
+    marginVertical: 0,
+    borderRadius: convertRemToPixel(0.375),
+  },
+  // divider
+  "div[data-type='horizontalRule']": {
+    marginVertical: convertRemToPixel(1),
+    height: 1,
+    width: "100%",
+    backgroundColor: "gray",
+  },
   // mention block
-  // TODO: update UI
   "[data-node-type='mention-block']": {
     margin: 0,
-    color: "blue",
-    backgroundColor: "red",
+    color: "#3f76ff",
+    backgroundColor: "#3f76ff33",
+    paddingHorizontal: convertRemToPixel(0.375),
   },
   // table
   table: {

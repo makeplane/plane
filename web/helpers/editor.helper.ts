@@ -1,9 +1,15 @@
+// helpers
+import { getBase64Image } from "@/helpers/file.helper";
+
 /**
  * @description function to replace all the custom components from the html component to make it pdf compatible
  * @param props
- * @returns {string}
+ * @returns {Promise<string>}
  */
-export const replaceCustomComponentsFromHTMLContent = (props: { htmlContent: string; noAssets?: boolean }): string => {
+export const replaceCustomComponentsFromHTMLContent = async (props: {
+  htmlContent: string;
+  noAssets?: boolean;
+}): Promise<string> => {
   const { htmlContent, noAssets = false } = props;
   // create a DOM parser
   const parser = new DOMParser();
@@ -14,15 +20,12 @@ export const replaceCustomComponentsFromHTMLContent = (props: { htmlContent: str
   mentionComponents.forEach((component) => {
     // get the user label from the component (or use any other attribute)
     const label = component.getAttribute("label") || "user";
-    const href = component.getAttribute("redirect_uri") || "";
-    // create an anchor element to replace the mention-component
-    const anchor = doc.createElement("a");
-    const originUrl = window?.location?.origin ?? "";
-    anchor.href = `${originUrl}/${href}`;
-    anchor.setAttribute("data-node-type", "mention-block");
-    anchor.textContent = `@${label}`;
+    // create a span element to replace the mention-component
+    const span = doc.createElement("span");
+    span.setAttribute("data-node-type", "mention-block");
+    span.textContent = `@${label}`;
     // replace the mention-component with the anchor element
-    component.replaceWith(anchor);
+    component.replaceWith(span);
   });
   // handle code inside pre elements
   const preElements = doc.querySelectorAll("pre");
@@ -66,14 +69,35 @@ export const replaceCustomComponentsFromHTMLContent = (props: { htmlContent: str
     // if no assets is not enabled, replace the image component elements with img elements
     imageComponents.forEach((component) => {
       // get the image src from the component
-      const src = component.getAttribute("src");
+      const src = component.getAttribute("src") ?? "";
+      const height = component.getAttribute("height") ?? "";
+      const width = component.getAttribute("width") ?? "";
       // create an img element to replace the image-component
       const img = doc.createElement("img");
-      img.src = src ?? "";
+      img.src = src;
+      img.style.height = height;
+      img.style.width = width;
       // replace the image-component with the img element
       component.replaceWith(img);
     });
   }
+  // convert all images to base64
+  const imgElements = doc.querySelectorAll("img");
+  await Promise.all(
+    Array.from(imgElements).map(async (img) => {
+      // get the image src from the img element
+      const src = img.getAttribute("src");
+      if (src) {
+        try {
+          const base64Image = await getBase64Image(src);
+          img.src = base64Image;
+        } catch (error) {
+          // log the error if the image conversion fails
+          console.error("Failed to convert image to base64:", error);
+        }
+      }
+    })
+  );
   // replace all checkbox elements
   const checkboxComponents = doc.querySelectorAll("input[type='checkbox']");
   checkboxComponents.forEach((component) => {
@@ -93,8 +117,7 @@ export const replaceCustomComponentsFromHTMLContent = (props: { htmlContent: str
   // serialize the document back into a string
   let serializedDoc = doc.body.innerHTML;
   // remove null colors from table elements
-  serializedDoc = serializedDoc.replace(/background-color: null/g, "");
-  serializedDoc = serializedDoc.replace(/color: null/g, "");
+  serializedDoc = serializedDoc.replace(/background-color: null/g, "").replace(/color: null/g, "");
   return serializedDoc;
 };
 

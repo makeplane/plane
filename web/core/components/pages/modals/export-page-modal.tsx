@@ -121,7 +121,7 @@ export const ExportPageModal: React.FC<Props> = (props) => {
   const handleExportAsPDF = async () => {
     try {
       const pageContent = `<h1 class="page-title">${pageTitle}</h1>${editorRef?.getDocument().html ?? "<p></p>"}`;
-      const parsedPageContent = replaceCustomComponentsFromHTMLContent({
+      const parsedPageContent = await replaceCustomComponentsFromHTMLContent({
         htmlContent: pageContent,
         noAssets: selectedContentVariety === "no-assets",
       });
