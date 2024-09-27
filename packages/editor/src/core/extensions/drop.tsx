@@ -1,5 +1,4 @@
-import { insertImage } from "@/helpers/editor-commands";
-import { Extension } from "@tiptap/core";
+import { Extension, Editor } from "@tiptap/core";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 import { EditorView } from "@tiptap/pm/view";
 
@@ -21,11 +20,9 @@ export const DropHandlerExtension = () =>
 
                 if (imageFiles.length > 0) {
                   const pos = view.state.selection.from;
-                  imageFiles.forEach((file, index) => {
-                    insertImage({ editor: this.editor, event: "drop", pos: pos + index, file });
-                  });
-                  return true;
+                  insertImages({ editor: this.editor, files: imageFiles, initialPos: pos, event: "drop" });
                 }
+                return true;
               }
               return false;
             },
@@ -42,11 +39,8 @@ export const DropHandlerExtension = () =>
                   });
 
                   if (coordinates) {
-                    imageFiles.forEach((file, index) => {
-                      setTimeout(() => {
-                        insertImage({ editor: this.editor, event: "drop", pos: coordinates.pos + index, file });
-                      }, index * 100); // Slight delay between insertions
-                    });
+                    const pos = coordinates.pos;
+                    insertImages({ editor: this.editor, files: imageFiles, initialPos: pos, event: "drop" });
                   }
                   return true;
                 }
@@ -58,3 +52,35 @@ export const DropHandlerExtension = () =>
       ];
     },
   });
+
+const insertImages = async ({
+  editor,
+  files,
+  initialPos,
+  event,
+}: {
+  editor: Editor;
+  files: File[];
+  initialPos: number;
+  event: "insert" | "drop";
+}) => {
+  let pos = initialPos;
+
+  for (const file of files) {
+    const docSize = editor.state.doc.content.size;
+    pos = Math.min(pos, docSize);
+
+    // Check if the position has a non-empty node
+    const nodeAtPos = editor.state.doc.nodeAt(pos);
+    if (nodeAtPos && nodeAtPos.content.size > 0) {
+      // Move to the end of the current node
+      pos += nodeAtPos.nodeSize;
+    }
+
+    // Insert the image at the current position
+    editor.commands.insertImageComponent({ file, pos, event });
+
+    // Move to the next position
+    pos += 1;
+  }
+};

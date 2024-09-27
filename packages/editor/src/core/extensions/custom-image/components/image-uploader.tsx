@@ -38,16 +38,22 @@ export const CustomImageUploader = (props: {
         updateAttributes({ src: url });
         editorStorage?.fileMap.delete(id);
 
-        // control cursor position after upload
         const pos = getPos();
-        const nextNode = editor.state.doc.nodeAt(pos + 1);
+        // get current node
+        const getCurrentSelection = editor.state.selection;
+        const currentNode = editor.state.doc.nodeAt(getCurrentSelection.from);
 
-        if (nextNode && nextNode.type.name === "paragraph") {
-          // If there is a paragraph node after the image component, move the focus to the next node
-          editor.commands.setTextSelection(pos + 1);
-        } else {
-          // create a new paragraph after the image component post upload
-          editor.commands.createParagraphNear();
+        if (currentNode && currentNode.type.name === "imageComponent") {
+          // control cursor position after upload
+          const nextNode = editor.state.doc.nodeAt(pos + 1);
+
+          if (nextNode && nextNode.type.name === "paragraph") {
+            // If there is a paragraph node after the image component, move the focus to the next node
+            editor.commands.setTextSelection(pos + 1);
+          } else {
+            // create a new paragraph after the image component post upload
+            editor.commands.createParagraphNear();
+          }
         }
       }
     },
