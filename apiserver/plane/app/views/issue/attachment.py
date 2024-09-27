@@ -113,7 +113,7 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
         workspace = Workspace.objects.get(slug=slug)
 
         # asset key
-        asset_key = f"{workspace.id}/{uuid.uuid4().hex}-{name[:50]}"
+        asset_key = f"{workspace.id}/{uuid.uuid4().hex}-{name}"
 
         # Create a File Asset
         asset = FileAsset.objects.create(

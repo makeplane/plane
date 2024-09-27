@@ -18,7 +18,7 @@ from django.db.models.functions import Coalesce
 from rest_framework import status
 from rest_framework.response import Response
 
-
+# Module imports
 from plane.app.permissions import allow_permission, ROLE
 from plane.app.serializers import (
     PageLogSerializer,
@@ -35,10 +35,7 @@ from plane.db.models import (
     Project,
 )
 from plane.utils.error_codes import ERROR_CODES
-
-# Module imports
 from ..base import BaseAPIView, BaseViewSet
-
 from plane.bgtasks.page_transaction_task import page_transaction
 from plane.bgtasks.page_version_task import page_version
 from plane.bgtasks.recent_visited_task import recent_visited_task
