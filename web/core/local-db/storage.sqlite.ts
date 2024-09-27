@@ -54,6 +54,7 @@ export class Storage {
       const fileSystemDirectoryHandle = await storageManager.getDirectory();
       //@ts-expect-error , clear local issue cache
       await fileSystemDirectoryHandle.remove({ recursive: true });
+      this.reset();
     } catch (e) {
       console.error("Error clearing sqlite sync storage", e);
     }
