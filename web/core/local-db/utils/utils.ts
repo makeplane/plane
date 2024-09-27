@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/react";
 import pick from "lodash/pick";
 import { TIssue } from "@plane/types";
 import { rootStore } from "@/lib/store-context";
@@ -9,7 +10,10 @@ export const log = (...args: any) => {
     console.log(...args);
   }
 };
-export const logError = console.error;
+export const logError = (e: any) => {
+  Sentry.captureException(e);
+  console.error(e);
+};
 export const logInfo = console.info;
 
 export const updatePersistentLayer = async (issueIds: string | string[]) => {
