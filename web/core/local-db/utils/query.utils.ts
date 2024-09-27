@@ -47,9 +47,9 @@ export const getOrderByFragment = (order_by: string, table = "") => {
   if (!order_by) return orderByString;
 
   if (order_by.startsWith("-")) {
-    orderByString += ` ORDER BY ${wrapDateTime(order_by.slice(1))} DESC NULLS LAST, datetime(${table}created_at) DESC`;
+    orderByString += ` ORDER BY ${wrapDateTime(order_by.slice(1))} DESC NULLS LAST, ${table}sequence_id DESC`;
   } else {
-    orderByString += ` ORDER BY ${wrapDateTime(order_by)} ASC NULLS LAST, datetime(${table}created_at) DESC`;
+    orderByString += ` ORDER BY ${wrapDateTime(order_by)} ASC NULLS LAST, ${table}sequence_id DESC`;
   }
   return orderByString;
 };
@@ -130,7 +130,7 @@ export const getFilteredRowsForGrouping = (projectId: string, queries: any) => {
 
   let sql = "";
   if (!joinsRequired) {
-    sql = `WITH fi as (SELECT i.id,i.created_at ${issueTableFilterFields}`;
+    sql = `WITH fi as (SELECT i.id,i.created_at, i.sequence_id ${issueTableFilterFields}`;
     if (group_by) {
       if (group_by === "target_date") {
         sql += `, date(i.${group_by}) as group_id`;
@@ -153,7 +153,7 @@ export const getFilteredRowsForGrouping = (projectId: string, queries: any) => {
   }
 
   sql = `WITH fi AS (`;
-  sql += `SELECT i.id,i.created_at ${issueTableFilterFields} `;
+  sql += `SELECT i.id,i.created_at,i.sequence_id ${issueTableFilterFields} `;
   if (group_by) {
     if (ARRAY_FIELDS.includes(group_by)) {
       sql += `, ${group_by}.value as group_id
@@ -238,7 +238,10 @@ export const singleFilterConstructor = (queries: any) => {
 
   keys.forEach((key) => {
     const value = filters[key] ? filters[key].split(",") : "";
-    if (!value) return;
+    if (!value) {
+      sql += ` AND ${key} IS NULL`;
+      return;
+    }
     if (!ARRAY_FIELDS.includes(key)) {
       sql += ` AND ${key} in ('${value.join("','")}')
       `;
@@ -248,10 +251,6 @@ export const singleFilterConstructor = (queries: any) => {
 
   return sql;
 };
-
-// let q = '2_months;after;fromnow,1_months;after;fromnow,2024-09-01;after,2024-10-06;after,2_weeks;after;fromnow'
-
-// ["2_months;after;fromnow", "1_months;after;fromnow", "2024-09-01;after", "2024-10-06;before", "2_weeks;after;fromnow"];
 
 const createDateFilter = (key: string, q: string) => {
   let sql = "  ";

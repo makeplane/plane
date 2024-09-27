@@ -27,10 +27,10 @@ const stageInserts = (table: string, schema: Schema, data: any) => {
         return "";
       }
       if (typeof value === "object") {
-        return `'${JSON.stringify(value)}'`;
+        return `'${JSON.stringify(value).replace(/'/g, "''")}'`;
       }
       if (typeof value === "string") {
-        return `'${value}'`;
+        return `'${value.replace(/'/g, "''")}'`;
       }
       return value;
     })
