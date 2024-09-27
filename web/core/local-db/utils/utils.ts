@@ -1,6 +1,7 @@
 import pick from "lodash/pick";
 import { TIssue } from "@plane/types";
 import { rootStore } from "@/lib/store-context";
+import { persistence } from "../storage.sqlite";
 import { updateIssue } from "./load-issues";
 
 export const log = (...args: any) => {
@@ -15,11 +16,13 @@ export const updatePersistentLayer = async (issueIds: string | string[]) => {
   if (typeof issueIds === "string") {
     issueIds = [issueIds];
   }
-  issueIds.forEach((issueId) => {
+  issueIds.forEach(async (issueId) => {
+    const dbIssue = await persistence.getIssue(issueId);
     const issue = rootStore.issue.issues.getIssueById(issueId);
 
     if (issue) {
-      const issuePartial = pick(JSON.parse(JSON.stringify(issue)), [
+      // JSON.parse(JSON.stringify(issue)) is used to remove the mobx observables
+      const issuePartial = pick({ ...dbIssue, ...JSON.parse(JSON.stringify(issue)) }, [
         "id",
         "name",
         "state_id",
@@ -47,6 +50,7 @@ export const updatePersistentLayer = async (issueIds: string | string[]) => {
         "label_ids",
         "module_ids",
         "type_id",
+        "description_html",
       ]);
       updateIssue({ ...issuePartial, is_local_update: 1 });
     }
