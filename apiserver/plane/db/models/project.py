@@ -129,8 +129,14 @@ class Project(BaseModel):
 
     @property
     def cover_image_url(self):
+        # Return cover image url
         if self.cover_image_asset:
             return self.cover_image_asset.asset_url
+
+        # Return cover image url
+        if self.cover_image:
+            return self.cover_image
+
         return None
 
     def __str__(self):
