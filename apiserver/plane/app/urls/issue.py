@@ -22,7 +22,7 @@ from plane.app.views import (
     BulkArchiveIssuesEndpoint,
     DeletedIssuesListViewSet,
     IssuePaginatedViewSet,
-    IssueAtachmentURLV2Endpoint,
+    IssueAttachmentV2Endpoint,
 )
 
 urlpatterns = [
@@ -134,15 +134,22 @@ urlpatterns = [
         IssueAttachmentEndpoint.as_view(),
         name="project-issue-attachments",
     ),
+    # V2 Attachments
+    path(
+        "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/attachments/",
+        IssueAttachmentV2Endpoint.as_view(),
+        name="project-issue-attachments",
+    ),
+    path(
+        "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/attachments/<uuid:asset_id>/",
+        IssueAttachmentV2Endpoint.as_view(),
+        name="project-issue-attachments",
+    ),
+    ## Export Issues
     path(
         "workspaces/<str:slug>/export-issues/",
         ExportIssuesEndpoint.as_view(),
         name="export-issues",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/attachments/<uuid:asset_id>/",
-        IssueAtachmentURLV2Endpoint.as_view(),
-        name="project-issue-attachments",
     ),
     ## End Issues
     ## Issue Activity
