@@ -109,7 +109,10 @@ class UserAssetsV2Endpoint(BaseAPIView):
         # get the storage metadata
         asset.is_uploaded = True
         # get the storage metadata
-        asset.storage_metadata = storage.get_object_metadata(asset.asset.name)
+        if asset.storage_metadata is None:
+            asset.storage_metadata = storage.get_object_metadata(
+                asset.asset.name
+            )
         # get the entity and save the asset id for the request field
         self.entity_asset_save(
             asset_id, asset.entity_type, asset.entity_identifier
@@ -233,7 +236,10 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         # get the storage metadata
         asset.is_uploaded = True
         # get the storage metadata
-        asset.storage_metadata = storage.get_object_metadata(asset.asset.name)
+        if asset.storage_metadata is None:
+            asset.storage_metadata = storage.get_object_metadata(
+                asset.asset.name
+            )
         # get the entity and save the asset id for the request field
         self.entity_asset_save(
             asset_id, asset.entity_type, asset.entity_identifier
@@ -322,17 +328,6 @@ class PageAssetEndpoint(BaseAPIView):
         name = request.data.get("name")
         type = request.data.get("type", "image/jpeg")
         size = int(request.data.get("size", settings.FILE_SIZE_LIMIT))
-        entity_identifier = request.data.get("entity_identifier", False)
-
-        # Check if the entity identifier is provided
-        if not entity_identifier:
-            return Response(
-                {
-                    "error": "Entity identifier is required.",
-                    "status": False,
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
 
         # Check if the file type is allowed
         allowed_types = ["image/jpeg", "image/png"]
@@ -364,7 +359,7 @@ class PageAssetEndpoint(BaseAPIView):
             workspace=workspace,
             created_by=request.user,
             entity_type=FileAsset.EntityTypeContext.PAGE_DESCRIPTION,
-            entity_identifier=entity_identifier,
+            entity_identifier=page_id,
         )
 
         # Get the presigned URL
@@ -397,7 +392,10 @@ class PageAssetEndpoint(BaseAPIView):
         # get the storage metadata
         asset.is_uploaded = True
         # get the storage metadata
-        asset.storage_metadata = storage.get_object_metadata(asset.asset.name)
+        if asset.storage_metadata is None:
+            asset.storage_metadata = storage.get_object_metadata(
+                asset.asset.name
+            )
         # get the entity and save the asset id for the request field
         self.entity_asset_save(
             asset_id, asset.entity_type, asset.entity_identifier
@@ -421,5 +419,6 @@ class PageAssetEndpoint(BaseAPIView):
         # Check deleted assets
         asset.is_deleted = True
         asset.deleted_at = timezone.now()
+        # Save the asset
         asset.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
