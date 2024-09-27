@@ -26,6 +26,7 @@ import { ThemeStore, IThemeStore } from "./theme.store";
 import { ITransientStore, TransientStore } from "./transient.store";
 import { IUserStore, UserStore } from "./user";
 import { IWorkspaceRootStore, WorkspaceRootStore } from "./workspace";
+import { IWorkspaceDraftStore, WorkspaceDraftStore } from "./workspace-draft.store";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -56,6 +57,7 @@ export class CoreRootStore {
   workspaceNotification: IWorkspaceNotificationStore;
   favorite: IFavoriteStore;
   transient: ITransientStore;
+  workspaceDraft : IWorkspaceDraftStore;
 
   constructor() {
     this.router = new RouterStore();
@@ -84,6 +86,7 @@ export class CoreRootStore {
     this.workspaceNotification = new WorkspaceNotificationStore(this);
     this.favorite = new FavoriteStore(this);
     this.transient = new TransientStore();
+    this.workspaceDraft = new WorkspaceDraftStore();
   }
 
   resetOnSignOut() {
@@ -115,5 +118,6 @@ export class CoreRootStore {
     this.workspaceNotification = new WorkspaceNotificationStore(this);
     this.favorite = new FavoriteStore(this);
     this.transient = new TransientStore();
+    this.workspaceDraft = new WorkspaceDraftStore();
   }
 }

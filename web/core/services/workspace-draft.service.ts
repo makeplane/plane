@@ -7,13 +7,9 @@ export class WorkspaceDraftService extends APIService {
     super(API_BASE_URL);
   }
 
-  async getDraftIssues(workspaceSlug: string, query?: any, config = {}): Promise<TIssue[]> {
+  async getDraftIssues(workspaceSlug: string): Promise<TIssue[]> {
     return this.get(
-      `/api/workspaces/${workspaceSlug}/draft-issues/`,
-      {
-        params: { ...query },
-      },
-      config
+      `/api/workspaces/${workspaceSlug}/draft-issues/`
     )
       .then((response) => response?.data)
       .catch((error) => {
@@ -21,10 +17,8 @@ export class WorkspaceDraftService extends APIService {
       });
   }
 
-  async getDraftIssueById(workspaceSlug: string, issueId: string, queries?: any): Promise<TIssue> {
-    return this.get(`/api/workspaces/${workspaceSlug}/draft-issues/${issueId}/`, {
-      params: queries,
-    })
+  async getDraftIssueById(workspaceSlug: string, issueId: string): Promise<TIssue> {
+    return this.get(`/api/workspaces/${workspaceSlug}/draft-issues/${issueId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
