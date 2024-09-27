@@ -4,7 +4,8 @@ import { issueSchema } from "./schemas";
 import { wrapDateTime } from "./utils";
 
 export const translateQueryParams = (queries: any) => {
-  const { group_by, sub_group_by, labels, assignees, state, cycle, module, priority, type, ...otherProps } = queries;
+  const { group_by, sub_group_by, labels, assignees, state, cycle, module, priority, type, issue_type, ...otherProps } =
+    queries;
 
   const order_by = queries.order_by;
   if (state) otherProps.state_id = state;
@@ -22,6 +23,9 @@ export const translateQueryParams = (queries: any) => {
   }
   if (type) {
     otherProps.state_group = type === "backlog" ? "backlog" : "unstarted,started";
+  }
+  if (issue_type) {
+    otherProps.type_id = issue_type;
   }
 
   if (order_by?.includes("priority")) {
@@ -238,11 +242,11 @@ export const singleFilterConstructor = (queries: any) => {
 
   keys.forEach((key) => {
     const value = filters[key] ? filters[key].split(",") : "";
-    if (!value) {
-      sql += ` AND ${key} IS NULL`;
-      return;
-    }
     if (!ARRAY_FIELDS.includes(key)) {
+      if (!value) {
+        sql += ` AND ${key} IS NULL`;
+        return;
+      }
       sql += ` AND ${key} in ('${value.join("','")}')
       `;
     }
