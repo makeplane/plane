@@ -15,8 +15,8 @@ export type CustomImageNodeViewProps = {
   node: ProsemirrorNode & {
     attrs: {
       src: string;
-      width: string;
-      height: string;
+      width: number | string;
+      height: number | string;
     };
   };
   updateAttributes: (attrs: Record<string, any>) => void;
