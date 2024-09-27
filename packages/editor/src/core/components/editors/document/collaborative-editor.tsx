@@ -1,6 +1,6 @@
 import React from "react";
 // components
-import { PageRenderer } from "@/components/editors";
+import { DocumentContentLoader, PageRenderer } from "@/components/editors";
 // constants
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 // extensions
@@ -42,7 +42,7 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
   }
 
   // use document editor
-  const { editor } = useCollaborativeEditor({
+  const { editor, hasServerConnectionFailed, hasServerSynced } = useCollaborativeEditor({
     disabledExtensions,
     editorClassName,
     embedHandler,
@@ -66,6 +66,8 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
   });
 
   if (!editor) return null;
+
+  if (!hasServerSynced && !hasServerConnectionFailed) return <DocumentContentLoader />;
 
   return (
     <PageRenderer
