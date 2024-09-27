@@ -40,6 +40,7 @@ class FileAsset(BaseModel):
     attributes = models.JSONField(default=dict)
     asset = models.FileField(
         upload_to=get_upload_path,
+        max_length=800,
     )
     workspace = models.ForeignKey(
         "db.Workspace",

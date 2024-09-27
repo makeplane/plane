@@ -147,8 +147,13 @@ class Workspace(BaseModel):
 
     @property
     def logo_url(self):
+        # Return the logo asset url if it exists
         if self.logo_asset:
             return self.logo_asset.asset_url
+
+        # Return the logo url if it exists
+        if self.logo:
+            return self.logo
         return None
 
     class Meta:
