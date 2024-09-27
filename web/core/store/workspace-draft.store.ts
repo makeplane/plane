@@ -1,121 +1,112 @@
-import { makeObservable, runInAction } from "mobx";
+import { action, makeObservable, observable } from "mobx";
 import { ViewFlags, TLoader, TIssue } from "@plane/types";
 import { WorkspaceDraftService } from "@/services/workspace-draft.service";
-import { IDraftIssuesFilter } from "./issue/draft";
-import { BaseIssuesStore, IBaseIssuesStore } from "./issue/helpers/base-issues.store";
-import { IIssueRootStore } from "./issue/root.store";
 
-export interface IWorkspaceDraftIssues extends IBaseIssuesStore {
+export interface IWorkspaceDraftStore {
   viewFlags: ViewFlags;
-  createWorkspaceDraft(workspaceSlug: string, data: Partial<TIssue>, shouldUpdateList: boolean): Promise<TIssue>;
-  getWorkspaceDrafts(workspaceSlug: string, loadType: TLoader) : Promise<TIssue[]>;
-  getWorkspaceDraftById: (workspaceSlug: string, issueId: string, loadType?: TLoader) => Promise<TIssue>;
-  deleteWorkspaceDraft: (workspaceSlug: string, issueId: string) => Promise<void>;
+  drafts: TIssue[]
+  createWorkspaceDraft(workspaceSlug: string, data: Partial<TIssue>): Promise<TIssue>;
+  getWorkspaceDrafts(workspaceSlug: string) : Promise<TIssue[]>;
+  getWorkspaceDraftById: (workspaceSlug: string, draftId: string, loadType?: TLoader) => Promise<TIssue>;
+  deleteWorkspaceDraft: (workspaceSlug: string, draftId: string) => Promise<void>;
 }
 
-
-export class WorkspaceDraftIssues extends BaseIssuesStore implements IWorkspaceDraftIssues {
+export class WorkspaceDraftStore implements IWorkspaceDraftStore {
+  drafts: TIssue[] = [];
   viewFlags = {
       enableQuickAdd: false,
       enableIssueCreation: true,
       enableInlineEditing: true,
   };
-  // filter store
-  issueFilterStore: IDraftIssuesFilter; // TODO:: VERIFY IF THIS IS CORRECT OR NOT
   workspaceDraftService: WorkspaceDraftService;
 
-  constructor(_rootStore: IIssueRootStore, issueFilterStore: IDraftIssuesFilter) {
-    super(_rootStore, issueFilterStore);    // issueFilterStore is required for the super constructor
+  constructor() {
     makeObservable(this, {
+      drafts: observable,
+      createWorkspaceDraft: action,
+      getWorkspaceDrafts: action,
+      getWorkspaceDraftById: action,
+      deleteWorkspaceDraft: action,
     });
-    // filter store
-    this.issueFilterStore = issueFilterStore;
     this.workspaceDraftService = new WorkspaceDraftService();
   }
 
-  /** Parent class had this as abstract method
-   * Fetches the project details
-   * @param workspaceSlug
-   * @param projectId
-   */
-  fetchParentStats = async (workspaceSlug: string, projectId?: string) => {
-    projectId && this.rootIssueStore.rootStore.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
-  };
 
-  /** Parent class had this as abstract method*/
-  updateParentStats = () => {};
+  addDraft = (draft: TIssue) => {
+    if(draft && !this.drafts.some(existingDraft => existingDraft.id === draft.id))
+      this.drafts.push(draft);
+  }
+
+  removeDraft = (draftId: string) => {
+    if (draftId) {
+      const index = this.drafts.findIndex(existingDraft => existingDraft.id === draftId);
+      if (index !== -1) {
+        this.drafts.splice(index, 1);
+      }
+    }
+  };
 
   createWorkspaceDraft = async (
     workspaceSlug: string,
     data: Partial<TIssue>,
-    shouldUpdateList = true,
   ) => {
-    //perform an API call
-    const response = await this.workspaceDraftService.createDraftIssue(workspaceSlug,data);
+   try{
+     //perform an API call
+     const response = await this.workspaceDraftService.createDraftIssue(workspaceSlug,data);
 
-    // add Issue to Store
-    this.addIssue(response, shouldUpdateList);
+     // add Issue to Store
+     this.addDraft(response);
 
-    return response;
+     return response;
+
+   } catch(error){
+    console.error(error)
+    throw error;
+   }
   }
 
   getWorkspaceDrafts = async (
     workspaceSlug: string,
-    loadType: TLoader = "init-loader",
   ) => {
     try{
-      // set loader and clear store
-      runInAction(() => {
-        this.setLoader(loadType);
-      });
-
       // call the fetch issues API with the params
-      const response = await this.workspaceDraftService.getDraftIssues(workspaceSlug,{
-        signal: this.controller.signal,
-      });
-
+      const response = await this.workspaceDraftService.getDraftIssues(workspaceSlug);
+      if(Array.isArray(response))
+        response.forEach((draft)=>{
+          this.addDraft(draft);
+        })
       // after fetching issues, call the base method to process the response further
       return response;
     } catch (error){
-      this.setLoader(undefined);
+      console.error(error)
       throw error;
     }
   }
 
   getWorkspaceDraftById = async (
     workspaceSlug: string,
-    issueId: string,
-    loadType: TLoader = "init-loader",
+    draftId: string,
   ) => {
     try{
-      // set loader and clear store
-      runInAction(() => {
-        this.setLoader(loadType);
-      });
-
       // call the fetch issues API with the params
-      const response = await this.workspaceDraftService.getDraftIssueById(workspaceSlug, issueId,{
-        signal: this.controller.signal,
-      });
-
+      const response = await this.workspaceDraftService.getDraftIssueById(workspaceSlug, draftId);
+      this.addDraft(response);
       return response;
     } catch (error){
-      this.setLoader(undefined);
+      console.error(error)
       throw error;
     }
   }
 
-  deleteWorkspaceDraft = async (workspaceSlug: string, issueId: string) => {
+  deleteWorkspaceDraft = async (workspaceSlug: string, draftId: string) => {
     //Make API call
-    await this.workspaceDraftService.deleteDraftIssue(workspaceSlug,issueId);
-
-    // Remove from Respective issue Id list
-    runInAction(() => {
-      this.removeIssueFromList(issueId);
-    });
-
-    this.rootIssueStore.issues.removeIssue(issueId);
-
+    try{
+      await this.workspaceDraftService.deleteDraftIssue(workspaceSlug,draftId);
+      this.removeDraft(draftId);
+    } catch (error){
+      console.error(error)
+      throw error;
+    }
   }
 
   // TODO IMPLEMENT UPDATE
