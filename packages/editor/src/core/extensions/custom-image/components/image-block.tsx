@@ -9,23 +9,41 @@ const MIN_SIZE = 100;
 
 type Pixel = `${number}px`;
 
+type PixelAttribute<TDefault> = Pixel | TDefault;
+
 export type ImageAttributes = {
   src: string | null;
-  width: Pixel | "35%";
-  height: Pixel | "auto";
+  width: PixelAttribute<"35%" | number>;
+  height: PixelAttribute<"auto" | number>;
   aspectRatio: number | null;
   id: string | null;
 };
 
-type Size = Omit<ImageAttributes, "src" | "id">;
+type Size = {
+  width: PixelAttribute<"35%">;
+  height: PixelAttribute<"auto">;
+  aspectRatio: number | null;
+};
+
+const ensurePixelString = <TDefault,>(value: Pixel | TDefault | number | undefined | null, defaultValue?: TDefault) => {
+  if (!value || value === defaultValue) {
+    return defaultValue;
+  }
+
+  if (typeof value === "number") {
+    return `${value}px` satisfies Pixel;
+  }
+
+  return value;
+};
 
 export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
   const { node, updateAttributes, localImage, selected, getPos, editor } = props;
   const { src, width, height, aspectRatio } = node.attrs;
   // states
   const [size, setSize] = useState<Size>({
-    width: width || "35%",
-    height: height || "auto",
+    width: ensurePixelString(width, "35%"),
+    height: ensurePixelString(height, "auto"),
     aspectRatio: aspectRatio || 1,
   });
   const [editorContainer, setEditorContainer] = useState<HTMLElement | null>(null);
@@ -77,7 +95,11 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
 
   // for real time resizing
   useLayoutEffect(() => {
-    setSize((prevSize) => ({ ...prevSize, width, height }));
+    setSize((prevSize) => ({
+      ...prevSize,
+      width: ensurePixelString(width),
+      height: ensurePixelString(height),
+    }));
   }, [width, height]);
 
   const handleResize = useCallback(
