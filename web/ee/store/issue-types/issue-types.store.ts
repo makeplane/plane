@@ -248,7 +248,7 @@ export class IssueTypes implements IIssueTypesStore {
     if (!workspaceSlug) return;
     try {
       this.loader = "init-loader";
-      let issueTypes;
+      let issueTypes: TIssueType[];
       if (projectId) {
         issueTypes = await this.service.fetchAllProjectIssueTypes(workspaceSlug, projectId);
       } else {

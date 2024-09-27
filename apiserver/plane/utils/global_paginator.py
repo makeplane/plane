@@ -1,3 +1,6 @@
+# python imports
+from math import ceil
+
 # constants
 PAGINATOR_MAX_LIMIT = 1000
 
@@ -36,6 +39,9 @@ def paginate(base_queryset, queryset, cursor, on_result):
     total_results = base_queryset.count()
     page_size = min(cursor_object.current_page_size, PAGINATOR_MAX_LIMIT)
 
+    # getting the total pages available based on the page size
+    total_pages = ceil(total_results / page_size)
+
     # Calculate the start and end index for the paginated data
     start_index = 0
     if cursor_object.current_page > 0:
@@ -72,6 +78,7 @@ def paginate(base_queryset, queryset, cursor, on_result):
         "next_page_results": next_page_results,
         "page_count": len(paginated_data),
         "total_results": total_results,
+        "total_pages": total_pages,
         "results": paginated_data,
     }
 

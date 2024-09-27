@@ -1,13 +1,13 @@
 "use client";
 
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { FileText, ListFilter } from "lucide-react";
 // types
-import { TPageFilterProps, TPageNavigationTabs } from "@plane/types";
+import { TPage, TPageFilterProps, TPageNavigationTabs } from "@plane/types";
 // ui
-import { Breadcrumbs, Button } from "@plane/ui";
+import { Breadcrumbs, Button, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
 import { FiltersDropdown } from "@/components/issues";
@@ -18,7 +18,7 @@ import { EPageAccess } from "@/constants/page";
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 import { capitalizeFirstLetter } from "@/helpers/string.helper";
 // hooks
-import { useCommandPalette, useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store";
 // plane web hooks
 import { useWorkspacePages } from "@/plane-web/hooks/store";
 
@@ -28,18 +28,20 @@ type Props = {
 
 export const PageTypeHeader: React.FC<Props> = observer((props) => {
   const { pageType } = props;
+  // states
+  const [isCreatingPage, setIsCreatingPage] = useState(false);
   // params
+  const router = useRouter();
   const { workspaceSlug } = useParams();
   const pathname = usePathname();
   // store hooks
-  const { toggleCreatePageModal } = useCommandPalette();
   const {
     workspace: { workspaceMemberIds },
   } = useMember();
-  const { filters, updateFilters, clearAllFilters } = useWorkspacePages();
+  const { createPage, filters, updateFilters, clearAllFilters } = useWorkspacePages();
   // derived values
   const isFiltersApplied = calculateTotalFilters(filters?.filters ?? {}) !== 0;
-
+  // handle remove filter
   const handleRemoveFilter = useCallback(
     (key: keyof TPageFilterProps, value: string | null) => {
       let newValues = filters.filters?.[key];
@@ -54,6 +56,28 @@ export const PageTypeHeader: React.FC<Props> = observer((props) => {
     },
     [filters.filters, updateFilters]
   );
+  // handle page create
+  const handleCreatePage = async () => {
+    setIsCreatingPage(true);
+
+    const payload: Partial<TPage> = {
+      access: pageType === "private" ? EPageAccess.PRIVATE : EPageAccess.PUBLIC,
+    };
+
+    await createPage(payload)
+      .then((res) => {
+        const pageId = `/${workspaceSlug}/pages/${res?.id}`;
+        router.push(pageId);
+      })
+      .catch((err) =>
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: err?.data?.error || "Page could not be created. Please try again.",
+        })
+      )
+      .finally(() => setIsCreatingPage(false));
+  };
 
   useEffect(() => {
     clearAllFilters();
@@ -112,14 +136,10 @@ export const PageTypeHeader: React.FC<Props> = observer((props) => {
             variant="primary"
             size="sm"
             className="flex-shrink-0"
-            onClick={() =>
-              toggleCreatePageModal({
-                isOpen: true,
-                pageAccess: pageType === "private" ? EPageAccess.PRIVATE : EPageAccess.PUBLIC,
-              })
-            }
+            onClick={handleCreatePage}
+            loading={isCreatingPage}
           >
-            Add page
+            {isCreatingPage ? "Adding" : "Add page"}
           </Button>
         </div>
       </div>

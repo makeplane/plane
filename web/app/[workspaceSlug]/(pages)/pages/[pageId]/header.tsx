@@ -14,8 +14,6 @@ import { BreadcrumbLink, Logo } from "@/components/common";
 import { SPACE_BASE_URL } from "@/helpers/common.helper";
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 import { getPageName } from "@/helpers/page.helper";
-// hooks
-import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { PublishPageModal } from "@/plane-web/components/pages";
 // plane web hooks
@@ -32,16 +30,14 @@ export const PageDetailsHeader = observer(() => {
   // params
   const { workspaceSlug, pageId } = useParams();
   // store hooks
-  const { anchor, isContentEditable, isCurrentUserOwner, isSubmitting, name, logo_props, updatePageLogo } =
-    useWorkspacePageDetails(pageId?.toString() ?? "");
+  const { anchor, isCurrentUserOwner, name, logo_props, updatePageLogo } = useWorkspacePageDetails(
+    pageId?.toString() ?? ""
+  );
   const { fetchWorkspacePagePublishSettings, getPagePublishSettings, publishWorkspacePage, unpublishWorkspacePage } =
     usePublishPage();
-  // use platform
-  const { platform } = usePlatformOS();
   // derived values
   const isDeployed = !!anchor;
   const pagePublishSettings = getPagePublishSettings(pageId.toString());
-  const isMac = platform === "MacOS";
 
   const handlePageLogoUpdate = async (data: TLogoProps) => {
     if (data) {
@@ -76,7 +72,7 @@ export const PageDetailsHeader = observer(() => {
         publishPage={(data) => publishWorkspacePage(pageId.toString(), data)}
         unpublishPage={() => unpublishWorkspacePage(pageId.toString())}
       />
-      <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
+      <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 py-4">
         <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
           <div>
             <Breadcrumbs>
@@ -155,25 +151,6 @@ export const PageDetailsHeader = observer(() => {
         {isCurrentUserOwner && (
           <Button variant="outline-primary" size="sm" onClick={() => setIsPublishModalOpen(true)}>
             {isDeployed ? "Unpublish" : "Publish"}
-          </Button>
-        )}
-        {isContentEditable && (
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => {
-              // ctrl/cmd + s to save the changes
-              const event = new KeyboardEvent("keydown", {
-                key: "s",
-                ctrlKey: !isMac,
-                metaKey: isMac,
-              });
-              window.dispatchEvent(event);
-            }}
-            className="flex-shrink-0 w-24"
-            loading={isSubmitting === "submitting"}
-          >
-            {isSubmitting === "submitting" ? "Saving" : "Save changes"}
           </Button>
         )}
       </div>

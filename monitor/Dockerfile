@@ -1,6 +1,6 @@
-FROM --platform=$BUILDPLATFORM tonistiigi/binfmt as binfmt
+FROM --platform=$BUILDPLATFORM tonistiigi/binfmt AS binfmt
 
-FROM goreleaser/goreleaser:v2.2.0 as Build
+FROM goreleaser/goreleaser:v2.2.0 AS build
 WORKDIR /app
 
 RUN apk add build-base
@@ -12,9 +12,9 @@ COPY . .
 
 RUN goreleaser build --snapshot --clean --single-target --output=./prime-monitor
 
-FROM alpine:latest as Run
+FROM alpine:latest AS run
 WORKDIR /app
-COPY --from=Build /app/prime-monitor /usr/local/bin/prime-monitor
+COPY --from=build /app/prime-monitor /usr/local/bin/prime-monitor
 
 CMD [ "prime-monitor", "start" ]
 

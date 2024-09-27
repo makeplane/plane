@@ -61,7 +61,7 @@ export const ProjectLayoutHOC = observer((props: Props) => {
           <Image src={AllFiltersImage} className="mx-auto h-36 w-36 sm:h-48 sm:w-48" alt="No matching projects" />
           <h5 className="mb-1 mt-7 text-xl font-medium">No matching projects</h5>
           <p className="whitespace-pre-line text-base text-custom-text-400">
-            No projects detected with the matching\ncriteria. Create a new project instead
+            {`No projects detected with the matching\ncriteria. Create a new project instead`}
           </p>
         </div>
       </div>

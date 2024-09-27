@@ -7,7 +7,7 @@ import { TActivityFilterRoot } from "@/ce/components/issues";
 // components
 import { ActivityFilter } from "@/components/issues";
 // hooks
-import { useProject, useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store";
 // plane web constants
 import {
   TActivityFilters,
@@ -19,20 +19,18 @@ import {
 import { useWorkspaceWorklogs } from "@/plane-web/hooks/store";
 
 export const ActivityFilterRoot: FC<TActivityFilterRoot> = observer((props) => {
-  const { selectedFilters, toggleFilter } = props;
+  const { selectedFilters, toggleFilter, isIntakeIssue = false, projectId } = props;
   // hooks
   const { currentWorkspace } = useWorkspace();
-  const { currentProjectDetails } = useProject();
   const { isWorklogsEnabledByProjectId } = useWorkspaceWorklogs();
 
   // derived values
   const workspaceId = currentWorkspace?.id || undefined;
-  const projectId = currentProjectDetails?.id || undefined;
   const isFeatureFlagged = (projectId && isWorklogsEnabledByProjectId(projectId)) || false;
   const filterOptions = { ...ACTIVITY_FILTER_TYPE_OPTIONS };
 
   if (!workspaceId || !projectId) return <></>;
-  if (!isFeatureFlagged && filterOptions?.[EActivityFilterTypeEE.WORKLOG]) {
+  if ((!isFeatureFlagged || isIntakeIssue) && filterOptions?.[EActivityFilterTypeEE.WORKLOG]) {
     delete filterOptions?.[EActivityFilterTypeEE.WORKLOG as keyof typeof filterOptions];
   }
 

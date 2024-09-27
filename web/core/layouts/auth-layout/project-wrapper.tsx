@@ -1,24 +1,29 @@
+"use client";
+
 import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
+
 // components
 import { JoinProject } from "@/components/auth-screens";
 import { EmptyState, LogoSpinner } from "@/components/common";
 // hooks
 import {
-  useEventTracker,
+  useCommandPalette,
   useCycle,
-  useProjectEstimates,
+  useEventTracker,
   useLabel,
   useMember,
   useModule,
   useProject,
+  useProjectEstimates,
   useProjectState,
   useProjectView,
-  useCommandPalette,
   useUserPermissions,
 } from "@/hooks/store";
+// local
+import { persistence } from "@/local-db/storage.sqlite";
 // plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web hooks
@@ -39,7 +44,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { fetchUserProjectInfo, allowPermissions, projectUserInfo } = useUserPermissions();
   const { loader, getProjectById, fetchProjectDetails } = useProject();
   const { fetchAllCycles } = useCycle();
-  const { fetchModules } = useModule();
+  const { fetchModulesSlim, fetchModules } = useModule();
   const { fetchViews } = useProjectView();
   const {
     project: { fetchProjectMembers },
@@ -53,11 +58,27 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
 
   const projectMemberInfo = projectUserInfo?.[workspaceSlug?.toString()]?.[projectId?.toString()];
 
+  useSWR(
+    workspaceSlug && projectId ? `PROJECT_SYNC_ISSUES_${workspaceSlug.toString()}_${projectId.toString()}` : null,
+    workspaceSlug && projectId
+      ? () => {
+          persistence.syncIssues(projectId.toString());
+        }
+      : null,
+    {
+      revalidateIfStale: true,
+      revalidateOnFocus: true,
+      revalidateOnReconnect: true,
+      refreshInterval: 5 * 60 * 1000,
+    }
+  );
+
   // fetching project details
   useSWR(
     workspaceSlug && projectId ? `PROJECT_DETAILS_${workspaceSlug.toString()}_${projectId.toString()}` : null,
     workspaceSlug && projectId ? () => fetchProjectDetails(workspaceSlug.toString(), projectId.toString()) : null
   );
+
   // fetching user project member information
   useSWR(
     workspaceSlug && projectId ? `PROJECT_ME_INFORMATION_${workspaceSlug}_${projectId}` : null,
@@ -96,7 +117,12 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // fetching project modules
   useSWR(
     workspaceSlug && projectId ? `PROJECT_MODULES_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchModules(workspaceSlug.toString(), projectId.toString()) : null,
+    workspaceSlug && projectId
+      ? async () => {
+          await fetchModulesSlim(workspaceSlug.toString(), projectId.toString());
+          await fetchModules(workspaceSlug.toString(), projectId.toString());
+        }
+      : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching project views

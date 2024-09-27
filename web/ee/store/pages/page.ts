@@ -1,7 +1,7 @@
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
 // types
-import { TLogoProps, TPage } from "@plane/types";
+import { TDocumentPayload, TLogoProps, TPage } from "@plane/types";
 // constants
 import { EPageAccess } from "@/constants/page";
 // plane web constants
@@ -34,7 +34,7 @@ export interface IWorkspacePageDetails extends TPage {
   // actions
   update: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
   updateTitle: (title: string) => void;
-  updateDescription: (binaryString: string, descriptionHTML: string) => Promise<void>;
+  updateDescription: (document: TDocumentPayload) => Promise<void>;
   makePublic: () => Promise<void>;
   makePrivate: () => Promise<void>;
   lock: () => Promise<void>;
@@ -242,14 +242,7 @@ export class WorkspacePageDetails implements IWorkspacePageDetails {
    * @description returns true if the current logged in user can lock the page
    */
   get canCurrentUserLockPage() {
-    const { workspaceSlug } = this.store.router;
-
-    const currentUserWorkspaceRole = this.store.user.permission.workspaceInfoBySlug(
-      workspaceSlug?.toString() || ""
-    )?.role;
-    return (
-      this.isCurrentUserOwner || (!!currentUserWorkspaceRole && currentUserWorkspaceRole >= EUserPermissions.MEMBER)
-    );
+    return this.isCurrentUserOwner;
   }
 
   /**
@@ -372,23 +365,19 @@ export class WorkspacePageDetails implements IWorkspacePageDetails {
 
   /**
    * @description update the page description
-   * @param {string} binaryString
-   * @param {string} descriptionHTML
+   * @param {TDocumentPayload} document
    */
-  updateDescription = async (binaryString: string, descriptionHTML: string) => {
+  updateDescription = async (document: TDocumentPayload) => {
     const { workspaceSlug } = this.store.router;
     if (!workspaceSlug || !this.id) return undefined;
 
     const currentDescription = this.description_html;
     runInAction(() => {
-      this.description_html = descriptionHTML;
+      this.description_html = document.description_html;
     });
 
     try {
-      await this.pageService.updateDescriptionYJS(workspaceSlug, this.id, {
-        description_binary: binaryString,
-        description_html: descriptionHTML,
-      });
+      await this.pageService.updateDescriptionBinary(workspaceSlug, this.id, document);
     } catch (error) {
       runInAction(() => {
         this.description_html = currentDescription;

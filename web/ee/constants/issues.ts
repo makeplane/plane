@@ -46,3 +46,5 @@ export const filterActivityOnSelectedFilters = (
   activity.filter((activity) => filters.some((filter) => shouldRenderActivity(activity, filter)));
 
 export { EActivityFilterType };
+
+export const ENABLE_LOCAL_DB_CACHE = true;

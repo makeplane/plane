@@ -31,11 +31,10 @@ type Props = {
   issueOperations: TIssueOperations;
   isEditable: boolean;
   isArchived: boolean;
-  swrIssueDetails: TIssue | null | undefined;
 };
 
 export const IssueMainContent: React.FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, issueOperations, isEditable, isArchived, swrIssueDetails } = props;
+  const { workspaceSlug, projectId, issueId, issueOperations, isEditable, isArchived } = props;
   // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   // hooks
@@ -88,7 +87,6 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
 
         {/* {issue?.description_html === issueDescription && ( */}
         <IssueDescriptionInput
-          swrIssueDescription={swrIssueDetails?.description_html}
           workspaceSlug={workspaceSlug}
           projectId={issue.project_id}
           issueId={issue.id}

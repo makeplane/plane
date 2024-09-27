@@ -118,7 +118,7 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
                       <AlertTriangle className="h-6 w-6 text-red-600" aria-hidden="true" />
                     </span>
                     <span className="flex items-center justify-start">
-                      <h3 className="text-xl font-medium 2xl:text-2xl">Delete Project</h3>
+                      <h3 className="text-xl font-medium 2xl:text-2xl">Delete project</h3>
                     </span>
                   </div>
                   <span>
@@ -181,7 +181,7 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
                       Cancel
                     </Button>
                     <Button variant="danger" size="sm" type="submit" disabled={!canDelete} loading={isSubmitting}>
-                      {isSubmitting ? "Deleting..." : "Delete Project"}
+                      {isSubmitting ? "Deleting" : "Delete project"}
                     </Button>
                   </div>
                 </form>

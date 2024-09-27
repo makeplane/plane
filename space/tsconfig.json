@@ -1,5 +1,5 @@
 {
-  "extends": "tsconfig/nextjs.json",
+  "extends": "@plane/typescript-config/nextjs.json",
   "plugins": [
     {
       "name": "next"
