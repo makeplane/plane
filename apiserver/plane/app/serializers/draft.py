@@ -49,7 +49,6 @@ class DraftIssueCreateSerializer(BaseSerializer):
         fields = "__all__"
         read_only_fields = [
             "workspace",
-            "project",
             "created_by",
             "updated_by",
             "created_at",
@@ -83,11 +82,13 @@ class DraftIssueCreateSerializer(BaseSerializer):
         modules = self.initial_data.get("module_ids", None)
 
         workspace_id = self.context["workspace_id"]
+        project_id = self.context["project_id"]
 
         # Create Issue
         issue = DraftIssue.objects.create(
             **validated_data,
             workspace_id=workspace_id,
+            project_id=project_id,
         )
 
         # Issue Audit Users
@@ -158,6 +159,8 @@ class DraftIssueCreateSerializer(BaseSerializer):
 
         # Related models
         workspace_id = instance.workspace_id
+        if self.context["project_id"]:
+            instance.project_id = self.context["project_id"]
         created_by_id = instance.created_by_id
         updated_by_id = instance.updated_by_id
 
