@@ -60,7 +60,7 @@ interface Props {
   showEmptyGroup?: boolean;
   loadMoreIssues: (groupId?: string) => void;
   selectionHelpers: TSelectionHelper;
-  handleCollapsedGroups: (toggle: "group_by" | "sub_group_by", value: string) => void;
+  handleCollapsedGroups: (toggle: "group_by", value: string) => void;
   collapsedGroups: TIssueKanbanFilters;
 }
 

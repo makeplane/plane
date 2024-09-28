@@ -1,7 +1,7 @@
 import { FC, useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 // types
-import { GroupByColumnTypes, TGroupedIssues } from "@plane/types";
+import { GroupByColumnTypes, TGroupedIssues, TIssueKanbanFilters } from "@plane/types";
 // constants
 import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 // hooks
@@ -62,7 +62,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
 
   const { workspaceSlug, projectId } = useParams();
   const {updateFilters} = useIssuesActions(storeType);
-  const collapsedGroups = issuesFilter?.issueFilters?.kanbanFilters || { group_by: [], sub_group_by: [] };
+  const collapsedGroups = issuesFilter?.issueFilters?.kanbanFilters || { group_by: [], sub_group_by: [] } as TIssueKanbanFilters;
 
   useEffect(() => {
     fetchIssues("init-loader", { canGroup: true, perPageCount: group_by ? 50 : 100 }, viewId);
@@ -112,20 +112,24 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
     [fetchNextIssues]
   );
 
-  //kanbanFilters and EIssueFilterType.KANBAN_FILTERS are used becuase the state is shared between kanban view and list view
-  const handleCollapsedGroups = (toggle: "group_by" | "sub_group_by", value: string) => {
-    if (workspaceSlug) {
-      let collapsedGroups = issuesFilter?.issueFilters?.kanbanFilters?.[toggle] || [];
-      if (collapsedGroups.includes(value)) {
-        collapsedGroups = collapsedGroups.filter((_value) => _value != value);
-      } else {
-        collapsedGroups.push(value);
+  // kanbanFilters and EIssueFilterType.KANBAN_FILTERS are used becuase the state is shared between kanban view and list view
+  const handleCollapsedGroups = useCallback(
+    (toggle: "group_by", value: string) => {
+      if (workspaceSlug) {
+        let collapsedGroups = issuesFilter?.issueFilters?.kanbanFilters?.[toggle] || [];
+        if (collapsedGroups.includes(value)) {
+          collapsedGroups = collapsedGroups.filter((_value) => _value != value);
+        } else {
+          collapsedGroups.push(value);
+        }
+        updateFilters(projectId?.toString() ?? "", EIssueFilterType.KANBAN_FILTERS, 
+          { group_by: collapsedGroups } as TIssueKanbanFilters
+        );
       }
-      updateFilters(projectId?.toString() ?? "", EIssueFilterType.KANBAN_FILTERS, {
-        [toggle]: collapsedGroups,
-      });
-    }
-  };
+    },
+    [workspaceSlug, issuesFilter, projectId, updateFilters]
+  );
+
 
   return (
     <IssueLayoutHOC layout={EIssueLayoutTypes.LIST}>

@@ -29,7 +29,7 @@ interface IHeaderGroupByCard {
   disableIssueCreation?: boolean;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   selectionHelpers: TSelectionHelper;
-  handleCollapsedGroups: (toggle: "group_by" | "sub_group_by", value: string) => void;
+  handleCollapsedGroups: (toggle: "group_by", value: string) => void;
 }
 
 export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {

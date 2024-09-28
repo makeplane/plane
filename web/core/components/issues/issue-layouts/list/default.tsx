@@ -48,7 +48,7 @@ export interface IList {
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   isCompletedCycle?: boolean;
   loadMoreIssues: (groupId?: string) => void;
-  handleCollapsedGroups: (toggle: "group_by" | "sub_group_by", value: string) => void;
+  handleCollapsedGroups: (toggle: "group_by" , value: string) => void;
   collapsedGroups : TIssueKanbanFilters;
 }
 
