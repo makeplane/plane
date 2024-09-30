@@ -2,15 +2,14 @@ import { ChangeEvent, useCallback, useEffect, useMemo, useRef } from "react";
 import { Node as ProsemirrorNode } from "@tiptap/pm/model";
 import { Editor } from "@tiptap/core";
 import { ImageIcon } from "lucide-react";
-
 // helpers
 import { cn } from "@/helpers/common";
 // hooks
 import { useUploader, useDropZone } from "@/hooks/use-file-upload";
 // plugins
 import { isFileValid } from "@/plugins/image";
-import { UploadImageExtensionStorage, getImageComponentImageFileMap } from "../custom-image";
-import { ImageAttributes } from "./image-block";
+// extensions
+import { getImageComponentImageFileMap, ImageAttributes } from "@/extensions/custom-image";
 
 export const CustomImageUploader = (props: {
   failedToLoadImage: boolean;
@@ -38,7 +37,7 @@ export const CustomImageUploader = (props: {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const hasTriggeredFilePickerRef = useRef(false);
-  const id = node.attrs.id as string;
+  const imageEntityId = node.attrs.id;
 
   const imageComponentImageFileMap = useMemo(() => getImageComponentImageFileMap(editor), [editor]);
 
@@ -48,7 +47,7 @@ export const CustomImageUploader = (props: {
         setIsUploaded(true);
         // Update the node view's src attribute post upload
         updateAttributes({ src: url });
-        imageComponentImageFileMap?.delete(id);
+        imageComponentImageFileMap?.delete(imageEntityId);
 
         const pos = getPos();
         // get current node
@@ -71,14 +70,17 @@ export const CustomImageUploader = (props: {
         }
       }
     },
-    [imageComponentImageFileMap, id, updateAttributes]
+    [imageComponentImageFileMap, imageEntityId, updateAttributes]
   );
   // hooks
   const { uploading: isImageBeingUploaded, uploadFile } = useUploader({ onUpload, editor, loadImageFromFileSystem });
   const { draggedInside, onDrop, onDragEnter, onDragLeave } = useDropZone({ uploader: uploadFile });
 
   // the meta data of the image component
-  const meta = useMemo(() => imageComponentImageFileMap?.get(id), [imageComponentImageFileMap, id]);
+  const meta = useMemo(
+    () => imageComponentImageFileMap?.get(imageEntityId),
+    [imageComponentImageFileMap, imageEntityId]
+  );
 
   // if the image component is dropped, we check if it has an existing file
   const existingFile = useMemo(() => (meta && meta.event === "drop" ? meta.file : undefined), [meta]);
@@ -93,7 +95,7 @@ export const CustomImageUploader = (props: {
         if (meta.hasOpenedFileInputOnce) return;
         fileInputRef.current.click();
         hasTriggeredFilePickerRef.current = true;
-        imageComponentImageFileMap?.set(id, { ...meta, hasOpenedFileInputOnce: true });
+        imageComponentImageFileMap?.set(imageEntityId, { ...meta, hasOpenedFileInputOnce: true });
       }
     }
   }, [meta, uploadFile, imageComponentImageFileMap]);
@@ -114,7 +116,7 @@ export const CustomImageUploader = (props: {
         }
       }
     },
-    [uploadFile, editor.storage.image]
+    [uploadFile]
   );
 
   return (
