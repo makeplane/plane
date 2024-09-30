@@ -187,6 +187,7 @@ class CycleViewSet(BaseViewSet):
                 "completed_issues",
                 "assignee_ids",
                 "status",
+                "version",
                 "created_by",
             )
 
@@ -216,6 +217,7 @@ class CycleViewSet(BaseViewSet):
             "completed_issues",
             "assignee_ids",
             "status",
+            "version",
             "created_by",
         )
         return Response(data, status=status.HTTP_200_OK)
@@ -255,6 +257,7 @@ class CycleViewSet(BaseViewSet):
                         "external_id",
                         "progress_snapshot",
                         "logo_props",
+                        "version",
                         # meta fields
                         "is_favorite",
                         "total_issues",
@@ -347,6 +350,7 @@ class CycleViewSet(BaseViewSet):
                 "external_id",
                 "progress_snapshot",
                 "logo_props",
+                "version",
                 # meta fields
                 "is_favorite",
                 "total_issues",
@@ -412,6 +416,7 @@ class CycleViewSet(BaseViewSet):
                 "progress_snapshot",
                 "sub_issues",
                 "logo_props",
+                "version",
                 # meta fields
                 "is_favorite",
                 "total_issues",
