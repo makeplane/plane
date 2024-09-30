@@ -119,6 +119,23 @@ export const CustomImageUploader = (props: {
     [uploadFile]
   );
 
+  const getDisplayMessage = useCallback(() => {
+    const isUploading = isImageBeingUploaded || existingFile;
+    if (failedToLoadImage) {
+      return "Error loading image";
+    }
+
+    if (isUploading) {
+      return "Uploading...";
+    }
+
+    if (draggedInside) {
+      return "Drop image here";
+    }
+
+    return "Add an image";
+  }, [draggedInside, failedToLoadImage, existingFile, isImageBeingUploaded]);
+
   return (
     <div
       className={cn(
@@ -137,17 +154,7 @@ export const CustomImageUploader = (props: {
       onClick={() => fileInputRef.current?.click()}
     >
       <ImageIcon className="size-4" />
-      <div className="text-base font-medium">
-        {failedToLoadImage
-          ? "Error loading image"
-          : isImageBeingUploaded
-            ? "Uploading..."
-            : draggedInside
-              ? "Drop image here"
-              : existingFile
-                ? "Uploading..."
-                : "Add an image"}
-      </div>
+      <div className="text-base font-medium">{getDisplayMessage()}</div>
       <input
         className="size-0 overflow-hidden"
         ref={fileInputRef}
