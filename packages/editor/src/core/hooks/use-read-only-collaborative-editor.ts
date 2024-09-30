@@ -2,6 +2,8 @@ import { useEffect, useLayoutEffect, useMemo } from "react";
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import Collaboration from "@tiptap/extension-collaboration";
 import { IndexeddbPersistence } from "y-indexeddb";
+// extensions
+import { HeadingListExtension } from "@/extensions";
 // hooks
 import { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
 // types
@@ -56,6 +58,7 @@ export const useReadOnlyCollaborativeEditor = (props: TReadOnlyCollaborativeEdit
     editorClassName,
     extensions: [
       ...(extensions ?? []),
+      HeadingListExtension,
       Collaboration.configure({
         document: provider.document,
       }),

@@ -19,7 +19,6 @@ import {
   CustomQuoteExtension,
   CustomTypographyExtension,
   DropHandlerExtension,
-  HeadingListExtension,
   ImageExtension,
   ListKeymap,
   Table,
@@ -167,5 +166,4 @@ export const CoreEditorExtensions = ({
     includeChildren: true,
   }),
   CharacterCount,
-  HeadingListExtension,
 ];

@@ -32,6 +32,7 @@ export const issueSchema: Schema = {
   assignee_ids: "TEXT",
   module_ids: "TEXT",
   description_html: "TEXT",
+  is_local_update: "INTEGER",
 };
 
 export const issueMetaSchema: Schema = {

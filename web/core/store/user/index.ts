@@ -9,6 +9,7 @@ import { TUserPermissions } from "@plane/types/src/enums";
 import { API_BASE_URL } from "@/helpers/common.helper";
 // local
 import { persistence } from "@/local-db/storage.sqlite";
+import { ENABLE_LOCAL_DB_CACHE } from "@/plane-web/constants/issues";
 import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // services
 import { AuthService } from "@/services/auth.service";
@@ -19,7 +20,6 @@ import { IAccountStore } from "@/store/user/account.store";
 import { ProfileStore, IUserProfileStore } from "@/store/user/profile.store";
 import { IUserPermissionStore, UserPermissionStore } from "./permissions.store";
 import { IUserSettingsStore, UserSettingsStore } from "./settings.store";
-import { ENABLE_LOCAL_DB_CACHE } from "@/plane-web/constants/issues";
 
 type TUserErrorStatus = {
   status: string;

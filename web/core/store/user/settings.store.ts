@@ -22,7 +22,7 @@ export interface IUserSettingsStore {
   canUseLocalDB: boolean;
   // actions
   fetchCurrentUserSettings: () => Promise<IUserSettings | undefined>;
-  toggleLocalDB: () => Promise<void>;
+  toggleLocalDB: (workspaceSlug: string | undefined, projectId: string | undefined) => Promise<void>;
 }
 
 export class UserSettingsStore implements IUserSettingsStore {
@@ -59,7 +59,7 @@ export class UserSettingsStore implements IUserSettingsStore {
     this.userService = new UserService();
   }
 
-  toggleLocalDB = async () => {
+  toggleLocalDB = async (workspaceSlug: string | undefined, projectId: string | undefined) => {
     const currentLocalDBValue = this.canUseLocalDB;
     try {
       runInAction(() => {
@@ -70,8 +70,14 @@ export class UserSettingsStore implements IUserSettingsStore {
 
       if (!transactionResult) {
         throw new Error("error while toggling local DB");
-      } else if (currentLocalDBValue) {
+      }
+
+      if (currentLocalDBValue) {
         await persistence.clearStorage();
+      } else if (workspaceSlug) {
+        await persistence.initialize(workspaceSlug);
+        persistence.syncWorkspace();
+        projectId && persistence.syncIssues(projectId);
       }
     } catch (e) {
       console.warn("error while toggling local DB");

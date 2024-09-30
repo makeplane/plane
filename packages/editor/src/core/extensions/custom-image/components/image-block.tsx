@@ -11,7 +11,10 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
   const { node, updateAttributes, selected, getPos, editor } = props;
   const { src, width, height } = node.attrs;
 
-  const [size, setSize] = useState({ width: width || "35%", height: height || "auto" });
+  const [size, setSize] = useState({
+    width: width?.toString() || "35%",
+    height: height?.toString() || "auto",
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [initialResizeComplete, setInitialResizeComplete] = useState(false);
   const isShimmerVisible = isLoading || !initialResizeComplete;
@@ -56,7 +59,10 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
   }, [width, height, updateAttributes]);
 
   useLayoutEffect(() => {
-    setSize({ width, height });
+    setSize({
+      width: width?.toString(),
+      height: height?.toString(),
+    });
   }, [width, height]);
 
   const handleResizeStart = useCallback(
