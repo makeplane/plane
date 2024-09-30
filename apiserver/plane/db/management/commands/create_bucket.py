@@ -41,7 +41,7 @@ class Command(BaseCommand):
             )
             self.stdout.write(
                 self.style.SUCCESS(
-                    f"Public read access policy set for bucket '{bucket_name}'."
+                    "Bucket is private, but existing objects remain public."
                 )
             )
         except ClientError as e:
