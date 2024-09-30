@@ -1,9 +1,9 @@
 "use client";
 
 import React, { FC, useEffect, useState } from "react";
+import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { ArchiveIcon, ArchiveRestoreIcon, ChevronRight, EllipsisIcon, LinkIcon, Trash2 } from "lucide-react";
-import { observer } from "mobx-react";
 // types
 import { ICycle } from "@plane/types";
 // ui
@@ -156,7 +156,7 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
       end_date: renderFormattedPayloadDate(endDate),
     };
 
-    if (cycleDetails && cycleDetails.start_date && cycleDetails.end_date)
+    if (cycleDetails?.start_date && cycleDetails.end_date)
       isDateValid = await dateChecker({
         ...payload,
         cycle_id: cycleDetails.id,
