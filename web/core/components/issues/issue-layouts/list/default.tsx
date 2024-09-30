@@ -48,7 +48,7 @@ export interface IList {
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   isCompletedCycle?: boolean;
   loadMoreIssues: (groupId?: string) => void;
-  handleCollapsedGroups: (toggle: "group_by" , value: string) => void;
+  handleCollapsedGroups: (value: string) => void;
   collapsedGroups : TIssueKanbanFilters;
 }
 
@@ -133,7 +133,7 @@ export const List: React.FC<IList> = observer((props) => {
   } else {
     entities = orderedGroups;
   }
-  
+
   return (
     <div className="relative size-full flex flex-col">
       {groups && (

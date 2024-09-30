@@ -61,7 +61,7 @@ interface Props {
   showEmptyGroup?: boolean;
   loadMoreIssues: (groupId?: string) => void;
   selectionHelpers: TSelectionHelper;
-  handleCollapsedGroups: (toggle: "group_by", value: string) => void;
+  handleCollapsedGroups: (value: string) => void;
   collapsedGroups: TIssueKanbanFilters;
 }
 
@@ -216,7 +216,7 @@ export const ListGroup = observer((props: Props) => {
           highlightIssueOnDrop(getIssueBlockId(source.id, destination?.groupId), orderBy !== "sort_order");
 
           if(!isExpanded){
-            handleCollapsedGroups("group_by", group.id)
+            handleCollapsedGroups(group.id)
           }
         },
       })

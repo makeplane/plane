@@ -1,6 +1,7 @@
 import { FC, useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 // types
+import { useParams } from "next/navigation";
 import { GroupByColumnTypes, TGroupedIssues, TIssueKanbanFilters } from "@plane/types";
 // constants
 import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
@@ -16,7 +17,6 @@ import { IssueLayoutHOC } from "../issue-layout-HOC";
 import { List } from "./default";
 // types
 import { IQuickActionProps, TRenderQuickActions } from "./list-view-types";
-import { useParams } from "next/navigation";
 
 type ListStoreType =
   | EIssuesStoreType.PROJECT
@@ -114,15 +114,15 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
 
   // kanbanFilters and EIssueFilterType.KANBAN_FILTERS are used becuase the state is shared between kanban view and list view
   const handleCollapsedGroups = useCallback(
-    (toggle: "group_by", value: string) => {
+    (value: string) => {
       if (workspaceSlug) {
-        let collapsedGroups = issuesFilter?.issueFilters?.kanbanFilters?.[toggle] || [];
+        let collapsedGroups = issuesFilter?.issueFilters?.kanbanFilters?.group_by || [];
         if (collapsedGroups.includes(value)) {
           collapsedGroups = collapsedGroups.filter((_value) => _value != value);
         } else {
           collapsedGroups.push(value);
         }
-        updateFilters(projectId?.toString() ?? "", EIssueFilterType.KANBAN_FILTERS, 
+        updateFilters(projectId?.toString() ?? "", EIssueFilterType.KANBAN_FILTERS,
           { group_by: collapsedGroups } as TIssueKanbanFilters
         );
       }
