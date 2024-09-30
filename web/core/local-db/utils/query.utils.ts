@@ -4,7 +4,8 @@ import { issueSchema } from "./schemas";
 import { wrapDateTime } from "./utils";
 
 export const translateQueryParams = (queries: any) => {
-  const { group_by, sub_group_by, labels, assignees, state, cycle, module, priority, type, ...otherProps } = queries;
+  const { group_by, sub_group_by, labels, assignees, state, cycle, module, priority, type, issue_type, ...otherProps } =
+    queries;
 
   const order_by = queries.order_by;
   if (state) otherProps.state_id = state;
@@ -22,6 +23,9 @@ export const translateQueryParams = (queries: any) => {
   }
   if (type) {
     otherProps.state_group = type === "backlog" ? "backlog" : "unstarted,started";
+  }
+  if (issue_type) {
+    otherProps.type_id = issue_type;
   }
 
   if (order_by?.includes("priority")) {
@@ -47,9 +51,9 @@ export const getOrderByFragment = (order_by: string, table = "") => {
   if (!order_by) return orderByString;
 
   if (order_by.startsWith("-")) {
-    orderByString += ` ORDER BY ${wrapDateTime(order_by.slice(1))} DESC NULLS LAST, datetime(${table}created_at) DESC`;
+    orderByString += ` ORDER BY ${wrapDateTime(order_by.slice(1))} DESC NULLS LAST, ${table}sequence_id DESC`;
   } else {
-    orderByString += ` ORDER BY ${wrapDateTime(order_by)} ASC NULLS LAST, datetime(${table}created_at) DESC`;
+    orderByString += ` ORDER BY ${wrapDateTime(order_by)} ASC NULLS LAST, ${table}sequence_id DESC`;
   }
   return orderByString;
 };
@@ -77,9 +81,7 @@ export const getMetaKeysFragment = (queries: any) => {
     }
   });
 
-  let sql;
-
-  sql = `  ('${Array.from(fields).join("','")}')`;
+  const sql = `  ('${Array.from(fields).join("','")}')`;
 
   return sql;
 };
@@ -132,7 +134,7 @@ export const getFilteredRowsForGrouping = (projectId: string, queries: any) => {
 
   let sql = "";
   if (!joinsRequired) {
-    sql = `WITH fi as (SELECT i.id,i.created_at ${issueTableFilterFields}`;
+    sql = `WITH fi as (SELECT i.id,i.created_at, i.sequence_id ${issueTableFilterFields}`;
     if (group_by) {
       if (group_by === "target_date") {
         sql += `, date(i.${group_by}) as group_id`;
@@ -155,7 +157,7 @@ export const getFilteredRowsForGrouping = (projectId: string, queries: any) => {
   }
 
   sql = `WITH fi AS (`;
-  sql += `SELECT i.id,i.created_at ${issueTableFilterFields} `;
+  sql += `SELECT i.id,i.created_at,i.sequence_id ${issueTableFilterFields} `;
   if (group_by) {
     if (ARRAY_FIELDS.includes(group_by)) {
       sql += `, ${group_by}.value as group_id
@@ -240,8 +242,11 @@ export const singleFilterConstructor = (queries: any) => {
 
   keys.forEach((key) => {
     const value = filters[key] ? filters[key].split(",") : "";
-    if (!value) return;
     if (!ARRAY_FIELDS.includes(key)) {
+      if (!value) {
+        sql += ` AND ${key} IS NULL`;
+        return;
+      }
       sql += ` AND ${key} in ('${value.join("','")}')
       `;
     }
@@ -250,10 +255,6 @@ export const singleFilterConstructor = (queries: any) => {
 
   return sql;
 };
-
-// let q = '2_months;after;fromnow,1_months;after;fromnow,2024-09-01;after,2024-10-06;after,2_weeks;after;fromnow'
-
-// ["2_months;after;fromnow", "1_months;after;fromnow", "2024-09-01;after", "2024-10-06;before", "2_weeks;after;fromnow"];
 
 const createDateFilter = (key: string, q: string) => {
   let sql = "  ";

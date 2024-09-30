@@ -42,8 +42,8 @@ export const deleteIssueFromLocal = async (issue_id: any) => {
   persistence.db.exec(deleteMetaQuery);
   persistence.db.exec("COMMIT;");
 };
-
-export const updateIssue = async (issue: TIssue) => {
+// @todo: Update deletes the issue description from local. Implement a separate update.
+export const updateIssue = async (issue: TIssue & { is_local_update: number }) => {
   if (document.hidden || !rootStore.user.localDBEnabled) return;
 
   const issue_id = issue.id;
@@ -82,10 +82,10 @@ const stageIssueInserts = (issue: any) => {
         return "";
       }
       if (typeof value === "object") {
-        return `'${JSON.stringify(value)}'`;
+        return `'${JSON.stringify(value).replace(/'/g, "''")}'`;
       }
       if (typeof value === "string") {
-        return `'${value}'`;
+        return `'${value.replace(/'/g, "''")}'`;
       }
       return value;
     })
