@@ -19,10 +19,14 @@ export interface IssuesModalProps {
   withDraftIssueWrapper?: boolean;
   storeType?: EIssuesStoreType;
   isDraft?: boolean;
+  fetchIssueDetails?: boolean;
 }
 
-export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((props) => (
-  <IssueModalProvider>
-    <CreateUpdateIssueModalBase {...props} />
-  </IssueModalProvider>
-));
+export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer(
+  (props) =>
+    props.isOpen && (
+      <IssueModalProvider>
+        <CreateUpdateIssueModalBase {...props} />
+      </IssueModalProvider>
+    )
+);
