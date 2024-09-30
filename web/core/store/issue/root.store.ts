@@ -7,6 +7,8 @@ import { RootStore } from "@/plane-web/store/root.store";
 import { IWorkspaceMembership } from "@/store/member/workspace-member.store";
 import { IStateStore, StateStore } from "../state.store";
 // issues data store
+import { IWorkspaceDrafts, WorkspaceDrafts } from "../workspace-draft.store";
+import { IWorkspaceDraftsFilter, WorkspaceDraftsFilter } from "../workspace-draft_filter.store";
 import { IArchivedIssuesFilter, ArchivedIssuesFilter, IArchivedIssues, ArchivedIssues } from "./archived";
 import { ICycleIssuesFilter, CycleIssuesFilter, ICycleIssues, CycleIssues } from "./cycle";
 import { IDraftIssuesFilter, DraftIssuesFilter, IDraftIssues, DraftIssues } from "./draft";
@@ -78,6 +80,9 @@ export interface IIssueRootStore {
 
   issueKanBanView: IIssueKanBanViewStore;
   issueCalendarView: ICalendarStore;
+
+  workspaceDraftsFilter: IWorkspaceDraftsFilter;
+  workspaceDrafts: IWorkspaceDrafts;
 }
 
 export class IssueRootStore implements IIssueRootStore {
@@ -133,6 +138,9 @@ export class IssueRootStore implements IIssueRootStore {
 
   issueKanBanView: IIssueKanBanViewStore;
   issueCalendarView: ICalendarStore;
+
+  workspaceDraftsFilter: IWorkspaceDraftsFilter;
+  workspaceDrafts: IWorkspaceDrafts;
 
   constructor(rootStore: RootStore) {
     makeObservable(this, {
@@ -210,5 +218,8 @@ export class IssueRootStore implements IIssueRootStore {
 
     this.issueKanBanView = new IssueKanBanViewStore(this);
     this.issueCalendarView = new CalendarStore();
+
+    this.workspaceDraftsFilter = new WorkspaceDraftsFilter(this);
+    this.workspaceDrafts = new WorkspaceDrafts(this,this.workspaceDraftsFilter);
   }
 }
