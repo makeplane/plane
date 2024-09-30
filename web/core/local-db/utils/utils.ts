@@ -1,4 +1,4 @@
-import * as Sentry from "@sentry/react";
+import * as Sentry from "@sentry/nextjs";
 import pick from "lodash/pick";
 import { TIssue } from "@plane/types";
 import { rootStore } from "@/lib/store-context";
@@ -11,8 +11,11 @@ export const log = (...args: any) => {
   }
 };
 export const logError = (e: any) => {
+  if (e?.result?.errorClass === "SQLite3Error") {
+    e = parseSQLite3Error(e);
+  }
   Sentry.captureException(e);
-  console.error(e);
+  console.log(e);
 };
 export const logInfo = console.info;
 
@@ -144,3 +147,8 @@ export const getSubGroupedIssueResults = (
 };
 
 export const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const parseSQLite3Error = (error: any) => {
+  error.result = JSON.stringify(error.result);
+  return error;
+};

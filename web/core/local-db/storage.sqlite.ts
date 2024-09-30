@@ -1,4 +1,4 @@
-import * as Sentry from "@sentry/react";
+import * as Sentry from "@sentry/nextjs";
 import set from "lodash/set";
 // plane
 import { EIssueGroupBYServerToProperty } from "@plane/constants";
@@ -288,7 +288,9 @@ export class Storage {
       currentProjectStatus === "error" ||
       !rootStore.user.localDBEnabled
     ) {
-      logInfo(`Project ${projectId} is loading, falling back to server`);
+      if (rootStore.user.localDBEnabled) {
+        logInfo(`Project ${projectId} is loading, falling back to server`);
+      }
       const issueService = new IssueService();
       return await issueService.getIssuesFromServer(workspaceSlug, projectId, queries);
     }
@@ -298,7 +300,15 @@ export class Storage {
     const query = issueFilterQueryConstructor(this.workspaceSlug, projectId, queries);
     const countQuery = issueFilterCountQueryConstructor(this.workspaceSlug, projectId, queries);
     const start = performance.now();
-    const [issuesRaw, count] = await Promise.all([runQuery(query), runQuery(countQuery)]);
+    let issuesRaw: any[] = [];
+    let count: any[];
+    try {
+      [issuesRaw, count] = await Promise.all([runQuery(query), runQuery(countQuery)]);
+    } catch (e) {
+      logError(e);
+      const issueService = new IssueService();
+      return await issueService.getIssuesFromServer(workspaceSlug, projectId, queries);
+    }
     // const issuesRaw = await runQuery(query);
     const end = performance.now();
 
