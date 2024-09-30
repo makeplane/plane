@@ -15,7 +15,7 @@ import { useIssueDetail } from "@/hooks/store";
 // plane web helpers
 import { getPropertiesDefaultValues } from "@/plane-web/helpers/issue-properties.helper";
 // plane web hooks
-import { useIssueTypes } from "@/plane-web/hooks/store";
+import { useIssuePropertiesActivity, useIssueTypes } from "@/plane-web/hooks/store";
 // plane web services
 import { IssuePropertyValuesService } from "@/plane-web/services/issue-types";
 // plane web types
@@ -44,7 +44,7 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
     getProjectIssueTypes,
     getProjectDefaultIssueType,
   } = useIssueTypes();
-
+  const { fetchPropertyActivities } = useIssuePropertiesActivity();
   // helpers
   const getIssueTypeIdOnProjectChange = (projectId: string) => {
     // get active issue types for the project
@@ -135,7 +135,10 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
     await issuePropertyValuesService
       .create(workspaceSlug, projectId, issueId, filteredIssuePropertyValues)
       .then(() => {
+        // mutate issue property values
         mutate(`ISSUE_PROPERTY_VALUES_${workspaceSlug}_${projectId}_${issueId}_${isIssueTypeDisplayEnabled}`);
+        // fetch property activities
+        fetchPropertyActivities(workspaceSlug, projectId, issueId);
         // reset issue property values
         setIssuePropertyValues({
           ...getPropertiesDefaultValues(issueType?.activeProperties ?? []),
