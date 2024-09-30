@@ -41,7 +41,7 @@ const IssueDetailsPage = observer(() => {
   // derived values
   const issue = getIssueById(issueId?.toString() || "") || undefined;
   const project = (issue?.project_id && getProjectById(issue?.project_id)) || undefined;
-  const issueLoader = !issue || isLoading ? true : false;
+  const issueLoader = !issue || isLoading;
   const pageTitle = project && issue ? `${project?.identifier}-${issue?.sequence_id} ${issue?.name}` : undefined;
 
   useEffect(() => {

@@ -40,7 +40,7 @@ const ArchivedIssueDetailsPage = observer(() => {
 
   if (!issue) return <></>;
 
-  const issueLoader = !issue || isLoading ? true : false;
+  const issueLoader = !issue || isLoading;
 
   return (
     <>
