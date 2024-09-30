@@ -120,12 +120,12 @@ class AnalyticsEndpoint(BaseAPIView):
                 Issue.issue_objects.filter(
                     workspace__slug=slug,
                     **filters,
-                    assignees__avatar__isnull=False,
+                    assignees__avatar_url__isnull=False,
                 )
                 .order_by("assignees__id")
                 .distinct("assignees__id")
                 .values(
-                    "assignees__avatar",
+                    "assignees__avatar_url",
                     "assignees__display_name",
                     "assignees__first_name",
                     "assignees__last_name",
@@ -355,7 +355,7 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
         user_details = [
             "created_by__first_name",
             "created_by__last_name",
-            "created_by__avatar",
+            "created_by__avatar_url",
             "created_by__display_name",
             "created_by__id",
         ]
@@ -370,7 +370,7 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
         user_assignee_details = [
             "assignees__first_name",
             "assignees__last_name",
-            "assignees__avatar",
+            "assignees__avatar_url",
             "assignees__display_name",
             "assignees__id",
         ]
