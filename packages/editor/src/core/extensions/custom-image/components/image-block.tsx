@@ -102,12 +102,11 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
       updateAttributes(initialComputedSize);
     } else {
       // as the aspect ratio in not stored for old images, we need to update the attrs
-      let newSize: Size;
       setSize((prevSize) => {
-        newSize = { ...prevSize, aspectRatio };
+        const newSize = { ...prevSize, aspectRatio };
+        updateAttributes(newSize);
         return newSize;
       });
-      updateAttributes(newSize);
     }
     setInitialResizeComplete(true);
   }, [width, updateAttributes, editorContainer]);
