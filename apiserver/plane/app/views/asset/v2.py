@@ -93,7 +93,7 @@ class UserAssetsV2Endpoint(BaseAPIView):
         # Return the presigned URL
         return Response(
             {
-                "url": presigned_url,
+                "upload_data": presigned_url,
                 "asset_id": str(asset.id),
                 "asset_url": asset.asset_url,
             },
