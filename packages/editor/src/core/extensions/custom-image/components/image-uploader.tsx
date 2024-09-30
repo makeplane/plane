@@ -151,7 +151,11 @@ export const CustomImageUploader = (props: {
       onDragOver={onDragEnter}
       onDragLeave={onDragLeave}
       contentEditable={false}
-      onClick={() => fileInputRef.current?.click()}
+      onClick={() => {
+        if (!failedToLoadImage) {
+          fileInputRef.current?.click();
+        }
+      }}
     >
       <ImageIcon className="size-4" />
       <div className="text-base font-medium">{getDisplayMessage()}</div>
