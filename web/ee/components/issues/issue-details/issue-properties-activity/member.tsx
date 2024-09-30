@@ -5,22 +5,23 @@ import { useMember, useWorkspace } from "@/hooks/store";
 // plane web components
 import { TIssueAdditionalPropertiesActivityItem } from "@/plane-web/components/issues";
 // plane web hooks
-import { useIssuePropertiesActivity, useIssueProperty } from "@/plane-web/hooks/store";
+import { useIssuePropertiesActivity, useIssueTypes } from "@/plane-web/hooks/store";
 
 type TMemberDetail = {
   id: string;
 };
 
 export const IssueMemberPropertyActivity: FC<TIssueAdditionalPropertiesActivityItem> = observer((props) => {
-  const { activityId, issueTypeId, issuePropertyId } = props;
+  const { activityId, issuePropertyId } = props;
   // hooks
   const { getUserDetails } = useMember();
   const { getWorkspaceById } = useWorkspace();
   // plane web hooks
+  const { getIssuePropertyById } = useIssueTypes();
   const { getPropertyActivityById } = useIssuePropertiesActivity();
   // derived values
   const activityDetail = getPropertyActivityById(activityId);
-  const propertyDetail = useIssueProperty(issueTypeId, issuePropertyId);
+  const propertyDetail = getIssuePropertyById(issuePropertyId);
   const propertyName = propertyDetail?.display_name;
   const workspaceDetail = activityDetail?.workspace ? getWorkspaceById(activityDetail.workspace) : null;
 

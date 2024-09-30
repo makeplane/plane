@@ -2,12 +2,13 @@
 
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
+import useSWR from "swr";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 // helpers
 import { getPropertiesDefaultValues } from "@/plane-web/helpers/issue-properties.helper";
 // plane web hooks
-import { useIssueType } from "@/plane-web/hooks/store";
+import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
 // plane web services
 import { IssuePropertyValuesService } from "@/plane-web/services/issue-types";
 // local components
@@ -27,7 +28,6 @@ export const IssueAdditionalPropertyValuesCreate: React.FC<TIssueAdditionalPrope
     const { issueId, issueTypeId, projectId, workspaceSlug } = props;
     // states
     const [issuePropertyValues, setIssuePropertyValues] = React.useState({});
-    const [isLoading, setIsLoading] = React.useState<boolean>(false);
     // store hooks
     const {
       issuePropertyValues: issuePropertyDefaultValues,
@@ -35,25 +35,30 @@ export const IssueAdditionalPropertyValuesCreate: React.FC<TIssueAdditionalPrope
       setIssuePropertyValues: handleIssuePropertyValueUpdate,
     } = useIssueModal();
     const issueType = useIssueType(issueTypeId);
+    const { isIssueTypeEnabledForProject } = useIssueTypes();
     // derived values
     const issueTypeDetail = issueType?.asJSON;
     const activeProperties = issueType?.activeProperties;
+    const isIssueTypeDisplayEnabled = isIssueTypeEnabledForProject(
+      workspaceSlug?.toString(),
+      projectId,
+      "ISSUE_TYPE_DISPLAY"
+    );
+    // fetch issue property values
+    const { data, isLoading } = useSWR(
+      workspaceSlug && projectId && issueId && isIssueTypeDisplayEnabled
+        ? `ISSUE_PROPERTY_VALUES_${workspaceSlug}_${projectId}_${issueId}_${isIssueTypeDisplayEnabled}`
+        : null,
+      () =>
+        workspaceSlug && projectId && issueId && isIssueTypeDisplayEnabled
+          ? issuePropertyValuesService.fetchAll(workspaceSlug, projectId, issueId)
+          : null,
+      {}
+    );
 
-    // fetch issue custom property values
     useEffect(() => {
-      async function fetchIssuePropertyValues(issueId: string) {
-        setIsLoading(true);
-        await issuePropertyValuesService
-          .fetchAll(workspaceSlug, projectId, issueId)
-          .then((data) => {
-            setIssuePropertyValues(data);
-          })
-          .finally(() => {
-            setIsLoading(false);
-          });
-      }
-      if (issueId) fetchIssuePropertyValues(issueId);
-    }, [issueId, projectId, workspaceSlug]);
+      if (data) setIssuePropertyValues(data);
+    }, [data]);
 
     useEffect(() => {
       if (activeProperties?.length) {

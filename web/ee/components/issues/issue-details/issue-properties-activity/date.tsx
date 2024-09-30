@@ -5,15 +5,16 @@ import { renderFormattedDate } from "@/helpers/date-time.helper";
 // plane web components
 import { TIssueAdditionalPropertiesActivityItem } from "@/plane-web/components/issues";
 // plane web hooks
-import { useIssuePropertiesActivity, useIssueProperty } from "@/plane-web/hooks/store";
+import { useIssuePropertiesActivity, useIssueTypes } from "@/plane-web/hooks/store";
 
 export const IssueDatePropertyActivity: FC<TIssueAdditionalPropertiesActivityItem> = observer((props) => {
-  const { activityId, issueTypeId, issuePropertyId } = props;
+  const { activityId, issuePropertyId } = props;
   // plane web hooks
+  const { getIssuePropertyById } = useIssueTypes();
   const { getPropertyActivityById } = useIssuePropertiesActivity();
   // derived values
   const activityDetail = getPropertyActivityById(activityId);
-  const propertyDetail = useIssueProperty(issueTypeId, issuePropertyId);
+  const propertyDetail = getIssuePropertyById(issuePropertyId);
   const propertyName = propertyDetail?.display_name;
 
   if (!activityDetail) return <></>;

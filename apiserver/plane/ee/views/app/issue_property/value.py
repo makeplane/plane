@@ -187,7 +187,8 @@ class IssuePropertyValueEndpoint(BaseAPIView):
 
             # Delete the old values
             existing_prop_queryset.filter(
-                property_id__in=issue_property_ids
+                property_id__in=issue_property_ids,
+                issue__type_id=issue_type_id,
             ).delete()
             # Bulk create the issue property values
             IssuePropertyValue.objects.bulk_create(

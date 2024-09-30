@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
+import { mutate } from "swr";
 // ui
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
@@ -120,13 +121,22 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
     // check if issue type display is enabled
     const isIssueTypeDisplayEnabled = isIssueTypeEnabledForProject(workspaceSlug, projectId, "ISSUE_TYPE_DISPLAY");
     if (!isIssueTypeDisplayEnabled) return;
+    // get issue type details
+    const issueDetail = getIssueById(issueId);
+    const issueType = issueDetail?.type_id ? getIssueTypeById(issueDetail.type_id) : null;
+    // filter property values that belongs to the issue type (required when issue type is changed)
+    const filteredIssuePropertyValues = Object.keys(issuePropertyValues).reduce((acc, propertyId) => {
+      if (issueType?.activeProperties?.find((property) => property.id === propertyId)) {
+        acc[propertyId] = issuePropertyValues[propertyId];
+      }
+      return acc;
+    }, {} as TIssuePropertyValues);
     // create issue property values
     await issuePropertyValuesService
-      .create(workspaceSlug, projectId, issueId, issuePropertyValues)
+      .create(workspaceSlug, projectId, issueId, filteredIssuePropertyValues)
       .then(() => {
+        mutate(`ISSUE_PROPERTY_VALUES_${workspaceSlug}_${projectId}_${issueId}_${isIssueTypeDisplayEnabled}`);
         // reset issue property values
-        const issueDetail = getIssueById(issueId);
-        const issueType = issueDetail?.type_id ? getIssueTypeById(issueDetail.type_id) : null;
         setIssuePropertyValues({
           ...getPropertiesDefaultValues(issueType?.activeProperties ?? []),
         });

@@ -15,7 +15,7 @@ import {
 // plane web helpers
 import { getIssuePropertyTypeKey } from "@/plane-web/helpers/issue-properties.helper";
 // plane web hooks
-import { useIssuePropertiesActivity, useIssueType } from "@/plane-web/hooks/store";
+import { useIssuePropertiesActivity, useIssueTypes } from "@/plane-web/hooks/store";
 // plane web types
 import { TIssuePropertyTypeKeys } from "@/plane-web/types";
 
@@ -26,7 +26,6 @@ type TIssueAdditionalPropertiesActivity = {
 
 export type TIssueAdditionalPropertiesActivityItem = {
   activityId: string;
-  issueTypeId: string;
   issuePropertyId: string;
 };
 
@@ -36,6 +35,7 @@ export const IssueAdditionalPropertiesActivity: FC<TIssueAdditionalPropertiesAct
   const {
     issue: { getIssueById },
   } = useIssueDetail();
+  const { getIssuePropertyById } = useIssueTypes();
   const { getPropertyActivityById } = useIssuePropertiesActivity();
   // activity details
   const activityDetail = getPropertyActivityById(activityId);
@@ -44,9 +44,8 @@ export const IssueAdditionalPropertiesActivity: FC<TIssueAdditionalPropertiesAct
   const issueDetail = getIssueById(activityDetail?.issue);
   if (!issueDetail) return <></>;
   // property details
-  const issueType = useIssueType(issueDetail.type_id);
-  const propertyDetail = issueType?.getPropertyById(activityDetail?.property);
-  if (!issueType?.id || !propertyDetail?.id) return <></>;
+  const propertyDetail = getIssuePropertyById(activityDetail?.property);
+  if (!propertyDetail?.id) return <></>;
   // property type key
   const propertyTypeKey = getIssuePropertyTypeKey(propertyDetail?.property_type, propertyDetail?.relation_type);
 
@@ -66,17 +65,8 @@ export const IssueAdditionalPropertiesActivity: FC<TIssueAdditionalPropertiesAct
   if (!IssuePropertyActivityComponent) return <></>;
 
   return (
-    <IssueActivityBlockComponent
-      activityId={activityId}
-      issueTypeId={issueType?.id}
-      propertyId={propertyDetail.id}
-      ends={ends}
-    >
-      <IssuePropertyActivityComponent
-        activityId={activityId}
-        issueTypeId={issueType?.id}
-        issuePropertyId={propertyDetail.id}
-      />
+    <IssueActivityBlockComponent activityId={activityId} propertyId={propertyDetail.id} ends={ends}>
+      <IssuePropertyActivityComponent activityId={activityId} issuePropertyId={propertyDetail.id} />
     </IssueActivityBlockComponent>
   );
 });
