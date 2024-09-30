@@ -70,7 +70,7 @@ export const CustomImageUploader = (props: {
         }
       }
     },
-    [imageComponentImageFileMap, imageEntityId, updateAttributes]
+    [imageComponentImageFileMap, imageEntityId, updateAttributes, getPos]
   );
   // hooks
   const { uploading: isImageBeingUploaded, uploadFile } = useUploader({ onUpload, editor, loadImageFromFileSystem });
