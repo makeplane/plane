@@ -8,6 +8,7 @@ export const DropHandlerExtension = () =>
     priority: 1000,
 
     addProseMirrorPlugins() {
+      const editor = this.editor;
       return [
         new Plugin({
           key: new PluginKey("drop-handler-plugin"),
@@ -20,7 +21,7 @@ export const DropHandlerExtension = () =>
 
                 if (imageFiles.length > 0) {
                   const pos = view.state.selection.from;
-                  insertImages({ editor: this.editor, files: imageFiles, initialPos: pos, event: "drop" });
+                  insertImages({ editor, files: imageFiles, initialPos: pos, event: "drop" });
                 }
                 return true;
               }
@@ -40,7 +41,7 @@ export const DropHandlerExtension = () =>
 
                   if (coordinates) {
                     const pos = coordinates.pos;
-                    insertImages({ editor: this.editor, files: imageFiles, initialPos: pos, event: "drop" });
+                    insertImages({ editor, files: imageFiles, initialPos: pos, event: "drop" });
                   }
                   return true;
                 }
