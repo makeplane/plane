@@ -28,6 +28,7 @@ export const IssueTypeSwitcher: React.FC<TIssueTypeSwitcherProps> = observer((pr
   const {
     issue: { getIssueById },
     toggleCreateIssueModal,
+    fetchActivities,
   } = useIssueDetail();
   const { isIssueTypeEnabledForProject } = useIssueTypes();
   // derived values
@@ -54,6 +55,11 @@ export const IssueTypeSwitcher: React.FC<TIssueTypeSwitcherProps> = observer((pr
     <>
       <CreateUpdateIssueModal
         isOpen={isCreateUpdateIssueModalOpen}
+        onSubmit={async () => {
+          if (workspaceSlug && issue.project_id) {
+            await fetchActivities(workspaceSlug.toString(), issue.project_id, issueId);
+          }
+        }}
         onClose={() => {
           setIsCreateUpdateIssueModalOpen(false);
           toggleCreateIssueModal(false);
@@ -72,7 +78,7 @@ export const IssueTypeSwitcher: React.FC<TIssueTypeSwitcherProps> = observer((pr
         {!disabled && (
           <span className="flex opacity-0 group-hover:opacity-100 transition-opacity duration-300 items-center gap-1 text-xs font-medium text-custom-text-300">
             <ArrowRightLeft className="w-3 h-3 flex-shrink-0" />
-            Switch Issue Type
+            Switch issue type
           </span>
         )}
       </div>

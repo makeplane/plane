@@ -6,7 +6,7 @@ import { LayersIcon, LUCIDE_ICONS_LIST } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 
-export type TIssueTypeLogoSize = "sm" | "md" | "lg" | "xl";
+export type TIssueTypeLogoSize = "xs" | "sm" | "md" | "lg" | "xl";
 
 type Props = {
   icon_props: TLogoProps["icon"];
@@ -16,6 +16,7 @@ type Props = {
 };
 
 const iconSizeMap = {
+  xs: 11,
   sm: 12.5,
   md: 14.5,
   lg: 18,
@@ -23,6 +24,7 @@ const iconSizeMap = {
 };
 
 const containerSizeMap = {
+  xs: 15.5,
   sm: 18,
   md: 21,
   lg: 25.5,
