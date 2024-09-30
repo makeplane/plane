@@ -488,12 +488,12 @@ class ModuleViewSet(BaseViewSet):
                 .annotate(last_name=F("assignees__last_name"))
                 .annotate(assignee_id=F("assignees__id"))
                 .annotate(display_name=F("assignees__display_name"))
-                .annotate(avatar=F("assignees__avatar"))
+                .annotate(avatar_url=F("assignees__avatar_url"))
                 .values(
                     "first_name",
                     "last_name",
                     "assignee_id",
-                    "avatar",
+                    "avatar_url",
                     "display_name",
                 )
                 .annotate(
@@ -585,12 +585,12 @@ class ModuleViewSet(BaseViewSet):
             .annotate(last_name=F("assignees__last_name"))
             .annotate(assignee_id=F("assignees__id"))
             .annotate(display_name=F("assignees__display_name"))
-            .annotate(avatar=F("assignees__avatar"))
+            .annotate(avatar_url=F("assignees__avatar_url"))
             .values(
                 "first_name",
                 "last_name",
                 "assignee_id",
-                "avatar",
+                "avatar_url",
                 "display_name",
             )
             .annotate(

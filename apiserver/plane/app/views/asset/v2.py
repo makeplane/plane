@@ -12,7 +12,7 @@ from rest_framework.response import Response
 
 # Module imports
 from ..base import BaseAPIView
-from plane.db.models import FileAsset, Workspace, Project, User
+from plane.db.models import FileAsset, Workspace, Project, User, Issue
 from plane.settings.storage import S3Storage
 from plane.app.permissions import allow_permission, ROLE
 
@@ -415,6 +415,139 @@ class PageAssetEndpoint(BaseAPIView):
             project_id=project_id,
             entity_identifier=page_id,
             entity_type=FileAsset.EntityTypeContext.PAGE_DESCRIPTION,
+        )
+        # Check deleted assets
+        asset.is_deleted = True
+        asset.deleted_at = timezone.now()
+        # Save the asset
+        asset.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class IssueAssetEndpoint(BaseAPIView):
+
+    @allow_permission(
+        allowed_roles=[
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+            ROLE.GUEST,
+        ],
+        creator=True,
+        model=Issue,
+    )
+    def get(self, request, slug, project_id, issue_id, asset_id):
+        # get the asset id
+        asset = FileAsset.objects.get(
+            workspace__slug=slug,
+            project_id=project_id,
+            entity_identifier=issue_id,
+            pk=asset_id,
+            entity_type=FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
+        )
+
+        # Get the presigned URL
+        storage = S3Storage(request=request)
+        # Generate a presigned URL to share an S3 object
+        signed_url = storage.generate_presigned_url(
+            object_name=asset.asset.name,
+        )
+        # Redirect to the signed URL
+        return HttpResponseRedirect(signed_url)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    def post(self, request, slug, project_id, issue_id):
+        name = request.data.get("name")
+        type = request.data.get("type", "image/jpeg")
+        size = int(request.data.get("size", settings.FILE_SIZE_LIMIT))
+
+        # Check if the file type is allowed
+        allowed_types = ["image/jpeg", "image/png"]
+        if type not in allowed_types:
+            return Response(
+                {
+                    "error": "Invalid file type. Only JPEG and PNG files are allowed.",
+                    "status": False,
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Get the workspace
+        workspace = Workspace.objects.get(slug=slug)
+
+        # asset key
+        asset_key = f"{workspace.id}/{uuid.uuid4().hex}-{name}"
+
+        # Create a File Asset
+        asset = FileAsset.objects.create(
+            attributes={
+                "name": name,
+                "type": type,
+                "size": size,
+            },
+            asset=asset_key,
+            size=size,
+            project_id=project_id,
+            workspace=workspace,
+            created_by=request.user,
+            entity_type=FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
+            entity_identifier=issue_id,
+        )
+
+        # Get the presigned URL
+        storage = S3Storage(request=request)
+        # Generate a presigned URL to share an S3 object
+        presigned_url = storage.generate_presigned_post(
+            object_name=asset_key,
+            file_type=type,
+            file_size=size,
+        )
+        # Return the presigned URL
+        return Response(
+            {
+                "upload_data": presigned_url,
+                "asset_id": str(asset.id),
+                "asset_url": asset.asset_url,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], creator=True, model=Issue
+    )
+    def patch(self, request, slug, project_id, issue_id, asset_id):
+        # get the asset id
+        asset = FileAsset.objects.get(
+            id=asset_id,
+            entity_identifier=issue_id,
+            entity_type=FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
+        )
+        storage = S3Storage(request=request)
+        # get the storage metadata
+        asset.is_uploaded = True
+        # get the storage metadata
+        if asset.storage_metadata is None:
+            asset.storage_metadata = storage.get_object_metadata(
+                asset.asset.name
+            )
+        # get the entity and save the asset id for the request field
+        self.entity_asset_save(
+            asset_id, asset.entity_type, asset.entity_identifier
+        )
+        # update the attributes
+        asset.attributes = request.data.get("attributes", asset.attributes)
+        # save the asset
+        asset.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @allow_permission([ROLE.ADMIN], creator=True, model=Issue)
+    def delete(self, request, slug, project_id, issue_id, asset_id):
+        # Get the asset
+        asset = FileAsset.objects.get(
+            id=asset_id,
+            workspace__slug=slug,
+            project_id=project_id,
+            entity_identifier=issue_id,
+            entity_type=FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
         )
         # Check deleted assets
         asset.is_deleted = True

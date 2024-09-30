@@ -747,6 +747,7 @@ class IssueRetrievePublicEndpoint(BaseAPIView):
                                     first_name=F("votes__actor__first_name"),
                                     last_name=F("votes__actor__last_name"),
                                     avatar=F("votes__actor__avatar"),
+                                    avatar_url=F("votes__actor__avatar_url"),
                                     display_name=F(
                                         "votes__actor__display_name"
                                     ),
@@ -778,6 +779,9 @@ class IssueRetrievePublicEndpoint(BaseAPIView):
                                         "issue_reactions__actor__last_name"
                                     ),
                                     avatar=F("issue_reactions__actor__avatar"),
+                                    avatar_url=F(
+                                        "issue_reactions__actor__avatar_url"
+                                    ),
                                     display_name=F(
                                         "issue_reactions__actor__display_name"
                                     ),

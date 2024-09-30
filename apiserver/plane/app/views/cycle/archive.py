@@ -139,7 +139,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                 Prefetch(
                     "issue_cycle__issue__assignees",
                     queryset=User.objects.only(
-                        "avatar", "first_name", "id"
+                        "avatar_url", "first_name", "id"
                     ).distinct(),
                 )
             )
@@ -400,8 +400,8 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                     )
                     .annotate(display_name=F("assignees__display_name"))
                     .annotate(assignee_id=F("assignees__id"))
-                    .annotate(avatar=F("assignees__avatar"))
-                    .values("display_name", "assignee_id", "avatar")
+                    .annotate(avatar_url=F("assignees__avatar_url"))
+                    .values("display_name", "assignee_id", "avatar_url")
                     .annotate(
                         total_estimates=Sum(
                             Cast("estimate_point__value", FloatField())
@@ -494,13 +494,13 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                 .annotate(first_name=F("assignees__first_name"))
                 .annotate(last_name=F("assignees__last_name"))
                 .annotate(assignee_id=F("assignees__id"))
-                .annotate(avatar=F("assignees__avatar"))
+                .annotate(avatar_url=F("assignees__avatar_url"))
                 .annotate(display_name=F("assignees__display_name"))
                 .values(
                     "first_name",
                     "last_name",
                     "assignee_id",
-                    "avatar",
+                    "avatar_url",
                     "display_name",
                 )
                 .annotate(

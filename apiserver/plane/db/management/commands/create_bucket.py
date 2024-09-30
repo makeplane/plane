@@ -1,55 +1,14 @@
 # Python imports
 import os
 import boto3
-import json
 from botocore.exceptions import ClientError
 
 # Django imports
 from django.core.management import BaseCommand
-from django.conf import settings
 
 
 class Command(BaseCommand):
     help = "Create the default bucket for the instance"
-
-    def set_bucket_public_policy(self, s3_client, bucket_name):
-        response = s3_client.list_objects_v2(Bucket=bucket_name)
-        public_object_resource = []
-        if "Contents" in response:
-            for obj in response["Contents"]:
-                object_key = obj["Key"]
-                public_object_resource.append(
-                    f"arn:aws:s3:::{bucket_name}/{object_key}"
-                )
-
-        # Define the bucket policy to allow access to only existing objects
-        bucket_policy = {
-            "Version": "2012-10-17",
-            "Statement": [
-                {
-                    "Effect": "Allow",
-                    "Principal": "*",
-                    "Action": "s3:GetObject",
-                    "Resource": public_object_resource,
-                }
-            ],
-        }
-
-        try:
-            s3_client.put_bucket_policy(
-                Bucket=bucket_name, Policy=json.dumps(bucket_policy)
-            )
-            self.stdout.write(
-                self.style.SUCCESS(
-                    "Bucket is private, but existing objects remain public."
-                )
-            )
-        except ClientError as e:
-            self.stdout.write(
-                self.style.ERROR(
-                    f"Error setting public read access policy: {e}"
-                )
-            )
 
     def handle(self, *args, **options):
         # Create a session using the credentials from Django settings
@@ -73,9 +32,6 @@ class Command(BaseCommand):
             self.stdout.write(self.style.NOTICE("Checking bucket..."))
             # Check if the bucket exists
             s3_client.head_bucket(Bucket=bucket_name)
-            if os.environ.get("USE_MINIO") == "1":
-                # If using the existing minio bucket, update the policies
-                self.set_bucket_public_policy(s3_client, bucket_name)
             # If the bucket exists, print a success message
             self.stdout.write(
                 self.style.SUCCESS(f"Bucket '{bucket_name}' exists.")
@@ -83,7 +39,7 @@ class Command(BaseCommand):
             return
         except ClientError as e:
             error_code = int(e.response["Error"]["Code"])
-            bucket_name = settings.AWS_STORAGE_BUCKET_NAME
+            bucket_name = os.environ.get("AWS_S3_BUCKET_NAME")
             if error_code == 404:
                 # Bucket does not exist, create it
                 self.stdout.write(

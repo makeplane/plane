@@ -48,7 +48,6 @@ INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
     "django_celery_beat",
-    "storages",
 ]
 
 # Middlewares

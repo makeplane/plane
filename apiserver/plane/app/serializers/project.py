@@ -128,6 +128,7 @@ class ProjectListSerializer(DynamicBaseSerializer):
                     "member_id": member.member_id,
                     "member__display_name": member.member.display_name,
                     "member__avatar": member.member.avatar,
+                    "member__avatar_url": member.member.avatar_url,
                 }
                 for member in project_members
             ]

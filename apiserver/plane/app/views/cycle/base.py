@@ -81,7 +81,7 @@ class CycleViewSet(BaseViewSet):
                 Prefetch(
                     "issue_cycle__issue__assignees",
                     queryset=User.objects.only(
-                        "avatar", "first_name", "id"
+                        "avatar_url", "first_name", "id"
                     ).distinct(),
                 )
             )
@@ -665,8 +665,8 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                 )
                 .annotate(display_name=F("assignees__display_name"))
                 .annotate(assignee_id=F("assignees__id"))
-                .annotate(avatar=F("assignees__avatar"))
-                .values("display_name", "assignee_id", "avatar")
+                .annotate(avatar_url=F("assignees__avatar_url"))
+                .values("display_name", "assignee_id", "avatar_url")
                 .annotate(
                     total_estimates=Sum(
                         Cast("estimate_point__value", FloatField())
@@ -703,7 +703,8 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                         if item["assignee_id"]
                         else None
                     ),
-                    "avatar": item["avatar"],
+                    "avatar": item.get("avatar"),
+                    "avatar_url": item.get("avatar_url"),
                     "total_estimates": item["total_estimates"],
                     "completed_estimates": item["completed_estimates"],
                     "pending_estimates": item["pending_estimates"],
@@ -780,8 +781,8 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             )
             .annotate(display_name=F("assignees__display_name"))
             .annotate(assignee_id=F("assignees__id"))
-            .annotate(avatar=F("assignees__avatar"))
-            .values("display_name", "assignee_id", "avatar")
+            .annotate(avatar_url=F("assignees__avatar_url"))
+            .values("display_name", "assignee_id", "avatar_url")
             .annotate(
                 total_issues=Count(
                     "id",
@@ -820,7 +821,8 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                 "assignee_id": (
                     str(item["assignee_id"]) if item["assignee_id"] else None
                 ),
-                "avatar": item["avatar"],
+                "avatar": item.get("avatar"),
+                "avatar_url": item.get("avatar_url"),
                 "total_issues": item["total_issues"],
                 "completed_issues": item["completed_issues"],
                 "pending_issues": item["pending_issues"],
@@ -1148,6 +1150,7 @@ class CycleProgressEndpoint(BaseAPIView):
             status=status.HTTP_200_OK,
         )
 
+
 class CycleAnalyticsEndpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
@@ -1198,8 +1201,8 @@ class CycleAnalyticsEndpoint(BaseAPIView):
                 )
                 .annotate(display_name=F("assignees__display_name"))
                 .annotate(assignee_id=F("assignees__id"))
-                .annotate(avatar=F("assignees__avatar"))
-                .values("display_name", "assignee_id", "avatar")
+                .annotate(avatar_url=F("assignees__avatar_url"))
+                .values("display_name", "assignee_id", "avatar_url")
                 .annotate(
                     total_estimates=Sum(
                         Cast("estimate_point__value", FloatField())
@@ -1282,8 +1285,8 @@ class CycleAnalyticsEndpoint(BaseAPIView):
                 )
                 .annotate(display_name=F("assignees__display_name"))
                 .annotate(assignee_id=F("assignees__id"))
-                .annotate(avatar=F("assignees__avatar"))
-                .values("display_name", "assignee_id", "avatar")
+                .annotate(avatar_url=F("assignees__avatar_url"))
+                .values("display_name", "assignee_id", "avatar_url")
                 .annotate(
                     total_issues=Count(
                         "assignee_id",

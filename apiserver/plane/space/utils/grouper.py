@@ -16,6 +16,7 @@ from plane.db.models import (
     WorkspaceMember,
 )
 
+
 def issue_queryset_grouper(queryset, group_by, sub_group_by):
 
     FIELD_MAPPER = {
@@ -98,8 +99,9 @@ def issue_on_results(issues, group_by, sub_group_by):
                             first_name=F("votes__actor__first_name"),
                             last_name=F("votes__actor__last_name"),
                             avatar=F("votes__actor__avatar"),
+                            avatar_url=F("votes__actor__avatar_url"),
                             display_name=F("votes__actor__display_name"),
-                        )
+                        ),
                     ),
                 ),
                 default=None,
@@ -123,7 +125,10 @@ def issue_on_results(issues, group_by, sub_group_by):
                             first_name=F("issue_reactions__actor__first_name"),
                             last_name=F("issue_reactions__actor__last_name"),
                             avatar=F("issue_reactions__actor__avatar"),
-                            display_name=F("issue_reactions__actor__display_name"),
+                            avatar_url=F("issue_reactions__actor__avatar_url"),
+                            display_name=F(
+                                "issue_reactions__actor__display_name"
+                            ),
                         ),
                     ),
                 ),
