@@ -106,7 +106,11 @@ export const useDropZone = ({ uploader }: { uploader: (file: File) => void }) =>
 
       const file = filteredFiles.length > 0 ? filteredFiles[0] : undefined;
 
-      uploader(file);
+      if (file) {
+        uploader(file);
+      } else {
+        console.error("No file found");
+      }
     },
     [uploader]
   );
