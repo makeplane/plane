@@ -5,9 +5,6 @@ import { Editor, NodeViewWrapper } from "@tiptap/react";
 import { CustomImageBlock, CustomImageUploader, ImageAttributes } from "@/extensions/custom-image";
 
 export type CustomImageNodeViewProps = {
-  imageFromFileSystem: string;
-  setFailedToLoadImage: (isError: boolean) => void;
-  failedToLoadImage: boolean;
   getPos: () => number;
   editor: Editor;
   node: ProsemirrorNode & {
@@ -15,8 +12,6 @@ export type CustomImageNodeViewProps = {
   };
   updateAttributes: (attrs: Record<string, any>) => void;
   selected: boolean;
-  editorContainer: HTMLDivElement | null;
-  setEditorContainer: (editorContainer: HTMLDivElement | null) => void;
 };
 
 export const CustomImageNode = (props: CustomImageNodeViewProps) => {

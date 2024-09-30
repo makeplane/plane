@@ -37,7 +37,15 @@ const ensurePixelString = <TDefault,>(value: Pixel | TDefault | number | undefin
   return value;
 };
 
-export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
+type CustomImageBlockProps = CustomImageNodeViewProps & {
+  imageFromFileSystem: string;
+  setFailedToLoadImage: (isError: boolean) => void;
+  failedToLoadImage: boolean;
+  editorContainer: HTMLDivElement | null;
+  setEditorContainer: (editorContainer: HTMLDivElement | null) => void;
+};
+
+export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
   // props
   const {
     node,
