@@ -89,15 +89,15 @@ class FileAsset(BaseModel):
             return f"/api/assets/v2/static/{self.id}/"
 
         if self.entity_type == self.EntityTypeContext.ISSUE_ATTACHMENT:
-            return f"/api/workspaces/{self.workspace.slug}/projects/{self.project_id}/issues/{self.entity_identifier}/attachments/{self.id}/"
+            return f"/api/assets/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/issues/{self.entity_identifier}/attachments/{self.id}/"
 
         if self.entity_type == self.EntityTypeContext.ISSUE_DESCRIPTION:
-            return f"/api/v2/assets/workspaces/{self.workspace.slug}/projects/{self.project_id}/issues/{self.entity_identifier}/{self.id}/"
+            return f"/api/assets/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/issues/{self.entity_identifier}/{self.id}/"
 
         if self.entity_type == self.EntityTypeContext.COMMENT_DESCRIPTION:
-            return f"/api/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/comments/{self.entity_identifier}/assets/{self.id}/"
+            return f"/api/assets/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/comments/{self.entity_identifier}/{self.id}/"
 
         if self.entity_type == self.EntityTypeContext.PAGE_DESCRIPTION:
-            return f"/api/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/pages/{self.entity_identifier}/assets/{self.id}/"
+            return f"/api/assets/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/pages/{self.entity_identifier}/{self.id}/"
 
         return None

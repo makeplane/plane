@@ -3,7 +3,7 @@ import { HocuspocusProvider } from "@hocuspocus/provider";
 import Collaboration from "@tiptap/extension-collaboration";
 import { IndexeddbPersistence } from "y-indexeddb";
 // extensions
-import { SideMenuExtension } from "@/extensions";
+import { HeadingListExtension, SideMenuExtension } from "@/extensions";
 // hooks
 import { useEditor } from "@/hooks/use-editor";
 // plane editor extensions
@@ -73,6 +73,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
         aiEnabled: !disabledExtensions?.includes("ai"),
         dragDropEnabled: true,
       }),
+      HeadingListExtension,
       Collaboration.configure({
         document: provider.document,
       }),

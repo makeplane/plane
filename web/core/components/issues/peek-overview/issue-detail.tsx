@@ -1,13 +1,14 @@
 import { FC, useEffect } from "react";
 import { observer } from "mobx-react";
-// store hooks
+// components
 import { TIssueOperations } from "@/components/issues";
+// store hooks
 import { useIssueDetail, useUser } from "@/hooks/store";
 // hooks
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues";
-// components
+import { IssueTypeSwitcher } from "@/plane-web/components/issues";
+// local components
 import { IssueDescriptionInput } from "../description-input";
 import { IssueReaction } from "../issue-detail/reactions";
 import { IssueTitleInput } from "../title-input";
@@ -56,7 +57,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
 
   return (
     <div className="space-y-2">
-      <IssueIdentifier issueId={issueId} projectId={issue.project_id} size="md" />
+      <IssueTypeSwitcher issueId={issueId} disabled={isArchived || disabled} />
       <IssueTitleInput
         workspaceSlug={workspaceSlug}
         projectId={issue.project_id}

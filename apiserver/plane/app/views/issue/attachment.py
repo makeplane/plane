@@ -113,7 +113,7 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
         workspace = Workspace.objects.get(slug=slug)
 
         # asset key
-        asset_key = f"{workspace.id}/{uuid.uuid4().hex}-{name[:50]}"
+        asset_key = f"{workspace.id}/{uuid.uuid4().hex}-{name}"
 
         # Create a File Asset
         asset = FileAsset.objects.create(
@@ -161,22 +161,20 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
             ROLE.GUEST,
         ]
     )
-    def get(self, request, slug, project_id, issue_id):
+    def get(self, request, slug, project_id, issue_id, asset_id=None):
+        if asset_id:
+            # Get the asset
+            asset = FileAsset.objects.get(
+                id=asset_id, workspace__slug=slug, project_id=project_id
+            )
+            storage = S3Storage(request=request)
+            presigned_url = storage.generate_presigned_url(asset.asset.name)
+            return HttpResponseRedirect(presigned_url)
 
+        # Get all the attachments
         issue_attachments = FileAsset.objects.filter(
             issue_id=issue_id, workspace__slug=slug, project_id=project_id
         )
+        # Serialize the attachments
         serializer = IssueAttachmentSerializer(issue_attachments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-class IssueAtachmentURLV2Endpoint(BaseAPIView):
-
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
-    def get(self, request, slug, project_id, issue_id, asset_id):
-        asset = FileAsset.objects.get(
-            id=asset_id, workspace__slug=slug, project_id=project_id
-        )
-        storage = S3Storage(request=request)
-        presigned_url = storage.generate_presigned_url(asset.asset.name)
-        return HttpResponseRedirect(presigned_url)
