@@ -146,12 +146,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   useEffect(() => {
     const issueTypeId = watch("type_id");
 
-    // if data is present, set active type id to the type id of the issue
-    if (data && data.type_id) {
-      setValue("type_id", data.type_id, { shouldValidate: true });
-      return;
-    }
-
     // if issue type id is present or project not available, return
     if (issueTypeId || !projectId) return;
 
@@ -284,7 +278,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
               <IssueTypeSelect
                 control={control}
                 projectId={projectId}
-                disabled={!!data?.id || !!data?.sourceIssueId}
+                disabled={!!data?.sourceIssueId}
                 handleFormChange={handleFormChange}
               />
             )}
