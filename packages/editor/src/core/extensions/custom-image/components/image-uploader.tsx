@@ -142,9 +142,10 @@ export const CustomImageUploader = (props: {
         "image-upload-component flex items-center justify-start gap-2 py-3 px-2 rounded-lg text-custom-text-300 hover:text-custom-text-200 bg-custom-background-90 hover:bg-custom-background-80 border border-dashed border-custom-border-300 cursor-pointer transition-all duration-200 ease-in-out",
         {
           "bg-custom-background-80 text-custom-text-200": draggedInside,
-          "text-custom-primary-200 bg-custom-primary-100/10": selected,
-          "text-red-500 bg-red-500/5 hover:bg-red-500/5 hover:text-red-500 border-red-400 border-dashed":
-            failedToLoadImage,
+          "text-custom-primary-200 bg-custom-primary-100/10 hover:bg-custom-primary-100/10 hover:text-custom-primary-200 border-custom-primary-200/10":
+            selected,
+          "text-red-500 cursor-default hover:text-red-500": failedToLoadImage,
+          "bg-red-500/10 hover:bg-red-500/10": failedToLoadImage && selected,
         }
       )}
       onDrop={onDrop}
