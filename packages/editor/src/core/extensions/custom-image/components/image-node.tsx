@@ -54,7 +54,6 @@ export const CustomImageNode = (props: CustomImageNodeViewProps) => {
             imageFromFileSystem={imageFromFileSystem}
             editorContainer={editorContainer}
             editor={editor}
-            failedToLoadImage={failedToLoadImage}
             getPos={getPos}
             node={node}
             setEditorContainer={setEditorContainer}

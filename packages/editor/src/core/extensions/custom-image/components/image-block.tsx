@@ -40,7 +40,6 @@ const ensurePixelString = <TDefault,>(value: Pixel | TDefault | number | undefin
 type CustomImageBlockProps = CustomImageNodeViewProps & {
   imageFromFileSystem: string;
   setFailedToLoadImage: (isError: boolean) => void;
-  failedToLoadImage: boolean;
   editorContainer: HTMLDivElement | null;
   setEditorContainer: (editorContainer: HTMLDivElement | null) => void;
 };
@@ -51,7 +50,6 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
     node,
     updateAttributes,
     setFailedToLoadImage,
-    failedToLoadImage,
     imageFromFileSystem,
     selected,
     getPos,
@@ -181,8 +179,12 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
     [editor, getPos]
   );
 
-  const showImageLoader = !(remoteImageSrc || imageFromFileSystem) || failedToLoadImage || !initialResizeComplete;
-  const showImageUtils = editor.isEditable && remoteImageSrc && !failedToLoadImage && initialResizeComplete;
+  // show the image loader if the remote image's src or preview image from filesystem is not set yet (while loading the image post upload) (or)
+  // if the initial resize (from 35% width and "auto" height attrs to the actual size in px) is not complete
+  const showImageLoader = !(remoteImageSrc || imageFromFileSystem) || !initialResizeComplete;
+  // show the image utils only if the editor is editable, the remote image's (post upload) src is set and the initial resize is complete (but not while we're showing the preview imageFromFileSystem)
+  const showImageUtils = editor.isEditable && remoteImageSrc && initialResizeComplete;
+  // show the preview image from the file system if the remote image's src is not set
   const displayedImageSrc = remoteImageSrc ?? imageFromFileSystem;
 
   return (
@@ -211,6 +213,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
         }}
         width={size.width}
         className={cn("image-component block rounded-md", {
+          // hide the image while the background calculations of the image loader are in progress (to avoid flickering) and show the loader until then
           hidden: showImageLoader,
           "read-only-image": !editor.isEditable,
           "blur-sm opacity-80 loading-image": !remoteImageSrc,
