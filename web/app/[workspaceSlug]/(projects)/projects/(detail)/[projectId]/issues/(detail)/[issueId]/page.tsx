@@ -27,12 +27,12 @@ const IssueDetailsPage = observer(() => {
   // store hooks
   const {
     fetchIssue,
-    issue: { getIssueById, getIsFetchingIssueDetails },
+    issue: { getIssueById },
   } = useIssueDetail();
   const { getProjectById } = useProject();
   const { toggleIssueDetailSidebar, issueDetailSidebarCollapsed } = useAppTheme();
   // fetching issue details
-  const { error } = useSWR(
+  const { isLoading, error } = useSWR(
     workspaceSlug && projectId && issueId ? `ISSUE_DETAIL_${workspaceSlug}_${projectId}_${issueId}` : null,
     workspaceSlug && projectId && issueId
       ? () => fetchIssue(workspaceSlug.toString(), projectId.toString(), issueId.toString())
@@ -41,7 +41,7 @@ const IssueDetailsPage = observer(() => {
   // derived values
   const issue = getIssueById(issueId?.toString() || "") || undefined;
   const project = (issue?.project_id && getProjectById(issue?.project_id)) || undefined;
-  const issueLoader = !issue || getIsFetchingIssueDetails(issue?.id) ? true : false;
+  const issueLoader = !issue || isLoading;
   const pageTitle = project && issue ? `${project?.identifier}-${issue?.sequence_id} ${issue?.name}` : undefined;
 
   useEffect(() => {
