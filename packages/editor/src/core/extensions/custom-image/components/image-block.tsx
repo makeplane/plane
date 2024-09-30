@@ -147,18 +147,15 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
     updateAttributes(size);
   }, [size, updateAttributes]);
 
-  const handleResizeStart = useCallback(
-    (e: React.MouseEvent | React.TouchEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      setIsResizing(true);
+  const handleResizeStart = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsResizing(true);
 
-      if (containerRef.current && editorContainer) {
-        containerRect.current = containerRef.current.getBoundingClientRect();
-      }
-    },
-    [editorContainer]
-  );
+    if (containerRef.current) {
+      containerRect.current = containerRef.current.getBoundingClientRect();
+    }
+  }, []);
 
   useEffect(() => {
     if (isResizing) {
