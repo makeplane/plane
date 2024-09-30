@@ -51,7 +51,7 @@ export const MemberValueSelect = observer((props: TMemberValueSelectProps) => {
       buttonClassName
     ),
     buttonContainerClassName: cn("w-full text-left", {
-      "bg-custom-background-90": isDisabled,
+      "bg-custom-background-90": variant === "create" && isDisabled,
     }),
     dropdownArrowClassName: "h-3.5 w-3.5 hidden group-hover:inline",
     placeholder: isMultiSelect ? "Select members" : "Select a member",

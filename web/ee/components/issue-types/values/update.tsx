@@ -2,7 +2,13 @@
 
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
+// ui
 import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
+// ce components
+import {
+  IssueAdditionalPropertyValuesUpdate as CEIssueAdditionalPropertyValuesUpdate,
+  TIssueAdditionalPropertyValuesUpdateProps,
+} from "@/ce/components/issue-types";
 // plane web components
 import { IssueAdditionalPropertyValues } from "@/plane-web/components/issue-types";
 // plane web hooks
@@ -12,18 +18,11 @@ import { IssuePropertyValuesService } from "@/plane-web/services/issue-types";
 // plane web types
 import { TIssuePropertyValues } from "@/plane-web/types";
 
-type TIssueAdditionalPropertyValuesUpdateProps = {
-  issueId: string;
-  issueTypeId: string;
-  projectId: string;
-  workspaceSlug: string;
-};
-
 const issuePropertyValuesService = new IssuePropertyValuesService();
 
 export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPropertyValuesUpdateProps> = observer(
   (props) => {
-    const { issueId, issueTypeId, projectId, workspaceSlug } = props;
+    const { issueId, issueTypeId, projectId, workspaceSlug, isDisabled } = props;
     // states
     const [issuePropertyValues, setIssuePropertyValues] = React.useState<TIssuePropertyValues>({});
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -85,7 +84,7 @@ export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPrope
     };
 
     // if issue types are not enabled, return null
-    if (!isIssueTypeDisplayEnabled) return null;
+    if (!isIssueTypeDisplayEnabled) return <CEIssueAdditionalPropertyValuesUpdate {...props} />;
 
     if (issuePropertiesLoader === "init-loader") {
       return (
@@ -109,6 +108,7 @@ export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPrope
         variant="update"
         isPropertyValuesLoading={isLoading}
         handlePropertyValueChange={handlePropertyValueChange}
+        isDisabled={isDisabled}
       />
     );
   }

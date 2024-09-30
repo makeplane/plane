@@ -36,6 +36,7 @@ type TPropertyValueSelectProps = {
   projectId: string;
   variant: TPropertyValueVariant;
   isPropertyValuesLoading: boolean;
+  isDisabled: boolean;
   onPropertyValueChange: (value: string[]) => Promise<void>;
 };
 
@@ -48,6 +49,7 @@ export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) =
     variant,
     isPropertyValuesLoading,
     onPropertyValueChange,
+    isDisabled,
   } = props;
   // store hooks
   const { peekIssue } = useIssueDetail();
@@ -90,6 +92,7 @@ export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) =
           display_format={propertyDetail?.settings?.display_format as TTextAttributeDisplayOptions}
           readOnlyData={propertyDetail?.default_value?.[0]}
           className="min-h-8"
+          isDisabled={isDisabled}
           onTextValueChange={onPropertyValueChange}
         />
       </>
@@ -102,6 +105,7 @@ export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) =
           error={propertyValueError}
           variant={variant}
           className="h-8"
+          isDisabled={isDisabled}
           onNumberValueChange={onPropertyValueChange}
         />
       </>
@@ -118,6 +122,7 @@ export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) =
             variant={variant}
             isMultiSelect={propertyDetail.is_multi}
             buttonClassName="h-8"
+            isDisabled={isDisabled}
             onOptionValueChange={onPropertyValueChange}
             showOptionDetails
           />
@@ -126,7 +131,7 @@ export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) =
     ),
     BOOLEAN: (
       <div className={cn("w-full h-8 flex items-center", variant === "update" && "px-1.5")}>
-        <BooleanInput value={propertyValue} onBooleanValueChange={onPropertyValueChange} />
+        <BooleanInput value={propertyValue} onBooleanValueChange={onPropertyValueChange} isDisabled={isDisabled} />
       </div>
     ),
     DATETIME: (
@@ -138,6 +143,7 @@ export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) =
           variant={variant}
           displayFormat={propertyDetail?.settings?.display_format as TDateAttributeDisplayOptions}
           buttonClassName="h-8"
+          isDisabled={isDisabled}
           onDateValueChange={onPropertyValueChange}
         />
       </>
@@ -152,6 +158,7 @@ export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) =
           variant={variant}
           isMultiSelect={propertyDetail?.is_multi}
           buttonClassName="h-8"
+          isDisabled={isDisabled}
           onMemberValueChange={onPropertyValueChange}
         />
       </>
