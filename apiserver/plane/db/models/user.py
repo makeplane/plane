@@ -128,6 +128,28 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return f"{self.username} <{self.email}>"
 
+    @property
+    def avatar_url(self):
+        # Return the logo asset url if it exists
+        if self.avatar_asset:
+            return self.avatar_asset.asset_url
+
+        # Return the logo url if it exists
+        if self.avatar:
+            return self.avatar
+        return None
+
+    @property
+    def cover_image_url(self):
+        # Return the logo asset url if it exists
+        if self.cover_image_asset:
+            return self.cover_image_asset.asset_url
+
+        # Return the logo url if it exists
+        if self.cover_image:
+            return self.cover_image
+        return None
+
     def save(self, *args, **kwargs):
         self.email = self.email.lower().strip()
         self.mobile_number = self.mobile_number
