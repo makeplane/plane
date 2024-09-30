@@ -2,7 +2,9 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
-// components
+// plane web components
+import { IssueTypeActivity } from "@/plane-web/components/issues/issue-details";
+// local components
 import {
   IssueDefaultActivity,
   IssueNameActivity,
@@ -77,6 +79,8 @@ export const IssueActivityItem: FC<TIssueActivityItem> = observer((props) => {
       return <IssueArchivedAtActivity {...componentDefaultProps} />;
     case "inbox":
       return <IssueInboxActivity {...componentDefaultProps} />;
+    case "type":
+      return <IssueTypeActivity {...componentDefaultProps} />;
     default:
       return <></>;
   }
