@@ -30,7 +30,14 @@ export const useUploader = ({
       try {
         const reader = new FileReader();
         reader.onload = () => {
-          loadImageFromFileSystem(reader.result as string);
+          if (reader.result) {
+            loadImageFromFileSystem(reader.result as string);
+          } else {
+            console.error("Failed to read the file: reader.result is null");
+          }
+        };
+        reader.onerror = () => {
+          console.error("Error reading file");
         };
         reader.readAsDataURL(fileWithTrimmedName);
         // @ts-expect-error - TODO: fix typings, and don't remove await from
