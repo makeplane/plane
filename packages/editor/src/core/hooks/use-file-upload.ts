@@ -5,27 +5,32 @@ import { isFileValid } from "@/plugins/image";
 export const useUploader = ({
   onUpload,
   editor,
-  setLocalImage,
+  loadImageFromFileSystem,
 }: {
   onUpload: (url: string) => void;
   editor: Editor;
-  setLocalImage: (file: string) => void;
+  loadImageFromFileSystem: (file: string) => void;
 }) => {
-  const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   const uploadFile = useCallback(
     async (file: File) => {
+      const setImageUploadInProgress = (isUploading: boolean) => {
+        editor.storage.imageComponent.uploadInProgress = isUploading;
+      };
+      setImageUploadInProgress(true);
+      setUploading(true);
       const fileNameTrimmed = trimFileName(file.name);
       const fileWithTrimmedName = new File([file], fileNameTrimmed, { type: file.type });
       const isValid = isFileValid(fileWithTrimmedName);
       if (!isValid) {
+        setImageUploadInProgress(false);
         return;
       }
-      setLoading(true);
       try {
         const reader = new FileReader();
         reader.onload = () => {
-          setLocalImage(reader.result as string);
+          loadImageFromFileSystem(reader.result as string);
         };
         reader.readAsDataURL(fileWithTrimmedName);
         // @ts-expect-error - TODO: fix typings, and don't remove await from
@@ -40,13 +45,15 @@ export const useUploader = ({
         console.log(errPayload);
         const error = errPayload?.response?.data?.error || "Something went wrong";
         console.error(error);
+      } finally {
+        setImageUploadInProgress(false);
+        setUploading(false);
       }
-      setLoading(false);
     },
     [onUpload]
   );
 
-  return { loading, uploadFile };
+  return { uploading, uploadFile };
 };
 
 export const useDropZone = ({ uploader }: { uploader: (file: File) => void }) => {

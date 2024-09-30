@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Node as ProsemirrorNode } from "@tiptap/pm/model";
 import { Editor, NodeViewWrapper } from "@tiptap/react";
 // extensions
 import { CustomImageBlock, CustomImageUploader, ImageAttributes } from "@/extensions/custom-image";
 
 export type CustomImageNodeViewProps = {
-  localImage: string | undefined;
+  imageFromFileSystem: string;
+  setFailedToLoadImage: (isError: boolean) => void;
+  failedToLoadImage: boolean;
   getPos: () => number;
   editor: Editor;
   node: ProsemirrorNode & {
@@ -13,42 +15,68 @@ export type CustomImageNodeViewProps = {
   };
   updateAttributes: (attrs: Record<string, any>) => void;
   selected: boolean;
+  editorContainer: HTMLDivElement | null;
+  setEditorContainer: (editorContainer: HTMLDivElement | null) => void;
 };
 
 export const CustomImageNode = (props: CustomImageNodeViewProps) => {
   const { getPos, editor, node, updateAttributes, selected } = props;
 
-  const [isUploaded, setIsUploaded] = useState(!!node.attrs.src);
-  const [localImage, setLocalImage] = useState<string | undefined>(undefined);
+  const [isUploaded, setIsUploaded] = useState(false);
+  const [imageFromFileSystem, setImageFromFileSystem] = useState<string | undefined>(undefined);
+  const [failedToLoadImage, setFailedToLoadImage] = useState(false);
+
+  const [editorContainer, setEditorContainer] = useState<HTMLDivElement | null>(null);
+  const imageComponentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const closestEditorContainer = imageComponentRef.current?.closest(".editor-container");
+    if (!closestEditorContainer) {
+      console.error("Editor container not found");
+      return;
+    }
+
+    setEditorContainer(closestEditorContainer as HTMLDivElement);
+  }, []);
 
   // the image is already uploaded if the image-component node has src attribute
+  // and we need to remove the blob from our file system
   useEffect(() => {
-    if (node.attrs.src) {
+    const remoteImageSrc = node.attrs.src;
+    if (remoteImageSrc) {
       setIsUploaded(true);
+      setImageFromFileSystem(undefined);
+    } else {
+      setIsUploaded(false);
     }
   }, [node.attrs.src]);
 
   return (
     <NodeViewWrapper>
-      <div className="p-0 mx-0 my-2" data-drag-handle>
-        {isUploaded || localImage ? (
+      <div className="p-0 mx-0 my-2" data-drag-handle ref={imageComponentRef}>
+        {(isUploaded || imageFromFileSystem) && !failedToLoadImage ? (
           <CustomImageBlock
-            localImage={localImage}
+            imageFromFileSystem={imageFromFileSystem}
+            editorContainer={editorContainer}
             editor={editor}
+            failedToLoadImage={failedToLoadImage}
             getPos={getPos}
             node={node}
-            updateAttributes={updateAttributes}
+            setEditorContainer={setEditorContainer}
+            setFailedToLoadImage={setFailedToLoadImage}
             selected={selected}
+            updateAttributes={updateAttributes}
           />
         ) : (
           <CustomImageUploader
-            updateAttributes={updateAttributes}
-            getPos={getPos}
-            setIsUploaded={setIsUploaded}
-            node={node}
             editor={editor}
-            setLocalImage={setLocalImage}
+            failedToLoadImage={failedToLoadImage}
+            getPos={getPos}
+            loadImageFromFileSystem={setImageFromFileSystem}
+            node={node}
+            setIsUploaded={setIsUploaded}
             selected={selected}
+            updateAttributes={updateAttributes}
           />
         )}
       </div>

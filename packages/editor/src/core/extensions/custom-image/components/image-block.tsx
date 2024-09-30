@@ -38,17 +38,27 @@ const ensurePixelString = <TDefault,>(value: Pixel | TDefault | number | undefin
 };
 
 export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
-  const { node, updateAttributes, localImage, selected, getPos, editor } = props;
-  const { src, width, height, aspectRatio } = node.attrs;
+  // props
+  const {
+    node,
+    updateAttributes,
+    setFailedToLoadImage,
+    failedToLoadImage,
+    imageFromFileSystem,
+    selected,
+    getPos,
+    editor,
+    editorContainer,
+    setEditorContainer,
+  } = props;
+  const { src: remoteImageSrc, width, height, aspectRatio } = node.attrs;
   // states
   const [size, setSize] = useState<Size>({
     width: ensurePixelString(width, "35%"),
     height: ensurePixelString(height, "auto"),
     aspectRatio: aspectRatio || 1,
   });
-  const [editorContainer, setEditorContainer] = useState<HTMLElement | null>(null);
   const [isResizing, setIsResizing] = useState(false);
-  const [imageLoadingError, setImageLoadingError] = useState(false);
   const [initialResizeComplete, setInitialResizeComplete] = useState(false);
   // refs
   const containerRef = useRef<HTMLDivElement>(null);
@@ -58,14 +68,23 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
   const handleImageLoad = useCallback(() => {
     const img = imageRef.current;
     if (!img) return;
+    let closestEditorContainer: HTMLDivElement | null = null;
 
-    const closestEditorContainer = img.closest(".editor-container");
+    if (editorContainer) {
+      closestEditorContainer = editorContainer;
+    } else {
+      closestEditorContainer = img.closest(".editor-container") as HTMLDivElement | null;
+      if (!closestEditorContainer) {
+        console.error("Editor container not found");
+        return;
+      }
+    }
     if (!closestEditorContainer) {
       console.error("Editor container not found");
       return;
     }
 
-    setEditorContainer(closestEditorContainer as HTMLElement);
+    setEditorContainer(closestEditorContainer);
     const aspectRatio = img.naturalWidth / img.naturalHeight;
 
     if (width === "35%") {
@@ -91,7 +110,7 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
       updateAttributes(newSize);
     }
     setInitialResizeComplete(true);
-  }, [width, updateAttributes]);
+  }, [width, updateAttributes, editorContainer]);
 
   // for real time resizing
   useLayoutEffect(() => {
@@ -158,9 +177,9 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
     [editor, getPos]
   );
 
-  const shouldShowImageLoader = !(src || localImage) || imageLoadingError || !initialResizeComplete;
-  const showImageUtils = editor.isEditable && src && !imageLoadingError && initialResizeComplete;
-  const currentImage = src ?? localImage;
+  const showImageLoader = !(remoteImageSrc || imageFromFileSystem) || failedToLoadImage || !initialResizeComplete;
+  const showImageUtils = editor.isEditable && remoteImageSrc && !failedToLoadImage && initialResizeComplete;
+  const displayedImageSrc = remoteImageSrc ?? imageFromFileSystem;
 
   return (
     <div
@@ -172,7 +191,7 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
         aspectRatio: size.aspectRatio,
       }}
     >
-      {shouldShowImageLoader && (
+      {showImageLoader && (
         <div
           className="animate-pulse bg-custom-background-80 rounded-md"
           style={{ width: size.width, height: size.height }}
@@ -180,17 +199,17 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
       )}
       <img
         ref={imageRef}
-        src={currentImage}
+        src={displayedImageSrc}
         onLoad={handleImageLoad}
         onError={(e) => {
           console.error("Error loading image", e);
-          setImageLoadingError(true);
+          setFailedToLoadImage(true);
         }}
         width={size.width}
         className={cn("image-component block rounded-md", {
-          hidden: shouldShowImageLoader,
+          hidden: showImageLoader,
           "read-only-image": !editor.isEditable,
-          "blur-sm opacity-80 loading-image": !src,
+          "blur-sm opacity-80 loading-image": !remoteImageSrc,
         })}
         style={{
           width: size.width,
@@ -203,14 +222,16 @@ export const CustomImageBlock: React.FC<CustomImageNodeViewProps> = (props) => {
             "absolute top-1 right-1 z-20 bg-black/40 rounded opacity-0 pointer-events-none group-hover/image-component:opacity-100 group-hover/image-component:pointer-events-auto transition-opacity"
           }
           image={{
-            src,
+            src: remoteImageSrc,
             aspectRatio: size.aspectRatio,
             height: size.height,
             width: size.width,
           }}
         />
       )}
-      {selected && currentImage === src && <div className="absolute inset-0 size-full bg-custom-primary-500/30" />}
+      {selected && displayedImageSrc === remoteImageSrc && (
+        <div className="absolute inset-0 size-full bg-custom-primary-500/30" />
+      )}
       {showImageUtils && (
         <>
           <div

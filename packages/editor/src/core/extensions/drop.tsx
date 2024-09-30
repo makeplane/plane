@@ -67,6 +67,7 @@ const insertImages = async ({
   let pos = initialPos;
 
   for (const file of files) {
+    // safe insertion
     const docSize = editor.state.doc.content.size;
     pos = Math.min(pos, docSize);
 
@@ -77,8 +78,12 @@ const insertImages = async ({
       pos += nodeAtPos.nodeSize;
     }
 
-    // Insert the image at the current position
-    editor.commands.insertImageComponent({ file, pos, event });
+    try {
+      // Insert the image at the current position
+      editor.commands.insertImageComponent({ file, pos, event });
+    } catch (error) {
+      console.error(`Error while ${event}ing image:`, error);
+    }
 
     // Move to the next position
     pos += 1;

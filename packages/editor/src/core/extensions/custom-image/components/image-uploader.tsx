@@ -9,13 +9,14 @@ import { cn } from "@/helpers/common";
 import { useUploader, useDropZone } from "@/hooks/use-file-upload";
 // plugins
 import { isFileValid } from "@/plugins/image";
-import { UploadImageExtensionStorage } from "../custom-image";
+import { UploadImageExtensionStorage, getImageComponentImageFileMap } from "../custom-image";
 import { ImageAttributes } from "./image-block";
 
 export const CustomImageUploader = (props: {
+  failedToLoadImage: boolean;
   editor: Editor;
   selected: boolean;
-  setLocalImage: (file: string) => void;
+  loadImageFromFileSystem: (file: string) => void;
   setIsUploaded: (isUploaded: boolean) => void;
   node: ProsemirrorNode & {
     attrs: ImageAttributes;
@@ -23,27 +24,40 @@ export const CustomImageUploader = (props: {
   updateAttributes: (attrs: Record<string, any>) => void;
   getPos: () => number;
 }) => {
-  const { selected, editor, setLocalImage, node, setIsUploaded, updateAttributes, getPos } = props;
+  const {
+    selected,
+    failedToLoadImage,
+    editor,
+    loadImageFromFileSystem,
+    node,
+    setIsUploaded,
+    updateAttributes,
+    getPos,
+  } = props;
   // ref
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const hasTriggeredFilePickerRef = useRef(false);
   const id = node.attrs.id as string;
-  const editorStorage = editor.storage.imageComponent as UploadImageExtensionStorage | undefined;
+
+  const imageComponentImageFileMap = useMemo(() => getImageComponentImageFileMap(editor), [editor]);
+
   const onUpload = useCallback(
     (url: string) => {
       if (url) {
         setIsUploaded(true);
         // Update the node view's src attribute post upload
         updateAttributes({ src: url });
-        editorStorage?.fileMap.delete(id);
+        imageComponentImageFileMap?.delete(id);
 
         const pos = getPos();
         // get current node
         const getCurrentSelection = editor.state.selection;
         const currentNode = editor.state.doc.nodeAt(getCurrentSelection.from);
 
-        if (currentNode && currentNode.type.name === "imageComponent") {
+        // only if the cursor is at the current image component, manipulate
+        // the cursor position
+        if (currentNode && currentNode.type.name === "imageComponent" && currentNode.attrs.src === url) {
           // control cursor position after upload
           const nextNode = editor.state.doc.nodeAt(pos + 1);
 
@@ -57,14 +71,14 @@ export const CustomImageUploader = (props: {
         }
       }
     },
-    [editorStorage?.fileMap, id, updateAttributes]
+    [imageComponentImageFileMap, id, updateAttributes]
   );
   // hooks
-  const { loading, uploadFile } = useUploader({ onUpload, editor, setLocalImage });
+  const { uploading: isImageBeingUploaded, uploadFile } = useUploader({ onUpload, editor, loadImageFromFileSystem });
   const { draggedInside, onDrop, onDragEnter, onDragLeave } = useDropZone({ uploader: uploadFile });
 
   // the meta data of the image component
-  const meta = useMemo(() => editorStorage?.fileMap.get(id), [editorStorage?.fileMap, id]);
+  const meta = useMemo(() => imageComponentImageFileMap?.get(id), [imageComponentImageFileMap, id]);
 
   // if the image component is dropped, we check if it has an existing file
   const existingFile = useMemo(() => (meta && meta.event === "drop" ? meta.file : undefined), [meta]);
@@ -79,10 +93,10 @@ export const CustomImageUploader = (props: {
         if (meta.hasOpenedFileInputOnce) return;
         fileInputRef.current.click();
         hasTriggeredFilePickerRef.current = true;
-        editorStorage?.fileMap.set(id, { ...meta, hasOpenedFileInputOnce: true });
+        imageComponentImageFileMap?.set(id, { ...meta, hasOpenedFileInputOnce: true });
       }
     }
-  }, [meta, uploadFile, editorStorage?.fileMap]);
+  }, [meta, uploadFile, imageComponentImageFileMap]);
 
   // check if the image is dropped and set the local image as the existing file
   useEffect(() => {
@@ -96,7 +110,6 @@ export const CustomImageUploader = (props: {
       const file = e.target.files?.[0];
       if (file) {
         if (isFileValid(file)) {
-          editor.storage.image.uploadInProgress = true;
           uploadFile(file);
         }
       }
@@ -110,9 +123,9 @@ export const CustomImageUploader = (props: {
         "image-upload-component flex items-center justify-start gap-2 py-3 px-2 rounded-lg text-custom-text-300 hover:text-custom-text-200 bg-custom-background-90 hover:bg-custom-background-80 border border-dashed border-custom-border-300 cursor-pointer transition-all duration-200 ease-in-out",
         {
           "bg-custom-background-80 text-custom-text-200": draggedInside,
-        },
-        {
           "text-custom-primary-200 bg-custom-primary-100/10": selected,
+          "text-red-500 bg-red-500/5 hover:bg-red-500/5 hover:text-red-500 border-red-400 border-dashed":
+            failedToLoadImage,
         }
       )}
       onDrop={onDrop}
@@ -123,7 +136,15 @@ export const CustomImageUploader = (props: {
     >
       <ImageIcon className="size-4" />
       <div className="text-base font-medium">
-        {loading ? "Uploading..." : draggedInside ? "Drop image here" : existingFile ? "Uploading..." : "Add an image"}
+        {failedToLoadImage
+          ? "Error loading image"
+          : isImageBeingUploaded
+            ? "Uploading..."
+            : draggedInside
+              ? "Drop image here"
+              : existingFile
+                ? "Uploading..."
+                : "Add an image"}
       </div>
       <input
         className="size-0 overflow-hidden"
