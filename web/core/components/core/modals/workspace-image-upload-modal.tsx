@@ -1,14 +1,18 @@
 "use client";
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useDropzone } from "react-dropzone";
 import { UserCircle2 } from "lucide-react";
 import { Transition, Dialog } from "@headlessui/react";
+// plane types
+import { EFileAssetType } from "@plane/types/src/enums";
 // hooks
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button } from "@plane/ui";
 // constants
 import { MAX_FILE_SIZE } from "@/constants/common";
+// helpers
+import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useWorkspace, useInstance } from "@/hooks/store";
 // services
@@ -33,10 +37,9 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
   const [isImageUploading, setIsImageUploading] = useState(false);
   // router
   const { workspaceSlug } = useParams();
-  const pathname = usePathname();
   // store hooks
   const { config } = useInstance();
-  const { currentWorkspace } = useWorkspace();
+  const { currentWorkspace, updateWorkspaceLogo } = useWorkspace();
 
   const onDrop = (acceptedFiles: File[]) => setImage(acceptedFiles[0]);
 
@@ -56,34 +59,29 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
   };
 
   const handleSubmit = async () => {
-    if (!image || (!workspaceSlug && pathname !== "/onboarding")) return;
-
+    if (!image || !workspaceSlug || !currentWorkspace) return;
     setIsImageUploading(true);
 
-    const formData = new FormData();
-    formData.append("asset", image);
-    formData.append("attributes", JSON.stringify({}));
-
-    if (!workspaceSlug) return;
-
-    fileService
-      .uploadFile(workspaceSlug.toString(), formData)
-      .then((res) => {
-        const imageUrl = res.asset;
-
-        onSuccess(imageUrl);
-        setImage(null);
-
-        if (value && currentWorkspace) fileService.deleteFile(currentWorkspace.id, value);
-      })
-      .catch((err) =>
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: err?.error ?? "Something went wrong. Please try again.",
-        })
-      )
-      .finally(() => setIsImageUploading(false));
+    try {
+      const imageURL = await fileService.getWorkspaceAssetSignedURL(
+        workspaceSlug.toString(),
+        {
+          entity_identifier: currentWorkspace.id,
+          entity_type: EFileAssetType.WORKSPACE_LOGO,
+          name: image.name,
+          size: image.size,
+          type: image.type,
+        },
+        image
+      );
+      updateWorkspaceLogo(workspaceSlug.toString(), imageURL);
+      onSuccess(imageURL);
+    } catch (error) {
+      console.log("error", error);
+      throw new Error("Error in uploading file.");
+    } finally {
+      setIsImageUploading(false);
+    }
   };
 
   return (
@@ -115,7 +113,7 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-xl sm:p-6">
                 <div className="space-y-5">
                   <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
-                    Upload Image
+                    Upload image
                   </Dialog.Title>
                   <div className="space-y-3">
                     <div className="flex items-center justify-center gap-3">
@@ -136,7 +134,7 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
                               Edit
                             </button>
                             <img
-                              src={image ? URL.createObjectURL(image) : value ? value : ""}
+                              src={image ? URL.createObjectURL(image) : value ? getFileURL(value) : ""}
                               alt="image"
                               className="absolute left-0 top-0 h-full w-full rounded-md object-cover"
                             />
@@ -166,7 +164,7 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
                 <div className="flex items-center justify-between">
                   {handleRemove && (
                     <Button variant="danger" size="sm" onClick={handleRemove} disabled={!value}>
-                      {isRemoving ? "Removing..." : "Remove"}
+                      {isRemoving ? "Removing" : "Remove"}
                     </Button>
                   )}
                   <div className="flex items-center gap-2">
@@ -180,7 +178,7 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
                       disabled={!image}
                       loading={isImageUploading}
                     >
-                      {isImageUploading ? "Uploading..." : "Upload & Save"}
+                      {isImageUploading ? "Uploading" : "Upload & Save"}
                     </Button>
                   </div>
                 </div>

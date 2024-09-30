@@ -7,10 +7,11 @@ import { useParams } from "next/navigation";
 import { useDropzone } from "react-dropzone";
 import { Control, Controller } from "react-hook-form";
 import useSWR from "swr";
-// headless ui
 import { Tab, Popover } from "@headlessui/react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/helpers";
+// plane types
+import { EFileAssetType } from "@plane/types/src/enums";
 // ui
 import { Button, Input, Loader } from "@plane/ui";
 // constants
@@ -107,8 +108,8 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
     const oldValue = value;
     const isUnsplashImage = oldValue?.split("/")[2] === "images.unsplash.com";
 
-    const uploadCallback = (res: any) => {
-      const imageUrl = res.asset;
+    const uploadCallback = (url: string) => {
+      const imageUrl = url;
       onChange(imageUrl);
       setIsImageUploading(false);
       setImage(null);
@@ -116,8 +117,17 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
     };
 
     if (isProfileCover) {
-      fileService
-        .uploadUserFile(formData)
+      await fileService
+        .getUserAssetSignedURL(
+          {
+            entity_identifier: "",
+            entity_type: EFileAssetType.USER_COVER,
+            name: image.name,
+            size: image.size,
+            type: image.type,
+          },
+          image
+        )
         .then((res) => {
           uploadCallback(res);
           if (isUnsplashImage) return;
@@ -128,10 +138,10 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
         });
     } else {
       if (!workspaceSlug) return;
-      fileService
+      await fileService
         .uploadFile(workspaceSlug.toString(), formData)
         .then((res) => {
-          uploadCallback(res);
+          uploadCallback(res.asset);
           if (isUnsplashImage) return;
           if (oldValue && currentWorkspace) fileService.deleteFile(currentWorkspace.id, oldValue);
         })
