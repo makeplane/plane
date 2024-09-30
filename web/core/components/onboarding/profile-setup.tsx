@@ -17,22 +17,23 @@ import { OnboardingHeader, SwitchAccountDropdown } from "@/components/onboarding
 // constants
 import { USER_DETAILS, E_ONBOARDING_STEP_1, E_ONBOARDING_STEP_2 } from "@/constants/event-tracker";
 // helpers
+import { getFileURL } from "@/helpers/file.helper";
 import { E_PASSWORD_STRENGTH, getPasswordStrength } from "@/helpers/password.helper";
 // hooks
 import { useEventTracker, useUser, useUserProfile } from "@/hooks/store";
-// services
 // assets
 import ProfileSetupDark from "@/public/onboarding/profile-setup-dark.webp";
 import ProfileSetupLight from "@/public/onboarding/profile-setup-light.webp";
 import UserPersonalizationDark from "@/public/onboarding/user-personalization-dark.webp";
 import UserPersonalizationLight from "@/public/onboarding/user-personalization-light.webp";
+// services
 import { AuthService } from "@/services/auth.service";
 import { FileService } from "@/services/file.service";
 
 type TProfileSetupFormValues = {
   first_name: string;
   last_name: string;
-  avatar?: string | null;
+  avatar_url?: string | null;
   password?: string;
   confirm_password?: string;
   role?: string;
@@ -42,7 +43,7 @@ type TProfileSetupFormValues = {
 const defaultValues: Partial<TProfileSetupFormValues> = {
   first_name: "",
   last_name: "",
-  avatar: "",
+  avatar_url: "",
   password: undefined,
   confirm_password: undefined,
   role: undefined,
@@ -112,10 +113,12 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
       ...defaultValues,
       first_name: user?.first_name,
       last_name: user?.last_name,
-      avatar: user?.avatar,
+      avatar_url: user?.avatar_url,
     },
     mode: "onChange",
   });
+  // derived values
+  const userAvatar = watch("avatar_url");
 
   const handleShowPassword = (key: keyof typeof showPassword) =>
     setShowPassword((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -129,7 +132,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
     const userDetailsPayload: Partial<IUser> = {
       first_name: formData.first_name,
       last_name: formData.last_name,
-      avatar: formData.avatar,
+      avatar_url: formData.avatar_url,
     };
     const profileUpdatePayload: Partial<TUserProfile> = {
       use_case: formData.use_case,
@@ -173,7 +176,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
     const userDetailsPayload: Partial<IUser> = {
       first_name: formData.first_name,
       last_name: formData.last_name,
-      avatar: formData.avatar,
+      avatar_url: formData.avatar_url,
     };
     try {
       await Promise.all([
@@ -243,7 +246,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
 
     setIsRemoving(true);
     fileService.deleteUserFile(url).finally(() => {
-      setValue("avatar", "");
+      setValue("avatar_url", "");
       setIsRemoving(false);
     });
   };
@@ -302,13 +305,13 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
               <>
                 <Controller
                   control={control}
-                  name="avatar"
+                  name="avatar_url"
                   render={({ field: { onChange, value } }) => (
                     <UserImageUploadModal
                       isOpen={isImageUploadModalOpen}
                       onClose={() => setIsImageUploadModalOpen(false)}
                       isRemoving={isRemoving}
-                      handleDelete={() => handleDelete(getValues("avatar"))}
+                      handleDelete={() => handleDelete(getValues("avatar_url"))}
                       onSuccess={(url) => {
                         onChange(url);
                         setIsImageUploadModalOpen(false);
@@ -319,7 +322,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                 />
                 <div className="space-y-1 flex items-center justify-center">
                   <button type="button" onClick={() => setIsImageUploadModalOpen(true)}>
-                    {!watch("avatar") || watch("avatar") === "" ? (
+                    {!userAvatar || userAvatar === "" ? (
                       <div className="flex flex-col items-center justify-between">
                         <div className="relative h-14 w-14 overflow-hidden">
                           <div className="absolute left-0 top-0 flex items-center justify-center h-full w-full rounded-full text-white text-3xl font-medium bg-[#9747FF] uppercase">
@@ -333,7 +336,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                     ) : (
                       <div className="relative mr-3 h-16 w-16 overflow-hidden">
                         <img
-                          src={watch("avatar") || undefined}
+                          src={getFileURL(userAvatar ?? "")}
                           className="absolute left-0 top-0 h-full w-full rounded-full object-cover"
                           onClick={() => setIsImageUploadModalOpen(true)}
                           alt={user?.display_name}

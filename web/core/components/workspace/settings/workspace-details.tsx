@@ -14,6 +14,7 @@ import { WorkspaceImageUploadModal } from "@/components/core";
 import { WORKSPACE_UPDATED } from "@/constants/event-tracker";
 import { ORGANIZATION_SIZE } from "@/constants/workspace";
 // helpers
+import { getFileURL } from "@/helpers/file.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useEventTracker, useUserPermissions, useWorkspace } from "@/hooks/store";
@@ -27,7 +28,7 @@ const defaultValues: Partial<IWorkspace> = {
   name: "",
   url: "",
   organization_size: "2-10",
-  logo: null,
+  logo_url: null,
 };
 
 // services
@@ -53,6 +54,8 @@ export const WorkspaceDetails: FC = observer(() => {
   } = useForm<IWorkspace>({
     defaultValues: { ...defaultValues, ...currentWorkspace },
   });
+  // derived values
+  const workspaceLogo = watch("logo_url");
 
   const onSubmit = async (formData: IWorkspace) => {
     if (!currentWorkspace) return;
@@ -60,7 +63,6 @@ export const WorkspaceDetails: FC = observer(() => {
     setIsLoading(true);
 
     const payload: Partial<IWorkspace> = {
-      logo: formData.logo,
       name: formData.name,
       organization_size: formData.organization_size,
     };
@@ -99,14 +101,14 @@ export const WorkspaceDetails: FC = observer(() => {
   const handleRemoveLogo = () => {
     if (!currentWorkspace) return;
 
-    const url = currentWorkspace.logo;
+    const url = currentWorkspace.logo_url;
 
     if (!url) return;
 
     setIsImageRemoving(true);
 
     fileService.deleteFile(currentWorkspace.id, url).then(() => {
-      updateWorkspace(currentWorkspace.slug, { logo: "" })
+      updateWorkspace(currentWorkspace.slug, { logo_url: "" })
         .then(() => {
           setToast({
             type: TOAST_TYPE.SUCCESS,
@@ -154,7 +156,7 @@ export const WorkspaceDetails: FC = observer(() => {
     <>
       <Controller
         control={control}
-        name="logo"
+        name="logo_url"
         render={({ field: { onChange, value } }) => (
           <WorkspaceImageUploadModal
             isOpen={isImageUploadModalOpen}
@@ -164,7 +166,6 @@ export const WorkspaceDetails: FC = observer(() => {
             onSuccess={(imageUrl) => {
               onChange(imageUrl);
               setIsImageUploadModalOpen(false);
-              handleSubmit(onSubmit)();
             }}
             value={value}
           />
@@ -174,10 +175,10 @@ export const WorkspaceDetails: FC = observer(() => {
         <div className="flex gap-5 border-b border-custom-border-100 pb-7 items-start">
           <div className="flex flex-col gap-1">
             <button type="button" onClick={() => setIsImageUploadModalOpen(true)} disabled={!isAdmin}>
-              {watch("logo") && watch("logo") !== null && watch("logo") !== "" ? (
+              {workspaceLogo && workspaceLogo !== "" ? (
                 <div className="relative mx-auto flex h-14 w-14">
                   <img
-                    src={watch("logo")!}
+                    src={getFileURL(workspaceLogo)}
                     className="absolute left-0 top-0 h-full w-full rounded-md object-cover"
                     alt="Workspace Logo"
                   />
@@ -199,7 +200,7 @@ export const WorkspaceDetails: FC = observer(() => {
                 className="flex items-center gap-1.5 text-left text-xs font-medium text-custom-primary-100"
                 onClick={() => setIsImageUploadModalOpen(true)}
               >
-                {watch("logo") && watch("logo") !== null && watch("logo") !== "" ? (
+                {workspaceLogo && workspaceLogo !== "" ? (
                   <>
                     <Pencil className="h-3 w-3" />
                     Edit logo

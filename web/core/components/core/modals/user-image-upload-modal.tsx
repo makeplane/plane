@@ -5,6 +5,8 @@ import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
 import { UserCircle2 } from "lucide-react";
 import { Transition, Dialog } from "@headlessui/react";
+// plane types
+import { EFileAssetType } from "@plane/types/src/enums";
 // hooks
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
@@ -56,28 +58,30 @@ export const UserImageUploadModal: React.FC<Props> = observer((props) => {
 
     setIsImageUploading(true);
 
-    const formData = new FormData();
-    formData.append("asset", image);
-    formData.append("attributes", JSON.stringify({}));
-
-    fileService
-      .uploadUserFile(formData)
-      .then((res) => {
-        const imageUrl = res.asset;
-
-        onSuccess(imageUrl);
-        setImage(null);
-
-        if (value) fileService.deleteUserFile(value);
-      })
-      .catch((err) =>
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: err?.error ?? "Something went wrong. Please try again.",
-        })
-      )
-      .finally(() => setIsImageUploading(false));
+    try {
+      const imageURL = await fileService.getUserAssetSignedURL(
+        {
+          entity_identifier: "",
+          entity_type: EFileAssetType.USER_AVATAR,
+          name: image.name,
+          size: image.size,
+          type: image.type,
+        },
+        image
+      );
+      onSuccess(imageURL);
+      setImage(null);
+    } catch (error: any) {
+      console.log("error", error);
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: error?.toString() ?? "Something went wrong. Please try again.",
+      });
+      throw new Error("Error in uploading file.");
+    } finally {
+      setIsImageUploading(false);
+    }
   };
 
   return (
