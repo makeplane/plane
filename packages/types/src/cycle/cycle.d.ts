@@ -20,7 +20,7 @@ export type TCycleEstimateDistributionBase = {
 
 export type TCycleAssigneesDistribution = {
   assignee_id: string | null;
-  avatar: string | null;
+  avatar_url: string | null;
   first_name: string | null;
   last_name: string | null;
   display_name: string | null;

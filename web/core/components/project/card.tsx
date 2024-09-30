@@ -23,10 +23,10 @@ import {
 // components
 import { Logo } from "@/components/common";
 import { ArchiveRestoreProjectModal, DeleteProjectModal, JoinProjectModal } from "@/components/project";
-// constants
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { getFileURL } from "@/helpers/file.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useProject, useUserPermissions } from "@/hooks/store";
@@ -55,7 +55,6 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
   const { allowPermissions } = useUserPermissions();
   // hooks
   const { isMobile } = usePlatformOS();
-  project.member_role;
   // derived values
   const projectMembersIds = project.members?.map((member) => member.member_id);
   const shouldRenderFavorite = allowPermissions(
@@ -285,7 +284,11 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
                         const member = project.members?.find((m) => m.member_id === memberId);
                         if (!member) return null;
                         return (
-                          <Avatar key={member.id} name={member.member__display_name} src={member.member__avatar} />
+                          <Avatar
+                            key={member.id}
+                            name={member.member__display_name}
+                            src={getFileURL(member.member__avatar_url)}
+                          />
                         );
                       })}
                     </AvatarGroup>

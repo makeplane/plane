@@ -75,7 +75,7 @@ export interface IProjectMap {
 
 export interface IProjectMemberLite {
   id: string;
-  member__avatar: string;
+  member__avatar_url: string;
   member__display_name: string;
   member_id: string;
 }

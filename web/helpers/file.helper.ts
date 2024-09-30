@@ -21,4 +21,7 @@ export const generateFileUploadPayload = (signedURLResponse: TFileSignedURLRespo
  * @param {string} path
  * @returns {string} final URL with the base URL
  */
-export const getFileURL = (path: string): string => `${API_BASE_URL}${path}`;
+export const getFileURL = (path: string): string | undefined => {
+  if (!path) return undefined;
+  return `${API_BASE_URL}${path}`;
+};
