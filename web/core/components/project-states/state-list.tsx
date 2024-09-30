@@ -12,10 +12,11 @@ type TStateList = {
   groupKey: TStateGroups;
   groupedStates: Record<string, IState[]>;
   states: IState[];
+  disabled?: boolean;
 };
 
 export const StateList: FC<TStateList> = observer((props) => {
-  const { workspaceSlug, projectId, groupKey, groupedStates, states } = props;
+  const { workspaceSlug, projectId, groupKey, groupedStates, states, disabled = false } = props;
 
   return (
     <>
@@ -28,6 +29,7 @@ export const StateList: FC<TStateList> = observer((props) => {
           groupedStates={groupedStates}
           totalStates={states.length || 0}
           state={state}
+          disabled={disabled}
         />
       ))}
     </>

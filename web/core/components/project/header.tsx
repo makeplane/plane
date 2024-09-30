@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 import { Search, Briefcase, X } from "lucide-react";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // ui
 import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
@@ -12,7 +14,6 @@ import { BreadcrumbLink } from "@/components/common";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useCommandPalette, useEventTracker, useProjectFilter, useUserPermissions } from "@/hooks/store";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import HeaderFilters from "./filters";
 

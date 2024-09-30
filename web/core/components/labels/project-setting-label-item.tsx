@@ -23,10 +23,20 @@ type Props = {
     droppedLabelId: string | undefined,
     dropAtEndOfList: boolean
   ) => void;
+  isEditable?: boolean;
 };
 
 export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
-  const { label, setIsUpdating, handleLabelDelete, isChild, isLastChild, isParentDragging = false, onDrop } = props;
+  const {
+    label,
+    setIsUpdating,
+    handleLabelDelete,
+    isChild,
+    isLastChild,
+    isParentDragging = false,
+    onDrop,
+    isEditable = false,
+  } = props;
   // states
   const [isEditLabelForm, setEditLabelForm] = useState(false);
   // router
@@ -91,6 +101,7 @@ export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
                 customMenuItems={customMenuItems}
                 handleLabelDelete={handleLabelDelete}
                 dragHandleRef={dragHandleRef}
+                disabled={!isEditable}
               />
             )}
           </div>

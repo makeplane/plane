@@ -173,10 +173,10 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
     const currentMemberWorkspaceRole = getWorkspaceMemberDetails(value)?.role;
     if (!value || !currentMemberWorkspaceRole) return ROLE;
 
-    const isGuest = [EUserPermissions.GUEST].includes(currentMemberWorkspaceRole);
+    const isGuestOROwner = [EUserPermissions.ADMIN, EUserPermissions.GUEST].includes(currentMemberWorkspaceRole);
 
     return Object.fromEntries(
-      Object.entries(ROLE).filter(([key]) => !isGuest || [5].includes(parseInt(key)))
+      Object.entries(ROLE).filter(([key]) => !isGuestOROwner || [currentMemberWorkspaceRole].includes(parseInt(key)))
     );
   };
 
@@ -210,7 +210,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="space-y-5">
                     <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
-                      Invite Members
+                      Invite members
                     </Dialog.Title>
                     <div className="mt-2">
                       <p className="text-sm text-custom-text-200">Invite members to work on your project.</p>
@@ -220,7 +220,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                       {fields.map((field, index) => (
                         <div
                           key={field.id}
-                          className="group mb-1 flex items-center justify-between gap-x-4 text-sm w-full"
+                          className="group mb-1 flex items-start justify-between gap-x-4 text-sm w-full"
                         >
                           <div className="flex flex-col gap-1 flex-grow w-full">
                             <Controller

@@ -5,6 +5,8 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // types
 import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 // ui
@@ -17,7 +19,6 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail, useKanbanView } from "@/hooks/store";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
@@ -38,6 +39,7 @@ interface IssueBlockProps {
   quickActions: TRenderQuickActions;
   canEditProperties: (projectId: string | undefined) => boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
+  shouldRenderByDefault?: boolean;
 }
 
 interface IssueDetailsBlockProps {
@@ -113,6 +115,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
     quickActions,
     canEditProperties,
     scrollableContainerRef,
+    shouldRenderByDefault,
   } = props;
 
   const cardRef = useRef<HTMLAnchorElement | null>(null);
@@ -187,6 +190,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
     <>
       <DropIndicator isVisible={!isCurrentBlockDragging && isDraggingOverBlock} />
       <div
+        id={`issue-${issueId}`}
         // make Z-index higher at the beginning of drag, to have a issue drag image of issue block without any overlaps
         className={cn("group/kanban-block relative mb-2", { "z-[1]": isCurrentBlockDragging })}
         onDragStart={() => {
@@ -220,6 +224,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
             defaultHeight="100px"
             horizontalOffset={100}
             verticalOffset={200}
+            defaultValue={shouldRenderByDefault}
           >
             <KanbanIssueDetailsBlock
               cardRef={cardRef}

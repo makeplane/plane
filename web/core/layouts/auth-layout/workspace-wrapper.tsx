@@ -7,13 +7,17 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
+import useSWRImmutable from "swr/immutable";
+
 import { LogOut } from "lucide-react";
 // hooks
-import { Button, TOAST_TYPE, setToast, Tooltip } from "@plane/ui";
+import { Button, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 import { LogoSpinner } from "@/components/common";
 import { useMember, useProject, useUser, useUserPermissions, useWorkspace } from "@/hooks/store";
 import { useFavorite } from "@/hooks/store/use-favorite";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// local
+import { persistence } from "@/local-db/storage.sqlite";
 // constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // images
@@ -40,7 +44,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   } = useMember();
   const { workspaces } = useWorkspace();
   const { isMobile } = usePlatformOS();
-  const { workspaceInfoBySlug, fetchUserWorkspaceInfo, fetchUserProjectPermissions, allowPermissions } =
+  const { loader, workspaceInfoBySlug, fetchUserWorkspaceInfo, fetchUserProjectPermissions, allowPermissions } =
     useUserPermissions();
   // derived values
   const canPerformWorkspaceMemberActions = allowPermissions(
@@ -88,6 +92,20 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
+  // initialize the local database
+  const { isLoading: isDBInitializing } = useSWRImmutable(
+    workspaceSlug ? `WORKSPACE_DB_${workspaceSlug}` : null,
+    workspaceSlug
+      ? async () => {
+          // persistence.reset();
+          await persistence.initialize(workspaceSlug.toString());
+          // Load common data
+          persistence.syncWorkspace();
+          return true;
+        }
+      : null
+  );
+
   const handleSignOut = async () => {
     await signOut().catch(() =>
       setToast({
@@ -102,7 +120,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const currentWorkspaceInfo = workspaceSlug && workspaceInfoBySlug(workspaceSlug.toString());
 
   // if list of workspaces are not there then we have to render the spinner
-  if (allWorkspaces === undefined) {
+  if (allWorkspaces === undefined || loader || isDBInitializing) {
     return (
       <div className="grid h-screen place-items-center bg-custom-background-100 p-4">
         <div className="flex flex-col items-center gap-3 text-center">

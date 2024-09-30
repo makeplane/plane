@@ -12,7 +12,7 @@ export type OnePlanUpgradeProps = {
 export const OnePlanUpgrade: FC<OnePlanUpgradeProps> = (props) => {
   const { features, verticalFeatureList = false, extraFeatures } = props;
   // env
-  const PLANE_ONE_PAYMENT_URL = process.env.NEXT_PUBLIC_PLANE_ONE_PAYMENT_URL ?? "https://plane.so/one";
+  const PLANE_ONE_PAYMENT_URL = "https://prime.plane.so/";
 
   return (
     <div className="py-4 px-2 border border-custom-border-90 rounded-xl bg-custom-background-90">

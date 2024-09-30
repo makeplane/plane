@@ -21,7 +21,7 @@ const ProjectSettingLayout: FC<IProjectSettingLayout> = (props) => {
           <ProjectSettingsSidebar />
         </div>
         <div className="flex flex-col relative w-full overflow-hidden">
-          <div className="w-full overflow-x-hidden overflow-y-scroll vertical-scrollbar scrollbar-md px-page-x md:px-9 py-page-y">
+          <div className="h-full w-full overflow-x-hidden overflow-y-scroll vertical-scrollbar scrollbar-md px-page-x md:px-9 py-page-y">
             {children}
           </div>
         </div>

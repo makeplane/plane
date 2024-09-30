@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-// types
-import { TIssue } from "@plane/types";
 // components
 import {
   IssueActivity,
@@ -20,7 +18,7 @@ import { useIssueDetail, useUser } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 import useSize from "@/hooks/use-window-size";
 // plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues";
+import { IssueTypeSwitcher } from "@/plane-web/components/issues";
 // types
 import { TIssueOperations } from "./root";
 
@@ -31,11 +29,10 @@ type Props = {
   issueOperations: TIssueOperations;
   isEditable: boolean;
   isArchived: boolean;
-  swrIssueDetails: TIssue | null | undefined;
 };
 
 export const IssueMainContent: React.FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, issueOperations, isEditable, isArchived, swrIssueDetails } = props;
+  const { workspaceSlug, projectId, issueId, issueOperations, isEditable, isArchived } = props;
   // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   // hooks
@@ -69,8 +66,8 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           />
         )}
 
-        <div className="mb-2.5 flex items-center gap-4">
-          <IssueIdentifier issueId={issueId} projectId={issue.project_id} size="md" />
+        <div className="mb-2.5 flex items-center justify-between gap-4">
+          <IssueTypeSwitcher issueId={issueId} disabled={isArchived || !isEditable} />
           <IssueUpdateStatus isSubmitting={isSubmitting} />
         </div>
 
@@ -88,7 +85,6 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
 
         {/* {issue?.description_html === issueDescription && ( */}
         <IssueDescriptionInput
-          swrIssueDescription={swrIssueDetails?.description_html}
           workspaceSlug={workspaceSlug}
           projectId={issue.project_id}
           issueId={issue.id}

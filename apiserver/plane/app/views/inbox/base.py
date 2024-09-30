@@ -167,9 +167,10 @@ class InboxIssueViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
-        inbox_id = Inbox.objects.get(
+        inbox_id = Inbox.objects.filter(
             workspace__slug=slug, project_id=project_id
-        )
+        ).first()
+        project = Project.objects.get(pk=project_id)
         filters = issue_filters(request.GET, "GET", "issue__")
         inbox_issue = (
             InboxIssue.objects.filter(
@@ -199,13 +200,16 @@ class InboxIssueViewSet(BaseViewSet):
         if inbox_status:
             inbox_issue = inbox_issue.filter(status__in=inbox_status)
 
-        if ProjectMember.objects.filter(
-            workspace__slug=slug,
-            project_id=project_id,
-            member=request.user,
-            role=5,
-            is_active=True,
-        ).exists():
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=request.user,
+                role=5,
+                is_active=True,
+            ).exists()
+            and not project.guest_view_all_features
+        ):
             inbox_issue = inbox_issue.filter(created_by=request.user)
         return self.paginate(
             request=request,
@@ -517,14 +521,16 @@ class InboxIssueViewSet(BaseViewSet):
         allowed_roles=[
             ROLE.ADMIN,
             ROLE.MEMBER,
+            ROLE.GUEST,
         ],
         creator=True,
         model=Issue,
     )
     def retrieve(self, request, slug, project_id, pk):
-        inbox_id = Inbox.objects.get(
+        inbox_id = Inbox.objects.filter(
             workspace__slug=slug, project_id=project_id
-        )
+        ).first()
+        project = Project.objects.get(pk=project_id)
         inbox_issue = (
             InboxIssue.objects.select_related("issue")
             .prefetch_related(
@@ -551,6 +557,21 @@ class InboxIssueViewSet(BaseViewSet):
             )
             .get(inbox_id=inbox_id.id, issue_id=pk, project_id=project_id)
         )
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=request.user,
+                role=5,
+                is_active=True,
+            ).exists()
+            and not project.guest_view_all_features
+            and not inbox_issue.created_by == request.user
+        ):
+            return Response(
+                {"error": "You are not allowed to view this issue"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         issue = InboxIssueDetailSerializer(inbox_issue).data
         return Response(
             issue,

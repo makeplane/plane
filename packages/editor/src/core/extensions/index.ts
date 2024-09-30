@@ -1,5 +1,6 @@
 export * from "./code";
 export * from "./code-inline";
+export * from "./custom-image";
 export * from "./custom-link";
 export * from "./custom-list-keymap";
 export * from "./image";
@@ -18,3 +19,4 @@ export * from "./quote";
 export * from "./read-only-extensions";
 export * from "./side-menu";
 export * from "./slash-commands";
+export * from "./headers";

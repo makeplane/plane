@@ -112,8 +112,8 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
         </div>
 
         <div
-          className={`relative flex items-baseline gap-1 ${
-            verticalAlignPosition ? `flex-col` : `w-full flex-row overflow-hidden`
+          className={`relative flex gap-1 ${
+            verticalAlignPosition ? `flex-col items-center` : `w-full flex-row items-baseline overflow-hidden`
           }`}
         >
           <div
@@ -124,7 +124,7 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
             {title}
           </div>
           <div
-            className={`flex-shrink-0 text-sm font-medium text-custom-text-300 ${verticalAlignPosition ? `` : `pl-2`}`}
+            className={`flex-shrink-0 text-sm font-medium text-custom-text-300 ${verticalAlignPosition ? `pr-0.5` : `pl-2`}`}
           >
             {count || 0}
           </div>

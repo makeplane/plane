@@ -11,6 +11,7 @@ import { CustomCodeInlineExtension } from "./code-inline";
 import { CustomLinkExtension } from "./custom-link";
 import { CustomHorizontalRule } from "./horizontal-rule";
 import { ImageExtensionWithoutProps } from "./image";
+import { CustomImageComponentWithoutProps } from "./image/image-component-without-props";
 import { IssueWidgetWithoutProps } from "./issue-embed/issue-embed-without-props";
 import { CustomMentionWithoutProps } from "./mentions/mentions-without-props";
 import { CustomQuoteExtension } from "./quote";
@@ -61,6 +62,7 @@ export const CoreEditorExtensionsWithoutProps = [
       class: "rounded-md",
     },
   }),
+  CustomImageComponentWithoutProps(),
   TiptapUnderline,
   TextStyle,
   TaskList.configure({

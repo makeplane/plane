@@ -4,6 +4,8 @@ import { Dispatch, MouseEvent, MutableRefObject, SetStateAction, useRef, useStat
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronRight, MoreHorizontal } from "lucide-react";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // types
 import { IIssueDisplayProperties, TIssue } from "@plane/types";
 // ui
@@ -19,7 +21,6 @@ import { cn } from "@/helpers/common.helper";
 import { useIssueDetail, useProject } from "@/hooks/store";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
@@ -38,7 +39,6 @@ interface Props {
   issueId: string;
   isScrolled: MutableRefObject<boolean>;
   containerRef: MutableRefObject<HTMLTableElement | null>;
-  issueIds: string[];
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
   spacingLeft?: number;
   selectionHelpers: TSelectionHelper;
@@ -56,7 +56,6 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
     canEditProperties,
     isScrolled,
     containerRef,
-    issueIds,
     spreadsheetColumnsList,
     spacingLeft = 6,
     selectionHelpers,
@@ -75,16 +74,20 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
       {/* first column/ issue name and key column */}
       <RenderIfVisible
         as="tr"
-        defaultHeight="calc(2.75rem - 1px)"
         root={containerRef}
         placeholderChildren={
-          <td colSpan={100} className="border-[0.5px] border-transparent border-b-custom-border-200" />
+          <td
+            colSpan={100}
+            className="border-[0.5px] border-transparent border-b-custom-border-200"
+            style={{ height: "calc(2.75rem - 1px)" }}
+          />
         }
         classNames={cn("bg-custom-background-100 transition-[background-color]", {
           "group selected-issue-row": isIssueSelected,
           "border-[0.5px] border-custom-border-400": isIssueActive,
         })}
         verticalOffset={100}
+        shouldRecordHeights={false}
       >
         <IssueRowDetails
           issueId={issueId}
@@ -119,7 +122,6 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
             portalElement={portalElement}
             isScrolled={isScrolled}
             containerRef={containerRef}
-            issueIds={issueIds}
             spreadsheetColumnsList={spreadsheetColumnsList}
             selectionHelpers={selectionHelpers}
           />

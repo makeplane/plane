@@ -8,25 +8,22 @@ import { useParams } from "next/navigation";
 import { ChevronDown, Pencil } from "lucide-react";
 // headless ui
 import { Disclosure, Transition } from "@headlessui/react";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // types
 import { IUserProfileProjectSegregation } from "@plane/types";
 // plane ui
 import { Loader, Tooltip } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
-// fetch-keys
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
 import { useAppTheme, useProject, useUser } from "@/hooks/store";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// services
 // components
 import { ProfileSidebarTime } from "./time";
-
-// services
 
 type TProfileSidebar = {
   userProjectsData: IUserProfileProjectSegregation | undefined;

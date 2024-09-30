@@ -43,6 +43,7 @@ type ButtonProps = {
   placeholder: string;
   priority: TIssuePriorities | undefined;
   showTooltip: boolean;
+  renderToolTipByDefault?: boolean;
 };
 
 const BorderButton = (props: ButtonProps) => {
@@ -56,6 +57,7 @@ const BorderButton = (props: ButtonProps) => {
     placeholder,
     priority,
     showTooltip,
+    renderToolTipByDefault = true,
   } = props;
 
   const priorityDetails = ISSUE_PRIORITIES.find((p) => p.key === priority);
@@ -76,7 +78,7 @@ const BorderButton = (props: ButtonProps) => {
       tooltipContent={priorityDetails?.title ?? "None"}
       disabled={!showTooltip}
       isMobile={isMobile}
-      renderByDefault={false}
+      renderByDefault={renderToolTipByDefault}
     >
       <div
         className={cn(
@@ -137,6 +139,7 @@ const BackgroundButton = (props: ButtonProps) => {
     placeholder,
     priority,
     showTooltip,
+    renderToolTipByDefault = true,
   } = props;
 
   const priorityDetails = ISSUE_PRIORITIES.find((p) => p.key === priority);
@@ -157,7 +160,7 @@ const BackgroundButton = (props: ButtonProps) => {
       tooltipContent={priorityDetails?.title ?? "None"}
       disabled={!showTooltip}
       isMobile={isMobile}
-      renderByDefault={false}
+      renderByDefault={renderToolTipByDefault}
     >
       <div
         className={cn(
@@ -219,6 +222,7 @@ const TransparentButton = (props: ButtonProps) => {
     placeholder,
     priority,
     showTooltip,
+    renderToolTipByDefault = true,
   } = props;
 
   const priorityDetails = ISSUE_PRIORITIES.find((p) => p.key === priority);
@@ -239,7 +243,7 @@ const TransparentButton = (props: ButtonProps) => {
       tooltipContent={priorityDetails?.title ?? "None"}
       disabled={!showTooltip}
       isMobile={isMobile}
-      renderByDefault={false}
+      renderByDefault={renderToolTipByDefault}
     >
       <div
         className={cn(
@@ -379,6 +383,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
           type="button"
           className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
           onClick={handleOnClick}
+          disabled={disabled}
         >
           {button}
         </button>
@@ -395,6 +400,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
             buttonContainerClassName
           )}
           onClick={handleOnClick}
+          disabled={disabled}
         >
           <ButtonToRender
             priority={value ?? undefined}
@@ -408,6 +414,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
             placeholder={placeholder}
             showTooltip={showTooltip}
             hideText={BUTTON_VARIANTS_WITHOUT_TEXT.includes(buttonVariant)}
+            renderToolTipByDefault={renderByDefault}
           />
         </button>
       )}
