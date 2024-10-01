@@ -141,7 +141,12 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
         )
         # Return the presigned URL
         return Response(
-            {"url": presigned_url, "asset_id": str(asset.id)},
+            {
+                "upload_data": presigned_url,
+                "asset_id": str(asset.id),
+                "attachment": IssueAttachmentSerializer(asset).data,
+                "asset_url": asset.asset_url,
+            },
             status=status.HTTP_200_OK,
         )
 
@@ -198,4 +203,4 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
                 issue_attachment.asset.name
             )
         issue_attachment.save()
-        return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_204_NO_CONTENT)
