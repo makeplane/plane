@@ -13,8 +13,12 @@ from django.db.models import (
     Q,
     Sum,
     FloatField,
+    Case,
+    When,
+    Value,
 )
-from django.db.models.functions import Cast
+from django.db.models.functions import Cast, Concat
+from django.db import models
 
 # Third party imports
 from rest_framework import status
@@ -887,7 +891,27 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                 )
                 .annotate(display_name=F("assignees__display_name"))
                 .annotate(assignee_id=F("assignees__id"))
-                .annotate(avatar_url=F("assignees__avatar_url"))
+                .annotate(avatar=F("assignees__avatar"))
+                .annotate(
+                    avatar_url=Case(
+                        # If `avatar_asset` exists, use it to generate the asset URL
+                        When(
+                            assignees__avatar_asset__isnull=False,
+                            then=Concat(
+                                Value("/api/assets/v2/static/"),
+                                "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
+                                Value("/"),
+                            ),
+                        ),
+                        # If `avatar_asset` is None, fall back to using `avatar` field directly
+                        When(
+                            assignees__avatar_asset__isnull=True,
+                            then="assignees__avatar",
+                        ),
+                        default=Value(None),
+                        output_field=models.CharField(),
+                    )
+                )
                 .values("display_name", "assignee_id", "avatar", "avatar_url")
                 .annotate(
                     total_estimates=Sum(
@@ -1003,7 +1027,27 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
             )
             .annotate(display_name=F("assignees__display_name"))
             .annotate(assignee_id=F("assignees__id"))
-            .annotate(avatar_url=F("assignees__avatar_url"))
+            .annotate(avatar=F("assignees__avatar"))
+            .annotate(
+                avatar_url=Case(
+                    # If `avatar_asset` exists, use it to generate the asset URL
+                    When(
+                        assignees__avatar_asset__isnull=False,
+                        then=Concat(
+                            Value("/api/assets/v2/static/"),
+                            "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
+                            Value("/"),
+                        ),
+                    ),
+                    # If `avatar_asset` is None, fall back to using `avatar` field directly
+                    When(
+                        assignees__avatar_asset__isnull=True,
+                        then="assignees__avatar",
+                    ),
+                    default=Value(None),
+                    output_field=models.CharField(),
+                )
+            )
             .values("display_name", "assignee_id", "avatar_url")
             .annotate(
                 total_issues=Count(
