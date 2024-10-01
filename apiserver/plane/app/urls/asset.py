@@ -76,12 +76,12 @@ urlpatterns = [
         name="static-file-asset",
     ),
     path(
-        "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/",
+        "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/",
         PageAssetEndpoint.as_view(),
         name="page-asset",
     ),
     path(
-        "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/<uuid:asset_id>/",
+        "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/<uuid:asset_id>/",
         PageAssetEndpoint.as_view(),
         name="page-asset",
     ),
