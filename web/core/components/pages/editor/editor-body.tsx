@@ -7,7 +7,6 @@ import {
   CollaborativeDocumentReadOnlyEditorWithRef,
   EditorReadOnlyRefApi,
   EditorRefApi,
-  IMarking,
   TAIMenuProps,
   TDisplayConfig,
   TRealtimeConfig,
@@ -67,7 +66,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     project: { getProjectMemberIds },
   } = useMember();
   // derived values
-  const workspaceId = workspaceSlug ? getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "" : "";
+  const workspaceId = workspaceSlug ? (getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "") : "";
   const pageId = page?.id;
   const pageTitle = page?.name ?? "";
   const { isContentEditable, updateTitle, setIsSubmitting } = page;
@@ -113,17 +112,22 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     []
   );
 
-  const realtimeConfig: TRealtimeConfig = useMemo(
-    () => ({
-      url: `${LIVE_URL}/collaboration`,
+  const realtimeConfig: TRealtimeConfig = useMemo(() => {
+    // Construct the WebSocket Collaboration URL
+    const WS_LIVE_URL = new URL(LIVE_URL);
+    const isSecureEnvironment = window.location.protocol === "https:";
+    WS_LIVE_URL.protocol = isSecureEnvironment ? "wss" : "ws";
+    WS_LIVE_URL.pathname = "collaboration";
+
+    return {
+      url: WS_LIVE_URL.toString(),
       queryParams: {
         workspaceSlug: workspaceSlug?.toString(),
         projectId: projectId?.toString(),
         documentType: "project_page",
       },
-    }),
-    [projectId, workspaceSlug]
-  );
+    };
+  }, [projectId, workspaceSlug]);
 
   if (pageId === undefined) return <PageContentLoader />;
 
