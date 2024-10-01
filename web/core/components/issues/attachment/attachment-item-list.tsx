@@ -3,9 +3,8 @@ import { observer } from "mobx-react";
 import { FileRejection, useDropzone } from "react-dropzone";
 import { UploadCloud } from "lucide-react";
 // hooks
-import {TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/ui";
 import { MAX_FILE_SIZE } from "@/constants/common";
-import { generateFileName } from "@/helpers/attachment.helper";
 import { useInstance, useIssueDetail } from "@/hooks/store";
 // components
 import { IssueAttachmentsListItem } from "./attachment-list-item";
@@ -37,45 +36,32 @@ export const IssueAttachmentItemList: FC<TIssueAttachmentItemList> = observer((p
   const issueAttachments = getAttachmentsByIssueId(issueId);
 
   const onDrop = useCallback(
-    (acceptedFiles: File[], rejectedFiles:FileRejection[] ) => {
-      const totalAttachedFiles = acceptedFiles.length +  rejectedFiles.length;
+    (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
+      const totalAttachedFiles = acceptedFiles.length + rejectedFiles.length;
 
-      if(rejectedFiles.length===0){
+      if (rejectedFiles.length === 0) {
         const currentFile: File = acceptedFiles[0];
         if (!currentFile || !workspaceSlug) return;
 
-        const uploadedFile: File = new File([currentFile], generateFileName(currentFile.name), {
-          type: currentFile.type,
-        });
-        const formData = new FormData();
-        formData.append("asset", uploadedFile);
-        formData.append(
-          "attributes",
-          JSON.stringify({
-            name: uploadedFile.name,
-            size: uploadedFile.size,
-          })
-        );
         setIsLoading(true);
-        handleAttachmentOperations.create(formData)
-        .catch(()=>{
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "File could not be attached. Try uploading again.",
+        handleAttachmentOperations
+          .create(currentFile)
+          .catch(() => {
+            setToast({
+              type: TOAST_TYPE.ERROR,
+              title: "Error!",
+              message: "File could not be attached. Try uploading again.",
+            });
           })
-        })
-        .finally(() => setIsLoading(false));
+          .finally(() => setIsLoading(false));
         return;
       }
 
       setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: (totalAttachedFiles>1)?
-            "Only one file can be uploaded at a time." :
-            "File must be 5MB or less.",
-      })
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: totalAttachedFiles > 1 ? "Only one file can be uploaded at a time." : "File must be 5MB or less.",
+      });
       return;
     },
     [handleAttachmentOperations, workspaceSlug]

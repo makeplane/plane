@@ -30,20 +30,8 @@ export const IssueAttachmentUpload: React.FC<Props> = observer((props) => {
       const currentFile: File = acceptedFiles[0];
       if (!currentFile || !workspaceSlug) return;
 
-      const uploadedFile: File = new File([currentFile], generateFileName(currentFile.name), {
-        type: currentFile.type,
-      });
-      const formData = new FormData();
-      formData.append("asset", uploadedFile);
-      formData.append(
-        "attributes",
-        JSON.stringify({
-          name: uploadedFile.name,
-          size: uploadedFile.size,
-        })
-      );
       setIsLoading(true);
-      handleAttachmentOperations.create(formData).finally(() => setIsLoading(false));
+      handleAttachmentOperations.create(currentFile).finally(() => setIsLoading(false));
     },
     [handleAttachmentOperations, workspaceSlug]
   );

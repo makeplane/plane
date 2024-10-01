@@ -5,7 +5,7 @@ import uniq from "lodash/uniq";
 import update from "lodash/update";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // types
-import { TIssueAttachment, TIssueAttachmentMap, TIssueAttachmentIdMap } from "@plane/types";
+import { TIssueAttachment, TIssueAttachmentMap, TIssueAttachmentIdMap, TAttachmentUploadMetaData } from "@plane/types";
 // services
 import { IssueAttachmentService } from "@/services/issue";
 import { IIssueRootStore } from "../root.store";
@@ -18,7 +18,7 @@ export interface IIssueAttachmentStoreActions {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    data: FormData
+    file: File
   ) => Promise<TIssueAttachment>;
   removeAttachment: (
     workspaceSlug: string,
@@ -104,8 +104,20 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
     return response;
   };
 
-  createAttachment = async (workspaceSlug: string, projectId: string, issueId: string, data: FormData) => {
-    const response = await this.issueAttachmentService.uploadIssueAttachment(workspaceSlug, projectId, issueId, data);
+  createAttachment = async (workspaceSlug: string, projectId: string, issueId: string, file: File) => {
+    console.log("Store creating...");
+    const fileMetaData: TAttachmentUploadMetaData = {
+      name: file.name,
+      size: file.size,
+      type: file.type,
+    };
+    const response = await this.issueAttachmentService.uploadIssueAttachment(
+      workspaceSlug,
+      projectId,
+      issueId,
+      fileMetaData,
+      file
+    );
     const issueAttachmentsCount = this.getAttachmentsByIssueId(issueId)?.length ?? 0;
 
     if (response && response.id) {

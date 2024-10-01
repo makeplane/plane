@@ -57,7 +57,7 @@ export class FileService extends APIService {
     this.fileUploadService = new FileUploadService();
   }
 
-  async updateWorkspaceAssetStatus(workspaceSlug: string, assetId: string): Promise<void> {
+  async updateWorkspaceAssetUploadStatus(workspaceSlug: string, assetId: string): Promise<void> {
     return this.patch(`/api/assets/v2/workspaces/${workspaceSlug}/${assetId}/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -71,7 +71,7 @@ export class FileService extends APIService {
         const signedURLResponse: TFileSignedURLResponse = response?.data;
         const fileUploadPayload = generateFileUploadPayload(signedURLResponse, file);
         await this.fileUploadService.uploadFile(signedURLResponse.upload_data.url, fileUploadPayload);
-        await this.updateWorkspaceAssetStatus(workspaceSlug.toString(), signedURLResponse.asset_id);
+        await this.updateWorkspaceAssetUploadStatus(workspaceSlug.toString(), signedURLResponse.asset_id);
         return signedURLResponse.asset_url;
       })
       .catch((error) => {
@@ -79,7 +79,7 @@ export class FileService extends APIService {
       });
   }
 
-  async updateUserAssetStatus(assetId: string): Promise<void> {
+  async updateUserAssetUploadStatus(assetId: string): Promise<void> {
     return this.patch(`/api/assets/v2/user-assets/${assetId}/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -93,7 +93,7 @@ export class FileService extends APIService {
         const signedURLResponse: TFileSignedURLResponse = response?.data;
         const fileUploadPayload = generateFileUploadPayload(signedURLResponse, file);
         await this.fileUploadService.uploadFile(signedURLResponse.upload_data.url, fileUploadPayload);
-        await this.updateUserAssetStatus(signedURLResponse.asset_id);
+        await this.updateUserAssetUploadStatus(signedURLResponse.asset_id);
         return signedURLResponse.asset_url;
       })
       .catch((error) => {

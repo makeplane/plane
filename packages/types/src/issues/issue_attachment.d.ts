@@ -1,3 +1,7 @@
+import { TFileMetaData, TFileSignedURLResponse } from "../file";
+
+export type TAttachmentUploadMetaData = Pick<TFileMetaData, "name" | "size" | "type">;
+
 export type TIssueAttachment = {
   id: string;
   attributes: {
@@ -6,10 +10,13 @@ export type TIssueAttachment = {
   };
   asset: string;
   issue_id: string;
-
-  //need
+  // required
   updated_at: string;
   updated_by: string;
+};
+
+export type TIssueAttachmentUploadResponse = TFileSignedURLResponse & {
+  attachment: TIssueAttachment
 };
 
 export type TIssueAttachmentMap = {
