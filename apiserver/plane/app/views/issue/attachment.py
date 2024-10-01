@@ -179,3 +179,23 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
         # Serialize the attachments
         serializer = IssueAttachmentSerializer(issue_attachments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+            ROLE.GUEST,
+        ]
+    )
+    def patch(self, request, slug, project_id, issue_id, asset_id):
+        issue_attachment = FileAsset.objects.get(
+            pk=asset_id, workspace__slug=slug, project_id=project_id
+        )
+        issue_attachment.is_uploaded = True
+        if issue_attachment.storage_metadata is None:
+            storage = S3Storage(request=request)
+            issue_attachment.storage_metadata = storage.get_object_metadata(
+                issue_attachment.asset.name
+            )
+        issue_attachment.save()
+        return Response(status=status.HTTP_200_OK)
