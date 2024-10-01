@@ -167,11 +167,11 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
             ROLE.GUEST,
         ]
     )
-    def get(self, request, slug, project_id, issue_id, asset_id=None):
-        if asset_id:
+    def get(self, request, slug, project_id, issue_id, pk=None):
+        if pk:
             # Get the asset
             asset = FileAsset.objects.get(
-                id=asset_id, workspace__slug=slug, project_id=project_id
+                id=pk, workspace__slug=slug, project_id=project_id
             )
 
             # Check if the asset is uploaded

@@ -141,7 +141,7 @@ urlpatterns = [
         name="project-issue-attachments",
     ),
     path(
-        "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/attachments/<uuid:asset_id>/",
+        "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/attachments/<uuid:pk>/",
         IssueAttachmentV2Endpoint.as_view(),
         name="project-issue-attachments",
     ),

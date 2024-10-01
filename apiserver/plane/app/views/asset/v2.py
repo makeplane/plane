@@ -457,13 +457,13 @@ class IssueAssetEndpoint(BaseAPIView):
         creator=True,
         model=Issue,
     )
-    def get(self, request, slug, project_id, issue_id, asset_id):
+    def get(self, request, slug, project_id, issue_id, pk):
         # get the asset id
         asset = FileAsset.objects.get(
             workspace__slug=slug,
             project_id=project_id,
             entity_identifier=issue_id,
-            pk=asset_id,
+            pk=pk,
             entity_type=FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
         )
 
@@ -545,10 +545,10 @@ class IssueAssetEndpoint(BaseAPIView):
     @allow_permission(
         allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], creator=True, model=Issue
     )
-    def patch(self, request, slug, project_id, issue_id, asset_id):
+    def patch(self, request, slug, project_id, issue_id, pk):
         # get the asset id
         asset = FileAsset.objects.get(
-            id=asset_id,
+            id=pk,
             entity_identifier=issue_id,
             entity_type=FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
         )
@@ -567,10 +567,10 @@ class IssueAssetEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @allow_permission([ROLE.ADMIN], creator=True, model=Issue)
-    def delete(self, request, slug, project_id, issue_id, asset_id):
+    def delete(self, request, slug, project_id, issue_id, pk):
         # Get the asset
         asset = FileAsset.objects.get(
-            id=asset_id,
+            id=pk,
             workspace__slug=slug,
             project_id=project_id,
             entity_identifier=issue_id,
@@ -691,10 +691,10 @@ class CommentAssetEndpoint(BaseAPIView):
         creator=True,
         model=IssueComment,
     )
-    def patch(self, request, slug, project_id, comment_id, asset_id):
+    def patch(self, request, slug, project_id, comment_id, pk):
         # get the asset id
         asset = FileAsset.objects.get(
-            id=asset_id,
+            id=pk,
             entity_identifier=comment_id,
             entity_type=FileAsset.EntityTypeContext.COMMENT_DESCRIPTION,
         )
