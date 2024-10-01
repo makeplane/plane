@@ -95,12 +95,12 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
         id={`issue-${issue.id}`}
         href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
         onClick={() => handleIssuePeekOverview(issue)}
-        className="w-full line-clamp-1 cursor-pointer text-sm text-custom-text-100"
+        className="w-full cursor-pointer"
       >
         {issue && (
           <div className="group relative flex min-h-11 h-full w-full items-center gap-3 px-1.5 py-1 transition-all hover:bg-custom-background-90">
             <span className="size-5 flex-shrink-0" />
-            <div className="flex w-full cursor-pointer items-center gap-3">
+            <div className="flex w-full truncate cursor-pointer items-center gap-3">
               <div
                 className="h-2 w-2 flex-shrink-0 rounded-full"
                 style={{
@@ -120,10 +120,16 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
               </div>
 
               <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
-                <span>{issue.name}</span>
+                <span className="w-full truncate text-sm text-custom-text-100">{issue.name}</span>
               </Tooltip>
             </div>
-            <div className="flex-shrink-0 text-sm">
+            <div
+              className="flex-shrink-0 text-sm"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+            >
               <RelationIssueProperty
                 workspaceSlug={workspaceSlug}
                 issueId={relationIssueId}

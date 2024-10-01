@@ -34,6 +34,7 @@ import {
   toggleHeadingFour,
   toggleHeadingFive,
   toggleHeadingSix,
+  insertImage,
 } from "@/helpers/editor-commands";
 // types
 import { CommandProps, ISlashCommandItem } from "@/types";
@@ -226,9 +227,7 @@ const getSuggestionItems =
         icon: <ImageIcon className="size-3.5" />,
         description: "Insert an image",
         searchTerms: ["img", "photo", "picture", "media", "upload"],
-        command: ({ editor, range }: CommandProps) => {
-          editor.chain().focus().deleteRange(range).setImageUpload({ event: "insert" }).run();
-        },
+        command: ({ editor, range }: CommandProps) => insertImage({ editor, event: "insert", range }),
       },
       {
         key: "divider",

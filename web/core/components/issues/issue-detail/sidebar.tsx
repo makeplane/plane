@@ -296,6 +296,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 issueTypeId={issue.type_id}
                 projectId={projectId}
                 workspaceSlug={workspaceSlug}
+                isDisabled={!isEditable}
               />
             )}
           </div>

@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/nextjs";
 import set from "lodash/set";
 // plane
 import { EIssueGroupBYServerToProperty } from "@plane/constants";
@@ -15,7 +16,7 @@ import { loadWorkSpaceData } from "./utils/load-workspace";
 import { issueFilterCountQueryConstructor, issueFilterQueryConstructor } from "./utils/query-constructor";
 import { runQuery } from "./utils/query-executor";
 import { createTables } from "./utils/tables";
-import { getGroupedIssueResults, getSubGroupedIssueResults } from "./utils/utils";
+import { getGroupedIssueResults, getSubGroupedIssueResults, log, logError, logInfo } from "./utils/utils";
 
 declare module "@sqlite.org/sqlite-wasm" {
   export function sqlite3Worker1Promiser(...args: any): any;
@@ -24,9 +25,6 @@ declare module "@sqlite.org/sqlite-wasm" {
 const DB_VERSION = 1;
 const PAGE_SIZE = 1000;
 const BATCH_SIZE = 200;
-const log = console.log;
-const error = console.error;
-const info = console.info;
 
 type TProjectStatus = {
   issues: { status: undefined | "loading" | "ready" | "error" | "syncing"; sync: Promise<void> | undefined };
@@ -57,6 +55,7 @@ export class Storage {
       const fileSystemDirectoryHandle = await storageManager.getDirectory();
       //@ts-expect-error , clear local issue cache
       await fileSystemDirectoryHandle.remove({ recursive: true });
+      this.reset();
     } catch (e) {
       console.error("Error clearing sqlite sync storage", e);
     }
@@ -69,10 +68,10 @@ export class Storage {
       this.reset();
     }
     try {
-      await this._initialize(workspaceSlug);
+      await Sentry.startSpan({ name: "INIT_DB" }, async () => await this._initialize(workspaceSlug));
       return true;
     } catch (err) {
-      error(err);
+      logError(err);
       this.status = "error";
       return false;
     }
@@ -92,7 +91,7 @@ export class Storage {
       return false;
     }
 
-    info("Loading and initializing SQLite3 module...");
+    logInfo("Loading and initializing SQLite3 module...");
 
     this.workspaceSlug = workspaceSlug;
     this.dbName = workspaceSlug;
@@ -141,7 +140,7 @@ export class Storage {
 
       await this.setOption("DB_VERSION", DB_VERSION.toString());
     } catch (err) {
-      error(err);
+      logError(err);
       throw err;
     }
 
@@ -150,7 +149,9 @@ export class Storage {
 
   syncWorkspace = async () => {
     if (document.hidden || !rootStore.user.localDBEnabled) return; // return if the window gets hidden
-    loadWorkSpaceData(this.workspaceSlug);
+    await Sentry.startSpan({ name: "LOAD_WS", attributes: { slug: this.workspaceSlug } }, async () => {
+      await loadWorkSpaceData(this.workspaceSlug);
+    });
   };
 
   syncProject = async (projectId: string) => {
@@ -175,19 +176,22 @@ export class Storage {
     if (document.hidden || !rootStore.user.localDBEnabled) return false; // return if the window gets hidden
 
     try {
-      const sync = this._syncIssues(projectId);
+      const sync = Sentry.startSpan({ name: `SYNC_ISSUES` }, () => this._syncIssues(projectId));
       this.setSync(projectId, sync);
       await sync;
     } catch (e) {
+      logError(e);
       this.setStatus(projectId, "error");
     }
   };
 
   _syncIssues = async (projectId: string) => {
-    console.log("### Sync started");
+    const activeSpan = Sentry.getActiveSpan();
+
+    log("### Sync started");
     let status = this.getStatus(projectId);
     if (status === "loading" || status === "syncing") {
-      info(`Project ${projectId} is already loading or syncing`);
+      logInfo(`Project ${projectId} is already loading or syncing`);
       return;
     }
     const syncPromise = this.getSync(projectId);
@@ -235,7 +239,7 @@ export class Storage {
     if (syncedAt) {
       await syncDeletesToLocal(this.workspaceSlug, projectId, { updated_at__gt: syncedAt });
     }
-    console.log("### Time taken to add issues", performance.now() - start);
+    log("### Time taken to add issues", performance.now() - start);
 
     if (status === "loading") {
       await createIndexes();
@@ -243,6 +247,11 @@ export class Storage {
     this.setOption(projectId, "ready");
     this.setStatus(projectId, "ready");
     this.setSync(projectId, undefined);
+
+    activeSpan?.setAttributes({
+      projectId: projectId,
+      count: response.total_count,
+    });
   };
 
   getIssueCount = async (projectId: string) => {
@@ -252,7 +261,7 @@ export class Storage {
 
   getLastUpdatedIssue = async (projectId: string) => {
     const lastUpdatedIssue = await runQuery(
-      `select id, name, updated_at , sequence_id from issues where project_id='${projectId}' order by datetime(updated_at) desc limit 1`
+      `select id, name, updated_at , sequence_id from issues WHERE project_id='${projectId}' AND is_local_update IS NULL order by datetime(updated_at) desc limit 1 `
     );
 
     if (lastUpdatedIssue.length) {
@@ -270,7 +279,7 @@ export class Storage {
   };
 
   getIssues = async (workspaceSlug: string, projectId: string, queries: any, config: any) => {
-    console.log("#### Queries", queries);
+    log("#### Queries", queries);
 
     const currentProjectStatus = this.getStatus(projectId);
     if (
@@ -280,7 +289,9 @@ export class Storage {
       currentProjectStatus === "error" ||
       !rootStore.user.localDBEnabled
     ) {
-      info(`Project ${projectId} is loading, falling back to server`);
+      if (rootStore.user.localDBEnabled) {
+        logInfo(`Project ${projectId} is loading, falling back to server`);
+      }
       const issueService = new IssueService();
       return await issueService.getIssuesFromServer(workspaceSlug, projectId, queries);
     }
@@ -290,7 +301,15 @@ export class Storage {
     const query = issueFilterQueryConstructor(this.workspaceSlug, projectId, queries);
     const countQuery = issueFilterCountQueryConstructor(this.workspaceSlug, projectId, queries);
     const start = performance.now();
-    const [issuesRaw, count] = await Promise.all([runQuery(query), runQuery(countQuery)]);
+    let issuesRaw: any[] = [];
+    let count: any[];
+    try {
+      [issuesRaw, count] = await Promise.all([runQuery(query), runQuery(countQuery)]);
+    } catch (e) {
+      logError(e);
+      const issueService = new IssueService();
+      return await issueService.getIssuesFromServer(workspaceSlug, projectId, queries);
+    }
     // const issuesRaw = await runQuery(query);
     const end = performance.now();
 
@@ -307,7 +326,7 @@ export class Storage {
     const parsingStart = performance.now();
     let issueResults = issuesRaw.map((issue: any) => formatLocalIssue(issue));
 
-    console.log("#### Issue Results", issueResults.length);
+    log("#### Issue Results", issueResults.length);
 
     const parsingEnd = performance.now();
 
@@ -319,6 +338,8 @@ export class Storage {
         issueResults = getGroupedIssueResults(issueResults);
       }
     }
+    const groupCount = group_by ? Object.keys(issueResults).length : undefined;
+    // const subGroupCount = sub_group_by ? Object.keys(issueResults[Object.keys(issueResults)[0]]).length : undefined;
     const groupingEnd = performance.now();
 
     const times = {
@@ -326,9 +347,10 @@ export class Storage {
       Parsing: parsingEnd - parsingStart,
       Grouping: groupingEnd - grouping,
     };
-    console.log(issueResults);
-    console.table(times);
-
+    log(issueResults);
+    if ((window as any).DEBUG) {
+      console.table(times);
+    }
     const total_pages = Math.ceil(total_count / Number(pageSize));
     const next_page_results = total_pages > parseInt(page) + 1;
 
@@ -342,6 +364,17 @@ export class Storage {
       total_pages,
     };
 
+    const activeSpan = Sentry.getActiveSpan();
+    activeSpan?.setAttributes({
+      projectId,
+      count: total_count,
+      groupBy: group_by,
+      subGroupBy: sub_group_by,
+      queries: queries,
+      local: true,
+      groupCount,
+      // subGroupCount,
+    });
     return out;
   };
 
@@ -354,6 +387,7 @@ export class Storage {
         return formatLocalIssue(issues[0]);
       }
     } catch (err) {
+      logError(err);
       console.warn("unable to fetch issue from local db");
     }
 
@@ -416,5 +450,5 @@ export const formatLocalIssue = (issue: any) => {
   ARRAY_FIELDS.forEach((field: string) => {
     currIssue[field] = currIssue[field] ? JSON.parse(currIssue[field]) : [];
   });
-  return currIssue as TIssue;
+  return currIssue as TIssue & { group_id?: string; total_issues: number; sub_group_id?: string };
 };
