@@ -42,6 +42,7 @@ type CustomImageBlockProps = CustomImageNodeViewProps & {
   setFailedToLoadImage: (isError: boolean) => void;
   editorContainer: HTMLDivElement | null;
   setEditorContainer: (editorContainer: HTMLDivElement | null) => void;
+  imageBeingUploadedByOtherUser: boolean;
 };
 
 export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
@@ -56,6 +57,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
     editor,
     editorContainer,
     setEditorContainer,
+    imageBeingUploadedByOtherUser,
   } = props;
   const { src: remoteImageSrc, width, height, aspectRatio } = node.attrs;
   // states
@@ -186,6 +188,18 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
   const showImageUtils = editor.isEditable && remoteImageSrc && initialResizeComplete;
   // show the preview image from the file system if the remote image's src is not set
   const displayedImageSrc = remoteImageSrc ?? imageFromFileSystem;
+
+  // if someone else is uploading the image, we show the loader with the same size as the image from the initially loaded attrs
+  if (imageBeingUploadedByOtherUser) {
+    return (
+      <div className="group/image-component relative inline-block max-w-full">
+        <div
+          className="animate-pulse bg-custom-background-80 rounded-md"
+          style={{ width: size.width, height: size.height }}
+        />
+      </div>
+    );
+  }
 
   return (
     <div

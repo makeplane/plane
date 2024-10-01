@@ -23,6 +23,7 @@ export const CustomImageNode = (props: CustomImageNodeViewProps) => {
 
   const [editorContainer, setEditorContainer] = useState<HTMLDivElement | null>(null);
   const imageComponentRef = useRef<HTMLDivElement>(null);
+  const [imageBeingUploadedByOtherUser, setImageBeingUploadedByOtherUser] = useState(false);
 
   useEffect(() => {
     const closestEditorContainer = imageComponentRef.current?.closest(".editor-container");
@@ -44,13 +45,22 @@ export const CustomImageNode = (props: CustomImageNodeViewProps) => {
     } else {
       setIsUploaded(false);
     }
-  }, [node.attrs.src]);
+
+    const nodeWidth = node.attrs.width;
+
+    if (nodeWidth && nodeWidth !== "35%" && !imageFromFileSystem && remoteImageSrc === null) {
+      setImageBeingUploadedByOtherUser(true);
+    } else {
+      setImageBeingUploadedByOtherUser(false);
+    }
+  }, [node.attrs.src, node.attrs.width, node.attrs.height, node.attrs.aspectRatio]);
 
   return (
     <NodeViewWrapper>
       <div className="p-0 mx-0 my-2" data-drag-handle ref={imageComponentRef}>
-        {(isUploaded || imageFromFileSystem) && !failedToLoadImage ? (
+        {((isUploaded || imageFromFileSystem) && !failedToLoadImage) || imageBeingUploadedByOtherUser ? (
           <CustomImageBlock
+            imageBeingUploadedByOtherUser={imageBeingUploadedByOtherUser}
             imageFromFileSystem={imageFromFileSystem}
             editorContainer={editorContainer}
             editor={editor}
