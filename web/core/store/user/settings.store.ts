@@ -1,5 +1,9 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { IUserSettings } from "@plane/types";
+// hooks
+import { getValueFromLocalStorage, setValueIntoLocalStorage } from "@/hooks/use-local-storage";
+// local
+import { persistence } from "@/local-db/storage.sqlite";
 // services
 import { UserService } from "@/services/user.service";
 
@@ -8,13 +12,17 @@ type TError = {
   message: string;
 };
 
+const LOCAL_DB_ENABLED = "LOCAL_DB_ENABLED";
+
 export interface IUserSettingsStore {
   // observables
   isLoading: boolean;
   error: TError | undefined;
   data: IUserSettings;
+  canUseLocalDB: boolean;
   // actions
   fetchCurrentUserSettings: () => Promise<IUserSettings | undefined>;
+  toggleLocalDB: (workspaceSlug: string | undefined, projectId: string | undefined) => Promise<void>;
 }
 
 export class UserSettingsStore implements IUserSettingsStore {
@@ -32,6 +40,7 @@ export class UserSettingsStore implements IUserSettingsStore {
       invites: undefined,
     },
   };
+  canUseLocalDB: boolean = getValueFromLocalStorage(LOCAL_DB_ENABLED, true);
   // services
   userService: UserService;
 
@@ -41,12 +50,42 @@ export class UserSettingsStore implements IUserSettingsStore {
       isLoading: observable.ref,
       error: observable,
       data: observable,
+      canUseLocalDB: observable.ref,
       // actions
       fetchCurrentUserSettings: action,
+      toggleLocalDB: action,
     });
     // services
     this.userService = new UserService();
   }
+
+  toggleLocalDB = async (workspaceSlug: string | undefined, projectId: string | undefined) => {
+    const currentLocalDBValue = this.canUseLocalDB;
+    try {
+      runInAction(() => {
+        this.canUseLocalDB = !currentLocalDBValue;
+      });
+
+      const transactionResult = setValueIntoLocalStorage(LOCAL_DB_ENABLED, !currentLocalDBValue);
+
+      if (!transactionResult) {
+        throw new Error("error while toggling local DB");
+      }
+
+      if (currentLocalDBValue) {
+        await persistence.clearStorage();
+      } else if (workspaceSlug) {
+        await persistence.initialize(workspaceSlug);
+        persistence.syncWorkspace();
+        projectId && persistence.syncIssues(projectId);
+      }
+    } catch (e) {
+      console.warn("error while toggling local DB");
+      runInAction(() => {
+        this.canUseLocalDB = currentLocalDBValue;
+      });
+    }
+  };
 
   // actions
   /**

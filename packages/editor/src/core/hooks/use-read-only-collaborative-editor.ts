@@ -1,7 +1,9 @@
-import { useEffect, useLayoutEffect, useMemo } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import Collaboration from "@tiptap/extension-collaboration";
 import { IndexeddbPersistence } from "y-indexeddb";
+// extensions
+import { HeadingListExtension } from "@/extensions";
 // hooks
 import { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
 // types
@@ -20,6 +22,9 @@ export const useReadOnlyCollaborativeEditor = (props: TReadOnlyCollaborativeEdit
     serverHandler,
     user,
   } = props;
+  // states
+  const [hasServerConnectionFailed, setHasServerConnectionFailed] = useState(false);
+  const [hasServerSynced, setHasServerSynced] = useState(false);
   // initialize Hocuspocus provider
   const provider = useMemo(
     () =>
@@ -28,13 +33,18 @@ export const useReadOnlyCollaborativeEditor = (props: TReadOnlyCollaborativeEdit
         name: id,
         token: user.id,
         parameters: realtimeConfig.queryParams,
+        onAuthenticationFailed: () => {
+          serverHandler?.onServerError?.();
+          setHasServerConnectionFailed(true);
+        },
         onConnect: () => serverHandler?.onConnect?.(),
         onClose: (data) => {
-          if (data.event.code === 1006) serverHandler?.onServerError?.();
+          if (data.event.code === 1006) {
+            serverHandler?.onServerError?.();
+            setHasServerConnectionFailed(true);
+          }
         },
-        onSynced: () => {
-          serverHandler?.onSynced?.();
-        },
+        onSynced: () => setHasServerSynced(true),
       }),
     [id, realtimeConfig, serverHandler, user.id]
   );
@@ -60,6 +70,7 @@ export const useReadOnlyCollaborativeEditor = (props: TReadOnlyCollaborativeEdit
     editorClassName,
     extensions: [
       ...(extensions ?? []),
+      HeadingListExtension,
       Collaboration.configure({
         document: provider.document,
       }),
@@ -70,5 +81,9 @@ export const useReadOnlyCollaborativeEditor = (props: TReadOnlyCollaborativeEdit
     provider,
   });
 
-  return { editor, isIndexedDbSynced: true };
+  return {
+    editor,
+    hasServerConnectionFailed,
+    hasServerSynced,
+  };
 };

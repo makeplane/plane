@@ -1,4 +1,4 @@
-import { Extension } from "@tiptap/core";
+import { Extension, Editor } from "@tiptap/core";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 import { EditorView } from "@tiptap/pm/view";
 
@@ -8,6 +8,7 @@ export const DropHandlerExtension = () =>
     priority: 1000,
 
     addProseMirrorPlugins() {
+      const editor = this.editor;
       return [
         new Plugin({
           key: new PluginKey("drop-handler-plugin"),
@@ -20,15 +21,9 @@ export const DropHandlerExtension = () =>
 
                 if (imageFiles.length > 0) {
                   const pos = view.state.selection.from;
-                  imageFiles.forEach((file, index) => {
-                    this.editor
-                      .chain()
-                      .focus()
-                      .setImageUpload({ file, pos: pos + index, event: "drop" })
-                      .run();
-                  });
-                  return true;
+                  insertImages({ editor, files: imageFiles, initialPos: pos, event: "drop" });
                 }
+                return true;
               }
               return false;
             },
@@ -45,15 +40,8 @@ export const DropHandlerExtension = () =>
                   });
 
                   if (coordinates) {
-                    imageFiles.forEach((file, index) => {
-                      setTimeout(() => {
-                        this.editor
-                          .chain()
-                          .focus()
-                          .setImageUpload({ file, pos: coordinates.pos + index, event: "drop" })
-                          .run();
-                      }, index * 100); // Slight delay between insertions
-                    });
+                    const pos = coordinates.pos;
+                    insertImages({ editor, files: imageFiles, initialPos: pos, event: "drop" });
                   }
                   return true;
                 }
@@ -65,3 +53,40 @@ export const DropHandlerExtension = () =>
       ];
     },
   });
+
+const insertImages = async ({
+  editor,
+  files,
+  initialPos,
+  event,
+}: {
+  editor: Editor;
+  files: File[];
+  initialPos: number;
+  event: "insert" | "drop";
+}) => {
+  let pos = initialPos;
+
+  for (const file of files) {
+    // safe insertion
+    const docSize = editor.state.doc.content.size;
+    pos = Math.min(pos, docSize);
+
+    // Check if the position has a non-empty node
+    const nodeAtPos = editor.state.doc.nodeAt(pos);
+    if (nodeAtPos && nodeAtPos.content.size > 0) {
+      // Move to the end of the current node
+      pos += nodeAtPos.nodeSize;
+    }
+
+    try {
+      // Insert the image at the current position
+      editor.commands.insertImageComponent({ file, pos, event });
+    } catch (error) {
+      console.error(`Error while ${event}ing image:`, error);
+    }
+
+    // Move to the next position
+    pos += 1;
+  }
+};

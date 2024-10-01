@@ -268,6 +268,20 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
   };
 
   /**
+   * This Method returns true if the display properties changed requires a server side update
+   * @param displayFilters
+   * @returns
+   */
+  getShouldClearIssues = (displayFilters: IIssueDisplayFilterOptions) => {
+    const NON_SERVER_DISPLAY_FILTERS = ["layout"];
+    const displayFilterKeys = Object.keys(displayFilters);
+
+    return NON_SERVER_DISPLAY_FILTERS.some((serverDisplayfilter: string) =>
+      displayFilterKeys.includes(serverDisplayfilter)
+    );
+  };
+
+  /**
    * This Method is used to construct the url params along with paginated values
    * @param filterParams params generated from filters
    * @param options pagination options

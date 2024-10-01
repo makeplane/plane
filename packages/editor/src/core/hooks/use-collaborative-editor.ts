@@ -1,9 +1,9 @@
-import { useEffect, useLayoutEffect, useMemo } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import Collaboration from "@tiptap/extension-collaboration";
 import { IndexeddbPersistence } from "y-indexeddb";
 // extensions
-import { SideMenuExtension } from "@/extensions";
+import { HeadingListExtension, SideMenuExtension } from "@/extensions";
 // hooks
 import { useEditor } from "@/hooks/use-editor";
 // plane editor extensions
@@ -29,6 +29,9 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     tabIndex,
     user,
   } = props;
+  // states
+  const [hasServerConnectionFailed, setHasServerConnectionFailed] = useState(false);
+  const [hasServerSynced, setHasServerSynced] = useState(false);
   // initialize Hocuspocus provider
   const provider = useMemo(
     () =>
@@ -38,14 +41,18 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
         // using user id as a token to verify the user on the server
         token: user.id,
         url: realtimeConfig.url,
-        onAuthenticationFailed: () => serverHandler?.onServerError?.(),
+        onAuthenticationFailed: () => {
+          serverHandler?.onServerError?.();
+          setHasServerConnectionFailed(true);
+        },
         onConnect: () => serverHandler?.onConnect?.(),
         onClose: (data) => {
-          if (data.event.code === 1006) serverHandler?.onServerError?.();
+          if (data.event.code === 1006) {
+            serverHandler?.onServerError?.();
+            setHasServerConnectionFailed(true);
+          }
         },
-        onSynced: () => {
-          serverHandler?.onSynced?.();
-        },
+        onSynced: () => setHasServerSynced(true),
       }),
     [id, realtimeConfig, serverHandler, user.id]
   );
@@ -76,6 +83,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
         aiEnabled: !disabledExtensions?.includes("ai"),
         dragDropEnabled: true,
       }),
+      HeadingListExtension,
       Collaboration.configure({
         document: provider.document,
       }),
@@ -96,5 +104,9 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     tabIndex,
   });
 
-  return { editor };
+  return {
+    editor,
+    hasServerConnectionFailed,
+    hasServerSynced,
+  };
 };

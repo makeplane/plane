@@ -30,6 +30,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     withDraftIssueWrapper = true,
     storeType: issueStoreFromProps,
     isDraft = false,
+    fetchIssueDetails = true,
   } = props;
   const issueStoreType = useIssueStoreType();
 
@@ -68,7 +69,8 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     setDescription(undefined);
     if (!workspaceSlug) return;
 
-    if (!projectId || issueId === undefined) {
+    if (!projectId || issueId === undefined || !fetchIssueDetails) {
+    // Set description to the issue description from the props if available
       setDescription(data?.description_html || "<p></p>");
       return;
     }
