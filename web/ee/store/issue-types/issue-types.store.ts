@@ -12,7 +12,7 @@ import {
   IssueTypesService,
 } from "@/plane-web/services/issue-types";
 // plane web stores
-import { IIssueType, IssueType } from "@/plane-web/store/issue-types";
+import { IIssueProperty, IIssueType, IssueType } from "@/plane-web/store/issue-types";
 import { RootStore } from "@/plane-web/store/root.store";
 // plane web types
 import { EIssuePropertyType, TIssueProperty, TIssuePropertyOptionsPayload, TIssueType } from "@/plane-web/types";
@@ -34,11 +34,12 @@ export interface IIssueTypesStore {
   data: Record<string, IIssueType>; // issue type id -> issue type
   // computed functions
   getIssueTypeById: (issueTypeId: string) => IIssueType | undefined;
+  getIssuePropertyById: (issuePropertyId: string) => IIssueProperty<EIssuePropertyType> | undefined;
   getProjectIssuePropertiesLoader: (projectId: string) => TLoader;
   getProjectIssueTypeIds: (projectId: string) => string[];
   getProjectIssueTypes: (projectId: string, activeOnly: boolean) => Record<string, IIssueType>; // issue type id -> issue type
   getProjectDefaultIssueType: (projectId: string) => IIssueType | undefined;
-  getIssueTypeProperties: (issueTypeId: string) => TIssueProperty<EIssuePropertyType>[];
+  getIssueTypeProperties: (issueTypeId: string) => IIssueProperty<EIssuePropertyType>[];
   isIssueTypeEnabledForProject: (
     workspaceSlug: string,
     projectId: string,
@@ -94,6 +95,18 @@ export class IssueTypes implements IIssueTypesStore {
    * @returns {IIssueType | undefined}
    */
   getIssueTypeById = computedFn((issueTypeId: string) => this.data[issueTypeId]);
+
+  /**
+   * @description Get issue property by issue property id (from all issue types)
+   * @param issuePropertyId
+   * @returns {IIssueProperty<EIssuePropertyType> | undefined}
+   */
+  getIssuePropertyById = computedFn((issuePropertyId: string) =>
+    Object.keys(this.data)
+      .filter(Boolean)
+      .flatMap((issueTypeId) => this.getIssueTypeProperties(issueTypeId))
+      .find((property) => property.id === issuePropertyId)
+  );
 
   /**
    * @description Get project issue type loader

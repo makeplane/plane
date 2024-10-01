@@ -3,16 +3,16 @@ import { observer } from "mobx-react";
 // plane web components
 import { TIssueAdditionalPropertiesActivityItem } from "@/plane-web/components/issues";
 // plane web hooks
-import { useIssuePropertiesActivity, useIssueProperty } from "@/plane-web/hooks/store";
+import { useIssuePropertiesActivity, useIssueTypes } from "@/plane-web/hooks/store";
 
 export const IssueDropdownPropertyActivity: FC<TIssueAdditionalPropertiesActivityItem> = observer((props) => {
-  const { activityId, issueTypeId, issuePropertyId } = props;
+  const { activityId, issuePropertyId } = props;
   // plane web hooks
+  const { getIssuePropertyById } = useIssueTypes();
   const { getPropertyActivityById } = useIssuePropertiesActivity();
-  const issueProperty = useIssueProperty(issueTypeId, issuePropertyId);
   // derived values
   const activityDetail = getPropertyActivityById(activityId);
-  const propertyDetail = useIssueProperty(issueTypeId, issuePropertyId);
+  const propertyDetail = getIssuePropertyById(issuePropertyId);
   const propertyName = propertyDetail?.display_name;
 
   if (!activityDetail) return <></>;
@@ -22,7 +22,7 @@ export const IssueDropdownPropertyActivity: FC<TIssueAdditionalPropertiesActivit
         <>
           selected{" "}
           <span className="font-medium text-custom-text-100">
-            {issueProperty?.getPropertyOptionById(activityDetail?.new_value)?.name}
+            {propertyDetail?.getPropertyOptionById(activityDetail?.new_value)?.name}
           </span>{" "}
           as value(s) for <span className="font-medium text-custom-text-100">{propertyName}</span>.
         </>
@@ -32,7 +32,7 @@ export const IssueDropdownPropertyActivity: FC<TIssueAdditionalPropertiesActivit
           <>
             deselected{" "}
             <span className="font-medium text-custom-text-100">
-              {issueProperty?.getPropertyOptionById(activityDetail?.old_value)?.name}
+              {propertyDetail?.getPropertyOptionById(activityDetail?.old_value)?.name}
             </span>{" "}
             from the previous selection in <span className="font-medium text-custom-text-100">{propertyName}</span>.
           </>
@@ -42,11 +42,11 @@ export const IssueDropdownPropertyActivity: FC<TIssueAdditionalPropertiesActivit
         <>
           changed{" "}
           <span className="font-medium text-custom-text-100">
-            {issueProperty?.getPropertyOptionById(activityDetail?.old_value)?.name}
+            {propertyDetail?.getPropertyOptionById(activityDetail?.old_value)?.name}
           </span>{" "}
           to{" "}
           <span className="font-medium text-custom-text-100">
-            {issueProperty?.getPropertyOptionById(activityDetail?.new_value)?.name}
+            {propertyDetail?.getPropertyOptionById(activityDetail?.new_value)?.name}
           </span>{" "}
           in <span className="font-medium text-custom-text-100">{propertyName}</span>.
         </>

@@ -2,7 +2,14 @@
 
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
+import useSWR from "swr";
+// ui
 import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
+// ce components
+import {
+  IssueAdditionalPropertyValuesUpdate as CEIssueAdditionalPropertyValuesUpdate,
+  TIssueAdditionalPropertyValuesUpdateProps,
+} from "@/ce/components/issue-types";
 // plane web components
 import { IssueAdditionalPropertyValues } from "@/plane-web/components/issue-types";
 // plane web hooks
@@ -12,21 +19,13 @@ import { IssuePropertyValuesService } from "@/plane-web/services/issue-types";
 // plane web types
 import { TIssuePropertyValues } from "@/plane-web/types";
 
-type TIssueAdditionalPropertyValuesUpdateProps = {
-  issueId: string;
-  issueTypeId: string;
-  projectId: string;
-  workspaceSlug: string;
-};
-
 const issuePropertyValuesService = new IssuePropertyValuesService();
 
 export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPropertyValuesUpdateProps> = observer(
   (props) => {
-    const { issueId, issueTypeId, projectId, workspaceSlug } = props;
+    const { issueId, issueTypeId, projectId, workspaceSlug, isDisabled } = props;
     // states
     const [issuePropertyValues, setIssuePropertyValues] = React.useState<TIssuePropertyValues>({});
-    const [isLoading, setIsLoading] = React.useState<boolean>(false);
     // store hooks
     const { isIssueTypeEnabledForProject, getProjectIssuePropertiesLoader, fetchAllPropertiesAndOptions } =
       useIssueTypes();
@@ -41,24 +40,26 @@ export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPrope
     const issueTypeDetails = issueType?.asJSON;
     const activeProperties = issueType?.activeProperties;
     const issuePropertiesLoader = getProjectIssuePropertiesLoader(projectId);
-
-    // fetch issue custom property values
-    useEffect(() => {
-      async function fetchIssuePropertyValues() {
-        setIsLoading(true);
-        // This is required when accessing the peek overview from workspace level.
-        await fetchAllPropertiesAndOptions(workspaceSlug, projectId);
-        await issuePropertyValuesService
-          .fetchAll(workspaceSlug, projectId, issueId)
-          .then((data) => {
-            setIssuePropertyValues(data);
-          })
-          .finally(() => {
-            setIsLoading(false);
-          });
+    // fetch methods
+    async function fetchIssuePropertyValues() {
+      // This is required when accessing the peek overview from workspace level.
+      await fetchAllPropertiesAndOptions(workspaceSlug, projectId);
+      return issuePropertyValuesService.fetchAll(workspaceSlug, projectId, issueId);
+    }
+    // fetch issue property values
+    const { data, isLoading } = useSWR(
+      workspaceSlug && projectId && issueId && isIssueTypeDisplayEnabled
+        ? `ISSUE_PROPERTY_VALUES_${workspaceSlug}_${projectId}_${issueId}_${isIssueTypeDisplayEnabled}`
+        : null,
+      () => (workspaceSlug && projectId && issueId && isIssueTypeDisplayEnabled ? fetchIssuePropertyValues() : null),
+      {
+        revalidateOnFocus: false,
       }
-      if (isIssueTypeDisplayEnabled) fetchIssuePropertyValues();
-    }, [fetchAllPropertiesAndOptions, isIssueTypeDisplayEnabled, issueId, projectId, workspaceSlug]);
+    );
+
+    useEffect(() => {
+      if (data) setIssuePropertyValues(data);
+    }, [data]);
 
     const handlePropertyValueChange = async (propertyId: string, value: string[]) => {
       const beforeUpdateValue = issuePropertyValues[propertyId];
@@ -85,7 +86,7 @@ export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPrope
     };
 
     // if issue types are not enabled, return null
-    if (!isIssueTypeDisplayEnabled) return null;
+    if (!isIssueTypeDisplayEnabled) return <CEIssueAdditionalPropertyValuesUpdate {...props} />;
 
     if (issuePropertiesLoader === "init-loader") {
       return (
@@ -109,6 +110,7 @@ export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPrope
         variant="update"
         isPropertyValuesLoading={isLoading}
         handlePropertyValueChange={handlePropertyValueChange}
+        isDisabled={isDisabled}
       />
     );
   }

@@ -13,6 +13,7 @@ type TIssueAdditionalPropertyValuesProps = {
   issuePropertyValueErrors?: TIssuePropertyValueErrors;
   projectId: string;
   variant: TPropertyValueVariant;
+  isDisabled?: boolean;
   isPropertyValuesLoading?: boolean;
   handlePropertyValueChange: (propertyId: string, value: string[]) => void;
 };
@@ -26,6 +27,7 @@ export const IssueAdditionalPropertyValues: React.FC<TIssueAdditionalPropertyVal
     variant,
     isPropertyValuesLoading = false,
     handlePropertyValueChange,
+    isDisabled = false,
   } = props;
   // store hooks
   const issueType = useIssueType(issueTypeId);
@@ -52,6 +54,7 @@ export const IssueAdditionalPropertyValues: React.FC<TIssueAdditionalPropertyVal
                 projectId={projectId}
                 variant={variant}
                 isPropertyValuesLoading={isPropertyValuesLoading}
+                isDisabled={isDisabled}
                 onPropertyValueChange={async (value) => onPropertyValueChange(property.id, value)}
               />
             </div>

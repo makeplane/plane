@@ -11,23 +11,23 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { IssuePropertyLogo } from "@/plane-web/components/issue-types";
 import { IssueUser } from "@/plane-web/components/issues";
 // plane web hooks
-import { useIssuePropertiesActivity, useIssueProperty } from "@/plane-web/hooks/store";
+import { useIssuePropertiesActivity, useIssueTypes } from "@/plane-web/hooks/store";
 
 type TIssueActivityBlockComponent = {
   activityId: string;
-  issueTypeId: string;
   propertyId: string;
   ends: "top" | "bottom" | undefined;
   children: ReactNode;
 };
 
 export const IssueActivityBlockComponent: FC<TIssueActivityBlockComponent> = (props) => {
-  const { activityId, issueTypeId, propertyId, ends, children } = props;
+  const { activityId, propertyId, ends, children } = props;
   // hooks
   const { isMobile } = usePlatformOS();
   // plane web hooks
+  const { getIssuePropertyById } = useIssueTypes();
   const { getPropertyActivityById } = useIssuePropertiesActivity();
-  const propertyDetail = useIssueProperty(issueTypeId, propertyId);
+  const propertyDetail = getIssuePropertyById(propertyId);
   // derived values
   const activityDetail = getPropertyActivityById(activityId);
   if (!activityDetail) return <></>;

@@ -22,6 +22,7 @@ type TTextValueInputProps = {
   readOnlyData?: string;
   error?: EIssuePropertyValueError;
   className?: string;
+  isDisabled?: boolean;
   onTextValueChange: (value: string[]) => void;
 };
 
@@ -34,6 +35,7 @@ export const TextValueInput = observer((props: TTextValueInputProps) => {
     readOnlyData,
     error,
     className = "",
+    isDisabled = false,
     onTextValueChange,
   } = props;
   // states
@@ -58,6 +60,7 @@ export const TextValueInput = observer((props: TTextValueInputProps) => {
     {
       "border-[0.5px]": variant === "create",
       "border-[1px] bg-custom-background-90": variant === "update",
+      "cursor-not-allowed": isDisabled,
     },
     className
   );
@@ -91,6 +94,7 @@ export const TextValueInput = observer((props: TTextValueInputProps) => {
             }}
             placeholder="Add text"
             hasError={Boolean(error)}
+            disabled={isDisabled}
           />
           {Boolean(error) && (
             <span className="text-xs font-medium text-red-500">
@@ -121,6 +125,7 @@ export const TextValueInput = observer((props: TTextValueInputProps) => {
             }}
             placeholder="Describe..."
             hasError={Boolean(error)}
+            disabled={isDisabled}
           />
           {Boolean(error) && (
             <span className="text-xs font-medium text-red-500">
@@ -139,6 +144,7 @@ export const TextValueInput = observer((props: TTextValueInputProps) => {
             "bg-custom-background-80 text-custom-text-100 border-custom-border-400 cursor-default"
           )}
           readOnly
+          disabled={isDisabled}
         />
       );
   }

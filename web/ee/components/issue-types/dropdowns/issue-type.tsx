@@ -18,18 +18,16 @@ export const IssueTypeDropdown = observer((props: TIssueTypeDropdownProps) => {
   // store hooks
   const { loader: issueTypesLoader, getProjectIssueTypes } = useIssueTypes();
   // derived values
-  const issueTypes = getProjectIssueTypes(projectId, true);
+  const allIssueTypes = getProjectIssueTypes(projectId, false);
+  const activeIssueTypes = getProjectIssueTypes(projectId, true);
 
   // Can be used with CustomSearchSelect as well
-  const issueTypeOptions = Object.entries(issueTypes).map(([issueTypeId, issueTypeDetail]) => ({
+  const issueTypeOptions = Object.entries(activeIssueTypes).map(([issueTypeId, issueTypeDetail]) => ({
     value: issueTypeId,
     query: issueTypeDetail.name ?? "",
     content: (
       <div className="flex w-full gap-2 items-center">
-        <IssueTypeLogo
-          icon_props={issueTypeDetail?.logo_props?.icon}
-          isDefault={issueTypeDetail?.is_default}
-        />
+        <IssueTypeLogo icon_props={issueTypeDetail?.logo_props?.icon} isDefault={issueTypeDetail?.is_default} />
         <div className="text-sm font-medium text-custom-text-200 truncate">{issueTypeDetail.name}</div>
       </div>
     ),
@@ -49,10 +47,10 @@ export const IssueTypeDropdown = observer((props: TIssueTypeDropdownProps) => {
       label={
         <div className="flex w-full gap-2 items-center max-w-44">
           <IssueTypeLogo
-            icon_props={issueTypes[issueTypeId]?.logo_props?.icon}
-            isDefault={issueTypes[issueTypeId]?.is_default}
+            icon_props={allIssueTypes[issueTypeId]?.logo_props?.icon}
+            isDefault={allIssueTypes[issueTypeId]?.is_default}
           />
-          <div className="text-sm font-medium text-custom-text-200 truncate">{issueTypes[issueTypeId]?.name}</div>
+          <div className="text-sm font-medium text-custom-text-200 truncate">{allIssueTypes[issueTypeId]?.name}</div>
         </div>
       }
       options={issueTypeOptions}

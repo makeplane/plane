@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // ui
 import { ToggleSwitch } from "@plane/ui";
+// helpers
+import { cn } from "@/helpers/common.helper";
 
 type TBooleanInputProps = {
   value: string[];
@@ -23,5 +25,14 @@ export const BooleanInput = observer((props: TBooleanInputProps) => {
     setData(value);
   }, [value]);
 
-  return <ToggleSwitch value={data?.[0] === "true"} onChange={(value) => handleChange(value)} disabled={isDisabled} />;
+  return (
+    <ToggleSwitch
+      value={data?.[0] === "true"}
+      onChange={(value) => handleChange(value)}
+      disabled={isDisabled}
+      className={cn({
+        "cursor-not-allowed": isDisabled,
+      })}
+    />
+  );
 });
