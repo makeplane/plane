@@ -88,12 +88,12 @@ urlpatterns = [
         name="page-asset",
     ),
     path(
-        "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/comments/<uuid:comment_id>/",
+        "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/",
         IssueAssetEndpoint.as_view(),
         name="issue-attachment",
     ),
     path(
-        "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/comments/<uuid:comment_id>/<uuid:pk>/",
+        "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/<uuid:pk>/",
         IssueAssetEndpoint.as_view(),
         name="issue-attachment",
     ),
