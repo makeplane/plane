@@ -2,7 +2,6 @@ import { action, makeObservable, runInAction } from "mobx";
 // base class
 import {
   IssuePaginationOptions,
-  TBulkOperationsPayload,
   TIssue,
   TIssuesResponse,
   TLoader,
@@ -12,7 +11,6 @@ import {
 import { WorkspaceService } from "@/plane-web/services";
 import { IBaseIssuesStore, BaseIssuesStore } from "./issue/helpers/base-issues.store";
 import { IIssueRootStore } from "./issue/root.store";
-import { IWorkspaceIssuesFilter } from "./issue/workspace";
 import { IWorkspaceDraftsFilter } from "./workspace-draft_filter.store";
 // types
 
@@ -22,26 +20,20 @@ export interface IWorkspaceDrafts extends IBaseIssuesStore {
   // actions
   fetchIssues: (
     workspaceSlug: string,
-    viewId: string,
     loadType: TLoader,
-    options: IssuePaginationOptions//can i just use this as it is or do i need to implement a separate one
-  ) => Promise<TIssuesResponse | undefined>; //the TIssuesResponse expects TBaseIssue
+    options: IssuePaginationOptions
+  ) => Promise<TIssuesResponse | undefined>;
   fetchIssuesWithExistingPagination: (
     workspaceSlug: string,
-    viewId: string,
     loadType: TLoader
-  ) => Promise<TIssuesResponse | undefined>;//this again expects TBaseIssue
+  ) => Promise<TIssuesResponse | undefined>;
   fetchNextIssues: (
     workspaceSlug: string,
     viewId: string,
     groupId?: string,
-    subGroupId?: string
-  ) => Promise<TIssuesResponse | undefined>;//this again expects TBaseIssue
-
-  // createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<Partial<TIssue>>;//Partial, return value
-  // updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;//Partial
-  createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TIssue>;
-  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
+  ) => Promise<TIssuesResponse | undefined>;
+  createDraft: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TIssue>;
+  updateDraft: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   quickAddIssue: undefined;
   clear(): void;
 }
@@ -55,10 +47,10 @@ export class WorkspaceDrafts extends BaseIssuesStore implements IWorkspaceDrafts
   // service
   workspaceService;
   // filterStore
-  draftFilterStore;
+  workspaceDraftFilterStore;
 
-  constructor(_rootStore: IIssueRootStore, draftFilterStore: IWorkspaceDraftsFilter) {
-    super(_rootStore, draftFilterStore);
+  constructor(_rootStore: IIssueRootStore, workspaceDraftFilterStore: IWorkspaceDraftsFilter) {
+    super(_rootStore, workspaceDraftFilterStore);
 
     makeObservable(this, {
       // action
@@ -69,7 +61,7 @@ export class WorkspaceDrafts extends BaseIssuesStore implements IWorkspaceDrafts
     // services
     this.workspaceService = new WorkspaceService();
     // filter store
-    this.draftFilterStore = draftFilterStore;
+    this.workspaceDraftFilterStore = workspaceDraftFilterStore;
   }
 
   fetchParentStats = () => {};
@@ -87,7 +79,6 @@ export class WorkspaceDrafts extends BaseIssuesStore implements IWorkspaceDrafts
    */
   fetchIssues = async (
     workspaceSlug: string,
-    viewId: string,
     loadType: TLoader,
     options: IssuePaginationOptions,
     isExistingPaginationOptions: boolean = false
@@ -97,15 +88,15 @@ export class WorkspaceDrafts extends BaseIssuesStore implements IWorkspaceDrafts
       runInAction(() => {
         this.setLoader(loadType);
       });
-      this.clear(!isExistingPaginationOptions);// #### clear the store
+      this.clear(!isExistingPaginationOptions);
 
       // get params from pagination options
-      const params = this.draftFilterStore?.getFilterParams(options, viewId, undefined, undefined, undefined);// #### get the params for the filters applied
+      const params = this.workspaceDraftFilterStore?.getFilterParams(options, workspaceSlug, undefined);
       // call the fetch issues API with the params
 
       //response is TIssueResponse, which expects TBaseIssue
-      const response = await this.workspaceService.getViewIssues(workspaceSlug, params, {//this needs to be getDraftIssues
-        signal: this.controller.signal,//what is the use of this signal
+      const response = await this.workspaceService.getViewIssues(workspaceSlug, params, { // FIX
+        signal: this.controller.signal, // ASK
       });
 
       // after fetching issues, call the base method to process the response further
@@ -120,39 +111,37 @@ export class WorkspaceDrafts extends BaseIssuesStore implements IWorkspaceDrafts
 
   /**
    * This method is called subsequent pages of pagination
-   * if groupId/subgroupId is provided, only that specific group's next page is fetched
+   * if groupId is provided, only that specific group's next page is fetched
    * else all the groups' next page is fetched
    * @param workspaceSlug
    * @param viewId
    * @param groupId
-   * @param subGroupId
    * @returns
    */
-  fetchNextIssues = async (workspaceSlug: string, viewId: string, groupId?: string, subGroupId?: string) => {
-    const cursorObject = this.getPaginationData(groupId, subGroupId);
+  fetchNextIssues = async (workspaceSlug: string, viewId: string, groupId?: string) => {
+    const cursorObject = this.getPaginationData(groupId, undefined);
     // if there are no pagination options and the next page results do not exist the return
     if (!this.paginationOptions || (cursorObject && !cursorObject?.nextPageResults)) return;
     try {
       // set Loader
-      this.setLoader("pagination", groupId, subGroupId);
+      this.setLoader("pagination", groupId);
 
       // get params from stored pagination options
-      const params = this.draftFilterStore?.getFilterParams(
+      const params = this.workspaceDraftFilterStore?.getFilterParams(
         this.paginationOptions,
         viewId,
-        this.getNextCursor(groupId, subGroupId),
-        groupId,
-        subGroupId
+        //this.getNextCursor(groupId, undefined),// ASK
+        groupId
       );
       // call the fetch issues API with the params for next page in issues
-      const response = await this.workspaceService.getViewIssues(workspaceSlug, params);
+      const response = await this.workspaceService.getViewIssues(workspaceSlug, params);// FIX
 
       // after the next page of issues are fetched, call the base method to process the response
-      this.onfetchNexIssues(response, groupId, subGroupId);
+      this.onfetchNexIssues(response, groupId);
       return response;
     } catch (error) {
       // set Loader as undefined if errored out
-      this.setLoader(undefined, groupId, subGroupId);
+      this.setLoader(undefined, groupId);
       throw error;
     }
   };
@@ -165,15 +154,14 @@ export class WorkspaceDrafts extends BaseIssuesStore implements IWorkspaceDrafts
    * @param loadType
    * @returns
    */
-  fetchIssuesWithExistingPagination = async (workspaceSlug: string, viewId: string, loadType: TLoader) => {
+  fetchIssuesWithExistingPagination = async (workspaceSlug: string, loadType: TLoader) => {
     if (!this.paginationOptions) return;
-    return await this.fetchIssues(workspaceSlug, viewId, loadType, this.paginationOptions, true);
+    return await this.fetchIssues(workspaceSlug, loadType, this.paginationOptions, true);
   };
 
   // Using aliased names as they cannot be overridden in other stores
-  archiveBulkIssues = this.bulkArchiveIssues;
-  updateIssue = this.issueUpdate;
-  archiveIssue = this.issueArchive;
+  createDraft = this.createDraftIssue;
+  updateDraft = this.updateDraftIssue;
 
   // Setting them as undefined as they can not performed on workspace issues
   quickAddIssue = undefined;
