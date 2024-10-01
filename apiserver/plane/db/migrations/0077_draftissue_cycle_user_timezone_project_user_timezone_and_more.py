@@ -19,19 +19,23 @@ def migrate_draft_issues(apps, schema_editor):
     DraftIssueCycle = apps.get_model("db", "DraftIssueCycle")
 
     # Fetch all draft issues with their related assignees and labels
-    draft_issues = Issue.objects.filter(is_draft=True).prefetch_related(
-        Prefetch(
-            "issue_assignee",
-            queryset=IssueAssignee.objects.select_related("assignee"),
-        ),
-        Prefetch(
-            "label_issue",
-            queryset=IssueLabel.objects.select_related("label"),
-        ),
-        Prefetch(
-            "issue_module",
-            queryset=ModuleIssue.objects.select_related("module"),
-        ),
+    issues = (
+        Issue.objects.filter(is_draft=True)
+        .select_related("issue_cycle__cycle")
+        .prefetch_related(
+            Prefetch(
+                "issue_assignee",
+                queryset=IssueAssignee.objects.select_related("assignee"),
+            ),
+            Prefetch(
+                "label_issue",
+                queryset=IssueLabel.objects.select_related("label"),
+            ),
+            Prefetch(
+                "issue_module",
+                queryset=ModuleIssue.objects.select_related("module"),
+            ),
+        )
     )
 
     draft_issues = []
@@ -41,7 +45,7 @@ def migrate_draft_issues(apps, schema_editor):
     draft_issue_assignees = []
     # issue_ids_to_delete = []
 
-    for issue in draft_issues:
+    for issue in issues:
         draft_issue = DraftIssue(
             parent_id=issue.parent_id,
             state_id=issue.state_id,
@@ -55,6 +59,7 @@ def migrate_draft_issues(apps, schema_editor):
             start_date=issue.start_date,
             target_date=issue.target_date,
             workspace_id=issue.workspace_id,
+            project_id=issue.project_id,
             created_by_id=issue.created_by_id,
             updated_by_id=issue.updated_by_id,
         )
@@ -84,14 +89,20 @@ def migrate_draft_issues(apps, schema_editor):
         for module_issue in issue.issue_module.all():
             draft_issue_modules.append(
                 DraftIssueModule(
-                    draft_issue=draft_issue, module=module_issue.module
+                    draft_issue=draft_issue,
+                    module=module_issue.module,
+                    workspace_id=issue.workspace_id,
+                    project_id=issue.project_id,
                 )
             )
 
-        for cycle_issue in issue.cycle_issue.all():
+        if hasattr(issue, "issue_cycle") and issue.issue_cycle:
             draft_issue_cycle.append(
                 DraftIssueCycle(
-                    draft_issue=draft_issue, cycle=cycle_issue.cycle
+                    draft_issue=draft_issue,
+                    cycle=issue.issue_cycle.cycle,
+                    workspace_id=issue.workspace_id,
+                    project_id=issue.project_id,
                 )
             )
 
@@ -2015,6 +2026,11 @@ class Migration(migrations.Migration):
         migrations.AlterUniqueTogether(
             name="draftissueassignee",
             unique_together={("draft_issue", "assignee", "deleted_at")},
+        ),
+        migrations.AddField(
+            model_name="cycle",
+            name="version",
+            field=models.IntegerField(default=1),
         ),
         migrations.RunPython(migrate_draft_issues),
     ]

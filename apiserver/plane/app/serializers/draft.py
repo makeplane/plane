@@ -102,6 +102,7 @@ class DraftIssueCreateSerializer(BaseSerializer):
                         assignee=user,
                         issue=issue,
                         workspace_id=workspace_id,
+                        project_id=project_id,
                         created_by_id=created_by_id,
                         updated_by_id=updated_by_id,
                     )
@@ -116,6 +117,7 @@ class DraftIssueCreateSerializer(BaseSerializer):
                     DraftIssueLabel(
                         label=label,
                         issue=issue,
+                        project_id=project_id,
                         workspace_id=workspace_id,
                         created_by_id=created_by_id,
                         updated_by_id=updated_by_id,
@@ -129,6 +131,7 @@ class DraftIssueCreateSerializer(BaseSerializer):
             DraftIssueCycle.objects.create(
                 cycle_id=cycle_id,
                 draft_issue=issue,
+                project_id=project_id,
                 workspace_id=workspace_id,
                 created_by_id=created_by_id,
                 updated_by_id=updated_by_id,
@@ -140,6 +143,7 @@ class DraftIssueCreateSerializer(BaseSerializer):
                     DraftIssueModule(
                         module_id=module_id,
                         draft_issue=issue,
+                        project_id=project_id,
                         workspace_id=workspace_id,
                         created_by_id=created_by_id,
                         updated_by_id=updated_by_id,
@@ -159,8 +163,8 @@ class DraftIssueCreateSerializer(BaseSerializer):
 
         # Related models
         workspace_id = instance.workspace_id
-        if self.context["project_id"]:
-            instance.project_id = self.context["project_id"]
+        project_id = instance.project_id
+
         created_by_id = instance.created_by_id
         updated_by_id = instance.updated_by_id
 
@@ -172,6 +176,7 @@ class DraftIssueCreateSerializer(BaseSerializer):
                         assignee=user,
                         issue=instance,
                         workspace_id=workspace_id,
+                        project_id=project_id,
                         created_by_id=created_by_id,
                         updated_by_id=updated_by_id,
                     )
@@ -188,6 +193,7 @@ class DraftIssueCreateSerializer(BaseSerializer):
                         label=label,
                         issue=instance,
                         workspace_id=workspace_id,
+                        project_id=project_id,
                         created_by_id=created_by_id,
                         updated_by_id=updated_by_id,
                     )
@@ -202,6 +208,7 @@ class DraftIssueCreateSerializer(BaseSerializer):
                 cycle_id=cycle_id,
                 draft_issue=instance,
                 workspace_id=workspace_id,
+                project_id=project_id,
                 created_by_id=created_by_id,
                 updated_by_id=updated_by_id,
             )
@@ -214,6 +221,7 @@ class DraftIssueCreateSerializer(BaseSerializer):
                         module=module,
                         draft_issue=instance,
                         workspace_id=workspace_id,
+                        project_id=project_id,
                         created_by_id=created_by_id,
                         updated_by_id=updated_by_id,
                     )

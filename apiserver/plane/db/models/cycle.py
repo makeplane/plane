@@ -81,6 +81,7 @@ class Cycle(ProjectBaseModel):
     user_timezone = models.CharField(
         max_length=255, default="UTC", choices=USER_TIMEZONE_CHOICES
     )
+    version = models.IntegerField(default=1)
 
     class Meta:
         verbose_name = "Cycle"
