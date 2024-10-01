@@ -378,4 +378,18 @@ export class IssueService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async bulkSubscribeIssues(
+    workspaceSlug: string,
+    projectId: string,
+    data: {
+      issue_ids: string[];
+    }
+  ): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/bulk-subscribe-issues/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }
