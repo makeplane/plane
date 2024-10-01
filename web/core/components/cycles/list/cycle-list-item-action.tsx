@@ -17,10 +17,13 @@ import { CYCLE_STATUS } from "@/constants/cycle";
 import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "@/constants/event-tracker";
 // helpers
 import { findHowManyDaysLeft, getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useCycle, useEventTracker, useMember, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+// services
 import { CycleService } from "@/services/cycle.service";
 
 const cycleService = new CycleService();
@@ -242,7 +245,9 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
             <AvatarGroup showTooltip={false}>
               {cycleDetails.assignee_ids?.map((assignee_id) => {
                 const member = getUserDetails(assignee_id);
-                return <Avatar key={member?.id} name={member?.display_name} src={member?.avatar} />;
+                return (
+                  <Avatar key={member?.id} name={member?.display_name} src={getFileURL(member?.avatar_url ?? "")} />
+                );
               })}
             </AvatarGroup>
           ) : (

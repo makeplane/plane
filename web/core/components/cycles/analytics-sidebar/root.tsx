@@ -19,6 +19,7 @@ import { CYCLE_STATUS } from "@/constants/cycle";
 import { CYCLE_UPDATED } from "@/constants/event-tracker";
 // helpers
 import { findHowManyDaysLeft, getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { getFileURL } from "@/helpers/file.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useEventTracker, useCycle, useMember, useProjectEstimates, useUserPermissions } from "@/hooks/store";
@@ -404,7 +405,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
             </div>
             <div className="flex w-3/5 items-center rounded-sm">
               <div className="flex items-center gap-2.5">
-                <Avatar name={cycleOwnerDetails?.display_name} src={cycleOwnerDetails?.avatar} />
+                <Avatar name={cycleOwnerDetails?.display_name} src={getFileURL(cycleOwnerDetails?.avatar_url ?? "")} />
                 <span className="text-sm text-custom-text-200">{cycleOwnerDetails?.display_name}</span>
               </div>
             </div>

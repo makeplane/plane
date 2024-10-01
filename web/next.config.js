@@ -10,22 +10,22 @@ const nextConfig = {
   reactStrictMode: false,
   swcMinify: true,
   output: "standalone",
-  async headers() {
-    return [
-      {
-        source: "/(.*)?",
-        headers: [
-          { key: "X-Frame-Options", value: "SAMEORIGIN" },
-          {
-            key: "Referrer-Policy",
-            value: "origin-when-cross-origin",
-          },
-          { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
-          { key: "Cross-Origin-Embedder-Policy", value: "credentialless" },
-        ],
-      },
-    ];
-  },
+  // async headers() {
+  //   return [
+  //     {
+  //       source: "/(.*)?",
+  //       headers: [
+  //         { key: "X-Frame-Options", value: "SAMEORIGIN" },
+  //         {
+  //           key: "Referrer-Policy",
+  //           value: "origin-when-cross-origin",
+  //         },
+  //         { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+  //         { key: "Cross-Origin-Embedder-Policy", value: "credentialless" },
+  //       ],
+  //     },
+  //   ];
+  // },
   images: {
     unoptimized: true,
   },
@@ -67,6 +67,7 @@ const nextConfig = {
   },
   async rewrites() {
     const posthogHost = process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://app.posthog.com";
+    const uploadsBaseURL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
     const rewrites = [
       {
         source: "/ingest/static/:path*",
@@ -90,6 +91,10 @@ const nextConfig = {
         destination: `${GOD_MODE_BASE_URL}/:path*`,
       });
     }
+    rewrites.push({
+      source: "/uploads/:path*",
+      destination: `${uploadsBaseURL}/:path*`,
+    });
     return rewrites;
   },
 };

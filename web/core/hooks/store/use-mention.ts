@@ -1,9 +1,12 @@
 "use client";
 
 import { useRef, useEffect } from "react";
-// types
+// plane types
 import { IUser, IUserLite } from "@plane/types";
-import { useMember } from "./use-member";
+// helpers
+import { getFileURL } from "@/helpers/file.helper";
+// hooks
+import { useMember } from "@/hooks/store/use-member";
 
 type Props = {
   workspaceSlug?: string;
@@ -73,7 +76,7 @@ export const useMention = ({ workspaceSlug, projectId, members, user }: Props) =
         type: "User",
         title: `${memberDetails?.display_name}`,
         subtitle: memberDetails?.email ?? "",
-        avatar: `${memberDetails?.avatar}`,
+        avatar: getFileURL(memberDetails?.avatar_url),
         redirect_uri: `/${workspaceSlug}/profile/${memberDetails?.id}`,
       }));
     } else {
@@ -86,7 +89,7 @@ export const useMention = ({ workspaceSlug, projectId, members, user }: Props) =
         type: "User",
         title: `${memberDetails?.display_name}`,
         subtitle: memberDetails?.email ?? "",
-        avatar: `${memberDetails?.avatar}`,
+        avatar: getFileURL(memberDetails?.avatar_url),
         redirect_uri: `/${workspaceSlug}/profile/${memberDetails?.id}`,
       }));
     }
