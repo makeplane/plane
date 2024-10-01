@@ -174,7 +174,11 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
                 id=asset_id, workspace__slug=slug, project_id=project_id
             )
             storage = S3Storage(request=request)
-            presigned_url = storage.generate_presigned_url(asset.asset.name)
+            presigned_url = storage.generate_presigned_url(
+                asset.asset.name,
+                disposition="attachment",
+                filename=asset.name,
+            )
             return HttpResponseRedirect(presigned_url)
 
         # Get all the attachments

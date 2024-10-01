@@ -4,6 +4,7 @@ import os
 # Third party imports
 import boto3
 from botocore.exceptions import ClientError
+from urllib.parse import quote
 
 # Module imports
 from plane.utils.exception_logger import log_exception
@@ -87,9 +88,25 @@ class S3Storage(object):
 
         return response
 
+    def _get_content_disposition(self, disposition, filename=None):
+        """Helper method to generate Content-Disposition header value"""
+        if filename:
+            # Encode the filename to handle special characters
+            encoded_filename = quote(filename)
+            return f"{disposition}; filename*=UTF-8''{encoded_filename}"
+        return disposition
+
     def generate_presigned_url(
-        self, object_name, expiration=3600, http_method="GET"
+        self,
+        object_name,
+        expiration=3600,
+        http_method="GET",
+        disposition="inline",
+        filename=None,
     ):
+        content_disposition = self._get_content_disposition(
+            disposition, filename
+        )
         """Generate a presigned URL to share an S3 object"""
         try:
             response = self.s3_client.generate_presigned_url(
@@ -97,6 +114,7 @@ class S3Storage(object):
                 Params={
                     "Bucket": self.aws_storage_bucket_name,
                     "Key": object_name,
+                    "ResponseContentDisposition": content_disposition,
                 },
                 ExpiresIn=expiration,
                 HttpMethod=http_method,
