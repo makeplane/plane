@@ -132,7 +132,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
     const userDetailsPayload: Partial<IUser> = {
       first_name: formData.first_name,
       last_name: formData.last_name,
-      avatar_url: formData.avatar_url,
+      avatar_url: formData.avatar_url ?? undefined,
     };
     const profileUpdatePayload: Partial<TUserProfile> = {
       use_case: formData.use_case,
@@ -176,7 +176,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
     const userDetailsPayload: Partial<IUser> = {
       first_name: formData.first_name,
       last_name: formData.last_name,
-      avatar_url: formData.avatar_url,
+      avatar_url: formData.avatar_url ?? undefined,
     };
     try {
       await Promise.all([
