@@ -110,7 +110,9 @@ class UserAssetsV2Endpoint(BaseAPIView):
         asset.is_uploaded = True
         # get the storage metadata
         if asset.storage_metadata is None:
-            asset.storage_metadata = storage.get_object_metadata(asset.asset)
+            asset.storage_metadata = storage.get_object_metadata(
+                object_name=asset.asset.name
+            )
         # get the entity and save the asset id for the request field
         self.entity_asset_save(
             asset_id, asset.entity_type, asset.entity_identifier
@@ -235,7 +237,9 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         asset.is_uploaded = True
         # get the storage metadata
         if asset.storage_metadata is None:
-            asset.storage_metadata = storage.get_object_metadata(asset.asset)
+            asset.storage_metadata = storage.get_object_metadata(
+                object_name=asset.asset.name
+            )
         # get the entity and save the asset id for the request field
         self.entity_asset_save(
             asset_id, asset.entity_type, asset.entity_identifier
@@ -280,7 +284,7 @@ class StaticFileAssetEndpoint(BaseAPIView):
         storage = S3Storage(request=request)
         # Generate a presigned URL to share an S3 object
         signed_url = storage.generate_presigned_url(
-            object_name=asset.asset,
+            object_name=asset.asset.name,
         )
         # Redirect to the signed URL
         return HttpResponseRedirect(signed_url)
@@ -314,7 +318,7 @@ class PageAssetEndpoint(BaseAPIView):
         storage = S3Storage(request=request)
         # Generate a presigned URL to share an S3 object
         signed_url = storage.generate_presigned_url(
-            object_name=asset.asset,
+            object_name=asset.asset.name,
         )
         # Redirect to the signed URL
         return HttpResponseRedirect(signed_url)
@@ -389,7 +393,9 @@ class PageAssetEndpoint(BaseAPIView):
         asset.is_uploaded = True
         # get the storage metadata
         if asset.storage_metadata is None:
-            asset.storage_metadata = storage.get_object_metadata(asset.asset)
+            asset.storage_metadata = storage.get_object_metadata(
+                object_name=asset.asset.name
+            )
         # get the entity and save the asset id for the request field
         self.entity_asset_save(
             asset_id, asset.entity_type, asset.entity_identifier
@@ -443,7 +449,7 @@ class IssueAssetEndpoint(BaseAPIView):
         storage = S3Storage(request=request)
         # Generate a presigned URL to share an S3 object
         signed_url = storage.generate_presigned_url(
-            object_name=asset.asset,
+            object_name=asset.asset.name,
         )
         # Redirect to the signed URL
         return HttpResponseRedirect(signed_url)
@@ -520,7 +526,9 @@ class IssueAssetEndpoint(BaseAPIView):
         asset.is_uploaded = True
         # get the storage metadata
         if asset.storage_metadata is None:
-            asset.storage_metadata = storage.get_object_metadata(asset.asset)
+            asset.storage_metadata = storage.get_object_metadata(
+                object_name=asset.asset.name
+            )
         # get the entity and save the asset id for the request field
         self.entity_asset_save(
             asset_id, asset.entity_type, asset.entity_identifier

@@ -730,24 +730,13 @@ class IssueLiteSerializer(DynamicBaseSerializer):
 class IssueDetailSerializer(IssueSerializer):
     description_html = serializers.CharField()
     is_subscribed = serializers.BooleanField(read_only=True)
-    issue_attachments = serializers.SerializerMethodField()
 
     class Meta(IssueSerializer.Meta):
         fields = IssueSerializer.Meta.fields + [
             "description_html",
             "is_subscribed",
-            "issue_attachments",
         ]
         read_only_fields = fields
-
-    def get_issue_attachments(self, obj):
-        return IssueAttachmentLiteSerializer(
-            FileAsset.objects.filter(
-                entity_identifier=obj.id,
-                entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
-            ),
-            many=True,
-        ).data
 
 
 class IssuePublicSerializer(BaseSerializer):

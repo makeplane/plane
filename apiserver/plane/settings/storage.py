@@ -118,7 +118,7 @@ class S3Storage(S3Boto3Storage):
                 "get_object",
                 Params={
                     "Bucket": self.aws_storage_bucket_name,
-                    "Key": object_name,
+                    "Key": str(object_name),
                     "ResponseContentDisposition": content_disposition,
                 },
                 ExpiresIn=expiration,

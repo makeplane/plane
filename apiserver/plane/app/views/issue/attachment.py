@@ -175,9 +175,9 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
             )
             storage = S3Storage(request=request)
             presigned_url = storage.generate_presigned_url(
-                asset.asset,
+                object_name=asset.asset.name,
                 disposition="attachment",
-                filename=asset.name,
+                filename=asset.attributes.get("name"),
             )
             return HttpResponseRedirect(presigned_url)
 
