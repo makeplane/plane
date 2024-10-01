@@ -1,4 +1,4 @@
-import type {TIssue, IIssueFilterOptions} from "@plane/types";
+import type { TIssue, IIssueFilterOptions } from "@plane/types";
 
 export type TCycleGroups = "current" | "upcoming" | "completed" | "draft";
 
@@ -42,6 +42,18 @@ export type TCycleEstimateDistribution = {
   assignees: (TCycleAssigneesDistribution & TCycleEstimateDistributionBase)[];
   completion_chart: TCycleCompletionChartDistribution;
   labels: (TCycleLabelsDistribution & TCycleEstimateDistributionBase)[];
+};
+export type TCycleProgress = {
+  date: string;
+  started: number;
+  pending: number;
+  ideal: number | null;
+  scope: number;
+  completed: number;
+  actual: number;
+  unstarted: number;
+  backlog: number;
+  cancelled: number;
 };
 
 export type TProgressSnapshot = {
@@ -90,6 +102,7 @@ export interface ICycle extends TProgressSnapshot {
   };
   workspace_id: string;
   project_detail: IProjectDetails;
+  progress: any[];
 }
 
 export interface CycleIssueResponse {
@@ -107,7 +120,7 @@ export interface CycleIssueResponse {
 }
 
 export type SelectCycleType =
-  | (ICycle & {actionType: "edit" | "delete" | "create-issue"})
+  | (ICycle & { actionType: "edit" | "delete" | "create-issue" })
   | undefined;
 
 export type CycleDateCheckData = {
@@ -116,4 +129,5 @@ export type CycleDateCheckData = {
   cycle_id?: string;
 };
 
-export type TCyclePlotType = "burndown" | "points";
+export type TCycleEstimateType = "issues" | "points";
+export type TCyclePlotType = "burndown" | "burnup";
