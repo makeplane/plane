@@ -73,7 +73,7 @@ export const wrapDateTime = (field: string) => {
   return field;
 };
 
-export const getGroupedIssueResults = (issueResults: (TIssue & { group_id: string; total_issues: number })[]): any => {
+export const getGroupedIssueResults = (issueResults: (TIssue & { group_id?: string; total_issues: number })[]): any => {
   const groupedResults: {
     [key: string]: {
       results: TIssue[];
@@ -95,7 +95,7 @@ export const getGroupedIssueResults = (issueResults: (TIssue & { group_id: strin
 };
 
 export const getSubGroupedIssueResults = (
-  issueResults: (TIssue & { group_id: string; total_issues: number; sub_group_id: string })[]
+  issueResults: (TIssue & { group_id?: string; total_issues: number; sub_group_id?: string })[]
 ): any => {
   const subGroupedResults: {
     [key: string]: {

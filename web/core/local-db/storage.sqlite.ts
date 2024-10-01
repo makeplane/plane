@@ -339,7 +339,7 @@ export class Storage {
       }
     }
     const groupCount = group_by ? Object.keys(issueResults).length : undefined;
-    const subGroupCount = sub_group_by ? Object.keys(issueResults[Object.keys(issueResults)[0]]).length : undefined;
+    // const subGroupCount = sub_group_by ? Object.keys(issueResults[Object.keys(issueResults)[0]]).length : undefined;
     const groupingEnd = performance.now();
 
     const times = {
@@ -348,8 +348,9 @@ export class Storage {
       Grouping: groupingEnd - grouping,
     };
     log(issueResults);
-    console.table(times);
-
+    if ((window as any).DEBUG) {
+      console.table(times);
+    }
     const total_pages = Math.ceil(total_count / Number(pageSize));
     const next_page_results = total_pages > parseInt(page) + 1;
 
@@ -372,7 +373,7 @@ export class Storage {
       queries: queries,
       local: true,
       groupCount,
-      subGroupCount,
+      // subGroupCount,
     });
     return out;
   };
@@ -449,5 +450,5 @@ export const formatLocalIssue = (issue: any) => {
   ARRAY_FIELDS.forEach((field: string) => {
     currIssue[field] = currIssue[field] ? JSON.parse(currIssue[field]) : [];
   });
-  return currIssue as TIssue;
+  return currIssue as TIssue & { group_id?: string; total_issues: number; sub_group_id?: string };
 };
