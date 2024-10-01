@@ -8,7 +8,7 @@ export type TIssueAttachment = {
     name: string;
     size: number;
   };
-  asset: string;
+  asset_url: string;
   issue_id: string;
   // required
   updated_at: string;
