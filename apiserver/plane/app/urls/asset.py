@@ -10,6 +10,7 @@ from plane.app.views import (
     UserAssetsV2Endpoint,
     StaticFileAssetEndpoint,
     AssetRestoreEndpoint,
+    PageAssetEndpoint,
 )
 
 
@@ -73,5 +74,15 @@ urlpatterns = [
         "assets/v2/static/<uuid:asset_id>/",
         StaticFileAssetEndpoint.as_view(),
         name="static-file-asset",
+    ),
+    path(
+        "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/",
+        PageAssetEndpoint.as_view(),
+        name="page-asset",
+    ),
+    path(
+        "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/<uuid:asset_id>/",
+        PageAssetEndpoint.as_view(),
+        name="page-asset",
     ),
 ]

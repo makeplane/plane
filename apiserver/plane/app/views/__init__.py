@@ -118,6 +118,7 @@ from .asset.v2 import (
     UserAssetsV2Endpoint,
     StaticFileAssetEndpoint,
     AssetRestoreEndpoint,
+    PageAssetEndpoint,
 )
 from .issue.base import (
     IssueListEndpoint,
