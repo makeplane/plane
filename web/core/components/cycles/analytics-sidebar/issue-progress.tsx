@@ -18,7 +18,7 @@ import { getDate } from "@/helpers/date-time.helper";
 // hooks
 import { useIssues, useCycle, useProjectEstimates } from "@/hooks/store";
 // plane web constants
-import { SidebarBaseChart } from "@/plane-web/components/cycles/analytics-sidebar/sidebar-chart";
+import { SidebarBaseChart } from "@/plane-web/components/cycles/analytics-sidebar";
 import { EEstimateSystem } from "@/plane-web/constants/estimates";
 
 type TCycleAnalyticsProgress = {
