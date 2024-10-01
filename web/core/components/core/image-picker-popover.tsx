@@ -97,20 +97,15 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
   });
 
   const handleSubmit = async () => {
-    setIsImageUploading(true);
-
     if (!image) return;
 
-    const formData = new FormData();
-    formData.append("asset", image);
-    formData.append("attributes", JSON.stringify({}));
+    setIsImageUploading(true);
 
     const oldValue = value;
     const isUnsplashImage = oldValue?.split("/")[2] === "images.unsplash.com";
 
     const uploadCallback = (url: string) => {
-      const imageUrl = url;
-      onChange(imageUrl);
+      onChange(url);
       setIsImageUploading(false);
       setImage(null);
       setIsOpen(false);
@@ -132,21 +127,25 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
           uploadCallback(res);
           if (isUnsplashImage) return;
           if (oldValue && currentWorkspace) fileService.deleteUserFile(oldValue);
-        })
-        .catch((err) => {
-          console.error(err);
         });
     } else {
       if (!workspaceSlug) return;
       await fileService
-        .uploadFile(workspaceSlug.toString(), formData)
+        .getWorkspaceAssetSignedURL(
+          workspaceSlug.toString(),
+          {
+            entity_identifier: "",
+            entity_type: EFileAssetType.PROJECT_COVER,
+            name: image.name,
+            size: image.size,
+            type: image.type,
+          },
+          image
+        )
         .then((res) => {
-          uploadCallback(res.asset);
+          uploadCallback(res);
           if (isUnsplashImage) return;
           if (oldValue && currentWorkspace) fileService.deleteFile(currentWorkspace.id, oldValue);
-        })
-        .catch((err) => {
-          console.error(err);
         });
     }
   };
