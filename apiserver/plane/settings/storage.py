@@ -8,9 +8,14 @@ from urllib.parse import quote
 
 # Module imports
 from plane.utils.exception_logger import log_exception
+from storages.backends.s3boto3 import S3Boto3Storage
 
 
-class S3Storage(object):
+class S3Storage(S3Boto3Storage):
+
+    def url(self, name, parameters=None, expire=None, http_method=None):
+        return name
+
     """S3 storage class to generate presigned URLs for S3 objects"""
 
     def __init__(self, request=None):
