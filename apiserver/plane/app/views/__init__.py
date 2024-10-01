@@ -119,6 +119,8 @@ from .asset.v2 import (
     StaticFileAssetEndpoint,
     AssetRestoreEndpoint,
     PageAssetEndpoint,
+    IssueAssetEndpoint,
+    CommentAssetEndpoint,
 )
 from .issue.base import (
     IssueListEndpoint,

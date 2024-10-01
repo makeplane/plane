@@ -173,6 +173,17 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
             asset = FileAsset.objects.get(
                 id=asset_id, workspace__slug=slug, project_id=project_id
             )
+
+            # Check if the asset is uploaded
+            if not asset.is_uploaded:
+                return Response(
+                    {
+                        "error": "The asset is not uploaded.",
+                        "status": False,
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             storage = S3Storage(request=request)
             presigned_url = storage.generate_presigned_url(
                 object_name=asset.asset.name,
@@ -183,7 +194,10 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
 
         # Get all the attachments
         issue_attachments = FileAsset.objects.filter(
-            issue_id=issue_id, workspace__slug=slug, project_id=project_id
+            issue_id=issue_id,
+            workspace__slug=slug,
+            project_id=project_id,
+            is_uploaded=True,
         )
         # Serialize the attachments
         serializer = IssueAttachmentSerializer(issue_attachments, many=True)

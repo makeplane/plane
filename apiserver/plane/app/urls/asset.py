@@ -11,6 +11,8 @@ from plane.app.views import (
     StaticFileAssetEndpoint,
     AssetRestoreEndpoint,
     PageAssetEndpoint,
+    IssueAssetEndpoint,
+    CommentAssetEndpoint,
 )
 
 
@@ -81,8 +83,28 @@ urlpatterns = [
         name="page-asset",
     ),
     path(
-        "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/<uuid:asset_id>/",
+        "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/<uuid:pk>/",
         PageAssetEndpoint.as_view(),
         name="page-asset",
+    ),
+    path(
+        "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/comments/<uuid:comment_id>/",
+        IssueAssetEndpoint.as_view(),
+        name="issue-attachment",
+    ),
+    path(
+        "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/comments/<uuid:comment_id>/<uuid:pk>/",
+        IssueAssetEndpoint.as_view(),
+        name="issue-attachment",
+    ),
+    path(
+        "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/comments/<uuid:comment_id>/",
+        CommentAssetEndpoint.as_view(),
+        name="comment-attachment",
+    ),
+    path(
+        "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/comments/<uuid:comment_id>/<uuid:pk>/",
+        CommentAssetEndpoint.as_view(),
+        name="comment-attachment",
     ),
 ]
