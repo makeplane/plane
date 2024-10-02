@@ -2,6 +2,8 @@
 from django.contrib.auth import get_user
 
 from typing import Any, Dict, Optional
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 
 # Third-Party Imports
 from asgiref.sync import sync_to_async
@@ -12,6 +14,7 @@ from strawberry.types import ExecutionResult
 from strawberry.types.execution import ExecutionContext
 
 
+@method_decorator(csrf_exempt, name="dispatch")
 class CustomGraphQLView(AsyncGraphQLView):
     async def get_context(self, request, response):
         # Get the user
