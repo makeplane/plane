@@ -40,6 +40,7 @@ from plane.db.models import (
 )
 from .. import BaseViewSet
 from plane.bgtasks.issue_activities_task import issue_activity
+from plane.utils.issue_filters import issue_filters
 
 
 class WorkspaceDraftIssueViewSet(BaseViewSet):
@@ -51,6 +52,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
         allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
     )
     def list(self, request, slug):
+        filters = issue_filters(request.query_params, "GET")
         issues = (
             DraftIssue.objects.filter(workspace__slug=slug)
             .filter(created_by=request.user)
@@ -92,8 +94,16 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
             .order_by("-created_at")
         )
 
-        serializer = DraftIssueSerializer(issues, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        issues = issues.filter(**filters)
+        # List Paginate
+        return self.paginate(
+            request=request,
+            queryset=(issues),
+            on_results=lambda issues: DraftIssueSerializer(
+                issues,
+                many=True,
+            ).data,
+        )
 
     @allow_permission(
         allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
