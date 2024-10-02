@@ -116,10 +116,10 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     // Construct the WebSocket Collaboration URL
     try {
       const LIVE_SERVER_BASE_URL = LIVE_BASE_URL?.trim() || window.location.origin;
-      const WS_LIVE_URL = new URL(`${LIVE_SERVER_BASE_URL}${LIVE_BASE_PATH}`);
+      const WS_LIVE_URL = new URL(LIVE_SERVER_BASE_URL);
       const isSecureEnvironment = window.location.protocol === "https:";
       WS_LIVE_URL.protocol = isSecureEnvironment ? "wss" : "ws";
-      WS_LIVE_URL.pathname = "collaboration";
+      WS_LIVE_URL.pathname = `${LIVE_BASE_PATH}/collaboration`;
       // Construct realtime config
       return {
         url: WS_LIVE_URL.toString(),
