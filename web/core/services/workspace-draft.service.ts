@@ -1,4 +1,4 @@
-import { TIssue } from "@plane/types";
+import { TIssue, TIssuesResponse } from "@plane/types";
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { APIService } from "./api.service";
 
@@ -7,9 +7,13 @@ export class WorkspaceDraftService extends APIService {
     super(API_BASE_URL);
   }
 
-  async getDraftIssues(workspaceSlug: string): Promise<TIssue[]> {
+  async getDraftIssues(workspaceSlug: string, query?: any, config = {}): Promise<TIssuesResponse> {
     return this.get(
-      `/api/workspaces/${workspaceSlug}/draft-issues/`
+      `/api/workspaces/${workspaceSlug}/draft-issues/`,
+      {
+        params: { ...query },
+      },
+      config
     )
       .then((response) => response?.data)
       .catch((error) => {
@@ -17,8 +21,10 @@ export class WorkspaceDraftService extends APIService {
       });
   }
 
-  async getDraftIssueById(workspaceSlug: string, issueId: string): Promise<TIssue> {
-    return this.get(`/api/workspaces/${workspaceSlug}/draft-issues/${issueId}/`)
+  async getDraftIssueById(workspaceSlug: string, issueId: string, queries?: any): Promise<TIssue> {
+    return this.get(`/api/workspaces/${workspaceSlug}/draft-issues/${issueId}/`, {
+      params: queries
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;

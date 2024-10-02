@@ -1,3 +1,4 @@
+import { clone, isNil } from "lodash";
 import { action, makeObservable, runInAction } from "mobx";
 // base class
 import {
@@ -8,7 +9,7 @@ import {
   ViewFlags,
 } from "@plane/types";
 // services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceDraftService } from "@/services/workspace-draft.service";
 import { IBaseIssuesStore, BaseIssuesStore } from "./issue/helpers/base-issues.store";
 import { IIssueRootStore } from "./issue/root.store";
 import { IWorkspaceDraftsFilter } from "./workspace-draft_filter.store";
@@ -32,10 +33,11 @@ export interface IWorkspaceDrafts extends IBaseIssuesStore {
     viewId: string,
     groupId?: string,
   ) => Promise<TIssuesResponse | undefined>;
-  createDraft: (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => Promise<TIssue>;
-  updateDraft: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
+  createDraft: (workspaceSlug: string, data: Partial<TIssue>) => Promise<TIssue>;
+  updateDraft: (workspaceSlug: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   quickAddIssue: undefined;
   clear(): void;
+  deleteDraft: (workspaceSlug: string, issueId: string) => Promise<void>;
 }
 
 export class WorkspaceDrafts extends BaseIssuesStore implements IWorkspaceDrafts {
@@ -45,7 +47,7 @@ export class WorkspaceDrafts extends BaseIssuesStore implements IWorkspaceDrafts
     enableInlineEditing: true,
   };
   // service
-  workspaceService;
+  workspaceDraftService;
   // filterStore
   workspaceDraftFilterStore;
 
@@ -59,7 +61,7 @@ export class WorkspaceDrafts extends BaseIssuesStore implements IWorkspaceDrafts
       fetchIssuesWithExistingPagination: action,
     });
     // services
-    this.workspaceService = new WorkspaceService();
+    this.workspaceDraftService = new WorkspaceDraftService();
     // filter store
     this.workspaceDraftFilterStore = workspaceDraftFilterStore;
   }
@@ -95,8 +97,8 @@ export class WorkspaceDrafts extends BaseIssuesStore implements IWorkspaceDrafts
       // call the fetch issues API with the params
 
       //response is TIssueResponse, which expects TBaseIssue
-      const response = await this.workspaceService.getViewIssues(workspaceSlug, params, { // FIX
-        signal: this.controller.signal, // ASK
+      const response = await this.workspaceDraftService.getDraftIssues(workspaceSlug, params, {
+        signal: this.controller.signal,
       });
 
       // after fetching issues, call the base method to process the response further
@@ -134,7 +136,9 @@ export class WorkspaceDrafts extends BaseIssuesStore implements IWorkspaceDrafts
         groupId
       );
       // call the fetch issues API with the params for next page in issues
-      const response = await this.workspaceService.getViewIssues(workspaceSlug, params);// FIX
+      const response = await this.workspaceDraftService.getDraftIssues(workspaceSlug, params, {
+        signal: this.controller.signal,
+      });
 
       // after the next page of issues are fetched, call the base method to process the response
       this.onfetchNexIssues(response, groupId);
@@ -159,10 +163,49 @@ export class WorkspaceDrafts extends BaseIssuesStore implements IWorkspaceDrafts
     return await this.fetchIssues(workspaceSlug, loadType, this.paginationOptions, true);
   };
 
-  // Using aliased names as they cannot be overridden in other stores
-  createDraft = this.createDraftIssue;
-  updateDraft = this.updateDraftIssue;
-
   // Setting them as undefined as they can not performed on workspace issues
   quickAddIssue = undefined;
+
+  createDraft = async (workspaceSlug: string, data: Partial<TIssue>) => {
+    const response = await this.workspaceDraftService.createDraftIssue(workspaceSlug,data);
+    console.log("createDraft called: " + response)
+    this.addIssue(response);
+    return response;
+  }
+
+  updateDraft = async (workspaceSlug: string,issueId: string, data: Partial<TIssue>) => {
+    // Store Before state of the issue
+    const issueBeforeUpdate = clone(this.rootIssueStore.issues.getIssueById(issueId));
+    try {
+      // Update the Respective Stores
+      this.rootIssueStore.issues.updateIssue(issueId, data);
+      this.updateIssueList({ ...issueBeforeUpdate, ...data } as TIssue, issueBeforeUpdate);
+
+      // call API to update the issue
+      await this.workspaceDraftService.updateDraftIssue(workspaceSlug, issueId, data);
+
+      // call Fetch parent stats
+      // this.fetchParentStats(workspaceSlug);
+
+      // If the issue is updated to not a draft issue anymore remove from the store list
+      if (!isNil(data.is_draft) && !data.is_draft) this.removeIssueFromList(issueId);
+    } catch (error) {
+      // If errored out update store again to revert the change
+      this.rootIssueStore.issues.updateIssue(issueId, issueBeforeUpdate ?? {});
+      this.updateIssueList(issueBeforeUpdate, { ...issueBeforeUpdate, ...data } as TIssue);
+      throw error;
+    }
+  }
+
+  deleteDraft = async(workspaceSlug: string, issueId: string) => {
+    // Male API call
+    await this.workspaceDraftService.deleteDraftIssue(workspaceSlug, issueId);
+    // Remove from Respective issue Id list
+    runInAction(() => {
+      this.removeIssueFromList(issueId);
+    });
+    // Remove issue from main issue Map store
+    this.rootIssueStore.issues.removeIssue(issueId);
+  }
+
 }

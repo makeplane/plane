@@ -52,14 +52,14 @@ export const useWorkspaceDraftActions = () => {
   const createIssue = useCallback(
     async (projectId: string | undefined | null, data: Partial<TIssue>) => {
       if (!workspaceSlug || !projectId) return;
-      return await issues.createDraft(workspaceSlug, projectId, data);
+      return await issues.createDraft(workspaceSlug, data);
     },
     [issues, workspaceSlug]
   );
   const updateIssue = useCallback(
     async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
       if (!workspaceSlug || !projectId) return;
-      return await issues.updateDraft(workspaceSlug, projectId, issueId, data);
+      return await issues.updateDraft(workspaceSlug, issueId, data);
     },
     [issues, workspaceSlug]
   );
