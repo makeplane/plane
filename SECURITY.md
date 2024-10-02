@@ -25,15 +25,15 @@ While we appreciate all efforts to assist in improving our security, please note
 
 At Plane, we are committed to maintaining transparent and collaborative communication throughout the vulnerability resolution process. Here's what you can expect from us:
 
-- **Response Time** 
+- **Response Time** <br/>
 We will acknowledge receipt of your vulnerability report within three business days and provide an estimated timeline for resolution.
-- **Legal Protection** 
+- **Legal Protection** <br/>
 We will not initiate legal action against you for reporting vulnerabilities, provided you adhere to the reporting guidelines.
-- **Confidentiality** 
+- **Confidentiality** <br/>
 Your report will be treated with confidentiality. We will not disclose your personal information to third parties without your consent.
-- **Recognition** 
+- **Recognition** <br/>
 With your permission, we are happy to publicly acknowledge your contribution to improving our security once the issue is resolved.
-- **Timely Resolution** 
+- **Timely Resolution** <br/>
 We strive to resolve all reported vulnerabilities promptly and will collaborate with you during the resolution process and provide updates where applicable.
 
 We appreciate your help in ensuring the security of our platform. Your contributions are crucial to protecting our users and maintaining a secure environment. Thank you for working with us to keep Plane safe.
