@@ -149,7 +149,7 @@ export const CoreEditorExtensions = ({
     placeholder: ({ editor, node }) => {
       if (node.type.name === "heading") return `Heading ${node.attrs.level}`;
 
-      // if (editor.storage.image.uploadInProgress) return "";
+      if (editor.storage.imageComponent.uploadInProgress) return "";
 
       const shouldHidePlaceholder =
         editor.isActive("table") || editor.isActive("codeBlock") || editor.isActive("image");

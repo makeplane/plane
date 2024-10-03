@@ -7,7 +7,6 @@ import {
   CollaborativeDocumentReadOnlyEditorWithRef,
   EditorReadOnlyRefApi,
   EditorRefApi,
-  IMarking,
   TAIMenuProps,
   TDisplayConfig,
   TRealtimeConfig,
@@ -19,7 +18,7 @@ import { IUserLite } from "@plane/types";
 import { Row } from "@plane/ui";
 import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
 // helpers
-import { cn, LIVE_URL } from "@/helpers/common.helper";
+import { cn, LIVE_BASE_PATH, LIVE_BASE_URL } from "@/helpers/common.helper";
 import { generateRandomColor } from "@/helpers/string.helper";
 // hooks
 import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
@@ -67,7 +66,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     project: { getProjectMemberIds },
   } = useMember();
   // derived values
-  const workspaceId = workspaceSlug ? getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "" : "";
+  const workspaceId = workspaceSlug ? (getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "") : "";
   const pageId = page?.id;
   const pageTitle = page?.name ?? "";
   const { isContentEditable, updateTitle, setIsSubmitting } = page;
@@ -113,19 +112,30 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     []
   );
 
-  const realtimeConfig: TRealtimeConfig = useMemo(
-    () => ({
-      url: `${LIVE_URL}/collaboration`,
-      queryParams: {
-        workspaceSlug: workspaceSlug?.toString(),
-        projectId: projectId?.toString(),
-        documentType: "project_page",
-      },
-    }),
-    [projectId, workspaceSlug]
-  );
+  const realtimeConfig: TRealtimeConfig | undefined = useMemo(() => {
+    // Construct the WebSocket Collaboration URL
+    try {
+      const LIVE_SERVER_BASE_URL = LIVE_BASE_URL ?? window.location.origin;
+      const WS_LIVE_URL = new URL(`${LIVE_SERVER_BASE_URL}${LIVE_BASE_PATH}`);
+      const isSecureEnvironment = window.location.protocol === "https:";
+      WS_LIVE_URL.protocol = isSecureEnvironment ? "wss" : "ws";
+      WS_LIVE_URL.pathname = "collaboration";
+      // Construct realtime config
+      return {
+        url: WS_LIVE_URL.toString(),
+        queryParams: {
+          workspaceSlug: workspaceSlug?.toString(),
+          projectId: projectId?.toString(),
+          documentType: "project_page",
+        },
+      };
+    } catch (error) {
+      console.error("Error creating realtime config", error);
+      return undefined;
+    }
+  }, [projectId, workspaceSlug]);
 
-  if (pageId === undefined) return <PageContentLoader />;
+  if (pageId === undefined || !realtimeConfig) return <PageContentLoader />;
 
   return (
     <div className="flex items-center h-full w-full overflow-y-auto">

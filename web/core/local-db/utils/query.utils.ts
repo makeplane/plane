@@ -330,7 +330,7 @@ const getSingleFilterFields = (queries: any) => {
 export const getIssueFieldsFragment = () => {
   const { description_html, ...filtered } = issueSchema;
   const keys = Object.keys(filtered);
-  const sql = `  ${keys.map((key, index) => `i.${key}`).join(`,
+  const sql = `  ${keys.map((key) => `i.${key}`).join(`,
     `)}`;
   return sql;
 };

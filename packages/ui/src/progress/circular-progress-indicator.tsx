@@ -9,7 +9,7 @@ interface ICircularProgressIndicator {
 }
 
 export const CircularProgressIndicator: React.FC<ICircularProgressIndicator> = (props) => {
-  const { size = 40, percentage = 25, strokeWidth = 6, children } = props;
+  const { size = 40, percentage = 25, strokeWidth = 6, strokeColor = "stroke-custom-primary-100", children } = props;
 
   const sqSize = size;
   const radius = (size - strokeWidth) / 2;
@@ -27,7 +27,7 @@ export const CircularProgressIndicator: React.FC<ICircularProgressIndicator> = (
           strokeWidth={`${strokeWidth}px`}
           style={{ filter: "url(#filter0_bi_377_19141)" }}
         />
-        <defs>
+        {/* <defs>
           <filter
             id="filter0_bi_377_19141"
             x="-3.57544"
@@ -53,9 +53,9 @@ export const CircularProgressIndicator: React.FC<ICircularProgressIndicator> = (
             <feColorMatrix type="matrix" values="0 0 0 0 0.63125 0 0 0 0 0.6625 0 0 0 0 0.75 0 0 0 0.35 0" />
             <feBlend mode="normal" in2="shape" result="effect2_innerShadow_377_19141" />
           </filter>
-        </defs>
+        </defs> */}
         <circle
-          className="fill-none stroke-custom-primary-100 "
+          className={`fill-none ${strokeColor}`}
           cx={size / 2}
           cy={size / 2}
           r={radius}

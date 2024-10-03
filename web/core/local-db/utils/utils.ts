@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/nextjs";
 import pick from "lodash/pick";
 import { TIssue } from "@plane/types";
 import { rootStore } from "@/lib/store-context";
@@ -9,7 +10,13 @@ export const log = (...args: any) => {
     console.log(...args);
   }
 };
-export const logError = console.error;
+export const logError = (e: any) => {
+  if (e?.result?.errorClass === "SQLite3Error") {
+    e = parseSQLite3Error(e);
+  }
+  Sentry.captureException(e);
+  console.log(e);
+};
 export const logInfo = console.info;
 
 export const updatePersistentLayer = async (issueIds: string | string[]) => {
@@ -66,7 +73,7 @@ export const wrapDateTime = (field: string) => {
   return field;
 };
 
-export const getGroupedIssueResults = (issueResults: (TIssue & { group_id: string; total_issues: number })[]): any => {
+export const getGroupedIssueResults = (issueResults: (TIssue & { group_id?: string; total_issues: number })[]): any => {
   const groupedResults: {
     [key: string]: {
       results: TIssue[];
@@ -88,7 +95,7 @@ export const getGroupedIssueResults = (issueResults: (TIssue & { group_id: strin
 };
 
 export const getSubGroupedIssueResults = (
-  issueResults: (TIssue & { group_id: string; total_issues: number; sub_group_id: string })[]
+  issueResults: (TIssue & { group_id?: string; total_issues: number; sub_group_id?: string })[]
 ): any => {
   const subGroupedResults: {
     [key: string]: {
@@ -140,3 +147,8 @@ export const getSubGroupedIssueResults = (
 };
 
 export const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const parseSQLite3Error = (error: any) => {
+  error.result = JSON.stringify(error.result);
+  return error;
+};
