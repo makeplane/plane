@@ -147,7 +147,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         name = request.data.get("name")
         type = request.data.get("type", "image/jpeg")
         size = int(request.data.get("size", settings.FILE_SIZE_LIMIT))
-        entity_type = request.data.get("entity_type", False)
+        entity_type = request.data.get("entity_type", "")
         entity_identifier = request.data.get("entity_identifier", False)
 
         # Check if the entity type is allowed
@@ -160,18 +160,8 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Check if the entity identifier is provided
-        if not entity_identifier:
-            return Response(
-                {
-                    "error": "Entity identifier is required.",
-                    "status": False,
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
         # Check if the file type is allowed
-        allowed_types = ["image/jpeg", "image/png"]
+        allowed_types = ["image/jpeg", "image/png", "image/webp"]
         if type not in allowed_types:
             return Response(
                 {
@@ -727,4 +717,33 @@ class CommentAssetEndpoint(BaseAPIView):
         asset.deleted_at = timezone.now()
         # Save the asset
         asset.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class BulkAssetUpdateEndpoint(BaseAPIView):
+    """This endpoint is used to bulk update the entity identifier for multiple assets. Which don't have the entity identifier set."""
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def patch(self, request, slug, project_id, entity_type, entity_id):
+        # get the asset id
+        asset_ids = request.data.get("asset_ids", [])
+
+        # Check if the asset ids are provided
+        if not asset_ids:
+            return Response(
+                {
+                    "error": "No asset ids provided.",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # get the asset id
+        assets = FileAsset.objects.filter(
+            id__in=asset_ids,
+            entity_type=entity_type,
+        )
+        # update the attributes
+        assets.update(
+            entity_identifier=entity_id,
+        )
         return Response(status=status.HTTP_204_NO_CONTENT)
