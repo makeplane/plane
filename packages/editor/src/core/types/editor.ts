@@ -12,7 +12,7 @@ import {
   TExtensions,
   TFileHandler,
   TServerHandler,
-  DocumentEventsServer,
+  TDocumentEventsServer,
 } from "@/types";
 
 import { HocuspocusProvider } from "@hocuspocus/provider";
@@ -33,7 +33,7 @@ export type EditorReadOnlyRefApi = {
     paragraphs: number;
     words: number;
   };
-  emitRealTimeUpdate: (message: DocumentEventsServer) => void;
+  emitRealTimeUpdate: (message: TDocumentEventsServer) => void;
   listenToRealTimeUpdate: () => HocuspocusProvider;
 };
 

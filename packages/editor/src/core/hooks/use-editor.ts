@@ -16,8 +16,8 @@ import { IMarking, scrollSummary } from "@/helpers/scroll-to-node";
 // props
 import { CoreEditorProps } from "@/props";
 // types
-import {
-  DocumentEventsServer,
+import type {
+  TDocumentEventsServer,
   EditorRefApi,
   IMentionHighlight,
   IMentionSuggestion,
@@ -279,7 +279,7 @@ export const useEditor = (props: CustomEditorProps) => {
         if (!document) return;
         Y.applyUpdate(document, value);
       },
-      emitRealTimeUpdate: (message: DocumentEventsServer) => provider?.sendStateless(message),
+      emitRealTimeUpdate: (message: TDocumentEventsServer) => provider?.sendStateless(message),
       listenToRealTimeUpdate: () => provider,
     }),
     [editorRef, savedSelection]

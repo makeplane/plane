@@ -6,7 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import { ArchiveRestoreIcon, Clipboard, Copy, History, Link, Lock, LockOpen, LucideIcon } from "lucide-react";
 // document editor
 import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
-import { DocumentEventsClient } from "@plane/editor/lib";
+import { TDocumentEventsClient } from "@plane/editor/lib";
 // ui
 import { ArchiveIcon, CustomMenu, ISvgIcons, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 // helpers
@@ -146,7 +146,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   useEffect(() => {
     const provider = editorRef?.listenToRealTimeUpdate();
 
-    const handleStatelessMessage = (message: { payload: DocumentEventsClient }) => {
+    const handleStatelessMessage = (message: { payload: TDocumentEventsClient }) => {
       if (localAction === message.payload) {
         setLocalAction(null);
         return;
