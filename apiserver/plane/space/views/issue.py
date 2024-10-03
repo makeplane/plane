@@ -19,7 +19,9 @@ from django.db.models import (
     Value,
     OuterRef,
     Func,
+    CharField,
 )
+from django.db.models.functions import Concat
 
 # Third Party imports
 from rest_framework.response import Response
@@ -747,7 +749,26 @@ class IssueRetrievePublicEndpoint(BaseAPIView):
                                     first_name=F("votes__actor__first_name"),
                                     last_name=F("votes__actor__last_name"),
                                     avatar=F("votes__actor__avatar"),
-                                    avatar_url=F("votes__actor__avatar_url"),
+                                    avatar_url=Case(
+                                        When(
+                                            votes__actor__avatar_asset__isnull=False,
+                                            then=Concat(
+                                                Value(
+                                                    "/api/assets/v2/static/"
+                                                ),
+                                                F(
+                                                    "votes__actor__avatar_asset"
+                                                ),
+                                                Value("/"),
+                                            ),
+                                        ),
+                                        When(
+                                            votes__actor__avatar_asset__isnull=True,
+                                            then=F("votes__actor__avatar"),
+                                        ),
+                                        default=Value(None),
+                                        output_field=CharField(),
+                                    ),
                                     display_name=F(
                                         "votes__actor__display_name"
                                     ),
