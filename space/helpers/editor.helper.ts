@@ -12,7 +12,7 @@ const fileService = new FileService();
  * @param {string} anchor
  */
 export const getEditorAssetSrc = (anchor: string, assetId: string): string | undefined => {
-  const url = getFileURL(`/api/assets/v2/anchor/${anchor}/${assetId}/`);
+  const url = getFileURL(`/api/public/assets/v2/anchor/${anchor}/${assetId}/`);
   return url;
 };
 

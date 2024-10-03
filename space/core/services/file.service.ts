@@ -19,7 +19,7 @@ export class FileService extends APIService {
   }
 
   private async updateAssetUploadStatus(anchor: string, assetId: string): Promise<void> {
-    return this.patch(`/api/assets/v2/anchor/${anchor}/${assetId}/`)
+    return this.patch(`/api/public/assets/v2/anchor/${anchor}/${assetId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -33,7 +33,7 @@ export class FileService extends APIService {
       asset_ids: string[];
     }
   ): Promise<void> {
-    return this.post(`/api/assets/v2/anchor/${anchor}/${entityId}/bulk/`, data)
+    return this.post(`/api/public/assets/v2/anchor/${anchor}/${entityId}/bulk/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -42,7 +42,7 @@ export class FileService extends APIService {
 
   async uploadAsset(anchor: string, data: TFileEntityInfo, file: File): Promise<TFileSignedURLResponse> {
     const fileMetaData = getFileMetaDataForUpload(file);
-    return this.post(`/api/assets/v2/anchor/${anchor}/`, {
+    return this.post(`/api/public/assets/v2/anchor/${anchor}/`, {
       ...data,
       ...fileMetaData,
     })
@@ -78,7 +78,7 @@ export class FileService extends APIService {
   async restoreNewAsset(workspaceSlug: string, src: string): Promise<void> {
     // remove the last slash and get the asset id
     const assetId = getAssetIdFromUrl(src);
-    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/restore/${assetId}/`)
+    return this.post(`/api/public/assets/v2/workspaces/${workspaceSlug}/restore/${assetId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
