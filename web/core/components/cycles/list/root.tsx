@@ -1,10 +1,11 @@
-import { FC } from "react";
+import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { Disclosure } from "@headlessui/react";
 // components
 import { ContentWrapper, ERowVariant } from "@plane/ui";
 import { ListLayout } from "@/components/core/list";
-import { ActiveCycleRoot, CycleListGroupHeader, CyclePeekOverview, CyclesListMap } from "@/components/cycles";
+import { CycleListGroupHeader, CyclePeekOverview, CyclesListMap } from "@/components/cycles";
+import { ActiveCycleRoot } from "@/plane-web/components/cycles";
 
 export interface ICyclesList {
   completedCycleIds: string[];
@@ -27,7 +28,7 @@ export const CyclesList: FC<ICyclesList> = observer((props) => {
           </>
         ) : (
           <>
-            <ActiveCycleRoot workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
+            <ActiveCycleRoot workspaceSlug={workspaceSlug} projectId={projectId} />
 
             {upcomingCycleIds && (
               <Disclosure as="div" className="flex flex-shrink-0 flex-col" defaultOpen>
@@ -49,7 +50,6 @@ export const CyclesList: FC<ICyclesList> = observer((props) => {
                 )}
               </Disclosure>
             )}
-
             <Disclosure as="div" className="flex flex-shrink-0 flex-col pb-7">
               {({ open }) => (
                 <>

@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 // helpers
 import {
+  insertImage,
   insertTableCommand,
   setText,
   toggleBlockquote,
@@ -193,8 +194,7 @@ export const ImageItem = (editor: Editor) =>
     key: "image",
     name: "Image",
     isActive: () => editor?.isActive("image") || editor?.isActive("imageComponent"),
-    command: (savedSelection: Selection | null) =>
-      editor?.commands.setImageUpload({ event: "insert", pos: savedSelection?.from }),
+    command: (savedSelection: Selection | null) => insertImage({ editor, event: "insert", pos: savedSelection?.from }),
     icon: ImageIcon,
   }) as const;
 
