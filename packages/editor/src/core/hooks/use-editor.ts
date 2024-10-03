@@ -41,11 +41,11 @@ export interface CustomEditorProps {
   };
   onChange?: (json: object, html: string) => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
+  provider?: HocuspocusProvider;
   tabIndex?: number;
   // undefined when prop is not passed, null if intentionally passed to stop
   // swr syncing
   value?: string | null | undefined;
-  provider?: HocuspocusProvider;
 }
 
 export const useEditor = (props: CustomEditorProps) => {
