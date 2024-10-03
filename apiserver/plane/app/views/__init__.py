@@ -119,6 +119,7 @@ from .asset.v2 import (
     StaticFileAssetEndpoint,
     AssetRestoreEndpoint,
     ProjectAssetEndpoint,
+    ProjectBulkAssetEndpoint,
 )
 from .issue.base import (
     IssueListEndpoint,

@@ -390,30 +390,38 @@ class ProjectAssetEndpoint(BaseAPIView):
     @allow_permission(
         [ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST],
     )
-    def patch(self, request, slug, project_id, entity_type, entity_id):
-        # get the asset id
-        asset_ids = request.data.get("asset_ids", [])
+    def patch(self, request, slug, project_id, pk):
+        entity_type = request.data.get("entity_type", "")
 
-        # Check if the asset ids are provided
-        if not asset_ids:
+        if (
+            not entity_type
+            or entity_type not in FileAsset.EntityTypeContext.values
+        ):
             return Response(
                 {
-                    "error": "No asset ids provided.",
+                    "error": "Invalid entity type.",
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         # get the asset id
-        assets = FileAsset.objects.filter(
-            id__in=asset_ids,
-            workspace__slug=slug,
-            project_id=project_id,
+        asset = FileAsset.objects.get(
+            id=pk,
             entity_type=entity_type,
         )
+        storage = S3Storage(request=request)
+        # get the storage metadata
+        asset.is_uploaded = True
+        # get the storage metadata
+        if asset.storage_metadata is None:
+            asset.storage_metadata = storage.get_object_metadata(
+                object_name=asset.asset.name
+            )
+
         # update the attributes
-        assets.update(
-            entity_identifier=entity_id,
-        )
+        asset.attributes = request.data.get("attributes", asset.attributes)
+        # save the asset
+        asset.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
@@ -457,3 +465,45 @@ class ProjectAssetEndpoint(BaseAPIView):
         )
         # Redirect to the signed URL
         return HttpResponseRedirect(signed_url)
+
+
+class ProjectBulkAssetEndpoint(BaseAPIView):
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def post(self, request, slug, project_id, entity_identifier):
+        entity_type = request.data.get("entity_type", "")
+        asset_ids = request.data.get("asset_ids", [])
+
+        # Check if the entity type is allowed
+        if (
+            not entity_type
+            or entity_type not in FileAsset.EntityTypeContext.values
+        ):
+            return Response(
+                {
+                    "error": "Invalid entity type.",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Check if the asset ids are provided
+        if not asset_ids:
+            return Response(
+                {
+                    "error": "No asset ids provided.",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # get the asset id
+        assets = FileAsset.objects.filter(
+            id__in=asset_ids,
+            entity_type=entity_type,
+            workspace__slug=slug,
+            project_id=project_id,
+        )
+        # update the attributes
+        assets.update(
+            entity_identifier=entity_identifier,
+        )
+        return Response(status=status.HTTP_204_NO_CONTENT)

@@ -11,6 +11,7 @@ from plane.app.views import (
     StaticFileAssetEndpoint,
     AssetRestoreEndpoint,
     ProjectAssetEndpoint,
+    ProjectBulkAssetEndpoint,
 )
 
 
@@ -86,7 +87,7 @@ urlpatterns = [
         name="bulk-asset-update",
     ),
     path(
-        "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/<str:entity_type>/<uuid:entity_id>/",
-        ProjectAssetEndpoint.as_view(),
+        "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/<uuid:entity_id>/bulk/",
+        ProjectBulkAssetEndpoint.as_view(),
     ),
 ]
