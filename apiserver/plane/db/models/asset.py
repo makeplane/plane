@@ -91,13 +91,11 @@ class FileAsset(BaseModel):
         if self.entity_type == self.EntityTypeContext.ISSUE_ATTACHMENT:
             return f"/api/assets/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/issues/{self.entity_identifier}/attachments/{self.id}/"
 
-        if self.entity_type == self.EntityTypeContext.ISSUE_DESCRIPTION:
-            return f"/api/assets/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/issues/{self.entity_identifier}/{self.id}/"
-
-        if self.entity_type == self.EntityTypeContext.COMMENT_DESCRIPTION:
-            return f"/api/assets/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/comments/{self.entity_identifier}/{self.id}/"
-
-        if self.entity_type == self.EntityTypeContext.PAGE_DESCRIPTION:
-            return f"/api/assets/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/pages/{self.entity_identifier}/{self.id}/"
+        if self.entity_type in [
+            self.EntityTypeContext.ISSUE_DESCRIPTION,
+            self.EntityTypeContext.COMMENT_DESCRIPTION,
+            self.EntityTypeContext.PAGE_DESCRIPTION,
+        ]:
+            return f"/api/assets/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/{self.id}/"
 
         return None
