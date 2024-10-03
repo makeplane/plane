@@ -25,7 +25,8 @@ type Props = {
 
 export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   const { editorRef, handleDuplicatePage, page } = props;
-  // create a local state to track if the current action is being processed
+  // create a local state to track if the current action is being processed, a
+  // local action is by the client
   const [localAction, setLocalAction] = useState<string | null>(null);
 
   // router
@@ -50,6 +51,21 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   // update query params
   const { updateQueryParams } = useQueryParams();
 
+  useEffect(() => {
+    if (localAction === "archived") {
+      editorRef?.emitRealTimeUpdate("Archive");
+    }
+    if (localAction === "unarchived") {
+      editorRef?.emitRealTimeUpdate("Unarchive");
+    }
+    if (localAction === "locked") {
+      editorRef?.emitRealTimeUpdate("Lock");
+    }
+    if (localAction === "unlocked") {
+      editorRef?.emitRealTimeUpdate("Unlock");
+    }
+  }, [localAction, editorRef]);
+
   const handleArchivePage = useCallback(
     async (isLocal: boolean = true) => {
       await archive()
@@ -68,22 +84,6 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     },
     [archive]
   );
-
-  // watch for changes in localAction
-  useEffect(() => {
-    if (localAction === "archived") {
-      editorRef?.emitRealTimeUpdate("Archive");
-    }
-    if (localAction === "unarchived") {
-      editorRef?.emitRealTimeUpdate("Unarchive");
-    }
-    if (localAction === "locked") {
-      editorRef?.emitRealTimeUpdate("Lock");
-    }
-    if (localAction === "unlocked") {
-      editorRef?.emitRealTimeUpdate("Unlock");
-    }
-  }, [localAction, editorRef]);
 
   const handleRestorePage = useCallback(
     async (isLocal: boolean = true) => {
