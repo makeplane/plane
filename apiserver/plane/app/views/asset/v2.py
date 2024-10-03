@@ -299,8 +299,9 @@ class StaticFileAssetEndpoint(BaseAPIView):
 class AssetRestoreEndpoint(BaseAPIView):
     """Endpoint to restore a deleted assets."""
 
-    def post(self, request, asset_id):
-        asset = FileAsset.objects.get(id=asset_id)
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def post(self, request, slug, asset_id):
+        asset = FileAsset.objects.get(id=asset_id, workspace__slug=slug)
         asset.is_deleted = False
         asset.deleted_at = None
         asset.save()
