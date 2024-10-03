@@ -114,7 +114,6 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
         height: `${Math.round(initialHeight)}px` satisfies Pixel,
         aspectRatio: aspectRatio,
       };
-
       setSize(initialComputedSize);
       updateAttributesSafely(
         initialComputedSize,
@@ -122,17 +121,19 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
       );
     } else {
       // as the aspect ratio in not stored for old images, we need to update the attrs
-      setSize((prevSize) => {
-        const newSize = { ...prevSize, aspectRatio };
-        updateAttributesSafely(
-          newSize,
-          "Failed to update attributes while initializing images with width but no aspect ratio:"
-        );
-        return newSize;
-      });
+      if (!aspectRatio) {
+        setSize((prevSize) => {
+          const newSize = { ...prevSize, aspectRatio };
+          updateAttributesSafely(
+            newSize,
+            "Failed to update attributes while initializing images with width but no aspect ratio:"
+          );
+          return newSize;
+        });
+      }
     }
     setInitialResizeComplete(true);
-  }, [width, updateAttributes, editorContainer]);
+  }, [width, updateAttributes, editorContainer, aspectRatio]);
 
   // for real time resizing
   useLayoutEffect(() => {
