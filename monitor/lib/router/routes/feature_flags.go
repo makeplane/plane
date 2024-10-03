@@ -43,6 +43,7 @@ func addFreeWorkspace(routes fiber.Router, api *prime_api.IPrimeMonitorApi, key 
 func addActivateRoutes(controller *fiber.App, api *prime_api.IPrimeMonitorApi, key string) {
 	controller.Post("/licenses/activate/", handlers.GetActivateFeatureFlagHandler(*api, key))
 	controller.Post("/licenses/modify-seats/", handlers.UpdateLicenseSeats(*api, key))
+	controller.Post("/licenses/deactivate/", handlers.DeactivateLicense(*api, key))
 }
 
 func addFeatureFlagRoutes(controller *fiber.App, api *prime_api.IPrimeMonitorApi, key string) {
@@ -51,6 +52,7 @@ func addFeatureFlagRoutes(controller *fiber.App, api *prime_api.IPrimeMonitorApi
 
 func addSyncRoutes(controller *fiber.App, api *prime_api.IPrimeMonitorApi, key string) {
 	controller.Patch("/workspaces/:workspaceId/subscriptions/", handlers.GetSyncFeatureFlagHandler(*api, key))
+	controller.Post("/workspaces/:workspaceId/sync/", handlers.GetManualSyncHandler(*api, key))
 }
 
 func addWorkspaceLicensRoutes(controller *fiber.App, api *prime_api.IPrimeMonitorApi, key string) {
