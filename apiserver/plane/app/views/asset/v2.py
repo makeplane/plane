@@ -317,7 +317,7 @@ class ProjectAssetEndpoint(BaseAPIView):
     @allow_permission(
         [ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST],
     )
-    def post(self, request, project_id, slug):
+    def post(self, request, slug, project_id):
         name = request.data.get("name")
         type = request.data.get("type", "image/jpeg")
         size = int(request.data.get("size", settings.FILE_SIZE_LIMIT))
