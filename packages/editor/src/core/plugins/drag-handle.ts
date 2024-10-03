@@ -232,16 +232,51 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     dragHandleElement.addEventListener("click", (e) => handleClick(e, view));
     dragHandleElement.addEventListener("contextmenu", (e) => handleClick(e, view));
 
+    const isScrollable = (node: HTMLElement | SVGElement) => {
+      if (!(node instanceof HTMLElement || node instanceof SVGElement)) {
+        return false;
+      }
+      const style = getComputedStyle(node);
+      return ["overflow", "overflow-x", "overflow-y"].some((propertyName) => {
+        const value = style.getPropertyValue(propertyName);
+        return value === "auto" || value === "scroll";
+      });
+    };
+
+    const getScrollParent = (node: HTMLElement | SVGElement) => {
+      let currentParent = node.parentElement;
+      while (currentParent) {
+        if (isScrollable(currentParent)) {
+          return currentParent;
+        }
+        currentParent = currentParent.parentElement;
+      }
+      return document.scrollingElement || document.documentElement;
+    };
+
+    // Usage in your existing code
     dragHandleElement.addEventListener("drag", (e) => {
       hideDragHandle();
-      const frameRenderer = document.querySelector(".frame-renderer");
-      if (!frameRenderer) return;
+      const scrollableParent = getScrollParent(dragHandleElement);
+      if (!scrollableParent) return;
+
       if (e.clientY < options.scrollThreshold.up) {
-        frameRenderer.scrollBy({ top: -150, behavior: "smooth" });
+        scrollableParent.scrollBy({ top: -70, behavior: "smooth" });
       } else if (window.innerHeight - e.clientY < options.scrollThreshold.down) {
-        frameRenderer.scrollBy({ top: 150, behavior: "smooth" });
+        scrollableParent.scrollBy({ top: 70, behavior: "smooth" });
       }
     });
+
+    // dragHandleElement.addEventListener("drag", (e) => {
+    //   hideDragHandle();
+    //   const frameRenderer = document.querySelector(".frame-renderer");
+    //   if (!frameRenderer) return;
+    //   if (e.clientY < options.scrollThreshold.up) {
+    //     frameRenderer.scrollBy({ top: -70, behavior: "smooth" });
+    //   } else if (window.innerHeight - e.clientY < options.scrollThreshold.down) {
+    //     frameRenderer.scrollBy({ top: 70, behavior: "smooth" });
+    //   }
+    // });
 
     hideDragHandle();
 
