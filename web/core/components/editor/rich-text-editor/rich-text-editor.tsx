@@ -5,6 +5,8 @@ import { EditorRefApi, IRichTextEditor, RichTextEditorWithRef } from "@plane/edi
 import { IUserLite } from "@plane/types";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { getEditorAssetSrc } from "@/helpers/editor.helper";
+import { checkURLValidity } from "@/helpers/string.helper";
 // hooks
 import { useMember, useMention, useUser } from "@/hooks/store";
 // services
@@ -14,12 +16,13 @@ interface RichTextEditorWrapperProps extends Omit<IRichTextEditor, "fileHandler"
   workspaceSlug: string;
   workspaceId: string;
   projectId: string;
+  uploadFile: (file: File) => Promise<string>;
 }
 
 const fileService = new FileService();
 
 export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProps>((props, ref) => {
-  const { containerClassName, workspaceSlug, workspaceId, projectId, ...rest } = props;
+  const { containerClassName, workspaceSlug, workspaceId, projectId, uploadFile, ...rest } = props;
   // store hooks
   const { data: currentUser } = useUser();
   const {
@@ -41,9 +44,22 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
     <RichTextEditorWithRef
       ref={ref}
       fileHandler={{
-        upload: fileService.getUploadFileFunction(workspaceSlug),
-        delete: fileService.getDeleteImageFunction(workspaceId),
-        restore: fileService.getRestoreImageFunction(workspaceId),
+        getAssetSrc: (path) => getEditorAssetSrc(workspaceSlug, projectId, path) ?? "",
+        upload: uploadFile,
+        delete: async (src: string) => {
+          if (checkURLValidity(src)) {
+            await fileService.deleteOldEditorAsset(workspaceId, src);
+          } else {
+            await fileService.deleteNewAsset(src);
+          }
+        },
+        restore: async (src: string) => {
+          if (checkURLValidity(src)) {
+            await fileService.restoreOldEditorAsset(workspaceId, src);
+          } else {
+            await fileService.restoreNewAsset(workspaceSlug, src);
+          }
+        },
         cancel: fileService.cancelUpload,
       }}
       mentionHandler={{

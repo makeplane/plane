@@ -1,4 +1,5 @@
 export * from "./issue_archive.service";
+export * from "./issue_assets.service";
 export * from "./issue.service";
 export * from "./issue_draft.service";
 export * from "./issue_reaction.service";

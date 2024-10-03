@@ -17,7 +17,7 @@ import { Button, Input, Loader } from "@plane/ui";
 // constants
 import { MAX_FILE_SIZE } from "@/constants/common";
 // hooks
-import { useWorkspace, useInstance } from "@/hooks/store";
+import { useInstance } from "@/hooks/store";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 // services
 import { FileService } from "@/services/file.service";
@@ -66,7 +66,6 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = useParams();
   // store hooks
   const { config } = useInstance();
-  const { currentWorkspace } = useWorkspace();
 
   const { data: unsplashImages, error: unsplashError } = useSWR(
     `UNSPLASH_IMAGES_${searchParams}`,
@@ -98,11 +97,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
 
   const handleSubmit = async () => {
     if (!image) return;
-
     setIsImageUploading(true);
-
-    const oldValue = value;
-    const isUnsplashImage = oldValue?.split("/")[2] === "images.unsplash.com";
 
     const uploadCallback = (url: string) => {
       onChange(url);
@@ -113,40 +108,26 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
 
     if (isProfileCover) {
       await fileService
-        .getUserAssetSignedURL(
+        .uploadUserAsset(
           {
             entity_identifier: "",
             entity_type: EFileAssetType.USER_COVER,
-            name: image.name,
-            size: image.size,
-            type: image.type,
           },
           image
         )
-        .then((res) => {
-          uploadCallback(res);
-          if (isUnsplashImage) return;
-          if (oldValue && currentWorkspace) fileService.deleteUserFile(oldValue);
-        });
+        .then((res) => uploadCallback(res.asset_url));
     } else {
       if (!workspaceSlug) return;
       await fileService
-        .getWorkspaceAssetSignedURL(
+        .uploadWorkspaceAsset(
           workspaceSlug.toString(),
           {
             entity_identifier: "",
             entity_type: EFileAssetType.PROJECT_COVER,
-            name: image.name,
-            size: image.size,
-            type: image.type,
           },
           image
         )
-        .then((res) => {
-          uploadCallback(res);
-          if (isUnsplashImage) return;
-          if (oldValue && currentWorkspace) fileService.deleteFile(currentWorkspace.id, oldValue);
-        });
+        .then((res) => uploadCallback(res.asset_url));
     }
   };
 

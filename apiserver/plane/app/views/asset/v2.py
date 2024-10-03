@@ -146,7 +146,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         name = request.data.get("name")
         type = request.data.get("type", "image/jpeg")
         size = int(request.data.get("size", settings.FILE_SIZE_LIMIT))
-        entity_type = request.data.get("entity_type", "")
+        entity_type = request.data.get("entity_type")
         entity_identifier = request.data.get("entity_identifier", False)
 
         # Check if the entity type is allowed
@@ -188,7 +188,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             workspace=workspace,
             created_by=request.user,
             entity_type=entity_type,
-            entity_identifier=entity_identifier,
+            entity_identifier=entity_identifier if entity_identifier else None,
         )
 
         # Get the presigned URL
@@ -304,7 +304,7 @@ class AssetRestoreEndpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def post(self, request, slug, asset_id):
-        asset = FileAsset.objects.get(id=asset_id, workspace__slug=slug)
+        asset = FileAsset.all_objects.get(id=asset_id, workspace__slug=slug)
         asset.is_deleted = False
         asset.deleted_at = None
         asset.save()

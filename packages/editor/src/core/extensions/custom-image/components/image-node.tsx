@@ -54,6 +54,8 @@ export const CustomImageNode = (props: CustomImageNodeViewProps) => {
             imageFromFileSystem={imageFromFileSystem}
             editorContainer={editorContainer}
             editor={editor}
+            // @ts-expect-error function not expected here, but will still work
+            src={editor?.commands?.getImageSource?.(node.attrs.src)}
             getPos={getPos}
             node={node}
             setEditorContainer={setEditorContainer}

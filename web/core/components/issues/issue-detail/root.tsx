@@ -4,7 +4,7 @@ import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // types
-import { TIssue } from "@plane/types";
+import { TFileSignedURLResponse, TIssue } from "@plane/types";
 // ui
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components
@@ -19,9 +19,14 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // images
 import emptyIssue from "@/public/empty-state/issue.svg";
+// services
+import { IssueAssetsService } from "@/services/issue";
 // local components
 import { IssueMainContent } from "./main-content";
 import { IssueDetailsSidebar } from "./sidebar";
+
+// services init
+const issueAssetsService = new IssueAssetsService();
 
 export type TIssueOperations = {
   fetch: (workspaceSlug: string, projectId: string, issueId: string, loader?: boolean) => Promise<void>;
@@ -45,6 +50,12 @@ export type TIssueOperations = {
     addModuleIds: string[],
     removeModuleIds: string[]
   ) => Promise<void>;
+  uploadIssueAsset: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    file: File
+  ) => Promise<TFileSignedURLResponse>;
 };
 
 export type TIssueDetailRoot = {
@@ -85,7 +96,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
         try {
           await fetchIssue(workspaceSlug, projectId, issueId);
         } catch (error) {
-          console.error("Error fetching the parent issue");
+          console.error("Error fetching the parent issue:", error);
         }
       },
       update: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
@@ -101,6 +112,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             path: pathname,
           });
         } catch (error) {
+          console.log("Error in updating issue:", error);
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { state: "FAILED", element: "Issue detail page" },
@@ -132,6 +144,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             path: pathname,
           });
         } catch (error) {
+          console.log("Error in deleting issue:", error);
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
@@ -153,6 +166,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             path: pathname,
           });
         } catch (error) {
+          console.log("Error in archiving issue:", error);
           captureIssueEvent({
             eventName: ISSUE_ARCHIVED,
             payload: { id: issueId, state: "FAILED", element: "Issue details page" },
@@ -309,6 +323,15 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
         });
         return promise;
       },
+      uploadIssueAsset: async (workspaceSlug: string, projectId: string, issueId: string, file: File) => {
+        try {
+          const res = await issueAssetsService.uploadIssueAsset(workspaceSlug, projectId, issueId, file);
+          return res;
+        } catch (error) {
+          console.log("Error in uploading issue asset:", error);
+          throw new Error("Asset upload failed. Please try again later.");
+        }
+      },
     }),
     [
       is_archived,
@@ -318,6 +341,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       archiveIssue,
       removeArchivedIssue,
       addIssueToCycle,
+      addCycleToIssue,
       removeIssueFromCycle,
       changeModulesInIssue,
       removeIssueFromModule,

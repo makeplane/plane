@@ -1,4 +1,5 @@
-import { TIssueAttachment, TIssueAttachmentUploadResponse } from "@plane/types";
+// plane types
+import { TFileSignedURLResponse } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { generateFileUploadPayload, getFileMetaDataForUpload } from "@/helpers/file.helper";
@@ -6,7 +7,7 @@ import { generateFileUploadPayload, getFileMetaDataForUpload } from "@/helpers/f
 import { APIService } from "@/services/api.service";
 import { FileUploadService } from "@/services/file-upload.service";
 
-export class IssueAttachmentService extends APIService {
+export class IssueAssetsService extends APIService {
   private fileUploadService: FileUploadService;
 
   constructor() {
@@ -15,47 +16,37 @@ export class IssueAttachmentService extends APIService {
     this.fileUploadService = new FileUploadService();
   }
 
-  private async updateIssueAttachmentUploadStatus(
+  private async updateIssueAssetUploadStatus(
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    attachmentId: string
+    assetId: string
   ): Promise<void> {
-    return this.patch(
-      `/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/attachments/${attachmentId}/`
-    )
+    return this.patch(`/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/${assetId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async uploadIssueAttachment(
+  async uploadIssueAsset(
     workspaceSlug: string,
     projectId: string,
     issueId: string,
     file: File
-  ): Promise<TIssueAttachment> {
+  ): Promise<TFileSignedURLResponse> {
     const fileMetaData = getFileMetaDataForUpload(file);
     return this.post(
-      `/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/attachments/`,
+      `/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/`,
       fileMetaData
     )
       .then(async (response) => {
-        const signedURLResponse: TIssueAttachmentUploadResponse = response?.data;
+        const signedURLResponse: TFileSignedURLResponse = response?.data;
         const fileUploadPayload = generateFileUploadPayload(signedURLResponse, file);
         await this.fileUploadService.uploadFile(signedURLResponse.upload_data.url, fileUploadPayload);
-        await this.updateIssueAttachmentUploadStatus(workspaceSlug, projectId, issueId, signedURLResponse.asset_id);
-        return signedURLResponse.attachment;
+        await this.updateIssueAssetUploadStatus(workspaceSlug, projectId, issueId, signedURLResponse.asset_id);
+        return signedURLResponse;
       })
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async getIssueAttachment(workspaceSlug: string, projectId: string, issueId: string): Promise<TIssueAttachment[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-attachments/`)
-      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });

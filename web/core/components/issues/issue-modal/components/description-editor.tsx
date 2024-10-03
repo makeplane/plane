@@ -180,6 +180,7 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
                 tabIndex={getIndex("description_html")}
                 placeholder={getDescriptionPlaceholder}
                 containerClassName="pt-3 min-h-[120px]"
+                uploadFile={async () => ""}
               />
             )}
           />
@@ -226,6 +227,8 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
                     AI
                   </button>
                 }
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
               />
             )}
           </div>

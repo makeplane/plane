@@ -28,7 +28,6 @@ import UserPersonalizationDark from "@/public/onboarding/user-personalization-da
 import UserPersonalizationLight from "@/public/onboarding/user-personalization-light.webp";
 // services
 import { AuthService } from "@/services/auth.service";
-import { FileService } from "@/services/file.service";
 
 type TProfileSetupFormValues = {
   first_name: string;
@@ -78,7 +77,6 @@ const USER_DOMAIN = [
   "Other",
 ];
 
-const fileService = new FileService();
 const authService = new AuthService();
 
 export const ProfileSetup: React.FC<Props> = observer((props) => {
@@ -87,7 +85,6 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
   const [profileSetupStep, setProfileSetupStep] = useState<EProfileSetupSteps>(
     user?.is_password_autoset ? EProfileSetupSteps.USER_DETAILS : EProfileSetupSteps.ALL
   );
-  const [isRemoving, setIsRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
   const [showPassword, setShowPassword] = useState({
@@ -243,12 +240,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
 
   const handleDelete = (url: string | null | undefined) => {
     if (!url) return;
-
-    setIsRemoving(true);
-    fileService.deleteUserFile(url).finally(() => {
-      setValue("avatar_url", "");
-      setIsRemoving(false);
-    });
+    setValue("avatar_url", "");
   };
 
   // derived values
@@ -310,8 +302,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                     <UserImageUploadModal
                       isOpen={isImageUploadModalOpen}
                       onClose={() => setIsImageUploadModalOpen(false)}
-                      isRemoving={isRemoving}
-                      handleDelete={() => handleDelete(getValues("avatar_url"))}
+                      handleDelete={async () => handleDelete(getValues("avatar_url"))}
                       onSuccess={(url) => {
                         onChange(url);
                         setIsImageUploadModalOpen(false);

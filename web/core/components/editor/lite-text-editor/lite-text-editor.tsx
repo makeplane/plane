@@ -9,7 +9,8 @@ import { IssueCommentToolbar } from "@/components/editor";
 import { EIssueCommentAccessSpecifier } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
-import { isCommentEmpty } from "@/helpers/string.helper";
+import { getEditorAssetSrc } from "@/helpers/editor.helper";
+import { checkURLValidity, isCommentEmpty } from "@/helpers/string.helper";
 // hooks
 import { useMember, useMention, useUser } from "@/hooks/store";
 // services
@@ -24,6 +25,7 @@ interface LiteTextEditorWrapperProps extends Omit<ILiteTextEditor, "fileHandler"
   showAccessSpecifier?: boolean;
   showSubmitButton?: boolean;
   isSubmitting?: boolean;
+  uploadFile: (file: File) => Promise<string>;
 }
 
 const fileService = new FileService();
@@ -40,6 +42,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     showSubmitButton = true,
     isSubmitting = false,
     placeholder = "Add comment...",
+    uploadFile,
     ...rest
   } = props;
   // store hooks
@@ -70,9 +73,23 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
       <LiteTextEditorWithRef
         ref={ref}
         fileHandler={{
-          upload: fileService.getUploadFileFunction(workspaceSlug),
-          delete: fileService.getDeleteImageFunction(workspaceId),
-          restore: fileService.getRestoreImageFunction(workspaceId),
+          getAssetSrc: (path) => getEditorAssetSrc(workspaceSlug, projectId, path) ?? "",
+          upload: uploadFile,
+          delete: async (src: string) => {
+            if (checkURLValidity(src)) {
+              await fileService.deleteOldEditorAsset(workspaceId, src);
+            } else {
+              await fileService.deleteNewAsset(src);
+            }
+          },
+          restore: async (src: string) => {
+            if (checkURLValidity(src)) {
+              await fileService.restoreOldEditorAsset(workspaceId, src);
+            } else {
+              await fileService.restoreNewAsset(workspaceSlug, src);
+            }
+          },
+          // restore: fileService.getRestoreImageFunction(workspaceId),
           cancel: fileService.cancelUpload,
         }}
         mentionHandler={{

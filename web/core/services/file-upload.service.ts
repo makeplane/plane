@@ -20,7 +20,7 @@ export class FileUploadService extends APIService {
     super("");
   }
 
-  async uploadFile(url: string, data: FormData): Promise<any> {
+  async uploadFile(url: string, data: FormData): Promise<void> {
     this.cancelSource = axios.CancelToken.source();
     return this.post(url, data, {
       headers: {
@@ -39,6 +39,6 @@ export class FileUploadService extends APIService {
   }
 
   cancelUpload() {
-    this.cancelSource.cancel("Upload cancelled");
+    this.cancelSource.cancel("Upload canceled");
   }
 }

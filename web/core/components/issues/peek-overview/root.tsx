@@ -13,7 +13,11 @@ import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useEventTracker, useIssueDetail, useIssues, useUserPermissions } from "@/hooks/store";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
+// plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+// services
+import { IssueAssetsService } from "@/services/issue";
+const issueAssetsService = new IssueAssetsService();
 
 interface IIssuePeekOverview {
   embedIssue?: boolean;
@@ -67,8 +71,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
         }
       },
       update: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
-        issues?.updateIssue &&
-          (await issues
+        if (issues?.updateIssue) {
+          await issues
             .updateIssue(workspaceSlug, projectId, issueId, data)
             .then(async () => {
               fetchActivities(workspaceSlug, projectId, issueId);
@@ -93,7 +97,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
                 type: TOAST_TYPE.ERROR,
                 message: "Issue update failed",
               });
-            }));
+            });
+        }
       },
       remove: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
@@ -317,6 +322,15 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             },
             path: pathname,
           });
+        }
+      },
+      uploadIssueAsset: async (workspaceSlug, projectId, issueId, file) => {
+        try {
+          const res = await issueAssetsService.uploadIssueAsset(workspaceSlug, projectId, issueId, file);
+          return res;
+        } catch (error) {
+          console.log("Error in uploading issue asset:", error);
+          throw new Error("Asset upload failed. Please try again later.");
         }
       },
     }),

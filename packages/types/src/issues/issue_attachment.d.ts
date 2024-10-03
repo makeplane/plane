@@ -1,6 +1,4 @@
-import { TFileMetaData, TFileSignedURLResponse } from "../file";
-
-export type TAttachmentUploadMetaData = Pick<TFileMetaData, "name" | "size" | "type">;
+import { TFileSignedURLResponse } from "../file";
 
 export type TIssueAttachment = {
   id: string;

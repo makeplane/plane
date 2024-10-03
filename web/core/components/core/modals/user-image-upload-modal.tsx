@@ -17,9 +17,8 @@ import { useInstance } from "@/hooks/store";
 import { FileService } from "@/services/file.service";
 
 type Props = {
-  handleDelete?: () => void;
+  handleDelete?: () => Promise<void>;
   isOpen: boolean;
-  isRemoving: boolean;
   onClose: () => void;
   onSuccess: (url: string) => void;
   value: string | null;
@@ -29,8 +28,9 @@ type Props = {
 const fileService = new FileService();
 
 export const UserImageUploadModal: React.FC<Props> = observer((props) => {
-  const { value, onSuccess, isOpen, onClose, isRemoving, handleDelete } = props;
+  const { value, onSuccess, isOpen, onClose, handleDelete } = props;
   // states
+  const [isRemoving, setIsRemoving] = useState(false);
   const [image, setImage] = useState<File | null>(null);
   const [isImageUploading, setIsImageUploading] = useState(false);
   // store hooks
@@ -55,24 +55,19 @@ export const UserImageUploadModal: React.FC<Props> = observer((props) => {
 
   const handleSubmit = async () => {
     if (!image) return;
-
     setIsImageUploading(true);
 
     try {
-      const imageURL = await fileService.getUserAssetSignedURL(
+      const { asset_url } = await fileService.uploadUserAsset(
         {
           entity_identifier: "",
           entity_type: EFileAssetType.USER_AVATAR,
-          name: image.name,
-          size: image.size,
-          type: image.type,
         },
         image
       );
-      onSuccess(imageURL);
+      onSuccess(asset_url);
       setImage(null);
-    } catch (error: any) {
-      console.log("error", error);
+    } catch (error) {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
@@ -82,6 +77,12 @@ export const UserImageUploadModal: React.FC<Props> = observer((props) => {
     } finally {
       setIsImageUploading(false);
     }
+  };
+
+  const handleImageDelete = async () => {
+    setIsRemoving(true);
+    await handleDelete?.();
+    setIsRemoving(false);
   };
 
   return (
@@ -162,11 +163,9 @@ export const UserImageUploadModal: React.FC<Props> = observer((props) => {
                 </div>
                 <p className="my-4 text-sm text-custom-text-200">File formats supported- .jpeg, .jpg, .png, .webp</p>
                 <div className="flex items-center justify-between">
-                  {handleDelete && (
-                    <Button variant="danger" size="sm" onClick={handleDelete} disabled={!value}>
-                      {isRemoving ? "Removing..." : "Remove"}
-                    </Button>
-                  )}
+                  <Button variant="danger" size="sm" onClick={handleImageDelete} disabled={!value}>
+                    {isRemoving ? "Removing" : "Remove"}
+                  </Button>
                   <div className="flex items-center gap-2">
                     <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                       Cancel
@@ -178,7 +177,7 @@ export const UserImageUploadModal: React.FC<Props> = observer((props) => {
                       disabled={!image}
                       loading={isImageUploading}
                     >
-                      {isImageUploading ? "Uploading..." : "Upload & Save"}
+                      {isImageUploading ? "Uploading" : "Upload & Save"}
                     </Button>
                   </div>
                 </div>

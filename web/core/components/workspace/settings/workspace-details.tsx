@@ -21,8 +21,6 @@ import { useEventTracker, useUserPermissions, useWorkspace } from "@/hooks/store
 // plane web components
 import { DeleteWorkspaceSection } from "@/plane-web/components/workspace";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
-// services
-import { FileService } from "@/services/file.service";
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",
@@ -30,9 +28,6 @@ const defaultValues: Partial<IWorkspace> = {
   organization_size: "2-10",
   logo_url: null,
 };
-
-// services
-const fileService = new FileService();
 
 export const WorkspaceDetails: FC = observer(() => {
   // states
@@ -102,30 +97,28 @@ export const WorkspaceDetails: FC = observer(() => {
     if (!currentWorkspace) return;
 
     const url = currentWorkspace.logo_url;
-
     if (!url) return;
 
     setIsImageRemoving(true);
 
-    fileService.deleteFile(currentWorkspace.id, url).then(() => {
-      updateWorkspace(currentWorkspace.slug, { logo_url: "" })
-        .then(() => {
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: "Success!",
-            message: "Workspace picture removed successfully.",
-          });
-          setIsImageUploadModalOpen(false);
-        })
-        .catch(() => {
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "There was some error in deleting your profile picture. Please try again.",
-          });
-        })
-        .finally(() => setIsImageRemoving(false));
-    });
+    updateWorkspace(currentWorkspace.slug, {
+      logo_url: "",
+    })
+      .then(() => {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: "Workspace picture removed successfully.",
+        });
+      })
+      .catch(() => {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "There was some error in deleting your profile picture. Please try again.",
+        });
+      })
+      .finally(() => setIsImageRemoving(false));
   };
 
   const handleCopyUrl = () => {
