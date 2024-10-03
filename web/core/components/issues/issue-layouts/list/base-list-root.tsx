@@ -1,9 +1,10 @@
 import { FC, useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 // types
-import { GroupByColumnTypes, TGroupedIssues } from "@plane/types";
+import { useParams } from "next/navigation";
+import { GroupByColumnTypes, TGroupedIssues, TIssueKanbanFilters } from "@plane/types";
 // constants
-import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
+import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useIssues, useUserPermissions } from "@/hooks/store";
 // hooks
@@ -59,6 +60,10 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
   const group_by = (displayFilters?.group_by || null) as GroupByColumnTypes | null;
   const showEmptyGroup = displayFilters?.show_empty_groups ?? false;
 
+  const { workspaceSlug, projectId } = useParams();
+  const {updateFilters} = useIssuesActions(storeType);
+  const collapsedGroups = issuesFilter?.issueFilters?.kanbanFilters || { group_by: [], sub_group_by: [] } as TIssueKanbanFilters;
+
   useEffect(() => {
     fetchIssues("init-loader", { canGroup: true, perPageCount: group_by ? 50 : 100 }, viewId);
   }, [fetchIssues, storeType, group_by, viewId]);
@@ -107,6 +112,25 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
     [fetchNextIssues]
   );
 
+  // kanbanFilters and EIssueFilterType.KANBAN_FILTERS are used becuase the state is shared between kanban view and list view
+  const handleCollapsedGroups = useCallback(
+    (value: string) => {
+      if (workspaceSlug) {
+        let collapsedGroups = issuesFilter?.issueFilters?.kanbanFilters?.group_by || [];
+        if (collapsedGroups.includes(value)) {
+          collapsedGroups = collapsedGroups.filter((_value) => _value != value);
+        } else {
+          collapsedGroups.push(value);
+        }
+        updateFilters(projectId?.toString() ?? "", EIssueFilterType.KANBAN_FILTERS,
+          { group_by: collapsedGroups } as TIssueKanbanFilters
+        );
+      }
+    },
+    [workspaceSlug, issuesFilter, projectId, updateFilters]
+  );
+
+
   return (
     <IssueLayoutHOC layout={EIssueLayoutTypes.LIST}>
       <div className={`relative size-full bg-custom-background-90`}>
@@ -127,6 +151,8 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
           addIssuesToView={addIssuesToView}
           isCompletedCycle={isCompletedCycle}
           handleOnDrop={handleOnDrop}
+          handleCollapsedGroups={handleCollapsedGroups}
+          collapsedGroups={collapsedGroups}
         />
       </div>
     </IssueLayoutHOC>

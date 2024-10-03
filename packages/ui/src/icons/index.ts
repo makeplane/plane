@@ -1,3 +1,4 @@
+export type { ISvgIcons } from "./type";
 export * from "./cycle";
 export * from "./module";
 export * from "./state";
@@ -28,5 +29,6 @@ export * from "./dropdown-icon";
 export * from "./intake";
 export * from "./user-activity-icon";
 export * from "./favorite-folder-icon";
-// types
-export type { ISvgIcons } from "./type";
+export * from "./planned-icon";
+export * from "./in-progress-icon";
+export * from "./done-icon";

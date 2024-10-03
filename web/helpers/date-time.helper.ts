@@ -357,3 +357,76 @@ export const getReadTimeFromWordsCount = (wordsCount: number): number => {
   const minutes = wordsCount / wordsPerMinute;
   return minutes * 60;
 };
+
+/**
+ * @description calculates today's date
+ * @param {boolean} format
+ * @returns {Date | string} today's date
+ * @example getToday() // Output: 2024-09-29T00:00:00.000Z
+ * @example getToday(true) // Output: 2024-09-29
+ */
+export const getToday = (format: boolean = false) => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  if (!format) return today;
+
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0"); // Months are 0-based, so add 1
+  const day = String(today.getDate()).padStart(2, "0"); // Add leading zero for single digits
+  return `${year}-${month}-${day}`;
+};
+
+/**
+ * @description calculates the date of the day before today
+ * @param {boolean} format
+ * @returns {Date | string} date of the day before today
+ * @example dateFormatter() // Output: "Sept 20, 2024"
+ */
+export const dateFormatter = (dateString: string) => {
+  // Convert to Date object
+  const date = new Date(dateString);
+
+  // Options for the desired format (Month Day, Year)
+  const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "short", day: "numeric" };
+
+  // Format the date
+  const formattedDate = date.toLocaleDateString("en-US", options);
+
+  return formattedDate;
+};
+
+/**
+ * @description calculates days left from today to the end date
+ * @returns {Date | string} number of days left
+ */
+export const daysLeft = (end_date: string) =>
+  end_date ? Math.ceil((new Date(end_date).getTime() - new Date().getTime()) / (1000 * 3600 * 24)) : 0;
+
+/**
+ * @description generates an array of dates between the start and end dates
+ * @param startDate
+ * @param endDate
+ * @returns
+ */
+export const generateDateArray = (startDate: Date, endDate: Date) => {
+  // Convert the start and end dates to Date objects if they aren't already
+  const start = new Date(startDate);
+  // start.setDate(start.getDate() + 1);
+  const end = new Date(endDate);
+  end.setDate(end.getDate() + 1);
+
+  // Create an empty array to store the dates
+  const dateArray = [];
+
+  // Use a while loop to generate dates between the range
+  while (start <= end) {
+    // Increment the date by 1 day (86400000 milliseconds)
+    start.setDate(start.getDate() + 1);
+    // Push the current date (converted to ISO string for consistency)
+    dateArray.push({
+      date: new Date(start).toISOString().split("T")[0],
+    });
+  }
+
+  return dateArray;
+};

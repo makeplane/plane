@@ -281,7 +281,7 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
 
           const currentUserId = this.rootIssueStore.currentUserId;
           if (currentUserId)
-            this.handleIssuesLocalFilters.set(EIssuesStoreType.PROJECT, type, workspaceSlug, moduleId, currentUserId, {
+            this.handleIssuesLocalFilters.set(EIssuesStoreType.MODULE, type, workspaceSlug, moduleId, currentUserId, {
               kanban_filters: _filters.kanbanFilters,
             });
 
