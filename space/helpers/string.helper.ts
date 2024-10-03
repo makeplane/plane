@@ -78,3 +78,23 @@ export const isCommentEmpty = (comment: string | undefined): boolean => {
 export const replaceUnderscoreIfSnakeCase = (str: string) => str.replace(/_/g, " ");
 
 export const capitalizeFirstLetter = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
+
+/**
+ * @description
+ * This function test whether a URL is valid or not.
+ *
+ * It accepts URLs with or without the protocol.
+ * @param {string} url
+ * @returns {boolean}
+ * @example
+ * checkURLValidity("https://example.com") => true
+ * checkURLValidity("example.com") => true
+ * checkURLValidity("example") => false
+ */
+export const checkURLValidity = (url: string): boolean => {
+  if (!url) return false;
+  // regex to match valid URLs (with or without http/https)
+  const urlPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z]{2,6})(\/[\w.-]*)*\/?(\?[=&\w.-]*)?$/i;
+  // test if the URL matches the pattern
+  return urlPattern.test(url);
+};

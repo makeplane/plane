@@ -23,9 +23,9 @@ type Props = {
 export const CommentCard: React.FC<Props> = observer((props) => {
   const { anchor, comment } = props;
   // store hooks
-  const { peekId, deleteIssueComment, updateIssueComment } = useIssueDetails();
+  const { peekId, deleteIssueComment, updateIssueComment, uploadCommentAsset } = useIssueDetails();
   const { data: currentUser } = useUser();
-  const { workspaceSlug, workspace: workspaceID } = usePublish(anchor);
+  const { workspace: workspaceID } = usePublish(anchor);
   const isInIframe = useIsInIframe();
 
   // states
@@ -101,8 +101,8 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                 name="comment_html"
                 render={({ field: { onChange, value } }) => (
                   <LiteTextEditor
+                    anchor={anchor}
                     workspaceId={workspaceID?.toString() ?? ""}
-                    workspaceSlug={workspaceSlug?.toString() ?? ""}
                     onEnterKeyPress={handleSubmit(handleCommentUpdate)}
                     ref={editorRef}
                     id={comment.id}
@@ -111,6 +111,10 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                     onChange={(comment_json, comment_html) => onChange(comment_html)}
                     isSubmitting={isSubmitting}
                     showSubmitButton={false}
+                    uploadFile={async (file) => {
+                      const { asset_id } = await uploadCommentAsset(file, anchor, comment.id);
+                      return asset_id;
+                    }}
                   />
                 )}
               />
@@ -133,7 +137,12 @@ export const CommentCard: React.FC<Props> = observer((props) => {
             </div>
           </form>
           <div className={`${isEditing ? "hidden" : ""}`}>
-            <LiteTextReadOnlyEditor ref={showEditorRef} id={comment.id} initialValue={comment.comment_html} />
+            <LiteTextReadOnlyEditor
+              anchor={anchor}
+              ref={showEditorRef}
+              id={comment.id}
+              initialValue={comment.comment_html}
+            />
             <CommentReactions anchor={anchor} commentId={comment.id} />
           </div>
         </div>
