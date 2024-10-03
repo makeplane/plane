@@ -19,9 +19,8 @@ import { useWorkspace, useInstance } from "@/hooks/store";
 import { FileService } from "@/services/file.service";
 
 type Props = {
-  handleRemove?: () => void;
+  handleRemove: () => Promise<void>;
   isOpen: boolean;
-  isRemoving: boolean;
   onClose: () => void;
   onSuccess: (url: string) => void;
   value: string | null;
@@ -31,9 +30,10 @@ type Props = {
 const fileService = new FileService();
 
 export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
-  const { value, onSuccess, isOpen, onClose, isRemoving, handleRemove } = props;
+  const { handleRemove, isOpen, onClose, onSuccess, value } = props;
   // states
   const [image, setImage] = useState<File | null>(null);
+  const [isRemoving, setIsRemoving] = useState(false);
   const [isImageUploading, setIsImageUploading] = useState(false);
   // router
   const { workspaceSlug } = useParams();
@@ -78,6 +78,19 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
       throw new Error("Error in uploading file.");
     } finally {
       setIsImageUploading(false);
+    }
+  };
+
+  const handleImageRemove = async () => {
+    if (!value) return;
+    setIsRemoving(true);
+    try {
+      await fileService.deleteNewAsset(value);
+      await handleRemove();
+    } catch (error) {
+      console.log("Error in removing workspace asset:", error);
+    } finally {
+      setIsRemoving(false);
     }
   };
 
@@ -159,11 +172,9 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
                 </div>
                 <p className="my-4 text-sm text-custom-text-200">File formats supported- .jpeg, .jpg, .png, .webp</p>
                 <div className="flex items-center justify-between">
-                  {handleRemove && (
-                    <Button variant="danger" size="sm" onClick={handleRemove} disabled={!value}>
-                      {isRemoving ? "Removing" : "Remove"}
-                    </Button>
-                  )}
+                  <Button variant="danger" size="sm" onClick={handleImageRemove} disabled={!value} loading={isRemoving}>
+                    {isRemoving ? "Removing" : "Remove"}
+                  </Button>
                   <div className="flex items-center gap-2">
                     <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                       Cancel

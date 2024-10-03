@@ -30,7 +30,7 @@ type TIssueCommentCreate = {
 export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
   const { workspaceSlug, projectId, issueId, activityOperations, showAccessSpecifier = false } = props;
   // states
-  const [uploadedAssetIds, setUploadAssetIds] = useState<string[]>([]);
+  const [uploadedAssetIds, setUploadedAssetIds] = useState<string[]>([]);
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   // store hooks
@@ -59,7 +59,7 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
           await fileService.updateBulkProjectAssetsUploadStatus(workspaceSlug, projectId, res.id, {
             asset_ids: uploadedAssetIds,
           });
-          setUploadAssetIds([]);
+          setUploadedAssetIds([]);
         }
       })
       .finally(() => {
@@ -112,7 +112,7 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
                 isSubmitting={isSubmitting}
                 uploadFile={async (file) => {
                   const { asset_id } = await activityOperations.uploadCommentAsset(file);
-                  setUploadAssetIds((prev) => [...prev, asset_id]);
+                  setUploadedAssetIds((prev) => [...prev, asset_id]);
                   return asset_id;
                 }}
               />

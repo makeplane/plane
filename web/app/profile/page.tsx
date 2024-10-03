@@ -81,30 +81,30 @@ const ProfileSettingsPage = observer(() => {
     });
   };
 
-  const handleDelete = async (url: string | null | undefined, updateUser: boolean = false) => {
+  const handleDelete = async (url: string | null | undefined) => {
     if (!url) return;
 
-    if (updateUser) {
-      await updateCurrentUser({ avatar_url: "" })
-        .then(() => {
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: "Success!",
-            message: "Profile picture deleted successfully.",
-          });
-          setValue("avatar_url", "");
-        })
-        .catch(() => {
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "There was some error in deleting your profile picture. Please try again.",
-          });
-        })
-        .finally(() => {
-          setIsImageUploadModalOpen(false);
+    await updateCurrentUser({
+      avatar_url: "",
+    })
+      .then(() => {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: "Profile picture deleted successfully.",
         });
-    }
+        setValue("avatar_url", "");
+      })
+      .catch(() => {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "There was some error in deleting your profile picture. Please try again.",
+        });
+      })
+      .finally(() => {
+        setIsImageUploadModalOpen(false);
+      });
   };
 
   const timeZoneOptions = TIME_ZONES.map((timeZone) => ({
@@ -131,7 +131,7 @@ const ProfileSettingsPage = observer(() => {
             <UserImageUploadModal
               isOpen={isImageUploadModalOpen}
               onClose={() => setIsImageUploadModalOpen(false)}
-              handleDelete={async () => await handleDelete(currentUser?.avatar_url, true)}
+              handleRemove={async () => await handleDelete(currentUser?.avatar_url)}
               onSuccess={(url) => {
                 onChange(url);
                 handleSubmit(onSubmit)();

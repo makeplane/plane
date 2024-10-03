@@ -35,8 +35,11 @@ export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
   return {
     getAssetSrc: (path) => {
       if (!path) return "";
-      const url = getEditorAssetSrc(workspaceSlug, projectId, path) ?? "";
-      return url;
+      if (checkURLValidity(path)) {
+        return path;
+      } else {
+        return getEditorAssetSrc(workspaceSlug, projectId, path) ?? "";
+      }
     },
     upload: uploadFile,
     delete: async (src: string) => {
@@ -68,8 +71,11 @@ export const getReadOnlyEditorFileHandlers = (
   return {
     getAssetSrc: (path) => {
       if (!path) return "";
-      const url = getEditorAssetSrc(workspaceSlug, projectId, path) ?? "";
-      return url;
+      if (checkURLValidity(path)) {
+        return path;
+      } else {
+        return getEditorAssetSrc(workspaceSlug, projectId, path) ?? "";
+      }
     },
   };
 };
