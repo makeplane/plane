@@ -53,7 +53,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
-  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
+  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, updateSubscribedPlan } = useWorkspaceSubscription();
   // derived values
   const isSelfHostedProWorkspace = subscriptionDetail?.is_self_managed && subscriptionDetail?.product === "PRO";
 
@@ -78,6 +78,9 @@ const WorkspaceMembersSettingsPage = observer(() => {
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Invitations sent successfully.",
+        });
+        updateSubscribedPlan(workspaceSlug?.toString(), {
+          total_seats: (subscriptionDetail?.total_seats ?? 1) + data.emails.length,
         });
       })
       .catch((err) => {
