@@ -2,7 +2,11 @@
 from django.urls import path
 
 # Module imports
-from plane.space.views import EntityAssetEndpoint, AssetRestoreEndpoint
+from plane.space.views import (
+    EntityAssetEndpoint,
+    AssetRestoreEndpoint,
+    EntityBulkAssetEndpoint,
+)
 
 urlpatterns = [
     path(
@@ -19,5 +23,10 @@ urlpatterns = [
         "assets/v2/anchor/<str:anchor>/restore/<uuid:pk>/",
         AssetRestoreEndpoint.as_view(),
         name="asset-restore",
+    ),
+    path(
+        "assets/v2/anchor/<str:anchor>/<uuid:entity_id>/bulk/",
+        EntityBulkAssetEndpoint.as_view(),
+        name="entity-bulk-asset",
     ),
 ]
