@@ -15,6 +15,11 @@ on:
         description: "Release Version"
         type: string
         default: v0.0.0-cloud
+      useVaultSecrets:
+        description: "Use Vault Secrets"
+        type: boolean
+        default: false
+        required: true
       isPrerelease:
         description: "Is Pre-release"
         type: boolean
@@ -113,6 +118,7 @@ jobs:
 
       - name: Tailscale
         uses: tailscale/github-action@v2
+        if: ${{github.event.inputs.useVaultSecrets == 'true'}}
         with:
           oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ secrets.TAILSCALE_OAUTH_SECRET }}
@@ -120,6 +126,7 @@ jobs:
 
       - name: Get the ENV values from Vault
         id: get_vault_secrets
+        if: ${{github.event.inputs.useVaultSecrets == 'true'}}
         run: |
           if [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
             ENV_NAME="prod"
