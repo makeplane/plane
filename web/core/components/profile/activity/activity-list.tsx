@@ -1,5 +1,6 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 // icons
 import { History, MessageSquare } from "lucide-react";
 import { IUserActivityResponse } from "@plane/types";
@@ -22,6 +23,8 @@ type Props = {
 
 export const ActivityList: React.FC<Props> = observer((props) => {
   const { activity } = props;
+  // params
+  const { workspaceSlug } = useParams();
   // store hooks
   const { data: currentUser } = useUser();
 
@@ -76,6 +79,8 @@ export const ActivityList: React.FC<Props> = observer((props) => {
                               : (activityItem.old_value?.toString() as string)
                           }
                           containerClassName="text-xs bg-custom-background-100"
+                          workspaceSlug={workspaceSlug?.toString() ?? ""}
+                          projectId={activityItem.project}
                         />
                       </div>
                     </div>

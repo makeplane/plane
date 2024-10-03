@@ -19,7 +19,8 @@ import { Row } from "@plane/ui";
 import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
 // helpers
 import { cn, LIVE_BASE_PATH, LIVE_BASE_URL } from "@/helpers/common.helper";
-import { generateRandomColor } from "@/helpers/string.helper";
+import { getEditorAssetSrc } from "@/helpers/editor.helper";
+import { checkURLValidity, generateRandomColor } from "@/helpers/string.helper";
 // hooks
 import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
@@ -30,10 +31,13 @@ import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 // services
 import { FileService } from "@/services/file.service";
+import { ProjectPageService } from "@/services/page";
 // store
 import { IPage } from "@/store/pages/page";
 
+// services init
 const fileService = new FileService();
+const pageService = new ProjectPageService();
 
 type Props = {
   editorRef: React.RefObject<EditorRefApi>;
@@ -69,7 +73,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const workspaceId = workspaceSlug ? (getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "") : "";
   const pageId = page?.id;
   const pageTitle = page?.name ?? "";
-  const { isContentEditable, updateTitle, setIsSubmitting } = page;
+  const { isContentEditable, updateTitle } = page;
   const projectMemberIds = projectId ? getProjectMemberIds(projectId.toString()) : [];
   const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
   // use-mention
@@ -92,8 +96,16 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   };
 
   const getAIMenu = useCallback(
-    ({ isOpen, onClose }: TAIMenuProps) => <EditorAIMenu editorRef={editorRef} isOpen={isOpen} onClose={onClose} />,
-    [editorRef]
+    ({ isOpen, onClose }: TAIMenuProps) => (
+      <EditorAIMenu
+        editorRef={editorRef}
+        isOpen={isOpen}
+        onClose={onClose}
+        projectId={projectId?.toString() ?? ""}
+        workspaceSlug={workspaceSlug?.toString() ?? ""}
+      />
+    ),
+    [editorRef, projectId, workspaceSlug]
   );
 
   const handleServerConnect = useCallback(() => {
@@ -169,10 +181,32 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             <CollaborativeDocumentEditorWithRef
               id={pageId}
               fileHandler={{
+                getAssetSrc: (path) =>
+                  getEditorAssetSrc(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "", path) ?? "",
                 cancel: fileService.cancelUpload,
-                delete: fileService.getDeleteImageFunction(workspaceId),
-                restore: fileService.getRestoreImageFunction(workspaceId),
-                upload: fileService.getUploadFileFunction(workspaceSlug as string, setIsSubmitting),
+                delete: async (src: string) => {
+                  if (checkURLValidity(src)) {
+                    await fileService.deleteOldEditorAsset(workspaceId, src);
+                  } else {
+                    await fileService.deleteNewAsset(src);
+                  }
+                },
+                restore: async (src: string) => {
+                  if (checkURLValidity(src)) {
+                    await fileService.restoreOldEditorAsset(workspaceId, src);
+                  } else {
+                    await fileService.restoreNewAsset(workspaceSlug?.toString() ?? "", src);
+                  }
+                },
+                upload: async (file) => {
+                  const { asset_url } = await pageService.uploadPageAsset(
+                    workspaceSlug?.toString() ?? "",
+                    projectId?.toString() ?? "",
+                    pageId,
+                    file
+                  );
+                  return asset_url;
+                },
               }}
               handleEditorReady={handleEditorReady}
               ref={editorRef}
@@ -202,6 +236,10 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             <CollaborativeDocumentReadOnlyEditorWithRef
               id={pageId}
               ref={readOnlyEditorRef}
+              fileHandler={{
+                getAssetSrc: (path) =>
+                  getEditorAssetSrc(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "", path) ?? "",
+              }}
               handleEditorReady={handleReadOnlyEditorReady}
               containerClassName="p-0 pb-64 border-none"
               displayConfig={displayConfig}

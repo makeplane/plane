@@ -1,9 +1,8 @@
-import axios from "axios";
 // plane types
-import { TFileMetaData, TFileSignedURLResponse } from "@plane/types";
+import { TFileEntityInfo, TFileSignedURLResponse } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
-import { generateFileUploadPayload } from "@/helpers/file.helper";
+import { generateFileUploadPayload, getFileMetaDataForUpload } from "@/helpers/file.helper";
 // services
 import { APIService } from "@/services/api.service";
 import { FileUploadService } from "@/services/file-upload.service";
@@ -45,19 +44,16 @@ export enum TFileAssetType {
 
 export class FileService extends APIService {
   private cancelSource: any;
-  fileUploadService: FileUploadService;
+  private fileUploadService: FileUploadService;
 
   constructor() {
     super(API_BASE_URL);
-    this.uploadFile = this.uploadFile.bind(this);
-    this.deleteImage = this.deleteImage.bind(this);
-    this.restoreImage = this.restoreImage.bind(this);
     this.cancelUpload = this.cancelUpload.bind(this);
     // upload service
     this.fileUploadService = new FileUploadService();
   }
 
-  async updateWorkspaceAssetUploadStatus(workspaceSlug: string, assetId: string): Promise<void> {
+  private async updateWorkspaceAssetUploadStatus(workspaceSlug: string, assetId: string): Promise<void> {
     return this.patch(`/api/assets/v2/workspaces/${workspaceSlug}/${assetId}/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -65,21 +61,29 @@ export class FileService extends APIService {
       });
   }
 
-  async getWorkspaceAssetSignedURL(workspaceSlug: string, data: TFileMetaData, file: File): Promise<string> {
-    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/`, data)
+  async uploadWorkspaceAsset(
+    workspaceSlug: string,
+    data: TFileEntityInfo,
+    file: File
+  ): Promise<TFileSignedURLResponse> {
+    const fileMetaData = getFileMetaDataForUpload(file);
+    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/`, {
+      ...data,
+      ...fileMetaData,
+    })
       .then(async (response) => {
         const signedURLResponse: TFileSignedURLResponse = response?.data;
         const fileUploadPayload = generateFileUploadPayload(signedURLResponse, file);
         await this.fileUploadService.uploadFile(signedURLResponse.upload_data.url, fileUploadPayload);
         await this.updateWorkspaceAssetUploadStatus(workspaceSlug.toString(), signedURLResponse.asset_id);
-        return signedURLResponse.asset_url;
+        return signedURLResponse;
       })
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async updateUserAssetUploadStatus(assetId: string): Promise<void> {
+  private async updateUserAssetUploadStatus(assetId: string): Promise<void> {
     return this.patch(`/api/assets/v2/user-assets/${assetId}/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -87,136 +91,68 @@ export class FileService extends APIService {
       });
   }
 
-  async getUserAssetSignedURL(data: TFileMetaData, file: File): Promise<string> {
-    return this.post(`/api/assets/v2/user-assets/`, data)
+  async uploadUserAsset(data: TFileEntityInfo, file: File): Promise<TFileSignedURLResponse> {
+    const fileMetaData = getFileMetaDataForUpload(file);
+    return this.post(`/api/assets/v2/user-assets/`, {
+      ...data,
+      ...fileMetaData,
+    })
       .then(async (response) => {
         const signedURLResponse: TFileSignedURLResponse = response?.data;
         const fileUploadPayload = generateFileUploadPayload(signedURLResponse, file);
         await this.fileUploadService.uploadFile(signedURLResponse.upload_data.url, fileUploadPayload);
         await this.updateUserAssetUploadStatus(signedURLResponse.asset_id);
-        return signedURLResponse.asset_url;
+        return signedURLResponse;
       })
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async uploadFile(workspaceSlug: string, file: FormData): Promise<any> {
-    this.cancelSource = axios.CancelToken.source();
-    return this.post(`/api/workspaces/${workspaceSlug}/file-assets/`, file, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-      cancelToken: this.cancelSource.token,
-    })
+  async deleteNewAsset(assetPath: string): Promise<void> {
+    return this.delete(assetPath)
       .then((response) => response?.data)
       .catch((error) => {
-        if (axios.isCancel(error)) {
-          console.log(error.message);
-        } else {
-          console.log(error);
-          throw error?.response?.data;
-        }
+        throw error?.response?.data;
+      });
+  }
+
+  async deleteOldEditorAsset(workspaceId: string, src: string): Promise<any> {
+    const assetKey = this.extractAssetIdFromUrl(src);
+    return this.delete(`/api/workspaces/file-assets/${workspaceId}/${assetKey}/`)
+      .then((response) => response?.status)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async restoreNewAsset(workspaceSlug: string, src: string): Promise<void> {
+    // remove the last slash and get the asset id
+    const assetId = this.extractAssetIdFromUrl(src.slice(0, -1));
+    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/${assetId}/restore/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async restoreOldEditorAsset(workspaceId: string, src: string): Promise<void> {
+    const assetKey = this.extractAssetIdFromUrl(src);
+    return this.post(`/api/workspaces/file-assets/${workspaceId}/${assetKey}/restore/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
       });
   }
 
   cancelUpload() {
-    this.cancelSource.cancel("Upload cancelled");
+    this.cancelSource.cancel("Upload canceled");
   }
 
-  getUploadFileFunction(
-    workspaceSlug: string,
-    setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
-  ): (file: File) => Promise<string> {
-    return async (file: File) => {
-      try {
-        const formData = new FormData();
-        formData.append("asset", file);
-        formData.append("attributes", JSON.stringify({}));
-
-        // the submitted state will be resolved by the page rendering the editor
-        // once the patch request of saving the editor contents is resolved
-        setIsSubmitting?.("submitting");
-
-        const data = await this.uploadFile(workspaceSlug, formData);
-        return data.asset;
-      } catch (e) {
-        console.error(e);
-      }
-    };
-  }
-
-  getDeleteImageFunction(workspaceId: string) {
-    return async (src: string) => {
-      try {
-        const assetUrlWithWorkspaceId = `${workspaceId}/${this.extractAssetIdFromUrl(src, workspaceId)}`;
-        const data = await this.deleteImage(assetUrlWithWorkspaceId);
-        return data;
-      } catch (e) {
-        console.error(e);
-      }
-    };
-  }
-
-  getRestoreImageFunction(workspaceId: string) {
-    return async (src: string) => {
-      try {
-        const assetUrlWithWorkspaceId = `${workspaceId}/${this.extractAssetIdFromUrl(src, workspaceId)}`;
-        const data = await this.restoreImage(assetUrlWithWorkspaceId);
-        return data;
-      } catch (e) {
-        console.error(e);
-      }
-    };
-  }
-
-  extractAssetIdFromUrl(src: string, workspaceId: string): string {
-    const indexWhereAssetIdStarts = src.indexOf(workspaceId) + workspaceId.length + 1;
-    if (indexWhereAssetIdStarts === -1) {
-      throw new Error("Workspace ID not found in source string");
-    }
-    const assetUrl = src.substring(indexWhereAssetIdStarts);
+  extractAssetIdFromUrl(src: string): string {
+    const sourcePaths = src.split("/");
+    const assetUrl = sourcePaths[sourcePaths.length - 1];
     return assetUrl;
-  }
-
-  async deleteImage(assetUrlWithWorkspaceId: string): Promise<any> {
-    return this.delete(`/api/workspaces/file-assets/${assetUrlWithWorkspaceId}/`)
-      .then((response) => response?.status)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async restoreImage(assetUrlWithWorkspaceId: string): Promise<any> {
-    return this.post(`/api/workspaces/file-assets/${assetUrlWithWorkspaceId}/restore/`, {
-      "Content-Type": "application/json",
-    })
-      .then((response) => response?.status)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async deleteFile(workspaceId: string, assetUrl: string): Promise<any> {
-    const lastIndex = assetUrl.lastIndexOf("/");
-    const assetId = assetUrl.substring(lastIndex + 1);
-
-    return this.delete(`/api/workspaces/file-assets/${workspaceId}/${assetId}/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async deleteUserFile(assetUrl: string): Promise<any> {
-    const lastIndex = assetUrl.lastIndexOf("/");
-    const assetId = assetUrl.substring(lastIndex + 1);
-
-    return this.delete(`/api/users/file-assets/${assetId}`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
   }
 
   async getUnsplashImages(query?: string): Promise<UnSplashImage[]> {

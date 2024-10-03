@@ -63,19 +63,16 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
     setIsImageUploading(true);
 
     try {
-      const imageURL = await fileService.getWorkspaceAssetSignedURL(
+      const { asset_url } = await fileService.uploadWorkspaceAsset(
         workspaceSlug.toString(),
         {
           entity_identifier: currentWorkspace.id,
           entity_type: EFileAssetType.WORKSPACE_LOGO,
-          name: image.name,
-          size: image.size,
-          type: image.type,
         },
         image
       );
-      updateWorkspaceLogo(workspaceSlug.toString(), imageURL);
-      onSuccess(imageURL);
+      updateWorkspaceLogo(workspaceSlug.toString(), asset_url);
+      onSuccess(asset_url);
     } catch (error) {
       console.log("error", error);
       throw new Error("Error in uploading file.");

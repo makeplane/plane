@@ -19,8 +19,6 @@ import { USER_ROLES } from "@/constants/workspace";
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useUser } from "@/hooks/store";
-// services
-import { FileService } from "@/services/file.service";
 
 const defaultValues: Partial<IUser> = {
   avatar_url: "",
@@ -33,12 +31,9 @@ const defaultValues: Partial<IUser> = {
   user_timezone: "Asia/Kolkata",
 };
 
-const fileService = new FileService();
-
 const ProfileSettingsPage = observer(() => {
   // states
   const [isLoading, setIsLoading] = useState(false);
-  const [isRemoving, setIsRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   const [deactivateAccountModal, setDeactivateAccountModal] = useState(false);
   // form info
@@ -86,35 +81,30 @@ const ProfileSettingsPage = observer(() => {
     });
   };
 
-  const handleDelete = (url: string | null | undefined, updateUser: boolean = false) => {
+  const handleDelete = async (url: string | null | undefined, updateUser: boolean = false) => {
     if (!url) return;
 
-    setIsRemoving(true);
-
-    fileService.deleteUserFile(url).then(() => {
-      if (updateUser)
-        updateCurrentUser({ avatar_url: "" })
-          .then(() => {
-            setToast({
-              type: TOAST_TYPE.SUCCESS,
-              title: "Success!",
-              message: "Profile picture deleted successfully.",
-            });
-            setIsRemoving(false);
-            setValue("avatar_url", "");
-          })
-          .catch(() => {
-            setToast({
-              type: TOAST_TYPE.ERROR,
-              title: "Error!",
-              message: "There was some error in deleting your profile picture. Please try again.",
-            });
-          })
-          .finally(() => {
-            setIsRemoving(false);
-            setIsImageUploadModalOpen(false);
+    if (updateUser) {
+      await updateCurrentUser({ avatar_url: "" })
+        .then(() => {
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: "Success!",
+            message: "Profile picture deleted successfully.",
           });
-    });
+          setValue("avatar_url", "");
+        })
+        .catch(() => {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: "Error!",
+            message: "There was some error in deleting your profile picture. Please try again.",
+          });
+        })
+        .finally(() => {
+          setIsImageUploadModalOpen(false);
+        });
+    }
   };
 
   const timeZoneOptions = TIME_ZONES.map((timeZone) => ({
@@ -141,8 +131,7 @@ const ProfileSettingsPage = observer(() => {
             <UserImageUploadModal
               isOpen={isImageUploadModalOpen}
               onClose={() => setIsImageUploadModalOpen(false)}
-              isRemoving={isRemoving}
-              handleDelete={() => handleDelete(currentUser?.avatar_url, true)}
+              handleDelete={async () => await handleDelete(currentUser?.avatar_url, true)}
               onSuccess={(url) => {
                 onChange(url);
                 handleSubmit(onSubmit)();

@@ -61,6 +61,7 @@ export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props
       containerClassName={containerClassName}
       onEnterKeyPress={onEnterKeyPress}
       tabIndex={getIndex("description_html")}
+      uploadFile={async () => ""}
     />
   );
 });

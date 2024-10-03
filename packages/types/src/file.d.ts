@@ -1,13 +1,18 @@
 import { EFileAssetType } from "./enums"
 
-export type TFileMetaData = {
-  entity_identifier: string;
-  entity_type: EFileAssetType;
+export type TFileMetaDataLite = {
   name: string;
   // file size in bytes
   size: number;
   type: string;
-};
+}
+
+export type TFileEntityInfo = {
+  entity_identifier: string;
+  entity_type: EFileAssetType;
+}
+
+export type TFileMetaData = TFileMetaDataLite & TFileEntityInfo;
 
 export type TFileSignedURLResponse = {
   asset_id: string;
@@ -24,8 +29,4 @@ export type TFileSignedURLResponse = {
       "x-amz-signature": string;
     };
   };
-};
-
-export type TFileUploadPayload = TFileSignedURLResponse["upload_data"]["fields"] & {
-  file: File;
 };

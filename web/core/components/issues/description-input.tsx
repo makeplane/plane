@@ -115,12 +115,18 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
                   placeholder ? placeholder : (isFocused, value) => getDescriptionPlaceholder(isFocused, value)
                 }
                 containerClassName={containerClassName}
+                uploadFile={async (file) => {
+                  const { asset_id } = await issueOperations.uploadIssueAsset(workspaceSlug, projectId, issueId, file);
+                  return asset_id;
+                }}
               />
             ) : (
               <RichTextReadOnlyEditor
                 id={issueId}
                 initialValue={localIssueDescription.description_html ?? ""}
                 containerClassName={containerClassName}
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
               />
             )
           }

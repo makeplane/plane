@@ -1,9 +1,9 @@
-import { FC, useRef } from "react";
+import { FC, useRef, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 // types
 import { TIssueComment } from "@plane/types";
 // components
-import { LiteTextEditor } from "@/components/editor/lite-text-editor/lite-text-editor";
+import { LiteTextEditor } from "@/components/editor";
 // constants
 import { EIssueCommentAccessSpecifier } from "@/constants/issue";
 // helpers
@@ -24,6 +24,8 @@ type TIssueCommentCreate = {
 
 export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
   const { workspaceSlug, projectId, issueId, activityOperations, showAccessSpecifier = false } = props;
+  // states
+  const [uploadedAssetIds, setUploadAssetIds] = useState<string[]>([]);
   // refs
   const editorRef = useRef<any>(null);
   // store hooks
@@ -44,13 +46,15 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
     },
   });
 
-  const onSubmit = async (formData: Partial<TIssueComment>) =>
+  const onSubmit = async (formData: Partial<TIssueComment>) => {
+    console.log("assetIds", uploadedAssetIds);
     await activityOperations.createComment(formData).finally(() => {
       reset({
         comment_html: "<p></p>",
       });
       editorRef.current?.clearEditor();
     });
+  };
 
   const commentHTML = watch("comment_html");
   const isEmpty = isCommentEmpty(commentHTML);
@@ -92,6 +96,11 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
                 handleAccessChange={onAccessChange}
                 showAccessSpecifier={showAccessSpecifier}
                 isSubmitting={isSubmitting}
+                uploadFile={async (file) => {
+                  const { asset_id } = await activityOperations.uploadCommentAsset(file);
+                  setUploadAssetIds([...uploadedAssetIds, asset_id]);
+                  return asset_id;
+                }}
               />
             )}
           />

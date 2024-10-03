@@ -89,6 +89,7 @@ export interface IReadOnlyEditorProps {
   containerClassName?: string;
   displayConfig?: TDisplayConfig;
   editorClassName?: string;
+  fileHandler: Pick<TFileHandler, "getAssetSrc">;
   forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
   id: string;
   initialValue: string;
