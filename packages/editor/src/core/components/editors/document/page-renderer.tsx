@@ -131,7 +131,7 @@ export const PageRenderer = (props: IPageRenderer) => {
 
   return (
     <>
-      <div className="frame-renderer flex-grow w-full -mx-5 overflow-auto" onMouseOver={handleLinkHover}>
+      <div className="frame-renderer flex-grow w-full -mx-5" onMouseOver={handleLinkHover}>
         <EditorContainer
           displayConfig={displayConfig}
           editor={editor}
