@@ -16,8 +16,14 @@ import { IMarking, scrollSummary } from "@/helpers/scroll-to-node";
 // props
 import { CoreEditorProps } from "@/props";
 // types
-import { EditorRefApi, IMentionHighlight, IMentionSuggestion, TEditorCommands, TFileHandler } from "@/types";
-import { DocumentEventsServer } from "src/lib";
+import {
+  DocumentEventsServer,
+  EditorRefApi,
+  IMentionHighlight,
+  IMentionSuggestion,
+  TEditorCommands,
+  TFileHandler,
+} from "@/types";
 
 export interface CustomEditorProps {
   editorClassName: string;

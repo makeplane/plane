@@ -12,8 +12,9 @@ import {
   TExtensions,
   TFileHandler,
   TServerHandler,
+  DocumentEventsServer,
 } from "@/types";
-import { DocumentEventsServer } from "src/lib";
+
 import { HocuspocusProvider } from "@hocuspocus/provider";
 
 // editor refs
