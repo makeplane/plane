@@ -121,6 +121,7 @@ from .asset.v2 import (
     PageAssetEndpoint,
     IssueAssetEndpoint,
     CommentAssetEndpoint,
+    BulkAssetUpdateEndpoint,
 )
 from .issue.base import (
     IssueListEndpoint,

@@ -13,6 +13,7 @@ from plane.app.views import (
     PageAssetEndpoint,
     IssueAssetEndpoint,
     CommentAssetEndpoint,
+    BulkAssetUpdateEndpoint,
 )
 
 
@@ -106,5 +107,10 @@ urlpatterns = [
         "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/comments/<uuid:comment_id>/<uuid:pk>/",
         CommentAssetEndpoint.as_view(),
         name="comment-attachment",
+    ),
+    path(
+        "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/bulk-update/",
+        BulkAssetUpdateEndpoint.as_view(),
+        name="bulk-asset-update",
     ),
 ]
