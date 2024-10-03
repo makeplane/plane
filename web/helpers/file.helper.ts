@@ -39,3 +39,14 @@ export const getFileMetaDataForUpload = (file: File): TFileMetaDataLite => ({
   size: file.size,
   type: file.type,
 });
+
+/**
+ * @description this function returns the assetId from the asset source
+ * @param {string} src
+ * @returns {string} assetId
+ */
+export const getAssetIdFromUrl = (src: string): string => {
+  const sourcePaths = src.split("/");
+  const assetUrl = sourcePaths[sourcePaths.length - 1];
+  return assetUrl;
+};

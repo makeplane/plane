@@ -9,12 +9,10 @@ import { IssueCommentToolbar } from "@/components/editor";
 import { EIssueCommentAccessSpecifier } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
-import { getEditorAssetSrc } from "@/helpers/editor.helper";
-import { checkURLValidity, isCommentEmpty } from "@/helpers/string.helper";
+import { getEditorFileHandlers } from "@/helpers/editor.helper";
+import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks
 import { useMember, useMention, useUser } from "@/hooks/store";
-// services
-import { FileService } from "@/services/file.service";
 
 interface LiteTextEditorWrapperProps extends Omit<ILiteTextEditor, "fileHandler" | "mentionHandler"> {
   workspaceSlug: string;
@@ -27,8 +25,6 @@ interface LiteTextEditorWrapperProps extends Omit<ILiteTextEditor, "fileHandler"
   isSubmitting?: boolean;
   uploadFile: (file: File) => Promise<string>;
 }
-
-const fileService = new FileService();
 
 export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapperProps>((props, ref) => {
   const {
@@ -72,26 +68,12 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     <div className="border border-custom-border-200 rounded p-3 space-y-3">
       <LiteTextEditorWithRef
         ref={ref}
-        fileHandler={{
-          getAssetSrc: (path) => getEditorAssetSrc(workspaceSlug, projectId, path) ?? "",
-          upload: uploadFile,
-          delete: async (src: string) => {
-            if (checkURLValidity(src)) {
-              await fileService.deleteOldEditorAsset(workspaceId, src);
-            } else {
-              await fileService.deleteNewAsset(src);
-            }
-          },
-          restore: async (src: string) => {
-            if (checkURLValidity(src)) {
-              await fileService.restoreOldEditorAsset(workspaceId, src);
-            } else {
-              await fileService.restoreNewAsset(workspaceSlug, src);
-            }
-          },
-          // restore: fileService.getRestoreImageFunction(workspaceId),
-          cancel: fileService.cancelUpload,
-        }}
+        fileHandler={getEditorFileHandlers({
+          projectId,
+          uploadFile,
+          workspaceId,
+          workspaceSlug,
+        })}
         mentionHandler={{
           highlights: mentionHighlights,
           suggestions: mentionSuggestions,

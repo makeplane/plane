@@ -14,13 +14,14 @@ import {
 } from "@plane/editor";
 // types
 import { IUserLite } from "@plane/types";
+import { EFileAssetType } from "@plane/types/src/enums";
 // components
 import { Row } from "@plane/ui";
 import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
 // helpers
 import { cn, LIVE_BASE_PATH, LIVE_BASE_URL } from "@/helpers/common.helper";
-import { getEditorAssetSrc } from "@/helpers/editor.helper";
-import { checkURLValidity, generateRandomColor } from "@/helpers/string.helper";
+import { getEditorFileHandlers, getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
+import { generateRandomColor } from "@/helpers/string.helper";
 // hooks
 import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
@@ -31,13 +32,11 @@ import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 // services
 import { FileService } from "@/services/file.service";
-import { ProjectPageService } from "@/services/page";
 // store
 import { IPage } from "@/store/pages/page";
 
 // services init
 const fileService = new FileService();
-const pageService = new ProjectPageService();
 
 type Props = {
   editorRef: React.RefObject<EditorRefApi>;
@@ -180,34 +179,23 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
           {isContentEditable ? (
             <CollaborativeDocumentEditorWithRef
               id={pageId}
-              fileHandler={{
-                getAssetSrc: (path) =>
-                  getEditorAssetSrc(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "", path) ?? "",
-                cancel: fileService.cancelUpload,
-                delete: async (src: string) => {
-                  if (checkURLValidity(src)) {
-                    await fileService.deleteOldEditorAsset(workspaceId, src);
-                  } else {
-                    await fileService.deleteNewAsset(src);
-                  }
-                },
-                restore: async (src: string) => {
-                  if (checkURLValidity(src)) {
-                    await fileService.restoreOldEditorAsset(workspaceId, src);
-                  } else {
-                    await fileService.restoreNewAsset(workspaceSlug?.toString() ?? "", src);
-                  }
-                },
-                upload: async (file) => {
-                  const { asset_url } = await pageService.uploadPageAsset(
+              fileHandler={getEditorFileHandlers({
+                projectId: projectId?.toString() ?? "",
+                uploadFile: async (file) => {
+                  const { asset_url } = await fileService.uploadProjectAsset(
                     workspaceSlug?.toString() ?? "",
                     projectId?.toString() ?? "",
-                    pageId,
+                    {
+                      entity_identifier: pageId,
+                      entity_type: EFileAssetType.PAGE_DESCRIPTION,
+                    },
                     file
                   );
                   return asset_url;
                 },
-              }}
+                workspaceId,
+                workspaceSlug: workspaceSlug?.toString() ?? "",
+              })}
               handleEditorReady={handleEditorReady}
               ref={editorRef}
               containerClassName="h-full p-0 pb-64"
@@ -236,10 +224,10 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             <CollaborativeDocumentReadOnlyEditorWithRef
               id={pageId}
               ref={readOnlyEditorRef}
-              fileHandler={{
-                getAssetSrc: (path) =>
-                  getEditorAssetSrc(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "", path) ?? "",
-              }}
+              fileHandler={getReadOnlyEditorFileHandlers({
+                projectId: projectId?.toString() ?? "",
+                workspaceSlug: workspaceSlug?.toString() ?? "",
+              })}
               handleEditorReady={handleReadOnlyEditorReady}
               containerClassName="p-0 pb-64 border-none"
               displayConfig={displayConfig}

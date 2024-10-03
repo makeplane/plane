@@ -2,7 +2,7 @@
 import { TFileEntityInfo, TFileSignedURLResponse } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
-import { generateFileUploadPayload, getFileMetaDataForUpload } from "@/helpers/file.helper";
+import { generateFileUploadPayload, getAssetIdFromUrl, getFileMetaDataForUpload } from "@/helpers/file.helper";
 // services
 import { APIService } from "@/services/api.service";
 import { FileUploadService } from "@/services/file-upload.service";
@@ -83,6 +83,56 @@ export class FileService extends APIService {
       });
   }
 
+  private async updateProjectAssetUploadStatus(
+    workspaceSlug: string,
+    projectId: string,
+    assetId: string
+  ): Promise<void> {
+    return this.patch(`/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/${assetId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async updateBulkProjectAssetsUploadStatus(
+    workspaceSlug: string,
+    projectId: string,
+    entityId: string,
+    data: {
+      asset_ids: string[];
+    }
+  ): Promise<void> {
+    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/${entityId}/bulk/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async uploadProjectAsset(
+    workspaceSlug: string,
+    projectId: string,
+    data: TFileEntityInfo,
+    file: File
+  ): Promise<TFileSignedURLResponse> {
+    const fileMetaData = getFileMetaDataForUpload(file);
+    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/`, {
+      ...data,
+      ...fileMetaData,
+    })
+      .then(async (response) => {
+        const signedURLResponse: TFileSignedURLResponse = response?.data;
+        const fileUploadPayload = generateFileUploadPayload(signedURLResponse, file);
+        await this.fileUploadService.uploadFile(signedURLResponse.upload_data.url, fileUploadPayload);
+        await this.updateProjectAssetUploadStatus(workspaceSlug, projectId, signedURLResponse.asset_id);
+        return signedURLResponse;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   private async updateUserAssetUploadStatus(assetId: string): Promise<void> {
     return this.patch(`/api/assets/v2/user-assets/${assetId}/`)
       .then((response) => response?.data)
@@ -118,7 +168,7 @@ export class FileService extends APIService {
   }
 
   async deleteOldEditorAsset(workspaceId: string, src: string): Promise<any> {
-    const assetKey = this.extractAssetIdFromUrl(src);
+    const assetKey = getAssetIdFromUrl(src);
     return this.delete(`/api/workspaces/file-assets/${workspaceId}/${assetKey}/`)
       .then((response) => response?.status)
       .catch((error) => {
@@ -128,8 +178,8 @@ export class FileService extends APIService {
 
   async restoreNewAsset(workspaceSlug: string, src: string): Promise<void> {
     // remove the last slash and get the asset id
-    const assetId = this.extractAssetIdFromUrl(src.slice(0, -1));
-    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/${assetId}/restore/`)
+    const assetId = getAssetIdFromUrl(src);
+    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/restore/${assetId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -137,7 +187,7 @@ export class FileService extends APIService {
   }
 
   async restoreOldEditorAsset(workspaceId: string, src: string): Promise<void> {
-    const assetKey = this.extractAssetIdFromUrl(src);
+    const assetKey = getAssetIdFromUrl(src);
     return this.post(`/api/workspaces/file-assets/${workspaceId}/${assetKey}/restore/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -147,12 +197,6 @@ export class FileService extends APIService {
 
   cancelUpload() {
     this.cancelSource.cancel("Upload canceled");
-  }
-
-  extractAssetIdFromUrl(src: string): string {
-    const sourcePaths = src.split("/");
-    const assetUrl = sourcePaths[sourcePaths.length - 1];
-    return assetUrl;
   }
 
   async getUnsplashImages(query?: string): Promise<UnSplashImage[]> {

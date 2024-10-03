@@ -3,7 +3,7 @@ import React from "react";
 import { EditorReadOnlyRefApi, ILiteTextReadOnlyEditor, LiteTextReadOnlyEditorWithRef } from "@plane/editor";
 // helpers
 import { cn } from "@/helpers/common.helper";
-import { getEditorAssetSrc } from "@/helpers/editor.helper";
+import { getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
 import { useMention, useUser } from "@/hooks/store";
 
@@ -23,9 +23,10 @@ export const LiteTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, Lit
     return (
       <LiteTextReadOnlyEditorWithRef
         ref={ref}
-        fileHandler={{
-          getAssetSrc: (path) => getEditorAssetSrc(workspaceSlug, projectId, path) ?? "",
-        }}
+        fileHandler={getReadOnlyEditorFileHandlers({
+          projectId,
+          workspaceSlug,
+        })}
         mentionHandler={{
           highlights: mentionHighlights,
         }}

@@ -3,7 +3,9 @@
 import { Dispatch, SetStateAction, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
+// plane types
 import { TIssue } from "@plane/types";
+// plane ui
 import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { InboxIssueContentProperties } from "@/components/inbox/content";
@@ -18,13 +20,8 @@ import {
 // hooks
 import { useEventTracker, useProjectInbox, useUser } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
-// services
-import { IssueAssetsService } from "@/services/issue";
 // store types
 import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
-
-// services init
-const issueAssetsService = new IssueAssetsService();
 
 type Props = {
   workspaceSlug: string;
@@ -95,15 +92,6 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
             },
             path: pathname,
           });
-        }
-      },
-      uploadIssueAsset: async (workspaceSlug, projectId, issueId, file) => {
-        try {
-          const res = await issueAssetsService.uploadIssueAsset(workspaceSlug, projectId, issueId, file);
-          return res;
-        } catch (error) {
-          console.log("Error in uploading issue asset:", error);
-          throw new Error("Asset upload failed. Please try again later.");
         }
       },
     }),

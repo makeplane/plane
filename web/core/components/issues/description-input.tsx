@@ -6,6 +6,7 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // types
 import { TIssue } from "@plane/types";
+import { EFileAssetType } from "@plane/types/src/enums";
 // ui
 import { Loader } from "@plane/ui";
 // components
@@ -15,6 +16,9 @@ import { TIssueOperations } from "@/components/issues/issue-detail";
 import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
 // hooks
 import { useWorkspace } from "@/hooks/store";
+// services
+import { FileService } from "@/services/file.service";
+const fileService = new FileService();
 
 export type IssueDescriptionInputProps = {
   containerClassName?: string;
@@ -116,8 +120,21 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
                 }
                 containerClassName={containerClassName}
                 uploadFile={async (file) => {
-                  const { asset_id } = await issueOperations.uploadIssueAsset(workspaceSlug, projectId, issueId, file);
-                  return asset_id;
+                  try {
+                    const { asset_id } = await fileService.uploadProjectAsset(
+                      workspaceSlug,
+                      projectId,
+                      {
+                        entity_identifier: issueId,
+                        entity_type: EFileAssetType.ISSUE_DESCRIPTION,
+                      },
+                      file
+                    );
+                    return asset_id;
+                  } catch (error) {
+                    console.log("Error in uploading issue asset:", error);
+                    throw new Error("Asset upload failed. Please try again later.");
+                  }
                 }}
               />
             ) : (

@@ -1,5 +1,7 @@
 import { FC, useRef, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
+// plane editor
+import { EditorRefApi } from "@plane/editor";
 // types
 import { TIssueComment } from "@plane/types";
 // components
@@ -11,6 +13,9 @@ import { cn } from "@/helpers/common.helper";
 import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks
 import { useIssueDetail, useWorkspace } from "@/hooks/store";
+// services
+import { FileService } from "@/services/file.service";
+const fileService = new FileService();
 // editor
 import { TActivityOperations } from "../root";
 
@@ -27,7 +32,7 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
   // states
   const [uploadedAssetIds, setUploadAssetIds] = useState<string[]>([]);
   // refs
-  const editorRef = useRef<any>(null);
+  const editorRef = useRef<EditorRefApi>(null);
   // store hooks
   const workspaceStore = useWorkspace();
   const { peekIssue } = useIssueDetail();
@@ -47,13 +52,22 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
   });
 
   const onSubmit = async (formData: Partial<TIssueComment>) => {
-    console.log("assetIds", uploadedAssetIds);
-    await activityOperations.createComment(formData).finally(() => {
-      reset({
-        comment_html: "<p></p>",
+    await activityOperations
+      .createComment(formData)
+      .then(async (res) => {
+        if (uploadedAssetIds.length > 0) {
+          await fileService.updateBulkProjectAssetsUploadStatus(workspaceSlug, projectId, res.id, {
+            asset_ids: uploadedAssetIds,
+          });
+          setUploadAssetIds([]);
+        }
+      })
+      .finally(() => {
+        reset({
+          comment_html: "<p></p>",
+        });
+        editorRef.current?.clearEditor();
       });
-      editorRef.current?.clearEditor();
-    });
   };
 
   const commentHTML = watch("comment_html");
@@ -98,7 +112,7 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
                 isSubmitting={isSubmitting}
                 uploadFile={async (file) => {
                   const { asset_id } = await activityOperations.uploadCommentAsset(file);
-                  setUploadAssetIds([...uploadedAssetIds, asset_id]);
+                  setUploadAssetIds((prev) => [...prev, asset_id]);
                   return asset_id;
                 }}
               />
