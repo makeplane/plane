@@ -5,8 +5,8 @@ import { handleAuthentication } from "@/core/lib/authentication.js";
 // extensions
 import { getExtensions } from "@/core/extensions/index.js";
 import {
+  DocumentEventResponses,
   DocumentEventsServer,
-  documentEventResponses,
 } from "@plane/editor/lib";
 
 export const getHocusPocusServer = async () => {
@@ -42,7 +42,7 @@ export const getHocusPocusServer = async () => {
       }
     },
     async onStateless({ payload, document }) {
-      const response = documentEventResponses[payload as DocumentEventsServer];
+      const response = DocumentEventResponses[payload as DocumentEventsServer];
       if (response) {
         document.broadcastStateless(response);
       }

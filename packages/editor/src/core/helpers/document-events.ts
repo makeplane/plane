@@ -1,9 +1,9 @@
-export const documentEventResponses = {
-  lock: "locked",
-  unlock: "unlocked",
-  archive: "archived",
-  unarchive: "unarchived",
-} as const;
+export enum DocumentEventResponses {
+  Lock = "locked",
+  Unlock = "unlocked",
+  Archive = "archived",
+  Unarchive = "unarchived",
+}
 
-export type DocumentEventsServer = keyof typeof documentEventResponses;
-export type DocumentEventsClient = (typeof documentEventResponses)[DocumentEventsServer];
+export type DocumentEventsServer = keyof typeof DocumentEventResponses;
+export type DocumentEventsClient = (typeof DocumentEventResponses)[DocumentEventsServer];
