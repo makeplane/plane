@@ -391,23 +391,9 @@ class ProjectAssetEndpoint(BaseAPIView):
         [ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST],
     )
     def patch(self, request, slug, project_id, pk):
-        entity_type = request.data.get("entity_type", "")
-
-        if (
-            not entity_type
-            or entity_type not in FileAsset.EntityTypeContext.values
-        ):
-            return Response(
-                {
-                    "error": "Invalid entity type.",
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
         # get the asset id
         asset = FileAsset.objects.get(
             id=pk,
-            entity_type=entity_type,
         )
         storage = S3Storage(request=request)
         # get the storage metadata
