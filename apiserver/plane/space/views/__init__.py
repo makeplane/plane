@@ -24,4 +24,8 @@ from .state import ProjectStatesEndpoint
 
 from .label import ProjectLabelsEndpoint
 
-from .asset import EntityAssetEndpoint, AssetRestoreEndpoint
+from .asset import (
+    EntityAssetEndpoint,
+    AssetRestoreEndpoint,
+    EntityBulkAssetEndpoint,
+)
