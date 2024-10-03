@@ -82,42 +82,4 @@ export class IssueCommentService extends APIService {
         throw error?.response?.data;
       });
   }
-
-  private async updateIssueCommentAssetUploadStatus(
-    workspaceSlug: string,
-    projectId: string,
-    commentId: string,
-    assetId: string
-  ): Promise<void> {
-    return this.patch(
-      `/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/comments/${commentId}/${assetId}/`
-    )
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async uploadIssueCommentAsset(
-    workspaceSlug: string,
-    projectId: string,
-    commentId: string,
-    file: File
-  ): Promise<TFileSignedURLResponse> {
-    const fileMetaData = getFileMetaDataForUpload(file);
-    return this.post(
-      `/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/comments/${commentId}/`,
-      fileMetaData
-    )
-      .then(async (response) => {
-        const signedURLResponse: TFileSignedURLResponse = response?.data;
-        const fileUploadPayload = generateFileUploadPayload(signedURLResponse, file);
-        await this.fileUploadService.uploadFile(signedURLResponse.upload_data.url, fileUploadPayload);
-        await this.updateIssueCommentAssetUploadStatus(workspaceSlug, projectId, commentId, signedURLResponse.asset_id);
-        return signedURLResponse;
-      })
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
 }

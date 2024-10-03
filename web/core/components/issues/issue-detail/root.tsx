@@ -4,7 +4,7 @@ import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // types
-import { TFileSignedURLResponse, TIssue } from "@plane/types";
+import { TIssue } from "@plane/types";
 // ui
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components
@@ -19,14 +19,9 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // images
 import emptyIssue from "@/public/empty-state/issue.svg";
-// services
-import { IssueAssetsService } from "@/services/issue";
 // local components
 import { IssueMainContent } from "./main-content";
 import { IssueDetailsSidebar } from "./sidebar";
-
-// services init
-const issueAssetsService = new IssueAssetsService();
 
 export type TIssueOperations = {
   fetch: (workspaceSlug: string, projectId: string, issueId: string, loader?: boolean) => Promise<void>;
@@ -50,12 +45,6 @@ export type TIssueOperations = {
     addModuleIds: string[],
     removeModuleIds: string[]
   ) => Promise<void>;
-  uploadIssueAsset: (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    file: File
-  ) => Promise<TFileSignedURLResponse>;
 };
 
 export type TIssueDetailRoot = {
@@ -322,15 +311,6 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           path: pathname,
         });
         return promise;
-      },
-      uploadIssueAsset: async (workspaceSlug: string, projectId: string, issueId: string, file: File) => {
-        try {
-          const res = await issueAssetsService.uploadIssueAsset(workspaceSlug, projectId, issueId, file);
-          return res;
-        } catch (error) {
-          console.log("Error in uploading issue asset:", error);
-          throw new Error("Asset upload failed. Please try again later.");
-        }
       },
     }),
     [

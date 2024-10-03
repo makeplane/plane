@@ -18,8 +18,6 @@ import { ActivityFilterRoot, IssueActivityWorklogCreateButton } from "@/plane-we
 import { TActivityFilters, defaultActivityFilters } from "@/plane-web/constants/issues";
 // services
 import { FileService } from "@/services/file.service";
-import { IssueCommentService } from "@/services/issue";
-const issueCommentService = new IssueCommentService();
 const fileService = new FileService();
 
 type TIssueActivity = {
@@ -31,7 +29,7 @@ type TIssueActivity = {
 };
 
 export type TActivityOperations = {
-  createComment: (data: Partial<TIssueComment>) => Promise<void>;
+  createComment: (data: Partial<TIssueComment>) => Promise<TIssueComment>;
   updateComment: (commentId: string, data: Partial<TIssueComment>) => Promise<void>;
   removeComment: (commentId: string) => Promise<void>;
   uploadCommentAsset: (file: File, commentId?: string) => Promise<TFileSignedURLResponse>;
@@ -61,12 +59,13 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
       createComment: async (data) => {
         try {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing fields");
-          await createComment(workspaceSlug, projectId, issueId, data);
+          const comment = await createComment(workspaceSlug, projectId, issueId, data);
           setToast({
             title: "Success!",
             type: TOAST_TYPE.SUCCESS,
             message: "Comment created successfully.",
           });
+          return comment;
         } catch (error) {
           setToast({
             title: "Error!",
@@ -111,21 +110,17 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
       },
       uploadCommentAsset: async (file, commentId) => {
         try {
-          if (!workspaceSlug) throw new Error("Missing fields");
-          if (commentId) {
-            const res = await issueCommentService.uploadIssueCommentAsset(workspaceSlug, projectId, commentId, file);
-            return res;
-          } else {
-            const res = await fileService.uploadWorkspaceAsset(
-              workspaceSlug,
-              {
-                entity_identifier: "",
-                entity_type: EFileAssetType.COMMENT_DESCRIPTION,
-              },
-              file
-            );
-            return res;
-          }
+          if (!workspaceSlug || !projectId) throw new Error("Missing fields");
+          const res = await fileService.uploadProjectAsset(
+            workspaceSlug,
+            projectId,
+            {
+              entity_identifier: commentId ?? "",
+              entity_type: EFileAssetType.COMMENT_DESCRIPTION,
+            },
+            file
+          );
+          return res;
         } catch (error) {
           console.log("Error in uploading comment asset:", error);
           throw new Error("Asset upload failed. Please try again later.");

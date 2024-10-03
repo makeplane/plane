@@ -159,37 +159,4 @@ export class ProjectPageService extends APIService {
         throw error;
       });
   }
-
-  private async updatePageAssetUploadStatus(
-    workspaceSlug: string,
-    projectId: string,
-    pageId: string,
-    assetId: string
-  ): Promise<void> {
-    return this.patch(`/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/${assetId}/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async uploadPageAsset(
-    workspaceSlug: string,
-    projectId: string,
-    pageId: string,
-    file: File
-  ): Promise<TFileSignedURLResponse> {
-    const fileMetaData = getFileMetaDataForUpload(file);
-    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/`, fileMetaData)
-      .then(async (response) => {
-        const signedURLResponse: TFileSignedURLResponse = response?.data;
-        const fileUploadPayload = generateFileUploadPayload(signedURLResponse, file);
-        await this.fileUploadService.uploadFile(signedURLResponse.upload_data.url, fileUploadPayload);
-        await this.updatePageAssetUploadStatus(workspaceSlug, projectId, pageId, signedURLResponse.asset_id);
-        return signedURLResponse;
-      })
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
 }

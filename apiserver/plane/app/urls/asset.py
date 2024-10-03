@@ -67,7 +67,7 @@ urlpatterns = [
         name="user-file-assets",
     ),
     path(
-        "assets/v2/workspaces/<str:slug>/<uuid:asset_id>/restore/",
+        "assets/v2/workspaces/<str:slug>/restore/<uuid:asset_id>/",
         AssetRestoreEndpoint.as_view(),
         name="asset-restore",
     ),

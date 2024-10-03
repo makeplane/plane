@@ -5,12 +5,9 @@ import { EditorRefApi, IRichTextEditor, RichTextEditorWithRef } from "@plane/edi
 import { IUserLite } from "@plane/types";
 // helpers
 import { cn } from "@/helpers/common.helper";
-import { getEditorAssetSrc } from "@/helpers/editor.helper";
-import { checkURLValidity } from "@/helpers/string.helper";
+import { getEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
 import { useMember, useMention, useUser } from "@/hooks/store";
-// services
-import { FileService } from "@/services/file.service";
 
 interface RichTextEditorWrapperProps extends Omit<IRichTextEditor, "fileHandler" | "mentionHandler"> {
   workspaceSlug: string;
@@ -18,8 +15,6 @@ interface RichTextEditorWrapperProps extends Omit<IRichTextEditor, "fileHandler"
   projectId: string;
   uploadFile: (file: File) => Promise<string>;
 }
-
-const fileService = new FileService();
 
 export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProps>((props, ref) => {
   const { containerClassName, workspaceSlug, workspaceId, projectId, uploadFile, ...rest } = props;
@@ -43,25 +38,12 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
   return (
     <RichTextEditorWithRef
       ref={ref}
-      fileHandler={{
-        getAssetSrc: (path) => getEditorAssetSrc(workspaceSlug, projectId, path) ?? "",
-        upload: uploadFile,
-        delete: async (src: string) => {
-          if (checkURLValidity(src)) {
-            await fileService.deleteOldEditorAsset(workspaceId, src);
-          } else {
-            await fileService.deleteNewAsset(src);
-          }
-        },
-        restore: async (src: string) => {
-          if (checkURLValidity(src)) {
-            await fileService.restoreOldEditorAsset(workspaceId, src);
-          } else {
-            await fileService.restoreNewAsset(workspaceSlug, src);
-          }
-        },
-        cancel: fileService.cancelUpload,
-      }}
+      fileHandler={getEditorFileHandlers({
+        projectId,
+        uploadFile,
+        workspaceId,
+        workspaceSlug,
+      })}
       mentionHandler={{
         highlights: mentionHighlights,
         suggestions: mentionSuggestions,

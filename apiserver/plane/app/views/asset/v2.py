@@ -454,23 +454,9 @@ class ProjectAssetEndpoint(BaseAPIView):
 
 
 class ProjectBulkAssetEndpoint(BaseAPIView):
-
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
-    def post(self, request, slug, project_id, entity_identifier):
-        entity_type = request.data.get("entity_type", "")
+    def post(self, request, slug, project_id, entity_id):
         asset_ids = request.data.get("asset_ids", [])
-
-        # Check if the entity type is allowed
-        if (
-            not entity_type
-            or entity_type not in FileAsset.EntityTypeContext.values
-        ):
-            return Response(
-                {
-                    "error": "Invalid entity type.",
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
 
         # Check if the asset ids are provided
         if not asset_ids:
@@ -484,12 +470,11 @@ class ProjectBulkAssetEndpoint(BaseAPIView):
         # get the asset id
         assets = FileAsset.objects.filter(
             id__in=asset_ids,
-            entity_type=entity_type,
             workspace__slug=slug,
             project_id=project_id,
         )
         # update the attributes
         assets.update(
-            entity_identifier=entity_identifier,
+            entity_identifier=entity_id,
         )
         return Response(status=status.HTTP_204_NO_CONTENT)

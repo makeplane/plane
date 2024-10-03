@@ -3,7 +3,9 @@
 import { FC, useEffect, useState, useMemo } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
+// plane types
 import { TIssue } from "@plane/types";
+// plane ui
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components
 import { IssueView, TIssueOperations } from "@/components/issues";
@@ -15,9 +17,6 @@ import { useEventTracker, useIssueDetail, useIssues, useUserPermissions } from "
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 // plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
-// services
-import { IssueAssetsService } from "@/services/issue";
-const issueAssetsService = new IssueAssetsService();
 
 interface IIssuePeekOverview {
   embedIssue?: boolean;
@@ -50,12 +49,12 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
 
   const removeRoutePeekId = () => {
     setPeekIssue(undefined);
-    if (embedIssue) embedRemoveCurrentNotification && embedRemoveCurrentNotification();
+    if (embedIssue) embedRemoveCurrentNotification?.();
   };
 
   const issueOperations: TIssueOperations = useMemo(
     () => ({
-      fetch: async (workspaceSlug: string, projectId: string, issueId: string, loader = true) => {
+      fetch: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
           setError(false);
           await fetchIssue(
@@ -322,15 +321,6 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             },
             path: pathname,
           });
-        }
-      },
-      uploadIssueAsset: async (workspaceSlug, projectId, issueId, file) => {
-        try {
-          const res = await issueAssetsService.uploadIssueAsset(workspaceSlug, projectId, issueId, file);
-          return res;
-        } catch (error) {
-          console.log("Error in uploading issue asset:", error);
-          throw new Error("Asset upload failed. Please try again later.");
         }
       },
     }),
