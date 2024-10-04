@@ -151,9 +151,9 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
         )
 
     @allow_permission([ROLE.ADMIN], creator=True, model=FileAsset)
-    def delete(self, request, slug, project_id, issue_id, asset_id):
+    def delete(self, request, slug, project_id, issue_id, pk):
         issue_attachment = FileAsset.objects.get(
-            pk=asset_id, workspace__slug=slug, project_id=project_id
+            pk=pk, workspace__slug=slug, project_id=project_id
         )
         issue_attachment.is_deleted = True
         issue_attachment.deleted_at = timezone.now()
