@@ -56,6 +56,7 @@ class UserSerializer(BaseSerializer):
 
 
 class UserMeSerializer(BaseSerializer):
+
     class Meta:
         model = User
         fields = [

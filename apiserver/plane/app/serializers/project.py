@@ -95,6 +95,7 @@ class ProjectLiteSerializer(BaseSerializer):
             "identifier",
             "name",
             "cover_image",
+            "cover_image_url",
             "logo_props",
             "description",
         ]
@@ -117,6 +118,7 @@ class ProjectListSerializer(DynamicBaseSerializer):
     member_role = serializers.IntegerField(read_only=True)
     anchor = serializers.CharField(read_only=True)
     members = serializers.SerializerMethodField()
+    cover_image_url = serializers.CharField(read_only=True)
 
     def get_members(self, obj):
         project_members = getattr(obj, "members_list", None)
