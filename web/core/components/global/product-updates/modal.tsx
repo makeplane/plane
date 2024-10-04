@@ -25,7 +25,11 @@ export const ProductUpdatesModal: FC<ProductUpdatesModalProps> = observer((props
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   // swr
-  const { data, isLoading, error } = useSWR(`INSTANCE_CHANGELOG`, () => instanceService.getInstanceChangeLog());
+  const { data, isLoading, error } = useSWR(`INSTANCE_CHANGELOG`, () => instanceService.getInstanceChangeLog(), {
+    shouldRetryOnError: false,
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+  });
 
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
