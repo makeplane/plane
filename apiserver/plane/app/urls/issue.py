@@ -42,7 +42,7 @@ urlpatterns = [
     ),
     # updated v2 paginated issues
     path(
-        "workspaces/<str:slug>/v2/issues/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/v2/issues/",
         IssuePaginatedViewSet.as_view({"get": "list"}),
         name="project-issues-paginated",
     ),
