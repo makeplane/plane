@@ -1,8 +1,8 @@
 import { ReactNode } from "react";
 import { FileText, Layers, ListTodo, Mail, Timer, Zap } from "lucide-react";
 import { ContrastIcon, DiceIcon, Intake } from "@plane/ui";
-import IntakeSubFeatures from "../../../../core/components/project/settings/intake-sub-features";
 import { IProject } from "@plane/types";
+
 export type TProperties = {
   property: string;
   title: string;
@@ -18,13 +18,6 @@ export type TProperties = {
 };
 export type TFeatureList = {
   [key: string]: TProperties;
-};
-export type TIntakeFeatureList = {
-  [key: string]: TProperties & {
-    hasOptions: boolean;
-    hasHyperlink?: boolean;
-    canShuffle?: boolean;
-  };
 };
 
 export type TProjectFeatures = {
@@ -79,9 +72,6 @@ export const PROJECT_FEATURES_LIST: TProjectFeatures = {
         icon: <Intake className="h-5 w-5 flex-shrink-0 text-custom-text-300" />,
         isPro: false,
         isEnabled: true,
-        renderChildren: (currentProjectDetails, isAdmin, handleSubmit) => (
-          <IntakeSubFeatures projectDetails={currentProjectDetails} isAdmin={isAdmin} handleSubmit={handleSubmit} />
-        ),
       },
     },
   },
@@ -98,39 +88,5 @@ export const PROJECT_FEATURES_LIST: TProjectFeatures = {
         isEnabled: false,
       },
     },
-  },
-};
-
-export const INTAKE_FEATURES_LIST: TIntakeFeatureList = {
-  "in-app": {
-    property: "in_app",
-    title: "In-app",
-    description: "Let the Plane app users in your org add issues via intake",
-    icon: <Zap className="h-4 w-4 flex-shrink-0 text-custom-text-300" />,
-    isPro: false,
-    isEnabled: true,
-    hasOptions: false,
-  },
-  email: {
-    property: "email",
-    title: "Email",
-    description: "You can send or forward emails to this address to create tasks and attach the email to them",
-    icon: <Mail className="h-4 w-4 flex-shrink-0 text-custom-text-300" />,
-    isPro: false,
-    isEnabled: true,
-    hasOptions: true,
-    hasHyperlink: false,
-    canShuffle: true,
-  },
-  forms: {
-    property: "forms",
-    title: "Forms",
-    description: "You can share this link to get tasks created directly from the Web",
-    icon: <ListTodo className="h-4 w-4 flex-shrink-0 text-custom-text-300" />,
-    isPro: false,
-    isEnabled: true,
-    hasOptions: true,
-    hasHyperlink: true,
-    canShuffle: true,
   },
 };
