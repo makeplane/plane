@@ -32,7 +32,7 @@
     "@plane/types": "*",
     "@plane/ui": "*",
     "@popperjs/core": "^2.11.8",
-    "@sentry/nextjs": "^8",
+    "@sentry/nextjs": "^8.32.0",
     "@sqlite.org/sqlite-wasm": "^3.46.0-build2",
     "axios": "^1.7.4",
     "clsx": "^2.0.0",
@@ -65,9 +65,12 @@
     "use-debounce": "^9.0.4",
     "use-font-face-observer": "^1.2.2",
     "uuid": "^9.0.0",
-    "zxcvbn": "^4.4.2"
+    "zxcvbn": "^4.4.2",
+    "recharts": "^2.12.7"
   },
   "devDependencies": {
+    "@plane/eslint-config": "*",
+    "@plane/typescript-config": "*",
     "@types/dompurify": "^3.0.5",
     "@types/js-cookie": "^3.0.2",
     "@types/lodash": "^4.14.202",
@@ -78,10 +81,8 @@
     "@types/react-dom": "^18.2.18",
     "@types/uuid": "^8.3.4",
     "@types/zxcvbn": "^4.4.4",
-    "@plane/eslint-config": "*",
     "prettier": "^3.2.5",
     "tailwind-config-custom": "*",
-    "@plane/typescript-config": "*",
     "typescript": "5.3.3"
   }
 }

@@ -9,6 +9,7 @@
     "build": "babel src --out-dir dist --extensions \".ts,.js\"",
     "start": "node dist/server.js",
     "lint": "eslint . --ext .ts,.tsx",
+    "dev": "concurrently \"babel src --out-dir dist --extensions '.ts,.js' --watch\" \"nodemon dist/server.js\"",
     "lint:errors": "eslint . --ext .ts,.tsx --quiet"
   },
   "keywords": [],
@@ -54,7 +55,8 @@
     "@types/express-ws": "^3.0.4",
     "@types/node": "^20.14.9",
     "babel-plugin-module-resolver": "^5.0.2",
-    "nodemon": "^3.1.0",
+    "concurrently": "^9.0.1",
+    "nodemon": "^3.1.7",
     "ts-node": "^10.9.2",
     "tsup": "^7.2.0",
     "typescript": "5.3.3"

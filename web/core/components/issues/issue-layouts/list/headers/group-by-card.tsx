@@ -26,10 +26,10 @@ interface IHeaderGroupByCard {
   count: number;
   issuePayload: Partial<TIssue>;
   canEditProperties: (projectId: string | undefined) => boolean;
-  toggleListGroup: () => void;
   disableIssueCreation?: boolean;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   selectionHelpers: TSelectionHelper;
+  handleCollapsedGroups: (value: string) => void;
 }
 
 export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
@@ -43,7 +43,7 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
     disableIssueCreation,
     addIssuesToView,
     selectionHelpers,
-    toggleListGroup,
+    handleCollapsedGroups
   } = props;
   // states
   const [isOpen, setIsOpen] = useState(false);
@@ -108,7 +108,7 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
 
         <div
           className="relative flex w-full flex-row items-center gap-1 overflow-hidden cursor-pointer"
-          onClick={toggleListGroup}
+          onClick={() => handleCollapsedGroups(groupID)}
         >
           <div className="inline-block line-clamp-1 truncate font-medium text-custom-text-100">{title}</div>
           <div className="pl-2 text-sm font-medium text-custom-text-300">{count || 0}</div>

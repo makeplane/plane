@@ -106,14 +106,6 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
           )}
         </CircularProgressIndicator>
       }
-      appendTitleElement={
-        <button
-          onClick={openCycleOverview}
-          className={`z-[1] flex-shrink-0 ${isMobile ? "flex" : "hidden group-hover:flex"}`}
-        >
-          <Info className="h-4 w-4 text-custom-text-400" />
-        </button>
-      }
       actionableItems={
         <CycleListItemAction
           workspaceSlug={workspaceSlug}

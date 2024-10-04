@@ -66,19 +66,20 @@
     "tailwind-merge": "^1.14.0",
     "tippy.js": "^6.3.7",
     "tiptap-markdown": "^0.8.9",
+    "uuid": "^10.0.0",
     "y-indexeddb": "^9.0.12",
     "y-prosemirror": "^1.2.5",
     "y-protocols": "^1.0.6",
     "yjs": "^13.6.15"
   },
   "devDependencies": {
+    "@plane/eslint-config": "*",
+    "@plane/typescript-config": "*",
     "@types/node": "18.15.3",
     "@types/react": "^18.2.42",
     "@types/react-dom": "^18.2.17",
-    "@plane/eslint-config": "*",
     "postcss": "^8.4.38",
     "tailwind-config-custom": "*",
-    "@plane/typescript-config": "*",
     "tsup": "^7.2.0",
     "typescript": "5.3.3"
   },

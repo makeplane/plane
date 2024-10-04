@@ -252,7 +252,7 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
 
           const currentUserId = this.rootIssueStore.currentUserId;
           if (currentUserId)
-            this.handleIssuesLocalFilters.set(EIssuesStoreType.PROJECT, type, workspaceSlug, userId, undefined, {
+            this.handleIssuesLocalFilters.set(EIssuesStoreType.PROFILE, type, workspaceSlug, userId, undefined, {
               kanban_filters: _filters.kanbanFilters,
             });
 

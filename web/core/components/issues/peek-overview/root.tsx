@@ -35,7 +35,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   const {
     peekIssue,
     setPeekIssue,
-    issue: { fetchIssue, isFetchingIssueDetails },
+    issue: { fetchIssue, getIsFetchingIssueDetails },
     fetchActivities,
   } = useIssueDetail();
 
@@ -344,7 +344,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       workspaceSlug={peekIssue.workspaceSlug}
       projectId={peekIssue.projectId}
       issueId={peekIssue.issueId}
-      isLoading={isFetchingIssueDetails}
+      isLoading={getIsFetchingIssueDetails(peekIssue.issueId)}
       isError={error}
       is_archived={is_archived}
       disabled={!isEditable}

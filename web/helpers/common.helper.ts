@@ -9,7 +9,7 @@ export const ADMIN_BASE_PATH = process.env.NEXT_PUBLIC_ADMIN_BASE_PATH || "";
 export const SPACE_BASE_URL = process.env.NEXT_PUBLIC_SPACE_BASE_URL || "";
 export const SPACE_BASE_PATH = process.env.NEXT_PUBLIC_SPACE_BASE_PATH || "";
 
-const LIVE_BASE_URL = process.env.NEXT_PUBLIC_LIVE_BASE_URL || "";
+export const LIVE_BASE_URL = process.env.NEXT_PUBLIC_LIVE_BASE_URL || "";
 export const LIVE_BASE_PATH = process.env.NEXT_PUBLIC_LIVE_BASE_PATH || "";
 export const LIVE_URL = `${LIVE_BASE_URL}${LIVE_BASE_PATH}`;
 

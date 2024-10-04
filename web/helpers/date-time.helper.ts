@@ -357,3 +357,32 @@ export const getReadTimeFromWordsCount = (wordsCount: number): number => {
   const minutes = wordsCount / wordsPerMinute;
   return minutes * 60;
 };
+
+/**
+ * @description generates an array of dates between the start and end dates
+ * @param startDate
+ * @param endDate
+ * @returns
+ */
+export const generateDateArray = (startDate: string | Date, endDate: string | Date) => {
+  // Convert the start and end dates to Date objects if they aren't already
+  const start = new Date(startDate);
+  // start.setDate(start.getDate() + 1);
+  const end = new Date(endDate);
+  end.setDate(end.getDate() + 1);
+
+  // Create an empty array to store the dates
+  const dateArray = [];
+
+  // Use a while loop to generate dates between the range
+  while (start <= end) {
+    // Increment the date by 1 day (86400000 milliseconds)
+    start.setDate(start.getDate() + 1);
+    // Push the current date (converted to ISO string for consistency)
+    dateArray.push({
+      date: new Date(start).toISOString().split("T")[0],
+    });
+  }
+
+  return dateArray;
+};

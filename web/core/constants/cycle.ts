@@ -60,7 +60,7 @@ export const CYCLE_STATUS: {
   {
     label: "day left",
     value: "current",
-    title: "Active",
+    title: "In progress",
     color: "#F59E0B",
     textColor: "text-amber-500",
     bgColor: "bg-amber-50",
