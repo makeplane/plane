@@ -108,14 +108,16 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
       updateAttributes(initialComputedSize);
     } else {
       // as the aspect ratio in not stored for old images, we need to update the attrs
-      setSize((prevSize) => {
-        const newSize = { ...prevSize, aspectRatio };
-        updateAttributes(newSize);
-        return newSize;
-      });
+      if (!aspectRatio) {
+        setSize((prevSize) => {
+          const newSize = { ...prevSize, aspectRatio };
+          updateAttributes(newSize);
+          return newSize;
+        });
+      }
     }
     setInitialResizeComplete(true);
-  }, [width, updateAttributes, editorContainer]);
+  }, [width, updateAttributes, editorContainer, aspectRatio]);
 
   // for real time resizing
   useLayoutEffect(() => {

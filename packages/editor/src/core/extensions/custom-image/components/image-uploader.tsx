@@ -5,9 +5,7 @@ import { ImageIcon } from "lucide-react";
 // helpers
 import { cn } from "@/helpers/common";
 // hooks
-import { useUploader, useDropZone } from "@/hooks/use-file-upload";
-// plugins
-import { isFileValid } from "@/plugins/image";
+import { useUploader, useDropZone, uploadFirstImageAndInsertRemaining } from "@/hooks/use-file-upload";
 // extensions
 import { getImageComponentImageFileMap, ImageAttributes } from "@/extensions/custom-image";
 
@@ -74,7 +72,11 @@ export const CustomImageUploader = (props: {
   );
   // hooks
   const { uploading: isImageBeingUploaded, uploadFile } = useUploader({ onUpload, editor, loadImageFromFileSystem });
-  const { draggedInside, onDrop, onDragEnter, onDragLeave } = useDropZone({ uploader: uploadFile });
+  const { draggedInside, onDrop, onDragEnter, onDragLeave } = useDropZone({
+    uploader: uploadFile,
+    editor,
+    pos: getPos(),
+  });
 
   // the meta data of the image component
   const meta = useMemo(
@@ -99,12 +101,9 @@ export const CustomImageUploader = (props: {
 
   const onFileChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (file) {
-        if (isFileValid(file)) {
-          uploadFile(file);
-        }
-      }
+      e.preventDefault();
+      const fileList = e.target.files;
+      uploadFirstImageAndInsertRemaining(editor, fileList, getPos(), uploadFile);
     },
     [uploadFile]
   );
@@ -157,6 +156,7 @@ export const CustomImageUploader = (props: {
         type="file"
         accept=".jpg,.jpeg,.png,.webp"
         onChange={onFileChange}
+        multiple
       />
     </div>
   );
