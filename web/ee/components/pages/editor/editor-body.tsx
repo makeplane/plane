@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // document-editor
@@ -7,7 +7,6 @@ import {
   CollaborativeDocumentReadOnlyEditorWithRef,
   EditorReadOnlyRefApi,
   EditorRefApi,
-  IMarking,
   TAIMenuProps,
   TDisplayConfig,
   TRealtimeConfig,
@@ -18,7 +17,7 @@ import { IUserLite } from "@plane/types";
 // components
 import { PageContentBrowser, PageEditorTitle, PageContentLoader } from "@/components/pages";
 // helpers
-import { cn, LIVE_URL } from "@/helpers/common.helper";
+import { cn, LIVE_BASE_PATH, LIVE_BASE_URL } from "@/helpers/common.helper";
 import { generateRandomColor } from "@/helpers/string.helper";
 // hooks
 import { useMember, useUser, useWorkspace } from "@/hooks/store";
@@ -110,23 +109,34 @@ export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
     []
   );
 
-  const realtimeConfig: TRealtimeConfig = useMemo(
-    () => ({
-      url: `${LIVE_URL}/collaboration`,
-      queryParams: {
-        workspaceSlug: workspaceSlug?.toString(),
-        documentType: "workspace_page",
-      },
-    }),
-    [workspaceSlug]
-  );
+  const realtimeConfig: TRealtimeConfig | undefined = useMemo(() => {
+    // Construct the WebSocket Collaboration URL
+    try {
+      const LIVE_SERVER_BASE_URL = LIVE_BASE_URL?.trim() || window.location.origin;
+      const WS_LIVE_URL = new URL(LIVE_SERVER_BASE_URL);
+      const isSecureEnvironment = window.location.protocol === "https:";
+      WS_LIVE_URL.protocol = isSecureEnvironment ? "wss" : "ws";
+      WS_LIVE_URL.pathname = `${LIVE_BASE_PATH}/collaboration`;
+      // Construct realtime config
+      return {
+        url: WS_LIVE_URL.toString(),
+        queryParams: {
+          workspaceSlug: workspaceSlug?.toString(),
+          documentType: "workspace_page",
+        },
+      };
+    } catch (error) {
+      console.error("Error creating realtime config", error);
+      return undefined;
+    }
+  }, [workspaceSlug]);
 
   const handleIssueSearch = async (searchQuery: string) => {
     const response = await fetchIssues(searchQuery);
     return response;
   };
 
-  if (pageId === undefined) return <PageContentLoader />;
+  if (pageId === undefined || !realtimeConfig) return <PageContentLoader />;
 
   if (pageDescription === undefined) return <PageContentLoader />;
 
