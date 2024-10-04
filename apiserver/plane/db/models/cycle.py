@@ -77,9 +77,9 @@ class Cycle(ProjectBaseModel):
     archived_at = models.DateTimeField(null=True)
     logo_props = models.JSONField(default=dict)
     # timezone
-    USER_TIMEZONE_CHOICES = tuple(zip(pytz.all_timezones, pytz.all_timezones))
-    user_timezone = models.CharField(
-        max_length=255, default="UTC", choices=USER_TIMEZONE_CHOICES
+    TIMEZONE_CHOICES = tuple(zip(pytz.all_timezones, pytz.all_timezones))
+    timezone = models.CharField(
+        max_length=255, default="UTC", choices=TIMEZONE_CHOICES
     )
 
     class Meta:

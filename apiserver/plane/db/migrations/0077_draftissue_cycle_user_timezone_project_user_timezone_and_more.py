@@ -207,7 +207,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name="cycle",
-            name="user_timezone",
+            name="timezone",
             field=models.CharField(
                 choices=[
                     ("Africa/Abidjan", "Africa/Abidjan"),
@@ -855,7 +855,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name="project",
-            name="user_timezone",
+            name="timezone",
             field=models.CharField(
                 choices=[
                     ("Africa/Abidjan", "Africa/Abidjan"),
