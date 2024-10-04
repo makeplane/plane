@@ -15,8 +15,7 @@ export type TIssueTypeSelectProps<T extends Partial<TIssueFields>> = {
   isRequired?: boolean;
   renderChevron?: boolean;
   dropDownContainerClassName?: string;
-  disableMandatoryTypes?: boolean; // Disable issue types with mandatory properties
-  reasonForDisabledType?: string; // Reason for disabling issue types
+  showMandatoryFieldInfo?: boolean; // Show info about mandatory fields
   handleFormChange?: () => void;
 };
 
