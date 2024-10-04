@@ -99,7 +99,7 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
   };
 
   fetchAttachments = async (workspaceSlug: string, projectId: string, issueId: string) => {
-    const response = await this.issueAttachmentService.getIssueAttachment(workspaceSlug, projectId, issueId);
+    const response = await this.issueAttachmentService.getIssueAttachments(workspaceSlug, projectId, issueId);
     this.addAttachments(issueId, response);
     return response;
   };

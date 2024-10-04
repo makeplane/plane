@@ -83,6 +83,14 @@ export class FileService extends APIService {
       });
   }
 
+  async deleteWorkspaceAsset(workspaceSlug: string, assetId: string): Promise<void> {
+    return this.delete(`/api/assets/v2/workspaces/${workspaceSlug}/${assetId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   private async updateProjectAssetUploadStatus(
     workspaceSlug: string,
     projectId: string,
@@ -154,6 +162,14 @@ export class FileService extends APIService {
         await this.updateUserAssetUploadStatus(signedURLResponse.asset_id);
         return signedURLResponse;
       })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async deleteUserAsset(assetId: string): Promise<void> {
+    return this.delete(`/api/assets/v2/user-assets/${assetId}/`)
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });

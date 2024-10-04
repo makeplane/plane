@@ -12,7 +12,7 @@ import { Button } from "@plane/ui";
 // constants
 import { MAX_FILE_SIZE } from "@/constants/common";
 // helpers
-import { getFileURL } from "@/helpers/file.helper";
+import { getAssetIdFromUrl, getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useWorkspace, useInstance } from "@/hooks/store";
 // services
@@ -82,10 +82,11 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
   };
 
   const handleImageRemove = async () => {
-    if (!value) return;
+    if (!workspaceSlug || !value) return;
+    const assetId = getAssetIdFromUrl(value);
     setIsRemoving(true);
     try {
-      await fileService.deleteNewAsset(value);
+      await fileService.deleteWorkspaceAsset(workspaceSlug.toString(), assetId);
       await handleRemove();
     } catch (error) {
       console.log("Error in removing workspace asset:", error);

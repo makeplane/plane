@@ -53,8 +53,8 @@ export class IssueAttachmentService extends APIService {
       });
   }
 
-  async getIssueAttachment(workspaceSlug: string, projectId: string, issueId: string): Promise<TIssueAttachment[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-attachments/`)
+  async getIssueAttachments(workspaceSlug: string, projectId: string, issueId: string): Promise<TIssueAttachment[]> {
+    return this.get(`/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/attachments/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -68,7 +68,7 @@ export class IssueAttachmentService extends APIService {
     assetId: string
   ): Promise<TIssueAttachment> {
     return this.delete(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-attachments/${assetId}/`
+      `/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/attachments/${assetId}/`
     )
       .then((response) => response?.data)
       .catch((error) => {

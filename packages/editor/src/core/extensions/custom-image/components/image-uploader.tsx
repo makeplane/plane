@@ -100,13 +100,6 @@ export const CustomImageUploader = (props: {
     }
   }, [meta, uploadFile, imageComponentImageFileMap]);
 
-  // check if the image is dropped and set the local image as the existing file
-  useEffect(() => {
-    if (existingFile) {
-      uploadFile(existingFile);
-    }
-  }, [existingFile, uploadFile]);
-
   const onFileChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
