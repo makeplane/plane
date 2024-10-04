@@ -100,12 +100,12 @@ export const CustomImageUploader = (props: {
   }, [meta, uploadFile, imageComponentImageFileMap]);
 
   const onFileChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
+    async (e: ChangeEvent<HTMLInputElement>) => {
       e.preventDefault();
       const fileList = e.target.files;
-      uploadFirstImageAndInsertRemaining(editor, fileList, getPos(), uploadFile);
+      await uploadFirstImageAndInsertRemaining(editor, fileList, getPos(), uploadFile);
     },
-    [uploadFile]
+    [uploadFile, editor, getPos, uploadFile]
   );
 
   const getDisplayMessage = useCallback(() => {

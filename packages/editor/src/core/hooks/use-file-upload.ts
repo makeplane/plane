@@ -95,15 +95,15 @@ export const useDropZone = ({
   }, []);
 
   const onDrop = useCallback(
-    (e: DragEvent<HTMLDivElement>) => {
+    async (e: DragEvent<HTMLDivElement>) => {
       setDraggedInside(false);
       if (e.dataTransfer.files.length === 0) {
         return;
       }
       const fileList = e.dataTransfer.files;
-      uploadFirstImageAndInsertRemaining(editor, fileList, pos, uploader);
+      await uploadFirstImageAndInsertRemaining(editor, fileList, pos, uploader);
     },
-    [uploader]
+    [uploader, editor, pos]
   );
 
   const onDragEnter = () => {
@@ -130,7 +130,7 @@ function trimFileName(fileName: string, maxLength = 100) {
 
 // Upload the first image and insert the remaining images for uploading multiple image
 // post insertion of image-component
-export function uploadFirstImageAndInsertRemaining(
+export async function uploadFirstImageAndInsertRemaining(
   editor: Editor,
   fileList: FileList,
   pos: number,
@@ -147,6 +147,9 @@ export function uploadFirstImageAndInsertRemaining(
     return;
   }
   const filteredFiles = files.filter((f) => f.type.indexOf("image") !== -1);
+  if (filteredFiles.length !== files.length) {
+    console.warn("Some files were not images and have been ignored.");
+  }
   if (filteredFiles.length === 0) {
     console.error("No image files found to upload");
     return;
@@ -154,7 +157,7 @@ export function uploadFirstImageAndInsertRemaining(
 
   // Upload the first image
   const firstFile = filteredFiles[0];
-  uploaderFn(firstFile);
+  await uploaderFn(firstFile);
 
   // Insert the remaining images
   const remainingFiles = filteredFiles.slice(1);
