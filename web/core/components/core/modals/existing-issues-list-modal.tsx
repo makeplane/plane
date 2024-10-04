@@ -249,7 +249,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                                     } ${selected ? "text-custom-text-100" : ""}`
                                   }
                                 >
-                                  <div className="flex items-center gap-2">
+                                  <div className="flex items-center gap-2 truncate">
                                     <input type="checkbox" checked={selected} readOnly />
                                     <span
                                       className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
@@ -266,12 +266,12 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                                         textContainerClassName="text-xs text-custom-text-200"
                                       />
                                     </span>
-                                    {issue.name}
+                                    <span className="truncate">{issue.name}</span>
                                   </div>
                                   <a
                                     href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
                                     target="_blank"
-                                    className="z-1 relative hidden text-custom-text-200 hover:text-custom-text-100 group-hover:block"
+                                    className="z-1 relative hidden flex-shrink-0 text-custom-text-200 hover:text-custom-text-100 group-hover:block"
                                     rel="noopener noreferrer"
                                     onClick={(e) => e.stopPropagation()}
                                   >

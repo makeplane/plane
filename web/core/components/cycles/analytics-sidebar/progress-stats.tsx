@@ -220,16 +220,16 @@ export const StateStatComponent = observer((props: TStateStatComponent) => {
 
 const progressStats = [
   {
+    key: "stat-states",
+    title: "States",
+  },
+  {
     key: "stat-assignees",
     title: "Assignees",
   },
   {
     key: "stat-labels",
     title: "Labels",
-  },
-  {
-    key: "stat-states",
-    title: "States",
   },
 ];
 
@@ -341,6 +341,14 @@ export const CycleProgressStats: FC<TCycleProgressStats> = observer((props) => {
           ))}
         </Tab.List>
         <Tab.Panels className="py-3 text-custom-text-200">
+          <Tab.Panel key={"stat-states"}>
+            <StateStatComponent
+              distribution={distributionStateData}
+              totalIssuesCount={totalIssuesCount}
+              isEditable={isEditable}
+              handleFiltersUpdate={handleFiltersUpdate}
+            />
+          </Tab.Panel>
           <Tab.Panel key={"stat-assignees"}>
             <AssigneeStatComponent
               distribution={distributionAssigneeData}
@@ -354,14 +362,6 @@ export const CycleProgressStats: FC<TCycleProgressStats> = observer((props) => {
               distribution={distributionLabelData}
               isEditable={isEditable}
               filters={filters}
-              handleFiltersUpdate={handleFiltersUpdate}
-            />
-          </Tab.Panel>
-          <Tab.Panel key={"stat-states"}>
-            <StateStatComponent
-              distribution={distributionStateData}
-              totalIssuesCount={totalIssuesCount}
-              isEditable={isEditable}
               handleFiltersUpdate={handleFiltersUpdate}
             />
           </Tab.Panel>

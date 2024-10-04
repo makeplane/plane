@@ -2,8 +2,9 @@
 
 import React, { FC, MouseEvent, useEffect } from "react";
 import { observer } from "mobx-react";
+import { usePathname, useSearchParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-import { Users } from "lucide-react";
+import { Eye, Users } from "lucide-react";
 // types
 import { ICycle, TCycleGroups } from "@plane/types";
 // ui
@@ -18,7 +19,9 @@ import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "@/constants/event-tracker";
 // helpers
 import { findHowManyDaysLeft, getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // hooks
+import { generateQueryParams } from "@/helpers/router.helper";
 import { useCycle, useEventTracker, useMember, useUserPermissions } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { CycleService } from "@/services/cycle.service";
@@ -31,6 +34,7 @@ type Props = {
   cycleId: string;
   cycleDetails: ICycle;
   parentRef: React.RefObject<HTMLDivElement>;
+  isActive?: boolean;
 };
 
 const defaultValues: Partial<ICycle> = {
@@ -39,9 +43,13 @@ const defaultValues: Partial<ICycle> = {
 };
 
 export const CycleListItemAction: FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, cycleId, cycleDetails, parentRef } = props;
+  const { workspaceSlug, projectId, cycleId, cycleDetails, parentRef, isActive = false } = props;
   // hooks
   const { isMobile } = usePlatformOS();
+  // router
+  const router = useAppRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
   // store hooks
   const { addCycleToFavorites, removeCycleFromFavorites, updateCycleDetails } = useCycle();
   const { captureEvent } = useEventTracker();
@@ -183,77 +191,90 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
   const isCompleted = cycleStatus === "completed";
 
   const isDisabled = !isEditingAllowed || isArchived || isCompleted;
+  // handlers
+  const openCycleOverview = (e: MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const query = generateQueryParams(searchParams, ["peekCycle"]);
+    if (searchParams.has("peekCycle") && searchParams.get("peekCycle") === cycleId) {
+      router.push(`${pathname}?${query}`);
+    } else {
+      router.push(`${pathname}?${query && `${query}&`}peekCycle=${cycleId}`);
+    }
+  };
 
   return (
     <>
-      <Controller
-        control={control}
-        name="start_date"
-        render={({ field: { value: startDateValue, onChange: onChangeStartDate } }) => (
-          <Controller
-            control={control}
-            name="end_date"
-            render={({ field: { value: endDateValue, onChange: onChangeEndDate } }) => (
-              <DateRangeDropdown
-                buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-custom-text-300 border-[0.5px] border-custom-border-300 rounded text-xs`}
-                buttonVariant="transparent-with-text"
-                minDate={new Date()}
-                value={{
-                  from: getDate(startDateValue),
-                  to: getDate(endDateValue),
-                }}
-                onSelect={(val) => {
-                  onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);
-                  onChangeEndDate(val?.to ? renderFormattedPayloadDate(val.to) : null);
-                  handleDateChange(val?.from, val?.to);
-                }}
-                placeholder={{
-                  from: "Start date",
-                  to: "End date",
-                }}
-                required={cycleDetails.status !== "draft"}
-                disabled={isDisabled}
-                hideIcon={{ from: renderIcon ?? true, to: renderIcon }}
-              />
-            )}
-          />
-        )}
-      />
-      {currentCycle && (
-        <div
-          className="relative flex h-6 w-20 flex-shrink-0 items-center justify-center rounded-sm text-center text-xs"
-          style={{
-            color: currentCycle.color,
-            backgroundColor: `${currentCycle.color}20`,
-          }}
-        >
-          {currentCycle.value === "current"
-            ? `${daysLeft} ${daysLeft > 1 ? "days" : "day"} left`
-            : `${currentCycle.label}`}
-        </div>
+      <button
+        onClick={openCycleOverview}
+        className={`z-[1] flex text-custom-primary-200 text-xs gap-1 flex-shrink-0 ${isMobile || isActive ? "flex" : "hidden group-hover:flex"}`}
+      >
+        <Eye className="h-4 w-4 my-auto  text-custom-primary-200" />
+        <span>More details</span>
+      </button>
+
+      {!isActive && (
+        <Controller
+          control={control}
+          name="start_date"
+          render={({ field: { value: startDateValue, onChange: onChangeStartDate } }) => (
+            <Controller
+              control={control}
+              name="end_date"
+              render={({ field: { value: endDateValue, onChange: onChangeEndDate } }) => (
+                <DateRangeDropdown
+                  buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-custom-text-300 border-[0.5px] border-custom-border-300 rounded text-xs`}
+                  buttonVariant="transparent-with-text"
+                  minDate={new Date()}
+                  value={{
+                    from: getDate(startDateValue),
+                    to: getDate(endDateValue),
+                  }}
+                  onSelect={(val) => {
+                    onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);
+                    onChangeEndDate(val?.to ? renderFormattedPayloadDate(val.to) : null);
+                    handleDateChange(val?.from, val?.to);
+                  }}
+                  placeholder={{
+                    from: "Start date",
+                    to: "End date",
+                  }}
+                  required={cycleDetails.status !== "draft"}
+                  disabled={isDisabled}
+                  hideIcon={{ from: renderIcon ?? true, to: renderIcon }}
+                />
+              )}
+            />
+          )}
+        />
       )}
 
       {/* created by */}
-      {createdByDetails && <ButtonAvatars showTooltip={false} userIds={createdByDetails?.id} />}
+      {createdByDetails && !isActive && <ButtonAvatars showTooltip={false} userIds={createdByDetails?.id} />}
 
-      <Tooltip tooltipContent={`${cycleDetails.assignee_ids?.length} Members`} isMobile={isMobile}>
-        <div className="flex w-10 cursor-default items-center justify-center">
-          {cycleDetails.assignee_ids && cycleDetails.assignee_ids?.length > 0 ? (
-            <AvatarGroup showTooltip={false}>
-              {cycleDetails.assignee_ids?.map((assignee_id) => {
-                const member = getUserDetails(assignee_id);
-                return <Avatar key={member?.id} name={member?.display_name} src={member?.avatar} />;
-              })}
-            </AvatarGroup>
-          ) : (
-            <Users className="h-4 w-4 text-custom-text-300" />
-          )}
-        </div>
-      </Tooltip>
+      {!isActive && (
+        <Tooltip tooltipContent={`${cycleDetails.assignee_ids?.length} Members`} isMobile={isMobile}>
+          <div className="flex w-10 cursor-default items-center justify-center">
+            {cycleDetails.assignee_ids && cycleDetails.assignee_ids?.length > 0 ? (
+              <AvatarGroup showTooltip={false}>
+                {cycleDetails.assignee_ids?.map((assignee_id) => {
+                  const member = getUserDetails(assignee_id);
+                  return <Avatar key={member?.id} name={member?.display_name} src={member?.avatar} />;
+                })}
+              </AvatarGroup>
+            ) : (
+              <Users className="h-4 w-4 text-custom-text-300" />
+            )}
+          </div>
+        </Tooltip>
+      )}
 
       {isEditingAllowed && !cycleDetails.archived_at && (
         <FavoriteStar
           onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
             if (cycleDetails.is_favorite) handleRemoveFromFavorites(e);
             else handleAddToFavorites(e);
           }}
