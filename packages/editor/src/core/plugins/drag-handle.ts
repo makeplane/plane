@@ -37,11 +37,11 @@ export const nodeDOMAtCoords = (coords: { x: number; y: number }) => {
     "p:not(:first-child)",
     ".code-block",
     "blockquote",
-    "img",
     "h1, h2, h3, h4, h5, h6",
     "[data-type=horizontalRule]",
     ".table-wrapper",
     ".issue-embed",
+    ".image-component",
     ".image-upload-component",
   ].join(", ");
 

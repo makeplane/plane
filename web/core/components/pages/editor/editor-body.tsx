@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // document-editor
@@ -7,7 +7,6 @@ import {
   CollaborativeDocumentReadOnlyEditorWithRef,
   EditorReadOnlyRefApi,
   EditorRefApi,
-  IMarking,
   TAIMenuProps,
   TDisplayConfig,
   TRealtimeConfig,
@@ -19,7 +18,7 @@ import { IUserLite } from "@plane/types";
 import { Row } from "@plane/ui";
 import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
 // helpers
-import { cn, LIVE_URL } from "@/helpers/common.helper";
+import { cn, LIVE_BASE_PATH, LIVE_BASE_URL } from "@/helpers/common.helper";
 import { generateRandomColor } from "@/helpers/string.helper";
 // hooks
 import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
@@ -38,14 +37,13 @@ const fileService = new FileService();
 
 type Props = {
   editorRef: React.RefObject<EditorRefApi>;
+  editorReady: boolean;
   handleConnectionStatus: (status: boolean) => void;
   handleEditorReady: (value: boolean) => void;
   handleReadOnlyEditorReady: (value: boolean) => void;
-  markings: IMarking[];
   page: IPage;
   readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
   sidePeekVisible: boolean;
-  updateMarkings: (description_html: string) => void;
 };
 
 export const PageEditorBody: React.FC<Props> = observer((props) => {
@@ -54,11 +52,9 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     handleConnectionStatus,
     handleEditorReady,
     handleReadOnlyEditorReady,
-    markings,
     page,
     readOnlyEditorRef,
     sidePeekVisible,
-    updateMarkings,
   } = props;
   // router
   const { workspaceSlug, projectId } = useParams();
@@ -73,7 +69,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const workspaceId = workspaceSlug ? (getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "") : "";
   const pageId = page?.id;
   const pageTitle = page?.name ?? "";
-  const pageDescription = page?.description_html;
   const { isContentEditable, updateTitle, setIsSubmitting } = page;
   const projectMemberIds = projectId ? getProjectMemberIds(projectId.toString()) : [];
   const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
@@ -104,6 +99,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const handleServerConnect = useCallback(() => {
     handleConnectionStatus(false);
   }, []);
+
   const handleServerError = useCallback(() => {
     handleConnectionStatus(true);
   }, []);
@@ -116,23 +112,30 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     []
   );
 
-  useEffect(() => {
-    updateMarkings(pageDescription ?? "<p></p>");
-  }, [pageDescription, updateMarkings]);
+  const realtimeConfig: TRealtimeConfig | undefined = useMemo(() => {
+    // Construct the WebSocket Collaboration URL
+    try {
+      const LIVE_SERVER_BASE_URL = LIVE_BASE_URL?.trim() || window.location.origin;
+      const WS_LIVE_URL = new URL(LIVE_SERVER_BASE_URL);
+      const isSecureEnvironment = window.location.protocol === "https:";
+      WS_LIVE_URL.protocol = isSecureEnvironment ? "wss" : "ws";
+      WS_LIVE_URL.pathname = `${LIVE_BASE_PATH}/collaboration`;
+      // Construct realtime config
+      return {
+        url: WS_LIVE_URL.toString(),
+        queryParams: {
+          workspaceSlug: workspaceSlug?.toString(),
+          projectId: projectId?.toString(),
+          documentType: "project_page",
+        },
+      };
+    } catch (error) {
+      console.error("Error creating realtime config", error);
+      return undefined;
+    }
+  }, [projectId, workspaceSlug]);
 
-  const realtimeConfig: TRealtimeConfig = useMemo(
-    () => ({
-      url: `${LIVE_URL}/collaboration`,
-      queryParams: {
-        workspaceSlug: workspaceSlug?.toString(),
-        projectId: projectId?.toString(),
-        documentType: "project_page",
-      },
-    }),
-    [projectId, workspaceSlug]
-  );
-
-  if (pageId === undefined) return <PageContentLoader />;
+  if (pageId === undefined || !realtimeConfig) return <PageContentLoader />;
 
   return (
     <div className="flex items-center h-full w-full overflow-y-auto">
@@ -144,10 +147,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
         })}
       >
         {!isFullWidth && (
-          <PageContentBrowser
-            editorRef={(isContentEditable ? editorRef : readOnlyEditorRef)?.current}
-            markings={markings}
-          />
+          <PageContentBrowser editorRef={(isContentEditable ? editorRef : readOnlyEditorRef)?.current} />
         )}
       </Row>
       <div
@@ -176,7 +176,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               }}
               handleEditorReady={handleEditorReady}
               ref={editorRef}
-              containerClassName="p-0 pb-64"
+              containerClassName="h-full p-0 pb-64"
               displayConfig={displayConfig}
               editorClassName="pl-10"
               mentionHandler={{
@@ -215,7 +215,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                 },
               }}
               realtimeConfig={realtimeConfig}
-              serverHandler={serverHandler}
               user={{
                 id: currentUser?.id ?? "",
                 name: currentUser?.display_name ?? "",

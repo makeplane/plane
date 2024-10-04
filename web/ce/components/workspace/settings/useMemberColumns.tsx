@@ -25,8 +25,8 @@ export const useMemberColumns = () => {
 
   const columns = [
     {
-      key: "Full Name",
-      content: "Full Name",
+      key: "Full name",
+      content: "Full name",
       thClassName: "text-left",
       tdRender: (rowData: RowData) => (
         <NameColumn
@@ -38,21 +38,36 @@ export const useMemberColumns = () => {
         />
       ),
     },
+
     {
-      key: "Display Name",
-      content: "Display Name",
+      key: "Display name",
+      content: "Display name",
       tdRender: (rowData: RowData) => <div className="w-32">{rowData.member.display_name}</div>,
     },
 
     {
-      key: "Account Type",
-      content: "Account Type",
+      key: "Email address",
+      content: "Email address",
+      tdRender: (rowData: RowData) => <div className="w-48 truncate">{rowData.member.email}</div>,
+    },
+
+    {
+      key: "Account type",
+      content: "Account type",
       tdRender: (rowData: RowData) => <AccountTypeColumn rowData={rowData} workspaceSlug={workspaceSlug as string} />,
     },
 
     {
-      key: "Joining Date",
-      content: "Joining Date",
+      key: "Authentication",
+      content: "Authentication",
+      tdRender: (rowData: RowData) => (
+        <div className="capitalize">{rowData.member.last_login_medium?.replace("-", " ")}</div>
+      ),
+    },
+
+    {
+      key: "Joining date",
+      content: "Joining date",
       tdRender: (rowData: RowData) => <div>{getFormattedDate(rowData?.member?.joining_date || "")}</div>,
     },
   ];

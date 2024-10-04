@@ -117,14 +117,18 @@ export function LowlightPlugin({
             // Such transactions can happen during collab syncing via y-prosemirror, for example.
             transaction.steps.some(
               (step) =>
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
                 step.from !== undefined &&
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
                 step.to !== undefined &&
                 oldNodes.some(
                   (node) =>
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-ignore
                     node.pos >= step.from &&
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-ignore
                     node.pos + node.node.nodeSize <= step.to
                 )

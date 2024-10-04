@@ -16,6 +16,17 @@ from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
 from corsheaders.defaults import default_headers
 
+# OpenTelemetry
+from opentelemetry import trace
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import (
+    OTLPSpanExporter,
+)
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.instrumentation.django import DjangoInstrumentor
+
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Secret Key
@@ -23,6 +34,19 @@ SECRET_KEY = os.environ.get("SECRET_KEY", get_random_secret_key())
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(os.environ.get("DEBUG", "0"))
+
+# Initialize Django instrumentation
+DjangoInstrumentor().instrument()
+# Configure the tracer provider
+service_name = os.environ.get("SERVICE_NAME", "plane-ce-api")
+resource = Resource.create({"service.name": service_name})
+trace.set_tracer_provider(TracerProvider(resource=resource))
+# Configure the OTLP exporter
+otel_endpoint = os.environ.get("OTLP_ENDPOINT", "https://telemetry.plane.so")
+otlp_exporter = OTLPSpanExporter(endpoint=otel_endpoint)
+span_processor = BatchSpanProcessor(otlp_exporter)
+trace.get_tracer_provider().add_span_processor(span_processor)
+
 
 # Allowed Hosts
 ALLOWED_HOSTS = ["*"]
@@ -265,7 +289,7 @@ if AMQP_URL:
     CELERY_BROKER_URL = AMQP_URL
 else:
     CELERY_BROKER_URL = f"amqp://{RABBITMQ_USER}:{RABBITMQ_PASSWORD}@{RABBITMQ_HOST}:{RABBITMQ_PORT}/{RABBITMQ_VHOST}"
- 
+
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
@@ -336,14 +360,14 @@ SESSION_COOKIE_SECURE = secure_origins
 SESSION_COOKIE_HTTPONLY = True
 SESSION_ENGINE = "plane.db.models.session"
 SESSION_COOKIE_AGE = os.environ.get("SESSION_COOKIE_AGE", 604800)
-SESSION_COOKIE_NAME = "plane-session-id"
+SESSION_COOKIE_NAME = os.environ.get("SESSION_COOKIE_NAME", "session-id")
 SESSION_COOKIE_DOMAIN = os.environ.get("COOKIE_DOMAIN", None)
 SESSION_SAVE_EVERY_REQUEST = (
     os.environ.get("SESSION_SAVE_EVERY_REQUEST", "0") == "1"
 )
 
 # Admin Cookie
-ADMIN_SESSION_COOKIE_NAME = "plane-admin-session-id"
+ADMIN_SESSION_COOKIE_NAME = "admin-session-id"
 ADMIN_SESSION_COOKIE_AGE = os.environ.get("ADMIN_SESSION_COOKIE_AGE", 3600)
 
 # CSRF cookies

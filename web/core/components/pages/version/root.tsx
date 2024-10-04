@@ -40,7 +40,7 @@ export const PageVersionsOverlay: React.FC<Props> = observer((props) => {
   return (
     <div
       className={cn(
-        "absolute inset-0 z-10 size-full bg-custom-background-100 flex overflow-hidden opacity-0 pointer-events-none transition-opacity",
+        "absolute inset-0 z-20 size-full bg-custom-background-100 flex overflow-hidden opacity-0 pointer-events-none transition-opacity",
         {
           "opacity-100 pointer-events-auto": isOpen,
         }

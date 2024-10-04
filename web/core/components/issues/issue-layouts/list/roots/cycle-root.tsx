@@ -11,8 +11,6 @@ import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/u
 // types
 import { BaseListRoot } from "../base-list-root";
 
-export interface ICycleListLayout {}
-
 export const CycleListLayout: React.FC = observer(() => {
   const { workspaceSlug, projectId, cycleId } = useParams();
   // store

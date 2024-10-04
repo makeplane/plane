@@ -110,6 +110,7 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
             tooltipContent={selectedName ?? placeholder}
             showTooltip={showTooltip}
             variant={buttonVariant}
+            renderToolTipByDefault={renderByDefault}
           >
             {!hideIcon && <ContrastIcon className="h-3 w-3 flex-shrink-0" />}
             {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (!!selectedName || !!placeholder) && (

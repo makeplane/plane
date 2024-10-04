@@ -414,6 +414,7 @@ class UserProjectRolesEndpoint(BaseAPIView):
         project_members = ProjectMember.objects.filter(
             workspace__slug=slug,
             member_id=request.user.id,
+            is_active=True,
         ).values("project_id", "role")
 
         project_members = {

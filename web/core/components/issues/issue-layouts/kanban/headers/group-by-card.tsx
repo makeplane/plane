@@ -24,8 +24,8 @@ interface IHeaderGroupByCard {
   icon?: React.ReactNode;
   title: string;
   count: number;
-  kanbanFilters: TIssueKanbanFilters;
-  handleKanbanFilters: any;
+  collapsedGroups: TIssueKanbanFilters;
+  handleCollapsedGroups: (toggle: "group_by" | "sub_group_by", value: string) => void;
   issuePayload: Partial<TIssue>;
   disableIssueCreation?: boolean;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
@@ -38,13 +38,13 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
     icon,
     title,
     count,
-    kanbanFilters,
-    handleKanbanFilters,
+    collapsedGroups,
+    handleCollapsedGroups,
     issuePayload,
     disableIssueCreation,
     addIssuesToView,
   } = props;
-  const verticalAlignPosition = sub_group_by ? false : kanbanFilters?.group_by.includes(column_id);
+  const verticalAlignPosition = sub_group_by ? false : collapsedGroups?.group_by.includes(column_id);
   // states
   const [isOpen, setIsOpen] = React.useState(false);
   const [openExistingIssueListModal, setOpenExistingIssueListModal] = React.useState(false);
@@ -133,7 +133,7 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
         {sub_group_by === null && (
           <div
             className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80"
-            onClick={() => handleKanbanFilters("group_by", column_id)}
+            onClick={() => handleCollapsedGroups("group_by", column_id)}
           >
             {verticalAlignPosition ? (
               <Maximize2 width={14} strokeWidth={2} />

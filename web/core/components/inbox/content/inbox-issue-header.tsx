@@ -247,7 +247,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
         />
       </>
 
-      <Row className="hidden relative lg:flex h-full w-full items-center justify-between gap-2">
+      <Row className="hidden relative lg:flex h-full w-full items-center justify-between gap-2 bg-custom-background-100 z-[15] border-b border-custom-border-200">
         <div className="flex items-center gap-4">
           {isNotificationEmbed && (
             <button onClick={embedRemoveCurrentNotification}>

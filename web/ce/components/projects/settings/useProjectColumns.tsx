@@ -40,7 +40,7 @@ export const useProjectColumns = () => {
   const columns = [
     {
       key: "Full Name",
-      content: "Full Name",
+      content: "Full name",
       thClassName: "text-left",
       tdRender: (rowData: RowData) => (
         <NameColumn
@@ -54,13 +54,13 @@ export const useProjectColumns = () => {
     },
     {
       key: "Display Name",
-      content: "Display Name",
+      content: "Display name",
       tdRender: (rowData: RowData) => <div className="w-32">{rowData.member.display_name}</div>,
     },
 
     {
       key: "Account Type",
-      content: "Account Type",
+      content: "Account type",
       tdRender: (rowData: RowData) => (
         <AccountTypeColumn
           rowData={rowData}
@@ -72,7 +72,7 @@ export const useProjectColumns = () => {
     },
     {
       key: "Joining Date",
-      content: "Joining Date",
+      content: "Joining date",
       tdRender: (rowData: RowData) => <div>{getFormattedDate(rowData?.member?.joining_date || "")}</div>,
     },
   ];

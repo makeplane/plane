@@ -9,7 +9,21 @@ from django.conf import settings
 
 # Module imports
 from plane.license.models import Instance
-from plane.db.models import User
+from plane.db.models import (
+    User,
+    Workspace,
+    Project,
+    Issue,
+    Module,
+    Cycle,
+    CycleIssue,
+    ModuleIssue,
+    Page,
+)
+
+from opentelemetry import trace
+
+tracer = trace.get_tracer(__name__)
 
 
 class Command(BaseCommand):
@@ -60,4 +74,32 @@ class Command(BaseCommand):
             self.stdout.write(
                 self.style.SUCCESS("Instance already registered")
             )
-            return
+
+        if instance.is_telemetry_enabled:
+            with tracer.start_as_current_span("instance_details") as span:
+                workspace_count = Workspace.objects.count()
+                user_count = User.objects.count()
+                project_count = Project.objects.count()
+                issue_count = Issue.objects.count()
+                module_count = Module.objects.count()
+                cycle_count = Cycle.objects.count()
+                cycle_issue_count = CycleIssue.objects.count()
+                module_issue_count = ModuleIssue.objects.count()
+                page_count = Page.objects.count()
+
+                span.set_attribute("instance_id", instance.instance_id)
+                span.set_attribute("instance_name", instance.instance_name)
+                span.set_attribute("current_version", instance.current_version)
+                span.set_attribute("latest_version", instance.latest_version)
+                span.set_attribute(
+                    "is_telemetry_enabled", instance.is_telemetry_enabled
+                )
+                span.set_attribute("user_count", user_count)
+                span.set_attribute("workspace_count", workspace_count)
+                span.set_attribute("project_count", project_count)
+                span.set_attribute("issue_count", issue_count)
+                span.set_attribute("module_count", module_count)
+                span.set_attribute("cycle_count", cycle_count)
+                span.set_attribute("cycle_issue_count", cycle_issue_count)
+                span.set_attribute("module_issue_count", module_issue_count)
+                span.set_attribute("page_count", page_count)
