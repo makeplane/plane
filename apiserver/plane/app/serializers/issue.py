@@ -498,6 +498,7 @@ class IssueLinkLiteSerializer(BaseSerializer):
 
 
 class IssueAttachmentSerializer(BaseSerializer):
+
     class Meta:
         model = FileAsset
         fields = "__all__"

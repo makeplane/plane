@@ -239,15 +239,6 @@ class IssueArchiveViewSet(BaseViewSet):
             )
             .prefetch_related(
                 Prefetch(
-                    "issue_attachment",
-                    queryset=FileAsset.objects.filter(
-                        entity_identifier=OuterRef("id"),
-                        entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
-                    ),
-                )
-            )
-            .prefetch_related(
-                Prefetch(
                     "issue_link",
                     queryset=IssueLink.objects.select_related("created_by"),
                 )

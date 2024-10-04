@@ -158,6 +158,19 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
         issue_attachment.is_deleted = True
         issue_attachment.deleted_at = timezone.now()
         issue_attachment.save()
+
+        issue_activity.delay(
+            type="attachment.activity.deleted",
+            requested_data=None,
+            actor_id=str(self.request.user.id),
+            issue_id=str(issue_id),
+            project_id=str(project_id),
+            current_instance=None,
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
+        )
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @allow_permission(
@@ -210,11 +223,33 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
             ROLE.GUEST,
         ]
     )
-    def patch(self, request, slug, project_id, issue_id, asset_id):
+    def patch(self, request, slug, project_id, issue_id, pk):
         issue_attachment = FileAsset.objects.get(
-            pk=asset_id, workspace__slug=slug, project_id=project_id
+            pk=pk, workspace__slug=slug, project_id=project_id
         )
-        issue_attachment.is_uploaded = True
+        serializer = IssueAttachmentSerializer(issue_attachment)
+
+        # Send this activity only if the attachment is not uploaded before
+        if not issue_attachment.is_uploaded:
+            issue_activity.delay(
+                type="attachment.activity.created",
+                requested_data=None,
+                actor_id=str(self.request.user.id),
+                issue_id=str(self.kwargs.get("issue_id", None)),
+                project_id=str(self.kwargs.get("project_id", None)),
+                current_instance=json.dumps(
+                    serializer.data,
+                    cls=DjangoJSONEncoder,
+                ),
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=request.META.get("HTTP_ORIGIN"),
+            )
+
+            # Update the attachment
+            issue_attachment.is_uploaded = True
+
+        # Get the storage metadata
         if issue_attachment.storage_metadata is None:
             storage = S3Storage(request=request)
             issue_attachment.storage_metadata = storage.get_object_metadata(
