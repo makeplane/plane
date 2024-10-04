@@ -36,7 +36,6 @@ from plane.db.models import (
     WorkspaceMember,
 )
 from plane.utils.cache import cache_response, invalidate_cache
-from plane.utils.tracer import trace_operation
 
 from .. import BaseViewSet
 
@@ -66,7 +65,6 @@ class WorkSpaceMemberViewSet(BaseViewSet):
     @allow_permission(
         allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
     )
-    @trace_operation("workspace_member_list", custom_attribute="value")
     def list(self, request, slug):
         workspace_member = WorkspaceMember.objects.get(
             member=request.user,
@@ -76,7 +74,6 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
         # Get all active workspace members
         workspace_members = self.get_queryset()
-
         if workspace_member.role > 5:
             serializer = WorkspaceMemberAdminSerializer(
                 workspace_members,

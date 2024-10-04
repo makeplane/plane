@@ -24,6 +24,8 @@ from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import (
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.sdk.resources import Resource
+from opentelemetry.instrumentation.django import DjangoInstrumentor
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -33,24 +35,18 @@ SECRET_KEY = os.environ.get("SECRET_KEY", get_random_secret_key())
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(os.environ.get("DEBUG", "0"))
 
-# Check if telemetry should be enabled
-TELEMETRY_ENABLED = (
-    os.environ.get("ENABLE_TELEMETRY", "True").lower() == "true"
-)
+# Initialize Django instrumentation
+DjangoInstrumentor().instrument()
+# Configure the tracer provider
+service_name = os.environ.get("SERVICE_NAME", "plane-ce-api")
+resource = Resource.create({"service.name": service_name})
+trace.set_tracer_provider(TracerProvider(resource=resource))
+# Configure the OTLP exporter
+otel_endpoint = os.environ.get("OTLP_ENDPOINT", "https://telemetry.plane.so")
+otlp_exporter = OTLPSpanExporter(endpoint=otel_endpoint)
+span_processor = BatchSpanProcessor(otlp_exporter)
+trace.get_tracer_provider().add_span_processor(span_processor)
 
-if TELEMETRY_ENABLED:
-    # Configure the tracer provider
-    service_name = os.environ.get("SERVICE_NAME", "plane-ce")
-    resource = Resource.create({"service.name": service_name})
-    trace.set_tracer_provider(TracerProvider(resource=resource))
-    # Configure the OTLP exporter
-    otel_endpoint = os.environ.get("OTLP_ENDPOINT", "https://ingest.plane.so")
-    otlp_exporter = OTLPSpanExporter(endpoint=otel_endpoint)
-    span_processor = BatchSpanProcessor(otlp_exporter)
-    trace.get_tracer_provider().add_span_processor(span_processor)
-else:
-    # Set up a no-op tracer when telemetry is disabled
-    trace.set_tracer_provider(TracerProvider())
 
 # Allowed Hosts
 ALLOWED_HOSTS = ["*"]
@@ -81,7 +77,6 @@ INSTALLED_APPS = [
 
 # Middlewares
 MIDDLEWARE = [
-    "opentelemetry.instrumentation.django.middleware.OpenTelemetryMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "plane.authentication.middleware.session.SessionMiddleware",
@@ -93,11 +88,6 @@ MIDDLEWARE = [
     "django.middleware.gzip.GZipMiddleware",
     "plane.middleware.api_log_middleware.APITokenLogMiddleware",
 ]
-if TELEMETRY_ENABLED:
-    MIDDLEWARE.insert(
-        0,
-        "opentelemetry.instrumentation.django.middleware.OpenTelemetryMiddleware",
-    )
 
 # Rest Framework settings
 REST_FRAMEWORK = {
