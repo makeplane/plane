@@ -280,6 +280,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                 projectId={projectId}
                 disabled={!!data?.sourceIssueId}
                 handleFormChange={handleFormChange}
+                renderChevron
               />
             )}
           </div>
