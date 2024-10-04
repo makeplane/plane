@@ -191,8 +191,10 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         # Workspace Logo
         if entity_type == FileAsset.EntityTypeContext.WORKSPACE_LOGO:
             workspace = Workspace.objects.filter(id=entity_id).first()
+            if workspace is None:
+                return
             # Delete the previous logo
-            if workspace and workspace.logo_asset_id:
+            if workspace.logo_asset_id:
                 self.asset_delete(workspace.logo_asset_id)
             # Save the new logo
             workspace.logo_asset_id = asset_id
@@ -202,8 +204,10 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         # Project Cover
         elif entity_type == FileAsset.EntityTypeContext.PROJECT_COVER:
             project = Project.objects.filter(id=entity_id).first()
+            if project is None:
+                return
             # Delete the previous cover image
-            if project and project.cover_image_asset_id:
+            if project.cover_image_asset_id:
                 self.asset_delete(project.cover_image_asset_id)
             # Save the new cover image
             project.cover_image_asset_id = asset_id
@@ -216,12 +220,16 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         # Workspace Logo
         if entity_type == FileAsset.EntityTypeContext.WORKSPACE_LOGO:
             workspace = Workspace.objects.get(id=entity_id)
+            if workspace is None:
+                return
             workspace.logo_asset_id = None
             workspace.save()
             return
         # Project Cover
         elif entity_type == FileAsset.EntityTypeContext.PROJECT_COVER:
             project = Project.objects.filter(id=entity_id).first()
+            if project is None:
+                return
             project.cover_image_asset_id = None
             project.save()
             return
