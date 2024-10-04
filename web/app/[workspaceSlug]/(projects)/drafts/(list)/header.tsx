@@ -14,8 +14,8 @@ import { useCommandPalette, useEventTracker, useProject, useUserPermissions } fr
 export const DraftsBaseHeader: FC = observer(() => {
   // store hooks
   const { loader } = useProject();
-    const { toggleCreateProjectModal } = useCommandPalette();
-    const { setTrackElement } = useEventTracker();
+  const { toggleCreateProjectModal } = useCommandPalette();
+  const { setTrackElement } = useEventTracker();
 
   const { allowPermissions } = useUserPermissions();
 
@@ -31,29 +31,27 @@ export const DraftsBaseHeader: FC = observer(() => {
           <Breadcrumbs isLoading={loader}>
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              link={
-                <BreadcrumbLink label="Drafts" icon={ <PenSquare className="h-4 w-4" />} />
-              }
+              link={<BreadcrumbLink label="Drafts" icon={<PenSquare className="h-4 w-4" />} />}
             />
           </Breadcrumbs>
         </div>
 
         <div className="ml-auto flex items-center">
-        {isAuthorizedUser ? (
-          <Button
-            size="sm"
-            prependIcon={<Plus />}
-            onClick={() => {
-              setTrackElement("Projects page");
-              toggleCreateProjectModal(true);
-            }}
-            className="items-center gap-1"
-          >
-            Draft <span className="hidden sm:inline-block">issue</span>
-          </Button>
-        ) : (
-          <></>
-        )}
+          {isAuthorizedUser ? (
+            <Button
+              size="sm"
+              prependIcon={<Plus />}
+              onClick={() => {
+                setTrackElement("Projects page");
+                toggleCreateProjectModal(true);
+              }}
+              className="items-center gap-1"
+            >
+              Draft <span className="hidden sm:inline-block">issue</span>
+            </Button>
+          ) : (
+            <></>
+          )}
         </div>
       </div>
     </div>

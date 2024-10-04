@@ -116,7 +116,7 @@ class DraftIssueCreateSerializer(BaseSerializer):
                 [
                     DraftIssueLabel(
                         label=label,
-                        draft_issue=issue,
+                        issue=issue,
                         project_id=project_id,
                         workspace_id=workspace_id,
                         created_by_id=created_by_id,
@@ -169,12 +169,12 @@ class DraftIssueCreateSerializer(BaseSerializer):
         updated_by_id = instance.updated_by_id
 
         if assignees is not None:
-            DraftIssueAssignee.objects.filter(draft_issue=instance).delete()
+            DraftIssueAssignee.objects.filter(issue=instance).delete()
             DraftIssueAssignee.objects.bulk_create(
                 [
                     DraftIssueAssignee(
                         assignee=user,
-                        draft_issue=instance,
+                        issue=instance,
                         workspace_id=workspace_id,
                         project_id=project_id,
                         created_by_id=created_by_id,
@@ -186,12 +186,12 @@ class DraftIssueCreateSerializer(BaseSerializer):
             )
 
         if labels is not None:
-            DraftIssueLabel.objects.filter(draft_issue=instance).delete()
+            DraftIssueLabel.objects.filter(issue=instance).delete()
             DraftIssueLabel.objects.bulk_create(
                 [
                     DraftIssueLabel(
                         label=label,
-                        draft_issue=instance,
+                        issue=instance,
                         workspace_id=workspace_id,
                         project_id=project_id,
                         created_by_id=created_by_id,
@@ -218,14 +218,14 @@ class DraftIssueCreateSerializer(BaseSerializer):
             DraftIssueModule.objects.bulk_create(
                 [
                     DraftIssueModule(
-                        module_id=module_id,
+                        module=module,
                         draft_issue=instance,
                         workspace_id=workspace_id,
                         project_id=project_id,
                         created_by_id=created_by_id,
                         updated_by_id=updated_by_id,
                     )
-                    for module_id in modules
+                    for module in modules
                 ],
                 batch_size=10,
             )

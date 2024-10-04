@@ -45,6 +45,7 @@ export const useIssuesActions = (storeType: EIssuesStoreType): IssueActions => {
   const profileIssueActions = useProfileIssueActions();
   const draftIssueActions = useDraftIssueActions();
   const archivedIssueActions = useArchivedIssueActions();
+  const workspaceDraftActions = useWorkspaceDraftActions();
 
   switch (storeType) {
     case EIssuesStoreType.PROJECT_VIEW:
@@ -61,6 +62,8 @@ export const useIssuesActions = (storeType: EIssuesStoreType): IssueActions => {
       return moduleIssueActions;
     case EIssuesStoreType.GLOBAL:
       return globalIssueActions;
+    case EIssuesStoreType.WORKSPACE_DRAFT:
+      return workspaceDraftActions;
     case EIssuesStoreType.PROJECT:
     default:
       return projectIssueActions;
@@ -737,3 +740,76 @@ const useGlobalIssueActions = () => {
     [createIssue, updateIssue, removeIssue, updateFilters]
   );
 };
+
+export const useWorkspaceDraftActions = () => {
+  // router
+  const { workspaceSlug: routerWorkspaceSlug, globalViewId: routerGlobalViewId } = useParams();
+  const workspaceSlug = routerWorkspaceSlug?.toString();
+  const globalViewId = routerGlobalViewId?.toString();
+  // store hooks
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.WORKSPACE_DRAFT);
+
+  const fetchIssues = useCallback(
+    async (loadType: TLoader, options: IssuePaginationOptions, viewId?: string) => {
+      if (!workspaceSlug) return;
+      return issues.fetchIssues(workspaceSlug.toString(), loadType, options);
+    },
+    [workspaceSlug, globalViewId, issues]
+  );
+
+  const fetchNextIssues = useCallback(
+    async (groupId?: string, subGroupId?: string) => {
+      if (!workspaceSlug || !globalViewId) return;
+      return issues.fetchNextIssues(workspaceSlug.toString(), globalViewId.toString(), groupId);
+    },
+    [workspaceSlug, globalViewId, issues]
+  );
+
+  const createIssue = useCallback(
+    async (projectId: string | undefined | null, data: Partial<TIssue>) => {
+      if (!workspaceSlug || !projectId) return;
+      return await issues.createDraft(workspaceSlug, data);
+    },
+    [issues, workspaceSlug]
+  );
+  const updateIssue = useCallback(
+    async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
+      if (!workspaceSlug || !projectId) return;
+      return await issues.updateDraft(workspaceSlug, issueId, data);
+    },
+    [issues, workspaceSlug]
+  );
+  const removeIssue = useCallback(
+    async (projectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !projectId) return;
+      return await issues.deleteDraft(workspaceSlug, issueId);
+    },
+    [issues, workspaceSlug]
+  );
+
+  const updateFilters = useCallback(
+    async (
+      projectId: string,
+      filterType: EIssueFilterType,
+      filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
+    ) => {
+      filters = filters as IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
+      if (!globalViewId || !workspaceSlug) return;
+      return await issuesFilter.updateFilters(workspaceSlug, filterType, filters);
+    },
+    [globalViewId, workspaceSlug, issuesFilter]
+  );
+
+
+    return useMemo(
+    () => ({
+      fetchIssues,
+      fetchNextIssues,
+      createIssue,
+      updateIssue,
+      removeIssue,
+      updateFilters,
+    }),
+    [fetchIssues, fetchNextIssues, createIssue, updateIssue, removeIssue, updateFilters]
+  );
+}

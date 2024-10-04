@@ -1,4 +1,4 @@
-import { clone, isNil } from "lodash";
+import { clone, concat, get, isNil, pull, uniq } from "lodash";
 import { action, makeObservable, runInAction } from "mobx";
 // base class
 import {
@@ -9,6 +9,7 @@ import {
   ViewFlags,
 } from "@plane/types";
 // services
+import { getDistributionPathsPostUpdate } from "@/helpers/distribution-update.helper";
 import { WorkspaceDraftService } from "@/services/workspace-draft.service";
 import { IBaseIssuesStore, BaseIssuesStore } from "./issue/helpers/base-issues.store";
 import { IIssueRootStore } from "./issue/root.store";
@@ -38,6 +39,13 @@ export interface IWorkspaceDrafts extends IBaseIssuesStore {
   quickAddIssue: undefined;
   clear(): void;
   deleteDraft: (workspaceSlug: string, issueId: string) => Promise<void>;
+  changeModulesInIssue(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    addModuleIds: string[],
+    removeModuleIds: string[]
+  ): Promise<void>;
 }
 
 export class WorkspaceDrafts extends BaseIssuesStore implements IWorkspaceDrafts {
@@ -66,10 +74,28 @@ export class WorkspaceDrafts extends BaseIssuesStore implements IWorkspaceDrafts
     this.workspaceDraftFilterStore = workspaceDraftFilterStore;
   }
 
-  fetchParentStats = () => {};
+  fetchParentStats = async (workspaceSlug: string, projectId?: string) => {
+    projectId && this.rootIssueStore.rootStore.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
+  };
 
   /** */
-  updateParentStats = () => {};
+  // updateParentStats = () => {};
+    updateParentStats = (prevIssueState?: TIssue, nextIssueState?: TIssue, id?: string | undefined) => {
+    try {
+      const distributionUpdates = getDistributionPathsPostUpdate(
+        prevIssueState,
+        nextIssueState,
+        this.rootIssueStore.rootStore.state.stateMap,
+        this.rootIssueStore.rootStore.projectEstimate?.currentActiveEstimate?.estimatePointById
+      );
+
+      const cycleId = id ?? this.cycleId;
+
+      cycleId && this.rootIssueStore.rootStore.cycle.updateCycleDistribution(distributionUpdates, cycleId);
+    } catch (e) {
+      console.warn("could not update cycle statistics");
+    }
+  };
 
   /**
    * This method is called to fetch the first issues of pagination
@@ -132,7 +158,7 @@ export class WorkspaceDrafts extends BaseIssuesStore implements IWorkspaceDrafts
       const params = this.workspaceDraftFilterStore?.getFilterParams(
         this.paginationOptions,
         viewId,
-        //this.getNextCursor(groupId, undefined),// ASK
+        //this.getNextCursor(groupId, undefined)
         groupId
       );
       // call the fetch issues API with the params for next page in issues
@@ -168,7 +194,7 @@ export class WorkspaceDrafts extends BaseIssuesStore implements IWorkspaceDrafts
 
   createDraft = async (workspaceSlug: string, data: Partial<TIssue>) => {
     const response = await this.workspaceDraftService.createDraftIssue(workspaceSlug,data);
-    console.log("createDraft called: " + response)
+
     this.addIssue(response);
     return response;
   }
@@ -185,7 +211,7 @@ export class WorkspaceDrafts extends BaseIssuesStore implements IWorkspaceDrafts
       await this.workspaceDraftService.updateDraftIssue(workspaceSlug, issueId, data);
 
       // call Fetch parent stats
-      // this.fetchParentStats(workspaceSlug);
+      this.fetchParentStats(workspaceSlug);
 
       // If the issue is updated to not a draft issue anymore remove from the store list
       if (!isNil(data.is_draft) && !data.is_draft) this.removeIssueFromList(issueId);
@@ -206,6 +232,76 @@ export class WorkspaceDrafts extends BaseIssuesStore implements IWorkspaceDrafts
     });
     // Remove issue from main issue Map store
     this.rootIssueStore.issues.removeIssue(issueId);
+  }
+
+
+  /*
+   * change modules array in issue
+   * @param workspaceSlug
+   * @param projectId
+   * @param issueId
+   * @param addModuleIds array of modules to be added
+   * @param removeModuleIds array of modules to be removed
+   */
+  async changeModulesInIssue(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    addModuleIds: string[],
+    removeModuleIds: string[]
+  ) {
+    // keep a copy of the original module ids
+    const issueBeforeChanges = clone(this.rootIssueStore.issues.getIssueById(issueId));
+    const originalModuleIds = get(this.rootIssueStore.issues.issuesMap, [issueId, "module_ids"]) ?? [];
+    try {
+      runInAction(() => {
+        // get current Module Ids of the issue
+        let currentModuleIds = [...originalModuleIds];
+        // remove the new issue id to the module issues
+        removeModuleIds.forEach((moduleId) => {
+          // If module Id is equal to current module Id, them remove Issue from List
+          this.moduleId === moduleId && this.removeIssueFromList(issueId);
+          currentModuleIds = pull(currentModuleIds, moduleId);
+        });
+
+        // If current Module Id is included in the modules list, then add Issue to List
+        if (addModuleIds.includes(this.moduleId ?? "")) this.addIssueToList(issueId);
+        currentModuleIds = uniq(concat([...currentModuleIds], addModuleIds));
+
+        // For current Issue, update module Ids by calling current store's update Issue, without making an API call
+        this.updateDraft(workspaceSlug, issueId, { module_ids: currentModuleIds });
+      });
+
+      const issueAfterChanges = clone(this.rootIssueStore.issues.getIssueById(issueId));
+
+      // update parent stats optimistically
+      if (addModuleIds.includes(this.moduleId || "") || removeModuleIds.includes(this.moduleId || "")) {
+        this.updateParentStats(issueBeforeChanges, issueAfterChanges, this.moduleId);
+      }
+
+      //Perform API call
+      await this.workspaceDraftService.updateDraftIssue(workspaceSlug, issueId, {
+        modules: addModuleIds,
+        removed_modules: removeModuleIds,
+      });
+
+      if (addModuleIds.includes(this.moduleId || "") || removeModuleIds.includes(this.moduleId || "")) {
+        this.fetchParentStats(workspaceSlug, projectId);
+      }
+    } catch (error) {
+      // revert the issue back to its original module ids
+      runInAction(() => {
+        // If current Module Id is included in the add modules list, then remove Issue from List
+        if (addModuleIds.includes(this.moduleId ?? "")) this.removeIssueFromList(issueId);
+        // If current Module Id is included in the removed modules list, then add Issue to List
+        if (removeModuleIds.includes(this.moduleId ?? "")) this.addIssueToList(issueId);
+
+        // For current Issue, update module Ids by calling current store's update Issue, without making an API call
+        this.updateDraft(workspaceSlug, issueId, { module_ids: originalModuleIds });
+      });
+
+      throw error;
+    }
   }
 
 }
