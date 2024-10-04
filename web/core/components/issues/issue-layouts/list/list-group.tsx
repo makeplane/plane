@@ -14,6 +14,7 @@ import {
   TIssueOrderByOptions,
   TIssue,
   IIssueDisplayProperties,
+  TIssueKanbanFilters,
 } from "@plane/types";
 import { Row, setToast, TOAST_TYPE } from "@plane/ui";
 // components
@@ -60,6 +61,8 @@ interface Props {
   showEmptyGroup?: boolean;
   loadMoreIssues: (groupId?: string) => void;
   selectionHelpers: TSelectionHelper;
+  handleCollapsedGroups: (value: string) => void;
+  collapsedGroups: TIssueKanbanFilters;
 }
 
 export const ListGroup = observer((props: Props) => {
@@ -84,11 +87,13 @@ export const ListGroup = observer((props: Props) => {
     showEmptyGroup,
     loadMoreIssues,
     selectionHelpers,
+    handleCollapsedGroups,
+    collapsedGroups,
   } = props;
 
   const [isDraggingOverColumn, setIsDraggingOverColumn] = useState(false);
   const [dragColumnOrientation, setDragColumnOrientation] = useState<"justify-start" | "justify-end">("justify-start");
-  const [isExpanded, setIsExpanded] = useState(true);
+  const isExpanded = !(collapsedGroups?.group_by.includes(group.id))
   const groupRef = useRef<HTMLDivElement | null>(null);
 
   const { projectId } = useParams();
@@ -127,10 +132,6 @@ export const ListGroup = observer((props: Props) => {
   const validateEmptyIssueGroups = (issueCount: number = 0) => {
     if (!showEmptyGroup && issueCount <= 0) return false;
     return true;
-  };
-
-  const toggleListGroup = () => {
-    setIsExpanded((prevState) => !prevState);
   };
 
   const prePopulateQuickAddData = (groupByKey: string | null, value: any) => {
@@ -213,6 +214,10 @@ export const ListGroup = observer((props: Props) => {
           handleOnDrop(source, destination);
 
           highlightIssueOnDrop(getIssueBlockId(source.id, destination?.groupId), orderBy !== "sort_order");
+
+          if(!isExpanded){
+            handleCollapsedGroups(group.id)
+          }
         },
       })
     );
@@ -248,7 +253,7 @@ export const ListGroup = observer((props: Props) => {
           disableIssueCreation={disableIssueCreation || isGroupByCreatedBy || isCompletedCycle}
           addIssuesToView={addIssuesToView}
           selectionHelpers={selectionHelpers}
-          toggleListGroup={toggleListGroup}
+          handleCollapsedGroups={handleCollapsedGroups}
         />
       </Row>
       {shouldExpand && (

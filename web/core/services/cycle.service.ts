@@ -43,6 +43,18 @@ export class CycleService extends APIService {
       });
   }
 
+  async workspaceActiveCyclesProgressPro(
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string
+  ): Promise<TProgressSnapshot> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-progress/`)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
   async workspaceActiveCycles(
     workspaceSlug: string,
     cursor: string,
