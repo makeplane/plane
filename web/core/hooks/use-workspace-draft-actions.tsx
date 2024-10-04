@@ -1,6 +1,15 @@
 import { useCallback, useMemo } from "react";
 import { useParams } from "next/navigation";
-import { TLoader, IssuePaginationOptions, TIssuesResponse, TIssue, IIssueFilterOptions, IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssueKanbanFilters } from "@plane/types";
+import {
+  TLoader,
+  IssuePaginationOptions,
+  TIssuesResponse,
+  TIssue,
+  IIssueFilterOptions,
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  TIssueKanbanFilters,
+} from "@plane/types";
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 import { useIssues } from "./store";
 
@@ -71,6 +80,14 @@ export const useWorkspaceDraftActions = () => {
     [issues, workspaceSlug]
   );
 
+  const moveToIssue = useCallback(
+    async (workspaceSlug: string, issueId: string, data: Partial<TIssue>) => {
+      if (!workspaceSlug || !issueId || !data) return;
+      return await issues.moveToIssues(workspaceSlug, issueId, data);
+    },
+    [issues]
+  );
+
   const updateFilters = useCallback(
     async (
       filterType: EIssueFilterType,
@@ -82,8 +99,7 @@ export const useWorkspaceDraftActions = () => {
     [globalViewId, workspaceSlug, issuesFilter]
   );
 
-
-    return useMemo(
+  return useMemo(
     () => ({
       fetchIssues,
       fetchNextIssues,
@@ -91,7 +107,8 @@ export const useWorkspaceDraftActions = () => {
       updateIssue,
       removeIssue,
       updateFilters,
+      moveToIssue,
     }),
-    [fetchIssues, fetchNextIssues, createIssue, updateIssue, removeIssue, updateFilters]
+    [fetchIssues, fetchNextIssues, createIssue, updateIssue, removeIssue, updateFilters, moveToIssue]
   );
-}
+};

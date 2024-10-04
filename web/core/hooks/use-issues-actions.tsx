@@ -29,6 +29,7 @@ interface IssueActions {
   removeIssueFromView?: (projectId: string | undefined | null, issueId: string) => Promise<void>;
   archiveIssue?: (projectId: string | undefined | null, issueId: string) => Promise<void>;
   restoreIssue?: (projectId: string | undefined | null, issueId: string) => Promise<void>;
+  moveToIssue?: (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => Promise<void>;
   updateFilters: (
     projectId: string,
     filterType: EIssueFilterType,
@@ -787,21 +788,28 @@ export const useWorkspaceDraftActions = () => {
     [issues, workspaceSlug]
   );
 
+  const moveToIssue = useCallback(
+    async (workspaceSlug: string, issueId: string, data: Partial<TIssue>) => {
+      if (!workspaceSlug || !issueId || !data) return;
+      return await issues.moveToIssues(workspaceSlug, issueId, data);
+    },
+    [issues]
+  );
+
   const updateFilters = useCallback(
     async (
       projectId: string,
       filterType: EIssueFilterType,
       filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
     ) => {
-      filters = filters as IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
+      filters = filters as IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties;
       if (!globalViewId || !workspaceSlug) return;
       return await issuesFilter.updateFilters(workspaceSlug, filterType, filters);
     },
     [globalViewId, workspaceSlug, issuesFilter]
   );
 
-
-    return useMemo(
+  return useMemo(
     () => ({
       fetchIssues,
       fetchNextIssues,
@@ -809,7 +817,8 @@ export const useWorkspaceDraftActions = () => {
       updateIssue,
       removeIssue,
       updateFilters,
+      moveToIssue,
     }),
-    [fetchIssues, fetchNextIssues, createIssue, updateIssue, removeIssue, updateFilters]
+    [fetchIssues, fetchNextIssues, createIssue, updateIssue, removeIssue, updateFilters, moveToIssue]
   );
-}
+};
