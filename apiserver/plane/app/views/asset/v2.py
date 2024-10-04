@@ -335,6 +335,28 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         asset.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    def get(self, request, slug, asset_id):
+        # get the asset id
+        asset = FileAsset.objects.get(id=asset_id, workspace__slug=slug)
+
+        # Check if the asset is uploaded
+        if not asset.is_uploaded:
+            return Response(
+                {
+                    "error": "The requested asset could not be found.",
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Get the presigned URL
+        storage = S3Storage(request=request)
+        # Generate a presigned URL to share an S3 object
+        signed_url = storage.generate_presigned_url(
+            object_name=asset.asset.name,
+        )
+        # Redirect to the signed URL
+        return HttpResponseRedirect(signed_url)
+
 
 class StaticFileAssetEndpoint(BaseAPIView):
     """This endpoint is used to get the signed URL for a static asset."""
