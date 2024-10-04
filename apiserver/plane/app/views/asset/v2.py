@@ -197,6 +197,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             if workspace.logo_asset_id:
                 self.asset_delete(workspace.logo_asset_id)
             # Save the new logo
+            workspace.logo = ""
             workspace.logo_asset_id = asset_id
             workspace.save()
             return
@@ -210,6 +211,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             if project.cover_image_asset_id:
                 self.asset_delete(project.cover_image_asset_id)
             # Save the new cover image
+            project.cover_image = ""
             project.cover_image_asset_id = asset_id
             project.save()
             return
