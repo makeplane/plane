@@ -82,9 +82,6 @@ export const CustomImageUploader = (props: {
     [imageComponentImageFileMap, imageEntityId]
   );
 
-  // if the image component is dropped, we check if it has an existing file
-  const existingFile = useMemo(() => (meta && meta.event === "drop" ? meta.file : undefined), [meta]);
-
   // after the image component is mounted we start the upload process based on
   // it's uploaded
   useEffect(() => {
@@ -100,13 +97,6 @@ export const CustomImageUploader = (props: {
     }
   }, [meta, uploadFile, imageComponentImageFileMap]);
 
-  // check if the image is dropped and set the local image as the existing file
-  useEffect(() => {
-    if (existingFile) {
-      uploadFile(existingFile);
-    }
-  }, [existingFile, uploadFile]);
-
   const onFileChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
@@ -120,7 +110,7 @@ export const CustomImageUploader = (props: {
   );
 
   const getDisplayMessage = useCallback(() => {
-    const isUploading = isImageBeingUploaded || existingFile;
+    const isUploading = isImageBeingUploaded;
     if (failedToLoadImage) {
       return "Error loading image";
     }
@@ -134,7 +124,7 @@ export const CustomImageUploader = (props: {
     }
 
     return "Add an image";
-  }, [draggedInside, failedToLoadImage, existingFile, isImageBeingUploaded]);
+  }, [draggedInside, failedToLoadImage, isImageBeingUploaded]);
 
   return (
     <div
