@@ -100,7 +100,7 @@ class DraftIssueCreateSerializer(BaseSerializer):
                 [
                     DraftIssueAssignee(
                         assignee=user,
-                        issue=issue,
+                        draft_issue=issue,
                         workspace_id=workspace_id,
                         project_id=project_id,
                         created_by_id=created_by_id,
