@@ -1,10 +1,11 @@
 import { observer } from "mobx-react";
 import Image from "next/image";
-import packageJson from "package.json";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // assets
 import PlaneLogo from "@/public/plane-logos/blue-without-text.png";
+// package.json
+import packageJson from "package.json";
 
 export const ProductUpdatesHeader = observer(() => (
   <div className="flex gap-2 mx-6 my-4 items-center justify-between flex-shrink-0">
