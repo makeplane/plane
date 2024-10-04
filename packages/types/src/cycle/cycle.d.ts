@@ -46,11 +46,11 @@ export type TCycleEstimateDistribution = {
 export type TCycleProgress = {
   date: string;
   started: number;
+  actual: number;
   pending: number;
   ideal: number | null;
   scope: number;
   completed: number;
-  actual: number;
   unstarted: number;
   backlog: number;
   cancelled: number;
@@ -103,6 +103,7 @@ export interface ICycle extends TProgressSnapshot {
   workspace_id: string;
   project_detail: IProjectDetails;
   progress: any[];
+  version: number;
 }
 
 export interface CycleIssueResponse {

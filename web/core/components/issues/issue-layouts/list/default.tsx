@@ -14,6 +14,7 @@ import {
   TIssueGroupByOptions,
   TIssueOrderByOptions,
   IGroupByColumn,
+  TIssueKanbanFilters,
 } from "@plane/types";
 // components
 import { MultipleSelectGroup } from "@/components/core";
@@ -47,6 +48,8 @@ export interface IList {
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   isCompletedCycle?: boolean;
   loadMoreIssues: (groupId?: string) => void;
+  handleCollapsedGroups: (value: string) => void;
+  collapsedGroups : TIssueKanbanFilters;
 }
 
 export const List: React.FC<IList> = observer((props) => {
@@ -67,6 +70,8 @@ export const List: React.FC<IList> = observer((props) => {
     addIssuesToView,
     isCompletedCycle = false,
     loadMoreIssues,
+    handleCollapsedGroups,
+    collapsedGroups
   } = props;
 
   const storeType = useIssueStoreType();
@@ -162,6 +167,8 @@ export const List: React.FC<IList> = observer((props) => {
                     loadMoreIssues={loadMoreIssues}
                     containerRef={containerRef}
                     selectionHelpers={helpers}
+                    handleCollapsedGroups={handleCollapsedGroups}
+                    collapsedGroups={collapsedGroups}
                   />
                 ))}
               </div>

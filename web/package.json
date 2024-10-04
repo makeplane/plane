@@ -65,7 +65,8 @@
     "use-debounce": "^9.0.4",
     "use-font-face-observer": "^1.2.2",
     "uuid": "^9.0.0",
-    "zxcvbn": "^4.4.2"
+    "zxcvbn": "^4.4.2",
+    "recharts": "^2.12.7"
   },
   "devDependencies": {
     "@plane/eslint-config": "*",
