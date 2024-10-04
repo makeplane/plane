@@ -153,6 +153,7 @@ const Root = observer(() => {
               isLastChild={index === Object.keys(issueMap).length - 1}
               isDragAllowed={false}
               canDropOverIssue={false}
+              isDraft={true}
             />
           ))}
       </div>

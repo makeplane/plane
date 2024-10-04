@@ -34,6 +34,14 @@ export interface IWorkspaceDrafts extends IBaseIssuesStore {
     addModuleIds: string[],
     removeModuleIds: string[]
   ): Promise<void>;
+  addIssueToCycle: (
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string,
+    issueIds: string[],
+    fetchAddedIssues?: boolean
+  ) => Promise<void>;
+  addDraftIssueToCycleIssue: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
 }
 
 export class WorkspaceDrafts extends BaseIssuesStore implements IWorkspaceDrafts {
@@ -55,6 +63,7 @@ export class WorkspaceDrafts extends BaseIssuesStore implements IWorkspaceDrafts
       fetchIssues: action,
       fetchNextIssues: action,
       fetchIssuesWithExistingPagination: action,
+      addDraftIssueToCycleIssue: action
     });
     // services
     this.workspaceDraftService = new WorkspaceDraftService();
@@ -301,4 +310,91 @@ export class WorkspaceDrafts extends BaseIssuesStore implements IWorkspaceDrafts
       throw error;
     }
   }
+
+    /**
+   * This method is used to add issues to a particular Cycle
+   * @param workspaceSlug
+   * @param projectId
+   * @param cycleId
+   * @param issueIds
+   * @param fetchAddedIssues If True we make an additional call to fetch all the issues from their Ids, Since the addIssueToCycle API does not return them
+   */
+  async addIssueToCycle(
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string,
+    issueIds: string[],
+    fetchAddedIssues = true
+  ) {
+    // Perform an APi call to add issue to cycle
+    const issueId = issueIds[0];
+    await this.updateDraft(workspaceSlug,issueId, {
+      cycle_id: cycleId,
+    });
+
+    // if cycle Id is the current Cycle Id then call fetch parent stats
+    if (this.cycleId === cycleId) this.fetchParentStats(workspaceSlug, projectId);
+
+    // if true, fetch the issue data for all the issueIds
+    if (fetchAddedIssues) await this.workspaceDraftService.getDraftIssueById(workspaceSlug, issueId);
+
+    // Update issueIds from current store
+    runInAction(() => {
+      // If cycle Id is the current cycle Id, then, add issue to list of issueIds
+      if (this.cycleId === cycleId) this.addIssueToList(issueId) //issueIds.forEach((issueId) => this.addIssueToList(issueId));
+      // If cycle Id is not the current cycle Id, then, remove issue to list of issueIds
+      else if (this.cycleId) this.removeIssueFromList(issueId)//issueIds.forEach((issueId) => this.removeIssueFromList(issueId));
+    });
+  }
+
+    /**
+   * Adds cycle to issue optimistically
+   * @param workspaceSlug
+   * @param projectId
+   * @param cycleId
+   * @param issueId
+   * @returns
+   */
+  addDraftIssueToCycleIssue = async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
+    const issueCycleId = this.rootIssueStore.issues.getIssueById(issueId)?.cycle_id;
+
+    if (issueCycleId === cycleId) return;
+
+    const issueBeforeUpdate = clone(this.rootIssueStore.issues.getIssueById(issueId));
+
+    try {
+      // Update issueIds from current store
+      runInAction(() => {
+        // If cycle Id before update is the same as current cycle Id then, remove issueId from list
+        if (this.cycleId === issueCycleId) this.removeIssueFromList(issueId);
+        // If cycle Id is the current cycle Id, then, add issue to list of issueIds
+        if (this.cycleId === cycleId) this.addIssueToList(issueId);
+        // For Each issue update cycle Id by calling current store's update Issue, without making an API call
+       this.updateDraft(workspaceSlug,issueId, {cycle_id: cycleId,});
+      });
+
+      const issueAfterUpdate = clone(this.rootIssueStore.issues.getIssueById(issueId));
+
+      // update parent stats optimistically
+      if (this.cycleId === cycleId || this.cycleId === issueCycleId)
+        this.updateParentStats(issueBeforeUpdate, issueAfterUpdate, this.cycleId);
+
+      await this.addIssueToCycle(workspaceSlug, projectId, cycleId,[issueId]);
+
+      // if cycle Id is the current Cycle Id then call fetch parent stats
+      if (this.cycleId === cycleId || this.cycleId === issueCycleId)
+        this.fetchParentStats(workspaceSlug, projectId);
+    } catch (error) {
+      // remove the new issue ids from the cycle issues map
+      runInAction(() => {
+        // If cycle Id is the current cycle Id, then, remove issue to list of issueIds
+        if (this.cycleId === cycleId) this.removeIssueFromList(issueId);
+        // // For Each issue update cycle Id to previous value by calling current store's update Issue, without making an API call
+        // this.issueUpdate(workspaceSlug, projectId, issueId, { cycle_id: issueCycleId }, false);
+      });
+
+      throw error;
+    }
+  };
+
 }
