@@ -1,8 +1,10 @@
 import { useImperativeHandle, useRef, MutableRefObject, useState, useEffect } from "react";
+import { HocuspocusProvider } from "@hocuspocus/provider";
 import { DOMSerializer } from "@tiptap/pm/model";
 import { Selection } from "@tiptap/pm/state";
 import { EditorProps } from "@tiptap/pm/view";
 import { useEditor as useTiptapEditor, Editor } from "@tiptap/react";
+import * as Y from "yjs";
 // components
 import { getEditorMenuItems } from "@/components/menus";
 // extensions
@@ -32,6 +34,7 @@ export interface CustomEditorProps {
   };
   onChange?: (json: object, html: string) => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
+  provider?: HocuspocusProvider;
   tabIndex?: number;
   // undefined when prop is not passed, null if intentionally passed to stop
   // swr syncing
@@ -52,10 +55,12 @@ export const useEditor = (props: CustomEditorProps) => {
     mentionHandler,
     onChange,
     placeholder,
+    provider,
     tabIndex,
     value,
   } = props;
   // states
+
   const [savedSelection, setSavedSelection] = useState<Selection | null>(null);
   // refs
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
@@ -78,7 +83,7 @@ export const useEditor = (props: CustomEditorProps) => {
         },
         mentionConfig: {
           mentionSuggestions: mentionHandler.suggestions ?? (() => Promise.resolve<IMentionSuggestion[]>([])),
-          mentionHighlights: mentionHandler.highlights ?? [],
+          mentionHighlights: mentionHandler.highlights,
         },
         placeholder,
         tabIndex,
@@ -91,6 +96,7 @@ export const useEditor = (props: CustomEditorProps) => {
     onUpdate: ({ editor }) => onChange?.(editor.getJSON(), editor.getHTML()),
     onDestroy: () => handleEditorReady?.(false),
   });
+
   // Update the ref whenever savedSelection changes
   useEffect(() => {
     savedSelectionRef.current = savedSelection;
@@ -101,7 +107,7 @@ export const useEditor = (props: CustomEditorProps) => {
     // value is null when intentionally passed where syncing is not yet
     // supported and value is undefined when the data from swr is not populated
     if (value === null || value === undefined) return;
-    if (editor && !editor.isDestroyed && !editor.storage.image.uploadInProgress) {
+    if (editor && !editor.isDestroyed && !editor.storage.imageComponent.uploadInProgress) {
       try {
         editor.commands.setContent(value, false, { preserveWhitespace: "full" });
         const currentSavedSelection = savedSelectionRef.current;
@@ -123,7 +129,7 @@ export const useEditor = (props: CustomEditorProps) => {
         editorRef.current?.commands.clearContent(emitUpdate);
       },
       setEditorValue: (content: string) => {
-        editorRef.current?.commands.setContent(content);
+        editorRef.current?.commands.setContent(content, false, { preserveWhitespace: "full" });
       },
       setEditorValueAtCursorPosition: (content: string) => {
         if (savedSelection) {
@@ -131,7 +137,7 @@ export const useEditor = (props: CustomEditorProps) => {
         }
       },
       executeMenuItemCommand: (itemKey: TEditorCommands) => {
-        const editorItems = getEditorMenuItems(editorRef.current, fileHandler.upload);
+        const editorItems = getEditorMenuItems(editorRef.current);
 
         const getEditorMenuItem = (itemKey: TEditorCommands) => editorItems.find((item) => item.key === itemKey);
 
@@ -147,17 +153,31 @@ export const useEditor = (props: CustomEditorProps) => {
         }
       },
       isMenuItemActive: (itemName: TEditorCommands): boolean => {
-        const editorItems = getEditorMenuItems(editorRef.current, fileHandler.upload);
+        const editorItems = getEditorMenuItems(editorRef.current);
 
         const getEditorMenuItem = (itemName: TEditorCommands) => editorItems.find((item) => item.key === itemName);
         const item = getEditorMenuItem(itemName);
         return item ? item.isActive() : false;
       },
+      onHeadingChange: (callback: (headings: IMarking[]) => void) => {
+        // Subscribe to update event emitted from headers extension
+        editorRef.current?.on("update", () => {
+          callback(editorRef.current?.storage.headingList.headings);
+        });
+        // Return a function to unsubscribe to the continuous transactions of
+        // the editor on unmounting the component that has subscribed to this
+        // method
+        return () => {
+          editorRef.current?.off("update");
+        };
+      },
+      getHeadings: () => editorRef?.current?.storage.headingList.headings,
       onStateChange: (callback: () => void) => {
         // Subscribe to editor state changes
         editorRef.current?.on("transaction", () => {
           callback();
         });
+
         // Return a function to unsubscribe to the continuous transactions of
         // the editor on unmounting the component that has subscribed to this
         // method
@@ -169,15 +189,22 @@ export const useEditor = (props: CustomEditorProps) => {
         const markdownOutput = editorRef.current?.storage.markdown.getMarkdown();
         return markdownOutput;
       },
-      getHTML: (): string => {
-        const htmlOutput = editorRef.current?.getHTML() ?? "<p></p>";
-        return htmlOutput;
+      getDocument: () => {
+        const documentBinary = provider?.document ? Y.encodeStateAsUpdate(provider?.document) : null;
+        const documentHTML = editorRef.current?.getHTML() ?? "<p></p>";
+        const documentJSON = editorRef.current?.getJSON() ?? null;
+
+        return {
+          binary: documentBinary,
+          html: documentHTML,
+          json: documentJSON,
+        };
       },
       scrollSummary: (marking: IMarking): void => {
         if (!editorRef.current) return;
         scrollSummary(editorRef.current, marking);
       },
-      isEditorReadyToDiscard: () => editorRef.current?.storage.image.uploadInProgress === false,
+      isEditorReadyToDiscard: () => editorRef.current?.storage.imageComponent.uploadInProgress === false,
       setFocusAtPosition: (position: number) => {
         if (!editorRef.current || editorRef.current.isDestroyed) {
           console.error("Editor reference is not available or has been destroyed.");
@@ -214,31 +241,39 @@ export const useEditor = (props: CustomEditorProps) => {
           }
         });
         const selection = nodesArray.join("");
-        console.log(selection);
         return selection;
       },
       insertText: (contentHTML, insertOnNextLine) => {
-        if (!editor) return;
+        if (!editorRef.current) return;
         // get selection
-        const { from, to, empty } = editor.state.selection;
+        const { from, to, empty } = editorRef.current.state.selection;
         if (empty) return;
         if (insertOnNextLine) {
           // move cursor to the end of the selection and insert a new line
-          editor.chain().focus().setTextSelection(to).insertContent("<br />").insertContent(contentHTML).run();
+          editorRef.current
+            .chain()
+            .focus()
+            .setTextSelection(to)
+            .insertContent("<br />")
+            .insertContent(contentHTML)
+            .run();
         } else {
           // replace selected text with the content provided
-          editor.chain().focus().deleteRange({ from, to }).insertContent(contentHTML).run();
+          editorRef.current.chain().focus().deleteRange({ from, to }).insertContent(contentHTML).run();
         }
       },
-      getDocumentInfo: () => {
-        return {
-          characters: editorRef?.current?.storage?.characterCount?.characters?.() ?? 0,
-          paragraphs: getParagraphCount(editorRef?.current?.state),
-          words: editorRef?.current?.storage?.characterCount?.words?.() ?? 0,
-        };
+      getDocumentInfo: () => ({
+        characters: editorRef?.current?.storage?.characterCount?.characters?.() ?? 0,
+        paragraphs: getParagraphCount(editorRef?.current?.state),
+        words: editorRef?.current?.storage?.characterCount?.words?.() ?? 0,
+      }),
+      setProviderDocument: (value) => {
+        const document = provider?.document;
+        if (!document) return;
+        Y.applyUpdate(document, value);
       },
     }),
-    [editorRef, savedSelection, fileHandler.upload]
+    [editorRef, savedSelection]
   );
 
   if (!editor) {

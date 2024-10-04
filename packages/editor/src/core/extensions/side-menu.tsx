@@ -3,7 +3,7 @@ import { Plugin, PluginKey } from "@tiptap/pm/state";
 import { EditorView } from "@tiptap/pm/view";
 // plugins
 import { AIHandlePlugin } from "@/plugins/ai-handle";
-import { DragHandlePlugin } from "@/plugins/drag-handle";
+import { DragHandlePlugin, nodeDOMAtCoords } from "@/plugins/drag-handle";
 
 type Props = {
   aiEnabled: boolean;
@@ -59,41 +59,6 @@ const absoluteRect = (node: Element) => {
   };
 };
 
-const nodeDOMAtCoords = (coords: { x: number; y: number }) => {
-  const elements = document.elementsFromPoint(coords.x, coords.y);
-  const generalSelectors = [
-    "li",
-    "p:not(:first-child)",
-    ".code-block",
-    "blockquote",
-    "img",
-    "h1, h2, h3, h4, h5, h6",
-    "[data-type=horizontalRule]",
-    ".table-wrapper",
-    ".issue-embed",
-  ].join(", ");
-
-  for (const elem of elements) {
-    if (elem.matches("p:first-child") && elem.parentElement?.matches(".ProseMirror")) {
-      return elem;
-    }
-
-    // if the element is a <p> tag that is the first child of a td or th
-    if (
-      (elem.matches("td > p:first-child") || elem.matches("th > p:first-child")) &&
-      elem?.textContent?.trim() !== ""
-    ) {
-      return elem; // Return only if p tag is not empty in td or th
-    }
-
-    // apply general selector
-    if (elem.matches(generalSelectors)) {
-      return elem;
-    }
-  }
-  return null;
-};
-
 const SideMenu = (options: SideMenuPluginProps) => {
   const { handlesConfig } = options;
   const editorSideMenu: HTMLDivElement | null = document.createElement("div");
@@ -113,10 +78,11 @@ const SideMenu = (options: SideMenuPluginProps) => {
       hideSideMenu();
       view?.dom.parentElement?.appendChild(editorSideMenu);
       // side menu elements' initialization
-      if (handlesConfig.ai) {
+      if (handlesConfig.ai && !editorSideMenu.querySelector("#ai-handle")) {
         aiHandleView(view, editorSideMenu);
       }
-      if (handlesConfig.dragDrop) {
+
+      if (handlesConfig.dragDrop && !editorSideMenu.querySelector("#drag-handle")) {
         dragHandleView(view, editorSideMenu);
       }
 
@@ -147,6 +113,10 @@ const SideMenu = (options: SideMenuPluginProps) => {
 
           rect.top += (lineHeight - 20) / 2;
           rect.top += paddingTop;
+
+          if (handlesConfig.ai) {
+            rect.left -= 20;
+          }
 
           if (node.parentElement?.parentElement?.matches("td") || node.parentElement?.parentElement?.matches("th")) {
             if (node.matches("ul:not([data-type=taskList]) li, ol li")) {

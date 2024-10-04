@@ -7,7 +7,8 @@
     "develop": "next dev -p 3002",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:errors": "eslint . --ext .ts,.tsx --quiet",
     "export": "next export"
   },
   "dependencies": {
@@ -21,7 +22,7 @@
     "@plane/editor": "*",
     "@plane/types": "*",
     "@plane/ui": "*",
-    "@sentry/nextjs": "^8",
+    "@sentry/nextjs": "^8.32.0",
     "axios": "^1.7.4",
     "clsx": "^2.0.0",
     "date-fns": "^3.6.0",
@@ -34,7 +35,7 @@
     "mobx": "^6.10.0",
     "mobx-react": "^9.1.1",
     "mobx-utils": "^6.0.8",
-    "next": "^14.2.3",
+    "next": "^14.2.12",
     "next-themes": "^0.2.1",
     "nprogress": "^0.2.0",
     "react": "^18.3.1",
@@ -48,6 +49,8 @@
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
+    "@plane/eslint-config": "*",
+    "@plane/typescript-config": "*",
     "@types/dompurify": "^3.0.5",
     "@types/js-cookie": "^3.0.3",
     "@types/lodash": "^4.17.1",
@@ -58,9 +61,7 @@
     "@types/uuid": "^9.0.1",
     "@types/zxcvbn": "^4.4.4",
     "@typescript-eslint/eslint-plugin": "^5.48.2",
-    "eslint-config-custom": "*",
     "tailwind-config-custom": "*",
-    "tsconfig": "*",
-    "typescript": "5.4.5"
+    "typescript": "5.3.3"
   }
 }

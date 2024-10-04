@@ -52,11 +52,10 @@ export type TIssueDetailRoot = {
   projectId: string;
   issueId: string;
   is_archived?: boolean;
-  swrIssueDetails: TIssue | null | undefined;
 };
 
 export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, swrIssueDetails, is_archived = false } = props;
+  const { workspaceSlug, projectId, issueId, is_archived = false } = props;
   // router
   const router = useAppRouter();
   const pathname = usePathname();
@@ -349,7 +348,6 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           <div className="max-w-2/3 h-full w-full space-y-8 overflow-y-auto px-9 py-5">
             <IssueMainContent
               workspaceSlug={workspaceSlug}
-              swrIssueDetails={swrIssueDetails}
               projectId={projectId}
               issueId={issueId}
               issueOperations={issueOperations}

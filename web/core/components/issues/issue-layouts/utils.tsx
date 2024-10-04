@@ -619,3 +619,54 @@ export const isIssueNew = (issue: TIssue) => {
   const diff = currentDate.getTime() - createdDate.getTime();
   return diff < 30000;
 };
+
+/**
+ * Returns approximate height of Kanban card based on display properties
+ * @param displayProperties
+ * @returns
+ */
+export function getApproximateCardHeight(displayProperties: IIssueDisplayProperties | undefined) {
+  if (!displayProperties) return 100;
+
+  // default card height
+  let cardHeight = 46;
+
+  const clonedProperties = clone(displayProperties);
+
+  // key adds the height for key
+  if (clonedProperties.key) {
+    cardHeight += 24;
+  }
+
+  // Ignore smaller dimension properties
+  const ignoredProperties: (keyof IIssueDisplayProperties)[] = [
+    "key",
+    "sub_issue_count",
+    "link",
+    "attachment_count",
+    "created_on",
+    "updated_on",
+  ];
+
+  ignoredProperties.forEach((key: keyof IIssueDisplayProperties) => {
+    delete clonedProperties[key];
+  });
+
+  let propertyCount = 0;
+
+  // count the remaining properties
+  (Object.keys(clonedProperties) as (keyof IIssueDisplayProperties)[]).forEach((key: keyof IIssueDisplayProperties) => {
+    if (clonedProperties[key]) {
+      propertyCount++;
+    }
+  });
+
+  // based on property count, approximate the height of each card
+  if (propertyCount > 3) {
+    cardHeight += 60;
+  } else if (propertyCount > 0) {
+    cardHeight += 32;
+  }
+
+  return cardHeight;
+}

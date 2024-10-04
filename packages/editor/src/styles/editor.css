@@ -122,18 +122,21 @@
 
 /* Custom image styles */
 .ProseMirror img {
-  transition: filter 0.1s ease-in-out;
-  margin-top: 8px;
+  margin-top: 0 !important;
   margin-bottom: 0;
 
-  &:hover {
-    cursor: pointer;
-    filter: brightness(90%);
-  }
+  &:not(.read-only-image):not(.loading-image) {
+    transition: filter 0.1s ease-in-out;
 
-  &.ProseMirror-selectednode {
-    outline: 3px solid rgba(var(--color-primary-100));
-    filter: brightness(90%);
+    &:hover {
+      cursor: pointer;
+      filter: brightness(90%);
+    }
+
+    &.ProseMirror-selectednode {
+      outline: 3px solid rgba(var(--color-primary-100));
+      filter: brightness(90%);
+    }
   }
 }
 
@@ -240,8 +243,7 @@ ul[data-type="taskList"] li > div > p {
 
 ul[data-type="taskList"] li[data-checked="true"] > div > p {
   color: rgb(var(--color-text-400));
-  text-decoration: line-through;
-  text-decoration-thickness: 2px;
+  transition: color 0.2s ease;
 }
 /* end to-do list */
 
@@ -259,27 +261,6 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
 .fade-out {
   opacity: 0;
   transition: opacity 0.2s ease-out;
-}
-
-.img-placeholder {
-  position: relative;
-  width: 35%;
-  margin-top: 0 !important;
-  margin-bottom: 0 !important;
-
-  &::before {
-    content: "";
-    box-sizing: border-box;
-    position: absolute;
-    top: 50%;
-    left: 45%;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: 3px solid rgba(var(--color-text-200));
-    border-top-color: rgba(var(--color-text-800));
-    animation: spinning 0.6s linear infinite;
-  }
 }
 
 @keyframes spinning {

@@ -21,9 +21,7 @@ import useSize from "@/hooks/use-window-size";
 import { SidebarAppSwitcher } from "@/plane-web/components/sidebar";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
-export interface IAppSidebar {}
-
-export const AppSidebar: FC<IAppSidebar> = observer(() => {
+export const AppSidebar: FC = observer(() => {
   // store hooks
   const { allowPermissions } = useUserPermissions();
   const { toggleSidebar, sidebarCollapsed } = useAppTheme();

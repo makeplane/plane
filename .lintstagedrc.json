@@ -1,3 +1,0 @@
-{
-  "*.{ts,tsx,js,jsx}": ["eslint -c ./.eslintrc-staged.js", "prettier --check"]
-}

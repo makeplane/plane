@@ -1,4 +1,4 @@
-import { NodeType, Schema } from "prosemirror-model";
+import { NodeType, Schema } from "@tiptap/pm/model";
 
 export function getTableNodeTypes(schema: Schema): { [key: string]: NodeType } {
   if (schema.cached.tableNodeTypes) {

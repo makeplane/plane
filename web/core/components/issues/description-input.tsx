@@ -26,7 +26,7 @@ export type IssueDescriptionInputProps = {
   issueOperations: TIssueOperations;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   setIsSubmitting: (initialValue: "submitting" | "submitted" | "saved") => void;
-  swrIssueDescription: string | null | undefined;
+  swrIssueDescription?: string | null | undefined;
 };
 
 export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((props) => {

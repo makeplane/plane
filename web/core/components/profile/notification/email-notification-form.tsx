@@ -79,7 +79,7 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
         </div>
         <div className="flex gap-2 items-center pt-6 pb-2">
           <div className="grow">
-            <div className="pb-1 text-base font-medium text-custom-text-100">State Change</div>
+            <div className="pb-1 text-base font-medium text-custom-text-100">State change</div>
             <div className="text-sm font-normal text-custom-text-300">
               Notify me when the issues moves to a different state
             </div>

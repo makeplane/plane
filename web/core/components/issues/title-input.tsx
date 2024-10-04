@@ -100,7 +100,7 @@ export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
     [setIsSubmitting]
   );
 
-  if (disabled) return <div className="text-2xl font-medium">{title}</div>;
+  if (disabled) return <div className="text-2xl font-medium whitespace-pre-line">{title}</div>;
 
   return (
     <div className="flex flex-col gap-1.5">

@@ -325,7 +325,7 @@ export const SIDEBAR_USER_MENU_ITEMS: {
     key: "notifications",
     label: "Inbox",
     href: `/notifications`,
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
     highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/notifications/`),
     Icon: Inbox,
   },

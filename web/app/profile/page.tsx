@@ -5,29 +5,20 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { ChevronDown, CircleUserRound } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
-// services
-// hooks
-// layouts
-// components
 import type { IUser } from "@plane/types";
 import { Button, CustomSelect, CustomSearchSelect, Input, TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
+// components
 import { DeactivateAccountModal } from "@/components/account";
 import { LogoSpinner } from "@/components/common";
 import { ImagePickerPopover, UserImageUploadModal, PageHead } from "@/components/core";
-// ui
-// icons
-// components
-// constants
 import { ProfileSettingContentWrapper } from "@/components/profile";
+// constants
 import { TIME_ZONES } from "@/constants/timezones";
 import { USER_ROLES } from "@/constants/workspace";
 // hooks
 import { useUser } from "@/hooks/store";
-// import { ProfileSettingsLayout } from "@/layouts/settings-layout";
-// layouts
-import { FileService } from "@/services/file.service";
 // services
-// types
+import { FileService } from "@/services/file.service";
 
 const defaultValues: Partial<IUser> = {
   avatar: "",
@@ -387,7 +378,7 @@ const ProfileSettingsPage = observer(() => {
                   render={({ field: { value, onChange } }) => (
                     <CustomSearchSelect
                       value={value}
-                      label={value ? TIME_ZONES.find((t) => t.value === value)?.label ?? value : "Select a timezone"}
+                      label={value ? (TIME_ZONES.find((t) => t.value === value)?.label ?? value) : "Select a timezone"}
                       options={timeZoneOptions}
                       onChange={onChange}
                       buttonClassName={errors.user_timezone ? "border-red-500" : "border-none"}

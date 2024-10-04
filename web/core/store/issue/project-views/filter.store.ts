@@ -1,6 +1,4 @@
-import isArray from "lodash/isArray";
 import isEmpty from "lodash/isEmpty";
-import pickBy from "lodash/pickBy";
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // base class
@@ -188,13 +186,11 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
             });
           });
 
-          const appliedFilters = _filters.filters || {};
-          const filteredFilters = pickBy(appliedFilters, (value) => value && isArray(value) && value.length > 0);
           this.rootIssueStore.projectViewIssues.fetchIssuesWithExistingPagination(
             workspaceSlug,
             projectId,
             viewId,
-            isEmpty(filteredFilters) ? "init-loader" : "mutation"
+            "mutation"
           );
           break;
         }
@@ -231,6 +227,10 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
             });
           });
 
+          if (this.getShouldClearIssues(updatedDisplayFilters)) {
+            this.rootIssueStore.projectIssues.clear(true, true); // clear issues for local store when some filters like layout changes
+          }
+
           if (this.getShouldReFetchIssues(updatedDisplayFilters)) {
             this.rootIssueStore.projectViewIssues.fetchIssuesWithExistingPagination(
               workspaceSlug,
@@ -264,7 +264,7 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
 
           const currentUserId = this.rootIssueStore.currentUserId;
           if (currentUserId)
-            this.handleIssuesLocalFilters.set(EIssuesStoreType.PROJECT, type, workspaceSlug, viewId, currentUserId, {
+            this.handleIssuesLocalFilters.set(EIssuesStoreType.PROJECT_VIEW, type, workspaceSlug, viewId, currentUserId, {
               kanban_filters: _filters.kanbanFilters,
             });
 

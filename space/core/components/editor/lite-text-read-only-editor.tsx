@@ -6,7 +6,7 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useMention } from "@/hooks/use-mention";
 
-interface LiteTextReadOnlyEditorWrapperProps extends Omit<ILiteTextReadOnlyEditor, "mentionHandler"> {}
+type LiteTextReadOnlyEditorWrapperProps = Omit<ILiteTextReadOnlyEditor, "mentionHandler">;
 
 export const LiteTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, LiteTextReadOnlyEditorWrapperProps>(
   ({ ...props }, ref) => {

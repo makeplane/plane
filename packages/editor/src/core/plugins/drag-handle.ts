@@ -30,18 +30,19 @@ const createDragHandleElement = (): HTMLElement => {
   return dragHandleElement;
 };
 
-const nodeDOMAtCoords = (coords: { x: number; y: number }) => {
+export const nodeDOMAtCoords = (coords: { x: number; y: number }) => {
   const elements = document.elementsFromPoint(coords.x, coords.y);
   const generalSelectors = [
     "li",
     "p:not(:first-child)",
     ".code-block",
     "blockquote",
-    "img",
     "h1, h2, h3, h4, h5, h6",
     "[data-type=horizontalRule]",
     ".table-wrapper",
     ".issue-embed",
+    ".image-component",
+    ".image-upload-component",
   ].join(", ");
 
   for (const elem of elements) {

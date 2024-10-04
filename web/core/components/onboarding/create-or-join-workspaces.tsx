@@ -61,6 +61,7 @@ export const CreateOrJoinWorkspaces: React.FC<Props> = observer((props) => {
         <div className="flex flex-col w-full items-center justify-center p-8 mt-6">
           {currentView === ECreateOrJoinWorkspaceViews.WORKSPACE_JOIN ? (
             <Invitations
+              invitations={invitations}
               handleNextStep={handleNextStep}
               handleCurrentViewChange={() => setCurrentView(ECreateOrJoinWorkspaceViews.WORKSPACE_CREATE)}
             />

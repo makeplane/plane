@@ -13,15 +13,16 @@ import { IIssueDisplayProperties, TIssue, TIssueMap } from "@plane/types";
 import { DropIndicator } from "@plane/ui";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { IssueBlock } from "@/components/issues/issue-layouts/list";
+import { ListLoaderItemRow } from "@/components/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
 import { HIGHLIGHT_CLASS, getIssueBlockId, isIssueNew } from "../utils";
 import { TRenderQuickActions } from "./list-view-types";
 
 type Props = {
-  issueIds: string[];
   issueId: string;
   issuesMap: TIssueMap;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
@@ -42,7 +43,6 @@ type Props = {
 
 export const IssueBlockRoot: FC<Props> = observer((props) => {
   const {
-    issueIds,
     issueId,
     issuesMap,
     groupId,
@@ -66,6 +66,8 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
   const [isCurrentBlockDragging, setIsCurrentBlockDragging] = useState(false);
   // ref
   const issueBlockRef = useRef<HTMLDivElement | null>(null);
+  // hooks
+  const { isMobile } = usePlatformOS();
   // store hooks
   const { subIssues: subIssuesStore } = useIssueDetail();
 
@@ -125,11 +127,12 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
       <DropIndicator classNames={"absolute top-0 z-[2]"} isVisible={instruction === "DRAG_OVER"} />
       <RenderIfVisible
         key={`${issueId}`}
-        defaultHeight="3rem"
         root={containerRef}
         classNames={`relative ${isLastChild && !isExpanded ? "" : "border-b border-b-custom-border-200"}`}
         verticalOffset={100}
         defaultValue={shouldRenderByDefault || isIssueNew(issuesMap[issueId])}
+        placeholderChildren={<ListLoaderItemRow shouldAnimate={false} renderForPlaceHolder defaultPropertyCount={4} />}
+        shouldRecordHeights={isMobile}
       >
         <IssueBlock
           issueId={issueId}
@@ -154,7 +157,6 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
         subIssues?.map((subIssueId) => (
           <IssueBlockRoot
             key={`${subIssueId}`}
-            issueIds={issueIds}
             issueId={subIssueId}
             issuesMap={issuesMap}
             updateIssue={updateIssue}

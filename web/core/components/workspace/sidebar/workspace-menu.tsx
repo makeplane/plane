@@ -23,7 +23,7 @@ import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { UpgradeBadge } from "@/plane-web/components/workspace";
-import { EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const SidebarWorkspaceMenu = observer(() => {
   // state
@@ -43,6 +43,7 @@ export const SidebarWorkspaceMenu = observer(() => {
   const { setValue: toggleWorkspaceMenu, storedValue } = useLocalStorage<boolean>("is_workspace_menu_open", true);
   // derived values
   const isWorkspaceMenuOpen = !!storedValue;
+  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
   const handleLinkClick = (itemKey: string) => {
     if (window.innerWidth < 768) {
@@ -67,11 +68,14 @@ export const SidebarWorkspaceMenu = observer(() => {
   return (
     <Disclosure as="div" defaultOpen>
       {!sidebarCollapsed && (
-        <div className={
-          cn("flex px-2 bg-custom-sidebar-background-100 group/workspace-button hover:bg-custom-sidebar-background-90 rounded", {
-            "mt-2.5": !sidebarCollapsed,
-          })
-        }>
+        <div
+          className={cn(
+            "flex px-2 bg-custom-sidebar-background-100 group/workspace-button hover:bg-custom-sidebar-background-90 rounded",
+            {
+              "mt-2.5": !sidebarCollapsed,
+            }
+          )}
+        >
           {" "}
           <Disclosure.Button
             as="button"
@@ -110,14 +114,16 @@ export const SidebarWorkspaceMenu = observer(() => {
               </Link>
             </CustomMenu.MenuItem>
 
-            <CustomMenu.MenuItem>
-              <Link href={`/${workspaceSlug}/settings`}>
-                <div className="flex items-center justify-start gap-2">
-                  <Settings className="h-3.5 w-3.5 stroke-[1.5]" />
-                  <span>Settings</span>
-                </div>
-              </Link>
-            </CustomMenu.MenuItem>
+            {isAdmin && (
+              <CustomMenu.MenuItem>
+                <Link href={`/${workspaceSlug}/settings`}>
+                  <div className="flex items-center justify-start gap-2">
+                    <Settings className="h-3.5 w-3.5 stroke-[1.5]" />
+                    <span>Settings</span>
+                  </div>
+                </Link>
+              </CustomMenu.MenuItem>
+            )}
           </CustomMenu>
           <Disclosure.Button
             as="button"

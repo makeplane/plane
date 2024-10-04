@@ -124,7 +124,7 @@ export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
                       <AlertTriangle className="h-6 w-6 text-red-600" aria-hidden="true" />
                     </span>
                     <span className="flex items-center justify-start">
-                      <h3 className="text-xl font-medium 2xl:text-2xl">Delete Workspace</h3>
+                      <h3 className="text-xl font-medium 2xl:text-2xl">Delete workspace</h3>
                     </span>
                   </div>
 
@@ -191,7 +191,7 @@ export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
                       Cancel
                     </Button>
                     <Button variant="danger" size="sm" type="submit" disabled={!canDelete} loading={isSubmitting}>
-                      {isSubmitting ? "Deleting..." : "Delete Workspace"}
+                      {isSubmitting ? "Deleting" : "Delete workspace"}
                     </Button>
                   </div>
                 </form>

@@ -234,11 +234,17 @@ class IssueViewSet(BaseViewSet):
     @method_decorator(gzip_page)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
+        extra_filters = {}
+        if request.GET.get("updated_at__gt", None) is not None:
+            extra_filters = {
+                "updated_at__gt": request.GET.get("updated_at__gt")
+            }
+
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
         filters = issue_filters(request.query_params, "GET")
         order_by_param = request.GET.get("order_by", "-created_at")
 
-        issue_queryset = self.get_queryset().filter(**filters)
+        issue_queryset = self.get_queryset().filter(**filters, **extra_filters)
         # Custom ordering for priority and state
 
         # Issue queryset
@@ -713,16 +719,43 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
         )
 
 
+class DeletedIssuesListViewSet(BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def get(self, request, slug, project_id):
+        filters = {}
+        if request.GET.get("updated_at__gt", None) is not None:
+            filters = {"updated_at__gt": request.GET.get("updated_at__gt")}
+        deleted_issues = (
+            Issue.all_objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+            )
+            .filter(Q(archived_at__isnull=False) | Q(deleted_at__isnull=False))
+            .filter(**filters)
+            .values_list("id", flat=True)
+        )
+
+        return Response(deleted_issues, status=status.HTTP_200_OK)
+
+
 class IssuePaginatedViewSet(BaseViewSet):
     def get_queryset(self):
         workspace_slug = self.kwargs.get("slug")
-        project_id = self.kwargs.get("project_id")
+
+        # getting the project_id from the request params
+        project_id = self.request.GET.get("project_id", None)
+
+        issue_queryset = Issue.issue_objects.filter(
+            workspace__slug=workspace_slug
+        )
+
+        if project_id:
+            issue_queryset = issue_queryset.filter(project_id=project_id)
 
         return (
-            Issue.issue_objects.filter(
-                workspace__slug=workspace_slug, project_id=project_id
+            issue_queryset.select_related(
+                "workspace", "project", "state", "parent"
             )
-            .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
             .annotate(
@@ -760,17 +793,18 @@ class IssuePaginatedViewSet(BaseViewSet):
 
         return paginated_data
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
-    def list(self, request, slug, project_id):
+    def list(self, request, slug):
+        project_id = self.request.GET.get("project_id", None)
         cursor = request.GET.get("cursor", None)
         is_description_required = request.GET.get("description", False)
-        updated_at = request.GET.get("updated_at__gte", None)
+        updated_at = request.GET.get("updated_at__gt", None)
 
         # required fields
         required_fields = [
             "id",
             "name",
             "state_id",
+            "state__group",
             "sort_order",
             "completed_at",
             "estimate_point",
@@ -787,7 +821,6 @@ class IssuePaginatedViewSet(BaseViewSet):
             "updated_by",
             "is_draft",
             "archived_at",
-            "deleted_at",
             "module_ids",
             "label_ids",
             "assignee_ids",
@@ -800,15 +833,18 @@ class IssuePaginatedViewSet(BaseViewSet):
             required_fields.append("description_html")
 
         # querying issues
-        base_queryset = Issue.issue_objects.filter(
-            workspace__slug=slug, project_id=project_id
-        ).order_by("updated_at")
+        base_queryset = Issue.issue_objects.filter(workspace__slug=slug)
+
+        if project_id:
+            base_queryset = base_queryset.filter(project_id=project_id)
+
+        base_queryset = base_queryset.order_by("updated_at")
         queryset = self.get_queryset().order_by("updated_at")
 
         # filtering issues by greater then updated_at given by the user
         if updated_at:
-            base_queryset = base_queryset.filter(updated_at__gte=updated_at)
-            queryset = queryset.filter(updated_at__gte=updated_at)
+            base_queryset = base_queryset.filter(updated_at__gt=updated_at)
+            queryset = queryset.filter(updated_at__gt=updated_at)
 
         queryset = queryset.annotate(
             label_ids=Coalesce(
