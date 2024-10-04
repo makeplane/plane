@@ -26,11 +26,24 @@ from plane.app.permissions import allow_permission, ROLE
 class UserAssetsV2Endpoint(BaseAPIView):
     """This endpoint is used to upload user profile images."""
 
+    def asset_delete(self, asset_id):
+        asset = FileAsset.objects.filter(id=asset_id).first()
+        if asset is None:
+            return
+        asset.is_deleted = True
+        asset.deleted_at = timezone.now()
+        asset.save()
+        return
+
     def entity_asset_save(self, asset_id, entity_type, entity_id):
         # User Avatar
         if entity_type == FileAsset.EntityTypeContext.USER_AVATAR:
             user = User.objects.get(id=entity_id)
             user.avatar = ""
+            # Delete the previous avatar
+            if user.avatar_asset_id:
+                self.asset_delete(user.avatar_asset_id)
+            # Save the new avatar
             user.avatar_asset_id = asset_id
             user.save()
             return
@@ -38,7 +51,26 @@ class UserAssetsV2Endpoint(BaseAPIView):
         if entity_type == FileAsset.EntityTypeContext.USER_COVER:
             user = User.objects.get(id=entity_id)
             user.cover_image = None
+            # Delete the previous cover image
+            if user.cover_image_asset_id:
+                self.asset_delete(user.cover_image_asset_id)
+            # Save the new cover image
             user.cover_image_asset_id = asset_id
+            user.save()
+            return
+        return
+
+    def entity_asset_delete(self, entity_type, entity_id):
+        # User Avatar
+        if entity_type == FileAsset.EntityTypeContext.USER_AVATAR:
+            user = User.objects.get(id=entity_id)
+            user.avatar_asset_id = None
+            user.save()
+            return
+        # User Cover
+        if entity_type == FileAsset.EntityTypeContext.USER_COVER:
+            user = User.objects.get(id=entity_id)
+            user.cover_image_asset_id = None
             user.save()
             return
         return
@@ -135,12 +167,66 @@ class UserAssetsV2Endpoint(BaseAPIView):
         )
         asset.is_deleted = True
         asset.deleted_at = timezone.now()
+        # get the entity and save the asset id for the request field
+        self.entity_asset_delete(asset.entity_type, asset.entity_identifier)
         asset.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class WorkspaceFileAssetEndpoint(BaseAPIView):
     """This endpoint is used to upload cover images/logos etc for workspace, projects and users."""
+
+    def asset_delete(self, asset_id):
+        asset = FileAsset.objects.filter(id=asset_id).first()
+        # Check if the asset exists
+        if asset is None:
+            return
+        # Mark the asset as deleted
+        asset.is_deleted = True
+        asset.deleted_at = timezone.now()
+        asset.save()
+        return
+
+    def entity_asset_save(self, asset_id, entity_type, entity_id):
+        # Workspace Logo
+        if entity_type == FileAsset.EntityTypeContext.WORKSPACE_LOGO:
+            workspace = Workspace.objects.get(id=entity_id)
+            # Delete the previous logo
+            if workspace.logo_asset_id:
+                self.asset_delete(workspace.logo_asset_id)
+            # Save the new logo
+            workspace.logo_asset_id = asset_id
+            workspace.save()
+            return
+
+        # Project Cover
+        elif entity_type == FileAsset.EntityTypeContext.PROJECT_COVER:
+            project = Project.objects.get(id=entity_id)
+            # Delete the previous cover image
+            if project.cover_image_asset_id:
+                self.asset_delete(project.cover_image_asset_id)
+            # Save the new cover image
+            project.cover_image_asset_id = asset_id
+            project.save()
+            return
+        else:
+            return
+
+    def entity_asset_delete(self, entity_type, entity_id):
+        # Workspace Logo
+        if entity_type == FileAsset.EntityTypeContext.WORKSPACE_LOGO:
+            workspace = Workspace.objects.get(id=entity_id)
+            workspace.logo_asset_id = None
+            workspace.save()
+            return
+        # Project Cover
+        elif entity_type == FileAsset.EntityTypeContext.PROJECT_COVER:
+            project = Project.objects.get(id=entity_id)
+            project.cover_image_asset_id = None
+            project.save()
+            return
+        else:
+            return
 
     def post(self, request, slug):
         name = request.data.get("name")
@@ -209,22 +295,6 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             status=status.HTTP_200_OK,
         )
 
-    def entity_asset_save(self, asset_id, entity_type, entity_id):
-        # Workspace Logo
-        if entity_type == FileAsset.EntityTypeContext.WORKSPACE_LOGO:
-            workspace = Workspace.objects.get(id=entity_id)
-            workspace.logo_asset_id = asset_id
-            workspace.save()
-            return
-        # Project Cover
-        elif entity_type == FileAsset.EntityTypeContext.PROJECT_COVER:
-            project = Project.objects.get(id=entity_id)
-            project.cover_image_asset_id = asset_id
-            project.save()
-            return
-        else:
-            return
-
     def patch(self, request, slug, asset_id):
         # get the asset id
         asset = FileAsset.objects.get(id=asset_id, workspace__slug=slug)
@@ -250,6 +320,8 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         asset = FileAsset.objects.get(id=asset_id, workspace__slug=slug)
         asset.is_deleted = True
         asset.deleted_at = timezone.now()
+        # get the entity and save the asset id for the request field
+        self.entity_asset_delete(asset.entity_type, asset.entity_identifier)
         asset.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
