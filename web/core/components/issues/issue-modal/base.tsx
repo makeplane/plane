@@ -49,7 +49,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   const { fetchModuleDetails } = useModule();
   const { issues } = useIssues(storeType);
   const { issues: projectIssues } = useIssues(EIssuesStoreType.PROJECT);
-  const { issues: draftIssues } = useIssues(EIssuesStoreType.DRAFT);
+  const { issues: draftIssues } = useIssues(EIssuesStoreType.WORKSPACE_DRAFT);
   const { fetchIssue } = useIssueDetail();
   const { handleCreateUpdatePropertyValues } = useIssueModal();
   // pathname
@@ -152,7 +152,8 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
 
       // if draft issue, use draft issue store to create issue
       if (is_draft_issue) {
-        response = await draftIssues.createIssue(workspaceSlug.toString(), payload.project_id, payload);
+        //response = await draftIssues.createIssue(workspaceSlug.toString(), payload.project_id, payload);
+        response = await draftIssues.createDraft(workspaceSlug.toString(), payload);
       }
       // if cycle id in payload does not match the cycleId in url
       // or if the moduleIds in Payload does not match the moduleId in url
@@ -236,7 +237,8 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
 
     try {
       isDraft
-        ? await draftIssues.updateIssue(workspaceSlug.toString(), payload.project_id, data.id, payload)
+        // ? await draftIssues.updateIssue(workspaceSlug.toString(), payload.project_id, data.id, payload)
+        ? await draftIssues.updateDraft(workspaceSlug.toString(), data.id,payload)
         : updateIssue && (await updateIssue(payload.project_id, data.id, payload));
 
       // add other property values
@@ -312,7 +314,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
           issueTitleRef={issueTitleRef}
           onChange={handleFormChange}
           onClose={handleClose}
-          onSubmit={handleFormSubmit}
+          onSubmit={(payload) => handleFormSubmit(payload, isDraft)}
           projectId={activeProjectId}
           isCreateMoreToggleEnabled={createMore}
           onCreateMoreToggleChange={handleCreateMoreToggleChange}
@@ -330,7 +332,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
           onClose={() => handleClose(false)}
           isCreateMoreToggleEnabled={createMore}
           onCreateMoreToggleChange={handleCreateMoreToggleChange}
-          onSubmit={handleFormSubmit}
+          onSubmit={(payload) => handleFormSubmit(payload, isDraft)}
           projectId={activeProjectId}
           isDraft={isDraft}
         />
