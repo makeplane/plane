@@ -68,15 +68,22 @@ class Command(BaseCommand):
                 Key="test_permission_check.txt",
                 Body=b"Test",
             )
+            self.stdout.write("PutObject permission granted.")
             permissions["s3:PutObject"] = True
-            s3_client.delete_object(
-                Bucket=bucket_name, Key="test_permission_check.txt"
-            )  # Clean up
+            # Clean up
         except ClientError as e:
             if e.response["Error"]["Code"] == "AccessDenied":
                 self.stdout.write("PutObject permission denied.")
             else:
                 self.stdout.write(f"Error in PutObject: {e}")
+
+        # Clean up
+        try:
+            s3_client.delete_object(
+                Bucket=bucket_name, Key="test_permission_check.txt"
+            )
+        except ClientError:
+            self.stdout.write("Coudn't delete test object")
 
         # 4. Test s3:PutBucketPolicy (attempt to put a bucket policy)
         try:
