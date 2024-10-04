@@ -32,6 +32,7 @@ export const DraftsBaseHeader: FC = observer(() => {
         isOpen={isDraftIssueModalOpen}
         onClose={() => setIsDraftIssueModalOpen(false)}
         storeType={EIssuesStoreType.WORKSPACE_DRAFT}
+        isDraft
       />
       <Header>
         <Header.LeftItem>

@@ -123,7 +123,7 @@ export const WorkspaceDraftIssueQuickActions: React.FC<IQuickActionProps> = obse
           if (draftToEdit && handleUpdate) await handleUpdate(data);
         }}
         storeType={EIssuesStoreType.WORKSPACE_DRAFT}
-        isDraft={true}
+        isDraft
       />
       <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
       <CustomMenu
