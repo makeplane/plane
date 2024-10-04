@@ -207,7 +207,8 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
 
         # Get all the attachments
         issue_attachments = FileAsset.objects.filter(
-            issue_id=issue_id,
+            entity_identifier=issue_id,
+            entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
             workspace__slug=slug,
             project_id=project_id,
             is_uploaded=True,
