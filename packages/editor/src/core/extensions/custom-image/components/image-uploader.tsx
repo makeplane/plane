@@ -128,8 +128,9 @@ export const CustomImageUploader = (props: {
   return (
     <div
       className={cn(
-        "image-upload-component flex items-center justify-start gap-2 py-3 px-2 rounded-lg text-custom-text-300 hover:text-custom-text-200 bg-custom-background-90 hover:bg-custom-background-80 border border-dashed border-custom-border-300 cursor-pointer transition-all duration-200 ease-in-out",
+        "image-upload-component flex items-center justify-start gap-2 py-3 px-2 rounded-lg text-custom-text-300 hover:text-custom-text-200 bg-custom-background-90 hover:bg-custom-background-80 border border-dashed border-custom-border-300 cursor-pointer transition-all duration-200 ease-in-out cursor-default",
         {
+          "hover:text-custom-text-200 cursor-pointer": editor.isEditable,
           "bg-custom-background-80 text-custom-text-200": draggedInside,
           "text-custom-primary-200 bg-custom-primary-100/10 hover:bg-custom-primary-100/10 hover:text-custom-primary-200 border-custom-primary-200/10":
             selected,
@@ -142,7 +143,7 @@ export const CustomImageUploader = (props: {
       onDragLeave={onDragLeave}
       contentEditable={false}
       onClick={() => {
-        if (!failedToLoadImage) {
+        if (!failedToLoadImage && editor.isEditable) {
           fileInputRef.current?.click();
         }
       }}
