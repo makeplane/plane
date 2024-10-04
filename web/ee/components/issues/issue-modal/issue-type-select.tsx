@@ -16,6 +16,7 @@ type TIssueTypeSelectProps = {
   control: Control<TIssue>;
   projectId: string | null;
   disabled?: boolean;
+  renderChevron?: boolean;
   handleFormChange: () => void;
 };
 
