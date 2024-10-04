@@ -96,6 +96,7 @@ export const useDropZone = ({
 
   const onDrop = useCallback(
     async (e: DragEvent<HTMLDivElement>) => {
+      e.preventDefault();
       setDraggedInside(false);
       if (e.dataTransfer.files.length === 0) {
         return;
@@ -157,7 +158,7 @@ export async function uploadFirstImageAndInsertRemaining(
 
   // Upload the first image
   const firstFile = filteredFiles[0];
-  await uploaderFn(firstFile);
+  uploaderFn(firstFile);
 
   // Insert the remaining images
   const remainingFiles = filteredFiles.slice(1);
