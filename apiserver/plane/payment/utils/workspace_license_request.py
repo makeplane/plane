@@ -1,5 +1,6 @@
 # Python imports
 import requests
+import os
 
 # Django imports
 from django.conf import settings
@@ -163,6 +164,36 @@ def count_billable_members(workspace_license):
     return workspace_member_count + invited_member_count
 
 
+def count_total_seats(workspace_license):
+    """Count the total seats in the workspace"""
+
+    # Check the active users in the workspace
+    workspace_seats_count = WorkspaceMember.objects.filter(
+        workspace=workspace_license.workspace,
+        is_active=True,
+        member__is_bot=False,
+    ).count()
+
+    # Check the active paid users in the workspace
+    invited_seats_count = WorkspaceMemberInvite.objects.filter(
+        workspace=workspace_license.workspace,
+    ).count()
+
+    return workspace_seats_count + invited_seats_count
+
+
+def show_cloud_seats_banner(workspace_license):
+    """Determine if the cloud seats banner should be shown"""
+    if settings.IS_MULTI_TENANT and (
+        workspace_license.plan == WorkspaceLicense.PlanChoice.FREE
+        or is_on_trial(workspace_license)
+    ):
+        return count_total_seats(workspace_license) >= int(
+            os.environ.get("CLOUD_SEATS_BANNER_LIMIT", 8)
+        )
+    return False
+
+
 def resync_workspace_license(workspace_slug, force=False):
     # Fetch the workspace
     workspace = Workspace.objects.get(slug=workspace_slug)
@@ -242,6 +273,10 @@ def resync_workspace_license(workspace_slug, force=False):
                 "show_payment_button": show_payment_button(workspace_license),
                 "show_trial_banner": show_trial_banner(workspace_license),
                 "free_seats": workspace_license.free_seats,
+                "total_seats": count_total_seats(workspace_license),
+                "show_cloud_seats_banner": show_cloud_seats_banner(
+                    workspace_license
+                ),
                 "current_period_start_date": workspace_license.current_period_start_date,
                 "is_trial_ended": is_trial_ended(workspace_license),
                 "billable_members": count_billable_members(workspace_license),
@@ -268,6 +303,10 @@ def resync_workspace_license(workspace_slug, force=False):
                 "show_payment_button": show_payment_button(workspace_license),
                 "show_trial_banner": show_trial_banner(workspace_license),
                 "free_seats": workspace_license.free_seats,
+                "total_seats": count_total_seats(workspace_license),
+                "show_cloud_seats_banner": show_cloud_seats_banner(
+                    workspace_license
+                ),
                 "current_period_start_date": workspace_license.current_period_start_date,
                 "is_trial_ended": is_trial_ended(workspace_license),
                 "billable_members": count_billable_members(workspace_license),
@@ -329,6 +368,10 @@ def resync_workspace_license(workspace_slug, force=False):
             "show_payment_button": show_payment_button(workspace_license),
             "show_trial_banner": show_trial_banner(workspace_license),
             "free_seats": workspace_license.free_seats,
+            "total_seats": count_total_seats(workspace_license),
+            "show_cloud_seats_banner": show_cloud_seats_banner(
+                workspace_license
+            ),
             "current_period_start_date": workspace_license.current_period_start_date,
             "is_trial_ended": is_trial_ended(workspace_license),
             "billable_members": count_billable_members(workspace_license),
