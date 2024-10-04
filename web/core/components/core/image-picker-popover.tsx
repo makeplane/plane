@@ -47,13 +47,14 @@ type Props = {
   disabled?: boolean;
   tabIndex?: number;
   isProfileCover?: boolean;
+  projectId?: string | null;
 };
 
 // services
 const fileService = new FileService();
 
 export const ImagePickerPopover: React.FC<Props> = observer((props) => {
-  const { label, value, control, onChange, disabled = false, tabIndex, isProfileCover = false } = props;
+  const { label, value, control, onChange, disabled = false, tabIndex, isProfileCover = false, projectId } = props;
   // states
   const [image, setImage] = useState<File | null>(null);
   const [isImageUploading, setIsImageUploading] = useState(false);
@@ -124,7 +125,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
         .uploadWorkspaceAsset(
           workspaceSlug.toString(),
           {
-            entity_identifier: "",
+            entity_identifier: projectId?.toString() ?? "",
             entity_type: EFileAssetType.PROJECT_COVER,
           },
           image

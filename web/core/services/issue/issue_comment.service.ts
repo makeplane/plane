@@ -43,7 +43,7 @@ export class IssueCommentService extends APIService {
     projectId: string,
     issueId: string,
     data: Partial<TIssueComment>
-  ): Promise<void> {
+  ): Promise<TIssueComment> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/comments/`, data)
       .then((response) => response?.data)
       .catch((error) => {

@@ -24,8 +24,8 @@ export const generateFileUploadPayload = (signedURLResponse: TFileSignedURLRespo
  */
 export const getFileURL = (path: string): string | undefined => {
   if (!path) return undefined;
-  const isOldURL = checkURLValidity(path);
-  if (isOldURL) return path;
+  const isValidURL = checkURLValidity(path);
+  if (isValidURL) return path;
   return `${API_BASE_URL}${path}`;
 };
 

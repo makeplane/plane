@@ -65,7 +65,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
     },
   });
   // derived values
-  const coverImage = watch("cover_image");
+  const coverImage = watch("cover_image_url");
 
   useEffect(() => {
     if (project && projectId !== getValues("id")) {
@@ -123,7 +123,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       network: formData.network,
       identifier: formData.identifier,
       description: formData.description,
-      cover_image: formData.cover_image,
+      cover_image_url: formData.cover_image_url,
       logo_props: formData.logo_props,
     };
 
@@ -202,14 +202,15 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
             <div>
               <Controller
                 control={control}
-                name="cover_image"
+                name="cover_image_url"
                 render={({ field: { value, onChange } }) => (
                   <ImagePickerPopover
-                    label={"Change cover"}
+                    label="Change cover"
                     control={control}
                     onChange={onChange}
                     value={value}
                     disabled={!isAdmin}
+                    projectId={project.id}
                   />
                 )}
               />

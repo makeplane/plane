@@ -22,7 +22,7 @@ const ProjectCreateHeader: React.FC<Props> = (props) => {
   const { handleClose, isMobile = false } = props;
   const { watch, control } = useFormContext<IProject>();
   // derived values
-  const coverImage = watch("cover_image");
+  const coverImage = watch("cover_image_url");
 
   const [isOpen, setIsOpen] = useState(false);
   const { getIndex } = getTabIndex(ETabIndices.PROJECT_CREATE, isMobile);
@@ -44,7 +44,7 @@ const ProjectCreateHeader: React.FC<Props> = (props) => {
       </div>
       <div className="absolute bottom-2 right-2">
         <Controller
-          name="cover_image"
+          name="cover_image_url"
           control={control}
           render={({ field: { value, onChange } }) => (
             <ImagePickerPopover

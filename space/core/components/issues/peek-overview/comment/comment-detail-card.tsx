@@ -9,6 +9,7 @@ import { LiteTextEditor, LiteTextReadOnlyEditor } from "@/components/editor";
 import { CommentReactions } from "@/components/issues/peek-overview";
 // helpers
 import { timeAgo } from "@/helpers/date-time.helper";
+import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useIssueDetails, usePublish, useUser } from "@/hooks/store";
 import useIsInIframe from "@/hooks/use-is-in-iframe";
@@ -58,10 +59,10 @@ export const CommentCard: React.FC<Props> = observer((props) => {
   return (
     <div className="relative flex items-start space-x-3">
       <div className="relative px-1">
-        {comment.actor_detail.avatar && comment.actor_detail.avatar !== "" ? (
+        {comment.actor_detail.avatar_url && comment.actor_detail.avatar_url !== "" ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={comment.actor_detail.avatar}
+            src={getFileURL(comment.actor_detail.avatar_url)}
             alt={
               comment.actor_detail.is_bot ? comment.actor_detail.first_name + " Bot" : comment.actor_detail.display_name
             }
