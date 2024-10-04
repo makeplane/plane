@@ -15,7 +15,7 @@ export const logError = (e: any) => {
     e = parseSQLite3Error(e);
   }
   Sentry.captureException(e);
-  console.log(e);
+  console.error(e);
 };
 export const logInfo = console.info;
 
