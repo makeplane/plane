@@ -1,8 +1,9 @@
+import { startOfToday, format } from "date-fns";
 import { isEmpty, orderBy, uniqBy } from "lodash";
 import sortBy from "lodash/sortBy";
 import { ICycle, TCycleFilters } from "@plane/types";
 // helpers
-import { generateDateArray, getDate, getToday } from "@/helpers/date-time.helper";
+import { findTotalDaysInRange, generateDateArray, getDate } from "@/helpers/date-time.helper";
 import { satisfiesDateFilter } from "@/helpers/filter.helper";
 
 export type TProgressChartData = {
@@ -75,47 +76,97 @@ export const shouldFilterCycle = (cycle: ICycle, filter: TCycleFilters): boolean
   return fallsInFilters;
 };
 
-export const formatActiveCycle = (args: {
-  cycle: ICycle;
-  isBurnDown?: boolean | undefined;
-  isTypeIssue?: boolean | undefined;
-}) => {
-  const { cycle, isBurnDown, isTypeIssue } = args;
-  let today = getToday();
-  const endDate: Date | string = new Date(cycle.end_date!);
+const scope = (p: any, isTypeIssue: boolean) => (isTypeIssue ? p.total_issues : p.total_estimate_points);
+const ideal = (date: string, scope: number, cycle: ICycle) =>
+  Math.floor(
+    ((findTotalDaysInRange(date, cycle.end_date) || 0) /
+      (findTotalDaysInRange(cycle.start_date, cycle.end_date) || 0)) *
+      scope
+  );
+
+const formatV1Data = (isTypeIssue: boolean, cycle: ICycle, isBurnDown: boolean, endDate: Date | string) => {
+  const today = format(startOfToday(), "yyyy-MM-dd");
+  const data = isTypeIssue ? cycle.distribution : cycle.estimate_distribution;
+  const extendedArray = generateDateArray(endDate, endDate).map((d) => d.date);
+
+  if (isEmpty(data)) return [];
+  const progress = [...Object.keys(data.completion_chart), ...extendedArray].map((p) => {
+    const pending = data.completion_chart[p] || 0;
+    const total = isTypeIssue ? cycle.total_issues : cycle.total_estimate_points;
+    const completed = scope(cycle, isTypeIssue) - pending;
+
+    return {
+      date: p,
+      scope: p! < today ? scope(cycle, isTypeIssue) : null,
+      completed,
+      backlog: isTypeIssue ? cycle.backlog_issues : cycle.backlog_estimate_points,
+      started: p === today ? cycle[isTypeIssue ? "started_issues" : "started_estimate_points"] : undefined,
+      unstarted: p === today ? cycle[isTypeIssue ? "unstarted_issues" : "unstarted_estimate_points"] : undefined,
+      cancelled: p === today ? cycle[isTypeIssue ? "cancelled_issues" : "cancelled_estimate_points"] : undefined,
+      pending: Math.abs(pending || 0),
+      ideal:
+        p < today
+          ? ideal(p, total || 0, cycle)
+          : p <= cycle.end_date!
+            ? ideal(today as string, total || 0, cycle)
+            : null,
+      actual: p <= today ? (isBurnDown ? Math.abs(pending) : completed) : undefined,
+    };
+  });
+
+  return progress;
+};
+
+const formatV2Data = (isTypeIssue: boolean, cycle: ICycle, isBurnDown: boolean, endDate: Date | string) => {
+  if (!cycle.progress) return [];
+  let today: Date | string = startOfToday();
 
   const extendedArray = endDate > today ? generateDateArray(today as Date, endDate) : [];
   if (isEmpty(cycle.progress)) return extendedArray;
-  today = getToday(true);
+  today = format(startOfToday(), "yyyy-MM-dd");
+  const todaysData = cycle?.progress[cycle?.progress.length - 1];
+  const scopeToday = scope(todaysData, isTypeIssue);
+  const idealToday = ideal(todaysData.date, scopeToday, cycle);
 
-  const scope = (p: any) => (isTypeIssue ? p.total_issues : p.total_estimate_points);
-  const ideal = (p: any) =>
-    isTypeIssue
-      ? Math.abs(p.total_issues - p.completed_issues + (Math.random() < 0.5 ? -1 : 1))
-      : Math.abs(p.total_estimate_points - p.completed_estimate_points + (Math.random() < 0.5 ? -1 : 1));
-
-  const scopeToday = scope(cycle?.progress[cycle?.progress.length - 1]);
-  const idealToday = ideal(cycle?.progress[cycle?.progress.length - 1]);
-
-  const progress = [...orderBy(cycle?.progress, "date"), ...extendedArray].map((p) => {
+  let progress = [...orderBy(cycle?.progress, "date"), ...extendedArray].map((p) => {
     const pending = isTypeIssue
       ? p.total_issues - p.completed_issues - p.cancelled_issues
       : p.total_estimate_points - p.completed_estimate_points - p.cancelled_estimate_points;
     const completed = isTypeIssue ? p.completed_issues : p.completed_estimate_points;
+    const dataDate = p.progress_date ? format(new Date(p.progress_date), "yyyy-MM-dd") : p.date;
 
     return {
-      date: p.date,
-      scope: p.date! < today ? scope(p) : p.date! < cycle.end_date! ? scopeToday : null,
+      date: dataDate,
+      scope: dataDate! < today ? scope(p, isTypeIssue) : dataDate! <= cycle.end_date! ? scopeToday : null,
       completed,
       backlog: isTypeIssue ? p.backlog_issues : p.backlog_estimate_points,
       started: isTypeIssue ? p.started_issues : p.started_estimate_points,
       unstarted: isTypeIssue ? p.unstarted_issues : p.unstarted_estimate_points,
       cancelled: isTypeIssue ? p.cancelled_issues : p.cancelled_estimate_points,
       pending: Math.abs(pending),
-      // TODO: This is a temporary logic to show the ideal line in the cycle chart
-      ideal: p.date! < today ? ideal(p) : p.date! < cycle.end_date! ? idealToday : null,
-      actual: p.date! <= today ? (isBurnDown ? Math.abs(pending) : completed) : undefined,
+      ideal:
+        dataDate! < today
+          ? ideal(dataDate, scope(p, isTypeIssue), cycle)
+          : dataDate! < cycle.end_date!
+            ? idealToday
+            : null,
+      actual: dataDate! <= today ? (isBurnDown ? Math.abs(pending) : completed) : undefined,
     };
   });
-  return uniqBy(progress, "date");
+  progress = uniqBy(progress, "date");
+
+  return progress;
+};
+
+export const formatActiveCycle = (args: {
+  cycle: ICycle;
+  isBurnDown?: boolean | undefined;
+  isTypeIssue?: boolean | undefined;
+}) => {
+  const { cycle, isBurnDown, isTypeIssue } = args;
+  const endDate: Date | string = new Date(cycle.end_date!);
+
+  return cycle.version === 1
+    ? formatV1Data(isTypeIssue!, cycle, isBurnDown!, endDate)
+    : formatV2Data(isTypeIssue!, cycle, isBurnDown!, endDate);
 };
