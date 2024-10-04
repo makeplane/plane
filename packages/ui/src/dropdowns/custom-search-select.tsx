@@ -184,10 +184,18 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
                                 <>
                                   <span className="flex-grow truncate">{option.content}</span>
                                   {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
-                                  {option.infoTooltipContent && (
-                                    <Tooltip tooltipContent={option.infoTooltipContent}>
-                                      <Info className="h-3.5 w-3.5 flex-shrink-0 cursor-pointer text-custom-text-200" />
-                                    </Tooltip>
+                                  {option.optionTooltip && (
+                                    <>
+                                      {
+                                        typeof option.optionTooltip === "string" ? (
+                                          <Tooltip tooltipContent={option.optionTooltip}>
+                                            <Info className="h-3.5 w-3.5 flex-shrink-0 cursor-pointer text-custom-text-200" />
+                                          </Tooltip>
+                                        ) : (
+                                          option.optionTooltip
+                                        )
+                                      }
+                                    </>
                                   )}
                                 </>
                               )}

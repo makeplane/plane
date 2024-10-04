@@ -49,7 +49,7 @@ interface CustomSearchSelectProps {
     query: string;
     content: React.ReactNode;
     disabled?: boolean;
-    infoTooltipContent?: string;
+    optionTooltip?: string | React.ReactNode;
   }[]
   | undefined;
 }
