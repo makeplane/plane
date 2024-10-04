@@ -280,7 +280,7 @@ function download() {
 function startServices() {
     /bin/bash -c "$COMPOSE_CMD -f $DOCKER_FILE_PATH --env-file=$DOCKER_ENV_PATH up -d --pull if_not_present --quiet-pull"
 
-    local migrator_container_id=$(docker container ls -aq -f "name=$SERVICE_FOLDER-migrator")
+    local migrator_container_id=$(docker ps --format "{{.ID}} {{.Names}}" | grep -E "${SERVICE_FOLDER}(-migrator|_migrator)" | awk '{print $1}')
     if [ -n "$migrator_container_id" ]; then
         local idx=0
         while docker inspect --format='{{.State.Status}}' $migrator_container_id | grep -q "running"; do
@@ -308,7 +308,7 @@ function startServices() {
         fi
     fi
 
-    local api_container_id=$(docker container ls -q -f "name=$SERVICE_FOLDER-api")
+    local api_container_id=$(docker ps --format "{{.ID}} {{.Names}}" | grep -E "${SERVICE_FOLDER}(-api|_api)" | awk '{print $1}')
     local idx2=0
     while ! docker logs $api_container_id 2>&1 | grep -m 1 -i "Application startup complete" | grep -q ".";
     do
