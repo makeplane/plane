@@ -86,7 +86,7 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
 
         <div className="w-full space-y-1 -mt-2">
           <div className="relative flex items-center gap-3 h-8">
-            <div className="w-full overflow-hidden whitespace-normal break-words truncate line-clamp-1 text-sm text-custom-text-100">
+            <div className="w-full overflow-hidden whitespace-normal break-all truncate line-clamp-1 text-sm text-custom-text-100">
               {!notification.message ? (
                 <>
                   <span className="font-semibold">

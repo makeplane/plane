@@ -31,6 +31,7 @@ import {
 } from "@plane/types";
 import { EIssueLayoutTypes, ISSUE_PRIORITIES } from "@/constants/issue";
 import { convertToISODateString } from "@/helpers/date-time.helper";
+import { updatePersistentLayer } from "@/local-db/utils/utils";
 import { CycleService } from "@/services/cycle.service";
 import { IssueArchiveService, IssueDraftService, IssueService } from "@/services/issue";
 import { ModuleService } from "@/services/module.service";
@@ -528,6 +529,8 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
     // If shouldUpdateList is true, call fetchParentStats
     shouldUpdateList && (await this.fetchParentStats(workspaceSlug, projectId));
+
+    updatePersistentLayer(response.id);
 
     return response;
   }

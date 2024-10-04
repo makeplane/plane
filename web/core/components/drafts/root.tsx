@@ -21,11 +21,8 @@ const Root = observer(() => {
   const storeType = useIssueStoreType() as EIssuesStoreType.WORKSPACE_DRAFT;
 
   const { workspaceSlug } = useParams();
-  const {
-    issues,
-    issuesFilter,
-  } = useIssues(storeType);
-  const { issueMap } = useIssues();
+  const { issues, issuesFilter } = useIssues(storeType);
+  const { issueMap } = useIssues(EIssuesStoreType.WORKSPACE_DRAFT);
 
   //swr hook for fetching issue properties
   useWorkspaceIssueProperties(workspaceSlug);
@@ -33,13 +30,12 @@ const Root = observer(() => {
   const {
     fetchIssues,
     fetchNextIssues,
-    quickAddIssue,
     updateIssue,
     removeIssue,
     removeIssueFromView,
     archiveIssue,
     restoreIssue,
-    createIssue,
+    moveToIssue,
   } = useIssuesActions(storeType);
 
   const { allowPermissions } = useUserPermissions();
@@ -106,10 +102,11 @@ const Root = observer(() => {
         handleRemoveFromView={async () => removeIssueFromView && removeIssueFromView(issue.project_id, issue.id)}
         handleArchive={async () => archiveIssue && archiveIssue(issue.project_id, issue.id)}
         handleRestore={async () => restoreIssue && restoreIssue(issue.project_id, issue.id)}
+        handleMoveToIssues={async () => moveToIssue && moveToIssue(workspaceSlug.toString(), issue.id, issue)}
         readOnly={!isEditingAllowed}
       />
     ),
-    [removeIssue, isEditingAllowed, updateIssue, workspaceSlug]
+    [removeIssue, isEditingAllowed, updateIssue, workspaceSlug, moveToIssue]
   );
 
   const loadMoreIssues = useCallback(
@@ -145,11 +142,11 @@ const Root = observer(() => {
               containerRef={containerRef}
               selectionHelpers={{
                 handleClearSelection: () => {},
-                handleEntityClick: (event: React.MouseEvent, entityID: string, groupId: string) => {},
-                getIsEntitySelected: (entityID: string) => false,
-                getIsEntityActive: (entityID: string) => false,
-                handleGroupClick: (groupID: string) => {},
-                isGroupSelected: (groupID: string) => "empty",
+                handleEntityClick: () => {},
+                getIsEntitySelected: () => false,
+                getIsEntityActive: () => false,
+                handleGroupClick: () => {},
+                isGroupSelected: () => "empty",
                 isSelectionDisabled: true,
               }}
               groupId={"1"}

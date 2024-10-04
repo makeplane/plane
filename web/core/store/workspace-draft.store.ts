@@ -1,13 +1,7 @@
 import { clone, concat, get, isNil, pull, uniq } from "lodash";
 import { action, makeObservable, runInAction } from "mobx";
 // base class
-import {
-  IssuePaginationOptions,
-  TIssue,
-  TIssuesResponse,
-  TLoader,
-  ViewFlags,
-} from "@plane/types";
+import { IssuePaginationOptions, TIssue, TIssuesResponse, TLoader, ViewFlags } from "@plane/types";
 // services
 import { getDistributionPathsPostUpdate } from "@/helpers/distribution-update.helper";
 import { WorkspaceDraftService } from "@/services/workspace-draft.service";
@@ -25,17 +19,11 @@ export interface IWorkspaceDrafts extends IBaseIssuesStore {
     loadType: TLoader,
     options: IssuePaginationOptions
   ) => Promise<TIssuesResponse | undefined>;
-  fetchIssuesWithExistingPagination: (
-    workspaceSlug: string,
-    loadType: TLoader
-  ) => Promise<TIssuesResponse | undefined>;
-  fetchNextIssues: (
-    workspaceSlug: string,
-    viewId: string,
-    groupId?: string,
-  ) => Promise<TIssuesResponse | undefined>;
+  fetchIssuesWithExistingPagination: (workspaceSlug: string, loadType: TLoader) => Promise<TIssuesResponse | undefined>;
+  fetchNextIssues: (workspaceSlug: string, viewId: string, groupId?: string) => Promise<TIssuesResponse | undefined>;
   createDraft: (workspaceSlug: string, data: Partial<TIssue>) => Promise<TIssue>;
   updateDraft: (workspaceSlug: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
+  moveToIssues: (workspaceSlug: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   quickAddIssue: undefined;
   clear(): void;
   deleteDraft: (workspaceSlug: string, issueId: string) => Promise<void>;
@@ -80,7 +68,7 @@ export class WorkspaceDrafts extends BaseIssuesStore implements IWorkspaceDrafts
 
   /** */
   // updateParentStats = () => {};
-    updateParentStats = (prevIssueState?: TIssue, nextIssueState?: TIssue, id?: string | undefined) => {
+  updateParentStats = (prevIssueState?: TIssue, nextIssueState?: TIssue, id?: string | undefined) => {
     try {
       const distributionUpdates = getDistributionPathsPostUpdate(
         prevIssueState,
@@ -193,13 +181,13 @@ export class WorkspaceDrafts extends BaseIssuesStore implements IWorkspaceDrafts
   quickAddIssue = undefined;
 
   createDraft = async (workspaceSlug: string, data: Partial<TIssue>) => {
-    const response = await this.workspaceDraftService.createDraftIssue(workspaceSlug,data);
+    const response = await this.workspaceDraftService.createDraftIssue(workspaceSlug, data);
 
     this.addIssue(response);
     return response;
-  }
+  };
 
-  updateDraft = async (workspaceSlug: string,issueId: string, data: Partial<TIssue>) => {
+  updateDraft = async (workspaceSlug: string, issueId: string, data: Partial<TIssue>) => {
     // Store Before state of the issue
     const issueBeforeUpdate = clone(this.rootIssueStore.issues.getIssueById(issueId));
     try {
@@ -221,9 +209,9 @@ export class WorkspaceDrafts extends BaseIssuesStore implements IWorkspaceDrafts
       this.updateIssueList(issueBeforeUpdate, { ...issueBeforeUpdate, ...data } as TIssue);
       throw error;
     }
-  }
+  };
 
-  deleteDraft = async(workspaceSlug: string, issueId: string) => {
+  deleteDraft = async (workspaceSlug: string, issueId: string) => {
     // Male API call
     await this.workspaceDraftService.deleteDraftIssue(workspaceSlug, issueId);
     // Remove from Respective issue Id list
@@ -232,8 +220,18 @@ export class WorkspaceDrafts extends BaseIssuesStore implements IWorkspaceDrafts
     });
     // Remove issue from main issue Map store
     this.rootIssueStore.issues.removeIssue(issueId);
-  }
+  };
 
+  moveToIssues = async (workspaceSlug: string, issueId: string, data: Partial<TIssue>) => {
+    // Make API call
+    await this.workspaceDraftService.moveToIssues(workspaceSlug, issueId, data);
+    // Remove from Respective issue Id list
+    runInAction(() => {
+      this.removeIssueFromList(issueId);
+    });
+    // Remove issue from main issue Map store
+    this.rootIssueStore.issues.removeIssue(issueId);
+  };
 
   /*
    * change modules array in issue
@@ -303,5 +301,4 @@ export class WorkspaceDrafts extends BaseIssuesStore implements IWorkspaceDrafts
       throw error;
     }
   }
-
 }

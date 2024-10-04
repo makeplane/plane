@@ -23,7 +23,7 @@ export class WorkspaceDraftService extends APIService {
 
   async getDraftIssueById(workspaceSlug: string, issueId: string, queries?: any): Promise<TIssue> {
     return this.get(`/api/workspaces/${workspaceSlug}/draft-issues/${issueId}/`, {
-      params: queries
+      params: queries,
     })
       .then((response) => response?.data)
       .catch((error) => {
@@ -55,4 +55,12 @@ export class WorkspaceDraftService extends APIService {
       });
   }
 
+  // move to issue service
+  async moveToIssues(workspaceSlug: string, issueId: string, data: Partial<TIssue>): Promise<void> {
+    return this.post(`/api/workspaces/${workspaceSlug}/draft-to-issue/${issueId}/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
 }

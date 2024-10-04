@@ -10,6 +10,7 @@ export const createIssueIndexes = async () => {
     "project_id",
     "created_by",
     "cycle_id",
+    "sequence_id",
   ];
 
   const promises: Promise<any>[] = [];

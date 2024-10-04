@@ -26,6 +26,7 @@ export const WorkspaceDraftIssueQuickActions: React.FC<IQuickActionProps> = obse
     issue,
     handleDelete,
     handleUpdate,
+    handleMoveToIssues,
     customActionButton,
     portalElement,
     readOnly = false,
@@ -44,8 +45,8 @@ export const WorkspaceDraftIssueQuickActions: React.FC<IQuickActionProps> = obse
   const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
   // const activeLayout = `list layout`
   // auth
-  const isEditingAllowed =true
-    // allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT) && !readOnly;
+  const isEditingAllowed = true;
+  // allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT) && !readOnly;
   const isDeletingAllowed = isEditingAllowed;
 
   const duplicateIssuePayload = omit(
@@ -83,10 +84,7 @@ export const WorkspaceDraftIssueQuickActions: React.FC<IQuickActionProps> = obse
       key: "move-to-issues",
       title: "Move to issues",
       icon: SquareStackIcon,
-      action: () => {
-        setTrackElement(activeLayout);
-        setDeleteDraftModal(true);
-      },
+      action: () => handleMoveToIssues && handleMoveToIssues(),
       shouldRender: isDeletingAllowed,
     },
     {

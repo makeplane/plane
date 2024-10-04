@@ -1,4 +1,3 @@
-import isEmpty from "lodash/isEmpty";
 import set from "lodash/set";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
@@ -8,6 +7,8 @@ import { TIssue } from "@plane/types";
 // helpers
 import { getCurrentDateTimeInISO } from "@/helpers/date-time.helper";
 // services
+import { deleteIssueFromLocal } from "@/local-db/utils/load-issues";
+import { updatePersistentLayer } from "@/local-db/utils/utils";
 import { IssueService } from "@/services/issue";
 
 export type IIssueStore = {
@@ -84,6 +85,7 @@ export class IssueStore implements IIssueStore {
         set(this.issuesMap, [issueId, key], issue[key as keyof TIssue]);
       });
     });
+    updatePersistentLayer(issueId);
   };
 
   /**
@@ -96,6 +98,7 @@ export class IssueStore implements IIssueStore {
     runInAction(() => {
       delete this.issuesMap[issueId];
     });
+    deleteIssueFromLocal(issueId);
   };
 
   // helper methods
