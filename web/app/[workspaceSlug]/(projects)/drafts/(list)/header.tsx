@@ -1,59 +1,61 @@
 "use client";
 
-import { FC } from "react";
+import { FC, useState } from "react";
 import { EUserPermissions, EUserPermissionsLevel } from "ee/constants/user-permissions";
 import { observer } from "mobx-react";
+import { PenSquare } from "lucide-react";
 // ui
-import { PenSquare, Plus } from "lucide-react";
-import { Breadcrumbs, Button } from "@plane/ui";
+import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
+import { CreateUpdateIssueModal } from "@/components/issues";
+// constants
+import { EIssuesStoreType } from "@/constants/issue";
 // hooks
-import { useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store";
 
 export const DraftsBaseHeader: FC = observer(() => {
+  // state
+  const [isDraftIssueModalOpen, setIsDraftIssueModalOpen] = useState(false);
   // store hooks
-  const { loader } = useProject();
-  const { toggleCreateProjectModal } = useCommandPalette();
-  const { setTrackElement } = useEventTracker();
-
   const { allowPermissions } = useUserPermissions();
 
+  // check if user is authorized to create draft issue
   const isAuthorizedUser = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
 
   return (
-    <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
-      <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
-        <div className="flex items-center gap-2.5">
-          <Breadcrumbs isLoading={loader}>
+    <>
+      <CreateUpdateIssueModal
+        isOpen={isDraftIssueModalOpen}
+        onClose={() => setIsDraftIssueModalOpen(false)}
+        storeType={EIssuesStoreType.WORKSPACE_DRAFT}
+      />
+      <Header>
+        <Header.LeftItem>
+          <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              link={<BreadcrumbLink label="Drafts" icon={<PenSquare className="h-4 w-4" />} />}
+              link={<BreadcrumbLink label={`Draft`} icon={<PenSquare className="h-4 w-4 text-custom-text-300" />} />}
             />
           </Breadcrumbs>
-        </div>
+        </Header.LeftItem>
 
-        <div className="ml-auto flex items-center">
-          {isAuthorizedUser ? (
-            <Button
-              size="sm"
-              prependIcon={<Plus />}
-              onClick={() => {
-                setTrackElement("Projects page");
-                toggleCreateProjectModal(true);
-              }}
-              className="items-center gap-1"
-            >
-              Draft <span className="hidden sm:inline-block">issue</span>
-            </Button>
-          ) : (
-            <></>
-          )}
-        </div>
-      </div>
-    </div>
+        <Header.RightItem>
+          {/* TODO: Issue & Display filters */}
+          <Button
+            variant="primary"
+            size="sm"
+            className="items-center gap-1"
+            onClick={() => setIsDraftIssueModalOpen(true)}
+            disabled={!isAuthorizedUser}
+          >
+            Draft <span className="hidden sm:inline-block">issue</span>
+          </Button>
+        </Header.RightItem>
+      </Header>
+    </>
   );
 });
