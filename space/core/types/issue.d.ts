@@ -139,7 +139,7 @@ export interface IIssueReaction {
 }
 
 export interface ActorDetail {
-  avatar?: string;
+  avatar_url?: string;
   display_name?: string;
   first_name?: string;
   is_bot?: boolean;

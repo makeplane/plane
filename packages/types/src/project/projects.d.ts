@@ -18,7 +18,7 @@ export interface IProject {
   close_in: number;
   created_at: Date;
   created_by: string;
-  cover_image: string | null;
+  cover_image_url: string;
   cycle_view: boolean;
   issue_views_view: boolean;
   module_view: boolean;

@@ -28,7 +28,7 @@ type Props = {
 };
 
 const defaultValues: Partial<TProject> = {
-  cover_image: PROJECT_UNSPLASH_COVERS[Math.floor(Math.random() * PROJECT_UNSPLASH_COVERS.length)],
+  cover_image_url: PROJECT_UNSPLASH_COVERS[Math.floor(Math.random() * PROJECT_UNSPLASH_COVERS.length)],
   description: "",
   logo_props: {
     in_use: "emoji",
