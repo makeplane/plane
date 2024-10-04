@@ -32,7 +32,6 @@ const defaultValues: Partial<IWorkspace> = {
 export const WorkspaceDetails: FC = observer(() => {
   // states
   const [isLoading, setIsLoading] = useState(false);
-  const [isImageRemoving, setIsImageRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   // store hooks
   const { captureWorkspaceEvent } = useEventTracker();
@@ -93,15 +92,10 @@ export const WorkspaceDetails: FC = observer(() => {
     }, 300);
   };
 
-  const handleRemoveLogo = () => {
+  const handleRemoveLogo = async () => {
     if (!currentWorkspace) return;
 
-    const url = currentWorkspace.logo_url;
-    if (!url) return;
-
-    setIsImageRemoving(true);
-
-    updateWorkspace(currentWorkspace.slug, {
+    await updateWorkspace(currentWorkspace.slug, {
       logo_url: "",
     })
       .then(() => {
@@ -117,8 +111,7 @@ export const WorkspaceDetails: FC = observer(() => {
           title: "Error!",
           message: "There was some error in deleting your profile picture. Please try again.",
         });
-      })
-      .finally(() => setIsImageRemoving(false));
+      });
   };
 
   const handleCopyUrl = () => {
@@ -154,7 +147,6 @@ export const WorkspaceDetails: FC = observer(() => {
           <WorkspaceImageUploadModal
             isOpen={isImageUploadModalOpen}
             onClose={() => setIsImageUploadModalOpen(false)}
-            isRemoving={isImageRemoving}
             handleRemove={handleRemoveLogo}
             onSuccess={(imageUrl) => {
               onChange(imageUrl);

@@ -88,8 +88,7 @@ export const CustomImageExtension = (props: TFileHandler) => {
       });
       imageSources.forEach(async (src) => {
         try {
-          const assetUrlWithWorkspaceId = new URL(src).pathname.substring(1);
-          await restoreImage(assetUrlWithWorkspaceId);
+          await restoreImage(src);
         } catch (error) {
           console.error("Error restoring image: ", error);
         }

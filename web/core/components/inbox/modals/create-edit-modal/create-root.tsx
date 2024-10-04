@@ -25,6 +25,9 @@ import { useEventTracker, useProjectInbox, useWorkspace } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useKeypress from "@/hooks/use-keypress";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// services
+import { FileService } from "@/services/file.service";
+const fileService = new FileService();
 
 type TInboxIssueCreateRoot = {
   workspaceSlug: string;
@@ -46,6 +49,9 @@ export const defaultIssueData: Partial<TIssue> = {
 
 export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) => {
   const { workspaceSlug, projectId, handleModalClose } = props;
+  // states
+  const [uploadedAssetIds, setUploadedAssetIds] = useState<string[]>([]);
+  // router
   const router = useAppRouter();
   const pathname = usePathname();
   // refs
@@ -112,7 +118,13 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
     setFormSubmitting(true);
 
     await createInboxIssue(workspaceSlug, projectId, payload)
-      .then((res) => {
+      .then(async (res) => {
+        if (uploadedAssetIds.length > 0) {
+          await fileService.updateBulkProjectAssetsUploadStatus(workspaceSlug, projectId, res?.id ?? "", {
+            asset_ids: uploadedAssetIds,
+          });
+          setUploadedAssetIds([]);
+        }
         if (!createMore) {
           router.push(`/${workspaceSlug}/projects/${projectId}/inbox/?currentTab=open&inboxIssueId=${res?.issue?.id}`);
           handleModalClose();
@@ -177,6 +189,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
             editorRef={descriptionEditorRef}
             containerClassName="border-[0.5px] border-custom-border-200 py-3 min-h-[150px]"
             onEnterKeyPress={() => submitBtnRef?.current?.click()}
+            onAssetUpload={(assetId) => setUploadedAssetIds((prev) => [...prev, assetId])}
           />
           <InboxIssueProperties projectId={projectId} data={formData} handleData={handleFormData} />
         </div>

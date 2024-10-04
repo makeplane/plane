@@ -60,4 +60,19 @@ export class IssueAttachmentService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async deleteIssueAttachment(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    assetId: string
+  ): Promise<TIssueAttachment> {
+    return this.delete(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-attachments/${assetId}/`
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }

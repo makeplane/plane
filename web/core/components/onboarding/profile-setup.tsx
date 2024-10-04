@@ -302,7 +302,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                     <UserImageUploadModal
                       isOpen={isImageUploadModalOpen}
                       onClose={() => setIsImageUploadModalOpen(false)}
-                      handleDelete={async () => handleDelete(getValues("avatar_url"))}
+                      handleRemove={async () => handleDelete(getValues("avatar_url"))}
                       onSuccess={(url) => {
                         onChange(url);
                         setIsImageUploadModalOpen(false);

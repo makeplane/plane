@@ -16,6 +16,8 @@ import { EFileAssetType } from "@plane/types/src/enums";
 import { Button, Input, Loader } from "@plane/ui";
 // constants
 import { MAX_FILE_SIZE } from "@/constants/common";
+// helpers
+import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useInstance } from "@/hooks/store";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
@@ -322,7 +324,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                             <Image
                               layout="fill"
                               objectFit="cover"
-                              src={image ? URL.createObjectURL(image) : value ? value : ""}
+                              src={image ? URL.createObjectURL(image) : value ? (getFileURL(value) ?? "") : ""}
                               alt="image"
                               className="rounded-lg"
                             />

@@ -11,27 +11,27 @@ import { EFileAssetType } from "@plane/types/src/enums";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { MAX_FILE_SIZE } from "@/constants/common";
+// helpers
+import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useInstance } from "@/hooks/store";
 // services
 import { FileService } from "@/services/file.service";
+const fileService = new FileService();
 
 type Props = {
-  handleDelete?: () => Promise<void>;
+  handleRemove: () => Promise<void>;
   isOpen: boolean;
   onClose: () => void;
   onSuccess: (url: string) => void;
   value: string | null;
 };
 
-// services
-const fileService = new FileService();
-
 export const UserImageUploadModal: React.FC<Props> = observer((props) => {
-  const { value, onSuccess, isOpen, onClose, handleDelete } = props;
+  const { handleRemove, isOpen, onClose, onSuccess, value } = props;
   // states
-  const [isRemoving, setIsRemoving] = useState(false);
   const [image, setImage] = useState<File | null>(null);
+  const [isRemoving, setIsRemoving] = useState(false);
   const [isImageUploading, setIsImageUploading] = useState(false);
   // store hooks
   const { config } = useInstance();
@@ -79,10 +79,17 @@ export const UserImageUploadModal: React.FC<Props> = observer((props) => {
     }
   };
 
-  const handleImageDelete = async () => {
+  const handleImageRemove = async () => {
+    if (!value) return;
     setIsRemoving(true);
-    await handleDelete?.();
-    setIsRemoving(false);
+    try {
+      await fileService.deleteNewAsset(value);
+      await handleRemove();
+    } catch (error) {
+      console.log("Error in uploading user asset:", error);
+    } finally {
+      setIsRemoving(false);
+    }
   };
 
   return (
@@ -135,7 +142,7 @@ export const UserImageUploadModal: React.FC<Props> = observer((props) => {
                               Edit
                             </button>
                             <img
-                              src={image ? URL.createObjectURL(image) : value ? value : ""}
+                              src={image ? URL.createObjectURL(image) : value ? getFileURL(value) : ""}
                               alt="image"
                               className="absolute left-0 top-0 h-full w-full rounded-md object-cover"
                             />
@@ -163,7 +170,7 @@ export const UserImageUploadModal: React.FC<Props> = observer((props) => {
                 </div>
                 <p className="my-4 text-sm text-custom-text-200">File formats supported- .jpeg, .jpg, .png, .webp</p>
                 <div className="flex items-center justify-between">
-                  <Button variant="danger" size="sm" onClick={handleImageDelete} disabled={!value}>
+                  <Button variant="danger" size="sm" onClick={handleImageRemove} disabled={!value}>
                     {isRemoving ? "Removing" : "Remove"}
                   </Button>
                   <div className="flex items-center gap-2">
