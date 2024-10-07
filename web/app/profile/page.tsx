@@ -149,14 +149,14 @@ const ProfileSettingsPage = observer(() => {
         />
         <DeactivateAccountModal isOpen={deactivateAccountModal} onClose={() => setDeactivateAccountModal(false)} />
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex w-full flex-col gap-8">
+          <div className="flex w-full flex-col gap-6">
             <div className="relative h-44 w-full">
               <img
                 src={watch("cover_image") ?? "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"}
                 className="h-44 w-full rounded-lg object-cover"
                 alt={currentUser?.first_name ?? "Cover image"}
               />
-              <div className="absolute -bottom-6 left-8 flex items-end justify-between">
+              <div className="absolute -bottom-6 left-6 flex items-end justify-between">
                 <div className="flex gap-3">
                   <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-custom-background-90">
                     <button type="button" onClick={() => setIsImageUploadModalOpen(true)}>
@@ -179,7 +179,6 @@ const ProfileSettingsPage = observer(() => {
                   </div>
                 </div>
               </div>
-
               <div className="absolute bottom-3 right-3 flex">
                 <Controller
                   control={control}
@@ -196,201 +195,202 @@ const ProfileSettingsPage = observer(() => {
                 />
               </div>
             </div>
-
-            <div className="item-center mt-4 flex justify-between md:px-8">
+            <div className="item-center mt-6 flex justify-between">
               <div className="flex flex-col">
-                <div className="item-center flex text-lg font-semibold text-custom-text-100">
+                <div className="item-center flex text-lg font-medium text-custom-text-200">
                   <span>{`${watch("first_name")} ${watch("last_name")}`}</span>
                 </div>
-                <span className="text-sm tracking-tight">{watch("email")}</span>
+                <span className="text-sm text-custom-text-300 tracking-tight">{watch("email")}</span>
               </div>
-
-              {/* <Link href={`/profile/${currentUser.id}`}>
-              <span className="flex item-center gap-1 text-sm text-custom-primary-100 underline font-medium">
-                <ExternalLink className="h-4 w-4" />
-                Activity Overview
-              </span>
-            </Link> */}
             </div>
-
-            <div className="grid grid-cols-1 gap-6 md:px-8 lg:grid-cols-2 2xl:grid-cols-3 pb-8">
-              <div className="flex flex-col gap-1">
-                <h4 className="text-sm">
-                  First name<span className="text-red-500">*</span>
-                </h4>
-                <Controller
-                  control={control}
-                  name="first_name"
-                  rules={{
-                    required: "First name is required.",
-                  }}
-                  render={({ field: { value, onChange, ref } }) => (
-                    <Input
-                      id="first_name"
-                      name="first_name"
-                      type="text"
-                      value={value}
-                      onChange={onChange}
-                      ref={ref}
-                      hasError={Boolean(errors.first_name)}
-                      placeholder="Enter your first name"
-                      className={`w-full rounded-md ${errors.first_name ? "border-red-500" : ""}`}
-                      maxLength={24}
-                      autoComplete="on"
-                    />
-                  )}
-                />
-                {errors.first_name && <span className="text-xs text-red-500">Please enter first name</span>}
+            <div className="flex flex-col gap-2">
+              <h3 className="text-sm font-semibold text-custom-text-400 pt-1 pb-2">Personal information</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                <div className="flex flex-col gap-1">
+                  <h4 className="text-sm font-medium text-custom-text-200">
+                    First name<span className="text-red-500">*</span>
+                  </h4>
+                  <Controller
+                    control={control}
+                    name="first_name"
+                    rules={{
+                      required: "First name is required.",
+                    }}
+                    render={({ field: { value, onChange, ref } }) => (
+                      <Input
+                        id="first_name"
+                        name="first_name"
+                        type="text"
+                        value={value}
+                        onChange={onChange}
+                        ref={ref}
+                        hasError={Boolean(errors.first_name)}
+                        placeholder="Enter your first name"
+                        className={`w-full rounded-md ${errors.first_name ? "border-red-500" : ""}`}
+                        maxLength={24}
+                        autoComplete="on"
+                      />
+                    )}
+                  />
+                  {errors.first_name && <span className="text-xs text-red-500">Please enter first name</span>}
+                </div>
+                <div className="flex flex-col gap-1">
+                  <h4 className="text-sm font-medium text-custom-text-200">Last name</h4>
+                  <Controller
+                    control={control}
+                    name="last_name"
+                    render={({ field: { value, onChange, ref } }) => (
+                      <Input
+                        id="last_name"
+                        name="last_name"
+                        type="text"
+                        value={value}
+                        onChange={onChange}
+                        ref={ref}
+                        hasError={Boolean(errors.last_name)}
+                        placeholder="Enter your last name"
+                        className="w-full rounded-md"
+                        maxLength={24}
+                        autoComplete="on"
+                      />
+                    )}
+                  />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <h4 className="text-sm font-medium text-custom-text-200">
+                    Display name<span className="text-red-500">*</span>
+                  </h4>
+                  <Controller
+                    control={control}
+                    name="display_name"
+                    rules={{
+                      required: "Display name is required.",
+                      validate: (value) => {
+                        if (value.trim().length < 1) return "Display name can't be empty.";
+                        if (value.split("  ").length > 1) return "Display name can't have two consecutive spaces.";
+                        if (value.replace(/\s/g, "").length < 1)
+                          return "Display name must be at least 1 characters long.";
+                        if (value.replace(/\s/g, "").length > 20)
+                          return "Display name must be less than 20 characters long.";
+                        return true;
+                      },
+                    }}
+                    render={({ field: { value, onChange, ref } }) => (
+                      <Input
+                        id="display_name"
+                        name="display_name"
+                        type="text"
+                        value={value}
+                        onChange={onChange}
+                        ref={ref}
+                        hasError={Boolean(errors?.display_name)}
+                        placeholder="Enter your display name"
+                        className={`w-full ${errors?.display_name ? "border-red-500" : ""}`}
+                        maxLength={24}
+                      />
+                    )}
+                  />
+                  {errors?.display_name && <span className="text-xs text-red-500">{errors?.display_name?.message}</span>}
+                </div>
+                <div className="flex flex-col gap-1">
+                  <h4 className="text-sm font-medium text-custom-text-200">
+                    Email<span className="text-red-500">*</span>
+                  </h4>
+                  <Controller
+                    control={control}
+                    name="email"
+                    rules={{
+                      required: "Email is required.",
+                    }}
+                    render={({ field: { value, ref } }) => (
+                      <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        value={value}
+                        ref={ref}
+                        hasError={Boolean(errors.email)}
+                        placeholder="Enter your email"
+                        className={`w-full cursor-not-allowed rounded-md !bg-custom-background-90 ${errors.email ? "border-red-500" : ""
+                          }`}
+                        autoComplete="on"
+                        disabled
+                      />
+                    )}
+                  />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <h4 className="text-sm font-medium text-custom-text-200">
+                    Role<span className="text-red-500">*</span>
+                  </h4>
+                  <Controller
+                    name="role"
+                    control={control}
+                    rules={{ required: "Role is required." }}
+                    render={({ field: { value, onChange } }) => (
+                      <CustomSelect
+                        value={value}
+                        onChange={onChange}
+                        label={value ? value.toString() : "Select your role"}
+                        buttonClassName={errors.role ? "border-red-500" : "border-none"}
+                        className="rounded-md border-[0.5px] !border-custom-border-200"
+                        optionsClassName="w-full"
+                        input
+                      >
+                        {USER_ROLES.map((item) => (
+                          <CustomSelect.Option key={item.value} value={item.value}>
+                            {item.label}
+                          </CustomSelect.Option>
+                        ))}
+                      </CustomSelect>
+                    )}
+                  />
+                  {errors.role && <span className="text-xs text-red-500">Please select a role</span>}
+                </div>
               </div>
-
-              <div className="flex flex-col gap-1">
-                <h4 className="text-sm">Last name</h4>
-
-                <Controller
-                  control={control}
-                  name="last_name"
-                  render={({ field: { value, onChange, ref } }) => (
-                    <Input
-                      id="last_name"
-                      name="last_name"
-                      type="text"
-                      value={value}
-                      onChange={onChange}
-                      ref={ref}
-                      hasError={Boolean(errors.last_name)}
-                      placeholder="Enter your last name"
-                      className="w-full rounded-md"
-                      maxLength={24}
-                      autoComplete="on"
-                    />
-                  )}
-                />
+            </div>
+            <div className="flex flex-col gap-2">
+              <h3 className="text-sm font-semibold text-custom-text-400 pt-1 pb-2">Timezone/Language</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                <div className="flex flex-col gap-1">
+                  <h4 className="text-sm font-medium text-custom-text-200">
+                    Timezone<span className="text-red-500">*</span>
+                  </h4>
+                  <Controller
+                    name="user_timezone"
+                    control={control}
+                    rules={{ required: "Please select a timezone" }}
+                    render={({ field: { value, onChange } }) => (
+                      <CustomSearchSelect
+                        value={value}
+                        label={value ? (TIME_ZONES.find((t) => t.value === value)?.label ?? value) : "Select a timezone"}
+                        options={timeZoneOptions}
+                        onChange={onChange}
+                        buttonClassName={errors.user_timezone ? "border-red-500" : "border-none"}
+                        className="rounded-md border-[0.5px] !border-custom-border-200"
+                        input
+                      />
+                    )}
+                  />
+                  {errors.user_timezone && <span className="text-xs text-red-500">{errors.user_timezone.message}</span>}
+                </div>
+                {/* TODO: Add Coming soon tooltip */}
+                <div className="flex flex-col gap-1">
+                  <h4 className="text-sm font-medium text-custom-text-200">
+                    Language<span className="text-red-500">*</span>
+                  </h4>
+                  <CustomSearchSelect
+                    value="English (US)"
+                    label="English (US)"
+                    options={[]}
+                    onChange={() => { }}
+                    className="rounded-md bg-custom-background-90"
+                    input
+                    disabled
+                  />
+                </div>
               </div>
-
-              <div className="flex flex-col gap-1">
-                <h4 className="text-sm">
-                  Email<span className="text-red-500">*</span>
-                </h4>
-                <Controller
-                  control={control}
-                  name="email"
-                  rules={{
-                    required: "Email is required.",
-                  }}
-                  render={({ field: { value, ref } }) => (
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      value={value}
-                      ref={ref}
-                      hasError={Boolean(errors.email)}
-                      placeholder="Enter your email"
-                      className={`w-full cursor-not-allowed rounded-md !bg-custom-background-80 ${
-                        errors.email ? "border-red-500" : ""
-                      }`}
-                      autoComplete="on"
-                      disabled
-                    />
-                  )}
-                />
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <h4 className="text-sm">
-                  Role<span className="text-red-500">*</span>
-                </h4>
-                <Controller
-                  name="role"
-                  control={control}
-                  rules={{ required: "Role is required." }}
-                  render={({ field: { value, onChange } }) => (
-                    <CustomSelect
-                      value={value}
-                      onChange={onChange}
-                      label={value ? value.toString() : "Select your role"}
-                      buttonClassName={errors.role ? "border-red-500" : "border-none"}
-                      className="rounded-md border-[0.5px] !border-custom-border-200"
-                      optionsClassName="w-full"
-                      input
-                    >
-                      {USER_ROLES.map((item) => (
-                        <CustomSelect.Option key={item.value} value={item.value}>
-                          {item.label}
-                        </CustomSelect.Option>
-                      ))}
-                    </CustomSelect>
-                  )}
-                />
-                {errors.role && <span className="text-xs text-red-500">Please select a role</span>}
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <h4 className="text-sm">
-                  Display name<span className="text-red-500">*</span>
-                </h4>
-                <Controller
-                  control={control}
-                  name="display_name"
-                  rules={{
-                    required: "Display name is required.",
-                    validate: (value) => {
-                      if (value.trim().length < 1) return "Display name can't be empty.";
-
-                      if (value.split("  ").length > 1) return "Display name can't have two consecutive spaces.";
-
-                      if (value.replace(/\s/g, "").length < 1)
-                        return "Display name must be at least 1 characters long.";
-
-                      if (value.replace(/\s/g, "").length > 20)
-                        return "Display name must be less than 20 characters long.";
-
-                      return true;
-                    },
-                  }}
-                  render={({ field: { value, onChange, ref } }) => (
-                    <Input
-                      id="display_name"
-                      name="display_name"
-                      type="text"
-                      value={value}
-                      onChange={onChange}
-                      ref={ref}
-                      hasError={Boolean(errors?.display_name)}
-                      placeholder="Enter your display name"
-                      className={`w-full ${errors?.display_name ? "border-red-500" : ""}`}
-                      maxLength={24}
-                    />
-                  )}
-                />
-                {errors?.display_name && <span className="text-xs text-red-500">{errors?.display_name?.message}</span>}
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <h4 className="text-sm">
-                  Timezone<span className="text-red-500">*</span>
-                </h4>
-
-                <Controller
-                  name="user_timezone"
-                  control={control}
-                  rules={{ required: "Time zone is required" }}
-                  render={({ field: { value, onChange } }) => (
-                    <CustomSearchSelect
-                      value={value}
-                      label={value ? (TIME_ZONES.find((t) => t.value === value)?.label ?? value) : "Select a timezone"}
-                      options={timeZoneOptions}
-                      onChange={onChange}
-                      buttonClassName={errors.user_timezone ? "border-red-500" : "border-none"}
-                      className="rounded-md border-[0.5px] !border-custom-border-200"
-                      input
-                    />
-                  )}
-                />
-                {errors.role && <span className="text-xs text-red-500">Please select a time zone</span>}
-              </div>
-
-              <div className="flex items-center justify-between py-2">
+              <div className="flex items-center justify-between pt-6 pb-8">
                 <Button variant="primary" type="submit" loading={isLoading}>
                   {isLoading ? "Saving..." : "Save changes"}
                 </Button>
@@ -398,11 +398,11 @@ const ProfileSettingsPage = observer(() => {
             </div>
           </div>
         </form>
-        <Disclosure as="div" className="border-t border-custom-border-100 md:px-8">
+        <Disclosure as="div" className="border-t border-custom-border-100">
           {({ open }) => (
             <>
               <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between py-4">
-                <span className="text-lg tracking-tight">Deactivate account</span>
+                <span className="text-lg font-medium tracking-tight">Deactivate account</span>
                 <ChevronDown className={`h-5 w-5 transition-all ${open ? "rotate-180" : ""}`} />
               </Disclosure.Button>
               <Transition
@@ -435,9 +435,5 @@ const ProfileSettingsPage = observer(() => {
     </>
   );
 });
-
-// ProfileSettingsPage.getLayout = function getLayout(page: ReactElement) {
-//   return <ProfileSettingsLayout>{page}</ProfileSettingsLayout>;
-// };
 
 export default ProfileSettingsPage;

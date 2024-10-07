@@ -16,6 +16,7 @@ import {
   CustomEmojiIconPicker,
   EmojiIconPickerTypes,
   Tooltip,
+  CustomSearchSelect,
 } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
@@ -24,6 +25,7 @@ import { ImagePickerPopover } from "@/components/core";
 import { PROJECT_UPDATED } from "@/constants/event-tracker";
 import { NETWORK_CHOICES } from "@/constants/project";
 // helpers
+import { TIME_ZONES } from "@/constants/timezones";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
@@ -64,6 +66,13 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       workspace: (project.workspace as IWorkspace).id,
     },
   });
+  // derived values
+  const currentNetwork = NETWORK_CHOICES.find((n) => n.key === project?.network);
+  const timeZoneOptions = TIME_ZONES.map((timeZone) => ({
+    value: timeZone.value,
+    query: timeZone.label + " " + timeZone.value,
+    content: timeZone.label,
+  }));
 
   useEffect(() => {
     if (project && projectId !== getValues("id")) {
@@ -74,12 +83,15 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [project, projectId]);
+
+  // handlers
   const handleIdentifierChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     const alphanumericValue = value.replace(/[^a-zA-Z0-9]/g, "");
     const formattedValue = alphanumericValue.toUpperCase();
     setValue("identifier", formattedValue);
   };
+
   const handleUpdateChange = async (payload: Partial<IProject>) => {
     if (!workspaceSlug || !project) return;
     return updateProject(workspaceSlug.toString(), project.id, payload)
@@ -113,6 +125,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
         });
       });
   };
+
   const onSubmit = async (formData: IProject) => {
     if (!workspaceSlug) return;
     setIsLoading(true);
@@ -123,6 +136,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       description: formData.description,
       cover_image: formData.cover_image,
       logo_props: formData.logo_props,
+      timezone: formData.timezone,
     };
 
     if (project.identifier !== formData.identifier)
@@ -137,7 +151,6 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       setIsLoading(false);
     }, 300);
   };
-  const currentNetwork = NETWORK_CHOICES.find((n) => n.key === project?.network);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -260,8 +273,8 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
             )}
           />
         </div>
-        <div className="flex w-full justify-between gap-10">
-          <div className="flex w-1/2 flex-col gap-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div className="flex flex-col gap-1">
             <h4 className="text-sm">Project ID</h4>
             <div className="relative">
               <Controller
@@ -309,14 +322,13 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
               <>{errors?.identifier?.message}</>
             </span>
           </div>
-          <div className="flex w-1/2 flex-col gap-1">
+          <div className="flex flex-col gap-1">
             <h4 className="text-sm">Network</h4>
             <Controller
               name="network"
               control={control}
               render={({ field: { value, onChange } }) => {
                 const selectedNetwork = NETWORK_CHOICES.find((n) => n.key === value);
-
                 return (
                   <CustomSelect
                     value={value}
@@ -353,6 +365,26 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                 );
               }}
             />
+          </div>
+          <div className="flex flex-col gap-1 col-span-1 sm:col-span-2 xl:col-span-1">
+            <h4 className="text-sm">Project Timezone</h4>
+            <Controller
+              name="timezone"
+              control={control}
+              rules={{ required: "Please select a timezone" }}
+              render={({ field: { value, onChange } }) => (
+                <CustomSearchSelect
+                  value={value}
+                  label={value ? (TIME_ZONES.find((t) => t.value === value)?.label ?? value) : "Select a timezone"}
+                  options={timeZoneOptions}
+                  onChange={onChange}
+                  buttonClassName={errors.timezone ? "border-red-500" : "border-none"}
+                  className="rounded-md border-[0.5px] !border-custom-border-200"
+                  input
+                />
+              )}
+            />
+            {errors.timezone && <span className="text-xs text-red-500">{errors.timezone.message}</span>}
           </div>
         </div>
         <div className="flex items-center justify-between py-2">
