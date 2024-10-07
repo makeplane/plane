@@ -169,12 +169,11 @@ class YourWorkQuery:
 
         # issues
         issues = await sync_to_async(list)(
-            Issue.objects.filter(workspace__slug=slug)
+            Issue.issue_objects.filter(workspace__slug=slug)
             .filter(
                 Q(
                     project__project_projectmember__member=info.context.user,
                     project__project_projectmember__is_active=True,
-                    # state__group__in=["unstarted", "started"],
                     assignees__in=[info.context.user],
                 ),
             )

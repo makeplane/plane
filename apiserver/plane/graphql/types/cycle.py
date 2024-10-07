@@ -39,6 +39,7 @@ class CycleType:
     updated_at: datetime
     total_issues: int
     completed_issues: int
+    is_favorite: bool
     owned_by: Optional[UserType]
 
     @strawberry.field

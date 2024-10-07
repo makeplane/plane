@@ -7,13 +7,16 @@ import strawberry
 # Python Standard Library Imports
 from asgiref.sync import sync_to_async
 
+# Django Imports
+from django.db.models import Exists, OuterRef
+
 # Strawberry Imports
 from strawberry.types import Info
 from strawberry.scalars import JSON
 from strawberry.permission import PermissionExtension
 
 # Module Imports
-from plane.db.models import Module, Issue, ModuleUserProperties
+from plane.db.models import Module, Issue, ModuleUserProperties, UserFavorite
 from plane.graphql.types.module import ModuleType, ModuleUserPropertyType
 from plane.graphql.types.issue import (
     IssuesInformationType,
@@ -40,6 +43,13 @@ class ModuleQuery:
         project: strawberry.ID,
         cursor: Optional[str] = None,
     ) -> PaginatorResponse[ModuleType]:
+        subquery = UserFavorite.objects.filter(
+            user=info.context.user,
+            entity_type="module",
+            entity_identifier=OuterRef("pk"),
+            project_id=project,
+        )
+
         modules = await sync_to_async(list)(
             Module.objects.filter(workspace__slug=slug)
             .filter(project_id=project)
@@ -47,6 +57,7 @@ class ModuleQuery:
                 project__project_projectmember__member=info.context.user,
                 project__project_projectmember__is_active=True,
             )
+            .annotate(is_favorite=Exists(subquery))
         )
 
         return paginate(results_object=modules, cursor=cursor)
