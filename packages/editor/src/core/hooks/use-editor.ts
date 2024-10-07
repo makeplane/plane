@@ -68,10 +68,19 @@ export const useEditor = (props: CustomEditorProps) => {
   const editor = useTiptapEditor({
     immediatelyRender: true,
     shouldRerenderOnTransaction: false,
+    enableContentCheck: true,
     onContentError({ editor, error, disableCollaboration }) {
+      // Disable collaboration to prevent syncing invalid content
+      disableCollaboration();
+
+      // Prevent emitting updates
+      const emitUpdate = false;
+
+      // Disable further user input
+      editor.setEditable(false, emitUpdate);
       console.log("onContentError", error);
-      // disableCollaboration();
     },
+
     editorProps: {
       ...CoreEditorProps({
         editorClassName,
