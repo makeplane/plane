@@ -66,6 +66,12 @@ export const useEditor = (props: CustomEditorProps) => {
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
   const savedSelectionRef = useRef(savedSelection);
   const editor = useTiptapEditor({
+    immediatelyRender: true,
+    shouldRerenderOnTransaction: false,
+    onContentError({ editor, error, disableCollaboration }) {
+      console.log("onContentError", error);
+      // disableCollaboration();
+    },
     editorProps: {
       ...CoreEditorProps({
         editorClassName,
