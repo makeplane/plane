@@ -1,6 +1,7 @@
 import { DragEvent, useCallback, useEffect, useState } from "react";
 import { Editor } from "@tiptap/core";
 import { isFileValid } from "@/plugins/image";
+import { insertImagesSafely } from "@/extensions/drop";
 
 export const useUploader = ({
   onUpload,
@@ -63,7 +64,15 @@ export const useUploader = ({
   return { uploading, uploadFile };
 };
 
-export const useDropZone = ({ uploader }: { uploader: (file: File) => void }) => {
+export const useDropZone = ({
+  uploader,
+  editor,
+  pos,
+}: {
+  uploader: (file: File) => Promise<void>;
+  editor: Editor;
+  pos: number;
+}) => {
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [draggedInside, setDraggedInside] = useState<boolean>(false);
 
@@ -86,40 +95,16 @@ export const useDropZone = ({ uploader }: { uploader: (file: File) => void }) =>
   }, []);
 
   const onDrop = useCallback(
-    (e: DragEvent<HTMLDivElement>) => {
+    async (e: DragEvent<HTMLDivElement>) => {
+      e.preventDefault();
       setDraggedInside(false);
       if (e.dataTransfer.files.length === 0) {
         return;
       }
-
       const fileList = e.dataTransfer.files;
-
-      const files: File[] = [];
-
-      for (let i = 0; i < fileList.length; i += 1) {
-        const item = fileList.item(i);
-        if (item) {
-          files.push(item);
-        }
-      }
-
-      if (files.some((file) => file.type.indexOf("image") === -1)) {
-        return;
-      }
-
-      e.preventDefault();
-
-      const filteredFiles = files.filter((f) => f.type.indexOf("image") !== -1);
-
-      const file = filteredFiles.length > 0 ? filteredFiles[0] : undefined;
-
-      if (file) {
-        uploader(file);
-      } else {
-        console.error("No file found");
-      }
+      await uploadFirstImageAndInsertRemaining(editor, fileList, pos, uploader);
     },
-    [uploader]
+    [uploader, editor, pos]
   );
 
   const onDragEnter = () => {
@@ -142,4 +127,41 @@ function trimFileName(fileName: string, maxLength = 100) {
   }
 
   return fileName;
+}
+
+// Upload the first image and insert the remaining images for uploading multiple image
+// post insertion of image-component
+export async function uploadFirstImageAndInsertRemaining(
+  editor: Editor,
+  fileList: FileList,
+  pos: number,
+  uploaderFn: (file: File) => Promise<void>
+) {
+  const filteredFiles: File[] = [];
+  for (let i = 0; i < fileList.length; i += 1) {
+    const item = fileList.item(i);
+    if (item && item.type.indexOf("image") !== -1 && isFileValid(item)) {
+      filteredFiles.push(item);
+    }
+  }
+  if (filteredFiles.length !== fileList.length) {
+    console.warn("Some files were not images and have been ignored.");
+  }
+  if (filteredFiles.length === 0) {
+    console.error("No image files found to upload");
+    return;
+  }
+
+  // Upload the first image
+  const firstFile = filteredFiles[0];
+  uploaderFn(firstFile);
+
+  // Insert the remaining images
+  const remainingFiles = filteredFiles.slice(1);
+
+  if (remainingFiles.length > 0) {
+    const docSize = editor.state.doc.content.size;
+    const posOfNextImageToBeInserted = Math.min(pos + 1, docSize);
+    insertImagesSafely({ editor, files: remainingFiles, initialPos: posOfNextImageToBeInserted, event: "drop" });
+  }
 }

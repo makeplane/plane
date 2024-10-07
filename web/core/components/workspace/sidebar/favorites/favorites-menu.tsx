@@ -182,7 +182,7 @@ export const SidebarFavoritesMenu = observer(() => {
                   .map((fav, index) => (
                     <Tooltip
                       key={fav.id}
-                      tooltipContent={fav.entity_data ? fav.entity_data.name : fav.name}
+                      tooltipContent={fav?.entity_data ? fav.entity_data?.name : fav?.name}
                       position="right"
                       className="ml-2"
                       disabled={!sidebarCollapsed}
