@@ -103,9 +103,12 @@ export const CustomImageUploader = (props: {
     async (e: ChangeEvent<HTMLInputElement>) => {
       e.preventDefault();
       const fileList = e.target.files;
+      if (!fileList) {
+        return;
+      }
       await uploadFirstImageAndInsertRemaining(editor, fileList, getPos(), uploadFile);
     },
-    [uploadFile, editor, getPos, uploadFile]
+    [uploadFile, editor, getPos]
   );
 
   const getDisplayMessage = useCallback(() => {
@@ -128,7 +131,7 @@ export const CustomImageUploader = (props: {
   return (
     <div
       className={cn(
-        "image-upload-component flex items-center justify-start gap-2 py-3 px-2 rounded-lg text-custom-text-300 hover:text-custom-text-200 bg-custom-background-90 hover:bg-custom-background-80 border border-dashed border-custom-border-300 cursor-pointer transition-all duration-200 ease-in-out cursor-default",
+        "image-upload-component flex items-center justify-start gap-2 py-3 px-2 rounded-lg text-custom-text-300 hover:text-custom-text-200 bg-custom-background-90 hover:bg-custom-background-80 border border-dashed border-custom-border-300 transition-all duration-200 ease-in-out cursor-default",
         {
           "hover:text-custom-text-200 cursor-pointer": editor.isEditable,
           "bg-custom-background-80 text-custom-text-200": draggedInside,

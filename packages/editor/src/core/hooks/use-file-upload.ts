@@ -137,18 +137,14 @@ export async function uploadFirstImageAndInsertRemaining(
   pos: number,
   uploaderFn: (file: File) => Promise<void>
 ) {
-  const files: File[] = [];
+  const filteredFiles: File[] = [];
   for (let i = 0; i < fileList.length; i += 1) {
     const item = fileList.item(i);
-    if (item) {
-      files.push(item);
+    if (item && item.type.indexOf("image") !== -1 && isFileValid(item)) {
+      filteredFiles.push(item);
     }
   }
-  if (files.some((file) => file.type.indexOf("image") === -1)) {
-    return;
-  }
-  const filteredFiles = files.filter((f) => f.type.indexOf("image") !== -1);
-  if (filteredFiles.length !== files.length) {
+  if (filteredFiles.length !== fileList.length) {
     console.warn("Some files were not images and have been ignored.");
   }
   if (filteredFiles.length === 0) {
