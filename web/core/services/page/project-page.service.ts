@@ -1,8 +1,7 @@
 // types
-import { TDocumentPayload, TFileSignedURLResponse, TPage } from "@plane/types";
+import { TDocumentPayload, TPage } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
-import { generateFileUploadPayload, getFileMetaDataForUpload } from "@/helpers/file.helper";
 // services
 import { APIService } from "@/services/api.service";
 import { FileUploadService } from "@/services/file-upload.service";
