@@ -413,7 +413,7 @@ class ProjectViewSet(BaseViewSet):
                 status=status.HTTP_410_GONE,
             )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN])
     def partial_update(self, request, slug, pk=None):
         try:
             workspace = Workspace.objects.get(slug=slug)
