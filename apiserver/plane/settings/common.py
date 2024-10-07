@@ -38,7 +38,7 @@ DEBUG = int(os.environ.get("DEBUG", "0"))
 # Initialize Django instrumentation
 DjangoInstrumentor().instrument()
 # Configure the tracer provider
-service_name = os.environ.get("SERVICE_NAME", "plane-ce-api")
+service_name = os.environ.get("SERVICE_NAME", "plane-ee-api")
 resource = Resource.create({"service.name": service_name})
 trace.set_tracer_provider(TracerProvider(resource=resource))
 # Configure the OTLP exporter
