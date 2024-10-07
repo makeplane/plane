@@ -15,7 +15,7 @@ import {
   PanelLeft,
   MoveRight,
 } from "lucide-react";
-import { Header, CustomMenu, EHeaderVariant } from "@plane/ui";
+import { Header, CustomMenu, EHeaderVariant, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { InboxIssueStatus } from "@/components/inbox";
 import { IssueUpdateStatus } from "@/components/issues";
@@ -47,6 +47,7 @@ type Props = {
   setIsMobileSidebar: (value: boolean) => void;
   isNotificationEmbed: boolean;
   embedRemoveCurrentNotification?: () => void;
+  isProjectAdmin: boolean;
 };
 
 export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) => {
@@ -70,6 +71,7 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
     setIsMobileSidebar,
     isNotificationEmbed,
     embedRemoveCurrentNotification,
+    isProjectAdmin,
   } = props;
   const router = useAppRouter();
   const issue = inboxIssue?.issue;
@@ -139,7 +141,17 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
               </CustomMenu.MenuItem>
             )}
             {canMarkAsAccepted && !isAcceptedOrDeclined && (
-              <CustomMenu.MenuItem onClick={handleIssueSnoozeAction}>
+              <CustomMenu.MenuItem
+                onClick={() =>
+                  isProjectAdmin
+                    ? handleIssueSnoozeAction()
+                    : setToast({
+                        type: TOAST_TYPE.ERROR,
+                        title: "Permission denied",
+                        message: "Only project admins can snooze/Un-snooze issues",
+                      })
+                }
+              >
                 <div className="flex items-center gap-2">
                   <Clock size={14} strokeWidth={2} />
                   {inboxIssue?.snoozed_till && numberOfDaysLeft && numberOfDaysLeft > 0 ? "Un-snooze" : "Snooze"}
@@ -147,7 +159,17 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
               </CustomMenu.MenuItem>
             )}
             {canMarkAsDuplicate && !isAcceptedOrDeclined && (
-              <CustomMenu.MenuItem onClick={() => setSelectDuplicateIssue(true)}>
+              <CustomMenu.MenuItem
+                onClick={() =>
+                  isProjectAdmin
+                    ? setSelectDuplicateIssue(true)
+                    : setToast({
+                        type: TOAST_TYPE.ERROR,
+                        title: "Permission denied",
+                        message: "Only project admins can mark issues as duplicate",
+                      })
+                }
+              >
                 <div className="flex items-center gap-2">
                   <FileStack size={14} strokeWidth={2} />
                   Mark as duplicate
@@ -155,7 +177,17 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
               </CustomMenu.MenuItem>
             )}
             {canMarkAsAccepted && (
-              <CustomMenu.MenuItem onClick={() => setAcceptIssueModal(true)}>
+              <CustomMenu.MenuItem
+                onClick={() =>
+                  isProjectAdmin
+                    ? setAcceptIssueModal(true)
+                    : setToast({
+                        type: TOAST_TYPE.ERROR,
+                        title: "Permission denied",
+                        message: "Only project admins can accept issues",
+                      })
+                }
+              >
                 <div className="flex items-center gap-2 text-green-500">
                   <CircleCheck size={14} strokeWidth={2} />
                   Accept
@@ -163,7 +195,17 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
               </CustomMenu.MenuItem>
             )}
             {canMarkAsDeclined && (
-              <CustomMenu.MenuItem onClick={() => setDeclineIssueModal(true)}>
+              <CustomMenu.MenuItem
+                onClick={() =>
+                  isProjectAdmin
+                    ? setDeclineIssueModal(true)
+                    : setToast({
+                        type: TOAST_TYPE.ERROR,
+                        title: "Permission denied",
+                        message: "Only project admins can deny issues",
+                      })
+                }
+              >
                 <div className="flex items-center gap-2 text-red-500">
                   <CircleX size={14} strokeWidth={2} />
                   Decline
