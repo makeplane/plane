@@ -9,7 +9,7 @@ from asgiref.sync import sync_to_async
 
 # Django Imports
 from django.utils import timezone
-from django.db.models import Q
+from django.db.models import Q, Exists, OuterRef
 
 # Strawberry Imports
 from strawberry.types import Info
@@ -17,7 +17,7 @@ from strawberry.scalars import JSON
 from strawberry.permission import PermissionExtension
 
 # Module Imports
-from plane.db.models import Cycle, Issue, CycleUserProperties
+from plane.db.models import Cycle, Issue, CycleUserProperties, UserFavorite
 from plane.graphql.types.cycle import CycleType, CycleUserPropertyType
 from plane.graphql.types.issue import (
     IssuesInformationType,
@@ -43,6 +43,13 @@ class CycleQuery:
         slug: str,
         project: strawberry.ID,
     ) -> list[CycleType]:
+        subquery = UserFavorite.objects.filter(
+            user=info.context.user,
+            entity_type="cycle",
+            entity_identifier=OuterRef("pk"),
+            project_id=project,
+        )
+
         # get cycles those are current and upcoming cycles based on the start_date and end_date
         cycles = await sync_to_async(list)(
             Cycle.objects.filter(workspace__slug=slug, project_id=project)
@@ -62,6 +69,7 @@ class CycleQuery:
                 )
             )
             .order_by("start_date")
+            .annotate(is_favorite=Exists(subquery))
         )
         return cycles
 
