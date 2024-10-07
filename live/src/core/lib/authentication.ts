@@ -1,4 +1,3 @@
-import { ConnectionConfiguration } from "@hocuspocus/server";
 // services
 import { UserService } from "@/core/services/user.service.js";
 // core helpers
@@ -7,9 +6,7 @@ import { manualLogger } from "@/core/helpers/logger.js";
 const userService = new UserService();
 
 type Props = {
-  connection: ConnectionConfiguration;
   cookie: string;
-  params: URLSearchParams;
   token: string;
 };
 
