@@ -3,6 +3,8 @@
 import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
+// components
+import { AuthBanner } from "@/components/account";
 // helpers
 import {
   authErrorHandler,
@@ -11,12 +13,8 @@ import {
   EErrorAlertType,
   TAuthErrorInfo,
 } from "@/helpers/authentication.helper";
-// components
-import { AuthBanner } from "@/components/account";
 // hooks
 import { useInstance } from "@/hooks/store";
-// services
-import { AuthService } from "@/services/auth.service";
 // plane web components
 import {
   MobileTermsAndConditions,
@@ -24,6 +22,8 @@ import {
   MobileAuthUniqueCodeForm,
   MobileAuthPasswordForm,
 } from "@/plane-web/components/mobile";
+// services
+import { AuthService } from "@/services/auth.service";
 
 // service initialization
 const authService = new AuthService();
@@ -53,7 +53,7 @@ const UNIQUE_CODE_ERROR_CODES = [
 
 const PASSWORD_ERROR_CODES = [EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_IN];
 
-export const AuthRoot: FC = observer((props) => {
+export const AuthRoot: FC = observer(() => {
   // router
   const searchParams = useSearchParams();
   // query params

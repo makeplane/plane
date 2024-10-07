@@ -41,6 +41,7 @@ class ModuleType:
     logo_props: Optional[JSON]
     total_issues: int
     completed_issues: int
+    is_favorite: bool
     lead: Optional[UserType]
 
     @strawberry.field
