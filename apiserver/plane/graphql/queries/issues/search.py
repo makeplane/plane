@@ -92,11 +92,11 @@ class IssuesSearchQuery:
         if subIssues and issue:
             current_issue = await get_issue_details(issue)
             issue_queryset = issue_queryset.filter(
-                Q(parent__isnull=True), ~Q(parent=issue)
+                Q(parent__isnull=True), ~Q(pk=issue)
             )
             if current_issue.parent:
                 issue_queryset = issue_queryset.filter(
-                    ~Q(parent=current_issue.parent)
+                    ~Q(pk=current_issue.parent_id)
                 )
 
         # apply search filter
