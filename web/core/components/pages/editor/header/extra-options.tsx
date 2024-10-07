@@ -1,20 +1,17 @@
 "use client";
 
-import { useState } from "react";
 import { observer } from "mobx-react";
-import { Sparkle } from "lucide-react";
 // editor
 import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
 // ui
-import { ArchiveIcon } from "@plane/ui";
+import { ArchiveIcon, FavoriteStar, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 // components
-import { GptAssistantPopover } from "@/components/core";
 import { LockedComponent } from "@/components/icons/locked-component";
 import { PageInfoPopover, PageOptionsDropdown } from "@/components/pages";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
-import { useInstance } from "@/hooks/store";
+import useOnlineStatus from "@/hooks/use-online-status";
 // store
 import { IPage } from "@/store/pages/page";
 
@@ -23,61 +20,76 @@ type Props = {
   handleDuplicatePage: () => void;
   page: IPage;
   readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
-  handleSaveDescription: (forceSync?: boolean, initSyncVectorAsUpdate?: Uint8Array | undefined) => Promise<void>;
 };
 
 export const PageExtraOptions: React.FC<Props> = observer((props) => {
-  const { editorRef, handleDuplicatePage, page, readOnlyEditorRef, handleSaveDescription } = props;
-  // states
-  const [gptModalOpen, setGptModal] = useState(false);
-  // store hooks
-  const { config } = useInstance();
+  const { editorRef, handleDuplicatePage, page, readOnlyEditorRef } = props;
   // derived values
-  const { archived_at, isContentEditable, is_locked } = page;
-
-  const handleAiAssistance = async (response: string) => {
-    if (!editorRef) return;
-    editorRef.current?.setEditorValueAtCursorPosition(response);
+  const {
+    archived_at,
+    isContentEditable,
+    is_favorite,
+    is_locked,
+    canCurrentUserFavoritePage,
+    addToFavorites,
+    removePageFromFavorites,
+  } = page;
+  // use online status
+  const { isOnline } = useOnlineStatus();
+  // favorite handler
+  const handleFavorite = () => {
+    if (is_favorite) {
+      removePageFromFavorites().then(() =>
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: "Page removed from favorites.",
+        })
+      );
+    } else {
+      addToFavorites().then(() =>
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: "Page added to favorites.",
+        })
+      );
+    }
   };
 
   return (
-    <div className="flex flex-grow items-center justify-end gap-3">
+    <div className="flex items-center justify-end gap-3">
       {is_locked && <LockedComponent />}
       {archived_at && (
-        <div className="flex h-7 items-center gap-2 rounded-full bg-blue-500/20 px-3 py-0.5 text-xs font-medium text-blue-500">
-          <ArchiveIcon className="h-3 w-3" />
+        <div className="flex-shrink-0 flex h-7 items-center gap-2 rounded-full bg-blue-500/20 px-3 py-0.5 text-xs font-medium text-blue-500">
+          <ArchiveIcon className="flex-shrink-0 size-3" />
           <span>Archived at {renderFormattedDate(archived_at)}</span>
         </div>
       )}
-      {isContentEditable && config?.has_openai_configured && (
-        <GptAssistantPopover
-          isOpen={gptModalOpen}
-          handleClose={() => {
-            setGptModal((prevData) => !prevData);
-            // this is done so that the title do not reset after gpt popover closed
-            // reset(getValues());
-          }}
-          onResponse={handleAiAssistance}
-          placement="top-end"
-          button={
-            <button
-              type="button"
-              className="flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-90"
-              onClick={() => setGptModal((prevData) => !prevData)}
-            >
-              <Sparkle className="h-4 w-4" />
-              AI
-            </button>
-          }
-          className="!min-w-[38rem]"
+      {isContentEditable && !isOnline && (
+        <Tooltip
+          tooltipHeading="You are offline."
+          tooltipContent="You can continue making changes. They will be synced when you are back online."
+        >
+          <div className="flex-shrink-0 flex h-7 items-center gap-2 rounded-full bg-custom-background-80 px-3 py-0.5 text-xs font-medium text-custom-text-300">
+            <span className="flex-shrink-0 size-1.5 rounded-full bg-custom-text-300" />
+            <span>Offline</span>
+          </div>
+        </Tooltip>
+      )}
+      {canCurrentUserFavoritePage && (
+        <FavoriteStar
+          selected={is_favorite}
+          onClick={handleFavorite}
+          buttonClassName="flex-shrink-0"
+          iconClassName="text-custom-text-100"
         />
       )}
-      <PageInfoPopover page={page} />
+      <PageInfoPopover editorRef={isContentEditable ? editorRef.current : readOnlyEditorRef.current} />
       <PageOptionsDropdown
         editorRef={isContentEditable ? editorRef.current : readOnlyEditorRef.current}
         handleDuplicatePage={handleDuplicatePage}
         page={page}
-        handleSaveDescription={handleSaveDescription}
       />
     </div>
   );

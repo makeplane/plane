@@ -14,14 +14,14 @@ import { CycleQuickActions } from "@/components/cycles";
 // constants
 import { CYCLE_STATUS } from "@/constants/cycle";
 import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "@/constants/event-tracker";
-import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helpers
 import { findHowManyDaysLeft, getDate, renderFormattedDate } from "@/helpers/date-time.helper";
 import { generateQueryParams } from "@/helpers/router.helper";
 // hooks
-import { useEventTracker, useCycle, useUser, useMember } from "@/hooks/store";
+import { useEventTracker, useCycle, useMember, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export interface ICyclesBoardCard {
   workspaceSlug: string;
@@ -39,9 +39,8 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
   const pathname = usePathname();
   // store
   const { captureEvent } = useEventTracker();
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
+
   const { addCycleToFavorites, removeCycleFromFavorites, getCycleById } = useCycle();
   const { getUserDetails } = useMember();
   // computed
@@ -57,7 +56,10 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
   const startDate = getDate(cycleDetails.start_date);
   const isDateValid = cycleDetails.start_date || cycleDetails.end_date;
 
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditingAllowed = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
 
   const currentCycle = CYCLE_STATUS.find((status) => status.value === cycleStatus);
 
@@ -139,7 +141,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = observer((props) => {
     e.stopPropagation();
 
     const query = generateQueryParams(searchParams, ["peekCycle"]);
-    if (searchParams.has("peekCycle")) {
+    if (searchParams.has("peekCycle") && searchParams.get("peekCycle") === cycleId) {
       router.push(`${pathname}?${query}`);
     } else {
       router.push(`${pathname}?${query && `${query}&`}peekCycle=${cycleId}`);

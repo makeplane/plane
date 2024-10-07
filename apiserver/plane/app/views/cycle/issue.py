@@ -3,12 +3,7 @@ import json
 
 # Django imports
 from django.core import serializers
-from django.db.models import (
-    F,
-    Func,
-    OuterRef,
-    Q,
-)
+from django.db.models import F, Func, OuterRef, Q
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
@@ -17,15 +12,12 @@ from django.views.decorators.gzip import gzip_page
 from rest_framework import status
 from rest_framework.response import Response
 
-from plane.app.permissions import (
-    ProjectEntityPermission,
-)
 # Module imports
 from .. import BaseViewSet
 from plane.app.serializers import (
     CycleIssueSerializer,
 )
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Cycle,
     CycleIssue,
@@ -44,8 +36,8 @@ from plane.utils.paginator import (
     GroupedOffsetPaginator,
     SubGroupedOffsetPaginator,
 )
+from plane.app.permissions import allow_permission, ROLE
 
-# Module imports
 
 class CycleIssueViewSet(BaseViewSet):
     serializer_class = CycleIssueSerializer
@@ -53,10 +45,6 @@ class CycleIssueViewSet(BaseViewSet):
 
     webhook_event = "cycle_issue"
     bulk = True
-
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
 
     filterset_fields = [
         "issue__labels__id",
@@ -92,6 +80,12 @@ class CycleIssueViewSet(BaseViewSet):
         )
 
     @method_decorator(gzip_page)
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+        ]
+    )
     def list(self, request, slug, project_id, cycle_id):
         order_by_param = request.GET.get("order_by", "created_at")
         filters = issue_filters(request.query_params, "GET")
@@ -238,6 +232,7 @@ class CycleIssueViewSet(BaseViewSet):
                 ),
             )
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def create(self, request, slug, project_id, cycle_id):
         issues = request.data.get("issues", [])
 
@@ -333,8 +328,9 @@ class CycleIssueViewSet(BaseViewSet):
         )
         return Response({"message": "success"}, status=status.HTTP_201_CREATED)
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def destroy(self, request, slug, project_id, cycle_id, issue_id):
-        cycle_issue = CycleIssue.objects.get(
+        cycle_issue = CycleIssue.objects.filter(
             issue_id=issue_id,
             workspace__slug=slug,
             project_id=project_id,

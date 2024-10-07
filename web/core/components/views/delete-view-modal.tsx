@@ -63,7 +63,7 @@ export const DeleteProjectViewModal: React.FC<Props> = observer((props) => {
       handleSubmit={handleDeleteView}
       isSubmitting={isDeleteLoading}
       isOpen={isOpen}
-      title="Delete View"
+      title="Delete view"
       content={
         <>
           Are you sure you want to delete view-{" "}

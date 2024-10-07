@@ -2,22 +2,10 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import {
-  CalendarCheck2,
-  CalendarClock,
-  CircleDot,
-  CopyPlus,
-  LayoutPanelTop,
-  Signal,
-  Tag,
-  Triangle,
-  UserCircle2,
-  Users,
-  XCircle,
-} from "lucide-react";
-// hooks
+import { CalendarCheck2, CalendarClock, LayoutPanelTop, Signal, Tag, Triangle, UserCircle2, Users } from "lucide-react";
+// ui
+import { ContrastIcon, DiceIcon, DoubleCircleIcon } from "@plane/ui";
 // components
-import { ContrastIcon, DiceIcon, DoubleCircleIcon, RelatedIcon, Tooltip } from "@plane/ui";
 import {
   DateDropdown,
   EstimateDropdown,
@@ -25,30 +13,19 @@ import {
   PriorityDropdown,
   StateDropdown,
 } from "@/components/dropdowns";
-// ui
-// helpers
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
-import {
-  IssueCycleSelect,
-  IssueLabel,
-  IssueLinkRoot,
-  IssueModuleSelect,
-  IssueParentSelect,
-  IssueRelationSelect,
-} from "@/components/issues";
+import { IssueCycleSelect, IssueLabel, IssueModuleSelect, IssueParentSelect } from "@/components/issues";
 // helpers
-// types
 import { cn } from "@/helpers/common.helper";
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
-// types
+// hooks
 import { useProjectEstimates, useIssueDetail, useProject, useProjectState, useMember } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web components
+import { IssueAdditionalPropertyValuesUpdate } from "@/plane-web/components/issue-types/values";
+import { IssueWorklogProperty } from "@/plane-web/components/issues";
 // components
 import type { TIssueOperations } from "./root";
-// icons
-// helpers
-// types
 
 type Props = {
   workspaceSlug: string;
@@ -68,7 +45,6 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   } = useIssueDetail();
   const { getUserDetails } = useMember();
   const { getStateById } = useProjectState();
-  const { isMobile } = usePlatformOS();
   const issue = getIssueById(issueId);
   if (!issue) return <></>;
 
@@ -156,12 +132,10 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                   <UserCircle2 className="h-4 w-4 flex-shrink-0" />
                   <span>Created by</span>
                 </div>
-                <Tooltip tooltipContent={createdByDetails?.display_name} isMobile={isMobile}>
-                  <div className="h-full flex items-center gap-1.5 rounded px-2 py-0.5 text-sm justify-between cursor-default">
-                    <ButtonAvatars showTooltip={false} userIds={createdByDetails.id} />
-                    <span className="flex-grow truncate text-xs leading-5">{createdByDetails?.display_name}</span>
-                  </div>
-                </Tooltip>
+                <div className="w-full h-full flex items-center gap-1.5 rounded px-2 py-0.5 text-sm justify-between cursor-not-allowed">
+                  <ButtonAvatars showTooltip userIds={createdByDetails.id} />
+                  <span className="flex-grow truncate text-xs leading-5">{createdByDetails?.display_name}</span>
+                </div>
               </div>
             )}
 
@@ -249,7 +223,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               <div className="flex min-h-8 gap-2">
                 <div className="flex w-2/5 flex-shrink-0 gap-1 pt-2 text-sm text-custom-text-300">
                   <DiceIcon className="h-4 w-4 flex-shrink-0" />
-                  <span>Module</span>
+                  <span>Modules</span>
                 </div>
                 <IssueModuleSelect
                   className="w-3/5 flex-grow"
@@ -296,66 +270,6 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
 
             <div className="flex min-h-8 gap-2">
               <div className="flex w-2/5 flex-shrink-0 gap-1 pt-2 text-sm text-custom-text-300">
-                <RelatedIcon className="h-4 w-4 flex-shrink-0" />
-                <span>Relates to</span>
-              </div>
-              <IssueRelationSelect
-                className="h-full min-h-8 w-3/5 flex-grow"
-                workspaceSlug={workspaceSlug}
-                projectId={projectId}
-                issueId={issueId}
-                relationKey="relates_to"
-                disabled={!isEditable}
-              />
-            </div>
-
-            <div className="flex min-h-8 gap-2">
-              <div className="flex w-2/5 flex-shrink-0 gap-1 pt-2 text-sm text-custom-text-300">
-                <XCircle className="h-4 w-4 flex-shrink-0" />
-                <span>Blocking</span>
-              </div>
-              <IssueRelationSelect
-                className="h-full min-h-8 w-3/5 flex-grow"
-                workspaceSlug={workspaceSlug}
-                projectId={projectId}
-                issueId={issueId}
-                relationKey="blocking"
-                disabled={!isEditable}
-              />
-            </div>
-
-            <div className="flex min-h-8 gap-2">
-              <div className="flex w-2/5 flex-shrink-0 gap-1 pt-2 text-sm text-custom-text-300">
-                <CircleDot className="h-4 w-4 flex-shrink-0" />
-                <span>Blocked by</span>
-              </div>
-              <IssueRelationSelect
-                className="h-full min-h-8 w-3/5 flex-grow"
-                workspaceSlug={workspaceSlug}
-                projectId={projectId}
-                issueId={issueId}
-                relationKey="blocked_by"
-                disabled={!isEditable}
-              />
-            </div>
-
-            <div className="flex min-h-8 gap-2">
-              <div className="flex w-2/5 flex-shrink-0 gap-1 pt-2 text-sm text-custom-text-300">
-                <CopyPlus className="h-4 w-4 flex-shrink-0" />
-                <span>Duplicate of</span>
-              </div>
-              <IssueRelationSelect
-                className="h-full min-h-8 w-3/5 flex-grow"
-                workspaceSlug={workspaceSlug}
-                projectId={projectId}
-                issueId={issueId}
-                relationKey="duplicate"
-                disabled={!isEditable}
-              />
-            </div>
-
-            <div className="flex min-h-8 gap-2">
-              <div className="flex w-2/5 flex-shrink-0 gap-1 pt-2 text-sm text-custom-text-300">
                 <Tag className="h-4 w-4 flex-shrink-0" />
                 <span>Labels</span>
               </div>
@@ -368,9 +282,24 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 />
               </div>
             </div>
-          </div>
 
-          <IssueLinkRoot workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={!isEditable} />
+            <IssueWorklogProperty
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              issueId={issueId}
+              disabled={!isEditable}
+            />
+
+            {issue.type_id && (
+              <IssueAdditionalPropertyValuesUpdate
+                issueId={issueId}
+                issueTypeId={issue.type_id}
+                projectId={projectId}
+                workspaceSlug={workspaceSlug}
+                isDisabled={!isEditable}
+              />
+            )}
+          </div>
         </div>
       </div>
     </>

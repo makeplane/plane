@@ -24,7 +24,7 @@ const ArchivedIssueDetailsPage = observer(() => {
 
   const { getProjectById } = useProject();
 
-  const { isLoading, data: swrArchivedIssueDetails } = useSWR(
+  const { isLoading } = useSWR(
     workspaceSlug && projectId && archivedIssueId
       ? `ARCHIVED_ISSUE_DETAIL_${workspaceSlug}_${projectId}_${archivedIssueId}`
       : null,
@@ -40,7 +40,7 @@ const ArchivedIssueDetailsPage = observer(() => {
 
   if (!issue) return <></>;
 
-  const issueLoader = !issue || isLoading ? true : false;
+  const issueLoader = !issue || isLoading;
 
   return (
     <>
@@ -65,7 +65,6 @@ const ArchivedIssueDetailsPage = observer(() => {
           <div className="h-full w-full space-y-3 divide-y-2 divide-custom-border-200 overflow-y-auto">
             {workspaceSlug && projectId && archivedIssueId && (
               <IssueDetailRoot
-                swrIssueDetails={swrArchivedIssueDetails}
                 workspaceSlug={workspaceSlug.toString()}
                 projectId={projectId.toString()}
                 issueId={archivedIssueId.toString()}

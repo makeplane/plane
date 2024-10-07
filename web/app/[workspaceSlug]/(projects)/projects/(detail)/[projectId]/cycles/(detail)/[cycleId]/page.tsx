@@ -2,11 +2,11 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import useSWR from "swr";
 // components
 import { EmptyState } from "@/components/common";
 import { PageHead } from "@/components/core";
 import { CycleDetailsSidebar } from "@/components/cycles";
+import useCyclesDetails from "@/components/cycles/active-cycle/use-cycles-details";
 import { CycleLayoutRoot } from "@/components/issues/issue-layouts";
 // constants
 // import { EIssuesStoreType } from "@/constants/issue";
@@ -24,18 +24,17 @@ const CycleDetailPage = observer(() => {
   const router = useAppRouter();
   const { workspaceSlug, projectId, cycleId } = useParams();
   // store hooks
-  const { fetchCycleDetails, getCycleById } = useCycle();
+  const { getCycleById, loader } = useCycle();
   const { getProjectById } = useProject();
   // const { issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
   // hooks
   const { setValue, storedValue } = useLocalStorage("cycle_sidebar_collapsed", "false");
-  // fetching cycle details
-  const { error } = useSWR(
-    workspaceSlug && projectId && cycleId ? `CYCLE_DETAILS_${cycleId.toString()}` : null,
-    workspaceSlug && projectId && cycleId
-      ? () => fetchCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleId.toString())
-      : null
-  );
+
+  useCyclesDetails({
+    workspaceSlug: workspaceSlug.toString(),
+    projectId: projectId.toString(),
+    cycleId: cycleId.toString(),
+  });
   // derived values
   const isSidebarCollapsed = storedValue ? (storedValue === "true" ? true : false) : false;
   const cycle = cycleId ? getCycleById(cycleId.toString()) : undefined;
@@ -52,7 +51,7 @@ const CycleDetailPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      {error ? (
+      {!cycle && !loader ? (
         <EmptyState
           image={emptyCycle}
           title="Cycle does not exist"
@@ -71,14 +70,14 @@ const CycleDetailPage = observer(() => {
             {cycleId && !isSidebarCollapsed && (
               <div
                 className={cn(
-                  "flex h-full w-[24rem] flex-shrink-0 flex-col gap-3.5 overflow-y-auto border-l border-custom-border-100 bg-custom-sidebar-background-100 px-6 duration-300 vertical-scrollbar scrollbar-sm fixed right-0 z-10"
+                  "flex h-full w-[21.5rem] flex-shrink-0 flex-col gap-3.5 overflow-y-auto border-l border-custom-border-100 bg-custom-sidebar-background-100 px-4 duration-300 vertical-scrollbar scrollbar-sm absolute right-0 z-[13]"
                 )}
                 style={{
                   boxShadow:
                     "0px 1px 4px 0px rgba(0, 0, 0, 0.06), 0px 2px 4px 0px rgba(16, 24, 40, 0.06), 0px 1px 8px -1px rgba(16, 24, 40, 0.06)",
                 }}
               >
-                <CycleDetailsSidebar cycleId={cycleId.toString()} handleClose={toggleSidebar} />
+                <CycleDetailsSidebar handleClose={toggleSidebar} />
               </div>
             )}
           </div>

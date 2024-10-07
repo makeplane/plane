@@ -13,9 +13,9 @@ class CycleSerializer(BaseSerializer):
     started_issues = serializers.IntegerField(read_only=True)
     unstarted_issues = serializers.IntegerField(read_only=True)
     backlog_issues = serializers.IntegerField(read_only=True)
-    total_estimates = serializers.IntegerField(read_only=True)
-    completed_estimates = serializers.IntegerField(read_only=True)
-    started_estimates = serializers.IntegerField(read_only=True)
+    total_estimates = serializers.FloatField(read_only=True)
+    completed_estimates = serializers.FloatField(read_only=True)
+    started_estimates = serializers.FloatField(read_only=True)
 
     def validate(self, data):
         if (
@@ -40,6 +40,7 @@ class CycleSerializer(BaseSerializer):
             "workspace",
             "project",
             "owned_by",
+            "deleted_at",
         ]
 
 

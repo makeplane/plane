@@ -7,15 +7,16 @@ import { Plus } from "lucide-react";
 // types
 import { TRecentProjectsWidgetResponse } from "@plane/types";
 // ui
-import { Avatar, AvatarGroup } from "@plane/ui";
+import { Avatar, AvatarGroup, Card } from "@plane/ui";
+
 // components
 import { Logo } from "@/components/common";
 import { WidgetLoader, WidgetProps } from "@/components/dashboard/widgets";
 // constants
 import { PROJECT_BACKGROUND_COLORS } from "@/constants/dashboard";
-import { EUserWorkspaceRoles } from "@/constants/workspace";
 // hooks
-import { useEventTracker, useDashboard, useProject, useUser, useCommandPalette } from "@/hooks/store";
+import { useEventTracker, useDashboard, useProject, useCommandPalette, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const WIDGET_KEY = "recent_projects";
 
@@ -64,13 +65,14 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
   // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
-  const {
-    membership: { currentWorkspaceRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
   const { fetchWidgetStats, getWidgetStats } = useDashboard();
   // derived values
   const widgetStats = getWidgetStats<TRecentProjectsWidgetResponse>(workspaceSlug, dashboardId, WIDGET_KEY);
-  const canCreateProject = currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+  const canCreateProject = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
 
   useEffect(() => {
     fetchWidgetStats(workspaceSlug, dashboardId, {
@@ -82,14 +84,14 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
   if (!widgetStats) return <WidgetLoader widgetKey={WIDGET_KEY} />;
 
   return (
-    <div className="min-h-96 w-full rounded-xl border-[0.5px] border-custom-border-200 bg-custom-background-100 py-6 duration-300 hover:shadow-custom-shadow-4xl">
+    <Card>
       <Link
         href={`/${workspaceSlug}/projects`}
-        className="mx-7 text-lg font-semibold text-custom-text-300 hover:underline"
+        className="text-lg font-semibold text-custom-text-300 hover:underline mb-4"
       >
         Recent projects
       </Link>
-      <div className="mx-7 mt-4 space-y-8">
+      <div className="mt-4 space-y-8">
         {canCreateProject && (
           <button
             type="button"
@@ -113,6 +115,6 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
           <ProjectListItem key={projectId} projectId={projectId} workspaceSlug={workspaceSlug} />
         ))}
       </div>
-    </div>
+    </Card>
   );
 });

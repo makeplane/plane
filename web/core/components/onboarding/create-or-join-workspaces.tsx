@@ -10,8 +10,8 @@ import { Invitations, OnboardingHeader, SwitchAccountDropdown, CreateWorkspace }
 // hooks
 import { useUser } from "@/hooks/store";
 // assets
-import CreateJoinWorkspaceDark from "@/public/onboarding/create-join-workspace-dark.svg";
-import CreateJoinWorkspace from "@/public/onboarding/create-join-workspace.svg";
+import CreateJoinWorkspaceDark from "@/public/onboarding/create-join-workspace-dark.webp";
+import CreateJoinWorkspace from "@/public/onboarding/create-join-workspace-light.webp";
 import { LogoSpinner } from "../common";
 
 export enum ECreateOrJoinWorkspaceViews {
@@ -61,6 +61,7 @@ export const CreateOrJoinWorkspaces: React.FC<Props> = observer((props) => {
         <div className="flex flex-col w-full items-center justify-center p-8 mt-6">
           {currentView === ECreateOrJoinWorkspaceViews.WORKSPACE_JOIN ? (
             <Invitations
+              invitations={invitations}
               handleNextStep={handleNextStep}
               handleCurrentViewChange={() => setCurrentView(ECreateOrJoinWorkspaceViews.WORKSPACE_CREATE)}
             />

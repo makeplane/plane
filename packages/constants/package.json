@@ -1,6 +1,6 @@
 {
   "name": "@plane/constants",
-  "version": "0.22.0",
+  "version": "0.23.0",
   "private": true,
   "main": "./index.ts"
 }

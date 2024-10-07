@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, useState } from "react";
+import { FC } from "react";
+import { observer } from "mobx-react";
 import { Pencil, Trash2, LinkIcon, ExternalLink } from "lucide-react";
 // ui
 import { Tooltip, TOAST_TYPE, setToast, CustomMenu } from "@plane/ui";
@@ -10,7 +11,7 @@ import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { IssueLinkCreateUpdateModal, TLinkOperationsModal } from "./create-update-link-modal";
+import { TLinkOperationsModal } from "./create-update-link-modal";
 
 type TIssueLinkItem = {
   linkId: string;
@@ -18,33 +19,25 @@ type TIssueLinkItem = {
   isNotAllowed: boolean;
 };
 
-export const IssueLinkItem: FC<TIssueLinkItem> = (props) => {
+export const IssueLinkItem: FC<TIssueLinkItem> = observer((props) => {
   // props
   const { linkId, linkOperations, isNotAllowed } = props;
   // hooks
   const {
     toggleIssueLinkModal: toggleIssueLinkModalStore,
+    setIssueLinkData,
     link: { getLinkById },
   } = useIssueDetail();
-
-  // state
-  const [isIssueLinkModalOpen, setIsIssueLinkModalOpen] = useState(false);
-  const toggleIssueLinkModal = (modalToggle: boolean) => {
-    toggleIssueLinkModalStore(modalToggle);
-    setIsIssueLinkModalOpen(modalToggle);
-  };
   const { isMobile } = usePlatformOS();
   const linkDetail = getLinkById(linkId);
   if (!linkDetail) return <></>;
 
+  const toggleIssueLinkModal = (modalToggle: boolean) => {
+    toggleIssueLinkModalStore(modalToggle);
+    setIssueLinkData(linkDetail);
+  };
   return (
     <>
-      <IssueLinkCreateUpdateModal
-        isModalOpen={isIssueLinkModalOpen}
-        handleModal={toggleIssueLinkModal}
-        linkOperations={linkOperations}
-        preloadedData={linkDetail}
-      />
       <div
         key={linkId}
         className="col-span-12 lg:col-span-6 xl:col-span-4 2xl:col-span-3 3xl:col-span-2 flex items-center justify-between gap-3 h-8 flex-shrink-0 px-3 bg-custom-background-90 border-[0.5px] border-custom-border-200 rounded"
@@ -113,4 +106,4 @@ export const IssueLinkItem: FC<TIssueLinkItem> = (props) => {
       </div>
     </>
   );
-};
+});

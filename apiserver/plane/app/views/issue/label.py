@@ -11,9 +11,7 @@ from rest_framework import status
 # Module imports
 from .. import BaseViewSet, BaseAPIView
 from plane.app.serializers import LabelSerializer
-from plane.app.permissions import (
-    ProjectMemberPermission,
-)
+from plane.app.permissions import allow_permission, ProjectBasePermission, ROLE
 from plane.db.models import (
     Project,
     Label,
@@ -25,7 +23,7 @@ class LabelViewSet(BaseViewSet):
     serializer_class = LabelSerializer
     model = Label
     permission_classes = [
-        ProjectMemberPermission,
+        ProjectBasePermission,
     ]
 
     def get_queryset(self):
@@ -45,6 +43,7 @@ class LabelViewSet(BaseViewSet):
     @invalidate_cache(
         path="/api/workspaces/:slug/labels/", url_params=True, user=False
     )
+    @allow_permission([ROLE.ADMIN])
     def create(self, request, slug, project_id):
         try:
             serializer = LabelSerializer(data=request.data)
@@ -67,17 +66,20 @@ class LabelViewSet(BaseViewSet):
     @invalidate_cache(
         path="/api/workspaces/:slug/labels/", url_params=True, user=False
     )
+    @allow_permission([ROLE.ADMIN])
     def partial_update(self, request, *args, **kwargs):
         return super().partial_update(request, *args, **kwargs)
 
     @invalidate_cache(
         path="/api/workspaces/:slug/labels/", url_params=True, user=False
     )
+    @allow_permission([ROLE.ADMIN])
     def destroy(self, request, *args, **kwargs):
         return super().destroy(request, *args, **kwargs)
 
 
 class BulkCreateIssueLabelsEndpoint(BaseAPIView):
+    @allow_permission([ROLE.ADMIN])
     def post(self, request, slug, project_id):
         label_data = request.data.get("label_data", [])
         project = Project.objects.get(pk=project_id)

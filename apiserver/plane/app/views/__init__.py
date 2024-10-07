@@ -40,6 +40,11 @@ from .workspace.base import (
     ExportWorkspaceUserActivityEndpoint,
 )
 
+from .workspace.favorite import (
+    WorkspaceFavoriteEndpoint,
+    WorkspaceFavoriteGroupEndpoint,
+)
+
 from .workspace.member import (
     WorkSpaceMemberViewSet,
     TeamMemberViewSet,
@@ -93,6 +98,8 @@ from .cycle.base import (
     CycleUserPropertiesEndpoint,
     CycleViewSet,
     TransferCycleIssueEndpoint,
+    CycleAnalyticsEndpoint,
+    CycleProgressEndpoint,
 )
 from .cycle.issue import (
     CycleIssueViewSet,
@@ -107,6 +114,8 @@ from .issue.base import (
     IssueViewSet,
     IssueUserDisplayPropertyEndpoint,
     BulkDeleteIssuesEndpoint,
+    DeletedIssuesListViewSet,
+    IssuePaginatedViewSet,
 )
 
 from .issue.activity import (
@@ -151,9 +160,6 @@ from .issue.subscriber import (
     IssueSubscriberViewSet,
 )
 
-
-from .issue.bulk_operations import BulkIssueOperationsEndpoint
-
 from .module.base import (
     ModuleViewSet,
     ModuleLinkViewSet,
@@ -169,8 +175,10 @@ from .module.archive import (
     ModuleArchiveUnarchiveEndpoint,
 )
 
-from .api import ApiTokenEndpoint
-
+from .api import (
+    ApiTokenEndpoint,
+    ServiceApiTokenEndpoint,
+)
 
 from .page.base import (
     PageViewSet,
@@ -179,6 +187,7 @@ from .page.base import (
     SubPagesEndpoint,
     PagesDescriptionViewSet,
 )
+from .page.version import PageVersionEndpoint
 
 from .search.base import GlobalSearchEndpoint
 from .search.issue import IssueSearchEndpoint

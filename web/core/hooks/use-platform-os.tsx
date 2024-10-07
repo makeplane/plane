@@ -1,29 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
 export const usePlatformOS = () => {
-  const [isMobile, setIsMobile] = useState(false);
-  const [platform, setPlatform] = useState("");
-  useEffect(() => {
-    const userAgent = window.navigator.userAgent;
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(userAgent);
-    let detectedPlatform = "";
+  const userAgent = window.navigator.userAgent;
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(userAgent);
+  let platform = "";
 
-    if (isMobile) {
-      setIsMobile(isMobile)
+  if (!isMobile) {
+    if (userAgent.indexOf("Win") !== -1) {
+      platform = "Windows";
+    } else if (userAgent.indexOf("Mac") !== -1) {
+      platform = "MacOS";
+    } else if (userAgent.indexOf("Linux") !== -1) {
+      platform = "Linux";
     } else {
-      if (userAgent.indexOf("Win") !== -1) {
-        detectedPlatform = "Windows";
-      } else if (userAgent.indexOf("Mac") !== -1) {
-        detectedPlatform = "MacOS";
-      } else if (userAgent.indexOf("Linux") !== -1) {
-        detectedPlatform = "Linux";
-      } else {
-        detectedPlatform = "Unknown";
-      }
-    };
-    setPlatform(detectedPlatform);
-  }, []);
+      platform = "Unknown";
+    }
+  }
   return { isMobile, platform };
 };

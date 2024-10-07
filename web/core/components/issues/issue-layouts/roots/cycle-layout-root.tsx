@@ -21,7 +21,11 @@ import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 import { useCycle, useIssues } from "@/hooks/store";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 
-const CycleIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined; cycleId: string }) => {
+const CycleIssueLayout = (props: {
+  activeLayout: EIssueLayoutTypes | undefined;
+  cycleId: string;
+  isCompletedCycle: boolean;
+}) => {
   switch (props.activeLayout) {
     case EIssueLayoutTypes.LIST:
       return <CycleListLayout />;
@@ -30,7 +34,7 @@ const CycleIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined; 
     case EIssueLayoutTypes.CALENDAR:
       return <CycleCalendarLayout />;
     case EIssueLayoutTypes.GANTT:
-      return <BaseGanttRoot viewId={props.cycleId} />;
+      return <BaseGanttRoot viewId={props.cycleId} isCompletedCycle={props.isCompletedCycle} />;
     case EIssueLayoutTypes.SPREADSHEET:
       return <CycleSpreadsheetLayout />;
     default:
@@ -62,6 +66,12 @@ export const CycleLayoutRoot: React.FC = observer(() => {
 
   const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : undefined;
   const cycleStatus = cycleDetails?.status?.toLocaleLowerCase() ?? "draft";
+  const isCompletedCycle = cycleStatus === "completed";
+  const isProgressSnapshotEmpty = isEmpty(cycleDetails?.progress_snapshot);
+  const transferableIssuesCount = cycleDetails
+    ? cycleDetails.backlog_issues + cycleDetails.unstarted_issues + cycleDetails.started_issues
+    : 0;
+  const canTransferIssues = isProgressSnapshotEmpty && transferableIssuesCount > 0;
 
   if (!workspaceSlug || !projectId || !cycleId) return <></>;
 
@@ -72,13 +82,18 @@ export const CycleLayoutRoot: React.FC = observer(() => {
         {cycleStatus === "completed" && (
           <TransferIssues
             handleClick={() => setTransferIssuesModal(true)}
-            disabled={!isEmpty(cycleDetails?.progress_snapshot) ?? false}
+            canTransferIssues={canTransferIssues}
+            disabled={!isEmpty(cycleDetails?.progress_snapshot)}
           />
         )}
         <CycleAppliedFiltersRoot />
 
         <div className="h-full w-full overflow-auto">
-          <CycleIssueLayout activeLayout={activeLayout} cycleId={cycleId?.toString()} />
+          <CycleIssueLayout
+            activeLayout={activeLayout}
+            cycleId={cycleId?.toString()}
+            isCompletedCycle={isCompletedCycle}
+          />
         </div>
         {/* peek overview */}
         <IssuePeekOverview />

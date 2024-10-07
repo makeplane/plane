@@ -2,12 +2,13 @@ import React, { useRef, useState } from "react";
 import { usePopper } from "react-popper";
 import EmojiPicker from "emoji-picker-react";
 import { Popover, Tab } from "@headlessui/react";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // components
 import { IconsList } from "./icons-list";
 // helpers
 import { cn } from "../../helpers";
 // hooks
-import useOutsideClickDetector from "../hooks/use-outside-click-detector";
 import { EmojiIconPickerTypes, TABS_LIST, TCustomEmojiPicker } from "./emoji-icon-helper";
 
 export const CustomEmojiIconPicker: React.FC<TCustomEmojiPicker> = (props) => {
@@ -101,7 +102,7 @@ export const CustomEmojiIconPicker: React.FC<TCustomEmojiPicker> = (props) => {
                           type: EmojiIconPickerTypes.EMOJI,
                           value: val,
                         });
-                        if (closeOnSelect) close();
+                        if (closeOnSelect) handleToggle(false);
                       }}
                       height="20rem"
                       width="100%"
@@ -120,7 +121,7 @@ export const CustomEmojiIconPicker: React.FC<TCustomEmojiPicker> = (props) => {
                           type: EmojiIconPickerTypes.ICON,
                           value: val,
                         });
-                        if (closeOnSelect) close();
+                        if (closeOnSelect) handleToggle(false);
                       }}
                     />
                   </Tab.Panel>

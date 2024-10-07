@@ -1,11 +1,16 @@
 "use client";
 
-import { FC, useEffect, Fragment } from "react";
+import { FC, useEffect } from "react";
+import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { Dialog, Transition } from "@headlessui/react";
+// plane types
 import type { TIssueLinkEditableFields } from "@plane/types";
-// ui
-import { Button, Input } from "@plane/ui";
+// plane ui
+import { Button, Input, ModalCore } from "@plane/ui";
+// helpers
+import { checkURLValidity } from "@/helpers/string.helper";
+// hooks
+import { useIssueDetail } from "@/hooks/store";
 // types
 import { TLinkOperations } from "./root";
 
@@ -17,9 +22,8 @@ export type TIssueLinkCreateFormFieldOptions = TIssueLinkEditableFields & {
 
 export type TIssueLinkCreateEditModal = {
   isModalOpen: boolean;
-  handleModal: (modalToggle: boolean) => void;
+  handleOnClose?: () => void;
   linkOperations: TLinkOperationsModal;
-  preloadedData?: TIssueLinkCreateFormFieldOptions | null;
 };
 
 const defaultValues: TIssueLinkCreateFormFieldOptions = {
@@ -27,10 +31,9 @@ const defaultValues: TIssueLinkCreateFormFieldOptions = {
   url: "",
 };
 
-export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = (props) => {
+export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = observer((props) => {
   // props
-  const { isModalOpen, handleModal, linkOperations, preloadedData } = props;
-
+  const { isModalOpen, handleOnClose, linkOperations } = props;
   // react hook form
   const {
     formState: { errors, isSubmitting },
@@ -40,13 +43,13 @@ export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = (props)
   } = useForm<TIssueLinkCreateFormFieldOptions>({
     defaultValues,
   });
+  // store hooks
+  const { issueLinkData: preloadedData, setIssueLinkData } = useIssueDetail();
 
   const onClose = () => {
-    handleModal(false);
-    const timeout = setTimeout(() => {
-      reset(preloadedData ? preloadedData : defaultValues);
-      clearTimeout(timeout);
-    }, 500);
+    setIssueLinkData(null);
+    reset();
+    if (handleOnClose) handleOnClose();
   };
 
   const handleFormSubmit = async (formData: TIssueLinkCreateFormFieldOptions) => {
@@ -56,114 +59,74 @@ export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = (props)
   };
 
   useEffect(() => {
-    reset({ ...defaultValues, ...preloadedData });
-  }, [preloadedData, reset]);
+    if (isModalOpen) reset({ ...defaultValues, ...preloadedData });
+  }, [preloadedData, reset, isModalOpen]);
 
   return (
-    <Transition.Root show={isModalOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={onClose}>
-        <Transition.Child
-          as={Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
-        </Transition.Child>
-
-        <div className="fixed inset-0 z-10 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              enterTo="opacity-100 translate-y-0 sm:scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
-                <form onSubmit={handleSubmit(handleFormSubmit)}>
-                  <div>
-                    <div className="space-y-5">
-                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
-                        {preloadedData?.id ? "Update Link" : "Add Link"}
-                      </Dialog.Title>
-                      <div className="mt-2 space-y-3">
-                        <div>
-                          <label htmlFor="url" className="mb-2 text-custom-text-200">
-                            URL
-                          </label>
-                          <Controller
-                            control={control}
-                            name="url"
-                            rules={{
-                              required: "URL is required",
-                            }}
-                            render={({ field: { value, onChange, ref } }) => (
-                              <Input
-                                id="url"
-                                name="url"
-                                type="url"
-                                value={value}
-                                onChange={onChange}
-                                ref={ref}
-                                hasError={Boolean(errors.url)}
-                                placeholder="https://..."
-                                pattern="^(https?://).*"
-                                className="w-full"
-                              />
-                            )}
-                          />
-                        </div>
-                        <div>
-                          <label htmlFor="title" className="mb-2 text-custom-text-200">
-                            {`Title (optional)`}
-                          </label>
-                          <Controller
-                            control={control}
-                            name="title"
-                            render={({ field: { value, onChange, ref } }) => (
-                              <Input
-                                id="title"
-                                name="title"
-                                type="text"
-                                value={value}
-                                onChange={onChange}
-                                ref={ref}
-                                hasError={Boolean(errors.title)}
-                                placeholder="Enter title"
-                                className="w-full"
-                              />
-                            )}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="mt-5 flex justify-end gap-2">
-                    <Button variant="neutral-primary" size="sm" onClick={onClose}>
-                      Cancel
-                    </Button>
-                    <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
-                      {preloadedData?.id
-                        ? isSubmitting
-                          ? "Updating Link..."
-                          : "Update Link"
-                        : isSubmitting
-                          ? "Adding Link..."
-                          : "Add Link"}
-                    </Button>
-                  </div>
-                </form>
-              </Dialog.Panel>
-            </Transition.Child>
+    <ModalCore isOpen={isModalOpen} handleClose={onClose}>
+      <form onSubmit={handleSubmit(handleFormSubmit)}>
+        <div className="space-y-5 p-5">
+          <h3 className="text-xl font-medium text-custom-text-200">{preloadedData?.id ? "Update" : "Add"} link</h3>
+          <div className="mt-2 space-y-3">
+            <div>
+              <label htmlFor="url" className="mb-2 text-custom-text-200">
+                URL
+              </label>
+              <Controller
+                control={control}
+                name="url"
+                rules={{
+                  required: "URL is required",
+                  validate: (value) => checkURLValidity(value) || "URL is invalid",
+                }}
+                render={({ field: { value, onChange, ref } }) => (
+                  <Input
+                    id="url"
+                    type="text"
+                    value={value}
+                    onChange={onChange}
+                    ref={ref}
+                    hasError={Boolean(errors.url)}
+                    placeholder="Type or paste a URL"
+                    className="w-full"
+                  />
+                )}
+              />
+              {errors.url && <span className="text-xs text-red-500">URL is invalid</span>}
+            </div>
+            <div>
+              <label htmlFor="title" className="mb-2 text-custom-text-200">
+                Display title
+                <span className="text-[10px] block">Optional</span>
+              </label>
+              <Controller
+                control={control}
+                name="title"
+                render={({ field: { value, onChange, ref } }) => (
+                  <Input
+                    id="title"
+                    type="text"
+                    value={value}
+                    onChange={onChange}
+                    ref={ref}
+                    hasError={Boolean(errors.title)}
+                    placeholder="What you'd like to see this link as"
+                    className="w-full"
+                  />
+                )}
+              />
+            </div>
           </div>
         </div>
-      </Dialog>
-    </Transition.Root>
+        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
+          <Button variant="neutral-primary" size="sm" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
+            {preloadedData?.id ? (isSubmitting ? "Updating" : "Update") : isSubmitting ? "Adding" : "Add"} link
+          </Button>
+        </div>
+      </form>
+    </ModalCore>
   );
-};
+});

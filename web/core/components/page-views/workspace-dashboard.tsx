@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
+import { ContentWrapper } from "@plane/ui";
 import { DashboardWidgets } from "@/components/dashboard";
 import { EmptyState } from "@/components/empty-state";
 import { IssuePeekOverview } from "@/components/issues";
@@ -65,18 +66,15 @@ export const WorkspaceDashboardView = observer(() => {
           {joinedProjectIds.length > 0 || loader ? (
             <>
               <IssuePeekOverview />
-              <div
-                className={cn(
-                  "space-y-7 md:p-7 p-3 bg-custom-background-90 h-full w-full flex flex-col overflow-y-auto",
-                  {
-                    "vertical-scrollbar scrollbar-lg": windowWidth >= 768,
-                  }
-                )}
+              <ContentWrapper
+                className={cn("gap-7 bg-custom-background-90", {
+                  "vertical-scrollbar scrollbar-lg": windowWidth >= 768,
+                })}
               >
                 {currentUser && <UserGreetingsView user={currentUser} />}
 
                 <DashboardWidgets />
-              </div>
+              </ContentWrapper>
             </>
           ) : (
             <EmptyState

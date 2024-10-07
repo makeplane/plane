@@ -12,7 +12,7 @@ from django.db.models import (
     Sum,
     Value,
     When,
-    IntegerField,
+    FloatField,
 )
 from django.db.models.functions import (
     Coalesce,
@@ -98,7 +98,7 @@ def build_graph_plot(queryset, x_axis, y_axis, segment=None):
     # Estimate
     else:
         queryset = queryset.annotate(
-            estimate=Sum(Cast("estimate_point__value", IntegerField()))
+            estimate=Sum(Cast("estimate_point__value", FloatField()))
         ).order_by(x_axis)
         queryset = (
             queryset.annotate(segment=F(segment)) if segment else queryset

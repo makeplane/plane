@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Eye, EyeOff, XCircle } from "lucide-react";
 import { Button, Input, Spinner } from "@plane/ui";
@@ -39,8 +39,10 @@ const authService = new AuthService();
 
 export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
   const { email, nextPath, isSMTPConfigured, handleAuthStep, handleEmailClear, mode } = props;
+  // ref
+  const formRef = useRef<HTMLFormElement>(null);
   // states
-  const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
+  const [csrfPromise, setCsrfPromise] = useState<Promise<{ csrf_token: string }> | undefined>(undefined);
   const [passwordFormData, setPasswordFormData] = useState<TPasswordFormValues>({ ...defaultValues, email });
   const [showPassword, setShowPassword] = useState({
     password: false,
@@ -57,9 +59,11 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
     setPasswordFormData((prev) => ({ ...prev, [key]: value }));
 
   useEffect(() => {
-    if (csrfToken === undefined)
-      authService.requestCSRFToken().then((data) => data?.csrf_token && setCsrfToken(data.csrf_token));
-  }, [csrfToken]);
+    if (csrfPromise === undefined) {
+      const promise = authService.requestCSRFToken();
+      setCsrfPromise(promise);
+    }
+  }, [csrfPromise]);
 
   const redirectToUniqueCodeSignIn = async () => {
     handleAuthStep(EAuthSteps.UNIQUE_CODE);
@@ -88,15 +92,29 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
   const confirmPassword = passwordFormData.confirm_password ?? "";
   const renderPasswordMatchError = !isRetryPasswordInputFocused || confirmPassword.length >= password.length;
 
+  const handleCSRFToken = async () => {
+    if (!formRef || !formRef.current) return;
+    const token = await csrfPromise;
+    if (!token?.csrf_token) return;
+    const csrfElement = formRef.current.querySelector("input[name=csrfmiddlewaretoken]");
+    csrfElement?.setAttribute("value", token?.csrf_token);
+  };
+
   return (
     <form
+      ref={formRef}
       className="mt-5 space-y-4"
       method="POST"
       action={`${API_BASE_URL}/auth/spaces/${mode === EAuthModes.SIGN_IN ? "sign-in" : "sign-up"}/`}
-      onSubmit={() => setIsSubmitting(true)}
+      onSubmit={async (event) => {
+        event.preventDefault();
+        await handleCSRFToken();
+        formRef.current && formRef.current.submit();
+        setIsSubmitting(true);
+      }}
       onError={() => setIsSubmitting(false)}
     >
-      <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
+      <input type="hidden" name="csrfmiddlewaretoken" />
       <input type="hidden" value={passwordFormData.email} name="email" />
       <input type="hidden" value={nextPath} name="next_path" />
       <div className="space-y-1">
@@ -139,6 +157,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
             className="disable-autofill-style h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
             onFocus={() => setIsPasswordInputFocused(true)}
             onBlur={() => setIsPasswordInputFocused(false)}
+            autoComplete="on"
             autoFocus
           />
           {showPassword?.password ? (

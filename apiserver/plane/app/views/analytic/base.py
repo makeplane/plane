@@ -7,22 +7,26 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.response import Response
 
+# Module imports
 from plane.app.permissions import WorkSpaceAdminPermission
 from plane.app.serializers import AnalyticViewSerializer
-
-# Module imports
 from plane.app.views.base import BaseAPIView, BaseViewSet
 from plane.bgtasks.analytic_plot_export import analytic_export_task
 from plane.db.models import AnalyticView, Issue, Workspace
 from plane.utils.analytics_plot import build_graph_plot
 from plane.utils.issue_filters import issue_filters
+from plane.app.permissions import allow_permission, ROLE
 
 
 class AnalyticsEndpoint(BaseAPIView):
-    permission_classes = [
-        WorkSpaceAdminPermission,
-    ]
 
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+        ],
+        level="WORKSPACE",
+    )
     def get(self, request, slug):
         x_axis = request.GET.get("x_axis", False)
         y_axis = request.GET.get("y_axis", False)
@@ -201,10 +205,14 @@ class AnalyticViewViewset(BaseViewSet):
 
 
 class SavedAnalyticEndpoint(BaseAPIView):
-    permission_classes = [
-        WorkSpaceAdminPermission,
-    ]
 
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+        ],
+        level="WORKSPACE",
+    )
     def get(self, request, slug, analytic_id):
         analytic_view = AnalyticView.objects.get(
             pk=analytic_id, workspace__slug=slug
@@ -234,10 +242,14 @@ class SavedAnalyticEndpoint(BaseAPIView):
 
 
 class ExportAnalyticsEndpoint(BaseAPIView):
-    permission_classes = [
-        WorkSpaceAdminPermission,
-    ]
 
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+        ],
+        level="WORKSPACE",
+    )
     def post(self, request, slug):
         x_axis = request.data.get("x_axis", False)
         y_axis = request.data.get("y_axis", False)
@@ -301,10 +313,8 @@ class ExportAnalyticsEndpoint(BaseAPIView):
 
 
 class DefaultAnalyticsEndpoint(BaseAPIView):
-    permission_classes = [
-        WorkSpaceAdminPermission,
-    ]
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug):
         filters = issue_filters(request.GET, "GET")
         base_issues = Issue.issue_objects.filter(
@@ -380,12 +390,10 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
             .order_by("-count")
         )
 
-        open_estimate_sum = open_issues_queryset.aggregate(
-            sum=Sum("point")
-        )["sum"]
-        total_estimate_sum = base_issues.aggregate(sum=Sum("point"))[
+        open_estimate_sum = open_issues_queryset.aggregate(sum=Sum("point"))[
             "sum"
         ]
+        total_estimate_sum = base_issues.aggregate(sum=Sum("point"))["sum"]
 
         return Response(
             {

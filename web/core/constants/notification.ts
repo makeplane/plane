@@ -1,3 +1,5 @@
+import { TUnreadNotificationsCount } from "@plane/types";
+
 export enum ENotificationTab {
   ALL = "all",
   MENTIONS = "mentions",
@@ -29,11 +31,14 @@ export const NOTIFICATION_TABS = [
   {
     label: "All",
     value: ENotificationTab.ALL,
+    count: (unReadNotification: TUnreadNotificationsCount) => unReadNotification?.total_unread_notifications_count || 0,
   },
-  // {
-  //   label: "Mentions",
-  //   value: ENotificationTab.MENTIONS,
-  // },
+  {
+    label: "Mentions",
+    value: ENotificationTab.MENTIONS,
+    count: (unReadNotification: TUnreadNotificationsCount) =>
+      unReadNotification?.mention_unread_notifications_count || 0,
+  },
 ];
 
 export const FILTER_TYPE_OPTIONS = [

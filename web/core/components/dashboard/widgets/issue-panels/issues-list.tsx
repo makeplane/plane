@@ -20,8 +20,9 @@ import {
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getRedirectionFilters } from "@/helpers/dashboard.helper";
-import { useIssueDetail } from "@/hooks/store";
-// types
+// hooks
+import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 export type WidgetIssuesListProps = {
   isLoading: boolean;
@@ -33,11 +34,12 @@ export type WidgetIssuesListProps = {
 
 export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
   const { isLoading, tab, type, widgetStats, workspaceSlug } = props;
-  // store hooks
-  const { setPeekIssue } = useIssueDetail();
+  // hooks
+  const { isMobile } = usePlatformOS();
+  const { handleRedirection } = useIssuePeekOverviewRedirection();
 
-  const handleIssuePeekOverview = (issue: TIssue) =>
-    issue.project_id && setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
+  // handlers
+  const handleIssuePeekOverview = (issue: TIssue) => handleRedirection(workspaceSlug, issue, isMobile);
 
   const filterParams = getRedirectionFilters(tab);
 
@@ -66,7 +68,7 @@ export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
     <>
       <div className="h-full">
         {isLoading ? (
-          <Loader className="space-y-4 mx-6 mt-7">
+          <Loader className="space-y-4 mt-7">
             <Loader.Item height="25px" />
             <Loader.Item height="25px" />
             <Loader.Item height="25px" />
@@ -74,24 +76,25 @@ export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
           </Loader>
         ) : issuesList.length > 0 ? (
           <>
-            <div className="mt-7 mx-6 border-b-[0.5px] border-custom-border-200 grid grid-cols-6 gap-1 text-xs text-custom-text-300 pb-1">
+            <div className="mt-7 border-b-[0.5px] border-custom-border-200 grid grid-cols-12 gap-1 text-xs text-custom-text-300 pb-1">
               <h6
-                className={cn("pl-1 flex items-center gap-1 col-span-4", {
-                  "col-span-6": type === "assigned" && tab === "completed",
-                  "col-span-5": type === "created" && tab === "completed",
+                className={cn("pl-1 flex items-center gap-1 col-span-7", {
+                  "col-span-11": type === "assigned" && tab === "completed",
+                  "col-span-9": type === "created" && tab === "completed",
                 })}
               >
                 Issues
-                <span className="flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-medium rounded-xl px-3 flex items-center text-center justify-center">
+                <span className="flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-medium rounded-xl px-2 flex items-center text-center justify-center">
                   {widgetStats.count}
                 </span>
               </h6>
-              {["upcoming", "pending"].includes(tab) && <h6 className="text-center">Due date</h6>}
-              {tab === "overdue" && <h6 className="text-center">Due by</h6>}
-              {type === "assigned" && tab !== "completed" && <h6 className="text-center">Blocked by</h6>}
-              {type === "created" && <h6 className="text-center">Assigned to</h6>}
+              <h6 className="text-center col-span-1">Priority</h6>
+              {["upcoming", "pending"].includes(tab) && <h6 className="text-center col-span-2">Due date</h6>}
+              {tab === "overdue" && <h6 className="text-center col-span-2">Due by</h6>}
+              {type === "assigned" && tab !== "completed" && <h6 className="text-center col-span-2">Blocked by</h6>}
+              {type === "created" && <h6 className="text-center col-span-2">Assigned to</h6>}
             </div>
-            <div className="px-4 pb-3 mt-2">
+            <div className="pb-3 mt-2">
               {issuesList.map((issue) => {
                 const IssueListItem = ISSUE_LIST_ITEM[type][tab];
 
@@ -109,7 +112,7 @@ export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
             </div>
           </>
         ) : (
-          <div className="h-full grid place-items-center">
+          <div className="h-full grid place-items-center my-6">
             {type === "assigned" && <AssignedIssuesEmptyState type={tab} />}
             {type === "created" && <CreatedIssuesEmptyState type={tab} />}
           </div>

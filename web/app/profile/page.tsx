@@ -5,29 +5,20 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { ChevronDown, CircleUserRound } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
-// services
-// hooks
-// layouts
-// components
 import type { IUser } from "@plane/types";
 import { Button, CustomSelect, CustomSearchSelect, Input, TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
+// components
 import { DeactivateAccountModal } from "@/components/account";
 import { LogoSpinner } from "@/components/common";
 import { ImagePickerPopover, UserImageUploadModal, PageHead } from "@/components/core";
-// ui
-// icons
-// components
-// constants
 import { ProfileSettingContentWrapper } from "@/components/profile";
+// constants
 import { TIME_ZONES } from "@/constants/timezones";
 import { USER_ROLES } from "@/constants/workspace";
 // hooks
 import { useUser } from "@/hooks/store";
-// import { ProfileSettingsLayout } from "@/layouts/settings-layout";
-// layouts
-import { FileService } from "@/services/file.service";
 // services
-// types
+import { FileService } from "@/services/file.service";
 
 const defaultValues: Partial<IUser> = {
   avatar: "",
@@ -245,6 +236,7 @@ const ProfileSettingsPage = observer(() => {
                       placeholder="Enter your first name"
                       className={`w-full rounded-md ${errors.first_name ? "border-red-500" : ""}`}
                       maxLength={24}
+                      autoComplete="on"
                     />
                   )}
                 />
@@ -269,6 +261,7 @@ const ProfileSettingsPage = observer(() => {
                       placeholder="Enter your last name"
                       className="w-full rounded-md"
                       maxLength={24}
+                      autoComplete="on"
                     />
                   )}
                 />
@@ -296,6 +289,7 @@ const ProfileSettingsPage = observer(() => {
                       className={`w-full cursor-not-allowed rounded-md !bg-custom-background-80 ${
                         errors.email ? "border-red-500" : ""
                       }`}
+                      autoComplete="on"
                       disabled
                     />
                   )}
@@ -369,7 +363,7 @@ const ProfileSettingsPage = observer(() => {
                     />
                   )}
                 />
-                {errors?.display_name && <span className="text-xs text-red-500">Please enter display name</span>}
+                {errors?.display_name && <span className="text-xs text-red-500">{errors?.display_name?.message}</span>}
               </div>
 
               <div className="flex flex-col gap-1">
@@ -384,10 +378,9 @@ const ProfileSettingsPage = observer(() => {
                   render={({ field: { value, onChange } }) => (
                     <CustomSearchSelect
                       value={value}
-                      label={value ? TIME_ZONES.find((t) => t.value === value)?.label ?? value : "Select a timezone"}
+                      label={value ? (TIME_ZONES.find((t) => t.value === value)?.label ?? value) : "Select a timezone"}
                       options={timeZoneOptions}
                       onChange={onChange}
-                      optionsClassName="w-full"
                       buttonClassName={errors.user_timezone ? "border-red-500" : "border-none"}
                       className="rounded-md border-[0.5px] !border-custom-border-200"
                       input
@@ -424,8 +417,7 @@ const ProfileSettingsPage = observer(() => {
                 <Disclosure.Panel>
                   <div className="flex flex-col gap-8">
                     <span className="text-sm tracking-tight">
-                      The danger zone of the profile page is a critical area that requires careful consideration and
-                      attention. When deactivating an account, all of the data and resources within that account will be
+                      When deactivating an account, all of the data and resources within that account will be
                       permanently removed and cannot be recovered.
                     </span>
                     <div>

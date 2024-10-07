@@ -1,19 +1,25 @@
 import { FC, ReactNode } from "react";
 import { Editor } from "@tiptap/react";
+// constants
+import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 // helpers
 import { cn } from "@/helpers/common";
+// types
+import { TDisplayConfig } from "@/types";
 
 interface EditorContainerProps {
+  children: ReactNode;
+  displayConfig: TDisplayConfig;
   editor: Editor | null;
   editorContainerClassName: string;
-  children: ReactNode;
-  hideDragHandle?: () => void;
+  id: string;
 }
 
 export const EditorContainer: FC<EditorContainerProps> = (props) => {
-  const { editor, editorContainerClassName, hideDragHandle, children } = props;
+  const { children, displayConfig, editor, editorContainerClassName, id } = props;
 
-  const handleContainerClick = () => {
+  const handleContainerClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    if (event.target !== event.currentTarget) return;
     if (!editor) return;
     if (!editor.isEditable) return;
     try {
@@ -52,16 +58,25 @@ export const EditorContainer: FC<EditorContainerProps> = (props) => {
     }
   };
 
+  const handleContainerMouseLeave = () => {
+    const dragHandleElement = document.querySelector("#editor-side-menu");
+    if (!dragHandleElement?.classList.contains("side-menu-hidden")) {
+      dragHandleElement?.classList.add("side-menu-hidden");
+    }
+  };
+
   return (
     <div
-      id="editor-container"
+      id={`editor-container-${id}`}
       onClick={handleContainerClick}
-      onMouseLeave={hideDragHandle}
+      onMouseLeave={handleContainerMouseLeave}
       className={cn(
-        "cursor-text relative",
+        "editor-container cursor-text relative",
         {
           "active-editor": editor?.isFocused && editor?.isEditable,
         },
+        displayConfig.fontSize ?? DEFAULT_DISPLAY_CONFIG.fontSize,
+        displayConfig.fontStyle ?? DEFAULT_DISPLAY_CONFIG.fontStyle,
         editorContainerClassName
       )}
     >

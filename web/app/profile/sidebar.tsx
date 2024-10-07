@@ -6,13 +6,18 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 // icons
 import { ChevronLeft, LogOut, MoveLeft, Plus, UserPlus } from "lucide-react";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // ui
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+// components
+import { SidebarNavItem } from "@/components/sidebar";
 // constants
 import { PROFILE_ACTION_LINKS } from "@/constants/profile";
+// helpers
+import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useUser, useUserSettings, useWorkspace } from "@/hooks/store";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 const WORKSPACE_ACTION_LINKS = [
@@ -115,11 +120,11 @@ export const ProfileLayoutSidebar = observer(() => {
             )}
           </div>
         </Link>
-        <div className="flex flex-shrink-0 flex-col overflow-x-hidden px-4">
+        <div className="flex flex-shrink-0 flex-col overflow-x-hidden">
           {!sidebarCollapsed && (
-            <h6 className="rounded px-1.5 text-sm font-semibold text-custom-sidebar-text-400">Your account</h6>
+            <h6 className="rounded px-6 text-sm font-semibold text-custom-sidebar-text-400">Your account</h6>
           )}
-          <div className="vertical-scrollbar scrollbar-sm mt-2 h-full space-y-1.5 overflow-y-auto">
+          <div className="vertical-scrollbar scrollbar-sm mt-2 px-4 h-full space-y-1 overflow-y-auto">
             {PROFILE_ACTION_LINKS.map((link) => {
               if (link.key === "change-password" && currentUser?.is_password_autoset) return null;
 
@@ -132,28 +137,33 @@ export const ProfileLayoutSidebar = observer(() => {
                     disabled={!sidebarCollapsed}
                     isMobile={isMobile}
                   >
-                    <div
-                      className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
-                        link.highlight(pathname)
-                          ? "bg-custom-primary-100/10 text-custom-primary-100"
-                          : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
-                      } ${sidebarCollapsed ? "justify-center" : ""}`}
+                    <SidebarNavItem
+                      key={link.key}
+                      className={`${sidebarCollapsed ? "p-0 size-8 aspect-square justify-center mx-auto" : ""}`}
+                      isActive={link.highlight(pathname)}
                     >
-                      {<link.Icon className="h-4 w-4" />}
-                      {!sidebarCollapsed && link.label}
-                    </div>
+                      <div className="flex items-center gap-1.5 py-[1px]">
+                        <link.Icon className="size-4" />
+                        {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{link.label}</p>}
+                      </div>
+                    </SidebarNavItem>
                   </Tooltip>
                 </Link>
               );
             })}
           </div>
         </div>
-        <div className="flex flex-col overflow-x-hidden px-4">
+        <div className="flex flex-col overflow-x-hidden">
           {!sidebarCollapsed && (
-            <h6 className="rounded px-1.5 text-sm font-semibold text-custom-sidebar-text-400">Workspaces</h6>
+            <h6 className="rounded px-6 text-sm font-semibold text-custom-sidebar-text-400">Workspaces</h6>
           )}
           {workspacesList && workspacesList.length > 0 && (
-            <div className="vertical-scrollbar scrollbar-sm mt-2 h-full space-y-1.5 overflow-y-auto">
+            <div
+              className={cn("vertical-scrollbar scrollbar-xs mt-2 px-4 h-full space-y-1.5 overflow-y-auto", {
+                "scrollbar-sm": !sidebarCollapsed,
+                "ml-2.5 px-1": sidebarCollapsed,
+              })}
+            >
               {workspacesList.map((workspace) => (
                 <Link
                   key={workspace.id}
@@ -191,7 +201,7 @@ export const ProfileLayoutSidebar = observer(() => {
               ))}
             </div>
           )}
-          <div className="mt-1.5">
+          <div className="mt-1.5 px-4">
             {WORKSPACE_ACTION_LINKS.map((link) => (
               <Link className="block w-full" key={link.key} href={link.href} onClick={handleItemClick}>
                 <Tooltip

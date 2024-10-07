@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, FormEvent, useMemo, useState } from "react";
+import { FC, FormEvent, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // icons
 import { CircleAlert, XCircle } from "lucide-react";
@@ -22,7 +22,6 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
   // states
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [email, setEmail] = useState(defaultEmail);
-  const [isFocused, setFocused] = useState(false);
 
   const emailError = useMemo(
     () => (email && !checkEmailValidity(email) ? { email: "Email is invalid" } : undefined),
@@ -41,6 +40,9 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
 
   const isButtonDisabled = email.length === 0 || Boolean(emailError?.email) || isSubmitting;
 
+  const [isFocused, setIsFocused] = useState(true)
+  const inputRef = useRef<HTMLInputElement>(null);
+
   return (
     <form onSubmit={handleFormSubmit} className="mt-5 space-y-4">
       <div className="space-y-1">
@@ -52,6 +54,9 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
             `relative flex items-center rounded-md bg-onboarding-background-200 border`,
             !isFocused && Boolean(emailError?.email) ? `border-red-500` : `border-onboarding-border-100`
           )}
+          tabIndex={-1}
+          onFocus={() => {setIsFocused(true)}}
+          onBlur={() => {setIsFocused(false)}}
         >
           <Input
             id="email"
@@ -61,14 +66,17 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="name@company.com"
             className={`disable-autofill-style h-[46px] w-full placeholder:text-onboarding-text-400 autofill:bg-red-500 border-0 focus:bg-none active:bg-transparent`}
-            onFocus={() => setFocused(true)}
-            onBlur={() => setFocused(false)}
+            autoComplete="on"
             autoFocus
+            ref={inputRef}
           />
-          {email.length > 0 && (
+            {email.length > 0 && (
             <XCircle
-              className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-              onClick={() => setEmail("")}
+              className="h-[46px] w-11 px-3 stroke-custom-text-400 hover:cursor-pointer text-xs"
+              onClick={() => {
+                setEmail("");
+                inputRef.current?.focus();
+              }}
             />
           )}
         </div>

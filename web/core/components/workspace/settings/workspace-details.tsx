@@ -3,25 +3,25 @@
 import { useEffect, useState, FC } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { ChevronDown, ChevronUp, Pencil } from "lucide-react";
-import { Disclosure, Transition } from "@headlessui/react";
+import { Pencil } from "lucide-react";
 import { IWorkspace } from "@plane/types";
 // ui
 import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { LogoSpinner } from "@/components/common";
 import { WorkspaceImageUploadModal } from "@/components/core";
-import { DeleteWorkspaceModal } from "@/components/workspace";
 // constants
 import { WORKSPACE_UPDATED } from "@/constants/event-tracker";
-import { EUserWorkspaceRoles, ORGANIZATION_SIZE } from "@/constants/workspace";
+import { ORGANIZATION_SIZE } from "@/constants/workspace";
 // helpers
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useEventTracker, useUser, useWorkspace } from "@/hooks/store";
+import { useEventTracker, useUserPermissions, useWorkspace } from "@/hooks/store";
+// plane web components
+import { DeleteWorkspaceSection } from "@/plane-web/components/workspace";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // services
 import { FileService } from "@/services/file.service";
-// types
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",
@@ -36,15 +36,13 @@ const fileService = new FileService();
 export const WorkspaceDetails: FC = observer(() => {
   // states
   const [isLoading, setIsLoading] = useState(false);
-  const [deleteWorkspaceModal, setDeleteWorkspaceModal] = useState(false);
   const [isImageRemoving, setIsImageRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   // store hooks
   const { captureWorkspaceEvent } = useEventTracker();
-  const {
-    membership: { currentWorkspaceRole },
-  } = useUser();
   const { currentWorkspace, updateWorkspace } = useWorkspace();
+  const { allowPermissions } = useUserPermissions();
+
   // form info
   const {
     handleSubmit,
@@ -143,7 +141,7 @@ export const WorkspaceDetails: FC = observer(() => {
     if (currentWorkspace) reset({ ...currentWorkspace });
   }, [currentWorkspace, reset]);
 
-  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
   if (!currentWorkspace)
     return (
@@ -154,11 +152,6 @@ export const WorkspaceDetails: FC = observer(() => {
 
   return (
     <>
-      <DeleteWorkspaceModal
-        data={currentWorkspace}
-        isOpen={deleteWorkspaceModal}
-        onClose={() => setDeleteWorkspaceModal(false)}
-      />
       <Controller
         control={control}
         name="logo"
@@ -177,8 +170,8 @@ export const WorkspaceDetails: FC = observer(() => {
           />
         )}
       />
-      <div className={`w-full overflow-y-auto md:py-8 py-4 md:pr-9 pr-4 ${isAdmin ? "" : "opacity-60"}`}>
-        <div className="flex items-center gap-5 border-b border-custom-border-100 pb-7">
+      <div className={`w-full overflow-y-auto md:pr-9 pr-4 ${isAdmin ? "" : "opacity-60"}`}>
+        <div className="flex gap-5 border-b border-custom-border-100 pb-7 items-start">
           <div className="flex flex-col gap-1">
             <button type="button" onClick={() => setIsImageUploadModalOpen(true)} disabled={!isAdmin}>
               {watch("logo") && watch("logo") !== null && watch("logo") !== "" ? (
@@ -197,7 +190,7 @@ export const WorkspaceDetails: FC = observer(() => {
             </button>
           </div>
           <div className="flex flex-col gap-1">
-            <h3 className="text-lg font-semibold leading-6">{watch("name")}</h3>
+            <div className="text-lg font-semibold leading-6 mb:-my-5">{watch("name")}</div>
             <button type="button" onClick={handleCopyUrl} className="text-sm tracking-tight text-left">{`${
               typeof window !== "undefined" && window.location.origin.replace("http://", "").replace("https://", "")
             }/${currentWorkspace.slug}`}</button>
@@ -219,7 +212,7 @@ export const WorkspaceDetails: FC = observer(() => {
           </div>
         </div>
 
-        <div className="my-10 flex flex-col gap-8">
+        <div className="my-8 flex flex-col gap-8">
           <div className="grid-col grid w-full grid-cols-1 items-center justify-between gap-10 xl:grid-cols-2 2xl:grid-cols-3">
             <div className="flex flex-col gap-1">
               <h4 className="text-sm">Workspace name</h4>
@@ -303,49 +296,12 @@ export const WorkspaceDetails: FC = observer(() => {
           {isAdmin && (
             <div className="flex items-center justify-between py-2">
               <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isLoading}>
-                {isLoading ? "Updating..." : "Update Workspace"}
+                {isLoading ? "Updating" : "Update workspace"}
               </Button>
             </div>
           )}
         </div>
-        {isAdmin && (
-          <Disclosure as="div" className="border-t border-custom-border-100">
-            {({ open }) => (
-              <div className="w-full">
-                <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between py-4">
-                  <span className="text-lg tracking-tight">Delete Workspace</span>
-                  {/* <Icon iconName={open ? "expand_less" : "expand_more"} className="!text-2xl" /> */}
-                  {open ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
-                </Disclosure.Button>
-
-                <Transition
-                  show={open}
-                  enter="transition duration-100 ease-out"
-                  enterFrom="transform opacity-0"
-                  enterTo="transform opacity-100"
-                  leave="transition duration-75 ease-out"
-                  leaveFrom="transform opacity-100"
-                  leaveTo="transform opacity-0"
-                >
-                  <Disclosure.Panel>
-                    <div className="flex flex-col gap-8">
-                      <span className="text-sm tracking-tight">
-                        The danger zone of the workspace delete page is a critical area that requires careful
-                        consideration and attention. When deleting a workspace, all of the data and resources within
-                        that workspace will be permanently removed and cannot be recovered.
-                      </span>
-                      <div>
-                        <Button variant="danger" onClick={() => setDeleteWorkspaceModal(true)}>
-                          Delete my workspace
-                        </Button>
-                      </div>
-                    </div>
-                  </Disclosure.Panel>
-                </Transition>
-              </div>
-            )}
-          </Disclosure>
-        )}
+        {isAdmin && <DeleteWorkspaceSection workspace={currentWorkspace} />}
       </div>
     </>
   );

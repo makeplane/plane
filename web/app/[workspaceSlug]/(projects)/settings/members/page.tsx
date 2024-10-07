@@ -9,15 +9,17 @@ import { IWorkspaceBulkInviteFormData } from "@plane/types";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // components
+import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
 import { SendWorkspaceInvitationModal, WorkspaceMembersList } from "@/components/workspace";
 // constants
 import { MEMBER_INVITED } from "@/constants/event-tracker";
-import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helpers
+import { cn } from "@/helpers/common.helper";
 import { getUserRole } from "@/helpers/user.helper";
 // hooks
-import { useEventTracker, useMember, useUser, useWorkspace } from "@/hooks/store";
+import { useEventTracker, useMember, useUserPermissions, useWorkspace } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const WorkspaceMembersSettingsPage = observer(() => {
   // states
@@ -26,14 +28,19 @@ const WorkspaceMembersSettingsPage = observer(() => {
   // router
   const { workspaceSlug } = useParams();
   // store hooks
+  const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { captureEvent } = useEventTracker();
-  const {
-    membership: { currentWorkspaceRole },
-  } = useUser();
   const {
     workspace: { inviteMembersToWorkspace },
   } = useMember();
   const { currentWorkspace } = useWorkspace();
+
+  // derived values
+  const canPerformWorkspaceAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const canPerformWorkspaceMemberActions = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
 
   const handleWorkspaceInvite = (data: IWorkspaceBulkInviteFormData) => {
     if (!workspaceSlug) return;
@@ -45,7 +52,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
           emails: [
             ...data.emails.map((email) => ({
               email: email.email,
-              role: getUserRole(email.role),
+              role: getUserRole(email.role as unknown as EUserPermissions),
             })),
           ],
           project_id: undefined,
@@ -63,7 +70,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
           emails: [
             ...data.emails.map((email) => ({
               email: email.email,
-              role: getUserRole(email.role),
+              role: getUserRole(email.role as unknown as EUserPermissions),
             })),
           ],
           project_id: undefined,
@@ -79,9 +86,12 @@ const WorkspaceMembersSettingsPage = observer(() => {
   };
 
   // derived values
-  const hasAddMemberPermission =
-    currentWorkspaceRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentWorkspaceRole);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Members` : undefined;
+
+  // if user is not authorized to view this page
+  if (workspaceUserInfo && !canPerformWorkspaceMemberActions) {
+    return <NotAuthorizedView section="settings" />;
+  }
 
   return (
     <>
@@ -91,8 +101,12 @@ const WorkspaceMembersSettingsPage = observer(() => {
         onClose={() => setInviteModal(false)}
         onSubmit={handleWorkspaceInvite}
       />
-      <section className="w-full overflow-y-auto md:pr-9 pr-4">
-        <div className="flex items-center justify-between gap-4 border-b border-custom-border-100 py-3.5">
+      <section
+        className={cn("w-full overflow-y-auto", {
+          "opacity-60": !canPerformWorkspaceMemberActions,
+        })}
+      >
+        <div className="flex justify-between gap-4 pb-3.5 items-start	">
           <h4 className="text-xl font-medium">Members</h4>
           <div className="ml-auto flex items-center gap-1.5 rounded-md border border-custom-border-200 bg-custom-background-100 px-2.5 py-1.5">
             <Search className="h-3.5 w-3.5 text-custom-text-400" />
@@ -104,13 +118,13 @@ const WorkspaceMembersSettingsPage = observer(() => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          {hasAddMemberPermission && (
+          {canPerformWorkspaceAdminActions && (
             <Button variant="primary" size="sm" onClick={() => setInviteModal(true)}>
               Add member
             </Button>
           )}
         </div>
-        <WorkspaceMembersList searchQuery={searchQuery} />
+        <WorkspaceMembersList searchQuery={searchQuery} isAdmin={canPerformWorkspaceAdminActions} />
       </section>
     </>
   );

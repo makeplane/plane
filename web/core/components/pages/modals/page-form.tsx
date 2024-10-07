@@ -10,8 +10,10 @@ import { Logo } from "@/components/common";
 // constants
 import { AccessField } from "@/components/common/access-field";
 import { EPageAccess, PAGE_ACCESS_SPECIFIERS } from "@/constants/page";
+import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
+import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
@@ -30,6 +32,8 @@ export const PageForm: React.FC<Props> = (props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const { getIndex } = getTabIndex(ETabIndices.PROJECT_PAGE, isMobile);
+
   const handlePageFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
@@ -46,7 +50,7 @@ export const PageForm: React.FC<Props> = (props) => {
   return (
     <form onSubmit={handlePageFormSubmit}>
       <div className="space-y-5 p-5">
-        <h3 className="text-xl font-medium text-custom-text-200">Create Page</h3>
+        <h3 className="text-xl font-medium text-custom-text-200">Create page</h3>
         <div className="flex items-start gap-2 h-9 w-full">
           <EmojiIconPicker
             isOpen={isOpen}
@@ -99,7 +103,7 @@ export const PageForm: React.FC<Props> = (props) => {
               onChange={(e) => handleFormData("name", e.target.value)}
               placeholder="Title"
               className="w-full resize-none text-base"
-              tabIndex={1}
+              tabIndex={getIndex("name")}
               required
               autoFocus
             />
@@ -122,7 +126,7 @@ export const PageForm: React.FC<Props> = (props) => {
           </h6>
         </div>
         <div className="flex items-center justify-end gap-2">
-          <Button variant="neutral-primary" size="sm" onClick={handleModalClose} tabIndex={4}>
+          <Button variant="neutral-primary" size="sm" onClick={handleModalClose} tabIndex={getIndex("cancel")}>
             Cancel
           </Button>
           <Button
@@ -131,7 +135,7 @@ export const PageForm: React.FC<Props> = (props) => {
             type="submit"
             loading={isSubmitting}
             disabled={isTitleLengthMoreThan255Character}
-            tabIndex={5}
+            tabIndex={getIndex("submit")}
           >
             {isSubmitting ? "Creating" : "Create Page"}
           </Button>

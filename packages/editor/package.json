@@ -1,6 +1,6 @@
 {
   "name": "@plane/editor",
-  "version": "0.22.0",
+  "version": "0.23.0",
   "description": "Core Editor that powers Plane",
   "private": true,
   "main": "./dist/index.mjs",
@@ -14,12 +14,19 @@
       "types": "./dist/index.d.mts",
       "import": "./dist/index.mjs",
       "module": "./dist/index.mjs"
+    },
+    "./lib": {
+      "require": "./dist/lib.js",
+      "types": "./dist/lib.d.mts",
+      "import": "./dist/lib.mjs",
+      "module": "./dist/lib.mjs"
     }
   },
   "scripts": {
     "build": "tsup --minify",
     "dev": "tsup --watch",
     "check-types": "tsc --noEmit",
+    "lint": "eslint src --ext .ts,.tsx",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "peerDependencies": {
@@ -29,9 +36,11 @@
   },
   "dependencies": {
     "@floating-ui/react": "^0.26.4",
+    "@hocuspocus/provider": "^2.13.5",
     "@plane/ui": "*",
     "@tiptap/core": "^2.1.13",
     "@tiptap/extension-blockquote": "^2.1.13",
+    "@tiptap/extension-character-count": "^2.6.5",
     "@tiptap/extension-collaboration": "^2.3.2",
     "@tiptap/extension-image": "^2.1.13",
     "@tiptap/extension-list-item": "^2.1.13",
@@ -57,21 +66,22 @@
     "tailwind-merge": "^1.14.0",
     "tippy.js": "^6.3.7",
     "tiptap-markdown": "^0.8.9",
+    "uuid": "^10.0.0",
     "y-indexeddb": "^9.0.12",
     "y-prosemirror": "^1.2.5",
     "y-protocols": "^1.0.6",
     "yjs": "^13.6.15"
   },
   "devDependencies": {
+    "@plane/eslint-config": "*",
+    "@plane/typescript-config": "*",
     "@types/node": "18.15.3",
     "@types/react": "^18.2.42",
     "@types/react-dom": "^18.2.17",
-    "eslint-config-custom": "*",
     "postcss": "^8.4.38",
     "tailwind-config-custom": "*",
-    "tsconfig": "*",
     "tsup": "^7.2.0",
-    "typescript": "4.9.5"
+    "typescript": "5.3.3"
   },
   "keywords": [
     "editor",

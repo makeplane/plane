@@ -20,14 +20,14 @@ export const IssueLinkActivity: FC<TIssueLinkActivity> = observer((props) => {
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<MessageSquare size={14} color="#6b7280" aria-hidden="true" />}
+      icon={<MessageSquare size={14} className="text-custom-text-200" aria-hidden="true" />}
       activityId={activityId}
       ends={ends}
     >
       <>
         {activity.verb === "created" ? (
           <>
-            <span>added this </span>
+            <span>added </span>
             <a
               href={`${activity.new_value}`}
               target="_blank"

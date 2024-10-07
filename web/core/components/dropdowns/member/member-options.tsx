@@ -4,15 +4,20 @@ import { useEffect, useRef, useState } from "react";
 import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
 import { Check, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 //components
+import { cn } from "@plane/editor";
 import { Avatar } from "@plane/ui";
 //store
 import { useUser, useMember } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 interface Props {
+  className? : string;
+  optionsClassName?: string;
   projectId?: string;
   referenceElement: HTMLButtonElement | null;
   placement: Placement | undefined;
@@ -20,7 +25,7 @@ interface Props {
 }
 
 export const MemberOptions = observer((props: Props) => {
-  const { projectId, referenceElement, placement, isOpen } = props;
+  const { projectId, referenceElement, placement, isOpen, optionsClassName="" } = props;
   // states
   const [query, setQuery] = useState("");
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -34,6 +39,7 @@ export const MemberOptions = observer((props: Props) => {
     workspace: { workspaceMemberIds },
   } = useMember();
   const { data: currentUser } = useUser();
+  const { isMobile } = usePlatformOS();
   // popper-js init
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "bottom-start",
@@ -50,9 +56,11 @@ export const MemberOptions = observer((props: Props) => {
   useEffect(() => {
     if (isOpen) {
       onOpen();
-      inputRef.current && inputRef.current.focus();
+      if (!isMobile) {
+        inputRef.current && inputRef.current.focus();
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, isMobile]);
 
   const memberIds = projectId ? getProjectMemberIds(projectId) : workspaceMemberIds;
   const onOpen = () => {
@@ -84,12 +92,15 @@ export const MemberOptions = observer((props: Props) => {
   const filteredOptions =
     query === "" ? options : options?.filter((o) => o.query.toLowerCase().includes(query.toLowerCase()));
 
-  return (
-    <Combobox.Options className="fixed z-10" static>
+  return createPortal(
+    <Combobox.Options data-prevent-outside-click static>
       <div
-        className="my-1 w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none"
+        className={cn("my-1 w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none z-20",
+          optionsClassName)}
         ref={setPopperElement}
-        style={styles.popper}
+        style={{
+          ...styles.popper,
+        }}
         {...attributes.popper}
       >
         <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2">
@@ -134,6 +145,7 @@ export const MemberOptions = observer((props: Props) => {
           )}
         </div>
       </div>
-    </Combobox.Options>
+    </Combobox.Options>,
+    document.body
   );
 });

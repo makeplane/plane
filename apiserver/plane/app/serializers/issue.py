@@ -17,7 +17,7 @@ from plane.db.models import (
     Issue,
     IssueActivity,
     IssueComment,
-    IssueProperty,
+    IssueUserProperty,
     IssueAssignee,
     IssueSubscriber,
     IssueLabel,
@@ -135,7 +135,11 @@ class IssueCreateSerializer(BaseSerializer):
         workspace_id = self.context["workspace_id"]
         default_assignee_id = self.context["default_assignee_id"]
 
-        issue = Issue.objects.create(**validated_data, project_id=project_id)
+        # Create Issue
+        issue = Issue.objects.create(
+            **validated_data,
+            project_id=project_id,
+        )
 
         # Issue Audit Users
         created_by_id = issue.created_by_id
@@ -248,9 +252,9 @@ class IssueActivitySerializer(BaseSerializer):
         fields = "__all__"
 
 
-class IssuePropertySerializer(BaseSerializer):
+class IssueUserPropertySerializer(BaseSerializer):
     class Meta:
-        model = IssueProperty
+        model = IssueUserProperty
         fields = "__all__"
         read_only_fields = [
             "user",
@@ -433,17 +437,21 @@ class IssueLinkSerializer(BaseSerializer):
             "issue",
         ]
 
-    def validate_url(self, value):
-        # Check URL format
-        validate_url = URLValidator()
-        try:
-            validate_url(value)
-        except ValidationError:
-            raise serializers.ValidationError("Invalid URL format.")
+    def to_internal_value(self, data):
+        # Modify the URL before validation by appending http:// if missing
+        url = data.get("url", "")
+        if url and not url.startswith(("http://", "https://")):
+            data["url"] = "http://" + url
 
-        # Check URL scheme
-        if not value.startswith(("http://", "https://")):
-            raise serializers.ValidationError("Invalid URL scheme.")
+        return super().to_internal_value(data)
+
+    def validate_url(self, value):
+        # Use Django's built-in URLValidator for validation
+        url_validator = URLValidator()
+        try:
+            url_validator(value)
+        except ValidationError:
+            raise serializers.ValidationError({"error": "Invalid URL format."})
 
         return value
 
@@ -459,10 +467,14 @@ class IssueLinkSerializer(BaseSerializer):
         return IssueLink.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        if IssueLink.objects.filter(
-            url=validated_data.get("url"),
-            issue_id=instance.issue_id,
-        ).exclude(pk=instance.id).exists():
+        if (
+            IssueLink.objects.filter(
+                url=validated_data.get("url"),
+                issue_id=instance.issue_id,
+            )
+            .exclude(pk=instance.id)
+            .exists()
+        ):
             raise serializers.ValidationError(
                 {"error": "URL already exists for this Issue"}
             )
@@ -509,7 +521,7 @@ class IssueAttachmentLiteSerializer(DynamicBaseSerializer):
             "attributes",
             "issue_id",
             "updated_at",
-            "updated_by_id",
+            "updated_by",
         ]
         read_only_fields = fields
 
@@ -525,6 +537,7 @@ class IssueReactionSerializer(BaseSerializer):
             "project",
             "issue",
             "actor",
+            "deleted_at",
         ]
 
 
@@ -543,7 +556,13 @@ class CommentReactionSerializer(BaseSerializer):
     class Meta:
         model = CommentReaction
         fields = "__all__"
-        read_only_fields = ["workspace", "project", "comment", "actor"]
+        read_only_fields = [
+            "workspace",
+            "project",
+            "comment",
+            "actor",
+            "deleted_at",
+        ]
 
 
 class IssueVoteSerializer(BaseSerializer):

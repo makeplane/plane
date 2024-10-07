@@ -19,13 +19,14 @@ from plane.app.permissions import ProjectBasePermission
 from plane.db.models import (
     Cycle,
     Inbox,
-    IssueProperty,
+    IssueUserProperty,
     Module,
     Project,
     DeployBoard,
     ProjectMember,
     State,
     Workspace,
+    UserFavorite,
 )
 from plane.bgtasks.webhook_task import model_activity
 from .base import BaseAPIView
@@ -165,7 +166,7 @@ class ProjectAPIEndpoint(BaseAPIView):
                     role=20,
                 )
                 # Also create the issue property for the user
-                _ = IssueProperty.objects.create(
+                _ = IssueUserProperty.objects.create(
                     project_id=serializer.data["id"],
                     user=request.user,
                 )
@@ -179,7 +180,7 @@ class ProjectAPIEndpoint(BaseAPIView):
                         role=20,
                     )
                     # Also create the issue property for the user
-                    IssueProperty.objects.create(
+                    IssueUserProperty.objects.create(
                         project_id=serializer.data["id"],
                         user_id=serializer.data["project_lead"],
                     )
@@ -240,6 +241,7 @@ class ProjectAPIEndpoint(BaseAPIView):
                     .filter(pk=serializer.data["id"])
                     .first()
                 )
+
                 # Model activity
                 model_activity.delay(
                     model_name="project",
@@ -299,11 +301,16 @@ class ProjectAPIEndpoint(BaseAPIView):
             if serializer.is_valid():
                 serializer.save()
                 if serializer.data["inbox_view"]:
-                    Inbox.objects.get_or_create(
-                        name=f"{project.name} Inbox",
+                    inbox = Inbox.objects.filter(
                         project=project,
                         is_default=True,
-                    )
+                    ).first()
+                    if not inbox:
+                        Inbox.objects.create(
+                            name=f"{project.name} Inbox",
+                            project=project,
+                            is_default=True,
+                        )
 
                     # Create the triage state in Backlog group
                     State.objects.get_or_create(
@@ -355,6 +362,12 @@ class ProjectAPIEndpoint(BaseAPIView):
 
     def delete(self, request, slug, pk):
         project = Project.objects.get(pk=pk, workspace__slug=slug)
+        # Delete the user favorite cycle
+        UserFavorite.objects.filter(
+            entity_type="project",
+            entity_identifier=pk,
+            project_id=pk,
+        ).delete()
         project.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -369,6 +382,10 @@ class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
         project.archived_at = timezone.now()
         project.save()
+        UserFavorite.objects.filter(
+            workspace__slug=slug,
+            project=project_id,
+        ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def delete(self, request, slug, project_id):

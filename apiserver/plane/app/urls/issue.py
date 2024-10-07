@@ -19,8 +19,9 @@ from plane.app.views import (
     IssueUserDisplayPropertyEndpoint,
     IssueViewSet,
     LabelViewSet,
-    BulkIssueOperationsEndpoint,
     BulkArchiveIssuesEndpoint,
+    DeletedIssuesListViewSet,
+    IssuePaginatedViewSet,
 )
 
 urlpatterns = [
@@ -38,6 +39,12 @@ urlpatterns = [
             }
         ),
         name="project-issue",
+    ),
+    # updated v2 paginated issues
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/v2/issues/",
+        IssuePaginatedViewSet.as_view({"get": "list"}),
+        name="project-issues-paginated",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:pk>/",
@@ -233,13 +240,13 @@ urlpatterns = [
         name="project-issue-comment-reactions",
     ),
     ## End Comment Reactions
-    ## IssueProperty
+    ## IssueUserProperty
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/user-properties/",
         IssueUserDisplayPropertyEndpoint.as_view(),
         name="project-issue-display-properties",
     ),
-    ## IssueProperty End
+    ## IssueUserProperty End
     ## Issue Archives
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/archived-issues/",
@@ -306,8 +313,8 @@ urlpatterns = [
         name="project-issue-draft",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-operation-issues/",
-        BulkIssueOperationsEndpoint.as_view(),
-        name="bulk-operations-issues",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/deleted-issues/",
+        DeletedIssuesListViewSet.as_view(),
+        name="deleted-issues",
     ),
 ]

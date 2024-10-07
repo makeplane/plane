@@ -3,6 +3,8 @@ import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
 import useSWR from "swr";
+// plane constants
+import { ALL_ISSUES } from "@plane/constants";
 import { IIssueDisplayFilterOptions } from "@plane/types";
 // hooks
 // components
@@ -12,19 +14,18 @@ import { AllIssueQuickActions } from "@/components/issues/issue-layouts/quick-ac
 import { SpreadsheetLayoutLoader } from "@/components/ui";
 // constants
 import {
-  ALL_ISSUES,
   EIssueFilterType,
   EIssueLayoutTypes,
   EIssuesStoreType,
   ISSUE_DISPLAY_FILTERS_BY_LAYOUT,
 } from "@/constants/issue";
-import { EUserProjectRoles } from "@/constants/project";
 // hooks
-import { useGlobalView, useIssues, useUser } from "@/hooks/store";
+import { useGlobalView, useIssues, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // store
 import emptyView from "@/public/empty-state/view.svg";
 import { IssuePeekOverview } from "../../peek-overview";
@@ -56,9 +57,8 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props: Props) => {
   } = useIssues(EIssuesStoreType.GLOBAL);
   const { updateIssue, removeIssue, archiveIssue } = useIssuesActions(EIssuesStoreType.GLOBAL);
 
-  const {
-    membership: { currentWorkspaceAllProjectsRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
+
   const { fetchAllGlobalViews, getViewDetailsById } = useGlobalView();
 
   const viewDetails = getViewDetailsById(globalViewId?.toString());
@@ -131,12 +131,14 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props: Props) => {
   const canEditProperties = useCallback(
     (projectId: string | undefined) => {
       if (!projectId) return false;
-
-      const currentProjectRole = currentWorkspaceAllProjectsRole && currentWorkspaceAllProjectsRole[projectId];
-
-      return !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+      return allowPermissions(
+        [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+        EUserPermissionsLevel.PROJECT,
+        workspaceSlug.toString(),
+        projectId
+      );
     },
-    [currentWorkspaceAllProjectsRole]
+    [workspaceSlug]
   );
 
   const issueFilters = globalViewId ? filters?.[globalViewId.toString()] : undefined;

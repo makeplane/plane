@@ -1,7 +1,7 @@
 # base requirements
 
 # django
-Django==4.2.11
+Django==4.2.15
 # rest framework
 djangorestframework==3.15.2
 # postgres 
@@ -17,6 +17,7 @@ django-cors-headers==4.3.1
 # celery
 celery==5.4.0
 django_celery_beat==2.6.0
+django-celery-results==2.5.1
 # file serve
 whitenoise==6.6.0
 # fake data
@@ -26,7 +27,7 @@ django-filter==24.2
 # json model
 jsonmodels==2.7.0
 # sentry
-sentry-sdk==2.0.1
+sentry-sdk==2.8.0
 # storage
 django-storages==1.14.2
 # user management
@@ -50,7 +51,7 @@ beautifulsoup4==4.12.3
 # analytics
 posthog==3.5.0
 # crypto
-cryptography==42.0.5
+cryptography==43.0.1
 # html validator
 lxml==5.2.1
 # s3
@@ -61,4 +62,8 @@ zxcvbn==4.4.28
 pytz==2024.1
 # jwt
 PyJWT==2.8.0
-
+# OpenTelemetry
+opentelemetry-api==1.27.0
+opentelemetry-sdk==1.27.0
+opentelemetry-instrumentation-django==0.48b0
+opentelemetry-exporter-otlp==1.27.0

@@ -9,6 +9,7 @@ from .issue import (
     IssueLinkAPIEndpoint,
     IssueCommentAPIEndpoint,
     IssueActivityAPIEndpoint,
+    IssueAttachmentEndpoint,
 )
 
 from .cycle import (
@@ -24,4 +25,7 @@ from .module import (
     ModuleArchiveUnarchiveAPIEndpoint,
 )
 
+from .member import ProjectMemberAPIEndpoint
+
 from .inbox import InboxIssueAPIEndpoint
+

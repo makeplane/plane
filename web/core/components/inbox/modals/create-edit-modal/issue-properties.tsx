@@ -2,6 +2,7 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { LayoutPanelTop } from "lucide-react";
 import { ISearchIssueResponse, TIssue } from "@plane/types";
+import { CustomMenu } from "@plane/ui";
 // components
 import {
   CycleDropdown,
@@ -14,10 +15,14 @@ import {
 } from "@/components/dropdowns";
 import { ParentIssuesListModal } from "@/components/issues";
 import { IssueLabelSelect } from "@/components/issues/select";
+// constants
+import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
+import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useProjectEstimates } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type TInboxIssueProperties = {
   projectId: string;
@@ -30,10 +35,12 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
   const { projectId, data, handleData, isVisible = false } = props;
   // hooks
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
+  const { isMobile } = usePlatformOS();
   // states
   const [parentIssueModalOpen, setParentIssueModalOpen] = useState(false);
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | undefined>(undefined);
-  true;
+
+  const { getIndex } = getTabIndex(ETabIndices.INTAKE_ISSUE_FORM, isMobile);
 
   const startDate = data?.start_date;
   const targetDate = data?.target_date;
@@ -53,6 +60,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
           onChange={(stateId) => handleData("state_id", stateId)}
           projectId={projectId}
           buttonVariant="border-with-text"
+          tabIndex={getIndex("state_id")}
         />
       </div>
 
@@ -62,6 +70,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
           value={data?.priority}
           onChange={(priority) => handleData("priority", priority)}
           buttonVariant="border-with-text"
+          tabIndex={getIndex("priority")}
         />
       </div>
 
@@ -75,17 +84,18 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
           buttonClassName={(data?.assignee_ids || [])?.length > 0 ? "hover:bg-transparent" : ""}
           placeholder="Assignees"
           multiple
+          tabIndex={getIndex("assignee_ids")}
         />
       </div>
 
       {/* labels */}
       <div className="h-7">
         <IssueLabelSelect
-          createLabelEnabled={false}
           setIsOpen={() => {}}
           value={data?.label_ids || []}
           onChange={(labelIds) => handleData("label_ids", labelIds)}
           projectId={projectId}
+          tabIndex={getIndex("label_ids")}
         />
       </div>
 
@@ -94,10 +104,11 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
         <div className="h-7">
           <DateDropdown
             value={data?.start_date || null}
-            onChange={(date) => (date ? handleData("start_date", renderFormattedPayloadDate(date)) : null)}
+            onChange={(date) => handleData("start_date", date ? renderFormattedPayloadDate(date) : "")}
             buttonVariant="border-with-text"
             minDate={minDate ?? undefined}
             placeholder="Start date"
+            tabIndex={getIndex("start_date")}
           />
         </div>
       )}
@@ -106,10 +117,11 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
       <div className="h-7">
         <DateDropdown
           value={data?.target_date || null}
-          onChange={(date) => (date ? handleData("target_date", renderFormattedPayloadDate(date)) : null)}
+          onChange={(date) => handleData("target_date", date ? renderFormattedPayloadDate(date) : "")}
           buttonVariant="border-with-text"
           minDate={minDate ?? undefined}
           placeholder="Due date"
+          tabIndex={getIndex("target_date")}
         />
       </div>
 
@@ -122,6 +134,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
             projectId={projectId}
             placeholder="Cycle"
             buttonVariant="border-with-text"
+            tabIndex={getIndex("cycle_id")}
           />
         </div>
       )}
@@ -137,6 +150,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
             buttonVariant="border-with-text"
             multiple
             showCount
+            tabIndex={getIndex("module_ids")}
           />
         </div>
       )}
@@ -150,6 +164,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
             projectId={projectId}
             buttonVariant="border-with-text"
             placeholder="Estimate"
+            tabIndex={getIndex("estimate_point")}
           />
         </div>
       )}
@@ -157,18 +172,50 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
       {/* add parent */}
       {isVisible && (
         <>
-          <button
-            type="button"
-            className="flex cursor-pointer items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1.5 text-xs hover:bg-custom-background-80"
-            onClick={() => setParentIssueModalOpen(true)}
-          >
-            <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
-            <span className="whitespace-nowrap">
-              {selectedParentIssue
-                ? `${selectedParentIssue.project__identifier}-${selectedParentIssue.sequence_id}`
-                : `Add parent`}
-            </span>
-          </button>
+          {selectedParentIssue ? (
+            <CustomMenu
+              customButton={
+                <button
+                  type="button"
+                  className="flex cursor-pointer items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1.5 text-xs hover:bg-custom-background-80"
+                >
+                  <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
+                  <span className="whitespace-nowrap">
+                    {selectedParentIssue
+                      ? `${selectedParentIssue.project__identifier}-${selectedParentIssue.sequence_id}`
+                      : `Add parent`}
+                  </span>
+                </button>
+              }
+              placement="bottom-start"
+              tabIndex={getIndex("parent_id")}
+            >
+              <>
+                <CustomMenu.MenuItem className="!p-1" onClick={() => setParentIssueModalOpen(true)}>
+                  Change parent issue
+                </CustomMenu.MenuItem>
+                <CustomMenu.MenuItem
+                  className="!p-1"
+                  onClick={() => {
+                    handleData("parent_id", "");
+                    setSelectedParentIssue(undefined);
+                  }}
+                >
+                  Remove parent issue
+                </CustomMenu.MenuItem>
+              </>
+            </CustomMenu>
+          ) : (
+            <button
+              type="button"
+              className="flex cursor-pointer items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1.5 text-xs hover:bg-custom-background-80"
+              onClick={() => setParentIssueModalOpen(true)}
+            >
+              <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
+              <span className="whitespace-nowrap">Add parent</span>
+            </button>
+          )}
+
           <ParentIssuesListModal
             isOpen={parentIssueModalOpen}
             handleClose={() => setParentIssueModalOpen(false)}

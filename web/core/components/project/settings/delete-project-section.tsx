@@ -21,7 +21,7 @@ export const DeleteProjectSection: React.FC<IDeleteProjectSection> = (props) => 
       {({ open }) => (
         <div className="w-full">
           <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between">
-            <span className="text-xl tracking-tight">Delete Project</span>
+            <span className="text-xl tracking-tight">Delete project</span>
             {open ? <ChevronUp className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
           </Disclosure.Button>
 
@@ -37,9 +37,8 @@ export const DeleteProjectSection: React.FC<IDeleteProjectSection> = (props) => 
             <Disclosure.Panel>
               <div className="flex flex-col gap-8 pt-4">
                 <span className="text-sm tracking-tight">
-                  The danger zone of the project delete page is a critical area that requires careful consideration and
-                  attention. When deleting a project, all of the data and resources within that project will be
-                  permanently removed and cannot be recovered.
+                  When deleting a project, all of the data and resources within that project will be permanently removed
+                  and cannot be recovered.
                 </span>
                 <div>
                   {projectDetails ? (

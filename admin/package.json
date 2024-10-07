@@ -1,6 +1,6 @@
 {
   "name": "admin",
-  "version": "0.22.0",
+  "version": "0.23.0",
   "private": true,
   "scripts": {
     "dev": "turbo run develop",
@@ -8,42 +8,46 @@
     "build": "next build",
     "preview": "next build && next start",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:errors": "eslint . --ext .ts,.tsx --quiet"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.19",
+    "@plane/constants": "*",
+    "@plane/helpers": "*",
     "@plane/types": "*",
     "@plane/ui": "*",
+    "@sentry/nextjs": "^8.32.0",
     "@tailwindcss/typography": "^0.5.9",
     "@types/lodash": "^4.17.0",
     "autoprefixer": "10.4.14",
-    "axios": "^1.6.7",
+    "axios": "^1.7.4",
     "js-cookie": "^3.0.5",
     "lodash": "^4.17.21",
     "lucide-react": "^0.356.0",
     "mobx": "^6.12.0",
     "mobx-react": "^9.1.1",
-    "next": "^14.2.3",
+    "next": "^14.2.12",
     "next-themes": "^0.2.1",
     "postcss": "^8.4.38",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-hook-form": "^7.51.0",
+    "react-hook-form": "7.51.5",
     "swr": "^2.2.4",
     "tailwindcss": "3.3.2",
     "uuid": "^9.0.1",
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
+    "@plane/eslint-config": "*",
+    "@plane/typescript-config": "*",
     "@types/js-cookie": "^3.0.6",
     "@types/node": "18.16.1",
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",
     "@types/uuid": "^9.0.8",
     "@types/zxcvbn": "^4.4.4",
-    "eslint-config-custom": "*",
     "tailwind-config-custom": "*",
-    "tsconfig": "*",
-    "typescript": "^5.4.2"
+    "typescript": "5.3.3"
   }
 }

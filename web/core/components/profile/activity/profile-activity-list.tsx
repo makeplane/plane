@@ -97,6 +97,7 @@ export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
                       </div>
                       <div className="issue-comments-section p-0">
                         <RichTextReadOnlyEditor
+                          id={activityItem.id}
                           initialValue={
                             activityItem?.new_value !== "" ? activityItem.new_value : activityItem.old_value
                           }

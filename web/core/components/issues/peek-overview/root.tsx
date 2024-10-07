@@ -6,70 +6,53 @@ import { usePathname } from "next/navigation";
 import { TIssue } from "@plane/types";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components
-import { IssueView } from "@/components/issues";
+import { IssueView, TIssueOperations } from "@/components/issues";
 // constants
 import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED, ISSUE_RESTORED } from "@/constants/event-tracker";
 import { EIssuesStoreType } from "@/constants/issue";
-import { EUserProjectRoles } from "@/constants/project";
 // hooks
-import { useEventTracker, useIssueDetail, useIssues, useUser } from "@/hooks/store";
+import { useEventTracker, useIssueDetail, useIssues, useUserPermissions } from "@/hooks/store";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 interface IIssuePeekOverview {
   embedIssue?: boolean;
+  embedRemoveCurrentNotification?: () => void;
   is_archived?: boolean;
   is_draft?: boolean;
 }
 
-export type TIssuePeekOperations = {
-  fetch: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
-  update: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
-  remove: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
-  archive: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
-  restore: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
-  addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<void>;
-  removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
-  addModulesToIssue?: (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => Promise<void>;
-  removeIssueFromModule?: (
-    workspaceSlug: string,
-    projectId: string,
-    moduleId: string,
-    issueId: string
-  ) => Promise<void>;
-  removeModulesFromIssue?: (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    moduleIds: string[]
-  ) => Promise<void>;
-};
-
 export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
-  const { embedIssue = false, is_archived = false, is_draft = false } = props;
+  const { embedIssue = false, embedRemoveCurrentNotification, is_archived = false, is_draft = false } = props;
   // router
   const pathname = usePathname();
-  const {
-    membership: { currentWorkspaceAllProjectsRole },
-  } = useUser();
+  // store hook
+  const { allowPermissions } = useUserPermissions();
+
   const {
     issues: { restoreIssue },
   } = useIssues(EIssuesStoreType.ARCHIVED);
   const {
     peekIssue,
-    issue: { fetchIssue },
+    setPeekIssue,
+    issue: { fetchIssue, getIsFetchingIssueDetails },
+    fetchActivities,
   } = useIssueDetail();
 
   const { issues } = useIssuesStore();
   const { captureIssueEvent } = useEventTracker();
   // state
-  const [loader, setLoader] = useState(true);
   const [error, setError] = useState(false);
 
-  const issueOperations: TIssuePeekOperations = useMemo(
+  const removeRoutePeekId = () => {
+    setPeekIssue(undefined);
+    if (embedIssue) embedRemoveCurrentNotification && embedRemoveCurrentNotification();
+  };
+
+  const issueOperations: TIssueOperations = useMemo(
     () => ({
-      fetch: async (workspaceSlug: string, projectId: string, issueId: string) => {
+      fetch: async (workspaceSlug: string, projectId: string, issueId: string, loader = true) => {
         try {
-          setLoader(true);
           setError(false);
           await fetchIssue(
             workspaceSlug,
@@ -77,10 +60,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             issueId,
             is_archived ? "ARCHIVED" : is_draft ? "DRAFT" : "DEFAULT"
           );
-          setLoader(false);
           setError(false);
         } catch (error) {
-          setLoader(false);
           setError(true);
           console.error("Error fetching the parent issue");
         }
@@ -89,7 +70,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
         issues?.updateIssue &&
           (await issues
             .updateIssue(workspaceSlug, projectId, issueId, data)
-            .then(() => {
+            .then(async () => {
+              fetchActivities(workspaceSlug, projectId, issueId);
               captureIssueEvent({
                 eventName: ISSUE_UPDATED,
                 payload: { ...data, issueId, state: "SUCCESS", element: "Issue peek-overview" },
@@ -115,16 +97,13 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       },
       remove: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
-          issues?.removeIssue(workspaceSlug, projectId, issueId);
-          setToast({
-            title: "Success!",
-            type: TOAST_TYPE.SUCCESS,
-            message: "Issue deleted successfully",
-          });
-          captureIssueEvent({
-            eventName: ISSUE_DELETED,
-            payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
-            path: pathname,
+          return issues?.removeIssue(workspaceSlug, projectId, issueId).then(() => {
+            captureIssueEvent({
+              eventName: ISSUE_DELETED,
+              payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
+              path: pathname,
+            });
+            removeRoutePeekId();
           });
         } catch (error) {
           setToast({
@@ -184,6 +163,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       addCycleToIssue: async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
         try {
           await issues.addCycleToIssue(workspaceSlug, projectId, cycleId, issueId);
+          fetchActivities(workspaceSlug, projectId, issueId);
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { issueId, state: "SUCCESS", element: "Issue peek-overview" },
@@ -254,6 +234,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             },
           });
           await removeFromCyclePromise;
+          fetchActivities(workspaceSlug, projectId, issueId);
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { issueId, state: "SUCCESS", element: "Issue peek-overview" },
@@ -289,6 +270,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
           addModuleIds,
           removeModuleIds
         );
+        fetchActivities(workspaceSlug, projectId, issueId);
         captureIssueEvent({
           eventName: ISSUE_UPDATED,
           payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
@@ -315,6 +297,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             },
           });
           await removeFromModulePromise;
+          fetchActivities(workspaceSlug, projectId, issueId);
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
@@ -348,20 +331,25 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
 
   if (!peekIssue?.workspaceSlug || !peekIssue?.projectId || !peekIssue?.issueId) return <></>;
 
-  const currentProjectRole = currentWorkspaceAllProjectsRole?.[peekIssue?.projectId];
   // Check if issue is editable, based on user role
-  const isEditable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditable = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT,
+    peekIssue?.workspaceSlug,
+    peekIssue?.projectId
+  );
 
   return (
     <IssueView
       workspaceSlug={peekIssue.workspaceSlug}
       projectId={peekIssue.projectId}
       issueId={peekIssue.issueId}
-      isLoading={loader}
+      isLoading={getIsFetchingIssueDetails(peekIssue.issueId)}
       isError={error}
       is_archived={is_archived}
       disabled={!isEditable}
       embedIssue={embedIssue}
+      embedRemoveCurrentNotification={embedRemoveCurrentNotification}
       issueOperations={issueOperations}
     />
   );

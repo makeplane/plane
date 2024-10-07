@@ -1,3 +1,4 @@
+import CharacterCount from "@tiptap/extension-character-count";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import TextStyle from "@tiptap/extension-text-style";
@@ -18,6 +19,8 @@ import {
   TableRow,
   Table,
   CustomMention,
+  HeadingListExtension,
+  CustomReadOnlyImageExtension,
 } from "@/extensions";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
@@ -73,6 +76,7 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
       class: "rounded-md",
     },
   }),
+  CustomReadOnlyImageExtension(),
   TiptapUnderline,
   TextStyle,
   TaskList.configure({
@@ -104,4 +108,6 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
     mentionHighlights: mentionConfig.mentionHighlights,
     readonly: true,
   }),
+  CharacterCount,
+  HeadingListExtension,
 ];

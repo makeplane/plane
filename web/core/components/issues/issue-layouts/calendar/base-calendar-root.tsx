@@ -3,22 +3,23 @@
 import { FC, useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { EIssueGroupByToServerOptions } from "@plane/constants";
 import { TGroupedIssues } from "@plane/types";
 // components
 import { TOAST_TYPE, setToast } from "@plane/ui";
 import { CalendarChart } from "@/components/issues";
 //constants
-import { EIssuesStoreType, EIssueGroupByToServerOptions } from "@/constants/issue";
-import { EUserProjectRoles } from "@/constants/project";
+import { EIssuesStoreType } from "@/constants/issue";
 // hooks
-import { useIssues, useUser, useCalendarView } from "@/hooks/store";
+import { useIssues, useCalendarView, useUserPermissions } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // types
 import { IQuickActionProps } from "../list/list-view-types";
 import { handleDragDrop } from "./utils";
 
-type CalendarStoreType =
+export type CalendarStoreType =
   | EIssuesStoreType.PROJECT
   | EIssuesStoreType.MODULE
   | EIssuesStoreType.CYCLE
@@ -39,9 +40,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
 
   // hooks
   const storeType = useIssueStoreType() as CalendarStoreType;
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
   const { issues, issuesFilter, issueMap } = useIssues(storeType);
   const {
     fetchIssues,
@@ -57,7 +56,10 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
 
   const issueCalendarView = useCalendarView();
 
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditingAllowed = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
 
   const displayFilters = issuesFilter.issueFilters?.displayFilters;
 

@@ -1,37 +1,30 @@
-import { forwardRef, useCallback, useState } from "react";
+import { forwardRef, useCallback } from "react";
 // components
 import { EditorWrapper } from "@/components/editors";
 import { EditorBubbleMenu } from "@/components/menus";
 // extensions
-import { DragAndDrop, SlashCommand } from "@/extensions";
+import { SideMenuExtension, SlashCommand } from "@/extensions";
 // types
 import { EditorRefApi, IRichTextEditor } from "@/types";
 
 const RichTextEditor = (props: IRichTextEditor) => {
-  const { dragDropEnabled, fileHandler } = props;
-  // states
-  const [hideDragHandleOnMouseLeave, setHideDragHandleOnMouseLeave] = useState<() => void>(() => {});
-
-  // this essentially sets the hideDragHandle function from the DragAndDrop extension as the Plugin
-  // loads such that we can invoke it from react when the cursor leaves the container
-  const setHideDragHandleFunction = (hideDragHandlerFromDragDrop: () => void) => {
-    setHideDragHandleOnMouseLeave(() => hideDragHandlerFromDragDrop);
-  };
+  const { dragDropEnabled } = props;
 
   const getExtensions = useCallback(() => {
-    const extensions = [
-      SlashCommand(fileHandler.upload),
-      // TODO; add the extension conditionally for forms that don't require it
-      // EnterKeyExtension(onEnterKeyPress),
-    ];
+    const extensions = [SlashCommand()];
 
-    if (dragDropEnabled) extensions.push(DragAndDrop(setHideDragHandleFunction));
+    extensions.push(
+      SideMenuExtension({
+        aiEnabled: false,
+        dragDropEnabled: !!dragDropEnabled,
+      })
+    );
 
     return extensions;
-  }, [dragDropEnabled, fileHandler.upload]);
+  }, [dragDropEnabled]);
 
   return (
-    <EditorWrapper {...props} extensions={getExtensions()} hideDragHandleOnMouseLeave={hideDragHandleOnMouseLeave}>
+    <EditorWrapper {...props} extensions={getExtensions()}>
       {(editor) => <>{editor && <EditorBubbleMenu editor={editor} />}</>}
     </EditorWrapper>
   );

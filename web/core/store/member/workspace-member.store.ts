@@ -4,8 +4,8 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 // types
 import { IWorkspaceBulkInviteFormData, IWorkspaceMember, IWorkspaceMemberInvitation } from "@plane/types";
-// constants
-import { EUserWorkspaceRoles } from "@/constants/workspace";
+// plane-web constants
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // services
 import { WorkspaceService } from "@/plane-web/services";
 // types
@@ -18,7 +18,7 @@ import { IMemberRootStore } from ".";
 export interface IWorkspaceMembership {
   id: string;
   member: string;
-  role: EUserWorkspaceRoles;
+  role: EUserPermissions;
 }
 
 export interface IWorkspaceMemberStore {
@@ -38,7 +38,7 @@ export interface IWorkspaceMemberStore {
   fetchWorkspaceMembers: (workspaceSlug: string) => Promise<IWorkspaceMember[]>;
   fetchWorkspaceMemberInvitations: (workspaceSlug: string) => Promise<IWorkspaceMemberInvitation[]>;
   // crud actions
-  updateMember: (workspaceSlug: string, userId: string, data: { role: EUserWorkspaceRoles }) => Promise<void>;
+  updateMember: (workspaceSlug: string, userId: string, data: { role: EUserPermissions }) => Promise<void>;
   removeMemberFromWorkspace: (workspaceSlug: string, userId: string) => Promise<void>;
   // invite actions
   inviteMembersToWorkspace: (workspaceSlug: string, data: IWorkspaceBulkInviteFormData) => Promise<void>;
@@ -196,7 +196,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
     await this.workspaceService.fetchWorkspaceMembers(workspaceSlug).then((response) => {
       runInAction(() => {
         response.forEach((member) => {
-          set(this.memberRoot?.memberMap, member.member.id, member.member);
+          set(this.memberRoot?.memberMap, member.member.id, { ...member.member, joining_date: member.created_at });
           set(this.workspaceMemberMap, [workspaceSlug, member.member.id], {
             id: member.id,
             member: member.member.id,
@@ -213,7 +213,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
    * @param userId
    * @param data
    */
-  updateMember = async (workspaceSlug: string, userId: string, data: { role: EUserWorkspaceRoles }) => {
+  updateMember = async (workspaceSlug: string, userId: string, data: { role: EUserPermissions }) => {
     const memberDetails = this.getWorkspaceMemberDetails(userId);
     if (!memberDetails) throw new Error("Member not found");
     // original data to revert back in case of error

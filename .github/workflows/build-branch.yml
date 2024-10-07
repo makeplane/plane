@@ -2,6 +2,12 @@ name: Branch Build
 
 on:
   workflow_dispatch:
+    inputs:
+      arm64:
+        description: "Build for ARM64 architecture"
+        required: false
+        default: false
+        type: boolean
   push:
     branches:
       - master
@@ -11,6 +17,8 @@ on:
 
 env:
   TARGET_BRANCH: ${{ github.ref_name || github.event.release.target_commitish }}
+  ARM64_BUILD: ${{ github.event.inputs.arm64 }}
+  IS_PRERELEASE: ${{ github.event.release.prerelease }}
 
 jobs:
   branch_build_setup:
@@ -27,12 +35,14 @@ jobs:
       build_admin: ${{ steps.changed_files.outputs.admin_any_changed }}
       build_space: ${{ steps.changed_files.outputs.space_any_changed }}
       build_web: ${{ steps.changed_files.outputs.web_any_changed }}
+      build_live: ${{ steps.changed_files.outputs.live_any_changed }}
+      flat_branch_name: ${{ steps.set_env_variables.outputs.FLAT_BRANCH_NAME }}
 
     steps:
       - id: set_env_variables
         name: Set Environment Variables
         run: |
-          if [ "${{ env.TARGET_BRANCH }}" == "master" ] || [ "${{ github.event_name }}" == "release" ]; then
+          if [ "${{ env.TARGET_BRANCH }}" == "master" ] || [ "${{ env.ARM64_BUILD }}" == "true" ] || ([ "${{ github.event_name }}" == "release" ] && [ "${{ env.IS_PRERELEASE }}" != "true" ]); then
             echo "BUILDX_DRIVER=cloud" >> $GITHUB_OUTPUT
             echo "BUILDX_VERSION=lab:latest" >> $GITHUB_OUTPUT
             echo "BUILDX_PLATFORMS=linux/amd64,linux/arm64" >> $GITHUB_OUTPUT
@@ -44,6 +54,8 @@ jobs:
             echo "BUILDX_ENDPOINT=" >> $GITHUB_OUTPUT
           fi
           echo "TARGET_BRANCH=${{ env.TARGET_BRANCH }}" >> $GITHUB_OUTPUT
+          flat_branch_name=$(echo ${{ env.TARGET_BRANCH }} | sed 's/[^a-zA-Z0-9\._]/-/g')
+          echo "FLAT_BRANCH_NAME=${flat_branch_name}" >> $GITHUB_OUTPUT
 
       - id: checkout_files
         name: Checkout Files
@@ -79,13 +91,21 @@ jobs:
               - 'yarn.lock'
               - 'tsconfig.json'
               - 'turbo.json'
+            live:
+              - live/**
+              - packages/**
+              - 'package.json'
+              - 'yarn.lock'
+              - 'tsconfig.json'
+              - 'turbo.json'
 
   branch_build_push_web:
     if: ${{ needs.branch_build_setup.outputs.build_web == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
+    name: Build-Push Web Docker Image
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
-      FRONTEND_TAG: makeplane/plane-frontend:${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      FRONTEND_TAG: makeplane/plane-frontend:${{ needs.branch_build_setup.outputs.flat_branch_name }}
       TARGET_BRANCH: ${{ needs.branch_build_setup.outputs.gh_branch_name }}
       BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
       BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
@@ -95,7 +115,10 @@ jobs:
       - name: Set Frontend Docker Tag
         run: |
           if [ "${{ github.event_name }}" == "release" ]; then
-            TAG=makeplane/plane-frontend:stable,makeplane/plane-frontend:${{ github.event.release.tag_name }}
+            TAG=makeplane/plane-frontend:${{ github.event.release.tag_name }}
+            if [ "${{ env.IS_PRERELEASE }}" != "true" ]; then
+              TAG=${TAG},makeplane/plane-frontend:stable
+            fi
           elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
             TAG=makeplane/plane-frontend:latest
           else
@@ -134,10 +157,11 @@ jobs:
 
   branch_build_push_admin:
     if: ${{ needs.branch_build_setup.outputs.build_admin== 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
+    name: Build-Push Admin Docker Image
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
-      ADMIN_TAG: makeplane/plane-admin:${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      ADMIN_TAG: makeplane/plane-admin:${{ needs.branch_build_setup.outputs.flat_branch_name }}
       TARGET_BRANCH: ${{ needs.branch_build_setup.outputs.gh_branch_name }}
       BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
       BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
@@ -147,7 +171,10 @@ jobs:
       - name: Set Admin Docker Tag
         run: |
           if [ "${{ github.event_name }}" == "release" ]; then
-            TAG=makeplane/plane-admin:stable,makeplane/plane-admin:${{ github.event.release.tag_name }}
+            TAG=makeplane/plane-admin:${{ github.event.release.tag_name }}
+            if [ "${{ env.IS_PRERELEASE }}" != "true" ]; then
+              TAG=${TAG},makeplane/plane-admin:stable
+            fi
           elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
             TAG=makeplane/plane-admin:latest
           else
@@ -186,10 +213,11 @@ jobs:
 
   branch_build_push_space:
     if: ${{ needs.branch_build_setup.outputs.build_space == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
+    name: Build-Push Space Docker Image
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
-      SPACE_TAG: makeplane/plane-space:${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      SPACE_TAG: makeplane/plane-space:${{ needs.branch_build_setup.outputs.flat_branch_name }}
       TARGET_BRANCH: ${{ needs.branch_build_setup.outputs.gh_branch_name }}
       BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
       BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
@@ -199,7 +227,10 @@ jobs:
       - name: Set Space Docker Tag
         run: |
           if [ "${{ github.event_name }}" == "release" ]; then
-            TAG=makeplane/plane-space:stable,makeplane/plane-space:${{ github.event.release.tag_name }}
+            TAG=makeplane/plane-space:${{ github.event.release.tag_name }}
+            if [ "${{ env.IS_PRERELEASE }}" != "true" ]; then
+              TAG=${TAG},makeplane/plane-space:stable
+            fi
           elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
             TAG=makeplane/plane-space:latest
           else
@@ -238,10 +269,11 @@ jobs:
 
   branch_build_push_apiserver:
     if: ${{ needs.branch_build_setup.outputs.build_apiserver == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
+    name: Build-Push API Server Docker Image
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
-      BACKEND_TAG: makeplane/plane-backend:${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      BACKEND_TAG: makeplane/plane-backend:${{ needs.branch_build_setup.outputs.flat_branch_name }}
       TARGET_BRANCH: ${{ needs.branch_build_setup.outputs.gh_branch_name }}
       BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
       BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
@@ -251,7 +283,10 @@ jobs:
       - name: Set Backend Docker Tag
         run: |
           if [ "${{ github.event_name }}" == "release" ]; then
-            TAG=makeplane/plane-backend:stable,makeplane/plane-backend:${{ github.event.release.tag_name }}
+            TAG=makeplane/plane-backend:${{ github.event.release.tag_name }}
+            if [ "${{ env.IS_PRERELEASE }}" != "true" ]; then
+              TAG=${TAG},makeplane/plane-backend:stable
+            fi
           elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
             TAG=makeplane/plane-backend:latest
           else
@@ -288,12 +323,69 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
-  branch_build_push_proxy:
-    if: ${{ needs.branch_build_setup.outputs.build_proxy == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
+  branch_build_push_live:
+    if: ${{ needs.branch_build_setup.outputs.build_live == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
+    name: Build-Push Live Collaboration Docker Image
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
-      PROXY_TAG: makeplane/plane-proxy:${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      LIVE_TAG: makeplane/plane-live:${{ needs.branch_build_setup.outputs.flat_branch_name }}
+      TARGET_BRANCH: ${{ needs.branch_build_setup.outputs.gh_branch_name }}
+      BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
+      BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
+      BUILDX_PLATFORMS: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
+      BUILDX_ENDPOINT: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+    steps:
+      - name: Set Live Docker Tag
+        run: |
+          if [ "${{ github.event_name }}" == "release" ]; then
+            TAG=makeplane/plane-live:${{ github.event.release.tag_name }}
+            if [ "${{ github.event.release.prerelease }}" != "true" ]; then
+              TAG=${TAG},makeplane/plane-live:stable
+            fi
+          elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
+            TAG=makeplane/plane-live:latest
+          else
+            TAG=${{ env.LIVE_TAG }}
+          fi
+          echo "LIVE_TAG=${TAG}" >> $GITHUB_ENV
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: ${{ env.BUILDX_DRIVER }}
+          version: ${{ env.BUILDX_VERSION }}
+          endpoint: ${{ env.BUILDX_ENDPOINT }}
+
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Build and Push Live Server to Docker Hub
+        uses: docker/build-push-action@v5.1.0
+        with:
+          context: .
+          file: ./live/Dockerfile.live
+          platforms: ${{ env.BUILDX_PLATFORMS }}
+          tags: ${{ env.LIVE_TAG }}
+          push: true
+        env:
+          DOCKER_BUILDKIT: 1
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  branch_build_push_proxy:
+    if: ${{ needs.branch_build_setup.outputs.build_proxy == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
+    name: Build-Push Proxy Docker Image
+    runs-on: ubuntu-20.04
+    needs: [branch_build_setup]
+    env:
+      PROXY_TAG: makeplane/plane-proxy:${{ needs.branch_build_setup.outputs.flat_branch_name }}
       TARGET_BRANCH: ${{ needs.branch_build_setup.outputs.gh_branch_name }}
       BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
       BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
@@ -303,7 +395,10 @@ jobs:
       - name: Set Proxy Docker Tag
         run: |
           if [ "${{ github.event_name }}" == "release" ]; then
-            TAG=makeplane/plane-proxy:stable,makeplane/plane-proxy:${{ github.event.release.tag_name }}
+            TAG=makeplane/plane-proxy:${{ github.event.release.tag_name }}
+            if [ "${{ env.IS_PRERELEASE }}" != "true" ]; then
+              TAG=${TAG},makeplane/plane-proxy:stable
+            fi
           elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
             TAG=makeplane/plane-proxy:latest
           else

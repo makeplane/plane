@@ -8,7 +8,7 @@ import { Plus, X, Loader } from "lucide-react";
 import { Popover } from "@headlessui/react";
 import { IIssueLabel } from "@plane/types";
 // hooks
-import { Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { Input } from "@plane/ui";
 // ui
 // types
 import { TLabelOperations } from "./root";
@@ -67,19 +67,11 @@ export const LabelCreate: FC<ILabelCreate> = (props) => {
   const handleLabel = async (formData: Partial<IIssueLabel>) => {
     if (!workspaceSlug || !projectId || isSubmitting) return;
 
-    try {
-      const labelResponse = await labelOperations.createLabel(workspaceSlug, projectId, formData);
-      const currentLabels = [...(values || []), labelResponse.id];
-      await labelOperations.updateIssue(workspaceSlug, projectId, issueId, { label_ids: currentLabels });
-      handleIsCreateToggle();
-      reset(defaultValues);
-    } catch (error) {
-      setToast({
-        title: "Error!",
-        type: TOAST_TYPE.ERROR,
-        message: "Label creation failed. Please try again sometime later.",
-      });
-    }
+    const labelResponse = await labelOperations.createLabel(workspaceSlug, projectId, formData);
+    const currentLabels = [...(values || []), labelResponse.id];
+    await labelOperations.updateIssue(workspaceSlug, projectId, issueId, { label_ids: currentLabels });
+    handleIsCreateToggle();
+    reset(defaultValues);
   };
 
   return (
@@ -160,7 +152,11 @@ export const LabelCreate: FC<ILabelCreate> = (props) => {
             <X className="h-3.5 w-3.5 text-white" />
           </button>
           <button type="submit" className="grid place-items-center rounded bg-green-500 p-1" disabled={isSubmitting}>
-            {isSubmitting ? <Loader className="spin h-3.5 w-3.5 text-white" /> : <Plus className="h-3.5 w-3.5 text-white" />}
+            {isSubmitting ? (
+              <Loader className="spin h-3.5 w-3.5 text-white" />
+            ) : (
+              <Plus className="h-3.5 w-3.5 text-white" />
+            )}
           </button>
         </form>
       )}

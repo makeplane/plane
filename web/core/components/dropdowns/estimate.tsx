@@ -1,9 +1,11 @@
-import { Fragment, ReactNode, useRef, useState } from "react";
+import { ReactNode, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Search, Triangle } from "lucide-react";
 import { Combobox } from "@headlessui/react";
+// ui
+import { ComboDropDown } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -27,6 +29,7 @@ type Props = TDropdownProps & {
   onClose?: () => void;
   projectId: string | undefined;
   value: string | undefined | null;
+  renderByDefault?: boolean;
 };
 
 type DropdownOptions =
@@ -56,6 +59,7 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
     showTooltip = false,
     tabIndex,
     value,
+    renderByDefault = true,
   } = props;
   // states
   const [query, setQuery] = useState("");
@@ -142,8 +146,57 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
     handleClose();
   };
 
+  const comboButton = (
+    <>
+      {button ? (
+        <button
+          ref={setReferenceElement}
+          type="button"
+          className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
+          onClick={handleOnClick}
+          disabled={disabled}
+        >
+          {button}
+        </button>
+      ) : (
+        <button
+          ref={setReferenceElement}
+          type="button"
+          className={cn(
+            "clickable block h-full max-w-full outline-none",
+            {
+              "cursor-not-allowed text-custom-text-200": disabled,
+              "cursor-pointer": !disabled,
+            },
+            buttonContainerClassName
+          )}
+          onClick={handleOnClick}
+          disabled={disabled}
+        >
+          <DropdownButton
+            className={buttonClassName}
+            isActive={isOpen}
+            tooltipHeading="Estimate"
+            tooltipContent={selectedEstimate ? selectedEstimate?.value : placeholder}
+            showTooltip={showTooltip}
+            variant={buttonVariant}
+            renderToolTipByDefault={renderByDefault}
+          >
+            {!hideIcon && <Triangle className="h-3 w-3 flex-shrink-0" />}
+            {(selectedEstimate || placeholder) && BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
+              <span className="flex-grow truncate">{selectedEstimate ? selectedEstimate?.value : placeholder}</span>
+            )}
+            {dropdownArrow && (
+              <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+            )}
+          </DropdownButton>
+        </button>
+      )}
+    </>
+  );
+
   return (
-    <Combobox
+    <ComboDropDown
       as="div"
       ref={dropdownRef}
       tabIndex={tabIndex}
@@ -152,50 +205,9 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
       onChange={dropdownOnChange}
       disabled={disabled}
       onKeyDown={handleKeyDown}
+      button={comboButton}
+      renderByDefault={renderByDefault}
     >
-      <Combobox.Button as={Fragment}>
-        {button ? (
-          <button
-            ref={setReferenceElement}
-            type="button"
-            className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
-            onClick={handleOnClick}
-          >
-            {button}
-          </button>
-        ) : (
-          <button
-            ref={setReferenceElement}
-            type="button"
-            className={cn(
-              "clickable block h-full max-w-full outline-none",
-              {
-                "cursor-not-allowed text-custom-text-200": disabled,
-                "cursor-pointer": !disabled,
-              },
-              buttonContainerClassName
-            )}
-            onClick={handleOnClick}
-          >
-            <DropdownButton
-              className={buttonClassName}
-              isActive={isOpen}
-              tooltipHeading="Estimate"
-              tooltipContent={selectedEstimate ? selectedEstimate?.value : placeholder}
-              showTooltip={showTooltip}
-              variant={buttonVariant}
-            >
-              {!hideIcon && <Triangle className="h-3 w-3 flex-shrink-0" />}
-              {(selectedEstimate || placeholder) && BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-                <span className="flex-grow truncate">{selectedEstimate ? selectedEstimate?.value : placeholder}</span>
-              )}
-              {dropdownArrow && (
-                <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
-              )}
-            </DropdownButton>
-          </button>
-        )}
-      </Combobox.Button>
       {isOpen && (
         <Combobox.Options className="fixed z-10" static>
           <div
@@ -263,6 +275,6 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
           </div>
         </Combobox.Options>
       )}
-    </Combobox>
+    </ComboDropDown>
   );
 });

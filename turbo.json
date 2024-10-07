@@ -8,6 +8,7 @@
     "NEXT_PUBLIC_SPACE_BASE_URL",
     "NEXT_PUBLIC_SPACE_BASE_PATH",
     "NEXT_PUBLIC_WEB_BASE_URL",
+    "NEXT_PUBLIC_LIVE_BASE_URL",
     "NEXT_PUBLIC_PLAUSIBLE_DOMAIN",
     "NEXT_PUBLIC_CRISP_ID",
     "NEXT_PUBLIC_ENABLE_SESSION_RECORDER",
@@ -26,32 +27,21 @@
   ],
   "tasks": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        ".next/**",
-        "dist/**"
-      ]
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "dist/**"]
     },
     "develop": {
       "cache": false,
       "persistent": true,
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "dev": {
       "cache": false,
       "persistent": true,
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "test": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "outputs": []
     },
     "lint": {

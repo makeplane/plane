@@ -12,8 +12,10 @@ import {
   FileStack,
   Link,
   Trash2,
+  MoveRight,
+  Copy,
 } from "lucide-react";
-import { Button, ControlLink, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, ControlLink, CustomMenu, Row, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import {
   DeclineIssueModal,
@@ -25,15 +27,14 @@ import {
   SelectDuplicateInboxIssueModal,
 } from "@/components/inbox";
 import { IssueUpdateStatus } from "@/components/issues";
-// constants
-import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { findHowManyDaysLeft } from "@/helpers/date-time.helper";
 import { EInboxIssueStatus } from "@/helpers/inbox.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useUser, useProjectInbox, useProject } from "@/hooks/store";
+import { useUser, useProjectInbox, useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // store types
 import type { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
 
@@ -45,6 +46,7 @@ type TInboxIssueActionsHeader = {
   isMobileSidebar: boolean;
   setIsMobileSidebar: (value: boolean) => void;
   isNotificationEmbed: boolean;
+  embedRemoveCurrentNotification?: () => void;
 };
 
 export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((props) => {
@@ -56,6 +58,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
     isMobileSidebar,
     setIsMobileSidebar,
     isNotificationEmbed = false,
+    embedRemoveCurrentNotification,
   } = props;
   // states
   const [isSnoozeDateModalOpen, setIsSnoozeDateModalOpen] = useState(false);
@@ -66,21 +69,26 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   // store
   const { currentTab, deleteInboxIssue, filteredInboxIssueIds } = useProjectInbox();
   const { data: currentUser } = useUser();
-  const {
-    membership: { currentProjectRoleByProjectId },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
 
   const router = useAppRouter();
   const { getProjectById } = useProject();
 
   const issue = inboxIssue?.issue;
   // derived values
-  const currentProjectRole = currentProjectRoleByProjectId(projectId) || undefined;
-  const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isAllowed = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug,
+    projectId
+  );
   const canMarkAsDuplicate = isAllowed && (inboxIssue?.status === 0 || inboxIssue?.status === -2);
   const canMarkAsAccepted = isAllowed && (inboxIssue?.status === 0 || inboxIssue?.status === -2);
   const canMarkAsDeclined = isAllowed && (inboxIssue?.status === 0 || inboxIssue?.status === -2);
-  const canDelete = isAllowed || inboxIssue?.created_by === currentUser?.id;
+  // can delete only if admin or is creator of the issue
+  const canDelete =
+    allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId) ||
+    issue?.created_by === currentUser?.id;
   const isAcceptedOrDeclined = inboxIssue?.status ? [-1, 1, 2].includes(inboxIssue.status) : undefined;
   // days left for snooze
   const numberOfDaysLeft = findHowManyDaysLeft(inboxIssue?.snoozed_till);
@@ -88,6 +96,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   const currentInboxIssueId = inboxIssue?.issue?.id;
 
   const issueLink = `${workspaceSlug}/projects/${issue?.project_id}/issues/${currentInboxIssueId}`;
+  const intakeIssueLink = `${workspaceSlug}/projects/${issue?.project_id}/inbox/?currentTab=${currentTab}&inboxIssueId=${currentInboxIssueId}`;
 
   const redirectIssue = (): string | undefined => {
     let nextOrPreviousIssueId: string | undefined = undefined;
@@ -137,7 +146,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
 
   const handleInboxIssueDelete = async () => {
     if (!inboxIssue || !currentInboxIssueId) return;
-    await deleteInboxIssue(workspaceSlug, projectId, currentInboxIssueId).finally(() => {
+    await deleteInboxIssue(workspaceSlug, projectId, currentInboxIssueId).then(() => {
       if (!isNotificationEmbed) router.push(`/${workspaceSlug}/projects/${projectId}/inbox`);
     });
   };
@@ -152,8 +161,8 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
     }
   };
 
-  const handleCopyIssueLink = () =>
-    copyUrlToClipboard(issueLink).then(() =>
+  const handleCopyIssueLink = (path: string) =>
+    copyUrlToClipboard(path).then(() =>
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Link copied",
@@ -238,8 +247,13 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
         />
       </>
 
-      <div className="hidden relative lg:flex h-full w-full items-center justify-between gap-2 px-4">
+      <Row className="hidden relative lg:flex h-full w-full items-center justify-between gap-2 bg-custom-background-100 z-[15] border-b border-custom-border-200">
         <div className="flex items-center gap-4">
+          {isNotificationEmbed && (
+            <button onClick={embedRemoveCurrentNotification}>
+              <MoveRight className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+            </button>
+          )}
           {issue?.project_id && issue.sequence_id && (
             <h3 className="text-base font-medium text-custom-text-300 flex-shrink-0">
               {getProjectById(issue.project_id)?.identifier}-{issue.sequence_id}
@@ -306,7 +320,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                   variant="neutral-primary"
                   prependIcon={<Link className="h-2.5 w-2.5" />}
                   size="sm"
-                  onClick={handleCopyIssueLink}
+                  onClick={() => handleCopyIssueLink(issueLink)}
                 >
                   Copy issue link
                 </Button>
@@ -344,6 +358,12 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                         </div>
                       </CustomMenu.MenuItem>
                     )}
+                    <CustomMenu.MenuItem onClick={() => handleCopyIssueLink(intakeIssueLink)}>
+                      <div className="flex items-center gap-2">
+                        <Copy size={14} strokeWidth={2} />
+                        Copy issue link
+                      </div>
+                    </CustomMenu.MenuItem>
                     {canDelete && (
                       <CustomMenu.MenuItem onClick={() => setDeleteIssueModal(true)}>
                         <div className="flex items-center gap-2">
@@ -358,13 +378,13 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
             )}
           </div>
         </div>
-      </div>
+      </Row>
 
       <div className="lg:hidden">
         <InboxIssueActionsMobileHeader
           inboxIssue={inboxIssue}
           isSubmitting={isSubmitting}
-          handleCopyIssueLink={handleCopyIssueLink}
+          handleCopyIssueLink={() => handleCopyIssueLink(issueLink)}
           setAcceptIssueModal={setAcceptIssueModal}
           setDeclineIssueModal={setDeclineIssueModal}
           handleIssueSnoozeAction={handleIssueSnoozeAction}
@@ -379,6 +399,8 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
           workspaceSlug={workspaceSlug}
           isMobileSidebar={isMobileSidebar}
           setIsMobileSidebar={setIsMobileSidebar}
+          isNotificationEmbed={isNotificationEmbed}
+          embedRemoveCurrentNotification={embedRemoveCurrentNotification}
         />
       </div>
     </>

@@ -73,6 +73,9 @@ export class ArchivedIssues extends BaseIssuesStore implements IArchivedIssues {
     projectId && this.rootIssueStore.rootStore.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
   };
 
+  /** */
+  updateParentStats = () => {};
+
   /**
    * This method is called to fetch the first issues of pagination
    * @param workspaceSlug
@@ -103,7 +106,7 @@ export class ArchivedIssues extends BaseIssuesStore implements IArchivedIssues {
       });
 
       // after fetching issues, call the base method to process the response further
-      this.onfetchIssues(response, options, workspaceSlug, projectId);
+      this.onfetchIssues(response, options, workspaceSlug, projectId, undefined, !isExistingPaginationOptions);
       return response;
     } catch (error) {
       // set loader to undefined if errored out
@@ -176,22 +179,18 @@ export class ArchivedIssues extends BaseIssuesStore implements IArchivedIssues {
    * @returns
    */
   restoreIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
-    try {
-      // call API to restore the issue
-      const response = await this.issueArchiveService.restoreIssue(workspaceSlug, projectId, issueId);
+    // call API to restore the issue
+    const response = await this.issueArchiveService.restoreIssue(workspaceSlug, projectId, issueId);
 
-      // update the store and remove from the archived issues list once restored
-      runInAction(() => {
-        this.rootIssueStore.issues.updateIssue(issueId, {
-          archived_at: null,
-        });
-        this.removeIssueFromList(issueId);
+    // update the store and remove from the archived issues list once restored
+    runInAction(() => {
+      this.rootIssueStore.issues.updateIssue(issueId, {
+        archived_at: null,
       });
+      this.removeIssueFromList(issueId);
+    });
 
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    return response;
   };
 
   // Setting them as undefined as they can not performed on Archived issues

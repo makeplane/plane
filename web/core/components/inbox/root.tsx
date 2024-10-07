@@ -1,6 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { Inbox, PanelLeft } from "lucide-react";
+import { PanelLeft } from "lucide-react";
+import { Intake } from "@plane/ui";
 // components
 import { EmptyState } from "@/components/empty-state";
 import { InboxSidebar, InboxContentRoot } from "@/components/inbox";
@@ -33,7 +34,12 @@ export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
     if (navigationTab && navigationTab !== currentTab) {
       handleCurrentTab(workspaceSlug, projectId, navigationTab);
     } else {
-      fetchInboxIssues(workspaceSlug.toString(), projectId.toString());
+      fetchInboxIssues(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        undefined,
+        navigationTab || EInboxIssueCurrentTab.OPEN
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inboxAccessible, workspaceSlug, projectId]);
@@ -50,7 +56,7 @@ export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
   if (error && error?.status === "init-error")
     return (
       <div className="relative w-full h-full flex flex-col gap-3 justify-center items-center">
-        <Inbox size={60} strokeWidth={1.5} />
+        <Intake className="size-[60px]" strokeWidth={1.5} />
         <div className="text-custom-text-200">{error?.message}</div>
       </div>
     );
@@ -76,6 +82,7 @@ export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
             setIsMobileSidebar={setIsMobileSidebar}
             workspaceSlug={workspaceSlug.toString()}
             projectId={projectId.toString()}
+            inboxIssueId={inboxIssueId}
           />
         </div>
 

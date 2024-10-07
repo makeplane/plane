@@ -20,7 +20,7 @@ export const AppliedProjectDisplayFilters: React.FC<Props> = observer((props) =>
       {values.map((key) => {
         const filterLabel = PROJECT_DISPLAY_FILTER_OPTIONS.find((s) => s.key === key)?.label;
         return (
-          <div key={key} className="flex items-center gap-1 rounded p-1 text-xs bg-custom-background-80">
+          <div key={key} className="flex items-center gap-1 rounded px-1.5 py-1 text-xs bg-custom-background-80">
             {filterLabel}
             {editable && (
               <button

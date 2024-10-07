@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 // editor
-import { EditorMenuItemNames, EditorRefApi } from "@plane/editor";
+import { EditorRefApi, TEditorCommands } from "@plane/editor";
 // ui
 import { Button, Tooltip } from "@plane/ui";
 // constants
@@ -11,8 +11,8 @@ import { TOOLBAR_ITEMS } from "@/constants/editor";
 import { cn } from "@/helpers/common.helper";
 
 type Props = {
-  executeCommand: (commandName: EditorMenuItemNames) => void;
-  handleSubmit: () => void;
+  executeCommand: (commandKey: TEditorCommands) => void;
+  handleSubmit: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   isCommentEmpty: boolean;
   isSubmitting: boolean;
   showSubmitButton: boolean;
@@ -57,7 +57,6 @@ export const IssueCommentToolbar: React.FC<Props> = (props) => {
               key={key}
               className={cn("flex items-stretch gap-0.5 border-r border-custom-border-200 px-2.5", {
                 "pl-0": index === 0,
-                "pr-0": index === Object.keys(toolbarItems).length - 1,
               })}
             >
               {toolbarItems[key].map((item) => (

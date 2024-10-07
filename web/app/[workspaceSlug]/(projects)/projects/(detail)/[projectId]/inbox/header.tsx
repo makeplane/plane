@@ -5,12 +5,13 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { RefreshCcw } from "lucide-react";
 // ui
-import { Breadcrumbs, Button, LayersIcon } from "@plane/ui";
+import { Breadcrumbs, Button, Intake, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 import { InboxIssueCreateEditModalRoot } from "@/components/inbox";
 // hooks
-import { useProject, useProjectInbox } from "@/hooks/store";
+import { useProject, useProjectInbox, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const ProjectInboxHeader: FC = observer(() => {
   // states
@@ -18,12 +19,20 @@ export const ProjectInboxHeader: FC = observer(() => {
   // router
   const { workspaceSlug, projectId } = useParams();
   // store hooks
+  const { allowPermissions } = useUserPermissions();
+
   const { currentProjectDetails, loader: currentProjectDetailsLoader } = useProject();
   const { loader } = useProjectInbox();
 
+  // derived value
+  const isAuthorized = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    EUserPermissionsLevel.PROJECT
+  );
+
   return (
-    <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
-      <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
+    <Header>
+      <Header.LeftItem>
         <div className="flex items-center gap-4">
           <Breadcrumbs isLoading={currentProjectDetailsLoader}>
             <Breadcrumbs.BreadcrumbItem
@@ -45,7 +54,7 @@ export const ProjectInboxHeader: FC = observer(() => {
 
             <Breadcrumbs.BreadcrumbItem
               type="text"
-              link={<BreadcrumbLink label="Inbox" icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />} />}
+              link={<BreadcrumbLink label="Intake" icon={<Intake className="h-4 w-4 text-custom-text-300" />} />}
             />
           </Breadcrumbs>
 
@@ -56,23 +65,26 @@ export const ProjectInboxHeader: FC = observer(() => {
             </div>
           )}
         </div>
-      </div>
+      </Header.LeftItem>
+      <Header.RightItem>
+        {currentProjectDetails?.inbox_view && workspaceSlug && projectId && isAuthorized ? (
+          <div className="flex items-center gap-2">
+            <InboxIssueCreateEditModalRoot
+              workspaceSlug={workspaceSlug.toString()}
+              projectId={projectId.toString()}
+              modalState={createIssueModal}
+              handleModalClose={() => setCreateIssueModal(false)}
+              issue={undefined}
+            />
 
-      {currentProjectDetails?.inbox_view && workspaceSlug && projectId && (
-        <div className="flex items-center gap-2">
-          <InboxIssueCreateEditModalRoot
-            workspaceSlug={workspaceSlug.toString()}
-            projectId={projectId.toString()}
-            modalState={createIssueModal}
-            handleModalClose={() => setCreateIssueModal(false)}
-            issue={undefined}
-          />
-
-          <Button variant="primary" size="sm" onClick={() => setCreateIssueModal(true)}>
-            Add Issue
-          </Button>
-        </div>
-      )}
-    </div>
+            <Button variant="primary" size="sm" onClick={() => setCreateIssueModal(true)}>
+              Add issue
+            </Button>
+          </div>
+        ) : (
+          <></>
+        )}
+      </Header.RightItem>
+    </Header>
   );
 });

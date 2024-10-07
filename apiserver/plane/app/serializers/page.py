@@ -10,6 +10,7 @@ from plane.db.models import (
     Label,
     ProjectPage,
     Project,
+    PageVersion,
 )
 
 
@@ -157,6 +158,49 @@ class PageLogSerializer(BaseSerializer):
     class Meta:
         model = PageLog
         fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "page",
+        ]
+
+
+class PageVersionSerializer(BaseSerializer):
+    class Meta:
+        model = PageVersion
+        fields = [
+            "id",
+            "workspace",
+            "page",
+            "last_saved_at",
+            "owned_by",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "workspace",
+            "page",
+        ]
+
+
+class PageVersionDetailSerializer(BaseSerializer):
+    class Meta:
+        model = PageVersion
+        fields = [
+            "id",
+            "workspace",
+            "page",
+            "last_saved_at",
+            "description_binary",
+            "description_html",
+            "description_json",
+            "owned_by",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
         read_only_fields = [
             "workspace",
             "page",

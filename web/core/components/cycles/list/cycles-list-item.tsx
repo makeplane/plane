@@ -18,6 +18,7 @@ import { generateQueryParams } from "@/helpers/router.helper";
 import { useCycle } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { CycleQuickActions } from "../quick-actions";
 
 type TCyclesListItem = {
   cycleId: string;
@@ -70,7 +71,7 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
     e.stopPropagation();
 
     const query = generateQueryParams(searchParams, ["peekCycle"]);
-    if (searchParams.has("peekCycle")) {
+    if (searchParams.has("peekCycle") && searchParams.get("peekCycle") === cycleId) {
       router.push(`${pathname}?${query}`);
     } else {
       router.push(`${pathname}?${query && `${query}&`}peekCycle=${cycleId}`);
@@ -105,14 +106,6 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
           )}
         </CircularProgressIndicator>
       }
-      appendTitleElement={
-        <button
-          onClick={openCycleOverview}
-          className={`z-[5] flex-shrink-0 ${isMobile ? "flex" : "hidden group-hover:flex"}`}
-        >
-          <Info className="h-4 w-4 text-custom-text-400" />
-        </button>
-      }
       actionableItems={
         <CycleListItemAction
           workspaceSlug={workspaceSlug}
@@ -122,8 +115,19 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
           parentRef={parentRef}
         />
       }
+      quickActionElement={
+        <div className="block md:hidden">
+          <CycleQuickActions
+            parentRef={parentRef}
+            cycleId={cycleId}
+            projectId={projectId}
+            workspaceSlug={workspaceSlug}
+          />
+        </div>
+      }
       isMobile={isMobile}
       parentRef={parentRef}
+      isSidebarOpen={searchParams.has("peekCycle")}
     />
   );
 });

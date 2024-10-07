@@ -7,7 +7,7 @@ import { MentionList, MentionNodeView } from "@/extensions";
 // types
 import { IMentionHighlight, IMentionSuggestion } from "@/types";
 
-export interface CustomMentionOptions extends MentionOptions {
+interface CustomMentionOptions extends MentionOptions {
   mentionHighlights: () => Promise<IMentionHighlight[]>;
   readonly?: boolean;
 }
@@ -91,7 +91,8 @@ export const CustomMention = ({
             // @ts-expect-error - Tippy types are incorrect
             popup = tippy("body", {
               getReferenceClientRect: props.clientRect,
-              appendTo: () => document.querySelector(".active-editor") ?? document.querySelector("#editor-container"),
+              appendTo: () =>
+                document.querySelector(".active-editor") ?? document.querySelector('[id^="editor-container"]'),
               content: component.element,
               showOnCreate: true,
               interactive: true,

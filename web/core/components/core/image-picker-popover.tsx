@@ -9,6 +9,8 @@ import { Control, Controller } from "react-hook-form";
 import useSWR from "swr";
 // headless ui
 import { Tab, Popover } from "@headlessui/react";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // ui
 import { Button, Input, Loader } from "@plane/ui";
 // constants
@@ -16,7 +18,6 @@ import { MAX_FILE_SIZE } from "@/constants/common";
 // hooks
 import { useWorkspace, useInstance } from "@/hooks/store";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 // services
 import { FileService } from "@/services/file.service";
 
@@ -89,7 +90,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
   const { getRootProps, getInputProps, isDragActive, fileRejections } = useDropzone({
     onDrop,
     accept: {
-      "image/*": [".png", ".jpg", ".jpeg", ".svg", ".webp"],
+      "image/*": [".png", ".jpg", ".jpeg", ".webp"],
     },
     maxSize: config?.file_size_limit ?? MAX_FILE_SIZE,
   });
@@ -215,6 +216,12 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                             id="search"
                             name="search"
                             type="text"
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                e.preventDefault();
+                                setSearchParams(formData.search);
+                              }
+                            }}
                             value={value}
                             onChange={(e) => setFormData({ ...formData, search: e.target.value })}
                             ref={ref}
@@ -338,7 +345,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                           </div>
                         )}
 
-                        <input {...getInputProps()} type="text" />
+                        <input {...getInputProps()} />
                       </div>
                     </div>
                     {fileRejections.length > 0 && (
@@ -349,9 +356,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                       </p>
                     )}
 
-                    <p className="text-sm text-custom-text-200">
-                      File formats supported- .jpeg, .jpg, .png, .webp, .svg
-                    </p>
+                    <p className="text-sm text-custom-text-200">File formats supported- .jpeg, .jpg, .png, .webp</p>
 
                     <div className="flex h-12 items-start justify-end gap-2">
                       <Button

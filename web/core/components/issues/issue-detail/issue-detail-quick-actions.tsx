@@ -10,15 +10,22 @@ import { ArchiveIssueModal, DeleteIssueModal, IssueSubscription } from "@/compon
 // constants
 import { ISSUE_ARCHIVED, ISSUE_DELETED } from "@/constants/event-tracker";
 import { EIssuesStoreType } from "@/constants/issue";
-import { EUserProjectRoles } from "@/constants/project";
 import { ARCHIVABLE_STATE_GROUPS } from "@/constants/state";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useEventTracker, useIssueDetail, useIssues, useProjectState, useUser } from "@/hooks/store";
+import {
+  useEventTracker,
+  useIssueDetail,
+  useIssues,
+  useProjectState,
+  useUser,
+  useUserPermissions,
+} from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   workspaceSlug: string;
@@ -38,10 +45,8 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
   const router = useAppRouter();
 
   // hooks
-  const {
-    data: currentUser,
-    membership: { currentProjectRole },
-  } = useUser();
+  const { data: currentUser } = useUser();
+  const { allowPermissions } = useUserPermissions();
   const { isMobile } = usePlatformOS();
   const { getStateById } = useProjectState();
   const {
@@ -78,13 +83,18 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
 
   const handleDeleteIssue = async () => {
     try {
-      if (issue?.archived_at) await removeArchivedIssue(workspaceSlug, projectId, issueId);
-      else await removeIssue(workspaceSlug, projectId, issueId);
-      router.push(`/${workspaceSlug}/projects/${projectId}/issues`);
-      captureIssueEvent({
-        eventName: ISSUE_DELETED,
-        payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
-        path: pathname,
+      const deleteIssue = issue?.archived_at ? removeArchivedIssue : removeIssue;
+      const redirectionPath = issue?.archived_at
+        ? `/${workspaceSlug}/projects/${projectId}/archives/issues`
+        : `/${workspaceSlug}/projects/${projectId}/issues`;
+
+      return deleteIssue(workspaceSlug, projectId, issueId).then(() => {
+        router.push(redirectionPath);
+        captureIssueEvent({
+          eventName: ISSUE_DELETED,
+          payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
+          path: pathname,
+        });
       });
     } catch (error) {
       setToast({
@@ -144,8 +154,11 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
   };
 
   // auth
-  const isEditable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
-  const canRestoreIssue = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditable = allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT);
+  const canRestoreIssue = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
   const isArchivingAllowed = !issue?.archived_at && isEditable;
   const isInArchivableGroup = !!stateDetails && ARCHIVABLE_STATE_GROUPS.includes(stateDetails?.group);
 

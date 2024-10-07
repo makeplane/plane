@@ -43,6 +43,7 @@ from plane.db.models import (
     ProjectMember,
     User,
     Widget,
+    WorkspaceMember,
 )
 from plane.utils.issue_filters import issue_filters
 
@@ -51,36 +52,108 @@ from .. import BaseAPIView
 
 
 def dashboard_overview_stats(self, request, slug):
-    assigned_issues = Issue.issue_objects.filter(
-        project__project_projectmember__is_active=True,
-        project__project_projectmember__member=request.user,
-        workspace__slug=slug,
-        assignees__in=[request.user],
-    ).count()
+    assigned_issues = (
+        Issue.issue_objects.filter(
+            project__project_projectmember__is_active=True,
+            project__project_projectmember__member=request.user,
+            workspace__slug=slug,
+            assignees__in=[request.user],
+        ).filter(
+            Q(
+                project__project_projectmember__role=5,
+                project__guest_view_all_features=True,
+            )
+            | Q(
+                project__project_projectmember__role=5,
+                project__guest_view_all_features=False,
+                created_by=self.request.user,
+            )
+            |
+            # For other roles (role < 5), show all issues
+            Q(project__project_projectmember__role__gt=5),
+            project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
+        )
+        .count()
+    )
 
-    pending_issues_count = Issue.issue_objects.filter(
-        ~Q(state__group__in=["completed", "cancelled"]),
-        target_date__lt=timezone.now().date(),
-        project__project_projectmember__is_active=True,
-        project__project_projectmember__member=request.user,
-        workspace__slug=slug,
-        assignees__in=[request.user],
-    ).count()
+    pending_issues_count = (
+        Issue.issue_objects.filter(
+            ~Q(state__group__in=["completed", "cancelled"]),
+            target_date__lt=timezone.now().date(),
+            project__project_projectmember__is_active=True,
+            project__project_projectmember__member=request.user,
+            workspace__slug=slug,
+            assignees__in=[request.user],
+        ).filter(
+            Q(
+                project__project_projectmember__role=5,
+                project__guest_view_all_features=True,
+            )
+            | Q(
+                project__project_projectmember__role=5,
+                project__guest_view_all_features=False,
+                created_by=self.request.user,
+            )
+            |
+            # For other roles (role < 5), show all issues
+            Q(project__project_projectmember__role__gt=5),
+            project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
+        )
+        .count()
+    )
 
-    created_issues_count = Issue.issue_objects.filter(
-        workspace__slug=slug,
-        project__project_projectmember__is_active=True,
-        project__project_projectmember__member=request.user,
-        created_by_id=request.user.id,
-    ).count()
+    created_issues_count = (
+        Issue.issue_objects.filter(
+            workspace__slug=slug,
+            project__project_projectmember__is_active=True,
+            project__project_projectmember__member=request.user,
+            created_by_id=request.user.id,
+        ).filter(
+            Q(
+                project__project_projectmember__role=5,
+                project__guest_view_all_features=True,
+            )
+            | Q(
+                project__project_projectmember__role=5,
+                project__guest_view_all_features=False,
+                created_by=self.request.user,
+            )
+            |
+            # For other roles (role < 5), show all issues
+            Q(project__project_projectmember__role__gt=5),
+            project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
+        )
+        .count()
+    )
 
-    completed_issues_count = Issue.issue_objects.filter(
-        workspace__slug=slug,
-        project__project_projectmember__is_active=True,
-        project__project_projectmember__member=request.user,
-        assignees__in=[request.user],
-        state__group="completed",
-    ).count()
+    completed_issues_count = (
+        Issue.issue_objects.filter(
+            workspace__slug=slug,
+            project__project_projectmember__is_active=True,
+            project__project_projectmember__member=request.user,
+            assignees__in=[request.user],
+            state__group="completed",
+        ).filter(
+            Q(
+                project__project_projectmember__role=5,
+                project__guest_view_all_features=True,
+            )
+            | Q(
+                project__project_projectmember__role=5,
+                project__guest_view_all_features=False,
+                created_by=self.request.user,
+            )
+            |
+            # For other roles (role < 5), show all issues
+            Q(project__project_projectmember__role__gt=5),
+            project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
+        )
+        .count()
+    )
 
     return Response(
         {
@@ -165,6 +238,14 @@ def dashboard_assigned_issues(self, request, slug):
             ),
         )
     )
+
+    if WorkspaceMember.objects.filter(
+        workspace__slug=slug,
+        member=request.user,
+        role=5,
+        is_active=True,
+    ).exists():
+        assigned_issues = assigned_issues.filter(created_by=request.user)
 
     # Priority Ordering
     priority_order = ["urgent", "high", "medium", "low", "none"]
@@ -409,6 +490,16 @@ def dashboard_created_issues(self, request, slug):
 def dashboard_issues_by_state_groups(self, request, slug):
     filters = issue_filters(request.query_params, "GET")
     state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
+    extra_filters = {}
+
+    if WorkspaceMember.objects.filter(
+        workspace__slug=slug,
+        member=request.user,
+        role=5,
+        is_active=True,
+    ).exists():
+        extra_filters = {"created_by": request.user}
+
     issues_by_state_groups = (
         Issue.issue_objects.filter(
             workspace__slug=slug,
@@ -416,7 +507,7 @@ def dashboard_issues_by_state_groups(self, request, slug):
             project__project_projectmember__member=request.user,
             assignees__in=[request.user],
         )
-        .filter(**filters)
+        .filter(**filters, **extra_filters)
         .values("state__group")
         .annotate(count=Count("id"))
     )
@@ -439,6 +530,15 @@ def dashboard_issues_by_state_groups(self, request, slug):
 def dashboard_issues_by_priority(self, request, slug):
     filters = issue_filters(request.query_params, "GET")
     priority_order = ["urgent", "high", "medium", "low", "none"]
+    extra_filters = {}
+
+    if WorkspaceMember.objects.filter(
+        workspace__slug=slug,
+        member=request.user,
+        role=5,
+        is_active=True,
+    ).exists():
+        extra_filters = {"created_by": request.user}
 
     issues_by_priority = (
         Issue.issue_objects.filter(
@@ -447,7 +547,7 @@ def dashboard_issues_by_priority(self, request, slug):
             project__project_projectmember__member=request.user,
             assignees__in=[request.user],
         )
-        .filter(**filters)
+        .filter(**filters, **extra_filters)
         .values("priority")
         .annotate(count=Count("id"))
     )
@@ -521,104 +621,42 @@ def dashboard_recent_projects(self, request, slug):
 
 
 def dashboard_recent_collaborators(self, request, slug):
-    # Subquery to count activities for each project member
-    activity_count_subquery = (
-        IssueActivity.objects.filter(
-            workspace__slug=slug,
-            actor=OuterRef("member"),
-            project__project_projectmember__member=request.user,
-            project__project_projectmember__is_active=True,
-            project__archived_at__isnull=True,
-        )
-        .values("actor")
-        .annotate(num_activities=Count("pk"))
-        .values("num_activities")
-    )
-
-    # Get all project members and annotate them with activity counts
     project_members_with_activities = (
-        ProjectMember.objects.filter(
+        WorkspaceMember.objects.filter(
             workspace__slug=slug,
-            project__project_projectmember__member=request.user,
-            project__project_projectmember__is_active=True,
-            project__archived_at__isnull=True,
+            is_active=True,
         )
         .annotate(
-            num_activities=Coalesce(
-                Subquery(activity_count_subquery),
-                Value(0),
-                output_field=IntegerField(),
+            active_issue_count=Count(
+                Case(
+                    When(
+                        member__issue_assignee__issue__state__group__in=[
+                            "unstarted",
+                            "started",
+                        ],
+                        member__issue_assignee__issue__workspace__slug=slug,
+                        member__issue_assignee__issue__project__project_projectmember__member=request.user,
+                        member__issue_assignee__issue__project__project_projectmember__is_active=True,
+                        then=F("member__issue_assignee__issue__id"),
+                    ),
+                    distinct=True,
+                    output_field=IntegerField(),
+                ),
+                distinct=True,
             ),
-            is_current_user=Case(
-                When(member=request.user, then=Value(0)),
-                default=Value(1),
-                output_field=IntegerField(),
-            ),
+            user_id=F("member_id"),
         )
-        .values_list("member", flat=True)
-        .order_by("is_current_user", "-num_activities")
+        .values("user_id", "active_issue_count")
+        .order_by("-active_issue_count")
         .distinct()
     )
-    search = request.query_params.get("search", None)
-    if search:
-        project_members_with_activities = (
-            project_members_with_activities.filter(
-                Q(member__display_name__icontains=search)
-                | Q(member__first_name__icontains=search)
-                | Q(member__last_name__icontains=search)
-            )
-        )
-
-    return self.paginate(
-        request=request,
-        queryset=project_members_with_activities,
-        controller=lambda qs: self.get_results_controller(qs, slug),
+    return Response(
+        (project_members_with_activities),
+        status=status.HTTP_200_OK,
     )
 
 
 class DashboardEndpoint(BaseAPIView):
-    def get_results_controller(self, project_members_with_activities, slug):
-        user_active_issue_counts = (
-            User.objects.filter(
-                id__in=project_members_with_activities,
-            )
-            .annotate(
-                active_issue_count=Count(
-                    Case(
-                        When(
-                            issue_assignee__issue__state__group__in=[
-                                "unstarted",
-                                "started",
-                            ],
-                            issue_assignee__issue__workspace__slug=slug,
-                            issue_assignee__issue__project__project_projectmember__is_active=True,
-                            then=F("issue_assignee__issue__id"),
-                        ),
-                        output_field=IntegerField(),
-                    ),
-                    distinct=True,
-                )
-            )
-            .values("active_issue_count", user_id=F("id"))
-        )
-        # Create a dictionary to store the active issue counts by user ID
-        active_issue_counts_dict = {
-            user["user_id"]: user["active_issue_count"]
-            for user in user_active_issue_counts
-        }
-
-        # Preserve the sequence of project members with activities
-        paginated_results = [
-            {
-                "user_id": member_id,
-                "active_issue_count": active_issue_counts_dict.get(
-                    member_id, 0
-                ),
-            }
-            for member_id in project_members_with_activities
-        ]
-        return paginated_results
-
     def create(self, request, slug):
         serializer = DashboardSerializer(data=request.data)
         if serializer.is_valid():

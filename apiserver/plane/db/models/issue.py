@@ -6,10 +6,9 @@ from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
+from django.db import models, transaction
 from django.utils import timezone
+from django.db.models import Q
 
 # Module imports
 from plane.utils.html_processor import strip_tags
@@ -91,6 +90,7 @@ class IssueManager(models.Manager):
                 | models.Q(issue_inbox__status=2)
                 | models.Q(issue_inbox__isnull=True)
             )
+            .filter(deleted_at__isnull=True)
             .filter(state__is_triage=False)
             .exclude(archived_at__isnull=False)
             .exclude(project__archived_at__isnull=False)
@@ -164,6 +164,13 @@ class Issue(ProjectBaseModel):
     is_draft = models.BooleanField(default=False)
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
+    type = models.ForeignKey(
+        "db.IssueType",
+        on_delete=models.SET_NULL,
+        related_name="issue_type",
+        null=True,
+        blank=True,
+    )
 
     objects = models.Manager()
     issue_objects = IssueManager()
@@ -175,7 +182,6 @@ class Issue(ProjectBaseModel):
         ordering = ("-created_at",)
 
     def save(self, *args, **kwargs):
-        # This means that the model isn't saved to the database yet
         if self.state is None:
             try:
                 from plane.db.models import State
@@ -185,7 +191,6 @@ class Issue(ProjectBaseModel):
                     project=self.project,
                     default=True,
                 ).first()
-                # if there is no default state assign any random state
                 if default_state is None:
                     random_state = State.objects.filter(
                         ~models.Q(is_triage=True), project=self.project
@@ -199,7 +204,6 @@ class Issue(ProjectBaseModel):
             try:
                 from plane.db.models import State
 
-                # Check if the current issue state group is completed or not
                 if self.state.group == "completed":
                     self.completed_at = timezone.now()
                 else:
@@ -208,30 +212,44 @@ class Issue(ProjectBaseModel):
                 pass
 
         if self._state.adding:
-            # Get the maximum display_id value from the database
-            last_id = IssueSequence.objects.filter(
-                project=self.project
-            ).aggregate(largest=models.Max("sequence"))["largest"]
-            # aggregate can return None! Check it first.
-            # If it isn't none, just use the last ID specified (which should be the greatest) and add one to it
-            if last_id:
-                self.sequence_id = last_id + 1
-            else:
-                self.sequence_id = 1
+            with transaction.atomic():
+                last_sequence = (
+                    IssueSequence.objects.filter(project=self.project)
+                    .select_for_update()
+                    .aggregate(largest=models.Max("sequence"))["largest"]
+                )
+                self.sequence_id = last_sequence + 1 if last_sequence else 1
+                # Strip the html tags using html parser
+                self.description_stripped = (
+                    None
+                    if (
+                        self.description_html == ""
+                        or self.description_html is None
+                    )
+                    else strip_tags(self.description_html)
+                )
+                largest_sort_order = Issue.objects.filter(
+                    project=self.project, state=self.state
+                ).aggregate(largest=models.Max("sort_order"))["largest"]
+                if largest_sort_order is not None:
+                    self.sort_order = largest_sort_order + 10000
 
-            largest_sort_order = Issue.objects.filter(
-                project=self.project, state=self.state
-            ).aggregate(largest=models.Max("sort_order"))["largest"]
-            if largest_sort_order is not None:
-                self.sort_order = largest_sort_order + 10000
+                super(Issue, self).save(*args, **kwargs)
 
-        # Strip the html tags using html parser
-        self.description_stripped = (
-            None
-            if (self.description_html == "" or self.description_html is None)
-            else strip_tags(self.description_html)
-        )
-        super(Issue, self).save(*args, **kwargs)
+                IssueSequence.objects.create(
+                    issue=self, sequence=self.sequence_id, project=self.project
+                )
+        else:
+            # Strip the html tags using html parser
+            self.description_stripped = (
+                None
+                if (
+                    self.description_html == ""
+                    or self.description_html is None
+                )
+                else strip_tags(self.description_html)
+            )
+            super(Issue, self).save(*args, **kwargs)
 
     def __str__(self):
         """Return name of the issue"""
@@ -277,7 +295,14 @@ class IssueRelation(ProjectBaseModel):
     )
 
     class Meta:
-        unique_together = ["issue", "related_issue"]
+        unique_together = ["issue", "related_issue", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["issue", "related_issue"],
+                condition=Q(deleted_at__isnull=True),
+                name="issue_relation_unique_issue_related_issue_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Issue Relation"
         verbose_name_plural = "Issue Relations"
         db_table = "issue_relations"
@@ -298,7 +323,14 @@ class IssueMention(ProjectBaseModel):
     )
 
     class Meta:
-        unique_together = ["issue", "mention"]
+        unique_together = ["issue", "mention", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["issue", "mention"],
+                condition=Q(deleted_at__isnull=True),
+                name="issue_mention_unique_issue_mention_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Issue Mention"
         verbose_name_plural = "Issue Mentions"
         db_table = "issue_mentions"
@@ -319,7 +351,14 @@ class IssueAssignee(ProjectBaseModel):
     )
 
     class Meta:
-        unique_together = ["issue", "assignee"]
+        unique_together = ["issue", "assignee", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["issue", "assignee"],
+                condition=Q(deleted_at__isnull=True),
+                name="issue_assignee_unique_issue_assignee_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Issue Assignee"
         verbose_name_plural = "Issue Assignees"
         db_table = "issue_assignees"
@@ -368,6 +407,8 @@ class IssueAttachment(ProjectBaseModel):
     issue = models.ForeignKey(
         "db.Issue", on_delete=models.CASCADE, related_name="issue_attachment"
     )
+    external_source = models.CharField(max_length=255, null=True, blank=True)
+    external_id = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         verbose_name = "Issue Attachment"
@@ -475,7 +516,7 @@ class IssueComment(ProjectBaseModel):
         return str(self.issue)
 
 
-class IssueProperty(ProjectBaseModel):
+class IssueUserProperty(ProjectBaseModel):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -488,11 +529,18 @@ class IssueProperty(ProjectBaseModel):
     )
 
     class Meta:
-        verbose_name = "Issue Property"
-        verbose_name_plural = "Issue Properties"
-        db_table = "issue_properties"
+        verbose_name = "Issue User Property"
+        verbose_name_plural = "Issue User Properties"
+        db_table = "issue_user_properties"
         ordering = ("-created_at",)
-        unique_together = ["user", "project"]
+        unique_together = ["user", "project", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "project"],
+                condition=Q(deleted_at__isnull=True),
+                name="issue_user_property_unique_user_project_when_deleted_at_null",
+            )
+        ]
 
     def __str__(self):
         """Return properties status of the issue"""
@@ -515,7 +563,14 @@ class Label(ProjectBaseModel):
     external_id = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
-        unique_together = ["name", "project"]
+        unique_together = ["name", "project", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "project"],
+                condition=Q(deleted_at__isnull=True),
+                name="label_unique_name_project_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Label"
         verbose_name_plural = "Labels"
         db_table = "labels"
@@ -560,9 +615,9 @@ class IssueSequence(ProjectBaseModel):
         Issue,
         on_delete=models.SET_NULL,
         related_name="issue_sequence",
-        null=True,
+        null=True,  # This is set to null because we want to keep the sequence even if the issue is deleted
     )
-    sequence = models.PositiveBigIntegerField(default=1)
+    sequence = models.PositiveBigIntegerField(default=1, db_index=True)
     deleted = models.BooleanField(default=False)
 
     class Meta:
@@ -583,7 +638,14 @@ class IssueSubscriber(ProjectBaseModel):
     )
 
     class Meta:
-        unique_together = ["issue", "subscriber"]
+        unique_together = ["issue", "subscriber", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["issue", "subscriber"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="issue_subscriber_unique_issue_subscriber_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Issue Subscriber"
         verbose_name_plural = "Issue Subscribers"
         db_table = "issue_subscribers"
@@ -605,7 +667,14 @@ class IssueReaction(ProjectBaseModel):
     reaction = models.CharField(max_length=20)
 
     class Meta:
-        unique_together = ["issue", "actor", "reaction"]
+        unique_together = ["issue", "actor", "reaction", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["issue", "actor", "reaction"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="issue_reaction_unique_issue_actor_reaction_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Issue Reaction"
         verbose_name_plural = "Issue Reactions"
         db_table = "issue_reactions"
@@ -629,7 +698,14 @@ class CommentReaction(ProjectBaseModel):
     reaction = models.CharField(max_length=20)
 
     class Meta:
-        unique_together = ["comment", "actor", "reaction"]
+        unique_together = ["comment", "actor", "reaction", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["comment", "actor", "reaction"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="comment_reaction_unique_comment_actor_reaction_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Comment Reaction"
         verbose_name_plural = "Comment Reactions"
         db_table = "comment_reactions"
@@ -660,6 +736,14 @@ class IssueVote(ProjectBaseModel):
         unique_together = [
             "issue",
             "actor",
+            "deleted_at",
+        ]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["issue", "actor"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="issue_vote_unique_issue_actor_when_deleted_at_null",
+            )
         ]
         verbose_name = "Issue Vote"
         verbose_name_plural = "Issue Votes"
@@ -668,14 +752,3 @@ class IssueVote(ProjectBaseModel):
 
     def __str__(self):
         return f"{self.issue.name} {self.actor.email}"
-
-
-# TODO: Find a better method to save the model
-@receiver(post_save, sender=Issue)
-def create_issue_sequence(sender, instance, created, **kwargs):
-    if created:
-        IssueSequence.objects.create(
-            issue=instance,
-            sequence=instance.sequence_id,
-            project=instance.project,
-        )

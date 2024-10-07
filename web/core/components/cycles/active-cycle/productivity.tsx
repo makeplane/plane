@@ -1,8 +1,8 @@
-import { FC, Fragment, useState } from "react";
+import { FC, Fragment } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { ICycle, TCyclePlotType } from "@plane/types";
-import { CustomSelect, Spinner } from "@plane/ui";
+import { ICycle, TCycleEstimateType, TCyclePlotType } from "@plane/types";
+import { CustomSelect, Loader } from "@plane/ui";
 // components
 import ProgressChart from "@/components/core/sidebar/progress-chart";
 import { EmptyState } from "@/components/empty-state";
@@ -15,35 +15,26 @@ import { EEstimateSystem } from "@/plane-web/constants/estimates";
 export type ActiveCycleProductivityProps = {
   workspaceSlug: string;
   projectId: string;
-  cycle: ICycle;
+  cycle: ICycle | null;
 };
 
 const cycleBurnDownChartOptions = [
-  { value: "burndown", label: "Issues" },
+  { value: "issues", label: "Issues" },
   { value: "points", label: "Points" },
 ];
 
 export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observer((props) => {
   const { workspaceSlug, projectId, cycle } = props;
   // hooks
-  const { getPlotTypeByCycleId, setPlotType, fetchCycleDetails } = useCycle();
+  const { getEstimateTypeByCycleId, setEstimateType } = useCycle();
   const { currentActiveEstimateId, areEstimateEnabledByProjectId, estimateById } = useProjectEstimates();
-  // state
-  const [loader, setLoader] = useState(false);
-  // derived values
-  const plotType: TCyclePlotType = (cycle && getPlotTypeByCycleId(cycle.id)) || "burndown";
 
-  const onChange = async (value: TCyclePlotType) => {
+  // derived values
+  const estimateType: TCycleEstimateType = (cycle && getEstimateTypeByCycleId(cycle.id)) || "issues";
+
+  const onChange = async (value: TCycleEstimateType) => {
     if (!workspaceSlug || !projectId || !cycle || !cycle.id) return;
-    setPlotType(cycle.id, value);
-    try {
-      setLoader(true);
-      await fetchCycleDetails(workspaceSlug, projectId, cycle.id);
-      setLoader(false);
-    } catch (error) {
-      setLoader(false);
-      setPlotType(cycle.id, plotType);
-    }
+    setEstimateType(cycle.id, value);
   };
 
   const isCurrentProjectEstimateEnabled = projectId && areEstimateEnabledByProjectId(projectId) ? true : false;
@@ -51,20 +42,21 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
     isCurrentProjectEstimateEnabled && currentActiveEstimateId && estimateById(currentActiveEstimateId);
   const isCurrentEstimateTypeIsPoints = estimateDetails && estimateDetails?.type === EEstimateSystem.POINTS;
 
-  const chartDistributionData = plotType === "points" ? cycle?.estimate_distribution : cycle?.distribution || undefined;
+  const chartDistributionData =
+    cycle && estimateType === "points" ? cycle?.estimate_distribution : cycle?.distribution || undefined;
   const completionChartDistributionData = chartDistributionData?.completion_chart || undefined;
 
-  return (
-    <div className="flex flex-col justify-center min-h-[17rem] gap-5 px-3.5 py-4 bg-custom-background-100 border border-custom-border-200 rounded-lg">
-      <div className="relative flex items-center justify-between gap-4 -mt-7">
+  return cycle && completionChartDistributionData ? (
+    <div className="flex flex-col min-h-[17rem] gap-5 px-3.5 py-4 bg-custom-background-100 border border-custom-border-200 rounded-lg">
+      <div className="relative flex items-center justify-between gap-4">
         <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle?.id}`}>
           <h3 className="text-base text-custom-text-300 font-semibold">Issue burndown</h3>
         </Link>
         {isCurrentEstimateTypeIsPoints && (
           <div className="relative flex items-center gap-2">
             <CustomSelect
-              value={plotType}
-              label={<span>{cycleBurnDownChartOptions.find((v) => v.value === plotType)?.label ?? "None"}</span>}
+              value={estimateType}
+              label={<span>{cycleBurnDownChartOptions.find((v) => v.value === estimateType)?.label ?? "None"}</span>}
               onChange={onChange}
               maxHeight="lg"
             >
@@ -74,7 +66,6 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
                 </CustomSelect.Option>
               ))}
             </CustomSelect>
-            {loader && <Spinner className="h-3 w-3" />}
           </div>
         )}
       </div>
@@ -94,7 +85,7 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
                     <span>Current</span>
                   </div>
                 </div>
-                {plotType === "points" ? (
+                {estimateType === "points" ? (
                   <span>{`Pending points - ${cycle.backlog_estimate_points + cycle.unstarted_estimate_points + cycle.started_estimate_points}`}</span>
                 ) : (
                   <span>{`Pending issues - ${cycle.backlog_issues + cycle.unstarted_issues + cycle.started_issues}`}</span>
@@ -104,7 +95,7 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
               <div className="relative  h-full">
                 {completionChartDistributionData && (
                   <Fragment>
-                    {plotType === "points" ? (
+                    {estimateType === "points" ? (
                       <ProgressChart
                         distribution={completionChartDistributionData}
                         startDate={cycle.start_date ?? ""}
@@ -135,5 +126,9 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
         )}
       </Link>
     </div>
+  ) : (
+    <Loader className="flex flex-col min-h-[17rem] gap-5 bg-custom-background-100 border border-custom-border-200 rounded-lg">
+      <Loader.Item width="100%" height="100%" />
+    </Loader>
   );
 });

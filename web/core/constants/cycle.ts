@@ -60,7 +60,7 @@ export const CYCLE_STATUS: {
   {
     label: "day left",
     value: "current",
-    title: "Active",
+    title: "In progress",
     color: "#F59E0B",
     textColor: "text-amber-500",
     bgColor: "bg-amber-50",
@@ -88,29 +88,6 @@ export const CYCLE_STATUS: {
     color: "#525252",
     textColor: "text-custom-text-300",
     bgColor: "bg-custom-background-90",
-  },
-];
-
-export const CYCLE_STATE_GROUPS_DETAILS = [
-  {
-    key: "completed_issues",
-    title: "Completed",
-    color: "#6490FE",
-  },
-  {
-    key: "started_issues",
-    title: "Started",
-    color: "#FDD97F",
-  },
-  {
-    key: "unstarted_issues",
-    title: "Unstarted",
-    color: "#FEB055",
-  },
-  {
-    key: "backlog_issues",
-    title: "Backlog",
-    color: "#F0F0F3",
   },
 ];
 

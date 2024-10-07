@@ -6,16 +6,17 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Dialog, Transition } from "@headlessui/react";
 // components
 import { FullScreenPeekView, SidePeekView } from "@/components/issues/peek-overview";
-// store
-import { useIssue, useIssueDetails } from "@/hooks/store";
+// hooks
+import { useIssueDetails } from "@/hooks/store";
 
 type TIssuePeekOverview = {
   anchor: string;
   peekId: string;
+  handlePeekClose?: () => void;
 };
 
 export const IssuePeekOverview: FC<TIssuePeekOverview> = observer((props) => {
-  const { anchor, peekId } = props;
+  const { anchor, peekId, handlePeekClose } = props;
   const router = useRouter();
   const searchParams = useSearchParams();
   // query params
@@ -28,19 +29,22 @@ export const IssuePeekOverview: FC<TIssuePeekOverview> = observer((props) => {
   const [isModalPeekOpen, setIsModalPeekOpen] = useState(false);
   // store
   const issueDetailStore = useIssueDetails();
-  const issueStore = useIssue();
 
   const issueDetails = issueDetailStore.peekId && peekId ? issueDetailStore.details[peekId.toString()] : undefined;
 
   useEffect(() => {
-    if (anchor && peekId && issueStore.issues && issueStore.issues.length > 0) {
-      if (!issueDetails) {
-        issueDetailStore.fetchIssueDetails(anchor, peekId.toString());
-      }
+    if (anchor && peekId) {
+      issueDetailStore.fetchIssueDetails(anchor, peekId.toString());
     }
-  }, [anchor, issueDetailStore, issueDetails, peekId, issueStore.issues]);
+  }, [anchor, issueDetailStore, peekId]);
 
   const handleClose = () => {
+    // if close logic is passed down, call that instead of the below logic
+    if (handlePeekClose) {
+      handlePeekClose();
+      return;
+    }
+
     issueDetailStore.setPeekId(null);
     let queryParams: any = {
       board,

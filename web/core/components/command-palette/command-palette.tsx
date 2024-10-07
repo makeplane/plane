@@ -17,15 +17,14 @@ import { CreateProjectModal } from "@/components/project";
 import { CreateUpdateProjectViewModal } from "@/components/views";
 // constants
 import { ISSUE_DETAILS } from "@/constants/fetch-keys";
-import { EIssuesStoreType } from "@/constants/issue";
-import { EUserProjectRoles } from "@/constants/project";
-import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helpers
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useEventTracker, useIssues, useUser, useAppTheme, useCommandPalette } from "@/hooks/store";
+import { useEventTracker, useUser, useAppTheme, useCommandPalette, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // services
 import { IssueService } from "@/services/issue";
 
@@ -44,12 +43,15 @@ export const CommandPalette: FC = observer(() => {
   const { setTrackElement } = useEventTracker();
   const { platform } = usePlatformOS();
   const {
-    membership: { currentWorkspaceRole, currentProjectRole },
     data: currentUser,
+    // canPerformProjectMemberActions,
+    // canPerformWorkspaceMemberActions,
+    canPerformAnyCreateAction,
+    // canPerformProjectAdminActions,
   } = useUser();
   const {
     issues: { removeIssue },
-  } = useIssues(EIssuesStoreType.PROJECT);
+  } = useIssuesStore();
   const {
     toggleCommandPaletteModal,
     isCreateIssueModalOpen,
@@ -71,8 +73,8 @@ export const CommandPalette: FC = observer(() => {
     isDeleteIssueModalOpen,
     toggleDeleteIssueModal,
     isAnyModalOpen,
-    createIssueStoreType,
   } = useCommandPalette();
+  const { allowPermissions } = useUserPermissions();
 
   const { data: issueDetails } = useSWR(
     workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
@@ -80,6 +82,17 @@ export const CommandPalette: FC = observer(() => {
       ? () => issueService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
       : null
   );
+
+  // derived values
+  const canPerformWorkspaceMemberActions = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
+  const canPerformProjectMemberActions = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
+  const canPerformProjectAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
 
   const copyIssueUrlToClipboard = useCallback(() => {
     if (!issueId) return;
@@ -101,30 +114,54 @@ export const CommandPalette: FC = observer(() => {
   }, [issueId]);
 
   // auth
-  const canPerformProjectCreateActions = useCallback(
+  const performProjectCreateActions = useCallback(
     (showToast: boolean = true) => {
-      const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
-      if (!isAllowed && showToast)
+      if (!canPerformProjectMemberActions && showToast)
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "You don't have permission to perform this action.",
         });
 
-      return isAllowed;
+      return canPerformProjectMemberActions;
     },
-    [currentProjectRole]
+    [canPerformProjectMemberActions]
   );
-  const canPerformWorkspaceCreateActions = useCallback(
+
+  const performProjectBulkDeleteActions = useCallback(
     (showToast: boolean = true) => {
-      const isAllowed = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
-      if (!isAllowed && showToast)
+      if (!canPerformProjectAdminActions && projectId && showToast)
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "You don't have permission to perform this action.",
         });
-      return isAllowed;
+
+      return canPerformProjectAdminActions;
     },
-    [currentWorkspaceRole]
+    [canPerformProjectAdminActions, projectId]
+  );
+
+  const performWorkspaceCreateActions = useCallback(
+    (showToast: boolean = true) => {
+      if (!canPerformWorkspaceMemberActions && showToast)
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "You don't have permission to perform this action.",
+        });
+      return canPerformWorkspaceMemberActions;
+    },
+    [canPerformWorkspaceMemberActions]
+  );
+
+  const performAnyProjectCreateActions = useCallback(
+    (showToast: boolean = true) => {
+      if (!canPerformAnyCreateAction && showToast)
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "You don't have permission to perform this action.",
+        });
+      return canPerformAnyCreateAction;
+    },
+    [canPerformAnyCreateAction]
   );
 
   const shortcutsList: {
@@ -188,7 +225,6 @@ export const CommandPalette: FC = observer(() => {
       toggleCreatePageModal,
       toggleCreateProjectModal,
       toggleCreateViewModal,
-      toggleShortcutModal,
     ]
   );
 
@@ -200,6 +236,7 @@ export const CommandPalette: FC = observer(() => {
       const keyPressed = key.toLowerCase();
       const cmdClicked = ctrlKey || metaKey;
       const shiftClicked = shiftKey;
+      const deleteKey = keyPressed === "backspace" || keyPressed === "delete";
 
       if (cmdClicked && keyPressed === "k" && !isAnyModalOpen) {
         e.preventDefault();
@@ -219,7 +256,11 @@ export const CommandPalette: FC = observer(() => {
         toggleShortcutModal(true);
       }
 
-      if (cmdClicked) {
+      if (deleteKey) {
+        if (performProjectBulkDeleteActions()) {
+          shortcutsList.project.delete.action();
+        }
+      } else if (cmdClicked) {
         if (keyPressed === "c" && ((platform === "MacOS" && ctrlKey) || altKey)) {
           e.preventDefault();
           copyIssueUrlToClipboard();
@@ -229,19 +270,26 @@ export const CommandPalette: FC = observer(() => {
         }
       } else if (!isAnyModalOpen) {
         setTrackElement("Shortcut key");
-        if (Object.keys(shortcutsList.global).includes(keyPressed)) shortcutsList.global[keyPressed].action();
+        if (
+          Object.keys(shortcutsList.global).includes(keyPressed) &&
+          ((!projectId && performAnyProjectCreateActions()) || performProjectCreateActions())
+        ) {
+          shortcutsList.global[keyPressed].action();
+        }
         // workspace authorized actions
         else if (
           Object.keys(shortcutsList.workspace).includes(keyPressed) &&
           workspaceSlug &&
-          canPerformWorkspaceCreateActions()
-        )
+          performWorkspaceCreateActions()
+        ) {
+          e.preventDefault();
           shortcutsList.workspace[keyPressed].action();
+        }
         // project authorized actions
         else if (
           Object.keys(shortcutsList.project).includes(keyPressed) &&
           projectId &&
-          canPerformProjectCreateActions()
+          performProjectCreateActions()
         ) {
           e.preventDefault();
           // actions that can be performed only inside a project
@@ -250,14 +298,18 @@ export const CommandPalette: FC = observer(() => {
       }
     },
     [
-      canPerformProjectCreateActions,
-      canPerformWorkspaceCreateActions,
       copyIssueUrlToClipboard,
       isAnyModalOpen,
+      platform,
+      performAnyProjectCreateActions,
+      performProjectBulkDeleteActions,
+      performProjectCreateActions,
+      performWorkspaceCreateActions,
       projectId,
       setTrackElement,
       shortcutsList,
       toggleCommandPaletteModal,
+      toggleShortcutModal,
       toggleSidebar,
       workspaceSlug,
     ]
@@ -317,7 +369,6 @@ export const CommandPalette: FC = observer(() => {
         isOpen={isCreateIssueModalOpen}
         onClose={() => toggleCreateIssueModal(false)}
         data={cycleId ? { cycle_id: cycleId.toString() } : moduleId ? { module_ids: [moduleId.toString()] } : undefined}
-        storeType={createIssueStoreType}
         isDraft={isDraftIssue}
       />
 

@@ -64,7 +64,7 @@ const PageDetailsPage = observer(() => {
     <>
       <PageHead title={name} />
       <div className="flex h-full flex-col justify-between">
-        <div className="h-full w-full flex-shrink-0 flex flex-col overflow-hidden">
+        <div className="relative h-full w-full flex-shrink-0 flex flex-col overflow-hidden">
           <PageRoot page={page} projectId={projectId.toString()} workspaceSlug={workspaceSlug.toString()} />
           <IssuePeekOverview />
         </div>

@@ -1,15 +1,95 @@
-.ProseMirror {
-  --font-size-h1: 1.5rem;
-  --font-size-h2: 1.3125rem;
-  --font-size-h3: 1.125rem;
-  --font-size-h4: 0.9375rem;
-  --font-size-h5: 0.8125rem;
-  --font-size-h6: 0.75rem;
-  --font-size-regular: 0.9375rem;
-  --font-size-list: var(--font-size-regular);
+.editor-container {
+  &.large-font {
+    --font-size-h1: 1.75rem;
+    --font-size-h2: 1.5rem;
+    --font-size-h3: 1.375rem;
+    --font-size-h4: 1.25rem;
+    --font-size-h5: 1.125rem;
+    --font-size-h6: 1rem;
+    --font-size-regular: 1rem;
+    --font-size-list: var(--font-size-regular);
+    --font-size-code: var(--font-size-regular);
+
+    --line-height-h1: 2.25rem;
+    --line-height-h2: 2rem;
+    --line-height-h3: 1.75rem;
+    --line-height-h4: 1.5rem;
+    --line-height-h5: 1.5rem;
+    --line-height-h6: 1.5rem;
+    --line-height-regular: 1.5rem;
+    --line-height-list: var(--line-height-regular);
+    --line-height-code: var(--line-height-regular);
+  }
+
+  &.small-font {
+    --font-size-h1: 1.4rem;
+    --font-size-h2: 1.2rem;
+    --font-size-h3: 1.1rem;
+    --font-size-h4: 1rem;
+    --font-size-h5: 0.9rem;
+    --font-size-h6: 0.8rem;
+    --font-size-regular: 0.8rem;
+    --font-size-list: var(--font-size-regular);
+    --font-size-code: var(--font-size-regular);
+
+    --line-height-h1: 1.8rem;
+    --line-height-h2: 1.6rem;
+    --line-height-h3: 1.4rem;
+    --line-height-h4: 1.2rem;
+    --line-height-h5: 1.2rem;
+    --line-height-h6: 1.2rem;
+    --line-height-regular: 1.2rem;
+    --line-height-list: var(--line-height-regular);
+    --line-height-code: var(--line-height-regular);
+  }
+
+  &.sans-serif {
+    --font-style: sans-serif;
+  }
+
+  &.serif {
+    --font-style: serif;
+  }
+
+  &.monospace {
+    --font-style: monospace;
+  }
 }
 
+.ProseMirror {
+  position: relative;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  -moz-tab-size: 4;
+  tab-size: 4;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+  outline: none;
+  cursor: text;
+  font-family: var(--font-style);
+  font-size: var(--font-size-regular);
+  line-height: 1.2;
+  color: inherit;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  appearance: textfield;
+  -webkit-appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+/* Placeholder only for the first line in an empty editor. */
 .ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: rgb(var(--color-text-400));
+  pointer-events: none;
+  height: 0;
+}
+
+/* Display Placeholders on every new line. */
+.ProseMirror p.is-empty::before {
   content: attr(data-placeholder);
   float: left;
   color: rgb(var(--color-text-400));
@@ -40,28 +120,23 @@
   display: none;
 }
 
-.ProseMirror .is-empty::before {
-  content: attr(data-placeholder);
-  float: left;
-  color: rgb(var(--color-text-400));
-  pointer-events: none;
-  height: 0;
-}
-
 /* Custom image styles */
 .ProseMirror img {
-  transition: filter 0.1s ease-in-out;
-  margin-top: 8px;
+  margin-top: 0 !important;
   margin-bottom: 0;
 
-  &:hover {
-    cursor: pointer;
-    filter: brightness(90%);
-  }
+  &:not(.read-only-image):not(.loading-image) {
+    transition: filter 0.1s ease-in-out;
 
-  &.ProseMirror-selectednode {
-    outline: 3px solid rgba(var(--color-primary-100));
-    filter: brightness(90%);
+    &:hover {
+      cursor: pointer;
+      filter: brightness(90%);
+    }
+
+    &.ProseMirror-selectednode {
+      outline: 3px solid rgba(var(--color-primary-100));
+      filter: brightness(90%);
+    }
   }
 }
 
@@ -98,13 +173,13 @@ ul[data-type="taskList"] li > label input[type="checkbox"]:hover {
   background-color: rgba(var(--color-background-80)) !important;
 }
 
-ul[data-type="taskList"] li > label input[type="checkbox"]:checked {
+ul[data-type="taskList"] li > label input[type="checkbox"][checked] {
   background-color: rgba(var(--color-primary-100)) !important;
   border-color: rgba(var(--color-primary-100)) !important;
   color: white !important;
 }
 
-ul[data-type="taskList"] li > label input[type="checkbox"]:checked:hover {
+ul[data-type="taskList"] li > label input[type="checkbox"][checked]:hover {
   background-color: rgba(var(--color-primary-300)) !important;
   border-color: rgba(var(--color-primary-300)) !important;
 }
@@ -157,7 +232,7 @@ ul[data-type="taskList"] li > label input[type="checkbox"] {
     clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
   }
 
-  &:checked::before {
+  &[checked]::before {
     transform: scale(1) translate(-50%, -50%);
   }
 }
@@ -168,8 +243,7 @@ ul[data-type="taskList"] li > div > p {
 
 ul[data-type="taskList"] li[data-checked="true"] > div > p {
   color: rgb(var(--color-text-400));
-  text-decoration: line-through;
-  text-decoration-thickness: 2px;
+  transition: color 0.2s ease;
 }
 /* end to-do list */
 
@@ -177,29 +251,6 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
 
 .tippy-box {
   max-width: 400px !important;
-}
-
-.ProseMirror {
-  position: relative;
-  word-wrap: break-word;
-  white-space: pre-wrap;
-  -moz-tab-size: 4;
-  tab-size: 4;
-  -webkit-user-select: text;
-  -moz-user-select: text;
-  -ms-user-select: text;
-  user-select: text;
-  outline: none;
-  cursor: text;
-  line-height: 1.2;
-  font-family: inherit;
-  font-size: var(--font-size-regular);
-  color: inherit;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  appearance: textfield;
-  -webkit-appearance: textfield;
-  -moz-appearance: textfield;
 }
 
 .fade-in {
@@ -210,27 +261,6 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
 .fade-out {
   opacity: 0;
   transition: opacity 0.2s ease-out;
-}
-
-.img-placeholder {
-  position: relative;
-  width: 35%;
-  margin-top: 0 !important;
-  margin-bottom: 0 !important;
-
-  &::before {
-    content: "";
-    box-sizing: border-box;
-    position: absolute;
-    top: 50%;
-    left: 45%;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: 3px solid rgba(var(--color-text-200));
-    border-top-color: rgba(var(--color-text-800));
-    animation: spinning 0.6s linear infinite;
-  }
 }
 
 @keyframes spinning {
@@ -248,6 +278,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
   opacity: 0;
 }
 
+/* code block, inline code */
 .ProseMirror pre {
   font-family: JetBrainsMono, monospace;
   tab-size: 2;
@@ -256,9 +287,13 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
 .ProseMirror pre code {
   background: none;
   color: inherit;
-  font-size: 0.8rem;
   padding: 0;
 }
+
+.ProseMirror code {
+  font-size: var(--font-size-code);
+}
+/* end code block, inline code */
 
 div[data-type="horizontalRule"] {
   line-height: 0;
@@ -342,48 +377,48 @@ ul[data-type="taskList"] ul[data-type="taskList"] {
   margin-top: 2rem;
   margin-bottom: 4px;
   font-size: var(--font-size-h1);
+  line-height: var(--line-height-h1);
   font-weight: 600;
-  line-height: 1.3;
 }
 
 .prose :where(h2):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   margin-top: 1.4rem;
   margin-bottom: 1px;
   font-size: var(--font-size-h2);
+  line-height: var(--line-height-h2);
   font-weight: 600;
-  line-height: 1.3;
 }
 
 .prose :where(h3):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   margin-top: 1rem;
   margin-bottom: 1px;
   font-size: var(--font-size-h3);
+  line-height: var(--line-height-h3);
   font-weight: 600;
-  line-height: 1.3;
 }
 
 .prose :where(h4):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   margin-top: 1rem;
   margin-bottom: 1px;
   font-size: var(--font-size-h4);
+  line-height: var(--line-height-h4);
   font-weight: 600;
-  line-height: 1.5;
 }
 
 .prose :where(h5):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   margin-top: 1rem;
   margin-bottom: 1px;
   font-size: var(--font-size-h5);
+  line-height: var(--line-height-h5);
   font-weight: 600;
-  line-height: 1.5;
 }
 
 .prose :where(h6):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   margin-top: 1rem;
   margin-bottom: 1px;
   font-size: var(--font-size-h6);
+  line-height: var(--line-height-h6);
   font-weight: 600;
-  line-height: 1.5;
 }
 
 .prose :where(p):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
@@ -391,13 +426,13 @@ ul[data-type="taskList"] ul[data-type="taskList"] {
   margin-bottom: 1px;
   padding: 3px 0;
   font-size: var(--font-size-regular);
-  line-height: 1.5;
+  line-height: var(--line-height-regular);
 }
 
 .prose :where(ol):not(:where([class~="not-prose"], [class~="not-prose"] *)) li p,
 .prose :where(ul):not(:where([class~="not-prose"], [class~="not-prose"] *)) li p {
   font-size: var(--font-size-list);
-  line-height: 1.5;
+  line-height: var(--line-height-list);
 }
 
 .prose :where(.prose > :first-child):not(:where([class~="not-prose"], [class~="not-prose"] *)) {

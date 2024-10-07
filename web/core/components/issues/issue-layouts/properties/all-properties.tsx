@@ -32,8 +32,8 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local components
-import { IssuePropertyLabels } from "../properties/labels";
-import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
+import { IssuePropertyLabels } from "./labels";
+import { WithDisplayPropertiesHOC } from "./with-display-properties-HOC";
 
 export interface IIssueProperties {
   issue: TIssue;
@@ -284,6 +284,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             projectId={issue.project_id}
             disabled={isReadOnly}
             buttonVariant="border-with-text"
+            renderByDefault={isMobile}
             showTooltip
           />
         </div>
@@ -298,6 +299,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             disabled={isReadOnly}
             buttonVariant="border-without-text"
             buttonClassName="border"
+            renderByDefault={isMobile}
             showTooltip
           />
         </div>
@@ -312,6 +314,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             defaultOptions={defaultLabelOptions}
             onChange={handleLabel}
             disabled={isReadOnly}
+            renderByDefault={isMobile}
             hideDropdownArrow
           />
         </div>
@@ -327,7 +330,9 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             placeholder="Start date"
             icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
+            optionsClassName="z-10"
             disabled={isReadOnly}
+            renderByDefault={isMobile}
             showTooltip
           />
         </div>
@@ -345,7 +350,9 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
             buttonClassName={shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-red-500" : ""}
             clearIconClassName="!text-custom-text-100"
+            optionsClassName="z-10"
             disabled={isReadOnly}
+            renderByDefault={isMobile}
             showTooltip
           />
         </div>
@@ -364,7 +371,9 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             buttonClassName={issue.assignee_ids?.length > 0 ? "hover:bg-transparent px-0" : ""}
             showTooltip={issue?.assignee_ids?.length === 0}
             placeholder="Assignees"
+            optionsClassName="z-10"
             tooltipContent=""
+            renderByDefault={isMobile}
           />
         </div>
       </WithDisplayPropertiesHOC>
@@ -379,6 +388,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
               value={issue?.module_ids ?? []}
               onChange={handleModule}
               disabled={isReadOnly}
+              renderByDefault={isMobile}
               multiple
               buttonVariant="border-with-text"
               showCount
@@ -399,6 +409,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
               onChange={handleCycle}
               disabled={isReadOnly}
               buttonVariant="border-with-text"
+              renderByDefault={isMobile}
               showTooltip
             />
           </div>
@@ -415,6 +426,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
               projectId={issue.project_id}
               disabled={isReadOnly}
               buttonVariant="border-with-text"
+              renderByDefault={isMobile}
               showTooltip
             />
           </div>
@@ -428,7 +440,12 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         displayPropertyKey="sub_issue_count"
         shouldRenderProperty={(properties) => !!properties.sub_issue_count && !!subIssueCount}
       >
-        <Tooltip tooltipHeading="Sub-issues" tooltipContent={`${subIssueCount}`} isMobile={isMobile}>
+        <Tooltip
+          tooltipHeading="Sub-issues"
+          tooltipContent={`${subIssueCount}`}
+          isMobile={isMobile}
+          renderByDefault={false}
+        >
           <div
             onClick={(e) => {
               e.stopPropagation();
@@ -454,7 +471,12 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         displayPropertyKey="attachment_count"
         shouldRenderProperty={(properties) => !!properties.attachment_count && !!issue.attachment_count}
       >
-        <Tooltip tooltipHeading="Attachments" tooltipContent={`${issue.attachment_count}`} isMobile={isMobile}>
+        <Tooltip
+          tooltipHeading="Attachments"
+          tooltipContent={`${issue.attachment_count}`}
+          isMobile={isMobile}
+          renderByDefault={false}
+        >
           <div
             className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1"
             onClick={handleEventPropagation}
@@ -471,7 +493,12 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         displayPropertyKey="link"
         shouldRenderProperty={(properties) => !!properties.link && !!issue.link_count}
       >
-        <Tooltip tooltipHeading="Links" tooltipContent={`${issue.link_count}`} isMobile={isMobile}>
+        <Tooltip
+          tooltipHeading="Links"
+          tooltipContent={`${issue.link_count}`}
+          isMobile={isMobile}
+          renderByDefault={false}
+        >
           <div
             className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1"
             onClick={handleEventPropagation}

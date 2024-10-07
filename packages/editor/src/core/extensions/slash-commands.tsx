@@ -9,6 +9,9 @@ import {
   Heading1,
   Heading2,
   Heading3,
+  Heading4,
+  Heading5,
+  Heading6,
   ImageIcon,
   List,
   ListOrdered,
@@ -25,13 +28,16 @@ import {
   toggleBulletList,
   toggleOrderedList,
   toggleTaskList,
-  insertImageCommand,
   toggleHeadingOne,
   toggleHeadingTwo,
   toggleHeadingThree,
+  toggleHeadingFour,
+  toggleHeadingFive,
+  toggleHeadingSix,
+  insertImage,
 } from "@/helpers/editor-commands";
 // types
-import { CommandProps, ISlashCommandItem, UploadImage } from "@/types";
+import { CommandProps, ISlashCommandItem } from "@/types";
 
 interface CommandItemProps {
   key: string;
@@ -83,7 +89,7 @@ const Command = Extension.create<SlashCommandOptions>({
 });
 
 const getSuggestionItems =
-  (uploadFile: UploadImage, additionalOptions?: Array<ISlashCommandItem>) =>
+  (additionalOptions?: Array<ISlashCommandItem>) =>
   ({ query }: { query: string }) => {
     let slashCommands: ISlashCommandItem[] = [
       {
@@ -91,7 +97,7 @@ const getSuggestionItems =
         title: "Text",
         description: "Just start typing with plain text.",
         searchTerms: ["p", "paragraph"],
-        icon: <CaseSensitive className="h-3.5 w-3.5" />,
+        icon: <CaseSensitive className="size-3.5" />,
         command: ({ editor, range }: CommandProps) => {
           if (range) {
             editor.chain().focus().deleteRange(range).clearNodes().run();
@@ -100,61 +106,91 @@ const getSuggestionItems =
         },
       },
       {
-        key: "heading_1",
+        key: "h1",
         title: "Heading 1",
         description: "Big section heading.",
         searchTerms: ["title", "big", "large"],
-        icon: <Heading1 className="h-3.5 w-3.5" />,
+        icon: <Heading1 className="size-3.5" />,
         command: ({ editor, range }: CommandProps) => {
           toggleHeadingOne(editor, range);
         },
       },
       {
-        key: "heading_2",
+        key: "h2",
         title: "Heading 2",
         description: "Medium section heading.",
         searchTerms: ["subtitle", "medium"],
-        icon: <Heading2 className="h-3.5 w-3.5" />,
+        icon: <Heading2 className="size-3.5" />,
         command: ({ editor, range }: CommandProps) => {
           toggleHeadingTwo(editor, range);
         },
       },
       {
-        key: "heading_3",
+        key: "h3",
         title: "Heading 3",
         description: "Small section heading.",
         searchTerms: ["subtitle", "small"],
-        icon: <Heading3 className="h-3.5 w-3.5" />,
+        icon: <Heading3 className="size-3.5" />,
         command: ({ editor, range }: CommandProps) => {
           toggleHeadingThree(editor, range);
         },
       },
       {
-        key: "todo_list",
+        key: "h4",
+        title: "Heading 4",
+        description: "Small section heading.",
+        searchTerms: ["subtitle", "small"],
+        icon: <Heading4 className="size-3.5" />,
+        command: ({ editor, range }: CommandProps) => {
+          toggleHeadingFour(editor, range);
+        },
+      },
+      {
+        key: "h5",
+        title: "Heading 5",
+        description: "Small section heading.",
+        searchTerms: ["subtitle", "small"],
+        icon: <Heading5 className="size-3.5" />,
+        command: ({ editor, range }: CommandProps) => {
+          toggleHeadingFive(editor, range);
+        },
+      },
+      {
+        key: "h6",
+        title: "Heading 6",
+        description: "Small section heading.",
+        searchTerms: ["subtitle", "small"],
+        icon: <Heading6 className="size-3.5" />,
+        command: ({ editor, range }: CommandProps) => {
+          toggleHeadingSix(editor, range);
+        },
+      },
+      {
+        key: "to-do-list",
         title: "To do",
         description: "Track tasks with a to-do list.",
         searchTerms: ["todo", "task", "list", "check", "checkbox"],
-        icon: <ListTodo className="h-3.5 w-3.5" />,
+        icon: <ListTodo className="size-3.5" />,
         command: ({ editor, range }: CommandProps) => {
           toggleTaskList(editor, range);
         },
       },
       {
-        key: "bullet_list",
+        key: "bulleted-list",
         title: "Bullet list",
         description: "Create a simple bullet list.",
         searchTerms: ["unordered", "point"],
-        icon: <List className="h-3.5 w-3.5" />,
+        icon: <List className="size-3.5" />,
         command: ({ editor, range }: CommandProps) => {
           toggleBulletList(editor, range);
         },
       },
       {
-        key: "numbered_list",
+        key: "numbered-list",
         title: "Numbered list",
         description: "Create a list with numbering.",
         searchTerms: ["ordered"],
-        icon: <ListOrdered className="h-3.5 w-3.5" />,
+        icon: <ListOrdered className="size-3.5" />,
         command: ({ editor, range }: CommandProps) => {
           toggleOrderedList(editor, range);
         },
@@ -164,43 +200,41 @@ const getSuggestionItems =
         title: "Table",
         description: "Create a table",
         searchTerms: ["table", "cell", "db", "data", "tabular"],
-        icon: <Table className="h-3.5 w-3.5" />,
+        icon: <Table className="size-3.5" />,
         command: ({ editor, range }: CommandProps) => {
           insertTableCommand(editor, range);
         },
       },
       {
-        key: "quote_block",
+        key: "quote",
         title: "Quote",
         description: "Capture a quote.",
         searchTerms: ["blockquote"],
-        icon: <Quote className="h-3.5 w-3.5" />,
+        icon: <Quote className="size-3.5" />,
         command: ({ editor, range }: CommandProps) => toggleBlockquote(editor, range),
       },
       {
-        key: "code_block",
+        key: "code",
         title: "Code",
         description: "Capture a code snippet.",
         searchTerms: ["codeblock"],
-        icon: <Code2 className="h-3.5 w-3.5" />,
+        icon: <Code2 className="size-3.5" />,
         command: ({ editor, range }: CommandProps) => editor.chain().focus().deleteRange(range).toggleCodeBlock().run(),
       },
       {
         key: "image",
         title: "Image",
-        description: "Upload an image from your computer.",
-        searchTerms: ["img", "photo", "picture", "media"],
-        icon: <ImageIcon className="h-3.5 w-3.5" />,
-        command: ({ editor, range }: CommandProps) => {
-          insertImageCommand(editor, uploadFile, null, range);
-        },
+        icon: <ImageIcon className="size-3.5" />,
+        description: "Insert an image",
+        searchTerms: ["img", "photo", "picture", "media", "upload"],
+        command: ({ editor, range }: CommandProps) => insertImage({ editor, event: "insert", range }),
       },
       {
         key: "divider",
         title: "Divider",
         description: "Visually divide blocks.",
         searchTerms: ["line", "divider", "horizontal", "rule", "separate"],
-        icon: <MinusSquare className="h-3.5 w-3.5" />,
+        icon: <MinusSquare className="size-3.5" />,
         command: ({ editor, range }: CommandProps) => {
           editor.chain().focus().deleteRange(range).setHorizontalRule().run();
         },
@@ -338,7 +372,8 @@ const renderItems = () => {
         editor: props.editor,
       });
 
-      const tippyContainer = document.querySelector(".active-editor") ?? document.querySelector("#editor-container");
+      const tippyContainer =
+        document.querySelector(".active-editor") ?? document.querySelector('[id^="editor-container"]');
 
       // @ts-expect-error Tippy overloads are messed up
       popup = tippy("body", {
@@ -378,10 +413,10 @@ const renderItems = () => {
   };
 };
 
-export const SlashCommand = (uploadFile: UploadImage, additionalOptions?: Array<ISlashCommandItem>) =>
+export const SlashCommand = (additionalOptions?: Array<ISlashCommandItem>) =>
   Command.configure({
     suggestion: {
-      items: getSuggestionItems(uploadFile, additionalOptions),
+      items: getSuggestionItems(additionalOptions),
       render: renderItems,
     },
   });

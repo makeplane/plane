@@ -26,7 +26,7 @@ from plane.api.serializers import (
     CycleSerializer,
 )
 from plane.app.permissions import ProjectEntityPermission
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Cycle,
     CycleIssue,
@@ -34,6 +34,8 @@ from plane.db.models import (
     Project,
     IssueAttachment,
     IssueLink,
+    ProjectMember,
+    UserFavorite,
 )
 from plane.utils.analytics_plot import burndown_plot
 
@@ -363,13 +365,27 @@ class CycleAPIEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, slug, project_id, pk):
+        cycle = Cycle.objects.get(
+            workspace__slug=slug, project_id=project_id, pk=pk
+        )
+        if cycle.owned_by_id != request.user.id and (
+            not ProjectMember.objects.filter(
+                workspace__slug=slug,
+                member=request.user,
+                role=20,
+                project_id=project_id,
+                is_active=True,
+            ).exists()
+        ):
+            return Response(
+                {"error": "Only admin or creator can delete the cycle"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         cycle_issues = list(
             CycleIssue.objects.filter(
                 cycle_id=self.kwargs.get("pk")
             ).values_list("issue", flat=True)
-        )
-        cycle = Cycle.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=pk
         )
 
         issue_activity.delay(
@@ -389,11 +405,20 @@ class CycleAPIEndpoint(BaseAPIView):
         )
         # Delete the cycle
         cycle.delete()
+        # Delete the cycle issues
+        CycleIssue.objects.filter(
+            cycle_id=self.kwargs.get("pk"),
+        ).delete()
+        # Delete the user favorite cycle
+        UserFavorite.objects.filter(
+            entity_type="cycle",
+            entity_identifier=pk,
+            project_id=project_id,
+        ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
-
     permission_classes = [
         ProjectEntityPermission,
     ]
@@ -519,6 +544,12 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             )
         cycle.archived_at = timezone.now()
         cycle.save()
+        UserFavorite.objects.filter(
+            entity_type="cycle",
+            entity_identifier=cycle_id,
+            project_id=project_id,
+            workspace__slug=slug,
+        ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def delete(self, request, slug, project_id, cycle_id):
@@ -647,72 +678,63 @@ class CycleIssueAPIEndpoint(BaseAPIView):
             workspace__slug=slug, project_id=project_id, pk=cycle_id
         )
 
-        if (
-            cycle.end_date is not None
-            and cycle.end_date < timezone.now().date()
-        ):
-            return Response(
+        # Get all CycleIssues already created
+        cycle_issues = list(
+            CycleIssue.objects.filter(
+                ~Q(cycle_id=cycle_id), issue_id__in=issues
+            )
+        )
+
+        existing_issues = [
+            str(cycle_issue.issue_id)
+            for cycle_issue in cycle_issues
+            if str(cycle_issue.issue_id) in issues
+        ]
+        new_issues = list(set(issues) - set(existing_issues))
+
+        # New issues to create
+        created_records = CycleIssue.objects.bulk_create(
+            [
+                CycleIssue(
+                    project_id=project_id,
+                    workspace_id=cycle.workspace_id,
+                    cycle_id=cycle_id,
+                    issue_id=issue,
+                )
+                for issue in new_issues
+            ],
+            ignore_conflicts=True,
+            batch_size=10,
+        )
+
+        # Updated Issues
+        updated_records = []
+        update_cycle_issue_activity = []
+        # Iterate over each cycle_issue in cycle_issues
+        for cycle_issue in cycle_issues:
+            old_cycle_id = cycle_issue.cycle_id
+            # Update the cycle_issue's cycle_id
+            cycle_issue.cycle_id = cycle_id
+            # Add the modified cycle_issue to the records_to_update list
+            updated_records.append(cycle_issue)
+            # Record the update activity
+            update_cycle_issue_activity.append(
                 {
-                    "error": "The Cycle has already been completed so no new issues can be added"
-                },
-                status=status.HTTP_400_BAD_REQUEST,
+                    "old_cycle_id": str(old_cycle_id),
+                    "new_cycle_id": str(cycle_id),
+                    "issue_id": str(cycle_issue.issue_id),
+                }
             )
 
-        issues = Issue.objects.filter(
-            pk__in=issues, workspace__slug=slug, project_id=project_id
-        ).values_list("id", flat=True)
-
-        # Get all CycleIssues already created
-        cycle_issues = list(CycleIssue.objects.filter(issue_id__in=issues))
-        update_cycle_issue_activity = []
-        record_to_create = []
-        records_to_update = []
-
-        for issue in issues:
-            cycle_issue = [
-                cycle_issue
-                for cycle_issue in cycle_issues
-                if str(cycle_issue.issue_id) in issues
-            ]
-            # Update only when cycle changes
-            if len(cycle_issue):
-                if cycle_issue[0].cycle_id != cycle_id:
-                    update_cycle_issue_activity.append(
-                        {
-                            "old_cycle_id": str(cycle_issue[0].cycle_id),
-                            "new_cycle_id": str(cycle_id),
-                            "issue_id": str(cycle_issue[0].issue_id),
-                        }
-                    )
-                    cycle_issue[0].cycle_id = cycle_id
-                    records_to_update.append(cycle_issue[0])
-            else:
-                record_to_create.append(
-                    CycleIssue(
-                        project_id=project_id,
-                        workspace=cycle.workspace,
-                        created_by=request.user,
-                        updated_by=request.user,
-                        cycle=cycle,
-                        issue_id=issue,
-                    )
-                )
-
-        CycleIssue.objects.bulk_create(
-            record_to_create,
-            batch_size=10,
-            ignore_conflicts=True,
-        )
+        # Update the cycle issues
         CycleIssue.objects.bulk_update(
-            records_to_update,
-            ["cycle"],
-            batch_size=10,
+            updated_records, ["cycle_id"], batch_size=100
         )
 
         # Capture Issue Activity
         issue_activity.delay(
             type="cycle.activity.created",
-            requested_data=json.dumps({"cycles_list": str(issues)}),
+            requested_data=json.dumps({"cycles_list": issues}),
             actor_id=str(self.request.user.id),
             issue_id=None,
             project_id=str(self.kwargs.get("project_id", None)),
@@ -720,13 +742,14 @@ class CycleIssueAPIEndpoint(BaseAPIView):
                 {
                     "updated_cycle_issues": update_cycle_issue_activity,
                     "created_cycle_issues": serializers.serialize(
-                        "json", record_to_create
+                        "json", created_records
                     ),
                 }
             ),
             epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
         )
-
         # Return all Cycle Issues
         return Response(
             CycleIssueSerializer(self.get_queryset(), many=True).data,
@@ -1140,12 +1163,38 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
         )
 
         updated_cycles = []
+        update_cycle_issue_activity = []
         for cycle_issue in cycle_issues:
             cycle_issue.cycle_id = new_cycle_id
             updated_cycles.append(cycle_issue)
+            update_cycle_issue_activity.append(
+                {
+                    "old_cycle_id": str(cycle_id),
+                    "new_cycle_id": str(new_cycle_id),
+                    "issue_id": str(cycle_issue.issue_id),
+                }
+            )
 
         cycle_issues = CycleIssue.objects.bulk_update(
             updated_cycles, ["cycle_id"], batch_size=100
+        )
+
+        # Capture Issue Activity
+        issue_activity.delay(
+            type="cycle.activity.created",
+            requested_data=json.dumps({"cycles_list": []}),
+            actor_id=str(self.request.user.id),
+            issue_id=None,
+            project_id=str(self.kwargs.get("project_id", None)),
+            current_instance=json.dumps(
+                {
+                    "updated_cycle_issues": update_cycle_issue_activity,
+                    "created_cycle_issues": "[]",
+                }
+            ),
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
         )
 
         return Response({"message": "Success"}, status=status.HTTP_200_OK)

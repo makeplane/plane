@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 // icons
-import { Activity, Check, ChevronDown, LogOut, Mails, PlusSquare, Settings } from "lucide-react";
+import { Check, ChevronDown, LogOut, Mails, PlusSquare, Settings } from "lucide-react";
 // ui
 import { Menu, Transition } from "@headlessui/react";
 // types
@@ -15,7 +15,8 @@ import { IWorkspace } from "@plane/types";
 import { Avatar, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 import { GOD_MODE_URL, cn } from "@/helpers/common.helper";
 // hooks
-import { useAppTheme, useUser, useUserProfile, useWorkspace } from "@/hooks/store";
+import { useAppTheme, useUser, useUserPermissions, useUserProfile, useWorkspace } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { WorkspaceLogo } from "../logo";
 
 // Static Data
@@ -25,25 +26,14 @@ const userLinks = (workspaceSlug: string) => [
     name: "Workspace invites",
     href: "/invitations",
     icon: Mails,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
   },
   {
     key: "settings",
     name: "Workspace settings",
     href: `/${workspaceSlug}/settings`,
     icon: Settings,
-  },
-];
-
-const profileLinks = (workspaceSlug: string, userId: string) => [
-  {
-    name: "My activity",
-    icon: Activity,
-    link: `/${workspaceSlug}/profile/${userId}`,
-  },
-  {
-    name: "Settings",
-    icon: Settings,
-    link: "/profile",
+    access: [EUserPermissions.ADMIN],
   },
 ];
 
@@ -59,6 +49,7 @@ export const SidebarDropdown = observer(() => {
     signOut,
   } = useUser();
   const { updateUserProfile } = useUserProfile();
+  const { allowPermissions } = useUserPermissions();
 
   const isUserInstanceAdmin = false;
   const { currentWorkspace: activeWorkspace, workspaces } = useWorkspace();
@@ -147,9 +138,9 @@ export const SidebarDropdown = observer(() => {
               leaveTo="transform opacity-0 scale-95"
             >
               <Menu.Items as={Fragment}>
-                <div className="fixed top-12 left-4 z-20 mt-1 flex w-full max-w-[19rem] origin-top-left flex-col divide-y divide-custom-border-100 rounded-md border-[0.5px] border-custom-sidebar-border-300 bg-custom-sidebar-background-100 shadow-custom-shadow-rg outline-none">
+                <div className="fixed top-12 left-4 z-[21] mt-1 flex w-full max-w-[19rem] origin-top-left flex-col divide-y divide-custom-border-100 rounded-md border-[0.5px] border-custom-sidebar-border-300 bg-custom-sidebar-background-100 shadow-custom-shadow-rg outline-none">
                   <div className="vertical-scrollbar scrollbar-sm mb-2 flex max-h-96 flex-col items-start justify-start gap-2 overflow-y-scroll px-4">
-                    <h6 className="sticky top-0 z-10 h-full w-full bg-custom-sidebar-background-100 pb-1 pt-3 text-sm font-medium text-custom-sidebar-text-400">
+                    <h6 className="sticky top-0 z-[21] h-full w-full bg-custom-sidebar-background-100 pb-1 pt-3 text-sm font-medium text-custom-sidebar-text-400">
                       {currentUser?.email}
                     </h6>
                     {workspacesList ? (
@@ -181,7 +172,7 @@ export const SidebarDropdown = observer(() => {
                                       alt="Workspace Logo"
                                     />
                                   ) : (
-                                    workspace?.name?.charAt(0) ?? "..."
+                                    (workspace?.name?.charAt(0) ?? "...")
                                   )}
                                 </span>
                                 <h5
@@ -214,30 +205,33 @@ export const SidebarDropdown = observer(() => {
                     <Link href="/create-workspace" className="w-full">
                       <Menu.Item
                         as="div"
-                        className="flex items-center gap-2 rounded px-2 py-1 text-sm font-medium text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-80"
+                        className="flex items-center gap-2 rounded px-2 py-1 text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
                       >
                         <PlusSquare strokeWidth={1.75} className="h-4 w-4 flex-shrink-0" />
                         Create workspace
                       </Menu.Item>
                     </Link>
-                    {userLinks(workspaceSlug?.toString() ?? "").map((link, index) => (
-                      <Link
-                        key={link.key}
-                        href={link.href}
-                        className="w-full"
-                        onClick={() => {
-                          if (index > 0) handleItemClick();
-                        }}
-                      >
-                        <Menu.Item
-                          as="div"
-                          className="flex items-center gap-2 rounded px-2 py-1 text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
-                        >
-                          <link.icon className="h-4 w-4 flex-shrink-0" />
-                          {link.name}
-                        </Menu.Item>
-                      </Link>
-                    ))}
+                    {userLinks(workspaceSlug?.toString() ?? "").map(
+                      (link, index) =>
+                        allowPermissions(link.access, EUserPermissionsLevel.WORKSPACE) && (
+                          <Link
+                            key={link.key}
+                            href={link.href}
+                            className="w-full"
+                            onClick={() => {
+                              if (index > 0) handleItemClick();
+                            }}
+                          >
+                            <Menu.Item
+                              as="div"
+                              className="flex items-center gap-2 rounded px-2 py-1 text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
+                            >
+                              <link.icon className="h-4 w-4 flex-shrink-0" />
+                              {link.name}
+                            </Menu.Item>
+                          </Link>
+                        )
+                    )}
                   </div>
                   <div className="w-full px-4 py-2">
                     <Menu.Item
@@ -277,7 +271,7 @@ export const SidebarDropdown = observer(() => {
             leaveTo="transform opacity-0 scale-95"
           >
             <Menu.Items
-              className="absolute left-0 z-20 mt-1 flex w-52 origin-top-left  flex-col divide-y
+              className="absolute left-0 z-[21] mt-1 flex w-52 origin-top-left  flex-col divide-y
             divide-custom-sidebar-border-200 rounded-md border border-custom-sidebar-border-200 bg-custom-sidebar-background-100 px-1 py-2 text-xs shadow-lg outline-none"
               ref={setPopperElement as Ref<HTMLDivElement>}
               style={styles.popper}
@@ -285,22 +279,14 @@ export const SidebarDropdown = observer(() => {
             >
               <div className="flex flex-col gap-2.5 pb-2">
                 <span className="px-2 text-custom-sidebar-text-200">{currentUser?.email}</span>
-                {profileLinks(workspaceSlug?.toString() ?? "", currentUser?.id ?? "").map((link, index) => (
-                  <Link
-                    key={index}
-                    href={link.link}
-                    onClick={() => {
-                      if (index == 0) handleItemClick();
-                    }}
-                  >
-                    <Menu.Item key={index} as="div">
-                      <span className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80">
-                        <link.icon className="h-4 w-4 stroke-[1.5]" />
-                        {link.name}
-                      </span>
-                    </Menu.Item>
-                  </Link>
-                ))}
+                <Link href="/profile">
+                  <Menu.Item as="div">
+                    <span className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80">
+                      <Settings className="h-4 w-4 stroke-[1.5]" />
+                      <span>Settings</span>
+                    </span>
+                  </Menu.Item>
+                </Link>
               </div>
               <div className={`pt-2 ${isUserInstanceAdmin || false ? "pb-2" : ""}`}>
                 <Menu.Item

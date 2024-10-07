@@ -1,22 +1,24 @@
 "use client";
 
 import React, { useState } from "react";
-// types
-import { IStateLite } from "@plane/types";
+import { observer } from "mobx-react";
 // ui
 import { Loader, StateGroupIcon } from "@plane/ui";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/filters/helpers";
+// hooks
+import { useStates } from "@/hooks/store";
 
 type Props = {
   appliedFilters: string[] | null;
   handleUpdate: (val: string) => void;
   searchQuery: string;
-  states: IStateLite[] | undefined;
 };
 
-export const FilterState: React.FC<Props> = (props) => {
-  const { appliedFilters, handleUpdate, searchQuery, states } = props;
+export const FilterState: React.FC<Props> = observer((props) => {
+  const { appliedFilters, handleUpdate, searchQuery } = props;
+
+  const { sortedStates: states } = useStates();
 
   const [itemsToRender, setItemsToRender] = useState(5);
   const [previewEnabled, setPreviewEnabled] = useState(true);
@@ -77,4 +79,4 @@ export const FilterState: React.FC<Props> = (props) => {
       )}
     </>
   );
-};
+});

@@ -1,7 +1,7 @@
 "use client";
 import React, { FC } from "react";
 // ui
-import { ControlLink, Tooltip } from "@plane/ui";
+import { ControlLink, Row, Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -18,6 +18,9 @@ interface IListItemProps {
   parentRef: React.RefObject<HTMLDivElement>;
   disableLink?: boolean;
   className?: string;
+  actionItemContainerClassName?: string;
+  isSidebarOpen?: boolean;
+  quickActionElement?: JSX.Element;
 }
 
 export const ListItem: FC<IListItemProps> = (props) => {
@@ -32,6 +35,9 @@ export const ListItem: FC<IListItemProps> = (props) => {
     parentRef,
     disableLink = false,
     className = "",
+    actionItemContainerClassName = "",
+    isSidebarOpen = false,
+    quickActionElement,
   } = props;
 
   // router
@@ -45,34 +51,49 @@ export const ListItem: FC<IListItemProps> = (props) => {
 
   return (
     <div ref={parentRef} className="relative">
-      <ControlLink href={itemLink} target="_self" onClick={handleControlLinkClick} disabled={disableLink}>
-        <div
-          className={cn(
-            "group h-24 sm:h-[52px] flex w-full flex-col items-center justify-between gap-3 sm:gap-5 px-6 py-4 sm:py-0 text-sm border-b border-custom-border-200 bg-custom-background-100 hover:bg-custom-background-90 sm:flex-row",
-            className
-          )}
-        >
-          <div className="relative flex w-full items-center justify-between gap-3 overflow-hidden">
-            <div className="relative flex w-full items-center gap-3 overflow-hidden">
-              <div className="flex items-center gap-4 truncate">
-                {prependTitleElement && <span className="flex items-center flex-shrink-0">{prependTitleElement}</span>}
-                <Tooltip tooltipContent={title} position="top" isMobile={isMobile}>
-                  <span className="truncate text-sm">{title}</span>
-                </Tooltip>
-              </div>
-              {appendTitleElement && <span className="flex items-center flex-shrink-0">{appendTitleElement}</span>}
+      <Row
+        className={cn(
+          "group min-h-[52px] flex w-full flex-col items-center justify-between gap-3 py-4 text-sm border-b border-custom-border-200 bg-custom-background-100 hover:bg-custom-background-90 ",
+          {
+            "xl:gap-5 xl:py-0 xl:flex-row": isSidebarOpen,
+            "lg:gap-5 lg:py-0 lg:flex-row": !isSidebarOpen,
+          },
+          className
+        )}
+      >
+        <div className="relative flex w-full items-center justify-between gap-3 overflow-hidden">
+          <ControlLink
+            className="relative flex w-full items-center gap-3 overflow-hidden"
+            href={itemLink}
+            target="_self"
+            onClick={handleControlLinkClick}
+            disabled={disableLink}
+          >
+            <div className="flex items-center gap-4 truncate">
+              {prependTitleElement && <span className="flex items-center flex-shrink-0">{prependTitleElement}</span>}
+              <Tooltip tooltipContent={title} position="top" isMobile={isMobile}>
+                <span className="truncate text-sm">{title}</span>
+              </Tooltip>
             </div>
-          </div>
-          <span className="h-6 w-96 flex-shrink-0" />
+            {appendTitleElement && <span className="flex items-center flex-shrink-0">{appendTitleElement}</span>}
+          </ControlLink>
+          {quickActionElement && quickActionElement}
         </div>
-      </ControlLink>
-      {actionableItems && (
-        <div className="absolute right-5 bottom-4 flex items-center gap-1.5">
-          <div className="relative flex items-center gap-4 sm:w-auto sm:flex-shrink-0 sm:justify-end items-center">
+        {actionableItems && (
+          <div
+            className={cn(
+              "relative flex items-center justify-start gap-4 flex-wrap w-full",
+              {
+                "xl:flex-nowrap xl:w-auto xl:flex-shrink-0": isSidebarOpen,
+                "lg:flex-nowrap lg:w-auto lg:flex-shrink-0": !isSidebarOpen,
+              },
+              actionItemContainerClassName
+            )}
+          >
             {actionableItems}
           </div>
-        </div>
-      )}
+        )}
+      </Row>
     </div>
   );
 };

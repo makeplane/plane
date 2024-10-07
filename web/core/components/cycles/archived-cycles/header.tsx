@@ -3,6 +3,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
 import { ListFilter, Search, X } from "lucide-react";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // types
 import type { TCycleFilters } from "@plane/types";
 // components
@@ -14,7 +16,6 @@ import { cn } from "@/helpers/common.helper";
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useCycleFilter } from "@/hooks/store";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 
 export const ArchivedCyclesHeader: FC = observer(() => {
   // router

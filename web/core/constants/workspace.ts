@@ -1,8 +1,6 @@
 // types
 import { TStaticViewTypes } from "@plane/types";
-// icons
-import { SettingIcon } from "@/components/icons/attachment";
-import { Props } from "@/components/icons/types";
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // services images
 import CSVLogo from "@/public/services/csv.svg";
 import ExcelLogo from "@/public/services/excel.svg";
@@ -10,34 +8,22 @@ import GithubLogo from "@/public/services/github.png";
 import JiraLogo from "@/public/services/jira.svg";
 import JSONLogo from "@/public/services/json.svg";
 
-export enum EUserWorkspaceRoles {
-  GUEST = 5,
-  VIEWER = 10,
-  MEMBER = 15,
-  ADMIN = 20,
-}
-
 export const ROLE = {
-  5: "Guest",
-  10: "Viewer",
-  15: "Member",
-  20: "Admin",
+  [EUserPermissions.GUEST]: "Guest",
+  [EUserPermissions.MEMBER]: "Member",
+  [EUserPermissions.ADMIN]: "Admin",
 };
 
 export const ROLE_DETAILS = {
-  5: {
+  [EUserPermissions.GUEST]: {
     title: "Guest",
     description: "External members of organizations can be invited as guests.",
   },
-  10: {
-    title: "Viewer",
-    description: "External members of organizations can be invited as guests.",
-  },
-  15: {
+  [EUserPermissions.MEMBER]: {
     title: "Member",
     description: "Ability to read, write, edit, and delete entities inside projects, cycles, and modules",
   },
-  20: {
+  [EUserPermissions.ADMIN]: {
     title: "Admin",
     description: "All permissions set to true within the workspace.",
   },
@@ -134,62 +120,4 @@ export const RESTRICTED_URLS = [
   "profile",
   "spaces",
   "workspace-invitations",
-];
-
-export const WORKSPACE_SETTINGS_LINKS: {
-  key: string;
-  label: string;
-  href: string;
-  access: EUserWorkspaceRoles;
-  highlight: (pathname: string, baseUrl: string) => boolean;
-  Icon: React.FC<Props>;
-}[] = [
-  {
-    key: "general",
-    label: "General",
-    href: `/settings`,
-    access: EUserWorkspaceRoles.GUEST,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/`,
-    Icon: SettingIcon,
-  },
-  {
-    key: "members",
-    label: "Members",
-    href: `/settings/members`,
-    access: EUserWorkspaceRoles.GUEST,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/members/`,
-    Icon: SettingIcon,
-  },
-  {
-    key: "billing-and-plans",
-    label: "Billing and plans",
-    href: `/settings/billing`,
-    access: EUserWorkspaceRoles.ADMIN,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/billing/`,
-    Icon: SettingIcon,
-  },
-  {
-    key: "export",
-    label: "Exports",
-    href: `/settings/exports`,
-    access: EUserWorkspaceRoles.MEMBER,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/exports/`,
-    Icon: SettingIcon,
-  },
-  {
-    key: "webhooks",
-    label: "Webhooks",
-    href: `/settings/webhooks`,
-    access: EUserWorkspaceRoles.ADMIN,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/webhooks/`,
-    Icon: SettingIcon,
-  },
-  {
-    key: "api-tokens",
-    label: "API tokens",
-    href: `/settings/api-tokens`,
-    access: EUserWorkspaceRoles.ADMIN,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/api-tokens/`,
-    Icon: SettingIcon,
-  },
 ];

@@ -13,8 +13,9 @@ import {
   Link,
   Trash2,
   PanelLeft,
+  MoveRight,
 } from "lucide-react";
-import { CustomMenu } from "@plane/ui";
+import { Header, CustomMenu, EHeaderVariant } from "@plane/ui";
 // components
 import { InboxIssueStatus } from "@/components/inbox";
 import { IssueUpdateStatus } from "@/components/issues";
@@ -44,6 +45,8 @@ type Props = {
   handleCopyIssueLink: () => void;
   isMobileSidebar: boolean;
   setIsMobileSidebar: (value: boolean) => void;
+  isNotificationEmbed: boolean;
+  embedRemoveCurrentNotification?: () => void;
 };
 
 export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) => {
@@ -65,6 +68,8 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
     handleCopyIssueLink,
     isMobileSidebar,
     setIsMobileSidebar,
+    isNotificationEmbed,
+    embedRemoveCurrentNotification,
   } = props;
   const router = useAppRouter();
   const issue = inboxIssue?.issue;
@@ -75,15 +80,20 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
   if (!issue || !inboxIssue) return null;
 
   return (
-    <div className="h-12 relative flex border-custom-border-200 w-full items-center gap-2 px-4">
+    <Header variant={EHeaderVariant.SECONDARY} className="justify-start">
+      {isNotificationEmbed && (
+        <button onClick={embedRemoveCurrentNotification}>
+          <MoveRight className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200 mr-2" />
+        </button>
+      )}
       <PanelLeft
         onClick={() => setIsMobileSidebar(!isMobileSidebar)}
         className={cn(
-          "w-4 h-4 flex-shrink-0 mr-2",
+          "w-4 h-4 flex-shrink-0 mr-2 my-auto",
           isMobileSidebar ? "text-custom-primary-100" : "text-custom-text-200"
         )}
       />
-      <div className="flex items-center gap-2 w-full">
+      <div className="flex items-center gap-2 w-full bg-custom-background-100 z-[15]">
         <div className="flex items-center gap-x-2">
           <button
             type="button"
@@ -171,6 +181,6 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
           </CustomMenu>
         </div>
       </div>
-    </div>
+    </Header>
   );
 });

@@ -2,12 +2,12 @@ import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
+import { ContentWrapper } from "@plane/ui";
 import { InboxIssueActionsHeader, InboxIssueMainContent } from "@/components/inbox";
-// constants
-import { EUserProjectRoles } from "@/constants/project";
 // hooks
-import { useProjectInbox, useUser } from "@/hooks/store";
+import { useProjectInbox, useUser, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type TInboxContentRoot = {
   workspaceSlug: string;
@@ -16,6 +16,7 @@ type TInboxContentRoot = {
   isMobileSidebar: boolean;
   setIsMobileSidebar: (value: boolean) => void;
   isNotificationEmbed?: boolean;
+  embedRemoveCurrentNotification?: () => void;
 };
 
 export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
@@ -26,17 +27,18 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
     isMobileSidebar,
     setIsMobileSidebar,
     isNotificationEmbed = false,
+    embedRemoveCurrentNotification,
   } = props;
   /// router
   const router = useAppRouter();
   // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   // hooks
+  const { data: currentUser } = useUser();
   const { currentTab, fetchInboxIssueById, getIssueInboxByIssueId, getIsIssueAvailable } = useProjectInbox();
   const inboxIssue = getIssueInboxByIssueId(inboxIssueId);
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions, projectPermissionsByWorkspaceSlugAndProjectId } = useUserPermissions();
+
   // derived values
   const isIssueAvailable = getIsIssueAvailable(inboxIssueId?.toString() || "");
 
@@ -60,7 +62,13 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
     }
   );
 
-  const isEditable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditable = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    EUserPermissionsLevel.PROJECT
+  );
+  const isGuest = projectPermissionsByWorkspaceSlugAndProjectId(workspaceSlug, projectId) === EUserPermissions.GUEST;
+  const isOwner = inboxIssue?.issue.created_by === currentUser?.id;
+  const readOnly = !isOwner && isGuest;
 
   if (!inboxIssue) return <></>;
 
@@ -69,7 +77,7 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
   return (
     <>
       <div className="w-full h-full overflow-hidden relative flex flex-col">
-        <div className="flex-shrink-0 min-h-[50px] border-b border-custom-border-300">
+        <div className="flex-shrink-0 min-h-[52px] z-[11]">
           <InboxIssueActionsHeader
             setIsMobileSidebar={setIsMobileSidebar}
             isMobileSidebar={isMobileSidebar}
@@ -78,18 +86,19 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
             inboxIssue={inboxIssue}
             isSubmitting={isSubmitting}
             isNotificationEmbed={isNotificationEmbed || false}
+            embedRemoveCurrentNotification={embedRemoveCurrentNotification}
           />
         </div>
-        <div className="h-full w-full space-y-5 divide-y-2 divide-custom-border-200 overflow-y-auto px-6 py-5 vertical-scrollbar scrollbar-md">
+        <ContentWrapper className="space-y-5 divide-y-2 divide-custom-border-200">
           <InboxIssueMainContent
             workspaceSlug={workspaceSlug}
             projectId={projectId}
             inboxIssue={inboxIssue}
-            isEditable={isEditable && !isIssueDisabled}
+            isEditable={isEditable && !isIssueDisabled && !readOnly}
             isSubmitting={isSubmitting}
             setIsSubmitting={setIsSubmitting}
           />
-        </div>
+        </ContentWrapper>
       </div>
     </>
   );

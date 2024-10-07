@@ -23,7 +23,7 @@ export const IssueModuleActivity: FC<TIssueModuleActivity> = observer((props) =>
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<DiceIcon className="h-4 w-4 flex-shrink-0 text-[#6b7280]" />}
+      icon={<DiceIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />}
       activityId={activityId}
       ends={ends}
     >

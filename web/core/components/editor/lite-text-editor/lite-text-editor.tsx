@@ -9,7 +9,7 @@ import { IssueCommentToolbar } from "@/components/editor";
 import { EIssueCommentAccessSpecifier } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
-import { isEmptyHtmlString } from "@/helpers/string.helper";
+import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks
 import { useMember, useMention, useUser } from "@/hooks/store";
 // services
@@ -59,10 +59,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     user: currentUser ?? undefined,
   });
 
-  const isEmpty =
-    props.initialValue?.trim() === "" ||
-    props.initialValue === "<p></p>" ||
-    (isEmptyHtmlString(props.initialValue ?? "") && !props.initialValue?.includes("mention-component"));
+  const isEmpty = isCommentEmpty(props.initialValue);
 
   function isMutableRefObject<T>(ref: React.ForwardedRef<T>): ref is React.MutableRefObject<T | null> {
     return !!ref && typeof ref === "object" && "current" in ref;
@@ -94,11 +91,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
           }
         }}
         handleAccessChange={handleAccessChange}
-        handleSubmit={() => {
-          if (isMutableRefObject<EditorRefApi>(ref)) {
-            rest.onEnterKeyPress?.(ref.current?.getHTML() ?? "");
-          }
-        }}
+        handleSubmit={(e) => rest.onEnterKeyPress?.(e)}
         isCommentEmpty={isEmpty}
         isSubmitting={isSubmitting}
         showAccessSpecifier={showAccessSpecifier}

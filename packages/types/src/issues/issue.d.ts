@@ -25,6 +25,7 @@ export type TBaseIssue = {
   parent_id: string | null;
   cycle_id: string | null;
   module_ids: string[] | null;
+  type_id: string | null;
 
   created_at: string;
   updated_at: string;
@@ -42,15 +43,14 @@ export type TBaseIssue = {
 export type TIssue = TBaseIssue & {
   description_html?: string;
   is_subscribed?: boolean;
-
-  parent?: partial<TIssue>;
-
+  parent?: Partial<TBaseIssue>;
   issue_reactions?: TIssueReaction[];
   issue_attachment?: TIssueAttachment[];
   issue_link?: TIssueLink[];
-
   // tempId is used for optimistic updates. It is not a part of the API response.
   tempId?: string;
+  // sourceIssueId is used to store the original issue id when creating a copy of an issue. Used in cloning property values. It is not a part of the API response.
+  sourceIssueId?: string;
 };
 
 export type TIssueMap = {
@@ -84,7 +84,7 @@ export type TIssuesResponse = {
   total_pages: number;
   extra_stats: null;
   results: TIssueResponseResults;
-}
+};
 
 export type TBulkIssueProperties = Pick<
   TIssue,
@@ -94,9 +94,18 @@ export type TBulkIssueProperties = Pick<
   | "assignee_ids"
   | "start_date"
   | "target_date"
+  | "module_ids"
+  | "cycle_id"
+  | "estimate_point"
 >;
 
 export type TBulkOperationsPayload = {
   issue_ids: string[];
   properties: Partial<TBulkIssueProperties>;
 };
+
+export type TIssueDetailWidget =
+  | "sub-issues"
+  | "relations"
+  | "links"
+  | "attachments";

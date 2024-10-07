@@ -3,12 +3,14 @@ import { useParams } from "next/navigation";
 import { IIssueFilterOptions } from "@plane/types";
 // hooks
 // components
+import { Header, EHeaderVariant } from "@plane/ui";
 import { AppliedFiltersList, SaveFilterView } from "@/components/issues";
 // constants
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
-import { EUserProjectRoles } from "@/constants/project";
-import { useLabel, useProjectState, useUser } from "@/hooks/store";
+import { useLabel, useProjectState, useUserPermissions } from "@/hooks/store";
 import { useIssues } from "@/hooks/store/use-issues";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+
 // types
 
 export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
@@ -22,12 +24,14 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
   const {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.PROJECT);
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
+
   const { projectStates } = useProjectState();
   // derived values
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditingAllowed = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
   const userFilters = issueFilters?.filters;
   // filters whose value not null or empty array
   const appliedFilters: IIssueFilterOptions = {};
@@ -67,25 +71,29 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
   if (Object.keys(appliedFilters).length === 0) return null;
 
   return (
-    <div className="flex justify-between p-4 gap-2.5">
-      <AppliedFiltersList
-        appliedFilters={appliedFilters}
-        handleClearAllFilters={handleClearAllFilters}
-        handleRemoveFilter={handleRemoveFilter}
-        labels={projectLabels ?? []}
-        states={projectStates}
-      />
-      {isEditingAllowed && (
-        <SaveFilterView
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          filterParams={{
-            filters: appliedFilters,
-            display_filters: issueFilters?.displayFilters,
-            display_properties: issueFilters?.displayProperties,
-          }}
+    <Header variant={EHeaderVariant.TERNARY}>
+      <Header.LeftItem>
+        <AppliedFiltersList
+          appliedFilters={appliedFilters}
+          handleClearAllFilters={handleClearAllFilters}
+          handleRemoveFilter={handleRemoveFilter}
+          labels={projectLabels ?? []}
+          states={projectStates}
         />
-      )}
-    </div>
+      </Header.LeftItem>
+      <Header.RightItem>
+        {isEditingAllowed && (
+          <SaveFilterView
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            filterParams={{
+              filters: appliedFilters,
+              display_filters: issueFilters?.displayFilters,
+              display_properties: issueFilters?.displayProperties,
+            }}
+          />
+        )}
+      </Header.RightItem>
+    </Header>
   );
 });

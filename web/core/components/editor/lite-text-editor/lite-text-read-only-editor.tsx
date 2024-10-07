@@ -4,13 +4,17 @@ import { EditorReadOnlyRefApi, ILiteTextReadOnlyEditor, LiteTextReadOnlyEditorWi
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useMention } from "@/hooks/store";
+import { useMention, useUser } from "@/hooks/store";
 
-interface LiteTextReadOnlyEditorWrapperProps extends Omit<ILiteTextReadOnlyEditor, "mentionHandler"> {}
+type LiteTextReadOnlyEditorWrapperProps = Omit<ILiteTextReadOnlyEditor, "mentionHandler">;
 
 export const LiteTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, LiteTextReadOnlyEditorWrapperProps>(
   ({ ...props }, ref) => {
-    const { mentionHighlights } = useMention({});
+    // store hooks
+    const { data: currentUser } = useUser();
+    const { mentionHighlights } = useMention({
+      user: currentUser,
+    });
 
     return (
       <LiteTextReadOnlyEditorWithRef

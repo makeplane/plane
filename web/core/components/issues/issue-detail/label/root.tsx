@@ -6,10 +6,13 @@ import { IIssueLabel, TIssue } from "@plane/types";
 // components
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { useIssueDetail, useLabel, useProjectInbox } from "@/hooks/store";
+import { useIssueDetail, useLabel, useProjectInbox, useUserPermissions } from "@/hooks/store";
 // ui
 // types
 import { LabelList, LabelCreate, IssueLabelSelectRoot } from "./";
+// TODO: Fix this import statement, as core should not import from ee
+// eslint-disable-next-line import/order
+import { EUserPermissions, EUserPermissionsLevel } from "ee/constants/user-permissions";
 
 export type TIssueLabel = {
   workspaceSlug: string;
@@ -34,7 +37,9 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
     issue: { getIssueById },
   } = useIssueDetail();
   const { getIssueInboxByIssueId } = useProjectInbox();
+  const { allowPermissions } = useUserPermissions();
 
+  const canCreateLabel = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
   const issue = isInboxIssue ? getIssueInboxByIssueId(issueId)?.issue : getIssueById(issueId);
 
   const labelOperations: TLabelOperations = useMemo(
@@ -62,12 +67,16 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
             });
           return labelResponse;
         } catch (error) {
+          let errMessage = "Label creation failed";
+          if (error && (error as any).error === "Label with the same name already exists in the project")
+            errMessage = "Label already exists";
+
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
-            message: "Label creation failed",
+            message: errMessage,
           });
-          return error;
+          throw error;
         }
       },
     }),
@@ -95,7 +104,7 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
         />
       )}
 
-      {!disabled && (
+      {!disabled && canCreateLabel && (
         <LabelCreate
           workspaceSlug={workspaceSlug}
           projectId={projectId}

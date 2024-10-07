@@ -128,7 +128,9 @@ def extract_mentions(issue_instance):
             "mention-component", attrs={"target": "users"}
         )
 
-        mentions = [mention_tag["entity_identifier"] for mention_tag in mention_tags]
+        mentions = [
+            mention_tag["entity_identifier"] for mention_tag in mention_tags
+        ]
 
         return list(set(mentions))
     except Exception:
@@ -198,6 +200,16 @@ def create_mention_notification(
                 "actor": str(activity.get("actor_id")),
                 "new_value": str(activity.get("new_value")),
                 "old_value": str(activity.get("old_value")),
+                "old_identifier": (
+                    str(activity.get("old_identifier"))
+                    if activity.get("old_identifier")
+                    else None
+                ),
+                "new_identifier": (
+                    str(activity.get("new_identifier"))
+                    if activity.get("new_identifier")
+                    else None
+                ),
             },
         },
     )
@@ -221,7 +233,6 @@ def notifications(
             else None
         )
         if type not in [
-            "issue.activity.deleted",
             "cycle.activity.created",
             "cycle.activity.deleted",
             "module.activity.created",
@@ -441,6 +452,24 @@ def notifications(
                                         if issue_comment is not None
                                         else ""
                                     ),
+                                    "old_identifier": (
+                                        str(
+                                            issue_activity.get(
+                                                "old_identifier"
+                                            )
+                                        )
+                                        if issue_activity.get("old_identifier")
+                                        else None
+                                    ),
+                                    "new_identifier": (
+                                        str(
+                                            issue_activity.get(
+                                                "new_identifier"
+                                            )
+                                        )
+                                        if issue_activity.get("new_identifier")
+                                        else None
+                                    ),
                                 },
                             },
                         )
@@ -489,6 +518,28 @@ def notifications(
                                             issue_comment.comment_stripped
                                             if issue_comment is not None
                                             else ""
+                                        ),
+                                        "old_identifier": (
+                                            str(
+                                                issue_activity.get(
+                                                    "old_identifier"
+                                                )
+                                            )
+                                            if issue_activity.get(
+                                                "old_identifier"
+                                            )
+                                            else None
+                                        ),
+                                        "new_identifier": (
+                                            str(
+                                                issue_activity.get(
+                                                    "new_identifier"
+                                                )
+                                            )
+                                            if issue_activity.get(
+                                                "new_identifier"
+                                            )
+                                            else None
                                         ),
                                         "activity_time": issue_activity.get(
                                             "created_at"
@@ -573,6 +624,28 @@ def notifications(
                                             "old_value": str(
                                                 issue_activity.get("old_value")
                                             ),
+                                            "old_identifier": (
+                                                str(
+                                                    issue_activity.get(
+                                                        "old_identifier"
+                                                    )
+                                                )
+                                                if issue_activity.get(
+                                                    "old_identifier"
+                                                )
+                                                else None
+                                            ),
+                                            "new_identifier": (
+                                                str(
+                                                    issue_activity.get(
+                                                        "new_identifier"
+                                                    )
+                                                )
+                                                if issue_activity.get(
+                                                    "new_identifier"
+                                                )
+                                                else None
+                                            ),
                                             "activity_time": issue_activity.get(
                                                 "created_at"
                                             ),
@@ -628,6 +701,28 @@ def notifications(
                                         "old_value": str(
                                             last_activity.old_value
                                         ),
+                                        "old_identifier": (
+                                            str(
+                                                issue_activity.get(
+                                                    "old_identifier"
+                                                )
+                                            )
+                                            if issue_activity.get(
+                                                "old_identifier"
+                                            )
+                                            else None
+                                        ),
+                                        "new_identifier": (
+                                            str(
+                                                issue_activity.get(
+                                                    "new_identifier"
+                                                )
+                                            )
+                                            if issue_activity.get(
+                                                "new_identifier"
+                                            )
+                                            else None
+                                        ),
                                     },
                                 },
                             )
@@ -663,7 +758,31 @@ def notifications(
                                             "old_value": str(
                                                 last_activity.old_value
                                             ),
-                                            "activity_time": str(last_activity.created_at),
+                                            "old_identifier": (
+                                                str(
+                                                    issue_activity.get(
+                                                        "old_identifier"
+                                                    )
+                                                )
+                                                if issue_activity.get(
+                                                    "old_identifier"
+                                                )
+                                                else None
+                                            ),
+                                            "new_identifier": (
+                                                str(
+                                                    issue_activity.get(
+                                                        "new_identifier"
+                                                    )
+                                                )
+                                                if issue_activity.get(
+                                                    "new_identifier"
+                                                )
+                                                else None
+                                            ),
+                                            "activity_time": str(
+                                                last_activity.created_at
+                                            ),
                                         },
                                     },
                                 )
@@ -719,6 +838,28 @@ def notifications(
                                                     issue_activity.get(
                                                         "old_value"
                                                     )
+                                                ),
+                                                "old_identifier": (
+                                                    str(
+                                                        issue_activity.get(
+                                                            "old_identifier"
+                                                        )
+                                                    )
+                                                    if issue_activity.get(
+                                                        "old_identifier"
+                                                    )
+                                                    else None
+                                                ),
+                                                "new_identifier": (
+                                                    str(
+                                                        issue_activity.get(
+                                                            "new_identifier"
+                                                        )
+                                                    )
+                                                    if issue_activity.get(
+                                                        "new_identifier"
+                                                    )
+                                                    else None
                                                 ),
                                                 "activity_time": issue_activity.get(
                                                     "created_at"

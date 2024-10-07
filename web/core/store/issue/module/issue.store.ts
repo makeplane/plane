@@ -8,10 +8,10 @@ import {
   TIssuesResponse,
   TBulkOperationsPayload,
 } from "@plane/types";
+// helpers
+import { getDistributionPathsPostUpdate } from "@/helpers/distribution-update.helper";
 import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
-// services
-// types
-// store
+//
 import { IIssueRootStore } from "../root.store";
 import { IModuleIssuesFilter } from "./filter.store";
 
@@ -92,6 +92,30 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
   };
 
   /**
+   * Update Parent stats before fetching from server
+   * @param prevIssueState
+   * @param nextIssueState
+   * @param id
+   */
+  updateParentStats = (prevIssueState?: TIssue, nextIssueState?: TIssue, id?: string | undefined) => {
+    try {
+      // get distribution updates
+      const distributionUpdates = getDistributionPathsPostUpdate(
+        prevIssueState,
+        nextIssueState,
+        this.rootIssueStore.rootStore.state.stateMap,
+        this.rootIssueStore.rootStore.projectEstimate?.currentActiveEstimate?.estimatePointById
+      );
+
+      const moduleId = id ?? this.moduleId;
+
+      moduleId && this.rootIssueStore.rootStore.module.updateModuleDistribution(distributionUpdates, moduleId);
+    } catch (e) {
+      console.warn("could not update module statistics");
+    }
+  };
+
+  /**
    * This method is called to fetch the first issues of pagination
    * @param workspaceSlug
    * @param projectId
@@ -112,18 +136,19 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
       // set loader and clear store
       runInAction(() => {
         this.setLoader(loadType);
+        this.clear(!isExistingPaginationOptions, false); // clear while fetching from server.
+        if (!this.groupBy) this.clear(!isExistingPaginationOptions, true); // clear while using local to have the no load effect.
       });
-      this.clear(!isExistingPaginationOptions);
 
       // get params from pagination options
       const params = this.issueFilterStore?.getFilterParams(options, moduleId, undefined, undefined, undefined);
       // call the fetch issues API with the params
-      const response = await this.moduleService.getModuleIssues(workspaceSlug, projectId, moduleId, params, {
+      const response = await this.issueService.getIssues(workspaceSlug, projectId, params, {
         signal: this.controller.signal,
       });
 
       // after fetching issues, call the base method to process the response further
-      this.onfetchIssues(response, options, workspaceSlug, projectId, moduleId);
+      this.onfetchIssues(response, options, workspaceSlug, projectId, moduleId, !isExistingPaginationOptions);
       return response;
     } catch (error) {
       // set loader to undefined once errored out
@@ -166,7 +191,7 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
         subGroupId
       );
       // call the fetch issues API with the params for next page in issues
-      const response = await this.moduleService.getModuleIssues(workspaceSlug, projectId, moduleId, params);
+      const response = await this.issueService.getIssues(workspaceSlug, projectId, params);
 
       // after the next page of issues are fetched, call the base method to process the response
       this.onfetchNexIssues(response, groupId, subGroupId);

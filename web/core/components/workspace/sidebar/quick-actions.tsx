@@ -7,12 +7,12 @@ import { TIssue } from "@plane/types";
 // components
 import { CreateUpdateIssueModal } from "@/components/issues";
 // constants
-import { EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useAppTheme, useCommandPalette, useEventTracker, useProject } from "@/hooks/store";
+import { useAppTheme, useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const SidebarQuickActions = observer(() => {
   // states
@@ -29,11 +29,16 @@ export const SidebarQuickActions = observer(() => {
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
   const { setTrackElement } = useEventTracker();
   const { joinedProjectIds } = useProject();
+  const { allowPermissions } = useUserPermissions();
   // local storage
   const { storedValue, setValue } = useLocalStorage<Record<string, Partial<TIssue>>>("draftedIssue", {});
   // derived values
-  const disabled = joinedProjectIds.length === 0;
-  const workspaceDraftIssue = workspaceSlug ? storedValue?.[workspaceSlug] ?? undefined : undefined;
+  const canCreateIssue = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
+  const disabled = joinedProjectIds.length === 0 || !canCreateIssue;
+  const workspaceDraftIssue = workspaceSlug ? (storedValue?.[workspaceSlug] ?? undefined) : undefined;
 
   const handleMouseEnter = () => {
     // if enter before time out clear the timeout
@@ -90,7 +95,7 @@ export const SidebarQuickActions = observer(() => {
             )}
             onClick={() => {
               setTrackElement("APP_SIDEBAR_QUICK_ACTIONS");
-              toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
+              toggleCreateIssueModal(true);
             }}
             disabled={disabled}
           >
@@ -109,14 +114,14 @@ export const SidebarQuickActions = observer(() => {
                 </button>
               )}
               {isDraftButtonOpen && (
-                <div className="absolute  mt-0 h-10 w-[220px] pt-2 z-10 top-8 left-0">
+                <div className="absolute  mt-0 h-10 w-[220px] pt-2 z-[16] top-8 left-0">
                   <div className="h-full w-full">
                     <button
                       onClick={() => setIsDraftIssueModalOpen(true)}
                       className="flex w-full flex-shrink-0 items-center rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-3 py-[10px] text-sm text-custom-text-300 shadow"
                     >
                       <PenSquare size={16} className="mr-2 !text-lg !leading-4 text-custom-sidebar-text-300" />
-                      Last Drafted Issue
+                      Last drafted issue
                     </button>
                   </div>
                 </div>

@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /** @type {import("next").NextConfig} */
 require("dotenv").config({ path: ".env" });
+// const path = require("path");
+
 const { withSentryConfig } = require("@sentry/nextjs");
 
 const nextConfig = {
@@ -18,19 +20,22 @@ const nextConfig = {
             key: "Referrer-Policy",
             value: "origin-when-cross-origin",
           },
+          { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+          { key: "Cross-Origin-Embedder-Policy", value: "credentialless" },
         ],
       },
     ];
   },
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "**",
-      },
-    ],
     unoptimized: true,
   },
+  // webpack: (config, { isServer }) => {
+  //   if (!isServer) {
+  //     // Ensure that all imports of 'yjs' resolve to the same instance
+  //     config.resolve.alias["yjs"] = path.resolve(__dirname, "node_modules/yjs");
+  //   }
+  //   return config;
+  // },
   async redirects() {
     return [
       {
@@ -40,6 +45,11 @@ const nextConfig = {
       },
       {
         source: "/sign-in",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/signin",
         destination: "/",
         permanent: true,
       },
@@ -56,7 +66,7 @@ const nextConfig = {
     ];
   },
   async rewrites() {
-    const posthogHost = process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://app.posthog.com"
+    const posthogHost = process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://app.posthog.com";
     const rewrites = [
       {
         source: "/ingest/static/:path*",
@@ -74,7 +84,7 @@ const nextConfig = {
       rewrites.push({
         source: "/god-mode",
         destination: `${GOD_MODE_BASE_URL}/`,
-      })
+      });
       rewrites.push({
         source: "/god-mode/:path*",
         destination: `${GOD_MODE_BASE_URL}/:path*`,
@@ -113,8 +123,7 @@ const sentryConfig = {
   // https://docs.sentry.io/product/crons/
   // https://vercel.com/docs/cron-jobs
   automaticVercelMonitors: true,
-}
-
+};
 
 if (parseInt(process.env.SENTRY_MONITORING_ENABLED || "0", 10)) {
   module.exports = withSentryConfig(nextConfig, sentryConfig);

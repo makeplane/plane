@@ -1,4 +1,4 @@
-import { IStateLite, IWorkspaceLite, TIssue, TIssuePriorities, TStateGroups } from "@plane/types";
+import { IWorkspaceLite, TIssue, TIssuePriorities, TStateGroups } from "@plane/types";
 
 export type TIssueLayout = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt";
 export type TIssueLayoutOptions = {
@@ -33,30 +33,66 @@ export type TIssueQueryFilters = Partial<TFilters>;
 
 export type TIssueQueryFiltersParams = Partial<Record<keyof TFilters, string>>;
 
-export type TIssuesResponse = {
-  states: IStateLite[];
-  labels: IIssueLabel[];
-  issues: IIssue[];
-};
-
 export interface IIssue
-  extends Pick<TIssue, "description_html" | "id" | "name" | "priority" | "sequence_id" | "start_date" | "target_date"> {
+  extends Pick<
+    TIssue,
+    | "description_html"
+    | "created_at"
+    | "updated_at"
+    | "created_by"
+    | "id"
+    | "name"
+    | "priority"
+    | "state_id"
+    | "project_id"
+    | "sequence_id"
+    | "sort_order"
+    | "start_date"
+    | "target_date"
+    | "cycle_id"
+    | "module_ids"
+    | "label_ids"
+    | "assignee_ids"
+    | "attachment_count"
+    | "sub_issues_count"
+    | "link_count"
+    | "estimate_point"
+  > {
   comments: Comment[];
-  label_details: any;
-  project: string;
-  project_detail: any;
-  reactions: IIssueReaction[];
-  state: string;
-  state_detail: {
-    id: string;
-    name: string;
-    group: TIssueGroupKey;
-    color: string;
-  };
-  votes: IVote[];
+  reaction_items: IIssueReaction[];
+  vote_items: IVote[];
 }
 
 export type IPeekMode = "side" | "modal" | "full";
+
+type TIssueResponseResults =
+  | IIssue[]
+  | {
+      [key: string]: {
+        results:
+          | IIssue[]
+          | {
+              [key: string]: {
+                results: IIssue[];
+                total_results: number;
+              };
+            };
+        total_results: number;
+      };
+    };
+
+export type TIssuesResponse = {
+  grouped_by: string;
+  next_cursor: string;
+  prev_cursor: string;
+  next_page_results: boolean;
+  prev_page_results: boolean;
+  total_count: number;
+  count: number;
+  total_pages: number;
+  extra_stats: null;
+  results: TIssueResponseResults;
+};
 
 export interface IIssueLabel {
   id: string;
@@ -66,12 +102,8 @@ export interface IIssueLabel {
 }
 
 export interface IVote {
-  issue: string;
   vote: -1 | 1;
-  workspace: string;
-  project: string;
-  actor: string;
-  actor_detail: ActorDetail;
+  actor_details: ActorDetail;
 }
 
 export interface Comment {
@@ -102,9 +134,7 @@ export interface Comment {
 }
 
 export interface IIssueReaction {
-  actor_detail: ActorDetail;
-  id: string;
-  issue: string;
+  actor_details: ActorDetail;
   reaction: string;
 }
 
@@ -112,8 +142,8 @@ export interface ActorDetail {
   avatar?: string;
   display_name?: string;
   first_name?: string;
-  id?: string;
   is_bot?: boolean;
+  id?: string;
   last_name?: string;
 }
 

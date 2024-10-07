@@ -26,7 +26,7 @@ export type IssueDescriptionInputProps = {
   issueOperations: TIssueOperations;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   setIsSubmitting: (initialValue: "submitting" | "submitted" | "saved") => void;
-  swrIssueDescription: string | null | undefined;
+  swrIssueDescription?: string | null | undefined;
 };
 
 export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((props) => {
@@ -118,6 +118,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
               />
             ) : (
               <RichTextReadOnlyEditor
+                id={issueId}
                 initialValue={localIssueDescription.description_html ?? ""}
                 containerClassName={containerClassName}
               />

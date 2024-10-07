@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   web:
     image: ${DOCKERHUB_USER:-local}/plane-frontend:${APP_RELEASE:-latest}

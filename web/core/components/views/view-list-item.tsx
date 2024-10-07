@@ -3,14 +3,13 @@
 import { FC, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { Layers } from "lucide-react";
 // types
 import { IProjectView } from "@plane/types";
-// ui
-import { PhotoFilterIcon } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
 import { ListItem } from "@/components/core/list";
-import { ViewListItemAction } from "@/components/views";
+import { ViewListItemAction, ViewQuickActions } from "@/components/views";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
@@ -34,13 +33,23 @@ export const ProjectViewListItem: FC<Props> = observer((props) => {
           {view?.logo_props?.in_use ? (
             <Logo logo={view?.logo_props} size={16} type="lucide" />
           ) : (
-            <PhotoFilterIcon className="h-4 w-4 text-custom-text-300" />
+            <Layers className="h-4 w-4 text-custom-text-300" />
           )}
         </>
       }
       title={view.name}
       itemLink={`/${workspaceSlug}/projects/${projectId}/views/${view.id}`}
       actionableItems={<ViewListItemAction parentRef={parentRef} view={view} />}
+      quickActionElement={
+        <div className="block md:hidden">
+          <ViewQuickActions
+            parentRef={parentRef}
+            projectId={projectId.toString()}
+            view={view}
+            workspaceSlug={workspaceSlug.toString()}
+          />
+        </div>
+      }
       isMobile={isMobile}
       parentRef={parentRef}
     />

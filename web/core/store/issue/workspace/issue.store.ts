@@ -76,6 +76,9 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
 
   fetchParentStats = () => {};
 
+  /** */
+  updateParentStats = () => {};
+
   /**
    * This method is called to fetch the first issues of pagination
    * @param workspaceSlug
@@ -106,7 +109,7 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
       });
 
       // after fetching issues, call the base method to process the response further
-      this.onfetchIssues(response, options, workspaceSlug);
+      this.onfetchIssues(response, options, workspaceSlug, undefined, undefined, !isExistingPaginationOptions);
       return response;
     } catch (error) {
       // set loader to undefined if errored out

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -19,8 +19,9 @@ import { EmptyStateType } from "@/constants/empty-state";
 import { EXPORT_SERVICES_LIST } from "@/constants/fetch-keys";
 import { EXPORTERS_LIST } from "@/constants/workspace";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useProject, useUser, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // services
 import { IntegrationService } from "@/services/integrations";
 
@@ -37,7 +38,10 @@ const IntegrationGuide = observer(() => {
   const searchParams = useSearchParams();
   const provider = searchParams.get("provider");
   // store hooks
-  const { data: currentUser } = useUser();
+  const { data: currentUser, canPerformAnyCreateAction } = useUser();
+  const { allowPermissions } = useUserPermissions();
+
+  const { workspaceProjectIds } = useProject();
 
   const { data: exporterServices } = useSWR(
     workspaceSlug && cursor ? EXPORT_SERVICES_LIST(workspaceSlug as string, cursor, `${per_page}`) : null,
@@ -46,9 +50,29 @@ const IntegrationGuide = observer(() => {
       : null
   );
 
+  const handleRefresh = () => {
+    setRefreshing(true);
+    mutate(EXPORT_SERVICES_LIST(workspaceSlug as string, `${cursor}`, `${per_page}`)).then(() => setRefreshing(false));
+  };
+
   const handleCsvClose = () => {
     router.replace(`/${workspaceSlug?.toString()}/settings/exports`);
   };
+
+  const hasProjects = workspaceProjectIds && workspaceProjectIds.length > 0;
+  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (exporterServices?.results?.some((service) => service.status === "processing")) {
+        handleRefresh();
+      } else {
+        clearInterval(interval);
+      }
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [exporterServices]);
 
   return (
     <>
@@ -58,7 +82,7 @@ const IntegrationGuide = observer(() => {
             {EXPORTERS_LIST.map((service) => (
               <div
                 key={service.provider}
-                className="flex items-center justify-between gap-2 border-b border-custom-border-100 bg-custom-background-100 px-4 py-6"
+                className="flex items-center justify-between gap-2 border-b border-custom-border-100 bg-custom-background-100 py-6"
               >
                 <div className="flex w-full items-start justify-between gap-4">
                   <div className="item-center flex gap-2.5">
@@ -73,7 +97,11 @@ const IntegrationGuide = observer(() => {
                   <div className="flex-shrink-0">
                     <Link href={`/${workspaceSlug}/settings/exports?provider=${service.provider}`}>
                       <span>
-                        <Button variant="primary" className="capitalize">
+                        <Button
+                          variant="primary"
+                          className="capitalize"
+                          disabled={!isAdmin && (!hasProjects || !canPerformAnyCreateAction)}
+                        >
                           {service.type}
                         </Button>
                       </span>
@@ -86,17 +114,12 @@ const IntegrationGuide = observer(() => {
           <div>
             <div className="flex items-center justify-between border-b border-custom-border-100 pb-3.5 pt-7">
               <div className="flex items-center gap-2">
-                <h3 className="flex gap-2 text-xl font-medium">Previous Exports</h3>
+                <h3 className="flex gap-2 text-xl font-medium">Previous exports</h3>
 
                 <button
                   type="button"
                   className="flex flex-shrink-0 items-center gap-1 rounded bg-custom-background-80 px-1.5 py-1 text-xs outline-none"
-                  onClick={() => {
-                    setRefreshing(true);
-                    mutate(EXPORT_SERVICES_LIST(workspaceSlug as string, `${cursor}`, `${per_page}`)).then(() =>
-                      setRefreshing(false)
-                    );
-                  }}
+                  onClick={handleRefresh}
                 >
                   <RefreshCw className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`} />{" "}
                   {refreshing ? "Refreshing..." : "Refresh status"}

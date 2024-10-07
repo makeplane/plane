@@ -1,6 +1,7 @@
 // TODO: fix all warnings
 
 /* eslint-disable react/display-name */
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import { useEffect, useState } from "react";
 import { NodeViewWrapper } from "@tiptap/react";

@@ -1,10 +1,13 @@
 # Python imports
 import json
 
-# Django improts
+# Django imports
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Q
 from django.utils import timezone
+from django.db.models import Q, Value, UUIDField
+from django.db.models.functions import Coalesce
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
 
 # Third party imports
 from rest_framework import status
@@ -13,7 +16,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.api.serializers import InboxIssueSerializer, IssueSerializer
 from plane.app.permissions import ProjectLitePermission
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Inbox,
     InboxIssue,
@@ -181,13 +184,8 @@ class InboxIssueAPIEndpoint(BaseAPIView):
             workspace__slug=slug, project_id=project_id
         ).first()
 
-        project = Project.objects.get(
-            workspace__slug=slug,
-            pk=project_id,
-        )
-
         # Inbox view
-        if inbox is None and not project.inbox_view:
+        if inbox is None:
             return Response(
                 {
                     "error": "Inbox is not enabled for this project enable it through the project's api"
@@ -212,7 +210,7 @@ class InboxIssueAPIEndpoint(BaseAPIView):
         )
 
         # Only project members admins and created_by users can access this endpoint
-        if project_member.role <= 10 and str(inbox_issue.created_by_id) != str(
+        if project_member.role <= 5 and str(inbox_issue.created_by_id) != str(
             request.user.id
         ):
             return Response(
@@ -224,12 +222,30 @@ class InboxIssueAPIEndpoint(BaseAPIView):
         issue_data = request.data.pop("issue", False)
 
         if bool(issue_data):
-            issue = Issue.objects.get(
-                pk=issue_id, workspace__slug=slug, project_id=project_id
+            issue = Issue.objects.annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "labels__id",
+                        distinct=True,
+                        filter=~Q(labels__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "assignees__id",
+                        distinct=True,
+                        filter=~Q(assignees__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+            ).get(
+                pk=issue_id,
+                workspace__slug=slug,
+                project_id=project_id,
             )
-            # Only allow guests and viewers to edit name and description
-            if project_member.role <= 10:
-                # viewers and guests since only viewers and guests
+            # Only allow guests to edit name and description
+            if project_member.role <= 5:
                 issue_data = {
                     "name": issue_data.get("name", issue.name),
                     "description_html": issue_data.get(
@@ -269,7 +285,7 @@ class InboxIssueAPIEndpoint(BaseAPIView):
                 )
 
         # Only project admins and members can edit inbox issue attributes
-        if project_member.role > 10:
+        if project_member.role > 5:
             serializer = InboxIssueSerializer(
                 inbox_issue, data=request.data, partial=True
             )
@@ -368,29 +384,26 @@ class InboxIssueAPIEndpoint(BaseAPIView):
             inbox_id=inbox.id,
         )
 
-        # Get the project member
-        project_member = ProjectMember.objects.get(
-            workspace__slug=slug,
-            project_id=project_id,
-            member=request.user,
-            is_active=True,
-        )
-
-        # Check the inbox issue created
-        if project_member.role <= 10 and str(inbox_issue.created_by_id) != str(
-            request.user.id
-        ):
-            return Response(
-                {"error": "You cannot delete inbox issue"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
         # Check the issue status
         if inbox_issue.status in [-2, -1, 0, 2]:
             # Delete the issue also
-            Issue.objects.filter(
+            issue = Issue.objects.filter(
                 workspace__slug=slug, project_id=project_id, pk=issue_id
-            ).delete()
+            ).first()
+            if issue.created_by_id != request.user.id and (
+                not ProjectMember.objects.filter(
+                    workspace__slug=slug,
+                    member=request.user,
+                    role=20,
+                    project_id=project_id,
+                    is_active=True,
+                ).exists()
+            ):
+                return Response(
+                    {"error": "Only admin or creator can delete the issue"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+            issue.delete()
 
         inbox_issue.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

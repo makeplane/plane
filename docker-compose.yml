@@ -99,9 +99,19 @@ services:
       - plane-db
       - plane-redis
 
+  live:
+    container_name: plane-live
+    build:
+      context: .
+      dockerfile: ./live/Dockerfile.live
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: always
+    command: node live/dist/server.js
+
   plane-db:
     container_name: plane-db
-    image: postgres:15.2-alpine
+    image: postgres:15.7-alpine
     restart: always
     command: postgres -c 'max_connections=1000'
     volumes:
@@ -120,6 +130,19 @@ services:
     restart: always
     volumes:
       - redisdata:/data
+
+  plane-mq:
+    container_name: plane-mq
+    image: rabbitmq:3.13.6-management-alpine
+    restart: always
+    env_file:
+      - .env
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
 
   plane-minio:
     container_name: plane-minio
@@ -154,3 +177,4 @@ volumes:
   pgdata:
   redisdata:
   uploads:
+  rabbitmq_data:

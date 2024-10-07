@@ -1,6 +1,4 @@
-import isArray from "lodash/isArray";
 import isEmpty from "lodash/isEmpty";
-import pickBy from "lodash/pickBy";
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // base class
@@ -119,7 +117,12 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
       groupId: string | undefined,
       subGroupId: string | undefined
     ) => {
-      const filterParams = this.getAppliedFilters(cycleId);
+      let filterParams = this.getAppliedFilters(cycleId);
+
+      if (!filterParams) {
+        filterParams = {};
+      }
+      filterParams["cycle"] = cycleId;
 
       const paginationParams = this.getPaginationParams(filterParams, options, cursor, groupId, subGroupId);
       return paginationParams;
@@ -127,39 +130,35 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
   );
 
   fetchFilters = async (workspaceSlug: string, projectId: string, cycleId: string) => {
-    try {
-      const _filters = await this.issueFilterService.fetchCycleIssueFilters(workspaceSlug, projectId, cycleId);
+    const _filters = await this.issueFilterService.fetchCycleIssueFilters(workspaceSlug, projectId, cycleId);
 
-      const filters: IIssueFilterOptions = this.computedFilters(_filters?.filters);
-      const displayFilters: IIssueDisplayFilterOptions = this.computedDisplayFilters(_filters?.display_filters);
-      const displayProperties: IIssueDisplayProperties = this.computedDisplayProperties(_filters?.display_properties);
+    const filters: IIssueFilterOptions = this.computedFilters(_filters?.filters);
+    const displayFilters: IIssueDisplayFilterOptions = this.computedDisplayFilters(_filters?.display_filters);
+    const displayProperties: IIssueDisplayProperties = this.computedDisplayProperties(_filters?.display_properties);
 
-      // fetching the kanban toggle helpers in the local storage
-      const kanbanFilters = {
-        group_by: [],
-        sub_group_by: [],
-      };
-      const currentUserId = this.rootIssueStore.currentUserId;
-      if (currentUserId) {
-        const _kanbanFilters = this.handleIssuesLocalFilters.get(
-          EIssuesStoreType.CYCLE,
-          workspaceSlug,
-          cycleId,
-          currentUserId
-        );
-        kanbanFilters.group_by = _kanbanFilters?.kanban_filters?.group_by || [];
-        kanbanFilters.sub_group_by = _kanbanFilters?.kanban_filters?.sub_group_by || [];
-      }
-
-      runInAction(() => {
-        set(this.filters, [cycleId, "filters"], filters);
-        set(this.filters, [cycleId, "displayFilters"], displayFilters);
-        set(this.filters, [cycleId, "displayProperties"], displayProperties);
-        set(this.filters, [cycleId, "kanbanFilters"], kanbanFilters);
-      });
-    } catch (error) {
-      throw error;
+    // fetching the kanban toggle helpers in the local storage
+    const kanbanFilters = {
+      group_by: [],
+      sub_group_by: [],
+    };
+    const currentUserId = this.rootIssueStore.currentUserId;
+    if (currentUserId) {
+      const _kanbanFilters = this.handleIssuesLocalFilters.get(
+        EIssuesStoreType.CYCLE,
+        workspaceSlug,
+        cycleId,
+        currentUserId
+      );
+      kanbanFilters.group_by = _kanbanFilters?.kanban_filters?.group_by || [];
+      kanbanFilters.sub_group_by = _kanbanFilters?.kanban_filters?.sub_group_by || [];
     }
+
+    runInAction(() => {
+      set(this.filters, [cycleId, "filters"], filters);
+      set(this.filters, [cycleId, "displayFilters"], displayFilters);
+      set(this.filters, [cycleId, "displayProperties"], displayProperties);
+      set(this.filters, [cycleId, "kanbanFilters"], kanbanFilters);
+    });
   };
 
   updateFilters = async (
@@ -190,12 +189,10 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
             });
           });
 
-          const appliedFilters = _filters.filters || {};
-          const filteredFilters = pickBy(appliedFilters, (value) => value && isArray(value) && value.length > 0);
           this.rootIssueStore.cycleIssues.fetchIssuesWithExistingPagination(
             workspaceSlug,
             projectId,
-            isEmpty(filteredFilters) ? "init-loader" : "mutation",
+            "mutation",
             cycleId
           );
           await this.issueFilterService.patchCycleIssueFilters(workspaceSlug, projectId, cycleId, {
@@ -235,6 +232,10 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
               );
             });
           });
+
+          if (this.getShouldClearIssues(updatedDisplayFilters)) {
+            this.rootIssueStore.cycleIssues.clear(true, true); // clear issues for local store when some filters like layout changes
+          }
 
           if (this.getShouldReFetchIssues(updatedDisplayFilters)) {
             this.rootIssueStore.cycleIssues.fetchIssuesWithExistingPagination(
@@ -277,7 +278,7 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
 
           const currentUserId = this.rootIssueStore.currentUserId;
           if (currentUserId)
-            this.handleIssuesLocalFilters.set(EIssuesStoreType.PROJECT, type, workspaceSlug, cycleId, currentUserId, {
+            this.handleIssuesLocalFilters.set(EIssuesStoreType.CYCLE, type, workspaceSlug, cycleId, currentUserId, {
               kanban_filters: _filters.kanbanFilters,
             });
 

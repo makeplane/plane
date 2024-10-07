@@ -3,8 +3,7 @@
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
 // types
-import { IStateLite } from "@plane/types";
-import { IIssueLabel, TFilters } from "@/types/issue";
+import { TFilters } from "@/types/issue";
 // components
 import { AppliedPriorityFilters } from "./priority";
 import { AppliedStateFilters } from "./state";
@@ -13,14 +12,12 @@ type Props = {
   appliedFilters: TFilters;
   handleRemoveAllFilters: () => void;
   handleRemoveFilter: (key: keyof TFilters, value: string | null) => void;
-  labels?: IIssueLabel[] | undefined;
-  states?: IStateLite[] | undefined;
 };
 
 export const replaceUnderscoreIfSnakeCase = (str: string) => str.replace(/_/g, " ");
 
 export const AppliedFiltersList: React.FC<Props> = observer((props) => {
-  const { appliedFilters = {}, handleRemoveAllFilters, handleRemoveFilter, states } = props;
+  const { appliedFilters = {}, handleRemoveAllFilters, handleRemoveFilter } = props;
 
   return (
     <div className="flex flex-wrap items-stretch gap-2">
@@ -52,10 +49,9 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
                 />
               )} */}
 
-              {filterKey === "state" && states && (
+              {filterKey === "state" && (
                 <AppliedStateFilters
                   handleRemove={(val) => handleRemoveFilter("state", val)}
-                  states={states}
                   values={filterValue ?? []}
                 />
               )}

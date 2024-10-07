@@ -143,6 +143,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
       const _filters = this.handleIssuesLocalFilters.get(EIssuesStoreType.GLOBAL, workspaceSlug, undefined, viewId);
       displayFilters = this.computedDisplayFilters(_filters?.display_filters, {
         layout: EIssueLayoutTypes.SPREADSHEET,
+        order_by: "-created_at",
       });
       displayProperties = this.computedDisplayProperties(_filters?.display_properties);
       kanbanFilters = {
@@ -158,8 +159,14 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
         filters = this.computedFilters(_filters?.filters);
         displayFilters = this.computedDisplayFilters(_filters?.display_filters, {
           layout: EIssueLayoutTypes.SPREADSHEET,
+          order_by: "-created_at",
         });
         displayProperties = this.computedDisplayProperties(_filters?.display_properties);
+      }
+
+      // override existing order by if ordered by manual sort_order
+      if (displayFilters.order_by === "sort_order") {
+        displayFilters.order_by = "-created_at";
       }
 
       runInAction(() => {
@@ -278,7 +285,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
 
           const currentUserId = this.rootIssueStore.currentUserId;
           if (currentUserId)
-            this.handleIssuesLocalFilters.set(EIssuesStoreType.PROJECT, type, workspaceSlug, undefined, viewId, {
+            this.handleIssuesLocalFilters.set(EIssuesStoreType.GLOBAL, type, workspaceSlug, undefined, viewId, {
               kanban_filters: _filters.kanbanFilters,
             });
 

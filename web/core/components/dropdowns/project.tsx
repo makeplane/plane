@@ -5,6 +5,8 @@ import { Check, ChevronDown, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // types
 import { IProject } from "@plane/types";
+// ui
+import { ComboDropDown } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
 // helpers
@@ -27,6 +29,7 @@ type Props = TDropdownProps & {
   onClose?: () => void;
   renderCondition?: (project: IProject) => boolean;
   value: string | null;
+  renderByDefault?: boolean;
 };
 
 export const ProjectDropdown: React.FC<Props> = observer((props) => {
@@ -48,6 +51,7 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
     showTooltip = false,
     tabIndex,
     value,
+    renderByDefault = true,
   } = props;
   // states
   const [query, setQuery] = useState("");
@@ -112,8 +116,61 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
     handleClose();
   };
 
+  const comboButton = (
+    <>
+      {button ? (
+        <button
+          ref={setReferenceElement}
+          type="button"
+          className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
+          onClick={handleOnClick}
+          disabled={disabled}
+        >
+          {button}
+        </button>
+      ) : (
+        <button
+          ref={setReferenceElement}
+          type="button"
+          className={cn(
+            "clickable block h-full max-w-full outline-none",
+            {
+              "cursor-not-allowed text-custom-text-200": disabled,
+              "cursor-pointer": !disabled,
+            },
+            buttonContainerClassName
+          )}
+          onClick={handleOnClick}
+          disabled={disabled}
+        >
+          <DropdownButton
+            className={buttonClassName}
+            isActive={isOpen}
+            tooltipHeading="Project"
+            tooltipContent={selectedProject?.name ?? placeholder}
+            showTooltip={showTooltip}
+            variant={buttonVariant}
+            renderToolTipByDefault={renderByDefault}
+          >
+            {!hideIcon && selectedProject && (
+              <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                <Logo logo={selectedProject.logo_props} size={12} />
+              </span>
+            )}
+            {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
+              <span className="flex-grow truncate max-w-40">{selectedProject?.name ?? placeholder}</span>
+            )}
+            {dropdownArrow && (
+              <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+            )}
+          </DropdownButton>
+        </button>
+      )}
+    </>
+  );
+
   return (
-    <Combobox
+    <ComboDropDown
       as="div"
       ref={dropdownRef}
       tabIndex={tabIndex}
@@ -122,54 +179,9 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
       onChange={dropdownOnChange}
       disabled={disabled}
       onKeyDown={handleKeyDown}
+      button={comboButton}
+      renderByDefault={renderByDefault}
     >
-      <Combobox.Button as={Fragment}>
-        {button ? (
-          <button
-            ref={setReferenceElement}
-            type="button"
-            className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
-            onClick={handleOnClick}
-          >
-            {button}
-          </button>
-        ) : (
-          <button
-            ref={setReferenceElement}
-            type="button"
-            className={cn(
-              "clickable block h-full max-w-full outline-none",
-              {
-                "cursor-not-allowed text-custom-text-200": disabled,
-                "cursor-pointer": !disabled,
-              },
-              buttonContainerClassName
-            )}
-            onClick={handleOnClick}
-          >
-            <DropdownButton
-              className={buttonClassName}
-              isActive={isOpen}
-              tooltipHeading="Project"
-              tooltipContent={selectedProject?.name ?? placeholder}
-              showTooltip={showTooltip}
-              variant={buttonVariant}
-            >
-              {!hideIcon && selectedProject && (
-                <span className="grid place-items-center flex-shrink-0 h-4 w-4">
-                  <Logo logo={selectedProject.logo_props} size={12} />
-                </span>
-              )}
-              {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-                <span className="flex-grow truncate max-w-40">{selectedProject?.name ?? placeholder}</span>
-              )}
-              {dropdownArrow && (
-                <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
-              )}
-            </DropdownButton>
-          </button>
-        )}
-      </Combobox.Button>
       {isOpen && (
         <Combobox.Options className="fixed z-10" static>
           <div
@@ -225,6 +237,6 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
           </div>
         </Combobox.Options>
       )}
-    </Combobox>
+    </ComboDropDown>
   );
 });

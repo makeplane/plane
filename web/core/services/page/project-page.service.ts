@@ -1,5 +1,5 @@
 // types
-import { TPage } from "@plane/types";
+import { TDocumentPayload, TPage } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
@@ -36,6 +36,14 @@ export class ProjectPageService extends APIService {
 
   async update(workspaceSlug: string, projectId: string, pageId: string, data: Partial<TPage>): Promise<TPage> {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async updateAccess(workspaceSlug: string, projectId: string, pageId: string, data: Partial<TPage>): Promise<void> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/access/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -120,7 +128,7 @@ export class ProjectPageService extends APIService {
       });
   }
 
-  async fetchDescriptionYJS(workspaceSlug: string, projectId: string, pageId: string): Promise<any> {
+  async fetchDescriptionBinary(workspaceSlug: string, projectId: string, pageId: string): Promise<any> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/description/`, {
       headers: {
         "Content-Type": "application/octet-stream",
@@ -137,10 +145,7 @@ export class ProjectPageService extends APIService {
     workspaceSlug: string,
     projectId: string,
     pageId: string,
-    data: {
-      description_binary: string;
-      description_html: string;
-    }
+    data: TDocumentPayload
   ): Promise<any> {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/description/`, data)
       .then((response) => response?.data)

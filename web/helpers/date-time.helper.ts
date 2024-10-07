@@ -3,20 +3,31 @@ import isNumber from "lodash/isNumber";
 
 // Format Date Helpers
 /**
- * @returns {string | null} formatted date in the format of MMM dd, yyyy
+ * @returns {string | null} formatted date in the desired format or platform default format (MMM dd, yyyy)
  * @description Returns date in the formatted format
  * @param {Date | string} date
+ * @param {string} formatToken (optional) // default MMM dd, yyyy
+ * @example renderFormattedDate("2024-01-01", "MM-DD-YYYY") // Jan 01, 2024
  * @example renderFormattedDate("2024-01-01") // Jan 01, 2024
  */
-export const renderFormattedDate = (date: string | Date | undefined | null): string | null => {
+export const renderFormattedDate = (
+  date: string | Date | undefined | null,
+  formatToken: string = "MMM dd, yyyy"
+): string | null => {
   // Parse the date to check if it is valid
   const parsedDate = getDate(date);
   // return if undefined
   if (!parsedDate) return null;
   // Check if the parsed date is valid before formatting
   if (!isValid(parsedDate)) return null; // Return null for invalid dates
-  // Format the date in format (MMM dd, yyyy)
-  const formattedDate = format(parsedDate, "MMM dd, yyyy");
+  let formattedDate;
+  try {
+    // Format the date in the format provided or default format (MMM dd, yyyy)
+    formattedDate = format(parsedDate, formatToken);
+  } catch (e) {
+    // Format the date in format (MMM dd, yyyy) in case of any error
+    formattedDate = format(parsedDate, "MMM dd, yyyy");
+  }
   return formattedDate;
 };
 
@@ -280,10 +291,98 @@ export const convertToISODateString = (dateString: string | undefined) => {
 };
 
 /**
+ * returns the date string in Epoch regardless of the timezone in input date string
+ * @param dateString
+ * @returns
+ */
+export const convertToEpoch = (dateString: string | undefined) => {
+  if (!dateString) return dateString;
+
+  const date = new Date(dateString);
+  return date.getTime();
+};
+
+/**
  * get current Date time in UTC ISO format
  * @returns
  */
 export const getCurrentDateTimeInISO = () => {
   const date = new Date();
   return date.toISOString();
+};
+
+/**
+ * @description converts hours and minutes to minutes
+ * @param { number } hours
+ * @param { number } minutes
+ * @returns { number } minutes
+ * @example convertHoursMinutesToMinutes(2, 30) // Output: 150
+ */
+export const convertHoursMinutesToMinutes = (hours: number, minutes: number): number => hours * 60 + minutes;
+
+/**
+ * @description converts minutes to hours and minutes
+ * @param { number } mins
+ * @returns { number, number } hours and minutes
+ * @example convertMinutesToHoursAndMinutes(150) // Output: { hours: 2, minutes: 30 }
+ */
+export const convertMinutesToHoursAndMinutes = (mins: number): { hours: number; minutes: number } => {
+  const hours = Math.floor(mins / 60);
+  const minutes = Math.floor(mins % 60);
+
+  return { hours: hours, minutes: minutes };
+};
+
+/**
+ * @description converts minutes to hours and minutes string
+ * @param { number } totalMinutes
+ * @returns { string } 0h 0m
+ * @example convertMinutesToHoursAndMinutes(150) // Output: 2h 10m
+ */
+export const convertMinutesToHoursMinutesString = (totalMinutes: number): string => {
+  const { hours, minutes } = convertMinutesToHoursAndMinutes(totalMinutes);
+
+  return `${hours ? `${hours}h ` : ``}${minutes ? `${minutes}m ` : ``}`;
+};
+
+/**
+ * @description calculates the read time for a document using the words count
+ * @param {number} wordsCount
+ * @returns {number} total number of seconds
+ * @example getReadTimeFromWordsCount(400) // Output: 120
+ * @example getReadTimeFromWordsCount(100) // Output: 30s
+ */
+export const getReadTimeFromWordsCount = (wordsCount: number): number => {
+  const wordsPerMinute = 200;
+  const minutes = wordsCount / wordsPerMinute;
+  return minutes * 60;
+};
+
+/**
+ * @description generates an array of dates between the start and end dates
+ * @param startDate
+ * @param endDate
+ * @returns
+ */
+export const generateDateArray = (startDate: string | Date, endDate: string | Date) => {
+  // Convert the start and end dates to Date objects if they aren't already
+  const start = new Date(startDate);
+  // start.setDate(start.getDate() + 1);
+  const end = new Date(endDate);
+  end.setDate(end.getDate() + 1);
+
+  // Create an empty array to store the dates
+  const dateArray = [];
+
+  // Use a while loop to generate dates between the range
+  while (start <= end) {
+    // Increment the date by 1 day (86400000 milliseconds)
+    start.setDate(start.getDate() + 1);
+    // Push the current date (converted to ISO string for consistency)
+    dateArray.push({
+      date: new Date(start).toISOString().split("T")[0],
+    });
+  }
+
+  return dateArray;
 };

@@ -47,9 +47,12 @@ const OnboardingPage = observer(() => {
     user?.id && fetchWorkspaces();
   });
   // fetching user workspace invitations
-  const { isLoading: invitationsLoader, data: invitations } = useSWR("USER_WORKSPACE_INVITATIONS_LIST", () => {
-    if (user?.id) return workspaceService.userWorkspaceInvitations();
-  });
+  const { isLoading: invitationsLoader, data: invitations } = useSWR(
+    `USER_WORKSPACE_INVITATIONS_LIST_${user?.id}`,
+    () => {
+      if (user?.id) return workspaceService.userWorkspaceInvitations();
+    }
+  );
   // handle step change
   const stepChange = async (steps: Partial<TOnboardingSteps>) => {
     if (!user) return;
@@ -103,6 +106,16 @@ const OnboardingPage = observer(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userLoader, workspaceListLoader]);
 
+  // If the user completes the profile setup and has workspaces (through invitations), then finish the onboarding.
+  useEffect(() => {
+    if (userLoader === false && profile && workspaceListLoader === false) {
+      const onboardingStep = profile.onboarding_step;
+      if (onboardingStep.profile_complete && !onboardingStep.workspace_create && workspacesList.length > 0)
+        finishOnboarding();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userLoader, profile, workspaceListLoader]);
+
   useEffect(() => {
     const handleStepChange = async () => {
       if (!user) return;
@@ -111,10 +124,10 @@ const OnboardingPage = observer(() => {
 
       if (!onboardingStep.profile_complete) setStep(EOnboardingSteps.PROFILE_SETUP);
 
-      // For Invited Users, they will skip all other steps.
-      if (totalSteps && totalSteps <= 2) return;
-
-      if (onboardingStep.profile_complete && !(onboardingStep.workspace_join || onboardingStep.workspace_create)) {
+      if (
+        onboardingStep.profile_complete &&
+        !(onboardingStep.workspace_join || onboardingStep.workspace_create || workspacesList?.length > 0)
+      ) {
         setStep(EOnboardingSteps.WORKSPACE_CREATE_OR_JOIN);
       }
 
@@ -143,7 +156,7 @@ const OnboardingPage = observer(() => {
             />
           ) : step === EOnboardingSteps.WORKSPACE_CREATE_OR_JOIN ? (
             <CreateOrJoinWorkspaces
-                invitations={invitations ?? []}
+              invitations={invitations ?? []}
               totalSteps={totalSteps}
               stepChange={stepChange}
               finishOnboarding={finishOnboarding}

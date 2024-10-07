@@ -16,22 +16,21 @@ from plane.app.serializers import (
     IssueCommentSerializer,
     CommentReactionSerializer,
 )
-from plane.app.permissions import ProjectLitePermission
+from plane.app.permissions import allow_permission, ROLE
 from plane.db.models import (
     IssueComment,
     ProjectMember,
     CommentReaction,
+    Project,
+    Issue,
 )
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 
 
 class IssueCommentViewSet(BaseViewSet):
     serializer_class = IssueCommentSerializer
     model = IssueComment
     webhook_event = "issue_comment"
-    permission_classes = [
-        ProjectLitePermission,
-    ]
 
     filterset_fields = [
         "issue__id",
@@ -66,7 +65,31 @@ class IssueCommentViewSet(BaseViewSet):
             .distinct()
         )
 
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+            ROLE.GUEST,
+        ]
+    )
     def create(self, request, slug, project_id, issue_id):
+        project = Project.objects.get(pk=project_id)
+        issue = Issue.objects.get(pk=issue_id)
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=request.user,
+                role=5,
+                is_active=True,
+            ).exists()
+            and not project.guest_view_all_features
+            and not issue.created_by == request.user
+        ):
+            return Response(
+                {"error": "You are not allowed to comment on the issue"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         serializer = IssueCommentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(
@@ -90,6 +113,11 @@ class IssueCommentViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN],
+        creator=True,
+        model=IssueComment,
+    )
     def partial_update(self, request, slug, project_id, issue_id, pk):
         issue_comment = IssueComment.objects.get(
             workspace__slug=slug,
@@ -121,6 +149,9 @@ class IssueCommentViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN], creator=True, model=IssueComment
+    )
     def destroy(self, request, slug, project_id, issue_id, pk):
         issue_comment = IssueComment.objects.get(
             workspace__slug=slug,
@@ -150,9 +181,6 @@ class IssueCommentViewSet(BaseViewSet):
 class CommentReactionViewSet(BaseViewSet):
     serializer_class = CommentReactionSerializer
     model = CommentReaction
-    permission_classes = [
-        ProjectLitePermission,
-    ]
 
     def get_queryset(self):
         return (
@@ -170,6 +198,13 @@ class CommentReactionViewSet(BaseViewSet):
             .distinct()
         )
 
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+            ROLE.GUEST,
+        ]
+    )
     def create(self, request, slug, project_id, comment_id):
         serializer = CommentReactionSerializer(data=request.data)
         if serializer.is_valid():
@@ -192,6 +227,13 @@ class CommentReactionViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+            ROLE.GUEST,
+        ]
+    )
     def destroy(self, request, slug, project_id, comment_id, reaction_code):
         comment_reaction = CommentReaction.objects.get(
             workspace__slug=slug,

@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState } from "react";
+import { FC } from "react";
 import { observer } from "mobx-react";
 import { Trash } from "lucide-react";
 // ui
@@ -8,34 +8,27 @@ import { CustomMenu, Tooltip } from "@plane/ui";
 // components
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { getFileIcon } from "@/components/icons";
-import { IssueAttachmentDeleteModal } from "@/components/issues";
 // helpers
 import { convertBytesToSize, getFileExtension, getFileName } from "@/helpers/attachment.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
 import { useIssueDetail, useMember } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// types
-import { TAttachmentOperations } from "./root";
-
-type TAttachmentOperationsRemoveModal = Exclude<TAttachmentOperations, "create">;
 
 type TIssueAttachmentsListItem = {
   attachmentId: string;
-  handleAttachmentOperations: TAttachmentOperationsRemoveModal;
   disabled?: boolean;
 };
 
 export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer((props) => {
   // props
-  const { attachmentId, handleAttachmentOperations, disabled } = props;
+  const { attachmentId, disabled } = props;
   // store hooks
   const { getUserDetails } = useMember();
   const {
     attachment: { getAttachmentById },
+    toggleDeleteAttachmentModal,
   } = useIssueDetail();
-  // state
-  const [isDeleteIssueAttachmentModalOpen, setIsDeleteIssueAttachmentModalOpen] = useState(false);
 
   // derived values
   const attachment = attachmentId ? getAttachmentById(attachmentId) : undefined;
@@ -46,14 +39,6 @@ export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer(
 
   return (
     <>
-      {isDeleteIssueAttachmentModalOpen && (
-        <IssueAttachmentDeleteModal
-          isOpen={isDeleteIssueAttachmentModalOpen}
-          onClose={() => setIsDeleteIssueAttachmentModalOpen(false)}
-          handleAttachmentOperations={handleAttachmentOperations}
-          data={attachment}
-        />
-      )}
       <button
         onClick={(e) => {
           e.preventDefault();
@@ -90,12 +75,12 @@ export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer(
               </>
             )}
 
-            <CustomMenu ellipsis closeOnSelect placement="bottom-end" openOnHover disabled={disabled}>
+            <CustomMenu ellipsis closeOnSelect placement="bottom-end" disabled={disabled}>
               <CustomMenu.MenuItem
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  setIsDeleteIssueAttachmentModalOpen(true);
+                  toggleDeleteAttachmentModal(attachmentId);
                 }}
               >
                 <div className="flex items-center gap-2">

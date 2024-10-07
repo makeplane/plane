@@ -1,12 +1,24 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { EditorRefApi, useEditorMarkings } from "@plane/editor";
+import { useSearchParams } from "next/navigation";
+// editor
+import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
+// types
 import { TPage } from "@plane/types";
+// ui
 import { setToast, TOAST_TYPE } from "@plane/ui";
-import { PageEditorHeaderRoot, PageEditorBody } from "@/components/pages";
+// components
+import { PageEditorHeaderRoot, PageEditorBody, PageVersionsOverlay, PagesVersionEditor } from "@/components/pages";
+// hooks
 import { useProjectPages } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { usePageDescription } from "@/hooks/use-page-description";
+import { usePageFallback } from "@/hooks/use-page-fallback";
+import { useQueryParams } from "@/hooks/use-query-params";
+// services
+import { ProjectPageService, ProjectPageVersionService } from "@/services/page";
+const projectPageService = new ProjectPageService();
+const projectPageVersionService = new ProjectPageVersionService();
+// store
 import { IPage } from "@/store/pages/page";
 
 type TPageRootProps = {
@@ -16,41 +28,43 @@ type TPageRootProps = {
 };
 
 export const PageRoot = observer((props: TPageRootProps) => {
-  // router
-  const router = useAppRouter();
   const { projectId, workspaceSlug, page } = props;
-  const { createPage } = useProjectPages();
-  const { access, description_html, name } = page;
-
   // states
   const [editorReady, setEditorReady] = useState(false);
+  const [hasConnectionFailed, setHasConnectionFailed] = useState(false);
   const [readOnlyEditorReady, setReadOnlyEditorReady] = useState(false);
-
+  const [sidePeekVisible, setSidePeekVisible] = useState(window.innerWidth >= 768);
+  const [isVersionsOverlayOpen, setIsVersionsOverlayOpen] = useState(false);
   // refs
   const editorRef = useRef<EditorRefApi>(null);
-  const readOnlyEditorRef = useRef<EditorRefApi>(null);
-
-  // editor markings hook
-  const { markings, updateMarkings } = useEditorMarkings();
-
-  const [sidePeekVisible, setSidePeekVisible] = useState(window.innerWidth >= 768 ? true : false);
-
-  // project-description
-  const { handleDescriptionChange, isDescriptionReady, pageDescriptionYJS, handleSaveDescription } = usePageDescription(
-    {
-      editorRef,
-      page,
-      projectId,
-      workspaceSlug,
-    }
-  );
+  const readOnlyEditorRef = useRef<EditorReadOnlyRefApi>(null);
+  // router
+  const router = useAppRouter();
+  // search params
+  const searchParams = useSearchParams();
+  // store hooks
+  const { createPage } = useProjectPages();
+  // derived values
+  const { access, description_html, name, isContentEditable, updateDescription } = page;
+  // page fallback
+  usePageFallback({
+    editorRef,
+    fetchPageDescription: async () => {
+      if (!page.id) return;
+      return await projectPageService.fetchDescriptionBinary(workspaceSlug, projectId, page.id);
+    },
+    hasConnectionFailed,
+    updatePageDescription: async (data) => await updateDescription(data),
+  });
+  // update query params
+  const { updateQueryParams } = useQueryParams();
 
   const handleCreatePage = async (payload: Partial<TPage>) => await createPage(payload);
 
   const handleDuplicatePage = async () => {
     const formData: Partial<TPage> = {
       name: "Copy of " + name,
-      description_html: editorRef.current?.getHTML() ?? description_html ?? "<p></p>",
+      description_html: editorRef.current?.getDocument().html ?? description_html ?? "<p></p>",
       access,
     };
 
@@ -65,32 +79,78 @@ export const PageRoot = observer((props: TPageRootProps) => {
       );
   };
 
+  const version = searchParams.get("version");
+  useEffect(() => {
+    if (!version) {
+      setIsVersionsOverlayOpen(false);
+      return;
+    }
+    setIsVersionsOverlayOpen(true);
+  }, [version]);
+
+  const handleCloseVersionsOverlay = () => {
+    const updatedRoute = updateQueryParams({
+      paramsToRemove: ["version"],
+    });
+    router.push(updatedRoute);
+  };
+
+  const handleRestoreVersion = async (descriptionHTML: string) => {
+    editorRef.current?.clearEditor();
+    editorRef.current?.setEditorValue(descriptionHTML);
+  };
+  const currentVersionDescription = isContentEditable
+    ? editorRef.current?.getDocument().html
+    : readOnlyEditorRef.current?.getDocument().html;
+
   return (
     <>
+      <PageVersionsOverlay
+        activeVersion={version}
+        currentVersionDescription={currentVersionDescription ?? null}
+        editorComponent={PagesVersionEditor}
+        fetchAllVersions={async (pageId) => {
+          if (!workspaceSlug || !projectId) return;
+          return await projectPageVersionService.fetchAllVersions(
+            workspaceSlug.toString(),
+            projectId.toString(),
+            pageId
+          );
+        }}
+        fetchVersionDetails={async (pageId, versionId) => {
+          if (!workspaceSlug || !projectId) return;
+          return await projectPageVersionService.fetchVersionById(
+            workspaceSlug.toString(),
+            projectId.toString(),
+            pageId,
+            versionId
+          );
+        }}
+        handleRestore={handleRestoreVersion}
+        isOpen={isVersionsOverlayOpen}
+        onClose={handleCloseVersionsOverlay}
+        pageId={page.id ?? ""}
+        restoreEnabled={isContentEditable}
+      />
       <PageEditorHeaderRoot
-        editorRef={editorRef}
-        readOnlyEditorRef={readOnlyEditorRef}
         editorReady={editorReady}
-        readOnlyEditorReady={readOnlyEditorReady}
+        editorRef={editorRef}
         handleDuplicatePage={handleDuplicatePage}
-        handleSaveDescription={handleSaveDescription}
-        markings={markings}
         page={page}
-        sidePeekVisible={sidePeekVisible}
+        readOnlyEditorReady={readOnlyEditorReady}
+        readOnlyEditorRef={readOnlyEditorRef}
         setSidePeekVisible={(state) => setSidePeekVisible(state)}
+        sidePeekVisible={sidePeekVisible}
       />
       <PageEditorBody
+        editorReady={editorReady}
         editorRef={editorRef}
+        handleConnectionStatus={(status) => setHasConnectionFailed(status)}
         handleEditorReady={(val) => setEditorReady(val)}
-        readOnlyEditorRef={readOnlyEditorRef}
         handleReadOnlyEditorReady={() => setReadOnlyEditorReady(true)}
-        markings={markings}
         page={page}
+        readOnlyEditorRef={readOnlyEditorRef}
         sidePeekVisible={sidePeekVisible}
-        updateMarkings={updateMarkings}
-        handleDescriptionChange={handleDescriptionChange}
-        isDescriptionReady={isDescriptionReady}
-        pageDescriptionYJS={pageDescriptionYJS}
       />
     </>
   );

@@ -13,7 +13,7 @@ import { EInstanceStatus, TInstanceStatus } from "@/helpers/instance.helper";
 // services
 import { InstanceService } from "@/services/instance.service";
 // root store
-import { RootStore } from "@/store/root.store";
+import { CoreRootStore } from "@/store/root.store";
 
 export interface IInstanceStore {
   // issues
@@ -46,7 +46,7 @@ export class InstanceStore implements IInstanceStore {
   // service
   instanceService;
 
-  constructor(private store: RootStore) {
+  constructor(private store: CoreRootStore) {
     makeObservable(this, {
       // observable
       isLoading: observable.ref,

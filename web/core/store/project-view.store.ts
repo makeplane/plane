@@ -2,7 +2,7 @@ import { set } from "lodash";
 import { observable, action, makeObservable, runInAction, computed } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { IProjectView, TViewFilters } from "@plane/types";
+import { IProjectView, TPublishViewDetails, TPublishViewSettings, TViewFilters } from "@plane/types";
 // constants
 import { EViewAccess } from "@/constants/views";
 // helpers
@@ -42,6 +42,25 @@ export interface IProjectViewStore {
   // favorites actions
   addViewToFavorites: (workspaceSlug: string, projectId: string, viewId: string) => Promise<any>;
   removeViewFromFavorites: (workspaceSlug: string, projectId: string, viewId: string) => Promise<any>;
+  // publish
+  publishView: (
+    workspaceSlug: string,
+    projectId: string,
+    viewId: string,
+    data: TPublishViewSettings
+  ) => Promise<TPublishViewDetails | undefined>;
+  fetchPublishDetails: (
+    workspaceSlug: string,
+    projectId: string,
+    viewId: string
+  ) => Promise<TPublishViewDetails | undefined>;
+  updatePublishedView: (
+    workspaceSlug: string,
+    projectId: string,
+    viewId: string,
+    data: Partial<TPublishViewSettings>
+  ) => Promise<void>;
+  unPublishView: (workspaceSlug: string, projectId: string, viewId: string) => Promise<void>;
 }
 
 export class ProjectViewStore implements IProjectViewStore {
@@ -252,6 +271,7 @@ export class ProjectViewStore implements IProjectViewStore {
     await this.viewService.deleteView(workspaceSlug, projectId, viewId).then(() => {
       runInAction(() => {
         delete this.viewMap[viewId];
+        if (this.rootStore.favorite.entityMap[viewId]) this.rootStore.favorite.removeFavoriteFromStore(viewId);
       });
     });
   };
@@ -339,8 +359,11 @@ export class ProjectViewStore implements IProjectViewStore {
       runInAction(() => {
         set(this.viewMap, [viewId, "is_favorite"], true);
       });
-      await this.viewService.addViewToFavorites(workspaceSlug, projectId, {
-        view: viewId,
+      await this.rootStore.favorite.addFavorite(workspaceSlug.toString(), {
+        entity_type: "view",
+        entity_identifier: viewId,
+        project_id: projectId,
+        entity_data: { name: this.viewMap[viewId].name || "" },
       });
     } catch (error) {
       console.error("Failed to add view to favorites in view store", error);
@@ -364,12 +387,99 @@ export class ProjectViewStore implements IProjectViewStore {
       runInAction(() => {
         set(this.viewMap, [viewId, "is_favorite"], false);
       });
-      await this.viewService.removeViewFromFavorites(workspaceSlug, projectId, viewId);
+      await this.rootStore.favorite.removeFavoriteEntity(workspaceSlug, viewId);
     } catch (error) {
       console.error("Failed to remove view from favorites in view store", error);
       runInAction(() => {
         set(this.viewMap, [viewId, "is_favorite"], true);
       });
+    }
+  };
+
+  /**
+   * Publishes View to the Public
+   * @param workspaceSlug
+   * @param projectId
+   * @param viewId
+   * @returns
+   */
+  publishView = async (workspaceSlug: string, projectId: string, viewId: string, data: TPublishViewSettings) => {
+    try {
+      const response = (await this.viewService.publishView(
+        workspaceSlug,
+        projectId,
+        viewId,
+        data
+      )) as TPublishViewDetails;
+      runInAction(() => {
+        set(this.viewMap, [viewId, "anchor"], response?.anchor);
+      });
+
+      return response;
+    } catch (error) {
+      console.error("Failed to publish view", error);
+    }
+  };
+
+  /**
+   * fetches Published Details
+   * @param workspaceSlug
+   * @param projectId
+   * @param viewId
+   * @returns
+   */
+  fetchPublishDetails = async (workspaceSlug: string, projectId: string, viewId: string) => {
+    try {
+      const response = (await this.viewService.getPublishDetails(
+        workspaceSlug,
+        projectId,
+        viewId
+      )) as TPublishViewDetails;
+      runInAction(() => {
+        set(this.viewMap, [viewId, "anchor"], response?.anchor);
+      });
+      return response;
+    } catch (error) {
+      console.error("Failed to fetch published view details", error);
+    }
+  };
+
+  /**
+   * updates already published view
+   * @param workspaceSlug
+   * @param projectId
+   * @param viewId
+   * @returns
+   */
+  updatePublishedView = async (
+    workspaceSlug: string,
+    projectId: string,
+    viewId: string,
+    data: Partial<TPublishViewSettings>
+  ) => {
+    try {
+      return await this.viewService.updatePublishedView(workspaceSlug, projectId, viewId, data);
+    } catch (error) {
+      console.error("Failed to update published view details", error);
+    }
+  };
+
+  /**
+   * un publishes the view
+   * @param workspaceSlug
+   * @param projectId
+   * @param viewId
+   * @returns
+   */
+  unPublishView = async (workspaceSlug: string, projectId: string, viewId: string) => {
+    try {
+      const response = await this.viewService.unPublishView(workspaceSlug, projectId, viewId);
+      runInAction(() => {
+        set(this.viewMap, [viewId, "anchor"], null);
+      });
+      return response;
+    } catch (error) {
+      console.error("Failed to unPublish view", error);
     }
   };
 }

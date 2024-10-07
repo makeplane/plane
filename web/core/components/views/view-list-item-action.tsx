@@ -9,12 +9,12 @@ import { Tooltip, FavoriteStar } from "@plane/ui";
 // components
 import { DeleteProjectViewModal, CreateUpdateProjectViewModal, ViewQuickActions } from "@/components/views";
 // constants
-import { EUserProjectRoles } from "@/constants/project";
 import { EViewAccess } from "@/constants/views";
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
-import { useMember, useProjectView, useUser } from "@/hooks/store";
+import { useMember, useProjectView, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { ButtonAvatars } from "../dropdowns/member/avatar";
 
 type Props = {
@@ -30,14 +30,16 @@ export const ViewListItemAction: FC<Props> = observer((props) => {
   // router
   const { workspaceSlug, projectId } = useParams();
   // store
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
+
   const { addViewToFavorites, removeViewFromFavorites } = useProjectView();
   const { getUserDetails } = useMember();
 
   // derived values
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditingAllowed = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
 
   const totalFilters = calculateTotalFilters(view.filters ?? {});
 
@@ -95,12 +97,14 @@ export const ViewListItemAction: FC<Props> = observer((props) => {
         />
       )}
       {projectId && workspaceSlug && (
-        <ViewQuickActions
-          parentRef={parentRef}
-          projectId={projectId.toString()}
-          view={view}
-          workspaceSlug={workspaceSlug.toString()}
-        />
+        <div className="hidden md:block">
+          <ViewQuickActions
+            parentRef={parentRef}
+            projectId={projectId.toString()}
+            view={view}
+            workspaceSlug={workspaceSlug.toString()}
+          />
+        </div>
       )}
     </>
   );

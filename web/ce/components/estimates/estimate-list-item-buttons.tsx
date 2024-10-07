@@ -1,7 +1,9 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { Crown, Pen, Trash } from "lucide-react";
+import { Pen, Trash } from "lucide-react";
 import { Tooltip } from "@plane/ui";
+// components
+import { ProIcon } from "@/components/common";
 
 type TEstimateListItem = {
   estimateId: string;
@@ -22,7 +24,7 @@ export const EstimateListItemButtons: FC<TEstimateListItem> = observer((props) =
         tooltipContent={
           <div className="relative flex items-center gap-2">
             <div>Upgrade</div>
-            <Crown size={12} className="text-amber-400" />
+            <ProIcon className="w-3 h-3" />
           </div>
         }
         position="top"

@@ -66,3 +66,7 @@ export class ProjectMemberService extends APIService {
       });
   }
 }
+
+const projectMemberService = new ProjectMemberService();
+
+export default projectMemberService;

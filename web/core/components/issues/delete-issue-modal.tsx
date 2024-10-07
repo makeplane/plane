@@ -5,9 +5,11 @@ import { useEffect, useState } from "react";
 import { TIssue } from "@plane/types";
 // ui
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+// constants
+import { PROJECT_ERROR_MESSAGES } from "@/constants/project";
 // hooks
-import { useIssues, useProject } from "@/hooks/store";
-
+import { useIssues, useProject, useUser, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
@@ -24,6 +26,12 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
   // store hooks
   const { issueMap } = useIssues();
   const { getProjectById } = useProject();
+  const { allowPermissions } = useUserPermissions();
+
+  const { data: currentUser } = useUser();
+
+  // derived values
+  const canPerformProjectAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
 
   useEffect(() => {
     setIsDeleting(false);
@@ -34,6 +42,8 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
   // derived values
   const issue = data ? data : issueMap[dataId!];
   const projectDetails = getProjectById(issue?.project_id);
+  const isIssueCreator = issue?.created_by === currentUser?.id;
+  const authorized = isIssueCreator || canPerformProjectAdminActions;
 
   const onClose = () => {
     setIsDeleting(false);
@@ -42,6 +52,16 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
 
   const handleIssueDelete = async () => {
     setIsDeleting(true);
+
+    if (!authorized) {
+      setToast({
+        title: PROJECT_ERROR_MESSAGES.permissionError.title,
+        type: TOAST_TYPE.ERROR,
+        message: PROJECT_ERROR_MESSAGES.permissionError.message,
+      });
+      onClose();
+      return;
+    }
     if (onSubmit)
       await onSubmit()
         .then(() => {
@@ -52,14 +72,18 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
           });
           onClose();
         })
-        .catch(() => {
+        .catch((errors) => {
+          const isPermissionError = errors?.error === "Only admin or creator can delete the issue";
+          const currentError = isPermissionError
+            ? PROJECT_ERROR_MESSAGES.permissionError
+            : PROJECT_ERROR_MESSAGES.issueDeleteError;
           setToast({
-            title: "Error",
+            title: currentError.title,
             type: TOAST_TYPE.ERROR,
-            message: "Failed to delete issue",
+            message: currentError.message,
           });
         })
-        .finally(() => setIsDeleting(false));
+        .finally(() => onClose());
   };
 
   return (
@@ -68,7 +92,7 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
       handleSubmit={handleIssueDelete}
       isSubmitting={isDeleting}
       isOpen={isOpen}
-      title="Delete Issue"
+      title="Delete issue"
       content={
         <>
           Are you sure you want to delete issue{" "}

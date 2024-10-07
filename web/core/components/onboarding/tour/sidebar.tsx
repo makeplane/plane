@@ -1,8 +1,8 @@
 "use client";
 
 // icons
-import { FileText } from "lucide-react";
-import { ContrastIcon, DiceIcon, LayersIcon, PhotoFilterIcon } from "@plane/ui";
+import { FileText, Layers } from "lucide-react";
+import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/ui";
 // types
 import { TTourSteps } from "./root";
 
@@ -24,7 +24,7 @@ const sidebarOptions: {
   },
   {
     key: "views",
-    Icon: PhotoFilterIcon,
+    Icon: Layers,
   },
   {
     key: "pages",

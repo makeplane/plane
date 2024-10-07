@@ -1,4 +1,5 @@
 import differenceInCalendarDays from "date-fns/differenceInCalendarDays";
+import set from "lodash/set";
 import { v4 as uuidv4 } from "uuid";
 // types
 import {
@@ -184,7 +185,7 @@ export function getChangedIssuefields(formData: Partial<TIssue>, dirtyFields: { 
   const dirtyFieldKeys = Object.keys(dirtyFields) as (keyof TIssue)[];
   for (const dirtyField of dirtyFieldKeys) {
     if (!!dirtyFields[dirtyField]) {
-      changedFields[dirtyField] = formData[dirtyField];
+      set(changedFields, [dirtyField], formData[dirtyField]);
     }
   }
 
@@ -304,4 +305,5 @@ export const getComputedDisplayProperties = (
   updated_on: displayProperties?.updated_on ?? true,
   modules: displayProperties?.modules ?? true,
   cycle: displayProperties?.cycle ?? true,
+  issue_type: displayProperties?.issue_type ?? true,
 });

@@ -4,21 +4,22 @@ import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { CalendarCheck2, CalendarClock, MoveRight, SquareUser } from "lucide-react";
+import { SquareUser } from "lucide-react";
 // types
 import { IModule } from "@plane/types";
 // ui
-import { FavoriteStar, Tooltip, setPromiseToast } from "@plane/ui";
+import { FavoriteStar, TOAST_TYPE, Tooltip, setPromiseToast, setToast } from "@plane/ui";
 // components
+import { DateRangeDropdown } from "@/components/dropdowns";
 import { ModuleQuickActions } from "@/components/modules";
+import { ModuleStatusDropdown } from "@/components/modules/module-status-dropdown";
 // constants
 import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker";
 import { MODULE_STATUS } from "@/constants/module";
-import { EUserProjectRoles } from "@/constants/project";
-// helpers
-import { getDate, renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
-import { useEventTracker, useMember, useModule, useUser } from "@/hooks/store";
+import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
+import { useEventTracker, useMember, useModule, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { ButtonAvatars } from "../dropdowns/member/avatar";
 
 type Props = {
@@ -32,22 +33,20 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
   // router
   const { workspaceSlug, projectId } = useParams();
   //   store hooks
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
-  const { addModuleToFavorites, removeModuleFromFavorites } = useModule();
+  const { allowPermissions } = useUserPermissions();
+  const { addModuleToFavorites, removeModuleFromFavorites, updateModuleDetails } = useModule();
   const { getUserDetails } = useMember();
   const { captureEvent } = useEventTracker();
 
   // derived values
-  const endDate = getDate(moduleDetails.target_date);
-  const startDate = getDate(moduleDetails.start_date);
-
-  const renderDate = moduleDetails.start_date || moduleDetails.target_date;
 
   const moduleStatus = MODULE_STATUS.find((status) => status.value === moduleDetails.status);
-
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditingAllowed = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
+  const isDisabled = !isEditingAllowed || !!moduleDetails?.archived_at;
+  const renderIcon = Boolean(moduleDetails.start_date) || Boolean(moduleDetails.target_date);
 
   // handlers
   const handleAddToFavorites = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -108,30 +107,58 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
     });
   };
 
+  const handleModuleDetailsChange = async (payload: Partial<IModule>) => {
+    if (!workspaceSlug || !projectId) return;
+
+    await updateModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId, payload)
+      .then(() => {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: "Module updated successfully.",
+        });
+      })
+      .catch((err) => {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: err?.detail ?? "Module could not be updated. Please try again.",
+        });
+      });
+  };
+
   const moduleLeadDetails = moduleDetails.lead_id ? getUserDetails(moduleDetails.lead_id) : undefined;
 
   return (
     <>
-      {renderDate && (
-        <div className="h-6 flex items-center gap-1.5 text-custom-text-300 border-[0.5px] border-custom-border-300 rounded text-xs px-2 cursor-default">
-          <CalendarClock className="h-3 w-3 flex-shrink-0" />
-          <span className="flex-grow truncate">{renderFormattedDate(startDate)}</span>
-          <MoveRight className="h-3 w-3 flex-shrink-0" />
-          <CalendarCheck2 className="h-3 w-3 flex-shrink-0" />
-          <span className="flex-grow truncate">{renderFormattedDate(endDate)}</span>
-        </div>
-      )}
+      <DateRangeDropdown
+        buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-custom-text-300 border-[0.5px] border-custom-border-300 rounded text-xs`}
+        buttonVariant="transparent-with-text"
+        className="h-7"
+        value={{
+          from: getDate(moduleDetails.start_date),
+          to: getDate(moduleDetails.target_date),
+        }}
+        onSelect={(val) => {
+          handleModuleDetailsChange({
+            start_date: val?.from ? renderFormattedPayloadDate(val.from) : null,
+            target_date: val?.to ? renderFormattedPayloadDate(val.to) : null,
+          });
+        }}
+        placeholder={{
+          from: "Start date",
+          to: "End date",
+        }}
+        disabled={isDisabled}
+        hideIcon={{ from: renderIcon ?? true, to: renderIcon }}
+      />
 
       {moduleStatus && (
-        <span
-          className="flex h-6 w-20 flex-shrink-0 items-center justify-center rounded-sm text-center text-xs cursor-default"
-          style={{
-            color: moduleStatus.color,
-            backgroundColor: `${moduleStatus.color}20`,
-          }}
-        >
-          {moduleStatus.label}
-        </span>
+        <ModuleStatusDropdown
+          isDisabled={isDisabled}
+          moduleDetails={moduleDetails}
+          handleModuleDetailsChange={handleModuleDetailsChange}
+        />
       )}
 
       {moduleLeadDetails ? (
@@ -154,12 +181,14 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
         />
       )}
       {workspaceSlug && projectId && (
-        <ModuleQuickActions
-          parentRef={parentRef}
-          moduleId={moduleId}
-          projectId={projectId.toString()}
-          workspaceSlug={workspaceSlug.toString()}
-        />
+        <div className="hidden md:block">
+          <ModuleQuickActions
+            parentRef={parentRef}
+            moduleId={moduleId}
+            projectId={projectId.toString()}
+            workspaceSlug={workspaceSlug.toString()}
+          />
+        </div>
       )}
     </>
   );

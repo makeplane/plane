@@ -2,10 +2,11 @@
 
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
+import useSWR from "swr";
 // components
 import { IssuesLayoutsRoot } from "@/components/issues";
 // hooks
-import { usePublish } from "@/hooks/store";
+import { usePublish, useLabel, useStates } from "@/hooks/store";
 
 type Props = {
   params: {
@@ -19,6 +20,12 @@ const IssuesPage = observer((props: Props) => {
   // params
   const searchParams = useSearchParams();
   const peekId = searchParams.get("peekId") || undefined;
+  // store
+  const { fetchStates } = useStates();
+  const { fetchLabels } = useLabel();
+
+  useSWR(anchor ? `PUBLIC_STATES_${anchor}` : null, anchor ? () => fetchStates(anchor) : null);
+  useSWR(anchor ? `PUBLIC_LABELS_${anchor}` : null, anchor ? () => fetchLabels(anchor) : null);
 
   const publishSettings = usePublish(anchor);
 

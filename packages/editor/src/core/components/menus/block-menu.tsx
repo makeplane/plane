@@ -14,7 +14,7 @@ export const BlockMenu = (props: BlockMenuProps) => {
 
   const handleClickDragHandle = useCallback((event: MouseEvent) => {
     const target = event.target as HTMLElement;
-    if (target.matches(".drag-handle-dots") || target.matches(".drag-handle-dot")) {
+    if (target.matches("#drag-handle")) {
       event.preventDefault();
 
       popup.current?.setProps({
@@ -34,7 +34,6 @@ export const BlockMenu = (props: BlockMenuProps) => {
       menuRef.current.remove();
       menuRef.current.style.visibility = "visible";
 
-      // @ts-expect-error - tippy types are incorrect
       popup.current = tippy(document.body, {
         getReferenceClientRect: null,
         content: menuRef.current,
@@ -101,7 +100,8 @@ export const BlockMenu = (props: BlockMenuProps) => {
       icon: Copy,
       key: "duplicate",
       label: "Duplicate",
-      isDisabled: editor.state.selection.content().content.firstChild?.type.name === "image",
+      isDisabled:
+        editor.state.selection.content().content.firstChild?.type.name === "image" || editor.isActive("imageComponent"),
       onClick: (e) => {
         e.preventDefault();
         e.stopPropagation();

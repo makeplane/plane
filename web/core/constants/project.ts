@@ -1,16 +1,6 @@
 // icons
 import { Globe2, Lock, LucideIcon } from "lucide-react";
 import { TProjectAppliedDisplayFilterKeys, TProjectOrderByOptions } from "@plane/types";
-import { SettingIcon } from "@/components/icons/attachment";
-// types
-import { Props } from "@/components/icons/types";
-
-export enum EUserProjectRoles {
-  GUEST = 5,
-  VIEWER = 10,
-  MEMBER = 15,
-  ADMIN = 20,
-}
 
 export const NETWORK_CHOICES: {
   key: 0 | 2;
@@ -67,72 +57,6 @@ export const PROJECT_UNSPLASH_COVERS = [
   "https://images.unsplash.com/photo-1675351066828-6fc770b90dd2?auto=format&fit=crop&q=80&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&w=870&q=80",
 ];
 
-export const PROJECT_SETTINGS_LINKS: {
-  key: string;
-  label: string;
-  href: string;
-  access: EUserProjectRoles;
-  highlight: (pathname: string, baseUrl: string) => boolean;
-  Icon: React.FC<Props>;
-}[] = [
-  {
-    key: "general",
-    label: "General",
-    href: `/settings`,
-    access: EUserProjectRoles.MEMBER,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/`,
-    Icon: SettingIcon,
-  },
-  {
-    key: "members",
-    label: "Members",
-    href: `/settings/members`,
-    access: EUserProjectRoles.MEMBER,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/members/`,
-    Icon: SettingIcon,
-  },
-  {
-    key: "features",
-    label: "Features",
-    href: `/settings/features`,
-    access: EUserProjectRoles.ADMIN,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/features/`,
-    Icon: SettingIcon,
-  },
-  {
-    key: "states",
-    label: "States",
-    href: `/settings/states`,
-    access: EUserProjectRoles.MEMBER,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/states/`,
-    Icon: SettingIcon,
-  },
-  {
-    key: "labels",
-    label: "Labels",
-    href: `/settings/labels`,
-    access: EUserProjectRoles.MEMBER,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/labels/`,
-    Icon: SettingIcon,
-  },
-  {
-    key: "estimates",
-    label: "Estimates",
-    href: `/settings/estimates`,
-    access: EUserProjectRoles.ADMIN,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/estimates/`,
-    Icon: SettingIcon,
-  },
-  {
-    key: "automations",
-    label: "Automations",
-    href: `/settings/automations`,
-    access: EUserProjectRoles.ADMIN,
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/automations/`,
-    Icon: SettingIcon,
-  },
-];
-
 export const PROJECT_ORDER_BY_OPTIONS: {
   key: TProjectOrderByOptions;
   label: string;
@@ -168,3 +92,22 @@ export const PROJECT_DISPLAY_FILTER_OPTIONS: {
     label: "Archived",
   },
 ];
+
+export const PROJECT_ERROR_MESSAGES = {
+  permissionError: {
+    title: "You don't have permission to perform this action.",
+    message: undefined,
+  },
+  cycleDeleteError: {
+    title: "Error",
+    message: "Failed to delete cycle",
+  },
+  moduleDeleteError: {
+    title: "Error",
+    message: "Failed to delete module",
+  },
+  issueDeleteError: {
+    title: "Error",
+    message: "Failed to delete issue",
+  },
+};

@@ -52,7 +52,7 @@ export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = observer((pro
           isOpen={isDeleteIssueAttachmentModalOpen}
           onClose={() => setIsDeleteIssueAttachmentModalOpen(false)}
           handleAttachmentOperations={handleAttachmentOperations}
-          data={attachment}
+          attachmentId={attachmentId}
         />
       )}
       <div className="flex h-[60px] items-center justify-between gap-1 rounded-md border-[2px] border-custom-border-200 bg-custom-background-100 px-4 py-2 text-sm">

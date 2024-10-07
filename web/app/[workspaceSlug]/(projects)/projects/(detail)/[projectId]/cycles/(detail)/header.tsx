@@ -9,7 +9,7 @@ import { ArrowRight, PanelRight } from "lucide-react";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
-import { Breadcrumbs, Button, ContrastIcon, CustomMenu, Tooltip } from "@plane/ui";
+import { Breadcrumbs, Button, ContrastIcon, CustomMenu, Tooltip, Header } from "@plane/ui";
 // components
 import { ProjectAnalyticsModal } from "@/components/analytics";
 import { BreadcrumbLink, Logo } from "@/components/common";
@@ -21,7 +21,6 @@ import {
   EIssuesStoreType,
   ISSUE_DISPLAY_FILTERS_BY_LAYOUT,
 } from "@/constants/issue";
-import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { isIssueFilterActive } from "@/helpers/filter.helper";
@@ -34,13 +33,14 @@ import {
   useMember,
   useProject,
   useProjectState,
-  useUser,
   useIssues,
   useCommandPalette,
+  useUserPermissions,
 } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const CycleDropdownOption: React.FC<{ cycleId: string }> = ({ cycleId }) => {
   // router
@@ -81,9 +81,6 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   const { currentProjectCycleIds, getCycleById } = useCycle();
   const { toggleCreateIssueModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
   const { currentProjectDetails, loader } = useProject();
   const { projectStates } = useProjectState();
   const { projectLabels } = useLabel();
@@ -91,6 +88,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
     project: { projectMemberIds },
   } = useMember();
   const { isMobile } = usePlatformOS();
+  const { allowPermissions } = useUserPermissions();
 
   const activeLayout = issueFilters?.displayFilters?.layout;
 
@@ -149,8 +147,10 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   // derived values
   const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : undefined;
   const isCompletedCycle = cycleDetails?.status?.toLocaleLowerCase() === "completed";
-  const canUserCreateIssue =
-    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
+  const canUserCreateIssue = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
 
   const issuesCount = getGroupIssueCount(undefined, undefined, false);
 
@@ -161,8 +161,8 @@ export const CycleIssuesHeader: React.FC = observer(() => {
         onClose={() => setAnalyticsModal(false)}
         cycleDetails={cycleDetails ?? undefined}
       />
-      <div className="relative z-[15] w-full items-center gap-x-2 gap-y-4">
-        <div className="flex justify-between bg-custom-sidebar-background-100 p-4">
+      <Header>
+        <Header.LeftItem>
           <div className="flex items-center gap-2">
             <Breadcrumbs onBack={router.back} isLoading={loader}>
               <Breadcrumbs.BreadcrumbItem
@@ -235,6 +235,8 @@ export const CycleIssuesHeader: React.FC = observer(() => {
               />
             </Breadcrumbs>
           </div>
+        </Header.LeftItem>
+        <Header.RightItem>
           <div className="hidden items-center gap-2 md:flex ">
             <LayoutSelection
               layouts={[
@@ -289,13 +291,14 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                 </Button>
                 {!isCompletedCycle && (
                   <Button
+                    className="h-full self-start"
                     onClick={() => {
                       setTrackElement("Cycle issues page");
                       toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
                     }}
                     size="sm"
                   >
-                    Add Issue
+                    Add issue
                   </Button>
                 )}
               </>
@@ -315,8 +318,8 @@ export const CycleIssuesHeader: React.FC = observer(() => {
           >
             <PanelRight className={cn("h-4 w-4", !isSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200")} />
           </button>
-        </div>
-      </div>
+        </Header.RightItem>
+      </Header>
     </>
   );
 });

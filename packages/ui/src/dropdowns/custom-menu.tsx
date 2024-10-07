@@ -3,9 +3,10 @@ import ReactDOM from "react-dom";
 import { Menu } from "@headlessui/react";
 import { usePopper } from "react-popper";
 import { ChevronDown, MoreHorizontal } from "lucide-react";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // hooks
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "../hooks/use-outside-click-detector";
 // helpers
 import { cn } from "../../helpers";
 // types
@@ -35,6 +36,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
     tabIndex,
     closeOnSelect,
     openOnHover = false,
+    useCaptureForOutsideClick = false,
   } = props;
 
   const [referenceElement, setReferenceElement] = React.useState<HTMLButtonElement | null>(null);
@@ -88,10 +90,10 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
     }
   };
 
-  useOutsideClickDetector(dropdownRef, closeDropdown);
+  useOutsideClickDetector(dropdownRef, closeDropdown, useCaptureForOutsideClick);
 
   let menuItems = (
-    <Menu.Items className={cn("fixed z-10", menuItemsClassName)} static>
+    <Menu.Items data-prevent-outside-click={!!portalElement} className={cn("fixed z-10", menuItemsClassName)} static>
       <div
         className={cn(
           "my-1 overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-[12rem] whitespace-nowrap",
@@ -137,6 +139,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                 onClick={handleMenuButtonClick}
                 className={customButtonClassName}
                 tabIndex={customButtonTabIndex}
+                disabled={disabled}
               >
                 {customButton}
               </button>
@@ -172,6 +175,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                     } ${buttonClassName}`}
                     onClick={handleMenuButtonClick}
                     tabIndex={customButtonTabIndex}
+                    disabled={disabled}
                   >
                     {label}
                     {!noChevron && <ChevronDown className="h-3.5 w-3.5" />}

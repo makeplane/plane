@@ -116,7 +116,7 @@ export default function ResetPasswordPage() {
           />
         </div>
         <div className="relative z-10 w-screen h-screen overflow-hidden overflow-y-auto flex flex-col">
-          <div className="container mx-auto px-10 lg:px-0 flex-shrink-0 relative flex items-center justify-between pb-4 transition-all">
+          <div className="container min-w-full px-10 lg:px-20 xl:px-36 flex-shrink-0 relative flex items-center justify-between pb-4 transition-all">
             <div className="flex items-center gap-x-2 py-10">
               <Link href={`/`} className="h-[30px] w-[133px]">
                 <Image src={logo} alt="Plane logo" />
@@ -153,6 +153,7 @@ export default function ResetPasswordPage() {
                       //hasError={Boolean(errors.email)}
                       placeholder="name@company.com"
                       className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 text-onboarding-text-400 cursor-not-allowed"
+                      autoComplete="on"
                       disabled
                     />
                   </div>
@@ -173,6 +174,7 @@ export default function ResetPasswordPage() {
                       minLength={8}
                       onFocus={() => setIsPasswordInputFocused(true)}
                       onBlur={() => setIsPasswordInputFocused(false)}
+                      autoComplete="on"
                       autoFocus
                     />
                     {showPassword.password ? (

@@ -1,6 +1,7 @@
 import uuid
 
 from django.conf import settings
+from django.utils import timezone
 
 # Django imports
 from django.db import models
@@ -66,6 +67,15 @@ class Page(BaseModel):
         """Return owner email and page name"""
         return f"{self.owned_by.email} <{self.name}>"
 
+    def save(self, *args, **kwargs):
+        # Strip the html tags using html parser
+        self.description_stripped = (
+            None
+            if (self.description_html == "" or self.description_html is None)
+            else strip_tags(self.description_html)
+        )
+        super(Page, self).save(*args, **kwargs)
+
 
 class PageLog(BaseModel):
     TYPE_CHOICES = (
@@ -93,7 +103,9 @@ class PageLog(BaseModel):
         verbose_name="Transaction Type",
     )
     workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="workspace_page_log"
+        "db.Workspace",
+        on_delete=models.CASCADE,
+        related_name="workspace_page_log",
     )
 
     class Meta:
@@ -107,6 +119,7 @@ class PageLog(BaseModel):
         return f"{self.page.name} {self.entity_name}"
 
 
+# DEPRECATED TODO: - Remove in next release
 class PageBlock(ProjectBaseModel):
     page = models.ForeignKey(
         "db.Page", on_delete=models.CASCADE, related_name="blocks"
@@ -163,6 +176,7 @@ class PageBlock(ProjectBaseModel):
         return f"{self.page.name} <{self.name}>"
 
 
+# DEPRECATED TODO: - Remove in next release
 class PageFavorite(ProjectBaseModel):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -220,7 +234,14 @@ class ProjectPage(BaseModel):
     )
 
     class Meta:
-        unique_together = ["project", "page"]
+        unique_together = ["project", "page", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["project", "page"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="project_page_unique_project_page_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Project Page"
         verbose_name_plural = "Project Pages"
         db_table = "project_pages"
@@ -242,8 +263,53 @@ class TeamPage(BaseModel):
     )
 
     class Meta:
-        unique_together = ["team", "page"]
+        unique_together = ["team", "page", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["team", "page"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="team_page_unique_team_page_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Team Page"
         verbose_name_plural = "Team Pages"
         db_table = "team_pages"
         ordering = ("-created_at",)
+
+
+class PageVersion(BaseModel):
+    workspace = models.ForeignKey(
+        "db.Workspace",
+        on_delete=models.CASCADE,
+        related_name="page_versions",
+    )
+    page = models.ForeignKey(
+        "db.Page",
+        on_delete=models.CASCADE,
+        related_name="page_versions",
+    )
+    last_saved_at = models.DateTimeField(default=timezone.now)
+    owned_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="page_versions",
+    )
+    description_binary = models.BinaryField(null=True)
+    description_html = models.TextField(blank=True, default="<p></p>")
+    description_stripped = models.TextField(blank=True, null=True)
+    description_json = models.JSONField(default=dict, blank=True)
+
+    class Meta:
+        verbose_name = "Page Version"
+        verbose_name_plural = "Page Versions"
+        db_table = "page_versions"
+        ordering = ("-created_at",)
+
+    def save(self, *args, **kwargs):
+        # Strip the html tags using html parser
+        self.description_stripped = (
+            None
+            if (self.description_html == "" or self.description_html is None)
+            else strip_tags(self.description_html)
+        )
+        super(PageVersion, self).save(*args, **kwargs)

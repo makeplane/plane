@@ -40,9 +40,9 @@ export const CodeBlockComponent: React.FC<CodeBlockComponentProps> = ({ node }) 
         <button
           type="button"
           className={cn(
-            "group/button hidden group-hover/code:flex items-center justify-center absolute top-2 right-2 z-10 size-8 rounded-md bg-custom-background-80 border border-custom-border-200 transition duration-150 ease-in-out",
+            "group/button hidden group-hover/code:flex items-center justify-center absolute top-2 right-2 z-10 size-8 rounded-md bg-custom-background-80 border border-custom-border-200 transition duration-150 ease-in-out backdrop-blur-sm",
             {
-              "bg-green-500/10 hover:bg-green-500/10 active:bg-green-500/10": copied,
+              "bg-green-500/30 hover:bg-green-500/30 active:bg-green-500/30": copied,
             }
           )}
           onClick={copyToClipboard}
@@ -55,8 +55,8 @@ export const CodeBlockComponent: React.FC<CodeBlockComponentProps> = ({ node }) 
         </button>
       </Tooltip>
 
-      <pre className="bg-custom-background-90 text-custom-text-100 rounded-lg p-8 pl-9 pr-4">
-        <NodeViewContent as="code" className="whitespace-[pre-wrap]" />
+      <pre className="bg-custom-background-90 text-custom-text-100 rounded-lg p-4 my-2">
+        <NodeViewContent as="code" className="whitespace-pre-wrap" />
       </pre>
     </NodeViewWrapper>
   );

@@ -21,27 +21,32 @@ type Props = {
 
 export const BlockItemAction: FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, pageId, parentRef } = props;
-
   // store hooks
   const page = usePage(pageId);
   const { getUserDetails } = useMember();
   // derived values
-  const { access, created_at, is_favorite, owned_by, addToFavorites, removeFromFavorites } = page;
-
-  // derived values
+  const {
+    access,
+    created_at,
+    is_favorite,
+    owned_by,
+    canCurrentUserFavoritePage,
+    addToFavorites,
+    removePageFromFavorites,
+  } = page;
   const ownerDetails = owned_by ? getUserDetails(owned_by) : undefined;
 
   // handlers
   const handleFavorites = () => {
-    if (is_favorite)
-      removeFromFavorites().then(() =>
+    if (is_favorite) {
+      removePageFromFavorites().then(() =>
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Page removed from favorites.",
         })
       );
-    else
+    } else {
       addToFavorites().then(() =>
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -49,7 +54,9 @@ export const BlockItemAction: FC<Props> = observer((props) => {
           message: "Page added to favorites.",
         })
       );
+    }
   };
+
   return (
     <>
       {/* page details */}
@@ -74,14 +81,16 @@ export const BlockItemAction: FC<Props> = observer((props) => {
       </Tooltip>
 
       {/* favorite/unfavorite */}
-      <FavoriteStar
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          handleFavorites();
-        }}
-        selected={is_favorite}
-      />
+      {canCurrentUserFavoritePage && (
+        <FavoriteStar
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleFavorites();
+          }}
+          selected={is_favorite}
+        />
+      )}
 
       {/* quick actions dropdown */}
       <PageQuickActions

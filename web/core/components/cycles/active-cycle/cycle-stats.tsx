@@ -1,14 +1,13 @@
 "use client";
 
 import { FC, Fragment, useCallback, useRef, useState } from "react";
+import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
-import Link from "next/link";
-import useSWR from "swr";
 import { CalendarCheck } from "lucide-react";
 // headless ui
 import { Tab } from "@headlessui/react";
 // types
-import { ICycle } from "@plane/types";
+import { ICycle, IIssueFilterOptions } from "@plane/types";
 // ui
 import { Tooltip, Loader, PriorityIcon, Avatar } from "@plane/ui";
 // components
@@ -17,24 +16,29 @@ import { StateDropdown } from "@/components/dropdowns";
 import { EmptyState } from "@/components/empty-state";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
-import { CYCLE_ISSUES_WITH_PARAMS } from "@/constants/fetch-keys";
 import { EIssuesStoreType } from "@/constants/issue";
 // helper
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate, renderFormattedDateWithoutYear } from "@/helpers/date-time.helper";
 // hooks
-import { useIssueDetail, useIssues, useProject } from "@/hooks/store";
+import { useIssueDetail, useIssues } from "@/hooks/store";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import useLocalStorage from "@/hooks/use-local-storage";
+// plane web components
+import { IssueIdentifier } from "@/plane-web/components/issues";
+import { ActiveCycleIssueDetails } from "@/store/issue/cycle";
 
 export type ActiveCycleStatsProps = {
   workspaceSlug: string;
   projectId: string;
-  cycle: ICycle;
+  cycle: ICycle | null;
+  cycleId?: string | null;
+  handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string[], redirect?: boolean) => void;
+  cycleIssueDetails: ActiveCycleIssueDetails;
 };
 
 export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
-  const { workspaceSlug, projectId, cycle } = props;
+  const { workspaceSlug, projectId, cycle, cycleId, handleFiltersUpdate, cycleIssueDetails } = props;
 
   const { storedValue: tab, setValue: setTab } = useLocalStorage("activeCycleTab", "Assignees");
 
@@ -54,31 +58,29 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
     }
   };
   const {
-    issues: { getActiveCycleById, fetchActiveCycleIssues, fetchNextActiveCycleIssues },
+    issues: { fetchNextActiveCycleIssues },
   } = useIssues(EIssuesStoreType.CYCLE);
   const {
     issue: { getIssueById },
+    setPeekIssue,
   } = useIssueDetail();
-
-  const { currentProjectDetails } = useProject();
-
-  useSWR(
-    workspaceSlug && projectId && cycle.id ? CYCLE_ISSUES_WITH_PARAMS(cycle.id, { priority: "urgent,high" }) : null,
-    workspaceSlug && projectId && cycle.id
-      ? () => fetchActiveCycleIssues(workspaceSlug, projectId, 30, cycle.id)
-      : null,
-    { revalidateIfStale: false, revalidateOnFocus: false }
-  );
-
-  const cycleIssueDetails = getActiveCycleById(cycle.id);
-
   const loadMoreIssues = useCallback(() => {
-    fetchNextActiveCycleIssues(workspaceSlug, projectId, cycle.id);
-  }, [workspaceSlug, projectId, cycle.id, issuesLoaderElement, cycleIssueDetails?.nextPageResults]);
+    if (!cycleId) return;
+    fetchNextActiveCycleIssues(workspaceSlug, projectId, cycleId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workspaceSlug, projectId, cycleId, issuesLoaderElement, cycleIssueDetails?.nextPageResults]);
 
   useIntersectionObserver(issuesContainerRef, issuesLoaderElement, loadMoreIssues, `0% 0% 100% 0%`);
 
-  return (
+  const loaders = (
+    <Loader className="space-y-3">
+      <Loader.Item height="30px" />
+      <Loader.Item height="30px" />
+      <Loader.Item height="30px" />
+    </Loader>
+  );
+
+  return cycleId ? (
     <div className="flex flex-col gap-4 p-4 min-h-[17rem] overflow-hidden bg-custom-background-100 col-span-1 lg:col-span-2 xl:col-span-1 border border-custom-border-200 rounded-lg">
       <Tab.Group
         as={Fragment}
@@ -154,7 +156,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
               ref={issuesContainerRef}
               className="flex flex-col gap-1 h-full w-full overflow-y-auto vertical-scrollbar scrollbar-sm"
             >
-              {cycleIssueDetails && cycleIssueDetails.issueIds ? (
+              {cycleIssueDetails && "issueIds" in cycleIssueDetails ? (
                 cycleIssueDetails.issueCount > 0 ? (
                   <>
                     {cycleIssueDetails.issueIds.map((issueId: string) => {
@@ -163,26 +165,27 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                       if (!issue) return null;
 
                       return (
-                        <Link
+                        <div
                           key={issue.id}
-                          href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
                           className="group flex cursor-pointer items-center justify-between gap-2 rounded-md hover:bg-custom-background-90 p-1"
+                          onClick={() => {
+                            if (issue.id) {
+                              setPeekIssue({ workspaceSlug, projectId, issueId: issue.id });
+                              handleFiltersUpdate("priority", ["urgent", "high"], true);
+                            }
+                          }}
                         >
                           <div className="flex items-center gap-1.5 flex-grow w-full min-w-24 truncate">
-                            <PriorityIcon priority={issue.priority} withContainer size={12} />
-
-                            <Tooltip
-                              tooltipHeading="Issue ID"
-                              tooltipContent={`${currentProjectDetails?.identifier}-${issue.sequence_id}`}
-                            >
-                              <span className="flex-shrink-0 text-xs text-custom-text-200">
-                                {currentProjectDetails?.identifier}-{issue.sequence_id}
-                              </span>
-                            </Tooltip>
+                            <IssueIdentifier
+                              issueId={issue.id}
+                              projectId={projectId}
+                              textContainerClassName="text-xs text-custom-text-200"
+                            />
                             <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
                               <span className="text-[0.825rem] text-custom-text-100 truncate">{issue.name}</span>
                             </Tooltip>
                           </div>
+                          <PriorityIcon priority={issue.priority} withContainer size={12} />
                           <div className="flex items-center gap-1.5 flex-shrink-0">
                             <StateDropdown
                               value={issue.state_id}
@@ -207,7 +210,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                               </Tooltip>
                             )}
                           </div>
-                        </Link>
+                        </div>
                       );
                     })}
                     {(cycleIssueDetails.nextPageResults === undefined || cycleIssueDetails.nextPageResults) && (
@@ -229,11 +232,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                   </div>
                 )
               ) : (
-                <Loader className="space-y-3">
-                  <Loader.Item height="50px" />
-                  <Loader.Item height="50px" />
-                  <Loader.Item height="50px" />
-                </Loader>
+                loaders
               )}
             </div>
           </Tab.Panel>
@@ -242,44 +241,57 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
             as="div"
             className="flex h-52 w-full flex-col gap-1 overflow-y-auto text-custom-text-200 vertical-scrollbar scrollbar-sm"
           >
-            {cycle?.distribution?.assignees && cycle.distribution.assignees.length > 0 ? (
-              cycle.distribution?.assignees?.map((assignee, index) => {
-                if (assignee.assignee_id)
-                  return (
-                    <SingleProgressStats
-                      key={assignee.assignee_id}
-                      title={
-                        <div className="flex items-center gap-2">
-                          <Avatar name={assignee?.display_name ?? undefined} src={assignee?.avatar ?? undefined} />
+            {cycle && !isEmpty(cycle.distribution) ? (
+              cycle?.distribution?.assignees && cycle.distribution.assignees.length > 0 ? (
+                cycle.distribution?.assignees?.map((assignee, index) => {
+                  if (assignee.assignee_id)
+                    return (
+                      <SingleProgressStats
+                        key={assignee.assignee_id}
+                        title={
+                          <div className="flex items-center gap-2">
+                            <Avatar name={assignee?.display_name ?? undefined} src={assignee?.avatar ?? undefined} />
 
-                          <span>{assignee.display_name}</span>
-                        </div>
-                      }
-                      completed={assignee.completed_issues}
-                      total={assignee.total_issues}
-                    />
-                  );
-                else
-                  return (
-                    <SingleProgressStats
-                      key={`unassigned-${index}`}
-                      title={
-                        <div className="flex items-center gap-2">
-                          <div className="h-5 w-5 rounded-full border-2 border-custom-border-200 bg-custom-background-80">
-                            <img src="/user.png" height="100%" width="100%" className="rounded-full" alt="User" />
+                            <span>{assignee.display_name}</span>
                           </div>
-                          <span>No assignee</span>
-                        </div>
-                      }
-                      completed={assignee.completed_issues}
-                      total={assignee.total_issues}
-                    />
-                  );
-              })
+                        }
+                        completed={assignee.completed_issues}
+                        total={assignee.total_issues}
+                        onClick={() => {
+                          if (assignee.assignee_id) {
+                            handleFiltersUpdate("assignees", [assignee.assignee_id], true);
+                          }
+                        }}
+                      />
+                    );
+                  else
+                    return (
+                      <SingleProgressStats
+                        key={`unassigned-${index}`}
+                        title={
+                          <div className="flex items-center gap-2">
+                            <div className="h-5 w-5 rounded-full border-2 border-custom-border-200 bg-custom-background-80">
+                              <img src="/user.png" height="100%" width="100%" className="rounded-full" alt="User" />
+                            </div>
+                            <span>No assignee</span>
+                          </div>
+                        }
+                        completed={assignee.completed_issues}
+                        total={assignee.total_issues}
+                      />
+                    );
+                })
+              ) : (
+                <div className="flex items-center justify-center h-full w-full">
+                  <EmptyState
+                    type={EmptyStateType.ACTIVE_CYCLE_ASSIGNEE_EMPTY_STATE}
+                    layout="screen-simple"
+                    size="sm"
+                  />
+                </div>
+              )
             ) : (
-              <div className="flex items-center justify-center h-full w-full">
-                <EmptyState type={EmptyStateType.ACTIVE_CYCLE_ASSIGNEE_EMPTY_STATE} layout="screen-simple" size="sm" />
-              </div>
+              loaders
             )}
           </Tab.Panel>
 
@@ -287,33 +299,46 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
             as="div"
             className="flex h-52 w-full flex-col gap-1 overflow-y-auto  text-custom-text-200 vertical-scrollbar scrollbar-sm"
           >
-            {cycle?.distribution?.labels && cycle.distribution.labels.length > 0 ? (
-              cycle.distribution.labels?.map((label, index) => (
-                <SingleProgressStats
-                  key={label.label_id ?? `no-label-${index}`}
-                  title={
-                    <div className="flex items-center gap-2">
-                      <span
-                        className="block h-3 w-3 rounded-full"
-                        style={{
-                          backgroundColor: label.color ?? "#000000",
-                        }}
-                      />
-                      <span className="text-xs">{label.label_name ?? "No labels"}</span>
-                    </div>
-                  }
-                  completed={label.completed_issues}
-                  total={label.total_issues}
-                />
-              ))
+            {cycle && !isEmpty(cycle.distribution) ? (
+              cycle?.distribution?.labels && cycle.distribution.labels.length > 0 ? (
+                cycle.distribution.labels?.map((label, index) => (
+                  <SingleProgressStats
+                    key={label.label_id ?? `no-label-${index}`}
+                    title={
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="block h-3 w-3 rounded-full"
+                          style={{
+                            backgroundColor: label.color ?? "#000000",
+                          }}
+                        />
+                        <span className="text-xs">{label.label_name ?? "No labels"}</span>
+                      </div>
+                    }
+                    completed={label.completed_issues}
+                    total={label.total_issues}
+                    onClick={() => {
+                      if (label.label_id) {
+                        handleFiltersUpdate("labels", [label.label_id], true);
+                      }
+                    }}
+                  />
+                ))
+              ) : (
+                <div className="flex items-center justify-center h-full w-full">
+                  <EmptyState type={EmptyStateType.ACTIVE_CYCLE_LABEL_EMPTY_STATE} layout="screen-simple" size="sm" />
+                </div>
+              )
             ) : (
-              <div className="flex items-center justify-center h-full w-full">
-                <EmptyState type={EmptyStateType.ACTIVE_CYCLE_LABEL_EMPTY_STATE} layout="screen-simple" size="sm" />
-              </div>
+              loaders
             )}
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>
     </div>
+  ) : (
+    <Loader className="flex flex-col gap-4 min-h-[17rem] overflow-hidden bg-custom-background-100 col-span-1 lg:col-span-2 xl:col-span-1">
+      <Loader.Item width="100%" height="17rem" />
+    </Loader>
   );
 });

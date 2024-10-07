@@ -43,7 +43,11 @@ from plane.db.models import (
     WorkspaceMember,
     WorkspaceTheme,
 )
+from plane.app.permissions import ROLE, allow_permission
 from plane.utils.cache import cache_response, invalidate_cache
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_control
+from django.views.decorators.vary import vary_on_cookie
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 
 
@@ -144,11 +148,25 @@ class WorkSpaceViewSet(BaseViewSet):
                 )
 
     @cache_response(60 * 60 * 2)
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+            ROLE.GUEST,
+        ],
+        level="WORKSPACE",
+    )
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
     @invalidate_cache(path="/api/workspaces/", user=False)
     @invalidate_cache(path="/api/users/me/workspaces/")
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+        ],
+        level="WORKSPACE",
+    )
     def partial_update(self, request, *args, **kwargs):
         return super().partial_update(request, *args, **kwargs)
 
@@ -159,6 +177,7 @@ class WorkSpaceViewSet(BaseViewSet):
     @invalidate_cache(
         path="/api/users/me/settings/", multiple=True, user=False
     )
+    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     def destroy(self, request, *args, **kwargs):
         return super().destroy(request, *args, **kwargs)
 
@@ -172,6 +191,8 @@ class UserWorkSpacesEndpoint(BaseAPIView):
     ]
 
     @cache_response(60 * 60 * 2)
+    @method_decorator(cache_control(private=True, max_age=12))
+    @method_decorator(vary_on_cookie)
     def get(self, request):
         fields = [
             field

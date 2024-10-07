@@ -1,0 +1,24 @@
+{
+  "name": "@plane/helpers",
+  "version": "0.23.0",
+  "description": "Helper functions shared across multiple apps internally",
+  "private": true,
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "tsup ./index.ts --format esm,cjs --dts --external react --minify"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.4",
+    "@types/react": "^18.3.5",
+    "typescript": "^5.6.2",
+    "tsup": "^7.2.0"
+  },
+  "dependencies": {
+    "react": "^18.3.1"
+  }
+}

@@ -23,7 +23,7 @@ const ProjectDraftIssuesPage = observer(() => {
     <>
       <PageHead title={pageTitle} />
       <div className="flex h-full w-full flex-col">
-        <div className="gap-1 flex items-center border-b border-custom-border-200 px-4 py-2.5 shadow-sm">
+        <div className="gap-1 flex items-center border-b border-custom-border-200 px-4 py-2.5 shadow-sm bg-custom-background-100 z-[12]">
           <button
             type="button"
             onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/issues/`)}

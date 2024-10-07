@@ -141,7 +141,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="relative mt-6 h-44 w-full">
+      <div className="relative h-44 w-full">
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
         <img src={watch("cover_image")!} alt={watch("cover_image")!} className="h-44 w-full rounded-md object-cover" />
         <div className="z-5 absolute bottom-4 flex w-full items-end justify-between gap-3 px-4">
@@ -155,7 +155,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                   isOpen={isOpen}
                   handleToggle={(val: boolean) => setIsOpen(val)}
                   className="flex items-center justify-center"
-                  buttonClassName="flex h-[52px] w-[52px] flex-shrink-0 items-center justify-center rounded-lg bg-custom-background-90"
+                  buttonClassName="flex h-[52px] w-[52px] flex-shrink-0 items-center justify-center rounded-lg bg-white/10"
                   label={<Logo logo={value} size={28} />}
                   onChange={(val) => {
                     let logoValue = {};
@@ -213,7 +213,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       </div>
       <div className="my-8 flex flex-col gap-8">
         <div className="flex flex-col gap-1">
-          <h4 className="text-sm">Project Name</h4>
+          <h4 className="text-sm">Project name</h4>
           <Controller
             control={control}
             name="name"
@@ -234,7 +234,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                 onChange={onChange}
                 hasError={Boolean(errors.name)}
                 className="rounded-md !p-3 font-medium"
-                placeholder="Project Name"
+                placeholder="Project name"
                 disabled={!isAdmin}
               />
             )}
@@ -290,7 +290,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                     onChange={handleIdentifierChange}
                     ref={ref}
                     hasError={Boolean(errors.identifier)}
-                    placeholder="Enter Project ID"
+                    placeholder="Enter project ID"
                     className="w-full font-medium"
                     disabled={!isAdmin}
                   />
@@ -298,7 +298,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
               />
               <Tooltip
                 isMobile={isMobile}
-                tooltipContent="Helps you identify issues in the project uniquely, (e.g. APP-123). Max 5 characters."
+                tooltipContent="Helps you identify issues in the project uniquely. Max 5 characters."
                 className="text-sm"
                 position="right-top"
               >

@@ -19,12 +19,12 @@ import {
   WeekChartView,
   YearChartView,
 } from "@/components/gantt-chart";
+// helpers
 import { cn } from "@/helpers/common.helper";
 // plane web components
 import { IssueBulkOperationsRoot } from "@/plane-web/components/issues";
-// plane web constants
-import { ENABLE_BULK_OPERATIONS } from "@/plane-web/constants/issue";
-// helpers
+// plane web hooks
+import { useBulkOperationStatus } from "@/plane-web/hooks/use-bulk-operation-status";
 // constants
 import { GANTT_SELECT_GROUP } from "../constants";
 // hooks
@@ -38,12 +38,12 @@ type Props = {
   blockToRender: (data: any) => React.ReactNode;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   bottomSpacing: boolean;
-  enableBlockLeftResize: boolean;
-  enableBlockMove: boolean;
-  enableBlockRightResize: boolean;
-  enableReorder: boolean;
-  enableSelection: boolean;
-  enableAddBlock: boolean;
+  enableBlockLeftResize: boolean | ((blockId: string) => boolean);
+  enableBlockMove: boolean | ((blockId: string) => boolean);
+  enableBlockRightResize: boolean | ((blockId: string) => boolean);
+  enableReorder: boolean | ((blockId: string) => boolean);
+  enableSelection: boolean | ((blockId: string) => boolean);
+  enableAddBlock: boolean | ((blockId: string) => boolean);
   itemsContainerWidth: number;
   showAllBlocks: boolean;
   sidebarToRender: (props: any) => React.ReactNode;
@@ -78,6 +78,8 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
   const ganttContainerRef = useRef<HTMLDivElement>(null);
   // chart hook
   const { currentView, currentViewData } = useGanttChart();
+  // plane web hooks
+  const isBulkOperationsEnabled = useBulkOperationStatus();
 
   // Enable Auto Scroll for Ganttlist
   useEffect(() => {
@@ -126,7 +128,7 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
       entities={{
         [GANTT_SELECT_GROUP]: blockIds ?? [],
       }}
-      disabled={!ENABLE_BULK_OPERATIONS}
+      disabled={!isBulkOperationsEnabled}
     >
       {(helpers) => (
         <>
@@ -143,38 +145,38 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
             onScroll={onScroll}
           >
             <GanttChartSidebar
-        blockIds={blockIds}
-        getBlockById={getBlockById}
-        loadMoreBlocks={loadMoreBlocks}
-        canLoadMoreBlocks={canLoadMoreBlocks}
-        ganttContainerRef={ganttContainerRef}
-        blockUpdateHandler={blockUpdateHandler}
-        enableReorder={enableReorder}
-        enableSelection={enableSelection}
-        sidebarToRender={sidebarToRender}
-        title={title}
-        quickAdd={quickAdd}
-        selectionHelpers={helpers}
-      />
-      <div className="relative min-h-full h-max flex-shrink-0 flex-grow">
-        <ActiveChartView />
-        {currentViewData && (
-          <GanttChartBlocksList
-            itemsContainerWidth={itemsContainerWidth}
-            blockIds={blockIds}
-            getBlockById={getBlockById}
-            blockToRender={blockToRender}
-            blockUpdateHandler={blockUpdateHandler}
-            enableBlockLeftResize={enableBlockLeftResize}
-            enableBlockRightResize={enableBlockRightResize}
-            enableBlockMove={enableBlockMove}
-            enableAddBlock={enableAddBlock}
-            ganttContainerRef={ganttContainerRef}
-            showAllBlocks={showAllBlocks}
-            selectionHelpers={helpers}
-          />
-        )}
-      </div>
+              blockIds={blockIds}
+              getBlockById={getBlockById}
+              loadMoreBlocks={loadMoreBlocks}
+              canLoadMoreBlocks={canLoadMoreBlocks}
+              ganttContainerRef={ganttContainerRef}
+              blockUpdateHandler={blockUpdateHandler}
+              enableReorder={enableReorder}
+              enableSelection={enableSelection}
+              sidebarToRender={sidebarToRender}
+              title={title}
+              quickAdd={quickAdd}
+              selectionHelpers={helpers}
+            />
+            <div className="relative min-h-full h-max flex-shrink-0 flex-grow">
+              <ActiveChartView />
+              {currentViewData && (
+                <GanttChartBlocksList
+                  itemsContainerWidth={itemsContainerWidth}
+                  blockIds={blockIds}
+                  getBlockById={getBlockById}
+                  blockToRender={blockToRender}
+                  blockUpdateHandler={blockUpdateHandler}
+                  enableBlockLeftResize={enableBlockLeftResize}
+                  enableBlockRightResize={enableBlockRightResize}
+                  enableBlockMove={enableBlockMove}
+                  enableAddBlock={enableAddBlock}
+                  ganttContainerRef={ganttContainerRef}
+                  showAllBlocks={showAllBlocks}
+                  selectionHelpers={helpers}
+                />
+              )}
+            </div>
           </div>
           <IssueBulkOperationsRoot selectionHelpers={helpers} />
         </>

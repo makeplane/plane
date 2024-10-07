@@ -1,23 +1,22 @@
 "use client";
 
-import { ArrowDownWideNarrow, Check, ChevronDown } from "lucide-react";
+import { ArrowDownWideNarrow, ArrowUpWideNarrow, Check, ChevronDown } from "lucide-react";
 // types
 import { TViewFiltersSortBy, TViewFiltersSortKey } from "@plane/types";
 // ui
 import { CustomMenu, getButtonStyling } from "@plane/ui";
 // constants
 import { VIEW_SORTING_KEY_OPTIONS } from "@/constants/views";
-// helpers
-import { cn } from "@/helpers/common.helper";
 
 type Props = {
   onChange: (value: { key?: TViewFiltersSortKey; order?: TViewFiltersSortBy }) => void;
   sortBy: TViewFiltersSortBy;
   sortKey: TViewFiltersSortKey;
+  isMobile?: boolean;
 };
 
 export const ViewOrderByDropdown: React.FC<Props> = (props) => {
-  const { onChange, sortBy, sortKey } = props;
+  const { onChange, sortBy, sortKey, isMobile = false } = props;
 
   const orderByDetails = VIEW_SORTING_KEY_OPTIONS.find((option) => sortKey === option.key);
   const isDescending = sortBy === "desc";
@@ -27,16 +26,25 @@ export const ViewOrderByDropdown: React.FC<Props> = (props) => {
     { key: "desc", label: "Descending", isSelected: isDescending },
   ];
 
+  const buttonClassName = isMobile
+    ? "flex items-center text-sm text-custom-text-200 gap-2 w-full"
+    : `${getButtonStyling("neutral-primary", "sm")} px-2 text-custom-text-300`;
+
+  const chevronClassName = isMobile ? "h-4 w-4 text-custom-text-200" : "h-3 w-3";
+  const icon = (
+    <>{!isDescending ? <ArrowUpWideNarrow className="size-3 " /> : <ArrowDownWideNarrow className="size-3 " />}</>
+  );
   return (
     <CustomMenu
       customButton={
-        <div className={cn(getButtonStyling("neutral-primary", "sm"), "px-2 text-custom-text-300")}>
-          <ArrowDownWideNarrow className="h-3 w-3" />
-          {orderByDetails?.label}
-          <ChevronDown className="h-3 w-3" strokeWidth={2} />
-        </div>
+        <span className={buttonClassName}>
+          {!isMobile && icon}
+          <span className="flex-shrink-0"> {orderByDetails?.label}</span>
+          <ChevronDown className={chevronClassName} strokeWidth={2} />
+        </span>
       }
       placement="bottom-end"
+      className="w-full flex justify-center"
       maxHeight="lg"
       closeOnSelect
     >

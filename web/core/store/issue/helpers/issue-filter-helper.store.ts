@@ -1,4 +1,5 @@
 import isEmpty from "lodash/isEmpty";
+import { EIssueGroupByToServerOptions, EServerGroupByToFilterOptions } from "@plane/constants";
 // types
 import {
   IIssueDisplayFilterOptions,
@@ -12,12 +13,7 @@ import {
   TStaticViewTypes,
 } from "@plane/types";
 // constants
-import {
-  EIssueFilterType,
-  EIssuesStoreType,
-  EIssueGroupByToServerOptions,
-  EServerGroupByToFilterOptions,
-} from "@/constants/issue";
+import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { getComputedDisplayFilters, getComputedDisplayProperties } from "@/helpers/issue.helper";
 // lib
@@ -96,6 +92,7 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
       target_date: filters?.target_date || undefined,
       project: filters?.project || undefined,
       subscriber: filters?.subscriber || undefined,
+      issue_type: filters?.issue_type || undefined,
       // display filters
       group_by: displayFilters?.group_by ? EIssueGroupByToServerOptions[displayFilters.group_by] : undefined,
       sub_group_by: displayFilters?.sub_group_by
@@ -139,6 +136,7 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
     target_date: filters?.target_date || null,
     project: filters?.project || null,
     subscriber: filters?.subscriber || null,
+    issue_type: filters?.issue_type || null,
   });
 
   /**
@@ -250,7 +248,7 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
             [filterType]: filters[filterType],
           },
         };
-
+      // All group_by "filters" are stored in a single array, will cause inconsistency in case of duplicated values
       storage.set("issue_local_filters", JSON.stringify(storageFilters));
     },
   };
@@ -262,6 +260,20 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
    */
   getShouldReFetchIssues = (displayFilters: IIssueDisplayFilterOptions) => {
     const NON_SERVER_DISPLAY_FILTERS = ["order_by", "sub_issue", "type"];
+    const displayFilterKeys = Object.keys(displayFilters);
+
+    return NON_SERVER_DISPLAY_FILTERS.some((serverDisplayfilter: string) =>
+      displayFilterKeys.includes(serverDisplayfilter)
+    );
+  };
+
+  /**
+   * This Method returns true if the display properties changed requires a server side update
+   * @param displayFilters
+   * @returns
+   */
+  getShouldClearIssues = (displayFilters: IIssueDisplayFilterOptions) => {
+    const NON_SERVER_DISPLAY_FILTERS = ["layout"];
     const displayFilterKeys = Object.keys(displayFilters);
 
     return NON_SERVER_DISPLAY_FILTERS.some((serverDisplayfilter: string) =>

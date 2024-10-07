@@ -7,7 +7,8 @@ import "src/styles/drag-drop.css";
 
 // editors
 export {
-  DocumentEditorWithRef,
+  CollaborativeDocumentEditorWithRef,
+  CollaborativeDocumentReadOnlyEditorWithRef,
   DocumentReadOnlyEditorWithRef,
   LiteTextEditorWithRef,
   LiteTextReadOnlyEditorWithRef,
@@ -19,11 +20,9 @@ export { isCellSelection } from "@/extensions/table/table/utilities/is-cell-sele
 
 // helpers
 export * from "@/helpers/common";
-export * from "@/components/editors/document/helpers";
 export * from "@/helpers/editor-commands";
 export * from "@/helpers/yjs";
 export * from "@/extensions/table/table";
-export { startImageUpload } from "@/plugins/image";
 
 // components
 export * from "@/components/menus";
@@ -34,5 +33,5 @@ export { type IMarking, useEditorMarkings } from "@/hooks/use-editor-markings";
 export { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
 
 // types
-export type { CustomEditorProps, TFileHandler } from "@/hooks/use-editor";
+export type { CustomEditorProps } from "@/hooks/use-editor";
 export * from "@/types";

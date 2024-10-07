@@ -6,6 +6,8 @@ from plane.app.views import (
     CycleIssueViewSet,
     CycleDateCheckEndpoint,
     CycleFavoriteViewSet,
+    CycleProgressEndpoint,
+    CycleAnalyticsEndpoint,
     TransferCycleIssueEndpoint,
     CycleUserPropertiesEndpoint,
     CycleArchiveUnarchiveEndpoint,
@@ -105,5 +107,15 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/archived-cycles/<uuid:pk>/",
         CycleArchiveUnarchiveEndpoint.as_view(),
         name="cycle-archive-unarchive",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/progress/",
+        CycleProgressEndpoint.as_view(),
+        name="project-cycle",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/analytics/",
+        CycleAnalyticsEndpoint.as_view(),
+        name="project-cycle",
     ),
 ]

@@ -1,3 +1,4 @@
+import CharacterCount from "@tiptap/extension-character-count";
 import Placeholder from "@tiptap/extension-placeholder";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
@@ -11,6 +12,7 @@ import {
   CustomCodeInlineExtension,
   CustomCodeMarkPlugin,
   CustomHorizontalRule,
+  CustomImageExtension,
   CustomKeymap,
   CustomLinkExtension,
   CustomMention,
@@ -30,23 +32,25 @@ import { isValidHttpUrl } from "@/helpers/common";
 import { DeleteImage, IMentionHighlight, IMentionSuggestion, RestoreImage, UploadImage } from "@/types";
 
 type TArguments = {
-  mentionConfig: {
-    mentionSuggestions?: () => Promise<IMentionSuggestion[]>;
-    mentionHighlights?: () => Promise<IMentionHighlight[]>;
-  };
+  enableHistory: boolean;
   fileConfig: {
     deleteFile: DeleteImage;
     restoreFile: RestoreImage;
     cancelUploadImage?: () => void;
     uploadFile: UploadImage;
   };
+  mentionConfig: {
+    mentionSuggestions?: () => Promise<IMentionSuggestion[]>;
+    mentionHighlights?: () => Promise<IMentionHighlight[]>;
+  };
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
 };
 
 export const CoreEditorExtensions = ({
-  mentionConfig,
+  enableHistory,
   fileConfig: { deleteFile, restoreFile, cancelUploadImage, uploadFile },
+  mentionConfig,
   placeholder,
   tabIndex,
 }: TArguments) => [
@@ -70,14 +74,13 @@ export const CoreEditorExtensions = ({
     codeBlock: false,
     horizontalRule: false,
     blockquote: false,
-    history: false,
     dropcursor: {
-      color: "rgba(var(--color-text-100))",
-      width: 1,
+      class: "text-custom-text-300",
     },
+    ...(enableHistory ? {} : { history: false }),
   }),
   CustomQuoteExtension,
-  DropHandlerExtension(uploadFile),
+  DropHandlerExtension(),
   CustomHorizontalRule.configure({
     HTMLAttributes: {
       class: "my-4 border-custom-border-400",
@@ -101,6 +104,12 @@ export const CoreEditorExtensions = ({
     HTMLAttributes: {
       class: "rounded-md",
     },
+  }),
+  CustomImageExtension({
+    delete: deleteFile,
+    restore: restoreFile,
+    upload: uploadFile,
+    cancel: cancelUploadImage ?? (() => {}),
   }),
   TiptapUnderline,
   TextStyle,
@@ -140,7 +149,7 @@ export const CoreEditorExtensions = ({
     placeholder: ({ editor, node }) => {
       if (node.type.name === "heading") return `Heading ${node.attrs.level}`;
 
-      if (editor.storage.image.uploadInProgress) return "";
+      if (editor.storage.imageComponent.uploadInProgress) return "";
 
       const shouldHidePlaceholder =
         editor.isActive("table") || editor.isActive("codeBlock") || editor.isActive("image");
@@ -156,4 +165,5 @@ export const CoreEditorExtensions = ({
     },
     includeChildren: true,
   }),
+  CharacterCount,
 ];

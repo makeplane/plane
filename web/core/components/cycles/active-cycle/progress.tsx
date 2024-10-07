@@ -1,45 +1,49 @@
 "use client";
 
 import { FC } from "react";
-import Link from "next/link";
+import { observer } from "mobx-react";
 // types
-import { ICycle } from "@plane/types";
+import { ICycle, IIssueFilterOptions } from "@plane/types";
 // ui
-import { LinearProgressIndicator } from "@plane/ui";
+import { LinearProgressIndicator, Loader } from "@plane/ui";
 // components
 import { EmptyState } from "@/components/empty-state";
 // constants
-import { CYCLE_STATE_GROUPS_DETAILS } from "@/constants/cycle";
+import { PROGRESS_STATE_GROUPS_DETAILS } from "@/constants/common";
 import { EmptyStateType } from "@/constants/empty-state";
+// hooks
+import { useProjectState } from "@/hooks/store";
 
 export type ActiveCycleProgressProps = {
+  cycle: ICycle | null;
   workspaceSlug: string;
   projectId: string;
-  cycle: ICycle;
+  handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string[], redirect?: boolean) => void;
 };
 
-export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = (props) => {
-  const { workspaceSlug, projectId, cycle } = props;
+export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = observer((props) => {
+  const { handleFiltersUpdate, cycle } = props;
+  // store hooks
+  const { groupedProjectStates } = useProjectState();
 
-  const progressIndicatorData = CYCLE_STATE_GROUPS_DETAILS.map((group, index) => ({
+  // derived values
+  const progressIndicatorData = PROGRESS_STATE_GROUPS_DETAILS.map((group, index) => ({
     id: index,
     name: group.title,
-    value: cycle.total_issues > 0 ? (cycle[group.key as keyof ICycle] as number) : 0,
+    value: cycle && cycle.total_issues > 0 ? (cycle[group.key as keyof ICycle] as number) : 0,
     color: group.color,
   }));
+  const groupedIssues: any = cycle
+    ? {
+        completed: cycle?.completed_issues,
+        started: cycle?.started_issues,
+        unstarted: cycle?.unstarted_issues,
+        backlog: cycle?.backlog_issues,
+      }
+    : {};
 
-  const groupedIssues: any = {
-    completed: cycle.completed_issues,
-    started: cycle.started_issues,
-    unstarted: cycle.unstarted_issues,
-    backlog: cycle.backlog_issues,
-  };
-
-  return (
-    <Link
-      href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle?.id}`}
-      className="flex flex-col min-h-[17rem] gap-5 py-4 px-3.5 bg-custom-background-100 border border-custom-border-200 rounded-lg"
-    >
+  return cycle && cycle.hasOwnProperty("started_issues") ? (
+    <div className="flex flex-col min-h-[17rem] gap-5 py-4 px-3.5 bg-custom-background-100 border border-custom-border-200 rounded-lg">
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between gap-4">
           <h3 className="text-base text-custom-text-300 font-semibold">Progress</h3>
@@ -60,12 +64,20 @@ export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = (props) => {
             <>
               {groupedIssues[group] > 0 && (
                 <div key={index}>
-                  <div className="flex items-center justify-between gap-2 text-sm">
+                  <div
+                    className="flex items-center justify-between gap-2 text-sm cursor-pointer"
+                    onClick={() => {
+                      if (groupedProjectStates) {
+                        const states = groupedProjectStates[group].map((state) => state.id);
+                        handleFiltersUpdate("state", states, true);
+                      }
+                    }}
+                  >
                     <div className="flex items-center gap-1.5">
                       <span
                         className="block h-3 w-3 rounded-full"
                         style={{
-                          backgroundColor: CYCLE_STATE_GROUPS_DETAILS[index].color,
+                          backgroundColor: PROGRESS_STATE_GROUPS_DETAILS[index].color,
                         }}
                       />
                       <span className="text-custom-text-300 capitalize font-medium w-16">{group}</span>
@@ -93,6 +105,10 @@ export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = (props) => {
           <EmptyState type={EmptyStateType.ACTIVE_CYCLE_PROGRESS_EMPTY_STATE} layout="screen-simple" size="sm" />
         </div>
       )}
-    </Link>
+    </div>
+  ) : (
+    <Loader className="flex flex-col min-h-[17rem] gap-5 bg-custom-background-100 border border-custom-border-200 rounded-lg">
+      <Loader.Item width="100%" height="100%" />
+    </Loader>
   );
-};
+});

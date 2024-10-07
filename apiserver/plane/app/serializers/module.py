@@ -5,6 +5,10 @@ from rest_framework import serializers
 from .base import BaseSerializer, DynamicBaseSerializer
 from .project import ProjectLiteSerializer
 
+# Django imports
+from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
+
 from plane.db.models import (
     User,
     Module,
@@ -39,6 +43,7 @@ class ModuleWriteSerializer(BaseSerializer):
             "created_at",
             "updated_at",
             "archived_at",
+            "deleted_at",
         ]
 
     def to_representation(self, instance):
@@ -63,6 +68,16 @@ class ModuleWriteSerializer(BaseSerializer):
         members = validated_data.pop("member_ids", None)
         project = self.context["project"]
 
+        module_name = validated_data.get("name")
+        if module_name:
+            # Lookup for the module name in the module table for that project
+            if Module.objects.filter(
+                name=module_name, project=project
+            ).exists():
+                raise serializers.ValidationError(
+                    {"error": "Module with this name already exists"}
+                )
+
         module = Module.objects.create(**validated_data, project=project)
         if members is not None:
             ModuleMember.objects.bulk_create(
@@ -85,6 +100,19 @@ class ModuleWriteSerializer(BaseSerializer):
 
     def update(self, instance, validated_data):
         members = validated_data.pop("member_ids", None)
+        module_name = validated_data.get("name")
+        if module_name:
+            # Lookup for the module name in the module table for that project
+            if (
+                Module.objects.filter(
+                    name=module_name, project=instance.project
+                )
+                .exclude(id=instance.id)
+                .exists()
+            ):
+                raise serializers.ValidationError(
+                    {"error": "Module with this name already exists"}
+                )
 
         if members is not None:
             ModuleMember.objects.filter(module=instance).delete()
@@ -154,16 +182,48 @@ class ModuleLinkSerializer(BaseSerializer):
             "module",
         ]
 
-    # Validation if url already exists
+    def to_internal_value(self, data):
+        # Modify the URL before validation by appending http:// if missing
+        url = data.get("url", "")
+        if url and not url.startswith(("http://", "https://")):
+            data["url"] = "http://" + url
+
+        return super().to_internal_value(data)
+
+    def validate_url(self, value):
+        # Use Django's built-in URLValidator for validation
+        url_validator = URLValidator()
+        try:
+            url_validator(value)
+        except ValidationError:
+            raise serializers.ValidationError({"error": "Invalid URL format."})
+
+        return value
+
     def create(self, validated_data):
+        validated_data["url"] = self.validate_url(validated_data.get("url"))
         if ModuleLink.objects.filter(
             url=validated_data.get("url"),
             module_id=validated_data.get("module_id"),
         ).exists():
+            raise serializers.ValidationError({"error": "URL already exists."})
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        validated_data["url"] = self.validate_url(validated_data.get("url"))
+        if (
+            ModuleLink.objects.filter(
+                url=validated_data.get("url"),
+                module_id=instance.module_id,
+            )
+            .exclude(pk=instance.id)
+            .exists()
+        ):
             raise serializers.ValidationError(
                 {"error": "URL already exists for this Issue"}
             )
-        return ModuleLink.objects.create(**validated_data)
+
+        return super().update(instance, validated_data)
 
 
 class ModuleSerializer(DynamicBaseSerializer):
@@ -228,7 +288,14 @@ class ModuleDetailSerializer(ModuleSerializer):
     cancelled_estimate_points = serializers.FloatField(read_only=True)
 
     class Meta(ModuleSerializer.Meta):
-        fields = ModuleSerializer.Meta.fields + ["link_module", "sub_issues", "backlog_estimate_points", "unstarted_estimate_points", "started_estimate_points", "cancelled_estimate_points"]
+        fields = ModuleSerializer.Meta.fields + [
+            "link_module",
+            "sub_issues",
+            "backlog_estimate_points",
+            "unstarted_estimate_points",
+            "started_estimate_points",
+            "cancelled_estimate_points",
+        ]
 
 
 class ModuleUserPropertiesSerializer(BaseSerializer):

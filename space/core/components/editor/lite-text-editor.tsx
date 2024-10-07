@@ -5,7 +5,7 @@ import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef } from "@plane/edi
 import { IssueCommentToolbar } from "@/components/editor";
 // helpers
 import { cn } from "@/helpers/common.helper";
-import { isEmptyHtmlString } from "@/helpers/string.helper";
+import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks
 import { useMention } from "@/hooks/use-mention";
 // services
@@ -33,10 +33,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   function isMutableRefObject<T>(ref: React.ForwardedRef<T>): ref is React.MutableRefObject<T | null> {
     return !!ref && typeof ref === "object" && "current" in ref;
   }
-  const isEmpty =
-    props.initialValue?.trim() === "" ||
-    props.initialValue === "<p></p>" ||
-    (isEmptyHtmlString(props.initialValue ?? "") && !props.initialValue?.includes("mention-component"));
+  const isEmpty = isCommentEmpty(props.initialValue);
 
   return (
     <div className="border border-custom-border-200 rounded p-3 space-y-3">
@@ -64,11 +61,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
         }}
         isSubmitting={isSubmitting}
         showSubmitButton={showSubmitButton}
-        handleSubmit={() => {
-          if (isMutableRefObject<EditorRefApi>(ref)) {
-            rest.onEnterKeyPress?.(ref.current?.getHTML() ?? "");
-          }
-        }}
+        handleSubmit={(e) => rest.onEnterKeyPress?.(e)}
         isCommentEmpty={isEmpty}
         editorRef={isMutableRefObject<EditorRefApi>(ref) ? ref : null}
       />

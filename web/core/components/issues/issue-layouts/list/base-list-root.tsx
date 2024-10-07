@@ -1,16 +1,17 @@
 import { FC, useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 // types
-import { GroupByColumnTypes, TGroupedIssues } from "@plane/types";
+import { useParams } from "next/navigation";
+import { GroupByColumnTypes, TGroupedIssues, TIssueKanbanFilters } from "@plane/types";
 // constants
-import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
-import { EUserProjectRoles } from "@/constants/project";
+import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 // hooks
-import { useIssues, useUser } from "@/hooks/store";
+import { useIssues, useUserPermissions } from "@/hooks/store";
 // hooks
 import { useGroupIssuesDragNDrop } from "@/hooks/use-group-dragndrop";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // components
 import { IssueLayoutHOC } from "../issue-layout-HOC";
 import { List } from "./default";
@@ -49,9 +50,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
     restoreIssue,
   } = useIssuesActions(storeType);
   // mobx store
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
   const { issueMap } = useIssues();
 
   const displayFilters = issuesFilter?.issueFilters?.displayFilters;
@@ -61,13 +60,20 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
   const group_by = (displayFilters?.group_by || null) as GroupByColumnTypes | null;
   const showEmptyGroup = displayFilters?.show_empty_groups ?? false;
 
+  const { workspaceSlug, projectId } = useParams();
+  const {updateFilters} = useIssuesActions(storeType);
+  const collapsedGroups = issuesFilter?.issueFilters?.kanbanFilters || { group_by: [], sub_group_by: [] } as TIssueKanbanFilters;
+
   useEffect(() => {
     fetchIssues("init-loader", { canGroup: true, perPageCount: group_by ? 50 : 100 }, viewId);
   }, [fetchIssues, storeType, group_by, viewId]);
 
   const groupedIssueIds = issues?.groupedIssueIds as TGroupedIssues | undefined;
   // auth
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditingAllowed = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
   const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issues?.viewFlags || {};
 
   const canEditProperties = useCallback(
@@ -106,6 +112,25 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
     [fetchNextIssues]
   );
 
+  // kanbanFilters and EIssueFilterType.KANBAN_FILTERS are used becuase the state is shared between kanban view and list view
+  const handleCollapsedGroups = useCallback(
+    (value: string) => {
+      if (workspaceSlug) {
+        let collapsedGroups = issuesFilter?.issueFilters?.kanbanFilters?.group_by || [];
+        if (collapsedGroups.includes(value)) {
+          collapsedGroups = collapsedGroups.filter((_value) => _value != value);
+        } else {
+          collapsedGroups.push(value);
+        }
+        updateFilters(projectId?.toString() ?? "", EIssueFilterType.KANBAN_FILTERS,
+          { group_by: collapsedGroups } as TIssueKanbanFilters
+        );
+      }
+    },
+    [workspaceSlug, issuesFilter, projectId, updateFilters]
+  );
+
+
   return (
     <IssueLayoutHOC layout={EIssueLayoutTypes.LIST}>
       <div className={`relative size-full bg-custom-background-90`}>
@@ -126,6 +151,8 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
           addIssuesToView={addIssuesToView}
           isCompletedCycle={isCompletedCycle}
           handleOnDrop={handleOnDrop}
+          handleCollapsedGroups={handleCollapsedGroups}
+          collapsedGroups={collapsedGroups}
         />
       </div>
     </IssueLayoutHOC>

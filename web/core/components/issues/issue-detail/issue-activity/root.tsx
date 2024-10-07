@@ -1,38 +1,28 @@
 "use client";
 
-import { FC, useMemo, useState } from "react";
+import { FC, Fragment, useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { History, LucideIcon, MessageCircle } from "lucide-react";
 // types
 import { TIssueComment } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { IssueActivityCommentRoot, IssueCommentRoot, IssueCommentCreate } from "@/components/issues";
+import { IssueCommentCreate } from "@/components/issues";
+import { IssueActivityCommentRoot } from "@/components/issues/issue-detail";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
+// plane web components
+import { ActivityFilterRoot, IssueActivityWorklogCreateButton } from "@/plane-web/components/issues/worklog";
+// plane web constants
+import { TActivityFilters, defaultActivityFilters } from "@/plane-web/constants/issues";
 
 type TIssueActivity = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
   disabled?: boolean;
+  isIntakeIssue?: boolean;
 };
-
-type TActivityTabs = "all" | "comments";
-
-const activityTabs: { key: TActivityTabs; title: string; icon: LucideIcon }[] = [
-  {
-    key: "comments",
-    title: "Comments",
-    icon: MessageCircle,
-  },
-  {
-    key: "all",
-    title: "All activity",
-    icon: History,
-  },
-];
 
 export type TActivityOperations = {
   createComment: (data: Partial<TIssueComment>) => Promise<void>;
@@ -41,12 +31,23 @@ export type TActivityOperations = {
 };
 
 export const IssueActivity: FC<TIssueActivity> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, disabled = false } = props;
+  const { workspaceSlug, projectId, issueId, disabled = false, isIntakeIssue = false } = props;
   // hooks
   const { createComment, updateComment, removeComment } = useIssueDetail();
   const { getProjectById } = useProject();
   // state
-  const [activityTab, setActivityTab] = useState<TActivityTabs>("comments");
+  const [selectedFilters, setSelectedFilters] = useState<TActivityFilters[]>(defaultActivityFilters);
+  // toggle filter
+  const toggleFilter = (filter: TActivityFilters) => {
+    setSelectedFilters((prevFilters) => {
+      if (prevFilters.includes(filter)) {
+        if (prevFilters.length === 1) return prevFilters; // Ensure at least one filter is applied
+        return prevFilters.filter((f) => f !== filter);
+      } else {
+        return [...prevFilters, filter];
+      }
+    });
+  };
 
   const activityOperations: TActivityOperations = useMemo(
     () => ({
@@ -109,74 +110,51 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
   if (!project) return <></>;
 
   return (
-    <div className="space-y-3 pt-3">
+    <div className="space-y-4 pt-3">
       {/* header */}
-      <div className="text-lg text-custom-text-100">Activity</div>
+      <div className="flex items-center justify-between">
+        <div className="text-lg text-custom-text-100">Activity</div>
+        <div className="flex items-center gap-2">
+          {!isIntakeIssue && (
+            <IssueActivityWorklogCreateButton
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              issueId={issueId}
+              disabled={disabled}
+            />
+          )}
+          <ActivityFilterRoot
+            selectedFilters={selectedFilters}
+            toggleFilter={toggleFilter}
+            isIntakeIssue={isIntakeIssue}
+            projectId={projectId}
+          />
+        </div>
+      </div>
 
       {/* rendering activity */}
       <div className="space-y-3">
-        <div className="relative flex items-center gap-1">
-          {activityTabs.map((tab) => (
-            <div
-              key={tab.key}
-              className={`relative flex items-center px-2 py-1.5 gap-1 cursor-pointer transition-all rounded 
-            ${
-              tab.key === activityTab
-                ? `text-custom-text-100 bg-custom-background-80`
-                : `text-custom-text-200 hover:bg-custom-background-80`
-            }`}
-              onClick={() => setActivityTab(tab.key)}
-            >
-              <div className="flex-shrink-0 w-4 h-4 flex justify-center items-center">
-                <tab.icon className="w-3 h-3" />
-              </div>
-              <div className="text-sm">{tab.title}</div>
-            </div>
-          ))}
-        </div>
-
         <div className="min-h-[200px]">
-          {activityTab === "all" ? (
-            <div className="space-y-3">
-              <IssueActivityCommentRoot
+          <div className="space-y-3">
+            <IssueActivityCommentRoot
+              projectId={projectId}
+              workspaceSlug={workspaceSlug}
+              issueId={issueId}
+              selectedFilters={selectedFilters}
+              activityOperations={activityOperations}
+              showAccessSpecifier={!!project.anchor}
+              disabled={disabled}
+            />
+            {!disabled && (
+              <IssueCommentCreate
+                issueId={issueId}
                 projectId={projectId}
                 workspaceSlug={workspaceSlug}
-                issueId={issueId}
                 activityOperations={activityOperations}
                 showAccessSpecifier={!!project.anchor}
-                disabled={disabled}
               />
-              {!disabled && (
-                <IssueCommentCreate
-                  issueId={issueId}
-                  projectId={projectId}
-                  workspaceSlug={workspaceSlug}
-                  activityOperations={activityOperations}
-                  showAccessSpecifier={!!project.anchor}
-                />
-              )}
-            </div>
-          ) : (
-            <div className="space-y-3">
-              <IssueCommentRoot
-                projectId={projectId}
-                workspaceSlug={workspaceSlug}
-                issueId={issueId}
-                activityOperations={activityOperations}
-                showAccessSpecifier={!!project.anchor}
-                disabled={disabled}
-              />
-              {!disabled && (
-                <IssueCommentCreate
-                  issueId={issueId}
-                  projectId={projectId}
-                  workspaceSlug={workspaceSlug}
-                  activityOperations={activityOperations}
-                  showAccessSpecifier={!!project.anchor}
-                />
-              )}
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </div>

@@ -7,7 +7,7 @@ import { usePopper } from "react-popper";
 import { ArrowRight, CalendarDays } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // ui
-import { Button } from "@plane/ui";
+import { Button, ComboDropDown } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
@@ -49,6 +49,7 @@ type Props = {
     from: Date | undefined;
     to: Date | undefined;
   };
+  renderByDefault?: boolean;
 };
 
 export const DateRangeDropdown: React.FC<Props> = (props) => {
@@ -80,6 +81,7 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
     showTooltip = false,
     tabIndex,
     value,
+    renderByDefault = true,
   } = props;
   // states
   const [isOpen, setIsOpen] = useState(false);
@@ -131,8 +133,55 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
     setDateRange(value);
   }, [value]);
 
+  const comboButton = (
+    <button
+      ref={setReferenceElement}
+      type="button"
+      className={cn(
+        "clickable block h-full max-w-full outline-none",
+        {
+          "cursor-not-allowed text-custom-text-200": disabled,
+          "cursor-pointer": !disabled,
+        },
+        buttonContainerClassName
+      )}
+      onClick={handleOnClick}
+      disabled={disabled}
+    >
+      <DropdownButton
+        className={buttonClassName}
+        isActive={isOpen}
+        tooltipHeading="Date range"
+        tooltipContent={
+          <>
+            {dateRange.from ? renderFormattedDate(dateRange.from) : "N/A"}
+            {" - "}
+            {dateRange.to ? renderFormattedDate(dateRange.to) : "N/A"}
+          </>
+        }
+        showTooltip={showTooltip}
+        variant={buttonVariant}
+        renderToolTipByDefault={renderByDefault}
+      >
+        <span
+          className={cn("h-full flex items-center justify-center gap-1 rounded-sm flex-grow", buttonFromDateClassName)}
+        >
+          {!hideIcon.from && icon}
+          {dateRange.from ? renderFormattedDate(dateRange.from) : placeholder.from}
+        </span>
+        <ArrowRight className="h-3 w-3 flex-shrink-0" />
+        <span
+          className={cn("h-full flex items-center justify-center gap-1 rounded-sm flex-grow", buttonToDateClassName)}
+        >
+          {!hideIcon.to && icon}
+          {dateRange.to ? renderFormattedDate(dateRange.to) : placeholder.to}
+        </span>
+      </DropdownButton>
+    </button>
+  );
+
   return (
-    <Combobox
+    <ComboDropDown
       as="div"
       ref={dropdownRef}
       tabIndex={tabIndex}
@@ -142,58 +191,10 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
           if (!isOpen) handleKeyDown(e);
         } else handleKeyDown(e);
       }}
+      button={comboButton}
       disabled={disabled}
+      renderByDefault={renderByDefault}
     >
-      <Combobox.Button as={React.Fragment}>
-        <button
-          ref={setReferenceElement}
-          type="button"
-          className={cn(
-            "clickable block h-full max-w-full outline-none",
-            {
-              "cursor-not-allowed text-custom-text-200": disabled,
-              "cursor-pointer": !disabled,
-            },
-            buttonContainerClassName
-          )}
-          onClick={handleOnClick}
-        >
-          <DropdownButton
-            className={buttonClassName}
-            isActive={isOpen}
-            tooltipHeading="Date range"
-            tooltipContent={
-              <>
-                {dateRange.from ? renderFormattedDate(dateRange.from) : "N/A"}
-                {" - "}
-                {dateRange.to ? renderFormattedDate(dateRange.to) : "N/A"}
-              </>
-            }
-            showTooltip={showTooltip}
-            variant={buttonVariant}
-          >
-            <span
-              className={cn(
-                "h-full flex items-center justify-center gap-1 rounded-sm flex-grow",
-                buttonFromDateClassName
-              )}
-            >
-              {!hideIcon.from && icon}
-              {dateRange.from ? renderFormattedDate(dateRange.from) : placeholder.from}
-            </span>
-            <ArrowRight className="h-3 w-3 flex-shrink-0" />
-            <span
-              className={cn(
-                "h-full flex items-center justify-center gap-1 rounded-sm flex-grow",
-                buttonToDateClassName
-              )}
-            >
-              {!hideIcon.to && icon}
-              {dateRange.to ? renderFormattedDate(dateRange.to) : placeholder.to}
-            </span>
-          </DropdownButton>
-        </button>
-      </Combobox.Button>
       {isOpen && (
         <Combobox.Options className="fixed z-10" static>
           <div
@@ -250,6 +251,6 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
           </div>
         </Combobox.Options>
       )}
-    </Combobox>
+    </ComboDropDown>
   );
 };

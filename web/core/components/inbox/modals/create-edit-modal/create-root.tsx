@@ -16,12 +16,15 @@ import {
 } from "@/components/inbox/modals/create-edit-modal";
 // constants
 import { ISSUE_CREATED } from "@/constants/event-tracker";
+import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useEventTracker, useProjectInbox, useWorkspace } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useKeypress from "@/hooks/use-keypress";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type TInboxIssueCreateRoot = {
   workspaceSlug: string;
@@ -53,6 +56,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
   const { createInboxIssue } = useProjectInbox();
   const { getWorkspaceBySlug } = useWorkspace();
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
+  const { isMobile } = usePlatformOS();
   // states
   const [createMore, setCreateMore] = useState<boolean>(false);
   const [formSubmitting, setFormSubmitting] = useState(false);
@@ -66,6 +70,8 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
     },
     [formData]
   );
+
+  const { getIndex } = getTabIndex(ETabIndices.INTAKE_ISSUE_FORM, isMobile);
 
   const handleEscKeyDown = (event: KeyboardEvent) => {
     if (descriptionEditorRef.current?.isEditorReadyToDiscard()) {
@@ -155,7 +161,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
   return (
     <form onSubmit={handleFormSubmit}>
       <div className="space-y-5 p-5">
-        <h3 className="text-xl font-medium text-custom-text-200">Create Inbox Issue</h3>
+        <h3 className="text-xl font-medium text-custom-text-200">Create intake issue</h3>
         <div className="space-y-3">
           <InboxIssueTitle
             data={formData}
@@ -180,6 +186,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
           className="inline-flex items-center gap-1.5 cursor-pointer"
           onClick={() => setCreateMore((prevData) => !prevData)}
           role="button"
+          tabIndex={getIndex("create_more")}
         >
           <ToggleSwitch value={createMore} onChange={() => {}} size="sm" />
           <span className="text-xs">Create more</span>
@@ -200,6 +207,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
                 });
               }
             }}
+            tabIndex={getIndex("discard_button")}
           >
             Discard
           </Button>
@@ -210,6 +218,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
             type="submit"
             loading={formSubmitting}
             disabled={isTitleLengthMoreThan255Character}
+            tabIndex={getIndex("submit_button")}
           >
             {formSubmitting ? "Creating" : "Create Issue"}
           </Button>

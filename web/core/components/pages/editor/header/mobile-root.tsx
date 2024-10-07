@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 import { EditorReadOnlyRefApi, EditorRefApi, IMarking } from "@plane/editor";
 // components
+import { Header, EHeaderVariant } from "@plane/ui";
 import { PageExtraOptions, PageSummaryPopover, PageToolbar } from "@/components/pages";
 // hooks
 import { usePageFilters } from "@/hooks/use-page-filters";
@@ -8,30 +9,26 @@ import { usePageFilters } from "@/hooks/use-page-filters";
 import { IPage } from "@/store/pages/page";
 
 type Props = {
-  editorRef: React.RefObject<EditorRefApi>;
-  readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
-  handleDuplicatePage: () => void;
-  markings: IMarking[];
-  page: IPage;
-  sidePeekVisible: boolean;
-  setSidePeekVisible: (sidePeekState: boolean) => void;
   editorReady: boolean;
+  editorRef: React.RefObject<EditorRefApi>;
+  handleDuplicatePage: () => void;
+  page: IPage;
   readOnlyEditorReady: boolean;
-  handleSaveDescription: (forceSync?: boolean, initSyncVectorAsUpdate?: Uint8Array | undefined) => Promise<void>;
+  readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
+  setSidePeekVisible: (sidePeekState: boolean) => void;
+  sidePeekVisible: boolean;
 };
 
 export const PageEditorMobileHeaderRoot: React.FC<Props> = observer((props) => {
   const {
-    editorRef,
-    readOnlyEditorRef,
     editorReady,
-    markings,
-    readOnlyEditorReady,
+    editorRef,
     handleDuplicatePage,
     page,
-    sidePeekVisible,
+    readOnlyEditorReady,
+    readOnlyEditorRef,
     setSidePeekVisible,
-    handleSaveDescription,
+    sidePeekVisible,
   } = props;
   // derived values
   const { isContentEditable } = page;
@@ -42,29 +39,27 @@ export const PageEditorMobileHeaderRoot: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <div className="flex items-center border-b border-custom-border-200 px-2 py-1">
-        <div className="flex-shrink-0">
+      <Header variant={EHeaderVariant.SECONDARY}>
+        <div className="flex-shrink-0 my-auto">
           <PageSummaryPopover
             editorRef={isContentEditable ? editorRef.current : readOnlyEditorRef.current}
             isFullWidth={isFullWidth}
-            markings={markings}
             sidePeekVisible={sidePeekVisible}
             setSidePeekVisible={setSidePeekVisible}
           />
         </div>
         <PageExtraOptions
           editorRef={editorRef}
-          handleSaveDescription={handleSaveDescription}
           handleDuplicatePage={handleDuplicatePage}
           page={page}
           readOnlyEditorRef={readOnlyEditorRef}
         />
-      </div>
-      <div className="border-b border-custom-border-200 py-1 px-2">
+      </Header>
+      <Header variant={EHeaderVariant.TERNARY}>
         {(editorReady || readOnlyEditorReady) && isContentEditable && editorRef.current && (
           <PageToolbar editorRef={editorRef?.current} />
         )}
-      </div>
+      </Header>
     </>
   );
 });

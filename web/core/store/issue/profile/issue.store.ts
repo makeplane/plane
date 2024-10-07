@@ -91,6 +91,9 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
 
   fetchParentStats = () => {};
 
+  /** */
+  updateParentStats = () => {};
+
   /**
    * This method is called to fetch the first issues of pagination
    * @param workspaceSlug
@@ -137,7 +140,7 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
       });
 
       // after fetching issues, call the base method to process the response further
-      this.onfetchIssues(response, options, workspaceSlug);
+      this.onfetchIssues(response, options, workspaceSlug, undefined, undefined, !isExistingPaginationOptions);
       return response;
     } catch (error) {
       // set loader to undefined if errored out

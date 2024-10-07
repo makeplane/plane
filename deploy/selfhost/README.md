@@ -10,7 +10,7 @@ Let's get started!
 
 <details>
   <summary>Option 1 - Using Cloud Server</summary>
-  <p>Best way to start is to create EC2 maching on AWS. It must of minimum t3.medium/t3a/medium</p>
+  <p>Best way to start is to create EC2 machine on AWS. It must have minimum of 2vCPU and 4GB RAM.</p>
   <p>Run the below command to install docker engine.</p>
 
 `curl -fsSL https://get.docker.com | sh -`
@@ -67,23 +67,6 @@ curl -fsSL -o setup.sh https://raw.githubusercontent.com/makeplane/plane/master/
 chmod +x setup.sh
 ```
 
-<details>
-    <summary>Downloading Preview Release</summary>
-
-```
-mkdir plane-selfhost
-
-cd plane-selfhost
-
-export RELEASE=preview
-
-curl -fsSL https://raw.githubusercontent.com/makeplane/plane/$BRANCH/deploy/selfhost/install.sh | sed  's@BRANCH=master@BRANCH='"$RELEASE"'@' > setup.sh
-
-chmod +x setup.sh
-```
-
-</details>
-
 ---
 
 ### Proceed with setup
@@ -114,7 +97,7 @@ This will create a create a folder `plane-app` or `plane-app-preview` (in case o
 - `docker-compose.yaml`
 - `plane.env`
 
-Again the `options [1-7]` will be popped up and this time hit `7` to exit.
+Again the `options [1-8]` will be popped up and this time hit `8` to exit.
 
 ---
 
@@ -236,7 +219,7 @@ Select a Action you want to perform:
 Action [2]: 5
 ```
 
-By choosing this, it will stop the services and then will download the latest `docker-compose.yaml` and `variables-upgrade.env`. Here system will not replace `.env` with the new one.
+By choosing this, it will stop the services and then will download the latest `docker-compose.yaml` and `plane.env`.
 
 You must expect the below message
 
@@ -244,7 +227,7 @@ You must expect the below message
 
 Once done, choose `8` to exit from prompt.
 
-> It is very important for you to compare the 2 files `variables-upgrade.env` and `.env`. Copy the newly added variable from downloaded file to `.env` and set the expected values.
+> It is very important for you to validate the `plane.env` for the new changes.
 
 Once done with making changes in `plane.env` file, jump on to `Start Server`
 
@@ -372,8 +355,60 @@ Backup completed successfully. Backup files are stored in /....../plane-app/back
 
 ---
 
+### Restore Data
 
-## Upgrading from v0.13.2 to v0.14.x
+When you want to restore the previously backed-up data, follow the instructions below.
+
+1. Make sure that Plane-CE is installed, started, and then stopped. This ensures that the Docker volumes are created.
+
+1. Download the restore script using the command below. We suggest downloading it in the same folder as `setup.sh`.
+
+   ```bash
+   curl -fsSL -o restore.sh https://raw.githubusercontent.com/makeplane/plane/master/deploy/selfhost/restore.sh
+   chmod +x restore.sh
+   ```
+
+1. Execute the command below to restore your data.
+
+   ```bash
+   ./restore.sh <path to backup folder containing *.tar.gz files>
+   ```
+
+   As an example, for a backup folder `/opt/plane-selfhost/plane-app/backup/20240722-0914`, expect the response below:
+
+   ```bash
+   --------------------------------------------
+    ____  _                          ///////// 
+   |  _ \| | __ _ _ __   ___         ///////// 
+   | |_) | |/ _` | '_ \ / _ \   /////    ///// 
+   |  __/| | (_| | | | |  __/   /////    ///// 
+   |_|   |_|\__,_|_| |_|\___|        ////      
+                                    ////      
+   --------------------------------------------
+   Project management tool from the future
+   --------------------------------------------
+   Found /opt/plane-selfhost/plane-app/backup/20240722-0914/pgdata.tar.gz
+   .....Restoring plane-app_pgdata
+   .....Successfully restored volume plane-app_pgdata from pgdata.tar.gz
+
+   Found /opt/plane-selfhost/plane-app/backup/20240722-0914/redisdata.tar.gz
+   .....Restoring plane-app_redisdata
+   .....Successfully restored volume plane-app_redisdata from redisdata.tar.gz
+
+   Found /opt/plane-selfhost/plane-app/backup/20240722-0914/uploads.tar.gz
+   .....Restoring plane-app_uploads
+   .....Successfully restored volume plane-app_uploads from uploads.tar.gz
+
+
+   Restore completed successfully.
+   ```
+
+1. Start the Plane instance using `./setup.sh start`.
+
+---
+
+<details>
+   <summary><h2>Upgrading from v0.13.2 to v0.14.x</h2></summary>
 
 This is one time activity for users who are upgrading from v0.13.2 to v0.14.0
 
@@ -445,3 +480,4 @@ In case the suffixes are wrong or the mentioned volumes are not found, you will 
 In case of successful migration, it will be a silent exit without error.
 
 Now its time to restart v0.14.0 setup.
+</details>

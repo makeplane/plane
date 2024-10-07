@@ -2,19 +2,20 @@
 
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
-// types
-import { IStateLite } from "@plane/types";
 // ui
 import { StateGroupIcon } from "@plane/ui";
+// hooks
+import { useStates } from "@/hooks/store";
 
 type Props = {
   handleRemove: (val: string) => void;
-  states: IStateLite[];
   values: string[];
 };
 
 export const AppliedStateFilters: React.FC<Props> = observer((props) => {
-  const { handleRemove, states, values } = props;
+  const { handleRemove, values } = props;
+
+  const { sortedStates: states } = useStates();
 
   return (
     <>

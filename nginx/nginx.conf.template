@@ -28,14 +28,6 @@ http {
             proxy_pass http://web:3000/;
         }
 
-        location /god-mode/ {
-            proxy_http_version 1.1;
-            proxy_set_header Upgrade ${dollar}http_upgrade;
-            proxy_set_header Connection "upgrade";
-            proxy_set_header Host ${dollar}http_host;
-            proxy_pass http://admin:3000/god-mode/;
-        }
-
         location /api/ {
             proxy_http_version 1.1;
             proxy_set_header Upgrade ${dollar}http_upgrade;
@@ -50,6 +42,22 @@ http {
             proxy_set_header Connection "upgrade";
             proxy_set_header Host ${dollar}http_host;
             proxy_pass http://api:8000/auth/;
+        }
+
+        location /god-mode/ {
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade ${dollar}http_upgrade;
+            proxy_set_header Connection "upgrade";
+            proxy_set_header Host ${dollar}http_host;
+            proxy_pass http://admin:3000/god-mode/;
+        }
+
+        location /live/ {
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade ${dollar}http_upgrade;
+            proxy_set_header Connection "upgrade";
+            proxy_set_header Host ${dollar}http_host;
+            proxy_pass http://live:3000/live/;
         }
 
         location /spaces/ {

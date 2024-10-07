@@ -1,8 +1,11 @@
 import React, { useRef, useState } from "react";
 import { DayPicker, Matcher } from "react-day-picker";
+import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
 import { CalendarDays, X } from "lucide-react";
 import { Combobox } from "@headlessui/react";
+// ui
+import { ComboDropDown } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate, getDate } from "@/helpers/date-time.helper";
@@ -17,6 +20,7 @@ import { TDropdownProps } from "./types";
 
 type Props = TDropdownProps & {
   clearIconClassName?: string;
+  optionsClassName?: string;
   icon?: React.ReactNode;
   isClearable?: boolean;
   minDate?: Date;
@@ -25,6 +29,8 @@ type Props = TDropdownProps & {
   onClose?: () => void;
   value: Date | string | null;
   closeOnSelect?: boolean;
+  formatToken?: string;
+  renderByDefault?: boolean;
 };
 
 export const DateDropdown: React.FC<Props> = (props) => {
@@ -34,6 +40,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
     buttonVariant,
     className = "",
     clearIconClassName = "",
+    optionsClassName = "",
     closeOnSelect = true,
     disabled = false,
     hideIcon = false,
@@ -48,6 +55,8 @@ export const DateDropdown: React.FC<Props> = (props) => {
     showTooltip = false,
     tabIndex,
     value,
+    formatToken,
+    renderByDefault = true,
   } = props;
   // states
   const [isOpen, setIsOpen] = useState(false);
@@ -95,8 +104,50 @@ export const DateDropdown: React.FC<Props> = (props) => {
   if (minDate) disabledDays.push({ before: minDate });
   if (maxDate) disabledDays.push({ after: maxDate });
 
+  const comboButton = (
+    <button
+      type="button"
+      className={cn(
+        "clickable block h-full max-w-full outline-none",
+        {
+          "cursor-not-allowed text-custom-text-200": disabled,
+          "cursor-pointer": !disabled,
+        },
+        buttonContainerClassName
+      )}
+      ref={setReferenceElement}
+      onClick={handleOnClick}
+      disabled={disabled}
+    >
+      <DropdownButton
+        className={buttonClassName}
+        isActive={isOpen}
+        tooltipHeading={placeholder}
+        tooltipContent={value ? renderFormattedDate(value, formatToken) : "None"}
+        showTooltip={showTooltip}
+        variant={buttonVariant}
+        renderToolTipByDefault={renderByDefault}
+      >
+        {!hideIcon && icon}
+        {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
+          <span className="flex-grow truncate">{value ? renderFormattedDate(value, formatToken) : placeholder}</span>
+        )}
+        {isClearable && !disabled && isDateSelected && (
+          <X
+            className={cn("h-2.5 w-2.5 flex-shrink-0", clearIconClassName)}
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              onChange(null);
+            }}
+          />
+        )}
+      </DropdownButton>
+    </button>
+  );
+
   return (
-    <Combobox
+    <ComboDropDown
       as="div"
       ref={dropdownRef}
       tabIndex={tabIndex}
@@ -106,69 +157,37 @@ export const DateDropdown: React.FC<Props> = (props) => {
           if (!isOpen) handleKeyDown(e);
         } else handleKeyDown(e);
       }}
+      button={comboButton}
       disabled={disabled}
+      renderByDefault={renderByDefault}
     >
-      <Combobox.Button as={React.Fragment}>
-        <button
-          type="button"
-          className={cn(
-            "clickable block h-full max-w-full outline-none",
-            {
-              "cursor-not-allowed text-custom-text-200": disabled,
-              "cursor-pointer": !disabled,
-            },
-            buttonContainerClassName
-          )}
-          ref={setReferenceElement}
-          onClick={handleOnClick}
-        >
-          <DropdownButton
-            className={buttonClassName}
-            isActive={isOpen}
-            tooltipHeading={placeholder}
-            tooltipContent={value ? renderFormattedDate(value) : "None"}
-            showTooltip={showTooltip}
-            variant={buttonVariant}
-          >
-            {!hideIcon && icon}
-            {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-              <span className="flex-grow truncate">{value ? renderFormattedDate(value) : placeholder}</span>
-            )}
-            {isClearable && !disabled && isDateSelected && (
-              <X
-                className={cn("h-2.5 w-2.5 flex-shrink-0", clearIconClassName)}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                  onChange(null);
+      {isOpen &&
+        createPortal(
+          <Combobox.Options data-prevent-outside-click static>
+            <div
+              className={cn(
+                "my-1 bg-custom-background-100 shadow-custom-shadow-rg rounded-md overflow-hidden p-3 z-20",
+                optionsClassName
+              )}
+              ref={setPopperElement}
+              style={styles.popper}
+              {...attributes.popper}
+            >
+              <DayPicker
+                selected={getDate(value)}
+                defaultMonth={getDate(value)}
+                onSelect={(date) => {
+                  dropdownOnChange(date ?? null);
                 }}
+                showOutsideDays
+                initialFocus
+                disabled={disabledDays}
+                mode="single"
               />
-            )}
-          </DropdownButton>
-        </button>
-      </Combobox.Button>
-      {isOpen && (
-        <Combobox.Options className="fixed z-10" static>
-          <div
-            className="my-1 bg-custom-background-100 shadow-custom-shadow-rg rounded-md overflow-hidden p-3"
-            ref={setPopperElement}
-            style={styles.popper}
-            {...attributes.popper}
-          >
-            <DayPicker
-              selected={getDate(value)}
-              defaultMonth={getDate(value)}
-              onSelect={(date) => {
-                dropdownOnChange(date ?? null);
-              }}
-              showOutsideDays
-              initialFocus
-              disabled={disabledDays}
-              mode="single"
-            />
-          </div>
-        </Combobox.Options>
-      )}
-    </Combobox>
+            </div>
+          </Combobox.Options>,
+          document.body
+        )}
+    </ComboDropDown>
   );
 };

@@ -6,6 +6,7 @@ import { Plus } from "lucide-react";
 // types
 import { TStaticViewTypes } from "@plane/types";
 // components
+import { Header, EHeaderVariant } from "@plane/ui";
 import {
   CreateUpdateWorkspaceViewModal,
   DefaultWorkspaceViewQuickActions,
@@ -13,9 +14,10 @@ import {
 } from "@/components/workspace";
 // constants
 import { GLOBAL_VIEW_OPENED } from "@/constants/event-tracker";
-import { DEFAULT_GLOBAL_VIEWS_LIST, EUserWorkspaceRoles } from "@/constants/workspace";
+import { DEFAULT_GLOBAL_VIEWS_LIST } from "@/constants/workspace";
 // store hooks
-import { useEventTracker, useGlobalView, useUser } from "@/hooks/store";
+import { useEventTracker, useGlobalView, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const ViewTab = observer((props: { viewId: string }) => {
   const { viewId } = props;
@@ -76,9 +78,8 @@ export const GlobalViewsHeader: React.FC = observer(() => {
   const { globalViewId } = useParams();
   // store hooks
   const { currentWorkspaceViews } = useGlobalView();
-  const {
-    membership: { currentWorkspaceRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
+
   const { captureEvent } = useEventTracker();
 
   // bring the active view to the centre of the header
@@ -100,33 +101,36 @@ export const GlobalViewsHeader: React.FC = observer(() => {
     }
   }, [globalViewId, currentWorkspaceViews, containerRef, captureEvent]);
 
-  const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+  const isAuthorizedUser = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
 
   return (
-    <>
+    <Header variant={EHeaderVariant.SECONDARY} className="min-h-[44px] z-[12] bg-custom-background-100">
       <CreateUpdateWorkspaceViewModal isOpen={createViewModal} onClose={() => setCreateViewModal(false)} />
-      <div className="group relative flex border-b border-custom-border-200">
-        <div
-          ref={containerRef}
-          className="flex w-full items-center overflow-x-auto px-4 horizontal-scrollbar scrollbar-sm"
-        >
-          {DEFAULT_GLOBAL_VIEWS_LIST.map((tab, index) => (
-            <DefaultViewTab key={`${tab.key}-${index}`} tab={tab} />
-          ))}
+      <div
+        ref={containerRef}
+        className="flex h-full w-full items-center overflow-y-hidden overflow-x-auto horizontal-scrollbar scrollbar-sm"
+      >
+        {DEFAULT_GLOBAL_VIEWS_LIST.map((tab, index) => (
+          <DefaultViewTab key={`${tab.key}-${index}`} tab={tab} />
+        ))}
 
-          {currentWorkspaceViews?.map((viewId) => <ViewTab key={viewId} viewId={viewId} />)}
-        </div>
-
-        {isAuthorizedUser && (
-          <button
-            type="button"
-            className="sticky -right-4 flex w-12 flex-shrink-0 items-center justify-center border-transparent bg-custom-background-100 py-3 hover:border-custom-border-200 hover:text-custom-text-400"
-            onClick={() => setCreateViewModal(true)}
-          >
-            <Plus className="h-4 w-4 text-custom-primary-200" />
-          </button>
-        )}
+        {currentWorkspaceViews?.map((viewId) => <ViewTab key={viewId} viewId={viewId} />)}
       </div>
-    </>
+
+      {isAuthorizedUser ? (
+        <button
+          type="button"
+          className="sticky -right-4 flex flex-shrink-0 items-center justify-center border-transparent bg-custom-background-100 py-3 hover:border-custom-border-200 hover:text-custom-text-400"
+          onClick={() => setCreateViewModal(true)}
+        >
+          <Plus className="h-4 w-4 text-custom-primary-200" />
+        </button>
+      ) : (
+        <></>
+      )}
+    </Header>
   );
 });

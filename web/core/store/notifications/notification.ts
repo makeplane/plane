@@ -42,6 +42,7 @@ export class Notification implements INotification {
   archived_at: string | undefined = undefined;
   snoozed_till: string | undefined = undefined;
   is_inbox_issue: boolean | undefined = undefined;
+  is_mentioned_notification: boolean | undefined = undefined;
   workspace: string | undefined = undefined;
   project: string | undefined = undefined;
   created_at: string | undefined = undefined;
@@ -70,6 +71,8 @@ export class Notification implements INotification {
       read_at: observable.ref,
       archived_at: observable.ref,
       snoozed_till: observable.ref,
+      is_inbox_issue: observable.ref,
+      is_mentioned_notification: observable.ref,
       workspace: observable.ref,
       project: observable.ref,
       created_at: observable.ref,
@@ -102,8 +105,9 @@ export class Notification implements INotification {
     this.read_at = this.notification.read_at;
     this.archived_at = this.notification.archived_at;
     this.snoozed_till = this.notification.snoozed_till;
-    this.workspace = this.notification.workspace;
     this.is_inbox_issue = this.notification.is_inbox_issue;
+    this.is_mentioned_notification = this.notification.is_mentioned_notification;
+    this.workspace = this.notification.workspace;
     this.project = this.notification.project;
     this.created_at = this.notification.created_at;
     this.updated_at = this.notification.updated_at;
@@ -132,8 +136,9 @@ export class Notification implements INotification {
       read_at: this.read_at,
       archived_at: this.archived_at,
       snoozed_till: this.snoozed_till,
-      workspace: this.workspace,
       is_inbox_issue: this.is_inbox_issue,
+      is_mentioned_notification: this.is_mentioned_notification,
+      workspace: this.workspace,
       project: this.project,
       created_at: this.created_at,
       updated_at: this.updated_at,

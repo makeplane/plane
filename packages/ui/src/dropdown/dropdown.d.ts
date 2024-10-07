@@ -85,6 +85,7 @@ export interface IDropdownOptions {
   renderItem: (({ value, selected }: { value: string; selected: boolean }) => React.ReactNode) | undefined;
   options: TDropdownOption[] | undefined;
   loader?: React.ReactNode;
+  isMobile?: boolean;
 }
 
 export interface IMultiSelectDropdownOptions extends IDropdownOptions {

@@ -1,50 +1,46 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { FC, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import useSWR from "swr";
 // icons
 import { ChevronDown, Pencil } from "lucide-react";
 // headless ui
 import { Disclosure, Transition } from "@headlessui/react";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
+// types
+import { IUserProfileProjectSegregation } from "@plane/types";
 // plane ui
 import { Loader, Tooltip } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
-// fetch-keys
-import { USER_PROFILE_PROJECT_SEGREGATION } from "@/constants/fetch-keys";
 // helpers
+import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
 import { useAppTheme, useProject, useUser } from "@/hooks/store";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// services
-import { UserService } from "@/services/user.service";
 // components
 import { ProfileSidebarTime } from "./time";
 
-// services
-const userService = new UserService();
+type TProfileSidebar = {
+  userProjectsData: IUserProfileProjectSegregation | undefined;
+  className?: string;
+};
 
-export const ProfileSidebar = observer(() => {
+export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
+  const { userProjectsData, className = "" } = props;
   // refs
   const ref = useRef<HTMLDivElement>(null);
   // router
-  const { workspaceSlug, userId } = useParams();
+  const { userId } = useParams();
   // store hooks
   const { data: currentUser } = useUser();
   const { profileSidebarCollapsed, toggleProfileSidebar } = useAppTheme();
   const { getProjectById } = useProject();
   const { isMobile } = usePlatformOS();
-  const { data: userProjectsData } = useSWR(
-    workspaceSlug && userId ? USER_PROFILE_PROJECT_SEGREGATION(workspaceSlug.toString(), userId.toString()) : null,
-    workspaceSlug && userId
-      ? () => userService.getUserProfileProjectsSegregation(workspaceSlug.toString(), userId.toString())
-      : null
-  );
 
   useOutsideClickDetector(ref, () => {
     if (profileSidebarCollapsed === false) {
@@ -82,12 +78,15 @@ export const ProfileSidebar = observer(() => {
 
   return (
     <div
-      className={`vertical-scrollbar scrollbar-md fixed z-[5] h-full w-full flex-shrink-0 overflow-hidden overflow-y-auto border-l border-custom-border-100 bg-custom-sidebar-background-100 shadow-custom-shadow-sm transition-all md:relative md:w-[300px]`}
+      className={cn(
+        `vertical-scrollbar scrollbar-md fixed z-[5] h-full w-full flex-shrink-0 overflow-hidden overflow-y-auto border-l border-custom-border-100 bg-custom-sidebar-background-100 transition-all md:relative md:w-[300px]`,
+        className
+      )}
       style={profileSidebarCollapsed ? { marginLeft: `${window?.innerWidth || 0}px` } : {}}
     >
       {userProjectsData ? (
         <>
-          <div className="relative h-32">
+          <div className="relative h-[110px]">
             {currentUser?.id === userId && (
               <div className="absolute right-3.5 top-3.5 grid h-5 w-5 place-items-center rounded bg-white">
                 <Link href="/profile">
@@ -100,7 +99,7 @@ export const ProfileSidebar = observer(() => {
             <img
               src={userProjectsData.user_data?.cover_image ?? "/users/user-profile-cover-default-img.png"}
               alt={userProjectsData.user_data?.display_name}
-              className="h-32 w-full object-cover"
+              className="h-[110px] w-full object-cover"
             />
             <div className="absolute -bottom-[26px] left-5 h-[52px] w-[52px] rounded">
               {userProjectsData.user_data?.avatar && userProjectsData.user_data?.avatar !== "" ? (

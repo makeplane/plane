@@ -30,8 +30,10 @@ from rest_framework.response import Response
 # Module imports
 from plane.app.permissions import (
     ProjectEntityPermission,
-    ProjectLitePermission,
+    allow_permission,
+    ROLE,
 )
+
 from plane.app.serializers import (
     ModuleDetailSerializer,
     ModuleLinkSerializer,
@@ -39,7 +41,7 @@ from plane.app.serializers import (
     ModuleUserPropertiesSerializer,
     ModuleWriteSerializer,
 )
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
     Module,
@@ -53,13 +55,11 @@ from plane.utils.analytics_plot import burndown_plot
 from plane.utils.user_timezone_converter import user_timezone_converter
 from plane.bgtasks.webhook_task import model_activity
 from .. import BaseAPIView, BaseViewSet
+from plane.bgtasks.recent_visited_task import recent_visited_task
 
 
 class ModuleViewSet(BaseViewSet):
     model = Module
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
     webhook_event = "module"
 
     def get_serializer_class(self):
@@ -317,6 +317,13 @@ class ModuleViewSet(BaseViewSet):
             .order_by("-is_favorite", "-created_at")
         )
 
+    allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+        ]
+    )
+
     def create(self, request, slug, project_id):
         project = Project.objects.get(workspace__slug=slug, pk=project_id)
         serializer = ModuleWriteSerializer(
@@ -379,6 +386,8 @@ class ModuleViewSet(BaseViewSet):
             return Response(module, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+
     def list(self, request, slug, project_id):
         queryset = self.get_queryset().filter(archived_at__isnull=True)
         if self.fields:
@@ -426,6 +435,13 @@ class ModuleViewSet(BaseViewSet):
             )
         return Response(modules, status=status.HTTP_200_OK)
 
+    allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+        ]
+    )
+
     def retrieve(self, request, slug, project_id, pk):
         queryset = (
             self.get_queryset()
@@ -442,6 +458,12 @@ class ModuleViewSet(BaseViewSet):
                 .values("count")
             )
         )
+
+        if not queryset.exists():
+            return Response(
+                {"error": "Module not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
         estimate_type = Project.objects.filter(
             workspace__slug=slug,
@@ -554,7 +576,7 @@ class ModuleViewSet(BaseViewSet):
                 )
 
         assignee_distribution = (
-            Issue.objects.filter(
+            Issue.issue_objects.filter(
                 issue_module__module_id=pk,
                 workspace__slug=slug,
                 project_id=project_id,
@@ -604,7 +626,7 @@ class ModuleViewSet(BaseViewSet):
         )
 
         label_distribution = (
-            Issue.objects.filter(
+            Issue.issue_objects.filter(
                 issue_module__module_id=pk,
                 workspace__slug=slug,
                 project_id=project_id,
@@ -659,11 +681,20 @@ class ModuleViewSet(BaseViewSet):
                 module_id=pk,
             )
 
+        recent_visited_task.delay(
+            slug=slug,
+            entity_name="module",
+            entity_identifier=pk,
+            user_id=request.user.id,
+            project_id=project_id,
+        )
+
         return Response(
             data,
             status=status.HTTP_200_OK,
         )
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def partial_update(self, request, slug, project_id, pk):
         module = self.get_queryset().filter(pk=pk)
 
@@ -733,10 +764,12 @@ class ModuleViewSet(BaseViewSet):
             return Response(module, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @allow_permission([ROLE.ADMIN], creator=True, model=Module)
     def destroy(self, request, slug, project_id, pk):
         module = Module.objects.get(
             workspace__slug=slug, project_id=project_id, pk=pk
         )
+
         module_issues = list(
             ModuleIssue.objects.filter(module_id=pk).values_list(
                 "issue", flat=True
@@ -757,6 +790,18 @@ class ModuleViewSet(BaseViewSet):
             for issue in module_issues
         ]
         module.delete()
+        # Delete the module issues
+        ModuleIssue.objects.filter(
+            module=pk,
+            project_id=project_id,
+        ).delete()
+        # Delete the user favorite module
+        UserFavorite.objects.filter(
+            user=request.user,
+            entity_type="module",
+            entity_identifier=pk,
+            project_id=project_id,
+        ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -820,15 +865,13 @@ class ModuleFavoriteViewSet(BaseViewSet):
             entity_type="module",
             entity_identifier=module_id,
         )
-        module_favorite.delete()
+        module_favorite.delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ModuleUserPropertiesEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectLitePermission,
-    ]
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def patch(self, request, slug, project_id, module_id):
         module_properties = ModuleUserProperties.objects.get(
             user=request.user,
@@ -851,6 +894,7 @@ class ModuleUserPropertiesEndpoint(BaseAPIView):
         serializer = ModuleUserPropertiesSerializer(module_properties)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, module_id):
         module_properties, _ = ModuleUserProperties.objects.get_or_create(
             user=request.user,

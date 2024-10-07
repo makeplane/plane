@@ -1,9 +1,9 @@
 "use client";
 
-import { FC, useCallback, useRef, useState } from "react";
+import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { TInboxIssueCurrentTab } from "@plane/types";
-import { Loader } from "@plane/ui";
+import { Header, Loader, EHeaderVariant } from "@plane/ui";
 // components
 import { EmptyState } from "@/components/empty-state";
 import { FiltersRoot, InboxIssueAppliedFilters, InboxIssueList } from "@/components/inbox";
@@ -21,6 +21,7 @@ import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 type IInboxSidebarProps = {
   workspaceSlug: string;
   projectId: string;
+  inboxIssueId: string | undefined;
   setIsMobileSidebar: (value: boolean) => void;
 };
 
@@ -36,7 +37,7 @@ const tabNavigationOptions: { key: TInboxIssueCurrentTab; label: string }[] = [
 ];
 
 export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
-  const { workspaceSlug, projectId, setIsMobileSidebar } = props;
+  const { workspaceSlug, projectId, inboxIssueId, setIsMobileSidebar } = props;
   // ref
   const containerRef = useRef<HTMLDivElement>(null);
   const [elementRef, setElementRef] = useState<HTMLDivElement | null>(null);
@@ -62,15 +63,25 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
   // page observer
   useIntersectionObserver(containerRef, elementRef, fetchNextPages, "20%");
 
+  useEffect(() => {
+    if (workspaceSlug && projectId && currentTab && filteredInboxIssueIds.length > 0) {
+      if (inboxIssueId === undefined) {
+        router.push(
+          `/${workspaceSlug}/projects/${projectId}/inbox?currentTab=${currentTab}&inboxIssueId=${filteredInboxIssueIds[0]}`
+        );
+      }
+    }
+  }, [currentTab, filteredInboxIssueIds, inboxIssueId, projectId, router, workspaceSlug]);
+
   return (
     <div className="bg-custom-background-100 flex-shrink-0 w-full h-full border-r border-custom-border-300 ">
       <div className="relative w-full h-full flex flex-col overflow-hidden">
-        <div className="border-b border-custom-border-300 flex-shrink-0 w-full h-[50px] relative flex items-center gap-2  whitespace-nowrap px-3">
+        <Header variant={EHeaderVariant.SECONDARY}>
           {tabNavigationOptions.map((option) => (
             <div
               key={option?.key}
               className={cn(
-                `text-sm relative flex items-center gap-1 h-[50px] px-3 cursor-pointer transition-all font-medium`,
+                `text-sm relative flex items-center gap-1 h-full px-3 cursor-pointer transition-all font-medium`,
                 currentTab === option?.key ? `text-custom-primary-100` : `hover:text-custom-text-200`
               )}
               onClick={() => {
@@ -94,11 +105,10 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
               />
             </div>
           ))}
-          <div className="ml-auto">
+          <div className="m-auto mr-0">
             <FiltersRoot />
           </div>
-        </div>
-
+        </Header>
         <InboxIssueAppliedFilters />
 
         {loader != undefined && loader === "filter-loading" && !inboxIssuePaginationInfo?.next_page_results ? (

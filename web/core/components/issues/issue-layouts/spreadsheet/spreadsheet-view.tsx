@@ -5,15 +5,16 @@ import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@pl
 // components
 import { LogoSpinner } from "@/components/common";
 import { MultipleSelectGroup } from "@/components/core";
-import { SpreadsheetQuickAddIssueForm } from "@/components/issues";
+import { QuickAddIssueRoot, SpreadsheetAddIssueButton } from "@/components/issues";
 // constants
+import { EIssueLayoutTypes } from "@/constants/issue";
 import { SPREADSHEET_PROPERTY_LIST, SPREADSHEET_SELECT_GROUP } from "@/constants/spreadsheet";
 // hooks
 import { useProject } from "@/hooks/store";
 // plane web components
 import { IssueBulkOperationsRoot } from "@/plane-web/components/issues";
-// plane web constants
-import { ENABLE_BULK_OPERATIONS } from "@/plane-web/constants/issue";
+// plane web hooks
+import { useBulkOperationStatus } from "@/plane-web/hooks/use-bulk-operation-status";
 // types
 import { TRenderQuickActions } from "../list/list-view-types";
 import { SpreadsheetTable } from "./spreadsheet-table";
@@ -54,8 +55,10 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
   // refs
   const containerRef = useRef<HTMLTableElement | null>(null);
   const portalRef = useRef<HTMLDivElement | null>(null);
-
+  // store hooks
   const { currentProjectDetails } = useProject();
+  // plane web hooks
+  const isBulkOperationsEnabled = useBulkOperationStatus();
 
   const isEstimateEnabled: boolean = currentProjectDetails?.estimate !== null;
 
@@ -82,7 +85,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
         entities={{
           [SPREADSHEET_SELECT_GROUP]: issueIds,
         }}
-        disabled={!ENABLE_BULK_OPERATIONS}
+        disabled={!isBulkOperationsEnabled}
       >
         {(helpers) => (
           <>
@@ -107,7 +110,11 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
             <div className="border-t border-custom-border-100">
               <div className="z-5 sticky bottom-0 left-0 mb-3">
                 {enableQuickCreateIssue && !disableIssueCreation && (
-                  <SpreadsheetQuickAddIssueForm formKey="name" quickAddCallback={quickAddCallback} />
+                  <QuickAddIssueRoot
+                    layout={EIssueLayoutTypes.SPREADSHEET}
+                    QuickAddButton={SpreadsheetAddIssueButton}
+                    quickAddCallback={quickAddCallback}
+                  />
                 )}
               </div>
             </div>

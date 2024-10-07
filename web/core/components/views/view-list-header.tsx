@@ -2,11 +2,12 @@ import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // icons
 import { ListFilter, Search, X } from "lucide-react";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useMember, useProjectView } from "@/hooks/store";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { FiltersDropdown } from "../issues";
 import { ViewFiltersSelection } from "./filters/filter-selection";
 import { ViewOrderByDropdown } from "./filters/order-by";
@@ -89,26 +90,28 @@ export const ViewListHeader = observer(() => {
           )}
         </div>
       </div>
-      <ViewOrderByDropdown
-        sortBy={filters.sortBy}
-        sortKey={filters.sortKey}
-        onChange={(val) => {
-          if (val.key) updateFilters("sortKey", val.key);
-          if (val.order) updateFilters("sortBy", val.order);
-        }}
-      />
-      <FiltersDropdown
-        icon={<ListFilter className="h-3 w-3" />}
-        title="Filters"
-        placement="bottom-end"
-        isFiltersApplied={false}
-      >
-        <ViewFiltersSelection
-          filters={filters}
-          handleFiltersUpdate={updateFilters}
-          memberIds={projectMemberIds ?? undefined}
+      <div className="hidden md:flex items-center gap-2">
+        <ViewOrderByDropdown
+          sortBy={filters.sortBy}
+          sortKey={filters.sortKey}
+          onChange={(val) => {
+            if (val.key) updateFilters("sortKey", val.key);
+            if (val.order) updateFilters("sortBy", val.order);
+          }}
         />
-      </FiltersDropdown>
+        <FiltersDropdown
+          icon={<ListFilter className="h-3 w-3" />}
+          title="Filters"
+          placement="bottom-end"
+          isFiltersApplied={false}
+        >
+          <ViewFiltersSelection
+            filters={filters}
+            handleFiltersUpdate={updateFilters}
+            memberIds={projectMemberIds ?? undefined}
+          />
+        </FiltersDropdown>
+      </div>
     </div>
   );
 });

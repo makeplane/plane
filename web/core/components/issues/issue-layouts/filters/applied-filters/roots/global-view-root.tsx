@@ -6,10 +6,10 @@ import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
-import { cn } from "@plane/editor";
 import { IIssueFilterOptions, TStaticViewTypes } from "@plane/types";
 //ui
 // components
+import { Header, EHeaderVariant } from "@plane/ui";
 import { AppliedFiltersList } from "@/components/issues";
 import { UpdateViewComponent } from "@/components/views/update-view-component";
 import { CreateUpdateWorkspaceViewModal } from "@/components/workspace";
@@ -17,9 +17,12 @@ import { CreateUpdateWorkspaceViewModal } from "@/components/workspace";
 import { GLOBAL_VIEW_UPDATED } from "@/constants/event-tracker";
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 import { EViewAccess } from "@/constants/views";
-import { DEFAULT_GLOBAL_VIEWS_LIST, EUserWorkspaceRoles } from "@/constants/workspace";
+import { DEFAULT_GLOBAL_VIEWS_LIST } from "@/constants/workspace";
+// helpers
+import { cn } from "@/helpers/common.helper";
 // hooks
-import { useEventTracker, useGlobalView, useIssues, useLabel, useUser } from "@/hooks/store";
+import { useEventTracker, useGlobalView, useIssues, useLabel, useUser, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { getAreFiltersEqual } from "../../../utils";
 
 type Props = {
@@ -37,10 +40,8 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
   const { workspaceLabels } = useLabel();
   const { globalViewMap, updateGlobalView } = useGlobalView();
   const { captureEvent } = useEventTracker();
-  const {
-    data,
-    membership: { currentWorkspaceRole },
-  } = useUser();
+  const { data } = useUser();
+  const { allowPermissions } = useUserPermissions();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -117,9 +118,13 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
     });
   };
 
-  const areFiltersEqual = getAreFiltersEqual(appliedFilters, issueFilters, viewDetails);
+  // add a placeholder object instead of appliedFilters if it is undefined
+  const areFiltersEqual = getAreFiltersEqual(appliedFilters ?? {}, issueFilters, viewDetails);
 
-  const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+  const isAuthorizedUser = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
 
   const isDefaultView = DEFAULT_GLOBAL_VIEWS_LIST.map((view) => view.key).includes(globalViewId as TStaticViewTypes);
 
@@ -132,7 +137,12 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
   if (areAppliedFiltersEmpty && areFiltersEqual) return null;
 
   return (
-    <>
+    <Header
+      variant={EHeaderVariant.TERNARY}
+      className={cn({
+        "justify-end": areAppliedFiltersEmpty,
+      })}
+    >
       <CreateUpdateWorkspaceViewModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -143,31 +153,28 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
           ...viewFilters,
         }}
       />
-      <div
-        className={cn("flex items-start justify-between gap-4 p-4", {
-          "justify-end": areAppliedFiltersEmpty,
-        })}
-      >
-        <AppliedFiltersList
-          labels={workspaceLabels ?? undefined}
-          appliedFilters={appliedFilters ?? {}}
-          handleClearAllFilters={handleClearAllFilters}
-          handleRemoveFilter={handleRemoveFilter}
-          disableEditing={isLocked}
-          alwaysAllowEditing
-        />
 
-        {!isDefaultView && (
-          <UpdateViewComponent
-            isLocked={isLocked}
-            areFiltersEqual={!!areFiltersEqual}
-            isOwner={isOwner}
-            isAuthorizedUser={isAuthorizedUser}
-            setIsModalOpen={setIsModalOpen}
-            handleUpdateView={handleUpdateView}
-          />
-        )}
-      </div>
-    </>
+      <AppliedFiltersList
+        labels={workspaceLabels ?? undefined}
+        appliedFilters={appliedFilters ?? {}}
+        handleClearAllFilters={handleClearAllFilters}
+        handleRemoveFilter={handleRemoveFilter}
+        disableEditing={isLocked}
+        alwaysAllowEditing
+      />
+
+      {!isDefaultView ? (
+        <UpdateViewComponent
+          isLocked={isLocked}
+          areFiltersEqual={!!areFiltersEqual}
+          isOwner={isOwner}
+          isAuthorizedUser={isAuthorizedUser}
+          setIsModalOpen={setIsModalOpen}
+          handleUpdateView={handleUpdateView}
+        />
+      ) : (
+        <></>
+      )}
+    </Header>
   );
 });

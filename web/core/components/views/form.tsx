@@ -3,21 +3,26 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
+import { Layers } from "lucide-react";
 // types
-import { IProjectView, IIssueFilterOptions } from "@plane/types";
+import { IProjectView, IIssueFilterOptions, IIssueDisplayProperties, IIssueDisplayFilterOptions } from "@plane/types";
 // ui
-import { Button, EmojiIconPicker, EmojiIconPickerTypes, Input, PhotoFilterIcon, TextArea } from "@plane/ui";
+import { Button, EmojiIconPicker, EmojiIconPickerTypes, Input, TextArea } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
-import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "@/components/issues";
+import { AppliedFiltersList, DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
 // constants
 import { EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
+import { ETabIndices } from "@/constants/tab-indices";
 import { EViewAccess } from "@/constants/views";
 // helpers
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 import { getComputedDisplayFilters, getComputedDisplayProperties } from "@/helpers/issue.helper";
+import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+
 import { AccessController } from "@/plane-web/components/views/access-controller";
 import { LayoutDropDown } from "../dropdowns/layout";
 
@@ -33,7 +38,7 @@ const defaultValues: Partial<IProjectView> = {
   description: "",
   access: EViewAccess.PUBLIC,
   display_properties: getComputedDisplayProperties(),
-  display_filters: getComputedDisplayFilters(),
+  display_filters: { ...getComputedDisplayFilters(), group_by: "state" },
 };
 
 export const ProjectViewForm: React.FC<Props> = observer((props) => {
@@ -47,6 +52,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
   const {
     project: { projectMemberIds },
   } = useMember();
+  const { isMobile } = usePlatformOS();
   // form info
   const {
     control,
@@ -60,6 +66,8 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
   });
 
   const logoValue = watch("logo_props");
+
+  const { getIndex } = getTabIndex(ETabIndices.PROJECT_VIEW, isMobile);
 
   const selectedFilters: IIssueFilterOptions = {};
   Object.entries(watch("filters") ?? {}).forEach(([key, value]) => {
@@ -130,7 +138,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
   return (
     <form onSubmit={handleSubmit(handleCreateUpdateView)}>
       <div className="space-y-5 p-5">
-        <h3 className="text-xl font-medium text-custom-text-200">{data ? "Update" : "Create"} View</h3>
+        <h3 className="text-xl font-medium text-custom-text-200">{data ? "Update" : "Create"} view</h3>
         <div className="space-y-3">
           <div className="flex items-start gap-2 w-full">
             <EmojiIconPicker
@@ -144,7 +152,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                     {logoValue?.in_use ? (
                       <Logo logo={logoValue} size={18} type="lucide" />
                     ) : (
-                      <PhotoFilterIcon className="h-4 w-4 text-custom-text-300" />
+                      <Layers className="h-4 w-4 text-custom-text-300" />
                     )}
                   </>
                 </span>
@@ -193,7 +201,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                     hasError={Boolean(errors.name)}
                     placeholder="Title"
                     className="w-full text-base"
-                    tabIndex={1}
+                    tabIndex={getIndex("name")}
                     autoFocus
                   />
                 )}
@@ -214,7 +222,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                   hasError={Boolean(errors?.description)}
                   value={value}
                   onChange={onChange}
-                  tabIndex={2}
+                  tabIndex={getIndex("descriptions")}
                 />
               )}
             />
@@ -223,46 +231,87 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
             <AccessController control={control} />
             <Controller
               control={control}
-              name="display_filters.layout"
-              render={({ field: { onChange, value } }) => (
-                <LayoutDropDown
-                  onChange={(selectedValue: EIssueLayoutTypes) => onChange(selectedValue)}
-                  value={value}
-                />
-              )}
-            />
-            <Controller
-              control={control}
-              name="filters"
-              render={({ field: { onChange, value: filters } }) => (
-                <FiltersDropdown title="Filters" tabIndex={3}>
-                  <FilterSelection
-                    filters={filters ?? {}}
-                    handleFiltersUpdate={(key, value) => {
-                      const newValues = filters?.[key] ?? [];
-
-                      if (Array.isArray(value)) {
-                        value.forEach((val) => {
-                          if (!newValues.includes(val)) newValues.push(val);
-                        });
-                      } else {
-                        if (filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-                        else newValues.push(value);
-                      }
-
-                      onChange({
-                        ...filters,
-                        [key]: newValues,
-                      });
-                    }}
-                    layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues.list}
-                    labels={projectLabels ?? undefined}
-                    memberIds={projectMemberIds ?? undefined}
-                    states={projectStates}
-                    cycleViewDisabled={!currentProjectDetails?.cycle_view}
-                    moduleViewDisabled={!currentProjectDetails?.module_view}
+              name="display_filters"
+              render={({ field: { onChange: onDisplayFiltersChange, value: displayFilters } }) => (
+                <>
+                  {/* layout dropdown */}
+                  <LayoutDropDown
+                    onChange={(selectedValue: EIssueLayoutTypes) =>
+                      onDisplayFiltersChange({
+                        ...displayFilters,
+                        layout: selectedValue,
+                      })
+                    }
+                    value={displayFilters.layout}
                   />
-                </FiltersDropdown>
+
+                  {/* filters dropdown */}
+                  <Controller
+                    control={control}
+                    name="filters"
+                    render={({ field: { onChange, value: filters } }) => (
+                      <FiltersDropdown title="Filters" tabIndex={getIndex("filters")}>
+                        <FilterSelection
+                          filters={filters ?? {}}
+                          handleFiltersUpdate={(key, value) => {
+                            const newValues = filters?.[key] ?? [];
+
+                            if (Array.isArray(value)) {
+                              value.forEach((val) => {
+                                if (!newValues.includes(val)) newValues.push(val);
+                              });
+                            } else {
+                              if (filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+                              else newValues.push(value);
+                            }
+
+                            onChange({
+                              ...filters,
+                              [key]: newValues,
+                            });
+                          }}
+                          layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[displayFilters.layout]}
+                          labels={projectLabels ?? undefined}
+                          memberIds={projectMemberIds ?? undefined}
+                          states={projectStates}
+                          cycleViewDisabled={!currentProjectDetails?.cycle_view}
+                          moduleViewDisabled={!currentProjectDetails?.module_view}
+                        />
+                      </FiltersDropdown>
+                    )}
+                  />
+
+                  {/* display filters dropdown */}
+                  <Controller
+                    control={control}
+                    name="display_properties"
+                    render={({ field: { onChange: onDisplayPropertiesChange, value: displayProperties } }) => (
+                      <FiltersDropdown title="Display">
+                        <DisplayFiltersSelection
+                          layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[displayFilters.layout]}
+                          displayFilters={displayFilters ?? {}}
+                          handleDisplayFiltersUpdate={(updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
+                            onDisplayFiltersChange({
+                              ...displayFilters,
+                              ...updatedDisplayFilter,
+                            });
+                          }}
+                          displayProperties={displayProperties ?? {}}
+                          handleDisplayPropertiesUpdate={(
+                            updatedDisplayProperties: Partial<IIssueDisplayProperties>
+                          ) => {
+                            onDisplayPropertiesChange({
+                              ...displayProperties,
+                              ...updatedDisplayProperties,
+                            });
+                          }}
+                          cycleViewDisabled={!currentProjectDetails?.cycle_view}
+                          moduleViewDisabled={!currentProjectDetails?.module_view}
+                        />
+                      </FiltersDropdown>
+                    )}
+                  />
+                </>
               )}
             />
           </div>
@@ -280,10 +329,10 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
         </div>
       </div>
       <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={4}>
+        <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={getIndex("cancel")}>
           Cancel
         </Button>
-        <Button variant="primary" size="sm" type="submit" tabIndex={5} loading={isSubmitting}>
+        <Button variant="primary" size="sm" type="submit" tabIndex={getIndex("submit")} loading={isSubmitting}>
           {data ? (isSubmitting ? "Updating" : "Update View") : isSubmitting ? "Creating" : "Create View"}
         </Button>
       </div>

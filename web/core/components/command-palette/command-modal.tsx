@@ -7,45 +7,50 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { FolderPlus, Search, Settings } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
-// icons
+// types
 import { IWorkspaceSearchResults } from "@plane/types";
-// hooks
+// ui
 import { LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
+// components
 import {
-  CommandPaletteThemeActions,
   ChangeIssueAssignee,
   ChangeIssuePriority,
   ChangeIssueState,
   CommandPaletteHelpActions,
   CommandPaletteIssueActions,
   CommandPaletteProjectActions,
-  CommandPaletteWorkspaceSettingsActions,
   CommandPaletteSearchResults,
+  CommandPaletteThemeActions,
+  CommandPaletteWorkspaceSettingsActions,
 } from "@/components/command-palette";
 import { EmptyState } from "@/components/empty-state";
+// constants
 import { EmptyStateType } from "@/constants/empty-state";
+// fetch-keys
 import { ISSUE_DETAILS } from "@/constants/fetch-keys";
-import { useCommandPalette, useEventTracker, useProject } from "@/hooks/store";
+// helpers
+import { getTabIndex } from "@/helpers/tab-indices.helper";
+// hooks
+import { useCommandPalette, useEventTracker, useProject, useUser, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// services
+// plane web components
+import { IssueIdentifier } from "@/plane-web/components/issues";
+// plane web services
 import { WorkspaceService } from "@/plane-web/services";
+// services
 import { IssueService } from "@/services/issue";
-
-// ui
-// components
-// types
-// fetch-keys
-// constants
+import { EUserPermissions, EUserPermissionsLevel } from "ee/constants/user-permissions";
 
 const workspaceService = new WorkspaceService();
 const issueService = new IssueService();
 
 export const CommandModal: React.FC = observer(() => {
   // hooks
-  const { getProjectById, workspaceProjectIds } = useProject();
+  const { workspaceProjectIds } = useProject();
   const { isMobile } = usePlatformOS();
+  const { canPerformAnyCreateAction } = useUser();
   // states
   const [placeholder, setPlaceholder] = useState("Type a command or search...");
   const [resultsCount, setResultsCount] = useState(0);
@@ -67,6 +72,7 @@ export const CommandModal: React.FC = observer(() => {
   const [pages, setPages] = useState<string[]>([]);
   const { isCommandPaletteOpen, toggleCommandPaletteModal, toggleCreateIssueModal, toggleCreateProjectModal } =
     useCommandPalette();
+  const { allowPermissions } = useUserPermissions();
   const { setTrackElement } = useEventTracker();
 
   // router
@@ -77,6 +83,13 @@ export const CommandModal: React.FC = observer(() => {
   const page = pages[pages.length - 1];
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
+  const { baseTabIndex } = getTabIndex(undefined, isMobile);
+
+  const canPerformWorkspaceActions = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
 
   // TODO: update this to mobx store
   const { data: issueDetails } = useSWR(
@@ -140,8 +153,6 @@ export const CommandModal: React.FC = observer(() => {
     [debouncedSearchTerm, isWorkspaceLevel, projectId, workspaceSlug] // Only call effect if debounced search term changes
   );
 
-  const projectDetails = getProjectById(issueDetails?.project_id ?? "");
-
   return (
     <Transition.Root show={isCommandPaletteOpen} afterLeave={() => setSearchTerm("")} as={React.Fragment}>
       <Dialog as="div" className="relative z-30" onClose={() => closePalette()}>
@@ -197,8 +208,15 @@ export const CommandModal: React.FC = observer(() => {
                       }`}
                     >
                       {issueDetails && (
-                        <div className="overflow-hidden truncate rounded-md bg-custom-background-80 p-2 text-xs font-medium text-custom-text-200">
-                          {projectDetails?.identifier}-{issueDetails.sequence_id} {issueDetails.name}
+                        <div className="flex gap-2 items-center overflow-hidden truncate rounded-md bg-custom-background-80 p-2 text-xs font-medium text-custom-text-200">
+                          {issueDetails.project_id && (
+                            <IssueIdentifier
+                              issueId={issueDetails.id}
+                              projectId={issueDetails.project_id}
+                              textContainerClassName="text-xs font-medium text-custom-text-200"
+                            />
+                          )}
+                          {issueDetails.name}
                         </div>
                       )}
                       {projectId && (
@@ -231,7 +249,7 @@ export const CommandModal: React.FC = observer(() => {
                         value={searchTerm}
                         onValueChange={(e) => setSearchTerm(e)}
                         autoFocus
-                        tabIndex={1}
+                        tabIndex={baseTabIndex}
                       />
                     </div>
 
@@ -282,26 +300,28 @@ export const CommandModal: React.FC = observer(() => {
                               setSearchTerm={(newSearchTerm) => setSearchTerm(newSearchTerm)}
                             />
                           )}
-                          {workspaceSlug && workspaceProjectIds && workspaceProjectIds.length > 0 && (
-                            <Command.Group heading="Issue">
-                              <Command.Item
-                                onSelect={() => {
-                                  closePalette();
-                                  setTrackElement("Command Palette");
-                                  toggleCreateIssueModal(true);
-                                }}
-                                className="focus:bg-custom-background-80"
-                              >
-                                <div className="flex items-center gap-2 text-custom-text-200">
-                                  <LayersIcon className="h-3.5 w-3.5" />
-                                  Create new issue
-                                </div>
-                                <kbd>C</kbd>
-                              </Command.Item>
-                            </Command.Group>
-                          )}
-
-                          {workspaceSlug && (
+                          {workspaceSlug &&
+                            workspaceProjectIds &&
+                            workspaceProjectIds.length > 0 &&
+                            canPerformAnyCreateAction && (
+                              <Command.Group heading="Issue">
+                                <Command.Item
+                                  onSelect={() => {
+                                    closePalette();
+                                    setTrackElement("Command Palette");
+                                    toggleCreateIssueModal(true);
+                                  }}
+                                  className="focus:bg-custom-background-80"
+                                >
+                                  <div className="flex items-center gap-2 text-custom-text-200">
+                                    <LayersIcon className="h-3.5 w-3.5" />
+                                    Create new issue
+                                  </div>
+                                  <kbd>C</kbd>
+                                </Command.Item>
+                              </Command.Group>
+                            )}
+                          {workspaceSlug && canPerformWorkspaceActions && (
                             <Command.Group heading="Project">
                               <Command.Item
                                 onSelect={() => {
@@ -321,23 +341,26 @@ export const CommandModal: React.FC = observer(() => {
                           )}
 
                           {/* project actions */}
-                          {projectId && <CommandPaletteProjectActions closePalette={closePalette} />}
-
-                          <Command.Group heading="Workspace Settings">
-                            <Command.Item
-                              onSelect={() => {
-                                setPlaceholder("Search workspace settings...");
-                                setSearchTerm("");
-                                setPages([...pages, "settings"]);
-                              }}
-                              className="focus:outline-none"
-                            >
-                              <div className="flex items-center gap-2 text-custom-text-200">
-                                <Settings className="h-3.5 w-3.5" />
-                                Search settings...
-                              </div>
-                            </Command.Item>
-                          </Command.Group>
+                          {projectId && canPerformAnyCreateAction && (
+                            <CommandPaletteProjectActions closePalette={closePalette} />
+                          )}
+                          {canPerformWorkspaceActions && (
+                            <Command.Group heading="Workspace Settings">
+                              <Command.Item
+                                onSelect={() => {
+                                  setPlaceholder("Search workspace settings...");
+                                  setSearchTerm("");
+                                  setPages([...pages, "settings"]);
+                                }}
+                                className="focus:outline-none"
+                              >
+                                <div className="flex items-center gap-2 text-custom-text-200">
+                                  <Settings className="h-3.5 w-3.5" />
+                                  Search settings...
+                                </div>
+                              </Command.Item>
+                            </Command.Group>
+                          )}
                           <Command.Group heading="Account">
                             <Command.Item onSelect={createNewWorkspace} className="focus:outline-none">
                               <div className="flex items-center gap-2 text-custom-text-200">

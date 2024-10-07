@@ -50,9 +50,31 @@ export const checkEmailValidity = (email: string): boolean => {
   return isEmailValid;
 };
 
-export const isEmptyHtmlString = (htmlString: string) => {
+export const isEmptyHtmlString = (htmlString: string, allowedHTMLTags: string[] = []) => {
   // Remove HTML tags using regex
-  const cleanText = DOMPurify.sanitize(htmlString, { ALLOWED_TAGS: ["img"] });
+  const cleanText = DOMPurify.sanitize(htmlString, { ALLOWED_TAGS: allowedHTMLTags });
   // Trim the string and check if it's empty
   return cleanText.trim() === "";
 };
+
+/**
+ * @description this function returns whether a comment is empty or not by checking for the following conditions-
+ * 1. If comment is undefined
+ * 2. If comment is an empty string
+ * 3. If comment is "<p></p>"
+ * @param {string | undefined} comment
+ * @returns {boolean}
+ */
+export const isCommentEmpty = (comment: string | undefined): boolean => {
+  // return true if comment is undefined
+  if (!comment) return true;
+  return (
+    comment?.trim() === "" ||
+    comment === "<p></p>" ||
+    isEmptyHtmlString(comment ?? "", ["img", "mention-component", "image-component"])
+  );
+};
+
+export const replaceUnderscoreIfSnakeCase = (str: string) => str.replace(/_/g, " ");
+
+export const capitalizeFirstLetter = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
