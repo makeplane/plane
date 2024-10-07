@@ -466,7 +466,7 @@ def track_estimate_points(
             IssueActivity(
                 issue_id=issue_id,
                 actor_id=actor_id,
-                verb="updated",
+                verb="removed" if new_estimate is None else "updated",
                 old_identifier=(
                     current_instance.get("estimate_point")
                     if current_instance.get("estimate_point") is not None
