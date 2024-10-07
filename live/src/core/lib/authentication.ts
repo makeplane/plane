@@ -1,10 +1,6 @@
 import { ConnectionConfiguration } from "@hocuspocus/server";
 // services
 import { UserService } from "@/core/services/user.service.js";
-// types
-import { TDocumentTypes } from "@/core/types/common.js";
-// plane live lib
-import { authenticateUser } from "@/plane-live/lib/authentication.js";
 // core helpers
 import { manualLogger } from "@/core/helpers/logger.js";
 
@@ -18,11 +14,7 @@ type Props = {
 };
 
 export const handleAuthentication = async (props: Props) => {
-  const { connection, cookie, params, token } = props;
-  // params
-  const documentType = params.get("documentType")?.toString() as
-    | TDocumentTypes
-    | undefined;
+  const { cookie, token } = props;
   // fetch current user info
   let response;
   try {
@@ -33,24 +25,6 @@ export const handleAuthentication = async (props: Props) => {
   }
   if (response.id !== token) {
     throw Error("Authentication failed: Token doesn't match the current user.");
-  }
-
-  if (documentType === "project_page") {
-    // params
-    const workspaceSlug = params.get("workspaceSlug")?.toString();
-    const projectId = params.get("projectId")?.toString();
-    if (!workspaceSlug || !projectId) {
-      throw Error(
-        "Authentication failed: Incomplete query params. Either workspaceSlug or projectId is missing.",
-      );
-    }
-  } else {
-    await authenticateUser({
-      connection,
-      cookie,
-      documentType,
-      params,
-    });
   }
 
   return {
