@@ -7,19 +7,29 @@ import { checkURLValidity } from "@/helpers/string.helper";
 import { FileService } from "@/services/file.service";
 const fileService = new FileService();
 
+type TEditorSrcArgs = {
+  assetId: string;
+  projectId?: string;
+  workspaceSlug: string;
+};
+
 /**
  * @description generate the file source using assetId
- * @param {string} workspaceSlug
- * @param {string} projectId
- * @param {string} assetId
+ * @param {TEditorSrcArgs} args
  */
-export const getEditorAssetSrc = (workspaceSlug: string, projectId: string, assetId: string): string | undefined => {
-  const url = getFileURL(`/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/${assetId}/`);
+export const getEditorAssetSrc = (args: TEditorSrcArgs): string | undefined => {
+  const { assetId, projectId, workspaceSlug } = args;
+  let url: string | undefined = "";
+  if (projectId) {
+    url = getFileURL(`/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/${assetId}/`);
+  } else {
+    url = getFileURL(`/api/assets/v2/workspaces/${workspaceSlug}/${assetId}/`);
+  }
   return url;
 };
 
 type TArgs = {
-  projectId: string;
+  projectId?: string;
   uploadFile: (file: File) => Promise<string>;
   workspaceId: string;
   workspaceSlug: string;
@@ -38,7 +48,13 @@ export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
       if (checkURLValidity(path)) {
         return path;
       } else {
-        return getEditorAssetSrc(workspaceSlug, projectId, path) ?? "";
+        return (
+          getEditorAssetSrc({
+            assetId: path,
+            projectId,
+            workspaceSlug,
+          }) ?? ""
+        );
       }
     },
     upload: uploadFile,
@@ -46,7 +62,13 @@ export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
       if (checkURLValidity(src)) {
         await fileService.deleteOldEditorAsset(workspaceId, src);
       } else {
-        await fileService.deleteNewAsset(getEditorAssetSrc(workspaceSlug, projectId, src) ?? "");
+        await fileService.deleteNewAsset(
+          getEditorAssetSrc({
+            assetId: src,
+            projectId,
+            workspaceSlug,
+          }) ?? ""
+        );
       }
     },
     restore: async (src: string) => {
@@ -74,7 +96,13 @@ export const getReadOnlyEditorFileHandlers = (
       if (checkURLValidity(path)) {
         return path;
       } else {
-        return getEditorAssetSrc(workspaceSlug, projectId, path) ?? "";
+        return (
+          getEditorAssetSrc({
+            assetId: path,
+            projectId,
+            workspaceSlug,
+          }) ?? ""
+        );
       }
     },
   };

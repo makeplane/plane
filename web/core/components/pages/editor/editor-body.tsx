@@ -182,7 +182,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               fileHandler={getEditorFileHandlers({
                 projectId: projectId?.toString() ?? "",
                 uploadFile: async (file) => {
-                  const { asset_url } = await fileService.uploadProjectAsset(
+                  const { asset_id } = await fileService.uploadProjectAsset(
                     workspaceSlug?.toString() ?? "",
                     projectId?.toString() ?? "",
                     {
@@ -191,7 +191,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                     },
                     file
                   );
-                  return asset_url;
+                  return asset_id;
                 },
                 workspaceId,
                 workspaceSlug: workspaceSlug?.toString() ?? "",

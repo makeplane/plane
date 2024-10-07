@@ -91,10 +91,6 @@ const nextConfig = {
         destination: `${GOD_MODE_BASE_URL}/:path*`,
       });
     }
-    rewrites.push({
-      source: "/uploads/:path*",
-      destination: `${uploadsBaseURL}/:path*`,
-    });
     return rewrites;
   },
 };
