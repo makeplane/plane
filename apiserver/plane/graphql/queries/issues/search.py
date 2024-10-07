@@ -20,6 +20,14 @@ from strawberry.permission import PermissionExtension
 from plane.graphql.permissions.workspace import WorkspaceBasePermission
 from plane.db.models import Issue
 from plane.graphql.types.issue import IssueLiteType
+from plane.graphql.types.paginator import PaginatorResponse
+from plane.graphql.utils.paginator import paginate
+
+
+@sync_to_async
+def get_issue_details(issue_id):
+    issue = Issue.objects.get(id=issue_id)
+    return issue
 
 
 @strawberry.type
@@ -43,7 +51,8 @@ class IssuesSearchQuery:
         relationType: Optional[bool] = False,
         subIssues: Optional[bool] = False,
         search: Optional[str] = None,
-    ) -> list[IssueLiteType]:
+        cursor: Optional[str] = None,
+    ) -> PaginatorResponse[IssueLiteType]:
         issue_queryset = Issue.issue_objects.filter(
             workspace__slug=slug,
             project__project_projectmember__member=info.context.user,
@@ -81,15 +90,13 @@ class IssuesSearchQuery:
 
         # sub issues
         if subIssues and issue:
-            current_issue = await sync_to_async(Issue.issue_objects.get)(
-                pk=issue
-            )
+            current_issue = await get_issue_details(issue)
             issue_queryset = issue_queryset.filter(
-                Q(parent__isNull=True), ~Q(parent=issue)
+                Q(parent__isnull=True), ~Q(pk=issue)
             )
             if current_issue.parent:
                 issue_queryset = issue_queryset.filter(
-                    ~Q(parent=current_issue.parent)
+                    ~Q(pk=current_issue.parent_id)
                 )
 
         # apply search filter
@@ -123,4 +130,8 @@ class IssuesSearchQuery:
             issue["project_identifier"] = issue["project__identifier"]
             del issue["project__identifier"]
 
-        return [IssueLiteType(**issue) for issue in issues]
+        listed_issues: list[IssueLiteType] = [
+            IssueLiteType(**issue) for issue in issues
+        ]
+
+        return paginate(results_object=listed_issues, cursor=cursor)
