@@ -82,6 +82,7 @@ def instance_traces():
 
             # Set span attributes
             with tracer.start_as_current_span("workspace_details") as span:
+                span.set_attribute("instance_id", instance.instance_id)
                 span.set_attribute("workspace_id", str(workspace.id))
                 span.set_attribute("workspace_slug", workspace.slug)
                 span.set_attribute("project_count", project_count)
