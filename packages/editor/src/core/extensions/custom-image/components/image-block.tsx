@@ -71,6 +71,17 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
   const containerRect = useRef<DOMRect | null>(null);
   const imageRef = useRef<HTMLImageElement>(null);
 
+  const updateAttributesSafely = useCallback(
+    (attributes: Partial<ImageAttributes>, errorMessage: string) => {
+      try {
+        updateAttributes(attributes);
+      } catch (error) {
+        console.error(`${errorMessage}:`, error);
+      }
+    },
+    [updateAttributes]
+  );
+
   const handleImageLoad = useCallback(() => {
     const img = imageRef.current;
     if (!img) return;
@@ -105,17 +116,25 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
       };
 
       setSize(initialComputedSize);
-      updateAttributes(initialComputedSize);
+      updateAttributesSafely(
+        initialComputedSize,
+        "Failed to update attributes while initializing an image for the first time:"
+      );
     } else {
       // as the aspect ratio in not stored for old images, we need to update the attrs
-      setSize((prevSize) => {
-        const newSize = { ...prevSize, aspectRatio };
-        updateAttributes(newSize);
-        return newSize;
-      });
+      if (!aspectRatio) {
+        setSize((prevSize) => {
+          const newSize = { ...prevSize, aspectRatio };
+          updateAttributesSafely(
+            newSize,
+            "Failed to update attributes while initializing images with width but no aspect ratio:"
+          );
+          return newSize;
+        });
+      }
     }
     setInitialResizeComplete(true);
-  }, [width, updateAttributes, editorContainer]);
+  }, [width, updateAttributes, editorContainer, aspectRatio]);
 
   // for real time resizing
   useLayoutEffect(() => {
@@ -142,7 +161,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
 
   const handleResizeEnd = useCallback(() => {
     setIsResizing(false);
-    updateAttributes(size);
+    updateAttributesSafely(size, "Failed to update attributes at the end of resizing:");
   }, [size, updateAttributes]);
 
   const handleResizeStart = useCallback((e: React.MouseEvent | React.TouchEvent) => {
