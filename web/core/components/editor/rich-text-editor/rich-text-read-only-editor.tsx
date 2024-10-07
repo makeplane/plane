@@ -9,7 +9,7 @@ import { useMention } from "@/hooks/store";
 
 type RichTextReadOnlyEditorWrapperProps = Omit<IRichTextReadOnlyEditor, "fileHandler" | "mentionHandler"> & {
   workspaceSlug: string;
-  projectId: string;
+  projectId?: string;
 };
 
 export const RichTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, RichTextReadOnlyEditorWrapperProps>(
