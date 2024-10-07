@@ -81,30 +81,34 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
     () => ({
       addModulesToIssue: async (moduleIds: string[]) => {
         if (!workspaceSlug || !issue.project_id || !issue.id) return;
-        if (isDraft) updateDraftIssue &&
+        isDraft
+          ? updateDraftIssue &&
             (await updateDraftIssue(issue.project_id, issue.id, {
               module_ids: [...(issue.module_ids ?? []), ...moduleIds],
-            }));
-        else await changeModulesInIssue?.(workspaceSlug.toString(), issue.project_id, issue.id, moduleIds, []);
+            }))
+          : await changeModulesInIssue?.(workspaceSlug.toString(), issue.project_id, issue.id, moduleIds, []);
       },
       removeModulesFromIssue: async (moduleIds: string[]) => {
         if (!workspaceSlug || !issue.project_id || !issue.id) return;
-        if (isDraft)
-          updateDraftIssue &&
+        isDraft
+          ? updateDraftIssue &&
             (await updateDraftIssue(issue.project_id, issue.id, {
               module_ids: issue.module_ids?.filter((moduleId: string) => !moduleIds.includes(moduleId)) || [],
-            }));
-        else await changeModulesInIssue?.(workspaceSlug.toString(), issue.project_id, issue.id, [], moduleIds);
+            }))
+          : await changeModulesInIssue?.(workspaceSlug.toString(), issue.project_id, issue.id, [], moduleIds);
       },
       addIssueToCycle: async (cycleId: string) => {
         if (!workspaceSlug || !issue.project_id || !issue.id) return;
-        if (isDraft) updateDraftIssue && (await updateDraftIssue(issue.project_id, issue.id, { cycle_id: cycleId }));
-        else await addCycleToIssue?.(workspaceSlug.toString(), issue.project_id, cycleId, issue.id);
+        isDraft
+          ? updateDraftIssue && (await updateDraftIssue(issue.project_id, issue.id, { cycle_id: cycleId }))
+          : await addCycleToIssue?.(workspaceSlug.toString(), issue.project_id, cycleId, issue.id);
       },
       removeIssueFromCycle: async () => {
         if (!workspaceSlug || !issue.project_id || !issue.id) return;
-        if (isDraft) updateDraftIssue && (await updateDraftIssue(issue.project_id, issue.id, { cycle_id: null }));
-        else await removeCycleFromIssue?.(workspaceSlug.toString(), issue.project_id, issue.id);
+
+        isDraft
+          ? updateDraftIssue && (await updateDraftIssue(issue.project_id, issue.id, { cycle_id: null }))
+          : await removeCycleFromIssue?.(workspaceSlug.toString(), issue.project_id, issue.id);
       },
     }),
     [workspaceSlug, issue, changeModulesInIssue, addCycleToIssue, removeCycleFromIssue]
