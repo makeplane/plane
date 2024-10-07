@@ -413,9 +413,20 @@ class ProjectViewSet(BaseViewSet):
                 status=status.HTTP_410_GONE,
             )
 
-    @allow_permission([ROLE.ADMIN])
     def partial_update(self, request, slug, pk=None):
         try:
+            if not ProjectMember.objects.filter(
+                member=request.user,
+                workspace__slug=slug,
+                project_id=pk,
+                role=20,
+                is_active=True,
+            ).exists():
+                return Response(
+                    {"error": "You don't have the required permissions."},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
             workspace = Workspace.objects.get(slug=slug)
 
             project = Project.objects.get(pk=pk)
