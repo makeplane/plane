@@ -32,21 +32,22 @@ class EntityAssetEndpoint(BaseAPIView):
 
     def get(self, request, anchor, pk):
         # Get the deploy board
-        deploy_board = DeployBoard.objects.filter(
-            anchor=anchor, entity_name="project"
-        ).first()
+        deploy_board = DeployBoard.objects.filter(anchor=anchor).first()
         # Check if the project is published
         if not deploy_board:
             return Response(
-                {"error": "Project is not published"},
+                {"error": "Requested resource could not be found."},
                 status=status.HTTP_404_NOT_FOUND,
             )
 
         # get the asset id
         asset = FileAsset.objects.get(
             workspace_id=deploy_board.workspace_id,
-            project_id=deploy_board.project_id,
             pk=pk,
+            entity_type__in=[
+                FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
+                FileAsset.EntityTypeContext.COMMENT_DESCRIPTION,
+            ],
         )
 
         # Check if the asset is uploaded

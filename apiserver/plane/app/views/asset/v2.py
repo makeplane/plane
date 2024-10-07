@@ -197,6 +197,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             if workspace.logo_asset_id:
                 self.asset_delete(workspace.logo_asset_id)
             # Save the new logo
+            workspace.logo = ""
             workspace.logo_asset_id = asset_id
             workspace.save()
             return
@@ -210,6 +211,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             if project.cover_image_asset_id:
                 self.asset_delete(project.cover_image_asset_id)
             # Save the new cover image
+            project.cover_image = ""
             project.cover_image_asset_id = asset_id
             project.save()
             return
@@ -332,6 +334,28 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         self.entity_asset_delete(asset.entity_type, asset.entity_identifier)
         asset.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def get(self, request, slug, asset_id):
+        # get the asset id
+        asset = FileAsset.objects.get(id=asset_id, workspace__slug=slug)
+
+        # Check if the asset is uploaded
+        if not asset.is_uploaded:
+            return Response(
+                {
+                    "error": "The requested asset could not be found.",
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Get the presigned URL
+        storage = S3Storage(request=request)
+        # Generate a presigned URL to share an S3 object
+        signed_url = storage.generate_presigned_url(
+            object_name=asset.asset.name,
+        )
+        # Redirect to the signed URL
+        return HttpResponseRedirect(signed_url)
 
 
 class StaticFileAssetEndpoint(BaseAPIView):
