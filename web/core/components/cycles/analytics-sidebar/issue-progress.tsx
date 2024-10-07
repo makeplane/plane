@@ -17,9 +17,8 @@ import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 import { getDate } from "@/helpers/date-time.helper";
 // hooks
 import { useIssues, useCycle, useProjectEstimates } from "@/hooks/store";
-// plane web constants
-import { SidebarBaseChart } from "@/plane-web/components/cycles/analytics-sidebar";
 import { EEstimateSystem } from "@/plane-web/constants/estimates";
+import SidebarChart from "./sidebar-chart";
 
 type TCycleAnalyticsProgress = {
   workspaceSlug: string;
@@ -218,9 +217,15 @@ export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((pro
                       </CustomSelect.Option>
                     ))}
                   </CustomSelect>
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="flex items-center gap-1 text-xs">
+                      <span className="text-custom-text-300">Done</span>
+                      <span className="font-semibold text-custom-text-400">{progressHeaderPercentage}%</span>
+                    </div>
+                  </div>
                 </div>
                 <div className="py-4">
-                  <SidebarBaseChart
+                  <SidebarChart
                     chartDistributionData={chartDistributionData}
                     cycleStartDate={cycleStartDate}
                     cycleEndDate={cycleEndDate}
