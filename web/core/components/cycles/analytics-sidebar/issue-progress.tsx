@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, Fragment, useCallback, useMemo, useState } from "react";
+import { FC, Fragment, useCallback, useMemo } from "react";
 import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
@@ -16,9 +16,9 @@ import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { getDate } from "@/helpers/date-time.helper";
 // hooks
-import { useIssues, useCycle, useProjectEstimates } from "@/hooks/store";
-import { EEstimateSystem } from "@/plane-web/constants/estimates";
-import SidebarChart from "./sidebar-chart";
+import { useIssues, useCycle } from "@/hooks/store";
+// plane web components
+import { SidebarChartRoot } from "@/plane-web/components/cycles";
 
 type TCycleAnalyticsProgress = {
   workspaceSlug: string;
@@ -26,7 +26,7 @@ type TCycleAnalyticsProgress = {
   cycleId: string;
 };
 
-const validateCycleSnapshot = (cycleDetails: ICycle | null): ICycle | null => {
+export const validateCycleSnapshot = (cycleDetails: ICycle | null): ICycle | null => {
   if (!cycleDetails || cycleDetails === null) return cycleDetails;
 
   const updatedCycleDetails: any = { ...cycleDetails };
@@ -59,12 +59,9 @@ export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((pro
   // router
   const searchParams = useSearchParams();
   const peekCycle = searchParams.get("peekCycle") || undefined;
-  // hooks
-  const { areEstimateEnabledByProjectId, currentActiveEstimateId, estimateById } = useProjectEstimates();
   const {
     getPlotTypeByCycleId,
     getEstimateTypeByCycleId,
-    setPlotType,
     getCycleById,
     fetchCycleDetails,
     fetchArchivedCycleDetails,
@@ -73,17 +70,11 @@ export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((pro
   const {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.CYCLE);
-  // state
-  const [loader, setLoader] = useState(false);
 
   // derived values
   const cycleDetails = validateCycleSnapshot(getCycleById(cycleId));
   const plotType: TCyclePlotType = getPlotTypeByCycleId(cycleId);
   const estimateType = getEstimateTypeByCycleId(cycleId);
-  const isCurrentProjectEstimateEnabled = projectId && areEstimateEnabledByProjectId(projectId) ? true : false;
-  const estimateDetails =
-    isCurrentProjectEstimateEnabled && currentActiveEstimateId && estimateById(currentActiveEstimateId);
-  const isCurrentEstimateTypeIsPoints = estimateDetails && estimateDetails?.type === EEstimateSystem.POINTS;
 
   const completedIssues = cycleDetails?.completed_issues || 0;
   const totalIssues = cycleDetails?.total_issues || 0;
@@ -131,15 +122,13 @@ export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((pro
     setEstimateType(cycleId, value);
     if (!workspaceSlug || !projectId || !cycleId) return;
     try {
-      setLoader(true);
       if (isArchived) {
         await fetchArchivedCycleDetails(workspaceSlug, projectId, cycleId);
       } else {
         await fetchCycleDetails(workspaceSlug, projectId, cycleId);
       }
-      setLoader(false);
-    } catch (error) {
-      setLoader(false);
+    } catch (err) {
+      console.error(err);
       setEstimateType(cycleId, estimateType);
     }
   };
@@ -225,14 +214,7 @@ export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((pro
                   </div>
                 </div>
                 <div className="py-4">
-                  <SidebarChart
-                    chartDistributionData={chartDistributionData}
-                    cycleStartDate={cycleStartDate}
-                    cycleEndDate={cycleEndDate}
-                    totalEstimatePoints={totalEstimatePoints}
-                    totalIssues={totalIssues}
-                    plotType={plotType}
-                  />
+                  <SidebarChartRoot workspaceSlug={workspaceSlug} projectId={projectId} cycleId={cycleId} />
                 </div>
                 {/* progress detailed view */}
                 {chartDistributionData && (
