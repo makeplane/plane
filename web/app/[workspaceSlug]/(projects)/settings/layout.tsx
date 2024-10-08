@@ -3,15 +3,15 @@
 import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 // components
-// plane web components
-// import { LicenseSeatsBanner } from "@/plane-web/components/license";
-// local components
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { AppHeader } from "@/components/core";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
+// plane web components
+// import { LicenseSeatsBanner } from "@/plane-web/components/license";
 // plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+// local components
 import { WorkspaceSettingHeader } from "./header";
 import { MobileWorkspaceSettingsTabs } from "./mobile-header-tabs";
 import { WorkspaceSettingsSidebar } from "./sidebar";
@@ -33,7 +33,7 @@ const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = observer((props) => 
       <AppHeader header={<WorkspaceSettingHeader />} />
       <div className="w-full h-full overflow-hidden">
         {/* free banner */}
-        <div className="flex-shrink-0">{/* <LicenseSeatsBanner /> */}</div>
+        {/* <LicenseSeatsBanner /> */}
         {/* workspace settings */}
         <div className="w-full h-full overflow-hidden">
           <MobileWorkspaceSettingsTabs />

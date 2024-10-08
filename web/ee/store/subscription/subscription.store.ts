@@ -92,6 +92,8 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
           show_trial_banner: response?.show_trial_banner ?? false,
           free_seats: response?.free_seats ?? 0,
           billable_members: response?.billable_members ?? 1,
+          total_seats: response?.total_seats ?? 1,
+          show_cloud_seats_banner: response?.show_cloud_seats_banner ?? false,
         });
       });
       return response;
@@ -107,6 +109,8 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
           show_payment_button: true,
           free_seats: 0,
           billable_members: 1,
+          total_seats: 1,
+          show_cloud_seats_banner: false,
         });
       });
       throw error;

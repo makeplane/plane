@@ -134,3 +134,61 @@ class WorkspaceLicenseEndpoint(BaseAPIView):
                 {"error": "Payment server is not configured"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class LicenseDeActivateEndpoint(BaseAPIView):
+
+    permission_classes = [
+        WorkspaceOwnerPermission,
+    ]
+
+    def post(self, request, slug):
+        # Check the multi-tenant environment
+        if settings.IS_MULTI_TENANT:
+            return Response(
+                {"error": "Forbidden"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        if settings.PAYMENT_SERVER_BASE_URL:
+            # Send request to payment server to activate the license
+            workspace = Workspace.objects.get(slug=slug)
+
+            try:
+                response = requests.post(
+                    f"{settings.PAYMENT_SERVER_BASE_URL}/api/licenses/deactivate/",
+                    json={
+                        "workspace_slug": workspace.slug,
+                        "workspace_id": str(workspace.id),
+                    },
+                    headers={
+                        "content-type": "application/json",
+                        "x-api-key": settings.PAYMENT_SERVER_AUTH_TOKEN,
+                    },
+                )
+                # Check if the request was successful
+                response.raise_for_status()
+
+                # Force resync the workspace licenses
+                resync_workspace_license(workspace_slug=slug, force=True)
+
+                # Return the response
+                return Response(
+                    response.json(),
+                    status=status.HTTP_200_OK,
+                )
+            except requests.exceptions.RequestException as e:
+                if e.response.status_code == 400:
+                    return Response(
+                        e.response.json(),
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+                return Response(
+                    {"error": "Invalid license key"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        else:
+            return Response(
+                {"error": "Payment server is not configured"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )

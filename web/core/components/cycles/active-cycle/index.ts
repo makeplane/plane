@@ -1,4 +1,3 @@
-export * from "./root";
 export * from "./header";
 export * from "./stats";
 export * from "./upcoming-cycles-list-item";

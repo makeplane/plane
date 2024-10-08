@@ -1,44 +1,39 @@
-# Security Policy
+# Security policy
+This document outlines the security protocols and vulnerability reporting guidelines for the Plane project. Ensuring the security of our systems is a top priority, and while we work diligently to maintain robust protection, vulnerabilities may still occur. We highly value the community’s role in identifying and reporting security concerns to uphold the integrity of our systems and safeguard our users.
 
-This document outlines security procedures and vulnerabilities reporting for the Plane project.
+## Reporting a vulnerability
+If you have identified a security vulnerability, submit your findings to [security@plane.so](mailto:security@plane.so). 
+Ensure your report includes all relevant information needed for us to reproduce and assess the issue. Include the IP address or URL of the affected system.
 
-At Plane, we safeguarding the security of our systems with top priority. Despite our efforts, vulnerabilities may still exist. We greatly appreciate your assistance in identifying and reporting any such vulnerabilities to help us maintain the integrity of our systems and protect our clients.
+To ensure a responsible and effective disclosure process, please adhere to the following:
 
-To report a security vulnerability, please email us directly at security@plane.so with a detailed description of the vulnerability and steps to reproduce it. Please refrain from disclosing the vulnerability publicly until we have had an opportunity to review and address it.
+- Maintain confidentiality and refrain from publicly disclosing the vulnerability until we have had the opportunity to investigate and address the issue.
+- Refrain from running automated vulnerability scans on our infrastructure or dashboard without prior consent. Contact us to set up a sandbox environment if necessary.
+- Do not exploit any discovered vulnerabilities for malicious purposes, such as accessing or altering user data.
+- Do not engage in physical security attacks, social engineering, distributed denial of service (DDoS) attacks, spam campaigns, or attacks on third-party applications as part of your vulnerability testing.
 
-## Out of Scope Vulnerabilities
+## Out of scope
+While we appreciate all efforts to assist in improving our security, please note that the following types of vulnerabilities are considered out of scope:
 
-We appreciate your help in identifying vulnerabilities. However, please note that the following types of vulnerabilities are considered out of scope:
+- Vulnerabilities requiring man-in-the-middle (MITM) attacks or physical access to a user’s device.
+- Content spoofing or text injection issues without a clear attack vector or the ability to modify HTML/CSS.
+- Issues related to email spoofing.
+- Missing DNSSEC, CAA, or CSP headers.
+- Absence of secure or HTTP-only flags on non-sensitive cookies.
 
-- Attacks requiring MITM or physical access to a user's device.
-- Content spoofing and text injection issues without demonstrating an attack vector or ability to modify HTML/CSS.
-- Email spoofing.
-- Missing DNSSEC, CAA, CSP headers.
-- Lack of Secure or HTTP only flag on non-sensitive cookies.
+## Our commitment
 
-## Reporting Process
+At Plane, we are committed to maintaining transparent and collaborative communication throughout the vulnerability resolution process. Here's what you can expect from us:
 
-If you discover a vulnerability, please adhere to the following reporting process:
+- **Response Time** <br/>
+We will acknowledge receipt of your vulnerability report within three business days and provide an estimated timeline for resolution.
+- **Legal Protection** <br/>
+We will not initiate legal action against you for reporting vulnerabilities, provided you adhere to the reporting guidelines.
+- **Confidentiality** <br/>
+Your report will be treated with confidentiality. We will not disclose your personal information to third parties without your consent.
+- **Recognition** <br/>
+With your permission, we are happy to publicly acknowledge your contribution to improving our security once the issue is resolved.
+- **Timely Resolution** <br/>
+We are committed to working closely with you throughout the resolution process, providing timely updates as necessary. Our goal is to address all reported vulnerabilities swiftly, and we will actively engage with you to coordinate a responsible disclosure once the issue is fully resolved.
 
-1. Email your findings to security@plane.so.
-2. Refrain from running automated scanners on our infrastructure or dashboard without prior consent. Contact us to set up a sandbox environment if necessary.
-3. Do not exploit the vulnerability for malicious purposes, such as downloading excessive data or altering user data.
-4. Maintain confidentiality and refrain from disclosing the vulnerability until it has been resolved.
-5. Avoid using physical security attacks, social engineering, distributed denial of service, spam, or third-party applications.
-
-When reporting a vulnerability, please provide sufficient information to allow us to reproduce and address the issue promptly. Include the IP address or URL of the affected system, along with a detailed description of the vulnerability.
-
-## Our Commitment
-
-We are committed to promptly addressing reported vulnerabilities and maintaining open communication throughout the resolution process. Here's what you can expect from us:
-
-- **Response Time:** We will acknowledge receipt of your report within three business days and provide an expected resolution date.
-- **Legal Protection:** We will not pursue legal action against you for reporting vulnerabilities, provided you adhere to the reporting guidelines.
-- **Confidentiality:** Your report will be treated with strict confidentiality. We will not disclose your personal information to third parties without your consent.
-- **Progress Updates:** We will keep you informed of our progress in resolving the reported vulnerability.
-- **Recognition:** With your permission, we will publicly acknowledge you as the discoverer of the vulnerability.
-- **Timely Resolution:** We strive to resolve all reported vulnerabilities promptly and will actively participate in the publication process once the issue is resolved.
-
-We appreciate your cooperation in helping us maintain the security of our systems and protecting our clients. Thank you for your contributions to our security efforts.
-
-reference: https://supabase.com/.well-known/security.txt
+We appreciate your help in ensuring the security of our platform. Your contributions are crucial to protecting our users and maintaining a secure environment. Thank you for working with us to keep Plane safe.

@@ -2,7 +2,7 @@ import { FC, Fragment, useState } from "react";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { ICycle, TCyclePlotType } from "@plane/types";
+import { ICycle, TCycleEstimateType, TCyclePlotType } from "@plane/types";
 import { CustomSelect, Loader } from "@plane/ui";
 // components
 import ProgressChart from "@/components/core/sidebar/progress-chart";
@@ -16,7 +16,7 @@ export type ActiveCycleProductivityProps = {
 };
 
 const cycleBurnDownChartOptions = [
-  { value: "burndown", label: "Issues" },
+  { value: "issues", label: "Issues" },
   { value: "points", label: "Points" },
 ];
 
@@ -55,7 +55,7 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
   );
 
   // state
-  const [plotType, setPlotType] = useState<TCyclePlotType>("burndown");
+  const [plotType, setPlotType] = useState<TCycleEstimateType>("issues");
   const isCurrentEstimateTypeIsPoints = estimate_distribution && !isEmpty(estimate_distribution.completion_chart);
 
   // derived values
@@ -72,7 +72,7 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
               <CustomSelect
                 value={plotType}
                 label={<span>{cycleBurnDownChartOptions.find((v) => v.value === plotType)?.label ?? "None"}</span>}
-                onChange={(value: TCyclePlotType) => setPlotType(value)}
+                onChange={(value: TCycleEstimateType) => setPlotType(value)}
                 maxHeight="lg"
               >
                 {cycleBurnDownChartOptions.map((item) => (

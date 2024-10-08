@@ -1,15 +1,7 @@
 "use client";
 
 //ui
-import {
-  ArrowDownWideNarrow,
-  ArrowUpNarrowWide,
-  CheckIcon,
-  ChevronDownIcon,
-  Eraser,
-  ListFilter,
-  MoveRight,
-} from "lucide-react";
+import { ArrowDownWideNarrow, ArrowUpNarrowWide, CheckIcon, ChevronDownIcon, Eraser, MoveRight } from "lucide-react";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssueOrderByOptions } from "@plane/types";
 import { CustomMenu, Row } from "@plane/ui";
 //hooks
@@ -59,7 +51,11 @@ export const HeaderColumn = (props: Props) => {
           <div className="ml-3 flex">
             {activeSortingProperty === property && (
               <div className="flex h-3.5 w-3.5 items-center justify-center rounded-full">
-                <ListFilter className="h-3 w-3" />
+                {propertyDetails.ascendingOrderKey === displayFilters.order_by ? (
+                  <ArrowDownWideNarrow className="h-3 w-3" />
+                ) : (
+                  <ArrowUpNarrowWide className="h-3 w-3" />
+                )}
               </div>
             )}
             <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />

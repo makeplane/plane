@@ -16,6 +16,6 @@ export const PlanCard = observer(({ planName, planDescription, button }: TPlanCa
       </div>
       <div className="text-sm text-custom-text-200 font-medium">{planDescription}</div>
     </div>
-    <div>{button}</div>
+    <div className="flex flex-col gap-1 items-center justify-center">{button}</div>
   </div>
 ));

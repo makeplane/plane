@@ -115,7 +115,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
         if not allowed:
             return Response(
                 {
-                    "error": "You cannot invite more users than the allowed limit",
+                    "error": "Reached seat limit - Upgrade to add more members",
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )

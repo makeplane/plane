@@ -55,14 +55,7 @@ export class IssueService extends APIService {
     queries?: any,
     config = {}
   ): Promise<TIssuesResponse> {
-    queries.project_id = projectId;
-    return this.get(
-      `/api/workspaces/${workspaceSlug}/v2/issues/`,
-      {
-        params: queries,
-      },
-      config
-    )
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/v2/issues/`, { params: queries }, config)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

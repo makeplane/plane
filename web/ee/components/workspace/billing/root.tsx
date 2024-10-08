@@ -1,15 +1,15 @@
 import { useState } from "react";
-import { useParams } from "next/navigation";
-import { observer } from "mobx-react";
-import useSWR from "swr";
 import orderBy from "lodash/orderBy";
-// ui
-import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
+import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
+import useSWR from "swr";
 // types
 import { IPaymentProduct, TProductSubscriptionType } from "@plane/types";
+// ui
+import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
 // plane web components
-import { PlansComparison } from "@/plane-web/components/workspace/billing";
 import { CloudFreePlanCard, OnePlanCard, ProPlanCard, SelfHostedFreePlanCard } from "@/plane-web/components/license";
+import { PlansComparison } from "@/plane-web/components/workspace/billing";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web services
@@ -135,7 +135,7 @@ export const BillingRoot = observer(() => {
   return (
     <section className="relative w-full overflow-y-auto">
       <div>
-        <div className="flex items-center border-b border-custom-border-100 py-3.5">
+        <div className="flex items-center">
           <h3 className="text-xl font-medium flex gap-4">Billing and plans</h3>
         </div>
       </div>
@@ -169,7 +169,7 @@ export const BillingRoot = observer(() => {
           )}
         </div>
       </div>
-      <div className="text-xl font-semibold mt-3">All Plans</div>
+      <div className="text-xl font-semibold mt-3">All plans</div>
       <PlansComparison
         isProductsAPILoading={isProductsAPILoading}
         trialLoader={trialLoader}

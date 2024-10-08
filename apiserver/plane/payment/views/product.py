@@ -10,13 +10,14 @@ from django.db.models import F
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
+from rest_framework.exceptions import Throttled
 
 # Module imports
 from .base import BaseAPIView
 from plane.app.permissions.workspace import (
     WorkspaceUserPermission,
 )
-from plane.db.models import WorkspaceMember
+from plane.db.models import WorkspaceMember, Workspace
 from plane.ee.models import WorkspaceLicense
 from plane.utils.exception_logger import log_exception
 from plane.payment.utils.workspace_license_request import (
@@ -24,6 +25,7 @@ from plane.payment.utils.workspace_license_request import (
     is_billing_active,
     is_on_trial,
 )
+from plane.payment.rate_limit import WorkspaceRateThrottle
 
 
 class ProductEndpoint(BaseAPIView):
@@ -186,16 +188,74 @@ class WorkspaceProductEndpoint(BaseAPIView):
 
 
 class WorkspaceLicenseRefreshEndpoint(BaseAPIView):
-    def post(self, request, slug):
-        # Resync the workspace license
-        _ = resync_workspace_license(workspace_slug=slug, force=True)
 
-        # Return the response
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    # Throttle classes
+    throttle_classes = [
+        WorkspaceRateThrottle,
+    ]
+
+    # Throttle rate
+    def throttled(self, request, wait):
+        raise Throttled(
+            detail={
+                "message": f"Rate limit exceeded. Please try again in {int(wait)} seconds.",
+                "wait_seconds": int(wait),
+            }
+        )
+
+    def post(self, request, slug):
+        # On the multi-tenant version, the workspace license is synced from the payment server
+        if settings.IS_MULTI_TENANT:
+            # Resync the workspace license
+            _ = resync_workspace_license(workspace_slug=slug, force=True)
+
+            # Return the response
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            workspace = Workspace.objects.get(slug=slug)
+            workspace_members = (
+                WorkspaceMember.objects.filter(
+                    workspace__slug=slug, is_active=True, member__is_bot=False
+                )
+                .annotate(
+                    user_email=F("member__email"),
+                    user_id=F("member__id"),
+                    user_role=F("role"),
+                )
+                .values(
+                    "user_email",
+                    "user_id",
+                    "user_role",
+                )
+            )
+
+            for member in workspace_members:
+                member["user_id"] = str(member["user_id"])
+            # Request to payment server to resync the workspace licenses and feature flags
+            response = requests.post(
+                f"{settings.PAYMENT_SERVER_BASE_URL}/api/workspaces/{str(workspace.id)}/sync/",
+                headers={
+                    "content-type": "application/json",
+                    "x-api-key": settings.PAYMENT_SERVER_AUTH_TOKEN,
+                },
+                json={
+                    "workspace_slug": str(workspace.slug),
+                    "workspace_id": str(workspace.id),
+                    "members_list": list(workspace_members),
+                },
+            )
+
+            # Check if the request was successful
+            response.raise_for_status()
+
+            # Return the response
+            return Response(
+                status=status.HTTP_204_NO_CONTENT,
+            )
 
 
 class WorkspaceLicenseSyncEndpoint(BaseAPIView):
-    """This endpoint is used to sync the workspace license from the payment server"""
+    """This endpoint is used to sync the workspace license from the payment server: - This is used by the payment server"""
 
     permission_classes = [
         AllowAny,

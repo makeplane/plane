@@ -139,6 +139,10 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
     const cycleId = id ?? this.cycleId;
 
     projectId && cycleId && this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
+    // fetch cycle progress
+    projectId &&
+      cycleId &&
+      this.rootIssueStore.rootStore.cycle.fetchActiveCycleProgressPro(workspaceSlug, projectId, cycleId);
   };
 
   updateParentStats = (prevIssueState?: TIssue, nextIssueState?: TIssue, id?: string | undefined) => {
