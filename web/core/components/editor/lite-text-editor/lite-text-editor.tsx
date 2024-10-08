@@ -1,6 +1,6 @@
 import React from "react";
 // editor
-import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef } from "@plane/editor";
+import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef, TNonColorEditorCommands } from "@plane/editor";
 // types
 import { IUserLite } from "@plane/types";
 // components
@@ -87,7 +87,9 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
         accessSpecifier={accessSpecifier}
         executeCommand={(key) => {
           if (isMutableRefObject<EditorRefApi>(ref)) {
-            ref.current?.executeMenuItemCommand(key);
+            ref.current?.executeMenuItemCommand({
+              itemKey: key as TNonColorEditorCommands,
+            });
           }
         }}
         handleAccessChange={handleAccessChange}
