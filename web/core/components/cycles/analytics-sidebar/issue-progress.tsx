@@ -188,6 +188,21 @@ export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((pro
                 <Disclosure.Button className="relative flex items-center gap-2 w-full">
                   <div className="font-medium text-custom-text-200 text-sm">Progress</div>
                 </Disclosure.Button>
+                <div className="relative flex items-center justify-between gap-2">
+                  <CustomSelect
+                    value={estimateType}
+                    label={<span>{cycleEstimateOptions.find((v) => v.value === estimateType)?.label ?? "None"}</span>}
+                    onChange={onChange}
+                    maxHeight="lg"
+                    buttonClassName="border-[0.5px] border-custom-border-300 rounded text-xs capitalize"
+                  >
+                    {cycleEstimateOptions.map((item) => (
+                      <CustomSelect.Option key={item.value} value={item.value}>
+                        {item.label}
+                      </CustomSelect.Option>
+                    ))}
+                  </CustomSelect>
+                </div>
                 <Disclosure.Button className="ml-auto">
                   {open ? (
                     <ChevronUp className="h-3.5 w-3.5" aria-hidden="true" />
@@ -204,21 +219,6 @@ export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((pro
 
             <Transition show={open}>
               <Disclosure.Panel className="flex flex-col">
-                <div className="relative flex items-center justify-between gap-2 pt-4">
-                  <CustomSelect
-                    value={estimateType}
-                    label={<span>{cycleEstimateOptions.find((v) => v.value === estimateType)?.label ?? "None"}</span>}
-                    onChange={onChange}
-                    maxHeight="lg"
-                    buttonClassName="border-none rounded text-sm font-medium"
-                  >
-                    {cycleEstimateOptions.map((item) => (
-                      <CustomSelect.Option key={item.value} value={item.value}>
-                        {item.label}
-                      </CustomSelect.Option>
-                    ))}
-                  </CustomSelect>
-                </div>
                 <div className="py-4">
                   <SidebarBaseChart
                     chartDistributionData={chartDistributionData}

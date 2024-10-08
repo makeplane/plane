@@ -28,7 +28,22 @@ from .app.magic import (
     MagicSignUpEndpoint,
 )
 
+
+from .app.oidc import (
+    OIDCAuthInitiateEndpoint,
+    OIDCallbackEndpoint,
+    OIDCLogoutEndpoint,
+)
+
+from .app.saml import (
+    SAMLAuthInitiateEndpoint,
+    SAMLCallbackEndpoint,
+    SAMLMetadataEndpoint,
+    SAMLLogoutEndpoint,
+)
+
 from .app.signout import SignOutAuthEndpoint
+
 
 
 from .space.email import SignInAuthSpaceEndpoint, SignUpAuthSpaceEndpoint
@@ -66,3 +81,10 @@ from .app.password_management import (
     ForgotPasswordEndpoint,
     ResetPasswordEndpoint,
 )
+
+
+# Mobile web view authentication exports
+from .app.mobile.email import MobileSignInAuthEndpoint
+from .app.mobile.magic import MobileMagicSignInEndpoint
+from .app.mobile.token import MobileSessionTokenCheckEndpoint
+from .app.mobile.signout import MobileSignOutAuthEndpoint
