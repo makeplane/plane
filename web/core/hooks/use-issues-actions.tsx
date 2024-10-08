@@ -748,7 +748,6 @@ const useWorkspaceDraftIssueActions = () => {
   const globalViewId = routerGlobalViewId?.toString();
   // store hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.WORKSPACE_DRAFT);
-
   const fetchIssues = useCallback(
     async (loadType: TLoader, options: IssuePaginationOptions) => {
       if (!workspaceSlug) return;

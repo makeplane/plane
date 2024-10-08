@@ -68,6 +68,7 @@ export class WorkspaceDraftIssues extends BaseIssuesStore implements IWorkspaceD
   ) => {
     try {
       // set loader and clear store
+      console.log("fetchIssues");
       runInAction(() => {
         this.setLoader(loadType);
       });
@@ -82,6 +83,8 @@ export class WorkspaceDraftIssues extends BaseIssuesStore implements IWorkspaceD
 
       // after fetching issues, call the base method to process the response further
       this.onfetchIssues(response, options, workspaceSlug, undefined, undefined, !isExistingPaginationOptions);
+      console.log("response", response);
+
       return response;
     } catch (error) {
       // set loader to undefined if errored out

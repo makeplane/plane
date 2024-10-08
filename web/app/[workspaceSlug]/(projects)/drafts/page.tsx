@@ -2,6 +2,7 @@
 
 // components
 import { PageHead } from "@/components/core";
+import { WorkspaceDraftIssueLayoutRoot } from "@/components/issues/issue-layouts/filters/applied-filters/roots/workspace-draft-root";
 
 const WorkspaceDraftPage = () => {
   const pageTitle = "Workspace Draft";
@@ -9,7 +10,9 @@ const WorkspaceDraftPage = () => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <div className="flex h-full w-full flex-col">Root</div>
+      <div className="flex h-full w-full flex-col">
+        <WorkspaceDraftIssueLayoutRoot />
+      </div>
     </>
   );
 };
