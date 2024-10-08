@@ -19,9 +19,8 @@ export const NotificationSidebarHeaderOptions: FC<TNotificationSidebarHeaderOpti
   const { workspaceSlug } = props;
   // hooks
   const { isMobile } = usePlatformOS();
-  const { loader, getNotifications } = useWorkspaceNotifications();
+  const { loader, getNotifications, markAllNotificationsAsRead } = useWorkspaceNotifications();
   const { captureEvent } = useEventTracker();
-  const { markAllNotificationsAsRead } = useWorkspaceNotifications();
 
   const refreshNotifications = async () => {
     if (loader) return;

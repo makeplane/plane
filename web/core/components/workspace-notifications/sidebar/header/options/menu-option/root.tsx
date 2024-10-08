@@ -11,10 +11,6 @@ import { NotificationMenuOptionItem } from "@/components/workspace-notifications
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store";
 
-type TNotificationHeaderMenuOption = {
-  workspaceSlug?: string;
-};
-
 export type TPopoverMenuOptions = {
   key: string;
   type: string;
@@ -25,7 +21,7 @@ export type TPopoverMenuOptions = {
   onClick?: (() => void) | undefined;
 };
 
-export const NotificationHeaderMenuOption: FC<TNotificationHeaderMenuOption> = observer(() => {
+export const NotificationHeaderMenuOption = observer(() => {
   // hooks
   const { filters, updateFilters, updateBulkFilters } = useWorkspaceNotifications();
 
