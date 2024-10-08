@@ -1,17 +1,17 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { FileText, ListFilter } from "lucide-react";
 // types
-import { TPage, TPageFilterProps, TPageNavigationTabs } from "@plane/types";
+import { TPage, TPageNavigationTabs } from "@plane/types";
 // ui
 import { Breadcrumbs, Button, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
 import { FiltersDropdown } from "@/components/issues";
-import { PageAppliedFiltersList, PageFiltersSelection, PageOrderByDropdown, PageSearchInput } from "@/components/pages";
+import { PageFiltersSelection, PageOrderByDropdown, PageSearchInput } from "@/components/pages";
 // constants
 import { EPageAccess } from "@/constants/page";
 // helpers
@@ -41,21 +41,6 @@ export const PageTypeHeader: React.FC<Props> = observer((props) => {
   const { createPage, filters, updateFilters, clearAllFilters } = useWorkspacePages();
   // derived values
   const isFiltersApplied = calculateTotalFilters(filters?.filters ?? {}) !== 0;
-  // handle remove filter
-  const handleRemoveFilter = useCallback(
-    (key: keyof TPageFilterProps, value: string | null) => {
-      let newValues = filters.filters?.[key];
-
-      if (key === "favorites") newValues = !!value;
-      if (Array.isArray(newValues)) {
-        if (!value) newValues = [];
-        else newValues = newValues.filter((val) => val !== value);
-      }
-
-      updateFilters("filters", { [key]: newValues });
-    },
-    [filters.filters, updateFilters]
-  );
   // handle page create
   const handleCreatePage = async () => {
     setIsCreatingPage(true);
@@ -86,7 +71,7 @@ export const PageTypeHeader: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
+      <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 py-4">
         <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
           <div>
             <Breadcrumbs>
@@ -143,16 +128,6 @@ export const PageTypeHeader: React.FC<Props> = observer((props) => {
           </Button>
         </div>
       </div>
-      {isFiltersApplied && (
-        <div className="border-b border-custom-border-200 px-5 py-3">
-          <PageAppliedFiltersList
-            appliedFilters={filters.filters ?? {}}
-            handleClearAllFilters={clearAllFilters}
-            handleRemoveFilter={handleRemoveFilter}
-            alwaysAllowEditing
-          />
-        </div>
-      )}
     </>
   );
 });
