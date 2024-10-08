@@ -1,4 +1,5 @@
 // plane web store
+import { ICycleStore, CycleStore } from "@/plane-web/store/cycle.store";
 import { FeatureFlagsStore, IFeatureFlagsStore } from "@/plane-web/store/feature-flags/feature-flags.store";
 import {
   IIssuePropertiesActivityStore,
@@ -45,6 +46,7 @@ export class RootStore extends CoreRootStore {
   projectFilter: IProjectFilterStore;
   issueTypes: IIssueTypesStore;
   issuePropertiesActivity: IIssuePropertiesActivityStore;
+  cycle: ICycleStore;
 
   constructor() {
     super();
@@ -60,6 +62,7 @@ export class RootStore extends CoreRootStore {
     this.issueTypes = new IssueTypes(this);
     this.issuePropertiesActivity = new IssuePropertiesActivityStore(this);
     this.projectFilter = new ProjectFilterStore(this);
+    this.cycle = new CycleStore(this);
   }
 
   resetOnSignOut() {
@@ -76,5 +79,6 @@ export class RootStore extends CoreRootStore {
     this.issueTypes = new IssueTypes(this);
     this.issuePropertiesActivity = new IssuePropertiesActivityStore(this);
     this.projectFilter = new ProjectFilterStore(this);
+    this.cycle = new CycleStore(this);
   }
 }

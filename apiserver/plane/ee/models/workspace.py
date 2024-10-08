@@ -1,9 +1,11 @@
 # Django imports
 from django.db import models
+from django.conf import settings
 from django.utils import timezone
 
 # Module imports
 from plane.db.models.base import BaseModel
+from plane.db.models.workspace import WorkspaceBaseModel
 
 
 class WorkspaceFeature(BaseModel):
@@ -64,3 +66,37 @@ class WorkspaceLicense(BaseModel):
         verbose_name_plural = "Workspace Licenses"
         db_table = "workspace_licenses"
         ordering = ("-created_at",)
+
+
+class WorkspaceActivity(WorkspaceBaseModel):
+    verb = models.CharField(
+        max_length=255, verbose_name="Action", default="created"
+    )
+    field = models.CharField(
+        max_length=255, verbose_name="Field Name", blank=True, null=True
+    )
+    old_value = models.TextField(
+        verbose_name="Old Value", blank=True, null=True
+    )
+    new_value = models.TextField(
+        verbose_name="New Value", blank=True, null=True
+    )
+    comment = models.TextField(verbose_name="Comment", blank=True)
+    actor = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="workspace_activities",
+    )
+    old_identifier = models.UUIDField(null=True)
+    new_identifier = models.UUIDField(null=True)
+    epoch = models.FloatField(null=True)
+
+    class Meta:
+        verbose_name = "Workspace Activity"
+        verbose_name_plural = "Workspace Activities"
+        db_table = "workspace_activities"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.project.name} {self.verb}"

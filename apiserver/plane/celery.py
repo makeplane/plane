@@ -40,6 +40,10 @@ app.conf.beat_schedule = {
         "task": "plane.bgtasks.deletion_task.hard_delete",
         "schedule": crontab(hour=0, minute=0),
     },
+    "track-entity-issue-state-progress": {
+        "task": "plane.bgtasks.entity_issue_state_progress_task.track_entity_issue_state_progress",
+        "schedule": crontab(hour=0, minute=0),
+    },
     "check-every-12-hr-instance-version": {
         "task": "plane.license.bgtasks.version_check_task.version_check",
         "schedule": crontab(hour="*/12", minute=0),

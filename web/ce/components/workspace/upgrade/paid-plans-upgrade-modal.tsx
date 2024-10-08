@@ -1,11 +1,11 @@
 import { FC } from "react";
-import useSWR from "swr";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import useSWR from "swr";
+import { CircleX } from "lucide-react";
 // types
 import { IPaymentProduct } from "@plane/types";
 // types
-import { CircleX } from "lucide-react";
 // services
 import { EModalWidth, ModalCore } from "@plane/ui";
 // plane web components

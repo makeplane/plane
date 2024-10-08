@@ -3,10 +3,10 @@ import orderBy from "lodash/orderBy";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-// types
 import { IPaymentProduct, TProductSubscriptionType } from "@plane/types";
 // ui
 import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
+// types
 // plane web components
 import { CloudFreePlanCard, OnePlanCard, ProPlanCard, SelfHostedFreePlanCard } from "@/plane-web/components/license";
 import { PlansComparison } from "@/plane-web/components/workspace/billing";

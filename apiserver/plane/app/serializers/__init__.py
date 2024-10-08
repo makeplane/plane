@@ -44,6 +44,7 @@ from .cycle import (
     CycleIssueSerializer,
     CycleWriteSerializer,
     CycleUserPropertiesSerializer,
+    EntityProgressSerializer,
 )
 from .asset import FileAssetSerializer
 from .issue import (

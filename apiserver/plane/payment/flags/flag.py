@@ -28,6 +28,8 @@ class FeatureFlag(Enum):
     ISSUE_WORKLOG = "ISSUE_WORKLOG"
     # Project Grouping
     PROJECT_GROUPING = "PROJECT_GROUPING"
+    # Active cycle progress
+    ACTIVE_CYCLE_PRO = "ACTIVE_CYCLE_PRO"
 
 
 class AdminFeatureFlag(Enum):

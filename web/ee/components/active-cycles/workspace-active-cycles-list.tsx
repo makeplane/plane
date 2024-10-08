@@ -15,10 +15,10 @@ import { EmptyStateType } from "@/constants/empty-state";
 // plane web components
 import { WORKSPACE_ACTIVE_CYCLES_LIST } from "@/constants/fetch-keys";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
-import { ActiveCycleInfoCard } from "@/plane-web/components/cycles";
 
 // services
 import { CycleService } from "@/services/cycle.service";
+import { ActiveCycleInfoCard } from "./card";
 
 const perPage = 100;
 const cycleService = new CycleService();

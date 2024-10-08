@@ -1,23 +1,13 @@
 # Django imports
 from django.db.models import (
-    Case,
-    Count,
     Exists,
-    F,
     OuterRef,
     Prefetch,
-    Q,
-    Value,
-    Sum,
-    When,
-    FloatField,
 )
-from django.db.models.functions import Cast
 from django.utils import timezone
 
 # Module imports
-from plane.db.models import Cycle, UserFavorite, Issue, Label, User, Project
-from plane.utils.analytics_plot import burndown_plot
+from plane.db.models import Cycle, UserFavorite, Label, User
 
 # ee imports
 from plane.ee.views.base import BaseAPIView
@@ -31,8 +21,6 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 
 # Third party imports
-from rest_framework import status
-from rest_framework.response import Response
 
 
 class WorkspaceActiveCycleEndpoint(BaseAPIView):
