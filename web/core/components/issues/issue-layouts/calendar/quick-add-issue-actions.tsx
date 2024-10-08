@@ -8,7 +8,7 @@ import { PlusIcon } from "lucide-react";
 // types
 import { ISearchIssueResponse, TIssue } from "@plane/types";
 // ui
-import { TOAST_TYPE, setToast, CustomMenu } from "@plane/ui";
+import { TOAST_TYPE, setToast, CustomMenu, setPromiseToast } from "@plane/ui";
 // components
 import { ExistingIssuesListModal } from "@/components/core";
 import { QuickAddIssueRoot } from "@/components/issues";
@@ -45,21 +45,26 @@ export const CalendarQuickAddIssueActions: FC<TCalendarQuickAddIssueActions> = o
     if (!workspaceSlug || !projectId) return;
 
     const issueIds = data.map((i) => i.id);
+    const updatePromise = Promise.all(
+      data.map((issue) => updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, prePopulatedData ?? {}))
+    ).then(() => addIssuesToView?.(issueIds))
+    console.log(issueIds.length)
+    setPromiseToast(updatePromise, {
+      loading: `Adding ${issueIds.length>1 ? "issues" : "issue" } to cycle...`,
+      success: {
+        title: "Success!",
+        message: () => `${issueIds.length>1 ? "Issues" : "Issue" } added to cycle successfully.`,
+      },
+      error: {
+        title: "Error!",
+        message: (err) => err?.message || "Something went wrong. Please try again.",
+      },
+    });
 
     try {
-      // To handle all updates in parallel
-      await Promise.all(
-        data.map((issue) =>
-          updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, prePopulatedData ?? {})
-        )
-      );
-      await addIssuesToView?.(issueIds);
+      await updatePromise;
     } catch (error) {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Something went wrong. Please try again.",
-      });
+      console.error(error)
     }
   };
 
