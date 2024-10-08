@@ -109,7 +109,10 @@ export const ExportPageModal: React.FC<Props> = (props) => {
   const selectedPageFormat = watch("page_format");
   const selectedContentVariety = watch("content_variety");
   const isPDFSelected = selectedExportFormat === "pdf";
-  const fileName = pageTitle?.toLowerCase()?.replace(/ /g, "-");
+  const fileName = pageTitle
+    ?.toLowerCase()
+    ?.replace(/[^a-z0-9-_]/g, "-")
+    .replace(/-+/g, "-");
   // handle modal close
   const handleClose = () => {
     onClose();
@@ -117,6 +120,18 @@ export const ExportPageModal: React.FC<Props> = (props) => {
       reset();
     }, 300);
   };
+
+  const initiateDownload = (blob: Blob, filename: string) => {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    link.click();
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+    }, 1000);
+  };
+
   // handle export as a PDF
   const handleExportAsPDF = async () => {
     try {
@@ -127,13 +142,7 @@ export const ExportPageModal: React.FC<Props> = (props) => {
       });
 
       const blob = await pdf(<PDFDocument content={parsedPageContent} pageFormat={selectedPageFormat} />).toBlob();
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `${fileName}-${selectedPageFormat.toString().toLowerCase()}.pdf`;
-      link.click();
-
-      URL.revokeObjectURL(url);
+      initiateDownload(blob, `${fileName}-${selectedPageFormat.toString().toLowerCase()}.pdf`);
     } catch (error) {
       throw new Error(`Error in exporting as a PDF: ${error}`);
     }
@@ -148,13 +157,7 @@ export const ExportPageModal: React.FC<Props> = (props) => {
       });
 
       const blob = new Blob([parsedMarkdownContent], { type: "text/markdown" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `${fileName}.md`;
-      link.click();
-
-      URL.revokeObjectURL(url);
+      initiateDownload(blob, `${fileName}.md`);
     } catch (error) {
       throw new Error(`Error in exporting as markdown: ${error}`);
     }
