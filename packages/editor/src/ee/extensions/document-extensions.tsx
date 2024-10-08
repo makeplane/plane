@@ -3,13 +3,13 @@ import { Extensions } from "@tiptap/core";
 // ui
 import { LayersIcon } from "@plane/ui";
 // extensions
-import { SlashCommand } from "@/extensions";
+import { SlashCommands } from "@/extensions";
 // plane editor extensions
 import { IssueEmbedSuggestions, IssueListRenderer } from "@/plane-editor/extensions";
 // plane editor types
 import { TIssueEmbedConfig } from "@/plane-editor/types";
 // types
-import { ISlashCommandItem, TExtensions, TFileHandler, TUserDetails } from "@/types";
+import { ISlashCommandItem, TExtensions, TUserDetails } from "@/types";
 // local extensions
 import { CustomCollaborationCursor } from "./collaboration-cursor";
 
@@ -31,6 +31,7 @@ export const DocumentEditorAdditionalExtensions = (props: Props) => {
   if (!isIssueEmbedDisabled) {
     const slashCommandAdditionalOptions: ISlashCommandItem[] = [
       {
+        commandKey: "issue-embed",
         key: "issue-embed",
         title: "Issue embed",
         description: "Embed an issue from the project.",
@@ -41,9 +42,9 @@ export const DocumentEditorAdditionalExtensions = (props: Props) => {
         },
       },
     ];
-    extensions.push(SlashCommand(slashCommandAdditionalOptions));
+    extensions.push(SlashCommands(slashCommandAdditionalOptions));
   } else {
-    extensions.push(SlashCommand());
+    extensions.push(SlashCommands());
   }
 
   if (issueEmbedConfig && !isIssueEmbedDisabled) {
