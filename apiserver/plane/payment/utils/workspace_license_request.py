@@ -207,7 +207,7 @@ def resync_workspace_license(workspace_slug, force=False):
     if workspace_license:
         # If the last sync is more than 1 hour, then sync the license or if force is True
         if (
-            workspace_license.last_synced_at - timezone.now()
+            timezone.now() - workspace_license.last_synced_at
         ).total_seconds() > 3600 or force:
             # Fetch the workspace license
             response = fetch_workspace_license(
