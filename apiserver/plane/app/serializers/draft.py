@@ -158,7 +158,7 @@ class DraftIssueCreateSerializer(BaseSerializer):
     def update(self, instance, validated_data):
         assignees = validated_data.pop("assignee_ids", None)
         labels = validated_data.pop("label_ids", None)
-        cycle_id = self.initial_data.get("cycle_id", None)
+        cycle_id = self.context.get("cycle_id", None)
         modules = self.initial_data.get("module_ids", None)
 
         # Related models
@@ -202,16 +202,17 @@ class DraftIssueCreateSerializer(BaseSerializer):
                 batch_size=10,
             )
 
-        if cycle_id is not None:
+        if cycle_id != "not_provided":
             DraftIssueCycle.objects.filter(draft_issue=instance).delete()
-            DraftIssueCycle.objects.create(
-                cycle_id=cycle_id,
-                draft_issue=instance,
-                workspace_id=workspace_id,
-                project_id=project_id,
-                created_by_id=created_by_id,
-                updated_by_id=updated_by_id,
-            )
+            if cycle_id is not None:
+                DraftIssueCycle.objects.create(
+                    cycle_id=cycle_id,
+                    draft_issue=instance,
+                    workspace_id=workspace_id,
+                    project_id=project_id,
+                    created_by_id=created_by_id,
+                    updated_by_id=updated_by_id,
+                )
 
         if modules is not None:
             DraftIssueModule.objects.filter(draft_issue=instance).delete()
