@@ -15,18 +15,12 @@ export interface IWorkspaceDraftIssues extends IBaseIssuesStore {
   // actions
   fetchIssues: (
     workspaceSlug: string,
-    viewId: string,
     loadType: TLoader,
     options: IssuePaginationOptions
   ) => Promise<TIssuesResponse | undefined>;
-  fetchIssuesWithExistingPagination: (
-    workspaceSlug: string,
-    viewId: string,
-    loadType: TLoader
-  ) => Promise<TIssuesResponse | undefined>;
+  fetchIssuesWithExistingPagination: (workspaceSlug: string, loadType: TLoader) => Promise<TIssuesResponse | undefined>;
   fetchNextIssues: (
     workspaceSlug: string,
-    viewId: string,
     groupId?: string,
     subGroupId?: string
   ) => Promise<TIssuesResponse | undefined>;
@@ -68,7 +62,6 @@ export class WorkspaceDraftIssues extends BaseIssuesStore implements IWorkspaceD
 
   fetchIssues = async (
     workspaceSlug: string,
-    viewId: string,
     loadType: TLoader,
     options: IssuePaginationOptions,
     isExistingPaginationOptions: boolean = false
@@ -81,7 +74,7 @@ export class WorkspaceDraftIssues extends BaseIssuesStore implements IWorkspaceD
       this.clear(!isExistingPaginationOptions);
 
       // get params from pagination options
-      const params = this.issueFilterStore?.getFilterParams(options, viewId, undefined, undefined, undefined);
+      const params = this.issueFilterStore?.getFilterParams(options, workspaceSlug, undefined, undefined, undefined);
       // call the fetch issues API with the params
       const response = await this.workspaceDraftService.getIssues(workspaceSlug, params, {
         signal: this.controller.signal,
@@ -107,7 +100,7 @@ export class WorkspaceDraftIssues extends BaseIssuesStore implements IWorkspaceD
    * @param subGroupId
    * @returns
    */
-  fetchNextIssues = async (workspaceSlug: string, viewId: string, groupId?: string, subGroupId?: string) => {
+  fetchNextIssues = async (workspaceSlug: string, groupId?: string, subGroupId?: string) => {
     const cursorObject = this.getPaginationData(groupId, subGroupId);
     // if there are no pagination options and the next page results do not exist the return
     if (!this.paginationOptions || (cursorObject && !cursorObject?.nextPageResults)) return;
@@ -118,7 +111,7 @@ export class WorkspaceDraftIssues extends BaseIssuesStore implements IWorkspaceD
       // get params from stored pagination options
       const params = this.issueFilterStore?.getFilterParams(
         this.paginationOptions,
-        viewId,
+        workspaceSlug,
         this.getNextCursor(groupId, subGroupId),
         groupId,
         subGroupId
@@ -144,9 +137,9 @@ export class WorkspaceDraftIssues extends BaseIssuesStore implements IWorkspaceD
    * @param loadType
    * @returns
    */
-  fetchIssuesWithExistingPagination = async (workspaceSlug: string, viewId: string, loadType: TLoader) => {
+  fetchIssuesWithExistingPagination = async (workspaceSlug: string, loadType: TLoader) => {
     if (!this.paginationOptions) return;
-    return await this.fetchIssues(workspaceSlug, viewId, loadType, this.paginationOptions, true);
+    return await this.fetchIssues(workspaceSlug, loadType, this.paginationOptions, true);
   };
 
   createWorkspaceDraftIssue = async (workspaceSlug: string, data: Partial<TIssue>) => {

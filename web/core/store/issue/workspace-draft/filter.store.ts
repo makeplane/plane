@@ -34,13 +34,11 @@ export interface IWorkspaceDraftIssuesFilter extends IBaseIssueFilterStore {
     subGroupId: string | undefined
   ) => Partial<Record<TIssueParams, string | boolean>>;
   // action
-  fetchFilters: (workspaceSlug: string, userId: string) => Promise<void>;
+  fetchFilters: (workspaceSlug: string) => Promise<void>;
   updateFilters: (
     workspaceSlug: string,
-    projectId: string | undefined,
     filterType: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters,
-    userId: string
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
   ) => Promise<void>;
 }
 
@@ -153,7 +151,6 @@ export class WorkspaceDraftIssuesFilter extends IssueFilterHelperStore implement
 
   updateFilters = async (
     workspaceSlug: string,
-    projectId: string | undefined,
     type: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
   ) => {
