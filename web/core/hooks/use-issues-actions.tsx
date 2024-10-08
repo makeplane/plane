@@ -742,7 +742,7 @@ const useGlobalIssueActions = () => {
   );
 };
 
-export const useWorkspaceDraftActions = () => {
+const useWorkspaceDraftActions = () => {
   // router
   const { workspaceSlug: routerWorkspaceSlug, globalViewId: routerGlobalViewId } = useParams();
   const workspaceSlug = routerWorkspaceSlug?.toString();

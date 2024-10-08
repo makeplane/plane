@@ -37,10 +37,11 @@ interface IPeekOverviewProperties {
   issueId: string;
   disabled: boolean;
   issueOperations: TIssueOperations;
+  isDraft?:boolean;
 }
 
 export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, issueOperations, disabled } = props;
+  const { workspaceSlug, projectId, issueId, issueOperations, disabled, isDraft=false } = props;
   // store hooks
   const { getProjectById } = useProject();
   const {
@@ -279,7 +280,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <span>Labels</span>
           </div>
           <div className="flex w-full flex-col gap-3 truncate">
-            <IssueLabel workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={disabled} />
+            <IssueLabel workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={disabled} isDraft={isDraft}/>
           </div>
         </div>
 

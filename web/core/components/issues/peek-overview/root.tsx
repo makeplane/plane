@@ -19,11 +19,11 @@ interface IIssuePeekOverview {
   embedIssue?: boolean;
   embedRemoveCurrentNotification?: () => void;
   is_archived?: boolean;
-  is_draft?: boolean;
+  isDraft?: boolean;
 }
 
 export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
-  const { embedIssue = false, embedRemoveCurrentNotification, is_archived = false, is_draft = false } = props;
+  const { embedIssue = false, embedRemoveCurrentNotification, is_archived = false, isDraft = false } = props;
   // router
   const pathname = usePathname();
   // store hook
@@ -58,7 +58,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
             workspaceSlug,
             projectId,
             issueId,
-            is_archived ? "ARCHIVED" : is_draft ? "DRAFT" : "DEFAULT"
+            is_archived ? "ARCHIVED" : isDraft ? "DRAFT" : "DEFAULT"
           );
           setError(false);
         } catch (error) {
@@ -67,37 +67,42 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
         }
       },
       update: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
-        issues?.updateIssue &&
-          (await issues
-            .updateIssue(workspaceSlug, projectId, issueId, data)
-            .then(async () => {
-              fetchActivities(workspaceSlug, projectId, issueId);
-              captureIssueEvent({
-                eventName: ISSUE_UPDATED,
-                payload: { ...data, issueId, state: "SUCCESS", element: "Issue peek-overview" },
-                updates: {
-                  changed_property: Object.keys(data).join(","),
-                  change_details: Object.values(data).join(","),
-                },
-                path: pathname,
-              });
-            })
-            .catch(() => {
-              captureIssueEvent({
-                eventName: ISSUE_UPDATED,
-                payload: { state: "FAILED", element: "Issue peek-overview" },
-                path: pathname,
-              });
-              setToast({
-                title: "Error!",
-                type: TOAST_TYPE.ERROR,
-                message: "Issue update failed",
-              });
-            }));
+        try {
+          if (isDraft && !issues?.updateDraft) throw new Error("Update function not available for draft");
+          if (!isDraft && !issues?.updateIssue) throw new Error("Update function not available for non-draft");
+          await (isDraft
+            ? issues.updateDraft(workspaceSlug, issueId, data)
+            : issues.updateIssue(workspaceSlug, projectId, issueId, data));
+          await fetchActivities(workspaceSlug, projectId, issueId);
+          captureIssueEvent({
+            eventName: ISSUE_UPDATED,
+            payload: { ...data, issueId, state: "SUCCESS", element: "Issue peek-overview" },
+            updates: {
+              changed_property: Object.keys(data).join(","),
+              change_details: Object.values(data).join(","),
+            },
+            path: pathname,
+          });
+        } catch (error) {
+          captureIssueEvent({
+            eventName: ISSUE_UPDATED,
+            payload: { state: "FAILED", element: "Issue peek-overview" },
+            path: pathname,
+          });
+          setToast({
+            title: "Error!",
+            type: TOAST_TYPE.ERROR,
+            message: "Issue update failed",
+          });
+        }
       },
       remove: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
-          return issues?.removeIssue(workspaceSlug, projectId, issueId).then(() => {
+          return (
+            isDraft
+              ? issues.deleteDraft(workspaceSlug, issueId)
+              : issues.removeIssue(workspaceSlug, projectId, issueId)
+          ).then(() => {
             captureIssueEvent({
               eventName: ISSUE_DELETED,
               payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
@@ -162,7 +167,9 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       },
       addCycleToIssue: async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
         try {
-          await issues.addCycleToIssue(workspaceSlug, projectId, cycleId, issueId);
+          isDraft
+            ? issues?.updateDraft && (await issues?.updateDraft(workspaceSlug, issueId, { cycle_id: cycleId }))
+            : await issues.addCycleToIssue(workspaceSlug, projectId, cycleId, issueId);
           fetchActivities(workspaceSlug, projectId, issueId);
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
@@ -192,7 +199,9 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       },
       addIssueToCycle: async (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => {
         try {
-          await issues.addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
+          if (isDraft)
+            issues?.updateDraft && (await issues?.updateDraft(workspaceSlug, issueIds[0], { cycle_id: cycleId }));
+          else await issues.addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { ...issueIds, state: "SUCCESS", element: "Issue peek-overview" },
@@ -221,7 +230,9 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       },
       removeIssueFromCycle: async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
         try {
-          const removeFromCyclePromise = issues.removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
+          const removeFromCyclePromise = isDraft
+            ? issues?.updateDraft && (await issues?.updateDraft(workspaceSlug, issueId, { cycle_id: null }))
+            : issues.removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
           setPromiseToast(removeFromCyclePromise, {
             loading: "Removing issue from the cycle...",
             success: {
@@ -284,7 +295,9 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       },
       removeIssueFromModule: async (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => {
         try {
-          const removeFromModulePromise = issues.removeIssuesFromModule(workspaceSlug, projectId, moduleId, [issueId]);
+          const removeFromModulePromise = isDraft
+            ? issues?.updateDraft && (await issues?.updateDraft(workspaceSlug, issueId, { cycle_id: null }))
+            : issues.removeIssuesFromModule(workspaceSlug, projectId, moduleId, [issueId]);
           setPromiseToast(removeFromModulePromise, {
             loading: "Removing issue from the module...",
             success: {
@@ -320,7 +333,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
         }
       },
     }),
-    [is_archived, is_draft, fetchIssue, issues, restoreIssue, captureIssueEvent, pathname]
+    [is_archived, isDraft, fetchIssue, issues, restoreIssue, captureIssueEvent, pathname]
   );
 
   useEffect(() => {
@@ -332,7 +345,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   if (!peekIssue?.workspaceSlug || !peekIssue?.projectId || !peekIssue?.issueId) return <></>;
 
   // Check if issue is editable, based on user role
-  const isEditable = allowPermissions(
+  const isEditable = 
+  allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.PROJECT,
     peekIssue?.workspaceSlug,
@@ -351,6 +365,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       embedIssue={embedIssue}
       embedRemoveCurrentNotification={embedRemoveCurrentNotification}
       issueOperations={issueOperations}
+      isDraft={isDraft}
     />
   );
 });
