@@ -48,6 +48,7 @@ type Props = {
   isNotificationEmbed: boolean;
   embedRemoveCurrentNotification?: () => void;
   isProjectAdmin: boolean;
+  handleActionWithPermission: (isAdmin: boolean, action: () => void, errorMessage: string) => void;
 };
 
 export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) => {
@@ -72,6 +73,7 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
     isNotificationEmbed,
     embedRemoveCurrentNotification,
     isProjectAdmin,
+    handleActionWithPermission,
   } = props;
   const router = useAppRouter();
   const issue = inboxIssue?.issue;
@@ -143,13 +145,11 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
             {canMarkAsAccepted && !isAcceptedOrDeclined && (
               <CustomMenu.MenuItem
                 onClick={() =>
-                  isProjectAdmin
-                    ? handleIssueSnoozeAction()
-                    : setToast({
-                        type: TOAST_TYPE.ERROR,
-                        title: "Permission denied",
-                        message: "Only project admins can snooze/Un-snooze issues",
-                      })
+                  handleActionWithPermission(
+                    isProjectAdmin,
+                    handleIssueSnoozeAction,
+                    "Only project admins can snooze/Un-snooze issues"
+                  )
                 }
               >
                 <div className="flex items-center gap-2">
@@ -161,13 +161,11 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
             {canMarkAsDuplicate && !isAcceptedOrDeclined && (
               <CustomMenu.MenuItem
                 onClick={() =>
-                  isProjectAdmin
-                    ? setSelectDuplicateIssue(true)
-                    : setToast({
-                        type: TOAST_TYPE.ERROR,
-                        title: "Permission denied",
-                        message: "Only project admins can mark issues as duplicate",
-                      })
+                  handleActionWithPermission(
+                    isProjectAdmin,
+                    () => setSelectDuplicateIssue(true),
+                    "Only project admins can mark issues as duplicate"
+                  )
                 }
               >
                 <div className="flex items-center gap-2">
@@ -179,13 +177,11 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
             {canMarkAsAccepted && (
               <CustomMenu.MenuItem
                 onClick={() =>
-                  isProjectAdmin
-                    ? setAcceptIssueModal(true)
-                    : setToast({
-                        type: TOAST_TYPE.ERROR,
-                        title: "Permission denied",
-                        message: "Only project admins can accept issues",
-                      })
+                  handleActionWithPermission(
+                    isProjectAdmin,
+                    () => setAcceptIssueModal(true),
+                    "Only project admins can accept issues"
+                  )
                 }
               >
                 <div className="flex items-center gap-2 text-green-500">
@@ -197,13 +193,11 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
             {canMarkAsDeclined && (
               <CustomMenu.MenuItem
                 onClick={() =>
-                  isProjectAdmin
-                    ? setDeclineIssueModal(true)
-                    : setToast({
-                        type: TOAST_TYPE.ERROR,
-                        title: "Permission denied",
-                        message: "Only project admins can deny issues",
-                      })
+                  handleActionWithPermission(
+                    isProjectAdmin,
+                    () => setDeclineIssueModal(true),
+                    "Only project admins can deny issues"
+                  )
                 }
               >
                 <div className="flex items-center gap-2 text-red-500">

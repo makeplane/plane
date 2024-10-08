@@ -205,6 +205,17 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
     [handleInboxIssueNavigation]
   );
 
+  const handleActionWithPermission = (isAdmin: boolean, action: () => void, errorMessage: string) => {
+    if (isAdmin) action();
+    else {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Permission denied",
+        message: errorMessage,
+      });
+    }
+  };
+
   useEffect(() => {
     if (!isNotificationEmbed) document.addEventListener("keydown", onKeyDown);
     return () => {
@@ -300,13 +311,11 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                   prependIcon={<CircleCheck className="w-3 h-3" />}
                   className="text-green-500 border-0.5 border-green-500 bg-green-500/20 focus:bg-green-500/20 focus:text-green-500 hover:bg-green-500/40 bg-opacity-20"
                   onClick={() =>
-                    isProjectAdmin
-                      ? setAcceptIssueModal(true)
-                      : setToast({
-                          type: TOAST_TYPE.ERROR,
-                          title: "Permission denied",
-                          message: "Only project admins can accept issues",
-                        })
+                    handleActionWithPermission(
+                      isProjectAdmin,
+                      () => setAcceptIssueModal(true),
+                      "Only project admins can accept issues"
+                    )
                   }
                 >
                   Accept
@@ -322,13 +331,11 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                   prependIcon={<CircleX className="w-3 h-3" />}
                   className="text-red-500 border-0.5 border-red-500 bg-red-500/20 focus:bg-red-500/20 focus:text-red-500 hover:bg-red-500/40 bg-opacity-20"
                   onClick={() =>
-                    isProjectAdmin
-                      ? setDeclineIssueModal(true)
-                      : setToast({
-                          type: TOAST_TYPE.ERROR,
-                          title: "Permission denied",
-                          message: "Only project admins can deny issues",
-                        })
+                    handleActionWithPermission(
+                      isProjectAdmin,
+                      () => setDeclineIssueModal(true),
+                      "Only project admins can deny issues"
+                    )
                   }
                 >
                   Decline
@@ -365,13 +372,11 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                     {canMarkAsAccepted && (
                       <CustomMenu.MenuItem
                         onClick={() =>
-                          isProjectAdmin
-                            ? handleIssueSnoozeAction()
-                            : setToast({
-                                type: TOAST_TYPE.ERROR,
-                                title: "Permission denied",
-                                message: "Only project admins can snooze/Un-snooze issues",
-                              })
+                          handleActionWithPermission(
+                            isProjectAdmin,
+                            handleIssueSnoozeAction,
+                            "Only project admins can snooze/Un-snooze issues"
+                          )
                         }
                       >
                         <div className="flex items-center gap-2">
@@ -385,13 +390,11 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                     {canMarkAsDuplicate && (
                       <CustomMenu.MenuItem
                         onClick={() =>
-                          isProjectAdmin
-                            ? setSelectDuplicateIssue(true)
-                            : setToast({
-                                type: TOAST_TYPE.ERROR,
-                                title: "Permission denied",
-                                message: "Only project admins can mark issues as duplicate",
-                              })
+                          handleActionWithPermission(
+                            isProjectAdmin,
+                            () => setSelectDuplicateIssue(true),
+                            "Only project admins can mark issues as duplicate"
+                          )
                         }
                       >
                         <div className="flex items-center gap-2">
@@ -444,6 +447,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
           isNotificationEmbed={isNotificationEmbed}
           embedRemoveCurrentNotification={embedRemoveCurrentNotification}
           isProjectAdmin={isProjectAdmin}
+          handleActionWithPermission={handleActionWithPermission}
         />
       </div>
     </>
