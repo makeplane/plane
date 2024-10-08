@@ -10,7 +10,7 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
     <AuthenticationWrapper>
       <CommandPalette />
       <WorkspaceAuthWrapper>
-        <div className="relative flex h-screen w-full overflow-hidden">
+        <div className="relative flex h-full w-full overflow-hidden">
           <AppSidebar />
           <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
             {children}
