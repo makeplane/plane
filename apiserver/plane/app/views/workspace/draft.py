@@ -44,7 +44,6 @@ from plane.utils.issue_filters import issue_filters
 
 
 class WorkspaceDraftIssueViewSet(BaseViewSet):
-
     model = DraftIssue
 
     @method_decorator(gzip_page)

@@ -46,7 +46,30 @@ class DraftIssueCreateSerializer(BaseSerializer):
 
     class Meta:
         model = DraftIssue
-        fields = "__all__"
+        fields = [
+            "id",
+            "name",
+            "state_id",
+            "sort_order",
+            "completed_at",
+            "estimate_point",
+            "priority",
+            "start_date",
+            "target_date",
+            "project_id",
+            "parent_id",
+            "cycle_id",
+            "module_ids",
+            "label_ids",
+            "assignee_ids",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+            "state_id",
+            "label_ids",
+            "assignee_ids",
+        ]
         read_only_fields = [
             "workspace",
             "created_by",

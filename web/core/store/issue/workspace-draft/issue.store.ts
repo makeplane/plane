@@ -1,202 +1,202 @@
-import { clone } from "lodash";
-import { action, makeObservable, runInAction } from "mobx";
-// base class
-import { IssuePaginationOptions, TIssue, TIssuesResponse, TLoader, ViewFlags } from "@plane/types";
+import clone from "lodash/clone";
+import set from "lodash/set";
+import unset from "lodash/unset";
+import update from "lodash/update";
+import { action, makeObservable, observable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
+import { IssuePaginationOptions, TIssue, TIssuesResponse } from "@plane/types";
+// helpers
+import { getCurrentDateTimeInISO } from "@/helpers/date-time.helper";
 // services
-import { WorkspaceDraftService } from "@/services/issue";
+import workspaceDraftService from "@/services/issue/workspace_draft.service";
 // types
-import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
 import { IIssueRootStore } from "../root.store";
-import { IWorkspaceDraftIssuesFilter } from "./filter.store";
 
-export interface IWorkspaceDraftIssues extends IBaseIssuesStore {
-  // observable
-  viewFlags: ViewFlags;
+export type TLoader =
+  | "init-loader"
+  | "mutation"
+  | "pagination"
+  | "loaded"
+  | "create"
+  | "update"
+  | "delete"
+  | "move"
+  | undefined;
+
+export type TPaginationInfo<T> = {
+  next_cursor: string | undefined;
+  prev_cursor: string | undefined;
+  next_page_results: boolean | undefined;
+  prev_page_results: boolean | undefined;
+  total_pages: number | undefined;
+  extra_stats: string | undefined;
+  count: number | undefined; // current paginated results count
+  total_count: number | undefined; // total available results count
+  results: T[] | undefined;
+  grouped_by: string | undefined;
+  sub_grouped_by: string | undefined;
+};
+
+export interface IWorkspaceDraftIssues {
+  // observables
+  issuesMap: Record<string, TIssue>;
+  paginationInfo: Omit<TPaginationInfo<TIssue>, "results"> | undefined;
+  loader: TLoader;
+  // computed actions
+  getIssueById: (issueId: string) => TIssue | undefined;
+  // helper actions
+  addIssue: (issues: TIssue[]) => void;
+  mutateIssue: (issueId: string, data: Partial<TIssue>) => void;
+  removeIssue: (issueId: string) => void;
   // actions
-  fetchIssues: (
-    workspaceSlug: string,
-    loadType: TLoader,
-    options: IssuePaginationOptions
-  ) => Promise<TIssuesResponse | undefined>;
-  fetchIssuesWithExistingPagination: (workspaceSlug: string, loadType: TLoader) => Promise<TIssuesResponse | undefined>;
-  fetchNextIssues: (
-    workspaceSlug: string,
-    groupId?: string,
-    subGroupId?: string
-  ) => Promise<TIssuesResponse | undefined>;
-
-  createWorkspaceDraftIssue: (workspaceSlug: string, data: Partial<TIssue>) => Promise<TIssue>;
-  updateWorkspaceDraftIssue: (workspaceSlug: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
-  deleteWorkspaceDraftIssue: (workspaceSlug: string, issueId: string) => Promise<void>;
-  moveToIssues: (workspaceSlug: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
+  fetchIssues: (workspaceSlug: string, loadType: TLoader) => Promise<TIssuesResponse | undefined>;
+  createIssue: (workspaceSlug: string, payload: Partial<TIssue>) => Promise<TIssue | undefined>;
+  updateIssue: (workspaceSlug: string, issueId: string, payload: Partial<TIssue>) => Promise<TIssue | undefined>;
+  deleteIssue: (workspaceSlug: string, issueId: string) => Promise<void>;
+  moveIssue: (workspaceSlug: string, issueId: string, payload: Partial<TIssue>) => Promise<void>;
 }
 
-export class WorkspaceDraftIssues extends BaseIssuesStore implements IWorkspaceDraftIssues {
-  viewFlags = {
-    enableQuickAdd: true,
-    enableIssueCreation: true,
-    enableInlineEditing: true,
-  };
-  // service
-  workspaceDraftService;
-  // filterStore
-  issueFilterStore;
+export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
+  // local constants
+  paginatedCount = 100;
+  // observables
+  paginationInfo: Omit<TPaginationInfo<TIssue>, "results"> | undefined = undefined;
+  loader: TLoader = undefined;
+  issuesMap: Record<string, TIssue> = {};
 
-  constructor(_rootStore: IIssueRootStore, issueFilterStore: IWorkspaceDraftIssuesFilter) {
-    super(_rootStore, issueFilterStore);
-
+  constructor(private store: IIssueRootStore) {
     makeObservable(this, {
+      issuesMap: observable,
+      loader: observable.ref,
       // action
       fetchIssues: action,
-      fetchNextIssues: action,
-      fetchIssuesWithExistingPagination: action,
-      createWorkspaceDraftIssue: action,
-      updateWorkspaceDraftIssue: action,
-      deleteWorkspaceDraftIssue: action,
+      createIssue: action,
+      updateIssue: action,
+      deleteIssue: action,
+      moveIssue: action,
     });
-    // services
-    this.workspaceDraftService = new WorkspaceDraftService();
-    // filter store
-    this.issueFilterStore = issueFilterStore;
   }
 
-  fetchIssues = async (
-    workspaceSlug: string,
-    loadType: TLoader,
-    options: IssuePaginationOptions,
-    isExistingPaginationOptions: boolean = false
-  ) => {
-    try {
-      // set loader and clear store
-      console.log("fetchIssues");
-      runInAction(() => {
-        this.setLoader(loadType);
+  // helper actions
+  addIssue = (issues: TIssue[]) => {
+    if (issues && issues.length <= 0) return;
+    runInAction(() => {
+      issues.forEach((issue) => {
+        if (!this.issuesMap[issue.id]) set(this.issuesMap, issue.id, issue);
+        else update(this.issuesMap, issue.id, (prevIssue) => ({ ...prevIssue, ...issue }));
       });
-      this.clear(!isExistingPaginationOptions);
+    });
+  };
+
+  getIssueById = computedFn((issueId: string) => {
+    if (!issueId || !this.issuesMap[issueId]) return undefined;
+    return this.issuesMap[issueId];
+  });
+
+  mutateIssue = (issueId: string, issue: Partial<TIssue>) => {
+    if (!issue || !issueId || !this.issuesMap[issueId]) return;
+    runInAction(() => {
+      set(this.issuesMap, [issueId, "updated_at"], getCurrentDateTimeInISO());
+      Object.keys(issue).forEach((key) => {
+        set(this.issuesMap, [issueId, key], issue[key as keyof TIssue]);
+      });
+    });
+  };
+
+  removeIssue = (issueId: string) => {
+    if (!issueId || !this.issuesMap[issueId]) return;
+    runInAction(() => unset(this.issuesMap, issueId));
+  };
+
+  // actions
+  fetchIssues = async (workspaceSlug: string, loadType: TLoader) => {
+    try {
+      this.loader = loadType;
 
       // get params from pagination options
-      const params = this.issueFilterStore?.getFilterParams(options, workspaceSlug, undefined, undefined, undefined);
-      // call the fetch issues API with the params
-      const response = await this.workspaceDraftService.getIssues(workspaceSlug, params, {
-        signal: this.controller.signal,
-      });
+      // const params = this.issueFilterStore?.getFilterParams(options, workspaceSlug, undefined, undefined, undefined);
+      const params = {};
 
-      // after fetching issues, call the base method to process the response further
-      this.onfetchIssues(response, options, workspaceSlug, undefined, undefined, !isExistingPaginationOptions);
+      // call the fetch issues API with the params
+      const response = await workspaceDraftService.getIssues(workspaceSlug, params);
+
       console.log("response", response);
 
       return response;
     } catch (error) {
       // set loader to undefined if errored out
-      this.setLoader(undefined);
+      this.loader = undefined;
       throw error;
     }
   };
 
-  /**
-   * This method is called subsequent pages of pagination
-   * if groupId/subgroupId is provided, only that specific group's next page is fetched
-   * else all the groups' next page is fetched
-   * @param workspaceSlug
-   * @param viewId
-   * @param groupId
-   * @param subGroupId
-   * @returns
-   */
-  fetchNextIssues = async (workspaceSlug: string, groupId?: string, subGroupId?: string) => {
-    const cursorObject = this.getPaginationData(groupId, subGroupId);
-    // if there are no pagination options and the next page results do not exist the return
-    if (!this.paginationOptions || (cursorObject && !cursorObject?.nextPageResults)) return;
+  createIssue = async (workspaceSlug: string, payload: Partial<TIssue>): Promise<TIssue | undefined> => {
     try {
-      // set Loader
-      this.setLoader("pagination", groupId, subGroupId);
+      this.loader = "create";
 
-      // get params from stored pagination options
-      const params = this.issueFilterStore?.getFilterParams(
-        this.paginationOptions,
-        workspaceSlug,
-        this.getNextCursor(groupId, subGroupId),
-        groupId,
-        subGroupId
-      );
-      // call the fetch issues API with the params for next page in issues
-      const response = await this.workspaceDraftService.getIssues(workspaceSlug, params);
+      const response = await workspaceDraftService.createIssue(workspaceSlug, payload);
+      if (response) {
+        runInAction(() => {
+          if (!this.issuesMap[response.id]) set(this.issuesMap, response.id, response);
+          else update(this.issuesMap, response.id, (prevIssue) => ({ ...prevIssue, ...response }));
+        });
+      }
 
-      // after the next page of issues are fetched, call the base method to process the response
-      this.onfetchNexIssues(response, groupId, subGroupId);
+      this.loader = undefined;
       return response;
     } catch (error) {
-      // set Loader as undefined if errored out
-      this.setLoader(undefined, groupId, subGroupId);
+      this.loader = undefined;
       throw error;
     }
   };
 
-  /**
-   * This Method exists to fetch the first page of the issues with the existing stored pagination
-   * This is useful for refetching when filters, groupBy, orderBy etc changes
-   * @param workspaceSlug
-   * @param viewId
-   * @param loadType
-   * @returns
-   */
-  fetchIssuesWithExistingPagination = async (workspaceSlug: string, loadType: TLoader) => {
-    if (!this.paginationOptions) return;
-    return await this.fetchIssues(workspaceSlug, loadType, this.paginationOptions, true);
-  };
-
-  createWorkspaceDraftIssue = async (workspaceSlug: string, data: Partial<TIssue>) => {
-    const response = await this.workspaceDraftService.createIssue(workspaceSlug, data);
-    this.addIssue(response);
-    return response;
-  };
-
-  updateWorkspaceDraftIssue = async (workspaceSlug: string, issueId: string, data: Partial<TIssue>) => {
-    // Store Before state of the issue
-    const issueBeforeUpdate = clone(this.rootIssueStore.issues.getIssueById(issueId));
+  updateIssue = async (workspaceSlug: string, issueId: string, payload: Partial<TIssue>) => {
     try {
-      // Update the Respective Stores
-      this.rootIssueStore.issues.updateIssue(issueId, data);
-      this.updateIssueList({ ...issueBeforeUpdate, ...data } as TIssue, issueBeforeUpdate);
+      this.loader = "create";
 
-      // call API to update the issue
-      await this.workspaceDraftService.updateIssue(workspaceSlug, issueId, data);
+      const response = await workspaceDraftService.updateIssue(workspaceSlug, issueId, payload);
+      if (response) {
+        runInAction(() => {
+          if (!this.issuesMap[response.id]) set(this.issuesMap, response.id, response);
+          else update(this.issuesMap, response.id, (prevIssue) => ({ ...prevIssue, ...response }));
+        });
+      }
+
+      this.loader = undefined;
+      return response;
     } catch (error) {
-      // If errored out update store again to revert the change
-      this.rootIssueStore.issues.updateIssue(issueId, issueBeforeUpdate ?? {});
-      this.updateIssueList(issueBeforeUpdate, { ...issueBeforeUpdate, ...data } as TIssue);
+      this.loader = undefined;
       throw error;
     }
   };
 
-  deleteWorkspaceDraftIssue = async (workspaceSlug: string, issueId: string) => {
-    // Male API call
-    await this.workspaceDraftService.deleteIssue(workspaceSlug, issueId);
-    // Remove from Respective issue Id list
-    runInAction(() => {
-      this.removeIssueFromList(issueId);
-    });
-    // Remove issue from main issue Map store
-    this.rootIssueStore.issues.removeIssue(issueId);
+  deleteIssue = async (workspaceSlug: string, issueId: string) => {
+    try {
+      this.loader = "delete";
+
+      const response = await workspaceDraftService.deleteIssue(workspaceSlug, issueId);
+      runInAction(() => {});
+
+      this.loader = undefined;
+      return response;
+    } catch (error) {
+      this.loader = undefined;
+      throw error;
+    }
   };
 
-  moveToIssues = async (workspaceSlug: string, issueId: string, data: Partial<TIssue>) => {
-    // Make API call
-    await this.workspaceDraftService.moveToIssues(workspaceSlug, issueId, data);
-    // Remove from Respective issue Id list
-    runInAction(() => {
-      this.removeIssueFromList(issueId);
-    });
-    // Remove issue from main issue Map store
-    this.rootIssueStore.issues.removeIssue(issueId);
-  };
+  moveIssue = async (workspaceSlug: string, issueId: string, payload: Partial<TIssue>) => {
+    try {
+      this.loader = "move";
 
-  fetchParentStats = (workspaceSlug: string, projectId?: string, id?: string) => {
-    // Implement the method logic here
-    console.log(`Fetching parent stats for workspace: ${workspaceSlug}, project: ${projectId}, id: ${id}`);
-  };
-  updateParentStats = (prevIssueState?: TIssue, nextIssueState?: TIssue, id?: string) => {
-    // Implement the method logic here
-    console.log(`Updating parent stats for issue: ${id}`);
+      const response = await workspaceDraftService.moveIssue(workspaceSlug, issueId, payload);
+      runInAction(() => {});
+
+      this.loader = undefined;
+      return response;
+    } catch (error) {
+      this.loader = undefined;
+      throw error;
+    }
   };
 }
