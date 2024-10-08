@@ -65,21 +65,6 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   // update query params
   const { updateQueryParams } = useQueryParams();
 
-  useEffect(() => {
-    if (currentUserAction === "archived") {
-      editorRef?.emitRealTimeUpdate("Archive");
-    }
-    if (currentUserAction === "unarchived") {
-      editorRef?.emitRealTimeUpdate("Unarchive");
-    }
-    if (currentUserAction === "locked") {
-      editorRef?.emitRealTimeUpdate("Lock");
-    }
-    if (currentUserAction === "unlocked") {
-      editorRef?.emitRealTimeUpdate("Unlock");
-    }
-  }, [currentUserAction, editorRef]);
-
   const handleArchivePage = useCallback(
     async (isPerformedByCurrentUser: boolean = true) => {
       await archive()
@@ -156,7 +141,24 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     [unlock]
   );
 
-  // listen to real time updates from the live server
+  // this is for the emitting real time updates for the current user's action
+  useEffect(() => {
+    if (currentUserAction === "archived") {
+      editorRef?.emitRealTimeUpdate("Archive");
+    }
+    if (currentUserAction === "unarchived") {
+      editorRef?.emitRealTimeUpdate("Unarchive");
+    }
+    if (currentUserAction === "locked") {
+      editorRef?.emitRealTimeUpdate("Lock");
+    }
+    if (currentUserAction === "unlocked") {
+      editorRef?.emitRealTimeUpdate("Unlock");
+    }
+  }, [currentUserAction, editorRef]);
+
+  // this is for listening to real time updates from the live server for remote
+  // users' actions
   useEffect(() => {
     const provider = editorRef?.listenToRealTimeUpdate();
 
