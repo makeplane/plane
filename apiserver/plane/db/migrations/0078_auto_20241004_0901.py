@@ -22,7 +22,7 @@ def move_attachment_to_fileasset(apps, schema_editor):
     ):
         bulk_issue_attachment.append(
             FileAsset(
-                entity_identifier=issue_attachment["issue_id"],
+                issue_id=issue_attachment["issue_id"],
                 entity_type="ISSUE_ATTACHMENT",
                 project_id=issue_attachment["project_id"],
                 workspace_id=issue_attachment["workspace_id"],

@@ -42,29 +42,52 @@ class FileAsset(BaseModel):
         upload_to=get_upload_path,
         max_length=800,
     )
+    user = models.ForeignKey(
+        "db.User",
+        on_delete=models.CASCADE,
+        null=True,
+        related_name="assets",
+    )
     workspace = models.ForeignKey(
         "db.Workspace",
         on_delete=models.CASCADE,
         null=True,
         related_name="assets",
     )
-    is_deleted = models.BooleanField(default=False)
-    is_archived = models.BooleanField(default=False)
-    entity_identifier = models.UUIDField(null=True, blank=True)
-    entity_type = models.CharField(
-        max_length=255,
-        choices=EntityTypeContext.choices,
-        null=True,
-        blank=True,
-    )
-    external_id = models.CharField(max_length=255, null=True, blank=True)
-    external_source = models.CharField(max_length=255, null=True, blank=True)
     project = models.ForeignKey(
         "db.Project",
         on_delete=models.CASCADE,
         null=True,
         related_name="assets",
     )
+    issue = models.ForeignKey(
+        "db.Issue",
+        on_delete=models.CASCADE,
+        null=True,
+        related_name="assets",
+    )
+    comment = models.ForeignKey(
+        "db.IssueComment",
+        on_delete=models.CASCADE,
+        null=True,
+        related_name="assets",
+    )
+    page = models.ForeignKey(
+        "db.Page",
+        on_delete=models.CASCADE,
+        null=True,
+        related_name="assets",
+    )
+    entity_type = models.CharField(
+        max_length=255,
+        choices=EntityTypeContext.choices,
+        null=True,
+        blank=True,
+    )
+    is_deleted = models.BooleanField(default=False)
+    is_archived = models.BooleanField(default=False)
+    external_id = models.CharField(max_length=255, null=True, blank=True)
+    external_source = models.CharField(max_length=255, null=True, blank=True)
     size = models.FloatField(default=0)
     is_uploaded = models.BooleanField(default=False)
     storage_metadata = models.JSONField(default=dict, null=True, blank=True)

@@ -34,7 +34,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
         if serializer.is_valid():
             serializer.save(
                 project_id=project_id,
-                entity_identifier=issue_id,
+                issue_id=issue_id,
                 workspace_id=workspace.id,
                 entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
             )
@@ -126,7 +126,7 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
             size=size,
             workspace_id=workspace.id,
             created_by=request.user,
-            entity_identifier=issue_id,
+            issue_id=issue_id,
             project_id=project_id,
             entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
         )
@@ -207,7 +207,7 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
 
         # Get all the attachments
         issue_attachments = FileAsset.objects.filter(
-            entity_identifier=issue_id,
+            issue_id=issue_id,
             entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
             workspace__slug=slug,
             project_id=project_id,

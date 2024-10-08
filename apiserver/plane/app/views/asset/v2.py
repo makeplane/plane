@@ -115,9 +115,9 @@ class UserAssetsV2Endpoint(BaseAPIView):
             },
             asset=asset_key,
             size=size,
+            user=request.user,
             created_by=request.user,
             entity_type=entity_type,
-            entity_identifier=request.user.id,
         )
 
         # Get the presigned URL
@@ -140,9 +140,7 @@ class UserAssetsV2Endpoint(BaseAPIView):
 
     def patch(self, request, asset_id):
         # get the asset id
-        asset = FileAsset.objects.get(
-            id=asset_id, entity_identifier=request.user.id
-        )
+        asset = FileAsset.objects.get(id=asset_id, user_id=request.user.id)
         storage = S3Storage(request=request)
         # get the storage metadata
         asset.is_uploaded = True
@@ -162,9 +160,7 @@ class UserAssetsV2Endpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def delete(self, request, asset_id):
-        asset = FileAsset.objects.get(
-            id=asset_id, entity_identifier=request.user.id
-        )
+        asset = FileAsset.objects.get(id=asset_id, user_id=request.user.id)
         asset.is_deleted = True
         asset.deleted_at = timezone.now()
         # get the entity and save the asset id for the request field
@@ -175,6 +171,44 @@ class UserAssetsV2Endpoint(BaseAPIView):
 
 class WorkspaceFileAssetEndpoint(BaseAPIView):
     """This endpoint is used to upload cover images/logos etc for workspace, projects and users."""
+
+    def get_entity_id_field(self, entity_type, entity_id):
+        if entity_type == FileAsset.EntityTypeContext.WORKSPACE_LOGO:
+            return {
+                "workspace_id": entity_id,
+            }
+
+        if entity_type == FileAsset.EntityTypeContext.PROJECT_COVER:
+            return {
+                "project_id": entity_id,
+            }
+
+        if entity_type in [
+            FileAsset.EntityTypeContext.USER_AVATAR,
+            FileAsset.EntityTypeContext.USER_COVER,
+        ]:
+            return {
+                "user_id": entity_id,
+            }
+
+        if entity_type in [
+            FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+            FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
+        ]:
+            return {
+                "issue_id": entity_id,
+            }
+
+        if entity_type == FileAsset.EntityTypeContext.PAGE_DESCRIPTION:
+            return {
+                "page_id": entity_id,
+            }
+
+        if entity_type == FileAsset.EntityTypeContext.COMMENT_DESCRIPTION:
+            return {
+                "comment_id": entity_id,
+            }
+        return {}
 
     def asset_delete(self, asset_id):
         asset = FileAsset.objects.filter(id=asset_id).first()
@@ -284,7 +318,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             workspace=workspace,
             created_by=request.user,
             entity_type=entity_type,
-            entity_identifier=entity_identifier if entity_identifier else None,
+            **self.get_entity_id_field(entity_type, entity_identifier),
         )
 
         # Get the presigned URL
@@ -418,6 +452,44 @@ class AssetRestoreEndpoint(BaseAPIView):
 class ProjectAssetEndpoint(BaseAPIView):
     """This endpoint is used to upload cover images/logos etc for workspace, projects and users."""
 
+    def get_entity_id_fiekd(self, entity_type, entity_id):
+        if entity_type == FileAsset.EntityTypeContext.WORKSPACE_LOGO:
+            return {
+                "workspace_id": entity_id,
+            }
+
+        if entity_type == FileAsset.EntityTypeContext.PROJECT_COVER:
+            return {
+                "project_id": entity_id,
+            }
+
+        if entity_type in [
+            FileAsset.EntityTypeContext.USER_AVATAR,
+            FileAsset.EntityTypeContext.USER_COVER,
+        ]:
+            return {
+                "user_id": entity_id,
+            }
+
+        if entity_type in [
+            FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+            FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
+        ]:
+            return {
+                "issue_id": entity_id,
+            }
+
+        if entity_type == FileAsset.EntityTypeContext.PAGE_DESCRIPTION:
+            return {
+                "page_id": entity_id,
+            }
+
+        if entity_type == FileAsset.EntityTypeContext.COMMENT_DESCRIPTION:
+            return {
+                "comment_id": entity_id,
+            }
+        return {}
+
     @allow_permission(
         [ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST],
     )
@@ -468,9 +540,7 @@ class ProjectAssetEndpoint(BaseAPIView):
             created_by=request.user,
             entity_type=entity_type,
             project_id=project_id,
-            entity_identifier=(
-                entity_identifier if entity_identifier else None
-            ),
+            **self.get_entity_id_fiekd(entity_type, entity_identifier),
         )
 
         # Get the presigned URL
@@ -558,6 +628,7 @@ class ProjectAssetEndpoint(BaseAPIView):
 
 
 class ProjectBulkAssetEndpoint(BaseAPIView):
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def post(self, request, slug, project_id, entity_id):
         asset_ids = request.data.get("asset_ids", [])

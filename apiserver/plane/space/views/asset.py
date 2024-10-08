@@ -124,9 +124,7 @@ class EntityAssetEndpoint(BaseAPIView):
             created_by=request.user,
             entity_type=entity_type,
             project_id=deploy_board.project_id,
-            entity_identifier=(
-                entity_identifier if entity_identifier else None
-            ),
+            comment_id=entity_identifier,
         )
 
         # Get the presigned URL

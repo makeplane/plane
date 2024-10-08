@@ -650,7 +650,7 @@ class CycleIssueAPIEndpoint(BaseAPIView):
             )
             .annotate(
                 attachment_count=FileAsset.objects.filter(
-                    entity_identifier=OuterRef("id"),
+                    issue_id=OuterRef("id"),
                     entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()

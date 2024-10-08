@@ -189,7 +189,7 @@ class DynamicBaseSerializer(BaseSerializer):
                 if issue_id:
                     # Fetch related issue_attachments
                     issue_attachments = FileAsset.objects.filter(
-                        entity_identifier=issue_id,
+                        issue_id=issue_id,
                         entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                     )
                     # Serialize issue_attachments and add them to the response
