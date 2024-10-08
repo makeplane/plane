@@ -270,7 +270,7 @@ export const isCommentEmpty = (comment: string | undefined): boolean => {
 export const checkURLValidity = (url: string): boolean => {
   if (!url) return false;
   // regex to match valid URLs (with or without http/https)
-  const urlPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z]{2,6})(\/[\w.-]*)*\/?(\?[=&\w.-]*)?$/i;
+  const urlPattern = /^(https?:\/\/)?([\w.-]+\.[a-z]{2,6})(\/[\w\-.~:/?#[\]@!$&'()*+,;=%]*)?$/i;
   // test if the URL matches the pattern
   return urlPattern.test(url);
 };
