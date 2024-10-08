@@ -9,6 +9,8 @@
     "space",
     "admin",
     "live",
+    "silo",
+    "packages/silo/*",
     "packages/*"
   ],
   "scripts": {

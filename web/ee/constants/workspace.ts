@@ -4,6 +4,7 @@ import { WORKSPACE_SETTINGS as WORKSPACE_SETTINGS_CE } from "@/ce/constants/work
 import { SettingIcon } from "@/components/icons/attachment";
 // logos
 import JiraLogo from "@/public/services/jira.svg";
+import LinearLogo from "@/public/services/linear.svg";
 import { EUserPermissions } from "./user-permissions";
 
 export const WORKSPACE_SETTINGS = {
@@ -62,5 +63,12 @@ export const IMPORTERS_LIST = [
     title: "Jira",
     description: "Import your Jira data into Plane projects.",
     logo: JiraLogo,
+  },
+  {
+    provider: "linear",
+    type: "Import",
+    title: "Linear",
+    description: "Import your Linear data into Plane projects.",
+    logo: LinearLogo,
   },
 ];

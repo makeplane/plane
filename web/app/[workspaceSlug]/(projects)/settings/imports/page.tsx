@@ -23,18 +23,15 @@ const ImportsPage = observer(() => {
   const { workspaceSlug } = useParams();
   // store hooks
   const { data: currentUserProfile } = useUserProfile();
-
   const { config } = useInstance();
-
   const { currentWorkspace } = useWorkspace();
   const { allowPermissions } = useUserPermissions();
-
   // derived values
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
   const isDarkMode = currentUserProfile?.theme.theme === "dark";
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Imports` : undefined;
-
-  const isSiloIntegrationEnabled = useFlag(workspaceSlug?.toString(), "SILO_INTEGRATION");
+  const isSiloIntegrationEnabled = useFlag(workspaceSlug?.toString(), "SILO_INTEGRATION") || true;
+  const siloBaseUrl = config?.silo_base_url;
 
   if (!isAdmin)
     return (
@@ -46,7 +43,7 @@ const ImportsPage = observer(() => {
       </>
     );
 
-  if (!isSiloIntegrationEnabled || !config?.silo_base_url)
+  if (!isSiloIntegrationEnabled || !siloBaseUrl)
     return (
       <>
         <PageHead title={pageTitle} />
