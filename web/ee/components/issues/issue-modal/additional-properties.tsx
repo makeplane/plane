@@ -41,7 +41,7 @@ export const IssueAdditionalProperties: React.FC<TIssueAdditionalPropertiesProps
     <>
       {isIssueTypeDisplayEnabled && (
         <>
-          {!issueTypeId || issuePropertiesLoader === "init-loader" ? (
+          {issuePropertiesLoader === "init-loader" ? (
             <Loader className="space-y-4 py-2">
               <Loader.Item height="30px" />
               <Loader.Item height="30px" />
@@ -49,12 +49,16 @@ export const IssueAdditionalProperties: React.FC<TIssueAdditionalPropertiesProps
               <Loader.Item height="30px" width="50%" />
             </Loader>
           ) : (
-            <IssueAdditionalPropertyValuesCreate
-              issueId={issueId}
-              issueTypeId={issueTypeId}
-              projectId={projectId}
-              workspaceSlug={workspaceSlug}
-            />
+            <>
+              {issueTypeId && (
+                <IssueAdditionalPropertyValuesCreate
+                  issueId={issueId}
+                  issueTypeId={issueTypeId}
+                  projectId={projectId}
+                  workspaceSlug={workspaceSlug}
+                />
+              )}
+            </>
           )}
         </>
       )}

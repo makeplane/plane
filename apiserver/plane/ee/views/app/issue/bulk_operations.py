@@ -31,6 +31,7 @@ from plane.db.models import (
     CycleIssue,
     ModuleIssue,
 )
+from plane.ee.models import IssueProperty
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.ee.bgtasks import bulk_issue_activity
 from plane.payment.flags.flag_decorator import check_feature_flag
@@ -238,6 +239,54 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                 )
                 issue.target_date = properties.get("target_date")
 
+            # Estimate Point
+            if properties.get("estimate_point", False):
+                issue_activities.append(
+                    {
+                        "type": "issue.activity.updated",
+                        "requested_data": json.dumps(
+                            {
+                                "estimate_point": properties.get(
+                                    "estimate_point"
+                                )
+                            }
+                        ),
+                        "current_instance": json.dumps(
+                            {
+                                "estimate_point": (
+                                    str(issue.estimate_point_id)
+                                    if issue.estimate_point_id
+                                    else issue.estimate_point_id
+                                )
+                            }
+                        ),
+                        "issue_id": str(issue.id),
+                        "actor_id": str(request.user.id),
+                        "project_id": str(project_id),
+                        "epoch": epoch,
+                    }
+                )
+                issue.estimate_point_id = properties.get("estimate_point")
+
+            # Issue Type
+            if properties.get("type_id", False):
+                issue_activities.append(
+                    {
+                        "type": "issue.activity.updated",
+                        "requested_data": json.dumps(
+                            {"type_id": properties.get("type_id")}
+                        ),
+                        "current_instance": json.dumps(
+                            {"type_id": str(issue.type_id)}
+                        ),
+                        "issue_id": str(issue.id),
+                        "actor_id": str(request.user.id),
+                        "project_id": str(project_id),
+                        "epoch": epoch,
+                    }
+                )
+                issue.type_id = properties.get("type_id")
+
             bulk_update_issues.append(issue)
 
             # Labels
@@ -381,35 +430,6 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                         }
                     )
 
-            # Estimate Point
-            if properties.get("estimate_point", False):
-                issue_activities.append(
-                    {
-                        "type": "issue.activity.updated",
-                        "requested_data": json.dumps(
-                            {
-                                "estimate_point": properties.get(
-                                    "estimate_point"
-                                )
-                            }
-                        ),
-                        "current_instance": json.dumps(
-                            {
-                                "estimate_point": (
-                                    str(issue.estimate_point_id)
-                                    if issue.estimate_point_id
-                                    else issue.estimate_point_id
-                                )
-                            }
-                        ),
-                        "issue_id": str(issue.id),
-                        "actor_id": str(request.user.id),
-                        "project_id": str(project_id),
-                        "epoch": epoch,
-                    }
-                )
-                issue.estimate_point_id = properties.get("estimate_point")
-
         # Bulk update all the objects
         Issue.objects.bulk_update(
             bulk_update_issues,
@@ -420,6 +440,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                 "state_id",
                 "completed_at",
                 "estimate_point_id",
+                "type_id",
             ],
             batch_size=100,
         )
