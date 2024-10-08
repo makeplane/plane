@@ -37,7 +37,7 @@ export const WorkspaceWorklogFilterProjects: FC<TWorkspaceWorklogFilterProjects>
       value: projectDetails?.id,
       query: `${projectDetails?.name} ${projectDetails?.identifier}`,
       content: (
-        <div className="flex items-center gap-2 truncate">
+        <div className="flex items-center gap-2 truncate max-w-[300px]">
           <span className="text-[0.65rem] text-custom-text-200 flex-shrink-0">{projectDetails?.identifier}</span>
           <span className="flex-grow truncate">{projectDetails?.name}</span>
         </div>
