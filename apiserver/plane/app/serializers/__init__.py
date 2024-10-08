@@ -125,6 +125,11 @@ from .dashboard import DashboardSerializer, WidgetSerializer
 
 from .favorite import UserFavoriteSerializer
 
+from .draft import (
+    DraftIssueCreateSerializer,
+    DraftIssueSerializer,
+    DraftIssueDetailSerializer,
+)
 from .integration import (
     IntegrationSerializer,
     WorkspaceIntegrationSerializer,

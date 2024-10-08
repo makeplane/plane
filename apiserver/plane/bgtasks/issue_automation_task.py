@@ -42,14 +42,12 @@ def archive_old_issues():
                 ),
                 Q(issue_cycle__isnull=True)
                 | (
-                    Q(issue_cycle__cycle__end_date__lt=timezone.now().date())
+                    Q(issue_cycle__cycle__end_date__lt=timezone.now())
                     & Q(issue_cycle__isnull=False)
                 ),
                 Q(issue_module__isnull=True)
                 | (
-                    Q(
-                        issue_module__module__target_date__lt=timezone.now().date()
-                    )
+                    Q(issue_module__module__target_date__lt=timezone.now())
                     & Q(issue_module__isnull=False)
                 ),
             ).filter(
@@ -122,14 +120,12 @@ def close_old_issues():
                 ),
                 Q(issue_cycle__isnull=True)
                 | (
-                    Q(issue_cycle__cycle__end_date__lt=timezone.now().date())
+                    Q(issue_cycle__cycle__end_date__lt=timezone.now())
                     & Q(issue_cycle__isnull=False)
                 ),
                 Q(issue_module__isnull=True)
                 | (
-                    Q(
-                        issue_module__module__target_date__lt=timezone.now().date()
-                    )
+                    Q(issue_module__module__target_date__lt=timezone.now())
                     & Q(issue_module__isnull=False)
                 ),
             ).filter(

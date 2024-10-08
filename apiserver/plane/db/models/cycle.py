@@ -1,3 +1,6 @@
+# Python imports
+import pytz
+
 # Django imports
 from django.conf import settings
 from django.db import models
@@ -55,10 +58,12 @@ class Cycle(ProjectBaseModel):
     description = models.TextField(
         verbose_name="Cycle Description", blank=True
     )
-    start_date = models.DateField(
+    start_date = models.DateTimeField(
         verbose_name="Start Date", blank=True, null=True
     )
-    end_date = models.DateField(verbose_name="End Date", blank=True, null=True)
+    end_date = models.DateTimeField(
+        verbose_name="End Date", blank=True, null=True
+    )
     owned_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -71,6 +76,12 @@ class Cycle(ProjectBaseModel):
     progress_snapshot = models.JSONField(default=dict)
     archived_at = models.DateTimeField(null=True)
     logo_props = models.JSONField(default=dict)
+    # timezone
+    TIMEZONE_CHOICES = tuple(zip(pytz.all_timezones, pytz.all_timezones))
+    timezone = models.CharField(
+        max_length=255, default="UTC", choices=TIMEZONE_CHOICES
+    )
+    version = models.IntegerField(default=1)
 
     class Meta:
         verbose_name = "Cycle"

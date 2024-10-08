@@ -308,7 +308,7 @@ class CycleViewSet(BaseViewSet):
 
         if (
             cycle.end_date is not None
-            and cycle.end_date < timezone.now().date()
+            and cycle.end_date < timezone.now()
         ):
             if "sort_order" in request_data:
                 # Can only change sort order for a completed cycle``
@@ -925,7 +925,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
 
         if (
             new_cycle.end_date is not None
-            and new_cycle.end_date < timezone.now().date()
+            and new_cycle.end_date < timezone.now()
         ):
             return Response(
                 {
