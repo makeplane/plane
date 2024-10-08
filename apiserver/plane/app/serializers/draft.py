@@ -49,7 +49,6 @@ class DraftIssueCreateSerializer(BaseSerializer):
         fields = "__all__"
         read_only_fields = [
             "workspace",
-            "project",
             "created_by",
             "updated_by",
             "created_at",
@@ -83,11 +82,13 @@ class DraftIssueCreateSerializer(BaseSerializer):
         modules = self.initial_data.get("module_ids", None)
 
         workspace_id = self.context["workspace_id"]
+        project_id = self.context["project_id"]
 
         # Create Issue
         issue = DraftIssue.objects.create(
             **validated_data,
             workspace_id=workspace_id,
+            project_id=project_id,
         )
 
         # Issue Audit Users
@@ -99,8 +100,9 @@ class DraftIssueCreateSerializer(BaseSerializer):
                 [
                     DraftIssueAssignee(
                         assignee=user,
-                        issue=issue,
+                        draft_issue=issue,
                         workspace_id=workspace_id,
+                        project_id=project_id,
                         created_by_id=created_by_id,
                         updated_by_id=updated_by_id,
                     )
@@ -114,7 +116,8 @@ class DraftIssueCreateSerializer(BaseSerializer):
                 [
                     DraftIssueLabel(
                         label=label,
-                        issue=issue,
+                        draft_issue=issue,
+                        project_id=project_id,
                         workspace_id=workspace_id,
                         created_by_id=created_by_id,
                         updated_by_id=updated_by_id,
@@ -128,6 +131,7 @@ class DraftIssueCreateSerializer(BaseSerializer):
             DraftIssueCycle.objects.create(
                 cycle_id=cycle_id,
                 draft_issue=issue,
+                project_id=project_id,
                 workspace_id=workspace_id,
                 created_by_id=created_by_id,
                 updated_by_id=updated_by_id,
@@ -139,6 +143,7 @@ class DraftIssueCreateSerializer(BaseSerializer):
                     DraftIssueModule(
                         module_id=module_id,
                         draft_issue=issue,
+                        project_id=project_id,
                         workspace_id=workspace_id,
                         created_by_id=created_by_id,
                         updated_by_id=updated_by_id,
@@ -153,22 +158,25 @@ class DraftIssueCreateSerializer(BaseSerializer):
     def update(self, instance, validated_data):
         assignees = validated_data.pop("assignee_ids", None)
         labels = validated_data.pop("label_ids", None)
-        cycle_id = self.initial_data.get("cycle_id", None)
+        cycle_id = self.context.get("cycle_id", None)
         modules = self.initial_data.get("module_ids", None)
 
         # Related models
         workspace_id = instance.workspace_id
+        project_id = instance.project_id
+
         created_by_id = instance.created_by_id
         updated_by_id = instance.updated_by_id
 
         if assignees is not None:
-            DraftIssueAssignee.objects.filter(issue=instance).delete()
+            DraftIssueAssignee.objects.filter(draft_issue=instance).delete()
             DraftIssueAssignee.objects.bulk_create(
                 [
                     DraftIssueAssignee(
                         assignee=user,
-                        issue=instance,
+                        draft_issue=instance,
                         workspace_id=workspace_id,
+                        project_id=project_id,
                         created_by_id=created_by_id,
                         updated_by_id=updated_by_id,
                     )
@@ -178,13 +186,14 @@ class DraftIssueCreateSerializer(BaseSerializer):
             )
 
         if labels is not None:
-            DraftIssueLabel.objects.filter(issue=instance).delete()
+            DraftIssueLabel.objects.filter(draft_issue=instance).delete()
             DraftIssueLabel.objects.bulk_create(
                 [
                     DraftIssueLabel(
                         label=label,
-                        issue=instance,
+                        draft_issue=instance,
                         workspace_id=workspace_id,
+                        project_id=project_id,
                         created_by_id=created_by_id,
                         updated_by_id=updated_by_id,
                     )
@@ -193,28 +202,31 @@ class DraftIssueCreateSerializer(BaseSerializer):
                 batch_size=10,
             )
 
-        if cycle_id is not None:
+        if cycle_id != "not_provided":
             DraftIssueCycle.objects.filter(draft_issue=instance).delete()
-            DraftIssueCycle.objects.create(
-                cycle_id=cycle_id,
-                draft_issue=instance,
-                workspace_id=workspace_id,
-                created_by_id=created_by_id,
-                updated_by_id=updated_by_id,
-            )
+            if cycle_id is not None:
+                DraftIssueCycle.objects.create(
+                    cycle_id=cycle_id,
+                    draft_issue=instance,
+                    workspace_id=workspace_id,
+                    project_id=project_id,
+                    created_by_id=created_by_id,
+                    updated_by_id=updated_by_id,
+                )
 
         if modules is not None:
             DraftIssueModule.objects.filter(draft_issue=instance).delete()
             DraftIssueModule.objects.bulk_create(
                 [
                     DraftIssueModule(
-                        module=module,
+                        module_id=module_id,
                         draft_issue=instance,
                         workspace_id=workspace_id,
+                        project_id=project_id,
                         created_by_id=created_by_id,
                         updated_by_id=updated_by_id,
                     )
-                    for module in modules
+                    for module_id in modules
                 ],
                 batch_size=10,
             )

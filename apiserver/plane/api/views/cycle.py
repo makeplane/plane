@@ -207,8 +207,7 @@ class CycleAPIEndpoint(BaseAPIView):
         # Incomplete Cycles
         if cycle_view == "incomplete":
             queryset = queryset.filter(
-                Q(end_date__gte=timezone.now())
-                | Q(end_date__isnull=True),
+                Q(end_date__gte=timezone.now()) | Q(end_date__isnull=True),
             )
             return self.paginate(
                 request=request,
@@ -309,10 +308,7 @@ class CycleAPIEndpoint(BaseAPIView):
 
         request_data = request.data
 
-        if (
-            cycle.end_date is not None
-            and cycle.end_date < timezone.now()
-        ):
+        if cycle.end_date is not None and cycle.end_date < timezone.now():
             if "sort_order" in request_data:
                 # Can only change sort order
                 request_data = {

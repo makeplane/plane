@@ -1,4 +1,10 @@
+# Python imports
+import json
+
 # Django imports
+from django.utils import timezone
+from django.core import serializers
+from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.db.models import (
@@ -26,9 +32,15 @@ from plane.app.serializers import (
 from plane.db.models import (
     Issue,
     DraftIssue,
+    CycleIssue,
+    ModuleIssue,
+    DraftIssueModule,
+    DraftIssueCycle,
     Workspace,
 )
 from .. import BaseViewSet
+from plane.bgtasks.issue_activities_task import issue_activity
+from plane.utils.issue_filters import issue_filters
 
 
 class WorkspaceDraftIssueViewSet(BaseViewSet):
@@ -40,6 +52,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
         allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
     )
     def list(self, request, slug):
+        filters = issue_filters(request.query_params, "GET")
         issues = (
             DraftIssue.objects.filter(workspace__slug=slug)
             .filter(created_by=request.user)
@@ -81,8 +94,16 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
             .order_by("-created_at")
         )
 
-        serializer = DraftIssueSerializer(issues, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        issues = issues.filter(**filters)
+        # List Paginate
+        return self.paginate(
+            request=request,
+            queryset=(issues),
+            on_results=lambda issues: DraftIssueSerializer(
+                issues,
+                many=True,
+            ).data,
+        )
 
     @allow_permission(
         allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
@@ -94,6 +115,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
             data=request.data,
             context={
                 "workspace_id": workspace.id,
+                "project_id": request.data.get("project_id", None),
             },
         )
         if serializer.is_valid():
@@ -156,8 +178,14 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        serializer = IssueCreateSerializer(
-            issue, data=request.data, partial=True
+        serializer = DraftIssueCreateSerializer(
+            issue,
+            data=request.data,
+            partial=True,
+            context={
+                "project_id": request.data.get("project_id", None),
+                "cycle_id": request.data.get("cycle_id", "not_provided"),
+            },
         )
 
         if serializer.is_valid():
@@ -234,3 +262,151 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
         draft_issue = DraftIssue.objects.get(workspace__slug=slug, pk=pk)
         draft_issue.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER],
+        level="WORKSPACE",
+    )
+    def create_draft_to_issue(self, request, slug, draft_id):
+        draft_issue = (
+            DraftIssue.objects.filter(workspace__slug=slug, pk=draft_id)
+            .annotate(cycle_id=F("draft_issue_cycle__cycle_id"))
+            .annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "labels__id",
+                        distinct=True,
+                        filter=~Q(labels__id__isnull=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "assignees__id",
+                        distinct=True,
+                        filter=~Q(assignees__id__isnull=True)
+                        & Q(assignees__member_project__is_active=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                module_ids=Coalesce(
+                    ArrayAgg(
+                        "draft_issue_module__module_id",
+                        distinct=True,
+                        filter=~Q(draft_issue_module__module_id__isnull=True)
+                        & Q(
+                            draft_issue_module__module__archived_at__isnull=True
+                        ),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+            )
+            .select_related("project", "workspace")
+            .first()
+        )
+
+        if not draft_issue.project_id:
+            return Response(
+                {"error": "Project is required to create an issue."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        serializer = IssueCreateSerializer(
+            data=request.data,
+            context={
+                "project_id": draft_issue.project_id,
+                "workspace_id": draft_issue.project.workspace_id,
+                "default_assignee_id": draft_issue.project.default_assignee_id,
+            },
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+
+            issue_activity.delay(
+                type="issue.activity.created",
+                requested_data=json.dumps(
+                    self.request.data, cls=DjangoJSONEncoder
+                ),
+                actor_id=str(request.user.id),
+                issue_id=str(serializer.data.get("id", None)),
+                project_id=str(draft_issue.project_id),
+                current_instance=None,
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=request.META.get("HTTP_ORIGIN"),
+            )
+
+            if draft_issue.cycle_id:
+                created_records = CycleIssue.objects.create(
+                    cycle_id=draft_issue.cycle_id,
+                    issue_id=serializer.data.get("id", None),
+                    project_id=draft_issue.project_id,
+                    workspace_id=draft_issue.workspace_id,
+                    created_by_id=draft_issue.created_by_id,
+                    updated_by_id=draft_issue.updated_by_id,
+                )
+                # Capture Issue Activity
+                issue_activity.delay(
+                    type="cycle.activity.created",
+                    requested_data=None,
+                    actor_id=str(self.request.user.id),
+                    issue_id=None,
+                    project_id=str(self.kwargs.get("project_id", None)),
+                    current_instance=json.dumps(
+                        {
+                            "updated_cycle_issues": None,
+                            "created_cycle_issues": serializers.serialize(
+                                "json", created_records
+                            ),
+                        }
+                    ),
+                    epoch=int(timezone.now().timestamp()),
+                    notification=True,
+                    origin=request.META.get("HTTP_ORIGIN"),
+                )
+
+            if draft_issue.module_ids:
+                # bulk create the module
+                ModuleIssue.objects.bulk_create(
+                    [
+                        ModuleIssue(
+                            module_id=module,
+                            issue_id=serializer.data.get("id", None),
+                            workspace_id=draft_issue.workspace_id,
+                            project_id=draft_issue.project_id,
+                            created_by_id=draft_issue.created_by_id,
+                            updated_by_id=draft_issue.updated_by_id,
+                        )
+                        for module in draft_issue.module_ids
+                    ],
+                    batch_size=10,
+                )
+                # Bulk Update the activity
+                _ = [
+                    issue_activity.delay(
+                        type="module.activity.created",
+                        requested_data=json.dumps({"module_id": str(module)}),
+                        actor_id=str(request.user.id),
+                        issue_id=serializer.data.get("id", None),
+                        project_id=draft_issue.project_id,
+                        current_instance=None,
+                        epoch=int(timezone.now().timestamp()),
+                        notification=True,
+                        origin=request.META.get("HTTP_ORIGIN"),
+                    )
+                    for module in draft_issue.module_ids
+                ]
+
+            # delete the draft issue
+            draft_issue.delete()
+
+            # delete the draft issue module
+            DraftIssueModule.objects.filter(draft_issue=draft_issue).delete()
+
+            # delete the draft issue cycle
+            DraftIssueCycle.objects.filter(draft_issue=draft_issue).delete()
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
