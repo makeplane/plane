@@ -27,6 +27,7 @@ from plane.db.models import (
     WorkspaceMember,
     IssueUserProperty,
 )
+from plane.payment.bgtasks.member_sync_task import member_sync_task
 
 
 class ProjectInvitationsViewset(BaseViewSet):
@@ -240,6 +241,9 @@ class ProjectJoinEndpoint(BaseAPIView):
                     # Else make him active
                     workspace_member.is_active = True
                     workspace_member.save()
+
+                # Sync workspace members
+                member_sync_task.delay(slug)
 
                 # Check if the user was already a member of project then activate the user
                 project_member = ProjectMember.objects.filter(
