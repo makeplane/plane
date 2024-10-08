@@ -1,9 +1,19 @@
 "use client";
 
-import { useState, useEffect, useCallback  } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
-import { ArchiveRestoreIcon, ArrowUpToLine, Clipboard, Copy, History, Link, Lock, LockOpen } from "lucide-react";
+import {
+  ArchiveRestoreIcon,
+  ArrowUpToLine,
+  Clipboard,
+  Copy,
+  History,
+  Link,
+  Lock,
+  LockOpen,
+  LucideIcon,
+} from "lucide-react";
 // document editor
 import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
 import { TDocumentEventsClient } from "@plane/editor/lib";
@@ -27,10 +37,6 @@ type Props = {
 
 export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   const { editorRef, handleDuplicatePage, page } = props;
-  // create a local state to track if the current action is being processed, a
-  // local action is by the client
-  const [localAction, setLocalAction] = useState<string | null>(null);
-
   // router
   const router = useRouter();
   // store values
@@ -49,6 +55,9 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   } = page;
   // states
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  // currentUserAction local state to track if the current action is being processed, a
+  // local action is basically the action performed by the current user to avoid double operations
+  const [currentUserAction, setCurrentUserAction] = useState<TDocumentEventsClient | null>(null);
   // store hooks
   const { workspaceSlug, projectId } = useParams();
   // page filters
@@ -57,26 +66,26 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   const { updateQueryParams } = useQueryParams();
 
   useEffect(() => {
-    if (localAction === "archived") {
+    if (currentUserAction === "archived") {
       editorRef?.emitRealTimeUpdate("Archive");
     }
-    if (localAction === "unarchived") {
+    if (currentUserAction === "unarchived") {
       editorRef?.emitRealTimeUpdate("Unarchive");
     }
-    if (localAction === "locked") {
+    if (currentUserAction === "locked") {
       editorRef?.emitRealTimeUpdate("Lock");
     }
-    if (localAction === "unlocked") {
+    if (currentUserAction === "unlocked") {
       editorRef?.emitRealTimeUpdate("Unlock");
     }
-  }, [localAction, editorRef]);
+  }, [currentUserAction, editorRef]);
 
   const handleArchivePage = useCallback(
-    async (isLocal: boolean = true) => {
+    async (isPerformedByCurrentUser: boolean = true) => {
       await archive()
         .then(() => {
-          if (isLocal) {
-            setLocalAction("archived");
+          if (isPerformedByCurrentUser) {
+            setCurrentUserAction("archived");
           }
         })
         .catch(() => {
@@ -91,11 +100,11 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   );
 
   const handleRestorePage = useCallback(
-    async (isLocal: boolean = true) => {
+    async (isPerformedByCurrentUser: boolean = true) => {
       await restore()
         .then(() => {
-          if (isLocal) {
-            setLocalAction("unarchived");
+          if (isPerformedByCurrentUser) {
+            setCurrentUserAction("unarchived");
           }
         })
         .catch(() =>
@@ -110,11 +119,11 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   );
 
   const handleLockPage = useCallback(
-    async (isLocal: boolean = true) => {
+    async (isPerformedByCurrentUser: boolean = true) => {
       await lock()
         .then(() => {
-          if (isLocal) {
-            setLocalAction("locked");
+          if (isPerformedByCurrentUser) {
+            setCurrentUserAction("locked");
           }
         })
         .catch(() =>
@@ -129,11 +138,11 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   );
 
   const handleUnlockPage = useCallback(
-    async (isLocal: boolean = true) => {
+    async (isPerformedByCurrentUser: boolean = true) => {
       await unlock()
         .then(() => {
-          if (isLocal) {
-            setLocalAction("unlocked");
+          if (isPerformedByCurrentUser) {
+            setCurrentUserAction("unlocked");
           }
         })
         .catch(() =>
@@ -152,8 +161,8 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     const provider = editorRef?.listenToRealTimeUpdate();
 
     const handleStatelessMessage = (message: { payload: TDocumentEventsClient }) => {
-      if (localAction === message.payload) {
-        setLocalAction(null);
+      if (currentUserAction === message.payload) {
+        setCurrentUserAction(null);
         return;
       }
 
@@ -178,7 +187,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     return () => {
       provider?.off("stateless", handleStatelessMessage);
     };
-  }, [editorRef, localAction, handleArchivePage, handleRestorePage, handleLockPage, handleUnlockPage]);
+  }, [editorRef, currentUserAction, handleArchivePage, handleRestorePage, handleLockPage, handleUnlockPage]);
 
   // menu items list
   const MENU_ITEMS: {
