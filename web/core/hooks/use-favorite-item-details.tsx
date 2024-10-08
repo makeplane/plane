@@ -13,7 +13,7 @@ import { useProject, usePage, useProjectView, useCycle, useModule } from "@/hook
 export const useFavoriteItemDetails = (workspaceSlug: string, favorite: IFavorite) => {
   const favoriteItemId = favorite?.entity_data?.id;
   const favoriteItemLogoProps = favorite?.entity_data?.logo_props;
-  const favoriteItemName = favorite?.entity_data.name || favorite?.name;
+  const favoriteItemName = favorite?.entity_data?.name || favorite?.name;
   const favoriteItemEntityType = favorite?.entity_type;
 
   // store hooks

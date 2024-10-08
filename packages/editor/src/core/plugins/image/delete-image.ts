@@ -17,6 +17,8 @@ export const TrackImageDeletionPlugin = (editor: Editor, deleteImage: DeleteImag
       });
 
       transactions.forEach((transaction) => {
+        // if the transaction has meta of skipImageDeletion get to true, then return (like while clearing the editor content programatically)
+        if (transaction.getMeta("skipImageDeletion")) return;
         // transaction could be a selection
         if (!transaction.docChanged) return;
 

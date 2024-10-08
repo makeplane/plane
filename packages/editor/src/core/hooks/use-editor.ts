@@ -126,7 +126,7 @@ export const useEditor = (props: CustomEditorProps) => {
     forwardedRef,
     () => ({
       clearEditor: (emitUpdate = false) => {
-        editorRef.current?.commands.clearContent(emitUpdate);
+        editorRef.current?.chain().setMeta("skipImageDeletion", true).clearContent(emitUpdate).run();
       },
       setEditorValue: (content: string) => {
         editorRef.current?.commands.setContent(content, false, { preserveWhitespace: "full" });

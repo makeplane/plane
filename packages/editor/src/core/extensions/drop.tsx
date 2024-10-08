@@ -21,7 +21,7 @@ export const DropHandlerExtension = () =>
 
                 if (imageFiles.length > 0) {
                   const pos = view.state.selection.from;
-                  insertImages({ editor, files: imageFiles, initialPos: pos, event: "drop" });
+                  insertImagesSafely({ editor, files: imageFiles, initialPos: pos, event: "drop" });
                 }
                 return true;
               }
@@ -41,7 +41,7 @@ export const DropHandlerExtension = () =>
 
                   if (coordinates) {
                     const pos = coordinates.pos;
-                    insertImages({ editor, files: imageFiles, initialPos: pos, event: "drop" });
+                    insertImagesSafely({ editor, files: imageFiles, initialPos: pos, event: "drop" });
                   }
                   return true;
                 }
@@ -54,7 +54,7 @@ export const DropHandlerExtension = () =>
     },
   });
 
-const insertImages = async ({
+export const insertImagesSafely = async ({
   editor,
   files,
   initialPos,
@@ -71,13 +71,6 @@ const insertImages = async ({
     // safe insertion
     const docSize = editor.state.doc.content.size;
     pos = Math.min(pos, docSize);
-
-    // Check if the position has a non-empty node
-    const nodeAtPos = editor.state.doc.nodeAt(pos);
-    if (nodeAtPos && nodeAtPos.content.size > 0) {
-      // Move to the end of the current node
-      pos += nodeAtPos.nodeSize;
-    }
 
     try {
       // Insert the image at the current position
