@@ -156,7 +156,7 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
       end_date: renderFormattedPayloadDate(endDate),
     };
 
-    if (cycleDetails && cycleDetails.start_date && cycleDetails.end_date)
+    if (cycleDetails?.start_date && cycleDetails.end_date)
       isDateValid = await dateChecker({
         ...payload,
         cycle_id: cycleDetails.id,
