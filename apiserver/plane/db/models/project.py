@@ -1,4 +1,5 @@
 # Python imports
+import pytz
 from uuid import uuid4
 
 # Django imports
@@ -7,7 +8,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import Q
 
-# Modeule imports
+# Module imports
 from plane.db.mixins import AuditModel
 
 # Module imports
@@ -126,6 +127,11 @@ class Project(BaseModel):
         related_name="default_state",
     )
     archived_at = models.DateTimeField(null=True)
+    # timezone
+    TIMEZONE_CHOICES = tuple(zip(pytz.all_timezones, pytz.all_timezones))
+    timezone = models.CharField(
+        max_length=255, default="UTC", choices=TIMEZONE_CHOICES
+    )
 
     @property
     def cover_image_url(self):

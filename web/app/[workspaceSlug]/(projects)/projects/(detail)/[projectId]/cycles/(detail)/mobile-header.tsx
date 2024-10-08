@@ -29,7 +29,7 @@ export const CycleIssuesMobileHeader = () => {
   const { getCycleById } = useCycle();
   const layouts = [
     { key: "list", title: "List", icon: List },
-    { key: "kanban", title: "Kanban", icon: Kanban },
+    { key: "kanban", title: "Board", icon: Kanban },
     { key: "calendar", title: "Calendar", icon: Calendar },
   ];
 

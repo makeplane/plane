@@ -16,6 +16,17 @@ from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
 from corsheaders.defaults import default_headers
 
+# OpenTelemetry
+from opentelemetry import trace
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import (
+    OTLPSpanExporter,
+)
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.instrumentation.django import DjangoInstrumentor
+
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Secret Key
@@ -23,6 +34,19 @@ SECRET_KEY = os.environ.get("SECRET_KEY", get_random_secret_key())
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(os.environ.get("DEBUG", "0"))
+
+# Initialize Django instrumentation
+DjangoInstrumentor().instrument()
+# Configure the tracer provider
+service_name = os.environ.get("SERVICE_NAME", "plane-ce-api")
+resource = Resource.create({"service.name": service_name})
+trace.set_tracer_provider(TracerProvider(resource=resource))
+# Configure the OTLP exporter
+otel_endpoint = os.environ.get("OTLP_ENDPOINT", "https://telemetry.plane.so")
+otlp_exporter = OTLPSpanExporter(endpoint=otel_endpoint)
+span_processor = BatchSpanProcessor(otlp_exporter)
+trace.get_tracer_provider().add_span_processor(span_processor)
+
 
 # Allowed Hosts
 ALLOWED_HOSTS = ["*"]
@@ -278,6 +302,7 @@ CELERY_IMPORTS = (
     "plane.bgtasks.file_asset_task",
     "plane.bgtasks.email_notification_task",
     "plane.bgtasks.api_logs_task",
+    "plane.license.bgtasks.tracer",
     # management tasks
     "plane.bgtasks.dummy_data_task",
 )

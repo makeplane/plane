@@ -249,7 +249,7 @@ class CycleIssueViewSet(BaseViewSet):
 
         if (
             cycle.end_date is not None
-            and cycle.end_date < timezone.now().date()
+            and cycle.end_date < timezone.now()
         ):
             return Response(
                 {
