@@ -22,7 +22,7 @@ class APIKeyAuthentication(authentication.BaseAuthentication):
     def get_api_token(self, request):
         return request.headers.get(self.auth_header_name)
 
-    def validate_api_token(self, token):
+    def validate_api_token(self, token, slug):
         try:
             api_token = APIToken.objects.get(
                 Q(
@@ -30,6 +30,7 @@ class APIKeyAuthentication(authentication.BaseAuthentication):
                     | Q(expired_at__isnull=True)
                 ),
                 token=token,
+                workspace__slug=slug,
                 is_active=True,
             )
         except APIToken.DoesNotExist:
@@ -41,10 +42,11 @@ class APIKeyAuthentication(authentication.BaseAuthentication):
         return (api_token.user, api_token.token)
 
     def authenticate(self, request):
+        slug = request.parser_context["kwargs"].get("slug", None)
         token = self.get_api_token(request=request)
         if not token:
             return None
 
         # Validate the API token
-        user, token = self.validate_api_token(token)
+        user, token = self.validate_api_token(token, slug)
         return user, token
