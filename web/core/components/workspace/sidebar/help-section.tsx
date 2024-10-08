@@ -15,6 +15,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { PlaneVersionNumber, ProductUpdates, ProductUpdatesModal } from "@/plane-web/components/global";
 import { WorkspaceEditionBadge } from "@/plane-web/components/workspace";
 import { ENABLE_LOCAL_DB_CACHE } from "@/plane-web/constants/issues";
+import { useFlag } from "@/plane-web/hooks/store";
 
 export interface WorkspaceHelpSectionProps {
   setSidebarActive?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -29,6 +30,7 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
   const { config } = useInstance();
   const { isIntercomToggle, toggleIntercom } = useTransient();
   const { canUseLocalDB, toggleLocalDB } = useUserSettings();
+  const isLocalDBCacheEnabled = useFlag(workspaceSlug?.toString(), "NO_LOAD");
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
   const [isChangeLogOpen, setIsChangeLogOpen] = useState(false);
@@ -109,7 +111,7 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
               </a>
             </CustomMenu.MenuItem>
             <div className="my-1 border-t border-custom-border-200" />
-            {ENABLE_LOCAL_DB_CACHE && (
+            {ENABLE_LOCAL_DB_CACHE && isLocalDBCacheEnabled && (
               <CustomMenu.MenuItem>
                 <div
                   onClick={(e) => {
