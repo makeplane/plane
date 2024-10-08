@@ -14,7 +14,7 @@ import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
 
-export const DraftsBaseHeader: FC = observer(() => {
+export const WorkspaceDraftIssuesHeader: FC = observer(() => {
   // state
   const [isDraftIssueModalOpen, setIsDraftIssueModalOpen] = useState(false);
   // store hooks
@@ -45,7 +45,6 @@ export const DraftsBaseHeader: FC = observer(() => {
         </Header.LeftItem>
 
         <Header.RightItem>
-          {/* TODO: Issue & Display filters */}
           <Button
             variant="primary"
             size="sm"

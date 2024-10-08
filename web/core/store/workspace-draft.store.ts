@@ -41,7 +41,12 @@ export interface IWorkspaceDrafts extends IBaseIssuesStore {
     issueIds: string[],
     fetchAddedIssues?: boolean
   ) => Promise<void>;
-  addDraftIssueToCycleIssue: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
+  addDraftIssueToCycleIssue: (
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string,
+    issueId: string
+  ) => Promise<void>;
 }
 
 export class WorkspaceDrafts extends BaseIssuesStore implements IWorkspaceDrafts {
@@ -63,7 +68,7 @@ export class WorkspaceDrafts extends BaseIssuesStore implements IWorkspaceDrafts
       fetchIssues: action,
       fetchNextIssues: action,
       fetchIssuesWithExistingPagination: action,
-      addDraftIssueToCycleIssue: action
+      addDraftIssueToCycleIssue: action,
     });
     // services
     this.workspaceDraftService = new WorkspaceDraftService();
@@ -311,7 +316,7 @@ export class WorkspaceDrafts extends BaseIssuesStore implements IWorkspaceDrafts
     }
   }
 
-    /**
+  /**
    * This method is used to add issues to a particular Cycle
    * @param workspaceSlug
    * @param projectId
@@ -328,7 +333,7 @@ export class WorkspaceDrafts extends BaseIssuesStore implements IWorkspaceDrafts
   ) {
     // Perform an APi call to add issue to cycle
     const issueId = issueIds[0];
-    await this.updateDraft(workspaceSlug,issueId, {
+    await this.updateDraft(workspaceSlug, issueId, {
       cycle_id: cycleId,
     });
 
@@ -341,13 +346,14 @@ export class WorkspaceDrafts extends BaseIssuesStore implements IWorkspaceDrafts
     // Update issueIds from current store
     runInAction(() => {
       // If cycle Id is the current cycle Id, then, add issue to list of issueIds
-      if (this.cycleId === cycleId) this.addIssueToList(issueId) //issueIds.forEach((issueId) => this.addIssueToList(issueId));
+      if (this.cycleId === cycleId)
+        this.addIssueToList(issueId); //issueIds.forEach((issueId) => this.addIssueToList(issueId));
       // If cycle Id is not the current cycle Id, then, remove issue to list of issueIds
-      else if (this.cycleId) this.removeIssueFromList(issueId)//issueIds.forEach((issueId) => this.removeIssueFromList(issueId));
+      else if (this.cycleId) this.removeIssueFromList(issueId); //issueIds.forEach((issueId) => this.removeIssueFromList(issueId));
     });
   }
 
-    /**
+  /**
    * Adds cycle to issue optimistically
    * @param workspaceSlug
    * @param projectId
@@ -370,7 +376,7 @@ export class WorkspaceDrafts extends BaseIssuesStore implements IWorkspaceDrafts
         // If cycle Id is the current cycle Id, then, add issue to list of issueIds
         if (this.cycleId === cycleId) this.addIssueToList(issueId);
         // For Each issue update cycle Id by calling current store's update Issue, without making an API call
-       this.updateDraft(workspaceSlug,issueId, {cycle_id: cycleId,});
+        this.updateDraft(workspaceSlug, issueId, { cycle_id: cycleId });
       });
 
       const issueAfterUpdate = clone(this.rootIssueStore.issues.getIssueById(issueId));
@@ -379,11 +385,10 @@ export class WorkspaceDrafts extends BaseIssuesStore implements IWorkspaceDrafts
       if (this.cycleId === cycleId || this.cycleId === issueCycleId)
         this.updateParentStats(issueBeforeUpdate, issueAfterUpdate, this.cycleId);
 
-      await this.addIssueToCycle(workspaceSlug, projectId, cycleId,[issueId]);
+      await this.addIssueToCycle(workspaceSlug, projectId, cycleId, [issueId]);
 
       // if cycle Id is the current Cycle Id then call fetch parent stats
-      if (this.cycleId === cycleId || this.cycleId === issueCycleId)
-        this.fetchParentStats(workspaceSlug, projectId);
+      if (this.cycleId === cycleId || this.cycleId === issueCycleId) this.fetchParentStats(workspaceSlug, projectId);
     } catch (error) {
       // remove the new issue ids from the cycle issues map
       runInAction(() => {
@@ -396,5 +401,4 @@ export class WorkspaceDrafts extends BaseIssuesStore implements IWorkspaceDrafts
       throw error;
     }
   };
-
 }
