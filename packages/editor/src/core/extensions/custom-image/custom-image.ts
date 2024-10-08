@@ -1,4 +1,4 @@
-import { mergeAttributes } from "@tiptap/core";
+import { Editor, mergeAttributes } from "@tiptap/core";
 import { Image } from "@tiptap/extension-image";
 import { ReactNodeViewRenderer } from "@tiptap/react";
 import { v4 as uuidv4 } from "uuid";
@@ -11,14 +11,23 @@ import { TFileHandler } from "@/types";
 // helpers
 import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
 
+export type InsertImageComponentProps = {
+  file?: File;
+  pos?: number;
+  event: "insert" | "drop";
+};
+
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
     imageComponent: {
-      setImageUpload: ({ file, pos, event }: { file?: File; pos?: number; event: "insert" | "drop" }) => ReturnType;
+      insertImageComponent: ({ file, pos, event }: InsertImageComponentProps) => ReturnType;
       uploadImage: (file: File) => () => Promise<string> | undefined;
     };
   }
 }
+
+export const getImageComponentImageFileMap = (editor: Editor) =>
+  (editor.storage.imageComponent as UploadImageExtensionStorage | undefined)?.fileMap;
 
 export interface UploadImageExtensionStorage {
   fileMap: Map<string, UploadEntity>;
@@ -49,6 +58,9 @@ export const CustomImageExtension = (props: TFileHandler) => {
           default: "auto",
         },
         ["id"]: {
+          default: null,
+        },
+        aspectRatio: {
           default: null,
         },
       };
@@ -101,12 +113,13 @@ export const CustomImageExtension = (props: TFileHandler) => {
       return {
         fileMap: new Map(),
         deletedImageSet: new Map<string, boolean>(),
+        uploadInProgress: false,
       };
     },
 
     addCommands() {
       return {
-        setImageUpload:
+        insertImageComponent:
           (props: { file?: File; pos?: number; event: "insert" | "drop" }) =>
           ({ commands }) => {
             // Early return if there's an invalid file being dropped
@@ -117,15 +130,21 @@ export const CustomImageExtension = (props: TFileHandler) => {
             // generate a unique id for the image to keep track of dropped
             // files' file data
             const fileId = uuidv4();
-            if (props?.event === "drop" && props.file) {
-              (this.editor.storage.imageComponent as UploadImageExtensionStorage).fileMap.set(fileId, {
-                file: props.file,
-                event: props.event,
-              });
-            } else if (props.event === "insert") {
-              (this.editor.storage.imageComponent as UploadImageExtensionStorage).fileMap.set(fileId, {
-                event: props.event,
-              });
+
+            const imageComponentImageFileMap = getImageComponentImageFileMap(this.editor);
+
+            if (imageComponentImageFileMap) {
+              if (props?.event === "drop" && props.file) {
+                imageComponentImageFileMap.set(fileId, {
+                  file: props.file,
+                  event: props.event,
+                });
+              } else if (props.event === "insert") {
+                imageComponentImageFileMap.set(fileId, {
+                  event: props.event,
+                  hasOpenedFileInputOnce: false,
+                });
+              }
             }
 
             const attributes = {

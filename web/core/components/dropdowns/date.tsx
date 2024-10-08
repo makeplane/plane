@@ -126,6 +126,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
         tooltipContent={value ? renderFormattedDate(value, formatToken) : "None"}
         showTooltip={showTooltip}
         variant={buttonVariant}
+        renderToolTipByDefault={renderByDefault}
       >
         {!hideIcon && icon}
         {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (

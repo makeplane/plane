@@ -1,0 +1,10 @@
+{
+  "name": "@plane/typescript-config",
+  "version": "0.23.0",
+  "private": true,
+  "files": [
+    "base.json",
+    "nextjs.json",
+    "react-library.json"
+  ]
+}

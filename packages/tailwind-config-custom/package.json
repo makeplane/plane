@@ -1,6 +1,6 @@
 {
   "name": "tailwind-config-custom",
-  "version": "0.22.0",
+  "version": "0.23.0",
   "description": "common tailwind configuration across monorepo",
   "main": "index.js",
   "private": true,

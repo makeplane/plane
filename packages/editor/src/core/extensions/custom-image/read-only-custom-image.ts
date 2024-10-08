@@ -27,6 +27,9 @@ export const CustomReadOnlyImageExtension = () =>
         ["id"]: {
           default: null,
         },
+        aspectRatio: {
+          default: null,
+        },
       };
     },
 

@@ -43,10 +43,11 @@ export interface IKanBan {
   isDropDisabled?: boolean;
   dropErrorMessage?: string | undefined;
   sub_group_id?: string;
+  sub_group_index?: number;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
-  kanbanFilters: TIssueKanbanFilters;
-  handleKanbanFilters: any;
+  collapsedGroups: TIssueKanbanFilters;
+  handleCollapsedGroups: (toggle: "group_by" | "sub_group_by", value: string) => void;
   loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
   enableQuickIssueCreate?: boolean;
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
@@ -70,8 +71,8 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     sub_group_id = "null",
     updateIssue,
     quickActions,
-    kanbanFilters,
-    handleKanbanFilters,
+    collapsedGroups,
+    handleCollapsedGroups,
     enableQuickIssueCreate,
     quickAddCallback,
     loadMoreIssues,
@@ -132,7 +133,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
         if ((getGroupIssueCount(_list.id, undefined, false) ?? 0) > 0) groupVisibility.showGroup = true;
         else groupVisibility.showGroup = false;
       }
-      if (kanbanFilters?.group_by.includes(_list.id)) groupVisibility.showIssues = false;
+      if (collapsedGroups?.group_by.includes(_list.id)) groupVisibility.showIssues = false;
       return groupVisibility;
     }
   };
@@ -175,8 +176,8 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
                     issuePayload={subList.payload}
                     disableIssueCreation={disableIssueCreation || isGroupByCreatedBy}
                     addIssuesToView={addIssuesToView}
-                    kanbanFilters={kanbanFilters}
-                    handleKanbanFilters={handleKanbanFilters}
+                    collapsedGroups={collapsedGroups}
+                    handleCollapsedGroups={handleCollapsedGroups}
                   />
                 </div>
               )}
@@ -186,13 +187,14 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
                   verticalOffset={100}
                   horizontalOffset={100}
                   root={scrollableContainerRef}
-                  classNames="relative h-full"
+                  classNames="h-full min-h-[120px]"
                   defaultHeight={`${groupHeight}px`}
                   placeholderChildren={
                     <KanbanColumnLoader
                       ignoreHeader
                       cardHeight={approximateCardHeight}
                       cardsInColumn={issueLength !== undefined && issueLength < 3 ? issueLength : 3}
+                      shouldAnimate={false}
                     />
                   }
                   defaultValue={groupIndex < 5 && subGroupIndex < 2}

@@ -10,8 +10,6 @@ import { useIssues } from "@/hooks/store";
 // constants
 import { BaseKanBanRoot } from "../base-kanban-root";
 
-export interface IModuleKanBanLayout {}
-
 export const ModuleKanBanLayout: React.FC = observer(() => {
   const { workspaceSlug, projectId, moduleId } = useParams();
 

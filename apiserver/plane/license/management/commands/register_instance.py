@@ -9,7 +9,10 @@ from django.conf import settings
 
 # Module imports
 from plane.license.models import Instance
-from plane.db.models import User
+from plane.db.models import (
+    User,
+)
+from plane.license.bgtasks.tracer import instance_traces
 
 
 class Command(BaseCommand):
@@ -21,16 +24,24 @@ class Command(BaseCommand):
             "machine_signature", type=str, help="Machine signature"
         )
 
+    def read_package_json(self):
+        with open("package.json", "r") as file:
+            # Load JSON content from the file
+            data = json.load(file)
+
+        payload = {
+            "instance_key": settings.INSTANCE_KEY,
+            "version": data.get("version", 0.1),
+            "user_count": User.objects.filter(is_bot=False).count(),
+        }
+        return payload
+
     def handle(self, *args, **options):
         # Check if the instance is registered
         instance = Instance.objects.first()
 
         # If instance is None then register this instance
         if instance is None:
-            with open("package.json", "r") as file:
-                # Load JSON content from the file
-                data = json.load(file)
-
             machine_signature = options.get(
                 "machine_signature", "machine-signature"
             )
@@ -38,12 +49,7 @@ class Command(BaseCommand):
             if not machine_signature:
                 raise CommandError("Machine signature is required")
 
-            payload = {
-                "instance_key": settings.INSTANCE_KEY,
-                "version": data.get("version", 0.1),
-                "machine_signature": machine_signature,
-                "user_count": User.objects.filter(is_bot=False).count(),
-            }
+            payload = self.read_package_json()
 
             instance = Instance.objects.create(
                 instance_name="Plane Community Edition",
@@ -60,4 +66,15 @@ class Command(BaseCommand):
             self.stdout.write(
                 self.style.SUCCESS("Instance already registered")
             )
-            return
+            payload = self.read_package_json()
+            # Update the instance details
+            instance.last_checked_at = timezone.now()
+            instance.user_count = payload.get("user_count", 0)
+            instance.current_version = payload.get("version")
+            instance.latest_version = payload.get("version")
+            instance.save()
+
+        # Call the instance traces task
+        instance_traces.delay()
+
+        return

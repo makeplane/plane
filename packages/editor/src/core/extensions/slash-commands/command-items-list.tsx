@@ -33,6 +33,7 @@ import {
   toggleHeadingSix,
   toggleTextColor,
   toggleBackgroundColor,
+  insertImage,
 } from "@/helpers/editor-commands";
 // types
 import { CommandProps, ISlashCommandItem } from "@/types";
@@ -176,8 +177,7 @@ const SLASH_COMMAND_SECTIONS: TSlashCommandSection[] = [
         icon: <ImageIcon className="size-3.5" />,
         description: "Insert an image",
         searchTerms: ["img", "photo", "picture", "media", "upload"],
-        command: ({ editor, range }) =>
-          editor.chain().focus().deleteRange(range).setImageUpload({ event: "insert" }).run(),
+        command: ({ editor, range }: CommandProps) => insertImage({ editor, event: "insert", range }),
       },
       {
         commandKey: "divider",

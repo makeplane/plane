@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { usePopper } from "react-popper";
 import { Combobox } from "@headlessui/react";
-import { Check, ChevronDown, Search } from "lucide-react";
+import { Check, ChevronDown, Info, Search } from "lucide-react";
 import { createPortal } from "react-dom";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/helpers";
@@ -11,6 +11,8 @@ import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 import { cn } from "../../helpers";
 // types
 import { ICustomSearchSelectProps } from "./helper";
+// local components
+import { Tooltip } from "../tooltip";
 
 export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
   const {
@@ -95,11 +97,10 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
                 <button
                   ref={setReferenceElement}
                   type="button"
-                  className={`flex w-full items-center justify-between gap-1 text-xs ${
-                    disabled
-                      ? "cursor-not-allowed text-custom-text-200"
-                      : "cursor-pointer hover:bg-custom-background-80"
-                  }  ${customButtonClassName}`}
+                  className={`flex w-full items-center justify-between gap-1 text-xs ${disabled
+                    ? "cursor-not-allowed text-custom-text-200"
+                    : "cursor-pointer hover:bg-custom-background-80"
+                    }  ${customButtonClassName}`}
                   onClick={toggleDropdown}
                 >
                   {customButton}
@@ -170,17 +171,32 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
                                   "w-full truncate flex items-center justify-between gap-2 rounded px-1 py-1.5 cursor-pointer select-none",
                                   {
                                     "bg-custom-background-80": active,
+                                    "text-custom-text-400 opacity-60 cursor-not-allowed": option.disabled,
                                   }
                                 )
                               }
                               onClick={() => {
                                 if (!multiple) closeDropdown();
                               }}
+                              disabled={option.disabled}
                             >
                               {({ selected }) => (
                                 <>
                                   <span className="flex-grow truncate">{option.content}</span>
                                   {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+                                  {option.tooltip && (
+                                    <>
+                                      {
+                                        typeof option.tooltip === "string" ? (
+                                          <Tooltip tooltipContent={option.tooltip}>
+                                            <Info className="h-3.5 w-3.5 flex-shrink-0 cursor-pointer text-custom-text-200" />
+                                          </Tooltip>
+                                        ) : (
+                                            option.tooltip
+                                        )
+                                      }
+                                    </>
+                                  )}
                                 </>
                               )}
                             </Combobox.Option>

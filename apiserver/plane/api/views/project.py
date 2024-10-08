@@ -301,11 +301,16 @@ class ProjectAPIEndpoint(BaseAPIView):
             if serializer.is_valid():
                 serializer.save()
                 if serializer.data["inbox_view"]:
-                    Inbox.objects.get_or_create(
-                        defaults={"name": f"{project.name} Inbox"},
+                    inbox = Inbox.objects.filter(
                         project=project,
                         is_default=True,
-                    )
+                    ).first()
+                    if not inbox:
+                        Inbox.objects.create(
+                            name=f"{project.name} Inbox",
+                            project=project,
+                            is_default=True,
+                        )
 
                     # Create the triage state in Backlog group
                     State.objects.get_or_create(

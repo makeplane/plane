@@ -21,6 +21,7 @@ import {
   TableRow,
   Table,
   CustomMention,
+  HeadingListExtension,
   CustomReadOnlyImageExtension,
 } from "@/extensions";
 // helpers
@@ -114,4 +115,5 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
   Highlight.configure({
     multicolor: true,
   }),
+  HeadingListExtension,
 ];
