@@ -278,7 +278,7 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
 
           const currentUserId = this.rootIssueStore.currentUserId;
           if (currentUserId)
-            this.handleIssuesLocalFilters.set(EIssuesStoreType.PROJECT, type, workspaceSlug, cycleId, currentUserId, {
+            this.handleIssuesLocalFilters.set(EIssuesStoreType.CYCLE, type, workspaceSlug, cycleId, currentUserId, {
               kanban_filters: _filters.kanbanFilters,
             });
 

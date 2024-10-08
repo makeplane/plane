@@ -12,12 +12,12 @@ import {
   CycleListGroupHeader,
   CyclesListItem,
 } from "@/components/cycles";
+import useCyclesDetails from "@/components/cycles/active-cycle/use-cycles-details";
 import { EmptyState } from "@/components/empty-state";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 import { useCycle } from "@/hooks/store";
 import { ActiveCycleIssueDetails } from "@/store/issue/cycle";
-import useCyclesDetails from "./use-cycles-details";
 
 interface IActiveCycleDetails {
   workspaceSlug: string;

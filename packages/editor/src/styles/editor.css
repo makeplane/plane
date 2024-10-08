@@ -125,7 +125,7 @@
   margin-top: 0 !important;
   margin-bottom: 0;
 
-  &:not(.read-only-image) {
+  &:not(.read-only-image):not(.loading-image) {
     transition: filter 0.1s ease-in-out;
 
     &:hover {

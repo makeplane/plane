@@ -173,7 +173,7 @@ export const SidebarFavoritesMenu = observer(() => {
               {Object.keys(groupedFavorites).length === 0 ? (
                 <>
                   {!sidebarCollapsed && (
-                    <span className="text-custom-text-400 text-xs text-center font-medium py-1">No favorites yet</span>
+                    <span className="text-custom-text-400 text-xs font-medium px-8 py-1.5">No favorites yet</span>
                   )}
                 </>
               ) : (
@@ -182,7 +182,7 @@ export const SidebarFavoritesMenu = observer(() => {
                   .map((fav, index) => (
                     <Tooltip
                       key={fav.id}
-                      tooltipContent={fav.entity_data ? fav.entity_data.name : fav.name}
+                      tooltipContent={fav?.entity_data ? fav.entity_data?.name : fav?.name}
                       position="right"
                       className="ml-2"
                       disabled={!sidebarCollapsed}

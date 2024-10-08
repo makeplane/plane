@@ -199,21 +199,24 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     });
   };
 
-  const handleKanbanFilters = (toggle: "group_by" | "sub_group_by", value: string) => {
-    if (workspaceSlug) {
-      let kanbanFilters = issuesFilter?.issueFilters?.kanbanFilters?.[toggle] || [];
-      if (kanbanFilters.includes(value)) {
-        kanbanFilters = kanbanFilters.filter((_value) => _value != value);
-      } else {
-        kanbanFilters.push(value);
+  const handleCollapsedGroups = useCallback(
+    (toggle: "group_by" | "sub_group_by", value: string) => {
+      if (workspaceSlug) {
+        let collapsedGroups = issuesFilter?.issueFilters?.kanbanFilters?.[toggle] || [];
+        if (collapsedGroups.includes(value)) {
+          collapsedGroups = collapsedGroups.filter((_value) => _value != value);
+        } else {
+          collapsedGroups.push(value);
+        }
+        updateFilters(projectId?.toString() ?? "", EIssueFilterType.KANBAN_FILTERS, {
+          [toggle]: collapsedGroups,
+        });
       }
-      updateFilters(projectId?.toString() ?? "", EIssueFilterType.KANBAN_FILTERS, {
-        [toggle]: kanbanFilters,
-      });
-    }
-  };
+    },
+    [workspaceSlug, issuesFilter, projectId, updateFilters]
+  );
 
-  const kanbanFilters = issuesFilter?.issueFilters?.kanbanFilters || { group_by: [], sub_group_by: [] };
+  const collapsedGroups = issuesFilter?.issueFilters?.kanbanFilters || { group_by: [], sub_group_by: [] };
 
   return (
     <IssueLayoutHOC layout={EIssueLayoutTypes.KANBAN}>
@@ -258,8 +261,8 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               orderBy={orderBy}
               updateIssue={updateIssue}
               quickActions={renderQuickActions}
-              handleKanbanFilters={handleKanbanFilters}
-              kanbanFilters={kanbanFilters}
+              handleCollapsedGroups={handleCollapsedGroups}
+              collapsedGroups={collapsedGroups}
               enableQuickIssueCreate={enableQuickAdd}
               showEmptyGroup={userDisplayFilters?.show_empty_groups ?? true}
               quickAddCallback={quickAddIssue}

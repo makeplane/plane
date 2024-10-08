@@ -40,12 +40,12 @@ export const CYCLE_VIEW_LAYOUTS: {
   {
     key: "board",
     icon: LayoutGrid,
-    title: "Grid layout",
+    title: "Gallery layout",
   },
   {
     key: "gantt",
     icon: GanttChartSquare,
-    title: "Gantt layout",
+    title: "Timeline layout",
   },
 ];
 
@@ -60,7 +60,7 @@ export const CYCLE_STATUS: {
   {
     label: "day left",
     value: "current",
-    title: "Active",
+    title: "In progress",
     color: "#F59E0B",
     textColor: "text-amber-500",
     bgColor: "bg-amber-50",
