@@ -1,12 +1,13 @@
 import { FC, useEffect, useState } from "react";
 import { BubbleMenu, BubbleMenuProps, isNodeSelection } from "@tiptap/react";
-import { LucideIcon } from "lucide-react";
 // components
 import {
   BoldItem,
+  BubbleMenuColorSelector,
   BubbleMenuLinkSelector,
   BubbleMenuNodeSelector,
   CodeItem,
+  EditorMenuItem,
   ItalicItem,
   StrikeThroughItem,
   UnderLineItem,
@@ -16,34 +17,23 @@ import { isCellSelection } from "@/extensions/table/table/utilities/is-cell-sele
 // helpers
 import { cn } from "@/helpers/common";
 
-export interface BubbleMenuItem {
-  key: string;
-  name: string;
-  isActive: () => boolean;
-  command: () => void;
-  icon: LucideIcon;
-}
-
 type EditorBubbleMenuProps = Omit<BubbleMenuProps, "children">;
 
 export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
-  const items: BubbleMenuItem[] = [
-    ...(props.editor.isActive("code")
-      ? []
-      : [
-          BoldItem(props.editor),
-          ItalicItem(props.editor),
-          UnderLineItem(props.editor),
-          StrikeThroughItem(props.editor),
-        ]),
-    CodeItem(props.editor),
-  ];
+  // states
+  const [isNodeSelectorOpen, setIsNodeSelectorOpen] = useState(false);
+  const [isLinkSelectorOpen, setIsLinkSelectorOpen] = useState(false);
+  const [isColorSelectorOpen, setIsColorSelectorOpen] = useState(false);
+  const [isSelecting, setIsSelecting] = useState(false);
+
+  const items: EditorMenuItem[] = props.editor.isActive("code")
+    ? [CodeItem(props.editor)]
+    : [BoldItem(props.editor), ItalicItem(props.editor), UnderLineItem(props.editor), StrikeThroughItem(props.editor)];
 
   const bubbleMenuProps: EditorBubbleMenuProps = {
     ...props,
     shouldShow: ({ state, editor }) => {
       const { selection } = state;
-
       const { empty } = selection;
 
       if (
@@ -63,14 +53,10 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
       onHidden: () => {
         setIsNodeSelectorOpen(false);
         setIsLinkSelectorOpen(false);
+        setIsColorSelectorOpen(false);
       },
     },
   };
-
-  const [isNodeSelectorOpen, setIsNodeSelectorOpen] = useState(false);
-  const [isLinkSelectorOpen, setIsLinkSelectorOpen] = useState(false);
-
-  const [isSelecting, setIsSelecting] = useState(false);
 
   useEffect(() => {
     function handleMouseDown() {
@@ -102,51 +88,66 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
   return (
     <BubbleMenu
       {...bubbleMenuProps}
-      className="flex w-fit divide-x divide-custom-border-300 rounded border border-custom-border-300 bg-custom-background-100 shadow-xl"
+      className="flex py-2 divide-x divide-custom-border-200 rounded-lg border border-custom-border-200 bg-custom-background-100 shadow-custom-shadow-rg"
     >
-      {isSelecting ? null : (
+      {!isSelecting && (
         <>
-          {!props.editor.isActive("table") && (
-            <BubbleMenuNodeSelector
-              editor={props.editor!}
-              isOpen={isNodeSelectorOpen}
-              setIsOpen={() => {
-                setIsNodeSelectorOpen(!isNodeSelectorOpen);
-                setIsLinkSelectorOpen(false);
-              }}
-            />
-          )}
-          {!props.editor.isActive("code") && (
-            <BubbleMenuLinkSelector
-              editor={props.editor}
-              isOpen={isLinkSelectorOpen}
-              setIsOpen={() => {
-                setIsLinkSelectorOpen(!isLinkSelectorOpen);
-                setIsNodeSelectorOpen(false);
-              }}
-            />
-          )}
-          <div className="flex">
+          <div className="px-2">
+            {!props.editor.isActive("table") && (
+              <BubbleMenuNodeSelector
+                editor={props.editor!}
+                isOpen={isNodeSelectorOpen}
+                setIsOpen={() => {
+                  setIsNodeSelectorOpen((prev) => !prev);
+                  setIsLinkSelectorOpen(false);
+                  setIsColorSelectorOpen(false);
+                }}
+              />
+            )}
+          </div>
+          <div className="px-2">
+            {!props.editor.isActive("code") && (
+              <BubbleMenuLinkSelector
+                editor={props.editor}
+                isOpen={isLinkSelectorOpen}
+                setIsOpen={() => {
+                  setIsLinkSelectorOpen((prev) => !prev);
+                  setIsNodeSelectorOpen(false);
+                  setIsColorSelectorOpen(false);
+                }}
+              />
+            )}
+          </div>
+          <div className="px-2">
+            {!props.editor.isActive("code") && (
+              <BubbleMenuColorSelector
+                editor={props.editor}
+                isOpen={isColorSelectorOpen}
+                setIsOpen={() => {
+                  setIsColorSelectorOpen((prev) => !prev);
+                  setIsNodeSelectorOpen(false);
+                  setIsLinkSelectorOpen(false);
+                }}
+              />
+            )}
+          </div>
+          <div className="flex gap-0.5 px-2">
             {items.map((item) => (
               <button
-                key={item.name}
+                key={item.key}
                 type="button"
                 onClick={(e) => {
                   item.command();
                   e.stopPropagation();
                 }}
                 className={cn(
-                  "p-2 text-custom-text-300 transition-colors hover:bg-custom-primary-100/5 active:bg-custom-primary-100/5",
+                  "size-7 grid place-items-center rounded text-custom-text-300 hover:bg-custom-background-80 active:bg-custom-background-80 transition-colors",
                   {
-                    "bg-custom-primary-100/5 text-custom-text-100": item.isActive(),
+                    "bg-custom-background-80 text-custom-text-100": item.isActive(""),
                   }
                 )}
               >
-                <item.icon
-                  className={cn("h-4 w-4", {
-                    "text-custom-text-100": item.isActive(),
-                  })}
-                />
+                <item.icon className="size-4" />
               </button>
             ))}
           </div>

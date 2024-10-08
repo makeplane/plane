@@ -3636,6 +3636,11 @@
   resolved "https://registry.yarnpkg.com/@tiptap/extension-collaboration/-/extension-collaboration-2.8.0.tgz#db7a1e600c80229ed24a9d004f290d9e8bd4d0f6"
   integrity sha512-Ae5NZWj2aq8ZElsGxQiq3cAxxbb0cR7VHvmIG1mPA6USvrQL6/xtBVutersBqINFELmIuxh/jm8qVffBm2qXyg==
 
+"@tiptap/extension-color@^2.7.1":
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-color/-/extension-color-2.8.0.tgz#597e1ea2e675e3c01ba64933008eacd296913abd"
+  integrity sha512-b0ZIDaZKTDVdTb0PMgtOiPzgCkYhvDldjzdWyPLsjWup5x9/zPasH5X/2SfMuwtjt+cKj6YBPveJjF7w5ApK7w==
+
 "@tiptap/extension-document@^2.8.0":
   version "2.8.0"
   resolved "https://registry.yarnpkg.com/@tiptap/extension-document/-/extension-document-2.8.0.tgz#7dc5d2622168ad5b81134a92fccf49d7be53f141"
@@ -3667,6 +3672,11 @@
   version "2.8.0"
   resolved "https://registry.yarnpkg.com/@tiptap/extension-heading/-/extension-heading-2.8.0.tgz#1b7711860fe9f4336fb8933110a129150faa4e39"
   integrity sha512-4inWgrTPiqlivPmEHFOM5ck2UsmOsbKKPtqga6bALvWPmCv24S6/EBwFp8Jz4YABabXDnkviihmGu0LpP9D69w==
+
+"@tiptap/extension-highlight@^2.7.1":
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-highlight/-/extension-highlight-2.8.0.tgz#3970f42a5a116745fbb2b82cfc5055adb04158e9"
+  integrity sha512-vyqX7D449nuARhI0AyRqtIZReFg3sfc/U/q1p3JOjtUoW6z2jmDTzshiKRrSg+Jf7Hhzj1pqwU+6+CpelPPDpA==
 
 "@tiptap/extension-history@^2.8.0":
   version "2.8.0"
@@ -3728,7 +3738,7 @@
   resolved "https://registry.yarnpkg.com/@tiptap/extension-task-list/-/extension-task-list-2.8.0.tgz#b4124b638ee50251cae0bad9280a07350dc39e76"
   integrity sha512-2Zkq0UojPh+Y4trJcNSsjkdHsYczxFReUqhzl5T0/OuPzIcDYL2OicUrsp36y16KKnH+WSOUOR8twDfR9LHygg==
 
-"@tiptap/extension-text-style@^2.1.13":
+"@tiptap/extension-text-style@^2.7.1":
   version "2.8.0"
   resolved "https://registry.yarnpkg.com/@tiptap/extension-text-style/-/extension-text-style-2.8.0.tgz#32e30ccf3853202eba2169ba5db30b9470df9644"
   integrity sha512-jJp0vcZ2Ty7RvIL0VU6dm1y+fTfXq1lN2GwtYzYM0ueFuESa+Qo8ticYOImyWZ3wGJGVrjn7OV9r0ReW0/NYkQ==

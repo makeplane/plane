@@ -134,7 +134,8 @@ export const replaceCustomComponentsFromMarkdownContent = (props: {
   let parsedMarkdownContent = markdownContent;
   // replace the matched mention components with [label](redirect_uri)
   const mentionRegex = /<mention-component[^>]*label="([^"]+)"[^>]*redirect_uri="([^"]+)"[^>]*><\/mention-component>/g;
-  const originUrl = window?.location?.origin ?? "";
+  const originUrl = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+
   parsedMarkdownContent = parsedMarkdownContent.replace(
     mentionRegex,
     (_match, label, redirectUri) => `[${label}](${originUrl}/${redirectUri})`

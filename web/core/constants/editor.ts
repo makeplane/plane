@@ -252,7 +252,6 @@ const EDITOR_PDF_CODE_STYLES: Styles = {
     fontSize: convertRemToPixel(0.7),
   },
   // inline code block
-  // TODO: update width
   "[data-node-type='inline-code-block']": {
     margin: 0,
     paddingVertical: convertRemToPixel(0.25 / 4 + 0.25 / 8),
