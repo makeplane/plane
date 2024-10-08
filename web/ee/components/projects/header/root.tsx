@@ -38,7 +38,7 @@ export const ProjectsListHeader = observer(() => {
 
   if (!workspaceSlug || !workspaceId) return <></>;
   return isProjectGroupingEnabled ? (
-    <div className="flex-shrink-0 relative z-10 flex h-[3.75rem] w-full bg-custom-sidebar-background-100">
+    <div className="flex-shrink-0 relative z-10 flex h-[3.75rem] w-full">
       {/* flex-row items-center justify-between gap-x-2 gap-y-4 */}
       <div className="w-full h-full relative flex justify-between items-center gap-x-2 gap-y-4">
         <div className="flex items-center gap-4">
