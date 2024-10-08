@@ -15,7 +15,7 @@ import {
   PanelLeft,
   MoveRight,
 } from "lucide-react";
-import { Header, CustomMenu, EHeaderVariant, TOAST_TYPE, setToast } from "@plane/ui";
+import { Header, CustomMenu, EHeaderVariant } from "@plane/ui";
 // components
 import { InboxIssueStatus } from "@/components/inbox";
 import { IssueUpdateStatus } from "@/components/issues";
