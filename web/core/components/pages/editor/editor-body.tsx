@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
+import { HocuspocusProviderWebsocket } from "@hocuspocus/provider";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // document-editor
@@ -32,6 +33,7 @@ import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 import { FileService } from "@/services/file.service";
 // store
 import { IPage } from "@/store/pages/page";
+import { getSocketConnection } from "./socket";
 
 const fileService = new FileService();
 
@@ -137,6 +139,9 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
 
   if (pageId === undefined || !realtimeConfig) return <PageContentLoader />;
 
+  const socket = useMemo(() => getSocketConnection(realtimeConfig, currentUser?.id), [realtimeConfig]);
+  console.log("socket connection", socket);
+
   return (
     <div className="flex items-center h-full w-full overflow-y-auto">
       <Row
@@ -167,6 +172,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
           </div>
           {isContentEditable ? (
             <CollaborativeDocumentEditorWithRef
+              socket={socket as HocuspocusProviderWebsocket}
               id={pageId}
               fileHandler={{
                 cancel: fileService.cancelUpload,

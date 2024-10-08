@@ -1,5 +1,6 @@
 "use client";
 
+import { HocuspocusProviderWebsocket } from "@hocuspocus/provider";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";

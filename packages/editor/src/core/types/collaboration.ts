@@ -13,6 +13,7 @@ import {
   TRealtimeConfig,
   TUserDetails,
 } from "@/types";
+import { HocuspocusProviderWebsocket } from "@hocuspocus/provider";
 
 export type TServerHandler = {
   onConnect?: () => void;
@@ -41,6 +42,7 @@ export type TCollaborativeEditorProps = TCollaborativeEditorHookProps & {
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
+  socket?: HocuspocusProviderWebsocket;
 };
 
 export type TReadOnlyCollaborativeEditorProps = TCollaborativeEditorHookProps & {

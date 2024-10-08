@@ -15,7 +15,7 @@ import {
   TDocumentEventsServer,
 } from "@/types";
 
-import { HocuspocusProvider } from "@hocuspocus/provider";
+import { HocuspocusProvider, HocuspocusProviderWebsocket } from "@hocuspocus/provider";
 
 // editor refs
 export type EditorReadOnlyRefApi = {
@@ -85,6 +85,7 @@ export interface ICollaborativeDocumentEditor
   realtimeConfig: TRealtimeConfig;
   serverHandler?: TServerHandler;
   user: TUserDetails;
+  socket: HocuspocusProviderWebsocket;
 }
 
 // read only editor props
