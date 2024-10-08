@@ -46,8 +46,9 @@ export const useReadOnlyCollaborativeEditor = (props: TReadOnlyCollaborativeEdit
         },
         onSynced: () => setHasServerSynced(true),
       }),
-    [id, realtimeConfig, user.id]
+    [id, realtimeConfig, serverHandler, user.id]
   );
+
   // destroy and disconnect connection on unmount
   useEffect(
     () => () => {

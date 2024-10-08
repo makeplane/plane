@@ -16,7 +16,14 @@ import { IMarking, scrollSummary } from "@/helpers/scroll-to-node";
 // props
 import { CoreEditorProps } from "@/props";
 // types
-import { EditorRefApi, IMentionHighlight, IMentionSuggestion, TEditorCommands, TFileHandler } from "@/types";
+import type {
+  TDocumentEventsServer,
+  EditorRefApi,
+  IMentionHighlight,
+  IMentionSuggestion,
+  TEditorCommands,
+  TFileHandler,
+} from "@/types";
 
 export interface CustomEditorProps {
   editorClassName: string;
@@ -55,9 +62,9 @@ export const useEditor = (props: CustomEditorProps) => {
     mentionHandler,
     onChange,
     placeholder,
-    provider,
     tabIndex,
     value,
+    provider,
   } = props;
   // states
 
@@ -231,7 +238,7 @@ export const useEditor = (props: CustomEditorProps) => {
         if (empty) return null;
 
         const nodesArray: string[] = [];
-        state.doc.nodesBetween(from, to, (node, pos, parent) => {
+        state.doc.nodesBetween(from, to, (node, _pos, parent) => {
           if (parent === state.doc && editorRef.current) {
             const serializer = DOMSerializer.fromSchema(editorRef.current?.schema);
             const dom = serializer.serializeNode(node);
@@ -272,6 +279,8 @@ export const useEditor = (props: CustomEditorProps) => {
         if (!document) return;
         Y.applyUpdate(document, value);
       },
+      emitRealTimeUpdate: (message: TDocumentEventsServer) => provider?.sendStateless(message),
+      listenToRealTimeUpdate: () => provider,
     }),
     [editorRef, savedSelection]
   );

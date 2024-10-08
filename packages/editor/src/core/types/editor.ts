@@ -12,7 +12,10 @@ import {
   TExtensions,
   TFileHandler,
   TServerHandler,
+  TDocumentEventsServer,
 } from "@/types";
+
+import { HocuspocusProvider } from "@hocuspocus/provider";
 
 // editor refs
 export type EditorReadOnlyRefApi = {
@@ -30,8 +33,8 @@ export type EditorReadOnlyRefApi = {
     paragraphs: number;
     words: number;
   };
-  onHeadingChange: (callback: (headings: IMarking[]) => void) => () => void;
-  getHeadings: () => IMarking[];
+  emitRealTimeUpdate: (message: TDocumentEventsServer) => void;
+  listenToRealTimeUpdate: () => HocuspocusProvider;
 };
 
 export interface EditorRefApi extends EditorReadOnlyRefApi {

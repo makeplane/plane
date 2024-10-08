@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // document-editor
@@ -109,7 +109,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
       onConnect: handleServerConnect,
       onServerError: handleServerError,
     }),
-    []
+    [handleServerConnect, handleServerError]
   );
 
   const realtimeConfig: TRealtimeConfig | undefined = useMemo(() => {
