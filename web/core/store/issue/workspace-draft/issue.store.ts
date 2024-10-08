@@ -4,7 +4,7 @@ import unset from "lodash/unset";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import { IssuePaginationOptions, TIssue, TIssuesResponse } from "@plane/types";
+import { TIssue, TIssuesResponse } from "@plane/types";
 // helpers
 import { getCurrentDateTimeInISO } from "@/helpers/date-time.helper";
 // services
@@ -22,6 +22,19 @@ export type TLoader =
   | "delete"
   | "move"
   | undefined;
+
+export enum EDraftIssuePaginationType {
+  INIT = "INIT",
+  NEXT = "NEXT",
+  PREV = "PREV",
+  CURRENT = "CURRENT",
+}
+
+export type TDraftIssuePaginationType = EDraftIssuePaginationType;
+
+export type TNotificationQueryParams = {
+  cursor: string;
+};
 
 export type TPaginationInfo<T> = {
   next_cursor: string | undefined;
@@ -106,6 +119,23 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
   removeIssue = (issueId: string) => {
     if (!issueId || !this.issuesMap[issueId]) return;
     runInAction(() => unset(this.issuesMap, issueId));
+  };
+
+  generateNotificationQueryParams = (paramType: TDraftIssuePaginationType): TNotificationQueryParams => {
+    const queryCursorNext: string =
+      paramType === EDraftIssuePaginationType.INIT
+        ? `${this.paginatedCount}:0:0`
+        : paramType === EDraftIssuePaginationType.CURRENT
+          ? `${this.paginatedCount}:${0}:0`
+          : paramType === EDraftIssuePaginationType.NEXT && this.paginationInfo
+            ? (this.paginationInfo?.next_cursor ?? `${this.paginatedCount}:${0}:0`)
+            : `${this.paginatedCount}:${0}:0`;
+
+    const queryParams: TNotificationQueryParams = {
+      cursor: queryCursorNext,
+    };
+
+    return queryParams;
   };
 
   // actions
