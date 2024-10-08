@@ -1,1 +1,1 @@
-export * from "./sidebar-chart";
+export * from "./root";

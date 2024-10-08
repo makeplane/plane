@@ -71,11 +71,7 @@ export interface ICycleStore {
   fetchArchivedCycleDetails: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<ICycle>;
   fetchCycleDetails: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<ICycle>;
   fetchActiveCycleProgress: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<TProgressSnapshot>;
-  fetchActiveCycleProgressPro: (
-    workspaceSlug: string,
-    projectId: string,
-    cycleId: string
-  ) => Promise<TProgressSnapshot> | Promise<null>;
+  fetchActiveCycleProgressPro: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<void>;
   fetchActiveCycleAnalytics: (
     workspaceSlug: string,
     projectId: string,
@@ -146,7 +142,6 @@ export class CycleStore implements ICycleStore {
       fetchArchivedCycles: action,
       fetchArchivedCycleDetails: action,
       fetchActiveCycleProgress: action,
-      fetchActiveCycleProgressPro: action,
       fetchActiveCycleAnalytics: action,
       fetchCycleDetails: action,
       createCycle: action,
@@ -282,7 +277,7 @@ export class CycleStore implements ICycleStore {
    */
   getActiveCycleProgress = computedFn((cycleId?: string) => {
     const cycle = cycleId ? this.cycleMap[cycleId] : this.currentProjectActiveCycle;
-    if (!cycle?.progress) return null;
+    if (!cycle) return null;
 
     const isTypeIssue = this.getEstimateTypeByCycleId(cycle.id) === "issues";
     const isBurnDown = this.getPlotTypeByCycleId(cycle.id) === "burndown";
@@ -403,13 +398,13 @@ export class CycleStore implements ICycleStore {
     await this.cycleService.cycleDateCheck(workspaceSlug, projectId, payload);
 
   /**
-   * @description gets the plot type for the module store
+   * @description gets the plot type for the cycle store
    * @param {TCyclePlotType} plotType
    */
   getPlotTypeByCycleId = computedFn((cycleId: string) => this.plotType[cycleId] || "burndown");
 
   /**
-   * @description gets the estimate type for the module store
+   * @description gets the estimate type for the cycle store
    * @param {TCycleEstimateType} estimateType
    */
   getEstimateTypeByCycleId = computedFn((cycleId: string) => {
@@ -421,7 +416,7 @@ export class CycleStore implements ICycleStore {
   });
 
   /**
-   * @description updates the plot type for the module store
+   * @description updates the plot type for the cycle store
    * @param {TCyclePlotType} plotType
    */
   setPlotType = (cycleId: string, plotType: TCyclePlotType) => {
@@ -429,7 +424,7 @@ export class CycleStore implements ICycleStore {
   };
 
   /**
-   * @description updates the estimate type for the module store
+   * @description updates the estimate type for the cycle store
    * @param {TCycleEstimateType} estimateType
    */
   setEstimateType = (cycleId: string, estimateType: TCycleEstimateType) => {
@@ -545,7 +540,7 @@ export class CycleStore implements ICycleStore {
    * @param cycleId
    *  @returns
    */
-  fetchActiveCycleProgressPro = async (workspaceSlug: string, projectId: string, cycleId: string) => null;
+  fetchActiveCycleProgressPro = action(async (workspaceSlug: string, projectId: string, cycleId: string) => {});
 
   /**
    * @description fetches active cycle analytics
