@@ -13,10 +13,19 @@ import { ISSUE_CREATED, ISSUE_UPDATED } from "@/constants/event-tracker";
 import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
-import { useEventTracker, useCycle, useIssues, useModule, useIssueDetail, useUser } from "@/hooks/store";
+import {
+  useEventTracker,
+  useCycle,
+  useIssues,
+  useModule,
+  useIssueDetail,
+  useUser,
+  useWorkspaceDraftIssues,
+} from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import useLocalStorage from "@/hooks/use-local-storage";
+import workspaceDraftService from "@/services/issue/workspace_draft.service";
 // local components
 import { DraftIssueLayout } from "./draft-issue-layout";
 import { IssueFormRoot } from "./form";
@@ -50,7 +59,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   const { fetchModuleDetails } = useModule();
   const { issues } = useIssues(storeType);
   const { issues: projectIssues } = useIssues(EIssuesStoreType.PROJECT);
-  const { issues: draftIssues } = useIssues(EIssuesStoreType.DRAFT);
+  const { createIssue: createDraftIssue, updateIssue: updateDraftIssue } = useWorkspaceDraftIssues();
   const { fetchIssue } = useIssueDetail();
   const { handleCreateUpdatePropertyValues } = useIssueModal();
   // pathname
@@ -70,7 +79,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     if (!workspaceSlug) return;
 
     if (!projectId || issueId === undefined || !fetchIssueDetails) {
-    // Set description to the issue description from the props if available
+      // Set description to the issue description from the props if available
       setDescription(data?.description_html || "<p></p>");
       return;
     }
@@ -151,10 +160,9 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
 
     try {
       let response;
-
       // if draft issue, use draft issue store to create issue
       if (is_draft_issue) {
-        response = await draftIssues.createIssue(workspaceSlug.toString(), payload.project_id, payload);
+        response = await createDraftIssue(workspaceSlug.toString(), payload);
       }
       // if cycle id in payload does not match the cycleId in url
       // or if the moduleIds in Payload does not match the moduleId in url
@@ -238,7 +246,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
 
     try {
       isDraft
-        ? await draftIssues.updateIssue(workspaceSlug.toString(), payload.project_id, data.id, payload)
+        ? await updateDraftIssue(workspaceSlug.toString(), data.id, payload)
         : updateIssue && (await updateIssue(payload.project_id, data.id, payload));
 
       // add other property values

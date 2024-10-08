@@ -28,12 +28,7 @@ export const WorkspaceDraftHeader: FC = observer(() => {
 
   return (
     <>
-      <CreateUpdateIssueModal
-        isOpen={isDraftIssueModalOpen}
-        onClose={() => setIsDraftIssueModalOpen(false)}
-        storeType={EIssuesStoreType.WORKSPACE_DRAFT}
-        isDraft
-      />
+      <CreateUpdateIssueModal isOpen={isDraftIssueModalOpen} onClose={() => setIsDraftIssueModalOpen(false)} isDraft />
       <Header>
         <Header.LeftItem>
           <Breadcrumbs>
