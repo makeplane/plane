@@ -18,7 +18,7 @@ on:
       useVaultSecrets:
         description: "Use Vault Secrets"
         type: boolean
-        default: false
+        default: true
         required: true
       isPrerelease:
         description: "Is Pre-release"
@@ -66,6 +66,7 @@ jobs:
       dh_img_proxy: ${{ steps.set_env_variables.outputs.DH_IMG_PROXY }}
       dh_img_monitor: ${{ steps.set_env_variables.outputs.DH_IMG_MONITOR }}
       harbor_push: ${{ steps.set_env_variables.outputs.HARBOR_PUSH }}
+      build_type: ${{steps.set_env_variables.outputs.BUILD_TYPE}}
       build_release: ${{ steps.set_env_variables.outputs.BUILD_RELEASE }}
       build_prerelease: ${{ steps.set_env_variables.outputs.BUILD_PRERELEASE }}
       release_version: ${{ steps.set_env_variables.outputs.RELEASE_VERSION }}
@@ -91,6 +92,7 @@ jobs:
           echo "DH_IMG_PROXY=proxy-cloud" >> $GITHUB_OUTPUT
           echo "DH_IMG_MONITOR=monitor-cloud" >> $GITHUB_OUTPUT
 
+          echo "BUILD_TYPE=${{env.BUILD_TYPE}}" >> $GITHUB_OUTPUT
           BUILD_RELEASE=false
           BUILD_PRERELEASE=false
           RELVERSION="latest"
@@ -419,6 +421,7 @@ jobs:
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
 
   publish_release:
+    if: ${{ needs.branch_build_setup.outputs.build_type == 'Release' }}
     name: Build Release
     runs-on: ubuntu-20.04
     needs:

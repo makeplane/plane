@@ -66,6 +66,7 @@ jobs:
       dh_img_monitor: ${{ steps.set_env_variables.outputs.DH_IMG_MONITOR }}
       dh_img_silo: ${{ steps.set_env_variables.outputs.DH_IMG_SILO }}
       harbor_push: ${{ steps.set_env_variables.outputs.HARBOR_PUSH }}
+      build_type: ${{steps.set_env_variables.outputs.BUILD_TYPE}}
       build_release: ${{ steps.set_env_variables.outputs.BUILD_RELEASE }}
       build_prerelease: ${{ steps.set_env_variables.outputs.BUILD_PRERELEASE }}
       release_version: ${{ steps.set_env_variables.outputs.RELEASE_VERSION }}
@@ -97,6 +98,7 @@ jobs:
           echo "DH_IMG_MONITOR=monitor-enterprise" >> $GITHUB_OUTPUT
           echo "DH_IMG_SILO=silo-enterprise" >> $GITHUB_OUTPUT
 
+          echo "BUILD_TYPE=${{env.BUILD_TYPE}}" >> $GITHUB_OUTPUT
           BUILD_RELEASE=false
           BUILD_PRERELEASE=false
           RELVERSION="latest"
@@ -484,6 +486,7 @@ jobs:
           aws s3 cp ~/${{ env.ARTIFACT_SUFFIX }} s3://${{ vars.SELF_HOST_BUCKET_NAME }}/plane-enterprise/${{ env.ARTIFACT_SUFFIX }} --recursive
 
   publish_release:
+    if: ${{ needs.branch_build_setup.outputs.build_type == 'Release' }}
     name: Build Release
     runs-on: ubuntu-20.04
     needs:
