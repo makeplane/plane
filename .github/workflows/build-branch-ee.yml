@@ -196,6 +196,9 @@ jobs:
       - name: Admin Build and Push
         uses: ./.github/actions/build-push-action
         with:
+          build-release: ${{ needs.branch_build_setup.outputs.build_release }}
+          build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
+          release-version: ${{ needs.branch_build_setup.outputs.release_version }}
           docker-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
           harbor-push: ${{ needs.branch_build_setup.outputs.harbor_push }}
