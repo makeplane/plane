@@ -129,10 +129,13 @@ jobs:
           echo "RELEASE_VERSION=${RELVERSION}" >> $GITHUB_OUTPUT
           echo "HARBOR_PUSH=${HARBOR_PUSH}" >> $GITHUB_OUTPUT
 
-          if [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
+          if [ "${{ env.BUILD_TYPE }}" == "Release" ]; then
+            echo "artifact_upload_to_s3=true" >> $GITHUB_OUTPUT
+            echo "artifact_s3_suffix=${{ env.RELEASE_VERSION }}" >> $GITHUB_OUTPUT
+          elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
             echo "artifact_upload_to_s3=true" >> $GITHUB_OUTPUT
             echo "artifact_s3_suffix=latest" >> $GITHUB_OUTPUT
-          elif [ "${{ env.TARGET_BRANCH }}" == "preview" ] || [ "${{ env.TARGET_BRANCH }}" == "develop" ]; then
+          elif [ "${{ env.TARGET_BRANCH }}" == "preview" ] || [ "${{ env.TARGET_BRANCH }}" == "develop" ] || [ "${{ env.TARGET_BRANCH }}" == "uat" ]; then
             echo "artifact_upload_to_s3=true" >> $GITHUB_OUTPUT
             echo "artifact_s3_suffix=${{ env.TARGET_BRANCH }}" >> $GITHUB_OUTPUT
           else
@@ -203,6 +206,9 @@ jobs:
       - name: Admin Build and Push
         uses: ./.github/actions/build-push-action
         with:
+          build-release: ${{ needs.branch_build_setup.outputs.build_release }}
+          build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
+          release-version: ${{ needs.branch_build_setup.outputs.release_version }}
           docker-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
           harbor-push: ${{ needs.branch_build_setup.outputs.harbor_push }}
@@ -488,6 +494,7 @@ jobs:
   publish_release:
     if: ${{ needs.branch_build_setup.outputs.build_type == 'Release' }}
     name: Build Release
+    if: ${{ needs.branch_build_setup.outputs.build_type == 'Release' }}
     runs-on: ubuntu-20.04
     needs:
       [
