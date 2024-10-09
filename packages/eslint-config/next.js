@@ -77,6 +77,11 @@ module.exports = {
             position: "after",
           },
           {
+            pattern: "@silo/**",
+            group: "external",
+            position: "after",
+          },
+          {
             pattern: "@/**",
             group: "internal",
           },
