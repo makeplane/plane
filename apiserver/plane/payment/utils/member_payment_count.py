@@ -454,13 +454,14 @@ def workspace_member_check(
 
     # Get the workspace license
     if settings.IS_MULTI_TENANT:
-        return handle_cloud_payments(
-            slug=slug,
-            requested_invite_list=requested_invite_list,
-            requested_role=requested_role,
-            current_role=current_role,
-            workspace_license=workspace_license,
-        )
+        # return handle_cloud_payments(
+        #     slug=slug,
+        #     requested_invite_list=requested_invite_list,
+        #     requested_role=requested_role,
+        #     current_role=current_role,
+        #     workspace_license=workspace_license,
+        # )
+        return True, 0, 0
     else:
         return handle_self_managed_payments(
             slug=slug,
