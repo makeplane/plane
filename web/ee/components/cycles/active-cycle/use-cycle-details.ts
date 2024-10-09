@@ -2,7 +2,14 @@ import { useCallback } from "react";
 import isEqual from "lodash/isEqual";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
-import { IActiveCycle, IIssueFilterOptions, TCycleEstimateType, TCyclePlotType } from "@plane/types";
+import {
+  IActiveCycle,
+  IIssueFilterOptions,
+  TCycleDistribution,
+  TCycleEstimateDistribution,
+  TCycleEstimateType,
+  TCyclePlotType,
+} from "@plane/types";
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 import { useCycle, useIssues } from "@/hooks/store";
 import { formatActiveCycle } from "./formatter";
@@ -43,7 +50,7 @@ const useCycleDetails = (props: IActiveCycleDetails) => {
     (cycleId ? getCycleById(cycleId) : currentProjectActiveCycleId ? getCycleById(currentProjectActiveCycleId) : null);
 
   // fetches cycle details for non-pro users
-  useSWR(
+  const { data: progress } = useSWR(
     workspaceSlug && projectId && cycle && cycle?.version === 1 ? `PROJECT_ACTIVE_CYCLE_${projectId}_PROGRESS` : null,
     workspaceSlug && projectId && cycle && cycle?.version === 1
       ? () => fetchActiveCycleProgress(workspaceSlug, projectId, cycle.id)
@@ -51,7 +58,7 @@ const useCycleDetails = (props: IActiveCycleDetails) => {
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetches cycle details for non-pro users
-  useSWR(
+  const { data: distribution } = useSWR(
     workspaceSlug && projectId && cycle && !cycle?.distribution && cycle?.version === 1
       ? `PROJECT_ACTIVE_CYCLE_${projectId}_DURATION`
       : null,
@@ -60,7 +67,7 @@ const useCycleDetails = (props: IActiveCycleDetails) => {
       : null
   );
   // fetches cycle details for non-pro users
-  useSWR(
+  const { data: estimate_distribution } = useSWR(
     workspaceSlug && projectId && cycle && !cycle?.estimate_distribution && cycle?.version === 1
       ? `PROJECT_ACTIVE_CYCLE_${projectId}_ESTIMATE_DURATION`
       : null,
@@ -125,7 +132,17 @@ const useCycleDetails = (props: IActiveCycleDetails) => {
     cycle,
     plotType,
     estimateType,
-    cycleProgress: cycle && formatActiveCycle({ ...cycleData, cycle }), // formatted chart data
+    cycleProgress:
+      cycle &&
+      formatActiveCycle({
+        ...cycleData,
+        cycle: {
+          ...progress,
+          distribution: distribution as TCycleDistribution,
+          estimate_distribution: estimate_distribution as TCycleEstimateDistribution,
+          ...cycle,
+        },
+      }), // formatted chart data
     progressLoader,
     handlePlotChange,
     handleFiltersUpdate,

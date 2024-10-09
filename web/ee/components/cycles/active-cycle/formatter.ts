@@ -15,8 +15,8 @@ const formatV1Data = (isTypeIssue: boolean, cycle: ICycle, isBurnDown: boolean, 
   const data = isTypeIssue ? cycle.distribution : cycle.estimate_distribution;
   const extendedArray = generateDateArray(endDate, endDate).map((d) => d.date);
 
-  if (isEmpty(data)) return generateDateArray(new Date(cycle.start_date!), endDate);
-  const progress = [...Object.keys(data.completion_chart), ...extendedArray].map((p) => {
+  if (isEmpty(data?.completion_chart)) return generateDateArray(new Date(cycle.start_date!), endDate);
+  let progress = [...Object.keys(data.completion_chart), ...extendedArray].map((p) => {
     const pending = data.completion_chart[p] || 0;
     const total = (isTypeIssue ? cycle.total_issues : cycle.total_estimate_points) || 0;
     const completed = total - pending;
@@ -35,6 +35,7 @@ const formatV1Data = (isTypeIssue: boolean, cycle: ICycle, isBurnDown: boolean, 
     };
   });
 
+  progress = uniqBy(progress, "date");
   return progress;
 };
 

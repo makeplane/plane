@@ -139,13 +139,13 @@ const Summary = observer((props: Props) => {
           </div>
         ))}
       </div>
-      <div className="space-y-4 mt-2 pb-4 border-b border-custom-border-200">
+      <div className="space-y-1 mt-2 pb-4 border-b border-custom-border-200">
         <div className="flex text-xs text-custom-text-400 font-medium">
           <span className="w-5/6">Other {estimateType.slice(0, -1)} states</span>
         </div>
         {stateGroups.secondaryStates.map((group, index) => (
           <div
-            className="flex text-sm cursor-pointer"
+            className="flex text-sm cursor-pointer p-2"
             key={index}
             onClick={() => {
               if (groupedProjectStates && states.includes(group.key)) {

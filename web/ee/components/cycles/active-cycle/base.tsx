@@ -3,6 +3,8 @@
 import { observer } from "mobx-react";
 import { Disclosure } from "@headlessui/react";
 // ui
+import { EmptyState } from "@/components/empty-state";
+import { EmptyStateType } from "@/constants/empty-state";
 import ActiveCycleDetail from "./details";
 import { CycleProgressHeader } from "./progress-header";
 // constants
@@ -17,7 +19,12 @@ export const ActiveCycleBase: React.FC<IActiveCycleDetails> = observer((props) =
   const { workspaceSlug, projectId } = props;
   const cycleDetails = useCycleDetails({ workspaceSlug, projectId });
 
-  if (!cycleDetails.cycle) return;
+  if (!cycleDetails.cycle)
+    return (
+      <div className="max-h-[500px]">
+        <EmptyState type={EmptyStateType.PROJECT_CYCLE_ACTIVE} size="sm" />
+      </div>
+    );
 
   return (
     <>
