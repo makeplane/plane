@@ -31,7 +31,6 @@ from plane.db.models import (
     CycleIssue,
     ModuleIssue,
 )
-from plane.ee.models import IssueProperty
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.ee.bgtasks import bulk_issue_activity
 from plane.payment.flags.flag_decorator import check_feature_flag

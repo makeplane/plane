@@ -1437,7 +1437,7 @@ class CycleAnalyticsEndpoint(BaseAPIView):
 
 class CycleIssueStateAnalyticsEndpoint(BaseAPIView):
 
-    # @check_feature_flag(FeatureFlag.ACTIVE_CYCLE_PRO)
+    @check_feature_flag(FeatureFlag.ACTIVE_CYCLE_PRO)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, cycle_id):
         workspace = Workspace.objects.get(slug=slug)

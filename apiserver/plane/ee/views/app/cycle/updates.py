@@ -47,7 +47,7 @@ class CycleUpdatesViewSet(BaseViewSet):
             .distinct()
         )
 
-    # @check_feature_flag(FeatureFlag.ACTIVE_CYCLE_PRO)
+    @check_feature_flag(FeatureFlag.ACTIVE_CYCLE_PRO)
     def list(self, request, slug, project_id, cycle_id):
         cycle_updates = (
             EntityUpdates.objects.filter(

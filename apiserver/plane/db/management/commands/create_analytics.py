@@ -1,146 +1,260 @@
 # Django imports
-from django.db.models import Sum
+import random
+
+from datetime import timedelta
 from django.utils import timezone
-from django.db.models import F
-from django.db.models.functions import RowNumber
-from django.db.models import Max, Subquery, OuterRef
+from django.db.models import Q, Max
+
 # Django imports
+from faker import Faker
 from django.core.management.base import BaseCommand, CommandError
 
 
 # Third party imports
-from celery import shared_task
-from plane.db.models import Cycle
+from plane.db.models import (
+    Cycle,
+    Workspace,
+    Project,
+    State,
+    Issue,
+    IssueSequence,
+    IssueActivity,
+    CycleIssue,
+)
 from plane.ee.models import EntityIssueStateActivity, EntityProgress
 
 # @shared_task
 # Module imports
-from plane.license.models import Instance, InstanceAdmin
-from plane.db.models import User
-
-
-def helper(current_date, i):
-    active_cycles = Cycle.objects.filter(
-        start_date__lte=timezone.now(), end_date__gte=timezone.now()
-    ).values_list("id", "project_id", "workspace_id")
-
-    analytics_records = []
-    for cycle_id, project_id, workspace_id in active_cycles:
-        print(cycle_id, project_id)
-        # Subquery to get the latest id for each issue_id
-        # Subquery to get the latest created_at for each issue_id
-        # latest_created_at = CycleIssueStateProgress.objects.filter(
-        #     cycle_id=cycle_id,
-        #     type__in=["ADDED", "UPDATED"],
-        #     issue_id=OuterRef("issue_id"),
-        #     created_at__lte=timezone.now(),
-        # ).values('issue_id').annotate(
-        #     latest_created=Max('created_at')
-        # ).values('latest_created')
-
-        # # Main query to get the latest unique issues
-        # cycle_issues = CycleIssueStateProgress.objects.filter(
-        #     cycle_id=cycle_id,
-        #     type__in=["ADDED", "UPDATED"],
-        #     created_at=Subquery(latest_created_at),
-        #     issue_id=OuterRef("issue_id")
-        # ).order_by("issue_id")
-        cycle_issues = EntityIssueStateActivity.objects.filter(
-            id=Subquery(
-                EntityIssueStateActivity.objects.filter(
-                    cycle_id=cycle_id,
-                    action__in=["ADDED", "UPDATED"],
-                    issue=OuterRef("issue"),
-                    entity_type="CYCLE"
-                )
-                .order_by("-created_at")
-                .values("id")[:1]
-            )
-        )
-        print(cycle_issues)
-
-        for issue in cycle_issues.values():
-            print(issue, "issues")
-
-        total_issues = cycle_issues.count()
-        total_estimate_points = (
-            cycle_issues.aggregate(
-                total_estimate_points=Sum("estimate_value")
-            )["total_estimate_points"]
-            or 0
-        )
-
-        state_groups = [
-            "backlog",
-            "unstarted",
-            "started",
-            "completed",
-            "cancelled",
-        ]
-        state_data = {
-            group: {
-                "count": cycle_issues.filter(state_group=group).count(),
-                "estimate_points": cycle_issues.filter(
-                    state_group=group
-                ).aggregate(total_estimate_points=Sum("estimate_value"))[
-                    "total_estimate_points"
-                ]
-                or 0,
-            }
-            for group in state_groups
-        }
-
-        # Prepare analytics record for bulk insert
-        analytics_records.append(
-            EntityProgress(
-                entity_type="CYCLE",
-                cycle_id=cycle_id,
-                progress_date=current_date,
-                total_issues=total_issues,
-                total_estimate_points=total_estimate_points,
-                backlog_issues=state_data["backlog"]["count"],
-                unstarted_issues=state_data["unstarted"]["count"] - i,
-                started_issues=state_data["started"]["count"]+ i,
-                completed_issues=state_data["completed"]["count"] + i,
-                cancelled_issues=state_data["cancelled"]["count"],
-                backlog_estimate_points=state_data["backlog"][
-                    "estimate_points"
-                ]
-                - i,
-                unstarted_estimate_points=state_data["unstarted"][
-                    "estimate_points"
-                ]
-                - i,
-                started_estimate_points=state_data["started"][
-                    "estimate_points"
-                ]
-                + i,
-                completed_estimate_points=state_data["completed"][
-                    "estimate_points"
-                ]
-                + i,
-                cancelled_estimate_points=state_data["cancelled"][
-                    "estimate_points"
-                ]
-                - i,
-                project_id=project_id,
-                workspace_id=workspace_id,
-            )
-        )
-
-    # Bulk create the records at once
-    if analytics_records:
-        EntityProgress.objects.bulk_create(analytics_records)
-
 
 
 class Command(BaseCommand):
-    help = "Add a new instance admin"
-
+    help = "Create custom analytics"
 
     def handle(self, *args, **options):
-        current_date = timezone.now()
-        for i in range(1, 8):
-            delta = timezone.timedelta(days=1 - i)
-            print("delta", delta, current_date)
-            helper(current_date + delta, i)
+
+        workspace_slug = input("Workspace slug: ")
+
+        if workspace_slug == "":
+            raise CommandError("Workspace slug is required")
+
+        workspace = Workspace.objects.filter(slug=workspace_slug).first()
+
+        if not workspace:
+            raise CommandError("Workspace does not exists")
+
+        project_id = input("Project ID: ")
+
+        if project_id == "":
+            raise CommandError("Project ID is required")
+
+        project = Project.objects.filter(
+            id=project_id, workspace__slug=workspace_slug
+        ).first()
+
+        if not project:
+            raise CommandError("Project does not exists")
+
+        start_date = timezone.now() - timezone.timedelta(days=10)
+        end_date = timezone.now() + timezone.timedelta(days=5)
+
+        if Cycle.objects.filter(
+            Q(workspace__slug=workspace_slug)
+            & Q(project_id=project_id)
+            & (
+                Q(start_date__lte=start_date, end_date__gte=start_date)
+                | Q(start_date__lte=end_date, end_date__gte=end_date)
+                | Q(start_date__gte=start_date, end_date__lte=end_date)
+            )
+        ).exists():
+            raise CommandError("Cycle already exists")
+
+        cycle = Cycle.objects.create(
+            workspace_id=workspace_slug,
+            project_id=project_id,
+            start_date=start_date,
+            end_date=end_date,
+            name="New Cycle Analytics",
+            owned_by_id=project.created_by_id,
+            version=2
+        )
+
+        states = (
+            State.objects.filter(
+                workspace__slug=workspace_slug, project=project
+            )
+            .exclude(group="Triage")
+            .values_list("id", flat=True)
+        )
+
+        # Get the maximum sequence_id
+        last_id = IssueSequence.objects.filter(
+            project=project,
+        ).aggregate(
+            largest=Max("sequence")
+        )["largest"]
+
+        last_id = 1 if last_id is None else last_id + 1
+
+        # Get the maximum sort order
+        largest_sort_order = Issue.objects.filter(
+            project=project,
+            state_id=states[random.randint(0, len(states) - 1)],
+        ).aggregate(largest=Max("sort_order"))["largest"]
+
+        largest_sort_order = (
+            65535 if largest_sort_order is None else largest_sort_order + 10000
+        )
+        fake = Faker()
+        Faker.seed(0)
+        issues = []
+        for _ in range(0, 50):
+            sentence = fake.sentence()
+            issues.append(
+                Issue(
+                    state_id=states[random.randint(0, len(states) - 1)],
+                    project=project,
+                    workspace=workspace,
+                    name=sentence[:254],
+                    sequence_id=last_id,
+                    priority=["urgent", "high", "medium", "low", "none"][
+                        random.randint(0, 4)
+                    ],
+                    created_by_id=project.created_by_id,
+                )
+            )
+
+            largest_sort_order = largest_sort_order + random.randint(0, 1000)
+            last_id = last_id + 1
+
+        issues = Issue.objects.bulk_create(
+            issues, ignore_conflicts=True, batch_size=1000
+        )
+        # Sequences
+        IssueSequence.objects.bulk_create(
+            [
+                IssueSequence(
+                    issue=issue,
+                    sequence=issue.sequence_id,
+                    project=project,
+                    workspace=workspace,
+                )
+                for issue in issues
+            ],
+            batch_size=100,
+        )
+        CycleIssue.objects.bulk_create(
+            [
+                CycleIssue(
+                    issue=issue,
+                    cycle=cycle,
+                    project=project,
+                    workspace=workspace,
+                )
+                for issue in issues
+            ],
+            batch_size=100,
+        )
+
+        # Track the issue activities
+        IssueActivity.objects.bulk_create(
+            [
+                IssueActivity(
+                    issue=issue,
+                    actor_id=project.created_by_id,
+                    project=project,
+                    workspace=workspace,
+                    comment="created the issue",
+                    verb="created",
+                    created_by_id=project.created_by_id,
+                )
+                for issue in issues
+            ],
+            batch_size=100,
+        )
+        EntityIssueStateActivity.objects.bulk_create(
+            [
+                EntityIssueStateActivity(
+                    issue=issue,
+                    entity_type="CYCLE",
+                    cycle=cycle,
+                    workspace=workspace,
+                    action="ADDED",
+                    state_id=issue.state_id,
+                    state_group=issue.state.group,
+                    estimate_value=random.randint(1, 10),
+                    created_by_id=project.created_by_id,
+                )
+                for issue in issues
+            ],
+            batch_size=100,
+        )
+
+        # Prepare analytics record for bulk insert
+        yesterday = timezone.now().date() - timedelta(days=1)
+        current_date = start_date.date()
+
+        analytics_records = []
+        state_data = {
+            "backlog": 20,
+            "unstarted": 15,
+            "started": 10,
+            "completed": 5,
+            "cancelled": 0,
+        }
+        days_passed = 0
+
+        while current_date <= yesterday:
+            # Calculate total issues
+            total_issues = sum(state_data.values())
+
+            # Randomly increase total issues every 2-3 days
+            if days_passed % 2 == 0 and random.choice([True, False]):
+                increase = random.randint(1, 5)
+                state_data["backlog"] += increase
+
+            # Move issues to completed
+            issues_to_complete = random.randint(1, 3)
+            for _ in range(issues_to_complete):
+                if state_data["started"] > 0:
+                    state_data["started"] -= 1
+                    state_data["completed"] += 1
+                elif state_data["unstarted"] > 0:
+                    state_data["unstarted"] -= 1
+                    state_data["completed"] += 1
+                elif state_data["backlog"] > 0:
+                    state_data["backlog"] -= 1
+                    state_data["completed"] += 1
+
+            # Randomly reduce other states
+            for state in ["backlog", "unstarted", "started"]:
+                if state_data[state] > 0 and random.choice([True, False]):
+                    state_data[state] -= 1
+                    state_data["cancelled"] += 1
+
+            # Recalculate total issues after changes
+            total_issues = sum(state_data.values())
+
+            analytics_records.append(
+                EntityProgress(
+                    entity_type="CYCLE",
+                    cycle=cycle,
+                    progress_date=current_date,
+                    total_issues=total_issues,
+                    backlog_issues=state_data["backlog"],
+                    unstarted_issues=state_data["unstarted"],
+                    started_issues=state_data["started"],
+                    completed_issues=state_data["completed"],
+                    cancelled_issues=state_data["cancelled"],
+                    project_id=project_id,
+                    workspace=workspace,
+                )
+            )
+
+            current_date += timedelta(days=1)
+            days_passed += 1
+
+        # Bulk create the records at once
+        if analytics_records:
+            EntityProgress.objects.bulk_create(analytics_records)
+        
+        self.stdout.write(self.style.SUCCESS("Cycle created successfully"))

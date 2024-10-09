@@ -1,9 +1,7 @@
+# Python imports
 import random
 import string
 import json
-
-# Django imports
-from django.utils import timezone
 
 # Django imports
 from django.utils import timezone
