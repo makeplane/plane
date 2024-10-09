@@ -9,8 +9,6 @@ import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
 import { CreateUpdateIssueModal } from "@/components/issues";
-// constants
-import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
 
