@@ -112,7 +112,7 @@ class FileAsset(BaseModel):
             return f"/api/assets/v2/static/{self.id}/"
 
         if self.entity_type == self.EntityTypeContext.ISSUE_ATTACHMENT:
-            return f"/api/assets/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/issues/{self.entity_identifier}/attachments/{self.id}/"
+            return f"/api/assets/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/issues/{self.issue_id}/attachments/{self.id}/"
 
         if self.entity_type in [
             self.EntityTypeContext.ISSUE_DESCRIPTION,
