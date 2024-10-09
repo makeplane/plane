@@ -18,7 +18,7 @@ on:
       useVaultSecrets:
         description: "Use Vault Secrets"
         type: boolean
-        default: true
+        default: false
         required: true
       isPrerelease:
         description: "Is Pre-release"
