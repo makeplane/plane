@@ -1,4 +1,3 @@
-import clone from "lodash/clone";
 import set from "lodash/set";
 import unset from "lodash/unset";
 import update from "lodash/update";
@@ -9,8 +8,7 @@ import { TIssue, TIssuesResponse } from "@plane/types";
 import { getCurrentDateTimeInISO } from "@/helpers/date-time.helper";
 // services
 import workspaceDraftService from "@/services/issue/workspace_draft.service";
-// types
-import { IIssueRootStore } from "../root.store";
+import { IIssueDetail } from "../issue-details/root.store";
 
 export type TLoader =
   | "init-loader"
@@ -67,17 +65,27 @@ export interface IWorkspaceDraftIssues {
   updateIssue: (workspaceSlug: string, issueId: string, payload: Partial<TIssue>) => Promise<TIssue | undefined>;
   deleteIssue: (workspaceSlug: string, issueId: string) => Promise<void>;
   moveIssue: (workspaceSlug: string, issueId: string, payload: Partial<TIssue>) => Promise<void>;
+  addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<void>;
+  changeModulesInIssue: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    addModuleIds: string[],
+    removeModuleIds: string[]
+  ) => Promise<void>;
 }
 
 export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
   // local constants
   paginatedCount = 100;
+  // root store
+  rootIssueDetailStore: IIssueDetail;
   // observables
   paginationInfo: Omit<TPaginationInfo<TIssue>, "results"> | undefined = undefined;
   loader: TLoader = undefined;
   issuesMap: Record<string, TIssue> = {};
 
-  constructor(private store: IIssueRootStore) {
+  constructor(rootStore: IIssueDetail) {
     makeObservable(this, {
       issuesMap: observable,
       loader: observable.ref,
@@ -87,7 +95,10 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
       updateIssue: action,
       deleteIssue: action,
       moveIssue: action,
+      addIssueToCycle: action,
+      changeModulesInIssue: action,
     });
+    this.rootIssueDetailStore = rootStore;
   }
 
   // helper actions
@@ -150,7 +161,11 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
       // call the fetch issues API with the params
       const response = await workspaceDraftService.getIssues(workspaceSlug, params);
 
-      console.log("response", response);
+      // update the issues map with the response
+      // TODO: update the logic to handle pagination
+      runInAction(() => {
+        if (response?.results) this.addIssue(response?.results as TIssue[]);
+      });
 
       return response;
     } catch (error) {
@@ -228,5 +243,34 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
       this.loader = undefined;
       throw error;
     }
+  };
+
+  addIssueToCycle = async (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => {
+    await this.rootIssueDetailStore.rootIssueStore.cycleIssues.addIssueToCycle(
+      workspaceSlug,
+      projectId,
+      cycleId,
+      issueIds,
+      false
+    );
+    if (issueIds && issueIds.length > 0)
+      await this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueIds[0]);
+  };
+
+  changeModulesInIssue = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    addModuleIds: string[],
+    removeModuleIds: string[]
+  ) => {
+    await this.rootIssueDetailStore.rootIssueStore.moduleIssues.changeModulesInIssue(
+      workspaceSlug,
+      projectId,
+      issueId,
+      addModuleIds,
+      removeModuleIds
+    );
+    await this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
   };
 }

@@ -9,6 +9,8 @@ import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
 import { CreateUpdateIssueModal } from "@/components/issues";
+// constants
+import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
 
@@ -26,7 +28,12 @@ export const WorkspaceDraftHeader: FC = observer(() => {
 
   return (
     <>
-      <CreateUpdateIssueModal isOpen={isDraftIssueModalOpen} onClose={() => setIsDraftIssueModalOpen(false)} isDraft />
+      <CreateUpdateIssueModal
+        isOpen={isDraftIssueModalOpen}
+        storeType={EIssuesStoreType.WORKSPACE_DRAFT}
+        onClose={() => setIsDraftIssueModalOpen(false)}
+        isDraft
+      />
       <Header>
         <Header.LeftItem>
           <Breadcrumbs>

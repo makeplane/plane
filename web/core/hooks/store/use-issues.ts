@@ -82,6 +82,11 @@ export const useIssues = <T extends EIssuesStoreType>(storeType?: T): TStoreIssu
         issues: context.issue.workspaceDraftIssues,
         issuesFilter: context.issue.workspaceDraftIssuesFilter,
       }) as TStoreIssues[T];
+    case EIssuesStoreType.WORKSPACE_DRAFT:
+      return merge(defaultStore, {
+        issues: context.issue.workspaceDraftIssues,
+        issuesFilter: context.issue.workspaceDraftIssuesFilter,
+      }) as TStoreIssues[T];
     case EIssuesStoreType.PROFILE:
       return merge(defaultStore, {
         issues: context.issue.profileIssues,
