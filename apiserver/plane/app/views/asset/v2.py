@@ -35,10 +35,10 @@ class UserAssetsV2Endpoint(BaseAPIView):
         asset.save()
         return
 
-    def entity_asset_save(self, asset_id, entity_type, entity_id):
+    def entity_asset_save(self, asset_id, entity_type, asset):
         # User Avatar
         if entity_type == FileAsset.EntityTypeContext.USER_AVATAR:
-            user = User.objects.get(id=entity_id)
+            user = User.objects.get(id=asset.user_id)
             user.avatar = ""
             # Delete the previous avatar
             if user.avatar_asset_id:
@@ -49,7 +49,7 @@ class UserAssetsV2Endpoint(BaseAPIView):
             return
         # User Cover
         if entity_type == FileAsset.EntityTypeContext.USER_COVER:
-            user = User.objects.get(id=entity_id)
+            user = User.objects.get(id=asset.user_id)
             user.cover_image = None
             # Delete the previous cover image
             if user.cover_image_asset_id:
@@ -60,16 +60,16 @@ class UserAssetsV2Endpoint(BaseAPIView):
             return
         return
 
-    def entity_asset_delete(self, entity_type, entity_id):
+    def entity_asset_delete(self, entity_type, asset):
         # User Avatar
         if entity_type == FileAsset.EntityTypeContext.USER_AVATAR:
-            user = User.objects.get(id=entity_id)
+            user = User.objects.get(id=asset.user_id)
             user.avatar_asset_id = None
             user.save()
             return
         # User Cover
         if entity_type == FileAsset.EntityTypeContext.USER_COVER:
-            user = User.objects.get(id=entity_id)
+            user = User.objects.get(id=asset.user_id)
             user.cover_image_asset_id = None
             user.save()
             return
@@ -150,9 +150,7 @@ class UserAssetsV2Endpoint(BaseAPIView):
                 object_name=asset.asset.name
             )
         # get the entity and save the asset id for the request field
-        self.entity_asset_save(
-            asset_id, asset.entity_type, asset.entity_identifier
-        )
+        self.entity_asset_save(asset_id, asset.entity_type, asset)
         # update the attributes
         asset.attributes = request.data.get("attributes", asset.attributes)
         # save the asset
@@ -164,7 +162,7 @@ class UserAssetsV2Endpoint(BaseAPIView):
         asset.is_deleted = True
         asset.deleted_at = timezone.now()
         # get the entity and save the asset id for the request field
-        self.entity_asset_delete(asset.entity_type, asset.entity_identifier)
+        self.entity_asset_delete(asset.entity_type, asset)
         asset.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -221,10 +219,10 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         asset.save()
         return
 
-    def entity_asset_save(self, asset_id, entity_type, entity_id):
+    def entity_asset_save(self, asset_id, entity_type, asset):
         # Workspace Logo
         if entity_type == FileAsset.EntityTypeContext.WORKSPACE_LOGO:
-            workspace = Workspace.objects.filter(id=entity_id).first()
+            workspace = Workspace.objects.filter(id=asset.workspace_id).first()
             if workspace is None:
                 return
             # Delete the previous logo
@@ -238,7 +236,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
 
         # Project Cover
         elif entity_type == FileAsset.EntityTypeContext.PROJECT_COVER:
-            project = Project.objects.filter(id=entity_id).first()
+            project = Project.objects.filter(id=asset.workspace_id).first()
             if project is None:
                 return
             # Delete the previous cover image
@@ -252,10 +250,10 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         else:
             return
 
-    def entity_asset_delete(self, entity_type, entity_id):
+    def entity_asset_delete(self, entity_type, asset):
         # Workspace Logo
         if entity_type == FileAsset.EntityTypeContext.WORKSPACE_LOGO:
-            workspace = Workspace.objects.get(id=entity_id)
+            workspace = Workspace.objects.get(id=asset.workspace_id)
             if workspace is None:
                 return
             workspace.logo_asset_id = None
@@ -263,7 +261,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             return
         # Project Cover
         elif entity_type == FileAsset.EntityTypeContext.PROJECT_COVER:
-            project = Project.objects.filter(id=entity_id).first()
+            project = Project.objects.filter(id=asset.project_id).first()
             if project is None:
                 return
             project.cover_image_asset_id = None
@@ -351,9 +349,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
                 object_name=asset.asset.name
             )
         # get the entity and save the asset id for the request field
-        self.entity_asset_save(
-            asset_id, asset.entity_type, asset.entity_identifier
-        )
+        self.entity_asset_save(asset_id, asset.entity_type, asset)
         # update the attributes
         asset.attributes = request.data.get("attributes", asset.attributes)
         # save the asset
@@ -365,7 +361,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         asset.is_deleted = True
         asset.deleted_at = timezone.now()
         # get the entity and save the asset id for the request field
-        self.entity_asset_delete(asset.entity_type, asset.entity_identifier)
+        self.entity_asset_delete(asset.entity_type, asset)
         asset.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -646,10 +642,41 @@ class ProjectBulkAssetEndpoint(BaseAPIView):
         assets = FileAsset.objects.filter(
             id__in=asset_ids,
             workspace__slug=slug,
-            project_id=project_id,
         )
-        # update the attributes
-        assets.update(
-            entity_identifier=entity_id,
-        )
+
+        # Get the first asset
+        asset = assets.first()
+
+        if not asset:
+            return Response(
+                {
+                    "error": "The requested asset could not be found.",
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Check if the asset is uploaded
+        if asset.entity_type == FileAsset.EntityTypeContext.PROJECT_COVER:
+            assets.update(
+                project_id=project_id,
+            )
+
+        if asset.entity_type == FileAsset.EntityTypeContext.ISSUE_DESCRIPTION:
+            assets.update(
+                issue_id=entity_id,
+            )
+
+        if (
+            asset.entity_type
+            == FileAsset.EntityTypeContext.COMMENT_DESCRIPTION
+        ):
+            assets.update(
+                comment_id=entity_id,
+            )
+
+        if asset.entity_type == FileAsset.EntityTypeContext.PAGE_DESCRIPTION:
+            assets.update(
+                page_id=entity_id,
+            )
+
         return Response(status=status.HTTP_204_NO_CONTENT)

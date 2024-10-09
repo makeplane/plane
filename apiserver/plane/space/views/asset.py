@@ -256,8 +256,25 @@ class EntityBulkAssetEndpoint(BaseAPIView):
             workspace=deploy_board.workspace,
             project_id=deploy_board.project_id,
         )
-        # update the attributes
-        assets.update(
-            entity_identifier=entity_id,
-        )
+
+        asset = assets.first()
+
+        # Check if the asset is uploaded
+        if not asset:
+            return Response(
+                {
+                    "error": "The requested asset could not be found.",
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Check if the entity type is allowed
+        if (
+            asset.entity_type
+            == FileAsset.EntityTypeContext.COMMENT_DESCRIPTION
+        ):
+            # update the attributes
+            assets.update(
+                comment_id=entity_id,
+            )
         return Response(status=status.HTTP_204_NO_CONTENT)
