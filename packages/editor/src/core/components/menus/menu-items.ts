@@ -219,7 +219,7 @@ export const TextColorItem = (editor: Editor): EditorMenuItem => ({
 export const BackgroundColorItem = (editor: Editor): EditorMenuItem => ({
   key: "background-color",
   name: "Background color",
-  isActive: (color) => editor.isActive("highlight", { color }),
+  isActive: (color) => editor.getAttributes("textStyle").backgroundColor === color,
   command: (color: string) => toggleBackgroundColor(color, editor),
   icon: Palette,
 });

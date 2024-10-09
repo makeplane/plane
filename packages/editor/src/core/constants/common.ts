@@ -1,51 +1,55 @@
 export const COLORS_LIST: {
-  backgroundColor: string;
-  textColor: string;
+  key: string;
   label: string;
+  textColorVariable: string;
+  backgroundColorVariable: string;
 }[] = [
-  // {
-  //   backgroundColor: "#1c202426",
-  //   textColor: "#1c2024",
-  //   label: "Black",
-  // },
   {
-    backgroundColor: "#5c5e6326",
-    textColor: "#5c5e63",
+    key: "gray",
     label: "Gray",
+    textColorVariable: "--editor-colors-gray-text",
+    backgroundColorVariable: "--editor-colors-gray-background",
   },
   {
-    backgroundColor: "#ff5b5926",
-    textColor: "#ff5b59",
+    key: "peach",
     label: "Peach",
+    textColorVariable: "--editor-colors-peach-text",
+    backgroundColorVariable: "--editor-colors-peach-background",
   },
   {
-    backgroundColor: "#f6538526",
-    textColor: "#f65385",
+    key: "pink",
     label: "Pink",
+    textColorVariable: "--editor-colors-pink-text",
+    backgroundColorVariable: "--editor-colors-pink-background",
   },
   {
-    backgroundColor: "#fd903826",
-    textColor: "#fd9038",
+    key: "orange",
     label: "Orange",
+    textColorVariable: "--editor-colors-orange-text",
+    backgroundColorVariable: "--editor-colors-orange-background",
   },
   {
-    backgroundColor: "#0fc27b26",
-    textColor: "#0fc27b",
+    key: "green",
     label: "Green",
+    textColorVariable: "--editor-colors-green-text",
+    backgroundColorVariable: "--editor-colors-green-background",
   },
   {
-    backgroundColor: "#17bee926",
-    textColor: "#17bee9",
+    key: "light-blue",
     label: "Light blue",
+    textColorVariable: "--editor-colors-light-blue-text",
+    backgroundColorVariable: "--editor-colors-light-blue-background",
   },
   {
-    backgroundColor: "#266df026",
-    textColor: "#266df0",
+    key: "dark-blue",
     label: "Dark blue",
+    textColorVariable: "--editor-colors-dark-blue-text",
+    backgroundColorVariable: "--editor-colors-dark-blue-background",
   },
   {
-    backgroundColor: "#9162f926",
-    textColor: "#9162f9",
+    key: "purple",
     label: "Purple",
+    textColorVariable: "--editor-colors-purple-text",
+    backgroundColorVariable: "--editor-colors-purple-background",
   },
 ];
