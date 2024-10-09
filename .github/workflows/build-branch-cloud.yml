@@ -385,7 +385,7 @@ jobs:
           harbor-registry: ${{ vars.HARBOR_REGISTRY }}
           harbor-project: ${{ vars.HARBOR_PROJECT }}
           docker-image-owner: makeplane
-          docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_live }}
+          docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_silo }}
           build-context: .
           dockerfile-path: ./silo/Dockerfile.silo
 
