@@ -15,9 +15,6 @@ import { CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
 import { EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
-// hooks
-import { useEventTracker, useIssues, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // types
 import { IQuickActionProps } from "../list/list-view-types";
 
@@ -29,7 +26,6 @@ export const WorkspaceDraftIssueQuickActions: React.FC<IQuickActionProps> = obse
     handleMoveToIssues,
     customActionButton,
     portalElement,
-    readOnly = false,
     placements = "bottom-end",
     parentRef,
   } = props;
@@ -37,16 +33,6 @@ export const WorkspaceDraftIssueQuickActions: React.FC<IQuickActionProps> = obse
   const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
   const [issueToEdit, setIssueToEdit] = useState<TIssue | undefined>(undefined);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
-  // store hooks
-  const { allowPermissions } = useUserPermissions();
-  const { setTrackElement } = useEventTracker();
-  const { issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
-  // derived values
-  const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
-  // auth
-  const isEditingAllowed =
-    allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT) && !readOnly;
-  const isDeletingAllowed = isEditingAllowed;
 
   const duplicateIssuePayload = omit(
     {
@@ -63,45 +49,33 @@ export const WorkspaceDraftIssueQuickActions: React.FC<IQuickActionProps> = obse
       title: "Edit",
       icon: Pencil,
       action: () => {
-        setTrackElement(activeLayout);
         setIssueToEdit(issue);
         setCreateUpdateIssueModal(true);
       },
-      shouldRender: isEditingAllowed,
     },
     {
       key: "make-a-copy",
       title: "Make a copy",
       icon: Copy,
       action: () => {
-        setTrackElement(activeLayout);
         setCreateUpdateIssueModal(true);
       },
-      shouldRender: isEditingAllowed,
     },
     {
       key: "move-to-issues",
       title: "Move to issues",
       icon: SquareStackIcon,
       action: () => handleMoveToIssues && handleMoveToIssues(),
-      shouldRender: isEditingAllowed,
     },
     {
       key: "delete",
       title: "Delete",
       icon: Trash2,
       action: () => {
-        setTrackElement(activeLayout);
         setDeleteIssueModal(true);
       },
-      shouldRender: isDeletingAllowed,
     },
   ];
-
-  // check if any of the menu items should render
-  const shouldRenderQuickAction = MENU_ITEMS.some((item) => item.shouldRender);
-
-  if (!shouldRenderQuickAction) return <></>;
 
   return (
     <>
@@ -135,41 +109,38 @@ export const WorkspaceDraftIssueQuickActions: React.FC<IQuickActionProps> = obse
         useCaptureForOutsideClick
         closeOnSelect
       >
-        {MENU_ITEMS.map((item) => {
-          if (item.shouldRender === false) return null;
-          return (
-            <CustomMenu.MenuItem
-              key={item.key}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                item.action();
-              }}
-              className={cn(
-                "flex items-center gap-2",
-                {
-                  "text-custom-text-400": item.disabled,
-                },
-                item.className
+        {MENU_ITEMS.map((item) => (
+          <CustomMenu.MenuItem
+            key={item.key}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              item.action();
+            }}
+            className={cn(
+              "flex items-center gap-2",
+              {
+                "text-custom-text-400": item.disabled,
+              },
+              item.className
+            )}
+            disabled={item.disabled}
+          >
+            {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
+            <div>
+              <h5>{item.title}</h5>
+              {item.description && (
+                <p
+                  className={cn("text-custom-text-300 whitespace-pre-line", {
+                    "text-custom-text-400": item.disabled,
+                  })}
+                >
+                  {item.description}
+                </p>
               )}
-              disabled={item.disabled}
-            >
-              {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
-              <div>
-                <h5>{item.title}</h5>
-                {item.description && (
-                  <p
-                    className={cn("text-custom-text-300 whitespace-pre-line", {
-                      "text-custom-text-400": item.disabled,
-                    })}
-                  >
-                    {item.description}
-                  </p>
-                )}
-              </div>
-            </CustomMenu.MenuItem>
-          );
-        })}
+            </div>
+          </CustomMenu.MenuItem>
+        ))}
       </CustomMenu>
     </>
   );
