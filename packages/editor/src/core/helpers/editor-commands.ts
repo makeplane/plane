@@ -157,39 +157,26 @@ export const setLinkEditor = (editor: Editor, url: string) => {
 
 export const toggleTextColor = (color: string | undefined, editor: Editor, range?: Range) => {
   if (color) {
-    if (range) editor.chain().focus().deleteRange(range).setColor(color).run();
-    else editor.chain().focus().setColor(color).run();
+    if (range) editor.chain().focus().deleteRange(range).setTextColor(color).run();
+    else editor.chain().focus().setTextColor(color).run();
   } else {
-    if (range) editor.chain().focus().deleteRange(range).unsetColor().run();
-    else editor.chain().focus().unsetColor().run();
+    if (range) editor.chain().focus().deleteRange(range).unsetTextColor().run();
+    else editor.chain().focus().unsetTextColor().run();
   }
 };
 
 export const toggleBackgroundColor = (color: string | undefined, editor: Editor, range?: Range) => {
   if (color) {
     if (range) {
-      editor
-        .chain()
-        .focus()
-        .deleteRange(range)
-        .setHighlight({
-          color,
-        })
-        .run();
+      editor.chain().focus().deleteRange(range).setBackgroundColor(color).run();
     } else {
-      editor
-        .chain()
-        .focus()
-        .setHighlight({
-          color,
-        })
-        .run();
+      editor.chain().focus().setBackgroundColor(color).run();
     }
   } else {
     if (range) {
-      editor.chain().focus().deleteRange(range).unsetHighlight().run();
+      editor.chain().focus().deleteRange(range).unsetBackgroundColor().run();
     } else {
-      editor.chain().focus().unsetHighlight().run();
+      editor.chain().focus().unsetBackgroundColor().run();
     }
   }
 };
