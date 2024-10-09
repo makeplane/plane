@@ -90,7 +90,7 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
   } = useForm();
   // store hooks
   const {
-    project: { updateMember },
+    project: { updateMember, getProjectMemberDetails },
     workspace: { getWorkspaceMemberDetails },
   } = useMember();
   const { data: currentUser } = useUser();
@@ -101,7 +101,9 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
   const isWorkspaceMember = [EUserPermissions.MEMBER].includes(
     Number(getWorkspaceMemberDetails(rowData.member.id)?.role) ?? EUserPermissions.GUEST
   );
-  const isRoleNonEditable = isCurrentUser || (isProjectAdminOrGuest && !isWorkspaceMember);
+  const isCurrentUserProjectMember = getProjectMemberDetails(currentUser?.id ?? "")?.role == EUserPermissions.MEMBER;
+  const isRoleNonEditable =
+    isCurrentUser || (isProjectAdminOrGuest && !isWorkspaceMember) || isCurrentUserProjectMember;
 
   const checkCurrentOptionWorkspaceRole = (value: string) => {
     const currentMemberWorkspaceRole = getWorkspaceMemberDetails(value)?.role as EUserPermissions | undefined;
