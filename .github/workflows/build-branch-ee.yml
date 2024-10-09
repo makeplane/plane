@@ -494,7 +494,6 @@ jobs:
   publish_release:
     if: ${{ needs.branch_build_setup.outputs.build_type == 'Release' }}
     name: Build Release
-    if: ${{ needs.branch_build_setup.outputs.build_type == 'Release' }}
     runs-on: ubuntu-20.04
     needs:
       [
