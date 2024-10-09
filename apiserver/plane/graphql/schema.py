@@ -46,6 +46,7 @@ from .queries.issues import (
     IssuesSearchQuery,
     SubIssuesQuery,
 )
+from .queries.dashboard import userInformationQuery
 
 # mutations
 from .mutations.workspace import WorkspaceMutation, WorkspaceInviteMutation
@@ -125,6 +126,7 @@ class Query(
     ModuleIssueUserPropertyQuery,
     IssueRelationQuery,
     IssuesSearchQuery,
+    userInformationQuery,
 ):
     pass
 
