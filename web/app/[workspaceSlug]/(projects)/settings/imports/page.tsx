@@ -30,7 +30,7 @@ const ImportsPage = observer(() => {
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
   const isDarkMode = currentUserProfile?.theme.theme === "dark";
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Imports` : undefined;
-  const isSiloIntegrationEnabled = useFlag(workspaceSlug?.toString(), "SILO_INTEGRATION") || true;
+  const isSiloIntegrationEnabled = useFlag(workspaceSlug?.toString(), "SILO_INTEGRATION");
   const siloBaseUrl = config?.silo_base_url;
 
   if (!isAdmin)
