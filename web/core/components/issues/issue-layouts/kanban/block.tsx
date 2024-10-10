@@ -61,6 +61,8 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
     e.preventDefault();
   };
 
+  const matchedImage = issue?.description_html?.match(/<img[^>]+src="([^">]+)"/)?.[1]
+
   return (
     <>
       <div className="relative">
@@ -90,6 +92,8 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
           <span>{issue.name}</span>
         </div>
       </Tooltip>
+
+      {matchedImage && <img class="w-full h-auto" src={matchedImage} />}
 
       <IssueProperties
         className="flex flex-wrap items-center gap-2 whitespace-nowrap text-custom-text-300 pt-1.5"

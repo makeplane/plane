@@ -74,6 +74,7 @@ def issue_on_results(issues, group_by, sub_group_by):
         "sequence_id",
         "project_id",
         "parent_id",
+        "description_html",
         "cycle_id",
         "sub_issues_count",
         "created_at",
