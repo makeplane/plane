@@ -2,6 +2,7 @@
 
 import { format, startOfToday } from "date-fns";
 import { observer } from "mobx-react";
+import { useTheme } from "next-themes";
 import {
   Area,
   Line,
@@ -18,7 +19,7 @@ import {
 } from "recharts";
 import { ICycle } from "@plane/types";
 import { TProgressChartData } from "@/helpers/cycle.helper";
-import { chartHelper, maxScope } from "./helper";
+import { chartHelper, getColors, maxScope } from "./helper";
 import { renderScopeLabel } from "./labels";
 import { CustomizedXAxisTicks, CustomizedYAxisTicks } from "./ticks";
 import CustomTooltip from "./tooltip";
@@ -33,10 +34,14 @@ type Props = {
 
 export const ActiveCycleChart = observer((props: Props) => {
   const { areaToHighlight, data = [], cycle, isFullWidth = false, estimateType = "ISSUES" } = props;
+
+  const { resolvedTheme } = useTheme();
+  const colors = getColors(resolvedTheme);
+
+  // derived values
   let endDate: Date | string = new Date(cycle.end_date!);
   const today = format(startOfToday(), "yyyy-MM-dd");
-
-  const { diffGradient, dataWithRange } = chartHelper(data, endDate);
+  const { diffGradient, dataWithRange } = chartHelper(data, endDate, colors);
   endDate = endDate.toISOString().split("T")[0];
 
   return (
@@ -50,7 +55,7 @@ export const ActiveCycleChart = observer((props: Props) => {
           left: isFullWidth ? -30 : 20,
         }}
       >
-        <CartesianGrid stroke="#f5f5f5" vertical={false} />
+        <CartesianGrid stroke={colors.cartesianLines} vertical={false} />
         {/* Area fills */}
         <defs>
           {/* Time left */}
@@ -61,7 +66,7 @@ export const ActiveCycleChart = observer((props: Props) => {
             height="8"
             patternTransform="rotate(-45 2 2)"
           >
-            <path d="M -1,2 l 6,0" stroke="#E0EAFF" stroke-width=".5" />
+            <path d="M -1,2 l 6,0" stroke={colors.timeLeftStroke} stroke-width=".5" />
           </pattern>
 
           {/* Beyond Time */}
@@ -72,7 +77,7 @@ export const ActiveCycleChart = observer((props: Props) => {
             height="8"
             patternTransform="rotate(-45 2 2)"
           >
-            <path d="M -1,2 l 6,0" stroke="#FF9999" stroke-width=".5" />
+            <path d="M -1,2 l 6,0" stroke={colors.beyondTimeStroke} stroke-width=".5" />
           </pattern>
 
           {/* actual */}
@@ -83,20 +88,20 @@ export const ActiveCycleChart = observer((props: Props) => {
 
           {/* Started */}
           <linearGradient id="fillStarted" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="#FFAA33" stopOpacity={1} />
-            <stop offset="95%" stopColor="#FFAA33" stopOpacity={0.05} />
+            <stop offset="5%" stopColor={colors.startedArea} stopOpacity={1} />
+            <stop offset="95%" stopColor={colors.startedArea} stopOpacity={0.05} />
           </linearGradient>
 
           {/* Scope */}
           <linearGradient id="fillScope" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="rgba(var(--color-primary-100))" stopOpacity={1} />
-            <stop offset="95%" stopColor="rgba(var(--color-primary-100))" stopOpacity={0.05} />
+            <stop offset="5%" stopColor={colors.scopeArea} stopOpacity={1} />
+            <stop offset="95%" stopColor={colors.scopeArea} stopOpacity={0.05} />
           </linearGradient>
 
           {/* Ideal */}
           <linearGradient id="fillIdeal" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="rgba(var(--color-primary-100))" stopOpacity={0.9} />
-            <stop offset="95%" stopColor="rgba(var(--color-primary-100))" stopOpacity={0.05} />
+            <stop offset="5%" stopColor={colors.scopeArea} stopOpacity={0.9} />
+            <stop offset="95%" stopColor={colors.scopeArea} stopOpacity={0.05} />
           </linearGradient>
 
           {/* Ideal - Actual */}
@@ -106,9 +111,9 @@ export const ActiveCycleChart = observer((props: Props) => {
         {/* Cartesian axis */}
         <XAxis
           dataKey="date"
-          stroke="#C2C8D6"
+          stroke={colors.axisLines}
           style={{ fontSize: "12px" }}
-          tick={<CustomizedXAxisTicks data={data} endDate={endDate} />}
+          tick={<CustomizedXAxisTicks data={data} endDate={endDate} stroke={colors.axisLines} text={colors.axisText} />}
           tickLine={false}
           interval={0}
         />
@@ -117,10 +122,10 @@ export const ActiveCycleChart = observer((props: Props) => {
           tickLine
           allowDecimals={false}
           strokeWidth={1}
-          stroke="#C2C8D6"
+          stroke={colors.axisLines}
           style={{ fontSize: "10px" }}
           domain={["dataMin", "dataMax"]}
-          tick={<CustomizedYAxisTicks />}
+          tick={<CustomizedYAxisTicks stroke={colors.axisLines} text={colors.axisText} />}
         >
           <Label
             angle={270}
@@ -137,8 +142,14 @@ export const ActiveCycleChart = observer((props: Props) => {
         </YAxis>
         {/* Line charts */}
         {/* Time left */}
-        <Area dataKey="timeLeft" stroke="#EBF1FF" strokeWidth={0} fill={`url(#fillTimeLeft)`} />
-        <Area dataKey="timeLeft" stroke="#EBF1FF" strokeWidth={0} fill="#E0EAFF" fillOpacity={0.5} />
+        <Area dataKey="timeLeft" stroke={colors.timeLeftStroke} strokeWidth={0} fill={`url(#fillTimeLeft)`} />
+        <Area
+          dataKey="timeLeft"
+          stroke={colors.timeLeftStroke}
+          strokeWidth={0}
+          fill={colors.timeLeft}
+          fillOpacity={0.5}
+        />
 
         {/* Beyond Time */}
         <Area dataKey="beyondTime" stroke="#FF9999" strokeWidth={0} fill={`url(#fillTimeBeyond)`} />
@@ -146,8 +157,7 @@ export const ActiveCycleChart = observer((props: Props) => {
           x1={endDate}
           x2={dataWithRange[dataWithRange.length - 1]?.date}
           y2={Math.max(maxScope(data), 2)}
-          stroke="#EBF1FF"
-          fill="#FFE5E5"
+          fill={colors.beyondTime}
         >
           {!isFullWidth && (
             <Label
@@ -155,24 +165,26 @@ export const ActiveCycleChart = observer((props: Props) => {
               className="font-medium"
               angle={270}
               value={"Beyond Time"}
-              fill="#FF9999"
+              fill={colors.beyondTimeStroke}
               position="middle"
             />
           )}
         </ReferenceArea>
 
         {/* Today */}
-        {today < endDate && <ReferenceLine x={today as string} stroke="black" label="" strokeDasharray="3 3" />}
+        {today < endDate && (
+          <ReferenceLine x={today as string} stroke={colors.todayLine} label="" strokeDasharray="3 3" />
+        )}
         {/* Beyond Time */}
-        <ReferenceLine x={endDate} stroke="#FF6666" label="" strokeDasharray="3 3" />
+        <ReferenceLine x={endDate} stroke={colors.beyondTimeStroke} label="" strokeDasharray="3 3" />
         {/* Started */}
-        <Line type="linear" dataKey="started" strokeWidth={1} stroke="#FF9500" dot={false} />
+        <Line type="linear" dataKey="started" strokeWidth={1} stroke={colors.startedStroke} dot={false} />
         {areaToHighlight === "started" && (
           <Area
             dataKey="started"
             fill="url(#fillStarted)"
             fillOpacity={0.4}
-            stroke="#FF9500"
+            stroke={colors.startedStroke}
             strokeWidth={1}
             isAnimationActive={false}
           />
@@ -194,7 +206,7 @@ export const ActiveCycleChart = observer((props: Props) => {
           type="linear"
           dataKey="ideal"
           strokeWidth={1}
-          stroke="#B8CEFF"
+          stroke={colors.idealStroke}
           dot={false}
           strokeDasharray="5 5"
           isAnimationActive={false}
@@ -204,7 +216,7 @@ export const ActiveCycleChart = observer((props: Props) => {
             dataKey="ideal"
             fill="url(#fillIdeal)"
             fillOpacity={0.4}
-            stroke="#B8CEFF"
+            stroke={colors.idealStroke}
             strokeWidth={0}
             isAnimationActive={false}
           />
@@ -214,7 +226,7 @@ export const ActiveCycleChart = observer((props: Props) => {
           type="stepAfter"
           dataKey="scope"
           strokeWidth={2}
-          stroke="rgba(var(--color-primary-100))"
+          stroke={colors.scopeStroke}
           dot={false}
           animationEasing="ease-in"
           isAnimationActive={false}
@@ -229,13 +241,13 @@ export const ActiveCycleChart = observer((props: Props) => {
             dataKey="scope"
             fill="url(#fillScope)"
             fillOpacity={0.4}
-            stroke="rgba(var(--color-primary-100))"
+            stroke={colors.scopeStroke}
             strokeWidth={0}
             isAnimationActive={false}
           />
         )}
         {/* Ideal - Actual */}
-        <Area dataKey="range" stroke="#8884d8" strokeWidth={0} fill={`url(#diff)`} isAnimationActive={false} />
+        <Area dataKey="range" strokeWidth={0} fill={`url(#diff)`} isAnimationActive={false} />
       </ComposedChart>
     </ResponsiveContainer>
   );
