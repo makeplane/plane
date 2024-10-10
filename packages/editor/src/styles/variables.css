@@ -12,7 +12,8 @@
 }
 
 /* text background colors */
-[data-theme="light"] {
+[data-theme="light"],
+[data-theme="light-contrast"] {
   --editor-colors-gray-background: #d6d6d8;
   --editor-colors-peach-background: #ffd5d7;
   --editor-colors-pink-background: #fdd4e3;
@@ -22,7 +23,8 @@
   --editor-colors-dark-blue-background: #c9dafb;
   --editor-colors-purple-background: #e3d8fd;
 }
-[data-theme="dark"] {
+[data-theme="dark"],
+[data-theme="dark-contrast"] {
   --editor-colors-gray-background: #404144;
   --editor-colors-peach-background: #593032;
   --editor-colors-pink-background: #562e3d;
