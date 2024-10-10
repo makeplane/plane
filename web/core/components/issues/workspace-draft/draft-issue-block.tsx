@@ -1,8 +1,6 @@
 "use client";
 import React, { FC, useRef } from "react";
 import { observer } from "mobx-react";
-// plane types
-import { TIssue } from "@plane/types";
 // ui
 import { Row, Spinner, Tooltip } from "@plane/ui";
 // helper
@@ -21,32 +19,22 @@ type Props = {
 };
 
 export const DraftIssueBlock: FC<Props> = observer((props) => {
+  // props
   const { workspaceSlug, issueId } = props;
-  const { issuesMap, updateIssue } = useWorkspaceDraftIssues();
+  // hooks
+  const { getIssueById, updateIssue } = useWorkspaceDraftIssues();
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
   const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
   const { getProjectIdentifierById } = useProject();
-
+  // ref
   const issueRef = useRef<HTMLDivElement | null>(null);
-
-  const issue = issuesMap[issueId];
-
-  const projectIdentifier = getProjectIdentifierById(issue.project_id);
-
-  const handleIssuePeekOverview = (issue: TIssue) =>
-    workspaceSlug &&
-    issue &&
-    issue.project_id &&
-    issue.id &&
-    !getIsIssuePeeked(issue.id) &&
-    setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id });
+  // derived values
+  const issue = getIssueById(issueId);
+  const projectIdentifier = (issue && issue.project_id && getProjectIdentifierById(issue.project_id)) || undefined;
+  if (!issue || !projectIdentifier) return null;
 
   return (
-    <div
-      id={`issue-${issue.id}`}
-      onClick={() => handleIssuePeekOverview(issue)}
-      className=" relative border-b border-b-custom-border-200 w-full cursor-pointer"
-    >
+    <div id={`issue-${issue.id}`} className=" relative border-b border-b-custom-border-200 w-full cursor-pointer">
       <Row
         ref={issueRef}
         className={cn(
@@ -76,10 +64,6 @@ export const DraftIssueBlock: FC<Props> = observer((props) => {
 
               {/* sub-issues chevron */}
               <div className="size-4 grid place-items-center flex-shrink-0" />
-
-              {issue?.tempId !== undefined && (
-                <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
-              )}
             </div>
 
             <Tooltip
@@ -92,56 +76,49 @@ export const DraftIssueBlock: FC<Props> = observer((props) => {
               <p className="w-full truncate cursor-pointer text-sm text-custom-text-100">{issue.name}</p>
             </Tooltip>
           </div>
-          {!issue?.tempId && (
-            <div
-              className={cn("block border border-custom-border-300 rounded", {
-                "md:hidden": isSidebarCollapsed,
-                "lg:hidden": !isSidebarCollapsed,
-              })}
-            >
-              <WorkspaceDraftIssueQuickActions
-                parentRef={issueRef}
-                issue={issue}
-                handleUpdate={async () => {}}
-                handleDelete={async () => {}}
-              />
-            </div>
-          )}
+
+          {/* quick actions */}
+          <div
+            className={cn("block border border-custom-border-300 rounded", {
+              "md:hidden": isSidebarCollapsed,
+              "lg:hidden": !isSidebarCollapsed,
+            })}
+          >
+            <WorkspaceDraftIssueQuickActions
+              parentRef={issueRef}
+              issue={issue}
+              handleUpdate={async () => {}}
+              handleDelete={async () => {}}
+            />
+          </div>
         </div>
+
         <div className="flex flex-shrink-0 items-center gap-2">
-          {!issue?.tempId ? (
-            <>
-              <DraftIssueProperties
-                className={`relative flex flex-wrap ${isSidebarCollapsed ? "md:flex-grow md:flex-shrink-0" : "lg:flex-grow lg:flex-shrink-0"} items-center gap-2 whitespace-nowrap`}
-                issue={issue}
-                updateIssue={async (projectId, issueId, data) => {
-                  await updateIssue(workspaceSlug, issueId, data);
-                }}
-                activeLayout="List"
-              />
-              <div
-                className={cn("hidden", {
-                  "md:flex": isSidebarCollapsed,
-                  "lg:flex": !isSidebarCollapsed,
-                })}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                }}
-              >
-                <WorkspaceDraftIssueQuickActions
-                  parentRef={issueRef}
-                  issue={issue}
-                  handleUpdate={async () => {}}
-                  handleDelete={async () => {}}
-                />
-              </div>
-            </>
-          ) : (
-            <div className="h-4 w-4">
-              <Spinner className="h-4 w-4" />
-            </div>
-          )}
+          <DraftIssueProperties
+            className={`relative flex flex-wrap ${isSidebarCollapsed ? "md:flex-grow md:flex-shrink-0" : "lg:flex-grow lg:flex-shrink-0"} items-center gap-2 whitespace-nowrap`}
+            issue={issue}
+            updateIssue={async (projectId, issueId, data) => {
+              await updateIssue(workspaceSlug, issueId, data);
+            }}
+            activeLayout="List"
+          />
+          <div
+            className={cn("hidden", {
+              "md:flex": isSidebarCollapsed,
+              "lg:flex": !isSidebarCollapsed,
+            })}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+          >
+            <WorkspaceDraftIssueQuickActions
+              parentRef={issueRef}
+              issue={issue}
+              handleUpdate={async () => {}}
+              handleDelete={async () => {}}
+            />
+          </div>
         </div>
       </Row>
     </div>

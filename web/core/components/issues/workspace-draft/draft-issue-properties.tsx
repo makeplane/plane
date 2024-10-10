@@ -7,7 +7,7 @@ import { useParams, usePathname } from "next/navigation";
 // icons
 import { CalendarCheck2, CalendarClock } from "lucide-react";
 // types
-import { TIssue, TIssuePriorities } from "@plane/types";
+import { TIssue, TIssuePriorities, TWorkspaceDraftIssue } from "@plane/types";
 // components
 import {
   DateDropdown,
@@ -38,7 +38,9 @@ import { IssuePropertyLabels } from "../issue-layouts";
 
 export interface IIssueProperties {
   issue: TIssue;
-  updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  updateIssue:
+    | ((projectId: string | null, issueId: string, data: Partial<TWorkspaceDraftIssue>) => Promise<void>)
+    | undefined;
   className: string;
   activeLayout: string;
 }
@@ -49,7 +51,7 @@ export const DraftIssueProperties: React.FC<IIssueProperties> = observer((props)
   const { getProjectById } = useProject();
   const { labelMap } = useLabel();
   const { captureIssueEvent } = useEventTracker();
-  const { changeModulesInIssue } = useWorkspaceDraftIssues();
+  const { addCycleToIssue, addModulesToIssue } = useWorkspaceDraftIssues();
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
   const { getStateById } = useProjectState();
   const { isMobile } = usePlatformOS();
@@ -67,11 +69,11 @@ export const DraftIssueProperties: React.FC<IIssueProperties> = observer((props)
     () => ({
       addModulesToIssue: async (moduleIds: string[]) => {
         if (!workspaceSlug || !issue.project_id || !issue.id) return;
-        await changeModulesInIssue?.(workspaceSlug.toString(), issue.project_id, issue.id, moduleIds, []);
+        await addModulesToIssue?.(workspaceSlug.toString(), issue.project_id, issue.id, moduleIds, []);
       },
       removeModulesFromIssue: async (moduleIds: string[]) => {
         if (!workspaceSlug || !issue.project_id || !issue.id) return;
-        await changeModulesInIssue?.(workspaceSlug.toString(), issue.project_id, issue.id, [], moduleIds);
+        await addModulesToIssue?.(workspaceSlug.toString(), issue.project_id, issue.id, [], moduleIds);
       },
       addIssueToCycle: async (cycleId: string) => {
         if (!workspaceSlug || !issue.project_id || !issue.id) return;
@@ -84,7 +86,7 @@ export const DraftIssueProperties: React.FC<IIssueProperties> = observer((props)
         // await removeCycleFromIssue?.(workspaceSlug.toString(), issue.project_id, issue.id);
       },
     }),
-    [workspaceSlug, issue, changeModulesInIssue]
+    [workspaceSlug, issue, addModulesToIssue]
   );
 
   const handleState = (stateId: string) => {

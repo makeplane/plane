@@ -10,7 +10,6 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useWorkspaceDraftIssues } from "@/hooks/store";
 // components
-import { IssuePeekOverview } from "../peek-overview";
 import { DraftIssueBlock } from "./draft-issue-block";
 import { WorkspaceDraftEmptyState } from "./empty-state";
 import { WorkspaceDraftIssuesLoader } from "./loader";
@@ -45,10 +44,9 @@ export const WorkspaceDraftIssuesRoot: FC<TWorkspaceDraftIssuesRoot> = observer(
   return (
     <div className="relative">
       <div className="relative">
-        {issuesMap &&
-          Object.keys(issuesMap).map((issueId: string) => (
-            <DraftIssueBlock key={issueId} workspaceSlug={workspaceSlug} issueId={issueId} />
-          ))}
+        {issueIds.map((issueId: string) => (
+          <DraftIssueBlock key={issueId} workspaceSlug={workspaceSlug} issueId={issueId} />
+        ))}
       </div>
       {loader === "pagination" && issueIds.length >= 0 ? (
         <WorkspaceDraftIssuesLoader items={1} />
@@ -67,7 +65,6 @@ export const WorkspaceDraftIssuesRoot: FC<TWorkspaceDraftIssuesRoot> = observer(
           Load More &darr;
         </div>
       )}
-      <IssuePeekOverview is_draft />
     </div>
   );
 });

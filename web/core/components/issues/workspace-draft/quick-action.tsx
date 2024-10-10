@@ -16,7 +16,7 @@ import { EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // types
-import { IQuickActionProps } from "../list/list-view-types";
+import { IQuickActionProps } from "../issue-layouts/list/list-view-types";
 
 export const WorkspaceDraftIssueQuickActions: React.FC<IQuickActionProps> = observer((props) => {
   const {
