@@ -61,7 +61,7 @@ export const SubscriptionActivationModal: FC<TSubscriptionActivationModal> = obs
       handleClose();
       handleSuccessModalToggle(true);
     } catch {
-      setErrors("Your license is invalid or already in use. For any queries contact support@plane.so .");
+      setErrors("Your license is invalid or already in use. For any queries contact support@plane.so");
     } finally {
       setLoader(false);
     }
