@@ -52,4 +52,10 @@ export const COLORS_LIST: {
     textColorVariable: "--editor-colors-purple-text",
     backgroundColorVariable: "--editor-colors-purple-background",
   },
+  // {
+  //   key: "pink-blue-gradient",
+  //   label: "Pink blue gradient",
+  //   textColorVariable: "--editor-colors-pink-blue-gradient-text",
+  //   backgroundColorVariable: "--editor-colors-pink-blue-gradient-background",
+  // },
 ];

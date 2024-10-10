@@ -1,3 +1,4 @@
+import { COLORS_LIST } from "@/constants/common";
 import { Extension } from "@tiptap/core";
 
 declare module "@tiptap/core" {
@@ -37,12 +38,23 @@ export const CustomTextColorExtension = Extension.create({
             default: null,
             parseHTML: (element: HTMLElement) => element.getAttribute("data-text-color"),
             renderHTML: (attributes: { color: string }) => {
-              if (!attributes.color) {
+              const { color } = attributes;
+              if (!color) {
                 return {};
               }
-              return {
-                "data-text-color": attributes.color,
+
+              let elementAttributes: Record<string, string> = {
+                "data-text-color": color,
               };
+
+              if (!COLORS_LIST.find((c) => c.key === color)) {
+                elementAttributes = {
+                  ...elementAttributes,
+                  style: `color: ${color}`,
+                };
+              }
+
+              return elementAttributes;
             },
           },
         },

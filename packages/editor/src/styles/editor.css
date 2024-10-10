@@ -407,6 +407,11 @@ ul[data-type="taskList"] ul[data-type="taskList"] {
 [data-text-color="purple"] {
   color: var(--editor-colors-purple-text);
 }
+/* [data-text-color="pink-blue-gradient"] {
+  background-clip: text;
+  color: transparent;
+  background-image: linear-gradient(90deg, #a961cd 50%, #e75962 100%);
+} */
 /* end text colors */
 
 /* background colors */
