@@ -150,7 +150,7 @@ class OffsetPaginator:
             raise BadPaginationError("Pagination offset cannot be negative")
 
         results = queryset[offset:stop]
-
+        print(limit, "limit")
         if cursor.value != limit:
             results = results[-(limit + 1) :]
 
@@ -761,7 +761,7 @@ class BasePaginator:
     ):
         """Paginate the request"""
         per_page = self.get_per_page(request, default_per_page, max_per_page)
-
+        print(per_page, "per_page")
         # Convert the cursor value to integer and float from string
         input_cursor = None
         try:
@@ -788,6 +788,7 @@ class BasePaginator:
             paginator = paginator_cls(**paginator_kwargs)
 
         try:
+            print(per_page, "per_page 2")
             cursor_result = paginator.get_result(
                 limit=per_page, cursor=input_cursor
             )

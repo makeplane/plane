@@ -105,6 +105,8 @@ export enum EmptyStateType {
   INBOX_SIDEBAR_CLOSED_TAB = "inbox-sidebar-closed-tab",
   INBOX_SIDEBAR_FILTER_EMPTY_STATE = "inbox-sidebar-filter-empty-state",
   INBOX_DETAIL_EMPTY_STATE = "inbox-detail-empty-state",
+
+  WORKSPACE_DRAFT_ISSUES = "workspace-draft-issues",
 }
 
 const emptyStateDetails = {
@@ -756,6 +758,17 @@ const emptyStateDetails = {
     key: EmptyStateType.INBOX_DETAIL_EMPTY_STATE,
     title: "Select an issue to view its details.",
     path: "/empty-state/intake/issue-detail",
+  },
+  [EmptyStateType.WORKSPACE_DRAFT_ISSUES]: {
+    key: EmptyStateType.WORKSPACE_DRAFT_ISSUES,
+    title: "No Draft Issues Yet",
+    description: "There are no draft issues in your workspace right now. Begin by adding your first one.",
+    path: "/empty-state/workspace-draft/issue",
+    primaryButton: {
+      text: "Create draft issue",
+    },
+    accessType: "workspace",
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
 } as const;
 
