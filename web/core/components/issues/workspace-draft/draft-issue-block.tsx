@@ -2,11 +2,11 @@
 import React, { FC, useRef } from "react";
 import { observer } from "mobx-react";
 // ui
-import { Row, Spinner, Tooltip } from "@plane/ui";
+import { Row, Tooltip } from "@plane/ui";
 // helper
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useAppTheme, useIssueDetail, useProject, useWorkspaceDraftIssues } from "@/hooks/store";
+import { useAppTheme, useProject, useWorkspaceDraftIssues } from "@/hooks/store";
 // plane-web components
 import { IdentifierText } from "@/plane-web/components/issues";
 // local components
@@ -24,7 +24,6 @@ export const DraftIssueBlock: FC<Props> = observer((props) => {
   // hooks
   const { getIssueById, updateIssue } = useWorkspaceDraftIssues();
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
-  const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
   const { getProjectIdentifierById } = useProject();
   // ref
   const issueRef = useRef<HTMLDivElement | null>(null);

@@ -1,22 +1,34 @@
 "use client";
 
 import { useState } from "react";
+import { Placement } from "@popperjs/core";
 import omit from "lodash/omit";
 import { observer } from "mobx-react";
 // icons
 import { Copy, Pencil, SquareStackIcon, Trash2 } from "lucide-react";
 // types
-import { TIssue } from "@plane/types";
+import { TIssue, TWorkspaceDraftIssue } from "@plane/types";
 // ui
 import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 // components
-import { CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
+import { CreateUpdateIssueModal } from "@/components/issues";
 // constant
 import { EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
-// types
-import { IQuickActionProps } from "../issue-layouts/list/list-view-types";
+// local components
+import { WorkspaceDraftIssueDeleteIssueModal } from "./delete-modal";
+
+export interface IQuickActionProps {
+  issue: TWorkspaceDraftIssue;
+  handleDelete: () => Promise<void>;
+  handleUpdate?: (data: TIssue) => Promise<void>;
+  handleMoveToIssues?: () => Promise<void>;
+  customActionButton?: React.ReactElement;
+  portalElement?: HTMLDivElement | null;
+  placements?: Placement;
+  parentRef: React.RefObject<HTMLElement>;
+}
 
 export const WorkspaceDraftIssueQuickActions: React.FC<IQuickActionProps> = observer((props) => {
   const {
@@ -31,7 +43,7 @@ export const WorkspaceDraftIssueQuickActions: React.FC<IQuickActionProps> = obse
   } = props;
   // states
   const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
-  const [issueToEdit, setIssueToEdit] = useState<TIssue | undefined>(undefined);
+  const [issueToEdit, setIssueToEdit] = useState<TWorkspaceDraftIssue | undefined>(undefined);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
 
   const duplicateIssuePayload = omit(
@@ -79,7 +91,7 @@ export const WorkspaceDraftIssueQuickActions: React.FC<IQuickActionProps> = obse
 
   return (
     <>
-      <DeleteIssueModal
+      <WorkspaceDraftIssueDeleteIssueModal
         data={issue}
         isOpen={deleteIssueModal}
         handleClose={() => setDeleteIssueModal(false)}

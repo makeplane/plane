@@ -37,7 +37,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { IssuePropertyLabels } from "../issue-layouts";
 
 export interface IIssueProperties {
-  issue: TIssue;
+  issue: TWorkspaceDraftIssue;
   updateIssue:
     | ((projectId: string | null, issueId: string, data: Partial<TWorkspaceDraftIssue>) => Promise<void>)
     | undefined;
@@ -68,86 +68,37 @@ export const DraftIssueProperties: React.FC<IIssueProperties> = observer((props)
   const issueOperations = useMemo(
     () => ({
       addModulesToIssue: async (moduleIds: string[]) => {
-        if (!workspaceSlug || !issue.project_id || !issue.id) return;
-        await addModulesToIssue?.(workspaceSlug.toString(), issue.project_id, issue.id, moduleIds, []);
+        if (!workspaceSlug || !issue.id) return;
+        await addModulesToIssue(workspaceSlug.toString(), issue.id, moduleIds);
       },
       removeModulesFromIssue: async (moduleIds: string[]) => {
-        if (!workspaceSlug || !issue.project_id || !issue.id) return;
-        await addModulesToIssue?.(workspaceSlug.toString(), issue.project_id, issue.id, [], moduleIds);
+        if (!workspaceSlug || !issue.id) return;
+        await addModulesToIssue(workspaceSlug.toString(), issue.id, moduleIds);
       },
       addIssueToCycle: async (cycleId: string) => {
-        if (!workspaceSlug || !issue.project_id || !issue.id) return;
-        // TODO: Uncomment this after adding function to draft issue store
-        // await addCycleToIssue?.(workspaceSlug.toString(), issue.project_id, cycleId, issue.id);
+        if (!workspaceSlug || !issue.id) return;
+        await addCycleToIssue(workspaceSlug.toString(), issue.id, cycleId);
       },
       removeIssueFromCycle: async () => {
-        if (!workspaceSlug || !issue.project_id || !issue.id) return;
-        // TODO: Uncomment this after adding function to draft issue store
-        // await removeCycleFromIssue?.(workspaceSlug.toString(), issue.project_id, issue.id);
+        if (!workspaceSlug || !issue.id) return;
+        // TODO: To be checked
+        await addCycleToIssue(workspaceSlug.toString(), issue.id, "");
       },
     }),
-    [workspaceSlug, issue, addModulesToIssue]
+    [workspaceSlug, issue, addCycleToIssue, addModulesToIssue]
   );
 
-  const handleState = (stateId: string) => {
-    updateIssue &&
-      updateIssue(issue.project_id, issue.id, { state_id: stateId }).then(() => {
-        captureIssueEvent({
-          eventName: ISSUE_UPDATED,
-          payload: { ...issue, state: "SUCCESS", element: currentLayout },
-          path: pathname,
-          updates: {
-            changed_property: "state",
-            change_details: stateId,
-          },
-        });
-      });
-  };
+  const handleState = (stateId: string) =>
+    issue?.project_id && updateIssue && updateIssue(issue.project_id, issue.id, { state_id: stateId });
 
-  const handlePriority = (value: TIssuePriorities) => {
-    updateIssue &&
-      updateIssue(issue.project_id, issue.id, { priority: value }).then(() => {
-        captureIssueEvent({
-          eventName: ISSUE_UPDATED,
-          payload: { ...issue, state: "SUCCESS", element: currentLayout },
-          path: pathname,
-          updates: {
-            changed_property: "priority",
-            change_details: value,
-          },
-        });
-      });
-  };
+  const handlePriority = (value: TIssuePriorities) =>
+    issue?.project_id && updateIssue && updateIssue(issue.project_id, issue.id, { priority: value });
 
-  const handleLabel = (ids: string[]) => {
-    updateIssue &&
-      updateIssue(issue.project_id, issue.id, { label_ids: ids }).then(() => {
-        captureIssueEvent({
-          eventName: ISSUE_UPDATED,
-          payload: { ...issue, state: "SUCCESS", element: currentLayout },
-          path: pathname,
-          updates: {
-            changed_property: "labels",
-            change_details: ids,
-          },
-        });
-      });
-  };
+  const handleLabel = (ids: string[]) =>
+    issue?.project_id && updateIssue && updateIssue(issue.project_id, issue.id, { label_ids: ids });
 
-  const handleAssignee = (ids: string[]) => {
-    updateIssue &&
-      updateIssue(issue.project_id, issue.id, { assignee_ids: ids }).then(() => {
-        captureIssueEvent({
-          eventName: ISSUE_UPDATED,
-          payload: { ...issue, state: "SUCCESS", element: currentLayout },
-          path: pathname,
-          updates: {
-            changed_property: "assignees",
-            change_details: ids,
-          },
-        });
-      });
-  };
+  const handleAssignee = (ids: string[]) =>
+    issue?.project_id && updateIssue && updateIssue(issue.project_id, issue.id, { assignee_ids: ids });
 
   const handleModule = useCallback(
     (moduleIds: string[] | null) => {
@@ -161,15 +112,8 @@ export const DraftIssueProperties: React.FC<IIssueProperties> = observer((props)
         else modulesToAdd.push(moduleId);
       if (modulesToAdd.length > 0) issueOperations.addModulesToIssue(modulesToAdd);
       if (modulesToRemove.length > 0) issueOperations.removeModulesFromIssue(modulesToRemove);
-
-      captureIssueEvent({
-        eventName: ISSUE_UPDATED,
-        payload: { ...issue, state: "SUCCESS", element: currentLayout },
-        path: pathname,
-        updates: { changed_property: "module_ids", change_details: { module_ids: moduleIds } },
-      });
     },
-    [issueOperations, captureIssueEvent, currentLayout, pathname, issue]
+    [issueOperations, currentLayout, pathname, issue]
   );
 
   const handleCycle = useCallback(
@@ -177,65 +121,26 @@ export const DraftIssueProperties: React.FC<IIssueProperties> = observer((props)
       if (!issue || issue.cycle_id === cycleId) return;
       if (cycleId) issueOperations.addIssueToCycle?.(cycleId);
       else issueOperations.removeIssueFromCycle?.();
-
-      captureIssueEvent({
-        eventName: ISSUE_UPDATED,
-        payload: { ...issue, state: "SUCCESS", element: currentLayout },
-        path: pathname,
-        updates: { changed_property: "cycle", change_details: { cycle_id: cycleId } },
-      });
     },
-    [issue, issueOperations, captureIssueEvent, currentLayout, pathname]
+    [issue, issueOperations, currentLayout, pathname]
   );
 
-  const handleStartDate = (date: Date | null) => {
+  const handleStartDate = (date: Date | null) =>
+    issue?.project_id &&
     updateIssue &&
-      updateIssue(issue.project_id, issue.id, { start_date: date ? renderFormattedPayloadDate(date) : null }).then(
-        () => {
-          captureIssueEvent({
-            eventName: ISSUE_UPDATED,
-            payload: { ...issue, state: "SUCCESS", element: currentLayout },
-            path: pathname,
-            updates: {
-              changed_property: "start_date",
-              change_details: date ? renderFormattedPayloadDate(date) : null,
-            },
-          });
-        }
-      );
-  };
+    updateIssue(issue.project_id, issue.id, {
+      start_date: date ? (renderFormattedPayloadDate(date) ?? undefined) : undefined,
+    });
 
-  const handleTargetDate = (date: Date | null) => {
+  const handleTargetDate = (date: Date | null) =>
+    issue?.project_id &&
     updateIssue &&
-      updateIssue(issue.project_id, issue.id, { target_date: date ? renderFormattedPayloadDate(date) : null }).then(
-        () => {
-          captureIssueEvent({
-            eventName: ISSUE_UPDATED,
-            payload: { ...issue, state: "SUCCESS", element: currentLayout },
-            path: pathname,
-            updates: {
-              changed_property: "target_date",
-              change_details: date ? renderFormattedPayloadDate(date) : null,
-            },
-          });
-        }
-      );
-  };
+    updateIssue(issue.project_id, issue.id, {
+      target_date: date ? (renderFormattedPayloadDate(date) ?? undefined) : undefined,
+    });
 
-  const handleEstimate = (value: string | undefined) => {
-    updateIssue &&
-      updateIssue(issue.project_id, issue.id, { estimate_point: value }).then(() => {
-        captureIssueEvent({
-          eventName: ISSUE_UPDATED,
-          payload: { ...issue, state: "SUCCESS", element: currentLayout },
-          path: pathname,
-          updates: {
-            changed_property: "estimate_point",
-            change_details: value,
-          },
-        });
-      });
-  };
+  const handleEstimate = (value: string | undefined) =>
+    issue?.project_id && updateIssue && updateIssue(issue.project_id, issue.id, { estimate_point: value });
 
   if (!issue.project_id) return null;
 
@@ -267,7 +172,6 @@ export const DraftIssueProperties: React.FC<IIssueProperties> = observer((props)
           showTooltip
         />
       </div>
-      {/* </WithDisplayPropertiesHOC> */}
 
       {/* priority */}
       <div className="h-5" onClick={handleEventPropagation}>
@@ -280,7 +184,6 @@ export const DraftIssueProperties: React.FC<IIssueProperties> = observer((props)
           showTooltip
         />
       </div>
-      {/* </WithDisplayPropertiesHOC> */}
 
       {/* label */}
 
@@ -319,7 +222,9 @@ export const DraftIssueProperties: React.FC<IIssueProperties> = observer((props)
           placeholder="Due date"
           icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
           buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
-          buttonClassName={shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-red-500" : ""}
+          buttonClassName={
+            shouldHighlightIssueDueDate(issue?.target_date || null, stateDetails?.group) ? "text-red-500" : ""
+          }
           clearIconClassName="!text-custom-text-100"
           optionsClassName="z-10"
           renderByDefault={isMobile}
@@ -367,7 +272,7 @@ export const DraftIssueProperties: React.FC<IIssueProperties> = observer((props)
           <CycleDropdown
             buttonContainerClassName="truncate max-w-40"
             projectId={issue?.project_id}
-            value={issue?.cycle_id}
+            value={issue?.cycle_id || null}
             onChange={handleCycle}
             buttonVariant="border-with-text"
             renderByDefault={isMobile}
