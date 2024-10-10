@@ -10,11 +10,9 @@ import { EFileAssetType } from "@plane/types/src/enums";
 // hooks
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { MAX_FILE_SIZE } from "@/constants/common";
+import { MAX_STATIC_FILE_SIZE } from "@/constants/common";
 // helpers
 import { getAssetIdFromUrl, getFileURL } from "@/helpers/file.helper";
-// hooks
-import { useInstance } from "@/hooks/store";
 // services
 import { FileService } from "@/services/file.service";
 const fileService = new FileService();
@@ -33,8 +31,6 @@ export const UserImageUploadModal: React.FC<Props> = observer((props) => {
   const [image, setImage] = useState<File | null>(null);
   const [isRemoving, setIsRemoving] = useState(false);
   const [isImageUploading, setIsImageUploading] = useState(false);
-  // store hooks
-  const { config } = useInstance();
 
   const onDrop = (acceptedFiles: File[]) => setImage(acceptedFiles[0]);
 
@@ -43,7 +39,7 @@ export const UserImageUploadModal: React.FC<Props> = observer((props) => {
     accept: {
       "image/*": [".png", ".jpg", ".jpeg", ".webp"],
     },
-    maxSize: config?.file_size_limit ?? MAX_FILE_SIZE,
+    maxSize: MAX_STATIC_FILE_SIZE,
     multiple: false,
   });
 

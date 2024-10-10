@@ -1,13 +1,15 @@
 "use client";
+
 import React, { FC, useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { FileRejection, useDropzone } from "react-dropzone";
 import { Plus } from "lucide-react";
+// plane ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
-// constants
-import { MAX_FILE_SIZE } from "@/constants/common";
 // hooks
-import { useInstance, useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store";
+// plane web hooks
+import { useFileSize } from "@/plane-web/hooks/use-file-size";
 
 import { useAttachmentOperations } from "./helper";
 
@@ -24,12 +26,11 @@ export const IssueAttachmentActionButton: FC<Props> = observer((props) => {
   // state
   const [isLoading, setIsLoading] = useState(false);
   // store hooks
-  const { config } = useInstance();
   const { setLastWidgetAction } = useIssueDetail();
-
+  // file size
+  const { maxFileSize } = useFileSize();
   // operations
   const handleAttachmentOperations = useAttachmentOperations(workspaceSlug, projectId, issueId);
-
   // handlers
   const onDrop = useCallback(
     (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
@@ -68,7 +69,7 @@ export const IssueAttachmentActionButton: FC<Props> = observer((props) => {
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
-    maxSize: config?.file_size_limit ?? MAX_FILE_SIZE,
+    maxSize: maxFileSize,
     multiple: false,
     disabled: isLoading || disabled,
   });

@@ -10,11 +10,11 @@ import { EFileAssetType } from "@plane/types/src/enums";
 // hooks
 import { Button } from "@plane/ui";
 // constants
-import { MAX_FILE_SIZE } from "@/constants/common";
+import { MAX_STATIC_FILE_SIZE } from "@/constants/common";
 // helpers
 import { getAssetIdFromUrl, getFileURL } from "@/helpers/file.helper";
 // hooks
-import { useWorkspace, useInstance } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store";
 // services
 import { FileService } from "@/services/file.service";
 
@@ -38,7 +38,6 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
   // router
   const { workspaceSlug } = useParams();
   // store hooks
-  const { config } = useInstance();
   const { currentWorkspace, updateWorkspaceLogo } = useWorkspace();
 
   const onDrop = (acceptedFiles: File[]) => setImage(acceptedFiles[0]);
@@ -48,7 +47,7 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
     accept: {
       "image/*": [".png", ".jpg", ".jpeg", ".webp"],
     },
-    maxSize: config?.file_size_limit ?? MAX_FILE_SIZE,
+    maxSize: MAX_STATIC_FILE_SIZE,
     multiple: false,
   });
 

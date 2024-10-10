@@ -15,11 +15,10 @@ import { EFileAssetType } from "@plane/types/src/enums";
 // ui
 import { Button, Input, Loader } from "@plane/ui";
 // constants
-import { MAX_FILE_SIZE } from "@/constants/common";
+import { MAX_STATIC_FILE_SIZE } from "@/constants/common";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
-import { useInstance } from "@/hooks/store";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 // services
 import { FileService } from "@/services/file.service";
@@ -67,8 +66,6 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
   const ref = useRef<HTMLDivElement>(null);
   // router params
   const { workspaceSlug } = useParams();
-  // store hooks
-  const { config } = useInstance();
 
   const { data: unsplashImages, error: unsplashError } = useSWR(
     `UNSPLASH_IMAGES_${searchParams}`,
@@ -95,7 +92,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
     accept: {
       "image/*": [".png", ".jpg", ".jpeg", ".webp"],
     },
-    maxSize: config?.file_size_limit ?? MAX_FILE_SIZE,
+    maxSize: MAX_STATIC_FILE_SIZE,
   });
 
   const handleSubmit = async () => {

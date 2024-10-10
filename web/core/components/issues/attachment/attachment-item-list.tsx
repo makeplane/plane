@@ -4,8 +4,9 @@ import { FileRejection, useDropzone } from "react-dropzone";
 import { UploadCloud } from "lucide-react";
 // hooks
 import { TOAST_TYPE, setToast } from "@plane/ui";
-import { MAX_FILE_SIZE } from "@/constants/common";
-import { useInstance, useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store";
+// plane web hooks
+import { useFileSize } from "@/plane-web/hooks/use-file-size";
 // components
 import { IssueAttachmentsListItem } from "./attachment-list-item";
 // types
@@ -23,15 +24,16 @@ type TIssueAttachmentItemList = {
 
 export const IssueAttachmentItemList: FC<TIssueAttachmentItemList> = observer((props) => {
   const { workspaceSlug, issueId, handleAttachmentOperations, disabled } = props;
+  // states
   const [isLoading, setIsLoading] = useState(false);
-
   // store hooks
-  const { config } = useInstance();
   const {
     attachment: { getAttachmentsByIssueId },
     attachmentDeleteModalId,
     toggleDeleteAttachmentModal,
   } = useIssueDetail();
+  // file size
+  const { maxFileSize } = useFileSize();
   // derived values
   const issueAttachments = getAttachmentsByIssueId(issueId);
 
@@ -69,7 +71,7 @@ export const IssueAttachmentItemList: FC<TIssueAttachmentItemList> = observer((p
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    maxSize: config?.file_size_limit ?? MAX_FILE_SIZE,
+    maxSize: maxFileSize,
     multiple: false,
     disabled: isLoading || disabled,
   });
