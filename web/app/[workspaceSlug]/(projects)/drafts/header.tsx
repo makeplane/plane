@@ -1,7 +1,6 @@
 "use client";
 
 import { FC, useState } from "react";
-import { EUserPermissions, EUserPermissionsLevel } from "ee/constants/user-permissions";
 import { observer } from "mobx-react";
 import { PenSquare } from "lucide-react";
 // ui
@@ -13,6 +12,8 @@ import { CreateUpdateIssueModal } from "@/components/issues";
 import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
+// plane-web
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const WorkspaceDraftHeader: FC = observer(() => {
   // state
