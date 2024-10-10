@@ -48,9 +48,7 @@ export const ColorDropdown: React.FC<Props> = memo((props) => {
                 }
               )}
               style={{
-                backgroundColor: activeBackgroundColor
-                  ? `var(${activeBackgroundColor.backgroundColorVariable})`
-                  : "transparent",
+                backgroundColor: activeBackgroundColor ? activeBackgroundColor.backgroundColor : "transparent",
               }}
             >
               <ALargeSmall
@@ -58,7 +56,7 @@ export const ColorDropdown: React.FC<Props> = memo((props) => {
                   "text-custom-text-100": !activeTextColor,
                 })}
                 style={{
-                  color: activeTextColor ? `var(${activeTextColor.textColorVariable})` : "inherit",
+                  color: activeTextColor ? activeTextColor.textColor : "inherit",
                 }}
               />
             </span>
@@ -78,7 +76,7 @@ export const ColorDropdown: React.FC<Props> = memo((props) => {
                 type="button"
                 className="flex-shrink-0 size-6 rounded border-[0.5px] border-custom-border-400 hover:opacity-60 transition-opacity"
                 style={{
-                  backgroundColor: `var(${color.textColorVariable})`,
+                  backgroundColor: color.textColor,
                 }}
                 onClick={() => handleColorSelect("text-color", color.key)}
               />
@@ -101,7 +99,7 @@ export const ColorDropdown: React.FC<Props> = memo((props) => {
                 type="button"
                 className="flex-shrink-0 size-6 rounded border-[0.5px] border-custom-border-400 hover:opacity-60 transition-opacity"
                 style={{
-                  backgroundColor: `var(${color.backgroundColorVariable})`,
+                  backgroundColor: color.backgroundColor,
                 }}
                 onClick={() => handleColorSelect("background-color", color.key)}
               />
