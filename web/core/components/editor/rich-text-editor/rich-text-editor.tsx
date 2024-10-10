@@ -8,6 +8,8 @@ import { cn } from "@/helpers/common.helper";
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
 import { useMember, useMention, useUser } from "@/hooks/store";
+// plane web hooks
+import { useFileSize } from "@/plane-web/hooks/use-file-size";
 
 interface RichTextEditorWrapperProps extends Omit<IRichTextEditor, "fileHandler" | "mentionHandler"> {
   workspaceSlug: string;
@@ -34,11 +36,14 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
     members: projectMemberDetails,
     user: currentUser ?? undefined,
   });
+  // file size
+  const { maxFileSize } = useFileSize();
 
   return (
     <RichTextEditorWithRef
       ref={ref}
       fileHandler={getEditorFileHandlers({
+        maxFileSize,
         projectId,
         uploadFile,
         workspaceId,

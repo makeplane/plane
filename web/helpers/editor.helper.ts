@@ -29,6 +29,7 @@ export const getEditorAssetSrc = (args: TEditorSrcArgs): string | undefined => {
 };
 
 type TArgs = {
+  maxFileSize: number;
   projectId?: string;
   uploadFile: (file: File) => Promise<string>;
   workspaceId: string;
@@ -40,7 +41,7 @@ type TArgs = {
  * @param {TArgs} args
  */
 export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
-  const { projectId, uploadFile, workspaceId, workspaceSlug } = args;
+  const { maxFileSize, projectId, uploadFile, workspaceId, workspaceSlug } = args;
 
   return {
     getAssetSrc: (path) => {
@@ -79,6 +80,9 @@ export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
       }
     },
     cancel: fileService.cancelUpload,
+    validation: {
+      maxFileSize,
+    },
   };
 };
 

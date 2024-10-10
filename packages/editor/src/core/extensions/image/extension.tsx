@@ -10,7 +10,12 @@ import { TFileHandler } from "@/types";
 import { CustomImageNode } from "@/extensions";
 
 export const ImageExtension = (fileHandler: TFileHandler) => {
-  const { delete: deleteImage, getAssetSrc, restore: restoreImage } = fileHandler;
+  const {
+    delete: deleteImage,
+    getAssetSrc,
+    restore: restoreImage,
+    validation: { maxFileSize },
+  } = fileHandler;
 
   return ImageExt.extend<any, ImageExtensionStorage>({
     addKeyboardShortcuts() {
@@ -47,6 +52,7 @@ export const ImageExtension = (fileHandler: TFileHandler) => {
       return {
         deletedImageSet: new Map<string, boolean>(),
         uploadInProgress: false,
+        maxFileSize,
       };
     },
 

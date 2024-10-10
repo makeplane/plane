@@ -29,6 +29,7 @@ import { usePageFilters } from "@/hooks/use-page-filters";
 import { EditorAIMenu } from "@/plane-web/components/pages";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
+import { useFileSize } from "@/plane-web/hooks/use-file-size";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 // services
 import { FileService } from "@/services/file.service";
@@ -88,6 +89,8 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const { fontSize, fontStyle, isFullWidth } = usePageFilters();
   // issue-embed
   const { issueEmbedProps } = useIssueEmbed(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "");
+  // file size
+  const { maxFileSize } = useFileSize();
 
   const displayConfig: TDisplayConfig = {
     fontSize,
@@ -180,6 +183,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             <CollaborativeDocumentEditorWithRef
               id={pageId}
               fileHandler={getEditorFileHandlers({
+                maxFileSize,
                 projectId: projectId?.toString() ?? "",
                 uploadFile: async (file) => {
                   const { asset_id } = await fileService.uploadProjectAsset(

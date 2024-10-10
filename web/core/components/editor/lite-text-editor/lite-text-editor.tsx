@@ -13,6 +13,8 @@ import { getEditorFileHandlers } from "@/helpers/editor.helper";
 import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks
 import { useMember, useMention, useUser } from "@/hooks/store";
+// plane web hooks
+import { useFileSize } from "@/plane-web/hooks/use-file-size";
 
 interface LiteTextEditorWrapperProps extends Omit<ILiteTextEditor, "fileHandler" | "mentionHandler"> {
   workspaceSlug: string;
@@ -57,6 +59,8 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     members: projectMemberDetails,
     user: currentUser ?? undefined,
   });
+  // file size
+  const { maxFileSize } = useFileSize();
 
   const isEmpty = isCommentEmpty(props.initialValue);
 
@@ -69,6 +73,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
       <LiteTextEditorWithRef
         ref={ref}
         fileHandler={getEditorFileHandlers({
+          maxFileSize,
           projectId,
           uploadFile,
           workspaceId,
