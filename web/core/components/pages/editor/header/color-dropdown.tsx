@@ -1,8 +1,8 @@
 "use client";
 
 import { memo } from "react";
-import { Popover } from "@headlessui/react";
 import { ALargeSmall, Ban } from "lucide-react";
+import { Popover } from "@headlessui/react";
 // plane editor
 import { COLORS_LIST, TColorEditorCommands } from "@plane/editor";
 // helpers
@@ -125,3 +125,5 @@ export const ColorDropdown: React.FC<Props> = memo((props) => {
     </Popover>
   );
 });
+
+ColorDropdown.displayName = "ColorDropdown";

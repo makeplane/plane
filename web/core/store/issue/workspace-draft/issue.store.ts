@@ -1,3 +1,4 @@
+import clone from "lodash/clone";
 import orderBy from "lodash/orderBy";
 import set from "lodash/set";
 import unset from "lodash/unset";
@@ -9,6 +10,12 @@ import {
   TWorkspaceDraftPaginationInfo,
   TWorkspaceDraftIssueLoader,
   TWorkspaceDraftQueryParams,
+  TPaginationData,
+  TLoader,
+  TGroupedIssues,
+  TSubGroupedIssues,
+  ViewFlags,
+  TIssue,
 } from "@plane/types";
 // constants
 import { EDraftIssuePaginationType } from "@/constants/workspace-drafts";
@@ -16,8 +23,6 @@ import { EDraftIssuePaginationType } from "@/constants/workspace-drafts";
 import { getCurrentDateTimeInISO, convertToISODateString } from "@/helpers/date-time.helper";
 // services
 import workspaceDraftService from "@/services/issue/workspace_draft.service";
-import { IIssueDetail } from "../issue-details/root.store";
-import { clone } from "lodash";
 
 export type TDraftIssuePaginationType = EDraftIssuePaginationType;
 
@@ -33,7 +38,7 @@ export interface IWorkspaceDraftIssues {
   // helper actions
   addIssue: (issues: TWorkspaceDraftIssue[]) => void;
   mutateIssue: (issueId: string, data: Partial<TWorkspaceDraftIssue>) => void;
-  removeIssue: (issueId: string) => void;
+  removeIssue: (issueId: string) => Promise<void>;
   // actions
   fetchIssues: (
     workspaceSlug: string,
@@ -42,12 +47,12 @@ export interface IWorkspaceDraftIssues {
   ) => Promise<TWorkspaceDraftPaginationInfo<TWorkspaceDraftIssue> | undefined>;
   createIssue: (
     workspaceSlug: string,
-    payload: Partial<TWorkspaceDraftIssue>
+    payload: Partial<TWorkspaceDraftIssue | TIssue>
   ) => Promise<TWorkspaceDraftIssue | undefined>;
   updateIssue: (
     workspaceSlug: string,
     issueId: string,
-    payload: Partial<TWorkspaceDraftIssue>
+    payload: Partial<TWorkspaceDraftIssue | TIssue>
   ) => Promise<TWorkspaceDraftIssue | undefined>;
   deleteIssue: (workspaceSlug: string, issueId: string) => Promise<void>;
   moveIssue: (workspaceSlug: string, issueId: string, payload: Partial<TWorkspaceDraftIssue>) => Promise<void>;
@@ -61,6 +66,42 @@ export interface IWorkspaceDraftIssues {
     issueId: string,
     moduleIds: string[]
   ) => Promise<TWorkspaceDraftIssue | undefined>;
+
+  // dummies
+  viewFlags: ViewFlags;
+  groupedIssueIds: TGroupedIssues | TSubGroupedIssues | undefined;
+  getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined;
+  getPaginationData(groupId: string | undefined, subGroupId: string | undefined): TPaginationData | undefined;
+  getIssueLoader(groupId?: string, subGroupId?: string): TLoader;
+  getGroupIssueCount: (
+    groupId: string | undefined,
+    subGroupId: string | undefined,
+    isSubGroupCumulative: boolean
+  ) => number | undefined;
+  removeCycleFromIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  addIssueToCycle: (
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string,
+    issueIds: string[],
+    fetchAddedIssues?: boolean
+  ) => Promise<void>;
+  removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
+
+  removeIssuesFromModule: (
+    workspaceSlug: string,
+    projectId: string,
+    moduleId: string,
+    issueIds: string[]
+  ) => Promise<void>;
+  changeModulesInIssue(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    addModuleIds: string[],
+    removeModuleIds: string[]
+  ): Promise<void>;
+  archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
 }
 
 export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
@@ -71,7 +112,7 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
   loader: TWorkspaceDraftIssueLoader = undefined;
   issuesMap: Record<string, TWorkspaceDraftIssue> = {};
 
-  constructor(private store: IIssueDetail) {
+  constructor() {
     makeObservable(this, {
       paginationInfo: observable,
       loader: observable.ref,
@@ -124,7 +165,7 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
     });
   };
 
-  removeIssue = (issueId: string) => {
+  removeIssue = async (issueId: string) => {
     if (!issueId || !this.issuesMap[issueId]) return;
     runInAction(() => unset(this.issuesMap, issueId));
   };
@@ -188,7 +229,7 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
 
   createIssue = async (
     workspaceSlug: string,
-    payload: Partial<TWorkspaceDraftIssue>
+    payload: Partial<TWorkspaceDraftIssue | TIssue>
   ): Promise<TWorkspaceDraftIssue | undefined> => {
     try {
       this.loader = "create";
@@ -206,7 +247,7 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
     }
   };
 
-  updateIssue = async (workspaceSlug: string, issueId: string, payload: Partial<TWorkspaceDraftIssue>) => {
+  updateIssue = async (workspaceSlug: string, issueId: string, payload: Partial<TWorkspaceDraftIssue | TIssue>) => {
     const issueBeforeUpdate = clone(this.getIssueById(issueId));
     try {
       this.loader = "update";
@@ -277,4 +318,32 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
       throw error;
     }
   };
+
+  // dummies
+  viewFlags: ViewFlags = { enableQuickAdd: false, enableIssueCreation: false, enableInlineEditing: false };
+  groupedIssueIds: TGroupedIssues | TSubGroupedIssues | undefined = undefined;
+  getIssueIds = (groupId?: string, subGroupId?: string) => undefined;
+  getPaginationData = (groupId: string | undefined, subGroupId: string | undefined) => undefined;
+  getIssueLoader = (groupId?: string, subGroupId?: string) => "loaded" as TLoader;
+  getGroupIssueCount = (groupId: string | undefined, subGroupId: string | undefined, isSubGroupCumulative: boolean) =>
+    undefined;
+  removeCycleFromIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {};
+  addIssueToCycle = async (
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string,
+    issueIds: string[],
+    fetchAddedIssues?: boolean
+  ) => {};
+  removeIssueFromCycle = async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {};
+
+  removeIssuesFromModule = async (workspaceSlug: string, projectId: string, moduleId: string, issueIds: string[]) => {};
+  changeModulesInIssue = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    addModuleIds: string[],
+    removeModuleIds: string[]
+  ) => {};
+  archiveIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {};
 }
