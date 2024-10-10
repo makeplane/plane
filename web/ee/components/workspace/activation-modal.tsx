@@ -60,10 +60,8 @@ export const SubscriptionActivationModal: FC<TSubscriptionActivationModal> = obs
       });
       handleClose();
       handleSuccessModalToggle(true);
-    } catch (error) {
-      const activationError = error as unknown as { response: { data: { error: string } } };
-      const errorMessage = activationError?.response?.data?.error || "Something went wrong. Please try again.";
-      setErrors(errorMessage);
+    } catch {
+      setErrors("Your license is invalid or already in use. For any queries contact support@plane.so");
     } finally {
       setLoader(false);
     }
