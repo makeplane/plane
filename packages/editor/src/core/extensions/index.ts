@@ -6,6 +6,7 @@ export * from "./custom-list-keymap";
 export * from "./image";
 export * from "./issue-embed";
 export * from "./mentions";
+export * from "./slash-commands";
 export * from "./table";
 export * from "./typography";
 export * from "./core-without-props";

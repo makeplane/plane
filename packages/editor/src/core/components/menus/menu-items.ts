@@ -20,12 +20,14 @@ import {
   Heading6,
   CaseSensitive,
   LucideIcon,
+  Palette,
 } from "lucide-react";
 // helpers
 import {
   insertImage,
   insertTableCommand,
   setText,
+  toggleBackgroundColor,
   toggleBlockquote,
   toggleBold,
   toggleBulletList,
@@ -40,18 +42,26 @@ import {
   toggleOrderedList,
   toggleStrike,
   toggleTaskList,
+  toggleTextColor,
   toggleUnderline,
 } from "@/helpers/editor-commands";
 // types
-import { TEditorCommands } from "@/types";
+import { TColorEditorCommands, TNonColorEditorCommands } from "@/types";
 
-export interface EditorMenuItem {
-  key: TEditorCommands;
+export type EditorMenuItem = {
   name: string;
-  isActive: () => boolean;
-  command: () => void;
+  command: (...args: any) => void;
   icon: LucideIcon;
-}
+} & (
+  | {
+      key: TNonColorEditorCommands;
+      isActive: () => boolean;
+    }
+  | {
+      key: TColorEditorCommands;
+      isActive: (color: string | undefined) => boolean;
+    }
+);
 
 export const TextItem = (editor: Editor): EditorMenuItem => ({
   key: "text",
@@ -198,10 +208,25 @@ export const ImageItem = (editor: Editor) =>
     icon: ImageIcon,
   }) as const;
 
-export function getEditorMenuItems(editor: Editor | null) {
-  if (!editor) {
-    return [];
-  }
+export const TextColorItem = (editor: Editor): EditorMenuItem => ({
+  key: "text-color",
+  name: "Color",
+  isActive: (color) => editor.getAttributes("textStyle").color === color,
+  command: (color: string) => toggleTextColor(color, editor),
+  icon: Palette,
+});
+
+export const BackgroundColorItem = (editor: Editor): EditorMenuItem => ({
+  key: "background-color",
+  name: "Background color",
+  isActive: (color) => editor.isActive("highlight", { color }),
+  command: (color: string) => toggleBackgroundColor(color, editor),
+  icon: Palette,
+});
+
+export const getEditorMenuItems = (editor: Editor | null): EditorMenuItem[] => {
+  if (!editor) return [];
+
   return [
     TextItem(editor),
     HeadingOneItem(editor),
@@ -221,5 +246,7 @@ export function getEditorMenuItems(editor: Editor | null) {
     QuoteItem(editor),
     TableItem(editor),
     ImageItem(editor),
+    TextColorItem(editor),
+    BackgroundColorItem(editor),
   ];
-}
+};

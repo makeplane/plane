@@ -1,3 +1,4 @@
+export * from "./color-dropdown";
 export * from "./extra-options";
 export * from "./info-popover";
 export * from "./options-dropdown";
