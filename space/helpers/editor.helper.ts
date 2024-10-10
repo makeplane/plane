@@ -1,5 +1,7 @@
 // plane editor
 import { TFileHandler } from "@plane/editor";
+// constants
+import { MAX_FILE_SIZE } from "@/constants/common";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 import { checkURLValidity } from "@/helpers/string.helper";
@@ -54,6 +56,9 @@ export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
       }
     },
     cancel: fileService.cancelUpload,
+    validation: {
+      maxFileSize: MAX_FILE_SIZE,
+    },
   };
 };
 
