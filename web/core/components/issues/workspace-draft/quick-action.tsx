@@ -108,6 +108,7 @@ export const WorkspaceDraftIssueQuickActions: React.FC<IQuickActionProps> = obse
           if (issueToEdit && handleUpdate) await handleUpdate(data as TWorkspaceDraftIssue);
         }}
         storeType={EIssuesStoreType.WORKSPACE_DRAFT}
+        fetchIssueDetails={false}
         isDraft
       />
       <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
