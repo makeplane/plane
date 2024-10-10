@@ -15,9 +15,7 @@ export type ActiveCycleInfoCardProps = {
 
 export const ActiveCycleInfoCard: FC<ActiveCycleInfoCardProps> = observer((props) => {
   const { cycle, workspaceSlug, projectId } = props;
-  let cycleDetails = useCycleDetails({ workspaceSlug, projectId, cycleId: cycle.id, defaultCycle: cycle });
-  cycleDetails = { ...cycleDetails, cycle };
-  console.log({ cycleDetails });
+  const cycleDetails = useCycleDetails({ workspaceSlug, projectId, cycleId: cycle.id, defaultCycle: cycle });
   return (
     <div
       key={cycle.id}

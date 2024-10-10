@@ -41,7 +41,8 @@ const formatV1Data = (isTypeIssue: boolean, cycle: ICycle, isBurnDown: boolean, 
 
 const formatV2Data = (isTypeIssue: boolean, cycle: ICycle, isBurnDown: boolean, endDate: Date | string) => {
   let today: Date | string = startOfToday();
-  const extendedArray = endDate > today ? generateDateArray(today as Date, endDate) : [];
+  const extendedArray =
+    endDate > today ? generateDateArray(today as Date, endDate).filter((d) => d.date >= cycle.start_date!) : [];
   if (isEmpty(cycle.progress)) return generateDateArray(new Date(cycle.start_date!), endDate);
   today = format(startOfToday(), "yyyy-MM-dd");
   const todaysData = cycle?.progress[cycle?.progress.length - 1];
@@ -53,7 +54,7 @@ const formatV2Data = (isTypeIssue: boolean, cycle: ICycle, isBurnDown: boolean, 
       : p.total_estimate_points - p.completed_estimate_points - p.cancelled_estimate_points;
     const completed = isTypeIssue ? p.completed_issues : p.completed_estimate_points;
     const dataDate = p.progress_date ? format(new Date(p.progress_date), "yyyy-MM-dd") : p.date;
-    const computedScope = dataDate! < today ? scope(p, isTypeIssue) : dataDate! <= cycle.end_date! ? scopeToday : null;
+    const computedScope = dataDate! <= today ? scope(p, isTypeIssue) : dataDate! <= cycle.end_date! ? scopeToday : null;
     const idealDone = ideal(dataDate, dataDate < today ? scope(p, isTypeIssue) : scopeToday, cycle);
 
     return {

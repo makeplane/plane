@@ -29,14 +29,15 @@ type Props = {
   data?: TProgressChartData;
   isFullWidth?: boolean;
   estimateType?: string;
+  plotType: string;
 };
 
 export const ActiveCycleChart = observer((props: Props) => {
-  const { areaToHighlight, data = [], cycle, isFullWidth = false, estimateType = "ISSUES" } = props;
+  const { areaToHighlight, data = [], cycle, isFullWidth = false, plotType, estimateType = "ISSUES" } = props;
   let endDate: Date | string = new Date(cycle.end_date!);
   const today = format(startOfToday(), "yyyy-MM-dd");
 
-  const { diffGradient, dataWithRange } = chartHelper(data, endDate);
+  const { diffGradient, dataWithRange } = chartHelper(data, endDate, plotType);
   endDate = endDate.toISOString().split("T")[0];
 
   return (
@@ -102,7 +103,7 @@ export const ActiveCycleChart = observer((props: Props) => {
           {/* Ideal - Actual */}
           <linearGradient id="diff">{diffGradient}</linearGradient>
         </defs>
-        <Tooltip isAnimationActive={false} content={<CustomTooltip active payload={[]} label={""} />} />
+        <Tooltip isAnimationActive={false} content={<CustomTooltip active payload={[]} label={""} plotType={plotType} />} />
         {/* Cartesian axis */}
         <XAxis
           dataKey="date"

@@ -3,12 +3,17 @@ import { TCycleProgress } from "@plane/types";
 import { TProgressChartData } from "@/helpers/cycle.helper";
 
 type TIntersection = { x: number; y: number; line1isHigher: boolean; line1isHigherNext: boolean };
-const getIntersectionColor = (_intersection: TIntersection | boolean, isLast = false) => {
-  if (isLast) {
-    return (_intersection as TIntersection).line1isHigherNext ? "#FFE5E5" : "#D4F7DC";
-  }
-
-  return (_intersection as TIntersection).line1isHigher ? "#FFE5E5" : "#D4F7DC";
+const getIntersectionColor = (_intersection: TIntersection | boolean, plotType: string, isLast = false) => {
+  const isLineHigher = isLast
+    ? (_intersection as TIntersection).line1isHigherNext
+    : (_intersection as TIntersection).line1isHigher;
+  return isLineHigher
+    ? plotType === "burndown"
+      ? "#FFE5E5"
+      : "#D4F7DC"
+    : plotType === "burnup"
+      ? "#FFE5E5"
+      : "#D4F7DC";
 };
 
 // line intercept math by Paul Bourke http://paulbourke.net/geometry/pointlineplane/
@@ -46,7 +51,7 @@ const intersect = (x1: number, y1: number, x2: number, y2: number, x3: number, y
 };
 export const maxScope = (data: TProgressChartData) => Math.max(...data.map((d) => d.scope || 0));
 
-export const chartHelper = (data: TProgressChartData, endDate: Date) => {
+export const chartHelper = (data: TProgressChartData, endDate: Date, plotType: string) => {
   // Get today's date
   const today = startOfToday();
 
@@ -70,6 +75,10 @@ export const chartHelper = (data: TProgressChartData, endDate: Date) => {
       i === intersections.length - 1 || (d as TIntersection).x !== (intersections[i - 1] as TIntersection)?.x
   );
 
+  const isAhead =
+    (plotType === "burndown" && data[0]?.actual < data[0]?.ideal) ||
+    (plotType === "burnup" && data[0]?.actual > data[0]?.ideal);
+
   const diffGradient = filteredIntersections.length ? (
     filteredIntersections.map((intersection, i: number) => {
       const nextIntersection = filteredIntersections[i + 1];
@@ -80,11 +89,11 @@ export const chartHelper = (data: TProgressChartData, endDate: Date) => {
       const isLast = i === filteredIntersections.length - 1;
 
       if (isLast) {
-        closeColor = getIntersectionColor(intersection);
-        startColor = getIntersectionColor(intersection, true);
+        closeColor = getIntersectionColor(intersection, plotType);
+        startColor = getIntersectionColor(intersection, plotType, true);
       } else {
-        closeColor = getIntersectionColor(intersection);
-        startColor = getIntersectionColor(nextIntersection);
+        closeColor = getIntersectionColor(intersection, plotType);
+        startColor = getIntersectionColor(nextIntersection, plotType);
       }
 
       const offset =
@@ -98,7 +107,7 @@ export const chartHelper = (data: TProgressChartData, endDate: Date) => {
       );
     })
   ) : (
-    <stop offset={0} stopColor={data[0]?.actual > data[0]?.ideal ? "#D4F7DC" : "#FFE5E5"} />
+    <stop offset={0} stopColor={isAhead ? "#D4F7DC" : "#FFE5E5"} />
   );
 
   return { diffGradient, dataWithRange };
