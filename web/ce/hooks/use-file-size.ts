@@ -7,9 +7,6 @@ type TReturnProps = {
   maxFileSize: number;
 };
 
-/**
- * @description extensions disabled in various editors
- */
 export const useFileSize = (): TReturnProps => {
   // store hooks
   const { config } = useInstance();

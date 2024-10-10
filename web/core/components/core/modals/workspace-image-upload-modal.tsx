@@ -52,9 +52,11 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
   });
 
   const handleClose = () => {
-    setImage(null);
     setIsImageUploading(false);
     onClose();
+    setTimeout(() => {
+      setImage(null);
+    }, 300);
   };
 
   const handleSubmit = async () => {
@@ -87,6 +89,7 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
     try {
       await fileService.deleteWorkspaceAsset(workspaceSlug.toString(), assetId);
       await handleRemove();
+      handleClose();
     } catch (error) {
       console.log("Error in removing workspace asset:", error);
     } finally {
