@@ -1,6 +1,4 @@
 import CharacterCount from "@tiptap/extension-character-count";
-import { Color } from "@tiptap/extension-color";
-import Highlight from "@tiptap/extension-highlight";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import TextStyle from "@tiptap/extension-text-style";
@@ -23,6 +21,8 @@ import {
   CustomMention,
   HeadingListExtension,
   CustomReadOnlyImageExtension,
+  CustomTextColorExtension,
+  CustomBackgroundColorExtension,
 } from "@/extensions";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
@@ -111,9 +111,7 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
     readonly: true,
   }),
   CharacterCount,
-  Color,
-  Highlight.configure({
-    multicolor: true,
-  }),
+  CustomTextColorExtension,
+  CustomBackgroundColorExtension,
   HeadingListExtension,
 ];

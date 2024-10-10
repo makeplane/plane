@@ -42,8 +42,6 @@
     "@tiptap/extension-blockquote": "^2.1.13",
     "@tiptap/extension-character-count": "^2.6.5",
     "@tiptap/extension-collaboration": "^2.3.2",
-    "@tiptap/extension-color": "^2.7.1",
-    "@tiptap/extension-highlight": "^2.7.1",
     "@tiptap/extension-image": "^2.1.13",
     "@tiptap/extension-list-item": "^2.1.13",
     "@tiptap/extension-mention": "^2.1.13",

@@ -1,6 +1,4 @@
 import CharacterCount from "@tiptap/extension-character-count";
-import { Color } from "@tiptap/extension-color";
-import Highlight from "@tiptap/extension-highlight";
 import Placeholder from "@tiptap/extension-placeholder";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
@@ -10,6 +8,7 @@ import StarterKit from "@tiptap/starter-kit";
 import { Markdown } from "tiptap-markdown";
 // extensions
 import {
+  CustomBackgroundColorExtension,
   CustomCodeBlockExtension,
   CustomCodeInlineExtension,
   CustomCodeMarkPlugin,
@@ -19,6 +18,7 @@ import {
   CustomLinkExtension,
   CustomMention,
   CustomQuoteExtension,
+  CustomTextColorExtension,
   CustomTypographyExtension,
   DropHandlerExtension,
   ImageExtension,
@@ -168,8 +168,6 @@ export const CoreEditorExtensions = ({
     includeChildren: true,
   }),
   CharacterCount,
-  Color,
-  Highlight.configure({
-    multicolor: true,
-  }),
+  CustomTextColorExtension,
+  CustomBackgroundColorExtension,
 ];

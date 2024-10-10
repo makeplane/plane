@@ -1,5 +1,6 @@
 // styles
 // import "./styles/tailwind.css";
+import "src/styles/variables.css";
 import "src/styles/editor.css";
 import "src/styles/table.css";
 import "src/styles/github-dark.css";

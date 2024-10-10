@@ -16,8 +16,8 @@ type Props = {
 export const ColorDropdown: React.FC<Props> = memo((props) => {
   const { handleColorSelect, isColorActive } = props;
 
-  const activeTextColor = COLORS_LIST.find((c) => isColorActive("text-color", c.textColor));
-  const activeBackgroundColor = COLORS_LIST.find((c) => isColorActive("background-color", c.backgroundColor));
+  const activeTextColor = COLORS_LIST.find((c) => isColorActive("text-color", c.key));
+  const activeBackgroundColor = COLORS_LIST.find((c) => isColorActive("background-color", c.key));
 
   return (
     <Popover as="div" className="h-7 px-2">
@@ -47,25 +47,17 @@ export const ColorDropdown: React.FC<Props> = memo((props) => {
                   "bg-custom-background-100": !activeBackgroundColor,
                 }
               )}
-              style={
-                activeBackgroundColor
-                  ? {
-                      backgroundColor: activeBackgroundColor.backgroundColor,
-                    }
-                  : {}
-              }
+              style={{
+                backgroundColor: activeBackgroundColor ? activeBackgroundColor.backgroundColor : "transparent",
+              }}
             >
               <ALargeSmall
                 className={cn("size-3.5", {
                   "text-custom-text-100": !activeTextColor,
                 })}
-                style={
-                  activeTextColor
-                    ? {
-                        color: activeTextColor.textColor,
-                      }
-                    : {}
-                }
+                style={{
+                  color: activeTextColor ? activeTextColor.textColor : "inherit",
+                }}
               />
             </span>
           </span>
@@ -80,13 +72,13 @@ export const ColorDropdown: React.FC<Props> = memo((props) => {
           <div className="flex items-center gap-2">
             {COLORS_LIST.map((color) => (
               <button
-                key={color.textColor}
+                key={color.key}
                 type="button"
                 className="flex-shrink-0 size-6 rounded border-[0.5px] border-custom-border-400 hover:opacity-60 transition-opacity"
                 style={{
                   backgroundColor: color.textColor,
                 }}
-                onClick={() => handleColorSelect("text-color", color.textColor)}
+                onClick={() => handleColorSelect("text-color", color.key)}
               />
             ))}
             <button
@@ -103,13 +95,13 @@ export const ColorDropdown: React.FC<Props> = memo((props) => {
           <div className="flex items-center gap-2">
             {COLORS_LIST.map((color) => (
               <button
-                key={color.backgroundColor}
+                key={color.key}
                 type="button"
                 className="flex-shrink-0 size-6 rounded border-[0.5px] border-custom-border-400 hover:opacity-60 transition-opacity"
                 style={{
                   backgroundColor: color.backgroundColor,
                 }}
-                onClick={() => handleColorSelect("background-color", color.backgroundColor)}
+                onClick={() => handleColorSelect("background-color", color.key)}
               />
             ))}
             <button
