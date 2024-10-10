@@ -150,10 +150,10 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     if (!workspaceSlug || !payload.project_id) return;
 
     try {
-      let response;
+      let response: TIssue | undefined;
       // if draft issue, use draft issue store to create issue
       if (is_draft_issue) {
-        response = await draftIssues.createIssue(workspaceSlug.toString(), payload);
+        response = (await draftIssues.createIssue(workspaceSlug.toString(), payload)) as TIssue;
       }
       // if cycle id in payload does not match the cycleId in url
       // or if the moduleIds in Payload does not match the moduleId in url

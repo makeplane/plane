@@ -13,6 +13,7 @@ import {
   TProfileViews,
 } from "@plane/types";
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { EDraftIssuePaginationType } from "@/constants/workspace-drafts";
 import { useIssues } from "./store";
 
 interface IssueActions {
@@ -63,6 +64,7 @@ export const useIssuesActions = (storeType: EIssuesStoreType): IssueActions => {
     case EIssuesStoreType.GLOBAL:
       return globalIssueActions;
     case EIssuesStoreType.WORKSPACE_DRAFT:
+      //@ts-expect-error type mismatch
       return workspaceDraftIssueActions;
     case EIssuesStoreType.PROJECT:
     default:
@@ -751,45 +753,45 @@ const useWorkspaceDraftIssueActions = () => {
   const fetchIssues = useCallback(
     async (loadType: TLoader, options: IssuePaginationOptions) => {
       if (!workspaceSlug) return;
-      return issues.fetchIssues(workspaceSlug.toString(), loadType, options);
+      return issues.fetchIssues(workspaceSlug.toString(), loadType, EDraftIssuePaginationType.INIT);
     },
     [workspaceSlug, issues]
   );
 
   const fetchNextIssues = useCallback(async () => {
     if (!workspaceSlug) return;
-    return issues.fetchNextIssues(workspaceSlug.toString());
+    return issues.fetchIssues(workspaceSlug.toString(), "pagination", EDraftIssuePaginationType.NEXT);
   }, [workspaceSlug, issues]);
 
   const createIssue = useCallback(
     async (projectId: string | undefined | null, data: Partial<TIssue>) => {
       if (!workspaceSlug || !projectId) return;
-      return await issues.createWorkspaceDraftIssue(workspaceSlug, data);
+      return await issues.createIssue(workspaceSlug, data);
     },
     [issues, workspaceSlug]
   );
   const updateIssue = useCallback(
     async (projectId: string | undefined | null, issueId: string, data: Partial<TIssue>) => {
       if (!workspaceSlug || !projectId) return;
-      return await issues.updateWorkspaceDraftIssue(workspaceSlug, issueId, data);
+      return await issues.updateIssue(workspaceSlug, issueId, data);
     },
     [issues, workspaceSlug]
   );
   const removeIssue = useCallback(
     async (projectId: string | undefined | null, issueId: string) => {
       if (!workspaceSlug || !projectId) return;
-      return await issues.deleteWorkspaceDraftIssue(workspaceSlug, issueId);
+      return await issues.removeIssue(issueId);
     },
     [issues, workspaceSlug]
   );
 
-  const moveToIssue = useCallback(
-    async (workspaceSlug: string, issueId: string, data: Partial<TIssue>) => {
-      if (!workspaceSlug || !issueId || !data) return;
-      return await issues.moveToIssues(workspaceSlug, issueId, data);
-    },
-    [issues]
-  );
+  // const moveToIssue = useCallback(
+  //   async (workspaceSlug: string, issueId: string, data: Partial<TIssue>) => {
+  //     if (!workspaceSlug || !issueId || !data) return;
+  //     return await issues.moveToIssues(workspaceSlug, issueId, data);
+  //   },
+  //   [issues]
+  // );
 
   const updateFilters = useCallback(
     async (
@@ -812,8 +814,7 @@ const useWorkspaceDraftIssueActions = () => {
       updateIssue,
       removeIssue,
       updateFilters,
-      moveToIssue,
     }),
-    [fetchIssues, fetchNextIssues, createIssue, updateIssue, removeIssue, updateFilters, moveToIssue]
+    [fetchIssues, fetchNextIssues, createIssue, updateIssue, removeIssue, updateFilters]
   );
 };
