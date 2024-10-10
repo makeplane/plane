@@ -18,3 +18,5 @@ from .admin import (
     InstanceAdminSignOutEndpoint,
     InstanceAdminUserSessionEndpoint,
 )
+
+from .changelog import ChangeLogEndpoint
