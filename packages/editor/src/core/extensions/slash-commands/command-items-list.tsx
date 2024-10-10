@@ -225,7 +225,7 @@ export const getSlashCommandFilteredSections =
                   <ALargeSmall
                     className="size-3.5"
                     style={{
-                      color: `var(${color.textColorVariable})`,
+                      color: color.textColor,
                     }}
                   />
                 ),
@@ -263,7 +263,7 @@ export const getSlashCommandFilteredSections =
                 icon: <ALargeSmall className="size-3.5" />,
                 iconContainerStyle: {
                   borderRadius: "4px",
-                  backgroundColor: `var(${color.backgroundColorVariable})`,
+                  backgroundColor: color.backgroundColor,
                 },
                 command: ({ editor, range }) => toggleBackgroundColor(color.key, editor, range),
               }) as ISlashCommandItem
