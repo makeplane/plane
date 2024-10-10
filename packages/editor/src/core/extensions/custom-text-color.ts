@@ -1,5 +1,6 @@
-import { COLORS_LIST } from "@/constants/common";
 import { Extension } from "@tiptap/core";
+// constants
+import { COLORS_LIST } from "@/constants/common";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {

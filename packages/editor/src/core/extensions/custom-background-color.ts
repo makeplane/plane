@@ -1,4 +1,6 @@
 import { Extension } from "@tiptap/core";
+// constants
+import { COLORS_LIST } from "@/constants/common";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -37,12 +39,23 @@ export const CustomBackgroundColorExtension = Extension.create({
             default: null,
             parseHTML: (element: HTMLElement) => element.getAttribute("data-background-color"),
             renderHTML: (attributes: { backgroundColor: string }) => {
-              if (!attributes.backgroundColor) {
+              const { backgroundColor } = attributes;
+              if (!backgroundColor) {
                 return {};
               }
-              return {
-                "data-background-color": attributes.backgroundColor,
+
+              let elementAttributes: Record<string, string> = {
+                "data-background-color": backgroundColor,
               };
+
+              if (!COLORS_LIST.find((c) => c.key === backgroundColor)) {
+                elementAttributes = {
+                  ...elementAttributes,
+                  style: `background-color: ${backgroundColor}`,
+                };
+              }
+
+              return elementAttributes;
             },
           },
         },
