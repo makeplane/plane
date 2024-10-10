@@ -198,10 +198,10 @@ export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((pro
                     label={<span>{cycleEstimateOptions.find((v) => v.value === estimateType)?.label ?? "None"}</span>}
                     onChange={onChange}
                     maxHeight="lg"
-                    buttonClassName="border-none rounded text-sm font-medium"
+                    buttonClassName="border-none rounded text-sm font-medium capitalize"
                   >
                     {cycleEstimateOptions.map((item) => (
-                      <CustomSelect.Option key={item.value} value={item.value}>
+                      <CustomSelect.Option key={item.value} value={item.value} className="capitalize">
                         {item.label}
                       </CustomSelect.Option>
                     ))}
