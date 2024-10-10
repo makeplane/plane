@@ -22,7 +22,7 @@ export const DraftIssueBlock: FC<Props> = observer((props) => {
   // props
   const { workspaceSlug, issueId } = props;
   // hooks
-  const { getIssueById, updateIssue } = useWorkspaceDraftIssues();
+  const { getIssueById, updateIssue, deleteIssue, moveIssue } = useWorkspaceDraftIssues();
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
   const { getProjectIdentifierById } = useProject();
   // ref
@@ -86,8 +86,9 @@ export const DraftIssueBlock: FC<Props> = observer((props) => {
             <WorkspaceDraftIssueQuickActions
               parentRef={issueRef}
               issue={issue}
-              handleUpdate={async () => {}}
-              handleDelete={async () => {}}
+              handleUpdate={async (data) => updateIssue(workspaceSlug, issueId, data)}
+              handleDelete={async () => deleteIssue(workspaceSlug, issueId)}
+              handleMoveToIssues={async () => moveIssue(workspaceSlug, issueId, issue)}
             />
           </div>
         </div>
@@ -114,8 +115,9 @@ export const DraftIssueBlock: FC<Props> = observer((props) => {
             <WorkspaceDraftIssueQuickActions
               parentRef={issueRef}
               issue={issue}
-              handleUpdate={async () => {}}
-              handleDelete={async () => {}}
+              handleUpdate={async (data) => updateIssue(workspaceSlug, issueId, data)}
+              handleDelete={async () => deleteIssue(workspaceSlug, issueId)}
+              handleMoveToIssues={async () => moveIssue(workspaceSlug, issueId, issue)}
             />
           </div>
         </div>

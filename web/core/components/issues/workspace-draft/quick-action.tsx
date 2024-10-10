@@ -7,7 +7,7 @@ import { observer } from "mobx-react";
 // icons
 import { Copy, Pencil, SquareStackIcon, Trash2 } from "lucide-react";
 // types
-import { TIssue, TWorkspaceDraftIssue } from "@plane/types";
+import { TWorkspaceDraftIssue } from "@plane/types";
 // ui
 import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 // components
@@ -22,7 +22,7 @@ import { WorkspaceDraftIssueDeleteIssueModal } from "./delete-modal";
 export interface IQuickActionProps {
   issue: TWorkspaceDraftIssue;
   handleDelete: () => Promise<void>;
-  handleUpdate?: (data: TIssue) => Promise<void>;
+  handleUpdate: (payload: Partial<TWorkspaceDraftIssue>) => Promise<TWorkspaceDraftIssue | undefined>;
   handleMoveToIssues?: () => Promise<void>;
   customActionButton?: React.ReactElement;
   portalElement?: HTMLDivElement | null;
@@ -105,9 +105,9 @@ export const WorkspaceDraftIssueQuickActions: React.FC<IQuickActionProps> = obse
         }}
         data={issueToEdit ?? duplicateIssuePayload}
         onSubmit={async (data) => {
-          if (issueToEdit && handleUpdate) await handleUpdate(data);
+          if (issueToEdit && handleUpdate) await handleUpdate(data as TWorkspaceDraftIssue);
         }}
-        storeType={EIssuesStoreType.DRAFT}
+        storeType={EIssuesStoreType.WORKSPACE_DRAFT}
         isDraft
       />
       <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
