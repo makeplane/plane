@@ -435,13 +435,7 @@ class ModuleViewSet(BaseViewSet):
             )
         return Response(modules, status=status.HTTP_200_OK)
 
-    allow_permission(
-        [
-            ROLE.ADMIN,
-            ROLE.MEMBER,
-        ]
-    )
-
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def retrieve(self, request, slug, project_id, pk):
         queryset = (
             self.get_queryset()
@@ -672,7 +666,13 @@ class ModuleViewSet(BaseViewSet):
             "labels": label_distribution,
             "completion_chart": {},
         }
-        if modules and modules.start_date and modules.target_date:
+
+        if (
+            modules
+            and modules.start_date
+            and modules.target_date
+            and modules.total_issues > 0
+        ):
             data["distribution"]["completion_chart"] = burndown_plot(
                 queryset=modules,
                 slug=slug,
