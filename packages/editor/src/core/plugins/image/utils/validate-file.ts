@@ -18,7 +18,7 @@ export const isFileValid = (args: TArgs): boolean => {
   }
 
   if (file.size > maxFileSize) {
-    alert("File size too large. Please select a file smaller than 5MB.");
+    alert(`File size too large. Please select a file smaller than ${maxFileSize / 1024 / 1024}MB.`);
     return false;
   }
 

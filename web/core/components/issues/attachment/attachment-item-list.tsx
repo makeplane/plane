@@ -62,11 +62,14 @@ export const IssueAttachmentItemList: FC<TIssueAttachmentItemList> = observer((p
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
-        message: totalAttachedFiles > 1 ? "Only one file can be uploaded at a time." : "File must be 5MB or less.",
+        message:
+          totalAttachedFiles > 1
+            ? "Only one file can be uploaded at a time."
+            : `File must be of ${maxFileSize / 1024 / 1024}MB or less in size.`,
       });
       return;
     },
-    [handleAttachmentOperations, workspaceSlug]
+    [handleAttachmentOperations, maxFileSize, workspaceSlug]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
