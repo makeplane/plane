@@ -207,14 +207,11 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
 
   updateIssue = async (workspaceSlug: string, issueId: string, payload: Partial<TWorkspaceDraftIssue>) => {
     try {
-      this.loader = "create";
+      this.loader = "update";
 
       const response = await workspaceDraftService.updateIssue(workspaceSlug, issueId, payload);
       if (response) {
-        runInAction(() => {
-          if (!this.issuesMap[response.id]) set(this.issuesMap, response.id, response);
-          else update(this.issuesMap, response.id, (prevIssue) => ({ ...prevIssue, ...response }));
-        });
+        runInAction(() => update(this.issuesMap, response.id, (prevIssue) => ({ ...prevIssue, ...response })));
       }
 
       this.loader = undefined;
@@ -230,7 +227,7 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
       this.loader = "delete";
 
       const response = await workspaceDraftService.deleteIssue(workspaceSlug, issueId);
-      runInAction(() => {});
+      runInAction(() => unset(this.issuesMap, issueId));
 
       this.loader = undefined;
       return response;
@@ -245,9 +242,7 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
       this.loader = "move";
 
       const response = await workspaceDraftService.moveIssue(workspaceSlug, issueId, payload);
-
-      // remove the issue from the draft issues list and fetch the issue from the issue list
-      runInAction(() => {});
+      runInAction(() => unset(this.issuesMap, issueId));
 
       this.loader = undefined;
       return response;
@@ -260,11 +255,7 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
   addCycleToIssue = async (workspaceSlug: string, issueId: string, cycleId: string) => {
     try {
       this.loader = "update";
-
-      const response = this.updateIssue(workspaceSlug, issueId, { cycle_id: cycleId });
-      runInAction(() => {});
-
-      this.loader = undefined;
+      const response = await this.updateIssue(workspaceSlug, issueId, { cycle_id: cycleId });
       return response;
     } catch (error) {
       this.loader = undefined;
@@ -275,11 +266,7 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
   addModulesToIssue = async (workspaceSlug: string, issueId: string, moduleIds: string[]) => {
     try {
       this.loader = "update";
-
       const response = this.updateIssue(workspaceSlug, issueId, { module_ids: moduleIds });
-      runInAction(() => {});
-
-      this.loader = undefined;
       return response;
     } catch (error) {
       this.loader = undefined;
