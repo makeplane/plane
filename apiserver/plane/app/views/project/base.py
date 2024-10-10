@@ -612,22 +612,42 @@ class ProjectViewSet(BaseViewSet):
             )
 
     def destroy(self, request, slug, pk):
-        project = Project.objects.get(pk=pk)
-        project.delete()
+        if (
+            WorkspaceMember.objects.filter(
+                member=request.user,
+                workspace__slug=slug,
+                is_active=True,
+                role=20,
+            ).exists()
+            or ProjectMember.objects.filter(
+                member=request.user,
+                workspace__slug=slug,
+                project_id=pk,
+                role=20,
+                is_active=True,
+            ).exists()
+        ):
+            project = Project.objects.get(pk=pk)
+            project.delete()
 
-        # Delete the project members
-        DeployBoard.objects.filter(
-            project_id=pk,
-            workspace__slug=slug,
-        ).delete()
+            # Delete the project members
+            DeployBoard.objects.filter(
+                project_id=pk,
+                workspace__slug=slug,
+            ).delete()
 
-        # Delete the user favorite
-        UserFavorite.objects.filter(
-            project_id=pk,
-            workspace__slug=slug,
-        ).delete()
+            # Delete the user favorite
+            UserFavorite.objects.filter(
+                project_id=pk,
+                workspace__slug=slug,
+            ).delete()
 
-        return Response(status=status.HTTP_204_NO_CONTENT)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(
+                {"error": "You don't have the required permissions."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
 
 class ProjectArchiveUnarchiveEndpoint(BaseAPIView):
@@ -806,7 +826,9 @@ class ProjectPublicCoverImagesEndpoint(BaseAPIView):
         # Extracting file keys from the response
         if "Contents" in response:
             for content in response["Contents"]:
-                if not content["Key"].endswith(
+                if not content[
+                    "Key"
+                ].endswith(
                     "/"
                 ):  # This line ensures we're only getting files, not "sub-folders"
                     files.append(
