@@ -37,6 +37,7 @@ export const WorkspaceDraftIssueLayoutRoot = observer(() => {
       <div className="relative flex h-full w-full flex-col overflow-hidden">
         <div className="relative h-full w-full overflow-auto">
           <BaseListRoot
+            //@ts-expect-error type mismatch
             QuickActions={WorkspaceDraftIssueQuickActions}
             canEditPropertiesBasedOnProject={canEditProperties}
           />

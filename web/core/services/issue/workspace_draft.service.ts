@@ -1,4 +1,4 @@
-import { TWorkspaceDraftIssue, TWorkspaceDraftPaginationInfo } from "@plane/types";
+import { TIssue, TWorkspaceDraftIssue, TWorkspaceDraftPaginationInfo } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
@@ -30,7 +30,7 @@ export class WorkspaceDraftService extends APIService {
 
   async createIssue(
     workspaceSlug: string,
-    payload: Partial<TWorkspaceDraftIssue>
+    payload: Partial<TWorkspaceDraftIssue | TIssue>
   ): Promise<TWorkspaceDraftIssue | undefined> {
     return this.post(`/api/workspaces/${workspaceSlug}/draft-issues/`, payload)
       .then((response) => response?.data)
@@ -42,7 +42,7 @@ export class WorkspaceDraftService extends APIService {
   async updateIssue(
     workspaceSlug: string,
     issueId: string,
-    payload: Partial<TWorkspaceDraftIssue>
+    payload: Partial<TWorkspaceDraftIssue | TIssue>
   ): Promise<TWorkspaceDraftIssue | undefined> {
     return this.patch(`/api/workspaces/${workspaceSlug}/draft-issues/${issueId}/`, payload)
       .then((response) => response?.data)
