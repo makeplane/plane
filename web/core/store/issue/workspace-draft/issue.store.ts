@@ -17,6 +17,7 @@ import { getCurrentDateTimeInISO, convertToISODateString } from "@/helpers/date-
 // services
 import workspaceDraftService from "@/services/issue/workspace_draft.service";
 import { IIssueDetail } from "../issue-details/root.store";
+import { clone } from "lodash";
 
 export type TDraftIssuePaginationType = EDraftIssuePaginationType;
 
@@ -206,18 +207,21 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
   };
 
   updateIssue = async (workspaceSlug: string, issueId: string, payload: Partial<TWorkspaceDraftIssue>) => {
+    const issueBeforeUpdate = clone(this.getIssueById(issueId));
     try {
       this.loader = "update";
-
+      runInAction(() => {
+        set(this.issuesMap, [issueId, "updated_at"], getCurrentDateTimeInISO());
+        set(this.issuesMap, [issueId], { ...issueBeforeUpdate, ...payload });
+      });
       const response = await workspaceDraftService.updateIssue(workspaceSlug, issueId, payload);
-      if (response) {
-        runInAction(() => update(this.issuesMap, response.id, (prevIssue) => ({ ...prevIssue, ...response })));
-      }
-
       this.loader = undefined;
       return response;
     } catch (error) {
       this.loader = undefined;
+      runInAction(() => {
+        set(this.issuesMap, [issueId], issueBeforeUpdate);
+      });
       throw error;
     }
   };
