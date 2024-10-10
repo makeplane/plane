@@ -6,6 +6,7 @@ import { TIssue } from "@plane/types";
 import { persistence } from "@/local-db/storage.sqlite";
 // services
 import { IssueArchiveService, IssueDraftService, IssueService } from "@/services/issue";
+import { WorkspaceDraftService } from "@/services/workspace-draft.service";
 // types
 import { IIssueDetail } from "./root.store";
 
@@ -49,6 +50,7 @@ export class IssueStore implements IIssueStore {
   issueService;
   issueArchiveService;
   issueDraftService;
+  workspaceDraftService;
 
   constructor(rootStore: IIssueDetail) {
     makeObservable(this, {
@@ -61,6 +63,7 @@ export class IssueStore implements IIssueStore {
     this.issueService = new IssueService();
     this.issueArchiveService = new IssueArchiveService();
     this.issueDraftService = new IssueDraftService();
+    this.workspaceDraftService = new WorkspaceDraftService();
   }
 
   getIsFetchingIssueDetails = computedFn((issueId: string | undefined) => {
@@ -101,8 +104,7 @@ export class IssueStore implements IIssueStore {
 
     if (issueType === "ARCHIVED")
       issue = await this.issueArchiveService.retrieveArchivedIssue(workspaceSlug, projectId, issueId, query);
-    else if (issueType === "DRAFT")
-      issue = await this.issueDraftService.getDraftIssueById(workspaceSlug, projectId, issueId, query);
+    else if (issueType === "DRAFT") issue = await this.workspaceDraftService.getDraftIssueById(workspaceSlug, issueId);
     else issue = await this.issueService.retrieve(workspaceSlug, projectId, issueId, query);
 
     if (!issue) throw new Error("Issue not found");

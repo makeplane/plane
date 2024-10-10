@@ -8,7 +8,7 @@ export const IssuesStoreContext = createContext<EIssuesStoreType | undefined>(un
 export const useIssueStoreType = () => {
   const storeType = useContext(IssuesStoreContext);
 
-  const { globalViewId, viewId, projectId, cycleId, moduleId, userId } = useParams();
+  const { globalViewId, viewId, projectId, cycleId, moduleId, userId, workspaceSlug } = useParams();
 
   // If store type exists in context, use that store type
   if (storeType) return storeType;
@@ -25,6 +25,8 @@ export const useIssueStoreType = () => {
   if (moduleId) return EIssuesStoreType.MODULE;
 
   if (projectId) return EIssuesStoreType.PROJECT;
+
+  if(workspaceSlug) return EIssuesStoreType.WORKSPACE_DRAFT
 
   return EIssuesStoreType.PROJECT;
 };

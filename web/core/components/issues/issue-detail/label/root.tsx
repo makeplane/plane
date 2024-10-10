@@ -13,6 +13,8 @@ import { LabelList, LabelCreate, IssueLabelSelectRoot } from "./";
 // TODO: Fix this import statement, as core should not import from ee
 // eslint-disable-next-line import/order
 import { EUserPermissions, EUserPermissionsLevel } from "ee/constants/user-permissions";
+import { useIssuesActions } from "@/hooks/use-issues-actions";
+import { EIssuesStoreType } from "@/constants/issue";
 
 export type TIssueLabel = {
   workspaceSlug: string;
@@ -21,6 +23,7 @@ export type TIssueLabel = {
   disabled: boolean;
   isInboxIssue?: boolean;
   onLabelUpdate?: (labelIds: string[]) => void;
+  isDraft?: boolean;
 };
 
 export type TLabelOperations = {
@@ -29,7 +32,15 @@ export type TLabelOperations = {
 };
 
 export const IssueLabel: FC<TIssueLabel> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, disabled = false, isInboxIssue = false, onLabelUpdate } = props;
+  const {
+    workspaceSlug,
+    projectId,
+    issueId,
+    disabled = false,
+    isInboxIssue = false,
+    onLabelUpdate,
+    isDraft = false,
+  } = props;
   // hooks
   const { updateIssue } = useIssueDetail();
   const { createLabel } = useLabel();
@@ -41,13 +52,17 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
 
   const canCreateLabel = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
   const issue = isInboxIssue ? getIssueInboxByIssueId(issueId)?.issue : getIssueById(issueId);
+  const { updateIssue: updateDraftIssue } = useIssuesActions(EIssuesStoreType.WORKSPACE_DRAFT);
 
   const labelOperations: TLabelOperations = useMemo(
     () => ({
       updateIssue: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
         try {
           if (onLabelUpdate) onLabelUpdate(data.label_ids || []);
-          else await updateIssue(workspaceSlug, projectId, issueId, data);
+          else
+            isDraft
+              ? await (updateDraftIssue && updateDraftIssue(projectId, issueId, data))
+              : await updateIssue(workspaceSlug, projectId, issueId, data);
         } catch (error) {
           setToast({
             title: "Error!",

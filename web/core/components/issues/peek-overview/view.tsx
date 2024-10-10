@@ -32,6 +32,7 @@ interface IIssueView {
   embedIssue?: boolean;
   embedRemoveCurrentNotification?: () => void;
   issueOperations: TIssueOperations;
+  isDraft?:boolean;
 }
 
 export const IssueView: FC<IIssueView> = observer((props) => {
@@ -46,6 +47,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     embedIssue = false,
     embedRemoveCurrentNotification,
     issueOperations,
+    isDraft=false
   } = props;
   // states
   const [peekMode, setPeekMode] = useState<TPeekModes>("side-peek");
@@ -171,6 +173,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                   isSubmitting={isSubmitting}
                   disabled={disabled}
                   embedIssue={embedIssue}
+                  isDraft={isDraft}
                 />
                 {/* content */}
                 <div className="vertical-scrollbar scrollbar-md relative h-full w-full overflow-hidden overflow-y-auto">
@@ -186,15 +189,16 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         isSubmitting={isSubmitting}
                         setIsSubmitting={(value) => setIsSubmitting(value)}
                       />
-
-                      <div className="py-2">
-                        <IssueDetailWidgets
-                          workspaceSlug={workspaceSlug}
-                          projectId={projectId}
-                          issueId={issueId}
-                          disabled={disabled || is_archived}
-                        />
-                      </div>
+                      {!isDraft &&(
+                        <div className="py-2">
+                          <IssueDetailWidgets
+                            workspaceSlug={workspaceSlug}
+                            projectId={projectId}
+                            issueId={issueId}
+                            disabled={disabled || is_archived}
+                          />
+                        </div>                      
+                      )}
 
                       <PeekOverviewProperties
                         workspaceSlug={workspaceSlug}
@@ -202,14 +206,16 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         issueId={issueId}
                         issueOperations={issueOperations}
                         disabled={disabled || is_archived}
+                        isDraft={isDraft}
                       />
-
-                      <IssueActivity
-                        workspaceSlug={workspaceSlug}
-                        projectId={projectId}
-                        issueId={issueId}
-                        disabled={is_archived}
-                      />
+                      {!isDraft &&(
+                        <IssueActivity
+                          workspaceSlug={workspaceSlug}
+                          projectId={projectId}
+                          issueId={issueId}
+                          disabled={is_archived}
+                        />
+                      )}
                     </div>
                   ) : (
                     <div className="vertical-scrollbar flex h-full w-full overflow-auto">

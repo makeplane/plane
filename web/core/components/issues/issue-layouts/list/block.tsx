@@ -40,6 +40,7 @@ interface IssueBlockProps {
   isCurrentBlockDragging: boolean;
   setIsCurrentBlockDragging: React.Dispatch<React.SetStateAction<boolean>>;
   canDrag: boolean;
+  isDraft?:boolean;
 }
 
 export const IssueBlock = observer((props: IssueBlockProps) => {
@@ -59,6 +60,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
     isCurrentBlockDragging,
     setIsCurrentBlockDragging,
     canDrag,
+    isDraft = false,
   } = props;
   // ref
   const issueRef = useRef<HTMLDivElement | null>(null);
@@ -265,6 +267,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
                 updateIssue={updateIssue}
                 displayProperties={displayProperties}
                 activeLayout="List"
+                isDraft={isDraft}
               />
               <div
                 className={cn("hidden", {

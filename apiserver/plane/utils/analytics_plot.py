@@ -163,7 +163,7 @@ def burndown_plot(
         if queryset.end_date and queryset.start_date:
             # Get all dates between the two dates
             date_range = [
-                queryset.start_date + timedelta(days=x)
+                (queryset.start_date + timedelta(days=x)).date()
                 for x in range(
                     (queryset.end_date - queryset.start_date).days + 1
                 )
@@ -203,7 +203,7 @@ def burndown_plot(
     if module_id:
         # Get all dates between the two dates
         date_range = [
-            queryset.start_date + timedelta(days=x)
+            (queryset.start_date + timedelta(days=x)).date()
             for x in range(
                 (queryset.target_date - queryset.start_date).days + 1
             )

@@ -604,7 +604,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
             pk=cycle_id, project_id=project_id, workspace__slug=slug
         )
 
-        if cycle.end_date >= timezone.now().date():
+        if cycle.end_date >= timezone.now():
             return Response(
                 {"error": "Only completed cycles can be archived"},
                 status=status.HTTP_400_BAD_REQUEST,

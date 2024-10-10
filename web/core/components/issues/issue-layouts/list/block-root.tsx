@@ -39,6 +39,7 @@ type Props = {
   isParentIssueBeingDragged?: boolean;
   isLastChild?: boolean;
   shouldRenderByDefault?: boolean;
+  isDraft?: boolean;
 };
 
 export const IssueBlockRoot: FC<Props> = observer((props) => {
@@ -59,6 +60,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
     isLastChild = false,
     selectionHelpers,
     shouldRenderByDefault,
+    isDraft = false,
   } = props;
   // states
   const [isExpanded, setExpanded] = useState<boolean>(false);
@@ -150,6 +152,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
           canDrag={!isSubIssue && isDragAllowed}
           isCurrentBlockDragging={isParentIssueBeingDragged || isCurrentBlockDragging}
           setIsCurrentBlockDragging={setIsCurrentBlockDragging}
+          isDraft={isDraft}
         />
       </RenderIfVisible>
 

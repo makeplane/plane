@@ -2,7 +2,7 @@
 
 import { linearGradientDef } from "@nivo/core";
 // icons
-import { BarChart2, Briefcase, Home, Inbox, Layers } from "lucide-react";
+import { BarChart2, Briefcase, Home, Inbox, Layers, PenSquare } from "lucide-react";
 // types
 import { TIssuesListTypes, TStateGroups } from "@plane/types";
 // ui
@@ -328,5 +328,13 @@ export const SIDEBAR_USER_MENU_ITEMS: {
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
     highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/notifications/`),
     Icon: Inbox,
+  },
+  {
+    key: "drafts",
+    label: "Drafts",
+    href: `/drafts`,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/drafts/`),
+    Icon: PenSquare,
   },
 ];
