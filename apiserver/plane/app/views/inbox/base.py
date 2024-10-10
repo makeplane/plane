@@ -323,7 +323,7 @@ class InboxIssueViewSet(BaseViewSet):
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=Issue)
     def partial_update(self, request, slug, project_id, pk):
         inbox_id = Inbox.objects.filter(
             workspace__slug=slug, project_id=project_id
@@ -418,7 +418,7 @@ class InboxIssueViewSet(BaseViewSet):
                 )
 
         # Only project admins and members can edit inbox issue attributes
-        if project_member.role > 5:
+        if project_member.role > 15:
             serializer = InboxIssueSerializer(
                 inbox_issue, data=request.data, partial=True
             )

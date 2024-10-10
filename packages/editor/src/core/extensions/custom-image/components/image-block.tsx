@@ -201,8 +201,10 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
   // show the image loader if the remote image's src or preview image from filesystem is not set yet (while loading the image post upload) (or)
   // if the initial resize (from 35% width and "auto" height attrs to the actual size in px) is not complete
   const showImageLoader = !(remoteImageSrc || imageFromFileSystem) || !initialResizeComplete;
-  // show the image utils only if the editor is editable, the remote image's (post upload) src is set and the initial resize is complete (but not while we're showing the preview imageFromFileSystem)
-  const showImageUtils = editor.isEditable && remoteImageSrc && initialResizeComplete;
+  // show the image utils only if the remote image's (post upload) src is set and the initial resize is complete (but not while we're showing the preview imageFromFileSystem)
+  const showImageUtils = remoteImageSrc && initialResizeComplete;
+  // show the image resizer only if the editor is editable, the remote image's (post upload) src is set and the initial resize is complete (but not while we're showing the preview imageFromFileSystem)
+  const showImageResizer = editor.isEditable && remoteImageSrc && initialResizeComplete;
   // show the preview image from the file system if the remote image's src is not set
   const displayedImageSrc = remoteImageSrc ?? imageFromFileSystem;
 
@@ -258,7 +260,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
       {selected && displayedImageSrc === remoteImageSrc && (
         <div className="absolute inset-0 size-full bg-custom-primary-500/30" />
       )}
-      {showImageUtils && (
+      {showImageResizer && (
         <>
           <div
             className={cn(
