@@ -38,7 +38,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
   const { projectPermissionsByWorkspaceSlugAndProjectId } = useUserPermissions();
   const { getProjectById } = useProject();
   //derived values
-  const isGuest = projectPermissionsByWorkspaceSlugAndProjectId(workspaceSlug, projectId) === EUserPermissions.GUEST;
+  const isGuest = (projectPermissionsByWorkspaceSlugAndProjectId(workspaceSlug, projectId) ?? EUserPermissions.GUEST) === EUserPermissions.GUEST;
   const isWorklogButtonEnabled = !isIntakeIssue && !isGuest;
   // state
   const [selectedFilters, setSelectedFilters] = useState<TActivityFilters[]>(defaultActivityFilters);
