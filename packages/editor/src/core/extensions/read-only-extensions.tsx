@@ -1,4 +1,6 @@
 import CharacterCount from "@tiptap/extension-character-count";
+import { Color } from "@tiptap/extension-color";
+import Highlight from "@tiptap/extension-highlight";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import TextStyle from "@tiptap/extension-text-style";
@@ -121,6 +123,10 @@ export const CoreReadOnlyEditorExtensions = (props: Props) => {
       readonly: true,
     }),
     CharacterCount,
+    Color,
+    Highlight.configure({
+      multicolor: true,
+    }),
     HeadingListExtension,
   ];
 };

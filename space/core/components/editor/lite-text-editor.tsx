@@ -1,6 +1,6 @@
 import React from "react";
 // editor
-import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef } from "@plane/editor";
+import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef, TNonColorEditorCommands } from "@plane/editor";
 // components
 import { IssueCommentToolbar } from "@/components/editor";
 // helpers
@@ -56,7 +56,9 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
       <IssueCommentToolbar
         executeCommand={(key) => {
           if (isMutableRefObject<EditorRefApi>(ref)) {
-            ref.current?.executeMenuItemCommand(key);
+            ref.current?.executeMenuItemCommand({
+              itemKey: key as TNonColorEditorCommands,
+            });
           }
         }}
         isSubmitting={isSubmitting}
