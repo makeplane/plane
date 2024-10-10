@@ -30,6 +30,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.app.permissions import (
     ProjectEntityPermission,
+    ProjectLitePermission,
     allow_permission,
     ROLE,
 )
@@ -317,13 +318,12 @@ class ModuleViewSet(BaseViewSet):
             .order_by("-is_favorite", "-created_at")
         )
 
-    allow_permission(
+    @allow_permission(
         [
             ROLE.ADMIN,
             ROLE.MEMBER,
         ]
     )
-
     def create(self, request, slug, project_id):
         project = Project.objects.get(workspace__slug=slug, pk=project_id)
         serializer = ModuleWriteSerializer(
@@ -386,8 +386,7 @@ class ModuleViewSet(BaseViewSet):
             return Response(module, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
-
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
         queryset = self.get_queryset().filter(archived_at__isnull=True)
         if self.fields:
@@ -838,6 +837,9 @@ class ModuleLinkViewSet(BaseViewSet):
 
 class ModuleFavoriteViewSet(BaseViewSet):
     model = UserFavorite
+    permission_classes = [
+        ProjectLitePermission,
+    ]
 
     def get_queryset(self):
         return self.filter_queryset(
