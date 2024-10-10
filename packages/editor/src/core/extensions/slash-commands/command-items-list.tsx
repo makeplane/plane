@@ -225,7 +225,7 @@ export const getSlashCommandFilteredSections =
                   <ALargeSmall
                     className="size-3.5"
                     style={{
-                      color: color.key,
+                      color: `var(${color.textColorVariable})`,
                     }}
                   />
                 ),
@@ -257,13 +257,13 @@ export const getSlashCommandFilteredSections =
               ({
                 commandKey: "background-color",
                 key: `background-color-${color.key}`,
-                title: `${color.label} background`,
+                title: color.label,
                 description: "Change background color",
                 searchTerms: ["color", "bg", "background", color.label],
                 icon: <ALargeSmall className="size-3.5" />,
                 iconContainerStyle: {
                   borderRadius: "4px",
-                  backgroundColor: color.key,
+                  backgroundColor: `var(${color.backgroundColorVariable})`,
                 },
                 command: ({ editor, range }) => toggleBackgroundColor(color.key, editor, range),
               }) as ISlashCommandItem
