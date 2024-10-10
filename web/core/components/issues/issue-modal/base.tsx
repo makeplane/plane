@@ -50,7 +50,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   const { fetchModuleDetails } = useModule();
   const { issues } = useIssues(storeType);
   const { issues: projectIssues } = useIssues(EIssuesStoreType.PROJECT);
-  const { issues: draftIssues } = useIssues(EIssuesStoreType.DRAFT);
+  const { issues: draftIssues } = useIssues(EIssuesStoreType.WORKSPACE_DRAFT);
   const { fetchIssue } = useIssueDetail();
   const { handleCreateUpdatePropertyValues } = useIssueModal();
   // pathname
@@ -70,7 +70,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     if (!workspaceSlug) return;
 
     if (!projectId || issueId === undefined || !fetchIssueDetails) {
-    // Set description to the issue description from the props if available
+      // Set description to the issue description from the props if available
       setDescription(data?.description_html || "<p></p>");
       return;
     }
@@ -151,10 +151,9 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
 
     try {
       let response;
-
       // if draft issue, use draft issue store to create issue
       if (is_draft_issue) {
-        response = await draftIssues.createIssue(workspaceSlug.toString(), payload.project_id, payload);
+        response = await draftIssues.createIssue(workspaceSlug.toString(), payload);
       }
       // if cycle id in payload does not match the cycleId in url
       // or if the moduleIds in Payload does not match the moduleId in url
@@ -213,8 +212,8 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
         payload: { ...response, state: "SUCCESS" },
         path: pathname,
       });
-      !createMore && handleClose();
-      if (createMore) issueTitleRef && issueTitleRef?.current?.focus();
+      if (!createMore) handleClose();
+      if (createMore && issueTitleRef) issueTitleRef?.current?.focus();
       setDescription("<p></p>");
       setChangesMade(null);
       return response;
@@ -237,9 +236,8 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     if (!workspaceSlug || !payload.project_id || !data?.id) return;
 
     try {
-      isDraft
-        ? await draftIssues.updateIssue(workspaceSlug.toString(), payload.project_id, data.id, payload)
-        : updateIssue && (await updateIssue(payload.project_id, data.id, payload));
+      if (isDraft) await draftIssues.updateIssue(workspaceSlug.toString(), data.id, payload);
+      else if (updateIssue) await updateIssue(payload.project_id, data.id, payload);
 
       // add other property values
       await handleCreateUpdatePropertyValues({
@@ -260,6 +258,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       });
       handleClose();
     } catch (error) {
+      console.error(error);
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
@@ -314,7 +313,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
           issueTitleRef={issueTitleRef}
           onChange={handleFormChange}
           onClose={handleClose}
-          onSubmit={handleFormSubmit}
+          onSubmit={(payload) => handleFormSubmit(payload, isDraft)}
           projectId={activeProjectId}
           isCreateMoreToggleEnabled={createMore}
           onCreateMoreToggleChange={handleCreateMoreToggleChange}
@@ -332,7 +331,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
           onClose={() => handleClose(false)}
           isCreateMoreToggleEnabled={createMore}
           onCreateMoreToggleChange={handleCreateMoreToggleChange}
-          onSubmit={handleFormSubmit}
+          onSubmit={(payload) => handleFormSubmit(payload, isDraft)}
           projectId={activeProjectId}
           isDraft={isDraft}
         />
