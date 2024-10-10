@@ -5,33 +5,63 @@ import { getDate } from "@/helpers/date-time.helper";
 
 type TIntersection = { x: number; y: number; line1isHigher: boolean; line1isHigherNext: boolean };
 
-export const getColors = (resolvedTheme: string | undefined) => ({
-  cartesianLines: resolvedTheme?.includes("dark") ? "#212631" : "#f5f5f5",
-  axisLines: resolvedTheme?.includes("dark") ? "#3D475C" : "#C2C8D6",
-  axisText: resolvedTheme?.includes("dark") ? "#667699" : "#666",
-  timeLeft: resolvedTheme?.includes("dark") ? "#000D29" : "#E0EAFF",
-  timeLeftStroke: resolvedTheme?.includes("dark") ? "#212631" : "#E0EAFF",
-  beyondTime: resolvedTheme?.includes("dark") ? "#330000" : "#FFE5E5",
-  beyondTimeStroke: resolvedTheme?.includes("dark") ? "#990000" : "#FF9999",
-  idealStroke: resolvedTheme?.includes("dark") ? "#001F66" : "#B8CEFF",
-  diffRed: resolvedTheme?.includes("dark") ? "#1A0000" : "#FFE5E5",
-  diffGreen: resolvedTheme?.includes("dark") ? "#082B10" : "#D4F7DC",
-  startedStroke: resolvedTheme?.includes("dark") ? "#FFD500" : "#FF9500",
-  startedArea: resolvedTheme?.includes("dark") ? "#FFAA33" : "#FF9500",
-  todayLine: resolvedTheme?.includes("dark") ? "#C8CEDA" : "black",
-  scopeStroke: resolvedTheme?.includes("dark") ? "#004EFF" : "rgba(var(--color-primary-100))",
-  scopeArea: resolvedTheme?.includes("dark") ? "#3E63DD" : "rgba(var(--color-primary-100))",
-});
+export const getColors = (resolvedTheme: string | undefined) => {
+  if (resolvedTheme?.includes("dark"))
+    return {
+      cartesianLines: "#212631",
+      axisLines: "#3D475C",
+      axisText: "#667699",
+      timeLeft: "#000D29",
+      timeLeftStroke: "#212631",
+      beyondTime: "#330000",
+      beyondTimeStroke: "#990000",
+      idealStroke: "#001F66",
+      diffRed: "#1A0000",
+      diffGreen: "#082B10",
+      startedStroke: "#FFD500",
+      startedArea: "#FFAA33",
+      todayLine: "#C8CEDA",
+      scopeStroke: "#004EFF",
+      scopeArea: "#3E63DD",
+      actual: "#26D950",
+    };
+  else
+    return {
+      cartesianLines: "#f5f5f5",
+      axisLines: "#C2C8D6",
+      axisText: "#666",
+      timeLeft: "#E0EAFF",
+      timeLeftStroke: "#E0EAFF",
+      beyondTime: "#FFE5E5",
+      beyondTimeStroke: "#FF9999",
+      idealStroke: "#B8CEFF",
+      diffRed: "#FFE5E5",
+      diffGreen: "#D4F7DC",
+      startedStroke: "#FF9500",
+      startedArea: "#FF9500",
+      todayLine: "black",
+      scopeStroke: "rgba(var(--color-primary-100))",
+      scopeArea: "rgba(var(--color-primary-100))",
+      actual: "#26D950",
+    };
+};
 
 const getIntersectionColor = (
   _intersection: TIntersection | boolean,
   colors: { diffGreen: string; diffRed: string },
+  plotType: string,
   isLast = false
 ) => {
-  if (isLast) {
-    return (_intersection as TIntersection).line1isHigherNext ? colors.diffGreen : colors.diffRed;
-  }
-  return (_intersection as TIntersection).line1isHigher ? colors.diffGreen : colors.diffRed;
+  const isLineHigher = isLast
+    ? (_intersection as TIntersection).line1isHigherNext
+    : (_intersection as TIntersection).line1isHigher;
+  return isLineHigher
+    ? plotType === "burndown"
+      ? colors.diffRed
+      : colors.diffGreen
+    : plotType === "burnup"
+      ? colors.diffRed
+      : colors.diffGreen;
 };
 
 // line intercept math by Paul Bourke http://paulbourke.net/geometry/pointlineplane/
@@ -72,6 +102,7 @@ export const maxScope = (data: TProgressChartData) => Math.max(...data.map((d) =
 export const chartHelper = (
   data: TProgressChartData,
   endDate: Date,
+  plotType: string,
   colors: { diffGreen: string; diffRed: string }
 ) => {
   // Get today's date
@@ -97,7 +128,10 @@ export const chartHelper = (
       i === intersections.length - 1 || (d as TIntersection).x !== (intersections[i - 1] as TIntersection)?.x
   );
 
-  console.log("colors", colors);
+  const isAhead =
+    (plotType === "burndown" && data[0]?.actual < data[0]?.ideal) ||
+    (plotType === "burnup" && data[0]?.actual > data[0]?.ideal);
+
   const diffGradient = filteredIntersections.length ? (
     filteredIntersections.map((intersection, i: number) => {
       const nextIntersection = filteredIntersections[i + 1];
@@ -108,11 +142,11 @@ export const chartHelper = (
       const isLast = i === filteredIntersections.length - 1;
 
       if (isLast) {
-        closeColor = getIntersectionColor(intersection, colors);
-        startColor = getIntersectionColor(intersection, colors, true);
+        closeColor = getIntersectionColor(intersection, colors, plotType);
+        startColor = getIntersectionColor(intersection, colors, plotType, true);
       } else {
-        closeColor = getIntersectionColor(intersection, colors);
-        startColor = getIntersectionColor(nextIntersection, colors);
+        closeColor = getIntersectionColor(intersection, colors, plotType);
+        startColor = getIntersectionColor(nextIntersection, colors, plotType);
       }
 
       const offset =
@@ -126,7 +160,7 @@ export const chartHelper = (
       );
     })
   ) : (
-    <stop offset={0} stopColor={data[0]?.actual > data[0]?.ideal ? colors.diffGreen : colors.diffRed} />
+    <stop offset={0} stopColor={isAhead ? colors.diffGreen : colors.diffRed} />
   );
 
   return { diffGradient, dataWithRange };

@@ -1,7 +1,6 @@
 import { observer } from "mobx-react";
 import { cn } from "@plane/editor";
 import { TCycleEstimateType, TCyclePlotType } from "@plane/types";
-import { EEstimateSystem } from "@plane/types/src/enums";
 import { CustomSelect, Row } from "@plane/ui";
 import { useProjectEstimates } from "@/hooks/store";
 
@@ -25,6 +24,7 @@ export type TSelectionProps = {
   handlePlotChange: (value: TCyclePlotType | TCycleEstimateType) => Promise<void>;
   handleEstimateChange: (value: TCyclePlotType | TCycleEstimateType) => Promise<void>;
   className?: string;
+  showEstimateSelection?: boolean;
 };
 export type TDropdownProps = {
   value: string;
@@ -49,16 +49,21 @@ const Dropdown = ({ value, onChange, options }: TDropdownProps) => (
   </div>
 );
 const Selection = observer((props: TSelectionProps) => {
-  const { plotType, estimateType, projectId, handlePlotChange, handleEstimateChange, className } = props;
-  const { currentActiveEstimateId, areEstimateEnabledByProjectId, estimateById } = useProjectEstimates();
+  const {
+    plotType,
+    estimateType,
+    projectId,
+    handlePlotChange,
+    handleEstimateChange,
+    className,
+    showEstimateSelection,
+  } = props;
+  const { areEstimateEnabledByProjectId } = useProjectEstimates();
   const isCurrentProjectEstimateEnabled = projectId && areEstimateEnabledByProjectId(projectId) ? true : false;
-  const estimateDetails =
-    isCurrentProjectEstimateEnabled && currentActiveEstimateId && estimateById(currentActiveEstimateId);
-  const isCurrentEstimateTypeIsPoints = estimateDetails && estimateDetails?.type === EEstimateSystem.POINTS;
   return (
     <Row className={cn("h-[40px] mt-2 py-4 flex text-sm items-center gap-2 font-medium", className)}>
       <Dropdown value={plotType} onChange={handlePlotChange} options={cycleChartOptions} />
-      {isCurrentEstimateTypeIsPoints && (
+      {showEstimateSelection && isCurrentProjectEstimateEnabled && (
         <>
           <span className="text-custom-text-400">for</span>
           <Dropdown value={estimateType} onChange={handleEstimateChange} options={cycleEstimateOptions} />

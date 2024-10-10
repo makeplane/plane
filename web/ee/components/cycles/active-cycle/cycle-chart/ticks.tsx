@@ -46,7 +46,7 @@ const CustomizedXAxisTicks = (props: TProps) => {
           )}
         </>
       )}
-      {payload.value === format(startOfToday(), "yyyy-MM-dd") && (
+      {payload.value === format(startOfToday(), "yyyy-MM-dd") && payload.value < endDate && (
         <>
           <line x1="0" y1="-8" x2="0" y2="0" stroke={stroke} stroke-width="1" />
           <text x={0} y={0} dy={12} textAnchor={"middle"} fill={text} style={{ fontSize: "10px" }}>

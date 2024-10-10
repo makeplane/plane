@@ -1,10 +1,12 @@
 import { format, startOfToday } from "date-fns";
 import { observer } from "mobx-react";
+import { useTheme } from "next-themes";
 import { Info, TrendingDown, TrendingUp } from "lucide-react";
 import { cn } from "@plane/editor";
 import { IIssueFilterOptions, TCycleProgress } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { useProjectState } from "@/hooks/store";
+import { getColors } from "./cycle-chart/helper";
 import ScopeDelta from "./scope-delta";
 
 type Props = {
@@ -20,14 +22,19 @@ const states = ["completed", "started", "unstarted", "backlog"];
 
 const Summary = observer((props: Props) => {
   const { setAreaToHighlight, data, plotType, estimateType, progressLoader, handleFiltersUpdate, parentWidth } = props;
+
+  // store hooks
+  const { groupedProjectStates } = useProjectState();
+  const { resolvedTheme } = useTheme();
+
+  // derived values
   const today = format(startOfToday(), "yyyy-MM-dd");
   const dataToday = data?.find((d) => d.date === today);
   const isBehind =
     dataToday &&
     (plotType === "burndown" ? dataToday.ideal! < dataToday.actual! : dataToday.ideal! > dataToday.actual!);
+  const colors = getColors(resolvedTheme);
 
-  // store hooks
-  const { groupedProjectStates } = useProjectState();
   const scopeChangeCount = data?.reduce((acc, curr, index, array) => {
     // Skip the first element as there's nothing to compare it with
     if (index === 0) return acc;
@@ -45,20 +52,23 @@ const Summary = observer((props: Props) => {
       {
         group: `Today’s ideal ${plotType === "burndown" ? "Pending" : "Done"}`,
         key: "ideal",
-        color: "indigo-400",
         showBg: false,
         dashed: true,
-        borderColor: "border-indigo-400",
+        color: colors.idealStroke,
       },
       {
         group: plotType === "burndown" ? "Pending" : "Done",
         key: "actual",
-        color: "green-500",
         showBg: true,
-        borderColor: "border-green-500",
+        color: colors.actual,
       },
-      { group: "Started", key: "started", color: "orange-400", showBg: true, borderColor: "border-orange-400" },
-      { group: "Scope", key: "scope", color: "blue-500", showBg: false, borderColor: "border-blue-500" },
+      {
+        group: "Started",
+        key: "started",
+        showBg: true,
+        color: colors.startedStroke,
+      },
+      { group: "Scope", key: "scope", showBg: false, color: colors.scopeStroke },
     ],
     secondaryStates: [
       { group: "Unstarted", key: "unstarted" },
@@ -118,9 +128,8 @@ const Summary = observer((props: Props) => {
           >
             <div className="flex">
               <hr
-                className={cn(
-                  `my-auto border-[1px]  w-[12px] ${group.borderColor} ${group.dashed && "border-dashed"} mr-2`
-                )}
+                className={cn(`my-auto border-[1px]  w-[12px] ${group.dashed && "border-dashed"} mr-2`)}
+                style={{ borderColor: group.color }}
               />
               <span className="my-auto">{group.group}</span>
             </div>
@@ -130,7 +139,10 @@ const Summary = observer((props: Props) => {
                 {progressLoader ? (
                   <Loader.Item width="20px" height="20px" />
                 ) : (
-                  <span className={`py-0.5 rounded ${group.showBg && `px-1 text-white bg-${group.color}`}`}>
+                  <span
+                    className={`py-0.5 rounded ${group.showBg && `px-1 text-white`}`}
+                    style={{ backgroundColor: group.showBg ? group.color : "" }}
+                  >
                     {(dataToday && Math.round(dataToday[group.key as keyof TCycleProgress] as number)) || 0}
                   </span>
                 )}

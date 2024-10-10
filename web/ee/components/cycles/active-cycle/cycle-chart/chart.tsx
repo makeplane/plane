@@ -30,10 +30,11 @@ type Props = {
   data?: TProgressChartData;
   isFullWidth?: boolean;
   estimateType?: string;
+  plotType: string;
 };
 
 export const ActiveCycleChart = observer((props: Props) => {
-  const { areaToHighlight, data = [], cycle, isFullWidth = false, estimateType = "ISSUES" } = props;
+  const { areaToHighlight, data = [], cycle, isFullWidth = false, plotType, estimateType = "ISSUES" } = props;
 
   const { resolvedTheme } = useTheme();
   const colors = getColors(resolvedTheme);
@@ -41,7 +42,7 @@ export const ActiveCycleChart = observer((props: Props) => {
   // derived values
   let endDate: Date | string = new Date(cycle.end_date!);
   const today = format(startOfToday(), "yyyy-MM-dd");
-  const { diffGradient, dataWithRange } = chartHelper(data, endDate, colors);
+  const { diffGradient, dataWithRange } = chartHelper(data, endDate, plotType, colors);
   endDate = endDate.toISOString().split("T")[0];
 
   return (
@@ -107,7 +108,10 @@ export const ActiveCycleChart = observer((props: Props) => {
           {/* Ideal - Actual */}
           <linearGradient id="diff">{diffGradient}</linearGradient>
         </defs>
-        <Tooltip isAnimationActive={false} content={<CustomTooltip active payload={[]} label={""} />} />
+        <Tooltip
+          isAnimationActive={false}
+          content={<CustomTooltip active payload={[]} label={""} plotType={plotType} />}
+        />
         {/* Cartesian axis */}
         <XAxis
           dataKey="date"
@@ -190,13 +194,20 @@ export const ActiveCycleChart = observer((props: Props) => {
           />
         )}
         {/* Actual */}
-        <Line type="linear" dataKey="actual" strokeWidth={3} stroke="#26D950" dot={false} isAnimationActive={false} />
+        <Line
+          type="linear"
+          dataKey="actual"
+          strokeWidth={3}
+          stroke={colors.actual}
+          dot={false}
+          isAnimationActive={false}
+        />
         {areaToHighlight === "actual" && (
           <Area
             dataKey="actual"
             fill="url(#fillPending)"
             fillOpacity={0.4}
-            stroke="#26D950"
+            stroke={colors.actual}
             strokeWidth={4}
             isAnimationActive={false}
           />
