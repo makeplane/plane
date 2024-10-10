@@ -75,12 +75,7 @@ export const useEditor = (props: CustomEditorProps) => {
     extensions: [
       ...CoreEditorExtensions({
         enableHistory,
-        fileConfig: {
-          uploadFile: fileHandler.upload,
-          deleteFile: fileHandler.delete,
-          restoreFile: fileHandler.restore,
-          cancelUploadImage: fileHandler.cancel,
-        },
+        fileHandler,
         mentionConfig: {
           mentionSuggestions: mentionHandler.suggestions ?? (() => Promise.resolve<IMentionSuggestion[]>([])),
           mentionHighlights: mentionHandler.highlights,

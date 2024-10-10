@@ -9,6 +9,7 @@ import { Avatar, FavoriteStar, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 import { PageQuickActions } from "@/components/pages/dropdowns";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useMember, usePage } from "@/hooks/store";
 
@@ -62,7 +63,7 @@ export const BlockItemAction: FC<Props> = observer((props) => {
       {/* page details */}
       <div className="cursor-default">
         <Tooltip tooltipHeading="Owned by" tooltipContent={ownerDetails?.display_name}>
-          <Avatar src={ownerDetails?.avatar} name={ownerDetails?.display_name} />
+          <Avatar src={getFileURL(ownerDetails?.avatar_url ?? "")} name={ownerDetails?.display_name} />
         </Tooltip>
       </div>
       <div className="cursor-default text-custom-text-300">

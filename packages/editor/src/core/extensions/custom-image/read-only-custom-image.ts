@@ -3,9 +3,13 @@ import { Image } from "@tiptap/extension-image";
 import { ReactNodeViewRenderer } from "@tiptap/react";
 // components
 import { CustomImageNode, UploadImageExtensionStorage } from "@/extensions/custom-image";
+// types
+import { TFileHandler } from "@/types";
 
-export const CustomReadOnlyImageExtension = () =>
-  Image.extend<Record<string, unknown>, UploadImageExtensionStorage>({
+export const CustomReadOnlyImageExtension = (props: Pick<TFileHandler, "getAssetSrc">) => {
+  const { getAssetSrc } = props;
+
+  return Image.extend<Record<string, unknown>, UploadImageExtensionStorage>({
     name: "imageComponent",
     selectable: false,
     group: "block",
@@ -51,7 +55,14 @@ export const CustomReadOnlyImageExtension = () =>
       };
     },
 
+    addCommands() {
+      return {
+        getImageSource: (path: string) => () => getAssetSrc(path),
+      };
+    },
+
     addNodeView() {
       return ReactNodeViewRenderer(CustomImageNode);
     },
   });
+};

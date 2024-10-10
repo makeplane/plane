@@ -16,6 +16,7 @@ import { SidebarNavItem } from "@/components/sidebar";
 import { PROFILE_ACTION_LINKS } from "@/constants/profile";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useAppTheme, useUser, useUserSettings, useWorkspace } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -180,17 +181,17 @@ export const ProfileLayoutSidebar = observer(() => {
                   >
                     <span
                       className={`relative flex h-6 w-6 flex-shrink-0 items-center  justify-center p-2 text-xs uppercase ${
-                        !workspace?.logo && "rounded bg-custom-primary-500 text-white"
+                        !workspace?.logo_url && "rounded bg-custom-primary-500 text-white"
                       }`}
                     >
-                      {workspace?.logo && workspace.logo !== "" ? (
+                      {workspace?.logo_url && workspace.logo_url !== "" ? (
                         <img
-                          src={workspace.logo}
+                          src={getFileURL(workspace.logo_url)}
                           className="absolute left-0 top-0 h-full w-full rounded object-cover"
                           alt="Workspace Logo"
                         />
                       ) : (
-                        workspace?.name?.charAt(0) ?? "..."
+                        (workspace?.name?.charAt(0) ?? "...")
                       )}
                     </span>
                     {!sidebarCollapsed && (

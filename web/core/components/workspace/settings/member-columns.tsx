@@ -3,10 +3,17 @@ import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { Trash2 } from "lucide-react";
 import { Disclosure } from "@headlessui/react";
+// plane types
 import { IUser, IWorkspaceMember } from "@plane/types";
+// plane ui
 import { CustomSelect, PopoverMenu, TOAST_TYPE, setToast } from "@plane/ui";
+// constants
 import { ROLE } from "@/constants/workspace";
+// helpers
+import { getFileURL } from "@/helpers/file.helper";
+// hooks
 import { useMember, useUser, useUserPermissions } from "@/hooks/store";
+// plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export interface RowData {
@@ -29,33 +36,36 @@ type AccountTypeProps = {
 
 export const NameColumn: React.FC<NameProps> = (props) => {
   const { rowData, workspaceSlug, isAdmin, currentUser, setRemoveMemberModal } = props;
+  // derived values
+  const { avatar_url, display_name, email, first_name, id, last_name } = rowData.member;
+
   return (
     <Disclosure>
       {({}) => (
         <div className="relative group">
           <div className="flex items-center gap-x-4 gap-y-2 w-72 justify-between">
             <div className="flex items-center gap-x-4 gap-y-2 flex-1">
-              {rowData.member.avatar && rowData.member.avatar.trim() !== "" ? (
-                <Link href={`/${workspaceSlug}/profile/${rowData.member.id}`}>
+              {avatar_url && avatar_url.trim() !== "" ? (
+                <Link href={`/${workspaceSlug}/profile/${id}`}>
                   <span className="relative flex h-6 w-6 items-center justify-center rounded-full p-4 capitalize text-white">
                     <img
-                      src={rowData.member.avatar}
+                      src={getFileURL(avatar_url)}
                       className="absolute left-0 top-0 h-full w-full rounded-full object-cover"
-                      alt={rowData.member.display_name || rowData.member.email}
+                      alt={display_name || email}
                     />
                   </span>
                 </Link>
               ) : (
-                <Link href={`/${workspaceSlug}/profile/${rowData.member.id}`}>
+                <Link href={`/${workspaceSlug}/profile/${id}`}>
                   <span className="relative flex h-6 w-6 items-center justify-center rounded-full bg-gray-700 p-4 capitalize text-white">
-                    {(rowData.member.email ?? rowData.member.display_name ?? "?")[0]}
+                    {(email ?? display_name ?? "?")[0]}
                   </span>
                 </Link>
               )}
-              {rowData.member.first_name} {rowData.member.last_name}
+              {first_name} {last_name}
             </div>
 
-            {(isAdmin || rowData.member?.id === currentUser?.id) && (
+            {(isAdmin || id === currentUser?.id) && (
               <PopoverMenu
                 data={[""]}
                 keyExtractor={(item) => item}
@@ -66,8 +76,7 @@ export const NameColumn: React.FC<NameProps> = (props) => {
                     className="flex items-center gap-x-3 cursor-pointer"
                     onClick={() => setRemoveMemberModal(rowData)}
                   >
-                    <Trash2 className="size-3.5 align-middle" />{" "}
-                    {rowData.member?.id === currentUser?.id ? "Leave " : "Remove "}
+                    <Trash2 className="size-3.5 align-middle" /> {id === currentUser?.id ? "Leave " : "Remove "}
                   </div>
                 )}
               />

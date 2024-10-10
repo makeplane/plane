@@ -45,7 +45,7 @@ export type TIssue = TBaseIssue & {
   is_subscribed?: boolean;
   parent?: Partial<TBaseIssue>;
   issue_reactions?: TIssueReaction[];
-  issue_attachment?: TIssueAttachment[];
+  issue_attachments?: TIssueAttachment[];
   issue_link?: TIssueLink[];
   // tempId is used for optimistic updates. It is not a part of the API response.
   tempId?: string;

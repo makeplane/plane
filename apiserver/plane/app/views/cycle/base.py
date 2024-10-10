@@ -20,7 +20,8 @@ from django.db.models import (
     Sum,
     FloatField,
 )
-from django.db.models.functions import Coalesce, Cast
+from django.db import models
+from django.db.models.functions import Coalesce, Cast, Concat
 from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
 
@@ -81,7 +82,7 @@ class CycleViewSet(BaseViewSet):
                 Prefetch(
                     "issue_cycle__issue__assignees",
                     queryset=User.objects.only(
-                        "avatar", "first_name", "id"
+                        "avatar_asset", "first_name", "id"
                     ).distinct(),
                 )
             )
@@ -667,8 +668,27 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                 )
                 .annotate(display_name=F("assignees__display_name"))
                 .annotate(assignee_id=F("assignees__id"))
-                .annotate(avatar=F("assignees__avatar"))
-                .values("display_name", "assignee_id", "avatar")
+                .annotate(
+                    avatar_url=Case(
+                        # If `avatar_asset` exists, use it to generate the asset URL
+                        When(
+                            assignees__avatar_asset__isnull=False,
+                            then=Concat(
+                                Value("/api/assets/v2/static/"),
+                                "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
+                                Value("/"),
+                            ),
+                        ),
+                        # If `avatar_asset` is None, fall back to using `avatar` field directly
+                        When(
+                            assignees__avatar_asset__isnull=True,
+                            then="assignees__avatar",
+                        ),
+                        default=Value(None),
+                        output_field=models.CharField(),
+                    )
+                )
+                .values("display_name", "assignee_id", "avatar_url")
                 .annotate(
                     total_estimates=Sum(
                         Cast("estimate_point__value", FloatField())
@@ -705,7 +725,8 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                         if item["assignee_id"]
                         else None
                     ),
-                    "avatar": item["avatar"],
+                    "avatar": item.get("avatar"),
+                    "avatar_url": item.get("avatar_url"),
                     "total_estimates": item["total_estimates"],
                     "completed_estimates": item["completed_estimates"],
                     "pending_estimates": item["pending_estimates"],
@@ -782,8 +803,27 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             )
             .annotate(display_name=F("assignees__display_name"))
             .annotate(assignee_id=F("assignees__id"))
-            .annotate(avatar=F("assignees__avatar"))
-            .values("display_name", "assignee_id", "avatar")
+            .annotate(
+                avatar_url=Case(
+                    # If `avatar_asset` exists, use it to generate the asset URL
+                    When(
+                        assignees__avatar_asset__isnull=False,
+                        then=Concat(
+                            Value("/api/assets/v2/static/"),
+                            "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
+                            Value("/"),
+                        ),
+                    ),
+                    # If `avatar_asset` is None, fall back to using `avatar` field directly
+                    When(
+                        assignees__avatar_asset__isnull=True,
+                        then="assignees__avatar",
+                    ),
+                    default=Value(None),
+                    output_field=models.CharField(),
+                )
+            )
+            .values("display_name", "assignee_id", "avatar_url")
             .annotate(
                 total_issues=Count(
                     "id",
@@ -822,7 +862,8 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                 "assignee_id": (
                     str(item["assignee_id"]) if item["assignee_id"] else None
                 ),
-                "avatar": item["avatar"],
+                "avatar": item.get("avatar"),
+                "avatar_url": item.get("avatar_url"),
                 "total_issues": item["total_issues"],
                 "completed_issues": item["completed_issues"],
                 "pending_issues": item["pending_issues"],
@@ -1201,8 +1242,27 @@ class CycleAnalyticsEndpoint(BaseAPIView):
                 )
                 .annotate(display_name=F("assignees__display_name"))
                 .annotate(assignee_id=F("assignees__id"))
-                .annotate(avatar=F("assignees__avatar"))
-                .values("display_name", "assignee_id", "avatar")
+                .annotate(
+                    avatar_url=Case(
+                        # If `avatar_asset` exists, use it to generate the asset URL
+                        When(
+                            assignees__avatar_asset__isnull=False,
+                            then=Concat(
+                                Value("/api/assets/v2/static/"),
+                                "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
+                                Value("/"),
+                            ),
+                        ),
+                        # If `avatar_asset` is None, fall back to using `avatar` field directly
+                        When(
+                            assignees__avatar_asset__isnull=True,
+                            then="assignees__avatar",
+                        ),
+                        default=Value(None),
+                        output_field=models.CharField(),
+                    )
+                )
+                .values("display_name", "assignee_id", "avatar_url")
                 .annotate(
                     total_estimates=Sum(
                         Cast("estimate_point__value", FloatField())
@@ -1285,8 +1345,27 @@ class CycleAnalyticsEndpoint(BaseAPIView):
                 )
                 .annotate(display_name=F("assignees__display_name"))
                 .annotate(assignee_id=F("assignees__id"))
-                .annotate(avatar=F("assignees__avatar"))
-                .values("display_name", "assignee_id", "avatar")
+                .annotate(
+                    avatar_url=Case(
+                        # If `avatar_asset` exists, use it to generate the asset URL
+                        When(
+                            assignees__avatar_asset__isnull=False,
+                            then=Concat(
+                                Value("/api/assets/v2/static/"),
+                                "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
+                                Value("/"),
+                            ),
+                        ),
+                        # If `avatar_asset` is None, fall back to using `avatar` field directly
+                        When(
+                            assignees__avatar_asset__isnull=True,
+                            then="assignees__avatar",
+                        ),
+                        default=Value(None),
+                        output_field=models.CharField(),
+                    )
+                )
+                .values("display_name", "assignee_id", "avatar_url")
                 .annotate(
                     total_issues=Count(
                         "assignee_id",

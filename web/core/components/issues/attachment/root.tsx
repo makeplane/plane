@@ -17,7 +17,7 @@ export type TIssueAttachmentRoot = {
 };
 
 export type TAttachmentOperations = {
-  create: (data: FormData) => Promise<void>;
+  create: (file: File) => Promise<void>;
   remove: (linkId: string) => Promise<void>;
 };
 
@@ -30,11 +30,11 @@ export const IssueAttachmentRoot: FC<TIssueAttachmentRoot> = (props) => {
 
   const handleAttachmentOperations: TAttachmentOperations = useMemo(
     () => ({
-      create: async (data: FormData) => {
+      create: async (file: File) => {
         try {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
 
-          const attachmentUploadPromise = createAttachment(workspaceSlug, projectId, issueId, data);
+          const attachmentUploadPromise = createAttachment(workspaceSlug, projectId, issueId, file);
           setPromiseToast(attachmentUploadPromise, {
             loading: "Uploading attachment...",
             success: {

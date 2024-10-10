@@ -7,8 +7,8 @@ import { useParams } from "next/navigation";
 import { Loader } from "@plane/ui";
 // components
 import { CycleAnalyticsProgress, CycleSidebarHeader, CycleSidebarDetails } from "@/components/cycles";
-import useCyclesDetails from "../active-cycle/use-cycles-details";
 // hooks
+import useCyclesDetails from "../active-cycle/use-cycles-details";
 
 type Props = {
   handleClose: () => void;

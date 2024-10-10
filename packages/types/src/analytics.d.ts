@@ -20,7 +20,7 @@ export interface IAnalyticsData {
 }
 
 export interface IAnalyticsAssigneeDetails {
-  assignees__avatar: string | null;
+  assignees__avatar_url: string | null;
   assignees__display_name: string | null;
   assignees__first_name: string;
   assignees__id: string | null;
@@ -87,7 +87,7 @@ export interface IExportAnalyticsFormData {
 }
 
 export interface IDefaultAnalyticsUser {
-  assignees__avatar: string | null;
+  assignees__avatar_url: string | null;
   assignees__first_name: string;
   assignees__last_name: string;
   assignees__display_name: string;
@@ -99,7 +99,7 @@ export interface IDefaultAnalyticsResponse {
   issue_completed_month_wise: { month: number; count: number }[];
   most_issue_closed_user: IDefaultAnalyticsUser[];
   most_issue_created_user: {
-    created_by__avatar: string | null;
+    created_by__avatar_url: string | null;
     created_by__first_name: string;
     created_by__last_name: string;
     created_by__display_name: string;

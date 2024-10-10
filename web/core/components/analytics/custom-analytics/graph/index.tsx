@@ -10,6 +10,7 @@ import { BarGraph } from "@/components/ui";
 // helpers
 import { generateBarColor, generateDisplayName, renderChartDynamicLabel } from "@/helpers/analytics.helper";
 import { findStringWithMostCharacters } from "@/helpers/array.helper";
+import { getFileURL } from "@/helpers/file.helper";
 // types
 import { CustomTooltip } from "./custom-tooltip";
 
@@ -77,7 +78,7 @@ export const AnalyticsGraph: React.FC<Props> = ({ analytics, barGraphData, param
             ? (datum) => {
                 const assignee = analytics.extras.assignee_details?.find((a) => a?.assignees__id === datum?.value);
 
-                if (assignee?.assignees__avatar && assignee?.assignees__avatar !== "")
+                if (assignee?.assignees__avatar_url && assignee?.assignees__avatar_url !== "")
                   return (
                     <Tooltip tooltipContent={assignee?.assignees__display_name}>
                       <g transform={`translate(${datum.x},${datum.y})`}>
@@ -86,7 +87,7 @@ export const AnalyticsGraph: React.FC<Props> = ({ analytics, barGraphData, param
                           y={10}
                           width={16}
                           height={16}
-                          xlinkHref={assignee?.assignees__avatar}
+                          xlinkHref={getFileURL(assignee?.assignees__avatar_url)}
                           style={{ clipPath: "circle(50%)" }}
                         />
                       </g>

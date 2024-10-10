@@ -5,7 +5,6 @@ from .issue import (
     IssueSerializer,
     LabelSerializer,
     IssueLinkSerializer,
-    IssueAttachmentSerializer,
     IssueCommentSerializer,
     IssueAttachmentSerializer,
     IssueActivitySerializer,

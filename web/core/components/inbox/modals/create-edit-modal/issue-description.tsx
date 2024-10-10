@@ -6,6 +6,7 @@ import { observer } from "mobx-react";
 import { EditorRefApi } from "@plane/editor";
 // types
 import { TIssue } from "@plane/types";
+import { EFileAssetType } from "@plane/types/src/enums";
 // ui
 import { Loader } from "@plane/ui";
 // components
@@ -18,6 +19,9 @@ import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useProjectInbox } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// services
+import { FileService } from "@/services/file.service";
+const fileService = new FileService();
 
 type TInboxIssueDescription = {
   containerClassName?: string;
@@ -28,12 +32,22 @@ type TInboxIssueDescription = {
   handleData: (issueKey: keyof Partial<TIssue>, issueValue: Partial<TIssue>[keyof Partial<TIssue>]) => void;
   editorRef: RefObject<EditorRefApi>;
   onEnterKeyPress?: (e?: any) => void;
+  onAssetUpload?: (assetId: string) => void;
 };
 
 // TODO: have to implement GPT Assistance
 export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props) => {
-  const { containerClassName, workspaceSlug, projectId, workspaceId, data, handleData, editorRef, onEnterKeyPress } =
-    props;
+  const {
+    containerClassName,
+    workspaceSlug,
+    projectId,
+    workspaceId,
+    data,
+    handleData,
+    editorRef,
+    onEnterKeyPress,
+    onAssetUpload,
+  } = props;
   // hooks
   const { loader } = useProjectInbox();
   const { isMobile } = usePlatformOS();
@@ -61,6 +75,24 @@ export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props
       containerClassName={containerClassName}
       onEnterKeyPress={onEnterKeyPress}
       tabIndex={getIndex("description_html")}
+      uploadFile={async (file) => {
+        try {
+          const { asset_id } = await fileService.uploadProjectAsset(
+            workspaceSlug,
+            projectId,
+            {
+              entity_identifier: data.id ?? "",
+              entity_type: EFileAssetType.ISSUE_DESCRIPTION,
+            },
+            file
+          );
+          onAssetUpload?.(asset_id);
+          return asset_id;
+        } catch (error) {
+          console.log("Error in uploading issue asset:", error);
+          throw new Error("Asset upload failed. Please try again later.");
+        }
+      }}
     />
   );
 });

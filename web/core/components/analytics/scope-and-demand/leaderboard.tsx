@@ -1,12 +1,15 @@
-// ui
+// plane ui
 import { Card } from "@plane/ui";
+// components
 import { ProfileEmptyState } from "@/components/ui";
+// helpers
+import { getFileURL } from "@/helpers/file.helper";
 // image
 import emptyUsers from "@/public/empty-state/empty_users.svg";
 
 type Props = {
   users: {
-    avatar: string | null;
+    avatar_url: string | null;
     display_name: string | null;
     firstName: string;
     lastName: string;
@@ -32,10 +35,10 @@ export const AnalyticsLeaderBoard: React.FC<Props> = ({ users, title, emptyState
             className="flex items-start justify-between gap-4 text-xs"
           >
             <div className="flex items-center gap-2">
-              {user && user.avatar && user.avatar !== "" ? (
+              {user.avatar_url && user.avatar_url !== "" ? (
                 <div className="relative h-4 w-4 flex-shrink-0 rounded-full">
                   <img
-                    src={user.avatar}
+                    src={getFileURL(user.avatar_url)}
                     className="absolute left-0 top-0 h-full w-full rounded-full object-cover"
                     alt={user?.display_name ?? "None"}
                   />

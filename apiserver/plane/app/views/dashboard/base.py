@@ -36,7 +36,7 @@ from plane.db.models import (
     DashboardWidget,
     Issue,
     IssueActivity,
-    IssueAttachment,
+    FileAsset,
     IssueLink,
     IssueRelation,
     Project,
@@ -56,7 +56,8 @@ def dashboard_overview_stats(self, request, slug):
             project__project_projectmember__member=request.user,
             workspace__slug=slug,
             assignees__in=[request.user],
-        ).filter(
+        )
+        .filter(
             Q(
                 project__project_projectmember__role=5,
                 project__guest_view_all_features=True,
@@ -83,7 +84,8 @@ def dashboard_overview_stats(self, request, slug):
             project__project_projectmember__member=request.user,
             workspace__slug=slug,
             assignees__in=[request.user],
-        ).filter(
+        )
+        .filter(
             Q(
                 project__project_projectmember__role=5,
                 project__guest_view_all_features=True,
@@ -108,7 +110,8 @@ def dashboard_overview_stats(self, request, slug):
             project__project_projectmember__is_active=True,
             project__project_projectmember__member=request.user,
             created_by_id=request.user.id,
-        ).filter(
+        )
+        .filter(
             Q(
                 project__project_projectmember__role=5,
                 project__guest_view_all_features=True,
@@ -134,7 +137,8 @@ def dashboard_overview_stats(self, request, slug):
             project__project_projectmember__member=request.user,
             assignees__in=[request.user],
             state__group="completed",
-        ).filter(
+        )
+        .filter(
             Q(
                 project__project_projectmember__role=5,
                 project__guest_view_all_features=True,
@@ -195,8 +199,9 @@ def dashboard_assigned_issues(self, request, slug):
             .values("count")
         )
         .annotate(
-            attachment_count=IssueAttachment.objects.filter(
-                issue=OuterRef("id")
+            attachment_count=FileAsset.objects.filter(
+                issue_id=OuterRef("id"),
+                entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
             )
             .order_by()
             .annotate(count=Func(F("id"), function="Count"))
@@ -358,8 +363,9 @@ def dashboard_created_issues(self, request, slug):
             .values("count")
         )
         .annotate(
-            attachment_count=IssueAttachment.objects.filter(
-                issue=OuterRef("id")
+            attachment_count=FileAsset.objects.filter(
+                issue_id=OuterRef("id"),
+                entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
             )
             .order_by()
             .annotate(count=Func(F("id"), function="Count"))

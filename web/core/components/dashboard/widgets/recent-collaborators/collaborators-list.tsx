@@ -8,6 +8,8 @@ import useSWR from "swr";
 import { TRecentCollaboratorsWidgetResponse } from "@plane/types";
 // ui
 import { Avatar } from "@plane/ui";
+// helpers
+import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useDashboard, useMember, useUser } from "@/hooks/store";
 // components
@@ -34,7 +36,7 @@ const CollaboratorListItem: React.FC<CollaboratorListItemProps> = observer((prop
     <Link href={`/${workspaceSlug}/profile/${userId}`} className="group text-center">
       <div className="flex justify-center">
         <Avatar
-          src={userDetails.avatar}
+          src={getFileURL(userDetails.avatar_url)}
           name={userDetails.display_name}
           size={69}
           className="!text-3xl !font-medium"

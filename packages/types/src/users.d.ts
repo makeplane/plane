@@ -3,17 +3,21 @@ import { TUserPermissions } from "./enums";
 
 type TLoginMediums = "email" | "magic-code" | "github" | "gitlab" | "google";
 
-export interface IUser {
-  id: string;
-  avatar: string | null;
-  cover_image: string | null;
-  date_joined: string;
+
+export interface IUserLite {
+  avatar_url: string;
   display_name: string;
-  email: string;
+  email?: string;
   first_name: string;
-  last_name: string;
-  is_active: boolean;
+  id: string;
   is_bot: boolean;
+  last_name: string;
+}
+export interface IUser extends IUserLite {
+  cover_image_url: string | null;
+  date_joined: string;
+  email: string;
+  is_active: boolean;
   is_email_verified: boolean;
   is_password_autoset: boolean;
   is_tour_completed: boolean;
@@ -86,15 +90,6 @@ export interface IUserTheme {
   sidebarBackground: string | undefined;
 }
 
-export interface IUserLite {
-  avatar: string;
-  display_name: string;
-  email?: string;
-  first_name: string;
-  id: string;
-  is_bot: boolean;
-  last_name: string;
-}
 
 export interface IUserMemberLite extends IUserLite {
   email?: string;
@@ -158,13 +153,8 @@ export interface IUserProfileProjectSegregation {
     id: string;
     pending_issues: number;
   }[];
-  user_data: {
-    avatar: string;
-    cover_image: string | null;
+  user_data: Pick<IUser, "avatar_url" | "cover_image_url" | "display_name" | "first_name" | "last_name"> & {
     date_joined: Date;
-    display_name: string;
-    first_name: string;
-    last_name: string;
     user_timezone: string;
   };
 }

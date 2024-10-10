@@ -16,11 +16,12 @@ export const useAttachmentOperations = (
 
   const handleAttachmentOperations: TAttachmentOperations = useMemo(
     () => ({
-      create: async (data: FormData) => {
+      create: async (file: File) => {
+        console.log("creating attachment...", file);
         try {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
 
-          const attachmentUploadPromise = createAttachment(workspaceSlug, projectId, issueId, data);
+          const attachmentUploadPromise = createAttachment(workspaceSlug, projectId, issueId, file);
           setPromiseToast(attachmentUploadPromise, {
             loading: "Uploading attachment...",
             success: {

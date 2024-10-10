@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { Avatar } from "@plane/ui";
 // helpers
 import { calculateTimeAgoShort, renderFormattedDate } from "@/helpers/date-time.helper";
+import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useMember } from "@/hooks/store";
 // store
@@ -20,7 +21,7 @@ export const PageEditInformationPopover: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = useParams();
   // store hooks
   const { getUserDetails } = useMember();
-
+  // derived values
   const editorInformation = page.updated_by ? getUserDetails(page.updated_by) : undefined;
   const creatorInformation = page.created_by ? getUserDetails(page.created_by) : undefined;
 
@@ -35,7 +36,7 @@ export const PageEditInformationPopover: React.FC<Props> = observer((props) => {
             className="mt-2 flex items-center gap-1.5 text-sm font-medium"
           >
             <Avatar
-              src={editorInformation?.avatar}
+              src={getFileURL(editorInformation?.avatar_url ?? "")}
               name={editorInformation?.display_name}
               className="flex-shrink-0"
               size="sm"
@@ -53,7 +54,7 @@ export const PageEditInformationPopover: React.FC<Props> = observer((props) => {
             className="mt-2 flex items-center gap-1.5 text-sm font-medium"
           >
             <Avatar
-              src={creatorInformation?.avatar}
+              src={getFileURL(creatorInformation?.avatar_url ?? "")}
               name={creatorInformation?.display_name}
               className="flex-shrink-0"
               size="sm"

@@ -118,7 +118,14 @@ def slug_validator(value):
 
 class Workspace(BaseModel):
     name = models.CharField(max_length=80, verbose_name="Workspace Name")
-    logo = models.URLField(verbose_name="Logo", blank=True, null=True)
+    logo = models.TextField(verbose_name="Logo", blank=True, null=True)
+    logo_asset = models.ForeignKey(
+        "db.FileAsset",
+        on_delete=models.SET_NULL,
+        related_name="workspace_logo",
+        blank=True,
+        null=True,
+    )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -137,6 +144,17 @@ class Workspace(BaseModel):
     def __str__(self):
         """Return name of the Workspace"""
         return self.name
+
+    @property
+    def logo_url(self):
+        # Return the logo asset url if it exists
+        if self.logo_asset:
+            return self.logo_asset.asset_url
+
+        # Return the logo url if it exists
+        if self.logo:
+            return self.logo
+        return None
 
     class Meta:
         verbose_name = "Workspace"

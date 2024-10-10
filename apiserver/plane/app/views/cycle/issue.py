@@ -22,7 +22,7 @@ from plane.db.models import (
     Cycle,
     CycleIssue,
     Issue,
-    IssueAttachment,
+    FileAsset,
     IssueLink,
 )
 from plane.utils.grouper import (
@@ -110,8 +110,9 @@ class CycleIssueViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    entity_identifier=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))

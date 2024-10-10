@@ -3,10 +3,14 @@
 import { FC, useMemo, useState } from "react";
 import sortBy from "lodash/sortBy";
 import { observer } from "mobx-react";
+// plane types
 import { TInboxIssueFilterMemberKeys } from "@plane/types";
+// plane ui
 import { Avatar, Loader } from "@plane/ui";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues";
+// helpers
+import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useMember, useProjectInbox, useUser } from "@/hooks/store";
 
@@ -74,7 +78,14 @@ export const FilterMember: FC<Props> = observer((props: Props) => {
                       key={`members-${member.id}`}
                       isChecked={filterValue?.includes(member.id) ? true : false}
                       onClick={() => handleInboxIssueFilters(filterKey, handleFilterValue(member.id))}
-                      icon={<Avatar name={member.display_name} src={member.avatar} showTooltip={false} size="md" />}
+                      icon={
+                        <Avatar
+                          name={member.display_name}
+                          src={getFileURL(member.avatar_url)}
+                          showTooltip={false}
+                          size="md"
+                        />
+                      }
                       title={currentUser?.id === member.id ? "You" : member?.display_name}
                     />
                   );

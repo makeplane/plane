@@ -7,6 +7,7 @@ import { Avatar } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate, renderFormattedTime } from "@/helpers/date-time.helper";
+import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useMember } from "@/hooks/store";
 
@@ -35,7 +36,7 @@ export const PlaneVersionsSidebarListItem: React.FC<Props> = observer((props) =>
       </p>
       <p className="mt-2 flex items-center gap-1 text-xs">
         <Avatar
-          src={ownerDetails?.avatar}
+          src={getFileURL(ownerDetails?.avatar_url ?? "")}
           name={ownerDetails?.display_name}
           shape="square"
           size="sm"

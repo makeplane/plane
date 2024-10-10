@@ -1,3 +1,6 @@
+// helpers
+import { getFileURL } from "@/helpers/file.helper";
+
 type Props = {
   logo: string | null | undefined;
   name: string | undefined;
@@ -11,9 +14,13 @@ export const WorkspaceLogo = (props: Props) => (
     } ${props.classNames ? props.classNames : ""}`}
   >
     {props.logo && props.logo !== "" ? (
-      <img src={props.logo} className="absolute left-0 top-0 h-full w-full rounded object-cover" alt="Workspace Logo" />
+      <img
+        src={getFileURL(props.logo)}
+        className="absolute left-0 top-0 h-full w-full rounded object-cover"
+        alt="Workspace Logo"
+      />
     ) : (
-      props.name?.charAt(0) ?? "..."
+      (props.name?.charAt(0) ?? "...")
     )}
   </div>
 );

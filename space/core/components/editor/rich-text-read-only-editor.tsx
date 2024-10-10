@@ -3,18 +3,24 @@ import React from "react";
 import { EditorReadOnlyRefApi, IRichTextReadOnlyEditor, RichTextReadOnlyEditorWithRef } from "@plane/editor";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
 import { useMention } from "@/hooks/use-mention";
 
-type RichTextReadOnlyEditorWrapperProps = Omit<IRichTextReadOnlyEditor, "mentionHandler">;
+type RichTextReadOnlyEditorWrapperProps = Omit<IRichTextReadOnlyEditor, "fileHandler" | "mentionHandler"> & {
+  anchor: string;
+};
 
 export const RichTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, RichTextReadOnlyEditorWrapperProps>(
-  ({ ...props }, ref) => {
+  ({ anchor, ...props }, ref) => {
     const { mentionHighlights } = useMention();
 
     return (
       <RichTextReadOnlyEditorWithRef
         ref={ref}
+        fileHandler={getReadOnlyEditorFileHandlers({
+          anchor,
+        })}
         mentionHandler={{ highlights: mentionHighlights }}
         {...props}
         // overriding the customClassName to add relative class passed

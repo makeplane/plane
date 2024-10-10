@@ -28,7 +28,7 @@ from plane.app.permissions import ProjectEntityPermission
 from plane.db.models import (
     Issue,
     IssueLink,
-    IssueAttachment,
+    FileAsset,
 )
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.user_timezone_converter import user_timezone_converter
@@ -56,8 +56,9 @@ class SubIssuesEndpoint(BaseAPIView):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))

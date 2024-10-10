@@ -9,6 +9,7 @@ import { NotificationOption } from "@/components/workspace-notifications";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { calculateTimeAgo, renderFormattedDate, renderFormattedTime } from "@/helpers/date-time.helper";
+import { getFileURL } from "@/helpers/file.helper";
 import { sanitizeCommentForNotification } from "@/helpers/notification.helper";
 import { replaceUnderscoreIfSnakeCase, stripAndTruncateHTML } from "@/helpers/string.helper";
 // hooks
@@ -76,7 +77,7 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
           {notificationTriggeredBy && (
             <Avatar
               name={notificationTriggeredBy.display_name || notificationTriggeredBy?.first_name}
-              src={notificationTriggeredBy.avatar ?? undefined}
+              src={getFileURL(notificationTriggeredBy.avatar_url)}
               size={42}
               shape="circle"
               className="!text-base !bg-custom-background-80"

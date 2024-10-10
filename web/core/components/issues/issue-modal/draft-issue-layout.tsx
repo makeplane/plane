@@ -25,6 +25,7 @@ export interface DraftIssueProps {
   data?: Partial<TIssue>;
   issueTitleRef: React.MutableRefObject<HTMLInputElement | null>;
   isCreateMoreToggleEnabled: boolean;
+  onAssetUpload: (assetId: string) => void;
   onCreateMoreToggleChange: (value: boolean) => void;
   onChange: (formData: Partial<TIssue> | null) => void;
   onClose: (saveDraftIssueInLocalStorage?: boolean) => void;
@@ -40,6 +41,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
     changesMade,
     data,
     issueTitleRef,
+    onAssetUpload,
     onChange,
     onClose,
     onSubmit,
@@ -154,6 +156,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
         onCreateMoreToggleChange={onCreateMoreToggleChange}
         data={data}
         issueTitleRef={issueTitleRef}
+        onAssetUpload={onAssetUpload}
         onChange={onChange}
         onClose={handleClose}
         onSubmit={onSubmit}

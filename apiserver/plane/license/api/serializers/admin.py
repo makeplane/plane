@@ -11,6 +11,7 @@ class InstanceAdminMeSerializer(BaseSerializer):
         fields = [
             "id",
             "avatar",
+            "avatar_url",
             "cover_image",
             "date_joined",
             "display_name",

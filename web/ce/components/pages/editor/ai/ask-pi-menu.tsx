@@ -11,11 +11,13 @@ type Props = {
   handleInsertText: (insertOnNextLine: boolean) => void;
   handleRegenerate: () => Promise<void>;
   isRegenerating: boolean;
+  projectId: string;
   response: string | undefined;
+  workspaceSlug: string;
 };
 
 export const AskPiMenu: React.FC<Props> = (props) => {
-  const { handleInsertText, handleRegenerate, isRegenerating, response } = props;
+  const { handleInsertText, handleRegenerate, isRegenerating, projectId, response, workspaceSlug } = props;
   // states
   const [query, setQuery] = useState("");
 
@@ -39,6 +41,8 @@ export const AskPiMenu: React.FC<Props> = (props) => {
               initialValue={response}
               containerClassName="!p-0 border-none"
               editorClassName="!pl-0"
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
             />
             <div className="mt-3 flex items-center gap-4">
               <button

@@ -89,7 +89,7 @@ def get_assignee_details(slug, filters):
         .distinct("assignees__id")
         .order_by("assignees__id")
         .values(
-            "assignees__avatar",
+            "assignees__avatar_url",
             "assignees__display_name",
             "assignees__first_name",
             "assignees__last_name",

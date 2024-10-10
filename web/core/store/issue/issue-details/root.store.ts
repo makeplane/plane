@@ -294,8 +294,8 @@ export class IssueDetail implements IIssueDetail {
     this.attachment.addAttachments(issueId, attachments);
   fetchAttachments = async (workspaceSlug: string, projectId: string, issueId: string) =>
     this.attachment.fetchAttachments(workspaceSlug, projectId, issueId);
-  createAttachment = async (workspaceSlug: string, projectId: string, issueId: string, data: FormData) =>
-    this.attachment.createAttachment(workspaceSlug, projectId, issueId, data);
+  createAttachment = async (workspaceSlug: string, projectId: string, issueId: string, file: File) =>
+    this.attachment.createAttachment(workspaceSlug, projectId, issueId, file);
   removeAttachment = async (workspaceSlug: string, projectId: string, issueId: string, attachmentId: string) =>
     this.attachment.removeAttachment(workspaceSlug, projectId, issueId, attachmentId);
 

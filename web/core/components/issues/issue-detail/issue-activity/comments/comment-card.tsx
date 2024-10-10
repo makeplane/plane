@@ -77,7 +77,9 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
   };
 
   useEffect(() => {
-    isEditing && setFocus("comment_html");
+    if (isEditing) {
+      setFocus("comment_html");
+    }
   }, [isEditing, setFocus]);
 
   const commentHTML = watch("comment_html");
@@ -155,6 +157,10 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
                 }
               }}
               showSubmitButton={false}
+              uploadFile={async (file) => {
+                const { asset_id } = await activityOperations.uploadCommentAsset(file, comment.id);
+                return asset_id;
+              }}
             />
           </div>
           <div className="flex gap-1 self-end">
@@ -189,7 +195,13 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
               )}
             </div>
           )}
-          <LiteTextReadOnlyEditor ref={showEditorRef} id={comment.id} initialValue={comment.comment_html ?? ""} />
+          <LiteTextReadOnlyEditor
+            ref={showEditorRef}
+            id={comment.id}
+            initialValue={comment.comment_html ?? ""}
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+          />
 
           <IssueCommentReaction
             workspaceSlug={workspaceSlug}

@@ -3,10 +3,12 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { Ban } from "lucide-react";
-// hooks
+// plane ui
 import { Avatar, CustomSearchSelect } from "@plane/ui";
+// helpers
+import { getFileURL } from "@/helpers/file.helper";
+// hooks
 import { useMember } from "@/hooks/store";
-// ui
 
 type Props = {
   value: any;
@@ -32,7 +34,7 @@ export const MemberSelect: React.FC<Props> = observer((props) => {
         query: `${memberDetails?.member.display_name}`,
         content: (
           <div className="flex items-center gap-2">
-            <Avatar name={memberDetails?.member.display_name} src={memberDetails?.member.avatar} />
+            <Avatar name={memberDetails?.member.display_name} src={getFileURL(memberDetails?.member.avatar_url)} />
             {memberDetails?.member.display_name}
           </div>
         ),
@@ -52,7 +54,9 @@ export const MemberSelect: React.FC<Props> = observer((props) => {
       value={value}
       label={
         <div className="flex items-center gap-2 h-5">
-          {selectedOption && <Avatar name={selectedOption.member?.display_name} src={selectedOption.member?.avatar} />}
+          {selectedOption && (
+            <Avatar name={selectedOption.member?.display_name} src={getFileURL(selectedOption.member?.avatar_url)} />
+          )}
           {selectedOption ? (
             selectedOption.member?.display_name
           ) : (

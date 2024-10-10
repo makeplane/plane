@@ -27,7 +27,7 @@ from plane.db.models import (
     Module,
     ModuleIssue,
     IssueLink,
-    IssueAttachment,
+    FileAsset,
     IssueReaction,
     CommentReaction,
     IssueVote,
@@ -498,8 +498,11 @@ class IssueLinkLiteSerializer(BaseSerializer):
 
 
 class IssueAttachmentSerializer(BaseSerializer):
+
+    asset_url = serializers.CharField(read_only=True)
+
     class Meta:
-        model = IssueAttachment
+        model = FileAsset
         fields = "__all__"
         read_only_fields = [
             "created_by",
@@ -514,14 +517,15 @@ class IssueAttachmentSerializer(BaseSerializer):
 
 class IssueAttachmentLiteSerializer(DynamicBaseSerializer):
     class Meta:
-        model = IssueAttachment
+        model = FileAsset
         fields = [
             "id",
             "asset",
             "attributes",
-            "issue_id",
+            # "issue_id",
             "updated_at",
             "updated_by",
+            "asset_url",
         ]
         read_only_fields = fields
 

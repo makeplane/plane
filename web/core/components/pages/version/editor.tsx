@@ -6,6 +6,8 @@ import { DocumentReadOnlyEditorWithRef, TDisplayConfig } from "@plane/editor";
 import { IUserLite, TPageVersion } from "@plane/types";
 // plane ui
 import { Loader } from "@plane/ui";
+// helpers
+import { getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
 import { useMember, useMention, useUser } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
@@ -101,6 +103,10 @@ export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props
       containerClassName="p-0 pb-64 border-none"
       displayConfig={displayConfig}
       editorClassName="pl-10"
+      fileHandler={getReadOnlyEditorFileHandlers({
+        projectId: projectId?.toString() ?? "",
+        workspaceSlug: workspaceSlug?.toString() ?? "",
+      })}
       mentionHandler={{
         highlights: mentionHighlights,
       }}

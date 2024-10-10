@@ -59,7 +59,7 @@ export const ScopeAndDemand: React.FC<Props> = (props) => {
               />
               <AnalyticsLeaderBoard
                 users={defaultAnalytics.most_issue_created_user?.map((user) => ({
-                  avatar: user?.created_by__avatar,
+                  avatar_url: user?.created_by__avatar_url,
                   firstName: user?.created_by__first_name,
                   lastName: user?.created_by__last_name,
                   display_name: user?.created_by__display_name,
@@ -72,7 +72,7 @@ export const ScopeAndDemand: React.FC<Props> = (props) => {
               />
               <AnalyticsLeaderBoard
                 users={defaultAnalytics.most_issue_closed_user?.map((user) => ({
-                  avatar: user?.assignees__avatar,
+                  avatar_url: user?.assignees__avatar_url,
                   firstName: user?.assignees__first_name,
                   lastName: user?.assignees__last_name,
                   display_name: user?.assignees__display_name,

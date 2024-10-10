@@ -10,6 +10,7 @@ import { Popover, Transition } from "@headlessui/react";
 import { Avatar, Button } from "@plane/ui";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
+import { getFileURL } from "@/helpers/file.helper";
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
 import { useUser } from "@/hooks/store";
@@ -66,7 +67,7 @@ export const UserAvatar: FC = observer(() => {
               >
                 <Avatar
                   name={currentUser?.display_name}
-                  src={currentUser?.avatar ?? undefined}
+                  src={getFileURL(currentUser?.avatar_url)}
                   shape="square"
                   size="sm"
                   showTooltip={false}

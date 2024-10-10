@@ -3,7 +3,9 @@
 import { FC, useEffect, useState, useMemo } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
+// plane types
 import { TIssue } from "@plane/types";
+// plane ui
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components
 import { IssueView, TIssueOperations } from "@/components/issues";
@@ -13,6 +15,7 @@ import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useEventTracker, useIssueDetail, useIssues, useUserPermissions } from "@/hooks/store";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
+// plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 interface IIssuePeekOverview {
@@ -46,12 +49,12 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
 
   const removeRoutePeekId = () => {
     setPeekIssue(undefined);
-    if (embedIssue) embedRemoveCurrentNotification && embedRemoveCurrentNotification();
+    if (embedIssue) embedRemoveCurrentNotification?.();
   };
 
   const issueOperations: TIssueOperations = useMemo(
     () => ({
-      fetch: async (workspaceSlug: string, projectId: string, issueId: string, loader = true) => {
+      fetch: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
           setError(false);
           await fetchIssue(
@@ -67,8 +70,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
         }
       },
       update: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
-        issues?.updateIssue &&
-          (await issues
+        if (issues?.updateIssue) {
+          await issues
             .updateIssue(workspaceSlug, projectId, issueId, data)
             .then(async () => {
               fetchActivities(workspaceSlug, projectId, issueId);
@@ -93,7 +96,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
                 type: TOAST_TYPE.ERROR,
                 message: "Issue update failed",
               });
-            }));
+            });
+        }
       },
       remove: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
