@@ -8,7 +8,7 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useProject, useWorkspaceDraftIssues } from "@/hooks/store";
 // plane-web components
-import { IdentifierText } from "@/plane-web/components/issues";
+import { IdentifierText } from "ce/components/issues";
 // local components
 import { WorkspaceDraftIssueQuickActions } from "../issue-layouts";
 import { DraftIssueProperties } from "./draft-issue-properties";
