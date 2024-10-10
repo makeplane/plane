@@ -1,6 +1,7 @@
 import { startOfToday } from "date-fns";
 import { TCycleProgress } from "@plane/types";
 import { TProgressChartData } from "@/helpers/cycle.helper";
+import { getDate } from "@/helpers/date-time.helper";
 
 type TIntersection = { x: number; y: number; line1isHigher: boolean; line1isHigherNext: boolean };
 
@@ -27,7 +28,6 @@ const getIntersectionColor = (
   colors: { diffGreen: string; diffRed: string },
   isLast = false
 ) => {
-  console.log("colors", colors);
   if (isLast) {
     return (_intersection as TIntersection).line1isHigherNext ? colors.diffGreen : colors.diffRed;
   }
@@ -69,7 +69,11 @@ const intersect = (x1: number, y1: number, x2: number, y2: number, x3: number, y
 };
 export const maxScope = (data: TProgressChartData) => Math.max(...data.map((d) => d.scope || 0));
 
-export const chartHelper = (data: TProgressChartData, endDate: Date, colors:{ diffGreen: string; diffRed: string }) => {
+export const chartHelper = (
+  data: TProgressChartData,
+  endDate: Date,
+  colors: { diffGreen: string; diffRed: string }
+) => {
   // Get today's date
   const today = startOfToday();
 
