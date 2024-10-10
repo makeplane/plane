@@ -1,6 +1,6 @@
 {
   "name": "@plane/editor",
-  "version": "0.23.0",
+  "version": "0.23.1",
   "description": "Core Editor that powers Plane",
   "private": true,
   "main": "./dist/index.mjs",

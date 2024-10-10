@@ -285,7 +285,7 @@ class InboxIssueAPIEndpoint(BaseAPIView):
                 )
 
         # Only project admins and members can edit inbox issue attributes
-        if project_member.role > 5:
+        if project_member.role > 15:
             serializer = InboxIssueSerializer(
                 inbox_issue, data=request.data, partial=True
             )
