@@ -6,12 +6,12 @@ import { PenSquare } from "lucide-react";
 // ui
 import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
+import { BreadcrumbLink, CountChip } from "@/components/common";
 import { CreateUpdateIssueModal } from "@/components/issues";
 // constants
 import { EIssuesStoreType } from "@/constants/issue";
 // hooks
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions, useWorkspaceDraftIssues } from "@/hooks/store";
 // plane-web
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
@@ -20,7 +20,7 @@ export const WorkspaceDraftHeader: FC = observer(() => {
   const [isDraftIssueModalOpen, setIsDraftIssueModalOpen] = useState(false);
   // store hooks
   const { allowPermissions } = useUserPermissions();
-
+  const { paginationInfo } = useWorkspaceDraftIssues();
   // check if user is authorized to create draft issue
   const isAuthorizedUser = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -37,12 +37,15 @@ export const WorkspaceDraftHeader: FC = observer(() => {
       />
       <Header>
         <Header.LeftItem>
-          <Breadcrumbs>
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={<BreadcrumbLink label={`Draft`} icon={<PenSquare className="h-4 w-4 text-custom-text-300" />} />}
-            />
-          </Breadcrumbs>
+          <div className="flex items-center gap-2.5">
+            <Breadcrumbs>
+              <Breadcrumbs.BreadcrumbItem
+                type="text"
+                link={<BreadcrumbLink label={`Draft`} icon={<PenSquare className="h-4 w-4 text-custom-text-300" />} />}
+              />
+            </Breadcrumbs>
+            {paginationInfo?.count && paginationInfo?.count > 0 ? <CountChip count={paginationInfo?.count} /> : <></>}
+          </div>
         </Header.LeftItem>
 
         <Header.RightItem>
