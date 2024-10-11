@@ -148,6 +148,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                     "created_by",
                     "updated_by",
                     "type_id",
+                    "description_html",
                 )
                 .first()
             )
