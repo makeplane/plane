@@ -252,6 +252,13 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
         runInAction(() => {
           this.addIssue([response]);
           update(this.issueMapIds, [workspaceSlug], (existingIssueIds = []) => [response.id, ...existingIssueIds]);
+          // increase the count of issues in the pagination info
+          if (this.paginationInfo?.total_count) {
+            set(this, "paginationInfo", {
+              ...this.paginationInfo,
+              total_count: this.paginationInfo.total_count + 1,
+            });
+          }
         });
       }
 
@@ -294,6 +301,13 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
       runInAction(() => {
         unset(this.issueMapIds[workspaceSlug], issueId);
         unset(this.issuesMap, issueId);
+        // reduce the count of issues in the pagination info
+        if (this.paginationInfo?.total_count) {
+          set(this, "paginationInfo", {
+            ...this.paginationInfo,
+            total_count: this.paginationInfo.total_count - 1,
+          });
+        }
       });
 
       this.loader = undefined;
@@ -312,6 +326,13 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
       runInAction(() => {
         unset(this.issueMapIds[workspaceSlug], issueId);
         unset(this.issuesMap, issueId);
+        // reduce the count of issues in the pagination info
+        if (this.paginationInfo?.total_count) {
+          set(this, "paginationInfo", {
+            ...this.paginationInfo,
+            total_count: this.paginationInfo.total_count - 1,
+          });
+        }
       });
 
       this.loader = undefined;
