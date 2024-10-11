@@ -145,7 +145,7 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
     if (!workspaceSlug) return [];
     if (!this.issueMapIds[workspaceSlug]) return [];
     const issueIds = this.issueMapIds[workspaceSlug];
-    return orderBy(issueIds, (issueId) => convertToISODateString(this.issuesMap[issueId]?.created_at), ["asc"]);
+    return orderBy(issueIds, (issueId) => convertToISODateString(this.issuesMap[issueId]?.created_at), ["desc"]);
   }
 
   // computed functions
@@ -224,8 +224,8 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
         if (results && results.length > 0) {
           // adding issueIds
           const issueIds = results.map((issue) => issue.id);
-          set(this, [workspaceSlug], issueIds);
-          this.addIssue(results as TWorkspaceDraftIssue[]);
+          this.addIssue(results);
+          update(this.issueMapIds, [workspaceSlug], (existingIssueIds = []) => [...issueIds, ...existingIssueIds]);
           this.loader = undefined;
         } else {
           this.loader = "empty-state";
@@ -250,8 +250,8 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
       const response = await workspaceDraftService.createIssue(workspaceSlug, payload);
       if (response) {
         runInAction(() => {
-          set(this, [workspaceSlug], response.id);
-          set(this.issuesMap, response.id, response);
+          this.addIssue([response]);
+          update(this.issueMapIds, [workspaceSlug], (existingIssueIds = []) => [response.id, ...existingIssueIds]);
         });
       }
 
@@ -268,8 +268,11 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
     try {
       this.loader = "update";
       runInAction(() => {
-        set(this.issuesMap, [issueId, "updated_at"], getCurrentDateTimeInISO());
-        set(this.issuesMap, [issueId], { ...issueBeforeUpdate, ...payload });
+        set(this.issuesMap, [issueId], {
+          ...issueBeforeUpdate,
+          ...payload,
+          ...{ updated_at: getCurrentDateTimeInISO() },
+        });
       });
       const response = await workspaceDraftService.updateIssue(workspaceSlug, issueId, payload);
       this.loader = undefined;
