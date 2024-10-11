@@ -5,6 +5,7 @@ from .base import BaseModel
 from .cycle import Cycle, CycleFavorite, CycleIssue, CycleUserProperties
 from .dashboard import Dashboard, DashboardWidget, Widget
 from .deploy_board import DeployBoard
+from .draft import DraftIssue, DraftIssueAssignee, DraftIssueLabel, DraftIssueModule, DraftIssueCycle
 from .estimate import Estimate, EstimatePoint
 from .exporter import ExporterHistory
 from .importer import Importer

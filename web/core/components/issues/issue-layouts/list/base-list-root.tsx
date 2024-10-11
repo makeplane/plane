@@ -25,7 +25,8 @@ type ListStoreType =
   | EIssuesStoreType.PROJECT_VIEW
   | EIssuesStoreType.DRAFT
   | EIssuesStoreType.PROFILE
-  | EIssuesStoreType.ARCHIVED;
+  | EIssuesStoreType.ARCHIVED
+  | EIssuesStoreType.WORKSPACE_DRAFT;
 interface IBaseListRoot {
   QuickActions: FC<IQuickActionProps>;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
@@ -61,8 +62,9 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
   const showEmptyGroup = displayFilters?.show_empty_groups ?? false;
 
   const { workspaceSlug, projectId } = useParams();
-  const {updateFilters} = useIssuesActions(storeType);
-  const collapsedGroups = issuesFilter?.issueFilters?.kanbanFilters || { group_by: [], sub_group_by: [] } as TIssueKanbanFilters;
+  const { updateFilters } = useIssuesActions(storeType);
+  const collapsedGroups =
+    issuesFilter?.issueFilters?.kanbanFilters || ({ group_by: [], sub_group_by: [] } as TIssueKanbanFilters);
 
   useEffect(() => {
     fetchIssues("init-loader", { canGroup: true, perPageCount: group_by ? 50 : 100 }, viewId);
@@ -122,14 +124,13 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
         } else {
           collapsedGroups.push(value);
         }
-        updateFilters(projectId?.toString() ?? "", EIssueFilterType.KANBAN_FILTERS,
-          { group_by: collapsedGroups } as TIssueKanbanFilters
-        );
+        updateFilters(projectId?.toString() ?? "", EIssueFilterType.KANBAN_FILTERS, {
+          group_by: collapsedGroups,
+        } as TIssueKanbanFilters);
       }
     },
     [workspaceSlug, issuesFilter, projectId, updateFilters]
   );
-
 
   return (
     <IssueLayoutHOC layout={EIssueLayoutTypes.LIST}>

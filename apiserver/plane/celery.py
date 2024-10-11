@@ -40,6 +40,10 @@ app.conf.beat_schedule = {
         "task": "plane.bgtasks.deletion_task.hard_delete",
         "schedule": crontab(hour=0, minute=0),
     },
+    "run-every-6-hours-for-instance-trace": {
+        "task": "plane.license.bgtasks.tracer.instance_traces",
+        "schedule": crontab(hour="*/6"),
+    },
 }
 
 # Load task modules from all registered Django app configs.

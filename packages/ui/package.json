@@ -2,7 +2,7 @@
   "name": "@plane/ui",
   "description": "UI components shared across multiple apps internally",
   "private": true,
-  "version": "0.23.0",
+  "version": "0.23.1",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",

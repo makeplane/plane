@@ -29,3 +29,4 @@ export * from "./pragmatic";
 export * from "./publish";
 export * from "./workspace-notifications";
 export * from "./favorite";
+export * from "./workspace-draft-issues/base";

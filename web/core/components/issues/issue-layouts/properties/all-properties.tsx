@@ -37,9 +37,7 @@ import { WithDisplayPropertiesHOC } from "./with-display-properties-HOC";
 
 export interface IIssueProperties {
   issue: TIssue;
-  updateIssue:
-    | ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>)
-    | undefined;
+  updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   displayProperties: IIssueDisplayProperties | undefined;
   isReadOnly: boolean;
   className: string;
