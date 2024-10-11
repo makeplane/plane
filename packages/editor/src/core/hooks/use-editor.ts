@@ -136,8 +136,7 @@ export const useEditor = (props: CustomEditorProps) => {
           insertContentAtSavedSelection(editorRef, content, savedSelection);
         }
       },
-      executeMenuItemCommand: (props) => {
-        const { itemKey } = props;
+      executeMenuItemCommand: (itemKey: TEditorCommands) => {
         const editorItems = getEditorMenuItems(editorRef.current);
 
         const getEditorMenuItem = (itemKey: TEditorCommands) => editorItems.find((item) => item.key === itemKey);
@@ -146,8 +145,6 @@ export const useEditor = (props: CustomEditorProps) => {
         if (item) {
           if (item.key === "image") {
             item.command(savedSelectionRef.current);
-          } else if (itemKey === "text-color" || itemKey === "background-color") {
-            item.command(props.color);
           } else {
             item.command();
           }
@@ -155,19 +152,12 @@ export const useEditor = (props: CustomEditorProps) => {
           console.warn(`No command found for item: ${itemKey}`);
         }
       },
-      isMenuItemActive: (props) => {
-        const { itemKey } = props;
+      isMenuItemActive: (itemName: TEditorCommands): boolean => {
         const editorItems = getEditorMenuItems(editorRef.current);
 
-        const getEditorMenuItem = (itemKey: TEditorCommands) => editorItems.find((item) => item.key === itemKey);
-        const item = getEditorMenuItem(itemKey);
-        if (!item) return false;
-
-        if (itemKey === "text-color" || itemKey === "background-color") {
-          return item.isActive(props.color);
-        } else {
-          return item.isActive("");
-        }
+        const getEditorMenuItem = (itemName: TEditorCommands) => editorItems.find((item) => item.key === itemName);
+        const item = getEditorMenuItem(itemName);
+        return item ? item.isActive() : false;
       },
       onHeadingChange: (callback: (headings: IMarking[]) => void) => {
         // Subscribe to update event emitted from headers extension

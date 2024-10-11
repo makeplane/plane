@@ -47,8 +47,6 @@ type Props = {
   setIsMobileSidebar: (value: boolean) => void;
   isNotificationEmbed: boolean;
   embedRemoveCurrentNotification?: () => void;
-  isProjectAdmin: boolean;
-  handleActionWithPermission: (isAdmin: boolean, action: () => void, errorMessage: string) => void;
 };
 
 export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) => {
@@ -72,8 +70,6 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
     setIsMobileSidebar,
     isNotificationEmbed,
     embedRemoveCurrentNotification,
-    isProjectAdmin,
-    handleActionWithPermission,
   } = props;
   const router = useAppRouter();
   const issue = inboxIssue?.issue;
@@ -143,15 +139,7 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
               </CustomMenu.MenuItem>
             )}
             {canMarkAsAccepted && !isAcceptedOrDeclined && (
-              <CustomMenu.MenuItem
-                onClick={() =>
-                  handleActionWithPermission(
-                    isProjectAdmin,
-                    handleIssueSnoozeAction,
-                    "Only project admins can snooze/Un-snooze issues"
-                  )
-                }
-              >
+              <CustomMenu.MenuItem onClick={handleIssueSnoozeAction}>
                 <div className="flex items-center gap-2">
                   <Clock size={14} strokeWidth={2} />
                   {inboxIssue?.snoozed_till && numberOfDaysLeft && numberOfDaysLeft > 0 ? "Un-snooze" : "Snooze"}
@@ -159,15 +147,7 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
               </CustomMenu.MenuItem>
             )}
             {canMarkAsDuplicate && !isAcceptedOrDeclined && (
-              <CustomMenu.MenuItem
-                onClick={() =>
-                  handleActionWithPermission(
-                    isProjectAdmin,
-                    () => setSelectDuplicateIssue(true),
-                    "Only project admins can mark issues as duplicate"
-                  )
-                }
-              >
+              <CustomMenu.MenuItem onClick={() => setSelectDuplicateIssue(true)}>
                 <div className="flex items-center gap-2">
                   <FileStack size={14} strokeWidth={2} />
                   Mark as duplicate
@@ -175,15 +155,7 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
               </CustomMenu.MenuItem>
             )}
             {canMarkAsAccepted && (
-              <CustomMenu.MenuItem
-                onClick={() =>
-                  handleActionWithPermission(
-                    isProjectAdmin,
-                    () => setAcceptIssueModal(true),
-                    "Only project admins can accept issues"
-                  )
-                }
-              >
+              <CustomMenu.MenuItem onClick={() => setAcceptIssueModal(true)}>
                 <div className="flex items-center gap-2 text-green-500">
                   <CircleCheck size={14} strokeWidth={2} />
                   Accept
@@ -191,15 +163,7 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
               </CustomMenu.MenuItem>
             )}
             {canMarkAsDeclined && (
-              <CustomMenu.MenuItem
-                onClick={() =>
-                  handleActionWithPermission(
-                    isProjectAdmin,
-                    () => setDeclineIssueModal(true),
-                    "Only project admins can deny issues"
-                  )
-                }
-              >
+              <CustomMenu.MenuItem onClick={() => setDeclineIssueModal(true)}>
                 <div className="flex items-center gap-2 text-red-500">
                   <CircleX size={14} strokeWidth={2} />
                   Decline

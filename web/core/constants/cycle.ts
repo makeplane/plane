@@ -40,12 +40,12 @@ export const CYCLE_VIEW_LAYOUTS: {
   {
     key: "board",
     icon: LayoutGrid,
-    title: "Gallery layout",
+    title: "Grid layout",
   },
   {
     key: "gantt",
     icon: GanttChartSquare,
-    title: "Timeline layout",
+    title: "Gantt layout",
   },
 ];
 

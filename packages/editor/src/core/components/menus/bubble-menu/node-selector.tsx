@@ -15,7 +15,7 @@ import {
   HeadingFourItem,
   HeadingFiveItem,
   HeadingSixItem,
-  EditorMenuItem,
+  BubbleMenuItem,
 } from "@/components/menus";
 // helpers
 import { cn } from "@/helpers/common";
@@ -26,10 +26,8 @@ type Props = {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 };
 
-export const BubbleMenuNodeSelector: FC<Props> = (props) => {
-  const { editor, isOpen, setIsOpen } = props;
-
-  const items: EditorMenuItem[] = [
+export const BubbleMenuNodeSelector: FC<Props> = ({ editor, isOpen, setIsOpen }) => {
+  const items: BubbleMenuItem[] = [
     TextItem(editor),
     HeadingOneItem(editor),
     HeadingTwoItem(editor),
@@ -44,7 +42,7 @@ export const BubbleMenuNodeSelector: FC<Props> = (props) => {
     CodeItem(editor),
   ];
 
-  const activeItem = items.filter((item) => item.isActive("")).pop() ?? {
+  const activeItem = items.filter((item) => item.isActive()).pop() ?? {
     name: "Multiple",
   };
 
@@ -56,11 +54,12 @@ export const BubbleMenuNodeSelector: FC<Props> = (props) => {
           setIsOpen(!isOpen);
           e.stopPropagation();
         }}
-        className="flex items-center gap-1 h-full whitespace-nowrap px-3 text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 active:bg-custom-background-80 rounded transition-colors"
+        className="flex h-full items-center gap-1 whitespace-nowrap p-2 text-sm font-medium text-custom-text-300 hover:bg-custom-primary-100/5 active:bg-custom-primary-100/5"
       >
         <span>{activeItem?.name}</span>
-        <ChevronDown className="flex-shrink-0 size-3" />
+        <ChevronDown className="h-4 w-4" />
       </button>
+
       {isOpen && (
         <section className="fixed top-full z-[99999] mt-1 flex w-48 flex-col overflow-hidden rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg animate-in fade-in slide-in-from-top-1">
           {items.map((item) => (

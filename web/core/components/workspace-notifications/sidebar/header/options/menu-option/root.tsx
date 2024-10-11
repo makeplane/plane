@@ -2,14 +2,20 @@
 
 import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
-import { Check, CheckCircle, Clock } from "lucide-react";
+import { Check, CheckCheck, CheckCircle, Clock } from "lucide-react";
 import { TNotificationFilter } from "@plane/types";
-import { ArchiveIcon, PopoverMenu } from "@plane/ui";
+import { ArchiveIcon, PopoverMenu, Spinner } from "@plane/ui";
 // components
 import { NotificationMenuOptionItem } from "@/components/workspace-notifications";
 // constants
+import { NOTIFICATIONS_READ } from "@/constants/event-tracker";
+import { ENotificationLoader } from "@/constants/notification";
 // hooks
-import { useWorkspaceNotifications } from "@/hooks/store";
+import { useEventTracker, useWorkspaceNotifications } from "@/hooks/store";
+
+type TNotificationHeaderMenuOption = {
+  workspaceSlug: string;
+};
 
 export type TPopoverMenuOptions = {
   key: string;
@@ -21,16 +27,44 @@ export type TPopoverMenuOptions = {
   onClick?: (() => void) | undefined;
 };
 
-export const NotificationHeaderMenuOption = observer(() => {
+export const NotificationHeaderMenuOption: FC<TNotificationHeaderMenuOption> = observer((props) => {
+  const { workspaceSlug } = props;
   // hooks
-  const { filters, updateFilters, updateBulkFilters } = useWorkspaceNotifications();
+  const { captureEvent } = useEventTracker();
+  const { loader, filters, updateFilters, updateBulkFilters, markAllNotificationsAsRead } = useWorkspaceNotifications();
 
   const handleFilterChange = (filterType: keyof TNotificationFilter, filterValue: boolean) =>
     updateFilters(filterType, filterValue);
 
   const handleBulkFilterChange = (filter: Partial<TNotificationFilter>) => updateBulkFilters(filter);
 
+  const handleMarkAllNotificationsAsRead = async () => {
+    // NOTE: We are using loader to prevent continues request when we are making all the notification to read
+    if (loader) return;
+    try {
+      await markAllNotificationsAsRead(workspaceSlug);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const popoverMenuOptions: TPopoverMenuOptions[] = [
+    {
+      key: "menu-mark-all-read",
+      type: "menu-item",
+      label: "Mark all as read",
+      isActive: true,
+      prependIcon: <CheckCheck className="h-3 w-3" />,
+      appendIcon: loader === ENotificationLoader.MARK_ALL_AS_READY ? <Spinner height="14px" width="14px" /> : undefined,
+      onClick: () => {
+        captureEvent(NOTIFICATIONS_READ);
+        handleMarkAllNotificationsAsRead();
+      },
+    },
+    {
+      key: "menu-divider",
+      type: "divider",
+    },
     {
       key: "menu-unread",
       type: "menu-item",

@@ -40,8 +40,6 @@ from .workspace.base import (
     ExportWorkspaceUserActivityEndpoint,
 )
 
-from .workspace.draft import WorkspaceDraftIssueViewSet
-
 from .workspace.favorite import (
     WorkspaceFavoriteEndpoint,
     WorkspaceFavoriteGroupEndpoint,
@@ -134,6 +132,8 @@ from .issue.comment import (
     IssueCommentViewSet,
     CommentReactionViewSet,
 )
+
+from .issue.draft import IssueDraftViewSet
 
 from .issue.label import (
     LabelViewSet,

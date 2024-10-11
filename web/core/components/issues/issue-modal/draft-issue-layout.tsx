@@ -14,7 +14,9 @@ import { ConfirmIssueDiscard } from "@/components/issues";
 import { isEmptyHtmlString } from "@/helpers/string.helper";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
-import { useEventTracker, useWorkspaceDraftIssues } from "@/hooks/store";
+import { useEventTracker } from "@/hooks/store";
+// services
+import { IssueDraftService } from "@/services/issue";
 // local components
 import { IssueFormRoot } from "./form";
 
@@ -30,6 +32,8 @@ export interface DraftIssueProps {
   projectId: string;
   isDraft: boolean;
 }
+
+const issueDraftService = new IssueDraftService();
 
 export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
   const {
@@ -53,7 +57,6 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
   // store hooks
   const { captureIssueEvent } = useEventTracker();
   const { handleCreateUpdatePropertyValues } = useIssueModal();
-  const { createIssue } = useWorkspaceDraftIssues();
 
   const handleClose = () => {
     if (data?.id) {
@@ -92,10 +95,10 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
     const payload = {
       ...changesMade,
       name: changesMade?.name && changesMade?.name?.trim() !== "" ? changesMade.name?.trim() : "Untitled",
-      project_id: projectId,
     };
 
-    const response = await createIssue(workspaceSlug.toString(), payload)
+    const response = await issueDraftService
+      .createDraftIssue(workspaceSlug.toString(), projectId.toString(), payload)
       .then((res) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,

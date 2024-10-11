@@ -18,7 +18,7 @@ import { SPREADSHEET_SELECT_GROUP } from "@/constants/spreadsheet";
 // helper
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useIssueDetail, useIssues, useProject } from "@/hooks/store";
+import { useIssueDetail, useProject } from "@/hooks/store";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -26,7 +26,6 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { IssueIdentifier } from "@/plane-web/components/issues";
 // local components
 import { TRenderQuickActions } from "../list/list-view-types";
-import { isIssueNew } from "../utils";
 import { IssueColumn } from "./issue-column";
 
 interface Props {
@@ -43,7 +42,6 @@ interface Props {
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
   spacingLeft?: number;
   selectionHelpers: TSelectionHelper;
-  shouldRenderByDefault?: boolean;
 }
 
 export const SpreadsheetIssueRow = observer((props: Props) => {
@@ -61,14 +59,11 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
     spreadsheetColumnsList,
     spacingLeft = 6,
     selectionHelpers,
-    shouldRenderByDefault,
   } = props;
   // states
   const [isExpanded, setExpanded] = useState<boolean>(false);
   // store hooks
   const { subIssues: subIssuesStore } = useIssueDetail();
-  const { issueMap } = useIssues();
-
   // derived values
   const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
   const isIssueSelected = selectionHelpers.getIsEntitySelected(issueId);
@@ -93,7 +88,6 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
         })}
         verticalOffset={100}
         shouldRecordHeights={false}
-        defaultValue={shouldRenderByDefault || isIssueNew(issueMap[issueId])}
       >
         <IssueRowDetails
           issueId={issueId}
@@ -130,7 +124,6 @@ export const SpreadsheetIssueRow = observer((props: Props) => {
             containerRef={containerRef}
             spreadsheetColumnsList={spreadsheetColumnsList}
             selectionHelpers={selectionHelpers}
-            shouldRenderByDefault={isExpanded}
           />
         ))}
     </>

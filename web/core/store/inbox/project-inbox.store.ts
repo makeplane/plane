@@ -423,7 +423,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
 
       if (inboxIssue && issueId) {
         runInAction(() => {
-          this.createOrUpdateInboxIssue([inboxIssue], workspaceSlug, projectId);
+          set(this.inboxIssues, [issueId], new InboxIssueStore(workspaceSlug, projectId, inboxIssue, this.store));
           set(this, "loader", undefined);
         });
         await Promise.all([

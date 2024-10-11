@@ -1,7 +1,7 @@
 import { FC, useEffect } from "react";
 import { observer } from "mobx-react";
 // components
-import { IssueParentDetail, TIssueOperations } from "@/components/issues";
+import { TIssueOperations } from "@/components/issues";
 // store hooks
 import { useIssueDetail, useUser } from "@/hooks/store";
 // hooks
@@ -57,15 +57,6 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
 
   return (
     <div className="space-y-2">
-      {issue.parent_id && (
-        <IssueParentDetail
-          workspaceSlug={workspaceSlug}
-          projectId={issue.project_id}
-          issueId={issueId}
-          issue={issue}
-          issueOperations={issueOperations}
-        />
-      )}
       <IssueTypeSwitcher issueId={issueId} disabled={isArchived || disabled} />
       <IssueTitleInput
         workspaceSlug={workspaceSlug}

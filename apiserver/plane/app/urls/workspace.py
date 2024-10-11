@@ -27,7 +27,6 @@ from plane.app.views import (
     WorkspaceCyclesEndpoint,
     WorkspaceFavoriteEndpoint,
     WorkspaceFavoriteGroupEndpoint,
-    WorkspaceDraftIssueViewSet,
 )
 
 
@@ -254,31 +253,5 @@ urlpatterns = [
         "workspaces/<str:slug>/user-favorites/<uuid:favorite_id>/group/",
         WorkspaceFavoriteGroupEndpoint.as_view(),
         name="workspace-user-favorites-groups",
-    ),
-    path(
-        "workspaces/<str:slug>/draft-issues/",
-        WorkspaceDraftIssueViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
-        name="workspace-draft-issues",
-    ),
-    path(
-        "workspaces/<str:slug>/draft-issues/<uuid:pk>/",
-        WorkspaceDraftIssueViewSet.as_view(
-            {
-                "get": "retrieve",
-                "patch": "partial_update",
-                "delete": "destroy",
-            }
-        ),
-        name="workspace-drafts-issues",
-    ),
-    path(
-        "workspaces/<str:slug>/draft-to-issue/<uuid:draft_id>/",
-        WorkspaceDraftIssueViewSet.as_view({"post": "create_draft_to_issue"}),
-        name="workspace-drafts-issues",
     ),
 ]

@@ -187,7 +187,6 @@ class CycleViewSet(BaseViewSet):
                 "completed_issues",
                 "assignee_ids",
                 "status",
-                "version",
                 "created_by",
             )
 
@@ -217,7 +216,6 @@ class CycleViewSet(BaseViewSet):
             "completed_issues",
             "assignee_ids",
             "status",
-            "version",
             "created_by",
         )
         return Response(data, status=status.HTTP_200_OK)
@@ -257,7 +255,6 @@ class CycleViewSet(BaseViewSet):
                         "external_id",
                         "progress_snapshot",
                         "logo_props",
-                        "version",
                         # meta fields
                         "is_favorite",
                         "total_issues",
@@ -309,7 +306,10 @@ class CycleViewSet(BaseViewSet):
 
         request_data = request.data
 
-        if cycle.end_date is not None and cycle.end_date < timezone.now():
+        if (
+            cycle.end_date is not None
+            and cycle.end_date < timezone.now().date()
+        ):
             if "sort_order" in request_data:
                 # Can only change sort order for a completed cycle``
                 request_data = {
@@ -347,7 +347,6 @@ class CycleViewSet(BaseViewSet):
                 "external_id",
                 "progress_snapshot",
                 "logo_props",
-                "version",
                 # meta fields
                 "is_favorite",
                 "total_issues",
@@ -413,7 +412,6 @@ class CycleViewSet(BaseViewSet):
                 "progress_snapshot",
                 "sub_issues",
                 "logo_props",
-                "version",
                 # meta fields
                 "is_favorite",
                 "total_issues",
@@ -927,7 +925,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
 
         if (
             new_cycle.end_date is not None
-            and new_cycle.end_date < timezone.now()
+            and new_cycle.end_date < timezone.now().date()
         ):
             return Response(
                 {
@@ -1149,7 +1147,6 @@ class CycleProgressEndpoint(BaseAPIView):
             },
             status=status.HTTP_200_OK,
         )
-
 
 class CycleAnalyticsEndpoint(BaseAPIView):
 

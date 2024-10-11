@@ -40,6 +40,8 @@ from plane.db.models import (
     IssueLink,
     IssueRelation,
     Project,
+    ProjectMember,
+    User,
     Widget,
     WorkspaceMember,
 )

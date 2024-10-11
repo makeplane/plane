@@ -18,9 +18,6 @@ export {
 
 export { isCellSelection } from "@/extensions/table/table/utilities/is-cell-selection";
 
-// constants
-export * from "@/constants/common";
-
 // helpers
 export * from "@/helpers/common";
 export * from "@/helpers/editor-commands";

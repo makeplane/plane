@@ -16,6 +16,7 @@ import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useEventTracker, useCycle, useIssues, useModule, useIssueDetail, useUser } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
+import useLocalStorage from "@/hooks/use-local-storage";
 // local components
 import { DraftIssueLayout } from "./draft-issue-layout";
 import { IssueFormRoot } from "./form";
@@ -49,11 +50,15 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   const { fetchModuleDetails } = useModule();
   const { issues } = useIssues(storeType);
   const { issues: projectIssues } = useIssues(EIssuesStoreType.PROJECT);
-  const { issues: draftIssues } = useIssues(EIssuesStoreType.WORKSPACE_DRAFT);
+  const { issues: draftIssues } = useIssues(EIssuesStoreType.DRAFT);
   const { fetchIssue } = useIssueDetail();
   const { handleCreateUpdatePropertyValues } = useIssueModal();
   // pathname
   const pathname = usePathname();
+  // local storage
+  const { storedValue: localStorageDraftIssues, setValue: setLocalStorageDraftIssue } = useLocalStorage<
+    Record<string, Partial<TIssue>>
+  >("draftedIssue", {});
   // current store details
   const { createIssue, updateIssue } = useIssuesActions(storeType);
   // derived values
@@ -65,7 +70,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     if (!workspaceSlug) return;
 
     if (!projectId || issueId === undefined || !fetchIssueDetails) {
-      // Set description to the issue description from the props if available
+    // Set description to the issue description from the props if available
       setDescription(data?.description_html || "<p></p>");
       return;
     }
@@ -123,9 +128,14 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     setCreateMore(value);
   };
 
-  const handleClose = (saveAsDraft?: boolean) => {
-    if (changesMade && saveAsDraft && !data) {
-      handleCreateIssue(changesMade, true);
+  const handleClose = (saveDraftIssueInLocalStorage?: boolean) => {
+    if (changesMade && saveDraftIssueInLocalStorage) {
+      // updating the current edited issue data in the local storage
+      let draftIssues = localStorageDraftIssues ? localStorageDraftIssues : {};
+      if (workspaceSlug) {
+        draftIssues = { ...draftIssues, [workspaceSlug.toString()]: changesMade };
+        setLocalStorageDraftIssue(draftIssues);
+      }
     }
 
     setActiveProjectId(null);
@@ -140,10 +150,11 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     if (!workspaceSlug || !payload.project_id) return;
 
     try {
-      let response: TIssue | undefined;
+      let response;
+
       // if draft issue, use draft issue store to create issue
       if (is_draft_issue) {
-        response = (await draftIssues.createIssue(workspaceSlug.toString(), payload)) as TIssue;
+        response = await draftIssues.createIssue(workspaceSlug.toString(), payload.project_id, payload);
       }
       // if cycle id in payload does not match the cycleId in url
       // or if the moduleIds in Payload does not match the moduleId in url
@@ -202,8 +213,8 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
         payload: { ...response, state: "SUCCESS" },
         path: pathname,
       });
-      if (!createMore) handleClose();
-      if (createMore && issueTitleRef) issueTitleRef?.current?.focus();
+      !createMore && handleClose();
+      if (createMore) issueTitleRef && issueTitleRef?.current?.focus();
       setDescription("<p></p>");
       setChangesMade(null);
       return response;
@@ -226,8 +237,9 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     if (!workspaceSlug || !payload.project_id || !data?.id) return;
 
     try {
-      if (isDraft) await draftIssues.updateIssue(workspaceSlug.toString(), data.id, payload);
-      else if (updateIssue) await updateIssue(payload.project_id, data.id, payload);
+      isDraft
+        ? await draftIssues.updateIssue(workspaceSlug.toString(), payload.project_id, data.id, payload)
+        : updateIssue && (await updateIssue(payload.project_id, data.id, payload));
 
       // add other property values
       await handleCreateUpdatePropertyValues({
@@ -248,7 +260,6 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       });
       handleClose();
     } catch (error) {
-      console.error(error);
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
@@ -303,7 +314,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
           issueTitleRef={issueTitleRef}
           onChange={handleFormChange}
           onClose={handleClose}
-          onSubmit={(payload) => handleFormSubmit(payload, isDraft)}
+          onSubmit={handleFormSubmit}
           projectId={activeProjectId}
           isCreateMoreToggleEnabled={createMore}
           onCreateMoreToggleChange={handleCreateMoreToggleChange}
@@ -318,10 +329,10 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
             cycle_id: data?.cycle_id ? data?.cycle_id : cycleId ? cycleId.toString() : null,
             module_ids: data?.module_ids ? data?.module_ids : moduleId ? [moduleId.toString()] : null,
           }}
-          onClose={handleClose}
+          onClose={() => handleClose(false)}
           isCreateMoreToggleEnabled={createMore}
           onCreateMoreToggleChange={handleCreateMoreToggleChange}
-          onSubmit={(payload) => handleFormSubmit(payload, isDraft)}
+          onSubmit={handleFormSubmit}
           projectId={activeProjectId}
           isDraft={isDraft}
         />

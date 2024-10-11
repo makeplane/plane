@@ -30,7 +30,6 @@ from rest_framework.response import Response
 # Module imports
 from plane.app.permissions import (
     ProjectEntityPermission,
-    ProjectLitePermission,
     allow_permission,
     ROLE,
 )
@@ -318,12 +317,13 @@ class ModuleViewSet(BaseViewSet):
             .order_by("-is_favorite", "-created_at")
         )
 
-    @allow_permission(
+    allow_permission(
         [
             ROLE.ADMIN,
             ROLE.MEMBER,
         ]
     )
+
     def create(self, request, slug, project_id):
         project = Project.objects.get(workspace__slug=slug, pk=project_id)
         serializer = ModuleWriteSerializer(
@@ -386,7 +386,8 @@ class ModuleViewSet(BaseViewSet):
             return Response(module, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+
     def list(self, request, slug, project_id):
         queryset = self.get_queryset().filter(archived_at__isnull=True)
         if self.fields:
@@ -434,7 +435,13 @@ class ModuleViewSet(BaseViewSet):
             )
         return Response(modules, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+        ]
+    )
+
     def retrieve(self, request, slug, project_id, pk):
         queryset = (
             self.get_queryset()
@@ -665,13 +672,7 @@ class ModuleViewSet(BaseViewSet):
             "labels": label_distribution,
             "completion_chart": {},
         }
-
-        if (
-            modules
-            and modules.start_date
-            and modules.target_date
-            and modules.total_issues > 0
-        ):
+        if modules and modules.start_date and modules.target_date:
             data["distribution"]["completion_chart"] = burndown_plot(
                 queryset=modules,
                 slug=slug,
@@ -837,9 +838,6 @@ class ModuleLinkViewSet(BaseViewSet):
 
 class ModuleFavoriteViewSet(BaseViewSet):
     model = UserFavorite
-    permission_classes = [
-        ProjectLitePermission,
-    ]
 
     def get_queryset(self):
         return self.filter_queryset(

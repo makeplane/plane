@@ -52,8 +52,13 @@ const ProfileAppearancePage = observer(() => {
   const applyThemeChange = (theme: Partial<IUserTheme>) => {
     setTheme(theme?.theme || "system");
 
-    if (theme?.theme === "custom" && theme?.palette) {
-      applyTheme(theme?.palette !== ",,,," ? theme?.palette : "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5", false);
+    const customThemeElement = window.document?.querySelector<HTMLElement>("[data-theme='custom']");
+    if (theme?.theme === "custom" && theme?.palette && customThemeElement) {
+      applyTheme(
+        theme?.palette !== ",,,," ? theme?.palette : "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5",
+        false,
+        customThemeElement
+      );
     } else unsetCustomCssVariables();
   };
 

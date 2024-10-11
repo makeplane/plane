@@ -30,7 +30,6 @@ export enum EIssuesStoreType {
   ARCHIVED = "ARCHIVED",
   DRAFT = "DRAFT",
   DEFAULT = "DEFAULT",
-  WORKSPACE_DRAFT = "WORKSPACE_DRAFT",
 }
 
 export enum EIssueLayoutTypes {
@@ -157,24 +156,24 @@ export const ISSUE_EXTRA_OPTIONS: {
 ];
 
 export const ISSUE_LAYOUT_MAP = {
-  [EIssueLayoutTypes.LIST]: { key: EIssueLayoutTypes.LIST, title: "List layout", label: "List", icon: List },
-  [EIssueLayoutTypes.KANBAN]: { key: EIssueLayoutTypes.KANBAN, title: "Board layout", label: "Board", icon: Kanban },
+  [EIssueLayoutTypes.LIST]: { key: EIssueLayoutTypes.LIST, title: "List Layout", label: "List", icon: List },
+  [EIssueLayoutTypes.KANBAN]: { key: EIssueLayoutTypes.KANBAN, title: "Kanban Layout", label: "Kanban", icon: Kanban },
   [EIssueLayoutTypes.CALENDAR]: {
     key: EIssueLayoutTypes.CALENDAR,
-    title: "Calendar layout",
+    title: "Calendar Layout",
     label: "Calendar",
     icon: Calendar,
   },
   [EIssueLayoutTypes.SPREADSHEET]: {
     key: EIssueLayoutTypes.SPREADSHEET,
-    title: "Table layout",
-    label: "Table",
+    title: "Spreadsheet Layout",
+    label: "Spreadsheet",
     icon: Sheet,
   },
   [EIssueLayoutTypes.GANTT]: {
     key: EIssueLayoutTypes.GANTT,
-    title: "Timeline layout",
-    label: "Timeline",
+    title: "Gantt Chart Layout",
+    label: "Gantt",
     icon: GanttChartSquare,
   },
 };
