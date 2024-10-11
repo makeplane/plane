@@ -61,7 +61,7 @@ export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
     upload: uploadFile,
     delete: async (src: string) => {
       if (checkURLValidity(src)) {
-        await fileService.deleteOldEditorAsset(workspaceId, src);
+        await fileService.deleteOldWorkspaceAsset(workspaceId, src);
       } else {
         await fileService.deleteNewAsset(
           getEditorAssetSrc({

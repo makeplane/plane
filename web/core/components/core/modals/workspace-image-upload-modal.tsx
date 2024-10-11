@@ -13,6 +13,7 @@ import { Button } from "@plane/ui";
 import { MAX_STATIC_FILE_SIZE } from "@/constants/common";
 // helpers
 import { getAssetIdFromUrl, getFileURL } from "@/helpers/file.helper";
+import { checkURLValidity } from "@/helpers/string.helper";
 // hooks
 import { useWorkspace } from "@/hooks/store";
 // services
@@ -84,10 +85,14 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
 
   const handleImageRemove = async () => {
     if (!workspaceSlug || !value) return;
-    const assetId = getAssetIdFromUrl(value);
     setIsRemoving(true);
     try {
-      await fileService.deleteWorkspaceAsset(workspaceSlug.toString(), assetId);
+      if (checkURLValidity(value)) {
+        await fileService.deleteOldWorkspaceAsset(currentWorkspace?.id ?? "", value);
+      } else {
+        const assetId = getAssetIdFromUrl(value);
+        await fileService.deleteWorkspaceAsset(workspaceSlug.toString(), assetId);
+      }
       await handleRemove();
       handleClose();
     } catch (error) {
