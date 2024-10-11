@@ -286,9 +286,8 @@ const ProfileSettingsPage = observer(() => {
                       ref={ref}
                       hasError={Boolean(errors.email)}
                       placeholder="Enter your email"
-                      className={`w-full cursor-not-allowed rounded-md !bg-custom-background-80 ${
-                        errors.email ? "border-red-500" : ""
-                      }`}
+                      className={`w-full cursor-not-allowed rounded-md !bg-custom-background-80 ${errors.email ? "border-red-500" : ""
+                        }`}
                       autoComplete="on"
                       disabled
                     />
@@ -435,9 +434,5 @@ const ProfileSettingsPage = observer(() => {
     </>
   );
 });
-
-// ProfileSettingsPage.getLayout = function getLayout(page: ReactElement) {
-//   return <ProfileSettingsLayout>{page}</ProfileSettingsLayout>;
-// };
 
 export default ProfileSettingsPage;
