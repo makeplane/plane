@@ -1,12 +1,15 @@
 "use client";
 
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
-import { ArchiveRestoreIcon, Clipboard, Copy, History, Link, Lock, LockOpen } from "lucide-react";
+import { ArchiveRestoreIcon, ArrowUpToLine, Clipboard, Copy, History, Link, Lock, LockOpen } from "lucide-react";
 // document editor
 import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
 // ui
 import { ArchiveIcon, CustomMenu, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
+// components
+import { ExportPageModal } from "@/components/pages";
 // helpers
 import { copyTextToClipboard, copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
@@ -27,6 +30,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   const router = useRouter();
   // store values
   const {
+    name,
     archived_at,
     is_locked,
     id,
@@ -38,6 +42,8 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     canCurrentUserLockPage,
     restore,
   } = page;
+  // states
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   // store hooks
   const { workspaceSlug, projectId } = useParams();
   // page filters
@@ -157,26 +163,41 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
       icon: History,
       shouldRender: true,
     },
+    {
+      key: "export",
+      action: () => setIsExportModalOpen(true),
+      label: "Export",
+      icon: ArrowUpToLine,
+      shouldRender: true,
+    },
   ];
 
   return (
-    <CustomMenu maxHeight="lg" placement="bottom-start" verticalEllipsis closeOnSelect>
-      <CustomMenu.MenuItem
-        className="hidden md:flex w-full items-center justify-between gap-2"
-        onClick={() => handleFullWidth(!isFullWidth)}
-      >
-        Full width
-        <ToggleSwitch value={isFullWidth} onChange={() => {}} />
-      </CustomMenu.MenuItem>
-      {MENU_ITEMS.map((item) => {
-        if (!item.shouldRender) return null;
-        return (
-          <CustomMenu.MenuItem key={item.key} onClick={item.action} className="flex items-center gap-2">
-            <item.icon className="h-3 w-3" />
-            {item.label}
-          </CustomMenu.MenuItem>
-        );
-      })}
-    </CustomMenu>
+    <>
+      <ExportPageModal
+        editorRef={editorRef}
+        isOpen={isExportModalOpen}
+        onClose={() => setIsExportModalOpen(false)}
+        pageTitle={name ?? ""}
+      />
+      <CustomMenu maxHeight="lg" placement="bottom-start" verticalEllipsis closeOnSelect>
+        <CustomMenu.MenuItem
+          className="hidden md:flex w-full items-center justify-between gap-2"
+          onClick={() => handleFullWidth(!isFullWidth)}
+        >
+          Full width
+          <ToggleSwitch value={isFullWidth} onChange={() => {}} />
+        </CustomMenu.MenuItem>
+        {MENU_ITEMS.map((item) => {
+          if (!item.shouldRender) return null;
+          return (
+            <CustomMenu.MenuItem key={item.key} onClick={item.action} className="flex items-center gap-2">
+              <item.icon className="h-3 w-3" />
+              {item.label}
+            </CustomMenu.MenuItem>
+          );
+        })}
+      </CustomMenu>
+    </>
   );
 });

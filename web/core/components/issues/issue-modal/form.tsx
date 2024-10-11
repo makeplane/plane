@@ -266,7 +266,9 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
       )}
       <form onSubmit={handleSubmit((data) => handleFormSubmit(data))}>
         <div className="p-5">
-          <h3 className="text-xl font-medium text-custom-text-200 pb-2">{data?.id ? "Update" : "Create new"} issue</h3>
+          <h3 className="text-xl font-medium text-custom-text-200 pb-2">
+            {data?.id ? "Update" : isDraft ? "Create draft" : "Create new"} issue
+          </h3>
           {/* Disable project selection if editing an issue */}
           <div className="flex items-center pt-2 pb-4 gap-x-1">
             <IssueProjectSelect
@@ -397,31 +399,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
               >
                 Discard
               </Button>
-              {isDraft && (
-                <>
-                  {data?.id ? (
-                    <Button
-                      variant="neutral-primary"
-                      size="sm"
-                      loading={isSubmitting}
-                      onClick={handleSubmit((data) => handleFormSubmit({ ...data, is_draft: false }))}
-                      tabIndex={getIndex("draft_button")}
-                    >
-                      {isSubmitting ? "Moving" : "Move from draft"}
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="neutral-primary"
-                      size="sm"
-                      loading={isSubmitting}
-                      onClick={handleSubmit((data) => handleFormSubmit(data, true))}
-                      tabIndex={getIndex("draft_button")}
-                    >
-                      {isSubmitting ? "Saving" : "Save as draft"}
-                    </Button>
-                  )}
-                </>
-              )}
               <Button
                 variant="primary"
                 type="submit"
@@ -430,7 +407,15 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                 loading={isSubmitting}
                 tabIndex={isDraft ? getIndex("submit_button") : getIndex("draft_button")}
               >
-                {data?.id ? (isSubmitting ? "Updating" : "Update") : isSubmitting ? "Creating" : "Create"}
+                {data?.id
+                  ? isSubmitting
+                    ? "Updating"
+                    : "Update"
+                  : isSubmitting
+                    ? "Creating"
+                    : isDraft
+                      ? "Create draft issue"
+                      : "Create"}
               </Button>
             </div>
           </div>

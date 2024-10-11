@@ -207,8 +207,7 @@ class CycleAPIEndpoint(BaseAPIView):
         # Incomplete Cycles
         if cycle_view == "incomplete":
             queryset = queryset.filter(
-                Q(end_date__gte=timezone.now().date())
-                | Q(end_date__isnull=True),
+                Q(end_date__gte=timezone.now()) | Q(end_date__isnull=True),
             )
             return self.paginate(
                 request=request,
@@ -309,10 +308,7 @@ class CycleAPIEndpoint(BaseAPIView):
 
         request_data = request.data
 
-        if (
-            cycle.end_date is not None
-            and cycle.end_date < timezone.now().date()
-        ):
+        if cycle.end_date is not None and cycle.end_date < timezone.now():
             if "sort_order" in request_data:
                 # Can only change sort order
                 request_data = {
@@ -537,7 +533,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         cycle = Cycle.objects.get(
             pk=cycle_id, project_id=project_id, workspace__slug=slug
         )
-        if cycle.end_date >= timezone.now().date():
+        if cycle.end_date >= timezone.now():
             return Response(
                 {"error": "Only completed cycles can be archived"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -1146,7 +1142,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
 
         if (
             new_cycle.end_date is not None
-            and new_cycle.end_date < timezone.now().date()
+            and new_cycle.end_date < timezone.now()
         ):
             return Response(
                 {
