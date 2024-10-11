@@ -37,12 +37,8 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions@github.com
           git remote add community https://github.com/makeplane/plane.git
-          git fetch community ${{ env.SOURCE_BRANCH }}
-
-      - name: Merge changes from community repo
-        run: |
-          git merge community/${{ env.SOURCE_BRANCH }} --allow-unrelated-histories
-          git push origin ${{ env.SYNC_BRANCH }}
+          git checkout -b ${{ env.SYNC_BRANCH }}
+          git reset --hard community/${{ env.SOURCE_BRANCH }}
 
       - name: Create Pull Request
         env:
