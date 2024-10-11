@@ -75,7 +75,7 @@ export const useWorkspaceMention = (props: Props) => {
         type: "User",
         title: `${memberDetails?.display_name}`,
         subtitle: memberDetails?.email ?? "",
-        avatar: `${memberDetails?.avatar}`,
+        avatar: `${memberDetails?.avatar_url}`,
         redirect_uri: `/${workspaceSlug}/profile/${memberDetails?.id}`,
       }));
     } else {
@@ -88,7 +88,7 @@ export const useWorkspaceMention = (props: Props) => {
         type: "User",
         title: `${memberDetails?.display_name}`,
         subtitle: memberDetails?.email ?? "",
-        avatar: `${memberDetails?.avatar}`,
+        avatar: `${memberDetails?.avatar_url}`,
         redirect_uri: `/${workspaceSlug}/profile/${memberDetails?.id}`,
       }));
     }

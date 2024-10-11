@@ -1,9 +1,5 @@
 # Django imports
-from django.db.models import (
-    Exists,
-    OuterRef,
-    Prefetch,
-)
+from django.db.models import Exists, OuterRef, Prefetch, Q
 from django.utils import timezone
 
 # Module imports
@@ -69,6 +65,15 @@ class WorkspaceActiveCycleEndpoint(BaseAPIView):
             .order_by("-is_favorite", "name")
             .distinct()
         )
+
+        active_cycles = active_cycles.filter(
+            ~Q(
+                project__project_projectmember__role=5,
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
+        )
+
         return self.paginate(
             request=request,
             queryset=active_cycles,

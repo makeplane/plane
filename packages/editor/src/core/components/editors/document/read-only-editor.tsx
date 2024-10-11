@@ -20,8 +20,8 @@ interface IDocumentReadOnlyEditor {
   containerClassName: string;
   displayConfig?: TDisplayConfig;
   editorClassName?: string;
-  fileHandler: Pick<TFileHandler, "getAssetSrc">;
   embedHandler: TReadOnlyEmbedConfig;
+  fileHandler: Pick<TFileHandler, "getAssetSrc">;
   tabIndex?: number;
   handleEditorReady?: (value: boolean) => void;
   mentionHandler: {

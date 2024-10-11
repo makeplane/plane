@@ -92,7 +92,6 @@ const nextConfig = {
         destination: `${GOD_MODE_BASE_URL}/:path*`,
       });
     }
-
     return rewrites;
   },
 };

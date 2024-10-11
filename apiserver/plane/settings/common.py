@@ -340,6 +340,7 @@ if bool(os.environ.get("SENTRY_DSN", False)) and os.environ.get(
 # Application Envs
 SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN", False)
 FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
+PRO_FILE_SIZE_LIMIT = int(os.environ.get("PRO_FILE_SIZE_LIMIT", 104857600))
 
 # Unsplash Access key
 UNSPLASH_ACCESS_KEY = os.environ.get("UNSPLASH_ACCESS_KEY")

@@ -7,6 +7,8 @@ import { cn } from "@plane/editor";
 import { Button, EModalWidth, Input, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { WorkspaceLogo } from "@/components/workspace";
+// helpers
+import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useUserPermissions, useWorkspace } from "@/hooks/store";
 // plane web constants
@@ -83,7 +85,7 @@ export const SubscriptionActivationModal: FC<TSubscriptionActivationModal> = obs
           <h3 className="flex items-center whitespace-nowrap flex-wrap gap-2 text-xl font-medium">
             Activate
             <WorkspaceLogo
-              logo={currentWorkspace?.logo}
+              logo={getFileURL(currentWorkspace?.logo_url ?? "")}
               name={currentWorkspace?.name}
               classNames="text-lg font-medium h-5 w-5"
             />

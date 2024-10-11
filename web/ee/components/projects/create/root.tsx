@@ -5,6 +5,8 @@ import { observer } from "mobx-react";
 import { useForm, FormProvider } from "react-hook-form";
 // ui
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
+// types
+import { TCreateProjectFormProps } from "@/ce/components/projects/create/root";
 // constants
 import ProjectCommonAttributes from "@/components/project/create/common-attributes";
 import ProjectCreateHeader from "@/components/project/create/header";
@@ -21,16 +23,8 @@ import { TProject } from "@/plane-web/types/projects";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import ProjectAttributes from "./attributes";
 
-type Props = {
-  setToFavorite?: boolean;
-  workspaceSlug: string;
-  onClose: () => void;
-  handleNextStep: (projectId: string) => void;
-  data?: Partial<TProject>;
-};
-
 const defaultValues: Partial<TProject> = {
-  cover_image: PROJECT_UNSPLASH_COVERS[Math.floor(Math.random() * PROJECT_UNSPLASH_COVERS.length)],
+  cover_image_url: PROJECT_UNSPLASH_COVERS[Math.floor(Math.random() * PROJECT_UNSPLASH_COVERS.length)],
   description: "",
   logo_props: {
     in_use: "emoji",
@@ -44,8 +38,8 @@ const defaultValues: Partial<TProject> = {
   project_lead: null,
 };
 
-export const CreateProjectForm: FC<Props> = observer((props) => {
-  const { setToFavorite, workspaceSlug, onClose, handleNextStep, data } = props;
+export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) => {
+  const { setToFavorite, workspaceSlug, onClose, handleNextStep, data, updateCoverImageStatus } = props;
   // store
   const { captureProjectEvent } = useEventTracker();
   const { addProjectToFavorites, createProject } = useProject();
@@ -97,23 +91,27 @@ export const CreateProjectForm: FC<Props> = observer((props) => {
           id,
           member_id: id,
           role: EUserPermissions.MEMBER,
-          member__avatar: memberMap[id]?.avatar,
+          member__avatar_url: memberMap[id]?.avatar_url,
           member__display_name: memberMap[id]?.display_name,
         }));
     formData.identifier = formData.identifier?.toUpperCase();
     if (members) formData.members = members;
+    const coverImage = formData.cover_image_url;
 
     return createProject(workspaceSlug.toString(), formData)
-      .then((res) => {
+      .then(async (res) => {
+        if (coverImage) {
+          await updateCoverImageStatus(res.id, coverImage);
+        }
         const newPayload = {
           ...res,
           state: "SUCCESS",
         };
-        isProjectGroupingEnabled &&
-          members &&
+        if (isProjectGroupingEnabled && members) {
           bulkAddMembersToProject(workspaceSlug.toString(), res.id, {
             members,
           });
+        }
         captureProjectEvent({
           eventName: PROJECT_CREATED,
           payload: newPayload,

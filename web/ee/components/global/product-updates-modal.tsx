@@ -1,15 +1,18 @@
 import { FC, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { ExternalLink, RefreshCw } from "lucide-react";
-// editor
+// plane editor
 import { DocumentReadOnlyEditorWithRef, EditorRefApi } from "@plane/editor";
-// ui
+// plane ui
 import { Button, EModalPosition, EModalWidth, getButtonStyling, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
-// helpers
+// components
 import { LogoSpinner } from "@/components/common";
+// helpers
 import { cn } from "@/helpers/common.helper";
+import { getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
 import { useInstance } from "@/hooks/store";
 // assets
@@ -29,6 +32,8 @@ export const ProductUpdatesModal: FC<ProductUpdatesModalProps> = observer((props
   const { isOpen, handleClose } = props;
   // states
   const [isCheckingForUpdates, setIsCheckingForUpdates] = useState(false);
+  // params
+  const { workspaceSlug, projectId } = useParams();
   // store
   const { isUpdateAvailable, updateInstanceInfo } = useInstance();
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
@@ -137,6 +142,10 @@ export const ProductUpdatesModal: FC<ProductUpdatesModalProps> = observer((props
                 id={data.id}
                 initialValue={data.description_html ?? "<p></p>"}
                 containerClassName="p-0 border-none"
+                fileHandler={getReadOnlyEditorFileHandlers({
+                  projectId: projectId?.toString() ?? "",
+                  workspaceSlug: workspaceSlug?.toString() ?? "",
+                })}
                 mentionHandler={{
                   highlights: () => Promise.resolve([]),
                 }}

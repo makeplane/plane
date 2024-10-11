@@ -8,10 +8,10 @@ import strawberry_django
 from strawberry.scalars import JSON
 
 # Module Imports
-from plane.db.models import IssueAttachment
+from plane.db.models import FileAsset
 
 
-@strawberry_django.type(IssueAttachment)
+@strawberry_django.type(FileAsset)
 class IssueAttachmentType:
     id: strawberry.ID
     created_at: datetime
@@ -24,7 +24,8 @@ class IssueAttachmentType:
     updated_by: strawberry.ID
     project: strawberry.ID
     workspace: strawberry.ID
-    issue: strawberry.ID
+    entity_identifier: strawberry.ID
+    entity_type: str
 
     @strawberry.field
     def workspace(self) -> int:
@@ -36,7 +37,7 @@ class IssueAttachmentType:
 
     @strawberry.field
     def issue(self) -> int:
-        return self.issue_id
+        return self.entity_identifier
 
     @strawberry.field
     def created_by(self) -> int:
