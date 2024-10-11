@@ -1,4 +1,4 @@
-name: Sync from Public Repo
+name: Sync from Community Repo
 
 on:
   #   schedule:
