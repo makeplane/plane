@@ -14,7 +14,7 @@ const formatV1Data = (isTypeIssue: boolean, cycle: ICycle, isBurnDown: boolean, 
   const today = format(startOfToday(), "yyyy-MM-dd");
   const data = isTypeIssue ? cycle.distribution : cycle.estimate_distribution;
   const extendedArray = generateDateArray(endDate, endDate).map((d) => d.date);
-
+  if (!data?.completion_chart) return null;
   if (isEmpty(data?.completion_chart)) return generateDateArray(new Date(cycle.start_date!), endDate);
   let progress = [...Object.keys(data.completion_chart), ...extendedArray].map((p) => {
     const pending = data.completion_chart[p] || 0;
@@ -43,6 +43,7 @@ const formatV2Data = (isTypeIssue: boolean, cycle: ICycle, isBurnDown: boolean, 
   let today: Date | string = startOfToday();
   const extendedArray =
     endDate > today ? generateDateArray(today as Date, endDate).filter((d) => d.date >= cycle.start_date!) : [];
+  if (!cycle?.progress) return null;
   if (isEmpty(cycle.progress)) return generateDateArray(new Date(cycle.start_date!), endDate);
   today = format(startOfToday(), "yyyy-MM-dd");
   const todaysData = cycle?.progress[cycle?.progress.length - 1];

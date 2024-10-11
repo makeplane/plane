@@ -46,8 +46,8 @@ export const CycleProgressHeader: FC<Props> = (props: Props) => {
       className={cn("px-page-x flex items-center justify-between py-4 bg-custom-sidebar-background-100")}
     >
       <div className="flex gap-6 h-full rounded-full">
-        {progressLoader && <Loader.Item width="82px" height="82px" className="rounded-full" />}
-        {progress !== undefined && !progressLoader && (
+        {progress === null && <Loader.Item width="82px" height="82px" className="rounded-full" />}
+        {progress && (
           <ProgressDonut progress={progressToday} days_left={findHowManyDaysLeft(cycleDetails.end_date) ?? 0} />
         )}
         <div className="flex flex-col h-full my-auto">

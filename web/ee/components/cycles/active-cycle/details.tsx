@@ -69,7 +69,7 @@ const ActiveCycleDetail = observer((props: ActiveCycleDetailProps) => {
         })}
       >
         <div className="h-full w-full flex-1">
-          {!progressLoader || cycleProgress?.length !== 0 ? (
+          {cycleProgress !== null ? (
             <div className="h-[430px]">
               <Selection
                 plotType={computedPlotType}

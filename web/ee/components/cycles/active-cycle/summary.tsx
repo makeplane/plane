@@ -89,7 +89,7 @@ const Summary = observer((props: Props) => {
           "text-green-500": !isBehind,
         })}
       >
-        {progressLoader ? (
+        {!data ? (
           <Loader.Item width="100px" height="20px" />
         ) : dataToday ? (
           <>
@@ -136,7 +136,7 @@ const Summary = observer((props: Props) => {
             <div className="flex gap-2">
               {group.key === "scope" && <ScopeDelta data={data} dataToday={dataToday} />}
               <span className="text-end font-bold text-custom-text-300">
-                {progressLoader ? (
+                {!data ? (
                   <Loader.Item width="20px" height="20px" />
                 ) : (
                   <span
@@ -168,7 +168,7 @@ const Summary = observer((props: Props) => {
           >
             <span className="w-5/6">{group.group}</span>
             <span className="w-1/6 text-end font-bold text-custom-text-300 flex justify-end">
-              {progressLoader ? (
+              {!data ? (
                 <Loader.Item width="20px" height="20px" />
               ) : (
                 (dataToday && dataToday[group.key as keyof TCycleProgress]) || 0
@@ -181,14 +181,14 @@ const Summary = observer((props: Props) => {
       <div className="text-xs text-custom-text-400 font-medium flex pt-2 gap-2">
         <Info className="text-xs mt-[2px]" size={12} />
         <div className="flex flex-col space-y-2">
-          {progressLoader ? (
+          {!data ? (
             <Loader.Item width="200px" height="20px" />
           ) : (
             <span>
               {dataToday?.cancelled || 0} Cancelled {estimateType} (excluded)
             </span>
           )}
-          {progressLoader ? (
+          {!data ? (
             <Loader.Item width="200px" height="20px" />
           ) : (
             <span>
