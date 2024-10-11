@@ -34,6 +34,7 @@ import {
   useProject,
   useProjectState,
   useProjectView,
+  useUser,
   useUserPermissions,
 } from "@/hooks/store";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
@@ -48,6 +49,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   const { setTrackElement } = useEventTracker();
   const { toggleCreateIssueModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
+  const { data : currentUser } = useUser();
 
   const { currentProjectDetails, loader } = useProject();
   const { projectViewIds, getViewById } = useProjectView();
@@ -134,6 +136,8 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.PROJECT
   );
+  // guests can use filters in their own views
+  const canUserUseFilters = canUserCreateIssue || currentUser?.id===viewDetails?.created_by
   const publishLink = getPublishViewLink(viewDetails?.anchor);
 
   return (
@@ -251,7 +255,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
             <FiltersDropdown
               title="Filters"
               placement="bottom-end"
-              disabled={!canUserCreateIssue}
+              disabled={!canUserUseFilters}
               isFiltersApplied={isIssueFilterActive(issueFilters)}
             >
               <FilterSelection
