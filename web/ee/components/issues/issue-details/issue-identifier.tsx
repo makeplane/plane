@@ -2,19 +2,58 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
-import { Loader, Tooltip } from "@plane/ui";
+import { Loader, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 // ce components
 import {
   IssueIdentifier as BaseIssueIdentifier,
-  IdentifierText,
   TIssueIdentifierProps,
 } from "@/ce/components/issues/issue-details/issue-identifier";
+// helpers
+import { cn } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
 // plane web components
 import { IssueTypeLogo } from "@/plane-web/components/issue-types";
 // plane web hooks
 import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
+
+type TIdentifierTextProps = {
+  identifier: string;
+  enableClickToCopyIdentifier?: boolean;
+  textContainerClassName?: string;
+};
+
+export const IdentifierText: React.FC<TIdentifierTextProps> = (props) => {
+  const { identifier, enableClickToCopyIdentifier = false, textContainerClassName } = props;
+  // handlers
+  const handleCopyIssueIdentifier = () => {
+    if (enableClickToCopyIdentifier) {
+      navigator.clipboard.writeText(identifier).then(() => {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Issue ID copied to clipboard",
+        });
+      });
+    }
+  };
+
+  return (
+    <Tooltip tooltipContent="Click to copy" disabled={!enableClickToCopyIdentifier} position="top">
+      <span
+        className={cn(
+          "text-base font-medium text-custom-text-300",
+          {
+            "cursor-pointer": enableClickToCopyIdentifier,
+          },
+          textContainerClassName
+        )}
+        onClick={handleCopyIssueIdentifier}
+      >
+        {identifier}
+      </span>
+    </Tooltip>
+  );
+};
 
 type TIssueTypeIdentifier = {
   issueTypeId: string;
