@@ -18,7 +18,7 @@ import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 
 // services
 import { CycleService } from "@/services/cycle.service";
-import { ActiveCycleInfoCard } from "./card";
+import { WorkspaceActiveCycleRoot } from "./workspace-active-cycle-root";
 
 const perPage = 100;
 const cycleService = new CycleService();
@@ -85,7 +85,7 @@ export const WorkspaceActiveCyclesList = observer(() => {
   return (
     <ContentWrapper ref={containerRef} className="space-y-4">
       {cycles.slice(0, cyclesInView).map((cycle: any) => (
-        <ActiveCycleInfoCard
+        <WorkspaceActiveCycleRoot
           key={cycle.id}
           workspaceSlug={workspaceSlug?.toString()}
           projectId={cycle.project_id}

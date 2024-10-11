@@ -25,7 +25,7 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
   const isDarkMode = userProfile?.theme.theme === "dark";
 
   return (
-    <ContentWrapper className=" space-y-12">
+    <ContentWrapper>
       <div
         className={cn("item-center flex min-h-[25rem] justify-between rounded-xl", {
           "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": userProfile?.theme.theme === "dark",

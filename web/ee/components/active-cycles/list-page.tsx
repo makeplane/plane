@@ -5,9 +5,9 @@ import { WorkspaceActiveCycleLoader } from "@/components/ui";
 // constants
 import { WORKSPACE_ACTIVE_CYCLES_LIST } from "@/constants/fetch-keys";
 // plane web components
-import { ActiveCycleInfoCard } from "@/plane-web/components/active-cycles";
 // services
 import { CycleService } from "@/services/cycle.service";
+import { ActiveCycleInfoCard } from "./card-v2";
 const cycleService = new CycleService();
 
 export type ActiveCyclesListPageProps = {
