@@ -964,7 +964,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                 }
             )
 
-        cycle_issues = CycleIssue.objects.bulk_update(
+        _ = CycleIssue.objects.bulk_update(
             updated_cycles, ["cycle_id"], batch_size=100
         )
 
