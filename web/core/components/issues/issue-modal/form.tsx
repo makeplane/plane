@@ -53,6 +53,7 @@ export interface IssueFormProps {
   data?: Partial<TIssue>;
   issueTitleRef: React.MutableRefObject<HTMLInputElement | null>;
   isCreateMoreToggleEnabled: boolean;
+  onAssetUpload: (assetId: string) => void;
   onCreateMoreToggleChange: (value: boolean) => void;
   onChange?: (formData: Partial<TIssue> | null) => void;
   onClose: () => void;
@@ -66,6 +67,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const {
     data,
     issueTitleRef,
+    onAssetUpload,
     onChange,
     onClose,
     onSubmit,
@@ -319,6 +321,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
             <IssueDescriptionEditor
               control={control}
               issueName={watch("name")}
+              issueId={data?.id}
               descriptionHtmlData={data?.description_html}
               editorRef={editorRef}
               submitBtnRef={submitBtnRef}
@@ -331,6 +334,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
               }
               setGptAssistantModal={setGptAssistantModal}
               handleGptAssistantClose={() => reset(getValues())}
+              onAssetUpload={onAssetUpload}
               onClose={onClose}
             />
           </div>
