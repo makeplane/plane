@@ -4,28 +4,9 @@ inputs:
   docker-username:
     description: "The Dockerhub username"
     required: true
-  dockerhub-token:
+  docker-token:
     description: "The Dockerhub Token"
     required: true
-
-  # Harbor Options
-  harbor-push:
-    description: "Flag to push to Harbor"
-    required: false
-    default: "false"
-  harbor-username:
-    description: "The Harbor username"
-    required: false
-  harbor-token:
-    description: "The Harbor token"
-    required: false
-  harbor-registry:
-    description: "The Harbor registry"
-    required: false
-    default: "registry.plane.tools"
-  harbor-project:
-    description: "The Harbor project"
-    required: false
 
   # Docker Image Options
   docker-image-owner:
@@ -86,9 +67,6 @@ runs:
       env:
         IMG_OWNER: ${{ inputs.docker-image-owner }}
         IMG_NAME: ${{ inputs.docker-image-name }}
-        HARBOR_PUSH: ${{ inputs.harbor-push }}
-        HARBOR_REGISTRY: ${{ inputs.harbor-registry }}
-        HARBOR_PROJECT: ${{ inputs.harbor-project }}
         BUILD_RELEASE: ${{ inputs.build-release }}
         IS_PRERELEASE: ${{ inputs.build-prerelease }}
         REL_VERSION: ${{ inputs.release-version }}
@@ -107,26 +85,13 @@ runs:
 
           TAG=${{ env.IMG_OWNER }}/${{ env.IMG_NAME }}:${{ env.REL_VERSION }}
 
-          if [ "${{ env.HARBOR_PUSH }}" == "true" ]; then
-            TAG=${TAG},${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_PROJECT }}/${{ env.IMG_NAME }}:${{ env.REL_VERSION }}
-          fi
-
           if [ "${{ env.IS_PRERELEASE }}" != "true" ]; then
             TAG=${TAG},${{ env.IMG_OWNER }}/${{ env.IMG_NAME }}:stable
-            if [ "${{ env.HARBOR_PUSH }}" == "true" ]; then
-              TAG=${TAG},${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_PROJECT }}/${{ env.IMG_NAME }}:stable
-            fi
           fi
         elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
           TAG=${{ env.IMG_OWNER }}/${{ env.IMG_NAME }}:latest
-          if [ "${{ env.HARBOR_PUSH }}" == "true" ]; then
-            TAG=${TAG},${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_PROJECT }}/${{ env.IMG_NAME }}:latest
-          fi
         else
           TAG=${{ env.IMG_OWNER }}/${{ env.IMG_NAME }}:${FLAT_BRANCH_VERSION}
-          if [ "${{ env.HARBOR_PUSH }}" == "true" ]; then
-            TAG=${TAG},${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_PROJECT }}/${{ env.IMG_NAME }}:${FLAT_BRANCH_VERSION}
-          fi
         fi
         
         echo "DOCKER_TAGS=${TAG}" >> $GITHUB_ENV
@@ -134,14 +99,7 @@ runs:
       uses: docker/login-action@v3
       with:
         username: ${{ inputs.docker-username }}
-        password: ${{ inputs.dockerhub-token}}
-    - name: Login to Harbor
-      if: ${{ inputs.harbor-push }} == "true"
-      uses: docker/login-action@v3
-      with:
-        username: ${{ inputs.harbor-username }}
-        password: ${{ inputs.harbor-token }}
-        registry: ${{ inputs.harbor-registry }}
+        password: ${{ inputs.docker-token}}
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
@@ -165,4 +123,4 @@ runs:
       env:
         DOCKER_BUILDKIT: 1
         DOCKER_USERNAME: ${{ inputs.docker-username }}
-        DOCKER_PASSWORD: ${{ inputs.dockerhub-token }}
+        DOCKER_PASSWORD: ${{ inputs.docker-token }}
