@@ -28,7 +28,7 @@ const CustomTooltip = ({ active, payload, label, plotType }: Props) => {
           <span className="flex text-xs text-custom-text-300 gap-1 items-center ml-0.5">
             <DoneState className="my-auto" width="12" height="12" />
             <span className="font-semibold">
-              {plotType === "burndown" ? payload.scope - payload.completed : payload.completed || 0}
+              {plotType === "burndown" ? payload.scope - payload.completed || 0 : payload.completed || 0}
             </span>
             <span> {plotType === "burndown" ? "pending" : "done"}</span>
           </span>
