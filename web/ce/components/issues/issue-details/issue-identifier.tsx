@@ -1,3 +1,4 @@
+import { FC } from "react";
 import { observer } from "mobx-react";
 // types
 import { IIssueDisplayProperties } from "@plane/types";
@@ -27,6 +28,13 @@ type TIssueIdentifierWithDetails = TIssueIdentifierBaseProps & {
 };
 
 export type TIssueIdentifierProps = TIssueIdentifierFromStore | TIssueIdentifierWithDetails;
+
+type TIssueTypeIdentifier = {
+  issueTypeId: string;
+  size?: "xs" | "sm" | "md" | "lg";
+};
+
+export const IssueTypeIdentifier: FC<TIssueTypeIdentifier> = observer((props) => <></>);
 
 type TIdentifierTextProps = {
   identifier: string;

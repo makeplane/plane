@@ -26,6 +26,8 @@ export type TWorkspaceDraftIssue = {
   updated_by: string;
 
   is_draft: boolean;
+
+  type_id: string;
 };
 
 export type TWorkspaceDraftPaginationInfo<T> = {
