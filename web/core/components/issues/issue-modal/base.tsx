@@ -30,6 +30,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     storeType: issueStoreFromProps,
     isDraft = false,
     fetchIssueDetails = true,
+    moveToIssue = false,
   } = props;
   const issueStoreType = useIssueStoreType();
 
@@ -308,6 +309,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
           isCreateMoreToggleEnabled={createMore}
           onCreateMoreToggleChange={handleCreateMoreToggleChange}
           isDraft={isDraft}
+          moveToIssue={moveToIssue}
         />
       ) : (
         <IssueFormRoot
@@ -324,6 +326,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
           onSubmit={(payload) => handleFormSubmit(payload, isDraft)}
           projectId={activeProjectId}
           isDraft={isDraft}
+          moveToIssue={moveToIssue}
         />
       )}
     </ModalCore>

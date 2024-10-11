@@ -29,6 +29,7 @@ export interface DraftIssueProps {
   onSubmit: (formData: Partial<TIssue>, is_draft_issue?: boolean) => Promise<void>;
   projectId: string;
   isDraft: boolean;
+  moveToIssue?: boolean;
 }
 
 export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
@@ -43,6 +44,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
     isCreateMoreToggleEnabled,
     onCreateMoreToggleChange,
     isDraft,
+    moveToIssue = false,
   } = props;
   // states
   const [issueDiscardModal, setIssueDiscardModal] = useState(false);
@@ -156,6 +158,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
         onSubmit={onSubmit}
         projectId={projectId}
         isDraft={isDraft}
+        moveToIssue={moveToIssue}
       />
     </>
   );
