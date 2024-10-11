@@ -63,7 +63,7 @@ from .mutations.issue import (
 )
 from .mutations.notification import NotificationMutation
 from .mutations.user import ProfileMutation
-from .mutations.page import PageFavoriteMutation
+from .mutations.page import PageMutation, PageFavoriteMutation
 from .mutations.cycle import (
     CycleIssueMutation,
     CycleFavoriteMutation,
@@ -157,6 +157,7 @@ class Mutation(
     IssueRelationMutation,
     IssueCommentMutation,
     SubIssueMutation,
+    PageMutation,
 ):
     pass
 
