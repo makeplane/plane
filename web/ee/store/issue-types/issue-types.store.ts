@@ -40,6 +40,7 @@ export interface IIssueTypesStore {
   getProjectIssueTypes: (projectId: string, activeOnly: boolean) => Record<string, IIssueType>; // issue type id -> issue type
   getProjectDefaultIssueType: (projectId: string) => IIssueType | undefined;
   getIssueTypeProperties: (issueTypeId: string) => IIssueProperty<EIssuePropertyType>[];
+  getIssueTypeIdsWithMandatoryProperties: (projectId: string) => string[];
   isIssueTypeEnabledForProject: (
     workspaceSlug: string,
     projectId: string,
@@ -168,6 +169,19 @@ export class IssueTypes implements IIssueTypesStore {
     const issueType = this.data[issueTypeId];
     if (!issueType) return [];
     return issueType.properties;
+  });
+
+  /**
+   * @description Get issue type ids with mandatory properties
+   * @param projectId
+   * @returns {string[]}
+   */
+  getIssueTypeIdsWithMandatoryProperties = computedFn((projectId: string) => {
+    const projectIssueTypes = this.getProjectIssueTypes(projectId, false);
+    return Object.keys(projectIssueTypes).filter((issueTypeId) => {
+      const issueType = projectIssueTypes[issueTypeId];
+      return issueType.activeProperties.some((property) => property.is_required);
+    });
   });
 
   /**

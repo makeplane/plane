@@ -154,3 +154,29 @@ export const unsetLinkEditor = (editor: Editor) => {
 export const setLinkEditor = (editor: Editor, url: string) => {
   editor.chain().focus().setLink({ href: url }).run();
 };
+
+export const toggleTextColor = (color: string | undefined, editor: Editor, range?: Range) => {
+  if (color) {
+    if (range) editor.chain().focus().deleteRange(range).setTextColor(color).run();
+    else editor.chain().focus().setTextColor(color).run();
+  } else {
+    if (range) editor.chain().focus().deleteRange(range).unsetTextColor().run();
+    else editor.chain().focus().unsetTextColor().run();
+  }
+};
+
+export const toggleBackgroundColor = (color: string | undefined, editor: Editor, range?: Range) => {
+  if (color) {
+    if (range) {
+      editor.chain().focus().deleteRange(range).setBackgroundColor(color).run();
+    } else {
+      editor.chain().focus().setBackgroundColor(color).run();
+    }
+  } else {
+    if (range) {
+      editor.chain().focus().deleteRange(range).unsetBackgroundColor().run();
+    } else {
+      editor.chain().focus().unsetBackgroundColor().run();
+    }
+  }
+};

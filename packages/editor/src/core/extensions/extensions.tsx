@@ -8,6 +8,7 @@ import StarterKit from "@tiptap/starter-kit";
 import { Markdown } from "tiptap-markdown";
 // extensions
 import {
+  CustomBackgroundColorExtension,
   CustomCodeBlockExtension,
   CustomCodeInlineExtension,
   CustomCodeMarkPlugin,
@@ -17,6 +18,7 @@ import {
   CustomLinkExtension,
   CustomMention,
   CustomQuoteExtension,
+  CustomTextColorExtension,
   CustomTypographyExtension,
   DropHandlerExtension,
   ImageExtension,
@@ -166,4 +168,6 @@ export const CoreEditorExtensions = ({
     includeChildren: true,
   }),
   CharacterCount,
+  CustomTextColorExtension,
+  CustomBackgroundColorExtension,
 ];

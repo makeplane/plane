@@ -29,6 +29,9 @@ import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper"
 import { useProjectEstimates } from "@/hooks/store";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import { TSelectionHelper, TSelectionSnapshot } from "@/hooks/use-multiple-select";
+// plane web components
+import { IssueTypeSelect } from "@/plane-web/components/issues/issue-modal";
+// plane web hooks
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 
 type Props = {
@@ -47,6 +50,7 @@ const defaultValues: TBulkIssueProperties = {
   cycle_id: "",
   module_ids: [],
   estimate_point: null,
+  type_id: null,
 };
 
 export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) => {
@@ -59,7 +63,7 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
   const {
     issues: { bulkUpdateProperties },
   } = useIssuesStore();
-  const { currentActiveEstimateId } = useProjectEstimates();
+  const { currentActiveEstimateId, areEstimateEnabledByProjectId } = useProjectEstimates();
   const isAdvancedBulkOpsEnabled = useFlag(workspaceSlug?.toString(), "BULK_OPS_ADVANCED");
 
   // form info
@@ -260,7 +264,7 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
                 )}
               />
             )}
-            {projectId && currentActiveEstimateId && (
+            {projectId && currentActiveEstimateId && areEstimateEnabledByProjectId(projectId?.toString()) && (
               <Controller
                 name="estimate_point"
                 control={control}
@@ -299,6 +303,17 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
                     />
                   </>
                 )}
+              />
+            )}
+            {projectId && (
+              <IssueTypeSelect
+                variant="xs"
+                control={control}
+                projectId={projectId.toString()}
+                disabled={isUpdateDisabled}
+                isRequired={false}
+                showMandatoryFieldInfo
+                dropDownContainerClassName="h-6"
               />
             )}
           </>

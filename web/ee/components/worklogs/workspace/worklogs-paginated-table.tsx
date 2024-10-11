@@ -35,7 +35,7 @@ export const WorklogsPaginatedTableRoot: FC<TWorklogsPaginatedTableRoot> = (prop
       content: "Project",
       tdRender: (rowData: TWorklog) => {
         const currentProject = (rowData.project_id && getProjectById(rowData.project_id)) || undefined;
-        return <div>{currentProject?.name}</div>;
+        return <div className="truncate w-[200px]">{currentProject?.name}</div>;
       },
     },
     {

@@ -44,6 +44,7 @@ from .cycle import (
     CycleIssueSerializer,
     CycleWriteSerializer,
     CycleUserPropertiesSerializer,
+    EntityProgressSerializer,
 )
 from .asset import FileAssetSerializer
 from .issue import (
@@ -125,6 +126,11 @@ from .dashboard import DashboardSerializer, WidgetSerializer
 
 from .favorite import UserFavoriteSerializer
 
+from .draft import (
+    DraftIssueCreateSerializer,
+    DraftIssueSerializer,
+    DraftIssueDetailSerializer,
+)
 from .integration import (
     IntegrationSerializer,
     WorkspaceIntegrationSerializer,

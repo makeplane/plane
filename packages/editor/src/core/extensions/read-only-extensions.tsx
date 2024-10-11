@@ -21,6 +21,8 @@ import {
   CustomMention,
   HeadingListExtension,
   CustomReadOnlyImageExtension,
+  CustomTextColorExtension,
+  CustomBackgroundColorExtension,
 } from "@/extensions";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
@@ -109,5 +111,7 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
     readonly: true,
   }),
   CharacterCount,
+  CustomTextColorExtension,
+  CustomBackgroundColorExtension,
   HeadingListExtension,
 ];

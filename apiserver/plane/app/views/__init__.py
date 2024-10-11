@@ -40,6 +40,8 @@ from .workspace.base import (
     ExportWorkspaceUserActivityEndpoint,
 )
 
+from .workspace.draft import WorkspaceDraftIssueViewSet
+
 from .workspace.favorite import (
     WorkspaceFavoriteEndpoint,
     WorkspaceFavoriteGroupEndpoint,
@@ -100,10 +102,9 @@ from .cycle.base import (
     TransferCycleIssueEndpoint,
     CycleAnalyticsEndpoint,
     CycleProgressEndpoint,
+    CycleIssueStateAnalyticsEndpoint,
 )
-from .cycle.issue import (
-    CycleIssueViewSet,
-)
+from .cycle.issue import CycleIssueViewSet
 from .cycle.archive import (
     CycleArchiveUnarchiveEndpoint,
 )
@@ -132,8 +133,6 @@ from .issue.comment import (
     IssueCommentViewSet,
     CommentReactionViewSet,
 )
-
-from .issue.draft import IssueDraftViewSet
 
 from .issue.label import (
     LabelViewSet,

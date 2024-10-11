@@ -4,7 +4,7 @@ inputs:
   docker-username:
     description: "The Dockerhub username"
     required: true
-  docker-token:
+  dockerhub-token:
     description: "The Dockerhub Token"
     required: true
 

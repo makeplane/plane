@@ -9,9 +9,7 @@ import { Disclosure, Transition } from "@headlessui/react";
 // plane types
 import { TPage, TPageNavigationTabs } from "@plane/types";
 // plane ui
-import { setToast, TOAST_TYPE } from "@plane/ui";
-// ui
-import { ArchiveIcon, Tooltip } from "@plane/ui";
+import { ArchiveIcon, Tooltip, setToast, TOAST_TYPE } from "@plane/ui";
 // constants
 import { EPageAccess } from "@/constants/page";
 // helpers

@@ -10,6 +10,7 @@ from plane.db.models import (
     CycleIssue,
     CycleUserProperties,
 )
+from plane.ee.models import EntityProgress
 
 
 class CycleWriteSerializer(BaseSerializer):
@@ -94,6 +95,7 @@ class CycleIssueSerializer(BaseSerializer):
             "cycle",
         ]
 
+
 class CycleUserPropertiesSerializer(BaseSerializer):
     class Meta:
         model = CycleUserProperties
@@ -103,3 +105,9 @@ class CycleUserPropertiesSerializer(BaseSerializer):
             "project",
             "cycle" "user",
         ]
+
+
+class EntityProgressSerializer(BaseSerializer):
+    class Meta:
+        model = EntityProgress
+        fields = "__all__"

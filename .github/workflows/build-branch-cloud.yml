@@ -52,6 +52,7 @@ jobs:
       build_admin: ${{ steps.changed_files.outputs.admin_any_changed }}
       build_space: ${{ steps.changed_files.outputs.space_any_changed }}
       build_live: ${{ steps.changed_files.outputs.live_any_changed }}
+      build_silo: ${{ steps.changed_files.outputs.silo_any_changed }}
       build_apiserver: ${{ steps.changed_files.outputs.apiserver_any_changed }}
       build_proxy: ${{ steps.changed_files.outputs.proxy_any_changed }}
       build_monitor: ${{ steps.changed_files.outputs.monitor_any_changed }}
@@ -60,10 +61,12 @@ jobs:
       dh_img_space: ${{ steps.set_env_variables.outputs.DH_IMG_SPACE }}
       dh_img_admin: ${{ steps.set_env_variables.outputs.DH_IMG_ADMIN }}
       dh_img_live: ${{ steps.set_env_variables.outputs.DH_IMG_LIVE }}
+      dh_img_silo: ${{ steps.set_env_variables.outputs.DH_IMG_SILO }}
       dh_img_backend: ${{ steps.set_env_variables.outputs.DH_IMG_BACKEND }}
       dh_img_proxy: ${{ steps.set_env_variables.outputs.DH_IMG_PROXY }}
       dh_img_monitor: ${{ steps.set_env_variables.outputs.DH_IMG_MONITOR }}
       harbor_push: ${{ steps.set_env_variables.outputs.HARBOR_PUSH }}
+      build_type: ${{steps.set_env_variables.outputs.BUILD_TYPE}}
       build_release: ${{ steps.set_env_variables.outputs.BUILD_RELEASE }}
       build_prerelease: ${{ steps.set_env_variables.outputs.BUILD_PRERELEASE }}
       release_version: ${{ steps.set_env_variables.outputs.RELEASE_VERSION }}
@@ -85,10 +88,12 @@ jobs:
           echo "DH_IMG_SPACE=space-cloud" >> $GITHUB_OUTPUT
           echo "DH_IMG_ADMIN=admin-cloud" >> $GITHUB_OUTPUT
           echo "DH_IMG_LIVE=live-cloud" >> $GITHUB_OUTPUT
+          echo "DH_IMG_SILO=silo-cloud" >> $GITHUB_OUTPUT
           echo "DH_IMG_BACKEND=backend-cloud" >> $GITHUB_OUTPUT
           echo "DH_IMG_PROXY=proxy-cloud" >> $GITHUB_OUTPUT
           echo "DH_IMG_MONITOR=monitor-cloud" >> $GITHUB_OUTPUT
 
+          echo "BUILD_TYPE=${{env.BUILD_TYPE}}" >> $GITHUB_OUTPUT
           BUILD_RELEASE=false
           BUILD_PRERELEASE=false
           RELVERSION="latest"
@@ -195,31 +200,33 @@ jobs:
               - packages/**
               - "package.json"
               - "yarn.lock"
-              - "tsconfig.json"
               - "turbo.json"
             space:
               - space/**
               - packages/**
               - "package.json"
               - "yarn.lock"
-              - "tsconfig.json"
               - "turbo.json"
             web:
               - web/**
               - packages/**
               - "package.json"
               - "yarn.lock"
-              - "tsconfig.json"
               - "turbo.json"
             live:
               - live/**
               - packages/**
               - 'package.json'
               - 'yarn.lock'
-              - 'tsconfig.json'
               - 'turbo.json'
             monitor:
               - monitor/**
+            silo:
+              - silo/**
+              - packages/**
+              - 'package.json'
+              - 'yarn.lock'
+              - 'turbo.json'
 
   branch_build_push_admin:
     if: ${{ needs.branch_build_setup.outputs.build_admin == 'true' || github.event_name == 'workflow_dispatch' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
@@ -358,6 +365,33 @@ jobs:
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
 
+  branch_build_push_silo:
+    if: ${{ needs.branch_build_setup.outputs.build_silo == 'true' || github.event_name == 'workflow_dispatch' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
+    name: Build-Push Silo Docker Image
+    runs-on: ubuntu-20.04
+    needs: [branch_build_setup]
+    steps:
+      - id: checkout_files
+        name: Checkout Files
+        uses: actions/checkout@v4
+      - name: Silo Build and Push
+        uses: ./.github/actions/build-push-action
+        with:
+          build-release: ${{ needs.branch_build_setup.outputs.build_release }}
+          build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
+          release-version: ${{ needs.branch_build_setup.outputs.release_version }}
+          docker-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+          harbor-push: ${{ needs.branch_build_setup.outputs.harbor_push }}
+          harbor-username: ${{ secrets.HARBOR_USERNAME }}
+          harbor-token: ${{ secrets.HARBOR_TOKEN }}
+          harbor-registry: ${{ vars.HARBOR_REGISTRY }}
+          harbor-project: ${{ vars.HARBOR_PROJECT }}
+          docker-image-owner: makeplane
+          docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_silo }}
+          build-context: .
+          dockerfile-path: ./silo/Dockerfile.silo
+
   branch_build_push_apiserver:
     if: ${{ needs.branch_build_setup.outputs.build_apiserver == 'true' || github.event_name == 'workflow_dispatch' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     name: Build-Push API Server Docker Image
@@ -390,6 +424,7 @@ jobs:
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
 
   publish_release:
+    if: ${{ needs.branch_build_setup.outputs.build_type == 'Release' }}
     name: Build Release
     runs-on: ubuntu-20.04
     needs:
@@ -399,6 +434,7 @@ jobs:
         branch_build_push_web,
         branch_build_push_space,
         branch_build_push_live,
+        branch_build_push_silo,
         branch_build_push_apiserver,
       ]
     env:

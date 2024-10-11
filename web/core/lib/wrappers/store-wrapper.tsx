@@ -21,8 +21,6 @@ const StoreWrapper: FC<TStoreWrapper> = observer((props) => {
   const { setQuery } = useRouterParams();
   const { sidebarCollapsed, toggleSidebar } = useAppTheme();
   const { data: userProfile } = useUserProfile();
-  // states
-  const [dom, setDom] = useState<HTMLElement | null>(null);
 
   /**
    * Sidebar collapsed fetching from local storage
@@ -44,36 +42,14 @@ const StoreWrapper: FC<TStoreWrapper> = observer((props) => {
     const currentThemePalette = userProfile?.theme?.palette;
     if (currentTheme) {
       setTheme(currentTheme);
-      if (currentTheme === "custom" && currentThemePalette && dom) {
+      if (currentTheme === "custom" && currentThemePalette) {
         applyTheme(
           currentThemePalette !== ",,,," ? currentThemePalette : "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5",
-          false,
-          dom
+          false
         );
       } else unsetCustomCssVariables();
     }
-  }, [userProfile?.theme?.theme, userProfile?.theme?.palette, setTheme, dom]);
-
-  useEffect(() => {
-    if (dom) return;
-
-    const observer = new MutationObserver((mutationsList, observer) => {
-      for (const mutation of mutationsList) {
-        if (mutation.type === "childList") {
-          const customThemeElement = window.document?.querySelector<HTMLElement>("[data-theme='custom']");
-          if (customThemeElement) {
-            setDom(customThemeElement);
-            observer.disconnect();
-            break;
-          }
-        }
-      }
-    });
-
-    observer.observe(document.body, { childList: true, subtree: true });
-
-    return () => observer.disconnect();
-  }, [dom]);
+  }, [userProfile?.theme?.theme, userProfile?.theme?.palette, setTheme]);
 
   useEffect(() => {
     if (!params) return;
