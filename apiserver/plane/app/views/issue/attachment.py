@@ -90,7 +90,6 @@ class IssueAttachmentEndpoint(BaseAPIView):
 
 
 class IssueAttachmentV2Endpoint(BaseAPIView):
-
     serializer_class = IssueAttachmentSerializer
     model = FileAsset
 
