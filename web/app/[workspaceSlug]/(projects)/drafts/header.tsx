@@ -44,7 +44,7 @@ export const WorkspaceDraftHeader: FC = observer(() => {
                 link={<BreadcrumbLink label={`Draft`} icon={<PenSquare className="h-4 w-4 text-custom-text-300" />} />}
               />
             </Breadcrumbs>
-            {paginationInfo?.count && paginationInfo?.count > 0 && <CountChip count={paginationInfo?.count} />}
+            {paginationInfo?.count && paginationInfo?.count > 0 ? <CountChip count={paginationInfo?.count} /> : <></>}
           </div>
         </Header.LeftItem>
 

@@ -3,12 +3,15 @@
 import { FC, Fragment } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
+// components
+import { EmptyState } from "@/components/empty-state";
 // constants
+import { EmptyStateType } from "@/constants/empty-state";
 import { EDraftIssuePaginationType } from "@/constants/workspace-drafts";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useWorkspaceDraftIssues } from "@/hooks/store";
+import { useCommandPalette, useProject, useWorkspaceDraftIssues } from "@/hooks/store";
 // components
 import { DraftIssueBlock } from "./draft-issue-block";
 import { WorkspaceDraftEmptyState } from "./empty-state";
@@ -22,6 +25,8 @@ export const WorkspaceDraftIssuesRoot: FC<TWorkspaceDraftIssuesRoot> = observer(
   const { workspaceSlug } = props;
   // hooks
   const { loader, paginationInfo, fetchIssues, issueIds } = useWorkspaceDraftIssues();
+  const { workspaceProjectIds } = useProject();
+  const { toggleCreateProjectModal } = useCommandPalette();
 
   // fetching issues
   useSWR(
@@ -38,6 +43,17 @@ export const WorkspaceDraftIssuesRoot: FC<TWorkspaceDraftIssuesRoot> = observer(
   if (loader === "init-loader" && issueIds.length <= 0) {
     return <WorkspaceDraftIssuesLoader items={14} />;
   }
+
+  if (workspaceProjectIds?.length === 0)
+    return (
+      <EmptyState
+        type={EmptyStateType.WORKSPACE_NO_PROJECTS}
+        size="sm"
+        primaryButtonOnClick={() => {
+          toggleCreateProjectModal(true);
+        }}
+      />
+    );
 
   if (loader === "empty-state" && issueIds.length <= 0) return <WorkspaceDraftEmptyState />;
 
