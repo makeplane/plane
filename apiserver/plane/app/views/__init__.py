@@ -109,7 +109,19 @@ from .cycle.archive import (
     CycleArchiveUnarchiveEndpoint,
 )
 
-from .asset.base import FileAssetEndpoint, UserAssetsEndpoint, FileAssetViewSet
+from .asset.base import (
+    FileAssetEndpoint,
+    UserAssetsEndpoint,
+    FileAssetViewSet,
+)
+from .asset.v2 import (
+    WorkspaceFileAssetEndpoint,
+    UserAssetsV2Endpoint,
+    StaticFileAssetEndpoint,
+    AssetRestoreEndpoint,
+    ProjectAssetEndpoint,
+    ProjectBulkAssetEndpoint,
+)
 from .issue.base import (
     IssueListEndpoint,
     IssueViewSet,
@@ -127,6 +139,8 @@ from .issue.archive import IssueArchiveViewSet
 
 from .issue.attachment import (
     IssueAttachmentEndpoint,
+    # V2
+    IssueAttachmentV2Endpoint,
 )
 
 from .issue.comment import (

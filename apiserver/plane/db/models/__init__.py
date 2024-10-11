@@ -29,7 +29,6 @@ from .issue import (
     Issue,
     IssueActivity,
     IssueAssignee,
-    IssueAttachment,
     IssueBlocker,
     IssueComment,
     IssueLabel,

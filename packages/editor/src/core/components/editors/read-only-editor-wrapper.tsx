@@ -14,14 +14,16 @@ export const ReadOnlyEditorWrapper = (props: IReadOnlyEditorProps) => {
     containerClassName,
     displayConfig = DEFAULT_DISPLAY_CONFIG,
     editorClassName = "",
+    fileHandler,
+    forwardedRef,
     id,
     initialValue,
-    forwardedRef,
     mentionHandler,
   } = props;
 
   const editor = useReadOnlyEditor({
     editorClassName,
+    fileHandler,
     forwardedRef,
     initialValue,
     mentionHandler,

@@ -31,16 +31,11 @@ import {
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
 // types
-import { DeleteImage, IMentionHighlight, IMentionSuggestion, RestoreImage, UploadImage } from "@/types";
+import { IMentionHighlight, IMentionSuggestion, TFileHandler } from "@/types";
 
 type TArguments = {
   enableHistory: boolean;
-  fileConfig: {
-    deleteFile: DeleteImage;
-    restoreFile: RestoreImage;
-    cancelUploadImage?: () => void;
-    uploadFile: UploadImage;
-  };
+  fileHandler: TFileHandler;
   mentionConfig: {
     mentionSuggestions?: () => Promise<IMentionSuggestion[]>;
     mentionHighlights?: () => Promise<IMentionHighlight[]>;
@@ -49,125 +44,118 @@ type TArguments = {
   tabIndex?: number;
 };
 
-export const CoreEditorExtensions = ({
-  enableHistory,
-  fileConfig: { deleteFile, restoreFile, cancelUploadImage, uploadFile },
-  mentionConfig,
-  placeholder,
-  tabIndex,
-}: TArguments) => [
-  StarterKit.configure({
-    bulletList: {
-      HTMLAttributes: {
-        class: "list-disc pl-7 space-y-2",
+export const CoreEditorExtensions = (args: TArguments) => {
+  const { enableHistory, fileHandler, mentionConfig, placeholder, tabIndex } = args;
+
+  return [
+    StarterKit.configure({
+      bulletList: {
+        HTMLAttributes: {
+          class: "list-disc pl-7 space-y-2",
+        },
       },
-    },
-    orderedList: {
-      HTMLAttributes: {
-        class: "list-decimal pl-7 space-y-2",
+      orderedList: {
+        HTMLAttributes: {
+          class: "list-decimal pl-7 space-y-2",
+        },
       },
-    },
-    listItem: {
-      HTMLAttributes: {
-        class: "not-prose space-y-2",
+      listItem: {
+        HTMLAttributes: {
+          class: "not-prose space-y-2",
+        },
       },
-    },
-    code: false,
-    codeBlock: false,
-    horizontalRule: false,
-    blockquote: false,
-    dropcursor: {
-      class: "text-custom-text-300",
-    },
-    ...(enableHistory ? {} : { history: false }),
-  }),
-  CustomQuoteExtension,
-  DropHandlerExtension(),
-  CustomHorizontalRule.configure({
-    HTMLAttributes: {
-      class: "my-4 border-custom-border-400",
-    },
-  }),
-  CustomKeymap,
-  ListKeymap({ tabIndex }),
-  CustomLinkExtension.configure({
-    openOnClick: true,
-    autolink: true,
-    linkOnPaste: true,
-    protocols: ["http", "https"],
-    validate: (url: string) => isValidHttpUrl(url),
-    HTMLAttributes: {
-      class:
-        "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
-    },
-  }),
-  CustomTypographyExtension,
-  ImageExtension(deleteFile, restoreFile, cancelUploadImage).configure({
-    HTMLAttributes: {
-      class: "rounded-md",
-    },
-  }),
-  CustomImageExtension({
-    delete: deleteFile,
-    restore: restoreFile,
-    upload: uploadFile,
-    cancel: cancelUploadImage ?? (() => {}),
-  }),
-  TiptapUnderline,
-  TextStyle,
-  TaskList.configure({
-    HTMLAttributes: {
-      class: "not-prose pl-2 space-y-2",
-    },
-  }),
-  TaskItem.configure({
-    HTMLAttributes: {
-      class: "relative",
-    },
-    nested: true,
-  }),
-  CustomCodeBlockExtension.configure({
-    HTMLAttributes: {
-      class: "",
-    },
-  }),
-  CustomCodeMarkPlugin,
-  CustomCodeInlineExtension,
-  Markdown.configure({
-    html: true,
-    transformPastedText: true,
-    breaks: true,
-  }),
-  Table,
-  TableHeader,
-  TableCell,
-  TableRow,
-  CustomMention({
-    mentionSuggestions: mentionConfig.mentionSuggestions,
-    mentionHighlights: mentionConfig.mentionHighlights,
-    readonly: false,
-  }),
-  Placeholder.configure({
-    placeholder: ({ editor, node }) => {
-      if (node.type.name === "heading") return `Heading ${node.attrs.level}`;
+      code: false,
+      codeBlock: false,
+      horizontalRule: false,
+      blockquote: false,
+      dropcursor: {
+        class: "text-custom-text-300",
+      },
+      ...(enableHistory ? {} : { history: false }),
+    }),
+    CustomQuoteExtension,
+    DropHandlerExtension(),
+    CustomHorizontalRule.configure({
+      HTMLAttributes: {
+        class: "my-4 border-custom-border-400",
+      },
+    }),
+    CustomKeymap,
+    ListKeymap({ tabIndex }),
+    CustomLinkExtension.configure({
+      openOnClick: true,
+      autolink: true,
+      linkOnPaste: true,
+      protocols: ["http", "https"],
+      validate: (url: string) => isValidHttpUrl(url),
+      HTMLAttributes: {
+        class:
+          "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
+      },
+    }),
+    CustomTypographyExtension,
+    ImageExtension(fileHandler).configure({
+      HTMLAttributes: {
+        class: "rounded-md",
+      },
+    }),
+    CustomImageExtension(fileHandler),
+    TiptapUnderline,
+    TextStyle,
+    TaskList.configure({
+      HTMLAttributes: {
+        class: "not-prose pl-2 space-y-2",
+      },
+    }),
+    TaskItem.configure({
+      HTMLAttributes: {
+        class: "relative",
+      },
+      nested: true,
+    }),
+    CustomCodeBlockExtension.configure({
+      HTMLAttributes: {
+        class: "",
+      },
+    }),
+    CustomCodeMarkPlugin,
+    CustomCodeInlineExtension,
+    Markdown.configure({
+      html: true,
+      transformPastedText: true,
+      breaks: true,
+    }),
+    Table,
+    TableHeader,
+    TableCell,
+    TableRow,
+    CustomMention({
+      mentionSuggestions: mentionConfig.mentionSuggestions,
+      mentionHighlights: mentionConfig.mentionHighlights,
+      readonly: false,
+    }),
+    Placeholder.configure({
+      placeholder: ({ editor, node }) => {
+        if (node.type.name === "heading") return `Heading ${node.attrs.level}`;
 
-      if (editor.storage.imageComponent.uploadInProgress) return "";
+        if (editor.storage.imageComponent.uploadInProgress) return "";
 
-      const shouldHidePlaceholder =
-        editor.isActive("table") || editor.isActive("codeBlock") || editor.isActive("image");
+        const shouldHidePlaceholder =
+          editor.isActive("table") || editor.isActive("codeBlock") || editor.isActive("image");
 
-      if (shouldHidePlaceholder) return "";
+        if (shouldHidePlaceholder) return "";
 
-      if (placeholder) {
-        if (typeof placeholder === "string") return placeholder;
-        else return placeholder(editor.isFocused, editor.getHTML());
-      }
+        if (placeholder) {
+          if (typeof placeholder === "string") return placeholder;
+          else return placeholder(editor.isFocused, editor.getHTML());
+        }
 
-      return "Press '/' for commands...";
-    },
-    includeChildren: true,
-  }),
-  CharacterCount,
-  CustomTextColorExtension,
-  CustomBackgroundColorExtension,
-];
+        return "Press '/' for commands...";
+      },
+      includeChildren: true,
+    }),
+    CharacterCount,
+    CustomTextColorExtension,
+    CustomBackgroundColorExtension,
+  ];
+};

@@ -76,7 +76,6 @@ INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
     "django_celery_beat",
-    "storages",
 ]
 
 # Middlewares
@@ -263,7 +262,7 @@ STORAGES = {
     },
 }
 STORAGES["default"] = {
-    "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+    "BACKEND": "plane.settings.storage.S3Storage",
 }
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "access-key")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "secret-key")
@@ -407,6 +406,63 @@ APP_BASE_URL = os.environ.get("APP_BASE_URL")
 
 HARD_DELETE_AFTER_DAYS = int(os.environ.get("HARD_DELETE_AFTER_DAYS", 60))
 
+ATTACHMENT_MIME_TYPES = [
+    # Images
+    "image/jpeg",
+    "image/png",
+    "image/gif",
+    "image/svg+xml",
+    "image/webp",
+    "image/tiff",
+    "image/bmp",
+    # Documents
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/vnd.ms-excel",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "application/vnd.ms-powerpoint",
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    "text/plain",
+    "application/rtf",
+    # Audio
+    "audio/mpeg",
+    "audio/wav",
+    "audio/ogg",
+    "audio/midi",
+    "audio/x-midi",
+    "audio/aac",
+    "audio/flac",
+    "audio/x-m4a",
+    # Video
+    "video/mp4",
+    "video/mpeg",
+    "video/ogg",
+    "video/webm",
+    "video/quicktime",
+    "video/x-msvideo",
+    "video/x-ms-wmv",
+    # Archives
+    "application/zip",
+    "application/x-rar-compressed",
+    "application/x-tar",
+    "application/gzip",
+    # 3D Models
+    "model/gltf-binary",
+    "model/gltf+json",
+    "application/octet-stream",  # for .obj files, but be cautious
+    # Fonts
+    "font/ttf",
+    "font/otf",
+    "font/woff",
+    "font/woff2",
+    # Other
+    "text/css",
+    "text/javascript",
+    "application/json",
+    "text/xml",
+    "application/xml",
+]
 # Prime Server Base url
 PRIME_SERVER_BASE_URL = os.environ.get("PRIME_SERVER_BASE_URL", False)
 PRIME_SERVER_AUTH_TOKEN = os.environ.get("PRIME_SERVER_AUTH_TOKEN", "")

@@ -10,33 +10,34 @@ import { useUploader, useDropZone, uploadFirstImageAndInsertRemaining } from "@/
 import { getImageComponentImageFileMap, ImageAttributes } from "@/extensions/custom-image";
 
 export const CustomImageUploader = (props: {
-  failedToLoadImage: boolean;
   editor: Editor;
-  selected: boolean;
+  failedToLoadImage: boolean;
+  getPos: () => number;
   loadImageFromFileSystem: (file: string) => void;
-  setIsUploaded: (isUploaded: boolean) => void;
+  maxFileSize: number;
   node: ProsemirrorNode & {
     attrs: ImageAttributes;
   };
+  selected: boolean;
+  setIsUploaded: (isUploaded: boolean) => void;
   updateAttributes: (attrs: Record<string, any>) => void;
-  getPos: () => number;
 }) => {
   const {
-    selected,
-    failedToLoadImage,
     editor,
+    failedToLoadImage,
+    getPos,
     loadImageFromFileSystem,
+    maxFileSize,
     node,
+    selected,
     setIsUploaded,
     updateAttributes,
-    getPos,
   } = props;
-  // ref
+  // refs
   const fileInputRef = useRef<HTMLInputElement>(null);
-
   const hasTriggeredFilePickerRef = useRef(false);
+  // derived values
   const imageEntityId = node.attrs.id;
-
   const imageComponentImageFileMap = useMemo(() => getImageComponentImageFileMap(editor), [editor]);
 
   const onUpload = useCallback(
@@ -71,11 +72,17 @@ export const CustomImageUploader = (props: {
     [imageComponentImageFileMap, imageEntityId, updateAttributes, getPos]
   );
   // hooks
-  const { uploading: isImageBeingUploaded, uploadFile } = useUploader({ onUpload, editor, loadImageFromFileSystem });
-  const { draggedInside, onDrop, onDragEnter, onDragLeave } = useDropZone({
-    uploader: uploadFile,
+  const { uploading: isImageBeingUploaded, uploadFile } = useUploader({
     editor,
+    loadImageFromFileSystem,
+    maxFileSize,
+    onUpload,
+  });
+  const { draggedInside, onDrop, onDragEnter, onDragLeave } = useDropZone({
+    editor,
+    maxFileSize,
     pos: getPos(),
+    uploader: uploadFile,
   });
 
   // the meta data of the image component
@@ -102,11 +109,17 @@ export const CustomImageUploader = (props: {
   const onFileChange = useCallback(
     async (e: ChangeEvent<HTMLInputElement>) => {
       e.preventDefault();
-      const fileList = e.target.files;
-      if (!fileList) {
+      const filesList = e.target.files;
+      if (!filesList) {
         return;
       }
-      await uploadFirstImageAndInsertRemaining(editor, fileList, getPos(), uploadFile);
+      await uploadFirstImageAndInsertRemaining({
+        editor,
+        filesList,
+        maxFileSize,
+        pos: getPos(),
+        uploader: uploadFile,
+      });
     },
     [uploadFile, editor, getPos]
   );

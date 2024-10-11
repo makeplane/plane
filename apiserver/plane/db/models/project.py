@@ -99,7 +99,14 @@ class Project(BaseModel):
     is_time_tracking_enabled = models.BooleanField(default=False)
     is_issue_type_enabled = models.BooleanField(default=False)
     guest_view_all_features = models.BooleanField(default=False)
-    cover_image = models.URLField(blank=True, null=True, max_length=800)
+    cover_image = models.TextField(blank=True, null=True)
+    cover_image_asset = models.ForeignKey(
+        "db.FileAsset",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="project_cover_image",
+    )
     estimate = models.ForeignKey(
         "db.Estimate",
         on_delete=models.SET_NULL,
@@ -125,6 +132,18 @@ class Project(BaseModel):
     timezone = models.CharField(
         max_length=255, default="UTC", choices=TIMEZONE_CHOICES
     )
+
+    @property
+    def cover_image_url(self):
+        # Return cover image url
+        if self.cover_image_asset:
+            return self.cover_image_asset.asset_url
+
+        # Return cover image url
+        if self.cover_image:
+            return self.cover_image
+
+        return None
 
     def __str__(self):
         """Return name of the project"""

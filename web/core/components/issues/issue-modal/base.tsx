@@ -16,6 +16,10 @@ import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useEventTracker, useCycle, useIssues, useModule, useIssueDetail, useUser } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
+import useLocalStorage from "@/hooks/use-local-storage";
+// services
+import { FileService } from "@/services/file.service";
+const fileService = new FileService();
 // local components
 import { DraftIssueLayout } from "./draft-issue-layout";
 import { IssueFormRoot } from "./form";
@@ -42,6 +46,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   const [createMore, setCreateMore] = useState(false);
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
   const [description, setDescription] = useState<string | undefined>(undefined);
+  const [uploadedAssetIds, setUploadedAssetIds] = useState<string[]>([]);
   // store hooks
   const { captureIssueEvent } = useEventTracker();
   const { workspaceSlug, projectId: routerProjectId, cycleId, moduleId } = useParams();
@@ -157,6 +162,19 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       } // else just use the existing store type's create method
       else if (createIssue) {
         response = await createIssue(payload.project_id, payload);
+      }
+
+      // update uploaded assets' status
+      if (uploadedAssetIds.length > 0) {
+        await fileService.updateBulkProjectAssetsUploadStatus(
+          workspaceSlug?.toString() ?? "",
+          projectId,
+          response?.id ?? "",
+          {
+            asset_ids: uploadedAssetIds,
+          }
+        );
+        setUploadedAssetIds([]);
       }
 
       if (!response) throw new Error();
@@ -282,6 +300,8 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
 
   const handleFormChange = (formData: Partial<TIssue> | null) => setChangesMade(formData);
 
+  const handleUpdateUploadedAssetIds = (assetId: string) => setUploadedAssetIds((prev) => [...prev, assetId]);
+
   // don't open the modal if there are no projects
   if (!projectIdsWithCreatePermissions || projectIdsWithCreatePermissions.length === 0 || !activeProjectId) return null;
 
@@ -302,6 +322,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
             module_ids: data?.module_ids ? data?.module_ids : moduleId ? [moduleId.toString()] : null,
           }}
           issueTitleRef={issueTitleRef}
+          onAssetUpload={handleUpdateUploadedAssetIds}
           onChange={handleFormChange}
           onClose={handleClose}
           onSubmit={(payload) => handleFormSubmit(payload, isDraft)}
@@ -320,6 +341,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
             cycle_id: data?.cycle_id ? data?.cycle_id : cycleId ? cycleId.toString() : null,
             module_ids: data?.module_ids ? data?.module_ids : moduleId ? [moduleId.toString()] : null,
           }}
+          onAssetUpload={handleUpdateUploadedAssetIds}
           onClose={handleClose}
           isCreateMoreToggleEnabled={createMore}
           onCreateMoreToggleChange={handleCreateMoreToggleChange}

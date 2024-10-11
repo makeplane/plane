@@ -1,9 +1,14 @@
 "use client";
 
 import { useRef, useEffect } from "react";
-// types
+// plane editor
+import { IMentionSuggestion } from "@plane/editor";
+// plane types
 import { IUser, IUserLite } from "@plane/types";
-import { useMember } from "./use-member";
+// helpers
+import { getFileURL } from "@/helpers/file.helper";
+// hooks
+import { useMember } from "@/hooks/store/use-member";
 
 type Props = {
   workspaceSlug?: string;
@@ -63,7 +68,7 @@ export const useMention = ({ workspaceSlug, projectId, members, user }: Props) =
       checkData();
     });
 
-  const mentionSuggestions = async () => {
+  const mentionSuggestions = async (): Promise<IMentionSuggestion[]> => {
     if (members && projectMembersRef.current && projectMembersRef.current.length > 0) {
       // If data is already available, return it immediately
       return projectMembersRef.current.map((memberDetails) => ({
@@ -73,7 +78,7 @@ export const useMention = ({ workspaceSlug, projectId, members, user }: Props) =
         type: "User",
         title: `${memberDetails?.display_name}`,
         subtitle: memberDetails?.email ?? "",
-        avatar: `${memberDetails?.avatar}`,
+        avatar: getFileURL(memberDetails?.avatar_url) ?? "",
         redirect_uri: `/${workspaceSlug}/profile/${memberDetails?.id}`,
       }));
     } else {
@@ -86,7 +91,7 @@ export const useMention = ({ workspaceSlug, projectId, members, user }: Props) =
         type: "User",
         title: `${memberDetails?.display_name}`,
         subtitle: memberDetails?.email ?? "",
-        avatar: `${memberDetails?.avatar}`,
+        avatar: getFileURL(memberDetails?.avatar_url) ?? "",
         redirect_uri: `/${workspaceSlug}/profile/${memberDetails?.id}`,
       }));
     }
