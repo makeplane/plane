@@ -110,7 +110,7 @@ export const ActiveCycleChart = observer((props: Props) => {
         </defs>
         <Tooltip
           isAnimationActive={false}
-          content={<CustomTooltip active payload={[]} label={""} plotType={plotType} />}
+          content={<CustomTooltip active payload={[]} label={""} plotType={plotType} endDate={endDate}/>}
         />
         {/* Cartesian axis */}
         <XAxis

@@ -18,10 +18,9 @@ type Props = {
   handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string[], redirect?: boolean) => void;
   parentWidth?: number;
 };
-const states = ["completed", "started", "unstarted", "backlog"];
 
 const Summary = observer((props: Props) => {
-  const { setAreaToHighlight, data, plotType, estimateType, progressLoader, handleFiltersUpdate, parentWidth } = props;
+  const { setAreaToHighlight, data, plotType, estimateType, handleFiltersUpdate, parentWidth } = props;
 
   // store hooks
   const { groupedProjectStates } = useProjectState();
@@ -61,18 +60,26 @@ const Summary = observer((props: Props) => {
         key: "actual",
         showBg: true,
         color: colors.actual,
+        states: plotType === "burndown" ? ["started", "unstarted", "backlog", "cancelled"] : ["completed"],
       },
       {
         group: "Started",
         key: "started",
         showBg: true,
         color: colors.startedStroke,
+        states: ["started"],
       },
-      { group: "Scope", key: "scope", showBg: false, color: colors.scopeStroke },
+      {
+        group: "Scope",
+        key: "scope",
+        showBg: false,
+        color: colors.scopeStroke,
+        states: ["started", "unstarted", "backlog", "completed"],
+      },
     ],
     secondaryStates: [
-      { group: "Unstarted", key: "unstarted" },
-      { group: "Backlog", key: "backlog" },
+      { group: "Unstarted", key: "unstarted", states: ["unstarted"] },
+      { group: "Backlog", key: "backlog", states: ["backlog"] },
     ],
   };
 
@@ -120,9 +127,12 @@ const Summary = observer((props: Props) => {
             onMouseEnter={() => setAreaToHighlight(group.key)}
             onMouseLeave={() => setAreaToHighlight("")}
             onClick={() => {
-              if (groupedProjectStates && states.includes(group.key)) {
-                const states = groupedProjectStates[group.key].map((state) => state.id);
-                handleFiltersUpdate("state", states, true);
+              if (groupedProjectStates) {
+                const states = group.states?.reduce(
+                  (acc, state) => acc.concat(groupedProjectStates[state].map((state) => state.id)),
+                  [] as string[]
+                );
+                handleFiltersUpdate("state", states || [], true);
               }
             }}
           >
@@ -157,10 +167,10 @@ const Summary = observer((props: Props) => {
         </div>
         {stateGroups.secondaryStates.map((group, index) => (
           <div
-            className="flex text-sm cursor-pointer p-2"
+            className="flex text-sm cursor-pointer p-2 rounded hover:bg-custom-background-90"
             key={index}
             onClick={() => {
-              if (groupedProjectStates && states.includes(group.key)) {
+              if (groupedProjectStates) {
                 const states = groupedProjectStates[group.key].map((state) => state.id);
                 handleFiltersUpdate("state", states, true);
               }

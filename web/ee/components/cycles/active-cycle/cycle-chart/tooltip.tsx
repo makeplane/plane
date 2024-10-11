@@ -5,12 +5,14 @@ type Props = {
   payload: any; // TODO: fix type
   label: string;
   plotType: string;
+  endDate: string;
 };
-const CustomTooltip = ({ active, payload, label, plotType }: Props) => {
+const CustomTooltip = ({ active, payload, label, plotType, endDate }: Props) => {
   if (active && payload && payload.length) {
     payload = payload[0]?.payload;
     const [year, month, day] = label?.split("-");
     const monthName = new Date(label).toLocaleString("default", { month: "short" });
+    if (payload.date > endDate) return null;
     return (
       <Card className="flex flex-col" spacing={ECardSpacing.SM}>
         <p className="text-xs text-custom-text-400 border-b pb-2">{`${day} ${monthName}'${parseInt(year) % 100}`}</p>
