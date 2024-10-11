@@ -35,7 +35,7 @@ const formatV1Data = (isTypeIssue: boolean, cycle: ICycle, isBurnDown: boolean, 
     };
   });
 
-  progress = uniqBy(progress, "date");
+  progress = uniqBy(orderBy(progress, "date"), "date");
   return progress;
 };
 
@@ -70,7 +70,7 @@ const formatV2Data = (isTypeIssue: boolean, cycle: ICycle, isBurnDown: boolean, 
       actual: dataDate! <= today ? (isBurnDown ? Math.abs(pending) : completed) : undefined,
     };
   });
-  progress = uniqBy(progress, "date");
+  progress = uniqBy(orderBy(progress, "date"), "date");
 
   return progress;
 };
