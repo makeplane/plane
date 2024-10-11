@@ -16,12 +16,8 @@ type Props = {
 export const BubbleMenuColorSelector: FC<Props> = (props) => {
   const { editor, isOpen, setIsOpen } = props;
 
-  const activeTextColor = COLORS_LIST.find((c) => editor.getAttributes("textStyle").color === c.textColor);
-  const activeBackgroundColor = COLORS_LIST.find((c) =>
-    editor.isActive("highlight", {
-      color: c.backgroundColor,
-    })
-  );
+  const activeTextColor = COLORS_LIST.find((c) => editor.getAttributes("textStyle").color === c.key);
+  const activeBackgroundColor = COLORS_LIST.find((c) => editor.getAttributes("textStyle").backgroundColor === c.key);
 
   return (
     <div className="relative h-full">
@@ -41,25 +37,17 @@ export const BubbleMenuColorSelector: FC<Props> = (props) => {
               "bg-custom-background-100": !activeBackgroundColor,
             }
           )}
-          style={
-            activeBackgroundColor
-              ? {
-                  backgroundColor: activeBackgroundColor.backgroundColor,
-                }
-              : {}
-          }
+          style={{
+            backgroundColor: activeBackgroundColor ? activeBackgroundColor.backgroundColor : "transparent",
+          }}
         >
           <ALargeSmall
             className={cn("size-3.5", {
               "text-custom-text-100": !activeTextColor,
             })}
-            style={
-              activeTextColor
-                ? {
-                    color: activeTextColor.textColor,
-                  }
-                : {}
-            }
+            style={{
+              color: activeTextColor ? activeTextColor.textColor : "inherit",
+            }}
           />
         </span>
       </button>
@@ -70,13 +58,13 @@ export const BubbleMenuColorSelector: FC<Props> = (props) => {
             <div className="flex items-center gap-2">
               {COLORS_LIST.map((color) => (
                 <button
-                  key={color.textColor}
+                  key={color.key}
                   type="button"
                   className="flex-shrink-0 size-6 rounded border-[0.5px] border-custom-border-400 hover:opacity-60 transition-opacity"
                   style={{
                     backgroundColor: color.textColor,
                   }}
-                  onClick={() => TextColorItem(editor).command(color.textColor)}
+                  onClick={() => TextColorItem(editor).command(color.key)}
                 />
               ))}
               <button
@@ -93,13 +81,13 @@ export const BubbleMenuColorSelector: FC<Props> = (props) => {
             <div className="flex items-center gap-2">
               {COLORS_LIST.map((color) => (
                 <button
-                  key={color.backgroundColor}
+                  key={color.key}
                   type="button"
                   className="flex-shrink-0 size-6 rounded border-[0.5px] border-custom-border-400 hover:opacity-60 transition-opacity"
                   style={{
                     backgroundColor: color.backgroundColor,
                   }}
-                  onClick={() => BackgroundColorItem(editor).command(color.backgroundColor)}
+                  onClick={() => BackgroundColorItem(editor).command(color.key)}
                 />
               ))}
               <button
