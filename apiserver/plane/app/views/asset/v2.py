@@ -93,7 +93,7 @@ class UserAssetsV2Endpoint(BaseAPIView):
             )
 
         # Check if the file type is allowed
-        allowed_types = ["image/jpeg", "image/png"]
+        allowed_types = ["image/jpeg", "image/png", "image/webp", "image/jpg"]
         if type not in allowed_types:
             return Response(
                 {
@@ -103,6 +103,9 @@ class UserAssetsV2Endpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Get the size limit
+        size_limit = min(settings.FILE_SIZE_LIMIT, size)
+
         # asset key
         asset_key = f"{uuid.uuid4().hex}-{name}"
 
@@ -111,10 +114,10 @@ class UserAssetsV2Endpoint(BaseAPIView):
             attributes={
                 "name": name,
                 "type": type,
-                "size": size,
+                "size": size_limit,
             },
             asset=asset_key,
-            size=size,
+            size=size_limit,
             user=request.user,
             created_by=request.user,
             entity_type=entity_type,
@@ -126,7 +129,7 @@ class UserAssetsV2Endpoint(BaseAPIView):
         presigned_url = storage.generate_presigned_post(
             object_name=asset_key,
             file_type=type,
-            file_size=size,
+            file_size=size_limit,
         )
         # Return the presigned URL
         return Response(
@@ -288,7 +291,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             )
 
         # Check if the file type is allowed
-        allowed_types = ["image/jpeg", "image/png", "image/webp"]
+        allowed_types = ["image/jpeg", "image/png", "image/webp", "image/jpg"]
         if type not in allowed_types:
             return Response(
                 {
@@ -297,6 +300,9 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        # Get the size limit
+        size_limit = min(settings.FILE_SIZE_LIMIT, size)
 
         # Get the workspace
         workspace = Workspace.objects.get(slug=slug)
@@ -309,10 +315,10 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             attributes={
                 "name": name,
                 "type": type,
-                "size": size,
+                "size": size_limit,
             },
             asset=asset_key,
-            size=size,
+            size=size_limit,
             workspace=workspace,
             created_by=request.user,
             entity_type=entity_type,
@@ -325,7 +331,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         presigned_url = storage.generate_presigned_post(
             object_name=asset_key,
             file_type=type,
-            file_size=size,
+            file_size=size_limit,
         )
         # Return the presigned URL
         return Response(
@@ -517,6 +523,9 @@ class ProjectAssetEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Get the size limit
+        size_limit = min(settings.FILE_SIZE_LIMIT, size)
+
         # Get the workspace
         workspace = Workspace.objects.get(slug=slug)
 
@@ -528,10 +537,10 @@ class ProjectAssetEndpoint(BaseAPIView):
             attributes={
                 "name": name,
                 "type": type,
-                "size": size,
+                "size": size_limit,
             },
             asset=asset_key,
-            size=size,
+            size=size_limit,
             workspace=workspace,
             created_by=request.user,
             entity_type=entity_type,
@@ -545,7 +554,7 @@ class ProjectAssetEndpoint(BaseAPIView):
         presigned_url = storage.generate_presigned_post(
             object_name=asset_key,
             file_type=type,
-            file_size=size,
+            file_size=size_limit,
         )
         # Return the presigned URL
         return Response(

@@ -115,15 +115,18 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
         # asset key
         asset_key = f"{workspace.id}/{uuid.uuid4().hex}-{name}"
 
+        # Get the size limit
+        size_limit = min(size, settings.FILE_SIZE_LIMIT)
+
         # Create a File Asset
         asset = FileAsset.objects.create(
             attributes={
                 "name": name,
                 "type": type,
-                "size": size,
+                "size": size_limit,
             },
             asset=asset_key,
-            size=size,
+            size=size_limit,
             workspace_id=workspace.id,
             created_by=request.user,
             issue_id=issue_id,
@@ -137,7 +140,7 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
         presigned_url = storage.generate_presigned_post(
             object_name=asset_key,
             file_type=type,
-            file_size=size,
+            file_size=size_limit,
         )
         # Return the presigned URL
         return Response(
