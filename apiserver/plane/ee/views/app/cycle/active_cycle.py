@@ -26,7 +26,6 @@ class WorkspaceActiveCycleEndpoint(BaseAPIView):
 
     @check_feature_flag(FeatureFlag.WORKSPACE_ACTIVE_CYCLES)
     def get(self, request, slug):
-
         favorite_subquery = UserFavorite.objects.filter(
             user=self.request.user,
             entity_identifier=OuterRef("pk"),
@@ -38,6 +37,7 @@ class WorkspaceActiveCycleEndpoint(BaseAPIView):
         active_cycles = (
             Cycle.objects.filter(
                 workspace__slug=slug,
+                project__project_projectmember__role__gt=5,
                 project__project_projectmember__member=self.request.user,
                 project__project_projectmember__is_active=True,
                 start_date__lte=timezone.now(),
@@ -64,14 +64,6 @@ class WorkspaceActiveCycleEndpoint(BaseAPIView):
             .annotate(is_favorite=Exists(favorite_subquery))
             .order_by("-is_favorite", "name")
             .distinct()
-        )
-
-        active_cycles = active_cycles.filter(
-            ~Q(
-                project__project_projectmember__role=5,
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
-            )
         )
 
         return self.paginate(
