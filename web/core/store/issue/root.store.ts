@@ -203,7 +203,7 @@ export class IssueRootStore implements IIssueRootStore {
     this.profileIssues = new ProfileIssues(this, this.profileIssuesFilter);
 
     this.workspaceDraftIssuesFilter = new WorkspaceDraftIssuesFilter(this);
-    this.workspaceDraftIssues = new WorkspaceDraftIssues();
+    this.workspaceDraftIssues = new WorkspaceDraftIssues(this);
 
     this.projectIssuesFilter = new ProjectIssuesFilter(this);
     this.projectIssues = new ProjectIssues(this, this.projectIssuesFilter);
@@ -224,6 +224,6 @@ export class IssueRootStore implements IIssueRootStore {
     this.draftIssues = new DraftIssues(this, this.draftIssuesFilter);
 
     this.issueKanBanView = new IssueKanBanViewStore(this);
-    this.issueCalendarView = new CalendarStore();
+    this.issueCalendarView = new CalendarStore(this);
   }
 }

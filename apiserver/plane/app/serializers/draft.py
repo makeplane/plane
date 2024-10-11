@@ -276,6 +276,8 @@ class DraftIssueSerializer(BaseSerializer):
             "updated_at",
             "created_by",
             "updated_by",
+            "type_id",
+            "description_html",
         ]
         read_only_fields = fields
 

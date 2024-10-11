@@ -16,7 +16,6 @@ import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useEventTracker, useCycle, useIssues, useModule, useIssueDetail, useUser } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
-import useLocalStorage from "@/hooks/use-local-storage";
 // local components
 import { DraftIssueLayout } from "./draft-issue-layout";
 import { IssueFormRoot } from "./form";
@@ -55,10 +54,6 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   const { handleCreateUpdatePropertyValues } = useIssueModal();
   // pathname
   const pathname = usePathname();
-  // local storage
-  const { storedValue: localStorageDraftIssues, setValue: setLocalStorageDraftIssue } = useLocalStorage<
-    Record<string, Partial<TIssue>>
-  >("draftedIssue", {});
   // current store details
   const { createIssue, updateIssue } = useIssuesActions(storeType);
   // derived values
@@ -128,14 +123,9 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     setCreateMore(value);
   };
 
-  const handleClose = (saveDraftIssueInLocalStorage?: boolean) => {
-    if (changesMade && saveDraftIssueInLocalStorage) {
-      // updating the current edited issue data in the local storage
-      let draftIssues = localStorageDraftIssues ? localStorageDraftIssues : {};
-      if (workspaceSlug) {
-        draftIssues = { ...draftIssues, [workspaceSlug.toString()]: changesMade };
-        setLocalStorageDraftIssue(draftIssues);
-      }
+  const handleClose = (saveAsDraft?: boolean) => {
+    if (changesMade && saveAsDraft && !data) {
+      handleCreateIssue(changesMade, true);
     }
 
     setActiveProjectId(null);
@@ -328,7 +318,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
             cycle_id: data?.cycle_id ? data?.cycle_id : cycleId ? cycleId.toString() : null,
             module_ids: data?.module_ids ? data?.module_ids : moduleId ? [moduleId.toString()] : null,
           }}
-          onClose={() => handleClose(false)}
+          onClose={handleClose}
           isCreateMoreToggleEnabled={createMore}
           onCreateMoreToggleChange={handleCreateMoreToggleChange}
           onSubmit={(payload) => handleFormSubmit(payload, isDraft)}
