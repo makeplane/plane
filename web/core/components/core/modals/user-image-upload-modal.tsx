@@ -13,6 +13,7 @@ import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 import { MAX_STATIC_FILE_SIZE } from "@/constants/common";
 // helpers
 import { getAssetIdFromUrl, getFileURL } from "@/helpers/file.helper";
+import { checkURLValidity } from "@/helpers/string.helper";
 // services
 import { FileService } from "@/services/file.service";
 const fileService = new FileService();
@@ -77,10 +78,14 @@ export const UserImageUploadModal: React.FC<Props> = observer((props) => {
 
   const handleImageRemove = async () => {
     if (!value) return;
-    const assetID = getAssetIdFromUrl(value);
     setIsRemoving(true);
     try {
-      await fileService.deleteUserAsset(assetID);
+      if (checkURLValidity(value)) {
+        await fileService.deleteOldUserAsset(value);
+      } else {
+        const assetId = getAssetIdFromUrl(value);
+        await fileService.deleteUserAsset(assetId);
+      }
       await handleRemove();
     } catch (error) {
       console.log("Error in uploading user asset:", error);
