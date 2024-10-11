@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 // editor
 import { EditorRefApi } from "@plane/editor";
 // types
-import type { TIssue, ISearchIssueResponse } from "@plane/types";
+import type { TIssue, ISearchIssueResponse, TWorkspaceDraftIssue } from "@plane/types";
 // hooks
 import { Button, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 // components
@@ -26,7 +26,7 @@ import { getChangedIssuefields } from "@/helpers/issue.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
-import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
+import { useIssueDetail, useProject, useProjectState, useWorkspaceDraftIssues } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
 // plane web components
@@ -60,6 +60,7 @@ export interface IssueFormProps {
   onSubmit: (values: Partial<TIssue>, is_draft_issue?: boolean) => Promise<void>;
   projectId: string;
   isDraft: boolean;
+  moveToIssue?: boolean;
 }
 
 export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
@@ -74,6 +75,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     isCreateMoreToggleEnabled,
     onCreateMoreToggleChange,
     isDraft,
+    moveToIssue,
   } = props;
 
   // states
@@ -93,6 +95,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const { getIssueTypeIdOnProjectChange, getActiveAdditionalPropertiesLength, handlePropertyValuesValidation } =
     useIssueModal();
   const { isMobile } = usePlatformOS();
+  const { moveIssue } = useWorkspaceDraftIssues();
 
   const {
     issue: { getIssueById },
@@ -404,7 +407,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                 Discard
               </Button>
               <Button
-                variant="primary"
+                variant={moveToIssue ? "neutral-primary" : "primary"}
                 type="submit"
                 size="sm"
                 ref={submitBtnRef}
@@ -421,6 +424,19 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                       ? "Create draft issue"
                       : "Create"}
               </Button>
+              {moveToIssue && (
+                <Button
+                  variant="primary"
+                  type="button"
+                  size="sm"
+                  loading={isSubmitting}
+                  onClick={() =>
+                    data?.id && data && moveIssue(workspaceSlug.toString(), data?.id, data as TWorkspaceDraftIssue)
+                  }
+                >
+                  Add to project
+                </Button>
+              )}
             </div>
           </div>
         </div>

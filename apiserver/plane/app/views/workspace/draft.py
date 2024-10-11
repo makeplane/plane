@@ -147,6 +147,8 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                     "updated_at",
                     "created_by",
                     "updated_by",
+                    "type_id",
+                    "description_html",
                 )
                 .first()
             )
@@ -210,7 +212,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
     @allow_permission(
         allowed_roles=[ROLE.ADMIN],
         creator=True,
-        model=Issue,
+        model=DraftIssue,
         level="WORKSPACE",
     )
     def destroy(self, request, slug, pk=None):

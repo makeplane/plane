@@ -42,6 +42,7 @@ export const WorkspaceDraftIssueQuickActions: React.FC<IQuickActionProps> = obse
     parentRef,
   } = props;
   // states
+  const [moveToIssue, setMoveToIssue] = useState(false);
   const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
   const [issueToEdit, setIssueToEdit] = useState<TWorkspaceDraftIssue | undefined>(undefined);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
@@ -77,7 +78,13 @@ export const WorkspaceDraftIssueQuickActions: React.FC<IQuickActionProps> = obse
       key: "move-to-issues",
       title: "Move to issues",
       icon: SquareStackIcon,
-      action: () => handleMoveToIssues && handleMoveToIssues(),
+      action: () => {
+        if (handleMoveToIssues) {
+          setMoveToIssue(true);
+          setIssueToEdit(issue);
+          setCreateUpdateIssueModal(true);
+        }
+      },
     },
     {
       key: "delete",
@@ -102,6 +109,7 @@ export const WorkspaceDraftIssueQuickActions: React.FC<IQuickActionProps> = obse
         onClose={() => {
           setCreateUpdateIssueModal(false);
           setIssueToEdit(undefined);
+          setMoveToIssue(false);
         }}
         data={issueToEdit ?? duplicateIssuePayload}
         onSubmit={async (data) => {
@@ -109,6 +117,7 @@ export const WorkspaceDraftIssueQuickActions: React.FC<IQuickActionProps> = obse
         }}
         storeType={EIssuesStoreType.WORKSPACE_DRAFT}
         fetchIssueDetails={false}
+        moveToIssue={moveToIssue}
         isDraft
       />
       <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
