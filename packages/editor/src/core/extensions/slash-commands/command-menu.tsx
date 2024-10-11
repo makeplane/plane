@@ -6,8 +6,6 @@ import { CommandMenuItem } from "./command-menu-item";
 type Props = {
   items: TSlashCommandSection[];
   command: any;
-  editor: any;
-  range: any;
 };
 
 export const SlashCommandsMenu = (props: Props) => {
@@ -22,7 +20,7 @@ export const SlashCommandsMenu = (props: Props) => {
 
   const selectItem = useCallback(
     (sectionIndex: number, itemIndex: number) => {
-      const item = sections[sectionIndex].items[itemIndex];
+      const item = sections[sectionIndex]?.items?.[itemIndex];
       if (item) command(item);
     },
     [command, sections]

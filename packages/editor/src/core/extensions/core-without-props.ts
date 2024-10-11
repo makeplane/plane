@@ -1,5 +1,3 @@
-import { Color } from "@tiptap/extension-color";
-import Highlight from "@tiptap/extension-highlight";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import TextStyle from "@tiptap/extension-text-style";
@@ -18,6 +16,8 @@ import { IssueWidgetWithoutProps } from "./issue-embed/issue-embed-without-props
 import { CustomMentionWithoutProps } from "./mentions/mentions-without-props";
 import { CustomQuoteExtension } from "./quote";
 import { TableHeader, TableCell, TableRow, Table } from "./table";
+import { CustomTextColorExtension } from "./custom-text-color";
+import { CustomBackgroundColorExtension } from "./custom-background-color";
 
 export const CoreEditorExtensionsWithoutProps = [
   StarterKit.configure({
@@ -85,10 +85,8 @@ export const CoreEditorExtensionsWithoutProps = [
   TableCell,
   TableRow,
   CustomMentionWithoutProps(),
-  Color,
-  Highlight.configure({
-    multicolor: true,
-  }),
+  CustomTextColorExtension,
+  CustomBackgroundColorExtension,
 ];
 
 export const DocumentEditorExtensionsWithoutProps = [IssueWidgetWithoutProps()];
