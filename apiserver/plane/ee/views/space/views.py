@@ -133,7 +133,7 @@ class IssueViewsPublicEndpoint(BaseAPIView):
                 .annotate(
                     attachment_count=FileAsset.objects.filter(
                         entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
-                        entity_identifier=OuterRef("id"),
+                        issue_id=OuterRef("id"),
                     )
                     .order_by()
                     .annotate(count=Func(F("id"), function="Count"))
