@@ -16,7 +16,6 @@ import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useEventTracker, useCycle, useIssues, useModule, useIssueDetail, useUser } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
-import useLocalStorage from "@/hooks/use-local-storage";
 // services
 import { FileService } from "@/services/file.service";
 const fileService = new FileService();
@@ -168,7 +167,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       if (uploadedAssetIds.length > 0) {
         await fileService.updateBulkProjectAssetsUploadStatus(
           workspaceSlug?.toString() ?? "",
-          projectId,
+          activeProjectId ?? "",
           response?.id ?? "",
           {
             asset_ids: uploadedAssetIds,
