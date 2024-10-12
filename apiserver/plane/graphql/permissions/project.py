@@ -4,8 +4,6 @@ from typing import Any
 # Third-Party Imports
 from asgiref.sync import sync_to_async
 
-# Django Imports
-from django.contrib.auth import get_user
 
 # Strawberry Imports
 from strawberry.types import Info
@@ -30,9 +28,7 @@ class IsAuthenticated(BasePermission):
     }
 
     async def has_permission(self, source: Any, info: Info, **kwargs) -> bool:
-        self.user = await sync_to_async(get_user, thread_sensitive=True)(
-            info.context.request
-        )
+        self.user = info.context.user
         return self.user.is_authenticated
 
 
