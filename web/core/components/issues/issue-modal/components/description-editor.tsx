@@ -29,6 +29,7 @@ import { FileService } from "@/services/file.service";
 
 type TIssueDescriptionEditorProps = {
   control: Control<TIssue>;
+  isDraft: boolean;
   issueName: string;
   issueId: string | undefined;
   descriptionHtmlData: string | undefined;
@@ -52,6 +53,7 @@ const fileService = new FileService();
 export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = observer((props) => {
   const {
     control,
+    isDraft,
     issueName,
     issueId,
     descriptionHtmlData,
@@ -194,7 +196,9 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
                       projectId,
                       {
                         entity_identifier: issueId ?? "",
-                        entity_type: EFileAssetType.ISSUE_DESCRIPTION,
+                        entity_type: isDraft
+                          ? EFileAssetType.DRAFT_ISSUE_DESCRIPTION
+                          : EFileAssetType.ISSUE_DESCRIPTION,
                       },
                       file
                     );
