@@ -2,7 +2,6 @@
 import { TFileMetaDataLite, TFileSignedURLResponse } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
-import { checkURLValidity } from "@/helpers/string.helper";
 
 /**
  * @description from the provided signed URL response, generate a payload to be used to upload the file
@@ -24,7 +23,7 @@ export const generateFileUploadPayload = (signedURLResponse: TFileSignedURLRespo
  */
 export const getFileURL = (path: string): string | undefined => {
   if (!path) return undefined;
-  const isValidURL = checkURLValidity(path);
+  const isValidURL = path.startsWith("http");
   if (isValidURL) return path;
   return `${API_BASE_URL}${path}`;
 };
