@@ -12,6 +12,7 @@ import {
   renderFormattedDate,
   renderFormattedTime,
 } from "@/helpers/date-time.helper";
+import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useMember } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -69,9 +70,9 @@ export const IssueActivityWorklog: FC<TIssueActivityWorklog> = observer((props) 
     >
       <div className="absolute left-[13px] top-0 bottom-0 w-0.5 bg-custom-background-80" aria-hidden />
       <div className="flex-shrink-0 relative w-7 h-7 rounded-full flex justify-center items-center z-10 bg-gray-500 text-white border border-white uppercase font-medium">
-        {currentUser?.member?.avatar && currentUser?.member?.avatar !== "" ? (
+        {currentUser?.member?.avatar_url && currentUser?.member?.avatar_url !== "" ? (
           <img
-            src={currentUser?.member?.avatar}
+            src={getFileURL(currentUser?.member?.avatar_url)}
             alt={currentUser?.member?.display_name}
             height={30}
             width={30}

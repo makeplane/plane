@@ -21,10 +21,10 @@ import { EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate, renderFormattedDateWithoutYear } from "@/helpers/date-time.helper";
+import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useIssues, useProjectState } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
-
 
 export type ActiveCycleStatsProps = {
   workspaceSlug: string;
@@ -165,7 +165,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                       <div className="flex items-center gap-1.5 flex-shrink-0">
                         <StateDropdown
                           value={issue.state_id ?? undefined}
-                          onChange={() => { }}
+                          onChange={() => {}}
                           projectId={projectId?.toString() ?? ""}
                           disabled
                           buttonVariant="background-with-text"
@@ -216,7 +216,10 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                       key={assignee.assignee_id}
                       title={
                         <div className="flex items-center gap-2">
-                          <Avatar name={assignee?.display_name ?? undefined} src={assignee?.avatar ?? undefined} />
+                          <Avatar
+                            name={assignee?.display_name ?? undefined}
+                            src={getFileURL(assignee?.avatar_url ?? "")}
+                          />
 
                           <span>{assignee.display_name}</span>
                         </div>

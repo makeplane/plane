@@ -30,6 +30,8 @@ class FeatureFlag(Enum):
     PROJECT_GROUPING = "PROJECT_GROUPING"
     # Active cycle progress
     ACTIVE_CYCLE_PRO = "ACTIVE_CYCLE_PRO"
+    # Pro file size limit
+    FILE_SIZE_LIMIT_PRO = "FILE_SIZE_LIMIT_PRO"
 
 
 class AdminFeatureFlag(Enum):

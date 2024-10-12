@@ -6,6 +6,7 @@ import { IWorkspace } from "@plane/types";
 import { Avatar, PriorityIcon, Tooltip } from "@plane/ui";
 import { DateRangeDropdown, MemberDropdown } from "@/components/dropdowns";
 import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
+import { getFileURL } from "@/helpers/file.helper";
 import { useMember, useUserPermissions } from "@/hooks/store";
 import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 import { TProject } from "@/plane-web/types/projects";
@@ -111,7 +112,13 @@ const Attributes: React.FC<Props> = observer((props) => {
                     { "cursor-not-allowed": !isEditingAllowed }
                   )}
                 >
-                  <Avatar key={lead.id} name={lead.display_name} src={lead.avatar} size={14} className="text-[9px]" />
+                  <Avatar
+                    key={lead.id}
+                    name={lead.display_name}
+                    src={getFileURL(lead.avatar_url)}
+                    size={14}
+                    className="text-[9px]"
+                  />
                   <div>{lead.first_name}</div>
                 </div>
               </Tooltip>

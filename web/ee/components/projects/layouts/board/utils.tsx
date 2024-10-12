@@ -3,6 +3,7 @@
 import smoothScrollIntoView from "smooth-scroll-into-view-if-needed";
 import { IWorkspace, IWorkspaceMember } from "@plane/types";
 import { Avatar, PriorityIcon } from "@plane/ui";
+import { getFileURL } from "@/helpers/file.helper";
 import { ProjectStateIcon } from "@/plane-web/components/workspace-project-states";
 import { PROJECT_PRIORITY_MAP } from "@/plane-web/constants/project";
 import { WORKSPACE_PROJECT_STATE_GROUPS } from "@/plane-web/constants/workspace-project-states";
@@ -82,7 +83,12 @@ export const groupDetails = (
       return {
         title: memberDetails?.display_name || "Created By",
         icon: memberDetails ? (
-          <Avatar name={memberDetails.display_name} src={memberDetails.avatar} showTooltip={false} size="md" />
+          <Avatar
+            name={memberDetails.display_name}
+            src={getFileURL(memberDetails.avatar_url)}
+            showTooltip={false}
+            size="md"
+          />
         ) : (
           <></>
         ),

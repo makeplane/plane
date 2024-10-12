@@ -18,7 +18,7 @@ export interface IProject {
   close_in: number;
   created_at: Date;
   created_by: string;
-  cover_image: string | null;
+  cover_image_url: string;
   cycle_view: boolean;
   issue_views_view: boolean;
   module_view: boolean;
@@ -75,7 +75,7 @@ export interface IProjectMap {
 
 export interface IProjectMemberLite {
   id: string;
-  member__avatar: string;
+  member__avatar_url: string;
   member__display_name: string;
   member_id: string;
 }

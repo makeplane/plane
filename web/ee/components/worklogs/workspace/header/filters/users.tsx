@@ -2,7 +2,10 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
+// plane ui
 import { Avatar, CustomSearchSelect } from "@plane/ui";
+// helpers
+import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useMember } from "@/hooks/store";
 import { useWorkspaceWorklogs } from "@/plane-web/hooks/store";
@@ -42,7 +45,7 @@ export const WorkspaceWorklogFilterUsers: FC<TWorkspaceWorklogFilterUsers> = obs
         <div className="flex items-center gap-2">
           <Avatar
             name={userDetails?.member?.display_name}
-            src={userDetails?.member?.avatar ?? undefined}
+            src={getFileURL(userDetails?.member?.avatar_url ?? "")}
             shape="circle"
             size="sm"
             showTooltip={false}

@@ -24,7 +24,7 @@ from plane.db.models import (
     IssueAssignee,
     IssueLabel,
     Workspace,
-    IssueAttachment,
+    FileAsset,
     IssueSubscriber,
 )
 
@@ -291,9 +291,10 @@ class IssueAttachmentMutation:
         issue: strawberry.ID,
         attachment: strawberry.ID,
     ) -> bool:
-        issue_attachment = await sync_to_async(IssueAttachment.objects.get)(
+        issue_attachment = await sync_to_async(FileAsset.objects.get)(
             id=attachment,
-            issue_id=issue,
+            entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+            entity_identifier=issue,
             project_id=project,
             workspace__slug=slug,
         )

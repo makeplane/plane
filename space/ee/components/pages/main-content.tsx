@@ -6,6 +6,8 @@ import { FileText } from "lucide-react";
 import { DocumentReadOnlyEditorWithRef, EditorRefApi } from "@plane/editor";
 // ui
 import { Logo } from "@plane/ui";
+// helpers
+import { getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
 import { usePublish } from "@/hooks/store";
 import { useMention } from "@/hooks/use-mention";
@@ -63,6 +65,9 @@ export const PageDetailsMainContent: React.FC<Props> = observer((props) => {
             id={pageDetails.id}
             initialValue={pageDetails.description_html ?? "<p></p>"}
             containerClassName="p-0 pb-64 border-none"
+            fileHandler={getReadOnlyEditorFileHandlers({
+              anchor,
+            })}
             mentionHandler={{
               highlights: mentionHighlights,
             }}

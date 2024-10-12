@@ -15,14 +15,14 @@ import { ProfileSettingContentWrapper } from "@/components/profile";
 // constants
 import { TIME_ZONES } from "@/constants/timezones";
 import { USER_ROLES } from "@/constants/workspace";
+// helpers
+import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useUser } from "@/hooks/store";
-// services
-import { FileService } from "@/services/file.service";
 
 const defaultValues: Partial<IUser> = {
-  avatar: "",
-  cover_image: "",
+  avatar_url: "",
+  cover_image_url: "",
   first_name: "",
   last_name: "",
   display_name: "",
@@ -31,12 +31,9 @@ const defaultValues: Partial<IUser> = {
   user_timezone: "Asia/Kolkata",
 };
 
-const fileService = new FileService();
-
 const ProfileSettingsPage = observer(() => {
   // states
   const [isLoading, setIsLoading] = useState(false);
-  const [isRemoving, setIsRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   const [deactivateAccountModal, setDeactivateAccountModal] = useState(false);
   // form info
@@ -48,6 +45,9 @@ const ProfileSettingsPage = observer(() => {
     setValue,
     formState: { errors },
   } = useForm<IUser>({ defaultValues });
+  // derived values
+  const userAvatar = watch("avatar_url");
+  const userCover = watch("cover_image_url");
   // store hooks
   const { data: currentUser, updateCurrentUser } = useUser();
 
@@ -60,8 +60,8 @@ const ProfileSettingsPage = observer(() => {
     const payload: Partial<IUser> = {
       first_name: formData.first_name,
       last_name: formData.last_name,
-      avatar: formData.avatar,
-      cover_image: formData.cover_image,
+      avatar_url: formData.avatar_url,
+      cover_image_url: formData.cover_image_url,
       role: formData.role,
       display_name: formData?.display_name,
       user_timezone: formData.user_timezone,
@@ -81,35 +81,30 @@ const ProfileSettingsPage = observer(() => {
     });
   };
 
-  const handleDelete = (url: string | null | undefined, updateUser: boolean = false) => {
+  const handleDelete = async (url: string | null | undefined) => {
     if (!url) return;
 
-    setIsRemoving(true);
-
-    fileService.deleteUserFile(url).then(() => {
-      if (updateUser)
-        updateCurrentUser({ avatar: "" })
-          .then(() => {
-            setToast({
-              type: TOAST_TYPE.SUCCESS,
-              title: "Success!",
-              message: "Profile picture deleted successfully.",
-            });
-            setIsRemoving(false);
-            setValue("avatar", "");
-          })
-          .catch(() => {
-            setToast({
-              type: TOAST_TYPE.ERROR,
-              title: "Error!",
-              message: "There was some error in deleting your profile picture. Please try again.",
-            });
-          })
-          .finally(() => {
-            setIsRemoving(false);
-            setIsImageUploadModalOpen(false);
-          });
-    });
+    await updateCurrentUser({
+      avatar_url: "",
+    })
+      .then(() => {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: "Profile picture deleted successfully.",
+        });
+        setValue("avatar_url", "");
+      })
+      .catch(() => {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "There was some error in deleting your profile picture. Please try again.",
+        });
+      })
+      .finally(() => {
+        setIsImageUploadModalOpen(false);
+      });
   };
 
   const timeZoneOptions = TIME_ZONES.map((timeZone) => ({
@@ -131,13 +126,12 @@ const ProfileSettingsPage = observer(() => {
       <ProfileSettingContentWrapper>
         <Controller
           control={control}
-          name="avatar"
+          name="avatar_url"
           render={({ field: { onChange, value } }) => (
             <UserImageUploadModal
               isOpen={isImageUploadModalOpen}
               onClose={() => setIsImageUploadModalOpen(false)}
-              isRemoving={isRemoving}
-              handleDelete={() => handleDelete(currentUser?.avatar, true)}
+              handleRemove={async () => await handleDelete(currentUser?.avatar_url)}
               onSuccess={(url) => {
                 onChange(url);
                 handleSubmit(onSubmit)();
@@ -152,7 +146,7 @@ const ProfileSettingsPage = observer(() => {
           <div className="flex w-full flex-col gap-8">
             <div className="relative h-44 w-full">
               <img
-                src={watch("cover_image") ?? "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"}
+                src={userCover ? getFileURL(userCover) : "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"}
                 className="h-44 w-full rounded-lg object-cover"
                 alt={currentUser?.first_name ?? "Cover image"}
               />
@@ -160,14 +154,14 @@ const ProfileSettingsPage = observer(() => {
                 <div className="flex gap-3">
                   <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-custom-background-90">
                     <button type="button" onClick={() => setIsImageUploadModalOpen(true)}>
-                      {!watch("avatar") || watch("avatar") === "" ? (
+                      {!userAvatar || userAvatar === "" ? (
                         <div className="h-16 w-16 rounded-md bg-custom-background-80 p-2">
                           <CircleUserRound className="h-full w-full text-custom-text-200" />
                         </div>
                       ) : (
                         <div className="relative h-16 w-16 overflow-hidden">
                           <img
-                            src={watch("avatar") || undefined}
+                            src={getFileURL(userAvatar)}
                             className="absolute left-0 top-0 h-full w-full rounded-lg object-cover"
                             onClick={() => setIsImageUploadModalOpen(true)}
                             alt={currentUser?.display_name}
@@ -183,7 +177,7 @@ const ProfileSettingsPage = observer(() => {
               <div className="absolute bottom-3 right-3 flex">
                 <Controller
                   control={control}
-                  name="cover_image"
+                  name="cover_image_url"
                   render={({ field: { value, onChange } }) => (
                     <ImagePickerPopover
                       label={"Change cover"}
