@@ -36,6 +36,8 @@ class FileAsset(BaseModel):
         USER_AVATAR = "USER_AVATAR"
         WORKSPACE_LOGO = "WORKSPACE_LOGO"
         PROJECT_COVER = "PROJECT_COVER"
+        DRAFT_ISSUE_ATTACHMENT = "DRAFT_ISSUE_ATTACHMENT"
+        DRAFT_ISSUE_DESCRIPTION = "DRAFT_ISSUE_DESCRIPTION"
 
     attributes = models.JSONField(default=dict)
     asset = models.FileField(
@@ -50,6 +52,12 @@ class FileAsset(BaseModel):
     )
     workspace = models.ForeignKey(
         "db.Workspace",
+        on_delete=models.CASCADE,
+        null=True,
+        related_name="assets",
+    )
+    draft_issue = models.ForeignKey(
+        "db.DraftIssue",
         on_delete=models.CASCADE,
         null=True,
         related_name="assets",
@@ -118,6 +126,7 @@ class FileAsset(BaseModel):
             self.EntityTypeContext.ISSUE_DESCRIPTION,
             self.EntityTypeContext.COMMENT_DESCRIPTION,
             self.EntityTypeContext.PAGE_DESCRIPTION,
+            self.EntityTypeContext.DRAFT_ISSUE_DESCRIPTION,
         ]:
             return f"/api/assets/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/{self.id}/"
 

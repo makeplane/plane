@@ -320,6 +320,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
           <div className="px-5">
             <IssueDescriptionEditor
               control={control}
+              isDraft={isDraft}
               issueName={watch("name")}
               issueId={data?.id}
               descriptionHtmlData={data?.description_html}
