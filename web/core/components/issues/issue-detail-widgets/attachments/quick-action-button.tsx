@@ -80,6 +80,7 @@ export const IssueAttachmentActionButton: FC<Props> = observer((props) => {
   return (
     <div
       onClick={(e) => {
+        // TODO: Remove extra div and move event propagation to button
         e.stopPropagation();
       }}
     >
