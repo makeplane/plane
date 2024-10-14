@@ -81,10 +81,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     onCreateMoreToggleChange,
     isDraft,
     moveToIssue,
-    modalTitle = `${data?.id ? "Update" : isDraft ? "Create draft" : "Create new"} issue`,
+    modalTitle = `${data?.id ? "Update" : isDraft ? "Create a draft" : "Create new issue"}`,
     primaryButtonText = {
-      default: `${data?.id ? "Update" : isDraft ? "Create draft" : "Create new"} issue`,
-      loading: `${data?.id ? "Updating" : isDraft ? "Creating draft" : "Creating"} issue`,
+      default: `${data?.id ? "Update" : isDraft ? "Save to Drafts" : "Save"}`,
+      loading: `${data?.id ? "Updating" : "Saving"}`,
     },
   } = props;
 
@@ -195,12 +195,12 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     const submitData = !data?.id
       ? formData
       : {
-          ...getChangedIssuefields(formData, dirtyFields as { [key: string]: boolean | undefined }),
-          project_id: getValues<"project_id">("project_id"),
-          id: data.id,
-          description_html: formData.description_html ?? "<p></p>",
+        ...getChangedIssuefields(formData, dirtyFields as { [key: string]: boolean | undefined }),
+        project_id: getValues<"project_id">("project_id"),
+        id: data.id,
+        description_html: formData.description_html ?? "<p></p>",
         type_id: getValues<"type_id">("type_id"),
-        };
+      };
 
     // this condition helps to move the issues from draft to project issues
     if (formData.hasOwnProperty("is_draft")) submitData.is_draft = formData.is_draft;
@@ -323,7 +323,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
           className={cn(
             "pb-4 space-y-3",
             activeAdditionalPropertiesLength > 4 &&
-              "max-h-[45vh] overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-sm"
+            "max-h-[45vh] overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-sm"
           )}
         >
           <div className="px-5">
@@ -352,7 +352,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
             className={cn(
               "px-5",
               activeAdditionalPropertiesLength <= 4 &&
-                "max-h-[25vh] overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-sm"
+              "max-h-[25vh] overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-sm"
             )}
           >
             {projectId && (
@@ -393,7 +393,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                 tabIndex={getIndex("create_more")}
                 role="button"
               >
-                <ToggleSwitch value={isCreateMoreToggleEnabled} onChange={() => {}} size="sm" />
+                <ToggleSwitch value={isCreateMoreToggleEnabled} onChange={() => { }} size="sm" />
                 <span className="text-xs">Create more</span>
               </div>
             )}
