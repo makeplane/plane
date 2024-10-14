@@ -12,6 +12,7 @@ import { EDraftIssuePaginationType } from "@/constants/workspace-drafts";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useCommandPalette, useProject, useWorkspaceDraftIssues } from "@/hooks/store";
+import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 // components
 import { DraftIssueBlock } from "./draft-issue-block";
 import { WorkspaceDraftEmptyState } from "./empty-state";
@@ -27,6 +28,9 @@ export const WorkspaceDraftIssuesRoot: FC<TWorkspaceDraftIssuesRoot> = observer(
   const { loader, paginationInfo, fetchIssues, issueIds } = useWorkspaceDraftIssues();
   const { workspaceProjectIds } = useProject();
   const { toggleCreateProjectModal } = useCommandPalette();
+
+  //swr hook for fetching issue properties
+  useWorkspaceIssueProperties(workspaceSlug);
 
   // fetching issues
   useSWR(
