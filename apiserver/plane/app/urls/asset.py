@@ -5,6 +5,13 @@ from plane.app.views import (
     FileAssetEndpoint,
     UserAssetsEndpoint,
     FileAssetViewSet,
+    # V2 Endpoints
+    WorkspaceFileAssetEndpoint,
+    UserAssetsV2Endpoint,
+    StaticFileAssetEndpoint,
+    AssetRestoreEndpoint,
+    ProjectAssetEndpoint,
+    ProjectBulkAssetEndpoint,
 )
 
 
@@ -37,5 +44,50 @@ urlpatterns = [
             }
         ),
         name="file-assets-restore",
+    ),
+    # V2 Endpoints
+    path(
+        "assets/v2/workspaces/<str:slug>/",
+        WorkspaceFileAssetEndpoint.as_view(),
+        name="workspace-file-assets",
+    ),
+    path(
+        "assets/v2/workspaces/<str:slug>/<uuid:asset_id>/",
+        WorkspaceFileAssetEndpoint.as_view(),
+        name="workspace-file-assets",
+    ),
+    path(
+        "assets/v2/user-assets/",
+        UserAssetsV2Endpoint.as_view(),
+        name="user-file-assets",
+    ),
+    path(
+        "assets/v2/user-assets/<uuid:asset_id>/",
+        UserAssetsV2Endpoint.as_view(),
+        name="user-file-assets",
+    ),
+    path(
+        "assets/v2/workspaces/<str:slug>/restore/<uuid:asset_id>/",
+        AssetRestoreEndpoint.as_view(),
+        name="asset-restore",
+    ),
+    path(
+        "assets/v2/static/<uuid:asset_id>/",
+        StaticFileAssetEndpoint.as_view(),
+        name="static-file-asset",
+    ),
+    path(
+        "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/",
+        ProjectAssetEndpoint.as_view(),
+        name="bulk-asset-update",
+    ),
+    path(
+        "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/<uuid:pk>/",
+        ProjectAssetEndpoint.as_view(),
+        name="bulk-asset-update",
+    ),
+    path(
+        "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/<uuid:entity_id>/bulk/",
+        ProjectBulkAssetEndpoint.as_view(),
     ),
 ]

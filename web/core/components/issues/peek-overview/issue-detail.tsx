@@ -1,13 +1,14 @@
 import { FC, useEffect } from "react";
 import { observer } from "mobx-react";
+// components
+import { IssueParentDetail, TIssueOperations } from "@/components/issues";
 // store hooks
-import { TIssueOperations } from "@/components/issues";
 import { useIssueDetail, useUser } from "@/hooks/store";
 // hooks
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues";
-// components
+import { IssueTypeSwitcher } from "@/plane-web/components/issues";
+// local components
 import { IssueDescriptionInput } from "../description-input";
 import { IssueReaction } from "../issue-detail/reactions";
 import { IssueTitleInput } from "../title-input";
@@ -56,7 +57,16 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
 
   return (
     <div className="space-y-2">
-      <IssueIdentifier issueId={issueId} projectId={issue.project_id} size="md" />
+      {issue.parent_id && (
+        <IssueParentDetail
+          workspaceSlug={workspaceSlug}
+          projectId={issue.project_id}
+          issueId={issueId}
+          issue={issue}
+          issueOperations={issueOperations}
+        />
+      )}
+      <IssueTypeSwitcher issueId={issueId} disabled={isArchived || disabled} />
       <IssueTitleInput
         workspaceSlug={workspaceSlug}
         projectId={issue.project_id}
@@ -77,7 +87,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
         disabled={disabled}
         issueOperations={issueOperations}
         setIsSubmitting={(value) => setIsSubmitting(value)}
-        containerClassName="-ml-3 !mb-6 border-none"
+        containerClassName="-ml-3 border-none"
       />
 
       {currentUser && (

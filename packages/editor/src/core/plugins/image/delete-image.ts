@@ -17,6 +17,8 @@ export const TrackImageDeletionPlugin = (editor: Editor, deleteImage: DeleteImag
       });
 
       transactions.forEach((transaction) => {
+        // if the transaction has meta of skipImageDeletion get to true, then return (like while clearing the editor content programatically)
+        if (transaction.getMeta("skipImageDeletion")) return;
         // transaction could be a selection
         if (!transaction.docChanged) return;
 
@@ -45,10 +47,9 @@ export const TrackImageDeletionPlugin = (editor: Editor, deleteImage: DeleteImag
   });
 
 async function onNodeDeleted(src: string, deleteImage: DeleteImage): Promise<void> {
+  if (!src) return;
   try {
-    if (!src) return;
-    const assetUrlWithWorkspaceId = new URL(src).pathname.substring(1);
-    await deleteImage(assetUrlWithWorkspaceId);
+    await deleteImage(src);
   } catch (error) {
     console.error("Error deleting image: ", error);
   }

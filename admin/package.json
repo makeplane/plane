@@ -1,6 +1,6 @@
 {
   "name": "admin",
-  "version": "0.22.0",
+  "version": "0.23.1",
   "private": true,
   "scripts": {
     "dev": "turbo run develop",
@@ -17,11 +17,11 @@
     "@plane/helpers": "*",
     "@plane/types": "*",
     "@plane/ui": "*",
+    "@sentry/nextjs": "^8.32.0",
     "@tailwindcss/typography": "^0.5.9",
     "@types/lodash": "^4.17.0",
     "autoprefixer": "10.4.14",
     "axios": "^1.7.4",
-    "js-cookie": "^3.0.5",
     "lodash": "^4.17.21",
     "lucide-react": "^0.356.0",
     "mobx": "^6.12.0",
@@ -38,15 +38,14 @@
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
-    "@types/js-cookie": "^3.0.6",
+    "@plane/eslint-config": "*",
+    "@plane/typescript-config": "*",
     "@types/node": "18.16.1",
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",
     "@types/uuid": "^9.0.8",
     "@types/zxcvbn": "^4.4.4",
-    "@plane/eslint-config": "*",
     "tailwind-config-custom": "*",
-    "@plane/typescript-config": "*",
     "typescript": "5.3.3"
   }
 }

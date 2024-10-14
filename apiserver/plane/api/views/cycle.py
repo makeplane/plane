@@ -13,8 +13,12 @@ from django.db.models import (
     Q,
     Sum,
     FloatField,
+    Case,
+    When,
+    Value,
 )
-from django.db.models.functions import Cast
+from django.db.models.functions import Cast, Concat
+from django.db import models
 
 # Third party imports
 from rest_framework import status
@@ -32,7 +36,7 @@ from plane.db.models import (
     CycleIssue,
     Issue,
     Project,
-    IssueAttachment,
+    FileAsset,
     IssueLink,
     ProjectMember,
     UserFavorite,
@@ -207,8 +211,7 @@ class CycleAPIEndpoint(BaseAPIView):
         # Incomplete Cycles
         if cycle_view == "incomplete":
             queryset = queryset.filter(
-                Q(end_date__gte=timezone.now().date())
-                | Q(end_date__isnull=True),
+                Q(end_date__gte=timezone.now()) | Q(end_date__isnull=True),
             )
             return self.paginate(
                 request=request,
@@ -309,10 +312,7 @@ class CycleAPIEndpoint(BaseAPIView):
 
         request_data = request.data
 
-        if (
-            cycle.end_date is not None
-            and cycle.end_date < timezone.now().date()
-        ):
+        if cycle.end_date is not None and cycle.end_date < timezone.now():
             if "sort_order" in request_data:
                 # Can only change sort order
                 request_data = {
@@ -537,7 +537,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         cycle = Cycle.objects.get(
             pk=cycle_id, project_id=project_id, workspace__slug=slug
         )
-        if cycle.end_date >= timezone.now().date():
+        if cycle.end_date >= timezone.now():
             return Response(
                 {"error": "Only completed cycles can be archived"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -645,8 +645,9 @@ class CycleIssueAPIEndpoint(BaseAPIView):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -887,7 +888,27 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                 .annotate(display_name=F("assignees__display_name"))
                 .annotate(assignee_id=F("assignees__id"))
                 .annotate(avatar=F("assignees__avatar"))
-                .values("display_name", "assignee_id", "avatar")
+                .annotate(
+                    avatar_url=Case(
+                        # If `avatar_asset` exists, use it to generate the asset URL
+                        When(
+                            assignees__avatar_asset__isnull=False,
+                            then=Concat(
+                                Value("/api/assets/v2/static/"),
+                                "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
+                                Value("/"),
+                            ),
+                        ),
+                        # If `avatar_asset` is None, fall back to using `avatar` field directly
+                        When(
+                            assignees__avatar_asset__isnull=True,
+                            then="assignees__avatar",
+                        ),
+                        default=Value(None),
+                        output_field=models.CharField(),
+                    )
+                )
+                .values("display_name", "assignee_id", "avatar", "avatar_url")
                 .annotate(
                     total_estimates=Sum(
                         Cast("estimate_point__value", FloatField())
@@ -924,7 +945,8 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                         if item["assignee_id"]
                         else None
                     ),
-                    "avatar": item["avatar"],
+                    "avatar": item.get("avatar", None),
+                    "avatar_url": item.get("avatar_url", None),
                     "total_estimates": item["total_estimates"],
                     "completed_estimates": item["completed_estimates"],
                     "pending_estimates": item["pending_estimates"],
@@ -1002,7 +1024,27 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
             .annotate(display_name=F("assignees__display_name"))
             .annotate(assignee_id=F("assignees__id"))
             .annotate(avatar=F("assignees__avatar"))
-            .values("display_name", "assignee_id", "avatar")
+            .annotate(
+                avatar_url=Case(
+                    # If `avatar_asset` exists, use it to generate the asset URL
+                    When(
+                        assignees__avatar_asset__isnull=False,
+                        then=Concat(
+                            Value("/api/assets/v2/static/"),
+                            "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
+                            Value("/"),
+                        ),
+                    ),
+                    # If `avatar_asset` is None, fall back to using `avatar` field directly
+                    When(
+                        assignees__avatar_asset__isnull=True,
+                        then="assignees__avatar",
+                    ),
+                    default=Value(None),
+                    output_field=models.CharField(),
+                )
+            )
+            .values("display_name", "assignee_id", "avatar_url")
             .annotate(
                 total_issues=Count(
                     "id",
@@ -1041,7 +1083,8 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                 "assignee_id": (
                     str(item["assignee_id"]) if item["assignee_id"] else None
                 ),
-                "avatar": item["avatar"],
+                "avatar": item.get("avatar", None),
+                "avatar_url": item.get("avatar_url", None),
                 "total_issues": item["total_issues"],
                 "completed_issues": item["completed_issues"],
                 "pending_issues": item["pending_issues"],
@@ -1146,7 +1189,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
 
         if (
             new_cycle.end_date is not None
-            and new_cycle.end_date < timezone.now().date()
+            and new_cycle.end_date < timezone.now()
         ):
             return Response(
                 {

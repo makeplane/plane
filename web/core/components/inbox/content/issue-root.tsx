@@ -3,7 +3,9 @@
 import { Dispatch, SetStateAction, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
+// plane types
 import { TIssue } from "@plane/types";
+// plane ui
 import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { InboxIssueContentProperties } from "@/components/inbox/content";
@@ -127,7 +129,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
             disabled={!isEditable}
             issueOperations={issueOperations}
             setIsSubmitting={(value) => setIsSubmitting(value)}
-            containerClassName="-ml-3 !mb-6 border-none"
+            containerClassName="-ml-3 border-none"
           />
         )}
 

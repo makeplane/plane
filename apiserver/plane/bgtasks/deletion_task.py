@@ -2,6 +2,7 @@
 from django.utils import timezone
 from django.apps import apps
 from django.conf import settings
+from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 
 # Third party imports
@@ -18,17 +19,25 @@ def soft_delete_related_objects(
     for field in related_fields:
         if field.one_to_many or field.one_to_one:
             try:
-                if field.one_to_many:
-                    related_objects = getattr(instance, field.name).all()
-                elif field.one_to_one:
-                    related_object = getattr(instance, field.name)
-                    related_objects = (
-                        [related_object] if related_object is not None else []
-                    )
-                for obj in related_objects:
-                    if obj:
-                        obj.deleted_at = timezone.now()
-                        obj.save(using=using)
+                # Check if the field has CASCADE on delete
+                if (
+                    hasattr(field.remote_field, "on_delete")
+                    and field.remote_field.on_delete == models.CASCADE
+                ):
+                    if field.one_to_many:
+                        related_objects = getattr(instance, field.name).all()
+                    elif field.one_to_one:
+                        related_object = getattr(instance, field.name)
+                        related_objects = (
+                            [related_object]
+                            if related_object is not None
+                            else []
+                        )
+
+                    for obj in related_objects:
+                        if obj:
+                            obj.deleted_at = timezone.now()
+                            obj.save(using=using)
             except ObjectDoesNotExist:
                 pass
 
@@ -154,8 +163,7 @@ def hard_delete():
         if hasattr(model, "deleted_at"):
             # Get all instances where 'deleted_at' is greater than 30 days ago
             _ = model.all_objects.filter(
-                deleted_at__lt=timezone.now()
-                - timezone.timedelta(days=days)
+                deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
             ).delete()
 
     return

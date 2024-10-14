@@ -428,7 +428,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                       </div>
                     </CustomMenu.MenuItem>
                   )}
-                  {isAuthorized && (
+                  {/* {isAuthorized && (
                     <CustomMenu.MenuItem>
                       <Link href={`/${workspaceSlug}/projects/${project?.id}/draft-issues/`}>
                         <div className="flex items-center justify-start gap-2">
@@ -437,7 +437,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                         </div>
                       </Link>
                     </CustomMenu.MenuItem>
-                  )}
+                  )} */}
                   <CustomMenu.MenuItem onClick={handleCopyText}>
                     <span className="flex items-center justify-start gap-2">
                       <LinkIcon className="h-3.5 w-3.5 stroke-[1.5]" />

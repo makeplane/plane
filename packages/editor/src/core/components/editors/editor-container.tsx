@@ -18,7 +18,8 @@ interface EditorContainerProps {
 export const EditorContainer: FC<EditorContainerProps> = (props) => {
   const { children, displayConfig, editor, editorContainerClassName, id } = props;
 
-  const handleContainerClick = () => {
+  const handleContainerClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    if (event.target !== event.currentTarget) return;
     if (!editor) return;
     if (!editor.isEditable) return;
     try {

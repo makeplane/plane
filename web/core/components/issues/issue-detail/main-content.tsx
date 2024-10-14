@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-// types
-import { TIssue } from "@plane/types";
 // components
 import {
   IssueActivity,
@@ -20,7 +18,7 @@ import { useIssueDetail, useUser } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 import useSize from "@/hooks/use-window-size";
 // plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues";
+import { IssueTypeSwitcher } from "@/plane-web/components/issues";
 // types
 import { TIssueOperations } from "./root";
 
@@ -68,8 +66,8 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           />
         )}
 
-        <div className="mb-2.5 flex items-center gap-4">
-          <IssueIdentifier issueId={issueId} projectId={issue.project_id} size="md" />
+        <div className="mb-2.5 flex items-center justify-between gap-4">
+          <IssueTypeSwitcher issueId={issueId} disabled={isArchived || !isEditable} />
           <IssueUpdateStatus isSubmitting={isSubmitting} />
         </div>
 
@@ -85,7 +83,6 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           containerClassName="-ml-3"
         />
 
-        {/* {issue?.description_html === issueDescription && ( */}
         <IssueDescriptionInput
           workspaceSlug={workspaceSlug}
           projectId={issue.project_id}
@@ -94,9 +91,8 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           disabled={!isEditable}
           issueOperations={issueOperations}
           setIsSubmitting={(value) => setIsSubmitting(value)}
-          containerClassName="-ml-3 !mb-6 border-none"
+          containerClassName="-ml-3 border-none"
         />
-        {/* )} */}
 
         {currentUser && (
           <IssueReaction

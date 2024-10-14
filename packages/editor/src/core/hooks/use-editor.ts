@@ -60,6 +60,7 @@ export const useEditor = (props: CustomEditorProps) => {
     value,
   } = props;
   // states
+
   const [savedSelection, setSavedSelection] = useState<Selection | null>(null);
   // refs
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
@@ -74,12 +75,7 @@ export const useEditor = (props: CustomEditorProps) => {
     extensions: [
       ...CoreEditorExtensions({
         enableHistory,
-        fileConfig: {
-          uploadFile: fileHandler.upload,
-          deleteFile: fileHandler.delete,
-          restoreFile: fileHandler.restore,
-          cancelUploadImage: fileHandler.cancel,
-        },
+        fileHandler,
         mentionConfig: {
           mentionSuggestions: mentionHandler.suggestions ?? (() => Promise.resolve<IMentionSuggestion[]>([])),
           mentionHighlights: mentionHandler.highlights,
@@ -106,7 +102,7 @@ export const useEditor = (props: CustomEditorProps) => {
     // value is null when intentionally passed where syncing is not yet
     // supported and value is undefined when the data from swr is not populated
     if (value === null || value === undefined) return;
-    if (editor && !editor.isDestroyed && !editor.storage.image.uploadInProgress) {
+    if (editor && !editor.isDestroyed && !editor.storage.imageComponent.uploadInProgress) {
       try {
         editor.commands.setContent(value, false, { preserveWhitespace: "full" });
         const currentSavedSelection = savedSelectionRef.current;
@@ -125,7 +121,7 @@ export const useEditor = (props: CustomEditorProps) => {
     forwardedRef,
     () => ({
       clearEditor: (emitUpdate = false) => {
-        editorRef.current?.commands.clearContent(emitUpdate);
+        editorRef.current?.chain().setMeta("skipImageDeletion", true).clearContent(emitUpdate).run();
       },
       setEditorValue: (content: string) => {
         editorRef.current?.commands.setContent(content, false, { preserveWhitespace: "full" });
@@ -135,7 +131,8 @@ export const useEditor = (props: CustomEditorProps) => {
           insertContentAtSavedSelection(editorRef, content, savedSelection);
         }
       },
-      executeMenuItemCommand: (itemKey: TEditorCommands) => {
+      executeMenuItemCommand: (props) => {
+        const { itemKey } = props;
         const editorItems = getEditorMenuItems(editorRef.current);
 
         const getEditorMenuItem = (itemKey: TEditorCommands) => editorItems.find((item) => item.key === itemKey);
@@ -144,6 +141,8 @@ export const useEditor = (props: CustomEditorProps) => {
         if (item) {
           if (item.key === "image") {
             item.command(savedSelectionRef.current);
+          } else if (itemKey === "text-color" || itemKey === "background-color") {
+            item.command(props.color);
           } else {
             item.command();
           }
@@ -151,12 +150,19 @@ export const useEditor = (props: CustomEditorProps) => {
           console.warn(`No command found for item: ${itemKey}`);
         }
       },
-      isMenuItemActive: (itemName: TEditorCommands): boolean => {
+      isMenuItemActive: (props) => {
+        const { itemKey } = props;
         const editorItems = getEditorMenuItems(editorRef.current);
 
-        const getEditorMenuItem = (itemName: TEditorCommands) => editorItems.find((item) => item.key === itemName);
-        const item = getEditorMenuItem(itemName);
-        return item ? item.isActive() : false;
+        const getEditorMenuItem = (itemKey: TEditorCommands) => editorItems.find((item) => item.key === itemKey);
+        const item = getEditorMenuItem(itemKey);
+        if (!item) return false;
+
+        if (itemKey === "text-color" || itemKey === "background-color") {
+          return item.isActive(props.color);
+        } else {
+          return item.isActive("");
+        }
       },
       onHeadingChange: (callback: (headings: IMarking[]) => void) => {
         // Subscribe to update event emitted from headers extension
@@ -203,7 +209,7 @@ export const useEditor = (props: CustomEditorProps) => {
         if (!editorRef.current) return;
         scrollSummary(editorRef.current, marking);
       },
-      isEditorReadyToDiscard: () => editorRef.current?.storage.image.uploadInProgress === false,
+      isEditorReadyToDiscard: () => editorRef.current?.storage.imageComponent.uploadInProgress === false,
       setFocusAtPosition: (position: number) => {
         if (!editorRef.current || editorRef.current.isDestroyed) {
           console.error("Editor reference is not available or has been destroyed.");
