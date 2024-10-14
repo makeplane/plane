@@ -272,7 +272,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
       <form onSubmit={handleSubmit((data) => handleFormSubmit(data))}>
         <div className="p-5">
           <h3 className="text-xl font-medium text-custom-text-200 pb-2">
-            {data?.id ? "Update" : isDraft ? "Create draft" : "Create new"} issue
+            {data?.id ? "Update" : isDraft ? "Create a draft" : "Create new issue"}
           </h3>
           {/* Disable project selection if editing an issue */}
           <div className="flex items-center pt-2 pb-4 gap-x-1">
@@ -422,8 +422,8 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   : isSubmitting
                     ? "Creating"
                     : isDraft
-                      ? "Create draft issue"
-                      : "Create"}
+                      ? "Save to Drafts"
+                      : "Save"}
               </Button>
               {moveToIssue && (
                 <Button
