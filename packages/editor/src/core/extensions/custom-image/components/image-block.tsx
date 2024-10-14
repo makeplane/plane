@@ -229,9 +229,14 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
         ref={imageRef}
         src={displayedImageSrc}
         onLoad={handleImageLoad}
-        onError={(e) => {
-          console.error("Error loading image", e);
-          setFailedToLoadImage(true);
+        onError={async (e) => {
+          try {
+            await editor?.commands.restoreImage(remoteImageSrc);
+            imageRef.current.src = remoteImageSrc;
+          } catch {
+            setFailedToLoadImage(true);
+          }
+          console.log("error while loading image", e);
         }}
         width={size.width}
         className={cn("image-component block rounded-md", {
