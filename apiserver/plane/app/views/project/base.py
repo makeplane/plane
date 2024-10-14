@@ -55,6 +55,16 @@ from plane.bgtasks.webhook_task import model_activity
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.utils.exception_logger import log_exception
 
+# EE imports
+from plane.ee.models import ProjectState, ProjectAttribute
+from plane.ee.utils.workspace_feature import (
+    WorkspaceFeatureContext,
+    check_workspace_feature,
+)
+from plane.ee.serializers.app.project import ProjectAttributeSerializer
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.payment.flags.flag import FeatureFlag
+
 
 class ProjectViewSet(BaseViewSet):
     serializer_class = ProjectListSerializer
@@ -68,6 +78,14 @@ class ProjectViewSet(BaseViewSet):
             workspace__slug=self.kwargs.get("slug"),
             is_active=True,
         ).values("sort_order")
+
+        # EE: project_grouping starts
+        state_id = ProjectAttribute.objects.filter(
+            workspace__slug=self.kwargs.get("slug"),
+            project_id=OuterRef("pk"),
+        ).values("state_id")
+        # EE: project_grouping ends
+
         return self.filter_queryset(
             super()
             .get_queryset()
@@ -135,6 +153,27 @@ class ProjectViewSet(BaseViewSet):
                 ).values("anchor")
             )
             .annotate(sort_order=Subquery(sort_order))
+            # EE: project_grouping starts
+            .annotate(state_id=Subquery(state_id))
+            .annotate(
+                priority=ProjectAttribute.objects.filter(
+                    workspace__slug=self.kwargs.get("slug"),
+                    project_id=OuterRef("pk"),
+                ).values("priority")
+            )
+            .annotate(
+                start_date=ProjectAttribute.objects.filter(
+                    workspace__slug=self.kwargs.get("slug"),
+                    project_id=OuterRef("pk"),
+                ).values("start_date")
+            )
+            .annotate(
+                target_date=ProjectAttribute.objects.filter(
+                    workspace__slug=self.kwargs.get("slug"),
+                    project_id=OuterRef("pk"),
+                ).values("target_date")
+            )
+            # EE: project_grouping ends
             .prefetch_related(
                 Prefetch(
                     "project_projectmember",
@@ -372,6 +411,42 @@ class ProjectViewSet(BaseViewSet):
                     ]
                 )
 
+                # validating the PROJECT_GROUPING feature flag is enabled
+                if check_workspace_feature_flag(
+                    feature_key=FeatureFlag.PROJECT_GROUPING,
+                    slug=slug,
+                    user_id=str(request.user.id),
+                    default_value=False,
+                ):
+                    # validating the is_project_grouping_enabled workspace feature is enabled
+                    if check_workspace_feature(
+                        slug,
+                        WorkspaceFeatureContext.IS_PROJECT_GROUPING_ENABLED,
+                    ):
+                        state_id = request.data.get("state_id", None)
+                        priority = request.data.get("priority", "none")
+                        start_date = request.data.get("start_date", None)
+                        target_date = request.data.get("target_date", None)
+
+                        if state_id is None:
+                            state_id = (
+                                ProjectState.objects.filter(
+                                    workspace=workspace, default=True
+                                )
+                                .values_list("id", flat=True)
+                                .first()
+                            )
+
+                        # also create project attributes
+                        _ = ProjectAttribute.objects.create(
+                            project_id=serializer.data.get("id"),
+                            state_id=state_id,
+                            priority=priority,
+                            start_date=start_date,
+                            target_date=target_date,
+                            workspace_id=workspace.id,
+                        )
+
                 project = (
                     self.get_queryset()
                     .filter(pk=serializer.data["id"])
@@ -471,6 +546,34 @@ class ProjectViewSet(BaseViewSet):
                         is_triage=True,
                     )
 
+                # EE: project_grouping starts
+                # validating the PROJECT_GROUPING feature flag is enabled
+                if check_workspace_feature_flag(
+                    feature_key=FeatureFlag.PROJECT_GROUPING,
+                    slug=slug,
+                    user_id=str(request.user.id),
+                    default_value=False,
+                ):
+                    # validating the is_project_grouping_enabled workspace feature is enabled
+                    if check_workspace_feature(
+                        slug,
+                        WorkspaceFeatureContext.IS_PROJECT_GROUPING_ENABLED,
+                    ):
+                        project_attribute = ProjectAttribute.objects.filter(
+                            project_id=project.id
+                        ).first()
+                        if project_attribute is not None:
+                            project_attribute_serializer = (
+                                ProjectAttributeSerializer(
+                                    project_attribute,
+                                    data=request.data,
+                                    partial=True,
+                                )
+                            )
+                            if project_attribute_serializer.is_valid():
+                                project_attribute_serializer.save()
+                # EE: project_grouping ends
+
                 project = (
                     self.get_queryset()
                     .filter(pk=serializer.data["id"])
@@ -549,15 +652,14 @@ class ProjectViewSet(BaseViewSet):
 
 
 class ProjectArchiveUnarchiveEndpoint(BaseAPIView):
-
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
         project.archived_at = timezone.now()
         project.save()
         UserFavorite.objects.filter(
+            project_id=project_id,
             workspace__slug=slug,
-            project=project_id,
         ).delete()
         return Response(
             {"archived_at": str(project.archived_at)},
@@ -726,7 +828,9 @@ class ProjectPublicCoverImagesEndpoint(BaseAPIView):
             # Extracting file keys from the response
             if "Contents" in response:
                 for content in response["Contents"]:
-                    if not content["Key"].endswith(
+                    if not content[
+                        "Key"
+                    ].endswith(
                         "/"
                     ):  # This line ensures we're only getting files, not "sub-folders"
                         files.append(

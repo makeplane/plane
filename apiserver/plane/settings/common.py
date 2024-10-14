@@ -38,7 +38,7 @@ DEBUG = int(os.environ.get("DEBUG", "0"))
 # Initialize Django instrumentation
 DjangoInstrumentor().instrument()
 # Configure the tracer provider
-service_name = os.environ.get("SERVICE_NAME", "plane-ce-api")
+service_name = os.environ.get("SERVICE_NAME", "plane-ee-api")
 resource = Resource.create({"service.name": service_name})
 trace.set_tracer_provider(TracerProvider(resource=resource))
 # Configure the OTLP exporter
@@ -56,7 +56,7 @@ INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
-    # Inhouse apps
+    # In house apps
     "plane.analytics",
     "plane.app",
     "plane.space",
@@ -68,7 +68,11 @@ INSTALLED_APPS = [
     "plane.license",
     "plane.api",
     "plane.authentication",
+    "plane.ee",
+    "plane.graphql",
+    "plane.payment",
     # Third-party things
+    "strawberry.django",
     "rest_framework",
     "corsheaders",
     "django_celery_beat",
@@ -302,7 +306,12 @@ CELERY_IMPORTS = (
     "plane.bgtasks.file_asset_task",
     "plane.bgtasks.email_notification_task",
     "plane.bgtasks.api_logs_task",
+    "plane.bgtasks.entity_issue_state_progress_task",
     "plane.license.bgtasks.tracer",
+    "plane.license.bgtasks.version_check_task",
+    # payment tasks
+    "plane.payment.bgtasks.workspace_subscription_sync_task",
+    "plane.payment.bgtasks.free_seat_sync",
     # management tasks
     "plane.bgtasks.dummy_data_task",
 )
@@ -328,7 +337,10 @@ if bool(os.environ.get("SENTRY_DSN", False)) and os.environ.get(
     )
 
 
+# Application Envs
+SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN", False)
 FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
+PRO_FILE_SIZE_LIMIT = int(os.environ.get("PRO_FILE_SIZE_LIMIT", 104857600))
 
 # Unsplash Access key
 UNSPLASH_ACCESS_KEY = os.environ.get("UNSPLASH_ACCESS_KEY")
@@ -355,6 +367,9 @@ SKIP_ENV_VAR = os.environ.get("SKIP_ENV_VAR", "1") == "1"
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
 
+# MongoDB Settings
+MONGO_DB_URL = os.environ.get("MONGO_DB_URL", False)
+
 # Cookie Settings
 SESSION_COOKIE_SECURE = secure_origins
 SESSION_COOKIE_HTTPONLY = True
@@ -365,6 +380,14 @@ SESSION_COOKIE_DOMAIN = os.environ.get("COOKIE_DOMAIN", None)
 SESSION_SAVE_EVERY_REQUEST = (
     os.environ.get("SESSION_SAVE_EVERY_REQUEST", "0") == "1"
 )
+# If on cloud, set the session cookie domain to the cloud domain else None
+if os.environ.get("IS_MULTI_TENANT", "0") == "1":
+    SESSION_COOKIE_DOMAIN = os.environ.get(
+        "SESSION_COOKIE_DOMAIN", ".plane.so"
+    )
+else:
+    SESSION_COOKIE_DOMAIN = None
+
 
 # Admin Cookie
 ADMIN_SESSION_COOKIE_NAME = "admin-session-id"
@@ -441,3 +464,24 @@ ATTACHMENT_MIME_TYPES = [
     "text/xml",
     "application/xml",
 ]
+# Prime Server Base url
+PRIME_SERVER_BASE_URL = os.environ.get("PRIME_SERVER_BASE_URL", False)
+PRIME_SERVER_AUTH_TOKEN = os.environ.get("PRIME_SERVER_AUTH_TOKEN", "")
+
+# payment server base url
+PAYMENT_SERVER_BASE_URL = os.environ.get("PAYMENT_SERVER_BASE_URL", False)
+PAYMENT_SERVER_AUTH_TOKEN = os.environ.get("PAYMENT_SERVER_AUTH_TOKEN", "")
+
+# feature flag server base urls
+FEATURE_FLAG_SERVER_BASE_URL = os.environ.get(
+    "FEATURE_FLAG_SERVER_BASE_URL", False
+)
+FEATURE_FLAG_SERVER_AUTH_TOKEN = os.environ.get(
+    "FEATURE_FLAG_SERVER_AUTH_TOKEN", ""
+)
+
+# Check if multi tenant
+IS_MULTI_TENANT = os.environ.get("IS_MULTI_TENANT", "0") == "1"
+
+# Instance Changelog URL
+INSTANCE_CHANGELOG_URL = os.environ.get("INSTANCE_CHANGELOG_URL", "")
