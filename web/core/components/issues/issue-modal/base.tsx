@@ -354,8 +354,8 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
           projectId={activeProjectId}
           isDraft={isDraft}
           moveToIssue={moveToIssue}
-            modalTitle={modalTitle}
-            primaryButtonText={primaryButtonText}
+          modalTitle={modalTitle}
+          primaryButtonText={primaryButtonText}
         />
       )}
     </ModalCore>
