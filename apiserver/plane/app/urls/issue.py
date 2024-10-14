@@ -23,6 +23,7 @@ from plane.app.views import (
     IssuePaginatedViewSet,
     IssueDetailEndpoint,
     IssueAttachmentV2Endpoint,
+    IssueBulkUpdateDateEndpoint,
 )
 
 urlpatterns = [
@@ -313,5 +314,10 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/deleted-issues/",
         DeletedIssuesListViewSet.as_view(),
         name="deleted-issues",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issue-dates/",
+        IssueBulkUpdateDateEndpoint.as_view(),
+        name="project-issue-dates",
     ),
 ]

@@ -131,6 +131,7 @@ from .issue.base import (
     DeletedIssuesListViewSet,
     IssuePaginatedViewSet,
     IssueDetailEndpoint,
+    IssueBulkUpdateDateEndpoint,
 )
 
 from .issue.activity import (

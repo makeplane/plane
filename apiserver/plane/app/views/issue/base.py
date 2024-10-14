@@ -927,8 +927,9 @@ class IssueDetailEndpoint(BaseAPIView):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -952,4 +953,95 @@ class IssueDetailEndpoint(BaseAPIView):
                 fields=self.fields,
                 expand=self.expand,
             ).data,
+        )
+
+
+class IssueBulkUpdateDateEndpoint(BaseAPIView):
+
+    def validate_dates(
+        self, current_start, current_target, new_start, new_target
+    ):
+        """
+        Validate that start date is before target date.
+        """
+        start = new_start or current_start
+        target = new_target or current_target
+
+        if start and target and start > target:
+            return False
+        return True
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    def post(self, request, slug, project_id):
+
+        updates = request.data.get("updates", [])
+
+        issue_ids = [update["issue_id"] for update in updates]
+        epoch = int(timezone.now().timestamp())
+
+        # Fetch all relevant issues in a single query
+        issues = list(Issue.objects.filter(id__in=issue_ids))
+        issues_dict = {str(issue.id): issue for issue in issues}
+        issues_to_update = []
+
+        for update in updates:
+            issue_id = update["issue_id"]
+            issue = issues_dict.get(issue_id)
+
+            if not issue:
+                continue
+
+            start_date = update.get("start_date")
+            target_date = update.get("target_date")
+            validate_dates = self.validate_dates(
+                issue.start_date, issue.target_date, start_date, target_date
+            )
+            if not validate_dates:
+                return Response(
+                    {
+                        "message": "Start date cannot exceed target date",
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            if start_date:
+                issue_activity.delay(
+                    type="issue.activity.updated",
+                    requested_data=json.dumps(
+                        {"start_date": update.get("start_date")}
+                    ),
+                    current_instance=json.dumps(
+                        {"start_date": str(issue.start_date)}
+                    ),
+                    issue_id=str(issue_id),
+                    actor_id=str(request.user.id),
+                    project_id=str(project_id),
+                    epoch=epoch,
+                )
+                issue.start_date = start_date
+                issues_to_update.append(issue)
+
+            if target_date:
+                issue_activity.delay(
+                    type="issue.activity.updated",
+                    requested_data=json.dumps(
+                        {"target_date": update.get("target_date")}
+                    ),
+                    current_instance=json.dumps(
+                        {"target_date": str(issue.target_date)}
+                    ),
+                    issue_id=str(issue_id),
+                    actor_id=str(request.user.id),
+                    project_id=str(project_id),
+                    epoch=epoch,
+                )
+
+        # Bulk update issues
+        Issue.objects.bulk_update(
+            issues_to_update, ["start_date", "target_date"]
+        )
+
+        return Response(
+            {"message": "Issues updated successfully"},
+            status=status.HTTP_200_OK,
         )
