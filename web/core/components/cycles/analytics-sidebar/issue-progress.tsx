@@ -26,8 +26,8 @@ type TCycleAnalyticsProgress = {
 };
 
 export const cycleEstimateOptions: options[] = [
-  { value: "issues", label: "issues" },
-  { value: "points", label: "points" },
+  { value: "issues", label: "Issues" },
+  { value: "points", label: "Points" },
 ];
 
 export const validateCycleSnapshot = (cycleDetails: ICycle | null): ICycle | null => {
