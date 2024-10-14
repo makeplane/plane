@@ -33,7 +33,7 @@ export const SidebarChart: FC<ProgressChartProps> = observer((props) => {
   const totalEstimatePoints = cycleDetails?.total_estimate_points || 0;
   const totalIssues = cycleDetails?.total_issues || 0;
   const estimateType = getEstimateTypeByCycleId(cycleId);
-  const isCurrentProjectEstimateEnabled = projectId && areEstimateEnabledByProjectId(projectId) ? true : false;
+  const isCurrentProjectEstimateEnabled = Boolean(projectId && areEstimateEnabledByProjectId(projectId));
   const estimateDetails =
     isCurrentProjectEstimateEnabled && currentActiveEstimateId && estimateById(currentActiveEstimateId);
   const isCurrentEstimateTypeIsPoints = estimateDetails && estimateDetails?.type === EEstimateSystem.POINTS;

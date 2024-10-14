@@ -24,10 +24,18 @@ type TCycleAnalyticsProgress = {
   projectId: string;
   cycleId: string;
 };
+type Options = {
+  value: string;
+  label: string;
+};
 
-export const cycleEstimateOptions: options[] = [
+export const cycleEstimateOptions: Options[] = [
   { value: "issues", label: "Issues" },
   { value: "points", label: "Points" },
+];
+export const cycleChartOptions: Options[] = [
+  { value: "burndown", label: "Burn-down" },
+  { value: "burnup", label: "Burn-up" },
 ];
 
 export const validateCycleSnapshot = (cycleDetails: ICycle | null): ICycle | null => {
@@ -44,15 +52,6 @@ export const validateCycleSnapshot = (cycleDetails: ICycle | null): ICycle | nul
   }
   return updatedCycleDetails;
 };
-
-type options = {
-  value: string;
-  label: string;
-};
-export const cycleChartOptions: options[] = [
-  { value: "burndown", label: "Burn-down" },
-  { value: "burnup", label: "Burn-up" },
-];
 
 export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((props) => {
   // props
