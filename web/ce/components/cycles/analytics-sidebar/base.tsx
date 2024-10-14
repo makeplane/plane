@@ -4,11 +4,12 @@ import { observer } from "mobx-react";
 // plane ui
 import { TCycleEstimateType } from "@plane/types";
 import { EEstimateSystem } from "@plane/types/src/enums";
-import { CustomSelect, Loader } from "@plane/ui";
+import { Loader } from "@plane/ui";
 // components
 import ProgressChart from "@/components/core/sidebar/progress-chart";
-import { cycleEstimateOptions, validateCycleSnapshot } from "@/components/cycles";
+import { validateCycleSnapshot } from "@/components/cycles";
 // helpers
+import { CycleEstimateOptions } from "@/components/cycles/dropdowns/estimate-dropdown";
 import { getDate } from "@/helpers/date-time.helper";
 // hooks
 import { useCycle, useProjectEstimates } from "@/hooks/store";
@@ -65,19 +66,12 @@ export const SidebarChart: FC<ProgressChartProps> = observer((props) => {
     <>
       {isCurrentEstimateTypeIsPoints && (
         <div className="relative flex items-center justify-between gap-2 pt-4">
-          <CustomSelect
-            value={estimateType}
-            label={<span>{cycleEstimateOptions.find((v) => v.value === estimateType)?.label ?? "None"}</span>}
-            onChange={onChange}
-            maxHeight="lg"
-            buttonClassName="border-none rounded text-sm font-medium capitalize"
-          >
-            {cycleEstimateOptions.map((item) => (
-              <CustomSelect.Option key={item.value} value={item.value} className="capitalize">
-                {item.label}
-              </CustomSelect.Option>
-            ))}
-          </CustomSelect>
+          <CycleEstimateOptions
+            showEstimateSelection
+            estimateType={estimateType}
+            handleEstimateChange={onChange}
+            projectId={projectId}
+          />
         </div>
       )}
       <div className="py-4">
