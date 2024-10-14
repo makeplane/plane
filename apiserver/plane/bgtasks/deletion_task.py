@@ -22,7 +22,7 @@ def soft_delete_related_objects(
                 # Check if the field has CASCADE on delete
                 if (
                     not hasattr(field.remote_field, "on_delete")
-                    or field.remote_field.on_delete == "CASCADE"
+                    or field.remote_field.on_delete == models.CASCADE
                 ):
                     if field.one_to_many:
                         related_objects = getattr(instance, field.name).all()
