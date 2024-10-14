@@ -40,10 +40,6 @@ export const WorkspaceDraftIssuesRoot: FC<TWorkspaceDraftIssuesRoot> = observer(
     await fetchIssues(workspaceSlug, "pagination", EDraftIssuePaginationType.NEXT);
   };
 
-  if (loader === "init-loader" && issueIds.length <= 0) {
-    return <WorkspaceDraftIssuesLoader items={14} />;
-  }
-
   if (workspaceProjectIds?.length === 0)
     return (
       <EmptyState
@@ -55,7 +51,11 @@ export const WorkspaceDraftIssuesRoot: FC<TWorkspaceDraftIssuesRoot> = observer(
       />
     );
 
-  if (loader === "empty-state" && issueIds.length <= 0) return <WorkspaceDraftEmptyState />;
+  if (issueIds.length <= 0) return <WorkspaceDraftEmptyState />;
+
+  if (loader === "init-loader") {
+    return <WorkspaceDraftIssuesLoader items={14} />;
+  }
 
   return (
     <div className="relative">
