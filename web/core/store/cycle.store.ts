@@ -144,7 +144,6 @@ export class CycleStore implements ICycleStore {
       fetchActiveCycleProgress: action,
       fetchActiveCycleAnalytics: action,
       fetchCycleDetails: action,
-      createCycle: action,
       updateCycleDetails: action,
       deleteCycle: action,
       addCycleToFavorites: action,
@@ -617,13 +616,15 @@ export class CycleStore implements ICycleStore {
    * @param data
    * @returns
    */
-  createCycle = async (workspaceSlug: string, projectId: string, data: Partial<ICycle>) =>
-    await this.cycleService.createCycle(workspaceSlug, projectId, data).then((response) => {
-      runInAction(() => {
-        set(this.cycleMap, [response.id], response);
-      });
-      return response;
-    });
+  createCycle = action(
+    async (workspaceSlug: string, projectId: string, data: Partial<ICycle>) =>
+      await this.cycleService.createCycle(workspaceSlug, projectId, data).then((response) => {
+        runInAction(() => {
+          set(this.cycleMap, [response.id], response);
+        });
+        return response;
+      })
+  );
 
   /**
    * @description updates cycle details

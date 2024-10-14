@@ -11,7 +11,6 @@ from plane.app.views import (
     IssueActivityEndpoint,
     IssueArchiveViewSet,
     IssueCommentViewSet,
-    IssueDraftViewSet,
     IssueListEndpoint,
     IssueReactionViewSet,
     IssueRelationViewSet,
@@ -22,6 +21,7 @@ from plane.app.views import (
     BulkArchiveIssuesEndpoint,
     DeletedIssuesListViewSet,
     IssuePaginatedViewSet,
+    IssueAttachmentV2Endpoint,
 )
 
 urlpatterns = [
@@ -133,6 +133,18 @@ urlpatterns = [
         IssueAttachmentEndpoint.as_view(),
         name="project-issue-attachments",
     ),
+    # V2 Attachments
+    path(
+        "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/attachments/",
+        IssueAttachmentV2Endpoint.as_view(),
+        name="project-issue-attachments",
+    ),
+    path(
+        "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/attachments/<uuid:pk>/",
+        IssueAttachmentV2Endpoint.as_view(),
+        name="project-issue-attachments",
+    ),
+    ## Export Issues
     path(
         "workspaces/<str:slug>/export-issues/",
         ExportIssuesEndpoint.as_view(),
@@ -290,28 +302,6 @@ urlpatterns = [
         name="issue-relation",
     ),
     ## End Issue Relation
-    ## Issue Drafts
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issue-drafts/",
-        IssueDraftViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
-        name="project-issue-draft",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issue-drafts/<uuid:pk>/",
-        IssueDraftViewSet.as_view(
-            {
-                "get": "retrieve",
-                "patch": "partial_update",
-                "delete": "destroy",
-            }
-        ),
-        name="project-issue-draft",
-    ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/deleted-issues/",
         DeletedIssuesListViewSet.as_view(),

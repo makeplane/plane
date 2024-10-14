@@ -3,7 +3,7 @@ import { forwardRef, useCallback } from "react";
 import { EditorWrapper } from "@/components/editors";
 import { EditorBubbleMenu } from "@/components/menus";
 // extensions
-import { SideMenuExtension, SlashCommand } from "@/extensions";
+import { SideMenuExtension, SlashCommands } from "@/extensions";
 // types
 import { EditorRefApi, IRichTextEditor } from "@/types";
 
@@ -11,7 +11,7 @@ const RichTextEditor = (props: IRichTextEditor) => {
   const { dragDropEnabled } = props;
 
   const getExtensions = useCallback(() => {
-    const extensions = [SlashCommand()];
+    const extensions = [SlashCommands()];
 
     extensions.push(
       SideMenuExtension({

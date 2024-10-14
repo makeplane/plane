@@ -2,10 +2,10 @@
 
 import { FC, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-// icons
 import { Info, Lock } from "lucide-react";
+// plane types
 import { IProject, IWorkspace } from "@plane/types";
-// ui
+// plane ui
 import {
   Button,
   CustomSelect,
@@ -25,13 +25,13 @@ import { PROJECT_UPDATED } from "@/constants/event-tracker";
 import { NETWORK_CHOICES } from "@/constants/project";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
-// hooks
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
+import { getFileURL } from "@/helpers/file.helper";
+// hooks
 import { useEventTracker, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
 import { ProjectService } from "@/services/project";
-// types
 export interface IProjectDetailsForm {
   project: IProject;
   workspaceSlug: string;
@@ -64,6 +64,8 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       workspace: (project.workspace as IWorkspace).id,
     },
   });
+  // derived values
+  const coverImage = watch("cover_image_url");
 
   useEffect(() => {
     if (project && projectId !== getValues("id")) {
@@ -121,7 +123,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       network: formData.network,
       identifier: formData.identifier,
       description: formData.description,
-      cover_image: formData.cover_image,
+      cover_image_url: formData.cover_image_url,
       logo_props: formData.logo_props,
     };
 
@@ -143,7 +145,11 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="relative h-44 w-full">
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-        <img src={watch("cover_image")!} alt={watch("cover_image")!} className="h-44 w-full rounded-md object-cover" />
+        <img
+          src={getFileURL(coverImage ?? "")}
+          alt="Project cover image"
+          className="h-44 w-full rounded-md object-cover"
+        />
         <div className="z-5 absolute bottom-4 flex w-full items-end justify-between gap-3 px-4">
           <div className="flex flex-grow gap-3 truncate">
             <Controller
@@ -196,14 +202,15 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
             <div>
               <Controller
                 control={control}
-                name="cover_image"
+                name="cover_image_url"
                 render={({ field: { value, onChange } }) => (
                   <ImagePickerPopover
-                    label={"Change cover"}
+                    label="Change cover"
                     control={control}
                     onChange={onChange}
                     value={value}
                     disabled={!isAdmin}
+                    projectId={project.id}
                   />
                 )}
               />

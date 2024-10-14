@@ -53,6 +53,7 @@ from plane.db.models import (
 from plane.utils.cache import cache_response
 from plane.bgtasks.webhook_task import model_activity
 from plane.bgtasks.recent_visited_task import recent_visited_task
+from plane.utils.exception_logger import log_exception
 
 
 class ProjectViewSet(BaseViewSet):
@@ -720,18 +721,22 @@ class ProjectPublicCoverImagesEndpoint(BaseAPIView):
             "Prefix": "static/project-cover/",
         }
 
-        response = s3.list_objects_v2(**params)
-        # Extracting file keys from the response
-        if "Contents" in response:
-            for content in response["Contents"]:
-                if not content["Key"].endswith(
-                    "/"
-                ):  # This line ensures we're only getting files, not "sub-folders"
-                    files.append(
-                        f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/{content['Key']}"
-                    )
+        try:
+            response = s3.list_objects_v2(**params)
+            # Extracting file keys from the response
+            if "Contents" in response:
+                for content in response["Contents"]:
+                    if not content["Key"].endswith(
+                        "/"
+                    ):  # This line ensures we're only getting files, not "sub-folders"
+                        files.append(
+                            f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/{content['Key']}"
+                        )
 
-        return Response(files, status=status.HTTP_200_OK)
+            return Response(files, status=status.HTTP_200_OK)
+        except Exception as e:
+            log_exception(e)
+            return Response([], status=status.HTTP_200_OK)
 
 
 class DeployBoardViewSet(BaseViewSet):

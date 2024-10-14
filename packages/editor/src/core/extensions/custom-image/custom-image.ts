@@ -121,6 +121,7 @@ export const CustomImageExtension = (props: TFileHandler) => {
         fileMap: new Map(),
         deletedImageSet: new Map<string, boolean>(),
         uploadInProgress: false,
+        maxFileSize,
       };
     },
 
@@ -130,7 +131,13 @@ export const CustomImageExtension = (props: TFileHandler) => {
           (props: { file?: File; pos?: number; event: "insert" | "drop" }) =>
           ({ commands }) => {
             // Early return if there's an invalid file being dropped
-            if (props?.file && !isFileValid(props.file)) {
+            if (
+              props?.file &&
+              !isFileValid({
+                file: props.file,
+                maxFileSize,
+              })
+            ) {
               return false;
             }
 

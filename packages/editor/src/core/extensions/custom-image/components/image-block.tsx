@@ -42,6 +42,7 @@ type CustomImageBlockProps = CustomImageNodeViewProps & {
   setFailedToLoadImage: (isError: boolean) => void;
   editorContainer: HTMLDivElement | null;
   setEditorContainer: (editorContainer: HTMLDivElement | null) => void;
+  src: string;
 };
 
 export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
@@ -55,6 +56,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
     getPos,
     editor,
     editorContainer,
+    src: remoteImageSrc,
     setEditorContainer,
   } = props;
   const { src: remoteImageSrc, width: nodeWidth, height: nodeHeight, aspectRatio: nodeAspectRatio } = node.attrs;
@@ -207,7 +209,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
   // show the image resizer only if the editor is editable, the remote image's (post upload) src is set and the initial resize is complete (but not while we're showing the preview imageFromFileSystem)
   const showImageResizer = editor.isEditable && remoteImageSrc && initialResizeComplete;
   // show the preview image from the file system if the remote image's src is not set
-  const displayedImageSrc = remoteImageSrc ?? imageFromFileSystem;
+  const displayedImageSrc = remoteImageSrc || imageFromFileSystem;
 
   return (
     <div

@@ -1,9 +1,16 @@
 import { useEffect, FC, useState } from "react";
-// ui
+// plane ui
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
-// components
+// helpers
+import { getAssetIdFromUrl } from "@/helpers/file.helper";
+import { checkURLValidity } from "@/helpers/string.helper";
+// plane web components
 import { CreateProjectForm } from "@/plane-web/components/projects/create/root";
+// plane web types
 import { TProject } from "@/plane-web/types/projects";
+// services
+import { FileService } from "@/services/file.service";
+const fileService = new FileService();
 import { ProjectFeatureUpdate } from "./project-feature-update";
 
 type Props = {
@@ -38,6 +45,14 @@ export const CreateProjectModal: FC<Props> = (props) => {
     setCurrentStep(EProjectCreationSteps.FEATURE_SELECTION);
   };
 
+  const handleCoverImageStatusUpdate = async (projectId: string, coverImage: string) => {
+    if (!checkURLValidity(coverImage)) {
+      await fileService.updateBulkProjectAssetsUploadStatus(workspaceSlug, projectId, projectId, {
+        asset_ids: [getAssetIdFromUrl(coverImage)],
+      });
+    }
+  };
+
   return (
     <ModalCore isOpen={isOpen} handleClose={onClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
       {currentStep === EProjectCreationSteps.CREATE_PROJECT && (
@@ -45,6 +60,7 @@ export const CreateProjectModal: FC<Props> = (props) => {
           setToFavorite={setToFavorite}
           workspaceSlug={workspaceSlug}
           onClose={onClose}
+          updateCoverImageStatus={handleCoverImageStatusUpdate}
           handleNextStep={handleNextStep}
           data={data}
         />

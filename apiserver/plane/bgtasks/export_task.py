@@ -105,7 +105,6 @@ def upload_to_s3(zip_file, workspace_id, token_id, slug):
             ExpiresIn=expires_in,
         )
     else:
-
         # If endpoint url is present, use it
         if settings.AWS_S3_ENDPOINT_URL:
             s3 = boto3.client(
@@ -129,7 +128,7 @@ def upload_to_s3(zip_file, workspace_id, token_id, slug):
             zip_file,
             settings.AWS_STORAGE_BUCKET_NAME,
             file_name,
-            ExtraArgs={"ACL": "public-read", "ContentType": "application/zip"},
+            ExtraArgs={"ContentType": "application/zip"},
         )
 
         # Generate presigned url for the uploaded file
