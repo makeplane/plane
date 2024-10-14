@@ -6,7 +6,6 @@ from django.db import models
 from .base import BaseModel
 
 
-
 class Notification(BaseModel):
     workspace = models.ForeignKey(
         "db.Workspace", related_name="notifications", on_delete=models.CASCADE
@@ -90,12 +89,31 @@ class UserNotificationPreference(BaseModel):
         null=True,
     )
 
-    # preference fields
-    property_change = models.BooleanField(default=True)
-    state_change = models.BooleanField(default=True)
-    comment = models.BooleanField(default=True)
-    mention = models.BooleanField(default=True)
-    issue_completed = models.BooleanField(default=True)
+    # email preference fields
+    email_property_change = models.BooleanField(default=False)
+    email_state_change = models.BooleanField(default=False)
+    email_priority_change = models.BooleanField(default=False)
+    email_assignee_change = models.BooleanField(default=False)
+    email_start_target_date_change = models.BooleanField(default=False)
+    email_module_change = models.BooleanField(default=False)
+    email_cycle_change = models.BooleanField(default=False)
+    email_reactions = models.BooleanField(default=False)
+    email_comment = models.BooleanField(default=False)
+    email_mention = models.BooleanField(default=False)
+    email_issue_completed = models.BooleanField(default=False)
+
+    # in app preference fields
+    in_app_property_change = models.BooleanField(default=False)
+    in_app_state_change = models.BooleanField(default=False)
+    in_app_priority_change = models.BooleanField(default=False)
+    in_app_assignee_change = models.BooleanField(default=False)
+    in_app_start_target_date_change = models.BooleanField(default=False)
+    in_app_module_change = models.BooleanField(default=False)
+    in_app_cycle_change = models.BooleanField(default=False)
+    in_app_reactions = models.BooleanField(default=False)
+    in_app_comment = models.BooleanField(default=False)
+    in_app_mention = models.BooleanField(default=False)
+    in_app_issue_completed = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "UserNotificationPreference"
