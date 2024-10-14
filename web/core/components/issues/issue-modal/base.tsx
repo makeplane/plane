@@ -206,7 +206,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success!",
-        message: `${is_draft_issue ? "Draft issue" : "Issue"} created successfully.`,
+        message: `${is_draft_issue ? "Draft created." : "Issue created successfully."} `,
         actionItems: !is_draft_issue && response?.project_id && (
           <CreateIssueToastActionItems
             workspaceSlug={workspaceSlug.toString()}

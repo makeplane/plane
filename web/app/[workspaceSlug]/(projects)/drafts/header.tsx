@@ -41,7 +41,7 @@ export const WorkspaceDraftHeader: FC = observer(() => {
             <Breadcrumbs>
               <Breadcrumbs.BreadcrumbItem
                 type="text"
-                link={<BreadcrumbLink label={`Draft`} icon={<PenSquare className="h-4 w-4 text-custom-text-300" />} />}
+                link={<BreadcrumbLink label={`Drafts`} icon={<PenSquare className="h-4 w-4 text-custom-text-300" />} />}
               />
             </Breadcrumbs>
             {paginationInfo?.total_count && paginationInfo?.total_count > 0 ? (
@@ -60,7 +60,7 @@ export const WorkspaceDraftHeader: FC = observer(() => {
             onClick={() => setIsDraftIssueModalOpen(true)}
             disabled={!isAuthorizedUser}
           >
-            Draft <span className="hidden sm:inline-block">issue</span>
+            Draft<span className="hidden sm:inline-block"> an issue</span>
           </Button>
         </Header.RightItem>
       </Header>

@@ -76,7 +76,7 @@ export const WorkspaceDraftIssueQuickActions: React.FC<IQuickActionProps> = obse
     },
     {
       key: "move-to-issues",
-      title: "Move to issues",
+      title: "Move to project",
       icon: SquareStackIcon,
       action: () => {
         if (handleMoveToIssues) {
