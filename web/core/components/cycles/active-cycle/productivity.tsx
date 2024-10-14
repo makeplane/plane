@@ -11,7 +11,7 @@ import { EmptyStateType } from "@/constants/empty-state";
 import { useCycle, useProjectEstimates } from "@/hooks/store";
 // plane web constants
 import { EEstimateSystem } from "@/plane-web/constants/estimates";
-import { CycleEstimateOptions } from "../dropdowns/estimate-dropdown";
+import { EstimateTypeDropdown } from "../dropdowns/estimate-type-dropdown";
 
 export type ActiveCycleProductivityProps = {
   workspaceSlug: string;
@@ -48,10 +48,10 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
         <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle?.id}`}>
           <h3 className="text-base text-custom-text-300 font-semibold">Issue burndown</h3>
         </Link>
-        <CycleEstimateOptions
+        <EstimateTypeDropdown
           showEstimateSelection={isCurrentEstimateTypeIsPoints}
-          estimateType={estimateType}
-          handleEstimateChange={onChange}
+          value={estimateType}
+          onChange={onChange}
           projectId={projectId}
         />
       </div>

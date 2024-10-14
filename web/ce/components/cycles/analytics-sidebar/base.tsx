@@ -7,9 +7,8 @@ import { EEstimateSystem } from "@plane/types/src/enums";
 import { Loader } from "@plane/ui";
 // components
 import ProgressChart from "@/components/core/sidebar/progress-chart";
-import { validateCycleSnapshot } from "@/components/cycles";
+import { EstimateTypeDropdown, validateCycleSnapshot } from "@/components/cycles";
 // helpers
-import { CycleEstimateOptions } from "@/components/cycles/dropdowns/estimate-dropdown";
 import { getDate } from "@/helpers/date-time.helper";
 // hooks
 import { useCycle, useProjectEstimates } from "@/hooks/store";
@@ -66,12 +65,7 @@ export const SidebarChart: FC<ProgressChartProps> = observer((props) => {
     <>
       {isCurrentEstimateTypeIsPoints && (
         <div className="relative flex items-center justify-between gap-2 pt-4">
-          <CycleEstimateOptions
-            showEstimateSelection
-            estimateType={estimateType}
-            handleEstimateChange={onChange}
-            projectId={projectId}
-          />
+          <EstimateTypeDropdown showEstimateSelection value={estimateType} onChange={onChange} projectId={projectId} />
         </div>
       )}
       <div className="py-4">
