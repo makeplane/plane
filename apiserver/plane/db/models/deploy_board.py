@@ -20,7 +20,7 @@ class DeployBoard(WorkspaceBaseModel):
         ("cycle", "Task"),
         ("page", "Page"),
         ("view", "View"),
-        ("inbox", "Inbox"),
+        ("intake", "Intake"),
     )
 
     entity_identifier = models.UUIDField(null=True)
@@ -33,9 +33,9 @@ class DeployBoard(WorkspaceBaseModel):
     )
     is_comments_enabled = models.BooleanField(default=False)
     is_reactions_enabled = models.BooleanField(default=False)
-    inbox = models.ForeignKey(
+    intake = models.ForeignKey(
         "db.Inbox",
-        related_name="board_inbox",
+        related_name="board_intake",
         on_delete=models.SET_NULL,
         null=True,
     )

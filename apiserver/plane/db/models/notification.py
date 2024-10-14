@@ -89,31 +89,24 @@ class UserNotificationPreference(BaseModel):
         null=True,
     )
 
-    # email preference fields
-    email_property_change = models.BooleanField(default=False)
-    email_state_change = models.BooleanField(default=False)
-    email_priority_change = models.BooleanField(default=False)
-    email_assignee_change = models.BooleanField(default=False)
-    email_start_target_date_change = models.BooleanField(default=False)
-    email_module_change = models.BooleanField(default=False)
-    email_cycle_change = models.BooleanField(default=False)
-    email_reactions = models.BooleanField(default=False)
-    email_comment = models.BooleanField(default=False)
-    email_mention = models.BooleanField(default=False)
-    email_issue_completed = models.BooleanField(default=False)
+    medium = models.CharField(
+        max_length=50,
+        default="email",
+        choices=(("EMAIL", "Email"), ("IN_APP", "In App")),
+    )
 
-    # in app preference fields
-    in_app_property_change = models.BooleanField(default=False)
-    in_app_state_change = models.BooleanField(default=False)
-    in_app_priority_change = models.BooleanField(default=False)
-    in_app_assignee_change = models.BooleanField(default=False)
-    in_app_start_target_date_change = models.BooleanField(default=False)
-    in_app_module_change = models.BooleanField(default=False)
-    in_app_cycle_change = models.BooleanField(default=False)
-    in_app_reactions = models.BooleanField(default=False)
-    in_app_comment = models.BooleanField(default=False)
-    in_app_mention = models.BooleanField(default=False)
-    in_app_issue_completed = models.BooleanField(default=False)
+    # preference fields
+    property_change = models.BooleanField(default=False)
+    state_change = models.BooleanField(default=False)
+    priority_change = models.BooleanField(default=False)
+    assignee_change = models.BooleanField(default=False)
+    start_target_date_change = models.BooleanField(default=False)
+    module_change = models.BooleanField(default=False)
+    cycle_change = models.BooleanField(default=False)
+    reactions = models.BooleanField(default=False)
+    comment = models.BooleanField(default=False)
+    mention = models.BooleanField(default=False)
+    issue_completed = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "UserNotificationPreference"
