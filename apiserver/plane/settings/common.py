@@ -18,6 +18,17 @@ from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
 from corsheaders.defaults import default_headers
 
+# OpenTelemetry
+from opentelemetry import trace
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import (
+    OTLPSpanExporter,
+)
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.instrumentation.django import DjangoInstrumentor
+
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Secret Key
@@ -25,6 +36,19 @@ SECRET_KEY = os.environ.get("SECRET_KEY", get_random_secret_key())
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(os.environ.get("DEBUG", "0"))
+
+# Initialize Django instrumentation
+DjangoInstrumentor().instrument()
+# Configure the tracer provider
+service_name = os.environ.get("SERVICE_NAME", "plane-ee-api")
+resource = Resource.create({"service.name": service_name})
+trace.set_tracer_provider(TracerProvider(resource=resource))
+# Configure the OTLP exporter
+otel_endpoint = os.environ.get("OTLP_ENDPOINT", "https://telemetry.plane.so")
+otlp_exporter = OTLPSpanExporter(endpoint=otel_endpoint)
+span_processor = BatchSpanProcessor(otlp_exporter)
+trace.get_tracer_provider().add_span_processor(span_processor)
+
 
 # Allowed Hosts
 ALLOWED_HOSTS = ["*"]
@@ -54,7 +78,6 @@ INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
     "django_celery_beat",
-    "storages",
 ]
 
 # Middlewares
@@ -241,7 +264,7 @@ STORAGES = {
     },
 }
 STORAGES["default"] = {
-    "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+    "BACKEND": "plane.settings.storage.S3Storage",
 }
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "access-key")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "secret-key")
@@ -285,9 +308,12 @@ CELERY_IMPORTS = (
     "plane.bgtasks.file_asset_task",
     "plane.bgtasks.email_notification_task",
     "plane.bgtasks.api_logs_task",
+    "plane.bgtasks.entity_issue_state_progress_task",
+    "plane.license.bgtasks.tracer",
     "plane.license.bgtasks.version_check_task",
     # payment tasks
     "plane.payment.bgtasks.workspace_subscription_sync_task",
+    "plane.payment.bgtasks.free_seat_sync",
     # management tasks
     "plane.bgtasks.dummy_data_task",
 )
@@ -316,6 +342,7 @@ if bool(os.environ.get("SENTRY_DSN", False)) and os.environ.get(
 # Application Envs
 SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN", False)
 FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
+PRO_FILE_SIZE_LIMIT = int(os.environ.get("PRO_FILE_SIZE_LIMIT", 104857600))
 
 # Unsplash Access key
 UNSPLASH_ACCESS_KEY = os.environ.get("UNSPLASH_ACCESS_KEY")
@@ -382,6 +409,63 @@ APP_BASE_URL = os.environ.get("APP_BASE_URL")
 
 HARD_DELETE_AFTER_DAYS = int(os.environ.get("HARD_DELETE_AFTER_DAYS", 60))
 
+ATTACHMENT_MIME_TYPES = [
+    # Images
+    "image/jpeg",
+    "image/png",
+    "image/gif",
+    "image/svg+xml",
+    "image/webp",
+    "image/tiff",
+    "image/bmp",
+    # Documents
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/vnd.ms-excel",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "application/vnd.ms-powerpoint",
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    "text/plain",
+    "application/rtf",
+    # Audio
+    "audio/mpeg",
+    "audio/wav",
+    "audio/ogg",
+    "audio/midi",
+    "audio/x-midi",
+    "audio/aac",
+    "audio/flac",
+    "audio/x-m4a",
+    # Video
+    "video/mp4",
+    "video/mpeg",
+    "video/ogg",
+    "video/webm",
+    "video/quicktime",
+    "video/x-msvideo",
+    "video/x-ms-wmv",
+    # Archives
+    "application/zip",
+    "application/x-rar-compressed",
+    "application/x-tar",
+    "application/gzip",
+    # 3D Models
+    "model/gltf-binary",
+    "model/gltf+json",
+    "application/octet-stream",  # for .obj files, but be cautious
+    # Fonts
+    "font/ttf",
+    "font/otf",
+    "font/woff",
+    "font/woff2",
+    # Other
+    "text/css",
+    "text/javascript",
+    "application/json",
+    "text/xml",
+    "application/xml",
+]
 # Prime Server Base url
 PRIME_SERVER_BASE_URL = os.environ.get("PRIME_SERVER_BASE_URL", False)
 PRIME_SERVER_AUTH_TOKEN = os.environ.get("PRIME_SERVER_AUTH_TOKEN", "")

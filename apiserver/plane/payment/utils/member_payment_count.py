@@ -332,11 +332,7 @@ def handle_cloud_payments(
     """
 
     # Check the plan of the workspace license and trial
-    if workspace_license.plan == WorkspaceLicense.PlanChoice.FREE or (
-        workspace_license.trial_end_date
-        and workspace_license.trial_end_date > timezone.now()
-        and not workspace_license.has_added_payment_method
-    ):
+    if workspace_license.plan == WorkspaceLicense.PlanChoice.FREE:
         # FREE or Trial Case
 
         # Check Case 1a or Case 1b

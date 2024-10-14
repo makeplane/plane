@@ -2,9 +2,15 @@ from .analytic import AnalyticView
 from .api import APIActivityLog, APIToken
 from .asset import FileAsset
 from .base import BaseModel
-from .cycle import Cycle, CycleFavorite, CycleIssue, CycleUserProperties
+from .cycle import (
+    Cycle,
+    CycleFavorite,
+    CycleIssue,
+    CycleUserProperties,
+)
 from .dashboard import Dashboard, DashboardWidget, Widget
 from .deploy_board import DeployBoard
+from .draft import DraftIssue, DraftIssueAssignee, DraftIssueLabel, DraftIssueModule, DraftIssueCycle
 from .estimate import Estimate, EstimatePoint
 from .exporter import ExporterHistory
 from .importer import Importer
@@ -23,7 +29,6 @@ from .issue import (
     Issue,
     IssueActivity,
     IssueAssignee,
-    IssueAttachment,
     IssueBlocker,
     IssueComment,
     IssueLabel,

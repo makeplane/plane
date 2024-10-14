@@ -5,10 +5,10 @@ import { observer } from "mobx-react";
 import { Eye, EyeOff, XCircle } from "lucide-react";
 import { Button, Input, Spinner } from "@plane/ui";
 // hooks
-import { useInstance } from "@/hooks/store";
 // helpers
 import { EAuthSteps } from "@/helpers/authentication.helper";
 import { API_BASE_URL } from "@/helpers/common.helper";
+import { useInstance } from "@/hooks/store";
 // services
 import { AuthService } from "@/services/auth.service";
 

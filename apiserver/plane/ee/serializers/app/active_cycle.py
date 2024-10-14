@@ -38,6 +38,7 @@ class WorkspaceActiveCycleSerializer(BaseSerializer):
             "external_source",
             "external_id",
             "progress_snapshot",
+            "version",
             # meta fields
             "is_favorite",
             "total_issues",

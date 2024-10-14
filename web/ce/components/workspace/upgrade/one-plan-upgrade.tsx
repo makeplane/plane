@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
-import { CheckCircle } from "lucide-react";
 import { useParams } from "next/navigation";
+import { CheckCircle } from "lucide-react";
 // types
 import { IPaymentProduct } from "@plane/types";
 // ui

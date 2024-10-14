@@ -1,13 +1,11 @@
 # Python imports
 import json
 
-import requests
 
 # Third Party imports
 from celery import shared_task
 
 # Django imports
-from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
 
@@ -1699,16 +1697,12 @@ def issue_activity(
                     event=(
                         "issue_comment"
                         if activity.field == "comment"
-                        else "inbox_issue"
-                        if inbox
-                        else "issue"
+                        else "inbox_issue" if inbox else "issue"
                     ),
                     event_id=(
                         activity.issue_comment_id
                         if activity.field == "comment"
-                        else inbox
-                        if inbox
-                        else activity.issue_id
+                        else inbox if inbox else activity.issue_id
                     ),
                     verb=activity.verb,
                     field=(

@@ -12,6 +12,7 @@ from .app.page import (
     WorkspacePageVersionSerializer,
     WorkspacePageVersionDetailSerializer,
 )
+from .app.cycle import UpdatesSerializer, UpdateReactionSerializer
 from .app.issue_property import (
     IssueTypeSerializer,
     IssuePropertySerializer,

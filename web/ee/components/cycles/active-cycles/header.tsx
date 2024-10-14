@@ -8,6 +8,7 @@ import { ICycle, TCycleGroups } from "@plane/types";
 import { Tooltip, CycleGroupIcon, getButtonStyling } from "@plane/ui";
 // helpers
 import { renderFormattedDate, findHowManyDaysLeft } from "@/helpers/date-time.helper";
+import { getFileURL } from "@/helpers/file.helper";
 import { truncateText } from "@/helpers/string.helper";
 // hooks
 import { useMember } from "@/hooks/store";
@@ -52,9 +53,9 @@ export const ActiveCycleHeader: FC<ActiveCycleHeaderProps> = (props) => {
               <span className="text-base leading-5">Lead</span>
             </span>
             <div className="flex items-center gap-1.5">
-              {cycleOwnerDetails?.avatar && cycleOwnerDetails?.avatar !== "" ? (
+              {cycleOwnerDetails?.avatar_url && cycleOwnerDetails?.avatar_url !== "" ? (
                 <img
-                  src={cycleOwnerDetails?.avatar}
+                  src={getFileURL(cycleOwnerDetails?.avatar_url)}
                   className="rounded-full flex-shrink-0 w-5 h-5 object-cover"
                   alt={cycleOwnerDetails?.display_name}
                 />

@@ -21,6 +21,8 @@ export interface ISelfHostedSubscriptionStore {
   // actions
   fetchSubscription: (workspaceSlug: string) => Promise<TSelfHostedSubscription | undefined>;
   activateSubscription: (workspaceSlug: string, license_key: string) => Promise<TSelfHostedSubscription | undefined>;
+  syncLicense: (workspaceSlug: string) => Promise<void>;
+  deactivateLicense: (workspaceSlug: string) => Promise<void>;
 }
 
 export class SelfHostedSubscriptionStore implements ISelfHostedSubscriptionStore {
@@ -38,6 +40,8 @@ export class SelfHostedSubscriptionStore implements ISelfHostedSubscriptionStore
       // actions
       fetchSubscription: action,
       activateSubscription: action,
+      syncLicense: action,
+      deactivateLicense: action,
     });
   }
 
@@ -109,6 +113,42 @@ export class SelfHostedSubscriptionStore implements ISelfHostedSubscriptionStore
       return license;
     } catch (error) {
       console.error("worklog -> updateWorklogById -> error", error);
+      throw error;
+    }
+  };
+
+  /**
+   * @description sync license
+   * @param { string } workspaceSlug
+   * @returns { void }
+   */
+  syncLicense = async (workspaceSlug: string): Promise<void> => {
+    try {
+      await selfHostedSubscriptionService.syncLicense(workspaceSlug);
+      await Promise.all([
+        this.rootStore.workspaceSubscription.fetchWorkspaceSubscribedPlan(workspaceSlug),
+        this.rootStore.featureFlags.fetchFeatureFlags(workspaceSlug),
+      ]);
+    } catch (error) {
+      console.error("selfHostedSubscriptionService -> syncLicense -> error", error);
+      throw error;
+    }
+  };
+
+  /**
+   * @description deactivate license
+   * @param { string } workspaceSlug
+   * @returns { void }
+   */
+  deactivateLicense = async (workspaceSlug: string): Promise<void> => {
+    try {
+      await selfHostedSubscriptionService.deactivateLicense(workspaceSlug);
+      // fetch workspace subscribed plan
+      await this.rootStore.workspaceSubscription.fetchWorkspaceSubscribedPlan(workspaceSlug);
+      // remove feature flags
+      this.rootStore.featureFlags.flags[workspaceSlug] = {};
+    } catch (error) {
+      console.error("selfHostedSubscriptionService -> deactivateLicense -> error", error);
       throw error;
     }
   };

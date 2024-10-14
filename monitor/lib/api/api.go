@@ -18,10 +18,17 @@ type IPrimeMonitorApi interface {
 	RetrievePaymentLink(RetrievePaymentLinkPayload) (*RetrievePaymentLinkResponse, ErrorCode)
 	UpdateSubcription(SeatUpdatePayload) (*SeatUpdateResponse, ErrorCode)
 	SyncWorkspace(WorkspaceSyncPayload) (*WorkspaceActivationResponse, ErrorCode)
+	DeactivateLicense(LicenseDeactivatePayload) (*WorkspaceActivationResponse, ErrorCode)
 	ActivateWorkspace(WorkspaceActivationPayload) (*WorkspaceActivationResponse, ErrorCode)
 	ActivateFreeWorkspace(WorkspaceActivationPayload) (*WorkspaceActivationResponse, ErrorCode)
 	InitializeInstance(CredentialsPayload) (SetupResponse, error)
 	GetSubscriptionDetails(WorkspaceSubscriptionPayload) (*WorkspaceSubscriptionResponse, ErrorCode)
+}
+
+type LicenseDeactivatePayload struct {
+	WorkspaceSlug string `json:"workspace_slug"`
+	WorkspaceID   string `json:"workspace_id"`
+	LicenseKey    string `json:"license_key"`
 }
 
 type PrimeMonitorApi struct {
@@ -77,21 +84,22 @@ func (api *PrimeMonitorApi) SetClient(client string) {
 }
 
 var (
-	API_PREFIX              = "/api/v2"
-	MONITOR_ENDPOINT        = API_PREFIX + "/monitor/"
-	FEATURE_FLAGS           = API_PREFIX + "/flags/"
-	INSTANCE_PREFIX         = API_PREFIX + "/instances"
-	ACTIVATE_INSTANCE       = INSTANCE_PREFIX + "/activate/"
-	DEACTIVATE_INSTANCE     = INSTANCE_PREFIX + "/deactivate/"
-	UPGRADE_INSTANCE        = INSTANCE_PREFIX + "/upgrade/"
-	FREE_WORKSPACE_ACTIVATE = API_PREFIX + "/licenses/initialize/"
-	WORKSPACE_ACTIVATE      = API_PREFIX + "/licenses/activate/"
-	SYNC_WORKSPACE          = API_PREFIX + "/licenses/sync/"
-	UPDATE_SUBSCRIPTION     = API_PREFIX + "/modify-subscriptions/"
-	SETUP_ENDPOINT          = API_PREFIX + "/instances/initialize/"
-	SUBSCRIPTION_PORTAL     = API_PREFIX + "/subscription-portal/"
-	RETRIEVE_PLANS          = API_PREFIX + "/instances/products/"
-	RETRIEVE_PAYMENT_LINK   = API_PREFIX + "/instances/payment-link/"
+	API_PREFIX                  = "/api/v2"
+	MONITOR_ENDPOINT            = API_PREFIX + "/monitor/"
+	FEATURE_FLAGS               = API_PREFIX + "/flags/"
+	INSTANCE_PREFIX             = API_PREFIX + "/instances"
+	ACTIVATE_INSTANCE           = INSTANCE_PREFIX + "/activate/"
+	DEACTIVATE_INSTANCE         = INSTANCE_PREFIX + "/deactivate/"
+	UPGRADE_INSTANCE            = INSTANCE_PREFIX + "/upgrade/"
+	FREE_WORKSPACE_ACTIVATE     = API_PREFIX + "/licenses/initialize/"
+	WORKSPACE_ACTIVATE          = API_PREFIX + "/licenses/activate/"
+	SYNC_WORKSPACE              = API_PREFIX + "/licenses/sync/"
+	UPDATE_SUBSCRIPTION         = API_PREFIX + "/modify-subscriptions/"
+	SETUP_ENDPOINT              = API_PREFIX + "/instances/initialize/"
+	SUBSCRIPTION_PORTAL         = API_PREFIX + "/subscription-portal/"
+	RETRIEVE_PLANS              = API_PREFIX + "/instances/products/"
+	RETRIEVE_PAYMENT_LINK       = API_PREFIX + "/instances/payment-link/"
+	DEACTIVATE_LICENSE_ENDPOINT = API_PREFIX + "/licenses/deactivate/"
 )
 
 /* ----------------------- Controller Methods ------------------------------ */
@@ -103,6 +111,19 @@ func (api *PrimeMonitorApi) PostServiceStatus(payload StatusPayload) ErrorCode {
 		return UNABLE_TO_POST_SERVICE_STATUS
 	}
 	return 0
+}
+
+func (api *PrimeMonitorApi) DeactivateLicense(payload LicenseDeactivatePayload) (*WorkspaceActivationResponse, ErrorCode) {
+	resp, err := api.post(api.host+DEACTIVATE_LICENSE_ENDPOINT, payload)
+	if err != nil {
+		return nil, UNABLE_TO_DEACTIVATE_LICENSE
+	}
+	data := WorkspaceActivationResponse{}
+	err = json.Unmarshal(resp, &data)
+	if err != nil {
+		return nil, UNABLE_TO_DEACTIVATE_LICENSE
+	}
+	return &data, 0
 }
 
 func (api *PrimeMonitorApi) ActivateFreeWorkspace(payload WorkspaceActivationPayload) (*WorkspaceActivationResponse, ErrorCode) {

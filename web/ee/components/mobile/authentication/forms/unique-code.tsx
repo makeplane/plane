@@ -2,16 +2,15 @@
 
 import { FC, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { CircleCheck, Eye, EyeOff, XCircle } from "lucide-react";
+import { CircleCheck, XCircle } from "lucide-react";
 import { Button, Input, Spinner } from "@plane/ui";
 // hooks
-import { useInstance } from "@/hooks/store";
 // helpers
 import { EAuthSteps } from "@/helpers/authentication.helper";
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
-import { AuthService } from "@/services/auth.service";
 import useTimer from "@/hooks/use-timer";
+import { AuthService } from "@/services/auth.service";
 
 const authService = new AuthService();
 
@@ -39,7 +38,6 @@ export const MobileAuthUniqueCodeForm: FC<TMobileAuthUniqueCodeForm> = observer(
   // ref
   const authFormRef = useRef<HTMLFormElement>(null);
   // hooks
-  const { config } = useInstance();
   const { timer: resendTimerCode, setTimer: setResendCodeTimer } = useTimer(0);
   // states
   const [csrfPromise, setCsrfPromise] = useState<Promise<{ csrf_token: string }> | undefined>(undefined);

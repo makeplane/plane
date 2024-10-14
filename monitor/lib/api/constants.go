@@ -13,6 +13,7 @@ const (
 	UNABLE_TO_FETCH_WORKSPACE_SUBSCRIPTION
 	UNABLE_TO_RETRIEVE_PLANS
 	UNABLE_TO_PARSE_PLANS
+	UNABLE_TO_DEACTIVATE_LICENSE
 )
 
 var errorCodeMap = map[ErrorCode]string{
@@ -26,6 +27,7 @@ var errorCodeMap = map[ErrorCode]string{
 	UNABLE_TO_FETCH_WORKSPACE_SUBSCRIPTION: "Unable to fetch workspace subscription",
 	UNABLE_TO_RETRIEVE_PLANS:               "Unable to retrieve plans",
 	UNABLE_TO_PARSE_PLANS:                  "Unable to parse plans",
+	UNABLE_TO_DEACTIVATE_LICENSE:           "Unable to activate license",
 }
 
 // Converting the Error Code type to confirm to the stringer interface to be

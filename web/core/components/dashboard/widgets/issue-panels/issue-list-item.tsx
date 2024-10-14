@@ -8,6 +8,7 @@ import { TIssue, TWidgetIssue } from "@plane/types";
 import { Avatar, AvatarGroup, ControlLink, PriorityIcon } from "@plane/ui";
 // helpers
 import { findTotalDaysInRange, getDate, renderFormattedDate } from "@/helpers/date-time.helper";
+import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useIssueDetail, useMember, useProject } from "@/hooks/store";
 // plane web components
@@ -223,7 +224,9 @@ export const CreatedUpcomingIssueListItem: React.FC<IssueListItemProps> = observ
 
               if (!userDetails) return null;
 
-              return <Avatar key={assigneeId} src={userDetails.avatar} name={userDetails.display_name} />;
+              return (
+                <Avatar key={assigneeId} src={getFileURL(userDetails.avatar_url)} name={userDetails.display_name} />
+              );
             })}
           </AvatarGroup>
         ) : (
@@ -281,7 +284,9 @@ export const CreatedOverdueIssueListItem: React.FC<IssueListItemProps> = observe
 
               if (!userDetails) return null;
 
-              return <Avatar key={assigneeId} src={userDetails.avatar} name={userDetails.display_name} />;
+              return (
+                <Avatar key={assigneeId} src={getFileURL(userDetails.avatar_url)} name={userDetails.display_name} />
+              );
             })}
           </AvatarGroup>
         ) : (
@@ -334,7 +339,9 @@ export const CreatedCompletedIssueListItem: React.FC<IssueListItemProps> = obser
 
               if (!userDetails) return null;
 
-              return <Avatar key={assigneeId} src={userDetails.avatar} name={userDetails.display_name} />;
+              return (
+                <Avatar key={assigneeId} src={getFileURL(userDetails.avatar_url)} name={userDetails.display_name} />
+              );
             })}
           </AvatarGroup>
         ) : (

@@ -12,7 +12,7 @@ import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // plane web components
-import { PlanCard } from "@/plane-web/components/license";
+import { PlanCard, SelfManagedLicenseActions } from "@/plane-web/components/license";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // services
@@ -96,6 +96,7 @@ export const ProPlanCard: React.FC<TProPlanCardProps> = observer((props: TProPla
                   • Billable seats: {subscriptionDetail?.billable_members}
                 </div>
               ))}
+            <SelfManagedLicenseActions />
           </>
         )
       }

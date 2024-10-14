@@ -1,6 +1,5 @@
 # Python imports
 import json
-import requests
 
 # Third Party imports
 from celery import shared_task

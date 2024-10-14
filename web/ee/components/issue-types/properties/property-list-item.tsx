@@ -176,7 +176,7 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
       })
       .finally(() => {
         resetOptions();
-        key && handleIssuePropertyCreateList("remove", { key, ...issuePropertyData });
+        if (key) handleIssuePropertyCreateList("remove", { key, ...issuePropertyData });
         setIsSubmitting(false);
       });
   };
@@ -271,7 +271,7 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
         });
       })
       .finally(() => {
-        key && handleIssuePropertyCreateList("remove", { key, ...issuePropertyData });
+        if (key) handleIssuePropertyCreateList("remove", { key, ...issuePropertyData });
         setIsSubmitting(false);
       });
   };

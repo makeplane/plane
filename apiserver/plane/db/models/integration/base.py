@@ -29,7 +29,7 @@ class Integration(AuditModel):
     redirect_url = models.TextField(blank=True)
     metadata = models.JSONField(default=dict)
     verified = models.BooleanField(default=False)
-    avatar_url = models.URLField(blank=True, null=True)
+    avatar_url = models.TextField(blank=True, null=True)
 
     def __str__(self):
         """Return provider of the integration"""

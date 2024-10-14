@@ -15,10 +15,10 @@ import { EmptyStateType } from "@/constants/empty-state";
 // plane web components
 import { WORKSPACE_ACTIVE_CYCLES_LIST } from "@/constants/fetch-keys";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
-import { ActiveCycleInfoCard } from "@/plane-web/components/cycles";
 
 // services
 import { CycleService } from "@/services/cycle.service";
+import { WorkspaceActiveCycleRoot } from "./workspace-active-cycle-root";
 
 const perPage = 100;
 const cycleService = new CycleService();
@@ -85,7 +85,7 @@ export const WorkspaceActiveCyclesList = observer(() => {
   return (
     <ContentWrapper ref={containerRef} className="space-y-4">
       {cycles.slice(0, cyclesInView).map((cycle: any) => (
-        <ActiveCycleInfoCard
+        <WorkspaceActiveCycleRoot
           key={cycle.id}
           workspaceSlug={workspaceSlug?.toString()}
           projectId={cycle.project_id}

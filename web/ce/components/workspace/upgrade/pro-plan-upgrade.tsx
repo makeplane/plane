@@ -2,8 +2,8 @@
 
 import { FC, useState } from "react";
 import orderBy from "lodash/orderBy";
-import { CheckCircle } from "lucide-react";
 import { useParams } from "next/navigation";
+import { CheckCircle } from "lucide-react";
 import { Tab } from "@headlessui/react";
 // types
 import { IPaymentProduct } from "@plane/types";

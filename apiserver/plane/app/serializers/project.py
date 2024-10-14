@@ -94,6 +94,7 @@ class ProjectLiteSerializer(BaseSerializer):
             "identifier",
             "name",
             "cover_image",
+            "cover_image_url",
             "logo_props",
             "description",
         ]
@@ -116,6 +117,7 @@ class ProjectListSerializer(DynamicBaseSerializer):
     member_role = serializers.IntegerField(read_only=True)
     anchor = serializers.CharField(read_only=True)
     members = serializers.SerializerMethodField()
+    cover_image_url = serializers.CharField(read_only=True)
     # EE: project_grouping starts
     state_id = serializers.UUIDField(read_only=True)
     priority = serializers.CharField(read_only=True)
@@ -133,6 +135,7 @@ class ProjectListSerializer(DynamicBaseSerializer):
                     "member_id": member.member_id,
                     "member__display_name": member.member.display_name,
                     "member__avatar": member.member.avatar,
+                    "member__avatar_url": member.member.avatar_url,
                 }
                 for member in project_members
             ]

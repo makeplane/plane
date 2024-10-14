@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -8,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	prime_api "github.com/makeplane/plane-ee/monitor/lib/api"
 	"github.com/makeplane/plane-ee/monitor/pkg/db"
+	"gorm.io/gorm"
 )
 
 func InitializeFreeWorkspace(api prime_api.IPrimeMonitorApi, key string) func(*fiber.Ctx) error {
@@ -310,6 +312,71 @@ func GetSyncFeatureFlagHandler(api prime_api.IPrimeMonitorApi, key string) func(
 	}
 }
 
+type ManualSyncPayload struct {
+	WorkspaceSlug string `json:"workspace_slug"`
+	WorkspaceId   string `json:"workspace_id"`
+}
+
+func GetManualSyncHandler(api prime_api.IPrimeMonitorApi, key string) func(*fiber.Ctx) error {
+	return func(ctx *fiber.Ctx) error {
+		var payload ManualSyncPayload
+
+		if err := ctx.BodyParser(&payload); err != nil {
+			ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": "Invalid payload passed for workspace activation",
+			})
+			return err
+		}
+
+		// get the license for the given workspace id and workspace slug
+		license := &db.License{}
+		record := db.Db.Model(&db.License{}).Where("workspace_id = ? AND workspace_slug = ?", payload.WorkspaceId, payload.WorkspaceSlug).First(&license)
+
+		if record.Error != nil {
+			ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+				"message": "No license found for the workspace",
+				"status":  false,
+			})
+			return nil
+		}
+
+		if license.ProductType == "FREE" {
+			return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+				"message": "Workspace synchronized successfully",
+			})
+		}
+
+		err := db.Db.Transaction(func(tx *gorm.DB) error {
+			updatedLicense, activationReponse, err := RefreshLicense(context.Background(), api, license, tx)
+			if err != nil {
+				return err
+			}
+
+			if err := RefreshLicenseUsers(context.Background(), updatedLicense, *activationReponse, tx); err != nil {
+				return err
+			}
+
+			if updatedLicense.ProductType != "FREE" {
+				if err := RefreshFeatureFlags(context.Background(), api, *updatedLicense, tx); err != nil {
+					return err
+				}
+			}
+
+			return nil
+		})
+
+		if err != nil {
+			return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Failed to sync the workspace",
+			})
+		}
+
+		return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+			"message": "Workspace synchronized successfully",
+		})
+	}
+}
+
 func GetActivateFeatureFlagHandler(api prime_api.IPrimeMonitorApi, key string) func(*fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 		// Get the data from the request and forward the request to the API
@@ -396,48 +463,6 @@ func containsUser(users []db.UserLicense, userID uuid.UUID) bool {
 	return false
 }
 
-func convertWorkspaceActivationResponseToLicense(data *prime_api.WorkspaceActivationResponse) (*db.License, error) {
-	workspaceUUID, _ := uuid.Parse(data.WorkspaceID)
-	instanceUUID, _ := uuid.Parse(data.InstanceID)
-
-	// Check for the current period end date
-	var currentPeriodEndDate *time.Time
-	if data.CurrentPeriodEndDate.IsZero() {
-		currentPeriodEndDate = nil
-	} else {
-		currentPeriodEndDate = &data.CurrentPeriodEndDate
-	}
-
-	// Check for the trial end date
-	var trialEndDate *time.Time
-	if data.TrialEndDate.IsZero() {
-		trialEndDate = nil
-	} else {
-		trialEndDate = &data.TrialEndDate
-	}
-
-	license := &db.License{
-		LicenseKey:            data.LicenceKey,
-		InstanceID:            instanceUUID,
-		WorkspaceID:           workspaceUUID,
-		Product:               data.Product,
-		ProductType:           data.ProductType,
-		WorkspaceSlug:         data.WorkspaceSlug,
-		Seats:                 data.Seats,
-		FreeSeats:             data.FreeSeats,
-		Interval:              data.Interval,
-		IsOfflinePayment:      data.IsOfflinePayment,
-		IsCancelled:           data.IsCancelled,
-		Subscription:          data.Subscription,
-		CurrentPeriodEndDate:  currentPeriodEndDate,
-		TrialEndDate:          trialEndDate,
-		HasAddedPaymentMethod: data.HasAddedPayment,
-		HasActivatedFreeTrial: data.HasActivatedFree,
-	}
-
-	return license, nil
-}
-
 type UpdateSeatsPayload struct {
 	WorkspaceSlug string `json:"workspace_slug"`
 	WorkspaceId   string `json:"workspace_id"`
@@ -486,6 +511,103 @@ func UpdateLicenseSeats(api prime_api.IPrimeMonitorApi, key string) func(*fiber.
 
 		return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 			"seats": license.Seats,
+		})
+	}
+}
+
+type DeactivateLicensePayload struct {
+	WorkspaceSlug string `json:"workspace_slug"`
+	WorkspaceId   string `json:"workspace_id"`
+}
+
+func DeactivateLicense(api prime_api.IPrimeMonitorApi, key string) func(*fiber.Ctx) error {
+	return func(ctx *fiber.Ctx) error {
+		var payload DeactivateLicensePayload
+
+		// Parse the incoming payload
+		if err := ctx.BodyParser(&payload); err != nil {
+			ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": "Invalid payload passed for license deactivation",
+			})
+			return err
+		}
+
+		// Find the license associated with the worksapce id and workspace slug
+		var license db.License
+		record := db.Db.Model(&db.License{}).Where("workspace_id = ? AND workspace_slug = ?", payload.WorkspaceId, payload.WorkspaceSlug).First(&license)
+
+		if record.Error != nil {
+			return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": "No license exist for corresponding workspace sent.",
+			})
+		}
+
+		freeLicensePayload, fetchError := api.DeactivateLicense(prime_api.LicenseDeactivatePayload{
+			WorkspaceSlug: license.WorkspaceSlug,
+			WorkspaceID:   license.WorkspaceID.String(),
+			LicenseKey:    license.LicenseKey,
+		})
+
+		if fetchError != 0 {
+			return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Failed to deactivate the license from the prime server",
+			})
+		}
+
+		// Create a transaction for clearing the license, flags and license users
+		err := db.Db.Transaction(func(tx *gorm.DB) error {
+			// Clear the license and license users
+			db.Db.Delete(&license)
+			db.Db.Where("license_id = ?", license.ID).Delete(&db.Flags{})
+			db.Db.Where("license_id = ?", license.ID).Delete(&db.UserLicense{})
+			return nil
+		})
+
+		if err != nil {
+			// @todo Link the license back to the prime server
+
+			members := []db.UserLicense{}
+			if err := db.Db.Where("license_id = ?", license.ID).Find(&members).Error; err != nil {
+				return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+					"error": "Failed to fetch the members for reactivating workspace",
+				})
+			}
+
+			// Create the payload for reactivating the license
+			reactivatePayload, err := convertLicenseToWorkspaceActivationPayload(&license, members)
+			if err != nil {
+				return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+					"error": "Failed to convert the license to workspace activation payload",
+				})
+			}
+
+			// Finally reactivate the workspace
+			_, errCode := api.ActivateWorkspace(*reactivatePayload)
+
+			if errCode != 0 {
+				return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+					"error": "Failed to reactivate the workspace, after failed deactivation at monitor",
+				})
+			}
+
+			return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Failed to deactivate the license",
+			})
+		}
+
+		freeLicense, err := convertWorkspaceActivationResponseToLicense(freeLicensePayload)
+
+		if err != nil {
+			return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Failed to convert the free license",
+			})
+		}
+
+		// Create the free license for the workspace
+		db.Db.Create(freeLicense)
+
+		return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+			"message": "License deactivated successfully",
 		})
 	}
 }

@@ -1,13 +1,18 @@
 "use client";
 
 import { FC, useState, FormEvent } from "react";
-import { useParams } from "next/navigation";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
+import { cn } from "@plane/editor";
 import { Button, EModalWidth, Input, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { WorkspaceLogo } from "@/components/workspace";
+// helpers
+import { getFileURL } from "@/helpers/file.helper";
 // hooks
-import { useWorkspace } from "@/hooks/store";
+import { useUserPermissions, useWorkspace } from "@/hooks/store";
+// plane web constants
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web hooks
 import { useSelfHostedSubscription, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
@@ -23,12 +28,15 @@ export const SubscriptionActivationModal: FC<TSubscriptionActivationModal> = obs
   const workspaceSlug = routerWorkspaceSlug?.toString();
   // hooks
   const { currentWorkspace } = useWorkspace();
+  const { allowPermissions } = useUserPermissions();
   const { handleSuccessModalToggle } = useWorkspaceSubscription();
   const { activateSubscription } = useSelfHostedSubscription();
   // states
   const [activationKey, setActivationKey] = useState<string | undefined>(undefined);
   const [errors, setErrors] = useState<string | undefined>(undefined);
   const [loader, setLoader] = useState<boolean>(false);
+  // derived values
+  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE, workspaceSlug);
 
   const handleActivateLicense = async (event: FormEvent<HTMLInputElement>) => {
     setErrors(undefined);
@@ -54,10 +62,8 @@ export const SubscriptionActivationModal: FC<TSubscriptionActivationModal> = obs
       });
       handleClose();
       handleSuccessModalToggle(true);
-    } catch (error) {
-      const activationError = error as unknown as { response: { data: { error: string } } };
-      const errorMessage = activationError?.response?.data?.error || "Something went wrong. Please try again.";
-      setErrors(errorMessage);
+    } catch {
+      setErrors("Your license is invalid or already in use. For any queries contact support@plane.so");
     } finally {
       setLoader(false);
     }
@@ -79,7 +85,7 @@ export const SubscriptionActivationModal: FC<TSubscriptionActivationModal> = obs
           <h3 className="flex items-center whitespace-nowrap flex-wrap gap-2 text-xl font-medium">
             Activate
             <WorkspaceLogo
-              logo={currentWorkspace?.logo}
+              logo={getFileURL(currentWorkspace?.logo_url ?? "")}
               name={currentWorkspace?.name}
               classNames="text-lg font-medium h-5 w-5"
             />
@@ -102,26 +108,36 @@ export const SubscriptionActivationModal: FC<TSubscriptionActivationModal> = obs
             value={activationKey}
             onChange={handleActivateLicense}
             hasError={(errors && Boolean(errors)) || false}
-            className="w-full"
+            className={cn("w-full", !isAdmin && "cursor-not-allowed")}
+            disabled={!isAdmin}
             autoFocus
           />
           <div className="text-sm text-red-500">{errors}</div>
         </div>
-        <div className="flex justify-end items-center gap-2">
-          <Button
-            onClick={() => {
-              handleClose();
-              setActivationKey("");
-              setErrors(undefined);
-            }}
-            variant="neutral-primary"
-            size="sm"
-          >
-            Close
-          </Button>
-          <Button type="submit" size="sm" disabled={loader}>
-            {loader ? "Activating" : "Activate"}
-          </Button>
+        <div className="flex justify-between gap-2">
+          <div className="flex items-center gap-2">
+            {!isAdmin && (
+              <div className="text-xs text-red-500 cursor-help">
+                You don&apos;t have permission to perform this action. Please contact the workspace admin.
+              </div>
+            )}
+          </div>
+          <div className="flex justify-end items-center gap-2">
+            <Button
+              onClick={() => {
+                handleClose();
+                setActivationKey("");
+                setErrors(undefined);
+              }}
+              variant="neutral-primary"
+              size="sm"
+            >
+              Close
+            </Button>
+            <Button type="submit" size="sm" disabled={loader || !isAdmin}>
+              {loader ? "Activating" : "Activate"}
+            </Button>
+          </div>
         </div>
       </form>
     </ModalCore>

@@ -29,7 +29,7 @@ from plane.app.serializers import (
 )
 from plane.db.models import (
     Issue,
-    IssueAttachment,
+    FileAsset,
     IssueLink,
     IssueView,
     Workspace,
@@ -214,8 +214,9 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -440,8 +441,7 @@ class IssueViewViewSet(BaseViewSet):
             .distinct()
         )
 
-    allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
-
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
         queryset = self.get_queryset()
         project = Project.objects.get(id=project_id)
@@ -466,8 +466,7 @@ class IssueViewViewSet(BaseViewSet):
         ).data
         return Response(views, status=status.HTTP_200_OK)
 
-    allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
-
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def retrieve(self, request, slug, project_id, pk):
         issue_view = (
             self.get_queryset().filter(pk=pk, project_id=project_id).first()
@@ -507,8 +506,7 @@ class IssueViewViewSet(BaseViewSet):
             status=status.HTTP_200_OK,
         )
 
-    allow_permission(allowed_roles=[], creator=True, model=IssueView)
-
+    @allow_permission(allowed_roles=[], creator=True, model=IssueView)
     def partial_update(self, request, slug, project_id, pk):
         with transaction.atomic():
             issue_view = IssueView.objects.select_for_update().get(
@@ -541,8 +539,7 @@ class IssueViewViewSet(BaseViewSet):
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
 
-    allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=IssueView)
-
+    @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=IssueView)
     def destroy(self, request, slug, project_id, pk):
         project_view = IssueView.objects.get(
             pk=pk,
@@ -594,8 +591,7 @@ class IssueViewFavoriteViewSet(BaseViewSet):
             .select_related("view")
         )
 
-    allow_permission([ROLE.ADMIN, ROLE.MEMBER])
-
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def create(self, request, slug, project_id):
         _ = UserFavorite.objects.create(
             user=request.user,
@@ -605,8 +601,7 @@ class IssueViewFavoriteViewSet(BaseViewSet):
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    allow_permission([ROLE.ADMIN, ROLE.MEMBER])
-
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def destroy(self, request, slug, project_id, view_id):
         view_favorite = UserFavorite.objects.get(
             project=project_id,

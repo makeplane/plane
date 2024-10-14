@@ -12,7 +12,7 @@ import { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
 // plane web types
 import { TReadOnlyEmbedConfig } from "@/plane-editor/types";
 // types
-import { EditorReadOnlyRefApi, IMentionHighlight, TDisplayConfig } from "@/types";
+import { EditorReadOnlyRefApi, IMentionHighlight, TDisplayConfig, TFileHandler } from "@/types";
 
 interface IDocumentReadOnlyEditor {
   id: string;
@@ -21,6 +21,7 @@ interface IDocumentReadOnlyEditor {
   displayConfig?: TDisplayConfig;
   editorClassName?: string;
   embedHandler: TReadOnlyEmbedConfig;
+  fileHandler: Pick<TFileHandler, "getAssetSrc">;
   tabIndex?: number;
   handleEditorReady?: (value: boolean) => void;
   mentionHandler: {
@@ -35,6 +36,7 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
     displayConfig = DEFAULT_DISPLAY_CONFIG,
     editorClassName = "",
     embedHandler,
+    fileHandler,
     id,
     forwardedRef,
     handleEditorReady,
@@ -53,6 +55,7 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
   const editor = useReadOnlyEditor({
     editorClassName,
     extensions,
+    fileHandler,
     forwardedRef,
     handleEditorReady,
     initialValue,

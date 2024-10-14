@@ -1,23 +1,9 @@
 # Django imports
-from django.db.models import (
-    Case,
-    Count,
-    Exists,
-    F,
-    OuterRef,
-    Prefetch,
-    Q,
-    Value,
-    Sum,
-    When,
-    FloatField,
-)
-from django.db.models.functions import Cast
+from django.db.models import Exists, OuterRef, Prefetch, Q
 from django.utils import timezone
 
 # Module imports
-from plane.db.models import Cycle, UserFavorite, Issue, Label, User, Project
-from plane.utils.analytics_plot import burndown_plot
+from plane.db.models import Cycle, UserFavorite, Label, User
 
 # ee imports
 from plane.ee.views.base import BaseAPIView
@@ -31,8 +17,6 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 
 # Third party imports
-from rest_framework import status
-from rest_framework.response import Response
 
 
 class WorkspaceActiveCycleEndpoint(BaseAPIView):
@@ -42,7 +26,6 @@ class WorkspaceActiveCycleEndpoint(BaseAPIView):
 
     @check_feature_flag(FeatureFlag.WORKSPACE_ACTIVE_CYCLES)
     def get(self, request, slug):
-
         favorite_subquery = UserFavorite.objects.filter(
             user=self.request.user,
             entity_identifier=OuterRef("pk"),
@@ -54,6 +37,7 @@ class WorkspaceActiveCycleEndpoint(BaseAPIView):
         active_cycles = (
             Cycle.objects.filter(
                 workspace__slug=slug,
+                project__project_projectmember__role__gt=5,
                 project__project_projectmember__member=self.request.user,
                 project__project_projectmember__is_active=True,
                 start_date__lte=timezone.now(),
@@ -81,6 +65,7 @@ class WorkspaceActiveCycleEndpoint(BaseAPIView):
             .order_by("-is_favorite", "name")
             .distinct()
         )
+
         return self.paginate(
             request=request,
             queryset=active_cycles,

@@ -4,6 +4,7 @@ import { FC } from "react";
 import { Avatar, Table } from "@plane/ui";
 // helpers
 import { convertMinutesToHoursMinutesString, renderFormattedDate } from "@/helpers/date-time.helper";
+import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useMember, useProject } from "@/hooks/store";
 // plane web hooks
@@ -35,7 +36,7 @@ export const WorklogsPaginatedTableRoot: FC<TWorklogsPaginatedTableRoot> = (prop
       content: "Project",
       tdRender: (rowData: TWorklog) => {
         const currentProject = (rowData.project_id && getProjectById(rowData.project_id)) || undefined;
-        return <div>{currentProject?.name}</div>;
+        return <div className="truncate w-[200px]">{currentProject?.name}</div>;
       },
     },
     {
@@ -62,7 +63,7 @@ export const WorklogsPaginatedTableRoot: FC<TWorklogsPaginatedTableRoot> = (prop
           <div className="flex items-center gap-2">
             <Avatar
               name={currentUser?.member?.display_name}
-              src={currentUser?.member?.avatar ?? undefined}
+              src={getFileURL(currentUser?.member?.avatar_url ?? "")}
               shape="circle"
               size="sm"
               showTooltip={false}

@@ -14,8 +14,7 @@ export interface IWorkspace {
   readonly updated_at: Date;
   name: string;
   url: string;
-  logo: string | null;
-  slug: string;
+  logo_url: string | null;
   readonly total_members: number;
   readonly slug: string;
   readonly created_by: string;
@@ -71,7 +70,7 @@ export interface IWorkspaceMember {
   member: IUserLite;
   role: TUserPermissions;
   created_at?: string;
-  avatar?: string;
+  avatar_url?: string;
   email?: string;
   first_name?: string;
   last_name?: string;

@@ -20,6 +20,7 @@ export interface IssuesModalProps {
   storeType?: EIssuesStoreType;
   isDraft?: boolean;
   fetchIssueDetails?: boolean;
+  moveToIssue?: boolean;
 }
 
 export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer(

@@ -20,5 +20,5 @@ export const IssueTypeSwitcher: React.FC<TIssueTypeSwitcherProps> = observer((pr
 
   if (!issue || !issue.project_id) return <></>;
 
-  return <IssueIdentifier issueId={issueId} projectId={issue.project_id} size="md" />;
+  return <IssueIdentifier issueId={issueId} projectId={issue.project_id} size="md" enableClickToCopyIdentifier />;
 });

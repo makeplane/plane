@@ -68,19 +68,23 @@ export const IssueTypeSwitcher: React.FC<TIssueTypeSwitcherProps> = observer((pr
         data={issueToEdit}
         fetchIssueDetails={false}
       />
-      <div
-        className={cn("group flex items-center gap-3 cursor-pointer", {
-          "cursor-not-allowed": disabled,
-        })}
-        onClick={handleEditIssue}
-      >
-        <IssueIdentifier issueId={issueId} projectId={issue.project_id} size="md" />
-        {!disabled && (
-          <span className="flex opacity-0 group-hover:opacity-100 transition-opacity duration-300 items-center gap-1 text-xs font-medium text-custom-text-300">
-            <ArrowRightLeft className="w-3 h-3 flex-shrink-0" />
-            Switch issue type
-          </span>
-        )}
+      <div className={cn("group flex items-center gap-3 cursor-pointer")}>
+        <IssueIdentifier issueId={issueId} projectId={issue.project_id} size="md" enableClickToCopyIdentifier />
+        <button
+          type="button"
+          className={cn(
+            "flex opacity-0 group-hover:opacity-100 transition-opacity duration-300 items-center gap-1 text-xs font-medium text-custom-text-300 hover:text-custom-text-200",
+            disabled ? "cursor-not-allowed" : "cursor-pointer",
+            {
+              "text-custom-text-400 hover:text-custom-text-400": disabled,
+            }
+          )}
+          disabled={disabled}
+          onClick={handleEditIssue}
+        >
+          <ArrowRightLeft className="w-3 h-3 flex-shrink-0" />
+          Switch issue type
+        </button>
       </div>
     </>
   );

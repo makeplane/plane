@@ -85,6 +85,33 @@ export class SelfHostedSubscriptionService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  /**
+   * @description syncing the workspace license
+   * @param { string } workspaceSlug
+   * @returns { void }
+   */
+  // TODO: This is same as refreshWorkspaceCurrentPlan, remove it after finalizing the flow.
+  async syncLicense(workspaceSlug: string): Promise<void> {
+    return this.post(`/api/payments/workspaces/${workspaceSlug}/license-refresh/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * @description deactivating the workspace license
+   * @param { string } workspaceSlug
+   * @returns { void }
+   */
+  async deactivateLicense(workspaceSlug: string): Promise<void> {
+    return this.post(`/api/payments/workspaces/${workspaceSlug}/licenses/deactivate/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }
 
 const selfHostedSubscriptionService = new SelfHostedSubscriptionService();

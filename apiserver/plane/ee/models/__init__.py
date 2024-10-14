@@ -7,6 +7,13 @@ from .issue_properties import (
     RelationTypeEnum,
 )
 
-from .issue import IssueWorkLog
+from .issue import (
+    IssueWorkLog,
+    EntityUpdates,
+    UpdateReaction,
+    EntityProgress,
+    EntityIssueStateActivity,
+)
+
 from .project import ProjectState, ProjectAttribute
-from .workspace import WorkspaceFeature, WorkspaceLicense
+from .workspace import WorkspaceFeature, WorkspaceLicense, WorkspaceActivity

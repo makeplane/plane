@@ -35,7 +35,7 @@ from plane.app.serializers import (
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
-    IssueAttachment,
+    FileAsset,
     IssueLink,
     IssueUserProperty,
     IssueReaction,
@@ -43,6 +43,7 @@ from plane.db.models import (
     Project,
     ProjectMember,
 )
+from plane.ee.models import EntityIssueStateActivity
 from plane.utils.grouper import (
     issue_group_values,
     issue_on_results,
@@ -91,8 +92,9 @@ class IssueListEndpoint(BaseAPIView):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -215,8 +217,9 @@ class IssueViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -504,12 +507,6 @@ class IssueViewSet(BaseViewSet):
             )
             .prefetch_related(
                 Prefetch(
-                    "issue_attachment",
-                    queryset=IssueAttachment.objects.select_related("issue"),
-                )
-            )
-            .prefetch_related(
-                Prefetch(
                     "issue_link",
                     queryset=IssueLink.objects.select_related("created_by"),
                 )
@@ -609,6 +606,12 @@ class IssueViewSet(BaseViewSet):
         current_instance = json.dumps(
             IssueSerializer(issue).data, cls=DjangoJSONEncoder
         )
+        estimate_type = Project.objects.filter(
+            workspace__slug=slug,
+            pk=project_id,
+            estimate__isnull=False,
+            estimate__type="points",
+        ).exists()
 
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         serializer = IssueCreateSerializer(
@@ -627,6 +630,29 @@ class IssueViewSet(BaseViewSet):
                 notification=True,
                 origin=request.META.get("HTTP_ORIGIN"),
             )
+
+            if issue.cycle_id and (
+                request.data.get("state_id")
+                or request.data.get("estimate_point")
+            ):
+                EntityIssueStateActivity.objects.create(
+                    cycle_id=issue.cycle_id,
+                    state_id=issue.state_id,
+                    issue_id=issue.id,
+                    state_group=issue.state.group,
+                    action="UPDATED",
+                    entity_type="CYCLE",
+                    estimate_point_id=issue.estimate_point_id,
+                    estimate_value=(
+                        issue.estimate_point.value
+                        if estimate_type and issue.estimate_point
+                        else None
+                    ),
+                    workspace_id=issue.workspace_id,
+                    created_by_id=request.user.id,
+                    updated_by_id=request.user.id,
+                )
+
             model_activity.delay(
                 model_name="issue",
                 model_id=str(serializer.data.get("id", None)),
@@ -743,16 +769,11 @@ class DeletedIssuesListViewSet(BaseAPIView):
 class IssuePaginatedViewSet(BaseViewSet):
     def get_queryset(self):
         workspace_slug = self.kwargs.get("slug")
-
-        # getting the project_id from the request params
-        project_id = self.request.GET.get("project_id", None)
+        project_id = self.kwargs.get("project_id")
 
         issue_queryset = Issue.issue_objects.filter(
-            workspace__slug=workspace_slug
+            workspace__slug=workspace_slug, project_id=project_id
         )
-
-        if project_id:
-            issue_queryset = issue_queryset.filter(project_id=project_id)
 
         return (
             issue_queryset.select_related(
@@ -762,14 +783,6 @@ class IssuePaginatedViewSet(BaseViewSet):
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
-                )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -795,8 +808,8 @@ class IssuePaginatedViewSet(BaseViewSet):
 
         return paginated_data
 
-    def list(self, request, slug):
-        project_id = self.request.GET.get("project_id", None)
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def list(self, request, slug, project_id):
         cursor = request.GET.get("cursor", None)
         is_description_required = request.GET.get("description", False)
         updated_at = request.GET.get("updated_at__gt", None)
@@ -836,13 +849,25 @@ class IssuePaginatedViewSet(BaseViewSet):
             required_fields.append("description_html")
 
         # querying issues
-        base_queryset = Issue.issue_objects.filter(workspace__slug=slug)
-
-        if project_id:
-            base_queryset = base_queryset.filter(project_id=project_id)
+        base_queryset = Issue.issue_objects.filter(
+            workspace__slug=slug, project_id=project_id
+        )
 
         base_queryset = base_queryset.order_by("updated_at")
         queryset = self.get_queryset().order_by("updated_at")
+
+        # validation for guest user
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
+        project_member = ProjectMember.objects.filter(
+            workspace__slug=slug,
+            project_id=project_id,
+            member=request.user,
+            role=5,
+            is_active=True,
+        )
+        if project_member.exists() and not project.guest_view_all_features:
+            base_queryset = base_queryset.filter(created_by=request.user)
+            queryset = queryset.filter(created_by=request.user)
 
         # filtering issues by greater then updated_at given by the user
         if updated_at:

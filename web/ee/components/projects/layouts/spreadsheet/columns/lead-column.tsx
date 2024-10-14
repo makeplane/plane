@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useMember } from "@/hooks/store";
 import { TProject } from "@/plane-web/types/projects";
@@ -30,12 +31,12 @@ export const SpreadsheetLeadColumn: React.FC<Props> = observer((props: Props) =>
     >
       {lead ? (
         <>
-          {lead.member.avatar && lead.member.avatar.trim() !== "" ? (
+          {lead.member.avatar_url && lead.member.avatar_url.trim() !== "" ? (
             <Link href={`/${workspaceSlug}/profile/${lead.member.id}`}>
               <span className="relative flex h-5 w-5 items-center justify-center rounded-full capitalize text-white ">
                 <img
                   width={20}
-                  src={lead.member.avatar}
+                  src={getFileURL(lead.member.avatar_url)}
                   className="absolute left-0 top-0 h-5 w-5  rounded-full object-cover"
                   alt={lead.member.display_name || lead.member.email}
                 />
