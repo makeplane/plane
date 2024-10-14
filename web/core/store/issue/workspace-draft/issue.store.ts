@@ -299,8 +299,10 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
 
       const response = await workspaceDraftService.deleteIssue(workspaceSlug, issueId);
       runInAction(() => {
-        unset(this.issueMapIds[workspaceSlug], issueId);
-        unset(this.issuesMap, issueId);
+        // Remove the issue from the issueMapIds
+        this.issueMapIds[workspaceSlug] = (this.issueMapIds[workspaceSlug] || []).filter((id) => id !== issueId);
+        // Remove the issue from the issuesMap
+        delete this.issuesMap[issueId];
         // reduce the count of issues in the pagination info
         if (this.paginationInfo?.total_count) {
           set(this, "paginationInfo", {
@@ -324,8 +326,10 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
 
       const response = await workspaceDraftService.moveIssue(workspaceSlug, issueId, payload);
       runInAction(() => {
-        unset(this.issueMapIds[workspaceSlug], issueId);
-        unset(this.issuesMap, issueId);
+        // Remove the issue from the issueMapIds
+        this.issueMapIds[workspaceSlug] = (this.issueMapIds[workspaceSlug] || []).filter((id) => id !== issueId);
+        // Remove the issue from the issuesMap
+        delete this.issuesMap[issueId];
         // reduce the count of issues in the pagination info
         if (this.paginationInfo?.total_count) {
           set(this, "paginationInfo", {
