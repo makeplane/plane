@@ -150,7 +150,6 @@ class OffsetPaginator:
             raise BadPaginationError("Pagination offset cannot be negative")
 
         results = queryset[offset:stop]
-        print(limit, "limit")
         if cursor.value != limit:
             results = results[-(limit + 1) :]
 
@@ -186,7 +185,6 @@ class OffsetPaginator:
 
 
 class GroupedOffsetPaginator(OffsetPaginator):
-
     # Field mappers - list m2m fields here
     FIELD_MAPPER = {
         "labels__id": "label_ids",
@@ -684,7 +682,7 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
                     # for multi groups
                     result[
                         self.FIELD_MAPPER.get(self.sub_group_by_field_name)
-                    ] = ([] if "None" in sub_group_ids else sub_group_ids)
+                    ] = [] if "None" in sub_group_ids else sub_group_ids
                 # If a result belongs to multiple groups, add it to each group
                 processed_results[str(group_value)]["results"][
                     str(sub_group_value)
@@ -761,7 +759,6 @@ class BasePaginator:
     ):
         """Paginate the request"""
         per_page = self.get_per_page(request, default_per_page, max_per_page)
-        print(per_page, "per_page")
         # Convert the cursor value to integer and float from string
         input_cursor = None
         try:
@@ -788,7 +785,6 @@ class BasePaginator:
             paginator = paginator_cls(**paginator_kwargs)
 
         try:
-            print(per_page, "per_page 2")
             cursor_result = paginator.get_result(
                 limit=per_page, cursor=input_cursor
             )
