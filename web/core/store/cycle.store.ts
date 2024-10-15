@@ -275,12 +275,10 @@ export class CycleStore implements ICycleStore {
   }
 
   getIsPointsDataAvailable = computedFn((cycleId: string) => {
-    console.log(this.cycleMap[cycleId]?.version);
     const cycle = this.cycleMap[cycleId];
     if (!cycle) return false;
     if (this.cycleMap[cycleId].version === 2) return cycle.progress.some((p) => p.total_estimate_points > 0);
     else if (this.cycleMap[cycleId].version === 1) {
-      console.log({ ...cycle.estimate_distribution?.completion_chart });
       const completionChart = cycle.estimate_distribution?.completion_chart || {};
       return !isEmpty(completionChart) && Object.keys(completionChart).some((p) => completionChart[p]! > 0);
     } else return false;
