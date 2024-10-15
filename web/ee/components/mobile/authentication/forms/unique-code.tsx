@@ -4,12 +4,12 @@ import { FC, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { CircleCheck, XCircle } from "lucide-react";
 import { Button, Input, Spinner } from "@plane/ui";
-// hooks
 // helpers
 import { EAuthSteps } from "@/helpers/authentication.helper";
 import { API_BASE_URL } from "@/helpers/common.helper";
-// services
+// hooks
 import useTimer from "@/hooks/use-timer";
+// services
 import { AuthService } from "@/services/auth.service";
 
 const authService = new AuthService();
@@ -95,7 +95,7 @@ export const MobileAuthUniqueCodeForm: FC<TMobileAuthUniqueCodeForm> = observer(
         event.preventDefault(); // Prevent form from submitting by default
         setIsSubmitting(true);
         await handleCSRFToken();
-        authFormRef.current && authFormRef.current.submit();
+        if (authFormRef.current) authFormRef.current.submit();
       }}
     >
       <input type="hidden" name="csrfmiddlewaretoken" />

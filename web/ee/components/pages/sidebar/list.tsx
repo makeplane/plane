@@ -9,13 +9,13 @@ import { Disclosure, Transition } from "@headlessui/react";
 // plane types
 import { TPage, TPageNavigationTabs } from "@plane/types";
 // plane ui
-import { ArchiveIcon, Tooltip, setToast, TOAST_TYPE } from "@plane/ui";
+import { ArchiveIcon, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 // constants
 import { EPageAccess } from "@/constants/page";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useAppTheme, useCommandPalette, useEventTracker } from "@/hooks/store";
+import { useAppTheme, useEventTracker } from "@/hooks/store";
 // plane web components
 import { PagesAppSidebarListItem } from "@/plane-web/components/pages";
 // plane web hooks
@@ -30,7 +30,6 @@ export const PagesAppSidebarList = observer(() => {
   // store hooks
   const { sidebarCollapsed } = useAppTheme();
   const { setTrackElement } = useEventTracker();
-  const { toggleCreatePageModal } = useCommandPalette();
   const { getCurrentWorkspacePageIdsByType, createPage } = useWorkspacePages();
   // derived values
   const isCollapsed = sidebarCollapsed || false;

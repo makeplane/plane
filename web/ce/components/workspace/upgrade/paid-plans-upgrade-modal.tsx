@@ -5,8 +5,7 @@ import useSWR from "swr";
 import { CircleX } from "lucide-react";
 // types
 import { IPaymentProduct } from "@plane/types";
-// types
-// services
+// ui
 import { EModalWidth, ModalCore } from "@plane/ui";
 // plane web components
 import { cn } from "@/helpers/common.helper";
