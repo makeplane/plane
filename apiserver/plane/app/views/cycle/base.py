@@ -1016,53 +1016,57 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             estimate__type="points",
         ).exists()
 
-        EntityIssueStateActivity.objects.bulk_create(
-            [
-                EntityIssueStateActivity(
-                    cycle_id=cycle_id,
-                    state_id=cycle_issue.issue.state_id,
-                    issue_id=cycle_issue.issue_id,
-                    state_group=cycle_issue.issue.state.group,
-                    action="REMOVED",
-                    entity_type="CYCLE",
-                    estimate_point_id=cycle_issue.issue.estimate_point_id,
-                    estimate_value=(
-                        cycle_issue.issue.estimate_point.value
-                        if estimate_type and cycle_issue.issue.estimate_point
-                        else None
-                    ),
-                    workspace_id=cycle_issue.workspace_id,
-                    created_by_id=request.user.id,
-                    updated_by_id=request.user.id,
-                )
-                for cycle_issue in cycle_issues
-            ],
-            batch_size=10,
-        )
+        if old_cycle.first().version == 2:
+            EntityIssueStateActivity.objects.bulk_create(
+                [
+                    EntityIssueStateActivity(
+                        cycle_id=cycle_id,
+                        state_id=cycle_issue.issue.state_id,
+                        issue_id=cycle_issue.issue_id,
+                        state_group=cycle_issue.issue.state.group,
+                        action="REMOVED",
+                        entity_type="CYCLE",
+                        estimate_point_id=cycle_issue.issue.estimate_point_id,
+                        estimate_value=(
+                            cycle_issue.issue.estimate_point.value
+                            if estimate_type
+                            and cycle_issue.issue.estimate_point
+                            else None
+                        ),
+                        workspace_id=cycle_issue.workspace_id,
+                        created_by_id=request.user.id,
+                        updated_by_id=request.user.id,
+                    )
+                    for cycle_issue in cycle_issues
+                ],
+                batch_size=10,
+            )
 
-        EntityIssueStateActivity.objects.bulk_create(
-            [
-                EntityIssueStateActivity(
-                    cycle_id=new_cycle_id,
-                    state_id=cycle_issue.issue.state_id,
-                    issue_id=cycle_issue.issue_id,
-                    state_group=cycle_issue.issue.state.group,
-                    action="ADDED",
-                    entity_type="CYCLE",
-                    estimate_point_id=cycle_issue.issue.estimate_point_id,
-                    estimate_value=(
-                        cycle_issue.issue.estimate_point.value
-                        if estimate_type and cycle_issue.issue.estimate_point
-                        else None
-                    ),
-                    workspace_id=cycle_issue.workspace_id,
-                    created_by_id=request.user.id,
-                    updated_by_id=request.user.id,
-                )
-                for cycle_issue in cycle_issues
-            ],
-            batch_size=10,
-        )
+        if new_cycle.version == 2:
+            EntityIssueStateActivity.objects.bulk_create(
+                [
+                    EntityIssueStateActivity(
+                        cycle_id=new_cycle_id,
+                        state_id=cycle_issue.issue.state_id,
+                        issue_id=cycle_issue.issue_id,
+                        state_group=cycle_issue.issue.state.group,
+                        action="ADDED",
+                        entity_type="CYCLE",
+                        estimate_point_id=cycle_issue.issue.estimate_point_id,
+                        estimate_value=(
+                            cycle_issue.issue.estimate_point.value
+                            if estimate_type
+                            and cycle_issue.issue.estimate_point
+                            else None
+                        ),
+                        workspace_id=cycle_issue.workspace_id,
+                        created_by_id=request.user.id,
+                        updated_by_id=request.user.id,
+                    )
+                    for cycle_issue in cycle_issues
+                ],
+                batch_size=10,
+            )
 
         # Capture Issue Activity
         issue_activity.delay(

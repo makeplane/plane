@@ -42,6 +42,7 @@ from plane.db.models import (
     IssueSubscriber,
     Project,
     ProjectMember,
+    Cycle,
 )
 from plane.ee.models import EntityIssueStateActivity
 from plane.utils.grouper import (
@@ -635,23 +636,25 @@ class IssueViewSet(BaseViewSet):
                 request.data.get("state_id")
                 or request.data.get("estimate_point")
             ):
-                EntityIssueStateActivity.objects.create(
-                    cycle_id=issue.cycle_id,
-                    state_id=issue.state_id,
-                    issue_id=issue.id,
-                    state_group=issue.state.group,
-                    action="UPDATED",
-                    entity_type="CYCLE",
-                    estimate_point_id=issue.estimate_point_id,
-                    estimate_value=(
-                        issue.estimate_point.value
-                        if estimate_type and issue.estimate_point
-                        else None
-                    ),
-                    workspace_id=issue.workspace_id,
-                    created_by_id=request.user.id,
-                    updated_by_id=request.user.id,
-                )
+                cycle = Cycle.objects.get(pk=pk)
+                if cycle.version == 2:
+                    EntityIssueStateActivity.objects.create(
+                        cycle_id=issue.cycle_id,
+                        state_id=issue.state_id,
+                        issue_id=issue.id,
+                        state_group=issue.state.group,
+                        action="UPDATED",
+                        entity_type="CYCLE",
+                        estimate_point_id=issue.estimate_point_id,
+                        estimate_value=(
+                            issue.estimate_point.value
+                            if estimate_type and issue.estimate_point
+                            else None
+                        ),
+                        workspace_id=issue.workspace_id,
+                        created_by_id=request.user.id,
+                        updated_by_id=request.user.id,
+                    )
 
             model_activity.delay(
                 model_name="issue",
