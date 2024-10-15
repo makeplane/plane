@@ -90,7 +90,7 @@ export const WorkspaceDraftIssueDeleteIssueModal: React.FC<Props> = (props) => {
       isSubmitting={isDeleting}
       isOpen={isOpen}
       title="Delete draft"
-      content={<>Are you sure you want to delete this draft? This can't be undone.</>}
+      content={<>Are you sure you want to delete this draft? This can&apos;t be undone.</>}
     />
   );
 };

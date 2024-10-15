@@ -28,12 +28,15 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     data,
     isOpen,
     onClose,
+    beforeFormSubmit,
     onSubmit,
     withDraftIssueWrapper = true,
     storeType: issueStoreFromProps,
     isDraft = false,
     fetchIssueDetails = true,
     moveToIssue = false,
+    modalTitle,
+    primaryButtonText,
   } = props;
   const issueStoreType = useIssueStoreType();
 
@@ -198,6 +201,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       if (response.id && response.project_id) {
         await handleCreateUpdatePropertyValues({
           issueId: response.id,
+          issueTypeId: response.type_id,
           projectId: response.project_id,
           workspaceSlug: workspaceSlug.toString(),
         });
@@ -250,6 +254,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       // add other property values
       await handleCreateUpdatePropertyValues({
         issueId: data.id,
+        issueTypeId: payload.type_id,
         projectId: payload.project_id,
         workspaceSlug: workspaceSlug.toString(),
       });
@@ -288,6 +293,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     let response: TIssue | undefined = undefined;
 
     try {
+      if (beforeFormSubmit) await beforeFormSubmit();
       if (!data?.id) response = await handleCreateIssue(payload, is_draft_issue);
       else response = await handleUpdateIssue(payload);
     } catch (error) {
@@ -348,6 +354,8 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
           projectId={activeProjectId}
           isDraft={isDraft}
           moveToIssue={moveToIssue}
+          modalTitle={modalTitle}
+          primaryButtonText={primaryButtonText}
         />
       )}
     </ModalCore>
