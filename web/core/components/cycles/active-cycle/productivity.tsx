@@ -23,7 +23,6 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
   const { workspaceSlug, projectId, cycle } = props;
   // hooks
   const { getEstimateTypeByCycleId, setEstimateType } = useCycle();
-  const { currentActiveEstimateId, areEstimateEnabledByProjectId, estimateById } = useProjectEstimates();
 
   // derived values
   const estimateType: TCycleEstimateType = (cycle && getEstimateTypeByCycleId(cycle.id)) || "issues";
@@ -32,11 +31,6 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
     if (!workspaceSlug || !projectId || !cycle || !cycle.id) return;
     setEstimateType(cycle.id, value);
   };
-
-  const isCurrentProjectEstimateEnabled = projectId && areEstimateEnabledByProjectId(projectId) ? true : false;
-  const estimateDetails =
-    isCurrentProjectEstimateEnabled && currentActiveEstimateId && estimateById(currentActiveEstimateId);
-  const isCurrentEstimateTypeIsPoints = Boolean(estimateDetails && estimateDetails?.type === EEstimateSystem.POINTS);
 
   const chartDistributionData =
     cycle && estimateType === "points" ? cycle?.estimate_distribution : cycle?.distribution || undefined;
@@ -48,12 +42,7 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
         <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle?.id}`}>
           <h3 className="text-base text-custom-text-300 font-semibold">Issue burndown</h3>
         </Link>
-        <EstimateTypeDropdown
-          showEstimateSelection={isCurrentEstimateTypeIsPoints}
-          value={estimateType}
-          onChange={onChange}
-          projectId={projectId}
-        />
+        <EstimateTypeDropdown value={estimateType} onChange={onChange} cycleId={cycle.id} projectId={projectId} />
       </div>
 
       <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle?.id}`}>

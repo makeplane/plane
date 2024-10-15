@@ -1,23 +1,23 @@
 import React from "react";
 import { TCycleEstimateType } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
-import { useProjectEstimates } from "@/hooks/store";
+import { useCycle, useProjectEstimates } from "@/hooks/store";
 import { cycleEstimateOptions } from "../analytics-sidebar";
 
 type TProps = {
-  showEstimateSelection: boolean | undefined;
   value: TCycleEstimateType;
   onChange: (value: TCycleEstimateType) => Promise<void>;
-  projectId: string;
   showDefault?: boolean;
+  projectId: string;
+  cycleId: string;
 };
 
 export const EstimateTypeDropdown = (props: TProps) => {
-  const { showEstimateSelection, value, onChange, projectId, showDefault = false } = props;
-
+  const { value, onChange, projectId, cycleId, showDefault = false } = props;
+  const { getIsPointsDataAvailable } = useCycle();
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
   const isCurrentProjectEstimateEnabled = projectId && areEstimateEnabledByProjectId(projectId) ? true : false;
-  return showEstimateSelection && isCurrentProjectEstimateEnabled ? (
+  return getIsPointsDataAvailable(cycleId) || isCurrentProjectEstimateEnabled ? (
     <div className="relative flex items-center gap-2">
       <CustomSelect
         value={value}
