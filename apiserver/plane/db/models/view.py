@@ -52,6 +52,7 @@ def get_default_display_properties():
         "updated_on": True,
     }
 
+
 # DEPRECATED TODO: - Remove in next release
 class GlobalView(BaseModel):
     workspace = models.ForeignKey(
@@ -109,7 +110,6 @@ class IssueView(WorkspaceBaseModel):
     )
     is_locked = models.BooleanField(default=False)
 
-
     class Meta:
         verbose_name = "Issue View"
         verbose_name_plural = "Issue Views"
@@ -139,26 +139,3 @@ class IssueView(WorkspaceBaseModel):
     def __str__(self):
         """Return name of the View"""
         return f"{self.name} <{self.project.name}>"
-
-
-# DEPRECATED TODO: - Remove in next release
-class IssueViewFavorite(ProjectBaseModel):
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="user_view_favorites",
-    )
-    view = models.ForeignKey(
-        "db.IssueView", on_delete=models.CASCADE, related_name="view_favorites"
-    )
-
-    class Meta:
-        unique_together = ["view", "user"]
-        verbose_name = "View Favorite"
-        verbose_name_plural = "View Favorites"
-        db_table = "view_favorites"
-        ordering = ("-created_at",)
-
-    def __str__(self):
-        """Return user and the view"""
-        return f"{self.user.email} <{self.view.name}>"

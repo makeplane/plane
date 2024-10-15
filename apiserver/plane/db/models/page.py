@@ -176,29 +176,6 @@ class PageBlock(ProjectBaseModel):
         return f"{self.page.name} <{self.name}>"
 
 
-# DEPRECATED TODO: - Remove in next release
-class PageFavorite(ProjectBaseModel):
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="page_favorites",
-    )
-    page = models.ForeignKey(
-        "db.Page", on_delete=models.CASCADE, related_name="page_favorites"
-    )
-
-    class Meta:
-        unique_together = ["page", "user"]
-        verbose_name = "Page Favorite"
-        verbose_name_plural = "Page Favorites"
-        db_table = "page_favorites"
-        ordering = ("-created_at",)
-
-    def __str__(self):
-        """Return user and the page"""
-        return f"{self.user.email} <{self.page.name}>"
-
-
 class PageLabel(BaseModel):
     label = models.ForeignKey(
         "db.Label", on_delete=models.CASCADE, related_name="page_labels"
