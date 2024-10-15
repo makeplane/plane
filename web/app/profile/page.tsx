@@ -6,14 +6,23 @@ import { Controller, useForm } from "react-hook-form";
 import { ChevronDown, CircleUserRound } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 import type { IUser } from "@plane/types";
-import { Button, CustomSelect, CustomSearchSelect, Input, TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
+import {
+  Button,
+  CustomSelect,
+  CustomSearchSelect,
+  Input,
+  TOAST_TYPE,
+  setPromiseToast,
+  setToast,
+  Tooltip,
+} from "@plane/ui";
 // components
 import { DeactivateAccountModal } from "@/components/account";
 import { LogoSpinner } from "@/components/common";
 import { ImagePickerPopover, UserImageUploadModal, PageHead } from "@/components/core";
 import { ProfileSettingContentWrapper } from "@/components/profile";
 // constants
-import { TIME_ZONES } from "@/constants/timezones";
+import { TIME_ZONES, TTimezone } from "@/constants/timezones";
 import { USER_ROLES } from "@/constants/workspace";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
@@ -107,10 +116,20 @@ const ProfileSettingsPage = observer(() => {
       });
   };
 
+  const getTimeZoneLabel = (timezone: TTimezone | undefined) => {
+    if (!timezone) return undefined;
+    return (
+      <div className="flex gap-1.5">
+        <span className="text-custom-text-400">{timezone.gmtOffset}</span>
+        <span className="text-custom-text-200">{timezone.name}</span>
+      </div>
+    );
+  };
+
   const timeZoneOptions = TIME_ZONES.map((timeZone) => ({
     value: timeZone.value,
-    query: timeZone.label + " " + timeZone.value,
-    content: timeZone.label,
+    query: timeZone.name + " " + timeZone.gmtOffset + " " + timeZone.value,
+    content: getTimeZoneLabel(timeZone),
   }));
 
   if (!currentUser)
@@ -198,8 +217,7 @@ const ProfileSettingsPage = observer(() => {
               </div>
             </div>
             <div className="flex flex-col gap-2">
-              <h3 className="text-sm font-semibold text-custom-text-400 pt-1 pb-2">Personal information</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-4">
                 <div className="flex flex-col gap-1">
                   <h4 className="text-sm font-medium text-custom-text-200">
                     First name<span className="text-red-500">*</span>
@@ -284,7 +302,9 @@ const ProfileSettingsPage = observer(() => {
                       />
                     )}
                   />
-                  {errors?.display_name && <span className="text-xs text-red-500">{errors?.display_name?.message}</span>}
+                  {errors?.display_name && (
+                    <span className="text-xs text-red-500">{errors?.display_name?.message}</span>
+                  )}
                 </div>
                 <div className="flex flex-col gap-1">
                   <h4 className="text-sm font-medium text-custom-text-200">
@@ -305,8 +325,9 @@ const ProfileSettingsPage = observer(() => {
                         ref={ref}
                         hasError={Boolean(errors.email)}
                         placeholder="Enter your email"
-                        className={`w-full cursor-not-allowed rounded-md !bg-custom-background-90 ${errors.email ? "border-red-500" : ""
-                          }`}
+                        className={`w-full cursor-not-allowed rounded-md !bg-custom-background-90 ${
+                          errors.email ? "border-red-500" : ""
+                        }`}
                         autoComplete="on"
                         disabled
                       />
@@ -343,9 +364,8 @@ const ProfileSettingsPage = observer(() => {
                 </div>
               </div>
             </div>
-            <div className="flex flex-col gap-2">
-              <h3 className="text-sm font-semibold text-custom-text-400 pt-1 pb-2">Timezone/Language</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="flex flex-col gap-2 pt-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-4">
                 <div className="flex flex-col gap-1">
                   <h4 className="text-sm font-medium text-custom-text-200">
                     Timezone<span className="text-red-500">*</span>
@@ -357,32 +377,38 @@ const ProfileSettingsPage = observer(() => {
                     render={({ field: { value, onChange } }) => (
                       <CustomSearchSelect
                         value={value}
-                        label={value ? (TIME_ZONES.find((t) => t.value === value)?.label ?? value) : "Select a timezone"}
+                        label={
+                          value
+                            ? (getTimeZoneLabel(TIME_ZONES.find((t) => t.value === value)) ?? value)
+                            : "Select a timezone"
+                        }
                         options={timeZoneOptions}
                         onChange={onChange}
                         buttonClassName={errors.user_timezone ? "border-red-500" : "border-none"}
                         className="rounded-md border-[0.5px] !border-custom-border-200"
+                        optionsClassName="w-72"
                         input
                       />
                     )}
                   />
                   {errors.user_timezone && <span className="text-xs text-red-500">{errors.user_timezone.message}</span>}
                 </div>
-                {/* TODO: Add Coming soon tooltip */}
-                <div className="flex flex-col gap-1">
-                  <h4 className="text-sm font-medium text-custom-text-200">
-                    Language<span className="text-red-500">*</span>
-                  </h4>
-                  <CustomSearchSelect
-                    value="English (US)"
-                    label="English (US)"
-                    options={[]}
-                    onChange={() => { }}
-                    className="rounded-md bg-custom-background-90"
-                    input
-                    disabled
-                  />
-                </div>
+                <Tooltip tooltipContent="Coming soon" position="bottom">
+                  <div className="flex flex-col gap-1">
+                    <h4 className="text-sm font-medium text-custom-text-200">
+                      Language<span className="text-red-500">*</span>
+                    </h4>
+                    <CustomSearchSelect
+                      value="English (US)"
+                      label="English (US)"
+                      options={[]}
+                      onChange={() => {}}
+                      className="rounded-md bg-custom-background-90"
+                      input
+                      disabled
+                    />
+                  </div>
+                </Tooltip>
               </div>
               <div className="flex items-center justify-between pt-6 pb-8">
                 <Button variant="primary" type="submit" loading={isLoading}>

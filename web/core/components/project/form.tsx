@@ -25,7 +25,7 @@ import { ImagePickerPopover } from "@/components/core";
 import { PROJECT_UPDATED } from "@/constants/event-tracker";
 import { NETWORK_CHOICES } from "@/constants/project";
 // helpers
-// import { TIME_ZONES } from "@/constants/timezones";
+// import { TTimezone, TIME_ZONES } from "@/constants/timezones";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 import { getFileURL } from "@/helpers/file.helper";
@@ -68,10 +68,19 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   });
   // derived values
   const currentNetwork = NETWORK_CHOICES.find((n) => n.key === project?.network);
+  // const getTimeZoneLabel = (timezone: TTimezone | undefined) => {
+  //   if (!timezone) return undefined;
+  //   return (
+  //     <div className="flex gap-1.5">
+  //       <span className="text-custom-text-400">{timezone.gmtOffset}</span>
+  //       <span className="text-custom-text-200">{timezone.name}</span>
+  //     </div>
+  //   );
+  // };
   // const timeZoneOptions = TIME_ZONES.map((timeZone) => ({
   //   value: timeZone.value,
-  //   query: timeZone.label + " " + timeZone.value,
-  //   content: timeZone.label,
+  //   query: timeZone.name + " " + timeZone.gmtOffset + " " + timeZone.value,
+  //   content: getTimeZoneLabel(timeZone),
   // }));
   const coverImage = watch("cover_image_url");
 
@@ -381,11 +390,16 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
               render={({ field: { value, onChange } }) => (
                 <CustomSearchSelect
                   value={value}
-                  label={value ? (TIME_ZONES.find((t) => t.value === value)?.label ?? value) : "Select a timezone"}
+                  label={
+                    value
+                      ? (getTimeZoneLabel(TIME_ZONES.find((t) => t.value === value)) ?? value)
+                      : "Select a timezone"
+                  }
                   options={timeZoneOptions}
                   onChange={onChange}
                   buttonClassName={errors.timezone ? "border-red-500" : "border-none"}
                   className="rounded-md border-[0.5px] !border-custom-border-200"
+                  optionsClassName="w-72"
                   input
                 />
               )}
