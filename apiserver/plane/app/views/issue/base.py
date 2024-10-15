@@ -788,7 +788,7 @@ class IssuePaginatedViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
         cursor = request.GET.get("cursor", None)
-        is_description_required = request.GET.get("description", False)
+        is_description_required = request.GET.get("description", "false")
         updated_at = request.GET.get("updated_at__gt", None)
 
         # required fields
@@ -821,7 +821,7 @@ class IssuePaginatedViewSet(BaseViewSet):
             "sub_issues_count",
         ]
 
-        if is_description_required and is_description_required == "true":
+        if str(is_description_required).lower() == "true":
             required_fields.append("description_html")
 
         # querying issues
