@@ -181,7 +181,7 @@ class ProjectBaseModel(BaseModel):
         Project, on_delete=models.CASCADE, related_name="project_%(class)s"
     )
     workspace = models.ForeignKey(
-        "db.Workspace", models.CASCADE, related_name="workspace_%(class)s"
+        "db.Workspace", on_delete=models.CASCADE, related_name="workspace_%(class)s"
     )
 
     class Meta:
