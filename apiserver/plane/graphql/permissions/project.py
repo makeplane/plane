@@ -28,6 +28,8 @@ class IsAuthenticated(BasePermission):
     }
 
     async def has_permission(self, source: Any, info: Info, **kwargs) -> bool:
+        if info.context.user is None:
+            return False
         self.user = info.context.user
         return self.user.is_authenticated
 

@@ -156,13 +156,13 @@ class YourWorkQuery:
     ) -> WorkspaceYourWorkType:
         # projects
         projects = await sync_to_async(list)(
-            Project.objects.filter(workspace__slug=slug)
+            Project.objects.filter(
+                workspace__slug=slug,
+                project_projectmember__is_active=True,
+            )
             .filter(
                 Q(created_by=info.context.user)
-                & Q(
-                    project_projectmember__member=info.context.user,
-                    project_projectmember__is_active=True,
-                )
+                | Q(project_projectmember__member=info.context.user)
             )
             .values_list("id", flat=True)
         )
