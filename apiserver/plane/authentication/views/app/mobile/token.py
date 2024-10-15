@@ -1,15 +1,20 @@
+# Django imports
+from django.conf import settings
+
 # Third party imports
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 # Module imports
 from plane.authentication.utils.mobile.login import (
     ValidateAuthToken,
 )
 from plane.db.models import User
+from plane.authentication.utils.mobile.login import mobile_user_login
 
 
 class MobileSessionTokenCheckEndpoint(APIView):
@@ -72,6 +77,53 @@ class MobileSessionTokenCheckEndpoint(APIView):
             response = self.get_tokens_for_user(user)
             # Return the tokens
             return Response(response, status=status.HTTP_200_OK)
+        except Exception:
+            return Response(
+                {"error": "Something went wrong"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class MobileTokenEndpoint(APIView):
+    def get_tokens_for_user(self, user):
+        # Get the refresh token
+        refresh = RefreshToken.for_user(user)
+        # Return the tokens
+        return {
+            "refresh_token": str(refresh),
+            "access_token": str(refresh.access_token),
+        }
+
+    def get(self, request):
+        try:
+            # Get the tokens
+            response = self.get_tokens_for_user(user=request.user)
+            # Return the tokens
+            return Response(response, status=status.HTTP_200_OK)
+        except Exception:
+            return Response(
+                {"error": "Something went wrong"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class MobileSessionTokenEndpoint(APIView):
+    authentication_classes = [
+        JWTAuthentication,
+    ]
+
+    def post(self, request):
+        try:
+            # Get the user
+            session = mobile_user_login(request=request, user=request.user)
+            # Return the tokens
+            return Response(
+                {
+                    "session_name": settings.SESSION_COOKIE_NAME,
+                    "session_id": session.session_key,
+                },
+                status=status.HTTP_200_OK,
+            )
         except Exception:
             return Response(
                 {"error": "Something went wrong"},
