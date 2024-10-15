@@ -31,3 +31,4 @@ export * from "./favorite-folder-icon";
 export * from "./planned-icon";
 export * from "./in-progress-icon";
 export * from "./done-icon";
+export * from "./pending-icon";

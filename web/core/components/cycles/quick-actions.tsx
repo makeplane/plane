@@ -115,7 +115,7 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
       key: "archive",
       action: handleArchiveCycle,
       title: "Archive",
-      description: isCompleted ? undefined : "Only completed cycle can\nbe archived.",
+      description: isCompleted ? undefined : "Only completed cycles can\nbe archived.",
       icon: ArchiveIcon,
       className: "items-start",
       iconClassName: "mt-1",

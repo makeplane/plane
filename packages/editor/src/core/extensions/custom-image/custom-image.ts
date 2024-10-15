@@ -22,6 +22,7 @@ declare module "@tiptap/core" {
     imageComponent: {
       insertImageComponent: ({ file, pos, event }: InsertImageComponentProps) => ReturnType;
       uploadImage: (file: File) => () => Promise<string> | undefined;
+      getImageSource?: (path: string) => () => string;
     };
   }
 }
@@ -36,7 +37,13 @@ export interface UploadImageExtensionStorage {
 export type UploadEntity = ({ event: "insert" } | { event: "drop"; file: File }) & { hasOpenedFileInputOnce?: boolean };
 
 export const CustomImageExtension = (props: TFileHandler) => {
-  const { upload, delete: deleteImage, restore: restoreImage } = props;
+  const {
+    getAssetSrc,
+    upload,
+    delete: deleteImage,
+    restore: restoreImage,
+    validation: { maxFileSize },
+  } = props;
 
   return Image.extend<Record<string, unknown>, UploadImageExtensionStorage>({
     name: "imageComponent",
@@ -87,8 +94,7 @@ export const CustomImageExtension = (props: TFileHandler) => {
       });
       imageSources.forEach(async (src) => {
         try {
-          const assetUrlWithWorkspaceId = new URL(src).pathname.substring(1);
-          await restoreImage(assetUrlWithWorkspaceId);
+          await restoreImage(src);
         } catch (error) {
           console.error("Error restoring image: ", error);
         }
@@ -114,6 +120,7 @@ export const CustomImageExtension = (props: TFileHandler) => {
         fileMap: new Map(),
         deletedImageSet: new Map<string, boolean>(),
         uploadInProgress: false,
+        maxFileSize,
       };
     },
 
@@ -123,7 +130,13 @@ export const CustomImageExtension = (props: TFileHandler) => {
           (props: { file?: File; pos?: number; event: "insert" | "drop" }) =>
           ({ commands }) => {
             // Early return if there's an invalid file being dropped
-            if (props?.file && !isFileValid(props.file)) {
+            if (
+              props?.file &&
+              !isFileValid({
+                file: props.file,
+                maxFileSize,
+              })
+            ) {
               return false;
             }
 
@@ -166,6 +179,7 @@ export const CustomImageExtension = (props: TFileHandler) => {
           const fileUrl = await upload(file);
           return fileUrl;
         },
+        getImageSource: (path: string) => () => getAssetSrc(path),
       };
     },
 

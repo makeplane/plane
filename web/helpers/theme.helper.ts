@@ -59,8 +59,9 @@ const calculateShades = (hexValue: string): TShades => {
   return shades as TShades;
 };
 
-export const applyTheme = (palette: string, isDarkPalette: boolean, dom: HTMLElement | null) => {
+export const applyTheme = (palette: string, isDarkPalette: boolean) => {
   if (!palette) return;
+  const themeElement = document?.querySelector("html");
   // palette: [bg, text, primary, sidebarBg, sidebarText]
   const values: string[] = palette.split(",");
   values.push(isDarkPalette ? "dark" : "light");
@@ -80,27 +81,27 @@ export const applyTheme = (palette: string, isDarkPalette: boolean, dom: HTMLEle
     const sidebarBackgroundRgbValues = `${sidebarBackgroundShades[shade].r}, ${sidebarBackgroundShades[shade].g}, ${sidebarBackgroundShades[shade].b}`;
     const sidebarTextRgbValues = `${sidebarTextShades[shade].r}, ${sidebarTextShades[shade].g}, ${sidebarTextShades[shade].b}`;
 
-    dom?.style.setProperty(`--color-background-${shade}`, bgRgbValues);
-    dom?.style.setProperty(`--color-text-${shade}`, textRgbValues);
-    dom?.style.setProperty(`--color-primary-${shade}`, primaryRgbValues);
-    dom?.style.setProperty(`--color-sidebar-background-${shade}`, sidebarBackgroundRgbValues);
-    dom?.style.setProperty(`--color-sidebar-text-${shade}`, sidebarTextRgbValues);
+    themeElement?.style.setProperty(`--color-background-${shade}`, bgRgbValues);
+    themeElement?.style.setProperty(`--color-text-${shade}`, textRgbValues);
+    themeElement?.style.setProperty(`--color-primary-${shade}`, primaryRgbValues);
+    themeElement?.style.setProperty(`--color-sidebar-background-${shade}`, sidebarBackgroundRgbValues);
+    themeElement?.style.setProperty(`--color-sidebar-text-${shade}`, sidebarTextRgbValues);
 
     if (i >= 100 && i <= 400) {
       const borderShade = i === 100 ? 70 : i === 200 ? 80 : i === 300 ? 90 : 100;
 
-      dom?.style.setProperty(
+      themeElement?.style.setProperty(
         `--color-border-${shade}`,
         `${bgShades[borderShade].r}, ${bgShades[borderShade].g}, ${bgShades[borderShade].b}`
       );
-      dom?.style.setProperty(
+      themeElement?.style.setProperty(
         `--color-sidebar-border-${shade}`,
         `${sidebarBackgroundShades[borderShade].r}, ${sidebarBackgroundShades[borderShade].g}, ${sidebarBackgroundShades[borderShade].b}`
       );
     }
   }
 
-  dom?.style.setProperty("--color-scheme", values[5]);
+  themeElement?.style.setProperty("--color-scheme", values[5]);
 };
 
 export const unsetCustomCssVariables = () => {

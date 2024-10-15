@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { CSSProperties } from "react";
 import { Editor, Range } from "@tiptap/core";
 
 export type TEditorCommands =
@@ -21,7 +21,12 @@ export type TEditorCommands =
   | "table"
   | "image"
   | "divider"
-  | "issue-embed";
+  | "issue-embed"
+  | "text-color"
+  | "background-color";
+
+export type TColorEditorCommands = Extract<TEditorCommands, "text-color" | "background-color">;
+export type TNonColorEditorCommands = Exclude<TEditorCommands, "text-color" | "background-color">;
 
 export type CommandProps = {
   editor: Editor;
@@ -29,10 +34,12 @@ export type CommandProps = {
 };
 
 export type ISlashCommandItem = {
-  key: TEditorCommands;
+  commandKey: TEditorCommands;
+  key: string;
   title: string;
   description: string;
   searchTerms: string[];
-  icon: ReactNode;
+  icon: React.ReactNode;
+  iconContainerStyle?: CSSProperties;
   command: ({ editor, range }: CommandProps) => void;
 };
