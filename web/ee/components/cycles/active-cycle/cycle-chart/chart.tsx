@@ -41,18 +41,20 @@ export const ActiveCycleChart = observer((props: Props) => {
 
   // derived values
   let endDate: Date | string = new Date(cycle.end_date!);
+  let startDate: Date | string = new Date(cycle.start_date!);
   const today = format(startOfToday(), "yyyy-MM-dd");
   const { diffGradient, dataWithRange } = chartHelper(data, endDate, plotType, colors);
   endDate = endDate.toISOString().split("T")[0];
+  startDate = startDate.toISOString().split("T")[0];
 
   return (
     <ResponsiveContainer height="100%" width="100%">
       <ComposedChart
         data={dataWithRange}
         margin={{
-          top: isFullWidth ? 20 : 30,
+          top: isFullWidth ? 10 : 30,
           right: isFullWidth ? 10 : 0,
-          bottom: isFullWidth ? 20 : 70,
+          bottom: isFullWidth ? 30 : 70,
           left: isFullWidth ? -30 : 20,
         }}
       >
@@ -110,14 +112,22 @@ export const ActiveCycleChart = observer((props: Props) => {
         </defs>
         <Tooltip
           isAnimationActive={false}
-          content={<CustomTooltip active payload={[]} label={""} plotType={plotType} endDate={endDate}/>}
+          content={<CustomTooltip active payload={[]} label={""} plotType={plotType} endDate={endDate} />}
         />
         {/* Cartesian axis */}
         <XAxis
           dataKey="date"
           stroke={colors.axisLines}
           style={{ fontSize: "12px" }}
-          tick={<CustomizedXAxisTicks data={data} endDate={endDate} stroke={colors.axisLines} text={colors.axisText} />}
+          tick={
+            <CustomizedXAxisTicks
+              data={data}
+              endDate={endDate}
+              stroke={colors.axisLines}
+              text={colors.axisText}
+              startDate={startDate}
+            />
+          }
           tickLine={false}
           interval={0}
         />
@@ -168,7 +178,7 @@ export const ActiveCycleChart = observer((props: Props) => {
               fontSize={14}
               className="font-medium"
               angle={270}
-              value={"Beyond Time"}
+              value={"Beyond time"}
               fill={colors.beyondTimeStroke}
               position="middle"
             />

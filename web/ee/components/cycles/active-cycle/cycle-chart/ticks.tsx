@@ -6,42 +6,45 @@ type TProps = {
   y?: number;
   payload?: any;
   data?: TProgressChartData;
+  startDate?: string;
   endDate?: string;
   stroke?: string;
   text?: string;
 };
 const CustomizedXAxisTicks = (props: TProps) => {
-  const { x, y, payload, data, endDate, stroke, text } = props;
+  const { x, y, payload, data, endDate, startDate, stroke, text } = props;
   if (data === undefined || endDate === undefined) return null;
   const [year, month, day] = payload.value.split("-");
   const monthName = new Date(payload.value).toLocaleString("default", { month: "short" });
-  const start = data[0]?.date;
   return (
     <g transform={`translate(${x},${y})`}>
-      {(((day === "01" || payload.index === 0) && start && payload.value !== format(startOfToday(), "yyyy-MM-dd")) ||
+      {(((day === "01" || payload.value === startDate) &&
+        startDate &&
+        payload.value !== format(startOfToday(), "yyyy-MM-dd")) ||
         payload.value === endDate) && (
         <>
-          <line x1="0" y1="-8" x2="0" y2="0" stroke={stroke} stroke-width="1" />
+          <line x1={"0"} y1="-8" x2="0" y2="0" stroke={stroke} stroke-width="1" />
           <text
-            x={0}
+            x={day === "01" || payload.index === 0 ? "-10" : "-5"}
             y={0}
             dy={12}
             textAnchor={payload.index === data.length - 1 ? "end" : "start"}
             fill={text}
             style={{ fontSize: "10px" }}
           >
-            {day === "01" && monthName} {day} {day === "01" && <>&#8594;</>}
+            {(day === "01" || payload.index === 0) && monthName} {day}
+            {day === "01" && <>&#8594;</>}
           </text>
-          {(payload.index === 0 || payload.value === endDate) && (
+          {(payload.value === startDate || payload.value === endDate) && (
             <text
-              x={0}
+              x={-8}
               y={12}
               dy={16}
               textAnchor={payload.index === data.length - 1 ? "end" : "start"}
               fill={text}
               style={{ fontSize: "10px" }}
             >
-              {payload.index === 0 ? "Start" : "End"}
+              {payload.value === startDate ? "Start" : "End"}
             </text>
           )}
         </>
@@ -52,7 +55,26 @@ const CustomizedXAxisTicks = (props: TProps) => {
           <text x={0} y={0} dy={12} textAnchor={"middle"} fill={text} style={{ fontSize: "10px" }}>
             {day}
           </text>
-          <svg x={-17} y={18} dy={18} width="34" height="16px" xmlns="http://www.w3.org/2000/svg">
+          {(payload.value === startDate || payload.value === endDate) && (
+            <text
+              x={-12}
+              y={8}
+              dy={16}
+              textAnchor={payload.index === data.length - 1 ? "end" : "start"}
+              fill={text}
+              style={{ fontSize: "10px" }}
+            >
+              {payload.value === startDate ? "Start" : "End"}
+            </text>
+          )}
+          <svg
+            x={-17}
+            y={payload.value === startDate || payload.value === endDate ? 30 : 18}
+            dy={payload.value === startDate || payload.value === endDate ? 30 : 18}
+            width="34"
+            height="16px"
+            xmlns="http://www.w3.org/2000/svg"
+          >
             <rect rx="2" width="100%" height="100%" fill="#667699" />
             <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="10px">
               Today

@@ -65,7 +65,7 @@ const ActiveCycleDetail = observer((props: ActiveCycleDetailProps) => {
     <div ref={ref} className="flex flex-col">
       <Row
         className={cn(`flex bg-custom-background-100 justify-between !pr-0 flex-col space-y-10`, {
-          "md:flex-row-reverse space-y-0": containerWidth > 620,
+          "md:flex-row-reverse space-y-0": containerWidth > 890,
         })}
       >
         <div className="h-full w-full flex-1">
@@ -77,14 +77,14 @@ const ActiveCycleDetail = observer((props: ActiveCycleDetailProps) => {
                 projectId={projectId}
                 handlePlotChange={handlePlotChange}
                 handleEstimateChange={handleEstimateChange}
-                className={`${containerWidth < 620 && "!px-0"}`}
-                showEstimateSelection={!isEmpty(activeCycle.estimate_distribution)}
+                className={`${containerWidth < 890 && "!px-0"}`}
+                cycleId={activeCycle.id}
               />
               <ActiveCycleChart
                 areaToHighlight={areaToHighlight}
                 data={cycleProgress as TProgressChartData}
                 cycle={activeCycle}
-                isFullWidth={containerWidth < 620}
+                isFullWidth={containerWidth < 890}
                 estimateType={computedEstimateType}
                 plotType={computedPlotType}
               />

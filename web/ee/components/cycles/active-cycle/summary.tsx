@@ -85,12 +85,11 @@ const Summary = observer((props: Props) => {
 
   return (
     <div
-      className={cn("py-4 pr-6 md:min-w-[250px]", {
-        "md:w-[300px]": parentWidth && parentWidth > 700,
-        "md:border-r border-custom-border-200": parentWidth && parentWidth > 620,
+      className={cn("py-4 pr-6 w-full md:min-w-[250px]", {
+        "md:w-[300px] md:border-r border-custom-border-200": parentWidth && parentWidth > 890,
       })}
     >
-      <div className="text-xs text-custom-text-400 font-medium">Summary of cycle issues</div>
+      <div className="text-xs text-custom-text-350 font-medium">Breakdown of this cycle&rsquo;s issues</div>
       <div
         className={cn("border-b border-custom-border-200 w-full flex text-red-500 py-2", {
           "text-green-500": !isBehind,
@@ -116,9 +115,10 @@ const Summary = observer((props: Props) => {
       </div>
 
       <div className="space-y-1 mt-2 pb-4 border-b border-custom-border-200">
-        <div className="flex text-xs text-custom-text-400 font-medium">
-          <span className="w-5/6 capitalize">{estimateType.slice(0, -1)} states on chart</span>
-          <span className="w-1/6 text-end capitalize">{estimateType}</span>
+        <div className="flex text-xs text-custom-text-350 font-medium">
+          <span className="w-5/6 capitalize">
+            {estimateType.slice(0, -1)}s <span className="lowercase">by stategroups on chart</span>
+          </span>
         </div>
         {stateGroups.primaryStates.map((group, index) => (
           <div
@@ -150,7 +150,7 @@ const Summary = observer((props: Props) => {
                   <Loader.Item width="20px" height="20px" />
                 ) : (
                   <span
-                    className={`py-0.5 rounded ${group.showBg && `px-1 text-white`}`}
+                    className={`py-0.5 rounded  ${group.showBg ? (resolvedTheme?.includes("dark") ? `px-1 text-black` : `px-1 text-white`) : `text-custom-text-350`}`}
                     style={{ backgroundColor: group.showBg ? group.color : "" }}
                   >
                     {(dataToday && Math.round(dataToday[group.key as keyof TCycleProgress] as number)) || 0}
@@ -162,8 +162,8 @@ const Summary = observer((props: Props) => {
         ))}
       </div>
       <div className="space-y-1 mt-2 pb-4 border-b border-custom-border-200">
-        <div className="flex text-xs text-custom-text-400 font-medium">
-          <span className="w-5/6">Other {estimateType.slice(0, -1)} states</span>
+        <div className="flex text-xs text-custom-text-350 font-medium">
+          <span className="w-5/6">Other {estimateType.slice(0, -1)} stategroups</span>
         </div>
         {stateGroups.secondaryStates.map((group, index) => (
           <div
@@ -177,7 +177,7 @@ const Summary = observer((props: Props) => {
             }}
           >
             <span className="w-5/6">{group.group}</span>
-            <span className="w-1/6 text-end font-bold text-custom-text-300 flex justify-end">
+            <span className="w-1/6 text-end font-bold text-custom-text-350 flex justify-end">
               {!data ? (
                 <Loader.Item width="20px" height="20px" />
               ) : (
@@ -188,23 +188,26 @@ const Summary = observer((props: Props) => {
         ))}
       </div>
 
-      <div className="text-xs text-custom-text-400 font-medium flex pt-2 gap-2">
+      <div className="text-xs text-custom-text-350 font-medium flex pt-2 gap-2">
         <Info className="text-xs mt-[2px]" size={12} />
         <div className="flex flex-col space-y-2">
           {!data ? (
             <Loader.Item width="200px" height="20px" />
           ) : (
             <span>
-              {dataToday?.cancelled || 0} Cancelled {estimateType} (excluded)
+              Excluded {dataToday?.cancelled || 0} cancelled {estimateType}
             </span>
           )}
           {!data ? (
             <Loader.Item width="200px" height="20px" />
-          ) : (
+          ) : scopeChangeCount ? (
             <span>
-              Scope has changed {scopeChangeCount} {scopeChangeCount === 1 ? "time" : "times"}
+              Scope has changed
+              {scopeChangeCount === 1 ? " once" : null}
+              {scopeChangeCount === 2 ? " twice" : null}
+              {scopeChangeCount > 2 ? ` ${scopeChangeCount} times` : null}
             </span>
-          )}
+          ) : null}
         </div>
       </div>
     </div>

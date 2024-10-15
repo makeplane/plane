@@ -42,22 +42,22 @@ const ProgressDonut = (props: Props) => {
       onMouseLeave={handleMouseLeave}
     >
       <CircularProgressIndicator size={82} percentage={percentage} strokeWidth={3}>
-        <span className="text-lg text-custom-primary-200 font-medium">
+        <span className="text-[20px] text-custom-primary-200 font-bold">
           {progress ? (hoverStep === 3 ? days_left : `${percentage ? percentage.toFixed(0) : 0}%`) : "0%"}
         </span>
 
         {hoverStep === 1 && (
-          <div className="text-custom-primary-200 text-[9px] uppercase whitespace-nowrap">
-            <span className="font-semibold">{progress?.completed || 0}</span> Issues <br /> done
+          <div className="text-custom-primary-200 text-[9px] uppercase whitespace-nowrap tracking-[0.9px] font-semibold leading-[11px]">
+            <span className="font-semibold">{progress?.completed || 0}</span> Issue(s) <br /> done
           </div>
         )}
         {hoverStep === 2 && (
-          <div className="text-custom-primary-200 text-[9px] uppercase whitespace-nowrap">
-            <span className="font-semibold">{progress?.pending || 0}</span> Issues <br /> pending
+          <div className="text-custom-primary-200 text-[9px] uppercase whitespace-nowrap tracking-[0.9px] font-semibold leading-[11px]">
+            <span className="font-semibold">{progress?.pending || 0}</span> Issue(s) <br /> pending
           </div>
         )}
         {hoverStep === 3 && (
-          <div className="text-custom-primary-200 text-[9px] uppercase whitespace-nowrap">
+          <div className="text-custom-primary-200 text-[9px] uppercase whitespace-nowrap tracking-[0.9px] font-semibold leading-[11px]">
             {days_left === 1 ? "Day" : "Days"} <br /> left
           </div>
         )}

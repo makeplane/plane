@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import { cn } from "@plane/editor";
 import { TCycleEstimateType, TCyclePlotType } from "@plane/types";
 import { CustomSelect, Row } from "@plane/ui";
-import { useProjectEstimates } from "@/hooks/store";
+import { EstimateTypeDropdown } from "@/components/cycles";
 
 type options = {
   value: string;
@@ -12,10 +12,6 @@ const cycleChartOptions: options[] = [
   { value: "burndown", label: "Burn-down" },
   { value: "burnup", label: "Build-up" },
 ];
-export const cycleEstimateOptions: options[] = [
-  { value: "issues", label: "issues" },
-  { value: "points", label: "points" },
-];
 
 export type TSelectionProps = {
   plotType: TCyclePlotType;
@@ -24,7 +20,7 @@ export type TSelectionProps = {
   handlePlotChange: (value: TCyclePlotType | TCycleEstimateType) => Promise<void>;
   handleEstimateChange: (value: TCyclePlotType | TCycleEstimateType) => Promise<void>;
   className?: string;
-  showEstimateSelection?: boolean;
+  cycleId: string;
 };
 export type TDropdownProps = {
   value: string;
@@ -38,7 +34,7 @@ const Dropdown = ({ value, onChange, options }: TDropdownProps) => (
       label={<span>{options.find((v) => v.value === value)?.label ?? "None"}</span>}
       onChange={onChange}
       maxHeight="lg"
-      buttonClassName="bg-custom-background-90 border-none rounded text-sm font-medium"
+      buttonClassName="bg-custom-background-90 border-none rounded text-sm font-medium "
     >
       {options.map((item) => (
         <CustomSelect.Option key={item.value} value={item.value}>
@@ -49,26 +45,22 @@ const Dropdown = ({ value, onChange, options }: TDropdownProps) => (
   </div>
 );
 const Selection = observer((props: TSelectionProps) => {
-  const {
-    plotType,
-    estimateType,
-    projectId,
-    handlePlotChange,
-    handleEstimateChange,
-    className,
-    showEstimateSelection,
-  } = props;
-  const { areEstimateEnabledByProjectId } = useProjectEstimates();
-  const isCurrentProjectEstimateEnabled = projectId && areEstimateEnabledByProjectId(projectId) ? true : false;
+  const { plotType, estimateType, projectId, handlePlotChange, handleEstimateChange, className, cycleId } = props;
   return (
     <Row className={cn("h-[40px] mt-2 py-4 flex text-sm items-center gap-2 font-medium", className)}>
       <Dropdown value={plotType} onChange={handlePlotChange} options={cycleChartOptions} />
-      {showEstimateSelection && isCurrentProjectEstimateEnabled && (
-        <>
-          <span className="text-custom-text-400">for</span>
-          <Dropdown value={estimateType} onChange={handleEstimateChange} options={cycleEstimateOptions} />
-        </>
-      )}
+      <>
+        <span className="text-custom-text-350">for</span>
+        {
+          <EstimateTypeDropdown
+            value={estimateType}
+            onChange={handleEstimateChange}
+            projectId={projectId}
+            cycleId={cycleId}
+            showDefault
+          />
+        }
+      </>
     </Row>
   );
 });
