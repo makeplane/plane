@@ -96,7 +96,7 @@ export const PagesListLayoutRoot: React.FC<Props> = observer((props) => {
 
   return (
     <div className="size-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
-      {pageIds?.map((pageId) => (
+      {filteredPageIds?.map((pageId) => (
         <PageListBlock key={pageId} workspaceSlug={workspaceSlug.toString()} pageId={pageId} />
       ))}
     </div>
