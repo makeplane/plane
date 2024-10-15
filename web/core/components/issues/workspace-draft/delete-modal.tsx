@@ -8,24 +8,22 @@ import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { PROJECT_ERROR_MESSAGES } from "@/constants/project";
 // hooks
-import { useIssues, useProject, useUser, useUserPermissions } from "@/hooks/store";
+import { useIssues, useUser, useUserPermissions } from "@/hooks/store";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
   dataId?: string | null | undefined;
   data?: TWorkspaceDraftIssue;
-  isSubIssue?: boolean;
   onSubmit?: () => Promise<void>;
 };
 
 export const WorkspaceDraftIssueDeleteIssueModal: React.FC<Props> = (props) => {
-  const { dataId, data, isOpen, handleClose, isSubIssue = false, onSubmit } = props;
+  const { dataId, data, isOpen, handleClose, onSubmit } = props;
   // states
   const [isDeleting, setIsDeleting] = useState(false);
   // store hooks
   const { issueMap } = useIssues();
-  const { getProjectById } = useProject();
   const { allowPermissions } = useUserPermissions();
 
   const { data: currentUser } = useUser();
@@ -41,7 +39,6 @@ export const WorkspaceDraftIssueDeleteIssueModal: React.FC<Props> = (props) => {
 
   // derived values
   const issue = data ? data : issueMap[dataId!];
-  const projectDetails = getProjectById(issue?.project_id);
   const isIssueCreator = issue?.created_by === currentUser?.id;
   const authorized = isIssueCreator || canPerformProjectAdminActions;
 
@@ -68,7 +65,7 @@ export const WorkspaceDraftIssueDeleteIssueModal: React.FC<Props> = (props) => {
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: "Success!",
-            message: `${isSubIssue ? "Sub-issue" : "Issue"} deleted successfully`,
+            message: `draft deleted.`,
           });
           onClose();
         })
@@ -92,14 +89,8 @@ export const WorkspaceDraftIssueDeleteIssueModal: React.FC<Props> = (props) => {
       handleSubmit={handleIssueDelete}
       isSubmitting={isDeleting}
       isOpen={isOpen}
-      title="Delete issue"
-      content={
-        <>
-          Are you sure you want to delete issue{" "}
-          <span className="break-words font-medium text-custom-text-100">{projectDetails?.identifier}</span>
-          {""}? All of the data related to the issue will be permanently removed. This action cannot be undone.
-        </>
-      }
+      title="Delete draft"
+      content={<>Are you sure you want to delete this draft? This can't be undone.</>}
     />
   );
 };

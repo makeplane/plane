@@ -74,7 +74,7 @@ export const DraftIssueBlock: FC<Props> = observer((props) => {
     },
     {
       key: "move-to-issues",
-      title: "Move to issues",
+      title: "Move to project",
       icon: SquareStackIcon,
       action: () => {
         setMoveToIssue(true);

@@ -104,7 +104,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
-          message: "Draft Issue created successfully.",
+          message: "Draft created.",
         });
         captureIssueEvent({
           eventName: "Draft issue created",
