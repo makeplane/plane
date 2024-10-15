@@ -3,6 +3,7 @@ import strawberry
 from strawberry.types import Info
 from strawberry.scalars import JSON
 from strawberry.permission import PermissionExtension
+from strawberry.exceptions import GraphQLError
 
 # Third-party imports
 from asgiref.sync import sync_to_async
@@ -41,20 +42,30 @@ class ProjectMutation:
         identifier: str,
         description: Optional[str] = "",
         network: int = 2,
-        project_lead: Optional[str] = None,
+        cover_image: Optional[str] = None,
+        project_lead: Optional[strawberry.ID] = None,
         logo_props: Optional[JSON] = {},
         page_view: Optional[bool] = False,
     ) -> ProjectType:
         workspace = await sync_to_async(Workspace.objects.get)(slug=slug)
-        project = await sync_to_async(Project.objects.create)(
-            name=name,
-            identifier=identifier,
-            description=description,
-            network=network,
-            logo_props=logo_props,
-            page_view=page_view,
-            workspace=workspace,
-        )
+        try:
+            project = await sync_to_async(Project.objects.create)(
+                name=name,
+                identifier=identifier,
+                description=description,
+                network=network,
+                logo_props=logo_props,
+                cover_image=cover_image,
+                page_view=page_view,
+                workspace=workspace,
+            )
+        except Exception:
+            message = "Project with this identifier already exists"
+            error_extensions = {
+                "code": "IDENTIFIER_ALREADY_EXISTS",
+                "statusCode": 400,
+            }
+            raise GraphQLError(message, extensions=error_extensions)
 
         # add the user as a admin of the project
         _ = await sync_to_async(ProjectMember.objects.create)(
@@ -151,6 +162,7 @@ class ProjectMutation:
         network: Optional[int] = None,
         logo_props: Optional[JSON] = None,
         page_view: Optional[bool] = None,
+        cover_image: Optional[str] = None,
     ) -> ProjectType:
         project = await sync_to_async(Project.objects.get)(id=id)
         if name is not None:
@@ -165,6 +177,10 @@ class ProjectMutation:
             project.logo_props = logo_props
         if page_view is not None:
             project.page_view = page_view
+        if page_view is not None:
+            project.page_view = page_view
+        if cover_image is not None:
+            project.cover_image = cover_image
         await sync_to_async(project.save)()
         return project
 
