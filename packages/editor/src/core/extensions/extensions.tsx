@@ -9,6 +9,7 @@ import { Markdown } from "tiptap-markdown";
 // extensions
 import {
   CustomBackgroundColorExtension,
+  CustomCalloutExtension,
   CustomCodeBlockExtension,
   CustomCodeInlineExtension,
   CustomCodeMarkPlugin,
@@ -157,5 +158,6 @@ export const CoreEditorExtensions = (args: TArguments) => {
     CharacterCount,
     CustomTextColorExtension,
     CustomBackgroundColorExtension,
+    CustomCalloutExtension,
   ];
 };
