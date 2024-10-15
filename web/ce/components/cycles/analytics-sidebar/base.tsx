@@ -3,15 +3,14 @@ import { FC, Fragment } from "react";
 import { observer } from "mobx-react";
 // plane ui
 import { TCycleEstimateType } from "@plane/types";
-import { EEstimateSystem } from "@plane/types/src/enums";
-import { CustomSelect, Loader } from "@plane/ui";
+import { Loader } from "@plane/ui";
 // components
 import ProgressChart from "@/components/core/sidebar/progress-chart";
-import { cycleEstimateOptions, validateCycleSnapshot } from "@/components/cycles";
+import { EstimateTypeDropdown, validateCycleSnapshot } from "@/components/cycles";
 // helpers
 import { getDate } from "@/helpers/date-time.helper";
 // hooks
-import { useCycle, useProjectEstimates } from "@/hooks/store";
+import { useCycle } from "@/hooks/store";
 
 type ProgressChartProps = {
   workspaceSlug: string;
@@ -24,7 +23,6 @@ export const SidebarChart: FC<ProgressChartProps> = observer((props) => {
   // hooks
   const { getEstimateTypeByCycleId, getCycleById, fetchCycleDetails, fetchArchivedCycleDetails, setEstimateType } =
     useCycle();
-  const { currentActiveEstimateId, areEstimateEnabledByProjectId, estimateById } = useProjectEstimates();
 
   // derived data
   const cycleDetails = validateCycleSnapshot(getCycleById(cycleId));
@@ -33,10 +31,7 @@ export const SidebarChart: FC<ProgressChartProps> = observer((props) => {
   const totalEstimatePoints = cycleDetails?.total_estimate_points || 0;
   const totalIssues = cycleDetails?.total_issues || 0;
   const estimateType = getEstimateTypeByCycleId(cycleId);
-  const isCurrentProjectEstimateEnabled = Boolean(projectId && areEstimateEnabledByProjectId(projectId));
-  const estimateDetails =
-    isCurrentProjectEstimateEnabled && currentActiveEstimateId && estimateById(currentActiveEstimateId);
-  const isCurrentEstimateTypeIsPoints = estimateDetails && estimateDetails?.type === EEstimateSystem.POINTS;
+
   const chartDistributionData =
     estimateType === "points" ? cycleDetails?.estimate_distribution : cycleDetails?.distribution || undefined;
 
@@ -63,23 +58,9 @@ export const SidebarChart: FC<ProgressChartProps> = observer((props) => {
   };
   return (
     <>
-      {isCurrentEstimateTypeIsPoints && (
-        <div className="relative flex items-center justify-between gap-2 pt-4">
-          <CustomSelect
-            value={estimateType}
-            label={<span>{cycleEstimateOptions.find((v) => v.value === estimateType)?.label ?? "None"}</span>}
-            onChange={onChange}
-            maxHeight="lg"
-            buttonClassName="border-none rounded text-sm font-medium capitalize"
-          >
-            {cycleEstimateOptions.map((item) => (
-              <CustomSelect.Option key={item.value} value={item.value} className="capitalize">
-                {item.label}
-              </CustomSelect.Option>
-            ))}
-          </CustomSelect>
-        </div>
-      )}
+      <div className="relative flex items-center justify-between gap-2 pt-4">
+        <EstimateTypeDropdown value={estimateType} onChange={onChange} cycleId={cycleId} projectId={projectId} />
+      </div>
       <div className="py-4">
         <div>
           <div className="relative flex items-center gap-2">
