@@ -31,10 +31,19 @@ type Props = {
   isFullWidth?: boolean;
   estimateType?: string;
   plotType: string;
+  showToday?: boolean;
 };
 
 export const ActiveCycleChart = observer((props: Props) => {
-  const { areaToHighlight, data = [], cycle, isFullWidth = false, plotType, estimateType = "ISSUES" } = props;
+  const {
+    areaToHighlight,
+    data = [],
+    cycle,
+    isFullWidth = false,
+    plotType,
+    estimateType = "ISSUES",
+    showToday,
+  } = props;
 
   const { resolvedTheme } = useTheme();
   const colors = getColors(resolvedTheme);
@@ -53,7 +62,7 @@ export const ActiveCycleChart = observer((props: Props) => {
         data={dataWithRange}
         margin={{
           top: isFullWidth ? 10 : 30,
-          right: isFullWidth ? 10 : 0,
+          right: isFullWidth ? 10 : 20,
           bottom: isFullWidth ? 30 : 70,
           left: isFullWidth ? -30 : 20,
         }}
@@ -126,10 +135,12 @@ export const ActiveCycleChart = observer((props: Props) => {
               stroke={colors.axisLines}
               text={colors.axisText}
               startDate={startDate}
+              showToday={showToday}
             />
           }
           tickLine={false}
           interval={0}
+          minTickGap={5}
         />
         <YAxis
           tickCount={10}
@@ -165,8 +176,9 @@ export const ActiveCycleChart = observer((props: Props) => {
           fillOpacity={0.5}
         />
 
+        {/* Required when manual cycles are implemented */}
         {/* Beyond Time */}
-        <Area dataKey="beyondTime" stroke="#FF9999" strokeWidth={0} fill={`url(#fillTimeBeyond)`} />
+        {/* <Area dataKey="beyondTime" stroke="#FF9999" strokeWidth={0} fill={`url(#fillTimeBeyond)`} />
         <ReferenceArea
           x1={endDate}
           x2={dataWithRange[dataWithRange.length - 1]?.date}
@@ -183,7 +195,7 @@ export const ActiveCycleChart = observer((props: Props) => {
               position="middle"
             />
           )}
-        </ReferenceArea>
+        </ReferenceArea> */}
 
         {/* Today */}
         {today < endDate && (
@@ -191,8 +203,38 @@ export const ActiveCycleChart = observer((props: Props) => {
         )}
         {/* Beyond Time */}
         <ReferenceLine x={endDate} stroke={colors.beyondTimeStroke} label="" strokeDasharray="3 3" />
+        {/* Ideal - Actual */}
+        <Area dataKey="range" strokeWidth={0} fill={`url(#diff)`} isAnimationActive={false} />
+
+        {/* Ideal */}
+        <Line
+          type="linear"
+          dataKey="ideal"
+          strokeWidth={1}
+          stroke={colors.idealStroke}
+          dot={false}
+          strokeDasharray="5 5"
+          isAnimationActive={false}
+        />
+        {areaToHighlight === "ideal" && (
+          <Area
+            dataKey="ideal"
+            fill="url(#fillIdeal)"
+            fillOpacity={0.4}
+            stroke={colors.idealStroke}
+            strokeWidth={0}
+            isAnimationActive={false}
+          />
+        )}
         {/* Started */}
-        <Line type="linear" dataKey="started" strokeWidth={1} stroke={colors.startedStroke} dot={false} />
+        <Line
+          type="linear"
+          dataKey="started"
+          strokeWidth={2}
+          stroke={colors.startedStroke}
+          dot={false}
+          isAnimationActive={false}
+        />
         {areaToHighlight === "started" && (
           <Area
             dataKey="started"
@@ -222,26 +264,7 @@ export const ActiveCycleChart = observer((props: Props) => {
             isAnimationActive={false}
           />
         )}
-        {/* Ideal */}
-        <Line
-          type="linear"
-          dataKey="ideal"
-          strokeWidth={1}
-          stroke={colors.idealStroke}
-          dot={false}
-          strokeDasharray="5 5"
-          isAnimationActive={false}
-        />
-        {areaToHighlight === "ideal" && (
-          <Area
-            dataKey="ideal"
-            fill="url(#fillIdeal)"
-            fillOpacity={0.4}
-            stroke={colors.idealStroke}
-            strokeWidth={0}
-            isAnimationActive={false}
-          />
-        )}
+
         {/* Scope */}
         <Line
           type="stepAfter"
@@ -267,8 +290,6 @@ export const ActiveCycleChart = observer((props: Props) => {
             isAnimationActive={false}
           />
         )}
-        {/* Ideal - Actual */}
-        <Area dataKey="range" strokeWidth={0} fill={`url(#diff)`} isAnimationActive={false} />
       </ComposedChart>
     </ResponsiveContainer>
   );

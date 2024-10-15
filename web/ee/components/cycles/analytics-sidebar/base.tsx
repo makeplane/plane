@@ -1,6 +1,5 @@
 "use client";
 
-import { isEmpty } from "lodash";
 import { observer } from "mobx-react";
 // helpers
 import { TCycleEstimateType, TCyclePlotType } from "@plane/types";
@@ -76,8 +75,8 @@ export const SidebarChart = observer((props: TProps) => {
           projectId={projectId}
           handlePlotChange={handlePlotChange}
           handleEstimateChange={handleEstimateChange}
-          showEstimateSelection={!isEmpty(cycle.estimate_distribution)}
           className="!px-0 mt-0"
+          cycleId={cycle.id}
         />
         <div className="flex items-center justify-center gap-2">
           <div className="flex items-center gap-1 text-xs">

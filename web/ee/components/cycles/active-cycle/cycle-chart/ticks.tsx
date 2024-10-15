@@ -10,9 +10,10 @@ type TProps = {
   endDate?: string;
   stroke?: string;
   text?: string;
+  showToday?: boolean;
 };
 const CustomizedXAxisTicks = (props: TProps) => {
-  const { x, y, payload, data, endDate, startDate, stroke, text } = props;
+  const { x, y, payload, data, endDate, startDate, stroke, text, showToday } = props;
   if (data === undefined || endDate === undefined) return null;
   const [year, month, day] = payload.value.split("-");
   const monthName = new Date(payload.value).toLocaleString("default", { month: "short" });
@@ -25,7 +26,7 @@ const CustomizedXAxisTicks = (props: TProps) => {
         <>
           <line x1={"0"} y1="-8" x2="0" y2="0" stroke={stroke} stroke-width="1" />
           <text
-            x={day === "01" || payload.index === 0 ? "-10" : "-5"}
+            x={day === "01" || payload.index === 0 ? "-10" : payload.value === endDate ? "5" : "-5"}
             y={0}
             dy={12}
             textAnchor={payload.index === data.length - 1 ? "end" : "start"}
@@ -37,7 +38,7 @@ const CustomizedXAxisTicks = (props: TProps) => {
           </text>
           {(payload.value === startDate || payload.value === endDate) && (
             <text
-              x={-8}
+              x={payload.value === endDate ? "10" : "-8"}
               y={12}
               dy={16}
               textAnchor={payload.index === data.length - 1 ? "end" : "start"}
@@ -52,7 +53,7 @@ const CustomizedXAxisTicks = (props: TProps) => {
       {payload.value === format(startOfToday(), "yyyy-MM-dd") && payload.value < endDate && (
         <>
           <line x1="0" y1="-8" x2="0" y2="0" stroke={stroke} stroke-width="1" />
-          <text x={0} y={0} dy={12} textAnchor={"middle"} fill={text} style={{ fontSize: "10px" }}>
+          <text x={0} y={0} dy={12} textAnchor={"middle"} fill={text} style={{ fontSize: "10px", fontWeight: 500 }}>
             {day}
           </text>
           {(payload.value === startDate || payload.value === endDate) && (
@@ -67,19 +68,21 @@ const CustomizedXAxisTicks = (props: TProps) => {
               {payload.value === startDate ? "Start" : "End"}
             </text>
           )}
-          <svg
-            x={-17}
-            y={payload.value === startDate || payload.value === endDate ? 30 : 18}
-            dy={payload.value === startDate || payload.value === endDate ? 30 : 18}
-            width="34"
-            height="16px"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <rect rx="2" width="100%" height="100%" fill="#667699" />
-            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="10px">
-              Today
-            </text>
-          </svg>
+          {showToday && (
+            <svg
+              x={-17}
+              y={payload.value === startDate || payload.value === endDate ? 30 : 18}
+              dy={payload.value === startDate || payload.value === endDate ? 30 : 18}
+              width="34"
+              height="16px"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect rx="2" width="100%" height="100%" fill="#667699" />
+              <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="10px">
+                Today
+              </text>
+            </svg>
+          )}
         </>
       )}
     </g>

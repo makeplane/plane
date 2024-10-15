@@ -13,7 +13,9 @@ const ideal = (date: string, scope: number, cycle: ICycle) => {
 const formatV1Data = (isTypeIssue: boolean, cycle: ICycle, isBurnDown: boolean, endDate: Date | string) => {
   const today = format(startOfToday(), "yyyy-MM-dd");
   const data = isTypeIssue ? cycle.distribution : cycle.estimate_distribution;
-  const extendedArray = generateDateArray(endDate, endDate).map((d) => d.date);
+  const extendedArray = generateDateArray(endDate, endDate)
+    .filter((d) => d.date >= cycle.start_date! && d.date <= cycle.end_date!)
+    .map((d) => d.date);
   if (!data?.completion_chart) return null;
   if (isEmpty(data?.completion_chart)) return generateDateArray(new Date(cycle.start_date!), endDate);
   let progress = [...Object.keys(data.completion_chart), ...extendedArray].map((p) => {
@@ -23,7 +25,7 @@ const formatV1Data = (isTypeIssue: boolean, cycle: ICycle, isBurnDown: boolean, 
     const idealDone = ideal(p, total, cycle);
     return {
       date: p,
-      scope: p! <= format(endDate as Date, "yyyy-MM-dd") ? total : null,
+      scope: p! <= cycle.end_date! ? total : null,
       completed,
       backlog: isTypeIssue ? cycle.backlog_issues : cycle.backlog_estimate_points,
       started: p === today ? cycle[isTypeIssue ? "started_issues" : "started_estimate_points"] : undefined,
@@ -42,7 +44,11 @@ const formatV1Data = (isTypeIssue: boolean, cycle: ICycle, isBurnDown: boolean, 
 const formatV2Data = (isTypeIssue: boolean, cycle: ICycle, isBurnDown: boolean, endDate: Date | string) => {
   let today: Date | string = startOfToday();
   const extendedArray =
-    endDate > today ? generateDateArray(today as Date, endDate).filter((d) => d.date >= cycle.start_date!) : [];
+    endDate > today
+      ? generateDateArray(today as Date, endDate).filter(
+          (d) => d.date >= cycle.start_date! && d.date <= cycle.end_date!
+        )
+      : [];
   if (!cycle?.progress) return null;
   if (isEmpty(cycle.progress)) return generateDateArray(new Date(cycle.start_date!), endDate);
   const startDate = cycle.start_date && format(new Date(cycle.start_date), "yyyy-MM-dd");
