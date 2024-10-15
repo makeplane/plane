@@ -432,9 +432,14 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   type="button"
                   size="sm"
                   loading={isSubmitting}
-                  onClick={() =>
-                    data?.id && data && moveIssue(workspaceSlug.toString(), data?.id, data as TWorkspaceDraftIssue)
-                  }
+                  onClick={() => {
+                    if (data?.id && data) {
+                      moveIssue(workspaceSlug.toString(), data?.id, {
+                        ...data,
+                        ...getValues(),
+                      } as TWorkspaceDraftIssue);
+                    }
+                  }}
                 >
                   Add to project
                 </Button>
