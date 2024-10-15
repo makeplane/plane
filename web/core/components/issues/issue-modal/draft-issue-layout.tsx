@@ -142,6 +142,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
         issueTypeId: response.type_id,
         projectId,
         workspaceSlug: workspaceSlug?.toString(),
+        isDraft: true,
       });
     }
   };
