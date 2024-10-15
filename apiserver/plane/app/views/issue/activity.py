@@ -29,6 +29,8 @@ from plane.db.models import (
     IssueComment,
     CommentReaction,
 )
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.payment.flags.flag import FeatureFlag
 
 
 class IssueActivityEndpoint(BaseAPIView):
@@ -61,6 +63,13 @@ class IssueActivityEndpoint(BaseAPIView):
             .filter(**filters)
             .select_related("actor", "workspace", "issue", "project")
         ).order_by("created_at")
+
+        if not check_workspace_feature_flag(
+            feature_key=FeatureFlag.ISSUE_TYPE_DISPLAY,
+            slug=slug,
+        ):
+            issue_activities = issue_activities.filter(~Q(field="type"))
+
         issue_comments = (
             IssueComment.objects.filter(issue_id=issue_id)
             .filter(
