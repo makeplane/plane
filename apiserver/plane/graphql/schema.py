@@ -47,6 +47,7 @@ from .queries.issues import (
     SubIssuesQuery,
 )
 from .queries.dashboard import userInformationQuery
+from .queries.external import UnsplashImagesQuery, ProjectCoversQuery
 
 # mutations
 from .mutations.workspace import WorkspaceMutation, WorkspaceInviteMutation
@@ -127,6 +128,8 @@ class Query(
     IssueRelationQuery,
     IssuesSearchQuery,
     userInformationQuery,
+    UnsplashImagesQuery,
+    ProjectCoversQuery,
 ):
     pass
 
