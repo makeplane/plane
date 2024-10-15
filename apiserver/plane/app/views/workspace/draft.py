@@ -279,7 +279,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                         {
                             "updated_cycle_issues": None,
                             "created_cycle_issues": serializers.serialize(
-                                "json", created_records
+                                "json", [created_records]
                             ),
                         }
                     ),
