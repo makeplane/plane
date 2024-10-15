@@ -38,13 +38,13 @@ from .queries.module import (
     ModuleIssueUserPropertyQuery,
 )
 from .queries.search import GlobalSearchQuery
-from .queries.attachment import IssueAttachmentQuery
 from .queries.link import IssueLinkQuery
 from .queries.estimate import EstimatePointQuery
 from .queries.issues import (
     IssueRelationQuery,
     IssuesSearchQuery,
     SubIssuesQuery,
+    IssueAttachmentQuery,
 )
 from .queries.dashboard import userInformationQuery
 from .queries.external import UnsplashImagesQuery, ProjectCoversQuery
