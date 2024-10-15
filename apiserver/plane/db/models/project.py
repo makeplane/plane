@@ -181,7 +181,9 @@ class ProjectBaseModel(BaseModel):
         Project, on_delete=models.CASCADE, related_name="project_%(class)s"
     )
     workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="workspace_%(class)s"
+        "db.Workspace",
+        on_delete=models.CASCADE,
+        related_name="workspace_%(class)s",
     )
 
     class Meta:
@@ -283,26 +285,6 @@ class ProjectIdentifier(AuditModel):
         verbose_name_plural = "Project Identifiers"
         db_table = "project_identifiers"
         ordering = ("-created_at",)
-
-
-# DEPRECATED TODO: - Remove in next release
-class ProjectFavorite(ProjectBaseModel):
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="project_favorites",
-    )
-
-    class Meta:
-        unique_together = ["project", "user"]
-        verbose_name = "Project Favorite"
-        verbose_name_plural = "Project Favorites"
-        db_table = "project_favorites"
-        ordering = ("-created_at",)
-
-    def __str__(self):
-        """Return user of the project"""
-        return f"{self.user.email} <{self.project.name}>"
 
 
 def get_anchor():
