@@ -31,6 +31,11 @@ export interface DraftIssueProps {
   projectId: string;
   isDraft: boolean;
   moveToIssue?: boolean;
+  modalTitle?: string;
+  primaryButtonText?: {
+    default: string;
+    loading: string;
+  };
 }
 
 export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
@@ -47,6 +52,8 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
     onCreateMoreToggleChange,
     isDraft,
     moveToIssue = false,
+    modalTitle,
+    primaryButtonText,
   } = props;
   // states
   const [issueDiscardModal, setIssueDiscardModal] = useState(false);
@@ -132,6 +139,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
     if (response && handleCreateUpdatePropertyValues) {
       handleCreateUpdatePropertyValues({
         issueId: response.id,
+        issueTypeId: response.type_id,
         projectId,
         workspaceSlug: workspaceSlug?.toString(),
       });
@@ -162,6 +170,8 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
         projectId={projectId}
         isDraft={isDraft}
         moveToIssue={moveToIssue}
+        modalTitle={modalTitle}
+        primaryButtonText={primaryButtonText}
       />
     </>
   );

@@ -61,6 +61,11 @@ export interface IssueFormProps {
   projectId: string;
   isDraft: boolean;
   moveToIssue?: boolean;
+  modalTitle?: string;
+  primaryButtonText?: {
+    default: string;
+    loading: string;
+  };
 }
 
 export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
@@ -76,6 +81,11 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     onCreateMoreToggleChange,
     isDraft,
     moveToIssue,
+    modalTitle = `${data?.id ? "Update" : isDraft ? "Create a draft" : "Create new issue"}`,
+    primaryButtonText = {
+      default: `${data?.id ? "Update" : isDraft ? "Save to Drafts" : "Save"}`,
+      loading: `${data?.id ? "Updating" : "Saving"}`,
+    },
   } = props;
 
   // states
@@ -185,11 +195,12 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     const submitData = !data?.id
       ? formData
       : {
-          ...getChangedIssuefields(formData, dirtyFields as { [key: string]: boolean | undefined }),
-          project_id: getValues<"project_id">("project_id"),
-          id: data.id,
-          description_html: formData.description_html ?? "<p></p>",
-        };
+        ...getChangedIssuefields(formData, dirtyFields as { [key: string]: boolean | undefined }),
+        project_id: getValues<"project_id">("project_id"),
+        id: data.id,
+        description_html: formData.description_html ?? "<p></p>",
+        type_id: getValues<"type_id">("type_id"),
+      };
 
     // this condition helps to move the issues from draft to project issues
     if (formData.hasOwnProperty("is_draft")) submitData.is_draft = formData.is_draft;
@@ -271,9 +282,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
       )}
       <form onSubmit={handleSubmit((data) => handleFormSubmit(data))}>
         <div className="p-5">
-          <h3 className="text-xl font-medium text-custom-text-200 pb-2">
-            {data?.id ? "Update" : isDraft ? "Create a draft" : "Create new issue"}
-          </h3>
+          <h3 className="text-xl font-medium text-custom-text-200 pb-2">{modalTitle}</h3>
           {/* Disable project selection if editing an issue */}
           <div className="flex items-center pt-2 pb-4 gap-x-1">
             <IssueProjectSelect
@@ -314,7 +323,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
           className={cn(
             "pb-4 space-y-3",
             activeAdditionalPropertiesLength > 4 &&
-              "max-h-[45vh] overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-sm"
+            "max-h-[45vh] overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-sm"
           )}
         >
           <div className="px-5">
@@ -343,7 +352,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
             className={cn(
               "px-5",
               activeAdditionalPropertiesLength <= 4 &&
-                "max-h-[25vh] overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-sm"
+              "max-h-[25vh] overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-sm"
             )}
           >
             {projectId && (
@@ -384,7 +393,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                 tabIndex={getIndex("create_more")}
                 role="button"
               >
-                <ToggleSwitch value={isCreateMoreToggleEnabled} onChange={() => {}} size="sm" />
+                <ToggleSwitch value={isCreateMoreToggleEnabled} onChange={() => { }} size="sm" />
                 <span className="text-xs">Create more</span>
               </div>
             )}
@@ -415,15 +424,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                 loading={isSubmitting}
                 tabIndex={isDraft ? getIndex("submit_button") : getIndex("draft_button")}
               >
-                {data?.id
-                  ? isSubmitting
-                    ? "Updating"
-                    : "Update"
-                  : isSubmitting
-                    ? "Creating"
-                    : isDraft
-                      ? "Save to Drafts"
-                      : "Save"}
+                {isSubmitting ? primaryButtonText.loading : primaryButtonText.default}
               </Button>
               {moveToIssue && (
                 <Button
