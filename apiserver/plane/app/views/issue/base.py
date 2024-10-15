@@ -756,6 +756,15 @@ class IssuePaginatedViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
                 sub_issues_count=Issue.issue_objects.filter(
                     parent=OuterRef("id")
                 )
@@ -812,7 +821,7 @@ class IssuePaginatedViewSet(BaseViewSet):
             "sub_issues_count",
         ]
 
-        if is_description_required:
+        if is_description_required and is_description_required == "true":
             required_fields.append("description_html")
 
         # querying issues
