@@ -16,7 +16,7 @@ import {
   CustomEmojiIconPicker,
   EmojiIconPickerTypes,
   Tooltip,
-  CustomSearchSelect,
+  // CustomSearchSelect,
 } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
@@ -25,7 +25,7 @@ import { ImagePickerPopover } from "@/components/core";
 import { PROJECT_UPDATED } from "@/constants/event-tracker";
 import { NETWORK_CHOICES } from "@/constants/project";
 // helpers
-import { TIME_ZONES } from "@/constants/timezones";
+// import { TIME_ZONES } from "@/constants/timezones";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 import { getFileURL } from "@/helpers/file.helper";
@@ -68,11 +68,11 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   });
   // derived values
   const currentNetwork = NETWORK_CHOICES.find((n) => n.key === project?.network);
-  const timeZoneOptions = TIME_ZONES.map((timeZone) => ({
-    value: timeZone.value,
-    query: timeZone.label + " " + timeZone.value,
-    content: timeZone.label,
-  }));
+  // const timeZoneOptions = TIME_ZONES.map((timeZone) => ({
+  //   value: timeZone.value,
+  //   query: timeZone.label + " " + timeZone.value,
+  //   content: timeZone.label,
+  // }));
   const coverImage = watch("cover_image_url");
 
   useEffect(() => {
@@ -137,7 +137,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       description: formData.description,
       cover_image_url: formData.cover_image_url,
       logo_props: formData.logo_props,
-      timezone: formData.timezone,
+      // timezone: formData.timezone,
     };
 
     if (project.identifier !== formData.identifier)
@@ -279,7 +279,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
             )}
           />
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="flex flex-col gap-1">
             <h4 className="text-sm">Project ID</h4>
             <div className="relative">
@@ -372,7 +372,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
               }}
             />
           </div>
-          <div className="flex flex-col gap-1 col-span-1 sm:col-span-2 xl:col-span-1">
+          {/* <div className="flex flex-col gap-1 col-span-1 sm:col-span-2 xl:col-span-1">
             <h4 className="text-sm">Project Timezone</h4>
             <Controller
               name="timezone"
@@ -391,7 +391,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
               )}
             />
             {errors.timezone && <span className="text-xs text-red-500">{errors.timezone.message}</span>}
-          </div>
+          </div> */}
         </div>
         <div className="flex items-center justify-between py-2">
           <>
