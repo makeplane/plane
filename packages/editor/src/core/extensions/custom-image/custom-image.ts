@@ -94,10 +94,7 @@ export const CustomImageExtension = (props: TFileHandler) => {
     },
 
     addProseMirrorPlugins() {
-      return [
-        TrackImageDeletionPlugin(this.editor, deleteImage, this.name),
-        // TrackImageRestorationPlugin(this.editor, restore, this.name),
-      ];
+      return [TrackImageDeletionPlugin(this.editor, deleteImage, this.name)];
     },
 
     addStorage() {

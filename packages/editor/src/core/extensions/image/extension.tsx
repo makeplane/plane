@@ -3,7 +3,7 @@ import { ReactNodeViewRenderer } from "@tiptap/react";
 // helpers
 import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
 // plugins
-import { ImageExtensionStorage, TrackImageDeletionPlugin, TrackImageRestorationPlugin } from "@/plugins/image";
+import { ImageExtensionStorage, TrackImageDeletionPlugin } from "@/plugins/image";
 // types
 import { TFileHandler } from "@/types";
 // extensions
@@ -25,27 +25,8 @@ export const ImageExtension = (fileHandler: TFileHandler) => {
       };
     },
     addProseMirrorPlugins() {
-      return [
-        TrackImageDeletionPlugin(this.editor, deleteImage, this.name),
-        // TrackImageRestorationPlugin(this.editor, restoreImage, this.name),
-      ];
+      return [TrackImageDeletionPlugin(this.editor, deleteImage, this.name)];
     },
-
-    // onCreate(this) {
-    //   const imageSources = new Set<string>();
-    //   this.editor.state.doc.descendants((node) => {
-    //     if (node.type.name === this.name) {
-    //       imageSources.add(node.attrs.src);
-    //     }
-    //   });
-    //   imageSources.forEach(async (src) => {
-    //     try {
-    //       await restoreImage(src);
-    //     } catch (error) {
-    //       console.error("Error restoring image: ", error);
-    //     }
-    //   });
-    // },
 
     // storage to keep track of image states Map<src, isDeleted>
     addStorage() {
@@ -63,6 +44,9 @@ export const ImageExtension = (fileHandler: TFileHandler) => {
           default: "35%",
         },
         height: {
+          default: null,
+        },
+        aspectRatio: {
           default: null,
         },
       };

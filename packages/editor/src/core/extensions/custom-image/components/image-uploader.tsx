@@ -1,27 +1,20 @@
 import { ChangeEvent, useCallback, useEffect, useMemo, useRef } from "react";
-import { Node as ProsemirrorNode } from "@tiptap/pm/model";
-import { Editor } from "@tiptap/core";
 import { ImageIcon } from "lucide-react";
 // helpers
 import { cn } from "@/helpers/common";
 // hooks
 import { useUploader, useDropZone, uploadFirstImageAndInsertRemaining } from "@/hooks/use-file-upload";
 // extensions
-import { getImageComponentImageFileMap, ImageAttributes } from "@/extensions/custom-image";
+import { type CustomImageComponentProps, getImageComponentImageFileMap } from "@/extensions/custom-image";
 
-export const CustomImageUploader = (props: {
-  editor: Editor;
-  failedToLoadImage: boolean;
-  getPos: () => number;
-  loadImageFromFileSystem: (file: string) => void;
+type CustomImageUploaderProps = CustomImageComponentProps & {
   maxFileSize: number;
-  node: ProsemirrorNode & {
-    attrs: ImageAttributes;
-  };
-  selected: boolean;
+  loadImageFromFileSystem: (file: string) => void;
+  failedToLoadImage: boolean;
   setIsUploaded: (isUploaded: boolean) => void;
-  updateAttributes: (attrs: Record<string, any>) => void;
-}) => {
+};
+
+export const CustomImageUploader = (props: CustomImageUploaderProps) => {
   const {
     editor,
     failedToLoadImage,
@@ -36,8 +29,8 @@ export const CustomImageUploader = (props: {
   // refs
   const fileInputRef = useRef<HTMLInputElement>(null);
   const hasTriggeredFilePickerRef = useRef(false);
+  const { id: imageEntityId } = node.attrs;
   // derived values
-  const imageEntityId = node.attrs.id;
   const imageComponentImageFileMap = useMemo(() => getImageComponentImageFileMap(editor), [editor]);
 
   const onUpload = useCallback(
