@@ -10,8 +10,6 @@ import {
   TCreateUpdatePropertyValuesProps,
   TPropertyValuesValidationProps,
 } from "@/components/issues";
-// hooks
-import { useIssueDetail } from "@/hooks/store";
 // plane web helpers
 import { getPropertiesDefaultValues } from "@/plane-web/helpers/issue-properties.helper";
 // plane web hooks
@@ -32,10 +30,6 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
   // states
   const [issuePropertyValues, setIssuePropertyValues] = useState<TIssuePropertyValues>({});
   const [issuePropertyValueErrors, setIssuePropertyValueErrors] = useState<TIssuePropertyValueErrors>({});
-  // hooks
-  const {
-    issue: { getIssueById },
-  } = useIssueDetail();
   // plane web hooks
   const {
     isIssueTypeEnabledForProject,
@@ -115,15 +109,14 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
   };
 
   const handleCreateUpdatePropertyValues = async (props: TCreateUpdatePropertyValuesProps) => {
-    const { workspaceSlug, projectId, issueId } = props;
+    const { workspaceSlug, projectId, issueTypeId, issueId } = props;
     // check if issue property values are empty
     if (Object.keys(issuePropertyValues).length === 0) return;
     // check if issue type display is enabled
     const isIssueTypeDisplayEnabled = isIssueTypeEnabledForProject(workspaceSlug, projectId, "ISSUE_TYPE_DISPLAY");
     if (!isIssueTypeDisplayEnabled) return;
     // get issue type details
-    const issueDetail = getIssueById(issueId);
-    const issueType = issueDetail?.type_id ? getIssueTypeById(issueDetail.type_id) : null;
+    const issueType = issueTypeId ? getIssueTypeById(issueTypeId) : null;
     // filter property values that belongs to the issue type (required when issue type is changed)
     const filteredIssuePropertyValues = Object.keys(issuePropertyValues).reduce((acc, propertyId) => {
       if (issueType?.activeProperties?.find((property) => property.id === propertyId)) {
