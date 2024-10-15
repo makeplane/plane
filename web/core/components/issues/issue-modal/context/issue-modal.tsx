@@ -22,6 +22,7 @@ export type TCreateUpdatePropertyValuesProps = {
   projectId: string;
   workspaceSlug: string;
   issueTypeId: string | null | undefined;
+  isDraft?: boolean;
 };
 
 export type TIssueModalContext = {

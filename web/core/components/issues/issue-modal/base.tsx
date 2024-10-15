@@ -204,6 +204,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
           issueTypeId: response.type_id,
           projectId: response.project_id,
           workspaceSlug: workspaceSlug.toString(),
+          isDraft: isDraft,
         });
       }
 
@@ -257,6 +258,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
         issueTypeId: payload.type_id,
         projectId: payload.project_id,
         workspaceSlug: workspaceSlug.toString(),
+        isDraft: isDraft,
       });
 
       setToast({
