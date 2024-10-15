@@ -6,6 +6,7 @@ from asgiref.sync import sync_to_async
 from strawberry.types import Info
 from strawberry.permission import PermissionExtension
 from strawberry.scalars import JSON
+from strawberry.exceptions import GraphQLError
 
 # Django Imports
 from django.db.models import Exists, OuterRef, Q
@@ -169,6 +170,7 @@ class ProjectQuery:
                     workspace__slug=slug,
                     pk=project,
                     archived_at__isnull=True,
+                    deleted_at__isnull=True,
                 )
                 .annotate(
                     is_favorite=Exists(
@@ -193,19 +195,28 @@ class ProjectQuery:
                 .first()
             )
 
-        project_detail = await sync_to_async(get_project)()
+        try:
+            _ = await sync_to_async(Project.objects.get)(pk=project)
+            project_detail = await sync_to_async(get_project)()
 
-        # Background task to update recent visited project
-        user_id = info.context.user.id
-        recent_visited_task.delay(
-            slug=slug,
-            project_id=project,
-            user_id=user_id,
-            entity_name="project",
-            entity_identifier=project,
-        )
+            # Background task to update recent visited project
+            user_id = info.context.user.id
+            recent_visited_task.delay(
+                slug=slug,
+                project_id=project,
+                user_id=user_id,
+                entity_name="project",
+                entity_identifier=project,
+            )
 
-        return project_detail
+            return project_detail
+        except Project.DoesNotExist:
+            message = "Project not found"
+            error_extensions = {
+                "code": "NOT_FOUND",
+                "statusCode": 404,
+            }
+            raise GraphQLError(message, extensions=error_extensions)
 
 
 @strawberry.type
