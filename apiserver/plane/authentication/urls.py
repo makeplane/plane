@@ -50,6 +50,8 @@ from .views import (
     MobileMagicSignInEndpoint,
     MobileSessionTokenCheckEndpoint,
     MobileSignOutAuthEndpoint,
+    MobileSessionTokenEndpoint,
+    MobileTokenEndpoint,
 )
 
 urlpatterns = [
@@ -289,5 +291,15 @@ urlpatterns = [
         "mobile/sign-out/",
         MobileSignOutAuthEndpoint.as_view(),
         name="mobile-sign-out",
+    ),
+    path(
+        "mobile/session-token/",
+        MobileSessionTokenEndpoint.as_view(),
+        name="mobile-token",
+    ),
+    path(
+        "mobile/token/",
+        MobileTokenEndpoint.as_view(),
+        name="mobile-token",
     ),
 ]

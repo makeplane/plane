@@ -42,6 +42,8 @@ class UserType:
     username: str
     is_password_autoset: bool
     last_login_medium: str
+    avatar_url: Optional[str]
+    cover_image_url: Optional[str]
 
 
 @strawberry_django.type(Profile)
