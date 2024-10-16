@@ -57,7 +57,8 @@ export const ActiveCycleChart = observer((props: Props) => {
   startDate = startDate.toISOString().split("T")[0];
 
   return (
-    <ResponsiveContainer height="100%" width="100%">
+    // Recharts 100% width doesn't work well with the sidebar https://github.com/recharts/recharts/issues/1423
+    <ResponsiveContainer height="100%" width="99%">
       <ComposedChart
         data={dataWithRange}
         margin={{
