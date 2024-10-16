@@ -15,7 +15,7 @@ import { getPropertiesDefaultValues } from "@/plane-web/helpers/issue-properties
 // plane web hooks
 import { useIssuePropertiesActivity, useIssueTypes } from "@/plane-web/hooks/store";
 // plane web services
-import { IssuePropertyValuesService } from "@/plane-web/services/issue-types";
+import { DraftIssuePropertyValuesService, IssuePropertyValuesService } from "@/plane-web/services/issue-types";
 // plane web types
 import { TIssuePropertyValueErrors, TIssuePropertyValues } from "@/plane-web/types";
 
@@ -24,6 +24,7 @@ type TIssueModalProviderProps = {
 };
 
 const issuePropertyValuesService = new IssuePropertyValuesService();
+const draftIssuePropertyValuesService = new DraftIssuePropertyValuesService();
 
 export const IssueModalProvider = observer((props: TIssueModalProviderProps) => {
   const { children } = props;
@@ -109,7 +110,7 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
   };
 
   const handleCreateUpdatePropertyValues = async (props: TCreateUpdatePropertyValuesProps) => {
-    const { workspaceSlug, projectId, issueTypeId, issueId } = props;
+    const { workspaceSlug, projectId, issueTypeId, issueId, isDraft = false } = props;
     // check if issue property values are empty
     if (Object.keys(issuePropertyValues).length === 0) return;
     // check if issue type display is enabled
@@ -117,6 +118,7 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
     if (!isIssueTypeDisplayEnabled) return;
     // get issue type details
     const issueType = issueTypeId ? getIssueTypeById(issueTypeId) : null;
+    // get draft issue type details
     // filter property values that belongs to the issue type (required when issue type is changed)
     const filteredIssuePropertyValues = Object.keys(issuePropertyValues).reduce((acc, propertyId) => {
       if (issueType?.activeProperties?.find((property) => property.id === propertyId)) {
@@ -125,8 +127,11 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
       return acc;
     }, {} as TIssuePropertyValues);
     // create issue property values
-    await issuePropertyValuesService
-      .create(workspaceSlug, projectId, issueId, filteredIssuePropertyValues)
+    await (
+      isDraft
+        ? draftIssuePropertyValuesService.create(workspaceSlug, projectId, issueId, filteredIssuePropertyValues)
+        : issuePropertyValuesService.create(workspaceSlug, projectId, issueId, filteredIssuePropertyValues)
+    )
       .then(() => {
         // mutate issue property values
         mutate(`ISSUE_PROPERTY_VALUES_${workspaceSlug}_${projectId}_${issueId}_${isIssueTypeDisplayEnabled}`);

@@ -8,9 +8,7 @@ from plane.ee.models import IssueProperty, IssuePropertyOption
 
 class DraftIssuePropertyValue(WorkspaceBaseModel):
     draft_issue = models.ForeignKey(
-        "db.DraftIssue",
-        on_delete=models.CASCADE,
-        related_name="draft_issue_properties",
+        "db.DraftIssue", on_delete=models.CASCADE, related_name="draft_issue_properties"
     )
     property = models.ForeignKey(
         IssueProperty,

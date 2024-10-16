@@ -1,5 +1,5 @@
 # Django imports
-from django.db.models import Exists, OuterRef, Prefetch, Q
+from django.db.models import Exists, OuterRef, Prefetch, Q, Count
 from django.utils import timezone
 
 # Module imports
@@ -59,6 +59,17 @@ class WorkspaceActiveCycleEndpoint(BaseAPIView):
                     queryset=Label.objects.only(
                         "name", "color", "id"
                     ).distinct(),
+                )
+            )
+            .annotate(
+                total_issues=Count(
+                    "issue_cycle__issue__id",
+                    distinct=True,
+                    filter=Q(
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                        issue_cycle__issue__deleted_at__isnull=True,
+                    ),
                 )
             )
             .annotate(is_favorite=Exists(favorite_subquery))

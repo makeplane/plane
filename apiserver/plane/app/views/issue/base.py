@@ -636,7 +636,7 @@ class IssueViewSet(BaseViewSet):
                 request.data.get("state_id")
                 or request.data.get("estimate_point")
             ):
-                cycle = Cycle.objects.get(pk=pk)
+                cycle = Cycle.objects.get(pk=issue.cycle_id)
                 if cycle.version == 2:
                     EntityIssueStateActivity.objects.create(
                         cycle_id=issue.cycle_id,
