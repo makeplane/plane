@@ -13,7 +13,7 @@ export const ImageExtension = (fileHandler: TFileHandler) => {
   const {
     delete: deleteImage,
     getAssetSrc,
-    restore: restoreImage,
+    restore,
     validation: { maxFileSize },
   } = fileHandler;
 
@@ -27,25 +27,25 @@ export const ImageExtension = (fileHandler: TFileHandler) => {
     addProseMirrorPlugins() {
       return [
         TrackImageDeletionPlugin(this.editor, deleteImage, this.name),
-        TrackImageRestorationPlugin(this.editor, restoreImage, this.name),
+        // TrackImageRestorationPlugin(this.editor, restoreImage, this.name),
       ];
     },
 
-    onCreate(this) {
-      const imageSources = new Set<string>();
-      this.editor.state.doc.descendants((node) => {
-        if (node.type.name === this.name) {
-          imageSources.add(node.attrs.src);
-        }
-      });
-      imageSources.forEach(async (src) => {
-        try {
-          await restoreImage(src);
-        } catch (error) {
-          console.error("Error restoring image: ", error);
-        }
-      });
-    },
+    // onCreate(this) {
+    //   const imageSources = new Set<string>();
+    //   this.editor.state.doc.descendants((node) => {
+    //     if (node.type.name === this.name) {
+    //       imageSources.add(node.attrs.src);
+    //     }
+    //   });
+    //   imageSources.forEach(async (src) => {
+    //     try {
+    //       await restoreImage(src);
+    //     } catch (error) {
+    //       console.error("Error restoring image: ", error);
+    //     }
+    //   });
+    // },
 
     // storage to keep track of image states Map<src, isDeleted>
     addStorage() {
@@ -71,6 +71,9 @@ export const ImageExtension = (fileHandler: TFileHandler) => {
     addCommands() {
       return {
         getImageSource: (path: string) => () => getAssetSrc(path),
+        restoreImage: (src: string) => async () => {
+          await restore(src);
+        },
       };
     },
 
