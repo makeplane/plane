@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 // editor
 import { EditorRefApi } from "@plane/editor";
 // types
-import type { TIssue, ISearchIssueResponse, TWorkspaceDraftIssue } from "@plane/types";
+import type { TIssue, ISearchIssueResponse } from "@plane/types";
 // hooks
 import { Button, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 // components
@@ -26,7 +26,7 @@ import { getChangedIssuefields } from "@/helpers/issue.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
-import { useIssueDetail, useProject, useProjectState, useWorkspaceDraftIssues } from "@/hooks/store";
+import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
 // plane web components
@@ -66,6 +66,7 @@ export interface IssueFormProps {
     default: string;
     loading: string;
   };
+  handleMoveIssue?: (payload: Partial<TIssue>) => Promise<void>;
 }
 
 export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
@@ -86,6 +87,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
       default: `${data?.id ? "Update" : isDraft ? "Save to Drafts" : "Save"}`,
       loading: `${data?.id ? "Updating" : "Saving"}`,
     },
+    handleMoveIssue,
   } = props;
 
   // states
@@ -105,7 +107,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const { getIssueTypeIdOnProjectChange, getActiveAdditionalPropertiesLength, handlePropertyValuesValidation } =
     useIssueModal();
   const { isMobile } = usePlatformOS();
-  const { moveIssue } = useWorkspaceDraftIssues();
 
   const {
     issue: { getIssueById },
@@ -434,12 +435,11 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   size="sm"
                   loading={isSubmitting}
                   onClick={() => {
-                    if (data?.id && data) {
-                      moveIssue(workspaceSlug.toString(), data?.id, {
+                    if (handleMoveIssue && data)
+                      handleMoveIssue({
                         ...data,
                         ...getValues(),
-                      } as TWorkspaceDraftIssue);
-                    }
+                      });
                   }}
                 >
                   Add to project

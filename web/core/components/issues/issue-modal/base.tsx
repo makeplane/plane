@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 // types
-import type { TIssue } from "@plane/types";
+import type { TIssue, TWorkspaceDraftIssue } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 import { CreateIssueToastActionItems, IssuesModalProps } from "@/components/issues";
@@ -13,7 +13,15 @@ import { ISSUE_CREATED, ISSUE_UPDATED } from "@/constants/event-tracker";
 import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
-import { useEventTracker, useCycle, useIssues, useModule, useIssueDetail, useUser } from "@/hooks/store";
+import {
+  useEventTracker,
+  useCycle,
+  useIssues,
+  useModule,
+  useIssueDetail,
+  useUser,
+  useWorkspaceDraftIssues,
+} from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // services
@@ -60,6 +68,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   const { issues: draftIssues } = useIssues(EIssuesStoreType.WORKSPACE_DRAFT);
   const { fetchIssue } = useIssueDetail();
   const { handleCreateUpdatePropertyValues } = useIssueModal();
+  const { moveIssue } = useWorkspaceDraftIssues();
   // pathname
   const pathname = usePathname();
   // current store details
@@ -305,6 +314,14 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     }
   };
 
+  const handleMoveIssue = async (payload: Partial<TIssue>) => {
+    await handleUpdateIssue(payload).then(() => {
+      if (data?.id) {
+        moveIssue(workspaceSlug.toString(), data.id, payload as TWorkspaceDraftIssue);
+      }
+    });
+  };
+
   const handleFormChange = (formData: Partial<TIssue> | null) => setChangesMade(formData);
 
   const handleUpdateUploadedAssetIds = (assetId: string) => setUploadedAssetIds((prev) => [...prev, assetId]);
@@ -338,6 +355,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
           onCreateMoreToggleChange={handleCreateMoreToggleChange}
           isDraft={isDraft}
           moveToIssue={moveToIssue}
+          handleMoveIssue={handleMoveIssue}
         />
       ) : (
         <IssueFormRoot
@@ -358,6 +376,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
           moveToIssue={moveToIssue}
           modalTitle={modalTitle}
           primaryButtonText={primaryButtonText}
+          handleMoveIssue={handleMoveIssue}
         />
       )}
     </ModalCore>

@@ -36,6 +36,7 @@ export interface DraftIssueProps {
     default: string;
     loading: string;
   };
+  handleMoveIssue?: (payload: Partial<TIssue>) => Promise<void>;
 }
 
 export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
@@ -54,6 +55,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
     moveToIssue = false,
     modalTitle,
     primaryButtonText,
+    handleMoveIssue,
   } = props;
   // states
   const [issueDiscardModal, setIssueDiscardModal] = useState(false);
@@ -173,6 +175,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
         moveToIssue={moveToIssue}
         modalTitle={modalTitle}
         primaryButtonText={primaryButtonText}
+        handleMoveIssue={handleMoveIssue}
       />
     </>
   );
