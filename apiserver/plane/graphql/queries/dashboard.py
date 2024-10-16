@@ -1,5 +1,3 @@
-from typing import Optional
-
 # Third-Party Imports
 import strawberry
 from asgiref.sync import sync_to_async
@@ -25,12 +23,16 @@ class userInformationQuery:
             user=info.context.user
         )
 
+        workspace = None
         workspace_id = (
             profile.last_workspace_id if profile.last_workspace_id else None
         )
         if workspace_id:
-            workspace = await sync_to_async(Workspace.objects.get)(
-                id=workspace_id
-            )
+            try:
+                workspace = await sync_to_async(Workspace.objects.get)(
+                    id=workspace_id
+                )
+            except Exception:
+                workspace = None
 
         return UserInformationType(user=info.context.user, workspace=workspace)
