@@ -45,6 +45,7 @@ class ProjectType:
     total_issues: int
     total_active_issues: int
     role: int
+    cover_image_url: Optional[str]
 
     @strawberry.field
     def workspace(self) -> int:
@@ -74,16 +75,17 @@ class ProjectType:
             ).count()
         )()
         return projects
-    
+
     @strawberry.field
     async def role(self, info: strawberry.Info) -> int:
         project_member = await sync_to_async(
             lambda: ProjectMember.objects.get(
-                project_id=self.id, is_active=True, member_id=info.context.user.id
+                project_id=self.id,
+                is_active=True,
+                member_id=info.context.user.id,
             )
         )()
         return project_member.role
-
 
     @strawberry.field
     async def total_issues(self, info: Info) -> int:

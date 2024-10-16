@@ -6,17 +6,30 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 # Module imports
 from plane.authentication.utils.mobile.login import (
     ValidateAuthToken,
 )
+from plane.db.models import User
+from plane.authentication.utils.mobile.login import mobile_user_login
 
 
 class MobileSessionTokenCheckEndpoint(APIView):
     permission_classes = [
         AllowAny,
     ]
+
+    def get_tokens_for_user(self, user):
+        # Get the refresh token
+        refresh = RefreshToken.for_user(user)
+        # Return the tokens
+        return {
+            "refresh_token": str(refresh),
+            "access_token": str(refresh.access_token),
+        }
 
     def post(self, request):
         try:
@@ -48,12 +61,69 @@ class MobileSessionTokenCheckEndpoint(APIView):
 
             # Remove the token
             session_token.remove_token()
-            response_session = {
-                "session_name": settings.SESSION_COOKIE_NAME,
-                "session_id": session_details.get("session_id"),
-            }
+            # Get the user id
+            user_id = session_details.get("session_id")
 
-            return Response(response_session, status=status.HTTP_200_OK)
+            # Get the user
+            user = User.objects.filter(id=user_id).first()
+            # Check if user exists
+            if not user:
+                return Response(
+                    {"error": "User not found"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+
+            # Get the tokens
+            response = self.get_tokens_for_user(user)
+            # Return the tokens
+            return Response(response, status=status.HTTP_200_OK)
+        except Exception:
+            return Response(
+                {"error": "Something went wrong"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class MobileTokenEndpoint(APIView):
+    def get_tokens_for_user(self, user):
+        # Get the refresh token
+        refresh = RefreshToken.for_user(user)
+        # Return the tokens
+        return {
+            "refresh_token": str(refresh),
+            "access_token": str(refresh.access_token),
+        }
+
+    def get(self, request):
+        try:
+            # Get the tokens
+            response = self.get_tokens_for_user(user=request.user)
+            # Return the tokens
+            return Response(response, status=status.HTTP_200_OK)
+        except Exception:
+            return Response(
+                {"error": "Something went wrong"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class MobileSessionTokenEndpoint(APIView):
+    authentication_classes = [
+        JWTAuthentication,
+    ]
+
+    def post(self, request):
+        try:
+            # Get the user
+            session = mobile_user_login(request=request, user=request.user)
+            # Return the tokens
+            return Response(
+                {
+                    "session_name": settings.SESSION_COOKIE_NAME,
+                    "session_id": session.session_key,
+                },
+                status=status.HTTP_200_OK,
+            )
         except Exception:
             return Response(
                 {"error": "Something went wrong"},

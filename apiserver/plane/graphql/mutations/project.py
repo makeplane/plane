@@ -3,6 +3,7 @@ import strawberry
 from strawberry.types import Info
 from strawberry.scalars import JSON
 from strawberry.permission import PermissionExtension
+from strawberry.exceptions import GraphQLError
 
 # Third-party imports
 from asgiref.sync import sync_to_async
@@ -16,12 +17,18 @@ from plane.graphql.permissions.project import (
     ProjectAdminPermission,
 )
 from plane.graphql.types.project import ProjectType
-from plane.db.models import Workspace, Project, ProjectMember, UserFavorite
+from plane.db.models import (
+    Workspace,
+    Project,
+    ProjectMember,
+    UserFavorite,
+    IssueUserProperty,
+    State,
+)
 
 
 @strawberry.type
 class ProjectMutation:
-
     @strawberry.mutation(
         extensions=[
             PermissionExtension(permissions=[WorkspaceBasePermission()])
@@ -33,26 +40,109 @@ class ProjectMutation:
         slug: str,
         name: str,
         identifier: str,
-        network: int,
         description: Optional[str] = "",
-        project_lead: Optional[str] = None,
+        network: int = 2,
+        cover_image: Optional[str] = None,
+        project_lead: Optional[strawberry.ID] = None,
         logo_props: Optional[JSON] = {},
+        page_view: Optional[bool] = False,
     ) -> ProjectType:
         workspace = await sync_to_async(Workspace.objects.get)(slug=slug)
-        project = await sync_to_async(Project.objects.create)(
-            name=name,
-            identifier=identifier,
-            network=network,
-            description=description,
-            project_lead=project_lead,
-            logo_props=logo_props,
-            workspace=workspace,
-        )
+        try:
+            project = await sync_to_async(Project.objects.create)(
+                name=name,
+                identifier=identifier,
+                description=description,
+                network=network,
+                logo_props=logo_props,
+                cover_image=cover_image,
+                page_view=page_view,
+                workspace=workspace,
+            )
+        except Exception:
+            message = "Project with this identifier already exists"
+            error_extensions = {
+                "code": "IDENTIFIER_ALREADY_EXISTS",
+                "statusCode": 400,
+            }
+            raise GraphQLError(message, extensions=error_extensions)
+
         # add the user as a admin of the project
         _ = await sync_to_async(ProjectMember.objects.create)(
             project=project,
             member=info.context.user,
             role=20,
+        )
+        # creating the issue property for the user
+        _ = await sync_to_async(IssueUserProperty.objects.create)(
+            project_id=project.id,
+            user_id=info.context.user.id,
+        )
+
+        # if lead was passed we can add the user as a lead
+        if project_lead:
+            # add the user as a admin of the project
+            _ = await sync_to_async(ProjectMember.objects.create)(
+                project=project,
+                member_id=project_lead,
+                role=20,
+            )
+            # creating the issue property for the user
+            _ = await sync_to_async(IssueUserProperty.objects.create)(
+                project_id=project.id,
+                user_id=project_lead,
+            )
+
+        # Default states
+        states = [
+            {
+                "name": "Backlog",
+                "color": "#A3A3A3",
+                "sequence": 15000,
+                "group": "backlog",
+                "default": True,
+            },
+            {
+                "name": "Todo",
+                "color": "#3A3A3A",
+                "sequence": 25000,
+                "group": "unstarted",
+            },
+            {
+                "name": "In Progress",
+                "color": "#F59E0B",
+                "sequence": 35000,
+                "group": "started",
+            },
+            {
+                "name": "Done",
+                "color": "#16A34A",
+                "sequence": 45000,
+                "group": "completed",
+            },
+            {
+                "name": "Cancelled",
+                "color": "#EF4444",
+                "sequence": 55000,
+                "group": "cancelled",
+            },
+        ]
+
+        # creating the default states for the project
+        _ = await sync_to_async(State.objects.bulk_create)(
+            [
+                State(
+                    name=state["name"],
+                    color=state["color"],
+                    project=project,
+                    sequence=state["sequence"],
+                    workspace=workspace,
+                    group=state["group"],
+                    default=state.get("default", False),
+                    created_by=info.context.user,
+                )
+                for state in states
+            ]
         )
 
         return project
@@ -65,16 +155,32 @@ class ProjectMutation:
     async def updateProject(
         self,
         id: strawberry.ID,
-        name: str,
         slug: str,
-        organizationSize: str,
-        ownerId: str,
+        name: Optional[str] = None,
+        identifier: Optional[str] = None,
+        description: Optional[str] = None,
+        network: Optional[int] = None,
+        logo_props: Optional[JSON] = None,
+        page_view: Optional[bool] = None,
+        cover_image: Optional[str] = None,
     ) -> ProjectType:
         project = await sync_to_async(Project.objects.get)(id=id)
-        project.name = name
-        project.slug = slug
-        project.organization_size = organizationSize
-        project.owner_id = ownerId
+        if name is not None:
+            project.name = name
+        if identifier is not None:
+            project.identifier = identifier
+        if description is not None:
+            project.description = description
+        if network is not None:
+            project.network = network
+        if logo_props is not None:
+            project.logo_props = logo_props
+        if page_view is not None:
+            project.page_view = page_view
+        if page_view is not None:
+            project.page_view = page_view
+        if cover_image is not None:
+            project.cover_image = cover_image
         await sync_to_async(project.save)()
         return project
 
@@ -91,7 +197,6 @@ class ProjectMutation:
 
 @strawberry.type
 class ProjectInviteMutation:
-
     @strawberry.mutation(
         extensions=[
             PermissionExtension(permissions=[ProjectMemberPermission()])
@@ -115,7 +220,6 @@ class ProjectInviteMutation:
 
 @strawberry.type
 class ProjectFavoriteMutation:
-
     @strawberry.mutation(
         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
     )

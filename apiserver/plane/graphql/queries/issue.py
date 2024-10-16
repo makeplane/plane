@@ -9,6 +9,7 @@ from typing import Optional
 from strawberry.types import Info
 from strawberry.scalars import JSON
 from strawberry.permission import PermissionExtension
+from strawberry.exceptions import GraphQLError
 
 # Django Imports
 from django.db.models import Prefetch, Q
@@ -175,13 +176,21 @@ class IssueQuery:
         project: strawberry.ID,
         issue: strawberry.ID,
     ) -> IssuesType:
-        issue_detail = await sync_to_async(Issue.issue_objects.get)(
-            workspace__slug=slug,
-            project_id=project,
-            id=issue,
-            project__project_projectmember__member=info.context.user,
-            project__project_projectmember__is_active=True,
-        )
+        try:
+            issue_detail = await sync_to_async(Issue.issue_objects.get)(
+                workspace__slug=slug,
+                project_id=project,
+                id=issue,
+                project__project_projectmember__member=info.context.user,
+                project__project_projectmember__is_active=True,
+            )
+        except Exception:
+            message = "Issue not found."
+            error_extensions = {
+                "code": "ISSUE_NOT_FOUND",
+                "statusCode": 404,
+            }
+            raise GraphQLError(message, extensions=error_extensions)
 
         # Background task to update recent visited project
         user_id = info.context.user.id

@@ -75,3 +75,5 @@ python3-saml==1.16.0
 openfeature-sdk==0.7.0
 # graphql
 strawberry-graphql-django==0.48.0
+# django rest framework jwt
+djangorestframework-simplejwt==5.3.1

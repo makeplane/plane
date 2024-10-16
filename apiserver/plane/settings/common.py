@@ -4,6 +4,8 @@
 import os
 from urllib.parse import urlparse
 
+from datetime import timedelta
+
 
 # Third party imports
 import dj_database_url
@@ -485,3 +487,25 @@ IS_MULTI_TENANT = os.environ.get("IS_MULTI_TENANT", "0") == "1"
 
 # Instance Changelog URL
 INSTANCE_CHANGELOG_URL = os.environ.get("INSTANCE_CHANGELOG_URL", "")
+
+# JWT Settings
+SIMPLE_JWT = {
+    # The number of seconds the access token will be valid
+    "ACCESS_TOKEN_LIFETIME": timedelta(
+        days=int(os.environ.get("ACCESS_TOKEN_LIFETIME", 1))
+    ),
+    # The number of seconds the refresh token will be valid
+    "REFRESH_TOKEN_LIFETIME": timedelta(
+        days=int(os.environ.get("REFRESH_TOKEN_LIFETIME", 7))
+    ),
+    # The number of seconds the refresh token will be valid
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+    # Algorithm used to sign the token
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": SECRET_KEY,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
+    "USER_ID_FIELD": "id",
+    "USER_ID_CLAIM": "user_id",
+}
