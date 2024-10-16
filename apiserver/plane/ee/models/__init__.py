@@ -17,3 +17,4 @@ from .issue import (
 
 from .project import ProjectState, ProjectAttribute
 from .workspace import WorkspaceFeature, WorkspaceLicense, WorkspaceActivity
+from .draft import DraftIssuePropertyValue
