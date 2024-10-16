@@ -31,17 +31,81 @@ from plane.db.models import (
     CycleIssue,
     ModuleIssue,
 )
+from plane.ee.models import IssueProperty, IssuePropertyValue
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.ee.bgtasks import bulk_issue_activity
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.utils.error_codes import ERROR_CODES
+from plane.ee.utils.issue_property_validators import (
+    property_savers,
+)
 
 
 class BulkIssueOperationsEndpoint(BaseAPIView):
     permission_classes = [
         ProjectEntityPermission,
     ]
+
+    def create_issue_property_values(
+        self, issues, type_id, project_id, slug, workspace_id
+    ):
+        # Get issue properties with default values for the issue type
+        issue_properties_with_default_values = IssueProperty.objects.filter(
+            workspace__slug=slug,
+            project_id=project_id,
+            issue_type_id=type_id,
+            default_value__isnull=False,
+        ).exclude(default_value=[])
+
+        # Get existing properties for the issue type
+        existing_property_values = IssuePropertyValue.objects.filter(
+            workspace__slug=slug,
+            project_id=project_id,
+            issue__type_id=type_id,
+            issue__in=issues,
+        ).values("property_id", "issue_id")
+
+        if issue_properties_with_default_values:
+            bulk_issue_property_values = []
+            for issue in issues:
+                # Get existing property ids
+                existing_prop_ids = [
+                    str(prop["property_id"])
+                    for prop in existing_property_values
+                    if str(prop["issue_id"]) == str(issue.id)
+                ]
+
+                # Get all missing properties
+                missing_properties = [
+                    prop
+                    for prop in issue_properties_with_default_values
+                    if str(prop.id) not in existing_prop_ids
+                ]
+
+                # Get missing property values
+                missing_prop_values = {
+                    str(prop.id): prop.default_value
+                    for prop in missing_properties
+                }
+
+                if missing_prop_values:
+                    # Save the data
+                    bulk_issue_property_values.extend(
+                        property_savers(
+                            properties=missing_properties,
+                            property_values=missing_prop_values,
+                            issue_id=issue.id,
+                            workspace_id=workspace_id,
+                            project_id=project_id,
+                            existing_prop_values=[],
+                        )
+                    )
+
+            # Bulk create the issue property values
+            IssuePropertyValue.objects.bulk_create(
+                bulk_issue_property_values, batch_size=10
+            )
 
     @check_feature_flag(FeatureFlag.BULK_OPS)
     def post(self, request, slug, project_id):
@@ -464,6 +528,17 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
             ignore_conflicts=True,
             batch_size=100,
         )
+
+        # Create new issue property values
+        if properties.get("type_id", False):
+            self.create_issue_property_values(
+                issues=bulk_update_issues,
+                type_id=properties.get("type_id"),
+                project_id=project_id,
+                slug=slug,
+                workspace_id=workspace_id,
+            )
+
         # update the issue activity
         [issue_activity.delay(**activity) for activity in issue_activities]
         [
