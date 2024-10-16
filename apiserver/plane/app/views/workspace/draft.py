@@ -37,6 +37,7 @@ from plane.db.models import (
     DraftIssueModule,
     DraftIssueCycle,
     Workspace,
+    FileAsset,
 )
 from .. import BaseViewSet
 from plane.bgtasks.issue_activities_task import issue_activity
@@ -319,6 +320,14 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                     )
                     for module in draft_issue.module_ids
                 ]
+
+            # Update file assets
+            file_assets = FileAsset.objects.filter(draft_issue_id=draft_id)
+            file_assets.update(
+                issue_id=serializer.data.get("id", None),
+                entity_type=FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
+                draft_issue_id=None,
+            )
 
             # delete the draft issue
             draft_issue.delete()
