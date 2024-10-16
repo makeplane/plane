@@ -252,9 +252,20 @@ def create_user_notification(sender, instance, created, **kwargs):
 
         UserNotificationPreference.objects.create(
             user=instance,
-            property_change=False,
-            state_change=False,
-            comment=False,
-            mention=False,
-            issue_completed=False,
+            type="EMAIL",
+        )
+        UserNotificationPreference.objects.create(
+            user=instance,
+            type="IN_APP",
+            property_change=True,
+            state_change=True,
+            comment=True,
+            mention=True,
+            issue_completed=True,
+            priority_change=True,
+            assignee_change=True,
+            start_target_date_change=True,
+            module_change=True,
+            cycle_change=True,
+            reactions=True,
         )

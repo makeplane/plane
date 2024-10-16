@@ -6,6 +6,10 @@ from django.db import models
 from .base import BaseModel
 
 
+class PreferenceTypeEnum(models.TextChoices):
+    EMAIL = "EMAIL", "Email"
+    IN_APP = "IN_APP", "In App"
+
 
 class Notification(BaseModel):
     workspace = models.ForeignKey(
@@ -89,13 +93,24 @@ class UserNotificationPreference(BaseModel):
         related_name="project_notification_preferences",
         null=True,
     )
+    type = models.CharField(
+        max_length=30,
+        choices=PreferenceTypeEnum.choices,
+        default=PreferenceTypeEnum.EMAIL,
+    )
 
     # preference fields
-    property_change = models.BooleanField(default=True)
-    state_change = models.BooleanField(default=True)
-    comment = models.BooleanField(default=True)
-    mention = models.BooleanField(default=True)
-    issue_completed = models.BooleanField(default=True)
+    property_change = models.BooleanField(default=False)
+    state_change = models.BooleanField(default=False)
+    comment = models.BooleanField(default=False)
+    mention = models.BooleanField(default=False)
+    issue_completed = models.BooleanField(default=False)
+    priority_change = models.BooleanField(default=False)
+    assignee_change = models.BooleanField(default=False)
+    start_target_date_change = models.BooleanField(default=False)
+    module_change = models.BooleanField(default=False)
+    cycle_change = models.BooleanField(default=False)
+    reactions = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "UserNotificationPreference"

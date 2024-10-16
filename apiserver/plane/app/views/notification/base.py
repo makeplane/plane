@@ -372,11 +372,11 @@ class UserNotificationPreferenceEndpoint(BaseAPIView):
 
     # request the object
     def get(self, request):
-        user_notification_preference = UserNotificationPreference.objects.get(
-            user=request.user
+        user_notification_preference = (
+            UserNotificationPreference.objects.filter(user=request.user)
         )
         serializer = UserNotificationPreferenceSerializer(
-            user_notification_preference
+            user_notification_preference, many=True
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
