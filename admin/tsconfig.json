@@ -7,7 +7,8 @@
       "@/*": ["core/*"],
       "@/helpers/*": ["helpers/*"],
       "@/public/*": ["public/*"],
-      "@/plane-admin/*": ["ce/*"]
+      "@/plane-admin/*": ["ee/*"],
+      "@/ce/*": ["ce/*"]
     }
   },
   "include": ["next-env.d.ts", "next.config.js", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
