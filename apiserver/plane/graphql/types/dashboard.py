@@ -1,3 +1,5 @@
+from typing import Optional
+
 # strawberry imports
 import strawberry
 
@@ -9,4 +11,4 @@ from plane.graphql.types.workspace import WorkspaceType
 @strawberry.type
 class UserInformationType:
     user: UserType
-    workspace: WorkspaceType
+    workspace: Optional[WorkspaceType]
