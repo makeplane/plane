@@ -12,7 +12,7 @@ from plane.settings.redis import redis_instance
 from plane.authentication.utils.host import base_host
 
 
-def generate_random_string(length=32):
+def generate_random_string(length=64):
     return "".join(
         random.choices(
             string.ascii_uppercase + string.ascii_lowercase + string.digits,

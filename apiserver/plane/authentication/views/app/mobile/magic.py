@@ -12,7 +12,6 @@ from plane.authentication.provider.credentials.magic_code import (
 )
 from plane.authentication.utils.mobile.login import (
     ValidateAuthToken,
-    mobile_user_login,
     mobile_validate_user_onboarding,
 )
 from plane.authentication.utils.user_auth_workflow import (
@@ -110,13 +109,8 @@ class MobileMagicSignInEndpoint(View):
                 return HttpResponseRedirect(url)
 
             # Login the user and record his device info
-            session = mobile_user_login(
-                request=request, user=user, is_app=True
-            )
-            session_key = session.session_key
-
             session_token = ValidateAuthToken()
-            session_token.set_value(session_key)
+            session_token.set_value(str(user.id))
 
             # redirect to referrer path
             url = urljoin(

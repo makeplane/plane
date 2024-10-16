@@ -8,6 +8,7 @@ from asgiref.sync import sync_to_async
 # Strawberry Imports
 from strawberry.types import Info
 from strawberry.permission import PermissionExtension
+from strawberry.exceptions import GraphQLError
 
 # Django Imports
 from django.db.models import Exists, OuterRef, Q
@@ -134,7 +135,17 @@ class PageQuery:
         )
 
         # Fetch the page asynchronously
-        page_result = await sync_to_async(query.get, thread_sensitive=True)()
+        try:
+            page_result = await sync_to_async(
+                query.get, thread_sensitive=True
+            )()
+        except Exception:
+            message = "Page not found."
+            error_extensions = {
+                "code": "PAGE_NOT_FOUND",
+                "statusCode": 404,
+            }
+            raise GraphQLError(message, extensions=error_extensions)
 
         # Background task to update recent visited project
         user_id = info.context.user.id
