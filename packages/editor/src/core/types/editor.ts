@@ -1,4 +1,5 @@
 import { JSONContent } from "@tiptap/core";
+import { Selection } from "@tiptap/pm/state";
 // helpers
 import { IMarking } from "@/helpers/scroll-to-node";
 // types
@@ -6,15 +7,62 @@ import {
   IMentionHighlight,
   IMentionSuggestion,
   TAIHandler,
-  TColorEditorCommands,
   TDisplayConfig,
-  TEditorCommands,
   TEmbedConfig,
   TExtensions,
   TFileHandler,
-  TNonColorEditorCommands,
   TServerHandler,
 } from "@/types";
+
+export type TEditorCommands =
+  | "text"
+  | "h1"
+  | "h2"
+  | "h3"
+  | "h4"
+  | "h5"
+  | "h6"
+  | "bold"
+  | "italic"
+  | "underline"
+  | "strikethrough"
+  | "bulleted-list"
+  | "numbered-list"
+  | "to-do-list"
+  | "quote"
+  | "code"
+  | "table"
+  | "image"
+  | "divider"
+  | "issue-embed"
+  | "text-color"
+  | "background-color"
+  | "text-align";
+
+export type TCommandExtraProps = {
+  image: {
+    savedSelection: Selection | null;
+  };
+  "text-color": {
+    color: string | undefined;
+  };
+  "background-color": {
+    color: string | undefined;
+  };
+  "text-align": {
+    alignment: string;
+  };
+};
+
+// Create a utility type that maps a command to its extra props or an empty object if none are defined
+export type TCommandWithProps<T extends TEditorCommands> = T extends keyof TCommandExtraProps
+  ? TCommandExtraProps[T] // If the command has extra props, include them
+  : {}; // Otherwise, just return the command type with no extra props
+
+type TCommandWithPropsWithItemKey<T extends TEditorCommands> = T extends keyof TCommandExtraProps
+  ? { itemKey: T } & TCommandExtraProps[T]
+  : { itemKey: T };
+
 // editor refs
 export type EditorReadOnlyRefApi = {
   getMarkDown: () => string;
@@ -37,26 +85,8 @@ export type EditorReadOnlyRefApi = {
 
 export interface EditorRefApi extends EditorReadOnlyRefApi {
   setEditorValueAtCursorPosition: (content: string) => void;
-  executeMenuItemCommand: (
-    props:
-      | {
-          itemKey: TNonColorEditorCommands;
-        }
-      | {
-          itemKey: TColorEditorCommands;
-          color: string | undefined;
-        }
-  ) => void;
-  isMenuItemActive: (
-    props:
-      | {
-          itemKey: TNonColorEditorCommands;
-        }
-      | {
-          itemKey: TColorEditorCommands;
-          color: string | undefined;
-        }
-  ) => boolean;
+  executeMenuItemCommand: <T extends TEditorCommands>(props: TCommandWithPropsWithItemKey<T>) => void;
+  isMenuItemActive: <T extends TEditorCommands>(props: TCommandWithPropsWithItemKey<T>) => boolean;
   onStateChange: (callback: () => void) => () => void;
   setFocusAtPosition: (position: number) => void;
   isEditorReadyToDiscard: () => boolean;

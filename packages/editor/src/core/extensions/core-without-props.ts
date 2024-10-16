@@ -18,6 +18,7 @@ import { CustomQuoteExtension } from "./quote";
 import { TableHeader, TableCell, TableRow, Table } from "./table";
 import { CustomTextColorExtension } from "./custom-text-color";
 import { CustomBackgroundColorExtension } from "./custom-background-color";
+import { CustomTextAlignExtension } from "./text-align";
 
 export const CoreEditorExtensionsWithoutProps = [
   StarterKit.configure({
@@ -87,6 +88,7 @@ export const CoreEditorExtensionsWithoutProps = [
   CustomMentionWithoutProps(),
   CustomTextColorExtension,
   CustomBackgroundColorExtension,
+  CustomTextAlignExtension,
 ];
 
 export const DocumentEditorExtensionsWithoutProps = [IssueWidgetWithoutProps()];

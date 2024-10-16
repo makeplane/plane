@@ -18,6 +18,7 @@ import {
   CustomLinkExtension,
   CustomMention,
   CustomQuoteExtension,
+  CustomTextAlignExtension,
   CustomTextColorExtension,
   CustomTypographyExtension,
   DropHandlerExtension,
@@ -157,5 +158,6 @@ export const CoreEditorExtensions = (args: TArguments) => {
     CharacterCount,
     CustomTextColorExtension,
     CustomBackgroundColorExtension,
+    CustomTextAlignExtension,
   ];
 };
