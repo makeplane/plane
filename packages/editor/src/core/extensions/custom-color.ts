@@ -1,4 +1,4 @@
-import { Extension, Mark, mergeAttributes } from "@tiptap/core";
+import { Mark, mergeAttributes } from "@tiptap/core";
 // constants
 import { COLORS_LIST } from "@/constants/common";
 
@@ -7,26 +7,26 @@ declare module "@tiptap/core" {
     color: {
       /**
        * Set the text color
-       * @param color The color to set
-       * @example editor.commands.setColor('red')
+       * @param {string} color The color to set
+       * @example editor.commands.setTextColor('red')
        */
       setTextColor: (color: string) => ReturnType;
 
       /**
        * Unset the text color
-       * @example editor.commands.unsetColor()
+       * @example editor.commands.unsetTextColor()
        */
       unsetTextColor: () => ReturnType;
       /**
-       * Set the text color
-       * @param color The color to set
-       * @example editor.commands.setColor('red')
+       * Set the background color
+       * @param {string} backgroundColor The color to set
+       * @example editor.commands.setBackgroundColor('red')
        */
-      setBackgroundColor: (color: string) => ReturnType;
+      setBackgroundColor: (backgroundColor: string) => ReturnType;
 
       /**
-       * Unset the text color
-       * @example editor.commands.unsetColor()
+       * Unset the background color
+       * @example editor.commands.unsetBackgroundColorColor()
        */
       unsetBackgroundColor: () => ReturnType;
     };
@@ -121,9 +121,9 @@ export const CustomColorExtension = Mark.create({
         ({ chain }) =>
           chain().setMark(this.name, { color: null }).run(),
       setBackgroundColor:
-        (color: string) =>
+        (backgroundColor: string) =>
         ({ chain }) =>
-          chain().setMark(this.name, { backgroundColor: color }).run(),
+          chain().setMark(this.name, { backgroundColor }).run(),
       unsetBackgroundColor:
         () =>
         ({ chain }) =>
