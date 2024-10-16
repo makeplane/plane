@@ -1035,6 +1035,8 @@ class IssueBulkUpdateDateEndpoint(BaseAPIView):
                     project_id=str(project_id),
                     epoch=epoch,
                 )
+                issue.target_date = target_date
+                issues_to_update.append(issue)
 
         # Bulk update issues
         Issue.objects.bulk_update(
