@@ -180,3 +180,7 @@ export const toggleBackgroundColor = (color: string | undefined, editor: Editor,
     }
   }
 };
+
+export const setTextAlign = (alignment: string, editor: Editor) => {
+  editor.chain().focus().setTextAlign(alignment).run();
+};

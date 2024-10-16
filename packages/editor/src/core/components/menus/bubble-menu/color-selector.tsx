@@ -64,7 +64,7 @@ export const BubbleMenuColorSelector: FC<Props> = (props) => {
                   style={{
                     backgroundColor: color.textColor,
                   }}
-                  onClick={() => TextColorItem(editor).command(color.key)}
+                  onClick={() => TextColorItem(editor).command({ color: color.key })}
                 />
               ))}
               <button
@@ -87,7 +87,7 @@ export const BubbleMenuColorSelector: FC<Props> = (props) => {
                   style={{
                     backgroundColor: color.backgroundColor,
                   }}
-                  onClick={() => BackgroundColorItem(editor).command(color.key)}
+                  onClick={() => BackgroundColorItem(editor).command({ color: color.key })}
                 />
               ))}
               <button
