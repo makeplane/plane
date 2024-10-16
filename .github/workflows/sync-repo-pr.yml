@@ -47,6 +47,6 @@ jobs:
             echo "Pull Request already exists: $PR_EXISTS"
           else
             echo "Creating new pull request"
-            PR_URL=$(gh pr create --base $TARGET_BRANCH --head $CURRENT_BRANCH --title "sync: community changes" --body "")
+            PR_URL=$(gh pr create --base $TARGET_BRANCH --head $CURRENT_BRANCH --title "${{ vars.SYNC_PR_TITLE }}" --body "")
             echo "Pull Request created: $PR_URL"
           fi
