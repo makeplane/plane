@@ -34,7 +34,7 @@ x-app-env: &app-env
     - SECRET_KEY=${SECRET_KEY:-60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5}
     # DATA STORE SETTINGS
     - USE_MINIO=${USE_MINIO:-1}
-    - AWS_REGION=${AWS_REGION:-""}
+    - AWS_REGION=${AWS_REGION:-}
     - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-"access-key"}
     - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-"secret-key"}
     - AWS_S3_ENDPOINT_URL=${AWS_S3_ENDPOINT_URL:-http://plane-minio:9000}

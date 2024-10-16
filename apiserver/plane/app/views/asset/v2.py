@@ -22,9 +22,9 @@ from plane.db.models import (
 from plane.settings.storage import S3Storage
 from plane.app.permissions import allow_permission, ROLE
 from plane.utils.cache import invalidate_cache_directly
+from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
-
 
 
 class UserAssetsV2Endpoint(BaseAPIView):
@@ -196,14 +196,11 @@ class UserAssetsV2Endpoint(BaseAPIView):
     def patch(self, request, asset_id):
         # get the asset id
         asset = FileAsset.objects.get(id=asset_id, user_id=request.user.id)
-        storage = S3Storage(request=request)
         # get the storage metadata
         asset.is_uploaded = True
         # get the storage metadata
-        if asset.storage_metadata is None:
-            asset.storage_metadata = storage.get_object_metadata(
-                object_name=asset.asset.name
-            )
+        if not asset.storage_metadata:
+            get_asset_object_metadata.delay(asset_id=str(asset_id))
         # get the entity and save the asset id for the request field
         self.entity_asset_save(
             asset_id=asset_id,
@@ -461,14 +458,11 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
     def patch(self, request, slug, asset_id):
         # get the asset id
         asset = FileAsset.objects.get(id=asset_id, workspace__slug=slug)
-        storage = S3Storage(request=request)
         # get the storage metadata
         asset.is_uploaded = True
         # get the storage metadata
-        if asset.storage_metadata is None:
-            asset.storage_metadata = storage.get_object_metadata(
-                object_name=asset.asset.name
-            )
+        if not asset.storage_metadata:
+            get_asset_object_metadata.delay(asset_id=str(asset_id))
         # get the entity and save the asset id for the request field
         self.entity_asset_save(
             asset_id=asset_id,
@@ -713,14 +707,11 @@ class ProjectAssetEndpoint(BaseAPIView):
         asset = FileAsset.objects.get(
             id=pk,
         )
-        storage = S3Storage(request=request)
         # get the storage metadata
         asset.is_uploaded = True
         # get the storage metadata
-        if asset.storage_metadata is None:
-            asset.storage_metadata = storage.get_object_metadata(
-                object_name=asset.asset.name
-            )
+        if not asset.storage_metadata:
+            get_asset_object_metadata.delay(asset_id=str(pk))
 
         # update the attributes
         asset.attributes = request.data.get("attributes", asset.attributes)
