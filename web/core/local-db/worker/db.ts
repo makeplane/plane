@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as Comlink from "comlink";
-import SQLiteESMFactory from "./wa-sqlite/dist/wa-sqlite.mjs";
 import { OPFSCoopSyncVFS as MyVFS } from "./wa-sqlite/src/OPFSCoopSyncVFS";
 import * as SQLite from "./wa-sqlite/src/sqlite-api";
+import SQLiteESMFactory from "./wa-sqlite/src/wa-sqlite.mjs";
 
 type TQueryProps = {
   sql: string;
