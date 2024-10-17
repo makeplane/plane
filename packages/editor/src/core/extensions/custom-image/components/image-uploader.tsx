@@ -5,40 +5,39 @@ import { ImageIcon } from "lucide-react";
 // helpers
 import { cn } from "@/helpers/common";
 // hooks
-import { useUploader, useDropZone } from "@/hooks/use-file-upload";
-// plugins
-import { isFileValid } from "@/plugins/image";
+import { useUploader, useDropZone, uploadFirstImageAndInsertRemaining } from "@/hooks/use-file-upload";
 // extensions
 import { getImageComponentImageFileMap, ImageAttributes } from "@/extensions/custom-image";
 
 export const CustomImageUploader = (props: {
-  failedToLoadImage: boolean;
   editor: Editor;
-  selected: boolean;
+  failedToLoadImage: boolean;
+  getPos: () => number;
   loadImageFromFileSystem: (file: string) => void;
-  setIsUploaded: (isUploaded: boolean) => void;
+  maxFileSize: number;
   node: ProsemirrorNode & {
     attrs: ImageAttributes;
   };
+  selected: boolean;
+  setIsUploaded: (isUploaded: boolean) => void;
   updateAttributes: (attrs: Record<string, any>) => void;
-  getPos: () => number;
 }) => {
   const {
-    selected,
-    failedToLoadImage,
     editor,
+    failedToLoadImage,
+    getPos,
     loadImageFromFileSystem,
+    maxFileSize,
     node,
+    selected,
     setIsUploaded,
     updateAttributes,
-    getPos,
   } = props;
-  // ref
+  // refs
   const fileInputRef = useRef<HTMLInputElement>(null);
-
   const hasTriggeredFilePickerRef = useRef(false);
+  // derived values
   const imageEntityId = node.attrs.id;
-
   const imageComponentImageFileMap = useMemo(() => getImageComponentImageFileMap(editor), [editor]);
 
   const onUpload = useCallback(
@@ -73,17 +72,24 @@ export const CustomImageUploader = (props: {
     [imageComponentImageFileMap, imageEntityId, updateAttributes, getPos]
   );
   // hooks
-  const { uploading: isImageBeingUploaded, uploadFile } = useUploader({ onUpload, editor, loadImageFromFileSystem });
-  const { draggedInside, onDrop, onDragEnter, onDragLeave } = useDropZone({ uploader: uploadFile });
+  const { uploading: isImageBeingUploaded, uploadFile } = useUploader({
+    editor,
+    loadImageFromFileSystem,
+    maxFileSize,
+    onUpload,
+  });
+  const { draggedInside, onDrop, onDragEnter, onDragLeave } = useDropZone({
+    editor,
+    maxFileSize,
+    pos: getPos(),
+    uploader: uploadFile,
+  });
 
   // the meta data of the image component
   const meta = useMemo(
     () => imageComponentImageFileMap?.get(imageEntityId),
     [imageComponentImageFileMap, imageEntityId]
   );
-
-  // if the image component is dropped, we check if it has an existing file
-  const existingFile = useMemo(() => (meta && meta.event === "drop" ? meta.file : undefined), [meta]);
 
   // after the image component is mounted we start the upload process based on
   // it's uploaded
@@ -100,27 +106,26 @@ export const CustomImageUploader = (props: {
     }
   }, [meta, uploadFile, imageComponentImageFileMap]);
 
-  // check if the image is dropped and set the local image as the existing file
-  useEffect(() => {
-    if (existingFile) {
-      uploadFile(existingFile);
-    }
-  }, [existingFile, uploadFile]);
-
   const onFileChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (file) {
-        if (isFileValid(file)) {
-          uploadFile(file);
-        }
+    async (e: ChangeEvent<HTMLInputElement>) => {
+      e.preventDefault();
+      const filesList = e.target.files;
+      if (!filesList) {
+        return;
       }
+      await uploadFirstImageAndInsertRemaining({
+        editor,
+        filesList,
+        maxFileSize,
+        pos: getPos(),
+        uploader: uploadFile,
+      });
     },
-    [uploadFile]
+    [uploadFile, editor, getPos]
   );
 
   const getDisplayMessage = useCallback(() => {
-    const isUploading = isImageBeingUploaded || existingFile;
+    const isUploading = isImageBeingUploaded;
     if (failedToLoadImage) {
       return "Error loading image";
     }
@@ -134,13 +139,14 @@ export const CustomImageUploader = (props: {
     }
 
     return "Add an image";
-  }, [draggedInside, failedToLoadImage, existingFile, isImageBeingUploaded]);
+  }, [draggedInside, failedToLoadImage, isImageBeingUploaded]);
 
   return (
     <div
       className={cn(
-        "image-upload-component flex items-center justify-start gap-2 py-3 px-2 rounded-lg text-custom-text-300 hover:text-custom-text-200 bg-custom-background-90 hover:bg-custom-background-80 border border-dashed border-custom-border-300 cursor-pointer transition-all duration-200 ease-in-out",
+        "image-upload-component flex items-center justify-start gap-2 py-3 px-2 rounded-lg text-custom-text-300 hover:text-custom-text-200 bg-custom-background-90 hover:bg-custom-background-80 border border-dashed border-custom-border-300 transition-all duration-200 ease-in-out cursor-default",
         {
+          "hover:text-custom-text-200 cursor-pointer": editor.isEditable,
           "bg-custom-background-80 text-custom-text-200": draggedInside,
           "text-custom-primary-200 bg-custom-primary-100/10 hover:bg-custom-primary-100/10 hover:text-custom-primary-200 border-custom-primary-200/10":
             selected,
@@ -153,7 +159,7 @@ export const CustomImageUploader = (props: {
       onDragLeave={onDragLeave}
       contentEditable={false}
       onClick={() => {
-        if (!failedToLoadImage) {
+        if (!failedToLoadImage && editor.isEditable) {
           fileInputRef.current?.click();
         }
       }}
@@ -167,6 +173,7 @@ export const CustomImageUploader = (props: {
         type="file"
         accept=".jpg,.jpeg,.png,.webp"
         onChange={onFileChange}
+        multiple
       />
     </div>
   );

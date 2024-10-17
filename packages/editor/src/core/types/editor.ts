@@ -6,14 +6,15 @@ import {
   IMentionHighlight,
   IMentionSuggestion,
   TAIHandler,
+  TColorEditorCommands,
   TDisplayConfig,
   TEditorCommands,
   TEmbedConfig,
   TExtensions,
   TFileHandler,
+  TNonColorEditorCommands,
   TServerHandler,
 } from "@/types";
-
 // editor refs
 export type EditorReadOnlyRefApi = {
   getMarkDown: () => string;
@@ -36,8 +37,26 @@ export type EditorReadOnlyRefApi = {
 
 export interface EditorRefApi extends EditorReadOnlyRefApi {
   setEditorValueAtCursorPosition: (content: string) => void;
-  executeMenuItemCommand: (itemKey: TEditorCommands) => void;
-  isMenuItemActive: (itemKey: TEditorCommands) => boolean;
+  executeMenuItemCommand: (
+    props:
+      | {
+          itemKey: TNonColorEditorCommands;
+        }
+      | {
+          itemKey: TColorEditorCommands;
+          color: string | undefined;
+        }
+  ) => void;
+  isMenuItemActive: (
+    props:
+      | {
+          itemKey: TNonColorEditorCommands;
+        }
+      | {
+          itemKey: TColorEditorCommands;
+          color: string | undefined;
+        }
+  ) => boolean;
   onStateChange: (callback: () => void) => () => void;
   setFocusAtPosition: (position: number) => void;
   isEditorReadyToDiscard: () => boolean;
@@ -89,6 +108,7 @@ export interface IReadOnlyEditorProps {
   containerClassName?: string;
   displayConfig?: TDisplayConfig;
   editorClassName?: string;
+  fileHandler: Pick<TFileHandler, "getAssetSrc">;
   forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
   id: string;
   initialValue: string;

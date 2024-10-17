@@ -42,7 +42,7 @@ export const IssueParentDetail: FC<TIssueParentDetail> = observer((props) => {
   return (
     <>
       <div className="mb-5 flex w-min items-center gap-3 whitespace-nowrap rounded-md border border-custom-border-300 bg-custom-background-80 px-2.5 py-1 text-xs">
-        <Link href={`/${workspaceSlug}/projects/${parentIssue?.project_id}/issues/${parentIssue.id}`}>
+        <Link href={`/${workspaceSlug}/projects/${parentIssue?.project_id}/issues/${parentIssue.id}`} target="_blank">
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-2.5">
               <span className="block h-2 w-2 rounded-full" style={{ backgroundColor: stateColor }} />

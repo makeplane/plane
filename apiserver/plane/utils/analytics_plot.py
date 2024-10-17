@@ -138,7 +138,7 @@ def burndown_plot(
         estimate__type="points",
     ).exists()
     if estimate_type and plot_type == "points" and cycle_id:
-        issue_estimates = Issue.objects.filter(
+        issue_estimates = Issue.issue_objects.filter(
             workspace__slug=slug,
             project_id=project_id,
             issue_cycle__cycle_id=cycle_id,
@@ -149,7 +149,7 @@ def burndown_plot(
         total_estimate_points = sum(issue_estimates)
 
     if estimate_type and plot_type == "points" and module_id:
-        issue_estimates = Issue.objects.filter(
+        issue_estimates = Issue.issue_objects.filter(
             workspace__slug=slug,
             project_id=project_id,
             issue_module__module_id=module_id,
@@ -163,7 +163,7 @@ def burndown_plot(
         if queryset.end_date and queryset.start_date:
             # Get all dates between the two dates
             date_range = [
-                queryset.start_date + timedelta(days=x)
+                (queryset.start_date + timedelta(days=x)).date()
                 for x in range(
                     (queryset.end_date - queryset.start_date).days + 1
                 )
@@ -203,7 +203,7 @@ def burndown_plot(
     if module_id:
         # Get all dates between the two dates
         date_range = [
-            queryset.start_date + timedelta(days=x)
+            (queryset.start_date + timedelta(days=x))
             for x in range(
                 (queryset.target_date - queryset.start_date).days + 1
             )

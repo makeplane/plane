@@ -14,8 +14,11 @@ import { IWorkspace } from "@plane/types";
 // plane ui
 import { Avatar, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 import { GOD_MODE_URL, cn } from "@/helpers/common.helper";
+// helpers
+import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useAppTheme, useUser, useUserPermissions, useUserProfile, useWorkspace } from "@/hooks/store";
+// plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { WorkspaceLogo } from "../logo";
 
@@ -110,7 +113,7 @@ export const SidebarDropdown = observer(() => {
               )}
             >
               <div className="flex-grow flex items-center gap-2 truncate">
-                <WorkspaceLogo logo={activeWorkspace?.logo} name={activeWorkspace?.name} />
+                <WorkspaceLogo logo={activeWorkspace?.logo_url} name={activeWorkspace?.name} />
                 {!sidebarCollapsed && (
                   <h4 className="truncate text-base font-medium text-custom-text-100">
                     {activeWorkspace?.name ?? "Loading..."}
@@ -162,17 +165,17 @@ export const SidebarDropdown = observer(() => {
                               <div className="flex items-center justify-start gap-2.5 truncate">
                                 <span
                                   className={`relative flex h-6 w-6 flex-shrink-0 items-center  justify-center p-2 text-xs uppercase ${
-                                    !workspace?.logo && "rounded bg-custom-primary-500 text-white"
+                                    !workspace?.logo_url && "rounded bg-custom-primary-500 text-white"
                                   }`}
                                 >
-                                  {workspace?.logo && workspace.logo !== "" ? (
+                                  {workspace?.logo_url && workspace.logo_url !== "" ? (
                                     <img
-                                      src={workspace.logo}
+                                      src={getFileURL(workspace.logo_url)}
                                       className="absolute left-0 top-0 h-full w-full rounded object-cover"
                                       alt="Workspace Logo"
                                     />
                                   ) : (
-                                    (workspace?.name?.charAt(0) ?? "...")
+                                    (workspace?.name?.[0] ?? "...")
                                   )}
                                 </span>
                                 <h5
@@ -255,7 +258,7 @@ export const SidebarDropdown = observer(() => {
           <Menu.Button className="grid place-items-center outline-none" ref={setReferenceElement}>
             <Avatar
               name={currentUser?.display_name}
-              src={currentUser?.avatar || undefined}
+              src={getFileURL(currentUser?.avatar_url ?? "")}
               size={24}
               shape="square"
               className="!text-base"

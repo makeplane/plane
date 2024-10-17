@@ -125,7 +125,7 @@ export class IssueStore implements IIssueStore {
       // if type is archived then check archived_at is not null
       // if type is un-archived then check archived_at is null
       const issue = this.issuesMap[issueId];
-      if ((issue && type === "archived" && issue.archived_at) || (type === "un-archived" && !issue?.archived_at)) {
+      if (issue && ((type === "archived" && issue.archived_at) || (type === "un-archived" && !issue?.archived_at))) {
         filteredIssues.push(issue);
       }
     });

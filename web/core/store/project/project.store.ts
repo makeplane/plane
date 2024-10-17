@@ -404,6 +404,7 @@ export class ProjectStore implements IProjectStore {
       runInAction(() => {
         delete this.projectMap[projectId];
         if (this.rootStore.favorite.entityMap[projectId]) this.rootStore.favorite.removeFavoriteFromStore(projectId);
+        delete this.rootStore.user.permission.workspaceProjectsPermissions[workspaceSlug][projectId];
       });
     } catch (error) {
       console.log("Failed to delete project from project store");

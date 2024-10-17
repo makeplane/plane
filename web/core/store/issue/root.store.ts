@@ -23,7 +23,13 @@ import {
   IProjectViewIssues,
   ProjectViewIssues,
 } from "./project-views";
-import { IWorkspaceIssuesFilter, WorkspaceIssuesFilter, IWorkspaceIssues, WorkspaceIssues } from "./workspace";
+import { WorkspaceIssuesFilter, IWorkspaceIssues, WorkspaceIssues, IWorkspaceIssuesFilter } from "./workspace";
+import {
+  IWorkspaceDraftIssues,
+  IWorkspaceDraftIssuesFilter,
+  WorkspaceDraftIssues,
+  WorkspaceDraftIssuesFilter,
+} from "./workspace-draft";
 
 export interface IIssueRootStore {
   currentUserId: string | undefined;
@@ -54,6 +60,9 @@ export interface IIssueRootStore {
 
   workspaceIssuesFilter: IWorkspaceIssuesFilter;
   workspaceIssues: IWorkspaceIssues;
+
+  workspaceDraftIssuesFilter: IWorkspaceDraftIssuesFilter;
+  workspaceDraftIssues: IWorkspaceDraftIssues;
 
   profileIssuesFilter: IProfileIssuesFilter;
   profileIssues: IProfileIssues;
@@ -109,6 +118,9 @@ export class IssueRootStore implements IIssueRootStore {
 
   workspaceIssuesFilter: IWorkspaceIssuesFilter;
   workspaceIssues: IWorkspaceIssues;
+
+  workspaceDraftIssuesFilter: IWorkspaceDraftIssuesFilter;
+  workspaceDraftIssues: IWorkspaceDraftIssues;
 
   profileIssuesFilter: IProfileIssuesFilter;
   profileIssues: IProfileIssues;
@@ -189,6 +201,9 @@ export class IssueRootStore implements IIssueRootStore {
 
     this.profileIssuesFilter = new ProfileIssuesFilter(this);
     this.profileIssues = new ProfileIssues(this, this.profileIssuesFilter);
+
+    this.workspaceDraftIssuesFilter = new WorkspaceDraftIssuesFilter(this);
+    this.workspaceDraftIssues = new WorkspaceDraftIssues(this);
 
     this.projectIssuesFilter = new ProjectIssuesFilter(this);
     this.projectIssues = new ProjectIssues(this, this.projectIssuesFilter);

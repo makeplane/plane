@@ -24,7 +24,7 @@ from plane.db.models import (
     Project,
     IssueRelation,
     Issue,
-    IssueAttachment,
+    FileAsset,
     IssueLink,
 )
 from plane.bgtasks.issue_activities_task import issue_activity
@@ -91,8 +91,9 @@ class IssueRelationViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))

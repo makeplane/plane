@@ -28,7 +28,7 @@ export const CyclesList: FC<ICyclesList> = observer((props) => {
           </>
         ) : (
           <>
-            <ActiveCycleRoot />
+            <ActiveCycleRoot workspaceSlug={workspaceSlug} projectId={projectId} />
 
             {upcomingCycleIds && (
               <Disclosure as="div" className="flex flex-shrink-0 flex-col" defaultOpen>

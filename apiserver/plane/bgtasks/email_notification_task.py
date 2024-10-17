@@ -224,7 +224,7 @@ def send_email_notification(
                         {
                             "actor_comments": comment,
                             "actor_detail": {
-                                "avatar_url": actor.avatar,
+                                "avatar_url": f"{base_api}{actor.avatar_url}",
                                 "first_name": actor.first_name,
                                 "last_name": actor.last_name,
                             },
@@ -241,7 +241,7 @@ def send_email_notification(
                         {
                             "actor_comments": mention,
                             "actor_detail": {
-                                "avatar_url": actor.avatar,
+                                "avatar_url": f"{base_api}{actor.avatar_url}",
                                 "first_name": actor.first_name,
                                 "last_name": actor.last_name,
                             },
@@ -257,7 +257,7 @@ def send_email_notification(
                     template_data.append(
                         {
                             "actor_detail": {
-                                "avatar_url": actor.avatar,
+                                "avatar_url": f"{base_api}{actor.avatar_url}",
                                 "first_name": actor.first_name,
                                 "last_name": actor.last_name,
                             },
