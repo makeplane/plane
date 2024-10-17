@@ -1,14 +1,13 @@
 "use client";
 
-import { FC, Fragment, useCallback, useMemo, useState } from "react";
+import { FC, Fragment, useCallback, useMemo } from "react";
 import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
-import { ICycle, IIssueFilterOptions, TCycleEstimateType, TCyclePlotType, TProgressSnapshot } from "@plane/types";
-import { CustomSelect } from "@plane/ui";
+import { ICycle, IIssueFilterOptions, TCyclePlotType, TProgressSnapshot } from "@plane/types";
 // components
 import { CycleProgressStats } from "@/components/cycles";
 // constants
@@ -16,18 +15,30 @@ import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { getDate } from "@/helpers/date-time.helper";
 // hooks
-import { useIssues, useCycle, useProjectEstimates } from "@/hooks/store";
-// plane web constants
-import { SidebarBaseChart } from "@/plane-web/components/cycles/analytics-sidebar";
-import { EEstimateSystem } from "@/plane-web/constants/estimates";
+import { useIssues, useCycle } from "@/hooks/store";
+// plane web components
+import { SidebarChartRoot } from "@/plane-web/components/cycles";
 
 type TCycleAnalyticsProgress = {
   workspaceSlug: string;
   projectId: string;
   cycleId: string;
 };
+type Options = {
+  value: string;
+  label: string;
+};
 
-const validateCycleSnapshot = (cycleDetails: ICycle | null): ICycle | null => {
+export const cycleEstimateOptions: Options[] = [
+  { value: "issues", label: "Issues" },
+  { value: "points", label: "Points" },
+];
+export const cycleChartOptions: Options[] = [
+  { value: "burndown", label: "Burn-down" },
+  { value: "burnup", label: "Burn-up" },
+];
+
+export const validateCycleSnapshot = (cycleDetails: ICycle | null): ICycle | null => {
   if (!cycleDetails || cycleDetails === null) return cycleDetails;
 
   const updatedCycleDetails: any = { ...cycleDetails };
@@ -42,64 +53,24 @@ const validateCycleSnapshot = (cycleDetails: ICycle | null): ICycle | null => {
   return updatedCycleDetails;
 };
 
-type options = {
-  value: string;
-  label: string;
-};
-export const cycleChartOptions: options[] = [
-  { value: "burndown", label: "Burn-down" },
-  { value: "burnup", label: "Burn-up" },
-];
-export const cycleEstimateOptions: options[] = [
-  { value: "issues", label: "issues" },
-  { value: "points", label: "points" },
-];
 export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((props) => {
   // props
   const { workspaceSlug, projectId, cycleId } = props;
   // router
   const searchParams = useSearchParams();
   const peekCycle = searchParams.get("peekCycle") || undefined;
-  // hooks
-  const { areEstimateEnabledByProjectId, currentActiveEstimateId, estimateById } = useProjectEstimates();
-  const {
-    getPlotTypeByCycleId,
-    getEstimateTypeByCycleId,
-    setPlotType,
-    getCycleById,
-    fetchCycleDetails,
-    fetchArchivedCycleDetails,
-    setEstimateType,
-  } = useCycle();
+  const { getPlotTypeByCycleId, getEstimateTypeByCycleId, getCycleById } = useCycle();
   const {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.CYCLE);
-  // state
-  const [loader, setLoader] = useState(false);
 
   // derived values
   const cycleDetails = validateCycleSnapshot(getCycleById(cycleId));
   const plotType: TCyclePlotType = getPlotTypeByCycleId(cycleId);
   const estimateType = getEstimateTypeByCycleId(cycleId);
-  const isCurrentProjectEstimateEnabled = projectId && areEstimateEnabledByProjectId(projectId) ? true : false;
-  const estimateDetails =
-    isCurrentProjectEstimateEnabled && currentActiveEstimateId && estimateById(currentActiveEstimateId);
-  const isCurrentEstimateTypeIsPoints = estimateDetails && estimateDetails?.type === EEstimateSystem.POINTS;
 
-  const completedIssues = cycleDetails?.completed_issues || 0;
   const totalIssues = cycleDetails?.total_issues || 0;
-  const completedEstimatePoints = cycleDetails?.completed_estimate_points || 0;
   const totalEstimatePoints = cycleDetails?.total_estimate_points || 0;
-
-  const progressHeaderPercentage = cycleDetails
-    ? estimateType === "points"
-      ? completedEstimatePoints != 0 && totalEstimatePoints != 0
-        ? Math.round((completedEstimatePoints / totalEstimatePoints) * 100)
-        : 0
-      : completedIssues != 0 && completedIssues != 0
-        ? Math.round((completedIssues / totalIssues) * 100)
-        : 0
-    : 0;
 
   const chartDistributionData =
     estimateType === "points" ? cycleDetails?.estimate_distribution : cycleDetails?.distribution || undefined;
@@ -125,25 +96,6 @@ export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((pro
   const isCycleStartDateValid = cycleStartDate && cycleStartDate <= new Date();
   const isCycleEndDateValid = cycleStartDate && cycleEndDate && cycleEndDate >= cycleStartDate;
   const isCycleDateValid = isCycleStartDateValid && isCycleEndDateValid;
-  const isArchived = !!cycleDetails?.archived_at;
-
-  // handlers
-  const onChange = async (value: TCycleEstimateType) => {
-    setEstimateType(cycleId, value);
-    if (!workspaceSlug || !projectId || !cycleId) return;
-    try {
-      setLoader(true);
-      if (isArchived) {
-        await fetchArchivedCycleDetails(workspaceSlug, projectId, cycleId);
-      } else {
-        await fetchCycleDetails(workspaceSlug, projectId, cycleId);
-      }
-      setLoader(false);
-    } catch (error) {
-      setLoader(false);
-      setEstimateType(cycleId, estimateType);
-    }
-  };
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
@@ -204,31 +156,7 @@ export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((pro
 
             <Transition show={open}>
               <Disclosure.Panel className="flex flex-col">
-                <div className="relative flex items-center justify-between gap-2 pt-4">
-                  <CustomSelect
-                    value={estimateType}
-                    label={<span>{cycleEstimateOptions.find((v) => v.value === estimateType)?.label ?? "None"}</span>}
-                    onChange={onChange}
-                    maxHeight="lg"
-                    buttonClassName="border-none rounded text-sm font-medium"
-                  >
-                    {cycleEstimateOptions.map((item) => (
-                      <CustomSelect.Option key={item.value} value={item.value}>
-                        {item.label}
-                      </CustomSelect.Option>
-                    ))}
-                  </CustomSelect>
-                </div>
-                <div className="py-4">
-                  <SidebarBaseChart
-                    chartDistributionData={chartDistributionData}
-                    cycleStartDate={cycleStartDate}
-                    cycleEndDate={cycleEndDate}
-                    totalEstimatePoints={totalEstimatePoints}
-                    totalIssues={totalIssues}
-                    plotType={plotType}
-                  />
-                </div>
+                <SidebarChartRoot workspaceSlug={workspaceSlug} projectId={projectId} cycleId={cycleId} />
                 {/* progress detailed view */}
                 {chartDistributionData && (
                   <div className="w-full border-t border-custom-border-200 py-4">

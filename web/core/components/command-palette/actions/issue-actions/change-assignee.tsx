@@ -4,13 +4,16 @@ import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Check } from "lucide-react";
+// plane types
 import { TIssue } from "@plane/types";
-// mobx store
+// plane ui
 import { Avatar } from "@plane/ui";
+// constants
 import { EIssuesStoreType } from "@/constants/issue";
+// helpers
+import { getFileURL } from "@/helpers/file.helper";
+// hooks
 import { useIssues, useMember } from "@/hooks/store";
-// ui
-// types
 
 type Props = {
   closePalette: () => void;
@@ -41,7 +44,7 @@ export const ChangeIssueAssignee: React.FC<Props> = observer((props) => {
             <div className="flex items-center gap-2">
               <Avatar
                 name={memberDetails?.member?.display_name}
-                src={memberDetails?.member?.avatar}
+                src={getFileURL(memberDetails?.member?.avatar_url ?? "")}
                 showTooltip={false}
               />
               {memberDetails?.member?.display_name}

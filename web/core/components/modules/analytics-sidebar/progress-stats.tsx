@@ -17,6 +17,7 @@ import { Avatar, StateGroupIcon } from "@plane/ui";
 import { SingleProgressStats } from "@/components/core";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useProjectState } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
@@ -28,7 +29,7 @@ import emptyMembers from "@/public/empty-state/empty_members.svg";
 type TAssigneeData = {
   id: string | undefined;
   title: string | undefined;
-  avatar: string | undefined;
+  avatar_url: string | undefined;
   completed: number;
   total: number;
 }[];
@@ -82,7 +83,7 @@ export const AssigneeStatComponent = observer((props: TAssigneeStatComponent) =>
                 key={assignee?.id}
                 title={
                   <div className="flex items-center gap-2">
-                    <Avatar name={assignee?.title ?? undefined} src={assignee?.avatar ?? undefined} />
+                    <Avatar name={assignee?.title ?? undefined} src={getFileURL(assignee?.avatar_url ?? "")} />
                     <span>{assignee?.title ?? ""}</span>
                   </div>
                 }
@@ -277,14 +278,14 @@ export const ModuleProgressStats: FC<TModuleProgressStats> = observer((props) =>
       ? (currentDistribution?.assignees || []).map((assignee) => ({
           id: assignee?.assignee_id || undefined,
           title: assignee?.display_name || undefined,
-          avatar: assignee?.avatar || undefined,
+          avatar_url: assignee?.avatar_url || undefined,
           completed: assignee.completed_issues,
           total: assignee.total_issues,
         }))
       : (currentEstimateDistribution?.assignees || []).map((assignee) => ({
           id: assignee?.assignee_id || undefined,
           title: assignee?.display_name || undefined,
-          avatar: assignee?.avatar || undefined,
+          avatar_url: assignee?.avatar_url || undefined,
           completed: assignee.completed_estimates,
           total: assignee.total_estimates,
         }));

@@ -102,7 +102,7 @@ export const SidebarQuickActions = observer(() => {
             <PenSquare className="size-4" />
             {!isSidebarCollapsed && <span className="text-sm font-medium">New issue</span>}
           </button>
-          {!disabled && workspaceDraftIssue && (
+          {/* {!disabled && workspaceDraftIssue && (
             <>
               {!isSidebarCollapsed && (
                 <button type="button" className="grid place-items-center">
@@ -127,7 +127,7 @@ export const SidebarQuickActions = observer(() => {
                 </div>
               )}
             </>
-          )}
+          )} */}
         </div>
         <button
           className={cn(

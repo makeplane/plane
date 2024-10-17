@@ -11,7 +11,7 @@ from plane.db.models import (
     IssueType,
     IssueActivity,
     IssueAssignee,
-    IssueAttachment,
+    FileAsset,
     IssueComment,
     IssueLabel,
     IssueLink,
@@ -30,6 +30,7 @@ from .user import UserLiteSerializer
 # Django imports
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
+
 
 class IssueSerializer(BaseSerializer):
     assignees = serializers.ListField(
@@ -211,7 +212,7 @@ class IssueSerializer(BaseSerializer):
         updated_by_id = instance.updated_by_id
 
         if assignees is not None:
-            IssueAssignee.objects.filter(issue=instance).delete()
+            IssueAssignee.objects.filter(issue=instance).delete(soft=False)
             IssueAssignee.objects.bulk_create(
                 [
                     IssueAssignee(
@@ -228,7 +229,7 @@ class IssueSerializer(BaseSerializer):
             )
 
         if labels is not None:
-            IssueLabel.objects.filter(issue=instance).delete()
+            IssueLabel.objects.filter(issue=instance).delete(soft=False)
             IssueLabel.objects.bulk_create(
                 [
                     IssueLabel(
@@ -315,7 +316,7 @@ class IssueLinkSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
-    
+
     def validate_url(self, value):
         # Check URL format
         validate_url = URLValidator()
@@ -359,7 +360,7 @@ class IssueLinkSerializer(BaseSerializer):
 
 class IssueAttachmentSerializer(BaseSerializer):
     class Meta:
-        model = IssueAttachment
+        model = FileAsset
         fields = "__all__"
         read_only_fields = [
             "id",
