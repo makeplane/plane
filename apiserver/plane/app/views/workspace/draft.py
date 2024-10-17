@@ -260,9 +260,9 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                 origin=request.META.get("HTTP_ORIGIN"),
             )
 
-            if draft_issue.cycle_id:
+            if request.data.get("cycle_id", None):
                 created_records = CycleIssue.objects.create(
-                    cycle_id=draft_issue.cycle_id,
+                    cycle_id=request.data.get("cycle_id", None),
                     issue_id=serializer.data.get("id", None),
                     project_id=draft_issue.project_id,
                     workspace_id=draft_issue.workspace_id,
@@ -289,7 +289,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                     origin=request.META.get("HTTP_ORIGIN"),
                 )
 
-            if draft_issue.module_ids:
+            if request.data.get("module_ids", []):
                 # bulk create the module
                 ModuleIssue.objects.bulk_create(
                     [
@@ -301,11 +301,11 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                             created_by_id=draft_issue.created_by_id,
                             updated_by_id=draft_issue.updated_by_id,
                         )
-                        for module in draft_issue.module_ids
+                        for module in request.data.get("module_ids", [])
                     ],
                     batch_size=10,
                 )
-                # Bulk Update the activity
+                # Update the activity
                 _ = [
                     issue_activity.delay(
                         type="module.activity.created",
@@ -318,7 +318,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                         notification=True,
                         origin=request.META.get("HTTP_ORIGIN"),
                     )
-                    for module in draft_issue.module_ids
+                    for module in request.data.get("module_ids", [])
                 ]
 
             # Update file assets
@@ -331,12 +331,6 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
 
             # delete the draft issue
             draft_issue.delete()
-
-            # delete the draft issue module
-            DraftIssueModule.objects.filter(draft_issue=draft_issue).delete()
-
-            # delete the draft issue cycle
-            DraftIssueCycle.objects.filter(draft_issue=draft_issue).delete()
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
