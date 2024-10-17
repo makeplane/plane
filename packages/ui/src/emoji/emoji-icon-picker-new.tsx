@@ -111,6 +111,7 @@ export const EmojiIconPicker: React.FC<TCustomEmojiPicker> = (props) => {
                       previewConfig={{
                         showPreview: false,
                       }}
+                      lazyLoadEmojis
                     />
                   </Tab.Panel>
                   <Tab.Panel className="h-80 w-full relative overflow-hidden overflow-y-auto">
