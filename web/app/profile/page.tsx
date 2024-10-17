@@ -226,7 +226,7 @@ const ProfileSettingsPage = observer(() => {
                     control={control}
                     name="first_name"
                     rules={{
-                      required: "First name is required.",
+                      required: "Please enter first name",
                     }}
                     render={({ field: { value, onChange, ref } }) => (
                       <Input
@@ -244,7 +244,7 @@ const ProfileSettingsPage = observer(() => {
                       />
                     )}
                   />
-                  {errors.first_name && <span className="text-xs text-red-500">Please enter first name</span>}
+                  {errors.first_name && <span className="text-xs text-red-500">{errors.first_name.message}</span>}
                 </div>
                 <div className="flex flex-col gap-1">
                   <h4 className="text-sm font-medium text-custom-text-200">Last name</h4>
@@ -281,7 +281,7 @@ const ProfileSettingsPage = observer(() => {
                         if (value.trim().length < 1) return "Display name can't be empty.";
                         if (value.split("  ").length > 1) return "Display name can't have two consecutive spaces.";
                         if (value.replace(/\s/g, "").length < 1)
-                          return "Display name must be at least 1 characters long.";
+                          return "Display name must be at least 1 character long.";
                         if (value.replace(/\s/g, "").length > 20)
                           return "Display name must be less than 20 characters long.";
                         return true;
@@ -384,7 +384,7 @@ const ProfileSettingsPage = observer(() => {
                         }
                         options={timeZoneOptions}
                         onChange={onChange}
-                        buttonClassName={errors.user_timezone ? "border-red-500" : "border-none"}
+                        buttonClassName={errors.user_timezone ? "border-red-500" : ""}
                         className="rounded-md border-[0.5px] !border-custom-border-200"
                         optionsClassName="w-72"
                         input
@@ -395,9 +395,7 @@ const ProfileSettingsPage = observer(() => {
                 </div>
                 <Tooltip tooltipContent="Coming soon" position="bottom">
                   <div className="flex flex-col gap-1">
-                    <h4 className="text-sm font-medium text-custom-text-200">
-                      Language<span className="text-red-500">*</span>
-                    </h4>
+                    <h4 className="text-sm font-medium text-custom-text-200">Language</h4>
                     <CustomSearchSelect
                       value="English (US)"
                       label="English (US)"
