@@ -565,6 +565,8 @@ class StaticFileAssetEndpoint(BaseAPIView):
 class AssetRestoreEndpoint(BaseAPIView):
     """Endpoint to restore a deleted assets."""
 
+    authentication_classes = [JWTAuthentication, BaseSessionAuthentication]
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def post(self, request, slug, asset_id):
         asset = FileAsset.all_objects.get(id=asset_id, workspace__slug=slug)

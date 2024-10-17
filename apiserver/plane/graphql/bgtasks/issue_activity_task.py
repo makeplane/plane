@@ -10,7 +10,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
 
 from plane.app.serializers import IssueActivitySerializer
-from .notification_task import notifications
+from plane.bgtasks.notification_task import notifications
 
 # Module imports
 from plane.db.models import (
@@ -27,6 +27,7 @@ from plane.db.models import (
     State,
     User,
     EstimatePoint,
+    IssueType,
 )
 from plane.settings.redis import redis_instance
 from plane.utils.exception_logger import log_exception
@@ -465,7 +466,7 @@ def track_estimate_points(
             IssueActivity(
                 issue_id=issue_id,
                 actor_id=actor_id,
-                verb="updated",
+                verb="removed" if new_estimate is None else "updated",
                 old_identifier=(
                     current_instance.get("estimate_point")
                     if current_instance.get("estimate_point") is not None
@@ -570,6 +571,50 @@ def track_closed_to(
         )
 
 
+def track_type(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    new_type_id = requested_data.get("type_id")
+    old_type_id = current_instance.get("type_id")
+
+    if new_type_id != old_type_id:
+        verb = "updated" if new_type_id else "deleted"
+        old_type_id = (
+            IssueType.objects.filter(pk=old_type_id).first()
+            if old_type_id
+            else None
+        )
+        new_type_id = (
+            IssueType.objects.filter(pk=new_type_id).first()
+            if new_type_id
+            else None
+        )
+
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor_id=actor_id,
+                verb=verb,
+                old_value=old_type_id.name if old_type_id else None,
+                new_value=new_type_id.name if new_type_id else None,
+                field="type",
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment="",
+                old_identifier=old_type_id.id if old_type_id else None,
+                new_identifier=new_type_id.id if new_type_id else None,
+                epoch=epoch,
+            )
+        )
+
+
 def create_issue_activity(
     requested_data,
     current_instance,
@@ -580,17 +625,19 @@ def create_issue_activity(
     issue_activities,
     epoch,
 ):
-    issue_activities.append(
-        IssueActivity(
-            issue_id=issue_id,
-            project_id=project_id,
-            workspace_id=workspace_id,
-            comment="created the issue",
-            verb="created",
-            actor_id=actor_id,
-            epoch=epoch,
-        )
+    issue = Issue.objects.get(pk=issue_id)
+    issue_activity = IssueActivity.objects.create(
+        issue_id=issue_id,
+        project_id=project_id,
+        workspace_id=workspace_id,
+        comment="created the issue",
+        verb="created",
+        actor_id=actor_id,
+        epoch=epoch,
     )
+    issue_activity.created_at = issue.created_at
+    issue_activity.actor_id = issue.created_by_id
+    issue_activity.save(update_fields=["created_at", "actor_id"])
     requested_data = (
         json.loads(requested_data) if requested_data is not None else None
     )
@@ -630,6 +677,7 @@ def update_issue_activity(
         "estimate_point": track_estimate_points,
         "archived_at": track_archive_at,
         "closed_to": track_closed_to,
+        "type_id": track_type,
     }
 
     requested_data = (
@@ -668,6 +716,7 @@ def delete_issue_activity(
         IssueActivity(
             project_id=project_id,
             workspace_id=workspace_id,
+            issue_id=issue_id,
             comment="deleted the issue",
             verb="deleted",
             actor_id=actor_id,
@@ -875,7 +924,6 @@ def delete_cycle_issue_activity(
     cycle_name = requested_data.get("cycle_name", "")
     cycle = Cycle.objects.filter(pk=cycle_id).first()
     issues = requested_data.get("issues")
-
     for issue in issues:
         current_issue = Issue.objects.filter(pk=issue).first()
         if issue:
@@ -1389,6 +1437,7 @@ def create_issue_relation_activity(
                     workspace_id=workspace_id,
                     comment=f"added {requested_data.get('relation_type')} relation",
                     old_identifier=related_issue,
+                    epoch=epoch,
                 )
             )
             issue = Issue.objects.get(pk=issue_id)
@@ -1697,12 +1746,16 @@ def issue_activity(
                     event=(
                         "issue_comment"
                         if activity.field == "comment"
-                        else "inbox_issue" if inbox else "issue"
+                        else "inbox_issue"
+                        if inbox
+                        else "issue"
                     ),
                     event_id=(
                         activity.issue_comment_id
                         if activity.field == "comment"
-                        else inbox if inbox else activity.issue_id
+                        else inbox
+                        if inbox
+                        else activity.issue_id
                     ),
                     verb=activity.verb,
                     field=(
