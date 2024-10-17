@@ -18,10 +18,9 @@ import { issueFilterCountQueryConstructor, issueFilterQueryConstructor } from ".
 import { runQuery } from "./utils/query-executor";
 import { createTables } from "./utils/tables";
 import { getGroupedIssueResults, getSubGroupedIssueResults, log, logError, logInfo } from "./utils/utils";
-import { DBClass } from "./worker/db";
 
 const DB_VERSION = 1;
-const PAGE_SIZE = 1000;
+const PAGE_SIZE = 500;
 const BATCH_SIZE = 200;
 
 type TProjectStatus = {
@@ -91,6 +90,8 @@ export class Storage {
 
     logInfo("Loading and initializing SQLite3 module...");
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { DBClass } = await import("./worker/db");
     const MyWorker = Comlink.wrap<typeof DBClass>(new Worker(new URL("./worker/db.ts", import.meta.url)));
     this.workspaceSlug = workspaceSlug;
     this.dbName = workspaceSlug;
@@ -309,7 +310,6 @@ export class Storage {
       Parsing: parsingEnd - parsingStart,
       Grouping: groupingEnd - grouping,
     };
-    log(issueResults);
     if ((window as any).DEBUG) {
       console.table(times);
     }
