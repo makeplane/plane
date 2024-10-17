@@ -14,21 +14,21 @@ type Props = {
   disabled: boolean;
   handleOpen: (val: boolean) => void;
   isOpen: boolean;
-  updateAttributes: (attrs: Record<string, any>) => void;
+  updateAttributes: (attrs: Partial<TCalloutBlockAttributes>) => void;
 };
 
 export const CalloutBlockLogoSelector: React.FC<Props> = (props) => {
   const { blockAttributes, disabled, handleOpen, isOpen, updateAttributes } = props;
-  const { dataLogoInUse, dataEmoji, dataIconColor, dataIconName } = blockAttributes;
 
   const logoValue: TEmojiLogoProps = {
-    in_use: dataLogoInUse,
+    in_use: blockAttributes["data-logo-in-use"],
     icon: {
-      color: dataIconColor,
-      name: dataIconName,
+      color: blockAttributes["data-icon-color"],
+      name: blockAttributes["data-icon-name"],
     },
     emoji: {
-      value: dataEmoji,
+      value: blockAttributes["data-emoji-unicode"]?.toString(),
+      url: blockAttributes["data-emoji-url"],
     },
   };
 
@@ -49,12 +49,14 @@ export const CalloutBlockLogoSelector: React.FC<Props> = (props) => {
           let newLogoValueToStoreInLocalStorage: TEmojiLogoProps = {
             in_use: "emoji",
             emoji: {
-              value: DEFAULT_CALLOUT_BLOCK_ATTRIBUTES.dataEmoji,
+              value: DEFAULT_CALLOUT_BLOCK_ATTRIBUTES["data-emoji-unicode"],
+              url: DEFAULT_CALLOUT_BLOCK_ATTRIBUTES["data-emoji-url"],
             },
           };
           if (val.type === "emoji") {
             newLogoValue = {
-              dataEmoji: convertHexEmojiToDecimal(val.value.unified),
+              "data-emoji-unicode": convertHexEmojiToDecimal(val.value.unified),
+              "data-emoji-url": val.value.imageUrl,
             };
             newLogoValueToStoreInLocalStorage = {
               in_use: "emoji",
@@ -64,8 +66,8 @@ export const CalloutBlockLogoSelector: React.FC<Props> = (props) => {
             };
           } else if (val.type === "icon") {
             newLogoValue = {
-              dataIconName: val.value.name,
-              dataIconColor: val.value.color,
+              "data-icon-name": val.value.name,
+              "data-icon-color": val.value.color,
             };
             newLogoValueToStoreInLocalStorage = {
               in_use: "icon",
@@ -77,7 +79,7 @@ export const CalloutBlockLogoSelector: React.FC<Props> = (props) => {
           }
           // update node attributes
           updateAttributes({
-            dataLogoInUse: val.type,
+            "data-logo-in-use": val.type,
             ...newLogoValue,
           });
           // update stored logo in local storage

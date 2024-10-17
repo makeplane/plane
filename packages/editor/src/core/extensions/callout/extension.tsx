@@ -30,7 +30,7 @@ export const CustomCalloutExtension = CustomCalloutExtensionConfig.extend({
             ],
             attrs: {
               ...storedLogoValues,
-              dataBackground: storedBackgroundValue,
+              "data-background": storedBackgroundValue,
             },
           });
         },
@@ -41,16 +41,20 @@ export const CustomCalloutExtension = CustomCalloutExtensionConfig.extend({
     return {
       Backspace: ({ editor }) => {
         const { $from, empty } = editor.state.selection;
-        const predicate: Predicate = (node) => node.type === this.type;
-        const parentNodeDetails = findParentNodeClosestToPos($from, predicate);
-        const isCursorAtCalloutBeginning = $from.pos === parentNodeDetails.start + 1;
-
-        // Check if selection is empty and at the beginning of the callout
-        if (empty && parentNodeDetails && parentNodeDetails.node.content.size > 2 && isCursorAtCalloutBeginning) {
-          editor.commands.setTextSelection(parentNodeDetails.pos - 1);
-          return true;
+        try {
+          const isParentNodeCallout: Predicate = (node) => node.type === this.type;
+          const parentNodeDetails = findParentNodeClosestToPos($from, isParentNodeCallout);
+          // Check if selection is empty and at the beginning of the callout
+          if (empty && parentNodeDetails) {
+            const isCursorAtCalloutBeginning = $from.pos === parentNodeDetails.start + 1;
+            if (parentNodeDetails.node.content.size > 2 && isCursorAtCalloutBeginning) {
+              editor.commands.setTextSelection(parentNodeDetails.pos - 1);
+              return true;
+            }
+          }
+        } catch (error) {
+          console.error("Error in performing backspace action on callout", error);
         }
-
         return false; // Allow the default behavior if conditions are not met
       },
       ArrowDown: insertEmptyParagraphAtNodeBoundaries("down", this.name),

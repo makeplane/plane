@@ -1,4 +1,8 @@
 import { Node, mergeAttributes } from "@tiptap/core";
+import { Node as NodeType } from "@tiptap/pm/model";
+import { MarkdownSerializerState } from "@tiptap/pm/markdown";
+// types
+import { EAttributeNames, TCalloutBlockAttributes } from "./types";
 // utils
 import { DEFAULT_CALLOUT_BLOCK_ATTRIBUTES } from "./utils";
 
@@ -17,28 +21,41 @@ export const CustomCalloutExtensionConfig = Node.create({
   content: "block+",
 
   addAttributes() {
-    return {
+    const attributes = {
       class: {
         default: "editor-callout",
       },
-      dataLogoInUse: {
-        default: "emoji",
-        parseHTML: (element) => element.getAttribute("dataLogoInUse") || DEFAULT_CALLOUT_BLOCK_ATTRIBUTES.dataLogoInUse,
-        renderHTML: (attributes) => ({
-          dataLogoInUse: attributes["dataLogoInUse"] || DEFAULT_CALLOUT_BLOCK_ATTRIBUTES.dataLogoInUse,
-        }),
-      },
-      dataIconColor: {},
-      dataIconName: {},
-      dataEmoji: {
-        default: "128161",
-        parseHTML: (element) => element.getAttribute("dataEmoji") || DEFAULT_CALLOUT_BLOCK_ATTRIBUTES.dataEmoji,
-        renderHTML: (attributes) => ({
-          dataEmoji: attributes["dataEmoji"] || DEFAULT_CALLOUT_BLOCK_ATTRIBUTES.dataEmoji,
-        }),
-      },
-      dataBackground: {
-        default: null,
+      // Reduce instead of map to accumulate the attributes directly into an object
+      ...Object.values(EAttributeNames).reduce((acc, value) => {
+        acc[value] = {
+          default: DEFAULT_CALLOUT_BLOCK_ATTRIBUTES[value],
+        };
+        return acc;
+      }, {}),
+    };
+    return attributes;
+  },
+
+  addStorage() {
+    return {
+      markdown: {
+        serialize(state: MarkdownSerializerState, node: NodeType) {
+          const attrs = node.attrs as TCalloutBlockAttributes;
+          const logoInUse = attrs["data-logo-in-use"];
+          // add callout logo
+          if (logoInUse === "emoji") {
+            state.write(
+              `> <img src="${attrs["data-emoji-url"]}" alt="${attrs["data-emoji-unicode"]}" width="30px" />\n`
+            );
+          } else {
+            state.write(`> <icon>${attrs["data-icon-name"]} icon</icon>\n`);
+          }
+          // add an empty line after the logo
+          state.write("> \n");
+          // add '> ' before each line of the callout content
+          state.wrapBlock("> ", null, node, () => state.renderContent(node));
+          state.closeBlock(node);
+        },
       },
     };
   },

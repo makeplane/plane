@@ -1,42 +1,51 @@
 // plane ui
 import { TEmojiLogoProps } from "@plane/ui";
 // types
-import { TCalloutBlockAttributes } from "./types";
+import {
+  EAttributeNames,
+  TCalloutBlockAttributes,
+  TCalloutBlockEmojiAttributes,
+  TCalloutBlockIconAttributes,
+} from "./types";
 
 export const DEFAULT_CALLOUT_BLOCK_ATTRIBUTES: TCalloutBlockAttributes = {
   class: "",
-  dataLogoInUse: "emoji",
-  dataIconColor: null,
-  dataIconName: null,
-  dataEmoji: "128161",
-  dataBackground: null,
+  "data-logo-in-use": "emoji",
+  "data-icon-color": null,
+  "data-icon-name": null,
+  "data-emoji-unicode": "128161",
+  "data-emoji-url": "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f4a1.png",
+  "data-background": null,
 };
 
 // function to get the stored logo from local storage
-export const getStoredLogo = (): Partial<TCalloutBlockAttributes> => {
+export const getStoredLogo = (): Pick<TCalloutBlockAttributes, EAttributeNames.LOGO_IN_USE> &
+  (TCalloutBlockEmojiAttributes | TCalloutBlockIconAttributes) => {
   if (typeof window !== "undefined") {
     const storedData = localStorage.getItem("editor-calloutComponent-logo");
     if (storedData) {
       const parsedData: TEmojiLogoProps = JSON.parse(storedData);
       if (parsedData.in_use === "emoji" && parsedData.emoji?.value) {
         return {
-          dataLogoInUse: "emoji",
-          dataEmoji: parsedData.emoji.value,
+          "data-logo-in-use": "emoji",
+          "data-emoji-unicode": parsedData.emoji.value,
+          "data-emoji-url": parsedData.emoji.url,
         };
       }
       if (parsedData.in_use === "icon" && parsedData.icon?.name) {
         return {
-          dataLogoInUse: "icon",
-          dataIconName: parsedData.icon.name,
-          dataIconColor: parsedData.icon.color || "",
+          "data-logo-in-use": "icon",
+          "data-icon-name": parsedData.icon.name,
+          "data-icon-color": parsedData.icon.color || "",
         };
       }
     }
   }
   // fallback values
   return {
-    dataLogoInUse: "emoji",
-    dataEmoji: DEFAULT_CALLOUT_BLOCK_ATTRIBUTES.dataEmoji,
+    "data-logo-in-use": "emoji",
+    "data-emoji-unicode": DEFAULT_CALLOUT_BLOCK_ATTRIBUTES["data-emoji-unicode"],
+    "data-emoji-url": DEFAULT_CALLOUT_BLOCK_ATTRIBUTES["data-emoji-url"],
   };
 };
 // function to update the stored logo on local storage
@@ -54,11 +63,10 @@ export const getStoredBackgroundColor = (): string | null => {
 // function to update the stored background color on local storage
 export const updateStoredBackgroundColor = (value: string | null): void => {
   if (typeof window === "undefined") return;
-  if(!value) {
+  if (!value) {
     localStorage.removeItem("editor-calloutComponent-background");
     return;
   } else {
-
     localStorage.setItem("editor-calloutComponent-background", value);
   }
 };

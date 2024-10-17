@@ -6,7 +6,7 @@ import { COLORS_LIST } from "@/constants/common";
 import { CalloutBlockColorSelector } from "./color-selector";
 import { CalloutBlockLogoSelector } from "./logo-selector";
 // types
-import { TCalloutBlockAttributes } from "./types";
+import { EAttributeNames, TCalloutBlockAttributes } from "./types";
 // utils
 import { updateStoredBackgroundColor } from "./utils";
 
@@ -14,8 +14,7 @@ type Props = NodeViewProps & {
   node: NodeViewProps["node"] & {
     attrs: TCalloutBlockAttributes;
   };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  updateAttributes: (attrs: Record<string, any>) => void;
+  updateAttributes: (attrs: Partial<TCalloutBlockAttributes>) => void;
 };
 
 export const CustomCalloutBlock: React.FC<Props> = (props) => {
@@ -24,12 +23,11 @@ export const CustomCalloutBlock: React.FC<Props> = (props) => {
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
   // derived values
-  const { dataBackground } = node.attrs;
-  const activeBackgroundColor = COLORS_LIST.find((c) => dataBackground === c.key)?.backgroundColor;
+  const activeBackgroundColor = COLORS_LIST.find((c) => node.attrs["data-background"] === c.key)?.backgroundColor;
 
   return (
     <NodeViewWrapper
-      className="editor-callout-component group/callout-node relative bg-custom-background-90 rounded-lg text-custom-text-100 p-4 my-2 flex items-start gap-4 transition-colors duration-500"
+      className="editor-callout-component group/callout-node relative bg-custom-background-90 rounded-lg text-custom-text-100 p-4 my-2 flex items-start gap-4 transition-colors duration-500 break-words"
       style={{
         backgroundColor: activeBackgroundColor,
       }}
@@ -47,12 +45,12 @@ export const CustomCalloutBlock: React.FC<Props> = (props) => {
         toggleDropdown={() => setIsColorPickerOpen((prev) => !prev)}
         onSelect={(val) => {
           updateAttributes({
-            dataBackground: val,
+            [EAttributeNames.BACKGROUND]: val,
           });
           updateStoredBackgroundColor(val);
         }}
       />
-      <NodeViewContent as="div" className="flex-shrink-0 whitespace-pre-wrap" />
+      <NodeViewContent as="div" className="w-full break-words" />
     </NodeViewWrapper>
   );
 };

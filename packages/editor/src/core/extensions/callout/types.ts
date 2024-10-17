@@ -1,8 +1,25 @@
-export type TCalloutBlockAttributes = {
-  class: string;
-  dataLogoInUse: "emoji" | "icon";
-  dataIconColor: string;
-  dataIconName: string;
-  dataEmoji: string;
-  dataBackground: string;
+export enum EAttributeNames {
+  ICON_COLOR = "data-icon-color",
+  ICON_NAME = "data-icon-name",
+  EMOJI_UNICODE = "data-emoji-unicode",
+  EMOJI_URL = "data-emoji-url",
+  LOGO_IN_USE = "data-logo-in-use",
+  BACKGROUND = "data-background",
+}
+
+export type TCalloutBlockIconAttributes = {
+  [EAttributeNames.ICON_COLOR]: string | undefined;
+  [EAttributeNames.ICON_NAME]: string | undefined;
 };
+
+export type TCalloutBlockEmojiAttributes = {
+  [EAttributeNames.EMOJI_UNICODE]: string | undefined;
+  [EAttributeNames.EMOJI_URL]: string | undefined;
+};
+
+export type TCalloutBlockAttributes = {
+  class: string | undefined;
+  [EAttributeNames.LOGO_IN_USE]: "emoji" | "icon";
+  [EAttributeNames.BACKGROUND]: string;
+} & TCalloutBlockIconAttributes &
+  TCalloutBlockEmojiAttributes;
