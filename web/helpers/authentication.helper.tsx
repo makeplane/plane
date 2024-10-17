@@ -95,6 +95,7 @@ export enum EAuthenticationErrorCodes {
   // mobile specific codes
   USER_NOT_ONBOARDED = "6000",
   TOKEN_NOT_SET = "6005",
+  MOBILE_SIGNUP_DISABLED = "6010",
 }
 
 export type TAuthErrorInfo = {
@@ -371,6 +372,10 @@ const errorCodeMessages: {
     title: `Token not set`,
     message: () => `Token not set. Please try again.`,
   },
+  [EAuthenticationErrorCodes.MOBILE_SIGNUP_DISABLED]: {
+    title: `Mobile sign up disabled`,
+    message: () => `Mobile sign up disabled. Please contact your administrator.`,
+  },
 };
 
 export const authErrorHandler = (
@@ -430,6 +435,7 @@ export const authErrorHandler = (
     EAuthenticationErrorCodes.RATE_LIMIT_EXCEEDED,
     EAuthenticationErrorCodes.USER_NOT_ONBOARDED,
     EAuthenticationErrorCodes.TOKEN_NOT_SET,
+    EAuthenticationErrorCodes.MOBILE_SIGNUP_DISABLED,
   ];
 
   if (bannerAlertErrorCodes.includes(errorCode))

@@ -91,3 +91,5 @@ from .app.mobile.token import (
     MobileTokenEndpoint,
 )
 from .app.mobile.signout import MobileSignOutAuthEndpoint
+from .app.mobile.google import MobileGoogleOauthInitiateEndpoint, MobileGoogleCallbackEndpoint
+from .app.mobile.github import MobileGitHubOauthInitiateEndpoint, MobileGitHubCallbackEndpoint

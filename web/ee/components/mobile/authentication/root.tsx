@@ -21,6 +21,7 @@ import {
   MobileAuthEmailValidationForm,
   MobileAuthUniqueCodeForm,
   MobileAuthPasswordForm,
+  OAuthRoot,
 } from "@/plane-web/components/mobile";
 // services
 import { AuthService } from "@/services/auth.service";
@@ -52,6 +53,17 @@ const UNIQUE_CODE_ERROR_CODES = [
 ];
 
 const PASSWORD_ERROR_CODES = [EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_IN];
+
+// oauth error codes
+const OAUTH_ERROR_CODES = [
+  EAuthenticationErrorCodes.OAUTH_NOT_CONFIGURED,
+  EAuthenticationErrorCodes.GOOGLE_NOT_CONFIGURED,
+  EAuthenticationErrorCodes.GITHUB_NOT_CONFIGURED,
+  EAuthenticationErrorCodes.GOOGLE_OAUTH_PROVIDER_ERROR,
+  EAuthenticationErrorCodes.GITHUB_OAUTH_PROVIDER_ERROR,
+  EAuthenticationErrorCodes.GITLAB_OAUTH_PROVIDER_ERROR,
+  EAuthenticationErrorCodes.MOBILE_SIGNUP_DISABLED,
+];
 
 export const AuthRoot: FC = observer(() => {
   // router
@@ -98,6 +110,8 @@ export const AuthRoot: FC = observer(() => {
     if (PASSWORD_ERROR_CODES.includes(errorhandler.code)) setAuthStep(EAuthSteps.PASSWORD);
     // unique code handler
     if (UNIQUE_CODE_ERROR_CODES.includes(errorhandler.code)) setAuthStep(EAuthSteps.UNIQUE_CODE);
+    // oauth signup handler
+    if (OAUTH_ERROR_CODES.includes(errorhandler.code)) setErrorInfo(errorhandler);
     setErrorInfo(errorhandler);
   }, [errorCodeParam, errorMessageParam]);
 
@@ -108,7 +122,7 @@ export const AuthRoot: FC = observer(() => {
   }, [sessionToken]);
 
   return (
-    <div className="relative flex flex-col space-y-6">
+    <div className="relative flex flex-col space-y-4">
       {/* heading */}
       <div className="space-y-1 text-center">
         <h3 className="text-3xl font-bold text-onboarding-text-100">{AUTH_HEADER_CONTENT_OPTIONS[authStep]?.title}</h3>
@@ -150,6 +164,9 @@ export const AuthRoot: FC = observer(() => {
           />
         )}
       </div>
+
+      {/* oauth */}
+      <OAuthRoot />
 
       {/* terms and conditions */}
       <MobileTermsAndConditions />
