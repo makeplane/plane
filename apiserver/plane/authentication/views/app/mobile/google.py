@@ -110,12 +110,20 @@ class MobileGoogleCallbackEndpoint(View):
             return HttpResponseRedirect(url)
 
         try:
+            scheme = (
+                "https"
+                if settings.IS_HEROKU
+                else "https"
+                if request.is_secure()
+                else "http"
+            )
+            redirect_uri = f"""{scheme}://{request.get_host()}/auth/mobile/google/callback/"""
             provider = GoogleOAuthProvider(
                 request=request,
                 code=code,
                 callback=post_user_auth_workflow,
                 is_mobile=True,
-                redirect_uri=f"""{base_host}/auth/mobile/google/callback/""",
+                redirect_uri=redirect_uri,
             )
 
             # getting the user from the google provider
