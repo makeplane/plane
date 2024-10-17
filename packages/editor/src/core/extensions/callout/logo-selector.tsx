@@ -62,6 +62,7 @@ export const CalloutBlockLogoSelector: React.FC<Props> = (props) => {
               in_use: "emoji",
               emoji: {
                 value: convertHexEmojiToDecimal(val.value.unified),
+                url: val.value.imageUrl,
               },
             };
           } else if (val.type === "icon") {
@@ -87,9 +88,7 @@ export const CalloutBlockLogoSelector: React.FC<Props> = (props) => {
           handleOpen(false);
         }}
         defaultIconColor={logoValue?.in_use && logoValue.in_use === "icon" ? logoValue?.icon?.color : undefined}
-        defaultOpen={
-          logoValue?.in_use && logoValue.in_use === "emoji" ? EmojiIconPickerTypes.EMOJI : EmojiIconPickerTypes.ICON
-        }
+        defaultOpen={logoValue.in_use === "emoji" ? EmojiIconPickerTypes.EMOJI : EmojiIconPickerTypes.ICON}
         disabled={disabled}
       />
     </div>

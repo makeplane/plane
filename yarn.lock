@@ -4129,13 +4129,21 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@18.2.48", "@types/react@^16.8.0 || ^17.0.0 || ^18.0.0", "@types/react@^18.2.42", "@types/react@^18.2.48", "@types/react@^18.3.5":
+"@types/react@*", "@types/react@^16.8.0 || ^17.0.0 || ^18.0.0", "@types/react@^18.2.42", "@types/react@^18.2.48":
   version "18.2.48"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.48.tgz#11df5664642d0bd879c1f58bc1d37205b064e8f1"
   integrity sha512-qboRCl6Ie70DQQG9hhNREz81jqC1cs9EVNcjQ1AU+jH6NFfSAhVVbrrY/+nSF+Bsk4AOwm9Qa61InvMCyV+H3w==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
+    csstype "^3.0.2"
+
+"@types/react@^18.3.5":
+  version "18.3.11"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.3.11.tgz#9d530601ff843ee0d7030d4227ea4360236bd537"
+  integrity sha512-r6QZ069rFTjrEYgFdOck1gK7FLVsgJE7tTz0pQBczlBNUhBNk0MQH4UbnFSwjpQLMkLzgqvBBa+qGpLje16eTQ==
+  dependencies:
+    "@types/prop-types" "*"
     csstype "^3.0.2"
 
 "@types/reactcss@*":
@@ -8154,7 +8162,7 @@ isexe@^2.0.0:
   resolved "https://registry.yarnpkg.com/isexe/-/isexe-2.0.0.tgz#e8fbf374dc556ff8947a10dcb0572d633f2cfa10"
   integrity sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==
 
-isomorphic-dompurify@^2.12.0:
+isomorphic-dompurify@^2.12.0, isomorphic-dompurify@^2.16.0:
   version "2.16.0"
   resolved "https://registry.yarnpkg.com/isomorphic-dompurify/-/isomorphic-dompurify-2.16.0.tgz#c46ec33ae6bde43648bd6163925625949113a696"
   integrity sha512-cXhX2owp8rPxafCr0ywqy2CGI/4ceLNgWkWBEvUz64KTbtg3oRL2ZRqq/zW0pzt4YtDjkHLbwcp/lozpKzAQjg==

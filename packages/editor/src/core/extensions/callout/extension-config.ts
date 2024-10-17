@@ -57,7 +57,6 @@ export const CustomCalloutExtensionConfig = Node.create({
     };
   },
 
-  // Parse HTML elements matching the class 'callout'
   parseHTML() {
     return [{ tag: "callout-component" }];
   },
