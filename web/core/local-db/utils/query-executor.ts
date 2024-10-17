@@ -9,5 +9,5 @@ export const runQuery = async (sql: string) => {
     returnValue: "resultRows",
   });
 
-  return data.result.resultRows;
+  return data;
 };

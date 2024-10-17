@@ -1,4 +1,5 @@
 import * as Sentry from "@sentry/nextjs";
+import * as Comlink from "comlink";
 import set from "lodash/set";
 // plane
 import { EIssueGroupBYServerToProperty } from "@plane/constants";
@@ -17,10 +18,7 @@ import { issueFilterCountQueryConstructor, issueFilterQueryConstructor } from ".
 import { runQuery } from "./utils/query-executor";
 import { createTables } from "./utils/tables";
 import { getGroupedIssueResults, getSubGroupedIssueResults, log, logError, logInfo } from "./utils/utils";
-
-declare module "@sqlite.org/sqlite-wasm" {
-  export function sqlite3Worker1Promiser(...args: any): any;
-}
+import { DBClass } from "./worker/db";
 
 const DB_VERSION = 1;
 const PAGE_SIZE = 1000;
@@ -93,57 +91,21 @@ export class Storage {
 
     logInfo("Loading and initializing SQLite3 module...");
 
+    const MyWorker = Comlink.wrap<typeof DBClass>(new Worker(new URL("./worker/db.ts", import.meta.url)));
     this.workspaceSlug = workspaceSlug;
     this.dbName = workspaceSlug;
-    const { sqlite3Worker1Promiser } = await import("@sqlite.org/sqlite-wasm");
+    const instance = await new MyWorker();
+    await instance.init(workspaceSlug);
 
-    try {
-      const promiser: any = await new Promise((resolve) => {
-        const _promiser = sqlite3Worker1Promiser({
-          onready: () => resolve(_promiser),
-        });
-      });
+    this.db = {
+      exec: instance.exec,
+    };
 
-      const configResponse = await promiser("config-get", {});
-      log("Running SQLite3 version", configResponse.result.version.libVersion);
+    this.status = "ready";
+    // Your SQLite code here.
+    await createTables();
 
-      const openResponse = await promiser("open", {
-        filename: `file:${this.dbName}.sqlite3?vfs=opfs`,
-      });
-      const { dbId } = openResponse;
-      this.db = {
-        dbId,
-        exec: async (val: any) => {
-          if (typeof val === "string") {
-            val = { sql: val };
-          }
-          return promiser("exec", { dbId, ...val });
-        },
-      };
-
-      // dump DB of db version is matching
-      const dbVersion = await this.getOption("DB_VERSION");
-      if (dbVersion !== "" && parseInt(dbVersion) !== DB_VERSION) {
-        await this.clearStorage();
-        this.reset();
-        await this._initialize(workspaceSlug);
-        return false;
-      }
-
-      log(
-        "OPFS is available, created persisted database at",
-        openResponse.result.filename.replace(/^file:(.*?)\?vfs=opfs$/, "$1")
-      );
-      this.status = "ready";
-      // Your SQLite code here.
-      await createTables();
-
-      await this.setOption("DB_VERSION", DB_VERSION.toString());
-    } catch (err) {
-      logError(err);
-      throw err;
-    }
-
+    await this.setOption("DB_VERSION", DB_VERSION.toString());
     return true;
   };
 
