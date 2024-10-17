@@ -138,7 +138,7 @@ def burndown_plot(
         estimate__type="points",
     ).exists()
     if estimate_type and plot_type == "points" and cycle_id:
-        issue_estimates = Issue.objects.filter(
+        issue_estimates = Issue.issue_objects.filter(
             workspace__slug=slug,
             project_id=project_id,
             issue_cycle__cycle_id=cycle_id,
@@ -149,7 +149,7 @@ def burndown_plot(
         total_estimate_points = sum(issue_estimates)
 
     if estimate_type and plot_type == "points" and module_id:
-        issue_estimates = Issue.objects.filter(
+        issue_estimates = Issue.issue_objects.filter(
             workspace__slug=slug,
             project_id=project_id,
             issue_module__module_id=module_id,

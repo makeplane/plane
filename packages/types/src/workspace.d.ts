@@ -91,6 +91,7 @@ export interface IWorkspaceMemberMe {
   updated_by: string;
   view_props: IWorkspaceViewProps;
   workspace: string;
+  draft_issue_count: number;
 }
 
 export interface ILastActiveWorkspaceDetails {

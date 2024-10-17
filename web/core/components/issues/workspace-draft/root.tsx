@@ -33,7 +33,7 @@ export const WorkspaceDraftIssuesRoot: FC<TWorkspaceDraftIssuesRoot> = observer(
   useWorkspaceIssueProperties(workspaceSlug);
 
   // fetching issues
-  useSWR(
+  const { isLoading } = useSWR(
     workspaceSlug && issueIds.length <= 0 ? `WORKSPACE_DRAFT_ISSUES_${workspaceSlug}` : null,
     workspaceSlug && issueIds.length <= 0 ? async () => await fetchIssues(workspaceSlug, "init-loader") : null
   );
@@ -43,6 +43,10 @@ export const WorkspaceDraftIssuesRoot: FC<TWorkspaceDraftIssuesRoot> = observer(
     if (!paginationInfo?.next_page_results) return;
     await fetchIssues(workspaceSlug, "pagination", EDraftIssuePaginationType.NEXT);
   };
+
+  if (isLoading) {
+    return <WorkspaceDraftIssuesLoader items={14} />;
+  }
 
   if (workspaceProjectIds?.length === 0)
     return (
@@ -56,10 +60,6 @@ export const WorkspaceDraftIssuesRoot: FC<TWorkspaceDraftIssuesRoot> = observer(
     );
 
   if (issueIds.length <= 0) return <WorkspaceDraftEmptyState />;
-
-  if (loader === "init-loader") {
-    return <WorkspaceDraftIssuesLoader items={14} />;
-  }
 
   return (
     <div className="relative">

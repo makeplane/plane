@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { PenSquare } from "lucide-react";
 // ui
@@ -11,16 +11,17 @@ import { CreateUpdateIssueModal } from "@/components/issues";
 // constants
 import { EIssuesStoreType } from "@/constants/issue";
 // hooks
-import { useUserPermissions, useWorkspaceDraftIssues } from "@/hooks/store";
+import { useProject, useUserPermissions, useWorkspaceDraftIssues } from "@/hooks/store";
 // plane-web
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
-export const WorkspaceDraftHeader: FC = observer(() => {
+export const WorkspaceDraftHeader = observer(() => {
   // state
   const [isDraftIssueModalOpen, setIsDraftIssueModalOpen] = useState(false);
   // store hooks
   const { allowPermissions } = useUserPermissions();
   const { paginationInfo } = useWorkspaceDraftIssues();
+  const { joinedProjectIds } = useProject();
   // check if user is authorized to create draft issue
   const isAuthorizedUser = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -53,15 +54,17 @@ export const WorkspaceDraftHeader: FC = observer(() => {
         </Header.LeftItem>
 
         <Header.RightItem>
-          <Button
-            variant="primary"
-            size="sm"
-            className="items-center gap-1"
-            onClick={() => setIsDraftIssueModalOpen(true)}
-            disabled={!isAuthorizedUser}
-          >
-            Draft<span className="hidden sm:inline-block"> an issue</span>
-          </Button>
+          {joinedProjectIds && joinedProjectIds.length > 0 && (
+            <Button
+              variant="primary"
+              size="sm"
+              className="items-center gap-1"
+              onClick={() => setIsDraftIssueModalOpen(true)}
+              disabled={!isAuthorizedUser}
+            >
+              Draft<span className="hidden sm:inline-block"> an issue</span>
+            </Button>
+          )}
         </Header.RightItem>
       </Header>
     </>

@@ -39,7 +39,11 @@ class S3Storage(S3Boto3Storage):
                 aws_access_key_id=self.aws_access_key_id,
                 aws_secret_access_key=self.aws_secret_access_key,
                 region_name=self.aws_region,
-                endpoint_url=f"{request.scheme}://{request.get_host()}",
+                endpoint_url=(
+                    f"{request.scheme}://{request.get_host()}"
+                    if request
+                    else self.aws_s3_endpoint_url
+                ),
                 config=boto3.session.Config(signature_version="s3v4"),
             )
         else:
