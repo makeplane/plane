@@ -86,10 +86,6 @@ export const CalloutBlockLogoSelector: React.FC<Props> = (props) => {
           updateStoredLogo(newLogoValueToStoreInLocalStorage);
           handleOpen(false);
         }}
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-        }}
         defaultIconColor={logoValue?.in_use && logoValue.in_use === "icon" ? logoValue?.icon?.color : undefined}
         defaultOpen={
           logoValue?.in_use && logoValue.in_use === "emoji" ? EmojiIconPickerTypes.EMOJI : EmojiIconPickerTypes.ICON

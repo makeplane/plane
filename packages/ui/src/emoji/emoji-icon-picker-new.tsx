@@ -24,7 +24,6 @@ export const EmojiIconPicker: React.FC<TCustomEmojiPicker> = (props) => {
     dropdownClassName,
     label,
     onChange,
-    onClick,
     placement = "bottom-start",
     searchPlaceholder = "Search",
     theme,
@@ -58,10 +57,7 @@ export const EmojiIconPicker: React.FC<TCustomEmojiPicker> = (props) => {
             ref={setReferenceElement}
             className={cn("outline-none", buttonClassName)}
             disabled={disabled}
-            onClick={(e) => {
-              onClick(e);
-              handleToggle(!isOpen);
-            }}
+            onClick={() => handleToggle(!isOpen)}
           >
             {label}
           </button>

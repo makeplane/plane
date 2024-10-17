@@ -17,7 +17,7 @@ export const CustomCalloutExtension = CustomCalloutExtensionConfig.extend({
       insertCallout:
         () =>
         ({ commands }) => {
-          // get store logo values and background color from the local storage
+          // get stored logo values and background color from the local storage
           const storedLogoValues = getStoredLogo();
           const storedBackgroundValue = getStoredBackgroundColor();
 

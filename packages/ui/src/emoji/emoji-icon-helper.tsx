@@ -42,7 +42,6 @@ export type TCustomEmojiPicker = {
   dropdownClassName?: string;
   label: React.ReactNode;
   onChange: (value: TChangeHandlerProps) => void;
-  onClick: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   placement?: Placement;
   searchPlaceholder?: string;
   theme?: Theme;

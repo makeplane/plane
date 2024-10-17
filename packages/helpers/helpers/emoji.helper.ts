@@ -2,6 +2,7 @@ export const convertHexEmojiToDecimal = (emojiUnified: string): string => {
   if (!emojiUnified) return "";
 
   return emojiUnified
+    .toString()
     .split("-")
     .map((e) => parseInt(e, 16))
     .join("-");
