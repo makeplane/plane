@@ -65,6 +65,7 @@ class WorkSpaceMemberSerializer(DynamicBaseSerializer):
 
 
 class WorkspaceMemberMeSerializer(BaseSerializer):
+    draft_issue_count = serializers.IntegerField(read_only=True)
     class Meta:
         model = WorkspaceMember
         fields = "__all__"

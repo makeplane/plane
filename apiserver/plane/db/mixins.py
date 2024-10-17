@@ -43,9 +43,19 @@ class UserAuditModel(models.Model):
         abstract = True
 
 
+class SoftDeletionQuerySet(models.QuerySet):
+    def delete(self, soft=True):
+        if soft:
+            return self.update(deleted_at=timezone.now())
+        else:
+            return super().delete()
+
+
 class SoftDeletionManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(deleted_at__isnull=True)
+        return SoftDeletionQuerySet(self.model, using=self._db).filter(
+            deleted_at__isnull=True
+        )
 
 
 class SoftDeleteModel(models.Model):
