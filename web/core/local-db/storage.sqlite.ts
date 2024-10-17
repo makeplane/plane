@@ -110,7 +110,7 @@ export class Storage {
   };
 
   syncWorkspace = async () => {
-    if (document.hidden || !rootStore.user.localDBEnabled) return; // return if the window gets hidden
+    if (document.hidden || !rootStore.user.localDBEnabled || !this.db) return; // return if the window gets hidden
     await Sentry.startSpan({ name: "LOAD_WS", attributes: { slug: this.workspaceSlug } }, async () => {
       await loadWorkSpaceData(this.workspaceSlug);
     });
@@ -135,7 +135,7 @@ export class Storage {
   };
 
   syncIssues = async (projectId: string) => {
-    if (document.hidden || !rootStore.user.localDBEnabled) return false; // return if the window gets hidden
+    if (document.hidden || !rootStore.user.localDBEnabled || !this.db) return false; // return if the window gets hidden
 
     try {
       const sync = Sentry.startSpan({ name: `SYNC_ISSUES` }, () => this._syncIssues(projectId));
@@ -153,7 +153,7 @@ export class Storage {
     log("### Sync started");
     let status = this.getStatus(projectId);
     if (status === "loading" || status === "syncing") {
-      logInfo(`Project ${projectId} is already loading or syncing`);
+      log(`Project ${projectId} is already loading or syncing`);
       return;
     }
     const syncPromise = this.getSync(projectId);
@@ -252,7 +252,7 @@ export class Storage {
       !rootStore.user.localDBEnabled
     ) {
       if (rootStore.user.localDBEnabled) {
-        logInfo(`Project ${projectId} is loading, falling back to server`);
+        log(`Project ${projectId} is loading, falling back to server`);
       }
       const issueService = new IssueService();
       return await issueService.getIssuesFromServer(workspaceSlug, projectId, queries);
