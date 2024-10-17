@@ -87,6 +87,7 @@ const ActiveCycleDetail = observer((props: ActiveCycleDetailProps) => {
                 isFullWidth={containerWidth < 890}
                 estimateType={computedEstimateType}
                 plotType={computedPlotType}
+                showAllTicks={containerWidth > 890}
                 showToday
               />
             </div>

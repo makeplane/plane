@@ -14,12 +14,11 @@ import {
   ReferenceLine,
   Label,
   Tooltip,
-  ReferenceArea,
   LabelList,
 } from "recharts";
 import { ICycle } from "@plane/types";
 import { TProgressChartData } from "@/helpers/cycle.helper";
-import { chartHelper, getColors, maxScope } from "./helper";
+import { chartHelper, getColors } from "./helper";
 import { renderScopeLabel } from "./labels";
 import { CustomizedXAxisTicks, CustomizedYAxisTicks } from "./ticks";
 import CustomTooltip from "./tooltip";
@@ -32,6 +31,7 @@ type Props = {
   estimateType?: string;
   plotType: string;
   showToday?: boolean;
+  showAllTicks?: boolean;
 };
 
 export const ActiveCycleChart = observer((props: Props) => {
@@ -43,6 +43,7 @@ export const ActiveCycleChart = observer((props: Props) => {
     plotType,
     estimateType = "ISSUES",
     showToday,
+    showAllTicks = false,
   } = props;
 
   const { resolvedTheme } = useTheme();
@@ -63,7 +64,7 @@ export const ActiveCycleChart = observer((props: Props) => {
         data={dataWithRange}
         margin={{
           top: isFullWidth ? 10 : 30,
-          right: isFullWidth ? 10 : 20,
+          right: isFullWidth ? 10 : 0,
           bottom: isFullWidth ? 30 : 70,
           left: isFullWidth ? -30 : 20,
         }}
@@ -137,11 +138,13 @@ export const ActiveCycleChart = observer((props: Props) => {
               text={colors.axisText}
               startDate={startDate}
               showToday={showToday}
+              showAllTicks={showAllTicks}
             />
           }
-          tickLine={false}
           interval={0}
-          minTickGap={5}
+          tickFormatter={(date) => format(new Date(date), "MMM dd")}
+          minTickGap={2}
+          tickLine={false}
         />
         <YAxis
           tickCount={10}
@@ -199,9 +202,7 @@ export const ActiveCycleChart = observer((props: Props) => {
         </ReferenceArea> */}
 
         {/* Today */}
-        {today < endDate && (
-          <ReferenceLine x={today as string} stroke={colors.todayLine} label="" strokeDasharray="3 3" />
-        )}
+        {today < endDate && <ReferenceLine x={today as string} stroke={colors.todayLine} strokeDasharray="3 3" />}
         {/* Beyond Time */}
         <ReferenceLine x={endDate} stroke={colors.beyondTimeStroke} label="" strokeDasharray="3 3" />
         {/* Ideal - Actual */}
