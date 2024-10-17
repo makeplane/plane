@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 // extensions
 import { CustomImageNode } from "@/extensions/custom-image";
 // plugins
-import { TrackImageDeletionPlugin, isFileValid } from "@/plugins/image";
+import { TrackImageDeletionPlugin, TrackImageRestorationPlugin, isFileValid } from "@/plugins/image";
 // types
 import { TFileHandler } from "@/types";
 // helpers
@@ -41,8 +41,8 @@ export const CustomImageExtension = (props: TFileHandler) => {
   const {
     getAssetSrc,
     upload,
-    delete: deleteImage,
-    restore,
+    delete: deleteImageFn,
+    restore: restoreImageFn,
     validation: { maxFileSize },
   } = props;
 
@@ -94,7 +94,29 @@ export const CustomImageExtension = (props: TFileHandler) => {
     },
 
     addProseMirrorPlugins() {
-      return [TrackImageDeletionPlugin(this.editor, deleteImage, this.name)];
+      return [
+        TrackImageDeletionPlugin(this.editor, deleteImageFn, this.name),
+        TrackImageRestorationPlugin(this.editor, restoreImageFn, this.name),
+      ];
+    },
+
+    onCreate(this) {
+      const imageSources = new Set<string>();
+      this.editor.state.doc.descendants((node) => {
+        if (node.type.name === this.name) {
+          if (!node.attrs.src.startsWith("http")) {
+            return;
+          }
+          imageSources.add(node.attrs.src);
+        }
+      });
+      imageSources.forEach(async (src) => {
+        try {
+          await restoreImageFn(src);
+        } catch (error) {
+          console.error("Error restoring image: ", error);
+        }
+      });
     },
 
     addStorage() {
@@ -162,7 +184,7 @@ export const CustomImageExtension = (props: TFileHandler) => {
           return fileUrl;
         },
         restoreImage: (src: string) => async () => {
-          await restore(src);
+          await restoreImageFn(src);
         },
         getImageSource: (path: string) => () => getAssetSrc(path),
       };

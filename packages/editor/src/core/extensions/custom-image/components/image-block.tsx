@@ -238,16 +238,15 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
         src={displayedImageSrc}
         onLoad={handleImageLoad}
         onError={async (e) => {
+          // for old image extension this command doesn't exist
+          if (!editor?.commands.restoreImage) {
+            setFailedToLoadImage(true);
+          }
+
           try {
             setOnFirstLoadError(true);
             // this is a type error from tiptap, don't remove await until it's fixed
-            await editor?.commands.restoreImage(remoteImageSrc);
-            console.log(
-              "imageRef width",
-              imageRef.current.naturalWidth,
-              imageRef.current.naturalHeight,
-              imageRef.current.src.split("/")[10]
-            );
+            await editor?.commands.restoreImage?.(remoteImageSrc);
             imageRef.current.src = remoteImageSrc;
           } catch {
             setFailedToLoadImage(true);
