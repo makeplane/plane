@@ -1,3 +1,9 @@
+# Python imports
+import json
+
+# Django imports
+from django.utils import timezone
+
 # Strawberry imports
 import strawberry
 from strawberry.types import Info
@@ -9,6 +15,10 @@ from asgiref.sync import sync_to_async
 # Module imports
 from plane.graphql.permissions.project import ProjectBasePermission
 from plane.db.models import Workspace, IssueRelation
+from plane.graphql.bgtasks.issue_activity_task import issue_activity
+from plane.graphql.utils.issue_activity import (
+    convert_issue_relation_properties_to_activity_dict,
+)
 
 
 @strawberry.type
@@ -61,6 +71,21 @@ class IssueRelationMutation:
             )
         )()
 
+        # Track the issue relation activity
+        issue_activity.delay(
+            type="issue_relation.activity.created",
+            requested_data=json.dumps(
+                {"issues": related_issue_ids, "relation_type": relation_type}
+            ),
+            actor_id=str(info.context.user.id),
+            issue_id=str(issue),
+            project_id=str(project),
+            current_instance=None,
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=info.context.request.META.get("HTTP_ORIGIN"),
+        )
+
         return True
 
     # removing issue relation
@@ -93,5 +118,30 @@ class IssueRelationMutation:
             return False
 
         await sync_to_async(lambda: issue_relation.delete())()
+
+        # current issue relation
+        current_issue_relation_instance = (
+            await convert_issue_relation_properties_to_activity_dict(
+                issue_relation
+            )
+        )
+
+        # Track the issue relation activity
+        issue_activity.delay(
+            type="issue_relation.activity.created",
+            requested_data=json.dumps(
+                {
+                    "related_issue": related_issue,
+                    "relation_type": relation_type,
+                }
+            ),
+            actor_id=str(info.context.user.id),
+            issue_id=str(issue),
+            project_id=str(project),
+            current_instance=json.dumps(current_issue_relation_instance),
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=info.context.request.META.get("HTTP_ORIGIN"),
+        )
 
         return True

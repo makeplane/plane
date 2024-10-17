@@ -26,9 +26,6 @@ class IssueAttachmentQuery:
         project: strawberry.ID,
         issue: strawberry.ID,
     ) -> list[IssueAttachmentType]:
-        print("---*___")
-        print("Attachment query")
-        print("---*___")
         issue_attachments = await sync_to_async(list)(
             FileAsset.objects.filter(
                 workspace__slug=slug,
