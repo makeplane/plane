@@ -31,6 +31,7 @@ export interface IProjectViewIssuesFilter extends IBaseIssueFilterStore {
     groupId: string | undefined,
     subGroupId: string | undefined
   ) => Partial<Record<TIssueParams, string | boolean>>;
+  getIssueFilters(viewId: string): IIssueFilters | undefined;
   // action
   fetchFilters: (workspaceSlug: string, projectId: string, viewId: string) => Promise<void>;
   updateFilters: (
@@ -264,9 +265,16 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
 
           const currentUserId = this.rootIssueStore.currentUserId;
           if (currentUserId)
-            this.handleIssuesLocalFilters.set(EIssuesStoreType.PROJECT_VIEW, type, workspaceSlug, viewId, currentUserId, {
-              kanban_filters: _filters.kanbanFilters,
-            });
+            this.handleIssuesLocalFilters.set(
+              EIssuesStoreType.PROJECT_VIEW,
+              type,
+              workspaceSlug,
+              viewId,
+              currentUserId,
+              {
+                kanban_filters: _filters.kanbanFilters,
+              }
+            );
 
           runInAction(() => {
             Object.keys(updatedKanbanFilters).forEach((_key) => {

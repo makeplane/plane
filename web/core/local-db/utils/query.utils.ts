@@ -4,8 +4,20 @@ import { issueSchema } from "./schemas";
 import { wrapDateTime } from "./utils";
 
 export const translateQueryParams = (queries: any) => {
-  const { group_by, sub_group_by, labels, assignees, state, cycle, module, priority, type, issue_type, ...otherProps } =
-    queries;
+  const {
+    group_by,
+    layout,
+    sub_group_by,
+    labels,
+    assignees,
+    state,
+    cycle,
+    module,
+    priority,
+    type,
+    issue_type,
+    ...otherProps
+  } = queries;
 
   const order_by = queries.order_by;
   if (state) otherProps.state_id = state;
@@ -33,7 +45,7 @@ export const translateQueryParams = (queries: any) => {
   }
 
   // Fix invalid orderby when switching from spreadsheet layout
-  if ((group_by || sub_group_by) && Object.keys(SPECIAL_ORDER_BY).includes(order_by)) {
+  if (layout === "spreadsheet" && Object.keys(SPECIAL_ORDER_BY).includes(order_by)) {
     otherProps.order_by = "sort_order";
   }
   // For each property value, replace None with empty string

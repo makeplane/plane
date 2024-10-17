@@ -1,4 +1,5 @@
 import * as Sentry from "@sentry/nextjs";
+import * as Comlink from "comlink";
 import set from "lodash/set";
 // plane
 import { EIssueGroupBYServerToProperty } from "@plane/constants";
@@ -18,12 +19,8 @@ import { runQuery } from "./utils/query-executor";
 import { createTables } from "./utils/tables";
 import { getGroupedIssueResults, getSubGroupedIssueResults, log, logError, logInfo } from "./utils/utils";
 
-declare module "@sqlite.org/sqlite-wasm" {
-  export function sqlite3Worker1Promiser(...args: any): any;
-}
-
 const DB_VERSION = 1;
-const PAGE_SIZE = 1000;
+const PAGE_SIZE = 500;
 const BATCH_SIZE = 200;
 
 type TProjectStatus = {
@@ -93,62 +90,28 @@ export class Storage {
 
     logInfo("Loading and initializing SQLite3 module...");
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { DBClass } = await import("./worker/db");
+    const MyWorker = Comlink.wrap<typeof DBClass>(new Worker(new URL("./worker/db.ts", import.meta.url)));
     this.workspaceSlug = workspaceSlug;
     this.dbName = workspaceSlug;
-    const { sqlite3Worker1Promiser } = await import("@sqlite.org/sqlite-wasm");
+    const instance = await new MyWorker();
+    await instance.init(workspaceSlug);
 
-    try {
-      const promiser: any = await new Promise((resolve) => {
-        const _promiser = sqlite3Worker1Promiser({
-          onready: () => resolve(_promiser),
-        });
-      });
+    this.db = {
+      exec: instance.exec,
+    };
 
-      const configResponse = await promiser("config-get", {});
-      log("Running SQLite3 version", configResponse.result.version.libVersion);
+    this.status = "ready";
+    // Your SQLite code here.
+    await createTables();
 
-      const openResponse = await promiser("open", {
-        filename: `file:${this.dbName}.sqlite3?vfs=opfs`,
-      });
-      const { dbId } = openResponse;
-      this.db = {
-        dbId,
-        exec: async (val: any) => {
-          if (typeof val === "string") {
-            val = { sql: val };
-          }
-          return promiser("exec", { dbId, ...val });
-        },
-      };
-
-      // dump DB of db version is matching
-      const dbVersion = await this.getOption("DB_VERSION");
-      if (dbVersion !== "" && parseInt(dbVersion) !== DB_VERSION) {
-        await this.clearStorage();
-        this.reset();
-        await this._initialize(workspaceSlug);
-        return false;
-      }
-
-      log(
-        "OPFS is available, created persisted database at",
-        openResponse.result.filename.replace(/^file:(.*?)\?vfs=opfs$/, "$1")
-      );
-      this.status = "ready";
-      // Your SQLite code here.
-      await createTables();
-
-      await this.setOption("DB_VERSION", DB_VERSION.toString());
-    } catch (err) {
-      logError(err);
-      throw err;
-    }
-
+    await this.setOption("DB_VERSION", DB_VERSION.toString());
     return true;
   };
 
   syncWorkspace = async () => {
-    if (document.hidden || !rootStore.user.localDBEnabled) return; // return if the window gets hidden
+    if (document.hidden || !rootStore.user.localDBEnabled || !this.db) return; // return if the window gets hidden
     await Sentry.startSpan({ name: "LOAD_WS", attributes: { slug: this.workspaceSlug } }, async () => {
       await loadWorkSpaceData(this.workspaceSlug);
     });
@@ -173,7 +136,7 @@ export class Storage {
   };
 
   syncIssues = async (projectId: string) => {
-    if (document.hidden || !rootStore.user.localDBEnabled) return false; // return if the window gets hidden
+    if (document.hidden || !rootStore.user.localDBEnabled || !this.db) return false; // return if the window gets hidden
 
     try {
       const sync = Sentry.startSpan({ name: `SYNC_ISSUES` }, () => this._syncIssues(projectId));
@@ -191,7 +154,7 @@ export class Storage {
     log("### Sync started");
     let status = this.getStatus(projectId);
     if (status === "loading" || status === "syncing") {
-      logInfo(`Project ${projectId} is already loading or syncing`);
+      log(`Project ${projectId} is already loading or syncing`);
       return;
     }
     const syncPromise = this.getSync(projectId);
@@ -290,7 +253,7 @@ export class Storage {
       !rootStore.user.localDBEnabled
     ) {
       if (rootStore.user.localDBEnabled) {
-        logInfo(`Project ${projectId} is loading, falling back to server`);
+        log(`Project ${projectId} is loading, falling back to server`);
       }
       const issueService = new IssueService();
       return await issueService.getIssuesFromServer(workspaceSlug, projectId, queries);
@@ -347,7 +310,6 @@ export class Storage {
       Parsing: parsingEnd - parsingStart,
       Grouping: groupingEnd - grouping,
     };
-    log(issueResults);
     if ((window as any).DEBUG) {
       console.table(times);
     }

@@ -8,7 +8,7 @@ import { issueSchema } from "./schemas";
 export const PROJECT_OFFLINE_STATUS: Record<string, boolean> = {};
 
 export const addIssue = async (issue: any) => {
-  if (document.hidden || !rootStore.user.localDBEnabled) return;
+  if (document.hidden || !rootStore.user.localDBEnabled || !persistence.db) return;
 
   persistence.db.exec("BEGIN TRANSACTION;");
   stageIssueInserts(issue);
@@ -16,7 +16,7 @@ export const addIssue = async (issue: any) => {
 };
 
 export const addIssuesBulk = async (issues: any, batchSize = 100) => {
-  if (!rootStore.user.localDBEnabled) return;
+  if (!rootStore.user.localDBEnabled || !persistence.db) return;
 
   for (let i = 0; i < issues.length; i += batchSize) {
     const batch = issues.slice(i, i + batchSize);
@@ -32,7 +32,7 @@ export const addIssuesBulk = async (issues: any, batchSize = 100) => {
   }
 };
 export const deleteIssueFromLocal = async (issue_id: any) => {
-  if (!rootStore.user.localDBEnabled) return;
+  if (!rootStore.user.localDBEnabled || !persistence.db) return;
 
   const deleteQuery = `delete from issues where id='${issue_id}'`;
   const deleteMetaQuery = `delete from issue_meta where issue_id='${issue_id}'`;
@@ -44,7 +44,7 @@ export const deleteIssueFromLocal = async (issue_id: any) => {
 };
 // @todo: Update deletes the issue description from local. Implement a separate update.
 export const updateIssue = async (issue: TIssue & { is_local_update: number }) => {
-  if (document.hidden || !rootStore.user.localDBEnabled) return;
+  if (document.hidden || !rootStore.user.localDBEnabled || !persistence.db) return;
 
   const issue_id = issue.id;
   // delete the issue and its meta data
@@ -53,7 +53,7 @@ export const updateIssue = async (issue: TIssue & { is_local_update: number }) =
 };
 
 export const syncDeletesToLocal = async (workspaceId: string, projectId: string, queries: any) => {
-  if (!rootStore.user.localDBEnabled) return;
+  if (!rootStore.user.localDBEnabled || !persistence.db) return;
 
   const issueService = new IssueService();
   const response = await issueService.getDeletedIssues(workspaceId, projectId, queries);

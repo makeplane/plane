@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
 import { Spinner } from "@plane/ui";
+import { LogoSpinner } from "@/components/common";
 import {
   ListLayout,
   CalendarLayout,
@@ -44,7 +45,7 @@ export const ProjectLayoutRoot: FC = observer(() => {
   // hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
 
-  useSWR(
+  const { isLoading } = useSWR(
     workspaceSlug && projectId ? `PROJECT_ISSUES_${workspaceSlug}_${projectId}` : null,
     async () => {
       if (workspaceSlug && projectId) {
@@ -54,9 +55,17 @@ export const ProjectLayoutRoot: FC = observer(() => {
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
+  const issueFilters = issuesFilter?.getIssueFilters(projectId?.toString());
+  const activeLayout = issueFilters?.displayFilters?.layout;
 
   if (!workspaceSlug || !projectId) return <></>;
+
+  if (isLoading && !issueFilters)
+    return (
+      <div className="h-full w-full flex items-center justify-center">
+        <LogoSpinner />
+      </div>
+    );
 
   return (
     <IssuesStoreContext.Provider value={EIssuesStoreType.PROJECT}>
