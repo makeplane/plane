@@ -37,10 +37,12 @@ from plane.db.models import (
     DraftIssueModule,
     DraftIssueCycle,
     Workspace,
+    FileAsset,
 )
 from .. import BaseViewSet
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.issue_filters import issue_filters
+from plane.ee.models import IssuePropertyValue, DraftIssuePropertyValue
 
 
 class WorkspaceDraftIssueViewSet(BaseViewSet):
@@ -259,9 +261,9 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                 origin=request.META.get("HTTP_ORIGIN"),
             )
 
-            if draft_issue.cycle_id:
+            if request.data.get("cycle_id", None):
                 created_records = CycleIssue.objects.create(
-                    cycle_id=draft_issue.cycle_id,
+                    cycle_id=request.data.get("cycle_id", None),
                     issue_id=serializer.data.get("id", None),
                     project_id=draft_issue.project_id,
                     workspace_id=draft_issue.workspace_id,
@@ -279,7 +281,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                         {
                             "updated_cycle_issues": None,
                             "created_cycle_issues": serializers.serialize(
-                                "json", created_records
+                                "json", [created_records]
                             ),
                         }
                     ),
@@ -288,7 +290,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                     origin=request.META.get("HTTP_ORIGIN"),
                 )
 
-            if draft_issue.module_ids:
+            if request.data.get("module_ids", []):
                 # bulk create the module
                 ModuleIssue.objects.bulk_create(
                     [
@@ -300,11 +302,11 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                             created_by_id=draft_issue.created_by_id,
                             updated_by_id=draft_issue.updated_by_id,
                         )
-                        for module in draft_issue.module_ids
+                        for module in request.data.get("module_ids", [])
                     ],
                     batch_size=10,
                 )
-                # Bulk Update the activity
+                # Update the activity
                 _ = [
                     issue_activity.delay(
                         type="module.activity.created",
@@ -317,17 +319,46 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                         notification=True,
                         origin=request.META.get("HTTP_ORIGIN"),
                     )
-                    for module in draft_issue.module_ids
+                    for module in request.data.get("module_ids", [])
                 ]
+
+            # Update file assets
+            file_assets = FileAsset.objects.filter(draft_issue_id=draft_id)
+            file_assets.update(
+                issue_id=serializer.data.get("id", None),
+                entity_type=FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
+                draft_issue_id=None,
+            )
+
+            draft_issue_property_values = (
+                DraftIssuePropertyValue.objects.filter(draft_issue=draft_issue)
+            )
+            IssuePropertyValue.objects.bulk_create(
+                [
+                    IssuePropertyValue(
+                        workspace_id=draft_issue_property_value.workspace_id,
+                        project_id=draft_issue_property_value.project_id,
+                        issue_id=serializer.data.get("id", None),
+                        property_id=draft_issue_property_value.property_id,
+                        value_text=draft_issue_property_value.value_text,
+                        value_boolean=draft_issue_property_value.value_boolean,
+                        value_decimal=draft_issue_property_value.value_decimal,
+                        value_datetime=draft_issue_property_value.value_datetime,
+                        value_uuid=draft_issue_property_value.value_uuid,
+                        value_option=draft_issue_property_value.value_option,
+                    )
+                    for draft_issue_property_value in draft_issue_property_values
+                ],
+                batch_size=10,
+                ignore_conflicts=True,
+            )
+            # TODO: Log the activity for issue property
+
+            draft_issue_property_values.delete()
+
 
             # delete the draft issue
             draft_issue.delete()
-
-            # delete the draft issue module
-            DraftIssueModule.objects.filter(draft_issue=draft_issue).delete()
-
-            # delete the draft issue cycle
-            DraftIssueCycle.objects.filter(draft_issue=draft_issue).delete()
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 

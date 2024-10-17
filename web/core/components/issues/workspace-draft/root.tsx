@@ -12,6 +12,7 @@ import { EDraftIssuePaginationType } from "@/constants/workspace-drafts";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useCommandPalette, useProject, useWorkspaceDraftIssues } from "@/hooks/store";
+import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 // components
 import { DraftIssueBlock } from "./draft-issue-block";
 import { WorkspaceDraftEmptyState } from "./empty-state";
@@ -28,8 +29,11 @@ export const WorkspaceDraftIssuesRoot: FC<TWorkspaceDraftIssuesRoot> = observer(
   const { workspaceProjectIds } = useProject();
   const { toggleCreateProjectModal } = useCommandPalette();
 
+  //swr hook for fetching issue properties
+  useWorkspaceIssueProperties(workspaceSlug);
+
   // fetching issues
-  useSWR(
+  const { isLoading } = useSWR(
     workspaceSlug && issueIds.length <= 0 ? `WORKSPACE_DRAFT_ISSUES_${workspaceSlug}` : null,
     workspaceSlug && issueIds.length <= 0 ? async () => await fetchIssues(workspaceSlug, "init-loader") : null
   );
@@ -40,7 +44,7 @@ export const WorkspaceDraftIssuesRoot: FC<TWorkspaceDraftIssuesRoot> = observer(
     await fetchIssues(workspaceSlug, "pagination", EDraftIssuePaginationType.NEXT);
   };
 
-  if (loader === "init-loader" && issueIds.length <= 0) {
+  if (isLoading) {
     return <WorkspaceDraftIssuesLoader items={14} />;
   }
 
@@ -55,7 +59,7 @@ export const WorkspaceDraftIssuesRoot: FC<TWorkspaceDraftIssuesRoot> = observer(
       />
     );
 
-  if (loader === "empty-state" && issueIds.length <= 0) return <WorkspaceDraftEmptyState />;
+  if (issueIds.length <= 0) return <WorkspaceDraftEmptyState />;
 
   return (
     <div className="relative">

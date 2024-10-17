@@ -42,6 +42,7 @@ from plane.db.models import (
     IssueSubscriber,
     Project,
     ProjectMember,
+    Cycle,
 )
 from plane.ee.models import EntityIssueStateActivity
 from plane.utils.grouper import (
@@ -635,23 +636,25 @@ class IssueViewSet(BaseViewSet):
                 request.data.get("state_id")
                 or request.data.get("estimate_point")
             ):
-                EntityIssueStateActivity.objects.create(
-                    cycle_id=issue.cycle_id,
-                    state_id=issue.state_id,
-                    issue_id=issue.id,
-                    state_group=issue.state.group,
-                    action="UPDATED",
-                    entity_type="CYCLE",
-                    estimate_point_id=issue.estimate_point_id,
-                    estimate_value=(
-                        issue.estimate_point.value
-                        if estimate_type and issue.estimate_point
-                        else None
-                    ),
-                    workspace_id=issue.workspace_id,
-                    created_by_id=request.user.id,
-                    updated_by_id=request.user.id,
-                )
+                cycle = Cycle.objects.get(pk=issue.cycle_id)
+                if cycle.version == 2:
+                    EntityIssueStateActivity.objects.create(
+                        cycle_id=issue.cycle_id,
+                        state_id=issue.state_id,
+                        issue_id=issue.id,
+                        state_group=issue.state.group,
+                        action="UPDATED",
+                        entity_type="CYCLE",
+                        estimate_point_id=issue.estimate_point_id,
+                        estimate_value=(
+                            issue.estimate_point.value
+                            if estimate_type and issue.estimate_point
+                            else None
+                        ),
+                        workspace_id=issue.workspace_id,
+                        created_by_id=request.user.id,
+                        updated_by_id=request.user.id,
+                    )
 
             model_activity.delay(
                 model_name="issue",
@@ -788,6 +791,15 @@ class IssuePaginatedViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
                 sub_issues_count=Issue.issue_objects.filter(
                     parent=OuterRef("id")
                 )
@@ -811,7 +823,7 @@ class IssuePaginatedViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
         cursor = request.GET.get("cursor", None)
-        is_description_required = request.GET.get("description", False)
+        is_description_required = request.GET.get("description", "false")
         updated_at = request.GET.get("updated_at__gt", None)
 
         # required fields
@@ -845,7 +857,7 @@ class IssuePaginatedViewSet(BaseViewSet):
             "type_id",
         ]
 
-        if is_description_required:
+        if str(is_description_required).lower() == "true":
             required_fields.append("description_html")
 
         # querying issues

@@ -70,7 +70,7 @@ export const ActiveCycleHeader: FC<ActiveCycleHeaderProps> = (props) => {
           href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}
           className={`${getButtonStyling("outline-primary", "sm")} cursor-pointer`}
         >
-          View Cycle
+          View cycle
         </Link>
       </div>
     </div>

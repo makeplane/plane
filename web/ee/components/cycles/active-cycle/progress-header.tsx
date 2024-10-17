@@ -26,7 +26,7 @@ type Props = {
 };
 
 export const CycleProgressHeader: FC<Props> = (props: Props) => {
-  const { workspaceSlug, projectId, cycleId, progress, cycleDetails, progressLoader } = props;
+  const { workspaceSlug, projectId, cycleId, progress, cycleDetails } = props;
   const { getUserDetails } = useMember();
 
   // router
@@ -52,7 +52,7 @@ export const CycleProgressHeader: FC<Props> = (props: Props) => {
         )}
         <div className="flex flex-col h-full my-auto">
           <div className="text-xs text-custom-primary-200 font-medium self-start">Currently active cycle</div>
-          <div className="inline-block line-clamp-1 truncate font-semibold text-custom-text-100 my-1 text-xl text-left">
+          <div className="inline-block line-clamp-1 truncate font-bold text-custom-text-100 my-1 text-[20px] text-left">
             {cycleDetails.name}
           </div>
           <div className="flex gap-2">

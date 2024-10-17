@@ -46,13 +46,6 @@ const QuickActions: React.FC<Props> = (props) => {
       shouldRender: !isArchived,
     },
     {
-      key: "drafted-issues",
-      action: () => router.push(`/${workspaceSlug}/projects/${project.id}/draft-issues`, {}),
-      title: "Drafted issues",
-      icon: PenSquare,
-      shouldRender: !isArchived && (isOwner || isMember),
-    },
-    {
       key: "restore",
       action: () => setArchiveRestoreProject(true),
       title: "Restore",

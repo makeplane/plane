@@ -10,14 +10,12 @@ import {
   TCreateUpdatePropertyValuesProps,
   TPropertyValuesValidationProps,
 } from "@/components/issues";
-// hooks
-import { useIssueDetail } from "@/hooks/store";
 // plane web helpers
 import { getPropertiesDefaultValues } from "@/plane-web/helpers/issue-properties.helper";
 // plane web hooks
 import { useIssuePropertiesActivity, useIssueTypes } from "@/plane-web/hooks/store";
 // plane web services
-import { IssuePropertyValuesService } from "@/plane-web/services/issue-types";
+import { DraftIssuePropertyValuesService, IssuePropertyValuesService } from "@/plane-web/services/issue-types";
 // plane web types
 import { TIssuePropertyValueErrors, TIssuePropertyValues } from "@/plane-web/types";
 
@@ -26,16 +24,13 @@ type TIssueModalProviderProps = {
 };
 
 const issuePropertyValuesService = new IssuePropertyValuesService();
+const draftIssuePropertyValuesService = new DraftIssuePropertyValuesService();
 
 export const IssueModalProvider = observer((props: TIssueModalProviderProps) => {
   const { children } = props;
   // states
   const [issuePropertyValues, setIssuePropertyValues] = useState<TIssuePropertyValues>({});
   const [issuePropertyValueErrors, setIssuePropertyValueErrors] = useState<TIssuePropertyValueErrors>({});
-  // hooks
-  const {
-    issue: { getIssueById },
-  } = useIssueDetail();
   // plane web hooks
   const {
     isIssueTypeEnabledForProject,
@@ -115,15 +110,15 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
   };
 
   const handleCreateUpdatePropertyValues = async (props: TCreateUpdatePropertyValuesProps) => {
-    const { workspaceSlug, projectId, issueId } = props;
+    const { workspaceSlug, projectId, issueTypeId, issueId, isDraft = false } = props;
     // check if issue property values are empty
     if (Object.keys(issuePropertyValues).length === 0) return;
     // check if issue type display is enabled
     const isIssueTypeDisplayEnabled = isIssueTypeEnabledForProject(workspaceSlug, projectId, "ISSUE_TYPE_DISPLAY");
     if (!isIssueTypeDisplayEnabled) return;
     // get issue type details
-    const issueDetail = getIssueById(issueId);
-    const issueType = issueDetail?.type_id ? getIssueTypeById(issueDetail.type_id) : null;
+    const issueType = issueTypeId ? getIssueTypeById(issueTypeId) : null;
+    // get draft issue type details
     // filter property values that belongs to the issue type (required when issue type is changed)
     const filteredIssuePropertyValues = Object.keys(issuePropertyValues).reduce((acc, propertyId) => {
       if (issueType?.activeProperties?.find((property) => property.id === propertyId)) {
@@ -132,8 +127,11 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
       return acc;
     }, {} as TIssuePropertyValues);
     // create issue property values
-    await issuePropertyValuesService
-      .create(workspaceSlug, projectId, issueId, filteredIssuePropertyValues)
+    await (
+      isDraft
+        ? draftIssuePropertyValuesService.create(workspaceSlug, projectId, issueId, filteredIssuePropertyValues)
+        : issuePropertyValuesService.create(workspaceSlug, projectId, issueId, filteredIssuePropertyValues)
+    )
       .then(() => {
         // mutate issue property values
         mutate(`ISSUE_PROPERTY_VALUES_${workspaceSlug}_${projectId}_${issueId}_${isIssueTypeDisplayEnabled}`);

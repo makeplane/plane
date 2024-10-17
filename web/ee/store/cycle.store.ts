@@ -1,10 +1,10 @@
 import { set } from "lodash";
 import { action, makeObservable, observable, runInAction } from "mobx";
+import { ICycle } from "@plane/types";
+import { RootStore } from "@/plane-web/store/root.store";
 import { ICycleStore as ICeCycleStore, CycleStore as CeCycleStore } from "@/store/cycle.store";
 import { CycleUpdateService } from "../services/cycle.service";
 import { TCycleUpdateReaction, TCycleUpdates } from "../types";
-import { ICycle } from "@plane/types";
-import { RootStore } from "@/plane-web/store/root.store";
 
 export interface ICycleStore extends ICeCycleStore {
   cycleUpdateIds: string[];

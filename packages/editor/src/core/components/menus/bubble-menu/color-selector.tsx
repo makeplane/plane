@@ -16,8 +16,8 @@ type Props = {
 export const BubbleMenuColorSelector: FC<Props> = (props) => {
   const { editor, isOpen, setIsOpen } = props;
 
-  const activeTextColor = COLORS_LIST.find((c) => editor.getAttributes("textStyle").color === c.key);
-  const activeBackgroundColor = COLORS_LIST.find((c) => editor.getAttributes("textStyle").backgroundColor === c.key);
+  const activeTextColor = COLORS_LIST.find((c) => TextColorItem(editor).isActive(c.key));
+  const activeBackgroundColor = COLORS_LIST.find((c) => BackgroundColorItem(editor).isActive(c.key));
 
   return (
     <div className="relative h-full">

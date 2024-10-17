@@ -10,7 +10,7 @@ import { getPropertiesDefaultValues } from "@/plane-web/helpers/issue-properties
 // plane web hooks
 import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
 // plane web services
-import { IssuePropertyValuesService } from "@/plane-web/services/issue-types";
+import { DraftIssuePropertyValuesService, IssuePropertyValuesService } from "@/plane-web/services/issue-types";
 // local components
 import { IssueAdditionalPropertyValues } from "./root";
 
@@ -19,13 +19,15 @@ type TIssueAdditionalPropertyValuesCreateProps = {
   issueTypeId: string;
   projectId: string;
   workspaceSlug: string;
+  isDraft?: boolean;
 };
 
 const issuePropertyValuesService = new IssuePropertyValuesService();
+const draftIssuePropertyValuesService = new DraftIssuePropertyValuesService();
 
 export const IssueAdditionalPropertyValuesCreate: React.FC<TIssueAdditionalPropertyValuesCreateProps> = observer(
   (props) => {
-    const { issueId, issueTypeId, projectId, workspaceSlug } = props;
+    const { issueId, issueTypeId, projectId, workspaceSlug, isDraft = false } = props;
     // states
     const [issuePropertyValues, setIssuePropertyValues] = React.useState({});
     // store hooks
@@ -51,7 +53,9 @@ export const IssueAdditionalPropertyValuesCreate: React.FC<TIssueAdditionalPrope
         : null,
       () =>
         workspaceSlug && projectId && issueId && isIssueTypeDisplayEnabled
-          ? issuePropertyValuesService.fetchAll(workspaceSlug, projectId, issueId)
+          ? isDraft
+            ? draftIssuePropertyValuesService.fetchAll(workspaceSlug, projectId, issueId)
+            : issuePropertyValuesService.fetchAll(workspaceSlug, projectId, issueId)
           : null,
       {}
     );

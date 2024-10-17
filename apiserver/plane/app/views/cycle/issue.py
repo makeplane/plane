@@ -24,6 +24,7 @@ from plane.db.models import (
     CycleIssue,
     IssueLink,
     Project,
+    Workspace,
 )
 from plane.ee.models import EntityIssueStateActivity
 from plane.utils.grouper import (
@@ -297,54 +298,55 @@ class CycleIssueViewSet(BaseViewSet):
             estimate__type="points",
         ).exists()
 
-        EntityIssueStateActivity.objects.bulk_create(
-            [
-                EntityIssueStateActivity(
-                    cycle_id=cycle_id,
-                    state_id=str(issue_dict[issue_id].state_id),
-                    issue_id=issue_id,
-                    state_group=issue_dict[issue_id].state.group,
-                    action="ADDED",
-                    entity_type="CYCLE",
-                    estimate_point_id=issue_dict[issue_id].estimate_point_id,
-                    estimate_value=(
-                        issue_dict[issue_id].estimate_point.value
-                        if estimate_type
-                        and issue_dict[issue_id].estimate_point
-                        else None
-                    ),
-                    workspace_id=cycle.workspace_id,
-                    created_by_id=request.user.id,
-                    updated_by_id=request.user.id,
-                )
-                for issue_id in issues
-            ],
-            batch_size=10,
-        )
+        if cycle.version == 2:
+            EntityIssueStateActivity.objects.bulk_create(
+                [
+                    EntityIssueStateActivity(
+                        cycle_id=cycle_id,
+                        state_id=str(issue_dict[issue_id].state_id),
+                        issue_id=issue_id,
+                        state_group=issue_dict[issue_id].state.group,
+                        action="ADDED",
+                        entity_type="CYCLE",
+                        estimate_point_id=issue_dict[issue_id].estimate_point_id,
+                        estimate_value=(
+                            issue_dict[issue_id].estimate_point.value
+                            if estimate_type
+                            and issue_dict[issue_id].estimate_point
+                            else None
+                        ),
+                        workspace_id=cycle.workspace_id,
+                        created_by_id=request.user.id,
+                        updated_by_id=request.user.id,
+                    )
+                    for issue_id in issues
+                ],
+                batch_size=10,
+            )
 
-        EntityIssueStateActivity.objects.bulk_create(
-            [
-                EntityIssueStateActivity(
-                    cycle_id=issue_dict[issue_id].cycle_id,
-                    state_id=str(issue_dict[issue_id].state_id),
-                    issue_id=issue_id,
-                    state_group=issue_dict[issue_id].state.group,
-                    action="REMOVED",
-                    entity_type="CYCLE",
-                    estimate_point_id=issue_dict[issue_id].estimate_point_id,
-                    estimate_value=(
-                        issue_dict[issue_id].estimate_point.value
-                        if estimate_type
-                        and issue_dict[issue_id].estimate_point
-                        else None
-                    ),
-                    workspace_id=cycle.workspace_id,
-                    created_by_id=request.user.id,
-                    updated_by_id=request.user.id,
-                )
-                for issue_id in existing_issues
-            ]
-        )
+            EntityIssueStateActivity.objects.bulk_create(
+                [
+                    EntityIssueStateActivity(
+                        cycle_id=issue_dict[issue_id].cycle_id,
+                        state_id=str(issue_dict[issue_id].state_id),
+                        issue_id=issue_id,
+                        state_group=issue_dict[issue_id].state.group,
+                        action="REMOVED",
+                        entity_type="CYCLE",
+                        estimate_point_id=issue_dict[issue_id].estimate_point_id,
+                        estimate_value=(
+                            issue_dict[issue_id].estimate_point.value
+                            if estimate_type
+                            and issue_dict[issue_id].estimate_point
+                            else None
+                        ),
+                        workspace_id=cycle.workspace_id,
+                        created_by_id=request.user.id,
+                        updated_by_id=request.user.id,
+                    )
+                    for issue_id in existing_issues
+                ]
+            )
 
         # Updated Issues
         updated_records = []
@@ -392,6 +394,7 @@ class CycleIssueViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def destroy(self, request, slug, project_id, cycle_id, issue_id):
+        workspace = Workspace.objects.get(slug=slug)
         cycle_issue = CycleIssue.objects.filter(
             issue_id=issue_id,
             workspace__slug=slug,
@@ -407,22 +410,25 @@ class CycleIssueViewSet(BaseViewSet):
             estimate__type="points",
         ).exists()
 
-        EntityIssueStateActivity.objects.create(
-            cycle_id=cycle_id,
-            state_id=issue.state_id,
-            issue_id=issue_id,
-            state_group=issue.state.group,
-            action="REMOVED",
-            entity_type="CYCLE",
-            estimate_point_id=issue.estimate_point_id,
-            estimate_value=(
-                issue.estimate_point.value
-                if estimate_type and issue.estimate_point
-                else None
-            ),
-            created_by_id=request.user.id,
-            updated_by_id=request.user.id,
-        )
+        cycle = Cycle.objects.get(pk=cycle_id)
+        if cycle.version == 2:
+            EntityIssueStateActivity.objects.create(
+                cycle_id=cycle_id,
+                state_id=issue.state_id,
+                issue_id=issue_id,
+                state_group=issue.state.group,
+                action="REMOVED",
+                entity_type="CYCLE",
+                estimate_point_id=issue.estimate_point_id,
+                estimate_value=(
+                    issue.estimate_point.value
+                    if estimate_type and issue.estimate_point
+                    else None
+                ),
+                created_by_id=request.user.id,
+                updated_by_id=request.user.id,
+                workspace_id=workspace.id,
+            )
 
         issue_activity.delay(
             type="cycle.activity.deleted",

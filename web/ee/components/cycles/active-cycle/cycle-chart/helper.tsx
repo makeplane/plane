@@ -1,7 +1,6 @@
 import { startOfToday } from "date-fns";
 import { TCycleProgress } from "@plane/types";
 import { TProgressChartData } from "@/helpers/cycle.helper";
-import { getDate } from "@/helpers/date-time.helper";
 
 type TIntersection = { x: number; y: number; line1isHigher: boolean; line1isHigherNext: boolean };
 
@@ -112,7 +111,7 @@ export const chartHelper = (
   const dataWithRange = [...data].map((d: Partial<TCycleProgress>) => ({
     ...d,
     range: d.actual !== undefined ? [d.actual, d.ideal] : [],
-    timeLeft: new Date(d.date!) < today ? [] : [0, Math.max(maxScope(data), 2)],
+    timeLeft: new Date(d.date!) < today || new Date(d.date!) > endDate ? [] : [0, Math.max(maxScope(data), 2)],
     beyondTime: endDate <= new Date(d.date!) ? [0, Math.max(maxScope(data), 2)] : [],
   }));
 

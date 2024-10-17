@@ -33,6 +33,7 @@ export const IssueParentSiblingItem: FC<TIssueParentSiblingItem> = observer((pro
       <CustomMenu.MenuItem key={issueDetail.id}>
         <Link
           href={`/${workspaceSlug}/projects/${issueDetail?.project_id as string}/issues/${issueDetail.id}`}
+          target="_blank"
           className="flex items-center gap-2 py-0.5"
         >
           {issueDetail.project_id && projectDetails?.identifier && (

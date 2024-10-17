@@ -1,8 +1,6 @@
 [
   {
-    "relation": [
-      "delegate_permission/common.handle_all_urls"
-    ],
+    "relation": ["delegate_permission/common.handle_all_urls"],
     "target": {
       "namespace": "android_app",
       "package_name": "com.plane.so",
@@ -12,21 +10,17 @@
     }
   },
   {
-    "relation": [
-      "delegate_permission/common.handle_all_urls"
-    ],
+    "relation": ["delegate_permission/common.handle_all_urls"],
     "target": {
       "namespace": "android_app",
       "package_name": "com.plane.so.stg",
       "sha256_cert_fingerprints": [
-        "9F:BB:FE:DC:55:55:60:2E:7C:6F:13:2B:5C:FE:6E:D8:47:F3:D2:25:E3:E7:BC:5B:70:52:46:6A:07:7A:A8:55"
+        "9A:98:14:F0:FD:82:9D:CA:7E:AA:B4:BE:00:D3:39:53:F9:AE:38:3F:EE:E7:22:20:81:C7:F0:49:AB:E5:22:E6"
       ]
     }
   },
   {
-    "relation": [
-      "delegate_permission/common.handle_all_urls"
-    ],
+    "relation": ["delegate_permission/common.handle_all_urls"],
     "target": {
       "namespace": "android_app",
       "package_name": "com.plane.so.development",
