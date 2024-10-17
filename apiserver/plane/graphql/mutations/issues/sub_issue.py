@@ -1,4 +1,9 @@
+# Python imports
+import json
 from typing import Optional
+
+# Django imports
+from django.utils import timezone
 
 # Strawberry imports
 import strawberry
@@ -12,6 +17,7 @@ from asgiref.sync import sync_to_async
 from plane.graphql.permissions.project import ProjectMemberPermission
 from plane.db.models import Issue
 from plane.graphql.types.issue import IssuesType
+from plane.graphql.bgtasks.issue_activity_task import issue_activity
 
 
 # create methods
@@ -65,6 +71,24 @@ class SubIssueMutation:
                 sub_issue.parent_id = parentIssueId
 
             await bulk_update_issues(sub_issues, ["parent"])
+
+            _ = [
+                issue_activity.delay(
+                    type="issue.activity.updated",
+                    requested_data=json.dumps(
+                        {"parent_id": str(parentIssueId)}
+                    ),
+                    actor_id=str(info.context.user.id),
+                    issue_id=str(sub_issue_id),
+                    project_id=str(project),
+                    current_instance=json.dumps({"parent_id": None}),
+                    epoch=int(timezone.now().timestamp()),
+                    notification=True,
+                    origin=info.context.request.META.get("HTTP_ORIGIN"),
+                )
+                for sub_issue_id in subIssueIds
+            ]
+
             return True
         except Exception:
             return False

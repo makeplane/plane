@@ -39,20 +39,24 @@ class CustomGraphQLView(AsyncGraphQLView):
                 bearer_token = auth_header.split()[1]
                 if not bearer_token:
                     context.user = None
+                    request.user = None
 
                 validated_token = await get_validated_token(bearer_token)
                 if validated_token is None:
                     context.user = None
+                    request.user = None
 
                 # Get the user from the validated token
                 user = await get_jwt_user(validated_token)
 
                 # Set the user in the context
                 context.user = user
+                request.user = user
             else:
                 context.user = None
         except (InvalidToken, TokenError) as e:
             context.user = None
+            request.user = None
         return context
 
     async def process_result(
