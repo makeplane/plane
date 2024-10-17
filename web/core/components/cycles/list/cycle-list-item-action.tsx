@@ -211,7 +211,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
     <>
       <button
         onClick={openCycleOverview}
-        className={`z-[1] flex text-custom-primary-200 text-xs gap-1 flex-shrink-0 ${isMobile || isActive ? "flex" : "hidden group-hover:flex"}`}
+        className={`z-[1] flex text-custom-primary-200 text-xs gap-1 flex-shrink-0 ${isMobile || (isActive && !searchParams.has("peekCycle")) ? "flex" : "hidden group-hover:flex"}`}
       >
         <Eye className="h-4 w-4 my-auto  text-custom-primary-200" />
         <span>More details</span>

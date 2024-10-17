@@ -240,7 +240,7 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
                       <div className="-mt-1">
                         <p>Archive cycle</p>
                         <p className="text-xs text-custom-text-400">
-                          Only completed cycle <br /> can be archived.
+                          Only completed cycles <br /> can be archived.
                         </p>
                       </div>
                     </div>

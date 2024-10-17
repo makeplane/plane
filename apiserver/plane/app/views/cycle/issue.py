@@ -111,7 +111,7 @@ class CycleIssueViewSet(BaseViewSet):
             )
             .annotate(
                 attachment_count=FileAsset.objects.filter(
-                    entity_identifier=OuterRef("id"),
+                    issue_id=OuterRef("id"),
                     entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()
@@ -247,10 +247,7 @@ class CycleIssueViewSet(BaseViewSet):
             workspace__slug=slug, project_id=project_id, pk=cycle_id
         )
 
-        if (
-            cycle.end_date is not None
-            and cycle.end_date < timezone.now()
-        ):
+        if cycle.end_date is not None and cycle.end_date < timezone.now():
             return Response(
                 {
                     "error": "The Cycle has already been completed so no new issues can be added"

@@ -9,11 +9,7 @@ import { EditorRefApi } from "@plane/editor";
 import { TIssue } from "@plane/types";
 import { Button, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import {
-  InboxIssueTitle,
-  InboxIssueDescription,
-  InboxIssueProperties,
-} from "@/components/inbox/modals/create-edit-modal";
+import { InboxIssueTitle, InboxIssueDescription, InboxIssueProperties } from "@/components/inbox/modals/create-modal";
 // constants
 import { ISSUE_CREATED } from "@/constants/event-tracker";
 import { ETabIndices } from "@/constants/tab-indices";
@@ -120,7 +116,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
     await createInboxIssue(workspaceSlug, projectId, payload)
       .then(async (res) => {
         if (uploadedAssetIds.length > 0) {
-          await fileService.updateBulkProjectAssetsUploadStatus(workspaceSlug, projectId, res?.id ?? "", {
+          await fileService.updateBulkProjectAssetsUploadStatus(workspaceSlug, projectId, res?.issue.id ?? "", {
             asset_ids: uploadedAssetIds,
           });
           setUploadedAssetIds([]);
@@ -201,7 +197,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
           role="button"
           tabIndex={getIndex("create_more")}
         >
-          <ToggleSwitch value={createMore} onChange={() => {}} size="sm" />
+          <ToggleSwitch value={createMore} onChange={() => { }} size="sm" />
           <span className="text-xs">Create more</span>
         </div>
         <div className="flex items-center gap-3">

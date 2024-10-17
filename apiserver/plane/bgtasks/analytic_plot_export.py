@@ -10,6 +10,9 @@ from celery import shared_task
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from django.db.models import Q, Case, Value, When
+from django.db import models
+from django.db.models.functions import Concat
 
 # Module imports
 from plane.db.models import Issue
@@ -84,7 +87,32 @@ def get_assignee_details(slug, filters):
     """Fetch assignee details if required."""
     return (
         Issue.issue_objects.filter(
-            workspace__slug=slug, **filters, assignees__avatar__isnull=False
+            Q(
+                Q(assignees__avatar__isnull=False)
+                | Q(assignees__avatar_asset__isnull=False)
+            ),
+            workspace__slug=slug,
+            **filters,
+        )
+        .annotate(
+            assignees__avatar_url=Case(
+                # If `avatar_asset` exists, use it to generate the asset URL
+                When(
+                    assignees__avatar_asset__isnull=False,
+                    then=Concat(
+                        Value("/api/assets/v2/static/"),
+                        "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
+                        Value("/"),
+                    ),
+                ),
+                # If `avatar_asset` is None, fall back to using `avatar` field directly
+                When(
+                    assignees__avatar_asset__isnull=True,
+                    then="assignees__avatar",
+                ),
+                default=Value(None),
+                output_field=models.CharField(),
+            )
         )
         .distinct("assignees__id")
         .order_by("assignees__id")

@@ -21,6 +21,8 @@ from plane.db.models import (
 )
 from plane.settings.storage import S3Storage
 from plane.app.permissions import allow_permission, ROLE
+from plane.utils.cache import invalidate_cache_directly
+from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 
 
 class UserAssetsV2Endpoint(BaseAPIView):
@@ -35,7 +37,7 @@ class UserAssetsV2Endpoint(BaseAPIView):
         asset.save()
         return
 
-    def entity_asset_save(self, asset_id, entity_type, asset):
+    def entity_asset_save(self, asset_id, entity_type, asset, request):
         # User Avatar
         if entity_type == FileAsset.EntityTypeContext.USER_AVATAR:
             user = User.objects.get(id=asset.user_id)
@@ -46,6 +48,18 @@ class UserAssetsV2Endpoint(BaseAPIView):
             # Save the new avatar
             user.avatar_asset_id = asset_id
             user.save()
+            invalidate_cache_directly(
+                path="/api/users/me/",
+                url_params=False,
+                user=True,
+                request=request,
+            )
+            invalidate_cache_directly(
+                path="/api/users/me/settings/",
+                url_params=False,
+                user=True,
+                request=request,
+            )
             return
         # User Cover
         if entity_type == FileAsset.EntityTypeContext.USER_COVER:
@@ -57,21 +71,57 @@ class UserAssetsV2Endpoint(BaseAPIView):
             # Save the new cover image
             user.cover_image_asset_id = asset_id
             user.save()
+            invalidate_cache_directly(
+                path="/api/users/me/",
+                url_params=False,
+                user=True,
+                request=request,
+            )
+            invalidate_cache_directly(
+                path="/api/users/me/settings/",
+                url_params=False,
+                user=True,
+                request=request,
+            )
             return
         return
 
-    def entity_asset_delete(self, entity_type, asset):
+    def entity_asset_delete(self, entity_type, asset, request):
         # User Avatar
         if entity_type == FileAsset.EntityTypeContext.USER_AVATAR:
             user = User.objects.get(id=asset.user_id)
             user.avatar_asset_id = None
             user.save()
+            invalidate_cache_directly(
+                path="/api/users/me/",
+                url_params=False,
+                user=True,
+                request=request,
+            )
+            invalidate_cache_directly(
+                path="/api/users/me/settings/",
+                url_params=False,
+                user=True,
+                request=request,
+            )
             return
         # User Cover
         if entity_type == FileAsset.EntityTypeContext.USER_COVER:
             user = User.objects.get(id=asset.user_id)
             user.cover_image_asset_id = None
             user.save()
+            invalidate_cache_directly(
+                path="/api/users/me/",
+                url_params=False,
+                user=True,
+                request=request,
+            )
+            invalidate_cache_directly(
+                path="/api/users/me/settings/",
+                url_params=False,
+                user=True,
+                request=request,
+            )
             return
         return
 
@@ -81,6 +131,9 @@ class UserAssetsV2Endpoint(BaseAPIView):
         type = request.data.get("type", "image/jpeg")
         size = int(request.data.get("size", settings.FILE_SIZE_LIMIT))
         entity_type = request.data.get("entity_type", False)
+
+        # Check if the file size is within the limit
+        size_limit = min(size, settings.FILE_SIZE_LIMIT)
 
         #  Check if the entity type is allowed
         if not entity_type or entity_type not in ["USER_AVATAR", "USER_COVER"]:
@@ -102,9 +155,6 @@ class UserAssetsV2Endpoint(BaseAPIView):
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
-        # Get the size limit
-        size_limit = min(settings.FILE_SIZE_LIMIT, size)
 
         # asset key
         asset_key = f"{uuid.uuid4().hex}-{name}"
@@ -144,16 +194,18 @@ class UserAssetsV2Endpoint(BaseAPIView):
     def patch(self, request, asset_id):
         # get the asset id
         asset = FileAsset.objects.get(id=asset_id, user_id=request.user.id)
-        storage = S3Storage(request=request)
         # get the storage metadata
         asset.is_uploaded = True
         # get the storage metadata
-        if asset.storage_metadata is None:
-            asset.storage_metadata = storage.get_object_metadata(
-                object_name=asset.asset.name
-            )
+        if not asset.storage_metadata:
+            get_asset_object_metadata.delay(asset_id=str(asset_id))
         # get the entity and save the asset id for the request field
-        self.entity_asset_save(asset_id, asset.entity_type, asset)
+        self.entity_asset_save(
+            asset_id=asset_id,
+            entity_type=asset.entity_type,
+            asset=asset,
+            request=request,
+        )
         # update the attributes
         asset.attributes = request.data.get("attributes", asset.attributes)
         # save the asset
@@ -165,7 +217,9 @@ class UserAssetsV2Endpoint(BaseAPIView):
         asset.is_deleted = True
         asset.deleted_at = timezone.now()
         # get the entity and save the asset id for the request field
-        self.entity_asset_delete(asset.entity_type, asset)
+        self.entity_asset_delete(
+            entity_type=asset.entity_type, asset=asset, request=request
+        )
         asset.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -174,16 +228,19 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
     """This endpoint is used to upload cover images/logos etc for workspace, projects and users."""
 
     def get_entity_id_field(self, entity_type, entity_id):
+        # Workspace Logo
         if entity_type == FileAsset.EntityTypeContext.WORKSPACE_LOGO:
             return {
                 "workspace_id": entity_id,
             }
 
+        # Project Cover
         if entity_type == FileAsset.EntityTypeContext.PROJECT_COVER:
             return {
                 "project_id": entity_id,
             }
 
+        # User Avatar and Cover
         if entity_type in [
             FileAsset.EntityTypeContext.USER_AVATAR,
             FileAsset.EntityTypeContext.USER_COVER,
@@ -192,6 +249,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
                 "user_id": entity_id,
             }
 
+        # Issue Attachment and Description
         if entity_type in [
             FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
             FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
@@ -200,11 +258,13 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
                 "issue_id": entity_id,
             }
 
+        # Page Description
         if entity_type == FileAsset.EntityTypeContext.PAGE_DESCRIPTION:
             return {
                 "page_id": entity_id,
             }
 
+        # Comment Description
         if entity_type == FileAsset.EntityTypeContext.COMMENT_DESCRIPTION:
             return {
                 "comment_id": entity_id,
@@ -222,7 +282,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         asset.save()
         return
 
-    def entity_asset_save(self, asset_id, entity_type, asset):
+    def entity_asset_save(self, asset_id, entity_type, asset, request):
         # Workspace Logo
         if entity_type == FileAsset.EntityTypeContext.WORKSPACE_LOGO:
             workspace = Workspace.objects.filter(id=asset.workspace_id).first()
@@ -235,6 +295,24 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             workspace.logo = ""
             workspace.logo_asset_id = asset_id
             workspace.save()
+            invalidate_cache_directly(
+                path="/api/workspaces/",
+                url_params=False,
+                user=False,
+                request=request,
+            )
+            invalidate_cache_directly(
+                path="/api/users/me/workspaces/",
+                url_params=False,
+                user=True,
+                request=request,
+            )
+            invalidate_cache_directly(
+                path="/api/instances/",
+                url_params=False,
+                user=False,
+                request=request,
+            )
             return
 
         # Project Cover
@@ -253,7 +331,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         else:
             return
 
-    def entity_asset_delete(self, entity_type, asset):
+    def entity_asset_delete(self, entity_type, asset, request):
         # Workspace Logo
         if entity_type == FileAsset.EntityTypeContext.WORKSPACE_LOGO:
             workspace = Workspace.objects.get(id=asset.workspace_id)
@@ -261,6 +339,24 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
                 return
             workspace.logo_asset_id = None
             workspace.save()
+            invalidate_cache_directly(
+                path="/api/workspaces/",
+                url_params=False,
+                user=False,
+                request=request,
+            )
+            invalidate_cache_directly(
+                path="/api/users/me/workspaces/",
+                url_params=False,
+                user=True,
+                request=request,
+            )
+            invalidate_cache_directly(
+                path="/api/instances/",
+                url_params=False,
+                user=False,
+                request=request,
+            )
             return
         # Project Cover
         elif entity_type == FileAsset.EntityTypeContext.PROJECT_COVER:
@@ -322,7 +418,9 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             workspace=workspace,
             created_by=request.user,
             entity_type=entity_type,
-            **self.get_entity_id_field(entity_type, entity_identifier),
+            **self.get_entity_id_field(
+                entity_type=entity_type, entity_id=entity_identifier
+            ),
         )
 
         # Get the presigned URL
@@ -346,16 +444,18 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
     def patch(self, request, slug, asset_id):
         # get the asset id
         asset = FileAsset.objects.get(id=asset_id, workspace__slug=slug)
-        storage = S3Storage(request=request)
         # get the storage metadata
         asset.is_uploaded = True
         # get the storage metadata
-        if asset.storage_metadata is None:
-            asset.storage_metadata = storage.get_object_metadata(
-                object_name=asset.asset.name
-            )
+        if not asset.storage_metadata:
+            get_asset_object_metadata.delay(asset_id=str(asset_id))
         # get the entity and save the asset id for the request field
-        self.entity_asset_save(asset_id, asset.entity_type, asset)
+        self.entity_asset_save(
+            asset_id=asset_id,
+            entity_type=asset.entity_type,
+            asset=asset,
+            request=request,
+        )
         # update the attributes
         asset.attributes = request.data.get("attributes", asset.attributes)
         # save the asset
@@ -367,7 +467,9 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         asset.is_deleted = True
         asset.deleted_at = timezone.now()
         # get the entity and save the asset id for the request field
-        self.entity_asset_delete(asset.entity_type, asset)
+        self.entity_asset_delete(
+            entity_type=asset.entity_type, asset=asset, request=request
+        )
         asset.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -454,7 +556,7 @@ class AssetRestoreEndpoint(BaseAPIView):
 class ProjectAssetEndpoint(BaseAPIView):
     """This endpoint is used to upload cover images/logos etc for workspace, projects and users."""
 
-    def get_entity_id_fiekd(self, entity_type, entity_id):
+    def get_entity_id_field(self, entity_type, entity_id):
         if entity_type == FileAsset.EntityTypeContext.WORKSPACE_LOGO:
             return {
                 "workspace_id": entity_id,
@@ -490,6 +592,11 @@ class ProjectAssetEndpoint(BaseAPIView):
             return {
                 "comment_id": entity_id,
             }
+
+        if entity_type == FileAsset.EntityTypeContext.DRAFT_ISSUE_DESCRIPTION:
+            return {
+                "draft_issue_id": entity_id,
+            }
         return {}
 
     @allow_permission(
@@ -513,7 +620,7 @@ class ProjectAssetEndpoint(BaseAPIView):
             )
 
         # Check if the file type is allowed
-        allowed_types = ["image/jpeg", "image/png", "image/webp"]
+        allowed_types = ["image/jpeg", "image/png", "image/webp", "image/jpg"]
         if type not in allowed_types:
             return Response(
                 {
@@ -545,7 +652,7 @@ class ProjectAssetEndpoint(BaseAPIView):
             created_by=request.user,
             entity_type=entity_type,
             project_id=project_id,
-            **self.get_entity_id_fiekd(entity_type, entity_identifier),
+            **self.get_entity_id_field(entity_type, entity_identifier),
         )
 
         # Get the presigned URL
@@ -574,14 +681,11 @@ class ProjectAssetEndpoint(BaseAPIView):
         asset = FileAsset.objects.get(
             id=pk,
         )
-        storage = S3Storage(request=request)
         # get the storage metadata
         asset.is_uploaded = True
         # get the storage metadata
-        if asset.storage_metadata is None:
-            asset.storage_metadata = storage.get_object_metadata(
-                object_name=asset.asset.name
-            )
+        if not asset.storage_metadata:
+            get_asset_object_metadata.delay(asset_id=str(pk))
 
         # update the attributes
         asset.attributes = request.data.get("attributes", asset.attributes)
@@ -686,6 +790,14 @@ class ProjectBulkAssetEndpoint(BaseAPIView):
         if asset.entity_type == FileAsset.EntityTypeContext.PAGE_DESCRIPTION:
             assets.update(
                 page_id=entity_id,
+            )
+
+        if (
+            asset.entity_type
+            == FileAsset.EntityTypeContext.DRAFT_ISSUE_DESCRIPTION
+        ):
+            assets.update(
+                draft_issue_id=entity_id,
             )
 
         return Response(status=status.HTTP_204_NO_CONTENT)
