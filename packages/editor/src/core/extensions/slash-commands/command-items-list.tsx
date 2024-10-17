@@ -12,10 +12,10 @@ import {
   List,
   ListOrdered,
   ListTodo,
-  MessageSquare,
+  MessageSquareText,
   MinusSquare,
-  Quote,
   Table,
+  TextQuote,
 } from "lucide-react";
 // constants
 import { COLORS_LIST } from "@/constants/common";
@@ -159,7 +159,7 @@ export const getSlashCommandFilteredSections =
             title: "Quote",
             description: "Capture a quote.",
             searchTerms: ["blockquote"],
-            icon: <Quote className="size-3.5" />,
+            icon: <TextQuote className="size-3.5" />,
             command: ({ editor, range }) => toggleBlockquote(editor, range),
           },
           {
@@ -184,7 +184,7 @@ export const getSlashCommandFilteredSections =
             commandKey: "callout",
             key: "callout",
             title: "Callout",
-            icon: <MessageSquare className="size-3.5" />,
+            icon: <MessageSquareText className="size-3.5" />,
             description: "Insert callout",
             searchTerms: ["callout", "comment", "message", "info", "alert"],
             command: ({ editor, range }: CommandProps) => insertCallout(editor, range),

@@ -104,8 +104,8 @@ export const LucideIconsList: React.FC<TIconsListProps> = (props) => {
           </button>
         </div>
         <div className="flex items-center gap-2 w-full pl-4 pr-3 py-1 h-6">
-          <InfoIcon className="h-3 w-3" />
-          <p className="text-xs"> Colors will be adjusted to ensure sufficient contrast.</p>
+          <InfoIcon className="flex-shrink-0 h-3 w-3" />
+          <p className="!text-xs"> Colors will be adjusted to ensure sufficient contrast.</p>
         </div>
       </div>
       <div className="grid grid-cols-8 gap-1 px-2.5 justify-items-center mt-2">

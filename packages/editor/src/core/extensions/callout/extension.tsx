@@ -1,4 +1,4 @@
-import { ReactNodeViewRenderer } from "@tiptap/react";
+import { findParentNodeClosestToPos, Predicate, ReactNodeViewRenderer } from "@tiptap/react";
 // extensions
 import { CustomCalloutBlock } from "@/extensions";
 // helpers
@@ -17,7 +17,7 @@ export const CustomCalloutExtension = CustomCalloutExtensionConfig.extend({
       insertCallout:
         () =>
         ({ commands }) => {
-          // get store logo values from the local storage
+          // get store logo values and background color from the local storage
           const storedLogoValues = getStoredLogo();
           const storedBackgroundValue = getStoredBackgroundColor();
 
@@ -40,34 +40,18 @@ export const CustomCalloutExtension = CustomCalloutExtensionConfig.extend({
   addKeyboardShortcuts() {
     return {
       Backspace: ({ editor }) => {
-        try {
-          const { selection } = editor.state;
-          const { $from } = selection;
+        const { $from, empty } = editor.state.selection;
+        const predicate: Predicate = (node) => node.type === this.type;
+        const parentNodeDetails = findParentNodeClosestToPos($from, predicate);
+        const isCursorAtCalloutBeginning = $from.pos === parentNodeDetails.start + 1;
 
-          const isCurrentNodeCallout = editor.isActive("calloutComponent");
-          const nodeBefore = $from.nodeBefore;
-
-          console.log("isCurrentNodeCallout", isCurrentNodeCallout);
-          console.log("nodeBefore", nodeBefore);
-          console.log("$from.parent", $from.parent);
-          console.log("editor", editor);
-
-          if (isCurrentNodeCallout && !nodeBefore) {
-            console.log("Inside");
-            // delete the callout
-            // editor.commands.deleteRange({
-            //   from: $from.pos - 1,
-            //   to: $from.pos,
-            // });
-            editor.commands.setTextSelection(4);
-            return true;
-          }
-
-          return false;
-        } catch (error) {
-          console.error("An error occurred while performing backspace action on a calloutComponent", error);
-          return false;
+        // Check if selection is empty and at the beginning of the callout
+        if (empty && parentNodeDetails && parentNodeDetails.node.content.size > 2 && isCursorAtCalloutBeginning) {
+          editor.commands.setTextSelection(parentNodeDetails.pos - 1);
+          return true;
         }
+
+        return false; // Allow the default behavior if conditions are not met
       },
       ArrowDown: insertEmptyParagraphAtNodeBoundaries("down", this.name),
       ArrowUp: insertEmptyParagraphAtNodeBoundaries("up", this.name),
