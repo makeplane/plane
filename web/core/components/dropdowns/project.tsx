@@ -3,8 +3,6 @@ import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
-// types
-import { IProject } from "@plane/types";
 // ui
 import { ComboDropDown } from "@plane/ui";
 // components
@@ -14,6 +12,8 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useProject } from "@/hooks/store";
 import { useDropdown } from "@/hooks/use-dropdown";
+// plane web types
+import { TProject } from "@/plane-web/types";
 // components
 import { DropdownButton } from "./buttons";
 // constants
@@ -27,7 +27,7 @@ type Props = TDropdownProps & {
   dropdownArrowClassName?: string;
   onChange: (val: string) => void;
   onClose?: () => void;
-  renderCondition?: (project: IProject) => boolean;
+  renderCondition?: (project: TProject) => boolean;
   value: string | null;
   renderByDefault?: boolean;
 };

@@ -5,7 +5,7 @@ import { computedFn } from "mobx-utils";
 // helpers
 import { orderProjects, shouldFilterProject } from "@/helpers/project.helper";
 // services
-import { TProject } from "@/plane-web/types/projects/projects";
+import { TProject } from "@/plane-web/types/projects";
 import { IssueLabelService, IssueService } from "@/services/issue";
 import { ProjectService, ProjectStateService, ProjectArchiveService } from "@/services/project";
 // store
