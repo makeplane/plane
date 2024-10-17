@@ -22,9 +22,6 @@ export const CustomCalloutExtensionConfig = Node.create({
 
   addAttributes() {
     const attributes = {
-      class: {
-        default: "editor-callout",
-      },
       // Reduce instead of map to accumulate the attributes directly into an object
       ...Object.values(EAttributeNames).reduce((acc, value) => {
         acc[value] = {

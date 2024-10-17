@@ -9,7 +9,6 @@ import {
 } from "./types";
 
 export const DEFAULT_CALLOUT_BLOCK_ATTRIBUTES: TCalloutBlockAttributes = {
-  class: "",
   "data-logo-in-use": "emoji",
   "data-icon-color": null,
   "data-icon-name": null,

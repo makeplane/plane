@@ -18,7 +18,6 @@ export type TCalloutBlockEmojiAttributes = {
 };
 
 export type TCalloutBlockAttributes = {
-  class: string | undefined;
   [EAttributeNames.LOGO_IN_USE]: "emoji" | "icon";
   [EAttributeNames.BACKGROUND]: string;
 } & TCalloutBlockIconAttributes &
