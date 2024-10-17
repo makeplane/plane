@@ -16,6 +16,7 @@ import {
   CustomEmojiIconPicker,
   EmojiIconPickerTypes,
   Tooltip,
+  // CustomSearchSelect,
 } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
@@ -24,6 +25,7 @@ import { ImagePickerPopover } from "@/components/core";
 import { PROJECT_UPDATED } from "@/constants/event-tracker";
 import { NETWORK_CHOICES } from "@/constants/project";
 // helpers
+// import { TTimezone, TIME_ZONES } from "@/constants/timezones";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 import { getFileURL } from "@/helpers/file.helper";
@@ -65,6 +67,21 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
     },
   });
   // derived values
+  const currentNetwork = NETWORK_CHOICES.find((n) => n.key === project?.network);
+  // const getTimeZoneLabel = (timezone: TTimezone | undefined) => {
+  //   if (!timezone) return undefined;
+  //   return (
+  //     <div className="flex gap-1.5">
+  //       <span className="text-custom-text-400">{timezone.gmtOffset}</span>
+  //       <span className="text-custom-text-200">{timezone.name}</span>
+  //     </div>
+  //   );
+  // };
+  // const timeZoneOptions = TIME_ZONES.map((timeZone) => ({
+  //   value: timeZone.value,
+  //   query: timeZone.name + " " + timeZone.gmtOffset + " " + timeZone.value,
+  //   content: getTimeZoneLabel(timeZone),
+  // }));
   const coverImage = watch("cover_image_url");
 
   useEffect(() => {
@@ -76,12 +93,15 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [project, projectId]);
+
+  // handlers
   const handleIdentifierChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     const alphanumericValue = value.replace(/[^a-zA-Z0-9]/g, "");
     const formattedValue = alphanumericValue.toUpperCase();
     setValue("identifier", formattedValue);
   };
+
   const handleUpdateChange = async (payload: Partial<IProject>) => {
     if (!workspaceSlug || !project) return;
     return updateProject(workspaceSlug.toString(), project.id, payload)
@@ -115,6 +135,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
         });
       });
   };
+
   const onSubmit = async (formData: IProject) => {
     if (!workspaceSlug) return;
     setIsLoading(true);
@@ -125,6 +146,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       description: formData.description,
       cover_image_url: formData.cover_image_url,
       logo_props: formData.logo_props,
+      // timezone: formData.timezone,
     };
 
     if (project.identifier !== formData.identifier)
@@ -139,7 +161,6 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       setIsLoading(false);
     }, 300);
   };
-  const currentNetwork = NETWORK_CHOICES.find((n) => n.key === project?.network);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -267,8 +288,8 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
             )}
           />
         </div>
-        <div className="flex w-full justify-between gap-10">
-          <div className="flex w-1/2 flex-col gap-1">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="flex flex-col gap-1">
             <h4 className="text-sm">Project ID</h4>
             <div className="relative">
               <Controller
@@ -316,14 +337,13 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
               <>{errors?.identifier?.message}</>
             </span>
           </div>
-          <div className="flex w-1/2 flex-col gap-1">
+          <div className="flex flex-col gap-1">
             <h4 className="text-sm">Network</h4>
             <Controller
               name="network"
               control={control}
               render={({ field: { value, onChange } }) => {
                 const selectedNetwork = NETWORK_CHOICES.find((n) => n.key === value);
-
                 return (
                   <CustomSelect
                     value={value}
@@ -361,6 +381,31 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
               }}
             />
           </div>
+          {/* <div className="flex flex-col gap-1 col-span-1 sm:col-span-2 xl:col-span-1">
+            <h4 className="text-sm">Project Timezone</h4>
+            <Controller
+              name="timezone"
+              control={control}
+              rules={{ required: "Please select a timezone" }}
+              render={({ field: { value, onChange } }) => (
+                <CustomSearchSelect
+                  value={value}
+                  label={
+                    value
+                      ? (getTimeZoneLabel(TIME_ZONES.find((t) => t.value === value)) ?? value)
+                      : "Select a timezone"
+                  }
+                  options={timeZoneOptions}
+                  onChange={onChange}
+                  buttonClassName={errors.timezone ? "border-red-500" : "border-none"}
+                  className="rounded-md border-[0.5px] !border-custom-border-200"
+                  optionsClassName="w-72"
+                  input
+                />
+              )}
+            />
+            {errors.timezone && <span className="text-xs text-red-500">{errors.timezone.message}</span>}
+          </div> */}
         </div>
         <div className="flex items-center justify-between py-2">
           <>

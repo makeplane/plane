@@ -211,7 +211,7 @@ export const ImageItem = (editor: Editor) =>
 export const TextColorItem = (editor: Editor): EditorMenuItem => ({
   key: "text-color",
   name: "Color",
-  isActive: (color) => editor.getAttributes("textStyle").color === color,
+  isActive: (color) => editor.isActive("customColor", { color }),
   command: (color: string) => toggleTextColor(color, editor),
   icon: Palette,
 });
@@ -219,7 +219,7 @@ export const TextColorItem = (editor: Editor): EditorMenuItem => ({
 export const BackgroundColorItem = (editor: Editor): EditorMenuItem => ({
   key: "background-color",
   name: "Background color",
-  isActive: (color) => editor.getAttributes("textStyle").backgroundColor === color,
+  isActive: (color) => editor.isActive("customColor", { backgroundColor: color }),
   command: (color: string) => toggleBackgroundColor(color, editor),
   icon: Palette,
 });
