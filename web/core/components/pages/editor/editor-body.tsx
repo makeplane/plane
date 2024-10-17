@@ -84,7 +84,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     user: currentUser ?? undefined,
   });
   // editor flaggings
-  const { documentEditor } = useEditorFlagging();
+  const { documentEditor } = useEditorFlagging(workspaceSlug?.toString());
   // page filters
   const { fontSize, fontStyle, isFullWidth } = usePageFilters();
   // issue-embed

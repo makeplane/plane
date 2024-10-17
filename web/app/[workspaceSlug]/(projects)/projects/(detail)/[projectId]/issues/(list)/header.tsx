@@ -19,6 +19,7 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+import { TProject } from "@/plane-web/types";
 
 export const ProjectIssuesHeader = observer(() => {
   // router
@@ -107,7 +108,7 @@ export const ProjectIssuesHeader = observer(() => {
         <div className="hidden gap-3 md:flex">
           <HeaderFilters
             projectId={projectId}
-            currentProjectDetails={currentProjectDetails}
+            currentProjectDetails={currentProjectDetails as TProject}
             workspaceSlug={workspaceSlug}
             canUserCreateIssue={canUserCreateIssue}
           />

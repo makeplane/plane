@@ -10,6 +10,7 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 # Module imports
 from ..base import BaseAPIView
@@ -23,7 +24,9 @@ from plane.settings.storage import S3Storage
 from plane.app.permissions import allow_permission, ROLE
 from plane.utils.cache import invalidate_cache_directly
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
-
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.payment.flags.flag import FeatureFlag
+from plane.authentication.session import BaseSessionAuthentication
 
 class UserAssetsV2Endpoint(BaseAPIView):
     """This endpoint is used to upload user profile images."""
@@ -397,8 +400,20 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Get the size limit
-        size_limit = min(settings.FILE_SIZE_LIMIT, size)
+        if entity_type in [
+            FileAsset.EntityTypeContext.WORKSPACE_LOGO,
+            FileAsset.EntityTypeContext.PROJECT_COVER,
+        ]:
+            size_limit = min(size, settings.FILE_SIZE_LIMIT)
+        else:
+            if settings.IS_MULTI_TENANT and check_workspace_feature_flag(
+                feature_key=FeatureFlag.FILE_SIZE_LIMIT_PRO,
+                slug=slug,
+                user_id=str(request.user.id),
+            ):
+                size_limit = min(size, settings.PRO_FILE_SIZE_LIMIT)
+            else:
+                size_limit = min(size, settings.FILE_SIZE_LIMIT)
 
         # Get the workspace
         workspace = Workspace.objects.get(slug=slug)
@@ -556,6 +571,8 @@ class AssetRestoreEndpoint(BaseAPIView):
 class ProjectAssetEndpoint(BaseAPIView):
     """This endpoint is used to upload cover images/logos etc for workspace, projects and users."""
 
+    authentication_classes = [JWTAuthentication, BaseSessionAuthentication]
+
     def get_entity_id_field(self, entity_type, entity_id):
         if entity_type == FileAsset.EntityTypeContext.WORKSPACE_LOGO:
             return {
@@ -630,8 +647,20 @@ class ProjectAssetEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Get the size limit
-        size_limit = min(settings.FILE_SIZE_LIMIT, size)
+        if entity_type in [
+            FileAsset.EntityTypeContext.WORKSPACE_LOGO,
+            FileAsset.EntityTypeContext.PROJECT_COVER,
+        ]:
+            size_limit = min(size, settings.FILE_SIZE_LIMIT)
+        else:
+            if check_workspace_feature_flag(
+                feature_key=FeatureFlag.FILE_SIZE_LIMIT_PRO,
+                slug=slug,
+                user_id=str(request.user.id),
+            ):
+                size_limit = min(size, settings.PRO_FILE_SIZE_LIMIT)
+            else:
+                size_limit = min(size, settings.FILE_SIZE_LIMIT)
 
         # Get the workspace
         workspace = Workspace.objects.get(slug=slug)
@@ -737,7 +766,6 @@ class ProjectAssetEndpoint(BaseAPIView):
 
 
 class ProjectBulkAssetEndpoint(BaseAPIView):
-
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def post(self, request, slug, project_id, entity_id):
         asset_ids = request.data.get("asset_ids", [])
