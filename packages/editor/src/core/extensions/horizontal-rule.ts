@@ -119,4 +119,8 @@ export const CustomHorizontalRule = Node.create<HorizontalRuleOptions>({
       }),
     ];
   },
+}).configure({
+  HTMLAttributes: {
+    class: "my-4 border-custom-border-400",
+  },
 });

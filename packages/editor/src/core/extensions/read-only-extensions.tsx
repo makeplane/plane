@@ -1,9 +1,7 @@
+import { Extension, Mark, Node } from "@tiptap/core";
 import CharacterCount from "@tiptap/extension-character-count";
-import TaskItem from "@tiptap/extension-task-item";
-import TaskList from "@tiptap/extension-task-list";
 import TextStyle from "@tiptap/extension-text-style";
 import TiptapUnderline from "@tiptap/extension-underline";
-import StarterKit from "@tiptap/starter-kit";
 import { Markdown } from "tiptap-markdown";
 // extensions
 import {
@@ -14,17 +12,14 @@ import {
   ReadOnlyImageExtension,
   CustomCodeBlockExtension,
   CustomCodeInlineExtension,
-  TableHeader,
-  TableCell,
-  TableRow,
-  Table,
   CustomMention,
   HeadingListExtension,
   CustomReadOnlyImageExtension,
   CustomColorExtension,
+  CustomStarterKit,
+  CustomTodoListExtension,
+  CustomTableExtension,
 } from "@/extensions";
-// helpers
-import { isValidHttpUrl } from "@/helpers/common";
 // types
 import { IMentionHighlight, TFileHandler } from "@/types";
 
@@ -35,50 +30,18 @@ type Props = {
   };
 };
 
-export const CoreReadOnlyEditorExtensions = (props: Props) => {
+export const CoreReadOnlyEditorExtensions = (
+  props: Props
+): (Extension<any, any> | Node<any, any> | Mark<any, any>)[] => {
   const { fileHandler, mentionConfig } = props;
 
   return [
-    StarterKit.configure({
-      bulletList: {
-        HTMLAttributes: {
-          class: "list-disc pl-7 space-y-2",
-        },
-      },
-      orderedList: {
-        HTMLAttributes: {
-          class: "list-decimal pl-7 space-y-2",
-        },
-      },
-      listItem: {
-        HTMLAttributes: {
-          class: "not-prose space-y-2",
-        },
-      },
-      code: false,
-      codeBlock: false,
-      horizontalRule: false,
-      blockquote: false,
-      dropcursor: false,
+    CustomStarterKit.configure({
       gapcursor: false,
     }),
     CustomQuoteExtension,
-    CustomHorizontalRule.configure({
-      HTMLAttributes: {
-        class: "my-4 border-custom-border-400",
-      },
-    }),
-    CustomLinkExtension.configure({
-      openOnClick: true,
-      autolink: true,
-      linkOnPaste: true,
-      protocols: ["http", "https"],
-      validate: (url: string) => isValidHttpUrl(url),
-      HTMLAttributes: {
-        class:
-          "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
-      },
-    }),
+    CustomHorizontalRule,
+    CustomLinkExtension,
     CustomTypographyExtension,
     ReadOnlyImageExtension({
       getAssetSrc: fileHandler.getAssetSrc,
@@ -92,34 +55,19 @@ export const CoreReadOnlyEditorExtensions = (props: Props) => {
     }),
     TiptapUnderline,
     TextStyle,
-    TaskList.configure({
-      HTMLAttributes: {
-        class: "not-prose pl-2 space-y-2",
-      },
+    ...CustomTodoListExtension({
+      readOnly: true,
     }),
-    TaskItem.configure({
-      HTMLAttributes: {
-        class: "relative pointer-events-none",
-      },
-      nested: true,
-    }),
-    CustomCodeBlockExtension.configure({
-      HTMLAttributes: {
-        class: "",
-      },
-    }),
+    CustomCodeBlockExtension,
     CustomCodeInlineExtension,
     Markdown.configure({
       html: true,
       transformCopiedText: true,
     }),
-    Table,
-    TableHeader,
-    TableCell,
-    TableRow,
+    ...CustomTableExtension,
     CustomMention({
       mentionHighlights: mentionConfig.mentionHighlights,
-      readonly: true,
+      readOnly: true,
     }),
     CharacterCount,
     CustomColorExtension,
