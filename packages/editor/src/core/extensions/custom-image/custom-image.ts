@@ -104,9 +104,8 @@ export const CustomImageExtension = (props: TFileHandler) => {
       const imageSources = new Set<string>();
       this.editor.state.doc.descendants((node) => {
         if (node.type.name === this.name) {
-          if (!node.attrs.src?.startsWith("http")) {
-            return;
-          }
+          if (!node.attrs.src?.startsWith("http")) return;
+
           imageSources.add(node.attrs.src);
         }
       });
