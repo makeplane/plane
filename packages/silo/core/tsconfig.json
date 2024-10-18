@@ -1,0 +1,14 @@
+{
+  "extends": "@plane/typescript-config/base.json",
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  },
+  "include": ["src/*"],
+  "exclude": ["dist", "build", "node_modules"]
+}

@@ -22,6 +22,15 @@ from .views import (
     SignUpAuthEndpoint,
     ForgotPasswordSpaceEndpoint,
     ResetPasswordSpaceEndpoint,
+    # OIDC
+    OIDCAuthInitiateEndpoint,
+    OIDCallbackEndpoint,
+    OIDCLogoutEndpoint,
+    # SAML
+    SAMLAuthInitiateEndpoint,
+    SAMLCallbackEndpoint,
+    SAMLMetadataEndpoint,
+    SAMLLogoutEndpoint,
     # Space
     EmailCheckSpaceEndpoint,
     GitLabCallbackSpaceEndpoint,
@@ -36,6 +45,13 @@ from .views import (
     SignInAuthSpaceEndpoint,
     SignUpAuthSpaceEndpoint,
     SignOutAuthSpaceEndpoint,
+    # mobile web view authentication
+    MobileSignInAuthEndpoint,
+    MobileMagicSignInEndpoint,
+    MobileSessionTokenCheckEndpoint,
+    MobileSignOutAuthEndpoint,
+    MobileSessionTokenEndpoint,
+    MobileTokenEndpoint,
 )
 
 urlpatterns = [
@@ -217,5 +233,73 @@ urlpatterns = [
         "set-password/",
         SetUserPasswordEndpoint.as_view(),
         name="set-password",
+    ),
+    # OIDC
+    path(
+        "oidc/",
+        OIDCAuthInitiateEndpoint.as_view(),
+        name="oidc",
+    ),
+    path(
+        "oidc/callback/",
+        OIDCallbackEndpoint.as_view(),
+        name="oidc",
+    ),
+    path(
+        "oidc/logout/",
+        OIDCLogoutEndpoint.as_view(),
+        name="oidc",
+    ),
+    # SAML
+    path(
+        "saml/",
+        SAMLAuthInitiateEndpoint.as_view(),
+        name="saml",
+    ),
+    path(
+        "saml/callback/",
+        SAMLCallbackEndpoint.as_view(),
+        name="saml",
+    ),
+    path(
+        "saml/metadata/",
+        SAMLMetadataEndpoint.as_view(),
+        name="saml",
+    ),
+    path(
+        "saml/logout/",
+        SAMLLogoutEndpoint.as_view(),
+        name="saml",
+    ),
+    # mobile web view authentication
+    path(
+        "mobile/sign-in/",
+        MobileSignInAuthEndpoint.as_view(),
+        name="mobile-sign-in",
+    ),
+    path(
+        "mobile/magic-sign-in/",
+        MobileMagicSignInEndpoint.as_view(),
+        name="mobile-magic-sign-in",
+    ),
+    path(
+        "mobile/token-check/",
+        MobileSessionTokenCheckEndpoint.as_view(),
+        name="mobile-token-check",
+    ),
+    path(
+        "mobile/sign-out/",
+        MobileSignOutAuthEndpoint.as_view(),
+        name="mobile-sign-out",
+    ),
+    path(
+        "mobile/session-token/",
+        MobileSessionTokenEndpoint.as_view(),
+        name="mobile-token",
+    ),
+    path(
+        "mobile/token/",
+        MobileTokenEndpoint.as_view(),
+        name="mobile-token",
     ),
 ]
