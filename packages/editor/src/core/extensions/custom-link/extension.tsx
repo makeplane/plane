@@ -1,6 +1,8 @@
 import { Mark, markPasteRule, mergeAttributes, PasteRuleMatch } from "@tiptap/core";
 import { Plugin } from "@tiptap/pm/state";
 import { find, registerCustomProtocol, reset } from "linkifyjs";
+// helpers
+import { isValidHttpUrl } from "@/helpers/common";
 import { autolink } from "./helpers/autolink";
 import { clickHandler } from "./helpers/clickHandler";
 import { pasteHandler } from "./helpers/pasteHandler";
@@ -241,5 +243,15 @@ export const CustomLinkExtension = Mark.create<LinkOptions>({
     }
 
     return plugins;
+  },
+}).configure({
+  openOnClick: true,
+  autolink: true,
+  linkOnPaste: true,
+  protocols: ["http", "https"],
+  validate: (url: string) => isValidHttpUrl(url),
+  HTMLAttributes: {
+    class:
+      "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
   },
 });

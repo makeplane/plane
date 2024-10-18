@@ -15,11 +15,11 @@ interface CustomMentionOptions extends MentionOptions {
 export const CustomMention = ({
   mentionHighlights,
   mentionSuggestions,
-  readonly,
+  readOnly,
 }: {
   mentionSuggestions?: () => Promise<IMentionSuggestion[]>;
   mentionHighlights?: () => Promise<IMentionHighlight[]>;
-  readonly: boolean;
+  readOnly: boolean;
 }) =>
   Mention.extend<CustomMentionOptions>({
     addStorage(this) {
@@ -69,7 +69,7 @@ export const CustomMention = ({
     HTMLAttributes: {
       class: "mention",
     },
-    readonly: readonly,
+    readonly: readOnly,
     mentionHighlights,
     suggestion: {
       // @ts-expect-error - Tiptap types are incorrect
