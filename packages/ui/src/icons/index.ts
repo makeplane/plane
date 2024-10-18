@@ -1,3 +1,4 @@
+export type { ISvgIcons } from "./type";
 export * from "./cycle";
 export * from "./module";
 export * from "./state";
