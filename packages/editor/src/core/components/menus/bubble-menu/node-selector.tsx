@@ -46,7 +46,7 @@ export const BubbleMenuNodeSelector: FC<Props> = (props) => {
     CodeItem(editor),
   ];
 
-  const activeItem = items.filter((item) => item.isActive("")).pop() ?? {
+  const activeItem = items.filter((item) => item.isActive()).pop() ?? {
     name: "Multiple",
   };
 

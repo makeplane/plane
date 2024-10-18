@@ -6,7 +6,7 @@ import { EditorProps } from "@tiptap/pm/view";
 import { useEditor as useTiptapEditor, Editor } from "@tiptap/react";
 import * as Y from "yjs";
 // components
-import { getEditorMenuItems } from "@/components/menus";
+import { EditorMenuItem, getEditorMenuItems } from "@/components/menus";
 // extensions
 import { CoreEditorExtensions } from "@/extensions";
 // helpers
@@ -139,7 +139,13 @@ export const useEditor = (props: CustomEditorProps) => {
 
         const item = getEditorMenuItem(itemKey);
         if (item) {
-          item.command(props);
+          if (item.key === "image") {
+            (item as EditorMenuItem<"image">).command({
+              savedSelection: savedSelectionRef.current,
+            });
+          } else {
+            item.command(props);
+          }
         } else {
           console.warn(`No command found for item: ${itemKey}`);
         }
