@@ -8,7 +8,9 @@ type Props = {
   readOnly?: boolean;
 };
 
-export const CustomTodoListExtension = (props?: Props): (Extension<any, any> | Node<any, any> | Mark<any, any>)[] => {
+export const CustomTodoListExtension = (
+  props: Props = {}
+): (Extension<any, any> | Node<any, any> | Mark<any, any>)[] => {
   const { readOnly } = props;
 
   return [
