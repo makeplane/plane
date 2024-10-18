@@ -12,6 +12,8 @@ from django.db.models import (
     Q,
     UUIDField,
     Value,
+    Case,
+    When,
 )
 from django.db.models.functions import Coalesce
 from django.utils.decorators import method_decorator
@@ -56,6 +58,15 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
             )
             .annotate(cycle_id=F("draft_issue_cycle__cycle_id"))
             .annotate(
+                cycle_id=Case(
+                    When(
+                        issue_cycle__cycle__deleted_at__isnull=True,
+                        then=F("issue_cycle__cycle_id"),
+                    ),
+                    default=None,
+                )
+            )
+            .annotate(
                 label_ids=Coalesce(
                     ArrayAgg(
                         "labels__id",
@@ -81,8 +92,12 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                         "draft_issue_module__module_id",
                         distinct=True,
                         filter=~Q(draft_issue_module__module_id__isnull=True)
-                        & Q(draft_issue_module__module__archived_at__isnull=True)
-                        & Q(draft_issue_module__module__deleted_at__isnull=True),
+                        & Q(
+                            draft_issue_module__module__archived_at__isnull=True
+                        )
+                        & Q(
+                            draft_issue_module__module__deleted_at__isnull=True
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
