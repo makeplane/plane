@@ -1,4 +1,4 @@
-import * as Sentry from "@sentry/nextjs";
+import { startSpan } from "@sentry/nextjs";
 // types
 import type {
   IIssueDisplayProperties,
@@ -63,7 +63,7 @@ export class IssueService extends APIService {
   }
 
   async getIssues(workspaceSlug: string, projectId: string, queries?: any, config = {}): Promise<TIssuesResponse> {
-    const response = await Sentry.startSpan({ name: "GET_ISSUES" }, async () => {
+    const response = await startSpan({ name: "GET_ISSUES" }, async () => {
       const res = await persistence.getIssues(workspaceSlug, projectId, queries, config);
       return res;
     });

@@ -4,32 +4,38 @@ import { IssueService } from "@/services/issue";
 import { persistence } from "../storage.sqlite";
 import { ARRAY_FIELDS, PRIORITY_MAP } from "./constants";
 import { issueSchema } from "./schemas";
+import { log } from "./utils";
 
 export const PROJECT_OFFLINE_STATUS: Record<string, boolean> = {};
 
 export const addIssue = async (issue: any) => {
   if (document.hidden || !rootStore.user.localDBEnabled || !persistence.db) return;
 
-  persistence.db.exec("BEGIN TRANSACTION;");
+  await persistence.db.exec("BEGIN TRANSACTION;");
   stageIssueInserts(issue);
-  persistence.db.exec("COMMIT;");
+  await persistence.db.exec("COMMIT;");
 };
 
 export const addIssuesBulk = async (issues: any, batchSize = 100) => {
   if (!rootStore.user.localDBEnabled || !persistence.db) return;
 
+  const insertStart = performance.now();
+  await persistence.db.exec("BEGIN TRANSACTION;");
+
   for (let i = 0; i < issues.length; i += batchSize) {
     const batch = issues.slice(i, i + batchSize);
 
-    persistence.db.exec("BEGIN TRANSACTION;");
     batch.forEach((issue: any) => {
       if (!issue.type_id) {
         issue.type_id = "";
       }
       stageIssueInserts(issue);
     });
-    await persistence.db.exec("COMMIT;");
   }
+  await persistence.db.exec("COMMIT;");
+
+  const insertEnd = performance.now();
+  log("Inserted issues in ", `${insertEnd - insertStart}ms`);
 };
 export const deleteIssueFromLocal = async (issue_id: any) => {
   if (!rootStore.user.localDBEnabled || !persistence.db) return;

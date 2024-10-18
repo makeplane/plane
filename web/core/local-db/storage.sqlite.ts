@@ -1,4 +1,4 @@
-import * as Sentry from "@sentry/nextjs";
+import { startSpan, getActiveSpan } from "@sentry/nextjs";
 import * as Comlink from "comlink";
 import set from "lodash/set";
 // plane
@@ -59,17 +59,22 @@ export class Storage {
   };
 
   initialize = async (workspaceSlug: string): Promise<boolean> => {
-    if (document.hidden || !rootStore.user.localDBEnabled) return false; // return if the window gets hidden
+    if (
+      // document.hidden ||
+      !rootStore.user.localDBEnabled
+    )
+      return false; // return if the window gets hidden
 
     if (workspaceSlug !== this.workspaceSlug) {
       this.reset();
     }
     try {
-      await Sentry.startSpan({ name: "INIT_DB" }, async () => await this._initialize(workspaceSlug));
+      await startSpan({ name: "INIT_DB" }, async () => await this._initialize(workspaceSlug));
       return true;
     } catch (err) {
       logError(err);
       this.status = "error";
+      debugger;
       return false;
     }
   };
@@ -111,14 +116,22 @@ export class Storage {
   };
 
   syncWorkspace = async () => {
-    if (document.hidden || !rootStore.user.localDBEnabled || !this.db) return; // return if the window gets hidden
-    await Sentry.startSpan({ name: "LOAD_WS", attributes: { slug: this.workspaceSlug } }, async () => {
+    if (
+      // document.hidden ||
+      !rootStore.user.localDBEnabled
+    )
+      return; // return if the window gets hidden
+    await startSpan({ name: "LOAD_WS", attributes: { slug: this.workspaceSlug } }, async () => {
       await loadWorkSpaceData(this.workspaceSlug);
     });
   };
 
   syncProject = async (projectId: string) => {
-    if (document.hidden || !rootStore.user.localDBEnabled) return false; // return if the window gets hidden
+    if (
+      // document.hidden ||
+      !rootStore.user.localDBEnabled
+    )
+      return false; // return if the window gets hidden
 
     // Load labels, members, states, modules, cycles
     await this.syncIssues(projectId);
@@ -136,10 +149,15 @@ export class Storage {
   };
 
   syncIssues = async (projectId: string) => {
-    if (document.hidden || !rootStore.user.localDBEnabled || !this.db) return false; // return if the window gets hidden
+    if (
+      // document.hidden ||
+      !rootStore.user.localDBEnabled ||
+      !this.db
+    )
+      return false; // return if the window gets hidden
 
     try {
-      const sync = Sentry.startSpan({ name: `SYNC_ISSUES` }, () => this._syncIssues(projectId));
+      const sync = startSpan({ name: `SYNC_ISSUES` }, () => this._syncIssues(projectId));
       this.setSync(projectId, sync);
       await sync;
     } catch (e) {
@@ -149,7 +167,7 @@ export class Storage {
   };
 
   _syncIssues = async (projectId: string) => {
-    const activeSpan = Sentry.getActiveSpan();
+    const activeSpan = getActiveSpan();
 
     log("### Sync started");
     let status = this.getStatus(projectId);
@@ -185,8 +203,7 @@ export class Storage {
     const issueService = new IssueService();
 
     const response = await issueService.getIssuesForSync(this.workspaceSlug, projectId, queryParams);
-    addIssuesBulk(response.results, BATCH_SIZE);
-
+    await addIssuesBulk(response.results, BATCH_SIZE);
     if (response.total_pages > 1) {
       const promiseArray = [];
       for (let i = 1; i < response.total_pages; i++) {
@@ -326,7 +343,7 @@ export class Storage {
       total_pages,
     };
 
-    const activeSpan = Sentry.getActiveSpan();
+    const activeSpan = getActiveSpan();
     activeSpan?.setAttributes({
       projectId,
       count: total_count,
