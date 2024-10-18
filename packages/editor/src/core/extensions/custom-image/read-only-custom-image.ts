@@ -57,8 +57,9 @@ export const CustomReadOnlyImageExtension = (props: Pick<TFileHandler, "getAsset
         markdown: {
           serialize(state: MarkdownSerializerState, node: Node) {
             const attrs = node.attrs as ImageAttributes;
-            const imageSource = this?.editor?.commands?.getImageSource?.(attrs.src) || attrs.src;
-            state.write(`<img src="${imageSource}" width="${attrs.width}" />`);
+            const imageSource = state.esc(this?.editor?.commands?.getImageSource?.(attrs.src) || attrs.src);
+            const imageWidth = state.esc(attrs.width?.toString());
+            state.write(`<img src="${state.esc(imageSource)}" width="${imageWidth}" />`);
             state.closeBlock(node);
           },
         },

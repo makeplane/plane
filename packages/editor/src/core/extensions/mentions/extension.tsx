@@ -30,20 +30,16 @@ export const CustomMention = ({
         markdown: {
           serialize(state: MarkdownSerializerState, node: Node) {
             const { attrs } = node;
-            // add link text
-            state.write("[");
-            state.write(`@${attrs.label}`);
-            state.write("]");
-            // add link url
-            state.write("(");
+            const label = `@${state.esc(attrs.label)}`;
             const originUrl = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-            state.write(`${originUrl}/${attrs.redirect_uri}`);
-            state.write(")");
-            state.closeBlock(node);
+            const safeRedirectionPath = state.esc(attrs.redirect_uri);
+            const url = `${originUrl}${safeRedirectionPath}`;
+            state.write(`[${label}](${url})`);
           },
         },
       };
     },
+
     addAttributes() {
       return {
         id: {
