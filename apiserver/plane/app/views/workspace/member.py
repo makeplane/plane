@@ -7,6 +7,7 @@ from django.db.models import (
     Subquery,
     IntegerField,
 )
+from django.utils import timezone
 from django.db.models.functions import Coalesce
 from django.db.models.functions import Cast
 
@@ -39,6 +40,7 @@ from plane.db.models import (
     Workspace,
     WorkspaceMember,
     DraftIssue,
+    Cycle,
 )
 from plane.utils.cache import cache_response, invalidate_cache
 from plane.payment.bgtasks.member_sync_task import member_sync_task
@@ -317,8 +319,23 @@ class WorkspaceMemberUserEndpoint(BaseAPIView):
             DraftIssue.objects.filter(
                 created_by=request.user,
                 workspace_id=OuterRef("workspace_id"),
+                project__project_projectmember__member=request.user,
+                project__project_projectmember__is_active=True,
             )
             .values("workspace_id")
+            .annotate(count=Count("id"))
+            .values("count")
+        )
+        active_cycles_count = (
+            Cycle.objects.filter(
+                workspace__slug=slug,
+                project__project_projectmember__role__gt=5,
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+                start_date__lte=timezone.now(),
+                end_date__gte=timezone.now(),
+            )
+            .values("pk")
             .annotate(count=Count("id"))
             .values("count")
         )
@@ -330,6 +347,15 @@ class WorkspaceMemberUserEndpoint(BaseAPIView):
             .annotate(
                 draft_issue_count=Coalesce(
                     Subquery(draft_issue_count, output_field=IntegerField()), 0
+                )
+            )
+            .annotate(
+                active_cycles_count=Coalesce(
+                    Subquery(
+                        active_cycles_count,
+                        output_field=IntegerField(),
+                    ),
+                    0,
                 )
             )
             .first()
