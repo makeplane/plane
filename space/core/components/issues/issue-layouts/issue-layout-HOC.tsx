@@ -1,6 +1,11 @@
 import { observer } from "mobx-react";
+// import { useTheme } from "next-themes";
+import { useTheme } from "next-themes";
 import { TLoader } from "@plane/types";
 import { LogoSpinner } from "@/components/common";
+import { EmptyState } from "@/components/common/empty-state";
+import emptyIssueDark from "@/public/empty-state/search/issues-dark.webp"
+import emptyIssueLight from "@/public/empty-state/search/issues-light.webp"
 
 interface Props {
   children: string | JSX.Element | JSX.Element[];
@@ -13,6 +18,9 @@ interface Props {
 }
 
 export const IssueLayoutHOC = observer((props: Props) => {
+
+  const { resolvedTheme } = useTheme();
+
   const { getIssueLoader, getGroupIssueCount } = props;
 
   const issueCount = getGroupIssueCount(undefined, undefined, false);
@@ -25,8 +33,15 @@ export const IssueLayoutHOC = observer((props: Props) => {
     );
   }
 
-  if (getGroupIssueCount(undefined, undefined, false) === 0) {
-    return <div className="flex w-full h-full items-center justify-center">No Issues Found</div>;
+  if (issueCount === 0) {
+    return <div className="flex w-full h-full items-center justify-center">
+      {/* No Issues Found */}
+      <EmptyState
+          image={resolvedTheme === "dark" ? emptyIssueDark : emptyIssueLight}
+          title="Project does not exist"
+          description="The project you are looking for has no issues or has been archived."
+        />
+      </div>;
   }
 
   return <>{props.children}</>;
