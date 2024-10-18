@@ -24,7 +24,7 @@ export const SidebarUserMenu = observer(() => {
   const { captureEvent } = useEventTracker();
   const { isMobile } = usePlatformOS();
   const { data: currentUser } = useUser();
-  const { allowPermissions } = useUserPermissions();
+  const { allowPermissions, workspaceUserInfo } = useUserPermissions();
   // router params
   const { workspaceSlug } = useParams();
   // pathname
@@ -50,14 +50,17 @@ export const SidebarUserMenu = observer(() => {
     />
   );
 
+  const draftIssueCount = workspaceUserInfo[workspaceSlug.toString()]?.draft_issue_count;
+
   return (
     <div
       className={cn("flex flex-col gap-0.5", {
         "space-y-0": sidebarCollapsed,
       })}
     >
-      {SIDEBAR_USER_MENU_ITEMS.map(
-        (link) =>
+      {SIDEBAR_USER_MENU_ITEMS.map((link) => {
+        if (link.key === "drafts" && draftIssueCount === 0) return null;
+        return (
           allowPermissions(link.access, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString()) && (
             <Tooltip
               key={link.key}
@@ -81,7 +84,8 @@ export const SidebarUserMenu = observer(() => {
               </Link>
             </Tooltip>
           )
-      )}
+        );
+      })}
     </div>
   );
 });

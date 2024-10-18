@@ -46,5 +46,6 @@ export type TCollaborativeEditorProps = TCollaborativeEditorHookProps & {
 };
 
 export type TReadOnlyCollaborativeEditorProps = TCollaborativeEditorHookProps & {
+  fileHandler: Pick<TFileHandler, "getAssetSrc">;
   forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
 };

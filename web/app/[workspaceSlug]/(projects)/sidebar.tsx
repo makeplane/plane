@@ -1,4 +1,5 @@
 import { FC, useEffect, useRef } from "react";
+import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/helpers";
@@ -16,8 +17,9 @@ import { SidebarFavoritesMenu } from "@/components/workspace/sidebar/favorites/f
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useUserPermissions } from "@/hooks/store";
-// plane web components
+import { useFavorite } from "@/hooks/store/use-favorite";
 import useSize from "@/hooks/use-window-size";
+// plane web components
 import { SidebarAppSwitcher } from "@/plane-web/components/sidebar";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
@@ -25,6 +27,7 @@ export const AppSidebar: FC = observer(() => {
   // store hooks
   const { allowPermissions } = useUserPermissions();
   const { toggleSidebar, sidebarCollapsed } = useAppTheme();
+  const { groupedFavorites } = useFavorite();
   const windowSize = useSize();
   // refs
   const ref = useRef<HTMLDivElement>(null);
@@ -47,6 +50,8 @@ export const AppSidebar: FC = observer(() => {
     if (windowSize[0] < 768) !sidebarCollapsed && toggleSidebar();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [windowSize]);
+
+  const isFavoriteEmpty = isEmpty(groupedFavorites);
 
   return (
     <div
@@ -91,7 +96,7 @@ export const AppSidebar: FC = observer(() => {
               "opacity-0": !sidebarCollapsed,
             })}
           />
-          {canPerformWorkspaceMemberActions && <SidebarFavoritesMenu />}
+          {canPerformWorkspaceMemberActions && !isFavoriteEmpty && <SidebarFavoritesMenu />}
 
           <SidebarProjectsList />
         </div>

@@ -3,7 +3,7 @@ import json
 
 # Django import
 from django.utils import timezone
-from django.db.models import Q, Count, OuterRef, Func, F, Prefetch
+from django.db.models import Q, Count, OuterRef, Func, F, Prefetch, Case, When
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
@@ -23,7 +23,7 @@ from plane.db.models import (
     Issue,
     State,
     IssueLink,
-    IssueAttachment,
+    FileAsset,
     Project,
     ProjectMember,
 )
@@ -112,7 +112,15 @@ class InboxIssueViewSet(BaseViewSet):
                     ),
                 )
             )
-            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(
+                cycle_id=Case(
+                    When(
+                        issue_cycle__cycle__deleted_at__isnull=True,
+                        then=F("issue_cycle__cycle_id"),
+                    ),
+                    default=None,
+                )
+            )
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -120,8 +128,9 @@ class InboxIssueViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -140,7 +149,10 @@ class InboxIssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=~Q(labels__id__isnull=True),
+                        filter=(
+                            ~Q(labels__id__isnull=True)
+                            & Q(labels__deleted_at__isnull=True)
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -158,7 +170,8 @@ class InboxIssueViewSet(BaseViewSet):
                         "issue_module__module_id",
                         distinct=True,
                         filter=~Q(issue_module__module_id__isnull=True)
-                        & Q(issue_module__module__archived_at__isnull=True),
+                        & Q(issue_module__module__archived_at__isnull=True)
+                        & Q(issue_module__module__deleted_at__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -185,7 +198,8 @@ class InboxIssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "issue__labels__id",
                         distinct=True,
-                        filter=~Q(issue__labels__id__isnull=True),
+                        filter=~Q(issue__labels__id__isnull=True)
+                        & Q(issue__labels__deleted_at__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 )
@@ -297,7 +311,10 @@ class InboxIssueViewSet(BaseViewSet):
                         ArrayAgg(
                             "issue__labels__id",
                             distinct=True,
-                            filter=~Q(issue__labels__id__isnull=True),
+                            filter=(
+                                ~Q(labels__id__isnull=True)
+                                & Q(labels__deleted_at__isnull=True)
+                            ),
                         ),
                         Value([], output_field=ArrayField(UUIDField())),
                     ),
@@ -305,7 +322,8 @@ class InboxIssueViewSet(BaseViewSet):
                         ArrayAgg(
                             "issue__assignees__id",
                             distinct=True,
-                            filter=~Q(issue__assignees__id__isnull=True),
+                            filter=~Q(assignees__id__isnull=True)
+                            & Q(assignees__member_project__is_active=True),
                         ),
                         Value([], output_field=ArrayField(UUIDField())),
                     ),
@@ -323,7 +341,7 @@ class InboxIssueViewSet(BaseViewSet):
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=Issue)
     def partial_update(self, request, slug, project_id, pk):
         inbox_id = Inbox.objects.filter(
             workspace__slug=slug, project_id=project_id
@@ -418,7 +436,7 @@ class InboxIssueViewSet(BaseViewSet):
                 )
 
         # Only project admins and members can edit inbox issue attributes
-        if project_member.role > 5:
+        if project_member.role > 15:
             serializer = InboxIssueSerializer(
                 inbox_issue, data=request.data, partial=True
             )

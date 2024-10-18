@@ -5,12 +5,19 @@ import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-par
 // plugins
 import { ImageExtensionStorage, TrackImageDeletionPlugin, TrackImageRestorationPlugin } from "@/plugins/image";
 // types
-import { DeleteImage, RestoreImage } from "@/types";
+import { TFileHandler } from "@/types";
 // extensions
 import { CustomImageNode } from "@/extensions";
 
-export const ImageExtension = (deleteImage: DeleteImage, restoreImage: RestoreImage, cancelUploadImage?: () => void) =>
-  ImageExt.extend<any, ImageExtensionStorage>({
+export const ImageExtension = (fileHandler: TFileHandler) => {
+  const {
+    delete: deleteImage,
+    getAssetSrc,
+    restore: restoreImage,
+    validation: { maxFileSize },
+  } = fileHandler;
+
+  return ImageExt.extend<any, ImageExtensionStorage>({
     addKeyboardShortcuts() {
       return {
         ArrowDown: insertEmptyParagraphAtNodeBoundaries("down", this.name),
@@ -33,8 +40,7 @@ export const ImageExtension = (deleteImage: DeleteImage, restoreImage: RestoreIm
       });
       imageSources.forEach(async (src) => {
         try {
-          const assetUrlWithWorkspaceId = new URL(src).pathname.substring(1);
-          await restoreImage(assetUrlWithWorkspaceId);
+          await restoreImage(src);
         } catch (error) {
           console.error("Error restoring image: ", error);
         }
@@ -46,6 +52,7 @@ export const ImageExtension = (deleteImage: DeleteImage, restoreImage: RestoreIm
       return {
         deletedImageSet: new Map<string, boolean>(),
         uploadInProgress: false,
+        maxFileSize,
       };
     },
 
@@ -61,8 +68,15 @@ export const ImageExtension = (deleteImage: DeleteImage, restoreImage: RestoreIm
       };
     },
 
+    addCommands() {
+      return {
+        getImageSource: (path: string) => () => getAssetSrc(path),
+      };
+    },
+
     // render custom image node
     addNodeView() {
       return ReactNodeViewRenderer(CustomImageNode);
     },
   });
+};

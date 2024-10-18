@@ -27,7 +27,7 @@ from plane.db.models import (
     Module,
     ModuleIssue,
     IssueLink,
-    IssueAttachment,
+    FileAsset,
     IssueReaction,
     CommentReaction,
     IssueVote,
@@ -201,7 +201,7 @@ class IssueCreateSerializer(BaseSerializer):
         updated_by_id = instance.updated_by_id
 
         if assignees is not None:
-            IssueAssignee.objects.filter(issue=instance).delete()
+            IssueAssignee.objects.filter(issue=instance).delete(soft=False)
             IssueAssignee.objects.bulk_create(
                 [
                     IssueAssignee(
@@ -218,7 +218,7 @@ class IssueCreateSerializer(BaseSerializer):
             )
 
         if labels is not None:
-            IssueLabel.objects.filter(issue=instance).delete()
+            IssueLabel.objects.filter(issue=instance).delete(soft=False)
             IssueLabel.objects.bulk_create(
                 [
                     IssueLabel(
@@ -498,8 +498,11 @@ class IssueLinkLiteSerializer(BaseSerializer):
 
 
 class IssueAttachmentSerializer(BaseSerializer):
+
+    asset_url = serializers.CharField(read_only=True)
+
     class Meta:
-        model = IssueAttachment
+        model = FileAsset
         fields = "__all__"
         read_only_fields = [
             "created_by",
@@ -514,14 +517,15 @@ class IssueAttachmentSerializer(BaseSerializer):
 
 class IssueAttachmentLiteSerializer(DynamicBaseSerializer):
     class Meta:
-        model = IssueAttachment
+        model = FileAsset
         fields = [
             "id",
             "asset",
             "attributes",
-            "issue_id",
+            # "issue_id",
             "updated_at",
             "updated_by",
+            "asset_url",
         ]
         read_only_fields = fields
 

@@ -1,6 +1,6 @@
 {
   "name": "@plane/helpers",
-  "version": "0.23.0",
+  "version": "0.23.1",
   "description": "Helper functions shared across multiple apps internally",
   "private": true,
   "main": "./dist/index.js",

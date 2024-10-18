@@ -1,9 +1,11 @@
-import { FC, useRef } from "react";
+import { FC, useRef, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
+// plane editor
+import { EditorRefApi } from "@plane/editor";
 // types
 import { TIssueComment } from "@plane/types";
 // components
-import { LiteTextEditor } from "@/components/editor/lite-text-editor/lite-text-editor";
+import { LiteTextEditor } from "@/components/editor";
 // constants
 import { EIssueCommentAccessSpecifier } from "@/constants/issue";
 // helpers
@@ -11,6 +13,9 @@ import { cn } from "@/helpers/common.helper";
 import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks
 import { useIssueDetail, useWorkspace } from "@/hooks/store";
+// services
+import { FileService } from "@/services/file.service";
+const fileService = new FileService();
 // editor
 import { TActivityOperations } from "../root";
 
@@ -24,8 +29,10 @@ type TIssueCommentCreate = {
 
 export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
   const { workspaceSlug, projectId, issueId, activityOperations, showAccessSpecifier = false } = props;
+  // states
+  const [uploadedAssetIds, setUploadedAssetIds] = useState<string[]>([]);
   // refs
-  const editorRef = useRef<any>(null);
+  const editorRef = useRef<EditorRefApi>(null);
   // store hooks
   const workspaceStore = useWorkspace();
   const { peekIssue } = useIssueDetail();
@@ -44,13 +51,24 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
     },
   });
 
-  const onSubmit = async (formData: Partial<TIssueComment>) =>
-    await activityOperations.createComment(formData).finally(() => {
-      reset({
-        comment_html: "<p></p>",
+  const onSubmit = async (formData: Partial<TIssueComment>) => {
+    await activityOperations
+      .createComment(formData)
+      .then(async (res) => {
+        if (uploadedAssetIds.length > 0) {
+          await fileService.updateBulkProjectAssetsUploadStatus(workspaceSlug, projectId, res.id, {
+            asset_ids: uploadedAssetIds,
+          });
+          setUploadedAssetIds([]);
+        }
+      })
+      .finally(() => {
+        reset({
+          comment_html: "<p></p>",
+        });
+        editorRef.current?.clearEditor();
       });
-      editorRef.current?.clearEditor();
-    });
+  };
 
   const commentHTML = watch("comment_html");
   const isEmpty = isCommentEmpty(commentHTML);
@@ -92,6 +110,11 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
                 handleAccessChange={onAccessChange}
                 showAccessSpecifier={showAccessSpecifier}
                 isSubmitting={isSubmitting}
+                uploadFile={async (file) => {
+                  const { asset_id } = await activityOperations.uploadCommentAsset(file);
+                  setUploadedAssetIds((prev) => [...prev, asset_id]);
+                  return asset_id;
+                }}
               />
             )}
           />
