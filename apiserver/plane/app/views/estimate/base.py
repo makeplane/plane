@@ -356,6 +356,7 @@ class EstimatePointEndpoint(BaseViewSet):
                     ),
                     epoch=int(timezone.now().timestamp()),
                 )
+            issues.update(estimate_point_id=None)
 
         # delete the estimate point
         old_estimate_point = EstimatePoint.objects.filter(
