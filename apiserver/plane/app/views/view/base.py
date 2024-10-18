@@ -207,7 +207,6 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
             )
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
-            .annotate(cycle_id=F("issue_cycle__cycle_id"))
             .annotate(
                 cycle_id=Case(
                     When(
@@ -286,7 +285,6 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         issue_queryset = (
             self.get_queryset()
             .filter(**filters)
-            .annotate(cycle_id=F("issue_cycle__cycle_id"))
             .annotate(
                 cycle_id=Case(
                     When(
