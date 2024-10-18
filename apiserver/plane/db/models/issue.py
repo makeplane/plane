@@ -12,6 +12,7 @@ from django.db.models import Q
 
 # Module imports
 from plane.utils.html_processor import strip_tags
+from plane.db.mixins import SoftDeletionManager
 
 from .project import ProjectBaseModel
 
@@ -80,7 +81,7 @@ def get_default_display_properties():
 
 
 # TODO: Handle identifiers for Bulk Inserts - nk
-class IssueManager(models.Manager):
+class IssueManager(SoftDeletionManager):
     def get_queryset(self):
         return (
             super()
@@ -91,7 +92,6 @@ class IssueManager(models.Manager):
                 | models.Q(issue_inbox__status=2)
                 | models.Q(issue_inbox__isnull=True)
             )
-            .filter(deleted_at__isnull=True)
             .filter(state__is_triage=False)
             .exclude(archived_at__isnull=False)
             .exclude(project__archived_at__isnull=False)
@@ -173,7 +173,6 @@ class Issue(ProjectBaseModel):
         blank=True,
     )
 
-    objects = models.Manager()
     issue_objects = IssueManager()
 
     class Meta:

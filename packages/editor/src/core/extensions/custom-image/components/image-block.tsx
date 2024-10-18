@@ -59,12 +59,12 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
     src: remoteImageSrc,
     setEditorContainer,
   } = props;
-  const { width, height, aspectRatio } = node.attrs;
+  const { width: nodeWidth, height: nodeHeight, aspectRatio: nodeAspectRatio } = node.attrs;
   // states
   const [size, setSize] = useState<Size>({
-    width: ensurePixelString(width, "35%"),
-    height: ensurePixelString(height, "auto"),
-    aspectRatio: aspectRatio || null,
+    width: ensurePixelString(nodeWidth, "35%"),
+    height: ensurePixelString(nodeHeight, "auto"),
+    aspectRatio: nodeAspectRatio || null,
   });
   const [isResizing, setIsResizing] = useState(false);
   const [initialResizeComplete, setInitialResizeComplete] = useState(false);
@@ -106,7 +106,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
     setEditorContainer(closestEditorContainer);
     const aspectRatioCalculated = img.naturalWidth / img.naturalHeight;
 
-    if (width === "35%") {
+    if (nodeWidth === "35%") {
       const editorWidth = closestEditorContainer.clientWidth;
       const initialWidth = Math.max(editorWidth * 0.35, MIN_SIZE);
       const initialHeight = initialWidth / aspectRatioCalculated;
@@ -125,7 +125,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
     } else {
       // as the aspect ratio in not stored for old images, we need to update the attrs
       // or if aspectRatioCalculated from the image's width and height doesn't match stored aspectRatio then also we'll update the attrs
-      if (!aspectRatio || aspectRatio !== aspectRatioCalculated) {
+      if (!nodeAspectRatio || nodeAspectRatio !== aspectRatioCalculated) {
         setSize((prevSize) => {
           const newSize = { ...prevSize, aspectRatio: aspectRatioCalculated };
           updateAttributesSafely(
@@ -137,16 +137,16 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
       }
     }
     setInitialResizeComplete(true);
-  }, [width, updateAttributes, editorContainer, aspectRatio]);
+  }, [nodeWidth, updateAttributes, editorContainer, nodeAspectRatio]);
 
   // for real time resizing
   useLayoutEffect(() => {
     setSize((prevSize) => ({
       ...prevSize,
-      width: ensurePixelString(width),
-      height: ensurePixelString(height),
+      width: ensurePixelString(nodeWidth),
+      height: ensurePixelString(nodeHeight),
     }));
-  }, [width, height]);
+  }, [nodeWidth, nodeHeight]);
 
   const handleResize = useCallback(
     (e: MouseEvent | TouchEvent) => {

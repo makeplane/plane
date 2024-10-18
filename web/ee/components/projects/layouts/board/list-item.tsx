@@ -12,8 +12,6 @@ import { useProject, useUserPermissions } from "@/hooks/store";
 import { ProjectCard } from "@/plane-web/components/projects/layouts/gallery/card";
 // plane web constants
 import { EUserPermissions } from "@/plane-web/constants/user-permissions";
-// plane web types
-import { TProject } from "@/plane-web/types/projects";
 
 type ProjectBoardListItem = {
   groupByKey: string;
@@ -29,7 +27,7 @@ export const ProjectBoardListItem: FC<ProjectBoardListItem> = observer((props) =
   const { workspaceProjectsPermissions } = useUserPermissions();
 
   // derived values
-  const project = getProjectById(projectId) as TProject;
+  const project = getProjectById(projectId);
   const cardRef = useRef<HTMLDivElement | null>(null);
   const isDragAllowed =
     workspaceProjectsPermissions &&

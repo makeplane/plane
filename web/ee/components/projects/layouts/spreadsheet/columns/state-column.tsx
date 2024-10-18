@@ -21,7 +21,7 @@ export const SpreadsheetStateColumn: React.FC<Props> = observer((props) => {
   const { defaultState } = useWorkspaceProjectStates();
 
   // derived values
-  const projectDetails = getProjectById(project.id) as TProject;
+  const projectDetails = getProjectById(project.id);
   const selectedId = projectDetails?.state_id || defaultState;
   return (
     <div className="h-11 border-b-[0.5px] border-custom-border-200">

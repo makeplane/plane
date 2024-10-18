@@ -139,6 +139,13 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
     });
   }
 
+  private updateWorkspaceUserDraftIssueCount(workspaceSlug: string, increment: number) {
+    const workspaceUserInfo = this.issueStore.rootStore.user.permission.workspaceUserInfo;
+    const currentCount = workspaceUserInfo[workspaceSlug]?.draft_issue_count ?? 0;
+
+    set(workspaceUserInfo, [workspaceSlug, "draft_issue_count"], currentCount + increment);
+  }
+
   // computed
   get issueIds() {
     const workspaceSlug = this.issueStore.workspaceSlug;
@@ -259,6 +266,8 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
               total_count: this.paginationInfo.total_count + 1,
             });
           }
+          // Update draft issue count in workspaceUserInfo
+          this.updateWorkspaceUserDraftIssueCount(workspaceSlug, 1);
         });
       }
 
@@ -310,6 +319,8 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
             total_count: this.paginationInfo.total_count - 1,
           });
         }
+        // Update draft issue count in workspaceUserInfo
+        this.updateWorkspaceUserDraftIssueCount(workspaceSlug, -1);
       });
 
       this.loader = undefined;
@@ -337,6 +348,8 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
             total_count: this.paginationInfo.total_count - 1,
           });
         }
+        // Update draft issue count in workspaceUserInfo
+        this.updateWorkspaceUserDraftIssueCount(workspaceSlug, -1);
       });
 
       this.loader = undefined;
