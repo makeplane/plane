@@ -6,7 +6,7 @@ import {
   CheckSquare,
   Heading2,
   Heading3,
-  QuoteIcon,
+  TextQuote,
   ImageIcon,
   TableIcon,
   ListIcon,
@@ -180,7 +180,7 @@ export const QuoteItem = (editor: Editor): EditorMenuItem => ({
   name: "Quote",
   isActive: () => editor?.isActive("blockquote"),
   command: () => toggleBlockquote(editor),
-  icon: QuoteIcon,
+  icon: TextQuote,
 });
 
 export const CodeItem = (editor: Editor): EditorMenuItem => ({

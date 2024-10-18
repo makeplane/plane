@@ -316,7 +316,10 @@ ul[data-type="taskList"] ul[data-type="taskList"] {
 
 /* tailwind typography */
 .prose :where(h1):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  margin-top: 2rem;
+  &:not(:first-child) {
+    margin-top: 2rem;
+  }
+
   margin-bottom: 4px;
   font-size: var(--font-size-h1);
   line-height: var(--line-height-h1);
@@ -324,7 +327,10 @@ ul[data-type="taskList"] ul[data-type="taskList"] {
 }
 
 .prose :where(h2):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  margin-top: 1.4rem;
+  &:not(:first-child) {
+    margin-top: 1.4rem;
+  }
+
   margin-bottom: 1px;
   font-size: var(--font-size-h2);
   line-height: var(--line-height-h2);
@@ -332,7 +338,10 @@ ul[data-type="taskList"] ul[data-type="taskList"] {
 }
 
 .prose :where(h3):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  margin-top: 1rem;
+  &:not(:first-child) {
+    margin-top: 1rem;
+  }
+
   margin-bottom: 1px;
   font-size: var(--font-size-h3);
   line-height: var(--line-height-h3);
@@ -340,7 +349,10 @@ ul[data-type="taskList"] ul[data-type="taskList"] {
 }
 
 .prose :where(h4):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  margin-top: 1rem;
+  &:not(:first-child) {
+    margin-top: 1rem;
+  }
+
   margin-bottom: 1px;
   font-size: var(--font-size-h4);
   line-height: var(--line-height-h4);
@@ -348,7 +360,10 @@ ul[data-type="taskList"] ul[data-type="taskList"] {
 }
 
 .prose :where(h5):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  margin-top: 1rem;
+  &:not(:first-child) {
+    margin-top: 1rem;
+  }
+
   margin-bottom: 1px;
   font-size: var(--font-size-h5);
   line-height: var(--line-height-h5);
@@ -356,7 +371,10 @@ ul[data-type="taskList"] ul[data-type="taskList"] {
 }
 
 .prose :where(h6):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  margin-top: 1rem;
+  &:not(:first-child) {
+    margin-top: 1rem;
+  }
+
   margin-bottom: 1px;
   font-size: var(--font-size-h6);
   line-height: var(--line-height-h6);
@@ -364,7 +382,14 @@ ul[data-type="taskList"] ul[data-type="taskList"] {
 }
 
 .prose :where(p):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  margin-top: 0.25rem;
+  &:not(:first-child) {
+    margin-top: 0.25rem;
+  }
+
+  &:first-child {
+    margin-top: 0;
+  }
+
   margin-bottom: 1px;
   padding: 3px 0;
   font-size: var(--font-size-regular);
