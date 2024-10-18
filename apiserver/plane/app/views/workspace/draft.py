@@ -60,7 +60,10 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=~Q(labels__id__isnull=True),
+                        filter=(
+                            ~Q(labels__id__isnull=True)
+                            & Q(labels__deleted_at__isnull=True)
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -78,9 +81,8 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                         "draft_issue_module__module_id",
                         distinct=True,
                         filter=~Q(draft_issue_module__module_id__isnull=True)
-                        & Q(
-                            draft_issue_module__module__archived_at__isnull=True
-                        ),
+                        & Q(draft_issue_module__module__archived_at__isnull=True)
+                        & Q(draft_issue_module__module__deleted_at__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
