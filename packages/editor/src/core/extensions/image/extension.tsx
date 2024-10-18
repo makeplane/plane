@@ -11,9 +11,9 @@ import { CustomImageNode } from "@/extensions";
 
 export const ImageExtension = (fileHandler: TFileHandler) => {
   const {
-    delete: deleteImage,
     getAssetSrc,
-    restore: restoreImage,
+    delete: deleteImageFn,
+    restore: restoreImageFn,
     validation: { maxFileSize },
   } = fileHandler;
 
@@ -24,10 +24,11 @@ export const ImageExtension = (fileHandler: TFileHandler) => {
         ArrowUp: insertEmptyParagraphAtNodeBoundaries("up", this.name),
       };
     },
+
     addProseMirrorPlugins() {
       return [
-        TrackImageDeletionPlugin(this.editor, deleteImage, this.name),
-        TrackImageRestorationPlugin(this.editor, restoreImage, this.name),
+        TrackImageDeletionPlugin(this.editor, deleteImageFn, this.name),
+        TrackImageRestorationPlugin(this.editor, restoreImageFn, this.name),
       ];
     },
 
@@ -35,12 +36,14 @@ export const ImageExtension = (fileHandler: TFileHandler) => {
       const imageSources = new Set<string>();
       this.editor.state.doc.descendants((node) => {
         if (node.type.name === this.name) {
+          if (!node.attrs.src?.startsWith("http")) return;
+
           imageSources.add(node.attrs.src);
         }
       });
       imageSources.forEach(async (src) => {
         try {
-          await restoreImage(src);
+          await restoreImageFn(src);
         } catch (error) {
           console.error("Error restoring image: ", error);
         }
@@ -63,6 +66,9 @@ export const ImageExtension = (fileHandler: TFileHandler) => {
           default: "35%",
         },
         height: {
+          default: null,
+        },
+        aspectRatio: {
           default: null,
         },
       };

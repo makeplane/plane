@@ -11,6 +11,9 @@ export const ImageExtensionWithoutProps = () =>
         height: {
           default: null,
         },
+        aspectRatio: {
+          default: null,
+        },
       };
     },
   });
