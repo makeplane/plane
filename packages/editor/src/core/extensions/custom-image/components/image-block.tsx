@@ -72,7 +72,8 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const containerRect = useRef<DOMRect | null>(null);
   const imageRef = useRef<HTMLImageElement>(null);
-  const [onFirstLoadError, setOnFirstLoadError] = useState(false);
+  const [hasErroredOnFirstLoad, setHasErroredOnFirstLoad] = useState(false);
+  const [hasTriedRestoringImageOnce, setHasTriedRestoringImageOnce] = useState(false);
 
   const updateAttributesSafely = useCallback(
     (attributes: Partial<ImageAttributes>, errorMessage: string) => {
@@ -209,7 +210,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
 
   // show the image loader if the remote image's src or preview image from filesystem is not set yet (while loading the image post upload) (or)
   // if the initial resize (from 35% width and "auto" height attrs to the actual size in px) is not complete
-  const showImageLoader = !(remoteImageSrc || imageFromFileSystem) || !initialResizeComplete || onFirstLoadError;
+  const showImageLoader = !(remoteImageSrc || imageFromFileSystem) || !initialResizeComplete || hasErroredOnFirstLoad;
   // show the image utils only if the remote image's (post upload) src is set and the initial resize is complete (but not while we're showing the preview imageFromFileSystem)
   const showImageUtils = remoteImageSrc && initialResizeComplete;
   // show the image resizer only if the editor is editable, the remote image's (post upload) src is set and the initial resize is complete (but not while we're showing the preview imageFromFileSystem)
@@ -238,22 +239,24 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
         src={displayedImageSrc}
         onLoad={handleImageLoad}
         onError={async (e) => {
-          // for old image extension this command doesn't exist
-          if (!editor?.commands.restoreImage) {
+          // for old image extension this command doesn't exist or if the image failed to load for the first time
+          if (!editor?.commands.restoreImage || hasTriedRestoringImageOnce) {
             setFailedToLoadImage(true);
             return;
           }
 
           try {
-            setOnFirstLoadError(true);
+            setHasErroredOnFirstLoad(true);
             // this is a type error from tiptap, don't remove await until it's fixed
             await editor?.commands.restoreImage?.(remoteImageSrc);
             imageRef.current.src = remoteImageSrc;
           } catch {
+            // if the image failed to even restore, then show the error state
             setFailedToLoadImage(true);
             console.error("Error while loading image", e);
           } finally {
-            setOnFirstLoadError(false);
+            setHasErroredOnFirstLoad(false);
+            setHasTriedRestoringImageOnce(true);
           }
         }}
         width={size.width}
