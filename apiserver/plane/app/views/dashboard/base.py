@@ -218,7 +218,10 @@ def dashboard_assigned_issues(self, request, slug):
                 ArrayAgg(
                     "labels__id",
                     distinct=True,
-                    filter=~Q(labels__id__isnull=True),
+                    filter=(
+                        ~Q(labels__id__isnull=True)
+                        & Q(labels__deleted_at__isnull=True)
+                    ),
                 ),
                 Value([], output_field=ArrayField(UUIDField())),
             ),
@@ -235,7 +238,9 @@ def dashboard_assigned_issues(self, request, slug):
                 ArrayAgg(
                     "issue_module__module_id",
                     distinct=True,
-                    filter=~Q(issue_module__module_id__isnull=True),
+                    filter=~Q(issue_module__module_id__isnull=True)
+                    & Q(issue_module__module__archived_at__isnull=True)
+                    & Q(issue_module__module__deleted_at__isnull=True),
                 ),
                 Value([], output_field=ArrayField(UUIDField())),
             ),
@@ -382,7 +387,10 @@ def dashboard_created_issues(self, request, slug):
                 ArrayAgg(
                     "labels__id",
                     distinct=True,
-                    filter=~Q(labels__id__isnull=True),
+                    filter=(
+                        ~Q(labels__id__isnull=True)
+                        & Q(labels__deleted_at__isnull=True)
+                    ),
                 ),
                 Value([], output_field=ArrayField(UUIDField())),
             ),
@@ -399,7 +407,9 @@ def dashboard_created_issues(self, request, slug):
                 ArrayAgg(
                     "issue_module__module_id",
                     distinct=True,
-                    filter=~Q(issue_module__module_id__isnull=True),
+                    filter=~Q(issue_module__module_id__isnull=True)
+                    & Q(issue_module__module__archived_at__isnull=True)
+                    & Q(issue_module__module__deleted_at__isnull=True),
                 ),
                 Value([], output_field=ArrayField(UUIDField())),
             ),
