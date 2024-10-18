@@ -56,7 +56,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
     getPos,
     editor,
     editorContainer,
-    // src: remoteImageSrc,
+    src: remoteImageSrc,
     setEditorContainer,
   } = props;
   const { src: remoteImageSrc, width: nodeWidth, height: nodeHeight, aspectRatio: nodeAspectRatio } = node.attrs;
