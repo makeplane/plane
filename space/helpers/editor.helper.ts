@@ -1,5 +1,5 @@
 // plane editor
-import { TFileHandler } from "@plane/editor";
+import { TFileHandler, TReadOnlyFileHandler } from "@plane/editor";
 // constants
 import { MAX_FILE_SIZE } from "@/constants/common";
 // helpers
@@ -25,11 +25,10 @@ type TArgs = {
 };
 
 /**
- * @description this function returns the file handler required by the editors
- * @param {TArgs} args
+ * @description this function returns the file handler required by the read-only editors
  */
-export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
-  const { anchor, uploadFile, workspaceId } = args;
+export const getReadOnlyEditorFileHandlers = (args: Pick<TArgs, "anchor" | "workspaceId">): TReadOnlyFileHandler => {
+  const { anchor, workspaceId } = args;
 
   return {
     getAssetSrc: (path) => {
@@ -38,14 +37,6 @@ export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
         return path;
       } else {
         return getEditorAssetSrc(anchor, path) ?? "";
-      }
-    },
-    upload: uploadFile,
-    delete: async (src: string) => {
-      if (checkURLValidity(src)) {
-        await fileService.deleteOldEditorAsset(workspaceId, src);
-      } else {
-        await fileService.deleteNewAsset(getEditorAssetSrc(anchor, src) ?? "");
       }
     },
     restore: async (src: string) => {
@@ -55,29 +46,32 @@ export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
         await fileService.restoreNewAsset(anchor, src);
       }
     },
-    cancel: fileService.cancelUpload,
-    validation: {
-      maxFileSize: MAX_FILE_SIZE,
-    },
   };
 };
 
 /**
- * @description this function returns the file handler required by the read-only editors
+ * @description this function returns the file handler required by the editors
+ * @param {TArgs} args
  */
-export const getReadOnlyEditorFileHandlers = (
-  args: Pick<TArgs, "anchor">
-): { getAssetSrc: TFileHandler["getAssetSrc"] } => {
-  const { anchor } = args;
+export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
+  const { anchor, uploadFile, workspaceId } = args;
 
   return {
-    getAssetSrc: (path) => {
-      if (!path) return "";
-      if (checkURLValidity(path)) {
-        return path;
+    ...getReadOnlyEditorFileHandlers({
+      anchor,
+      workspaceId,
+    }),
+    upload: uploadFile,
+    delete: async (src: string) => {
+      if (checkURLValidity(src)) {
+        await fileService.deleteOldEditorAsset(workspaceId, src);
       } else {
-        return getEditorAssetSrc(anchor, path) ?? "";
+        await fileService.deleteNewAsset(getEditorAssetSrc(anchor, src) ?? "");
       }
+    },
+    cancel: fileService.cancelUpload,
+    validation: {
+      maxFileSize: MAX_FILE_SIZE,
     },
   };
 };

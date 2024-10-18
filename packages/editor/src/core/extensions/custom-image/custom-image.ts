@@ -1,9 +1,7 @@
-import { Editor, mergeAttributes } from "@tiptap/core";
-import { Image } from "@tiptap/extension-image";
 import { ReactNodeViewRenderer } from "@tiptap/react";
 import { v4 as uuidv4 } from "uuid";
 // extensions
-import { CustomImageNode } from "@/extensions/custom-image";
+import { CustomImageExtensionConfig, CustomImageNode, getImageComponentImageFileMap } from "@/extensions/custom-image";
 // plugins
 import { TrackImageDeletionPlugin, TrackImageRestorationPlugin, isFileValid } from "@/plugins/image";
 // types
@@ -27,79 +25,17 @@ declare module "@tiptap/core" {
   }
 }
 
-export const getImageComponentImageFileMap = (editor: Editor) =>
-  (editor.storage.imageComponent as UploadImageExtensionStorage | undefined)?.fileMap;
-
-export interface UploadImageExtensionStorage {
-  fileMap: Map<string, UploadEntity>;
-}
-
-export type UploadEntity = ({ event: "insert" } | { event: "drop"; file: File }) & { hasOpenedFileInputOnce?: boolean };
-
 export const CustomImageExtension = (props: TFileHandler) => {
   const {
-    getAssetSrc,
     upload,
     delete: deleteImage,
     restore: restoreImage,
     validation: { maxFileSize },
   } = props;
 
-  return Image.extend<Record<string, unknown>, UploadImageExtensionStorage>({
-    name: "imageComponent",
+  return CustomImageExtensionConfig(props).extend({
     selectable: true,
-    group: "block",
-    atom: true,
     draggable: true,
-
-    addAttributes() {
-      return {
-        ...this.parent?.(),
-        width: {
-          default: "35%",
-        },
-        src: {
-          default: null,
-        },
-        height: {
-          default: "auto",
-        },
-        ["id"]: {
-          default: null,
-        },
-        aspectRatio: {
-          default: null,
-        },
-      };
-    },
-
-    parseHTML() {
-      return [
-        {
-          tag: "image-component",
-        },
-      ];
-    },
-
-    renderHTML({ HTMLAttributes }) {
-      return ["image-component", mergeAttributes(HTMLAttributes)];
-    },
-
-    onCreate(this) {
-      const imageSources = new Set<string>();
-      this.editor.state.doc.descendants((node) => {
-        if (node.type.name === this.name) {
-          imageSources.add(node.attrs.src);
-        }
-      });
-      imageSources.forEach(async (src) => {
-        try {
-          await restoreImage(src);
-        } catch (error) {
-          console.error("Error restoring image: ", error);
-        }
-      });
-    },
 
     addKeyboardShortcuts() {
       return {
@@ -113,15 +49,6 @@ export const CustomImageExtension = (props: TFileHandler) => {
         TrackImageDeletionPlugin(this.editor, deleteImage, this.name),
         TrackImageRestorationPlugin(this.editor, restoreImage, this.name),
       ];
-    },
-
-    addStorage() {
-      return {
-        fileMap: new Map(),
-        deletedImageSet: new Map<string, boolean>(),
-        uploadInProgress: false,
-        maxFileSize,
-      };
     },
 
     addCommands() {
@@ -179,7 +106,6 @@ export const CustomImageExtension = (props: TFileHandler) => {
           const fileUrl = await upload(file);
           return fileUrl;
         },
-        getImageSource: (path: string) => () => getAssetSrc(path),
       };
     },
 

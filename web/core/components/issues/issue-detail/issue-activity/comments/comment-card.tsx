@@ -54,7 +54,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
 
   const comment = getCommentById(commentId);
   const workspaceStore = useWorkspace();
-  const workspaceId = workspaceStore.getWorkspaceBySlug(comment?.workspace_detail?.slug as string)?.id as string;
+  const workspaceId = workspaceStore.getWorkspaceBySlug(comment?.workspace_detail?.slug ?? "")?.id;
 
   const {
     formState: { isSubmitting },
@@ -143,7 +143,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
             }}
           >
             <LiteTextEditor
-              workspaceId={workspaceId}
+              workspaceId={workspaceId ?? ""}
               projectId={projectId}
               workspaceSlug={workspaceSlug}
               ref={editorRef}

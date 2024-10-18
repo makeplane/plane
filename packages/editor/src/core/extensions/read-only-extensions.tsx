@@ -26,10 +26,10 @@ import {
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
 // types
-import { IMentionHighlight, TFileHandler } from "@/types";
+import { IMentionHighlight, TReadOnlyFileHandler } from "@/types";
 
 type Props = {
-  fileHandler: Pick<TFileHandler, "getAssetSrc">;
+  fileHandler: TReadOnlyFileHandler;
   mentionConfig: {
     mentionHighlights?: () => Promise<IMentionHighlight[]>;
   };
@@ -82,6 +82,7 @@ export const CoreReadOnlyEditorExtensions = (props: Props) => {
     CustomTypographyExtension,
     ReadOnlyImageExtension({
       getAssetSrc: fileHandler.getAssetSrc,
+      restore: fileHandler.restore,
     }).configure({
       HTMLAttributes: {
         class: "rounded-md",
@@ -89,6 +90,7 @@ export const CoreReadOnlyEditorExtensions = (props: Props) => {
     }),
     CustomReadOnlyImageExtension({
       getAssetSrc: fileHandler.getAssetSrc,
+      restore: fileHandler.restore,
     }),
     TiptapUnderline,
     TextStyle,

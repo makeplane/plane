@@ -14,7 +14,7 @@ type Props = {
 export const PeekOverviewIssueDetails: React.FC<Props> = observer((props) => {
   const { anchor, issueDetails } = props;
 
-  const { project_details } = usePublish(anchor);
+  const { project_details, workspace: workspaceId } = usePublish(anchor);
 
   const description = issueDetails.description_html;
 
@@ -27,6 +27,7 @@ export const PeekOverviewIssueDetails: React.FC<Props> = observer((props) => {
       {description !== "" && description !== "<p></p>" && (
         <RichTextReadOnlyEditor
           anchor={anchor}
+          workspaceId={workspaceId?.toString() ?? ""}
           id={issueDetails.id}
           initialValue={
             !description ||

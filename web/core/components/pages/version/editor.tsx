@@ -9,7 +9,7 @@ import { Loader } from "@plane/ui";
 // helpers
 import { getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
-import { useMember, useMention, useUser } from "@/hooks/store";
+import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web hooks
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
@@ -31,9 +31,11 @@ export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props
     getUserDetails,
     project: { getProjectMemberIds },
   } = useMember();
+  const { getWorkspaceBySlug } = useWorkspace();
   // derived values
   const projectMemberIds = projectId ? getProjectMemberIds(projectId.toString()) : [];
   const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
+  const workspaceId = getWorkspaceBySlug(workspaceSlug?.toString() ?? "")?.id ?? "";
   // issue-embed
   const { issueEmbedProps } = useIssueEmbed(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "");
   // use-mention
@@ -105,6 +107,7 @@ export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props
       editorClassName="pl-10"
       fileHandler={getReadOnlyEditorFileHandlers({
         projectId: projectId?.toString() ?? "",
+        workspaceId,
         workspaceSlug: workspaceSlug?.toString() ?? "",
       })}
       mentionHandler={{

@@ -5,7 +5,7 @@ import { EditorReadOnlyRefApi, IRichTextReadOnlyEditor, RichTextReadOnlyEditorWi
 import { cn } from "@/helpers/common.helper";
 import { getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
-import { useMention } from "@/hooks/store";
+import { useMention, useWorkspace } from "@/hooks/store";
 
 type RichTextReadOnlyEditorWrapperProps = Omit<IRichTextReadOnlyEditor, "fileHandler" | "mentionHandler"> & {
   workspaceSlug: string;
@@ -14,13 +14,18 @@ type RichTextReadOnlyEditorWrapperProps = Omit<IRichTextReadOnlyEditor, "fileHan
 
 export const RichTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, RichTextReadOnlyEditorWrapperProps>(
   ({ workspaceSlug, projectId, ...props }, ref) => {
+    // store hooks
+    const { getWorkspaceBySlug } = useWorkspace();
     const { mentionHighlights } = useMention({});
+    // derived values
+    const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id ?? "";
 
     return (
       <RichTextReadOnlyEditorWithRef
         ref={ref}
         fileHandler={getReadOnlyEditorFileHandlers({
           projectId,
+          workspaceId,
           workspaceSlug,
         })}
         mentionHandler={{

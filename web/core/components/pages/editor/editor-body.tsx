@@ -230,6 +230,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               ref={readOnlyEditorRef}
               fileHandler={getReadOnlyEditorFileHandlers({
                 projectId: projectId?.toString() ?? "",
+                workspaceId,
                 workspaceSlug: workspaceSlug?.toString() ?? "",
               })}
               handleEditorReady={handleReadOnlyEditorReady}

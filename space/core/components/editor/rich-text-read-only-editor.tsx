@@ -9,10 +9,11 @@ import { useMention } from "@/hooks/use-mention";
 
 type RichTextReadOnlyEditorWrapperProps = Omit<IRichTextReadOnlyEditor, "fileHandler" | "mentionHandler"> & {
   anchor: string;
+  workspaceId: string;
 };
 
 export const RichTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, RichTextReadOnlyEditorWrapperProps>(
-  ({ anchor, ...props }, ref) => {
+  ({ anchor, workspaceId, ...props }, ref) => {
     const { mentionHighlights } = useMention();
 
     return (
@@ -20,6 +21,7 @@ export const RichTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, Ric
         ref={ref}
         fileHandler={getReadOnlyEditorFileHandlers({
           anchor,
+          workspaceId,
         })}
         mentionHandler={{ highlights: mentionHighlights }}
         {...props}

@@ -1,5 +1,5 @@
 // plane editor
-import { TFileHandler } from "@plane/editor";
+import { TFileHandler, TReadOnlyFileHandler } from "@plane/editor";
 // helpers
 import { getBase64Image, getFileURL } from "@/helpers/file.helper";
 import { checkURLValidity } from "@/helpers/string.helper";
@@ -37,11 +37,12 @@ type TArgs = {
 };
 
 /**
- * @description this function returns the file handler required by the editors
- * @param {TArgs} args
+ * @description this function returns the file handler required by the read-only editors
  */
-export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
-  const { maxFileSize, projectId, uploadFile, workspaceId, workspaceSlug } = args;
+export const getReadOnlyEditorFileHandlers = (
+  args: Pick<TArgs, "projectId" | "workspaceId" | "workspaceSlug">
+): TReadOnlyFileHandler => {
+  const { projectId, workspaceId, workspaceSlug } = args;
 
   return {
     getAssetSrc: (path) => {
@@ -58,6 +59,29 @@ export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
         );
       }
     },
+    restore: async (src: string) => {
+      if (checkURLValidity(src)) {
+        await fileService.restoreOldEditorAsset(workspaceId, src);
+      } else {
+        await fileService.restoreNewAsset(workspaceSlug, src);
+      }
+    },
+  };
+};
+
+/**
+ * @description this function returns the file handler required by the editors
+ * @param {TArgs} args
+ */
+export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
+  const { maxFileSize, projectId, uploadFile, workspaceId, workspaceSlug } = args;
+
+  return {
+    ...getReadOnlyEditorFileHandlers({
+      projectId,
+      workspaceId,
+      workspaceSlug,
+    }),
     upload: uploadFile,
     delete: async (src: string) => {
       if (checkURLValidity(src)) {
@@ -72,42 +96,9 @@ export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
         );
       }
     },
-    restore: async (src: string) => {
-      if (checkURLValidity(src)) {
-        await fileService.restoreOldEditorAsset(workspaceId, src);
-      } else {
-        await fileService.restoreNewAsset(workspaceSlug, src);
-      }
-    },
     cancel: fileService.cancelUpload,
     validation: {
       maxFileSize,
-    },
-  };
-};
-
-/**
- * @description this function returns the file handler required by the read-only editors
- */
-export const getReadOnlyEditorFileHandlers = (
-  args: Pick<TArgs, "projectId" | "workspaceSlug">
-): { getAssetSrc: TFileHandler["getAssetSrc"] } => {
-  const { projectId, workspaceSlug } = args;
-
-  return {
-    getAssetSrc: (path) => {
-      if (!path) return "";
-      if (checkURLValidity(path)) {
-        return path;
-      } else {
-        return (
-          getEditorAssetSrc({
-            assetId: path,
-            projectId,
-            workspaceSlug,
-          }) ?? ""
-        );
-      }
     },
   };
 };

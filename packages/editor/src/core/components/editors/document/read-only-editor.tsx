@@ -10,7 +10,7 @@ import { getEditorClassNames } from "@/helpers/common";
 // hooks
 import { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
 // types
-import { EditorReadOnlyRefApi, IMentionHighlight, TDisplayConfig, TFileHandler } from "@/types";
+import { EditorReadOnlyRefApi, IMentionHighlight, TDisplayConfig, TReadOnlyFileHandler } from "@/types";
 
 interface IDocumentReadOnlyEditor {
   id: string;
@@ -19,7 +19,7 @@ interface IDocumentReadOnlyEditor {
   displayConfig?: TDisplayConfig;
   editorClassName?: string;
   embedHandler: any;
-  fileHandler: Pick<TFileHandler, "getAssetSrc">;
+  fileHandler: TReadOnlyFileHandler;
   tabIndex?: number;
   handleEditorReady?: (value: boolean) => void;
   mentionHandler: {

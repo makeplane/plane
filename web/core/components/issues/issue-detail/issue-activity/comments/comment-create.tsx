@@ -37,7 +37,7 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
   const workspaceStore = useWorkspace();
   const { peekIssue } = useIssueDetail();
   // derived values
-  const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
+  const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug ?? "")?.id;
   // form info
   const {
     handleSubmit,
@@ -92,7 +92,7 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
             control={control}
             render={({ field: { value, onChange } }) => (
               <LiteTextEditor
-                workspaceId={workspaceId}
+                workspaceId={workspaceId ?? ""}
                 id={"add_comment_" + issueId}
                 value={"<p></p>"}
                 projectId={projectId}

@@ -5,7 +5,7 @@ import { EditorReadOnlyRefApi, ILiteTextReadOnlyEditor, LiteTextReadOnlyEditorWi
 import { cn } from "@/helpers/common.helper";
 import { getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
-import { useMention, useUser } from "@/hooks/store";
+import { useMention, useUser, useWorkspace } from "@/hooks/store";
 
 type LiteTextReadOnlyEditorWrapperProps = Omit<ILiteTextReadOnlyEditor, "fileHandler" | "mentionHandler"> & {
   workspaceSlug: string;
@@ -19,12 +19,16 @@ export const LiteTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, Lit
     const { mentionHighlights } = useMention({
       user: currentUser,
     });
+    const { getWorkspaceBySlug } = useWorkspace();
+    // derived values
+    const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id ?? "";
 
     return (
       <LiteTextReadOnlyEditorWithRef
         ref={ref}
         fileHandler={getReadOnlyEditorFileHandlers({
           projectId,
+          workspaceId,
           workspaceSlug,
         })}
         mentionHandler={{
