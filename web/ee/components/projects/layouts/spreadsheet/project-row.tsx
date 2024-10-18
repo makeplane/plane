@@ -147,7 +147,7 @@ const ProjectRowDetails = observer((props: ProjectRowDetailsProps) => {
       {spreadsheetColumnsList.map((property) => (
         <ProjectColumn
           key={property}
-          projectDetails={projectDetails as TProject}
+          projectDetails={projectDetails}
           disableUserActions={disableUserActions}
           property={property}
           updateProject={updateProject}

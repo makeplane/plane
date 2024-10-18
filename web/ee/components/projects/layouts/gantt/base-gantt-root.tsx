@@ -36,8 +36,7 @@ export const BaseGanttRoot: React.FC = observer(() => {
 
   const getBlockById = useCallback(
     (id: string, currentViewData?: ChartDataType | undefined) => {
-      const project = projectMap[id] as TProject;
-      console.log(JSON.parse(JSON.stringify(project)), getDate(project?.start_date));
+      const project = projectMap[id];
       const block = getProjectBlocksStructure(project);
       if (currentViewData) {
         return {

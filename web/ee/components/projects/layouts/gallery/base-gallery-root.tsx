@@ -3,7 +3,6 @@ import { observer } from "mobx-react";
 import { ContentWrapper } from "@plane/ui";
 import { useProject } from "@/hooks/store";
 import { useProjectFilter } from "@/plane-web/hooks/store/workspace-project-states/use-project-filters";
-import { TProject } from "@/plane-web/types/projects";
 import { EProjectLayouts } from "@/plane-web/types/workspace-project-filters";
 import { ProjectLayoutHOC } from "../project-layout-HOC";
 import { ProjectCard } from "./card";
@@ -23,7 +22,7 @@ export const BaseProjectRoot = observer(() => {
             filteredProjectIds.map((projectId) => {
               const projectDetails = getProjectById(projectId);
               if (!projectDetails) return;
-              return <ProjectCard key={projectDetails.id} project={projectDetails as TProject} />;
+              return <ProjectCard key={projectDetails.id} project={projectDetails} />;
             })}
         </div>
       </ContentWrapper>

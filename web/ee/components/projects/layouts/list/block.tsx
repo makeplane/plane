@@ -12,7 +12,6 @@ import { cn } from "@/helpers/common.helper";
 import { useAppTheme, useProject, useWorkspace } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useProjectFilter } from "@/plane-web/hooks/store";
-import { TProject } from "@/plane-web/types/projects";
 import { EProjectScope } from "@/plane-web/types/workspace-project-filters";
 import JoinButton from "../../common/join-button";
 import QuickActions from "../../quick-actions";
@@ -103,18 +102,18 @@ export const ProjectBlock = observer((props: ProjectBlockProps) => {
             "lg:hidden": !isSidebarCollapsed,
           })}
         >
-          <QuickActions project={projectDetails as TProject} workspaceSlug={workspaceSlug.toString()} />
+          <QuickActions project={projectDetails} workspaceSlug={workspaceSlug.toString()} />
         </div>
       </div>
       <div className="flex flex-shrink-0 items-center gap-2">
         <>
           <Attributes
-            project={projectDetails as TProject}
+            project={projectDetails}
             isArchived={projectDetails.archived_at !== null}
             handleUpdateProject={(data) => updateProject(workspaceSlug.toString(), projectDetails.id, data)}
             workspaceSlug={workspaceSlug.toString()}
             currentWorkspace={currentWorkspace}
-            cta={filters?.scope === EProjectScope.ALL_PROJECTS && <JoinButton project={projectDetails as TProject} />}
+            cta={filters?.scope === EProjectScope.ALL_PROJECTS && <JoinButton project={projectDetails} />}
             containerClass="px-0 py-0 md:pb-4 lg:py-2"
           />
           <div
@@ -123,7 +122,7 @@ export const ProjectBlock = observer((props: ProjectBlockProps) => {
               "lg:flex": !isSidebarCollapsed,
             })}
           >
-            <QuickActions project={projectDetails as TProject} workspaceSlug={workspaceSlug.toString()} />
+            <QuickActions project={projectDetails} workspaceSlug={workspaceSlug.toString()} />
           </div>
         </>
       </div>
