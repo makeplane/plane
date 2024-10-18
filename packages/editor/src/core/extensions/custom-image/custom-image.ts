@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 // extensions
 import { CustomImageNode } from "@/extensions/custom-image";
 // plugins
-import { TrackImageDeletionPlugin, TrackImageRestorationPlugin, isFileValid } from "@/plugins/image";
+import { TrackImageDeletionPlugin, isFileValid } from "@/plugins/image";
 // types
 import { TFileHandler } from "@/types";
 // helpers
@@ -22,6 +22,7 @@ declare module "@tiptap/core" {
     imageComponent: {
       insertImageComponent: ({ file, pos, event }: InsertImageComponentProps) => ReturnType;
       uploadImage: (file: File) => () => Promise<string> | undefined;
+      restoreImage: (src: string) => () => Promise<void>;
       getImageSource?: (path: string) => () => string;
     };
   }
@@ -41,7 +42,7 @@ export const CustomImageExtension = (props: TFileHandler) => {
     getAssetSrc,
     upload,
     delete: deleteImage,
-    restore: restoreImage,
+    restore,
     validation: { maxFileSize },
   } = props;
 
@@ -85,22 +86,6 @@ export const CustomImageExtension = (props: TFileHandler) => {
       return ["image-component", mergeAttributes(HTMLAttributes)];
     },
 
-    onCreate(this) {
-      const imageSources = new Set<string>();
-      this.editor.state.doc.descendants((node) => {
-        if (node.type.name === this.name) {
-          imageSources.add(node.attrs.src);
-        }
-      });
-      imageSources.forEach(async (src) => {
-        try {
-          await restoreImage(src);
-        } catch (error) {
-          console.error("Error restoring image: ", error);
-        }
-      });
-    },
-
     addKeyboardShortcuts() {
       return {
         ArrowDown: insertEmptyParagraphAtNodeBoundaries("down", this.name),
@@ -111,7 +96,7 @@ export const CustomImageExtension = (props: TFileHandler) => {
     addProseMirrorPlugins() {
       return [
         TrackImageDeletionPlugin(this.editor, deleteImage, this.name),
-        TrackImageRestorationPlugin(this.editor, restoreImage, this.name),
+        // TrackImageRestorationPlugin(this.editor, restore, this.name),
       ];
     },
 
@@ -178,6 +163,9 @@ export const CustomImageExtension = (props: TFileHandler) => {
         uploadImage: (file: File) => async () => {
           const fileUrl = await upload(file);
           return fileUrl;
+        },
+        restoreImage: (src: string) => async () => {
+          await restore(src);
         },
         getImageSource: (path: string) => () => getAssetSrc(path),
       };
