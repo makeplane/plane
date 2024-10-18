@@ -59,7 +59,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
     src: remoteImageSrc,
     setEditorContainer,
   } = props;
-  const { src: remoteImageSrc, width: nodeWidth, height: nodeHeight, aspectRatio: nodeAspectRatio } = node.attrs;
+  const { width: nodeWidth, height: nodeHeight, aspectRatio: nodeAspectRatio } = node.attrs;
   // states
   const [size, setSize] = useState<Size>({
     width: ensurePixelString(nodeWidth, "35%"),
