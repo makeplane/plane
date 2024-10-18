@@ -17,15 +17,12 @@ import {
   CustomPlaceholderExtension,
   CustomQuoteExtension,
   CustomStarterKit,
+  CustomTableExtension,
   CustomTodoListExtension,
   CustomTypographyExtension,
   DropHandlerExtension,
   ImageExtension,
   ListKeymap,
-  Table,
-  TableCell,
-  TableHeader,
-  TableRow,
 } from "@/extensions";
 // types
 import { IMentionHighlight, IMentionSuggestion, TFileHandler } from "@/types";
@@ -72,10 +69,7 @@ export const CoreEditorExtensions = (args: TArguments): (Extension<any, any> | N
       transformPastedText: true,
       breaks: true,
     }),
-    Table,
-    TableHeader,
-    TableCell,
-    TableRow,
+    ...CustomTableExtension,
     CustomMention({
       mentionSuggestions: mentionConfig.mentionSuggestions,
       mentionHighlights: mentionConfig.mentionHighlights,

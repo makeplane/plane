@@ -13,7 +13,7 @@ import { IssueWidgetWithoutProps } from "./issue-embed/issue-embed-without-props
 import { CustomMentionWithoutProps } from "./mentions/mentions-without-props";
 import { CustomQuoteExtension } from "./quote";
 import { CustomStarterKit } from "./starter-kit";
-import { TableHeader, TableCell, TableRow, Table } from "./table";
+import { CustomTableExtension } from "./table";
 import { CustomTodoListExtension } from "./todo-list";
 
 export const CoreEditorExtensionsWithoutProps: (Extension<any, any> | Node<any, any> | Mark<any, any>)[] = [
@@ -32,10 +32,7 @@ export const CoreEditorExtensionsWithoutProps: (Extension<any, any> | Node<any, 
   ...CustomTodoListExtension(),
   CustomCodeInlineExtension,
   CustomCodeBlockExtensionWithoutProps,
-  Table,
-  TableHeader,
-  TableCell,
-  TableRow,
+  ...CustomTableExtension,
   CustomMentionWithoutProps(),
   CustomColorExtension,
 ];

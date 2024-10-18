@@ -1,3 +1,4 @@
+import { Extension, Mark, Node } from "@tiptap/core";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 // helpers
@@ -7,7 +8,7 @@ type Props = {
   readOnly?: boolean;
 };
 
-export const CustomTodoListExtension = (props?: Props) => {
+export const CustomTodoListExtension = (props?: Props): (Extension<any, any> | Node<any, any> | Mark<any, any>)[] => {
   const { readOnly } = props;
 
   return [

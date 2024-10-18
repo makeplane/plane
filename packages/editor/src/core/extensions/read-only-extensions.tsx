@@ -12,16 +12,13 @@ import {
   ReadOnlyImageExtension,
   CustomCodeBlockExtension,
   CustomCodeInlineExtension,
-  TableHeader,
-  TableCell,
-  TableRow,
-  Table,
   CustomMention,
   HeadingListExtension,
   CustomReadOnlyImageExtension,
   CustomColorExtension,
   CustomStarterKit,
   CustomTodoListExtension,
+  CustomTableExtension,
 } from "@/extensions";
 // types
 import { IMentionHighlight, TFileHandler } from "@/types";
@@ -67,10 +64,7 @@ export const CoreReadOnlyEditorExtensions = (
       html: true,
       transformCopiedText: true,
     }),
-    Table,
-    TableHeader,
-    TableCell,
-    TableRow,
+    ...CustomTableExtension,
     CustomMention({
       mentionHighlights: mentionConfig.mentionHighlights,
       readOnly: true,
