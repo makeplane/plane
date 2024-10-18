@@ -138,7 +138,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
       }
     }
     setInitialResizeComplete(true);
-  }, [nodeWidth, updateAttributes, editorContainer, nodeAspectRatio, size.aspectRatio]);
+  }, [nodeWidth, updateAttributes, editorContainer, nodeAspectRatio]);
 
   // for real time resizing
   useLayoutEffect(() => {
@@ -241,6 +241,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
           // for old image extension this command doesn't exist
           if (!editor?.commands.restoreImage) {
             setFailedToLoadImage(true);
+            return;
           }
 
           try {

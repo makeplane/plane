@@ -36,7 +36,6 @@ export const ImageExtension = (fileHandler: TFileHandler) => {
       const imageSources = new Set<string>();
       this.editor.state.doc.descendants((node) => {
         if (node.type.name === this.name) {
-          console.log("node", node.attrs.src?.startsWith("http"));
           if (!node.attrs.src?.startsWith("http")) {
             return;
           }
