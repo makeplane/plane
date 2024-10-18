@@ -5,7 +5,7 @@ import { computedFn } from "mobx-utils";
 // helpers
 import { orderProjects, shouldFilterProject } from "@/helpers/project.helper";
 // services
-import { TProject } from "@/plane-web/types/projects/projects";
+import { TProject } from "@/plane-web/types/projects";
 import { IssueLabelService, IssueService } from "@/services/issue";
 import { ProjectService, ProjectStateService, ProjectArchiveService } from "@/services/project";
 // store
@@ -404,6 +404,7 @@ export class ProjectStore implements IProjectStore {
       runInAction(() => {
         delete this.projectMap[projectId];
         if (this.rootStore.favorite.entityMap[projectId]) this.rootStore.favorite.removeFavoriteFromStore(projectId);
+        delete this.rootStore.user.permission.workspaceProjectsPermissions[workspaceSlug][projectId];
       });
     } catch (error) {
       console.log("Failed to delete project from project store");

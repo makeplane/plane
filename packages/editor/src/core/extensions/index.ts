@@ -11,6 +11,7 @@ export * from "./table";
 export * from "./typography";
 export * from "./core-without-props";
 export * from "./custom-code-inline";
+export * from "./custom-color";
 export * from "./drop";
 export * from "./enter-key-extension";
 export * from "./extensions";

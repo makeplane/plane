@@ -9,11 +9,12 @@ import { IssueCommentToolbar } from "@/components/editor";
 import { EIssueCommentAccessSpecifier } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { getEditorFileHandlers } from "@/helpers/editor.helper";
 import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks
 import { useMember, useMention, useUser } from "@/hooks/store";
-// services
-import { FileService } from "@/services/file.service";
+// plane web hooks
+import { useFileSize } from "@/plane-web/hooks/use-file-size";
 
 interface LiteTextEditorWrapperProps extends Omit<ILiteTextEditor, "fileHandler" | "mentionHandler"> {
   workspaceSlug: string;
@@ -24,9 +25,8 @@ interface LiteTextEditorWrapperProps extends Omit<ILiteTextEditor, "fileHandler"
   showAccessSpecifier?: boolean;
   showSubmitButton?: boolean;
   isSubmitting?: boolean;
+  uploadFile: (file: File) => Promise<string>;
 }
-
-const fileService = new FileService();
 
 export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapperProps>((props, ref) => {
   const {
@@ -40,6 +40,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     showSubmitButton = true,
     isSubmitting = false,
     placeholder = "Add comment...",
+    uploadFile,
     ...rest
   } = props;
   // store hooks
@@ -58,6 +59,8 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     members: projectMemberDetails,
     user: currentUser ?? undefined,
   });
+  // file size
+  const { maxFileSize } = useFileSize();
 
   const isEmpty = isCommentEmpty(props.initialValue);
 
@@ -69,12 +72,13 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     <div className="border border-custom-border-200 rounded p-3 space-y-3">
       <LiteTextEditorWithRef
         ref={ref}
-        fileHandler={{
-          upload: fileService.getUploadFileFunction(workspaceSlug),
-          delete: fileService.getDeleteImageFunction(workspaceId),
-          restore: fileService.getRestoreImageFunction(workspaceId),
-          cancel: fileService.cancelUpload,
-        }}
+        fileHandler={getEditorFileHandlers({
+          maxFileSize,
+          projectId,
+          uploadFile,
+          workspaceId,
+          workspaceSlug,
+        })}
         mentionHandler={{
           highlights: mentionHighlights,
           suggestions: mentionSuggestions,

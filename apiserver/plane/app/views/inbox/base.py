@@ -23,7 +23,7 @@ from plane.db.models import (
     Issue,
     State,
     IssueLink,
-    IssueAttachment,
+    FileAsset,
     Project,
     ProjectMember,
 )
@@ -120,8 +120,9 @@ class InboxIssueViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -140,7 +141,10 @@ class InboxIssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=~Q(labels__id__isnull=True),
+                        filter=(
+                            ~Q(labels__id__isnull=True)
+                            & Q(labels__deleted_at__isnull=True)
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -158,7 +162,8 @@ class InboxIssueViewSet(BaseViewSet):
                         "issue_module__module_id",
                         distinct=True,
                         filter=~Q(issue_module__module_id__isnull=True)
-                        & Q(issue_module__module__archived_at__isnull=True),
+                        & Q(issue_module__module__archived_at__isnull=True)
+                        & Q(issue_module__module__deleted_at__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -185,7 +190,8 @@ class InboxIssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "issue__labels__id",
                         distinct=True,
-                        filter=~Q(issue__labels__id__isnull=True),
+                        filter=~Q(issue__labels__id__isnull=True)
+                        & Q(issue__labels__deleted_at__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 )
@@ -297,7 +303,10 @@ class InboxIssueViewSet(BaseViewSet):
                         ArrayAgg(
                             "issue__labels__id",
                             distinct=True,
-                            filter=~Q(issue__labels__id__isnull=True),
+                            filter=(
+                                ~Q(labels__id__isnull=True)
+                                & Q(labels__deleted_at__isnull=True)
+                            ),
                         ),
                         Value([], output_field=ArrayField(UUIDField())),
                     ),
@@ -305,7 +314,8 @@ class InboxIssueViewSet(BaseViewSet):
                         ArrayAgg(
                             "issue__assignees__id",
                             distinct=True,
-                            filter=~Q(issue__assignees__id__isnull=True),
+                            filter=~Q(assignees__id__isnull=True)
+                            & Q(assignees__member_project__is_active=True),
                         ),
                         Value([], output_field=ArrayField(UUIDField())),
                     ),

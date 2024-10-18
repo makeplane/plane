@@ -1,4 +1,5 @@
 import { isFuture, isPast, isToday } from "date-fns";
+import isEmpty from "lodash/isEmpty";
 import set from "lodash/set";
 import sortBy from "lodash/sortBy";
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
@@ -58,6 +59,8 @@ export interface ICycleStore {
   getProjectCycleIds: (projectId: string) => string[] | null;
   getPlotTypeByCycleId: (cycleId: string) => TCyclePlotType;
   getEstimateTypeByCycleId: (cycleId: string) => TCycleEstimateType;
+  getIsPointsDataAvailable: (cycleId: string) => boolean;
+
   // actions
   updateCycleDistribution: (distributionUpdates: DistributionUpdates, cycleId: string) => void;
   validateDate: (workspaceSlug: string, projectId: string, payload: CycleDateCheckData) => Promise<any>;
@@ -270,6 +273,16 @@ export class CycleStore implements ICycleStore {
     if (!projectId && !this.currentProjectActiveCycleId) return null;
     return this.cycleMap?.[this.currentProjectActiveCycleId!] ?? null;
   }
+
+  getIsPointsDataAvailable = computedFn((cycleId: string) => {
+    const cycle = this.cycleMap[cycleId];
+    if (!cycle) return false;
+    if (this.cycleMap[cycleId].version === 2) return cycle.progress.some((p) => p.total_estimate_points > 0);
+    else if (this.cycleMap[cycleId].version === 1) {
+      const completionChart = cycle.estimate_distribution?.completion_chart || {};
+      return !isEmpty(completionChart) && Object.keys(completionChart).some((p) => completionChart[p]! > 0);
+    } else return false;
+  });
 
   /**
    * returns active cycle progress for a project

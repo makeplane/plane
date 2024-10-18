@@ -22,7 +22,6 @@
     "@types/lodash": "^4.17.0",
     "autoprefixer": "10.4.14",
     "axios": "^1.7.4",
-    "js-cookie": "^3.0.5",
     "lodash": "^4.17.21",
     "lucide-react": "^0.356.0",
     "mobx": "^6.12.0",
@@ -41,7 +40,6 @@
   "devDependencies": {
     "@plane/eslint-config": "*",
     "@plane/typescript-config": "*",
-    "@types/js-cookie": "^3.0.6",
     "@types/node": "18.16.1",
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",

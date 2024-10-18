@@ -19,7 +19,9 @@ from django.db.models import (
     Value,
     OuterRef,
     Func,
+    CharField,
 )
+from django.db.models.functions import Concat
 
 # Third Party imports
 from rest_framework.response import Response
@@ -59,7 +61,7 @@ from plane.db.models import (
     DeployBoard,
     IssueVote,
     ProjectPublicMember,
-    IssueAttachment,
+    FileAsset,
 )
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.issue_filters import issue_filters
@@ -112,8 +114,9 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -698,7 +701,10 @@ class IssueRetrievePublicEndpoint(BaseAPIView):
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=~Q(labels__id__isnull=True),
+                        filter=(
+                            ~Q(labels__id__isnull=True)
+                            & Q(labels__deleted_at__isnull=True)
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -715,7 +721,9 @@ class IssueRetrievePublicEndpoint(BaseAPIView):
                     ArrayAgg(
                         "issue_module__module_id",
                         distinct=True,
-                        filter=~Q(issue_module__module_id__isnull=True),
+                        filter=~Q(issue_module__module_id__isnull=True)
+                        & Q(issue_module__module__archived_at__isnull=True)
+                        & Q(issue_module__module__deleted_at__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -746,6 +754,26 @@ class IssueRetrievePublicEndpoint(BaseAPIView):
                                     first_name=F("votes__actor__first_name"),
                                     last_name=F("votes__actor__last_name"),
                                     avatar=F("votes__actor__avatar"),
+                                    avatar_url=Case(
+                                        When(
+                                            votes__actor__avatar_asset__isnull=False,
+                                            then=Concat(
+                                                Value(
+                                                    "/api/assets/v2/static/"
+                                                ),
+                                                F(
+                                                    "votes__actor__avatar_asset"
+                                                ),
+                                                Value("/"),
+                                            ),
+                                        ),
+                                        When(
+                                            votes__actor__avatar_asset__isnull=True,
+                                            then=F("votes__actor__avatar"),
+                                        ),
+                                        default=Value(None),
+                                        output_field=CharField(),
+                                    ),
                                     display_name=F(
                                         "votes__actor__display_name"
                                     ),
@@ -777,6 +805,26 @@ class IssueRetrievePublicEndpoint(BaseAPIView):
                                         "issue_reactions__actor__last_name"
                                     ),
                                     avatar=F("issue_reactions__actor__avatar"),
+                                    avatar_url=Case(
+                                        When(
+                                            votes__actor__avatar_asset__isnull=False,
+                                            then=Concat(
+                                                Value(
+                                                    "/api/assets/v2/static/"
+                                                ),
+                                                F(
+                                                    "votes__actor__avatar_asset"
+                                                ),
+                                                Value("/"),
+                                            ),
+                                        ),
+                                        When(
+                                            votes__actor__avatar_asset__isnull=True,
+                                            then=F("votes__actor__avatar"),
+                                        ),
+                                        default=Value(None),
+                                        output_field=CharField(),
+                                    ),
                                     display_name=F(
                                         "issue_reactions__actor__display_name"
                                     ),

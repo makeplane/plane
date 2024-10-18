@@ -169,7 +169,9 @@ class DraftIssueCreateSerializer(BaseSerializer):
         updated_by_id = instance.updated_by_id
 
         if assignees is not None:
-            DraftIssueAssignee.objects.filter(draft_issue=instance).delete()
+            DraftIssueAssignee.objects.filter(draft_issue=instance).delete(
+                soft=False
+            )
             DraftIssueAssignee.objects.bulk_create(
                 [
                     DraftIssueAssignee(
@@ -186,7 +188,9 @@ class DraftIssueCreateSerializer(BaseSerializer):
             )
 
         if labels is not None:
-            DraftIssueLabel.objects.filter(draft_issue=instance).delete()
+            DraftIssueLabel.objects.filter(draft_issue=instance).delete(
+                soft=False
+            )
             DraftIssueLabel.objects.bulk_create(
                 [
                     DraftIssueLabel(
@@ -276,6 +280,8 @@ class DraftIssueSerializer(BaseSerializer):
             "updated_at",
             "created_by",
             "updated_by",
+            "type_id",
+            "description_html",
         ]
         read_only_fields = fields
 

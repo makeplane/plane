@@ -30,6 +30,7 @@ export enum EIssuesStoreType {
   ARCHIVED = "ARCHIVED",
   DRAFT = "DRAFT",
   DEFAULT = "DEFAULT",
+  WORKSPACE_DRAFT = "WORKSPACE_DRAFT",
 }
 
 export enum EIssueLayoutTypes {

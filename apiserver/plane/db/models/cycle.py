@@ -127,33 +127,6 @@ class CycleIssue(ProjectBaseModel):
         return f"{self.cycle}"
 
 
-# DEPRECATED TODO: - Remove in next release
-class CycleFavorite(ProjectBaseModel):
-    """_summary_
-    CycleFavorite (model): To store all the cycle favorite of the user
-    """
-
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="cycle_favorites",
-    )
-    cycle = models.ForeignKey(
-        "db.Cycle", on_delete=models.CASCADE, related_name="cycle_favorites"
-    )
-
-    class Meta:
-        unique_together = ["cycle", "user"]
-        verbose_name = "Cycle Favorite"
-        verbose_name_plural = "Cycle Favorites"
-        db_table = "cycle_favorites"
-        ordering = ("-created_at",)
-
-    def __str__(self):
-        """Return user and the cycle"""
-        return f"{self.user.email} <{self.cycle.name}>"
-
-
 class CycleUserProperties(ProjectBaseModel):
     cycle = models.ForeignKey(
         "db.Cycle",

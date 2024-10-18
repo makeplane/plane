@@ -99,7 +99,14 @@ class Project(BaseModel):
     is_time_tracking_enabled = models.BooleanField(default=False)
     is_issue_type_enabled = models.BooleanField(default=False)
     guest_view_all_features = models.BooleanField(default=False)
-    cover_image = models.URLField(blank=True, null=True, max_length=800)
+    cover_image = models.TextField(blank=True, null=True)
+    cover_image_asset = models.ForeignKey(
+        "db.FileAsset",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="project_cover_image",
+    )
     estimate = models.ForeignKey(
         "db.Estimate",
         on_delete=models.SET_NULL,
@@ -125,6 +132,18 @@ class Project(BaseModel):
     timezone = models.CharField(
         max_length=255, default="UTC", choices=TIMEZONE_CHOICES
     )
+
+    @property
+    def cover_image_url(self):
+        # Return cover image url
+        if self.cover_image_asset:
+            return self.cover_image_asset.asset_url
+
+        # Return cover image url
+        if self.cover_image:
+            return self.cover_image
+
+        return None
 
     def __str__(self):
         """Return name of the project"""
@@ -162,7 +181,9 @@ class ProjectBaseModel(BaseModel):
         Project, on_delete=models.CASCADE, related_name="project_%(class)s"
     )
     workspace = models.ForeignKey(
-        "db.Workspace", models.CASCADE, related_name="workspace_%(class)s"
+        "db.Workspace",
+        on_delete=models.CASCADE,
+        related_name="workspace_%(class)s",
     )
 
     class Meta:
@@ -264,26 +285,6 @@ class ProjectIdentifier(AuditModel):
         verbose_name_plural = "Project Identifiers"
         db_table = "project_identifiers"
         ordering = ("-created_at",)
-
-
-# DEPRECATED TODO: - Remove in next release
-class ProjectFavorite(ProjectBaseModel):
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="project_favorites",
-    )
-
-    class Meta:
-        unique_together = ["project", "user"]
-        verbose_name = "Project Favorite"
-        verbose_name_plural = "Project Favorites"
-        db_table = "project_favorites"
-        ordering = ("-created_at",)
-
-    def __str__(self):
-        """Return user of the project"""
-        return f"{self.user.email} <{self.project.name}>"
 
 
 def get_anchor():
