@@ -9,7 +9,7 @@ export type CustomImageComponentProps = {
   node: NodeViewProps["node"] & {
     attrs: ImageAttributes;
   };
-  updateAttributes: (attrs: Record<string, any>) => void;
+  updateAttributes: (attrs: ImageAttributes) => void;
   selected: boolean;
 };
 
