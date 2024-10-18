@@ -3,7 +3,17 @@ import json
 
 # Django imports
 from django.utils import timezone
-from django.db.models import Q, OuterRef, F, Func, UUIDField, Value, CharField
+from django.db.models import (
+    Q,
+    OuterRef,
+    F,
+    Func,
+    UUIDField,
+    Value,
+    CharField,
+    Case,
+    When,
+)
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models.functions import Coalesce
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -83,7 +93,15 @@ class IssueRelationViewSet(BaseViewSet):
             Issue.issue_objects.filter(workspace__slug=slug)
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
-            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(
+                cycle_id=Case(
+                    When(
+                        issue_cycle__cycle__deleted_at__isnull=True,
+                        then=F("issue_cycle__cycle_id"),
+                    ),
+                    default=None,
+                )
+            )
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -112,7 +130,10 @@ class IssueRelationViewSet(BaseViewSet):
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=~Q(labels__id__isnull=True),
+                        filter=(
+                            ~Q(labels__id__isnull=True)
+                            & Q(labels__deleted_at__isnull=True)
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),

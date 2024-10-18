@@ -208,7 +208,7 @@ export const ImageItem = (editor: Editor): EditorMenuItem<"image"> => ({
 export const TextColorItem = (editor: Editor): EditorMenuItem<"text-color"> => ({
   key: "text-color",
   name: "Color",
-  isActive: ({ color }) => editor.getAttributes("textStyle").color === color,
+  isActive: ({ color }) => editor.isActive("customColor", { color }),
   command: ({ color }) => toggleTextColor(color, editor),
   icon: Palette,
 });
@@ -216,7 +216,7 @@ export const TextColorItem = (editor: Editor): EditorMenuItem<"text-color"> => (
 export const BackgroundColorItem = (editor: Editor): EditorMenuItem<"background-color"> => ({
   key: "background-color",
   name: "Background color",
-  isActive: ({ color }) => editor.getAttributes("textStyle").backgroundColor === color,
+  isActive: ({ color }) => editor.isActive("customColor", { backgroundColor: color }),
   command: ({ color }) => toggleBackgroundColor(color, editor),
   icon: Palette,
 });

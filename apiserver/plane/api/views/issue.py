@@ -202,7 +202,15 @@ class IssueAPIEndpoint(BaseAPIView):
 
         issue_queryset = (
             self.get_queryset()
-            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(
+                cycle_id=Case(
+                    When(
+                        Q(issue_cycle__cycle__deleted_at__isnull=True),
+                        then=F("issue_cycle__cycle_id"),
+                    ),
+                    default=None,
+                )
+            )
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
