@@ -13,6 +13,7 @@ import {
   TFileHandler,
   TServerHandler,
 } from "@/types";
+import { TTextAlign } from "@/extensions";
 
 export type TEditorCommands =
   | "text"
@@ -50,14 +51,14 @@ export type TCommandExtraProps = {
     color: string | undefined;
   };
   "text-align": {
-    alignment: string;
+    alignment: TTextAlign;
   };
 };
 
 // Create a utility type that maps a command to its extra props or an empty object if none are defined
 export type TCommandWithProps<T extends TEditorCommands> = T extends keyof TCommandExtraProps
   ? TCommandExtraProps[T] // If the command has extra props, include them
-  : {}; // Otherwise, just return the command type with no extra props
+  : object; // Otherwise, just return the command type with no extra props
 
 type TCommandWithPropsWithItemKey<T extends TEditorCommands> = T extends keyof TCommandExtraProps
   ? { itemKey: T } & TCommandExtraProps[T]

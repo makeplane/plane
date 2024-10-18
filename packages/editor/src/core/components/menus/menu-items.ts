@@ -200,7 +200,8 @@ export const ImageItem = (editor: Editor): EditorMenuItem<"image"> => ({
   key: "image",
   name: "Image",
   isActive: () => editor?.isActive("image") || editor?.isActive("imageComponent"),
-  command: ({ savedSelection }) => insertImage({ editor, event: "insert", pos: savedSelection?.from }),
+  command: ({ savedSelection }) =>
+    insertImage({ editor, event: "insert", pos: savedSelection?.from ?? editor.state.selection.from }),
   icon: ImageIcon,
 });
 

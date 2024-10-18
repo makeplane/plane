@@ -174,7 +174,7 @@ export const TOOLBAR_ITEMS: {
   },
   document: {
     basic: BASIC_MARK_ITEMS.filter((item) => item.editors.includes("document")),
-    alignment: TEXT_ALIGNMENT_ITEMS.filter((item) => item.editors.includes("lite")),
+    alignment: TEXT_ALIGNMENT_ITEMS.filter((item) => item.editors.includes("document")),
     list: LIST_ITEMS.filter((item) => item.editors.includes("document")),
     userAction: USER_ACTION_ITEMS.filter((item) => item.editors.includes("document")),
     complex: COMPLEX_ITEMS.filter((item) => item.editors.includes("document")),
