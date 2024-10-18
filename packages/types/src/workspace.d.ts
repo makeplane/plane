@@ -92,6 +92,7 @@ export interface IWorkspaceMemberMe {
   view_props: IWorkspaceViewProps;
   workspace: string;
   draft_issue_count: number;
+  active_cycles_count: number;
 }
 
 export interface ILastActiveWorkspaceDetails {
@@ -222,4 +223,3 @@ export interface IWorkspaceProgressResponse {
 export interface IWorkspaceAnalyticsResponse {
   completion_chart: any;
 }
-

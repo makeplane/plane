@@ -194,6 +194,10 @@ export class CycleStore extends CeCycleStore implements ICycleStore {
     return await this.cycleService.createCycle(workspaceSlug, projectId, { ...data, version }).then((response) => {
       runInAction(() => {
         set(this.cycleMap, [response.id], response);
+        if (response.status?.toLowerCase() === "current") {
+          // Update workspace active cycle count in workspaceUserInfo
+          this.updateWorkspaceUserActiveCycleCount(workspaceSlug, 1);
+        }
       });
       return response;
     });

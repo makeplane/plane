@@ -24,21 +24,23 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { UpgradeBadge } from "@/plane-web/components/workspace";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 export const SidebarWorkspaceMenu = observer(() => {
   // state
   const [isMenuActive, setIsMenuActive] = useState(false);
   // refs
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
-  // store hooks
-  const { toggleSidebar, sidebarCollapsed } = useAppTheme();
-  const { captureEvent } = useEventTracker();
-  const { isMobile } = usePlatformOS();
-  const { allowPermissions } = useUserPermissions();
   // router params
   const { workspaceSlug } = useParams();
   // pathname
   const pathname = usePathname();
+  // store hooks
+  const { toggleSidebar, sidebarCollapsed } = useAppTheme();
+  const { captureEvent } = useEventTracker();
+  const { isMobile } = usePlatformOS();
+  const { allowPermissions, workspaceUserInfo } = useUserPermissions();
+  const { currentWorkspaceSubscribedPlanDetail } = useWorkspaceSubscription();
   // local storage
   const { setValue: toggleWorkspaceMenu, storedValue } = useLocalStorage<boolean>("is_workspace_menu_open", true);
   // derived values
@@ -58,6 +60,10 @@ export const SidebarWorkspaceMenu = observer(() => {
     if (sidebarCollapsed) toggleWorkspaceMenu(true);
   }, [sidebarCollapsed, toggleWorkspaceMenu]);
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
+
+  const shouldRenderWorkspaceActiveCycle =
+    workspaceUserInfo[workspaceSlug.toString()]?.active_cycles_count > 0 &&
+    currentWorkspaceSubscribedPlanDetail?.product !== "FREE";
 
   return (
     <Disclosure as="div" defaultOpen>
@@ -152,8 +158,9 @@ export const SidebarWorkspaceMenu = observer(() => {
             })}
             static
           >
-            {SIDEBAR_WORKSPACE_MENU_ITEMS.map(
-              (link) =>
+            {SIDEBAR_WORKSPACE_MENU_ITEMS.map((link) => {
+              if (link.key === "active-cycles" && !shouldRenderWorkspaceActiveCycle) return null;
+              return (
                 allowPermissions(link.access, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString()) && (
                   <Tooltip
                     key={link.key}
@@ -186,7 +193,8 @@ export const SidebarWorkspaceMenu = observer(() => {
                     </Link>
                   </Tooltip>
                 )
-            )}
+              );
+            })}
           </Disclosure.Panel>
         )}
       </Transition>
