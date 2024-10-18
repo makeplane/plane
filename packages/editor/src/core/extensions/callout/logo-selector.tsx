@@ -90,6 +90,7 @@ export const CalloutBlockLogoSelector: React.FC<Props> = (props) => {
         defaultIconColor={logoValue?.in_use && logoValue.in_use === "icon" ? logoValue?.icon?.color : undefined}
         defaultOpen={logoValue.in_use === "emoji" ? EmojiIconPickerTypes.EMOJI : EmojiIconPickerTypes.ICON}
         disabled={disabled}
+        searchDisabled
       />
     </div>
   );
