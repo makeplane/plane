@@ -184,7 +184,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
       window.addEventListener("mousemove", handleResize);
       window.addEventListener("mouseup", handleResizeEnd);
       window.addEventListener("mouseleave", handleResizeEnd);
-      window.addEventListener("touchmove", handleResize, { passive: false });
+      window.addEventListener("touchmove", handleResize);
       window.addEventListener("touchend", handleResizeEnd);
 
       return () => {
@@ -251,7 +251,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
             imageRef.current.src = remoteImageSrc;
           } catch {
             setFailedToLoadImage(true);
-            console.log("Error while loading image", e);
+            console.error("Error while loading image", e);
           } finally {
             setOnFirstLoadError(false);
           }
