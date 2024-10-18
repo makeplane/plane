@@ -3,12 +3,12 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 import { TSlashCommandSection } from "./command-items-list";
 import { CommandMenuItem } from "./command-menu-item";
 
-type Props = {
+export type SlashCommandsMenuProps = {
   items: TSlashCommandSection[];
   command: any;
 };
 
-export const SlashCommandsMenu = (props: Props) => {
+export const SlashCommandsMenu = (props: SlashCommandsMenuProps) => {
   const { items: sections, command } = props;
   // states
   const [selectedIndex, setSelectedIndex] = useState({

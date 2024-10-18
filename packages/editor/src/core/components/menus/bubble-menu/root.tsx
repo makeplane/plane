@@ -7,7 +7,6 @@ import {
   BubbleMenuLinkSelector,
   BubbleMenuNodeSelector,
   CodeItem,
-  EditorMenuItem,
   ItalicItem,
   StrikeThroughItem,
   UnderLineItem,
@@ -16,6 +15,8 @@ import {
 import { isCellSelection } from "@/extensions/table/table/utilities/is-cell-selection";
 // helpers
 import { cn } from "@/helpers/common";
+// local components
+import { TextAlignmentSelector } from "./alignment-selector";
 
 type EditorBubbleMenuProps = Omit<BubbleMenuProps, "children">;
 
@@ -26,7 +27,7 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
   const [isColorSelectorOpen, setIsColorSelectorOpen] = useState(false);
   const [isSelecting, setIsSelecting] = useState(false);
 
-  const items: EditorMenuItem[] = props.editor.isActive("code")
+  const basicFormattingOptions = props.editor.isActive("code")
     ? [CodeItem(props.editor)]
     : [BoldItem(props.editor), ItalicItem(props.editor), UnderLineItem(props.editor), StrikeThroughItem(props.editor)];
 
@@ -132,7 +133,7 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
             )}
           </div>
           <div className="flex gap-0.5 px-2">
-            {items.map((item) => (
+            {basicFormattingOptions.map((item) => (
               <button
                 key={item.key}
                 type="button"
@@ -151,6 +152,7 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
               </button>
             ))}
           </div>
+          <TextAlignmentSelector editor={props.editor} />
         </>
       )}
     </BubbleMenu>

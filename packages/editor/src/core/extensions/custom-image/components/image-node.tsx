@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { Node as ProsemirrorNode } from "@tiptap/pm/model";
-import { Editor, NodeViewWrapper } from "@tiptap/react";
+import { Editor, NodeViewProps, NodeViewWrapper } from "@tiptap/react";
 // extensions
 import { CustomImageBlock, CustomImageUploader, ImageAttributes } from "@/extensions/custom-image";
 
-export type CustomImageNodeViewProps = {
+export type CustomImageNodeViewProps = NodeViewProps & {
   getPos: () => number;
   editor: Editor;
   node: ProsemirrorNode & {

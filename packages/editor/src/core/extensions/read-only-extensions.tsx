@@ -21,6 +21,7 @@ import {
   CustomMention,
   HeadingListExtension,
   CustomReadOnlyImageExtension,
+  CustomTextAlignExtension,
   CustomColorExtension,
 } from "@/extensions";
 // helpers
@@ -124,5 +125,6 @@ export const CoreReadOnlyEditorExtensions = (props: Props) => {
     CharacterCount,
     CustomColorExtension,
     HeadingListExtension,
+    CustomTextAlignExtension,
   ];
 };
