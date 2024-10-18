@@ -38,7 +38,7 @@ export const ViewQuickActions: React.FC<Props> = observer((props) => {
 
   const { isPublishModalOpen, setPublishModalOpen, publishContextMenu } = useViewPublish(
     !!view.anchor,
-    isAdmin || isOwner
+    isOwner
   );
 
   const viewLink = `${workspaceSlug}/projects/${projectId}/views/${view.id}`;
