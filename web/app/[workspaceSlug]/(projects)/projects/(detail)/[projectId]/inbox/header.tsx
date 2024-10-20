@@ -8,7 +8,7 @@ import { RefreshCcw } from "lucide-react";
 import { Breadcrumbs, Button, Intake, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
-import { InboxIssueCreateEditModalRoot } from "@/components/inbox";
+import { InboxIssueCreateModalRoot } from "@/components/inbox";
 // hooks
 import { useProject, useProjectInbox, useUserPermissions } from "@/hooks/store";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
@@ -69,12 +69,11 @@ export const ProjectInboxHeader: FC = observer(() => {
       <Header.RightItem>
         {currentProjectDetails?.inbox_view && workspaceSlug && projectId && isAuthorized ? (
           <div className="flex items-center gap-2">
-            <InboxIssueCreateEditModalRoot
+            <InboxIssueCreateModalRoot
               workspaceSlug={workspaceSlug.toString()}
               projectId={projectId.toString()}
               modalState={createIssueModal}
               handleModalClose={() => setCreateIssueModal(false)}
-              issue={undefined}
             />
 
             <Button variant="primary" size="sm" onClick={() => setCreateIssueModal(true)}>

@@ -3,7 +3,11 @@ from django.db.models import (
     CharField,
     Count,
     Q,
+    OuterRef,
+    Subquery,
+    IntegerField,
 )
+from django.db.models.functions import Coalesce
 from django.db.models.functions import Cast
 
 # Third party modules
@@ -34,6 +38,7 @@ from plane.db.models import (
     User,
     Workspace,
     WorkspaceMember,
+    DraftIssue,
 )
 from plane.utils.cache import cache_response, invalidate_cache
 
@@ -283,10 +288,26 @@ class WorkspaceMemberUserViewsEndpoint(BaseAPIView):
 
 class WorkspaceMemberUserEndpoint(BaseAPIView):
     def get(self, request, slug):
-        workspace_member = WorkspaceMember.objects.get(
-            member=request.user,
-            workspace__slug=slug,
-            is_active=True,
+        draft_issue_count = (
+            DraftIssue.objects.filter(
+                created_by=request.user,
+                workspace_id=OuterRef("workspace_id"),
+            )
+            .values("workspace_id")
+            .annotate(count=Count("id"))
+            .values("count")
+        )
+
+        workspace_member = (
+            WorkspaceMember.objects.filter(
+                member=request.user, workspace__slug=slug, is_active=True
+            )
+            .annotate(
+                draft_issue_count=Coalesce(
+                    Subquery(draft_issue_count, output_field=IntegerField()), 0
+                )
+            )
+            .first()
         )
         serializer = WorkspaceMemberMeSerializer(workspace_member)
         return Response(serializer.data, status=status.HTTP_200_OK)

@@ -31,6 +31,11 @@ export interface DraftIssueProps {
   projectId: string;
   isDraft: boolean;
   moveToIssue?: boolean;
+  modalTitle?: string;
+  primaryButtonText?: {
+    default: string;
+    loading: string;
+  };
 }
 
 export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
@@ -47,6 +52,8 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
     onCreateMoreToggleChange,
     isDraft,
     moveToIssue = false,
+    modalTitle,
+    primaryButtonText,
   } = props;
   // states
   const [issueDiscardModal, setIssueDiscardModal] = useState(false);
@@ -104,7 +111,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
-          message: "Draft Issue created successfully.",
+          message: "Draft created.",
         });
         captureIssueEvent({
           eventName: "Draft issue created",
@@ -132,8 +139,10 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
     if (response && handleCreateUpdatePropertyValues) {
       handleCreateUpdatePropertyValues({
         issueId: response.id,
+        issueTypeId: response.type_id,
         projectId,
         workspaceSlug: workspaceSlug?.toString(),
+        isDraft: true,
       });
     }
   };
@@ -162,6 +171,8 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
         projectId={projectId}
         isDraft={isDraft}
         moveToIssue={moveToIssue}
+        modalTitle={modalTitle}
+        primaryButtonText={primaryButtonText}
       />
     </>
   );

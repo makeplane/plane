@@ -20,6 +20,7 @@ from plane.db.models import FileAsset, Workspace
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.app.permissions import allow_permission, ROLE
 from plane.settings.storage import S3Storage
+from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 
 
 class IssueAttachmentEndpoint(BaseAPIView):
@@ -254,10 +255,7 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
             issue_attachment.is_uploaded = True
 
         # Get the storage metadata
-        if issue_attachment.storage_metadata is None:
-            storage = S3Storage(request=request)
-            issue_attachment.storage_metadata = storage.get_object_metadata(
-                issue_attachment.asset.name
-            )
+        if not issue_attachment.storage_metadata:
+            get_asset_object_metadata.delay(str(issue_attachment.id))
         issue_attachment.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
