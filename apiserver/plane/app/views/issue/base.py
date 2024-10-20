@@ -991,6 +991,7 @@ class IssueDetailEndpoint(BaseAPIView):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
+            .order_by(request.GET.get("order_by", "-created_at"))
         )
         return self.paginate(
             request=request,
