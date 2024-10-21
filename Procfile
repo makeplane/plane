@@ -1,1 +1,0 @@
-web: node live/dist/server.js

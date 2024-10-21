@@ -16,7 +16,6 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev --concurrency=13",
-    "heroku-postbuild": "turbo run build --filter=live",
     "start": "turbo run start",
     "lint": "turbo run lint",
     "lint:errors": "turbo run lint:errors",
