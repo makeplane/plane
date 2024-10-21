@@ -54,6 +54,7 @@ export const ActiveCycleChart = observer((props: Props) => {
   let startDate: Date | string = new Date(cycle.start_date!);
   const today = format(startOfToday(), "yyyy-MM-dd");
   const { diffGradient, dataWithRange } = chartHelper(data, endDate, plotType, colors);
+  const cycleId = cycle.id;
   endDate = endDate.toISOString().split("T")[0];
   startDate = startDate.toISOString().split("T")[0];
 
@@ -74,7 +75,7 @@ export const ActiveCycleChart = observer((props: Props) => {
         <defs>
           {/* Time left */}
           <pattern
-            id="fillTimeLeft"
+            id={`fillTimeLeft-${cycleId}`}
             patternUnits="userSpaceOnUse"
             width="4"
             height="8"
@@ -85,7 +86,7 @@ export const ActiveCycleChart = observer((props: Props) => {
 
           {/* Beyond Time */}
           <pattern
-            id="fillTimeBeyond"
+            id={`fillTimeBeyond-${cycleId}`}
             patternUnits="userSpaceOnUse"
             width="4"
             height="8"
@@ -95,31 +96,31 @@ export const ActiveCycleChart = observer((props: Props) => {
           </pattern>
 
           {/* actual */}
-          <linearGradient id="fillPending" x1="0" y1="0" x2="0" y2="1">
+          <linearGradient id={`fillPending-${cycleId}`} x1="0" y1="0" x2="0" y2="1">
             <stop offset="5%" stopColor="#26D950" stopOpacity={1} />
             <stop offset="95%" stopColor="#26D950" stopOpacity={0.05} />
           </linearGradient>
 
           {/* Started */}
-          <linearGradient id="fillStarted" x1="0" y1="0" x2="0" y2="1">
+          <linearGradient id={`fillStarted-${cycleId}`} x1="0" y1="0" x2="0" y2="1">
             <stop offset="5%" stopColor={colors.startedArea} stopOpacity={1} />
             <stop offset="95%" stopColor={colors.startedArea} stopOpacity={0.05} />
           </linearGradient>
 
           {/* Scope */}
-          <linearGradient id="fillScope" x1="0" y1="0" x2="0" y2="1">
+          <linearGradient id={`fillScope-${cycleId}`} x1="0" y1="0" x2="0" y2="1">
             <stop offset="5%" stopColor={colors.scopeArea} stopOpacity={1} />
             <stop offset="95%" stopColor={colors.scopeArea} stopOpacity={0.05} />
           </linearGradient>
 
           {/* Ideal */}
-          <linearGradient id="fillIdeal" x1="0" y1="0" x2="0" y2="1">
+          <linearGradient id={`fillIdeal-${cycleId}`} x1="0" y1="0" x2="0" y2="1">
             <stop offset="5%" stopColor={colors.scopeArea} stopOpacity={0.9} />
             <stop offset="95%" stopColor={colors.scopeArea} stopOpacity={0.05} />
           </linearGradient>
 
           {/* Ideal - Actual */}
-          <linearGradient id="diff">{diffGradient}</linearGradient>
+          <linearGradient id={`diff-${cycleId}`}>{diffGradient}</linearGradient>
         </defs>
         <Tooltip
           isAnimationActive={false}
@@ -171,7 +172,12 @@ export const ActiveCycleChart = observer((props: Props) => {
         </YAxis>
         {/* Line charts */}
         {/* Time left */}
-        <Area dataKey="timeLeft" stroke={colors.timeLeftStroke} strokeWidth={0} fill={`url(#fillTimeLeft)`} />
+        <Area
+          dataKey="timeLeft"
+          stroke={colors.timeLeftStroke}
+          strokeWidth={0}
+          fill={`url(#fillTimeLeft-${cycleId})`}
+        />
         <Area
           dataKey="timeLeft"
           stroke={colors.timeLeftStroke}
@@ -206,7 +212,13 @@ export const ActiveCycleChart = observer((props: Props) => {
         {/* Beyond Time */}
         <ReferenceLine x={endDate} stroke={colors.beyondTimeStroke} label="" strokeDasharray="3 3" />
         {/* Ideal - Actual */}
-        <Area dataKey="range" strokeWidth={0} fill={`url(#diff)`} isAnimationActive={false} type="monotone" />
+        <Area
+          dataKey="range"
+          strokeWidth={0}
+          fill={`url(#diff-${cycleId})`}
+          isAnimationActive={false}
+          type="monotone"
+        />
 
         {/* Ideal */}
         <Line
@@ -222,7 +234,7 @@ export const ActiveCycleChart = observer((props: Props) => {
           <Area
             type="monotone"
             dataKey="ideal"
-            fill="url(#fillIdeal)"
+            fill={`url(#fillIdeal-${cycleId})`}
             fillOpacity={0.4}
             stroke={colors.idealStroke}
             strokeWidth={0}
@@ -242,7 +254,7 @@ export const ActiveCycleChart = observer((props: Props) => {
           <Area
             type="monotone"
             dataKey="started"
-            fill="url(#fillStarted)"
+            fill={`url(#fillStarted-${cycleId})`}
             fillOpacity={0.4}
             stroke={colors.startedStroke}
             strokeWidth={1}
@@ -262,7 +274,7 @@ export const ActiveCycleChart = observer((props: Props) => {
           <Area
             type="monotone"
             dataKey="actual"
-            fill="url(#fillPending)"
+            fill={`url(#fillPending-${cycleId})`}
             fillOpacity={0.4}
             stroke={colors.actual}
             strokeWidth={4}
@@ -288,7 +300,7 @@ export const ActiveCycleChart = observer((props: Props) => {
           <Area
             type="stepAfter"
             dataKey="scope"
-            fill="url(#fillScope)"
+            fill={`url(#fillScope-${cycleId})`}
             fillOpacity={0.4}
             stroke={colors.scopeStroke}
             strokeWidth={0}
