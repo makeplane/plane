@@ -34,12 +34,13 @@ export const ViewQuickActions: React.FC<Props> = observer((props) => {
   const { allowPermissions } = useUserPermissions();
   // auth
   const isOwner = view?.owned_by === data?.id;
+  const canPublishView = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId);
 
-  const { isPublishModalOpen, setPublishModalOpen, publishContextMenu } = useViewPublish(
-    !!view.anchor,
-    isAdmin || isOwner
-  );
+  const { isPublishModalOpen, setPublishModalOpen, publishContextMenu } = useViewPublish(!!view.anchor, isOwner);
 
   const viewLink = `${workspaceSlug}/projects/${projectId}/views/${view.id}`;
   const handleCopyText = () =>
@@ -98,6 +99,7 @@ export const ViewQuickActions: React.FC<Props> = observer((props) => {
       <CustomMenu ellipsis placement="bottom-end" closeOnSelect>
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;
+          if (item.key === "publish" && !canPublishView) return null;
           return (
             <CustomMenu.MenuItem
               key={item.key}
