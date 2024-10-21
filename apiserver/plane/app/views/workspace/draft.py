@@ -60,7 +60,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
             .annotate(
                 cycle_id=Case(
                     When(
-                        draft_issue_cycle__cycle__deleted_at__isnull=True,
+                        draft_issue_cycle__deleted_at__isnull=True,
                         then=F("draft_issue_cycle__cycle_id"),
                     ),
                     default=None,
@@ -95,9 +95,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                         & Q(
                             draft_issue_module__module__archived_at__isnull=True
                         )
-                        & Q(
-                            draft_issue_module__module__deleted_at__isnull=True
-                        ),
+                        & Q(draft_issue_module__deleted_at__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),

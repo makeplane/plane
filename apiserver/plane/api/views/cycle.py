@@ -761,7 +761,7 @@ class CycleIssueAPIEndpoint(BaseAPIView):
             cycle_id=cycle_id,
         )
         issue_id = cycle_issue.issue_id
-        cycle_issue.delete()
+        cycle_issue.delete(soft=False)
         issue_activity.delay(
             type="cycle.activity.deleted",
             requested_data=json.dumps(

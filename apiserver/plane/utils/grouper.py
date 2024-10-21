@@ -35,7 +35,7 @@ def issue_queryset_grouper(queryset, group_by, sub_group_by):
             (
                 ~Q(issue_module__module_id__isnull=True)
                 & Q(issue_module__module__archived_at__isnull=True)
-                & Q(issue_module__module__deleted_at__isnull=True)
+                & Q(issue_module__deleted_at__isnull=True)
             ),
         ),
     }

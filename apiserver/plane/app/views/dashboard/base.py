@@ -240,7 +240,7 @@ def dashboard_assigned_issues(self, request, slug):
                     distinct=True,
                     filter=~Q(issue_module__module_id__isnull=True)
                     & Q(issue_module__module__archived_at__isnull=True)
-                    & Q(issue_module__module__deleted_at__isnull=True),
+                    & Q(issue_module__deleted_at__isnull=True),
                 ),
                 Value([], output_field=ArrayField(UUIDField())),
             ),
@@ -409,7 +409,7 @@ def dashboard_created_issues(self, request, slug):
                     distinct=True,
                     filter=~Q(issue_module__module_id__isnull=True)
                     & Q(issue_module__module__archived_at__isnull=True)
-                    & Q(issue_module__module__deleted_at__isnull=True),
+                    & Q(issue_module__deleted_at__isnull=True),
                 ),
                 Value([], output_field=ArrayField(UUIDField())),
             ),

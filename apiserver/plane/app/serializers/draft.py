@@ -207,8 +207,8 @@ class DraftIssueCreateSerializer(BaseSerializer):
             )
 
         if cycle_id != "not_provided":
-            DraftIssueCycle.objects.filter(draft_issue=instance).delete()
-            if cycle_id is not None:
+            DraftIssueCycle.objects.filter(draft_issue=instance).delete(soft=False)
+            if cycle_id:
                 DraftIssueCycle.objects.create(
                     cycle_id=cycle_id,
                     draft_issue=instance,
@@ -219,7 +219,7 @@ class DraftIssueCreateSerializer(BaseSerializer):
                 )
 
         if modules is not None:
-            DraftIssueModule.objects.filter(draft_issue=instance).delete()
+            DraftIssueModule.objects.filter(draft_issue=instance).delete(soft=False)
             DraftIssueModule.objects.bulk_create(
                 [
                     DraftIssueModule(

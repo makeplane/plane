@@ -105,7 +105,7 @@ class CycleIssueViewSet(BaseViewSet):
             .annotate(
                 cycle_id=Case(
                     When(
-                        issue_cycle__cycle__deleted_at__isnull=True,
+                        issue_cycle__deleted_at__isnull=True,
                         then=F("issue_cycle__cycle_id"),
                     ),
                     default=None,
@@ -358,5 +358,5 @@ class CycleIssueViewSet(BaseViewSet):
             notification=True,
             origin=request.META.get("HTTP_ORIGIN"),
         )
-        cycle_issue.delete()
+        cycle_issue.delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)

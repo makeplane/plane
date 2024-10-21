@@ -70,7 +70,7 @@ class ModuleIssueViewSet(BaseViewSet):
             .annotate(
                 cycle_id=Case(
                     When(
-                        issue_cycle__cycle__deleted_at__isnull=True,
+                        issue_cycle__deleted_at__isnull=True,
                         then=F("issue_cycle__cycle_id"),
                     ),
                     default=None,
@@ -316,7 +316,7 @@ class ModuleIssueViewSet(BaseViewSet):
                 notification=True,
                 origin=request.META.get("HTTP_ORIGIN"),
             )
-            module_issue.delete()
+            module_issue.delete(soft=False)
 
         return Response({"message": "success"}, status=status.HTTP_201_CREATED)
 
@@ -341,5 +341,5 @@ class ModuleIssueViewSet(BaseViewSet):
             notification=True,
             origin=request.META.get("HTTP_ORIGIN"),
         )
-        module_issue.delete()
+        module_issue.delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)

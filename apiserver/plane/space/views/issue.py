@@ -109,7 +109,7 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
             .annotate(
                 cycle_id=Case(
                     When(
-                        issue_cycle__cycle__deleted_at__isnull=True,
+                        issue_cycle__deleted_at__isnull=True,
                         then=F("issue_cycle__cycle_id"),
                     ),
                     default=None,
@@ -706,7 +706,7 @@ class IssueRetrievePublicEndpoint(BaseAPIView):
             .annotate(
                 cycle_id=Case(
                     When(
-                        issue_cycle__cycle__deleted_at__isnull=True,
+                        issue_cycle__deleted_at__isnull=True,
                         then=F("issue_cycle__cycle_id"),
                     ),
                     default=None,
@@ -739,7 +739,7 @@ class IssueRetrievePublicEndpoint(BaseAPIView):
                         distinct=True,
                         filter=~Q(issue_module__module_id__isnull=True)
                         & Q(issue_module__module__archived_at__isnull=True)
-                        & Q(issue_module__module__deleted_at__isnull=True),
+                        & Q(issue_module__deleted_at__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),

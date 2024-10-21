@@ -506,7 +506,7 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
             module_id=module_id,
             issue_id=issue_id,
         )
-        module_issue.delete()
+        module_issue.delete(soft=False)
         issue_activity.delay(
             type="module.activity.deleted",
             requested_data=json.dumps(
