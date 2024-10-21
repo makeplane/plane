@@ -90,7 +90,8 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
   const { getRootProps, getInputProps, isDragActive, fileRejections } = useDropzone({
     onDrop,
     accept: {
-      "image/*": [".png", ".jpg", ".jpeg", ".webp"],
+      "image/jpeg": [],
+      "image/png": [],
     },
     maxSize: MAX_STATIC_FILE_SIZE,
   });
@@ -346,7 +347,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                       </p>
                     )}
 
-                    <p className="text-sm text-custom-text-200">File formats supported- .jpeg, .jpg, .png, .webp</p>
+                    <p className="text-sm text-custom-text-200">File formats supported- .jpeg, .jpg, .png</p>
 
                     <div className="flex h-12 items-start justify-end gap-2">
                       <Button
@@ -378,3 +379,4 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
     </Popover>
   );
 });
+
