@@ -169,9 +169,7 @@ class DraftIssueCreateSerializer(BaseSerializer):
         updated_by_id = instance.updated_by_id
 
         if assignees is not None:
-            DraftIssueAssignee.objects.filter(draft_issue=instance).delete(
-                soft=False
-            )
+            DraftIssueAssignee.objects.filter(draft_issue=instance).delete()
             DraftIssueAssignee.objects.bulk_create(
                 [
                     DraftIssueAssignee(
@@ -188,9 +186,7 @@ class DraftIssueCreateSerializer(BaseSerializer):
             )
 
         if labels is not None:
-            DraftIssueLabel.objects.filter(draft_issue=instance).delete(
-                soft=False
-            )
+            DraftIssueLabel.objects.filter(draft_issue=instance).delete()
             DraftIssueLabel.objects.bulk_create(
                 [
                     DraftIssueLabel(
@@ -208,7 +204,7 @@ class DraftIssueCreateSerializer(BaseSerializer):
 
         if cycle_id != "not_provided":
             DraftIssueCycle.objects.filter(draft_issue=instance).delete()
-            if cycle_id is not None:
+            if cycle_id:
                 DraftIssueCycle.objects.create(
                     cycle_id=cycle_id,
                     draft_issue=instance,

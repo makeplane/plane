@@ -48,14 +48,22 @@ def string_date_filter(
     if term == "weeks":
         if subsequent == "after":
             if offset == "fromnow":
-                issue_filter[f"{date_filter}__gte"] = now + timedelta(weeks=duration)
+                issue_filter[f"{date_filter}__gte"] = now + timedelta(
+                    weeks=duration
+                )
             else:
-                issue_filter[f"{date_filter}__gte"] = now - timedelta(weeks=duration)
+                issue_filter[f"{date_filter}__gte"] = now - timedelta(
+                    weeks=duration
+                )
         else:
             if offset == "fromnow":
-                issue_filter[f"{date_filter}__lte"] = now + timedelta(weeks=duration)
+                issue_filter[f"{date_filter}__lte"] = now + timedelta(
+                    weeks=duration
+                )
             else:
-                issue_filter[f"{date_filter}__lte"] = now - timedelta(weeks=duration)
+                issue_filter[f"{date_filter}__lte"] = now - timedelta(
+                    weeks=duration
+                )
 
 
 def date_filter(issue_filter, date_term, queries):
@@ -120,7 +128,9 @@ def filter_state_group(params, issue_filter, method, prefix=""):
             and len(params.get("state_group"))
             and params.get("state_group") != "null"
         ):
-            issue_filter[f"{prefix}state__group__in"] = params.get("state_group")
+            issue_filter[f"{prefix}state__group__in"] = params.get(
+                "state_group"
+            )
     return issue_filter
 
 
@@ -242,8 +252,8 @@ def filter_mentions(params, issue_filter, method, prefix=""):
             and len(params.get("mentions"))
             and params.get("mentions") != "null"
         ):
-            issue_filter[f"{prefix}issue_mention__mention__id__in"] = params.get(
-                "mentions"
+            issue_filter[f"{prefix}issue_mention__mention__id__in"] = (
+                params.get("mentions")
             )
     return issue_filter
 
@@ -411,7 +421,10 @@ def filter_cycle(params, issue_filter, method, prefix=""):
             and len(params.get("cycle"))
             and params.get("cycle") != "null"
         ):
-            issue_filter[f"{prefix}issue_cycle__cycle_id__in"] = params.get("cycle")
+            issue_filter[f"{prefix}issue_cycle__cycle_id__in"] = params.get(
+                "cycle"
+            )
+    issue_filter[f"{prefix}issue_cycle__deleted_at__isnull"] = True
     return issue_filter
 
 
@@ -434,6 +447,7 @@ def filter_module(params, issue_filter, method, prefix=""):
             issue_filter[f"{prefix}issue_module__module_id__in"] = params.get(
                 "module"
             )
+    issue_filter[f"{prefix}issue_module__deleted_at__isnull"] = True
     return issue_filter
 
 

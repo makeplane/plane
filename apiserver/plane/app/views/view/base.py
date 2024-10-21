@@ -210,7 +210,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
             .annotate(
                 cycle_id=Case(
                     When(
-                        issue_cycle__cycle__deleted_at__isnull=True,
+                        issue_cycle__deleted_at__isnull=True,
                         then=F("issue_cycle__cycle_id"),
                     ),
                     default=None,
@@ -246,7 +246,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                         distinct=True,
                         filter=(
                             ~Q(labels__id__isnull=True)
-                            & Q(labels__deleted_at__isnull=True)
+                            & Q(label_issue__deleted_at__isnull=True),
                         ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
@@ -256,7 +256,8 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                         "assignees__id",
                         distinct=True,
                         filter=~Q(assignees__id__isnull=True)
-                        & Q(assignees__member_project__is_active=True),
+                        & Q(assignees__member_project__is_active=True)
+                        & Q(issue_assignee__deleted_at__isnull=True)
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -266,7 +267,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                         distinct=True,
                         filter=~Q(issue_module__module_id__isnull=True)
                         & Q(issue_module__module__archived_at__isnull=True)
-                        & Q(issue_module__module__deleted_at__isnull=True),
+                        & Q(issue_module__deleted_at__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -288,7 +289,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
             .annotate(
                 cycle_id=Case(
                     When(
-                        issue_cycle__cycle__deleted_at__isnull=True,
+                        issue_cycle__deleted_at__isnull=True,
                         then=F("issue_cycle__cycle_id"),
                     ),
                     default=None,
@@ -552,7 +553,9 @@ class IssueViewViewSet(BaseViewSet):
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=IssueView)
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN], creator=True, model=IssueView
+    )
     def destroy(self, request, slug, project_id, pk):
         project_view = IssueView.objects.get(
             pk=pk,

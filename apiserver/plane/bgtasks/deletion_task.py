@@ -71,7 +71,7 @@ def hard_delete():
         EstimatePoint,
     )
 
-    days = settings.HARD_DELETE_AFTER_DAYS
+    days = 60
     # check delete workspace
     _ = Workspace.all_objects.filter(
         deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
