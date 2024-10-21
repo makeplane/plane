@@ -40,7 +40,7 @@ export interface IProjectInboxStore {
   inboxIssuePaginationInfo: TInboxIssuePaginationInfo | undefined;
   inboxIssues: Record<string, IInboxIssueStore>; // issue_id -> IInboxIssueStore
   inboxIssueIds: string[];
-  intakeForms: Record<string, TInboxForm>; // Fix this
+  intakeForms: Record<string, TInboxForm>;
   // computed
   inboxFilters: Partial<TInboxIssueFilter>; // computed project inbox filters
   inboxSorting: Partial<TInboxIssueSorting>; // computed project inbox sorting
