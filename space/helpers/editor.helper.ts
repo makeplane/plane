@@ -4,7 +4,6 @@ import { TFileHandler } from "@plane/editor";
 import { MAX_FILE_SIZE } from "@/constants/common";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
-import { checkURLValidity } from "@/helpers/string.helper";
 // services
 import { FileService } from "@/services/file.service";
 const fileService = new FileService();
@@ -34,7 +33,7 @@ export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
   return {
     getAssetSrc: (path) => {
       if (!path) return "";
-      if (checkURLValidity(path)) {
+      if (path?.startsWith("http")) {
         return path;
       } else {
         return getEditorAssetSrc(anchor, path) ?? "";
@@ -42,14 +41,14 @@ export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
     },
     upload: uploadFile,
     delete: async (src: string) => {
-      if (checkURLValidity(src)) {
+      if (src?.startsWith("http")) {
         await fileService.deleteOldEditorAsset(workspaceId, src);
       } else {
         await fileService.deleteNewAsset(getEditorAssetSrc(anchor, src) ?? "");
       }
     },
     restore: async (src: string) => {
-      if (checkURLValidity(src)) {
+      if (src?.startsWith("http")) {
         await fileService.restoreOldEditorAsset(workspaceId, src);
       } else {
         await fileService.restoreNewAsset(anchor, src);
@@ -73,7 +72,7 @@ export const getReadOnlyEditorFileHandlers = (
   return {
     getAssetSrc: (path) => {
       if (!path) return "";
-      if (checkURLValidity(path)) {
+      if (path?.startsWith("http")) {
         return path;
       } else {
         return getEditorAssetSrc(anchor, path) ?? "";

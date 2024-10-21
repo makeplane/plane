@@ -248,7 +248,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
           try {
             setHasErroredOnFirstLoad(true);
             // this is a type error from tiptap, don't remove await until it's fixed
-            await editor?.commands.restoreImage?.(remoteImageSrc);
+            await editor?.commands.restoreImage?.(node.attrs.src);
             imageRef.current.src = remoteImageSrc;
           } catch {
             // if the image failed to even restore, then show the error state
