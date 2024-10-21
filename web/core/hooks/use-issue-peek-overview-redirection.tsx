@@ -22,9 +22,11 @@ const useIssuePeekOverviewRedirection = () => {
     if (workspaceSlug && project_id && id && !getIsIssuePeeked(id) && !tempId) {
       const issuePath = `/${workspaceSlug}/projects/${project_id}/${archived_at ? "archives/" : ""}issues/${id}`;
 
-      isMobile
-        ? router.push(issuePath)
-        : setPeekIssue({ workspaceSlug, projectId: project_id, issueId: id, nestingLevel });
+      if (isMobile) {
+        router.push(issuePath);
+      } else {
+        setPeekIssue({ workspaceSlug, projectId: project_id, issueId: id, nestingLevel, isArchived: !!archived_at });
+      }
     }
   };
 
