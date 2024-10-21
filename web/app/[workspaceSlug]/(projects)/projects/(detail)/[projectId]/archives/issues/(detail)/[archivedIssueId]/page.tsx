@@ -29,7 +29,7 @@ const ArchivedIssueDetailsPage = observer(() => {
       ? `ARCHIVED_ISSUE_DETAIL_${workspaceSlug}_${projectId}_${archivedIssueId}`
       : null,
     workspaceSlug && projectId && archivedIssueId
-      ? () => fetchIssue(workspaceSlug.toString(), projectId.toString(), archivedIssueId.toString(), "ARCHIVED")
+      ? () => fetchIssue(workspaceSlug.toString(), projectId.toString(), archivedIssueId.toString())
       : null
   );
 

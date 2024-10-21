@@ -37,6 +37,7 @@ export type TPeekIssue = {
   projectId: string;
   issueId: string;
   nestingLevel?: number;
+  isArchived?: boolean;
 };
 
 export type TIssueRelationModal = {
@@ -251,8 +252,8 @@ export class IssueDetail implements IIssueDetail {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    issueType: "DEFAULT" | "ARCHIVED" | "DRAFT" = "DEFAULT"
-  ) => this.issue.fetchIssue(workspaceSlug, projectId, issueId, issueType);
+    issueStatus: "DEFAULT" | "DRAFT" = "DEFAULT"
+  ) => this.issue.fetchIssue(workspaceSlug, projectId, issueId, issueStatus);
   updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) =>
     this.issue.updateIssue(workspaceSlug, projectId, issueId, data);
   removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
