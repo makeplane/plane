@@ -2,9 +2,9 @@ import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { v4 } from "uuid";
-import { Plus } from "lucide-react";
+import { InfoIcon, Plus } from "lucide-react";
 // ui
-import { Button, Loader } from "@plane/ui";
+import { Button, Loader, Tooltip } from "@plane/ui";
 // plane web components
 import { IssuePropertyList, IssueTypePropertiesEmptyState } from "@/plane-web/components/issue-types";
 // plane web hooks
@@ -83,7 +83,13 @@ export const IssuePropertiesRoot = observer((props: TIssuePropertiesRoot) => {
     <div className="bg-custom-background-100 border border-custom-border-200 rounded-lg">
       <div className="pt-4">
         <div className="w-full flex gap-2 items-center px-6">
-          <div className="text-base font-semibold">Properties</div>
+          <div className="text-base font-semibold">Custom Properties</div>
+          <Tooltip
+            position="right"
+            tooltipContent="Each issue type comes with a default set of properties like Title, Description, Assignee, State, Priority, Start date, Due date, Module, Cycle etc. You can also customize and add your own properties to tailor it to your team's needs."
+          >
+            <InfoIcon className="size-3.5 text-custom-text-200 cursor-help" />
+          </Tooltip>
         </div>
         {issuePropertiesLoader === "init-loader" ? (
           <Loader className="w-full space-y-4 p-6">

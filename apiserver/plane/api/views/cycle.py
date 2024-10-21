@@ -404,11 +404,7 @@ class CycleAPIEndpoint(BaseAPIView):
             epoch=int(timezone.now().timestamp()),
         )
         # Delete the cycle
-        cycle.delete()
-        # Delete the cycle issues
-        CycleIssue.objects.filter(
-            cycle_id=self.kwargs.get("pk"),
-        ).delete()
+        cycle.delete(soft=False)
         # Delete the user favorite cycle
         UserFavorite.objects.filter(
             entity_type="cycle",
