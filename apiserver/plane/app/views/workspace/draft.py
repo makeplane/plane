@@ -60,8 +60,8 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
             .annotate(
                 cycle_id=Case(
                     When(
-                        issue_cycle__cycle__deleted_at__isnull=True,
-                        then=F("issue_cycle__cycle_id"),
+                        draft_issue_cycle__cycle__deleted_at__isnull=True,
+                        then=F("draft_issue_cycle__cycle_id"),
                     ),
                     default=None,
                 )
