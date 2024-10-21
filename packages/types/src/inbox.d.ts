@@ -102,3 +102,10 @@ export type TInboxForm = {
   id: string;
   is_disabled: boolean;
 };
+
+export type TInboxIssueForm = {
+  name: string;
+  description: string;
+  username: string;
+  email: string;
+};

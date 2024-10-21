@@ -101,15 +101,4 @@ export class InboxIssueService extends APIService {
         throw error?.response?.data;
       });
   }
-
-  async publishForm(anchor: string, data: Partial<TIssue>): Promise<TInboxIssue> {
-    return this.post(`/api/anchor/${anchor}/intake/`, {
-      source: "IN_APP",
-      issue: data,
-    })
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
 }
