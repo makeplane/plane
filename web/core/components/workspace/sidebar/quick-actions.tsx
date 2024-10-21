@@ -83,6 +83,14 @@ export const SidebarQuickActions = observer(() => {
           )}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
+          onClick={() => {
+            if (disabled) {
+              return;
+            }
+
+            setTrackElement("APP_SIDEBAR_QUICK_ACTIONS");
+            toggleCreateIssueModal(true);
+          }}
         >
           <button
             type="button"
@@ -93,10 +101,6 @@ export const SidebarQuickActions = observer(() => {
                 "cursor-not-allowed opacity-50": disabled,
               }
             )}
-            onClick={() => {
-              setTrackElement("APP_SIDEBAR_QUICK_ACTIONS");
-              toggleCreateIssueModal(true);
-            }}
             disabled={disabled}
           >
             <PenSquare className="size-4" />
