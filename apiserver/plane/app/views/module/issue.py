@@ -316,7 +316,7 @@ class ModuleIssueViewSet(BaseViewSet):
                 notification=True,
                 origin=request.META.get("HTTP_ORIGIN"),
             )
-            module_issue.delete(soft=False)
+            module_issue.delete()
 
         return Response({"message": "success"}, status=status.HTTP_201_CREATED)
 
@@ -341,5 +341,5 @@ class ModuleIssueViewSet(BaseViewSet):
             notification=True,
             origin=request.META.get("HTTP_ORIGIN"),
         )
-        module_issue.delete(soft=False)
+        module_issue.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

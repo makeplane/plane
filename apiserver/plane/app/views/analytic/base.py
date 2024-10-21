@@ -110,7 +110,10 @@ class AnalyticsEndpoint(BaseAPIView):
         if x_axis in ["labels__id"] or segment in ["labels__id"]:
             label_details = (
                 Issue.objects.filter(
-                    workspace__slug=slug, **filters, labels__id__isnull=False
+                    workspace__slug=slug,
+                    **filters,
+                    labels__id__isnull=False
+                    & Q(label_issue__deleted_at__isnull=True),
                 )
                 .distinct("labels__id")
                 .order_by("labels__id")

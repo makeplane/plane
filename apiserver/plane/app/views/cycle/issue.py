@@ -358,5 +358,5 @@ class CycleIssueViewSet(BaseViewSet):
             notification=True,
             origin=request.META.get("HTTP_ORIGIN"),
         )
-        cycle_issue.delete(soft=False)
+        cycle_issue.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

@@ -246,7 +246,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                         distinct=True,
                         filter=(
                             ~Q(labels__id__isnull=True)
-                            & Q(labels__deleted_at__isnull=True)
+                            & Q(label_issue__deleted_at__isnull=True),
                         ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
@@ -256,7 +256,8 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                         "assignees__id",
                         distinct=True,
                         filter=~Q(assignees__id__isnull=True)
-                        & Q(assignees__member_project__is_active=True),
+                        & Q(assignees__member_project__is_active=True)
+                        & Q(issue_assignee__deleted_at__isnull=True)
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),

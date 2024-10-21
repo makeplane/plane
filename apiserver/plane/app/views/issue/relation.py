@@ -132,7 +132,7 @@ class IssueRelationViewSet(BaseViewSet):
                         distinct=True,
                         filter=(
                             ~Q(labels__id__isnull=True)
-                            & Q(labels__deleted_at__isnull=True)
+                            & (Q(label_issue__deleted_at__isnull=True))
                         ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
@@ -142,7 +142,8 @@ class IssueRelationViewSet(BaseViewSet):
                         "assignees__id",
                         distinct=True,
                         filter=~Q(assignees__id__isnull=True)
-                        & Q(assignees__member_project__is_active=True),
+                        & Q(assignees__member_project__is_active=True)
+                        & Q(issue_assignee__deleted_at__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -289,7 +290,7 @@ class IssueRelationViewSet(BaseViewSet):
             IssueRelationSerializer(issue_relation).data,
             cls=DjangoJSONEncoder,
         )
-        issue_relation.delete(soft=False)
+        issue_relation.delete()
         issue_activity.delay(
             type="issue_relation.activity.deleted",
             requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),

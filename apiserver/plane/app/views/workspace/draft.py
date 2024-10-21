@@ -73,7 +73,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                         distinct=True,
                         filter=(
                             ~Q(labels__id__isnull=True)
-                            & Q(labels__deleted_at__isnull=True)
+                            & (Q(draft_label_issue__deleted_at__isnull=True))
                         ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
@@ -83,7 +83,8 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                         "assignees__id",
                         distinct=True,
                         filter=~Q(assignees__id__isnull=True)
-                        & Q(assignees__member_project__is_active=True),
+                        & Q(assignees__member_project__is_active=True)
+                        & Q(draft_issue_assignee__deleted_at__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),

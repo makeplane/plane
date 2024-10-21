@@ -110,7 +110,7 @@ class CycleIssue(ProjectBaseModel):
     Cycle Issues
     """
 
-    issue = models.OneToOneField(
+    issue = models.ForeignKey(
         "db.Issue", on_delete=models.CASCADE, related_name="issue_cycle"
     )
     cycle = models.ForeignKey(
@@ -118,6 +118,7 @@ class CycleIssue(ProjectBaseModel):
     )
 
     class Meta:
+        unique_together = ["issue", "cycle", "deleted_at"]
         verbose_name = "Cycle Issue"
         verbose_name_plural = "Cycle Issues"
         db_table = "cycle_issues"

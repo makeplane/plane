@@ -404,7 +404,7 @@ class CycleAPIEndpoint(BaseAPIView):
             epoch=int(timezone.now().timestamp()),
         )
         # Delete the cycle
-        cycle.delete(soft=False)
+        cycle.delete()
         # Delete the user favorite cycle
         UserFavorite.objects.filter(
             entity_type="cycle",
@@ -761,7 +761,7 @@ class CycleIssueAPIEndpoint(BaseAPIView):
             cycle_id=cycle_id,
         )
         issue_id = cycle_issue.issue_id
-        cycle_issue.delete(soft=False)
+        cycle_issue.delete()
         issue_activity.delay(
             type="cycle.activity.deleted",
             requested_data=json.dumps(
