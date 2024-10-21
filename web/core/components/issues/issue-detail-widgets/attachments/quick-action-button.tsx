@@ -26,12 +26,16 @@ export const IssueAttachmentActionButton: FC<Props> = observer((props) => {
   // state
   const [isLoading, setIsLoading] = useState(false);
   // store hooks
-  const { setLastWidgetAction } = useIssueDetail();
+  const { setLastWidgetAction, fetchActivities } = useIssueDetail();
   // file size
   const { maxFileSize } = useFileSize();
   // operations
   const handleAttachmentOperations = useAttachmentOperations(workspaceSlug, projectId, issueId);
   // handlers
+  const handleFetchPropertyActivities = useCallback(() => {
+    fetchActivities(workspaceSlug, projectId, issueId);
+  }, [fetchActivities, workspaceSlug, projectId, issueId]);
+
   const onDrop = useCallback(
     (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
       const totalAttachedFiles = acceptedFiles.length + rejectedFiles.length;
@@ -51,6 +55,7 @@ export const IssueAttachmentActionButton: FC<Props> = observer((props) => {
             });
           })
           .finally(() => {
+            handleFetchPropertyActivities();
             setLastWidgetAction("attachments");
             setIsLoading(false);
           });
@@ -67,7 +72,7 @@ export const IssueAttachmentActionButton: FC<Props> = observer((props) => {
       });
       return;
     },
-    [handleAttachmentOperations, maxFileSize, workspaceSlug]
+    [maxFileSize, workspaceSlug, handleAttachmentOperations, handleFetchPropertyActivities, setLastWidgetAction]
   );
 
   const { getRootProps, getInputProps } = useDropzone({

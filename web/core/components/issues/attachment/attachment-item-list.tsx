@@ -17,13 +17,14 @@ type TAttachmentOperationsRemoveModal = Exclude<TAttachmentOperations, "create">
 
 type TIssueAttachmentItemList = {
   workspaceSlug: string;
+  projectId: string;
   issueId: string;
   handleAttachmentOperations: TAttachmentOperationsRemoveModal;
   disabled?: boolean;
 };
 
 export const IssueAttachmentItemList: FC<TIssueAttachmentItemList> = observer((props) => {
-  const { workspaceSlug, issueId, handleAttachmentOperations, disabled } = props;
+  const { workspaceSlug, projectId, issueId, handleAttachmentOperations, disabled } = props;
   // states
   const [isLoading, setIsLoading] = useState(false);
   // store hooks
@@ -31,11 +32,17 @@ export const IssueAttachmentItemList: FC<TIssueAttachmentItemList> = observer((p
     attachment: { getAttachmentsByIssueId },
     attachmentDeleteModalId,
     toggleDeleteAttachmentModal,
+    fetchActivities,
   } = useIssueDetail();
   // file size
   const { maxFileSize } = useFileSize();
   // derived values
   const issueAttachments = getAttachmentsByIssueId(issueId);
+
+  // handlers
+  const handleFetchPropertyActivities = useCallback(() => {
+    fetchActivities(workspaceSlug, projectId, issueId);
+  }, [fetchActivities, workspaceSlug, projectId, issueId]);
 
   const onDrop = useCallback(
     (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
@@ -55,7 +62,10 @@ export const IssueAttachmentItemList: FC<TIssueAttachmentItemList> = observer((p
               message: "File could not be attached. Try uploading again.",
             });
           })
-          .finally(() => setIsLoading(false));
+          .finally(() => {
+            handleFetchPropertyActivities();
+            setIsLoading(false);
+          });
         return;
       }
 
@@ -69,7 +79,7 @@ export const IssueAttachmentItemList: FC<TIssueAttachmentItemList> = observer((p
       });
       return;
     },
-    [handleAttachmentOperations, maxFileSize, workspaceSlug]
+    [handleAttachmentOperations, maxFileSize, workspaceSlug, handleFetchPropertyActivities]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

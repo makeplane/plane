@@ -19,6 +19,7 @@ export const IssueAttachmentsCollapsibleContent: FC<Props> = (props) => {
   return (
     <IssueAttachmentItemList
       workspaceSlug={workspaceSlug}
+      projectId={projectId}
       issueId={issueId}
       disabled={disabled}
       handleAttachmentOperations={handleAttachmentOperations}
