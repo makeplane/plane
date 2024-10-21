@@ -312,8 +312,8 @@ class InboxIssueViewSet(BaseViewSet):
                             "issue__labels__id",
                             distinct=True,
                             filter=(
-                                ~Q(labels__id__isnull=True)
-                                & Q(labels__deleted_at__isnull=True)
+                                ~Q(issue__labels__id__isnull=True)
+                                & Q(issue__labels__deleted_at__isnull=True)
                             ),
                         ),
                         Value([], output_field=ArrayField(UUIDField())),
@@ -322,8 +322,8 @@ class InboxIssueViewSet(BaseViewSet):
                         ArrayAgg(
                             "issue__assignees__id",
                             distinct=True,
-                            filter=~Q(assignees__id__isnull=True)
-                            & Q(assignees__member_project__is_active=True),
+                            filter=~Q(issue__assignees__id__isnull=True)
+                            & Q(issue__assignees__member_project__is_active=True),
                         ),
                         Value([], output_field=ArrayField(UUIDField())),
                     ),
