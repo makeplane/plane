@@ -2,7 +2,6 @@
 import { TFileHandler } from "@plane/editor";
 // helpers
 import { getBase64Image, getFileURL } from "@/helpers/file.helper";
-import { checkURLValidity } from "@/helpers/string.helper";
 // services
 import { FileService } from "@/services/file.service";
 const fileService = new FileService();
@@ -46,7 +45,7 @@ export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
   return {
     getAssetSrc: (path) => {
       if (!path) return "";
-      if (checkURLValidity(path)) {
+      if (path?.startsWith("http")) {
         return path;
       } else {
         return (
@@ -60,7 +59,7 @@ export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
     },
     upload: uploadFile,
     delete: async (src: string) => {
-      if (checkURLValidity(src)) {
+      if (src?.startsWith("http")) {
         await fileService.deleteOldWorkspaceAsset(workspaceId, src);
       } else {
         await fileService.deleteNewAsset(
@@ -73,7 +72,7 @@ export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
       }
     },
     restore: async (src: string) => {
-      if (checkURLValidity(src)) {
+      if (src?.startsWith("http")) {
         await fileService.restoreOldEditorAsset(workspaceId, src);
       } else {
         await fileService.restoreNewAsset(workspaceSlug, src);
@@ -97,7 +96,7 @@ export const getReadOnlyEditorFileHandlers = (
   return {
     getAssetSrc: (path) => {
       if (!path) return "";
-      if (checkURLValidity(path)) {
+      if (path?.startsWith("http")) {
         return path;
       } else {
         return (
