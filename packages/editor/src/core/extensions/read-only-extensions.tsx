@@ -22,6 +22,7 @@ import {
   HeadingListExtension,
   CustomReadOnlyImageExtension,
   CustomColorExtension,
+  CustomToggleHeadingReadOnlyExtension,
 } from "@/extensions";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
@@ -124,5 +125,6 @@ export const CoreReadOnlyEditorExtensions = (props: Props) => {
     CharacterCount,
     CustomColorExtension,
     HeadingListExtension,
+    CustomToggleHeadingReadOnlyExtension,
   ];
 };

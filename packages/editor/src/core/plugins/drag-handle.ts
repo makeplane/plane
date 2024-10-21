@@ -43,6 +43,7 @@ export const nodeDOMAtCoords = (coords: { x: number; y: number }) => {
     ".issue-embed",
     ".image-component",
     ".image-upload-component",
+    ".editor-toggle-heading-component",
   ].join(", ");
 
   for (const elem of elements) {

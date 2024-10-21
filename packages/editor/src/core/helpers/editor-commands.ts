@@ -180,3 +180,8 @@ export const toggleBackgroundColor = (color: string | undefined, editor: Editor,
     }
   }
 };
+
+export const insertToggleHeading = (headingLevel: number, editor: Editor, range?: Range) => {
+  if (range) editor.chain().focus().deleteRange(range).insertToggleHeading({ headingLevel }).run();
+  else editor.chain().focus().insertToggleHeading({ headingLevel }).run();
+};

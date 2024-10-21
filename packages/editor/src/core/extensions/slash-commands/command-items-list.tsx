@@ -10,6 +10,7 @@ import {
   Heading6,
   ImageIcon,
   List,
+  ListCollapse,
   ListOrdered,
   ListTodo,
   MinusSquare,
@@ -34,6 +35,7 @@ import {
   toggleTextColor,
   toggleBackgroundColor,
   insertImage,
+  insertToggleHeading,
 } from "@/helpers/editor-commands";
 // types
 import { CommandProps, ISlashCommandItem } from "@/types";
@@ -49,7 +51,8 @@ export const getSlashCommandFilteredSections =
   ({ query }: { query: string }): TSlashCommandSection[] => {
     const SLASH_COMMAND_SECTIONS: TSlashCommandSection[] = [
       {
-        key: "general",
+        key: "basic",
+        title: "Basic blocks",
         items: [
           {
             commandKey: "text",
@@ -190,6 +193,39 @@ export const getSlashCommandFilteredSections =
             searchTerms: ["line", "divider", "horizontal", "rule", "separate"],
             icon: <MinusSquare className="size-3.5" />,
             command: ({ editor, range }) => editor.chain().focus().deleteRange(range).setHorizontalRule().run(),
+          },
+        ],
+      },
+      {
+        key: "advanced",
+        title: "Advanced blocks",
+        items: [
+          {
+            commandKey: "toggle-heading",
+            key: "toggle-heading-1",
+            title: "Toggle heading 1",
+            icon: <ListCollapse className="size-3.5" />,
+            description: "Insert toggle heading 1",
+            searchTerms: ["toggle", "heading", "collapse", "disclosure", "accordion"],
+            command: ({ editor, range }) => insertToggleHeading(1, editor, range),
+          },
+          {
+            commandKey: "toggle-heading",
+            key: "toggle-heading-2",
+            title: "Toggle heading 2",
+            icon: <ListCollapse className="size-3.5" />,
+            description: "Insert toggle heading 2",
+            searchTerms: ["toggle", "heading", "collapse", "disclosure", "accordion"],
+            command: ({ editor, range }) => insertToggleHeading(2, editor, range),
+          },
+          {
+            commandKey: "toggle-heading",
+            key: "toggle-heading-3",
+            title: "Toggle heading 3",
+            icon: <ListCollapse className="size-3.5" />,
+            description: "Insert toggle heading 3",
+            searchTerms: ["toggle", "heading", "collapse", "disclosure", "accordion"],
+            command: ({ editor, range }) => insertToggleHeading(3, editor, range),
           },
         ],
       },

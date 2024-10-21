@@ -8,6 +8,7 @@ export * from "./issue-embed";
 export * from "./mentions";
 export * from "./slash-commands";
 export * from "./table";
+export * from "./toggle-heading";
 export * from "./typography";
 export * from "./core-without-props";
 export * from "./custom-code-inline";
