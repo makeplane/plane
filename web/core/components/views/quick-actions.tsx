@@ -40,10 +40,7 @@ export const ViewQuickActions: React.FC<Props> = observer((props) => {
   );
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId);
 
-  const { isPublishModalOpen, setPublishModalOpen, publishContextMenu } = useViewPublish(
-    !!view.anchor,
-    isOwner
-  );
+  const { isPublishModalOpen, setPublishModalOpen, publishContextMenu } = useViewPublish(!!view.anchor, isOwner);
 
   const viewLink = `${workspaceSlug}/projects/${projectId}/views/${view.id}`;
   const handleCopyText = () =>
