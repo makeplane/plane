@@ -21,7 +21,7 @@ import { getGroupedIssueResults, getSubGroupedIssueResults, log, logError, logIn
 
 const DB_VERSION = 1;
 const PAGE_SIZE = 500;
-const BATCH_SIZE = 200;
+const BATCH_SIZE = 500;
 
 type TProjectStatus = {
   issues: { status: undefined | "loading" | "ready" | "error" | "syncing"; sync: Promise<void> | undefined };
@@ -59,11 +59,7 @@ export class Storage {
   };
 
   initialize = async (workspaceSlug: string): Promise<boolean> => {
-    if (
-      // document.hidden ||
-      !rootStore.user.localDBEnabled
-    )
-      return false; // return if the window gets hidden
+    if (!rootStore.user.localDBEnabled) return false; // return if the window gets hidden
 
     if (workspaceSlug !== this.workspaceSlug) {
       this.reset();
@@ -93,8 +89,6 @@ export class Storage {
       return false;
     }
 
-    logInfo("Loading and initializing SQLite3 module...");
-
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { DBClass } = await import("./worker/db");
     const MyWorker = Comlink.wrap<typeof DBClass>(new Worker(new URL("./worker/db.ts", import.meta.url)));
@@ -116,13 +110,15 @@ export class Storage {
   };
 
   syncWorkspace = async () => {
-    if (
-      // document.hidden ||
-      !rootStore.user.localDBEnabled
-    )
-      return; // return if the window gets hidden
+    if (!rootStore.user.localDBEnabled) return;
+    const syncInProgress = await this.getIsWriteInProgress("sync_workspace");
+    if (syncInProgress) {
+      log("Sync in progress, skipping");
+    }
     await startSpan({ name: "LOAD_WS", attributes: { slug: this.workspaceSlug } }, async () => {
+      this.setOption("sync_workspace", new Date().toUTCString());
       await loadWorkSpaceData(this.workspaceSlug);
+      this.deleteOption("sync_workspace");
     });
   };
 
@@ -149,13 +145,9 @@ export class Storage {
   };
 
   syncIssues = async (projectId: string) => {
-    if (
-      // document.hidden ||
-      !rootStore.user.localDBEnabled ||
-      !this.db
-    )
-      return false; // return if the window gets hidden
-
+    if (!rootStore.user.localDBEnabled || !this.db) {
+      return false;
+    }
     try {
       const sync = startSpan({ name: `SYNC_ISSUES` }, () => this._syncIssues(projectId));
       this.setSync(projectId, sync);
@@ -203,6 +195,7 @@ export class Storage {
     const issueService = new IssueService();
 
     const response = await issueService.getIssuesForSync(this.workspaceSlug, projectId, queryParams);
+
     await addIssuesBulk(response.results, BATCH_SIZE);
     if (response.total_pages > 1) {
       const promiseArray = [];
@@ -290,11 +283,9 @@ export class Storage {
       const issueService = new IssueService();
       return await issueService.getIssuesFromServer(workspaceSlug, projectId, queries);
     }
-    // const issuesRaw = await runQuery(query);
     const end = performance.now();
 
     const { total_count } = count[0];
-    // const total_count = 2300;
 
     const [pageSize, page, offset] = cursor.split(":");
 
@@ -392,7 +383,7 @@ export class Storage {
     set(this.projectStatus, `${projectId}.issues.sync`, sync);
   };
 
-  getOption = async (key: string, fallback = "") => {
+  getOption = async (key: string, fallback?: string | boolean | number) => {
     try {
       const options = await runQuery(`select * from options where key='${key}'`);
       if (options.length) {
@@ -408,12 +399,30 @@ export class Storage {
     await runQuery(`insert or replace into options (key, value) values ('${key}', '${value}')`);
   };
 
+  deleteOption = async (key: string) => {
+    await runQuery(` DELETE FROM options where key='${key}'`);
+  };
   getOptions = async (keys: string[]) => {
     const options = await runQuery(`select * from options where key in ('${keys.join("','")}')`);
     return options.reduce((acc: any, option: any) => {
       acc[option.key] = option.value;
       return acc;
     }, {});
+  };
+
+  getIsWriteInProgress = async (op: string) => {
+    const writeStartTime = await this.getOption(op, false);
+    if (writeStartTime) {
+      // Check if it has been more than 5seconds
+      const current = new Date();
+      const start = new Date(writeStartTime);
+
+      if (current.getTime() - start.getTime() < 5000) {
+        return true;
+      }
+      return false;
+    }
+    return false;
   };
 }
 
