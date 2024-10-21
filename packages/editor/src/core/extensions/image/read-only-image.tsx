@@ -18,6 +18,9 @@ export const ReadOnlyImageExtension = (props: Pick<TFileHandler, "getAssetSrc">)
         height: {
           default: null,
         },
+        aspectRatio: {
+          default: null,
+        },
       };
     },
 
