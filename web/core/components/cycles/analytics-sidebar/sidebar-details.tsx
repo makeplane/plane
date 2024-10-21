@@ -3,13 +3,15 @@ import React, { FC } from "react";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { LayersIcon, SquareUser, Users } from "lucide-react";
-// ui
+// plane types
 import { ICycle } from "@plane/types";
+// plane ui
 import { Avatar, AvatarGroup, TextArea } from "@plane/ui";
-// types
+// helpers
+import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useMember, useProjectEstimates } from "@/hooks/store";
-// plane web
+// plane web constants
 import { EEstimateSystem } from "@/plane-web/constants/estimates";
 
 type Props = {
@@ -72,7 +74,7 @@ export const CycleSidebarDetails: FC<Props> = observer((props) => {
           </div>
           <div className="flex w-3/5 items-center rounded-sm">
             <div className="flex items-center gap-2.5">
-              <Avatar name={cycleOwnerDetails?.display_name} src={cycleOwnerDetails?.avatar} />
+              <Avatar name={cycleOwnerDetails?.display_name} src={getFileURL(cycleOwnerDetails?.avatar_url ?? "")} />
               <span className="text-sm text-custom-text-200">{cycleOwnerDetails?.display_name}</span>
             </div>
           </div>
@@ -94,7 +96,7 @@ export const CycleSidebarDetails: FC<Props> = observer((props) => {
                         <Avatar
                           key={memberDetails?.id}
                           name={memberDetails?.display_name ?? ""}
-                          src={memberDetails?.avatar ?? ""}
+                          src={getFileURL(memberDetails?.avatar_url ?? "")}
                           showTooltip={false}
                         />
                       );

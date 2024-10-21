@@ -465,7 +465,7 @@ def track_estimate_points(
             IssueActivity(
                 issue_id=issue_id,
                 actor_id=actor_id,
-                verb="updated",
+                verb="removed" if new_estimate is None else "updated",
                 old_identifier=(
                     current_instance.get("estimate_point")
                     if current_instance.get("estimate_point") is not None
@@ -1700,16 +1700,12 @@ def issue_activity(
                     event=(
                         "issue_comment"
                         if activity.field == "comment"
-                        else "inbox_issue"
-                        if inbox
-                        else "issue"
+                        else "inbox_issue" if inbox else "issue"
                     ),
                     event_id=(
                         activity.issue_comment_id
                         if activity.field == "comment"
-                        else inbox
-                        if inbox
-                        else activity.issue_id
+                        else inbox if inbox else activity.issue_id
                     ),
                     verb=activity.verb,
                     field=(

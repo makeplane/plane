@@ -18,12 +18,15 @@ import { CYCLE_STATUS } from "@/constants/cycle";
 import { CYCLE_FAVORITED, CYCLE_UNFAVORITED } from "@/constants/event-tracker";
 // helpers
 import { findHowManyDaysLeft, getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { generateQueryParams } from "@/helpers/router.helper";
 import { useCycle, useEventTracker, useMember, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+// services
 import { CycleService } from "@/services/cycle.service";
 
 const cycleService = new CycleService();
@@ -208,7 +211,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
     <>
       <button
         onClick={openCycleOverview}
-        className={`z-[1] flex text-custom-primary-200 text-xs gap-1 flex-shrink-0 ${isMobile || isActive ? "flex" : "hidden group-hover:flex"}`}
+        className={`z-[1] flex text-custom-primary-200 text-xs gap-1 flex-shrink-0 ${isMobile || (isActive && !searchParams.has("peekCycle")) ? "flex" : "hidden group-hover:flex"}`}
       >
         <Eye className="h-4 w-4 my-auto  text-custom-primary-200" />
         <span>More details</span>
@@ -260,7 +263,9 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
               <AvatarGroup showTooltip={false}>
                 {cycleDetails.assignee_ids?.map((assignee_id) => {
                   const member = getUserDetails(assignee_id);
-                  return <Avatar key={member?.id} name={member?.display_name} src={member?.avatar} />;
+                  return (
+                    <Avatar key={member?.id} name={member?.display_name} src={getFileURL(member?.avatar_url ?? "")} />
+                  );
                 })}
               </AvatarGroup>
             ) : (

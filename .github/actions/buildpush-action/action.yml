@@ -1,0 +1,126 @@
+name: "Build and Push Docker Image"
+description: "Reusable action for building and pushing Docker images"
+inputs:
+  docker-username:
+    description: "The Dockerhub username"
+    required: true
+  docker-token:
+    description: "The Dockerhub Token"
+    required: true
+
+  # Docker Image Options
+  docker-image-owner:
+    description: "The owner of the Docker image"
+    required: true
+  docker-image-name:
+    description: "The name of the Docker image"
+    required: true
+  build-context:
+    description: "The build context"
+    required: true
+    default: "."
+  dockerfile-path:
+    description: "The path to the Dockerfile"
+    required: true
+  build-args:
+    description: "The build arguments"
+    required: false
+    default: ""
+  
+  # Buildx Options
+  buildx-driver:
+    description: "Buildx driver"
+    required: true
+    default: "docker-container"
+  buildx-version:
+    description: "Buildx version"
+    required: true
+    default: "latest"
+  buildx-platforms:
+    description: "Buildx platforms"
+    required: true
+    default: "linux/amd64"
+  buildx-endpoint:
+    description: "Buildx endpoint"
+    required: true
+    default: "default"
+
+  # Release Build Options
+  build-release:
+    description: "Flag to publish release"
+    required: false
+    default: "false"
+  build-prerelease:
+    description: "Flag to publish prerelease"
+    required: false
+    default: "false"
+  release-version:
+    description: "The release version"
+    required: false
+    default: "latest"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set Docker Tag
+      shell: bash
+      env:
+        IMG_OWNER: ${{ inputs.docker-image-owner }}
+        IMG_NAME: ${{ inputs.docker-image-name }}
+        BUILD_RELEASE: ${{ inputs.build-release }}
+        IS_PRERELEASE: ${{ inputs.build-prerelease }}
+        REL_VERSION: ${{ inputs.release-version }}
+      run: |
+        FLAT_BRANCH_VERSION=$(echo "${{ github.ref_name }}" | sed 's/[^a-zA-Z0-9.-]//g')
+
+        if [ "${{ env.BUILD_RELEASE }}" == "true" ]; then
+          semver_regex="^v([0-9]+)\.([0-9]+)\.([0-9]+)(-[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*)?$"
+          if [[ ! ${{ env.REL_VERSION }} =~ $semver_regex ]]; then
+            echo "Invalid Release Version Format : ${{ env.REL_VERSION }}"
+            echo "Please provide a valid SemVer version"
+            echo "e.g. v1.2.3 or v1.2.3-alpha-1"
+            echo "Exiting the build process"
+            exit 1  # Exit with status 1 to fail the step
+          fi
+
+          TAG=${{ env.IMG_OWNER }}/${{ env.IMG_NAME }}:${{ env.REL_VERSION }}
+
+          if [ "${{ env.IS_PRERELEASE }}" != "true" ]; then
+            TAG=${TAG},${{ env.IMG_OWNER }}/${{ env.IMG_NAME }}:stable
+          fi
+        elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
+          TAG=${{ env.IMG_OWNER }}/${{ env.IMG_NAME }}:latest
+        else
+          TAG=${{ env.IMG_OWNER }}/${{ env.IMG_NAME }}:${FLAT_BRANCH_VERSION}
+        fi
+        
+        echo "DOCKER_TAGS=${TAG}" >> $GITHUB_ENV
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ inputs.docker-username }}
+        password: ${{ inputs.docker-token}}
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+      with:
+        driver: ${{ inputs.buildx-driver }}
+        version: ${{ inputs.buildx-version }}
+        endpoint: ${{ inputs.buildx-endpoint }}
+
+    - name: Check out the repo
+      uses: actions/checkout@v4
+
+    - name: Build and Push Docker Image
+      uses: docker/build-push-action@v5.1.0
+      with:
+        context: ${{ inputs.build-context }}
+        file: ${{ inputs.dockerfile-path }}
+        platforms: ${{ inputs.buildx-platforms }}
+        tags: ${{ env.DOCKER_TAGS }}
+        push: true
+        build-args: ${{ inputs.build-args }}
+      env:
+        DOCKER_BUILDKIT: 1
+        DOCKER_USERNAME: ${{ inputs.docker-username }}
+        DOCKER_PASSWORD: ${{ inputs.docker-token }}

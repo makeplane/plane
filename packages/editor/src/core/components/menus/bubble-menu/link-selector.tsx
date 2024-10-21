@@ -1,6 +1,6 @@
 import { Dispatch, FC, SetStateAction, useCallback, useEffect, useRef } from "react";
 import { Editor } from "@tiptap/core";
-import { Check, Trash } from "lucide-react";
+import { Check, Link, Trash } from "lucide-react";
 // helpers
 import { cn, isValidHttpUrl } from "@/helpers/common";
 import { setLinkEditor, unsetLinkEditor } from "@/helpers/editor-commands";
@@ -11,7 +11,9 @@ type Props = {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 };
 
-export const BubbleMenuLinkSelector: FC<Props> = ({ editor, isOpen, setIsOpen }) => {
+export const BubbleMenuLinkSelector: FC<Props> = (props) => {
+  const { editor, isOpen, setIsOpen } = props;
+  // refs
   const inputRef = useRef<HTMLInputElement>(null);
 
   const onLinkSubmit = useCallback(() => {
@@ -28,26 +30,23 @@ export const BubbleMenuLinkSelector: FC<Props> = ({ editor, isOpen, setIsOpen })
   });
 
   return (
-    <div className="relative">
+    <div className="relative h-full">
       <button
         type="button"
         className={cn(
-          "flex h-full items-center space-x-2 px-3 py-1.5 text-sm font-medium text-custom-text-300 hover:bg-custom-background-100 active:bg-custom-background-100",
-          { "bg-custom-background-100": isOpen }
+          "h-full flex items-center gap-1 px-3 text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 active:bg-custom-background-80 rounded transition-colors",
+          {
+            "bg-custom-background-80": isOpen,
+            "text-custom-text-100": editor.isActive("link"),
+          }
         )}
         onClick={(e) => {
           setIsOpen(!isOpen);
           e.stopPropagation();
         }}
       >
-        <p className="text-base">↗</p>
-        <p
-          className={cn("underline underline-offset-4", {
-            "text-custom-text-100": editor.isActive("link"),
-          })}
-        >
-          Link
-        </p>
+        <span>Link</span>
+        <Link className="flex-shrink-0 size-3" />
       </button>
       {isOpen && (
         <div

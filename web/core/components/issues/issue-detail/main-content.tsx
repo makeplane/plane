@@ -83,7 +83,6 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           containerClassName="-ml-3"
         />
 
-        {/* {issue?.description_html === issueDescription && ( */}
         <IssueDescriptionInput
           workspaceSlug={workspaceSlug}
           projectId={issue.project_id}
@@ -94,7 +93,6 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           setIsSubmitting={(value) => setIsSubmitting(value)}
           containerClassName="-ml-3 border-none"
         />
-        {/* )} */}
 
         {currentUser && (
           <IssueReaction
