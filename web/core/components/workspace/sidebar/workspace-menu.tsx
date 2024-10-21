@@ -61,8 +61,8 @@ export const SidebarWorkspaceMenu = observer(() => {
   }, [sidebarCollapsed, toggleWorkspaceMenu]);
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
 
-  const shouldRenderWorkspaceActiveCycle =
-    workspaceUserInfo[workspaceSlug.toString()]?.active_cycles_count > 0 &&
+  const hideWorkspaceActiveCycle =
+    workspaceUserInfo[workspaceSlug.toString()]?.active_cycles_count <= 0 &&
     currentWorkspaceSubscribedPlanDetail?.product !== "FREE";
 
   return (
@@ -159,7 +159,7 @@ export const SidebarWorkspaceMenu = observer(() => {
             static
           >
             {SIDEBAR_WORKSPACE_MENU_ITEMS.map((link) => {
-              if (link.key === "active-cycles" && !shouldRenderWorkspaceActiveCycle) return null;
+              if (link.key === "active-cycles" && hideWorkspaceActiveCycle) return null;
               return (
                 allowPermissions(link.access, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString()) && (
                   <Tooltip
