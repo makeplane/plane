@@ -351,7 +351,6 @@ export class ProjectInboxStore implements IProjectInboxStore {
           set(this.intakeForms, projectId, form);
         });
       }
-      console.log(form);
     } catch {
       console.error("Error fetching the publish forms");
     }
