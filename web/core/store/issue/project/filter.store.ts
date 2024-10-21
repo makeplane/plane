@@ -31,6 +31,7 @@ export interface IProjectIssuesFilter extends IBaseIssueFilterStore {
     groupId: string | undefined,
     subGroupId: string | undefined
   ) => Partial<Record<TIssueParams, string | boolean>>;
+  getIssueFilters(projectId: string): IIssueFilters | undefined;
   // action
   fetchFilters: (workspaceSlug: string, projectId: string) => Promise<void>;
   updateFilters: (

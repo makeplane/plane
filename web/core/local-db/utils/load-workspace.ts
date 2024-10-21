@@ -45,11 +45,11 @@ export const loadLabels = async (workspaceSlug: string, batchSize = 500) => {
   for (let i = 0; i < objects.length; i += batchSize) {
     const batch = objects.slice(i, i + batchSize);
 
-    persistence.db.exec("BEGIN TRANSACTION;");
+    // await persistence.db.exec("BEGIN TRANSACTION;");
     batch.forEach((label: any) => {
       stageInserts("labels", labelSchema, label);
     });
-    await persistence.db.exec("COMMIT;");
+    // await persistence.db.exec("COMMIT;");
   }
 };
 
@@ -59,11 +59,11 @@ export const loadModules = async (workspaceSlug: string, batchSize = 500) => {
   for (let i = 0; i < objects.length; i += batchSize) {
     const batch = objects.slice(i, i + batchSize);
 
-    persistence.db.exec("BEGIN TRANSACTION;");
+    // await persistence.db.exec("BEGIN TRANSACTION;");
     batch.forEach((label: any) => {
       stageInserts("modules", labelSchema, label);
     });
-    await persistence.db.exec("COMMIT;");
+    // await persistence.db.exec("COMMIT;");
   }
 };
 
@@ -74,11 +74,11 @@ export const loadCycles = async (workspaceSlug: string, batchSize = 500) => {
   for (let i = 0; i < objects.length; i += batchSize) {
     const batch = objects.slice(i, i + batchSize);
 
-    persistence.db.exec("BEGIN TRANSACTION;");
+    // await persistence.db.exec("BEGIN TRANSACTION;");
     batch.forEach((cycle: any) => {
       stageInserts("cycles", cycleSchema, cycle);
     });
-    await persistence.db.exec("COMMIT;");
+    // await persistence.db.exec("COMMIT;");
   }
 };
 
@@ -88,11 +88,11 @@ export const loadStates = async (workspaceSlug: string, batchSize = 500) => {
   for (let i = 0; i < objects.length; i += batchSize) {
     const batch = objects.slice(i, i + batchSize);
 
-    persistence.db.exec("BEGIN TRANSACTION;");
+    // await persistence.db.exec("BEGIN TRANSACTION;");
     batch.forEach((state: any) => {
       stageInserts("states", stateSchema, state);
     });
-    await persistence.db.exec("COMMIT;");
+    // await persistence.db.exec("COMMIT;");
   }
 };
 
@@ -108,11 +108,11 @@ export const loadEstimatePoints = async (workspaceSlug: string, batchSize = 500)
   for (let i = 0; i < objects.length; i += batchSize) {
     const batch = objects.slice(i, i + batchSize);
 
-    persistence.db.exec("BEGIN TRANSACTION;");
+    // await persistence.db.exec("BEGIN TRANSACTION;");
     batch.forEach((point: any) => {
       stageInserts("estimate_points", estimatePointSchema, point);
     });
-    await persistence.db.exec("COMMIT;");
+    // await persistence.db.exec("COMMIT;");
   }
 };
 
@@ -122,11 +122,11 @@ export const loadMembers = async (workspaceSlug: string, batchSize = 500) => {
   const objects = members.map((member: IWorkspaceMember) => member.member);
   for (let i = 0; i < objects.length; i += batchSize) {
     const batch = objects.slice(i, i + batchSize);
-    persistence.db.exec("BEGIN TRANSACTION;");
+    // await persistence.db.exec("BEGIN TRANSACTION;");
     batch.forEach((member: any) => {
       stageInserts("members", memberSchema, member);
     });
-    await persistence.db.exec("COMMIT;");
+    // await persistence.db.exec("COMMIT;");
   }
 };
 
