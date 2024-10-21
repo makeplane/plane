@@ -25,6 +25,7 @@ export const EmojiIconPicker: React.FC<TCustomEmojiPicker> = (props) => {
     label,
     onChange,
     placement = "bottom-start",
+    searchDisabled = false,
     searchPlaceholder = "Search",
     theme,
   } = props;
@@ -107,10 +108,12 @@ export const EmojiIconPicker: React.FC<TCustomEmojiPicker> = (props) => {
                       height="20rem"
                       width="100%"
                       theme={theme}
+                      searchDisabled={searchDisabled}
                       searchPlaceholder={searchPlaceholder}
                       previewConfig={{
                         showPreview: false,
                       }}
+                      lazyLoadEmojis
                     />
                   </Tab.Panel>
                   <Tab.Panel className="h-80 w-full relative overflow-hidden overflow-y-auto">
@@ -123,6 +126,7 @@ export const EmojiIconPicker: React.FC<TCustomEmojiPicker> = (props) => {
                         });
                         if (closeOnSelect) handleToggle(false);
                       }}
+                      searchDisabled={searchDisabled}
                     />
                   </Tab.Panel>
                 </Tab.Panels>

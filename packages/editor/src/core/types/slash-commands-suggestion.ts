@@ -23,7 +23,8 @@ export type TEditorCommands =
   | "divider"
   | "issue-embed"
   | "text-color"
-  | "background-color";
+  | "background-color"
+  | "callout";
 
 export type TColorEditorCommands = Extract<TEditorCommands, "text-color" | "background-color">;
 export type TNonColorEditorCommands = Exclude<TEditorCommands, "text-color" | "background-color">;

@@ -8,7 +8,6 @@ import {
   TAIHandler,
   TColorEditorCommands,
   TDisplayConfig,
-  TEditorCommands,
   TEmbedConfig,
   TExtensions,
   TFileHandler,
