@@ -490,12 +490,9 @@ class CycleViewSet(BaseViewSet):
             notification=True,
             origin=request.META.get("HTTP_ORIGIN"),
         )
-        # Delete the cycle
-        cycle.delete()
-        # Delete the cycle issues
-        CycleIssue.objects.filter(
-            cycle_id=self.kwargs.get("pk"),
-        ).delete()
+        # TODO: Soft delete the cycle break the onetoone relationship with cycle issue
+        cycle.delete(soft=False)
+
         # Delete the user favorite cycle
         UserFavorite.objects.filter(
             user=request.user,
