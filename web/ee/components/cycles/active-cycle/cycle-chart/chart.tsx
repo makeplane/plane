@@ -206,11 +206,11 @@ export const ActiveCycleChart = observer((props: Props) => {
         {/* Beyond Time */}
         <ReferenceLine x={endDate} stroke={colors.beyondTimeStroke} label="" strokeDasharray="3 3" />
         {/* Ideal - Actual */}
-        <Area dataKey="range" strokeWidth={0} fill={`url(#diff)`} isAnimationActive={false} />
+        <Area dataKey="range" strokeWidth={0} fill={`url(#diff)`} isAnimationActive={false} type="monotone" />
 
         {/* Ideal */}
         <Line
-          type="linear"
+          type="monotone"
           dataKey="ideal"
           strokeWidth={1}
           stroke={colors.idealStroke}
@@ -220,6 +220,7 @@ export const ActiveCycleChart = observer((props: Props) => {
         />
         {areaToHighlight === "ideal" && (
           <Area
+            type="monotone"
             dataKey="ideal"
             fill="url(#fillIdeal)"
             fillOpacity={0.4}
@@ -230,7 +231,7 @@ export const ActiveCycleChart = observer((props: Props) => {
         )}
         {/* Started */}
         <Line
-          type="linear"
+          type="monotone"
           dataKey="started"
           strokeWidth={2}
           stroke={colors.startedStroke}
@@ -239,6 +240,7 @@ export const ActiveCycleChart = observer((props: Props) => {
         />
         {areaToHighlight === "started" && (
           <Area
+            type="monotone"
             dataKey="started"
             fill="url(#fillStarted)"
             fillOpacity={0.4}
@@ -249,7 +251,7 @@ export const ActiveCycleChart = observer((props: Props) => {
         )}
         {/* Actual */}
         <Line
-          type="linear"
+          type="monotone"
           dataKey="actual"
           strokeWidth={3}
           stroke={colors.actual}
@@ -258,6 +260,7 @@ export const ActiveCycleChart = observer((props: Props) => {
         />
         {areaToHighlight === "actual" && (
           <Area
+            type="monotone"
             dataKey="actual"
             fill="url(#fillPending)"
             fillOpacity={0.4}
