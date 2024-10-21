@@ -47,7 +47,6 @@ export const IssueParentDetail: FC<TIssueParentDetail> = observer((props) => {
       <div className="mb-5 flex w-min items-center gap-3 whitespace-nowrap rounded-md border border-custom-border-300 bg-custom-background-80 px-2.5 py-1 text-xs">
         <ControlLink
           href={`/${workspaceSlug}/projects/${parentIssue?.project_id}/issues/${parentIssue.id}`}
-          target="_blank"
           onClick={() => handleRedirection(workspaceSlug, parentIssue, isMobile)}
         >
           <div className="flex items-center gap-2">
