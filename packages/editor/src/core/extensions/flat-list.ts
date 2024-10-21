@@ -1,24 +1,7 @@
-import { Node, NodeRange } from "@tiptap/core";
-import {
-  createListSpec,
-  createListPlugins,
-  listInputRules,
-  listKeymap,
-  DedentListOptions,
-  IndentListOptions,
-  ListAttributes,
-  ToggleCollapsedOptions,
-  UnwrapListOptions,
-  createDedentListCommand,
-  createIndentListCommand,
-  createMoveListCommand,
-  createSplitListCommand,
-  createToggleCollapsedCommand,
-  createToggleListCommand,
-  createUnwrapListCommand,
-  createWrapInListCommand,
-  protectCollapsed,
-} from "prosemirror-flat-list";
+import { Node } from "@tiptap/core";
+import { createListSpec, createListPlugins, listKeymap, listInputRules } from "prosemirror-flat-list";
+import { keymap } from "@tiptap/pm/keymap";
+import { inputRules } from "@tiptap/pm/inputrules";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -28,59 +11,26 @@ declare module "@tiptap/core" {
   }
 }
 
-const listSpec = createListSpec();
+const { attrs, parseDOM, toDOM, content, group, definingForContent, definingAsContext } = createListSpec();
+const listKeymapPlugin = keymap(listKeymap);
+const listInputRulePlugin = inputRules({ rules: listInputRules });
+
 export const FlatListExtension = Node.create({
   name: "flatListComponent",
-
-  addOptions() {
-    return {
-      HTMLAttributes: {},
-    };
-  },
-
+  content,
+  group,
+  definingForContent,
+  definingAsContext,
   addAttributes() {
-    return listSpec.attrs;
+    return attrs;
   },
-
   parseHTML() {
-    return listSpec.parseDOM;
+    return parseDOM;
   },
-
   renderHTML({ node }) {
-    return listSpec.toDOM(node);
+    return toDOM(node);
   },
-
-  // addCommands() {
-  //   return {
-  //     toggleCustomList:
-  //       (attrs) =>
-  //       ({ commands }) =>
-  //         commands.toggleNode(this.name, this.name, attrs),
-  //   };
-  // },
-
-  addCommands() {
-    return {
-      indentList: (props?: IndentListOptions) => createIndentListCommand(props),
-      dedentList: (props?: DedentListOptions) => createDedentListCommand(props),
-      unwrapList: (options?: UnwrapListOptions) => createUnwrapListCommand(options),
-      wrapInList: (getAttrs: ListAttributes | ((range: NodeRange) => ListAttributes | null)) =>
-        createWrapInListCommand<ListAttributes>(getAttrs),
-      moveList: (direction: "up" | "down") => createMoveListCommand(direction),
-      splitList: () => createSplitListCommand(),
-
-      protectCollapsed: () => protectCollapsed,
-
-      toggleCollapsed: (props?: ToggleCollapsedOptions) => createToggleCollapsedCommand(props),
-      toggleList: (attrs: ListAttributes) => createToggleListCommand(attrs),
-    } as const;
-  },
-
-  addInputRules() {
-    return listInputRules;
-  },
-
   addProseMirrorPlugins() {
-    return [...createListPlugins({ schema: this.editor.schema }), listInputRules, listKeymap];
+    return [...createListPlugins({ schema: this.editor.schema }), listKeymapPlugin, listInputRulePlugin];
   },
 });
