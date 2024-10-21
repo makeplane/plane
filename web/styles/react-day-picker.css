@@ -9,7 +9,7 @@
   /* Font size for the caption labels. */
   --rdp-accent-color: rgba(var(--color-primary-100));
   /* Accent color for the background of selected days. */
-  --rdp-background-color: rgba(var(--color-primary-100), 0.2);
+  --rdp-background-color: rgba(var(--color-primary-100), 0.5);
   /* Background color for the hovered/focused elements. */
   --rdp-dark-background-color: rgba(var(--color-primary-300));
   /* Background color for the hovered/focused, already selected elements. */
@@ -223,7 +223,7 @@
   color: unset;
 }
 
-.rdp-dropdown:focus-visible:not([disabled])+.rdp-caption_label {
+.rdp-dropdown:focus-visible:not([disabled]) + .rdp-caption_label {
   background-color: var(--rdp-background-color);
   border: var(--rdp-outline);
   border-radius: 6px;
@@ -293,7 +293,7 @@
 }
 
 .rdp-day_today:not(.rdp-day_outside)::after {
-  content: '';
+  content: "";
   position: absolute;
   left: 50%;
   bottom: 2px;
@@ -329,7 +329,7 @@ td:has(.rdp-day_range_end) {
 td:has(.rdp-day_range_start)::before,
 td:has(.rdp-day_range_middle)::before,
 td:has(.rdp-day_range_end)::before {
-  content: '';
+  content: "";
   position: absolute;
   background-color: var(--rdp-background-color);
   top: 50%;
