@@ -59,7 +59,6 @@
     "react-markdown": "^8.0.7",
     "react-pdf-html": "^2.1.2",
     "react-popper": "^2.3.0",
-    "recharts": "^2.12.7",
     "sharp": "^0.32.1",
     "smooth-scroll-into-view-if-needed": "^2.0.2",
     "swr": "^2.1.3",
