@@ -217,12 +217,11 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   };
 
   useEffect(() => {
-    if (isSubmitting === "submitting") return;
     if (!isNotificationEmbed) document.addEventListener("keydown", onKeyDown);
     return () => {
       if (!isNotificationEmbed) document.removeEventListener("keydown", onKeyDown);
     };
-  }, [onKeyDown, isNotificationEmbed, isSubmitting]);
+  }, [onKeyDown, isNotificationEmbed]);
 
   if (!inboxIssue) return null;
 
