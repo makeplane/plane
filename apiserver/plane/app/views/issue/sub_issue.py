@@ -3,16 +3,7 @@ import json
 
 # Django imports
 from django.utils import timezone
-from django.db.models import (
-    OuterRef,
-    Func,
-    F,
-    Q,
-    Value,
-    UUIDField,
-    Case,
-    When,
-)
+from django.db.models import OuterRef, Func, F, Q, Value, UUIDField, Subquery
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -31,6 +22,7 @@ from plane.db.models import (
     Issue,
     IssueLink,
     FileAsset,
+    CycleIssue,
 )
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.user_timezone_converter import user_timezone_converter
@@ -51,12 +43,10 @@ class SubIssuesEndpoint(BaseAPIView):
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
             .annotate(
-                cycle_id=Case(
-                    When(
-                        issue_cycle__deleted_at__isnull=True,
-                        then=F("issue_cycle__cycle_id"),
-                    ),
-                    default=None,
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(
+                        issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("cycle_id")[:1]
                 )
             )
             .annotate(
