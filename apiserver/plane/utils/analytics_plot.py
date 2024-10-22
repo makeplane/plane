@@ -142,6 +142,7 @@ def burndown_plot(
             workspace__slug=slug,
             project_id=project_id,
             issue_cycle__cycle_id=cycle_id,
+            issue_cycle__deleted_at__isnull=True,
             estimate_point__isnull=False,
         ).values_list("estimate_point__value", flat=True)
 
@@ -153,6 +154,7 @@ def burndown_plot(
             workspace__slug=slug,
             project_id=project_id,
             issue_module__module_id=module_id,
+            issue_module__deleted_at__isnull=True,
             estimate_point__isnull=False,
         ).values_list("estimate_point__value", flat=True)
 
@@ -179,6 +181,7 @@ def burndown_plot(
                     workspace__slug=slug,
                     project_id=project_id,
                     issue_cycle__cycle_id=cycle_id,
+                    issue_cycle__deleted_at__isnull=True,
                     estimate_point__isnull=False,
                 )
                 .annotate(date=TruncDate("completed_at"))
@@ -192,6 +195,7 @@ def burndown_plot(
                     workspace__slug=slug,
                     project_id=project_id,
                     issue_cycle__cycle_id=cycle_id,
+                    issue_cycle__deleted_at__isnull=True,
                 )
                 .annotate(date=TruncDate("completed_at"))
                 .values("date")
@@ -217,6 +221,7 @@ def burndown_plot(
                     workspace__slug=slug,
                     project_id=project_id,
                     issue_module__module_id=module_id,
+                    issue_module__deleted_at__isnull=True,
                     estimate_point__isnull=False,
                 )
                 .annotate(date=TruncDate("completed_at"))
@@ -230,6 +235,7 @@ def burndown_plot(
                     workspace__slug=slug,
                     project_id=project_id,
                     issue_module__module_id=module_id,
+                    issue_module__deleted_at__isnull=True,
                 )
                 .annotate(date=TruncDate("completed_at"))
                 .values("date")
