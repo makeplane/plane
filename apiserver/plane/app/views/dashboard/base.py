@@ -42,6 +42,7 @@ from plane.db.models import (
     Project,
     Widget,
     WorkspaceMember,
+    CycleIssue,
 )
 from plane.utils.issue_filters import issue_filters
 
@@ -191,7 +192,13 @@ def dashboard_assigned_issues(self, request, slug):
                 ).select_related("issue"),
             )
         )
-        .annotate(cycle_id=F("issue_cycle__cycle_id"))
+        .annotate(
+            cycle_id=Subquery(
+                CycleIssue.objects.filter(
+                    issue=OuterRef("id"), deleted_at__isnull=True
+                ).values("cycle_id")[:1]
+            )
+        )
         .annotate(
             link_count=IssueLink.objects.filter(issue=OuterRef("id"))
             .order_by()
@@ -365,7 +372,13 @@ def dashboard_created_issues(self, request, slug):
         .filter(**filters)
         .select_related("workspace", "project", "state", "parent")
         .prefetch_related("assignees", "labels", "issue_module__module")
-        .annotate(cycle_id=F("issue_cycle__cycle_id"))
+        .annotate(
+            cycle_id=Subquery(
+                CycleIssue.objects.filter(
+                    issue=OuterRef("id"), deleted_at__isnull=True
+                ).values("cycle_id")[:1]
+            )
+        )
         .annotate(
             link_count=IssueLink.objects.filter(issue=OuterRef("id"))
             .order_by()

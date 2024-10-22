@@ -8,12 +8,11 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.db.models import (
-    F,
     Q,
     UUIDField,
     Value,
-    Case,
-    When,
+    Subquery,
+    OuterRef,
 )
 from django.db.models.functions import Coalesce
 from django.utils.decorators import method_decorator
@@ -36,7 +35,6 @@ from plane.db.models import (
     DraftIssue,
     CycleIssue,
     ModuleIssue,
-    DraftIssueModule,
     DraftIssueCycle,
     Workspace,
     FileAsset,
@@ -56,14 +54,11 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
             .prefetch_related(
                 "assignees", "labels", "draft_issue_module__module"
             )
-            .annotate(cycle_id=F("draft_issue_cycle__cycle_id"))
             .annotate(
-                cycle_id=Case(
-                    When(
-                        draft_issue_cycle__deleted_at__isnull=True,
-                        then=F("draft_issue_cycle__cycle_id"),
-                    ),
-                    default=None,
+                cycle_id=Subquery(
+                    DraftIssueCycle.objects.filter(
+                        draft_issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("cycle_id")[:1]
                 )
             )
             .annotate(
@@ -82,9 +77,11 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "assignees__id",
                         distinct=True,
-                        filter=Q(~Q(assignees__id__isnull=True)
-                        & Q(assignees__member_project__is_active=True)
-                        & Q(draft_issue_assignee__deleted_at__isnull=True)),
+                        filter=Q(
+                            ~Q(assignees__id__isnull=True)
+                            & Q(assignees__member_project__is_active=True)
+                            & Q(draft_issue_assignee__deleted_at__isnull=True)
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -92,11 +89,13 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "draft_issue_module__module_id",
                         distinct=True,
-                        filter=Q(~Q(draft_issue_module__module_id__isnull=True)
-                        & Q(
-                            draft_issue_module__module__archived_at__isnull=True
-                        )
-                        & Q(draft_issue_module__deleted_at__isnull=True)),
+                        filter=Q(
+                            ~Q(draft_issue_module__module_id__isnull=True)
+                            & Q(
+                                draft_issue_module__module__archived_at__isnull=True
+                            )
+                            & Q(draft_issue_module__deleted_at__isnull=True)
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),

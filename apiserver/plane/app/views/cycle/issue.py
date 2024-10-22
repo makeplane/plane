@@ -3,7 +3,7 @@ import json
 
 # Django imports
 from django.core import serializers
-from django.db.models import F, Func, OuterRef, Q, Case, When
+from django.db.models import F, Func, OuterRef, Q, Subquery
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
@@ -103,12 +103,10 @@ class CycleIssueViewSet(BaseViewSet):
             )
             .filter(**filters)
             .annotate(
-                cycle_id=Case(
-                    When(
-                        issue_cycle__deleted_at__isnull=True,
-                        then=F("issue_cycle__cycle_id"),
-                    ),
-                    default=None,
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(
+                        issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("cycle_id")[:1]
                 )
             )
             .annotate(
