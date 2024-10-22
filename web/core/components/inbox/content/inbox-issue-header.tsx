@@ -196,14 +196,13 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
 
   const onKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      if (isSubmitting === "submitting") return;
       if (e.key === "ArrowUp") {
         handleInboxIssueNavigation("prev");
       } else if (e.key === "ArrowDown") {
         handleInboxIssueNavigation("next");
       }
     },
-    [handleInboxIssueNavigation, isSubmitting]
+    [handleInboxIssueNavigation]
   );
 
   const handleActionWithPermission = (isAdmin: boolean, action: () => void, errorMessage: string) => {
@@ -218,11 +217,12 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   };
 
   useEffect(() => {
+    if (isSubmitting === "submitting") return;
     if (!isNotificationEmbed) document.addEventListener("keydown", onKeyDown);
     return () => {
       if (!isNotificationEmbed) document.removeEventListener("keydown", onKeyDown);
     };
-  }, [onKeyDown, isNotificationEmbed]);
+  }, [onKeyDown, isNotificationEmbed, isSubmitting]);
 
   if (!inboxIssue) return null;
 
