@@ -52,7 +52,7 @@ export const DraftIssueProperties: React.FC<IIssueProperties> = observer((props)
 
   const issueOperations = useMemo(
     () => ({
-      updateModulesToIssue: async (moduleIds: string[]) => {
+      updateIssueModules: async (moduleIds: string[]) => {
         if (!workspaceSlug || !issue.id) return;
         await addModulesToIssue(workspaceSlug.toString(), issue.id, moduleIds);
       },
@@ -84,7 +84,7 @@ export const DraftIssueProperties: React.FC<IIssueProperties> = observer((props)
   const handleModule = useCallback(
     (moduleIds: string[] | null) => {
       if (!issue || !issue.module_ids || !moduleIds) return;
-      issueOperations.updateModulesToIssue(moduleIds);
+      issueOperations.updateIssueModules(moduleIds);
     },
     [issueOperations, issue]
   );
