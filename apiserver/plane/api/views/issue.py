@@ -16,6 +16,7 @@ from django.db.models import (
     Q,
     Value,
     When,
+    Subquery,
 )
 from django.utils import timezone
 
@@ -48,6 +49,7 @@ from plane.db.models import (
     Label,
     Project,
     ProjectMember,
+    CycleIssue,
 )
 
 from .base import BaseAPIView
@@ -203,12 +205,10 @@ class IssueAPIEndpoint(BaseAPIView):
         issue_queryset = (
             self.get_queryset()
             .annotate(
-                cycle_id=Case(
-                    When(
-                        Q(issue_cycle__deleted_at__isnull=True),
-                        then=F("issue_cycle__cycle_id"),
-                    ),
-                    default=None,
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(
+                        issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("cycle_id")[:1]
                 )
             )
             .annotate(
