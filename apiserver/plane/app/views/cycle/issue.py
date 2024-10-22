@@ -90,7 +90,10 @@ class CycleIssueViewSet(BaseViewSet):
         order_by_param = request.GET.get("order_by", "created_at")
         filters = issue_filters(request.query_params, "GET")
         issue_queryset = (
-            Issue.issue_objects.filter(issue_cycle__cycle_id=cycle_id)
+            Issue.issue_objects.filter(
+                issue_cycle__cycle_id=cycle_id,
+                issue_cycle__deleted_at__isnull=True,
+            )
             .filter(project_id=project_id)
             .filter(workspace__slug=slug)
             .filter(**filters)

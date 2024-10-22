@@ -78,6 +78,7 @@ class CycleAPIEndpoint(BaseAPIView):
                     filter=Q(
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -88,6 +89,7 @@ class CycleAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="completed",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -98,6 +100,7 @@ class CycleAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="cancelled",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -108,6 +111,7 @@ class CycleAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="started",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -118,6 +122,7 @@ class CycleAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="unstarted",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -128,6 +133,7 @@ class CycleAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="backlog",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -437,6 +443,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                     filter=Q(
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -447,6 +454,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="completed",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -457,6 +465,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="cancelled",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -467,6 +476,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="started",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -477,6 +487,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="unstarted",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -487,6 +498,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="backlog",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -500,6 +512,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="completed",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -510,6 +523,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="started",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -615,7 +629,10 @@ class CycleIssueAPIEndpoint(BaseAPIView):
         # List
         order_by = request.GET.get("order_by", "created_at")
         issues = (
-            Issue.issue_objects.filter(issue_cycle__cycle_id=cycle_id)
+            Issue.issue_objects.filter(
+                issue_cycle__cycle_id=cycle_id,
+                issue_cycle__deleted_at__isnull=True,
+            )
             .annotate(
                 sub_issues_count=Issue.issue_objects.filter(
                     parent=OuterRef("id")
@@ -812,6 +829,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                     filter=Q(
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -822,6 +840,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="completed",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -832,6 +851,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="cancelled",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -842,6 +862,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="started",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -852,6 +873,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="unstarted",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -862,6 +884,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="backlog",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -878,6 +901,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
             assignee_estimate_data = (
                 Issue.issue_objects.filter(
                     issue_cycle__cycle_id=cycle_id,
+                    issue_cycle__deleted_at__isnull=True,
                     workspace__slug=slug,
                     project_id=project_id,
                 )
@@ -953,6 +977,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
             label_distribution_data = (
                 Issue.issue_objects.filter(
                     issue_cycle__cycle_id=cycle_id,
+                    issue_cycle__deleted_at__isnull=True,
                     workspace__slug=slug,
                     project_id=project_id,
                 )
@@ -1014,6 +1039,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
         assignee_distribution = (
             Issue.issue_objects.filter(
                 issue_cycle__cycle_id=cycle_id,
+                issue_cycle__deleted_at__isnull=True,
                 workspace__slug=slug,
                 project_id=project_id,
             )
@@ -1092,6 +1118,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
         label_distribution = (
             Issue.issue_objects.filter(
                 issue_cycle__cycle_id=cycle_id,
+                issue_cycle__deleted_at__isnull=True,
                 workspace__slug=slug,
                 project_id=project_id,
             )
