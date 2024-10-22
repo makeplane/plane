@@ -12,6 +12,7 @@ import {
   TInboxIssueSorting,
   TInboxIssuePaginationInfo,
   TInboxIssueSortingOrderByQueryParam,
+  TInboxForm,
 } from "@plane/types";
 // helpers
 import { EInboxIssueCurrentTab, EInboxIssueStatus, EPastDurationFilters, getCustomDates } from "@/helpers/inbox.helper";
@@ -39,6 +40,7 @@ export interface IProjectInboxStore {
   inboxIssuePaginationInfo: TInboxIssuePaginationInfo | undefined;
   inboxIssues: Record<string, IInboxIssueStore>; // issue_id -> IInboxIssueStore
   inboxIssueIds: string[];
+  intakeForms: Record<string, TInboxForm>;
   // computed
   inboxFilters: Partial<TInboxIssueFilter>; // computed project inbox filters
   inboxSorting: Partial<TInboxIssueSorting>; // computed project inbox sorting
@@ -68,6 +70,9 @@ export interface IProjectInboxStore {
   ) => Promise<void>;
   fetchInboxPaginationIssues: (workspaceSlug: string, projectId: string) => Promise<void>;
   fetchInboxIssueById: (workspaceSlug: string, projectId: string, inboxIssueId: string) => Promise<TInboxIssue>;
+  fetchIntakeForms: (workspaceSlug: string, projectId: string) => Promise<void>;
+  toggleIntakeForms: (workspaceSlug: string, projectId: string, isDisabled: boolean) => Promise<void>;
+  regenerateIntakeForms: (workspaceSlug: string, projectId: string) => Promise<void>;
   createInboxIssue: (
     workspaceSlug: string,
     projectId: string,
@@ -89,6 +94,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
   inboxIssuePaginationInfo: TInboxIssuePaginationInfo | undefined = undefined;
   inboxIssues: Record<string, IInboxIssueStore> = {};
   inboxIssueIds: string[] = [];
+  intakeForms: Record<string, TInboxForm> = {};
   // services
   inboxIssueService;
 
@@ -103,6 +109,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
       inboxIssuePaginationInfo: observable,
       inboxIssues: observable,
       inboxIssueIds: observable,
+      intakeForms: observable,
       // computed
       inboxFilters: computed,
       inboxSorting: computed,
@@ -307,6 +314,45 @@ export class ProjectInboxStore implements IProjectInboxStore {
     }
     if (isEmpty(this.inboxSorting)) {
       set(this.sortingMap, [projectId], { order_by: "issue__created_at", sort_by: "desc" });
+    }
+  };
+
+  fetchIntakeForms = async (workspaceSlug: string, projectId: string) => {
+    try {
+      const intakeForms = await this.inboxIssueService.retrievePublishForm(workspaceSlug, projectId);
+      if (intakeForms)
+        runInAction(() => {
+          set(this.intakeForms, projectId, intakeForms);
+        });
+    } catch {
+      console.error("Error fetching the publish forms");
+    }
+  };
+
+  toggleIntakeForms = async (workspaceSlug: string, projectId: string, isDisabled: boolean) => {
+    try {
+      runInAction(() => {
+        set(this.intakeForms, projectId, { ...this.intakeForms[projectId], is_disabled: isDisabled });
+      });
+      await this.inboxIssueService.updatePublishForm(workspaceSlug, projectId, isDisabled);
+    } catch {
+      console.error("Error fetching the publish forms");
+      runInAction(() => {
+        set(this.intakeForms, projectId, { ...this.intakeForms[projectId], is_disabled: !isDisabled });
+      });
+    }
+  };
+
+  regenerateIntakeForms = async (workspaceSlug: string, projectId: string) => {
+    try {
+      const form = await this.inboxIssueService.regeneratePublishForm(workspaceSlug, projectId);
+      if (form) {
+        runInAction(() => {
+          set(this.intakeForms, projectId, form);
+        });
+      }
+    } catch {
+      console.error("Error fetching the publish forms");
     }
   };
 
