@@ -218,7 +218,7 @@ def dashboard_assigned_issues(self, request, slug):
                 ArrayAgg(
                     "labels__id",
                     distinct=True,
-                    filter=(
+                    filter=Q(
                         ~Q(labels__id__isnull=True)
                         & Q(label_issue__deleted_at__isnull=True),
                     ),
@@ -229,9 +229,11 @@ def dashboard_assigned_issues(self, request, slug):
                 ArrayAgg(
                     "assignees__id",
                     distinct=True,
-                    filter=~Q(assignees__id__isnull=True)
-                    & Q(assignees__member_project__is_active=True)
-                    & Q(issue_assignee__deleted_at__isnull=True)
+                    filter=Q(
+                        ~Q(assignees__id__isnull=True)
+                        & Q(assignees__member_project__is_active=True)
+                        & Q(issue_assignee__deleted_at__isnull=True)
+                    ),
                 ),
                 Value([], output_field=ArrayField(UUIDField())),
             ),
@@ -239,9 +241,11 @@ def dashboard_assigned_issues(self, request, slug):
                 ArrayAgg(
                     "issue_module__module_id",
                     distinct=True,
-                    filter=~Q(issue_module__module_id__isnull=True)
-                    & Q(issue_module__module__archived_at__isnull=True)
-                    & Q(issue_module__deleted_at__isnull=True),
+                    filter=Q(
+                        ~Q(issue_module__module_id__isnull=True)
+                        & Q(issue_module__module__archived_at__isnull=True)
+                        & Q(issue_module__deleted_at__isnull=True)
+                    ),
                 ),
                 Value([], output_field=ArrayField(UUIDField())),
             ),
@@ -388,7 +392,7 @@ def dashboard_created_issues(self, request, slug):
                 ArrayAgg(
                     "labels__id",
                     distinct=True,
-                    filter=(
+                    filter=Q(
                         ~Q(labels__id__isnull=True)
                         & Q(label_issue__deleted_at__isnull=True),
                     ),
@@ -399,9 +403,11 @@ def dashboard_created_issues(self, request, slug):
                 ArrayAgg(
                     "assignees__id",
                     distinct=True,
-                    filter=~Q(assignees__id__isnull=True)
-                    & Q(assignees__member_project__is_active=True)
-                    & Q(issue_assignee__deleted_at__isnull=True),
+                    filter=Q(
+                        ~Q(assignees__id__isnull=True)
+                        & Q(assignees__member_project__is_active=True)
+                        & Q(issue_assignee__deleted_at__isnull=True)
+                    ),
                 ),
                 Value([], output_field=ArrayField(UUIDField())),
             ),
@@ -409,9 +415,11 @@ def dashboard_created_issues(self, request, slug):
                 ArrayAgg(
                     "issue_module__module_id",
                     distinct=True,
-                    filter=~Q(issue_module__module_id__isnull=True)
-                    & Q(issue_module__module__archived_at__isnull=True)
-                    & Q(issue_module__deleted_at__isnull=True),
+                    filter=Q(
+                        ~Q(issue_module__module_id__isnull=True)
+                        & Q(issue_module__module__archived_at__isnull=True)
+                        & Q(issue_module__deleted_at__isnull=True)
+                    ),
                 ),
                 Value([], output_field=ArrayField(UUIDField())),
             ),
