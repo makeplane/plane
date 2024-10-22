@@ -1,6 +1,6 @@
 import { persistence } from "../storage.sqlite";
+import { log } from "./utils";
 
-const log = console.log;
 export const createIssueIndexes = async () => {
   const columns = [
     "state_id",
