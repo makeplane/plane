@@ -19,3 +19,4 @@ from .module import (
     ModuleLiteSerializer,
 )
 from .inbox import InboxIssueSerializer
+from .issue_type import IssueTypeAPISerializer, ProjectIssueTypeAPISerializer

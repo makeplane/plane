@@ -276,7 +276,7 @@ class UpdateReaction(ProjectBaseModel):
     )
 
     class Meta:
-        unique_together = ["update", "actor", "reaction"]
+        unique_together = ["actor", "reaction", "update"]
         verbose_name = "Update Reaction"
         verbose_name_plural = "Update Reactions"
         db_table = "update_reactions"

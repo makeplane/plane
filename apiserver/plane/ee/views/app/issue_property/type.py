@@ -61,7 +61,6 @@ class WorkspaceIssueTypeEndpoint(BaseAPIView):
 
 
 class IssueTypeEndpoint(BaseAPIView):
-
     permission_classes = [
         ProjectEntityPermission,
     ]
@@ -115,7 +114,7 @@ class IssueTypeEndpoint(BaseAPIView):
         serializer = IssueTypeSerializer(issue_types, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    # @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
+    @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
     def post(self, request, slug, project_id):
         # Fetch the project
         project = Project.objects.get(pk=project_id)
@@ -182,9 +181,7 @@ class IssueTypeEndpoint(BaseAPIView):
         )
 
         # Default cannot be made in active
-        if issue_type.is_default and not request.data.get(
-            "is_active"
-        ):
+        if issue_type.is_default and not request.data.get("is_active"):
             return Response(
                 {"error": "Default issue type cannot be inactive"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -262,7 +259,6 @@ class IssueTypeEndpoint(BaseAPIView):
 
 
 class DefaultIssueTypeEndpoint(BaseAPIView):
-
     permission_classes = [
         ProjectEntityPermission,
     ]

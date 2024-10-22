@@ -51,6 +51,8 @@ class IssueProperty(WorkspaceBaseModel):
     )
     is_multi = models.BooleanField(default=False)
     validation_rules = models.JSONField(blank=True, default=dict)
+    external_source = models.CharField(max_length=255, null=True, blank=True)
+    external_id = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         ordering = ["sort_order"]
@@ -98,6 +100,8 @@ class IssuePropertyOption(WorkspaceBaseModel):
         blank=True,
     )
     is_default = models.BooleanField(default=False)
+    external_source = models.CharField(max_length=255, null=True, blank=True)
+    external_id = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         ordering = ["sort_order"]
@@ -146,6 +150,8 @@ class IssuePropertyValue(WorkspaceBaseModel):
         blank=True,
         null=True,
     )
+    external_source = models.CharField(max_length=255, null=True, blank=True)
+    external_id = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         ordering = ["-created_at"]

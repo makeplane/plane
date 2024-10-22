@@ -7,9 +7,7 @@ from .issue_properties import (
     RelationTypeEnum,
 )
 
-from .draft import (
-    DraftIssuePropertyValue
-)
+from .draft import DraftIssuePropertyValue
 
 from .issue import (
     IssueWorkLog,
@@ -21,4 +19,3 @@ from .issue import (
 
 from .project import ProjectState, ProjectAttribute
 from .workspace import WorkspaceFeature, WorkspaceLicense, WorkspaceActivity
-from .draft import DraftIssuePropertyValue
