@@ -38,6 +38,7 @@ from plane.db.models import (
     WorkspaceMember,
     ProjectMember,
     Project,
+    DeployBoard,
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -450,6 +451,14 @@ class IssueViewViewSet(BaseViewSet):
             .select_related("project")
             .select_related("workspace")
             .annotate(is_favorite=Exists(subquery))
+            .annotate(
+                anchor=DeployBoard.objects.filter(
+                    entity_name="view",
+                    entity_identifier=OuterRef("pk"),
+                    project_id=self.kwargs.get("project_id"),
+                    workspace__slug=self.kwargs.get("slug"),
+                ).values("anchor")
+            )
             .order_by("-is_favorite", "name")
             .distinct()
         )
@@ -576,6 +585,13 @@ class IssueViewViewSet(BaseViewSet):
                 workspace__slug=slug,
                 entity_identifier=pk,
                 entity_type="view",
+            ).delete()
+            # Delete the view from the deploy board
+            DeployBoard.objects.filter(
+                entity_name="view",
+                entity_identifier=pk,
+                project_id=project_id,
+                workspace__slug=slug,
             ).delete()
         else:
             return Response(

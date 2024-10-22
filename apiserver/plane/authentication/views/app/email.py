@@ -24,7 +24,6 @@ from plane.authentication.adapter.error import (
 
 
 class SignInAuthEndpoint(View):
-
     def post(self, request):
         next_path = request.POST.get("next_path")
         # Check instance configuration
@@ -139,7 +138,6 @@ class SignInAuthEndpoint(View):
 
 
 class SignUpAuthEndpoint(View):
-
     def post(self, request):
         next_path = request.POST.get("next_path")
         # Check instance configuration
