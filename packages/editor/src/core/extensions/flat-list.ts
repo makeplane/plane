@@ -23,7 +23,7 @@ const listKeymapPlugin = keymap(listKeymap);
 const listInputRulePlugin = inputRules({ rules: listInputRules });
 
 export const FlatListExtension = Node.create({
-  name: "flatListComponent",
+  name: "list",
   content,
   group,
   definingForContent,
@@ -42,7 +42,6 @@ export const FlatListExtension = Node.create({
       createList:
         (attrs: ListAttributes) =>
         ({ editor }) => {
-          console.log("createList", attrs);
           const wrapInList = createWrapInListCommand<ListAttributes>(attrs);
           return wrapInList(editor.state, editor.view.dispatch);
         },

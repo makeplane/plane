@@ -17,6 +17,7 @@ import { CustomMentionWithoutProps } from "./mentions/mentions-without-props";
 import { CustomQuoteExtension } from "./quote";
 import { TableHeader, TableCell, TableRow, Table } from "./table";
 import { CustomColorExtension } from "./custom-color";
+import { FlatListExtension } from "./flat-list";
 
 export const CoreEditorExtensionsWithoutProps = [
   StarterKit.configure({
@@ -85,6 +86,7 @@ export const CoreEditorExtensionsWithoutProps = [
   TableRow,
   CustomMentionWithoutProps(),
   CustomColorExtension,
+  FlatListExtension,
 ];
 
 export const DocumentEditorExtensionsWithoutProps = [IssueWidgetWithoutProps()];

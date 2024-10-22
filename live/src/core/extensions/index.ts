@@ -23,6 +23,12 @@ import { TDocumentTypes } from "@/core/types/common.js";
 // Plane live libraries
 import { fetchDocument } from "@/plane-live/lib/fetch-document.js";
 import { updateDocument } from "@/plane-live/lib/update-document.js";
+import * as Y from "yjs";
+import { prosemirrorJSONToYDoc, yDocToProsemirrorJSON } from "y-prosemirror";
+import { documentEditorSchema } from "../helpers/page.js";
+import { migrateDocJSON } from "@plane/editor/lib";
+
+type ProsemirrorJSON = NonNullable<ReturnType<typeof migrateDocJSON>>;
 
 export const getExtensions: () => Promise<Extension[]> = async () => {
   const extensions: Extension[] = [
@@ -47,7 +53,7 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
           | undefined;
         // TODO: Fix this lint error.
         // eslint-disable-next-line no-async-promise-executor
-        return new Promise(async (resolve) => {
+        return new Promise(async (resolve, reject) => {
           try {
             let fetchedData = null;
             if (documentType === "project_page") {
@@ -64,9 +70,35 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
                 params,
               });
             }
-            resolve(fetchedData);
+
+            if (!fetchedData) {
+              reject("Data is null");
+              return;
+            }
+
+            const ydoc = new Y.Doc();
+            // Y.applyUpdate(ydoc, fetchedData);
+
+            const prosemirrorJSON = yDocToProsemirrorJSON(ydoc, "default");
+
+            const migratedProsemirrorJSON = migrateDocJSON(
+              prosemirrorJSON as ProsemirrorJSON,
+            );
+
+            const newYDoc = prosemirrorJSONToYDoc(
+              documentEditorSchema,
+              migratedProsemirrorJSON,
+              "default",
+            );
+
+            const updatedBinaryData = Y.encodeStateAsUpdate(newYDoc);
+
+            console.log("newYDoc", newYDoc.toJSON());
+
+            resolve(updatedBinaryData);
           } catch (error) {
             logger.error("Error in fetching document", error);
+            reject("Error in fetching document" + JSON.stringify(error));
           }
         });
       },
@@ -149,42 +181,3 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
 
   return extensions;
 };
-
-import * as Y from "yjs";
-import { migrateDocJSON } from "prosemirror-flat-list";
-
-// Function to convert binary data to JSON
-async function convertBinaryToJson(binaryData) {
-  const ydoc = new Y.Doc();
-  Y.applyUpdate(ydoc, binaryData);
-  const json = ydoc.toJSON();
-  return json;
-}
-
-// Function to convert JSON back to binary
-function convertJsonToBinary(json) {
-  const ydoc = new Y.Doc();
-  ydoc.fromJSON(json);
-  const binaryData = Y.encodeStateAsUpdate(ydoc);
-  return binaryData;
-}
-
-// Fetch binary data
-async function fetchAndMigrateDocument(params, pageId, cookie) {
-  let binaryData = await fetchPageDescriptionBinary(params, pageId, cookie);
-
-  // Convert binary to JSON
-  let jsonData = await convertBinaryToJson(binaryData);
-
-  // Migrate JSON document
-  let migratedJson = migrateDocJSON(jsonData);
-
-  // Convert JSON back to binary
-  let updatedBinaryData = convertJsonToBinary(migratedJson);
-
-  // Store the updated binary data
-  await updatePageDescription(params, pageId, updatedBinaryData, cookie);
-}
-
-// Example usage
-fetchAndMigrateDocument(params, pageId, cookie);

@@ -1,17 +1,25 @@
 import { getSchema } from "@tiptap/core";
 import { generateHTML, generateJSON } from "@tiptap/html";
-import { prosemirrorJSONToYDoc, yXmlFragmentToProseMirrorRootNode } from "y-prosemirror";
-import * as Y from "yjs"
+import {
+  prosemirrorJSONToYDoc,
+  yXmlFragmentToProseMirrorRootNode,
+} from "y-prosemirror";
+import * as Y from "yjs";
 // plane editor
-import { CoreEditorExtensionsWithoutProps, DocumentEditorExtensionsWithoutProps } from "@plane/editor/lib";
+import {
+  CoreEditorExtensionsWithoutProps,
+  DocumentEditorExtensionsWithoutProps,
+} from "@plane/editor/lib";
 
 const DOCUMENT_EDITOR_EXTENSIONS = [
   ...CoreEditorExtensionsWithoutProps,
   ...DocumentEditorExtensionsWithoutProps,
 ];
-const documentEditorSchema = getSchema(DOCUMENT_EDITOR_EXTENSIONS);
+export const documentEditorSchema = getSchema(DOCUMENT_EDITOR_EXTENSIONS);
 
-export const getAllDocumentFormatsFromBinaryData =  (description: Uint8Array): {
+export const getAllDocumentFormatsFromBinaryData = (
+  description: Uint8Array,
+): {
   contentBinaryEncoded: string;
   contentJSON: object;
   contentHTML: string;
@@ -24,7 +32,7 @@ export const getAllDocumentFormatsFromBinaryData =  (description: Uint8Array): {
   const type = yDoc.getXmlFragment("default");
   const contentJSON = yXmlFragmentToProseMirrorRootNode(
     type,
-    documentEditorSchema
+    documentEditorSchema,
   ).toJSON();
   // convert to HTML
   const contentHTML = generateHTML(contentJSON, DOCUMENT_EDITOR_EXTENSIONS);
@@ -34,26 +42,29 @@ export const getAllDocumentFormatsFromBinaryData =  (description: Uint8Array): {
     contentJSON,
     contentHTML,
   };
-}
+};
 
-export const getBinaryDataFromHTMLString = (descriptionHTML: string): {
-  contentBinary: Uint8Array
+export const getBinaryDataFromHTMLString = (
+  descriptionHTML: string,
+): {
+  contentBinary: Uint8Array;
 } => {
   // convert HTML to JSON
   const contentJSON = generateJSON(
     descriptionHTML ?? "<p></p>",
-    DOCUMENT_EDITOR_EXTENSIONS
+    DOCUMENT_EDITOR_EXTENSIONS,
   );
   // convert JSON to Y.Doc format
   const transformedData = prosemirrorJSONToYDoc(
     documentEditorSchema,
     contentJSON,
-    "default"
+    "default",
   );
   // convert Y.Doc to Uint8Array format
   const encodedData = Y.encodeStateAsUpdate(transformedData);
 
   return {
-    contentBinary: encodedData
-  }
-}
+    contentBinary: encodedData,
+  };
+};
+
