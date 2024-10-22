@@ -196,13 +196,14 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
 
   const onKeyDown = useCallback(
     (e: KeyboardEvent) => {
+      if (isSubmitting === "submitting") return;
       if (e.key === "ArrowUp") {
         handleInboxIssueNavigation("prev");
       } else if (e.key === "ArrowDown") {
         handleInboxIssueNavigation("next");
       }
     },
-    [handleInboxIssueNavigation]
+    [handleInboxIssueNavigation, isSubmitting]
   );
 
   const handleActionWithPermission = (isAdmin: boolean, action: () => void, errorMessage: string) => {
