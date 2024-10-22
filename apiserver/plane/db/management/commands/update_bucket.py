@@ -68,7 +68,6 @@ class Command(BaseCommand):
                 Key="test_permission_check.txt",
                 Body=b"Test",
             )
-            self.stdout.write("PutObject permission granted.")
             permissions["s3:PutObject"] = True
             # Clean up
         except ClientError as e:
@@ -150,23 +149,47 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # Create a session using the credentials from Django settings
-        try:
-            # Check if the bucket exists
-            s3_client = self.get_s3_client()
-            # Get the bucket name from the environment
-            bucket_name = os.environ.get("AWS_S3_BUCKET_NAME")
-            self.stdout.write(self.style.NOTICE("Checking bucket..."))
-            # Check if the bucket exists
-            s3_client.head_bucket(Bucket=bucket_name)
 
-            # If the bucket exists, print a success message
+        # Check if the bucket exists
+        s3_client = self.get_s3_client()
+        # Get the bucket name from the environment
+        bucket_name = os.environ.get("AWS_S3_BUCKET_NAME")
+
+        if not bucket_name:
             self.stdout.write(
-                self.style.SUCCESS(f"Bucket '{bucket_name}' exists.")
+                self.style.ERROR(
+                    "Please set the AWS_S3_BUCKET_NAME environment variable."
+                )
             )
+            return
 
+        self.stdout.write(self.style.NOTICE("Checking bucket..."))
+        # Check if the bucket exists
+        try:
+            s3_client.head_bucket(Bucket=bucket_name)
+        except ClientError as e:
+            error_code = e.response["Error"]["Code"]
+            if error_code == "404":
+                self.stdout.write(
+                    self.style.ERROR(f"Bucket '{bucket_name}' does not exist.")
+                )
+                return
+            else:
+                self.stdout.write(f"Error: {e}")
+        # If the bucket exists, print a success message
+        self.stdout.write(
+            self.style.SUCCESS(f"Bucket '{bucket_name}' exists.")
+        )
+
+        try:
             # Check the permissions of the access key
             permissions = self.check_s3_permissions(bucket_name)
-
+        except ClientError as e:
+            self.stdout.write(f"Error: {e}")
+        except Exception as e:
+            self.stdout.write(f"Error: {e}")
+        # If the access key has the required permissions
+        try:
             if all(permissions.values()):
                 self.stdout.write(
                     self.style.SUCCESS(
@@ -175,35 +198,26 @@ class Command(BaseCommand):
                 )
                 # Making the existing objects public
                 self.make_objects_public(bucket_name)
-
-            # If the access key does not have PutBucketPolicy permission
-            # write the bucket policy to a file
-            if (
-                all(
-                    {
-                        k: v
-                        for k, v in permissions.items()
-                        if k != "s3:PutBucketPolicy"
-                    }.values()
-                )
-                and not permissions["s3:PutBucketPolicy"]
-            ):
-                self.stdout.write(
-                    self.style.WARNING(
-                        "Access key does not have PutBucketPolicy permission."
-                    )
-                )
-                # Writing to a file
-                with open("permissions.json", "w") as f:
-                    f.write(
-                        json.dumps(self.generate_bucket_policy(bucket_name))
-                    )
-                self.stdout.write(
-                    self.style.WARNING(
-                        "Permissions have been written to permissions.json."
-                    )
-                )
                 return
-        except Exception as ex:
-            # Handle any other exception
-            self.stdout.write(self.style.ERROR(f"An error occurred: {ex}"))
+        except Exception as e:
+            self.stdout.write(f"Error: {e}")
+
+        # write the bucket policy to a file
+        self.stdout.write(
+            self.style.WARNING(
+                "Generating permissions.json for manual bucket policy update."
+            )
+        )
+        try:
+            # Writing to a file
+            with open("permissions.json", "w") as f:
+                f.write(json.dumps(self.generate_bucket_policy(bucket_name)))
+            self.stdout.write(
+                self.style.WARNING(
+                    "Permissions have been written to permissions.json."
+                )
+            )
+            return
+        except IOError as e:
+            self.stdout.write(f"Error writing permissions.json: {e}")
+            return
