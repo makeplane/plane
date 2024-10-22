@@ -87,7 +87,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
   const debouncedHandleDescriptionFormSubmit = debounce(async (data: Partial<TIssue>, _issueId: string) => {
     await handleDescriptionFormSubmit(data, _issueId);
     setIsSubmitting("submitted");
-  }, 10000);
+  }, 1500);
 
   const debouncedFormSave = useCallback(
     (_issueId: string) =>
