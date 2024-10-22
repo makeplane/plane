@@ -58,6 +58,7 @@ class ModuleIssueViewSet(BaseViewSet):
                 project_id=self.kwargs.get("project_id"),
                 workspace__slug=self.kwargs.get("slug"),
                 issue_module__module_id=self.kwargs.get("module_id"),
+                issue_module__deleted_at__isnull=True,
             )
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
