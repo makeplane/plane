@@ -5,6 +5,7 @@ export type TPopoverButtonDefaultOptions = {
   // button and button styling
   button?: ReactNode;
   buttonClassName?: string;
+  buttonRefClassName?: string;
   disabled?: boolean;
 };
 
