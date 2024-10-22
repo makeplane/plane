@@ -444,3 +444,7 @@ ul[data-type="taskList"] ul[data-type="taskList"] {
   background-color: var(--editor-colors-purple-background);
 }
 /* end background colors */
+
+.prosemirror-flat-list > .list-marker {
+  top: 7px;
+}

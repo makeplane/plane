@@ -1,12 +1,12 @@
 import { Node } from "@tiptap/core";
-import { createListSpec, createListPlugins, listKeymap, listInputRules } from "prosemirror-flat-list";
+import { createListSpec, createListPlugins, listKeymap, listInputRules, ListAttributes } from "prosemirror-flat-list";
 import { keymap } from "@tiptap/pm/keymap";
 import { inputRules } from "@tiptap/pm/inputrules";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
     flatListComponent: {
-      toggleCustomList: (attrs: Record<string, any>) => ReturnType;
+      createList: (attrs: ListAttributes) => ReturnType;
     };
   }
 }
@@ -29,6 +29,18 @@ export const FlatListExtension = Node.create({
   },
   renderHTML({ node }) {
     return toDOM(node);
+  },
+
+  addCommands() {
+    return {
+      createList:
+        (attrs: ListAttributes) =>
+        ({ commands }) =>
+          commands.insertContent({
+            type: this.name,
+            attrs,
+          }),
+    };
   },
   addProseMirrorPlugins() {
     return [...createListPlugins({ schema: this.editor.schema }), listKeymapPlugin, listInputRulePlugin];
