@@ -30,7 +30,6 @@ from .project import (
     ProjectIdentifierSerializer,
     ProjectLiteSerializer,
     ProjectMemberLiteSerializer,
-    DeployBoardSerializer,
     ProjectMemberAdminSerializer,
     ProjectPublicMemberSerializer,
     ProjectMemberRoleSerializer,
@@ -39,11 +38,13 @@ from .state import StateSerializer, StateLiteSerializer
 from .view import (
     IssueViewSerializer,
 )
+
 from .cycle import (
     CycleSerializer,
     CycleIssueSerializer,
     CycleWriteSerializer,
     CycleUserPropertiesSerializer,
+    EntityProgressSerializer,
 )
 from .asset import FileAssetSerializer
 from .issue import (
@@ -130,3 +131,14 @@ from .draft import (
     DraftIssueSerializer,
     DraftIssueDetailSerializer,
 )
+from .integration import (
+    IntegrationSerializer,
+    WorkspaceIntegrationSerializer,
+    GithubIssueSyncSerializer,
+    GithubRepositorySerializer,
+    GithubRepositorySyncSerializer,
+    GithubCommentSyncSerializer,
+    SlackProjectSyncSerializer,
+)
+
+from .deploy_board import DeployBoardSerializer

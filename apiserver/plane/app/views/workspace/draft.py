@@ -44,6 +44,7 @@ from plane.db.models import (
 from .. import BaseViewSet
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.issue_filters import issue_filters
+from plane.ee.models import IssuePropertyValue, DraftIssuePropertyValue
 
 
 class WorkspaceDraftIssueViewSet(BaseViewSet):
@@ -345,6 +346,33 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                 entity_type=FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
                 draft_issue_id=None,
             )
+
+            draft_issue_property_values = (
+                DraftIssuePropertyValue.objects.filter(draft_issue=draft_issue)
+            )
+            IssuePropertyValue.objects.bulk_create(
+                [
+                    IssuePropertyValue(
+                        workspace_id=draft_issue_property_value.workspace_id,
+                        project_id=draft_issue_property_value.project_id,
+                        issue_id=serializer.data.get("id", None),
+                        property_id=draft_issue_property_value.property_id,
+                        value_text=draft_issue_property_value.value_text,
+                        value_boolean=draft_issue_property_value.value_boolean,
+                        value_decimal=draft_issue_property_value.value_decimal,
+                        value_datetime=draft_issue_property_value.value_datetime,
+                        value_uuid=draft_issue_property_value.value_uuid,
+                        value_option=draft_issue_property_value.value_option,
+                    )
+                    for draft_issue_property_value in draft_issue_property_values
+                ],
+                batch_size=10,
+                ignore_conflicts=True,
+            )
+            # TODO: Log the activity for issue property
+
+            draft_issue_property_values.delete()
+
 
             # delete the draft issue
             draft_issue.delete()
