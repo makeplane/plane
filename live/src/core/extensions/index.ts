@@ -8,7 +8,7 @@ import { Logger } from "@hocuspocus/extension-logger";
 import { Redis as HocusPocusRedis } from "@hocuspocus/extension-redis";
 
 // Core helpers and utilities
-import { manualLogger } from "@/core/helpers/logger.js";
+import { logger } from "@/core/helpers/logger.js";
 import { getRedisUrl } from "@/core/lib/utils/redis-url.js";
 
 // Core libraries
@@ -29,7 +29,7 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
     new Logger({
       onChange: false,
       log: (message) => {
-        manualLogger.info(message);
+        logger.info(message);
       },
     }),
     new Database({
@@ -54,7 +54,7 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
               fetchedData = await fetchPageDescriptionBinary(
                 params,
                 pageId,
-                cookie
+                cookie,
               );
             } else {
               fetchedData = await fetchDocument({
@@ -66,7 +66,7 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
             }
             resolve(fetchedData);
           } catch (error) {
-            manualLogger.error("Error in fetching document", error);
+            logger.error("Error in fetching document", error);
           }
         });
       },
@@ -100,7 +100,7 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
               });
             }
           } catch (error) {
-            manualLogger.error("Error in updating document:", error);
+            logger.error("Error in updating document:", error);
           }
         });
       },
@@ -122,30 +122,69 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
           ) {
             redisClient.disconnect();
           }
-          manualLogger.warn(
+          logger.warn(
             `Redis Client wasn't able to connect, continuing without Redis (you won't be able to sync data between multiple plane live servers)`,
-            error
+            error,
           );
           reject(error);
         });
 
         redisClient.on("ready", () => {
           extensions.push(new HocusPocusRedis({ redis: redisClient }));
-          manualLogger.info("Redis Client connected ✅");
+          logger.info("Redis Client connected ✅");
           resolve();
         });
       });
     } catch (error) {
-      manualLogger.warn(
+      logger.warn(
         `Redis Client wasn't able to connect, continuing without Redis (you won't be able to sync data between multiple plane live servers)`,
-        error
+        error,
       );
     }
   } else {
-    manualLogger.warn(
-      "Redis URL is not set, continuing without Redis (you won't be able to sync data between multiple plane live servers)"
+    logger.warn(
+      "Redis URL is not set, continuing without Redis (you won't be able to sync data between multiple plane live servers)",
     );
   }
 
   return extensions;
 };
+
+import * as Y from "yjs";
+import { migrateDocJSON } from "prosemirror-flat-list";
+
+// Function to convert binary data to JSON
+async function convertBinaryToJson(binaryData) {
+  const ydoc = new Y.Doc();
+  Y.applyUpdate(ydoc, binaryData);
+  const json = ydoc.toJSON();
+  return json;
+}
+
+// Function to convert JSON back to binary
+function convertJsonToBinary(json) {
+  const ydoc = new Y.Doc();
+  ydoc.fromJSON(json);
+  const binaryData = Y.encodeStateAsUpdate(ydoc);
+  return binaryData;
+}
+
+// Fetch binary data
+async function fetchAndMigrateDocument(params, pageId, cookie) {
+  let binaryData = await fetchPageDescriptionBinary(params, pageId, cookie);
+
+  // Convert binary to JSON
+  let jsonData = await convertBinaryToJson(binaryData);
+
+  // Migrate JSON document
+  let migratedJson = migrateDocJSON(jsonData);
+
+  // Convert JSON back to binary
+  let updatedBinaryData = convertJsonToBinary(migratedJson);
+
+  // Store the updated binary data
+  await updatePageDescription(params, pageId, updatedBinaryData, cookie);
+}
+
+// Example usage
+fetchAndMigrateDocument(params, pageId, cookie);

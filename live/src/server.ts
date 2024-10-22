@@ -13,7 +13,10 @@ import cors from "cors";
 import { getHocusPocusServer } from "@/core/hocuspocus-server.js";
 
 // helpers
-import { logger, manualLogger } from "@/core/helpers/logger.js";
+import {
+  coreLogger as LoggerMiddleware,
+  logger,
+} from "@/core/helpers/logger.js";
 import { errorHandler } from "@/core/helpers/error-handler.js";
 
 const app = express();
@@ -33,7 +36,7 @@ app.use(
 );
 
 // Logging middleware
-app.use(logger);
+app.use(LoggerMiddleware);
 
 // Body parsing middleware
 app.use(express.json());
@@ -45,7 +48,7 @@ app.use(cors());
 const router = express.Router();
 
 const HocusPocusServer = await getHocusPocusServer().catch((err) => {
-  manualLogger.error("Failed to initialize HocusPocusServer:", err);
+  logger.error("Failed to initialize HocusPocusServer:", err);
   process.exit(1);
 });
 
@@ -57,7 +60,7 @@ router.ws("/collaboration", (ws, req) => {
   try {
     HocusPocusServer.handleConnection(ws, req);
   } catch (err) {
-    manualLogger.error("WebSocket connection error:", err);
+    logger.error("WebSocket connection error:", err);
     ws.close();
   }
 });
@@ -73,46 +76,44 @@ Sentry.setupExpressErrorHandler(app);
 app.use(errorHandler);
 
 const liveServer = app.listen(app.get("port"), () => {
-  manualLogger.info(`Plane Live server has started at port ${app.get("port")}`);
+  logger.info(`Plane Live server has started at port ${app.get("port")}`);
 });
 
 const gracefulShutdown = async () => {
-  manualLogger.info("Starting graceful shutdown...");
+  logger.info("Starting graceful shutdown...");
 
   try {
     // Close the HocusPocus server WebSocket connections
     await HocusPocusServer.destroy();
-    manualLogger.info(
-      "HocusPocus server WebSocket connections closed gracefully.",
-    );
+    logger.info("HocusPocus server WebSocket connections closed gracefully.");
 
     // Close the Express server
     liveServer.close(() => {
-      manualLogger.info("Express server closed gracefully.");
+      logger.info("Express server closed gracefully.");
       process.exit(1);
     });
   } catch (err) {
-    manualLogger.error("Error during shutdown:", err);
+    logger.error("Error during shutdown:", err);
     process.exit(1);
   }
 
   // Forcefully shut down after 10 seconds if not closed
   setTimeout(() => {
-    manualLogger.error("Forcing shutdown...");
+    logger.error("Forcing shutdown...");
     process.exit(1);
   }, 10000);
 };
 
 // Graceful shutdown on unhandled rejection
 process.on("unhandledRejection", (err: any) => {
-  manualLogger.info("Unhandled Rejection: ", err);
-  manualLogger.info(`UNHANDLED REJECTION! 💥 Shutting down...`);
+  logger.info("Unhandled Rejection: ", err);
+  logger.info(`UNHANDLED REJECTION! 💥 Shutting down...`);
   gracefulShutdown();
 });
 
 // Graceful shutdown on uncaught exception
 process.on("uncaughtException", (err: any) => {
-  manualLogger.info("Uncaught Exception: ", err);
-  manualLogger.info(`UNCAUGHT EXCEPTION! 💥 Shutting down...`);
+  logger.info("Uncaught Exception: ", err);
+  logger.info(`UNCAUGHT EXCEPTION! 💥 Shutting down...`);
   gracefulShutdown();
 });
