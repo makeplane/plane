@@ -3,6 +3,7 @@ import requests
 
 # Django imports
 from django.utils import timezone
+from django.db import DatabaseError, IntegrityError
 
 # Module imports
 from plane.db.models import Account
@@ -127,7 +128,7 @@ class OauthAdapter(Adapter):
                 Account.objects.create(
                     user=user,
                     provider=self.provider,
-                    provider_account_id=self.user_data.get("user").get(
+                    provider_account_id=self.user_data.get("user", {}).get(
                         "provider_id"
                     ),
                     access_token=self.token_data.get("access_token"),
@@ -141,6 +142,5 @@ class OauthAdapter(Adapter):
                     last_connected_at=timezone.now(),
                     id_token=self.token_data.get("id_token", ""),
                 )
-        except Exception as e:
+        except (DatabaseError, IntegrityError) as e:
             log_exception(e)
-            pass
