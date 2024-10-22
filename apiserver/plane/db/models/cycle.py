@@ -119,6 +119,13 @@ class CycleIssue(ProjectBaseModel):
 
     class Meta:
         unique_together = ["issue", "cycle", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["cycle", "issue"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="cycle_issue_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Cycle Issue"
         verbose_name_plural = "Cycle Issues"
         db_table = "cycle_issues"
