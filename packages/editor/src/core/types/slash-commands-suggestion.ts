@@ -23,7 +23,11 @@ export type TEditorCommands =
   | "divider"
   | "issue-embed"
   | "text-color"
-  | "background-color";
+  | "background-color"
+  | "flat-bulleted-list"
+  | "flat-numbered-list"
+  | "flat-check-list"
+  | "flat-toggle-list";
 
 export type TColorEditorCommands = Extract<TEditorCommands, "text-color" | "background-color">;
 export type TNonColorEditorCommands = Exclude<TEditorCommands, "text-color" | "background-color">;

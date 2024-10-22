@@ -90,14 +90,67 @@ export const toggleOrderedList = (editor: Editor, range?: Range) => {
   else editor.chain().focus().toggleOrderedList().run();
 };
 
+export const toggleFlatOrderedList = (editor: Editor, range?: Range) => {
+  if (range)
+    editor
+      .chain()
+      .focus()
+      .deleteRange(range)
+      .createList({
+        kind: "ordered",
+      })
+      .run();
+  else editor.chain().focus().createList({ kind: "ordered", collapsed: false }).run();
+};
+
 export const toggleBulletList = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).toggleBulletList().run();
   else editor.chain().focus().toggleBulletList().run();
 };
 
+export const toggleFlatBulletList = (editor: Editor, range?: Range) => {
+  if (range)
+    editor
+      .chain()
+      .focus()
+      .deleteRange(range)
+      .createList({
+        kind: "bullet",
+      })
+      .run();
+  else editor.chain().focus().createList({ kind: "bullet", collapsed: false }).run();
+  console.log("ran bullet toggle");
+};
+
 export const toggleTaskList = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).toggleTaskList().run();
   else editor.chain().focus().toggleTaskList().run();
+};
+
+export const toggleFlatTaskList = (editor: Editor, range?: Range) => {
+  if (range)
+    editor
+      .chain()
+      .focus()
+      .deleteRange(range)
+      .createList({
+        kind: "task",
+      })
+      .run();
+  else editor.chain().focus().createList({ kind: "task", collapsed: false }).run();
+};
+
+export const toggleFlatToggleList = (editor: Editor, range?: Range) => {
+  if (range)
+    editor
+      .chain()
+      .focus()
+      .deleteRange(range)
+      .createList({
+        kind: "toggle",
+      })
+      .run();
+  else editor.chain().focus().createList({ kind: "toggle", collapsed: false }).run();
 };
 
 export const toggleStrike = (editor: Editor, range?: Range) => {

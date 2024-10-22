@@ -1,5 +1,12 @@
 import { Node } from "@tiptap/core";
-import { createListSpec, createListPlugins, listKeymap, listInputRules, ListAttributes } from "prosemirror-flat-list";
+import {
+  createListSpec,
+  createListPlugins,
+  listKeymap,
+  listInputRules,
+  ListAttributes,
+  createWrapInListCommand,
+} from "prosemirror-flat-list";
 import { keymap } from "@tiptap/pm/keymap";
 import { inputRules } from "@tiptap/pm/inputrules";
 
@@ -30,16 +37,15 @@ export const FlatListExtension = Node.create({
   renderHTML({ node }) {
     return toDOM(node);
   },
-
   addCommands() {
     return {
       createList:
         (attrs: ListAttributes) =>
-        ({ commands }) =>
-          commands.insertContent({
-            type: this.name,
-            attrs,
-          }),
+        ({ editor }) => {
+          console.log("createList", attrs);
+          const wrapInList = createWrapInListCommand<ListAttributes>(attrs);
+          return wrapInList(editor.state, editor.view.dispatch);
+        },
     };
   },
   addProseMirrorPlugins() {
