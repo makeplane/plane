@@ -404,7 +404,7 @@ class CycleAPIEndpoint(BaseAPIView):
             epoch=int(timezone.now().timestamp()),
         )
         # Delete the cycle
-        cycle.delete(soft=False)
+        cycle.delete()
         # Delete the user favorite cycle
         UserFavorite.objects.filter(
             entity_type="cycle",

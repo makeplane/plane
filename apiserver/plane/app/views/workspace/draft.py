@@ -60,7 +60,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
             .annotate(
                 cycle_id=Case(
                     When(
-                        draft_issue_cycle__cycle__deleted_at__isnull=True,
+                        draft_issue_cycle__deleted_at__isnull=True,
                         then=F("draft_issue_cycle__cycle_id"),
                     ),
                     default=None,
@@ -71,9 +71,9 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=(
+                        filter=Q(
                             ~Q(labels__id__isnull=True)
-                            & Q(labels__deleted_at__isnull=True)
+                            & (Q(draft_label_issue__deleted_at__isnull=True))
                         ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
@@ -82,8 +82,9 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "assignees__id",
                         distinct=True,
-                        filter=~Q(assignees__id__isnull=True)
-                        & Q(assignees__member_project__is_active=True),
+                        filter=Q(~Q(assignees__id__isnull=True)
+                        & Q(assignees__member_project__is_active=True)
+                        & Q(draft_issue_assignee__deleted_at__isnull=True)),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -91,13 +92,11 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "draft_issue_module__module_id",
                         distinct=True,
-                        filter=~Q(draft_issue_module__module_id__isnull=True)
+                        filter=Q(~Q(draft_issue_module__module_id__isnull=True)
                         & Q(
                             draft_issue_module__module__archived_at__isnull=True
                         )
-                        & Q(
-                            draft_issue_module__module__deleted_at__isnull=True
-                        ),
+                        & Q(draft_issue_module__deleted_at__isnull=True)),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
