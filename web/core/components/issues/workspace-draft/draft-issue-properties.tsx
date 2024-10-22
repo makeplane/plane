@@ -1,13 +1,12 @@
 "use client";
 
 import { useCallback, useMemo } from "react";
-import xor from "lodash/xor";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
 // icons
 import { CalendarCheck2, CalendarClock } from "lucide-react";
 // types
-import { TIssue, TIssuePriorities, TWorkspaceDraftIssue } from "@plane/types";
+import { TIssuePriorities, TWorkspaceDraftIssue } from "@plane/types";
 // components
 import {
   DateDropdown,
@@ -18,20 +17,11 @@ import {
   CycleDropdown,
   StateDropdown,
 } from "@/components/dropdowns";
-// constants
-import { ISSUE_UPDATED } from "@/constants/event-tracker";
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 // hooks
-import {
-  useEventTracker,
-  useLabel,
-  useProjectState,
-  useProject,
-  useProjectEstimates,
-  useWorkspaceDraftIssues,
-} from "@/hooks/store";
+import { useLabel, useProjectState, useProject, useProjectEstimates, useWorkspaceDraftIssues } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local components
 import { IssuePropertyLabels } from "../issue-layouts";
@@ -42,15 +32,13 @@ export interface IIssueProperties {
     | ((projectId: string | null, issueId: string, data: Partial<TWorkspaceDraftIssue>) => Promise<void>)
     | undefined;
   className: string;
-  activeLayout: string;
 }
 
 export const DraftIssueProperties: React.FC<IIssueProperties> = observer((props) => {
-  const { issue, updateIssue, activeLayout, className } = props;
+  const { issue, updateIssue, className } = props;
   // store hooks
   const { getProjectById } = useProject();
   const { labelMap } = useLabel();
-  const { captureIssueEvent } = useEventTracker();
   const { addCycleToIssue, addModulesToIssue } = useWorkspaceDraftIssues();
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
   const { getStateById } = useProjectState();
@@ -59,19 +47,12 @@ export const DraftIssueProperties: React.FC<IIssueProperties> = observer((props)
 
   // router
   const { workspaceSlug } = useParams();
-  const pathname = usePathname();
-
-  const currentLayout = `${activeLayout} layout`;
   // derived values
   const stateDetails = getStateById(issue.state_id);
 
   const issueOperations = useMemo(
     () => ({
-      addModulesToIssue: async (moduleIds: string[]) => {
-        if (!workspaceSlug || !issue.id) return;
-        await addModulesToIssue(workspaceSlug.toString(), issue.id, moduleIds);
-      },
-      removeModulesFromIssue: async (moduleIds: string[]) => {
+      updateIssueModules: async (moduleIds: string[]) => {
         if (!workspaceSlug || !issue.id) return;
         await addModulesToIssue(workspaceSlug.toString(), issue.id, moduleIds);
       },
@@ -103,17 +84,9 @@ export const DraftIssueProperties: React.FC<IIssueProperties> = observer((props)
   const handleModule = useCallback(
     (moduleIds: string[] | null) => {
       if (!issue || !issue.module_ids || !moduleIds) return;
-
-      const updatedModuleIds = xor(issue.module_ids, moduleIds);
-      const modulesToAdd: string[] = [];
-      const modulesToRemove: string[] = [];
-      for (const moduleId of updatedModuleIds)
-        if (issue.module_ids.includes(moduleId)) modulesToRemove.push(moduleId);
-        else modulesToAdd.push(moduleId);
-      if (modulesToAdd.length > 0) issueOperations.addModulesToIssue(modulesToAdd);
-      if (modulesToRemove.length > 0) issueOperations.removeModulesFromIssue(modulesToRemove);
+      issueOperations.updateIssueModules(moduleIds);
     },
-    [issueOperations, currentLayout, pathname, issue]
+    [issueOperations, issue]
   );
 
   const handleCycle = useCallback(
@@ -122,7 +95,7 @@ export const DraftIssueProperties: React.FC<IIssueProperties> = observer((props)
       if (cycleId) issueOperations.addIssueToCycle?.(cycleId);
       else issueOperations.removeIssueFromCycle?.();
     },
-    [issue, issueOperations, currentLayout, pathname]
+    [issue, issueOperations]
   );
 
   const handleStartDate = (date: Date | null) =>

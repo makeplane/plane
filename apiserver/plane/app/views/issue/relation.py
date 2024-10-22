@@ -96,7 +96,7 @@ class IssueRelationViewSet(BaseViewSet):
             .annotate(
                 cycle_id=Case(
                     When(
-                        issue_cycle__cycle__deleted_at__isnull=True,
+                        issue_cycle__deleted_at__isnull=True,
                         then=F("issue_cycle__cycle_id"),
                     ),
                     default=None,
@@ -130,9 +130,9 @@ class IssueRelationViewSet(BaseViewSet):
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=(
+                        filter=Q(
                             ~Q(labels__id__isnull=True)
-                            & Q(labels__deleted_at__isnull=True)
+                            & (Q(label_issue__deleted_at__isnull=True))
                         ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
@@ -141,8 +141,9 @@ class IssueRelationViewSet(BaseViewSet):
                     ArrayAgg(
                         "assignees__id",
                         distinct=True,
-                        filter=~Q(assignees__id__isnull=True)
-                        & Q(assignees__member_project__is_active=True),
+                        filter=Q(~Q(assignees__id__isnull=True)
+                        & Q(assignees__member_project__is_active=True)
+                        & Q(issue_assignee__deleted_at__isnull=True)),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -289,7 +290,7 @@ class IssueRelationViewSet(BaseViewSet):
             IssueRelationSerializer(issue_relation).data,
             cls=DjangoJSONEncoder,
         )
-        issue_relation.delete(soft=False)
+        issue_relation.delete()
         issue_activity.delay(
             type="issue_relation.activity.deleted",
             requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),

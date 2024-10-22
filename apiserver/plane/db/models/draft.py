@@ -234,7 +234,7 @@ class DraftIssueCycle(WorkspaceBaseModel):
     Draft Issue Cycles
     """
 
-    draft_issue = models.OneToOneField(
+    draft_issue = models.ForeignKey(
         "db.DraftIssue",
         on_delete=models.CASCADE,
         related_name="draft_issue_cycle",
@@ -244,6 +244,14 @@ class DraftIssueCycle(WorkspaceBaseModel):
     )
 
     class Meta:
+        unique_together = ["draft_issue", "cycle", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["draft_issue", "cycle"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="draft_issue_cycle_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Draft Issue Cycle"
         verbose_name_plural = "Draft Issue Cycles"
         db_table = "draft_issue_cycles"
