@@ -3,18 +3,24 @@ import React from "react";
 import { EditorReadOnlyRefApi, ILiteTextReadOnlyEditor, LiteTextReadOnlyEditorWithRef } from "@plane/editor";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
 import { useMention } from "@/hooks/use-mention";
 
-type LiteTextReadOnlyEditorWrapperProps = Omit<ILiteTextReadOnlyEditor, "mentionHandler">;
+type LiteTextReadOnlyEditorWrapperProps = Omit<ILiteTextReadOnlyEditor, "fileHandler" | "mentionHandler"> & {
+  anchor: string;
+};
 
 export const LiteTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, LiteTextReadOnlyEditorWrapperProps>(
-  ({ ...props }, ref) => {
+  ({ anchor, ...props }, ref) => {
     const { mentionHighlights } = useMention();
 
     return (
       <LiteTextReadOnlyEditorWithRef
         ref={ref}
+        fileHandler={getReadOnlyEditorFileHandlers({
+          anchor,
+        })}
         mentionHandler={{
           highlights: mentionHighlights,
         }}

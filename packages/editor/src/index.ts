@@ -1,5 +1,6 @@
 // styles
 // import "./styles/tailwind.css";
+import "src/styles/variables.css";
 import "src/styles/editor.css";
 import "src/styles/table.css";
 import "src/styles/github-dark.css";
@@ -17,6 +18,9 @@ export {
 } from "@/components/editors";
 
 export { isCellSelection } from "@/extensions/table/table/utilities/is-cell-selection";
+
+// constants
+export * from "@/constants/common";
 
 // helpers
 export * from "@/helpers/common";

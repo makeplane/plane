@@ -1,5 +1,6 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 // icons
 import { History, MessageSquare } from "lucide-react";
 import { IUserActivityResponse } from "@plane/types";
@@ -12,6 +13,7 @@ import { RichTextReadOnlyEditor } from "@/components/editor/rich-text-editor/ric
 import { ActivitySettingsLoader } from "@/components/ui";
 // helpers
 import { calculateTimeAgo } from "@/helpers/date-time.helper";
+import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useUser } from "@/hooks/store";
 
@@ -21,6 +23,8 @@ type Props = {
 
 export const ActivityList: React.FC<Props> = observer((props) => {
   const { activity } = props;
+  // params
+  const { workspaceSlug } = useParams();
   // store hooks
   const { data: currentUser } = useUser();
 
@@ -37,9 +41,9 @@ export const ActivityList: React.FC<Props> = observer((props) => {
                     <div className="relative px-1">
                       {activityItem.field ? (
                         activityItem.new_value === "restore" && <History className="h-3.5 w-3.5 text-custom-text-200" />
-                      ) : activityItem.actor_detail.avatar && activityItem.actor_detail.avatar !== "" ? (
+                      ) : activityItem.actor_detail.avatar_url && activityItem.actor_detail.avatar_url !== "" ? (
                         <img
-                          src={activityItem.actor_detail.avatar}
+                          src={getFileURL(activityItem.actor_detail.avatar_url)}
                           alt={activityItem.actor_detail.display_name}
                           height={30}
                           width={30}
@@ -75,6 +79,8 @@ export const ActivityList: React.FC<Props> = observer((props) => {
                               : (activityItem.old_value?.toString() as string)
                           }
                           containerClassName="text-xs bg-custom-background-100"
+                          workspaceSlug={workspaceSlug?.toString() ?? ""}
+                          projectId={activityItem.project}
                         />
                       </div>
                     </div>
@@ -111,9 +117,10 @@ export const ActivityList: React.FC<Props> = observer((props) => {
                                   ) : (
                                     <ActivityIcon activity={activityItem} />
                                   )
-                                ) : activityItem.actor_detail.avatar && activityItem.actor_detail.avatar !== "" ? (
+                                ) : activityItem.actor_detail.avatar_url &&
+                                  activityItem.actor_detail.avatar_url !== "" ? (
                                   <img
-                                    src={activityItem.actor_detail.avatar}
+                                    src={getFileURL(activityItem.actor_detail.avatar_url)}
                                     alt={activityItem.actor_detail.display_name}
                                     height={24}
                                     width={24}

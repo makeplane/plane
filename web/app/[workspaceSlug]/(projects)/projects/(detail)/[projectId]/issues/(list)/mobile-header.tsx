@@ -28,7 +28,7 @@ import { useIssues, useLabel, useMember, useProject, useProjectState } from "@/h
 export const ProjectIssuesMobileHeader = observer(() => {
   const layouts = [
     { key: "list", title: "List", icon: List },
-    { key: "kanban", title: "Kanban", icon: Kanban },
+    { key: "kanban", title: "Board", icon: Kanban },
     { key: "calendar", title: "Calendar", icon: Calendar },
   ];
   const [analyticsModal, setAnalyticsModal] = useState(false);

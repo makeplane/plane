@@ -1,8 +1,17 @@
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
-from django.db.models import Q, UUIDField, Value, F, Case, When, JSONField
-from django.db.models.functions import Coalesce, JSONObject
+from django.db.models import (
+    Q,
+    UUIDField,
+    Value,
+    F,
+    Case,
+    When,
+    JSONField,
+    CharField,
+)
+from django.db.models.functions import Coalesce, JSONObject, Concat
 
 # Module imports
 from plane.db.models import (
@@ -16,6 +25,7 @@ from plane.db.models import (
     WorkspaceMember,
 )
 
+
 def issue_queryset_grouper(queryset, group_by, sub_group_by):
 
     FIELD_MAPPER = {
@@ -25,8 +35,16 @@ def issue_queryset_grouper(queryset, group_by, sub_group_by):
     }
 
     annotations_map = {
-        "assignee_ids": ("assignees__id", ~Q(assignees__id__isnull=True)),
-        "label_ids": ("labels__id", ~Q(labels__id__isnull=True)),
+        "assignee_ids": (
+            "assignees__id",
+            ~Q(assignees__id__isnull=True)
+            & Q(issue_assignee__deleted_at__isnull=True),
+        ),
+        "label_ids": (
+            "labels__id",
+            ~Q(labels__id__isnull=True)
+            & Q(label_issue__deleted_at__isnull=True),
+        ),
         "module_ids": (
             "issue_module__module_id",
             ~Q(issue_module__module_id__isnull=True),
@@ -98,18 +116,26 @@ def issue_on_results(issues, group_by, sub_group_by):
                             first_name=F("votes__actor__first_name"),
                             last_name=F("votes__actor__last_name"),
                             avatar=F("votes__actor__avatar"),
+                            avatar_url=Case(
+                                When(
+                                    votes__actor__avatar_asset__isnull=False,
+                                    then=Concat(
+                                        Value("/api/assets/v2/static/"),
+                                        F("votes__actor__avatar_asset"),
+                                        Value("/"),
+                                    ),
+                                ),
+                                default=F("votes__actor__avatar"),
+                                output_field=CharField(),
+                            ),
                             display_name=F("votes__actor__display_name"),
-                        )
+                        ),
                     ),
                 ),
                 default=None,
                 output_field=JSONField(),
             ),
-            filter=Case(
-                When(votes__isnull=False, then=True),
-                default=False,
-                output_field=JSONField(),
-            ),
+            filter=Q(votes__isnull=False),
             distinct=True,
         ),
         reaction_items=ArrayAgg(
@@ -123,18 +149,30 @@ def issue_on_results(issues, group_by, sub_group_by):
                             first_name=F("issue_reactions__actor__first_name"),
                             last_name=F("issue_reactions__actor__last_name"),
                             avatar=F("issue_reactions__actor__avatar"),
-                            display_name=F("issue_reactions__actor__display_name"),
+                            avatar_url=Case(
+                                When(
+                                    issue_reactions__actor__avatar_asset__isnull=False,
+                                    then=Concat(
+                                        Value("/api/assets/v2/static/"),
+                                        F(
+                                            "issue_reactions__actor__avatar_asset"
+                                        ),
+                                        Value("/"),
+                                    ),
+                                ),
+                                default=F("issue_reactions__actor__avatar"),
+                                output_field=CharField(),
+                            ),
+                            display_name=F(
+                                "issue_reactions__actor__display_name"
+                            ),
                         ),
                     ),
                 ),
                 default=None,
                 output_field=JSONField(),
             ),
-            filter=Case(
-                When(issue_reactions__isnull=False, then=True),
-                default=False,
-                output_field=JSONField(),
-            ),
+            filter=Q(issue_reactions__isnull=False),
             distinct=True,
         ),
     ).values(*required_fields, "vote_items", "reaction_items")
