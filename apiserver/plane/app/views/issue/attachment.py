@@ -257,5 +257,5 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
         # Get the storage metadata
         if not issue_attachment.storage_metadata:
             get_asset_object_metadata.delay(str(issue_attachment.id))
-        issue_attachment.save()
+        issue_attachment.save(created_by=request.user)
         return Response(status=status.HTTP_204_NO_CONTENT)
