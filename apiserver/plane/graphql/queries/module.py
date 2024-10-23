@@ -26,7 +26,7 @@ from plane.graphql.types.issue import (
 from plane.graphql.permissions.project import ProjectBasePermission
 from plane.graphql.types.paginator import PaginatorResponse
 from plane.graphql.utils.issue_filters import issue_filters
-from plane.graphql.utils.paginator import paginate
+from plane.graphql.utils.paginator import paginate, PAGINATOR_MAX_LIMIT
 from plane.graphql.utils.issue import issue_information_query_execute
 from plane.graphql.bgtasks.recent_visited_task import recent_visited_task
 
@@ -42,6 +42,7 @@ class ModuleQuery:
         slug: str,
         project: strawberry.ID,
         cursor: Optional[str] = None,
+        ids: Optional[list[strawberry.ID]] = None,
     ) -> PaginatorResponse[ModuleType]:
         subquery = UserFavorite.objects.filter(
             user=info.context.user,
@@ -50,14 +51,18 @@ class ModuleQuery:
             project_id=project,
         )
 
+        module_query = Module.objects.filter(
+            workspace__slug=slug,
+            project_id=project,
+            project__project_projectmember__member=info.context.user,
+            project__project_projectmember__is_active=True,
+        )
+
+        if ids:
+            module_query = module_query.filter(id__in=ids)
+
         modules = await sync_to_async(list)(
-            Module.objects.filter(workspace__slug=slug)
-            .filter(project_id=project)
-            .filter(
-                project__project_projectmember__member=info.context.user,
-                project__project_projectmember__is_active=True,
-            )
-            .annotate(is_favorite=Exists(subquery))
+            module_query.annotate(is_favorite=Exists(subquery))
         )
 
         return paginate(results_object=modules, cursor=cursor)
@@ -91,29 +96,6 @@ class ModuleQuery:
         )
 
         return module_details
-
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def moduleIds(
-        self,
-        info: Info,
-        slug: str,
-        project: strawberry.ID,
-        moduleIds: list[strawberry.ID],
-    ) -> list[ModuleType]:
-        modules = await sync_to_async(list)(
-            Module.objects.filter(workspace__slug=slug)
-            .filter(
-                project_id=project,
-                id__in=moduleIds,
-            )
-            .filter(
-                project__project_projectmember__member=info.context.user,
-                project__project_projectmember__is_active=True,
-            )
-        )
-        return modules
 
 
 # module issue user properties

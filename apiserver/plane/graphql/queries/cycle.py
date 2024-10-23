@@ -42,6 +42,7 @@ class CycleQuery:
         info: Info,
         slug: str,
         project: strawberry.ID,
+        ids: Optional[list[strawberry.ID]] = None,
     ) -> list[CycleType]:
         subquery = UserFavorite.objects.filter(
             user=info.context.user,
@@ -50,10 +51,16 @@ class CycleQuery:
             project_id=project,
         )
 
+        cycle_query = Cycle.objects.filter(
+            workspace__slug=slug, project_id=project
+        )
+
+        if ids:
+            cycle_query = cycle_query.filter(id__in=ids)
+
         # get cycles those are current and upcoming cycles based on the start_date and end_date
         cycles = await sync_to_async(list)(
-            Cycle.objects.filter(workspace__slug=slug, project_id=project)
-            .filter(
+            cycle_query.filter(
                 project__project_projectmember__member=info.context.user,
                 project__project_projectmember__is_active=True,
             )
