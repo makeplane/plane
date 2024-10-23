@@ -1,3 +1,8 @@
+# Django imports
+from django.db.models import OuterRef, Subquery
+from django.db.models.functions import Coalesce
+from django.contrib.postgres.aggregates import ArrayAgg
+
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
@@ -5,7 +10,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.api.views.base import BaseAPIView
 from plane.app.permissions import ProjectEntityPermission
-from plane.db.models import Workspace, Project, IssueType
+from plane.db.models import Workspace, Project, IssueType, ProjectIssueType
 from plane.api.serializers import (
     IssueTypeAPISerializer,
     ProjectIssueTypeAPISerializer,
@@ -47,6 +52,22 @@ class IssueTypeAPIEndpoint(BaseAPIView):
                 issue_types = self.model.objects.filter(
                     workspace__slug=self.workspace_slug,
                     project_issue_types__project_id=self.project_id,
+                ).annotate(
+                    project_ids=Coalesce(
+                        Subquery(
+                            ProjectIssueType.objects.filter(
+                                issue_type=OuterRef("pk"), workspace__slug=slug
+                            )
+                            .values("issue_type")
+                            .annotate(
+                                project_ids=ArrayAgg(
+                                    "project_id", distinct=True
+                                )
+                            )
+                            .values("project_ids")
+                        ),
+                        [],
+                    )
                 )
                 serializer = self.serializer_class(issue_types, many=True)
                 return Response(serializer.data, status=status.HTTP_200_OK)

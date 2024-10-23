@@ -33,14 +33,9 @@ urlpatterns = [
     # ======================== issue property options ends ========================
     # ======================== issue property values start ========================
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issue/<uuid:issue_id>/issue-properties/<uuid:property_id>/values/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-properties/<uuid:property_id>/values/",
         IssuePropertyValueAPIEndpoint.as_view(),
         name="external-issue-property-value",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issue/<uuid:issue_id>/issue-properties/<uuid:property_id>/values/<uuid:value_id>/",
-        IssuePropertyValueAPIEndpoint.as_view(),
-        name="external-issue-property-value-detail",
     ),
     # ======================== issue property values end ========================
 ]
