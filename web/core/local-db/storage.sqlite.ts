@@ -1,4 +1,4 @@
-import { startSpan, getActiveSpan } from "@sentry/nextjs";
+import { getActiveSpan, startSpan } from "@sentry/nextjs";
 import * as Comlink from "comlink";
 import set from "lodash/set";
 // plane
@@ -17,7 +17,7 @@ import { loadWorkSpaceData } from "./utils/load-workspace";
 import { issueFilterCountQueryConstructor, issueFilterQueryConstructor } from "./utils/query-constructor";
 import { runQuery } from "./utils/query-executor";
 import { createTables } from "./utils/tables";
-import { getGroupedIssueResults, getSubGroupedIssueResults, log, logError, logInfo } from "./utils/utils";
+import { clearOPFS, getGroupedIssueResults, getSubGroupedIssueResults, log, logError } from "./utils/utils";
 
 const DB_VERSION = 1;
 const PAGE_SIZE = 500;
@@ -48,10 +48,8 @@ export class Storage {
 
   clearStorage = async () => {
     try {
-      const storageManager = window.navigator.storage;
-      const fileSystemDirectoryHandle = await storageManager.getDirectory();
-      //@ts-expect-error , clear local issue cache
-      await fileSystemDirectoryHandle.remove({ recursive: true });
+      await this.db.close();
+      await clearOPFS();
       this.reset();
     } catch (e) {
       console.error("Error clearing sqlite sync storage", e);
@@ -70,7 +68,6 @@ export class Storage {
     } catch (err) {
       logError(err);
       this.status = "error";
-      debugger;
       return false;
     }
   };
@@ -99,6 +96,7 @@ export class Storage {
 
     this.db = {
       exec: instance.exec,
+      close: instance.close,
     };
 
     this.status = "ready";

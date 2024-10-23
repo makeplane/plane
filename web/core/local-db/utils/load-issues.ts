@@ -25,11 +25,11 @@ export const addIssuesBulk = async (issues: any, batchSize = 100) => {
   for (let i = 0; i < issues.length; i += batchSize) {
     const batch = issues.slice(i, i + batchSize);
 
-    batch.forEach((issue: any) => {
+    batch.forEach(async (issue: any) => {
       if (!issue.type_id) {
         issue.type_id = "";
       }
-      stageIssueInserts(issue);
+      await stageIssueInserts(issue);
     });
   }
   await persistence.db.exec("COMMIT;");
@@ -68,7 +68,7 @@ export const syncDeletesToLocal = async (workspaceId: string, projectId: string,
   }
 };
 
-const stageIssueInserts = (issue: any) => {
+const stageIssueInserts = async (issue: any) => {
   const issue_id = issue.id;
   issue.priority_proxy = PRIORITY_MAP[issue.priority as keyof typeof PRIORITY_MAP];
 
@@ -100,7 +100,7 @@ const stageIssueInserts = (issue: any) => {
   const query = `INSERT OR REPLACE INTO issues (${columns}) VALUES (${values});`;
   persistence.db.exec(query);
 
-  persistence.db.exec({
+  await persistence.db.exec({
     sql: `DELETE from issue_meta where issue_id='${issue_id}'`,
   });
 

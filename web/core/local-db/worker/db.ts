@@ -29,14 +29,10 @@ export class DBClass {
     this.instance.db = db;
     this.instance.exec = async (sql: string) => {
       const rows: any[] = [];
-      try {
-        await this.sqlite3.exec(db, sql, (row: any[], columns: string[]) => {
-          rows.push(mergeToObject(columns, row));
-        });
-      } catch (e) {
-        console.log(e);
-        throw e;
-      }
+      await this.sqlite3.exec(db, sql, (row: any[], columns: string[]) => {
+        rows.push(mergeToObject(columns, row));
+      });
+
       return rows;
     };
     return true;
@@ -63,7 +59,6 @@ export class DBClass {
           do {
             const columns = await this.sqlite3.column_names(stmt);
             const row = await this.sqlite3.row(stmt);
-            // debugger;
             rows.push(mergeToObject(columns, row));
           } while ((await this.sqlite3.step(stmt)) === SQLite.SQLITE_ROW);
 
@@ -72,6 +67,9 @@ export class DBClass {
       }
     }
     return this.instance.exec(sql);
+  }
+  async close() {
+    await this.sqlite3.close(this.instance.db);
   }
 }
 Comlink.expose(DBClass);

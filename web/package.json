@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "turbo run develop",
-    "develop": "NEXT_CPU_PROF=1  next dev --port 3000",
+    "develop": "next dev --port 3000",
     "build": "next build",
     "start": "next start",
     "lint": "eslint . --ext .ts,.tsx",
