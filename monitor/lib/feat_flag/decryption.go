@@ -6,6 +6,7 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha1"
+	"crypto/x509"
 	"encoding/base64"
 	"encoding/json"
 	"encoding/pem"
@@ -68,6 +69,7 @@ func decodeBase64Key(base64EncodedKey string) ([]byte, error) {
 
 /* ---------------------- Helper Functions ---------------------------- */
 // Parses the private key given to the rsa.PrivateKey type
+
 func ParsePrivateKey(base64EncodedKey string) (*rsa.PrivateKey, error) {
 	decodedKey, err := decodeBase64Key(base64EncodedKey)
 	if err != nil {
@@ -78,15 +80,19 @@ func ParsePrivateKey(base64EncodedKey string) (*rsa.PrivateKey, error) {
 	if block == nil {
 		return nil, fmt.Errorf("failed to parse PEM block containing the key")
 	}
+	privateKey, err := x509.ParsePKCS1PrivateKey(block.Bytes)
 
-	privateKey, err := pkcs8.ParsePKCS8PrivateKey(block.Bytes)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse RSA private key: %v", err)
+		privateKey, err := pkcs8.ParsePKCS8PrivateKey(block.Bytes)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse RSA private key: %v", err)
+		}
+
+		key := privateKey.(*rsa.PrivateKey)
+		return key, nil
 	}
 
-	key := privateKey.(*rsa.PrivateKey)
-
-	return key, nil
+	return privateKey, nil
 }
 
 func decryptWithPrivateKey(data EncryptedData, privateKey *rsa.PrivateKey) ([]byte, error) {
