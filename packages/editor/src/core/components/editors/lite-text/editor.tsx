@@ -7,9 +7,12 @@ import { EnterKeyExtension } from "@/extensions";
 import { EditorRefApi, ILiteTextEditor } from "@/types";
 
 const LiteTextEditor = (props: ILiteTextEditor) => {
-  const { onEnterKeyPress } = props;
+  const { onEnterKeyPress, isEnterExtensionEnabled = true, extensions: externalExtensions = [] } = props;
 
-  const extensions = [EnterKeyExtension(onEnterKeyPress)];
+  const extensions = externalExtensions;
+  if (isEnterExtensionEnabled) {
+    extensions.push(EnterKeyExtension(onEnterKeyPress));
+  }
 
   return <EditorWrapper {...props} extensions={extensions} />;
 };

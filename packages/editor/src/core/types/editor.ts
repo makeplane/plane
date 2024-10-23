@@ -36,6 +36,9 @@ export type EditorReadOnlyRefApi = {
 };
 
 export interface EditorRefApi extends EditorReadOnlyRefApi {
+  blur: () => void;
+  scrollToNodeViaDOMCoordinates: (behavior?: ScrollBehavior, position?: number) => void;
+  getCurrentCursorPosition: () => number | undefined;
   setEditorValueAtCursorPosition: (content: string) => void;
   executeMenuItemCommand: (
     props:
@@ -79,15 +82,22 @@ export interface IEditorProps {
     suggestions?: () => Promise<IMentionSuggestion[]>;
   };
   onChange?: (json: object, html: string) => void;
+  onTransaction?: () => void;
+  handleEditorReady?: (value: boolean) => void;
+  autofocus?: boolean;
   onEnterKeyPress?: (e?: any) => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
   value?: string | null;
 }
-
-export type ILiteTextEditor = IEditorProps;
-
+export interface ILiteTextEditor extends IEditorProps {
+  isEnterExtensionEnabled?: boolean;
+  extensions?: any[];
+}
 export interface IRichTextEditor extends IEditorProps {
+  extensions?: any[];
+  slashCommandEnabled?: boolean;
+  bubbleMenuEnabled?: boolean;
   dragDropEnabled?: boolean;
 }
 

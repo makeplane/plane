@@ -20,6 +20,7 @@ export const CustomImageNode = (props: CustomImageNodeViewProps) => {
   const { src: remoteImageSrc } = node.attrs;
 
   const [isUploaded, setIsUploaded] = useState(false);
+  const [resolvedSrc, setResolvedSrc] = useState<string | undefined>(undefined);
   const [imageFromFileSystem, setImageFromFileSystem] = useState<string | undefined>(undefined);
   const [failedToLoadImage, setFailedToLoadImage] = useState(false);
 
@@ -47,6 +48,15 @@ export const CustomImageNode = (props: CustomImageNodeViewProps) => {
     }
   }, [remoteImageSrc]);
 
+  useEffect(() => {
+    const getImageSource = async () => {
+      // @ts-expect-error function not expected here, but will still work and don't remove await
+      const url: string = await editor?.commands?.getImageSource?.(remoteImageSrc);
+      setResolvedSrc(url as string);
+    };
+    getImageSource();
+  }, [imageFromFileSystem, node.attrs.src]);
+
   return (
     <NodeViewWrapper>
       <div className="p-0 mx-0 my-2" data-drag-handle ref={imageComponentRef}>
@@ -55,8 +65,7 @@ export const CustomImageNode = (props: CustomImageNodeViewProps) => {
             imageFromFileSystem={imageFromFileSystem}
             editorContainer={editorContainer}
             editor={editor}
-            // @ts-expect-error function not expected here, but will still work
-            src={editor?.commands?.getImageSource?.(remoteImageSrc)}
+            src={resolvedSrc}
             getPos={getPos}
             node={node}
             setEditorContainer={setEditorContainer}

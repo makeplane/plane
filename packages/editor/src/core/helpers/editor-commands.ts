@@ -180,3 +180,8 @@ export const toggleBackgroundColor = (color: string | undefined, editor: Editor,
     }
   }
 };
+
+export const insertHorizontalRule = (editor: Editor, range?: Range) => {
+  if (range) editor.chain().focus().deleteRange(range).setHorizontalRule().run();
+  else editor.chain().focus().setHorizontalRule().run();
+}
