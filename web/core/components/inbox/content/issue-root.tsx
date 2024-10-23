@@ -67,7 +67,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
       },
       update: async (_workspaceSlug: string, _projectId: string, _issueId: string, data: Partial<TIssue>) => {
         try {
-          await inboxIssue.updateIssue(data);
+          await inboxIssue.updateIssue({ ...data, id: _issueId });
           captureIssueEvent({
             eventName: "Inbox issue updated",
             payload: { ...data, state: "SUCCESS", element: "Inbox" },
