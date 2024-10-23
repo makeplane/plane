@@ -169,7 +169,8 @@ class EntityAssetEndpoint(BaseAPIView):
         # update the attributes
         asset.attributes = request.data.get("attributes", asset.attributes)
         # save the asset
-        asset.save(created_by=request.user)
+        asset.created_by = request.user
+        asset.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def delete(self, request, anchor, pk):
