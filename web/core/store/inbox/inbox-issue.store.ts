@@ -151,12 +151,12 @@ export class InboxIssueStore implements IInboxIssueStore {
   updateIssue = async (issue: Partial<TIssue>) => {
     const inboxIssue = clone(this.issue);
     try {
-      if (!this.issue.id) return;
+      if (!issue.id) return;
       Object.keys(issue).forEach((key) => {
         const issueKey = key as keyof TIssue;
         set(this.issue, issueKey, issue[issueKey]);
       });
-      await this.inboxIssueService.updateIssue(this.workspaceSlug, this.projectId, this.issue.id, issue);
+      await this.inboxIssueService.updateIssue(this.workspaceSlug, this.projectId, issue.id, issue);
       // fetching activity
       this.fetchIssueActivity();
     } catch {
