@@ -113,11 +113,16 @@ export class Storage {
     if (syncInProgress) {
       log("Sync in progress, skipping");
     }
-    await startSpan({ name: "LOAD_WS", attributes: { slug: this.workspaceSlug } }, async () => {
-      this.setOption("sync_workspace", new Date().toUTCString());
-      await loadWorkSpaceData(this.workspaceSlug);
+    try {
+      await startSpan({ name: "LOAD_WS", attributes: { slug: this.workspaceSlug } }, async () => {
+        this.setOption("sync_workspace", new Date().toUTCString());
+        await loadWorkSpaceData(this.workspaceSlug);
+        this.deleteOption("sync_workspace");
+      });
+    } catch (e) {
+      logError(e);
       this.deleteOption("sync_workspace");
-    });
+    }
   };
 
   syncProject = async (projectId: string) => {
