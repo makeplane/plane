@@ -20,17 +20,18 @@ export const addIssuesBulk = async (issues: any, batchSize = 100) => {
   if (!rootStore.user.localDBEnabled || !persistence.db) return;
 
   const insertStart = performance.now();
-  await persistence.db.exec("BEGIN TRANSACTION;");
+  await persistence.db.exec("BEGIN;");
 
   for (let i = 0; i < issues.length; i += batchSize) {
     const batch = issues.slice(i, i + batchSize);
 
-    batch.forEach(async (issue: any) => {
+    for (let j = 0; j < batch.length; j++) {
+      const issue = batch[j];
       if (!issue.type_id) {
         issue.type_id = "";
       }
       await stageIssueInserts(issue);
-    });
+    }
   }
   await persistence.db.exec("COMMIT;");
 

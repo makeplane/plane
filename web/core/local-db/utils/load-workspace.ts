@@ -7,9 +7,17 @@ import { ModuleService } from "@/services/module.service";
 import { ProjectStateService } from "@/services/project";
 import { WorkspaceService } from "@/services/workspace.service";
 import { persistence } from "../storage.sqlite";
-import { cycleSchema, estimatePointSchema, labelSchema, memberSchema, Schema, stateSchema } from "./schemas";
+import {
+  cycleSchema,
+  estimatePointSchema,
+  labelSchema,
+  memberSchema,
+  moduleSchema,
+  Schema,
+  stateSchema,
+} from "./schemas";
 
-const stageInserts = (table: string, schema: Schema, data: any) => {
+const stageInserts = async (table: string, schema: Schema, data: any) => {
   const keys = Object.keys(schema);
   // Pick only the keys that are in the schema
   const filteredData = keys.reduce((acc: any, key) => {
@@ -36,7 +44,7 @@ const stageInserts = (table: string, schema: Schema, data: any) => {
     })
     .join(", ");
   const query = `INSERT OR REPLACE INTO ${table} (${columns}) VALUES (${values});`;
-  persistence.db.exec(query);
+  await persistence.db.exec(query);
 };
 
 export const loadLabels = async (workspaceSlug: string, batchSize = 500) => {
@@ -45,11 +53,10 @@ export const loadLabels = async (workspaceSlug: string, batchSize = 500) => {
   for (let i = 0; i < objects.length; i += batchSize) {
     const batch = objects.slice(i, i + batchSize);
 
-    // await persistence.db.exec("BEGIN TRANSACTION;");
-    batch.forEach((label: any) => {
-      stageInserts("labels", labelSchema, label);
-    });
-    // await persistence.db.exec("COMMIT;");
+    for (let j = 0; j < batch.length; j++) {
+      const item = batch[j];
+      await stageInserts("labels", labelSchema, item);
+    }
   }
 };
 
@@ -59,11 +66,10 @@ export const loadModules = async (workspaceSlug: string, batchSize = 500) => {
   for (let i = 0; i < objects.length; i += batchSize) {
     const batch = objects.slice(i, i + batchSize);
 
-    // await persistence.db.exec("BEGIN TRANSACTION;");
-    batch.forEach((label: any) => {
-      stageInserts("modules", labelSchema, label);
-    });
-    // await persistence.db.exec("COMMIT;");
+    for (let j = 0; j < batch.length; j++) {
+      const item = batch[j];
+      await stageInserts("modules", moduleSchema, item);
+    }
   }
 };
 
@@ -74,11 +80,10 @@ export const loadCycles = async (workspaceSlug: string, batchSize = 500) => {
   for (let i = 0; i < objects.length; i += batchSize) {
     const batch = objects.slice(i, i + batchSize);
 
-    // await persistence.db.exec("BEGIN TRANSACTION;");
-    batch.forEach((cycle: any) => {
-      stageInserts("cycles", cycleSchema, cycle);
-    });
-    // await persistence.db.exec("COMMIT;");
+    for (let j = 0; j < batch.length; j++) {
+      const item = batch[j];
+      await stageInserts("cycles", cycleSchema, item);
+    }
   }
 };
 
@@ -88,11 +93,10 @@ export const loadStates = async (workspaceSlug: string, batchSize = 500) => {
   for (let i = 0; i < objects.length; i += batchSize) {
     const batch = objects.slice(i, i + batchSize);
 
-    // await persistence.db.exec("BEGIN TRANSACTION;");
-    batch.forEach((state: any) => {
-      stageInserts("states", stateSchema, state);
-    });
-    // await persistence.db.exec("COMMIT;");
+    for (let j = 0; j < batch.length; j++) {
+      const item = batch[j];
+      await stageInserts("states", stateSchema, item);
+    }
   }
 };
 
@@ -108,11 +112,10 @@ export const loadEstimatePoints = async (workspaceSlug: string, batchSize = 500)
   for (let i = 0; i < objects.length; i += batchSize) {
     const batch = objects.slice(i, i + batchSize);
 
-    // await persistence.db.exec("BEGIN TRANSACTION;");
-    batch.forEach((point: any) => {
-      stageInserts("estimate_points", estimatePointSchema, point);
-    });
-    // await persistence.db.exec("COMMIT;");
+    for (let j = 0; j < batch.length; j++) {
+      const item = batch[j];
+      await stageInserts("estimate_points", estimatePointSchema, item);
+    }
   }
 };
 
@@ -122,15 +125,16 @@ export const loadMembers = async (workspaceSlug: string, batchSize = 500) => {
   const objects = members.map((member: IWorkspaceMember) => member.member);
   for (let i = 0; i < objects.length; i += batchSize) {
     const batch = objects.slice(i, i + batchSize);
-    // await persistence.db.exec("BEGIN TRANSACTION;");
-    batch.forEach((member: any) => {
-      stageInserts("members", memberSchema, member);
-    });
-    // await persistence.db.exec("COMMIT;");
+
+    for (let j = 0; j < batch.length; j++) {
+      const item = batch[j];
+      await stageInserts("members", memberSchema, item);
+    }
   }
 };
 
 export const loadWorkSpaceData = async (workspaceSlug: string) => {
+  persistence.db.exec("BEGIN TRANSACTION;");
   const promises = [];
   promises.push(loadLabels(workspaceSlug));
   promises.push(loadModules(workspaceSlug));
@@ -139,4 +143,5 @@ export const loadWorkSpaceData = async (workspaceSlug: string) => {
   promises.push(loadEstimatePoints(workspaceSlug));
   promises.push(loadMembers(workspaceSlug));
   await Promise.all(promises);
+  persistence.db.exec("COMMIT");
 };

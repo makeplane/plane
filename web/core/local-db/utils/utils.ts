@@ -156,6 +156,14 @@ const parseSQLite3Error = (error: any) => {
 export const clearOPFS = async () => {
   const storageManager = window.navigator.storage;
   const fileSystemDirectoryHandle = await storageManager.getDirectory();
+  const userAgent = navigator.userAgent;
+  const isChrome = userAgent.includes("Chrome") && !userAgent.includes("Edg") && !userAgent.includes("OPR");
+
+  if (isChrome) {
+    await (fileSystemDirectoryHandle as any).remove({ recursive: true });
+    return;
+  }
+
   const entries = await (fileSystemDirectoryHandle as any).entries();
   for await (const entry of entries) {
     const [name] = entry;
