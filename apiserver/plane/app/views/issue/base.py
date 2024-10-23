@@ -1026,6 +1026,7 @@ class IssueDetailEndpoint(BaseAPIView):
         )
         return self.paginate(
             request=request,
+            order_by=order_by_param,
             queryset=(issue),
             on_results=lambda issue: IssueSerializer(
                 issue,
