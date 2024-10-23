@@ -45,7 +45,7 @@ jobs:
           # Determine target branch based on current branch prefix
           if [[ "$CURRENT_BRANCH" == mobile-sync/* ]]; then
             TARGET_BRANCH="mobile"
-            PR_TITLE="Sync: Mobile Changes from Enterprise Repository"
+            PR_TITLE="${{vars.SYNC_MOBILE_PR_TITLE}}"
           else
             TARGET_BRANCH="preview"
             PR_TITLE="${{vars.SYNC_PR_TITLE}}"
