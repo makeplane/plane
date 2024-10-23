@@ -9,7 +9,7 @@ from asgiref.sync import sync_to_async
 
 # Django Imports
 from django.utils import timezone
-from django.db.models import Q, Exists, OuterRef
+from django.db.models import Q, Exists, OuterRef, Subquery
 
 # Strawberry Imports
 from strawberry.types import Info
@@ -52,19 +52,16 @@ class CycleQuery:
         )
 
         cycle_query = Cycle.objects.filter(
-            workspace__slug=slug, project_id=project
+            workspace__slug=slug,
+            project_id=project,
+            project__project_projectmember__member=info.context.user,
+            project__project_projectmember__is_active=True,
         )
 
         if ids:
             cycle_query = cycle_query.filter(id__in=ids)
-
-        # get cycles those are current and upcoming cycles based on the start_date and end_date
-        cycles = await sync_to_async(list)(
-            cycle_query.filter(
-                project__project_projectmember__member=info.context.user,
-                project__project_projectmember__is_active=True,
-            )
-            .filter(
+        else:
+            cycle_query = cycle_query.filter(
                 Q(start_date__isnull=True, end_date__isnull=True)
                 | Q(
                     start_date__lte=timezone.now().date(),
@@ -75,8 +72,12 @@ class CycleQuery:
                     & Q(start_date__gte=timezone.now().date())
                 )
             )
-            .order_by("start_date")
-            .annotate(is_favorite=Exists(subquery))
+
+        # get cycles those are current and upcoming cycles based on the start_date and end_date
+        cycles = await sync_to_async(list)(
+            cycle_query.order_by("start_date").annotate(
+                is_favorite=Exists(subquery)
+            )
         )
         return cycles
 
@@ -90,13 +91,27 @@ class CycleQuery:
         project: strawberry.ID,
         cycle: strawberry.ID,
     ) -> CycleType:
-        cycle_details = await sync_to_async(Cycle.objects.get)(
+        fav_subquery = UserFavorite.objects.filter(
             workspace__slug=slug,
             project_id=project,
-            id=cycle,
-            project__project_projectmember__member=info.context.user,
-            project__project_projectmember__is_active=True,
+            user=info.context.user,
+            entity_type="cycle",
+            entity_identifier=OuterRef("pk"),
+        ).values("id")
+
+        cycle_query = (
+            Cycle.objects.filter(
+                workspace__slug=slug,
+                project_id=project,
+                id=cycle,
+                project__project_projectmember__member=info.context.user,
+                project__project_projectmember__is_active=True,
+            )
+            .annotate(is_favorite=Exists(fav_subquery))
+            .annotate(favorite_id=Subquery(fav_subquery[:1]))
         )
+
+        cycle_details = await sync_to_async(cycle_query.first)()
 
         # Background task to update recent visited project
         user_id = info.context.user.id

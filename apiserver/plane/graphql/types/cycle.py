@@ -40,6 +40,7 @@ class CycleType:
     total_issues: int
     completed_issues: int
     is_favorite: bool
+    favorite_id: Optional[strawberry.ID]
     owned_by: Optional[UserType]
 
     @strawberry.field

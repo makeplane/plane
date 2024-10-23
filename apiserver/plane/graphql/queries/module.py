@@ -8,7 +8,7 @@ import strawberry
 from asgiref.sync import sync_to_async
 
 # Django Imports
-from django.db.models import Exists, OuterRef
+from django.db.models import Exists, OuterRef, Subquery
 
 # Strawberry Imports
 from strawberry.types import Info
@@ -26,7 +26,7 @@ from plane.graphql.types.issue import (
 from plane.graphql.permissions.project import ProjectBasePermission
 from plane.graphql.types.paginator import PaginatorResponse
 from plane.graphql.utils.issue_filters import issue_filters
-from plane.graphql.utils.paginator import paginate, PAGINATOR_MAX_LIMIT
+from plane.graphql.utils.paginator import paginate
 from plane.graphql.utils.issue import issue_information_query_execute
 from plane.graphql.bgtasks.recent_visited_task import recent_visited_task
 
@@ -77,13 +77,27 @@ class ModuleQuery:
         project: strawberry.ID,
         module: strawberry.ID,
     ) -> ModuleType:
-        module_details = await sync_to_async(Module.objects.get)(
+        fav_subquery = UserFavorite.objects.filter(
             workspace__slug=slug,
             project_id=project,
-            id=module,
-            project__project_projectmember__member=info.context.user,
-            project__project_projectmember__is_active=True,
+            user=info.context.user,
+            entity_type="module",
+            entity_identifier=OuterRef("pk"),
+        ).values("id")
+
+        module_query = (
+            Module.objects.filter(
+                workspace__slug=slug,
+                project_id=project,
+                id=module,
+                project__project_projectmember__member=info.context.user,
+                project__project_projectmember__is_active=True,
+            )
+            .annotate(is_favorite=Exists(fav_subquery))
+            .annotate(favorite_id=Subquery(fav_subquery[:1]))
         )
+
+        module_details = await sync_to_async(module_query.first)()
 
         # Background task to update recent visited project
         user_id = info.context.user.id
