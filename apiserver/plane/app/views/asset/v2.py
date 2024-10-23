@@ -209,7 +209,8 @@ class UserAssetsV2Endpoint(BaseAPIView):
         # update the attributes
         asset.attributes = request.data.get("attributes", asset.attributes)
         # save the asset
-        asset.save(created_by=request.user)
+        asset.created_by = request.user
+        asset.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def delete(self, request, asset_id):
@@ -459,7 +460,8 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         # update the attributes
         asset.attributes = request.data.get("attributes", asset.attributes)
         # save the asset
-        asset.save(created_by=request.user)
+        asset.created_by = request.user
+        asset.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def delete(self, request, slug, asset_id):
@@ -690,7 +692,8 @@ class ProjectAssetEndpoint(BaseAPIView):
         # update the attributes
         asset.attributes = request.data.get("attributes", asset.attributes)
         # save the asset
-        asset.save(created_by=request.user)
+        asset.created_by = request.user
+        asset.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
