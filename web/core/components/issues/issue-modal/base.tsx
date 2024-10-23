@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 // types
-import type { TIssue } from "@plane/types";
+import type { TBaseIssue, TIssue } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 import { CreateIssueToastActionItems, IssuesModalProps } from "@/components/issues";
@@ -251,6 +251,22 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     try {
       if (isDraft) await draftIssues.updateIssue(workspaceSlug.toString(), data.id, payload);
       else if (updateIssue) await updateIssue(payload.project_id, data.id, payload);
+
+      // check if we should add issue to cycle/module
+      if (
+        payload.cycle_id &&
+        payload.cycle_id !== "" &&
+        (payload.cycle_id !== cycleId || storeType !== EIssuesStoreType.CYCLE)
+      ) {
+        await addIssueToCycle(data as TBaseIssue, payload.cycle_id);
+      }
+      if (
+        payload.module_ids &&
+        payload.module_ids.length > 0 &&
+        (!payload.module_ids.includes(moduleId?.toString()) || storeType !== EIssuesStoreType.MODULE)
+      ) {
+        await addIssueToModule(data as TBaseIssue, payload.module_ids);
+      }
 
       // add other property values
       await handleCreateUpdatePropertyValues({

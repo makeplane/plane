@@ -1,5 +1,7 @@
 import { Editor, mergeAttributes } from "@tiptap/core";
 import Mention, { MentionOptions } from "@tiptap/extension-mention";
+import { MarkdownSerializerState } from "@tiptap/pm/markdown";
+import { Node } from "@tiptap/pm/model";
 import { ReactNodeViewRenderer, ReactRenderer } from "@tiptap/react";
 import tippy from "tippy.js";
 // extensions
@@ -25,8 +27,19 @@ export const CustomMention = ({
     addStorage(this) {
       return {
         mentionsOpen: false,
+        markdown: {
+          serialize(state: MarkdownSerializerState, node: Node) {
+            const { attrs } = node;
+            const label = `@${state.esc(attrs.label)}`;
+            const originUrl = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+            const safeRedirectionPath = state.esc(attrs.redirect_uri);
+            const url = `${originUrl}${safeRedirectionPath}`;
+            state.write(`[${label}](${url})`);
+          },
+        },
       };
     },
+
     addAttributes() {
       return {
         id: {

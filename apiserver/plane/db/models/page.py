@@ -9,7 +9,6 @@ from django.db import models
 # Module imports
 from plane.utils.html_processor import strip_tags
 
-from .project import ProjectBaseModel
 from .base import BaseModel
 
 

@@ -9,8 +9,7 @@ from django.db.models import (
     Q,
     UUIDField,
     Value,
-    Case,
-    When,
+    Subquery,
 )
 from django.db.models.functions import Coalesce
 from django.utils.decorators import method_decorator
@@ -38,6 +37,7 @@ from plane.db.models import (
     WorkspaceMember,
     ProjectMember,
     Project,
+    CycleIssue,
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -208,12 +208,10 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
             .annotate(
-                cycle_id=Case(
-                    When(
-                        issue_cycle__cycle__deleted_at__isnull=True,
-                        then=F("issue_cycle__cycle_id"),
-                    ),
-                    default=None,
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(
+                        issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("cycle_id")[:1]
                 )
             )
             .annotate(
@@ -244,9 +242,9 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=(
+                        filter=Q(
                             ~Q(labels__id__isnull=True)
-                            & Q(labels__deleted_at__isnull=True)
+                            & Q(label_issue__deleted_at__isnull=True),
                         ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
@@ -255,8 +253,11 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                     ArrayAgg(
                         "assignees__id",
                         distinct=True,
-                        filter=~Q(assignees__id__isnull=True)
-                        & Q(assignees__member_project__is_active=True),
+                        filter=Q(
+                            ~Q(assignees__id__isnull=True)
+                            & Q(assignees__member_project__is_active=True)
+                            & Q(issue_assignee__deleted_at__isnull=True)
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -264,9 +265,11 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                     ArrayAgg(
                         "issue_module__module_id",
                         distinct=True,
-                        filter=~Q(issue_module__module_id__isnull=True)
-                        & Q(issue_module__module__archived_at__isnull=True)
-                        & Q(issue_module__module__deleted_at__isnull=True),
+                        filter=Q(
+                            ~Q(issue_module__module_id__isnull=True)
+                            & Q(issue_module__module__archived_at__isnull=True)
+                            & Q(issue_module__deleted_at__isnull=True)
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -286,12 +289,10 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
             self.get_queryset()
             .filter(**filters)
             .annotate(
-                cycle_id=Case(
-                    When(
-                        issue_cycle__cycle__deleted_at__isnull=True,
-                        then=F("issue_cycle__cycle_id"),
-                    ),
-                    default=None,
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(
+                        issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("cycle_id")[:1]
                 )
             )
         )
@@ -552,7 +553,9 @@ class IssueViewViewSet(BaseViewSet):
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=IssueView)
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN], creator=True, model=IssueView
+    )
     def destroy(self, request, slug, project_id, pk):
         project_view = IssueView.objects.get(
             pk=pk,

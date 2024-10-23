@@ -30,9 +30,8 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "peerDependencies": {
-    "next": "12.3.2",
-    "react": "^18.2.0",
-    "react-dom": "18.2.0"
+    "react": "^18.3.1",
+    "react-dom": "18.3.1"
   },
   "dependencies": {
     "@floating-ui/react": "^0.26.4",
@@ -76,8 +75,8 @@
     "@plane/eslint-config": "*",
     "@plane/typescript-config": "*",
     "@types/node": "18.15.3",
-    "@types/react": "^18.2.42",
-    "@types/react-dom": "^18.2.17",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.2.18",
     "postcss": "^8.4.38",
     "tailwind-config-custom": "*",
     "tsup": "^7.2.0",

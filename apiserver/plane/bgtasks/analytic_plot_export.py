@@ -130,7 +130,9 @@ def get_label_details(slug, filters):
     """Fetch label details if required"""
     return (
         Issue.objects.filter(
-            workspace__slug=slug, **filters, labels__id__isnull=False
+            workspace__slug=slug,
+            **filters,
+            labels__id__isnull=False & Q(label_issue__deleted_at__isnull=True),
         )
         .distinct("labels__id")
         .order_by("labels__id")
@@ -156,6 +158,7 @@ def get_module_details(slug, filters):
             workspace__slug=slug,
             **filters,
             issue_module__module_id__isnull=False,
+            issue_module__deleted_at__isnull=True,
         )
         .distinct("issue_module__module_id")
         .order_by("issue_module__module_id")
@@ -172,6 +175,7 @@ def get_cycle_details(slug, filters):
             workspace__slug=slug,
             **filters,
             issue_cycle__cycle_id__isnull=False,
+            issue_cycle__deleted_at__isnull=True,
         )
         .distinct("issue_cycle__cycle_id")
         .order_by("issue_cycle__cycle_id")

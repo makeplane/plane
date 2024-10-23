@@ -1,21 +1,23 @@
 import { useEffect, useRef, useState } from "react";
-import { Node as ProsemirrorNode } from "@tiptap/pm/model";
-import { Editor, NodeViewWrapper } from "@tiptap/react";
+import { Editor, NodeViewProps, NodeViewWrapper } from "@tiptap/react";
 // extensions
 import { CustomImageBlock, CustomImageUploader, ImageAttributes } from "@/extensions/custom-image";
 
-export type CustomImageNodeViewProps = {
+export type CustomImageComponentProps = {
   getPos: () => number;
   editor: Editor;
-  node: ProsemirrorNode & {
+  node: NodeViewProps["node"] & {
     attrs: ImageAttributes;
   };
-  updateAttributes: (attrs: Record<string, any>) => void;
+  updateAttributes: (attrs: ImageAttributes) => void;
   selected: boolean;
 };
 
+export type CustomImageNodeViewProps = NodeViewProps & CustomImageComponentProps;
+
 export const CustomImageNode = (props: CustomImageNodeViewProps) => {
   const { getPos, editor, node, updateAttributes, selected } = props;
+  const { src: remoteImageSrc } = node.attrs;
 
   const [isUploaded, setIsUploaded] = useState(false);
   const [imageFromFileSystem, setImageFromFileSystem] = useState<string | undefined>(undefined);
@@ -37,14 +39,13 @@ export const CustomImageNode = (props: CustomImageNodeViewProps) => {
   // the image is already uploaded if the image-component node has src attribute
   // and we need to remove the blob from our file system
   useEffect(() => {
-    const remoteImageSrc = node.attrs.src;
     if (remoteImageSrc) {
       setIsUploaded(true);
       setImageFromFileSystem(undefined);
     } else {
       setIsUploaded(false);
     }
-  }, [node.attrs.src]);
+  }, [remoteImageSrc]);
 
   return (
     <NodeViewWrapper>
@@ -55,7 +56,7 @@ export const CustomImageNode = (props: CustomImageNodeViewProps) => {
             editorContainer={editorContainer}
             editor={editor}
             // @ts-expect-error function not expected here, but will still work
-            src={editor?.commands?.getImageSource?.(node.attrs.src)}
+            src={editor?.commands?.getImageSource?.(remoteImageSrc)}
             getPos={getPos}
             node={node}
             setEditorContainer={setEditorContainer}

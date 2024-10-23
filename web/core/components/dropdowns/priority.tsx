@@ -63,7 +63,7 @@ const BorderButton = (props: ButtonProps) => {
   const priorityDetails = ISSUE_PRIORITIES.find((p) => p.key === priority);
 
   const priorityClasses = {
-    urgent: "bg-red-500/20 text-red-950 border-red-500",
+    urgent: "bg-red-600/10 text-red-600 border-red-600 px-1",
     high: "bg-orange-500/20 text-orange-950 border-orange-500",
     medium: "bg-yellow-500/20 text-yellow-950 border-yellow-500",
     low: "bg-custom-primary-100/20 text-custom-primary-950 border-custom-primary-100",
@@ -88,7 +88,7 @@ const BorderButton = (props: ButtonProps) => {
             // compact the icons if text is hidden
             "px-0.5": hideText,
             // highlight the whole button if text is hidden and priority is urgent
-            "bg-red-600 border-red-600": priority === "urgent" && hideText && highlightUrgent,
+            "bg-red-600/10 border-red-600": priority === "urgent" && hideText && highlightUrgent,
           },
           className
         )}
@@ -98,7 +98,8 @@ const BorderButton = (props: ButtonProps) => {
             <div
               className={cn({
                 // highlight just the icon if text is visible and priority is urgent
-                "bg-red-600 p-1 rounded": priority === "urgent" && !hideText && highlightUrgent,
+                "bg-red-600/20 p-0.5 rounded border border-red-600":
+                  priority === "urgent" && !hideText && highlightUrgent,
               })}
             >
               <PriorityIcon
@@ -112,7 +113,6 @@ const BorderButton = (props: ButtonProps) => {
                   "translate-x-0.5": hideText && priority === "medium",
                   "translate-x-1": hideText && priority === "low",
                   // highlight the icon if priority is urgent
-                  "text-white": priority === "urgent" && highlightUrgent,
                 })}
               />
             </div>
@@ -145,7 +145,7 @@ const BackgroundButton = (props: ButtonProps) => {
   const priorityDetails = ISSUE_PRIORITIES.find((p) => p.key === priority);
 
   const priorityClasses = {
-    urgent: "bg-red-500/20 text-red-950",
+    urgent: "bg-red-600/20 text-red-600",
     high: "bg-orange-500/20 text-orange-950",
     medium: "bg-yellow-500/20 text-yellow-950",
     low: "bg-blue-500/20 text-blue-950",
@@ -170,7 +170,7 @@ const BackgroundButton = (props: ButtonProps) => {
             // compact the icons if text is hidden
             "px-0.5": hideText,
             // highlight the whole button if text is hidden and priority is urgent
-            "bg-red-600 border-red-600": priority === "urgent" && hideText && highlightUrgent,
+            "bg-red-600/10 border-red-600": priority === "urgent" && hideText && highlightUrgent,
           },
           className
         )}
@@ -180,7 +180,8 @@ const BackgroundButton = (props: ButtonProps) => {
             <div
               className={cn({
                 // highlight just the icon if text is visible and priority is urgent
-                "bg-red-600 p-1 rounded": priority === "urgent" && !hideText && highlightUrgent,
+                "bg-red-600/20 p-0.5 rounded border border-red-600":
+                  priority === "urgent" && !hideText && highlightUrgent,
               })}
             >
               <PriorityIcon
@@ -194,7 +195,6 @@ const BackgroundButton = (props: ButtonProps) => {
                   "translate-x-0.5": hideText && priority === "medium",
                   "translate-x-1": hideText && priority === "low",
                   // highlight the icon if priority is urgent
-                  "text-white": priority === "urgent" && highlightUrgent,
                 })}
               />
             </div>
@@ -253,7 +253,7 @@ const TransparentButton = (props: ButtonProps) => {
             // compact the icons if text is hidden
             "px-0.5": hideText,
             // highlight the whole button if text is hidden and priority is urgent
-            "bg-red-600 border-red-600": priority === "urgent" && hideText && highlightUrgent,
+            "bg-red-600/10 border-red-600": priority === "urgent" && hideText && highlightUrgent,
             "bg-custom-background-80": isActive,
           },
           className
@@ -264,7 +264,8 @@ const TransparentButton = (props: ButtonProps) => {
             <div
               className={cn({
                 // highlight just the icon if text is visible and priority is urgent
-                "bg-red-600 p-1 rounded": priority === "urgent" && !hideText && highlightUrgent,
+                "bg-red-600/20 p-0.5 rounded border border-red-600":
+                  priority === "urgent" && !hideText && highlightUrgent,
               })}
             >
               <PriorityIcon
@@ -278,7 +279,6 @@ const TransparentButton = (props: ButtonProps) => {
                   "translate-x-0.5": hideText && priority === "medium",
                   "translate-x-1": hideText && priority === "low",
                   // highlight the icon if priority is urgent
-                  "text-white": priority === "urgent" && highlightUrgent,
                 })}
               />
             </div>
