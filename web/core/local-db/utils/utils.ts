@@ -156,7 +156,7 @@ const parseSQLite3Error = (error: any) => {
 export const clearOPFS = async () => {
   const storageManager = window.navigator.storage;
   const fileSystemDirectoryHandle = await storageManager.getDirectory();
-  const entries = await fileSystemDirectoryHandle.entries();
+  const entries = await (fileSystemDirectoryHandle as any).entries();
   for await (const entry of entries) {
     const [name] = entry;
     try {
