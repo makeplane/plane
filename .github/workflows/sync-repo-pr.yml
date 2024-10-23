@@ -43,7 +43,7 @@ jobs:
       - name: Create PR to Target Branch
         run: |
           # Determine target branch based on current branch prefix
-          if [[ "$CURRENT_BRANCH" == mobile-sync/* ]]; then
+          if [[ "$CURRENT_BRANCH" == "${{vars.SYNC_TARGET_MOBILE_BRANCH_NAME}}" ]]; then
             TARGET_BRANCH="mobile"
             PR_TITLE="${{vars.SYNC_MOBILE_PR_TITLE}}"
           else
