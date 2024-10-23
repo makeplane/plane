@@ -4,18 +4,18 @@ import { useDropzone } from "react-dropzone";
 // plane web hooks
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
 // types
-import { TAttachmentOperations } from "./root";
+import { TAttachmentOperations } from "../issue-detail-widgets/attachments/helper";
 
-type TAttachmentOperationsModal = Exclude<TAttachmentOperations, "remove">;
+type TAttachmentOperationsModal = Pick<TAttachmentOperations, "create">;
 
 type Props = {
   workspaceSlug: string;
   disabled?: boolean;
-  handleAttachmentOperations: TAttachmentOperationsModal;
+  attachmentOperations: TAttachmentOperationsModal;
 };
 
 export const IssueAttachmentUpload: React.FC<Props> = observer((props) => {
-  const { workspaceSlug, disabled = false, handleAttachmentOperations } = props;
+  const { workspaceSlug, disabled = false, attachmentOperations } = props;
   // states
   const [isLoading, setIsLoading] = useState(false);
   // file size
@@ -27,9 +27,9 @@ export const IssueAttachmentUpload: React.FC<Props> = observer((props) => {
       if (!currentFile || !workspaceSlug) return;
 
       setIsLoading(true);
-      handleAttachmentOperations.create(currentFile).finally(() => setIsLoading(false));
+      attachmentOperations.create(currentFile).finally(() => setIsLoading(false));
     },
-    [handleAttachmentOperations, workspaceSlug]
+    [attachmentOperations, workspaceSlug]
   );
 
   const { getRootProps, getInputProps, isDragActive, isDragReject, fileRejections } = useDropzone({

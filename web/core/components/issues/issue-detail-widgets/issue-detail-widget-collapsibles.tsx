@@ -25,6 +25,7 @@ export const IssueDetailWidgetCollapsibles: FC<Props> = observer((props) => {
     issue: { getIssueById },
     subIssues: { subIssuesByIssueId },
     relation: { getRelationsByIssueId },
+    attachment: { getAttachmentsUploadStatusByIssueId },
   } = useIssueDetail();
 
   // derived values
@@ -36,7 +37,9 @@ export const IssueDetailWidgetCollapsibles: FC<Props> = observer((props) => {
   const shouldRenderSubIssues = !!subIssues && subIssues.length > 0;
   const shouldRenderRelations = Object.values(issueRelations ?? {}).some((relation) => relation.length > 0);
   const shouldRenderLinks = !!issue?.link_count && issue?.link_count > 0;
-  const shouldRenderAttachments = !!issue?.attachment_count && issue?.attachment_count > 0;
+  const attachmentUploads = getAttachmentsUploadStatusByIssueId(issueId);
+  const shouldRenderAttachments =
+    (!!issue?.attachment_count && issue?.attachment_count > 0) || (!!attachmentUploads && attachmentUploads.length > 0);
 
   return (
     <div className="flex flex-col">

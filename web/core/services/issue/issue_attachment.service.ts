@@ -1,3 +1,5 @@
+import { AxiosRequestConfig } from "axios";
+// plane types
 import { TIssueAttachment, TIssueAttachmentUploadResponse } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
@@ -34,7 +36,8 @@ export class IssueAttachmentService extends APIService {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    file: File
+    file: File,
+    uploadProgressHandler?: AxiosRequestConfig["onUploadProgress"]
   ): Promise<TIssueAttachment> {
     const fileMetaData = getFileMetaDataForUpload(file);
     return this.post(
@@ -44,7 +47,11 @@ export class IssueAttachmentService extends APIService {
       .then(async (response) => {
         const signedURLResponse: TIssueAttachmentUploadResponse = response?.data;
         const fileUploadPayload = generateFileUploadPayload(signedURLResponse, file);
-        await this.fileUploadService.uploadFile(signedURLResponse.upload_data.url, fileUploadPayload);
+        await this.fileUploadService.uploadFile(
+          signedURLResponse.upload_data.url,
+          fileUploadPayload,
+          uploadProgressHandler
+        );
         await this.updateIssueAttachmentUploadStatus(workspaceSlug, projectId, issueId, signedURLResponse.asset_id);
         return signedURLResponse.attachment;
       })

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import axios, { AxiosInstance } from "axios";
+import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 
 export abstract class APIService {
   protected baseURL: string;
@@ -28,26 +28,26 @@ export abstract class APIService {
     );
   }
 
-  get(url: string, params = {}, config = {}) {
+  get(url: string, params = {}, config: AxiosRequestConfig = {}) {
     return this.axiosInstance.get(url, {
       ...params,
       ...config,
     });
   }
 
-  post(url: string, data = {}, config = {}) {
+  post(url: string, data = {}, config: AxiosRequestConfig = {}) {
     return this.axiosInstance.post(url, data, config);
   }
 
-  put(url: string, data = {}, config = {}) {
+  put(url: string, data = {}, config: AxiosRequestConfig = {}) {
     return this.axiosInstance.put(url, data, config);
   }
 
-  patch(url: string, data = {}, config = {}) {
+  patch(url: string, data = {}, config: AxiosRequestConfig = {}) {
     return this.axiosInstance.patch(url, data, config);
   }
 
-  delete(url: string, data?: any, config = {}) {
+  delete(url: string, data?: any, config: AxiosRequestConfig = {}) {
     return this.axiosInstance.delete(url, { data, ...config });
   }
 
