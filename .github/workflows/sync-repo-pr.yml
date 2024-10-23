@@ -45,9 +45,12 @@ jobs:
           # Determine target branch based on current branch prefix
           if [[ "$CURRENT_BRANCH" == mobile-sync/* ]]; then
             TARGET_BRANCH="mobile"
+            PR_TITLE="Sync: Mobile Changes from Enterprise Repository"
           else
             TARGET_BRANCH="preview"
+            PR_TITLE="${{vars.SYNC_PR_TITLE}}"
           fi
+
 
           # get all pull requests and check if there is already a PR
           PR_EXISTS=$(gh pr list --base $TARGET_BRANCH --head $CURRENT_BRANCH --state open --json number | jq '.[] | .number')
@@ -55,6 +58,6 @@ jobs:
             echo "Pull Request already exists: $PR_EXISTS"
           else
             echo "Creating new pull request"
-            PR_URL=$(gh pr create --base $TARGET_BRANCH --head $CURRENT_BRANCH --title "${{ vars.SYNC_PR_TITLE }}" --body "")
+            PR_URL=$(gh pr create --base $TARGET_BRANCH --head $CURRENT_BRANCH --title $PR_TITLE --body "")
             echo "Pull Request created: $PR_URL"
           fi
