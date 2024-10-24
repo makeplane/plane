@@ -37,7 +37,7 @@ class UserAssetsV2Endpoint(BaseAPIView):
             return
         asset.is_deleted = True
         asset.deleted_at = timezone.now()
-        asset.save()
+        asset.save(update_fields=["is_deleted", "deleted_at"])
         return
 
     def entity_asset_save(self, asset_id, entity_type, asset, request):
@@ -212,8 +212,7 @@ class UserAssetsV2Endpoint(BaseAPIView):
         # update the attributes
         asset.attributes = request.data.get("attributes", asset.attributes)
         # save the asset
-        asset.created_by = request.user
-        asset.save()
+        asset.save(update_fields=["is_uploaded", "attributes"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def delete(self, request, asset_id):
@@ -224,7 +223,7 @@ class UserAssetsV2Endpoint(BaseAPIView):
         self.entity_asset_delete(
             entity_type=asset.entity_type, asset=asset, request=request
         )
-        asset.save()
+        asset.save(update_fields=["is_deleted", "deleted_at"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -283,7 +282,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         # Mark the asset as deleted
         asset.is_deleted = True
         asset.deleted_at = timezone.now()
-        asset.save()
+        asset.save(update_fields=["is_deleted", "deleted_at"])
         return
 
     def entity_asset_save(self, asset_id, entity_type, asset, request):
@@ -475,8 +474,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         # update the attributes
         asset.attributes = request.data.get("attributes", asset.attributes)
         # save the asset
-        asset.created_by = request.user
-        asset.save()
+        asset.save(update_fields=["is_uploaded", "attributes"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def delete(self, request, slug, asset_id):
@@ -487,7 +485,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         self.entity_asset_delete(
             entity_type=asset.entity_type, asset=asset, request=request
         )
-        asset.save()
+        asset.save(update_fields=["is_deleted", "deleted_at"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def get(self, request, slug, asset_id):
@@ -568,7 +566,7 @@ class AssetRestoreEndpoint(BaseAPIView):
         asset = FileAsset.all_objects.get(id=asset_id, workspace__slug=slug)
         asset.is_deleted = False
         asset.deleted_at = None
-        asset.save()
+        asset.save(update_fields=["is_deleted", "deleted_at"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -723,8 +721,7 @@ class ProjectAssetEndpoint(BaseAPIView):
         # update the attributes
         asset.attributes = request.data.get("attributes", asset.attributes)
         # save the asset
-        asset.created_by = request.user
-        asset.save()
+        asset.save(update_fields=["is_uploaded", "attributes"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
@@ -739,7 +736,7 @@ class ProjectAssetEndpoint(BaseAPIView):
         asset.is_deleted = True
         asset.deleted_at = timezone.now()
         # Save the asset
-        asset.save()
+        asset.save(update_fields=["is_deleted", "deleted_at"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
