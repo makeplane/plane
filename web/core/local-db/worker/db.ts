@@ -21,21 +21,29 @@ export class DBClass {
   instance: any = {};
   sqlite3: any;
   async init(dbName: string) {
-    const m = await SQLiteESMFactory();
-    this.sqlite3 = SQLite.Factory(m);
-    const vfs = await MyVFS.create("hello", m);
-    this.sqlite3.vfs_register(vfs, true);
-    const db = await this.sqlite3.open_v2(`${dbName}.sqlite3`);
-    this.instance.db = db;
-    this.instance.exec = async (sql: string) => {
-      const rows: any[] = [];
-      await this.sqlite3.exec(db, sql, (row: any[], columns: string[]) => {
-        rows.push(mergeToObject(columns, row));
-      });
+    if (!dbName || typeof dbName !== 'string') {
+      throw new Error('Invalid database name');
+    }
 
-      return rows;
-    };
-    return true;
+    try {
+      const m = await SQLiteESMFactory();
+      this.sqlite3 = SQLite.Factory(m);
+      const vfs = await MyVFS.create("hello", m);
+      this.sqlite3.vfs_register(vfs, true);
+      const db = await this.sqlite3.open_v2(`${dbName}.sqlite3`);
+      this.instance.db = db;
+      this.instance.exec = async (sql: string) => {
+        const rows: any[] = [];
+        await this.sqlite3.exec(db, sql, (row: any[], columns: string[]) => {
+          rows.push(mergeToObject(columns, row));
+        });
+
+        return rows;
+      };
+      return true;
+    } catch (error) {
+      throw new Error(`Failed to initialize database: ${error.message}`);
+    }
   }
 
   runQuery(sql: string) {
