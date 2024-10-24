@@ -66,7 +66,7 @@ export class DBClass {
         }
       }
     }
-    return this.instance.exec(sql);
+    return await this.instance.exec(sql);
   }
   async close() {
     await this.sqlite3.close(this.instance.db);

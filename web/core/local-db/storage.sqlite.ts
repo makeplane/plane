@@ -40,6 +40,9 @@ export class Storage {
   }
 
   reset = () => {
+    if (this.db) {
+      this.db.close();
+    }
     this.db = null;
     this.status = undefined;
     this.projectStatus = {};
