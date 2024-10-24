@@ -43,7 +43,7 @@ export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
   const { maxFileSize, projectId, uploadFile, workspaceId, workspaceSlug } = args;
 
   return {
-    getAssetSrc: (path) => {
+    getAssetSrc: async (path) => {
       if (!path) return "";
       if (path?.startsWith("http")) {
         return path;
@@ -94,7 +94,7 @@ export const getReadOnlyEditorFileHandlers = (
   const { projectId, workspaceSlug } = args;
 
   return {
-    getAssetSrc: (path) => {
+    getAssetSrc: async (path) => {
       if (!path) return "";
       if (path?.startsWith("http")) {
         return path;
