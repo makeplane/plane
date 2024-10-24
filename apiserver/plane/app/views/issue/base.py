@@ -14,8 +14,7 @@ from django.db.models import (
     Q,
     UUIDField,
     Value,
-    When,
-    Case,
+    Subquery,
 )
 from django.db.models.functions import Coalesce
 from django.utils import timezone
@@ -44,6 +43,7 @@ from plane.db.models import (
     IssueSubscriber,
     Project,
     ProjectMember,
+    CycleIssue,
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -86,12 +86,10 @@ class IssueListEndpoint(BaseAPIView):
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
             .annotate(
-                cycle_id=Case(
-                    When(
-                        issue_cycle__cycle__deleted_at__isnull=True,
-                        then=F("issue_cycle__cycle_id"),
-                    ),
-                    default=None,
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(
+                        issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("cycle_id")[:1]
                 )
             )
             .annotate(
@@ -218,12 +216,10 @@ class IssueViewSet(BaseViewSet):
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
             .annotate(
-                cycle_id=Case(
-                    When(
-                        issue_cycle__cycle__deleted_at__isnull=True,
-                        then=F("issue_cycle__cycle_id"),
-                    ),
-                    default=None,
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(
+                        issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("cycle_id")[:1]
                 )
             )
             .annotate(
@@ -489,9 +485,9 @@ class IssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=(
+                        filter=Q(
                             ~Q(labels__id__isnull=True)
-                            & Q(labels__deleted_at__isnull=True)
+                            & Q(label_issue__deleted_at__isnull=True),
                         ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
@@ -500,8 +496,11 @@ class IssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "assignees__id",
                         distinct=True,
-                        filter=~Q(assignees__id__isnull=True)
-                        & Q(assignees__member_project__is_active=True),
+                        filter=Q(
+                            ~Q(assignees__id__isnull=True)
+                            & Q(assignees__member_project__is_active=True)
+                            & Q(issue_assignee__deleted_at__isnull=True)
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -509,9 +508,11 @@ class IssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "issue_module__module_id",
                         distinct=True,
-                        filter=~Q(issue_module__module_id__isnull=True)
-                        & Q(issue_module__module__archived_at__isnull=True)
-                        & Q(issue_module__module__deleted_at__isnull=True),
+                        filter=Q(
+                            ~Q(issue_module__module_id__isnull=True)
+                            & Q(issue_module__module__archived_at__isnull=True)
+                            & Q(issue_module__deleted_at__isnull=True)
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -590,9 +591,9 @@ class IssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=(
+                        filter=Q(
                             ~Q(labels__id__isnull=True)
-                            & Q(labels__deleted_at__isnull=True)
+                            & Q(label_issue__deleted_at__isnull=True),
                         ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
@@ -601,8 +602,11 @@ class IssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "assignees__id",
                         distinct=True,
-                        filter=~Q(assignees__id__isnull=True)
-                        & Q(assignees__member_project__is_active=True),
+                        filter=Q(
+                            ~Q(assignees__id__isnull=True)
+                            & Q(assignees__member_project__is_active=True)
+                            & Q(issue_assignee__deleted_at__isnull=True)
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -610,9 +614,11 @@ class IssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "issue_module__module_id",
                         distinct=True,
-                        filter=~Q(issue_module__module_id__isnull=True)
-                        & Q(issue_module__module__archived_at__isnull=True)
-                        & Q(issue_module__module__deleted_at__isnull=True),
+                        filter=Q(
+                            ~Q(issue_module__module_id__isnull=True)
+                            & Q(issue_module__module__archived_at__isnull=True)
+                            & Q(issue_module__deleted_at__isnull=True)
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -776,12 +782,10 @@ class IssuePaginatedViewSet(BaseViewSet):
             )
             .prefetch_related("assignees", "labels", "issue_module__module")
             .annotate(
-                cycle_id=Case(
-                    When(
-                        issue_cycle__cycle__deleted_at__isnull=True,
-                        then=F("issue_cycle__cycle_id"),
-                    ),
-                    default=None,
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(
+                        issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("cycle_id")[:1]
                 )
             )
             .annotate(
@@ -890,9 +894,9 @@ class IssuePaginatedViewSet(BaseViewSet):
                 ArrayAgg(
                     "labels__id",
                     distinct=True,
-                    filter=(
+                    filter=Q(
                         ~Q(labels__id__isnull=True)
-                        & Q(labels__deleted_at__isnull=True)
+                        & Q(label_issue__deleted_at__isnull=True),
                     ),
                 ),
                 Value([], output_field=ArrayField(UUIDField())),
@@ -901,8 +905,11 @@ class IssuePaginatedViewSet(BaseViewSet):
                 ArrayAgg(
                     "assignees__id",
                     distinct=True,
-                    filter=~Q(assignees__id__isnull=True)
-                    & Q(assignees__member_project__is_active=True),
+                    filter=Q(
+                        ~Q(assignees__id__isnull=True)
+                        & Q(assignees__member_project__is_active=True)
+                        & Q(issue_assignee__deleted_at__isnull=True)
+                    ),
                 ),
                 Value([], output_field=ArrayField(UUIDField())),
             ),
@@ -910,9 +917,11 @@ class IssuePaginatedViewSet(BaseViewSet):
                 ArrayAgg(
                     "issue_module__module_id",
                     distinct=True,
-                    filter=~Q(issue_module__module_id__isnull=True)
-                    & Q(issue_module__module__archived_at__isnull=True)
-                    & Q(issue_module__module__deleted_at__isnull=True),
+                    filter=Q(
+                        ~Q(issue_module__module_id__isnull=True)
+                        & Q(issue_module__module__archived_at__isnull=True)
+                        & Q(issue_module__deleted_at__isnull=True)
+                    ),
                 ),
                 Value([], output_field=ArrayField(UUIDField())),
             ),

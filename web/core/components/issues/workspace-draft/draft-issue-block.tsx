@@ -177,7 +177,6 @@ export const DraftIssueBlock: FC<Props> = observer((props) => {
               updateIssue={async (projectId, issueId, data) => {
                 await updateIssue(workspaceSlug, issueId, data);
               }}
-              activeLayout="List"
             />
             <div
               className={cn("hidden", {
