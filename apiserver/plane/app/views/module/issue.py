@@ -1,12 +1,7 @@
 # Python imports
 import json
 
-from django.db.models import (
-    F,
-    Func,
-    OuterRef,
-    Q,
-)
+from django.db.models import F, Func, OuterRef, Q, Subquery
 
 # Django Imports
 from django.utils import timezone
@@ -28,6 +23,7 @@ from plane.db.models import (
     IssueLink,
     ModuleIssue,
     Project,
+    CycleIssue,
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -62,10 +58,17 @@ class ModuleIssueViewSet(BaseViewSet):
                 project_id=self.kwargs.get("project_id"),
                 workspace__slug=self.kwargs.get("slug"),
                 issue_module__module_id=self.kwargs.get("module_id"),
+                issue_module__deleted_at__isnull=True,
             )
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
-            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(
+                        issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("cycle_id")[:1]
+                )
+            )
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()

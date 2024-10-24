@@ -48,6 +48,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                 estimate_point__estimate__type="points",
                 state__group="backlog",
                 issue_cycle__cycle_id=OuterRef("pk"),
+                issue_cycle__deleted_at__isnull=True,
             )
             .values("issue_cycle__cycle_id")
             .annotate(
@@ -62,6 +63,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                 estimate_point__estimate__type="points",
                 state__group="unstarted",
                 issue_cycle__cycle_id=OuterRef("pk"),
+                issue_cycle__deleted_at__isnull=True,
             )
             .values("issue_cycle__cycle_id")
             .annotate(
@@ -76,6 +78,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                 estimate_point__estimate__type="points",
                 state__group="started",
                 issue_cycle__cycle_id=OuterRef("pk"),
+                issue_cycle__deleted_at__isnull=True,
             )
             .values("issue_cycle__cycle_id")
             .annotate(
@@ -90,6 +93,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                 estimate_point__estimate__type="points",
                 state__group="cancelled",
                 issue_cycle__cycle_id=OuterRef("pk"),
+                issue_cycle__deleted_at__isnull=True,
             )
             .values("issue_cycle__cycle_id")
             .annotate(
@@ -104,6 +108,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                 estimate_point__estimate__type="points",
                 state__group="completed",
                 issue_cycle__cycle_id=OuterRef("pk"),
+                issue_cycle__deleted_at__isnull=True,
             )
             .values("issue_cycle__cycle_id")
             .annotate(
@@ -117,6 +122,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
             Issue.issue_objects.filter(
                 estimate_point__estimate__type="points",
                 issue_cycle__cycle_id=OuterRef("pk"),
+                issue_cycle__deleted_at__isnull=True,
             )
             .values("issue_cycle__cycle_id")
             .annotate(
@@ -348,6 +354,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                         project_id=self.kwargs.get("project_id"),
                         parent__isnull=False,
                         issue_cycle__cycle_id=pk,
+                        issue_cycle__deleted_at__isnull=True,
                     )
                     .order_by()
                     .annotate(count=Func(F("id"), function="Count"))
@@ -402,6 +409,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                 assignee_distribution = (
                     Issue.issue_objects.filter(
                         issue_cycle__cycle_id=pk,
+                        issue_cycle__deleted_at__isnull=True,
                         workspace__slug=slug,
                         project_id=project_id,
                     )
@@ -459,6 +467,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                 label_distribution = (
                     Issue.issue_objects.filter(
                         issue_cycle__cycle_id=pk,
+                        issue_cycle__deleted_at__isnull=True,
                         workspace__slug=slug,
                         project_id=project_id,
                     )
@@ -514,6 +523,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
             assignee_distribution = (
                 Issue.issue_objects.filter(
                     issue_cycle__cycle_id=pk,
+                    issue_cycle__deleted_at__isnull=True,
                     workspace__slug=slug,
                     project_id=project_id,
                 )
@@ -584,6 +594,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
             label_distribution = (
                 Issue.issue_objects.filter(
                     issue_cycle__cycle_id=pk,
+                    issue_cycle__deleted_at__isnull=True,
                     workspace__slug=slug,
                     project_id=project_id,
                 )

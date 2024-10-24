@@ -45,6 +45,7 @@ class WorkspaceModulesEndpoint(BaseAPIView):
                     filter=Q(
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 ),
@@ -56,6 +57,7 @@ class WorkspaceModulesEndpoint(BaseAPIView):
                         issue_module__issue__state__group="completed",
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 )
@@ -67,6 +69,7 @@ class WorkspaceModulesEndpoint(BaseAPIView):
                         issue_module__issue__state__group="cancelled",
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 )
@@ -78,6 +81,7 @@ class WorkspaceModulesEndpoint(BaseAPIView):
                         issue_module__issue__state__group="started",
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 )
@@ -89,6 +93,7 @@ class WorkspaceModulesEndpoint(BaseAPIView):
                         issue_module__issue__state__group="unstarted",
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 )
@@ -100,6 +105,7 @@ class WorkspaceModulesEndpoint(BaseAPIView):
                         issue_module__issue__state__group="backlog",
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 )
