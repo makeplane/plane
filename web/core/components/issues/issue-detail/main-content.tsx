@@ -19,6 +19,9 @@ import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 import useSize from "@/hooks/use-window-size";
 // plane web components
 import { IssueTypeSwitcher } from "@/plane-web/components/issues";
+// services
+import { IssueService } from "@/services/issue";
+const issueService = new IssueService();
 // types
 import { TIssueOperations } from "./root";
 
@@ -87,14 +90,24 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
         />
 
         <IssueDescriptionInput
-          workspaceSlug={workspaceSlug}
-          projectId={issue.project_id}
-          issueId={issue.id}
-          initialValue={issue.description_html}
-          disabled={!isEditable}
-          issueOperations={issueOperations}
-          setIsSubmitting={(value) => setIsSubmitting(value)}
           containerClassName="-ml-3 border-none"
+          descriptionHTML={issue.description_html ?? "<p></p>"}
+          disabled={!isEditable}
+          fetchDescription={async () => {
+            if (!workspaceSlug || !projectId || !issueId) return;
+            return await issueService.fetchDescriptionBinary(workspaceSlug, projectId, issueId);
+          }}
+          updateDescription={async (data) => {
+            if (!workspaceSlug || !issue.project_id || !issue.id) return;
+            return await issueService.updateDescriptionBinary(workspaceSlug, issue.project_id, issue.id, {
+              description_binary: data,
+            });
+          }}
+          issueId={issue.id}
+          issueOperations={issueOperations}
+          projectId={issue.project_id}
+          setIsSubmitting={(value) => setIsSubmitting(value)}
+          workspaceSlug={workspaceSlug}
         />
 
         {currentUser && (

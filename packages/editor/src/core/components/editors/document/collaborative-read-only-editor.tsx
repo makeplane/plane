@@ -8,7 +8,7 @@ import { IssueWidget } from "@/extensions";
 // helpers
 import { getEditorClassNames } from "@/helpers/common";
 // hooks
-import { useReadOnlyCollaborativeEditor } from "@/hooks/use-read-only-collaborative-editor";
+import { useCollaborativeDocumentReadOnlyEditor } from "@/hooks/use-collaborative-document-read-only-editor";
 // types
 import { EditorReadOnlyRefApi, ICollaborativeDocumentReadOnlyEditor } from "@/types";
 
@@ -36,7 +36,7 @@ const CollaborativeDocumentReadOnlyEditor = (props: ICollaborativeDocumentReadOn
     );
   }
 
-  const { editor, hasServerConnectionFailed, hasServerSynced } = useReadOnlyCollaborativeEditor({
+  const { editor, hasServerConnectionFailed, hasServerSynced } = useCollaborativeDocumentReadOnlyEditor({
     editorClassName,
     extensions,
     fileHandler,

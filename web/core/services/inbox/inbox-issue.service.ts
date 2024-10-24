@@ -1,5 +1,5 @@
 // types
-import type { TInboxIssue, TIssue, TInboxIssueWithPagination, TInboxForm } from "@plane/types";
+import type { TInboxIssue, TIssue, TInboxIssueWithPagination, TInboxForm, TDocumentPayload } from "@plane/types";
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { APIService } from "@/services/api.service";
 // helpers
@@ -70,6 +70,41 @@ export class InboxIssueService extends APIService {
 
   async destroy(workspaceSlug: string, projectId: string, inboxIssueId: string): Promise<void> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/inbox-issues/${inboxIssueId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async fetchDescriptionBinary(workspaceSlug: string, projectId: string, inboxIssueId: string): Promise<any> {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/inbox-issues/${inboxIssueId}/description/`,
+      {
+        headers: {
+          "Content-Type": "application/octet-stream",
+        },
+        responseType: "arraybuffer",
+      }
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async updateDescriptionBinary(
+    workspaceSlug: string,
+    projectId: string,
+    inboxIssueId: string,
+    data: Pick<TDocumentPayload, "description_binary">
+  ): Promise<any> {
+    return this.post(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/inbox-issues/${inboxIssueId}/description/`,
+      data,
+      {
+        responseType: "arraybuffer",
+      }
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -1,3 +1,7 @@
+import { CoreEditorExtensionsWithoutProps } from "@/extensions";
+import { getSchema } from "@tiptap/core";
+import { generateJSON } from "@tiptap/html";
+import { prosemirrorJSONToYDoc } from "y-prosemirror";
 import * as Y from "yjs";
 
 /**
@@ -13,4 +17,16 @@ export const applyUpdates = (document: Uint8Array, updates: Uint8Array): Uint8Ar
 
   const encodedDoc = Y.encodeStateAsUpdate(yDoc);
   return encodedDoc;
+};
+
+const richTextEditorSchema = getSchema(CoreEditorExtensionsWithoutProps);
+export const getBinaryDataFromRichTextEditorHTMLString = (descriptionHTML: string): Uint8Array => {
+  // convert HTML to JSON
+  const contentJSON = generateJSON(descriptionHTML ?? "<p></p>", CoreEditorExtensionsWithoutProps);
+  // convert JSON to Y.Doc format
+  const transformedData = prosemirrorJSONToYDoc(richTextEditorSchema, contentJSON, "default");
+  // convert Y.Doc to Uint8Array format
+  const encodedData = Y.encodeStateAsUpdate(transformedData);
+
+  return encodedData;
 };

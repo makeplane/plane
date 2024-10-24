@@ -7,7 +7,7 @@ import useSWR from "swr";
 import { History, MessageSquare } from "lucide-react";
 // hooks
 import { ActivityIcon, ActivityMessage, IssueLink } from "@/components/core";
-import { RichTextReadOnlyEditor } from "@/components/editor/rich-text-editor/rich-text-read-only-editor";
+import { RichTextReadOnlyEditor } from "@/components/editor";
 import { ActivitySettingsLoader } from "@/components/ui";
 // constants
 import { USER_ACTIVITY } from "@/constants/fetch-keys";

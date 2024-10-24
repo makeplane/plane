@@ -5,16 +5,15 @@ import expressWs from "express-ws";
 import * as Sentry from "@sentry/node";
 import compression from "compression";
 import helmet from "helmet";
-
-// cors
 import cors from "cors";
-
+import * as Y from "yjs";
 // core hocuspocus server
 import { getHocusPocusServer } from "@/core/hocuspocus-server.js";
-
 // helpers
-import { logger, manualLogger } from "@/core/helpers/logger.js";
 import { errorHandler } from "@/core/helpers/error-handler.js";
+import { applyUpdatesToBinaryData } from "@/core/helpers/document.js";
+import { getAllDocumentFormatsFromRichTextEditorBinaryData } from "@/core/helpers/issue.js";
+import { logger, manualLogger } from "@/core/helpers/logger.js";
 
 const app = express();
 expressWs(app);
@@ -29,7 +28,7 @@ app.use(
   compression({
     level: 6,
     threshold: 5 * 1000,
-  }),
+  })
 );
 
 // Logging middleware
@@ -62,6 +61,47 @@ router.ws("/collaboration", (ws, req) => {
   }
 });
 
+app.post("/resolve-document-conflicts", (req, res) => {
+  const { original_document, updates } = req.body;
+  try {
+    if (original_document === undefined || updates === undefined) {
+      res.status(400).send({
+        message: "Missing required fields",
+      });
+      throw new Error("Missing required fields");
+    }
+    // convert from base64 to buffer
+    const originalDocumentBuffer = original_document ? Buffer.from(original_document, "base64") : null;
+    const updatesBuffer = updates ? Buffer.from(updates, "base64") : null;
+    // decode req.body
+    const decodedOriginalDocument = originalDocumentBuffer ? new Uint8Array(originalDocumentBuffer) : new Uint8Array();
+    const decodedUpdates = updatesBuffer ? new Uint8Array(updatesBuffer) : new Uint8Array();
+    // resolve conflicts
+    let resolvedDocument: Uint8Array;
+    if (decodedOriginalDocument.length === 0) {
+      const yDoc = new Y.Doc();
+      Y.applyUpdate(yDoc, decodedUpdates);
+      resolvedDocument = Y.encodeStateAsUpdate(yDoc);
+    } else {
+      resolvedDocument = applyUpdatesToBinaryData(decodedOriginalDocument, decodedUpdates);
+    }
+
+    const { contentBinaryEncoded, contentHTML, contentJSON } =
+      getAllDocumentFormatsFromRichTextEditorBinaryData(resolvedDocument);
+
+    res.status(200).json({
+      description_html: contentHTML,
+      description_binary: contentBinaryEncoded,
+      description: contentJSON,
+    });
+  } catch (error) {
+    console.log("error", error);
+    res.status(500).send({
+      message: "Internal server error",
+    });
+  }
+});
+
 app.use(process.env.LIVE_BASE_PATH || "/live", router);
 
 app.use((_req, res) => {
@@ -82,9 +122,7 @@ const gracefulShutdown = async () => {
   try {
     // Close the HocusPocus server WebSocket connections
     await HocusPocusServer.destroy();
-    manualLogger.info(
-      "HocusPocus server WebSocket connections closed gracefully.",
-    );
+    manualLogger.info("HocusPocus server WebSocket connections closed gracefully.");
 
     // Close the Express server
     liveServer.close(() => {

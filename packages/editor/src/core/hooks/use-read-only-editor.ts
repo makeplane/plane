@@ -1,5 +1,4 @@
 import { useImperativeHandle, useRef, MutableRefObject, useEffect } from "react";
-import { HocuspocusProvider } from "@hocuspocus/provider";
 import { EditorProps } from "@tiptap/pm/view";
 import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
 import * as Y from "yjs";
@@ -24,7 +23,7 @@ interface CustomReadOnlyEditorProps {
   mentionHandler: {
     highlights: () => Promise<IMentionHighlight[]>;
   };
-  provider?: HocuspocusProvider;
+  providerDocument?: Y.Doc;
 }
 
 export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
@@ -37,7 +36,7 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
     fileHandler,
     handleEditorReady,
     mentionHandler,
-    provider,
+    providerDocument,
   } = props;
 
   const editor = useCustomEditor({
@@ -86,7 +85,7 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
       return markdownOutput;
     },
     getDocument: () => {
-      const documentBinary = provider?.document ? Y.encodeStateAsUpdate(provider?.document) : null;
+      const documentBinary = providerDocument ? Y.encodeStateAsUpdate(providerDocument) : null;
       const documentHTML = editorRef.current?.getHTML() ?? "<p></p>";
       const documentJSON = editorRef.current?.getJSON() ?? null;
 

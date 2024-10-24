@@ -8,7 +8,7 @@ import { IssueWidget } from "@/extensions";
 // helpers
 import { getEditorClassNames } from "@/helpers/common";
 // hooks
-import { useCollaborativeEditor } from "@/hooks/use-collaborative-editor";
+import { useCollaborativeDocumentEditor } from "@/hooks/use-collaborative-document-editor";
 // types
 import { EditorRefApi, ICollaborativeDocumentEditor } from "@/types";
 
@@ -42,7 +42,7 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
   }
 
   // use document editor
-  const { editor, hasServerConnectionFailed, hasServerSynced } = useCollaborativeEditor({
+  const { editor, hasServerConnectionFailed, hasServerSynced } = useCollaborativeDocumentEditor({
     disabledExtensions,
     editorClassName,
     embedHandler,

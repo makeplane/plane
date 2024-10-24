@@ -1,31 +1,24 @@
-import { AnyExtension, Editor } from "@tiptap/core";
+import React from "react";
 // components
-import { EditorContainer } from "@/components/editors";
+import { EditorContainer, EditorContentWrapper } from "@/components/editors";
+import { EditorBubbleMenu } from "@/components/menus";
 // constants
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
-// hooks
+// helpers
 import { getEditorClassNames } from "@/helpers/common";
-import { useEditor } from "@/hooks/use-editor";
+// hooks
+import { useCollaborativeRichTextEditor } from "@/hooks/use-collaborative-rich-text-editor";
 // types
-import { IEditorProps } from "@/types";
-import { EditorContentWrapper } from "./editor-content";
+import { EditorRefApi, ICollaborativeRichTextEditor } from "@/types";
 
-type Props = IEditorProps & {
-  children?: (editor: Editor) => React.ReactNode;
-  extensions: AnyExtension[];
-};
-
-export const EditorWrapper: React.FC<Props> = (props) => {
+const CollaborativeRichTextEditor = (props: ICollaborativeRichTextEditor) => {
   const {
-    children,
     containerClassName,
     displayConfig = DEFAULT_DISPLAY_CONFIG,
-    editorClassName = "",
-    extensions,
-    id,
-    initialValue,
+    editorClassName,
     fileHandler,
     forwardedRef,
+    id,
     mentionHandler,
     onChange,
     placeholder,
@@ -33,14 +26,11 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     value,
   } = props;
 
-  const editor = useEditor({
+  const { editor } = useCollaborativeRichTextEditor({
     editorClassName,
-    enableHistory: true,
-    extensions,
     fileHandler,
     forwardedRef,
     id,
-    initialValue,
     mentionHandler,
     onChange,
     placeholder,
@@ -63,10 +53,20 @@ export const EditorWrapper: React.FC<Props> = (props) => {
       editorContainerClassName={editorContainerClassName}
       id={id}
     >
-      {children?.(editor)}
+      <EditorBubbleMenu editor={editor} />
       <div className="flex flex-col">
         <EditorContentWrapper editor={editor} id={id} tabIndex={tabIndex} />
       </div>
     </EditorContainer>
   );
 };
+
+const CollaborativeRichTextEditorWithRef = React.forwardRef<EditorRefApi, ICollaborativeRichTextEditor>(
+  (props, ref) => (
+    <CollaborativeRichTextEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi | null>} />
+  )
+);
+
+CollaborativeRichTextEditorWithRef.displayName = "CollaborativeRichTextEditorWithRef";
+
+export { CollaborativeRichTextEditorWithRef };

@@ -10,6 +10,8 @@ import "src/styles/drag-drop.css";
 export {
   CollaborativeDocumentEditorWithRef,
   CollaborativeDocumentReadOnlyEditorWithRef,
+  CollaborativeRichTextEditorWithRef,
+  CollaborativeRichTextReadOnlyEditorWithRef,
   DocumentReadOnlyEditorWithRef,
   LiteTextEditorWithRef,
   LiteTextReadOnlyEditorWithRef,

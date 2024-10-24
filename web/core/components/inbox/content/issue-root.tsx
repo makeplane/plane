@@ -20,6 +20,9 @@ import {
 // hooks
 import { useEventTracker, useProjectInbox, useUser } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
+// services
+import { InboxIssueService } from "@/services/inbox";
+const inboxIssueService = new InboxIssueService();
 // store types
 import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
 
@@ -121,15 +124,24 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           </Loader>
         ) : (
           <IssueDescriptionInput
-            workspaceSlug={workspaceSlug}
-            projectId={issue.project_id}
-            issueId={issue.id}
-            swrIssueDescription={issue.description_html ?? "<p></p>"}
-            initialValue={issue.description_html ?? "<p></p>"}
-            disabled={!isEditable}
-            issueOperations={issueOperations}
-            setIsSubmitting={(value) => setIsSubmitting(value)}
             containerClassName="-ml-3 border-none"
+            descriptionHTML={issue.description_html ?? "<p></p>"}
+            disabled={!isEditable}
+            fetchDescription={async () => {
+              if (!workspaceSlug || !projectId || !issue.id) return;
+              return await inboxIssueService.fetchDescriptionBinary(workspaceSlug, projectId, issue.id);
+            }}
+            updateDescription={async (data) => {
+              if (!workspaceSlug || !projectId || !issue.id) return;
+              return await inboxIssueService.updateDescriptionBinary(workspaceSlug, projectId, issue.id, {
+                description_binary: data,
+              });
+            }}
+            issueId={issue.id}
+            issueOperations={issueOperations}
+            projectId={issue.project_id}
+            setIsSubmitting={(value) => setIsSubmitting(value)}
+            workspaceSlug={workspaceSlug}
           />
         )}
 

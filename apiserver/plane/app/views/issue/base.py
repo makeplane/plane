@@ -1,6 +1,7 @@
 # Python imports
 import json
 import requests
+import base64
 
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -22,6 +23,7 @@ from django.utils import timezone
 from django.http import StreamingHttpResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
+from django.conf import settings
 
 # Third Party imports
 from rest_framework import status
@@ -718,25 +720,45 @@ class IssueViewSet(BaseViewSet):
         issue = Issue.issue_objects.get(
             workspace__slug=slug, project_id=project_id, pk=pk
         )
+        base64_description = issue.description_binary
+        # convert to base64 string
+        if base64_description:
+            base64_description = base64.b64encode(base64_description).decode(
+                "utf-8"
+            )
         data = {
-            "original_document": issue.description_binary,
+            "original_document": base64_description,
             "updates": request.data.get("description_binary"),
         }
-        scheme = request.scheme
-        host = request.get_host()
-        base_url = f"{scheme}://{host}/resolve-document-conflicts/"
-        response = requests.post(base_url, data=data, headers=None)
+        base_url = f"{settings.LIVE_BASE_URL}/resolve-document-conflicts/"
+        response = requests.post(base_url, json=data, headers=None)
 
         if response.status_code == 200:
-            issue.description = request.data.get(
+            issue.description = response.json().get(
                 "description", issue.description
             )
             issue.description_html = response.json().get("description_html")
-            issue.description_binary = response.json().get(
+            response_description_binary = response.json().get(
                 "description_binary"
             )
+            issue.description_binary = base64.b64decode(
+                response_description_binary
+            )
             issue.save()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+
+            def stream_data():
+                if issue.description_binary:
+                    yield issue.description_binary
+                else:
+                    yield b""
+
+            response = StreamingHttpResponse(
+                stream_data(), content_type="application/octet-stream"
+            )
+            response["Content-Disposition"] = (
+                'attachment; filename="issue_description.bin"'
+            )
+            return response
 
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 

@@ -8,6 +8,9 @@ import { useIssueDetail, useUser } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // plane web components
 import { IssueTypeSwitcher } from "@/plane-web/components/issues";
+// services
+import { IssueService } from "@/services/issue";
+const issueService = new IssueService();
 // local components
 import { IssueDescriptionInput } from "../description-input";
 import { IssueReaction } from "../issue-detail/reactions";
@@ -48,13 +51,6 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
   const issue = issueId ? getIssueById(issueId) : undefined;
   if (!issue || !issue.project_id) return <></>;
 
-  const issueDescription =
-    issue.description_html !== undefined || issue.description_html !== null
-      ? issue.description_html != ""
-        ? issue.description_html
-        : "<p></p>"
-      : undefined;
-
   return (
     <div className="space-y-2">
       {issue.parent_id && (
@@ -80,14 +76,24 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
       />
 
       <IssueDescriptionInput
-        workspaceSlug={workspaceSlug}
-        projectId={issue.project_id}
-        issueId={issue.id}
-        initialValue={issueDescription}
-        disabled={disabled}
-        issueOperations={issueOperations}
-        setIsSubmitting={(value) => setIsSubmitting(value)}
         containerClassName="-ml-3 border-none"
+        descriptionHTML={issue.description_html ?? "<p></p>"}
+        disabled={disabled}
+        fetchDescription={async () => {
+          if (!workspaceSlug || !issue.project_id || !issue.id) return;
+          return await issueService.fetchDescriptionBinary(workspaceSlug, issue.project_id, issue.id);
+        }}
+        updateDescription={async (data) => {
+          if (!workspaceSlug || !issue.project_id || !issue.id) return;
+          return await issueService.updateDescriptionBinary(workspaceSlug, issue.project_id, issue.id, {
+            description_binary: data,
+          });
+        }}
+        issueId={issue.id}
+        issueOperations={issueOperations}
+        projectId={issue.project_id}
+        setIsSubmitting={(value) => setIsSubmitting(value)}
+        workspaceSlug={workspaceSlug}
       />
 
       {currentUser && (
