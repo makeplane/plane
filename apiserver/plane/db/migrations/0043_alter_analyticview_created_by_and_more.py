@@ -3,7 +3,6 @@
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
-from plane.db.models import IssueRelation
 from sentry_sdk import capture_exception
 import uuid
 
@@ -11,6 +10,7 @@ import uuid
 def create_issue_relation(apps, schema_editor):
     try:
         IssueBlockerModel = apps.get_model("db", "IssueBlocker")
+        IssueRelation = apps.get_model("db", "IssueRelation")
         updated_issue_relation = []
         for blocked_issue in IssueBlockerModel.objects.all():
             updated_issue_relation.append(
