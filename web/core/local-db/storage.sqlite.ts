@@ -123,6 +123,7 @@ export class Storage {
     const syncInProgress = await this.getIsWriteInProgress("sync_workspace");
     if (syncInProgress) {
       log("Sync in progress, skipping");
+      return;
     }
     try {
       await startSpan({ name: "LOAD_WS", attributes: { slug: this.workspaceSlug } }, async () => {
