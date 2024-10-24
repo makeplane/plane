@@ -1,6 +1,6 @@
 import { persistence } from "../storage.sqlite";
+import { log } from "./utils";
 
-const log = console.log;
 export const createIssueIndexes = async () => {
   const columns = [
     "state_id",
@@ -34,10 +34,8 @@ export const createWorkSpaceIndexes = async () => {
   const promises: Promise<any>[] = [];
   // Labels
   promises.push(persistence.db.exec({ sql: `CREATE INDEX labels_name_idx ON labels (id,name,project_id)` }));
-
   // Modules
   promises.push(persistence.db.exec({ sql: `CREATE INDEX modules_name_idx ON modules  (id,name,project_id)` }));
-
   // States
   promises.push(persistence.db.exec({ sql: `CREATE INDEX states_name_idx ON states  (id,name,project_id)` }));
   // Cycles
@@ -49,7 +47,7 @@ export const createWorkSpaceIndexes = async () => {
   // Estimate Points @todo
   promises.push(persistence.db.exec({ sql: `CREATE INDEX estimate_points_name_idx ON estimate_points  (id,value)` }));
   // Options
-  promises.push(persistence.db.exec({ sql: `CREATE INDEX options_name_idx ON options  (name)` }));
+  promises.push(persistence.db.exec({ sql: `CREATE INDEX options_key_idx ON options  (key)` }));
 
   await Promise.all(promises);
 };
