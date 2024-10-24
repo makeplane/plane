@@ -12,9 +12,10 @@ import {
   List,
   ListOrdered,
   ListTodo,
+  MessageSquareText,
   MinusSquare,
-  Quote,
   Table,
+  TextQuote,
 } from "lucide-react";
 // constants
 import { COLORS_LIST } from "@/constants/common";
@@ -34,6 +35,8 @@ import {
   toggleTextColor,
   toggleBackgroundColor,
   insertImage,
+  insertCallout,
+  setText,
 } from "@/helpers/editor-commands";
 // types
 import { CommandProps, ISlashCommandItem } from "@/types";
@@ -58,12 +61,7 @@ export const getSlashCommandFilteredSections =
             description: "Just start typing with plain text.",
             searchTerms: ["p", "paragraph"],
             icon: <CaseSensitive className="size-3.5" />,
-            command: ({ editor, range }: CommandProps) => {
-              if (range) {
-                editor.chain().focus().deleteRange(range).clearNodes().run();
-              }
-              editor.chain().focus().clearNodes().run();
-            },
+            command: ({ editor, range }) => setText(editor, range),
           },
           {
             commandKey: "h1",
@@ -161,7 +159,7 @@ export const getSlashCommandFilteredSections =
             title: "Quote",
             description: "Capture a quote.",
             searchTerms: ["blockquote"],
-            icon: <Quote className="size-3.5" />,
+            icon: <TextQuote className="size-3.5" />,
             command: ({ editor, range }) => toggleBlockquote(editor, range),
           },
           {
@@ -181,6 +179,15 @@ export const getSlashCommandFilteredSections =
             description: "Insert an image",
             searchTerms: ["img", "photo", "picture", "media", "upload"],
             command: ({ editor, range }: CommandProps) => insertImage({ editor, event: "insert", range }),
+          },
+          {
+            commandKey: "callout",
+            key: "callout",
+            title: "Callout",
+            icon: <MessageSquareText className="size-3.5" />,
+            description: "Insert callout",
+            searchTerms: ["callout", "comment", "message", "info", "alert"],
+            command: ({ editor, range }: CommandProps) => insertCallout(editor, range),
           },
           {
             commandKey: "divider",
