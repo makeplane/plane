@@ -103,6 +103,7 @@ export interface IRichTextEditor extends IEditorProps {
 
 export interface ICollaborativeDocumentEditor
   extends Omit<IEditorProps, "initialValue" | "onChange" | "onEnterKeyPress" | "value"> {
+  slashCommandEnabled?: boolean;
   aiHandler?: TAIHandler;
   disabledExtensions: TExtensions[];
   embedHandler: TEmbedConfig;

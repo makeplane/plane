@@ -14,6 +14,7 @@ import { EditorRefApi, ICollaborativeDocumentEditor } from "@/types";
 
 const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
   const {
+    slashCommandEnabled = true,
     aiHandler,
     containerClassName,
     disabledExtensions,
@@ -43,6 +44,7 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
 
   // use document editor
   const { editor, hasServerConnectionFailed, hasServerSynced } = useCollaborativeEditor({
+    slashCommandEnabled,
     disabledExtensions,
     editorClassName,
     embedHandler,
