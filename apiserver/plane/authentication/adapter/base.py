@@ -25,10 +25,11 @@ from plane.authentication.utils.host import base_host
 class Adapter:
     """Common interface for all auth providers"""
 
-    def __init__(self, request, provider, callback=None):
+    def __init__(self, request, provider, callback=None, is_mobile=False):
         self.request = request
         self.provider = provider
         self.callback = callback
+        self.is_mobile = is_mobile
         self.token_data = None
         self.user_data = None
 
@@ -141,8 +142,19 @@ class Adapter:
 
         # Check if the user is present
         user = User.objects.filter(email=email).first()
+
         # Check if sign up case or login
-        is_signup = bool(user)
+        is_signup = not bool(user)
+
+        # check if the user is authenticated via mobile
+        if is_signup and self.is_mobile:
+            raise AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES[
+                    "MOBILE_SIGNUP_DISABLED"
+                ],
+                error_message="MOBILE_SIGNUP_DISABLED",
+            )
+
         # If user is not present, create a new user
         if not user:
             # New user
