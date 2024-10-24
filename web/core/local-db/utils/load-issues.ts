@@ -10,7 +10,9 @@ export const PROJECT_OFFLINE_STATUS: Record<string, boolean> = {};
 
 export const addIssue = async (issue: any) => {
   if (document.hidden || !rootStore.user.localDBEnabled || !persistence.db) return;
-  stageIssueInserts(issue);
+  await persistence.db.exec("BEGIN;");
+  await stageIssueInserts(issue);
+  await persistence.db.exec("COMMIT;");
 };
 
 export const addIssuesBulk = async (issues: any, batchSize = 100) => {
@@ -41,7 +43,7 @@ export const deleteIssueFromLocal = async (issue_id: any) => {
   const deleteQuery = `delete from issues where id='${issue_id}'`;
   const deleteMetaQuery = `delete from issue_meta where issue_id='${issue_id}'`;
 
-  persistence.db.exec("BEGIN TRANSACTION;");
+  persistence.db.exec("BEGIN;");
   persistence.db.exec(deleteQuery);
   persistence.db.exec(deleteMetaQuery);
   persistence.db.exec("COMMIT;");

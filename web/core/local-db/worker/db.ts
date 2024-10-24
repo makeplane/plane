@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as Comlink from "comlink";
 import { OPFSCoopSyncVFS as MyVFS } from "./wa-sqlite/src/OPFSCoopSyncVFS";
 import * as SQLite from "./wa-sqlite/src/sqlite-api";
@@ -25,6 +24,8 @@ interface SQLiteInstance {
 export class DBClass {
   private instance: SQLiteInstance = {} as SQLiteInstance;
   private sqlite3: any;
+  private tp: Promise<any> | null = null;
+  private tpResolver: any;
   async init(dbName: string) {
     if (!dbName || typeof dbName !== "string") {
       throw new Error("Invalid database name");
@@ -56,6 +57,9 @@ export class DBClass {
   }
 
   async exec(props: string | TQueryProps) {
+    if (this.tp && props === "BEGIN;") {
+      await this.tp;
+    }
     let sql: string, bind: any[];
     if (typeof props === "string") {
       sql = props;
@@ -78,6 +82,19 @@ export class DBClass {
           return rows;
         }
       }
+    }
+
+    if (sql === "BEGIN;") {
+      this.tp = new Promise((resolve, reject) => {
+        this.tpResolver = { resolve, reject };
+      });
+    }
+
+    if (sql === "COMMIT;" && this.tp) {
+      await this.instance.exec(sql);
+      this.tpResolver.resolve();
+      this.tp = null;
+      return;
     }
     return await this.instance.exec(sql);
   }

@@ -25,7 +25,7 @@ const createTableSQLfromSchema = (tableName: string, schema: Schema) => {
 
 export const createTables = async () => {
   //@todo use promise.all or send all statements in one go
-  await persistence.db.exec("BEGIN TRANSACTION;");
+  await persistence.db.exec("BEGIN;");
 
   await persistence.db.exec(createTableSQLfromSchema("issues", issueSchema));
   await persistence.db.exec(createTableSQLfromSchema("issue_meta", issueMetaSchema));
