@@ -18,8 +18,21 @@ const mergeToObject = (columns: string[], row: any[]) => {
   return obj;
 };
 export class DBClass {
-  instance: any = {};
-  sqlite3: any;
+interface SQLiteInstance {
+  db: unknown;
+  exec: (sql: string) => Promise<unknown[]>;
+}
+
+interface SQLite3API {
+  open_v2: (filename: string) => Promise<unknown>;
+  exec: (db: unknown, sql: string, callback: (row: unknown[], columns: string[]) => void) => Promise<void>;
+  close: (db: unknown) => Promise<void>;
+  // Add other required method signatures
+}
+
+export class DBClass {
+  private instance: SQLiteInstance = {} as SQLiteInstance;
+  private sqlite3: SQLite3API;
   async init(dbName: string) {
     if (!dbName || typeof dbName !== 'string') {
       throw new Error('Invalid database name');
