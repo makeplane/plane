@@ -11,11 +11,12 @@ import { TOAST_TYPE, setToast } from "@plane/ui";
 import { IssueCommentCreate } from "@/components/issues";
 import { IssueActivityCommentRoot } from "@/components/issues/issue-detail";
 // hooks
-import { useIssueDetail, useProject } from "@/hooks/store";
+import { useIssueDetail, useProject, useUserPermissions } from "@/hooks/store";
 // plane web components
 import { ActivityFilterRoot, IssueActivityWorklogCreateButton } from "@/plane-web/components/issues/worklog";
 // plane web constants
 import { TActivityFilters, defaultActivityFilters } from "@/plane-web/constants/issues";
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // services
 import { FileService } from "@/services/file.service";
 const fileService = new FileService();
@@ -39,7 +40,11 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
   const { workspaceSlug, projectId, issueId, disabled = false, isIntakeIssue = false } = props;
   // hooks
   const { createComment, updateComment, removeComment } = useIssueDetail();
+  const { projectPermissionsByWorkspaceSlugAndProjectId } = useUserPermissions();
   const { getProjectById } = useProject();
+  //derived values
+  const isGuest = (projectPermissionsByWorkspaceSlugAndProjectId(workspaceSlug, projectId) ?? EUserPermissions.GUEST) === EUserPermissions.GUEST;
+  const isWorklogButtonEnabled = !isIntakeIssue && !isGuest;
   // state
   const [selectedFilters, setSelectedFilters] = useState<TActivityFilters[]>(defaultActivityFilters);
   // toggle filter
@@ -139,7 +144,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
       <div className="flex items-center justify-between">
         <div className="text-lg text-custom-text-100">Activity</div>
         <div className="flex items-center gap-2">
-          {!isIntakeIssue && (
+          {isWorklogButtonEnabled && (
             <IssueActivityWorklogCreateButton
               workspaceSlug={workspaceSlug}
               projectId={projectId}

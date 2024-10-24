@@ -53,11 +53,12 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
+  const issueFilters = issuesFilter?.getIssueFilters(viewId?.toString());
+  const activeLayout = issueFilters?.displayFilters?.layout;
 
   if (!workspaceSlug || !projectId || !viewId) return <></>;
 
-  if (isLoading) {
+  if (isLoading && !issueFilters) {
     return (
       <div className="relative flex h-screen w-full items-center justify-center">
         <LogoSpinner />
