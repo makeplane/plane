@@ -3,7 +3,8 @@ import { HocuspocusProvider } from "@hocuspocus/provider";
 import { DOMSerializer } from "@tiptap/pm/model";
 import { Selection } from "@tiptap/pm/state";
 import { EditorProps } from "@tiptap/pm/view";
-import { useEditor as useTiptapEditor, Editor } from "@tiptap/react";
+import { useEditor as useTiptapEditor, Editor, type JSONContent } from "@tiptap/react";
+import { IndexeddbPersistence } from "y-indexeddb";
 import * as Y from "yjs";
 // components
 import { getEditorMenuItems } from "@/components/menus";
@@ -17,6 +18,8 @@ import { IMarking, scrollSummary } from "@/helpers/scroll-to-node";
 import { CoreEditorProps } from "@/props";
 // types
 import { EditorRefApi, IMentionHighlight, IMentionSuggestion, TEditorCommands, TFileHandler } from "@/types";
+import { migrateDocJSON } from "@/extensions/migrationjson";
+import { type ProsemirrorNodeJSON } from "prosemirror-flat-list";
 
 export interface CustomEditorProps {
   editorClassName: string;
@@ -35,6 +38,7 @@ export interface CustomEditorProps {
   onChange?: (json: object, html: string) => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   provider?: HocuspocusProvider;
+  localProvider?: IndexeddbPersistence;
   tabIndex?: number;
   // undefined when prop is not passed, null if intentionally passed to stop
   // swr syncing
@@ -56,16 +60,35 @@ export const useEditor = (props: CustomEditorProps) => {
     onChange,
     placeholder,
     provider,
+    // localProvider,
     tabIndex,
     value,
   } = props;
   // states
 
   const [savedSelection, setSavedSelection] = useState<Selection | null>(null);
+  const [isEditorDisabled, setIsEditorDisabled] = useState(false);
   // refs
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
   const savedSelectionRef = useRef(savedSelection);
   const editor = useTiptapEditor({
+    immediatelyRender: true,
+    shouldRerenderOnTransaction: false,
+    enableContentCheck: true,
+    onContentError: ({ editor, error, disableCollaboration }) => {
+      // console.log("ran", editor.getJSON());
+      if (disableCollaboration) disableCollaboration();
+      // localProvider.clearData();
+      // localProvider.destroy();
+
+      const emitUpdate = false;
+
+      // Disable further user input
+      // setIsEditorDisabled(true);
+      editor.setEditable(false, emitUpdate);
+      console.log("error", error);
+    },
+
     editorProps: {
       ...CoreEditorProps({
         editorClassName,
@@ -116,6 +139,40 @@ export const useEditor = (props: CustomEditorProps) => {
       }
     }
   }, [editor, value, id]);
+
+  // const [hasMigrated, setHasMigrated] = useState(false);
+  //
+  // useEffect(() => {
+  //   if (editor && (!hasMigrated || editor.isActive("listItem")) && !isEditorDisabled) {
+  //     const newJSON = migrateDocJSON(editor.getJSON()) as JSONContent;
+  //
+  //     if (newJSON) {
+  //       // Create a new transaction
+  //       const transaction = editor.state.tr;
+  //
+  //       try {
+  //         const node = editor.state.schema.nodeFromJSON(newJSON);
+  //
+  //         transaction.replaceWith(0, editor.state.doc.content.size, node);
+  //         transaction.setMeta("addToHistory", false);
+  //         editor.view.dispatch(transaction);
+  //         setHasMigrated(true);
+  //
+  //         // focus user on the current position
+  //         const currentSavedSelection = savedSelectionRef.current;
+  //         if (currentSavedSelection) {
+  //           const docLength = editor.state.doc.content.size;
+  //           const relativePosition = Math.min(currentSavedSelection.from, docLength - 1);
+  //           editor.commands.setTextSelection(relativePosition);
+  //         }
+  //
+  //         console.log("Migration of old lists completed without adding to history");
+  //       } catch (error) {
+  //         console.error("Error during migration:", error);
+  //       }
+  //     }
+  //   }
+  // }, [editor.getJSON(), editor.isActive("listItem"), hasMigrated]);
 
   useImperativeHandle(
     forwardedRef,
