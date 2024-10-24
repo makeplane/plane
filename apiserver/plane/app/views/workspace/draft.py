@@ -1,5 +1,6 @@
 # Python imports
 import json
+import requests
 
 # Django imports
 from django.utils import timezone
@@ -7,6 +8,7 @@ from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
+from django.http import StreamingHttpResponse
 from django.db.models import (
     Q,
     UUIDField,
@@ -350,3 +352,52 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def retrieve_description(self, request, slug, pk):
+        issue = DraftIssue.objects.filter(pk=pk, workspace__slug=slug).first()
+        if issue is None:
+            return Response(
+                {"error": "Issue not found"},
+                status=404,
+            )
+        binary_data = issue.description_binary
+
+        def stream_data():
+            if binary_data:
+                yield binary_data
+            else:
+                yield b""
+
+        response = StreamingHttpResponse(
+            stream_data(), content_type="application/octet-stream"
+        )
+        response["Content-Disposition"] = (
+            'attachment; filename="draft_issue_description.bin"'
+        )
+        return response
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    def update_description(self, request, slug, pk):
+        issue = DraftIssue.objects.get(workspace__slug=slug, pk=pk)
+        data = {
+            "original_document": issue.description_binary,
+            "updates": request.data.get("description_binary"),
+        }
+        scheme = request.scheme
+        host = request.get_host()
+        base_url = f"{scheme}://{host}/resolve-document-conflicts/"
+        response = requests.post(base_url, data=data, headers=None)
+
+        if response.status_code == 200:
+            issue.description = request.data.get(
+                "description", issue.description
+            )
+            issue.description_html = response.json().get("description_html")
+            issue.description_binary = response.json().get(
+                "description_binary"
+            )
+            issue.save()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
