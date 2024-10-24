@@ -1,4 +1,4 @@
-import * as Sentry from "@sentry/nextjs";
+import { startSpan } from "@sentry/nextjs";
 // types
 import type {
   IIssueDisplayProperties,
@@ -14,7 +14,7 @@ import { API_BASE_URL } from "@/helpers/common.helper";
 import { persistence } from "@/local-db/storage.sqlite";
 // services
 
-import { addIssue, addIssuesBulk, deleteIssueFromLocal } from "@/local-db/utils/load-issues";
+import { addIssuesBulk, deleteIssueFromLocal, updateIssue } from "@/local-db/utils/load-issues";
 import { APIService } from "@/services/api.service";
 
 export class IssueService extends APIService {
@@ -63,7 +63,7 @@ export class IssueService extends APIService {
   }
 
   async getIssues(workspaceSlug: string, projectId: string, queries?: any, config = {}): Promise<TIssuesResponse> {
-    const response = await Sentry.startSpan({ name: "GET_ISSUES" }, async () => {
+    const response = await startSpan({ name: "GET_ISSUES" }, async () => {
       const res = await persistence.getIssues(workspaceSlug, projectId, queries, config);
       return res;
     });
@@ -100,7 +100,7 @@ export class IssueService extends APIService {
     })
       .then((response) => {
         if (response.data) {
-          addIssue(response?.data);
+          updateIssue({ ...response.data, is_local_update: 1 });
         }
         return response?.data;
       })

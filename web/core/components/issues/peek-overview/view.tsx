@@ -66,7 +66,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   // remove peek id
   const removeRoutePeekId = () => {
     setPeekIssue(undefined);
-    if (embedIssue) embedRemoveCurrentNotification && embedRemoveCurrentNotification();
+    if (embedIssue && embedRemoveCurrentNotification) embedRemoveCurrentNotification();
   };
 
   const isLocalDBIssueDescription = getIsLocalDBIssueDescription(issueId);

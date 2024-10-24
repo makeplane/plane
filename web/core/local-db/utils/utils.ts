@@ -1,4 +1,4 @@
-import * as Sentry from "@sentry/nextjs";
+import { captureException } from "@sentry/nextjs";
 import pick from "lodash/pick";
 import { TIssue } from "@plane/types";
 import { rootStore } from "@/lib/store-context";
@@ -14,8 +14,8 @@ export const logError = (e: any) => {
   if (e?.result?.errorClass === "SQLite3Error") {
     e = parseSQLite3Error(e);
   }
-  Sentry.captureException(e);
-  console.log(e);
+  console.error(e);
+  captureException(e);
 };
 export const logInfo = console.info;
 
@@ -151,4 +151,26 @@ export const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve
 const parseSQLite3Error = (error: any) => {
   error.result = JSON.stringify(error.result);
   return error;
+};
+
+export const clearOPFS = async () => {
+  const storageManager = window.navigator.storage;
+  const fileSystemDirectoryHandle = await storageManager.getDirectory();
+  const userAgent = navigator.userAgent;
+  const isChrome = userAgent.includes("Chrome") && !userAgent.includes("Edg") && !userAgent.includes("OPR");
+
+  if (isChrome) {
+    await (fileSystemDirectoryHandle as any).remove({ recursive: true });
+    return;
+  }
+
+  const entries = await (fileSystemDirectoryHandle as any).entries();
+  for await (const entry of entries) {
+    const [name] = entry;
+    try {
+      await fileSystemDirectoryHandle.removeEntry(name);
+    } catch (e) {
+      console.log("Error", e);
+    }
+  }
 };
