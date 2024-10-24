@@ -89,9 +89,17 @@ export class Storage {
       return false;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { DBClass } = await import("./worker/db");
-    const MyWorker = Comlink.wrap<typeof DBClass>(new Worker(new URL("./worker/db.ts", import.meta.url)));
+    try {
+      const { DBClass } = await import("./worker/db");
+      const worker = new Worker(new URL("./worker/db.ts", import.meta.url));
+      const MyWorker = Comlink.wrap<typeof DBClass>(worker);
+      
+      // Add cleanup on window unload
+      window.addEventListener('unload', () => worker.terminate());
+    } catch (error) {
+      this.status = "error";
+      throw new Error(`Failed to initialize database worker: ${error}`);
+    }
     this.workspaceSlug = workspaceSlug;
     this.dbName = workspaceSlug;
     const instance = await new MyWorker();
