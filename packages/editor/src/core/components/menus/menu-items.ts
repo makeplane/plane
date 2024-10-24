@@ -182,7 +182,7 @@ export const TodoListItem = (editor: Editor): EditorMenuItem => ({
 export const FlatBulletListItem = (editor: Editor): EditorMenuItem => ({
   key: "flat-bulleted-list",
   name: "Flat Bulleted list",
-  isActive: () => editor?.isActive("flatListComponent", { type: "bullet" }),
+  isActive: () => editor?.isActive("list", { type: "bullet" }),
   command: () => toggleFlatBulletList(editor),
   icon: ListIcon,
 });
@@ -190,7 +190,7 @@ export const FlatBulletListItem = (editor: Editor): EditorMenuItem => ({
 export const FlatNumberedListItem = (editor: Editor): EditorMenuItem => ({
   key: "flat-numbered-list",
   name: "Flat Numbered list",
-  isActive: () => editor?.isActive("flatListComponent", { type: "ordered" }),
+  isActive: () => editor?.isActive("list", { type: "ordered" }),
   command: () => toggleFlatOrderedList(editor),
   icon: ListIcon,
 });
@@ -198,7 +198,7 @@ export const FlatNumberedListItem = (editor: Editor): EditorMenuItem => ({
 export const FlatTaskListItem = (editor: Editor): EditorMenuItem => ({
   key: "flat-check-list",
   name: "Flat Check list",
-  isActive: () => editor?.isActive("flatListComponent", { type: "task" }),
+  isActive: () => editor?.isActive("list", { type: "task" }),
   command: () => toggleFlatTaskList(editor),
   icon: ListIcon,
 });
@@ -206,7 +206,7 @@ export const FlatTaskListItem = (editor: Editor): EditorMenuItem => ({
 export const FlatToggleListItem = (editor: Editor): EditorMenuItem => ({
   key: "flat-toggle-list",
   name: "Flat Toggle list",
-  isActive: () => editor?.isActive("flatListComponent", { type: "toggle" }),
+  isActive: () => editor?.isActive("list", { type: "toggle" }),
   command: () => toggleFlatToggleList(editor),
   icon: ListIcon,
 });

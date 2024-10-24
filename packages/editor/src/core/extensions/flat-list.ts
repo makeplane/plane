@@ -13,7 +13,6 @@ import {
 } from "prosemirror-flat-list";
 import { keymap } from "@tiptap/pm/keymap";
 import { inputRules } from "@tiptap/pm/inputrules";
-import migrationPlugin from "./old-list-migration";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -90,11 +89,6 @@ export const FlatListExtension = Node.create({
     };
   },
   addProseMirrorPlugins() {
-    return [
-      ...createListPlugins({ schema: this.editor.schema }),
-      listKeymapPlugin,
-      listInputRulePlugin,
-      // migrationPlugin,
-    ];
+    return [...createListPlugins({ schema: this.editor.schema }), listKeymapPlugin, listInputRulePlugin];
   },
 });

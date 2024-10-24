@@ -88,41 +88,41 @@ export const ListKeymap = ({ tabIndex }: { tabIndex?: number }) =>
 
           return handled;
         },
-        Backspace: ({ editor }) => {
-          try {
-            let handled = false;
-
-            this.options.listTypes.forEach(({ itemName, wrapperNames }) => {
-              if (editor.state.schema.nodes[itemName] === undefined) {
-                return;
-              }
-
-              if (handleBackspace(editor, itemName, wrapperNames)) {
-                handled = true;
-              }
-            });
-
-            return handled;
-          } catch (e) {
-            console.log("Error in handling Backspace:", e);
-            return false;
-          }
-        },
-        "Mod-Backspace": ({ editor }) => {
-          let handled = false;
-
-          this.options.listTypes.forEach(({ itemName, wrapperNames }) => {
-            if (editor.state.schema.nodes[itemName] === undefined) {
-              return;
-            }
-
-            if (handleBackspace(editor, itemName, wrapperNames)) {
-              handled = true;
-            }
-          });
-
-          return handled;
-        },
+        // Backspace: ({ editor }) => {
+        //   try {
+        //     let handled = false;
+        //
+        //     this.options.listTypes.forEach(({ itemName, wrapperNames }) => {
+        //       if (editor.state.schema.nodes[itemName] === undefined) {
+        //         return;
+        //       }
+        //
+        //       if (handleBackspace(editor, itemName, wrapperNames)) {
+        //         handled = true;
+        //       }
+        //     });
+        //
+        //     return handled;
+        //   } catch (e) {
+        //     console.log("Error in handling Backspace:", e);
+        //     return false;
+        //   }
+        // },
+        // "Mod-Backspace": ({ editor }) => {
+        //   let handled = false;
+        //
+        //   this.options.listTypes.forEach(({ itemName, wrapperNames }) => {
+        //     if (editor.state.schema.nodes[itemName] === undefined) {
+        //       return;
+        //     }
+        //
+        //     if (handleBackspace(editor, itemName, wrapperNames)) {
+        //       handled = true;
+        //     }
+        //   });
+        //
+        //   return handled;
+        // },
       };
     },
   });

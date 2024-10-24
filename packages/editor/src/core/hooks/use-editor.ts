@@ -140,39 +140,39 @@ export const useEditor = (props: CustomEditorProps) => {
     }
   }, [editor, value, id]);
 
-  // const [hasMigrated, setHasMigrated] = useState(false);
-  //
-  // useEffect(() => {
-  //   if (editor && (!hasMigrated || editor.isActive("listItem")) && !isEditorDisabled) {
-  //     const newJSON = migrateDocJSON(editor.getJSON()) as JSONContent;
-  //
-  //     if (newJSON) {
-  //       // Create a new transaction
-  //       const transaction = editor.state.tr;
-  //
-  //       try {
-  //         const node = editor.state.schema.nodeFromJSON(newJSON);
-  //
-  //         transaction.replaceWith(0, editor.state.doc.content.size, node);
-  //         transaction.setMeta("addToHistory", false);
-  //         editor.view.dispatch(transaction);
-  //         setHasMigrated(true);
-  //
-  //         // focus user on the current position
-  //         const currentSavedSelection = savedSelectionRef.current;
-  //         if (currentSavedSelection) {
-  //           const docLength = editor.state.doc.content.size;
-  //           const relativePosition = Math.min(currentSavedSelection.from, docLength - 1);
-  //           editor.commands.setTextSelection(relativePosition);
-  //         }
-  //
-  //         console.log("Migration of old lists completed without adding to history");
-  //       } catch (error) {
-  //         console.error("Error during migration:", error);
-  //       }
-  //     }
-  //   }
-  // }, [editor.getJSON(), editor.isActive("listItem"), hasMigrated]);
+  const [hasMigrated, setHasMigrated] = useState(false);
+
+  useEffect(() => {
+    if (editor && (!hasMigrated || editor.isActive("listItem")) && !isEditorDisabled) {
+      const newJSON = migrateDocJSON(editor.getJSON()) as JSONContent;
+
+      if (newJSON) {
+        // Create a new transaction
+        const transaction = editor.state.tr;
+
+        try {
+          const node = editor.state.schema.nodeFromJSON(newJSON);
+
+          transaction.replaceWith(0, editor.state.doc.content.size, node);
+          transaction.setMeta("addToHistory", false);
+          editor.view.dispatch(transaction);
+          setHasMigrated(true);
+
+          // focus user on the current position
+          const currentSavedSelection = savedSelectionRef.current;
+          if (currentSavedSelection) {
+            const docLength = editor.state.doc.content.size;
+            const relativePosition = Math.min(currentSavedSelection.from, docLength - 1);
+            editor.commands.setTextSelection(relativePosition);
+          }
+
+          console.log("Migration of old lists completed without adding to history");
+        } catch (error) {
+          console.error("Error during migration:", error);
+        }
+      }
+    }
+  }, [editor.getJSON(), editor.isActive("listItem"), hasMigrated]);
 
   useImperativeHandle(
     forwardedRef,
