@@ -43,7 +43,7 @@ export const nodeDOMAtCoords = (coords: { x: number; y: number }) => {
     ".issue-embed",
     ".image-component",
     ".image-upload-component",
-    ".editor-callout-component",
+    ".prosemirror-flat-list",
   ].join(", ");
 
   for (const elem of elements) {
@@ -103,14 +103,8 @@ const calcNodePos = (pos: number, view: EditorView, node: Element) => {
 
 export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOptions => {
   let listType = "";
-  let isDragging = false;
-  let lastClientY = 0;
-  let scrollAnimationFrame = null;
   const handleDragStart = (event: DragEvent, view: EditorView) => {
     view.focus();
-    isDragging = true;
-    lastClientY = event.clientY;
-    scroll();
 
     if (!event.dataTransfer) return;
 
@@ -186,96 +180,6 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     view.dragging = { slice, move: event.ctrlKey };
   };
 
-  const handleDragEnd = (event: DragEvent, view: EditorView) => {
-    isDragging = false;
-    if (scrollAnimationFrame) {
-      cancelAnimationFrame(scrollAnimationFrame);
-      scrollAnimationFrame = null;
-    }
-
-    view.dom.classList.remove("dragging");
-    // [Existing handleDragEnd logic...]
-  };
-
-  function scroll() {
-    if (!isDragging) {
-      return;
-    }
-    const getScrollParent = (node: HTMLElement | SVGElement) => {
-      let currentParent = node.parentElement;
-      const isScrollable = (node: HTMLElement | SVGElement) => {
-        if (!(node instanceof HTMLElement || node instanceof SVGElement)) {
-          return false;
-        }
-        const style = getComputedStyle(node);
-        return ["overflow", "overflow-y"].some((propertyName) => {
-          const value = style.getPropertyValue(propertyName);
-          return value === "auto" || value === "scroll";
-        });
-      };
-
-      while (currentParent) {
-        if (isScrollable(currentParent)) {
-          return currentParent;
-        }
-        currentParent = currentParent.parentElement;
-      }
-      return document.scrollingElement || document.documentElement;
-    };
-
-    const scrollableParent = getScrollParent(dragHandleElement);
-    if (!scrollableParent) return;
-    const scrollThreshold = options.scrollThreshold;
-
-    const maxScrollSpeed = 20; // Adjusted for smoother scrolling
-    const clientY = lastClientY; // Use the last known clientY
-    let scrollAmount = 0;
-
-    // Define the upper and lower scroll regions
-    const scrollRegionUp = scrollThreshold.up;
-    const scrollRegionDown = window.innerHeight - scrollThreshold.down;
-
-    console.log("clientY: %s", clientY, scrollRegionUp, scrollRegionDown);
-    // Calculate scroll amount when mouse is near the top
-    if (clientY < scrollRegionUp) {
-      const overflow = scrollRegionUp - clientY;
-      const ratio = Math.min(Math.pow(overflow / scrollThreshold.up, 2), 1);
-      const speed = maxScrollSpeed * ratio;
-      scrollAmount = -speed;
-    }
-    // Calculate scroll amount when mouse is near the bottom
-    else if (clientY > scrollRegionDown) {
-      const overflow = clientY - scrollRegionDown;
-      const ratio = Math.min(Math.pow(overflow / scrollThreshold.down, 2), 1);
-      const speed = maxScrollSpeed * ratio;
-      scrollAmount = speed;
-    }
-
-    // Handle cases when mouse is outside the window (above or below)
-    console.log("clientY: %s", clientY);
-    if (clientY <= 0) {
-      const overflow = scrollThreshold.up + Math.abs(clientY);
-      const ratio = Math.min(Math.pow(overflow / (scrollThreshold.up + 100), 2), 1);
-      // __AUTO_GENERATED_PRINT_VAR_START__
-      console.log("DragHandlePlugin#scroll#if  : %s", ratio); // __AUTO_GENERATED_PRINT_VAR_END__
-      const speed = maxScrollSpeed * 2;
-      scrollAmount = -speed;
-    } else if (clientY >= window.innerHeight) {
-      const overflow = clientY - window.innerHeight + scrollThreshold.down;
-      const ratio = Math.min(Math.pow(overflow / (scrollThreshold.down + 100), 2), 1);
-      // __AUTO_GENERATED_PRINT_VAR_START__
-      console.log("DragHandlePlugin#scroll#if#if ratio: %s", ratio); // __AUTO_GENERATED_PRINT_VAR_END__
-      const speed = maxScrollSpeed * 2;
-      scrollAmount = speed;
-    }
-
-    if (scrollAmount !== 0) {
-      scrollableParent.scrollBy({ top: scrollAmount });
-    }
-
-    // Continue the scrolling loop
-    scrollAnimationFrame = requestAnimationFrame(scroll);
-  }
   const handleClick = (event: MouseEvent, view: EditorView) => {
     view.focus();
 
@@ -326,100 +230,73 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
 
   const view = (view: EditorView, sideMenu: HTMLDivElement | null) => {
     dragHandleElement = createDragHandleElement();
-    // dragHandleElement.addEventListener("dragstart", (e) => handleDragStart(e, view));
     dragHandleElement.addEventListener("dragstart", (e) => handleDragStart(e, view));
-    dragHandleElement.addEventListener("dragend", (e) => handleDragEnd(e, view));
-    dragHandleElement.addEventListener("blur", (e) => handleDragEnd(e, view));
-    window.addEventListener("blur", (e) => handleDragEnd(e, view));
-    // End drag on visibility change
-    document.addEventListener("visibilitychange", (e) => {
-      if (document.visibilityState === "hidden" && isDragging) {
-        handleDragEnd(e, view);
-      }
-    });
-
-    document.addEventListener("dragover", (event) => {
-      event.preventDefault();
-      if (isDragging) {
-        lastClientY = event.clientY;
-      }
-    });
-
     dragHandleElement.addEventListener("click", (e) => handleClick(e, view));
     dragHandleElement.addEventListener("contextmenu", (e) => handleClick(e, view));
 
-    // const maxScrollSpeed = 15;
-    //
-    // const isScrollable = (node: HTMLElement | SVGElement) => {
-    //   if (!(node instanceof HTMLElement || node instanceof SVGElement)) {
-    //     return false;
-    //   }
-    //   const style = getComputedStyle(node);
-    //   return ["overflow", "overflow-y"].some((propertyName) => {
-    //     const value = style.getPropertyValue(propertyName);
-    //     return value === "auto" || value === "scroll";
-    //   });
-    // };
+    const isScrollable = (node: HTMLElement | SVGElement) => {
+      if (!(node instanceof HTMLElement || node instanceof SVGElement)) {
+        return false;
+      }
+      const style = getComputedStyle(node);
+      return ["overflow", "overflow-y"].some((propertyName) => {
+        const value = style.getPropertyValue(propertyName);
+        return value === "auto" || value === "scroll";
+      });
+    };
 
-    // dragHandleElement.addEventListener("drag", (e) => {
-    //   hideDragHandle();
-    //   const getScrollParent = (node: HTMLElement | SVGElement) => {
-    //     let currentParent = node.parentElement;
-    //     while (currentParent) {
-    //       if (isScrollable(currentParent)) {
-    //         return currentParent;
-    //       }
-    //       currentParent = currentParent.parentElement;
-    //     }
-    //     return document.scrollingElement || document.documentElement;
-    //   };
-    //
-    //   const scrollableParent = getScrollParent(dragHandleElement);
-    //   if (!scrollableParent) return;
-    //   const scrollThreshold = options.scrollThreshold;
-    //
-    //   console.log("e", e.clientY);
-    //   if (e.clientY < scrollThreshold.up) {
-    //     const overflow = scrollThreshold.up - e.clientY;
-    //     const ratio = Math.min(Math.pow(overflow / scrollThreshold.up, 3), 1); // Use power of 3 for smoother acceleration
-    //     const scrollAmount = -maxScrollSpeed * ratio;
-    //     scrollableParent.scrollBy({ top: scrollAmount });
-    //   } else if (window.innerHeight - e.clientY < scrollThreshold.down) {
-    //     const overflow = e.clientY - (window.innerHeight - scrollThreshold.down);
-    //     const ratio = Math.min(Math.pow(overflow / scrollThreshold.down, 3), 1); // Use power of 3 for smoother acceleration
-    //     const scrollAmount = maxScrollSpeed * ratio;
-    //     scrollableParent.scrollBy({ top: scrollAmount });
-    //   }
-    //   // if (e.clientY < scrollThreshold.up) {
-    //   //   const overflow = scrollThreshold.up - e.clientY;
-    //   //   const ratio = Math.min(overflow / scrollThreshold.up, 1);
-    //   //   const scrollAmount = -maxScrollSpeed * ratio;
-    //   //   scrollableParent.scrollBy({ top: scrollAmount });
-    //   // } else if (window.innerHeight - e.clientY < scrollThreshold.down) {
-    //   //   const overflow = e.clientY - (window.innerHeight - scrollThreshold.down);
-    //   //   const ratio = Math.min(overflow / scrollThreshold.down, 1);
-    //   //   const scrollAmount = maxScrollSpeed * ratio;
-    //   //   scrollableParent.scrollBy({ top: scrollAmount });
-    //   // }
-    // });
+    const getScrollParent = (node: HTMLElement | SVGElement) => {
+      let currentParent = node.parentElement;
+      while (currentParent) {
+        if (isScrollable(currentParent)) {
+          return currentParent;
+        }
+        currentParent = currentParent.parentElement;
+      }
+      return document.scrollingElement || document.documentElement;
+    };
+
+    const maxScrollSpeed = 15;
+
+    dragHandleElement.addEventListener("drag", (e) => {
+      hideDragHandle();
+      const scrollableParent = getScrollParent(dragHandleElement);
+      if (!scrollableParent) return;
+      const scrollThreshold = options.scrollThreshold;
+
+      console.log("e", e.clientY);
+      if (e.clientY < scrollThreshold.up) {
+        const overflow = scrollThreshold.up - e.clientY;
+        const ratio = Math.min(Math.pow(overflow / scrollThreshold.up, 3), 1); // Use power of 3 for smoother acceleration
+        const scrollAmount = -maxScrollSpeed * ratio;
+        scrollableParent.scrollBy({ top: scrollAmount });
+      } else if (window.innerHeight - e.clientY < scrollThreshold.down) {
+        const overflow = e.clientY - (window.innerHeight - scrollThreshold.down);
+        const ratio = Math.min(Math.pow(overflow / scrollThreshold.down, 3), 1); // Use power of 3 for smoother acceleration
+        const scrollAmount = maxScrollSpeed * ratio;
+        scrollableParent.scrollBy({ top: scrollAmount });
+      }
+      // if (e.clientY < scrollThreshold.up) {
+      //   const overflow = scrollThreshold.up - e.clientY;
+      //   const ratio = Math.min(overflow / scrollThreshold.up, 1);
+      //   const scrollAmount = -maxScrollSpeed * ratio;
+      //   scrollableParent.scrollBy({ top: scrollAmount });
+      // } else if (window.innerHeight - e.clientY < scrollThreshold.down) {
+      //   const overflow = e.clientY - (window.innerHeight - scrollThreshold.down);
+      //   const ratio = Math.min(overflow / scrollThreshold.down, 1);
+      //   const scrollAmount = maxScrollSpeed * ratio;
+      //   scrollableParent.scrollBy({ top: scrollAmount });
+      // }
+    });
 
     hideDragHandle();
 
     sideMenu?.appendChild(dragHandleElement);
 
     return {
-      // destroy: () => {
-      //   dragHandleElement?.remove?.();
-      //   dragHandleElement = null;
-      // },
       destroy: () => {
         dragHandleElement?.remove?.();
         dragHandleElement = null;
-        isDragging = false;
-        if (scrollAnimationFrame) {
-          cancelAnimationFrame(scrollAnimationFrame);
-          scrollAnimationFrame = null;
-        }
       },
     };
   };

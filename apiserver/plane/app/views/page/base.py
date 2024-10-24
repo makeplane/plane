@@ -438,7 +438,6 @@ class PageViewSet(BaseViewSet):
 
 
 class PageFavoriteViewSet(BaseViewSet):
-
     model = UserFavorite
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
@@ -465,7 +464,6 @@ class PageFavoriteViewSet(BaseViewSet):
 
 
 class PageLogEndpoint(BaseAPIView):
-
     serializer_class = PageLogSerializer
     model = PageLog
 
@@ -504,7 +502,6 @@ class PageLogEndpoint(BaseAPIView):
 
 
 class SubPagesEndpoint(BaseAPIView):
-
     @method_decorator(gzip_page)
     def get(self, request, slug, project_id, page_id):
         pages = (
@@ -522,7 +519,6 @@ class SubPagesEndpoint(BaseAPIView):
 
 
 class PagesDescriptionViewSet(BaseViewSet):
-
     @allow_permission(
         [
             ROLE.ADMIN,
@@ -552,7 +548,7 @@ class PagesDescriptionViewSet(BaseViewSet):
                 yield b""
 
         response = StreamingHttpResponse(
-            stream_data(), content_type="application/octet-stream"
+            page.description_binary, content_type="application/octet-stream"
         )
         response["Content-Disposition"] = (
             'attachment; filename="page_description.bin"'
@@ -561,6 +557,7 @@ class PagesDescriptionViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def partial_update(self, request, slug, project_id, pk):
+        print("inside partial update")
         page = (
             Page.objects.filter(
                 pk=pk, workspace__slug=slug, projects__id=project_id
@@ -601,24 +598,27 @@ class PagesDescriptionViewSet(BaseViewSet):
             cls=DjangoJSONEncoder,
         )
 
+        print("before base  64")
         # Get the base64 data from the request
-        base64_data = request.data.get("description_binary")
+        base64_data = request.body
+        print("after base  64", base64_data)
 
         # If base64 data is provided
         if base64_data:
             # Decode the base64 data to bytes
-            new_binary_data = base64.b64decode(base64_data)
+            # new_binary_data = base64.b64decode(base64_data)
             # capture the page transaction
-            if request.data.get("description_html"):
-                page_transaction.delay(
-                    new_value=request.data,
-                    old_value=existing_instance,
-                    page_id=pk,
-                )
+            # if request.data.get("description_html"):
+            #     page_transaction.delay(
+            #         new_value=request.data,
+            #         old_value=existing_instance,
+            #         page_id=pk,
+            #     )
             # Store the updated binary data
-            page.description_binary = new_binary_data
-            page.description_html = request.data.get("description_html")
-            page.description = request.data.get("description")
+            page.description_binary = base64_data
+            # page.description_html = request.data.get("description_html")
+            # page.description = request.data.get("description")
+            print("before save")
             page.save()
             # Return a success response
             page_version.delay(

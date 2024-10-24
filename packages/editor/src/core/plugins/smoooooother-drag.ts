@@ -43,7 +43,7 @@ export const nodeDOMAtCoords = (coords: { x: number; y: number }) => {
     ".issue-embed",
     ".image-component",
     ".image-upload-component",
-    ".editor-callout-component",
+    ".prosemirror-flat-list",
   ].join(", ");
 
   for (const elem of elements) {
@@ -227,7 +227,7 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     if (!scrollableParent) return;
     const scrollThreshold = options.scrollThreshold;
 
-    const maxScrollSpeed = 20; // Adjusted for smoother scrolling
+    const maxScrollSpeed = 10; // Adjusted for smoother scrolling
     const clientY = lastClientY; // Use the last known clientY
     let scrollAmount = 0;
 
@@ -235,7 +235,6 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     const scrollRegionUp = scrollThreshold.up;
     const scrollRegionDown = window.innerHeight - scrollThreshold.down;
 
-    console.log("clientY: %s", clientY, scrollRegionUp, scrollRegionDown);
     // Calculate scroll amount when mouse is near the top
     if (clientY < scrollRegionUp) {
       const overflow = scrollRegionUp - clientY;
@@ -252,20 +251,15 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     }
 
     // Handle cases when mouse is outside the window (above or below)
-    console.log("clientY: %s", clientY);
     if (clientY <= 0) {
       const overflow = scrollThreshold.up + Math.abs(clientY);
       const ratio = Math.min(Math.pow(overflow / (scrollThreshold.up + 100), 2), 1);
-      // __AUTO_GENERATED_PRINT_VAR_START__
-      console.log("DragHandlePlugin#scroll#if  : %s", ratio); // __AUTO_GENERATED_PRINT_VAR_END__
-      const speed = maxScrollSpeed * 2;
+      const speed = maxScrollSpeed * ratio;
       scrollAmount = -speed;
     } else if (clientY >= window.innerHeight) {
       const overflow = clientY - window.innerHeight + scrollThreshold.down;
       const ratio = Math.min(Math.pow(overflow / (scrollThreshold.down + 100), 2), 1);
-      // __AUTO_GENERATED_PRINT_VAR_START__
-      console.log("DragHandlePlugin#scroll#if#if ratio: %s", ratio); // __AUTO_GENERATED_PRINT_VAR_END__
-      const speed = maxScrollSpeed * 2;
+      const speed = maxScrollSpeed * ratio;
       scrollAmount = speed;
     }
 
@@ -330,13 +324,6 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     dragHandleElement.addEventListener("dragstart", (e) => handleDragStart(e, view));
     dragHandleElement.addEventListener("dragend", (e) => handleDragEnd(e, view));
     dragHandleElement.addEventListener("blur", (e) => handleDragEnd(e, view));
-    window.addEventListener("blur", (e) => handleDragEnd(e, view));
-    // End drag on visibility change
-    document.addEventListener("visibilitychange", (e) => {
-      if (document.visibilityState === "hidden" && isDragging) {
-        handleDragEnd(e, view);
-      }
-    });
 
     document.addEventListener("dragover", (event) => {
       event.preventDefault();
