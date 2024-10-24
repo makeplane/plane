@@ -69,7 +69,16 @@ export class DBClass {
     return await this.instance.exec(sql);
   }
   async close() {
-    await this.sqlite3.close(this.instance.db);
+    try {
+      if (!this.instance.db) {
+        return;
+      }
+      await this.sqlite3.close(this.instance.db);
+      // Clear instance to prevent usage after closing
+      this.instance = {} as SQLiteInstance;
+    } catch (error) {
+      throw new Error(`Failed to close database: ${error.message}`);
+    }
   }
 }
 Comlink.expose(DBClass);
