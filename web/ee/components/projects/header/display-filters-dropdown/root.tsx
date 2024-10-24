@@ -13,10 +13,11 @@ import { EProjectLayouts } from "@/plane-web/types/workspace-project-filters";
 type TProjectDisplayFiltersDropdown = {
   workspaceSlug: string;
   menuButton?: React.ReactNode;
+  isArchived?: boolean;
 };
 
 export const ProjectDisplayFiltersDropdown: FC<TProjectDisplayFiltersDropdown> = observer((props) => {
-  const { workspaceSlug, menuButton } = props;
+  const { workspaceSlug, menuButton, isArchived = false } = props;
   // hooks
   const { filters, updateDisplayFilters } = useProjectFilter();
   return (
@@ -28,23 +29,22 @@ export const ProjectDisplayFiltersDropdown: FC<TProjectDisplayFiltersDropdown> =
             <div className="py-2">
               <DisplayFilterGroupBy
                 filterValue={filters?.display_filters?.group_by}
-                handleUpdate={(val) => updateDisplayFilters(workspaceSlug, "group_by", val)}
+                handleUpdate={(val) => updateDisplayFilters(workspaceSlug, "group_by", val, isArchived)}
               />
             </div>
           )}
-
           {/* sort by */}
           <div className="py-2">
             <DisplayFilterSortBy
               filterValue={filters?.display_filters?.sort_by}
-              handleUpdate={(val) => updateDisplayFilters(workspaceSlug, "sort_by", val)}
+              handleUpdate={(val) => updateDisplayFilters(workspaceSlug, "sort_by", val, isArchived)}
             />
           </div>
           {/* order by */}
           <div className="py-2">
             <DisplayFilterSortOrder
               filterValue={filters?.display_filters?.sort_order}
-              handleUpdate={(val) => updateDisplayFilters(workspaceSlug, "sort_order", val)}
+              handleUpdate={(val) => updateDisplayFilters(workspaceSlug, "sort_order", val, isArchived)}
             />
           </div>
         </div>

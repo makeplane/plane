@@ -97,42 +97,6 @@ export abstract class ProjectFilterHelper implements IProjectFilterHelper {
       return isMatched;
     });
 
-  handleProjectLocalFilters = {
-    fetchFiltersFromStorage: () => {
-      const _filters = storage.get("project_local_filters");
-      return _filters ? JSON.parse(_filters) : [];
-    },
-
-    get: (workspaceSlug: string) => {
-      const storageFilters = this.handleProjectLocalFilters.fetchFiltersFromStorage();
-      const currentFilterIndex = storageFilters.findIndex((filter: any) => filter.workspaceSlug === workspaceSlug);
-
-      if (!currentFilterIndex && currentFilterIndex.length < 0) return undefined;
-      return storageFilters[currentFilterIndex]?.filters || {};
-    },
-
-    set: (filterType: keyof TProjectFilters, workspaceSlug: string, filters: Partial<TProjectFilters>) => {
-      const storageFilters = this.handleProjectLocalFilters.fetchFiltersFromStorage();
-      const currentFilterIndex = storageFilters.findIndex((filter: any) => filter.workspaceSlug === workspaceSlug);
-
-      if (currentFilterIndex < 0)
-        storageFilters.push({
-          workspaceSlug: workspaceSlug,
-          filters: filters,
-        });
-      else
-        storageFilters[currentFilterIndex] = {
-          ...storageFilters[currentFilterIndex],
-          filters: {
-            ...storageFilters[currentFilterIndex].filters,
-            [filterType]: filters[filterType],
-          },
-        };
-
-      storage.set("project_local_filters", JSON.stringify(storageFilters));
-    },
-  };
-
   /**
    * @description sort the project based on the display filters order_by and sort_order
    */
@@ -245,5 +209,45 @@ export abstract class ProjectFilterHelper implements IProjectFilterHelper {
       default:
         return undefined;
     }
+  };
+
+  handleProjectLocalFilters = {
+    fetchFiltersFromStorage: () => {
+      const _filters = storage.get("project_local_filters");
+      return _filters ? JSON.parse(_filters) : {};
+    },
+
+    get: (workspaceSlug: string, isArchived: boolean) => {
+      const storageFilters = this.handleProjectLocalFilters.fetchFiltersFromStorage();
+      const workspaceFilters = storageFilters[workspaceSlug];
+
+      if (!workspaceFilters) return undefined;
+
+      return workspaceFilters[isArchived ? "archived-project-filters" : "global-project-filters"] || {};
+    },
+
+    set: (
+      filterType: keyof TProjectFilters,
+      workspaceSlug: string,
+      filters: Partial<TProjectFilters>,
+      isArchived: boolean
+    ) => {
+      const storageFilters = this.handleProjectLocalFilters.fetchFiltersFromStorage();
+
+      const workspaceFilters = storageFilters[workspaceSlug] || {
+        "archived-project-filters": {},
+        "global-project-filters": {},
+      };
+
+      const projectFilterKey = isArchived ? "archived-project-filters" : "global-project-filters";
+
+      workspaceFilters[projectFilterKey] = {
+        ...workspaceFilters[projectFilterKey],
+        [filterType]: filters[filterType],
+      };
+
+      storageFilters[workspaceSlug] = workspaceFilters;
+      storage.set("project_local_filters", JSON.stringify(storageFilters));
+    },
   };
 }

@@ -25,7 +25,6 @@ type TProjectBoardGroupItemHeader = {
   ) => void;
 };
 
-// Todo: Vertical Align
 export const ProjectBoardGroupItemHeader: FC<TProjectBoardGroupItemHeader> = observer((props) => {
   const { groupByKey, projectIds, verticalAlign, setVerticalAlign } = props;
   //states
@@ -69,8 +68,8 @@ export const ProjectBoardGroupItemHeader: FC<TProjectBoardGroupItemHeader> = obs
         </div>
 
         <div
-          className={`relative flex items-baseline gap-1 ${
-            verticalAlign ? `flex-col` : `w-full flex-row overflow-hidden`
+          className={`relative flex gap-1 ${
+            verticalAlign ? `flex-col items-center` : `items-baseline w-full flex-row overflow-hidden`
           }`}
         >
           <div
@@ -80,7 +79,9 @@ export const ProjectBoardGroupItemHeader: FC<TProjectBoardGroupItemHeader> = obs
           >
             {details?.title}
           </div>
-          <div className={`flex-shrink-0 text-sm font-medium text-custom-text-300 ${verticalAlign ? `` : `pl-2`}`}>
+          <div
+            className={`flex-shrink-0 text-sm font-medium text-custom-text-300 ${verticalAlign ? `text-center pr-0.5` : `pl-2`}`}
+          >
             {projectIds?.length || 0}
           </div>
         </div>
