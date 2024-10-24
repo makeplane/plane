@@ -40,6 +40,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
   const { data: currentUser } = useUser();
   const {
     issue: { getIssueById },
+    peekIssue,
   } = useIssueDetail();
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
 
@@ -52,6 +53,8 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
 
   const issue = issueId ? getIssueById(issueId) : undefined;
   if (!issue || !issue.project_id) return <></>;
+
+  const isPeekModeActive = Boolean(peekIssue);
 
   return (
     <>
@@ -110,6 +113,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
         projectId={projectId}
         issueId={issueId}
         disabled={!isEditable || isArchived}
+        renderWidgetModals={!isPeekModeActive}
       />
 
       {windowSize[0] < 768 && (

@@ -209,6 +209,7 @@ class UserAssetsV2Endpoint(BaseAPIView):
         # update the attributes
         asset.attributes = request.data.get("attributes", asset.attributes)
         # save the asset
+        asset.created_by = request.user
         asset.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -459,6 +460,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         # update the attributes
         asset.attributes = request.data.get("attributes", asset.attributes)
         # save the asset
+        asset.created_by = request.user
         asset.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -690,6 +692,7 @@ class ProjectAssetEndpoint(BaseAPIView):
         # update the attributes
         asset.attributes = request.data.get("attributes", asset.attributes)
         # save the asset
+        asset.created_by = request.user
         asset.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
