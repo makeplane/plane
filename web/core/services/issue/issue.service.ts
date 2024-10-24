@@ -14,7 +14,7 @@ import { API_BASE_URL } from "@/helpers/common.helper";
 import { persistence } from "@/local-db/storage.sqlite";
 // services
 
-import { addIssue, addIssuesBulk, deleteIssueFromLocal } from "@/local-db/utils/load-issues";
+import { addIssuesBulk, deleteIssueFromLocal, updateIssue } from "@/local-db/utils/load-issues";
 import { APIService } from "@/services/api.service";
 
 export class IssueService extends APIService {
@@ -100,7 +100,7 @@ export class IssueService extends APIService {
     })
       .then((response) => {
         if (response.data) {
-          addIssue(response?.data);
+          updateIssue({ ...response.data, is_local_update: 1 });
         }
         return response?.data;
       })

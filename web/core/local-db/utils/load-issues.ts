@@ -10,10 +10,7 @@ export const PROJECT_OFFLINE_STATUS: Record<string, boolean> = {};
 
 export const addIssue = async (issue: any) => {
   if (document.hidden || !rootStore.user.localDBEnabled || !persistence.db) return;
-
-  await persistence.db.exec("BEGIN TRANSACTION;");
   stageIssueInserts(issue);
-  await persistence.db.exec("COMMIT;");
 };
 
 export const addIssuesBulk = async (issues: any, batchSize = 100) => {

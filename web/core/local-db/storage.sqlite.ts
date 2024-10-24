@@ -93,29 +93,30 @@ export class Storage {
       const { DBClass } = await import("./worker/db");
       const worker = new Worker(new URL("./worker/db.ts", import.meta.url));
       const MyWorker = Comlink.wrap<typeof DBClass>(worker);
-      
+
       // Add cleanup on window unload
-      window.addEventListener('unload', () => worker.terminate());
+      window.addEventListener("unload", () => worker.terminate());
+
+      this.workspaceSlug = workspaceSlug;
+      this.dbName = workspaceSlug;
+      const instance = await new MyWorker();
+      await instance.init(workspaceSlug);
+
+      this.db = {
+        exec: instance.exec,
+        close: instance.close,
+      };
+
+      this.status = "ready";
+      // Your SQLite code here.
+      await createTables();
+
+      await this.setOption("DB_VERSION", DB_VERSION.toString());
+      return true;
     } catch (error) {
       this.status = "error";
       throw new Error(`Failed to initialize database worker: ${error}`);
     }
-    this.workspaceSlug = workspaceSlug;
-    this.dbName = workspaceSlug;
-    const instance = await new MyWorker();
-    await instance.init(workspaceSlug);
-
-    this.db = {
-      exec: instance.exec,
-      close: instance.close,
-    };
-
-    this.status = "ready";
-    // Your SQLite code here.
-    await createTables();
-
-    await this.setOption("DB_VERSION", DB_VERSION.toString());
-    return true;
   };
 
   syncWorkspace = async () => {
