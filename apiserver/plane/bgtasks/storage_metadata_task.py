@@ -19,7 +19,7 @@ def get_asset_object_metadata(asset_id):
             object_name=asset.asset.name
         )
         # Save the asset
-        asset.save()
+        asset.save(update_fields=["storage_metadata"])
         return
     except FileAsset.DoesNotExist:
         return
