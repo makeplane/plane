@@ -13,7 +13,11 @@ import {
   TFileHandler,
   TNonColorEditorCommands,
   TServerHandler,
+  TDocumentEventsServer,
 } from "@/types";
+
+import { HocuspocusProvider, HocuspocusProviderWebsocket } from "@hocuspocus/provider";
+
 // editor refs
 export type EditorReadOnlyRefApi = {
   getMarkDown: () => string;
@@ -30,8 +34,8 @@ export type EditorReadOnlyRefApi = {
     paragraphs: number;
     words: number;
   };
-  onHeadingChange: (callback: (headings: IMarking[]) => void) => () => void;
-  getHeadings: () => IMarking[];
+  emitRealTimeUpdate: (message: TDocumentEventsServer) => void;
+  listenToRealTimeUpdate: () => HocuspocusProvider;
 };
 
 export interface EditorRefApi extends EditorReadOnlyRefApi {
@@ -100,6 +104,7 @@ export interface ICollaborativeDocumentEditor
   realtimeConfig: TRealtimeConfig;
   serverHandler?: TServerHandler;
   user: TUserDetails;
+  socket: HocuspocusProviderWebsocket;
 }
 
 // read only editor props
