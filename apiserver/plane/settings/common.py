@@ -440,5 +440,6 @@ ATTACHMENT_MIME_TYPES = [
     "text/javascript",
     "application/json",
     "text/xml",
+    "text/csv",
     "application/xml",
 ]

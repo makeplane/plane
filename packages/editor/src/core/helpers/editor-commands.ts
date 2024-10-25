@@ -7,8 +7,8 @@ import { findTableAncestor } from "@/helpers/common";
 import { InsertImageComponentProps } from "@/extensions";
 
 export const setText = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).clearNodes().run();
-  else editor.chain().focus().clearNodes().run();
+  if (range) editor.chain().focus().deleteRange(range).setNode("paragraph").run();
+  else editor.chain().focus().setNode("paragraph").run();
 };
 
 export const toggleHeadingOne = (editor: Editor, range?: Range) => {
@@ -179,4 +179,9 @@ export const toggleBackgroundColor = (color: string | undefined, editor: Editor,
       editor.chain().focus().unsetBackgroundColor().run();
     }
   }
+};
+
+export const insertCallout = (editor: Editor, range?: Range) => {
+  if (range) editor.chain().focus().deleteRange(range).insertCallout().run();
+  else editor.chain().focus().insertCallout().run();
 };

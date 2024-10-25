@@ -36,6 +36,7 @@
   "dependencies": {
     "@floating-ui/react": "^0.26.4",
     "@hocuspocus/provider": "^2.13.5",
+    "@plane/helpers": "*",
     "@plane/ui": "*",
     "@tiptap/core": "^2.1.13",
     "@tiptap/extension-blockquote": "^2.1.13",
@@ -61,6 +62,7 @@
     "lowlight": "^3.0.0",
     "lucide-react": "^0.378.0",
     "prosemirror-codemark": "^0.4.2",
+    "prosemirror-utils": "^1.2.2",
     "react-moveable": "^0.54.2",
     "tailwind-merge": "^1.14.0",
     "tippy.js": "^6.3.7",
