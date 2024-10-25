@@ -76,6 +76,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
       />
 
       <IssueDescriptionInput
+        key={issue.id}
         containerClassName="-ml-3 border-none"
         descriptionHTML={issue.description_html ?? "<p></p>"}
         disabled={disabled}

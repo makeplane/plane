@@ -19,6 +19,8 @@ export type CollaborationProviderConfiguration = Required<Pick<CompleteCollabora
   Partial<CompleteCollaboratorProviderConfiguration>;
 
 export class CustomCollaborationProvider {
+  public hasSynced: boolean;
+
   public configuration: CompleteCollaboratorProviderConfiguration = {
     name: "",
     document: new Y.Doc(),
@@ -26,6 +28,7 @@ export class CustomCollaborationProvider {
   };
 
   constructor(configuration: CollaborationProviderConfiguration) {
+    this.hasSynced = false;
     this.setConfiguration(configuration);
     this.document.on("update", this.documentUpdateHandler.bind(this));
     this.document.on("destroy", this.documentDestroyHandler.bind(this));
@@ -43,6 +46,7 @@ export class CustomCollaborationProvider {
   }
 
   async documentUpdateHandler(_update: Uint8Array, origin: any) {
+    if (!this.hasSynced) return;
     // return if the update is from the provider itself
     if (origin === this) return;
     // call onChange with the update

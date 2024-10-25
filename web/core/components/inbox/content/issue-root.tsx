@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 // plane types
 import { TIssue } from "@plane/types";
 // plane ui
-import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { InboxIssueContentProperties } from "@/components/inbox/content";
 import {
@@ -18,7 +18,7 @@ import {
   IssueAttachmentRoot,
 } from "@/components/issues";
 // hooks
-import { useEventTracker, useProjectInbox, useUser } from "@/hooks/store";
+import { useEventTracker, useUser } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // services
 import { InboxIssueService } from "@/services/inbox";
@@ -42,7 +42,6 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
   const { data: currentUser } = useUser();
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
   const { captureIssueEvent } = useEventTracker();
-  const { loader } = useProjectInbox();
 
   useEffect(() => {
     if (isSubmitting === "submitted") {
@@ -98,7 +97,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
         }
       },
     }),
-    [inboxIssue]
+    [captureIssueEvent, inboxIssue, pathname]
   );
 
   if (!issue?.project_id || !issue?.id) return <></>;
@@ -118,32 +117,27 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           containerClassName="-ml-3"
         />
 
-        {loader === "issue-loading" ? (
-          <Loader className="min-h-[6rem] rounded-md border border-custom-border-200">
-            <Loader.Item width="100%" height="140px" />
-          </Loader>
-        ) : (
-          <IssueDescriptionInput
-            containerClassName="-ml-3 border-none"
-            descriptionHTML={issue.description_html ?? "<p></p>"}
-            disabled={!isEditable}
-            fetchDescription={async () => {
-              if (!workspaceSlug || !projectId || !issue.id) return;
-              return await inboxIssueService.fetchDescriptionBinary(workspaceSlug, projectId, issue.id);
-            }}
-            updateDescription={async (data) => {
-              if (!workspaceSlug || !projectId || !issue.id) return;
-              return await inboxIssueService.updateDescriptionBinary(workspaceSlug, projectId, issue.id, {
-                description_binary: data,
-              });
-            }}
-            issueId={issue.id}
-            issueOperations={issueOperations}
-            projectId={issue.project_id}
-            setIsSubmitting={(value) => setIsSubmitting(value)}
-            workspaceSlug={workspaceSlug}
-          />
-        )}
+        <IssueDescriptionInput
+          key={issue.id}
+          containerClassName="-ml-3 border-none"
+          descriptionHTML={issue.description_html ?? "<p></p>"}
+          disabled={!isEditable}
+          fetchDescription={async () => {
+            if (!workspaceSlug || !projectId || !issue.id) return;
+            return await inboxIssueService.fetchDescriptionBinary(workspaceSlug, projectId, issue.id);
+          }}
+          updateDescription={async (data) => {
+            if (!workspaceSlug || !projectId || !issue.id) return;
+            return await inboxIssueService.updateDescriptionBinary(workspaceSlug, projectId, issue.id, {
+              description_binary: data,
+            });
+          }}
+          issueId={issue.id}
+          issueOperations={issueOperations}
+          projectId={issue.project_id}
+          setIsSubmitting={(value) => setIsSubmitting(value)}
+          workspaceSlug={workspaceSlug}
+        />
 
         {currentUser && (
           <IssueReaction

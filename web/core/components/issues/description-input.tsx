@@ -28,6 +28,7 @@ export type IssueDescriptionInputProps = {
   fetchDescription: () => Promise<any>;
   issueId: string;
   issueOperations: TIssueOperations;
+  key: string;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   projectId: string;
   setIsSubmitting: (initialValue: "submitting" | "submitted" | "saved") => void;
@@ -100,6 +101,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
     <>
       {!disabled ? (
         <CollaborativeRichTextEditor
+          key={issueId}
           containerClassName={containerClassName}
           value={descriptionBinary}
           onChange={(val) => {
