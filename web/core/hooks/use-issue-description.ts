@@ -17,11 +17,15 @@ export const useIssueDescription = (args: TArgs) => {
   const resolveConflictsAndUpdateDescription = useCallback(
     async (encodedDescription: string, editorRef: EditorRefApi | null) => {
       if (!updateDescription) return;
-      const conflictFreeEncodedDescription = await updateDescription(encodedDescription);
-      const decodedDescription = conflictFreeEncodedDescription
-        ? new Uint8Array(conflictFreeEncodedDescription)
-        : new Uint8Array();
-      editorRef?.setProviderDocument(decodedDescription);
+      try {
+        const conflictFreeEncodedDescription = await updateDescription(encodedDescription);
+        const decodedDescription = conflictFreeEncodedDescription
+          ? new Uint8Array(conflictFreeEncodedDescription)
+          : new Uint8Array();
+        editorRef?.setProviderDocument(decodedDescription);
+      } catch (error) {
+        console.error("Error while updating description", error);
+      }
     },
     [updateDescription]
   );
