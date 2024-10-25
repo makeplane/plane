@@ -34,12 +34,13 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
     }),
     new Database({
       fetch: async ({
+        context,
         documentName: pageId,
         requestHeaders,
         requestParameters,
       }) => {
         // request headers
-        const cookie = requestHeaders.cookie?.toString();
+        const cookie = context.cookie ?? requestHeaders.cookie?.toString();
         // query params
         const params = requestParameters;
         const documentType = params.get("documentType")?.toString() as
@@ -71,13 +72,14 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
         });
       },
       store: async ({
+        context,
         state,
         documentName: pageId,
         requestHeaders,
         requestParameters,
       }) => {
         // request headers
-        const cookie = requestHeaders.cookie?.toString();
+        const cookie = context.cookie ?? requestHeaders.cookie?.toString();
         // query params
         const params = requestParameters;
         const documentType = params.get("documentType")?.toString() as

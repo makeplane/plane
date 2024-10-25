@@ -12,20 +12,30 @@ export const getHocusPocusServer = async () => {
     name: serverName,
     onAuthenticate: async ({
       requestHeaders,
+      context,
       // user id used as token for authentication
       token,
     }) => {
-      // request headers
-      const cookie = requestHeaders.cookie?.toString();
-
-      if (!cookie) {
+      let cookie, userId;
+      try {
+        const parsedToken = JSON.parse(token);
+        cookie = parsedToken?.cookie ?? requestHeaders.cookie?.toString();
+        userId = parsedToken.id;
+      } catch {
         throw Error("Credentials not provided");
       }
+
+      if (!cookie || !userId) {
+        throw Error("Credentials not provided");
+      }
+
+      // set cookie in context, so it can be used in the server handler.
+      context.cookie = cookie;
 
       try {
         await handleAuthentication({
           cookie,
-          token,
+          token: userId,
         });
       } catch (error) {
         throw Error("Authentication unsuccessful!");
