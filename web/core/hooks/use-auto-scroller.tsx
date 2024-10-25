@@ -77,7 +77,7 @@ export const useAutoScroller = (
       containerRef.current?.scrollBy(scrollByX, scrollByY);
       intervalId.current = setInterval(() => {
         containerRef.current?.scrollBy(scrollByX, scrollByY);
-      }, 24);
+      }, 16);
     }
   };
 
