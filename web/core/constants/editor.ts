@@ -18,9 +18,9 @@ import {
   ListOrdered,
   ListTodo,
   LucideIcon,
-  Quote,
   Strikethrough,
   Table,
+  TextQuote,
   Underline,
 } from "lucide-react";
 // editor
@@ -156,7 +156,7 @@ const LIST_ITEMS: ToolbarMenuItem<"bulleted-list" | "numbered-list" | "to-do-lis
 ];
 
 const USER_ACTION_ITEMS: ToolbarMenuItem<"quote" | "code">[] = [
-  { itemKey: "quote", renderKey: "quote", name: "Quote", icon: Quote, editors: ["lite", "document"] },
+  { itemKey: "quote", renderKey: "quote", name: "Quote", icon: TextQuote, editors: ["lite", "document"] },
   { itemKey: "code", renderKey: "code", name: "Code", icon: Code2, editors: ["lite", "document"] },
 ];
 

@@ -25,7 +25,7 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
     per_page,
     group_by,
     sub_group_by,
-    order_by = "created_at",
+    order_by = "-created_at",
     ...otherProps
   } = translateQueryParams(queries);
 
