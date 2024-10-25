@@ -7,9 +7,18 @@ import { ModuleService } from "@/services/module.service";
 import { ProjectStateService } from "@/services/project";
 import { WorkspaceService } from "@/services/workspace.service";
 import { persistence } from "../storage.sqlite";
-import { cycleSchema, estimatePointSchema, labelSchema, memberSchema, Schema, stateSchema } from "./schemas";
+import {
+  cycleSchema,
+  estimatePointSchema,
+  labelSchema,
+  memberSchema,
+  moduleSchema,
+  Schema,
+  stateSchema,
+} from "./schemas";
+import { log } from "./utils";
 
-const stageInserts = (table: string, schema: Schema, data: any) => {
+const stageInserts = async (table: string, schema: Schema, data: any) => {
   const keys = Object.keys(schema);
   // Pick only the keys that are in the schema
   const filteredData = keys.reduce((acc: any, key) => {
@@ -36,67 +45,46 @@ const stageInserts = (table: string, schema: Schema, data: any) => {
     })
     .join(", ");
   const query = `INSERT OR REPLACE INTO ${table} (${columns}) VALUES (${values});`;
-  persistence.db.exec(query);
+  await persistence.db.exec(query);
 };
 
-export const loadLabels = async (workspaceSlug: string, batchSize = 500) => {
+const batchInserts = async (data: any[], table: string, schema: Schema, batchSize = 500) => {
+  for (let i = 0; i < data.length; i += batchSize) {
+    const batch = data.slice(i, i + batchSize);
+    for (let j = 0; j < batch.length; j++) {
+      const item = batch[j];
+      await stageInserts(table, schema, item);
+    }
+  }
+};
+
+export const getLabels = async (workspaceSlug: string) => {
   const issueLabelService = new IssueLabelService();
   const objects = await issueLabelService.getWorkspaceIssueLabels(workspaceSlug);
-  for (let i = 0; i < objects.length; i += batchSize) {
-    const batch = objects.slice(i, i + batchSize);
 
-    persistence.db.exec("BEGIN TRANSACTION;");
-    batch.forEach((label: any) => {
-      stageInserts("labels", labelSchema, label);
-    });
-    await persistence.db.exec("COMMIT;");
-  }
+  return objects;
 };
 
-export const loadModules = async (workspaceSlug: string, batchSize = 500) => {
+export const getModules = async (workspaceSlug: string) => {
   const moduleService = new ModuleService();
   const objects = await moduleService.getWorkspaceModules(workspaceSlug);
-  for (let i = 0; i < objects.length; i += batchSize) {
-    const batch = objects.slice(i, i + batchSize);
-
-    persistence.db.exec("BEGIN TRANSACTION;");
-    batch.forEach((label: any) => {
-      stageInserts("modules", labelSchema, label);
-    });
-    await persistence.db.exec("COMMIT;");
-  }
+  return objects;
 };
 
-export const loadCycles = async (workspaceSlug: string, batchSize = 500) => {
+export const getCycles = async (workspaceSlug: string) => {
   const cycleService = new CycleService();
 
   const objects = await cycleService.getWorkspaceCycles(workspaceSlug);
-  for (let i = 0; i < objects.length; i += batchSize) {
-    const batch = objects.slice(i, i + batchSize);
-
-    persistence.db.exec("BEGIN TRANSACTION;");
-    batch.forEach((cycle: any) => {
-      stageInserts("cycles", cycleSchema, cycle);
-    });
-    await persistence.db.exec("COMMIT;");
-  }
+  return objects;
 };
 
-export const loadStates = async (workspaceSlug: string, batchSize = 500) => {
+export const getStates = async (workspaceSlug: string) => {
   const stateService = new ProjectStateService();
   const objects = await stateService.getWorkspaceStates(workspaceSlug);
-  for (let i = 0; i < objects.length; i += batchSize) {
-    const batch = objects.slice(i, i + batchSize);
-
-    persistence.db.exec("BEGIN TRANSACTION;");
-    batch.forEach((state: any) => {
-      stageInserts("states", stateSchema, state);
-    });
-    await persistence.db.exec("COMMIT;");
-  }
+  return objects;
 };
 
-export const loadEstimatePoints = async (workspaceSlug: string, batchSize = 500) => {
+export const getEstimatePoints = async (workspaceSlug: string) => {
   const estimateService = new EstimateService();
   const estimates = await estimateService.fetchWorkspaceEstimates(workspaceSlug);
   const objects: IEstimatePoint[] = [];
@@ -105,38 +93,36 @@ export const loadEstimatePoints = async (workspaceSlug: string, batchSize = 500)
       objects.concat(estimate.points);
     }
   });
-  for (let i = 0; i < objects.length; i += batchSize) {
-    const batch = objects.slice(i, i + batchSize);
-
-    persistence.db.exec("BEGIN TRANSACTION;");
-    batch.forEach((point: any) => {
-      stageInserts("estimate_points", estimatePointSchema, point);
-    });
-    await persistence.db.exec("COMMIT;");
-  }
+  return objects;
 };
 
-export const loadMembers = async (workspaceSlug: string, batchSize = 500) => {
+export const getMembers = async (workspaceSlug: string) => {
   const workspaceService = new WorkspaceService(API_BASE_URL);
   const members = await workspaceService.fetchWorkspaceMembers(workspaceSlug);
   const objects = members.map((member: IWorkspaceMember) => member.member);
-  for (let i = 0; i < objects.length; i += batchSize) {
-    const batch = objects.slice(i, i + batchSize);
-    persistence.db.exec("BEGIN TRANSACTION;");
-    batch.forEach((member: any) => {
-      stageInserts("members", memberSchema, member);
-    });
-    await persistence.db.exec("COMMIT;");
-  }
+  return objects;
 };
 
 export const loadWorkSpaceData = async (workspaceSlug: string) => {
+  log("Loading workspace data");
   const promises = [];
-  promises.push(loadLabels(workspaceSlug));
-  promises.push(loadModules(workspaceSlug));
-  promises.push(loadCycles(workspaceSlug));
-  promises.push(loadStates(workspaceSlug));
-  promises.push(loadEstimatePoints(workspaceSlug));
-  promises.push(loadMembers(workspaceSlug));
-  await Promise.all(promises);
+  promises.push(getLabels(workspaceSlug));
+  promises.push(getModules(workspaceSlug));
+  promises.push(getCycles(workspaceSlug));
+  promises.push(getStates(workspaceSlug));
+  promises.push(getEstimatePoints(workspaceSlug));
+  promises.push(getMembers(workspaceSlug));
+  const [labels, modules, cycles, states, estimates, memebers] = await Promise.all(promises);
+
+  const start = performance.now();
+  await persistence.db.exec("BEGIN TRANSACTION;");
+  await batchInserts(labels, "labels", labelSchema);
+  await batchInserts(modules, "modules", moduleSchema);
+  await batchInserts(cycles, "cycles", cycleSchema);
+  await batchInserts(states, "states", stateSchema);
+  await batchInserts(estimates, "estimate_points", estimatePointSchema);
+  await batchInserts(memebers, "members", memberSchema);
+  await persistence.db.exec("COMMIT");
+  const end = performance.now();
+  log("Time taken to load workspace data", end - start);
 };

@@ -3,7 +3,7 @@ import { Editor, NodeViewProps, NodeViewWrapper } from "@tiptap/react";
 // extensions
 import { CustomImageBlock, CustomImageUploader, ImageAttributes } from "@/extensions/custom-image";
 
-export type CustomImageComponentProps = {
+export type CustomImageComponentProps = NodeViewProps & {
   getPos: () => number;
   editor: Editor;
   node: NodeViewProps["node"] & {
@@ -13,9 +13,7 @@ export type CustomImageComponentProps = {
   selected: boolean;
 };
 
-export type CustomImageNodeViewProps = NodeViewProps & CustomImageComponentProps;
-
-export const CustomImageNode = (props: CustomImageNodeViewProps) => {
+export const CustomImageNode = (props: CustomImageComponentProps) => {
   const { getPos, editor, node, updateAttributes, selected } = props;
   const { src: remoteImageSrc } = node.attrs;
 
