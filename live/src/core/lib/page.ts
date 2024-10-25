@@ -1,8 +1,8 @@
-// helpers
+// plane editor
 import {
   getAllDocumentFormatsFromDocumentEditorBinaryData,
   getBinaryDataFromDocumentEditorHTMLString,
-} from "@/core/helpers/page.js";
+} from "@plane/editor/lib";
 // services
 import { PageService } from "@/core/services/page.service.js";
 import { manualLogger } from "../helpers/logger.js";
@@ -48,7 +48,7 @@ const fetchDescriptionHTMLAndTransform = async (
 
   try {
     const pageDetails = await pageService.fetchDetails(workspaceSlug, projectId, pageId, cookie);
-    const { contentBinary } = getBinaryDataFromDocumentEditorHTMLString(pageDetails.description_html ?? "<p></p>");
+    const contentBinary = getBinaryDataFromDocumentEditorHTMLString(pageDetails.description_html ?? "<p></p>");
     return contentBinary;
   } catch (error) {
     manualLogger.error("Error while transforming from HTML to Uint8Array", error);

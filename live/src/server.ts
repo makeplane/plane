@@ -6,13 +6,16 @@ import * as Sentry from "@sentry/node";
 import compression from "compression";
 import helmet from "helmet";
 import cors from "cors";
-import * as Y from "yjs";
+// plane editor
+import {
+  applyUpdates,
+  convertBase64StringToBinaryData,
+  getAllDocumentFormatsFromRichTextEditorBinaryData,
+} from "@plane/editor/lib";
 // core hocuspocus server
 import { getHocusPocusServer } from "@/core/hocuspocus-server.js";
 // helpers
 import { errorHandler } from "@/core/helpers/error-handler.js";
-import { applyUpdatesToBinaryData } from "@/core/helpers/document.js";
-import { getAllDocumentFormatsFromRichTextEditorBinaryData } from "@/core/helpers/issue.js";
 import { logger, manualLogger } from "@/core/helpers/logger.js";
 
 const app = express();
@@ -71,19 +74,19 @@ app.post("/resolve-document-conflicts", (req, res) => {
       throw new Error("Missing required fields");
     }
     // convert from base64 to buffer
-    const originalDocumentBuffer = original_document ? Buffer.from(original_document, "base64") : null;
-    const updatesBuffer = updates ? Buffer.from(updates, "base64") : null;
+    const originalDocumentBuffer = original_document ? convertBase64StringToBinaryData(original_document) : null;
+    const updatesBuffer = updates ? convertBase64StringToBinaryData(updates) : null;
     // decode req.body
     const decodedOriginalDocument = originalDocumentBuffer ? new Uint8Array(originalDocumentBuffer) : new Uint8Array();
     const decodedUpdates = updatesBuffer ? new Uint8Array(updatesBuffer) : new Uint8Array();
     // resolve conflicts
     let resolvedDocument: Uint8Array;
     if (decodedOriginalDocument.length === 0) {
-      const yDoc = new Y.Doc();
-      Y.applyUpdate(yDoc, decodedUpdates);
-      resolvedDocument = Y.encodeStateAsUpdate(yDoc);
+      // use updates to create the document id original_description is null
+      resolvedDocument = applyUpdates(decodedUpdates);
     } else {
-      resolvedDocument = applyUpdatesToBinaryData(decodedOriginalDocument, decodedUpdates);
+      // use original document and updates to resolve conflicts
+      resolvedDocument = applyUpdates(decodedOriginalDocument, decodedUpdates);
     }
 
     const { contentBinaryEncoded, contentHTML, contentJSON } =
@@ -95,7 +98,7 @@ app.post("/resolve-document-conflicts", (req, res) => {
       description: contentJSON,
     });
   } catch (error) {
-    console.log("error", error);
+    console.error("error", error);
     res.status(500).send({
       message: "Internal server error",
     });
