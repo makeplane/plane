@@ -95,11 +95,15 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           descriptionHTML={issue.description_html ?? "<p></p>"}
           disabled={!isEditable}
           fetchDescription={async () => {
-            if (!workspaceSlug || !projectId || !issueId) return;
+            if (!workspaceSlug || !projectId || !issueId) {
+              throw new Error("Required fields missing while fetching binary description");
+            }
             return await issueService.fetchDescriptionBinary(workspaceSlug, projectId, issueId);
           }}
           updateDescription={async (data) => {
-            if (!workspaceSlug || !issue.project_id || !issue.id) return;
+            if (!workspaceSlug || !issue.project_id || !issue.id) {
+              throw new Error("Required fields missing while updating binary description");
+            }
             return await issueService.updateDescriptionBinary(workspaceSlug, issue.project_id, issue.id, {
               description_binary: data,
             });

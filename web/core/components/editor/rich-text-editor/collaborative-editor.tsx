@@ -12,6 +12,7 @@ import { useMember, useMention, useUser } from "@/hooks/store";
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
 
 interface Props extends Omit<ICollaborativeRichTextEditor, "fileHandler" | "mentionHandler"> {
+  key: string;
   projectId: string;
   uploadFile: (file: File) => Promise<string>;
   workspaceId: string;

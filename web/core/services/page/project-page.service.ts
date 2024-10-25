@@ -128,7 +128,7 @@ export class ProjectPageService extends APIService {
       });
   }
 
-  async fetchDescriptionBinary(workspaceSlug: string, projectId: string, pageId: string): Promise<any> {
+  async fetchDescriptionBinary(workspaceSlug: string, projectId: string, pageId: string): Promise<Buffer> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/description/`, {
       headers: {
         "Content-Type": "application/octet-stream",

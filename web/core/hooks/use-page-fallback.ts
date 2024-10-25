@@ -8,7 +8,7 @@ import useAutoSave from "@/hooks/use-auto-save";
 
 type TArgs = {
   editorRef: React.RefObject<EditorRefApi>;
-  fetchPageDescription: () => Promise<any>;
+  fetchPageDescription: () => Promise<Buffer>;
   hasConnectionFailed: boolean;
   updatePageDescription: (data: TDocumentPayload) => Promise<void>;
 };

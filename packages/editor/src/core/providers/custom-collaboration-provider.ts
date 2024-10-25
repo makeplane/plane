@@ -1,6 +1,6 @@
 import * as Y from "yjs";
 
-export interface CompleteCollaboratorProviderConfiguration {
+export interface CompleteCollaborationProviderConfiguration {
   /**
    * The identifier/name of your document
    */
@@ -15,13 +15,13 @@ export interface CompleteCollaboratorProviderConfiguration {
   onChange: (updates: Uint8Array) => void;
 }
 
-export type CollaborationProviderConfiguration = Required<Pick<CompleteCollaboratorProviderConfiguration, "name">> &
-  Partial<CompleteCollaboratorProviderConfiguration>;
+export type CollaborationProviderConfiguration = Required<Pick<CompleteCollaborationProviderConfiguration, "name">> &
+  Partial<CompleteCollaborationProviderConfiguration>;
 
 export class CustomCollaborationProvider {
   public hasSynced: boolean;
 
-  public configuration: CompleteCollaboratorProviderConfiguration = {
+  public configuration: CompleteCollaborationProviderConfiguration = {
     name: "",
     document: new Y.Doc(),
     onChange: () => {},
@@ -34,7 +34,7 @@ export class CustomCollaborationProvider {
     this.document.on("destroy", this.documentDestroyHandler.bind(this));
   }
 
-  public setConfiguration(configuration: Partial<CompleteCollaboratorProviderConfiguration> = {}): void {
+  public setConfiguration(configuration: Partial<CompleteCollaborationProviderConfiguration> = {}): void {
     this.configuration = {
       ...this.configuration,
       ...configuration,

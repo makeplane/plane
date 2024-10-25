@@ -37,7 +37,7 @@ export const useCollaborativeRichTextEditor = (props: TCollaborativeRichTextEdit
 
   useEffect(() => {
     if (provider.hasSynced) return;
-    if (value.length > 0) {
+    if (value && value.length > 0) {
       Y.applyUpdate(provider.document, value);
     }
     provider.hasSynced = true;
