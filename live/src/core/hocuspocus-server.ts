@@ -16,14 +16,8 @@ export const getHocusPocusServer = async () => {
       // user id used as token for authentication
       token,
     }) => {
-      let cookie, userId;
-      try {
-        const parsedToken = JSON.parse(token);
-        cookie = parsedToken?.cookie ?? requestHeaders.cookie?.toString();
-        userId = parsedToken.id;
-      } catch {
-        throw Error("Credentials not provided");
-      }
+      const { cookie = requestHeaders.cookie?.toString(), id: userId } =
+        JSON.parse(token);
 
       if (!cookie || !userId) {
         throw Error("Credentials not provided");
