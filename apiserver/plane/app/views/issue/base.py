@@ -1096,7 +1096,7 @@ class IssueBulkUpdateDateEndpoint(BaseAPIView):
 
         updates = request.data.get("updates", [])
 
-        issue_ids = [update["issue_id"] for update in updates]
+        issue_ids = [update["id"] for update in updates]
         epoch = int(timezone.now().timestamp())
 
         # Fetch all relevant issues in a single query
@@ -1105,7 +1105,7 @@ class IssueBulkUpdateDateEndpoint(BaseAPIView):
         issues_to_update = []
 
         for update in updates:
-            issue_id = update["issue_id"]
+            issue_id = update["id"]
             issue = issues_dict.get(issue_id)
 
             if not issue:
