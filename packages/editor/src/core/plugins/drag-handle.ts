@@ -30,6 +30,29 @@ const createDragHandleElement = (): HTMLElement => {
   return dragHandleElement;
 };
 
+const isScrollable = (node: HTMLElement | SVGElement) => {
+  if (!(node instanceof HTMLElement || node instanceof SVGElement)) {
+    return false;
+  }
+  const style = getComputedStyle(node);
+  return ["overflow", "overflow-y"].some((propertyName) => {
+    const value = style.getPropertyValue(propertyName);
+    return value === "auto" || value === "scroll";
+  });
+};
+
+const getScrollParent = (node: HTMLElement | SVGElement) => {
+  let currentParent = node.parentElement;
+
+  while (currentParent) {
+    if (isScrollable(currentParent)) {
+      return currentParent;
+    }
+    currentParent = currentParent.parentElement;
+  }
+  return document.scrollingElement || document.documentElement;
+};
+
 export const nodeDOMAtCoords = (coords: { x: number; y: number }) => {
   const elements = document.elementsFromPoint(coords.x, coords.y);
   const generalSelectors = [
@@ -107,6 +130,8 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
   let lastClientY = 0;
   let scrollAnimationFrame = null;
   const handleDragStart = (event: DragEvent, view: EditorView) => {
+    console.log("window.innerHeight: %s", window.innerHeight);
+
     view.focus();
     isDragging = true;
     lastClientY = event.clientY;
@@ -186,7 +211,8 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     view.dragging = { slice, move: event.ctrlKey };
   };
 
-  const handleDragEnd = (event: DragEvent, view: EditorView) => {
+  const handleDragEnd = <TEvent extends DragEvent | FocusEvent>(event: TEvent, view: EditorView) => {
+    event.preventDefault();
     isDragging = false;
     if (scrollAnimationFrame) {
       cancelAnimationFrame(scrollAnimationFrame);
@@ -201,33 +227,12 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     if (!isDragging) {
       return;
     }
-    const getScrollParent = (node: HTMLElement | SVGElement) => {
-      let currentParent = node.parentElement;
-      const isScrollable = (node: HTMLElement | SVGElement) => {
-        if (!(node instanceof HTMLElement || node instanceof SVGElement)) {
-          return false;
-        }
-        const style = getComputedStyle(node);
-        return ["overflow", "overflow-y"].some((propertyName) => {
-          const value = style.getPropertyValue(propertyName);
-          return value === "auto" || value === "scroll";
-        });
-      };
-
-      while (currentParent) {
-        if (isScrollable(currentParent)) {
-          return currentParent;
-        }
-        currentParent = currentParent.parentElement;
-      }
-      return document.scrollingElement || document.documentElement;
-    };
 
     const scrollableParent = getScrollParent(dragHandleElement);
     if (!scrollableParent) return;
     const scrollThreshold = options.scrollThreshold;
 
-    const maxScrollSpeed = 20; // Adjusted for smoother scrolling
+    const maxScrollSpeed = 20;
     const clientY = lastClientY; // Use the last known clientY
     let scrollAmount = 0;
 
@@ -235,7 +240,6 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     const scrollRegionUp = scrollThreshold.up;
     const scrollRegionDown = window.innerHeight - scrollThreshold.down;
 
-    console.log("clientY: %s", clientY, scrollRegionUp, scrollRegionDown);
     // Calculate scroll amount when mouse is near the top
     if (clientY < scrollRegionUp) {
       const overflow = scrollRegionUp - clientY;
@@ -243,6 +247,7 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
       const speed = maxScrollSpeed * ratio;
       scrollAmount = -speed;
     }
+
     // Calculate scroll amount when mouse is near the bottom
     else if (clientY > scrollRegionDown) {
       const overflow = clientY - scrollRegionDown;
@@ -252,22 +257,38 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     }
 
     // Handle cases when mouse is outside the window (above or below)
-    console.log("clientY: %s", clientY);
     if (clientY <= 0) {
+      console.log("ran above");
       const overflow = scrollThreshold.up + Math.abs(clientY);
       const ratio = Math.min(Math.pow(overflow / (scrollThreshold.up + 100), 2), 1);
-      // __AUTO_GENERATED_PRINT_VAR_START__
-      console.log("DragHandlePlugin#scroll#if  : %s", ratio); // __AUTO_GENERATED_PRINT_VAR_END__
-      const speed = maxScrollSpeed * 2;
+      const speed = maxScrollSpeed * ratio;
       scrollAmount = -speed;
     } else if (clientY >= window.innerHeight) {
+      console.log("ran below");
       const overflow = clientY - window.innerHeight + scrollThreshold.down;
       const ratio = Math.min(Math.pow(overflow / (scrollThreshold.down + 100), 2), 1);
-      // __AUTO_GENERATED_PRINT_VAR_START__
-      console.log("DragHandlePlugin#scroll#if#if ratio: %s", ratio); // __AUTO_GENERATED_PRINT_VAR_END__
-      const speed = maxScrollSpeed * 2;
+      const speed = maxScrollSpeed * ratio;
       scrollAmount = speed;
     }
+
+    document.addEventListener("mouseout", function (event) {
+      // Check if the mouse has left the window from the top or bottom
+      if (event.clientY <= 0) {
+        console.log("Mouse left from the top");
+        // Handle the logic for when the mouse leaves from the top
+        const overflow = scrollThreshold.up + Math.abs(event.clientY);
+        const ratio = Math.min(Math.pow(overflow / (scrollThreshold.up + 100), 2), 1);
+        const speed = maxScrollSpeed * ratio;
+        scrollAmount = -speed;
+      } else if (event.clientY >= window.innerHeight) {
+        console.log("Mouse left from the bottom");
+        // Handle the logic for when the mouse leaves from the bottom
+        const overflow = event.clientY - window.innerHeight + scrollThreshold.down;
+        const ratio = Math.min(Math.pow(overflow / (scrollThreshold.down + 100), 2), 1);
+        const speed = maxScrollSpeed * ratio;
+        scrollAmount = speed;
+      }
+    });
 
     if (scrollAmount !== 0) {
       scrollableParent.scrollBy({ top: scrollAmount });
@@ -326,17 +347,10 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
 
   const view = (view: EditorView, sideMenu: HTMLDivElement | null) => {
     dragHandleElement = createDragHandleElement();
-    // dragHandleElement.addEventListener("dragstart", (e) => handleDragStart(e, view));
     dragHandleElement.addEventListener("dragstart", (e) => handleDragStart(e, view));
     dragHandleElement.addEventListener("dragend", (e) => handleDragEnd(e, view));
-    dragHandleElement.addEventListener("blur", (e) => handleDragEnd(e, view));
+
     window.addEventListener("blur", (e) => handleDragEnd(e, view));
-    // End drag on visibility change
-    document.addEventListener("visibilitychange", (e) => {
-      if (document.visibilityState === "hidden" && isDragging) {
-        handleDragEnd(e, view);
-      }
-    });
 
     document.addEventListener("dragover", (event) => {
       event.preventDefault();
@@ -348,70 +362,11 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     dragHandleElement.addEventListener("click", (e) => handleClick(e, view));
     dragHandleElement.addEventListener("contextmenu", (e) => handleClick(e, view));
 
-    // const maxScrollSpeed = 15;
-    //
-    // const isScrollable = (node: HTMLElement | SVGElement) => {
-    //   if (!(node instanceof HTMLElement || node instanceof SVGElement)) {
-    //     return false;
-    //   }
-    //   const style = getComputedStyle(node);
-    //   return ["overflow", "overflow-y"].some((propertyName) => {
-    //     const value = style.getPropertyValue(propertyName);
-    //     return value === "auto" || value === "scroll";
-    //   });
-    // };
-
-    // dragHandleElement.addEventListener("drag", (e) => {
-    //   hideDragHandle();
-    //   const getScrollParent = (node: HTMLElement | SVGElement) => {
-    //     let currentParent = node.parentElement;
-    //     while (currentParent) {
-    //       if (isScrollable(currentParent)) {
-    //         return currentParent;
-    //       }
-    //       currentParent = currentParent.parentElement;
-    //     }
-    //     return document.scrollingElement || document.documentElement;
-    //   };
-    //
-    //   const scrollableParent = getScrollParent(dragHandleElement);
-    //   if (!scrollableParent) return;
-    //   const scrollThreshold = options.scrollThreshold;
-    //
-    //   console.log("e", e.clientY);
-    //   if (e.clientY < scrollThreshold.up) {
-    //     const overflow = scrollThreshold.up - e.clientY;
-    //     const ratio = Math.min(Math.pow(overflow / scrollThreshold.up, 3), 1); // Use power of 3 for smoother acceleration
-    //     const scrollAmount = -maxScrollSpeed * ratio;
-    //     scrollableParent.scrollBy({ top: scrollAmount });
-    //   } else if (window.innerHeight - e.clientY < scrollThreshold.down) {
-    //     const overflow = e.clientY - (window.innerHeight - scrollThreshold.down);
-    //     const ratio = Math.min(Math.pow(overflow / scrollThreshold.down, 3), 1); // Use power of 3 for smoother acceleration
-    //     const scrollAmount = maxScrollSpeed * ratio;
-    //     scrollableParent.scrollBy({ top: scrollAmount });
-    //   }
-    //   // if (e.clientY < scrollThreshold.up) {
-    //   //   const overflow = scrollThreshold.up - e.clientY;
-    //   //   const ratio = Math.min(overflow / scrollThreshold.up, 1);
-    //   //   const scrollAmount = -maxScrollSpeed * ratio;
-    //   //   scrollableParent.scrollBy({ top: scrollAmount });
-    //   // } else if (window.innerHeight - e.clientY < scrollThreshold.down) {
-    //   //   const overflow = e.clientY - (window.innerHeight - scrollThreshold.down);
-    //   //   const ratio = Math.min(overflow / scrollThreshold.down, 1);
-    //   //   const scrollAmount = maxScrollSpeed * ratio;
-    //   //   scrollableParent.scrollBy({ top: scrollAmount });
-    //   // }
-    // });
-
     hideDragHandle();
 
     sideMenu?.appendChild(dragHandleElement);
 
     return {
-      // destroy: () => {
-      //   dragHandleElement?.remove?.();
-      //   dragHandleElement = null;
-      // },
       destroy: () => {
         dragHandleElement?.remove?.();
         dragHandleElement = null;
