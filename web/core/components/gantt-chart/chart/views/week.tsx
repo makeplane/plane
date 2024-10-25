@@ -60,7 +60,7 @@ export const WeekChartView: FC<any> = observer(() => {
                     <div className="space-x-1 text-xs font-medium">
                       <span
                         className={cn({
-                          "rounded-full bg-custom-primary-100 px-1 text-white": weekDay.today,
+                          "rounded bg-custom-primary-100 px-1 text-white": weekDay.today,
                         })}
                       >
                         {weekDay.date.getDate()}

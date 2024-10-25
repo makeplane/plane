@@ -75,7 +75,7 @@ export const MonthChartView: FC<any> = observer(() => {
                   <div className="space-x-1 text-xs font-medium text-custom-text-400">
                     <span
                       className={cn({
-                        "rounded-full bg-custom-primary-100 px-1 text-white": weekBlock.today,
+                        "rounded bg-custom-primary-100 px-1 text-white": weekBlock.today,
                       })}
                     >
                       {weekBlock.startDate.getDate()}-{weekBlock.endDate.getDate()}
