@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from "react";
-import { BubbleMenu, BubbleMenuProps, isNodeSelection } from "@tiptap/react";
+import { BubbleMenu, BubbleMenuProps, Editor, isNodeSelection } from "@tiptap/react";
 // components
 import {
   BoldItem,
@@ -152,7 +152,15 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
               </button>
             ))}
           </div>
-          <TextAlignmentSelector editor={props.editor} />
+          <TextAlignmentSelector
+            editor={props.editor}
+            onClose={() => {
+              const editor = props.editor as Editor;
+              if (!editor) return;
+              const pos = editor.state.selection.to;
+              editor.commands.setTextSelection(pos ?? 0);
+            }}
+          />
         </>
       )}
     </BubbleMenu>

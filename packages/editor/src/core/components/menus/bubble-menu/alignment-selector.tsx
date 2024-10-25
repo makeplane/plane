@@ -9,10 +9,11 @@ import { TEditorCommands } from "@/types";
 
 type Props = {
   editor: Editor;
+  onClose: () => void;
 };
 
 export const TextAlignmentSelector: React.FC<Props> = (props) => {
-  const { editor } = props;
+  const { editor, onClose } = props;
 
   const menuItem = TextAlignItem(editor);
 
@@ -71,8 +72,9 @@ export const TextAlignmentSelector: React.FC<Props> = (props) => {
           key={item.renderKey}
           type="button"
           onClick={(e) => {
-            item.command();
             e.stopPropagation();
+            item.command();
+            onClose();
           }}
           className={cn(
             "size-7 grid place-items-center rounded text-custom-text-300 hover:bg-custom-background-80 active:bg-custom-background-80 transition-colors",
