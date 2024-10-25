@@ -29,8 +29,8 @@ export const CustomAnalyticsSidebarProjectsList: React.FC<Props> = observer((pro
           return (
             <div key={projectId} className="w-full">
               <div className="flex items-center gap-1 text-sm">
-                <div className="h-6 w-6 grid place-items-center">
-                  <Logo logo={project.logo_props} />
+                <div className="size-4 grid place-items-center">
+                  <Logo logo={project.logo_props} size={16} />
                 </div>
                 <h5 className="flex items-center gap-1">
                   <p className="break-words">{truncateText(project.name, 20)}</p>

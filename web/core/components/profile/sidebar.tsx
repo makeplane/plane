@@ -157,7 +157,7 @@ export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
                       <div className="w-full">
                         <Disclosure.Button className="flex w-full items-center justify-between gap-2">
                           <div className="flex w-3/4 items-center gap-2">
-                            <span className="grid h-7 w-7 flex-shrink-0 place-items-center">
+                            <span className="grid h-6 w-6 flex-shrink-0 place-items-center">
                               <Logo logo={projectDetails.logo_props} />
                             </span>
                             <div className="truncate break-words text-sm font-medium">{projectDetails.name}</div>

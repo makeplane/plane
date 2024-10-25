@@ -6,41 +6,29 @@ import { Info, Lock } from "lucide-react";
 // plane types
 import { IProject, IWorkspace } from "@plane/types";
 // plane ui
-import {
-  Button,
-  CustomSelect,
-  Input,
-  TextArea,
-  TOAST_TYPE,
-  setToast,
-  CustomEmojiIconPicker,
-  EmojiIconPickerTypes,
-  Tooltip,
-  // CustomSearchSelect,
-} from "@plane/ui";
+import { Button, CustomSelect, Input, TextArea, TOAST_TYPE, setToast, Tooltip } from "@plane/ui";
 // components
-import { Logo } from "@/components/common";
 import { ImagePickerPopover } from "@/components/core";
+import { ProjectLogoPicker } from "@/components/project";
 // constants
 import { PROJECT_UPDATED } from "@/constants/event-tracker";
 import { NETWORK_CHOICES } from "@/constants/project";
 // helpers
 // import { TTimezone, TIME_ZONES } from "@/constants/timezones";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
-import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useEventTracker, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
 import { ProjectService } from "@/services/project";
+const projectService = new ProjectService();
 export interface IProjectDetailsForm {
   project: IProject;
   workspaceSlug: string;
   projectId: string;
   isAdmin: boolean;
 }
-const projectService = new ProjectService();
 export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   const { project, workspaceSlug, projectId, isAdmin } = props;
   // states
@@ -166,45 +154,31 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="relative h-44 w-full">
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-        <img
-          src={getFileURL(coverImage ?? "")}
-          alt="Project cover image"
-          className="h-44 w-full rounded-md object-cover"
-        />
+        {coverImage && (
+          <img
+            src={getFileURL(coverImage ?? "")}
+            alt="Project cover image"
+            className="h-44 w-full rounded-md object-cover"
+          />
+        )}
         <div className="z-5 absolute bottom-4 flex w-full items-end justify-between gap-3 px-4">
           <div className="flex flex-grow gap-3 truncate">
             <Controller
               control={control}
               name="logo_props"
               render={({ field: { value, onChange } }) => (
-                <CustomEmojiIconPicker
-                  closeOnSelect={false}
+                <ProjectLogoPicker
                   isOpen={isOpen}
-                  handleToggle={(val: boolean) => setIsOpen(val)}
-                  className="flex items-center justify-center"
-                  buttonClassName="flex h-[52px] w-[52px] flex-shrink-0 items-center justify-center rounded-lg bg-white/10"
-                  label={<Logo logo={value} size={28} />}
+                  handleToggle={(val) => setIsOpen(val)}
+                  buttonClassName="h-[52px] w-[52px] rounded-lg bg-white/10"
+                  logoSize={28}
                   onChange={(val) => {
-                    let logoValue = {};
-
-                    if (val?.type === "emoji")
-                      logoValue = {
-                        value: convertHexEmojiToDecimal(val.value.unified),
-                        url: val.value.imageUrl,
-                      };
-                    else if (val?.type === "icon") logoValue = val.value;
-
-                    onChange({
-                      in_use: val?.type,
-                      [val?.type]: logoValue,
-                    });
+                    onChange(val);
                     setIsOpen(false);
                   }}
-                  defaultIconColor={value?.in_use && value.in_use === "icon" ? value?.icon?.color : undefined}
-                  defaultOpen={
-                    value.in_use && value.in_use === "emoji" ? EmojiIconPickerTypes.EMOJI : EmojiIconPickerTypes.ICON
-                  }
                   disabled={!isAdmin}
+                  value={value}
+                  workspaceSlug={workspaceSlug}
                 />
               )}
             />

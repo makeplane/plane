@@ -1,16 +1,15 @@
 import { useState } from "react";
+import { useParams } from "next/navigation";
 import { Controller, useFormContext } from "react-hook-form";
 import { X } from "lucide-react";
 // plane types
 import { IProject } from "@plane/types";
-// plane ui
-import { CustomEmojiIconPicker, EmojiIconPickerTypes, Logo } from "@plane/ui";
 // components
 import { ImagePickerPopover } from "@/components/core";
+import { ProjectLogoPicker } from "@/components/project";
 // constants
 import { ETabIndices } from "@/constants/tab-indices";
 // helpers
-import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 import { getFileURL } from "@/helpers/file.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 
@@ -20,11 +19,15 @@ type Props = {
 };
 const ProjectCreateHeader: React.FC<Props> = (props) => {
   const { handleClose, isMobile = false } = props;
+  // states
+  const [isOpen, setIsOpen] = useState(false);
+  // params
+  const { workspaceSlug } = useParams();
+  // form
   const { watch, control } = useFormContext<IProject>();
   // derived values
   const coverImage = watch("cover_image_url");
 
-  const [isOpen, setIsOpen] = useState(false);
   const { getIndex } = getTabIndex(ETabIndices.PROJECT_CREATE, isMobile);
 
   return (
@@ -62,36 +65,16 @@ const ProjectCreateHeader: React.FC<Props> = (props) => {
           name="logo_props"
           control={control}
           render={({ field: { value, onChange } }) => (
-            <CustomEmojiIconPicker
+            <ProjectLogoPicker
+              buttonClassName="h-11 w-11 rounded-md bg-custom-background-80"
+              handleToggle={(val) => setIsOpen(val)}
               isOpen={isOpen}
-              handleToggle={(val: boolean) => setIsOpen(val)}
-              className="flex items-center justify-center"
-              buttonClassName="flex items-center justify-center"
-              label={
-                <span className="grid h-11 w-11 place-items-center rounded-md bg-custom-background-80">
-                  <Logo logo={value} size={20} />
-                </span>
-              }
-              onChange={(val: any) => {
-                let logoValue = {};
-
-                if (val?.type === "emoji")
-                  logoValue = {
-                    value: convertHexEmojiToDecimal(val.value.unified),
-                    url: val.value.imageUrl,
-                  };
-                else if (val?.type === "icon") logoValue = val.value;
-
-                onChange({
-                  in_use: val?.type,
-                  [val?.type]: logoValue,
-                });
+              onChange={(val) => {
+                onChange(val);
                 setIsOpen(false);
               }}
-              defaultIconColor={value.in_use && value.in_use === "icon" ? value.icon?.color : undefined}
-              defaultOpen={
-                value.in_use && value.in_use === "emoji" ? EmojiIconPickerTypes.EMOJI : EmojiIconPickerTypes.ICON
-              }
+              value={value}
+              workspaceSlug={workspaceSlug?.toString() ?? ""}
             />
           )}
         />

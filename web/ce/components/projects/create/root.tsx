@@ -26,7 +26,7 @@ export type TCreateProjectFormProps = {
   onClose: () => void;
   handleNextStep: (projectId: string) => void;
   data?: Partial<TProject>;
-  updateCoverImageStatus: (projectId: string, coverImage: string) => Promise<void>;
+  updateProjectAssetsStatus: (args: { projectId: string; formData: Partial<TProject> }) => Promise<void>;
 };
 
 const defaultValues: Partial<TProject> = {
@@ -45,7 +45,7 @@ const defaultValues: Partial<TProject> = {
 };
 
 export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) => {
-  const { setToFavorite, workspaceSlug, onClose, handleNextStep, updateCoverImageStatus } = props;
+  const { setToFavorite, workspaceSlug, onClose, handleNextStep, updateProjectAssetsStatus } = props;
   // store
   const { captureProjectEvent } = useEventTracker();
   const { addProjectToFavorites, createProject } = useProject();
@@ -73,13 +73,13 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
   const onSubmit = async (formData: Partial<TProject>) => {
     // Upper case identifier
     formData.identifier = formData.identifier?.toUpperCase();
-    const coverImage = formData.cover_image_url;
 
     return createProject(workspaceSlug.toString(), formData)
       .then(async (res) => {
-        if (coverImage) {
-          await updateCoverImageStatus(res.id, coverImage);
-        }
+        await updateProjectAssetsStatus({
+          projectId: res.id,
+          formData,
+        });
         const newPayload = {
           ...res,
           state: "SUCCESS",

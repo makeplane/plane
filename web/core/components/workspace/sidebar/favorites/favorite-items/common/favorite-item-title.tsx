@@ -33,7 +33,7 @@ export const FavoriteItemTitle: FC<Props> = observer((props) => {
 
   return (
     <Link href={href} className={isSidebarCollapsed ? collapsedClass : linkClass} draggable onClick={handleOnClick}>
-      <span className="flex items-center justify-center size-5">{icon}</span>
+      <span className="flex items-center justify-center size-4">{icon}</span>
       {!isSidebarCollapsed && <span className="text-sm leading-5 font-medium flex-1 truncate">{title}</span>}
     </Link>
   );

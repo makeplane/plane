@@ -4,7 +4,23 @@ import { EmojiClickData, Theme } from "emoji-picker-react";
 export enum EmojiIconPickerTypes {
   EMOJI = "emoji",
   ICON = "icon",
+  IMAGE = "image",
 }
+
+export const PROJECT_LOGO_PICKER_TABS_LIST = [
+  {
+    key: EmojiIconPickerTypes.EMOJI,
+    title: "Emojis",
+  },
+  {
+    key: EmojiIconPickerTypes.ICON,
+    title: "Icons",
+  },
+  {
+    key: EmojiIconPickerTypes.IMAGE,
+    title: "Custom",
+  },
+];
 
 export const TABS_LIST = [
   {
@@ -28,6 +44,10 @@ export type TChangeHandlerProps =
         name: string;
         color: string;
       };
+    }
+  | {
+      type: EmojiIconPickerTypes.IMAGE;
+      value: string;
     };
 
 export type TCustomEmojiPicker = {

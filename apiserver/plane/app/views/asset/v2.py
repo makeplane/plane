@@ -522,6 +522,7 @@ class StaticFileAssetEndpoint(BaseAPIView):
             FileAsset.EntityTypeContext.USER_COVER,
             FileAsset.EntityTypeContext.WORKSPACE_LOGO,
             FileAsset.EntityTypeContext.PROJECT_COVER,
+            FileAsset.EntityTypeContext.PROJECT_LOGO,
         ]:
             return Response(
                 {
@@ -737,7 +738,6 @@ class ProjectAssetEndpoint(BaseAPIView):
 
 
 class ProjectBulkAssetEndpoint(BaseAPIView):
-
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def post(self, request, slug, project_id, entity_id):
         asset_ids = request.data.get("asset_ids", [])

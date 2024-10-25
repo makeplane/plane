@@ -1,29 +1,32 @@
 "use client";
 
 import { FC } from "react";
-// emoji-picker-react
 import { Emoji } from "emoji-picker-react";
-import { TLogoProps } from "@plane/types";
-// helpers
-import { LUCIDE_ICONS_LIST } from "@plane/ui";
-import { emojiCodeToUnicode } from "@/helpers/emoji.helper";
-// import { icons } from "lucide-react";
 import useFontFaceObserver from "use-font-face-observer";
+// plane types
+import { TLogoProps } from "@plane/types";
+// plane ui
+import { LUCIDE_ICONS_LIST } from "@plane/ui";
+// helpers
+import { cn } from "@/helpers/common.helper";
+import { emojiCodeToUnicode } from "@/helpers/emoji.helper";
+import { getFileURL } from "@/helpers/file.helper";
 
 type Props = {
+  imageClassName?: string;
   logo: TLogoProps;
   size?: number;
   type?: "lucide" | "material";
 };
 
 export const Logo: FC<Props> = (props) => {
-  const { logo, size = 16, type = "material" } = props;
+  const { imageClassName, logo, size = 16, type = "material" } = props;
 
   // destructuring the logo object
-  const { in_use, emoji, icon } = logo;
+  const { in_use, emoji, icon, image } = logo;
 
   // derived values
-  const value = in_use === "emoji" ? emoji?.value : icon?.name;
+  const value = in_use === "emoji" ? emoji?.value : in_use === "icon" ? icon?.name : image?.url;
   const color = icon?.color;
   const lucideIcon = LUCIDE_ICONS_LIST.find((item) => item.name === value);
 
@@ -84,6 +87,14 @@ export const Logo: FC<Props> = (props) => {
           </span>
         )}
       </>
+    );
+  }
+
+  if (in_use === "image") {
+    return (
+      <span className={cn("size-full rounded-lg overflow-hidden", imageClassName)}>
+        <img src={getFileURL(value)} alt="Project logo" className={cn("rounded-lg", imageClassName)} />
+      </span>
     );
   }
 

@@ -33,7 +33,10 @@ export const ProjectFeatureUpdate: FC<Props> = observer((props) => {
       </Row>
       <div className="flex items-center justify-between gap-2 mt-4 px-6 py-4 border-t border-custom-border-100">
         <div className="flex gap-1 text-sm text-custom-text-300 font-medium">
-          Congrats! Project <Logo logo={currentProjectDetails.logo_props} />{" "}
+          Congrats! Project{" "}
+          <div className="flex-shrink-0 size-4 grid place-items-center">
+            <Logo logo={currentProjectDetails.logo_props} size={16} />
+          </div>{" "}
           <p className="break-all">{currentProjectDetails.name}</p> created.
         </div>
         <div className="flex gap-2">

@@ -11,7 +11,7 @@ export type TPaginationInfo = {
 };
 
 export type TLogoProps = {
-  in_use: "emoji" | "icon";
+  in_use: "emoji" | "icon" | "image";
   emoji?: {
     value?: string;
     url?: string;
@@ -21,4 +21,7 @@ export type TLogoProps = {
     color?: string;
     background_color?: string;
   };
+  image?: {
+    url?: string;
+  }
 };

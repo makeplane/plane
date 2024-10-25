@@ -9,9 +9,14 @@ import { IconsList } from "./icons-list";
 // helpers
 import { cn } from "../../helpers";
 // hooks
-import { EmojiIconPickerTypes, TABS_LIST, TCustomEmojiPicker } from "./emoji-icon-helper";
+import { EmojiIconPickerTypes, PROJECT_LOGO_PICKER_TABS_LIST, TCustomEmojiPicker } from "./emoji-icon-helper";
+import { ProjectLogoCustomImagePicker } from "./custom-image-picker";
 
-export const CustomEmojiIconPicker: React.FC<TCustomEmojiPicker> = (props) => {
+type Props = TCustomEmojiPicker & {
+  uploadFile: (file: File) => Promise<string>;
+};
+
+export const ProjectLogoPickerDropdown: React.FC<Props> = (props) => {
   const {
     isOpen,
     handleToggle,
@@ -28,6 +33,7 @@ export const CustomEmojiIconPicker: React.FC<TCustomEmojiPicker> = (props) => {
     searchDisabled = false,
     searchPlaceholder = "Search",
     theme,
+    uploadFile,
   } = props;
   // refs
   const containerRef = useRef<HTMLDivElement>(null);
@@ -78,10 +84,10 @@ export const CustomEmojiIconPicker: React.FC<TCustomEmojiPicker> = (props) => {
                 ref={containerRef}
                 as="div"
                 className="h-full w-full flex flex-col overflow-hidden"
-                defaultIndex={TABS_LIST.findIndex((tab) => tab.key === defaultOpen)}
+                defaultIndex={PROJECT_LOGO_PICKER_TABS_LIST.findIndex((tab) => tab.key === defaultOpen)}
               >
-                <Tab.List as="div" className="grid grid-cols-2 gap-1 p-2">
-                  {TABS_LIST.map((tab) => (
+                <Tab.List as="div" className="grid grid-cols-3 gap-1 p-2">
+                  {PROJECT_LOGO_PICKER_TABS_LIST.map((tab) => (
                     <Tab
                       key={tab.key}
                       className={({ selected }) =>
@@ -126,6 +132,18 @@ export const CustomEmojiIconPicker: React.FC<TCustomEmojiPicker> = (props) => {
                         if (closeOnSelect) handleToggle(false);
                       }}
                       searchDisabled={searchDisabled}
+                    />
+                  </Tab.Panel>
+                  <Tab.Panel className="px-2 my-2 space-y-2">
+                    <ProjectLogoCustomImagePicker
+                      uploadFile={uploadFile}
+                      onChange={(url) => {
+                        onChange({
+                          type: EmojiIconPickerTypes.IMAGE,
+                          value: url,
+                        });
+                        if (closeOnSelect) handleToggle(false);
+                      }}
                     />
                   </Tab.Panel>
                 </Tab.Panels>

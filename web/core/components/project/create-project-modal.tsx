@@ -3,7 +3,6 @@ import { useEffect, FC, useState } from "react";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // helpers
 import { getAssetIdFromUrl } from "@/helpers/file.helper";
-import { checkURLValidity } from "@/helpers/string.helper";
 // plane web components
 import { CreateProjectForm } from "@/plane-web/components/projects/create/root";
 // plane web types
@@ -45,10 +44,20 @@ export const CreateProjectModal: FC<Props> = (props) => {
     setCurrentStep(EProjectCreationSteps.FEATURE_SELECTION);
   };
 
-  const handleCoverImageStatusUpdate = async (projectId: string, coverImage: string) => {
-    if (!checkURLValidity(coverImage)) {
+  const handleProjectAssetsStatusUpdate = async (args: { projectId: string; formData: Partial<TProject> }) => {
+    const { projectId, formData } = args;
+    const { cover_image_url: coverImage, logo_props } = formData;
+    const projectLogo = logo_props?.image?.url;
+    const assetIds: string[] = [];
+    if (coverImage && !coverImage.startsWith("http")) {
+      assetIds.push(getAssetIdFromUrl(coverImage));
+    }
+    if (projectLogo && !projectLogo.startsWith("http")) {
+      assetIds.push(getAssetIdFromUrl(projectLogo));
+    }
+    if (assetIds.length > 0) {
       await fileService.updateBulkProjectAssetsUploadStatus(workspaceSlug, projectId, projectId, {
-        asset_ids: [getAssetIdFromUrl(coverImage)],
+        asset_ids: assetIds,
       });
     }
   };
@@ -60,7 +69,7 @@ export const CreateProjectModal: FC<Props> = (props) => {
           setToFavorite={setToFavorite}
           workspaceSlug={workspaceSlug}
           onClose={onClose}
-          updateCoverImageStatus={handleCoverImageStatusUpdate}
+          updateProjectAssetsStatus={handleProjectAssetsStatusUpdate}
           handleNextStep={handleNextStep}
           data={data}
         />

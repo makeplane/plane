@@ -11,7 +11,6 @@ from .base import BaseModel
 
 
 def get_upload_path(instance, filename):
-
     if instance.workspace_id is not None:
         return f"{instance.workspace.id}/{uuid4().hex}-{filename}"
     return f"user-{uuid4().hex}-{filename}"
@@ -38,6 +37,7 @@ class FileAsset(BaseModel):
         PROJECT_COVER = "PROJECT_COVER"
         DRAFT_ISSUE_ATTACHMENT = "DRAFT_ISSUE_ATTACHMENT"
         DRAFT_ISSUE_DESCRIPTION = "DRAFT_ISSUE_DESCRIPTION"
+        PROJECT_LOGO = "PROJECT_LOGO"
 
     attributes = models.JSONField(default=dict)
     asset = models.FileField(
@@ -116,6 +116,7 @@ class FileAsset(BaseModel):
             or self.entity_type == self.EntityTypeContext.USER_AVATAR
             or self.entity_type == self.EntityTypeContext.USER_COVER
             or self.entity_type == self.EntityTypeContext.PROJECT_COVER
+            or self.entity_type == self.EntityTypeContext.PROJECT_LOGO
         ):
             return f"/api/assets/v2/static/{self.id}/"
 

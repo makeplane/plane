@@ -23,7 +23,7 @@ export const getFavoriteItemIcon = (type: string, logo?: TLogoProps | undefined)
     <div className="hidden group-hover:flex items-center justify-center size-5">
       {FAVORITE_ITEM_ICON[type] || <FileText className={iconClassName} />}
     </div>
-    <div className="flex items-center justify-center size-5 group-hover:hidden">
+    <div className="flex items-center justify-center size-4 group-hover:hidden">
       {logo?.in_use ? (
         <Logo logo={logo} size={16} type={type === "project" ? "material" : "lucide"} />
       ) : (

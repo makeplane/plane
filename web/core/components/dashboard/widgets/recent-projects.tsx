@@ -39,12 +39,8 @@ const ProjectListItem: React.FC<ProjectListItemProps> = observer((props) => {
 
   return (
     <Link href={`/${workspaceSlug}/projects/${projectId}/issues`} className="group flex items-center gap-8">
-      <div
-        className={`grid h-[3.375rem] w-[3.375rem] flex-shrink-0 place-items-center rounded border border-transparent ${randomBgColor}`}
-      >
-        <div className="grid h-7 w-7 place-items-center">
-          <Logo logo={projectDetails.logo_props} size={20} />
-        </div>
+      <div className={`grid h-[3.375rem] w-[3.375rem] flex-shrink-0 place-items-center rounded ${randomBgColor}`}>
+        <Logo logo={projectDetails.logo_props} size={20} imageClassName="rounded" />
       </div>
       <div className="flex-grow truncate">
         <h6 className="truncate text-sm font-medium text-custom-text-300 group-hover:text-custom-text-100 group-hover:underline">
