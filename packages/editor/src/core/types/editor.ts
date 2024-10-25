@@ -38,7 +38,8 @@ export type TEditorCommands =
   | "issue-embed"
   | "text-color"
   | "background-color"
-  | "text-align";
+  | "text-align"
+  | "callout";
 
 export type TCommandExtraProps = {
   image: {
