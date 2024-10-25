@@ -5,11 +5,12 @@ import { EditorRefApi, getBinaryDataFromRichTextEditorHTMLString } from "@plane/
 type TArgs = {
   descriptionHTML: string | null;
   fetchDescription: () => Promise<any>;
+  id: string;
   updateDescription?: (data: string) => Promise<any>;
 };
 
 export const useIssueDescription = (args: TArgs) => {
-  const { descriptionHTML, fetchDescription, updateDescription } = args;
+  const { descriptionHTML, fetchDescription, id, updateDescription } = args;
   // states
   const [descriptionBinary, setDescriptionBinary] = useState<Uint8Array | null>(null);
   // update description
@@ -42,6 +43,10 @@ export const useIssueDescription = (args: TArgs) => {
     };
     fetchDecodedDescription();
   }, [descriptionBinary, descriptionHTML, fetchDescription]);
+
+  useEffect(() => {
+    setDescriptionBinary(null);
+  }, [id]);
 
   return {
     descriptionBinary,
