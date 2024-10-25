@@ -50,7 +50,7 @@ class FileAssetEndpoint(BaseAPIView):
         asset_key = str(workspace_id) + "/" + asset_key
         file_asset = FileAsset.objects.get(asset=asset_key)
         file_asset.is_deleted = True
-        file_asset.save()
+        file_asset.save(update_fields=["is_deleted"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -59,7 +59,7 @@ class FileAssetViewSet(BaseViewSet):
         asset_key = str(workspace_id) + "/" + asset_key
         file_asset = FileAsset.objects.get(asset=asset_key)
         file_asset.is_deleted = False
-        file_asset.save()
+        file_asset.save(update_fields=["is_deleted"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -96,5 +96,5 @@ class UserAssetsEndpoint(BaseAPIView):
             asset=asset_key, created_by=request.user
         )
         file_asset.is_deleted = True
-        file_asset.save()
+        file_asset.save(update_fields=["is_deleted"])
         return Response(status=status.HTTP_204_NO_CONTENT)
