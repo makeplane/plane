@@ -13,7 +13,7 @@ export type CustomImageComponentProps = {
   selected: boolean;
 };
 
-type CustomImageNodeViewProps = NodeViewProps & CustomImageComponentProps;
+export type CustomImageNodeViewProps = NodeViewProps & CustomImageComponentProps;
 
 export const CustomImageNode = (props: CustomImageNodeViewProps) => {
   const { getPos, editor, node, updateAttributes, selected } = props;
@@ -55,6 +55,7 @@ export const CustomImageNode = (props: CustomImageNodeViewProps) => {
             imageFromFileSystem={imageFromFileSystem}
             editorContainer={editorContainer}
             editor={editor}
+            // @ts-expect-error function not expected here, but will still work
             src={editor?.commands?.getImageSource?.(remoteImageSrc)}
             getPos={getPos}
             node={node}
