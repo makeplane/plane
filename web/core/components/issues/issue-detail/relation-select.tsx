@@ -4,17 +4,18 @@ import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { CircleDot, CopyPlus, Pencil, X, XCircle } from "lucide-react";
-import { TIssueRelationTypes, ISearchIssueResponse } from "@plane/types";
-// hooks
+// Plane
+import { ISearchIssueResponse } from "@plane/types";
 import { RelatedIcon, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+// components
 import { ExistingIssuesListModal } from "@/components/core";
+// helpers
 import { cn } from "@/helpers/common.helper";
+// hooks
 import { useIssueDetail, useIssues, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// components
-// ui
-// helpers
-// types
+// Plane-web
+import { TIssueRelationTypes } from "@/plane-web/types";
 
 export type TRelationObject = { className: string; icon: (size: number) => React.ReactElement; placeholder: string };
 

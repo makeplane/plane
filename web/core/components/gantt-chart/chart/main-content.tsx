@@ -5,36 +5,34 @@ import { observer } from "mobx-react";
 // components
 import { MultipleSelectGroup } from "@/components/core";
 import {
-  BiWeekChartView,
-  ChartDataType,
-  DayChartView,
   GanttChartBlocksList,
   GanttChartSidebar,
-  HourChartView,
   IBlockUpdateData,
-  IGanttBlock,
+  IBlockUpdateDependencyData,
   MonthChartView,
   QuarterChartView,
   TGanttViews,
   WeekChartView,
-  YearChartView,
 } from "@/components/gantt-chart";
 // helpers
 import { cn } from "@/helpers/common.helper";
+// hooks
+import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 // plane web components
+import { TimelineDependencyPaths, TimelineDraggablePath } from "@/plane-web/components/gantt-chart";
 import { IssueBulkOperationsRoot } from "@/plane-web/components/issues";
 // plane web hooks
 import { useBulkOperationStatus } from "@/plane-web/hooks/use-bulk-operation-status";
-// constants
-import { GANTT_SELECT_GROUP } from "../constants";
-// hooks
-import { useGanttChart } from "../hooks/use-gantt-chart";
+//
+import { GanttChartRowList } from "../blocks/block-row-list";
+import { GANTT_SELECT_GROUP, HEADER_HEIGHT } from "../constants";
+import { TimelineDragHelper } from "./timeline-drag-helper";
 
 type Props = {
   blockIds: string[];
-  getBlockById: (id: string, currentViewData?: ChartDataType | undefined) => IGanttBlock;
   canLoadMoreBlocks?: boolean;
   loadMoreBlocks?: () => void;
+  updateBlockDates?: (updates: IBlockUpdateDependencyData[]) => Promise<void>;
   blockToRender: (data: any) => React.ReactNode;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   bottomSpacing: boolean;
@@ -55,7 +53,6 @@ type Props = {
 export const GanttChartMainContent: React.FC<Props> = observer((props) => {
   const {
     blockIds,
-    getBlockById,
     loadMoreBlocks,
     blockToRender,
     blockUpdateHandler,
@@ -73,11 +70,12 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
     canLoadMoreBlocks,
     updateCurrentViewRenderPayload,
     quickAdd,
+    updateBlockDates,
   } = props;
   // refs
   const ganttContainerRef = useRef<HTMLDivElement>(null);
   // chart hook
-  const { currentView, currentViewData } = useGanttChart();
+  const { currentView, currentViewData } = useTimeLineChartStore();
   // plane web hooks
   const isBulkOperationsEnabled = useBulkOperationStatus();
 
@@ -91,14 +89,14 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
       autoScrollForElements({
         element,
         getAllowedAxis: () => "vertical",
+        canScroll: ({ source }) => source.data.dragInstanceId === "GANTT_REORDER",
       })
     );
   }, [ganttContainerRef?.current]);
+
   // handling scroll functionality
   const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
     const { clientWidth, scrollLeft, scrollWidth } = e.currentTarget;
-
-    // updateScrollLeft(scrollLeft);
 
     const approxRangeLeft = scrollLeft >= clientWidth + 1000 ? 1000 : scrollLeft - clientWidth;
     const approxRangeRight = scrollWidth - (scrollLeft + clientWidth);
@@ -110,77 +108,89 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
   const CHART_VIEW_COMPONENTS: {
     [key in TGanttViews]: React.FC;
   } = {
-    hours: HourChartView,
-    day: DayChartView,
     week: WeekChartView,
-    bi_week: BiWeekChartView,
     month: MonthChartView,
     quarter: QuarterChartView,
-    year: YearChartView,
   };
 
   if (!currentView) return null;
   const ActiveChartView = CHART_VIEW_COMPONENTS[currentView];
 
   return (
-    <MultipleSelectGroup
-      containerRef={ganttContainerRef}
-      entities={{
-        [GANTT_SELECT_GROUP]: blockIds ?? [],
-      }}
-      disabled={!isBulkOperationsEnabled}
-    >
-      {(helpers) => (
-        <>
-          <div
-            // DO NOT REMOVE THE ID
-            id="gantt-container"
-            className={cn(
-              "h-full w-full overflow-auto vertical-scrollbar horizontal-scrollbar scrollbar-lg flex border-t-[0.5px] border-custom-border-200",
-              {
-                "mb-8": bottomSpacing,
-              }
-            )}
-            ref={ganttContainerRef}
-            onScroll={onScroll}
-          >
-            <GanttChartSidebar
-              blockIds={blockIds}
-              getBlockById={getBlockById}
-              loadMoreBlocks={loadMoreBlocks}
-              canLoadMoreBlocks={canLoadMoreBlocks}
-              ganttContainerRef={ganttContainerRef}
-              blockUpdateHandler={blockUpdateHandler}
-              enableReorder={enableReorder}
-              enableSelection={enableSelection}
-              sidebarToRender={sidebarToRender}
-              title={title}
-              quickAdd={quickAdd}
-              selectionHelpers={helpers}
-            />
-            <div className="relative min-h-full h-max flex-shrink-0 flex-grow">
-              <ActiveChartView />
-              {currentViewData && (
-                <GanttChartBlocksList
-                  itemsContainerWidth={itemsContainerWidth}
-                  blockIds={blockIds}
-                  getBlockById={getBlockById}
-                  blockToRender={blockToRender}
-                  blockUpdateHandler={blockUpdateHandler}
-                  enableBlockLeftResize={enableBlockLeftResize}
-                  enableBlockRightResize={enableBlockRightResize}
-                  enableBlockMove={enableBlockMove}
-                  enableAddBlock={enableAddBlock}
-                  ganttContainerRef={ganttContainerRef}
-                  showAllBlocks={showAllBlocks}
-                  selectionHelpers={helpers}
-                />
+    <>
+      <TimelineDragHelper ganttContainerRef={ganttContainerRef} />
+      <MultipleSelectGroup
+        containerRef={ganttContainerRef}
+        entities={{
+          [GANTT_SELECT_GROUP]: blockIds ?? [],
+        }}
+        disabled={!isBulkOperationsEnabled}
+      >
+        {(helpers) => (
+          <>
+            <div
+              // DO NOT REMOVE THE ID
+              id="gantt-container"
+              className={cn(
+                "h-full w-full overflow-auto vertical-scrollbar horizontal-scrollbar scrollbar-lg flex border-t-[0.5px] border-custom-border-200",
+                {
+                  "mb-8": bottomSpacing,
+                }
               )}
+              ref={ganttContainerRef}
+              onScroll={onScroll}
+            >
+              <GanttChartSidebar
+                blockIds={blockIds}
+                loadMoreBlocks={loadMoreBlocks}
+                canLoadMoreBlocks={canLoadMoreBlocks}
+                ganttContainerRef={ganttContainerRef}
+                blockUpdateHandler={blockUpdateHandler}
+                enableReorder={enableReorder}
+                enableSelection={enableSelection}
+                sidebarToRender={sidebarToRender}
+                title={title}
+                quickAdd={quickAdd}
+                selectionHelpers={helpers}
+              />
+              <div className="relative min-h-full h-max flex-shrink-0 flex-grow">
+                <ActiveChartView />
+                {currentViewData && (
+                  <div
+                    className="relative h-full"
+                    style={{
+                      width: `${itemsContainerWidth}px`,
+                      transform: `translateY(${HEADER_HEIGHT}px)`,
+                    }}
+                  >
+                    <GanttChartRowList
+                      blockIds={blockIds}
+                      blockUpdateHandler={blockUpdateHandler}
+                      enableAddBlock={enableAddBlock}
+                      showAllBlocks={showAllBlocks}
+                      selectionHelpers={helpers}
+                      ganttContainerRef={ganttContainerRef}
+                    />
+                    <TimelineDependencyPaths />
+                    <TimelineDraggablePath />
+                    <GanttChartBlocksList
+                      blockIds={blockIds}
+                      blockToRender={blockToRender}
+                      enableBlockLeftResize={enableBlockLeftResize}
+                      enableBlockRightResize={enableBlockRightResize}
+                      enableBlockMove={enableBlockMove}
+                      ganttContainerRef={ganttContainerRef}
+                      showAllBlocks={showAllBlocks}
+                      updateBlockDates={updateBlockDates}
+                    />
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-          <IssueBulkOperationsRoot selectionHelpers={helpers} />
-        </>
-      )}
-    </MultipleSelectGroup>
+            <IssueBulkOperationsRoot selectionHelpers={helpers} />
+          </>
+        )}
+      </MultipleSelectGroup>
+    </>
   );
 });

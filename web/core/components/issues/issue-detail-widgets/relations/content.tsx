@@ -20,7 +20,7 @@ type Props = {
   disabled: boolean;
 };
 
-const ISSUE_RELATION_OPTIONS = [
+export const ISSUE_RELATION_OPTIONS = [
   {
     key: "blocked_by",
     label: "Blocked by",

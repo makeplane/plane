@@ -2,11 +2,12 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
-import { TIssueRelationTypes } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
-// helper
+// Plane-web
+import { TIssueRelationTypes } from "@/plane-web/types";
+//
 import { ISSUE_RELATION_OPTIONS } from "./helper";
 
 type Props = {
