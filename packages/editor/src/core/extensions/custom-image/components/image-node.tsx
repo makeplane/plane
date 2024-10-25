@@ -3,15 +3,17 @@ import { Editor, NodeViewProps, NodeViewWrapper } from "@tiptap/react";
 // extensions
 import { CustomImageBlock, CustomImageUploader, ImageAttributes } from "@/extensions/custom-image";
 
-export type CustomImageNodeViewProps = NodeViewProps & {
+export type CustomImageComponentProps = {
   getPos: () => number;
   editor: Editor;
   node: NodeViewProps["node"] & {
     attrs: ImageAttributes;
   };
-  updateAttributes: (attrs: ImageAttributes) => void;
+  updateAttributes: (attrs: Partial<ImageAttributes>) => void;
   selected: boolean;
 };
+
+type CustomImageNodeViewProps = NodeViewProps & CustomImageComponentProps;
 
 export const CustomImageNode = (props: CustomImageNodeViewProps) => {
   const { getPos, editor, node, updateAttributes, selected } = props;
@@ -53,7 +55,6 @@ export const CustomImageNode = (props: CustomImageNodeViewProps) => {
             imageFromFileSystem={imageFromFileSystem}
             editorContainer={editorContainer}
             editor={editor}
-            // @ts-expect-error function not expected here, but will still work
             src={editor?.commands?.getImageSource?.(remoteImageSrc)}
             getPos={getPos}
             node={node}
