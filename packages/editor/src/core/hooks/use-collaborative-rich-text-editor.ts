@@ -38,7 +38,11 @@ export const useCollaborativeRichTextEditor = (props: TCollaborativeRichTextEdit
   useEffect(() => {
     if (provider.hasSynced) return;
     if (value && value.length > 0) {
-      Y.applyUpdate(provider.document, value);
+      try {
+        Y.applyUpdate(provider.document, value);
+      } catch (error) {
+        console.error("Error applying binary updates to the description", error);
+      }
     }
     provider.hasSynced = true;
   }, [value, provider.document]);

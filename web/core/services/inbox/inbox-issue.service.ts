@@ -76,7 +76,7 @@ export class InboxIssueService extends APIService {
       });
   }
 
-  async fetchDescriptionBinary(workspaceSlug: string, projectId: string, inboxIssueId: string): Promise<Buffer> {
+  async fetchDescriptionBinary(workspaceSlug: string, projectId: string, inboxIssueId: string): Promise<ArrayBuffer> {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/inbox-issues/${inboxIssueId}/description/`,
       {
@@ -97,7 +97,7 @@ export class InboxIssueService extends APIService {
     projectId: string,
     inboxIssueId: string,
     data: Pick<TDocumentPayload, "description_binary">
-  ): Promise<Buffer> {
+  ): Promise<ArrayBuffer> {
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/inbox-issues/${inboxIssueId}/description/`,
       data,

@@ -4,9 +4,9 @@ import { EditorRefApi, getBinaryDataFromRichTextEditorHTMLString } from "@plane/
 
 type TArgs = {
   descriptionHTML: string | null;
-  fetchDescription: () => Promise<Buffer>;
+  fetchDescription: () => Promise<ArrayBuffer>;
   id: string;
-  updateDescription?: (data: string) => Promise<Buffer>;
+  updateDescription?: (data: string) => Promise<ArrayBuffer>;
 };
 
 export const useIssueDescription = (args: TArgs) => {

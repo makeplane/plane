@@ -373,7 +373,7 @@ export class IssueService extends APIService {
       });
   }
 
-  async fetchDescriptionBinary(workspaceSlug: string, projectId: string, issueId: string): Promise<Buffer> {
+  async fetchDescriptionBinary(workspaceSlug: string, projectId: string, issueId: string): Promise<ArrayBuffer> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/description/`, {
       headers: {
         "Content-Type": "application/octet-stream",
@@ -391,7 +391,7 @@ export class IssueService extends APIService {
     projectId: string,
     issueId: string,
     data: Pick<TDocumentPayload, "description_binary">
-  ): Promise<Buffer> {
+  ): Promise<ArrayBuffer> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/description/`, data, {
       responseType: "arraybuffer",
     })

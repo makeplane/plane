@@ -25,14 +25,14 @@ export type IssueDescriptionInputProps = {
   containerClassName?: string;
   descriptionHTML: string;
   disabled?: boolean;
-  fetchDescription: () => Promise<Buffer>;
+  fetchDescription: () => Promise<ArrayBuffer>;
   issueId: string;
   issueOperations: TIssueOperations;
   key: string;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   projectId: string;
   setIsSubmitting: (initialValue: "submitting" | "submitted" | "saved") => void;
-  updateDescription: (data: string) => Promise<Buffer>;
+  updateDescription: (data: string) => Promise<ArrayBuffer>;
   workspaceSlug: string;
 };
 
