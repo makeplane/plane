@@ -13,7 +13,7 @@ import {
   TStaticViewTypes,
 } from "@plane/types";
 // constants
-import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { getComputedDisplayFilters, getComputedDisplayProperties } from "@/helpers/issue.helper";
 // lib
@@ -113,6 +113,8 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
           ? nonEmptyArrayValue.join(",")
           : nonEmptyArrayValue;
     });
+
+    if (displayFilters?.layout) issueFiltersParams.layout = displayFilters?.layout;
 
     return issueFiltersParams;
   };

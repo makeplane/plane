@@ -102,7 +102,7 @@ class CycleViewSet(BaseViewSet):
                     filter=Q(
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
-                        issue_cycle__issue__deleted_at__isnull=True,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -114,7 +114,7 @@ class CycleViewSet(BaseViewSet):
                         issue_cycle__issue__state__group="completed",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
-                        issue_cycle__issue__deleted_at__isnull=True,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -144,6 +144,11 @@ class CycleViewSet(BaseViewSet):
                         distinct=True,
                         filter=~Q(
                             issue_cycle__issue__assignees__id__isnull=True
+                        )
+                        & (
+                            Q(
+                                issue_cycle__issue__issue_assignee__deleted_at__isnull=True
+                            )
                         ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
@@ -393,6 +398,7 @@ class CycleViewSet(BaseViewSet):
                     project_id=self.kwargs.get("project_id"),
                     parent__isnull=False,
                     issue_cycle__cycle_id=pk,
+                    issue_cycle__deleted_at__isnull=True,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -491,7 +497,7 @@ class CycleViewSet(BaseViewSet):
             origin=request.META.get("HTTP_ORIGIN"),
         )
         # TODO: Soft delete the cycle break the onetoone relationship with cycle issue
-        cycle.delete(soft=False)
+        cycle.delete()
 
         # Delete the user favorite cycle
         UserFavorite.objects.filter(
@@ -596,6 +602,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                     filter=Q(
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -607,6 +614,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
                         issue_cycle__issue__deleted_at__isnull=True,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -618,6 +626,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
                         issue_cycle__issue__deleted_at__isnull=True,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -629,6 +638,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
                         issue_cycle__issue__deleted_at__isnull=True,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -640,6 +650,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
                         issue_cycle__issue__deleted_at__isnull=True,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -651,6 +662,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
                         issue_cycle__issue__deleted_at__isnull=True,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -667,6 +679,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             assignee_estimate_data = (
                 Issue.issue_objects.filter(
                     issue_cycle__cycle_id=cycle_id,
+                    issue_cycle__deleted_at__isnull=True,
                     workspace__slug=slug,
                     project_id=project_id,
                 )
@@ -741,6 +754,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             label_distribution_data = (
                 Issue.issue_objects.filter(
                     issue_cycle__cycle_id=cycle_id,
+                    issue_cycle__deleted_at__isnull=True,
                     workspace__slug=slug,
                     project_id=project_id,
                 )
@@ -802,6 +816,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
         assignee_distribution = (
             Issue.issue_objects.filter(
                 issue_cycle__cycle_id=cycle_id,
+                issue_cycle__deleted_at__isnull=True,
                 workspace__slug=slug,
                 project_id=project_id,
             )
@@ -879,6 +894,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
         label_distribution = (
             Issue.issue_objects.filter(
                 issue_cycle__cycle_id=cycle_id,
+                issue_cycle__deleted_at__isnull=True,
                 workspace__slug=slug,
                 project_id=project_id,
             )
@@ -1069,6 +1085,7 @@ class CycleProgressEndpoint(BaseAPIView):
             Issue.issue_objects.filter(
                 estimate_point__estimate__type="points",
                 issue_cycle__cycle_id=cycle_id,
+                issue_cycle__deleted_at__isnull=True,
                 workspace__slug=slug,
                 project_id=project_id,
             )
@@ -1121,6 +1138,7 @@ class CycleProgressEndpoint(BaseAPIView):
 
         backlog_issues = Issue.issue_objects.filter(
             issue_cycle__cycle_id=cycle_id,
+            issue_cycle__deleted_at__isnull=True,
             workspace__slug=slug,
             project_id=project_id,
             state__group="backlog",
@@ -1128,6 +1146,7 @@ class CycleProgressEndpoint(BaseAPIView):
 
         unstarted_issues = Issue.issue_objects.filter(
             issue_cycle__cycle_id=cycle_id,
+            issue_cycle__deleted_at__isnull=True,
             workspace__slug=slug,
             project_id=project_id,
             state__group="unstarted",
@@ -1135,6 +1154,7 @@ class CycleProgressEndpoint(BaseAPIView):
 
         started_issues = Issue.issue_objects.filter(
             issue_cycle__cycle_id=cycle_id,
+            issue_cycle__deleted_at__isnull=True,
             workspace__slug=slug,
             project_id=project_id,
             state__group="started",
@@ -1142,6 +1162,7 @@ class CycleProgressEndpoint(BaseAPIView):
 
         cancelled_issues = Issue.issue_objects.filter(
             issue_cycle__cycle_id=cycle_id,
+            issue_cycle__deleted_at__isnull=True,
             workspace__slug=slug,
             project_id=project_id,
             state__group="cancelled",
@@ -1149,6 +1170,7 @@ class CycleProgressEndpoint(BaseAPIView):
 
         completed_issues = Issue.issue_objects.filter(
             issue_cycle__cycle_id=cycle_id,
+            issue_cycle__deleted_at__isnull=True,
             workspace__slug=slug,
             project_id=project_id,
             state__group="completed",
@@ -1156,6 +1178,7 @@ class CycleProgressEndpoint(BaseAPIView):
 
         total_issues = Issue.issue_objects.filter(
             issue_cycle__cycle_id=cycle_id,
+            issue_cycle__deleted_at__isnull=True,
             workspace__slug=slug,
             project_id=project_id,
         ).count()
@@ -1215,6 +1238,7 @@ class CycleAnalyticsEndpoint(BaseAPIView):
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
                         issue_cycle__issue__deleted_at__isnull=True,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -1242,6 +1266,7 @@ class CycleAnalyticsEndpoint(BaseAPIView):
             assignee_distribution = (
                 Issue.issue_objects.filter(
                     issue_cycle__cycle_id=cycle_id,
+                    issue_cycle__deleted_at__isnull=True,
                     workspace__slug=slug,
                     project_id=project_id,
                 )
@@ -1299,6 +1324,7 @@ class CycleAnalyticsEndpoint(BaseAPIView):
             label_distribution = (
                 Issue.issue_objects.filter(
                     issue_cycle__cycle_id=cycle_id,
+                    issue_cycle__deleted_at__isnull=True,
                     workspace__slug=slug,
                     project_id=project_id,
                 )
@@ -1345,6 +1371,7 @@ class CycleAnalyticsEndpoint(BaseAPIView):
             assignee_distribution = (
                 Issue.issue_objects.filter(
                     issue_cycle__cycle_id=cycle_id,
+                    issue_cycle__deleted_at__isnull=True,
                     project_id=project_id,
                     workspace__slug=slug,
                 )
@@ -1403,6 +1430,7 @@ class CycleAnalyticsEndpoint(BaseAPIView):
             label_distribution = (
                 Issue.issue_objects.filter(
                     issue_cycle__cycle_id=cycle_id,
+                    issue_cycle__deleted_at__isnull=True,
                     project_id=project_id,
                     workspace__slug=slug,
                 )

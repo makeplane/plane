@@ -27,7 +27,8 @@ export type TEditorCommands =
   | "flat-bulleted-list"
   | "flat-numbered-list"
   | "flat-check-list"
-  | "flat-toggle-list";
+  | "flat-toggle-list"
+  | "callout";
 
 export type TColorEditorCommands = Extract<TEditorCommands, "text-color" | "background-color">;
 export type TNonColorEditorCommands = Exclude<TEditorCommands, "text-color" | "background-color">;
