@@ -50,24 +50,24 @@ export const CoreEditorExtensions = (args: TArguments) => {
 
   return [
     StarterKit.configure({
-      bulletList: {
-        HTMLAttributes: {
-          class: "list-disc pl-7 space-y-2",
-        },
-      },
-      orderedList: {
-        HTMLAttributes: {
-          class: "list-decimal pl-7 space-y-2",
-        },
-      },
-      listItem: {
-        HTMLAttributes: {
-          class: "not-prose space-y-2",
-        },
-      },
-      // bulletList: false,
-      // orderedList: false,
-      // listItem: false,
+      // bulletList: {
+      //   HTMLAttributes: {
+      //     class: "list-disc pl-7 space-y-2",
+      //   },
+      // },
+      // orderedList: {
+      //   HTMLAttributes: {
+      //     class: "list-decimal pl-7 space-y-2",
+      //   },
+      // },
+      // listItem: {
+      //   HTMLAttributes: {
+      //     class: "not-prose space-y-2",
+      //   },
+      // },
+      bulletList: false,
+      orderedList: false,
+      listItem: false,
       code: false,
       codeBlock: false,
       horizontalRule: false,

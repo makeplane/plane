@@ -473,3 +473,12 @@ ul[data-type="taskList"] ul[data-type="taskList"] {
 .prosemirror-flat-list > .list-marker {
   top: 7px;
 }
+
+.prosemirror-flat-list[data-list-kind="ordered"]::before {
+  position: absolute;
+  left: -17px;
+  top: 6px;
+  /* right: 100%; */
+  font-variant-numeric: tabular-nums;
+  content: counter(prosemirror-flat-list-counter, decimal) ". ";
+}
