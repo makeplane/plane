@@ -67,7 +67,7 @@ export const StateItem: FC<TStateItem> = observer((props) => {
           getInitialData: () => initialData,
           onDragStart: () => setIsDragging(true),
           onDrop: () => setIsDragging(false),
-          canDrag: () => isDraggable,
+          canDrag: () => isDraggable && !disabled,
         }),
         dropTargetForElements({
           element: elementRef,

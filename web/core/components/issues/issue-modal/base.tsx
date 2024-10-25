@@ -204,7 +204,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
           issueTypeId: response.type_id,
           projectId: response.project_id,
           workspaceSlug: workspaceSlug.toString(),
-          isDraft: isDraft,
+          isDraft: is_draft_issue,
         });
       }
 
