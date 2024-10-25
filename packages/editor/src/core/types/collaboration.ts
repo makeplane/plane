@@ -37,6 +37,7 @@ type TCollaborativeEditorHookProps = {
 
 export type TCollaborativeEditorProps = TCollaborativeEditorHookProps & {
   slashCommandEnabled?: boolean;
+  onTransaction?: () => void;
   embedHandler?: TEmbedConfig;
   fileHandler: TFileHandler;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
