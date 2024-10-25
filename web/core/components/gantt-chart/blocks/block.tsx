@@ -36,7 +36,7 @@ export const GanttChartBlock: React.FC<Props> = observer((props) => {
     updateBlockDates,
   } = props;
   // store hooks
-  const { updateActiveBlockId, getBlockById, getIsCurrentDependencyDragging } = useTimeLineChartStore();
+  const { updateActiveBlockId, getBlockById, getIsCurrentDependencyDragging, currentView } = useTimeLineChartStore();
   // refs
   const resizableRef = useRef<HTMLDivElement>(null);
 
@@ -56,7 +56,7 @@ export const GanttChartBlock: React.FC<Props> = observer((props) => {
   return (
     <div
       className={cn("relative z-[5]", {
-        "transition-all": !!isMoving,
+        "transition-all": !!isMoving && currentView === "week",
         "pointer-events-none": !isBlockVisibleOnChart,
       })}
       id={`gantt-block-${block.id}`}
