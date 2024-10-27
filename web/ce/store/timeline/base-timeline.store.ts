@@ -70,8 +70,6 @@ export class BaseTimeLineStore implements IBaseTimelineStore {
       activeBlockId: observable.ref,
       renderView: observable,
       // actions
-      updateBlockPosition: action,
-      getUpdatedPositionAfterDrag: action,
       setIsDragging: action,
       setBlockIds: action.bound,
       initGantt: action.bound,
@@ -215,29 +213,6 @@ export class BaseTimeLineStore implements IBaseTimelineStore {
   }
 
   /**
-   * returns updates dates of blocks post drag.
-   * @param id
-   * @returns
-   */
-  getUpdatedPositionAfterDrag = (id: string) => {
-    const currBlock = this.blocksMap[id];
-
-    if (!currBlock?.position || !this.currentViewData) return [];
-
-    return [
-      {
-        id,
-        start_date: renderFormattedPayloadDate(
-          getDateFromPositionOnGantt(currBlock.position.marginLeft, this.currentViewData)
-        ),
-        target_date: renderFormattedPayloadDate(
-          getDateFromPositionOnGantt(currBlock.position.marginLeft + currBlock.position.width, this.currentViewData, -1)
-        ),
-      },
-    ];
-  };
-
-  /**
    * returns number of days that the position pixels span across the timeline chart
    * @param position
    * @returns
@@ -258,13 +233,36 @@ export class BaseTimeLineStore implements IBaseTimelineStore {
   });
 
   /**
+   * returns updates dates of blocks post drag.
+   * @param id
+   * @returns
+   */
+  getUpdatedPositionAfterDrag = action((id: string) => {
+    const currBlock = this.blocksMap[id];
+
+    if (!currBlock?.position || !this.currentViewData) return [];
+
+    return [
+      {
+        id,
+        start_date: renderFormattedPayloadDate(
+          getDateFromPositionOnGantt(currBlock.position.marginLeft, this.currentViewData)
+        ),
+        target_date: renderFormattedPayloadDate(
+          getDateFromPositionOnGantt(currBlock.position.marginLeft + currBlock.position.width, this.currentViewData, -1)
+        ),
+      },
+    ] as IBlockUpdateDependencyData[];
+  });
+
+  /**
    * updates the block's position such as marginLeft and width wile dragging
    * @param id
    * @param deltaLeft
    * @param deltaWidth
    * @returns
    */
-  updateBlockPosition = (id: string, deltaLeft: number, deltaWidth: number) => {
+  updateBlockPosition = action((id: string, deltaLeft: number, deltaWidth: number) => {
     const currBlock = this.blocksMap[id];
 
     if (!currBlock?.position) return;
@@ -278,7 +276,7 @@ export class BaseTimeLineStore implements IBaseTimelineStore {
         width: newWidth ?? currBlock.position?.width,
       });
     });
-  };
+  });
 
   // Dummy method to return if the current Block's dependency is being dragged
   getIsCurrentDependencyDragging = computedFn((blockId: string) => false);
