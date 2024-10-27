@@ -15,7 +15,7 @@ export const QuarterChartView: FC<any> = observer(() => {
   const quarterBlocks: IQuarterMonthBlock[] = groupMonthsToQuarters(monthBlocks);
 
   return (
-    <div className={`absolute top-0 left-0 min-h-[calc(100%+${HEADER_HEIGHT}px)] h-max w-max flex`}>
+    <div className={`absolute top-0 left-0 h-max w-max flex`} style={{ minHeight: `calc(100% + ${HEADER_HEIGHT}px` }}>
       {currentViewData &&
         quarterBlocks?.map((quarterBlock, rootIndex) => (
           <div
