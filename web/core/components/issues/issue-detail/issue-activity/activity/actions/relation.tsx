@@ -1,10 +1,9 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
-// components
-import { issueRelationObject } from "@/components/issues/issue-detail/relation-select";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // Plane-web
+import { ISSUE_RELATION_OPTIONS } from "@/plane-web/components/relations";
 import { TIssueRelationTypes } from "@/plane-web/types";
 //
 import { IssueActivityBlockComponent } from "./";
@@ -23,7 +22,7 @@ export const IssueRelationActivity: FC<TIssueRelationActivity> = observer((props
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={activity.field ? issueRelationObject[activity.field as TIssueRelationTypes].icon(14) : <></>}
+      icon={activity.field ? ISSUE_RELATION_OPTIONS[activity.field as TIssueRelationTypes].icon(14) : <></>}
       activityId={activityId}
       ends={ends}
     >

@@ -15,32 +15,8 @@ import { cn } from "@/helpers/common.helper";
 import { useIssueDetail, useIssues, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // Plane-web
+import { ISSUE_RELATION_OPTIONS } from "@/plane-web/components/relations";
 import { TIssueRelationTypes } from "@/plane-web/types";
-
-export type TRelationObject = { className: string; icon: (size: number) => React.ReactElement; placeholder: string };
-
-export const issueRelationObject: Record<TIssueRelationTypes, TRelationObject> = {
-  relates_to: {
-    className: "bg-custom-background-80 text-custom-text-200",
-    icon: (size) => <RelatedIcon height={size} width={size} className="text-custom-text-200" />,
-    placeholder: "Add related issues",
-  },
-  blocking: {
-    className: "bg-yellow-500/20 text-yellow-700",
-    icon: (size) => <XCircle size={size} className="text-custom-text-200" />,
-    placeholder: "None",
-  },
-  blocked_by: {
-    className: "bg-red-500/20 text-red-700",
-    icon: (size) => <CircleDot size={size} className="text-custom-text-200" />,
-    placeholder: "None",
-  },
-  duplicate: {
-    className: "bg-custom-background-80 text-custom-text-200",
-    icon: (size) => <CopyPlus size={size} className="text-custom-text-200" />,
-    placeholder: "None",
-  },
-};
 
 type TIssueRelationSelect = {
   className?: string;
@@ -130,7 +106,7 @@ export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((pro
                 return (
                   <div
                     key={relationIssueId}
-                    className={`group flex items-center gap-1 rounded px-1.5 pb-1 pt-1 leading-3 hover:bg-custom-background-90 ${issueRelationObject[relationKey].className}`}
+                    className={`group flex items-center gap-1 rounded px-1.5 pb-1 pt-1 leading-3 hover:bg-custom-background-90 ${ISSUE_RELATION_OPTIONS[relationKey].className}`}
                   >
                     <Tooltip tooltipHeading="Title" tooltipContent={currentIssue.name} isMobile={isMobile}>
                       <Link
@@ -161,7 +137,7 @@ export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((pro
               })}
             </div>
           ) : (
-            <span className="text-sm text-custom-text-400">{issueRelationObject[relationKey].placeholder}</span>
+            <span className="text-sm text-custom-text-400">{ISSUE_RELATION_OPTIONS[relationKey].placeholder}</span>
           )}
           {!disabled && (
             <span

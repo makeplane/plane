@@ -6,9 +6,8 @@ import { CustomMenu } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // Plane-web
+import { ISSUE_RELATION_OPTIONS } from "@/plane-web/components/relations";
 import { TIssueRelationTypes } from "@/plane-web/types";
-//
-import { ISSUE_RELATION_OPTIONS } from "./helper";
 
 type Props = {
   issueId: string;
@@ -31,8 +30,14 @@ export const RelationActionButton: FC<Props> = observer((props) => {
   const customButtonElement = customButton ? <>{customButton}</> : <Plus className="h-4 w-4" />;
 
   return (
-    <CustomMenu customButton={customButtonElement} placement="bottom-start" disabled={disabled} closeOnSelect>
-      {ISSUE_RELATION_OPTIONS.map((item, index) => (
+    <CustomMenu
+      customButton={customButtonElement}
+      placement="bottom-start"
+      disabled={disabled}
+      maxHeight="lg"
+      closeOnSelect
+    >
+      {Object.values(ISSUE_RELATION_OPTIONS).map((item, index) => (
         <CustomMenu.MenuItem
           key={index}
           onClick={(e) => {
