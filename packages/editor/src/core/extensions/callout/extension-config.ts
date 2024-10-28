@@ -63,6 +63,6 @@ export const CustomCalloutExtensionConfig = Node.create({
 
   // Render HTML for the callout node
   renderHTML({ HTMLAttributes }) {
-    return ["callout-component", mergeAttributes(HTMLAttributes)];
+    return ["callout-component", mergeAttributes(HTMLAttributes), 0];
   },
 });
