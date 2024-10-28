@@ -1,4 +1,5 @@
 import concat from "lodash/concat";
+import debounce from "lodash/debounce";
 import pull from "lodash/pull";
 import set from "lodash/set";
 import uniq from "lodash/uniq";
@@ -125,6 +126,12 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
     return response;
   };
 
+  debouncedUpdateProgress = debounce((issueId: string, tempId: string, progress: number) => {
+    runInAction(() => {
+      set(this.attachmentsUploadStatusMap, [issueId, tempId, "progress"], progress);
+    });
+  }, 100);
+
   createAttachment = async (workspaceSlug: string, projectId: string, issueId: string, file: File) => {
     const tempId = uuidv4();
     try {
@@ -144,10 +151,8 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
         issueId,
         file,
         (progressEvent) => {
-          runInAction(() => {
-            const progressPercentage = Number(((progressEvent.progress ?? 0) * 100).toFixed(0));
-            set(this.attachmentsUploadStatusMap, [issueId, tempId, "progress"], progressPercentage);
-          });
+          const progressPercentage = Number(((progressEvent.progress ?? 0) * 100).toFixed(0));
+          this.debouncedUpdateProgress(issueId, tempId, progressPercentage);
         }
       );
       const issueAttachmentsCount = this.getAttachmentsByIssueId(issueId)?.length ?? 0;
