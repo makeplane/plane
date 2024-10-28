@@ -1,5 +1,5 @@
 import { mergeAttributes, Node, textblockTypeInputRule } from "@tiptap/core";
-import { Plugin, PluginKey } from "@tiptap/pm/state";
+import { Plugin, PluginKey, Selection } from "@tiptap/pm/state";
 
 export interface CodeBlockOptions {
   /**
@@ -183,8 +183,6 @@ export const CodeBlock = Node.create<CodeBlockOptions>({
           return false;
         }
       },
-
-      // exit node on arrow down
       ArrowDown: ({ editor }) => {
         try {
           if (!this.options.exitOnArrowDown) {
@@ -205,7 +203,12 @@ export const CodeBlock = Node.create<CodeBlockOptions>({
             return false;
           }
 
-          const after = $from.after();
+          // if the code block is directly on the root level, then just
+          // find the next node at same depth (basically the root and code block are at the same level)
+          // else it's always to be found at $from.depth - 1 to set the cursor at the next node
+          const parentDepth = $from.depth === 1 ? $from.depth : $from.depth - 1;
+
+          const after = $from.after(parentDepth);
 
           if (after === undefined) {
             return false;
@@ -214,12 +217,15 @@ export const CodeBlock = Node.create<CodeBlockOptions>({
           const nodeAfter = doc.nodeAt(after);
 
           if (nodeAfter) {
-            return false;
+            return editor.commands.command(({ tr }) => {
+              tr.setSelection(Selection.near(doc.resolve(after)));
+              return true;
+            });
           }
 
           return editor.commands.exitCode();
         } catch (error) {
-          console.error("Error handling ArrowDown in code block:", error);
+          console.error("Error handling ArrowDown in CustomCodeBlockExtension:", error);
           return false;
         }
       },
