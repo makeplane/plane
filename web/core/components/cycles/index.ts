@@ -2,7 +2,6 @@ export * from "./cycles-view";
 export * from "./active-cycle";
 export * from "./applied-filters";
 export * from "./dropdowns";
-export * from "./gantt-chart";
 export * from "./list";
 export * from "./cycle-peek-overview";
 export * from "./cycles-view-header";

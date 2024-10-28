@@ -32,6 +32,7 @@ from plane.db.models import (
 from plane.settings.redis import redis_instance
 from plane.utils.exception_logger import log_exception
 from plane.bgtasks.webhook_task import webhook_activity
+from plane.utils.issue_relation_mapper import get_inverse_relation
 
 
 # Track Changes in name
@@ -1441,6 +1442,9 @@ def create_issue_relation_activity(
                     epoch=epoch,
                 )
             )
+            inverse_relation = get_inverse_relation(
+                requested_data.get("relation_type")
+            )
             issue = Issue.objects.get(pk=issue_id)
             issue_activities.append(
                 IssueActivity(
@@ -1449,19 +1453,10 @@ def create_issue_relation_activity(
                     verb="updated",
                     old_value="",
                     new_value=f"{issue.project.identifier}-{issue.sequence_id}",
-                    field=(
-                        "blocking"
-                        if requested_data.get("relation_type") == "blocked_by"
-                        else (
-                            "blocked_by"
-                            if requested_data.get("relation_type")
-                            == "blocking"
-                            else requested_data.get("relation_type")
-                        )
-                    ),
+                    field=inverse_relation,
                     project_id=project_id,
                     workspace_id=workspace_id,
-                    comment=f'added {"blocking" if requested_data.get("relation_type") == "blocked_by" else ("blocked_by" if requested_data.get("relation_type") == "blocking" else requested_data.get("relation_type")),} relation',
+                    comment=f"added {inverse_relation} relation",
                     old_identifier=issue_id,
                     epoch=epoch,
                 )

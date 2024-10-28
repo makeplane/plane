@@ -1,0 +1,283 @@
+import isEqual from "lodash/isEqual";
+import set from "lodash/set";
+import { action, makeObservable, observable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
+// components
+import { ChartDataType, IBlockUpdateDependencyData, IGanttBlock, TGanttViews } from "@/components/gantt-chart";
+import { currentViewDataWithView } from "@/components/gantt-chart/data";
+import { getDateFromPositionOnGantt, getItemPositionWidth } from "@/components/gantt-chart/views/helpers";
+// helpers
+import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+// store
+import { CoreRootStore } from "@/store/root.store";
+
+// types
+type BlockData = {
+  id: string;
+  name: string;
+  sort_order: number;
+  start_date: string | undefined | null;
+  target_date: string | undefined | null;
+};
+
+export interface IBaseTimelineStore {
+  // observables
+  currentView: TGanttViews;
+  currentViewData: ChartDataType | undefined;
+  activeBlockId: string | null;
+  renderView: any;
+  isDragging: boolean;
+  //
+  setBlockIds: (ids: string[]) => void;
+  getBlockById: (blockId: string) => IGanttBlock;
+  // computed functions
+  getIsCurrentDependencyDragging: (blockId: string) => boolean;
+  isBlockActive: (blockId: string) => boolean;
+  // actions
+  updateCurrentView: (view: TGanttViews) => void;
+  updateCurrentViewData: (data: ChartDataType | undefined) => void;
+  updateActiveBlockId: (blockId: string | null) => void;
+  updateRenderView: (data: any) => void;
+  getUpdatedPositionAfterDrag: (id: string, ignoreDependencies?: boolean) => IBlockUpdateDependencyData[];
+  updateBlockPosition: (id: string, deltaLeft: number, deltaWidth: number, ignoreDependencies?: boolean) => void;
+  getNumberOfDaysFromPosition: (position: number | undefined) => number | undefined;
+  setIsDragging: (isDragging: boolean) => void;
+  initGantt: () => void;
+
+  getDateFromPositionOnGantt: (position: number, offsetDays: number) => Date | undefined;
+}
+
+export class BaseTimeLineStore implements IBaseTimelineStore {
+  blocksMap: Record<string, IGanttBlock> = {};
+  blockIds: string[] | undefined = undefined;
+
+  isDragging: boolean = false;
+  currentView: TGanttViews = "week";
+  currentViewData: ChartDataType | undefined = undefined;
+  activeBlockId: string | null = null;
+  renderView: any = [];
+
+  rootStore: CoreRootStore;
+
+  constructor(_rootStore: CoreRootStore) {
+    makeObservable(this, {
+      // observables
+      blocksMap: observable,
+      blockIds: observable,
+      isDragging: observable.ref,
+      currentView: observable.ref,
+      currentViewData: observable,
+      activeBlockId: observable.ref,
+      renderView: observable,
+      // actions
+      setIsDragging: action,
+      setBlockIds: action.bound,
+      initGantt: action.bound,
+      updateCurrentView: action.bound,
+      updateCurrentViewData: action.bound,
+      updateActiveBlockId: action.bound,
+      updateRenderView: action.bound,
+    });
+
+    this.initGantt();
+
+    this.rootStore = _rootStore;
+  }
+
+  /**
+   * Update Block Ids to derive blocks from
+   * @param ids
+   */
+  setBlockIds = (ids: string[]) => {
+    this.blockIds = ids;
+  };
+
+  /**
+   * setIsDragging
+   * @param isDragging
+   */
+  setIsDragging = (isDragging: boolean) => {
+    runInAction(() => {
+      this.isDragging = isDragging;
+    });
+  };
+
+  /**
+   * @description check if block is active
+   * @param {string} blockId
+   */
+  isBlockActive = computedFn((blockId: string): boolean => this.activeBlockId === blockId);
+
+  /**
+   * @description update current view
+   * @param {TGanttViews} view
+   */
+  updateCurrentView = (view: TGanttViews) => {
+    this.currentView = view;
+  };
+
+  /**
+   * @description update current view data
+   * @param {ChartDataType | undefined} data
+   */
+  updateCurrentViewData = (data: ChartDataType | undefined) => {
+    runInAction(() => {
+      this.currentViewData = data;
+    });
+  };
+
+  /**
+   * @description update active block
+   * @param {string | null} block
+   */
+  updateActiveBlockId = (blockId: string | null) => {
+    this.activeBlockId = blockId;
+  };
+
+  /**
+   * @description update render view
+   * @param {any[]} data
+   */
+  updateRenderView = (data: any[]) => {
+    this.renderView = data;
+  };
+
+  /**
+   * @description initialize gantt chart with month view
+   */
+  initGantt = () => {
+    const newCurrentViewData = currentViewDataWithView(this.currentView);
+
+    runInAction(() => {
+      this.currentViewData = newCurrentViewData;
+      this.blocksMap = {};
+      this.blockIds = undefined;
+    });
+  };
+
+  /** Gets Block from Id */
+  getBlockById = computedFn((blockId: string) => this.blocksMap[blockId]);
+
+  /**
+   * updates the BlocksMap from blockIds
+   * @param getDataById
+   * @returns
+   */
+  updateBlocks(getDataById: (id: string) => BlockData | undefined | null) {
+    if (!this.blockIds || !Array.isArray(this.blockIds) || this.isDragging) return true;
+
+    const updatedBlockMaps: { path: string[]; value: any }[] = [];
+    const newBlocks: IGanttBlock[] = [];
+
+    // Loop through blockIds to generate blocks Data
+    for (const blockId of this.blockIds) {
+      const blockData = getDataById(blockId);
+      if (!blockData) continue;
+
+      const block: IGanttBlock = {
+        data: blockData,
+        id: blockData?.id,
+        name: blockData.name,
+        sort_order: blockData?.sort_order,
+        start_date: blockData?.start_date ?? undefined,
+        target_date: blockData?.target_date ?? undefined,
+      };
+      if (this.currentViewData && this.currentViewData?.data?.startDate && this.currentViewData?.data?.dayWidth) {
+        block.position = getItemPositionWidth(this.currentViewData, block);
+      }
+
+      // create block updates if the block already exists, or push them to newBlocks
+      if (this.blocksMap[blockId]) {
+        for (const key of Object.keys(block)) {
+          const currValue = this.blocksMap[blockId][key as keyof IGanttBlock];
+          const nextValue = block[key as keyof IGanttBlock];
+          if (!isEqual(currValue, nextValue)) {
+            updatedBlockMaps.push({ path: [blockId, key], value: nextValue });
+          }
+        }
+      } else {
+        newBlocks.push(block);
+      }
+    }
+
+    // update the store with the block updates
+    runInAction(() => {
+      for (const updatedBlock of updatedBlockMaps) {
+        set(this.blocksMap, updatedBlock.path, updatedBlock.value);
+      }
+
+      for (const newBlock of newBlocks) {
+        set(this.blocksMap, [newBlock.id], newBlock);
+      }
+    });
+  }
+
+  /**
+   * returns number of days that the position pixels span across the timeline chart
+   * @param position
+   * @returns
+   */
+  getNumberOfDaysFromPosition = (position: number | undefined) => {
+    if (!this.currentViewData || !position) return;
+
+    return Math.round(position / this.currentViewData.data.dayWidth);
+  };
+
+  /**
+   * returns the date at which the position corresponds to on the timeline chart
+   */
+  getDateFromPositionOnGantt = computedFn((position: number, offsetDays: number) => {
+    if (!this.currentViewData) return;
+
+    return getDateFromPositionOnGantt(position, this.currentViewData, offsetDays);
+  });
+
+  /**
+   * returns updates dates of blocks post drag.
+   * @param id
+   * @returns
+   */
+  getUpdatedPositionAfterDrag = action((id: string) => {
+    const currBlock = this.blocksMap[id];
+
+    if (!currBlock?.position || !this.currentViewData) return [];
+
+    return [
+      {
+        id,
+        start_date: renderFormattedPayloadDate(
+          getDateFromPositionOnGantt(currBlock.position.marginLeft, this.currentViewData)
+        ),
+        target_date: renderFormattedPayloadDate(
+          getDateFromPositionOnGantt(currBlock.position.marginLeft + currBlock.position.width, this.currentViewData, -1)
+        ),
+      },
+    ] as IBlockUpdateDependencyData[];
+  });
+
+  /**
+   * updates the block's position such as marginLeft and width wile dragging
+   * @param id
+   * @param deltaLeft
+   * @param deltaWidth
+   * @returns
+   */
+  updateBlockPosition = action((id: string, deltaLeft: number, deltaWidth: number) => {
+    const currBlock = this.blocksMap[id];
+
+    if (!currBlock?.position) return;
+
+    const newMarginLeft = currBlock.position.marginLeft + deltaLeft;
+    const newWidth = currBlock.position.width + deltaWidth;
+
+    runInAction(() => {
+      set(this.blocksMap, [id, "position"], {
+        marginLeft: newMarginLeft ?? currBlock.position?.marginLeft,
+        width: newWidth ?? currBlock.position?.width,
+      });
+    });
+  });
+
+  // Dummy method to return if the current Block's dependency is being dragged
+  getIsCurrentDependencyDragging = computedFn((blockId: string) => false);
+}

@@ -129,6 +129,8 @@ from .issue.base import (
     BulkDeleteIssuesEndpoint,
     DeletedIssuesListViewSet,
     IssuePaginatedViewSet,
+    IssueDetailEndpoint,
+    IssueBulkUpdateDateEndpoint,
 )
 
 from .issue.activity import (

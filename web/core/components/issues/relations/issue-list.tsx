@@ -1,10 +1,13 @@
 "use client";
 import React, { FC } from "react";
 import { observer } from "mobx-react";
-import { TIssue, TIssueRelationTypes } from "@plane/types";
+// Plane
+import { TIssue } from "@plane/types";
 // components
 import { RelationIssueListItem } from "@/components/issues/relations";
-// types
+// Plane-web
+import { TIssueRelationTypes } from "@/plane-web/types";
+//
 import { TRelationIssueOperations } from "../issue-detail-widgets/relations/helper";
 
 type Props = {

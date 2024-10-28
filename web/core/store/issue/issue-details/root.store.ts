@@ -7,7 +7,6 @@ import {
   TIssueCommentReaction,
   TIssueLink,
   TIssueReaction,
-  TIssueRelationTypes,
   TIssueDetailWidget,
 } from "@plane/types";
 // plane web store
@@ -17,6 +16,7 @@ import {
   IIssueActivityStoreActions,
   TActivityLoader,
 } from "@/plane-web/store/issue/issue-details/activity.store";
+import { TIssueRelationTypes } from "@/plane-web/types";
 import { IIssueRootStore } from "../root.store";
 import { IIssueAttachmentStore, IssueAttachmentStore, IIssueAttachmentStoreActions } from "./attachment.store";
 import { IIssueCommentStore, IssueCommentStore, IIssueCommentStoreActions, TCommentLoader } from "./comment.store";

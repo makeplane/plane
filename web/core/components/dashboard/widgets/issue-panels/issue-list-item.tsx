@@ -72,7 +72,6 @@ export const AssignedUpcomingIssueListItem: React.FC<IssueListItemProps> = obser
                   projectIdentifier={blockedByIssueProjectDetails?.identifier}
                   projectId={blockedByIssueProjectDetails?.id}
                   issueSequenceId={blockedByIssues[0]?.sequence_id}
-                  issueTypeId={blockedByIssues[0]?.type_id}
                   textContainerClassName="text-xs text-custom-text-200 font-medium"
                 />
               )
