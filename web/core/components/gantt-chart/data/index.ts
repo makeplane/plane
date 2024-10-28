@@ -90,7 +90,7 @@ export const VIEWS_LIST: ChartDataType[] = [
       startDate: new Date(),
       currentDate: new Date(),
       endDate: new Date(),
-      approxFilterRange: 18, // it will preview week starting dates all months data and there is 3 months limitation for preview ex: title (2, 9, 16, 23, 30)
+      approxFilterRange: 24, // it will preview week starting dates all months data and there is 3 months limitation for preview ex: title (2, 9, 16, 23, 30)
       dayWidth: 5,
     },
   },

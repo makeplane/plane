@@ -1,8 +1,7 @@
 import { autorun } from "mobx";
 // Plane-web
+import { RootStore } from "@/plane-web/store/root.store";
 import { BaseTimeLineStore, IBaseTimelineStore } from "@/plane-web/store/timeline/base-timeline.store";
-// Store
-import { CoreRootStore } from "@/store/root.store";
 
 export interface IIssuesTimeLineStore extends IBaseTimelineStore {
   isDependencyEnabled: boolean;
@@ -11,7 +10,7 @@ export interface IIssuesTimeLineStore extends IBaseTimelineStore {
 export class IssuesTimeLineStore extends BaseTimeLineStore implements IIssuesTimeLineStore {
   isDependencyEnabled = true;
 
-  constructor(_rootStore: CoreRootStore) {
+  constructor(_rootStore: RootStore) {
     super(_rootStore);
 
     autorun((reaction) => {

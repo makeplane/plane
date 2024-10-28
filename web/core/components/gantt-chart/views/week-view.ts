@@ -1,7 +1,7 @@
 //
 import { weeks, months } from "../data";
 import { ChartDataType } from "../types";
-import { getWeekNumberByDate } from "./helpers";
+import { getNumberOfDaysBetweenTwoDates, getWeekNumberByDate } from "./helpers";
 export interface IDayBlock {
   date: Date;
   day: number;
@@ -46,6 +46,9 @@ const generateWeekChart = (weekPayload: ChartDataType, side: null | "left" | "ri
   let minusDate: Date = new Date();
   let plusDate: Date = new Date();
 
+  let startDate = new Date();
+  let endDate = new Date();
+
   // if side is null generate weeks on both side of current date
   if (side === null) {
     const currentDate = renderState.data.currentDate;
@@ -55,12 +58,14 @@ const generateWeekChart = (weekPayload: ChartDataType, side: null | "left" | "ri
 
     if (minusDate && plusDate) filteredDates = getWeeksBetweenTwoDates(minusDate, plusDate);
 
+    startDate = filteredDates[0].startDate;
+    endDate = filteredDates[filteredDates.length - 1].endDate;
     renderState = {
       ...renderState,
       data: {
         ...renderState.data,
-        startDate: filteredDates[0].startDate,
-        endDate: filteredDates[filteredDates.length - 1].endDate,
+        startDate,
+        endDate,
       },
     };
   }
@@ -73,9 +78,11 @@ const generateWeekChart = (weekPayload: ChartDataType, side: null | "left" | "ri
 
     if (minusDate && plusDate) filteredDates = getWeeksBetweenTwoDates(minusDate, plusDate);
 
+    startDate = filteredDates[0].startDate;
+    endDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - 1);
     renderState = {
       ...renderState,
-      data: { ...renderState.data, startDate: filteredDates[0].startDate },
+      data: { ...renderState.data, startDate },
     };
   }
   // When side is right, generate more weeks on the right side of the end date
@@ -87,16 +94,16 @@ const generateWeekChart = (weekPayload: ChartDataType, side: null | "left" | "ri
 
     if (minusDate && plusDate) filteredDates = getWeeksBetweenTwoDates(minusDate, plusDate);
 
+    startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1);
+    endDate = filteredDates[filteredDates.length - 1].endDate;
     renderState = {
       ...renderState,
-      data: { ...renderState.data, endDate: filteredDates[filteredDates.length - 1].endDate },
+      data: { ...renderState.data, endDate },
     };
   }
 
-  const scrollWidth =
-    filteredDates
-      .map((monthData: any) => monthData.children.length)
-      .reduce((partialSum: number, a: number) => partialSum + a, 0) * weekPayload.data.dayWidth;
+  const days = Math.abs(getNumberOfDaysBetweenTwoDates(startDate, endDate)) + 1;
+  const scrollWidth = days * weekPayload.data.dayWidth;
 
   return { state: renderState, payload: filteredDates, scrollWidth: scrollWidth };
 };

@@ -27,6 +27,9 @@ const generateQuarterChart = (quarterPayload: ChartDataType, side: null | "left"
   let minusDate: Date = new Date();
   let plusDate: Date = new Date();
 
+  let startDate = new Date();
+  let endDate = new Date();
+
   // if side is null generate months on both side of current date
   if (side === null) {
     const currentDate = renderState.data.currentDate;
@@ -38,12 +41,15 @@ const generateQuarterChart = (quarterPayload: ChartDataType, side: null | "left"
 
     const startMonthBlock = filteredDates[0];
     const endMonthBlock = filteredDates[filteredDates.length - 1];
+    startDate = new Date(startMonthBlock.year, startMonthBlock.month, 1);
+    endDate = new Date(endMonthBlock.year, endMonthBlock.month + 1, 0);
+
     renderState = {
       ...renderState,
       data: {
         ...renderState.data,
-        startDate: new Date(startMonthBlock.year, startMonthBlock.month, 1),
-        endDate: new Date(endMonthBlock.year, endMonthBlock.month + 1, 0),
+        startDate,
+        endDate,
       },
     };
   }
@@ -51,15 +57,17 @@ const generateQuarterChart = (quarterPayload: ChartDataType, side: null | "left"
   else if (side === "left") {
     const currentDate = renderState.data.startDate;
 
-    minusDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - range, 1);
+    minusDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - range / 2, 1);
     plusDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
 
     if (minusDate && plusDate) filteredDates = getMonthsBetweenTwoDates(minusDate, plusDate);
 
     const startMonthBlock = filteredDates[0];
+    startDate = new Date(startMonthBlock.year, startMonthBlock.month, 1);
+    endDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - 1);
     renderState = {
       ...renderState,
-      data: { ...renderState.data, startDate: new Date(startMonthBlock.year, startMonthBlock.month, 1) },
+      data: { ...renderState.data, startDate },
     };
   }
   // When side is right, generate more months on the right side of the end date
@@ -67,24 +75,20 @@ const generateQuarterChart = (quarterPayload: ChartDataType, side: null | "left"
     const currentDate = renderState.data.endDate;
 
     minusDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
-    plusDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + range, 1);
+    plusDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + range / 2, 1);
 
     if (minusDate && plusDate) filteredDates = getMonthsBetweenTwoDates(minusDate, plusDate);
 
     const endMonthBlock = filteredDates[filteredDates.length - 1];
-
+    startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1);
+    endDate = new Date(endMonthBlock.year, endMonthBlock.month + 1, 0);
     renderState = {
       ...renderState,
-      data: { ...renderState.data, endDate: new Date(endMonthBlock.year, endMonthBlock.month + 1, 0) },
+      data: { ...renderState.data, endDate },
     };
   }
 
-  const startMonthBlock = filteredDates[0];
-  const endMonthBlock = filteredDates[filteredDates.length - 1];
-  const startDate = new Date(startMonthBlock.year, startMonthBlock.month, 1);
-  const endDate = new Date(endMonthBlock.year, endMonthBlock.month + 1, 0);
-
-  const days = Math.abs(getNumberOfDaysBetweenTwoDates(startDate, endDate));
+  const days = Math.abs(getNumberOfDaysBetweenTwoDates(startDate, endDate)) + 1;
   const scrollWidth = days * quarterPayload.data.dayWidth;
 
   return { state: renderState, payload: filteredDates, scrollWidth: scrollWidth };

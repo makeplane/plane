@@ -9,7 +9,7 @@ import { getDateFromPositionOnGantt, getItemPositionWidth } from "@/components/g
 // helpers
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // store
-import { CoreRootStore } from "@/store/root.store";
+import { RootStore } from "@/plane-web/store/root.store";
 
 // types
 type BlockData = {
@@ -38,6 +38,7 @@ export interface IBaseTimelineStore {
   updateCurrentViewData: (data: ChartDataType | undefined) => void;
   updateActiveBlockId: (blockId: string | null) => void;
   updateRenderView: (data: any) => void;
+  updateAllBlocksOnChartChangeWhileDragging: (addedWidth: number) => void;
   getUpdatedPositionAfterDrag: (id: string, ignoreDependencies?: boolean) => IBlockUpdateDependencyData[];
   updateBlockPosition: (id: string, deltaLeft: number, deltaWidth: number, ignoreDependencies?: boolean) => void;
   getNumberOfDaysFromPosition: (position: number | undefined) => number | undefined;
@@ -57,9 +58,9 @@ export class BaseTimeLineStore implements IBaseTimelineStore {
   activeBlockId: string | null = null;
   renderView: any = [];
 
-  rootStore: CoreRootStore;
+  rootStore: RootStore;
 
-  constructor(_rootStore: CoreRootStore) {
+  constructor(_rootStore: RootStore) {
     makeObservable(this, {
       // observables
       blocksMap: observable,
@@ -230,6 +231,24 @@ export class BaseTimeLineStore implements IBaseTimelineStore {
     if (!this.currentViewData) return;
 
     return getDateFromPositionOnGantt(position, this.currentViewData, offsetDays);
+  });
+
+  /**
+   * Adds width on Chart position change while the blocks are being dragged
+   * @param addedWidth
+   */
+  updateAllBlocksOnChartChangeWhileDragging = action((addedWidth: number) => {
+    if (!this.blockIds || !this.isDragging) return;
+
+    runInAction(() => {
+      this.blockIds?.forEach((blockId) => {
+        const currBlock = this.blocksMap[blockId];
+
+        if (!currBlock || !currBlock.position) return;
+
+        currBlock.position.marginLeft += addedWidth;
+      });
+    });
   });
 
   /**
