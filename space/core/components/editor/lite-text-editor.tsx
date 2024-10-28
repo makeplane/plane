@@ -5,26 +5,27 @@ import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef, TNonColorEditorCo
 import { IssueCommentToolbar } from "@/components/editor";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { getEditorFileHandlers } from "@/helpers/editor.helper";
 import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks
 import { useMention } from "@/hooks/use-mention";
-// services
-import fileService from "@/services/file.service";
 
 interface LiteTextEditorWrapperProps extends Omit<ILiteTextEditor, "fileHandler" | "mentionHandler"> {
-  workspaceSlug: string;
+  anchor: string;
   workspaceId: string;
   isSubmitting?: boolean;
   showSubmitButton?: boolean;
+  uploadFile: (file: File) => Promise<string>;
 }
 
 export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapperProps>((props, ref) => {
   const {
+    anchor,
     containerClassName,
-    workspaceSlug,
     workspaceId,
     isSubmitting = false,
     showSubmitButton = true,
+    uploadFile,
     ...rest
   } = props;
   // use-mention
@@ -39,12 +40,11 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     <div className="border border-custom-border-200 rounded p-3 space-y-3">
       <LiteTextEditorWithRef
         ref={ref}
-        fileHandler={{
-          upload: fileService.getUploadFileFunction(workspaceSlug),
-          delete: fileService.getDeleteImageFunction(workspaceId),
-          restore: fileService.getRestoreImageFunction(workspaceId),
-          cancel: fileService.cancelUpload,
-        }}
+        fileHandler={getEditorFileHandlers({
+          anchor,
+          uploadFile,
+          workspaceId,
+        })}
         mentionHandler={{
           highlights: mentionHighlights,
           // suggestions disabled for now

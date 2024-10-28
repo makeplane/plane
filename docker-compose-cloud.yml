@@ -71,7 +71,7 @@ x-app-env: &app-env
     - SECRET_KEY=${SECRET_KEY:-60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5}
     # DATA STORE SETTINGS
     - USE_MINIO=${USE_MINIO:-1}
-    - AWS_REGION=${AWS_REGION:-""}
+    - AWS_REGION=${AWS_REGION:-}
     - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-"access-key"}
     - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-"secret-key"}
     - AWS_S3_ENDPOINT_URL=${AWS_S3_ENDPOINT_URL:-http://plane-minio:9000}
@@ -108,7 +108,7 @@ services:
     image: registry.plane.tools/plane/silo-enterprise:${APP_RELEASE_VERSION}
     restart: always
     command: node silo/start.js
-    depends_on: 
+    depends_on:
       plane-mq:
         condition: service_healthy
       silo_migrator:
@@ -119,7 +119,7 @@ services:
     image: registry.plane.tools/plane/silo-enterprise:${APP_RELEASE_VERSION}
     restart: "no"
     command: npm --prefix ./silo run db:migrate
-    depends_on: 
+    depends_on:
       plane-db:
         condition: service_healthy
       plane-mq:
@@ -232,7 +232,11 @@ services:
         wait
       '
     healthcheck:
-      test: ["CMD-SHELL", "PGPASSWORD=${POSTGRES_PASSWORD} psql -U $POSTGRES_USER -tAc \"SELECT CASE WHEN EXISTS(SELECT 1 FROM pg_database WHERE datname='${SILO_DB}') THEN 1 ELSE 0 END AS ${SILO_DB}, CASE WHEN EXISTS(SELECT 1 FROM pg_database WHERE datname='${POSTGRES_DB}') THEN 1 ELSE 0 END AS ${POSTGRES_DB}\" | grep -q '1|1' && echo 'Both databases exist' || (echo 'One or both databases are missing' && exit 1)"]
+      test:
+        [
+          "CMD-SHELL",
+          'PGPASSWORD=${POSTGRES_PASSWORD} psql -U $POSTGRES_USER -tAc "SELECT CASE WHEN EXISTS(SELECT 1 FROM pg_database WHERE datname=''${SILO_DB}'') THEN 1 ELSE 0 END AS ${SILO_DB}, CASE WHEN EXISTS(SELECT 1 FROM pg_database WHERE datname=''${POSTGRES_DB}'') THEN 1 ELSE 0 END AS ${POSTGRES_DB}" | grep -q ''1|1'' && echo ''Both databases exist'' || (echo ''One or both databases are missing'' && exit 1)',
+        ]
       interval: 30s
       timeout: 10s
       retries: 3

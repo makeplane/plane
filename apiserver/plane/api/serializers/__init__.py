@@ -5,7 +5,6 @@ from .issue import (
     IssueSerializer,
     LabelSerializer,
     IssueLinkSerializer,
-    IssueAttachmentSerializer,
     IssueCommentSerializer,
     IssueAttachmentSerializer,
     IssueActivitySerializer,
@@ -20,3 +19,4 @@ from .module import (
     ModuleLiteSerializer,
 )
 from .inbox import InboxIssueSerializer
+from .issue_type import IssueTypeAPISerializer, ProjectIssueTypeAPISerializer

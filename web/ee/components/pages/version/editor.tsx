@@ -8,6 +8,8 @@ import { IUserLite } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
 import { TVersionEditorProps } from "@/components/pages";
+// helpers
+import { getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
 import { useMember, useUser } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
@@ -94,6 +96,9 @@ export const WorkspacePagesVersionEditor: React.FC<TVersionEditorProps> = observ
       containerClassName="p-0 pb-64 border-none"
       displayConfig={displayConfig}
       editorClassName="pl-10"
+      fileHandler={getReadOnlyEditorFileHandlers({
+        workspaceSlug: workspaceSlug?.toString() ?? "",
+      })}
       mentionHandler={{
         highlights: mentionHighlights,
       }}

@@ -40,6 +40,7 @@ export const WorkspaceWorklogDownloadRoot: FC<TWorkspaceWorklogDownloadRoot> = o
     workspaceWorklogDownloadIds && workspaceWorklogDownloadIds.length > 0
       ? EWorklogDownloadLoader.MUTATION_LOADER
       : EWorklogDownloadLoader.INIT_LOADER;
+  const worklogDownloadIds = worklogDownloadIdsByWorkspaceId(workspaceId) || [];
 
   // fetching workspace worklog downloads
   useSWR(workspaceSlug ? `WORKSPACE_WORKLOG_DOWNLOADS_${workspaceSlug}` : null, () =>
@@ -49,6 +50,8 @@ export const WorkspaceWorklogDownloadRoot: FC<TWorkspaceWorklogDownloadRoot> = o
   );
 
   if (loader === EWorklogDownloadLoader.INIT_LOADER) return <WorklogDownloadLoader loader={loader} />;
+
+  if (worklogDownloadIds.length <= 0) return <></>;
 
   return (
     <Fragment>

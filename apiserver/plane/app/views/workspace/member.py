@@ -3,7 +3,12 @@ from django.db.models import (
     CharField,
     Count,
     Q,
+    OuterRef,
+    Subquery,
+    IntegerField,
 )
+from django.utils import timezone
+from django.db.models.functions import Coalesce
 from django.db.models.functions import Cast
 
 # Third party modules
@@ -34,6 +39,8 @@ from plane.db.models import (
     User,
     Workspace,
     WorkspaceMember,
+    DraftIssue,
+    Cycle,
 )
 from plane.utils.cache import cache_response, invalidate_cache
 from plane.payment.bgtasks.member_sync_task import member_sync_task
@@ -308,10 +315,47 @@ class WorkspaceMemberUserViewsEndpoint(BaseAPIView):
 
 class WorkspaceMemberUserEndpoint(BaseAPIView):
     def get(self, request, slug):
-        workspace_member = WorkspaceMember.objects.get(
-            member=request.user,
-            workspace__slug=slug,
-            is_active=True,
+        draft_issue_count = (
+            DraftIssue.objects.filter(
+                created_by=OuterRef("member"),
+                workspace_id=OuterRef("workspace_id"),
+                project__project_projectmember__member=OuterRef("member"),
+                project__project_projectmember__is_active=True,
+            )
+            .values("workspace_id")
+            .annotate(count=Count("id", distinct=True))
+            .values("count")
+        )
+        active_cycles_count = (
+            Cycle.objects.filter(
+                workspace__slug=OuterRef("workspace__slug"),
+                project__project_projectmember__role__gt=5,
+                project__project_projectmember__member=OuterRef("member"),
+                project__project_projectmember__is_active=True,
+                start_date__lte=timezone.now(),
+                end_date__gte=timezone.now(),
+            )
+            .values("workspace__slug")
+            .annotate(count=Count("id", distinct=True))
+            .values("count")
+        )
+
+        workspace_member = (
+            WorkspaceMember.objects.filter(
+                member=request.user, workspace__slug=slug, is_active=True
+            )
+            .annotate(
+                draft_issue_count=Coalesce(
+                    Subquery(draft_issue_count, output_field=IntegerField()), 0
+                )
+            )
+            .annotate(
+                active_cycles_count=Coalesce(
+                    Subquery(active_cycles_count, output_field=IntegerField()),
+                    0,
+                )
+            )
+            .first()
         )
         serializer = WorkspaceMemberMeSerializer(workspace_member)
         return Response(serializer.data, status=status.HTTP_200_OK)

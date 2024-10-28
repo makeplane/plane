@@ -11,7 +11,7 @@ import { Breadcrumbs, Button, EmojiIconPicker, EmojiIconPickerTypes, TOAST_TYPE,
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 // helpers
-import { SPACE_BASE_URL } from "@/helpers/common.helper";
+import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 import { getPageName } from "@/helpers/page.helper";
 // plane web components
@@ -59,7 +59,8 @@ export const PageDetailsHeader = observer(() => {
     }
   };
 
-  const publishLink = `${SPACE_BASE_URL}/pages/${anchor}`;
+  const SPACE_APP_URL = SPACE_BASE_URL.trim() === "" ? window.location.origin : SPACE_BASE_URL;
+  const publishLink = `${SPACE_APP_URL}${SPACE_BASE_PATH}/pages/${anchor}`;
 
   return (
     <>

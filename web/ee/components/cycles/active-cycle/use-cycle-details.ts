@@ -2,14 +2,7 @@ import { useCallback } from "react";
 import isEqual from "lodash/isEqual";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
-import {
-  IActiveCycle,
-  IIssueFilterOptions,
-  TCycleDistribution,
-  TCycleEstimateDistribution,
-  TCycleEstimateType,
-  TCyclePlotType,
-} from "@plane/types";
+import { IActiveCycle, ICycle, IIssueFilterOptions, TCycleEstimateType, TCyclePlotType } from "@plane/types";
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 import { useCycle, useIssues } from "@/hooks/store";
 import { formatActiveCycle } from "./formatter";
@@ -38,19 +31,21 @@ const useCycleDetails = (props: IActiveCycleDetails) => {
     setPlotType,
     setEstimateType,
     currentProjectActiveCycleId,
-    getActiveCycleProgress,
     progressLoader,
   } = useCycle();
 
   // props
   const { workspaceSlug, projectId, cycleId = currentProjectActiveCycleId, defaultCycle } = props;
   // derived values
-  const cycle =
-    defaultCycle ??
-    (cycleId ? getCycleById(cycleId) : currentProjectActiveCycleId ? getCycleById(currentProjectActiveCycleId) : null);
+  const storeCycle = cycleId
+    ? getCycleById(cycleId)
+    : currentProjectActiveCycleId
+      ? getCycleById(currentProjectActiveCycleId)
+      : null;
+  const cycle = defaultCycle ?? storeCycle;
 
   // fetches cycle details for non-pro users
-  const { data: progress } = useSWR(
+  useSWR(
     workspaceSlug && projectId && cycle && cycle?.version === 1 ? `PROJECT_ACTIVE_CYCLE_${projectId}_PROGRESS` : null,
     workspaceSlug && projectId && cycle && cycle?.version === 1
       ? () => fetchActiveCycleProgress(workspaceSlug, projectId, cycle.id)
@@ -58,7 +53,7 @@ const useCycleDetails = (props: IActiveCycleDetails) => {
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetches cycle details for non-pro users
-  const { data: distribution } = useSWR(
+  useSWR(
     workspaceSlug && projectId && cycle && !cycle?.distribution && cycle?.version === 1
       ? `PROJECT_ACTIVE_CYCLE_${projectId}_DURATION`
       : null,
@@ -67,7 +62,7 @@ const useCycleDetails = (props: IActiveCycleDetails) => {
       : null
   );
   // fetches cycle details for non-pro users
-  const { data: estimate_distribution } = useSWR(
+  useSWR(
     workspaceSlug && projectId && cycle && !cycle?.estimate_distribution && cycle?.version === 1
       ? `PROJECT_ACTIVE_CYCLE_${projectId}_ESTIMATE_DURATION`
       : null,
@@ -96,6 +91,7 @@ const useCycleDetails = (props: IActiveCycleDetails) => {
   };
 
   const handleEstimateChange = async (value: TCyclePlotType | TCycleEstimateType) => {
+    console.log(workspaceSlug, projectId, cycleId);
     if (!workspaceSlug || !projectId || !cycleId) return;
     setEstimateType(cycleId, value as TCycleEstimateType);
   };
@@ -125,21 +121,18 @@ const useCycleDetails = (props: IActiveCycleDetails) => {
     },
     [workspaceSlug, projectId, cycleId, issueFilters, updateFilters, router]
   );
-  const cycleData = cycleId && getActiveCycleProgress(cycleId);
-
   return {
     projectId,
-    cycle,
+    cycle: { ...cycle, ...storeCycle } as ICycle,
     plotType,
     estimateType,
     cycleProgress:
       cycle &&
       formatActiveCycle({
-        ...cycleData,
+        isTypeIssue: estimateType === "issues",
+        isBurnDown: plotType === "burndown",
         cycle: {
-          ...progress,
-          distribution: distribution as TCycleDistribution,
-          estimate_distribution: estimate_distribution as TCycleEstimateDistribution,
+          ...storeCycle,
           ...cycle,
         },
       }), // formatted chart data

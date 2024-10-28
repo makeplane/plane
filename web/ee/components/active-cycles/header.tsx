@@ -6,6 +6,7 @@ import { ICycle, TCycleGroups } from "@plane/types";
 import { Tooltip, CycleGroupIcon, getButtonStyling, Avatar, AvatarGroup } from "@plane/ui";
 // helpers
 import { renderFormattedDate, findHowManyDaysLeft } from "@/helpers/date-time.helper";
+import { getFileURL } from "@/helpers/file.helper";
 import { truncateText } from "@/helpers/string.helper";
 // hooks
 import { useMember } from "@/hooks/store";
@@ -48,7 +49,7 @@ export const ActiveCycleHeader: FC<ActiveCycleHeaderProps> = (props) => {
       <div className="flex items-center gap-4">
         <div className="rounded-sm text-sm">
           <div className="flex gap-2 divide-x spac divide-x-border-300 text-sm whitespace-nowrap text-custom-text-300 font-medium">
-            <Avatar name={cycleOwnerDetails?.display_name} src={cycleOwnerDetails?.avatar} />
+            <Avatar name={cycleOwnerDetails?.display_name} src={getFileURL(cycleOwnerDetails?.avatar_url ?? "")} />
             {cycleAssignee.length > 0 && (
               <span className="pl-2">
                 <AvatarGroup showTooltip>
@@ -56,7 +57,7 @@ export const ActiveCycleHeader: FC<ActiveCycleHeaderProps> = (props) => {
                     <Avatar
                       key={member.assignee_id}
                       name={member?.display_name ?? ""}
-                      src={member?.avatar ?? ""}
+                      src={getFileURL(member?.avatar_url ?? "")}
                       showTooltip={false}
                     />
                   ))}
@@ -69,7 +70,7 @@ export const ActiveCycleHeader: FC<ActiveCycleHeaderProps> = (props) => {
           href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}
           className={`${getButtonStyling("outline-primary", "sm")} cursor-pointer`}
         >
-          View Cycle
+          View cycle
         </Link>
       </div>
     </div>

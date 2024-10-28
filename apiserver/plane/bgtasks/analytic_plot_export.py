@@ -10,6 +10,9 @@ from celery import shared_task
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from django.db.models import Q, Case, Value, When
+from django.db import models
+from django.db.models.functions import Concat
 
 # Module imports
 from plane.db.models import Issue
@@ -84,12 +87,37 @@ def get_assignee_details(slug, filters):
     """Fetch assignee details if required."""
     return (
         Issue.issue_objects.filter(
-            workspace__slug=slug, **filters, assignees__avatar__isnull=False
+            Q(
+                Q(assignees__avatar__isnull=False)
+                | Q(assignees__avatar_asset__isnull=False)
+            ),
+            workspace__slug=slug,
+            **filters,
+        )
+        .annotate(
+            assignees__avatar_url=Case(
+                # If `avatar_asset` exists, use it to generate the asset URL
+                When(
+                    assignees__avatar_asset__isnull=False,
+                    then=Concat(
+                        Value("/api/assets/v2/static/"),
+                        "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
+                        Value("/"),
+                    ),
+                ),
+                # If `avatar_asset` is None, fall back to using `avatar` field directly
+                When(
+                    assignees__avatar_asset__isnull=True,
+                    then="assignees__avatar",
+                ),
+                default=Value(None),
+                output_field=models.CharField(),
+            )
         )
         .distinct("assignees__id")
         .order_by("assignees__id")
         .values(
-            "assignees__avatar",
+            "assignees__avatar_url",
             "assignees__display_name",
             "assignees__first_name",
             "assignees__last_name",
@@ -102,7 +130,9 @@ def get_label_details(slug, filters):
     """Fetch label details if required"""
     return (
         Issue.objects.filter(
-            workspace__slug=slug, **filters, labels__id__isnull=False
+            workspace__slug=slug,
+            **filters,
+            labels__id__isnull=False & Q(label_issue__deleted_at__isnull=True),
         )
         .distinct("labels__id")
         .order_by("labels__id")
@@ -128,6 +158,7 @@ def get_module_details(slug, filters):
             workspace__slug=slug,
             **filters,
             issue_module__module_id__isnull=False,
+            issue_module__deleted_at__isnull=True,
         )
         .distinct("issue_module__module_id")
         .order_by("issue_module__module_id")
@@ -144,6 +175,7 @@ def get_cycle_details(slug, filters):
             workspace__slug=slug,
             **filters,
             issue_cycle__cycle_id__isnull=False,
+            issue_cycle__deleted_at__isnull=True,
         )
         .distinct("issue_cycle__cycle_id")
         .order_by("issue_cycle__cycle_id")

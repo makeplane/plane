@@ -20,7 +20,8 @@ from django.db.models import (
     Sum,
     FloatField,
 )
-from django.db.models.functions import Coalesce, Cast
+from django.db import models
+from django.db.models.functions import Coalesce, Cast, Concat
 from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
 
@@ -89,7 +90,7 @@ class CycleViewSet(BaseViewSet):
                 Prefetch(
                     "issue_cycle__issue__assignees",
                     queryset=User.objects.only(
-                        "avatar", "first_name", "id"
+                        "avatar_asset", "first_name", "id"
                     ).distinct(),
                 )
             )
@@ -109,6 +110,7 @@ class CycleViewSet(BaseViewSet):
                     filter=Q(
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -120,6 +122,7 @@ class CycleViewSet(BaseViewSet):
                         issue_cycle__issue__state__group="completed",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -149,6 +152,11 @@ class CycleViewSet(BaseViewSet):
                         distinct=True,
                         filter=~Q(
                             issue_cycle__issue__assignees__id__isnull=True
+                        )
+                        & (
+                            Q(
+                                issue_cycle__issue__issue_assignee__deleted_at__isnull=True
+                            )
                         ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
@@ -398,6 +406,7 @@ class CycleViewSet(BaseViewSet):
                     project_id=self.kwargs.get("project_id"),
                     parent__isnull=False,
                     issue_cycle__cycle_id=pk,
+                    issue_cycle__deleted_at__isnull=True,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -495,12 +504,9 @@ class CycleViewSet(BaseViewSet):
             notification=True,
             origin=request.META.get("HTTP_ORIGIN"),
         )
-        # Delete the cycle
+        # TODO: Soft delete the cycle break the onetoone relationship with cycle issue
         cycle.delete()
-        # Delete the cycle issues
-        CycleIssue.objects.filter(
-            cycle_id=self.kwargs.get("pk"),
-        ).delete()
+
         # Delete the user favorite cycle
         UserFavorite.objects.filter(
             user=request.user,
@@ -604,6 +610,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                     filter=Q(
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -614,6 +621,8 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="completed",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__issue__deleted_at__isnull=True,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -624,6 +633,8 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="cancelled",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__issue__deleted_at__isnull=True,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -634,6 +645,8 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="started",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__issue__deleted_at__isnull=True,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -644,6 +657,8 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="unstarted",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__issue__deleted_at__isnull=True,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -654,6 +669,8 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="backlog",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__issue__deleted_at__isnull=True,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -670,13 +687,33 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             assignee_estimate_data = (
                 Issue.issue_objects.filter(
                     issue_cycle__cycle_id=cycle_id,
+                    issue_cycle__deleted_at__isnull=True,
                     workspace__slug=slug,
                     project_id=project_id,
                 )
                 .annotate(display_name=F("assignees__display_name"))
                 .annotate(assignee_id=F("assignees__id"))
-                .annotate(avatar=F("assignees__avatar"))
-                .values("display_name", "assignee_id", "avatar")
+                .annotate(
+                    avatar_url=Case(
+                        # If `avatar_asset` exists, use it to generate the asset URL
+                        When(
+                            assignees__avatar_asset__isnull=False,
+                            then=Concat(
+                                Value("/api/assets/v2/static/"),
+                                "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
+                                Value("/"),
+                            ),
+                        ),
+                        # If `avatar_asset` is None, fall back to using `avatar` field directly
+                        When(
+                            assignees__avatar_asset__isnull=True,
+                            then="assignees__avatar",
+                        ),
+                        default=Value(None),
+                        output_field=models.CharField(),
+                    )
+                )
+                .values("display_name", "assignee_id", "avatar_url")
                 .annotate(
                     total_estimates=Sum(
                         Cast("estimate_point__value", FloatField())
@@ -713,7 +750,8 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                         if item["assignee_id"]
                         else None
                     ),
-                    "avatar": item["avatar"],
+                    "avatar": item.get("avatar"),
+                    "avatar_url": item.get("avatar_url"),
                     "total_estimates": item["total_estimates"],
                     "completed_estimates": item["completed_estimates"],
                     "pending_estimates": item["pending_estimates"],
@@ -724,6 +762,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             label_distribution_data = (
                 Issue.issue_objects.filter(
                     issue_cycle__cycle_id=cycle_id,
+                    issue_cycle__deleted_at__isnull=True,
                     workspace__slug=slug,
                     project_id=project_id,
                 )
@@ -785,13 +824,33 @@ class TransferCycleIssueEndpoint(BaseAPIView):
         assignee_distribution = (
             Issue.issue_objects.filter(
                 issue_cycle__cycle_id=cycle_id,
+                issue_cycle__deleted_at__isnull=True,
                 workspace__slug=slug,
                 project_id=project_id,
             )
             .annotate(display_name=F("assignees__display_name"))
             .annotate(assignee_id=F("assignees__id"))
-            .annotate(avatar=F("assignees__avatar"))
-            .values("display_name", "assignee_id", "avatar")
+            .annotate(
+                avatar_url=Case(
+                    # If `avatar_asset` exists, use it to generate the asset URL
+                    When(
+                        assignees__avatar_asset__isnull=False,
+                        then=Concat(
+                            Value("/api/assets/v2/static/"),
+                            "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
+                            Value("/"),
+                        ),
+                    ),
+                    # If `avatar_asset` is None, fall back to using `avatar` field directly
+                    When(
+                        assignees__avatar_asset__isnull=True,
+                        then="assignees__avatar",
+                    ),
+                    default=Value(None),
+                    output_field=models.CharField(),
+                )
+            )
+            .values("display_name", "assignee_id", "avatar_url")
             .annotate(
                 total_issues=Count(
                     "id",
@@ -830,7 +889,8 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                 "assignee_id": (
                     str(item["assignee_id"]) if item["assignee_id"] else None
                 ),
-                "avatar": item["avatar"],
+                "avatar": item.get("avatar"),
+                "avatar_url": item.get("avatar_url"),
                 "total_issues": item["total_issues"],
                 "completed_issues": item["completed_issues"],
                 "pending_issues": item["pending_issues"],
@@ -842,6 +902,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
         label_distribution = (
             Issue.issue_objects.filter(
                 issue_cycle__cycle_id=cycle_id,
+                issue_cycle__deleted_at__isnull=True,
                 workspace__slug=slug,
                 project_id=project_id,
             )
@@ -964,7 +1025,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                 }
             )
 
-        cycle_issues = CycleIssue.objects.bulk_update(
+        _ = CycleIssue.objects.bulk_update(
             updated_cycles, ["cycle_id"], batch_size=100
         )
 
@@ -975,53 +1036,57 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             estimate__type="points",
         ).exists()
 
-        EntityIssueStateActivity.objects.bulk_create(
-            [
-                EntityIssueStateActivity(
-                    cycle_id=cycle_id,
-                    state_id=cycle_issue.issue.state_id,
-                    issue_id=cycle_issue.issue_id,
-                    state_group=cycle_issue.issue.state.group,
-                    action="REMOVED",
-                    entity_type="CYCLE",
-                    estimate_point_id=cycle_issue.issue.estimate_point_id,
-                    estimate_value=(
-                        cycle_issue.issue.estimate_point.value
-                        if estimate_type and cycle_issue.issue.estimate_point
-                        else None
-                    ),
-                    workspace_id=cycle_issue.workspace_id,
-                    created_by_id=request.user.id,
-                    updated_by_id=request.user.id,
-                )
-                for cycle_issue in cycle_issues
-            ],
-            batch_size=10,
-        )
+        if old_cycle.first().version == 2:
+            EntityIssueStateActivity.objects.bulk_create(
+                [
+                    EntityIssueStateActivity(
+                        cycle_id=cycle_id,
+                        state_id=cycle_issue.issue.state_id,
+                        issue_id=cycle_issue.issue_id,
+                        state_group=cycle_issue.issue.state.group,
+                        action="REMOVED",
+                        entity_type="CYCLE",
+                        estimate_point_id=cycle_issue.issue.estimate_point_id,
+                        estimate_value=(
+                            cycle_issue.issue.estimate_point.value
+                            if estimate_type
+                            and cycle_issue.issue.estimate_point
+                            else None
+                        ),
+                        workspace_id=cycle_issue.workspace_id,
+                        created_by_id=request.user.id,
+                        updated_by_id=request.user.id,
+                    )
+                    for cycle_issue in cycle_issues
+                ],
+                batch_size=10,
+            )
 
-        EntityIssueStateActivity.objects.bulk_create(
-            [
-                EntityIssueStateActivity(
-                    cycle_id=new_cycle_id,
-                    state_id=cycle_issue.issue.state_id,
-                    issue_id=cycle_issue.issue_id,
-                    state_group=cycle_issue.issue.state.group,
-                    action="ADDED",
-                    entity_type="CYCLE",
-                    estimate_point_id=cycle_issue.issue.estimate_point_id,
-                    estimate_value=(
-                        cycle_issue.issue.estimate_point.value
-                        if estimate_type and cycle_issue.issue.estimate_point
-                        else None
-                    ),
-                    workspace_id=cycle_issue.workspace_id,
-                    created_by_id=request.user.id,
-                    updated_by_id=request.user.id,
-                )
-                for cycle_issue in cycle_issues
-            ],
-            batch_size=10,
-        )
+        if new_cycle.version == 2:
+            EntityIssueStateActivity.objects.bulk_create(
+                [
+                    EntityIssueStateActivity(
+                        cycle_id=new_cycle_id,
+                        state_id=cycle_issue.issue.state_id,
+                        issue_id=cycle_issue.issue_id,
+                        state_group=cycle_issue.issue.state.group,
+                        action="ADDED",
+                        entity_type="CYCLE",
+                        estimate_point_id=cycle_issue.issue.estimate_point_id,
+                        estimate_value=(
+                            cycle_issue.issue.estimate_point.value
+                            if estimate_type
+                            and cycle_issue.issue.estimate_point
+                            else None
+                        ),
+                        workspace_id=cycle_issue.workspace_id,
+                        created_by_id=request.user.id,
+                        updated_by_id=request.user.id,
+                    )
+                    for cycle_issue in cycle_issues
+                ],
+                batch_size=10,
+            )
 
         # Capture Issue Activity
         issue_activity.delay(
@@ -1087,6 +1152,7 @@ class CycleProgressEndpoint(BaseAPIView):
             Issue.issue_objects.filter(
                 estimate_point__estimate__type="points",
                 issue_cycle__cycle_id=cycle_id,
+                issue_cycle__deleted_at__isnull=True,
                 workspace__slug=slug,
                 project_id=project_id,
             )
@@ -1139,6 +1205,7 @@ class CycleProgressEndpoint(BaseAPIView):
 
         backlog_issues = Issue.issue_objects.filter(
             issue_cycle__cycle_id=cycle_id,
+            issue_cycle__deleted_at__isnull=True,
             workspace__slug=slug,
             project_id=project_id,
             state__group="backlog",
@@ -1146,6 +1213,7 @@ class CycleProgressEndpoint(BaseAPIView):
 
         unstarted_issues = Issue.issue_objects.filter(
             issue_cycle__cycle_id=cycle_id,
+            issue_cycle__deleted_at__isnull=True,
             workspace__slug=slug,
             project_id=project_id,
             state__group="unstarted",
@@ -1153,6 +1221,7 @@ class CycleProgressEndpoint(BaseAPIView):
 
         started_issues = Issue.issue_objects.filter(
             issue_cycle__cycle_id=cycle_id,
+            issue_cycle__deleted_at__isnull=True,
             workspace__slug=slug,
             project_id=project_id,
             state__group="started",
@@ -1160,6 +1229,7 @@ class CycleProgressEndpoint(BaseAPIView):
 
         cancelled_issues = Issue.issue_objects.filter(
             issue_cycle__cycle_id=cycle_id,
+            issue_cycle__deleted_at__isnull=True,
             workspace__slug=slug,
             project_id=project_id,
             state__group="cancelled",
@@ -1167,6 +1237,7 @@ class CycleProgressEndpoint(BaseAPIView):
 
         completed_issues = Issue.issue_objects.filter(
             issue_cycle__cycle_id=cycle_id,
+            issue_cycle__deleted_at__isnull=True,
             workspace__slug=slug,
             project_id=project_id,
             state__group="completed",
@@ -1174,6 +1245,7 @@ class CycleProgressEndpoint(BaseAPIView):
 
         total_issues = Issue.issue_objects.filter(
             issue_cycle__cycle_id=cycle_id,
+            issue_cycle__deleted_at__isnull=True,
             workspace__slug=slug,
             project_id=project_id,
         ).count()
@@ -1232,6 +1304,8 @@ class CycleAnalyticsEndpoint(BaseAPIView):
                     filter=Q(
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__issue__deleted_at__isnull=True,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -1259,13 +1333,33 @@ class CycleAnalyticsEndpoint(BaseAPIView):
             assignee_distribution = (
                 Issue.issue_objects.filter(
                     issue_cycle__cycle_id=cycle_id,
+                    issue_cycle__deleted_at__isnull=True,
                     workspace__slug=slug,
                     project_id=project_id,
                 )
                 .annotate(display_name=F("assignees__display_name"))
                 .annotate(assignee_id=F("assignees__id"))
-                .annotate(avatar=F("assignees__avatar"))
-                .values("display_name", "assignee_id", "avatar")
+                .annotate(
+                    avatar_url=Case(
+                        # If `avatar_asset` exists, use it to generate the asset URL
+                        When(
+                            assignees__avatar_asset__isnull=False,
+                            then=Concat(
+                                Value("/api/assets/v2/static/"),
+                                "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
+                                Value("/"),
+                            ),
+                        ),
+                        # If `avatar_asset` is None, fall back to using `avatar` field directly
+                        When(
+                            assignees__avatar_asset__isnull=True,
+                            then="assignees__avatar",
+                        ),
+                        default=Value(None),
+                        output_field=models.CharField(),
+                    )
+                )
+                .values("display_name", "assignee_id", "avatar_url")
                 .annotate(
                     total_estimates=Sum(
                         Cast("estimate_point__value", FloatField())
@@ -1297,6 +1391,7 @@ class CycleAnalyticsEndpoint(BaseAPIView):
             label_distribution = (
                 Issue.issue_objects.filter(
                     issue_cycle__cycle_id=cycle_id,
+                    issue_cycle__deleted_at__isnull=True,
                     workspace__slug=slug,
                     project_id=project_id,
                 )
@@ -1343,13 +1438,33 @@ class CycleAnalyticsEndpoint(BaseAPIView):
             assignee_distribution = (
                 Issue.issue_objects.filter(
                     issue_cycle__cycle_id=cycle_id,
+                    issue_cycle__deleted_at__isnull=True,
                     project_id=project_id,
                     workspace__slug=slug,
                 )
                 .annotate(display_name=F("assignees__display_name"))
                 .annotate(assignee_id=F("assignees__id"))
-                .annotate(avatar=F("assignees__avatar"))
-                .values("display_name", "assignee_id", "avatar")
+                .annotate(
+                    avatar_url=Case(
+                        # If `avatar_asset` exists, use it to generate the asset URL
+                        When(
+                            assignees__avatar_asset__isnull=False,
+                            then=Concat(
+                                Value("/api/assets/v2/static/"),
+                                "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
+                                Value("/"),
+                            ),
+                        ),
+                        # If `avatar_asset` is None, fall back to using `avatar` field directly
+                        When(
+                            assignees__avatar_asset__isnull=True,
+                            then="assignees__avatar",
+                        ),
+                        default=Value(None),
+                        output_field=models.CharField(),
+                    )
+                )
+                .values("display_name", "assignee_id", "avatar_url")
                 .annotate(
                     total_issues=Count(
                         "assignee_id",
@@ -1382,6 +1497,7 @@ class CycleAnalyticsEndpoint(BaseAPIView):
             label_distribution = (
                 Issue.issue_objects.filter(
                     issue_cycle__cycle_id=cycle_id,
+                    issue_cycle__deleted_at__isnull=True,
                     project_id=project_id,
                     workspace__slug=slug,
                 )

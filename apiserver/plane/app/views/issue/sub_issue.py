@@ -3,14 +3,7 @@ import json
 
 # Django imports
 from django.utils import timezone
-from django.db.models import (
-    OuterRef,
-    Func,
-    F,
-    Q,
-    Value,
-    UUIDField,
-)
+from django.db.models import OuterRef, Func, F, Q, Value, UUIDField, Subquery
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -28,7 +21,8 @@ from plane.app.permissions import ProjectEntityPermission
 from plane.db.models import (
     Issue,
     IssueLink,
-    IssueAttachment,
+    FileAsset,
+    CycleIssue,
 )
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.user_timezone_converter import user_timezone_converter
@@ -48,7 +42,13 @@ class SubIssuesEndpoint(BaseAPIView):
             )
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
-            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(
+                        issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("cycle_id")[:1]
+                )
+            )
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -56,8 +56,9 @@ class SubIssuesEndpoint(BaseAPIView):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -76,7 +77,10 @@ class SubIssuesEndpoint(BaseAPIView):
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=~Q(labels__id__isnull=True),
+                        filter=Q(
+                            ~Q(labels__id__isnull=True)
+                            & Q(label_issue__deleted_at__isnull=True),
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -84,8 +88,11 @@ class SubIssuesEndpoint(BaseAPIView):
                     ArrayAgg(
                         "assignees__id",
                         distinct=True,
-                        filter=~Q(assignees__id__isnull=True)
-                        & Q(assignees__member_project__is_active=True),
+                        filter=Q(
+                            ~Q(assignees__id__isnull=True)
+                            & Q(assignees__member_project__is_active=True)
+                            & Q(issue_assignee__deleted_at__isnull=True)
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -93,7 +100,11 @@ class SubIssuesEndpoint(BaseAPIView):
                     ArrayAgg(
                         "issue_module__module_id",
                         distinct=True,
-                        filter=~Q(issue_module__module_id__isnull=True),
+                        filter=Q(
+                            ~Q(issue_module__module_id__isnull=True)
+                            & Q(issue_module__module__archived_at__isnull=True)
+                            & Q(issue_module__deleted_at__isnull=True)
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),

@@ -1,5 +1,9 @@
 # Python imports
 from datetime import datetime
+import json
+
+# Django imports
+from django.utils import timezone
 
 # Strawberry imports
 import strawberry
@@ -24,8 +28,12 @@ from plane.db.models import (
     IssueAssignee,
     IssueLabel,
     Workspace,
-    IssueAttachment,
+    FileAsset,
     IssueSubscriber,
+)
+from plane.graphql.bgtasks.issue_activity_task import issue_activity
+from plane.graphql.utils.issue_activity import (
+    convert_issue_properties_to_activity_dict,
 )
 
 
@@ -46,7 +54,7 @@ class IssueMutation:
         priority: str,
         labels: Optional[list[strawberry.ID]] = None,
         assignees: Optional[list[strawberry.ID]] = None,
-        descriptionHtml: Optional[str] = {},
+        descriptionHtml: Optional[str] = None,
         parent: Optional[str] = None,
         estimatePoint: Optional[str] = None,
         startDate: Optional[datetime] = None,
@@ -58,7 +66,9 @@ class IssueMutation:
             project_id=project,
             priority=priority,
             state_id=state,
-            description_html=descriptionHtml,
+            description_html=descriptionHtml
+            if descriptionHtml is not None
+            else "<p></p>",
             parent_id=parent,
             estimate_point_id=estimatePoint,
             start_date=startDate,
@@ -98,20 +108,42 @@ class IssueMutation:
                 batch_size=10,
             )
 
-        # # Track the issue
-        # issue_activity.delay(
-        #     type="issue.activity.created",
-        #     requested_data=json.dumps(
-        #         self.request.data, cls=DjangoJSONEncoder
-        #     ),
-        #     actor_id=str(info.context.user.id),
-        #     issue_id=str(issue.id),
-        #     project_id=str(project),
-        #     current_instance=None,
-        #     epoch=int(timezone.now().timestamp()),
-        #     notification=True,
-        #     origin=info.context.request.META.get("HTTP_ORIGIN"),
-        # )
+        activity_payload = {}
+        if name is not None:
+            activity_payload["name"] = name
+        if descriptionHtml is not None:
+            activity_payload["description_html"] = descriptionHtml
+        else:
+            activity_payload["description_html"] = "<p></p>"
+        if priority is not None:
+            activity_payload["priority"] = priority
+        if state is not None:
+            activity_payload["state_id"] = state
+        if parent is not None:
+            activity_payload["parent_id"] = parent
+        if estimatePoint is not None:
+            activity_payload["estimate_point"] = estimatePoint
+        if startDate is not None:
+            activity_payload["start_date"] = startDate.strftime("%Y-%m-%d")
+        if targetDate is not None:
+            activity_payload["target_date"] = targetDate.strftime("%Y-%m-%d")
+        if labels is not None:
+            activity_payload["label_ids"] = labels
+        if assignees is not None:
+            activity_payload["assignee_ids"] = assignees
+
+        # Track the issue
+        await sync_to_async(issue_activity.delay)(
+            type="issue.activity.created",
+            origin=info.context.request.META.get("HTTP_ORIGIN"),
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            project_id=str(project),
+            issue_id=str(issue.id),
+            actor_id=str(info.context.user.id),
+            current_instance=None,
+            requested_data=json.dumps(activity_payload),
+        )
 
         return issue
 
@@ -139,28 +171,45 @@ class IssueMutation:
     ) -> IssuesType:
         issue = await sync_to_async(Issue.objects.get)(id=id)
 
+        # activity tacking data
+        current_issue_activity = (
+            await convert_issue_properties_to_activity_dict(issue)
+        )
+        activity_payload = {}
+
         if name is not None:
             issue.name = name
+            activity_payload["name"] = name
         if priority is not None:
             issue.priority = priority
+            activity_payload["priority"] = priority
         if state is not None:
             issue.state_id = state
+            activity_payload["state_id"] = state
         if descriptionHtml is not None:
             issue.description_html = descriptionHtml
+            activity_payload["description_html"] = descriptionHtml
         if parent is not None:
             issue.parent_id = parent
+            activity_payload["parent_id"] = parent
         if estimatePoint is not None:
             issue.estimate_point_id = estimatePoint
+            activity_payload["estimate_point"] = estimatePoint
         if startDate is not None:
             issue.start_date = startDate
+            activity_payload["start_date"] = startDate.strftime("%Y-%m-%d")
         if targetDate is not None:
             issue.target_date = targetDate
+            activity_payload["target_date"] = targetDate.strftime("%Y-%m-%d")
 
         workspace = await sync_to_async(Workspace.objects.get)(slug=slug)
-        # Save the updated issue
+
+        # updating the issue
         await sync_to_async(issue.save)()
 
+        # creating or updating the assignees
         if assignees is not None:
+            activity_payload["assignee_ids"] = assignees
             await sync_to_async(
                 IssueAssignee.objects.filter(issue=issue).delete
             )()
@@ -179,7 +228,9 @@ class IssueMutation:
                 batch_size=10,
             )
 
+        # creating or updating the labels
         if labels is not None:
+            activity_payload["label_ids"] = labels
             await sync_to_async(
                 IssueLabel.objects.filter(issue=issue).delete
             )()
@@ -199,19 +250,17 @@ class IssueMutation:
             )
 
         # Track the issue
-        # issue_activity.delay(
-        #     type="issue.activity.created",
-        #     requested_data=json.dumps(
-        #         self.request.data, cls=DjangoJSONEncoder
-        #     ),
-        #     actor_id=str(info.context.user.id),
-        #     issue_id=str(issue.id),
-        #     project_id=str(project),
-        #     current_instance=None,
-        #     epoch=int(timezone.now().timestamp()),
-        #     notification=True,
-        #     origin=info.context.request.META.get("HTTP_ORIGIN"),
-        # )
+        issue_activity.delay(
+            type="issue.activity.updated",
+            origin=info.context.request.META.get("HTTP_ORIGIN"),
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            project_id=str(project),
+            issue_id=str(issue.id),
+            actor_id=str(info.context.user.id),
+            current_instance=json.dumps(current_issue_activity),
+            requested_data=json.dumps(activity_payload),
+        )
 
         return issue
 
@@ -230,7 +279,27 @@ class IssueMutation:
         issue = await sync_to_async(Issue.issue_objects.get)(
             id=issue, project_id=project, workspace__slug=slug
         )
+
+        if issue.created_by_id != info.context.user.id:
+            raise Exception("You are not authorized to delete this issue")
+
+        # activity tracking data
+        current_issue_activity = (
+            await convert_issue_properties_to_activity_dict(issue)
+        )
         await sync_to_async(issue.delete)()
+
+        # Track the issue
+        issue_activity.delay(
+            type="issue.activity.deleted",
+            requested_data=json.dumps({"issue_id": str(issue)}),
+            actor_id=str(info.context.user.id),
+            issue_id=str(issue),
+            project_id=str(project),
+            current_instance=current_issue_activity,
+            epoch=int(timezone.now().timestamp()),
+            origin=info.context.request.META.get("HTTP_ORIGIN"),
+        )
 
         return True
 
@@ -291,9 +360,10 @@ class IssueAttachmentMutation:
         issue: strawberry.ID,
         attachment: strawberry.ID,
     ) -> bool:
-        issue_attachment = await sync_to_async(IssueAttachment.objects.get)(
+        issue_attachment = await sync_to_async(FileAsset.objects.get)(
             id=attachment,
-            issue_id=issue,
+            entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+            entity_identifier=issue,
             project_id=project,
             workspace__slug=slug,
         )

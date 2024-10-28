@@ -127,7 +127,7 @@ export class ProjectFilterStore extends ProjectFilterHelper implements IProjectF
 
     const projects = Object.values(projectMap).filter(
       (p) => p.workspace === workspaceDetails.id && !p.archived_at
-    ) as TProject[];
+    );
     if (projects.length === 0) return defaultCounts;
 
     return {
@@ -161,7 +161,7 @@ export class ProjectFilterStore extends ProjectFilterHelper implements IProjectF
     this.loading = projectStore.loader;
     if (isEmpty(projectMap) || !this.filters || !workspaceDetails) return undefined;
 
-    let projects = Object.values(projectMap).filter((p) => p.workspace === workspaceDetails.id) as TProject[];
+    let projects = Object.values(projectMap).filter((p) => p.workspace === workspaceDetails.id);
     // filter projects based on scope
     projects = this.filters.scope ? this.filterProjectsByScope(projects, this.filters.scope) : projects;
     // filter projects based on attributes

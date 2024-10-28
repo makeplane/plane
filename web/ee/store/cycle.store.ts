@@ -1,10 +1,10 @@
 import { set } from "lodash";
 import { action, makeObservable, observable, runInAction } from "mobx";
+import { ICycle } from "@plane/types";
+import { RootStore } from "@/plane-web/store/root.store";
 import { ICycleStore as ICeCycleStore, CycleStore as CeCycleStore } from "@/store/cycle.store";
 import { CycleUpdateService } from "../services/cycle.service";
 import { TCycleUpdateReaction, TCycleUpdates } from "../types";
-import { ICycle } from "@plane/types";
-import { RootStore } from "@/plane-web/store/root.store";
 
 export interface ICycleStore extends ICeCycleStore {
   cycleUpdateIds: string[];
@@ -194,6 +194,10 @@ export class CycleStore extends CeCycleStore implements ICycleStore {
     return await this.cycleService.createCycle(workspaceSlug, projectId, { ...data, version }).then((response) => {
       runInAction(() => {
         set(this.cycleMap, [response.id], response);
+        if (response.status?.toLowerCase() === "current") {
+          // Update workspace active cycle count in workspaceUserInfo
+          this.updateWorkspaceUserActiveCycleCount(workspaceSlug, 1);
+        }
       });
       return response;
     });

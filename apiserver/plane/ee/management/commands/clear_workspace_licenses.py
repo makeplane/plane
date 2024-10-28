@@ -9,8 +9,8 @@ class Command(BaseCommand):
     help = "Clear the workspace licenses on the start up"
 
     def handle(self, *args, **options):
-        # Clear the workspace licenses
-        WorkspaceLicense.objects.all().delete()
+        # Hard Delete all workspace licenses
+        WorkspaceLicense.all_objects.all().delete()
         self.stdout.write(
             self.style.SUCCESS("Workspace licenses cleared successfully")
         )

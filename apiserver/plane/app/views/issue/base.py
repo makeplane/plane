@@ -14,6 +14,7 @@ from django.db.models import (
     Q,
     UUIDField,
     Value,
+    Subquery,
 )
 from django.db.models.functions import Coalesce
 from django.utils import timezone
@@ -35,13 +36,15 @@ from plane.app.serializers import (
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
-    IssueAttachment,
+    FileAsset,
     IssueLink,
     IssueUserProperty,
     IssueReaction,
     IssueSubscriber,
     Project,
     ProjectMember,
+    CycleIssue,
+    Cycle,
 )
 from plane.ee.models import EntityIssueStateActivity
 from plane.utils.grouper import (
@@ -84,7 +87,13 @@ class IssueListEndpoint(BaseAPIView):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
-            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(
+                        issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("cycle_id")[:1]
+                )
+            )
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -92,8 +101,9 @@ class IssueListEndpoint(BaseAPIView):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -208,7 +218,13 @@ class IssueViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
-            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(
+                        issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("cycle_id")[:1]
+                )
+            )
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -216,8 +232,9 @@ class IssueViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -472,7 +489,10 @@ class IssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=~Q(labels__id__isnull=True),
+                        filter=Q(
+                            ~Q(labels__id__isnull=True)
+                            & Q(label_issue__deleted_at__isnull=True),
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -480,8 +500,11 @@ class IssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "assignees__id",
                         distinct=True,
-                        filter=~Q(assignees__id__isnull=True)
-                        & Q(assignees__member_project__is_active=True),
+                        filter=Q(
+                            ~Q(assignees__id__isnull=True)
+                            & Q(assignees__member_project__is_active=True)
+                            & Q(issue_assignee__deleted_at__isnull=True)
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -489,8 +512,11 @@ class IssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "issue_module__module_id",
                         distinct=True,
-                        filter=~Q(issue_module__module_id__isnull=True)
-                        & Q(issue_module__module__archived_at__isnull=True),
+                        filter=Q(
+                            ~Q(issue_module__module_id__isnull=True)
+                            & Q(issue_module__module__archived_at__isnull=True)
+                            & Q(issue_module__deleted_at__isnull=True)
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -501,12 +527,6 @@ class IssueViewSet(BaseViewSet):
                     queryset=IssueReaction.objects.select_related(
                         "issue", "actor"
                     ),
-                )
-            )
-            .prefetch_related(
-                Prefetch(
-                    "issue_attachment",
-                    queryset=IssueAttachment.objects.select_related("issue"),
                 )
             )
             .prefetch_related(
@@ -575,7 +595,10 @@ class IssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=~Q(labels__id__isnull=True),
+                        filter=Q(
+                            ~Q(labels__id__isnull=True)
+                            & Q(label_issue__deleted_at__isnull=True),
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -583,8 +606,11 @@ class IssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "assignees__id",
                         distinct=True,
-                        filter=~Q(assignees__id__isnull=True)
-                        & Q(assignees__member_project__is_active=True),
+                        filter=Q(
+                            ~Q(assignees__id__isnull=True)
+                            & Q(assignees__member_project__is_active=True)
+                            & Q(issue_assignee__deleted_at__isnull=True)
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -592,7 +618,11 @@ class IssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "issue_module__module_id",
                         distinct=True,
-                        filter=~Q(issue_module__module_id__isnull=True),
+                        filter=Q(
+                            ~Q(issue_module__module_id__isnull=True)
+                            & Q(issue_module__module__archived_at__isnull=True)
+                            & Q(issue_module__deleted_at__isnull=True)
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -639,23 +669,25 @@ class IssueViewSet(BaseViewSet):
                 request.data.get("state_id")
                 or request.data.get("estimate_point")
             ):
-                EntityIssueStateActivity.objects.create(
-                    cycle_id=issue.cycle_id,
-                    state_id=issue.state_id,
-                    issue_id=issue.id,
-                    state_group=issue.state.group,
-                    action="UPDATED",
-                    entity_type="CYCLE",
-                    estimate_point_id=issue.estimate_point_id,
-                    estimate_value=(
-                        issue.estimate_point.value
-                        if estimate_type and issue.estimate_point
-                        else None
-                    ),
-                    workspace_id=issue.workspace_id,
-                    created_by_id=request.user.id,
-                    updated_by_id=request.user.id,
-                )
+                cycle = Cycle.objects.get(pk=issue.cycle_id)
+                if cycle.version == 2:
+                    EntityIssueStateActivity.objects.create(
+                        cycle_id=issue.cycle_id,
+                        state_id=issue.state_id,
+                        issue_id=issue.id,
+                        state_group=issue.state.group,
+                        action="UPDATED",
+                        entity_type="CYCLE",
+                        estimate_point_id=issue.estimate_point_id,
+                        estimate_value=(
+                            issue.estimate_point.value
+                            if estimate_type and issue.estimate_point
+                            else None
+                        ),
+                        workspace_id=issue.workspace_id,
+                        created_by_id=request.user.id,
+                        updated_by_id=request.user.id,
+                    )
 
             model_activity.delay(
                 model_name="issue",
@@ -784,7 +816,13 @@ class IssuePaginatedViewSet(BaseViewSet):
                 "workspace", "project", "state", "parent"
             )
             .prefetch_related("assignees", "labels", "issue_module__module")
-            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(
+                        issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("cycle_id")[:1]
+                )
+            )
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -792,8 +830,9 @@ class IssuePaginatedViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -823,7 +862,7 @@ class IssuePaginatedViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
         cursor = request.GET.get("cursor", None)
-        is_description_required = request.GET.get("description", False)
+        is_description_required = request.GET.get("description", "false")
         updated_at = request.GET.get("updated_at__gt", None)
 
         # required fields
@@ -857,7 +896,7 @@ class IssuePaginatedViewSet(BaseViewSet):
             "type_id",
         ]
 
-        if is_description_required:
+        if str(is_description_required).lower() == "true":
             required_fields.append("description_html")
 
         # querying issues
@@ -891,7 +930,10 @@ class IssuePaginatedViewSet(BaseViewSet):
                 ArrayAgg(
                     "labels__id",
                     distinct=True,
-                    filter=~Q(labels__id__isnull=True),
+                    filter=Q(
+                        ~Q(labels__id__isnull=True)
+                        & Q(label_issue__deleted_at__isnull=True),
+                    ),
                 ),
                 Value([], output_field=ArrayField(UUIDField())),
             ),
@@ -899,8 +941,11 @@ class IssuePaginatedViewSet(BaseViewSet):
                 ArrayAgg(
                     "assignees__id",
                     distinct=True,
-                    filter=~Q(assignees__id__isnull=True)
-                    & Q(assignees__member_project__is_active=True),
+                    filter=Q(
+                        ~Q(assignees__id__isnull=True)
+                        & Q(assignees__member_project__is_active=True)
+                        & Q(issue_assignee__deleted_at__isnull=True)
+                    ),
                 ),
                 Value([], output_field=ArrayField(UUIDField())),
             ),
@@ -908,8 +953,11 @@ class IssuePaginatedViewSet(BaseViewSet):
                 ArrayAgg(
                     "issue_module__module_id",
                     distinct=True,
-                    filter=~Q(issue_module__module_id__isnull=True)
-                    & Q(issue_module__module__archived_at__isnull=True),
+                    filter=Q(
+                        ~Q(issue_module__module_id__isnull=True)
+                        & Q(issue_module__module__archived_at__isnull=True)
+                        & Q(issue_module__deleted_at__isnull=True)
+                    ),
                 ),
                 Value([], output_field=ArrayField(UUIDField())),
             ),

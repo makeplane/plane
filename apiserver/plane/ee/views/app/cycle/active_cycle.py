@@ -1,9 +1,5 @@
 # Django imports
-from django.db.models import (
-    Exists,
-    OuterRef,
-    Prefetch,
-)
+from django.db.models import Exists, OuterRef, Prefetch, Q, Count
 from django.utils import timezone
 
 # Module imports
@@ -30,7 +26,6 @@ class WorkspaceActiveCycleEndpoint(BaseAPIView):
 
     @check_feature_flag(FeatureFlag.WORKSPACE_ACTIVE_CYCLES)
     def get(self, request, slug):
-
         favorite_subquery = UserFavorite.objects.filter(
             user=self.request.user,
             entity_identifier=OuterRef("pk"),
@@ -42,6 +37,7 @@ class WorkspaceActiveCycleEndpoint(BaseAPIView):
         active_cycles = (
             Cycle.objects.filter(
                 workspace__slug=slug,
+                project__project_projectmember__role__gt=5,
                 project__project_projectmember__member=self.request.user,
                 project__project_projectmember__is_active=True,
                 start_date__lte=timezone.now(),
@@ -65,10 +61,22 @@ class WorkspaceActiveCycleEndpoint(BaseAPIView):
                     ).distinct(),
                 )
             )
+            .annotate(
+                total_issues=Count(
+                    "issue_cycle__issue__id",
+                    distinct=True,
+                    filter=Q(
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                        issue_cycle__issue__deleted_at__isnull=True,
+                    ),
+                )
+            )
             .annotate(is_favorite=Exists(favorite_subquery))
             .order_by("-is_favorite", "name")
             .distinct()
         )
+
         return self.paginate(
             request=request,
             queryset=active_cycles,

@@ -50,6 +50,12 @@ from .views import (
     MobileMagicSignInEndpoint,
     MobileSessionTokenCheckEndpoint,
     MobileSignOutAuthEndpoint,
+    MobileSessionTokenEndpoint,
+    MobileTokenEndpoint,
+    MobileGoogleOauthInitiateEndpoint,
+    MobileGoogleCallbackEndpoint,
+    MobileGitHubOauthInitiateEndpoint,
+    MobileGitHubCallbackEndpoint,
 )
 
 urlpatterns = [
@@ -290,4 +296,47 @@ urlpatterns = [
         MobileSignOutAuthEndpoint.as_view(),
         name="mobile-sign-out",
     ),
+    path(
+        "mobile/session-token/",
+        MobileSessionTokenEndpoint.as_view(),
+        name="mobile-token",
+    ),
+    path(
+        "mobile/token/",
+        MobileTokenEndpoint.as_view(),
+        name="mobile-token",
+    ),
+    # mobile web view google oauth
+    path(
+        "mobile/google/",
+        MobileGoogleOauthInitiateEndpoint.as_view(),
+        name="mobile-google-initiate",
+    ),
+    path(
+        "mobile/google/callback/",
+        MobileGoogleCallbackEndpoint.as_view(),
+        name="mobile-google-callback",
+    ),
+    # mobile web view github oauth
+    path(
+        "mobile/github/",
+        MobileGitHubOauthInitiateEndpoint.as_view(),
+        name="mobile-github-initiate",
+    ),
+    path(
+        "mobile/github/callback/",
+        MobileGitHubCallbackEndpoint.as_view(),
+        name="mobile-github-callback",
+    ),
+    # # mobile web view gitlab oauth
+    # path(
+    #     "mobile/gitlab/",
+    #     MobileGitlabOauthInitiateEndpoint.as_view(),
+    #     name="mobile-gitlab-initiate",
+    # ),
+    # path(
+    #     "mobile/gitlab/callback/",
+    #     MobileGitlabCallbackEndpoint.as_view(),
+    #     name="mobile-gitlab-callback",
+    # ),
 ]

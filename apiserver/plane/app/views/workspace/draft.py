@@ -8,10 +8,11 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.db.models import (
-    F,
     Q,
     UUIDField,
     Value,
+    Subquery,
+    OuterRef,
 )
 from django.db.models.functions import Coalesce
 from django.utils.decorators import method_decorator
@@ -34,18 +35,73 @@ from plane.db.models import (
     DraftIssue,
     CycleIssue,
     ModuleIssue,
-    DraftIssueModule,
     DraftIssueCycle,
     Workspace,
+    FileAsset,
 )
 from .. import BaseViewSet
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.issue_filters import issue_filters
+from plane.ee.models import IssuePropertyValue, DraftIssuePropertyValue
 
 
 class WorkspaceDraftIssueViewSet(BaseViewSet):
-
     model = DraftIssue
+
+    def get_queryset(self):
+        return (
+            DraftIssue.objects.filter(workspace__slug=self.kwargs.get("slug"))
+            .select_related("workspace", "project", "state", "parent")
+            .prefetch_related(
+                "assignees", "labels", "draft_issue_module__module"
+            )
+            .annotate(
+                cycle_id=Subquery(
+                    DraftIssueCycle.objects.filter(
+                        draft_issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("cycle_id")[:1]
+                )
+            )
+            .annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "labels__id",
+                        distinct=True,
+                        filter=Q(
+                            ~Q(labels__id__isnull=True)
+                            & (Q(draft_label_issue__deleted_at__isnull=True))
+                        ),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "assignees__id",
+                        distinct=True,
+                        filter=Q(
+                            ~Q(assignees__id__isnull=True)
+                            & Q(assignees__member_project__is_active=True)
+                            & Q(draft_issue_assignee__deleted_at__isnull=True)
+                        ),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                module_ids=Coalesce(
+                    ArrayAgg(
+                        "draft_issue_module__module_id",
+                        distinct=True,
+                        filter=Q(
+                            ~Q(draft_issue_module__module_id__isnull=True)
+                            & Q(
+                                draft_issue_module__module__archived_at__isnull=True
+                            )
+                            & Q(draft_issue_module__deleted_at__isnull=True)
+                        ),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+            )
+        ).distinct()
 
     @method_decorator(gzip_page)
     @allow_permission(
@@ -54,43 +110,8 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
     def list(self, request, slug):
         filters = issue_filters(request.query_params, "GET")
         issues = (
-            DraftIssue.objects.filter(workspace__slug=slug)
+            self.get_queryset()
             .filter(created_by=request.user)
-            .select_related("workspace", "project", "state", "parent")
-            .prefetch_related(
-                "assignees", "labels", "draft_issue_module__module"
-            )
-            .annotate(cycle_id=F("draft_issue_cycle__cycle_id"))
-            .annotate(
-                label_ids=Coalesce(
-                    ArrayAgg(
-                        "labels__id",
-                        distinct=True,
-                        filter=~Q(labels__id__isnull=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                assignee_ids=Coalesce(
-                    ArrayAgg(
-                        "assignees__id",
-                        distinct=True,
-                        filter=~Q(assignees__id__isnull=True)
-                        & Q(assignees__member_project__is_active=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                module_ids=Coalesce(
-                    ArrayAgg(
-                        "draft_issue_module__module_id",
-                        distinct=True,
-                        filter=~Q(draft_issue_module__module_id__isnull=True)
-                        & Q(
-                            draft_issue_module__module__archived_at__isnull=True
-                        ),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-            )
             .order_by("-created_at")
         )
 
@@ -120,7 +141,36 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
         )
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            issue = (
+                self.get_queryset()
+                .filter(pk=serializer.data.get("id"))
+                .values(
+                    "id",
+                    "name",
+                    "state_id",
+                    "sort_order",
+                    "completed_at",
+                    "estimate_point",
+                    "priority",
+                    "start_date",
+                    "target_date",
+                    "project_id",
+                    "parent_id",
+                    "cycle_id",
+                    "module_ids",
+                    "label_ids",
+                    "assignee_ids",
+                    "created_at",
+                    "updated_at",
+                    "created_by",
+                    "updated_by",
+                    "type_id",
+                    "description_html",
+                )
+                .first()
+            )
+
+            return Response(issue, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @allow_permission(
@@ -131,45 +181,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
     )
     def partial_update(self, request, slug, pk):
         issue = (
-            DraftIssue.objects.filter(workspace__slug=slug)
-            .filter(pk=pk)
-            .filter(created_by=request.user)
-            .select_related("workspace", "project", "state", "parent")
-            .prefetch_related(
-                "assignees", "labels", "draft_issue_module__module"
-            )
-            .annotate(cycle_id=F("draft_issue_cycle__cycle_id"))
-            .annotate(
-                label_ids=Coalesce(
-                    ArrayAgg(
-                        "labels__id",
-                        distinct=True,
-                        filter=~Q(labels__id__isnull=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                assignee_ids=Coalesce(
-                    ArrayAgg(
-                        "assignees__id",
-                        distinct=True,
-                        filter=~Q(assignees__id__isnull=True)
-                        & Q(assignees__member_project__is_active=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                module_ids=Coalesce(
-                    ArrayAgg(
-                        "draft_issue_module__module_id",
-                        distinct=True,
-                        filter=~Q(draft_issue_module__module_id__isnull=True)
-                        & Q(
-                            draft_issue_module__module__archived_at__isnull=True
-                        ),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-            )
-            .first()
+            self.get_queryset().filter(pk=pk, created_by=request.user).first()
         )
 
         if not issue:
@@ -202,46 +214,8 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
     )
     def retrieve(self, request, slug, pk=None):
         issue = (
-            DraftIssue.objects.filter(workspace__slug=slug)
-            .filter(pk=pk)
-            .filter(created_by=request.user)
-            .select_related("workspace", "project", "state", "parent")
-            .prefetch_related(
-                "assignees", "labels", "draft_issue_module__module"
-            )
-            .annotate(cycle_id=F("draft_issue_cycle__cycle_id"))
-            .filter(pk=pk)
-            .annotate(
-                label_ids=Coalesce(
-                    ArrayAgg(
-                        "labels__id",
-                        distinct=True,
-                        filter=~Q(labels__id__isnull=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                assignee_ids=Coalesce(
-                    ArrayAgg(
-                        "assignees__id",
-                        distinct=True,
-                        filter=~Q(assignees__id__isnull=True)
-                        & Q(assignees__member_project__is_active=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                module_ids=Coalesce(
-                    ArrayAgg(
-                        "draft_issue_module__module_id",
-                        distinct=True,
-                        filter=~Q(draft_issue_module__module_id__isnull=True)
-                        & Q(
-                            draft_issue_module__module__archived_at__isnull=True
-                        ),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-            )
-        ).first()
+            self.get_queryset().filter(pk=pk, created_by=request.user).first()
+        )
 
         if not issue:
             return Response(
@@ -255,7 +229,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
     @allow_permission(
         allowed_roles=[ROLE.ADMIN],
         creator=True,
-        model=Issue,
+        model=DraftIssue,
         level="WORKSPACE",
     )
     def destroy(self, request, slug, pk=None):
@@ -268,42 +242,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
         level="WORKSPACE",
     )
     def create_draft_to_issue(self, request, slug, draft_id):
-        draft_issue = (
-            DraftIssue.objects.filter(workspace__slug=slug, pk=draft_id)
-            .annotate(cycle_id=F("draft_issue_cycle__cycle_id"))
-            .annotate(
-                label_ids=Coalesce(
-                    ArrayAgg(
-                        "labels__id",
-                        distinct=True,
-                        filter=~Q(labels__id__isnull=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                assignee_ids=Coalesce(
-                    ArrayAgg(
-                        "assignees__id",
-                        distinct=True,
-                        filter=~Q(assignees__id__isnull=True)
-                        & Q(assignees__member_project__is_active=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                module_ids=Coalesce(
-                    ArrayAgg(
-                        "draft_issue_module__module_id",
-                        distinct=True,
-                        filter=~Q(draft_issue_module__module_id__isnull=True)
-                        & Q(
-                            draft_issue_module__module__archived_at__isnull=True
-                        ),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-            )
-            .select_related("project", "workspace")
-            .first()
-        )
+        draft_issue = self.get_queryset().filter(pk=draft_id).first()
 
         if not draft_issue.project_id:
             return Response(
@@ -337,9 +276,9 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                 origin=request.META.get("HTTP_ORIGIN"),
             )
 
-            if draft_issue.cycle_id:
+            if request.data.get("cycle_id", None):
                 created_records = CycleIssue.objects.create(
-                    cycle_id=draft_issue.cycle_id,
+                    cycle_id=request.data.get("cycle_id", None),
                     issue_id=serializer.data.get("id", None),
                     project_id=draft_issue.project_id,
                     workspace_id=draft_issue.workspace_id,
@@ -357,7 +296,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                         {
                             "updated_cycle_issues": None,
                             "created_cycle_issues": serializers.serialize(
-                                "json", created_records
+                                "json", [created_records]
                             ),
                         }
                     ),
@@ -366,7 +305,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                     origin=request.META.get("HTTP_ORIGIN"),
                 )
 
-            if draft_issue.module_ids:
+            if request.data.get("module_ids", []):
                 # bulk create the module
                 ModuleIssue.objects.bulk_create(
                     [
@@ -378,11 +317,11 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                             created_by_id=draft_issue.created_by_id,
                             updated_by_id=draft_issue.updated_by_id,
                         )
-                        for module in draft_issue.module_ids
+                        for module in request.data.get("module_ids", [])
                     ],
                     batch_size=10,
                 )
-                # Bulk Update the activity
+                # Update the activity
                 _ = [
                     issue_activity.delay(
                         type="module.activity.created",
@@ -395,17 +334,46 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                         notification=True,
                         origin=request.META.get("HTTP_ORIGIN"),
                     )
-                    for module in draft_issue.module_ids
+                    for module in request.data.get("module_ids", [])
                 ]
+
+            # Update file assets
+            file_assets = FileAsset.objects.filter(draft_issue_id=draft_id)
+            file_assets.update(
+                issue_id=serializer.data.get("id", None),
+                entity_type=FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
+                draft_issue_id=None,
+            )
+
+            draft_issue_property_values = (
+                DraftIssuePropertyValue.objects.filter(draft_issue=draft_issue)
+            )
+            IssuePropertyValue.objects.bulk_create(
+                [
+                    IssuePropertyValue(
+                        workspace_id=draft_issue_property_value.workspace_id,
+                        project_id=draft_issue_property_value.project_id,
+                        issue_id=serializer.data.get("id", None),
+                        property_id=draft_issue_property_value.property_id,
+                        value_text=draft_issue_property_value.value_text,
+                        value_boolean=draft_issue_property_value.value_boolean,
+                        value_decimal=draft_issue_property_value.value_decimal,
+                        value_datetime=draft_issue_property_value.value_datetime,
+                        value_uuid=draft_issue_property_value.value_uuid,
+                        value_option=draft_issue_property_value.value_option,
+                    )
+                    for draft_issue_property_value in draft_issue_property_values
+                ],
+                batch_size=10,
+                ignore_conflicts=True,
+            )
+            # TODO: Log the activity for issue property
+
+            draft_issue_property_values.delete()
+
 
             # delete the draft issue
             draft_issue.delete()
-
-            # delete the draft issue module
-            DraftIssueModule.objects.filter(draft_issue=draft_issue).delete()
-
-            # delete the draft issue cycle
-            DraftIssueCycle.objects.filter(draft_issue=draft_issue).delete()
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 

@@ -2,10 +2,11 @@
 import { FC, Fragment } from "react";
 import { observer } from "mobx-react";
 // plane ui
+import { TCycleEstimateType } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
 import ProgressChart from "@/components/core/sidebar/progress-chart";
-import { validateCycleSnapshot } from "@/components/cycles";
+import { EstimateTypeDropdown, validateCycleSnapshot } from "@/components/cycles";
 // helpers
 import { getDate } from "@/helpers/date-time.helper";
 // hooks
@@ -20,7 +21,8 @@ export const SidebarChart: FC<ProgressChartProps> = observer((props) => {
   const { workspaceSlug, projectId, cycleId } = props;
 
   // hooks
-  const { getEstimateTypeByCycleId, getCycleById } = useCycle();
+  const { getEstimateTypeByCycleId, getCycleById, fetchCycleDetails, fetchArchivedCycleDetails, setEstimateType } =
+    useCycle();
 
   // derived data
   const cycleDetails = validateCycleSnapshot(getCycleById(cycleId));
@@ -37,33 +39,57 @@ export const SidebarChart: FC<ProgressChartProps> = observer((props) => {
 
   if (!workspaceSlug || !projectId || !cycleId) return null;
 
+  const isArchived = !!cycleDetails?.archived_at;
+
+  // handlers
+  const onChange = async (value: TCycleEstimateType) => {
+    setEstimateType(cycleId, value);
+    if (!workspaceSlug || !projectId || !cycleId) return;
+    try {
+      if (isArchived) {
+        await fetchArchivedCycleDetails(workspaceSlug, projectId, cycleId);
+      } else {
+        await fetchCycleDetails(workspaceSlug, projectId, cycleId);
+      }
+    } catch (err) {
+      console.error(err);
+      setEstimateType(cycleId, estimateType);
+    }
+  };
   return (
-    <div>
-      <div className="relative flex items-center gap-2">
-        <div className="flex items-center justify-center gap-1 text-xs">
-          <span className="h-2.5 w-2.5 rounded-full bg-[#A9BBD0]" />
-          <span>Ideal</span>
-        </div>
-        <div className="flex items-center justify-center gap-1 text-xs">
-          <span className="h-2.5 w-2.5 rounded-full bg-[#4C8FFF]" />
-          <span>Current</span>
+    <>
+      <div className="relative flex items-center justify-between gap-2 pt-4">
+        <EstimateTypeDropdown value={estimateType} onChange={onChange} cycleId={cycleId} projectId={projectId} />
+      </div>
+      <div className="py-4">
+        <div>
+          <div className="relative flex items-center gap-2">
+            <div className="flex items-center justify-center gap-1 text-xs">
+              <span className="h-2.5 w-2.5 rounded-full bg-[#A9BBD0]" />
+              <span>Ideal</span>
+            </div>
+            <div className="flex items-center justify-center gap-1 text-xs">
+              <span className="h-2.5 w-2.5 rounded-full bg-[#4C8FFF]" />
+              <span>Current</span>
+            </div>
+          </div>
+          {cycleStartDate && cycleEndDate && completionChartDistributionData ? (
+            <Fragment>
+              <ProgressChart
+                distribution={completionChartDistributionData}
+                startDate={cycleStartDate}
+                endDate={cycleEndDate}
+                totalIssues={estimateType === "points" ? totalEstimatePoints : totalIssues}
+                plotTitle={estimateType === "points" ? "points" : "issues"}
+              />
+            </Fragment>
+          ) : (
+            <Loader className="w-full h-[160px] mt-4">
+              <Loader.Item width="100%" height="100%" />
+            </Loader>
+          )}
         </div>
       </div>
-      {cycleStartDate && cycleEndDate && completionChartDistributionData ? (
-        <Fragment>
-          <ProgressChart
-            distribution={completionChartDistributionData}
-            startDate={cycleStartDate}
-            endDate={cycleEndDate}
-            totalIssues={estimateType === "points" ? totalEstimatePoints : totalIssues}
-            plotTitle={estimateType === "points" ? "points" : "issues"}
-          />
-        </Fragment>
-      ) : (
-        <Loader className="w-full h-[160px] mt-4">
-          <Loader.Item width="100%" height="100%" />
-        </Loader>
-      )}
-    </div>
+    </>
   );
 });

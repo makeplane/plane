@@ -15,11 +15,10 @@ from plane.db.models import Account
 
 
 class OIDCOAuthProvider(OauthAdapter):
-
     provider = "oidc"
     scope = "openid email profile"
 
-    def __init__(self, request, code=None, state=None):
+    def __init__(self, request, code=None, state=None, is_mobile=False):
         (
             OIDC_CLIENT_ID,
             OIDC_CLIENT_SECRET,
@@ -85,6 +84,7 @@ class OIDCOAuthProvider(OauthAdapter):
             OIDC_USERINFO_URL,
             OIDC_CLIENT_SECRET,
             code,
+            is_mobile=is_mobile,
         )
 
     def set_token_data(self):

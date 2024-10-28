@@ -12,7 +12,6 @@ import { findTotalDaysInRange, renderFormattedDate } from "@/helpers/date-time.h
 import { useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useProjectFilter, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
-import { TProject } from "@/plane-web/types/projects";
 import { EProjectScope } from "@/plane-web/types/workspace-project-filters";
 import JoinButton from "../../common/join-button";
 
@@ -30,7 +29,7 @@ export const ProjectGanttBlock: React.FC<Props> = observer((props) => {
   const { projectStates } = useWorkspaceProjectStates();
 
   // derived values
-  const projectDetails = getProjectById(projectId) as TProject;
+  const projectDetails = getProjectById(projectId);
 
   const stateDetails = projectDetails && projectStates[projectDetails.state_id!];
 

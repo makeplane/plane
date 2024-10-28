@@ -261,25 +261,26 @@ class EstimatePointEndpoint(BaseViewSet):
                 cycle_id=F("issue_cycle__cycle_id")
             ).filter(estimate_point_id=estimate_point_id, cycle_id=cycle.id)
 
-            EntityIssueStateActivity.objects.bulk_create(
-                [
-                    EntityIssueStateActivity(
-                        cycle_id=cycle.id,
-                        state_id=str(issue.state_id),
-                        issue_id=issue.id,
-                        state_group=issue.state.group,
-                        action="UPDATED",
-                        entity_type="CYCLE",
-                        estimate_point_id=estimate_point_id,
-                        estimate_value=(request.data.get("value")),
-                        workspace_id=issue.workspace_id,
-                        created_by_id=request.user.id,
-                        updated_by_id=request.user.id,
-                    )
-                    for issue in issues
-                ],
-                batch_size=10,
-            )
+            if cycle.version == 2:
+                EntityIssueStateActivity.objects.bulk_create(
+                    [
+                        EntityIssueStateActivity(
+                            cycle_id=cycle.id,
+                            state_id=str(issue.state_id),
+                            issue_id=issue.id,
+                            state_group=issue.state.group,
+                            action="UPDATED",
+                            entity_type="CYCLE",
+                            estimate_point_id=estimate_point_id,
+                            estimate_value=(request.data.get("value")),
+                            workspace_id=issue.workspace_id,
+                            created_by_id=request.user.id,
+                            updated_by_id=request.user.id,
+                        )
+                        for issue in issues
+                    ],
+                    batch_size=10,
+                )
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -355,6 +356,7 @@ class EstimatePointEndpoint(BaseViewSet):
                     ),
                     epoch=int(timezone.now().timestamp()),
                 )
+            issues.update(estimate_point_id=None)
 
         # delete the estimate point
         old_estimate_point = EstimatePoint.objects.filter(
@@ -386,46 +388,43 @@ class EstimatePointEndpoint(BaseViewSet):
                 project_id=project_id,
                 workspace__slug=slug,
             ).first()
-
-            if new_estimate_id:
+            if cycle and cycle.version == 2:
                 new_estimate_value = (
                     EstimatePoint.objects.filter(pk=new_estimate_id)
+                    .values_list("value", flat=True)
                     .first()
-                    .value
-                )
-                issues = Issue.objects.annotate(
-                    cycle_id=F("issue_cycle__cycle_id")
-                ).filter(estimate_point_id=new_estimate_id, cycle_id=cycle.id)
-            else:
-                issues = Issue.objects.annotate(
-                    cycle_id=F("issue_cycle__cycle_id")
-                ).filter(
-                    estimate_point_id=estimate_point_id, cycle_id=cycle.id
+                    if new_estimate_id
+                    else None
                 )
 
-            EntityIssueStateActivity.objects.bulk_create(
-                [
-                    EntityIssueStateActivity(
-                        cycle_id=cycle.id,
-                        state_id=str(issue.state_id),
-                        issue_id=issue.id,
-                        state_group=issue.state.group,
-                        action="UPDATED",
-                        entity_type="CYCLE",
-                        estimate_point_id=(
-                            new_estimate_id if new_estimate_id else None
-                        ),
-                        estimate_value=(
-                            new_estimate_value if new_estimate_id else None
-                        ),
-                        workspace_id=issue.workspace_id,
-                        created_by_id=request.user.id,
-                        updated_by_id=request.user.id,
-                    )
-                    for issue in issues
-                ],
-                batch_size=10,
-            )
+                issues = Issue.objects.filter(
+                    estimate_point_id=(
+                        new_estimate_id
+                        if new_estimate_id
+                        else estimate_point_id
+                    ),
+                    issue_cycle__cycle_id=cycle.id,
+                )
+
+                EntityIssueStateActivity.objects.bulk_create(
+                    [
+                        EntityIssueStateActivity(
+                            cycle_id=cycle.id,
+                            state_id=str(issue.state_id),
+                            issue_id=issue.id,
+                            state_group=issue.state.group,
+                            action="UPDATED",
+                            entity_type="CYCLE",
+                            estimate_point_id=new_estimate_id,
+                            estimate_value=new_estimate_value,
+                            workspace_id=issue.workspace_id,
+                            created_by_id=request.user.id,
+                            updated_by_id=request.user.id,
+                        )
+                        for issue in issues
+                    ],
+                    batch_size=10,
+                )
 
         old_estimate_point.delete()
 

@@ -36,12 +36,13 @@ from plane.db.models import (
     DashboardWidget,
     Issue,
     IssueActivity,
-    IssueAttachment,
+    FileAsset,
     IssueLink,
     IssueRelation,
     Project,
     Widget,
     WorkspaceMember,
+    CycleIssue,
 )
 from plane.utils.issue_filters import issue_filters
 
@@ -56,7 +57,8 @@ def dashboard_overview_stats(self, request, slug):
             project__project_projectmember__member=request.user,
             workspace__slug=slug,
             assignees__in=[request.user],
-        ).filter(
+        )
+        .filter(
             Q(
                 project__project_projectmember__role=5,
                 project__guest_view_all_features=True,
@@ -83,7 +85,8 @@ def dashboard_overview_stats(self, request, slug):
             project__project_projectmember__member=request.user,
             workspace__slug=slug,
             assignees__in=[request.user],
-        ).filter(
+        )
+        .filter(
             Q(
                 project__project_projectmember__role=5,
                 project__guest_view_all_features=True,
@@ -108,7 +111,8 @@ def dashboard_overview_stats(self, request, slug):
             project__project_projectmember__is_active=True,
             project__project_projectmember__member=request.user,
             created_by_id=request.user.id,
-        ).filter(
+        )
+        .filter(
             Q(
                 project__project_projectmember__role=5,
                 project__guest_view_all_features=True,
@@ -134,7 +138,8 @@ def dashboard_overview_stats(self, request, slug):
             project__project_projectmember__member=request.user,
             assignees__in=[request.user],
             state__group="completed",
-        ).filter(
+        )
+        .filter(
             Q(
                 project__project_projectmember__role=5,
                 project__guest_view_all_features=True,
@@ -187,7 +192,13 @@ def dashboard_assigned_issues(self, request, slug):
                 ).select_related("issue"),
             )
         )
-        .annotate(cycle_id=F("issue_cycle__cycle_id"))
+        .annotate(
+            cycle_id=Subquery(
+                CycleIssue.objects.filter(
+                    issue=OuterRef("id"), deleted_at__isnull=True
+                ).values("cycle_id")[:1]
+            )
+        )
         .annotate(
             link_count=IssueLink.objects.filter(issue=OuterRef("id"))
             .order_by()
@@ -195,8 +206,9 @@ def dashboard_assigned_issues(self, request, slug):
             .values("count")
         )
         .annotate(
-            attachment_count=IssueAttachment.objects.filter(
-                issue=OuterRef("id")
+            attachment_count=FileAsset.objects.filter(
+                issue_id=OuterRef("id"),
+                entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
             )
             .order_by()
             .annotate(count=Func(F("id"), function="Count"))
@@ -213,7 +225,10 @@ def dashboard_assigned_issues(self, request, slug):
                 ArrayAgg(
                     "labels__id",
                     distinct=True,
-                    filter=~Q(labels__id__isnull=True),
+                    filter=Q(
+                        ~Q(labels__id__isnull=True)
+                        & Q(label_issue__deleted_at__isnull=True),
+                    ),
                 ),
                 Value([], output_field=ArrayField(UUIDField())),
             ),
@@ -221,8 +236,11 @@ def dashboard_assigned_issues(self, request, slug):
                 ArrayAgg(
                     "assignees__id",
                     distinct=True,
-                    filter=~Q(assignees__id__isnull=True)
-                    & Q(assignees__member_project__is_active=True),
+                    filter=Q(
+                        ~Q(assignees__id__isnull=True)
+                        & Q(assignees__member_project__is_active=True)
+                        & Q(issue_assignee__deleted_at__isnull=True)
+                    ),
                 ),
                 Value([], output_field=ArrayField(UUIDField())),
             ),
@@ -230,7 +248,11 @@ def dashboard_assigned_issues(self, request, slug):
                 ArrayAgg(
                     "issue_module__module_id",
                     distinct=True,
-                    filter=~Q(issue_module__module_id__isnull=True),
+                    filter=Q(
+                        ~Q(issue_module__module_id__isnull=True)
+                        & Q(issue_module__module__archived_at__isnull=True)
+                        & Q(issue_module__deleted_at__isnull=True)
+                    ),
                 ),
                 Value([], output_field=ArrayField(UUIDField())),
             ),
@@ -350,7 +372,13 @@ def dashboard_created_issues(self, request, slug):
         .filter(**filters)
         .select_related("workspace", "project", "state", "parent")
         .prefetch_related("assignees", "labels", "issue_module__module")
-        .annotate(cycle_id=F("issue_cycle__cycle_id"))
+        .annotate(
+            cycle_id=Subquery(
+                CycleIssue.objects.filter(
+                    issue=OuterRef("id"), deleted_at__isnull=True
+                ).values("cycle_id")[:1]
+            )
+        )
         .annotate(
             link_count=IssueLink.objects.filter(issue=OuterRef("id"))
             .order_by()
@@ -358,8 +386,9 @@ def dashboard_created_issues(self, request, slug):
             .values("count")
         )
         .annotate(
-            attachment_count=IssueAttachment.objects.filter(
-                issue=OuterRef("id")
+            attachment_count=FileAsset.objects.filter(
+                issue_id=OuterRef("id"),
+                entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
             )
             .order_by()
             .annotate(count=Func(F("id"), function="Count"))
@@ -376,7 +405,10 @@ def dashboard_created_issues(self, request, slug):
                 ArrayAgg(
                     "labels__id",
                     distinct=True,
-                    filter=~Q(labels__id__isnull=True),
+                    filter=Q(
+                        ~Q(labels__id__isnull=True)
+                        & Q(label_issue__deleted_at__isnull=True),
+                    ),
                 ),
                 Value([], output_field=ArrayField(UUIDField())),
             ),
@@ -384,8 +416,11 @@ def dashboard_created_issues(self, request, slug):
                 ArrayAgg(
                     "assignees__id",
                     distinct=True,
-                    filter=~Q(assignees__id__isnull=True)
-                    & Q(assignees__member_project__is_active=True),
+                    filter=Q(
+                        ~Q(assignees__id__isnull=True)
+                        & Q(assignees__member_project__is_active=True)
+                        & Q(issue_assignee__deleted_at__isnull=True)
+                    ),
                 ),
                 Value([], output_field=ArrayField(UUIDField())),
             ),
@@ -393,7 +428,11 @@ def dashboard_created_issues(self, request, slug):
                 ArrayAgg(
                     "issue_module__module_id",
                     distinct=True,
-                    filter=~Q(issue_module__module_id__isnull=True),
+                    filter=Q(
+                        ~Q(issue_module__module_id__isnull=True)
+                        & Q(issue_module__module__archived_at__isnull=True)
+                        & Q(issue_module__deleted_at__isnull=True)
+                    ),
                 ),
                 Value([], output_field=ArrayField(UUIDField())),
             ),

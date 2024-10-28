@@ -204,7 +204,7 @@ jobs:
         name: Checkout Files
         uses: actions/checkout@v4
       - name: Admin Build and Push
-        uses: ./.github/actions/build-push-action
+        uses: ./.github/actions/build-push-ee
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -235,7 +235,7 @@ jobs:
         name: Checkout Files
         uses: actions/checkout@v4
       - name: Web Build and Push
-        uses: ./.github/actions/build-push-action
+        uses: ./.github/actions/build-push-ee
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -266,7 +266,7 @@ jobs:
         name: Checkout Files
         uses: actions/checkout@v4
       - name: Space Build and Push
-        uses: ./.github/actions/build-push-action
+        uses: ./.github/actions/build-push-ee
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -297,7 +297,7 @@ jobs:
         name: Checkout Files
         uses: actions/checkout@v4
       - name: Live Build and Push
-        uses: ./.github/actions/build-push-action
+        uses: ./.github/actions/build-push-ee
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -328,7 +328,7 @@ jobs:
         name: Checkout Files
         uses: actions/checkout@v4
       - name: Silo Build and Push
-        uses: ./.github/actions/build-push-action
+        uses: ./.github/actions/build-push-ee
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -359,7 +359,7 @@ jobs:
         name: Checkout Files
         uses: actions/checkout@v4
       - name: Backend Build and Push
-        uses: ./.github/actions/build-push-action
+        uses: ./.github/actions/build-push-ee
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -390,7 +390,7 @@ jobs:
         name: Checkout Files
         uses: actions/checkout@v4
       - name: Proxy Build and Push
-        uses: ./.github/actions/build-push-action
+        uses: ./.github/actions/build-push-ee
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -422,7 +422,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Generate Keypair
         run: |
-          if [ "${{ env.TARGET_BRANCH }}" == "master" ]; then 
+          if [ "${{ env.TARGET_BRANCH }}" == "master" ] || [ "${{ env.BUILD_TYPE }}" == "Release" ]; then 
             openssl genrsa -out private_key.pem 2048
           else
             echo "${{ secrets.DEFAULT_PRIME_PRIVATE_KEY }}" > private_key.pem
@@ -435,7 +435,7 @@ jobs:
           echo "PRIVATE_KEY=${PRIVATE_KEY}" >> $GITHUB_ENV
 
       - name: Monitor Build and Push
-        uses: ./.github/actions/build-push-action
+        uses: ./.github/actions/build-push-ee
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}

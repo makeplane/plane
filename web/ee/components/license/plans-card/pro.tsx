@@ -71,34 +71,43 @@ export const ProPlanCard: React.FC<TProPlanCardProps> = observer((props: TProPla
     <PlanCard
       planName={isInTrialPeriod ? "Pro trial" : "Pro"}
       planDescription={
-        !subscriptionDetail.is_offline_payment && (
-          <>
-            <div>Unlimited members, 1:5 Guests, Issue Types, Active Cycles, and more</div>
-            {isInTrialPeriod && (
-              <div className={cn("text-custom-text-300", subscriptionDetail.show_trial_banner && "text-red-500")}>
-                Pro trial ends{" "}
-                {subscriptionDetail.remaining_trial_days === 0
-                  ? "today"
-                  : `in ${subscriptionDetail.remaining_trial_days} days`}{" "}
-                <span className="text-sm font-medium text-custom-text-300">
-                  • Billable seats when you upgrade: {subscriptionDetail?.billable_members}
-                </span>
-              </div>
-            )}
-            {!isInTrialPeriod &&
-              (isSubscriptionCancelled ? (
-                <div className="text-red-500 ">Your billing cycle ends on {renderFormattedDate(endDate)}.</div>
-              ) : (
-                <div>
-                  {startDate
-                    ? `Current billing cycle: ${renderFormattedDate(startDate)} - ${renderFormattedDate(endDate)}`
-                    : `Your billing cycle renews on ${renderFormattedDate(endDate)}`}{" "}
-                  • Billable seats: {subscriptionDetail?.billable_members}
+        <>
+          <div>Unlimited members, 1:5 Guests, Issue Types, Active Cycles, and more</div>
+          {!subscriptionDetail.is_offline_payment ? (
+            <>
+              {isInTrialPeriod && (
+                <div className={cn("text-custom-text-300", subscriptionDetail.show_trial_banner && "text-red-500")}>
+                  Pro trial ends{" "}
+                  {subscriptionDetail.remaining_trial_days === 0
+                    ? "today"
+                    : `in ${subscriptionDetail.remaining_trial_days} days`}{" "}
+                  <span className="text-sm font-medium text-custom-text-300">
+                    • Billable seats when you upgrade: {subscriptionDetail?.billable_members}
+                  </span>
                 </div>
-              ))}
-            <SelfManagedLicenseActions />
-          </>
-        )
+              )}
+              {!isInTrialPeriod &&
+                (isSubscriptionCancelled ? (
+                  <div className="text-red-500 ">Your billing cycle ends on {renderFormattedDate(endDate)}.</div>
+                ) : (
+                  <div>
+                    {startDate
+                      ? `Current billing cycle: ${renderFormattedDate(startDate)} - ${renderFormattedDate(endDate)}`
+                      : `Your billing cycle renews on ${renderFormattedDate(endDate)}`}{" "}
+                    • Billable seats: {subscriptionDetail?.billable_members}
+                  </div>
+                ))}
+            </>
+          ) : (
+            <div>
+              To manage your subscription, please{" "}
+              <a className="text-custom-primary-300 hover:underline" href="mailto:support@plane.so">
+                contact support.
+              </a>
+            </div>
+          )}
+          <SelfManagedLicenseActions />
+        </>
       }
       button={
         !subscriptionDetail.is_offline_payment && (

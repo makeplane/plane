@@ -7,6 +7,8 @@ from .issue_properties import (
     RelationTypeEnum,
 )
 
+from .draft import DraftIssuePropertyValue
+
 from .issue import (
     IssueWorkLog,
     EntityUpdates,

@@ -22,7 +22,7 @@ from plane.db.models import (
     CycleIssue,
     ModuleIssue,
     IssueLink,
-    IssueAttachment,
+    FileAsset,
     IssueReaction,
     CommentReaction,
     IssueVote,
@@ -175,7 +175,7 @@ class IssueLinkSerializer(BaseSerializer):
 
 class IssueAttachmentSerializer(BaseSerializer):
     class Meta:
-        model = IssueAttachment
+        model = FileAsset
         fields = "__all__"
         read_only_fields = [
             "created_by",

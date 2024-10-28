@@ -10,9 +10,11 @@ export interface IHeaderProperties {
 }
 export const headerStyle: IHeaderProperties = {
   [EHeaderVariant.PRIMARY]:
-    "relative flex w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 bg-custom-background-100 z-[18]",
-  [EHeaderVariant.SECONDARY]: "!py-0  overflow-y-hidden border-b border-custom-border-200 justify-between bg-custom-background-100 z-[15]",
-  [EHeaderVariant.TERNARY]: "flex flex-wrap justify-between py-2  border-b border-custom-border-200 gap-2 bg-custom-background-100 z-[12]",
+    "relative flex w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 bg-custom-sidebar-background-100 z-[18]",
+  [EHeaderVariant.SECONDARY]:
+    "!py-0  overflow-y-hidden border-b border-custom-border-200 justify-between bg-custom-background-100 z-[15]",
+  [EHeaderVariant.TERNARY]:
+    "flex flex-wrap justify-between py-2  border-b border-custom-border-200 gap-2 bg-custom-background-100 z-[12]",
 };
 export const minHeights: IHeaderProperties = {
   [EHeaderVariant.PRIMARY]: "",

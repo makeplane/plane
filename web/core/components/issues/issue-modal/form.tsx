@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 // editor
 import { EditorRefApi } from "@plane/editor";
 // types
-import type { TIssue, ISearchIssueResponse } from "@plane/types";
+import type { TIssue, ISearchIssueResponse, TWorkspaceDraftIssue } from "@plane/types";
 // hooks
 import { Button, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 // components
@@ -26,7 +26,7 @@ import { getChangedIssuefields } from "@/helpers/issue.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
-import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
+import { useIssueDetail, useProject, useProjectState, useWorkspaceDraftIssues } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
 // plane web components
@@ -53,18 +53,26 @@ export interface IssueFormProps {
   data?: Partial<TIssue>;
   issueTitleRef: React.MutableRefObject<HTMLInputElement | null>;
   isCreateMoreToggleEnabled: boolean;
+  onAssetUpload: (assetId: string) => void;
   onCreateMoreToggleChange: (value: boolean) => void;
   onChange?: (formData: Partial<TIssue> | null) => void;
   onClose: () => void;
   onSubmit: (values: Partial<TIssue>, is_draft_issue?: boolean) => Promise<void>;
   projectId: string;
   isDraft: boolean;
+  moveToIssue?: boolean;
+  modalTitle?: string;
+  primaryButtonText?: {
+    default: string;
+    loading: string;
+  };
 }
 
 export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const {
     data,
     issueTitleRef,
+    onAssetUpload,
     onChange,
     onClose,
     onSubmit,
@@ -72,6 +80,12 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     isCreateMoreToggleEnabled,
     onCreateMoreToggleChange,
     isDraft,
+    moveToIssue,
+    modalTitle = `${data?.id ? "Update" : isDraft ? "Create a draft" : "Create new issue"}`,
+    primaryButtonText = {
+      default: `${data?.id ? "Update" : isDraft ? "Save to Drafts" : "Save"}`,
+      loading: `${data?.id ? "Updating" : "Saving"}`,
+    },
   } = props;
 
   // states
@@ -91,6 +105,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const { getIssueTypeIdOnProjectChange, getActiveAdditionalPropertiesLength, handlePropertyValuesValidation } =
     useIssueModal();
   const { isMobile } = usePlatformOS();
+  const { moveIssue } = useWorkspaceDraftIssues();
 
   const {
     issue: { getIssueById },
@@ -184,6 +199,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
           project_id: getValues<"project_id">("project_id"),
           id: data.id,
           description_html: formData.description_html ?? "<p></p>",
+          type_id: getValues<"type_id">("type_id"),
         };
 
     // this condition helps to move the issues from draft to project issues
@@ -266,7 +282,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
       )}
       <form onSubmit={handleSubmit((data) => handleFormSubmit(data))}>
         <div className="p-5">
-          <h3 className="text-xl font-medium text-custom-text-200 pb-2">{data?.id ? "Update" : "Create new"} issue</h3>
+          <h3 className="text-xl font-medium text-custom-text-200 pb-2">{modalTitle}</h3>
           {/* Disable project selection if editing an issue */}
           <div className="flex items-center pt-2 pb-4 gap-x-1">
             <IssueProjectSelect
@@ -313,7 +329,9 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
           <div className="px-5">
             <IssueDescriptionEditor
               control={control}
+              isDraft={isDraft}
               issueName={watch("name")}
+              issueId={data?.id}
               descriptionHtmlData={data?.description_html}
               editorRef={editorRef}
               submitBtnRef={submitBtnRef}
@@ -326,6 +344,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
               }
               setGptAssistantModal={setGptAssistantModal}
               handleGptAssistantClose={() => reset(getValues())}
+              onAssetUpload={onAssetUpload}
               onClose={onClose}
             />
           </div>
@@ -342,6 +361,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                 issueTypeId={watch("type_id")}
                 projectId={projectId}
                 workspaceSlug={workspaceSlug?.toString()}
+                isDraft={isDraft}
               />
             )}
           </div>
@@ -397,41 +417,34 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
               >
                 Discard
               </Button>
-              {isDraft && (
-                <>
-                  {data?.id ? (
-                    <Button
-                      variant="neutral-primary"
-                      size="sm"
-                      loading={isSubmitting}
-                      onClick={handleSubmit((data) => handleFormSubmit({ ...data, is_draft: false }))}
-                      tabIndex={getIndex("draft_button")}
-                    >
-                      {isSubmitting ? "Moving" : "Move from draft"}
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="neutral-primary"
-                      size="sm"
-                      loading={isSubmitting}
-                      onClick={handleSubmit((data) => handleFormSubmit(data, true))}
-                      tabIndex={getIndex("draft_button")}
-                    >
-                      {isSubmitting ? "Saving" : "Save as draft"}
-                    </Button>
-                  )}
-                </>
-              )}
               <Button
-                variant="primary"
+                variant={moveToIssue ? "neutral-primary" : "primary"}
                 type="submit"
                 size="sm"
                 ref={submitBtnRef}
                 loading={isSubmitting}
                 tabIndex={isDraft ? getIndex("submit_button") : getIndex("draft_button")}
               >
-                {data?.id ? (isSubmitting ? "Updating" : "Update") : isSubmitting ? "Creating" : "Create"}
+                {isSubmitting ? primaryButtonText.loading : primaryButtonText.default}
               </Button>
+              {moveToIssue && (
+                <Button
+                  variant="primary"
+                  type="button"
+                  size="sm"
+                  loading={isSubmitting}
+                  onClick={() => {
+                    if (data?.id && data) {
+                      moveIssue(workspaceSlug.toString(), data?.id, {
+                        ...data,
+                        ...getValues(),
+                      } as TWorkspaceDraftIssue);
+                    }
+                  }}
+                >
+                  Add to project
+                </Button>
+              )}
             </div>
           </div>
         </div>

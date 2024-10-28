@@ -5,21 +5,21 @@ import { EditorRefApi, IRichTextEditor, RichTextEditorWithRef } from "@plane/edi
 import { IUserLite } from "@plane/types";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { getEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
 import { useMember, useMention, useUser } from "@/hooks/store";
-// services
-import { FileService } from "@/services/file.service";
+// plane web hooks
+import { useFileSize } from "@/plane-web/hooks/use-file-size";
 
 interface RichTextEditorWrapperProps extends Omit<IRichTextEditor, "fileHandler" | "mentionHandler"> {
   workspaceSlug: string;
   workspaceId: string;
   projectId: string;
+  uploadFile: (file: File) => Promise<string>;
 }
 
-const fileService = new FileService();
-
 export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProps>((props, ref) => {
-  const { containerClassName, workspaceSlug, workspaceId, projectId, ...rest } = props;
+  const { containerClassName, workspaceSlug, workspaceId, projectId, uploadFile, ...rest } = props;
   // store hooks
   const { data: currentUser } = useUser();
   const {
@@ -36,16 +36,19 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
     members: projectMemberDetails,
     user: currentUser ?? undefined,
   });
+  // file size
+  const { maxFileSize } = useFileSize();
 
   return (
     <RichTextEditorWithRef
       ref={ref}
-      fileHandler={{
-        upload: fileService.getUploadFileFunction(workspaceSlug),
-        delete: fileService.getDeleteImageFunction(workspaceId),
-        restore: fileService.getRestoreImageFunction(workspaceId),
-        cancel: fileService.cancelUpload,
-      }}
+      fileHandler={getEditorFileHandlers({
+        maxFileSize,
+        projectId,
+        uploadFile,
+        workspaceId,
+        workspaceSlug,
+      })}
       mentionHandler={{
         highlights: mentionHighlights,
         suggestions: mentionSuggestions,

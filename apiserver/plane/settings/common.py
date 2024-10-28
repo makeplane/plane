@@ -4,6 +4,8 @@
 import os
 from urllib.parse import urlparse
 
+from datetime import timedelta
+
 
 # Third party imports
 import dj_database_url
@@ -76,7 +78,6 @@ INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
     "django_celery_beat",
-    "storages",
 ]
 
 # Middlewares
@@ -263,7 +264,7 @@ STORAGES = {
     },
 }
 STORAGES["default"] = {
-    "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+    "BACKEND": "plane.settings.storage.S3Storage",
 }
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "access-key")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "secret-key")
@@ -341,6 +342,7 @@ if bool(os.environ.get("SENTRY_DSN", False)) and os.environ.get(
 # Application Envs
 SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN", False)
 FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
+PRO_FILE_SIZE_LIMIT = int(os.environ.get("PRO_FILE_SIZE_LIMIT", 104857600))
 
 # Unsplash Access key
 UNSPLASH_ACCESS_KEY = os.environ.get("UNSPLASH_ACCESS_KEY")
@@ -407,6 +409,63 @@ APP_BASE_URL = os.environ.get("APP_BASE_URL")
 
 HARD_DELETE_AFTER_DAYS = int(os.environ.get("HARD_DELETE_AFTER_DAYS", 60))
 
+ATTACHMENT_MIME_TYPES = [
+    # Images
+    "image/jpeg",
+    "image/png",
+    "image/gif",
+    "image/svg+xml",
+    "image/webp",
+    "image/tiff",
+    "image/bmp",
+    # Documents
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/vnd.ms-excel",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "application/vnd.ms-powerpoint",
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    "text/plain",
+    "application/rtf",
+    # Audio
+    "audio/mpeg",
+    "audio/wav",
+    "audio/ogg",
+    "audio/midi",
+    "audio/x-midi",
+    "audio/aac",
+    "audio/flac",
+    "audio/x-m4a",
+    # Video
+    "video/mp4",
+    "video/mpeg",
+    "video/ogg",
+    "video/webm",
+    "video/quicktime",
+    "video/x-msvideo",
+    "video/x-ms-wmv",
+    # Archives
+    "application/zip",
+    "application/x-rar-compressed",
+    "application/x-tar",
+    "application/gzip",
+    # 3D Models
+    "model/gltf-binary",
+    "model/gltf+json",
+    "application/octet-stream",  # for .obj files, but be cautious
+    # Fonts
+    "font/ttf",
+    "font/otf",
+    "font/woff",
+    "font/woff2",
+    # Other
+    "text/css",
+    "text/javascript",
+    "application/json",
+    "text/xml",
+    "application/xml",
+]
 # Prime Server Base url
 PRIME_SERVER_BASE_URL = os.environ.get("PRIME_SERVER_BASE_URL", False)
 PRIME_SERVER_AUTH_TOKEN = os.environ.get("PRIME_SERVER_AUTH_TOKEN", "")
@@ -428,3 +487,25 @@ IS_MULTI_TENANT = os.environ.get("IS_MULTI_TENANT", "0") == "1"
 
 # Instance Changelog URL
 INSTANCE_CHANGELOG_URL = os.environ.get("INSTANCE_CHANGELOG_URL", "")
+
+# JWT Settings
+SIMPLE_JWT = {
+    # The number of seconds the access token will be valid
+    "ACCESS_TOKEN_LIFETIME": timedelta(
+        days=int(os.environ.get("ACCESS_TOKEN_LIFETIME", 1))
+    ),
+    # The number of seconds the refresh token will be valid
+    "REFRESH_TOKEN_LIFETIME": timedelta(
+        days=int(os.environ.get("REFRESH_TOKEN_LIFETIME", 7))
+    ),
+    # The number of seconds the refresh token will be valid
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+    # Algorithm used to sign the token
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": SECRET_KEY,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
+    "USER_ID_FIELD": "id",
+    "USER_ID_CLAIM": "user_id",
+}

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 // plane editor
-import { EditorReadOnlyRefApi, EditorRefApi, useEditorMarkings } from "@plane/editor";
+import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
 // plane types
 import { TPage } from "@plane/types";
 // plane ui
@@ -57,8 +57,6 @@ export const WorkspacePageRoot = observer((props: TPageRootProps) => {
     hasConnectionFailed,
     updatePageDescription: async (data) => await updateDescription(data),
   });
-  // editor markings hook
-  const { updateMarkings } = useEditorMarkings();
   // update query params
   const { updateQueryParams } = useQueryParams();
 

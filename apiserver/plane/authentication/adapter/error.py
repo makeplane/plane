@@ -72,6 +72,7 @@ AUTHENTICATION_ERROR_CODES = {
     # user not onboarded
     "USER_NOT_ONBOARDED": 6000,
     "TOKEN_NOT_SET": 6005,
+    "MOBILE_SIGNUP_DISABLED": 6010,
 }
 
 

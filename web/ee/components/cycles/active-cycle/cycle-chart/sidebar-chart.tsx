@@ -29,7 +29,7 @@ const chartLegends = [
 
 const SidebarChartPro = observer((props: TProps) => {
   const { workspaceSlug, projectId } = props;
-  const { cycle, cycleProgress } = useCycleDetails({
+  const { cycle, cycleProgress, plotType } = useCycleDetails({
     workspaceSlug: workspaceSlug.toString(),
     projectId: projectId.toString(),
   });
@@ -37,7 +37,12 @@ const SidebarChartPro = observer((props: TProps) => {
   return (
     <div>
       <div className="h-40 w-full">
-        <ActiveCycleChart cycle={cycle} data={(cycleProgress as TProgressChartData) || []} isFullWidth />
+        <ActiveCycleChart
+          cycle={cycle}
+          data={(cycleProgress as TProgressChartData) || []}
+          isFullWidth
+          plotType={plotType}
+        />
       </div>
       <div className="flex items-center justify-between">
         {chartLegends.map((legend, index) => (

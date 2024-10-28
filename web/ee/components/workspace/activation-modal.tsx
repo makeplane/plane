@@ -3,11 +3,13 @@
 import { FC, useState, FormEvent } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { cn } from "@plane/editor";
 import { Button, EModalWidth, Input, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { WorkspaceLogo } from "@/components/workspace";
+// helpers
+import { cn } from "@/helpers/common.helper";
 // hooks
+import { getFileURL } from "@/helpers/file.helper";
 import { useUserPermissions, useWorkspace } from "@/hooks/store";
 // plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
@@ -61,7 +63,7 @@ export const SubscriptionActivationModal: FC<TSubscriptionActivationModal> = obs
       handleClose();
       handleSuccessModalToggle(true);
     } catch {
-      setErrors("Your license is invalid or already in use. For any queries contact support@plane.so .");
+      setErrors("Your license is invalid or already in use. For any queries contact support@plane.so");
     } finally {
       setLoader(false);
     }
@@ -83,7 +85,7 @@ export const SubscriptionActivationModal: FC<TSubscriptionActivationModal> = obs
           <h3 className="flex items-center whitespace-nowrap flex-wrap gap-2 text-xl font-medium">
             Activate
             <WorkspaceLogo
-              logo={currentWorkspace?.logo}
+              logo={getFileURL(currentWorkspace?.logo_url ?? "")}
               name={currentWorkspace?.name}
               classNames="text-lg font-medium h-5 w-5"
             />

@@ -23,7 +23,15 @@ class GoogleOAuthProvider(OauthAdapter):
     scope = "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile"
     provider = "google"
 
-    def __init__(self, request, code=None, state=None, callback=None):
+    def __init__(
+        self,
+        request,
+        code=None,
+        state=None,
+        callback=None,
+        redirect_uri=None,
+        is_mobile=False,
+    ):
         (GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET) = get_configuration_value(
             [
                 {
@@ -49,12 +57,17 @@ class GoogleOAuthProvider(OauthAdapter):
         scheme = (
             "https"
             if settings.IS_HEROKU
-            else "https" if request.is_secure() else "http"
+            else "https"
+            if request.is_secure()
+            else "http"
         )
 
         redirect_uri = (
-            f"""{scheme}://{request.get_host()}/auth/google/callback/"""
+            redirect_uri
+            if redirect_uri
+            else (f"""{scheme}://{request.get_host()}/auth/google/callback/""")
         )
+
         url_params = {
             "client_id": client_id,
             "scope": self.scope,
@@ -78,6 +91,7 @@ class GoogleOAuthProvider(OauthAdapter):
             client_secret,
             code,
             callback=callback,
+            is_mobile=is_mobile,
         )
 
     def set_token_data(self):

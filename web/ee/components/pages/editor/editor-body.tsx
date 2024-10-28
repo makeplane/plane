@@ -14,10 +14,12 @@ import {
 } from "@plane/editor";
 // types
 import { IUserLite } from "@plane/types";
+import { EFileAssetType } from "@plane/types/src/enums";
 // components
 import { PageContentBrowser, PageEditorTitle, PageContentLoader } from "@/components/pages";
 // helpers
 import { cn, LIVE_BASE_PATH, LIVE_BASE_URL } from "@/helpers/common.helper";
+import { getEditorFileHandlers, getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
 import { generateRandomColor } from "@/helpers/string.helper";
 // hooks
 import { useMember, useUser, useWorkspace } from "@/hooks/store";
@@ -26,6 +28,7 @@ import { usePageFilters } from "@/hooks/use-page-filters";
 import { EditorAIMenu, IssueEmbedCard } from "@/plane-web/components/pages";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
+import { useFileSize } from "@/plane-web/hooks/use-file-size";
 import { useWorkspaceIssueEmbed } from "@/plane-web/hooks/use-workspace-issue-embed";
 import { useWorkspaceMention } from "@/plane-web/hooks/use-workspace-mention";
 // store
@@ -69,7 +72,7 @@ export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
   const pageId = page?.id;
   const pageTitle = page?.name ?? "";
   const pageDescription = page?.description_html;
-  const { isContentEditable, updateTitle, setIsSubmitting } = page;
+  const { isContentEditable, updateTitle } = page;
   const workspaceMemberDetails = workspaceMemberIds?.map((id) => getUserDetails(id) as IUserLite);
   // use-mention
   const { mentionHighlights, mentionSuggestions } = useWorkspaceMention({
@@ -83,6 +86,8 @@ export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
   const { fontSize, fontStyle, isFullWidth } = usePageFilters();
   // issue-embed
   const { fetchIssues } = useWorkspaceIssueEmbed(workspaceSlug?.toString() ?? "");
+  // file size
+  const { maxFileSize } = useFileSize();
 
   const displayConfig: TDisplayConfig = {
     fontSize,
@@ -90,8 +95,15 @@ export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
   };
 
   const getAIMenu = useCallback(
-    ({ isOpen, onClose }: TAIMenuProps) => <EditorAIMenu editorRef={editorRef} isOpen={isOpen} onClose={onClose} />,
-    [editorRef]
+    ({ isOpen, onClose }: TAIMenuProps) => (
+      <EditorAIMenu
+        editorRef={editorRef}
+        isOpen={isOpen}
+        onClose={onClose}
+        workspaceSlug={workspaceSlug?.toString() ?? ""}
+      />
+    ),
+    [editorRef, workspaceSlug]
   );
 
   const handleServerConnect = useCallback(() => {
@@ -171,12 +183,22 @@ export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
           {isContentEditable ? (
             <CollaborativeDocumentEditorWithRef
               id={pageId}
-              fileHandler={{
-                cancel: fileService.cancelUpload,
-                delete: fileService.getDeleteImageFunction(workspaceId),
-                restore: fileService.getRestoreImageFunction(workspaceId),
-                upload: fileService.getUploadFileFunction(workspaceSlug as string, setIsSubmitting),
-              }}
+              fileHandler={getEditorFileHandlers({
+                maxFileSize,
+                uploadFile: async (file) => {
+                  const { asset_id } = await fileService.uploadWorkspaceAsset(
+                    workspaceSlug?.toString() ?? "",
+                    {
+                      entity_identifier: pageId,
+                      entity_type: EFileAssetType.PAGE_DESCRIPTION,
+                    },
+                    file
+                  );
+                  return asset_id;
+                },
+                workspaceId,
+                workspaceSlug: workspaceSlug?.toString() ?? "",
+              })}
               handleEditorReady={handleEditorReady}
               ref={editorRef}
               containerClassName="h-full p-0 pb-64"
@@ -237,6 +259,9 @@ export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
               containerClassName="p-0 pb-64 border-none"
               displayConfig={displayConfig}
               editorClassName="pl-10"
+              fileHandler={getReadOnlyEditorFileHandlers({
+                workspaceSlug: workspaceSlug?.toString() ?? "",
+              })}
               mentionHandler={{
                 highlights: mentionHighlights,
               }}

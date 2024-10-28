@@ -16,10 +16,11 @@ type TIssueAdditionalPropertiesProps = {
   issueTypeId: string | null;
   projectId: string;
   workspaceSlug: string;
+  isDraft?: boolean;
 };
 
 export const IssueAdditionalProperties: React.FC<TIssueAdditionalPropertiesProps> = observer((props) => {
-  const { issueId, issueTypeId, projectId, workspaceSlug } = props;
+  const { issueId, issueTypeId, projectId, workspaceSlug, isDraft = false } = props;
   // store hooks
   const { issuePropertyValues, setIssuePropertyValues } = useIssueModal();
   const { isIssueTypeEnabledForProject, getProjectIssuePropertiesLoader, fetchAllPropertiesAndOptions } =
@@ -56,6 +57,7 @@ export const IssueAdditionalProperties: React.FC<TIssueAdditionalPropertiesProps
                   issueTypeId={issueTypeId}
                   projectId={projectId}
                   workspaceSlug={workspaceSlug}
+                  isDraft={isDraft}
                 />
               )}
             </>

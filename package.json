@@ -16,7 +16,6 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev --concurrency=13",
-    "heroku-postbuild": "turbo run build --filter=live",
     "start": "turbo run start",
     "lint": "turbo run lint",
     "lint:errors": "turbo run lint:errors",
@@ -27,9 +26,6 @@
     "prettier": "latest",
     "prettier-plugin-tailwindcss": "^0.5.4",
     "turbo": "^2.1.1"
-  },
-  "resolutions": {
-    "@types/react": "18.2.48"
   },
   "packageManager": "yarn@1.22.22"
 }

@@ -1,3 +1,11 @@
+# Api imports
+from plane.ee.views.api import (
+    # issue property, property option, property value
+    IssuePropertyAPIEndpoint,
+    IssuePropertyOptionAPIEndpoint,
+    IssuePropertyValueAPIEndpoint
+)
+
 # App imports
 from plane.ee.views.app.ai import RephraseGrammarEndpoint
 from plane.ee.views.app.cycle import (

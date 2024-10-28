@@ -8,11 +8,12 @@ import { TProductSubscriptionType } from "@plane/types";
 // ui
 import { Button, Loader } from "@plane/ui";
 // constants
-import { ComingSoonBadge, PLANE_PLANS, TPlanDetail, TPlanePlans, TPlanFeatureData } from "@/constants/plans";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // plane web components
 import { calculateYearlyDiscount } from "@/plane-web/components/license";
+// plane web constants
+import { ComingSoonBadge, PLANE_PLANS, TPlanDetail, TPlanePlans, TPlanFeatureData } from "@/plane-web/constants/plans";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 

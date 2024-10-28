@@ -27,7 +27,7 @@ from plane.db.models import (
     IssueVote,
     IssueView,
     IssueLink,
-    IssueAttachment,
+    FileAsset,
 )
 from plane.utils.issue_filters import issue_filters
 from plane.ee.serializers import (
@@ -131,8 +131,9 @@ class IssueViewsPublicEndpoint(BaseAPIView):
                     .values("count")
                 )
                 .annotate(
-                    attachment_count=IssueAttachment.objects.filter(
-                        issue=OuterRef("id")
+                    attachment_count=FileAsset.objects.filter(
+                        entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+                        issue_id=OuterRef("id"),
                     )
                     .order_by()
                     .annotate(count=Func(F("id"), function="Count"))

@@ -16,6 +16,7 @@ import {
 import { Logo } from "@/components/common";
 // constants
 // helpers
+import { getFileURL } from "@/helpers/file.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useProject, useUserPermissions } from "@/hooks/store";
@@ -99,13 +100,6 @@ const Details: React.FC<Props> = observer((props) => {
       shouldRender: !isArchived,
     },
     {
-      key: "drafted-issues",
-      action: () => router.push(`/${workspaceSlug}/projects/${project.id}/draft-issues`, {}),
-      title: "Drafted issues",
-      icon: PenSquare,
-      shouldRender: !isArchived && (isOwner || isMember),
-    },
-    {
       key: "restore",
       action: () => setArchiveRestoreProject(true),
       title: "Restore",
@@ -140,10 +134,10 @@ const Details: React.FC<Props> = observer((props) => {
       <div className="relative ">
         <div>
           <img
-            src={
-              project.cover_image ??
-              "https://images.unsplash.com/photo-1672243775941-10d763d9adef?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
-            }
+            src={getFileURL(
+              project.cover_image_url ??
+                "https://images.unsplash.com/photo-1672243775941-10d763d9adef?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+            )}
             alt={project.name}
             className="relative w-full rounded-t object-cover h-[120px]"
             // ref={projectCardRef}

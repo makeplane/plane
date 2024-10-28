@@ -77,7 +77,6 @@ def upload_to_s3(files, workspace_id, token_id, slug, provider):
             settings.AWS_STORAGE_BUCKET_NAME,
             file_name,
             ExtraArgs={
-                "ACL": "public-read",
                 "ContentType": f"application/{provider}",
             },
         )
@@ -124,7 +123,6 @@ def upload_to_s3(files, workspace_id, token_id, slug, provider):
             settings.AWS_STORAGE_BUCKET_NAME,
             file_name,
             ExtraArgs={
-                "ACL": "public-read",
                 "ContentType": f"application/{provider}",
             },
         )

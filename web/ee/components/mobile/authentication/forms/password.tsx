@@ -4,10 +4,10 @@ import { FC, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Eye, EyeOff, XCircle } from "lucide-react";
 import { Button, Input, Spinner } from "@plane/ui";
-// hooks
 // helpers
 import { EAuthSteps } from "@/helpers/authentication.helper";
 import { API_BASE_URL } from "@/helpers/common.helper";
+// hooks
 import { useInstance } from "@/hooks/store";
 // services
 import { AuthService } from "@/services/auth.service";

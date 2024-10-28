@@ -15,7 +15,7 @@ import {
 import { cn } from "@/helpers/common.helper";
 import { checkEmailValidity } from "@/helpers/string.helper";
 // plane web services
-import mobileAuthService from "@/plane-web/services/mobile.service";
+import mobileService from "@/plane-web/services/mobile.service";
 // services
 import { AuthService } from "@/services/auth.service";
 
@@ -49,28 +49,33 @@ export const MobileAuthEmailValidationForm: FC<TMobileAuthEmailValidationForm> =
   const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    let isUserSignOut = false;
+    handleEmail(email);
+    setIsSubmitting(true);
+
+    let userExists = false;
+    let userCanAuthenticate = true;
+
     try {
-      await mobileAuthService.currentUser();
-      isUserSignOut = true;
-    } catch (error) {
-      console.error(error);
+      await mobileService.currentUser();
+      userExists = true;
+    } catch {
+      userExists = false;
     }
 
-    let isEmailShouldBeVerified = true;
-    if (isUserSignOut) {
+    if (userExists) {
       try {
-        await mobileAuthService.signOut();
-      } catch (error) {
-        console.error(error);
-        isEmailShouldBeVerified = false;
+        await mobileService.signOut();
+        userCanAuthenticate = true;
+      } catch {
+        userCanAuthenticate = false;
       }
     }
 
-    if (!isEmailShouldBeVerified) return;
+    if (!userCanAuthenticate) {
+      setIsSubmitting(false);
+      return;
+    }
 
-    handleEmail(email);
-    setIsSubmitting(true);
     const payload: IEmailCheckData = {
       email: email,
     };

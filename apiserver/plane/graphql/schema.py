@@ -38,14 +38,16 @@ from .queries.module import (
     ModuleIssueUserPropertyQuery,
 )
 from .queries.search import GlobalSearchQuery
-from .queries.attachment import IssueAttachmentQuery
 from .queries.link import IssueLinkQuery
 from .queries.estimate import EstimatePointQuery
 from .queries.issues import (
     IssueRelationQuery,
     IssuesSearchQuery,
     SubIssuesQuery,
+    IssueAttachmentQuery,
 )
+from .queries.dashboard import userInformationQuery
+from .queries.external import UnsplashImagesQuery, ProjectCoversQuery
 
 # mutations
 from .mutations.workspace import WorkspaceMutation, WorkspaceInviteMutation
@@ -62,7 +64,7 @@ from .mutations.issue import (
 )
 from .mutations.notification import NotificationMutation
 from .mutations.user import ProfileMutation
-from .mutations.page import PageFavoriteMutation
+from .mutations.page import PageMutation, PageFavoriteMutation
 from .mutations.cycle import (
     CycleIssueMutation,
     CycleFavoriteMutation,
@@ -125,6 +127,9 @@ class Query(
     ModuleIssueUserPropertyQuery,
     IssueRelationQuery,
     IssuesSearchQuery,
+    userInformationQuery,
+    UnsplashImagesQuery,
+    ProjectCoversQuery,
 ):
     pass
 
@@ -155,6 +160,7 @@ class Mutation(
     IssueRelationMutation,
     IssueCommentMutation,
     SubIssueMutation,
+    PageMutation,
 ):
     pass
 

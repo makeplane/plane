@@ -1,51 +1,61 @@
 export const COLORS_LIST: {
-  backgroundColor: string;
-  textColor: string;
+  key: string;
   label: string;
+  textColor: string;
+  backgroundColor: string;
 }[] = [
-  // {
-  //   backgroundColor: "#1c202426",
-  //   textColor: "#1c2024",
-  //   label: "Black",
-  // },
   {
-    backgroundColor: "#5c5e6326",
-    textColor: "#5c5e63",
+    key: "gray",
     label: "Gray",
+    textColor: "var(--editor-colors-gray-text)",
+    backgroundColor: "var(--editor-colors-gray-background)",
   },
   {
-    backgroundColor: "#ff5b5926",
-    textColor: "#ff5b59",
+    key: "peach",
     label: "Peach",
+    textColor: "var(--editor-colors-peach-text)",
+    backgroundColor: "var(--editor-colors-peach-background)",
   },
   {
-    backgroundColor: "#f6538526",
-    textColor: "#f65385",
+    key: "pink",
     label: "Pink",
+    textColor: "var(--editor-colors-pink-text)",
+    backgroundColor: "var(--editor-colors-pink-background)",
   },
   {
-    backgroundColor: "#fd903826",
-    textColor: "#fd9038",
+    key: "orange",
     label: "Orange",
+    textColor: "var(--editor-colors-orange-text)",
+    backgroundColor: "var(--editor-colors-orange-background)",
   },
   {
-    backgroundColor: "#0fc27b26",
-    textColor: "#0fc27b",
+    key: "green",
     label: "Green",
+    textColor: "var(--editor-colors-green-text)",
+    backgroundColor: "var(--editor-colors-green-background)",
   },
   {
-    backgroundColor: "#17bee926",
-    textColor: "#17bee9",
+    key: "light-blue",
     label: "Light blue",
+    textColor: "var(--editor-colors-light-blue-text)",
+    backgroundColor: "var(--editor-colors-light-blue-background)",
   },
   {
-    backgroundColor: "#266df026",
-    textColor: "#266df0",
+    key: "dark-blue",
     label: "Dark blue",
+    textColor: "var(--editor-colors-dark-blue-text)",
+    backgroundColor: "var(--editor-colors-dark-blue-background)",
   },
   {
-    backgroundColor: "#9162f926",
-    textColor: "#9162f9",
+    key: "purple",
     label: "Purple",
+    textColor: "var(--editor-colors-purple-text)",
+    backgroundColor: "var(--editor-colors-purple-background)",
   },
+  // {
+  //   key: "pink-blue-gradient",
+  //   label: "Pink blue gradient",
+  //   textColor: "var(--editor-colors-pink-blue-gradient-text)",
+  //   backgroundColor: "var(--editor-colors-pink-blue-gradient-background)",
+  // },
 ];

@@ -12,8 +12,9 @@ const ScopeDelta = (props: Props) => {
   if (prevIndex < 0) return null;
   const prevData = data[prevIndex];
 
-  if (prevData.scope === dataToday.scope) return null;
-  const delta = (((dataToday.scope || 0) - prevData.scope!) / prevData.scope!) * 100;
+  if (prevData.scope === dataToday.scope || !prevData.scope) return null;
+  const delta =
+    prevData.scope === 0 ? 100 : Math.abs(((dataToday.scope || 0) - prevData.scope!) / prevData.scope!) * 100;
   return (
     <div className="flex text-indigo-400 font-medium">
       {prevData.scope! < dataToday.scope! ? (

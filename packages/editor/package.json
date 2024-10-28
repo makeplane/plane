@@ -30,9 +30,8 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "peerDependencies": {
-    "next": "12.3.2",
-    "react": "^18.2.0",
-    "react-dom": "18.2.0"
+    "react": "^18.3.1",
+    "react-dom": "18.3.1"
   },
   "dependencies": {
     "@floating-ui/react": "^0.26.4",
@@ -43,8 +42,6 @@
     "@tiptap/extension-character-count": "^2.6.5",
     "@tiptap/extension-collaboration": "^2.3.2",
     "@tiptap/extension-collaboration-cursor": "^2.6.6",
-    "@tiptap/extension-color": "^2.7.1",
-    "@tiptap/extension-highlight": "^2.7.1",
     "@tiptap/extension-image": "^2.1.13",
     "@tiptap/extension-list-item": "^2.1.13",
     "@tiptap/extension-mention": "^2.1.13",
@@ -79,8 +76,8 @@
     "@plane/eslint-config": "*",
     "@plane/typescript-config": "*",
     "@types/node": "18.15.3",
-    "@types/react": "^18.2.42",
-    "@types/react-dom": "^18.2.17",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.2.18",
     "postcss": "^8.4.38",
     "tailwind-config-custom": "*",
     "tsup": "^7.2.0",

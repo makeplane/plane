@@ -17,9 +17,9 @@ import { IssueActivityService } from "@/services/issue";
 
 export type TActivityLoader = "fetch" | "mutate" | undefined;
 
-export interface IIssueActivityStoreActions extends IIssueActivityStoreActionsCe {}
+export type IIssueActivityStoreActions = IIssueActivityStoreActionsCe;
 
-export interface IIssueActivityStore extends IIssueActivityStoreCe {}
+export type IIssueActivityStore = IIssueActivityStoreCe;
 
 export class IssueActivityStore extends IssueActivityStoreCe implements IIssueActivityStore {
   // services

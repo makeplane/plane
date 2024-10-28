@@ -73,44 +73,53 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
               return (
                 <div
                   key={featureItemKey}
-                  className="flex items-center justify-between gap-x-8 gap-y-2 border-b border-custom-border-100 bg-custom-background-100 pb-2 pt-4 last:border-b-0"
+                  className="gap-x-8 gap-y-2 border-b border-custom-border-100 bg-custom-background-100 pb-2 pt-4"
                 >
-                  <div className="flex items-start gap-3">
-                    <div className="flex items-center justify-center rounded bg-custom-background-90 p-3">
-                      {featureItem.icon}
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h4 className="text-sm font-medium leading-5">{featureItem.title}</h4>
-                        {featureItem.isPro && (
-                          <Tooltip tooltipContent="Pro feature" position="top">
-                            <UpgradeBadge
-                              flag={
-                                featureItem.property === "is_time_tracking_enabled"
-                                  ? E_FEATURE_FLAGS.ISSUE_WORKLOG
-                                  : undefined
-                              }
-                            />
-                          </Tooltip>
-                        )}
+                  <div key={featureItemKey} className="flex items-center justify-between">
+                    <div className="flex items-start gap-3">
+                      <div className="flex items-center justify-center rounded bg-custom-background-90 p-3">
+                        {featureItem.icon}
                       </div>
-                      <p className="text-sm leading-5 tracking-tight text-custom-text-300">{featureItem.description}</p>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h4 className="text-sm font-medium leading-5">{featureItem.title}</h4>
+                          {featureItem.isPro && (
+                            <Tooltip tooltipContent="Pro feature" position="top">
+                              <UpgradeBadge
+                                flag={
+                                  featureItem.property === "is_time_tracking_enabled"
+                                    ? E_FEATURE_FLAGS.ISSUE_WORKLOG
+                                    : undefined
+                                }
+                              />
+                            </Tooltip>
+                          )}
+                        </div>
+                        <p className="text-sm leading-5 tracking-tight text-custom-text-300">
+                          {featureItem.description}
+                        </p>
+                      </div>
                     </div>
-                  </div>
 
-                  <ToggleSwitch
-                    value={Boolean(
-                      currentProjectDetails?.[featureItem.property as keyof IProject] &&
-                        (featureItem.property === "is_time_tracking_enabled" ? isWorklogEnabled : true)
-                    )}
-                    onChange={() => handleSubmit(featureItemKey, featureItem.property)}
-                    disabled={
-                      !featureItem.isEnabled || !isAdmin || featureItem.property === "is_time_tracking_enabled"
-                        ? !isWorklogEnabled
-                        : false
-                    }
-                    size="sm"
-                  />
+                    <ToggleSwitch
+                      value={Boolean(
+                        currentProjectDetails?.[featureItem.property as keyof IProject] &&
+                          (featureItem.property === "is_time_tracking_enabled" ? isWorklogEnabled : true)
+                      )}
+                      onChange={() => handleSubmit(featureItemKey, featureItem.property)}
+                      disabled={
+                        !featureItem.isEnabled || !isAdmin || featureItem.property === "is_time_tracking_enabled"
+                          ? !isWorklogEnabled
+                          : false
+                      }
+                      size="sm"
+                    />
+                  </div>
+                  <div className="pl-14">
+                    {currentProjectDetails?.[featureItem.property as keyof IProject] &&
+                      featureItem.renderChildren &&
+                      featureItem.renderChildren(currentProjectDetails, isAdmin, handleSubmit)}
+                  </div>
                 </div>
               );
             })}

@@ -2,9 +2,12 @@
 
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
+// plane ui
 import { Avatar } from "@plane/ui";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues";
+// helpers
+import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useMember } from "@/hooks/store";
 
@@ -86,7 +89,14 @@ export const FilterUser: React.FC<TFilterUser> = observer((props) => {
                         key={member.id}
                         isChecked={appliedFilters?.includes(member.id) ? true : false}
                         onClick={() => member.id && handleFilter(member.id)}
-                        icon={<Avatar name={member.display_name} src={member.avatar} showTooltip={false} size="md" />}
+                        icon={
+                          <Avatar
+                            name={member.display_name}
+                            src={getFileURL(member.avatar_url)}
+                            showTooltip={false}
+                            size="md"
+                          />
+                        }
                         title={member.display_name.charAt(0).toUpperCase() + member.display_name.slice(1)}
                       />
                     )

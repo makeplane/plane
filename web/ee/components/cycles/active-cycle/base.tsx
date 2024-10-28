@@ -1,5 +1,6 @@
 "use client";
 
+import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { Disclosure } from "@headlessui/react";
 // ui
@@ -19,7 +20,7 @@ export const ActiveCycleBase: React.FC<IActiveCycleDetails> = observer((props) =
   const { workspaceSlug, projectId } = props;
   const cycleDetails = useCycleDetails({ workspaceSlug, projectId });
 
-  if (!cycleDetails.cycle)
+  if (!cycleDetails.cycle || isEmpty(cycleDetails.cycle))
     return (
       <div className="max-h-[500px]">
         <EmptyState type={EmptyStateType.PROJECT_CYCLE_ACTIVE} size="sm" />

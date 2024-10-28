@@ -3,14 +3,7 @@ import json
 
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import (
-    F,
-    Func,
-    OuterRef,
-    Q,
-    Prefetch,
-    Exists,
-)
+from django.db.models import F, Func, OuterRef, Q, Prefetch, Exists, Subquery
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
@@ -29,10 +22,11 @@ from plane.app.serializers import (
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
-    IssueAttachment,
+    FileAsset,
     IssueLink,
     IssueSubscriber,
     IssueReaction,
+    CycleIssue
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -67,7 +61,13 @@ class IssueArchiveViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
-            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(
+                        issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("cycle_id")[:1]
+                )
+            )
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -75,8 +75,9 @@ class IssueArchiveViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -230,12 +231,6 @@ class IssueArchiveViewSet(BaseViewSet):
                     queryset=IssueReaction.objects.select_related(
                         "issue", "actor"
                     ),
-                )
-            )
-            .prefetch_related(
-                Prefetch(
-                    "issue_attachment",
-                    queryset=IssueAttachment.objects.select_related("issue"),
                 )
             )
             .prefetch_related(
