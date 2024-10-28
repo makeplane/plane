@@ -40,13 +40,14 @@ export const addIssuesBulk = async (issues: any, batchSize = 100) => {
 export const deleteIssueFromLocal = async (issue_id: any) => {
   if (!rootStore.user.localDBEnabled || !persistence.db) return;
 
-  const deleteQuery = `delete from issues where id='${issue_id}'`;
+  const deleteQuery = `DELETE from issues where id='${issue_id}'`;
   const deleteMetaQuery = `delete from issue_meta where issue_id='${issue_id}'`;
 
-  persistence.db.exec("BEGIN;");
-  persistence.db.exec(deleteQuery);
-  persistence.db.exec(deleteMetaQuery);
-  persistence.db.exec("COMMIT;");
+  await persistence.db.exec("BEGIN;");
+
+  await persistence.db.exec(deleteQuery);
+  await persistence.db.exec(deleteMetaQuery);
+  await persistence.db.exec("COMMIT;");
 };
 // @todo: Update deletes the issue description from local. Implement a separate update.
 export const updateIssue = async (issue: TIssue & { is_local_update: number }) => {
@@ -55,7 +56,7 @@ export const updateIssue = async (issue: TIssue & { is_local_update: number }) =
   const issue_id = issue.id;
   // delete the issue and its meta data
   await deleteIssueFromLocal(issue_id);
-  addIssue(issue);
+  await addIssue(issue);
 };
 
 export const syncDeletesToLocal = async (workspaceId: string, projectId: string, queries: any) => {
@@ -98,27 +99,33 @@ const stageIssueInserts = async (issue: any) => {
     .join(", ");
 
   const query = `INSERT OR REPLACE INTO issues (${columns}) VALUES (${values});`;
-  persistence.db.exec(query);
+  await persistence.db.exec(query);
 
   await persistence.db.exec({
     sql: `DELETE from issue_meta where issue_id='${issue_id}'`,
   });
 
+  const metaPromises: Promise<any>[] = [];
+
   ARRAY_FIELDS.forEach((field) => {
     const values = issue[field];
     if (values && values.length) {
       values.forEach((val: any) => {
-        persistence.db.exec({
+        const p = persistence.db.exec({
           sql: `INSERT OR REPLACE  into issue_meta(issue_id,key,value) values (?,?,?) `,
           bind: [issue_id, field, val],
         });
+        metaPromises.push(p);
       });
     } else {
       // Added for empty fields?
-      persistence.db.exec({
+      const p = persistence.db.exec({
         sql: `INSERT OR REPLACE  into issue_meta(issue_id,key,value) values (?,?,?) `,
         bind: [issue_id, field, ""],
       });
+      metaPromises.push(p);
     }
   });
+
+  await Promise.all(metaPromises);
 };
