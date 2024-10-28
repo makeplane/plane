@@ -235,7 +235,10 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             }
 
         # Project Cover
-        if entity_type == FileAsset.EntityTypeContext.PROJECT_COVER:
+        if (
+            entity_type == FileAsset.EntityTypeContext.PROJECT_COVER
+            or entity_type == FileAsset.EntityTypeContext.PROJECT_LOGO
+        ):
             return {
                 "project_id": entity_id,
             }
@@ -563,7 +566,10 @@ class ProjectAssetEndpoint(BaseAPIView):
                 "workspace_id": entity_id,
             }
 
-        if entity_type == FileAsset.EntityTypeContext.PROJECT_COVER:
+        if (
+            entity_type == FileAsset.EntityTypeContext.PROJECT_COVER
+            or entity_type == FileAsset.EntityTypeContext.PROJECT_LOGO
+        ):
             return {
                 "project_id": entity_id,
             }
@@ -769,10 +775,20 @@ class ProjectBulkAssetEndpoint(BaseAPIView):
             )
 
         # Check if the asset is uploaded
-        if asset.entity_type == FileAsset.EntityTypeContext.PROJECT_COVER:
+        if (
+            asset.entity_type == FileAsset.EntityTypeContext.PROJECT_COVER
+            or asset.entity_type == FileAsset.EntityTypeContext.PROJECT_LOGO
+        ):
+            # Update the project cover image
             assets.update(
                 project_id=project_id,
             )
+
+            # Update the project cover image
+            if asset.entity_type == FileAsset.EntityTypeContext.PROJECT_COVER:
+                project = Project.objects.get(id=project_id)
+                project.cover_image_asset_id = asset.id
+                project.save()
 
         if asset.entity_type == FileAsset.EntityTypeContext.ISSUE_DESCRIPTION:
             assets.update(
