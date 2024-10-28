@@ -17,13 +17,14 @@ import { IssueAttachmentDeleteModal } from "./delete-attachment-modal";
 
 type TIssueAttachmentItemList = {
   workspaceSlug: string;
+  projectId: string;
   issueId: string;
   attachmentHelpers: TAttachmentHelpers;
   disabled?: boolean;
 };
 
 export const IssueAttachmentItemList: FC<TIssueAttachmentItemList> = observer((props) => {
-  const { workspaceSlug, issueId, attachmentHelpers, disabled } = props;
+  const { workspaceSlug, projectId, issueId, attachmentHelpers, disabled } = props;
   // states
   const [isUploading, setIsUploading] = useState(false);
   // store hooks
@@ -31,6 +32,7 @@ export const IssueAttachmentItemList: FC<TIssueAttachmentItemList> = observer((p
     attachment: { getAttachmentsByIssueId },
     attachmentDeleteModalId,
     toggleDeleteAttachmentModal,
+    fetchActivities,
   } = useIssueDetail();
   const { operations: attachmentOperations, snapshot: attachmentSnapshot } = attachmentHelpers;
   const { create: createAttachment } = attachmentOperations;
@@ -39,6 +41,11 @@ export const IssueAttachmentItemList: FC<TIssueAttachmentItemList> = observer((p
   const { maxFileSize } = useFileSize();
   // derived values
   const issueAttachments = getAttachmentsByIssueId(issueId);
+
+  // handlers
+  const handleFetchPropertyActivities = useCallback(() => {
+    fetchActivities(workspaceSlug, projectId, issueId);
+  }, [fetchActivities, workspaceSlug, projectId, issueId]);
 
   const onDrop = useCallback(
     (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
@@ -57,7 +64,10 @@ export const IssueAttachmentItemList: FC<TIssueAttachmentItemList> = observer((p
               message: "File could not be attached. Try uploading again.",
             });
           })
-          .finally(() => setIsUploading(false));
+          .finally(() => {
+            handleFetchPropertyActivities();
+            setIsUploading(false);
+          });
         return;
       }
 
@@ -71,7 +81,7 @@ export const IssueAttachmentItemList: FC<TIssueAttachmentItemList> = observer((p
       });
       return;
     },
-    [createAttachment, maxFileSize, workspaceSlug]
+    [createAttachment, maxFileSize, workspaceSlug, handleFetchPropertyActivities]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

@@ -20,6 +20,7 @@ export const IssueAttachmentsCollapsibleContent: FC<Props> = observer((props) =>
   return (
     <IssueAttachmentItemList
       workspaceSlug={workspaceSlug}
+      projectId={projectId}
       issueId={issueId}
       disabled={disabled}
       attachmentHelpers={attachmentHelpers}

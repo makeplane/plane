@@ -57,6 +57,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             Issue.issue_objects.filter(
                 state__group="cancelled",
                 issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
             .annotate(cnt=Count("pk"))
@@ -66,6 +67,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             Issue.issue_objects.filter(
                 state__group="completed",
                 issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
             .annotate(cnt=Count("pk"))
@@ -75,6 +77,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             Issue.issue_objects.filter(
                 state__group="started",
                 issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
             .annotate(cnt=Count("pk"))
@@ -84,6 +87,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             Issue.issue_objects.filter(
                 state__group="unstarted",
                 issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
             .annotate(cnt=Count("pk"))
@@ -93,6 +97,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             Issue.issue_objects.filter(
                 state__group="backlog",
                 issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
             .annotate(cnt=Count("pk"))
@@ -101,6 +106,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
         total_issues = (
             Issue.issue_objects.filter(
                 issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
             .annotate(cnt=Count("pk"))
@@ -111,6 +117,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                 estimate_point__estimate__type="points",
                 state__group="completed",
                 issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
             .annotate(
@@ -125,6 +132,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             Issue.issue_objects.filter(
                 estimate_point__estimate__type="points",
                 issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
             .annotate(
@@ -139,6 +147,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                 estimate_point__estimate__type="points",
                 state__group="backlog",
                 issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
             .annotate(
@@ -153,6 +162,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                 estimate_point__estimate__type="points",
                 state__group="unstarted",
                 issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
             .annotate(
@@ -167,6 +177,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                 estimate_point__estimate__type="points",
                 state__group="started",
                 issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
             .annotate(
@@ -181,6 +192,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                 estimate_point__estimate__type="points",
                 state__group="cancelled",
                 issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
             .annotate(
@@ -337,6 +349,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                         project_id=self.kwargs.get("project_id"),
                         parent__isnull=False,
                         issue_module__module_id=pk,
+                        issue_module__deleted_at__isnull=True,
                     )
                     .order_by()
                     .annotate(count=Func(F("id"), function="Count"))
@@ -360,6 +373,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                 assignee_distribution = (
                     Issue.issue_objects.filter(
                         issue_module__module_id=pk,
+                        issue_module__deleted_at__isnull=True,
                         workspace__slug=slug,
                         project_id=project_id,
                     )
@@ -478,6 +492,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             assignee_distribution = (
                 Issue.issue_objects.filter(
                     issue_module__module_id=pk,
+                    issue_module__deleted_at__isnull=True,
                     workspace__slug=slug,
                     project_id=project_id,
                 )
@@ -547,6 +562,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             label_distribution = (
                 Issue.issue_objects.filter(
                     issue_module__module_id=pk,
+                    issue_module__deleted_at__isnull=True,
                     workspace__slug=slug,
                     project_id=project_id,
                 )

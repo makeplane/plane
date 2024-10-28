@@ -9,7 +9,7 @@ import { TAttachmentUploadStatus } from "@/store/issue/issue-details/attachment.
 
 export type TAttachmentOperations = {
   create: (file: File) => Promise<void>;
-  remove: (linkId: string) => Promise<void>;
+  remove: (attachmentId: string) => Promise<void>;
 };
 
 export type TAttachmentSnapshot = {

@@ -25,17 +25,22 @@ def issue_queryset_grouper(queryset, group_by, sub_group_by):
     }
 
     annotations_map = {
-        "assignee_ids": ("assignees__id", ~Q(assignees__id__isnull=True)),
+        "assignee_ids": (
+            "assignees__id",
+            ~Q(assignees__id__isnull=True)
+            & Q(issue_assignee__deleted_at__isnull=True),
+        ),
         "label_ids": (
             "labels__id",
-            ~Q(labels__id__isnull=True) & (Q(labels__deleted_at__isnull=True)),
+            ~Q(labels__id__isnull=True)
+            & Q(label_issue__deleted_at__isnull=True),
         ),
         "module_ids": (
             "issue_module__module_id",
             (
                 ~Q(issue_module__module_id__isnull=True)
                 & Q(issue_module__module__archived_at__isnull=True)
-                & Q(issue_module__module__deleted_at__isnull=True)
+                & Q(issue_module__deleted_at__isnull=True)
             ),
         ),
     }
