@@ -151,7 +151,7 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
         issueId,
         file,
         (progressEvent) => {
-          const progressPercentage = Number(((progressEvent.progress ?? 0) * 100).toFixed(0));
+          const progressPercentage = Math.round((progressEvent.progress ?? 0) * 100);
           this.debouncedUpdateProgress(issueId, tempId, progressPercentage);
         }
       );
