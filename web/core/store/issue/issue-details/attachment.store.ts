@@ -130,7 +130,7 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
     runInAction(() => {
       set(this.attachmentsUploadStatusMap, [issueId, tempId, "progress"], progress);
     });
-  }, 100);
+  }, 16);
 
   createAttachment = async (workspaceSlug: string, projectId: string, issueId: string, file: File) => {
     const tempId = uuidv4();
