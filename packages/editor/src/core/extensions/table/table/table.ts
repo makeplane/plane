@@ -111,12 +111,15 @@ export const Table = Node.create({
         ({ rows = 3, cols = 3, withHeaderRow = false } = {}) =>
         ({ tr, dispatch, editor }) => {
           const node = createTable(editor.schema, rows, cols, withHeaderRow);
-          if (dispatch) {
-            const offset = tr.selection.anchor + 1;
 
-            tr.replaceSelectionWith(node)
+          if (dispatch) {
+            const { selection } = tr;
+            const position = selection.$from.before(selection.$from.depth);
+
+            // Insert the table at the calculated position
+            tr.insert(position, node)
               .scrollIntoView()
-              .setSelection(TextSelection.near(tr.doc.resolve(offset)));
+              .setSelection(TextSelection.near(tr.doc.resolve(position + 1)));
           }
 
           return true;
