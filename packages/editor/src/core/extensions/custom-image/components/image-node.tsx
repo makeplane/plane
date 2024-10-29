@@ -17,7 +17,7 @@ export type CustomImageNodeProps = NodeViewProps & CustoBaseImageNodeViewProps;
 
 export const CustomImageNode = (props: CustomImageNodeProps) => {
   const { getPos, editor, node, updateAttributes, selected } = props;
-  const { src: remoteImageSrc } = node.attrs;
+  const { src: imgNodeSrc } = node.attrs;
 
   const [isUploaded, setIsUploaded] = useState(false);
   const [resolvedSrc, setResolvedSrc] = useState<string | undefined>(undefined);
@@ -40,18 +40,18 @@ export const CustomImageNode = (props: CustomImageNodeProps) => {
   // the image is already uploaded if the image-component node has src attribute
   // and we need to remove the blob from our file system
   useEffect(() => {
-    if (remoteImageSrc) {
+    if (imgNodeSrc) {
       setIsUploaded(true);
       setImageFromFileSystem(undefined);
     } else {
       setIsUploaded(false);
     }
-  }, [remoteImageSrc]);
+  }, [imgNodeSrc]);
 
   useEffect(() => {
     const getImageSource = async () => {
       // @ts-expect-error function not expected here, but will still work and don't remove await
-      const url: string = await editor?.commands?.getImageSource?.(remoteImageSrc);
+      const url: string = await editor?.commands?.getImageSource?.(imgNodeSrc);
       setResolvedSrc(url as string);
     };
     getImageSource();

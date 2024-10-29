@@ -31,7 +31,7 @@ export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
   const { anchor, uploadFile, workspaceId } = args;
 
   return {
-    getAssetSrc: (path) => {
+    getAssetSrc: async (path) => {
       if (!path) return "";
       if (path?.startsWith("http")) {
         return path;

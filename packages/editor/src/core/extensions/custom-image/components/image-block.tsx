@@ -56,10 +56,10 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
     getPos,
     editor,
     editorContainer,
-    src: remoteImageSrc,
+    src: resolvedImageSrc,
     setEditorContainer,
   } = props;
-  const { width: nodeWidth, height: nodeHeight, aspectRatio: nodeAspectRatio } = node.attrs;
+  const { width: nodeWidth, height: nodeHeight, aspectRatio: nodeAspectRatio, src: imgNodeSrc } = node.attrs;
   // states
   const [size, setSize] = useState<Size>({
     width: ensurePixelString(nodeWidth, "35%"),
@@ -210,13 +210,13 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
 
   // show the image loader if the remote image's src or preview image from filesystem is not set yet (while loading the image post upload) (or)
   // if the initial resize (from 35% width and "auto" height attrs to the actual size in px) is not complete
-  const showImageLoader = !(remoteImageSrc || imageFromFileSystem) || !initialResizeComplete || hasErroredOnFirstLoad;
+  const showImageLoader = !(resolvedImageSrc || imageFromFileSystem) || !initialResizeComplete || hasErroredOnFirstLoad;
   // show the image utils only if the remote image's (post upload) src is set and the initial resize is complete (but not while we're showing the preview imageFromFileSystem)
-  const showImageUtils = remoteImageSrc && initialResizeComplete;
+  const showImageUtils = resolvedImageSrc && initialResizeComplete;
   // show the image resizer only if the editor is editable, the remote image's (post upload) src is set and the initial resize is complete (but not while we're showing the preview imageFromFileSystem)
-  const showImageResizer = editor.isEditable && remoteImageSrc && initialResizeComplete;
+  const showImageResizer = editor.isEditable && resolvedImageSrc && initialResizeComplete;
   // show the preview image from the file system if the remote image's src is not set
-  const displayedImageSrc = remoteImageSrc || imageFromFileSystem;
+  const displayedImageSrc = resolvedImageSrc || imageFromFileSystem;
 
   return (
     <div
@@ -248,8 +248,8 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
           try {
             setHasErroredOnFirstLoad(true);
             // this is a type error from tiptap, don't remove await until it's fixed
-            await editor?.commands.restoreImage?.(node.attrs.src);
-            imageRef.current.src = remoteImageSrc;
+            await editor?.commands.restoreImage?.(imgNodeSrc);
+            imageRef.current.src = resolvedImageSrc;
           } catch {
             // if the image failed to even restore, then show the error state
             setFailedToLoadImage(true);
@@ -264,7 +264,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
           // hide the image while the background calculations of the image loader are in progress (to avoid flickering) and show the loader until then
           hidden: showImageLoader,
           "read-only-image": !editor.isEditable,
-          "blur-sm opacity-80 loading-image": !remoteImageSrc,
+          "blur-sm opacity-80 loading-image": !resolvedImageSrc,
         })}
         style={{
           width: size.width,
@@ -277,14 +277,14 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
             "absolute top-1 right-1 z-20 bg-black/40 rounded opacity-0 pointer-events-none group-hover/image-component:opacity-100 group-hover/image-component:pointer-events-auto transition-opacity"
           }
           image={{
-            src: remoteImageSrc,
+            src: resolvedImageSrc,
             aspectRatio: size.aspectRatio,
             height: size.height,
             width: size.width,
           }}
         />
       )}
-      {selected && displayedImageSrc === remoteImageSrc && (
+      {selected && displayedImageSrc === resolvedImageSrc && (
         <div className="absolute inset-0 size-full bg-custom-primary-500/30" />
       )}
       {showImageResizer && (
