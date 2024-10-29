@@ -265,3 +265,11 @@ export const replaceCustomComponentsFromMarkdownContent = (props: {
   parsedMarkdownContent = parsedMarkdownContent.replace(issueEmbedRegex, "");
   return parsedMarkdownContent;
 };
+
+export const getTextContent = (jsx: JSX.Element | React.ReactNode | null | undefined): string => {
+  if (!jsx) return "";
+
+  const div = document.createElement("div");
+  div.innerHTML = jsx.toString();
+  return div.textContent?.trim() ?? "";
+};
