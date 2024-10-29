@@ -40,13 +40,13 @@ export const CustomImageNode = (props: CustomImageNodeProps) => {
   // the image is already uploaded if the image-component node has src attribute
   // and we need to remove the blob from our file system
   useEffect(() => {
-    if (imgNodeSrc) {
+    if (resolvedSrc) {
       setIsUploaded(true);
       setImageFromFileSystem(undefined);
     } else {
       setIsUploaded(false);
     }
-  }, [imgNodeSrc]);
+  }, [resolvedSrc]);
 
   useEffect(() => {
     const getImageSource = async () => {

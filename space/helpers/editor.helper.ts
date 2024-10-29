@@ -70,7 +70,7 @@ export const getReadOnlyEditorFileHandlers = (
   const { anchor } = args;
 
   return {
-    getAssetSrc: (path) => {
+    getAssetSrc: async (path) => {
       if (!path) return "";
       if (path?.startsWith("http")) {
         return path;
