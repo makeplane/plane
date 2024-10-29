@@ -23,7 +23,6 @@ import { IProjectViewStore, ProjectViewStore } from "./project-view.store";
 import { RouterStore, IRouterStore } from "./router.store";
 import { IStateStore, StateStore } from "./state.store";
 import { ThemeStore, IThemeStore } from "./theme.store";
-import { ITimelineStore, TimeLineStore } from "./timeline";
 import { ITransientStore, TransientStore } from "./transient.store";
 import { IUserStore, UserStore } from "./user";
 import { IWorkspaceRootStore, WorkspaceRootStore } from "./workspace";
@@ -57,7 +56,6 @@ export class CoreRootStore {
   workspaceNotification: IWorkspaceNotificationStore;
   favorite: IFavoriteStore;
   transient: ITransientStore;
-  timelineStore: ITimelineStore;
 
   constructor() {
     this.router = new RouterStore();
@@ -86,7 +84,6 @@ export class CoreRootStore {
     this.workspaceNotification = new WorkspaceNotificationStore(this);
     this.favorite = new FavoriteStore(this);
     this.transient = new TransientStore();
-    this.timelineStore = new TimeLineStore(this);
   }
 
   resetOnSignOut() {
