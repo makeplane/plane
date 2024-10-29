@@ -7,7 +7,6 @@ import { TIssueEmbedConfig } from "@/plane-editor/types";
 import { TExtensions, TUserDetails } from "@/types";
 
 type Props = {
-  slashCommandEnabled?: boolean;
   disabledExtensions?: TExtensions[];
   issueEmbedConfig: TIssueEmbedConfig | undefined;
   provider: HocuspocusProvider;
@@ -15,8 +14,8 @@ type Props = {
 };
 
 export const DocumentEditorAdditionalExtensions = (_props: Props) => {
-  const { slashCommandEnabled } = _props;
-  const extensions: Extensions = slashCommandEnabled ? [SlashCommands()] : [];
+  const { disabledExtensions } = _props;
+  const extensions: Extensions = disabledExtensions?.includes("slash-commands") ? [] : [SlashCommands()];
 
   return extensions;
 };

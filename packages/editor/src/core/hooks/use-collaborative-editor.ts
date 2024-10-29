@@ -13,7 +13,6 @@ import { TCollaborativeEditorProps } from "@/types";
 
 export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
   const {
-    slashCommandEnabled,
     onTransaction,
     disabledExtensions,
     editorClassName,
@@ -92,7 +91,6 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
       }),
       ...(extensions ?? []),
       ...DocumentEditorAdditionalExtensions({
-        slashCommandEnabled,
         disabledExtensions,
         issueEmbedConfig: embedHandler?.issue,
         provider,

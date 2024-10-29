@@ -9,9 +9,9 @@ import { EditorRefApi, IRichTextEditor } from "@/types";
 
 const RichTextEditor = (props: IRichTextEditor) => {
   const {
+    disabledExtensions,
     dragDropEnabled,
     bubbleMenuEnabled = true,
-    slashCommandEnabled = true,
     extensions: externalExtensions = [],
   } = props;
 
@@ -23,12 +23,12 @@ const RichTextEditor = (props: IRichTextEditor) => {
         dragDropEnabled: !!dragDropEnabled,
       }),
     ];
-    if (slashCommandEnabled) {
+    if (!disabledExtensions?.includes("slash-commands")) {
       extensions.push(SlashCommands());
     }
 
     return extensions;
-  }, [dragDropEnabled, slashCommandEnabled, externalExtensions]);
+  }, [dragDropEnabled, disabledExtensions, externalExtensions]);
 
   return (
     <EditorWrapper {...props} extensions={getExtensions()}>

@@ -7,11 +7,14 @@ import { EnterKeyExtension } from "@/extensions";
 import { EditorRefApi, ILiteTextEditor } from "@/types";
 
 const LiteTextEditor = (props: ILiteTextEditor) => {
-  const { onEnterKeyPress, isEnterExtensionEnabled = true, extensions: externalExtensions = [] } = props;
+  const { onEnterKeyPress, disabledExtensions, extensions: externalExtensions = [] } = props;
 
   const extensions = useMemo(
-    () => [...externalExtensions, ...(isEnterExtensionEnabled ? [EnterKeyExtension(onEnterKeyPress)] : [])],
-    [externalExtensions, isEnterExtensionEnabled, onEnterKeyPress]
+    () => [
+      ...externalExtensions,
+      ...(disabledExtensions?.includes("enter-key") ? [] : [EnterKeyExtension(onEnterKeyPress)]),
+    ],
+    [externalExtensions, disabledExtensions, onEnterKeyPress]
   );
 
   return <EditorWrapper {...props} extensions={extensions} />;

@@ -71,6 +71,7 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
 export interface IEditorProps {
   containerClassName?: string;
   displayConfig?: TDisplayConfig;
+  disabledExtensions?: TExtensions[];
   editorClassName?: string;
   fileHandler: TFileHandler;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
@@ -87,24 +88,20 @@ export interface IEditorProps {
   onEnterKeyPress?: (e?: any) => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
-  value?: string | null;
+  value?: string | null; 
 }
 export interface ILiteTextEditor extends IEditorProps {
-  isEnterExtensionEnabled?: boolean;
   extensions?: any[];
 }
 export interface IRichTextEditor extends IEditorProps {
   extensions?: any[];
-  slashCommandEnabled?: boolean;
   bubbleMenuEnabled?: boolean;
   dragDropEnabled?: boolean;
 }
 
 export interface ICollaborativeDocumentEditor
   extends Omit<IEditorProps, "initialValue" | "onChange" | "onEnterKeyPress" | "value"> {
-  slashCommandEnabled?: boolean;
   aiHandler?: TAIHandler;
-  disabledExtensions: TExtensions[];
   embedHandler: TEmbedConfig;
   handleEditorReady?: (value: boolean) => void;
   id: string;
