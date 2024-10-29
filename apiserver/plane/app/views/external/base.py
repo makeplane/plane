@@ -1,23 +1,22 @@
-# Python imports
-import requests
+# Python import
 import os
 
-# Third party imports
-from openai import OpenAI
-from rest_framework.response import Response
+# Third party import
+import litellm
+import requests
+
+from litellm import completion
 from rest_framework import status
+from rest_framework.response import Response
 
-# Django imports
-
-# Module imports
-from ..base import BaseAPIView
-from plane.app.permissions import allow_permission, ROLE
-from plane.db.models import Workspace, Project
-from plane.app.serializers import (
-    ProjectLiteSerializer,
-    WorkspaceLiteSerializer,
-)
+# Module import
+from plane.app.permissions import ROLE, allow_permission
+from plane.app.serializers import (ProjectLiteSerializer,
+                                   WorkspaceLiteSerializer)
+from plane.db.models import Project, Workspace
 from plane.license.utils.instance_value import get_configuration_value
+
+from ..base import BaseAPIView
 
 
 class GPTIntegrationEndpoint(BaseAPIView):
@@ -32,7 +31,7 @@ class GPTIntegrationEndpoint(BaseAPIView):
                 },
                 {
                     "key": "GPT_ENGINE",
-                    "default": os.environ.get("GPT_ENGINE", "gpt-3.5-turbo"),
+                    "default": os.environ.get("GPT_ENGINE", "gpt-4o-mini"),
                 },
             ]
         )
@@ -56,11 +55,8 @@ class GPTIntegrationEndpoint(BaseAPIView):
 
         final_text = task + "\n" + prompt
 
-        client = OpenAI(
-            api_key=OPENAI_API_KEY,
-        )
-
-        response = client.chat.completions.create(
+        litellm.api_key = OPENAI_API_KEY
+        response = completion(
             model=GPT_ENGINE,
             messages=[{"role": "user", "content": final_text}],
         )
@@ -95,7 +91,7 @@ class WorkspaceGPTIntegrationEndpoint(BaseAPIView):
                 },
                 {
                     "key": "GPT_ENGINE",
-                    "default": os.environ.get("GPT_ENGINE", "gpt-3.5-turbo"),
+                    "default": os.environ.get("GPT_ENGINE", "gpt-4o-mini"),
                 },
             ]
         )
@@ -119,11 +115,8 @@ class WorkspaceGPTIntegrationEndpoint(BaseAPIView):
 
         final_text = task + "\n" + prompt
 
-        client = OpenAI(
-            api_key=OPENAI_API_KEY,
-        )
-
-        response = client.chat.completions.create(
+        litellm.api_key = OPENAI_API_KEY
+        response = completion(
             model=GPT_ENGINE,
             messages=[{"role": "user", "content": final_text}],
         )
