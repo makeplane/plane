@@ -2,12 +2,15 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
+// import { useParams } from "next/navigation";
 import { AlertTriangle } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // ui
 import { Button } from "@plane/ui";
 // hooks
 import { useUser } from "@/hooks/store";
+// plane web hooks
+// import { useWorkspaceSubscription } from "@/plane-web/hooks/store/use-workspace-subscription";
 
 export type Props = {
   isOpen: boolean;
@@ -21,10 +24,13 @@ export type Props = {
 
 export const ConfirmWorkspaceMemberRemove: React.FC<Props> = observer((props) => {
   const { isOpen, onClose, onSubmit, userDetails } = props;
+  // router
+  // const { workspaceSlug } = useParams();
   // states
   const [isRemoving, setIsRemoving] = useState(false);
   // store hooks
   const { data: currentUser } = useUser();
+  // const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, updateSubscribedPlan } = useWorkspaceSubscription();
 
   const handleClose = () => {
     onClose();
@@ -33,8 +39,13 @@ export const ConfirmWorkspaceMemberRemove: React.FC<Props> = observer((props) =>
 
   const handleDeletion = async () => {
     setIsRemoving(true);
-
     await onSubmit();
+
+    // await onSubmit().then(() => {
+    //   updateSubscribedPlan(workspaceSlug?.toString(), {
+    //     total_seats: (subscriptionDetail?.total_seats ?? 1) - 1,
+    //   });
+    // });
 
     handleClose();
   };

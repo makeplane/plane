@@ -6,6 +6,9 @@ from urllib.parse import urlencode
 import pytz
 import requests
 
+# Django imports
+from django.conf import settings
+
 # Module imports
 from plane.authentication.adapter.oauth import OauthAdapter
 from plane.license.utils.instance_value import get_configuration_value
@@ -16,14 +19,20 @@ from plane.authentication.adapter.error import (
 
 
 class GitHubOAuthProvider(OauthAdapter):
-
     token_url = "https://github.com/login/oauth/access_token"
     userinfo_url = "https://api.github.com/user"
     provider = "github"
     scope = "read:user user:email"
 
-    def __init__(self, request, code=None, state=None, callback=None):
-
+    def __init__(
+        self,
+        request,
+        code=None,
+        state=None,
+        callback=None,
+        redirect_uri=None,
+        is_mobile=False,
+    ):
         GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET = get_configuration_value(
             [
                 {
@@ -46,7 +55,20 @@ class GitHubOAuthProvider(OauthAdapter):
         client_id = GITHUB_CLIENT_ID
         client_secret = GITHUB_CLIENT_SECRET
 
-        redirect_uri = f"""{"https" if request.is_secure() else "http"}://{request.get_host()}/auth/github/callback/"""
+        scheme = (
+            "https"
+            if settings.IS_HEROKU
+            else "https"
+            if request.is_secure()
+            else "http"
+        )
+
+        redirect_uri = (
+            redirect_uri
+            if redirect_uri
+            else (f"""{scheme}://{request.get_host()}/auth/github/callback/""")
+        )
+
         url_params = {
             "client_id": client_id,
             "redirect_uri": redirect_uri,
@@ -68,6 +90,7 @@ class GitHubOAuthProvider(OauthAdapter):
             client_secret,
             code,
             callback=callback,
+            is_mobile=is_mobile,
         )
 
     def set_token_data(self):

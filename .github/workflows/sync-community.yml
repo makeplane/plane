@@ -1,0 +1,55 @@
+name: Sync from Community Repo
+
+on:
+  #   schedule:
+  #     - cron: "*/30 * * * *" # Runs every 30 minutes
+  workflow_dispatch:
+    inputs:
+      source_branch:
+        description: "Source branch in Community repo"
+        required: true
+        default: "preview"
+      target_branch:
+        description: "Target branch in Enterprise repo"
+        required: true
+        default: "preview"
+
+jobs:
+  sync-from-community-repo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout enterprise repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Set branch names
+        run: |
+          echo "SOURCE_BRANCH=${{ github.event.inputs.source_branch || 'preview' }}" >> $GITHUB_ENV
+          echo "TARGET_BRANCH=${{ github.event.inputs.target_branch || 'preview' }}" >> $GITHUB_ENV
+          echo "SYNC_BRANCH=sync-${{ github.run_id }}" >> $GITHUB_ENV
+
+      - name: Create sync branch
+        run: git checkout -b ${{ env.SYNC_BRANCH }}
+
+      - name: Fetch from community repository
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git remote add community https://github.com/makeplane/plane.git
+          git reset --hard community/${{ env.SOURCE_BRANCH }}
+
+      - name: Create Pull Request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_TITLE="Sync changes from community repo"
+          EXISTING_PR=$(gh pr list --base ${{ env.TARGET_BRANCH }} --head ${{ env.SYNC_BRANCH }} --json number --jq '.[0].number')
+          if [ -z "$EXISTING_PR" ]; then
+            pr_url=$(gh pr create --base ${{ env.TARGET_BRANCH }} --head ${{ env.SYNC_BRANCH }} --title "$PR_TITLE" --body "This PR syncs changes from the community repository's ${{ env.SOURCE_BRANCH }} branch.")
+            echo "New Pull Request created: $pr_url"
+          else
+            echo "Pull Request already exists with number: $EXISTING_PR"
+            gh pr edit $EXISTING_PR --title "$PR_TITLE" --body "This PR syncs changes from the community repository's ${{ env.SOURCE_BRANCH }} branch. (Updated)"
+            echo "Existing Pull Request updated"
+          fi
