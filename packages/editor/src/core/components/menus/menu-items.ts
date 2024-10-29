@@ -215,9 +215,7 @@ export const HorizontalRuleItem = (editor: Editor) =>
     key: "divider",
     name: "Divider",
     isActive: () => editor?.isActive("horizontalRule"),
-    command: () => {
-      insertHorizontalRule(editor);
-    },
+    command: () => insertHorizontalRule(editor),
     icon: MinusSquare,
   }) as const;
 
