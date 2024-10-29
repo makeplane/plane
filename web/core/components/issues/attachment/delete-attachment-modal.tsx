@@ -8,19 +8,19 @@ import { getFileName } from "@/helpers/attachment.helper";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // types
-import { TAttachmentOperations } from "./root";
+import { TAttachmentOperations } from "../issue-detail-widgets/attachments/helper";
 
-export type TAttachmentOperationsRemoveModal = Exclude<TAttachmentOperations, "create">;
+export type TAttachmentOperationsRemoveModal = Pick<TAttachmentOperations, "remove">;
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
   attachmentId: string;
-  handleAttachmentOperations: TAttachmentOperationsRemoveModal;
+  attachmentOperations: TAttachmentOperationsRemoveModal;
 };
 
 export const IssueAttachmentDeleteModal: FC<Props> = observer((props) => {
-  const { isOpen, onClose, attachmentId, handleAttachmentOperations } = props;
+  const { isOpen, onClose, attachmentId, attachmentOperations } = props;
   // states
   const [loader, setLoader] = useState(false);
 
@@ -40,7 +40,7 @@ export const IssueAttachmentDeleteModal: FC<Props> = observer((props) => {
 
   const handleDeletion = async (assetId: string) => {
     setLoader(true);
-    handleAttachmentOperations.remove(assetId).finally(() => handleClose());
+    attachmentOperations.remove(assetId).finally(() => handleClose());
   };
 
   if (!attachment) return <></>;
