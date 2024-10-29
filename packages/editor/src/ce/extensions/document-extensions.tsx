@@ -7,7 +7,7 @@ import { TIssueEmbedConfig } from "@/plane-editor/types";
 import { TExtensions, TUserDetails } from "@/types";
 
 type Props = {
-  slashCommandEnabled: boolean;
+  slashCommandEnabled?: boolean;
   disabledExtensions?: TExtensions[];
   issueEmbedConfig: TIssueEmbedConfig | undefined;
   provider: HocuspocusProvider;
