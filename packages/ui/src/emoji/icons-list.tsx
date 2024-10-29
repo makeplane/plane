@@ -12,7 +12,7 @@ import { cn } from "../../helpers";
 import { DEFAULT_COLORS, TIconsListProps, adjustColorForContrast } from "./emoji-icon-helper";
 
 export const IconsList: React.FC<TIconsListProps> = (props) => {
-  const { defaultColor, onChange } = props;
+  const { defaultColor, onChange, searchDisabled = false } = props;
   // states
   const [activeColor, setActiveColor] = useState(defaultColor);
   const [showHexInput, setShowHexInput] = useState(false);
@@ -42,21 +42,23 @@ export const IconsList: React.FC<TIconsListProps> = (props) => {
   return (
     <>
       <div className="flex flex-col sticky top-0 bg-custom-background-100">
-        <div className="flex items-center px-2 py-[15px] w-full ">
-          <div
-            className={`relative flex items-center gap-2 bg-custom-background-90 h-10 rounded-lg w-full px-[30px] border ${isInputFocused ? "border-custom-primary-100" : "border-transparent"}`}
-            onFocus={() => setIsInputFocused(true)}
-            onBlur={() => setIsInputFocused(false)}
-          >
-            <Search className="absolute left-2.5 bottom-3 h-3.5 w-3.5 text-custom-text-400" />
-            <Input
-              placeholder="Search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="text-[1rem] border-none p-0 h-full w-full "
-            />
+        {!searchDisabled && (
+          <div className="flex items-center px-2 py-[15px] w-full ">
+            <div
+              className={`relative flex items-center gap-2 bg-custom-background-90 h-10 rounded-lg w-full px-[30px] border ${isInputFocused ? "border-custom-primary-100" : "border-transparent"}`}
+              onFocus={() => setIsInputFocused(true)}
+              onBlur={() => setIsInputFocused(false)}
+            >
+              <Search className="absolute left-2.5 bottom-3 h-3.5 w-3.5 text-custom-text-400" />
+              <Input
+                placeholder="Search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                className="text-[1rem] border-none p-0 h-full w-full "
+              />
+            </div>
           </div>
-        </div>
+        )}
         <div className="grid grid-cols-9 gap-2 items-center justify-items-center px-2.5 py-1 h-9">
           {showHexInput ? (
             <div className="col-span-8 flex items-center gap-1 justify-self-stretch ml-2">

@@ -3,6 +3,7 @@ export const emojiCodeToUnicode = (emoji: string) => {
 
   // convert emoji code to unicode
   const uniCodeEmoji = emoji
+    .toString()
     .split("-")
     .map((emoji) => parseInt(emoji, 10).toString(16))
     .join("-");

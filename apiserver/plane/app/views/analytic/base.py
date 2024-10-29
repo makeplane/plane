@@ -110,7 +110,10 @@ class AnalyticsEndpoint(BaseAPIView):
         if x_axis in ["labels__id"] or segment in ["labels__id"]:
             label_details = (
                 Issue.objects.filter(
-                    workspace__slug=slug, **filters, labels__id__isnull=False
+                    workspace__slug=slug,
+                    **filters,
+                    labels__id__isnull=False,
+                    label_issue__deleted_at__isnull=True,
                 )
                 .distinct("labels__id")
                 .order_by("labels__id")
@@ -168,6 +171,7 @@ class AnalyticsEndpoint(BaseAPIView):
                     workspace__slug=slug,
                     **filters,
                     issue_cycle__cycle_id__isnull=False,
+                    issue_cycle__deleted_at__isnull=True,
                 )
                 .distinct("issue_cycle__cycle_id")
                 .order_by("issue_cycle__cycle_id")
@@ -186,6 +190,7 @@ class AnalyticsEndpoint(BaseAPIView):
                     workspace__slug=slug,
                     **filters,
                     issue_module__module_id__isnull=False,
+                    issue_module__deleted_at__isnull=True,
                 )
                 .distinct("issue_module__module_id")
                 .order_by("issue_module__module_id")

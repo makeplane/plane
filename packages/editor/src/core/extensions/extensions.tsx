@@ -8,6 +8,7 @@ import StarterKit from "@tiptap/starter-kit";
 import { Markdown } from "tiptap-markdown";
 // extensions
 import {
+  CustomCalloutExtension,
   CustomCodeBlockExtension,
   CustomCodeInlineExtension,
   CustomCodeMarkPlugin,
@@ -140,7 +141,10 @@ export const CoreEditorExtensions = (args: TArguments) => {
         if (editor.storage.imageComponent.uploadInProgress) return "";
 
         const shouldHidePlaceholder =
-          editor.isActive("table") || editor.isActive("codeBlock") || editor.isActive("image");
+          editor.isActive("table") ||
+          editor.isActive("codeBlock") ||
+          editor.isActive("image") ||
+          editor.isActive("imageComponent");
 
         if (shouldHidePlaceholder) return "";
 
@@ -154,6 +158,7 @@ export const CoreEditorExtensions = (args: TArguments) => {
       includeChildren: true,
     }),
     CharacterCount,
+    CustomCalloutExtension,
     CustomColorExtension,
   ];
 };

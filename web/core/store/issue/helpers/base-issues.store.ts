@@ -29,12 +29,19 @@ import {
   TPaginationData,
   TBulkOperationsPayload,
 } from "@plane/types";
+// components
+import { IBlockUpdateDependencyData } from "@/components/gantt-chart";
+// constants
 import { EIssueLayoutTypes, ISSUE_PRIORITIES } from "@/constants/issue";
+// helpers
 import { convertToISODateString } from "@/helpers/date-time.helper";
+// local-db
 import { updatePersistentLayer } from "@/local-db/utils/utils";
+// services
 import { CycleService } from "@/services/cycle.service";
 import { IssueArchiveService, IssueDraftService, IssueService } from "@/services/issue";
 import { ModuleService } from "@/services/module.service";
+//
 import { IIssueRootStore } from "../root.store";
 import {
   getDifference,
@@ -45,9 +52,6 @@ import {
   getSubGroupIssueKeyActions,
 } from "./base-issues-utils";
 import { IBaseIssueFilterStore } from "./issue-filter-helper.store";
-// constants
-// helpers
-// services
 
 export type TIssueDisplayFilterOptions = Exclude<TIssueGroupByOptions, null> | "target_date";
 
@@ -109,6 +113,7 @@ export interface IBaseIssuesStore {
     addModuleIds: string[],
     removeModuleIds: string[]
   ): Promise<void>;
+  updateIssueDates(workspaceSlug: string, projectId: string, updates: IBlockUpdateDependencyData[]): Promise<void>;
 }
 
 // This constant maps the group by keys to the respective issue property that the key relies on
@@ -226,6 +231,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       issueUpdate: action,
       createDraftIssue: action,
       updateDraftIssue: action,
+      updateIssueDates: action,
       issueQuickAdd: action.bound,
       removeIssue: action.bound,
       issueArchive: action.bound,
@@ -476,6 +482,8 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     // fetch parent stats if required, to be handled in the Implemented class
     this.fetchParentStats(workspaceSlug, projectId, id);
 
+    this.rootIssueStore.issueDetail.relation.extractRelationsFromIssues(issueList);
+
     // store Pagination options for next subsequent calls and data like next cursor etc
     this.storePreviousPaginationValues(issuesResponse, options);
   }
@@ -500,6 +508,8 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       this.updateGroupedIssueIds(groupedIssues, groupedIssueCount, groupId, subGroupId);
       this.loader[getGroupKey(groupId, subGroupId)] = undefined;
     });
+
+    this.rootIssueStore.issueDetail.relation.extractRelationsFromIssues(issueList);
 
     // store Pagination data like next cursor etc
     this.storePreviousPaginationValues(issuesResponse, undefined, groupId, subGroupId);
@@ -791,6 +801,50 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       });
     });
   };
+
+  async updateIssueDates(
+    workspaceSlug: string,
+    projectId: string,
+    updates: { id: string; start_date?: string; target_date?: string }[]
+  ) {
+    const issueDatesBeforeChange: { id: string; start_date?: string; target_date?: string }[] = [];
+    try {
+      const getIssueById = this.rootIssueStore.issues.getIssueById;
+      runInAction(() => {
+        for (const update of updates) {
+          const dates: Partial<TIssue> = {};
+          if (update.start_date) dates.start_date = update.start_date;
+          if (update.target_date) dates.target_date = update.target_date;
+
+          const currIssue = getIssueById(update.id);
+
+          if (currIssue) {
+            issueDatesBeforeChange.push({
+              id: update.id,
+              start_date: currIssue.start_date ?? undefined,
+              target_date: currIssue.target_date ?? undefined,
+            });
+          }
+
+          this.issueUpdate(workspaceSlug, projectId, update.id, dates, false);
+        }
+      });
+
+      await this.issueService.updateIssueDates(workspaceSlug, projectId, updates);
+    } catch (e) {
+      runInAction(() => {
+        for (const update of issueDatesBeforeChange) {
+          const dates: Partial<TIssue> = {};
+          if (update.start_date) dates.start_date = update.start_date;
+          if (update.target_date) dates.target_date = update.target_date;
+
+          this.issueUpdate(workspaceSlug, projectId, update.id, dates, false);
+        }
+      });
+      console.error("error while updating Timeline dependencies");
+      throw e;
+    }
+  }
 
   /**
    * This method is used to add issues to a particular Cycle
