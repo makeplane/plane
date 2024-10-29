@@ -6,7 +6,7 @@ export interface IGanttBlock {
     marginLeft: number;
     width: number;
   };
-  sort_order: number;
+  sort_order: number | undefined;
   start_date: string | undefined;
   target_date: string | undefined;
 }

@@ -10,10 +10,10 @@ import { computedFn } from "mobx-utils";
 import { TIssueActivityComment, TIssueActivity, TIssueActivityMap, TIssueActivityIdMap } from "@plane/types";
 // plane web constants
 import { EActivityFilterType } from "@/plane-web/constants/issues";
-// plane web store types
-import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { IssueActivityService } from "@/services/issue";
+// store
+import { CoreRootStore } from "@/store/root.store";
 
 export type TActivityLoader = "fetch" | "mutate" | undefined;
 
@@ -47,7 +47,7 @@ export class IssueActivityStore implements IIssueActivityStore {
   // services
   issueActivityService;
 
-  constructor(protected store: RootStore) {
+  constructor(protected store: CoreRootStore) {
     makeObservable(this, {
       // observables
       loader: observable.ref,

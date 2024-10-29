@@ -15,7 +15,7 @@ import { RootStore } from "@/plane-web/store/root.store";
 type BlockData = {
   id: string;
   name: string;
-  sort_order: number;
+  sort_order: number | null;
   start_date: string | undefined | null;
   target_date: string | undefined | null;
 };
@@ -27,6 +27,7 @@ export interface IBaseTimelineStore {
   activeBlockId: string | null;
   renderView: any;
   isDragging: boolean;
+  isDependencyEnabled: boolean;
   //
   setBlockIds: (ids: string[]) => void;
   getBlockById: (blockId: string) => IGanttBlock;
@@ -59,6 +60,8 @@ export class BaseTimeLineStore implements IBaseTimelineStore {
   renderView: any = [];
 
   rootStore: RootStore;
+
+  isDependencyEnabled = false;
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
@@ -179,7 +182,7 @@ export class BaseTimeLineStore implements IBaseTimelineStore {
         data: blockData,
         id: blockData?.id,
         name: blockData.name,
-        sort_order: blockData?.sort_order,
+        sort_order: blockData?.sort_order ?? undefined,
         start_date: blockData?.start_date ?? undefined,
         target_date: blockData?.target_date ?? undefined,
       };
