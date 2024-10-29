@@ -21,7 +21,7 @@ from plane.app.permissions import ProjectEntityPermission
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
-    IssueAttachment,
+    FileAsset,
     IssueLink,
     Module,
     ModuleIssue,
@@ -71,6 +71,7 @@ class ModuleAPIEndpoint(BaseAPIView):
                     filter=Q(
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 ),
@@ -82,6 +83,7 @@ class ModuleAPIEndpoint(BaseAPIView):
                         issue_module__issue__state__group="completed",
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 )
@@ -93,6 +95,7 @@ class ModuleAPIEndpoint(BaseAPIView):
                         issue_module__issue__state__group="cancelled",
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 )
@@ -104,6 +107,7 @@ class ModuleAPIEndpoint(BaseAPIView):
                         issue_module__issue__state__group="started",
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 )
@@ -115,6 +119,7 @@ class ModuleAPIEndpoint(BaseAPIView):
                         issue_module__issue__state__group="unstarted",
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 )
@@ -126,6 +131,7 @@ class ModuleAPIEndpoint(BaseAPIView):
                         issue_module__issue__state__group="backlog",
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 )
@@ -367,7 +373,10 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
     def get(self, request, slug, project_id, module_id):
         order_by = request.GET.get("order_by", "created_at")
         issues = (
-            Issue.issue_objects.filter(issue_module__module_id=module_id)
+            Issue.issue_objects.filter(
+                issue_module__module_id=module_id,
+                issue_module__deleted_at__isnull=True,
+            )
             .annotate(
                 sub_issues_count=Issue.issue_objects.filter(
                     parent=OuterRef("id")
@@ -393,8 +402,9 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -551,6 +561,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                     filter=Q(
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 ),
@@ -562,6 +573,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                         issue_module__issue__state__group="completed",
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 )
@@ -573,6 +585,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                         issue_module__issue__state__group="cancelled",
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 )
@@ -584,6 +597,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                         issue_module__issue__state__group="started",
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 )
@@ -595,6 +609,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                         issue_module__issue__state__group="unstarted",
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 )
@@ -606,6 +621,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                         issue_module__issue__state__group="backlog",
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 )

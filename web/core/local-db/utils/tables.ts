@@ -24,17 +24,18 @@ const createTableSQLfromSchema = (tableName: string, schema: Schema) => {
 };
 
 export const createTables = async () => {
-  persistence.db.exec("BEGIN TRANSACTION;");
+  //@todo use promise.all or send all statements in one go
+  await persistence.db.exec("BEGIN;");
 
-  persistence.db.exec(createTableSQLfromSchema("issues", issueSchema));
-  persistence.db.exec(createTableSQLfromSchema("issue_meta", issueMetaSchema));
-  persistence.db.exec(createTableSQLfromSchema("modules", moduleSchema));
-  persistence.db.exec(createTableSQLfromSchema("labels", labelSchema));
-  persistence.db.exec(createTableSQLfromSchema("states", stateSchema));
-  persistence.db.exec(createTableSQLfromSchema("cycles", cycleSchema));
-  persistence.db.exec(createTableSQLfromSchema("estimate_points", estimatePointSchema));
-  persistence.db.exec(createTableSQLfromSchema("members", memberSchema));
-  persistence.db.exec(createTableSQLfromSchema("options", optionsSchema));
+  await persistence.db.exec(createTableSQLfromSchema("issues", issueSchema));
+  await persistence.db.exec(createTableSQLfromSchema("issue_meta", issueMetaSchema));
+  await persistence.db.exec(createTableSQLfromSchema("modules", moduleSchema));
+  await persistence.db.exec(createTableSQLfromSchema("labels", labelSchema));
+  await persistence.db.exec(createTableSQLfromSchema("states", stateSchema));
+  await persistence.db.exec(createTableSQLfromSchema("cycles", cycleSchema));
+  await persistence.db.exec(createTableSQLfromSchema("estimate_points", estimatePointSchema));
+  await persistence.db.exec(createTableSQLfromSchema("members", memberSchema));
+  await persistence.db.exec(createTableSQLfromSchema("options", optionsSchema));
 
-  persistence.db.exec("COMMIT;");
+  await persistence.db.exec("COMMIT;");
 };

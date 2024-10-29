@@ -77,7 +77,9 @@ export type TIssueParams =
   | "show_empty_groups"
   | "cursor"
   | "per_page"
-  | "issue_type";
+  | "issue_type"
+  | "layout"
+  | "expand";
 
 export type TCalendarLayouts = "month" | "week";
 

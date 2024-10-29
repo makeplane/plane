@@ -15,7 +15,7 @@ export interface IIssueStoreActions {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    issueType?: "DEFAULT" | "DRAFT" | "ARCHIVED"
+    issueStatus?: "DEFAULT" | "DRAFT",
   ) => Promise<TIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
@@ -82,9 +82,9 @@ export class IssueStore implements IIssueStore {
   });
 
   // actions
-  fetchIssue = async (workspaceSlug: string, projectId: string, issueId: string, issueType = "DEFAULT") => {
+  fetchIssue = async (workspaceSlug: string, projectId: string, issueId: string, issueStatus = "DEFAULT") => {
     const query = {
-      expand: "issue_reactions,issue_attachment,issue_link,parent",
+      expand: "issue_reactions,issue_attachments,issue_link,parent",
     };
 
     let issue: TIssue | undefined;
@@ -99,9 +99,7 @@ export class IssueStore implements IIssueStore {
       this.localDBIssueDescription = issueId;
     }
 
-    if (issueType === "ARCHIVED")
-      issue = await this.issueArchiveService.retrieveArchivedIssue(workspaceSlug, projectId, issueId, query);
-    else if (issueType === "DRAFT")
+    if (issueStatus === "DRAFT")
       issue = await this.issueDraftService.getDraftIssueById(workspaceSlug, projectId, issueId, query);
     else issue = await this.issueService.retrieve(workspaceSlug, projectId, issueId, query);
 
@@ -130,7 +128,7 @@ export class IssueStore implements IIssueStore {
     if (issue.issue_link) this.rootIssueDetailStore.addLinks(issueId, issue.issue_link);
 
     // fetch issue attachments
-    if (issue.issue_attachment) this.rootIssueDetailStore.addAttachments(issueId, issue.issue_attachment);
+    if (issue.issue_attachments) this.rootIssueDetailStore.addAttachments(issueId, issue.issue_attachments);
 
     this.rootIssueDetailStore.addSubscription(issueId, issue.is_subscribed);
 

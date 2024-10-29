@@ -62,8 +62,8 @@ class DynamicBaseSerializer(BaseSerializer):
                     IssueRelationSerializer,
                     InboxIssueLiteSerializer,
                     IssueReactionLiteSerializer,
-                    IssueAttachmentLiteSerializer,
                     IssueLinkLiteSerializer,
+                    RelatedIssueSerializer,
                 )
 
                 # Expansion mapper
@@ -84,13 +84,14 @@ class DynamicBaseSerializer(BaseSerializer):
                     "issue_cycle": CycleIssueSerializer,
                     "parent": IssueLiteSerializer,
                     "issue_relation": IssueRelationSerializer,
+                    "issue_related": RelatedIssueSerializer,
                     "issue_inbox": InboxIssueLiteSerializer,
                     "issue_reactions": IssueReactionLiteSerializer,
-                    "issue_attachment": IssueAttachmentLiteSerializer,
                     "issue_link": IssueLinkLiteSerializer,
                     "sub_issues": IssueLiteSerializer,
                 }
 
+            if field not in self.fields and field in expansion:
                 self.fields[field] = expansion[field](
                     many=(
                         True
@@ -106,6 +107,7 @@ class DynamicBaseSerializer(BaseSerializer):
                             "issue_attachment",
                             "issue_link",
                             "sub_issues",
+                            "issue_related",
                         ]
                         else False
                     )
@@ -135,6 +137,7 @@ class DynamicBaseSerializer(BaseSerializer):
                         IssueReactionLiteSerializer,
                         IssueAttachmentLiteSerializer,
                         IssueLinkLiteSerializer,
+                        RelatedIssueSerializer,
                     )
 
                     # Expansion mapper
@@ -155,6 +158,7 @@ class DynamicBaseSerializer(BaseSerializer):
                         "issue_cycle": CycleIssueSerializer,
                         "parent": IssueLiteSerializer,
                         "issue_relation": IssueRelationSerializer,
+                        "issue_related": RelatedIssueSerializer,
                         "issue_inbox": InboxIssueLiteSerializer,
                         "issue_reactions": IssueReactionLiteSerializer,
                         "issue_attachment": IssueAttachmentLiteSerializer,
@@ -177,5 +181,30 @@ class DynamicBaseSerializer(BaseSerializer):
                         response[expand] = getattr(
                             instance, f"{expand}_id", None
                         )
+
+            # Check if issue_attachments is in fields or expand
+            if (
+                "issue_attachments" in self.fields
+                or "issue_attachments" in self.expand
+            ):
+                # Import the model here to avoid circular imports
+                from plane.db.models import FileAsset
+
+                issue_id = getattr(instance, "id", None)
+
+                if issue_id:
+                    # Fetch related issue_attachments
+                    issue_attachments = FileAsset.objects.filter(
+                        issue_id=issue_id,
+                        entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+                    )
+                    # Serialize issue_attachments and add them to the response
+                    response["issue_attachments"] = (
+                        IssueAttachmentLiteSerializer(
+                            issue_attachments, many=True
+                        ).data
+                    )
+                else:
+                    response["issue_attachments"] = []
 
         return response

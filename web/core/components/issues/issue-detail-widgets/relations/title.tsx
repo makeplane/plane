@@ -17,12 +17,11 @@ export const RelationsCollapsibleTitle: FC<Props> = observer((props) => {
   const { isOpen, issueId, disabled } = props;
   // store hook
   const {
-    relation: { getRelationsByIssueId },
+    relation: { getRelationCountByIssueId },
   } = useIssueDetail();
 
   // derived values
-  const issueRelations = getRelationsByIssueId(issueId);
-  const relationsCount = Object.values(issueRelations ?? {}).reduce((acc, curr) => acc + curr.length, 0);
+  const relationsCount = getRelationCountByIssueId(issueId);
 
   // indicator element
   const indicatorElement = useMemo(

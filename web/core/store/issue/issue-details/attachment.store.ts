@@ -18,7 +18,7 @@ export interface IIssueAttachmentStoreActions {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    data: FormData
+    file: File
   ) => Promise<TIssueAttachment>;
   removeAttachment: (
     workspaceSlug: string,
@@ -99,13 +99,13 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
   };
 
   fetchAttachments = async (workspaceSlug: string, projectId: string, issueId: string) => {
-    const response = await this.issueAttachmentService.getIssueAttachment(workspaceSlug, projectId, issueId);
+    const response = await this.issueAttachmentService.getIssueAttachments(workspaceSlug, projectId, issueId);
     this.addAttachments(issueId, response);
     return response;
   };
 
-  createAttachment = async (workspaceSlug: string, projectId: string, issueId: string, data: FormData) => {
-    const response = await this.issueAttachmentService.uploadIssueAttachment(workspaceSlug, projectId, issueId, data);
+  createAttachment = async (workspaceSlug: string, projectId: string, issueId: string, file: File) => {
+    const response = await this.issueAttachmentService.uploadIssueAttachment(workspaceSlug, projectId, issueId, file);
     const issueAttachmentsCount = this.getAttachmentsByIssueId(issueId)?.length ?? 0;
 
     if (response && response.id) {

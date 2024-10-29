@@ -14,6 +14,7 @@ from django.db.models import (
     Q,
     Value,
     When,
+    Subquery,
 )
 from django.db.models.fields import DateField
 from django.db.models.functions import Cast, ExtractWeek
@@ -40,7 +41,7 @@ from plane.db.models import (
     CycleIssue,
     Issue,
     IssueActivity,
-    IssueAttachment,
+    FileAsset,
     IssueLink,
     IssueSubscriber,
     Project,
@@ -120,7 +121,13 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
             .filter(**filters)
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
-            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(
+                        issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("cycle_id")[:1]
+                )
+            )
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -128,8 +135,9 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -359,8 +367,8 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
                     "email": user_data.email,
                     "first_name": user_data.first_name,
                     "last_name": user_data.last_name,
-                    "avatar": user_data.avatar,
-                    "cover_image": user_data.cover_image,
+                    "avatar_url": user_data.avatar_url,
+                    "cover_image_url": user_data.cover_image_url,
                     "date_joined": user_data.date_joined,
                     "user_timezone": user_data.user_timezone,
                     "display_name": user_data.display_name,
@@ -504,7 +512,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
 
         upcoming_cycles = CycleIssue.objects.filter(
             workspace__slug=slug,
-            cycle__start_date__gt=timezone.now().date(),
+            cycle__start_date__gt=timezone.now(),
             issue__assignees__in=[
                 user_id,
             ],
@@ -512,8 +520,8 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
 
         present_cycle = CycleIssue.objects.filter(
             workspace__slug=slug,
-            cycle__start_date__lt=timezone.now().date(),
-            cycle__end_date__gt=timezone.now().date(),
+            cycle__start_date__lt=timezone.now(),
+            cycle__end_date__gt=timezone.now(),
             issue__assignees__in=[
                 user_id,
             ],
