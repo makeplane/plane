@@ -50,8 +50,6 @@ export function scrollToNodeViaDOMCoordinates(editor: Editor, pos: number, behav
   } else {
     console.warn("Unable to find coordinates for the given position");
   }
-
-  console.warn("No scrollable parent node found");
 }
 
 export function scrollSummary(editor: Editor, marking: IMarking) {
