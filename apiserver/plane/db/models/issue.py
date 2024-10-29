@@ -279,6 +279,8 @@ class IssueRelation(ProjectBaseModel):
         ("duplicate", "Duplicate"),
         ("relates_to", "Relates To"),
         ("blocked_by", "Blocked By"),
+        ("start_before", "Start Before"),
+        ("finish_before", "Finish Before"),
     )
 
     issue = models.ForeignKey(

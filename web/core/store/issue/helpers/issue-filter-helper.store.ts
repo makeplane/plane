@@ -18,6 +18,8 @@ import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constan
 import { getComputedDisplayFilters, getComputedDisplayProperties } from "@/helpers/issue.helper";
 // lib
 import { storage } from "@/lib/local-storage";
+// plane-web
+import { ENABLE_ISSUE_DEPENDENCIES } from "@/plane-web/constants";
 
 interface ILocalStoreIssueFilters {
   key: EIssuesStoreType;
@@ -115,6 +117,9 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
     });
 
     if (displayFilters?.layout) issueFiltersParams.layout = displayFilters?.layout;
+
+    if (ENABLE_ISSUE_DEPENDENCIES && displayFilters.layout === EIssueLayoutTypes.GANTT)
+      issueFiltersParams["expand"] = "issue_relation,issue_related";
 
     return issueFiltersParams;
   };

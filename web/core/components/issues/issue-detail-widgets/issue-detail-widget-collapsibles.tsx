@@ -24,18 +24,18 @@ export const IssueDetailWidgetCollapsibles: FC<Props> = observer((props) => {
   const {
     issue: { getIssueById },
     subIssues: { subIssuesByIssueId },
-    relation: { getRelationsByIssueId },
     attachment: { getAttachmentsUploadStatusByIssueId },
+    relation: { getRelationCountByIssueId },
   } = useIssueDetail();
 
   // derived values
   const issue = getIssueById(issueId);
   const subIssues = subIssuesByIssueId(issueId);
-  const issueRelations = getRelationsByIssueId(issueId);
+  const issueRelationsCount = getRelationCountByIssueId(issueId);
 
   // render conditions
   const shouldRenderSubIssues = !!subIssues && subIssues.length > 0;
-  const shouldRenderRelations = Object.values(issueRelations ?? {}).some((relation) => relation.length > 0);
+  const shouldRenderRelations = issueRelationsCount > 0;
   const shouldRenderLinks = !!issue?.link_count && issue?.link_count > 0;
   const attachmentUploads = getAttachmentsUploadStatusByIssueId(issueId);
   const shouldRenderAttachments =
