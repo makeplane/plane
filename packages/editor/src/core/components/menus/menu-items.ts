@@ -1,5 +1,5 @@
 import { Selection } from "@tiptap/pm/state";
-import { Editor, Range } from "@tiptap/react";
+import { Editor } from "@tiptap/react";
 import {
   BoldIcon,
   Heading1,
@@ -215,8 +215,8 @@ export const HorizontalRuleItem = (editor: Editor) =>
     key: "divider",
     name: "Divider",
     isActive: () => editor?.isActive("horizontalRule"),
-    command: (range?: Range) => {
-      insertHorizontalRule(editor, range);
+    command: () => {
+      insertHorizontalRule(editor);
     },
     icon: MinusSquare,
   }) as const;
