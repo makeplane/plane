@@ -23,9 +23,6 @@ import { TDocumentTypes } from "@/core/types/common.js";
 // Plane live libraries
 import { fetchDocument } from "@/plane-live/lib/fetch-document.js";
 import { updateDocument } from "@/plane-live/lib/update-document.js";
-import * as Y from "yjs";
-import { prosemirrorJSONToYDoc, yDocToProsemirrorJSON } from "y-prosemirror";
-import { documentEditorSchema } from "../helpers/page.js";
 import { migrateDocJSON } from "@plane/editor/lib";
 
 type ProsemirrorJSON = NonNullable<ReturnType<typeof migrateDocJSON>>;
@@ -76,26 +73,7 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
               return;
             }
 
-            const ydoc = new Y.Doc();
-            // Y.applyUpdate(ydoc, fetchedData);
-
-            const prosemirrorJSON = yDocToProsemirrorJSON(ydoc, "default");
-
-            const migratedProsemirrorJSON = migrateDocJSON(
-              prosemirrorJSON as ProsemirrorJSON,
-            );
-
-            const newYDoc = prosemirrorJSONToYDoc(
-              documentEditorSchema,
-              migratedProsemirrorJSON,
-              "default",
-            );
-
-            const updatedBinaryData = Y.encodeStateAsUpdate(newYDoc);
-
-            console.log("newYDoc", newYDoc.toJSON());
-
-            resolve(updatedBinaryData);
+            resolve(fetchedData);
           } catch (error) {
             logger.error("Error in fetching document", error);
             reject("Error in fetching document" + JSON.stringify(error));
