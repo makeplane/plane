@@ -1,6 +1,6 @@
 import { RefObject, useEffect, useRef } from "react";
 
-const SCROLL_BY = 1;
+const SCROLL_BY = 3;
 
 const AUTO_SCROLL_THRESHOLD = 15;
 const MAX_SPEED_THRESHOLD = 5;
@@ -13,6 +13,7 @@ export const useAutoScroller = (
 ) => {
   const containerDimensions = useRef<DOMRect | undefined>();
   const intervalId = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
+  const mousePosition = useRef<{ clientX: number; clientY: number } | undefined>(undefined);
 
   const clearRegisteredTimeout = () => {
     clearInterval(intervalId.current);
@@ -26,6 +27,15 @@ export const useAutoScroller = (
 
     if (!rect || !shouldScroll || (e.clientX === 0 && e.clientY === 0)) return;
 
+    let diffX = 0,
+      diffY = 0;
+
+    if (mousePosition.current) {
+      diffX = e.clientX - mousePosition.current.clientX;
+      diffY = e.clientY - mousePosition.current.clientY;
+    }
+
+    mousePosition.current = { clientX: e.clientX, clientY: e.clientY };
     const { left, top, width, height } = rect;
 
     const mouseX = e.clientX - left - leftOffset;
@@ -44,28 +54,28 @@ export const useAutoScroller = (
       scrollByY = 0;
 
     // Check mouse positions against thresholds
-    if (mouseX < thresholdX) {
+    if (mouseX < thresholdX && diffX <= 0) {
       scrollByX = -1 * SCROLL_BY;
       if (mouseX < maxSpeedX) {
         scrollByX *= 2;
       }
     }
 
-    if (mouseX > currWidth - thresholdX) {
+    if (mouseX > currWidth - thresholdX && diffX >= 0) {
       scrollByX = SCROLL_BY;
       if (mouseX > currWidth - maxSpeedX) {
         scrollByX *= 2;
       }
     }
 
-    if (mouseY < thresholdY) {
+    if (mouseY < thresholdY && diffY <= 0) {
       scrollByY = -1 * SCROLL_BY;
       if (mouseX < maxSpeedY) {
         scrollByY *= 2;
       }
     }
 
-    if (mouseY > currHeight - thresholdY) {
+    if (mouseY > currHeight - thresholdY && diffY >= 0) {
       scrollByY = SCROLL_BY;
       if (mouseY > currHeight - maxSpeedY) {
         scrollByY *= 2;

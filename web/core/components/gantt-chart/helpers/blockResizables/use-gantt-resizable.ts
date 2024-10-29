@@ -66,13 +66,16 @@ export const useGanttResizable = (
 
       let width = initialPositionRef.current.width;
       let marginLeft = initialPositionRef.current.marginLeft;
-      const blockRight = initialPositionRef.current.width + initialPositionRef.current.marginLeft;
 
       if (dragDirection === "left") {
         // calculate new marginLeft and update the initial marginLeft to the newly calculated one
         marginLeft = Math.round(mouseX / dayWidth) * dayWidth;
+        // get Dimensions from dom's style
+        const prevMarginLeft = parseFloat(resizableDiv.style.transform.slice(11, -3));
+        const prevWidth = parseFloat(resizableDiv.style.width.slice(0, -2));
         // calculate new width
-        width = blockRight - marginLeft;
+        const marginDelta = prevMarginLeft - marginLeft;
+        width = prevWidth + marginDelta;
       } else if (dragDirection === "right") {
         // calculate new width and update the initialMarginLeft using +=
         width = Math.round(mouseX / dayWidth) * dayWidth - marginLeft;
