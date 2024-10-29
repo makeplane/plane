@@ -48,7 +48,7 @@ export const BlockRow: React.FC<Props> = observer((props) => {
       (entries) => {
         entries.forEach((entry) => {
           setIsHidden(!entry.isIntersecting);
-          setIsBlockHiddenOnLeft(entry.boundingClientRect.left < 0);
+          setIsBlockHiddenOnLeft(entry.boundingClientRect.right < (entry.rootBounds?.left ?? 0));
         });
       },
       {
