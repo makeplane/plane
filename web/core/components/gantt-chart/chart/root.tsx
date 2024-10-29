@@ -10,7 +10,15 @@ import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 import { SIDEBAR_WIDTH } from "../constants";
 import { currentViewDataWithView } from "../data";
 import { ChartDataType, IBlockUpdateData, IBlockUpdateDependencyData, TGanttViews } from "../types";
-import { getNumberOfDaysBetweenTwoDates, IMonthBlock, IMonthView, IWeekBlock, timelineViewHelpers } from "../views";
+import {
+  getNumberOfDaysBetweenTwoDates,
+  IMonthBlock,
+  IMonthView,
+  IWeekBlock,
+  monthView,
+  quarterView,
+  weekView,
+} from "../views";
 
 type ChartViewRootProps = {
   border: boolean;
@@ -33,6 +41,12 @@ type ChartViewRootProps = {
   canLoadMoreBlocks?: boolean;
   quickAdd?: React.JSX.Element | undefined;
   showToday: boolean;
+};
+
+const timelineViewHelpers = {
+  week: weekView,
+  month: monthView,
+  quarter: quarterView,
 };
 
 export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
@@ -62,8 +76,15 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
   const [itemsContainerWidth, setItemsContainerWidth] = useState(0);
   const [fullScreenMode, setFullScreenMode] = useState(false);
   // hooks
-  const { currentView, currentViewData, renderView, updateCurrentView, updateCurrentViewData, updateRenderView } =
-    useTimeLineChartStore();
+  const {
+    currentView,
+    currentViewData,
+    renderView,
+    updateCurrentView,
+    updateCurrentViewData,
+    updateRenderView,
+    updateAllBlocksOnChartChangeWhileDragging,
+  } = useTimeLineChartStore();
 
   const updateCurrentViewRenderPayload = (side: null | "left" | "right", view: TGanttViews) => {
     const selectedCurrentView: TGanttViews = view;
@@ -89,6 +110,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
         updateCurrentView(selectedCurrentView);
         updateRenderView(mergeRenderPayloads(currentRender.payload, renderView));
         updatingCurrentLeftScrollPosition(currentRender.scrollWidth);
+        updateAllBlocksOnChartChangeWhileDragging(currentRender.scrollWidth);
         setItemsContainerWidth(itemsContainerWidth + currentRender.scrollWidth);
       } else if (side === "right") {
         updateCurrentView(view);

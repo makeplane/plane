@@ -3,7 +3,7 @@ import uniqBy from "lodash/uniqBy";
 //
 import { months } from "../data";
 import { ChartDataType } from "../types";
-import { getNumberOfDaysInMonth } from "./helpers";
+import { getNumberOfDaysBetweenTwoDates, getNumberOfDaysInMonth } from "./helpers";
 import { getWeeksBetweenTwoDates, IWeekBlock } from "./week-view";
 
 export interface IMonthBlock {
@@ -38,6 +38,9 @@ const generateMonthChart = (monthPayload: ChartDataType, side: null | "left" | "
   let minusDate: Date = new Date();
   let plusDate: Date = new Date();
 
+  let startDate = new Date();
+  let endDate = new Date();
+
   // if side is null generate months on both side of current date
   if (side === null) {
     const currentDate = renderState.data.currentDate;
@@ -47,12 +50,14 @@ const generateMonthChart = (monthPayload: ChartDataType, side: null | "left" | "
 
     if (minusDate && plusDate) filteredDates = getMonthsViewBetweenTwoDates(minusDate, plusDate);
 
+    startDate = filteredDates.weeks[0]?.startDate;
+    endDate = filteredDates.weeks[filteredDates.weeks.length - 1]?.endDate;
     renderState = {
       ...renderState,
       data: {
         ...renderState.data,
-        startDate: filteredDates.weeks[0]?.startDate,
-        endDate: filteredDates.weeks[filteredDates.weeks.length - 1]?.endDate,
+        startDate,
+        endDate,
       },
     };
   }
@@ -65,9 +70,11 @@ const generateMonthChart = (monthPayload: ChartDataType, side: null | "left" | "
 
     if (minusDate && plusDate) filteredDates = getMonthsViewBetweenTwoDates(minusDate, plusDate);
 
+    startDate = filteredDates.weeks[0]?.startDate;
+    endDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - 1);
     renderState = {
       ...renderState,
-      data: { ...renderState.data, startDate: filteredDates.weeks[0].startDate },
+      data: { ...renderState.data, startDate },
     };
   }
   // When side is right, generate more months on the right side of the end date
@@ -79,13 +86,16 @@ const generateMonthChart = (monthPayload: ChartDataType, side: null | "left" | "
 
     if (minusDate && plusDate) filteredDates = getMonthsViewBetweenTwoDates(minusDate, plusDate);
 
+    startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1);
+    endDate = filteredDates.weeks[filteredDates.weeks.length - 1]?.endDate;
     renderState = {
       ...renderState,
       data: { ...renderState.data, endDate: filteredDates.weeks[filteredDates.weeks.length - 1]?.endDate },
     };
   }
 
-  const scrollWidth = filteredDates.weeks.length * monthPayload.data.dayWidth * 7;
+  const days = Math.abs(getNumberOfDaysBetweenTwoDates(startDate, endDate)) + 1;
+  const scrollWidth = days * monthPayload.data.dayWidth;
 
   return { state: renderState, payload: filteredDates, scrollWidth: scrollWidth };
 };

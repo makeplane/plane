@@ -113,9 +113,3 @@ export const getItemPositionWidth = (chartData: ChartDataType, itemData: IGanttB
 
   return { marginLeft: scrollPosition, width: scrollWidth };
 };
-
-export const timelineViewHelpers = {
-  week: weekView,
-  month: monthView,
-  quarter: quarterView,
-};
