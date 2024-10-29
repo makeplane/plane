@@ -70,6 +70,9 @@ export const ProductUpdatesModal: FC<ProductUpdatesModalProps> = observer((props
                     widgetCallback: () => <></>,
                   },
                 }}
+                fileHandler={{
+                  getAssetSrc: () => "",
+                }}
               />
             )}
           </div>
