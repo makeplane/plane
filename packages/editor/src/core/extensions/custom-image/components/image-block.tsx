@@ -1,7 +1,7 @@
 import React, { useRef, useState, useCallback, useLayoutEffect, useEffect } from "react";
 import { NodeSelection } from "@tiptap/pm/state";
 // extensions
-import { CustomImageNodeViewProps, ImageToolbarRoot } from "@/extensions/custom-image";
+import { CustoBaseImageNodeViewProps, ImageToolbarRoot } from "@/extensions/custom-image";
 // helpers
 import { cn } from "@/helpers/common";
 
@@ -37,7 +37,7 @@ const ensurePixelString = <TDefault,>(value: Pixel | TDefault | number | undefin
   return value;
 };
 
-type CustomImageBlockProps = CustomImageNodeViewProps & {
+type CustomImageBlockProps = CustoBaseImageNodeViewProps & {
   imageFromFileSystem: string;
   setFailedToLoadImage: (isError: boolean) => void;
   editorContainer: HTMLDivElement | null;
