@@ -58,11 +58,15 @@ export const CustomCalloutExtensionConfig = Node.create({
   },
 
   parseHTML() {
-    return [{ tag: "callout-component" }];
+    return [
+      {
+        tag: `div[${EAttributeNames.BLOCK_TYPE}="${DEFAULT_CALLOUT_BLOCK_ATTRIBUTES[EAttributeNames.BLOCK_TYPE]}"]`,
+      },
+    ];
   },
 
   // Render HTML for the callout node
   renderHTML({ HTMLAttributes }) {
-    return ["callout-component", mergeAttributes(HTMLAttributes), 0];
+    return ["div", mergeAttributes(HTMLAttributes), 0];
   },
 });
