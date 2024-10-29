@@ -28,7 +28,7 @@ const RichTextEditor = (props: IRichTextEditor) => {
     }
 
     return extensions;
-  }, [dragDropEnabled]);
+  }, [dragDropEnabled, slashCommandEnabled, externalExtensions]);
 
   return (
     <EditorWrapper {...props} extensions={getExtensions()}>
