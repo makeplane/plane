@@ -6,7 +6,7 @@ import { BarChart2, Briefcase, Home, Inbox, Layers, PenSquare } from "lucide-rea
 // types
 import { TIssuesListTypes, TStateGroups } from "@plane/types";
 // ui
-import { ContrastIcon, UserActivityIcon } from "@plane/ui";
+import { ContrastIcon, PiChatLogo, UserActivityIcon } from "@plane/ui";
 import { Props } from "@/components/icons/types";
 import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // assets
@@ -336,5 +336,13 @@ export const SIDEBAR_USER_MENU_ITEMS: {
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/drafts/`),
     Icon: PenSquare,
+  },
+  {
+    key: "pi-chat",
+    label: "Pi chat",
+    href: `/pi-chat`,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/pi-chat/`),
+    Icon: PiChatLogo,
   },
 ];
