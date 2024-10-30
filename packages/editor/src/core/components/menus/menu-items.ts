@@ -20,10 +20,12 @@ import {
   Heading6,
   CaseSensitive,
   LucideIcon,
+  MinusSquare,
   Palette,
 } from "lucide-react";
 // helpers
 import {
+  insertHorizontalRule,
   insertImage,
   insertTableCommand,
   setText,
@@ -208,6 +210,15 @@ export const ImageItem = (editor: Editor) =>
     icon: ImageIcon,
   }) as const;
 
+export const HorizontalRuleItem = (editor: Editor) =>
+  ({
+    key: "divider",
+    name: "Divider",
+    isActive: () => editor?.isActive("horizontalRule"),
+    command: () => insertHorizontalRule(editor),
+    icon: MinusSquare,
+  }) as const;
+
 export const TextColorItem = (editor: Editor): EditorMenuItem => ({
   key: "text-color",
   name: "Color",
@@ -246,6 +257,7 @@ export const getEditorMenuItems = (editor: Editor | null): EditorMenuItem[] => {
     QuoteItem(editor),
     TableItem(editor),
     ImageItem(editor),
+    HorizontalRuleItem(editor),
     TextColorItem(editor),
     BackgroundColorItem(editor),
   ];

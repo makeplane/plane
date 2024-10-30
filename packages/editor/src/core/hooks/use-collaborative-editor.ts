@@ -13,6 +13,7 @@ import { TCollaborativeEditorProps } from "@/types";
 
 export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
   const {
+    onTransaction,
     disabledExtensions,
     editorClassName,
     editorProps = {},
@@ -75,6 +76,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
 
   const editor = useEditor({
     id,
+    onTransaction,
     editorProps,
     editorClassName,
     enableHistory: false,
