@@ -18,6 +18,7 @@ import { issueFilterCountQueryConstructor, issueFilterQueryConstructor } from ".
 import { runQuery } from "./utils/query-executor";
 import { createTables } from "./utils/tables";
 import { clearOPFS, getGroupedIssueResults, getSubGroupedIssueResults, log, logError } from "./utils/utils";
+import { th } from "date-fns/locale";
 
 const DB_VERSION = 1;
 const PAGE_SIZE = 500;
@@ -37,8 +38,17 @@ export class Storage {
 
   constructor() {
     this.db = null;
+
+    if (typeof window !== "undefined") {
+      window.addEventListener("beforeunload", this.closeDBConnection);
+    }
   }
 
+  closeDBConnection = async () => {
+    if (this.db) {
+      await this.db.close();
+    }
+  };
   reset = () => {
     if (this.db) {
       this.db.close();
@@ -293,7 +303,9 @@ export class Storage {
     let issuesRaw: any[] = [];
     let count: any[];
     try {
-      [issuesRaw, count] = await Promise.all([runQuery(query), runQuery(countQuery)]);
+      [issuesRaw, count] = await startSpan({ name: "GET_ISSUES" }, async () => {
+        return await Promise.all([runQuery(query), runQuery(countQuery)]);
+      });
     } catch (e) {
       logError(e);
       const issueService = new IssueService();
