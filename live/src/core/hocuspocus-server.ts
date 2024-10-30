@@ -4,6 +4,9 @@ import { v4 as uuidv4 } from "uuid";
 import { handleAuthentication } from "@/core/lib/authentication.js";
 // extensions
 import { getExtensions } from "@/core/extensions/index.js";
+import { TUserDetails } from "@plane/editor";
+// types
+import { type HocusPocusServerContext } from "@/core/types/common.js";
 
 export const getHocusPocusServer = async () => {
   const extensions = await getExtensions();
@@ -16,20 +19,34 @@ export const getHocusPocusServer = async () => {
       // user id used as token for authentication
       token,
     }) => {
-      const { cookie = requestHeaders.cookie?.toString(), id: userId } =
-        JSON.parse(token);
+      let cookie: string | undefined;
+      let userId: string | undefined;
 
-      if (!cookie || !userId) {
-        throw Error("Credentials not provided");
+      // Extract cookie (fallback to request headers) and userId from token (for scenarios where
+      // the cookies are not passed in the request headers)
+      try {
+        const parsedToken = JSON.parse(token) as TUserDetails;
+        userId = parsedToken.id;
+        cookie = parsedToken.cookie;
+        if (!cookie) {
+          cookie = requestHeaders.cookie?.toString();
+        }
+      } catch (error) {
+        // If token parsing fails, fallback to request headers
+        console.error("Token parsing failed, using request headers:", error);
       }
 
-      // set cookie in context, so it can be used in the server handler.
-      context.cookie = cookie;
+      if (!cookie || !userId) {
+        throw new Error("Credentials not provided");
+      }
+
+      // set cookie in context, so it can be used throughout the ws connection
+      (context as HocusPocusServerContext).cookie = cookie;
 
       try {
         await handleAuthentication({
           cookie,
-          token: userId,
+          userId,
         });
       } catch (error) {
         throw Error("Authentication unsuccessful!");

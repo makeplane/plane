@@ -138,6 +138,7 @@ export type TUserDetails = {
   color: string;
   id: string;
   name: string;
+  cookie?: string;
 };
 
 export type TRealtimeConfig = {
