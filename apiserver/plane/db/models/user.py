@@ -225,6 +225,7 @@ class Account(TimeAuditModel):
             ("google", "Google"),
             ("github", "Github"),
             ("gitlab", "GitLab"),
+            ("firebase", "Firebase"),
         ),
     )
     access_token = models.TextField()
