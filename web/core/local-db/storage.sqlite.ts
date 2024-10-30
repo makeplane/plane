@@ -18,7 +18,6 @@ import { issueFilterCountQueryConstructor, issueFilterQueryConstructor } from ".
 import { runQuery } from "./utils/query-executor";
 import { createTables } from "./utils/tables";
 import { clearOPFS, getGroupedIssueResults, getSubGroupedIssueResults, log, logError } from "./utils/utils";
-import { th } from "date-fns/locale";
 
 const DB_VERSION = 1;
 const PAGE_SIZE = 500;
@@ -49,6 +48,7 @@ export class Storage {
       await this.db.close();
     }
   };
+
   reset = () => {
     if (this.db) {
       this.db.close();
