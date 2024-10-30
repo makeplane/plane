@@ -39,7 +39,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
         name: id,
         parameters: realtimeConfig.queryParams,
         // using user id as a token to verify the user on the server
-        token: user.id,
+        token: JSON.stringify(user),
         url: realtimeConfig.url,
         onAuthenticationFailed: () => {
           serverHandler?.onServerError?.();
