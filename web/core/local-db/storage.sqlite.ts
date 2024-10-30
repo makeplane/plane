@@ -303,9 +303,10 @@ export class Storage {
     let issuesRaw: any[] = [];
     let count: any[];
     try {
-      [issuesRaw, count] = await startSpan({ name: "GET_ISSUES" }, async () => {
-        return await Promise.all([runQuery(query), runQuery(countQuery)]);
-      });
+      [issuesRaw, count] = await startSpan(
+        { name: "GET_ISSUES" },
+        async () => await Promise.all([runQuery(query), runQuery(countQuery)])
+      );
     } catch (e) {
       logError(e);
       const issueService = new IssueService();
