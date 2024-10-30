@@ -29,6 +29,7 @@ type IssueTypeFlagKeys = keyof {
 export interface IIssueTypesStore {
   // observables
   loader: TLoader; // issue type loader
+  issueTypePromise: Promise<TIssueType[]> | undefined; // promise to fetch issue types
   issuePropertiesLoader: Record<string, TLoader>; // project id -> TLoader
   propertiesFetchedMap: Record<string, boolean>; // project id -> boolean
   data: Record<string, IIssueType>; // issue type id -> issue type
@@ -60,6 +61,7 @@ export interface IIssueTypesStore {
 export class IssueTypes implements IIssueTypesStore {
   // observables
   loader: TLoader = "init-loader";
+  issueTypePromise: Promise<TIssueType[]> | undefined = undefined;
   issuePropertiesLoader: Record<string, TLoader> = {};
   propertiesFetchedMap: Record<string, boolean> = {};
   data: Record<string, IIssueType> = {};
@@ -224,7 +226,7 @@ export class IssueTypes implements IIssueTypesStore {
    * @param workspaceSlug
    * @param projectId
    */
-  fetchAllPropertyData = async (workspaceSlug: string, projectId: string) => {
+  fetchAllPropertyData = async (workspaceSlug: string, projectId: string): Promise<TIssueTypesPropertiesOptions> => {
     const [issueProperties, issuePropertyOptions] = await Promise.all([
       this.issuePropertyService.fetchAll(workspaceSlug, projectId),
       this.issuePropertyOptionService.fetchAll(workspaceSlug, projectId),
@@ -275,19 +277,21 @@ export class IssueTypes implements IIssueTypesStore {
     if (!workspaceSlug) return;
     try {
       this.loader = "init-loader";
-      let issueTypes: TIssueType[];
       if (projectId) {
-        issueTypes = await this.service.fetchAllProjectIssueTypes(workspaceSlug, projectId);
+        this.issueTypePromise = this.service.fetchAllProjectIssueTypes(workspaceSlug, projectId);
       } else {
-        issueTypes = await this.service.fetchAll(workspaceSlug);
+        this.issueTypePromise = this.service.fetchAll(workspaceSlug);
       }
+      const issueTypes: TIssueType[] = await this.issueTypePromise;
       runInAction(() => {
         this.addOrUpdateIssueTypes(issueTypes);
         this.loader = "loaded";
+        this.issueTypePromise = undefined;
       });
       return issueTypes;
     } catch (error) {
       this.loader = "loaded";
+      this.issueTypePromise = undefined;
       console.error("Error in fetching issue types", error);
       throw error;
     }
@@ -307,8 +311,10 @@ export class IssueTypes implements IIssueTypesStore {
       this.issuePropertiesLoader[projectId] = "init-loader";
       this.propertiesFetchedMap[projectId] = true;
       const { issueProperties, issuePropertyOptions } = await this.fetchAllPropertyData(workspaceSlug, projectId);
-      runInAction(() => {
+      runInAction(async () => {
         if (issueProperties) {
+          // Since we fetch issue type,properties and options in parallel, we need to wait for issue types to be fetched and stores to be populated
+          if (this.issueTypePromise) await this.issueTypePromise;
           for (const issueProperty of issueProperties) {
             if (issueProperty.id && issueProperty.issue_type) {
               const issueType = this.data[issueProperty.issue_type];
