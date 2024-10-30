@@ -1,8 +1,8 @@
 import { observer } from "mobx-react";
-// hooks
-import { useInstance } from "@/hooks/store";
 // assets
 import packageJson from "package.json";
+// hooks
+import { useInstance } from "@/hooks/store";
 
 export const PlaneVersionNumber = observer(() => {
   const { instance, config } = useInstance();
