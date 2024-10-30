@@ -11,8 +11,7 @@ from django.db.models import (
     UUIDField,
     Value,
     CharField,
-    Case,
-    When,
+    Subquery,
 )
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models.functions import Coalesce
@@ -36,8 +35,10 @@ from plane.db.models import (
     Issue,
     FileAsset,
     IssueLink,
+    CycleIssue,
 )
 from plane.bgtasks.issue_activities_task import issue_activity
+from plane.utils.issue_relation_mapper import get_actual_relation
 
 
 class IssueRelationViewSet(BaseViewSet):
@@ -89,17 +90,35 @@ class IssueRelationViewSet(BaseViewSet):
             related_issue_id=issue_id, relation_type="relates_to"
         ).values_list("issue_id", flat=True)
 
+        # get all start after issues
+        start_after_issues = issue_relations.filter(
+            relation_type="start_before", related_issue_id=issue_id
+        ).values_list("issue_id", flat=True)
+
+        # get all start_before issues
+        start_before_issues = issue_relations.filter(
+            relation_type="start_before", issue_id=issue_id
+        ).values_list("related_issue_id", flat=True)
+
+        # get all finish after issues
+        finish_after_issues = issue_relations.filter(
+            relation_type="finish_before", related_issue_id=issue_id
+        ).values_list("issue_id", flat=True)
+
+        # get all finish before issues
+        finish_before_issues = issue_relations.filter(
+            relation_type="finish_before", issue_id=issue_id
+        ).values_list("related_issue_id", flat=True)
+
         queryset = (
             Issue.issue_objects.filter(workspace__slug=slug)
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
             .annotate(
-                cycle_id=Case(
-                    When(
-                        issue_cycle__cycle__deleted_at__isnull=True,
-                        then=F("issue_cycle__cycle_id"),
-                    ),
-                    default=None,
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(
+                        issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("cycle_id")[:1]
                 )
             )
             .annotate(
@@ -130,9 +149,9 @@ class IssueRelationViewSet(BaseViewSet):
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=(
+                        filter=Q(
                             ~Q(labels__id__isnull=True)
-                            & Q(labels__deleted_at__isnull=True)
+                            & (Q(label_issue__deleted_at__isnull=True))
                         ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
@@ -141,8 +160,11 @@ class IssueRelationViewSet(BaseViewSet):
                     ArrayAgg(
                         "assignees__id",
                         distinct=True,
-                        filter=~Q(assignees__id__isnull=True)
-                        & Q(assignees__member_project__is_active=True),
+                        filter=Q(
+                            ~Q(assignees__id__isnull=True)
+                            & Q(assignees__member_project__is_active=True)
+                            & Q(issue_assignee__deleted_at__isnull=True)
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -210,12 +232,50 @@ class IssueRelationViewSet(BaseViewSet):
                 )
             )
             .values(*fields),
+            "start_after": queryset.filter(pk__in=start_after_issues)
+            .annotate(
+                relation_type=Value(
+                    "start_after",
+                    output_field=CharField(),
+                )
+            )
+            .values(*fields),
+            "start_before": queryset.filter(pk__in=start_before_issues)
+            .annotate(
+                relation_type=Value(
+                    "start_before",
+                    output_field=CharField(),
+                )
+            )
+            .values(*fields),
+            "finish_after": queryset.filter(pk__in=finish_after_issues)
+            .annotate(
+                relation_type=Value(
+                    "finish_after",
+                    output_field=CharField(),
+                )
+            )
+            .values(*fields),
+            "finish_before": queryset.filter(pk__in=finish_before_issues)
+            .annotate(
+                relation_type=Value(
+                    "finish_before",
+                    output_field=CharField(),
+                )
+            )
+            .values(*fields),
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
 
     def create(self, request, slug, project_id, issue_id):
         relation_type = request.data.get("relation_type", None)
+        if relation_type is None:
+            return Response(
+                {"message": "Issue relation type is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         issues = request.data.get("issues", [])
         project = Project.objects.get(pk=project_id)
 
@@ -223,16 +283,18 @@ class IssueRelationViewSet(BaseViewSet):
             [
                 IssueRelation(
                     issue_id=(
-                        issue if relation_type == "blocking" else issue_id
+                        issue
+                        if relation_type
+                        in ["blocking", "start_after", "finish_after"]
+                        else issue_id
                     ),
                     related_issue_id=(
-                        issue_id if relation_type == "blocking" else issue
+                        issue_id
+                        if relation_type
+                        in ["blocking", "start_after", "finish_after"]
+                        else issue
                     ),
-                    relation_type=(
-                        "blocked_by"
-                        if relation_type == "blocking"
-                        else relation_type
-                    ),
+                    relation_type=(get_actual_relation(relation_type)),
                     project_id=project_id,
                     workspace_id=project.workspace_id,
                     created_by=request.user,
@@ -289,7 +351,7 @@ class IssueRelationViewSet(BaseViewSet):
             IssueRelationSerializer(issue_relation).data,
             cls=DjangoJSONEncoder,
         )
-        issue_relation.delete(soft=False)
+        issue_relation.delete()
         issue_activity.delay(
             type="issue_relation.activity.deleted",
             requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),

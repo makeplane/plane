@@ -170,7 +170,7 @@ jobs:
         name: Checkout Files
         uses: actions/checkout@v4
       - name: Admin Build and Push
-        uses: ./.github/actions/buildpush-action
+        uses: ./.github/actions/build-push-ce
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -196,7 +196,7 @@ jobs:
         name: Checkout Files
         uses: actions/checkout@v4
       - name: Web Build and Push
-        uses: ./.github/actions/buildpush-action
+        uses: ./.github/actions/build-push-ce
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -222,7 +222,7 @@ jobs:
         name: Checkout Files
         uses: actions/checkout@v4
       - name: Space Build and Push
-        uses: ./.github/actions/buildpush-action
+        uses: ./.github/actions/build-push-ce
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -248,7 +248,7 @@ jobs:
         name: Checkout Files
         uses: actions/checkout@v4
       - name: Live Build and Push
-        uses: ./.github/actions/buildpush-action
+        uses: ./.github/actions/build-push-ce
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -274,7 +274,7 @@ jobs:
         name: Checkout Files
         uses: actions/checkout@v4
       - name: Backend Build and Push
-        uses: ./.github/actions/buildpush-action
+        uses: ./.github/actions/build-push-ce
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -300,7 +300,7 @@ jobs:
         name: Checkout Files
         uses: actions/checkout@v4
       - name: Proxy Build and Push
-        uses: ./.github/actions/buildpush-action
+        uses: ./.github/actions/build-push-ce
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -320,7 +320,7 @@ jobs:
     if: ${{ needs.branch_build_setup.outputs.build_type == 'Build' }}
     name: Attach Assets to Build
     runs-on: ubuntu-20.04
-    needs: [ branch_build_setup ]
+    needs: [branch_build_setup]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -340,7 +340,7 @@ jobs:
             ${{ github.workspace }}/deploy/selfhost/restore.sh
             ${{ github.workspace }}/deploy/selfhost/docker-compose.yml
             ${{ github.workspace }}/deploy/selfhost/variables.env
- 
+
   publish_release:
     if: ${{ needs.branch_build_setup.outputs.build_type == 'Release' }}
     name: Build Release
@@ -353,7 +353,7 @@ jobs:
         branch_build_push_space,
         branch_build_push_live,
         branch_build_push_apiserver,
-        branch_build_push_proxy
+        branch_build_push_proxy,
       ]
     env:
       REL_VERSION: ${{ needs.branch_build_setup.outputs.release_version }}

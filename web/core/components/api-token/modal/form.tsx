@@ -50,7 +50,7 @@ const defaultValues: Partial<IApiToken> = {
   expired_at: null,
 };
 
-const getExpiryDate = (val: string): string | null => {
+const getExpiryDate = (val: string): string | null | undefined => {
   const today = new Date();
 
   const dateToAdd = EXPIRY_DATE_OPTIONS.find((option) => option.key === val)?.value;

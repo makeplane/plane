@@ -1,5 +1,13 @@
 import { Row } from "@plane/ui";
+import { BLOCK_HEIGHT } from "@/components/gantt-chart/constants";
 import { getRandomLength } from "../utils";
+
+export const GanttLayoutLIstItem = () => (
+  <div className="flex flex w-full items-center gap-4 px-6 " style={{ height: `${BLOCK_HEIGHT}px` }}>
+    <div className="px-3 h-6 w-8 bg-custom-background-80 rounded" />
+    <div className={`px-3 h-6 w-${getRandomLength(["32", "52", "72"])} bg-custom-background-80 rounded`} />
+  </div>
+);
 
 export const GanttLayoutLoader = () => (
   <div className="flex flex-col h-full overflow-x-auto animate-pulse">
