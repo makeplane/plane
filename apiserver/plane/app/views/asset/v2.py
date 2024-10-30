@@ -28,6 +28,7 @@ from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.authentication.session import BaseSessionAuthentication
 
+
 class UserAssetsV2Endpoint(BaseAPIView):
     """This endpoint is used to upload user profile images."""
 
@@ -149,7 +150,13 @@ class UserAssetsV2Endpoint(BaseAPIView):
             )
 
         # Check if the file type is allowed
-        allowed_types = ["image/jpeg", "image/png", "image/webp", "image/jpg"]
+        allowed_types = [
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+            "image/jpg",
+            "image/gif",
+        ]
         if type not in allowed_types:
             return Response(
                 {
@@ -639,7 +646,13 @@ class ProjectAssetEndpoint(BaseAPIView):
             )
 
         # Check if the file type is allowed
-        allowed_types = ["image/jpeg", "image/png", "image/webp", "image/jpg"]
+        allowed_types = [
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+            "image/jpg",
+            "image/gif",
+        ]
         if type not in allowed_types:
             return Response(
                 {
