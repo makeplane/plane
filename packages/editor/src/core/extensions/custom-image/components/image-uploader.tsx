@@ -7,9 +7,9 @@ import { cn } from "@/helpers/common";
 // hooks
 import { useUploader, useDropZone, uploadFirstImageAndInsertRemaining } from "@/hooks/use-file-upload";
 // extensions
-import { type CustomImageComponentProps, getImageComponentImageFileMap } from "@/extensions/custom-image";
+import { CustoBaseImageNodeViewProps, getImageComponentImageFileMap } from "@/extensions/custom-image";
 
-type CustomImageUploaderProps = CustomImageComponentProps & {
+type CustomImageUploaderProps = CustoBaseImageNodeViewProps & {
   maxFileSize: number;
   loadImageFromFileSystem: (file: string) => void;
   failedToLoadImage: boolean;
