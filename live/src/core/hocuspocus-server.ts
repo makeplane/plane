@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { handleAuthentication } from "@/core/lib/authentication.js";
 // extensions
 import { getExtensions } from "@/core/extensions/index.js";
+// editor types
 import { TUserDetails } from "@plane/editor";
 // types
 import { type HocusPocusServerContext } from "@/core/types/common.js";
@@ -19,8 +20,8 @@ export const getHocusPocusServer = async () => {
       // user id used as token for authentication
       token,
     }) => {
-      let cookie: string | undefined;
-      let userId: string | undefined;
+      let cookie: string | undefined = undefined;
+      let userId: string | undefined = undefined;
 
       // Extract cookie (fallback to request headers) and userId from token (for scenarios where
       // the cookies are not passed in the request headers)
@@ -28,12 +29,14 @@ export const getHocusPocusServer = async () => {
         const parsedToken = JSON.parse(token) as TUserDetails;
         userId = parsedToken.id;
         cookie = parsedToken.cookie;
-        if (!cookie) {
-          cookie = requestHeaders.cookie?.toString();
-        }
       } catch (error) {
         // If token parsing fails, fallback to request headers
         console.error("Token parsing failed, using request headers:", error);
+      } finally {
+        // If cookie is still not found, fallback to request headers
+        if (!cookie) {
+          cookie = requestHeaders.cookie?.toString();
+        }
       }
 
       if (!cookie || !userId) {
