@@ -5,13 +5,20 @@ from .base import BaseModel
 
 
 class Device(BaseModel):
+
+    class DeviceType(models.TextChoices):
+        ANDROID = "ANDROID", "Android"
+        IOS = "IOS", "iOS"
+        WEB = "WEB", "Web"
+        DESKTOP = "DESKTOP", "Desktop"
+
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="devices",
     )
     device_id = models.CharField(max_length=255, blank=True, null=True)
-    device_type = models.CharField(max_length=255)
+    device_type = models.CharField(max_length=255, choices=DeviceType.choices)
     push_token = models.CharField(max_length=255, blank=True, null=True)
     is_active = models.BooleanField(default=True)
 
@@ -23,6 +30,7 @@ class Device(BaseModel):
 
 
 class DeviceSession(BaseModel):
+
     device = models.ForeignKey(
         Device,
         on_delete=models.CASCADE,
