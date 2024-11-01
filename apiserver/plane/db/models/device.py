@@ -22,7 +22,6 @@ class Device(BaseModel):
     is_active = models.BooleanField(default=True)
 
     class Meta:
-        unique_together = ["user", "push_token"]
         db_table = "devices"
         verbose_name = "Device"
         verbose_name_plural = "Devices"
