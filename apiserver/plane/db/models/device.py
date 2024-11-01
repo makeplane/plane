@@ -5,7 +5,6 @@ from .base import BaseModel
 
 
 class Device(BaseModel):
-
     class DeviceType(models.TextChoices):
         ANDROID = "ANDROID", "Android"
         IOS = "IOS", "iOS"
@@ -30,13 +29,16 @@ class Device(BaseModel):
 
 
 class DeviceSession(BaseModel):
-
     device = models.ForeignKey(
         Device,
         on_delete=models.CASCADE,
         related_name="sessions",
     )
-    session_id = models.CharField(max_length=255)
+    session = models.ForeignKey(
+        "db.Session",
+        on_delete=models.CASCADE,
+        related_name="device_sessions",
+    )
     is_active = models.BooleanField(default=True)
     user_agent = models.CharField(max_length=255, null=True, blank=True)
     ip_address = models.GenericIPAddressField(null=True, blank=True)
