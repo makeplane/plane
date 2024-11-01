@@ -209,6 +209,13 @@ class Profile(TimeAuditModel):
 
 
 class Account(TimeAuditModel):
+    PROVIDER_CHOICES = (
+        ("google", "Google"),
+        ("github", "Github"),
+        ("gitlab", "GitLab"),
+        ("firebase", "Firebase"),
+    )
+
     id = models.UUIDField(
         default=uuid.uuid4,
         unique=True,
@@ -221,13 +228,10 @@ class Account(TimeAuditModel):
     )
     provider_account_id = models.CharField(max_length=255)
     provider = models.CharField(
-        choices=(
-            ("google", "Google"),
-            ("github", "Github"),
-            ("gitlab", "GitLab"),
-        ),
+        choices=PROVIDER_CHOICES,
     )
-    access_token = models.TextField()
+    device_token = models.TextField(blank=True, null=True)
+    access_token = models.TextField(blank=True, null=True)
     access_token_expired_at = models.DateTimeField(null=True)
     refresh_token = models.TextField(null=True, blank=True)
     refresh_token_expired_at = models.DateTimeField(null=True)
