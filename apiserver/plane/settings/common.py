@@ -496,11 +496,11 @@ INSTANCE_CHANGELOG_URL = os.environ.get("INSTANCE_CHANGELOG_URL", "")
 SIMPLE_JWT = {
     # The number of seconds the access token will be valid
     "ACCESS_TOKEN_LIFETIME": timedelta(
-        days=int(os.environ.get("ACCESS_TOKEN_LIFETIME", 1))
+        minutes=int(os.environ.get("ACCESS_TOKEN_LIFETIME", 15))
     ),
     # The number of seconds the refresh token will be valid
     "REFRESH_TOKEN_LIFETIME": timedelta(
-        days=int(os.environ.get("REFRESH_TOKEN_LIFETIME", 7))
+        days=int(os.environ.get("REFRESH_TOKEN_LIFETIME", 90))
     ),
     # The number of seconds the refresh token will be valid
     "ROTATE_REFRESH_TOKENS": True,
