@@ -83,6 +83,7 @@ from .mutations.issues import (
     IssueCommentMutation,
     SubIssueMutation,
 )
+from .mutations.device import DeviceInformationMutation
 
 
 # combined query class for all
@@ -163,6 +164,7 @@ class Mutation(
     IssueCommentMutation,
     SubIssueMutation,
     PageMutation,
+    DeviceInformationMutation,
 ):
     pass
 

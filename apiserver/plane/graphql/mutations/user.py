@@ -13,7 +13,6 @@ from plane.graphql.permissions.workspace import IsAuthenticated
 
 @strawberry.type
 class ProfileMutation:
-
     @strawberry.mutation(
         extensions=[PermissionExtension(permissions=[IsAuthenticated()])]
     )
