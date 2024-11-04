@@ -48,6 +48,7 @@ from .queries.issues import (
 )
 from .queries.dashboard import userInformationQuery
 from .queries.external import UnsplashImagesQuery, ProjectCoversQuery
+from .queries.version_check import VersionCheckQuery
 
 # mutations
 from .mutations.workspace import WorkspaceMutation, WorkspaceInviteMutation
@@ -130,6 +131,7 @@ class Query(
     userInformationQuery,
     UnsplashImagesQuery,
     ProjectCoversQuery,
+    VersionCheckQuery,
 ):
     pass
 
