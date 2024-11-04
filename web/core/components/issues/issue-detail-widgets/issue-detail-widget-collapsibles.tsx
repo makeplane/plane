@@ -10,6 +10,8 @@ import {
 } from "@/components/issues/issue-detail-widgets";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
+// Plane-web
+import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
 
 type Props = {
   workspaceSlug: string;
@@ -31,7 +33,8 @@ export const IssueDetailWidgetCollapsibles: FC<Props> = observer((props) => {
   // derived values
   const issue = getIssueById(issueId);
   const subIssues = subIssuesByIssueId(issueId);
-  const issueRelationsCount = getRelationCountByIssueId(issueId);
+  const ISSUE_RELATION_OPTIONS = useTimeLineRelationOptions();
+  const issueRelationsCount = getRelationCountByIssueId(issueId, ISSUE_RELATION_OPTIONS);
 
   // render conditions
   const shouldRenderSubIssues = !!subIssues && subIssues.length > 0;
