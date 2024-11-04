@@ -19,7 +19,7 @@ from plane.graphql.types.version_check import VersionCheckType
 # fetching the version check query
 @sync_to_async
 def get_version_check(platform: str, is_internal: Optional[bool] = False):
-    url = f"{settings.FEATURE_FLAG_SERVER_BASE_URL}api/mobile-version/"
+    url = f"{settings.FEATURE_FLAG_SERVER_BASE_URL}/api/mobile-version/"
     headers = {
         "content-type": "application/json",
         "x-api-key": settings.FEATURE_FLAG_SERVER_AUTH_TOKEN,
