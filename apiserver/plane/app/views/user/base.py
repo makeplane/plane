@@ -10,6 +10,7 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 # Module imports
 from plane.app.serializers import (
@@ -41,7 +42,6 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
 from django.views.decorators.vary import vary_on_cookie
 from plane.payment.bgtasks.member_sync_task import member_sync_task
-
 
 
 class UserEndpoint(BaseViewSet):
@@ -323,3 +323,19 @@ class ProfileEndpoint(BaseAPIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserTokenVerificationEndpoint(BaseAPIView):
+
+    authentication_classes = [JWTAuthentication]
+
+    def get(self, request):
+        if request.user:
+            return Response(
+                {"user_id": request.user.id},
+                status=status.HTTP_200_OK,
+            )
+        return Response(
+            {"error": "Invalid verification token"},
+            status=status.HTTP_401_UNAUTHORIZED,
+        )

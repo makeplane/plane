@@ -280,4 +280,9 @@ from .integration.github import (
 from .integration.slack import SlackProjectSyncViewSet
 from .exporter.base import ExportIssuesEndpoint
 from .notification.base import MarkAllReadNotificationViewSet
-from .user.base import AccountEndpoint, ProfileEndpoint, UserSessionEndpoint
+from .user.base import (
+    AccountEndpoint,
+    ProfileEndpoint,
+    UserSessionEndpoint,
+    UserTokenVerificationEndpoint,
+)
