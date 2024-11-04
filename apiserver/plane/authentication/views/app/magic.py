@@ -24,7 +24,7 @@ from plane.authentication.utils.user_auth_workflow import (
 from plane.bgtasks.magic_link_code_task import magic_link
 from plane.license.models import Instance
 from plane.authentication.utils.host import base_host
-from plane.db.models import User, Profile
+from plane.db.models import User, Profile, Workspace, WorkspaceMember
 from plane.authentication.adapter.error import (
     AuthenticationException,
     AUTHENTICATION_ERROR_CODES,
@@ -66,7 +66,7 @@ class MagicGenerateEndpoint(APIView):
             key, token = adapter.initiate()
             # If the smtp is configured send through here
             magic_link.delay(email, key, token, origin)
-            return Response({"key": str(key)}, status=status.HTTP_200_OK)
+            return Response({"key": str(key), "token": token}, status=status.HTTP_200_OK)
         except AuthenticationException as e:
             params = e.get_error_dict()
             return Response(
@@ -75,15 +75,46 @@ class MagicGenerateEndpoint(APIView):
             )
 
 
-class MagicSignInEndpoint(View):
+class MagicSignInEndpoint(APIView):
+    permission_classes = [
+        AllowAny,
+    ]
+    throttle_classes = [
+        AuthenticationThrottle,
+    ]
+    def add_user_to_workspace(self, user, workspace_slug):
+        workspace = self.get_workspace(workspace_slug)
+        workspace_member = WorkspaceMember.objects.filter(
+            workspace=workspace, member=user
+        ).first()
+        if not workspace_member:
+            workspace_member = WorkspaceMember.objects.create(
+                workspace=workspace, member=user, is_active=True
+            )
+            user.profile.last_workspace_id = workspace.id
+            user.profile.onboarding_step.update({
+                'profile_completed': True,
+                'workspace_join': True
+            })
+            user.profile.is_tour_completed = True
+            user.profile.is_onboarded = True
+            user.profile.company_name = workspace.name
+            user.profile.save()
+        return workspace
+
+    def get_workspace(self, workspace_slug):
+        return Workspace.objects.filter(slug=workspace_slug
+        ).first()
 
     def post(self, request):
-
+        
         # set the referer as session to redirect after login
+        print(base_host(request=request, is_app=True))
         code = request.POST.get("code", "").strip()
         email = request.POST.get("email", "").strip().lower()
+        app_url = request.POST.get("app_url", "").strip().lower()
+        workspace = request.POST.get("workspace", "").strip().lower()
         next_path = request.POST.get("next_path")
-
         if code == "" or email == "":
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES[
@@ -101,64 +132,84 @@ class MagicSignInEndpoint(View):
             return HttpResponseRedirect(url)
 
         # Existing User
-        existing_user = User.objects.filter(email=email).first()
-
-        if not existing_user:
-            exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES["USER_DOES_NOT_EXIST"],
-                error_message="USER_DOES_NOT_EXIST",
-            )
-            params = exc.get_error_dict()
-            if next_path:
-                params["next_path"] = str(next_path)
-            url = urljoin(
-                base_host(request=request, is_app=True),
-                "sign-in?" + urlencode(params),
-            )
-            return HttpResponseRedirect(url)
-
         try:
-            provider = MagicCodeProvider(
-                request=request,
-                key=f"magic_{email}",
-                code=code,
-                callback=post_user_auth_workflow,
-            )
-            user = provider.authenticate()
-            profile, _ = Profile.objects.get_or_create(user=user)
-            # Login the user and record his device info
-            user_login(request=request, user=user, is_app=True)
-            if user.is_password_autoset and profile.is_onboarded:
-                path = "accounts/set-password"
-            else:
-                # Get the redirection path
-                path = (
-                    str(next_path)
-                    if next_path
-                    else str(get_redirection_path(user=user))
+            existing_user = User.objects.filter(email=email).first()
+            if not existing_user:
+                provider = MagicCodeProvider(
+                    request=request,
+                    key=f"magic_{email}",
+                    code=code,
+                    callback=post_user_auth_workflow,
                 )
-            # redirect to referer path
-            url = urljoin(base_host(request=request, is_app=True), path)
-            return HttpResponseRedirect(url)
+                user = provider.authenticate()
+                # Login the user and record his device info
+                user_login(request=request, user=user, is_app=True)
+                self.add_user_to_workspace(user, workspace)
+                # Get the redirection path
+                if next_path:
+                    path = str(next_path)
+                else:
+                    path = get_redirection_path(user=user)
+                # redirect to referer path
+                url = urljoin(base_host(request=request, is_app=True), path)
+                if app_url:
+                    url = urljoin(app_url, path)
+                return HttpResponseRedirect(url)
+            else:
+                provider = MagicCodeProvider(
+                    request=request,
+                    key=f"magic_{email}",
+                    code=code,
+                    callback=post_user_auth_workflow,
+                )
+                user = provider.authenticate()
+                profile, _ = Profile.objects.get_or_create(user=user)
+                # Login the user and record his device info
+                user_login(request=request, user=user, is_app=True)
+                if user.is_password_autoset and profile.is_onboarded:
+                    path = "accounts/set-password"
+                else:
+                    # Get the redirection path
+                    path = (
+                        str(next_path)
+                        if next_path
+                        else str(get_redirection_path(user=user))
+                    )
+                # redirect to referer path
+                url = urljoin(base_host(request=request, is_app=True), path)
+                if app_url:
+                    url = urljoin(app_url, path)
+                
+                return HttpResponseRedirect(url)
 
         except AuthenticationException as e:
             params = e.get_error_dict()
+            print(params)
             if next_path:
                 params["next_path"] = str(next_path)
+            path = "sign-in?" + urlencode(params)
             url = urljoin(
                 base_host(request=request, is_app=True),
-                "sign-in?" + urlencode(params),
+                path
             )
+            if app_url:
+                url = urljoin(app_url, path)
             return HttpResponseRedirect(url)
 
 
-class MagicSignUpEndpoint(View):
-
+class MagicSignUpEndpoint(APIView):
+    permission_classes = [
+        AllowAny,
+    ]
+    throttle_classes = [
+        AuthenticationThrottle,
+    ]
     def post(self, request):
 
         # set the referer as session to redirect after login
         code = request.POST.get("code", "").strip()
         email = request.POST.get("email", "").strip().lower()
+        is_app = request.POST.get("is_app", False)
         next_path = request.POST.get("next_path")
 
         if code == "" or email == "":

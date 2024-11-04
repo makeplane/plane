@@ -7,20 +7,6 @@ services:
     volumes:
       - redisdata:/data
 
-  plane-mq:
-    image: rabbitmq:3.13.6-management-alpine
-    restart: unless-stopped
-    networks:
-      - dev_env
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
-    env_file:
-      - .env
-    environment:
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
-      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST}
-
   plane-minio:
     image: minio/minio
     restart: unless-stopped
@@ -47,6 +33,8 @@ services:
       - .env
     environment:
       PGDATA: /var/lib/postgresql/data
+    ports:
+      - 5432:5432
 
   web:
     build:

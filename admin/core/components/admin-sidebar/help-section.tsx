@@ -61,17 +61,6 @@ export const HelpSection: FC = observer(() => {
             {!isSidebarCollapsed && "Redirect to plane"}
           </a>
         </Tooltip>
-        <Tooltip tooltipContent="Help" position={isSidebarCollapsed ? "right" : "top"} className="ml-4">
-          <button
-            type="button"
-            className={`ml-auto grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 ${
-              isSidebarCollapsed ? "w-full" : ""
-            }`}
-            onClick={() => setIsNeedHelpOpen((prev) => !prev)}
-          >
-            <HelpCircle className="h-3.5 w-3.5" />
-          </button>
-        </Tooltip>
         <Tooltip tooltipContent="Toggle sidebar" position={isSidebarCollapsed ? "right" : "top"} className="ml-4">
           <button
             type="button"

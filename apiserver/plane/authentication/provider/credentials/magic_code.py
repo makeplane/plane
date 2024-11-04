@@ -44,12 +44,12 @@ class MagicCodeProvider(CredentialAdapter):
             ]
         )
 
-        if not (EMAIL_HOST):
-            raise AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES["SMTP_NOT_CONFIGURED"],
-                error_message="SMTP_NOT_CONFIGURED",
-                payload={"email": str(key)},
-            )
+        # if not (EMAIL_HOST):
+        #     raise AuthenticationException(
+        #         error_code=AUTHENTICATION_ERROR_CODES["SMTP_NOT_CONFIGURED"],
+        #         error_message="SMTP_NOT_CONFIGURED",
+        #         payload={"email": str(key)},
+        #     )
 
         if ENABLE_MAGIC_LINK_LOGIN == "0":
             raise AuthenticationException(
