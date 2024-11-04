@@ -71,7 +71,7 @@ export const ProductUpdatesModal: FC<ProductUpdatesModalProps> = observer((props
                   },
                 }}
                 fileHandler={{
-                  getAssetSrc: () => "",
+                  getAssetSrc: () => Promise.resolve(""),
                 }}
               />
             )}
