@@ -122,7 +122,7 @@ export const loadWorkSpaceData = async (workspaceSlug: string) => {
   await batchInserts(states, "states", stateSchema);
   await batchInserts(estimates, "estimate_points", estimatePointSchema);
   await batchInserts(memebers, "members", memberSchema);
-  await persistence.db.exec("COMMIT");
+  await persistence.db.exec("COMMIT;");
   const end = performance.now();
   log("Time taken to load workspace data", end - start);
 };
