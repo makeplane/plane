@@ -33,12 +33,6 @@ class Inbox(ProjectBaseModel):
         ordering = ("name",)
 
 
-class SourceType(models.TextChoices):
-    EMAIL = "EMAIL"
-    IN_APP = "IN_APP"
-    FORMS = "FORMS"
-
-
 class InboxIssue(ProjectBaseModel):
     inbox = models.ForeignKey(
         "db.Inbox", related_name="issue_inbox", on_delete=models.CASCADE
