@@ -30,6 +30,12 @@ def get_default_onboarding():
     }
 
 
+class BotTypeEnum(models.TextChoices):
+    SLACK_BOT = "SLACK_BOT", "Slack Bot"
+    GITHUB_BOT = "GITHUB_BOT", "Github Bot"
+    INTAKE_BOT = "INTAKE_BOT", "Intake Bot"
+
+
 class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(
         default=uuid.uuid4,
@@ -107,6 +113,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     # my_issues_prop = models.JSONField(null=True)
 
     is_bot = models.BooleanField(default=False)
+    bot_type = models.CharField(
+        max_length=30,
+        verbose_name="Bot Type",
+        blank=True,
+        null=True,
+    )
 
     # timezone
     USER_TIMEZONE_CHOICES = tuple(zip(pytz.all_timezones, pytz.all_timezones))

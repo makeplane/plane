@@ -33,6 +33,12 @@ class Inbox(ProjectBaseModel):
         ordering = ("name",)
 
 
+class SourceType(models.TextChoices):
+    EMAIL = "EMAIL"
+    IN_APP = "IN_APP"
+    FORMS = "FORMS"
+
+
 class InboxIssue(ProjectBaseModel):
     inbox = models.ForeignKey(
         "db.Inbox", related_name="issue_inbox", on_delete=models.CASCADE
@@ -57,9 +63,16 @@ class InboxIssue(ProjectBaseModel):
         on_delete=models.SET_NULL,
         null=True,
     )
-    source = models.TextField(blank=True, null=True)
+    source = models.CharField(
+        max_length=255,
+        default="IN_APP",
+        null=True,
+        blank=True,
+    )
+    source_email = models.TextField(blank=True, null=True)
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
+    extra = models.JSONField(default=dict)
 
     class Meta:
         verbose_name = "InboxIssue"
