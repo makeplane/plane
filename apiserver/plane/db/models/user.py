@@ -30,12 +30,6 @@ def get_default_onboarding():
     }
 
 
-class BotTypeEnum(models.TextChoices):
-    SLACK_BOT = "SLACK_BOT", "Slack Bot"
-    GITHUB_BOT = "GITHUB_BOT", "Github Bot"
-    INTAKE_BOT = "INTAKE_BOT", "Intake Bot"
-
-
 class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(
         default=uuid.uuid4,
