@@ -292,57 +292,6 @@ export const SIDEBAR_WORKSPACE_MENU_ITEMS: {
   },
 ];
 
-type TLinkOptions = {
+export type TLinkOptions = {
   userId: string | undefined;
 };
-
-export const SIDEBAR_USER_MENU_ITEMS: {
-  key: string;
-  label: string;
-  href: string;
-  access: EUserPermissions[];
-  highlight: (pathname: string, baseUrl: string, options?: TLinkOptions) => boolean;
-  Icon: React.FC<Props>;
-}[] = [
-  {
-    key: "home",
-    label: "Home",
-    href: ``,
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/`,
-    Icon: Home,
-  },
-  {
-    key: "your-work",
-    label: "Your work",
-    href: "/profile",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    highlight: (pathname: string, baseUrl: string, options?: TLinkOptions) =>
-      options?.userId ? pathname.includes(`${baseUrl}/profile/${options?.userId}`) : false,
-    Icon: UserActivityIcon,
-  },
-  {
-    key: "notifications",
-    label: "Inbox",
-    href: `/notifications`,
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
-    highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/notifications/`),
-    Icon: Inbox,
-  },
-  {
-    key: "drafts",
-    label: "Drafts",
-    href: `/drafts`,
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/drafts/`),
-    Icon: PenSquare,
-  },
-  {
-    key: "pi-chat",
-    label: "Pi chat",
-    href: `/pi-chat`,
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
-    highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/pi-chat/`),
-    Icon: PiChatLogo,
-  },
-];
