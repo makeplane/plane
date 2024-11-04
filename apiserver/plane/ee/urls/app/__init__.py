@@ -6,6 +6,7 @@ from .page import urlpatterns as page_patterns
 from .views import urlpatterns as views_patterns
 from .issue_property import urlpatterns as issue_property_patterns
 from .workspace import urlpatterns as workspace_patterns
+from .initiative import urlpatterns as initiative_patterns
 
 urlpatterns = [
     *ai_patterns,
@@ -16,4 +17,5 @@ urlpatterns = [
     *views_patterns,
     *issue_property_patterns,
     *workspace_patterns,
+    *initiative_patterns,
 ]

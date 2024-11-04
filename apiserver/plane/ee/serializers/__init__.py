@@ -24,6 +24,7 @@ from .app.exporter import ExporterHistorySerializer
 
 from .app.workspace.feature import WorkspaceFeatureSerializer
 from .app.workspace.project_state import ProjectStateSerializer
+from .app.initiative import InitiativeSerializer
 
 # Space imports
 from .space.page import PagePublicSerializer
