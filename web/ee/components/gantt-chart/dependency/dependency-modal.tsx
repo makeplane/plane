@@ -17,7 +17,7 @@ import { getRelationType } from "@/plane-web/store/timeline/utils";
 import { Relation } from "@/plane-web/types";
 //
 import { IssueIdentifier } from "../../issues/issue-details";
-import { ISSUE_RELATION_OPTIONS } from "../../relations";
+import { useTimeLineRelationOptions } from "../../relations";
 
 type IssueBlockProps = {
   blockId: string;
@@ -96,6 +96,7 @@ export const DependencyPathModal = observer((props: DependencyPathProps) => {
   const relationType = relation
     ? getRelationType(relation.originDependencyPosition, relation.destinationDependencyPosition)
     : undefined;
+  const ISSUE_RELATION_OPTIONS = useTimeLineRelationOptions();
   const relationObject = relationType ? ISSUE_RELATION_OPTIONS[relationType] : undefined;
 
   const {

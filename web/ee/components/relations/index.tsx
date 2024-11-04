@@ -1,12 +1,18 @@
 import { CircleDot, CopyPlus, XCircle } from "lucide-react";
+import { useParams } from "next/navigation";
 // Plane
 import { RelatedIcon } from "@plane/ui";
 // components
 import { TRelationObject } from "@/components/issues";
 // Plane-web
+import { E_FEATURE_FLAGS, useFlag } from "@/plane-web/hooks/store";
 import { TIssueRelationTypes } from "@/plane-web/types";
+//
+import { ISSUE_RELATION_OPTIONS as CE_ISSUE_RELATION_OPTIONS } from "ce/components/relations";
 
-export const ISSUE_RELATION_OPTIONS: Record<TIssueRelationTypes, TRelationObject> = {
+export * from "./activity";
+
+export const ISSUE_RELATION_OPTIONS: { [key in TIssueRelationTypes]?: TRelationObject } = {
   relates_to: {
     key: "relates_to",
     label: "Relates to",
@@ -63,4 +69,20 @@ export const ISSUE_RELATION_OPTIONS: Record<TIssueRelationTypes, TRelationObject
     className: "bg-yellow-500/20 text-yellow-700",
     placeholder: "None",
   },
+};
+
+export const useTimeLineRelationOptions = () => {
+  const { workspaceSlug } = useParams();
+
+  const isDependencyEnabled = useFlag(workspaceSlug.toString(), E_FEATURE_FLAGS.TIMELINE_DEPENDENCY);
+
+  return isDependencyEnabled
+    ? ISSUE_RELATION_OPTIONS
+    : {
+        ...CE_ISSUE_RELATION_OPTIONS,
+        start_before: undefined,
+        start_after: undefined,
+        finish_before: undefined,
+        finish_after: undefined,
+      };
 };

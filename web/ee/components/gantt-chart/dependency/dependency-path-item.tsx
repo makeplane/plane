@@ -39,9 +39,9 @@ export const TimelineDependencyPathItem = observer((props: TimelineDependencyPat
       >
         <g className="cursor-pointer pointer-events-auto" onClick={() => onPathClick(relation)}>
           <path
-            className="opacity-0 hover:opacity-100"
+            className="opacity-0 hover:opacity-5"
             d={`M${pathStart.x},${pathStart.y} C${cp1.x},${cp1.y} ${cp2.x},${cp2.y} ${pathEnd.x},${pathEnd.y} `}
-            stroke={"#F7F9FF"}
+            stroke={"#3F76FF"}
             stroke-width={`${strokeWidth}`}
             fill="none"
           />
