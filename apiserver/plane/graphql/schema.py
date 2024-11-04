@@ -48,6 +48,7 @@ from .queries.issues import (
 )
 from .queries.dashboard import userInformationQuery
 from .queries.external import UnsplashImagesQuery, ProjectCoversQuery
+from .queries.feature_flag import FeatureFlagQuery
 from .queries.version_check import VersionCheckQuery
 
 # mutations
@@ -132,6 +133,7 @@ class Query(
     userInformationQuery,
     UnsplashImagesQuery,
     ProjectCoversQuery,
+    FeatureFlagQuery,
     VersionCheckQuery,
 ):
     pass
