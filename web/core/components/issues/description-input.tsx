@@ -59,12 +59,12 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
   });
 
   const handleDescriptionFormSubmit = useCallback(
-    async (formData: Partial<TIssue>, _issueId: string) => {
-      await issueOperations.update(workspaceSlug, projectId, _issueId, {
+    async (formData: Partial<TIssue>) => {
+      await issueOperations.update(workspaceSlug, projectId, issueId, {
         description_html: formData.description_html ?? "<p></p>",
       });
     },
-    [workspaceSlug, projectId, issueOperations]
+    [workspaceSlug, projectId, issueId, issueOperations]
   );
 
   const { getWorkspaceBySlug } = useWorkspace();
@@ -84,17 +84,14 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
     });
   }, [initialValue, issueId, reset]);
 
-  const debouncedHandleDescriptionFormSubmit = debounce(async (data: Partial<TIssue>, _issueId: string) => {
-    await handleDescriptionFormSubmit(data, _issueId);
-    setIsSubmitting("submitted");
-  }, 1500);
-
+  // ADDING handleDescriptionFormSubmit TO DEPENDENCY ARRAY PRODUCES ADVERSE EFFECTS
+  // TODO: Verify the exhaustive-deps warning
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedFormSave = useCallback(
-    (_issueId: string) =>
-      handleSubmit((data) => {
-        debouncedHandleDescriptionFormSubmit(data, _issueId);
-      })(),
-    [debouncedHandleDescriptionFormSubmit, handleSubmit]
+    debounce(async () => {
+      handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
+    }, 1500),
+    [handleSubmit, issueId]
   );
 
   return (
@@ -116,7 +113,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
                 onChange={(_description: object, description_html: string) => {
                   setIsSubmitting("submitting");
                   onChange(description_html);
-                  debouncedFormSave(issueId);
+                  debouncedFormSave();
                 }}
                 placeholder={
                   placeholder ? placeholder : (isFocused, value) => getDescriptionPlaceholder(isFocused, value)

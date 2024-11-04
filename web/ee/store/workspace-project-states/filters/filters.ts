@@ -40,23 +40,36 @@ export interface IProjectFilterStore extends IProjectFilterHelper {
   ) => TProjectsLayoutStructure[T] | undefined;
   // helpers actions
   // actions
-  initWorkspaceFilters: (workspaceSlug: string, scope?: EProjectScope, filtersToInit?: EProjectFilters[]) => void;
+  initWorkspaceFilters: (
+    workspaceSlug: string,
+    scope?: EProjectScope,
+    filtersToInit?: EProjectFilters[],
+    isArchived?: boolean
+  ) => void;
   updateScope: (workspaceSlug: string, scope: TProjectScope, setLocalStorage?: boolean) => void;
-  updateLayout: (workspaceSlug: string, layout: TProjectLayouts, setLocalStorage?: boolean) => void;
+  updateLayout: (
+    workspaceSlug: string,
+    layout: TProjectLayouts,
+    isArchived?: boolean,
+    setLocalStorage?: boolean
+  ) => void;
   updateAttributes: <T extends keyof TProjectAttributes>(
     workspaceSlug: string,
     key: T,
     values: TProjectAttributes[T],
+    isArchived?: boolean,
     setLocalStorage?: boolean
   ) => void;
   updateDisplayFilters: <T extends keyof TProjectDisplayFilters>(
     workspaceSlug: string,
     key: T,
     values: TProjectDisplayFilters[T],
+    isArchived?: boolean,
     setLocalStorage?: boolean
   ) => void;
   bulkUpdateDisplayFilters: (workspaceSlug: string, values: Partial<TProjectDisplayFilters>) => void;
   updateSearchQuery: (query: string | undefined) => void;
+  clearAllFilters: (workspaceSlug: string, isArchived?: boolean) => void;
 }
 
 export class ProjectFilterStore extends ProjectFilterHelper implements IProjectFilterStore {
@@ -92,6 +105,7 @@ export class ProjectFilterStore extends ProjectFilterHelper implements IProjectF
       updateDisplayFilters: action,
       bulkUpdateDisplayFilters: action,
       updateSearchQuery: action,
+      clearAllFilters: action,
     });
   }
 
@@ -206,10 +220,15 @@ export class ProjectFilterStore extends ProjectFilterHelper implements IProjectF
    * @param { string } workspaceSlug
    * @returns { void }
    */
-  initWorkspaceFilters = (workspaceSlug: string, scope?: EProjectScope, filtersToInit?: EProjectFilters[]): void => {
-    const savedFilters = this.handleProjectLocalFilters.get(workspaceSlug);
+  initWorkspaceFilters = (
+    workspaceSlug: string,
+    scope?: EProjectScope,
+    filtersToInit?: EProjectFilters[],
+    isArchived = false
+  ): void => {
+    const savedFilters = this.handleProjectLocalFilters.get(workspaceSlug, isArchived);
 
-    filtersToInit?.includes(EProjectFilters.SCOPE) &&
+    if (filtersToInit?.includes(EProjectFilters.SCOPE))
       this.updateScope(
         workspaceSlug,
         scope ||
@@ -217,21 +236,39 @@ export class ProjectFilterStore extends ProjectFilterHelper implements IProjectF
             ? EProjectScope.MY_PROJECTS
             : EProjectScope.ALL_PROJECTS)
       );
-
+    // setLocalStorage is being sent as false becasue these values are fetched from the local storage only and only the store needs to be updates
     if (!this.layoutMap[workspaceSlug] && filtersToInit?.includes(EProjectFilters.LAYOUT)) {
-      this.updateLayout(workspaceSlug, savedFilters?.layout || EProjectLayouts.GALLERY, false);
+      this.updateLayout(workspaceSlug, savedFilters?.layout || EProjectLayouts.GALLERY, isArchived, false);
     }
     if (!this.attributesMap[workspaceSlug] && filtersToInit?.includes(EProjectFilters.ATTRIBUTES)) {
-      this.updateAttributes(workspaceSlug, "priority", savedFilters?.attributes?.priority || [], false);
-      this.updateAttributes(workspaceSlug, "state", savedFilters?.attributes?.state || [], false);
-      this.updateAttributes(workspaceSlug, "lead", savedFilters?.attributes?.lead || [], false);
-      this.updateAttributes(workspaceSlug, "members", savedFilters?.attributes?.members || [], false);
-      this.updateAttributes(workspaceSlug, "access", savedFilters?.attributes?.access || [], false);
+      this.updateAttributes(workspaceSlug, "priority", savedFilters?.attributes?.priority || [], isArchived, false);
+      this.updateAttributes(workspaceSlug, "state", savedFilters?.attributes?.state || [], isArchived, false);
+      this.updateAttributes(workspaceSlug, "lead", savedFilters?.attributes?.lead || [], isArchived, false);
+      this.updateAttributes(workspaceSlug, "members", savedFilters?.attributes?.members || [], isArchived, false);
+      this.updateAttributes(workspaceSlug, "access", savedFilters?.attributes?.access || [], isArchived, false);
     }
     if (!this.displayFiltersMap[workspaceSlug] && filtersToInit?.includes(EProjectFilters.DISPLAY_FILTERS)) {
-      this.updateDisplayFilters(workspaceSlug, "group_by", savedFilters?.display_filters?.group_by || "states", false);
-      this.updateDisplayFilters(workspaceSlug, "sort_by", savedFilters?.display_filters?.sort_by || "manual", false);
-      this.updateDisplayFilters(workspaceSlug, "sort_order", savedFilters?.display_filters?.sort_order || "asc", false);
+      this.updateDisplayFilters(
+        workspaceSlug,
+        "group_by",
+        savedFilters?.display_filters?.group_by || "states",
+        isArchived,
+        false
+      );
+      this.updateDisplayFilters(
+        workspaceSlug,
+        "sort_by",
+        savedFilters?.display_filters?.sort_by || "manual",
+        isArchived,
+        false
+      );
+      this.updateDisplayFilters(
+        workspaceSlug,
+        "sort_order",
+        savedFilters?.display_filters?.sort_order || "asc",
+        isArchived,
+        false
+      );
     }
   };
 
@@ -243,7 +280,7 @@ export class ProjectFilterStore extends ProjectFilterHelper implements IProjectF
    */
   updateScope = (workspaceSlug: string, scope: TProjectScope, setLocalStorage = true): void => {
     set(this.scopeMap, workspaceSlug, scope);
-    setLocalStorage && this.handleProjectLocalFilters.set("scope", workspaceSlug, { scope });
+    if (setLocalStorage) this.handleProjectLocalFilters.set("scope", workspaceSlug, { scope }, false);
   };
 
   /**
@@ -252,9 +289,9 @@ export class ProjectFilterStore extends ProjectFilterHelper implements IProjectF
    * @param { TProjectLayouts } layout
    * @returns { void }
    */
-  updateLayout = (workspaceSlug: string, layout: TProjectLayouts, setLocalStorage = true): void => {
+  updateLayout = (workspaceSlug: string, layout: TProjectLayouts, isArchived = false, setLocalStorage = true): void => {
     set(this.layoutMap, workspaceSlug, layout);
-    setLocalStorage && this.handleProjectLocalFilters.set("layout", workspaceSlug, { layout });
+    if (setLocalStorage) this.handleProjectLocalFilters.set("layout", workspaceSlug, { layout }, isArchived);
   };
 
   /**
@@ -268,13 +305,19 @@ export class ProjectFilterStore extends ProjectFilterHelper implements IProjectF
     workspaceSlug: string,
     key: T,
     values: TProjectAttributes[T],
+    isArchived = false,
     setLocalStorage = true
   ): void => {
     set(this.attributesMap, [workspaceSlug, key], values);
-    setLocalStorage &&
-      this.handleProjectLocalFilters.set("attributes", workspaceSlug, {
-        attributes: { ...this.attributesMap[workspaceSlug], [key]: values },
-      });
+    if (setLocalStorage)
+      this.handleProjectLocalFilters.set(
+        "attributes",
+        workspaceSlug,
+        {
+          attributes: { ...this.attributesMap[workspaceSlug], [key]: values },
+        },
+        isArchived
+      );
   };
 
   /**
@@ -288,13 +331,19 @@ export class ProjectFilterStore extends ProjectFilterHelper implements IProjectF
     workspaceSlug: string,
     key: T,
     values: TProjectDisplayFilters[T],
+    isArchived = false,
     setLocalStorage = true
   ): void => {
     set(this.displayFiltersMap, [workspaceSlug, key], values);
-    setLocalStorage &&
-      this.handleProjectLocalFilters.set("display_filters", workspaceSlug, {
-        display_filters: { ...this.displayFiltersMap[workspaceSlug], [key]: values },
-      });
+    if (setLocalStorage)
+      this.handleProjectLocalFilters.set(
+        "display_filters",
+        workspaceSlug,
+        {
+          display_filters: { ...this.displayFiltersMap[workspaceSlug], [key]: values },
+        },
+        isArchived
+      );
   };
 
   /**
@@ -317,5 +366,23 @@ export class ProjectFilterStore extends ProjectFilterHelper implements IProjectF
    */
   updateSearchQuery = (query: string | undefined): void => {
     this.searchQuery = query;
+  };
+
+  /**
+   * @description clear all the attributes
+   * @param { string } workspaceSlug
+   * @param { boolean } isArchived
+   * @returns { void }
+   */
+  clearAllFilters = (workspaceSlug: string, isArchived: boolean = false): void => {
+    this.attributesMap[workspaceSlug] = { archived: isArchived } as TProjectAttributes;
+    this.handleProjectLocalFilters.set(
+      "attributes",
+      workspaceSlug,
+      {
+        attributes: { archived: isArchived } as TProjectAttributes,
+      },
+      isArchived
+    );
   };
 }

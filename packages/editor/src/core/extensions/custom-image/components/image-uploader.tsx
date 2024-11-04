@@ -1,13 +1,15 @@
 import { ChangeEvent, useCallback, useEffect, useMemo, useRef } from "react";
 import { ImageIcon } from "lucide-react";
+// constants
+import { ACCEPTED_FILE_EXTENSIONS } from "@/constants/config";
 // helpers
 import { cn } from "@/helpers/common";
 // hooks
 import { useUploader, useDropZone, uploadFirstImageAndInsertRemaining } from "@/hooks/use-file-upload";
 // extensions
-import { type CustomImageComponentProps, getImageComponentImageFileMap } from "@/extensions/custom-image";
+import { CustoBaseImageNodeViewProps, getImageComponentImageFileMap } from "@/extensions/custom-image";
 
-type CustomImageUploaderProps = CustomImageComponentProps & {
+type CustomImageUploaderProps = CustoBaseImageNodeViewProps & {
   maxFileSize: number;
   loadImageFromFileSystem: (file: string) => void;
   failedToLoadImage: boolean;
@@ -164,7 +166,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
         ref={fileInputRef}
         hidden
         type="file"
-        accept=".jpg,.jpeg,.png,.webp"
+        accept={ACCEPTED_FILE_EXTENSIONS.join(",")}
         onChange={onFileChange}
         multiple
       />

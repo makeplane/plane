@@ -91,7 +91,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
         })}
       >
         <>
-          <div>
+          <div className="bg-custom-background-100">
             <Details
               project={project}
               workspaceSlug={workspaceSlug.toString()}

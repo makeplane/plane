@@ -43,10 +43,15 @@ export const ProjectsListMobileHeader = observer(() => {
           workspaceSlug={workspaceSlug.toString()}
           workspaceId={workspaceId}
           menuButton={customButton("Filters")}
+          isArchived={isArchived}
         />
       </div>
       <div className="border-l border-custom-border-200 flex justify-around w-full">
-        <ProjectDisplayFiltersDropdown workspaceSlug={workspaceSlug.toString()} menuButton={customButton("Display")} />
+        <ProjectDisplayFiltersDropdown
+          workspaceSlug={workspaceSlug.toString()}
+          menuButton={customButton("Display")}
+          isArchived={isArchived}
+        />
       </div>
     </div>
   );

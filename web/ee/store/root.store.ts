@@ -32,6 +32,8 @@ import {
 } from "@/plane-web/store/workspace-worklog";
 // store
 import { CoreRootStore } from "@/store/root.store";
+//
+import { ITimelineStore, TimeLineStore } from "./timeline";
 
 export class RootStore extends CoreRootStore {
   workspacePages: IWorkspacePageStore;
@@ -47,6 +49,7 @@ export class RootStore extends CoreRootStore {
   issueTypes: IIssueTypesStore;
   issuePropertiesActivity: IIssuePropertiesActivityStore;
   cycle: ICycleStore;
+  timelineStore: ITimelineStore;
 
   constructor() {
     super();
@@ -63,6 +66,7 @@ export class RootStore extends CoreRootStore {
     this.issuePropertiesActivity = new IssuePropertiesActivityStore(this);
     this.projectFilter = new ProjectFilterStore(this);
     this.cycle = new CycleStore(this);
+    this.timelineStore = new TimeLineStore(this);
   }
 
   resetOnSignOut() {

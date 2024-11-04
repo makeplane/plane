@@ -92,8 +92,8 @@ export const SubscriptionActivationModal: FC<TSubscriptionActivationModal> = obs
             {currentWorkspace?.name}
           </h3>
           <div className="text-sm text-custom-text-300">
-            The Plane license key you enter below will activate the associated plan for this workspace on your instance.
-            Any other workspaces without a license key will continue to be on the Free plan.
+            Enter a license key to activate the plan you subscribed to on this workspace. Any other workspaces without a
+            license key on this instance will continue to be on the Free plan.
           </div>
         </div>
         <div>

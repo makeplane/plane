@@ -7,3 +7,8 @@ from plane.ee.views.app.issue import (
     IssueWorkLogsEndpoint,
     IssueTotalWorkLogEndpoint,
 )
+from plane.ee.views.app.initiative import (
+    InitiativeEndpoint,
+    InitiativeProjectEndpoint,
+    InitiativeLabelEndpoint,
+)

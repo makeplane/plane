@@ -132,7 +132,8 @@ def get_label_details(slug, filters):
         Issue.objects.filter(
             workspace__slug=slug,
             **filters,
-            labels__id__isnull=False & Q(label_issue__deleted_at__isnull=True),
+            labels__id__isnull=False,
+            label_issue__deleted_at__isnull=True,
         )
         .distinct("labels__id")
         .order_by("labels__id")

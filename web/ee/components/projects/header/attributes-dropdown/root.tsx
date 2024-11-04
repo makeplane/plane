@@ -1,4 +1,4 @@
-" use client";
+"use client";
 
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
@@ -15,10 +15,11 @@ type TProjectAttributesDropdown = {
   workspaceSlug: string;
   workspaceId: string;
   menuButton?: React.ReactNode;
+  isArchived?: boolean;
 };
 
 export const ProjectAttributesDropdown: FC<TProjectAttributesDropdown> = observer((props) => {
-  const { workspaceSlug, workspaceId, menuButton } = props;
+  const { workspaceSlug, workspaceId, menuButton, isArchived = false } = props;
   // hooks
   const { appliedAttributesCount, filters, updateAttributes } = useProjectFilter();
   // states
@@ -61,7 +62,7 @@ export const ProjectAttributesDropdown: FC<TProjectAttributesDropdown> = observe
               workspaceId={workspaceId}
               searchQuery={filtersSearchQuery}
               appliedFilters={filters?.attributes?.access ?? null}
-              handleUpdate={(val) => updateAttributes(workspaceSlug, "access", val)}
+              handleUpdate={(val) => updateAttributes(workspaceSlug, "access", val, isArchived)}
             />
           </div>{" "}
           {/* priority */}
@@ -69,7 +70,7 @@ export const ProjectAttributesDropdown: FC<TProjectAttributesDropdown> = observe
             <FilterPriority
               searchQuery={filtersSearchQuery}
               appliedFilters={filters?.attributes?.priority ?? null}
-              handleUpdate={(val) => updateAttributes(workspaceSlug, "priority", val)}
+              handleUpdate={(val) => updateAttributes(workspaceSlug, "priority", val, isArchived)}
             />
           </div>
           {/* state */}
@@ -78,7 +79,7 @@ export const ProjectAttributesDropdown: FC<TProjectAttributesDropdown> = observe
               workspaceId={workspaceId}
               searchQuery={filtersSearchQuery}
               appliedFilters={filters?.attributes?.state ?? null}
-              handleUpdate={(val) => updateAttributes(workspaceSlug, "state", val)}
+              handleUpdate={(val) => updateAttributes(workspaceSlug, "state", val, isArchived)}
             />
           </div>
           {/* lead */}
@@ -87,7 +88,7 @@ export const ProjectAttributesDropdown: FC<TProjectAttributesDropdown> = observe
               filterTitle="Leads"
               searchQuery={filtersSearchQuery}
               appliedFilters={filters?.attributes?.lead ?? null}
-              handleUpdate={(val) => updateAttributes(workspaceSlug, "lead", val)}
+              handleUpdate={(val) => updateAttributes(workspaceSlug, "lead", val, isArchived)}
             />
           </div>
           {/* members */}
@@ -96,7 +97,7 @@ export const ProjectAttributesDropdown: FC<TProjectAttributesDropdown> = observe
               filterTitle="Members"
               searchQuery={filtersSearchQuery}
               appliedFilters={filters?.attributes?.members ?? null}
-              handleUpdate={(val) => updateAttributes(workspaceSlug, "members", val)}
+              handleUpdate={(val) => updateAttributes(workspaceSlug, "members", val, isArchived)}
             />
           </div>
         </div>

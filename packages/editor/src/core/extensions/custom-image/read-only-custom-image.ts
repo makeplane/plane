@@ -68,7 +68,7 @@ export const CustomReadOnlyImageExtension = (props: Pick<TFileHandler, "getAsset
 
     addCommands() {
       return {
-        getImageSource: (path: string) => () => getAssetSrc(path),
+        getImageSource: (path: string) => async () => await getAssetSrc(path),
       };
     },
 

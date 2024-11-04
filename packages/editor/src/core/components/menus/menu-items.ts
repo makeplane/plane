@@ -6,7 +6,7 @@ import {
   CheckSquare,
   Heading2,
   Heading3,
-  QuoteIcon,
+  TextQuote,
   ImageIcon,
   TableIcon,
   ListIcon,
@@ -20,10 +20,12 @@ import {
   Heading6,
   CaseSensitive,
   LucideIcon,
+  MinusSquare,
   Palette,
 } from "lucide-react";
 // helpers
 import {
+  insertHorizontalRule,
   insertImage,
   insertTableCommand,
   setText,
@@ -180,7 +182,7 @@ export const QuoteItem = (editor: Editor): EditorMenuItem => ({
   name: "Quote",
   isActive: () => editor?.isActive("blockquote"),
   command: () => toggleBlockquote(editor),
-  icon: QuoteIcon,
+  icon: TextQuote,
 });
 
 export const CodeItem = (editor: Editor): EditorMenuItem => ({
@@ -206,6 +208,15 @@ export const ImageItem = (editor: Editor) =>
     isActive: () => editor?.isActive("image") || editor?.isActive("imageComponent"),
     command: (savedSelection: Selection | null) => insertImage({ editor, event: "insert", pos: savedSelection?.from }),
     icon: ImageIcon,
+  }) as const;
+
+export const HorizontalRuleItem = (editor: Editor) =>
+  ({
+    key: "divider",
+    name: "Divider",
+    isActive: () => editor?.isActive("horizontalRule"),
+    command: () => insertHorizontalRule(editor),
+    icon: MinusSquare,
   }) as const;
 
 export const TextColorItem = (editor: Editor): EditorMenuItem => ({
@@ -246,6 +257,7 @@ export const getEditorMenuItems = (editor: Editor | null): EditorMenuItem[] => {
     QuoteItem(editor),
     TableItem(editor),
     ImageItem(editor),
+    HorizontalRuleItem(editor),
     TextColorItem(editor),
     BackgroundColorItem(editor),
   ];

@@ -218,6 +218,8 @@ class InstanceEndpoint(BaseAPIView):
         data["silo_base_url"] = SILO_BASE_URL
         data["instance_changelog_url"] = settings.INSTANCE_CHANGELOG_URL
 
+        data["instance_changelog_url"] = settings.INSTANCE_CHANGELOG_URL
+
         instance_data = serializer.data
         instance_data["workspaces_exist"] = Workspace.objects.count() >= 1
 

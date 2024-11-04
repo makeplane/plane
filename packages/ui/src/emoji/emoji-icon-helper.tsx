@@ -43,6 +43,7 @@ export type TCustomEmojiPicker = {
   label: React.ReactNode;
   onChange: (value: TChangeHandlerProps) => void;
   placement?: Placement;
+  searchDisabled?: boolean;
   searchPlaceholder?: string;
   theme?: Theme;
   iconType?: "material" | "lucide";
@@ -53,6 +54,7 @@ export const DEFAULT_COLORS = ["#95999f", "#6d7b8a", "#5e6ad2", "#02b5ed", "#02b
 export type TIconsListProps = {
   defaultColor: string;
   onChange: (val: { name: string; color: string }) => void;
+  searchDisabled?: boolean;
 };
 
 /**

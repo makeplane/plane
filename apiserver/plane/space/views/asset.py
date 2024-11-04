@@ -99,7 +99,13 @@ class EntityAssetEndpoint(BaseAPIView):
             )
 
         # Check if the file type is allowed
-        allowed_types = ["image/jpeg", "image/png", "image/webp"]
+        allowed_types = [
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+            "image/jpg",
+            "image/gif",
+        ]
         if type not in allowed_types:
             return Response(
                 {
@@ -169,7 +175,7 @@ class EntityAssetEndpoint(BaseAPIView):
         # update the attributes
         asset.attributes = request.data.get("attributes", asset.attributes)
         # save the asset
-        asset.save()
+        asset.save(update_fields=["attributes", "is_uploaded"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def delete(self, request, anchor, pk):
@@ -193,7 +199,7 @@ class EntityAssetEndpoint(BaseAPIView):
         asset.is_deleted = True
         asset.deleted_at = timezone.now()
         # Save the asset
-        asset.save()
+        asset.save(update_fields=["is_deleted", "deleted_at"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -218,7 +224,7 @@ class AssetRestoreEndpoint(BaseAPIView):
         )
         asset.is_deleted = False
         asset.deleted_at = None
-        asset.save()
+        asset.save(update_fields=["is_deleted", "deleted_at"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

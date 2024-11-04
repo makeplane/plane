@@ -16,6 +16,7 @@ import { IssueWidgetWithoutProps } from "./issue-embed/issue-embed-without-props
 import { CustomMentionWithoutProps } from "./mentions/mentions-without-props";
 import { CustomQuoteExtension } from "./quote";
 import { TableHeader, TableCell, TableRow, Table } from "./table";
+import { CustomCalloutExtensionConfig } from "./callout/extension-config";
 import { CustomColorExtension } from "./custom-color";
 
 export const CoreEditorExtensionsWithoutProps = [
@@ -84,6 +85,7 @@ export const CoreEditorExtensionsWithoutProps = [
   TableCell,
   TableRow,
   CustomMentionWithoutProps(),
+  CustomCalloutExtensionConfig,
   CustomColorExtension,
 ];
 

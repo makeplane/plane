@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useEffect } from "react";
+import { FC, useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 // plane web components
 import { usePathname, useSearchParams } from "next/navigation";
@@ -8,21 +8,43 @@ import { useProject } from "@/hooks/store";
 import { ProjectLayoutRoot } from "@/plane-web/components/projects";
 // plane web hooks
 import { useProjectFilter } from "@/plane-web/hooks/store";
-import { EProjectFilters, EProjectScope } from "@/plane-web/types/workspace-project-filters";
+import {
+  EProjectFilters,
+  EProjectScope,
+  TProjectFilters,
+  TProjectAttributes,
+} from "@/plane-web/types/workspace-project-filters";
+import { ProjectAppliedFiltersList } from "./applied-filters";
 
 type TWorkspaceProjectsRoot = {
   workspaceSlug: string;
   workspaceId: string;
+  isArchived?: boolean;
 };
 
 export const WorkspaceProjectsRoot: FC<TWorkspaceProjectsRoot> = observer((props) => {
-  const { workspaceSlug } = props;
+  const { workspaceSlug, isArchived = false } = props;
+  //pathname
+  const pathname = usePathname();
   // hooks
-  const { initWorkspaceFilters } = useProjectFilter();
+  const {
+    initWorkspaceFilters,
+    appliedAttributesCount,
+    filters,
+    filteredProjectIds,
+    clearAllFilters,
+    updateAttributes,
+    scopeProjectsCount,
+  } = useProjectFilter();
+
   const searchParams = useSearchParams();
   const showAllProjects = searchParams.get("show-all-projects");
-  const pathname = usePathname();
   const { loader } = useProject();
+
+  // derived values
+  const selectedScope = filters?.scope;
+  const selectedScopeCount = selectedScope && scopeProjectsCount?.[selectedScope];
+  const allProjectCount = scopeProjectsCount[EProjectScope.ALL_PROJECTS];
 
   useEffect(() => {
     if (workspaceSlug) {
@@ -35,10 +57,51 @@ export const WorkspaceProjectsRoot: FC<TWorkspaceProjectsRoot> = observer((props
             ? EProjectScope.ALL_PROJECTS
             : EProjectScope.MY_PROJECTS
           : undefined,
-        filtersToInit
+        filtersToInit,
+        isArchived
       );
     }
-  }, [workspaceSlug, initWorkspaceFilters, pathname, showAllProjects, loader]);
+  }, [workspaceSlug, initWorkspaceFilters, pathname, showAllProjects, loader, isArchived]);
 
-  return <ProjectLayoutRoot />;
+  const handleClearAllFilters = useCallback(() => {
+    if (!workspaceSlug) return;
+    clearAllFilters(workspaceSlug, isArchived);
+  }, [clearAllFilters, isArchived, workspaceSlug]);
+
+  // TProjectAttributes has arrays of different types, value is an element of that array
+  const handleRemoveFilter = useCallback(
+    <T extends keyof TProjectAttributes>(key: T, value: any) => {
+      if (!workspaceSlug || !filters) return;
+
+      if (!value) {
+        updateAttributes(workspaceSlug, key, [] as unknown as TProjectAttributes[T], isArchived);
+        return;
+      }
+
+      let newValues = filters.attributes[key];
+      if (Array.isArray(newValues)) {
+        newValues = newValues.filter((val) => val !== value) as TProjectAttributes[T];
+        updateAttributes(workspaceSlug, key, newValues, isArchived);
+      } else if (typeof value === "boolean") {
+        updateAttributes(workspaceSlug, "archived", !value, isArchived);
+      }
+    },
+    [filters, isArchived, updateAttributes, workspaceSlug]
+  );
+
+  return (
+    <div className="flex h-full w-full flex-col">
+      {appliedAttributesCount > 0 && (
+        <ProjectAppliedFiltersList
+          appliedFilters={filters ?? ({} as TProjectFilters)}
+          handleClearAllFilters={handleClearAllFilters}
+          filteredProjects={filteredProjectIds?.length ?? 0}
+          totalProjects={selectedScopeCount ?? allProjectCount}
+          handleRemoveFilter={handleRemoveFilter}
+          alwaysAllowEditing
+        />
+      )}
+      <ProjectLayoutRoot />
+    </div>
+  );
 });

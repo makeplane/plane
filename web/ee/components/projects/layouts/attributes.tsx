@@ -58,7 +58,7 @@ const Attributes: React.FC<Props> = observer((props) => {
           workspaceSlug={workspaceSlug.toString()}
           workspaceId={currentWorkspace.id}
           disabled={!isEditingAllowed || isArchived}
-          optionsClassName="z-[19]"
+          optionsClassName="z-[11]"
           buttonClassName={cn(
             "z-1 h-5 px-2 py-0 text-left rounded group-[.selected-project-row]:bg-custom-primary-100/5 group-[.selected-project-row]:hover:bg-custom-primary-100/10"
           )}
@@ -103,6 +103,7 @@ const Attributes: React.FC<Props> = observer((props) => {
           projectId={project.id}
           disabled={!isEditingAllowed || isArchived}
           showTooltip
+          optionsClassName={"z-[11]"}
           button={
             lead ? (
               <Tooltip tooltipContent="Lead" position={"top"} className="ml-4">

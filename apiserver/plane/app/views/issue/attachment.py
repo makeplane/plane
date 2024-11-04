@@ -270,6 +270,7 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
 
             # Update the attachment
             issue_attachment.is_uploaded = True
+            issue_attachment.created_by = request.user
 
         # Get the storage metadata
         if not issue_attachment.storage_metadata:
