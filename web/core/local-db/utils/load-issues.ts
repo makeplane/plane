@@ -17,7 +17,7 @@ export const addIssue = async (issue: any) => {
 
 export const addIssuesBulk = async (issues: any, batchSize = 100) => {
   if (!rootStore.user.localDBEnabled || !persistence.db) return;
-
+  if (!issues.length) return;
   const insertStart = performance.now();
   await persistence.db.exec("BEGIN;");
 

@@ -71,10 +71,7 @@ export class IssueService extends APIService {
     if (!isEmpty(queries.expand as string) && !queries.group_by)
       return await this.getIssuesFromServer(workspaceSlug, projectId, queries, config);
 
-    const response = await startSpan({ name: "GET_ISSUES" }, async () => {
-      const res = await persistence.getIssues(workspaceSlug, projectId, queries, config);
-      return res;
-    });
+    const response = await persistence.getIssues(workspaceSlug, projectId, queries, config);
     return response as TIssuesResponse;
   }
 
