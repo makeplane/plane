@@ -1,7 +1,7 @@
 import { DeleteImage, RestoreImage, UploadImage } from "@/types";
 
 export type TFileHandler = {
-  getAssetSrc: (path: string) => string;
+  getAssetSrc: (path: string) => Promise<string>;
   cancel: () => void;
   delete: DeleteImage;
   upload: UploadImage;

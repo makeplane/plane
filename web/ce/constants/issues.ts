@@ -33,3 +33,5 @@ export const filterActivityOnSelectedFilters = (
 
 // boolean to decide if the local db cache is enabled
 export const ENABLE_LOCAL_DB_CACHE = false;
+
+export const ENABLE_ISSUE_DEPENDENCIES = false;

@@ -185,6 +185,10 @@ export const setTextAlign = (alignment: string, editor: Editor) => {
   editor.chain().focus().setTextAlign(alignment).run();
 };
 
+export const insertHorizontalRule = (editor: Editor, range?: Range) => {
+  if (range) editor.chain().focus().deleteRange(range).setHorizontalRule().run();
+  else editor.chain().focus().setHorizontalRule().run();
+};
 export const insertCallout = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).insertCallout().run();
   else editor.chain().focus().insertCallout().run();

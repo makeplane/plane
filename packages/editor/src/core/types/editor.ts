@@ -86,6 +86,9 @@ export type EditorReadOnlyRefApi = {
 };
 
 export interface EditorRefApi extends EditorReadOnlyRefApi {
+  blur: () => void;
+  scrollToNodeViaDOMCoordinates: (behavior?: ScrollBehavior, position?: number) => void;
+  getCurrentCursorPosition: () => number | undefined;
   setEditorValueAtCursorPosition: (content: string) => void;
   executeMenuItemCommand: <T extends TEditorCommands>(props: TCommandWithPropsWithItemKey<T>) => void;
   isMenuItemActive: <T extends TEditorCommands>(props: TCommandWithPropsWithItemKey<T>) => boolean;
@@ -101,6 +104,7 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
 export interface IEditorProps {
   containerClassName?: string;
   displayConfig?: TDisplayConfig;
+  disabledExtensions?: TExtensions[];
   editorClassName?: string;
   fileHandler: TFileHandler;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
@@ -111,22 +115,26 @@ export interface IEditorProps {
     suggestions?: () => Promise<IMentionSuggestion[]>;
   };
   onChange?: (json: object, html: string) => void;
+  onTransaction?: () => void;
+  handleEditorReady?: (value: boolean) => void;
+  autofocus?: boolean;
   onEnterKeyPress?: (e?: any) => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
-  value?: string | null;
+  value?: string | null; 
 }
-
-export type ILiteTextEditor = IEditorProps;
-
+export interface ILiteTextEditor extends IEditorProps {
+  extensions?: any[];
+}
 export interface IRichTextEditor extends IEditorProps {
+  extensions?: any[];
+  bubbleMenuEnabled?: boolean;
   dragDropEnabled?: boolean;
 }
 
 export interface ICollaborativeDocumentEditor
   extends Omit<IEditorProps, "initialValue" | "onChange" | "onEnterKeyPress" | "value"> {
   aiHandler?: TAIHandler;
-  disabledExtensions: TExtensions[];
   embedHandler: TEmbedConfig;
   handleEditorReady?: (value: boolean) => void;
   id: string;
@@ -171,6 +179,7 @@ export type TUserDetails = {
   color: string;
   id: string;
   name: string;
+  cookie?: string;
 };
 
 export type TRealtimeConfig = {

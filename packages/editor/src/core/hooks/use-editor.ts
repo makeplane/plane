@@ -12,7 +12,7 @@ import { CoreEditorExtensions } from "@/extensions";
 // helpers
 import { getParagraphCount } from "@/helpers/common";
 import { insertContentAtSavedSelection } from "@/helpers/insert-content-at-cursor-position";
-import { IMarking, scrollSummary } from "@/helpers/scroll-to-node";
+import { IMarking, scrollSummary, scrollToNodeViaDOMCoordinates } from "@/helpers/scroll-to-node";
 // props
 import { CoreEditorProps } from "@/props";
 // types
@@ -33,6 +33,8 @@ export interface CustomEditorProps {
     suggestions?: () => Promise<IMentionSuggestion[]>;
   };
   onChange?: (json: object, html: string) => void;
+  onTransaction?: () => void;
+  autofocus?: boolean;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   provider?: HocuspocusProvider;
   tabIndex?: number;
@@ -54,10 +56,12 @@ export const useEditor = (props: CustomEditorProps) => {
     initialValue,
     mentionHandler,
     onChange,
+    onTransaction,
     placeholder,
     provider,
     tabIndex,
     value,
+    autofocus = false,
   } = props;
   // states
 
@@ -66,6 +70,7 @@ export const useEditor = (props: CustomEditorProps) => {
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
   const savedSelectionRef = useRef(savedSelection);
   const editor = useTiptapEditor({
+    autofocus,
     editorProps: {
       ...CoreEditorProps({
         editorClassName,
@@ -87,7 +92,10 @@ export const useEditor = (props: CustomEditorProps) => {
     ],
     content: typeof initialValue === "string" && initialValue.trim() !== "" ? initialValue : "<p></p>",
     onCreate: () => handleEditorReady?.(true),
-    onTransaction: ({ editor }) => setSavedSelection(editor.state.selection),
+    onTransaction: ({ editor }) => {
+      setSavedSelection(editor.state.selection);
+      onTransaction?.();
+    },
     onUpdate: ({ editor }) => onChange?.(editor.getJSON(), editor.getHTML()),
     onDestroy: () => handleEditorReady?.(false),
   });
@@ -120,6 +128,13 @@ export const useEditor = (props: CustomEditorProps) => {
   useImperativeHandle(
     forwardedRef,
     () => ({
+      blur: () => editorRef.current?.commands.blur(),
+      scrollToNodeViaDOMCoordinates(behavior?: ScrollBehavior, pos?: number) {
+        const resolvedPos = pos ?? savedSelection?.from;
+        if (!editorRef.current || !resolvedPos) return;
+        scrollToNodeViaDOMCoordinates(editorRef.current, resolvedPos, behavior);
+      },
+      getCurrentCursorPosition: () => savedSelection?.from,
       clearEditor: (emitUpdate = false) => {
         editorRef.current?.chain().setMeta("skipImageDeletion", true).clearContent(emitUpdate).run();
       },
