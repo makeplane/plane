@@ -52,6 +52,7 @@ from .views import (
     MobileSignOutAuthEndpoint,
     MobileSessionTokenEndpoint,
     MobileTokenEndpoint,
+    MobileRefreshTokenEndpoint,
     MobileGoogleOauthInitiateEndpoint,
     MobileGoogleCallbackEndpoint,
     MobileGitHubOauthInitiateEndpoint,
@@ -305,6 +306,12 @@ urlpatterns = [
         "mobile/token/",
         MobileTokenEndpoint.as_view(),
         name="mobile-token",
+    ),
+    # mobile web view refresh token
+    path(
+        "mobile/refresh-token/",
+        MobileRefreshTokenEndpoint.as_view(),
+        name="mobile-refresh-token",
     ),
     # mobile web view google oauth
     path(

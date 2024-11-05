@@ -89,6 +89,7 @@ from .app.mobile.token import (
     MobileSessionTokenCheckEndpoint,
     MobileSessionTokenEndpoint,
     MobileTokenEndpoint,
+    MobileRefreshTokenEndpoint,
 )
 from .app.mobile.signout import MobileSignOutAuthEndpoint
 from .app.mobile.google import MobileGoogleOauthInitiateEndpoint, MobileGoogleCallbackEndpoint

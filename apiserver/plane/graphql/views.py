@@ -31,6 +31,7 @@ class CustomGraphQLView(AsyncGraphQLView):
         # Get the context from the parent class
         context = await super().get_context(request, response)
         try:
+            # ========= JWT token validation =========
             # Get the token from the request headers
             auth_header = request.headers.get("Authorization")
 
