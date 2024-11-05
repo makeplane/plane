@@ -20,12 +20,14 @@ class DeployBoard(WorkspaceBaseModel):
         ("cycle", "Task"),
         ("page", "Page"),
         ("view", "View"),
+        ("intake", "Intake"),
     )
 
     entity_identifier = models.UUIDField(null=True)
     entity_name = models.CharField(
         max_length=30,
-        choices=TYPE_CHOICES,
+        null=True,
+        blank=True,
     )
     anchor = models.CharField(
         max_length=255, default=get_anchor, unique=True, db_index=True
@@ -41,6 +43,7 @@ class DeployBoard(WorkspaceBaseModel):
     is_votes_enabled = models.BooleanField(default=False)
     view_props = models.JSONField(default=dict)
     is_activity_enabled = models.BooleanField(default=True)
+    is_disabled = models.BooleanField(default=False)
 
     def __str__(self):
         """Return name of the deploy board"""
