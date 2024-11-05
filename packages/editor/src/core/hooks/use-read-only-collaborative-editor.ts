@@ -32,7 +32,7 @@ export const useReadOnlyCollaborativeEditor = (props: TReadOnlyCollaborativeEdit
       new HocuspocusProvider({
         url: realtimeConfig.url,
         name: id,
-        token: user.id,
+        token: JSON.stringify(user),
         parameters: realtimeConfig.queryParams,
         onAuthenticationFailed: () => {
           serverHandler?.onServerError?.();
