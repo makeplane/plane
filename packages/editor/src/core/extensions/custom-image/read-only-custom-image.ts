@@ -1,8 +1,10 @@
 import { mergeAttributes } from "@tiptap/core";
 import { Image } from "@tiptap/extension-image";
+import { MarkdownSerializerState } from "@tiptap/pm/markdown";
+import { Node } from "@tiptap/pm/model";
 import { ReactNodeViewRenderer } from "@tiptap/react";
 // components
-import { CustomImageNode, UploadImageExtensionStorage } from "@/extensions/custom-image";
+import { CustomImageNode, ImageAttributes, UploadImageExtensionStorage } from "@/extensions/custom-image";
 // types
 import { TFileHandler } from "@/types";
 
@@ -52,12 +54,21 @@ export const CustomReadOnlyImageExtension = (props: Pick<TFileHandler, "getAsset
     addStorage() {
       return {
         fileMap: new Map(),
+        markdown: {
+          serialize(state: MarkdownSerializerState, node: Node) {
+            const attrs = node.attrs as ImageAttributes;
+            const imageSource = state.esc(this?.editor?.commands?.getImageSource?.(attrs.src) || attrs.src);
+            const imageWidth = state.esc(attrs.width?.toString());
+            state.write(`<img src="${state.esc(imageSource)}" width="${imageWidth}" />`);
+            state.closeBlock(node);
+          },
+        },
       };
     },
 
     addCommands() {
       return {
-        getImageSource: (path: string) => () => getAssetSrc(path),
+        getImageSource: (path: string) => async () => await getAssetSrc(path),
       };
     },
 

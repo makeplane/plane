@@ -1,7 +1,7 @@
 import React, { useRef, useState, useCallback, useLayoutEffect, useEffect } from "react";
 import { NodeSelection } from "@tiptap/pm/state";
 // extensions
-import { CustomImageNodeViewProps, ImageToolbarRoot } from "@/extensions/custom-image";
+import { CustoBaseImageNodeViewProps, ImageToolbarRoot } from "@/extensions/custom-image";
 // helpers
 import { cn } from "@/helpers/common";
 
@@ -37,7 +37,7 @@ const ensurePixelString = <TDefault,>(value: Pixel | TDefault | number | undefin
   return value;
 };
 
-type CustomImageBlockProps = CustomImageNodeViewProps & {
+type CustomImageBlockProps = CustoBaseImageNodeViewProps & {
   imageFromFileSystem: string;
   setFailedToLoadImage: (isError: boolean) => void;
   editorContainer: HTMLDivElement | null;
@@ -56,15 +56,15 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
     getPos,
     editor,
     editorContainer,
-    src: remoteImageSrc,
+    src: resolvedImageSrc,
     setEditorContainer,
   } = props;
-  const { width, height, aspectRatio } = node.attrs;
+  const { width: nodeWidth, height: nodeHeight, aspectRatio: nodeAspectRatio, src: imgNodeSrc } = node.attrs;
   // states
   const [size, setSize] = useState<Size>({
-    width: ensurePixelString(width, "35%"),
-    height: ensurePixelString(height, "auto"),
-    aspectRatio: aspectRatio || 1,
+    width: ensurePixelString(nodeWidth, "35%"),
+    height: ensurePixelString(nodeHeight, "auto"),
+    aspectRatio: nodeAspectRatio || null,
   });
   const [isResizing, setIsResizing] = useState(false);
   const [initialResizeComplete, setInitialResizeComplete] = useState(false);
@@ -72,6 +72,8 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const containerRect = useRef<DOMRect | null>(null);
   const imageRef = useRef<HTMLImageElement>(null);
+  const [hasErroredOnFirstLoad, setHasErroredOnFirstLoad] = useState(false);
+  const [hasTriedRestoringImageOnce, setHasTriedRestoringImageOnce] = useState(false);
 
   const updateAttributesSafely = useCallback(
     (attributes: Partial<ImageAttributes>, errorMessage: string) => {
@@ -104,17 +106,17 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
     }
 
     setEditorContainer(closestEditorContainer);
-    const aspectRatio = img.naturalWidth / img.naturalHeight;
+    const aspectRatioCalculated = img.naturalWidth / img.naturalHeight;
 
-    if (width === "35%") {
+    if (nodeWidth === "35%") {
       const editorWidth = closestEditorContainer.clientWidth;
       const initialWidth = Math.max(editorWidth * 0.35, MIN_SIZE);
-      const initialHeight = initialWidth / aspectRatio;
+      const initialHeight = initialWidth / aspectRatioCalculated;
 
       const initialComputedSize = {
         width: `${Math.round(initialWidth)}px` satisfies Pixel,
         height: `${Math.round(initialHeight)}px` satisfies Pixel,
-        aspectRatio: aspectRatio,
+        aspectRatio: aspectRatioCalculated,
       };
 
       setSize(initialComputedSize);
@@ -124,9 +126,10 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
       );
     } else {
       // as the aspect ratio in not stored for old images, we need to update the attrs
-      if (!aspectRatio) {
+      // or if aspectRatioCalculated from the image's width and height doesn't match stored aspectRatio then also we'll update the attrs
+      if (!nodeAspectRatio || nodeAspectRatio !== aspectRatioCalculated) {
         setSize((prevSize) => {
-          const newSize = { ...prevSize, aspectRatio };
+          const newSize = { ...prevSize, aspectRatio: aspectRatioCalculated };
           updateAttributesSafely(
             newSize,
             "Failed to update attributes while initializing images with width but no aspect ratio:"
@@ -136,16 +139,17 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
       }
     }
     setInitialResizeComplete(true);
-  }, [width, updateAttributes, editorContainer, aspectRatio]);
+  }, [nodeWidth, updateAttributes, editorContainer, nodeAspectRatio]);
 
   // for real time resizing
   useLayoutEffect(() => {
     setSize((prevSize) => ({
       ...prevSize,
-      width: ensurePixelString(width),
-      height: ensurePixelString(height),
+      width: ensurePixelString(nodeWidth),
+      height: ensurePixelString(nodeHeight),
+      aspectRatio: nodeAspectRatio,
     }));
-  }, [width, height]);
+  }, [nodeWidth, nodeHeight, nodeAspectRatio]);
 
   const handleResize = useCallback(
     (e: MouseEvent | TouchEvent) => {
@@ -158,7 +162,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
 
       setSize((prevSize) => ({ ...prevSize, width: `${newWidth}px`, height: `${newHeight}px` }));
     },
-    [size]
+    [size.aspectRatio]
   );
 
   const handleResizeEnd = useCallback(() => {
@@ -181,11 +185,15 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
       window.addEventListener("mousemove", handleResize);
       window.addEventListener("mouseup", handleResizeEnd);
       window.addEventListener("mouseleave", handleResizeEnd);
+      window.addEventListener("touchmove", handleResize);
+      window.addEventListener("touchend", handleResizeEnd);
 
       return () => {
         window.removeEventListener("mousemove", handleResize);
         window.removeEventListener("mouseup", handleResizeEnd);
         window.removeEventListener("mouseleave", handleResizeEnd);
+        window.removeEventListener("touchmove", handleResize);
+        window.removeEventListener("touchend", handleResizeEnd);
       };
     }
   }, [isResizing, handleResize, handleResizeEnd]);
@@ -202,13 +210,13 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
 
   // show the image loader if the remote image's src or preview image from filesystem is not set yet (while loading the image post upload) (or)
   // if the initial resize (from 35% width and "auto" height attrs to the actual size in px) is not complete
-  const showImageLoader = !(remoteImageSrc || imageFromFileSystem) || !initialResizeComplete;
+  const showImageLoader = !(resolvedImageSrc || imageFromFileSystem) || !initialResizeComplete || hasErroredOnFirstLoad;
   // show the image utils only if the remote image's (post upload) src is set and the initial resize is complete (but not while we're showing the preview imageFromFileSystem)
-  const showImageUtils = remoteImageSrc && initialResizeComplete;
+  const showImageUtils = resolvedImageSrc && initialResizeComplete;
   // show the image resizer only if the editor is editable, the remote image's (post upload) src is set and the initial resize is complete (but not while we're showing the preview imageFromFileSystem)
-  const showImageResizer = editor.isEditable && remoteImageSrc && initialResizeComplete;
+  const showImageResizer = editor.isEditable && resolvedImageSrc && initialResizeComplete;
   // show the preview image from the file system if the remote image's src is not set
-  const displayedImageSrc = remoteImageSrc || imageFromFileSystem;
+  const displayedImageSrc = resolvedImageSrc || imageFromFileSystem;
 
   return (
     <div
@@ -217,7 +225,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
       onMouseDown={handleImageMouseDown}
       style={{
         width: size.width,
-        aspectRatio: size.aspectRatio,
+        ...(size.aspectRatio && { aspectRatio: size.aspectRatio }),
       }}
     >
       {showImageLoader && (
@@ -230,20 +238,37 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
         ref={imageRef}
         src={displayedImageSrc}
         onLoad={handleImageLoad}
-        onError={(e) => {
-          console.error("Error loading image", e);
-          setFailedToLoadImage(true);
+        onError={async (e) => {
+          // for old image extension this command doesn't exist or if the image failed to load for the first time
+          if (!editor?.commands.restoreImage || hasTriedRestoringImageOnce) {
+            setFailedToLoadImage(true);
+            return;
+          }
+
+          try {
+            setHasErroredOnFirstLoad(true);
+            // this is a type error from tiptap, don't remove await until it's fixed
+            await editor?.commands.restoreImage?.(imgNodeSrc);
+            imageRef.current.src = resolvedImageSrc;
+          } catch {
+            // if the image failed to even restore, then show the error state
+            setFailedToLoadImage(true);
+            console.error("Error while loading image", e);
+          } finally {
+            setHasErroredOnFirstLoad(false);
+            setHasTriedRestoringImageOnce(true);
+          }
         }}
         width={size.width}
         className={cn("image-component block rounded-md", {
           // hide the image while the background calculations of the image loader are in progress (to avoid flickering) and show the loader until then
           hidden: showImageLoader,
           "read-only-image": !editor.isEditable,
-          "blur-sm opacity-80 loading-image": !remoteImageSrc,
+          "blur-sm opacity-80 loading-image": !resolvedImageSrc,
         })}
         style={{
           width: size.width,
-          aspectRatio: size.aspectRatio,
+          ...(size.aspectRatio && { aspectRatio: size.aspectRatio }),
         }}
       />
       {showImageUtils && (
@@ -252,14 +277,14 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
             "absolute top-1 right-1 z-20 bg-black/40 rounded opacity-0 pointer-events-none group-hover/image-component:opacity-100 group-hover/image-component:pointer-events-auto transition-opacity"
           }
           image={{
-            src: remoteImageSrc,
+            src: resolvedImageSrc,
             aspectRatio: size.aspectRatio,
             height: size.height,
             width: size.width,
           }}
         />
       )}
-      {selected && displayedImageSrc === remoteImageSrc && (
+      {selected && displayedImageSrc === resolvedImageSrc && (
         <div className="absolute inset-0 size-full bg-custom-primary-500/30" />
       )}
       {showImageResizer && (
@@ -283,6 +308,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
               }
             )}
             onMouseDown={handleResizeStart}
+            onTouchStart={handleResizeStart}
           />
         </>
       )}

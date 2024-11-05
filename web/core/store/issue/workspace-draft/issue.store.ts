@@ -139,6 +139,13 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
     });
   }
 
+  private updateWorkspaceUserDraftIssueCount(workspaceSlug: string, increment: number) {
+    const workspaceUserInfo = this.issueStore.rootStore.user.permission.workspaceUserInfo;
+    const currentCount = workspaceUserInfo[workspaceSlug]?.draft_issue_count ?? 0;
+
+    set(workspaceUserInfo, [workspaceSlug, "draft_issue_count"], currentCount + increment);
+  }
+
   // computed
   get issueIds() {
     const workspaceSlug = this.issueStore.workspaceSlug;
@@ -259,6 +266,8 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
               total_count: this.paginationInfo.total_count + 1,
             });
           }
+          // Update draft issue count in workspaceUserInfo
+          this.updateWorkspaceUserDraftIssueCount(workspaceSlug, 1);
         });
       }
 
@@ -299,8 +308,10 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
 
       const response = await workspaceDraftService.deleteIssue(workspaceSlug, issueId);
       runInAction(() => {
-        unset(this.issueMapIds[workspaceSlug], issueId);
-        unset(this.issuesMap, issueId);
+        // Remove the issue from the issueMapIds
+        this.issueMapIds[workspaceSlug] = (this.issueMapIds[workspaceSlug] || []).filter((id) => id !== issueId);
+        // Remove the issue from the issuesMap
+        delete this.issuesMap[issueId];
         // reduce the count of issues in the pagination info
         if (this.paginationInfo?.total_count) {
           set(this, "paginationInfo", {
@@ -308,6 +319,8 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
             total_count: this.paginationInfo.total_count - 1,
           });
         }
+        // Update draft issue count in workspaceUserInfo
+        this.updateWorkspaceUserDraftIssueCount(workspaceSlug, -1);
       });
 
       this.loader = undefined;
@@ -324,8 +337,10 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
 
       const response = await workspaceDraftService.moveIssue(workspaceSlug, issueId, payload);
       runInAction(() => {
-        unset(this.issueMapIds[workspaceSlug], issueId);
-        unset(this.issuesMap, issueId);
+        // Remove the issue from the issueMapIds
+        this.issueMapIds[workspaceSlug] = (this.issueMapIds[workspaceSlug] || []).filter((id) => id !== issueId);
+        // Remove the issue from the issuesMap
+        delete this.issuesMap[issueId];
         // reduce the count of issues in the pagination info
         if (this.paginationInfo?.total_count) {
           set(this, "paginationInfo", {
@@ -333,6 +348,8 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
             total_count: this.paginationInfo.total_count - 1,
           });
         }
+        // Update draft issue count in workspaceUserInfo
+        this.updateWorkspaceUserDraftIssueCount(workspaceSlug, -1);
       });
 
       this.loader = undefined;

@@ -54,6 +54,7 @@ export interface IProject {
   updated_by: string;
   workspace: IWorkspace | string;
   workspace_detail: IWorkspaceLite;
+  timezone: string;
 }
 
 export interface IProjectLite {

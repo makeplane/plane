@@ -2,10 +2,16 @@ from .analytic import AnalyticView
 from .api import APIActivityLog, APIToken
 from .asset import FileAsset
 from .base import BaseModel
-from .cycle import Cycle, CycleFavorite, CycleIssue, CycleUserProperties
+from .cycle import Cycle, CycleIssue, CycleUserProperties
 from .dashboard import Dashboard, DashboardWidget, Widget
 from .deploy_board import DeployBoard
-from .draft import DraftIssue, DraftIssueAssignee, DraftIssueLabel, DraftIssueModule, DraftIssueCycle
+from .draft import (
+    DraftIssue,
+    DraftIssueAssignee,
+    DraftIssueLabel,
+    DraftIssueModule,
+    DraftIssueCycle,
+)
 from .estimate import Estimate, EstimatePoint
 from .exporter import ExporterHistory
 from .importer import Importer
@@ -35,11 +41,9 @@ from .issue import (
     IssueSequence,
     IssueSubscriber,
     IssueVote,
-    Label,
 )
 from .module import (
     Module,
-    ModuleFavorite,
     ModuleIssue,
     ModuleLink,
     ModuleMember,
@@ -52,7 +56,6 @@ from .notification import (
 )
 from .page import (
     Page,
-    PageFavorite,
     PageLabel,
     PageLog,
     ProjectPage,
@@ -61,7 +64,6 @@ from .page import (
 from .project import (
     Project,
     ProjectBaseModel,
-    ProjectFavorite,
     ProjectIdentifier,
     ProjectMember,
     ProjectMemberInvite,
@@ -72,7 +74,7 @@ from .session import Session
 from .social_connection import SocialLoginConnection
 from .state import State
 from .user import Account, Profile, User
-from .view import IssueView, IssueViewFavorite
+from .view import IssueView
 from .webhook import Webhook, WebhookLog
 from .workspace import (
     Team,
@@ -87,7 +89,7 @@ from .workspace import (
 
 from .importer import Importer
 
-from .page import Page, PageLog, PageFavorite, PageLabel
+from .page import Page, PageLog, PageLabel
 
 from .estimate import Estimate, EstimatePoint
 
@@ -112,3 +114,7 @@ from .favorite import UserFavorite
 from .issue_type import IssueType
 
 from .recent_visit import UserRecentVisit
+
+from .label import Label
+
+from .device import Device, DeviceSession

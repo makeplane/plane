@@ -1,4 +1,5 @@
-import * as Sentry from "@sentry/nextjs";
+import { startSpan } from "@sentry/nextjs";
+import isEmpty from "lodash/isEmpty";
 // types
 import type {
   IIssueDisplayProperties,
@@ -14,7 +15,7 @@ import { API_BASE_URL } from "@/helpers/common.helper";
 import { persistence } from "@/local-db/storage.sqlite";
 // services
 
-import { addIssue, addIssuesBulk, deleteIssueFromLocal } from "@/local-db/utils/load-issues";
+import { addIssuesBulk, deleteIssueFromLocal, updateIssue } from "@/local-db/utils/load-issues";
 import { APIService } from "@/services/api.service";
 
 export class IssueService extends APIService {
@@ -36,8 +37,12 @@ export class IssueService extends APIService {
     queries?: any,
     config = {}
   ): Promise<TIssuesResponse> {
+    const path =
+      (queries.expand as string)?.includes("issue_relation") && !queries.group_by
+        ? `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues-detail/`
+        : `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/`;
     return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/`,
+      path,
       {
         params: queries,
       },
@@ -63,10 +68,10 @@ export class IssueService extends APIService {
   }
 
   async getIssues(workspaceSlug: string, projectId: string, queries?: any, config = {}): Promise<TIssuesResponse> {
-    const response = await Sentry.startSpan({ name: "GET_ISSUES" }, async () => {
-      const res = await persistence.getIssues(workspaceSlug, projectId, queries, config);
-      return res;
-    });
+    if (!isEmpty(queries.expand as string) && !queries.group_by)
+      return await this.getIssuesFromServer(workspaceSlug, projectId, queries, config);
+
+    const response = await persistence.getIssues(workspaceSlug, projectId, queries, config);
     return response as TIssuesResponse;
   }
 
@@ -100,7 +105,7 @@ export class IssueService extends APIService {
     })
       .then((response) => {
         if (response.data) {
-          addIssue(response?.data);
+          updateIssue({ ...response.data, is_local_update: 1 });
         }
         return response?.data;
       })
@@ -219,6 +224,18 @@ export class IssueService extends APIService {
   async deleteIssue(workspaceSlug: string, projectId: string, issuesId: string): Promise<any> {
     deleteIssueFromLocal(issuesId);
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issuesId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async updateIssueDates(
+    workspaceSlug: string,
+    projectId: string,
+    updates: { id: string; start_date?: string; target_date?: string }[]
+  ): Promise<void> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-dates/`, { updates })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

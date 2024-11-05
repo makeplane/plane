@@ -12,6 +12,7 @@ from django.db.models import Q
 
 # Module imports
 from plane.utils.html_processor import strip_tags
+from plane.db.mixins import SoftDeletionManager
 
 from .project import ProjectBaseModel
 
@@ -79,7 +80,7 @@ def get_default_display_properties():
 
 
 # TODO: Handle identifiers for Bulk Inserts - nk
-class IssueManager(models.Manager):
+class IssueManager(SoftDeletionManager):
     def get_queryset(self):
         return (
             super()
@@ -172,7 +173,6 @@ class Issue(ProjectBaseModel):
         blank=True,
     )
 
-    objects = models.Manager()
     issue_objects = IssueManager()
 
     class Meta:
@@ -279,6 +279,8 @@ class IssueRelation(ProjectBaseModel):
         ("duplicate", "Duplicate"),
         ("relates_to", "Relates To"),
         ("blocked_by", "Blocked By"),
+        ("start_before", "Start Before"),
+        ("finish_before", "Finish Before"),
     )
 
     issue = models.ForeignKey(
@@ -545,51 +547,6 @@ class IssueUserProperty(ProjectBaseModel):
     def __str__(self):
         """Return properties status of the issue"""
         return str(self.user)
-
-
-class Label(ProjectBaseModel):
-    parent = models.ForeignKey(
-        "self",
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name="parent_label",
-    )
-    name = models.CharField(max_length=255)
-    description = models.TextField(blank=True)
-    color = models.CharField(max_length=255, blank=True)
-    sort_order = models.FloatField(default=65535)
-    external_source = models.CharField(max_length=255, null=True, blank=True)
-    external_id = models.CharField(max_length=255, blank=True, null=True)
-
-    class Meta:
-        unique_together = ["name", "project", "deleted_at"]
-        constraints = [
-            models.UniqueConstraint(
-                fields=["name", "project"],
-                condition=Q(deleted_at__isnull=True),
-                name="label_unique_name_project_when_deleted_at_null",
-            )
-        ]
-        verbose_name = "Label"
-        verbose_name_plural = "Labels"
-        db_table = "labels"
-        ordering = ("-created_at",)
-
-    def save(self, *args, **kwargs):
-        if self._state.adding:
-            # Get the maximum sequence value from the database
-            last_id = Label.objects.filter(project=self.project).aggregate(
-                largest=models.Max("sort_order")
-            )["largest"]
-            # if last_id is not None
-            if last_id is not None:
-                self.sort_order = last_id + 10000
-
-        super(Label, self).save(*args, **kwargs)
-
-    def __str__(self):
-        return str(self.name)
 
 
 class IssueLabel(ProjectBaseModel):

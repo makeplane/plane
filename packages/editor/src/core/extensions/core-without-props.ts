@@ -16,8 +16,9 @@ import { IssueWidgetWithoutProps } from "./issue-embed/issue-embed-without-props
 import { CustomMentionWithoutProps } from "./mentions/mentions-without-props";
 import { CustomQuoteExtension } from "./quote";
 import { TableHeader, TableCell, TableRow, Table } from "./table";
-import { CustomTextColorExtension } from "./custom-text-color";
-import { CustomBackgroundColorExtension } from "./custom-background-color";
+import { CustomTextAlignExtension } from "./text-align";
+import { CustomCalloutExtensionConfig } from "./callout/extension-config";
+import { CustomColorExtension } from "./custom-color";
 
 export const CoreEditorExtensionsWithoutProps = [
   StarterKit.configure({
@@ -85,8 +86,9 @@ export const CoreEditorExtensionsWithoutProps = [
   TableCell,
   TableRow,
   CustomMentionWithoutProps(),
-  CustomTextColorExtension,
-  CustomBackgroundColorExtension,
+  CustomTextAlignExtension,
+  CustomCalloutExtensionConfig,
+  CustomColorExtension,
 ];
 
 export const DocumentEditorExtensionsWithoutProps = [IssueWidgetWithoutProps()];

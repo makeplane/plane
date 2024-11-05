@@ -761,11 +761,11 @@ const emptyStateDetails = {
   },
   [EmptyStateType.WORKSPACE_DRAFT_ISSUES]: {
     key: EmptyStateType.WORKSPACE_DRAFT_ISSUES,
-    title: "No Draft Issues Yet",
-    description: "There are no draft issues in your workspace right now. Begin by adding your first one.",
+    title: "Half-written issues, and soon, comments will show up here.",
+    description: "To try this out, start adding an issue and leave it mid-way or create your first draft below. 😉",
     path: "/empty-state/workspace-draft/issue",
     primaryButton: {
-      text: "Create draft issue",
+      text: "Create your first draft",
     },
     accessType: "workspace",
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],

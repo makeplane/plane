@@ -26,7 +26,8 @@ class DeployBoard(WorkspaceBaseModel):
     entity_identifier = models.UUIDField(null=True)
     entity_name = models.CharField(
         max_length=30,
-        choices=TYPE_CHOICES,
+        null=True,
+        blank=True,
     )
     anchor = models.CharField(
         max_length=255, default=get_anchor, unique=True, db_index=True

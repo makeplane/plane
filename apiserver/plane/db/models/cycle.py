@@ -110,7 +110,7 @@ class CycleIssue(ProjectBaseModel):
     Cycle Issues
     """
 
-    issue = models.OneToOneField(
+    issue = models.ForeignKey(
         "db.Issue", on_delete=models.CASCADE, related_name="issue_cycle"
     )
     cycle = models.ForeignKey(
@@ -118,6 +118,14 @@ class CycleIssue(ProjectBaseModel):
     )
 
     class Meta:
+        unique_together = ["issue", "cycle", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["cycle", "issue"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="cycle_issue_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Cycle Issue"
         verbose_name_plural = "Cycle Issues"
         db_table = "cycle_issues"
@@ -125,33 +133,6 @@ class CycleIssue(ProjectBaseModel):
 
     def __str__(self):
         return f"{self.cycle}"
-
-
-# DEPRECATED TODO: - Remove in next release
-class CycleFavorite(ProjectBaseModel):
-    """_summary_
-    CycleFavorite (model): To store all the cycle favorite of the user
-    """
-
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="cycle_favorites",
-    )
-    cycle = models.ForeignKey(
-        "db.Cycle", on_delete=models.CASCADE, related_name="cycle_favorites"
-    )
-
-    class Meta:
-        unique_together = ["cycle", "user"]
-        verbose_name = "Cycle Favorite"
-        verbose_name_plural = "Cycle Favorites"
-        db_table = "cycle_favorites"
-        ordering = ("-created_at",)
-
-    def __str__(self):
-        """Return user and the cycle"""
-        return f"{self.user.email} <{self.cycle.name}>"
 
 
 class CycleUserProperties(ProjectBaseModel):

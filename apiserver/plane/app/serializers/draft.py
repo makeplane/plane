@@ -204,7 +204,7 @@ class DraftIssueCreateSerializer(BaseSerializer):
 
         if cycle_id != "not_provided":
             DraftIssueCycle.objects.filter(draft_issue=instance).delete()
-            if cycle_id is not None:
+            if cycle_id:
                 DraftIssueCycle.objects.create(
                     cycle_id=cycle_id,
                     draft_issue=instance,

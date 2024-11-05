@@ -21,12 +21,11 @@ import {
   DeclineIssueModal,
   DeleteInboxIssueModal,
   InboxIssueActionsMobileHeader,
-  InboxIssueCreateEditModalRoot,
   InboxIssueSnoozeModal,
   InboxIssueStatus,
   SelectDuplicateInboxIssueModal,
 } from "@/components/inbox";
-import { IssueUpdateStatus } from "@/components/issues";
+import { CreateUpdateIssueModal, IssueUpdateStatus } from "@/components/issues";
 // helpers
 import { findHowManyDaysLeft } from "@/helpers/date-time.helper";
 import { EInboxIssueStatus } from "@/helpers/inbox.helper";
@@ -70,6 +69,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   const { currentTab, deleteInboxIssue, filteredInboxIssueIds } = useProjectInbox();
   const { data: currentUser } = useUser();
   const { allowPermissions } = useUserPermissions();
+  const { currentProjectDetails } = useProject();
 
   const router = useAppRouter();
   const { getProjectById } = useProject();
@@ -217,11 +217,12 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   };
 
   useEffect(() => {
+    if (isSubmitting === "submitting") return;
     if (!isNotificationEmbed) document.addEventListener("keydown", onKeyDown);
     return () => {
       if (!isNotificationEmbed) document.removeEventListener("keydown", onKeyDown);
     };
-  }, [onKeyDown, isNotificationEmbed]);
+  }, [onKeyDown, isNotificationEmbed, isSubmitting]);
 
   if (!inboxIssue) return null;
 
@@ -234,16 +235,19 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
           value={inboxIssue?.duplicate_to}
           onSubmit={handleInboxIssueDuplicate}
         />
-
-        <InboxIssueCreateEditModalRoot
-          workspaceSlug={workspaceSlug.toString()}
-          projectId={projectId.toString()}
-          modalState={acceptIssueModal}
-          handleModalClose={() => setAcceptIssueModal(false)}
-          issue={inboxIssue?.issue}
-          onSubmit={handleInboxIssueAccept}
+        <CreateUpdateIssueModal
+          data={inboxIssue?.issue}
+          isOpen={acceptIssueModal}
+          onClose={() => setAcceptIssueModal(false)}
+          beforeFormSubmit={handleInboxIssueAccept}
+          withDraftIssueWrapper={false}
+          fetchIssueDetails={false}
+          modalTitle={`Move ${currentProjectDetails?.identifier}-${issue?.sequence_id} to project issues`}
+          primaryButtonText={{
+            default: "Add to project",
+            loading: "Adding",
+          }}
         />
-
         <DeclineIssueModal
           data={inboxIssue?.issue || {}}
           isOpen={declineIssueModal}

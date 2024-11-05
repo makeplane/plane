@@ -2,6 +2,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
+import { LogoSpinner } from "@/components/common";
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
 import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 // hooks
@@ -30,7 +31,7 @@ export const DraftIssueLayoutRoot: React.FC = observer(() => {
   // hooks
   const { issuesFilter } = useIssues(EIssuesStoreType.DRAFT);
 
-  useSWR(
+  const { isLoading } = useSWR(
     workspaceSlug && projectId ? `DRAFT_ISSUES_${workspaceSlug.toString()}_${projectId.toString()}` : null,
     async () => {
       if (workspaceSlug && projectId) {
@@ -40,9 +41,17 @@ export const DraftIssueLayoutRoot: React.FC = observer(() => {
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout || undefined;
+  const issueFilters = issuesFilter?.getIssueFilters(projectId?.toString());
+  const activeLayout = issueFilters?.displayFilters?.layout || undefined;
 
   if (!workspaceSlug || !projectId) return <></>;
+
+  if (isLoading && !issueFilters)
+    return (
+      <div className="h-full w-full flex items-center justify-center">
+        <LogoSpinner />
+      </div>
+    );
 
   return (
     <IssuesStoreContext.Provider value={EIssuesStoreType.DRAFT}>

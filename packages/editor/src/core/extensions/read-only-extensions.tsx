@@ -21,8 +21,9 @@ import {
   CustomMention,
   HeadingListExtension,
   CustomReadOnlyImageExtension,
-  CustomTextColorExtension,
-  CustomBackgroundColorExtension,
+  CustomTextAlignExtension,
+  CustomCalloutReadOnlyExtension,
+  CustomColorExtension,
 } from "@/extensions";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
@@ -123,8 +124,9 @@ export const CoreReadOnlyEditorExtensions = (props: Props) => {
       readonly: true,
     }),
     CharacterCount,
-    CustomTextColorExtension,
-    CustomBackgroundColorExtension,
+    CustomColorExtension,
     HeadingListExtension,
+    CustomTextAlignExtension,
+    CustomCalloutReadOnlyExtension,
   ];
 };

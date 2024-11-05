@@ -15,6 +15,7 @@ from rest_framework.response import Response
 from .base import BaseAPIView
 from plane.db.models import DeployBoard, FileAsset
 from plane.settings.storage import S3Storage
+from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 
 
 class EntityAssetEndpoint(BaseAPIView):
@@ -159,19 +160,16 @@ class EntityAssetEndpoint(BaseAPIView):
 
         # get the asset id
         asset = FileAsset.objects.get(id=pk, workspace=deploy_board.workspace)
-        storage = S3Storage(request=request)
         # get the storage metadata
         asset.is_uploaded = True
         # get the storage metadata
-        if asset.storage_metadata is None:
-            asset.storage_metadata = storage.get_object_metadata(
-                object_name=asset.asset.name
-            )
+        if not asset.storage_metadata:
+            get_asset_object_metadata.delay(str(asset.id))
 
         # update the attributes
         asset.attributes = request.data.get("attributes", asset.attributes)
         # save the asset
-        asset.save()
+        asset.save(update_fields=["attributes", "is_uploaded"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def delete(self, request, anchor, pk):
@@ -195,7 +193,7 @@ class EntityAssetEndpoint(BaseAPIView):
         asset.is_deleted = True
         asset.deleted_at = timezone.now()
         # Save the asset
-        asset.save()
+        asset.save(update_fields=["is_deleted", "deleted_at"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -220,7 +218,7 @@ class AssetRestoreEndpoint(BaseAPIView):
         )
         asset.is_deleted = False
         asset.deleted_at = None
-        asset.save()
+        asset.save(update_fields=["is_deleted", "deleted_at"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

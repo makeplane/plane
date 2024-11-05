@@ -18,12 +18,15 @@ export const ReadOnlyImageExtension = (props: Pick<TFileHandler, "getAssetSrc">)
         height: {
           default: null,
         },
+        aspectRatio: {
+          default: null,
+        },
       };
     },
 
     addCommands() {
       return {
-        getImageSource: (path: string) => () => getAssetSrc(path),
+        getImageSource: (path: string) => async () => await getAssetSrc(path),
       };
     },
 

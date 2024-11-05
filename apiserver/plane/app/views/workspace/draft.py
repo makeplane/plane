@@ -8,10 +8,11 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.db.models import (
-    F,
     Q,
     UUIDField,
     Value,
+    Subquery,
+    OuterRef,
 )
 from django.db.models.functions import Coalesce
 from django.utils.decorators import method_decorator
@@ -34,9 +35,9 @@ from plane.db.models import (
     DraftIssue,
     CycleIssue,
     ModuleIssue,
-    DraftIssueModule,
     DraftIssueCycle,
     Workspace,
+    FileAsset,
 )
 from .. import BaseViewSet
 from plane.bgtasks.issue_activities_task import issue_activity
@@ -53,13 +54,22 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
             .prefetch_related(
                 "assignees", "labels", "draft_issue_module__module"
             )
-            .annotate(cycle_id=F("draft_issue_cycle__cycle_id"))
+            .annotate(
+                cycle_id=Subquery(
+                    DraftIssueCycle.objects.filter(
+                        draft_issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("cycle_id")[:1]
+                )
+            )
             .annotate(
                 label_ids=Coalesce(
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=~Q(labels__id__isnull=True),
+                        filter=Q(
+                            ~Q(labels__id__isnull=True)
+                            & (Q(draft_label_issue__deleted_at__isnull=True))
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -67,8 +77,11 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "assignees__id",
                         distinct=True,
-                        filter=~Q(assignees__id__isnull=True)
-                        & Q(assignees__member_project__is_active=True),
+                        filter=Q(
+                            ~Q(assignees__id__isnull=True)
+                            & Q(assignees__member_project__is_active=True)
+                            & Q(draft_issue_assignee__deleted_at__isnull=True)
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -76,9 +89,12 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "draft_issue_module__module_id",
                         distinct=True,
-                        filter=~Q(draft_issue_module__module_id__isnull=True)
-                        & Q(
-                            draft_issue_module__module__archived_at__isnull=True
+                        filter=Q(
+                            ~Q(draft_issue_module__module_id__isnull=True)
+                            & Q(
+                                draft_issue_module__module__archived_at__isnull=True
+                            )
+                            & Q(draft_issue_module__deleted_at__isnull=True)
                         ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
@@ -259,9 +275,9 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                 origin=request.META.get("HTTP_ORIGIN"),
             )
 
-            if draft_issue.cycle_id:
+            if request.data.get("cycle_id", None):
                 created_records = CycleIssue.objects.create(
-                    cycle_id=draft_issue.cycle_id,
+                    cycle_id=request.data.get("cycle_id", None),
                     issue_id=serializer.data.get("id", None),
                     project_id=draft_issue.project_id,
                     workspace_id=draft_issue.workspace_id,
@@ -279,7 +295,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                         {
                             "updated_cycle_issues": None,
                             "created_cycle_issues": serializers.serialize(
-                                "json", created_records
+                                "json", [created_records]
                             ),
                         }
                     ),
@@ -288,7 +304,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                     origin=request.META.get("HTTP_ORIGIN"),
                 )
 
-            if draft_issue.module_ids:
+            if request.data.get("module_ids", []):
                 # bulk create the module
                 ModuleIssue.objects.bulk_create(
                     [
@@ -300,11 +316,11 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                             created_by_id=draft_issue.created_by_id,
                             updated_by_id=draft_issue.updated_by_id,
                         )
-                        for module in draft_issue.module_ids
+                        for module in request.data.get("module_ids", [])
                     ],
                     batch_size=10,
                 )
-                # Bulk Update the activity
+                # Update the activity
                 _ = [
                     issue_activity.delay(
                         type="module.activity.created",
@@ -317,17 +333,19 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                         notification=True,
                         origin=request.META.get("HTTP_ORIGIN"),
                     )
-                    for module in draft_issue.module_ids
+                    for module in request.data.get("module_ids", [])
                 ]
+
+            # Update file assets
+            file_assets = FileAsset.objects.filter(draft_issue_id=draft_id)
+            file_assets.update(
+                issue_id=serializer.data.get("id", None),
+                entity_type=FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
+                draft_issue_id=None,
+            )
 
             # delete the draft issue
             draft_issue.delete()
-
-            # delete the draft issue module
-            DraftIssueModule.objects.filter(draft_issue=draft_issue).delete()
-
-            # delete the draft issue cycle
-            DraftIssueCycle.objects.filter(draft_issue=draft_issue).delete()
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 

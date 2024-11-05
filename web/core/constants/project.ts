@@ -17,7 +17,7 @@ export const NETWORK_CHOICES: {
   {
     key: 2,
     label: "Public",
-    description: "Anyone in the workspace can join",
+    description: "Anyone in the workspace except Guests can join",
     icon: Globe2,
   },
 ];

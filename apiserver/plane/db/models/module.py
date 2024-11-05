@@ -100,9 +100,9 @@ class Module(ProjectBaseModel):
         unique_together = ["name", "project", "deleted_at"]
         constraints = [
             models.UniqueConstraint(
-                fields=['name', 'project'],
+                fields=["name", "project"],
                 condition=Q(deleted_at__isnull=True),
-                name='module_unique_name_project_when_deleted_at_null'
+                name="module_unique_name_project_when_deleted_at_null",
             )
         ]
         verbose_name = "Module"
@@ -189,33 +189,6 @@ class ModuleLink(ProjectBaseModel):
 
     def __str__(self):
         return f"{self.module.name} {self.url}"
-
-
-# DEPRECATED TODO: - Remove in next release
-class ModuleFavorite(ProjectBaseModel):
-    """_summary_
-    ModuleFavorite (model): To store all the module favorite of the user
-    """
-
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="module_favorites",
-    )
-    module = models.ForeignKey(
-        "db.Module", on_delete=models.CASCADE, related_name="module_favorites"
-    )
-
-    class Meta:
-        unique_together = ["module", "user"]
-        verbose_name = "Module Favorite"
-        verbose_name_plural = "Module Favorites"
-        db_table = "module_favorites"
-        ordering = ("-created_at",)
-
-    def __str__(self):
-        """Return user and the module"""
-        return f"{self.user.email} <{self.module.name}>"
 
 
 class ModuleUserProperties(ProjectBaseModel):
