@@ -22,7 +22,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import useKeypress from "@/hooks/use-keypress";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
-import { DeDupeIssueButtonLabel, DuplicateModalRoot } from "@/plane-web/components/de-dupe";
+import { DeDupeButtonRoot, DuplicateModalRoot } from "@/plane-web/components/de-dupe";
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
 import { FileService } from "@/services/file.service";
 
@@ -210,18 +210,12 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
             <div className="flex items-center justify-between gap-2">
               <h3 className="text-xl font-medium text-custom-text-200">Create intake issue</h3>
               {duplicateIssues?.length > 0 && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    handleDuplicateIssueModal(!isDuplicateModalOpen);
-                  }}
-                >
-                  <DeDupeIssueButtonLabel
-                    isOpen={isDuplicateModalOpen}
-                    buttonLabel={`${duplicateIssues.length} duplicate issue${duplicateIssues.length > 1 ? "s" : ""} found!`}
-                  />
-                </button>
+                <DeDupeButtonRoot
+                  workspaceSlug={workspaceSlug}
+                  isDuplicateModalOpen={isDuplicateModalOpen}
+                  label={`${duplicateIssues.length} duplicate issue${duplicateIssues.length > 1 ? "s" : ""} found!`}
+                  handleOnClick={() => handleDuplicateIssueModal(!isDuplicateModalOpen)}
+                />
               )}
             </div>
             <div className="space-y-3">
