@@ -34,7 +34,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
       })}
       {...rest}
       containerClassName={containerClassName}
-      editorClassName="h-[100px] border border-gray-100 rounded-md pl-3 pb-3 overflow-y-scroll"
+      editorClassName="min-h-[100px] max-h-[50vh] border border-gray-100 rounded-md pl-3 pb-3 overflow-y-scroll"
     />
   );
 });
