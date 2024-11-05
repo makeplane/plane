@@ -39,4 +39,10 @@ export class WorkspaceService extends CoreWorkspaceService {
         throw error?.response;
       });
   }
+
+  async searchAcrossWorkspace(workspaceSlug: string, params: { search: string; projectId?: string }) {
+    return this.get(`/api/workspaces/${workspaceSlug}/search/`, {
+      params,
+    }).then((response) => response?.data);
+  }
 }

@@ -71,18 +71,18 @@ export type TIssueMap = {
 type TIssueResponseResults =
   | TBaseIssue[]
   | {
-    [key: string]: {
-      results:
-      | TBaseIssue[]
-      | {
-        [key: string]: {
-          results: TBaseIssue[];
-          total_results: number;
-        };
+      [key: string]: {
+        results:
+          | TBaseIssue[]
+          | {
+              [key: string]: {
+                results: TBaseIssue[];
+                total_results: number;
+              };
+            };
+        total_results: number;
       };
-      total_results: number;
     };
-  };
 
 export type TIssuesResponse = {
   grouped_by: string;

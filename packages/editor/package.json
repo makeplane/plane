@@ -66,6 +66,7 @@
     "prosemirror-codemark": "^0.4.2",
     "prosemirror-utils": "^1.2.2",
     "react-moveable": "^0.54.2",
+    "smooth-scroll-into-view-if-needed": "^2.0.2",
     "tailwind-merge": "^1.14.0",
     "tippy.js": "^6.3.7",
     "tiptap-markdown": "^0.8.9",

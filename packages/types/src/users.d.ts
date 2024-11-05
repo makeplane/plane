@@ -3,7 +3,6 @@ import { TUserPermissions } from "./enums";
 
 type TLoginMediums = "email" | "magic-code" | "github" | "gitlab" | "google";
 
-
 export interface IUserLite {
   avatar_url: string;
   display_name: string;
@@ -28,6 +27,7 @@ export interface IUser extends IUserLite {
   username: string;
   last_login_medium: TLoginMediums;
   theme: IUserTheme;
+  avatar: string;
 }
 
 export interface IUserAccount {
@@ -89,7 +89,6 @@ export interface IUserTheme {
   sidebarText: string | undefined;
   sidebarBackground: string | undefined;
 }
-
 
 export interface IUserMemberLite extends IUserLite {
   email?: string;
@@ -153,7 +152,14 @@ export interface IUserProfileProjectSegregation {
     id: string;
     pending_issues: number;
   }[];
-  user_data: Pick<IUser, "avatar_url" | "cover_image_url" | "display_name" | "first_name" | "last_name"> & {
+  user_data: Pick<
+    IUser,
+    | "avatar_url"
+    | "cover_image_url"
+    | "display_name"
+    | "first_name"
+    | "last_name"
+  > & {
     date_joined: Date;
     user_timezone: string;
   };

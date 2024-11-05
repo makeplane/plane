@@ -32,6 +32,7 @@ import {
 } from "@/plane-web/store/workspace-worklog";
 // store
 import { CoreRootStore } from "@/store/root.store";
+import { IPiChatStore, PiChatStore } from "./pi-chat/pi-chat";
 //
 import { ITimelineStore, TimeLineStore } from "./timeline";
 
@@ -49,6 +50,7 @@ export class RootStore extends CoreRootStore {
   issueTypes: IIssueTypesStore;
   issuePropertiesActivity: IIssuePropertiesActivityStore;
   cycle: ICycleStore;
+  piChat: IPiChatStore;
   timelineStore: ITimelineStore;
 
   constructor() {
@@ -66,6 +68,7 @@ export class RootStore extends CoreRootStore {
     this.issuePropertiesActivity = new IssuePropertiesActivityStore(this);
     this.projectFilter = new ProjectFilterStore(this);
     this.cycle = new CycleStore(this);
+    this.piChat = new PiChatStore(this);
     this.timelineStore = new TimeLineStore(this);
   }
 
@@ -84,5 +87,6 @@ export class RootStore extends CoreRootStore {
     this.issuePropertiesActivity = new IssuePropertiesActivityStore(this);
     this.projectFilter = new ProjectFilterStore(this);
     this.cycle = new CycleStore(this);
+    this.piChat = new PiChatStore(this);
   }
 }
