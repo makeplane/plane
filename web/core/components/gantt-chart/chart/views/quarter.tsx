@@ -56,7 +56,7 @@ export const QuarterChartView: FC<any> = observer(() => {
                     className={cn(
                       "flex flex-shrink-0 text-center capitalize justify-center outline-[0.25px] outline outline-custom-border-200",
                       {
-                        "bg-custom-primary-10": monthBlock.today,
+                        "bg-custom-primary-100/20": monthBlock.today,
                       }
                     )}
                     style={{ width: `${currentViewData?.data.dayWidth * monthBlock.days}px` }}
@@ -80,7 +80,7 @@ export const QuarterChartView: FC<any> = observer(() => {
                 <div
                   key={`column-${rootIndex}-${index}`}
                   className={cn("h-full overflow-hidden outline-[0.25px] outline outline-custom-border-100", {
-                    "bg-custom-primary-10": monthBlock.today,
+                    "bg-custom-primary-100/20": monthBlock.today,
                   })}
                   style={{ width: `${currentViewData?.data.dayWidth * monthBlock.days}px` }}
                 />

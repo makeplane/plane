@@ -1,7 +1,3 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 .ProseMirror {
   position: relative;
   word-wrap: break-word;
@@ -196,7 +192,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
 /* Overwrite tippy-box original max-width */
 
 .tippy-box {
-  max-width: 400px !important;
+  max-width: 600px !important;
 }
 
 .fade-in {

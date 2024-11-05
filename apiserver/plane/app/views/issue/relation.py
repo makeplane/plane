@@ -318,7 +318,7 @@ class IssueRelationViewSet(BaseViewSet):
             origin=request.META.get("HTTP_ORIGIN"),
         )
 
-        if relation_type == "blocking":
+        if relation_type in ["blocking", "start_after", "finish_after"]:
             return Response(
                 RelatedIssueSerializer(issue_relation, many=True).data,
                 status=status.HTTP_201_CREATED,
@@ -333,7 +333,7 @@ class IssueRelationViewSet(BaseViewSet):
         relation_type = request.data.get("relation_type", None)
         related_issue = request.data.get("related_issue", None)
 
-        if relation_type == "blocking":
+        if relation_type in ["blocking", "start_after", "finish_after"]:
             issue_relation = IssueRelation.objects.get(
                 workspace__slug=slug,
                 project_id=project_id,
