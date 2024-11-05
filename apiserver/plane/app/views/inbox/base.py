@@ -37,6 +37,7 @@ from plane.app.serializers import (
 )
 from plane.utils.issue_filters import issue_filters
 from plane.bgtasks.issue_activities_task import issue_activity
+from plane.ee.models import IntakeSetting
 
 
 class InboxViewSet(BaseViewSet):
@@ -248,6 +249,25 @@ class InboxIssueViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        intake = Inbox.objects.filter(
+            workspace__slug=slug, project_id=project_id
+        ).first()
+
+        intake_settings = IntakeSetting.objects.filter(
+            workspace__slug=slug,
+            project_id=project_id,
+            intake=intake,
+        ).first()
+
+        if (
+            intake_settings is not None
+            and not intake_settings.is_in_app_enabled
+        ):
+            return Response(
+                {"error": "Creating intake issues is disabled"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         # Check for valid priority
         if request.data.get("issue", {}).get("priority", "none") not in [
             "low",
@@ -283,12 +303,10 @@ class InboxIssueViewSet(BaseViewSet):
         )
         if serializer.is_valid():
             serializer.save()
-            inbox_id = Inbox.objects.filter(
-                workspace__slug=slug, project_id=project_id
-            ).first()
+
             # create an inbox issue
             inbox_issue = InboxIssue.objects.create(
-                inbox_id=inbox_id.id,
+                inbox_id=intake.id,
                 project_id=project_id,
                 issue_id=serializer.data["id"],
                 source=request.data.get("source", "in-app"),
@@ -339,7 +357,7 @@ class InboxIssueViewSet(BaseViewSet):
                     ),
                 )
                 .get(
-                    inbox_id=inbox_id.id,
+                    inbox_id=intake.id,
                     issue_id=serializer.data["id"],
                     project_id=project_id,
                 )

@@ -1,1 +1,1 @@
-export * from "ce/components/projects/settings/intake";
+export * from "./header";

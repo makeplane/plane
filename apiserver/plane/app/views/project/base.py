@@ -49,6 +49,7 @@ from plane.db.models import (
     State,
     Workspace,
     WorkspaceMember,
+    APIToken,
 )
 from plane.utils.cache import cache_response
 from plane.bgtasks.webhook_task import model_activity
@@ -535,6 +536,21 @@ class ProjectViewSet(BaseViewSet):
                             project=project,
                             is_default=True,
                         )
+                    # Get the intake bot if it exists in the workspace
+                    api_token = APIToken.objects.filter(
+                        workspace__slug=slug,
+                        user__is_bot=True,
+                        user__bot_type="INTAKE_BOT",
+                    ).first()
+
+                    if api_token:
+                        ProjectMember.objects.get_or_create(
+                            project_id=pk,
+                            workspace_id=workspace.id,
+                            member_id=api_token.user_id,
+                            role=20,
+                        )
+
 
                     # Create the triage state in Backlog group
                     State.objects.get_or_create(

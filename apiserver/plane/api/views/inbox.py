@@ -26,6 +26,7 @@ from plane.db.models import (
     ProjectMember,
     State,
 )
+from plane.ee.models import IntakeSetting
 
 from .base import BaseAPIView
 
@@ -187,12 +188,27 @@ class InboxIssueAPIEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def patch(self, request, slug, project_id, issue_id):
-        inbox = Inbox.objects.filter(
+        intake = Inbox.objects.filter(
             workspace__slug=slug, project_id=project_id
         ).first()
 
+        intake_settings = IntakeSetting.objects.filter(
+            workspace__slug=slug,
+            project_id=project_id,
+            intake=intake,
+        ).first()
+
+        if (
+            intake_settings is not None
+            and not intake_settings.is_in_app_enabled
+        ):
+            return Response(
+                {"error": "Creating intake issues is disabled"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         # Inbox view
-        if inbox is None:
+        if intake is None:
             return Response(
                 {
                     "error": "Inbox is not enabled for this project enable it through the project's api"
@@ -205,7 +221,7 @@ class InboxIssueAPIEndpoint(BaseAPIView):
             issue_id=issue_id,
             workspace__slug=slug,
             project_id=project_id,
-            inbox_id=inbox.id,
+            inbox_id=intake.id,
         )
 
         # Get the project member

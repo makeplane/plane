@@ -19,5 +19,6 @@ from .issue import (
 
 from .project import ProjectState, ProjectAttribute
 from .workspace import WorkspaceFeature, WorkspaceLicense, WorkspaceActivity
+
 from .intake import IntakeSetting
 from .initiative import Initiative, InitiativeProject, InitiativeLabel

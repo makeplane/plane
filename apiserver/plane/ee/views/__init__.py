@@ -3,7 +3,7 @@ from plane.ee.views.api import (
     # issue property, property option, property value
     IssuePropertyAPIEndpoint,
     IssuePropertyOptionAPIEndpoint,
-    IssuePropertyValueAPIEndpoint
+    IssuePropertyValueAPIEndpoint,
 )
 
 # App imports
@@ -41,6 +41,7 @@ from plane.ee.views.app.workspace import (
 )
 
 from plane.ee.views.app.issue_property import IssuePropertyEndpoint
+from plane.ee.views.app.intake import IntakeSettingEndpoint
 
 # Space imports
 from plane.ee.views.space.page import (
@@ -51,3 +52,4 @@ from plane.ee.views.space.views import (
     ViewsPublicEndpoint,
     IssueViewsPublicEndpoint,
 )
+from plane.ee.views.space.intake import IntakePublishedIssueEndpoint

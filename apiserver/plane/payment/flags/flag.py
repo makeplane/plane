@@ -32,6 +32,10 @@ class FeatureFlag(Enum):
     ACTIVE_CYCLE_PRO = "ACTIVE_CYCLE_PRO"
     # Pro file size limit
     FILE_SIZE_LIMIT_PRO = "FILE_SIZE_LIMIT_PRO"
+    # Intake publish
+    INTAKE_PUBLISH = "INTAKE_PUBLISH"
+    # Intake settings
+    INTAKE_SETTINGS = "INTAKE_SETTINGS"
 
 
 class AdminFeatureFlag(Enum):
