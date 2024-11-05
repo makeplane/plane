@@ -16,8 +16,8 @@ type Props = {
 export const BubbleMenuColorSelector: FC<Props> = (props) => {
   const { editor, isOpen, setIsOpen } = props;
 
-  const activeTextColor = COLORS_LIST.find((c) => TextColorItem(editor).isActive(c.key));
-  const activeBackgroundColor = COLORS_LIST.find((c) => BackgroundColorItem(editor).isActive(c.key));
+  const activeTextColor = COLORS_LIST.find((c) => TextColorItem(editor).isActive({ color: c.key }));
+  const activeBackgroundColor = COLORS_LIST.find((c) => BackgroundColorItem(editor).isActive({ color: c.key }));
 
   return (
     <div className="relative h-full">
@@ -64,7 +64,7 @@ export const BubbleMenuColorSelector: FC<Props> = (props) => {
                   style={{
                     backgroundColor: color.textColor,
                   }}
-                  onClick={() => TextColorItem(editor).command(color.key)}
+                  onClick={() => TextColorItem(editor).command({ color: color.key })}
                 />
               ))}
               <button
@@ -87,7 +87,7 @@ export const BubbleMenuColorSelector: FC<Props> = (props) => {
                   style={{
                     backgroundColor: color.backgroundColor,
                   }}
-                  onClick={() => BackgroundColorItem(editor).command(color.key)}
+                  onClick={() => BackgroundColorItem(editor).command({ color: color.key })}
                 />
               ))}
               <button
