@@ -6,7 +6,7 @@ import { EditorProps } from "@tiptap/pm/view";
 import { useEditor as useTiptapEditor, Editor } from "@tiptap/react";
 import * as Y from "yjs";
 // components
-import { getEditorMenuItems } from "@/components/menus";
+import { EditorMenuItem, getEditorMenuItems } from "@/components/menus";
 // extensions
 import { CoreEditorExtensions } from "@/extensions";
 // helpers
@@ -155,11 +155,11 @@ export const useEditor = (props: CustomEditorProps) => {
         const item = getEditorMenuItem(itemKey);
         if (item) {
           if (item.key === "image") {
-            item.command(savedSelectionRef.current);
-          } else if (itemKey === "text-color" || itemKey === "background-color") {
-            item.command(props.color);
+            (item as EditorMenuItem<"image">).command({
+              savedSelection: savedSelectionRef.current,
+            });
           } else {
-            item.command();
+            item.command(props);
           }
         } else {
           console.warn(`No command found for item: ${itemKey}`);
@@ -173,11 +173,7 @@ export const useEditor = (props: CustomEditorProps) => {
         const item = getEditorMenuItem(itemKey);
         if (!item) return false;
 
-        if (itemKey === "text-color" || itemKey === "background-color") {
-          return item.isActive(props.color);
-        } else {
-          return item.isActive("");
-        }
+        return item.isActive(props);
       },
       onHeadingChange: (callback: (headings: IMarking[]) => void) => {
         // Subscribe to update event emitted from headers extension
