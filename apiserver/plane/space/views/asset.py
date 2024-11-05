@@ -19,7 +19,6 @@ from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 
 
 class EntityAssetEndpoint(BaseAPIView):
-
     def get_permissions(self):
         if self.request.method == "GET":
             permission_classes = [
@@ -48,6 +47,7 @@ class EntityAssetEndpoint(BaseAPIView):
             entity_type__in=[
                 FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
                 FileAsset.EntityTypeContext.COMMENT_DESCRIPTION,
+                FileAsset.EntityTypeContext.PAGE_DESCRIPTION,
             ],
         )
 
@@ -99,7 +99,13 @@ class EntityAssetEndpoint(BaseAPIView):
             )
 
         # Check if the file type is allowed
-        allowed_types = ["image/jpeg", "image/png", "image/webp"]
+        allowed_types = [
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+            "image/jpg",
+            "image/gif",
+        ]
         if type not in allowed_types:
             return Response(
                 {

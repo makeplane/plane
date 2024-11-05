@@ -465,3 +465,6 @@ ul[data-type="taskList"] ul[data-type="taskList"] {
   background-color: var(--editor-colors-purple-background);
 }
 /* end background colors */
+.ProseMirror .issue-embed img {
+  margin: 0 !important;
+}
