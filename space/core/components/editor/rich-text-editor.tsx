@@ -33,7 +33,8 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
         anchor: "",
       })}
       {...rest}
-      containerClassName={cn("relative pl-3 pb-3", containerClassName)}
+      containerClassName={cn("relative pl-3 pb-3 h-[100px]", containerClassName)}
+      editorClassName="h-[100px] border border-gray-100 rounded-md pl-3 pb-3 overflow-y-scroll"
     />
   );
 });
