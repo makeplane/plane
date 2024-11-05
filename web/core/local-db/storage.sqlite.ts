@@ -310,7 +310,7 @@ export class Storage {
     } catch (e) {
       logError(e);
       const issueService = new IssueService();
-      return await issueService.getIssuesFromServer(workspaceSlug, projectId, queries);
+      return await issueService.getIssuesFromServer(workspaceSlug, projectId, queries, config);
     }
     const end = performance.now();
 
