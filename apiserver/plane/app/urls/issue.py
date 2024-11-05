@@ -295,7 +295,6 @@ urlpatterns = [
         IssueArchiveViewSet.as_view(
             {
                 "get": "retrieve_description",
-                "post": "update_description",
             }
         ),
         name="archive-issue-description",
