@@ -2,11 +2,11 @@
 
 import { linearGradientDef } from "@nivo/core";
 // icons
-import { BarChart2, Briefcase, Home, Inbox, Layers, PenSquare } from "lucide-react";
+import { BarChart2, Briefcase, Layers } from "lucide-react";
 // types
 import { TIssuesListTypes, TStateGroups } from "@plane/types";
 // ui
-import { ContrastIcon, PiChatLogo, UserActivityIcon } from "@plane/ui";
+import { ContrastIcon } from "@plane/ui";
 import { Props } from "@/components/icons/types";
 import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // assets
