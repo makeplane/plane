@@ -2,15 +2,17 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
 import { AlertModalCore, Checkbox, Tooltip } from "@plane/ui";
+// helpers
+import { cn } from "@/helpers/common.helper";
 
-type TPropertyMandatoryFieldToggleProps = {
+type TPropertyMandatoryFieldCheckboxProps = {
   value: boolean;
   defaultValue: string[];
   isDisabled?: boolean;
   onMandatoryFieldChange: (value: boolean) => void;
 };
 
-export const PropertyMandatoryFieldToggle = observer((props: TPropertyMandatoryFieldToggleProps) => {
+export const PropertyMandatoryFieldCheckbox = observer((props: TPropertyMandatoryFieldCheckboxProps) => {
   const { value, defaultValue, isDisabled = false, onMandatoryFieldChange } = props;
   // states
   const [isDefaultResetConfirmationOpen, setIsDefaultResetConfirmationOpen] = useState<boolean>(false);
@@ -58,13 +60,25 @@ export const PropertyMandatoryFieldToggle = observer((props: TPropertyMandatoryF
           }
           position="bottom"
         >
-          <span>
+          <span
+            className={cn(
+              "flex items-center gap-1.5 text-custom-text-300 text-xs font-medium select-none",
+              isDisabled ? "cursor-not-allowed" : "cursor-pointer"
+            )}
+            onClick={() => {
+              if (isDisabled) return;
+              handleMandatoryFieldChange(!value);
+            }}
+          >
             <Checkbox
               checked={value}
-              onChange={() => handleMandatoryFieldChange(!value)}
               disabled={isDisabled}
-              className={!value ? "bg-custom-background-100" : ""}
+              className={cn("size-3.5", {
+                "bg-custom-background-100": !value,
+              })}
+              iconClassName="size-3.5"
             />
+            Mandatory property
           </span>
         </Tooltip>
       </div>

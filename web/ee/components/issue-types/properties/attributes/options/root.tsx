@@ -70,12 +70,9 @@ export const IssuePropertyOptionsRoot: FC<TIssuePropertyOptionsRoot> = observer(
   };
 
   return (
-    <div className="pt-3">
-      <div className="text-xs font-medium text-custom-text-300 p-1">Add options</div>
-      <div
-        ref={containerRef}
-        className="flex flex-col items-center py-1 -mr-1.5 space-y-1.5 max-h-36 overflow-scroll vertical-scrollbar scrollbar-xs"
-      >
+    <>
+      <div className="text-xs font-medium text-custom-text-300">Options</div>
+      <div ref={containerRef} className="flex flex-col items-center -ml-2 -mr-1.5 space-y-1.5">
         {sortedActivePropertyOptions && sortedActivePropertyOptions?.length > 0 && (
           <Sortable
             data={sortedActivePropertyOptions}
@@ -133,6 +130,6 @@ export const IssuePropertyOptionsRoot: FC<TIssuePropertyOptionsRoot> = observer(
           </div>
         ))}
       </div>
-    </div>
+    </>
   );
 });

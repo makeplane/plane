@@ -44,7 +44,9 @@ export const BooleanAttributes = observer((props: TBooleanAttributesProps) => {
         </div>
       )}
       <div className="flex flex-col gap-3">
-        <div className="text-xs font-medium text-custom-text-300">Default • Optional</div>
+        <div className="text-xs font-medium text-custom-text-300">
+          Default <span className="font-normal italic">(optional)</span>
+        </div>
         <div className="flex items-center gap-2">
           <BooleanInput
             value={booleanPropertyDetail.default_value ?? []}

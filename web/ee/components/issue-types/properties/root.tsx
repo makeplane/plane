@@ -5,6 +5,8 @@ import { v4 } from "uuid";
 import { InfoIcon, Plus } from "lucide-react";
 // ui
 import { Button, Loader, Tooltip } from "@plane/ui";
+// helpers
+import { cn } from "@/helpers/common.helper";
 // plane web components
 import { IssuePropertyList, IssueTypePropertiesEmptyState } from "@/plane-web/components/issue-types";
 // plane web hooks
@@ -42,6 +44,7 @@ export const IssuePropertiesRoot = observer((props: TIssuePropertiesRoot) => {
   // derived values
   const issuePropertiesLoader = getProjectIssuePropertiesLoader(projectId?.toString());
   const properties = issueType?.properties;
+  const isAnyPropertiesAvailable = (properties && properties?.length > 0) || issuePropertyCreateList.length > 0;
   // refs
   const containerRef = useRef<HTMLDivElement>(null);
   const lastElementRef = useRef<HTMLDivElement>(null);
@@ -80,25 +83,31 @@ export const IssuePropertiesRoot = observer((props: TIssuePropertiesRoot) => {
   };
 
   return (
-    <div className="bg-custom-background-100 border border-custom-border-200 rounded-lg">
-      <div className="pt-4">
-        <div className="w-full flex gap-2 items-center px-6">
-          <div className="text-base font-semibold">Custom Properties</div>
-          <Tooltip
-            position="right"
-            tooltipContent="Each issue type comes with a default set of properties like Title, Description, Assignee, State, Priority, Start date, Due date, Module, Cycle etc. You can also customize and add your own properties to tailor it to your team's needs."
-          >
-            <InfoIcon className="size-3.5 text-custom-text-200 cursor-help" />
-          </Tooltip>
-        </div>
-        {issuePropertiesLoader === "init-loader" ? (
-          <Loader className="w-full space-y-4 p-6">
-            <Loader.Item height="30px" width="100%" />
-            <Loader.Item height="30px" width="100%" />
-            <Loader.Item height="30px" width="100%" />
-            <Loader.Item height="30px" width="100%" />
-          </Loader>
-        ) : (properties && properties?.length > 0) || issuePropertyCreateList.length > 0 ? (
+    <div
+      className={cn("pt-1", {
+        "bg-custom-background-100 rounded-lg h-60 flex flex-col justify-center items-center":
+          issuePropertiesLoader !== "init-loader" && !isAnyPropertiesAvailable,
+      })}
+    >
+      {issuePropertiesLoader === "init-loader" ? (
+        <Loader className="w-full space-y-4 px-6 py-4">
+          <Loader.Item height="25px" width="150px" />
+          <Loader.Item height="35px" width="100%" />
+          <Loader.Item height="35px" width="100%" />
+          <Loader.Item height="35px" width="100%" />
+          <Loader.Item height="35px" width="100%" />
+        </Loader>
+      ) : isAnyPropertiesAvailable ? (
+        <>
+          <div className="w-full flex gap-2 items-center px-6">
+            <div className="text-base font-medium">Custom Properties</div>
+            <Tooltip
+              position="right"
+              tooltipContent="Each issue type comes with a default set of properties like Title, Description, Assignee, State, Priority, Start date, Due date, Module, Cycle etc. You can also customize and add your own properties to tailor it to your team's needs."
+            >
+              <InfoIcon className="size-3.5 text-custom-text-200 cursor-help outline-none" />
+            </Tooltip>
+          </div>
           <IssuePropertyList
             issueTypeId={issueTypeId}
             issuePropertyCreateList={issuePropertyCreateList}
@@ -106,28 +115,31 @@ export const IssuePropertiesRoot = observer((props: TIssuePropertiesRoot) => {
             containerRef={containerRef}
             lastElementRef={lastElementRef}
           />
-        ) : (
-          <IssueTypePropertiesEmptyState />
-        )}
-      </div>
-      <div className="flex justify-between items-center py-3 px-6 border-t border-custom-border-200">
-        <Button
-          variant="accent-primary"
-          size="sm"
-          onClick={() => {
-            handleIssuePropertyCreateList("add", {
-              key: v4(),
-              ...defaultIssueProperty,
-            });
-            setTimeout(() => {
-              scrollIntoElementView();
-            }, 0);
-          }}
-        >
-          <Plus className="h-3.5 w-3.5" />
-          Add new property
-        </Button>
-      </div>
+        </>
+      ) : (
+        <IssueTypePropertiesEmptyState />
+      )}
+      {issuePropertiesLoader !== "init-loader" && (
+        <div className={cn("flex items-center py-2 px-6", !isAnyPropertiesAvailable && "justify-center")}>
+          <Button
+            variant="accent-primary"
+            size="sm"
+            className="rounded-md"
+            onClick={() => {
+              handleIssuePropertyCreateList("add", {
+                key: v4(),
+                ...defaultIssueProperty,
+              });
+              setTimeout(() => {
+                scrollIntoElementView();
+              }, 0);
+            }}
+          >
+            <Plus className="h-3.5 w-3.5" />
+            Add new property
+          </Button>
+        </div>
+      )}
     </div>
   );
 });

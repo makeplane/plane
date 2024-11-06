@@ -76,7 +76,7 @@ export const DeleteConfirmationModal: React.FC<TProps> = observer((props) => {
             size="sm"
             tabIndex={1}
             onClick={handleDelete}
-            className="w-full"
+            className="w-full focus:!text-white"
             disabled={isSubmitting}
           >
             {isDisabledAlready ? "Yes, delete it" : "No, delete it"}

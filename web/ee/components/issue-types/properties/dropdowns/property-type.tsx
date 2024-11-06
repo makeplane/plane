@@ -6,7 +6,7 @@ import { cn } from "@/helpers/common.helper";
 // plane web constants
 import { ISSUE_PROPERTY_TYPE_DETAILS } from "@/plane-web/constants/issue-properties";
 // plane web helpers
-import { getIssuePropertyTypeDisplayName, getIssuePropertyTypeKey } from "@/plane-web/helpers/issue-properties.helper";
+import { getIssuePropertyTypeDetails, getIssuePropertyTypeKey } from "@/plane-web/helpers/issue-properties.helper";
 // plane web types
 import { useIssueType } from "@/plane-web/hooks/store";
 import {
@@ -41,6 +41,7 @@ export const PropertyTypeDropdown = observer((props: TPropertyTypeDropdownProps)
   const isAnyIssueAttached = issueType?.issue_exists;
   // derived values
   const isEditingAllowed = currentOperationMode && (currentOperationMode === "create" || !isAnyIssueAttached);
+  const propertyTypeDetails = getIssuePropertyTypeDetails(propertyType, propertyRelationType);
 
   // Can be used with CustomSearchSelect as well
   const issuePropertyTypeOptions = Object.entries(ISSUE_PROPERTY_TYPE_DETAILS).map(([key, property]) => ({
@@ -62,19 +63,33 @@ export const PropertyTypeDropdown = observer((props: TPropertyTypeDropdownProps)
     });
   };
 
-  return isEditingAllowed ? (
-    <CustomSearchSelect
-      value={getIssuePropertyTypeKey(propertyType, propertyRelationType)}
-      label={propertyType ? getIssuePropertyTypeDisplayName(propertyType, propertyRelationType) : "Select type"}
-      options={issuePropertyTypeOptions}
-      onChange={onPropertyTypeChange}
-      optionsClassName="w-48"
-      buttonClassName={cn(
-        "rounded text-sm bg-custom-background-100 border-[0.5px] border-custom-border-300",
-        Boolean(error) && "border-red-500"
-      )}
-    />
-  ) : (
-    <span className="px-2">{getIssuePropertyTypeDisplayName(propertyType, propertyRelationType)}</span>
+  return (
+    <div>
+      <span className="text-xs text-custom-text-300 font-medium">Property type</span>
+      <CustomSearchSelect
+        value={getIssuePropertyTypeKey(propertyType, propertyRelationType)}
+        label={
+          propertyTypeDetails ? (
+            <span className="flex items-center gap-1.5">
+              <propertyTypeDetails.icon className="w-3.5 h-3.5" />
+              {propertyTypeDetails.displayName}
+            </span>
+          ) : (
+            "Select type"
+          )
+        }
+        options={issuePropertyTypeOptions}
+        onChange={onPropertyTypeChange}
+        optionsClassName="w-48"
+        buttonClassName={cn(
+          "rounded text-sm border-[0.5px] bg-custom-background-100 border-custom-border-300",
+          Boolean(error) && "border-red-500",
+          {
+            "bg-custom-background-80": !isEditingAllowed,
+          }
+        )}
+        disabled={!isEditingAllowed}
+      />
+    </div>
   );
 });
