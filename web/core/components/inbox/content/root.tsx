@@ -1,13 +1,29 @@
-import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
+import { FC, useEffect, useState } from "react";
 import useSWR from "swr";
 // components
 import { ContentWrapper } from "@plane/ui";
-import { InboxIssueActionsHeader, InboxIssueMainContent } from "@/components/inbox";
 // hooks
 import { useProjectInbox, useUser, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+import dynamic from "next/dynamic";
+import { LogoSpinner } from "@/components/common";
+
+const InboxIssueActionsHeader = dynamic(
+  () => import("@/components/inbox/content/inbox-issue-header").then((m) => m.InboxIssueActionsHeader),
+  {
+    ssr: false,
+    loading: () => <LogoSpinner />,
+  }
+);
+const InboxIssueMainContent = dynamic(
+  () => import("@/components/inbox/content/issue-root").then((m) => m.InboxIssueMainContent),
+  {
+    ssr: false,
+    loading: () => <LogoSpinner />,
+  }
+);
 
 type TInboxContentRoot = {
   workspaceSlug: string;

@@ -1,8 +1,7 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
+import { FC } from "react";
 // components
-import { CyclesList } from "@/components/cycles";
 // ui
 import { CycleModuleListLayout } from "@/components/ui";
 // hooks
@@ -10,12 +9,16 @@ import { useCycle, useCycleFilter } from "@/hooks/store";
 // assets
 import AllFiltersImage from "@/public/empty-state/cycle/all-filters.svg";
 import NameFilterImage from "@/public/empty-state/cycle/name-filter.svg";
+import dynamic from "next/dynamic";
 
 export interface ICyclesView {
   workspaceSlug: string;
   projectId: string;
 }
-
+const CyclesList = dynamic(() => import("@/components/cycles/list/root").then((m) => m.CyclesList), {
+  ssr: false,
+  loading: () => <CycleModuleListLayout />,
+});
 export const CyclesView: FC<ICyclesView> = observer((props) => {
   const { workspaceSlug, projectId } = props;
   // store hooks
