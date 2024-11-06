@@ -285,6 +285,11 @@ class ProjectAPIEndpoint(BaseAPIView):
             current_instance = json.dumps(
                 ProjectSerializer(project).data, cls=DjangoJSONEncoder
             )
+
+            intake_view = request.data.get(
+                "inbox_view", request.data.get("intake_view", False)
+            )
+
             if project.archived_at:
                 return Response(
                     {"error": "Archived project cannot be updated"},
@@ -293,7 +298,10 @@ class ProjectAPIEndpoint(BaseAPIView):
 
             serializer = ProjectSerializer(
                 project,
-                data={**request.data},
+                data={
+                    **request.data,
+                    "intake_view": intake_view,
+                },
                 context={"workspace_id": workspace.id},
                 partial=True,
             )
