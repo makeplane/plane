@@ -4,20 +4,9 @@ import {
   PROJECT_FEATURES_LIST,
   TProperties,
 } from "ce/constants/project/settings/features";
-import { ListTodo, Mail, Zap } from "lucide-react";
+import { ListTodo, Zap } from "lucide-react";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import IntakeSubFeatures from "@/plane-web/components/projects/settings/intake/intake-sub-features";
-
-PROJECT_FEATURES_LIST.project_features.featureList.inbox.renderChildren = (
-  currentProjectDetails,
-  isAdmin,
-  handleSubmit,
-  workspaceSlug
-) => (
-  <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="INTAKE_SETTINGS" fallback={<></>}>
-    <IntakeSubFeatures projectId={currentProjectDetails.id} isAdmin={isAdmin} handleSubmit={handleSubmit} />
-  </WithFeatureFlagHOC>
-);
 
 PROJECT_FEATURES_LIST.project_others.featureList.is_time_tracking_enabled = {
   ...PROJECT_FEATURES_LIST.project_others.featureList.is_time_tracking_enabled,
@@ -64,6 +53,22 @@ export const INTAKE_FEATURES_LIST: TIntakeFeatureList = {
     canShuffle: true,
   },
 };
+
+PROJECT_FEATURES_LIST.project_features.featureList.inbox.renderChildren = (
+  currentProjectDetails,
+  isAdmin,
+  handleSubmit,
+  workspaceSlug
+) => (
+  <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="INTAKE_SETTINGS" fallback={<></>}>
+    <IntakeSubFeatures
+      projectId={currentProjectDetails.id}
+      isAdmin={isAdmin}
+      handleSubmit={handleSubmit}
+      featureList={INTAKE_FEATURES_LIST}
+    />
+  </WithFeatureFlagHOC>
+);
 
 export type { TFeatureList, TProjectFeatures };
 export { PROJECT_FEATURES_LIST };

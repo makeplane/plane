@@ -1,26 +1,33 @@
 import { useState } from "react";
-import { UpgradeBadge } from "ee/components/workspace";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { Copy, ExternalLink, RefreshCcw } from "lucide-react";
 import { TInboxForm } from "@plane/types";
-import { Button, Loader, setPromiseToast, setToast, TOAST_TYPE, ToggleSwitch, Tooltip } from "@plane/ui";
+import { Button, Loader, setPromiseToast, setToast, TOAST_TYPE, ToggleSwitch } from "@plane/ui";
+import { TProperties } from "@/ce/constants";
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
 import { copyTextToClipboard } from "@/helpers/string.helper";
 import { useProjectInbox } from "@/hooks/store";
-import { INTAKE_FEATURES_LIST } from "@/plane-web/constants/project";
 import { RenewModal } from "./renew-modal";
 
+export type TIntakeFeatureList = {
+  [key: string]: TProperties & {
+    hasOptions: boolean;
+    hasHyperlink?: boolean;
+    canShuffle?: boolean;
+  };
+};
 type Props = {
   projectId?: string;
   isAdmin?: boolean;
   handleSubmit?: (featureKey: string, featureProperty: string) => Promise<void>;
   allowEdit?: boolean;
   showDefault?: boolean;
+  featureList: TIntakeFeatureList;
 };
 const IntakeSubFeatures = observer((props: Props) => {
-  const { projectId, isAdmin, allowEdit = true, showDefault = true } = props;
+  const { projectId, isAdmin, allowEdit = true, showDefault = true, featureList } = props;
   const { workspaceSlug } = useParams();
   const [modalType, setModalType] = useState("");
   const { fetchIntakeForms, toggleIntakeForms, regenerateIntakeForms, intakeForms } = useProjectInbox();
@@ -78,10 +85,10 @@ const IntakeSubFeatures = observer((props: Props) => {
           handleSubmit={regenerateIntakeForms}
         />
       )}
-      {Object.keys(INTAKE_FEATURES_LIST)
+      {Object.keys(featureList)
         .filter((featureKey) => featureKey !== "in-app" || showDefault)
         .map((featureKey) => {
-          const feature = INTAKE_FEATURES_LIST[featureKey];
+          const feature = featureList[featureKey];
           const SPACE_APP_URL =
             (SPACE_BASE_URL.trim() === "" ? window.location.origin : SPACE_BASE_URL) + SPACE_BASE_PATH;
           const publishLink = `${SPACE_APP_URL}/intake/${settings?.anchor}`;
@@ -96,11 +103,6 @@ const IntakeSubFeatures = observer((props: Props) => {
                     <div>
                       <div className="flex items-center gap-2">
                         <h4 className="text-sm font-medium leading-5">{feature.title}</h4>
-                        {feature.isPro && (
-                          <Tooltip tooltipContent="Pro feature" position="top">
-                            <UpgradeBadge />
-                          </Tooltip>
-                        )}
                       </div>
                     </div>
                   </div>
