@@ -234,6 +234,10 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
     ? (getProjectIdentifierById(issueDetail.project_id)?.length ?? 0 + 5) * 7
     : 0;
 
+  const handleOnFocus = () => {
+    peekIssue && handleIssuePeekOverview(issueDetail);
+  };
+
   return (
     <>
       <td
@@ -241,6 +245,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
         ref={cellRef}
         tabIndex={0}
         className="relative md:sticky left-0 z-10 group/list-block bg-custom-background-100"
+        onFocus={handleOnFocus}
       >
         <ControlLink
           href={`/${workspaceSlug}/projects/${issueDetail.project_id}/issues/${issueId}`}
