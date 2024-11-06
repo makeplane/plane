@@ -1,5 +1,7 @@
 "use client";
 
+import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { CalendarCheck2, Signal } from "lucide-react";
 // ui
 import { DoubleCircleIcon, StateGroupIcon, TOAST_TYPE, setToast } from "@plane/ui";
@@ -12,6 +14,8 @@ import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 import { copyTextToClipboard, addSpaceIfCamelCase } from "@/helpers/string.helper";
+// hooks
+import { usePublish, useStates } from "@/hooks/store";
 // types
 import { IIssue, IPeekMode } from "@/types/issue";
 
@@ -20,8 +24,13 @@ type Props = {
   mode?: IPeekMode;
 };
 
-export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mode }) => {
-  const state = issueDetails.state_detail;
+export const PeekOverviewIssueProperties: React.FC<Props> = observer(({ issueDetails, mode }) => {
+  const { getStateById } = useStates();
+  const state = getStateById(issueDetails?.state_id ?? undefined);
+
+  const { anchor } = useParams();
+
+  const { project_details } = usePublish(anchor?.toString());
 
   const priority = issueDetails.priority ? issuePriorityFilter(issueDetails.priority) : null;
 
@@ -42,7 +51,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mod
       {mode === "full" && (
         <div className="flex justify-between gap-2 pb-3">
           <h6 className="flex items-center gap-2 font-medium">
-            {issueDetails.project_detail.identifier}-{issueDetails.sequence_id}
+            {project_details?.identifier}-{issueDetails.sequence_id}
           </h6>
           <div className="flex items-center gap-2">
             <button type="button" onClick={handleCopyLink} className="-rotate-45">
@@ -58,7 +67,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mod
             <span>State</span>
           </div>
           <div className="w-3/4 flex items-center gap-1.5 py-0.5 text-sm">
-            <StateGroupIcon stateGroup={state.group} color={state.color} />
+            <StateGroupIcon stateGroup={state?.group ?? "backlog"} color={state?.color} />
             {addSpaceIfCamelCase(state?.name ?? "")}
           </div>
         </div>
@@ -101,10 +110,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mod
             {issueDetails.target_date ? (
               <div
                 className={cn("flex items-center gap-1.5 rounded py-0.5 text-xs text-custom-text-100", {
-                  "text-red-500": shouldHighlightIssueDueDate(
-                    issueDetails.target_date,
-                    issueDetails.state_detail.group
-                  ),
+                  "text-red-500": shouldHighlightIssueDueDate(issueDetails.target_date, state?.group),
                 })}
               >
                 <CalendarCheck2 className="size-3" />
@@ -118,4 +124,4 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mod
       </div>
     </div>
   );
-};
+});

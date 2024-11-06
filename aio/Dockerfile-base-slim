@@ -1,0 +1,45 @@
+FROM --platform=$BUILDPLATFORM tonistiigi/binfmt AS binfmt
+
+FROM python:3.12-slim
+
+# Set environment variables to non-interactive for apt
+ENV DEBIAN_FRONTEND=noninteractive
+ENV BUILD_TYPE=slim
+
+SHELL [ "/bin/bash", "-c" ]
+
+WORKDIR /app
+
+RUN mkdir -p /app/{data,logs} && \
+    mkdir -p /app/data/{nginx} && \
+    mkdir -p /app/logs/{access,error} && \
+    mkdir -p /etc/supervisor/conf.d
+
+# Update the package list and install prerequisites
+RUN apt-get update && \
+    apt-get install -y \
+    gnupg2 curl ca-certificates lsb-release software-properties-common \
+    build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
+    libsqlite3-dev wget llvm libncurses5-dev libncursesw5-dev xz-utils \
+    tk-dev libffi-dev liblzma-dev supervisor nginx nano vim ncdu \
+    sudo lsof net-tools libpq-dev procps gettext
+
+# Install Node.js 18
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs
+
+RUN python -m pip install --upgrade pip && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+    
+# Create Supervisor configuration file
+COPY supervisord-slim-base /app/supervisord.conf
+COPY nginx.conf /etc/nginx/nginx.conf.template
+COPY env.sh /app/nginx-start.sh
+RUN chmod +x /app/nginx-start.sh
+
+# Expose ports for Redis, PostgreSQL, and MinIO
+EXPOSE 80 443
+
+# Start Supervisor
+CMD ["/usr/bin/supervisord", "-c", "/app/supervisord.conf"]

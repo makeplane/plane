@@ -1,6 +1,6 @@
 import { computed, makeObservable } from "mobx";
 // editor
-import { IMentionHighlight } from "@plane/lite-text-editor";
+import { IMentionHighlight } from "@plane/editor";
 // store
 import { CoreRootStore } from "@/store/root.store";
 

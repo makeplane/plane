@@ -1,12 +1,7 @@
 # Python imports
 import json
 
-from django.db.models import (
-    F,
-    Func,
-    OuterRef,
-    Q,
-)
+from django.db.models import F, Func, OuterRef, Q, Subquery
 
 # Django Imports
 from django.utils import timezone
@@ -17,19 +12,18 @@ from django.views.decorators.gzip import gzip_page
 from rest_framework import status
 from rest_framework.response import Response
 
-from plane.app.permissions import (
-    ProjectEntityPermission,
-)
+from plane.app.permissions import allow_permission, ROLE
 from plane.app.serializers import (
     ModuleIssueSerializer,
 )
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
-    IssueAttachment,
+    FileAsset,
     IssueLink,
     ModuleIssue,
     Project,
+    CycleIssue,
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -58,20 +52,23 @@ class ModuleIssueViewSet(BaseViewSet):
         "issue__assignees__id",
     ]
 
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
-
     def get_queryset(self):
         return (
             Issue.issue_objects.filter(
                 project_id=self.kwargs.get("project_id"),
                 workspace__slug=self.kwargs.get("slug"),
                 issue_module__module_id=self.kwargs.get("module_id"),
+                issue_module__deleted_at__isnull=True,
             )
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
-            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(
+                        issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("cycle_id")[:1]
+                )
+            )
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -79,8 +76,9 @@ class ModuleIssueViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -97,6 +95,12 @@ class ModuleIssueViewSet(BaseViewSet):
         ).distinct()
 
     @method_decorator(gzip_page)
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+        ]
+    )
     def list(self, request, slug, project_id, module_id):
         filters = issue_filters(request.query_params, "GET")
         issue_queryset = self.get_queryset().filter(**filters)
@@ -204,6 +208,7 @@ class ModuleIssueViewSet(BaseViewSet):
                 ),
             )
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     # create multiple issues inside a module
     def create_module_issues(self, request, slug, project_id, module_id):
         issues = request.data.get("issues", [])
@@ -245,6 +250,7 @@ class ModuleIssueViewSet(BaseViewSet):
         ]
         return Response({"message": "success"}, status=status.HTTP_201_CREATED)
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     # add multiple module inside an issue and remove multiple modules from an issue
     def create_issue_modules(self, request, slug, project_id, issue_id):
         modules = request.data.get("modules", [])
@@ -284,7 +290,7 @@ class ModuleIssueViewSet(BaseViewSet):
             ]
 
         for module_id in removed_modules:
-            module_issue = ModuleIssue.objects.get(
+            module_issue = ModuleIssue.objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
                 module_id=module_id,
@@ -297,7 +303,7 @@ class ModuleIssueViewSet(BaseViewSet):
                 issue_id=str(issue_id),
                 project_id=str(project_id),
                 current_instance=json.dumps(
-                    {"module_name": module_issue.module.name}
+                    {"module_name": module_issue.first().module.name}
                 ),
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
@@ -307,8 +313,9 @@ class ModuleIssueViewSet(BaseViewSet):
 
         return Response({"message": "success"}, status=status.HTTP_201_CREATED)
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def destroy(self, request, slug, project_id, module_id, issue_id):
-        module_issue = ModuleIssue.objects.get(
+        module_issue = ModuleIssue.objects.filter(
             workspace__slug=slug,
             project_id=project_id,
             module_id=module_id,
@@ -321,7 +328,7 @@ class ModuleIssueViewSet(BaseViewSet):
             issue_id=str(issue_id),
             project_id=str(project_id),
             current_instance=json.dumps(
-                {"module_name": module_issue.module.name}
+                {"module_name": module_issue.first().module.name}
             ),
             epoch=int(timezone.now().timestamp()),
             notification=True,

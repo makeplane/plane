@@ -1,7 +1,9 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // icons
 import { ListFilter, Search, X } from "lucide-react";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // types
 import { TCycleFilters } from "@plane/types";
 // components
@@ -12,7 +14,6 @@ import { cn } from "@/helpers/common.helper";
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useCycleFilter } from "@/hooks/store";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 
 type Props = {
   projectId: string;
@@ -62,6 +63,10 @@ export const CyclesViewHeader: React.FC<Props> = observer((props) => {
   };
 
   const isFiltersApplied = calculateTotalFilters(currentProjectFilters ?? {}) !== 0;
+
+  useEffect(() => {
+    if (searchQuery.trim() !== "") setIsSearchOpen(true);
+  }, [searchQuery]);
 
   return (
     <div className="flex items-center gap-3">

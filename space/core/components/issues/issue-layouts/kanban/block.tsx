@@ -1,78 +1,107 @@
 "use client";
 
-import { FC } from "react";
+import { MutableRefObject } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
+// plane
+import { cn } from "@plane/editor";
+import { IIssueDisplayProperties } from "@plane/types";
+import { Tooltip } from "@plane/ui";
 // components
-import { IssueBlockDueDate, IssueBlockPriority, IssueBlockState } from "@/components/issues";
+import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/with-display-properties-HOC";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
 import { useIssueDetails, usePublish } from "@/hooks/store";
-// interfaces
+//
 import { IIssue } from "@/types/issue";
+import { IssueProperties } from "../properties/all-properties";
+import { getIssueBlockId } from "../utils";
+import { BlockReactions } from "./block-reactions";
 
-type Props = {
-  anchor: string;
+interface IssueBlockProps {
+  issueId: string;
+  groupId: string;
+  subGroupId: string;
+  displayProperties: IIssueDisplayProperties | undefined;
+  scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
+}
+
+interface IssueDetailsBlockProps {
   issue: IIssue;
-  params: any;
-};
+  displayProperties: IIssueDisplayProperties | undefined;
+}
 
-export const IssueKanBanBlock: FC<Props> = observer((props) => {
-  const { anchor, issue } = props;
+const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((props) => {
+  const { issue, displayProperties } = props;
+  const { anchor } = useParams();
+  // hooks
+  const { project_details } = usePublish(anchor.toString());
+
+  return (
+    <div className="space-y-2 px-3 py-2">
+      <WithDisplayPropertiesHOC displayProperties={displayProperties || {}} displayPropertyKey="key">
+        <div className="relative">
+          <div className="line-clamp-1 text-xs text-custom-text-300">
+            {project_details?.identifier}-{issue.sequence_id}
+          </div>
+        </div>
+      </WithDisplayPropertiesHOC>
+
+      <div className="w-full line-clamp-1 text-sm text-custom-text-100 mb-1.5">
+        <Tooltip tooltipContent={issue.name}>
+          <span>{issue.name}</span>
+        </Tooltip>
+      </div>
+
+      <IssueProperties
+        className="flex flex-wrap items-center gap-2 whitespace-nowrap text-custom-text-300 pt-1.5"
+        issue={issue}
+        displayProperties={displayProperties}
+      />
+    </div>
+  );
+});
+
+export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
+  const { issueId, groupId, subGroupId, displayProperties } = props;
   const searchParams = useSearchParams();
   // query params
   const board = searchParams.get("board");
-  const state = searchParams.get("state");
-  const priority = searchParams.get("priority");
-  const labels = searchParams.get("labels");
-  // store hooks
-  const { project_details } = usePublish(anchor);
-  const { setPeekId } = useIssueDetails();
+  // hooks
+  const { setPeekId, getIsIssuePeeked, getIssueById } = useIssueDetails();
 
-  const { queryParam } = queryParamGenerator({ board, peekId: issue.id, priority, state, labels });
-
-  const handleBlockClick = () => {
-    setPeekId(issue.id);
+  const handleIssuePeekOverview = () => {
+    setPeekId(issueId);
   };
 
+  const { queryParam } = queryParamGenerator(board ? { board, peekId: issueId } : { peekId: issueId });
+
+  const issue = getIssueById(issueId);
+
+  if (!issue) return null;
+
   return (
-    <Link
-      href={`/issues/${anchor}?${queryParam}`}
-      onClick={handleBlockClick}
-      className="flex flex-col gap-1.5 space-y-2 rounded border-[0.5px] border-custom-border-200 bg-custom-background-100 px-3 py-2 text-sm shadow-custom-shadow-2xs select-none"
-    >
-      {/* id */}
-      <div className="break-words text-xs text-custom-text-300">
-        {project_details?.identifier}-{issue?.sequence_id}
+    <div className={cn("group/kanban-block relative p-1.5")}>
+      <div
+        className={cn(
+          "relative block rounded border-[1px] outline-[0.5px] outline-transparent w-full border-custom-border-200 bg-custom-background-100 text-sm transition-all hover:border-custom-border-400",
+          { "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issue.id) }
+        )}
+      >
+        <Link
+          id={getIssueBlockId(issueId, groupId, subGroupId)}
+          className="w-full"
+          href={`?${queryParam}`}
+          onClick={handleIssuePeekOverview}
+        >
+          <KanbanIssueDetailsBlock issue={issue} displayProperties={displayProperties} />
+        </Link>
+        <BlockReactions issueId={issueId} />
       </div>
-
-      {/* name */}
-      <h6 role="button" className="line-clamp-2 cursor-pointer break-words text-sm">
-        {issue.name}
-      </h6>
-
-      <div className="hide-horizontal-scrollbar relative flex w-full flex-grow items-end gap-2 overflow-x-scroll">
-        {/* priority */}
-        {issue?.priority && (
-          <div className="flex-shrink-0">
-            <IssueBlockPriority priority={issue?.priority} />
-          </div>
-        )}
-        {/* state */}
-        {issue?.state_detail && (
-          <div className="flex-shrink-0">
-            <IssueBlockState state={issue?.state_detail} />
-          </div>
-        )}
-        {/* due date */}
-        {issue?.target_date && (
-          <div className="flex-shrink-0">
-            <IssueBlockDueDate due_date={issue?.target_date} group={issue?.state_detail?.group} />
-          </div>
-        )}
-      </div>
-    </Link>
+    </div>
   );
 });
+
+KanbanIssueBlock.displayName = "KanbanIssueBlock";

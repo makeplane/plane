@@ -1,27 +1,38 @@
 import { FC, useState } from "react";
+import { observer } from "mobx-react";
 // types
-import type { TIssueAttachment } from "@plane/types";
 // ui
 import { AlertModalCore } from "@plane/ui";
 // helper
 import { getFileName } from "@/helpers/attachment.helper";
+// hooks
+import { useIssueDetail } from "@/hooks/store";
 // types
-import { TAttachmentOperations } from "./root";
+import { TAttachmentOperations } from "../issue-detail-widgets/attachments/helper";
 
-export type TAttachmentOperationsRemoveModal = Exclude<TAttachmentOperations, "create">;
+export type TAttachmentOperationsRemoveModal = Pick<TAttachmentOperations, "remove">;
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  data: TIssueAttachment;
-  handleAttachmentOperations: TAttachmentOperationsRemoveModal;
+  attachmentId: string;
+  attachmentOperations: TAttachmentOperationsRemoveModal;
 };
 
-export const IssueAttachmentDeleteModal: FC<Props> = (props) => {
-  const { isOpen, onClose, data, handleAttachmentOperations } = props;
+export const IssueAttachmentDeleteModal: FC<Props> = observer((props) => {
+  const { isOpen, onClose, attachmentId, attachmentOperations } = props;
   // states
   const [loader, setLoader] = useState(false);
 
+  // store hooks
+  const {
+    attachment: { getAttachmentById },
+  } = useIssueDetail();
+
+  // derived values
+  const attachment = attachmentId ? getAttachmentById(attachmentId) : undefined;
+
+  // handlers
   const handleClose = () => {
     onClose();
     setLoader(false);
@@ -29,23 +40,24 @@ export const IssueAttachmentDeleteModal: FC<Props> = (props) => {
 
   const handleDeletion = async (assetId: string) => {
     setLoader(true);
-    handleAttachmentOperations.remove(assetId).finally(() => handleClose());
+    attachmentOperations.remove(assetId).finally(() => handleClose());
   };
 
+  if (!attachment) return <></>;
   return (
     <AlertModalCore
       handleClose={handleClose}
-      handleSubmit={() => handleDeletion(data.id)}
+      handleSubmit={() => handleDeletion(attachment.id)}
       isSubmitting={loader}
       isOpen={isOpen}
       title="Delete attachment"
       content={
         <>
           Are you sure you want to delete attachment-{" "}
-          <span className="font-bold">{getFileName(data.attributes.name)}</span>? This attachment will be permanently
-          removed. This action cannot be undone.
+          <span className="font-bold">{getFileName(attachment.attributes.name)}</span>? This attachment will be
+          permanently removed. This action cannot be undone.
         </>
       }
     />
   );
-};
+});

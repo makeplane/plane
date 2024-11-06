@@ -2,10 +2,11 @@ import React, { useRef, useState } from "react";
 import { usePopper } from "react-popper";
 import { Popover, Tab } from "@headlessui/react";
 import EmojiPicker from "emoji-picker-react";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // helpers
 import { cn } from "../../helpers";
 // hooks
-import useOutsideClickDetector from "../hooks/use-outside-click-detector";
 import { LucideIconsList } from "./lucide-icons-list";
 // helpers
 import { EmojiIconPickerTypes, TABS_LIST, TCustomEmojiPicker } from "./emoji-icon-helper";
@@ -24,6 +25,7 @@ export const EmojiIconPicker: React.FC<TCustomEmojiPicker> = (props) => {
     label,
     onChange,
     placement = "bottom-start",
+    searchDisabled = false,
     searchPlaceholder = "Search",
     theme,
   } = props;
@@ -101,15 +103,17 @@ export const EmojiIconPicker: React.FC<TCustomEmojiPicker> = (props) => {
                           type: EmojiIconPickerTypes.EMOJI,
                           value: val,
                         });
-                        if (closeOnSelect) close();
+                        if (closeOnSelect) handleToggle(false);
                       }}
                       height="20rem"
                       width="100%"
                       theme={theme}
+                      searchDisabled={searchDisabled}
                       searchPlaceholder={searchPlaceholder}
                       previewConfig={{
                         showPreview: false,
                       }}
+                      lazyLoadEmojis
                     />
                   </Tab.Panel>
                   <Tab.Panel className="h-80 w-full relative overflow-hidden overflow-y-auto">
@@ -120,8 +124,9 @@ export const EmojiIconPicker: React.FC<TCustomEmojiPicker> = (props) => {
                           type: EmojiIconPickerTypes.ICON,
                           value: val,
                         });
-                        if (closeOnSelect) close();
+                        if (closeOnSelect) handleToggle(false);
                       }}
+                      searchDisabled={searchDisabled}
                     />
                   </Tab.Panel>
                 </Tab.Panels>

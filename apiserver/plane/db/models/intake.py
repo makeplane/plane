@@ -19,7 +19,14 @@ class Intake(ProjectBaseModel):
         return f"{self.name} <{self.project.name}>"
 
     class Meta:
-        unique_together = ["name", "project"]
+        unique_together = ["name", "project", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "project"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="intake_unique_name_project_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Intake"
         verbose_name_plural = "Intakes"
         db_table = "intakes"
@@ -50,9 +57,16 @@ class IntakeIssue(ProjectBaseModel):
         on_delete=models.SET_NULL,
         null=True,
     )
-    source = models.TextField(blank=True, null=True)
+    source = models.CharField(
+        max_length=255,
+        default="IN_APP",
+        null=True,
+        blank=True,
+    )
+    source_email = models.TextField(blank=True, null=True)
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
+    extra = models.JSONField(default=dict)
 
     class Meta:
         verbose_name = "IntakeIssue"

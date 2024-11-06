@@ -1,12 +1,14 @@
 import { observer } from "mobx-react";
 import { Control, Controller, UseFormSetValue } from "react-hook-form";
+// types
 import { IAnalyticsParams } from "@plane/types";
-// hooks
+// ui
+import { Row } from "@plane/ui";
+// components
 import { SelectProject, SelectSegment, SelectXAxis, SelectYAxis } from "@/components/analytics";
 import { ANALYTICS_X_AXIS_VALUES } from "@/constants/analytics";
+// hooks
 import { useProject } from "@/hooks/store";
-// components
-// types
 
 type Props = {
   control: Control<IAnalyticsParams, any>;
@@ -30,14 +32,14 @@ export const CustomAnalyticsSelectBar: React.FC<Props> = observer((props) => {
     : ANALYTICS_X_AXIS_VALUES;
 
   return (
-    <div
-      className={`grid items-center gap-4 px-5 py-2.5 ${
+    <Row
+      className={`grid items-center gap-4 py-2.5 ${
         isProjectLevel ? "grid-cols-1 sm:grid-cols-3" : "grid-cols-2"
       } ${fullScreen ? "md:py-5 lg:grid-cols-4" : ""}`}
     >
       {!isProjectLevel && (
         <div>
-          <h6 className="text-xs text-custom-text-200">Project</h6>
+          <h6 className="text-xs text-custom-text-200 mb-2">Project</h6>
           <Controller
             name="project"
             control={control}
@@ -52,7 +54,7 @@ export const CustomAnalyticsSelectBar: React.FC<Props> = observer((props) => {
         </div>
       )}
       <div>
-        <h6 className="text-xs text-custom-text-200">Measure (y-axis)</h6>
+        <h6 className="text-xs text-custom-text-200 mb-2">Measure (y-axis)</h6>
         <Controller
           name="y_axis"
           control={control}
@@ -60,7 +62,7 @@ export const CustomAnalyticsSelectBar: React.FC<Props> = observer((props) => {
         />
       </div>
       <div>
-        <h6 className="text-xs text-custom-text-200">Dimension (x-axis)</h6>
+        <h6 className="text-xs text-custom-text-200 mb-2">Dimension (x-axis)</h6>
         <Controller
           name="x_axis"
           control={control}
@@ -79,7 +81,7 @@ export const CustomAnalyticsSelectBar: React.FC<Props> = observer((props) => {
         />
       </div>
       <div>
-        <h6 className="text-xs text-custom-text-200">Group</h6>
+        <h6 className="text-xs text-custom-text-200 mb-2">Group</h6>
         <Controller
           name="segment"
           control={control}
@@ -88,6 +90,6 @@ export const CustomAnalyticsSelectBar: React.FC<Props> = observer((props) => {
           )}
         />
       </div>
-    </div>
+    </Row>
   );
 });

@@ -3,12 +3,7 @@ import json
 
 # Django imports
 from django.core import serializers
-from django.db.models import (
-    F,
-    Func,
-    OuterRef,
-    Q,
-)
+from django.db.models import F, Func, OuterRef, Q, Subquery
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
@@ -17,21 +12,18 @@ from django.views.decorators.gzip import gzip_page
 from rest_framework import status
 from rest_framework.response import Response
 
-from plane.app.permissions import (
-    ProjectEntityPermission,
-)
 
 # Module imports
 from .. import BaseViewSet
 from plane.app.serializers import (
     CycleIssueSerializer,
 )
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Cycle,
     CycleIssue,
     Issue,
-    IssueAttachment,
+    FileAsset,
     IssueLink,
 )
 from plane.utils.grouper import (
@@ -45,8 +37,8 @@ from plane.utils.paginator import (
     GroupedOffsetPaginator,
     SubGroupedOffsetPaginator,
 )
+from plane.app.permissions import allow_permission, ROLE
 
-# Module imports
 
 
 class CycleIssueViewSet(BaseViewSet):
@@ -55,10 +47,6 @@ class CycleIssueViewSet(BaseViewSet):
 
     webhook_event = "cycle_issue"
     bulk = True
-
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
 
     filterset_fields = [
         "issue__labels__id",
@@ -94,11 +82,20 @@ class CycleIssueViewSet(BaseViewSet):
         )
 
     @method_decorator(gzip_page)
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+        ]
+    )
     def list(self, request, slug, project_id, cycle_id):
         order_by_param = request.GET.get("order_by", "created_at")
         filters = issue_filters(request.query_params, "GET")
         issue_queryset = (
-            Issue.issue_objects.filter(issue_cycle__cycle_id=cycle_id)
+            Issue.issue_objects.filter(
+                issue_cycle__cycle_id=cycle_id,
+                issue_cycle__deleted_at__isnull=True,
+            )
             .filter(project_id=project_id)
             .filter(workspace__slug=slug)
             .filter(**filters)
@@ -110,7 +107,13 @@ class CycleIssueViewSet(BaseViewSet):
                 "issue_cycle__cycle",
             )
             .filter(**filters)
-            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(
+                        issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("cycle_id")[:1]
+                )
+            )
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -118,8 +121,9 @@ class CycleIssueViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -240,6 +244,7 @@ class CycleIssueViewSet(BaseViewSet):
                 ),
             )
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def create(self, request, slug, project_id, cycle_id):
         issues = request.data.get("issues", [])
 
@@ -253,10 +258,7 @@ class CycleIssueViewSet(BaseViewSet):
             workspace__slug=slug, project_id=project_id, pk=cycle_id
         )
 
-        if (
-            cycle.end_date is not None
-            and cycle.end_date < timezone.now().date()
-        ):
+        if cycle.end_date is not None and cycle.end_date < timezone.now():
             return Response(
                 {
                     "error": "The Cycle has already been completed so no new issues can be added"
@@ -335,8 +337,9 @@ class CycleIssueViewSet(BaseViewSet):
         )
         return Response({"message": "success"}, status=status.HTTP_201_CREATED)
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def destroy(self, request, slug, project_id, cycle_id, issue_id):
-        cycle_issue = CycleIssue.objects.get(
+        cycle_issue = CycleIssue.objects.filter(
             issue_id=issue_id,
             workspace__slug=slug,
             project_id=project_id,

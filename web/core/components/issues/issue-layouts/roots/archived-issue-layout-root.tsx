@@ -4,11 +4,8 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // mobx store
 // components
-import {
-  ArchivedIssueListLayout,
-  ArchivedIssueAppliedFiltersRoot,
-  IssuePeekOverview,
-} from "@/components/issues";
+import { LogoSpinner } from "@/components/common";
+import { ArchivedIssueListLayout, ArchivedIssueAppliedFiltersRoot, IssuePeekOverview } from "@/components/issues";
 import { EIssuesStoreType } from "@/constants/issue";
 // ui
 import { useIssues } from "@/hooks/store";
@@ -20,7 +17,7 @@ export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
   // hooks
   const { issuesFilter } = useIssues(EIssuesStoreType.ARCHIVED);
 
-  useSWR(
+  const { isLoading } = useSWR(
     workspaceSlug && projectId ? `ARCHIVED_ISSUES_${workspaceSlug.toString()}_${projectId.toString()}` : null,
     async () => {
       if (workspaceSlug && projectId) {
@@ -30,7 +27,17 @@ export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
+  const issueFilters = issuesFilter?.getIssueFilters(projectId?.toString());
+
   if (!workspaceSlug || !projectId) return <></>;
+
+  if (isLoading && !issueFilters)
+    return (
+      <div className="h-full w-full flex items-center justify-center">
+        <LogoSpinner />
+      </div>
+    );
+
   return (
     <IssuesStoreContext.Provider value={EIssuesStoreType.ARCHIVED}>
       <ArchivedIssueAppliedFiltersRoot />
@@ -38,7 +45,7 @@ export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
         <div className="relative h-full w-full overflow-auto">
           <ArchivedIssueListLayout />
         </div>
-        <IssuePeekOverview is_archived />
+        <IssuePeekOverview />
       </Fragment>
     </IssuesStoreContext.Provider>
   );

@@ -1,3 +1,6 @@
+# Python imports
+import pytz
+
 # Django imports
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -5,11 +8,11 @@ from django.db import models
 
 # Module imports
 from .base import BaseModel
+from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 
 ROLE_CHOICES = (
-    (20, "Owner"),
-    (15, "Admin"),
-    (10, "Member"),
+    (20, "Admin"),
+    (15, "Member"),
     (5, "Guest"),
 )
 
@@ -112,25 +115,22 @@ def get_issue_props():
 
 
 def slug_validator(value):
-    if value in [
-        "404",
-        "accounts",
-        "api",
-        "create-workspace",
-        "god-mode",
-        "installations",
-        "invitations",
-        "onboarding",
-        "profile",
-        "spaces",
-        "workspace-invitations",
-    ]:
+    if value in RESTRICTED_WORKSPACE_SLUGS:
         raise ValidationError("Slug is not valid")
 
 
 class Workspace(BaseModel):
+    TIMEZONE_CHOICES = tuple(zip(pytz.all_timezones, pytz.all_timezones))
+
     name = models.CharField(max_length=80, verbose_name="Workspace Name")
-    logo = models.URLField(verbose_name="Logo", blank=True, null=True)
+    logo = models.TextField(verbose_name="Logo", blank=True, null=True)
+    logo_asset = models.ForeignKey(
+        "db.FileAsset",
+        on_delete=models.SET_NULL,
+        related_name="workspace_logo",
+        blank=True,
+        null=True,
+    )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -145,10 +145,24 @@ class Workspace(BaseModel):
         ],
     )
     organization_size = models.CharField(max_length=20, blank=True, null=True)
+    timezone = models.CharField(
+        max_length=255, default="UTC", choices=TIMEZONE_CHOICES
+    )
 
     def __str__(self):
         """Return name of the Workspace"""
         return self.name
+
+    @property
+    def logo_url(self):
+        # Return the logo asset url if it exists
+        if self.logo_asset:
+            return self.logo_asset.asset_url
+
+        # Return the logo url if it exists
+        if self.logo:
+            return self.logo
+        return None
 
     class Meta:
         verbose_name = "Workspace"
@@ -188,7 +202,7 @@ class WorkspaceMember(BaseModel):
         on_delete=models.CASCADE,
         related_name="member_workspace",
     )
-    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=10)
+    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=5)
     company_role = models.TextField(null=True, blank=True)
     view_props = models.JSONField(default=get_default_props)
     default_props = models.JSONField(default=get_default_props)
@@ -196,7 +210,14 @@ class WorkspaceMember(BaseModel):
     is_active = models.BooleanField(default=True)
 
     class Meta:
-        unique_together = ["workspace", "member"]
+        unique_together = ["workspace", "member", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["workspace", "member"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="workspace_member_unique_workspace_member_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Workspace Member"
         verbose_name_plural = "Workspace Members"
         db_table = "workspace_members"
@@ -218,10 +239,17 @@ class WorkspaceMemberInvite(BaseModel):
     token = models.CharField(max_length=255)
     message = models.TextField(null=True)
     responded_at = models.DateTimeField(null=True)
-    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=10)
+    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=5)
 
     class Meta:
-        unique_together = ["email", "workspace"]
+        unique_together = ["email", "workspace", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["email", "workspace"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="workspace_member_invite_unique_email_workspace_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Workspace Member Invite"
         verbose_name_plural = "Workspace Member Invites"
         db_table = "workspace_member_invites"
@@ -251,7 +279,14 @@ class Team(BaseModel):
         return f"{self.name} <{self.workspace.name}>"
 
     class Meta:
-        unique_together = ["name", "workspace"]
+        unique_together = ["name", "workspace", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "workspace"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="team_unique_name_workspace_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Team"
         verbose_name_plural = "Teams"
         db_table = "teams"
@@ -275,7 +310,14 @@ class TeamMember(BaseModel):
         return self.team.name
 
     class Meta:
-        unique_together = ["team", "member"]
+        unique_together = ["team", "member", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["team", "member"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="team_member_unique_team_member_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Team Member"
         verbose_name_plural = "Team Members"
         db_table = "team_members"
@@ -298,7 +340,14 @@ class WorkspaceTheme(BaseModel):
         return str(self.name) + str(self.actor.email)
 
     class Meta:
-        unique_together = ["workspace", "name"]
+        unique_together = ["workspace", "name", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["workspace", "name"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="workspace_theme_unique_workspace_name_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Workspace Theme"
         verbose_name_plural = "Workspace Themes"
         db_table = "workspace_themes"
@@ -323,7 +372,14 @@ class WorkspaceUserProperties(BaseModel):
     )
 
     class Meta:
-        unique_together = ["workspace", "user"]
+        unique_together = ["workspace", "user", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["workspace", "user"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="workspace_user_properties_unique_workspace_user_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Workspace User Property"
         verbose_name_plural = "Workspace User Property"
         db_table = "workspace_user_properties"

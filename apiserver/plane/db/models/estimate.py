@@ -1,6 +1,7 @@
 # Django imports
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.db.models import Q
 
 # Module imports
 from .project import ProjectBaseModel
@@ -19,7 +20,14 @@ class Estimate(ProjectBaseModel):
         return f"{self.name} <{self.project.name}>"
 
     class Meta:
-        unique_together = ["name", "project"]
+        unique_together = ["name", "project", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "project"],
+                condition=Q(deleted_at__isnull=True),
+                name="estimate_unique_name_project_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Estimate"
         verbose_name_plural = "Estimates"
         db_table = "estimates"

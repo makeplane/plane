@@ -35,8 +35,8 @@ export const InboxIssueContentProperties: React.FC<Props> = observer((props) => 
   if (!issue || !issue?.id) return <></>;
 
   return (
-    <div className="flex h-min w-full flex-col divide-y-2 divide-custom-border-200 overflow-hidden">
-      <div className="h-min w-full overflow-y-auto px-3">
+    <div className="flex w-full flex-col divide-y-2 divide-custom-border-200">
+      <div className="w-full overflow-y-auto">
         <h5 className="text-sm font-medium my-4">Properties</h5>
         <div className={`divide-y-2 divide-custom-border-200 ${!isEditable ? "opacity-60" : ""}`}>
           <div className="flex flex-col gap-3">
@@ -173,6 +173,7 @@ export const InboxIssueContentProperties: React.FC<Props> = observer((props) => 
                   onClick={() => {
                     router.push(`/${workspaceSlug}/projects/${projectId}/issues/${duplicateIssueDetails?.id}`);
                   }}
+                  target="_self"
                 >
                   <Tooltip tooltipContent={`${duplicateIssueDetails?.name}`}>
                     <span className="flex items-center gap-1 cursor-pointer text-xs rounded px-1.5 py-1 pb-0.5 bg-custom-background-80 text-custom-text-200">

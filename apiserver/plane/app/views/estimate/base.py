@@ -1,5 +1,9 @@
 import random
 import string
+import json
+
+# Django imports
+from django.utils import timezone
 
 # Third party imports
 from rest_framework.response import Response
@@ -7,7 +11,11 @@ from rest_framework import status
 
 # Module imports
 from ..base import BaseViewSet, BaseAPIView
-from plane.app.permissions import ProjectEntityPermission
+from plane.app.permissions import (
+    ProjectEntityPermission,
+    allow_permission,
+    ROLE,
+)
 from plane.db.models import Project, Estimate, EstimatePoint, Issue
 from plane.app.serializers import (
     EstimateSerializer,
@@ -15,6 +23,7 @@ from plane.app.serializers import (
     EstimateReadSerializer,
 )
 from plane.utils.cache import invalidate_cache
+from plane.bgtasks.issue_activities_task import issue_activity
 
 
 def generate_random_name(length=10):
@@ -23,10 +32,13 @@ def generate_random_name(length=10):
 
 
 class ProjectEstimatePointEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
 
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+        ]
+    )
     def get(self, request, slug, project_id):
         project = Project.objects.get(workspace__slug=slug, pk=project_id)
         if project.estimate_id is not None:
@@ -189,10 +201,8 @@ class BulkEstimatePointEndpoint(BaseViewSet):
 
 
 class EstimatePointEndpoint(BaseViewSet):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def create(self, request, slug, project_id, estimate_id):
         #  TODO: add a key validation if the same key already exists
         if not request.data.get("key") or not request.data.get("value"):
@@ -211,6 +221,7 @@ class EstimatePointEndpoint(BaseViewSet):
         serializer = EstimatePointSerializer(estimate_point).data
         return Response(serializer, status=status.HTTP_200_OK)
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def partial_update(
         self, request, slug, project_id, estimate_id, estimate_point_id
     ):
@@ -231,6 +242,7 @@ class EstimatePointEndpoint(BaseViewSet):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def destroy(
         self, request, slug, project_id, estimate_id, estimate_point_id
     ):
@@ -242,11 +254,66 @@ class EstimatePointEndpoint(BaseViewSet):
         )
         # update all the issues with the new estimate
         if new_estimate_id:
-            _ = Issue.objects.filter(
+            issues = Issue.objects.filter(
                 project_id=project_id,
                 workspace__slug=slug,
                 estimate_point_id=estimate_point_id,
-            ).update(estimate_point_id=new_estimate_id)
+            )
+            for issue in issues:
+                issue_activity.delay(
+                    type="issue.activity.updated",
+                    requested_data=json.dumps(
+                        {
+                            "estimate_point": (
+                                str(new_estimate_id)
+                                if new_estimate_id
+                                else None
+                            ),
+                        }
+                    ),
+                    actor_id=str(request.user.id),
+                    issue_id=issue.id,
+                    project_id=str(project_id),
+                    current_instance=json.dumps(
+                        {
+                            "estimate_point": (
+                                str(issue.estimate_point_id)
+                                if issue.estimate_point_id
+                                else None
+                            ),
+                        }
+                    ),
+                    epoch=int(timezone.now().timestamp()),
+                )
+                issues.update(estimate_point_id=new_estimate_id)
+        else:
+            issues = Issue.objects.filter(
+                project_id=project_id,
+                workspace__slug=slug,
+                estimate_point_id=estimate_point_id,
+            )
+            for issue in issues:
+                issue_activity.delay(
+                    type="issue.activity.updated",
+                    requested_data=json.dumps(
+                        {
+                            "estimate_point": None,
+                        }
+                    ),
+                    actor_id=str(request.user.id),
+                    issue_id=issue.id,
+                    project_id=str(project_id),
+                    current_instance=json.dumps(
+                        {
+                            "estimate_point": (
+                                str(issue.estimate_point_id)
+                                if issue.estimate_point_id
+                                else None
+                            ),
+                        }
+                    ),
+                    epoch=int(timezone.now().timestamp()),
+                )
 
         # delete the estimate point
         old_estimate_point = EstimatePoint.objects.filter(

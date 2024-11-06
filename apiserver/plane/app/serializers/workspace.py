@@ -15,29 +15,20 @@ from plane.db.models import (
     WorkspaceTheme,
     WorkspaceUserProperties,
 )
+from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 
 
 class WorkSpaceSerializer(DynamicBaseSerializer):
     owner = UserLiteSerializer(read_only=True)
     total_members = serializers.IntegerField(read_only=True)
     total_issues = serializers.IntegerField(read_only=True)
+    logo_url = serializers.CharField(read_only=True)
 
-    def validated(self, data):
-        if data.get("slug") in [
-            "404",
-            "accounts",
-            "api",
-            "create-workspace",
-            "god-mode",
-            "installations",
-            "invitations",
-            "onboarding",
-            "profile",
-            "spaces",
-            "workspace-invitations",
-            "password",
-        ]:
-            raise serializers.ValidationError({"slug": "Slug is not valid"})
+    def validate_slug(self, value):
+        # Check if the slug is restricted
+        if value in RESTRICTED_WORKSPACE_SLUGS:
+            raise serializers.ValidationError("Slug is not valid")
+        return value
 
     class Meta:
         model = Workspace
@@ -49,6 +40,7 @@ class WorkSpaceSerializer(DynamicBaseSerializer):
             "created_at",
             "updated_at",
             "owner",
+            "logo_url",
         ]
 
 
@@ -73,6 +65,7 @@ class WorkSpaceMemberSerializer(DynamicBaseSerializer):
 
 
 class WorkspaceMemberMeSerializer(BaseSerializer):
+    draft_issue_count = serializers.IntegerField(read_only=True)
     class Meta:
         model = WorkspaceMember
         fields = "__all__"

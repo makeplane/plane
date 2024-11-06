@@ -29,7 +29,7 @@ export const ShortcutCommandsList: React.FC<Props> = (props) => {
         { keys: "V", description: "Create view" },
         { keys: "D", description: "Create page" },
         { keys: "Delete", description: "Bulk delete issues" },
-        { keys: "H", description: "Open shortcuts guide" },
+        { keys: "Shift,/", description: "Open shortcuts guide" },
         {
           keys: platform === "MacOS" ? "Ctrl,control,C" : "Ctrl,Alt,C",
           description: "Copy issue URL from the issue details page",

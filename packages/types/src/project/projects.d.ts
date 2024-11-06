@@ -1,4 +1,3 @@
-import { EUserProjectRoles } from "@/constants/project";
 import type {
   IProjectViewProps,
   IUser,
@@ -9,6 +8,7 @@ import type {
   TLogoProps,
   TStateGroups,
 } from "..";
+import { TUserPermissions } from "../enums";
 
 export interface IProject {
   archive_in: number;
@@ -18,7 +18,7 @@ export interface IProject {
   close_in: number;
   created_at: Date;
   created_by: string;
-  cover_image: string | null;
+  cover_image_url: string;
   cycle_view: boolean;
   issue_views_view: boolean;
   module_view: boolean;
@@ -30,13 +30,16 @@ export interface IProject {
   draft_issues: number;
   draft_sub_issues: number;
   estimate: string | null;
+  guest_view_all_features: boolean;
   id: string;
   identifier: string;
   anchor: string | null;
   is_favorite: boolean;
+  is_issue_type_enabled: boolean;
   is_member: boolean;
+  is_time_tracking_enabled: boolean;
   logo_props: TLogoProps;
-  member_role: EUserProjectRoles | null;
+  member_role: TUserPermissions | null;
   members: IProjectMemberLite[];
   name: string;
   network: number;
@@ -51,12 +54,14 @@ export interface IProject {
   updated_by: string;
   workspace: IWorkspace | string;
   workspace_detail: IWorkspaceLite;
+  timezone: string;
 }
 
 export interface IProjectLite {
   id: string;
   name: string;
   identifier: string;
+  logo_props: TLogoProps;
 }
 
 type ProjectPreferences = {
@@ -71,7 +76,7 @@ export interface IProjectMap {
 
 export interface IProjectMemberLite {
   id: string;
-  member__avatar: string;
+  member__avatar_url: string;
   member__display_name: string;
   member_id: string;
 }
@@ -82,7 +87,7 @@ export interface IProjectMember {
   project: IProjectLite;
   workspace: IWorkspaceLite;
   comment: string;
-  role: EUserProjectRoles;
+  role: TUserPermissions;
 
   preferences: ProjectPreferences;
 
@@ -98,11 +103,11 @@ export interface IProjectMember {
 export interface IProjectMembership {
   id: string;
   member: string;
-  role: EUserProjectRoles;
+  role: TUserPermissions;
 }
 
 export interface IProjectBulkAddFormData {
-  members: { role: EUserProjectRoles; member_id: string }[];
+  members: { role: TUserPermissions; member_id: string }[];
 }
 
 export interface IGithubRepository {
@@ -141,4 +146,5 @@ export interface ISearchIssueResponse {
   state__group: TStateGroups;
   state__name: string;
   workspace__slug: string;
+  type_id: string;
 }

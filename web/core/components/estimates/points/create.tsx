@@ -11,7 +11,7 @@ import { isEstimatePointValuesRepeated } from "@/helpers/estimates";
 // hooks
 import { useEstimate } from "@/hooks/store";
 // plane web constants
-import { EEstimateSystem } from "@/plane-web/constants/estimates";
+import { EEstimateSystem, MAX_ESTIMATE_POINT_INPUT_LENGTH } from "@/plane-web/constants/estimates";
 
 type TEstimatePointCreate = {
   workspaceSlug: string;
@@ -58,8 +58,10 @@ export const EstimatePointCreate: FC<TEstimatePointCreate> = observer((props) =>
   };
 
   const handleEstimateInputValue = (value: string) => {
-    setEstimateInputValue(value);
-    handleEstimatePointError && handleEstimatePointError(value, undefined);
+    if (value.length <= MAX_ESTIMATE_POINT_INPUT_LENGTH) {
+      setEstimateInputValue(value);
+      handleEstimatePointError && handleEstimatePointError(value, undefined);
+    }
   };
 
   const handleCreate = async (event: FormEvent<HTMLFormElement>) => {
@@ -149,6 +151,12 @@ export const EstimatePointCreate: FC<TEstimatePointCreate> = observer((props) =>
     } else handleEstimatePointError && handleEstimatePointError(estimateInputValue, "Estimate value cannot be empty.");
   };
 
+  // derived values
+  const inputProps = {
+    type: "text",
+    maxlength: MAX_ESTIMATE_POINT_INPUT_LENGTH,
+  };
+
   return (
     <form onSubmit={handleCreate} className="relative flex items-center gap-2 text-base pr-2.5">
       <div
@@ -158,12 +166,12 @@ export const EstimatePointCreate: FC<TEstimatePointCreate> = observer((props) =>
         )}
       >
         <input
-          type="text"
           value={estimateInputValue}
           onChange={(e) => handleEstimateInputValue(e.target.value)}
           className="border-none focus:ring-0 focus:border-0 focus:outline-none p-2.5 w-full bg-transparent"
           placeholder="Enter estimate point"
           autoFocus
+          {...inputProps}
         />
         {estimatePointError?.message && (
           <Tooltip

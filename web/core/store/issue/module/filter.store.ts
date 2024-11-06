@@ -1,6 +1,4 @@
-import isArray from "lodash/isArray";
 import isEmpty from "lodash/isEmpty";
-import pickBy from "lodash/pickBy";
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // base class
@@ -28,10 +26,12 @@ export interface IModuleIssuesFilter extends IBaseIssueFilterStore {
   //helper actions
   getFilterParams: (
     options: IssuePaginationOptions,
+    moduleId: string,
     cursor: string | undefined,
     groupId: string | undefined,
     subGroupId: string | undefined
   ) => Partial<Record<TIssueParams, string | boolean>>;
+  getIssueFilters(moduleId: string): IIssueFilters | undefined;
   // action
   fetchFilters: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<void>;
   updateFilters: (
@@ -73,6 +73,17 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
     const moduleId = this.rootIssueStore.moduleId;
     if (!moduleId) return undefined;
 
+    return this.getIssueFilters(moduleId);
+  }
+
+  get appliedFilters() {
+    const moduleId = this.rootIssueStore.moduleId;
+    if (!moduleId) return undefined;
+
+    return this.getAppliedFilters(moduleId);
+  }
+
+  getIssueFilters(moduleId: string) {
     const displayFilters = this.filters[moduleId] || undefined;
     if (isEmpty(displayFilters)) return undefined;
 
@@ -81,8 +92,8 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
     return _filters;
   }
 
-  get appliedFilters() {
-    const userFilters = this.issueFilters;
+  getAppliedFilters(moduleId: string) {
+    const userFilters = this.getIssueFilters(moduleId);
     if (!userFilters) return undefined;
 
     const filteredParams = handleIssueQueryParamsByLayout(userFilters?.displayFilters?.layout, "issues");
@@ -102,11 +113,17 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
   getFilterParams = computedFn(
     (
       options: IssuePaginationOptions,
+      moduleId: string,
       cursor: string | undefined,
       groupId: string | undefined,
       subGroupId: string | undefined
     ) => {
-      const filterParams = this.appliedFilters;
+      let filterParams = this.getAppliedFilters(moduleId);
+
+      if (!filterParams) {
+        filterParams = {};
+      }
+      filterParams["module"] = moduleId;
 
       const paginationParams = this.getPaginationParams(filterParams, options, cursor, groupId, subGroupId);
       return paginationParams;
@@ -176,12 +193,10 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
               set(this.filters, [moduleId, "filters", _key], updatedFilters[_key as keyof IIssueFilterOptions]);
             });
           });
-          const appliedFilters = _filters.filters || {};
-          const filteredFilters = pickBy(appliedFilters, (value) => value && isArray(value) && value.length > 0);
           this.rootIssueStore.moduleIssues.fetchIssuesWithExistingPagination(
             workspaceSlug,
             projectId,
-            isEmpty(filteredFilters) ? "init-loader" : "mutation",
+            "mutation",
             moduleId
           );
           await this.issueFilterService.patchModuleIssueFilters(workspaceSlug, projectId, moduleId, {
@@ -222,12 +237,18 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
             });
           });
 
-          this.rootIssueStore.moduleIssues.fetchIssuesWithExistingPagination(
-            workspaceSlug,
-            projectId,
-            "mutation",
-            moduleId
-          );
+          if (this.getShouldClearIssues(updatedDisplayFilters)) {
+            this.rootIssueStore.moduleIssues.clear(true, true); // clear issues for local store when some filters like layout changes
+          }
+
+          if (this.getShouldReFetchIssues(updatedDisplayFilters)) {
+            this.rootIssueStore.moduleIssues.fetchIssuesWithExistingPagination(
+              workspaceSlug,
+              projectId,
+              "mutation",
+              moduleId
+            );
+          }
 
           await this.issueFilterService.patchModuleIssueFilters(workspaceSlug, projectId, moduleId, {
             display_filters: _filters.displayFilters,
@@ -261,7 +282,7 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
 
           const currentUserId = this.rootIssueStore.currentUserId;
           if (currentUserId)
-            this.handleIssuesLocalFilters.set(EIssuesStoreType.PROJECT, type, workspaceSlug, moduleId, currentUserId, {
+            this.handleIssuesLocalFilters.set(EIssuesStoreType.MODULE, type, workspaceSlug, moduleId, currentUserId, {
               kanban_filters: _filters.kanbanFilters,
             });
 

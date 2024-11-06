@@ -1,5 +1,6 @@
 // ui
 import { IDefaultAnalyticsResponse } from "@plane/types";
+import { Card } from "@plane/ui";
 import { LineGraph, ProfileEmptyState } from "@/components/ui";
 // image
 import { MONTHS_LIST } from "@/constants/calendar";
@@ -12,8 +13,8 @@ type Props = {
 };
 
 export const AnalyticsYearWiseIssues: React.FC<Props> = ({ defaultAnalytics }) => (
-  <div className="rounded-[10px] border border-custom-border-200 py-3">
-    <h1 className="px-3 text-base font-medium">Issues closed in a year</h1>
+  <Card>
+    <h1 className="py-3 text-base font-medium">Issues closed in a year</h1>
     {defaultAnalytics.issue_completed_month_wise.length > 0 ? (
       <LineGraph
         data={[
@@ -55,5 +56,5 @@ export const AnalyticsYearWiseIssues: React.FC<Props> = ({ defaultAnalytics }) =
         />
       </div>
     )}
-  </div>
+  </Card>
 );

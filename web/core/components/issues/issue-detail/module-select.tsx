@@ -47,11 +47,8 @@ export const IssueModuleSelect: React.FC<TIssueModuleSelect> = observer((props) 
         modulesToAdd.push(moduleId);
       }
     }
-    if (modulesToRemove.length > 0)
-      await issueOperations.removeModulesFromIssue?.(workspaceSlug, projectId, issueId, modulesToRemove);
 
-    if (modulesToAdd.length > 0)
-      await issueOperations.addModulesToIssue?.(workspaceSlug, projectId, issueId, modulesToAdd);
+    await issueOperations.changeModulesInIssue?.(workspaceSlug, projectId, issueId, modulesToAdd, modulesToRemove);
 
     setIsUpdating(false);
   };
@@ -65,13 +62,14 @@ export const IssueModuleSelect: React.FC<TIssueModuleSelect> = observer((props) 
         placeholder="No module"
         disabled={disableSelect}
         className="group h-full w-full"
-        buttonContainerClassName="w-full"
+        buttonContainerClassName="w-full rounded"
         buttonClassName={`min-h-8 text-sm justify-between ${issue?.module_ids?.length ? "" : "text-custom-text-400"}`}
         buttonVariant="transparent-with-text"
         hideIcon
         dropdownArrow
         dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
         multiple
+        itemClassName="px-2"
       />
     </div>
   );

@@ -37,6 +37,7 @@ export interface IDraftIssues extends IBaseIssuesStore {
 
   archiveBulkIssues: undefined;
   quickAddIssue: undefined;
+  archiveIssue: undefined;
 }
 
 export class DraftIssues extends BaseIssuesStore implements IDraftIssues {
@@ -69,6 +70,9 @@ export class DraftIssues extends BaseIssuesStore implements IDraftIssues {
     projectId && this.rootIssueStore.rootStore.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
   };
 
+  /** */
+  updateParentStats = () => {};
+
   /**
    * This method is called to fetch the first issues of pagination
    * @param workspaceSlug
@@ -92,14 +96,14 @@ export class DraftIssues extends BaseIssuesStore implements IDraftIssues {
       this.clear(!isExistingPaginationOptions);
 
       // get params from pagination options
-      const params = this.issueFilterStore?.getFilterParams(options, undefined, undefined, undefined);
+      const params = this.issueFilterStore?.getFilterParams(options, projectId, undefined, undefined, undefined);
       // call the fetch issues API with the params
       const response = await this.issueDraftService.getDraftIssues(workspaceSlug, projectId, params, {
         signal: this.controller.signal,
       });
 
       // after fetching issues, call the base method to process the response further
-      this.onfetchIssues(response, options, workspaceSlug, projectId);
+      this.onfetchIssues(response, options, workspaceSlug, projectId, undefined, !isExistingPaginationOptions);
       return response;
     } catch (error) {
       // set loader to undefined if errored out
@@ -129,6 +133,7 @@ export class DraftIssues extends BaseIssuesStore implements IDraftIssues {
       // get params from stored pagination options
       const params = this.issueFilterStore?.getFilterParams(
         this.paginationOptions,
+        projectId,
         this.getNextCursor(groupId, subGroupId),
         groupId,
         subGroupId
@@ -163,9 +168,12 @@ export class DraftIssues extends BaseIssuesStore implements IDraftIssues {
     return await this.fetchIssues(workspaceSlug, projectId, loadType, this.paginationOptions, true);
   };
 
+  // Using aliased names as they cannot be overridden in other stores
   createIssue = this.createDraftIssue;
   updateIssue = this.updateDraftIssue;
 
+  // Setting them as undefined as they can not performed on draft issues
   archiveBulkIssues = undefined;
   quickAddIssue = undefined;
+  archiveIssue = undefined;
 }

@@ -1,20 +1,32 @@
 import React from "react";
 // editor
-import { EditorReadOnlyRefApi, ILiteTextReadOnlyEditor, LiteTextReadOnlyEditorWithRef } from "@plane/lite-text-editor";
+import { EditorReadOnlyRefApi, ILiteTextReadOnlyEditor, LiteTextReadOnlyEditorWithRef } from "@plane/editor";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
-import { useMention } from "@/hooks/store";
+import { useMention, useUser } from "@/hooks/store";
 
-interface LiteTextReadOnlyEditorWrapperProps extends Omit<ILiteTextReadOnlyEditor, "mentionHandler"> {}
+type LiteTextReadOnlyEditorWrapperProps = Omit<ILiteTextReadOnlyEditor, "fileHandler" | "mentionHandler"> & {
+  workspaceSlug: string;
+  projectId: string;
+};
 
 export const LiteTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, LiteTextReadOnlyEditorWrapperProps>(
-  ({ ...props }, ref) => {
-    const { mentionHighlights } = useMention({});
+  ({ workspaceSlug, projectId, ...props }, ref) => {
+    // store hooks
+    const { data: currentUser } = useUser();
+    const { mentionHighlights } = useMention({
+      user: currentUser,
+    });
 
     return (
       <LiteTextReadOnlyEditorWithRef
         ref={ref}
+        fileHandler={getReadOnlyEditorFileHandlers({
+          projectId,
+          workspaceSlug,
+        })}
         mentionHandler={{
           highlights: mentionHighlights,
         }}

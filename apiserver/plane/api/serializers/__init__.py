@@ -5,11 +5,11 @@ from .issue import (
     IssueSerializer,
     LabelSerializer,
     IssueLinkSerializer,
-    IssueAttachmentSerializer,
     IssueCommentSerializer,
     IssueAttachmentSerializer,
     IssueActivitySerializer,
     IssueExpandSerializer,
+    IssueLiteSerializer,
 )
 from .state import StateLiteSerializer, StateSerializer
 from .cycle import CycleSerializer, CycleIssueSerializer, CycleLiteSerializer

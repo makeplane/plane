@@ -39,6 +39,7 @@ class ModuleSerializer(BaseSerializer):
             "updated_by",
             "created_at",
             "updated_at",
+            "deleted_at",
         ]
 
     def to_representation(self, instance):
@@ -70,6 +71,16 @@ class ModuleSerializer(BaseSerializer):
         project_id = self.context["project_id"]
         workspace_id = self.context["workspace_id"]
 
+        module_name = validated_data.get("name")
+        if module_name:
+            # Lookup for the module name in the module table for that project
+            if Module.objects.filter(
+                name=module_name, project_id=project_id
+            ).exists():
+                raise serializers.ValidationError(
+                    {"error": "Module with this name already exists"}
+                )
+
         module = Module.objects.create(**validated_data, project_id=project_id)
         if members is not None:
             ModuleMember.objects.bulk_create(
@@ -92,6 +103,19 @@ class ModuleSerializer(BaseSerializer):
 
     def update(self, instance, validated_data):
         members = validated_data.pop("members", None)
+        module_name = validated_data.get("name")
+        if module_name:
+            # Lookup for the module name in the module table for that project
+            if (
+                Module.objects.filter(
+                    name=module_name, project=instance.project
+                )
+                .exclude(id=instance.id)
+                .exists()
+            ):
+                raise serializers.ValidationError(
+                    {"error": "Module with this name already exists"}
+                )
 
         if members is not None:
             ModuleMember.objects.filter(module=instance).delete()

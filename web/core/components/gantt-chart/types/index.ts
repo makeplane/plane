@@ -1,13 +1,14 @@
 export interface IGanttBlock {
   data: any;
   id: string;
+  name: string;
   position?: {
     marginLeft: number;
     width: number;
   };
-  sort_order: number;
-  start_date: Date | undefined;
-  target_date: Date | undefined;
+  sort_order: number | undefined;
+  start_date: string | undefined;
+  target_date: string | undefined;
 }
 
 export interface IBlockUpdateData {
@@ -20,13 +21,20 @@ export interface IBlockUpdateData {
   target_date?: string;
 }
 
-export type TGanttViews = "hours" | "day" | "week" | "bi_week" | "month" | "quarter" | "year";
+export interface IBlockUpdateDependencyData {
+  id: string;
+  start_date?: string;
+  target_date?: string;
+}
+
+export type TGanttViews = "week" | "month" | "quarter";
 
 // chart render types
 export interface WeekMonthDataType {
   key: number;
   shortTitle: string;
   title: string;
+  abbreviation: string;
 }
 
 export interface ChartDataType {
@@ -40,5 +48,5 @@ export interface ChartDataTypeData {
   currentDate: Date;
   endDate: Date;
   approxFilterRange: number;
-  width: number;
+  dayWidth: number;
 }

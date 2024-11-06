@@ -19,7 +19,7 @@ export default function ProfileSettingsLayout(props: Props) {
     <>
       <CommandPalette />
       <AuthenticationWrapper>
-        <div className="relative flex h-screen w-full overflow-hidden">
+        <div className="relative flex h-full w-full overflow-hidden">
           <ProfileLayoutSidebar />
           <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
             <div className="h-full w-full overflow-hidden">{children}</div>

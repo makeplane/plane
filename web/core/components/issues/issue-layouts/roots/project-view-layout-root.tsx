@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // mobx store
 // components
+import { LogoSpinner } from "@/components/common";
 import {
   IssuePeekOverview,
   ProjectViewAppliedFiltersRoot,
@@ -19,7 +20,7 @@ import { useIssues } from "@/hooks/store";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 // types
 
-const ProjectViewIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined }) => {
+const ProjectViewIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined; viewId: string }) => {
   switch (props.activeLayout) {
     case EIssueLayoutTypes.LIST:
       return <ProjectViewListLayout />;
@@ -28,7 +29,7 @@ const ProjectViewIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undef
     case EIssueLayoutTypes.CALENDAR:
       return <ProjectViewCalendarLayout />;
     case EIssueLayoutTypes.GANTT:
-      return <BaseGanttRoot />;
+      return <BaseGanttRoot viewId={props.viewId} />;
     case EIssueLayoutTypes.SPREADSHEET:
       return <ProjectViewSpreadsheetLayout />;
     default:
@@ -42,7 +43,7 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
   // hooks
   const { issuesFilter } = useIssues(EIssuesStoreType.PROJECT_VIEW);
 
-  useSWR(
+  const { isLoading } = useSWR(
     workspaceSlug && projectId && viewId ? `PROJECT_VIEW_ISSUES_${workspaceSlug}_${projectId}_${viewId}` : null,
     async () => {
       if (workspaceSlug && projectId && viewId) {
@@ -52,16 +53,25 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
+  const issueFilters = issuesFilter?.getIssueFilters(viewId?.toString());
+  const activeLayout = issueFilters?.displayFilters?.layout;
 
   if (!workspaceSlug || !projectId || !viewId) return <></>;
+
+  if (isLoading && !issueFilters) {
+    return (
+      <div className="relative flex h-screen w-full items-center justify-center">
+        <LogoSpinner />
+      </div>
+    );
+  }
 
   return (
     <IssuesStoreContext.Provider value={EIssuesStoreType.PROJECT_VIEW}>
       <div className="relative flex h-full w-full flex-col overflow-hidden">
         <ProjectViewAppliedFiltersRoot />
         <div className="relative h-full w-full overflow-auto">
-          <ProjectViewIssueLayout activeLayout={activeLayout} />
+          <ProjectViewIssueLayout activeLayout={activeLayout} viewId={viewId.toString()} />
         </div>
 
         {/* peek overview */}

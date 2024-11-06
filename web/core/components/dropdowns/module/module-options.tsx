@@ -12,6 +12,7 @@ import { DiceIcon } from "@plane/ui";
 //store
 import { cn } from "@/helpers/common.helper";
 import { useModule } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 //hooks
 //icon
 //types
@@ -42,14 +43,17 @@ export const ModuleOptions = observer((props: Props) => {
   // store hooks
   const { workspaceSlug } = useParams();
   const { getProjectModuleIds, fetchModules, getModuleById } = useModule();
+  const { isMobile } = usePlatformOS();
 
   useEffect(() => {
     if (isOpen) {
       onOpen();
-      inputRef.current && inputRef.current.focus();
+      if (!isMobile) {
+        inputRef.current && inputRef.current.focus();
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen]);
+  }, [isOpen, isMobile]);
 
   // popper-js init
   const { styles, attributes } = usePopper(referenceElement, popperElement, {

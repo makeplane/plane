@@ -36,8 +36,9 @@ export const SpreadsheetAssigneeColumn: React.FC<Props> = observer((props: Props
         buttonVariant={
           issue?.assignee_ids && issue.assignee_ids.length > 1 ? "transparent-without-text" : "transparent-with-text"
         }
-        buttonClassName="text-left rounded-none group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10"
+        buttonClassName="text-left rounded-none group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10 px-page-x"
         buttonContainerClassName="w-full"
+        optionsClassName="z-[9]"
         onClose={onClose}
       />
     </div>

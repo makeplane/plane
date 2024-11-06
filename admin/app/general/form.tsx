@@ -9,8 +9,9 @@ import { IInstance, IInstanceAdmin } from "@plane/types";
 import { Button, Input, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 // components
 import { ControllerInput } from "@/components/common";
-// hooks
 import { useInstance } from "@/hooks/store";
+import { IntercomConfig } from "./intercom";
+// hooks
 
 export interface IGeneralConfigurationForm {
   instance: IInstance;
@@ -20,11 +21,13 @@ export interface IGeneralConfigurationForm {
 export const GeneralConfigurationForm: FC<IGeneralConfigurationForm> = observer((props) => {
   const { instance, instanceAdmins } = props;
   // hooks
-  const { updateInstanceInfo } = useInstance();
+  const { instanceConfigurations, updateInstanceInfo, updateInstanceConfigurations } = useInstance();
+
   // form data
   const {
     handleSubmit,
     control,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<Partial<IInstance>>({
     defaultValues: {
@@ -36,7 +39,16 @@ export const GeneralConfigurationForm: FC<IGeneralConfigurationForm> = observer(
   const onSubmit = async (formData: Partial<IInstance>) => {
     const payload: Partial<IInstance> = { ...formData };
 
-    console.log("payload", payload);
+    // update the intercom configuration
+    const isIntercomEnabled =
+      instanceConfigurations?.find((config) => config.key === "IS_INTERCOM_ENABLED")?.value === "1";
+    if (!payload.is_telemetry_enabled && isIntercomEnabled) {
+      try {
+        await updateInstanceConfigurations({ IS_INTERCOM_ENABLED: "0" });
+      } catch (error) {
+        console.error(error);
+      }
+    }
 
     await updateInstanceInfo(payload)
       .then(() =>
@@ -74,6 +86,7 @@ export const GeneralConfigurationForm: FC<IGeneralConfigurationForm> = observer(
               value={instanceAdmins[0]?.user_detail?.email ?? ""}
               placeholder="Admin email"
               className="w-full cursor-not-allowed !text-custom-text-400"
+              autoComplete="on"
               disabled
             />
           </div>
@@ -93,7 +106,8 @@ export const GeneralConfigurationForm: FC<IGeneralConfigurationForm> = observer(
       </div>
 
       <div className="space-y-3">
-        <div className="text-lg font-medium">Telemetry</div>
+        <div className="text-lg font-medium">Chat + telemetry</div>
+        <IntercomConfig isTelemetryEnabled={watch("is_telemetry_enabled") ?? false} />
         <div className="flex items-center gap-14 px-4 py-3 border border-custom-border-200 rounded">
           <div className="grow flex items-center gap-4">
             <div className="shrink-0">

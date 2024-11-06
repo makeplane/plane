@@ -4,22 +4,20 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 // ui
 import { Button } from "@plane/ui";
-// constants
-import { EUserWorkspaceRoles } from "@/constants/workspace";
 // hooks
-import { useCommandPalette, useEventTracker, useUser } from "@/hooks/store";
+import { useCommandPalette, useEventTracker, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // assets
-import ProjectEmptyStateImage from "@/public/empty-state/dashboard/project.svg";
+import ProjectEmptyStateImage from "@/public/empty-state/onboarding/dashboard-light.webp";
 
 export const DashboardProjectEmptyState = observer(() => {
   // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
-  const {
-    membership: { currentWorkspaceRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
+
   // derived values
-  const canCreateProject = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+  const canCreateProject = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
   return (
     <div className="mx-auto flex h-full flex-col justify-center space-y-4 lg:w-3/5">

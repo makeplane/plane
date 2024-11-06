@@ -7,7 +7,7 @@ import { ProjectArchivesHeader } from "../../header";
 export default function ProjectArchiveIssuesLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <AppHeader header={<ProjectArchivesHeader />} />
+      <AppHeader header={<ProjectArchivesHeader activeTab="issues" />} />
       <ContentWrapper>{children}</ContentWrapper>
     </>
   );

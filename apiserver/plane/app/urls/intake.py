@@ -50,4 +50,15 @@ urlpatterns = [
         ),
         name="intake-issue",
     ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/inbox-issues/<uuid:pk>/",
+        IntakeIssueViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="inbox-issue",
+    ),
 ]

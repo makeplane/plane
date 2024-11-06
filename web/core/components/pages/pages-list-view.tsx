@@ -18,7 +18,10 @@ export const PagesListView: React.FC<TPageView> = observer((props) => {
   // store hooks
   const { isAnyPageAvailable, getAllPages } = useProjectPages();
   // fetching pages list
-  useSWR(projectId ? `PROJECT_PAGES_${projectId}` : null, projectId ? () => getAllPages(pageType) : null);
+  useSWR(
+    workspaceSlug && projectId && pageType ? `PROJECT_PAGES_${projectId}` : null,
+    workspaceSlug && projectId && pageType ? () => getAllPages(workspaceSlug, projectId, pageType) : null
+  );
 
   // pages loader
   return (

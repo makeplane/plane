@@ -16,6 +16,7 @@ export type DropdownButtonProps = {
   tooltipHeading: string;
   showTooltip: boolean;
   variant: TButtonVariants;
+  renderToolTipByDefault?: boolean;
 };
 
 type ButtonProps = {
@@ -25,10 +26,20 @@ type ButtonProps = {
   tooltipContent: string | React.ReactNode;
   tooltipHeading: string;
   showTooltip: boolean;
+  renderToolTipByDefault?: boolean;
 };
 
 export const DropdownButton: React.FC<DropdownButtonProps> = (props) => {
-  const { children, className, isActive, tooltipContent, tooltipHeading, showTooltip, variant } = props;
+  const {
+    children,
+    className,
+    isActive,
+    tooltipContent,
+    renderToolTipByDefault = true,
+    tooltipHeading,
+    showTooltip,
+    variant,
+  } = props;
   const ButtonToRender: React.FC<ButtonProps> = BORDER_BUTTON_VARIANTS.includes(variant)
     ? BorderButton
     : BACKGROUND_BUTTON_VARIANTS.includes(variant)
@@ -42,6 +53,7 @@ export const DropdownButton: React.FC<DropdownButtonProps> = (props) => {
       tooltipContent={tooltipContent}
       tooltipHeading={tooltipHeading}
       showTooltip={showTooltip}
+      renderToolTipByDefault={renderToolTipByDefault}
     >
       {children}
     </ButtonToRender>
@@ -49,7 +61,7 @@ export const DropdownButton: React.FC<DropdownButtonProps> = (props) => {
 };
 
 const BorderButton: React.FC<ButtonProps> = (props) => {
-  const { children, className, isActive, tooltipContent, tooltipHeading, showTooltip } = props;
+  const { children, className, isActive, tooltipContent, renderToolTipByDefault, tooltipHeading, showTooltip } = props;
   const { isMobile } = usePlatformOS();
 
   return (
@@ -58,10 +70,11 @@ const BorderButton: React.FC<ButtonProps> = (props) => {
       tooltipContent={tooltipContent}
       disabled={!showTooltip}
       isMobile={isMobile}
+      renderByDefault={renderToolTipByDefault}
     >
       <div
         className={cn(
-          "h-full flex items-center gap-1.5 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded text-xs px-2 py-0.5",
+          "h-full w-full flex items-center gap-1.5 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded text-xs px-2 py-0.5",
           { "bg-custom-background-80": isActive },
           className
         )}
@@ -73,7 +86,7 @@ const BorderButton: React.FC<ButtonProps> = (props) => {
 };
 
 const BackgroundButton: React.FC<ButtonProps> = (props) => {
-  const { children, className, tooltipContent, tooltipHeading, showTooltip } = props;
+  const { children, className, tooltipContent, tooltipHeading, renderToolTipByDefault, showTooltip } = props;
   const { isMobile } = usePlatformOS();
   return (
     <Tooltip
@@ -81,10 +94,11 @@ const BackgroundButton: React.FC<ButtonProps> = (props) => {
       tooltipContent={tooltipContent}
       disabled={!showTooltip}
       isMobile={isMobile}
+      renderByDefault={renderToolTipByDefault}
     >
       <div
         className={cn(
-          "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80",
+          "h-full w-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80",
           className
         )}
       >
@@ -95,7 +109,7 @@ const BackgroundButton: React.FC<ButtonProps> = (props) => {
 };
 
 const TransparentButton: React.FC<ButtonProps> = (props) => {
-  const { children, className, isActive, tooltipContent, tooltipHeading, showTooltip } = props;
+  const { children, className, isActive, tooltipContent, tooltipHeading, renderToolTipByDefault, showTooltip } = props;
   const { isMobile } = usePlatformOS();
   return (
     <Tooltip
@@ -103,10 +117,11 @@ const TransparentButton: React.FC<ButtonProps> = (props) => {
       tooltipContent={tooltipContent}
       disabled={!showTooltip}
       isMobile={isMobile}
+      renderByDefault={renderToolTipByDefault}
     >
       <div
         className={cn(
-          "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
+          "h-full w-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
           { "bg-custom-background-80": isActive },
           className
         )}

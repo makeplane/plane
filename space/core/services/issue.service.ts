@@ -2,7 +2,7 @@ import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import { APIService } from "@/services/api.service";
 // types
-import { TIssuesResponse } from "@/types/issue";
+import { Comment, TIssuesResponse, IIssue } from "@/types/issue";
 
 class IssueService extends APIService {
   constructor() {
@@ -19,7 +19,7 @@ class IssueService extends APIService {
       });
   }
 
-  async getIssueById(anchor: string, issueID: string): Promise<any> {
+  async getIssueById(anchor: string, issueID: string): Promise<IIssue> {
     return this.get(`/api/public/anchor/${anchor}/issues/${issueID}/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -83,7 +83,7 @@ class IssueService extends APIService {
       });
   }
 
-  async createIssueComment(anchor: string, issueID: string, data: any): Promise<any> {
+  async createIssueComment(anchor: string, issueID: string, data: any): Promise<Comment> {
     return this.post(`/api/public/anchor/${anchor}/issues/${issueID}/comments/`, data)
       .then((response) => response?.data)
       .catch((error) => {

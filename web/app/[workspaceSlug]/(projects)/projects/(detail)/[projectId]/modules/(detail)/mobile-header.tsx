@@ -13,9 +13,15 @@ import { CustomMenu } from "@plane/ui";
 import { ProjectAnalyticsModal } from "@/components/analytics";
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
 // constants
-import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT, ISSUE_LAYOUTS } from "@/constants/issue";
+import {
+  EIssueFilterType,
+  EIssueLayoutTypes,
+  EIssuesStoreType,
+  ISSUE_DISPLAY_FILTERS_BY_LAYOUT,
+  ISSUE_LAYOUTS,
+} from "@/constants/issue";
 // helpers
-import { calculateTotalFilters } from "@/helpers/filter.helper";
+import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
 
@@ -25,7 +31,7 @@ export const ModuleIssuesMobileHeader = observer(() => {
   const { getModuleById } = useModule();
   const layouts = [
     { key: "list", title: "List", icon: List },
-    { key: "kanban", title: "Kanban", icon: Kanban },
+    { key: "kanban", title: "Board", icon: Kanban },
     { key: "calendar", title: "Calendar", icon: Calendar },
   ];
   const { workspaceSlug, projectId, moduleId } = useParams() as {
@@ -90,8 +96,6 @@ export const ModuleIssuesMobileHeader = observer(() => {
     [workspaceSlug, projectId, moduleId, updateFilters]
   );
 
-  const isFiltersApplied = calculateTotalFilters(issueFilters?.filters ?? {}) !== 0;
-
   return (
     <div className="block md:hidden">
       <ProjectAnalyticsModal
@@ -131,7 +135,7 @@ export const ModuleIssuesMobileHeader = observer(() => {
                 <ChevronDown className="ml-2  h-4 w-4 text-custom-text-200" />
               </span>
             }
-            isFiltersApplied={isFiltersApplied}
+            isFiltersApplied={isIssueFilterActive(issueFilters)}
           >
             <FilterSelection
               filters={issueFilters?.filters ?? {}}

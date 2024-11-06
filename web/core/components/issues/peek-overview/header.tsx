@@ -54,6 +54,7 @@ export type PeekOverviewHeaderProps = {
   issueId: string;
   isArchived: boolean;
   disabled: boolean;
+  embedIssue: boolean;
   toggleDeleteIssueModal: (issueId: string | null) => void;
   toggleArchiveIssueModal: (issueId: string | null) => void;
   handleRestoreIssue: () => void;
@@ -69,6 +70,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
     issueId,
     isArchived,
     disabled,
+    embedIssue = false,
     removeRoutePeekId,
     toggleDeleteIssueModal,
     toggleArchiveIssueModal,
@@ -123,7 +125,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
             <MoveDiagonal className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
           </Link>
         </Tooltip>
-        {currentMode && (
+        {currentMode && embedIssue === false && (
           <div className="flex flex-shrink-0 items-center gap-2">
             <CustomSelect
               value={currentMode}

@@ -1,6 +1,3 @@
-from django.core.exceptions import ValidationError
-from django.core.validators import URLValidator
-
 # Django imports
 from django.utils import timezone
 from lxml import html
@@ -11,9 +8,10 @@ from rest_framework import serializers
 # Module imports
 from plane.db.models import (
     Issue,
+    IssueType,
     IssueActivity,
     IssueAssignee,
-    IssueAttachment,
+    FileAsset,
     IssueComment,
     IssueLabel,
     IssueLink,
@@ -28,6 +26,10 @@ from .cycle import CycleLiteSerializer, CycleSerializer
 from .module import ModuleLiteSerializer, ModuleSerializer
 from .state import StateLiteSerializer
 from .user import UserLiteSerializer
+
+# Django imports
+from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
 
 
 class IssueSerializer(BaseSerializer):
@@ -46,6 +48,12 @@ class IssueSerializer(BaseSerializer):
         write_only=True,
         required=False,
     )
+    type_id = serializers.PrimaryKeyRelatedField(
+        source="type",
+        queryset=IssueType.objects.all(),
+        required=False,
+        allow_null=True,
+    )
 
     class Meta:
         model = Issue
@@ -53,9 +61,7 @@ class IssueSerializer(BaseSerializer):
             "id",
             "workspace",
             "project",
-            "created_by",
             "updated_by",
-            "created_at",
             "updated_at",
         ]
         exclude = [
@@ -131,7 +137,20 @@ class IssueSerializer(BaseSerializer):
         workspace_id = self.context["workspace_id"]
         default_assignee_id = self.context["default_assignee_id"]
 
-        issue = Issue.objects.create(**validated_data, project_id=project_id)
+        issue_type = validated_data.pop("type", None)
+
+        if not issue_type:
+            # Get default issue type
+            issue_type = IssueType.objects.filter(
+                project_issue_types__project_id=project_id, is_default=True
+            ).first()
+            issue_type = issue_type
+
+        issue = Issue.objects.create(
+            **validated_data,
+            project_id=project_id,
+            type=issue_type,
+        )
 
         # Issue Audit Users
         created_by_id = issue.created_by_id
@@ -256,6 +275,17 @@ class IssueSerializer(BaseSerializer):
         return data
 
 
+class IssueLiteSerializer(BaseSerializer):
+    class Meta:
+        model = Issue
+        fields = [
+            "id",
+            "sequence_id",
+            "project_id",
+        ]
+        read_only_fields = fields
+
+
 class LabelSerializer(BaseSerializer):
     class Meta:
         model = Label
@@ -268,6 +298,7 @@ class LabelSerializer(BaseSerializer):
             "updated_by",
             "created_at",
             "updated_at",
+            "deleted_at",
         ]
 
 
@@ -312,10 +343,14 @@ class IssueLinkSerializer(BaseSerializer):
         return IssueLink.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        if IssueLink.objects.filter(
-            url=validated_data.get("url"),
-            issue_id=instance.issue_id,
-        ).exclude(pk=instance.id).exists():
+        if (
+            IssueLink.objects.filter(
+                url=validated_data.get("url"),
+                issue_id=instance.issue_id,
+            )
+            .exclude(pk=instance.id)
+            .exists()
+        ):
             raise serializers.ValidationError(
                 {"error": "URL already exists for this Issue"}
             )
@@ -325,16 +360,14 @@ class IssueLinkSerializer(BaseSerializer):
 
 class IssueAttachmentSerializer(BaseSerializer):
     class Meta:
-        model = IssueAttachment
+        model = FileAsset
         fields = "__all__"
         read_only_fields = [
             "id",
             "workspace",
             "project",
             "issue",
-            "created_by",
             "updated_by",
-            "created_at",
             "updated_at",
         ]
 

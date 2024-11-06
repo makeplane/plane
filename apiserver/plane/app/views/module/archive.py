@@ -12,10 +12,14 @@ from django.db.models import (
     Subquery,
     UUIDField,
     Value,
-    Sum
+    Sum,
+    FloatField,
+    Case,
+    When,
 )
-from django.db.models.functions import Coalesce, Cast
+from django.db.models.functions import Coalesce, Cast, Concat
 from django.utils import timezone
+from django.db import models
 
 # Third party imports
 from rest_framework import status
@@ -44,8 +48,8 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
     def get_queryset(self):
         favorite_subquery = UserFavorite.objects.filter(
             user=self.request.user,
-            entity_identifier=OuterRef("pk"),
             entity_type="module",
+            entity_identifier=OuterRef("pk"),
             project_id=self.kwargs.get("project_id"),
             workspace__slug=self.kwargs.get("slug"),
         )
@@ -53,6 +57,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             Issue.issue_objects.filter(
                 state__group="cancelled",
                 issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
             .annotate(cnt=Count("pk"))
@@ -62,6 +67,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             Issue.issue_objects.filter(
                 state__group="completed",
                 issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
             .annotate(cnt=Count("pk"))
@@ -71,6 +77,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             Issue.issue_objects.filter(
                 state__group="started",
                 issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
             .annotate(cnt=Count("pk"))
@@ -80,6 +87,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             Issue.issue_objects.filter(
                 state__group="unstarted",
                 issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
             .annotate(cnt=Count("pk"))
@@ -89,6 +97,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             Issue.issue_objects.filter(
                 state__group="backlog",
                 issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
             .annotate(cnt=Count("pk"))
@@ -97,13 +106,105 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
         total_issues = (
             Issue.issue_objects.filter(
                 issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
             .annotate(cnt=Count("pk"))
             .values("cnt")
         )
+        completed_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                state__group="completed",
+                issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
+            )
+            .values("issue_module__module_id")
+            .annotate(
+                completed_estimate_points=Sum(
+                    Cast("estimate_point__value", FloatField())
+                )
+            )
+            .values("completed_estimate_points")[:1]
+        )
+
+        total_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
+            )
+            .values("issue_module__module_id")
+            .annotate(
+                total_estimate_points=Sum(
+                    Cast("estimate_point__value", FloatField())
+                )
+            )
+            .values("total_estimate_points")[:1]
+        )
+        backlog_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                state__group="backlog",
+                issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
+            )
+            .values("issue_module__module_id")
+            .annotate(
+                backlog_estimate_point=Sum(
+                    Cast("estimate_point__value", FloatField())
+                )
+            )
+            .values("backlog_estimate_point")[:1]
+        )
+        unstarted_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                state__group="unstarted",
+                issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
+            )
+            .values("issue_module__module_id")
+            .annotate(
+                unstarted_estimate_point=Sum(
+                    Cast("estimate_point__value", FloatField())
+                )
+            )
+            .values("unstarted_estimate_point")[:1]
+        )
+        started_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                state__group="started",
+                issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
+            )
+            .values("issue_module__module_id")
+            .annotate(
+                started_estimate_point=Sum(
+                    Cast("estimate_point__value", FloatField())
+                )
+            )
+            .values("started_estimate_point")[:1]
+        )
+        cancelled_estimate_point = (
+            Issue.issue_objects.filter(
+                estimate_point__estimate__type="points",
+                state__group="cancelled",
+                issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
+            )
+            .values("issue_module__module_id")
+            .annotate(
+                cancelled_estimate_point=Sum(
+                    Cast("estimate_point__value", FloatField())
+                )
+            )
+            .values("cancelled_estimate_point")[:1]
+        )
         return (
             Module.objects.filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project_id=self.kwargs.get("project_id"))
             .filter(archived_at__isnull=False)
             .annotate(is_favorite=Exists(favorite_subquery))
             .select_related("workspace", "project", "lead")
@@ -151,6 +252,42 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                     Subquery(total_issues[:1]),
                     Value(0, output_field=IntegerField()),
                 )
+            )
+            .annotate(
+                backlog_estimate_points=Coalesce(
+                    Subquery(backlog_estimate_point),
+                    Value(0, output_field=FloatField()),
+                ),
+            )
+            .annotate(
+                unstarted_estimate_points=Coalesce(
+                    Subquery(unstarted_estimate_point),
+                    Value(0, output_field=FloatField()),
+                ),
+            )
+            .annotate(
+                started_estimate_points=Coalesce(
+                    Subquery(started_estimate_point),
+                    Value(0, output_field=FloatField()),
+                ),
+            )
+            .annotate(
+                cancelled_estimate_points=Coalesce(
+                    Subquery(cancelled_estimate_point),
+                    Value(0, output_field=FloatField()),
+                ),
+            )
+            .annotate(
+                completed_estimate_points=Coalesce(
+                    Subquery(completed_estimate_point),
+                    Value(0, output_field=FloatField()),
+                ),
+            )
+            .annotate(
+                total_estimate_points=Coalesce(
+                    Subquery(total_estimate_point),
+                    Value(0, output_field=FloatField()),
+                ),
             )
             .annotate(
                 member_ids=Coalesce(
@@ -212,6 +349,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                         project_id=self.kwargs.get("project_id"),
                         parent__isnull=False,
                         issue_module__module_id=pk,
+                        issue_module__deleted_at__isnull=True,
                     )
                     .order_by()
                     .annotate(count=Func(F("id"), function="Count"))
@@ -232,9 +370,10 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             data["estimate_distribution"] = {}
 
             if estimate_type:
-                label_distribution = (
-                    Issue.objects.filter(
+                assignee_distribution = (
+                    Issue.issue_objects.filter(
                         issue_module__module_id=pk,
+                        issue_module__deleted_at__isnull=True,
                         workspace__slug=slug,
                         project_id=project_id,
                     )
@@ -242,22 +381,41 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                     .annotate(last_name=F("assignees__last_name"))
                     .annotate(assignee_id=F("assignees__id"))
                     .annotate(display_name=F("assignees__display_name"))
-                    .annotate(avatar=F("assignees__avatar"))
+                    .annotate(
+                        avatar_url=Case(
+                            # If `avatar_asset` exists, use it to generate the asset URL
+                            When(
+                                assignees__avatar_asset__isnull=False,
+                                then=Concat(
+                                    Value("/api/assets/v2/static/"),
+                                    "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
+                                    Value("/"),
+                                ),
+                            ),
+                            # If `avatar_asset` is None, fall back to using `avatar` field directly
+                            When(
+                                assignees__avatar_asset__isnull=True,
+                                then="assignees__avatar",
+                            ),
+                            default=Value(None),
+                            output_field=models.CharField(),
+                        )
+                    )
                     .values(
                         "first_name",
                         "last_name",
                         "assignee_id",
-                        "avatar",
+                        "avatar_url",
                         "display_name",
                     )
                     .annotate(
                         total_estimates=Sum(
-                            Cast("estimate_point__value", IntegerField())
+                            Cast("estimate_point__value", FloatField())
                         ),
                     )
                     .annotate(
                         completed_estimates=Sum(
-                            Cast("estimate_point__value", IntegerField()),
+                            Cast("estimate_point__value", FloatField()),
                             filter=Q(
                                 completed_at__isnull=False,
                                 archived_at__isnull=True,
@@ -267,7 +425,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                     )
                     .annotate(
                         pending_estimates=Sum(
-                            Cast("estimate_point__value", IntegerField()),
+                            Cast("estimate_point__value", FloatField()),
                             filter=Q(
                                 completed_at__isnull=True,
                                 archived_at__isnull=True,
@@ -278,8 +436,8 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                     .order_by("first_name", "last_name")
                 )
 
-                assignee_distribution = (
-                    Issue.objects.filter(
+                label_distribution = (
+                    Issue.issue_objects.filter(
                         issue_module__module_id=pk,
                         workspace__slug=slug,
                         project_id=project_id,
@@ -290,12 +448,12 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                     .values("label_name", "color", "label_id")
                     .annotate(
                         total_estimates=Sum(
-                            Cast("estimate_point__value", IntegerField())
+                            Cast("estimate_point__value", FloatField())
                         ),
                     )
                     .annotate(
                         completed_estimates=Sum(
-                            Cast("estimate_point__value", IntegerField()),
+                            Cast("estimate_point__value", FloatField()),
                             filter=Q(
                                 completed_at__isnull=False,
                                 archived_at__isnull=True,
@@ -305,7 +463,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                     )
                     .annotate(
                         pending_estimates=Sum(
-                            Cast("estimate_point__value", IntegerField()),
+                            Cast("estimate_point__value", FloatField()),
                             filter=Q(
                                 completed_at__isnull=True,
                                 archived_at__isnull=True,
@@ -315,8 +473,10 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                     )
                     .order_by("label_name")
                 )
-                data["estimate_distribution"]["assignee"] = assignee_distribution
-                data["estimate_distribution"]["label"] = label_distribution
+                data["estimate_distribution"][
+                    "assignees"
+                ] = assignee_distribution
+                data["estimate_distribution"]["labels"] = label_distribution
 
                 if modules and modules.start_date and modules.target_date:
                     data["estimate_distribution"]["completion_chart"] = (
@@ -328,9 +488,11 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                             module_id=pk,
                         )
                     )
+
             assignee_distribution = (
-                Issue.objects.filter(
+                Issue.issue_objects.filter(
                     issue_module__module_id=pk,
+                    issue_module__deleted_at__isnull=True,
                     workspace__slug=slug,
                     project_id=project_id,
                 )
@@ -338,12 +500,31 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                 .annotate(last_name=F("assignees__last_name"))
                 .annotate(assignee_id=F("assignees__id"))
                 .annotate(display_name=F("assignees__display_name"))
-                .annotate(avatar=F("assignees__avatar"))
+                .annotate(
+                    avatar_url=Case(
+                        # If `avatar_asset` exists, use it to generate the asset URL
+                        When(
+                            assignees__avatar_asset__isnull=False,
+                            then=Concat(
+                                Value("/api/assets/v2/static/"),
+                                "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
+                                Value("/"),
+                            ),
+                        ),
+                        # If `avatar_asset` is None, fall back to using `avatar` field directly
+                        When(
+                            assignees__avatar_asset__isnull=True,
+                            then="assignees__avatar",
+                        ),
+                        default=Value(None),
+                        output_field=models.CharField(),
+                    )
+                )
                 .values(
                     "first_name",
                     "last_name",
                     "assignee_id",
-                    "avatar",
+                    "avatar_url",
                     "display_name",
                 )
                 .annotate(
@@ -353,7 +534,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                             archived_at__isnull=True,
                             is_draft=False,
                         ),
-                    )
+                    ),
                 )
                 .annotate(
                     completed_issues=Count(
@@ -379,8 +560,9 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             )
 
             label_distribution = (
-                Issue.objects.filter(
+                Issue.issue_objects.filter(
                     issue_module__module_id=pk,
+                    issue_module__deleted_at__isnull=True,
                     workspace__slug=slug,
                     project_id=project_id,
                 )
@@ -425,8 +607,6 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                 "labels": label_distribution,
                 "completion_chart": {},
             }
-
-            # Fetch the modules
             if modules and modules.start_date and modules.target_date:
                 data["distribution"]["completion_chart"] = burndown_plot(
                     queryset=modules,
@@ -454,6 +634,12 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             )
         module.archived_at = timezone.now()
         module.save()
+        UserFavorite.objects.filter(
+            entity_type="module",
+            entity_identifier=module_id,
+            project_id=project_id,
+            workspace__slug=slug,
+        ).delete()
         return Response(
             {"archived_at": str(module.archived_at)},
             status=status.HTTP_200_OK,

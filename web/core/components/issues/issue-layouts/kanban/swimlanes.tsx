@@ -12,6 +12,8 @@ import {
   TIssueGroupByOptions,
   TIssueOrderByOptions,
 } from "@plane/types";
+// UI
+import { Row } from "@plane/ui";
 // hooks
 import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
@@ -33,8 +35,8 @@ interface ISubGroupSwimlaneHeader {
   sub_group_by: TIssueGroupByOptions | undefined;
   group_by: TIssueGroupByOptions | undefined;
   list: IGroupByColumn[];
-  kanbanFilters: TIssueKanbanFilters;
-  handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
+  collapsedGroups: TIssueKanbanFilters;
+  handleCollapsedGroups: (toggle: "group_by" | "sub_group_by", value: string) => void;
   showEmptyGroup: boolean;
 }
 
@@ -51,7 +53,7 @@ const visibilitySubGroupByGroupCount = (subGroupIssueCount: number, showEmptyGro
 };
 
 const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = observer(
-  ({ getGroupIssueCount, sub_group_by, group_by, list, kanbanFilters, handleKanbanFilters, showEmptyGroup }) => (
+  ({ getGroupIssueCount, sub_group_by, group_by, list, collapsedGroups, handleCollapsedGroups, showEmptyGroup }) => (
     <div className="relative flex h-max min-h-full w-full items-center gap-2">
       {list &&
         list.length > 0 &&
@@ -71,8 +73,8 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = observer(
                 icon={_list.icon}
                 title={_list.name}
                 count={groupCount}
-                kanbanFilters={kanbanFilters}
-                handleKanbanFilters={handleKanbanFilters}
+                collapsedGroups={collapsedGroups}
+                handleCollapsedGroups={handleCollapsedGroups}
                 issuePayload={_list.payload}
               />
             </div>
@@ -94,8 +96,8 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   displayProperties: IIssueDisplayProperties | undefined;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
-  kanbanFilters: TIssueKanbanFilters;
-  handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
+  collapsedGroups: TIssueKanbanFilters;
+  handleCollapsedGroups: (toggle: "group_by" | "sub_group_by", value: string) => void;
   handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   disableIssueCreation?: boolean;
   enableQuickIssueCreate: boolean;
@@ -118,11 +120,12 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
     updateIssue,
     quickActions,
     displayProperties,
-    kanbanFilters,
-    handleKanbanFilters,
+    collapsedGroups,
+    handleCollapsedGroups,
     loadMoreIssues,
     showEmptyGroup,
     enableQuickIssueCreate,
+    disableIssueCreation,
     canEditProperties,
     addIssuesToView,
     quickAddCallback,
@@ -144,7 +147,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
       if (subGroupCount > 0) subGroupVisibility.showGroup = true;
       else subGroupVisibility.showGroup = false;
     }
-    if (kanbanFilters?.sub_group_by.includes(_list.id)) subGroupVisibility.showIssues = false;
+    if (collapsedGroups?.sub_group_by.includes(_list.id)) subGroupVisibility.showIssues = false;
     return subGroupVisibility;
   };
 
@@ -152,23 +155,23 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
     <div className="relative h-max min-h-full w-full">
       {list &&
         list.length > 0 &&
-        list.map((_list: IGroupByColumn) => {
+        list.map((_list: IGroupByColumn, subGroupIndex) => {
           const issueCount = getGroupIssueCount(undefined, _list.id, true) ?? 0;
           const subGroupByVisibilityToggle = visibilitySubGroupBy(_list, issueCount);
           if (subGroupByVisibilityToggle.showGroup === false) return <></>;
           return (
             <div key={_list.id} className="flex flex-shrink-0 flex-col">
               <div className="sticky top-[50px] z-[3] py-1 flex w-full items-center bg-custom-background-100 border-y-[0.5px] border-custom-border-200">
-                <div className="sticky left-0 flex-shrink-0">
+                <Row className="sticky left-0 flex-shrink-0">
                   <HeaderSubGroupByCard
                     column_id={_list.id}
                     icon={_list.icon}
                     title={_list.name || ""}
                     count={issueCount}
-                    kanbanFilters={kanbanFilters}
-                    handleKanbanFilters={handleKanbanFilters}
+                    collapsedGroups={collapsedGroups}
+                    handleCollapsedGroups={handleCollapsedGroups}
                   />
-                </div>
+                </Row>
               </div>
 
               {subGroupByVisibilityToggle.showIssues && (
@@ -181,12 +184,14 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                     sub_group_by={sub_group_by}
                     group_by={group_by}
                     sub_group_id={_list.id}
+                    subGroupIndex={subGroupIndex}
                     updateIssue={updateIssue}
                     quickActions={quickActions}
-                    kanbanFilters={kanbanFilters}
-                    handleKanbanFilters={handleKanbanFilters}
+                    collapsedGroups={collapsedGroups}
+                    handleCollapsedGroups={handleCollapsedGroups}
                     showEmptyGroup={showEmptyGroup}
                     enableQuickIssueCreate={enableQuickIssueCreate}
+                    disableIssueCreation={disableIssueCreation}
                     canEditProperties={canEditProperties}
                     addIssuesToView={addIssuesToView}
                     quickAddCallback={quickAddCallback}
@@ -219,8 +224,8 @@ export interface IKanBanSwimLanes {
   group_by: TIssueGroupByOptions | undefined;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
-  kanbanFilters: TIssueKanbanFilters;
-  handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
+  collapsedGroups: TIssueKanbanFilters;
+  handleCollapsedGroups: (toggle: "group_by" | "sub_group_by", value: string) => void;
   loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
   showEmptyGroup: boolean;
   handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
@@ -244,8 +249,8 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     orderBy,
     updateIssue,
     quickActions,
-    kanbanFilters,
-    handleKanbanFilters,
+    collapsedGroups,
+    handleCollapsedGroups,
     loadMoreIssues,
     showEmptyGroup,
     handleOnDrop,
@@ -293,17 +298,17 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
 
   return (
     <div className="relative">
-      <div className="sticky top-0 z-[4] h-[50px] bg-custom-background-90 px-2">
+      <Row className="sticky top-0 z-[4] h-[50px] bg-custom-background-90">
         <SubGroupSwimlaneHeader
           getGroupIssueCount={getGroupIssueCount}
           group_by={group_by}
           sub_group_by={sub_group_by}
-          kanbanFilters={kanbanFilters}
-          handleKanbanFilters={handleKanbanFilters}
+          collapsedGroups={collapsedGroups}
+          handleCollapsedGroups={handleCollapsedGroups}
           list={groupByList}
           showEmptyGroup={showEmptyGroup}
         />
-      </div>
+      </Row>
 
       {sub_group_by && (
         <SubGroupSwimlane
@@ -317,8 +322,8 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           orderBy={orderBy}
           updateIssue={updateIssue}
           quickActions={quickActions}
-          kanbanFilters={kanbanFilters}
-          handleKanbanFilters={handleKanbanFilters}
+          collapsedGroups={collapsedGroups}
+          handleCollapsedGroups={handleCollapsedGroups}
           loadMoreIssues={loadMoreIssues}
           showEmptyGroup={showEmptyGroup}
           handleOnDrop={handleOnDrop}

@@ -3,9 +3,22 @@ import json
 
 # Django imports
 from django.core import serializers
-from django.db.models import Count, F, Func, OuterRef, Q, Sum
 from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import (
+    Count,
+    F,
+    Func,
+    OuterRef,
+    Q,
+    Sum,
+    FloatField,
+    Case,
+    When,
+    Value,
+)
+from django.db.models.functions import Cast, Concat
+from django.db import models
 
 # Third party imports
 from rest_framework import status
@@ -17,13 +30,16 @@ from plane.api.serializers import (
     CycleSerializer,
 )
 from plane.app.permissions import ProjectEntityPermission
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Cycle,
     CycleIssue,
     Issue,
-    IssueAttachment,
+    Project,
+    FileAsset,
     IssueLink,
+    ProjectMember,
+    UserFavorite,
 )
 from plane.utils.analytics_plot import burndown_plot
 
@@ -62,6 +78,7 @@ class CycleAPIEndpoint(BaseAPIView):
                     filter=Q(
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -72,6 +89,7 @@ class CycleAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="completed",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -82,6 +100,7 @@ class CycleAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="cancelled",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -92,6 +111,7 @@ class CycleAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="started",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -102,6 +122,7 @@ class CycleAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="unstarted",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -112,29 +133,7 @@ class CycleAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="backlog",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
-                    ),
-                )
-            )
-            .annotate(
-                total_estimates=Sum("issue_cycle__issue__estimate_point")
-            )
-            .annotate(
-                completed_estimates=Sum(
-                    "issue_cycle__issue__estimate_point",
-                    filter=Q(
-                        issue_cycle__issue__state__group="completed",
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                    ),
-                )
-            )
-            .annotate(
-                started_estimates=Sum(
-                    "issue_cycle__issue__estimate_point",
-                    filter=Q(
-                        issue_cycle__issue__state__group="started",
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -218,8 +217,7 @@ class CycleAPIEndpoint(BaseAPIView):
         # Incomplete Cycles
         if cycle_view == "incomplete":
             queryset = queryset.filter(
-                Q(end_date__gte=timezone.now().date())
-                | Q(end_date__isnull=True),
+                Q(end_date__gte=timezone.now()) | Q(end_date__isnull=True),
             )
             return self.paginate(
                 request=request,
@@ -320,10 +318,7 @@ class CycleAPIEndpoint(BaseAPIView):
 
         request_data = request.data
 
-        if (
-            cycle.end_date is not None
-            and cycle.end_date < timezone.now().date()
-        ):
+        if cycle.end_date is not None and cycle.end_date < timezone.now():
             if "sort_order" in request_data:
                 # Can only change sort order
                 request_data = {
@@ -376,13 +371,27 @@ class CycleAPIEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, slug, project_id, pk):
+        cycle = Cycle.objects.get(
+            workspace__slug=slug, project_id=project_id, pk=pk
+        )
+        if cycle.owned_by_id != request.user.id and (
+            not ProjectMember.objects.filter(
+                workspace__slug=slug,
+                member=request.user,
+                role=20,
+                project_id=project_id,
+                is_active=True,
+            ).exists()
+        ):
+            return Response(
+                {"error": "Only admin or creator can delete the cycle"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         cycle_issues = list(
             CycleIssue.objects.filter(
                 cycle_id=self.kwargs.get("pk")
             ).values_list("issue", flat=True)
-        )
-        cycle = Cycle.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=pk
         )
 
         issue_activity.delay(
@@ -402,11 +411,16 @@ class CycleAPIEndpoint(BaseAPIView):
         )
         # Delete the cycle
         cycle.delete()
+        # Delete the user favorite cycle
+        UserFavorite.objects.filter(
+            entity_type="cycle",
+            entity_identifier=pk,
+            project_id=project_id,
+        ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
-
     permission_classes = [
         ProjectEntityPermission,
     ]
@@ -429,6 +443,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                     filter=Q(
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -439,6 +454,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="completed",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -449,6 +465,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="cancelled",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -459,6 +476,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="started",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -469,6 +487,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="unstarted",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -479,6 +498,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="backlog",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -492,6 +512,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="completed",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -502,6 +523,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="started",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -525,13 +547,19 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         cycle = Cycle.objects.get(
             pk=cycle_id, project_id=project_id, workspace__slug=slug
         )
-        if cycle.end_date >= timezone.now().date():
+        if cycle.end_date >= timezone.now():
             return Response(
                 {"error": "Only completed cycles can be archived"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         cycle.archived_at = timezone.now()
         cycle.save()
+        UserFavorite.objects.filter(
+            entity_type="cycle",
+            entity_identifier=cycle_id,
+            project_id=project_id,
+            workspace__slug=slug,
+        ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def delete(self, request, slug, project_id, cycle_id):
@@ -601,7 +629,10 @@ class CycleIssueAPIEndpoint(BaseAPIView):
         # List
         order_by = request.GET.get("order_by", "created_at")
         issues = (
-            Issue.issue_objects.filter(issue_cycle__cycle_id=cycle_id)
+            Issue.issue_objects.filter(
+                issue_cycle__cycle_id=cycle_id,
+                issue_cycle__deleted_at__isnull=True,
+            )
             .annotate(
                 sub_issues_count=Issue.issue_objects.filter(
                     parent=OuterRef("id")
@@ -627,8 +658,9 @@ class CycleIssueAPIEndpoint(BaseAPIView):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -660,72 +692,63 @@ class CycleIssueAPIEndpoint(BaseAPIView):
             workspace__slug=slug, project_id=project_id, pk=cycle_id
         )
 
-        if (
-            cycle.end_date is not None
-            and cycle.end_date < timezone.now().date()
-        ):
-            return Response(
+        # Get all CycleIssues already created
+        cycle_issues = list(
+            CycleIssue.objects.filter(
+                ~Q(cycle_id=cycle_id), issue_id__in=issues
+            )
+        )
+
+        existing_issues = [
+            str(cycle_issue.issue_id)
+            for cycle_issue in cycle_issues
+            if str(cycle_issue.issue_id) in issues
+        ]
+        new_issues = list(set(issues) - set(existing_issues))
+
+        # New issues to create
+        created_records = CycleIssue.objects.bulk_create(
+            [
+                CycleIssue(
+                    project_id=project_id,
+                    workspace_id=cycle.workspace_id,
+                    cycle_id=cycle_id,
+                    issue_id=issue,
+                )
+                for issue in new_issues
+            ],
+            ignore_conflicts=True,
+            batch_size=10,
+        )
+
+        # Updated Issues
+        updated_records = []
+        update_cycle_issue_activity = []
+        # Iterate over each cycle_issue in cycle_issues
+        for cycle_issue in cycle_issues:
+            old_cycle_id = cycle_issue.cycle_id
+            # Update the cycle_issue's cycle_id
+            cycle_issue.cycle_id = cycle_id
+            # Add the modified cycle_issue to the records_to_update list
+            updated_records.append(cycle_issue)
+            # Record the update activity
+            update_cycle_issue_activity.append(
                 {
-                    "error": "The Cycle has already been completed so no new issues can be added"
-                },
-                status=status.HTTP_400_BAD_REQUEST,
+                    "old_cycle_id": str(old_cycle_id),
+                    "new_cycle_id": str(cycle_id),
+                    "issue_id": str(cycle_issue.issue_id),
+                }
             )
 
-        issues = Issue.objects.filter(
-            pk__in=issues, workspace__slug=slug, project_id=project_id
-        ).values_list("id", flat=True)
-
-        # Get all CycleIssues already created
-        cycle_issues = list(CycleIssue.objects.filter(issue_id__in=issues))
-        update_cycle_issue_activity = []
-        record_to_create = []
-        records_to_update = []
-
-        for issue in issues:
-            cycle_issue = [
-                cycle_issue
-                for cycle_issue in cycle_issues
-                if str(cycle_issue.issue_id) in issues
-            ]
-            # Update only when cycle changes
-            if len(cycle_issue):
-                if cycle_issue[0].cycle_id != cycle_id:
-                    update_cycle_issue_activity.append(
-                        {
-                            "old_cycle_id": str(cycle_issue[0].cycle_id),
-                            "new_cycle_id": str(cycle_id),
-                            "issue_id": str(cycle_issue[0].issue_id),
-                        }
-                    )
-                    cycle_issue[0].cycle_id = cycle_id
-                    records_to_update.append(cycle_issue[0])
-            else:
-                record_to_create.append(
-                    CycleIssue(
-                        project_id=project_id,
-                        workspace=cycle.workspace,
-                        created_by=request.user,
-                        updated_by=request.user,
-                        cycle=cycle,
-                        issue_id=issue,
-                    )
-                )
-
-        CycleIssue.objects.bulk_create(
-            record_to_create,
-            batch_size=10,
-            ignore_conflicts=True,
-        )
+        # Update the cycle issues
         CycleIssue.objects.bulk_update(
-            records_to_update,
-            ["cycle"],
-            batch_size=10,
+            updated_records, ["cycle_id"], batch_size=100
         )
 
         # Capture Issue Activity
         issue_activity.delay(
             type="cycle.activity.created",
-            requested_data=json.dumps({"cycles_list": str(issues)}),
+            requested_data=json.dumps({"cycles_list": issues}),
             actor_id=str(self.request.user.id),
             issue_id=None,
             project_id=str(self.kwargs.get("project_id", None)),
@@ -733,13 +756,14 @@ class CycleIssueAPIEndpoint(BaseAPIView):
                 {
                     "updated_cycle_issues": update_cycle_issue_activity,
                     "created_cycle_issues": serializers.serialize(
-                        "json", record_to_create
+                        "json", created_records
                     ),
                 }
             ),
             epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
         )
-
         # Return all Cycle Issues
         return Response(
             CycleIssueSerializer(self.get_queryset(), many=True).data,
@@ -784,7 +808,6 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
 
     def post(self, request, slug, project_id, cycle_id):
         new_cycle_id = request.data.get("new_cycle_id", False)
-        plot_type = request.GET.get("plot_type", "issues")
 
         if not new_cycle_id:
             return Response(
@@ -792,9 +815,9 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        new_cycle = Cycle.objects.get(
+        new_cycle = Cycle.objects.filter(
             workspace__slug=slug, project_id=project_id, pk=new_cycle_id
-        )
+        ).first()
 
         old_cycle = (
             Cycle.objects.filter(
@@ -806,6 +829,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                     filter=Q(
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -816,6 +840,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="completed",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -826,6 +851,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="cancelled",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -836,6 +862,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="started",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -846,6 +873,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="unstarted",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -856,35 +884,196 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="backlog",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
                     ),
                 )
             )
         )
 
-        # Pass the new_cycle queryset to burndown_plot
-        completion_chart = burndown_plot(
-            queryset=old_cycle.first(),
-            slug=slug,
-            project_id=project_id,
-            plot_type=plot_type,
-            cycle_id=cycle_id,
-        )
+        estimate_type = Project.objects.filter(
+            workspace__slug=slug,
+            pk=project_id,
+            estimate__isnull=False,
+            estimate__type="points",
+        ).exists()
+
+        if estimate_type:
+            assignee_estimate_data = (
+                Issue.issue_objects.filter(
+                    issue_cycle__cycle_id=cycle_id,
+                    issue_cycle__deleted_at__isnull=True,
+                    workspace__slug=slug,
+                    project_id=project_id,
+                )
+                .annotate(display_name=F("assignees__display_name"))
+                .annotate(assignee_id=F("assignees__id"))
+                .annotate(avatar=F("assignees__avatar"))
+                .annotate(
+                    avatar_url=Case(
+                        # If `avatar_asset` exists, use it to generate the asset URL
+                        When(
+                            assignees__avatar_asset__isnull=False,
+                            then=Concat(
+                                Value("/api/assets/v2/static/"),
+                                "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
+                                Value("/"),
+                            ),
+                        ),
+                        # If `avatar_asset` is None, fall back to using `avatar` field directly
+                        When(
+                            assignees__avatar_asset__isnull=True,
+                            then="assignees__avatar",
+                        ),
+                        default=Value(None),
+                        output_field=models.CharField(),
+                    )
+                )
+                .values("display_name", "assignee_id", "avatar", "avatar_url")
+                .annotate(
+                    total_estimates=Sum(
+                        Cast("estimate_point__value", FloatField())
+                    )
+                )
+                .annotate(
+                    completed_estimates=Sum(
+                        Cast("estimate_point__value", FloatField()),
+                        filter=Q(
+                            completed_at__isnull=False,
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
+                    )
+                )
+                .annotate(
+                    pending_estimates=Sum(
+                        Cast("estimate_point__value", FloatField()),
+                        filter=Q(
+                            completed_at__isnull=True,
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
+                    )
+                )
+                .order_by("display_name")
+            )
+            # assignee distribution serialization
+            assignee_estimate_distribution = [
+                {
+                    "display_name": item["display_name"],
+                    "assignee_id": (
+                        str(item["assignee_id"])
+                        if item["assignee_id"]
+                        else None
+                    ),
+                    "avatar": item.get("avatar", None),
+                    "avatar_url": item.get("avatar_url", None),
+                    "total_estimates": item["total_estimates"],
+                    "completed_estimates": item["completed_estimates"],
+                    "pending_estimates": item["pending_estimates"],
+                }
+                for item in assignee_estimate_data
+            ]
+
+            label_distribution_data = (
+                Issue.issue_objects.filter(
+                    issue_cycle__cycle_id=cycle_id,
+                    issue_cycle__deleted_at__isnull=True,
+                    workspace__slug=slug,
+                    project_id=project_id,
+                )
+                .annotate(label_name=F("labels__name"))
+                .annotate(color=F("labels__color"))
+                .annotate(label_id=F("labels__id"))
+                .values("label_name", "color", "label_id")
+                .annotate(
+                    total_estimates=Sum(
+                        Cast("estimate_point__value", FloatField())
+                    )
+                )
+                .annotate(
+                    completed_estimates=Sum(
+                        Cast("estimate_point__value", FloatField()),
+                        filter=Q(
+                            completed_at__isnull=False,
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
+                    )
+                )
+                .annotate(
+                    pending_estimates=Sum(
+                        Cast("estimate_point__value", FloatField()),
+                        filter=Q(
+                            completed_at__isnull=True,
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
+                    )
+                )
+                .order_by("label_name")
+            )
+
+            estimate_completion_chart = burndown_plot(
+                queryset=old_cycle.first(),
+                slug=slug,
+                project_id=project_id,
+                plot_type="points",
+                cycle_id=cycle_id,
+            )
+            # Label distribution serialization
+            label_estimate_distribution = [
+                {
+                    "label_name": item["label_name"],
+                    "color": item["color"],
+                    "label_id": (
+                        str(item["label_id"]) if item["label_id"] else None
+                    ),
+                    "total_estimates": item["total_estimates"],
+                    "completed_estimates": item["completed_estimates"],
+                    "pending_estimates": item["pending_estimates"],
+                }
+                for item in label_distribution_data
+            ]
 
         # Get the assignee distribution
         assignee_distribution = (
-            Issue.objects.filter(
+            Issue.issue_objects.filter(
                 issue_cycle__cycle_id=cycle_id,
+                issue_cycle__deleted_at__isnull=True,
                 workspace__slug=slug,
                 project_id=project_id,
             )
             .annotate(display_name=F("assignees__display_name"))
             .annotate(assignee_id=F("assignees__id"))
             .annotate(avatar=F("assignees__avatar"))
-            .values("display_name", "assignee_id", "avatar")
+            .annotate(
+                avatar_url=Case(
+                    # If `avatar_asset` exists, use it to generate the asset URL
+                    When(
+                        assignees__avatar_asset__isnull=False,
+                        then=Concat(
+                            Value("/api/assets/v2/static/"),
+                            "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
+                            Value("/"),
+                        ),
+                    ),
+                    # If `avatar_asset` is None, fall back to using `avatar` field directly
+                    When(
+                        assignees__avatar_asset__isnull=True,
+                        then="assignees__avatar",
+                    ),
+                    default=Value(None),
+                    output_field=models.CharField(),
+                )
+            )
+            .values("display_name", "assignee_id", "avatar_url")
             .annotate(
                 total_issues=Count(
                     "id",
-                    filter=Q(archived_at__isnull=True, is_draft=False),
+                    filter=Q(
+                        archived_at__isnull=True,
+                        is_draft=False,
+                    ),
                 ),
             )
             .annotate(
@@ -916,7 +1105,8 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                 "assignee_id": (
                     str(item["assignee_id"]) if item["assignee_id"] else None
                 ),
-                "avatar": item["avatar"],
+                "avatar": item.get("avatar", None),
+                "avatar_url": item.get("avatar_url", None),
                 "total_issues": item["total_issues"],
                 "completed_issues": item["completed_issues"],
                 "pending_issues": item["pending_issues"],
@@ -926,8 +1116,9 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
 
         # Get the label distribution
         label_distribution = (
-            Issue.objects.filter(
+            Issue.issue_objects.filter(
                 issue_cycle__cycle_id=cycle_id,
+                issue_cycle__deleted_at__isnull=True,
                 workspace__slug=slug,
                 project_id=project_id,
             )
@@ -938,8 +1129,11 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
             .annotate(
                 total_issues=Count(
                     "id",
-                    filter=Q(archived_at__isnull=True, is_draft=False),
-                )
+                    filter=Q(
+                        archived_at__isnull=True,
+                        is_draft=False,
+                    ),
+                ),
             )
             .annotate(
                 completed_issues=Count(
@@ -979,30 +1173,46 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
             for item in label_distribution
         ]
 
+        # Pass the new_cycle queryset to burndown_plot
+        completion_chart = burndown_plot(
+            queryset=old_cycle.first(),
+            slug=slug,
+            project_id=project_id,
+            plot_type="issues",
+            cycle_id=cycle_id,
+        )
+
         current_cycle = Cycle.objects.filter(
             workspace__slug=slug, project_id=project_id, pk=cycle_id
         ).first()
 
-        if current_cycle:
-            current_cycle.progress_snapshot = {
-                "total_issues": old_cycle.first().total_issues,
-                "completed_issues": old_cycle.first().completed_issues,
-                "cancelled_issues": old_cycle.first().cancelled_issues,
-                "started_issues": old_cycle.first().started_issues,
-                "unstarted_issues": old_cycle.first().unstarted_issues,
-                "backlog_issues": old_cycle.first().backlog_issues,
-                "distribution": {
-                    "labels": label_distribution_data,
-                    "assignees": assignee_distribution_data,
-                    "completion_chart": completion_chart,
-                },
-            }
-            # Save the snapshot of the current cycle
-            current_cycle.save(update_fields=["progress_snapshot"])
+        current_cycle.progress_snapshot = {
+            "total_issues": old_cycle.first().total_issues,
+            "completed_issues": old_cycle.first().completed_issues,
+            "cancelled_issues": old_cycle.first().cancelled_issues,
+            "started_issues": old_cycle.first().started_issues,
+            "unstarted_issues": old_cycle.first().unstarted_issues,
+            "backlog_issues": old_cycle.first().backlog_issues,
+            "distribution": {
+                "labels": label_distribution_data,
+                "assignees": assignee_distribution_data,
+                "completion_chart": completion_chart,
+            },
+            "estimate_distribution": (
+                {}
+                if not estimate_type
+                else {
+                    "labels": label_estimate_distribution,
+                    "assignees": assignee_estimate_distribution,
+                    "completion_chart": estimate_completion_chart,
+                }
+            ),
+        }
+        current_cycle.save(update_fields=["progress_snapshot"])
 
         if (
             new_cycle.end_date is not None
-            and new_cycle.end_date < timezone.now().date()
+            and new_cycle.end_date < timezone.now()
         ):
             return Response(
                 {
@@ -1019,12 +1229,38 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
         )
 
         updated_cycles = []
+        update_cycle_issue_activity = []
         for cycle_issue in cycle_issues:
             cycle_issue.cycle_id = new_cycle_id
             updated_cycles.append(cycle_issue)
+            update_cycle_issue_activity.append(
+                {
+                    "old_cycle_id": str(cycle_id),
+                    "new_cycle_id": str(new_cycle_id),
+                    "issue_id": str(cycle_issue.issue_id),
+                }
+            )
 
         cycle_issues = CycleIssue.objects.bulk_update(
             updated_cycles, ["cycle_id"], batch_size=100
+        )
+
+        # Capture Issue Activity
+        issue_activity.delay(
+            type="cycle.activity.created",
+            requested_data=json.dumps({"cycles_list": []}),
+            actor_id=str(self.request.user.id),
+            issue_id=None,
+            project_id=str(self.kwargs.get("project_id", None)),
+            current_instance=json.dumps(
+                {
+                    "updated_cycle_issues": update_cycle_issue_activity,
+                    "created_cycle_issues": "[]",
+                }
+            ),
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
         )
 
         return Response({"message": "Success"}, status=status.HTTP_200_OK)

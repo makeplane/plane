@@ -1,12 +1,3 @@
-networks:
-  dev_env:
-    driver: bridge
-
-volumes:
-  redisdata:
-  uploads:
-  pgdata:
-
 services:
   plane-redis:
     image: valkey/valkey:7.2.5-alpine
@@ -15,6 +6,20 @@ services:
       - dev_env
     volumes:
       - redisdata:/data
+
+  plane-mq:
+    image: rabbitmq:3.13.6-management-alpine
+    restart: unless-stopped
+    networks:
+      - dev_env
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    env_file:
+      - .env
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST}
 
   plane-minio:
     image: minio/minio
@@ -31,7 +36,7 @@ services:
       MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
 
   plane-db:
-    image: postgres:15.2-alpine
+    image: postgres:15.7-alpine
     restart: unless-stopped
     networks:
       - dev_env
@@ -81,6 +86,20 @@ services:
       - dev_env
     volumes:
       - ./admin:/app/admin
+    depends_on:
+      - api
+      - worker
+      - web
+
+  live:
+    build:
+      context: .
+      dockerfile: ./live/Dockerfile.dev
+    restart: unless-stopped
+    networks:
+      - dev_env
+    volumes:
+      - ./live:/app/live
     depends_on:
       - api
       - worker
@@ -179,3 +198,13 @@ services:
       - api
       - space
       - admin
+
+volumes:
+  redisdata:
+  uploads:
+  pgdata:
+  rabbitmq_data:
+
+networks:
+  dev_env:
+    driver: bridge

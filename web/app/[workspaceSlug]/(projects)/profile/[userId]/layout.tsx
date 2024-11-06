@@ -2,24 +2,28 @@
 
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
+import useSWR from "swr";
 // components
 import { AppHeader, ContentWrapper } from "@/components/core";
 import { ProfileSidebar } from "@/components/profile";
 // constants
+import { USER_PROFILE_PROJECT_SEGREGATION } from "@/constants/fetch-keys";
 import { PROFILE_ADMINS_TAB, PROFILE_VIEWER_TAB } from "@/constants/profile";
-import { EUserWorkspaceRoles } from "@/constants/workspace";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store";
+import useSize from "@/hooks/use-window-size";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // local components
+import { UserService } from "@/services/user.service";
 import { UserProfileHeader } from "./header";
 import { ProfileIssuesMobileHeader } from "./mobile-header";
 import { ProfileNavbar } from "./navbar";
 
+const userService = new UserService();
+
 type Props = {
   children: React.ReactNode;
 };
-
-const AUTHORIZED_ROLES = [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.VIEWER];
 
 const UseProfileLayout: React.FC<Props> = observer((props) => {
   const { children } = props;
@@ -27,11 +31,23 @@ const UseProfileLayout: React.FC<Props> = observer((props) => {
   const { workspaceSlug, userId } = useParams();
   const pathname = usePathname();
   // store hooks
-  const {
-    membership: { currentWorkspaceRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
   // derived values
-  const isAuthorized = currentWorkspaceRole && AUTHORIZED_ROLES.includes(currentWorkspaceRole);
+  const isAuthorized = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
+
+  const windowSize = useSize();
+  const isSmallerScreen = windowSize[0] >= 768;
+
+  const { data: userProjectsData } = useSWR(
+    workspaceSlug && userId ? USER_PROFILE_PROJECT_SEGREGATION(workspaceSlug.toString(), userId.toString()) : null,
+    workspaceSlug && userId
+      ? () => userService.getUserProfileProjectsSegregation(workspaceSlug.toString(), userId.toString())
+      : null
+  );
+  // derived values
   const isAuthorizedPath =
     pathname.includes("assigned") || pathname.includes("created") || pathname.includes("subscribed");
   const isIssuesTab = pathname.includes("assigned") || pathname.includes("created") || pathname.includes("subscribed");
@@ -43,25 +59,36 @@ const UseProfileLayout: React.FC<Props> = observer((props) => {
     <>
       {/* Passing the type prop from the current route value as we need the header as top most component.
       TODO: We are depending on the route path to handle the mobile header type. If the path changes, this logic will break. */}
-      <AppHeader
-        header={<UserProfileHeader type={currentTab?.label} />}
-        mobileHeader={isIssuesTab && <ProfileIssuesMobileHeader />}
-      />
-      <ContentWrapper>
-        <div className="h-full w-full flex md:overflow-hidden">
-          <div className="flex w-full flex-col md:h-full md:overflow-hidden">
-            <ProfileNavbar isAuthorized={!!isAuthorized} showProfileIssuesFilter={isIssuesTab} />
-            {isAuthorized || !isAuthorizedPath ? (
-              <div className={`w-full overflow-hidden md:h-full`}>{children}</div>
-            ) : (
-              <div className="grid h-full w-full place-items-center text-custom-text-200">
-                You do not have the permission to access this page.
+      <div className="h-full w-full flex flex-col md:flex-row overflow-hidden">
+        <div className="h-full w-full flex flex-col overflow-hidden">
+          <AppHeader
+            header={
+              <UserProfileHeader
+                type={currentTab?.label}
+                userProjectsData={userProjectsData}
+                showProfileIssuesFilter={isIssuesTab}
+              />
+            }
+            mobileHeader={isIssuesTab && <ProfileIssuesMobileHeader />}
+          />
+          <ContentWrapper>
+            <div className="h-full w-full flex flex-row md:flex-col  md:overflow-hidden">
+              <div className="flex w-full flex-col md:h-full md:overflow-hidden">
+                <ProfileNavbar isAuthorized={!!isAuthorized} />
+                {isAuthorized || !isAuthorizedPath ? (
+                  <div className={`w-full overflow-hidden h-full`}>{children}</div>
+                ) : (
+                  <div className="grid h-full w-full place-items-center text-custom-text-200">
+                    You do not have the permission to access this page.
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-          <ProfileSidebar />
+              {!isSmallerScreen && <ProfileSidebar userProjectsData={userProjectsData} />}
+            </div>
+          </ContentWrapper>
         </div>
-      </ContentWrapper>
+        {isSmallerScreen && <ProfileSidebar userProjectsData={userProjectsData} />}
+      </div>
     </>
   );
 });

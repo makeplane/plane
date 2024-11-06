@@ -7,6 +7,7 @@ import { computedFn } from "mobx-utils";
 // types
 import { IModule, ILinkDetails, TModulePlotType } from "@plane/types";
 // helpers
+import { DistributionUpdates, updateDistribution } from "@/helpers/distribution-update.helper";
 import { orderModules, shouldFilterModule } from "@/helpers/module.helper";
 // services
 import { ModuleService } from "@/services/module.service";
@@ -35,8 +36,10 @@ export interface IModuleStore {
   // actions
   setPlotType: (moduleId: string, plotType: TModulePlotType) => void;
   // fetch
+  updateModuleDistribution: (distributionUpdates: DistributionUpdates, moduleId: string) => void;
   fetchWorkspaceModules: (workspaceSlug: string) => Promise<IModule[]>;
   fetchModules: (workspaceSlug: string, projectId: string) => Promise<undefined | IModule[]>;
+  fetchModulesSlim: (workspaceSlug: string, projectId: string) => Promise<undefined  | IModule[]>
   fetchArchivedModules: (workspaceSlug: string, projectId: string) => Promise<undefined | IModule[]>;
   fetchArchivedModuleDetails: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<IModule>;
   fetchModuleDetails: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<IModule>;
@@ -280,6 +283,32 @@ export class ModulesStore implements IModuleStore {
   };
 
   /**
+   * @description fetch all modules
+   * @param workspaceSlug
+   * @param projectId
+   * @returns IModule[]
+   */
+  fetchModulesSlim = async (workspaceSlug: string, projectId: string) => {
+    try {
+      this.loader = true;
+      await this.moduleService.getWorkspaceModules(workspaceSlug).then((response) => {
+        const projectModules = response.filter((module) => module.project_id === projectId);
+        runInAction(() => {
+          projectModules.forEach((module) => {
+            set(this.moduleMap, [module.id], { ...this.moduleMap[module.id], ...module });
+          });
+          set(this.fetchedMap, projectId, true);
+          this.loader = false;
+        });
+        return projectModules;
+      });
+    } catch (error) {
+      this.loader = false;
+      return undefined;
+    }
+  };
+
+  /**
    * @description fetch all archived modules
    * @param workspaceSlug
    * @param projectId
@@ -318,6 +347,22 @@ export class ModulesStore implements IModuleStore {
       });
       return response;
     });
+
+  /**
+   * This method updates the module's stats locally without fetching the updated stats from backend
+   * @param distributionUpdates
+   * @param moduleId
+   * @returns
+   */
+  updateModuleDistribution = (distributionUpdates: DistributionUpdates, moduleId: string) => {
+    const moduleInfo = this.moduleMap[moduleId];
+
+    if (!moduleInfo) return;
+
+    runInAction(() => {
+      updateDistribution(moduleInfo, distributionUpdates);
+    });
+  };
 
   /**
    * @description fetch module details
@@ -387,6 +432,7 @@ export class ModulesStore implements IModuleStore {
     await this.moduleService.deleteModule(workspaceSlug, projectId, moduleId).then(() => {
       runInAction(() => {
         delete this.moduleMap[moduleId];
+        if (this.rootStore.favorite.entityMap[moduleId]) this.rootStore.favorite.removeFavoriteFromStore(moduleId);
       });
     });
   };
@@ -486,8 +532,11 @@ export class ModulesStore implements IModuleStore {
       runInAction(() => {
         set(this.moduleMap, [moduleId, "is_favorite"], true);
       });
-      await this.moduleService.addModuleToFavorites(workspaceSlug, projectId, {
-        module: moduleId,
+      await this.rootStore.favorite.addFavorite(workspaceSlug.toString(), {
+        entity_type: "module",
+        entity_identifier: moduleId,
+        project_id: projectId,
+        entity_data: { name: this.moduleMap[moduleId].name || "" },
       });
     } catch (error) {
       console.error("Failed to add module to favorites in module store", error);
@@ -511,7 +560,7 @@ export class ModulesStore implements IModuleStore {
       runInAction(() => {
         set(this.moduleMap, [moduleId, "is_favorite"], false);
       });
-      await this.moduleService.removeModuleFromFavorites(workspaceSlug, projectId, moduleId);
+      await this.rootStore.favorite.removeFavoriteEntity(workspaceSlug, moduleId);
     } catch (error) {
       console.error("Failed to remove module from favorites in module store", error);
       runInAction(() => {
@@ -535,6 +584,7 @@ export class ModulesStore implements IModuleStore {
       .then((response) => {
         runInAction(() => {
           set(this.moduleMap, [moduleId, "archived_at"], response.archived_at);
+          if (this.rootStore.favorite.entityMap[moduleId]) this.rootStore.favorite.removeFavoriteFromStore(moduleId);
         });
       })
       .catch((error) => {

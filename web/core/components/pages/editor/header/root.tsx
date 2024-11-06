@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
-import { EditorReadOnlyRefApi, EditorRefApi, IMarking } from "@plane/document-editor";
+import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
 // components
+import { Header, EHeaderVariant } from "@plane/ui";
 import { PageEditorMobileHeaderRoot, PageExtraOptions, PageSummaryPopover, PageToolbar } from "@/components/pages";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -10,28 +11,26 @@ import { usePageFilters } from "@/hooks/use-page-filters";
 import { IPage } from "@/store/pages/page";
 
 type Props = {
-  editorRef: React.RefObject<EditorRefApi>;
-  readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
-  handleDuplicatePage: () => void;
-  markings: IMarking[];
-  page: IPage;
-  sidePeekVisible: boolean;
-  setSidePeekVisible: (sidePeekState: boolean) => void;
   editorReady: boolean;
+  editorRef: React.RefObject<EditorRefApi>;
+  handleDuplicatePage: () => void;
+  page: IPage;
   readOnlyEditorReady: boolean;
+  readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
+  setSidePeekVisible: (sidePeekState: boolean) => void;
+  sidePeekVisible: boolean;
 };
 
 export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
   const {
-    editorRef,
-    readOnlyEditorRef,
     editorReady,
-    markings,
-    readOnlyEditorReady,
+    editorRef,
     handleDuplicatePage,
     page,
-    sidePeekVisible,
+    readOnlyEditorReady,
+    readOnlyEditorRef,
     setSidePeekVisible,
+    sidePeekVisible,
   } = props;
   // derived values
   const { isContentEditable } = page;
@@ -42,38 +41,40 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <div className="hidden md:flex items-center border-b border-custom-border-200 px-3 py-2 md:px-5">
-        <div
-          className={cn("flex-shrink-0", {
-            "w-40 lg:w-56": !isFullWidth,
-            "w-[5%]": isFullWidth,
-          })}
-        >
-          <PageSummaryPopover
-            editorRef={isContentEditable ? editorRef.current : readOnlyEditorRef.current}
-            isFullWidth={isFullWidth}
-            markings={markings}
-            sidePeekVisible={sidePeekVisible}
-            setSidePeekVisible={setSidePeekVisible}
-          />
-        </div>
-        {(editorReady || readOnlyEditorReady) && isContentEditable && editorRef.current && (
-          <PageToolbar editorRef={editorRef?.current} />
-        )}
+      <Header variant={EHeaderVariant.SECONDARY} showOnMobile={false}>
+        <Header.LeftItem className="gap-0 w-full">
+          {(editorReady || readOnlyEditorReady) && (
+            <div
+              className={cn("flex-shrink-0 my-auto", {
+                "w-40 lg:w-56": !isFullWidth,
+                "w-[5%]": isFullWidth,
+              })}
+            >
+              <PageSummaryPopover
+                editorRef={isContentEditable ? editorRef.current : readOnlyEditorRef.current}
+                isFullWidth={isFullWidth}
+                sidePeekVisible={sidePeekVisible}
+                setSidePeekVisible={setSidePeekVisible}
+              />
+            </div>
+          )}
+          {(editorReady || readOnlyEditorReady) && isContentEditable && editorRef.current && (
+            <PageToolbar editorRef={editorRef?.current} />
+          )}
+        </Header.LeftItem>
         <PageExtraOptions
           editorRef={editorRef}
           handleDuplicatePage={handleDuplicatePage}
           page={page}
           readOnlyEditorRef={readOnlyEditorRef}
         />
-      </div>
+      </Header>
       <div className="md:hidden">
         <PageEditorMobileHeaderRoot
           editorRef={editorRef}
           readOnlyEditorRef={readOnlyEditorRef}
           editorReady={editorReady}
           readOnlyEditorReady={readOnlyEditorReady}
-          markings={markings}
           handleDuplicatePage={handleDuplicatePage}
           page={page}
           sidePeekVisible={sidePeekVisible}

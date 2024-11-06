@@ -19,10 +19,9 @@ import {
   SignalMediumIcon,
   MessageSquareIcon,
   UsersIcon,
-  Inbox,
 } from "lucide-react";
 import { IIssueActivity } from "@plane/types";
-import { Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon } from "@plane/ui";
+import { Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon, Intake } from "@plane/ui";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { capitalizeFirstLetter } from "@/helpers/string.helper";
@@ -102,7 +101,7 @@ const LabelPill = observer(({ labelId, workspaceSlug }: { labelId: string; works
 const inboxActivityMessage = {
   declined: {
     showIssue: "declined issue",
-    noIssue: "declined this issue from inbox.",
+    noIssue: "declined this issue from intake.",
   },
   snoozed: {
     showIssue: "snoozed issue",
@@ -110,11 +109,11 @@ const inboxActivityMessage = {
   },
   accepted: {
     showIssue: "accepted issue",
-    noIssue: "accepted this issue from inbox.",
+    noIssue: "accepted this issue from intake.",
   },
   markedDuplicate: {
     showIssue: "declined issue",
-    noIssue: "declined this issue from inbox by marking a duplicate issue.",
+    noIssue: "declined this issue from intake by marking a duplicate issue.",
   },
 };
 
@@ -129,7 +128,7 @@ const getInboxUserActivityMessage = (activity: IIssueActivity, showIssue: boolea
     case "2":
       return showIssue ? inboxActivityMessage.markedDuplicate.showIssue : inboxActivityMessage.markedDuplicate.noIssue;
     default:
-      return "updated inbox issue status.";
+      return "updated intake issue status.";
   }
 };
 
@@ -166,7 +165,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <Users2Icon size={12} color="#6b7280" aria-hidden="true" />,
+    icon: <Users2Icon size={12} className="text-custom-text-200" aria-hidden="true" />,
   },
   archived_at: {
     message: (activity) => {
@@ -183,7 +182,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <ArchiveIcon size={12} color="#6b7280" aria-hidden="true" />,
+    icon: <ArchiveIcon size={12} className="text-custom-text-200" aria-hidden="true" />,
   },
   attachment: {
     message: (activity, showIssue) => {
@@ -220,7 +219,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <PaperclipIcon size={12} color="#6b7280" aria-hidden="true" />,
+    icon: <PaperclipIcon size={12} className="text-custom-text-200" aria-hidden="true" />,
   },
   description: {
     message: (activity, showIssue) => (
@@ -234,7 +233,7 @@ const activityDetails: {
         )}
       </>
     ),
-    icon: <MessageSquareIcon size={12} color="#6b7280" aria-hidden="true" />,
+    icon: <MessageSquareIcon size={12} className="text-custom-text-200" aria-hidden="true" />,
   },
   estimate_point: {
     message: (activity, showIssue) => {
@@ -263,7 +262,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <TriangleIcon size={12} color="#6b7280" aria-hidden="true" />,
+    icon: <TriangleIcon size={12} className="text-custom-text-200" aria-hidden="true" />,
   },
   issue: {
     message: (activity) => {
@@ -280,7 +279,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <LayersIcon width={12} height={12} color="#6b7280" aria-hidden="true" />,
+    icon: <LayersIcon width={12} height={12} className="text-custom-text-200" aria-hidden="true" />,
   },
   labels: {
     message: (activity, showIssue, workspaceSlug) => {
@@ -321,7 +320,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <TagIcon size={12} color="#6b7280" aria-hidden="true" />,
+    icon: <TagIcon size={12} className="text-custom-text-200" aria-hidden="true" />,
   },
   link: {
     message: (activity, showIssue) => {
@@ -386,7 +385,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <Link2Icon size={12} color="#6b7280" aria-hidden="true" />,
+    icon: <Link2Icon size={12} className="text-custom-text-200" aria-hidden="true" />,
   },
   cycles: {
     message: (activity, showIssue, workspaceSlug) => {
@@ -436,7 +435,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <ContrastIcon size={12} color="#6b7280" aria-hidden="true" />,
+    icon: <ContrastIcon size={12} className="text-custom-text-200" aria-hidden="true" />,
   },
   modules: {
     message: (activity, showIssue, workspaceSlug) => {
@@ -483,7 +482,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <DiceIcon className="h-3 w-3 !text-[#6b7280]" aria-hidden="true" />,
+    icon: <DiceIcon className="h-3 w-3 !text-custom-text-200" aria-hidden="true" />,
   },
   name: {
     message: (activity, showIssue) => (
@@ -497,7 +496,7 @@ const activityDetails: {
         )}
       </>
     ),
-    icon: <MessageSquareIcon size={12} color="#6b7280" aria-hidden="true" />,
+    icon: <MessageSquareIcon size={12} className="text-custom-text-200" aria-hidden="true" />,
   },
   parent: {
     message: (activity, showIssue) => {
@@ -528,7 +527,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <UsersIcon className="h-3 w-3 !text-[#6b7280]" aria-hidden="true" />,
+    icon: <UsersIcon className="h-3 w-3 !text-custom-text-200" aria-hidden="true" />,
   },
   priority: {
     message: (activity, showIssue) => (
@@ -545,7 +544,7 @@ const activityDetails: {
         )}
       </>
     ),
-    icon: <SignalMediumIcon size={12} color="#6b7280" aria-hidden="true" />,
+    icon: <SignalMediumIcon size={12} className="text-custom-text-200" aria-hidden="true" />,
   },
   relates_to: {
     message: (activity, showIssue) => {
@@ -564,7 +563,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <RelatedIcon height="12" width="12" color="#6b7280" />,
+    icon: <RelatedIcon height="12" width="12" className="text-custom-text-200" />,
   },
   blocking: {
     message: (activity, showIssue) => {
@@ -583,7 +582,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <BlockerIcon height="12" width="12" color="#6b7280" />,
+    icon: <BlockerIcon height="12" width="12" className="text-custom-text-200" />,
   },
   blocked_by: {
     message: (activity, showIssue) => {
@@ -602,7 +601,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <BlockedIcon height="12" width="12" color="#6b7280" />,
+    icon: <BlockedIcon height="12" width="12" className="text-custom-text-200" />,
   },
   duplicate: {
     message: (activity, showIssue) => {
@@ -621,7 +620,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <CopyPlus size={12} color="#6b7280" />,
+    icon: <CopyPlus size={12} className="text-custom-text-200" />,
   },
   state: {
     message: (activity, showIssue) => (
@@ -635,7 +634,7 @@ const activityDetails: {
         )}
       </>
     ),
-    icon: <LayoutGridIcon size={12} color="#6b7280" aria-hidden="true" />,
+    icon: <LayoutGridIcon size={12} className="text-custom-text-200" aria-hidden="true" />,
   },
   start_date: {
     message: (activity, showIssue) => {
@@ -667,7 +666,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <Calendar size={12} color="#6b7280" aria-hidden="true" />,
+    icon: <Calendar size={12} className="text-custom-text-200" aria-hidden="true" />,
   },
   target_date: {
     message: (activity, showIssue) => {
@@ -698,7 +697,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <Calendar size={12} color="#6b7280" aria-hidden="true" />,
+    icon: <Calendar size={12} className="text-custom-text-200" aria-hidden="true" />,
   },
   inbox: {
     message: (activity, showIssue) => (
@@ -710,10 +709,10 @@ const activityDetails: {
             <IssueLink activity={activity} />
           </>
         )}
-        {activity.verb === "2" && ` from inbox by marking a duplicate issue.`}
+        {activity.verb === "2" && ` from intake by marking a duplicate issue.`}
       </>
     ),
-    icon: <Inbox size={12} color="#6b7280" aria-hidden="true" />,
+    icon: <Intake className="size-3 text-custom-text-200" aria-hidden="true" />,
   },
 };
 
@@ -735,7 +734,7 @@ export const ActivityMessage = ({ activity, showIssue = false }: ActivityMessage
       {activityDetails[activity.field as keyof typeof activityDetails]?.message(
         activity,
         showIssue,
-        workspaceSlug ? workspaceSlug.toString() : activity.workspace_detail?.slug ?? ""
+        workspaceSlug ? workspaceSlug.toString() : (activity.workspace_detail?.slug ?? "")
       )}
     </>
   );

@@ -1,13 +1,16 @@
 import { observer } from "mobx-react";
 import { Expand, Shrink } from "lucide-react";
-// hooks
-// helpers
+// plane
+import { Row } from "@plane/ui";
+// components
 import { VIEWS_LIST } from "@/components/gantt-chart/data";
+// helpers
 import { cn } from "@/helpers/common.helper";
-// types
-import { useGanttChart } from "../hooks/use-gantt-chart";
+// hooks
+import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
+//
+import { GANTT_BREADCRUMBS_HEIGHT } from "../constants";
 import { TGanttViews } from "../types";
-// constants
 
 type Props = {
   blockIds: string[];
@@ -16,15 +19,20 @@ type Props = {
   handleToday: () => void;
   loaderTitle: string;
   toggleFullScreenMode: () => void;
+  showToday: boolean;
 };
 
 export const GanttChartHeader: React.FC<Props> = observer((props) => {
-  const { blockIds, fullScreenMode, handleChartView, handleToday, loaderTitle, toggleFullScreenMode } = props;
+  const { blockIds, fullScreenMode, handleChartView, handleToday, loaderTitle, toggleFullScreenMode, showToday } =
+    props;
   // chart hook
-  const { currentView } = useGanttChart();
+  const { currentView } = useTimeLineChartStore();
 
   return (
-    <div className="relative flex w-full flex-shrink-0 flex-wrap items-center gap-2 whitespace-nowrap px-2.5 py-2">
+    <Row
+      className="relative flex w-full flex-shrink-0 flex-wrap items-center gap-2 whitespace-nowrap py-2"
+      style={{ height: `${GANTT_BREADCRUMBS_HEIGHT}px` }}
+    >
       <div className="ml-auto">
         <div className="ml-auto text-sm font-medium">
           {blockIds ? `${blockIds.length} ${loaderTitle}` : "Loading..."}
@@ -46,9 +54,15 @@ export const GanttChartHeader: React.FC<Props> = observer((props) => {
         ))}
       </div>
 
-      <button type="button" className="rounded-sm p-1 px-2 text-xs hover:bg-custom-background-80" onClick={handleToday}>
-        Today
-      </button>
+      {showToday && (
+        <button
+          type="button"
+          className="rounded-sm p-1 px-2 text-xs hover:bg-custom-background-80"
+          onClick={handleToday}
+        >
+          Today
+        </button>
+      )}
 
       <button
         type="button"
@@ -57,6 +71,6 @@ export const GanttChartHeader: React.FC<Props> = observer((props) => {
       >
         {fullScreenMode ? <Shrink className="h-4 w-4" /> : <Expand className="h-4 w-4" />}
       </button>
-    </div>
+    </Row>
   );
 });

@@ -3,7 +3,9 @@ import { observer } from "mobx-react";
 // types
 import type { TIssue } from "@plane/types";
 // ui
-import { AlertModalCore } from "@plane/ui";
+import { AlertModalCore, setToast, TOAST_TYPE } from "@plane/ui";
+// constants
+import { PROJECT_ERROR_MESSAGES } from "@/constants/project";
 // hooks
 import { useProject } from "@/hooks/store";
 
@@ -29,7 +31,26 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
 
   const handleDelete = async () => {
     setIsDeleting(true);
-    await onSubmit().finally(() => handleClose());
+    await onSubmit()
+      .then(() => {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: `Issue deleted successfully`,
+        });
+      })
+      .catch((errors) => {
+        const isPermissionError = errors?.error === "Only admin or creator can delete the issue";
+        const currentError = isPermissionError
+          ? PROJECT_ERROR_MESSAGES.permissionError
+          : PROJECT_ERROR_MESSAGES.issueDeleteError;
+        setToast({
+          title: currentError.title,
+          type: TOAST_TYPE.ERROR,
+          message: currentError.message,
+        });
+      })
+      .finally(() => handleClose());
   };
 
   return (
@@ -38,14 +59,14 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
       handleSubmit={handleDelete}
       isSubmitting={isDeleting}
       isOpen={isOpen}
-      title="Delete Issue"
+      title="Delete issue"
       content={
         <>
           Are you sure you want to delete issue{" "}
           <span className="break-words font-medium text-custom-text-100">
             {projectDetails?.identifier}-{data?.sequence_id}
           </span>
-          {""}? The issue will only be deleted from the inbox and this action cannot be undone.
+          {""}? The issue will only be deleted from the intake and this action cannot be undone.
         </>
       }
     />

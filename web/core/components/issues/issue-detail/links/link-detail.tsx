@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState } from "react";
+import { FC } from "react";
 // hooks
 // ui
 import { Pencil, Trash2, LinkIcon, ExternalLink } from "lucide-react";
@@ -12,7 +12,7 @@ import { calculateTimeAgo } from "@/helpers/date-time.helper";
 import { copyTextToClipboard } from "@/helpers/string.helper";
 import { useIssueDetail, useMember } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { IssueLinkCreateUpdateModal, TLinkOperationsModal } from "./create-update-link-modal";
+import { TLinkOperationsModal } from "./create-update-link-modal";
 
 export type TIssueLinkDetail = {
   linkId: string;
@@ -27,30 +27,22 @@ export const IssueLinkDetail: FC<TIssueLinkDetail> = (props) => {
   const {
     toggleIssueLinkModal: toggleIssueLinkModalStore,
     link: { getLinkById },
+    setIssueLinkData,
   } = useIssueDetail();
   const { getUserDetails } = useMember();
-
-  // state
-  const [isIssueLinkModalOpen, setIsIssueLinkModalOpen] = useState(false);
-  const toggleIssueLinkModal = (modalToggle: boolean) => {
-    toggleIssueLinkModalStore(modalToggle);
-    setIsIssueLinkModalOpen(modalToggle);
-  };
   const { isMobile } = usePlatformOS();
   const linkDetail = getLinkById(linkId);
   if (!linkDetail) return <></>;
+
+  const toggleIssueLinkModal = (modalToggle: boolean) => {
+    toggleIssueLinkModalStore(modalToggle);
+    setIssueLinkData(linkDetail);
+  };
 
   const createdByDetails = getUserDetails(linkDetail.created_by_id);
 
   return (
     <div key={linkId}>
-      <IssueLinkCreateUpdateModal
-        isModalOpen={isIssueLinkModalOpen}
-        handleModal={toggleIssueLinkModal}
-        linkOperations={linkOperations}
-        preloadedData={linkDetail}
-      />
-
       <div className="relative flex flex-col rounded-md bg-custom-background-90 p-2.5">
         <div
           className="flex w-full cursor-pointer items-start justify-between gap-2"

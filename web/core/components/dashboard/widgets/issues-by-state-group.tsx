@@ -4,6 +4,7 @@ import Link from "next/link";
 // types
 import { TIssuesByStateGroupsWidgetFilters, TIssuesByStateGroupsWidgetResponse, TStateGroups } from "@plane/types";
 // components
+import { Card } from "@plane/ui";
 import {
   DurationFilterDropdown,
   IssuesByStateGroupEmptyState,
@@ -79,14 +80,14 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
       startedCount > 0
         ? "started"
         : unStartedCount > 0
-        ? "unstarted"
-        : backlogCount > 0
-        ? "backlog"
-        : completedCount > 0
-        ? "completed"
-        : canceledCount > 0
-        ? "cancelled"
-        : null;
+          ? "unstarted"
+          : backlogCount > 0
+            ? "backlog"
+            : completedCount > 0
+              ? "completed"
+              : canceledCount > 0
+                ? "cancelled"
+                : null;
 
     setActiveStateGroup(stateGroup);
     setDefaultStateGroup(stateGroup);
@@ -134,8 +135,8 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
   };
 
   return (
-    <div className="bg-custom-background-100 rounded-xl border-[0.5px] border-custom-border-200 w-full py-6 hover:shadow-custom-shadow-4xl duration-300 overflow-hidden min-h-96 flex flex-col">
-      <div className="flex items-center justify-between gap-2 pl-7 pr-6">
+    <Card>
+      <div className="flex items-center justify-between gap-2 mb-4">
         <Link
           href={`/${workspaceSlug}/workspace-views/assigned`}
           className="text-lg font-semibold text-custom-text-300 hover:underline"
@@ -154,7 +155,7 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
         />
       </div>
       {totalCount > 0 ? (
-        <div className="flex items-center pl-10 md:pl-11 lg:pl-14 pr-11 mt-11">
+        <div className="flex items-center mt-11">
           <div className="flex flex-col sm:flex-row md:flex-row lg:flex-row items-center justify-evenly gap-x-10 gap-y-8 w-full">
             <div>
               <PieGraph
@@ -215,6 +216,6 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
           <IssuesByStateGroupEmptyState />
         </div>
       )}
-    </div>
+    </Card>
   );
 });

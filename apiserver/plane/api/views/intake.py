@@ -1,10 +1,13 @@
 # Python imports
 import json
 
-# Django improts
+# Django imports
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Q
 from django.utils import timezone
+from django.db.models import Q, Value, UUIDField
+from django.db.models.functions import Coalesce
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
 
 # Third party imports
 from rest_framework import status
@@ -13,7 +16,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.api.serializers import IntakeIssueSerializer, IssueSerializer
 from plane.app.permissions import ProjectLitePermission
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Intake,
     IntakeIssue,
@@ -149,7 +152,7 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
             description_html=request.data.get("issue", {}).get(
                 "description_html", "<p></p>"
             ),
-            priority=request.data.get("issue", {}).get("priority", "low"),
+            priority=request.data.get("issue", {}).get("priority", "none"),
             project_id=project_id,
             state=state,
         )
@@ -212,9 +215,9 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
         )
 
         # Only project members admins and created_by users can access this endpoint
-        if project_member.role <= 10 and str(
-            intake_issue.created_by_id
-        ) != str(request.user.id):
+        if project_member.role <= 5 and str(intake_issue.created_by_id) != str(
+            request.user.id
+        ):
             return Response(
                 {"error": "You cannot edit intake issues"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -224,12 +227,37 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
         issue_data = request.data.pop("issue", False)
 
         if bool(issue_data):
-            issue = Issue.objects.get(
-                pk=issue_id, workspace__slug=slug, project_id=project_id
+            issue = Issue.objects.annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "labels__id",
+                        distinct=True,
+                        filter=Q(
+                            ~Q(labels__id__isnull=True)
+                            & Q(label_issue__deleted_at__isnull=True),
+                        ),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "assignees__id",
+                        distinct=True,
+                        filter=Q(
+                            ~Q(assignees__id__isnull=True)
+                            & Q(assignees__member_project__is_active=True)
+                            & Q(issue_assignee__deleted_at__isnull=True)
+                        ),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+            ).get(
+                pk=issue_id,
+                workspace__slug=slug,
+                project_id=project_id,
             )
-            # Only allow guests and viewers to edit name and description
-            if project_member.role <= 10:
-                # viewers and guests since only viewers and guests
+            # Only allow guests to edit name and description
+            if project_member.role <= 5:
                 issue_data = {
                     "name": issue_data.get("name", issue.name),
                     "description_html": issue_data.get(
@@ -269,7 +297,7 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
                 )
 
         # Only project admins and members can edit intake issue attributes
-        if project_member.role > 10:
+        if project_member.role > 15:
             serializer = IntakeIssueSerializer(
                 intake_issue, data=request.data, partial=True
             )
@@ -368,29 +396,26 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
             intake_id=intake.id,
         )
 
-        # Get the project member
-        project_member = ProjectMember.objects.get(
-            workspace__slug=slug,
-            project_id=project_id,
-            member=request.user,
-            is_active=True,
-        )
-
-        # Check the intake issue created
-        if project_member.role <= 10 and str(
-            intake_issue.created_by_id
-        ) != str(request.user.id):
-            return Response(
-                {"error": "You cannot delete intake issue"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
         # Check the issue status
         if intake_issue.status in [-2, -1, 0, 2]:
             # Delete the issue also
-            Issue.objects.filter(
+            issue = Issue.objects.filter(
                 workspace__slug=slug, project_id=project_id, pk=issue_id
-            ).delete()
+            ).first()
+            if issue.created_by_id != request.user.id and (
+                not ProjectMember.objects.filter(
+                    workspace__slug=slug,
+                    member=request.user,
+                    role=20,
+                    project_id=project_id,
+                    is_active=True,
+                ).exists()
+            ):
+                return Response(
+                    {"error": "Only admin or creator can delete the issue"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+            issue.delete()
 
         intake_issue.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

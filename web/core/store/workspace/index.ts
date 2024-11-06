@@ -3,7 +3,7 @@ import { action, computed, observable, makeObservable, runInAction } from "mobx"
 // types
 import { IWorkspace } from "@plane/types";
 // services
-import { WorkspaceService } from "@/services/workspace.service";
+import { WorkspaceService } from "@/plane-web/services";
 // store
 import { CoreRootStore } from "@/store/root.store";
 // sub-stores
@@ -25,6 +25,7 @@ export interface IWorkspaceRootStore {
   // crud actions
   createWorkspace: (data: Partial<IWorkspace>) => Promise<IWorkspace>;
   updateWorkspace: (workspaceSlug: string, data: Partial<IWorkspace>) => Promise<IWorkspace>;
+  updateWorkspaceLogo: (workspaceSlug: string, logoURL: string) => void;
   deleteWorkspace: (workspaceSlug: string) => Promise<void>;
   // sub-stores
   webhook: IWebhookStore;
@@ -59,6 +60,7 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
       fetchWorkspaces: action,
       createWorkspace: action,
       updateWorkspace: action,
+      updateWorkspaceLogo: action,
       deleteWorkspace: action,
     });
 
@@ -111,14 +113,19 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
    */
   fetchWorkspaces = async () => {
     this.loader = true;
-    const workspaceResponse = await this.workspaceService.userWorkspaces();
-    runInAction(() => {
-      workspaceResponse.forEach((workspace) => {
-        set(this.workspaces, [workspace.id], workspace);
+    try {
+      const workspaceResponse = await this.workspaceService.userWorkspaces();
+      runInAction(() => {
+        workspaceResponse.forEach((workspace) => {
+          set(this.workspaces, [workspace.id], workspace);
+        });
       });
-    });
-    this.loader = false;
-    return workspaceResponse;
+      return workspaceResponse;
+    } catch (e) {
+      throw e;
+    } finally {
+      this.loader = false;
+    }
   };
 
   /**
@@ -145,6 +152,21 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
       });
       return response;
     });
+
+  /**
+   * update workspace using the workspace slug and new workspace data
+   * @param {string} workspaceSlug
+   * @param {string} logoURL
+   */
+  updateWorkspaceLogo = async (workspaceSlug: string, logoURL: string) => {
+    const workspaceId = this.getWorkspaceBySlug(workspaceSlug)?.id;
+    if (!workspaceId) {
+      throw new Error("Workspace not found");
+    }
+    runInAction(() => {
+      set(this.workspaces[workspaceId], ["logo_url"], logoURL);
+    });
+  };
 
   /**
    * delete workspace using the workspace slug

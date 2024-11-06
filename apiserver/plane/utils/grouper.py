@@ -18,7 +18,6 @@ from plane.db.models import (
 
 
 def issue_queryset_grouper(queryset, group_by, sub_group_by):
-
     FIELD_MAPPER = {
         "label_ids": "labels__id",
         "assignee_ids": "assignees__id",
@@ -26,11 +25,23 @@ def issue_queryset_grouper(queryset, group_by, sub_group_by):
     }
 
     annotations_map = {
-        "assignee_ids": ("assignees__id", ~Q(assignees__id__isnull=True)),
-        "label_ids": ("labels__id", ~Q(labels__id__isnull=True)),
+        "assignee_ids": (
+            "assignees__id",
+            ~Q(assignees__id__isnull=True)
+            & Q(issue_assignee__deleted_at__isnull=True),
+        ),
+        "label_ids": (
+            "labels__id",
+            ~Q(labels__id__isnull=True)
+            & Q(label_issue__deleted_at__isnull=True),
+        ),
         "module_ids": (
             "issue_module__module_id",
-            ~Q(issue_module__module_id__isnull=True),
+            (
+                ~Q(issue_module__module_id__isnull=True)
+                & Q(issue_module__module__archived_at__isnull=True)
+                & Q(issue_module__deleted_at__isnull=True)
+            ),
         ),
     }
     default_annotations = {
@@ -51,7 +62,6 @@ def issue_queryset_grouper(queryset, group_by, sub_group_by):
 
 
 def issue_on_results(issues, group_by, sub_group_by):
-
     FIELD_MAPPER = {
         "labels__id": "label_ids",
         "assignees__id": "assignee_ids",
@@ -101,7 +111,7 @@ def issue_on_results(issues, group_by, sub_group_by):
 def issue_group_values(field, slug, project_id=None, filters=dict):
     if field == "state_id":
         queryset = State.objects.filter(
-            ~Q(name="Triage"),
+            is_triage=False,
             workspace__slug=slug,
         ).values_list("id", flat=True)
         if project_id:

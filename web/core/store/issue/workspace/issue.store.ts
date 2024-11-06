@@ -1,8 +1,15 @@
 import { action, makeObservable, runInAction } from "mobx";
 // base class
-import { IssuePaginationOptions, TBulkOperationsPayload, TIssue, TIssuesResponse, TLoader, ViewFlags } from "@plane/types";
-import { WorkspaceService } from "@/services/workspace.service";
+import {
+  IssuePaginationOptions,
+  TBulkOperationsPayload,
+  TIssue,
+  TIssuesResponse,
+  TLoader,
+  ViewFlags,
+} from "@plane/types";
 // services
+import { WorkspaceService } from "@/plane-web/services";
 // types
 import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
 import { IIssueRootStore } from "../root.store";
@@ -69,6 +76,9 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
 
   fetchParentStats = () => {};
 
+  /** */
+  updateParentStats = () => {};
+
   /**
    * This method is called to fetch the first issues of pagination
    * @param workspaceSlug
@@ -92,14 +102,14 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
       this.clear(!isExistingPaginationOptions);
 
       // get params from pagination options
-      const params = this.issueFilterStore?.getFilterParams(viewId, options, undefined, undefined, undefined);
+      const params = this.issueFilterStore?.getFilterParams(options, viewId, undefined, undefined, undefined);
       // call the fetch issues API with the params
       const response = await this.workspaceService.getViewIssues(workspaceSlug, params, {
         signal: this.controller.signal,
       });
 
       // after fetching issues, call the base method to process the response further
-      this.onfetchIssues(response, options, workspaceSlug);
+      this.onfetchIssues(response, options, workspaceSlug, undefined, undefined, !isExistingPaginationOptions);
       return response;
     } catch (error) {
       // set loader to undefined if errored out
@@ -128,8 +138,8 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
 
       // get params from stored pagination options
       const params = this.issueFilterStore?.getFilterParams(
-        viewId,
         this.paginationOptions,
+        viewId,
         this.getNextCursor(groupId, subGroupId),
         groupId,
         subGroupId
@@ -160,6 +170,11 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
     return await this.fetchIssues(workspaceSlug, viewId, loadType, this.paginationOptions, true);
   };
 
+  // Using aliased names as they cannot be overridden in other stores
   archiveBulkIssues = this.bulkArchiveIssues;
+  updateIssue = this.issueUpdate;
+  archiveIssue = this.issueArchive;
+
+  // Setting them as undefined as they can not performed on workspace issues
   quickAddIssue = undefined;
 }

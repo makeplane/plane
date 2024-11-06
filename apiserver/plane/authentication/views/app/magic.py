@@ -29,12 +29,17 @@ from plane.authentication.adapter.error import (
     AuthenticationException,
     AUTHENTICATION_ERROR_CODES,
 )
+from plane.authentication.rate_limit import AuthenticationThrottle
 
 
 class MagicGenerateEndpoint(APIView):
 
     permission_classes = [
         AllowAny,
+    ]
+
+    throttle_classes = [
+        AuthenticationThrottle,
     ]
 
     def post(self, request):
@@ -112,22 +117,6 @@ class MagicSignInEndpoint(View):
             )
             return HttpResponseRedirect(url)
 
-        if not existing_user.is_active:
-            exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "USER_ACCOUNT_DEACTIVATED"
-                ],
-                error_message="USER_ACCOUNT_DEACTIVATED",
-            )
-            params = exc.get_error_dict()
-            if next_path:
-                params["next_path"] = str(next_path)
-            url = urljoin(
-                base_host(request=request, is_app=True),
-                "sign-in?" + urlencode(params),
-            )
-            return HttpResponseRedirect(url)
-
         try:
             provider = MagicCodeProvider(
                 request=request,
@@ -136,7 +125,7 @@ class MagicSignInEndpoint(View):
                 callback=post_user_auth_workflow,
             )
             user = provider.authenticate()
-            profile = Profile.objects.get(user=user)
+            profile, _ = Profile.objects.get_or_create(user=user)
             # Login the user and record his device info
             user_login(request=request, user=user, is_app=True)
             if user.is_password_autoset and profile.is_onboarded:

@@ -1,10 +1,11 @@
 "use client";
 
 import { observer } from "mobx-react";
-// icons
 import { LucideIcon, Users } from "lucide-react";
-// ui
+// plane ui
 import { Avatar, AvatarGroup } from "@plane/ui";
+// helpers
+import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useMember } from "@/hooks/store";
 
@@ -27,16 +28,23 @@ export const ButtonAvatars: React.FC<AvatarProps> = observer((props) => {
             const userDetails = getUserDetails(userId);
 
             if (!userDetails) return;
-            return <Avatar key={userId} src={userDetails.avatar} name={userDetails.display_name} />;
+            return <Avatar key={userId} src={getFileURL(userDetails.avatar_url)} name={userDetails.display_name} />;
           })}
         </AvatarGroup>
       );
   } else {
     if (userIds) {
       const userDetails = getUserDetails(userIds);
-      return <Avatar src={userDetails?.avatar} name={userDetails?.display_name} size="md" showTooltip={!showTooltip} />;
+      return (
+        <Avatar
+          src={getFileURL(userDetails?.avatar_url ?? "")}
+          name={userDetails?.display_name}
+          size="md"
+          showTooltip={!showTooltip}
+        />
+      );
     }
   }
 
-  return Icon ? <Icon className="h-3 w-3 flex-shrink-0" /> : <Users className="h-3 w-3 flex-shrink-0" />;
+  return Icon ? <Icon className="h-3 w-3 flex-shrink-0" /> : <Users className="h-3 w-3 mx-[4px] flex-shrink-0" />;
 });

@@ -1,8 +1,13 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
+// helpers
+import { getValidKeysFromObject } from "@/helpers/array.helper";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
-// components
+// plane web components
+import { IssueTypeActivity } from "@/plane-web/components/issues/issue-details";
+import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
+// local components
 import {
   IssueDefaultActivity,
   IssueNameActivity,
@@ -24,18 +29,20 @@ import {
   IssueInboxActivity,
 } from "./actions";
 
-type TIssueActivityList = {
+type TIssueActivityItem = {
   activityId: string;
   ends: "top" | "bottom" | undefined;
 };
 
-export const IssueActivityList: FC<TIssueActivityList> = observer((props) => {
+export const IssueActivityItem: FC<TIssueActivityItem> = observer((props) => {
   const { activityId, ends } = props;
   // hooks
   const {
     activity: { getActivityById },
     comment: {},
   } = useIssueDetail();
+  const ISSUE_RELATION_OPTIONS = useTimeLineRelationOptions();
+  const activityRelations = getValidKeysFromObject(ISSUE_RELATION_OPTIONS);
 
   const componentDefaultProps = { activityId, ends };
 
@@ -57,7 +64,7 @@ export const IssueActivityList: FC<TIssueActivityList> = observer((props) => {
       return <IssueEstimateActivity {...componentDefaultProps} showIssue={false} />;
     case "parent":
       return <IssueParentActivity {...componentDefaultProps} showIssue={false} />;
-    case ["blocking", "blocked_by", "duplicate", "relates_to"].find((field) => field === activityField):
+    case activityRelations.find((field) => field === activityField):
       return <IssueRelationActivity {...componentDefaultProps} />;
     case "start_date":
       return <IssueStartDateActivity {...componentDefaultProps} showIssue={false} />;
@@ -77,6 +84,8 @@ export const IssueActivityList: FC<TIssueActivityList> = observer((props) => {
       return <IssueArchivedAtActivity {...componentDefaultProps} />;
     case "inbox":
       return <IssueInboxActivity {...componentDefaultProps} />;
+    case "type":
+      return <IssueTypeActivity {...componentDefaultProps} />;
     default:
       return <></>;
   }

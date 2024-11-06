@@ -11,10 +11,11 @@ type Props = {
   config: JSX.Element;
   disabled?: boolean;
   withBorder?: boolean;
+  unavailable?: boolean;
 };
 
 export const AuthenticationMethodCard: FC<Props> = (props) => {
-  const { name, description, icon, config, disabled = false, withBorder = true } = props;
+  const { name, description, icon, config, disabled = false, withBorder = true, unavailable = false } = props;
 
   return (
     <div
@@ -22,7 +23,11 @@ export const AuthenticationMethodCard: FC<Props> = (props) => {
         "px-4 py-3 border border-custom-border-200": withBorder,
       })}
     >
-      <div className="flex grow items-center gap-4">
+      <div
+        className={cn("flex grow items-center gap-4", {
+          "opacity-50": unavailable,
+        })}
+      >
         <div className="shrink-0">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-custom-background-80">{icon}</div>
         </div>

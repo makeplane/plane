@@ -1,6 +1,4 @@
-import isArray from "lodash/isArray";
 import isEmpty from "lodash/isEmpty";
-import pickBy from "lodash/pickBy";
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // base class
@@ -30,6 +28,7 @@ export interface IProfileIssuesFilter extends IBaseIssueFilterStore {
   //helper actions
   getFilterParams: (
     options: IssuePaginationOptions,
+    userId: string,
     cursor: string | undefined,
     groupId: string | undefined,
     subGroupId: string | undefined
@@ -77,6 +76,17 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
     const userId = this.rootIssueStore.userId;
     if (!userId) return undefined;
 
+    return this.getIssueFilters(userId);
+  }
+
+  get appliedFilters() {
+    const userId = this.rootIssueStore.userId;
+    if (!userId) return undefined;
+
+    return this.getAppliedFilters(userId);
+  }
+
+  getIssueFilters(userId: string) {
     const displayFilters = this.filters[userId] || undefined;
     if (isEmpty(displayFilters)) return undefined;
 
@@ -85,8 +95,8 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
     return _filters;
   }
 
-  get appliedFilters() {
-    const userFilters = this.issueFilters;
+  getAppliedFilters(userId: string) {
+    const userFilters = this.getIssueFilters(userId);
     if (!userFilters) return undefined;
 
     const filteredParams = handleIssueQueryParamsByLayout(userFilters?.displayFilters?.layout, "profile_issues");
@@ -104,11 +114,12 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
   getFilterParams = computedFn(
     (
       options: IssuePaginationOptions,
+      userId: string,
       cursor: string | undefined,
       groupId: string | undefined,
       subGroupId: string | undefined
     ) => {
-      const filterParams = this.appliedFilters;
+      const filterParams = this.getAppliedFilters(userId);
 
       const paginationParams = this.getPaginationParams(filterParams, options, cursor, groupId, subGroupId);
       return paginationParams;
@@ -167,13 +178,7 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
             });
           });
 
-          const appliedFilters = _filters.filters || {};
-          const filteredFilters = pickBy(appliedFilters, (value) => value && isArray(value) && value.length > 0);
-          this.rootIssueStore.profileIssues.fetchIssuesWithExistingPagination(
-            workspaceSlug,
-            userId,
-            isEmpty(filteredFilters) ? "init-loader" : "mutation"
-          );
+          this.rootIssueStore.profileIssues.fetchIssuesWithExistingPagination(workspaceSlug, userId, "mutation");
 
           this.handleIssuesLocalFilters.set(EIssuesStoreType.PROFILE, type, workspaceSlug, userId, undefined, {
             filters: _filters.filters,
@@ -247,7 +252,7 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
 
           const currentUserId = this.rootIssueStore.currentUserId;
           if (currentUserId)
-            this.handleIssuesLocalFilters.set(EIssuesStoreType.PROJECT, type, workspaceSlug, userId, undefined, {
+            this.handleIssuesLocalFilters.set(EIssuesStoreType.PROFILE, type, workspaceSlug, userId, undefined, {
               kanban_filters: _filters.kanbanFilters,
             });
 

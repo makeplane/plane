@@ -22,9 +22,11 @@ export const DropdownOptions: React.FC<IMultiSelectDropdownOptions | ISingleSele
     disableSearch,
     keyExtractor,
     options,
+    handleClose,
     value,
     renderItem,
     loader,
+    isMobile = false,
   } = props;
   return (
     <>
@@ -37,6 +39,7 @@ export const DropdownOptions: React.FC<IMultiSelectDropdownOptions | ISingleSele
           inputPlaceholder={inputPlaceholder}
           inputClassName={inputClassName}
           inputContainerClassName={inputContainerClassName}
+          isMobile={isMobile}
         />
       )}
       <div className="mt-2 max-h-48 space-y-1 overflow-y-scroll">
@@ -46,7 +49,7 @@ export const DropdownOptions: React.FC<IMultiSelectDropdownOptions | ISingleSele
               options?.map((option) => (
                 <Combobox.Option
                   key={keyExtractor(option)}
-                  value={option.data[option.value]}
+                  value={keyExtractor(option)}
                   className={({ active, selected }) =>
                     cn(
                       "flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5",
@@ -58,14 +61,15 @@ export const DropdownOptions: React.FC<IMultiSelectDropdownOptions | ISingleSele
                       option.className && option.className({ active, selected })
                     )
                   }
+                  onClick={handleClose}
                 >
                   {({ selected }) => (
                     <>
                       {renderItem ? (
-                        <>{renderItem({ value: option.data[option.value], selected })}</>
+                        <>{renderItem({ value: keyExtractor(option), selected })}</>
                       ) : (
                         <>
-                          <span className="flex-grow truncate">{value}</span>
+                          <span className="flex-grow truncate">{option.value}</span>
                           {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
                         </>
                       )}

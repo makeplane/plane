@@ -5,13 +5,11 @@ import { useParams } from "next/navigation";
 import { CycleIssueQuickActions } from "@/components/issues";
 // constants
 import { EIssuesStoreType } from "@/constants/issue";
-import { EUserProjectRoles } from "@/constants/project";
 // hooks
-import { useCycle, useIssues, useUser } from "@/hooks/store";
+import { useCycle, useIssues, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // components
 import { BaseKanBanRoot } from "../base-kanban-root";
-
-export interface ICycleKanBanLayout {}
 
 export const CycleKanBanLayout: React.FC = observer(() => {
   const { workspaceSlug, projectId, cycleId } = useParams();
@@ -19,13 +17,14 @@ export const CycleKanBanLayout: React.FC = observer(() => {
   // store
   const { issues } = useIssues(EIssuesStoreType.CYCLE);
   const { currentProjectCompletedCycleIds } = useCycle();
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
 
   const isCompletedCycle =
     cycleId && currentProjectCompletedCycleIds ? currentProjectCompletedCycleIds.includes(cycleId.toString()) : false;
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditingAllowed = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
 
   const canEditIssueProperties = useCallback(
     () => !isCompletedCycle && isEditingAllowed,

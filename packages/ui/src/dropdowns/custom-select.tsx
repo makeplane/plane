@@ -2,9 +2,10 @@ import React, { useRef, useState } from "react";
 import { usePopper } from "react-popper";
 import { Listbox } from "@headlessui/react";
 import { Check, ChevronDown } from "lucide-react";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // hooks
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "../hooks/use-outside-click-detector";
 // helpers
 import { cn } from "../../helpers";
 // types
@@ -82,11 +83,16 @@ const CustomSelect = (props: ICustomSelectProps) => {
             <button
               ref={setReferenceElement}
               type="button"
-              className={`flex w-full items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 ${
-                input ? "px-3 py-2 text-sm" : "px-2 py-1 text-xs"
-              } ${
-                disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
-              } ${buttonClassName}`}
+              className={cn(
+                "flex w-full items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300",
+                {
+                  "px-3 py-2 text-sm": input,
+                  "px-2 py-1 text-xs": !input,
+                  "cursor-not-allowed text-custom-text-200": disabled,
+                  "cursor-pointer hover:bg-custom-background-80": !disabled,
+                },
+                buttonClassName
+              )}
               onClick={toggleDropdown}
             >
               {label}

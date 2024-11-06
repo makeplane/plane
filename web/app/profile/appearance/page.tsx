@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
-// ui
+import { IUserTheme } from "@plane/types";
 import { setPromiseToast } from "@plane/ui";
 // components
 import { LogoSpinner } from "@/components/common";
@@ -11,6 +11,8 @@ import { CustomThemeSelector, ThemeSwitch, PageHead } from "@/components/core";
 import { ProfileSettingContentHeader, ProfileSettingContentWrapper } from "@/components/profile";
 // constants
 import { I_THEME_OPTION, THEME_OPTIONS } from "@/constants/themes";
+// helpers
+import { applyTheme, unsetCustomCssVariables } from "@/helpers/theme.helper";
 // hooks
 import { useUserProfile } from "@/hooks/store";
 
@@ -31,9 +33,9 @@ const ProfileAppearancePage = observer(() => {
   }, [userProfile?.theme?.theme]);
 
   const handleThemeChange = (themeOption: I_THEME_OPTION) => {
-    setTheme(themeOption.value);
-    const updateCurrentUserThemePromise = updateUserTheme({ theme: themeOption.value });
+    applyThemeChange({ theme: themeOption.value });
 
+    const updateCurrentUserThemePromise = updateUserTheme({ theme: themeOption.value });
     setPromiseToast(updateCurrentUserThemePromise, {
       loading: "Updating theme...",
       success: {
@@ -47,9 +49,17 @@ const ProfileAppearancePage = observer(() => {
     });
   };
 
+  const applyThemeChange = (theme: Partial<IUserTheme>) => {
+    setTheme(theme?.theme || "system");
+
+    if (theme?.theme === "custom" && theme?.palette) {
+      applyTheme(theme?.palette !== ",,,," ? theme?.palette : "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5", false);
+    } else unsetCustomCssVariables();
+  };
+
   return (
     <>
-      <PageHead title="Profile - Theme Prefrence" />
+      <PageHead title="Profile - Appearance" />
       {userProfile ? (
         <ProfileSettingContentWrapper>
           <ProfileSettingContentHeader title="Appearance" />
@@ -62,7 +72,7 @@ const ProfileAppearancePage = observer(() => {
               <ThemeSwitch value={currentTheme} onChange={handleThemeChange} />
             </div>
           </div>
-          {userProfile?.theme?.theme === "custom" && <CustomThemeSelector />}
+          {userProfile?.theme?.theme === "custom" && <CustomThemeSelector applyThemeChange={applyThemeChange} />}
         </ProfileSettingContentWrapper>
       ) : (
         <div className="grid h-full w-full place-items-center px-4 sm:px-0">

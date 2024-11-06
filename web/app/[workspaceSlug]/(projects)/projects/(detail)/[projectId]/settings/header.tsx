@@ -5,30 +5,28 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
 import { Settings } from "lucide-react";
-import { Breadcrumbs, CustomMenu } from "@plane/ui";
+import { Breadcrumbs, CustomMenu, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 // constants
-import { EUserProjectRoles, PROJECT_SETTINGS_LINKS } from "@/constants/project";
 // hooks
-import { useProject, useUser } from "@/hooks/store";
+import { useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
+// plane web constants
+import { PROJECT_SETTINGS_LINKS } from "@/plane-web/constants/project";
+import { EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const ProjectSettingHeader: FC = observer(() => {
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();
   // store hooks
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
   const { currentProjectDetails, loader } = useProject();
 
-  if (currentProjectRole && currentProjectRole <= EUserProjectRoles.VIEWER) return null;
-
   return (
-    <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
-      <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
+    <Header>
+      <Header.LeftItem>
         <div>
           <div className="z-50">
             <Breadcrumbs onBack={router.back} isLoading={loader}>
@@ -70,16 +68,24 @@ export const ProjectSettingHeader: FC = observer(() => {
           placement="bottom-start"
           closeOnSelect
         >
-          {PROJECT_SETTINGS_LINKS.map((item) => (
-            <CustomMenu.MenuItem
-              key={item.key}
-              onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}${item.href}`)}
-            >
-              {item.label}
-            </CustomMenu.MenuItem>
-          ))}
+          {PROJECT_SETTINGS_LINKS.map(
+            (item) =>
+              allowPermissions(
+                item.access,
+                EUserPermissionsLevel.PROJECT,
+                workspaceSlug.toString(),
+                projectId.toString()
+              ) && (
+                <CustomMenu.MenuItem
+                  key={item.key}
+                  onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}${item.href}`)}
+                >
+                  {item.label}
+                </CustomMenu.MenuItem>
+              )
+          )}
         </CustomMenu>
-      </div>
-    </div>
+      </Header.LeftItem>
+    </Header>
   );
 });

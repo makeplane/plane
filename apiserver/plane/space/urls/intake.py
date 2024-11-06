@@ -20,6 +20,16 @@ urlpatterns = [
         name="intake-issue",
     ),
     path(
+        "anchor/<str:anchor>/intakes/<uuid:intake_id>/inbox-issues/",
+        IntakeIssuePublicViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="inbox-issue",
+    ),
+    path(
         "anchor/<str:anchor>/intakes/<uuid:intake_id>/intake-issues/<uuid:pk>/",
         IntakeIssuePublicViewSet.as_view(
             {
@@ -29,17 +39,6 @@ urlpatterns = [
             }
         ),
         name="intake-issue",
-    ),
-    path(
-        "anchor/<str:anchor>/issues/<uuid:issue_id>/votes/",
-        IssueVotePublicViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-                "delete": "destroy",
-            }
-        ),
-        name="issue-vote-project-board",
     ),
     path(
         "workspaces/<str:slug>/project-boards/",

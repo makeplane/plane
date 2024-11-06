@@ -2,10 +2,8 @@
 
 # Python imports
 import os
-import ssl
 from urllib.parse import urlparse
 
-import certifi
 
 # Third party imports
 import dj_database_url
@@ -16,6 +14,18 @@ from django.core.management.utils import get_random_secret_key
 from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
+from corsheaders.defaults import default_headers
+
+# OpenTelemetry
+from opentelemetry import trace
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import (
+    OTLPSpanExporter,
+)
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.instrumentation.django import DjangoInstrumentor
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -24,6 +34,19 @@ SECRET_KEY = os.environ.get("SECRET_KEY", get_random_secret_key())
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(os.environ.get("DEBUG", "0"))
+
+# Initialize Django instrumentation
+DjangoInstrumentor().instrument()
+# Configure the tracer provider
+service_name = os.environ.get("SERVICE_NAME", "plane-ce-api")
+resource = Resource.create({"service.name": service_name})
+trace.set_tracer_provider(TracerProvider(resource=resource))
+# Configure the OTLP exporter
+otel_endpoint = os.environ.get("OTLP_ENDPOINT", "https://telemetry.plane.so")
+otlp_exporter = OTLPSpanExporter(endpoint=otel_endpoint)
+span_processor = BatchSpanProcessor(otlp_exporter)
+trace.get_tracer_provider().add_span_processor(span_processor)
+
 
 # Allowed Hosts
 ALLOWED_HOSTS = ["*"]
@@ -49,7 +72,6 @@ INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
     "django_celery_beat",
-    "storages",
 ]
 
 # Middlewares
@@ -126,6 +148,8 @@ if cors_allowed_origins:
 else:
     CORS_ALLOW_ALL_ORIGINS = True
     secure_origins = False
+
+CORS_ALLOW_HEADERS = [*default_headers, "X-API-Key"]
 
 # Application Settings
 WSGI_APPLICATION = "plane.wsgi.application"
@@ -234,7 +258,7 @@ STORAGES = {
     },
 }
 STORAGES["default"] = {
-    "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+    "BACKEND": "plane.settings.storage.S3Storage",
 }
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "access-key")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "secret-key")
@@ -251,18 +275,25 @@ if AWS_S3_ENDPOINT_URL and USE_MINIO:
     AWS_S3_CUSTOM_DOMAIN = f"{parsed_url.netloc}/{AWS_STORAGE_BUCKET_NAME}"
     AWS_S3_URL_PROTOCOL = f"{parsed_url.scheme}:"
 
+# RabbitMQ connection settings
+RABBITMQ_HOST = os.environ.get("RABBITMQ_HOST", "localhost")
+RABBITMQ_PORT = os.environ.get("RABBITMQ_PORT", "5672")
+RABBITMQ_USER = os.environ.get("RABBITMQ_USER", "guest")
+RABBITMQ_PASSWORD = os.environ.get("RABBITMQ_PASSWORD", "guest")
+RABBITMQ_VHOST = os.environ.get("RABBITMQ_VHOST", "/")
+AMQP_URL = os.environ.get("AMQP_URL")
 
 # Celery Configuration
+if AMQP_URL:
+    CELERY_BROKER_URL = AMQP_URL
+else:
+    CELERY_BROKER_URL = f"amqp://{RABBITMQ_USER}:{RABBITMQ_PASSWORD}@{RABBITMQ_HOST}:{RABBITMQ_PORT}/{RABBITMQ_VHOST}"
+
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
 CELERY_ACCEPT_CONTENT = ["application/json"]
 
-if REDIS_SSL:
-    redis_url = os.environ.get("REDIS_URL")
-    broker_url = f"{redis_url}?ssl_cert_reqs={ssl.CERT_NONE.name}&ssl_ca_certs={certifi.where()}"
-    CELERY_BROKER_URL = broker_url
-else:
-    CELERY_BROKER_URL = REDIS_URL
 
 CELERY_IMPORTS = (
     # scheduled tasks
@@ -271,6 +302,7 @@ CELERY_IMPORTS = (
     "plane.bgtasks.file_asset_task",
     "plane.bgtasks.email_notification_task",
     "plane.bgtasks.api_logs_task",
+    "plane.license.bgtasks.tracer",
     # management tasks
     "plane.bgtasks.dummy_data_task",
 )
@@ -291,13 +323,10 @@ if bool(os.environ.get("SENTRY_DSN", False)) and os.environ.get(
         send_default_pii=True,
         environment=os.environ.get("SENTRY_ENVIRONMENT", "development"),
         profiles_sample_rate=float(
-            os.environ.get("SENTRY_PROFILE_SAMPLE_RATE", 0.5)
+            os.environ.get("SENTRY_PROFILE_SAMPLE_RATE", 0)
         ),
     )
 
-
-# Application Envs
-PROXY_BASE_URL = os.environ.get("PROXY_BASE_URL", False)  # For External
 
 FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
 
@@ -331,14 +360,14 @@ SESSION_COOKIE_SECURE = secure_origins
 SESSION_COOKIE_HTTPONLY = True
 SESSION_ENGINE = "plane.db.models.session"
 SESSION_COOKIE_AGE = os.environ.get("SESSION_COOKIE_AGE", 604800)
-SESSION_COOKIE_NAME = "plane-session-id"
+SESSION_COOKIE_NAME = os.environ.get("SESSION_COOKIE_NAME", "session-id")
 SESSION_COOKIE_DOMAIN = os.environ.get("COOKIE_DOMAIN", None)
 SESSION_SAVE_EVERY_REQUEST = (
     os.environ.get("SESSION_SAVE_EVERY_REQUEST", "0") == "1"
 )
 
 # Admin Cookie
-ADMIN_SESSION_COOKIE_NAME = "plane-admin-session-id"
+ADMIN_SESSION_COOKIE_NAME = "admin-session-id"
 ADMIN_SESSION_COOKIE_AGE = os.environ.get("ADMIN_SESSION_COOKIE_AGE", 3600)
 
 # CSRF cookies
@@ -352,3 +381,67 @@ CSRF_FAILURE_VIEW = "plane.authentication.views.common.csrf_failure"
 ADMIN_BASE_URL = os.environ.get("ADMIN_BASE_URL", None)
 SPACE_BASE_URL = os.environ.get("SPACE_BASE_URL", None)
 APP_BASE_URL = os.environ.get("APP_BASE_URL")
+
+HARD_DELETE_AFTER_DAYS = int(os.environ.get("HARD_DELETE_AFTER_DAYS", 60))
+
+# Instance Changelog URL
+INSTANCE_CHANGELOG_URL = os.environ.get("INSTANCE_CHANGELOG_URL", "")
+
+ATTACHMENT_MIME_TYPES = [
+    # Images
+    "image/jpeg",
+    "image/png",
+    "image/gif",
+    "image/svg+xml",
+    "image/webp",
+    "image/tiff",
+    "image/bmp",
+    # Documents
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/vnd.ms-excel",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "application/vnd.ms-powerpoint",
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    "text/plain",
+    "application/rtf",
+    # Audio
+    "audio/mpeg",
+    "audio/wav",
+    "audio/ogg",
+    "audio/midi",
+    "audio/x-midi",
+    "audio/aac",
+    "audio/flac",
+    "audio/x-m4a",
+    # Video
+    "video/mp4",
+    "video/mpeg",
+    "video/ogg",
+    "video/webm",
+    "video/quicktime",
+    "video/x-msvideo",
+    "video/x-ms-wmv",
+    # Archives
+    "application/zip",
+    "application/x-rar-compressed",
+    "application/x-tar",
+    "application/gzip",
+    # 3D Models
+    "model/gltf-binary",
+    "model/gltf+json",
+    "application/octet-stream",  # for .obj files, but be cautious
+    # Fonts
+    "font/ttf",
+    "font/otf",
+    "font/woff",
+    "font/woff2",
+    # Other
+    "text/css",
+    "text/javascript",
+    "application/json",
+    "text/xml",
+    "text/csv",
+    "application/xml",
+]

@@ -1,6 +1,13 @@
-import { action, makeObservable, runInAction, } from "mobx";
+import { action, makeObservable, runInAction } from "mobx";
 // types
-import { TIssue, TLoader, ViewFlags, IssuePaginationOptions, TIssuesResponse, TBulkOperationsPayload } from "@plane/types";
+import {
+  TIssue,
+  TLoader,
+  ViewFlags,
+  IssuePaginationOptions,
+  TIssuesResponse,
+  TBulkOperationsPayload,
+} from "@plane/types";
 // helpers
 // base class
 import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
@@ -44,6 +51,7 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
     enableIssueCreation: true,
     enableInlineEditing: true,
   };
+  router;
 
   // filter store
   issueFilterStore: IProjectIssuesFilter;
@@ -59,6 +67,7 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
     });
     // filter store
     this.issueFilterStore = issueFilterStore;
+    this.router = _rootStore.rootStore.router;
   }
 
   /**
@@ -69,6 +78,9 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
   fetchParentStats = async (workspaceSlug: string, projectId?: string) => {
     projectId && this.rootIssueStore.rootStore.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
   };
+
+  /** */
+  updateParentStats = () => {};
 
   /**
    * This method is called to fetch the first issues of pagination
@@ -89,18 +101,19 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
       // set loader and clear store
       runInAction(() => {
         this.setLoader(loadType);
+        this.clear(!isExistingPaginationOptions, false); // clear while fetching from server.
+        if (!this.groupBy) this.clear(!isExistingPaginationOptions, true); // clear while using local to have the no load effect.
       });
-      this.clear(!isExistingPaginationOptions);
 
       // get params from pagination options
-      const params = this.issueFilterStore?.getFilterParams(options, undefined, undefined, undefined);
+      const params = this.issueFilterStore?.getFilterParams(options, projectId, undefined, undefined, undefined);
       // call the fetch issues API with the params
       const response = await this.issueService.getIssues(workspaceSlug, projectId, params, {
         signal: this.controller.signal,
       });
 
       // after fetching issues, call the base method to process the response further
-      this.onfetchIssues(response, options, workspaceSlug, projectId);
+      this.onfetchIssues(response, options, workspaceSlug, projectId, undefined, !isExistingPaginationOptions);
       return response;
     } catch (error) {
       // set loader to undefined if errored out
@@ -130,6 +143,7 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
       // get params from stored pagination options
       const params = this.issueFilterStore?.getFilterParams(
         this.paginationOptions,
+        projectId,
         this.getNextCursor(groupId, subGroupId),
         groupId,
         subGroupId
@@ -164,6 +178,21 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
     return await this.fetchIssues(workspaceSlug, projectId, loadType, this.paginationOptions, true);
   };
 
+  /**
+   * Override inherited create issue, to update list only if user is on current project
+   * @param workspaceSlug
+   * @param projectId
+   * @param data
+   * @returns
+   */
+  override createIssue = async (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => {
+    const response = await super.createIssue(workspaceSlug, projectId, data, "", projectId === this.router.projectId);
+    return response;
+  };
+
+  // Using aliased names as they cannot be overridden in other stores
   archiveBulkIssues = this.bulkArchiveIssues;
   quickAddIssue = this.issueQuickAdd;
+  updateIssue = this.issueUpdate;
+  archiveIssue = this.issueArchive;
 }

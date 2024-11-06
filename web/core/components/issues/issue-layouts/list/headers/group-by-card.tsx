@@ -26,10 +26,10 @@ interface IHeaderGroupByCard {
   count: number;
   issuePayload: Partial<TIssue>;
   canEditProperties: (projectId: string | undefined) => boolean;
-  toggleListGroup: () => void;
   disableIssueCreation?: boolean;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   selectionHelpers: TSelectionHelper;
+  handleCollapsedGroups: (value: string) => void;
 }
 
 export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
@@ -43,7 +43,7 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
     disableIssueCreation,
     addIssuesToView,
     selectionHelpers,
-    toggleListGroup,
+    handleCollapsedGroups
   } = props;
   // states
   const [isOpen, setIsOpen] = useState(false);
@@ -86,18 +86,19 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
 
   return (
     <>
-      <div className="group/list-header relative w-full flex-shrink-0 flex items-center gap-2 py-1.5">
+      <div className="group/list-header w-full flex-shrink-0 flex items-center gap-2 py-1.5">
         {canSelectIssues && (
-          <div className="flex-shrink-0 flex items-center w-3.5">
+          <div className="flex-shrink-0 flex items-center w-3.5 absolute left-1">
             <MultipleSelectGroupAction
               className={cn(
-                "size-3.5 opacity-0 pointer-events-none group-hover/list-header:opacity-100 group-hover/list-header:pointer-events-auto !outline-none",
+                "size-3.5 opacity-0 pointer-events-none group-hover/list-header:opacity-100 group-hover/list-header:pointer-events-auto !outline-none ",
                 {
                   "opacity-100 pointer-events-auto": !isGroupSelectionEmpty,
                 }
               )}
               groupID={groupID}
               selectionHelpers={selectionHelpers}
+              disabled={count === 0}
             />
           </div>
         )}
@@ -105,8 +106,10 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
           {icon ?? <CircleDashed className="size-3.5" strokeWidth={2} />}
         </div>
 
-        <div className="relative flex w-full flex-row items-center gap-1 overflow-hidden cursor-pointer"
-        onClick={toggleListGroup}>
+        <div
+          className="relative flex w-full flex-row items-center gap-1 overflow-hidden cursor-pointer"
+          onClick={() => handleCollapsedGroups(groupID)}
+        >
           <div className="inline-block line-clamp-1 truncate font-medium text-custom-text-100">{title}</div>
           <div className="pl-2 text-sm font-medium text-custom-text-300">{count || 0}</div>
         </div>

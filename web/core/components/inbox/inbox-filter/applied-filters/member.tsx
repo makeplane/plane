@@ -3,8 +3,12 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
+// plane types
 import { TInboxIssueFilterMemberKeys } from "@plane/types";
-import { Avatar } from "@plane/ui";
+// plane ui
+import { Avatar, Tag } from "@plane/ui";
+// helpers
+import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useMember, useProjectInbox } from "@/hooks/store";
 
@@ -29,7 +33,7 @@ export const InboxIssueAppliedFiltersMember: FC<InboxIssueAppliedFiltersMember> 
 
   if (filteredValues.length === 0) return <></>;
   return (
-    <div className="relative flex flex-wrap items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1">
+    <Tag>
       <div className="text-xs text-custom-text-200">{label}</div>
       {filteredValues.map((value) => {
         const optionDetail = currentOptionDetail(value);
@@ -37,7 +41,12 @@ export const InboxIssueAppliedFiltersMember: FC<InboxIssueAppliedFiltersMember> 
         return (
           <div key={value} className="relative flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
             <div className="flex-shrink-0 relative flex justify-center items-center overflow-hidden">
-              <Avatar name={optionDetail.display_name} src={optionDetail.avatar} showTooltip={false} size="sm" />
+              <Avatar
+                name={optionDetail.display_name}
+                src={getFileURL(optionDetail.avatar_url)}
+                showTooltip={false}
+                size="sm"
+              />
             </div>
             <div className="text-xs truncate">{optionDetail?.display_name}</div>
             <div
@@ -56,6 +65,6 @@ export const InboxIssueAppliedFiltersMember: FC<InboxIssueAppliedFiltersMember> 
       >
         <X className={`w-3 h-3`} />
       </div>
-    </div>
+    </Tag>
   );
 });

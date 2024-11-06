@@ -1,6 +1,4 @@
-import isArray from "lodash/isArray";
 import isEmpty from "lodash/isEmpty";
-import pickBy from "lodash/pickBy";
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // base class
@@ -28,10 +26,12 @@ export interface IProjectIssuesFilter extends IBaseIssueFilterStore {
   //helper actions
   getFilterParams: (
     options: IssuePaginationOptions,
+    projectId: string,
     cursor: string | undefined,
     groupId: string | undefined,
     subGroupId: string | undefined
   ) => Partial<Record<TIssueParams, string | boolean>>;
+  getIssueFilters(projectId: string): IIssueFilters | undefined;
   // action
   fetchFilters: (workspaceSlug: string, projectId: string) => Promise<void>;
   updateFilters: (
@@ -70,18 +70,27 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
 
   get issueFilters() {
     const projectId = this.rootIssueStore.projectId;
-    console.log("projectId", projectId);
     if (!projectId) return undefined;
 
+    return this.getIssueFilters(projectId);
+  }
+
+  get appliedFilters() {
+    const projectId = this.rootIssueStore.projectId;
+    if (!projectId) return undefined;
+
+    return this.getAppliedFilters(projectId);
+  }
+
+  getIssueFilters(projectId: string) {
     const displayFilters = this.filters[projectId] || undefined;
-    console.log("displayFilters", displayFilters);
     if (isEmpty(displayFilters)) return undefined;
 
     return this.computedIssueFilters(displayFilters);
   }
 
-  get appliedFilters() {
-    const userFilters = this.issueFilters;
+  getAppliedFilters(projectId: string) {
+    const userFilters = this.getIssueFilters(projectId);
     if (!userFilters) return undefined;
 
     const filteredParams = handleIssueQueryParamsByLayout(userFilters?.displayFilters?.layout, "issues");
@@ -99,11 +108,12 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
   getFilterParams = computedFn(
     (
       options: IssuePaginationOptions,
+      projectId: string,
       cursor: string | undefined,
       groupId: string | undefined,
       subGroupId: string | undefined
     ) => {
-      const filterParams = this.appliedFilters;
+      const filterParams = this.getAppliedFilters(projectId);
       const paginationParams = this.getPaginationParams(filterParams, options, cursor, groupId, subGroupId);
       return paginationParams;
     }
@@ -172,13 +182,7 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
             });
           });
 
-          const appliedFilters = _filters.filters || {};
-          const filteredFilters = pickBy(appliedFilters, (value) => value && isArray(value) && value.length > 0);
-          this.rootIssueStore.projectIssues.fetchIssuesWithExistingPagination(
-            workspaceSlug,
-            projectId,
-            isEmpty(filteredFilters) ? "init-loader" : "mutation"
-          );
+          this.rootIssueStore.projectIssues.fetchIssuesWithExistingPagination(workspaceSlug, projectId, "mutation");
           await this.issueFilterService.patchProjectIssueFilters(workspaceSlug, projectId, {
             filters: _filters.filters,
           });
@@ -217,8 +221,13 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
             });
           });
 
-          if (this.requiresServerUpdate(updatedDisplayFilters))
+          if (this.getShouldClearIssues(updatedDisplayFilters)) {
+            this.rootIssueStore.projectIssues.clear(true, true); // clear issues for local store when some filters like layout changes
+          }
+
+          if (this.getShouldReFetchIssues(updatedDisplayFilters)) {
             this.rootIssueStore.projectIssues.fetchIssuesWithExistingPagination(workspaceSlug, projectId, "mutation");
+          }
 
           await this.issueFilterService.patchProjectIssueFilters(workspaceSlug, projectId, {
             display_filters: _filters.displayFilters,

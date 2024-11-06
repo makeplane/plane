@@ -14,7 +14,7 @@ import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@/constants/workspace";
 import { useEventTracker, useWorkspace } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // services
-import { WorkspaceService } from "@/services/workspace.service";
+import { WorkspaceService } from "@/plane-web/services";
 
 type Props = {
   onSubmit?: (res: IWorkspace) => Promise<void>;

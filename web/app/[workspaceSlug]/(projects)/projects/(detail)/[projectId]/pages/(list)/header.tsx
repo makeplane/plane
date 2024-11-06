@@ -1,37 +1,68 @@
 "use client";
 
+import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { FileText } from "lucide-react";
-// ui
-import { Breadcrumbs, Button } from "@plane/ui";
+// plane types
+import { TPage } from "@plane/types";
+// plane ui
+import { Breadcrumbs, Button, Header, setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
 import { BreadcrumbLink, Logo } from "@/components/common";
 // constants
 import { EPageAccess } from "@/constants/page";
-import { EUserProjectRoles } from "@/constants/project";
 // hooks
-import { useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
+import { useEventTracker, useProject, useProjectPages, useUserPermissions } from "@/hooks/store";
+// plane web hooks
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const PagesListHeader = observer(() => {
+  // states
+  const [isCreatingPage, setIsCreatingPage] = useState(false);
   // router
+  const router = useRouter();
   const { workspaceSlug } = useParams();
   const searchParams = useSearchParams();
   const pageType = searchParams.get("type");
   // store hooks
-  const { toggleCreatePageModal } = useCommandPalette();
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
-  const { currentProjectDetails, loader } = useProject();
-  const { setTrackElement } = useEventTracker();
+  const { allowPermissions } = useUserPermissions();
 
-  const canUserCreatePage =
-    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
+  const { currentProjectDetails, loader } = useProject();
+  const { createPage } = useProjectPages();
+  const { setTrackElement } = useEventTracker();
+  // auth
+  const canUserCreatePage = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    EUserPermissionsLevel.PROJECT
+  );
+  // handle page create
+  const handleCreatePage = async () => {
+    setIsCreatingPage(true);
+    setTrackElement("Project pages page");
+
+    const payload: Partial<TPage> = {
+      access: pageType === "private" ? EPageAccess.PRIVATE : EPageAccess.PUBLIC,
+    };
+
+    await createPage(payload)
+      .then((res) => {
+        const pageId = `/${workspaceSlug}/projects/${currentProjectDetails?.id}/pages/${res?.id}`;
+        router.push(pageId);
+      })
+      .catch((err) =>
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: err?.data?.error || "Page could not be created. Please try again.",
+        })
+      )
+      .finally(() => setIsCreatingPage(false));
+  };
 
   return (
-    <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
-      <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
+    <Header>
+      <Header.LeftItem>
         <div>
           <Breadcrumbs isLoading={loader}>
             <Breadcrumbs.BreadcrumbItem
@@ -56,24 +87,16 @@ export const PagesListHeader = observer(() => {
             />
           </Breadcrumbs>
         </div>
-      </div>
-      {canUserCreatePage && (
-        <div className="flex items-center gap-2">
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => {
-              setTrackElement("Project pages page");
-              toggleCreatePageModal({
-                isOpen: true,
-                pageAccess: pageType === "private" ? EPageAccess.PRIVATE : EPageAccess.PUBLIC,
-              });
-            }}
-          >
-            Add Page
+      </Header.LeftItem>
+      {canUserCreatePage ? (
+        <Header.RightItem>
+          <Button variant="primary" size="sm" onClick={handleCreatePage} loading={isCreatingPage}>
+            {isCreatingPage ? "Adding" : "Add page"}
           </Button>
-        </div>
+        </Header.RightItem>
+      ) : (
+        <></>
       )}
-    </div>
+    </Header>
   );
 });

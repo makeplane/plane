@@ -91,6 +91,9 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
 
   fetchParentStats = () => {};
 
+  /** */
+  updateParentStats = () => {};
+
   /**
    * This method is called to fetch the first issues of pagination
    * @param workspaceSlug
@@ -119,7 +122,7 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
       this.setViewId(view);
 
       // get params from pagination options
-      let params = this.issueFilterStore?.getFilterParams(options, undefined, undefined, undefined);
+      let params = this.issueFilterStore?.getFilterParams(options, userId, undefined, undefined, undefined);
       params = {
         ...params,
         assignees: undefined,
@@ -137,7 +140,7 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
       });
 
       // after fetching issues, call the base method to process the response further
-      this.onfetchIssues(response, options, workspaceSlug);
+      this.onfetchIssues(response, options, workspaceSlug, undefined, undefined, !isExistingPaginationOptions);
       return response;
     } catch (error) {
       // set loader to undefined if errored out
@@ -167,6 +170,7 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
       // get params from stored pagination options
       let params = this.issueFilterStore?.getFilterParams(
         this.paginationOptions,
+        userId,
         this.getNextCursor(groupId, subGroupId),
         groupId,
         subGroupId
@@ -207,6 +211,11 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
     return await this.fetchIssues(workspaceSlug, userId, loadType, this.paginationOptions, this.currentView, true);
   };
 
+  // Using aliased names as they cannot be overridden in other stores
   archiveBulkIssues = this.bulkArchiveIssues;
+  updateIssue = this.issueUpdate;
+  archiveIssue = this.issueArchive;
+
+  // Setting them as undefined as they can not performed on profile issues
   quickAddIssue = undefined;
 }

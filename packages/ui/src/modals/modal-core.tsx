@@ -11,13 +11,21 @@ type Props = {
   isOpen: boolean;
   position?: EModalPosition;
   width?: EModalWidth;
+  className?: string;
 };
 export const ModalCore: React.FC<Props> = (props) => {
-  const { children, handleClose, isOpen, position = EModalPosition.CENTER, width = EModalWidth.XXL } = props;
+  const {
+    children,
+    handleClose,
+    isOpen,
+    position = EModalPosition.CENTER,
+    width = EModalWidth.XXL,
+    className = "",
+  } = props;
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={() => handleClose && handleClose}>
+      <Dialog as="div" className="relative z-20" onClose={() => handleClose && handleClose()}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -44,7 +52,8 @@ export const ModalCore: React.FC<Props> = (props) => {
               <Dialog.Panel
                 className={cn(
                   "relative transform rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all w-full",
-                  width
+                  width,
+                  className
                 )}
               >
                 {children}

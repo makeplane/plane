@@ -92,7 +92,7 @@ export const SpreadsheetTable = observer((props: Props) => {
 
   const isPaginating = !!getIssueLoader();
 
-  useIntersectionObserver(containerRef, isPaginating ? null : intersectionElement, loadMoreIssues, `50% 0% 50% 0%`);
+  useIntersectionObserver(containerRef, isPaginating ? null : intersectionElement, loadMoreIssues, `100% 0% 100% 0%`);
 
   const handleKeyBoardNavigation = useTableKeyboardNavigation();
 
@@ -125,7 +125,6 @@ export const SpreadsheetTable = observer((props: Props) => {
             portalElement={portalElement}
             containerRef={containerRef}
             isScrolled={isScrolled}
-            issueIds={issueIds}
             spreadsheetColumnsList={spreadsheetColumnsList}
             selectionHelpers={selectionHelpers}
           />

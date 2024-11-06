@@ -23,7 +23,7 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
     <table className="w-full overflow-hidden divide-y divide-custom-border-200 whitespace-nowrap border-y border-custom-border-200">
       <thead className="bg-custom-background-80">
         <tr className="divide-x divide-custom-border-200 text-sm text-custom-text-100">
-          <th scope="col" className="px-2.5 py-3 text-left font-medium">
+          <th scope="col" className="px-page-x py-3 text-left font-medium">
             {ANALYTICS_X_AXIS_VALUES.find((v) => v.value === params.x_axis)?.label}
           </th>
           {params.segment ? (
@@ -31,7 +31,7 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
               <th
                 key={`segment-${key}`}
                 scope="col"
-                className={`px-2.5 py-3 text-left font-medium ${
+                className={`px-page-x py-3 text-left font-medium ${
                   params.segment === "priority" || params.segment === "state__group" ? "capitalize" : ""
                 }`}
               >
@@ -51,7 +51,7 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
               </th>
             ))
           ) : (
-            <th scope="col" className="px-2.5 py-3 text-left font-medium sm:pr-0">
+            <th scope="col" className="px-page-x py-3 text-left font-medium sm:pr-0">
               {ANALYTICS_Y_AXIS_VALUES.find((v) => v.value === params.y_axis)?.label}
             </th>
           )}
@@ -60,11 +60,11 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
       <tbody className="divide-y divide-custom-border-200">
         {barGraphData.data.map((item, index) => (
           <tr key={`table-row-${index}`} className="divide-x divide-custom-border-200 text-xs text-custom-text-200">
-            <td className="px-2.5 py-2">
+            <td className="px-page-x py-2">
               <div className="relative flex items-center gap-2 w-full overflow-hidden">
                 <div className="flex-shrink-0 h-3 w-3 rounded overflow-hidden">
                   {params.x_axis === "priority" ? (
-                    <PriorityIcon priority={(item.name as string).toLowerCase() as TIssuePriorities} />
+                    <PriorityIcon size={12} priority={(item.name as string).toLowerCase() as TIssuePriorities} />
                   ) : (
                     <div
                       className="w-full h-full"
@@ -90,12 +90,12 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
             </td>
             {params.segment ? (
               barGraphData.xAxisKeys.map((key, index) => (
-                <td key={`segment-value-${index}`} className="whitespace-nowrap px-2.5 py-2 sm:pr-0">
+                <td key={`segment-value-${index}`} className="whitespace-nowrap px-page-x py-2 sm:pr-0">
                   {item[key] ?? 0}
                 </td>
               ))
             ) : (
-              <td className="whitespace-nowrap px-2.5 py-2 sm:pr-0">{item[yAxisKey]}</td>
+              <td className="whitespace-nowrap px-page-x py-2 sm:pr-0">{item[yAxisKey]}</td>
             )}
           </tr>
         ))}

@@ -1,12 +1,11 @@
 import { IProjectView } from "@plane/types";
-import { API_BASE_URL } from "@/helpers/common.helper";
 import { APIService } from "@/services/api.service";
 // types
 // helpers
 
 export class ViewService extends APIService {
-  constructor() {
-    super(API_BASE_URL);
+  constructor(baseUrl: string) {
+    super(baseUrl);
   }
 
   async createView(workspaceSlug: string, projectId: string, data: Partial<IProjectView>): Promise<any> {

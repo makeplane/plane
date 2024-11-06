@@ -3,8 +3,9 @@ import { observer } from "mobx-react";
 // hooks
 import { useParams } from "next/navigation";
 import { ProjectIssueQuickActions } from "@/components/issues";
-import { EUserProjectRoles } from "@/constants/project";
-import { useUser } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+
 // components
 // types
 // constants
@@ -12,17 +13,17 @@ import { BaseListRoot } from "../base-list-root";
 
 export const ProfileIssuesListLayout: FC = observer(() => {
   // router
-  const { profileViewId } = useParams();
+  const { workspaceSlug, profileViewId } = useParams();
   // store
-  const {
-    membership: { currentWorkspaceAllProjectsRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
 
-  const canEditPropertiesBasedOnProject = (projectId: string) => {
-    const currentProjectRole = currentWorkspaceAllProjectsRole && currentWorkspaceAllProjectsRole[projectId];
-
-    return !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
-  };
+  const canEditPropertiesBasedOnProject = (projectId: string) =>
+    allowPermissions(
+      [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+      EUserPermissionsLevel.PROJECT,
+      workspaceSlug.toString(),
+      projectId
+    );
 
   return (
     <BaseListRoot

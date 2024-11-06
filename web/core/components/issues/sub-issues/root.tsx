@@ -395,18 +395,16 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
               </div>
 
               {subIssueHelpers.issue_visibility.includes(parentIssueId) && (
-                <div className="border border-b-0 border-custom-border-100">
-                  <IssueList
-                    workspaceSlug={workspaceSlug}
-                    projectId={projectId}
-                    parentIssueId={parentIssueId}
-                    rootIssueId={parentIssueId}
-                    spacingLeft={10}
-                    disabled={!disabled}
-                    handleIssueCrudState={handleIssueCrudState}
-                    subIssueOperations={subIssueOperations}
-                  />
-                </div>
+                <IssueList
+                  workspaceSlug={workspaceSlug}
+                  projectId={projectId}
+                  parentIssueId={parentIssueId}
+                  rootIssueId={parentIssueId}
+                  spacingLeft={10}
+                  disabled={!disabled}
+                  handleIssueCrudState={handleIssueCrudState}
+                  subIssueOperations={subIssueOperations}
+                />
               )}
             </>
           ) : (

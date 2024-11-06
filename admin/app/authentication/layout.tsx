@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import { AdminLayout } from "@/layouts/admin-layout";
 
 export const metadata: Metadata = {
-  title: "Authentication Settings - God Mode",
+  title: "Authentication Settings - Plane Web",
 };
 
 export default function AuthenticationLayout({ children }: { children: ReactNode }) {

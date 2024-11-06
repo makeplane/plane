@@ -2,7 +2,7 @@
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // ui
-import { Button, Loader } from "@plane/ui";
+import { Button, ContentWrapper, Loader } from "@plane/ui";
 // components
 import { AnalyticsDemand, AnalyticsLeaderBoard, AnalyticsScope, AnalyticsYearWiseIssues } from "@/components/analytics";
 // fetch-keys
@@ -50,7 +50,7 @@ export const ScopeAndDemand: React.FC<Props> = (props) => {
     <>
       {!defaultAnalyticsError ? (
         defaultAnalytics ? (
-          <div className="h-full overflow-y-auto p-5 text-sm vertical-scrollbar scrollbar-lg">
+          <ContentWrapper>
             <div className={`grid grid-cols-1 gap-5 ${fullScreen ? "md:grid-cols-2" : ""}`}>
               <AnalyticsDemand defaultAnalytics={defaultAnalytics} />
               <AnalyticsScope
@@ -59,7 +59,7 @@ export const ScopeAndDemand: React.FC<Props> = (props) => {
               />
               <AnalyticsLeaderBoard
                 users={defaultAnalytics.most_issue_created_user?.map((user) => ({
-                  avatar: user?.created_by__avatar,
+                  avatar_url: user?.created_by__avatar_url,
                   firstName: user?.created_by__first_name,
                   lastName: user?.created_by__last_name,
                   display_name: user?.created_by__display_name,
@@ -72,7 +72,7 @@ export const ScopeAndDemand: React.FC<Props> = (props) => {
               />
               <AnalyticsLeaderBoard
                 users={defaultAnalytics.most_issue_closed_user?.map((user) => ({
-                  avatar: user?.assignees__avatar,
+                  avatar_url: user?.assignees__avatar_url,
                   firstName: user?.assignees__first_name,
                   lastName: user?.assignees__last_name,
                   display_name: user?.assignees__display_name,
@@ -87,7 +87,7 @@ export const ScopeAndDemand: React.FC<Props> = (props) => {
                 <AnalyticsYearWiseIssues defaultAnalytics={defaultAnalytics} />
               </div>
             </div>
-          </div>
+          </ContentWrapper>
         ) : (
           <Loader className="grid grid-cols-1 gap-5 p-5 lg:grid-cols-2">
             <Loader.Item height="250px" />

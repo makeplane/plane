@@ -6,6 +6,7 @@ import useSWR from "swr";
 // components
 import { LogoSpinner } from "@/components/common";
 import { IssuesNavbarRoot } from "@/components/issues";
+import { SomethingWentWrongError } from "@/components/issues/issue-layouts/error";
 // hooks
 import { useIssueFilter, usePublish, usePublishList } from "@/hooks/store";
 // assets
@@ -27,7 +28,7 @@ const IssuesLayout = observer((props: Props) => {
   const publishSettings = usePublish(anchor);
   const { updateLayoutOptions } = useIssueFilter();
   // fetch publish settings
-  useSWR(
+  const { error } = useSWR(
     anchor ? `PUBLISH_SETTINGS_${anchor}` : null,
     anchor
       ? async () => {
@@ -45,7 +46,9 @@ const IssuesLayout = observer((props: Props) => {
       : null
   );
 
-  if (!publishSettings) return <LogoSpinner />;
+  if (!publishSettings && !error) return <LogoSpinner />;
+
+  if (error) return <SomethingWentWrongError />;
 
   return (
     <div className="relative flex h-screen min-h-[500px] w-screen flex-col overflow-hidden">
@@ -63,7 +66,7 @@ const IssuesLayout = observer((props: Props) => {
           <Image src={planeLogo} alt="Plane logo" className="h-6 w-6" height="24" width="24" />
         </div>
         <div className="text-xs">
-          Powered by <span className="font-semibold">Plane Deploy</span>
+          Powered by <span className="font-semibold">Plane Publish</span>
         </div>
       </a>
     </div>

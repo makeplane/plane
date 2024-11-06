@@ -82,7 +82,7 @@ class CursorResult(Sequence):
         return f"<{type(self).__name__}: results={len(self.results)}>"
 
 
-MAX_LIMIT = 100
+MAX_LIMIT = 1000
 
 
 class BadPaginationError(Exception):
@@ -118,7 +118,7 @@ class OffsetPaginator:
         self.max_offset = max_offset
         self.on_results = on_results
 
-    def get_result(self, limit=100, cursor=None):
+    def get_result(self, limit=1000, cursor=None):
         # offset is page #
         # value is page limit
         if cursor is None:
@@ -150,7 +150,6 @@ class OffsetPaginator:
             raise BadPaginationError("Pagination offset cannot be negative")
 
         results = queryset[offset:stop]
-
         if cursor.value != limit:
             results = results[-(limit + 1) :]
 
@@ -727,7 +726,7 @@ class BasePaginator:
     cursor_name = "cursor"
 
     # get the per page parameter from request
-    def get_per_page(self, request, default_per_page=100, max_per_page=100):
+    def get_per_page(self, request, default_per_page=1000, max_per_page=1000):
         try:
             per_page = int(request.GET.get("per_page", default_per_page))
         except ValueError:
@@ -747,8 +746,8 @@ class BasePaginator:
         on_results=None,
         paginator=None,
         paginator_cls=OffsetPaginator,
-        default_per_page=100,
-        max_per_page=100,
+        default_per_page=1000,
+        max_per_page=1000,
         cursor_cls=Cursor,
         extra_stats=None,
         controller=None,
@@ -761,7 +760,6 @@ class BasePaginator:
     ):
         """Paginate the request"""
         per_page = self.get_per_page(request, default_per_page, max_per_page)
-
         # Convert the cursor value to integer and float from string
         input_cursor = None
         try:

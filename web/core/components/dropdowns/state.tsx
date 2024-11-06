@@ -7,7 +7,7 @@ import { usePopper } from "react-popper";
 import { Check, ChevronDown, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // ui
-import { Spinner, StateGroupIcon } from "@plane/ui";
+import { ComboDropDown, Spinner, StateGroupIcon } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -29,6 +29,7 @@ type Props = TDropdownProps & {
   projectId: string | undefined;
   showDefaultState?: boolean;
   value: string | undefined | null;
+  renderByDefault?: boolean;
 };
 
 export const StateDropdown: React.FC<Props> = observer((props) => {
@@ -50,6 +51,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
     showTooltip = false,
     tabIndex,
     value,
+    renderByDefault = true,
   } = props;
   // states
   const [query, setQuery] = useState("");
@@ -125,8 +127,69 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
     handleClose();
   };
 
+  const comboButton = (
+    <>
+      {button ? (
+        <button
+          ref={setReferenceElement}
+          type="button"
+          className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
+          onClick={handleOnClick}
+          disabled={disabled}
+        >
+          {button}
+        </button>
+      ) : (
+        <button
+          ref={setReferenceElement}
+          type="button"
+          className={cn(
+            "clickable block h-full max-w-full outline-none",
+            {
+              "cursor-not-allowed text-custom-text-200": disabled,
+              "cursor-pointer": !disabled,
+            },
+            buttonContainerClassName
+          )}
+          onClick={handleOnClick}
+          disabled={disabled}
+        >
+          <DropdownButton
+            className={buttonClassName}
+            isActive={isOpen}
+            tooltipHeading="State"
+            tooltipContent={selectedState?.name ?? "State"}
+            showTooltip={showTooltip}
+            variant={buttonVariant}
+            renderToolTipByDefault={renderByDefault}
+          >
+            {stateLoader ? (
+              <Spinner className="h-3.5 w-3.5" />
+            ) : (
+              <>
+                {!hideIcon && (
+                  <StateGroupIcon
+                    stateGroup={selectedState?.group ?? "backlog"}
+                    color={selectedState?.color ?? "rgba(var(--color-text-300))"}
+                    className="h-3 w-3 flex-shrink-0"
+                  />
+                )}
+                {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
+                  <span className="flex-grow truncate">{selectedState?.name ?? "State"}</span>
+                )}
+                {dropdownArrow && (
+                  <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+                )}
+              </>
+            )}
+          </DropdownButton>
+        </button>
+      )}
+    </>
+  );
+
   return (
-    <Combobox
+    <ComboDropDown
       as="div"
       ref={dropdownRef}
       tabIndex={tabIndex}
@@ -135,65 +198,9 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
       onChange={dropdownOnChange}
       disabled={disabled}
       onKeyDown={handleKeyDown}
+      button={comboButton}
+      renderByDefault={renderByDefault}
     >
-      <Combobox.Button as={Fragment}>
-        {button ? (
-          <button
-            ref={setReferenceElement}
-            type="button"
-            className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
-            onClick={handleOnClick}
-          >
-            {button}
-          </button>
-        ) : (
-          <button
-            ref={setReferenceElement}
-            type="button"
-            className={cn(
-              "clickable block h-full max-w-full outline-none",
-              {
-                "cursor-not-allowed text-custom-text-200": disabled,
-                "cursor-pointer": !disabled,
-              },
-              buttonContainerClassName
-            )}
-            onClick={handleOnClick}
-          >
-            <DropdownButton
-              className={buttonClassName}
-              isActive={isOpen}
-              tooltipHeading="State"
-              tooltipContent={selectedState?.name ?? "State"}
-              showTooltip={showTooltip}
-              variant={buttonVariant}
-            >
-              {stateLoader ? (
-                <Spinner className="h-3.5 w-3.5" />
-              ) : (
-                <>
-                  {!hideIcon && (
-                    <StateGroupIcon
-                      stateGroup={selectedState?.group ?? "backlog"}
-                      color={selectedState?.color ?? "rgba(var(--color-text-300))"}
-                      className="h-3 w-3 flex-shrink-0"
-                    />
-                  )}
-                  {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-                    <span className="flex-grow truncate">{selectedState?.name ?? "State"}</span>
-                  )}
-                  {dropdownArrow && (
-                    <ChevronDown
-                      className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)}
-                      aria-hidden="true"
-                    />
-                  )}
-                </>
-              )}
-            </DropdownButton>
-          </button>
-        )}
-      </Combobox.Button>
       {isOpen && (
         <Combobox.Options className="fixed z-10" static>
           <div
@@ -246,6 +253,6 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
           </div>
         </Combobox.Options>
       )}
-    </Combobox>
+    </ComboDropDown>
   );
 });

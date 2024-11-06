@@ -17,7 +17,7 @@ from plane.db.models import (
     Issue,
     State,
     IssueLink,
-    IssueAttachment,
+    FileAsset,
     DeployBoard,
 )
 from plane.app.serializers import (
@@ -27,7 +27,7 @@ from plane.app.serializers import (
     IssueStateIntakeSerializer,
 )
 from plane.utils.issue_filters import issue_filters
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 
 
 class IntakeIssuePublicViewSet(BaseViewSet):
@@ -95,8 +95,9 @@ class IntakeIssuePublicViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))

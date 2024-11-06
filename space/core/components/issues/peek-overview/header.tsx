@@ -87,7 +87,7 @@ export const PeekOverviewHeader: React.FC<Props> = observer((props) => {
               leaveFrom="transform opacity-100 scale-100"
               leaveTo="transform opacity-0 scale-95"
             >
-              <Listbox.Options className="absolute left-0 z-10 mt-1 min-w-[8rem] origin-top-left overflow-y-auto whitespace-nowrap rounded-md border border-custom-border-300 bg-custom-background-90 text-xs shadow-lg focus:outline-none">
+              <Listbox.Options className="absolute left-0 z-10 mt-1 min-w-[12rem] origin-top-left overflow-y-auto whitespace-nowrap rounded-md border border-custom-border-300 bg-custom-background-90 text-xs shadow-lg focus:outline-none">
                 <div className="space-y-1 p-2">
                   {PEEK_MODES.map((mode) => (
                     <Listbox.Option
@@ -95,24 +95,14 @@ export const PeekOverviewHeader: React.FC<Props> = observer((props) => {
                       value={mode.key}
                       className={({ active, selected }) =>
                         `cursor-pointer select-none truncate rounded px-1 py-1.5 ${
-                          active || selected ? "bg-custom-background-80" : ""
+                          active ? "bg-custom-background-80" : ""
                         } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                       }
                     >
-                      {({ selected }) => (
-                        <div className="flex items-center justify-between gap-2">
-                          <div className="flex items-center gap-2">
-                            <div className="flex items-center gap-1.5">
-                              <Icon
-                                iconName={mode.icon}
-                                className={`-my-1 flex-shrink-0 !text-base ${mode.key === "full" ? "rotate-45" : ""}`}
-                              />
-                              {mode.label}
-                            </div>
-                          </div>
-                          {selected && <Icon iconName="done" />}
-                        </div>
-                      )}
+                      <div className="flex items-center gap-1.5">
+                        <mode.icon className="-my-1 h-4 w-4 flex-shrink-0" />
+                        {mode.label}
+                      </div>
                     </Listbox.Option>
                   ))}
                 </div>

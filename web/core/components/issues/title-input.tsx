@@ -100,7 +100,7 @@ export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
     [setIsSubmitting]
   );
 
-  if (disabled) return <div className="text-2xl font-medium">{title}</div>;
+  if (disabled) return <div className="text-2xl font-medium whitespace-pre-line">{title}</div>;
 
   return (
     <div className="flex flex-col gap-1.5">
@@ -110,7 +110,7 @@ export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
           className={cn(
             "block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-0 text-2xl font-medium outline-none ring-0",
             {
-              "ring-1 ring-red-400 mx-3": title.length && title.length === 0,
+              "ring-1 ring-red-400 mx-2.5": title?.length === 0,
             },
             className
           )}
@@ -134,7 +134,7 @@ export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
           /255
         </div>
       </div>
-      {title.length && title.length === 0 && <span className="text-sm text-red-500">Title is required</span>}
+      {title?.length === 0 && <span className="text-sm font-medium text-red-500">Title is required</span>}
     </div>
   );
 });

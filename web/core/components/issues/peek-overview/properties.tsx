@@ -2,22 +2,10 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-import {
-  Signal,
-  Tag,
-  Triangle,
-  LayoutPanelTop,
-  CircleDot,
-  CopyPlus,
-  XCircle,
-  CalendarClock,
-  CalendarCheck2,
-  Users,
-  UserCircle2,
-} from "lucide-react";
+import { Signal, Tag, Triangle, LayoutPanelTop, CalendarClock, CalendarCheck2, Users, UserCircle2 } from "lucide-react";
 // hooks
 // ui icons
-import { DiceIcon, DoubleCircleIcon, ContrastIcon, RelatedIcon, Tooltip } from "@plane/ui";
+import { DiceIcon, DoubleCircleIcon, ContrastIcon } from "@plane/ui";
 // components
 import {
   DateDropdown,
@@ -28,20 +16,20 @@ import {
 } from "@/components/dropdowns";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import {
-  IssueLinkRoot,
   IssueCycleSelect,
   IssueModuleSelect,
   IssueParentSelect,
   IssueLabel,
   TIssueOperations,
-  IssueRelationSelect,
 } from "@/components/issues";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 import { useIssueDetail, useMember, useProject, useProjectState } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web components
+import { IssueAdditionalPropertyValuesUpdate } from "@/plane-web/components/issue-types/values";
+import { IssueWorklogProperty } from "@/plane-web/components/issues";
 
 interface IPeekOverviewProperties {
   workspaceSlug: string;
@@ -60,7 +48,6 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   } = useIssueDetail();
   const { getStateById } = useProjectState();
   const { getUserDetails } = useMember();
-  const { isMobile } = usePlatformOS();
   // derived values
   const issue = getIssueById(issueId);
   if (!issue) return <></>;
@@ -147,12 +134,10 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               <UserCircle2 className="h-4 w-4 flex-shrink-0" />
               <span>Created by</span>
             </div>
-            <Tooltip tooltipContent={createdByDetails?.display_name} isMobile={isMobile}>
-              <div className="h-full flex items-center gap-1.5 rounded px-2 py-0.5 text-sm justify-between cursor-default">
-                <ButtonAvatars showTooltip={false} userIds={createdByDetails?.id} />
-                <span className="flex-grow truncate text-xs leading-5">{createdByDetails?.display_name}</span>
-              </div>
-            </Tooltip>
+            <div className="w-full h-full flex items-center gap-1.5 rounded px-2 py-0.5 text-sm justify-between cursor-not-allowed">
+              <ButtonAvatars showTooltip userIds={createdByDetails?.id} />
+              <span className="flex-grow truncate text-xs leading-5">{createdByDetails?.display_name}</span>
+            </div>
           </div>
         )}
 
@@ -241,7 +226,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           <div className="flex w-full items-center gap-3 min-h-8 h-full">
             <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
               <DiceIcon className="h-4 w-4 flex-shrink-0" />
-              <span>Module</span>
+              <span>Modules</span>
             </div>
             <IssueModuleSelect
               className="w-3/4 flex-grow"
@@ -287,70 +272,6 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           />
         </div>
 
-        {/* relates to */}
-        <div className="flex gap-3 min-h-8">
-          <div className="flex pt-2 gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <RelatedIcon className="h-4 w-4 flex-shrink-0" />
-            <span>Relates to</span>
-          </div>
-          <IssueRelationSelect
-            className="w-3/4 flex-grow min-h-8 h-full"
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            issueId={issueId}
-            relationKey="relates_to"
-            disabled={disabled}
-          />
-        </div>
-
-        {/* blocking */}
-        <div className="flex gap-3 min-h-8">
-          <div className="flex pt-2 gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <XCircle className="h-4 w-4 flex-shrink-0" />
-            <span>Blocking</span>
-          </div>
-          <IssueRelationSelect
-            className="w-3/4 flex-grow min-h-8 h-full"
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            issueId={issueId}
-            relationKey="blocking"
-            disabled={disabled}
-          />
-        </div>
-
-        {/* blocked by */}
-        <div className="flex gap-3 min-h-8">
-          <div className="flex pt-2 gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <CircleDot className="h-4 w-4 flex-shrink-0" />
-            <span>Blocked by</span>
-          </div>
-          <IssueRelationSelect
-            className="w-3/4 flex-grow min-h-8 h-full"
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            issueId={issueId}
-            relationKey="blocked_by"
-            disabled={disabled}
-          />
-        </div>
-
-        {/* duplicate of */}
-        <div className="flex gap-3 min-h-8">
-          <div className="flex pt-2 gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <CopyPlus className="h-4 w-4 flex-shrink-0" />
-            <span>Duplicate of</span>
-          </div>
-          <IssueRelationSelect
-            className="w-3/4 flex-grow min-h-8 h-full"
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            issueId={issueId}
-            relationKey="duplicate"
-            disabled={disabled}
-          />
-        </div>
-
         {/* label */}
         <div className="flex w-full items-center gap-3 min-h-8">
           <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
@@ -361,9 +282,23 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <IssueLabel workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={disabled} />
           </div>
         </div>
-      </div>
-      <div className="w-full pt-3">
-        <IssueLinkRoot workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={disabled} />
+
+        <IssueWorklogProperty
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          issueId={issueId}
+          disabled={disabled}
+        />
+
+        {issue.type_id && (
+          <IssueAdditionalPropertyValuesUpdate
+            issueId={issueId}
+            issueTypeId={issue.type_id}
+            projectId={projectId}
+            workspaceSlug={workspaceSlug}
+            isDisabled={disabled}
+          />
+        )}
       </div>
     </div>
   );

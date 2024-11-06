@@ -5,6 +5,8 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 // types
 import { TOnboardingSteps, TUserProfile } from "@plane/types";
+// ui
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { LogoSpinner } from "@/components/common";
 import { InviteMembers, CreateOrJoinWorkspaces, ProfileSetup } from "@/components/onboarding";
@@ -15,11 +17,10 @@ import { USER_WORKSPACES_LIST } from "@/constants/fetch-keys";
 import { EPageTypes } from "@/helpers/authentication.helper";
 // hooks
 import { useUser, useWorkspace, useUserProfile, useEventTracker } from "@/hooks/store";
-import { useAppRouter } from "@/hooks/use-app-router";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers";
+import { WorkspaceService } from "@/plane-web/services";
 // services
-import { WorkspaceService } from "@/services/workspace.service";
 
 enum EOnboardingSteps {
   PROFILE_SETUP = "PROFILE_SETUP",
@@ -33,23 +34,24 @@ const OnboardingPage = observer(() => {
   // states
   const [step, setStep] = useState<EOnboardingSteps | null>(null);
   const [totalSteps, setTotalSteps] = useState<number | null>(null);
-  // router
-  const router = useAppRouter();
   // store hooks
   const { captureEvent } = useEventTracker();
   const { isLoading: userLoader, data: user, updateCurrentUser } = useUser();
-  const { data: profile, updateUserOnBoard, updateUserProfile } = useUserProfile();
+  const { data: profile, updateUserProfile, finishUserOnboarding } = useUserProfile();
   const { workspaces, fetchWorkspaces } = useWorkspace();
 
   // computed values
   const workspacesList = Object.values(workspaces ?? {});
   // fetching workspaces list
-  const { isLoading: workspaceListLoader } = useSWR(USER_WORKSPACES_LIST, () => fetchWorkspaces(), {
-    shouldRetryOnError: false,
+  const { isLoading: workspaceListLoader } = useSWR(USER_WORKSPACES_LIST, () => {
+    user?.id && fetchWorkspaces();
   });
   // fetching user workspace invitations
-  const { data: invitations } = useSWR("USER_WORKSPACE_INVITATIONS_LIST", () =>
-    workspaceService.userWorkspaceInvitations()
+  const { isLoading: invitationsLoader, data: invitations } = useSWR(
+    `USER_WORKSPACE_INVITATIONS_LIST_${user?.id}`,
+    () => {
+      if (user?.id) return workspaceService.userWorkspaceInvitations();
+    }
   );
   // handle step change
   const stepChange = async (steps: Partial<TOnboardingSteps>) => {
@@ -67,22 +69,9 @@ const OnboardingPage = observer(() => {
 
   // complete onboarding
   const finishOnboarding = async () => {
-    if (!user || !workspaces) return;
+    if (!user) return;
 
-    const firstWorkspace = Object.values(workspaces ?? {})?.[0];
-
-    await Promise.all([
-      updateUserProfile({
-        onboarding_step: {
-          profile_complete: true,
-          workspace_join: true,
-          workspace_create: true,
-          workspace_invite: true,
-        },
-        last_workspace_id: firstWorkspace?.id,
-      }),
-      updateUserOnBoard(),
-    ])
+    await finishUserOnboarding()
       .then(() => {
         captureEvent(USER_ONBOARDING_COMPLETED, {
           // user_role: user.role,
@@ -92,10 +81,12 @@ const OnboardingPage = observer(() => {
         });
       })
       .catch(() => {
-        console.log("Failed to update onboarding status");
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Failed",
+          message: "Failed to finish onboarding, Please try again later.",
+        });
       });
-
-    router.replace(`/${firstWorkspace?.slug}`);
   };
 
   useEffect(() => {
@@ -115,6 +106,16 @@ const OnboardingPage = observer(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userLoader, workspaceListLoader]);
 
+  // If the user completes the profile setup and has workspaces (through invitations), then finish the onboarding.
+  useEffect(() => {
+    if (userLoader === false && profile && workspaceListLoader === false) {
+      const onboardingStep = profile.onboarding_step;
+      if (onboardingStep.profile_complete && !onboardingStep.workspace_create && workspacesList.length > 0)
+        finishOnboarding();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userLoader, profile, workspaceListLoader]);
+
   useEffect(() => {
     const handleStepChange = async () => {
       if (!user) return;
@@ -123,10 +124,10 @@ const OnboardingPage = observer(() => {
 
       if (!onboardingStep.profile_complete) setStep(EOnboardingSteps.PROFILE_SETUP);
 
-      // For Invited Users, they will skip all other steps.
-      if (totalSteps && totalSteps <= 2) return;
-
-      if (onboardingStep.profile_complete && !(onboardingStep.workspace_join || onboardingStep.workspace_create)) {
+      if (
+        onboardingStep.profile_complete &&
+        !(onboardingStep.workspace_join || onboardingStep.workspace_create || workspacesList?.length > 0)
+      ) {
         setStep(EOnboardingSteps.WORKSPACE_CREATE_OR_JOIN);
       }
 
@@ -144,7 +145,7 @@ const OnboardingPage = observer(() => {
 
   return (
     <AuthenticationWrapper pageType={EPageTypes.ONBOARDING}>
-      {user && totalSteps && step !== null && invitations ? (
+      {user && totalSteps && step !== null && !invitationsLoader ? (
         <div className={`flex h-full w-full flex-col`}>
           {step === EOnboardingSteps.PROFILE_SETUP ? (
             <ProfileSetup
@@ -155,7 +156,7 @@ const OnboardingPage = observer(() => {
             />
           ) : step === EOnboardingSteps.WORKSPACE_CREATE_OR_JOIN ? (
             <CreateOrJoinWorkspaces
-              invitations={invitations}
+              invitations={invitations ?? []}
               totalSteps={totalSteps}
               stepChange={stepChange}
               finishOnboarding={finishOnboarding}

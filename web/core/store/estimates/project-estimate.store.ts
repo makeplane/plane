@@ -5,11 +5,12 @@ import update from "lodash/update";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { IEstimate as IEstimateType, IEstimateFormData } from "@plane/types";
-// services
-import estimateService from "@/services/project/estimate.service";
+import { IEstimate as IEstimateType, IEstimateFormData, TEstimateSystemKeys } from "@plane/types";
+// plane web services
+import estimateService from "@/plane-web/services/project/estimate.service";
+// plane web store
+import { IEstimate, Estimate } from "@/plane-web/store/estimates/estimate";
 // store
-import { IEstimate, Estimate } from "@/store/estimates/estimate";
 import { CoreRootStore } from "../root.store";
 
 type TEstimateLoader = "init-loader" | "mutation-loader" | undefined;
@@ -25,9 +26,11 @@ export interface IProjectEstimateStore {
   error: TErrorCodes | undefined;
   // computed
   currentActiveEstimateId: string | undefined;
+  currentActiveEstimate: IEstimate | undefined;
   archivedEstimateIds: string[] | undefined;
   areEstimateEnabledByProjectId: (projectId: string) => boolean;
   estimateIdsByProjectId: (projectId: string) => string[] | undefined;
+  currentActiveEstimateIdByProjectId: (projectId: string) => string | undefined;
   estimateById: (estimateId: string) => IEstimate | undefined;
   // actions
   getWorkspaceEstimates: (workspaceSlug: string, loader?: TEstimateLoader) => Promise<IEstimateType[] | undefined>;
@@ -59,6 +62,7 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
       error: observable,
       // computed
       currentActiveEstimateId: computed,
+      currentActiveEstimate: computed,
       archivedEstimateIds: computed,
       // actions
       getWorkspaceEstimates: action,
@@ -81,6 +85,20 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
       (p) => p.project === projectId && p.last_used
     );
     return currentActiveEstimateId?.id ?? undefined;
+  }
+
+  // computed
+  /**
+   * @description get current active estimate for a project
+   * @returns { string | undefined }
+   */
+  get currentActiveEstimate(): IEstimate | undefined {
+    const { projectId } = this.store.router;
+    if (!projectId) return undefined;
+    const currentActiveEstimate = Object.values(this.estimates || {}).find(
+      (p) => p.project === projectId && p.last_used
+    );
+    return currentActiveEstimate ?? undefined;
   }
 
   /**
@@ -123,6 +141,18 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
   });
 
   /**
+   * @description get current active estimate id for a project
+   * @returns { string | undefined }
+   */
+  currentActiveEstimateIdByProjectId = computedFn((projectId: string): string | undefined => {
+    if (!projectId) return undefined;
+    const currentActiveEstimateId = Object.values(this.estimates || {}).find(
+      (p) => p.project === projectId && p.last_used
+    );
+    return currentActiveEstimateId?.id ?? undefined;
+  });
+
+  /**
    * @description get estimate by id
    * @returns { IEstimate | undefined }
    */
@@ -149,7 +179,12 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
       if (estimates && estimates.length > 0) {
         runInAction(() => {
           estimates.forEach((estimate) => {
-            if (estimate.id) set(this.estimates, [estimate.id], new Estimate(this.store, estimate));
+            if (estimate.id)
+              set(
+                this.estimates,
+                [estimate.id],
+                new Estimate(this.store, { ...estimate, type: estimate.type?.toLowerCase() as TEstimateSystemKeys })
+              );
           });
         });
       }
@@ -184,7 +219,12 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
       if (estimates && estimates.length > 0) {
         runInAction(() => {
           estimates.forEach((estimate) => {
-            if (estimate.id) set(this.estimates, [estimate.id], new Estimate(this.store, estimate));
+            if (estimate.id)
+              set(
+                this.estimates,
+                [estimate.id],
+                new Estimate(this.store, { ...estimate, type: estimate.type?.toLowerCase() as TEstimateSystemKeys })
+              );
           });
         });
       }
@@ -221,7 +261,11 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
           if (estimate.id)
             update(this.estimates, [estimate.id], (estimateStore) => {
               if (estimateStore) estimateStore.updateEstimate(estimate);
-              else return new Estimate(this.store, estimate);
+              else
+                return new Estimate(this.store, {
+                  ...estimate,
+                  type: estimate.type?.toLowerCase() as TEstimateSystemKeys,
+                });
             });
         });
       }
@@ -258,7 +302,12 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
         //   estimate: estimate.id,
         // });
         runInAction(() => {
-          if (estimate.id) set(this.estimates, [estimate.id], new Estimate(this.store, estimate));
+          if (estimate.id)
+            set(
+              this.estimates,
+              [estimate.id],
+              new Estimate(this.store, { ...estimate, type: estimate.type?.toLowerCase() as TEstimateSystemKeys })
+            );
         });
       }
 

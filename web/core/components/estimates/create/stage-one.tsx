@@ -1,10 +1,11 @@
 "use client";
 
 import { FC } from "react";
-import { Crown, Info } from "lucide-react";
+import { Info } from "lucide-react";
 import { TEstimateSystemKeys } from "@plane/types";
 import { Tooltip } from "@plane/ui";
 // components
+import { ProIcon } from "@/components/common";
 import { RadioInput } from "@/components/estimates";
 // plane web constants
 import { ESTIMATE_SYSTEMS } from "@/plane-web/constants/estimates";
@@ -39,7 +40,7 @@ export const EstimateCreateStageOne: FC<TEstimateCreateStageOne> = (props) => {
                 <div className="relative flex items-center gap-2 cursor-no-drop text-custom-text-300">
                   {ESTIMATE_SYSTEMS[currentSystem]?.name}
                   <Tooltip tooltipContent={"upgrade"}>
-                    <Crown size={12} className="text-amber-400" />
+                    <ProIcon className="w-3 h-3" />
                   </Tooltip>
                 </div>
               ) : (

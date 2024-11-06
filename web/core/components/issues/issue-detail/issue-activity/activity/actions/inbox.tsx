@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { Inbox } from "lucide-react";
+import { Intake } from "@plane/ui";
 import { useIssueDetail } from "@/hooks/store";
 // components
 import { IssueActivityBlockComponent } from "./";
@@ -21,21 +21,25 @@ export const IssueInboxActivity: FC<TIssueInboxActivity> = observer((props) => {
   const getInboxActivityMessage = () => {
     switch (activity?.verb) {
       case "-1":
-        return "declined this issue from inbox.";
+        return "declined this issue from intake.";
       case "0":
         return "snoozed this issue.";
       case "1":
-        return "accepted this issue from inbox.";
+        return "accepted this issue from intake.";
       case "2":
-        return "declined this issue from inbox by marking a duplicate issue.";
+        return "declined this issue from intake by marking a duplicate issue.";
       default:
-        return "updated inbox issue status.";
+        return "updated intake issue status.";
     }
   };
 
   if (!activity) return <></>;
   return (
-    <IssueActivityBlockComponent icon={<Inbox className="h-4 w-4 flex-shrink-0" />} activityId={activityId} ends={ends}>
+    <IssueActivityBlockComponent
+      icon={<Intake className="h-4 w-4 flex-shrink-0 text-custom-text-200" />}
+      activityId={activityId}
+      ends={ends}
+    >
       <>{getInboxActivityMessage()}</>
     </IssueActivityBlockComponent>
   );

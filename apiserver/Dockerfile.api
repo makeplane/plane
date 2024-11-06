@@ -1,29 +1,30 @@
-FROM python:3.11.1-alpine3.17 AS backend
+FROM python:3.12.5-alpine AS backend
 
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1 
+ENV INSTANCE_CHANGELOG_URL https://api.plane.so/api/public/anchor/8e1c2e4c7bc5493eb7731be3862f6960/pages/
 
 WORKDIR /code
 
-RUN apk --no-cache add \
-    "libpq~=15" \
-    "libxslt~=1.1" \
-    "nodejs-current~=19" \
-    "xmlsec~=1.2"
+RUN apk add --no-cache \
+    "libpq" \
+    "libxslt" \
+    "nodejs-current" \
+    "xmlsec"
 
 COPY requirements.txt ./
 COPY requirements ./requirements
 RUN apk add --no-cache libffi-dev
 RUN apk add --no-cache --virtual .build-deps \
     "bash~=5.2" \
-    "g++~=12.2" \
-    "gcc~=12.2" \
-    "cargo~=1.64" \
-    "git~=2" \
-    "make~=4.3" \
-    "postgresql13-dev~=13" \
+    "g++" \
+    "gcc" \
+    "cargo" \
+    "git" \
+    "make" \
+    "postgresql-dev" \
     "libc-dev" \
     "linux-headers" \
     && \

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { mutate } from "swr";
 // types
 import type { CycleDateCheckData, ICycle, TCycleTabOptions } from "@plane/types";
 // ui
@@ -12,6 +13,7 @@ import { CYCLE_CREATED, CYCLE_UPDATED } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker, useCycle, useProject } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
 import { CycleService } from "@/services/cycle.service";
 
@@ -34,6 +36,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
   const { captureCycleEvent } = useEventTracker();
   const { workspaceProjectIds } = useProject();
   const { createCycle, updateCycleDetails } = useCycle();
+  const { isMobile } = usePlatformOS();
 
   const { setValue: setCycleTab } = useLocalStorage<TCycleTabOptions>("cycle_tab", "active");
 
@@ -43,6 +46,16 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
     const selectedProjectId = payload.project_id ?? projectId.toString();
     await createCycle(workspaceSlug, selectedProjectId, payload)
       .then((res) => {
+        // mutate when the current cycle creation is active
+        if (payload.start_date && payload.end_date) {
+          const currentDate = new Date();
+          const cycleStartDate = new Date(payload.start_date);
+          const cycleEndDate = new Date(payload.end_date);
+          if (currentDate >= cycleStartDate && currentDate <= cycleEndDate) {
+            mutate(`PROJECT_ACTIVE_CYCLE_${selectedProjectId}`);
+          }
+        }
+
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
@@ -175,6 +188,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
         projectId={activeProject ?? ""}
         setActiveProject={setActiveProject}
         data={data}
+        isMobile={isMobile}
       />
     </ModalCore>
   );

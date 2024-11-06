@@ -1,12 +1,14 @@
 "use client";
 
-import React, { FC, useCallback, useRef, useState } from "react";
+import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
 import { ListFilter, Search, X } from "lucide-react";
-// helpers
-import { cn } from "@plane/editor-core";
+// editor
+import { cn } from "@plane/editor";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // types
 import { TModuleFilters } from "@plane/types";
 // ui
@@ -20,19 +22,15 @@ import { MODULE_VIEW_LAYOUTS } from "@/constants/module";
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useMember, useModuleFilter } from "@/hooks/store";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 export const ModuleViewHeader: FC = observer(() => {
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
-
   // router
   const { projectId } = useParams();
-
   // hooks
   const { isMobile } = usePlatformOS();
-
   // store hooks
   const {
     workspace: { workspaceMemberIds },
@@ -84,6 +82,10 @@ export const ModuleViewHeader: FC = observer(() => {
   useOutsideClickDetector(inputRef, () => {
     if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
   });
+
+  useEffect(() => {
+    if (searchQuery.trim() !== "") setIsSearchOpen(true);
+  }, [searchQuery]);
 
   const isFiltersApplied = calculateTotalFilters(filters ?? {}) !== 0 || displayFilters?.favorites;
 

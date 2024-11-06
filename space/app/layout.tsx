@@ -9,11 +9,11 @@ import "@/styles/globals.css";
 import { ToastProvider } from "@/lib/toast-provider";
 
 export const metadata: Metadata = {
-  title: "Plane Deploy | Make your Plane boards public with one-click",
-  description: "Plane Deploy is a customer feedback management tool built on top of plane.so",
+  title: "Plane Publish | Make your Plane boards public with one-click",
+  description: "Plane Publish is a customer feedback management tool built on top of plane.so",
   openGraph: {
-    title: "Plane Deploy | Make your Plane boards public with one-click",
-    description: "Plane Deploy is a customer feedback management tool built on top of plane.so",
+    title: "Plane Publish | Make your Plane boards public with one-click",
+    description: "Plane Publish is a customer feedback management tool built on top of plane.so",
     url: "https://sites.plane.so/",
   },
   keywords:

@@ -33,15 +33,17 @@ const ProjectViewIssuesPage = observer(() => {
   );
 
   if (error) {
-    <EmptyState
-      image={emptyView}
-      title="View does not exist"
-      description="The view you are looking for does not exist or has been deleted."
-      primaryButton={{
-        text: "View other views",
-        onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/views`),
-      }}
-    />;
+    return (
+      <EmptyState
+        image={emptyView}
+        title="View does not exist"
+        description="The view you are looking for does not exist or you don't have permission to view it."
+        primaryButton={{
+          text: "View other views",
+          onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/views`),
+        }}
+      />
+    );
   }
 
   return (

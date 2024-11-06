@@ -16,7 +16,8 @@ type DNDStoreType =
   | EIssuesStoreType.PROJECT_VIEW
   | EIssuesStoreType.DRAFT
   | EIssuesStoreType.PROFILE
-  | EIssuesStoreType.ARCHIVED;
+  | EIssuesStoreType.ARCHIVED
+  | EIssuesStoreType.WORKSPACE_DRAFT;
 
 export const useGroupIssuesDragNDrop = (
   storeType: DNDStoreType,
@@ -65,7 +66,7 @@ export const useGroupIssuesDragNDrop = (
 
     if (isCycleChanged && workspaceSlug) {
       if (data[cycleKey]) {
-        addCycleToIssue(workspaceSlug.toString(), projectId, data[cycleKey], issueId).catch(() =>
+        addCycleToIssue(workspaceSlug.toString(), projectId, data[cycleKey]?.toString() ?? "", issueId).catch(() =>
           setToast(errorToastProps)
         );
       } else {

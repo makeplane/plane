@@ -3,14 +3,7 @@ import json
 
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import (
-    F,
-    Func,
-    OuterRef,
-    Q,
-    Prefetch,
-    Exists,
-)
+from django.db.models import F, Func, OuterRef, Q, Prefetch, Exists, Subquery
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
@@ -27,13 +20,14 @@ from plane.app.serializers import (
     IssueSerializer,
     IssueDetailSerializer,
 )
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
-    IssueAttachment,
+    FileAsset,
     IssueLink,
     IssueSubscriber,
     IssueReaction,
+    CycleIssue
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -46,15 +40,14 @@ from plane.utils.paginator import (
     GroupedOffsetPaginator,
     SubGroupedOffsetPaginator,
 )
+from plane.app.permissions import allow_permission, ROLE
+from plane.utils.error_codes import ERROR_CODES
 
 # Module imports
 from .. import BaseViewSet, BaseAPIView
 
 
 class IssueArchiveViewSet(BaseViewSet):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
     serializer_class = IssueFlatSerializer
     model = Issue
 
@@ -66,12 +59,19 @@ class IssueArchiveViewSet(BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
+            .filter(deleted_at__isnull=True)
             .filter(archived_at__isnull=False)
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(workspace__slug=self.kwargs.get("slug"))
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
-            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(
+                        issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("cycle_id")[:1]
+                )
+            )
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -79,8 +79,9 @@ class IssueArchiveViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -97,6 +98,12 @@ class IssueArchiveViewSet(BaseViewSet):
         )
 
     @method_decorator(gzip_page)
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+        ]
+    )
     def list(self, request, slug, project_id):
         filters = issue_filters(request.query_params, "GET")
         show_sub_issues = request.GET.get("show_sub_issues", "true")
@@ -212,6 +219,12 @@ class IssueArchiveViewSet(BaseViewSet):
                 ),
             )
 
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+        ]
+    )
     def retrieve(self, request, slug, project_id, pk=None):
         issue = (
             self.get_queryset()
@@ -222,12 +235,6 @@ class IssueArchiveViewSet(BaseViewSet):
                     queryset=IssueReaction.objects.select_related(
                         "issue", "actor"
                     ),
-                )
-            )
-            .prefetch_related(
-                Prefetch(
-                    "issue_attachment",
-                    queryset=IssueAttachment.objects.select_related("issue"),
                 )
             )
             .prefetch_related(
@@ -255,6 +262,7 @@ class IssueArchiveViewSet(BaseViewSet):
         serializer = IssueDetailSerializer(issue, expand=self.expand)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def archive(self, request, slug, project_id, pk=None):
         issue = Issue.issue_objects.get(
             workspace__slug=slug,
@@ -293,6 +301,7 @@ class IssueArchiveViewSet(BaseViewSet):
             {"archived_at": str(issue.archived_at)}, status=status.HTTP_200_OK
         )
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def unarchive(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(
             workspace__slug=slug,
@@ -324,6 +333,7 @@ class BulkArchiveIssuesEndpoint(BaseAPIView):
         ProjectEntityPermission,
     ]
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id):
         issue_ids = request.data.get("issue_ids", [])
 
@@ -341,7 +351,9 @@ class BulkArchiveIssuesEndpoint(BaseAPIView):
             if issue.state.group not in ["completed", "cancelled"]:
                 return Response(
                     {
-                        "error_code": 4091,
+                        "error_code": ERROR_CODES[
+                            "INVALID_ARCHIVE_STATE_GROUP"
+                        ],
                         "error_message": "INVALID_ARCHIVE_STATE_GROUP",
                     },
                     status=status.HTTP_400_BAD_REQUEST,

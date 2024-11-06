@@ -8,6 +8,7 @@ import { IFormattedInstanceConfiguration, TInstanceGitlabAuthenticationConfigura
 import { Button, TOAST_TYPE, getButtonStyling, setToast } from "@plane/ui";
 // components
 import {
+  CodeBlock,
   ConfirmDiscardModal,
   ControllerInput,
   CopyField,
@@ -54,7 +55,7 @@ export const InstanceGitlabConfigForm: FC<Props> = (props) => {
       label: "Host",
       description: (
         <>
-          This is the <b>GitLab host</b> to use for login, <b>including scheme</b>.
+          This is either https://gitlab.com or the <CodeBlock>domain.tld</CodeBlock> where you host GitLab.
         </>
       ),
       placeholder: "https://gitlab.com",
@@ -116,7 +117,8 @@ export const InstanceGitlabConfigForm: FC<Props> = (props) => {
       url: `${originURL}/auth/gitlab/callback/`,
       description: (
         <>
-          We will auto-generate this. Paste this into the <b>Redirect URI</b> field of your{" "}
+          We will auto-generate this. Paste this into the{" "}
+          <CodeBlock darkerShade>Redirect URI</CodeBlock> field of your{" "}
           <a
             tabIndex={-1}
             href="https://docs.gitlab.com/ee/integration/oauth_provider.html"
@@ -139,8 +141,8 @@ export const InstanceGitlabConfigForm: FC<Props> = (props) => {
       .then((response = []) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success",
-          message: "GitLab Configuration Settings updated successfully",
+          title: "Done!",
+          message: "Your GitLab authentication is configured. You should test it now.",
         });
         reset({
           GITLAB_HOST: response.find((item) => item.key === "GITLAB_HOST")?.value,
@@ -167,8 +169,8 @@ export const InstanceGitlabConfigForm: FC<Props> = (props) => {
       />
       <div className="flex flex-col gap-8">
         <div className="grid grid-cols-2 gap-x-12 gap-y-8 w-full">
-          <div className="flex flex-col gap-y-4 col-span-2 md:col-span-1">
-            <div className="pt-2 text-xl font-medium">Configuration</div>
+          <div className="flex flex-col gap-y-4 col-span-2 md:col-span-1 pt-1">
+            <div className="pt-2.5 text-xl font-medium">GitLab-provided details for Plane</div>
             {GITLAB_FORM_FIELDS.map((field) => (
               <ControllerInput
                 key={field.key}
@@ -198,8 +200,8 @@ export const InstanceGitlabConfigForm: FC<Props> = (props) => {
             </div>
           </div>
           <div className="col-span-2 md:col-span-1">
-            <div className="flex flex-col gap-y-4 px-6 py-4 my-2 bg-custom-background-80/60 rounded-lg">
-              <div className="pt-2 text-xl font-medium">Service provider details</div>
+            <div className="flex flex-col gap-y-4 px-6 pt-1.5 pb-4 bg-custom-background-80/60 rounded-lg">
+              <div className="pt-2 text-xl font-medium">Plane-provided details for GitLab</div>
               {GITLAB_SERVICE_FIELD.map((field) => (
                 <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
               ))}

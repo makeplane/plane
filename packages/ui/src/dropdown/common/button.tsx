@@ -31,7 +31,7 @@ export const DropdownButton: React.FC<IMultiSelectDropdownButton | ISingleSelect
         )}
         onClick={handleOnClick}
       >
-        {buttonContent ? <>{buttonContent(isOpen)}</> : <span className={cn("", buttonClassName)}>{value}</span>}
+        {buttonContent ? <>{buttonContent(isOpen, value)}</> : <span className={cn("", buttonClassName)}>{value}</span>}
       </button>
     </Combobox.Button>
   );

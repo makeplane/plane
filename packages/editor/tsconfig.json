@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "lib": ["ES2015", "DOM"],
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "target": "ES6",
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/core/*"],
+      "@/styles/*": ["src/styles/*"],
+      "@/plane-editor/*": ["src/ce/*"]
+    },
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["src/**/*", "index.d.ts"],
+  "exclude": ["dist", "build", "node_modules"]
+}

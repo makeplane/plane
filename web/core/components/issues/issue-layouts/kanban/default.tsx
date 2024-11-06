@@ -13,13 +13,17 @@ import {
   TIssueOrderByOptions,
 } from "@plane/types";
 // constants
+import { ContentWrapper } from "@plane/ui";
+// components
+import RenderIfVisible from "@/components/core/render-if-visible-HOC";
+import { KanbanColumnLoader } from "@/components/ui";
 // hooks
 import { useCycle, useKanbanView, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // types
 // parent components
 import { TRenderQuickActions } from "../list/list-view-types";
-import { getGroupByColumns, isWorkspaceLevel, GroupDropLocation } from "../utils";
+import { getGroupByColumns, isWorkspaceLevel, GroupDropLocation, getApproximateCardHeight } from "../utils";
 // components
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { KanbanGroup } from "./kanban-group";
@@ -39,10 +43,11 @@ export interface IKanBan {
   isDropDisabled?: boolean;
   dropErrorMessage?: string | undefined;
   sub_group_id?: string;
+  sub_group_index?: number;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
-  kanbanFilters: TIssueKanbanFilters;
-  handleKanbanFilters: any;
+  collapsedGroups: TIssueKanbanFilters;
+  handleCollapsedGroups: (toggle: "group_by" | "sub_group_by", value: string) => void;
   loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
   enableQuickIssueCreate?: boolean;
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
@@ -52,6 +57,7 @@ export interface IKanBan {
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
   handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   showEmptyGroup?: boolean;
+  subGroupIndex?: number;
 }
 
 export const KanBan: React.FC<IKanBan> = observer((props) => {
@@ -65,8 +71,8 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     sub_group_id = "null",
     updateIssue,
     quickActions,
-    kanbanFilters,
-    handleKanbanFilters,
+    collapsedGroups,
+    handleCollapsedGroups,
     enableQuickIssueCreate,
     quickAddCallback,
     loadMoreIssues,
@@ -79,6 +85,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     orderBy,
     isDropDisabled,
     dropErrorMessage,
+    subGroupIndex = 0,
   } = props;
 
   const storeType = useIssueStoreType();
@@ -126,21 +133,30 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
         if ((getGroupIssueCount(_list.id, undefined, false) ?? 0) > 0) groupVisibility.showGroup = true;
         else groupVisibility.showGroup = false;
       }
-      if (kanbanFilters?.group_by.includes(_list.id)) groupVisibility.showIssues = false;
+      if (collapsedGroups?.group_by.includes(_list.id)) groupVisibility.showIssues = false;
       return groupVisibility;
     }
   };
 
   const isGroupByCreatedBy = group_by === "created_by";
+  const approximateCardHeight = getApproximateCardHeight(displayProperties);
+  const isSubGroup = !!sub_group_id && sub_group_id !== "null";
 
   return (
-    <div className={`relative w-full flex gap-2 px-2 ${sub_group_by ? "h-full" : "h-full"}`}>
+    <ContentWrapper className={`flex-row relative gap-4 py-4`}>
       {list &&
         list.length > 0 &&
-        list.map((subList: IGroupByColumn) => {
+        list.map((subList: IGroupByColumn, groupIndex) => {
           const groupByVisibilityToggle = visibilityGroupBy(subList);
 
           if (groupByVisibilityToggle.showGroup === false) return <></>;
+
+          const issueIds = isSubGroup
+            ? ((groupedIssueIds as TSubGroupedIssues)?.[subList.id]?.[sub_group_id] ?? [])
+            : ((groupedIssueIds as TGroupedIssues)?.[subList.id] ?? []);
+          const issueLength = issueIds?.length as number;
+          const groupHeight = issueLength * approximateCardHeight;
+
           return (
             <div
               key={subList.id}
@@ -149,7 +165,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
               } `}
             >
               {sub_group_by === null && (
-                <div className="sticky top-0 z-[2] w-full flex-shrink-0 bg-custom-background-90 py-1">
+                <div className="sticky top-0 z-[2] w-full flex-shrink-0 bg-custom-background-90 py-1 mb-1">
                   <HeaderGroupByCard
                     sub_group_by={sub_group_by}
                     group_by={group_by}
@@ -160,39 +176,57 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
                     issuePayload={subList.payload}
                     disableIssueCreation={disableIssueCreation || isGroupByCreatedBy}
                     addIssuesToView={addIssuesToView}
-                    kanbanFilters={kanbanFilters}
-                    handleKanbanFilters={handleKanbanFilters}
+                    collapsedGroups={collapsedGroups}
+                    handleCollapsedGroups={handleCollapsedGroups}
                   />
                 </div>
               )}
 
               {groupByVisibilityToggle.showIssues && (
-                <KanbanGroup
-                  groupId={subList.id}
-                  issuesMap={issuesMap}
-                  groupedIssueIds={groupedIssueIds}
-                  displayProperties={displayProperties}
-                  sub_group_by={sub_group_by}
-                  group_by={group_by}
-                  orderBy={orderBy}
-                  sub_group_id={sub_group_id}
-                  isDragDisabled={isDragDisabled}
-                  isDropDisabled={!!subList.isDropDisabled || !!isDropDisabled}
-                  dropErrorMessage={subList.dropErrorMessage ?? dropErrorMessage}
-                  updateIssue={updateIssue}
-                  quickActions={quickActions}
-                  enableQuickIssueCreate={enableQuickIssueCreate}
-                  quickAddCallback={quickAddCallback}
-                  disableIssueCreation={disableIssueCreation}
-                  canEditProperties={canEditProperties}
-                  scrollableContainerRef={scrollableContainerRef}
-                  loadMoreIssues={loadMoreIssues}
-                  handleOnDrop={handleOnDrop}
-                />
+                <RenderIfVisible
+                  verticalOffset={100}
+                  horizontalOffset={100}
+                  root={scrollableContainerRef}
+                  classNames="h-full min-h-[120px]"
+                  defaultHeight={`${groupHeight}px`}
+                  placeholderChildren={
+                    <KanbanColumnLoader
+                      ignoreHeader
+                      cardHeight={approximateCardHeight}
+                      cardsInColumn={issueLength !== undefined && issueLength < 3 ? issueLength : 3}
+                      shouldAnimate={false}
+                    />
+                  }
+                  defaultValue={groupIndex < 5 && subGroupIndex < 2}
+                  useIdletime
+                >
+                  <KanbanGroup
+                    groupId={subList.id}
+                    issuesMap={issuesMap}
+                    groupedIssueIds={groupedIssueIds}
+                    displayProperties={displayProperties}
+                    sub_group_by={sub_group_by}
+                    group_by={group_by}
+                    orderBy={orderBy}
+                    sub_group_id={sub_group_id}
+                    isDragDisabled={isDragDisabled}
+                    isDropDisabled={!!subList.isDropDisabled || !!isDropDisabled}
+                    dropErrorMessage={subList.dropErrorMessage ?? dropErrorMessage}
+                    updateIssue={updateIssue}
+                    quickActions={quickActions}
+                    enableQuickIssueCreate={enableQuickIssueCreate}
+                    quickAddCallback={quickAddCallback}
+                    disableIssueCreation={disableIssueCreation}
+                    canEditProperties={canEditProperties}
+                    scrollableContainerRef={scrollableContainerRef}
+                    loadMoreIssues={loadMoreIssues}
+                    handleOnDrop={handleOnDrop}
+                  />
+                </RenderIfVisible>
               )}
             </div>
           );
         })}
-    </div>
+    </ContentWrapper>
   );
 });

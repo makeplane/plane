@@ -1,6 +1,6 @@
 "use client";
-
-import { useEffect } from "react";
+import { useState } from "react";
+import sortBy from "lodash/sortBy";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
@@ -8,6 +8,8 @@ import useSWR from "swr";
 import { TRecentCollaboratorsWidgetResponse } from "@plane/types";
 // ui
 import { Avatar } from "@plane/ui";
+// helpers
+import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useDashboard, useMember, useUser } from "@/hooks/store";
 // components
@@ -34,7 +36,7 @@ const CollaboratorListItem: React.FC<CollaboratorListItemProps> = observer((prop
     <Link href={`/${workspaceSlug}/profile/${userId}`} className="group text-center">
       <div className="flex justify-center">
         <Avatar
-          src={userDetails.avatar}
+          src={getFileURL(userDetails.avatar_url)}
           name={userDetails.display_name}
           size={69}
           className="!text-3xl !font-medium"
@@ -52,71 +54,101 @@ const CollaboratorListItem: React.FC<CollaboratorListItemProps> = observer((prop
 });
 
 type CollaboratorsListProps = {
-  cursor: string;
   dashboardId: string;
-  perPage: number;
   searchQuery?: string;
-  updateIsLoading?: (isLoading: boolean) => void;
-  updateResultsCount: (count: number) => void;
-  updateTotalPages: (count: number) => void;
   workspaceSlug: string;
 };
 
 const WIDGET_KEY = "recent_collaborators";
 
 export const CollaboratorsList: React.FC<CollaboratorsListProps> = (props) => {
-  const {
-    cursor,
-    dashboardId,
-    perPage,
-    searchQuery = "",
-    updateIsLoading,
-    updateResultsCount,
-    updateTotalPages,
-    workspaceSlug,
-  } = props;
+  const { dashboardId, searchQuery = "", workspaceSlug } = props;
+
+  // state
+  const [visibleItems, setVisibleItems] = useState(16);
+  const [isExpanded, setIsExpanded] = useState(false);
   // store hooks
   const { fetchWidgetStats } = useDashboard();
+  const { getUserDetails } = useMember();
+  const { data: currentUser } = useUser();
 
   const { data: widgetStats } = useSWR(
-    workspaceSlug && dashboardId && cursor
-      ? `WIDGET_STATS_${workspaceSlug}_${dashboardId}_${cursor}_${searchQuery}`
-      : null,
-    workspaceSlug && dashboardId && cursor
+    workspaceSlug && dashboardId ? `WIDGET_STATS_${workspaceSlug}_${dashboardId}` : null,
+    workspaceSlug && dashboardId
       ? () =>
           fetchWidgetStats(workspaceSlug, dashboardId, {
-            cursor,
-            per_page: perPage,
-            search: searchQuery,
             widget_key: WIDGET_KEY,
           })
       : null
   ) as {
-    data: TRecentCollaboratorsWidgetResponse | undefined;
+    data: TRecentCollaboratorsWidgetResponse[] | undefined;
   };
 
-  useEffect(() => {
-    updateIsLoading?.(true);
+  if (!widgetStats)
+    return (
+      <div className="mt-7 mb-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 xl:grid-cols-8 gap-2 gap-y-8">
+        <WidgetLoader widgetKey={WIDGET_KEY} />
+      </div>
+    );
 
-    if (!widgetStats) return;
+  const sortedStats = sortBy(widgetStats, [(user) => user?.user_id !== currentUser?.id]);
 
-    updateIsLoading?.(false);
-    updateTotalPages(widgetStats.total_pages);
-    updateResultsCount(widgetStats.results?.length);
-  }, [updateIsLoading, updateResultsCount, updateTotalPages, widgetStats]);
+  const filteredStats = sortedStats.filter((user) => {
+    if (!user) return false;
+    const userDetails = getUserDetails(user?.user_id);
+    if (!userDetails || userDetails.is_bot) return false;
+    const { display_name, first_name, last_name } = userDetails;
+    const searchLower = searchQuery.toLowerCase();
+    return (
+      display_name?.toLowerCase().includes(searchLower) ||
+      first_name?.toLowerCase().includes(searchLower) ||
+      last_name?.toLowerCase().includes(searchLower)
+    );
+  });
 
-  if (!widgetStats || !widgetStats?.results) return <WidgetLoader widgetKey={WIDGET_KEY} />;
+  // Update the displayedStats to always use the visibleItems limit
+  const handleLoadMore = () => {
+    setVisibleItems((prev) => {
+      const newValue = prev + 16;
+      if (newValue >= filteredStats.length) {
+        setIsExpanded(true);
+        return filteredStats.length;
+      }
+      return newValue;
+    });
+  };
+
+  const handleHide = () => {
+    setVisibleItems(16);
+    setIsExpanded(false);
+  };
+
+  const displayedStats = filteredStats.slice(0, visibleItems);
 
   return (
     <>
-      {widgetStats?.results?.map((user) => (
-        <CollaboratorListItem
-          key={user.user_id}
-          issueCount={user.active_issue_count}
-          userId={user.user_id}
-          workspaceSlug={workspaceSlug}
-        />
-      ))}
+      <div className="mt-7 mb-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 xl:grid-cols-8 gap-2 gap-y-8">
+        {displayedStats?.map((user) => (
+          <CollaboratorListItem
+            key={user?.user_id}
+            issueCount={user?.active_issue_count}
+            userId={user?.user_id}
+            workspaceSlug={workspaceSlug}
+          />
+        ))}
+      </div>
+      {filteredStats.length > visibleItems && !isExpanded && (
+        <div className="py-4 flex justify-center items-center text-sm font-medium" onClick={handleLoadMore}>
+          <div className="text-custom-primary-90 hover:text-custom-primary-100 transition-all cursor-pointer">
+            Load more
+          </div>
+        </div>
+      )}
+      {isExpanded && (
+        <div className="py-4 flex justify-center items-center text-sm font-medium" onClick={handleHide}>
+          <div className="text-custom-primary-90 hover:text-custom-primary-100 transition-all cursor-pointer">Hide</div>
+        </div>
+      )}
     </>
   );
 };

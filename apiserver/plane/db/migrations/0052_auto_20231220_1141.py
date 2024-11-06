@@ -161,7 +161,7 @@ class Migration(migrations.Migration):
             options={
                 "verbose_name": "Workspace User Property",
                 "verbose_name_plural": "Workspace User Property",
-                "db_table": "Workspace_user_properties",
+                "db_table": "workspace_user_properties",
                 "ordering": ("-created_at",),
                 "unique_together": {("workspace", "user")},
             },

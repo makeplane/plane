@@ -30,9 +30,9 @@ def order_issue_queryset(issue_queryset, order_by_param="-created_at"):
             )
         ).order_by("priority_order")
         order_by_param = (
-            "-priority_order"
+            "priority_order"
             if order_by_param.startswith("-")
-            else "priority_order"
+            else "-priority_order"
         )
     # State Ordering
     elif order_by_param in [

@@ -4,7 +4,7 @@ import { FC, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useForm } from "react-hook-form";
 import { Check, Globe2, Lock, Pencil, Trash2, X } from "lucide-react";
-import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/lite-text-editor";
+import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
 import { TIssueComment } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/ui";
@@ -13,7 +13,7 @@ import { LiteTextEditor, LiteTextReadOnlyEditor } from "@/components/editor";
 // constants
 import { EIssueCommentAccessSpecifier } from "@/constants/issue";
 // helpers
-import { isEmptyHtmlString } from "@/helpers/string.helper";
+import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks
 import { useIssueDetail, useUser, useWorkspace } from "@/hooks/store";
 // components
@@ -77,14 +77,13 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
   };
 
   useEffect(() => {
-    isEditing && setFocus("comment_html");
+    if (isEditing) {
+      setFocus("comment_html");
+    }
   }, [isEditing, setFocus]);
 
-  const isEmpty =
-    watch("comment_html") === "" ||
-    watch("comment_html")?.trim() === "" ||
-    watch("comment_html") === "<p></p>" ||
-    isEmptyHtmlString(watch("comment_html") ?? "");
+  const commentHTML = watch("comment_html");
+  const isEmpty = isCommentEmpty(commentHTML);
 
   if (!comment || !currentUser) return <></>;
   return (
@@ -140,7 +139,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
         <form className={`flex-col gap-2 ${isEditing ? "flex" : "hidden"}`}>
           <div
             onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey && !isEmpty) handleSubmit(onEnter)(e);
+              if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey && !isEmpty) handleSubmit(onEnter)(e);
             }}
           >
             <LiteTextEditor
@@ -148,10 +147,20 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
               projectId={projectId}
               workspaceSlug={workspaceSlug}
               ref={editorRef}
-              initialValue={watch("comment_html") ?? ""}
+              id={comment.id}
+              initialValue={commentHTML ?? ""}
               value={null}
               onChange={(comment_json, comment_html) => setValue("comment_html", comment_html)}
+              onEnterKeyPress={(e) => {
+                if (!isEmpty && !isSubmitting) {
+                  handleSubmit(onEnter)(e);
+                }
+              }}
               showSubmitButton={false}
+              uploadFile={async (file) => {
+                const { asset_id } = await activityOperations.uploadCommentAsset(file, comment.id);
+                return asset_id;
+              }}
             />
           </div>
           <div className="flex gap-1 self-end">
@@ -186,7 +195,13 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
               )}
             </div>
           )}
-          <LiteTextReadOnlyEditor ref={showEditorRef} initialValue={comment.comment_html ?? ""} />
+          <LiteTextReadOnlyEditor
+            ref={showEditorRef}
+            id={comment.id}
+            initialValue={comment.comment_html ?? ""}
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+          />
 
           <IssueCommentReaction
             workspaceSlug={workspaceSlug}

@@ -23,16 +23,17 @@ import {
 // components
 import { Logo } from "@/components/common";
 import { ArchiveRestoreProjectModal, DeleteProjectModal, JoinProjectModal } from "@/components/project";
-// constants
-import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { getFileURL } from "@/helpers/file.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane-web constants
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   project: IProject;
@@ -51,14 +52,18 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = useParams();
   // store hooks
   const { addProjectToFavorites, removeProjectFromFavorites } = useProject();
+  const { allowPermissions } = useUserPermissions();
   // hooks
   const { isMobile } = usePlatformOS();
-  project.member_role;
   // derived values
   const projectMembersIds = project.members?.map((member) => member.member_id);
+  const shouldRenderFavorite = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
   // auth
-  const isOwner = project.member_role === EUserProjectRoles.ADMIN;
-  const isMember = project.member_role === EUserProjectRoles.MEMBER;
+  const isOwner = project.member_role === EUserPermissions.ADMIN;
+  const isMember = project.member_role === EUserPermissions.MEMBER;
   // archive
   const isArchived = !!project.archived_at;
 
@@ -100,7 +105,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
   const handleCopyText = () =>
     copyUrlToClipboard(projectLink).then(() =>
       setToast({
-        type: TOAST_TYPE.SUCCESS,
+        type: TOAST_TYPE.INFO,
         title: "Link Copied!",
         message: "Project link copied to clipboard.",
       })
@@ -110,7 +115,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
   const MENU_ITEMS: TContextMenuItem[] = [
     {
       key: "settings",
-      action: () => router.push(`/${workspaceSlug}/projects/${project.id}/settings`),
+      action: () => router.push(`/${workspaceSlug}/projects/${project.id}/settings`, {}, { showProgressBar: false }),
       title: "Settings",
       icon: Settings,
       shouldRender: !isArchived && (isOwner || isMember),
@@ -189,6 +194,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
             if (!isArchived) setJoinProjectModal(true);
           }
         }}
+        data-prevent-nprogress={!project.is_member || isArchived}
         className="flex flex-col rounded border border-custom-border-200 bg-custom-background-100"
       >
         <ContextMenu parentRef={projectCardRef} items={MENU_ITEMS} />
@@ -196,17 +202,17 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
           <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/60 to-transparent" />
 
           <img
-            src={
-              project.cover_image ??
-              "https://images.unsplash.com/photo-1672243775941-10d763d9adef?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
-            }
+            src={getFileURL(
+              project.cover_image_url ??
+                "https://images.unsplash.com/photo-1672243775941-10d763d9adef?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+            )}
             alt={project.name}
             className="absolute left-0 top-0 h-full w-full rounded-t object-cover"
           />
 
           <div className="absolute bottom-4 z-[1] flex h-10 w-full items-center justify-between gap-3 px-4">
             <div className="flex flex-grow items-center gap-2.5 truncate">
-              <div className="h-9 w-9 flex-shrink-0 grid place-items-center rounded bg-white/90">
+              <div className="h-9 w-9 flex-shrink-0 grid place-items-center rounded bg-white/10">
                 <Logo logo={project.logo_props} size={18} />
               </div>
 
@@ -220,7 +226,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
             </div>
 
             {!isArchived && (
-              <div className="flex h-full flex-shrink-0 items-center gap-2">
+              <div data-prevent-nprogress className="flex h-full flex-shrink-0 items-center gap-2">
                 <button
                   className="flex h-6 w-6 items-center justify-center rounded bg-white/10"
                   onClick={(e) => {
@@ -231,19 +237,21 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
                 >
                   <LinkIcon className="h-3 w-3 text-white" />
                 </button>
-                <FavoriteStar
-                  buttonClassName="h-6 w-6 bg-white/10"
-                  iconClassName={cn("h-3 w-3", {
-                    "text-white": !project.is_favorite,
-                  })}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if (project.is_favorite) handleRemoveFromFavorites();
-                    else handleAddToFavorites();
-                  }}
-                  selected={project.is_favorite}
-                />
+                {shouldRenderFavorite && (
+                  <FavoriteStar
+                    buttonClassName="h-6 w-6 bg-white/10 rounded"
+                    iconClassName={cn("h-3 w-3", {
+                      "text-white": !project.is_favorite,
+                    })}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (project.is_favorite) handleRemoveFromFavorites();
+                      else handleAddToFavorites();
+                    }}
+                    selected={project.is_favorite}
+                  />
+                )}
               </div>
             )}
           </div>
@@ -276,7 +284,11 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
                         const member = project.members?.find((m) => m.member_id === memberId);
                         if (!member) return null;
                         return (
-                          <Avatar key={member.id} name={member.member__display_name} src={member.member__avatar} />
+                          <Avatar
+                            key={member.id}
+                            name={member.member__display_name}
+                            src={getFileURL(member.member__avatar_url)}
+                          />
                         );
                       })}
                     </AvatarGroup>

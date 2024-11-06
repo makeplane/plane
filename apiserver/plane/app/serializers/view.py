@@ -23,7 +23,7 @@ class IssueViewSerializer(DynamicBaseSerializer):
         ]
 
     def create(self, validated_data):
-        query_params = validated_data.get("query_data", {})
+        query_params = validated_data.get("filters", {})
         if bool(query_params):
             validated_data["query"] = issue_filters(query_params, "POST")
         else:
@@ -31,7 +31,7 @@ class IssueViewSerializer(DynamicBaseSerializer):
         return IssueView.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        query_params = validated_data.get("query_data", {})
+        query_params = validated_data.get("filters", {})
         if bool(query_params):
             validated_data["query"] = issue_filters(query_params, "POST")
         else:

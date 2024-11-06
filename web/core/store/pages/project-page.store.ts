@@ -31,8 +31,12 @@ export interface IProjectPageStore {
   updateFilters: <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => void;
   clearAllFilters: () => void;
   // actions
-  getAllPages: (pageType: TPageNavigationTabs) => Promise<TPage[] | undefined>;
-  getPageById: (pageId: string) => Promise<TPage | undefined>;
+  getAllPages: (
+    workspaceSlug: string,
+    projectId: string,
+    pageType: TPageNavigationTabs
+  ) => Promise<TPage[] | undefined>;
+  getPageById: (workspaceSlug: string, projectId: string, pageId: string) => Promise<TPage | undefined>;
   createPage: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
   removePage: (pageId: string) => Promise<void>;
 }
@@ -49,6 +53,7 @@ export class ProjectPageStore implements IProjectPageStore {
   };
   // service
   service: ProjectPageService;
+  rootStore: CoreRootStore;
 
   constructor(private store: CoreRootStore) {
     makeObservable(this, {
@@ -66,6 +71,7 @@ export class ProjectPageStore implements IProjectPageStore {
       createPage: action,
       removePage: action,
     });
+    this.rootStore = store;
     // service
     this.service = new ProjectPageService();
     // initialize display filters of the current project
@@ -148,9 +154,8 @@ export class ProjectPageStore implements IProjectPageStore {
   /**
    * @description fetch all the pages
    */
-  getAllPages = async (pageType: TPageNavigationTabs) => {
+  getAllPages = async (workspaceSlug: string, projectId: string, pageType: TPageNavigationTabs) => {
     try {
-      const { workspaceSlug, projectId } = this.store.router;
       if (!workspaceSlug || !projectId) return undefined;
 
       const currentPageIds = this.getCurrentProjectPageIds(pageType);
@@ -182,9 +187,8 @@ export class ProjectPageStore implements IProjectPageStore {
    * @description fetch the details of a page
    * @param {string} pageId
    */
-  getPageById = async (pageId: string) => {
+  getPageById = async (workspaceSlug: string, projectId: string, pageId: string) => {
     try {
-      const { workspaceSlug, projectId } = this.store.router;
       if (!workspaceSlug || !projectId || !pageId) return undefined;
 
       const currentPageId = this.pageById(pageId);
@@ -255,7 +259,10 @@ export class ProjectPageStore implements IProjectPageStore {
       if (!workspaceSlug || !projectId || !pageId) return undefined;
 
       await this.service.remove(workspaceSlug, projectId, pageId);
-      runInAction(() => unset(this.data, [pageId]));
+      runInAction(() => {
+        unset(this.data, [pageId]);
+        if (this.rootStore.favorite.entityMap[pageId]) this.rootStore.favorite.removeFavoriteFromStore(pageId);
+      });
     } catch (error) {
       runInAction(() => {
         this.loader = undefined;

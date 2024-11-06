@@ -4,11 +4,12 @@ import { extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tre
 import clone from "lodash/clone";
 import concat from "lodash/concat";
 import isEqual from "lodash/isEqual";
+import isNil from "lodash/isNil";
 import pull from "lodash/pull";
 import uniq from "lodash/uniq";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
 import { ContrastIcon } from "lucide-react";
-// types
+// plane types
 import {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -21,15 +22,18 @@ import {
   IIssueFilters,
   IProjectView,
   TGroupedIssues,
+  IWorkspaceView,
 } from "@plane/types";
-// ui
+// plane ui
 import { Avatar, CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
 // constants
 import { ISSUE_PRIORITIES, EIssuesStoreType } from "@/constants/issue";
 import { STATE_GROUPS } from "@/constants/state";
-// stores
+// helpers
+import { getFileURL } from "@/helpers/file.helper";
+// store
 import { ICycleStore } from "@/store/cycle.store";
 import { ISSUE_FILTER_DEFAULT_DATA } from "@/store/issue/helpers/base-issues.store";
 import { ILabelStore } from "@/store/label.store";
@@ -255,7 +259,7 @@ const getAssigneeColumns = (member: IMemberRootStore) => {
     return {
       id: memberId,
       name: member?.display_name || "",
-      icon: <Avatar name={member?.display_name} src={member?.avatar} size="md" />,
+      icon: <Avatar name={member?.display_name} src={getFileURL(member?.avatar_url ?? "")} size="md" />,
       payload: { assignee_ids: [memberId] },
     };
   });
@@ -278,7 +282,7 @@ const getCreatedByColumns = (member: IMemberRootStore) => {
     return {
       id: memberId,
       name: member?.display_name || "",
-      icon: <Avatar name={member?.display_name} src={member?.avatar} size="md" />,
+      icon: <Avatar name={member?.display_name} src={getFileURL(member?.avatar_url ?? "")} size="md" />,
       payload: {},
     };
   });
@@ -570,11 +574,24 @@ export const handleGroupDragDrop = async (
 export const getAreFiltersEqual = (
   appliedFilters: IIssueFilterOptions | undefined,
   issueFilters: IIssueFilters | undefined,
-  viewDetails: IProjectView | null
-) =>
-  isEqual(appliedFilters ?? {}, viewDetails?.filters ?? {}) &&
-  isEqual(issueFilters?.displayFilters ?? {}, viewDetails?.display_filters ?? {}) &&
-  isEqual(issueFilters?.displayProperties ?? {}, viewDetails?.display_properties ?? {});
+  viewDetails: IProjectView | IWorkspaceView | null
+) => {
+  if (isNil(appliedFilters) || isNil(issueFilters) || isNil(viewDetails)) return true;
+
+  return (
+    isEqual(appliedFilters, viewDetails.filters) &&
+    isEqual(issueFilters.displayFilters, viewDetails.display_filters) &&
+    isEqual(removeNillKeys(issueFilters.displayProperties), removeNillKeys(viewDetails.display_properties))
+  );
+};
+
+/**
+ * method that removes Null or undefined Keys from object
+ * @param obj
+ * @returns
+ */
+export const removeNillKeys = <T,>(obj: T) =>
+  Object.fromEntries(Object.entries(obj ?? {}).filter(([key, value]) => key && !isNil(value)));
 
 /**
  * This Method returns if the the grouped values are subGrouped
@@ -592,3 +609,66 @@ export const isSubGrouped = (groupedIssueIds: TGroupedIssues) => {
 
   return true;
 };
+
+/**
+ * This Method returns if the issue is new or not
+ * @param issue
+ * @returns
+ */
+export const isIssueNew = (issue: TIssue) => {
+  const createdDate = new Date(issue.created_at);
+  const currentDate = new Date();
+  const diff = currentDate.getTime() - createdDate.getTime();
+  return diff < 30000;
+};
+
+/**
+ * Returns approximate height of Kanban card based on display properties
+ * @param displayProperties
+ * @returns
+ */
+export function getApproximateCardHeight(displayProperties: IIssueDisplayProperties | undefined) {
+  if (!displayProperties) return 100;
+
+  // default card height
+  let cardHeight = 46;
+
+  const clonedProperties = clone(displayProperties);
+
+  // key adds the height for key
+  if (clonedProperties.key) {
+    cardHeight += 24;
+  }
+
+  // Ignore smaller dimension properties
+  const ignoredProperties: (keyof IIssueDisplayProperties)[] = [
+    "key",
+    "sub_issue_count",
+    "link",
+    "attachment_count",
+    "created_on",
+    "updated_on",
+  ];
+
+  ignoredProperties.forEach((key: keyof IIssueDisplayProperties) => {
+    delete clonedProperties[key];
+  });
+
+  let propertyCount = 0;
+
+  // count the remaining properties
+  (Object.keys(clonedProperties) as (keyof IIssueDisplayProperties)[]).forEach((key: keyof IIssueDisplayProperties) => {
+    if (clonedProperties[key]) {
+      propertyCount++;
+    }
+  });
+
+  // based on property count, approximate the height of each card
+  if (propertyCount > 3) {
+    cardHeight += 60;
+  } else if (propertyCount > 0) {
+    cardHeight += 32;
+  }
+
+  return cardHeight;
+}

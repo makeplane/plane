@@ -9,19 +9,19 @@ interface IHeaderSubGroupByCard {
   title: string;
   count: number;
   column_id: string;
-  kanbanFilters: TIssueKanbanFilters;
-  handleKanbanFilters: (toggle: "group_by" | "sub_group_by", value: string) => void;
+  collapsedGroups: TIssueKanbanFilters;
+  handleCollapsedGroups: (toggle: "group_by" | "sub_group_by", value: string) => void;
 }
 
 export const HeaderSubGroupByCard: FC<IHeaderSubGroupByCard> = observer((props) => {
-  const { icon, title, count, column_id, kanbanFilters, handleKanbanFilters } = props;
+  const { icon, title, count, column_id, collapsedGroups, handleCollapsedGroups } = props;
   return (
     <div
-      className={`relative flex w-full flex-shrink-0 flex-row items-center gap-2 rounded-sm p-1.5 cursor-pointer`}
-      onClick={() => handleKanbanFilters("sub_group_by", column_id)}
+      className={`relative flex w-full flex-shrink-0 flex-row items-center gap-1 rounded-sm py-1.5 cursor-pointer`}
+      onClick={() => handleCollapsedGroups("sub_group_by", column_id)}
     >
       <div className="flex h-[20px] w-[20px] flex-shrink-0 items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80">
-        {kanbanFilters?.sub_group_by.includes(column_id) ? (
+        {collapsedGroups?.sub_group_by.includes(column_id) ? (
           <ChevronDown width={14} strokeWidth={2} />
         ) : (
           <ChevronUp width={14} strokeWidth={2} />

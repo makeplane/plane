@@ -2,22 +2,28 @@
 
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-// types
-import { TIssue } from "@plane/types";
-// ui
-import { StateGroupIcon } from "@plane/ui";
 // components
-import { IssueAttachmentRoot, IssueUpdateStatus } from "@/components/issues";
+import {
+  IssueActivity,
+  IssueUpdateStatus,
+  IssueReaction,
+  IssueParentDetail,
+  IssueTitleInput,
+  IssueDescriptionInput,
+  IssueDetailWidgets,
+  PeekOverviewProperties,
+} from "@/components/issues";
+// helpers
+import { getTextContent } from "@/helpers/editor.helper";
 // hooks
-import { useIssueDetail, useProjectState, useUser } from "@/hooks/store";
+import { useIssueDetail, useProject, useUser } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
-// components
-import { IssueDescriptionInput } from "../description-input";
-import { SubIssuesRoot } from "../sub-issues";
-import { IssueTitleInput } from "../title-input";
-import { IssueActivity } from "./issue-activity";
-import { IssueParentDetail } from "./parent";
-import { IssueReaction } from "./reactions";
+import useSize from "@/hooks/use-window-size";
+// plane web components
+import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe";
+import { IssueTypeSwitcher } from "@/plane-web/components/issues";
+import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
+// types
 import { TIssueOperations } from "./root";
 
 type Props = {
@@ -27,20 +33,32 @@ type Props = {
   issueOperations: TIssueOperations;
   isEditable: boolean;
   isArchived: boolean;
-  swrIssueDetails: TIssue | null | undefined;
 };
 
 export const IssueMainContent: React.FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, issueOperations, isEditable, isArchived, swrIssueDetails } = props;
+  const { workspaceSlug, projectId, issueId, issueOperations, isEditable, isArchived } = props;
   // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   // hooks
+  const windowSize = useSize();
   const { data: currentUser } = useUser();
-  const { projectStates } = useProjectState();
   const {
     issue: { getIssueById },
+    peekIssue,
   } = useIssueDetail();
+  const { getProjectById } = useProject();
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
+
+  // derived values
+  const projectDetails = getProjectById(projectId);
+  const issue = issueId ? getIssueById(issueId) : undefined;
+
+  // debounced duplicate issues swr
+  const { duplicateIssues } = useDebouncedDuplicateIssues(projectDetails?.workspace.toString(), projectDetails?.id, {
+    name: issue?.name,
+    description_html: getTextContent(issue?.description_html),
+    issueId: issue?.id,
+  });
 
   useEffect(() => {
     if (isSubmitting === "submitted") {
@@ -49,14 +67,13 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
     } else if (isSubmitting === "submitting") setShowAlert(true);
   }, [isSubmitting, setShowAlert, setIsSubmitting]);
 
-  const issue = issueId ? getIssueById(issueId) : undefined;
   if (!issue || !issue.project_id) return <></>;
 
-  const currentIssueState = projectStates?.find((s) => s.id === issue.state_id);
+  const isPeekModeActive = Boolean(peekIssue);
 
   return (
     <>
-      <div className="rounded-lg space-y-4 pl-3">
+      <div className="rounded-lg space-y-4">
         {issue.parent_id && (
           <IssueParentDetail
             workspaceSlug={workspaceSlug}
@@ -67,15 +84,21 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           />
         )}
 
-        <div className="mb-2.5 flex items-center">
-          {currentIssueState && (
-            <StateGroupIcon
-              className="mr-3 h-4 w-4"
-              stateGroup={currentIssueState.group}
-              color={currentIssueState.color}
-            />
-          )}
-          <IssueUpdateStatus isSubmitting={isSubmitting} issueDetail={issue} />
+        <div className="mb-2.5 flex items-center justify-between gap-4">
+          <IssueTypeSwitcher issueId={issueId} disabled={isArchived || !isEditable} />
+          <div className="flex items-center gap-3">
+            <IssueUpdateStatus isSubmitting={isSubmitting} />
+            {duplicateIssues?.length > 0 && (
+              <DeDupeIssuePopoverRoot
+                workspaceSlug={workspaceSlug}
+                projectId={issue.project_id}
+                rootIssueId={issueId}
+                issues={duplicateIssues}
+                issueOperations={issueOperations}
+                renderDeDupeActionModals={!isPeekModeActive}
+              />
+            )}
+          </div>
         </div>
 
         <IssueTitleInput
@@ -90,9 +113,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           containerClassName="-ml-3"
         />
 
-        {/* {issue?.description_html === issueDescription && ( */}
         <IssueDescriptionInput
-          swrIssueDescription={swrIssueDetails?.description_html}
           workspaceSlug={workspaceSlug}
           projectId={issue.project_id}
           issueId={issue.id}
@@ -100,9 +121,8 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           disabled={!isEditable}
           issueOperations={issueOperations}
           setIsSubmitting={(value) => setIsSubmitting(value)}
-          containerClassName="-ml-3 !mb-6 border-none"
+          containerClassName="-ml-3 border-none"
         />
-        {/* )} */}
 
         {currentUser && (
           <IssueReaction
@@ -113,30 +133,27 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
             disabled={isArchived}
           />
         )}
-
-        {currentUser && (
-          <SubIssuesRoot
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            parentIssueId={issueId}
-            currentUser={currentUser}
-            disabled={!isEditable}
-          />
-        )}
       </div>
 
-      <div className="pl-3">
-        <IssueAttachmentRoot
+      <IssueDetailWidgets
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
+        issueId={issueId}
+        disabled={!isEditable || isArchived}
+        renderWidgetModals={!isPeekModeActive}
+      />
+
+      {windowSize[0] < 768 && (
+        <PeekOverviewProperties
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           issueId={issueId}
-          disabled={!isEditable}
+          issueOperations={issueOperations}
+          disabled={!isEditable || isArchived}
         />
-      </div>
+      )}
 
-      <div className="pl-3">
-        <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={isArchived} />
-      </div>
+      <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={isArchived} />
     </>
   );
 });

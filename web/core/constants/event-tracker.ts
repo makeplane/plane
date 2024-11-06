@@ -229,3 +229,5 @@ export const GROUP_WORKSPACE = "Workspace_metrics";
 export const E_ONBOARDING = "Onboarding";
 export const E_ONBOARDING_STEP_1 = "Onboarding step 1";
 export const E_ONBOARDING_STEP_2 = "Onboarding step 2";
+// Favorites
+export const FAVORITE_ADDED = "Favorite added";

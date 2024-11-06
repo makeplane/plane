@@ -31,15 +31,16 @@ from plane.app.serializers import (
 )
 
 from plane.app.permissions import (
-    ProjectBasePermission,
     ProjectMemberPermission,
+    allow_permission,
+    ROLE,
 )
 from plane.db.models import (
     UserFavorite,
     Cycle,
     Intake,
     DeployBoard,
-    IssueProperty,
+    IssueUserProperty,
     Issue,
     Module,
     Project,
@@ -47,19 +48,18 @@ from plane.db.models import (
     ProjectMember,
     State,
     Workspace,
+    WorkspaceMember,
 )
 from plane.utils.cache import cache_response
 from plane.bgtasks.webhook_task import model_activity
+from plane.bgtasks.recent_visited_task import recent_visited_task
+from plane.utils.exception_logger import log_exception
 
 
 class ProjectViewSet(BaseViewSet):
     serializer_class = ProjectListSerializer
     model = Project
     webhook_event = "project"
-
-    permission_classes = [
-        ProjectBasePermission,
-    ]
 
     def get_queryset(self):
         sort_order = ProjectMember.objects.filter(
@@ -72,13 +72,6 @@ class ProjectViewSet(BaseViewSet):
             super()
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(
-                Q(
-                    project_projectmember__member=self.request.user,
-                    project_projectmember__is_active=True,
-                )
-                | Q(network=2)
-            )
             .select_related(
                 "workspace",
                 "workspace__owner",
@@ -155,6 +148,10 @@ class ProjectViewSet(BaseViewSet):
             .distinct()
         )
 
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST],
+        level="WORKSPACE",
+    )
     def list(self, request, slug):
         fields = [
             field
@@ -162,6 +159,31 @@ class ProjectViewSet(BaseViewSet):
             if field
         ]
         projects = self.get_queryset().order_by("sort_order", "name")
+        if WorkspaceMember.objects.filter(
+            member=request.user,
+            workspace__slug=slug,
+            is_active=True,
+            role=5,
+        ).exists():
+            projects = projects.filter(
+                project_projectmember__member=self.request.user,
+                project_projectmember__is_active=True,
+            )
+
+        if WorkspaceMember.objects.filter(
+            member=request.user,
+            workspace__slug=slug,
+            is_active=True,
+            role=15,
+        ).exists():
+            projects = projects.filter(
+                Q(
+                    project_projectmember__member=self.request.user,
+                    project_projectmember__is_active=True,
+                )
+                | Q(network=2)
+            )
+
         if request.GET.get("per_page", False) and request.GET.get(
             "cursor", False
         ):
@@ -173,11 +195,16 @@ class ProjectViewSet(BaseViewSet):
                     projects, many=True
                 ).data,
             )
+
         projects = ProjectListSerializer(
             projects, many=True, fields=fields if fields else None
         ).data
         return Response(projects, status=status.HTTP_200_OK)
 
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST],
+        level="WORKSPACE",
+    )
     def retrieve(self, request, slug, pk):
         project = (
             self.get_queryset()
@@ -246,9 +273,18 @@ class ProjectViewSet(BaseViewSet):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
+        recent_visited_task.delay(
+            slug=slug,
+            project_id=pk,
+            entity_name="project",
+            entity_identifier=pk,
+            user_id=request.user.id,
+        )
+
         serializer = ProjectListSerializer(project)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def create(self, request, slug):
         try:
             workspace = Workspace.objects.get(slug=slug)
@@ -266,7 +302,7 @@ class ProjectViewSet(BaseViewSet):
                     role=20,
                 )
                 # Also create the issue property for the user
-                _ = IssueProperty.objects.create(
+                _ = IssueUserProperty.objects.create(
                     project_id=serializer.data["id"],
                     user=request.user,
                 )
@@ -280,7 +316,7 @@ class ProjectViewSet(BaseViewSet):
                         role=20,
                     )
                     # Also create the issue property for the user
-                    IssueProperty.objects.create(
+                    IssueUserProperty.objects.create(
                         project_id=serializer.data["id"],
                         user_id=serializer.data["project_lead"],
                     )
@@ -342,6 +378,7 @@ class ProjectViewSet(BaseViewSet):
                     .first()
                 )
 
+                # Create the model activity
                 model_activity.delay(
                     model_name="project",
                     model_id=str(project.id),
@@ -379,6 +416,18 @@ class ProjectViewSet(BaseViewSet):
 
     def partial_update(self, request, slug, pk=None):
         try:
+            if not ProjectMember.objects.filter(
+                member=request.user,
+                workspace__slug=slug,
+                project_id=pk,
+                role=20,
+                is_active=True,
+            ).exists():
+                return Response(
+                    {"error": "You don't have the required permissions."},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
             workspace = Workspace.objects.get(slug=slug)
 
             project = Project.objects.get(pk=pk)
@@ -401,11 +450,16 @@ class ProjectViewSet(BaseViewSet):
             if serializer.is_valid():
                 serializer.save()
                 if serializer.data["intake_view"]:
-                    Intake.objects.get_or_create(
-                        name=f"{project.name} Intake",
+                    intake = Intake.objects.filter(
                         project=project,
                         is_default=True,
-                    )
+                    ).first()
+                    if not intake:
+                        Intake.objects.create(
+                            name=f"{project.name} Intake",
+                            project=project,
+                            is_default=True,
+                        )
 
                     # Create the triage state in Backlog group
                     State.objects.get_or_create(
@@ -455,22 +509,62 @@ class ProjectViewSet(BaseViewSet):
                 status=status.HTTP_410_GONE,
             )
 
+    def destroy(self, request, slug, pk):
+        if (
+            WorkspaceMember.objects.filter(
+                member=request.user,
+                workspace__slug=slug,
+                is_active=True,
+                role=20,
+            ).exists()
+            or ProjectMember.objects.filter(
+                member=request.user,
+                workspace__slug=slug,
+                project_id=pk,
+                role=20,
+                is_active=True,
+            ).exists()
+        ):
+            project = Project.objects.get(pk=pk)
+            project.delete()
+
+            # Delete the project members
+            DeployBoard.objects.filter(
+                project_id=pk,
+                workspace__slug=slug,
+            ).delete()
+
+            # Delete the user favorite
+            UserFavorite.objects.filter(
+                project_id=pk,
+                workspace__slug=slug,
+            ).delete()
+
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(
+                {"error": "You don't have the required permissions."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
 
 class ProjectArchiveUnarchiveEndpoint(BaseAPIView):
 
-    permission_classes = [
-        ProjectBasePermission,
-    ]
-
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
         project.archived_at = timezone.now()
         project.save()
+        UserFavorite.objects.filter(
+            workspace__slug=slug,
+            project=project_id,
+        ).delete()
         return Response(
             {"archived_at": str(project.archived_at)},
             status=status.HTTP_200_OK,
         )
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def delete(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
         project.archived_at = None
@@ -479,10 +573,7 @@ class ProjectArchiveUnarchiveEndpoint(BaseAPIView):
 
 
 class ProjectIdentifierEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectBasePermission,
-    ]
-
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def get(self, request, slug):
         name = request.GET.get("name", "").strip().upper()
 
@@ -501,6 +592,7 @@ class ProjectIdentifierEndpoint(BaseAPIView):
             status=status.HTTP_200_OK,
         )
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def delete(self, request, slug):
         name = request.data.get("name", "").strip().upper()
 
@@ -598,7 +690,7 @@ class ProjectFavoritesViewSet(BaseViewSet):
             user=request.user,
             workspace__slug=slug,
         )
-        project_favorite.delete()
+        project_favorite.delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -629,18 +721,22 @@ class ProjectPublicCoverImagesEndpoint(BaseAPIView):
             "Prefix": "static/project-cover/",
         }
 
-        response = s3.list_objects_v2(**params)
-        # Extracting file keys from the response
-        if "Contents" in response:
-            for content in response["Contents"]:
-                if not content["Key"].endswith(
-                    "/"
-                ):  # This line ensures we're only getting files, not "sub-folders"
-                    files.append(
-                        f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/{content['Key']}"
-                    )
+        try:
+            response = s3.list_objects_v2(**params)
+            # Extracting file keys from the response
+            if "Contents" in response:
+                for content in response["Contents"]:
+                    if not content["Key"].endswith(
+                        "/"
+                    ):  # This line ensures we're only getting files, not "sub-folders"
+                        files.append(
+                            f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/{content['Key']}"
+                        )
 
-        return Response(files, status=status.HTTP_200_OK)
+            return Response(files, status=status.HTTP_200_OK)
+        except Exception as e:
+            log_exception(e)
+            return Response([], status=status.HTTP_200_OK)
 
 
 class DeployBoardViewSet(BaseViewSet):

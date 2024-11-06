@@ -7,14 +7,15 @@ import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Search, Tags } from "lucide-react";
 import { Combobox } from "@headlessui/react";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // types
 import { IIssueLabel } from "@plane/types";
 // ui
-import { Tooltip } from "@plane/ui";
+import { ComboDropDown, Tooltip } from "@plane/ui";
 // hooks
 import { useLabel } from "@/hooks/store";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 export interface IIssuePropertyLabels {
@@ -32,6 +33,8 @@ export interface IIssuePropertyLabels {
   noLabelBorder?: boolean;
   placeholderText?: string;
   onClose?: () => void;
+  renderByDefault?: boolean;
+  fullWidth?: boolean;
 }
 
 export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((props) => {
@@ -50,6 +53,8 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
     maxRender = 2,
     noLabelBorder = false,
     placeholderText,
+    renderByDefault = true,
+    fullWidth = false,
   } = props;
   // router
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
@@ -105,10 +110,10 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
   };
 
   useEffect(() => {
-    if (isOpen && inputRef.current) {
+    if (isOpen && inputRef.current && !isMobile) {
       inputRef.current.focus();
     }
-  }, [isOpen]);
+  }, [isOpen, isMobile]);
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "bottom-start",
@@ -147,7 +152,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
     query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
   const label = (
-    <div className="flex h-5 w-full flex-wrap items-center gap-2 overflow-hidden">
+    <div className="flex h-full w-full flex-wrap items-center gap-2 overflow-hidden">
       {value.length > 0 ? (
         value.length <= maxRender ? (
           <>
@@ -160,12 +165,13 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
                   tooltipHeading="Labels"
                   tooltipContent={label?.name ?? ""}
                   isMobile={isMobile}
+                  renderByDefault={renderByDefault}
                 >
                   <div
                     key={label?.id}
                     className={`flex overflow-hidden hover:bg-custom-background-80 ${
                       !disabled && "cursor-pointer"
-                    } h-full max-w-full flex-shrink-0 items-center rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs`}
+                    } h-full ${fullWidth && "w-full"} max-w-full flex-shrink-0 items-center rounded px-2.5 text-xs ${noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300"}`}
                   >
                     <div className="flex max-w-full items-center gap-1.5 overflow-hidden text-custom-text-200">
                       <span
@@ -182,9 +188,9 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
           </>
         ) : (
           <div
-            className={`flex h-full flex-shrink-0 items-center rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs ${
+            className={`flex h-full ${fullWidth && "w-full"} flex-shrink-0 items-center rounded px-2.5 text-xs ${
               disabled ? "cursor-not-allowed" : "cursor-pointer"
-            }`}
+            } ${noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300"}`}
           >
             <Tooltip
               isMobile={isMobile}
@@ -194,6 +200,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
                 ?.filter((l) => value.includes(l?.id))
                 .map((l) => l?.name)
                 .join(", ")}
+              renderByDefault={false}
             >
               <div className="flex h-full items-center gap-1.5 text-custom-text-200">
                 <span className="h-2 w-2 flex-shrink-0 rounded-full bg-custom-primary" />
@@ -203,10 +210,16 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
           </div>
         )
       ) : (
-        <Tooltip position="top" tooltipHeading="Labels" tooltipContent="None" isMobile={isMobile}>
+        <Tooltip
+          position="top"
+          tooltipHeading="Labels"
+          tooltipContent="None"
+          isMobile={isMobile}
+          renderByDefault={false}
+        >
           <div
-            className={`flex h-full items-center justify-center gap-2 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80 ${
-              noLabelBorder ? "" : "border-[0.5px] border-custom-border-300"
+            className={`flex h-full ${fullWidth && "w-full"} items-center justify-center gap-2 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80 ${
+              noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300"
             }`}
           >
             <Tags className="h-3.5 w-3.5" strokeWidth={2} />
@@ -217,39 +230,42 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
     </div>
   );
 
+  const comboButton = (
+    <button
+      ref={setReferenceElement}
+      type="button"
+      className={`clickable flex w-full h-full items-center justify-between gap-1 text-xs ${fullWidth && "hover:bg-custom-background-80"} ${
+        disabled
+          ? "cursor-not-allowed text-custom-text-200"
+          : value.length <= maxRender
+            ? "cursor-pointer"
+            : "cursor-pointer hover:bg-custom-background-80"
+      }  ${buttonClassName}`}
+      onClick={handleOnClick}
+      disabled={disabled}
+    >
+      {label}
+      {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
+    </button>
+  );
+
   return (
-    <Combobox
+    <ComboDropDown
       as="div"
       ref={dropdownRef}
-      className={`w-auto max-w-full flex-shrink-0 text-left ${className}`}
+      className={`w-auto max-w-full h-full flex-shrink-0 text-left ${className}`}
       value={value}
       onChange={onChange}
       disabled={disabled}
       onKeyDown={handleKeyDown}
+      button={comboButton}
+      renderByDefault={renderByDefault}
       multiple
     >
-      <Combobox.Button as={Fragment}>
-        <button
-          ref={setReferenceElement}
-          type="button"
-          className={`clickable flex w-full items-center justify-between gap-1 text-xs ${
-            disabled
-              ? "cursor-not-allowed text-custom-text-200"
-              : value.length <= maxRender
-                ? "cursor-pointer"
-                : "cursor-pointer hover:bg-custom-background-80"
-          }  ${buttonClassName}`}
-          onClick={handleOnClick}
-        >
-          {label}
-          {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
-        </button>
-      </Combobox.Button>
-
       {isOpen && (
         <Combobox.Options className="fixed z-10" static>
           <div
-            className={`z-10 my-1 w-48 whitespace-nowrap rounded border border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none ${optionsClassName}`}
+            className={`z-10 my-1 w-48 h-auto whitespace-nowrap rounded border border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none ${optionsClassName}`}
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
@@ -307,6 +323,6 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
           </div>
         </Combobox.Options>
       )}
-    </Combobox>
+    </ComboDropDown>
   );
 });

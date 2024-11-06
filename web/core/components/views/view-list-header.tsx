@@ -1,27 +1,34 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // icons
-import { Search, X } from "lucide-react";
+import { ListFilter, Search, X } from "lucide-react";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useProjectView } from "@/hooks/store";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
+import { useMember, useProjectView } from "@/hooks/store";
+import { FiltersDropdown } from "../issues";
+import { ViewFiltersSelection } from "./filters/filter-selection";
+import { ViewOrderByDropdown } from "./filters/order-by";
 
 export const ViewListHeader = observer(() => {
   // states
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  // const [isSearchOpen, setIsSearchOpen] = useState(searchQuery !== "" ? true : false);
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
-
-  const { searchQuery, updateSearchQuery } = useProjectView();
+  // store hooks
+  const { filters, updateFilters } = useProjectView();
+  const {
+    project: { projectMemberIds },
+  } = useMember();
 
   // handlers
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Escape") {
-      if (searchQuery && searchQuery.trim() !== "") updateSearchQuery("");
-      else {
+      if (filters?.searchQuery && filters?.searchQuery.trim() !== "") {
+        updateFilters("searchQuery", "");
+      } else {
         setIsSearchOpen(false);
         inputRef.current?.blur();
       }
@@ -30,8 +37,12 @@ export const ViewListHeader = observer(() => {
 
   // outside click detector hook
   useOutsideClickDetector(inputRef, () => {
-    if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
+    if (isSearchOpen && filters?.searchQuery.trim() === "") setIsSearchOpen(false);
   });
+
+  useEffect(() => {
+    if (filters?.searchQuery.trim() !== "") setIsSearchOpen(true);
+  }, [filters?.searchQuery]);
 
   return (
     <div className="h-full flex items-center gap-2">
@@ -61,8 +72,8 @@ export const ViewListHeader = observer(() => {
             ref={inputRef}
             className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"
             placeholder="Search"
-            value={searchQuery}
-            onChange={(e) => updateSearchQuery(e.target.value)}
+            value={filters?.searchQuery}
+            onChange={(e) => updateFilters("searchQuery", e.target.value)}
             onKeyDown={handleInputKeyDown}
           />
           {isSearchOpen && (
@@ -70,7 +81,7 @@ export const ViewListHeader = observer(() => {
               type="button"
               className="grid place-items-center"
               onClick={() => {
-                updateSearchQuery("");
+                updateFilters("searchQuery", "");
                 setIsSearchOpen(false);
               }}
             >
@@ -78,6 +89,28 @@ export const ViewListHeader = observer(() => {
             </button>
           )}
         </div>
+      </div>
+      <div className="hidden md:flex items-center gap-2">
+        <ViewOrderByDropdown
+          sortBy={filters.sortBy}
+          sortKey={filters.sortKey}
+          onChange={(val) => {
+            if (val.key) updateFilters("sortKey", val.key);
+            if (val.order) updateFilters("sortBy", val.order);
+          }}
+        />
+        <FiltersDropdown
+          icon={<ListFilter className="h-3 w-3" />}
+          title="Filters"
+          placement="bottom-end"
+          isFiltersApplied={false}
+        >
+          <ViewFiltersSelection
+            filters={filters}
+            handleFiltersUpdate={updateFilters}
+            memberIds={projectMemberIds ?? undefined}
+          />
+        </FiltersDropdown>
       </div>
     </div>
   );

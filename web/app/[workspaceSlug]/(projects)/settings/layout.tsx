@@ -1,8 +1,14 @@
 "use client";
 
-import { ReactNode } from "react";
+import { FC, ReactNode } from "react";
+import { observer } from "mobx-react";
 // components
-import { AppHeader, ContentWrapper } from "@/components/core";
+import { NotAuthorizedView } from "@/components/auth-screens";
+import { AppHeader } from "@/components/core";
+// hooks
+import { useUserPermissions } from "@/hooks/store";
+// plane web constants
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // local components
 import { WorkspaceSettingHeader } from "./header";
 import { MobileWorkspaceSettingsTabs } from "./mobile-header-tabs";
@@ -12,25 +18,36 @@ export interface IWorkspaceSettingLayout {
   children: ReactNode;
 }
 
-export default function WorkspaceSettingLayout(props: IWorkspaceSettingLayout) {
+const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = observer((props) => {
   const { children } = props;
+
+  const { workspaceUserInfo, allowPermissions } = useUserPermissions();
+
+  // derived values
+  const isWorkspaceAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
   return (
     <>
       <AppHeader header={<WorkspaceSettingHeader />} />
-      <ContentWrapper>
-        <div className="inset-y-0 z-20 flex h-full w-full gap-2">
-          <div className="w-80 flex-shrink-0 overflow-y-hidden pt-8 sm:hidden hidden md:block lg:block">
-            <WorkspaceSettingsSidebar />
-          </div>
-          <div className="flex flex-col relative w-full overflow-hidden">
-            <MobileWorkspaceSettingsTabs />
-            <div className="w-full pl-4 md:pl-0 md:py-8 py-2 overflow-x-hidden overflow-y-scroll vertical-scrollbar scrollbar-md">
-              {children}
+      <MobileWorkspaceSettingsTabs />
+      <div className="inset-y-0 flex flex-row vertical-scrollbar scrollbar-lg h-full w-full overflow-y-auto">
+        {workspaceUserInfo && !isWorkspaceAdmin ? (
+          <NotAuthorizedView section="settings" />
+        ) : (
+          <>
+            <div className="px-page-x !pr-0 py-page-y flex-shrink-0 overflow-y-hidden sm:hidden hidden md:block lg:block">
+              <WorkspaceSettingsSidebar />
             </div>
-          </div>
-        </div>
-      </ContentWrapper>
+            <div className="flex flex-col relative w-full overflow-hidden">
+              <div className="w-full  h-full overflow-x-hidden overflow-y-scroll vertical-scrollbar scrollbar-md px-page-x md:px-9 py-page-y">
+                {children}
+              </div>
+            </div>
+          </>
+        )}
+      </div>
     </>
   );
-}
+});
+
+export default WorkspaceSettingLayout;

@@ -1,9 +1,13 @@
-// ui
+// plane types
 import { IDefaultAnalyticsUser } from "@plane/types";
+// plane ui
+import { Card } from "@plane/ui";
+// components
 import { BarGraph, ProfileEmptyState } from "@/components/ui";
+// helpers
+import { getFileURL } from "@/helpers/file.helper";
 // image
 import emptyBarGraph from "@/public/empty-state/empty_bar_graph.svg";
-// types
 
 type Props = {
   pendingUnAssignedIssuesUser: IDefaultAnalyticsUser | undefined;
@@ -11,11 +15,11 @@ type Props = {
 };
 
 export const AnalyticsScope: React.FC<Props> = ({ pendingUnAssignedIssuesUser, pendingAssignedIssues }) => (
-  <div className="rounded-[10px] border border-custom-border-200 p-3">
+  <Card>
     <div className="divide-y divide-custom-border-200">
       <div>
         <div className="flex items-center justify-between">
-          <h6 className=" text-base font-medium">Pending issues</h6>
+          <h6 className="text-base font-medium">Pending issues</h6>
           {pendingUnAssignedIssuesUser && (
             <div className="relative flex items-center py-1 px-3 rounded-md gap-2  text-xs text-custom-primary-100  bg-custom-primary-100/10">
               Unassigned: {pendingUnAssignedIssuesUser.count}
@@ -47,7 +51,7 @@ export const AnalyticsScope: React.FC<Props> = ({ pendingUnAssignedIssuesUser, p
               renderTick: (datum) => {
                 const assignee = pendingAssignedIssues[datum.tickIndex] ?? "";
 
-                if (assignee && assignee?.assignees__avatar && assignee?.assignees__avatar !== "")
+                if (assignee && assignee?.assignees__avatar_url && assignee?.assignees__avatar_url !== "")
                   return (
                     <g transform={`translate(${datum.x},${datum.y})`}>
                       <image
@@ -55,7 +59,7 @@ export const AnalyticsScope: React.FC<Props> = ({ pendingUnAssignedIssuesUser, p
                         y={10}
                         width={16}
                         height={16}
-                        xlinkHref={assignee?.assignees__avatar}
+                        xlinkHref={getFileURL(assignee?.assignees__avatar_url)}
                         style={{ clipPath: "circle(50%)" }}
                       />
                     </g>
@@ -87,5 +91,5 @@ export const AnalyticsScope: React.FC<Props> = ({ pendingUnAssignedIssuesUser, p
         )}
       </div>
     </div>
-  </div>
+  </Card>
 );

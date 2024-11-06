@@ -20,17 +20,20 @@ export interface IProjectViewIssues extends IBaseIssuesStore {
   fetchIssues: (
     workspaceSlug: string,
     projectId: string,
+    viewId: string,
     loadType: TLoader,
     options: IssuePaginationOptions
   ) => Promise<TIssuesResponse | undefined>;
   fetchIssuesWithExistingPagination: (
     workspaceSlug: string,
     projectId: string,
+    viewId: string,
     loadType: TLoader
   ) => Promise<TIssuesResponse | undefined>;
   fetchNextIssues: (
     workspaceSlug: string,
     projectId: string,
+    viewId: string,
     groupId?: string,
     subGroupId?: string
   ) => Promise<TIssuesResponse | undefined>;
@@ -67,6 +70,9 @@ export class ProjectViewIssues extends BaseIssuesStore implements IProjectViewIs
 
   fetchParentStats = async () => {};
 
+  /** */
+  updateParentStats = () => {};
+
   /**
    * This method is called to fetch the first issues of pagination
    * @param workspaceSlug
@@ -78,6 +84,7 @@ export class ProjectViewIssues extends BaseIssuesStore implements IProjectViewIs
   fetchIssues = async (
     workspaceSlug: string,
     projectId: string,
+    viewId: string,
     loadType: TLoader,
     options: IssuePaginationOptions,
     isExistingPaginationOptions: boolean = false
@@ -86,18 +93,19 @@ export class ProjectViewIssues extends BaseIssuesStore implements IProjectViewIs
       // set loader and clear store
       runInAction(() => {
         this.setLoader(loadType);
+        this.clear(!isExistingPaginationOptions, false); // clear while fetching from server.
+        if (!this.groupBy) this.clear(!isExistingPaginationOptions, true); // clear while using local to have the no load effect.
       });
-      this.clear(!isExistingPaginationOptions);
 
       // get params from pagination options
-      const params = this.issueFilterStore?.getFilterParams(options, undefined, undefined, undefined);
+      const params = this.issueFilterStore?.getFilterParams(options, viewId, undefined, undefined, undefined);
       // call the fetch issues API with the params
       const response = await this.issueService.getIssues(workspaceSlug, projectId, params, {
         signal: this.controller.signal,
       });
 
       // after fetching issues, call the base method to process the response further
-      this.onfetchIssues(response, options, workspaceSlug, projectId);
+      this.onfetchIssues(response, options, workspaceSlug, projectId, viewId, !isExistingPaginationOptions);
       return response;
     } catch (error) {
       // set loader to undefined if errored out
@@ -116,7 +124,13 @@ export class ProjectViewIssues extends BaseIssuesStore implements IProjectViewIs
    * @param subGroupId
    * @returns
    */
-  fetchNextIssues = async (workspaceSlug: string, projectId: string, groupId?: string, subGroupId?: string) => {
+  fetchNextIssues = async (
+    workspaceSlug: string,
+    projectId: string,
+    viewId: string,
+    groupId?: string,
+    subGroupId?: string
+  ) => {
     const cursorObject = this.getPaginationData(groupId, subGroupId);
     // if there are no pagination options and the next page results do not exist the return
     if (!this.paginationOptions || (cursorObject && !cursorObject?.nextPageResults)) return;
@@ -127,6 +141,7 @@ export class ProjectViewIssues extends BaseIssuesStore implements IProjectViewIs
       // get params from stored pagination options
       const params = this.issueFilterStore?.getFilterParams(
         this.paginationOptions,
+        viewId,
         this.getNextCursor(groupId, subGroupId),
         groupId,
         subGroupId
@@ -152,11 +167,19 @@ export class ProjectViewIssues extends BaseIssuesStore implements IProjectViewIs
    * @param loadType
    * @returns
    */
-  fetchIssuesWithExistingPagination = async (workspaceSlug: string, projectId: string, loadType: TLoader) => {
+  fetchIssuesWithExistingPagination = async (
+    workspaceSlug: string,
+    projectId: string,
+    viewId: string,
+    loadType: TLoader
+  ) => {
     if (!this.paginationOptions) return;
-    return await this.fetchIssues(workspaceSlug, projectId, loadType, this.paginationOptions, true);
+    return await this.fetchIssues(workspaceSlug, projectId, viewId, loadType, this.paginationOptions, true);
   };
 
+  // Using aliased names as they cannot be overridden in other stores
   archiveBulkIssues = this.bulkArchiveIssues;
   quickAddIssue = this.issueQuickAdd;
+  updateIssue = this.issueUpdate;
+  archiveIssue = this.issueArchive;
 }

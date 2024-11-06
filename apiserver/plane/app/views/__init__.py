@@ -40,6 +40,13 @@ from .workspace.base import (
     ExportWorkspaceUserActivityEndpoint,
 )
 
+from .workspace.draft import WorkspaceDraftIssueViewSet
+
+from .workspace.favorite import (
+    WorkspaceFavoriteEndpoint,
+    WorkspaceFavoriteGroupEndpoint,
+)
+
 from .workspace.member import (
     WorkSpaceMemberViewSet,
     TeamMemberViewSet,
@@ -93,6 +100,8 @@ from .cycle.base import (
     CycleUserPropertiesEndpoint,
     CycleViewSet,
     TransferCycleIssueEndpoint,
+    CycleAnalyticsEndpoint,
+    CycleProgressEndpoint,
 )
 from .cycle.issue import (
     CycleIssueViewSet,
@@ -101,12 +110,28 @@ from .cycle.archive import (
     CycleArchiveUnarchiveEndpoint,
 )
 
-from .asset.base import FileAssetEndpoint, UserAssetsEndpoint, FileAssetViewSet
+from .asset.base import (
+    FileAssetEndpoint,
+    UserAssetsEndpoint,
+    FileAssetViewSet,
+)
+from .asset.v2 import (
+    WorkspaceFileAssetEndpoint,
+    UserAssetsV2Endpoint,
+    StaticFileAssetEndpoint,
+    AssetRestoreEndpoint,
+    ProjectAssetEndpoint,
+    ProjectBulkAssetEndpoint,
+)
 from .issue.base import (
     IssueListEndpoint,
     IssueViewSet,
     IssueUserDisplayPropertyEndpoint,
     BulkDeleteIssuesEndpoint,
+    DeletedIssuesListViewSet,
+    IssuePaginatedViewSet,
+    IssueDetailEndpoint,
+    IssueBulkUpdateDateEndpoint,
 )
 
 from .issue.activity import (
@@ -117,14 +142,14 @@ from .issue.archive import IssueArchiveViewSet, BulkArchiveIssuesEndpoint
 
 from .issue.attachment import (
     IssueAttachmentEndpoint,
+    # V2
+    IssueAttachmentV2Endpoint,
 )
 
 from .issue.comment import (
     IssueCommentViewSet,
     CommentReactionViewSet,
 )
-
-from .issue.draft import IssueDraftViewSet
 
 from .issue.label import (
     LabelViewSet,
@@ -151,9 +176,6 @@ from .issue.subscriber import (
     IssueSubscriberViewSet,
 )
 
-
-from .issue.bulk_operations import BulkIssueOperationsEndpoint
-
 from .module.base import (
     ModuleViewSet,
     ModuleLinkViewSet,
@@ -169,8 +191,10 @@ from .module.archive import (
     ModuleArchiveUnarchiveEndpoint,
 )
 
-from .api import ApiTokenEndpoint
-
+from .api import (
+    ApiTokenEndpoint,
+    ServiceApiTokenEndpoint,
+)
 
 from .page.base import (
     PageViewSet,
@@ -179,6 +203,7 @@ from .page.base import (
     SubPagesEndpoint,
     PagesDescriptionViewSet,
 )
+from .page.version import PageVersionEndpoint
 
 from .search.base import GlobalSearchEndpoint
 from .search.issue import IssueSearchEndpoint

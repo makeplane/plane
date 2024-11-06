@@ -22,13 +22,13 @@ import { CalendarHeader, CalendarIssueBlocks, CalendarWeekDays, CalendarWeekHead
 // constants
 import { MONTHS_LIST } from "@/constants/calendar";
 import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
-import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // hooks
-import { useIssues, useUser } from "@/hooks/store";
+import { useIssues, useUserPermissions } from "@/hooks/store";
 import useSize from "@/hooks/use-window-size";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // store
 import { ICycleIssuesFilter } from "@/store/issue/cycle";
 import { ICalendarStore } from "@/store/issue/issue_calendar_view.store";
@@ -91,14 +91,15 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
   const {
     issues: { viewFlags },
   } = useIssues(EIssuesStoreType.PROJECT);
+  const { allowPermissions } = useUserPermissions();
 
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
   const [windowWidth] = useSize();
 
   const { enableIssueCreation } = viewFlags || {};
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditingAllowed = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
 
   const calendarPayload = issueCalendarView.calendarPayload;
 
@@ -203,7 +204,6 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
               </p>
               <CalendarIssueBlocks
                 date={selectedDate}
-                issues={issues}
                 issueIdList={issueIdList}
                 loadMoreIssues={loadMoreIssues}
                 getPaginationData={getPaginationData}
@@ -230,7 +230,6 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
           </p>
           <CalendarIssueBlocks
             date={selectedDate}
-            issues={issues}
             issueIdList={issueIdList}
             quickActions={quickActions}
             loadMoreIssues={loadMoreIssues}

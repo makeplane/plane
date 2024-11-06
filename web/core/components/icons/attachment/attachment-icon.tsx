@@ -16,44 +16,44 @@ import {
   VideoIcon,
 } from "@/components/icons/attachment";
 
-export const getFileIcon = (fileType: string) => {
+export const getFileIcon = (fileType: string, size: number = 28) => {
   switch (fileType) {
     case "pdf":
-      return <PdfIcon height={28} width={28} />;
+      return <PdfIcon height={size} width={size} />;
     case "csv":
-      return <CsvIcon height={28} width={28} />;
+      return <CsvIcon height={size} width={size} />;
     case "xlsx":
-      return <SheetIcon height={28} width={28} />;
+      return <SheetIcon height={size} width={size} />;
     case "css":
-      return <CssIcon height={28} width={28} />;
+      return <CssIcon height={size} width={size} />;
     case "doc":
-      return <DocIcon height={28} width={28} />;
+      return <DocIcon height={size} width={size} />;
     case "fig":
-      return <FigmaIcon height={28} width={28} />;
+      return <FigmaIcon height={size} width={size} />;
     case "html":
-      return <HtmlIcon height={28} width={28} />;
+      return <HtmlIcon height={size} width={size} />;
     case "png":
-      return <PngIcon height={28} width={28} />;
+      return <PngIcon height={size} width={size} />;
     case "jpg":
-      return <JpgIcon height={28} width={28} />;
+      return <JpgIcon height={size} width={size} />;
     case "js":
-      return <JavaScriptIcon height={28} width={28} />;
+      return <JavaScriptIcon height={size} width={size} />;
     case "txt":
-      return <TxtIcon height={28} width={28} />;
+      return <TxtIcon height={size} width={size} />;
     case "svg":
-      return <SvgIcon height={28} width={28} />;
+      return <SvgIcon height={size} width={size} />;
     case "mp3":
-      return <AudioIcon height={28} width={28} />;
+      return <AudioIcon height={size} width={size} />;
     case "wav":
-      return <AudioIcon height={28} width={28} />;
+      return <AudioIcon height={size} width={size} />;
     case "mp4":
-      return <VideoIcon height={28} width={28} />;
+      return <VideoIcon height={size} width={size} />;
     case "wmv":
-      return <VideoIcon height={28} width={28} />;
+      return <VideoIcon height={size} width={size} />;
     case "mkv":
-      return <VideoIcon height={28} width={28} />;
+      return <VideoIcon height={size} width={size} />;
 
     default:
-      return <DefaultIcon height={28} width={28} />;
+      return <DefaultIcon height={size} width={size} />;
   }
 };

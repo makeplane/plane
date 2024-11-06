@@ -1,6 +1,7 @@
 import uuid
 
 from django.conf import settings
+from django.utils import timezone
 
 # Django imports
 from django.db import models
@@ -8,7 +9,6 @@ from django.db import models
 # Module imports
 from plane.utils.html_processor import strip_tags
 
-from .project import ProjectBaseModel
 from .base import BaseModel
 
 
@@ -66,6 +66,15 @@ class Page(BaseModel):
         """Return owner email and page name"""
         return f"{self.owned_by.email} <{self.name}>"
 
+    def save(self, *args, **kwargs):
+        # Strip the html tags using html parser
+        self.description_stripped = (
+            None
+            if (self.description_html == "" or self.description_html is None)
+            else strip_tags(self.description_html)
+        )
+        super(Page, self).save(*args, **kwargs)
+
 
 class PageLog(BaseModel):
     TYPE_CHOICES = (
@@ -93,7 +102,9 @@ class PageLog(BaseModel):
         verbose_name="Transaction Type",
     )
     workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="workspace_page_log"
+        "db.Workspace",
+        on_delete=models.CASCADE,
+        related_name="workspace_page_log",
     )
 
     class Meta:
@@ -105,84 +116,6 @@ class PageLog(BaseModel):
 
     def __str__(self):
         return f"{self.page.name} {self.entity_name}"
-
-
-class PageBlock(ProjectBaseModel):
-    page = models.ForeignKey(
-        "db.Page", on_delete=models.CASCADE, related_name="blocks"
-    )
-    name = models.CharField(max_length=255)
-    description = models.JSONField(default=dict, blank=True)
-    description_html = models.TextField(blank=True, default="<p></p>")
-    description_stripped = models.TextField(blank=True, null=True)
-    issue = models.ForeignKey(
-        "db.Issue", on_delete=models.SET_NULL, related_name="blocks", null=True
-    )
-    completed_at = models.DateTimeField(null=True)
-    sort_order = models.FloatField(default=65535)
-    sync = models.BooleanField(default=True)
-
-    def save(self, *args, **kwargs):
-        if self._state.adding:
-            largest_sort_order = PageBlock.objects.filter(
-                project=self.project, page=self.page
-            ).aggregate(largest=models.Max("sort_order"))["largest"]
-            if largest_sort_order is not None:
-                self.sort_order = largest_sort_order + 10000
-
-        # Strip the html tags using html parser
-        self.description_stripped = (
-            None
-            if (self.description_html == "" or self.description_html is None)
-            else strip_tags(self.description_html)
-        )
-
-        if self.completed_at and self.issue:
-            try:
-                from plane.db.models import Issue, State
-
-                completed_state = State.objects.filter(
-                    group="completed", project=self.project
-                ).first()
-                if completed_state is not None:
-                    Issue.objects.update(
-                        pk=self.issue_id, state=completed_state
-                    )
-            except ImportError:
-                pass
-        super(PageBlock, self).save(*args, **kwargs)
-
-    class Meta:
-        verbose_name = "Page Block"
-        verbose_name_plural = "Page Blocks"
-        db_table = "page_blocks"
-        ordering = ("-created_at",)
-
-    def __str__(self):
-        """Return page and page block"""
-        return f"{self.page.name} <{self.name}>"
-
-
-class PageFavorite(ProjectBaseModel):
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="page_favorites",
-    )
-    page = models.ForeignKey(
-        "db.Page", on_delete=models.CASCADE, related_name="page_favorites"
-    )
-
-    class Meta:
-        unique_together = ["page", "user"]
-        verbose_name = "Page Favorite"
-        verbose_name_plural = "Page Favorites"
-        db_table = "page_favorites"
-        ordering = ("-created_at",)
-
-    def __str__(self):
-        """Return user and the page"""
-        return f"{self.user.email} <{self.page.name}>"
 
 
 class PageLabel(BaseModel):
@@ -220,7 +153,14 @@ class ProjectPage(BaseModel):
     )
 
     class Meta:
-        unique_together = ["project", "page"]
+        unique_together = ["project", "page", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["project", "page"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="project_page_unique_project_page_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Project Page"
         verbose_name_plural = "Project Pages"
         db_table = "project_pages"
@@ -242,8 +182,53 @@ class TeamPage(BaseModel):
     )
 
     class Meta:
-        unique_together = ["team", "page"]
+        unique_together = ["team", "page", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["team", "page"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="team_page_unique_team_page_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Team Page"
         verbose_name_plural = "Team Pages"
         db_table = "team_pages"
         ordering = ("-created_at",)
+
+
+class PageVersion(BaseModel):
+    workspace = models.ForeignKey(
+        "db.Workspace",
+        on_delete=models.CASCADE,
+        related_name="page_versions",
+    )
+    page = models.ForeignKey(
+        "db.Page",
+        on_delete=models.CASCADE,
+        related_name="page_versions",
+    )
+    last_saved_at = models.DateTimeField(default=timezone.now)
+    owned_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="page_versions",
+    )
+    description_binary = models.BinaryField(null=True)
+    description_html = models.TextField(blank=True, default="<p></p>")
+    description_stripped = models.TextField(blank=True, null=True)
+    description_json = models.JSONField(default=dict, blank=True)
+
+    class Meta:
+        verbose_name = "Page Version"
+        verbose_name_plural = "Page Versions"
+        db_table = "page_versions"
+        ordering = ("-created_at",)
+
+    def save(self, *args, **kwargs):
+        # Strip the html tags using html parser
+        self.description_stripped = (
+            None
+            if (self.description_html == "" or self.description_html is None)
+            else strip_tags(self.description_html)
+        )
+        super(PageVersion, self).save(*args, **kwargs)

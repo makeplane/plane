@@ -13,10 +13,10 @@ import { IssuePeekOverview } from "@/components/issues";
 // constants
 import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED } from "@/constants/event-tracker";
 import { EIssuesStoreType } from "@/constants/issue";
-import { EUserProjectRoles } from "@/constants/project";
 // hooks
-import { useAppTheme, useEventTracker, useIssueDetail, useIssues, useUser } from "@/hooks/store";
+import { useAppTheme, useEventTracker, useIssueDetail, useIssues, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // images
 import emptyIssue from "@/public/empty-state/issue.svg";
 // local components
@@ -24,7 +24,7 @@ import { IssueMainContent } from "./main-content";
 import { IssueDetailsSidebar } from "./sidebar";
 
 export type TIssueOperations = {
-  fetch: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  fetch: (workspaceSlug: string, projectId: string, issueId: string, loader?: boolean) => Promise<void>;
   update: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   remove: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   archive?: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
@@ -32,18 +32,18 @@ export type TIssueOperations = {
   addCycleToIssue?: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
   addIssueToCycle?: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<void>;
   removeIssueFromCycle?: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
-  addModulesToIssue?: (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => Promise<void>;
   removeIssueFromModule?: (
     workspaceSlug: string,
     projectId: string,
     moduleId: string,
     issueId: string
   ) => Promise<void>;
-  removeModulesFromIssue?: (
+  changeModulesInIssue?: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    moduleIds: string[]
+    addModuleIds: string[],
+    removeModuleIds: string[]
   ) => Promise<void>;
 };
 
@@ -52,11 +52,10 @@ export type TIssueDetailRoot = {
   projectId: string;
   issueId: string;
   is_archived?: boolean;
-  swrIssueDetails: TIssue | null | undefined;
 };
 
 export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, swrIssueDetails, is_archived = false } = props;
+  const { workspaceSlug, projectId, issueId, is_archived = false } = props;
   // router
   const router = useAppRouter();
   const pathname = usePathname();
@@ -70,17 +69,14 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
     addCycleToIssue,
     addIssueToCycle,
     removeIssueFromCycle,
-    addModulesToIssue,
+    changeModulesInIssue,
     removeIssueFromModule,
-    removeModulesFromIssue,
   } = useIssueDetail();
   const {
     issues: { removeIssue: removeArchivedIssue },
   } = useIssues(EIssuesStoreType.ARCHIVED);
   const { captureIssueEvent } = useEventTracker();
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
   const { issueDetailSidebarCollapsed } = useAppTheme();
 
   const issueOperations: TIssueOperations = useMemo(
@@ -89,7 +85,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
         try {
           await fetchIssue(workspaceSlug, projectId, issueId);
         } catch (error) {
-          console.error("Error fetching the parent issue");
+          console.error("Error fetching the parent issue:", error);
         }
       },
       update: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
@@ -105,6 +101,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             path: pathname,
           });
         } catch (error) {
+          console.log("Error in updating issue:", error);
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { state: "FAILED", element: "Issue detail page" },
@@ -136,6 +133,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             path: pathname,
           });
         } catch (error) {
+          console.log("Error in deleting issue:", error);
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
@@ -157,6 +155,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             path: pathname,
           });
         } catch (error) {
+          console.log("Error in archiving issue:", error);
           captureIssueEvent({
             eventName: ISSUE_ARCHIVED,
             payload: { id: issueId, state: "FAILED", element: "Issue details page" },
@@ -258,35 +257,6 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           });
         }
       },
-      addModulesToIssue: async (workspaceSlug: string, projectId: string, issueId: string, moduleIds: string[]) => {
-        try {
-          const response = await addModulesToIssue(workspaceSlug, projectId, issueId, moduleIds);
-          captureIssueEvent({
-            eventName: ISSUE_UPDATED,
-            payload: { ...response, state: "SUCCESS", element: "Issue detail page" },
-            updates: {
-              changed_property: "module_id",
-              change_details: moduleIds,
-            },
-            path: pathname,
-          });
-        } catch (error) {
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Issue could not be added to the module. Please try again.",
-          });
-          captureIssueEvent({
-            eventName: ISSUE_UPDATED,
-            payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
-            updates: {
-              changed_property: "module_id",
-              change_details: moduleIds,
-            },
-            path: pathname,
-          });
-        }
-      },
       removeIssueFromModule: async (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => {
         try {
           const removeFromModulePromise = removeIssueFromModule(workspaceSlug, projectId, moduleId, issueId);
@@ -323,25 +293,24 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           });
         }
       },
-      removeModulesFromIssue: async (
+      changeModulesInIssue: async (
         workspaceSlug: string,
         projectId: string,
         issueId: string,
-        moduleIds: string[]
+        addModuleIds: string[],
+        removeModuleIds: string[]
       ) => {
-        const removeModulesFromIssuePromise = removeModulesFromIssue(workspaceSlug, projectId, issueId, moduleIds);
-        setPromiseToast(removeModulesFromIssuePromise, {
-          loading: "Removing module from issue...",
-          success: {
-            title: "Success!",
-            message: () => "Module removed from issue successfully",
+        const promise = await changeModulesInIssue(workspaceSlug, projectId, issueId, addModuleIds, removeModuleIds);
+        captureIssueEvent({
+          eventName: ISSUE_UPDATED,
+          payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
+          updates: {
+            changed_property: "module_id",
+            change_details: { addModuleIds, removeModuleIds },
           },
-          error: {
-            title: "Error!",
-            message: () => "Module remove from issue failed",
-          },
+          path: pathname,
         });
-        await removeModulesFromIssuePromise;
+        return promise;
       },
     }),
     [
@@ -352,10 +321,10 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       archiveIssue,
       removeArchivedIssue,
       addIssueToCycle,
+      addCycleToIssue,
       removeIssueFromCycle,
-      addModulesToIssue,
+      changeModulesInIssue,
       removeIssueFromModule,
-      removeModulesFromIssue,
       captureIssueEvent,
       pathname,
     ]
@@ -364,7 +333,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
   // issue details
   const issue = getIssueById(issueId);
   // checking if issue is editable, based on user role
-  const isEditable = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditable = allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT);
 
   return (
     <>
@@ -380,10 +349,9 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
         />
       ) : (
         <div className="flex h-full w-full overflow-hidden">
-          <div className="max-w-2/3 h-full w-full space-y-5 divide-y-2 divide-custom-border-200 overflow-y-auto px-6 py-5">
+          <div className="max-w-2/3 h-full w-full space-y-8 overflow-y-auto px-9 py-5">
             <IssueMainContent
               workspaceSlug={workspaceSlug}
-              swrIssueDetails={swrIssueDetails}
               projectId={projectId}
               issueId={issueId}
               issueOperations={issueOperations}

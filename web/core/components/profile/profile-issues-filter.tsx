@@ -6,9 +6,14 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 // components
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown, LayoutSelection } from "@/components/issues";
 // constants
-import { EIssuesStoreType, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT, EIssueLayoutTypes } from "@/constants/issue";
+import {
+  EIssuesStoreType,
+  EIssueFilterType,
+  ISSUE_DISPLAY_FILTERS_BY_LAYOUT,
+  EIssueLayoutTypes,
+} from "@/constants/issue";
 // helpers
-import { calculateTotalFilters } from "@/helpers/filter.helper";
+import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useLabel } from "@/hooks/store";
 
@@ -95,8 +100,6 @@ export const ProfileIssuesFilter = observer(() => {
     [workspaceSlug, updateFilters, userId]
   );
 
-  const isFiltersApplied = calculateTotalFilters(issueFilters?.filters ?? {}) !== 0;
-
   return (
     <div className="relative flex items-center justify-end gap-2">
       <LayoutSelection
@@ -105,7 +108,7 @@ export const ProfileIssuesFilter = observer(() => {
         selectedLayout={activeLayout}
       />
 
-      <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={isFiltersApplied}>
+      <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={isIssueFilterActive(issueFilters)}>
         <FilterSelection
           layoutDisplayFiltersOptions={
             activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.profile_issues[activeLayout] : undefined

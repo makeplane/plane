@@ -2,9 +2,9 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
 // ui
-import { ArchiveIcon, Breadcrumbs, Tooltip } from "@plane/ui";
+import { ArchiveIcon, Breadcrumbs, Tooltip, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 // constants
@@ -15,32 +15,31 @@ import { useIssues, useProject } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
-export const ProjectArchivesHeader: FC = observer(() => {
+type TProps = {
+  activeTab: "issues" | "cycles" | "modules";
+};
+
+export const ProjectArchivesHeader: FC<TProps> = observer((props: TProps) => {
+  const { activeTab } = props;
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();
-  const pathname = usePathname();
-  const activeTab = pathname.split("/").pop();
   // store hooks
   const {
-    issuesFilter: { issueFilters },
+    issues: { getGroupIssueCount },
   } = useIssues(EIssuesStoreType.ARCHIVED);
   const { currentProjectDetails, loader } = useProject();
   // hooks
   const { isMobile } = usePlatformOS();
 
-  const issueCount = currentProjectDetails
-    ? !issueFilters?.displayFilters?.sub_issue && currentProjectDetails.archived_sub_issues
-      ? currentProjectDetails.archived_issues - currentProjectDetails.archived_sub_issues
-      : currentProjectDetails.archived_issues
-    : undefined;
+  const issueCount = getGroupIssueCount(undefined, undefined, false);
 
   const activeTabBreadcrumbDetail =
     PROJECT_ARCHIVES_BREADCRUMB_LIST[activeTab as keyof typeof PROJECT_ARCHIVES_BREADCRUMB_LIST];
 
   return (
-    <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
-      <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
+    <Header>
+      <Header.LeftItem>
         <div className="flex items-center gap-2.5">
           <Breadcrumbs onBack={router.back} isLoading={loader}>
             <Breadcrumbs.BreadcrumbItem
@@ -93,7 +92,7 @@ export const ProjectArchivesHeader: FC = observer(() => {
             </Tooltip>
           ) : null}
         </div>
-      </div>
-    </div>
+      </Header.LeftItem>
+    </Header>
   );
 });

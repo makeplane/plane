@@ -38,7 +38,7 @@ export const ControllerInput: React.FC<Props> = (props) => {
   return (
     <div className="flex flex-col gap-1">
       <h4 className="text-sm text-custom-text-300">
-        {label} {!required && "(optional)"}
+        {label}
       </h4>
       <div className="relative">
         <Controller
@@ -80,7 +80,7 @@ export const ControllerInput: React.FC<Props> = (props) => {
             </button>
           ))}
       </div>
-      {description && <p className="text-xs text-custom-text-300">{description}</p>}
+      {description && <p className="pt-0.5 text-xs text-custom-text-300">{description}</p>}
     </div>
   );
 };

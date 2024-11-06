@@ -1,7 +1,6 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useTheme } from "next-themes";
 import { Controller, useForm } from "react-hook-form";
 // types
 import { IUserTheme } from "@plane/types";
@@ -25,8 +24,12 @@ const inputRules = {
   },
 };
 
-export const CustomThemeSelector: React.FC = observer(() => {
-  const { setTheme } = useTheme();
+type TCustomThemeSelector = {
+  applyThemeChange: (theme: Partial<IUserTheme>) => void;
+};
+
+export const CustomThemeSelector: React.FC<TCustomThemeSelector> = observer((props) => {
+  const { applyThemeChange } = props;
   // hooks
   const { data: userProfile, updateUserTheme } = useUserProfile();
 
@@ -59,7 +62,7 @@ export const CustomThemeSelector: React.FC = observer(() => {
       palette: `${formData.background},${formData.text},${formData.primary},${formData.sidebarBackground},${formData.sidebarText}`,
       theme: "custom",
     };
-    setTheme("custom");
+    applyThemeChange(payload);
 
     const updateCurrentUserThemePromise = updateUserTheme(payload);
     setPromiseToast(updateCurrentUserThemePromise, {

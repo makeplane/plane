@@ -18,15 +18,17 @@ from plane.api.serializers import (
     ModuleSerializer,
 )
 from plane.app.permissions import ProjectEntityPermission
-from plane.bgtasks.issue_activites_task import issue_activity
+from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
-    IssueAttachment,
+    FileAsset,
     IssueLink,
     Module,
     ModuleIssue,
     ModuleLink,
     Project,
+    ProjectMember,
+    UserFavorite,
 )
 
 from .base import BaseAPIView
@@ -69,6 +71,7 @@ class ModuleAPIEndpoint(BaseAPIView):
                     filter=Q(
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 ),
@@ -80,6 +83,7 @@ class ModuleAPIEndpoint(BaseAPIView):
                         issue_module__issue__state__group="completed",
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 )
@@ -91,6 +95,7 @@ class ModuleAPIEndpoint(BaseAPIView):
                         issue_module__issue__state__group="cancelled",
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 )
@@ -102,6 +107,7 @@ class ModuleAPIEndpoint(BaseAPIView):
                         issue_module__issue__state__group="started",
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 )
@@ -113,6 +119,7 @@ class ModuleAPIEndpoint(BaseAPIView):
                         issue_module__issue__state__group="unstarted",
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 )
@@ -124,6 +131,7 @@ class ModuleAPIEndpoint(BaseAPIView):
                         issue_module__issue__state__group="backlog",
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 )
@@ -265,6 +273,20 @@ class ModuleAPIEndpoint(BaseAPIView):
         module = Module.objects.get(
             workspace__slug=slug, project_id=project_id, pk=pk
         )
+        if module.created_by_id != request.user.id and (
+            not ProjectMember.objects.filter(
+                workspace__slug=slug,
+                member=request.user,
+                role=20,
+                project_id=project_id,
+                is_active=True,
+            ).exists()
+        ):
+            return Response(
+                {"error": "Only admin or creator can delete the module"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         module_issues = list(
             ModuleIssue.objects.filter(module_id=pk).values_list(
                 "issue", flat=True
@@ -282,10 +304,25 @@ class ModuleAPIEndpoint(BaseAPIView):
             actor_id=str(request.user.id),
             issue_id=None,
             project_id=str(project_id),
-            current_instance=None,
+            current_instance=json.dumps(
+                {
+                    "module_name": str(module.name),
+                }
+            ),
             epoch=int(timezone.now().timestamp()),
         )
         module.delete()
+        # Delete the module issues
+        ModuleIssue.objects.filter(
+            module=pk,
+            project_id=project_id,
+        ).delete()
+        # Delete the user favorite module
+        UserFavorite.objects.filter(
+            entity_type="module",
+            entity_identifier=pk,
+            project_id=project_id,
+        ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -336,7 +373,10 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
     def get(self, request, slug, project_id, module_id):
         order_by = request.GET.get("order_by", "created_at")
         issues = (
-            Issue.issue_objects.filter(issue_module__module_id=module_id)
+            Issue.issue_objects.filter(
+                issue_module__module_id=module_id,
+                issue_module__deleted_at__isnull=True,
+            )
             .annotate(
                 sub_issues_count=Issue.issue_objects.filter(
                     parent=OuterRef("id")
@@ -362,8 +402,9 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -493,7 +534,6 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
 
 
 class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
-
     permission_classes = [
         ProjectEntityPermission,
     ]
@@ -521,6 +561,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                     filter=Q(
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 ),
@@ -532,6 +573,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                         issue_module__issue__state__group="completed",
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 )
@@ -543,6 +585,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                         issue_module__issue__state__group="cancelled",
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 )
@@ -554,6 +597,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                         issue_module__issue__state__group="started",
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 )
@@ -565,6 +609,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                         issue_module__issue__state__group="unstarted",
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 )
@@ -576,6 +621,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                         issue_module__issue__state__group="backlog",
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 )
@@ -608,6 +654,12 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             )
         module.archived_at = timezone.now()
         module.save()
+        UserFavorite.objects.filter(
+            entity_type="module",
+            entity_identifier=pk,
+            project_id=project_id,
+            workspace__slug=slug,
+        ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def delete(self, request, slug, project_id, pk):

@@ -1,62 +1,38 @@
-import { observable, action, makeObservable, runInAction } from "mobx";
-import { computedFn } from "mobx-utils";
+import { action, makeObservable, runInAction } from "mobx";
 // types
-import { IStateLite } from "@plane/types";
+import { IssuePaginationOptions, TLoader } from "@plane/types";
 // services
 import IssueService from "@/services/issue.service";
 // store
 import { CoreRootStore } from "@/store/root.store";
 // types
-import { IIssue, IIssueLabel } from "@/types/issue";
+import { BaseIssuesStore, IBaseIssuesStore } from "./helpers/base-issues.store";
 
-export interface IIssueStore {
-  loader: boolean;
-  error: any;
-  // observables
-  issues: IIssue[];
-  states: IStateLite[];
-  labels: IIssueLabel[];
-  // filter observables
-  filteredStates: string[];
-  filteredLabels: string[];
-  filteredPriorities: string[];
+export interface IIssueStore extends IBaseIssuesStore {
   // actions
-  fetchPublicIssues: (anchor: string, params: any) => Promise<void>;
-  // helpers
-  getCountOfIssuesByState: (stateID: string) => number;
-  getFilteredIssuesByState: (stateID: string) => IIssue[];
+  fetchPublicIssues: (
+    anchor: string,
+    loadType: TLoader,
+    options: IssuePaginationOptions,
+    isExistingPaginationOptions?: boolean
+  ) => Promise<void>;
+  fetchNextPublicIssues: (anchor: string, groupId?: string, subGroupId?: string) => Promise<void>;
+  fetchPublicIssuesWithExistingPagination: (anchor: string, loadType?: TLoader) => Promise<void>;
 }
 
-export class IssueStore implements IIssueStore {
-  loader: boolean = false;
-  error: any | null = null;
-  // observables
-  states: IStateLite[] = [];
-  labels: IIssueLabel[] = [];
-  issues: IIssue[] = [];
-  // filter observables
-  filteredStates: string[] = [];
-  filteredLabels: string[] = [];
-  filteredPriorities: string[] = [];
+export class IssueStore extends BaseIssuesStore implements IIssueStore {
   // root store
   rootStore: CoreRootStore;
   // services
   issueService: IssueService;
 
   constructor(_rootStore: CoreRootStore) {
+    super(_rootStore);
     makeObservable(this, {
-      loader: observable.ref,
-      error: observable,
-      // observables
-      states: observable,
-      labels: observable,
-      issues: observable,
-      // filter observables
-      filteredStates: observable,
-      filteredLabels: observable,
-      filteredPriorities: observable,
       // actions
       fetchPublicIssues: action,
+      fetchNextPublicIssues: action,
+      fetchPublicIssuesWithExistingPagination: action,
     });
 
     this.rootStore = _rootStore;
@@ -68,45 +44,69 @@ export class IssueStore implements IIssueStore {
    * @param {string} anchor
    * @param params
    */
-  fetchPublicIssues = async (anchor: string, params: any) => {
+  fetchPublicIssues = async (
+    anchor: string,
+    loadType: TLoader = "init-loader",
+    options: IssuePaginationOptions,
+    isExistingPaginationOptions: boolean = false
+  ) => {
     try {
+      // set loader and clear store
       runInAction(() => {
-        this.loader = true;
-        this.error = null;
+        this.setLoader(loadType);
       });
+      this.clear(!isExistingPaginationOptions);
+
+      const params = this.rootStore.issueFilter.getFilterParams(options, anchor, undefined, undefined, undefined);
 
       const response = await this.issueService.fetchPublicIssues(anchor, params);
 
-      if (response) {
-        runInAction(() => {
-          this.states = response.states;
-          this.labels = response.labels;
-          this.issues = response.issues;
-          this.loader = false;
-        });
-      }
+      // after fetching issues, call the base method to process the response further
+      this.onfetchIssues(response, options);
     } catch (error) {
-      this.loader = false;
-      this.error = error;
+      this.setLoader(undefined);
+      throw error;
+    }
+  };
+
+  fetchNextPublicIssues = async (anchor: string, groupId?: string, subGroupId?: string) => {
+    const cursorObject = this.getPaginationData(groupId, subGroupId);
+    // if there are no pagination options and the next page results do not exist the return
+    if (!this.paginationOptions || (cursorObject && !cursorObject?.nextPageResults)) return;
+    try {
+      // set Loader
+      this.setLoader("pagination", groupId, subGroupId);
+
+      // get params from stored pagination options
+      const params = this.rootStore.issueFilter.getFilterParams(
+        this.paginationOptions,
+        anchor,
+        cursorObject?.nextCursor,
+        groupId,
+        subGroupId
+      );
+      // call the fetch issues API with the params for next page in issues
+      const response = await this.issueService.fetchPublicIssues(anchor, params);
+
+      // after the next page of issues are fetched, call the base method to process the response
+      this.onfetchNexIssues(response, groupId, subGroupId);
+    } catch (error) {
+      // set Loader as undefined if errored out
+      this.setLoader(undefined, groupId, subGroupId);
       throw error;
     }
   };
 
   /**
-   * @description get total count of issues under a particular state
-   * @param {string} stateID
-   * @returns {number}
+   * This Method exists to fetch the first page of the issues with the existing stored pagination
+   * This is useful for refetching when filters, groupBy, orderBy etc changes
+   * @param workspaceSlug
+   * @param projectId
+   * @param loadType
+   * @returns
    */
-  getCountOfIssuesByState = computedFn(
-    (stateID: string) => this.issues?.filter((issue) => issue.state == stateID).length || 0
-  );
-
-  /**
-   * @description get array of issues under a particular state
-   * @param {string} stateID
-   * @returns {IIssue[]}
-   */
-  getFilteredIssuesByState = computedFn(
-    (stateID: string) => this.issues?.filter((issue) => issue.state == stateID) || []
-  );
+  fetchPublicIssuesWithExistingPagination = async (anchor: string, loadType: TLoader = "mutation") => {
+    if (!this.paginationOptions) return;
+    return await this.fetchPublicIssues(anchor, loadType, this.paginationOptions, true);
+  };
 }

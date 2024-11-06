@@ -1,18 +1,24 @@
 "use client";
 
+import { useState } from "react";
+import cloneDeep from "lodash/cloneDeep";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { IIssueFilterOptions } from "@plane/types";
-// hooks
-import { Button } from "@plane/ui";
-import { AppliedFiltersList } from "@/components/issues";
-import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
-import { useIssues, useLabel, useProjectState, useProjectView } from "@/hooks/store";
-import { getAreFiltersEqual } from "../../../utils";
-// components
-// ui
 // types
+import { IIssueFilterOptions } from "@plane/types";
+// components
+import { Header, EHeaderVariant } from "@plane/ui";
+import { AppliedFiltersList } from "@/components/issues";
+import { CreateUpdateProjectViewModal } from "@/components/views";
+import { UpdateViewComponent } from "@/components/views/update-view-component";
+// constants
+import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { EViewAccess } from "@/constants/views";
+// hooks
+import { useIssues, useLabel, useProjectState, useProjectView, useUser, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+import { getAreFiltersEqual } from "../../../utils";
 
 export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   // router
@@ -24,6 +30,10 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   const { projectLabels } = useLabel();
   const { projectStates } = useProjectState();
   const { viewMap, updateView } = useProjectView();
+  const { data } = useUser();
+  const { allowPermissions } = useUserPermissions();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
   // derived values
   const viewDetails = viewId ? viewMap[viewId.toString()] : null;
   const userFilters = issueFilters?.filters;
@@ -80,47 +90,65 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
     );
   };
 
-  const areFiltersEqual = getAreFiltersEqual(appliedFilters, issueFilters, viewDetails);
-
+  // add a placeholder object instead of appliedFilters if it is undefined
+  const areFiltersEqual = getAreFiltersEqual(appliedFilters ?? {}, issueFilters, viewDetails);
+  const viewFilters = {
+    filters: cloneDeep(appliedFilters ?? {}),
+    display_filters: cloneDeep(issueFilters?.displayFilters),
+    display_properties: cloneDeep(issueFilters?.displayProperties),
+  };
   // return if no filters are applied
   if (isEmpty(appliedFilters) && areFiltersEqual) return null;
 
   const handleUpdateView = () => {
     if (!workspaceSlug || !projectId || !viewId || !viewDetails) return;
 
-    updateView(workspaceSlug.toString(), projectId.toString(), viewId.toString(), {
-      filters: {
-        ...(appliedFilters ?? {}),
-      },
-      display_filters: {
-        ...issueFilters?.displayFilters,
-      },
-      display_properties: {
-        ...issueFilters?.displayProperties,
-      },
-    });
+    updateView(workspaceSlug.toString(), projectId.toString(), viewId.toString(), viewFilters);
   };
 
+  const isAuthorizedUser = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
+
+  const isLocked = !!viewDetails?.is_locked;
+  const isOwner = viewDetails?.owned_by === data?.id;
+
   return (
-    <div className="flex justify-between gap-4 p-4">
-      <div>
+    <Header variant={EHeaderVariant.TERNARY}>
+      <CreateUpdateProjectViewModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        workspaceSlug={workspaceSlug.toString()}
+        projectId={projectId.toString()}
+        preLoadedData={{
+          name: `${viewDetails?.name} 2`,
+          description: viewDetails?.description,
+          logo_props: viewDetails?.logo_props,
+          access: viewDetails?.access ?? EViewAccess.PUBLIC,
+          ...viewFilters,
+        }}
+      />
+      <Header.LeftItem className="w-[70%]">
         <AppliedFiltersList
           appliedFilters={appliedFilters ?? {}}
           handleClearAllFilters={handleClearAllFilters}
           handleRemoveFilter={handleRemoveFilter}
           labels={projectLabels ?? []}
           states={projectStates}
-          alwaysAllowEditing
+          disableEditing={isLocked}
         />
-      </div>
-
-      {!areFiltersEqual && (
-        <div>
-          <Button variant="primary" size="sm" className="flex-shrink-0" onClick={handleUpdateView}>
-            Update view
-          </Button>
-        </div>
-      )}
-    </div>
+      </Header.LeftItem>
+      <Header.RightItem>
+        <UpdateViewComponent
+          isLocked={isLocked}
+          areFiltersEqual={!!areFiltersEqual}
+          isOwner={isOwner}
+          isAuthorizedUser={isAuthorizedUser}
+          setIsModalOpen={setIsModalOpen}
+          handleUpdateView={handleUpdateView}
+        />
+      </Header.RightItem>
+    </Header>
   );
 });

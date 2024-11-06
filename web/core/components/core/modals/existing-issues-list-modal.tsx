@@ -7,9 +7,13 @@ import { Combobox, Dialog, Transition } from "@headlessui/react";
 import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 // ui
 import { Button, Loader, ToggleSwitch, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+// helpers
+import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web components
+import { IssueIdentifier } from "@/plane-web/components/issues";
 // services
 import { ProjectService } from "@/services/project";
 // components
@@ -49,6 +53,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
   const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
   const { isMobile } = usePlatformOS();
   const debouncedSearchTerm: string = useDebounce(searchTerm, 500);
+  const { baseTabIndex } = getTabIndex(undefined, isMobile);
 
   const handleClose = () => {
     onClose();
@@ -138,6 +143,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                       placeholder="Type to search..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
+                      tabIndex={baseTabIndex}
                     />
                   </div>
 
@@ -149,7 +155,13 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                             key={issue.id}
                             className="flex items-center gap-1 whitespace-nowrap rounded-md border border-custom-border-200 bg-custom-background-80 py-1 pl-2 text-xs text-custom-text-100"
                           >
-                            {issue.project__identifier}-{issue.sequence_id}
+                            <IssueIdentifier
+                              projectId={issue.project_id}
+                              issueTypeId={issue.type_id}
+                              projectIdentifier={issue.project__identifier}
+                              issueSequenceId={issue.sequence_id}
+                              textContainerClassName="text-xs text-custom-text-200"
+                            />
                             <button
                               type="button"
                               className="group p-1"
@@ -232,12 +244,12 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                                   htmlFor={`issue-${issue.id}`}
                                   value={issue}
                                   className={({ active }) =>
-                                    `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 text-custom-text-200 ${
+                                    `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 my-0.5 text-custom-text-200 ${
                                       active ? "bg-custom-background-80 text-custom-text-100" : ""
                                     } ${selected ? "text-custom-text-100" : ""}`
                                   }
                                 >
-                                  <div className="flex items-center gap-2">
+                                  <div className="flex items-center gap-2 truncate">
                                     <input type="checkbox" checked={selected} readOnly />
                                     <span
                                       className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
@@ -245,15 +257,21 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                                         backgroundColor: issue.state__color,
                                       }}
                                     />
-                                    <span className="flex-shrink-0 text-xs">
-                                      {issue.project__identifier}-{issue.sequence_id}
+                                    <span className="flex-shrink-0">
+                                      <IssueIdentifier
+                                        projectId={issue.project_id}
+                                        issueTypeId={issue.type_id}
+                                        projectIdentifier={issue.project__identifier}
+                                        issueSequenceId={issue.sequence_id}
+                                        textContainerClassName="text-xs text-custom-text-200"
+                                      />
                                     </span>
-                                    {issue.name}
+                                    <span className="truncate">{issue.name}</span>
                                   </div>
                                   <a
                                     href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
                                     target="_blank"
-                                    className="z-1 relative hidden text-custom-text-200 hover:text-custom-text-100 group-hover:block"
+                                    className="z-1 relative hidden flex-shrink-0 text-custom-text-200 hover:text-custom-text-100 group-hover:block"
                                     rel="noopener noreferrer"
                                     onClick={(e) => e.stopPropagation()}
                                   >

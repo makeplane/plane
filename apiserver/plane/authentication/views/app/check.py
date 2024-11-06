@@ -95,17 +95,7 @@ class EmailCheckEndpoint(APIView):
 
         # If existing user
         if existing_user:
-            if not existing_user.is_active:
-                exc = AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES[
-                        "USER_ACCOUNT_DEACTIVATED"
-                    ],
-                    error_message="USER_ACCOUNT_DEACTIVATED",
-                )
-                return Response(
-                    exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST
-                )
-
+            # Return response
             return Response(
                 {
                     "existing": True,

@@ -1,13 +1,75 @@
 // services
-import type { CycleDateCheckData, ICycle, TIssuesResponse } from "@plane/types";
+import type {
+  CycleDateCheckData,
+  ICycle,
+  TIssuesResponse,
+  IWorkspaceActiveCyclesResponse,
+  TCycleDistribution,
+  TProgressSnapshot,
+  TCycleEstimateDistribution,
+} from "@plane/types";
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { APIService } from "@/services/api.service";
-// types
-// helpers
 
 export class CycleService extends APIService {
   constructor() {
     super(API_BASE_URL);
+  }
+
+  async workspaceActiveCyclesAnalytics(
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string,
+    analytic_type: string = "points"
+  ): Promise<TCycleDistribution | TCycleEstimateDistribution> {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/analytics?type=${analytic_type}`
+    )
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async workspaceActiveCyclesProgress(
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string
+  ): Promise<TProgressSnapshot> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/progress/`)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async workspaceActiveCyclesProgressPro(
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string
+  ): Promise<TProgressSnapshot> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-progress/`)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async workspaceActiveCycles(
+    workspaceSlug: string,
+    cursor: string,
+    per_page: number
+  ): Promise<IWorkspaceActiveCyclesResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/active-cycles/`, {
+      params: {
+        per_page,
+        cursor,
+      },
+    })
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
   }
 
   async getWorkspaceCycles(workspaceSlug: string): Promise<ICycle[]> {

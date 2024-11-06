@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 // hooks
 import { ClipboardList } from "lucide-react";
 import { Button } from "@plane/ui";
-import { useProject, useUser } from "@/hooks/store";
+import { useProject, useUserPermissions } from "@/hooks/store";
 // ui
 // icons
 // images
@@ -15,9 +15,7 @@ export const JoinProject: React.FC = () => {
   // states
   const [isJoiningProject, setIsJoiningProject] = useState(false);
   // store hooks
-  const {
-    membership: { joinProject },
-  } = useUser();
+  const { joinProject } = useUserPermissions();
   const { fetchProjects } = useProject();
 
   const { workspaceSlug, projectId } = useParams();
@@ -27,7 +25,7 @@ export const JoinProject: React.FC = () => {
 
     setIsJoiningProject(true);
 
-    joinProject(workspaceSlug.toString(), [projectId.toString()])
+    joinProject(workspaceSlug.toString(), projectId.toString())
       .then(() => fetchProjects(workspaceSlug.toString()))
       .finally(() => setIsJoiningProject(false));
   };
