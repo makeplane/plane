@@ -10,7 +10,7 @@ import { useCycle, useIssues } from "@/hooks/store";
 interface IActiveCycleDetails {
   workspaceSlug: string;
   projectId: string;
-  cycleId: string | null;
+  cycleId: string | null | undefined;
 }
 
 const useCyclesDetails = (props: IActiveCycleDetails) => {

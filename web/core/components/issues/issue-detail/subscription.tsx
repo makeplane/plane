@@ -7,7 +7,8 @@ import { Bell, BellOff } from "lucide-react";
 // UI
 import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export type TIssueSubscription = {
   workspaceSlug: string;
@@ -25,8 +26,16 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
   } = useIssueDetail();
   // state
   const [loading, setLoading] = useState(false);
+  // hooks
+  const { allowPermissions } = useUserPermissions();
 
   const isSubscribed = getSubscriptionByIssueId(issueId);
+  const isEditable = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug,
+    projectId
+  );
 
   const handleSubscription = async () => {
     setLoading(true);
@@ -64,6 +73,7 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
         variant="outline-primary"
         className="hover:!bg-custom-primary-100/20"
         onClick={handleSubscription}
+        disabled={!isEditable}
       >
         {loading ? (
           <span>

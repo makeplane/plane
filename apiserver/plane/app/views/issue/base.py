@@ -14,6 +14,9 @@ from django.db.models import (
     Q,
     UUIDField,
     Value,
+    Subquery,
+    Case,
+    When,
 )
 from django.db.models.functions import Coalesce
 from django.utils import timezone
@@ -35,13 +38,14 @@ from plane.app.serializers import (
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
-    IssueAttachment,
+    FileAsset,
     IssueLink,
     IssueUserProperty,
     IssueReaction,
     IssueSubscriber,
     Project,
     ProjectMember,
+    CycleIssue,
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -62,7 +66,7 @@ from plane.bgtasks.webhook_task import model_activity
 
 
 class IssueListEndpoint(BaseAPIView):
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id):
         issue_ids = request.GET.get("issues", False)
 
@@ -83,7 +87,13 @@ class IssueListEndpoint(BaseAPIView):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
-            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(
+                        issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("cycle_id")[:1]
+                )
+            )
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -91,8 +101,9 @@ class IssueListEndpoint(BaseAPIView):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -206,7 +217,13 @@ class IssueViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
-            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(
+                        issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("cycle_id")[:1]
+                )
+            )
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -214,8 +231,9 @@ class IssueViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -232,12 +250,19 @@ class IssueViewSet(BaseViewSet):
         ).distinct()
 
     @method_decorator(gzip_page)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
+        extra_filters = {}
+        if request.GET.get("updated_at__gt", None) is not None:
+            extra_filters = {
+                "updated_at__gt": request.GET.get("updated_at__gt")
+            }
+
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
         filters = issue_filters(request.query_params, "GET")
         order_by_param = request.GET.get("order_by", "-created_at")
 
-        issue_queryset = self.get_queryset().filter(**filters)
+        issue_queryset = self.get_queryset().filter(**filters, **extra_filters)
         # Custom ordering for priority and state
 
         # Issue queryset
@@ -264,13 +289,16 @@ class IssueViewSet(BaseViewSet):
             entity_identifier=project_id,
             user_id=request.user.id,
         )
-        if ProjectMember.objects.filter(
-            workspace__slug=slug,
-            project_id=project_id,
-            member=request.user,
-            role=5,
-            is_active=True,
-        ).exists():
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=request.user,
+                role=5,
+                is_active=True,
+            ).exists()
+            and not project.guest_view_all_features
+        ):
             issue_queryset = issue_queryset.filter(created_by=request.user)
 
         if group_by:
@@ -440,18 +468,66 @@ class IssueViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @allow_permission(
-        [ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER], creator=True, model=Issue
+        allowed_roles=[
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+            ROLE.GUEST,
+        ],
+        creator=True,
+        model=Issue,
     )
     def retrieve(self, request, slug, project_id, pk=None):
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
+
         issue = (
-            self.get_queryset()
+            Issue.objects.filter(
+                project_id=self.kwargs.get("project_id")
+            )
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .select_related("workspace", "project", "state", "parent")
+            .prefetch_related("assignees", "labels", "issue_module__module")
+            .annotate(
+                cycle_id=Case(
+                    When(
+                        issue_cycle__cycle__deleted_at__isnull=True,
+                        then=F("issue_cycle__cycle_id"),
+                    ),
+                    default=None,
+                )
+            )
+            .annotate(
+                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("id")
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+                )
             .filter(pk=pk)
             .annotate(
                 label_ids=Coalesce(
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=~Q(labels__id__isnull=True),
+                        filter=Q(
+                            ~Q(labels__id__isnull=True)
+                            & Q(label_issue__deleted_at__isnull=True),
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -459,8 +535,11 @@ class IssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "assignees__id",
                         distinct=True,
-                        filter=~Q(assignees__id__isnull=True)
-                        & Q(assignees__member_project__is_active=True),
+                        filter=Q(
+                            ~Q(assignees__id__isnull=True)
+                            & Q(assignees__member_project__is_active=True)
+                            & Q(issue_assignee__deleted_at__isnull=True)
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -468,8 +547,11 @@ class IssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "issue_module__module_id",
                         distinct=True,
-                        filter=~Q(issue_module__module_id__isnull=True)
-                        & Q(issue_module__module__archived_at__isnull=True),
+                        filter=Q(
+                            ~Q(issue_module__module_id__isnull=True)
+                            & Q(issue_module__module__archived_at__isnull=True)
+                            & Q(issue_module__deleted_at__isnull=True)
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -480,12 +562,6 @@ class IssueViewSet(BaseViewSet):
                     queryset=IssueReaction.objects.select_related(
                         "issue", "actor"
                     ),
-                )
-            )
-            .prefetch_related(
-                Prefetch(
-                    "issue_attachment",
-                    queryset=IssueAttachment.objects.select_related("issue"),
                 )
             )
             .prefetch_related(
@@ -511,6 +587,27 @@ class IssueViewSet(BaseViewSet):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
+        """
+        if the role is guest and guest_view_all_features is false and owned by is not 
+        the requesting user then dont show the issue
+        """
+
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=request.user,
+                role=5,
+                is_active=True,
+            ).exists()
+            and not project.guest_view_all_features
+            and not issue.created_by == request.user
+        ):
+            return Response(
+                {"error": "You are not allowed to view this issue"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         recent_visited_task.delay(
             slug=slug,
             entity_name="issue",
@@ -522,7 +619,9 @@ class IssueViewSet(BaseViewSet):
         serializer = IssueDetailSerializer(issue, expand=self.expand)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], creator=True, model=Issue
+    )
     def partial_update(self, request, slug, project_id, pk=None):
         issue = (
             self.get_queryset()
@@ -531,7 +630,10 @@ class IssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=~Q(labels__id__isnull=True),
+                        filter=Q(
+                            ~Q(labels__id__isnull=True)
+                            & Q(label_issue__deleted_at__isnull=True),
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -539,8 +641,11 @@ class IssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "assignees__id",
                         distinct=True,
-                        filter=~Q(assignees__id__isnull=True)
-                        & Q(assignees__member_project__is_active=True),
+                        filter=Q(
+                            ~Q(assignees__id__isnull=True)
+                            & Q(assignees__member_project__is_active=True)
+                            & Q(issue_assignee__deleted_at__isnull=True)
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -548,7 +653,11 @@ class IssueViewSet(BaseViewSet):
                     ArrayAgg(
                         "issue_module__module_id",
                         distinct=True,
-                        filter=~Q(issue_module__module_id__isnull=True),
+                        filter=Q(
+                            ~Q(issue_module__module_id__isnull=True)
+                            & Q(issue_module__module__archived_at__isnull=True)
+                            & Q(issue_module__deleted_at__isnull=True)
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -618,7 +727,7 @@ class IssueViewSet(BaseViewSet):
 
 
 class IssueUserDisplayPropertyEndpoint(BaseAPIView):
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST, ROLE.VIEWER])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def patch(self, request, slug, project_id):
         issue_property = IssueUserProperty.objects.get(
             user=request.user,
@@ -638,7 +747,13 @@ class IssueUserDisplayPropertyEndpoint(BaseAPIView):
         serializer = IssueUserPropertySerializer(issue_property)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST, ROLE.VIEWER])
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+            ROLE.GUEST,
+        ]
+    )
     def get(self, request, slug, project_id):
         issue_property, _ = IssueUserProperty.objects.get_or_create(
             user=request.user, project_id=project_id
@@ -672,18 +787,46 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
         )
 
 
+class DeletedIssuesListViewSet(BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def get(self, request, slug, project_id):
+        filters = {}
+        if request.GET.get("updated_at__gt", None) is not None:
+            filters = {"updated_at__gt": request.GET.get("updated_at__gt")}
+        deleted_issues = (
+            Issue.all_objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+            )
+            .filter(Q(archived_at__isnull=False) | Q(deleted_at__isnull=False))
+            .filter(**filters)
+            .values_list("id", flat=True)
+        )
+
+        return Response(deleted_issues, status=status.HTTP_200_OK)
+
+
 class IssuePaginatedViewSet(BaseViewSet):
     def get_queryset(self):
         workspace_slug = self.kwargs.get("slug")
         project_id = self.kwargs.get("project_id")
 
+        issue_queryset = Issue.issue_objects.filter(
+            workspace__slug=workspace_slug, project_id=project_id
+        )
+
         return (
-            Issue.issue_objects.filter(
-                workspace__slug=workspace_slug, project_id=project_id
+            issue_queryset.select_related(
+                "workspace", "project", "state", "parent"
             )
-            .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
-            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(
+                        issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("cycle_id")[:1]
+                )
+            )
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -691,8 +834,9 @@ class IssuePaginatedViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -719,17 +863,18 @@ class IssuePaginatedViewSet(BaseViewSet):
 
         return paginated_data
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER, ROLE.GUEST])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
         cursor = request.GET.get("cursor", None)
-        is_description_required = request.GET.get("description", False)
-        updated_at = request.GET.get("updated_at__gte", None)
+        is_description_required = request.GET.get("description", "false")
+        updated_at = request.GET.get("updated_at__gt", None)
 
         # required fields
         required_fields = [
             "id",
             "name",
             "state_id",
+            "state__group",
             "sort_order",
             "completed_at",
             "estimate_point",
@@ -746,7 +891,6 @@ class IssuePaginatedViewSet(BaseViewSet):
             "updated_by",
             "is_draft",
             "archived_at",
-            "deleted_at",
             "module_ids",
             "label_ids",
             "assignee_ids",
@@ -755,26 +899,44 @@ class IssuePaginatedViewSet(BaseViewSet):
             "sub_issues_count",
         ]
 
-        if is_description_required:
+        if str(is_description_required).lower() == "true":
             required_fields.append("description_html")
 
         # querying issues
         base_queryset = Issue.issue_objects.filter(
             workspace__slug=slug, project_id=project_id
-        ).order_by("updated_at")
+        )
+
+        base_queryset = base_queryset.order_by("updated_at")
         queryset = self.get_queryset().order_by("updated_at")
+
+        # validation for guest user
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
+        project_member = ProjectMember.objects.filter(
+            workspace__slug=slug,
+            project_id=project_id,
+            member=request.user,
+            role=5,
+            is_active=True,
+        )
+        if project_member.exists() and not project.guest_view_all_features:
+            base_queryset = base_queryset.filter(created_by=request.user)
+            queryset = queryset.filter(created_by=request.user)
 
         # filtering issues by greater then updated_at given by the user
         if updated_at:
-            base_queryset = base_queryset.filter(updated_at__gte=updated_at)
-            queryset = queryset.filter(updated_at__gte=updated_at)
+            base_queryset = base_queryset.filter(updated_at__gt=updated_at)
+            queryset = queryset.filter(updated_at__gt=updated_at)
 
         queryset = queryset.annotate(
             label_ids=Coalesce(
                 ArrayAgg(
                     "labels__id",
                     distinct=True,
-                    filter=~Q(labels__id__isnull=True),
+                    filter=Q(
+                        ~Q(labels__id__isnull=True)
+                        & Q(label_issue__deleted_at__isnull=True),
+                    ),
                 ),
                 Value([], output_field=ArrayField(UUIDField())),
             ),
@@ -782,8 +944,11 @@ class IssuePaginatedViewSet(BaseViewSet):
                 ArrayAgg(
                     "assignees__id",
                     distinct=True,
-                    filter=~Q(assignees__id__isnull=True)
-                    & Q(assignees__member_project__is_active=True),
+                    filter=Q(
+                        ~Q(assignees__id__isnull=True)
+                        & Q(assignees__member_project__is_active=True)
+                        & Q(issue_assignee__deleted_at__isnull=True)
+                    ),
                 ),
                 Value([], output_field=ArrayField(UUIDField())),
             ),
@@ -791,8 +956,11 @@ class IssuePaginatedViewSet(BaseViewSet):
                 ArrayAgg(
                     "issue_module__module_id",
                     distinct=True,
-                    filter=~Q(issue_module__module_id__isnull=True)
-                    & Q(issue_module__module__archived_at__isnull=True),
+                    filter=Q(
+                        ~Q(issue_module__module_id__isnull=True)
+                        & Q(issue_module__module__archived_at__isnull=True)
+                        & Q(issue_module__deleted_at__isnull=True)
+                    ),
                 ),
                 Value([], output_field=ArrayField(UUIDField())),
             ),
@@ -808,3 +976,194 @@ class IssuePaginatedViewSet(BaseViewSet):
         )
 
         return Response(paginated_data, status=status.HTTP_200_OK)
+
+
+class IssueDetailEndpoint(BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def get(self, request, slug, project_id):
+        filters = issue_filters(request.query_params, "GET")
+        issue = (
+            Issue.issue_objects.filter(
+                workspace__slug=slug, project_id=project_id
+            )
+            .select_related("workspace", "project", "state", "parent")
+            .prefetch_related("assignees", "labels", "issue_module__module")
+            .annotate(
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(
+                        issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("cycle_id")[:1]
+                )
+            )
+            .annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "labels__id",
+                        distinct=True,
+                        filter=Q(
+                            ~Q(labels__id__isnull=True)
+                            & Q(label_issue__deleted_at__isnull=True),
+                        ),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "assignees__id",
+                        distinct=True,
+                        filter=Q(
+                            ~Q(assignees__id__isnull=True)
+                            & Q(assignees__member_project__is_active=True)
+                            & Q(issue_assignee__deleted_at__isnull=True)
+                        ),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                module_ids=Coalesce(
+                    ArrayAgg(
+                        "issue_module__module_id",
+                        distinct=True,
+                        filter=Q(
+                            ~Q(issue_module__module_id__isnull=True)
+                            & Q(issue_module__module__archived_at__isnull=True)
+                            & Q(issue_module__deleted_at__isnull=True)
+                        ),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+            )
+            .annotate(
+                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("id")
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+        )
+        issue = issue.filter(**filters)
+        order_by_param = request.GET.get("order_by", "-created_at")
+        # Issue queryset
+        issue, order_by_param = order_issue_queryset(
+            issue_queryset=issue,
+            order_by_param=order_by_param,
+        )
+        return self.paginate(
+            request=request,
+            order_by=order_by_param,
+            queryset=(issue),
+            on_results=lambda issue: IssueSerializer(
+                issue,
+                many=True,
+                fields=self.fields,
+                expand=self.expand,
+            ).data,
+        )
+
+
+class IssueBulkUpdateDateEndpoint(BaseAPIView):
+
+    def validate_dates(
+        self, current_start, current_target, new_start, new_target
+    ):
+        """
+        Validate that start date is before target date.
+        """
+        start = new_start or current_start
+        target = new_target or current_target
+
+        if start and target and start > target:
+            return False
+        return True
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    def post(self, request, slug, project_id):
+
+        updates = request.data.get("updates", [])
+
+        issue_ids = [update["id"] for update in updates]
+        epoch = int(timezone.now().timestamp())
+
+        # Fetch all relevant issues in a single query
+        issues = list(Issue.objects.filter(id__in=issue_ids))
+        issues_dict = {str(issue.id): issue for issue in issues}
+        issues_to_update = []
+
+        for update in updates:
+            issue_id = update["id"]
+            issue = issues_dict.get(issue_id)
+
+            if not issue:
+                continue
+
+            start_date = update.get("start_date")
+            target_date = update.get("target_date")
+            validate_dates = self.validate_dates(
+                issue.start_date, issue.target_date, start_date, target_date
+            )
+            if not validate_dates:
+                return Response(
+                    {
+                        "message": "Start date cannot exceed target date",
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            if start_date:
+                issue_activity.delay(
+                    type="issue.activity.updated",
+                    requested_data=json.dumps(
+                        {"start_date": update.get("start_date")}
+                    ),
+                    current_instance=json.dumps(
+                        {"start_date": str(issue.start_date)}
+                    ),
+                    issue_id=str(issue_id),
+                    actor_id=str(request.user.id),
+                    project_id=str(project_id),
+                    epoch=epoch,
+                )
+                issue.start_date = start_date
+                issues_to_update.append(issue)
+
+            if target_date:
+                issue_activity.delay(
+                    type="issue.activity.updated",
+                    requested_data=json.dumps(
+                        {"target_date": update.get("target_date")}
+                    ),
+                    current_instance=json.dumps(
+                        {"target_date": str(issue.target_date)}
+                    ),
+                    issue_id=str(issue_id),
+                    actor_id=str(request.user.id),
+                    project_id=str(project_id),
+                    epoch=epoch,
+                )
+                issue.target_date = target_date
+                issues_to_update.append(issue)
+
+        # Bulk update issues
+        Issue.objects.bulk_update(
+            issues_to_update, ["start_date", "target_date"]
+        )
+
+        return Response(
+            {"message": "Issues updated successfully"},
+            status=status.HTTP_200_OK,
+        )

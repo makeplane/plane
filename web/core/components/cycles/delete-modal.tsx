@@ -54,7 +54,7 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
           });
         })
         .catch((errors) => {
-          const isPermissionError = errors?.error === "Only admin or owner can delete the cycle";
+          const isPermissionError = errors?.error === "You don't have the required permissions.";
           const currentError = isPermissionError
             ? PROJECT_ERROR_MESSAGES.permissionError
             : PROJECT_ERROR_MESSAGES.cycleDeleteError;

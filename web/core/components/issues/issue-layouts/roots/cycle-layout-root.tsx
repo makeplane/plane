@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // hooks
 // components
+import { LogoSpinner } from "@/components/common";
 import { TransferIssues, TransferIssuesModal } from "@/components/cycles";
 import {
   CycleAppliedFiltersRoot,
@@ -50,7 +51,7 @@ export const CycleLayoutRoot: React.FC = observer(() => {
   // state
   const [transferIssuesModal, setTransferIssuesModal] = useState(false);
 
-  useSWR(
+  const { isLoading } = useSWR(
     workspaceSlug && projectId && cycleId
       ? `CYCLE_ISSUES_${workspaceSlug.toString()}_${projectId.toString()}_${cycleId.toString()}`
       : null,
@@ -62,7 +63,8 @@ export const CycleLayoutRoot: React.FC = observer(() => {
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
+  const issueFilters = issuesFilter?.getIssueFilters(cycleId?.toString());
+  const activeLayout = issueFilters?.displayFilters?.layout;
 
   const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : undefined;
   const cycleStatus = cycleDetails?.status?.toLocaleLowerCase() ?? "draft";
@@ -75,6 +77,13 @@ export const CycleLayoutRoot: React.FC = observer(() => {
 
   if (!workspaceSlug || !projectId || !cycleId) return <></>;
 
+  if (isLoading && !issueFilters)
+    return (
+      <div className="h-full w-full flex items-center justify-center">
+        <LogoSpinner />
+      </div>
+    );
+
   return (
     <IssuesStoreContext.Provider value={EIssuesStoreType.CYCLE}>
       <TransferIssuesModal handleClose={() => setTransferIssuesModal(false)} isOpen={transferIssuesModal} />
@@ -83,7 +92,7 @@ export const CycleLayoutRoot: React.FC = observer(() => {
           <TransferIssues
             handleClick={() => setTransferIssuesModal(true)}
             canTransferIssues={canTransferIssues}
-            disabled={!isEmpty(cycleDetails?.progress_snapshot) ?? false}
+            disabled={!isEmpty(cycleDetails?.progress_snapshot)}
           />
         )}
         <CycleAppliedFiltersRoot />

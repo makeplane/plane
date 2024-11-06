@@ -1,7 +1,9 @@
-import { makeObservable } from "mobx";
+import { makeObservable, observable } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
 import { TIssue } from "@plane/types";
+// local
+import { persistence } from "@/local-db/storage.sqlite";
 // services
 import { IssueArchiveService, IssueDraftService, IssueService } from "@/services/issue";
 // types
@@ -13,7 +15,7 @@ export interface IIssueStoreActions {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    issueType?: "DEFAULT" | "DRAFT" | "ARCHIVED"
+    issueStatus?: "DEFAULT" | "DRAFT",
   ) => Promise<TIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
@@ -32,11 +34,15 @@ export interface IIssueStoreActions {
 }
 
 export interface IIssueStore extends IIssueStoreActions {
+  getIsFetchingIssueDetails: (issueId: string | undefined) => boolean;
+  getIsLocalDBIssueDescription: (issueId: string | undefined) => boolean;
   // helper methods
   getIssueById: (issueId: string) => TIssue | undefined;
 }
 
 export class IssueStore implements IIssueStore {
+  fetchingIssueDetails: string | undefined = undefined;
+  localDBIssueDescription: string | undefined = undefined;
   // root store
   rootIssueDetailStore: IIssueDetail;
   // services
@@ -45,7 +51,10 @@ export class IssueStore implements IIssueStore {
   issueDraftService;
 
   constructor(rootStore: IIssueDetail) {
-    makeObservable(this, {});
+    makeObservable(this, {
+      fetchingIssueDetails: observable.ref,
+      localDBIssueDescription: observable.ref,
+    });
     // root store
     this.rootIssueDetailStore = rootStore;
     // services
@@ -54,6 +63,18 @@ export class IssueStore implements IIssueStore {
     this.issueDraftService = new IssueDraftService();
   }
 
+  getIsFetchingIssueDetails = computedFn((issueId: string | undefined) => {
+    if (!issueId) return false;
+
+    return this.fetchingIssueDetails === issueId;
+  });
+
+  getIsLocalDBIssueDescription = computedFn((issueId: string | undefined) => {
+    if (!issueId) return false;
+
+    return this.localDBIssueDescription === issueId;
+  });
+
   // helper methods
   getIssueById = computedFn((issueId: string) => {
     if (!issueId) return undefined;
@@ -61,21 +82,76 @@ export class IssueStore implements IIssueStore {
   });
 
   // actions
-  fetchIssue = async (workspaceSlug: string, projectId: string, issueId: string, issueType = "DEFAULT") => {
+  fetchIssue = async (workspaceSlug: string, projectId: string, issueId: string, issueStatus = "DEFAULT") => {
     const query = {
-      expand: "issue_reactions,issue_attachment,issue_link,parent",
+      expand: "issue_reactions,issue_attachments,issue_link,parent",
     };
 
-    let issue: TIssue;
+    let issue: TIssue | undefined;
 
-    if (issueType === "ARCHIVED")
-      issue = await this.issueArchiveService.retrieveArchivedIssue(workspaceSlug, projectId, issueId, query);
-    else if (issueType === "DRAFT")
+    // fetch issue from local db
+    issue = await persistence.getIssue(issueId);
+
+    this.fetchingIssueDetails = issueId;
+
+    if (issue) {
+      this.addIssueToStore(issue);
+      this.localDBIssueDescription = issueId;
+    }
+
+    if (issueStatus === "DRAFT")
       issue = await this.issueDraftService.getDraftIssueById(workspaceSlug, projectId, issueId, query);
     else issue = await this.issueService.retrieve(workspaceSlug, projectId, issueId, query);
 
     if (!issue) throw new Error("Issue not found");
 
+    const issuePayload = this.addIssueToStore(issue);
+    this.localDBIssueDescription = undefined;
+
+    this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issuePayload]);
+
+    // store handlers from issue detail
+    // parent
+    if (issue && issue?.parent && issue?.parent?.id && issue?.parent?.project_id) {
+      this.issueService.retrieve(workspaceSlug, issue.parent.project_id, issue?.parent?.id).then((res) => {
+        this.rootIssueDetailStore.rootIssueStore.issues.addIssue([res]);
+      });
+    }
+    // assignees
+    // labels
+    // state
+
+    // issue reactions
+    if (issue.issue_reactions) this.rootIssueDetailStore.addReactions(issueId, issue.issue_reactions);
+
+    // fetch issue links
+    if (issue.issue_link) this.rootIssueDetailStore.addLinks(issueId, issue.issue_link);
+
+    // fetch issue attachments
+    if (issue.issue_attachments) this.rootIssueDetailStore.addAttachments(issueId, issue.issue_attachments);
+
+    this.rootIssueDetailStore.addSubscription(issueId, issue.is_subscribed);
+
+    // fetch issue activity
+    this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
+
+    // fetch issue comments
+    this.rootIssueDetailStore.comment.fetchComments(workspaceSlug, projectId, issueId);
+
+    // fetch sub issues
+    this.rootIssueDetailStore.subIssues.fetchSubIssues(workspaceSlug, projectId, issueId);
+
+    // fetch issue relations
+    this.rootIssueDetailStore.relation.fetchRelations(workspaceSlug, projectId, issueId);
+
+    // fetching states
+    // TODO: check if this function is required
+    this.rootIssueDetailStore.rootIssueStore.state.fetchProjectStates(workspaceSlug, projectId);
+
+    return issue;
+  };
+
+  addIssueToStore = (issue: TIssue) => {
     const issuePayload: TIssue = {
       id: issue?.id,
       sequence_id: issue?.sequence_id,
@@ -108,46 +184,9 @@ export class IssueStore implements IIssueStore {
     };
 
     this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issuePayload]);
+    this.fetchingIssueDetails = undefined;
 
-    // store handlers from issue detail
-    // parent
-    if (issue && issue?.parent && issue?.parent?.id && issue?.parent?.project_id) {
-      this.issueService.retrieve(workspaceSlug, issue.parent.project_id, issue?.parent?.id).then((res) => {
-        this.rootIssueDetailStore.rootIssueStore.issues.addIssue([res]);
-      });
-    }
-    // assignees
-    // labels
-    // state
-
-    // issue reactions
-    if (issue.issue_reactions) this.rootIssueDetailStore.addReactions(issueId, issue.issue_reactions);
-
-    // fetch issue links
-    if (issue.issue_link) this.rootIssueDetailStore.addLinks(issueId, issue.issue_link);
-
-    // fetch issue attachments
-    if (issue.issue_attachment) this.rootIssueDetailStore.addAttachments(issueId, issue.issue_attachment);
-
-    this.rootIssueDetailStore.addSubscription(issueId, issue.is_subscribed);
-
-    // fetch issue activity
-    this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
-
-    // fetch issue comments
-    this.rootIssueDetailStore.comment.fetchComments(workspaceSlug, projectId, issueId);
-
-    // fetch sub issues
-    this.rootIssueDetailStore.subIssues.fetchSubIssues(workspaceSlug, projectId, issueId);
-
-    // fetch issue relations
-    this.rootIssueDetailStore.relation.fetchRelations(workspaceSlug, projectId, issueId);
-
-    // fetching states
-    // TODO: check if this function is required
-    this.rootIssueDetailStore.rootIssueStore.state.fetchProjectStates(workspaceSlug, projectId);
-
-    return issue;
+    return issuePayload;
   };
 
   updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {

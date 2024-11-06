@@ -296,6 +296,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             issueTypeId={issue.type_id}
             projectId={projectId}
             workspaceSlug={workspaceSlug}
+            isDisabled={disabled}
           />
         )}
       </div>

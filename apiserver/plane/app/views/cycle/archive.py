@@ -1,6 +1,7 @@
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
+from django.db import models
 from django.db.models import (
     Case,
     CharField,
@@ -18,7 +19,7 @@ from django.db.models import (
     Sum,
     FloatField,
 )
-from django.db.models.functions import Coalesce, Cast
+from django.db.models.functions import Coalesce, Cast, Concat
 from django.utils import timezone
 
 # Third party imports
@@ -47,6 +48,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                 estimate_point__estimate__type="points",
                 state__group="backlog",
                 issue_cycle__cycle_id=OuterRef("pk"),
+                issue_cycle__deleted_at__isnull=True,
             )
             .values("issue_cycle__cycle_id")
             .annotate(
@@ -61,6 +63,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                 estimate_point__estimate__type="points",
                 state__group="unstarted",
                 issue_cycle__cycle_id=OuterRef("pk"),
+                issue_cycle__deleted_at__isnull=True,
             )
             .values("issue_cycle__cycle_id")
             .annotate(
@@ -75,6 +78,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                 estimate_point__estimate__type="points",
                 state__group="started",
                 issue_cycle__cycle_id=OuterRef("pk"),
+                issue_cycle__deleted_at__isnull=True,
             )
             .values("issue_cycle__cycle_id")
             .annotate(
@@ -89,6 +93,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                 estimate_point__estimate__type="points",
                 state__group="cancelled",
                 issue_cycle__cycle_id=OuterRef("pk"),
+                issue_cycle__deleted_at__isnull=True,
             )
             .values("issue_cycle__cycle_id")
             .annotate(
@@ -103,6 +108,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                 estimate_point__estimate__type="points",
                 state__group="completed",
                 issue_cycle__cycle_id=OuterRef("pk"),
+                issue_cycle__deleted_at__isnull=True,
             )
             .values("issue_cycle__cycle_id")
             .annotate(
@@ -116,6 +122,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
             Issue.issue_objects.filter(
                 estimate_point__estimate__type="points",
                 issue_cycle__cycle_id=OuterRef("pk"),
+                issue_cycle__deleted_at__isnull=True,
             )
             .values("issue_cycle__cycle_id")
             .annotate(
@@ -139,7 +146,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                 Prefetch(
                     "issue_cycle__issue__assignees",
                     queryset=User.objects.only(
-                        "avatar", "first_name", "id"
+                        "avatar_asset", "first_name", "id"
                     ).distinct(),
                 )
             )
@@ -159,6 +166,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                     filter=Q(
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__issue__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -170,6 +178,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="completed",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__issue__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -181,6 +190,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="cancelled",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__issue__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -192,6 +202,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="started",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__issue__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -203,6 +214,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="unstarted",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__issue__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -214,6 +226,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                         issue_cycle__issue__state__group="backlog",
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
+                        issue_cycle__issue__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -288,7 +301,12 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
             .distinct()
         )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.VIEWER])
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+        ]
+    )
     def get(self, request, slug, project_id, pk=None):
         if pk is None:
             queryset = (
@@ -336,6 +354,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                         project_id=self.kwargs.get("project_id"),
                         parent__isnull=False,
                         issue_cycle__cycle_id=pk,
+                        issue_cycle__deleted_at__isnull=True,
                     )
                     .order_by()
                     .annotate(count=Func(F("id"), function="Count"))
@@ -390,13 +409,33 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                 assignee_distribution = (
                     Issue.issue_objects.filter(
                         issue_cycle__cycle_id=pk,
+                        issue_cycle__deleted_at__isnull=True,
                         workspace__slug=slug,
                         project_id=project_id,
                     )
                     .annotate(display_name=F("assignees__display_name"))
                     .annotate(assignee_id=F("assignees__id"))
-                    .annotate(avatar=F("assignees__avatar"))
-                    .values("display_name", "assignee_id", "avatar")
+                    .annotate(
+                        avatar_url=Case(
+                            # If `avatar_asset` exists, use it to generate the asset URL
+                            When(
+                                assignees__avatar_asset__isnull=False,
+                                then=Concat(
+                                    Value("/api/assets/v2/static/"),
+                                    "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
+                                    Value("/"),
+                                ),
+                            ),
+                            # If `avatar_asset` is None, fall back to using `avatar` field directly
+                            When(
+                                assignees__avatar_asset__isnull=True,
+                                then="assignees__avatar",
+                            ),
+                            default=Value(None),
+                            output_field=models.CharField(),
+                        )
+                    )
+                    .values("display_name", "assignee_id", "avatar_url")
                     .annotate(
                         total_estimates=Sum(
                             Cast("estimate_point__value", FloatField())
@@ -428,6 +467,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
                 label_distribution = (
                     Issue.issue_objects.filter(
                         issue_cycle__cycle_id=pk,
+                        issue_cycle__deleted_at__isnull=True,
                         workspace__slug=slug,
                         project_id=project_id,
                     )
@@ -483,19 +523,39 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
             assignee_distribution = (
                 Issue.issue_objects.filter(
                     issue_cycle__cycle_id=pk,
+                    issue_cycle__deleted_at__isnull=True,
                     workspace__slug=slug,
                     project_id=project_id,
                 )
                 .annotate(first_name=F("assignees__first_name"))
                 .annotate(last_name=F("assignees__last_name"))
                 .annotate(assignee_id=F("assignees__id"))
-                .annotate(avatar=F("assignees__avatar"))
+                .annotate(
+                    avatar_url=Case(
+                        # If `avatar_asset` exists, use it to generate the asset URL
+                        When(
+                            assignees__avatar_asset__isnull=False,
+                            then=Concat(
+                                Value("/api/assets/v2/static/"),
+                                "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
+                                Value("/"),
+                            ),
+                        ),
+                        # If `avatar_asset` is None, fall back to using `avatar` field directly
+                        When(
+                            assignees__avatar_asset__isnull=True,
+                            then="assignees__avatar",
+                        ),
+                        default=Value(None),
+                        output_field=models.CharField(),
+                    )
+                )
                 .annotate(display_name=F("assignees__display_name"))
                 .values(
                     "first_name",
                     "last_name",
                     "assignee_id",
-                    "avatar",
+                    "avatar_url",
                     "display_name",
                 )
                 .annotate(
@@ -534,6 +594,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
             label_distribution = (
                 Issue.issue_objects.filter(
                     issue_cycle__cycle_id=pk,
+                    issue_cycle__deleted_at__isnull=True,
                     workspace__slug=slug,
                     project_id=project_id,
                 )
@@ -599,7 +660,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
             pk=cycle_id, project_id=project_id, workspace__slug=slug
         )
 
-        if cycle.end_date >= timezone.now().date():
+        if cycle.end_date >= timezone.now():
             return Response(
                 {"error": "Only completed cycles can be archived"},
                 status=status.HTTP_400_BAD_REQUEST,

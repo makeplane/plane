@@ -43,7 +43,6 @@ export const IssueBlocksList: FC<Props> = (props) => {
         issueIds.map((issueId: string, index: number) => (
           <IssueBlockRoot
             key={issueId}
-            issueIds={issueIds}
             issueId={issueId}
             issuesMap={issuesMap}
             updateIssue={updateIssue}

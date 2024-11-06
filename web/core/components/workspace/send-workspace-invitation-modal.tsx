@@ -2,6 +2,7 @@
 
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { Plus, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
@@ -9,9 +10,10 @@ import { IWorkspaceBulkInviteFormData } from "@plane/types";
 // ui
 import { Button, CustomSelect, Input } from "@plane/ui";
 // constants
-import { EUserWorkspaceRoles, ROLE } from "@/constants/workspace";
+import { ROLE } from "@/constants/workspace";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store";
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // types
 
 type Props = {
@@ -22,7 +24,7 @@ type Props = {
 
 type EmailRole = {
   email: string;
-  role: EUserWorkspaceRoles;
+  role: EUserPermissions;
 };
 
 type FormValues = {
@@ -40,10 +42,10 @@ const defaultValues: FormValues = {
 
 export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) => {
   const { isOpen, onClose, onSubmit } = props;
-  // mobx store
-  const {
-    membership: { currentWorkspaceRole },
-  } = useUser();
+  // store hooks
+  const { workspaceInfoBySlug } = useUserPermissions();
+  // router
+  const { workspaceSlug } = useParams();
   // form info
   const {
     control,
@@ -56,6 +58,8 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
     control,
     name: "emails",
   });
+
+  const currentWorkspaceRole = workspaceInfoBySlug(workspaceSlug.toString())?.role;
 
   const handleClose = () => {
     onClose();

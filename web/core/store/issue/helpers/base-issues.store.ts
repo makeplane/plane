@@ -29,11 +29,19 @@ import {
   TPaginationData,
   TBulkOperationsPayload,
 } from "@plane/types";
+// components
+import { IBlockUpdateDependencyData } from "@/components/gantt-chart";
+// constants
 import { EIssueLayoutTypes, ISSUE_PRIORITIES } from "@/constants/issue";
+// helpers
 import { convertToISODateString } from "@/helpers/date-time.helper";
+// local-db
+import { updatePersistentLayer } from "@/local-db/utils/utils";
+// services
 import { CycleService } from "@/services/cycle.service";
 import { IssueArchiveService, IssueDraftService, IssueService } from "@/services/issue";
 import { ModuleService } from "@/services/module.service";
+//
 import { IIssueRootStore } from "../root.store";
 import {
   getDifference,
@@ -44,9 +52,6 @@ import {
   getSubGroupIssueKeyActions,
 } from "./base-issues-utils";
 import { IBaseIssueFilterStore } from "./issue-filter-helper.store";
-// constants
-// helpers
-// services
 
 export type TIssueDisplayFilterOptions = Exclude<TIssueGroupByOptions, null> | "target_date";
 
@@ -65,6 +70,7 @@ export interface IBaseIssuesStore {
 
   //actions
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  clear(shouldClearPaginationOptions?: boolean, clearForLocal?: boolean): void;
   // helper methods
   getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined;
   issuesSortWithOrderBy(issueIds: string[], key: Partial<TIssueOrderByOptions>): string[];
@@ -107,6 +113,7 @@ export interface IBaseIssuesStore {
     addModuleIds: string[],
     removeModuleIds: string[]
   ): Promise<void>;
+  updateIssueDates(workspaceSlug: string, projectId: string, updates: IBlockUpdateDependencyData[]): Promise<void>;
 }
 
 // This constant maps the group by keys to the respective issue property that the key relies on
@@ -224,6 +231,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       issueUpdate: action,
       createDraftIssue: action,
       updateDraftIssue: action,
+      updateIssueDates: action,
       issueQuickAdd: action.bound,
       removeIssue: action.bound,
       issueArchive: action.bound,
@@ -455,7 +463,8 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     options: IssuePaginationOptions,
     workspaceSlug: string,
     projectId?: string,
-    id?: string
+    id?: string,
+    shouldClearPaginationOptions = true
   ) {
     // Process the Issue Response to get the following data from it
     const { issueList, groupedIssues, groupedIssueCount } = this.processIssueResponse(issuesResponse);
@@ -465,12 +474,15 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
     // Update all the GroupIds to this Store's groupedIssueIds and update Individual group issue counts
     runInAction(() => {
+      this.clear(shouldClearPaginationOptions, true);
       this.updateGroupedIssueIds(groupedIssues, groupedIssueCount);
       this.loader[getGroupKey()] = undefined;
     });
 
     // fetch parent stats if required, to be handled in the Implemented class
     this.fetchParentStats(workspaceSlug, projectId, id);
+
+    this.rootIssueStore.issueDetail.relation.extractRelationsFromIssues(issueList);
 
     // store Pagination options for next subsequent calls and data like next cursor etc
     this.storePreviousPaginationValues(issuesResponse, options);
@@ -496,6 +508,8 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       this.updateGroupedIssueIds(groupedIssues, groupedIssueCount, groupId, subGroupId);
       this.loader[getGroupKey(groupId, subGroupId)] = undefined;
     });
+
+    this.rootIssueStore.issueDetail.relation.extractRelationsFromIssues(issueList);
 
     // store Pagination data like next cursor etc
     this.storePreviousPaginationValues(issuesResponse, undefined, groupId, subGroupId);
@@ -525,6 +539,8 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
     // If shouldUpdateList is true, call fetchParentStats
     shouldUpdateList && (await this.fetchParentStats(workspaceSlug, projectId));
+
+    updatePersistentLayer(response.id);
 
     return response;
   }
@@ -785,6 +801,50 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       });
     });
   };
+
+  async updateIssueDates(
+    workspaceSlug: string,
+    projectId: string,
+    updates: { id: string; start_date?: string; target_date?: string }[]
+  ) {
+    const issueDatesBeforeChange: { id: string; start_date?: string; target_date?: string }[] = [];
+    try {
+      const getIssueById = this.rootIssueStore.issues.getIssueById;
+      runInAction(() => {
+        for (const update of updates) {
+          const dates: Partial<TIssue> = {};
+          if (update.start_date) dates.start_date = update.start_date;
+          if (update.target_date) dates.target_date = update.target_date;
+
+          const currIssue = getIssueById(update.id);
+
+          if (currIssue) {
+            issueDatesBeforeChange.push({
+              id: update.id,
+              start_date: currIssue.start_date ?? undefined,
+              target_date: currIssue.target_date ?? undefined,
+            });
+          }
+
+          this.issueUpdate(workspaceSlug, projectId, update.id, dates, false);
+        }
+      });
+
+      await this.issueService.updateIssueDates(workspaceSlug, projectId, updates);
+    } catch (e) {
+      runInAction(() => {
+        for (const update of issueDatesBeforeChange) {
+          const dates: Partial<TIssue> = {};
+          if (update.start_date) dates.start_date = update.start_date;
+          if (update.target_date) dates.target_date = update.target_date;
+
+          this.issueUpdate(workspaceSlug, projectId, update.id, dates, false);
+        }
+      });
+      console.error("error while updating Timeline dependencies");
+      throw e;
+    }
+  }
 
   /**
    * This method is used to add issues to a particular Cycle
@@ -1139,17 +1199,22 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   /**
    * Method called to clear out the current store
    */
-  clear(shouldClearPaginationOptions = true) {
-    runInAction(() => {
-      this.groupedIssueIds = undefined;
-      this.issuePaginationData = {};
-      this.groupedIssueCount = {};
-      if (shouldClearPaginationOptions) {
-        this.paginationOptions = undefined;
-      }
-    });
-    this.controller.abort();
-    this.controller = new AbortController();
+  clear(shouldClearPaginationOptions = true, clearForLocal = false) {
+    if (
+      (this.rootIssueStore.rootStore.user?.localDBEnabled && clearForLocal) ||
+      (!this.rootIssueStore.rootStore.user?.localDBEnabled && !clearForLocal)
+    ) {
+      runInAction(() => {
+        this.groupedIssueIds = undefined;
+        this.issuePaginationData = {};
+        this.groupedIssueCount = {};
+        if (shouldClearPaginationOptions) {
+          this.paginationOptions = undefined;
+        }
+      });
+      this.controller.abort();
+      this.controller = new AbortController();
+    }
   }
 
   /**
@@ -1694,7 +1759,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       }
     }
 
-    return isDataIdsArray ? (order ? orderBy(dataValues, undefined, [order])[0] : dataValues) : dataValues[0];
+    return isDataIdsArray ? (order ? orderBy(dataValues, undefined, [order]) : dataValues) : dataValues;
   }
 
   issuesSortWithOrderBy = (issueIds: string[], key: TIssueOrderByOptions | undefined): string[] => {
@@ -1744,11 +1809,11 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
         );
 
       // custom
-      case "priority": {
+      case "-priority": {
         const sortArray = ISSUE_PRIORITIES.map((i) => i.key);
         return getIssueIds(orderBy(array, (currentIssue: TIssue) => indexOf(sortArray, currentIssue?.priority)));
       }
-      case "-priority": {
+      case "priority": {
         const sortArray = ISSUE_PRIORITIES.map((i) => i.key);
         return getIssueIds(
           orderBy(array, (currentIssue: TIssue) => indexOf(sortArray, currentIssue?.priority), ["desc"])

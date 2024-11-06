@@ -13,13 +13,13 @@ import isNumber from "lodash/isNumber";
 export const renderFormattedDate = (
   date: string | Date | undefined | null,
   formatToken: string = "MMM dd, yyyy"
-): string | null => {
+): string | undefined => {
   // Parse the date to check if it is valid
   const parsedDate = getDate(date);
   // return if undefined
-  if (!parsedDate) return null;
+  if (!parsedDate) return;
   // Check if the parsed date is valid before formatting
-  if (!isValid(parsedDate)) return null; // Return null for invalid dates
+  if (!isValid(parsedDate)) return; // Return null for invalid dates
   let formattedDate;
   try {
     // Format the date in the format provided or default format (MMM dd, yyyy)
@@ -55,13 +55,13 @@ export const renderFormattedDateWithoutYear = (date: string | Date): string => {
  * @param {Date | string} date
  * @example renderFormattedPayloadDate("Jan 01, 20224") // "2024-01-01"
  */
-export const renderFormattedPayloadDate = (date: Date | string | undefined | null): string | null => {
+export const renderFormattedPayloadDate = (date: Date | string | undefined | null): string | undefined => {
   // Parse the date to check if it is valid
   const parsedDate = getDate(date);
   // return if undefined
-  if (!parsedDate) return null;
+  if (!parsedDate) return;
   // Check if the parsed date is valid before formatting
-  if (!isValid(parsedDate)) return null; // Return null for invalid dates
+  if (!isValid(parsedDate)) return; // Return null for invalid dates
   // Format the date in payload format (yyyy-mm-dd)
   const formattedDate = format(parsedDate, "yyyy-MM-dd");
   return formattedDate;
@@ -118,6 +118,25 @@ export const findTotalDaysInRange = (
   const diffInDays = differenceInDays(parsedEndDate, parsedStartDate);
   // Return the difference in days based on inclusive flag
   return inclusive ? diffInDays + 1 : diffInDays;
+};
+
+/**
+ * Add number of days to the provided date and return a resulting new date
+ * @param startDate
+ * @param numberOfDays
+ * @returns
+ */
+export const addDaysToDate = (startDate: Date | string | undefined | null, numberOfDays: number) => {
+  // Parse the dates to check if they are valid
+  const parsedStartDate = getDate(startDate);
+
+  // return if undefined
+  if (!parsedStartDate) return;
+
+  const newDate = new Date(parsedStartDate);
+  newDate.setDate(newDate.getDate() + numberOfDays);
+
+  return newDate;
 };
 
 /**
@@ -356,4 +375,33 @@ export const getReadTimeFromWordsCount = (wordsCount: number): number => {
   const wordsPerMinute = 200;
   const minutes = wordsCount / wordsPerMinute;
   return minutes * 60;
+};
+
+/**
+ * @description generates an array of dates between the start and end dates
+ * @param startDate
+ * @param endDate
+ * @returns
+ */
+export const generateDateArray = (startDate: string | Date, endDate: string | Date) => {
+  // Convert the start and end dates to Date objects if they aren't already
+  const start = new Date(startDate);
+  // start.setDate(start.getDate() + 1);
+  const end = new Date(endDate);
+  end.setDate(end.getDate() + 1);
+
+  // Create an empty array to store the dates
+  const dateArray = [];
+
+  // Use a while loop to generate dates between the range
+  while (start <= end) {
+    // Increment the date by 1 day (86400000 milliseconds)
+    start.setDate(start.getDate() + 1);
+    // Push the current date (converted to ISO string for consistency)
+    dateArray.push({
+      date: new Date(start).toISOString().split("T")[0],
+    });
+  }
+
+  return dateArray;
 };

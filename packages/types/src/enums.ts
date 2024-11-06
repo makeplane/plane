@@ -1,9 +1,13 @@
-export enum EUserProjectRoles {
-  GUEST = 5,
-  VIEWER = 10,
-  MEMBER = 15,
+export enum EUserPermissions {
   ADMIN = 20,
+  MEMBER = 15,
+  GUEST = 5,
 }
+
+export type TUserPermissions =
+  | EUserPermissions.ADMIN
+  | EUserPermissions.MEMBER
+  | EUserPermissions.GUEST;
 
 // project pages
 export enum EPageAccess {
@@ -43,4 +47,16 @@ export enum ENotificationFilterType {
   CREATED = "created",
   ASSIGNED = "assigned",
   SUBSCRIBED = "subscribed",
+}
+
+export enum EFileAssetType {
+  COMMENT_DESCRIPTION = "COMMENT_DESCRIPTION",
+  ISSUE_ATTACHMENT = "ISSUE_ATTACHMENT",
+  ISSUE_DESCRIPTION = "ISSUE_DESCRIPTION",
+  DRAFT_ISSUE_DESCRIPTION = "DRAFT_ISSUE_DESCRIPTION",
+  PAGE_DESCRIPTION = "PAGE_DESCRIPTION",
+  PROJECT_COVER = "PROJECT_COVER",
+  USER_AVATAR = "USER_AVATAR",
+  USER_COVER = "USER_COVER",
+  WORKSPACE_LOGO = "WORKSPACE_LOGO",
 }

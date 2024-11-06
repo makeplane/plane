@@ -14,9 +14,12 @@ from django.db.models import (
     Value,
     Sum,
     FloatField,
+    Case,
+    When,
 )
-from django.db.models.functions import Coalesce, Cast
+from django.db.models.functions import Coalesce, Cast, Concat
 from django.utils import timezone
+from django.db import models
 
 # Third party imports
 from rest_framework import status
@@ -54,6 +57,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             Issue.issue_objects.filter(
                 state__group="cancelled",
                 issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
             .annotate(cnt=Count("pk"))
@@ -63,6 +67,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             Issue.issue_objects.filter(
                 state__group="completed",
                 issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
             .annotate(cnt=Count("pk"))
@@ -72,6 +77,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             Issue.issue_objects.filter(
                 state__group="started",
                 issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
             .annotate(cnt=Count("pk"))
@@ -81,6 +87,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             Issue.issue_objects.filter(
                 state__group="unstarted",
                 issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
             .annotate(cnt=Count("pk"))
@@ -90,6 +97,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             Issue.issue_objects.filter(
                 state__group="backlog",
                 issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
             .annotate(cnt=Count("pk"))
@@ -98,6 +106,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
         total_issues = (
             Issue.issue_objects.filter(
                 issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
             .annotate(cnt=Count("pk"))
@@ -108,6 +117,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                 estimate_point__estimate__type="points",
                 state__group="completed",
                 issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
             .annotate(
@@ -122,6 +132,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             Issue.issue_objects.filter(
                 estimate_point__estimate__type="points",
                 issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
             .annotate(
@@ -136,6 +147,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                 estimate_point__estimate__type="points",
                 state__group="backlog",
                 issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
             .annotate(
@@ -150,6 +162,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                 estimate_point__estimate__type="points",
                 state__group="unstarted",
                 issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
             .annotate(
@@ -164,6 +177,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                 estimate_point__estimate__type="points",
                 state__group="started",
                 issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
             .annotate(
@@ -178,6 +192,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                 estimate_point__estimate__type="points",
                 state__group="cancelled",
                 issue_module__module_id=OuterRef("pk"),
+                issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
             .annotate(
@@ -334,6 +349,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                         project_id=self.kwargs.get("project_id"),
                         parent__isnull=False,
                         issue_module__module_id=pk,
+                        issue_module__deleted_at__isnull=True,
                     )
                     .order_by()
                     .annotate(count=Func(F("id"), function="Count"))
@@ -357,6 +373,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                 assignee_distribution = (
                     Issue.issue_objects.filter(
                         issue_module__module_id=pk,
+                        issue_module__deleted_at__isnull=True,
                         workspace__slug=slug,
                         project_id=project_id,
                     )
@@ -364,12 +381,31 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                     .annotate(last_name=F("assignees__last_name"))
                     .annotate(assignee_id=F("assignees__id"))
                     .annotate(display_name=F("assignees__display_name"))
-                    .annotate(avatar=F("assignees__avatar"))
+                    .annotate(
+                        avatar_url=Case(
+                            # If `avatar_asset` exists, use it to generate the asset URL
+                            When(
+                                assignees__avatar_asset__isnull=False,
+                                then=Concat(
+                                    Value("/api/assets/v2/static/"),
+                                    "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
+                                    Value("/"),
+                                ),
+                            ),
+                            # If `avatar_asset` is None, fall back to using `avatar` field directly
+                            When(
+                                assignees__avatar_asset__isnull=True,
+                                then="assignees__avatar",
+                            ),
+                            default=Value(None),
+                            output_field=models.CharField(),
+                        )
+                    )
                     .values(
                         "first_name",
                         "last_name",
                         "assignee_id",
-                        "avatar",
+                        "avatar_url",
                         "display_name",
                     )
                     .annotate(
@@ -437,7 +473,9 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                     )
                     .order_by("label_name")
                 )
-                data["estimate_distribution"]["assignees"] = assignee_distribution
+                data["estimate_distribution"][
+                    "assignees"
+                ] = assignee_distribution
                 data["estimate_distribution"]["labels"] = label_distribution
 
                 if modules and modules.start_date and modules.target_date:
@@ -454,6 +492,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             assignee_distribution = (
                 Issue.issue_objects.filter(
                     issue_module__module_id=pk,
+                    issue_module__deleted_at__isnull=True,
                     workspace__slug=slug,
                     project_id=project_id,
                 )
@@ -461,12 +500,31 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                 .annotate(last_name=F("assignees__last_name"))
                 .annotate(assignee_id=F("assignees__id"))
                 .annotate(display_name=F("assignees__display_name"))
-                .annotate(avatar=F("assignees__avatar"))
+                .annotate(
+                    avatar_url=Case(
+                        # If `avatar_asset` exists, use it to generate the asset URL
+                        When(
+                            assignees__avatar_asset__isnull=False,
+                            then=Concat(
+                                Value("/api/assets/v2/static/"),
+                                "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
+                                Value("/"),
+                            ),
+                        ),
+                        # If `avatar_asset` is None, fall back to using `avatar` field directly
+                        When(
+                            assignees__avatar_asset__isnull=True,
+                            then="assignees__avatar",
+                        ),
+                        default=Value(None),
+                        output_field=models.CharField(),
+                    )
+                )
                 .values(
                     "first_name",
                     "last_name",
                     "assignee_id",
-                    "avatar",
+                    "avatar_url",
                     "display_name",
                 )
                 .annotate(
@@ -504,6 +562,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             label_distribution = (
                 Issue.issue_objects.filter(
                     issue_module__module_id=pk,
+                    issue_module__deleted_at__isnull=True,
                     workspace__slug=slug,
                     project_id=project_id,
                 )

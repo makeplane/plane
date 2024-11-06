@@ -1,4 +1,11 @@
-export function isFileValid(file: File): boolean {
+type TArgs = {
+  file: File;
+  maxFileSize: number;
+};
+
+export const isFileValid = (args: TArgs): boolean => {
+  const { file, maxFileSize } = args;
+
   if (!file) {
     alert("No file selected. Please select a file to upload.");
     return false;
@@ -10,10 +17,10 @@ export function isFileValid(file: File): boolean {
     return false;
   }
 
-  if (file.size > 5 * 1024 * 1024) {
-    alert("File size too large. Please select a file smaller than 5MB.");
+  if (file.size > maxFileSize) {
+    alert(`File size too large. Please select a file smaller than ${maxFileSize / 1024 / 1024}MB.`);
     return false;
   }
 
   return true;
-}
+};

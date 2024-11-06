@@ -16,6 +16,7 @@ from django.db.models import (
     Q,
     Value,
     When,
+    Subquery,
 )
 from django.utils import timezone
 
@@ -42,12 +43,13 @@ from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
     IssueActivity,
-    IssueAttachment,
+    FileAsset,
     IssueComment,
     IssueLink,
     Label,
     Project,
     ProjectMember,
+    CycleIssue,
 )
 
 from .base import BaseAPIView
@@ -202,7 +204,13 @@ class IssueAPIEndpoint(BaseAPIView):
 
         issue_queryset = (
             self.get_queryset()
-            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(
+                        issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("cycle_id")[:1]
+                )
+            )
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -210,8 +218,9 @@ class IssueAPIEndpoint(BaseAPIView):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -1062,7 +1071,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
     permission_classes = [
         ProjectEntityPermission,
     ]
-    model = IssueAttachment
+    model = FileAsset
     parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request, slug, project_id, issue_id):
@@ -1070,7 +1079,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
         if (
             request.data.get("external_id")
             and request.data.get("external_source")
-            and IssueAttachment.objects.filter(
+            and FileAsset.objects.filter(
                 project_id=project_id,
                 workspace__slug=slug,
                 issue_id=issue_id,
@@ -1078,7 +1087,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
                 external_id=request.data.get("external_id"),
             ).exists()
         ):
-            issue_attachment = IssueAttachment.objects.filter(
+            issue_attachment = FileAsset.objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
                 external_id=request.data.get("external_id"),
@@ -1112,7 +1121,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, slug, project_id, issue_id, pk):
-        issue_attachment = IssueAttachment.objects.get(pk=pk)
+        issue_attachment = FileAsset.objects.get(pk=pk)
         issue_attachment.asset.delete(save=False)
         issue_attachment.delete()
         issue_activity.delay(
@@ -1130,7 +1139,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def get(self, request, slug, project_id, issue_id):
-        issue_attachments = IssueAttachment.objects.filter(
+        issue_attachments = FileAsset.objects.filter(
             issue_id=issue_id, workspace__slug=slug, project_id=project_id
         )
         serializer = IssueAttachmentSerializer(issue_attachments, many=True)

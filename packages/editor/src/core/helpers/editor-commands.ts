@@ -1,17 +1,14 @@
 import { Editor, Range } from "@tiptap/core";
-import { Selection } from "@tiptap/pm/state";
 // extensions
 import { replaceCodeWithText } from "@/extensions/code/utils/replace-code-block-with-text";
 // helpers
 import { findTableAncestor } from "@/helpers/common";
-// plugins
-import { startImageUpload } from "@/plugins/image";
 // types
-import { UploadImage } from "@/types";
+import { InsertImageComponentProps } from "@/extensions";
 
 export const setText = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).clearNodes().run();
-  else editor.chain().focus().clearNodes().run();
+  if (range) editor.chain().focus().deleteRange(range).setNode("paragraph").run();
+  else editor.chain().focus().setNode("paragraph").run();
 };
 
 export const toggleHeadingOne = (editor: Editor, range?: Range) => {
@@ -129,6 +126,27 @@ export const insertTableCommand = (editor: Editor, range?: Range) => {
   else editor.chain().focus().clearNodes().insertTable({ rows: 3, cols: 3 }).run();
 };
 
+export const insertImage = ({
+  editor,
+  event,
+  pos,
+  file,
+  range,
+}: {
+  editor: Editor;
+  event: "insert" | "drop";
+  pos?: number | null;
+  file?: File;
+  range?: Range;
+}) => {
+  if (range) editor.chain().focus().deleteRange(range).run();
+
+  const imageOptions: InsertImageComponentProps = { event };
+  if (pos) imageOptions.pos = pos;
+  if (file) imageOptions.file = file;
+  return editor?.chain().focus().insertImageComponent(imageOptions).run();
+};
+
 export const unsetLinkEditor = (editor: Editor) => {
   editor.chain().focus().unsetLink().run();
 };
@@ -137,22 +155,41 @@ export const setLinkEditor = (editor: Editor, url: string) => {
   editor.chain().focus().setLink({ href: url }).run();
 };
 
-export const insertImageCommand = (
-  editor: Editor,
-  uploadFile: UploadImage,
-  savedSelection?: Selection | null,
-  range?: Range
-) => {
-  if (range) editor.chain().focus().deleteRange(range).run();
-  const input = document.createElement("input");
-  input.type = "file";
-  input.accept = ".jpeg, .jpg, .png, .webp";
-  input.onchange = async () => {
-    if (input.files?.length) {
-      const file = input.files[0];
-      const pos = savedSelection?.anchor ?? editor.view.state.selection.from;
-      startImageUpload(editor, file, editor.view, pos, uploadFile);
+export const toggleTextColor = (color: string | undefined, editor: Editor, range?: Range) => {
+  if (color) {
+    if (range) editor.chain().focus().deleteRange(range).setTextColor(color).run();
+    else editor.chain().focus().setTextColor(color).run();
+  } else {
+    if (range) editor.chain().focus().deleteRange(range).unsetTextColor().run();
+    else editor.chain().focus().unsetTextColor().run();
+  }
+};
+
+export const toggleBackgroundColor = (color: string | undefined, editor: Editor, range?: Range) => {
+  if (color) {
+    if (range) {
+      editor.chain().focus().deleteRange(range).setBackgroundColor(color).run();
+    } else {
+      editor.chain().focus().setBackgroundColor(color).run();
     }
-  };
-  input.click();
+  } else {
+    if (range) {
+      editor.chain().focus().deleteRange(range).unsetBackgroundColor().run();
+    } else {
+      editor.chain().focus().unsetBackgroundColor().run();
+    }
+  }
+};
+
+export const setTextAlign = (alignment: string, editor: Editor) => {
+  editor.chain().focus().setTextAlign(alignment).run();
+};
+
+export const insertHorizontalRule = (editor: Editor, range?: Range) => {
+  if (range) editor.chain().focus().deleteRange(range).setHorizontalRule().run();
+  else editor.chain().focus().setHorizontalRule().run();
+};
+export const insertCallout = (editor: Editor, range?: Range) => {
+  if (range) editor.chain().focus().deleteRange(range).insertCallout().run();
+  else editor.chain().focus().insertCallout().run();
 };

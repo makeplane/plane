@@ -43,7 +43,7 @@ export const Tooltip: React.FC<ITooltipProps> = ({
   openDelay = 200,
   closeDelay,
   isMobile = false,
-  renderByDefault = true,
+  renderByDefault = true, //FIXME: tooltip should always render on hover and not by default, this is a temporary fix
 }) => {
   const toolTipRef = useRef<HTMLDivElement | null>(null);
 
@@ -54,7 +54,7 @@ export const Tooltip: React.FC<ITooltipProps> = ({
   };
 
   useEffect(() => {
-    const element = toolTipRef.current;
+    const element = toolTipRef.current as any;
 
     if (!element) return;
 

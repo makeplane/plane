@@ -1,5 +1,4 @@
-import { EUserProjectRoles } from "./project";
-import { EUserWorkspaceRoles } from "./workspace";
+import { EUserPermissions } from "ee/constants/user-permissions";
 
 export interface EmptyStateDetails {
   key: EmptyStateType;
@@ -23,7 +22,7 @@ export interface EmptyStateDetails {
     };
   };
   accessType?: "workspace" | "project";
-  access?: EUserWorkspaceRoles | EUserProjectRoles;
+  access?: any;
 }
 
 export enum EmptyStateType {
@@ -106,6 +105,8 @@ export enum EmptyStateType {
   INBOX_SIDEBAR_CLOSED_TAB = "inbox-sidebar-closed-tab",
   INBOX_SIDEBAR_FILTER_EMPTY_STATE = "inbox-sidebar-filter-empty-state",
   INBOX_DETAIL_EMPTY_STATE = "inbox-detail-empty-state",
+
+  WORKSPACE_DRAFT_ISSUES = "workspace-draft-issues",
 }
 
 const emptyStateDetails = {
@@ -126,7 +127,7 @@ const emptyStateDetails = {
     },
 
     accessType: "workspace",
-    access: EUserWorkspaceRoles.MEMBER,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   [EmptyStateType.WORKSPACE_ANALYTICS]: {
     key: EmptyStateType.WORKSPACE_ANALYTICS,
@@ -135,7 +136,7 @@ const emptyStateDetails = {
       "See scope versus demand, estimates, and scope creep. Get performance by team members and teams, and make sure your project runs on time.",
     path: "/empty-state/onboarding/analytics",
     primaryButton: {
-      text: "Create Cycles and Modules first",
+      text: "Start your first project",
       comicBox: {
         title: "Analytics works best with Cycles + Modules",
         description:
@@ -143,7 +144,7 @@ const emptyStateDetails = {
       },
     },
     accessType: "workspace",
-    access: EUserWorkspaceRoles.MEMBER,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   [EmptyStateType.WORKSPACE_PROJECTS]: {
     key: EmptyStateType.WORKSPACE_PROJECTS,
@@ -159,7 +160,7 @@ const emptyStateDetails = {
       },
     },
     accessType: "workspace",
-    access: EUserWorkspaceRoles.MEMBER,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   // all-issues
   [EmptyStateType.WORKSPACE_ALL_ISSUES]: {
@@ -171,7 +172,7 @@ const emptyStateDetails = {
       text: "Create new issue",
     },
     accessType: "workspace",
-    access: EUserWorkspaceRoles.MEMBER,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   [EmptyStateType.WORKSPACE_ASSIGNED]: {
     key: EmptyStateType.WORKSPACE_ASSIGNED,
@@ -182,7 +183,7 @@ const emptyStateDetails = {
       text: "Create new issue",
     },
     accessType: "workspace",
-    access: EUserWorkspaceRoles.MEMBER,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   [EmptyStateType.WORKSPACE_CREATED]: {
     key: EmptyStateType.WORKSPACE_CREATED,
@@ -193,7 +194,7 @@ const emptyStateDetails = {
       text: "Create new issue",
     },
     accessType: "workspace",
-    access: EUserWorkspaceRoles.MEMBER,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   [EmptyStateType.WORKSPACE_SUBSCRIBED]: {
     key: EmptyStateType.WORKSPACE_SUBSCRIBED,
@@ -220,7 +221,7 @@ const emptyStateDetails = {
       },
     },
     accessType: "workspace",
-    access: EUserWorkspaceRoles.MEMBER,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   // workspace settings
   [EmptyStateType.WORKSPACE_SETTINGS_API_TOKENS]: {
@@ -309,7 +310,7 @@ const emptyStateDetails = {
       },
     },
     accessType: "project",
-    access: EUserProjectRoles.MEMBER,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   [EmptyStateType.PROJECT_CYCLE_NO_ISSUES]: {
     key: EmptyStateType.PROJECT_CYCLE_NO_ISSUES,
@@ -323,7 +324,7 @@ const emptyStateDetails = {
       text: "Add an existing issue",
     },
     accessType: "project",
-    access: EUserProjectRoles.MEMBER,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   [EmptyStateType.PROJECT_CYCLE_ACTIVE]: {
     key: EmptyStateType.PROJECT_CYCLE_ACTIVE,
@@ -361,7 +362,7 @@ const emptyStateDetails = {
       text: "Clear all filters",
     },
     accessType: "project",
-    access: EUserProjectRoles.MEMBER,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   [EmptyStateType.PROJECT_ARCHIVED_EMPTY_FILTER]: {
     key: EmptyStateType.PROJECT_ARCHIVED_EMPTY_FILTER,
@@ -371,7 +372,7 @@ const emptyStateDetails = {
       text: "Clear all filters",
     },
     accessType: "project",
-    access: EUserProjectRoles.MEMBER,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   [EmptyStateType.PROJECT_DRAFT_EMPTY_FILTER]: {
     key: EmptyStateType.PROJECT_DRAFT_EMPTY_FILTER,
@@ -381,7 +382,7 @@ const emptyStateDetails = {
       text: "Clear all filters",
     },
     accessType: "project",
-    access: EUserProjectRoles.MEMBER,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   //  project issues
   [EmptyStateType.PROJECT_NO_ISSUES]: {
@@ -399,7 +400,7 @@ const emptyStateDetails = {
       },
     },
     accessType: "project",
-    access: EUserProjectRoles.MEMBER,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   [EmptyStateType.PROJECT_ARCHIVED_NO_ISSUES]: {
     key: EmptyStateType.PROJECT_ARCHIVED_NO_ISSUES,
@@ -411,7 +412,7 @@ const emptyStateDetails = {
       text: "Set automation",
     },
     accessType: "project",
-    access: EUserProjectRoles.MEMBER,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   [EmptyStateType.PROJECT_DRAFT_NO_ISSUES]: {
     key: EmptyStateType.PROJECT_DRAFT_NO_ISSUES,
@@ -451,7 +452,7 @@ const emptyStateDetails = {
       text: "Add an existing issue",
     },
     accessType: "project",
-    access: EUserProjectRoles.MEMBER,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   [EmptyStateType.PROJECT_MODULE]: {
     key: EmptyStateType.PROJECT_MODULE,
@@ -467,7 +468,7 @@ const emptyStateDetails = {
       },
     },
     accessType: "project",
-    access: EUserProjectRoles.MEMBER,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   [EmptyStateType.PROJECT_ARCHIVED_NO_MODULES]: {
     key: EmptyStateType.PROJECT_ARCHIVED_NO_MODULES,
@@ -490,7 +491,7 @@ const emptyStateDetails = {
       },
     },
     accessType: "project",
-    access: EUserProjectRoles.GUEST,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
   },
   // project pages
   [EmptyStateType.PROJECT_PAGE]: {
@@ -503,7 +504,7 @@ const emptyStateDetails = {
       text: "Create your first page",
     },
     accessType: "project",
-    access: EUserProjectRoles.MEMBER,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
   },
   [EmptyStateType.PROJECT_PAGE_PRIVATE]: {
     key: EmptyStateType.PROJECT_PAGE_PRIVATE,
@@ -514,7 +515,7 @@ const emptyStateDetails = {
       text: "Create your first page",
     },
     accessType: "project",
-    access: EUserProjectRoles.MEMBER,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
   },
   [EmptyStateType.PROJECT_PAGE_PUBLIC]: {
     key: EmptyStateType.PROJECT_PAGE_PUBLIC,
@@ -525,7 +526,7 @@ const emptyStateDetails = {
       text: "Create your first page",
     },
     accessType: "project",
-    access: EUserProjectRoles.MEMBER,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
   },
   [EmptyStateType.PROJECT_PAGE_ARCHIVED]: {
     key: EmptyStateType.PROJECT_PAGE_ARCHIVED,
@@ -543,7 +544,7 @@ const emptyStateDetails = {
       text: "Create your first page",
     },
     accessType: "workspace",
-    access: EUserProjectRoles.GUEST,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
   },
   [EmptyStateType.WORKSPACE_PAGE_PRIVATE]: {
     key: EmptyStateType.WORKSPACE_PAGE_PRIVATE,
@@ -554,7 +555,7 @@ const emptyStateDetails = {
       text: "Create your first page",
     },
     accessType: "workspace",
-    access: EUserProjectRoles.GUEST,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
   },
   [EmptyStateType.WORKSPACE_PAGE_PUBLIC]: {
     key: EmptyStateType.WORKSPACE_PAGE_PUBLIC,
@@ -565,7 +566,7 @@ const emptyStateDetails = {
       text: "Create your first page",
     },
     accessType: "workspace",
-    access: EUserProjectRoles.GUEST,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
   },
   [EmptyStateType.WORKSPACE_PAGE_ARCHIVED]: {
     key: EmptyStateType.WORKSPACE_PAGE_ARCHIVED,
@@ -681,7 +682,7 @@ const emptyStateDetails = {
     description:
       "Intake helps you manage incoming requests to your project and add them as issues in your workflow. Enable intake \n from project settings to manage requests.",
     accessType: "project",
-    access: EUserProjectRoles.ADMIN,
+    access: [EUserPermissions.ADMIN],
     path: "/empty-state/disabled-feature/intake",
     primaryButton: {
       text: "Manage features",
@@ -693,7 +694,7 @@ const emptyStateDetails = {
     description:
       "Break work down by timeboxed chunks, work backwards from your project deadline to set dates, and make tangible progress as a team. Enable the cycles feature for your project to start using them.",
     accessType: "project",
-    access: EUserProjectRoles.ADMIN,
+    access: [EUserPermissions.ADMIN],
     path: "/empty-state/disabled-feature/cycles",
     primaryButton: {
       text: "Manage features",
@@ -705,7 +706,7 @@ const emptyStateDetails = {
     description:
       "A group of issues that belong to a logical, hierarchical parent form a module. Think of them as a way to track work by project milestones. Enable modules from project settings.",
     accessType: "project",
-    access: EUserProjectRoles.ADMIN,
+    access: [EUserPermissions.ADMIN],
     path: "/empty-state/disabled-feature/modules",
     primaryButton: {
       text: "Manage features",
@@ -717,7 +718,7 @@ const emptyStateDetails = {
     description:
       "Pages are thought spotting space in Plane. Take down meeting notes, format them easily, embed issues, lay them out using a library of components, and keep them all in your project’s context. Enable the pages feature to start creating them in your project.",
     accessType: "project",
-    access: EUserProjectRoles.ADMIN,
+    access: [EUserPermissions.ADMIN],
     path: "/empty-state/disabled-feature/pages",
     primaryButton: {
       text: "Manage features",
@@ -729,7 +730,7 @@ const emptyStateDetails = {
     description:
       "Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a project can see everyone’s views and choose whichever suits their needs best. Enable views in the project settings to start using them.",
     accessType: "project",
-    access: EUserProjectRoles.ADMIN,
+    access: [EUserPermissions.ADMIN],
     path: "/empty-state/disabled-feature/views",
     primaryButton: {
       text: "Manage features",
@@ -757,6 +758,17 @@ const emptyStateDetails = {
     key: EmptyStateType.INBOX_DETAIL_EMPTY_STATE,
     title: "Select an issue to view its details.",
     path: "/empty-state/intake/issue-detail",
+  },
+  [EmptyStateType.WORKSPACE_DRAFT_ISSUES]: {
+    key: EmptyStateType.WORKSPACE_DRAFT_ISSUES,
+    title: "Half-written issues, and soon, comments will show up here.",
+    description: "To try this out, start adding an issue and leave it mid-way or create your first draft below. 😉",
+    path: "/empty-state/workspace-draft/issue",
+    primaryButton: {
+      text: "Create your first draft",
+    },
+    accessType: "workspace",
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
 } as const;
 

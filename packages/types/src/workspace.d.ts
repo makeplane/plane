@@ -1,4 +1,3 @@
-import {EUserWorkspaceRoles} from "@/constants/workspace";
 import type {
   ICycle,
   IProjectMember,
@@ -6,6 +5,7 @@ import type {
   IUserLite,
   IWorkspaceViewProps,
 } from "@plane/types";
+import { TUserPermissions } from "./enums";
 
 export interface IWorkspace {
   readonly id: string;
@@ -14,8 +14,7 @@ export interface IWorkspace {
   readonly updated_at: Date;
   name: string;
   url: string;
-  logo: string | null;
-  slug: string;
+  logo_url: string | null;
   readonly total_members: number;
   readonly slug: string;
   readonly created_by: string;
@@ -36,7 +35,7 @@ export interface IWorkspaceMemberInvitation {
   id: string;
   message: string;
   responded_at: Date;
-  role: EUserWorkspaceRoles;
+  role: TUserPermissions;
   token: string;
   workspace: {
     id: string;
@@ -47,7 +46,7 @@ export interface IWorkspaceMemberInvitation {
 }
 
 export interface IWorkspaceBulkInviteFormData {
-  emails: {email: string; role: EUserWorkspaceRoles}[];
+  emails: { email: string; role: TUserPermissions }[];
 }
 
 export type Properties = {
@@ -69,14 +68,15 @@ export type Properties = {
 export interface IWorkspaceMember {
   id: string;
   member: IUserLite;
-  role: EUserWorkspaceRoles;
+  role: TUserPermissions;
   created_at?: string;
-  avatar?: string;
+  avatar_url?: string;
   email?: string;
   first_name?: string;
   last_name?: string;
   joining_date?: string;
   display_name?: string;
+  last_login_medium?: string;
 }
 
 export interface IWorkspaceMemberMe {
@@ -86,11 +86,12 @@ export interface IWorkspaceMemberMe {
   default_props: IWorkspaceViewProps;
   id: string;
   member: string;
-  role: EUserWorkspaceRoles;
+  role: TUserPermissions;
   updated_at: Date;
   updated_by: string;
   view_props: IWorkspaceViewProps;
   workspace: string;
+  draft_issue_count: number;
 }
 
 export interface ILastActiveWorkspaceDetails {

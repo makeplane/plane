@@ -13,7 +13,8 @@ import { Button, TButtonVariant } from "@plane/ui";
 import { EMPTY_STATE_DETAILS, EmptyStateType } from "@/constants/empty-state";
 // helpers
 import { cn } from "@/helpers/common.helper";
-import { useUser } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store";
+import { EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { ComicBoxButton } from "./comic-box-button";
 
 export type EmptyStateProps = {
@@ -37,9 +38,7 @@ export const EmptyState: React.FC<EmptyStateProps> = observer((props) => {
     secondaryButtonOnClick,
   } = props;
   // store
-  const {
-    membership: { currentWorkspaceRole, currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
   // theme
   const { resolvedTheme } = useTheme();
 
@@ -53,10 +52,14 @@ export const EmptyState: React.FC<EmptyStateProps> = observer((props) => {
   const resolvedEmptyStatePath = `${additionalPath && additionalPath !== "" ? `${path}${additionalPath}` : path}-${
     resolvedTheme === "light" ? "light" : "dark"
   }.webp`;
-  // current access type
-  const currentAccessType = accessType === "workspace" ? currentWorkspaceRole : currentProjectRole;
   // permission
-  const isEditingAllowed = currentAccessType && access && currentAccessType >= access;
+  const isEditingAllowed =
+    access &&
+    accessType &&
+    allowPermissions(
+      access,
+      accessType === "workspace" ? EUserPermissionsLevel.WORKSPACE : EUserPermissionsLevel.PROJECT
+    );
   const anyButton = primaryButton || secondaryButton;
 
   // primary button

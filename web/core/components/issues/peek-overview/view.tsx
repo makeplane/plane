@@ -60,14 +60,16 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     isArchiveIssueModalOpen,
     toggleDeleteIssueModal,
     toggleArchiveIssueModal,
-    issue: { getIssueById },
+    issue: { getIssueById, getIsLocalDBIssueDescription },
   } = useIssueDetail();
   const issue = getIssueById(issueId);
   // remove peek id
   const removeRoutePeekId = () => {
     setPeekIssue(undefined);
-    if (embedIssue) embedRemoveCurrentNotification && embedRemoveCurrentNotification();
+    if (embedIssue && embedRemoveCurrentNotification) embedRemoveCurrentNotification();
   };
+
+  const isLocalDBIssueDescription = getIsLocalDBIssueDescription(issueId);
 
   usePeekOverviewOutsideClickDetector(
     issuePeekOverviewRef,
@@ -145,11 +147,12 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                 "0px 4px 8px 0px rgba(0, 0, 0, 0.12), 0px 6px 12px 0px rgba(16, 24, 40, 0.12), 0px 1px 16px 0px rgba(16, 24, 40, 0.12)",
             }}
           >
-            {isLoading && <IssuePeekOverviewLoader removeRoutePeekId={removeRoutePeekId} />}
-            {isError && (
+            {isError ? (
               <div className="relative h-screen w-full overflow-hidden">
                 <IssuePeekOverviewError removeRoutePeekId={removeRoutePeekId} />
               </div>
+            ) : (
+              isLoading && <IssuePeekOverviewLoader removeRoutePeekId={removeRoutePeekId} />
             )}
             {!isLoading && !isError && issue && (
               <>
@@ -178,7 +181,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         projectId={projectId}
                         issueId={issueId}
                         issueOperations={issueOperations}
-                        disabled={disabled || is_archived}
+                        disabled={disabled || is_archived || isLocalDBIssueDescription}
                         isArchived={is_archived}
                         isSubmitting={isSubmitting}
                         setIsSubmitting={(value) => setIsSubmitting(value)}
@@ -217,7 +220,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                             projectId={projectId}
                             issueId={issueId}
                             issueOperations={issueOperations}
-                            disabled={disabled || is_archived}
+                            disabled={disabled || is_archived || isLocalDBIssueDescription}
                             isArchived={is_archived}
                             isSubmitting={isSubmitting}
                             setIsSubmitting={(value) => setIsSubmitting(value)}

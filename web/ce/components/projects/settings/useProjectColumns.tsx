@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { IWorkspaceMember } from "@plane/types";
-import { EUserProjectRoles } from "@plane/types/src/enums";
 import { AccountTypeColumn, NameColumn } from "@/components/project/settings/member-columns";
-import { EUserWorkspaceRoles } from "@/constants/workspace";
-import { useUser } from "@/hooks/store";
+import { useUser, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export interface RowData {
   member: IWorkspaceMember;
-  role: EUserWorkspaceRoles;
+  role: EUserPermissions;
 }
 
 export const useProjectColumns = () => {
@@ -17,10 +16,12 @@ export const useProjectColumns = () => {
 
   const { workspaceSlug, projectId } = useParams();
 
-  const {
-    membership: { currentProjectRole },
-    data: currentUser,
-  } = useUser();
+  const { data: currentUser } = useUser();
+  const { allowPermissions, projectUserInfo } = useUserPermissions();
+
+  const currentProjectRole =
+    (projectUserInfo?.[workspaceSlug.toString()]?.[projectId.toString()]?.role as unknown as EUserPermissions) ??
+    EUserPermissions.GUEST;
 
   const getFormattedDate = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -29,11 +30,17 @@ export const useProjectColumns = () => {
     return date.toLocaleDateString("en-US", options);
   };
   // derived values
-  const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
+  const isAdmin = allowPermissions(
+    [EUserPermissions.ADMIN],
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug.toString(),
+    projectId.toString()
+  );
+
   const columns = [
     {
       key: "Full Name",
-      content: "Full Name",
+      content: "Full name",
       thClassName: "text-left",
       tdRender: (rowData: RowData) => (
         <NameColumn
@@ -47,13 +54,13 @@ export const useProjectColumns = () => {
     },
     {
       key: "Display Name",
-      content: "Display Name",
+      content: "Display name",
       tdRender: (rowData: RowData) => <div className="w-32">{rowData.member.display_name}</div>,
     },
 
     {
       key: "Account Type",
-      content: "Account Type",
+      content: "Account type",
       tdRender: (rowData: RowData) => (
         <AccountTypeColumn
           rowData={rowData}
@@ -65,7 +72,7 @@ export const useProjectColumns = () => {
     },
     {
       key: "Joining Date",
-      content: "Joining Date",
+      content: "Joining date",
       tdRender: (rowData: RowData) => <div>{getFormattedDate(rowData?.member?.joining_date || "")}</div>,
     },
   ];

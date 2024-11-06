@@ -1,4 +1,5 @@
 # Python imports
+import pytz
 from uuid import uuid4
 
 # Django imports
@@ -7,7 +8,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import Q
 
-# Modeule imports
+# Module imports
 from plane.db.mixins import AuditModel
 
 # Module imports
@@ -16,7 +17,6 @@ from .base import BaseModel
 ROLE_CHOICES = (
     (20, "Admin"),
     (15, "Member"),
-    (10, "Viewer"),
     (5, "Guest"),
 )
 
@@ -98,7 +98,15 @@ class Project(BaseModel):
     inbox_view = models.BooleanField(default=False)
     is_time_tracking_enabled = models.BooleanField(default=False)
     is_issue_type_enabled = models.BooleanField(default=False)
-    cover_image = models.URLField(blank=True, null=True, max_length=800)
+    guest_view_all_features = models.BooleanField(default=False)
+    cover_image = models.TextField(blank=True, null=True)
+    cover_image_asset = models.ForeignKey(
+        "db.FileAsset",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="project_cover_image",
+    )
     estimate = models.ForeignKey(
         "db.Estimate",
         on_delete=models.SET_NULL,
@@ -119,6 +127,23 @@ class Project(BaseModel):
         related_name="default_state",
     )
     archived_at = models.DateTimeField(null=True)
+    # timezone
+    TIMEZONE_CHOICES = tuple(zip(pytz.all_timezones, pytz.all_timezones))
+    timezone = models.CharField(
+        max_length=255, default="UTC", choices=TIMEZONE_CHOICES
+    )
+
+    @property
+    def cover_image_url(self):
+        # Return cover image url
+        if self.cover_image_asset:
+            return self.cover_image_asset.asset_url
+
+        # Return cover image url
+        if self.cover_image:
+            return self.cover_image
+
+        return None
 
     def __str__(self):
         """Return name of the project"""
@@ -156,7 +181,9 @@ class ProjectBaseModel(BaseModel):
         Project, on_delete=models.CASCADE, related_name="project_%(class)s"
     )
     workspace = models.ForeignKey(
-        "db.Workspace", models.CASCADE, related_name="workspace_%(class)s"
+        "db.Workspace",
+        on_delete=models.CASCADE,
+        related_name="workspace_%(class)s",
     )
 
     class Meta:
@@ -173,7 +200,7 @@ class ProjectMemberInvite(ProjectBaseModel):
     token = models.CharField(max_length=255)
     message = models.TextField(null=True)
     responded_at = models.DateTimeField(null=True)
-    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=10)
+    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=5)
 
     class Meta:
         verbose_name = "Project Member Invite"
@@ -194,7 +221,7 @@ class ProjectMember(ProjectBaseModel):
         related_name="member_project",
     )
     comment = models.TextField(blank=True, null=True)
-    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=10)
+    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=5)
     view_props = models.JSONField(default=get_default_props)
     default_props = models.JSONField(default=get_default_props)
     preferences = models.JSONField(default=get_default_preferences)
@@ -258,26 +285,6 @@ class ProjectIdentifier(AuditModel):
         verbose_name_plural = "Project Identifiers"
         db_table = "project_identifiers"
         ordering = ("-created_at",)
-
-
-# DEPRECATED TODO: - Remove in next release
-class ProjectFavorite(ProjectBaseModel):
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="project_favorites",
-    )
-
-    class Meta:
-        unique_together = ["project", "user"]
-        verbose_name = "Project Favorite"
-        verbose_name_plural = "Project Favorites"
-        db_table = "project_favorites"
-        ordering = ("-created_at",)
-
-    def __str__(self):
-        """Return user of the project"""
-        return f"{self.user.email} <{self.project.name}>"
 
 
 def get_anchor():

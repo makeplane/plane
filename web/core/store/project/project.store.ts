@@ -5,7 +5,7 @@ import { computedFn } from "mobx-utils";
 // helpers
 import { orderProjects, shouldFilterProject } from "@/helpers/project.helper";
 // services
-import { TProject } from "@/plane-web/types/projects/projects";
+import { TProject } from "@/plane-web/types/projects";
 import { IssueLabelService, IssueService } from "@/services/issue";
 import { ProjectService, ProjectStateService, ProjectArchiveService } from "@/services/project";
 // store
@@ -354,7 +354,12 @@ export class ProjectStore implements IProjectStore {
       const response = await this.projectService.createProject(workspaceSlug, data);
       runInAction(() => {
         set(this.projectMap, [response.id], response);
-        set(this.rootStore.user.membership.workspaceProjectsRole, [workspaceSlug, response.id], response.member_role);
+        // updating the user project role in workspaceProjectsPermissions
+        set(
+          this.rootStore.user.permission.workspaceProjectsPermissions,
+          [workspaceSlug, response.id],
+          response.member_role
+        );
       });
       return response;
     } catch (error) {
@@ -399,10 +404,12 @@ export class ProjectStore implements IProjectStore {
       runInAction(() => {
         delete this.projectMap[projectId];
         if (this.rootStore.favorite.entityMap[projectId]) this.rootStore.favorite.removeFavoriteFromStore(projectId);
+        delete this.rootStore.user.permission.workspaceProjectsPermissions[workspaceSlug][projectId];
       });
     } catch (error) {
       console.log("Failed to delete project from project store");
       this.fetchProjects(workspaceSlug);
+      throw error;
     }
   };
 

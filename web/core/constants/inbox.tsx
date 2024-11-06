@@ -67,11 +67,11 @@ export const INBOX_ISSUE_SOURCE = "in-app";
 export const INBOX_ISSUE_ORDER_BY_OPTIONS: { key: TInboxIssueSortingOrderByKeys; label: string }[] = [
   {
     key: "issue__created_at",
-    label: "Date created",
+    label: "Created at",
   },
   {
     key: "issue__updated_at",
-    label: "Date updated",
+    label: "Updated at",
   },
   {
     key: "issue__sequence_id",

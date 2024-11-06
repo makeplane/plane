@@ -7,26 +7,34 @@ import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { Info, SquareUser } from "lucide-react";
 // ui
 import { IModule } from "@plane/types";
-import { Card, FavoriteStar, LayersIcon, LinearProgressIndicator, TOAST_TYPE, Tooltip, setPromiseToast, setToast } from "@plane/ui";
+import {
+  Card,
+  FavoriteStar,
+  LayersIcon,
+  LinearProgressIndicator,
+  TOAST_TYPE,
+  Tooltip,
+  setPromiseToast,
+  setToast,
+} from "@plane/ui";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { ModuleQuickActions } from "@/components/modules";
-import { ModuleStatusDropdown } from  "@/components/modules/module-status-dropdown";
+import { ModuleStatusDropdown } from "@/components/modules/module-status-dropdown";
 // constants
 import { PROGRESS_STATE_GROUPS_DETAILS } from "@/constants/common";
 import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker";
 import { MODULE_STATUS } from "@/constants/module";
-import { EUserProjectRoles } from "@/constants/project";
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { generateQueryParams } from "@/helpers/router.helper";
 // hooks
-import { useEventTracker, useMember, useModule, useProjectEstimates, useUser } from "@/hooks/store";
+import { useEventTracker, useMember, useModule, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web constants
-import { EEstimateSystem } from "@/plane-web/constants/estimates";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   moduleId: string;
@@ -42,20 +50,19 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   // store hooks
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
   const { getModuleById, addModuleToFavorites, removeModuleFromFavorites, updateModuleDetails } = useModule();
   const { getUserDetails } = useMember();
   const { captureEvent } = useEventTracker();
-  const { currentActiveEstimateId, areEstimateEnabledByProjectId, estimateById } = useProjectEstimates();
 
   // derived values
   const moduleDetails = getModuleById(moduleId);
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditingAllowed = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
   const isDisabled = !isEditingAllowed || !!moduleDetails?.archived_at;
   const renderIcon = Boolean(moduleDetails?.start_date) || Boolean(moduleDetails?.target_date);
-
 
   const { isMobile } = usePlatformOS();
   const handleAddToFavorites = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -155,29 +162,14 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
 
   if (!moduleDetails) return null;
 
-  /**
-   * NOTE: This completion percentage calculation is based on the total issues count.
-   * when estimates are available and estimate type is points, we should consider the estimate point count
-   * when estimates are available and estimate type is not points, then by default we consider the issue count
-   */
-  const isEstimateEnabled =
-    projectId &&
-    currentActiveEstimateId &&
-    areEstimateEnabledByProjectId(projectId.toString()) &&
-    estimateById(currentActiveEstimateId)?.type === EEstimateSystem.POINTS;
+  const moduleTotalIssues =
+    moduleDetails.backlog_issues +
+    moduleDetails.unstarted_issues +
+    moduleDetails.started_issues +
+    moduleDetails.completed_issues +
+    moduleDetails.cancelled_issues;
 
-  const moduleTotalIssues = isEstimateEnabled
-    ? moduleDetails?.total_estimate_points || 0
-    : moduleDetails.backlog_issues +
-      moduleDetails.unstarted_issues +
-      moduleDetails.started_issues +
-      moduleDetails.completed_issues +
-      moduleDetails.cancelled_issues;
-
-  const moduleCompletedIssues = isEstimateEnabled
-    ? moduleDetails?.completed_estimate_points || 0
-    : moduleDetails.completed_issues;
-
+  const moduleCompletedIssues = moduleDetails.completed_issues;
 
   // const areYearsEqual = startDate.getFullYear() === endDate.getFullYear();
 
@@ -185,11 +177,11 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
 
   const issueCount = module
     ? !moduleTotalIssues || moduleTotalIssues === 0
-      ? `0 ${isEstimateEnabled ? `Point` : `Issue`}`
+      ? `0 Issue`
       : moduleTotalIssues === moduleCompletedIssues
         ? `${moduleTotalIssues} Issue${moduleTotalIssues > 1 ? `s` : ``}`
-        : `${moduleCompletedIssues}/${moduleTotalIssues} ${isEstimateEnabled ? `Points` : `Issues`}`
-    : `0 ${isEstimateEnabled ? `Point` : `Issue`}`;
+        : `${moduleCompletedIssues}/${moduleTotalIssues} Issues`
+    : `0 Issue`;
 
   const moduleLeadDetails = moduleDetails.lead_id ? getUserDetails(moduleDetails.lead_id) : undefined;
 
@@ -212,9 +204,9 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
               <div className="flex items-center gap-2" onClick={handleEventPropagation}>
                 {moduleStatus && (
                   <ModuleStatusDropdown
-                  isDisabled={isDisabled}
-                  moduleDetails={moduleDetails}
-                  handleModuleDetailsChange={handleModuleDetailsChange}
+                    isDisabled={isDisabled}
+                    moduleDetails={moduleDetails}
+                    handleModuleDetailsChange={handleModuleDetailsChange}
                   />
                 )}
                 <button onClick={openModuleOverview}>
@@ -251,9 +243,9 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
                 }}
                 onSelect={(val) => {
                   handleModuleDetailsChange({
-                    start_date: (val?.from ? renderFormattedPayloadDate(val.from) : null),
-                    target_date: (val?.to ? renderFormattedPayloadDate(val.to) : null)
-                  })
+                    start_date: val?.from ? renderFormattedPayloadDate(val.from) : null,
+                    target_date: val?.to ? renderFormattedPayloadDate(val.to) : null,
+                  });
                 }}
                 placeholder={{
                   from: "Start date",

@@ -1,28 +1,26 @@
 // Third-party libraries
 import { Redis } from "ioredis";
-
 // Hocuspocus extensions and core
 import { Database } from "@hocuspocus/extension-database";
 import { Extension } from "@hocuspocus/server";
 import { Logger } from "@hocuspocus/extension-logger";
 import { Redis as HocusPocusRedis } from "@hocuspocus/extension-redis";
-
-// Core helpers and utilities
+// core helpers and utilities
 import { manualLogger } from "@/core/helpers/logger.js";
 import { getRedisUrl } from "@/core/lib/utils/redis-url.js";
-
-// Core libraries
+// core libraries
 import {
   fetchPageDescriptionBinary,
   updatePageDescription,
 } from "@/core/lib/page.js";
-
-// Core types
-import { TDocumentTypes } from "@/core/types/common.js";
-
-// Plane live libraries
+// plane live libraries
 import { fetchDocument } from "@/plane-live/lib/fetch-document.js";
 import { updateDocument } from "@/plane-live/lib/update-document.js";
+// types
+import {
+  type HocusPocusServerContext,
+  type TDocumentTypes,
+} from "@/core/types/common.js";
 
 export const getExtensions: () => Promise<Extension[]> = async () => {
   const extensions: Extension[] = [
@@ -33,19 +31,15 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
       },
     }),
     new Database({
-      fetch: async ({
-        documentName: pageId,
-        requestHeaders,
-        requestParameters,
-      }) => {
-        // request headers
-        const cookie = requestHeaders.cookie?.toString();
+      fetch: async ({ context, documentName: pageId, requestParameters }) => {
+        const cookie = (context as HocusPocusServerContext).cookie;
         // query params
         const params = requestParameters;
         const documentType = params.get("documentType")?.toString() as
           | TDocumentTypes
           | undefined;
-
+        // TODO: Fix this lint error.
+        // eslint-disable-next-line no-async-promise-executor
         return new Promise(async (resolve) => {
           try {
             let fetchedData = null;
@@ -70,19 +64,20 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
         });
       },
       store: async ({
+        context,
         state,
         documentName: pageId,
-        requestHeaders,
         requestParameters,
       }) => {
-        // request headers
-        const cookie = requestHeaders.cookie?.toString();
+        const cookie = (context as HocusPocusServerContext).cookie;
         // query params
         const params = requestParameters;
         const documentType = params.get("documentType")?.toString() as
           | TDocumentTypes
           | undefined;
 
+        // TODO: Fix this lint error.
+        // eslint-disable-next-line no-async-promise-executor
         return new Promise(async () => {
           try {
             if (documentType === "project_page") {

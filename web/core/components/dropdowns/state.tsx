@@ -135,6 +135,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
           type="button"
           className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
           onClick={handleOnClick}
+          disabled={disabled}
         >
           {button}
         </button>
@@ -151,6 +152,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
             buttonContainerClassName
           )}
           onClick={handleOnClick}
+          disabled={disabled}
         >
           <DropdownButton
             className={buttonClassName}
@@ -159,6 +161,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
             tooltipContent={selectedState?.name ?? "State"}
             showTooltip={showTooltip}
             variant={buttonVariant}
+            renderToolTipByDefault={renderByDefault}
           >
             {stateLoader ? (
               <Spinner className="h-3.5 w-3.5" />

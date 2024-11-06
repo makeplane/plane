@@ -56,12 +56,15 @@ class UserSerializer(BaseSerializer):
 
 
 class UserMeSerializer(BaseSerializer):
+
     class Meta:
         model = User
         fields = [
             "id",
             "avatar",
             "cover_image",
+            "avatar_url",
+            "cover_image_url",
             "date_joined",
             "display_name",
             "email",
@@ -156,6 +159,7 @@ class UserLiteSerializer(BaseSerializer):
             "first_name",
             "last_name",
             "avatar",
+            "avatar_url",
             "is_bot",
             "display_name",
         ]
@@ -173,9 +177,11 @@ class UserAdminLiteSerializer(BaseSerializer):
             "first_name",
             "last_name",
             "avatar",
+            "avatar_url",
             "is_bot",
             "display_name",
             "email",
+            "last_login_medium",
         ]
         read_only_fields = [
             "id",

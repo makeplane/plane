@@ -146,6 +146,7 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
         buttonContainerClassName
       )}
       onClick={handleOnClick}
+      disabled={disabled}
     >
       <DropdownButton
         className={buttonClassName}
@@ -160,6 +161,7 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
         }
         showTooltip={showTooltip}
         variant={buttonVariant}
+        renderToolTipByDefault={renderByDefault}
       >
         <span
           className={cn("h-full flex items-center justify-center gap-1 rounded-sm flex-grow", buttonFromDateClassName)}

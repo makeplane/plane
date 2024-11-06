@@ -174,9 +174,10 @@ export const shouldHighlightIssueDueDate = (
 export const getIssueBlocksStructure = (block: TIssue): IGanttBlock => ({
   data: block,
   id: block?.id,
+  name: block?.name,
   sort_order: block?.sort_order,
-  start_date: getDate(block?.start_date),
-  target_date: getDate(block?.target_date),
+  start_date: block?.start_date ?? undefined,
+  target_date: block?.target_date ?? undefined,
 });
 
 export function getChangedIssuefields(formData: Partial<TIssue>, dirtyFields: { [key: string]: boolean | undefined }) {
@@ -305,4 +306,5 @@ export const getComputedDisplayProperties = (
   updated_on: displayProperties?.updated_on ?? true,
   modules: displayProperties?.modules ?? true,
   cycle: displayProperties?.cycle ?? true,
+  issue_type: displayProperties?.issue_type ?? true,
 });

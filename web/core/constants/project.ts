@@ -2,13 +2,6 @@
 import { Globe2, Lock, LucideIcon } from "lucide-react";
 import { TProjectAppliedDisplayFilterKeys, TProjectOrderByOptions } from "@plane/types";
 
-export enum EUserProjectRoles {
-  GUEST = 5,
-  VIEWER = 10,
-  MEMBER = 15,
-  ADMIN = 20,
-}
-
 export const NETWORK_CHOICES: {
   key: 0 | 2;
   label: string;
@@ -24,7 +17,7 @@ export const NETWORK_CHOICES: {
   {
     key: 2,
     label: "Public",
-    description: "Anyone in the workspace can join",
+    description: "Anyone in the workspace except Guests can join",
     icon: Globe2,
   },
 ];
@@ -107,7 +100,7 @@ export const PROJECT_ERROR_MESSAGES = {
   },
   cycleDeleteError: {
     title: "Error",
-    message: "Failed to delete project",
+    message: "Failed to delete cycle",
   },
   moduleDeleteError: {
     title: "Error",

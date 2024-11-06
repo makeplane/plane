@@ -22,6 +22,7 @@ type Props = {
   icon?: LucideIcon;
   onClose?: () => void;
   renderByDefault?: boolean;
+  optionsClassName?: string;
 } & MemberDropdownProps;
 
 export const MemberDropdown: React.FC<Props> = observer((props) => {
@@ -34,6 +35,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
     disabled = false,
     dropdownArrow = false,
     dropdownArrowClassName = "",
+    optionsClassName = "",
     hideIcon = false,
     multiple,
     onChange,
@@ -106,6 +108,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
           type="button"
           className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
           onClick={handleOnClick}
+          disabled={disabled}
         >
           {button}
         </button>
@@ -122,6 +125,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
             buttonContainerClassName
           )}
           onClick={handleOnClick}
+          disabled={disabled}
         >
           <DropdownButton
             className={cn("text-xs", buttonClassName)}
@@ -130,6 +134,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
             tooltipContent={tooltipContent ?? `${value?.length ?? 0} assignee${value?.length !== 1 ? "s" : ""}`}
             showTooltip={showTooltip}
             variant={buttonVariant}
+            renderToolTipByDefault={renderByDefault}
           >
             {!hideIcon && <ButtonAvatars showTooltip={showTooltip} userIds={value} icon={icon} />}
             {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
@@ -160,6 +165,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
     >
       {isOpen && (
         <MemberOptions
+          optionsClassName={optionsClassName}
           isOpen={isOpen}
           projectId={projectId}
           placement={placement}

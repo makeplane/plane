@@ -30,18 +30,20 @@ const createDragHandleElement = (): HTMLElement => {
   return dragHandleElement;
 };
 
-const nodeDOMAtCoords = (coords: { x: number; y: number }) => {
+export const nodeDOMAtCoords = (coords: { x: number; y: number }) => {
   const elements = document.elementsFromPoint(coords.x, coords.y);
   const generalSelectors = [
     "li",
     "p:not(:first-child)",
     ".code-block",
     "blockquote",
-    "img",
     "h1, h2, h3, h4, h5, h6",
     "[data-type=horizontalRule]",
     ".table-wrapper",
     ".issue-embed",
+    ".image-component",
+    ".image-upload-component",
+    ".editor-callout-component",
   ].join(", ");
 
   for (const elem of elements) {
@@ -232,14 +234,46 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     dragHandleElement.addEventListener("click", (e) => handleClick(e, view));
     dragHandleElement.addEventListener("contextmenu", (e) => handleClick(e, view));
 
+    const isScrollable = (node: HTMLElement | SVGElement) => {
+      if (!(node instanceof HTMLElement || node instanceof SVGElement)) {
+        return false;
+      }
+      const style = getComputedStyle(node);
+      return ["overflow", "overflow-y"].some((propertyName) => {
+        const value = style.getPropertyValue(propertyName);
+        return value === "auto" || value === "scroll";
+      });
+    };
+
+    const getScrollParent = (node: HTMLElement | SVGElement) => {
+      let currentParent = node.parentElement;
+      while (currentParent) {
+        if (isScrollable(currentParent)) {
+          return currentParent;
+        }
+        currentParent = currentParent.parentElement;
+      }
+      return document.scrollingElement || document.documentElement;
+    };
+
+    const maxScrollSpeed = 100;
+
     dragHandleElement.addEventListener("drag", (e) => {
       hideDragHandle();
-      const frameRenderer = document.querySelector(".frame-renderer");
-      if (!frameRenderer) return;
-      if (e.clientY < options.scrollThreshold.up) {
-        frameRenderer.scrollBy({ top: -70, behavior: "smooth" });
-      } else if (window.innerHeight - e.clientY < options.scrollThreshold.down) {
-        frameRenderer.scrollBy({ top: 70, behavior: "smooth" });
+      const scrollableParent = getScrollParent(dragHandleElement);
+      if (!scrollableParent) return;
+      const scrollThreshold = options.scrollThreshold;
+
+      if (e.clientY < scrollThreshold.up) {
+        const overflow = scrollThreshold.up - e.clientY;
+        const ratio = Math.min(overflow / scrollThreshold.up, 1);
+        const scrollAmount = -maxScrollSpeed * ratio;
+        scrollableParent.scrollBy({ top: scrollAmount });
+      } else if (window.innerHeight - e.clientY < scrollThreshold.down) {
+        const overflow = e.clientY - (window.innerHeight - scrollThreshold.down);
+        const ratio = Math.min(overflow / scrollThreshold.down, 1);
+        const scrollAmount = maxScrollSpeed * ratio;
+        scrollableParent.scrollBy({ top: scrollAmount });
       }
     });
 

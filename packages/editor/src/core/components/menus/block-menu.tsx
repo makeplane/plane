@@ -34,7 +34,6 @@ export const BlockMenu = (props: BlockMenuProps) => {
       menuRef.current.remove();
       menuRef.current.style.visibility = "visible";
 
-      // @ts-expect-error - tippy types are incorrect
       popup.current = tippy(document.body, {
         getReferenceClientRect: null,
         content: menuRef.current,
@@ -101,7 +100,8 @@ export const BlockMenu = (props: BlockMenuProps) => {
       icon: Copy,
       key: "duplicate",
       label: "Duplicate",
-      isDisabled: editor.state.selection.content().content.firstChild?.type.name === "image",
+      isDisabled:
+        editor.state.selection.content().content.firstChild?.type.name === "image" || editor.isActive("imageComponent"),
       onClick: (e) => {
         e.preventDefault();
         e.stopPropagation();

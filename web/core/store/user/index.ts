@@ -3,11 +3,14 @@ import set from "lodash/set";
 import { action, makeObservable, observable, runInAction, computed } from "mobx";
 // types
 import { IUser } from "@plane/types";
+import { TUserPermissions } from "@plane/types/src/enums";
 // constants
-import { EUserProjectRoles } from "@/constants/project";
-import { EUserWorkspaceRoles } from "@/constants/workspace";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
+// local
+import { persistence } from "@/local-db/storage.sqlite";
+import { ENABLE_LOCAL_DB_CACHE } from "@/plane-web/constants/issues";
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // services
 import { AuthService } from "@/services/auth.service";
 import { UserService } from "@/services/user.service";
@@ -15,7 +18,7 @@ import { UserService } from "@/services/user.service";
 import { CoreRootStore } from "@/store/root.store";
 import { IAccountStore } from "@/store/user/account.store";
 import { ProfileStore, IUserProfileStore } from "@/store/user/profile.store";
-import { IUserMembershipStore, UserMembershipStore } from "@/store/user/user-membership.store";
+import { IUserPermissionStore, UserPermissionStore } from "./permissions.store";
 import { IUserSettingsStore, UserSettingsStore } from "./settings.store";
 
 type TUserErrorStatus = {
@@ -33,7 +36,7 @@ export interface IUserStore {
   userProfile: IUserProfileStore;
   userSettings: IUserSettingsStore;
   accounts: Record<string, IAccountStore>;
-  membership: IUserMembershipStore;
+  permission: IUserPermissionStore;
   // actions
   fetchCurrentUser: () => Promise<IUser | undefined>;
   updateCurrentUser: (data: Partial<IUser>) => Promise<IUser | undefined>;
@@ -42,18 +45,7 @@ export interface IUserStore {
   reset: () => void;
   signOut: () => Promise<void>;
   // computed
-
-  // workspace level
-  canPerformWorkspaceAdminActions: boolean;
-  canPerformWorkspaceMemberActions: boolean;
-  canPerformWorkspaceViewerActions: boolean;
-  canPerformWorkspaceGuestActions: boolean;
-
-  // project level
-  canPerformProjectAdminActions: boolean;
-  canPerformProjectMemberActions: boolean;
-  canPerformProjectViewerActions: boolean;
-  canPerformProjectGuestActions: boolean;
+  localDBEnabled: boolean;
   canPerformAnyCreateAction: boolean;
   projectsWithCreatePermissions: { [projectId: string]: number } | null;
 }
@@ -68,7 +60,7 @@ export class UserStore implements IUserStore {
   userProfile: IUserProfileStore;
   userSettings: IUserSettingsStore;
   accounts: Record<string, IAccountStore> = {};
-  membership: IUserMembershipStore;
+  permission: IUserPermissionStore;
   // service
   userService: UserService;
   authService: AuthService;
@@ -77,7 +69,7 @@ export class UserStore implements IUserStore {
     // stores
     this.userProfile = new ProfileStore(store);
     this.userSettings = new UserSettingsStore();
-    this.membership = new UserMembershipStore(store);
+    this.permission = new UserPermissionStore(store);
     // service
     this.userService = new UserService();
     this.authService = new AuthService();
@@ -92,7 +84,7 @@ export class UserStore implements IUserStore {
       userProfile: observable,
       userSettings: observable,
       accounts: observable,
-      membership: observable,
+      permission: observable,
       // actions
       fetchCurrentUser: action,
       updateCurrentUser: action,
@@ -101,18 +93,10 @@ export class UserStore implements IUserStore {
       reset: action,
       signOut: action,
       // computed
-      canPerformWorkspaceAdminActions: computed,
-      canPerformWorkspaceMemberActions: computed,
-      canPerformWorkspaceViewerActions: computed,
-      canPerformWorkspaceGuestActions: computed,
-
-      canPerformProjectAdminActions: computed,
-      canPerformProjectMemberActions: computed,
-      canPerformProjectViewerActions: computed,
-      canPerformProjectGuestActions: computed,
-
       canPerformAnyCreateAction: computed,
       projectsWithCreatePermissions: computed,
+
+      localDBEnabled: computed,
     });
   }
 
@@ -157,26 +141,6 @@ export class UserStore implements IUserStore {
       throw error;
     }
   };
-
-  /**
-   * @description fetches the prjects with write permissions
-   * @returns {{[projectId: string]: number} || null}
-   */
-  fetchProjectsWithCreatePermissions() {
-    const allWorkspaceRoles =
-      this.membership.workspaceProjectsRole &&
-      this.membership.workspaceProjectsRole[this.membership.router.workspaceSlug || ""];
-    return (
-      (allWorkspaceRoles &&
-        Object.keys(allWorkspaceRoles)
-          .filter((key) => allWorkspaceRoles[key] >= EUserProjectRoles.MEMBER)
-          .reduce(
-            (res: { [projectId: string]: number }, key: string) => ((res[key] = allWorkspaceRoles[key]), res),
-            {}
-          )) ||
-      null
-    );
-  }
 
   /**
    * @description updates the current user
@@ -258,7 +222,7 @@ export class UserStore implements IUserStore {
       this.data = undefined;
       this.userProfile = new ProfileStore(this.store);
       this.userSettings = new UserSettingsStore();
-      this.membership = new UserMembershipStore(this.store);
+      this.permission = new UserPermissionStore(this.store);
     });
   };
 
@@ -268,7 +232,32 @@ export class UserStore implements IUserStore {
    */
   signOut = async (): Promise<void> => {
     await this.authService.signOut(API_BASE_URL);
+    await persistence.clearStorage();
     this.store.resetOnSignOut();
+  };
+
+  // helper actions
+  /**
+   * @description fetches the prjects with write permissions
+   * @returns {{[projectId: string]: number} || null}
+   */
+  fetchProjectsWithCreatePermissions = (): { [key: string]: TUserPermissions } => {
+    const { workspaceSlug } = this.store.router;
+
+    const allWorkspaceProjectRoles =
+      this.permission.workspaceProjectsPermissions && this.permission.workspaceProjectsPermissions[workspaceSlug || ""];
+
+    const userPermissions =
+      (allWorkspaceProjectRoles &&
+        Object.keys(allWorkspaceProjectRoles)
+          .filter((key) => allWorkspaceProjectRoles[key] >= EUserPermissions.MEMBER)
+          .reduce(
+            (res: { [projectId: string]: number }, key: string) => ((res[key] = allWorkspaceProjectRoles[key]), res),
+            {}
+          )) ||
+      null;
+
+    return userPermissions;
   };
 
   /**
@@ -288,69 +277,7 @@ export class UserStore implements IUserStore {
     return filteredProjects ? Object.keys(filteredProjects).length > 0 : false;
   }
 
-  /**
-   * @description returns true if user has workspace admin actions permissions
-   * @returns {boolean}
-   */
-  get canPerformWorkspaceAdminActions() {
-    return !!this.membership.currentWorkspaceRole && this.membership.currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
-  }
-
-  /**
-   * @description returns true if user has workspace member actions permissions
-   * @returns {boolean}
-   */
-  get canPerformWorkspaceMemberActions() {
-    return !!this.membership.currentWorkspaceRole && this.membership.currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
-  }
-
-  /**
-   * @description returns true if user has workspace viewer actions permissions
-   * @returns {boolean}
-   */
-
-  get canPerformWorkspaceViewerActions() {
-    return !!this.membership.currentWorkspaceRole && this.membership.currentWorkspaceRole >= EUserWorkspaceRoles.VIEWER;
-  }
-
-  /**
-   * @description returns true if user has workspace guest actions permissions
-   * @returns {boolean}
-   */
-  get canPerformWorkspaceGuestActions() {
-    return !!this.membership.currentWorkspaceRole && this.membership.currentWorkspaceRole >= EUserWorkspaceRoles.GUEST;
-  }
-
-  /**
-   * @description returns true if user has project admin actions permissions
-   * @returns {boolean}
-   */
-  get canPerformProjectAdminActions() {
-    return !!this.membership.currentProjectRole && this.membership.currentProjectRole === EUserProjectRoles.ADMIN;
-  }
-
-  /**
-   * @description returns true if user has project member actions permissions
-   * @returns {boolean}
-   */
-  get canPerformProjectMemberActions() {
-    return !!this.membership.currentProjectRole && this.membership.currentProjectRole >= EUserProjectRoles.MEMBER;
-  }
-
-  /**
-   * @description returns true if user has project viewer actions permissions
-   * @returns {boolean}
-   */
-
-  get canPerformProjectViewerActions() {
-    return !!this.membership.currentProjectRole && this.membership.currentProjectRole >= EUserProjectRoles.VIEWER;
-  }
-
-  /**
-   * @description returns true if user has project guest actions permissions
-   * @returns {boolean}
-   */
-  get canPerformProjectGuestActions() {
-    return !!this.membership.currentProjectRole && this.membership.currentProjectRole >= EUserProjectRoles.GUEST;
+  get localDBEnabled() {
+    return ENABLE_LOCAL_DB_CACHE && this.userSettings.canUseLocalDB;
   }
 }
