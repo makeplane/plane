@@ -289,6 +289,7 @@ module.exports = {
       },
       // scale down font sizes to 90% of default
       fontSize: {
+        "2xs": "0.5625rem",
         xs: "0.675rem",
         sm: "0.7875rem",
         base: "0.9rem",

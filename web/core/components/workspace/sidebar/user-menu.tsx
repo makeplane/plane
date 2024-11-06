@@ -9,13 +9,14 @@ import { Tooltip } from "@plane/ui";
 import { SidebarNavItem } from "@/components/sidebar";
 import { NotificationAppSidebarOption } from "@/components/workspace-notifications";
 // constants
-import { SIDEBAR_USER_MENU_ITEMS } from "@/constants/dashboard";
 import { SIDEBAR_CLICKED } from "@/constants/event-tracker";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useEventTracker, useUser, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+
+import { SIDEBAR_USER_MENU_ITEMS } from "@/plane-web/constants/dashboard";
 import { EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const SidebarUserMenu = observer(() => {

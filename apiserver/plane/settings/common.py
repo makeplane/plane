@@ -385,6 +385,9 @@ LIVE_BASE_URL = os.environ.get("LIVE_BASE_URL")
 
 HARD_DELETE_AFTER_DAYS = int(os.environ.get("HARD_DELETE_AFTER_DAYS", 60))
 
+# Instance Changelog URL
+INSTANCE_CHANGELOG_URL = os.environ.get("INSTANCE_CHANGELOG_URL", "")
+
 ATTACHMENT_MIME_TYPES = [
     # Images
     "image/jpeg",

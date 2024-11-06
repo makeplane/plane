@@ -33,6 +33,8 @@ type TCollaborativeEditorHookCommonProps = {
 };
 
 type TCollaborativeEditorHookProps = TCollaborativeEditorHookCommonProps & {
+  onTransaction?: () => void;
+  embedHandler?: TEmbedConfig;
   fileHandler: TFileHandler;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
   placeholder?: string | ((isFocused: boolean, value: string) => string);

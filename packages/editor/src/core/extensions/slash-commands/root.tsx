@@ -6,7 +6,7 @@ import tippy from "tippy.js";
 import { ISlashCommandItem } from "@/types";
 // components
 import { getSlashCommandFilteredSections } from "./command-items-list";
-import { SlashCommandsMenu } from "./command-menu";
+import { SlashCommandsMenu, SlashCommandsMenuProps } from "./command-menu";
 
 export type SlashCommandOptions = {
   suggestion: Omit<SuggestionOptions, "editor">;
@@ -55,7 +55,7 @@ interface CommandListInstance {
 }
 
 const renderItems = () => {
-  let component: ReactRenderer<CommandListInstance, typeof SlashCommandsMenu> | null = null;
+  let component: ReactRenderer<CommandListInstance, SlashCommandsMenuProps> | null = null;
   let popup: any | null = null;
   return {
     onStart: (props: { editor: Editor; clientRect?: (() => DOMRect | null) | null }) => {

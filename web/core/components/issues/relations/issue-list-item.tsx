@@ -3,7 +3,8 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { X, Pencil, Trash, Link as LinkIcon } from "lucide-react";
-import { TIssue, TIssueRelationTypes } from "@plane/types";
+// Plane
+import { TIssue } from "@plane/types";
 import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
 // components
 import { RelationIssueProperty } from "@/components/issues/relations";
@@ -13,7 +14,8 @@ import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-red
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
-// types
+import { TIssueRelationTypes } from "@/plane-web/types";
+//
 import { TRelationIssueOperations } from "../issue-detail-widgets/relations/helper";
 
 type Props = {

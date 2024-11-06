@@ -13,6 +13,7 @@ import { TCollaborativeDocumentEditorHookProps } from "@/types";
 
 export const useCollaborativeDocumentEditor = (props: TCollaborativeDocumentEditorHookProps) => {
   const {
+    onTransaction,
     disabledExtensions,
     editorClassName,
     editorProps = {},
@@ -39,7 +40,7 @@ export const useCollaborativeDocumentEditor = (props: TCollaborativeDocumentEdit
         name: id,
         parameters: realtimeConfig.queryParams,
         // using user id as a token to verify the user on the server
-        token: user.id,
+        token: JSON.stringify(user),
         url: realtimeConfig.url,
         onAuthenticationFailed: () => {
           serverHandler?.onServerError?.();
@@ -75,6 +76,7 @@ export const useCollaborativeDocumentEditor = (props: TCollaborativeDocumentEdit
 
   const editor = useEditor({
     id,
+    onTransaction,
     editorProps,
     editorClassName,
     enableHistory: false,

@@ -3597,6 +3597,11 @@
   resolved "https://registry.yarnpkg.com/@tiptap/extension-task-list/-/extension-task-list-2.9.1.tgz#e0ca3ec1379dbc39a98070c650d3759df85db794"
   integrity sha512-vmUkclPi02iVf+uu74iyUp5xGNib0Gxs73DJ1z+a7CzjuLRqqCa/KEde95CR0Y//DaK/Csz4DOSUyTfLCMvpWg==
 
+"@tiptap/extension-text-align@^2.8.0":
+  version "2.9.1"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-text-align/-/extension-text-align-2.9.1.tgz#5f7920a16c95b283c961cf1e22357bdc355c1626"
+  integrity sha512-oUp0XnwJpAImcOVV68vsY2CpkHpRZ3gzWfIRTuy+aYitQim3xDKis/qfWQUWZsANp9/TZ0VyjtkZxNMwOfcu1g==
+
 "@tiptap/extension-text-style@^2.7.1", "@tiptap/extension-text-style@^2.9.1":
   version "2.9.1"
   resolved "https://registry.yarnpkg.com/@tiptap/extension-text-style/-/extension-text-style-2.9.1.tgz#b9fc9cd8e90747357fbd4cac541a33aaa8b76875"
@@ -3878,9 +3883,9 @@
   integrity sha512-CuPgU6f3eT/XgKKPqKd/gLZV1Xmvf1a2R5POBOGQa6uv82xpls89HU5zKeVoyR8XzHd1RGNOlQlvUe3CFkjWNQ==
 
 "@types/express-serve-static-core@*", "@types/express-serve-static-core@^5.0.0":
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/@types/express-serve-static-core/-/express-serve-static-core-5.0.0.tgz#91f06cda1049e8f17eeab364798ed79c97488a1c"
-  integrity sha512-AbXMTZGt40T+KON9/Fdxx0B2WK5hsgxcfXJLr5bFpZ7b4JCex2WyQPTEKdXqfHiY5nKKBScZ7yCoO6Pvgxfvnw==
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/@types/express-serve-static-core/-/express-serve-static-core-5.0.1.tgz#3c9997ae9d00bc236e45c6374e84f2596458d9db"
+  integrity sha512-CRICJIl0N5cXDONAdlTv5ShATZ4HEwk6kDDIW2/w9qOWKg+NU/5F8wYRWCrONad0/UKkloNSmmyN/wX4rtpbVA==
   dependencies:
     "@types/node" "*"
     "@types/qs" "*"
@@ -4031,11 +4036,11 @@
     "@types/node" "*"
 
 "@types/node@*", "@types/node@^22.0.0", "@types/node@^22.5.4":
-  version "22.7.9"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-22.7.9.tgz#2bf2797b5e84702d8262ea2cf843c3c3c880d0e9"
-  integrity sha512-jrTfRC7FM6nChvU7X2KqcrgquofrWLFDeYC1hKfwNWomVvrn7JIksqf344WN2X/y8xrgqBd2dJATZV4GbatBfg==
+  version "22.8.0"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-22.8.0.tgz#193c6f82f9356ce0e6bba86b59f2ffe06e7e320b"
+  integrity sha512-84rafSBHC/z1i1E3p0cJwKA+CfYDNSXX9WSZBRopjIzLET8oNt6ht2tei4C7izwDeEiLLfdeSVBv1egOH916hg==
   dependencies:
-    undici-types "~6.19.2"
+    undici-types "~6.19.8"
 
 "@types/node@18.14.1":
   version "18.14.1"
@@ -4053,9 +4058,9 @@
   integrity sha512-DZxSZWXxFfOlx7k7Rv4LAyiMroaxa3Ly/7OOzZO8cBNho0YzAi4qlbrx8W27JGqG57IgR/6J7r+nOJWw6kcvZA==
 
 "@types/node@^20.14.9", "@types/node@^20.5.2":
-  version "20.17.0"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.17.0.tgz#d0620ba0fe4cf2a0f12351c7bdd805fc4e1f036b"
-  integrity sha512-a7zRo0f0eLo9K5X9Wp5cAqTUNGzuFLDG2R7C4HY2BhcMAsxgSPuRvAC1ZB6QkuUQXf0YZAgfOX2ZyrBa2n4nHQ==
+  version "20.17.1"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.17.1.tgz#2b968e060dfb04b7f9550fe3db5f552721c14566"
+  integrity sha512-j2VlPv1NnwPJbaCNv69FO/1z4lId0QmGvpT41YxitRtWlg96g/j8qcv2RKsLKe2F6OJgyXhupN1Xo17b2m139Q==
   dependencies:
     undici-types "~6.19.2"
 
@@ -9876,9 +9881,9 @@ postgres-range@^1.1.1:
   integrity sha512-i/hbxIE9803Alj/6ytL7UHQxRvZkI9O4Sy+J3HGc4F4oo/2eQAjTSNJ0bfxyse3bH0nuVesCk+3IRLaMtG3H6w==
 
 posthog-js@^1.131.3:
-  version "1.174.4"
-  resolved "https://registry.yarnpkg.com/posthog-js/-/posthog-js-1.174.4.tgz#67abe7ba9c3b99db8fb472be0017b7d45217184f"
-  integrity sha512-wfnSp1nDYHvV4+qy+UnDTED3afe8tVOiLa4Y83RLI2HZdMKovnLq11GJX6cYJ99+hs88HyGD1XmNTxShIQoOhQ==
+  version "1.176.0"
+  resolved "https://registry.yarnpkg.com/posthog-js/-/posthog-js-1.176.0.tgz#39841ab213aa9c5500982659dc6d537a407f7205"
+  integrity sha512-T5XKNtRzp7q6CGb7Vc7wAI76rWap9fiuDUPxPsyPBPDkreKya91x9RIsSapAVFafwD1AEin1QMczCmt9Le9BWw==
   dependencies:
     core-js "^3.38.1"
     fflate "^0.4.8"
@@ -10109,9 +10114,9 @@ prosemirror-state@^1.0.0, prosemirror-state@^1.2.2, prosemirror-state@^1.3.1, pr
     prosemirror-view "^1.27.0"
 
 prosemirror-tables@^1.4.0:
-  version "1.5.1"
-  resolved "https://registry.yarnpkg.com/prosemirror-tables/-/prosemirror-tables-1.5.1.tgz#75e6ace7427834f2150f9f08bf8fa400429f5238"
-  integrity sha512-zL0vI0rGdhLLKXaZU1Jw1I8RuXwa5bv4aEY6G9TdynNRIU2FodtfI/YdhqVlimilhOIBGMbhvTvnQy5fvbHt2A==
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/prosemirror-tables/-/prosemirror-tables-1.6.0.tgz#b05fbb1172d55dd22ad2662af8e243c969bbbfdd"
+  integrity sha512-eirSS2fwVYzKhvM2qeXSn9ix/SBn7QOLDftPQ4ImEQIevFDiSKAB6Lbrmm/WEgrbTDbCm+xhSq4gOD9w7wT59Q==
   dependencies:
     prosemirror-keymap "^1.1.2"
     prosemirror-model "^1.8.1"
@@ -11735,17 +11740,17 @@ tiptap-markdown@^0.8.9:
     markdown-it-task-lists "^2.1.1"
     prosemirror-markdown "^1.11.1"
 
-tldts-core@^6.1.54:
-  version "6.1.54"
-  resolved "https://registry.yarnpkg.com/tldts-core/-/tldts-core-6.1.54.tgz#a3c3b5f45a64a1f9ea4bb32a94642218c7b7baa5"
-  integrity sha512-5cc42+0G0EjYRDfIJHKraaT3I5kPm7j6or3Zh1T9sF+Ftj1T+isT4thicUyQQ1bwN7/xjHQIuY2fXCoXP8Haqg==
+tldts-core@^6.1.55:
+  version "6.1.55"
+  resolved "https://registry.yarnpkg.com/tldts-core/-/tldts-core-6.1.55.tgz#cab0d412672fca9c77d3c51312c69bb5b5ee95c2"
+  integrity sha512-BL+BuKHHaOpntE5BGI6naXjULU6aRlgaYdfDHR3T/hdbNTWkWUZ9yuc11wGnwgpvRwlyUiIK+QohYK3olaVU6Q==
 
 tldts@^6.1.32:
-  version "6.1.54"
-  resolved "https://registry.yarnpkg.com/tldts/-/tldts-6.1.54.tgz#782594001a7b95e577b4cc391c0f0ed7c8307d37"
-  integrity sha512-rDaL1t59gb/Lg0HPMUGdV1vAKLQcXwU74D26aMaYV4QW7mnMvShd1Vmkg3HYAPWx2JCTUmsrXt/Yl9eJ5UFBQw==
+  version "6.1.55"
+  resolved "https://registry.yarnpkg.com/tldts/-/tldts-6.1.55.tgz#9a27d1708652bbae93d4b842dc2f8554fdabffc6"
+  integrity sha512-HxQR/9roQ07Pwc8RyyrJMAxRz5/ssoF3qIPPUiIo3zUt6yMdmYZjM2OZIFMiZ3jHyz9jrGHEHuQZrUhoc1LkDw==
   dependencies:
-    tldts-core "^6.1.54"
+    tldts-core "^6.1.55"
 
 to-regex-range@^5.0.1:
   version "5.0.1"
@@ -12063,7 +12068,7 @@ undefsafe@^2.0.5:
   resolved "https://registry.yarnpkg.com/undefsafe/-/undefsafe-2.0.5.tgz#38733b9327bdcd226db889fb723a6efd162e6e2c"
   integrity sha512-WxONCrssBM8TSPRqN5EmsjVrsv4A8X12J4ArBiiayv3DyyG3ZlIg6yysuuSYdZsVz3TKcTg2fd//Ujd4CHV1iA==
 
-undici-types@~6.19.2:
+undici-types@~6.19.2, undici-types@~6.19.8:
   version "6.19.8"
   resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-6.19.8.tgz#35111c9d1437ab83a7cdc0abae2f26d88eda0a02"
   integrity sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==

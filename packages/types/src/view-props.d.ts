@@ -78,7 +78,8 @@ export type TIssueParams =
   | "cursor"
   | "per_page"
   | "issue_type"
-  | "layout";
+  | "layout"
+  | "expand";
 
 export type TCalendarLayouts = "month" | "week";
 

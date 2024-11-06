@@ -36,6 +36,8 @@ export interface DraftIssueProps {
     default: string;
     loading: string;
   };
+  isDuplicateModalOpen: boolean;
+  handleDuplicateIssueModal: (isOpen: boolean) => void;
 }
 
 export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
@@ -54,6 +56,8 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
     moveToIssue = false,
     modalTitle,
     primaryButtonText,
+    isDuplicateModalOpen,
+    handleDuplicateIssueModal,
   } = props;
   // states
   const [issueDiscardModal, setIssueDiscardModal] = useState(false);
@@ -173,6 +177,8 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
         moveToIssue={moveToIssue}
         modalTitle={modalTitle}
         primaryButtonText={primaryButtonText}
+        isDuplicateModalOpen={isDuplicateModalOpen}
+        handleDuplicateIssueModal={handleDuplicateIssueModal}
       />
     </>
   );

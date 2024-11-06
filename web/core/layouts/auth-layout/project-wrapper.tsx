@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -8,6 +8,7 @@ import useSWR from "swr";
 // components
 import { JoinProject } from "@/components/auth-screens";
 import { EmptyState, LogoSpinner } from "@/components/common";
+import { ETimeLineTypeType } from "@/components/gantt-chart/contexts";
 // hooks
 import {
   useCommandPalette,
@@ -22,6 +23,7 @@ import {
   useProjectView,
   useUserPermissions,
 } from "@/hooks/store";
+import { useTimeLineChart } from "@/hooks/use-timeline-chart";
 // local
 import { persistence } from "@/local-db/storage.sqlite";
 // plane web constants
@@ -43,6 +45,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { loader, getProjectById, fetchProjectDetails } = useProject();
   const { fetchAllCycles } = useCycle();
   const { fetchModulesSlim, fetchModules } = useModule();
+  const { initGantt } = useTimeLineChart(ETimeLineTypeType.MODULE);
   const { fetchViews } = useProjectView();
   const {
     project: { fetchProjectMembers },
@@ -54,6 +57,11 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { workspaceSlug, projectId } = useParams();
 
   const projectMemberInfo = projectUserInfo?.[workspaceSlug?.toString()]?.[projectId?.toString()];
+
+  // Initialize module timeline chart
+  useEffect(() => {
+    initGantt();
+  }, []);
 
   useSWR(
     workspaceSlug && projectId ? `PROJECT_SYNC_ISSUES_${workspaceSlug.toString()}_${projectId.toString()}` : null,

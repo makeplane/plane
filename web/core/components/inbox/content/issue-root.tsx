@@ -17,13 +17,19 @@ import {
   TIssueOperations,
   IssueAttachmentRoot,
 } from "@/components/issues";
+// constants
+import { ISSUE_ARCHIVED, ISSUE_DELETED } from "@/constants/event-tracker";
+// helpers
+import { getTextContent } from "@/helpers/editor.helper";
 // hooks
-import { useEventTracker, useUser } from "@/hooks/store";
+import { useEventTracker, useIssueDetail, useProject, useUser } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
+// store types
+import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe";
+import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
 // services
 import { InboxIssueService } from "@/services/inbox";
 const inboxIssueService = new InboxIssueService();
-// store types
 import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
 
 type Props = {
@@ -42,6 +48,8 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
   const { data: currentUser } = useUser();
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
   const { captureIssueEvent } = useEventTracker();
+  const { getProjectById } = useProject();
+  const { removeIssue, archiveIssue } = useIssueDetail();
 
   useEffect(() => {
     if (isSubmitting === "submitted") {
@@ -54,7 +62,17 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
     }
   }, [isSubmitting, setShowAlert, setIsSubmitting]);
 
+  // dervied values
   const issue = inboxIssue.issue;
+  const projectDetails = issue?.project_id ? getProjectById(issue?.project_id) : undefined;
+
+  // debounced duplicate issues swr
+  const { duplicateIssues } = useDebouncedDuplicateIssues(projectDetails?.workspace.toString(), projectId, {
+    name: issue?.name,
+    description_html: getTextContent(issue?.description_html),
+    issueId: issue?.id,
+  });
+
   if (!issue) return <></>;
 
   const issueOperations: TIssueOperations = useMemo(
@@ -65,7 +83,31 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
       },
       // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars, arrow-body-style
       remove: async (_workspaceSlug: string, _projectId: string, _issueId: string) => {
-        return;
+        try {
+          await removeIssue(workspaceSlug, projectId, _issueId);
+          setToast({
+            title: "Success!",
+            type: TOAST_TYPE.SUCCESS,
+            message: "Issue deleted successfully",
+          });
+          captureIssueEvent({
+            eventName: ISSUE_DELETED,
+            payload: { id: _issueId, state: "SUCCESS", element: "Issue detail page" },
+            path: pathname,
+          });
+        } catch (error) {
+          console.log("Error in deleting issue:", error);
+          setToast({
+            title: "Error!",
+            type: TOAST_TYPE.ERROR,
+            message: "Issue delete failed",
+          });
+          captureIssueEvent({
+            eventName: ISSUE_DELETED,
+            payload: { id: _issueId, state: "FAILED", element: "Issue detail page" },
+            path: pathname,
+          });
+        }
       },
       update: async (_workspaceSlug: string, _projectId: string, _issueId: string, data: Partial<TIssue>) => {
         try {
@@ -96,6 +138,23 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           });
         }
       },
+      archive: async (workspaceSlug: string, projectId: string, issueId: string) => {
+        try {
+          await archiveIssue(workspaceSlug, projectId, issueId);
+          captureIssueEvent({
+            eventName: ISSUE_ARCHIVED,
+            payload: { id: issueId, state: "SUCCESS", element: "Issue details page" },
+            path: pathname,
+          });
+        } catch (error) {
+          console.log("Error in archiving issue:", error);
+          captureIssueEvent({
+            eventName: ISSUE_ARCHIVED,
+            payload: { id: issueId, state: "FAILED", element: "Issue details page" },
+            path: pathname,
+          });
+        }
+      },
     }),
     [captureIssueEvent, inboxIssue, pathname]
   );
@@ -105,6 +164,16 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
   return (
     <>
       <div className="rounded-lg space-y-4">
+        {duplicateIssues.length > 0 && (
+          <DeDupeIssuePopoverRoot
+            workspaceSlug={workspaceSlug}
+            projectId={issue.project_id}
+            rootIssueId={issue.id}
+            issues={duplicateIssues}
+            issueOperations={issueOperations}
+            isIntakeIssue
+          />
+        )}
         <IssueTitleInput
           workspaceSlug={workspaceSlug}
           projectId={issue.project_id}

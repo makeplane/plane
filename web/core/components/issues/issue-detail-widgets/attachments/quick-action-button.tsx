@@ -30,7 +30,7 @@ export const IssueAttachmentActionButton: FC<Props> = observer((props) => {
   // file size
   const { maxFileSize } = useFileSize();
   // operations
-  const handleAttachmentOperations = useAttachmentOperations(workspaceSlug, projectId, issueId);
+  const { operations: attachmentOperations } = useAttachmentOperations(workspaceSlug, projectId, issueId);
   // handlers
   const handleFetchPropertyActivities = useCallback(() => {
     fetchActivities(workspaceSlug, projectId, issueId);
@@ -45,7 +45,7 @@ export const IssueAttachmentActionButton: FC<Props> = observer((props) => {
         if (!currentFile || !workspaceSlug) return;
 
         setIsLoading(true);
-        handleAttachmentOperations
+        attachmentOperations
           .create(currentFile)
           .catch(() => {
             setToast({
@@ -72,7 +72,7 @@ export const IssueAttachmentActionButton: FC<Props> = observer((props) => {
       });
       return;
     },
-    [maxFileSize, workspaceSlug, handleAttachmentOperations, handleFetchPropertyActivities, setLastWidgetAction]
+    [attachmentOperations, maxFileSize, workspaceSlug, handleFetchPropertyActivities, setLastWidgetAction]
   );
 
   const { getRootProps, getInputProps } = useDropzone({
