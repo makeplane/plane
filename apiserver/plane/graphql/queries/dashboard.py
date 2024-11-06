@@ -21,7 +21,7 @@ class userInformationQuery:
         extensions=[PermissionExtension(permissions=[IsAuthenticated()])]
     )
     async def userInformation(
-        self, info: Info, device_id: Optional[str]
+        self, info: Info, device_id: Optional[str] = None
     ) -> UserInformationType:
         profile = await sync_to_async(Profile.objects.get)(
             user=info.context.user
@@ -42,7 +42,7 @@ class userInformationQuery:
 
         # fetch firebase notification token
         device_information = None
-        if device_id:
+        if device_id is not None:
             try:
                 device_information = await sync_to_async(Device.objects.get)(
                     user=info.context.user, device_id=device_id
