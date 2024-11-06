@@ -1,5 +1,6 @@
 import { X } from "lucide-react";
 import { Popover } from "@headlessui/react";
+import { INTAKE_FEATURES_LIST } from "@/plane-web/constants";
 import IntakeSubFeatures from "./intake-sub-features";
 
 const IntakeTooltip = ({ projectId }: { projectId: string }) => (
@@ -11,7 +12,7 @@ const IntakeTooltip = ({ projectId }: { projectId: string }) => (
         <X size={16} />
       </Popover.Button>
     </div>
-    <IntakeSubFeatures allowEdit={false} showDefault={false} projectId={projectId} />
+    <IntakeSubFeatures allowEdit={false} showDefault={false} projectId={projectId} featureList={INTAKE_FEATURES_LIST} />
   </div>
 );
 export default IntakeTooltip;

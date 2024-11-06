@@ -118,7 +118,7 @@ const IntakeSubFeatures = observer((props: Props) => {
                     size="sm"
                   />
                 )}
-                {!settings && (
+                {!settings && allowEdit && (
                   <Loader>
                     <Loader.Item height="16px" width="24px" className="rounded-lg" />
                   </Loader>
