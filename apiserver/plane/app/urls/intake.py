@@ -40,7 +40,7 @@ urlpatterns = [
         name="intake-issue",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/intake-issues/<uuid:issue_id>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/intake-issues/<uuid:pk>/",
         IntakeIssueViewSet.as_view(
             {
                 "get": "retrieve",
@@ -49,6 +49,37 @@ urlpatterns = [
             }
         ),
         name="intake-issue",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/inboxes/",
+        IntakeViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="inbox",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/inboxes/<uuid:pk>/",
+        IntakeViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="inbox",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/inbox-issues/",
+        IntakeIssueViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="inbox-issue",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/inbox-issues/<uuid:pk>/",

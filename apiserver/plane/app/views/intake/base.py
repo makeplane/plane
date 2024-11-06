@@ -261,16 +261,6 @@ class IntakeIssueViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Create or get state
-        state, _ = State.objects.get_or_create(
-            name="Triage",
-            group="triage",
-            description="Default state for managing all Intake Issues",
-            project_id=project_id,
-            color="#ff7700",
-            is_triage=True,
-        )
-
         # create an issue
         project = Project.objects.get(pk=project_id)
         serializer = IssueCreateSerializer(
@@ -291,7 +281,7 @@ class IntakeIssueViewSet(BaseViewSet):
                 intake_id=intake_id.id,
                 project_id=project_id,
                 issue_id=serializer.data["id"],
-                source=request.data.get("source", "in-app"),
+                source=request.data.get("source", "IN-APP"),
             )
             # Create an Issue Activity
             issue_activity.delay(

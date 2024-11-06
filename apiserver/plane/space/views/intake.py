@@ -183,7 +183,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
             intake_id=intake_id,
             project_id=project_deploy_board.project_id,
             issue=issue,
-            source=request.data.get("source", "in-app"),
+            source=request.data.get("source", "IN-APP"),
         )
 
         serializer = IssueStateIntakeSerializer(issue)

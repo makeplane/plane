@@ -162,7 +162,7 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
             intake_id=intake.id,
             project_id=project_id,
             issue=issue,
-            source=request.data.get("source", "in-app"),
+            source=request.data.get("source", "IN-APP"),
         )
         # Create an Issue Activity
         issue_activity.delay(

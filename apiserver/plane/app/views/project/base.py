@@ -449,7 +449,7 @@ class ProjectViewSet(BaseViewSet):
 
             if serializer.is_valid():
                 serializer.save()
-                if serializer.data["intake_view"]:
+                if serializer.data["intake_view"] or request.data.get("inbox_view", False):
                     intake = Intake.objects.filter(
                         project=project,
                         is_default=True,
