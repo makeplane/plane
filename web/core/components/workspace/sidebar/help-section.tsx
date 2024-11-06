@@ -16,7 +16,6 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { PlaneVersionNumber } from "@/plane-web/components/global";
 import { WorkspaceEditionBadge } from "@/plane-web/components/workspace";
-import { ENABLE_LOCAL_DB_CACHE } from "@/plane-web/constants/issues";
 
 export interface WorkspaceHelpSectionProps {
   setSidebarActive?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -110,24 +109,23 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
                 <span className="text-xs">Contact sales</span>
               </a>
             </CustomMenu.MenuItem>
-            <div className="my-1 border-t border-custom-border-200" />
-            {ENABLE_LOCAL_DB_CACHE && (
-              <CustomMenu.MenuItem>
-                <div
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                  }}
-                  className="flex w-full items-center justify-between text-xs hover:bg-custom-background-80"
-                >
-                  <span className="racking-tight">Local Cache</span>
-                  <ToggleSwitch
-                    value={canUseLocalDB}
-                    onChange={() => toggleLocalDB(workspaceSlug?.toString(), projectId?.toString())}
-                  />
-                </div>
-              </CustomMenu.MenuItem>
-            )}
+            <div className="my-1 border-t border-custom-border-200" />(
+            <CustomMenu.MenuItem>
+              <div
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+                className="flex w-full items-center justify-between text-xs hover:bg-custom-background-80"
+              >
+                <span className="racking-tight">Local Cache</span>
+                <ToggleSwitch
+                  value={canUseLocalDB}
+                  onChange={() => toggleLocalDB(workspaceSlug?.toString(), projectId?.toString())}
+                />
+              </div>
+            </CustomMenu.MenuItem>
+            )
             <CustomMenu.MenuItem>
               <button
                 type="button"
@@ -173,8 +171,9 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
           <Tooltip tooltipContent={`${isCollapsed ? "Expand" : "Hide"}`} isMobile={isMobile}>
             <button
               type="button"
-              className={`grid place-items-center rounded-md p-1 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 ${isCollapsed ? "w-full" : ""
-                }`}
+              className={`grid place-items-center rounded-md p-1 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 ${
+                isCollapsed ? "w-full" : ""
+              }`}
               onClick={() => toggleSidebar()}
             >
               <MoveLeft className={`h-4 w-4 duration-300 ${isCollapsed ? "rotate-180" : ""}`} />
