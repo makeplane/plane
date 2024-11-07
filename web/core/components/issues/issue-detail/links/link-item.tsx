@@ -46,7 +46,7 @@ export const IssueLinkItem: FC<TIssueLinkItem> = observer((props) => {
           <LinkIcon className="h-3 w-3 flex-shrink-0" />
           <Tooltip tooltipContent={linkDetail.url} isMobile={isMobile}>
             <span
-              className="truncate text-xs cursor-pointer"
+              className="truncate text-sm cursor-pointer"
               onClick={() => {
                 copyTextToClipboard(linkDetail.url);
                 setToast({
