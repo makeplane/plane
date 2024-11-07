@@ -351,7 +351,10 @@ export class ProjectInboxStore implements IProjectInboxStore {
       const form = await this.inboxIssueService.regeneratePublishForm(workspaceSlug, projectId);
       if (form) {
         runInAction(() => {
-          set(this.intakeForms, projectId, form);
+          set(this.intakeForms, projectId, {
+            ...this.intakeForms[projectId],
+            anchor: form?.anchor,
+          });
         });
       }
     } catch {

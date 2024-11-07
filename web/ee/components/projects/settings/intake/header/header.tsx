@@ -24,13 +24,15 @@ export const IntakeHeader: FC = observer(() => {
   const { allowPermissions } = useUserPermissions();
   const { intakeForms, fetchIntakeForms } = useProjectInbox();
 
-  const { currentProjectDetails, loader: currentProjectDetailsLoader } = useProject();
+  const { currentProjectDetails, loader: currentProjectDetailsLoader, isUpdatingProject } = useProject();
   const { loader } = useProjectInbox();
 
   // fetching intake forms
   useSWR(
-    workspaceSlug && projectId ? `INTAKE_FORMS_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchIntakeForms(workspaceSlug.toString(), projectId.toString()) : null,
+    workspaceSlug && projectId && !isUpdatingProject ? `INTAKE_FORMS_${workspaceSlug}_${projectId}` : null,
+    workspaceSlug && projectId && !isUpdatingProject
+      ? () => fetchIntakeForms(workspaceSlug.toString(), projectId.toString())
+      : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // derived value

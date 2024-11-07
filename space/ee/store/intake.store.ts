@@ -26,8 +26,8 @@ export class IntakeStore implements IIntakeStore {
   publishIntakeForm = async (anchor: string, data: TIntakeIssueForm) => {
     try {
       await this.intakeService.publishForm(anchor, data);
-    } catch {
-      console.error("Error fetching the publish forms");
+    } catch (error) {
+      throw error;
     }
   };
 }

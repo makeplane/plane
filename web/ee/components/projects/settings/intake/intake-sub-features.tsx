@@ -8,7 +8,7 @@ import { Button, Loader, setPromiseToast, setToast, TOAST_TYPE, ToggleSwitch } f
 import { TProperties } from "@/ce/constants";
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
 import { copyTextToClipboard } from "@/helpers/string.helper";
-import { useProjectInbox } from "@/hooks/store";
+import { useProject, useProjectInbox } from "@/hooks/store";
 import { RenewModal } from "./renew-modal";
 
 export type TIntakeFeatureList = {
@@ -31,11 +31,14 @@ const IntakeSubFeatures = observer((props: Props) => {
   const { workspaceSlug } = useParams();
   const [modalType, setModalType] = useState("");
   const { fetchIntakeForms, toggleIntakeForms, regenerateIntakeForms, intakeForms } = useProjectInbox();
+  const { isUpdatingProject } = useProject();
 
   // fetching intake forms
   useSWR(
-    workspaceSlug && projectId ? `INTAKE_FORMS_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchIntakeForms(workspaceSlug.toString(), projectId.toString()) : null,
+    workspaceSlug && projectId && !isUpdatingProject ? `INTAKE_FORMS_${workspaceSlug}_${projectId}` : null,
+    workspaceSlug && projectId && !isUpdatingProject
+      ? () => fetchIntakeForms(workspaceSlug.toString(), projectId.toString())
+      : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
@@ -118,7 +121,7 @@ const IntakeSubFeatures = observer((props: Props) => {
                     size="sm"
                   />
                 )}
-                {!settings && allowEdit && (
+                {(!settings || (!settings && isUpdatingProject)) && (
                   <Loader>
                     <Loader.Item height="16px" width="24px" className="rounded-lg" />
                   </Loader>
@@ -127,11 +130,11 @@ const IntakeSubFeatures = observer((props: Props) => {
               {feature.hasOptions && settings && settings[key as keyof TInboxForm] && (
                 <div className="flex gap-2 h-[30px] mt-2 w-full">
                   {settings?.anchor ? (
-                    <div className="flex items-center text-sm rounded-md border-[0.5px] border-custom-border-300 w-full max-w-[500px] py-1 px-2 gap-2 h-full">
+                    <div className="flex items-center text-sm rounded-md border-[0.5px] border-custom-border-300 w-full max-w-[490px] py-1 px-2 gap-2 h-full">
                       <span className="truncate flex-1 mr-4">{publishLink}</span>
                       <Copy
                         className="text-custom-text-400 w-[16px] cursor-pointer"
-                        onClick={() => copyToClipboard("abc")}
+                        onClick={() => copyToClipboard(publishLink)}
                       />
                       {feature.hasHyperlink && (
                         <a href={publishLink} target="_blank">

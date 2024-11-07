@@ -54,6 +54,12 @@ const CreateIssueModal = ({ project, anchor }: TProps) => {
         });
         return;
       }
+      if (formData?.name.length > 255)
+        return setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Name should be less than 255 characters",
+        });
 
       const payload: TFormData = {
         name: formData.name || "",
@@ -73,6 +79,7 @@ const CreateIssueModal = ({ project, anchor }: TProps) => {
         title: "error",
         message: "Something went wrong",
       });
+      setFormSubmitting(false);
     }
   };
 
