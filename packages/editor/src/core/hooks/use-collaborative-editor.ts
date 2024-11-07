@@ -39,10 +39,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
       new HocuspocusProvider({
         websocketProvider: socket,
         name: id,
-        // parameters: realtimeConfig.queryParams,
-        // using user id as a token to verify the user on the server
         token: user.id,
-        // url: realtimeConfig.url,
         onAuthenticationFailed: () => {
           serverHandler?.onServerError?.();
           setHasServerConnectionFailed(true);
@@ -54,19 +51,23 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
             setHasServerConnectionFailed(true);
           }
         },
+        preserveConnection: true,
         onSynced: () => setHasServerSynced(true),
       }),
     [id, realtimeConfig, serverHandler, user.id]
   );
 
-  // // destroy and disconnect connection on unmount
-  // useEffect(
-  //   () => () => {
-  //     provider.destroy();
-  //     provider.disconnect();
-  //   },
-  //   [provider]
-  // );
+  // destroy and disconnect connection on unmount
+  useEffect(
+    () => () => {
+      setTimeout(() => {
+        console.log("destroying provider", id);
+        provider.destroy();
+      }, 4000);
+      // provider.destroy();
+    },
+    []
+  );
 
   // indexed db integration for offline support
   useLayoutEffect(() => {

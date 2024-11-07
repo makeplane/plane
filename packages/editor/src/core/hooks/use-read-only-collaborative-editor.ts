@@ -22,6 +22,7 @@ export const useReadOnlyCollaborativeEditor = (props: TReadOnlyCollaborativeEdit
     realtimeConfig,
     serverHandler,
     user,
+    socket,
   } = props;
   // states
   const [hasServerConnectionFailed, setHasServerConnectionFailed] = useState(false);
@@ -30,10 +31,9 @@ export const useReadOnlyCollaborativeEditor = (props: TReadOnlyCollaborativeEdit
   const provider = useMemo(
     () =>
       new HocuspocusProvider({
-        url: realtimeConfig.url,
+        websocketProvider: socket,
         name: id,
         token: user.id,
-        parameters: realtimeConfig.queryParams,
         onAuthenticationFailed: () => {
           serverHandler?.onServerError?.();
           setHasServerConnectionFailed(true);
@@ -45,6 +45,7 @@ export const useReadOnlyCollaborativeEditor = (props: TReadOnlyCollaborativeEdit
             setHasServerConnectionFailed(true);
           }
         },
+        preserveConnection: true,
         onSynced: () => setHasServerSynced(true),
       }),
     [id, realtimeConfig, serverHandler, user.id]
@@ -53,11 +54,15 @@ export const useReadOnlyCollaborativeEditor = (props: TReadOnlyCollaborativeEdit
   // destroy and disconnect connection on unmount
   useEffect(
     () => () => {
-      provider.destroy();
-      provider.disconnect();
+      setTimeout(() => {
+        console.log("destroying read only provider", id);
+        provider.destroy();
+      }, 4000);
+      // provider.destroy();
     },
     [provider]
   );
+
   // indexed db integration for offline support
   useLayoutEffect(() => {
     const localProvider = new IndexeddbPersistence(id, provider.document);

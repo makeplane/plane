@@ -132,6 +132,7 @@ export interface ICollaborativeDocumentReadOnlyEditor extends Omit<IReadOnlyEdit
   realtimeConfig: TRealtimeConfig;
   serverHandler?: TServerHandler;
   user: TUserDetails;
+  socket: HocuspocusProviderWebsocket;
 }
 
 export interface IDocumentReadOnlyEditor extends IReadOnlyEditorProps {
