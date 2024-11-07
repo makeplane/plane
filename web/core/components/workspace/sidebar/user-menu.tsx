@@ -15,9 +15,11 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useEventTracker, useUser, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-
+// plane web constants
 import { SIDEBAR_USER_MENU_ITEMS } from "@/plane-web/constants/dashboard";
 import { EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+// plane web helpers
+import { isUserFeatureEnabled } from "@/plane-web/helpers/dashboard.helper";
 
 export const SidebarUserMenu = observer(() => {
   // store hooks
@@ -61,6 +63,7 @@ export const SidebarUserMenu = observer(() => {
     >
       {SIDEBAR_USER_MENU_ITEMS.map((link) => {
         if (link.key === "drafts" && draftIssueCount === 0) return null;
+        if (!isUserFeatureEnabled(link.key)) return null;
         return (
           allowPermissions(link.access, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString()) && (
             <Tooltip
