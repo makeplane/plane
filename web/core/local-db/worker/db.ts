@@ -66,7 +66,7 @@ export class DBClass {
   }
 
   runQuery(sql: string) {
-    return this.instance.exec(sql);
+    return this.instance?.exec && this.instance.exec(sql);
   }
 
   async exec(props: string | TQueryProps) {
@@ -111,14 +111,14 @@ export class DBClass {
     }
 
     if (sql === "COMMIT;" && this.tp) {
-      await this.instance.exec(sql);
+      await (this.instance?.exec && this.instance.exec(sql));
       if (this.tp.length > 0) {
         const { resolve } = this.tpResolver.shift();
         resolve();
       }
       return;
     }
-    return await this.instance.exec(sql);
+    return await (this.instance?.exec && this.instance.exec(sql));
   }
   async close() {
     try {
