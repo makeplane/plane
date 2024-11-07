@@ -75,6 +75,7 @@ export class Storage {
     if (workspaceSlug !== this.workspaceSlug) {
       this.reset();
     }
+
     try {
       await startSpan({ name: "INIT_DB" }, async () => await this._initialize(workspaceSlug));
       return true;
@@ -125,6 +126,7 @@ export class Storage {
       return true;
     } catch (error) {
       this.status = "error";
+      this.db = null;
       throw new Error(`Failed to initialize database worker: ${error}`);
     }
   };

@@ -36,11 +36,19 @@ export class DBClass {
       this.sqlite3 = SQLite.Factory(m);
       const vfs = await MyVFS.create("plane", m);
       this.sqlite3.vfs_register(vfs, true);
-      const db = await this.sqlite3.open_v2(
+      // Fallback in rare cases where the database is not initialized in time
+      const p = new Promise((resolve) => setTimeout(() => resolve(false), 5000));
+      const dbPromise = this.sqlite3.open_v2(
         `${dbName}.sqlite3`,
         this.sqlite3.OPEN_READWRITE | this.sqlite3.OPEN_CREATE,
         "plane"
       );
+
+      const db = await Promise.any([dbPromise, p]);
+
+      if (!db) {
+        throw new Error("Failed to initialize in time");
+      }
 
       this.instance.db = db;
       this.instance.exec = async (sql: string) => {
