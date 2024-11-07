@@ -6,6 +6,23 @@ const nextConfig = {
   reactStrictMode: false,
   swcMinify: true,
   output: "standalone",
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      // Don't bundle opentelemetry for client-side
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        "@opentelemetry/api": false,
+        "@opentelemetry/sdk-node": false,
+        "@opentelemetry/sdk-trace-node": false,
+        "@opentelemetry/sdk-trace-base": false,
+        "@opentelemetry/core": false,
+        "@opentelemetry/semantic-conventions": false,
+        "@opentelemetry/resources": false,
+        "@opentelemetry/exporter-trace-otlp-http": false,
+      };
+    }
+    return config;
+  },
   async headers() {
     return [
       {
