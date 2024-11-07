@@ -13,6 +13,7 @@ import { TCollaborativeEditorProps } from "@/types";
 
 export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
   const {
+    onTransaction,
     disabledExtensions,
     editorClassName,
     editorProps = {},
@@ -39,7 +40,10 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
       new HocuspocusProvider({
         websocketProvider: socket,
         name: id,
-        token: user.id,
+        parameters: realtimeConfig.queryParams,
+        // using user id as a token to verify the user on the server
+        token: JSON.stringify(user),
+        url: realtimeConfig.url,
         onAuthenticationFailed: () => {
           serverHandler?.onServerError?.();
           setHasServerConnectionFailed(true);
@@ -79,6 +83,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
 
   const editor = useEditor({
     id,
+    onTransaction,
     editorProps,
     editorClassName,
     enableHistory: false,

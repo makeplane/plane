@@ -5,7 +5,13 @@ from .base import BaseModel
 from .cycle import Cycle, CycleIssue, CycleUserProperties
 from .dashboard import Dashboard, DashboardWidget, Widget
 from .deploy_board import DeployBoard
-from .draft import DraftIssue, DraftIssueAssignee, DraftIssueLabel, DraftIssueModule, DraftIssueCycle
+from .draft import (
+    DraftIssue,
+    DraftIssueAssignee,
+    DraftIssueLabel,
+    DraftIssueModule,
+    DraftIssueCycle,
+)
 from .estimate import Estimate, EstimatePoint
 from .exporter import ExporterHistory
 from .importer import Importer
@@ -35,7 +41,6 @@ from .issue import (
     IssueSequence,
     IssueSubscriber,
     IssueVote,
-    Label,
 )
 from .module import (
     Module,
@@ -109,3 +114,7 @@ from .favorite import UserFavorite
 from .issue_type import IssueType
 
 from .recent_visit import UserRecentVisit
+
+from .label import Label
+
+from .device import Device, DeviceSession

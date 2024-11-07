@@ -10,19 +10,20 @@ import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 //
 import { BLOCK_HEIGHT, SIDEBAR_WIDTH } from "../constants";
 import { ChartAddBlock } from "../helpers";
-import { IBlockUpdateData } from "../types";
+import { IBlockUpdateData, IGanttBlock } from "../types";
 
 type Props = {
   blockId: string;
   showAllBlocks: boolean;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
+  handleScrollToBlock: (block: IGanttBlock) => void;
   enableAddBlock: boolean;
   selectionHelpers: TSelectionHelper;
   ganttContainerRef: React.RefObject<HTMLDivElement>;
 };
 
 export const BlockRow: React.FC<Props> = observer((props) => {
-  const { blockId, showAllBlocks, blockUpdateHandler, enableAddBlock, selectionHelpers } = props;
+  const { blockId, showAllBlocks, blockUpdateHandler, handleScrollToBlock, enableAddBlock, selectionHelpers } = props;
   // states
   const [isHidden, setIsHidden] = useState(false);
   const [isBlockHiddenOnLeft, setIsBlockHiddenOnLeft] = useState(false);
@@ -67,14 +68,6 @@ export const BlockRow: React.FC<Props> = observer((props) => {
   // hide the block if it doesn't have start and target dates and showAllBlocks is false
   if (!block || !block.data || (!showAllBlocks && !(block.start_date && block.target_date))) return null;
 
-  // scroll to a hidden block
-  const handleScrollToBlock = () => {
-    const scrollContainer = document.querySelector("#gantt-container") as HTMLDivElement;
-    if (!scrollContainer || !block.position) return;
-    // update container's scroll position to the block's position
-    scrollContainer.scrollLeft = block.position.marginLeft - 4;
-  };
-
   const isBlockVisibleOnChart = block.start_date && block.target_date;
   const isBlockSelected = selectionHelpers.getIsEntitySelected(block.id);
   const isBlockFocused = selectionHelpers.getIsEntityActive(block.id);
@@ -106,7 +99,7 @@ export const BlockRow: React.FC<Props> = observer((props) => {
                 style={{
                   left: `${SIDEBAR_WIDTH + 4}px`,
                 }}
-                onClick={handleScrollToBlock}
+                onClick={() => handleScrollToBlock(block)}
               >
                 <ArrowRight
                   className={cn("h-3.5 w-3.5", {

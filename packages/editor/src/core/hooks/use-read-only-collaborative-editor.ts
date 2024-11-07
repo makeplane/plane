@@ -33,7 +33,8 @@ export const useReadOnlyCollaborativeEditor = (props: TReadOnlyCollaborativeEdit
       new HocuspocusProvider({
         websocketProvider: socket,
         name: id,
-        token: user.id,
+        token: JSON.stringify(user),
+        parameters: realtimeConfig.queryParams,
         onAuthenticationFailed: () => {
           serverHandler?.onServerError?.();
           setHasServerConnectionFailed(true);

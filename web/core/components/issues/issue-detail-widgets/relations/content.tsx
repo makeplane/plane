@@ -10,7 +10,7 @@ import { CreateUpdateIssueModal } from "@/components/issues/issue-modal";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // Plane-web
-import { ISSUE_RELATION_OPTIONS } from "@/plane-web/components/relations";
+import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
 import { TIssueRelationTypes } from "@/plane-web/types";
 // helper
 import { useRelationOperations } from "./helper";
@@ -63,6 +63,7 @@ export const RelationsCollapsibleContent: FC<Props> = observer((props) => {
 
   // derived values
   const relations = getRelationsByIssueId(issueId);
+  const ISSUE_RELATION_OPTIONS = useTimeLineRelationOptions();
 
   const handleIssueCrudState = (key: "update" | "delete", _issueId: string | null, issue: TIssue | null = null) => {
     setIssueCrudState({

@@ -3,6 +3,8 @@ import { RelatedIcon } from "@plane/ui";
 import { TRelationObject } from "@/components/issues";
 import { TIssueRelationTypes } from "../../types";
 
+export * from "./activity";
+
 export const ISSUE_RELATION_OPTIONS: Record<TIssueRelationTypes, TRelationObject> = {
   relates_to: {
     key: "relates_to",
@@ -33,3 +35,5 @@ export const ISSUE_RELATION_OPTIONS: Record<TIssueRelationTypes, TRelationObject
     placeholder: "None",
   },
 };
+
+export const useTimeLineRelationOptions = () => ISSUE_RELATION_OPTIONS;

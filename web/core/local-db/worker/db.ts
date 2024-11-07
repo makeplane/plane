@@ -36,7 +36,12 @@ export class DBClass {
       this.sqlite3 = SQLite.Factory(m);
       const vfs = await MyVFS.create("plane", m);
       this.sqlite3.vfs_register(vfs, true);
-      const db = await this.sqlite3.open_v2(`${dbName}.sqlite3`);
+      const db = await this.sqlite3.open_v2(
+        `${dbName}.sqlite3`,
+        this.sqlite3.OPEN_READWRITE | this.sqlite3.OPEN_CREATE,
+        "plane"
+      );
+
       this.instance.db = db;
       this.instance.exec = async (sql: string) => {
         const rows: any[] = [];
@@ -57,6 +62,8 @@ export class DBClass {
   }
 
   async exec(props: string | TQueryProps) {
+    // @todo this will fail if the transaction is started any other way
+    // eg:  BEGIN, OR BEGIN TRANSACTION
     if (props === "BEGIN;") {
       let promiseToAwait;
       if (this.tp.length > 0) {

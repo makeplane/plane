@@ -71,7 +71,7 @@ export interface IProjectInboxStore {
   fetchInboxPaginationIssues: (workspaceSlug: string, projectId: string) => Promise<void>;
   fetchInboxIssueById: (workspaceSlug: string, projectId: string, inboxIssueId: string) => Promise<TInboxIssue>;
   fetchIntakeForms: (workspaceSlug: string, projectId: string) => Promise<void>;
-  toggleIntakeForms: (workspaceSlug: string, projectId: string, isDisabled: boolean) => Promise<void>;
+  toggleIntakeForms: (workspaceSlug: string, projectId: string, data: Partial<TInboxForm>) => Promise<void>;
   regenerateIntakeForms: (workspaceSlug: string, projectId: string) => Promise<void>;
   createInboxIssue: (
     workspaceSlug: string,
@@ -329,20 +329,23 @@ export class ProjectInboxStore implements IProjectInboxStore {
     }
   };
 
-  toggleIntakeForms = async (workspaceSlug: string, projectId: string, isDisabled: boolean) => {
+  toggleIntakeForms = async (workspaceSlug: string, projectId: string, data: Partial<TInboxForm>) => {
+    const initialData = this.intakeForms[projectId];
     try {
       runInAction(() => {
-        set(this.intakeForms, projectId, { ...this.intakeForms[projectId], is_disabled: isDisabled });
+        set(this.intakeForms, projectId, { ...this.intakeForms[projectId], ...data });
       });
-      await this.inboxIssueService.updatePublishForm(workspaceSlug, projectId, isDisabled);
+      const result = await this.inboxIssueService.updatePublishForm(workspaceSlug, projectId, data);
+      runInAction(() => {
+        set(this.intakeForms, projectId, { ...this.intakeForms[projectId], anchor: result?.anchor });
+      });
     } catch {
       console.error("Error fetching the publish forms");
       runInAction(() => {
-        set(this.intakeForms, projectId, { ...this.intakeForms[projectId], is_disabled: !isDisabled });
+        set(this.intakeForms, projectId, initialData);
       });
     }
   };
-
   regenerateIntakeForms = async (workspaceSlug: string, projectId: string) => {
     try {
       const form = await this.inboxIssueService.regeneratePublishForm(workspaceSlug, projectId);
