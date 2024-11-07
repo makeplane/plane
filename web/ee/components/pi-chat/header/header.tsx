@@ -21,7 +21,7 @@ export const Header = observer((props: THeaderProps) => {
 
   const handleNewConversation = async () => {
     const newChatId = initPiChat();
-    router.push(`?chat_id=${newChatId}`);
+    router.push(`?chat_id=${newChatId}`, {}, { showProgressBar: false });
   };
   return (
     <div className="flex justify-between h-8">

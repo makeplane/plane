@@ -31,7 +31,7 @@ export const Toolbar: FC<Props> = observer((props) => {
 
   const handleNewConversation = async () => {
     const newChatId = initPiChat();
-    router.push(`?chat_id=${newChatId}`);
+    router.push(`?chat_id=${newChatId}`, {}, { showProgressBar: false });
   };
 
   return (

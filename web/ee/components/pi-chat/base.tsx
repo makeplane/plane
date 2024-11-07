@@ -66,7 +66,7 @@ export const PiChatBase = observer(() => {
   }, [chat_id]);
 
   useEffect(() => {
-    if (!chat_id) router.push(`?chat_id=${activeChatId}`);
+    if (!chat_id) router.push(`?chat_id=${activeChatId}`, {}, { showProgressBar: false });
   }, [activeChatId]);
 
   const toggleSidePanel = (value: boolean) => setIsSidePanelOpen(value);

@@ -38,7 +38,7 @@ const HistoryList = (props: TProps) => {
                 <ControlLink
                   key={thread.chat_id}
                   href={`/${workspaceSlug}/pi-chat?chat_id=${thread.chat_id}`}
-                  onClick={() => router.push(`?chat_id=${thread.chat_id}`)}
+                  onClick={() => router.push(`?chat_id=${thread.chat_id}`, {}, { showProgressBar: false })}
                   className="text-sm font-medium text-custom-text-300 text-left truncate p-2 rounded-lg hover:text-custom-text-200 hover:bg-custom-background-90"
                 >
                   {thread.title}
