@@ -5,7 +5,7 @@ import Head from "next/head";
 import { useParams } from "next/navigation";
 // components
 import { PageHead } from "@/components/core";
-import { ProjectLayoutRoot } from "@/components/issues";
+import { ProjectLayoutRoot } from "@/components/issues/issue-layouts";
 // hooks
 import { useProject } from "@/hooks/store";
 

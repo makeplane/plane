@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
+import dynamic from "next/dynamic";
 import { Dialog, Transition } from "@headlessui/react";
 import { ICycle, IModule, IProject } from "@plane/types";
 
 // components
-import { ProjectAnalyticsModalHeader, ProjectAnalyticsModalMainContent } from "@/components/analytics";
 // types
 
 type Props = {
@@ -14,6 +14,22 @@ type Props = {
   moduleDetails?: IModule | undefined;
   projectDetails?: IProject | undefined;
 };
+
+const ProjectAnalyticsModalHeader = dynamic(
+  () => import("@/components/analytics").then((m) => m.ProjectAnalyticsModalHeader),
+  {
+    ssr: false,
+    loading: () => null,
+  }
+);
+
+const ProjectAnalyticsModalMainContent = dynamic(
+  () => import("@/components/analytics").then((m) => m.ProjectAnalyticsModalMainContent),
+  {
+    ssr: false,
+    loading: () => null,
+  }
+);
 
 export const ProjectAnalyticsModal: React.FC<Props> = observer((props) => {
   const { isOpen, onClose, cycleDetails, moduleDetails, projectDetails } = props;
