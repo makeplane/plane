@@ -91,7 +91,7 @@ export const AddComment: React.FC<Props> = observer((props) => {
               }
               onChange={(comment_json, comment_html) => onChange(comment_html)}
               isSubmitting={isSubmitting}
-              placeholder="Add Comment..."
+              placeholder="Add comment..."
               uploadFile={async (file) => {
                 const { asset_id } = await uploadCommentAsset(file, anchor);
                 setUploadAssetIds((prev) => [...prev, asset_id]);

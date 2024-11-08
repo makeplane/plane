@@ -6,6 +6,8 @@ import { LogoSpinner } from "@/components/common";
 import { InstanceNotReady } from "@/components/instance";
 // hooks
 import { useInstance } from "@/hooks/store";
+// plane web components
+import { MaintenanceMode } from "@/plane-web/components/maintenance-mode";
 
 type TInstanceWrapper = {
   children: ReactNode;
@@ -16,9 +18,11 @@ export const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
   // store
   const { isLoading, instance, error, fetchInstanceInfo } = useInstance();
 
-  const { isLoading: isInstanceSWRLoading } = useSWR("INSTANCE_INFORMATION", () => fetchInstanceInfo(), {
-    revalidateOnFocus: false,
-  });
+  const { isLoading: isInstanceSWRLoading, error: instanceSWRError } = useSWR(
+    "INSTANCE_INFORMATION",
+    async () => await fetchInstanceInfo(),
+    { revalidateOnFocus: false }
+  );
 
   // loading state
   if ((isLoading || isInstanceSWRLoading) && !instance)
@@ -27,6 +31,8 @@ export const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
         <LogoSpinner />
       </div>
     );
+
+  if (instanceSWRError) return <MaintenanceMode />;
 
   // something went wrong while in the request
   if (error && error?.status === "error") return <>{children}</>;

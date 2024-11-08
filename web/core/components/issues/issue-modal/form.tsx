@@ -31,7 +31,7 @@ import { useIssueDetail, useProject, useProjectState, useWorkspaceDraftIssues } 
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
 // plane web components
-import { DeDupeIssueButtonLabel, DuplicateModalRoot } from "@/plane-web/components/de-dupe";
+import { DeDupeButtonRoot, DuplicateModalRoot } from "@/plane-web/components/de-dupe";
 import { IssueAdditionalProperties, IssueTypeSelect } from "@/plane-web/components/issues/issue-modal";
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
 
@@ -350,18 +350,12 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   )}
                 </div>
                 {duplicateIssues.length > 0 && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
-                      handleDuplicateIssueModal(!isDuplicateModalOpen);
-                    }}
-                  >
-                    <DeDupeIssueButtonLabel
-                      isOpen={isDuplicateModalOpen}
-                      buttonLabel={`${duplicateIssues.length} duplicate issue${duplicateIssues.length > 1 ? "s" : ""} found!`}
-                    />
-                  </button>
+                  <DeDupeButtonRoot
+                    workspaceSlug={workspaceSlug?.toString()}
+                    isDuplicateModalOpen={isDuplicateModalOpen}
+                    label={`${duplicateIssues.length} duplicate issue${duplicateIssues.length > 1 ? "s" : ""} found!`}
+                    handleOnClick={() => handleDuplicateIssueModal(!isDuplicateModalOpen)}
+                  />
                 )}
               </div>
               {watch("parent_id") && selectedParentIssue && (

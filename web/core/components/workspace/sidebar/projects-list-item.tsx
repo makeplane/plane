@@ -287,7 +287,6 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
 
   useEffect(() => {
     if (URLProjectId === project.id) setIsProjectListOpen(true);
-    else setIsProjectListOpen(false);
   }, [URLProjectId]);
 
   const handleItemClick = () => {

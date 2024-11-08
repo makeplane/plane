@@ -9,7 +9,7 @@ import { rootStore } from "@/lib/store-context";
 // services
 import { IssueService } from "@/services/issue/issue.service";
 //
-import { ARRAY_FIELDS } from "./utils/constants";
+import { ARRAY_FIELDS, BOOLEAN_FIELDS } from "./utils/constants";
 import { getSubIssuesWithDistribution } from "./utils/data.utils";
 import createIndexes from "./utils/indexes";
 import { addIssuesBulk, syncDeletesToLocal } from "./utils/load-issues";
@@ -294,7 +294,7 @@ export class Storage {
         log(`Project ${projectId} is loading, falling back to server`);
       }
       const issueService = new IssueService();
-      return await issueService.getIssuesFromServer(workspaceSlug, projectId, queries);
+      return await issueService.getIssuesFromServer(workspaceSlug, projectId, queries, config);
     }
 
     const { cursor, group_by, sub_group_by } = queries;
@@ -312,7 +312,7 @@ export class Storage {
     } catch (e) {
       logError(e);
       const issueService = new IssueService();
-      return await issueService.getIssuesFromServer(workspaceSlug, projectId, queries);
+      return await issueService.getIssuesFromServer(workspaceSlug, projectId, queries, config);
     }
     const end = performance.now();
 
@@ -468,6 +468,10 @@ export const formatLocalIssue = (issue: any) => {
   const currIssue = issue;
   ARRAY_FIELDS.forEach((field: string) => {
     currIssue[field] = currIssue[field] ? JSON.parse(currIssue[field]) : [];
+  });
+  // Convert boolean fields to actual boolean values
+  BOOLEAN_FIELDS.forEach((field: string) => {
+    currIssue[field] = currIssue[field] === 1;
   });
   return currIssue as TIssue & { group_id?: string; total_issues: number; sub_group_id?: string };
 };
