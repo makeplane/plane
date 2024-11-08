@@ -99,6 +99,9 @@ class IntakePublishedIssueEndpoint(BaseAPIView):
                     issue_id=serializer.data["id"],
                     source=request.data.get("source", "FORMS"),
                     source_email=request.data.get("email", None),
+                    extra={
+                        "username": request.data.get("username", None),
+                    },
                 )
                 # Create an Issue Activity
                 issue_activity.delay(
