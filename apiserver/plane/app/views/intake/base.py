@@ -247,7 +247,7 @@ class IntakeIssueViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        intake = Inbox.objects.filter(
+        intake = Intake.objects.filter(
             workspace__slug=slug, project_id=project_id
         ).first()
 

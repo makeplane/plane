@@ -11,7 +11,7 @@ from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Module imports
-from plane.db.models import DeployBoard, Inbox, InboxIssue, Project, APIToken
+from plane.db.models import DeployBoard, Intake, IntakeIssue, Project, APIToken
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag_decorator import ErrorCodes
@@ -43,7 +43,7 @@ class IntakePublishedIssueEndpoint(BaseAPIView):
             workspace_id=deploy_board.workspace_id,
             project_id=deploy_board.project_id,
         ).first()
-        if not intake_settings.is_form_enabled or not project.inbox_view:
+        if not intake_settings.is_form_enabled or not project.intake_view:
             return Response(
                 {
                     "error": "The current published url is disabled",
@@ -56,7 +56,7 @@ class IntakePublishedIssueEndpoint(BaseAPIView):
             feature_key=FeatureFlag.INTAKE_PUBLISH,
             slug=deploy_board.workspace.slug,
         ):
-            intake = Inbox.objects.filter(
+            intake = Intake.objects.filter(
                 workspace_id=deploy_board.workspace_id,
                 project_id=deploy_board.project_id,
             ).first()
@@ -92,9 +92,9 @@ class IntakePublishedIssueEndpoint(BaseAPIView):
             if serializer.is_valid():
                 serializer.save()
 
-                # create an inbox issue
-                inbox_issue = InboxIssue.objects.create(
-                    inbox_id=intake.id,
+                # create an Intake issue
+                intake_issue = IntakeIssue.objects.create(
+                    intake_id=intake.id,
                     project_id=deploy_board.project_id,
                     issue_id=serializer.data["id"],
                     source=request.data.get("source", "FORMS"),
@@ -116,7 +116,7 @@ class IntakePublishedIssueEndpoint(BaseAPIView):
                     epoch=int(timezone.now().timestamp()),
                     notification=True,
                     origin=request.META.get("HTTP_ORIGIN"),
-                    inbox=str(inbox_issue.id),
+                    intake=str(intake_issue.id),
                 )
                 return Response(status=status.HTTP_204_NO_CONTENT)
             return Response(

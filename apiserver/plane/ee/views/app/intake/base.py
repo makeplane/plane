@@ -14,7 +14,7 @@ from plane.db.models import (
     WorkspaceMember,
     ProjectMember,
     Project,
-    Inbox,
+    Intake,
     Workspace,
     DeployBoard,
 )
@@ -27,7 +27,7 @@ class IntakeSettingEndpoint(BaseAPIView):
 
     @check_feature_flag(FeatureFlag.INTAKE_SETTINGS)
     def get(self, request, slug, project_id):
-        intake = Inbox.objects.filter(
+        intake = Intake.objects.filter(
             workspace__slug=slug, project_id=project_id
         ).first()
 
@@ -67,7 +67,7 @@ class IntakeSettingEndpoint(BaseAPIView):
 
     @check_feature_flag(FeatureFlag.INTAKE_SETTINGS)
     def patch(self, request, slug, project_id):
-        intake = Inbox.objects.filter(
+        intake = Intake.objects.filter(
             workspace__slug=slug, project_id=project_id
         ).first()
 

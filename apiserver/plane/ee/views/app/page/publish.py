@@ -43,7 +43,7 @@ class ProjectPagePublishEndpoint(BaseAPIView):
         # Get the deploy board attributes
         comments = request.data.get("is_comments_enabled", False)
         reactions = request.data.get("is_reactions_enabled", False)
-        inbox = request.data.get("inbox", None)
+        intake = request.data.get("intake", None)
         votes = request.data.get("is_votes_enabled", False)
         view_props = request.data.get("view_props", {})
 
@@ -55,7 +55,7 @@ class ProjectPagePublishEndpoint(BaseAPIView):
             defaults={
                 "is_comments_enabled": comments,
                 "is_reactions_enabled": reactions,
-                "inbox": inbox,
+                "intake": intake,
                 "is_votes_enabled": votes,
                 "view_props": view_props,
                 "workspace": workspace,
@@ -80,7 +80,7 @@ class ProjectPagePublishEndpoint(BaseAPIView):
             "is_reactions_enabled": request.data.get(
                 "is_reactions_enabled", deploy_board.is_reactions_enabled
             ),
-            "inbox": request.data.get("inbox", deploy_board.inbox),
+            "intake": request.data.get("intake", deploy_board.intake),
             "is_votes_enabled": request.data.get(
                 "is_votes_enabled", deploy_board.is_votes_enabled
             ),
@@ -150,7 +150,7 @@ class WorkspacePagePublishEndpoint(BaseAPIView):
         # Check if the page is already published
         comments = request.data.get("is_comments_enabled", False)
         reactions = request.data.get("is_reactions_enabled", False)
-        inbox = request.data.get("inbox", None)
+        intake = request.data.get("intake", None)
         votes = request.data.get("is_votes_enabled", False)
         view_props = request.data.get("view_props", {})
 
@@ -161,7 +161,7 @@ class WorkspacePagePublishEndpoint(BaseAPIView):
             defaults={
                 "is_comments_enabled": comments,
                 "is_reactions_enabled": reactions,
-                "inbox": inbox,
+                "intake": intake,
                 "is_votes_enabled": votes,
                 "view_props": view_props,
                 "workspace": workspace,
@@ -184,7 +184,7 @@ class WorkspacePagePublishEndpoint(BaseAPIView):
             "is_reactions_enabled": request.data.get(
                 "is_reactions_enabled", deploy_board.is_reactions_enabled
             ),
-            "inbox": request.data.get("inbox", deploy_board.inbox),
+            "intake": request.data.get("intake", deploy_board.intake),
             "is_votes_enabled": request.data.get(
                 "is_votes_enabled", deploy_board.is_votes_enabled
             ),

@@ -89,7 +89,7 @@ class EntityAssetEndpoint(BaseAPIView):
                     intake=deploy_board.entity_identifier, is_form_enabled=True
                 ).exists()
                 and Project.objects.filter(
-                    pk=deploy_board.project_id, inbox_view=True
+                    pk=deploy_board.project_id, intake_view=True
                 ).exists()
             ):
                 return Response(

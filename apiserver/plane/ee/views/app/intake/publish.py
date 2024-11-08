@@ -10,7 +10,7 @@ from plane.ee.views.base import BaseViewSet
 from plane.ee.permissions import (
     ProjectMemberPermission,
 )
-from plane.db.models import DeployBoard, Inbox
+from plane.db.models import DeployBoard, Intake
 from plane.app.serializers import DeployBoardSerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
@@ -22,7 +22,7 @@ class ProjectInTakePublishViewSet(BaseViewSet):
         ProjectMemberPermission,
     ]
 
-    models = Inbox
+    models = Intake
 
     @check_feature_flag(FeatureFlag.INTAKE_PUBLISH)
     def regenerate(self, request, slug, project_id):

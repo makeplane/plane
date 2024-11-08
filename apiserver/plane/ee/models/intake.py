@@ -7,7 +7,7 @@ from plane.db.models import ProjectBaseModel
 
 class IntakeSetting(ProjectBaseModel):
     intake = models.ForeignKey(
-        "db.Inbox", on_delete=models.CASCADE, related_name="intake_settings"
+        "db.Intake", on_delete=models.CASCADE, related_name="intake_settings"
     )
     is_in_app_enabled = models.BooleanField(default=True)
     is_email_enabled = models.BooleanField(default=False)
