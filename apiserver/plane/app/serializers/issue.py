@@ -645,7 +645,7 @@ class IssueStateSerializer(DynamicBaseSerializer):
         fields = "__all__"
 
 
-class IssueInboxSerializer(DynamicBaseSerializer):
+class IssueIntakeSerializer(DynamicBaseSerializer):
     label_ids = serializers.ListField(
         child=serializers.UUIDField(),
         required=False,

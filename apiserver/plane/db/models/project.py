@@ -95,7 +95,7 @@ class Project(BaseModel):
     cycle_view = models.BooleanField(default=True)
     issue_views_view = models.BooleanField(default=True)
     page_view = models.BooleanField(default=True)
-    inbox_view = models.BooleanField(default=False)
+    intake_view = models.BooleanField(default=False)
     is_time_tracking_enabled = models.BooleanField(default=False)
     is_issue_type_enabled = models.BooleanField(default=False)
     guest_view_all_features = models.BooleanField(default=False)
@@ -309,9 +309,9 @@ class ProjectDeployBoard(ProjectBaseModel):
     )
     comments = models.BooleanField(default=False)
     reactions = models.BooleanField(default=False)
-    inbox = models.ForeignKey(
-        "db.Inbox",
-        related_name="bord_inbox",
+    intake = models.ForeignKey(
+        "db.Intake",
+        related_name="board_intake",
         on_delete=models.SET_NULL,
         null=True,
     )

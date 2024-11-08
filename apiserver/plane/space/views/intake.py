@@ -13,7 +13,7 @@ from rest_framework.response import Response
 # Module imports
 from .base import BaseViewSet
 from plane.db.models import (
-    InboxIssue,
+    IntakeIssue,
     Issue,
     State,
     IssueLink,
@@ -22,17 +22,17 @@ from plane.db.models import (
 )
 from plane.app.serializers import (
     IssueSerializer,
-    InboxIssueSerializer,
+    IntakeIssueSerializer,
     IssueCreateSerializer,
-    IssueStateInboxSerializer,
+    IssueStateIntakeSerializer,
 )
 from plane.utils.issue_filters import issue_filters
 from plane.bgtasks.issue_activities_task import issue_activity
 
 
-class InboxIssuePublicViewSet(BaseViewSet):
-    serializer_class = InboxIssueSerializer
-    model = InboxIssue
+class IntakeIssuePublicViewSet(BaseViewSet):
+    serializer_class = IntakeIssueSerializer
+    model = IntakeIssue
 
     filterset_fields = [
         "status",
@@ -52,34 +52,34 @@ class InboxIssuePublicViewSet(BaseViewSet):
                     | Q(snoozed_till__isnull=True),
                     project_id=self.kwargs.get("project_id"),
                     workspace__slug=self.kwargs.get("slug"),
-                    inbox_id=self.kwargs.get("inbox_id"),
+                    intake_id=self.kwargs.get("intake_id"),
                 )
                 .select_related("issue", "workspace", "project")
             )
-        return InboxIssue.objects.none()
+        return IntakeIssue.objects.none()
 
-    def list(self, request, anchor, inbox_id):
+    def list(self, request, anchor, intake_id):
         project_deploy_board = DeployBoard.objects.get(
             anchor=anchor, entity_name="project"
         )
-        if project_deploy_board.inbox is None:
+        if project_deploy_board.intake is None:
             return Response(
-                {"error": "Inbox is not enabled for this Project Board"},
+                {"error": "Intake is not enabled for this Project Board"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         filters = issue_filters(request.query_params, "GET")
         issues = (
             Issue.objects.filter(
-                issue_inbox__inbox_id=inbox_id,
+                issue_intake__intake_id=intake_id,
                 workspace_id=project_deploy_board.workspace_id,
                 project_id=project_deploy_board.project_id,
             )
             .filter(**filters)
-            .annotate(bridge_id=F("issue_inbox__id"))
+            .annotate(bridge_id=F("issue_intake__id"))
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels")
-            .order_by("issue_inbox__snoozed_till", "issue_inbox__status")
+            .order_by("issue_intake__snoozed_till", "issue_intake__status")
             .annotate(
                 sub_issues_count=Issue.issue_objects.filter(
                     parent=OuterRef("id")
@@ -105,26 +105,26 @@ class InboxIssuePublicViewSet(BaseViewSet):
             )
             .prefetch_related(
                 Prefetch(
-                    "issue_inbox",
-                    queryset=InboxIssue.objects.only(
+                    "issue_intake",
+                    queryset=IntakeIssue.objects.only(
                         "status", "duplicate_to", "snoozed_till", "source"
                     ),
                 )
             )
         )
-        issues_data = IssueStateInboxSerializer(issues, many=True).data
+        issues_data = IssueStateIntakeSerializer(issues, many=True).data
         return Response(
             issues_data,
             status=status.HTTP_200_OK,
         )
 
-    def create(self, request, anchor, inbox_id):
+    def create(self, request, anchor, intake_id):
         project_deploy_board = DeployBoard.objects.get(
             anchor=anchor, entity_name="project"
         )
-        if project_deploy_board.inbox is None:
+        if project_deploy_board.intake is None:
             return Response(
-                {"error": "Inbox is not enabled for this Project Board"},
+                {"error": "Intake is not enabled for this Project Board"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -151,7 +151,7 @@ class InboxIssuePublicViewSet(BaseViewSet):
         state, _ = State.objects.get_or_create(
             name="Triage",
             group="backlog",
-            description="Default state for managing all Inbox Issues",
+            description="Default state for managing all Intake Issues",
             project_id=project_deploy_board.project_id,
             color="#ff7700",
         )
@@ -178,37 +178,37 @@ class InboxIssuePublicViewSet(BaseViewSet):
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
         )
-        # create an inbox issue
-        InboxIssue.objects.create(
-            inbox_id=inbox_id,
+        # create an intake issue
+        IntakeIssue.objects.create(
+            intake_id=intake_id,
             project_id=project_deploy_board.project_id,
             issue=issue,
-            source=request.data.get("source", "in-app"),
+            source=request.data.get("source", "IN-APP"),
         )
 
-        serializer = IssueStateInboxSerializer(issue)
+        serializer = IssueStateIntakeSerializer(issue)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def partial_update(self, request, anchor, inbox_id, pk):
+    def partial_update(self, request, anchor, intake_id, pk):
         project_deploy_board = DeployBoard.objects.get(
             anchor=anchor, entity_name="project"
         )
-        if project_deploy_board.inbox is None:
+        if project_deploy_board.intake is None:
             return Response(
-                {"error": "Inbox is not enabled for this Project Board"},
+                {"error": "Intake is not enabled for this Project Board"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        inbox_issue = InboxIssue.objects.get(
+        intake_issue = IntakeIssue.objects.get(
             pk=pk,
             workspace_id=project_deploy_board.workspace_id,
             project_id=project_deploy_board.project_id,
-            inbox_id=inbox_id,
+            intake_id=intake_id,
         )
         # Get the project member
-        if str(inbox_issue.created_by_id) != str(request.user.id):
+        if str(intake_issue.created_by_id) != str(request.user.id):
             return Response(
-                {"error": "You cannot edit inbox issues"},
+                {"error": "You cannot edit intake issues"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -216,7 +216,7 @@ class InboxIssuePublicViewSet(BaseViewSet):
         issue_data = request.data.pop("issue", False)
 
         issue = Issue.objects.get(
-            pk=inbox_issue.issue_id,
+            pk=intake_issue.issue_id,
             workspace_id=project_deploy_board.workspace_id,
             project_id=project_deploy_board.project_id,
         )
@@ -256,52 +256,52 @@ class InboxIssuePublicViewSet(BaseViewSet):
             issue_serializer.errors, status=status.HTTP_400_BAD_REQUEST
         )
 
-    def retrieve(self, request, anchor, inbox_id, pk):
+    def retrieve(self, request, anchor, intake_id, pk):
         project_deploy_board = DeployBoard.objects.get(
             anchor=anchor, entity_name="project"
         )
-        if project_deploy_board.inbox is None:
+        if project_deploy_board.intake is None:
             return Response(
-                {"error": "Inbox is not enabled for this Project Board"},
+                {"error": "Intake is not enabled for this Project Board"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        inbox_issue = InboxIssue.objects.get(
+        intake_issue = IntakeIssue.objects.get(
             pk=pk,
             workspace_id=project_deploy_board.workspace_id,
             project_id=project_deploy_board.project_id,
-            inbox_id=inbox_id,
+            intake_id=intake_id,
         )
         issue = Issue.objects.get(
-            pk=inbox_issue.issue_id,
+            pk=intake_issue.issue_id,
             workspace_id=project_deploy_board.workspace_id,
             project_id=project_deploy_board.project_id,
         )
-        serializer = IssueStateInboxSerializer(issue)
+        serializer = IssueStateIntakeSerializer(issue)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def destroy(self, request, anchor, inbox_id, pk):
+    def destroy(self, request, anchor, intake_id, pk):
         project_deploy_board = DeployBoard.objects.get(
             anchor=anchor, entity_name="project"
         )
-        if project_deploy_board.inbox is None:
+        if project_deploy_board.intake is None:
             return Response(
-                {"error": "Inbox is not enabled for this Project Board"},
+                {"error": "Intake is not enabled for this Project Board"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        inbox_issue = InboxIssue.objects.get(
+        intake_issue = IntakeIssue.objects.get(
             pk=pk,
             workspace_id=project_deploy_board.workspace_id,
             project_id=project_deploy_board.project_id,
-            inbox_id=inbox_id,
+            intake_id=intake_id,
         )
 
-        if str(inbox_issue.created_by_id) != str(request.user.id):
+        if str(intake_issue.created_by_id) != str(request.user.id):
             return Response(
-                {"error": "You cannot delete inbox issue"},
+                {"error": "You cannot delete intake issue"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        inbox_issue.delete()
+        intake_issue.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

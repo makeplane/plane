@@ -62,13 +62,15 @@ class Command(BaseCommand):
             project_count = int(input("Number of projects to be created: "))
 
             for i in range(project_count):
-                print(f"Please provide the following details for project {i+1}:")
+                print(
+                    f"Please provide the following details for project {i+1}:"
+                )
                 issue_count = int(input("Number of issues to be created: "))
                 cycle_count = int(input("Number of cycles to be created: "))
                 module_count = int(input("Number of modules to be created: "))
                 pages_count = int(input("Number of pages to be created: "))
-                inbox_issue_count = int(
-                    input("Number of inbox issues to be created: ")
+                intake_issue_count = int(
+                    input("Number of intake issues to be created: ")
                 )
 
                 from plane.bgtasks.dummy_data_task import create_dummy_data
@@ -81,7 +83,7 @@ class Command(BaseCommand):
                     cycle_count=cycle_count,
                     module_count=module_count,
                     pages_count=pages_count,
-                    inbox_issue_count=inbox_issue_count,
+                    intake_issue_count=intake_issue_count,
                 )
 
             self.stdout.write(
