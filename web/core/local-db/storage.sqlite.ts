@@ -9,7 +9,7 @@ import { rootStore } from "@/lib/store-context";
 // services
 import { IssueService } from "@/services/issue/issue.service";
 //
-import { ARRAY_FIELDS } from "./utils/constants";
+import { ARRAY_FIELDS, BOOLEAN_FIELDS } from "./utils/constants";
 import { getSubIssuesWithDistribution } from "./utils/data.utils";
 import createIndexes from "./utils/indexes";
 import { addIssuesBulk, syncDeletesToLocal } from "./utils/load-issues";
@@ -75,6 +75,7 @@ export class Storage {
     if (workspaceSlug !== this.workspaceSlug) {
       this.reset();
     }
+
     try {
       await startSpan({ name: "INIT_DB" }, async () => await this._initialize(workspaceSlug));
       return true;
@@ -125,6 +126,7 @@ export class Storage {
       return true;
     } catch (error) {
       this.status = "error";
+      this.db = null;
       throw new Error(`Failed to initialize database worker: ${error}`);
     }
   };
@@ -466,6 +468,10 @@ export const formatLocalIssue = (issue: any) => {
   const currIssue = issue;
   ARRAY_FIELDS.forEach((field: string) => {
     currIssue[field] = currIssue[field] ? JSON.parse(currIssue[field]) : [];
+  });
+  // Convert boolean fields to actual boolean values
+  BOOLEAN_FIELDS.forEach((field: string) => {
+    currIssue[field] = currIssue[field] === 1;
   });
   return currIssue as TIssue & { group_id?: string; total_issues: number; sub_group_id?: string };
 };
