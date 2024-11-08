@@ -1,4 +1,6 @@
-import { FC } from "react";
+"use-client";
+
+import { FC, useState } from "react";
 // ui
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // components
@@ -13,15 +15,29 @@ type TInboxIssueCreateModalRoot = {
 
 export const InboxIssueCreateModalRoot: FC<TInboxIssueCreateModalRoot> = (props) => {
   const { workspaceSlug, projectId, modalState, handleModalClose } = props;
+  // states
+  const [isDuplicateModalOpen, setIsDuplicateModalOpen] = useState(false);
+  // handlers
+  const handleDuplicateIssueModal = (value: boolean) => setIsDuplicateModalOpen(value);
 
   return (
     <ModalCore
       isOpen={modalState}
-      handleClose={handleModalClose}
+      handleClose={() => {
+        handleModalClose();
+        setIsDuplicateModalOpen(false);
+      }}
       position={EModalPosition.TOP}
-      width={EModalWidth.XXXXL}
+      width={isDuplicateModalOpen ? EModalWidth.VIXL : EModalWidth.XXXXL}
+      className="!bg-transparent rounded-lg shadow-none transition-[width] ease-linear"
     >
-      <InboxIssueCreateRoot workspaceSlug={workspaceSlug} projectId={projectId} handleModalClose={handleModalClose} />
+      <InboxIssueCreateRoot
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
+        handleModalClose={handleModalClose}
+        isDuplicateModalOpen={isDuplicateModalOpen}
+        handleDuplicateIssueModal={handleDuplicateIssueModal}
+      />
     </ModalCore>
   );
 };

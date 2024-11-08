@@ -1,3 +1,5 @@
+/* eslint-disable no-var */
+
 declare namespace Asyncify {
   function handleAsync(f: () => Promise<any>);
 }

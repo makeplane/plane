@@ -3,23 +3,24 @@ import { Editor, NodeViewProps, NodeViewWrapper } from "@tiptap/react";
 // extensions
 import { CustomImageBlock, CustomImageUploader, ImageAttributes } from "@/extensions/custom-image";
 
-export type CustomImageComponentProps = {
+export type CustoBaseImageNodeViewProps = {
   getPos: () => number;
   editor: Editor;
   node: NodeViewProps["node"] & {
     attrs: ImageAttributes;
   };
-  updateAttributes: (attrs: ImageAttributes) => void;
+  updateAttributes: (attrs: Partial<ImageAttributes>) => void;
   selected: boolean;
 };
 
-export type CustomImageNodeViewProps = NodeViewProps & CustomImageComponentProps;
+export type CustomImageNodeProps = NodeViewProps & CustoBaseImageNodeViewProps;
 
-export const CustomImageNode = (props: CustomImageNodeViewProps) => {
+export const CustomImageNode = (props: CustomImageNodeProps) => {
   const { getPos, editor, node, updateAttributes, selected } = props;
-  const { src: remoteImageSrc } = node.attrs;
+  const { src: imgNodeSrc } = node.attrs;
 
   const [isUploaded, setIsUploaded] = useState(false);
+  const [resolvedSrc, setResolvedSrc] = useState<string | undefined>(undefined);
   const [imageFromFileSystem, setImageFromFileSystem] = useState<string | undefined>(undefined);
   const [failedToLoadImage, setFailedToLoadImage] = useState(false);
 
@@ -39,13 +40,22 @@ export const CustomImageNode = (props: CustomImageNodeViewProps) => {
   // the image is already uploaded if the image-component node has src attribute
   // and we need to remove the blob from our file system
   useEffect(() => {
-    if (remoteImageSrc) {
+    if (resolvedSrc) {
       setIsUploaded(true);
       setImageFromFileSystem(undefined);
     } else {
       setIsUploaded(false);
     }
-  }, [remoteImageSrc]);
+  }, [resolvedSrc]);
+
+  useEffect(() => {
+    const getImageSource = async () => {
+      // @ts-expect-error function not expected here, but will still work and don't remove await
+      const url: string = await editor?.commands?.getImageSource?.(imgNodeSrc);
+      setResolvedSrc(url as string);
+    };
+    getImageSource();
+  }, [imageFromFileSystem, node.attrs.src]);
 
   return (
     <NodeViewWrapper>
@@ -55,8 +65,7 @@ export const CustomImageNode = (props: CustomImageNodeViewProps) => {
             imageFromFileSystem={imageFromFileSystem}
             editorContainer={editorContainer}
             editor={editor}
-            // @ts-expect-error function not expected here, but will still work
-            src={editor?.commands?.getImageSource?.(remoteImageSrc)}
+            src={resolvedSrc}
             getPos={getPos}
             node={node}
             setEditorContainer={setEditorContainer}

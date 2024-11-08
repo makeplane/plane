@@ -5,6 +5,7 @@ export enum EAttributeNames {
   EMOJI_URL = "data-emoji-url",
   LOGO_IN_USE = "data-logo-in-use",
   BACKGROUND = "data-background",
+  BLOCK_TYPE = "data-block-type",
 }
 
 export type TCalloutBlockIconAttributes = {
@@ -20,5 +21,6 @@ export type TCalloutBlockEmojiAttributes = {
 export type TCalloutBlockAttributes = {
   [EAttributeNames.LOGO_IN_USE]: "emoji" | "icon";
   [EAttributeNames.BACKGROUND]: string;
+  [EAttributeNames.BLOCK_TYPE]: "callout-component";
 } & TCalloutBlockIconAttributes &
   TCalloutBlockEmojiAttributes;

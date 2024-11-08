@@ -5,19 +5,22 @@ import { observer } from "mobx-react";
 // ui
 import { Loader } from "@plane/ui";
 // components
-import { IGanttBlock, IBlockUpdateData } from "@/components/gantt-chart/types";
+import RenderIfVisible from "@/components/core/render-if-visible-HOC";
+import { IBlockUpdateData } from "@/components/gantt-chart/types";
+import { GanttLayoutLIstItem } from "@/components/ui";
 //hooks
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
+//
+import { useTimeLineChart } from "../../../../hooks/use-timeline-chart";
+import { ETimeLineTypeType } from "../../contexts";
 import { GanttDnDHOC } from "../gantt-dnd-HOC";
 import { handleOrderChange } from "../utils";
-// types
 import { IssuesSidebarBlock } from "./block";
 
 type Props = {
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
-  getBlockById: (id: string) => IGanttBlock;
   canLoadMoreBlocks?: boolean;
   loadMoreBlocks?: () => void;
   ganttContainerRef: RefObject<HTMLDivElement>;
@@ -32,7 +35,6 @@ export const IssueGanttSidebar: React.FC<Props> = observer((props) => {
   const {
     blockUpdateHandler,
     blockIds,
-    getBlockById,
     enableReorder,
     enableSelection,
     loadMoreBlocks,
@@ -41,6 +43,8 @@ export const IssueGanttSidebar: React.FC<Props> = observer((props) => {
     showAllBlocks = false,
     selectionHelpers,
   } = props;
+
+  const { getBlockById } = useTimeLineChart(ETimeLineTypeType.ISSUE);
 
   const {
     issues: { getIssueLoader },
@@ -77,22 +81,30 @@ export const IssueGanttSidebar: React.FC<Props> = observer((props) => {
             if (!block || (!showAllBlocks && !isBlockVisibleOnSidebar)) return;
 
             return (
-              <GanttDnDHOC
+              <RenderIfVisible
                 key={block.id}
-                id={block.id}
-                isLastChild={index === blockIds.length - 1}
-                isDragEnabled={enableReorder}
-                onDrop={handleOnDrop}
+                root={ganttContainerRef}
+                horizontalOffset={100}
+                verticalOffset={200}
+                shouldRecordHeights={false}
+                placeholderChildren={<GanttLayoutLIstItem />}
               >
-                {(isDragging: boolean) => (
-                  <IssuesSidebarBlock
-                    block={block}
-                    enableSelection={enableSelection}
-                    isDragging={isDragging}
-                    selectionHelpers={selectionHelpers}
-                  />
-                )}
-              </GanttDnDHOC>
+                <GanttDnDHOC
+                  id={block.id}
+                  isLastChild={index === blockIds.length - 1}
+                  isDragEnabled={enableReorder}
+                  onDrop={handleOnDrop}
+                >
+                  {(isDragging: boolean) => (
+                    <IssuesSidebarBlock
+                      block={block}
+                      enableSelection={enableSelection}
+                      isDragging={isDragging}
+                      selectionHelpers={selectionHelpers}
+                    />
+                  )}
+                </GanttDnDHOC>
+              </RenderIfVisible>
             );
           })}
           {canLoadMoreBlocks && (

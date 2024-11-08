@@ -22,6 +22,7 @@ import { CreateLabelModal } from "@/components/labels";
 import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { getTextContent } from "@/helpers/editor.helper";
 import { getChangedIssuefields } from "@/helpers/issue.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
@@ -30,7 +31,9 @@ import { useIssueDetail, useProject, useProjectState, useWorkspaceDraftIssues } 
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
 // plane web components
+import { DeDupeButtonRoot, DuplicateModalRoot } from "@/plane-web/components/de-dupe";
 import { IssueAdditionalProperties, IssueTypeSelect } from "@/plane-web/components/issues/issue-modal";
+import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
 
 const defaultValues: Partial<TIssue> = {
   project_id: "",
@@ -66,6 +69,8 @@ export interface IssueFormProps {
     default: string;
     loading: string;
   };
+  isDuplicateModalOpen: boolean;
+  handleDuplicateIssueModal: (isOpen: boolean) => void;
 }
 
 export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
@@ -86,6 +91,8 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
       default: `${data?.id ? "Update" : isDraft ? "Save to Drafts" : "Save"}`,
       loading: `${data?.id ? "Updating" : "Saving"}`,
     },
+    isDuplicateModalOpen,
+    handleDuplicateIssueModal,
   } = props;
 
   // states
@@ -96,6 +103,8 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   const submitBtnRef = useRef<HTMLButtonElement | null>(null);
+  const formRef = useRef<HTMLFormElement | null>(null);
+  const modalContainerRef = useRef<HTMLDivElement | null>(null);
 
   // router
   const { workspaceSlug, projectId: routeProjectId } = useParams();
@@ -133,6 +142,9 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     workspaceSlug: workspaceSlug?.toString(),
     watch: watch,
   });
+
+  // derived values
+  const projectDetails = projectId ? getProjectById(projectId) : undefined;
 
   const { getIndex } = getTabIndex(ETabIndices.ISSUE_FORM, isMobile);
 
@@ -232,6 +244,16 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     else onChange(null);
   };
 
+  // debounced duplicate issues swr
+  const { duplicateIssues } = useDebouncedDuplicateIssues(
+    projectDetails?.workspace.toString(),
+    projectId ?? undefined,
+    {
+      name: watch("name"),
+      description_html: getTextContent(watch("description_html")),
+    }
+  );
+
   // executing this useEffect when the parent_id coming from the component prop
   useEffect(() => {
     const parentId = watch("parent_id") || undefined;
@@ -267,6 +289,27 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDirty]);
 
+  useEffect(() => {
+    const formElement = formRef?.current;
+    const modalElement = modalContainerRef?.current;
+
+    if (!formElement || !modalElement) return;
+
+    const resizeObserver = new ResizeObserver(() => {
+      modalElement.style.maxHeight = `${formElement?.offsetHeight}px`;
+    });
+
+    resizeObserver.observe(formElement);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [formRef, modalContainerRef]);
+
+  // TODO: Remove this after the de-dupe feature is implemented
+
+  const shouldRenderDuplicateModal = isDuplicateModalOpen && duplicateIssues?.length > 0;
+
   return (
     <>
       {projectId && (
@@ -280,175 +323,205 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
           }}
         />
       )}
-      <form onSubmit={handleSubmit((data) => handleFormSubmit(data))}>
-        <div className="p-5">
-          <h3 className="text-xl font-medium text-custom-text-200 pb-2">{modalTitle}</h3>
-          {/* Disable project selection if editing an issue */}
-          <div className="flex items-center pt-2 pb-4 gap-x-1">
-            <IssueProjectSelect
-              control={control}
-              disabled={!!data?.id || !!data?.sourceIssueId}
-              handleFormChange={handleFormChange}
-            />
-            {projectId && (
-              <IssueTypeSelect
-                control={control}
-                projectId={projectId}
-                disabled={!!data?.sourceIssueId}
-                handleFormChange={handleFormChange}
-                renderChevron
-              />
-            )}
-          </div>
-          {watch("parent_id") && selectedParentIssue && (
-            <div className="pb-4">
-              <IssueParentTag
-                control={control}
-                selectedParentIssue={selectedParentIssue}
-                handleFormChange={handleFormChange}
-                setSelectedParentIssue={setSelectedParentIssue}
-              />
-            </div>
-          )}
-          <div className="space-y-1">
-            <IssueTitleInput
-              control={control}
-              issueTitleRef={issueTitleRef}
-              errors={errors}
-              handleFormChange={handleFormChange}
-            />
-          </div>
-        </div>
-        <div
-          className={cn(
-            "pb-4 space-y-3",
-            activeAdditionalPropertiesLength > 4 &&
-              "max-h-[45vh] overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-sm"
-          )}
-        >
-          <div className="px-5">
-            <IssueDescriptionEditor
-              control={control}
-              isDraft={isDraft}
-              issueName={watch("name")}
-              issueId={data?.id}
-              descriptionHtmlData={data?.description_html}
-              editorRef={editorRef}
-              submitBtnRef={submitBtnRef}
-              gptAssistantModal={gptAssistantModal}
-              workspaceSlug={workspaceSlug?.toString()}
-              projectId={projectId}
-              handleFormChange={handleFormChange}
-              handleDescriptionHTMLDataChange={(description_html) =>
-                setValue<"description_html">("description_html", description_html)
-              }
-              setGptAssistantModal={setGptAssistantModal}
-              handleGptAssistantClose={() => reset(getValues())}
-              onAssetUpload={onAssetUpload}
-              onClose={onClose}
-            />
-          </div>
-          <div
-            className={cn(
-              "px-5",
-              activeAdditionalPropertiesLength <= 4 &&
-                "max-h-[25vh] overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-sm"
-            )}
+      <div className="flex gap-2 bg-transparent">
+        <div className="rounded-lg w-full">
+          <form
+            ref={formRef}
+            onSubmit={handleSubmit((data) => handleFormSubmit(data))}
+            className="flex flex-col w-full"
           >
-            {projectId && (
-              <IssueAdditionalProperties
-                issueId={data?.id ?? data?.sourceIssueId}
-                issueTypeId={watch("type_id")}
-                projectId={projectId}
-                workspaceSlug={workspaceSlug?.toString()}
-                isDraft={isDraft}
-              />
-            )}
-          </div>
+            <div className="p-5 rounded-t-lg bg-custom-background-100">
+              <h3 className="text-xl font-medium text-custom-text-200 pb-2">{modalTitle}</h3>
+              <div className="flex items-center justify-between pt-2 pb-4">
+                <div className="flex items-center gap-x-1">
+                  <IssueProjectSelect
+                    control={control}
+                    disabled={!!data?.id || !!data?.sourceIssueId}
+                    handleFormChange={handleFormChange}
+                  />
+                  {projectId && (
+                    <IssueTypeSelect
+                      control={control}
+                      projectId={projectId}
+                      disabled={!!data?.sourceIssueId}
+                      handleFormChange={handleFormChange}
+                      renderChevron
+                    />
+                  )}
+                </div>
+                {duplicateIssues.length > 0 && (
+                  <DeDupeButtonRoot
+                    workspaceSlug={workspaceSlug?.toString()}
+                    isDuplicateModalOpen={isDuplicateModalOpen}
+                    label={`${duplicateIssues.length} duplicate issue${duplicateIssues.length > 1 ? "s" : ""} found!`}
+                    handleOnClick={() => handleDuplicateIssueModal(!isDuplicateModalOpen)}
+                  />
+                )}
+              </div>
+              {watch("parent_id") && selectedParentIssue && (
+                <div className="pb-4">
+                  <IssueParentTag
+                    control={control}
+                    selectedParentIssue={selectedParentIssue}
+                    handleFormChange={handleFormChange}
+                    setSelectedParentIssue={setSelectedParentIssue}
+                  />
+                </div>
+              )}
+              <div className="space-y-1">
+                <IssueTitleInput
+                  control={control}
+                  issueTitleRef={issueTitleRef}
+                  errors={errors}
+                  handleFormChange={handleFormChange}
+                />
+              </div>
+            </div>
+            <div
+              className={cn(
+                "pb-4 space-y-3 bg-custom-background-100",
+                activeAdditionalPropertiesLength > 4 &&
+                  "max-h-[45vh] overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-sm"
+              )}
+            >
+              <div className="px-5">
+                <IssueDescriptionEditor
+                  control={control}
+                  isDraft={isDraft}
+                  issueName={watch("name")}
+                  issueId={data?.id}
+                  descriptionHtmlData={data?.description_html}
+                  editorRef={editorRef}
+                  submitBtnRef={submitBtnRef}
+                  gptAssistantModal={gptAssistantModal}
+                  workspaceSlug={workspaceSlug?.toString()}
+                  projectId={projectId}
+                  handleFormChange={handleFormChange}
+                  handleDescriptionHTMLDataChange={(description_html) =>
+                    setValue<"description_html">("description_html", description_html)
+                  }
+                  setGptAssistantModal={setGptAssistantModal}
+                  handleGptAssistantClose={() => reset(getValues())}
+                  onAssetUpload={onAssetUpload}
+                  onClose={onClose}
+                />
+              </div>
+              <div
+                className={cn(
+                  "px-5",
+                  activeAdditionalPropertiesLength <= 4 &&
+                    "max-h-[25vh] overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-sm"
+                )}
+              >
+                {projectId && (
+                  <IssueAdditionalProperties
+                    issueId={data?.id ?? data?.sourceIssueId}
+                    issueTypeId={watch("type_id")}
+                    projectId={projectId}
+                    workspaceSlug={workspaceSlug?.toString()}
+                    isDraft={isDraft}
+                  />
+                )}
+              </div>
+            </div>
+            <div className="px-4 py-3 border-t-[0.5px] border-custom-border-200 shadow-custom-shadow-xs rounded-b-lg bg-custom-background-100">
+              <div className="pb-3 border-b-[0.5px] border-custom-border-200">
+                <IssueDefaultProperties
+                  control={control}
+                  id={data?.id}
+                  projectId={projectId}
+                  workspaceSlug={workspaceSlug?.toString()}
+                  selectedParentIssue={selectedParentIssue}
+                  startDate={watch("start_date")}
+                  targetDate={watch("target_date")}
+                  parentId={watch("parent_id")}
+                  isDraft={isDraft}
+                  handleFormChange={handleFormChange}
+                  setLabelModal={setLabelModal}
+                  setSelectedParentIssue={setSelectedParentIssue}
+                />
+              </div>
+              <div className="flex items-center justify-end gap-4 py-3">
+                {!data?.id && (
+                  <div
+                    className="inline-flex items-center gap-1.5 cursor-pointer"
+                    onClick={() => onCreateMoreToggleChange(!isCreateMoreToggleEnabled)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") onCreateMoreToggleChange(!isCreateMoreToggleEnabled);
+                    }}
+                    tabIndex={getIndex("create_more")}
+                    role="button"
+                  >
+                    <ToggleSwitch value={isCreateMoreToggleEnabled} onChange={() => {}} size="sm" />
+                    <span className="text-xs">Create more</span>
+                  </div>
+                )}
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="neutral-primary"
+                    size="sm"
+                    onClick={() => {
+                      if (editorRef.current?.isEditorReadyToDiscard()) {
+                        onClose();
+                      } else {
+                        setToast({
+                          type: TOAST_TYPE.ERROR,
+                          title: "Error!",
+                          message: "Editor is still processing changes. Please wait before proceeding.",
+                        });
+                      }
+                    }}
+                    tabIndex={getIndex("discard_button")}
+                  >
+                    Discard
+                  </Button>
+                  <Button
+                    variant={moveToIssue ? "neutral-primary" : "primary"}
+                    type="submit"
+                    size="sm"
+                    ref={submitBtnRef}
+                    loading={isSubmitting}
+                    tabIndex={isDraft ? getIndex("submit_button") : getIndex("draft_button")}
+                  >
+                    {isSubmitting ? primaryButtonText.loading : primaryButtonText.default}
+                  </Button>
+                  {moveToIssue && (
+                    <Button
+                      variant="primary"
+                      type="button"
+                      size="sm"
+                      loading={isSubmitting}
+                      onClick={() => {
+                        if (data?.id && data) {
+                          moveIssue(workspaceSlug.toString(), data?.id, {
+                            ...data,
+                            ...getValues(),
+                          } as TWorkspaceDraftIssue);
+                        }
+                      }}
+                    >
+                      Add to project
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </form>
         </div>
-        <div className="px-4 py-3 border-t-[0.5px] border-custom-border-200 shadow-custom-shadow-xs rounded-b-lg">
-          <div className="pb-3 border-b-[0.5px] border-custom-border-200">
-            <IssueDefaultProperties
-              control={control}
-              id={data?.id}
-              projectId={projectId}
-              workspaceSlug={workspaceSlug?.toString()}
-              selectedParentIssue={selectedParentIssue}
-              startDate={watch("start_date")}
-              targetDate={watch("target_date")}
-              parentId={watch("parent_id")}
-              isDraft={isDraft}
-              handleFormChange={handleFormChange}
-              setLabelModal={setLabelModal}
-              setSelectedParentIssue={setSelectedParentIssue}
+        {shouldRenderDuplicateModal && (
+          <div
+            ref={modalContainerRef}
+            className="relative flex flex-col gap-2.5 h-full px-3 py-4 rounded-lg shadow-xl bg-pi-50"
+            style={{ maxHeight: formRef?.current?.offsetHeight ? `${formRef.current.offsetHeight}px` : "436px" }}
+          >
+            <DuplicateModalRoot
+              workspaceSlug={workspaceSlug.toString()}
+              issues={duplicateIssues}
+              handleDuplicateIssueModal={handleDuplicateIssueModal}
             />
           </div>
-          <div className="flex items-center justify-end gap-4 py-3">
-            {!data?.id && (
-              <div
-                className="inline-flex items-center gap-1.5 cursor-pointer"
-                onClick={() => onCreateMoreToggleChange(!isCreateMoreToggleEnabled)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") onCreateMoreToggleChange(!isCreateMoreToggleEnabled);
-                }}
-                tabIndex={getIndex("create_more")}
-                role="button"
-              >
-                <ToggleSwitch value={isCreateMoreToggleEnabled} onChange={() => {}} size="sm" />
-                <span className="text-xs">Create more</span>
-              </div>
-            )}
-            <div className="flex items-center gap-2">
-              <Button
-                variant="neutral-primary"
-                size="sm"
-                onClick={() => {
-                  if (editorRef.current?.isEditorReadyToDiscard()) {
-                    onClose();
-                  } else {
-                    setToast({
-                      type: TOAST_TYPE.ERROR,
-                      title: "Error!",
-                      message: "Editor is still processing changes. Please wait before proceeding.",
-                    });
-                  }
-                }}
-                tabIndex={getIndex("discard_button")}
-              >
-                Discard
-              </Button>
-              <Button
-                variant={moveToIssue ? "neutral-primary" : "primary"}
-                type="submit"
-                size="sm"
-                ref={submitBtnRef}
-                loading={isSubmitting}
-                tabIndex={isDraft ? getIndex("submit_button") : getIndex("draft_button")}
-              >
-                {isSubmitting ? primaryButtonText.loading : primaryButtonText.default}
-              </Button>
-              {moveToIssue && (
-                <Button
-                  variant="primary"
-                  type="button"
-                  size="sm"
-                  loading={isSubmitting}
-                  onClick={() => {
-                    if (data?.id && data) {
-                      moveIssue(workspaceSlug.toString(), data?.id, {
-                        ...data,
-                        ...getValues(),
-                      } as TWorkspaceDraftIssue);
-                    }
-                  }}
-                >
-                  Add to project
-                </Button>
-              )}
-            </div>
-          </div>
-        </div>
-      </form>
+        )}
+      </div>
     </>
   );
 });
