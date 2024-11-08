@@ -59,7 +59,7 @@ export class WorkspaceDraftService extends APIService {
       });
   }
 
-  async moveIssue(workspaceSlug: string, issueId: string, payload: Partial<TWorkspaceDraftIssue>): Promise<void> {
+  async moveIssue(workspaceSlug: string, issueId: string, payload: Partial<TWorkspaceDraftIssue>): Promise<TIssue> {
     return this.post(`/api/workspaces/${workspaceSlug}/draft-to-issue/${issueId}/`, payload)
       .then((response) => response?.data)
       .catch((error) => {

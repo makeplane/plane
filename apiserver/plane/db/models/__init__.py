@@ -15,7 +15,7 @@ from .draft import (
 from .estimate import Estimate, EstimatePoint
 from .exporter import ExporterHistory
 from .importer import Importer
-from .inbox import Inbox, InboxIssue
+from .intake import Intake, IntakeIssue
 from .integration import (
     GithubCommentSync,
     GithubIssueSync,
@@ -77,8 +77,6 @@ from .user import Account, Profile, User
 from .view import IssueView
 from .webhook import Webhook, WebhookLog
 from .workspace import (
-    Team,
-    TeamMember,
     Workspace,
     WorkspaceBaseModel,
     WorkspaceMember,
@@ -93,7 +91,7 @@ from .page import Page, PageLog, PageLabel
 
 from .estimate import Estimate, EstimatePoint
 
-from .inbox import Inbox, InboxIssue
+from .intake import Intake, IntakeIssue
 
 from .analytic import AnalyticView
 

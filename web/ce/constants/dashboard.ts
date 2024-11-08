@@ -2,21 +2,24 @@
 
 // icons
 import { Home, Inbox, PenSquare } from "lucide-react";
-
 // ui
 import { UserActivityIcon } from "@plane/ui";
 import { Props } from "@/components/icons/types";
 import { TLinkOptions } from "@/constants/dashboard";
 import { EUserPermissions } from "@/plane-web/constants/user-permissions";
+// plane web types
+import { TSidebarUserMenuItemKeys } from "@/plane-web/types/dashboard";
 
-export const SIDEBAR_USER_MENU_ITEMS: {
-  key: string;
+export type TSidebarUserMenuItems = {
+  key: TSidebarUserMenuItemKeys;
   label: string;
   href: string;
   access: EUserPermissions[];
   highlight: (pathname: string, baseUrl: string, options?: TLinkOptions) => boolean;
   Icon: React.FC<Props>;
-}[] = [
+};
+
+export const SIDEBAR_USER_MENU_ITEMS: TSidebarUserMenuItems[] = [
   {
     key: "home",
     label: "Home",

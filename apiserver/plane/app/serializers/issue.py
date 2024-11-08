@@ -98,6 +98,8 @@ class IssueCreateSerializer(BaseSerializer):
         write_only=True,
         required=False,
     )
+    project_id = serializers.UUIDField(source="project.id", read_only=True)
+    workspace_id = serializers.UUIDField(source="workspace.id", read_only=True)
 
     class Meta:
         model = Issue
@@ -646,7 +648,7 @@ class IssueStateSerializer(DynamicBaseSerializer):
         fields = "__all__"
 
 
-class IssueInboxSerializer(DynamicBaseSerializer):
+class IssueIntakeSerializer(DynamicBaseSerializer):
     label_ids = serializers.ListField(
         child=serializers.UUIDField(),
         required=False,

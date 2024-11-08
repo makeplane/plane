@@ -16,7 +16,6 @@ from .project.invite import (
 
 from .project.member import (
     ProjectMemberViewSet,
-    AddTeamToProjectEndpoint,
     ProjectMemberUserEndpoint,
     UserProjectRolesEndpoint,
 )
@@ -49,7 +48,6 @@ from .workspace.favorite import (
 
 from .workspace.member import (
     WorkSpaceMemberViewSet,
-    TeamMemberViewSet,
     WorkspaceMemberUserEndpoint,
     WorkspaceProjectMemberEndpoint,
     WorkspaceMemberUserViewsEndpoint,
@@ -220,7 +218,7 @@ from .estimate.base import (
     EstimatePointEndpoint,
 )
 
-from .inbox.base import InboxViewSet, InboxIssueViewSet
+from .intake.base import IntakeViewSet, IntakeIssueViewSet
 
 from .analytic.base import (
     AnalyticsEndpoint,

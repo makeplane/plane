@@ -18,4 +18,4 @@ from .module import (
     ModuleIssueSerializer,
     ModuleLiteSerializer,
 )
-from .inbox import InboxIssueSerializer
+from .intake import IntakeIssueSerializer
