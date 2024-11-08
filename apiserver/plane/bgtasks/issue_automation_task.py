@@ -51,10 +51,10 @@ def archive_old_issues():
                     & Q(issue_module__isnull=False)
                 ),
             ).filter(
-                Q(issue_inbox__status=1)
-                | Q(issue_inbox__status=-1)
-                | Q(issue_inbox__status=2)
-                | Q(issue_inbox__isnull=True)
+                Q(issue_intake__status=1)
+                | Q(issue_intake__status=-1)
+                | Q(issue_intake__status=2)
+                | Q(issue_intake__isnull=True)
             )
 
             # Check if Issues
@@ -129,10 +129,10 @@ def close_old_issues():
                     & Q(issue_module__isnull=False)
                 ),
             ).filter(
-                Q(issue_inbox__status=1)
-                | Q(issue_inbox__status=-1)
-                | Q(issue_inbox__status=2)
-                | Q(issue_inbox__isnull=True)
+                Q(issue_intake__status=1)
+                | Q(issue_intake__status=-1)
+                | Q(issue_intake__status=2)
+                | Q(issue_intake__isnull=True)
             )
 
             # Check if Issues

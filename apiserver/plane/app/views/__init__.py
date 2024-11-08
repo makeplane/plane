@@ -227,7 +227,7 @@ from .estimate.base import (
     EstimatePointEndpoint,
 )
 
-from .inbox.base import InboxViewSet, InboxIssueViewSet
+from .intake.base import IntakeViewSet, IntakeIssueViewSet
 
 from .analytic.base import (
     AnalyticsEndpoint,

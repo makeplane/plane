@@ -38,7 +38,7 @@ from plane.app.permissions import (
 from plane.db.models import (
     UserFavorite,
     Cycle,
-    Inbox,
+    Intake,
     DeployBoard,
     IssueUserProperty,
     Issue,
@@ -525,14 +525,14 @@ class ProjectViewSet(BaseViewSet):
 
             if serializer.is_valid():
                 serializer.save()
-                if serializer.data["inbox_view"]:
-                    inbox = Inbox.objects.filter(
+                if serializer.data["intake_view"] or request.data.get("inbox_view", False):
+                    intake = Intake.objects.filter(
                         project=project,
                         is_default=True,
                     ).first()
-                    if not inbox:
-                        Inbox.objects.create(
-                            name=f"{project.name} Inbox",
+                    if not intake:
+                        Intake.objects.create(
+                            name=f"{project.name} Intake",
                             project=project,
                             is_default=True,
                         )
@@ -556,7 +556,7 @@ class ProjectViewSet(BaseViewSet):
                     State.objects.get_or_create(
                         name="Triage",
                         group="triage",
-                        description="Default state for managing all Inbox Issues",
+                        description="Default state for managing all Intake Issues",
                         project_id=pk,
                         color="#ff7700",
                         is_triage=True,
@@ -865,7 +865,7 @@ class DeployBoardViewSet(BaseViewSet):
     def create(self, request, slug, project_id):
         comments = request.data.get("is_comments_enabled", False)
         reactions = request.data.get("is_reactions_enabled", False)
-        inbox = request.data.get("inbox", None)
+        intake = request.data.get("intake", None)
         votes = request.data.get("is_votes_enabled", False)
         views = request.data.get(
             "views",
@@ -883,7 +883,7 @@ class DeployBoardViewSet(BaseViewSet):
             entity_identifier=project_id,
             project_id=project_id,
         )
-        project_deploy_board.inbox = inbox
+        project_deploy_board.intake = intake
         project_deploy_board.view_props = views
         project_deploy_board.is_votes_enabled = votes
         project_deploy_board.is_comments_enabled = comments

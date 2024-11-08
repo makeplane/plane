@@ -1614,7 +1614,7 @@ def delete_draft_issue_activity(
     )
 
 
-def create_inbox_activity(
+def create_intake_activity(
     requested_data,
     current_instance,
     issue_id,
@@ -1643,8 +1643,8 @@ def create_inbox_activity(
                 issue_id=issue_id,
                 project_id=project_id,
                 workspace_id=workspace_id,
-                comment="updated the inbox status",
-                field="inbox",
+                comment="updated the intake status",
+                field="intake",
                 verb=requested_data.get("status"),
                 actor_id=actor_id,
                 epoch=epoch,
@@ -1667,7 +1667,7 @@ def issue_activity(
     subscriber=True,
     notification=False,
     origin=None,
-    inbox=None,
+    intake=None,
 ):
     try:
         issue_activities = []
@@ -1715,7 +1715,7 @@ def issue_activity(
             "issue_draft.activity.created": create_draft_issue_activity,
             "issue_draft.activity.updated": update_draft_issue_activity,
             "issue_draft.activity.deleted": delete_draft_issue_activity,
-            "inbox.activity.created": create_inbox_activity,
+            "intake.activity.created": create_intake_activity,
         }
 
         func = ACTIVITY_MAPPER.get(type)
@@ -1742,12 +1742,12 @@ def issue_activity(
                     event=(
                         "issue_comment"
                         if activity.field == "comment"
-                        else "inbox_issue" if inbox else "issue"
+                        else "intake_issue" if intake else "issue"
                     ),
                     event_id=(
                         activity.issue_comment_id
                         if activity.field == "comment"
-                        else inbox if inbox else activity.issue_id
+                        else intake if intake else activity.issue_id
                     ),
                     verb=activity.verb,
                     field=(

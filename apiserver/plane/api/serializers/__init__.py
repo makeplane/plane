@@ -18,5 +18,5 @@ from .module import (
     ModuleIssueSerializer,
     ModuleLiteSerializer,
 )
-from .inbox import InboxIssueSerializer
+from .intake import IntakeIssueSerializer
 from .issue_type import IssueTypeAPISerializer, ProjectIssueTypeAPISerializer
