@@ -1,16 +1,20 @@
 import { useCallback, useEffect, useState } from "react";
 // plane editor
-import { EditorRefApi, getBinaryDataFromRichTextEditorHTMLString } from "@plane/editor";
+import {
+  convertBase64StringToBinaryData,
+  EditorRefApi,
+  getBinaryDataFromRichTextEditorHTMLString,
+} from "@plane/editor";
 
 type TArgs = {
+  descriptionBinary: string | null;
   descriptionHTML: string | null;
-  fetchDescription: () => Promise<ArrayBuffer>;
   id: string;
   updateDescription?: (data: string) => Promise<ArrayBuffer>;
 };
 
 export const useIssueDescription = (args: TArgs) => {
-  const { descriptionHTML, fetchDescription, id, updateDescription } = args;
+  const { descriptionBinary: savedDescriptionBinary, descriptionHTML, id, updateDescription } = args;
   // states
   const [descriptionBinary, setDescriptionBinary] = useState<Uint8Array | null>(null);
   // update description
@@ -32,25 +36,26 @@ export const useIssueDescription = (args: TArgs) => {
 
   useEffect(() => {
     if (descriptionBinary) return;
-    // fetch latest binary description
-    const fetchDecodedDescription = async () => {
-      const encodedDescription = await fetchDescription();
-      let decodedDescription = encodedDescription ? new Uint8Array(encodedDescription) : new Uint8Array();
-      // if there's no binary data present, convert existing HTML string to binary
-      if (decodedDescription.length === 0) {
-        decodedDescription = getBinaryDataFromRichTextEditorHTMLString(descriptionHTML ?? "<p></p>");
-      } else {
-        // decode binary string
-        decodedDescription = new Uint8Array(encodedDescription);
-      }
-      setDescriptionBinary(decodedDescription);
-    };
-    fetchDecodedDescription();
-  }, [descriptionBinary, descriptionHTML, fetchDescription]);
+    if (savedDescriptionBinary) {
+      const savedDescriptionBuffer = convertBase64StringToBinaryData(savedDescriptionBinary);
+      console.log("Saved", savedDescriptionBuffer);
+      const decodedSavedDescription = savedDescriptionBuffer
+        ? new Uint8Array(savedDescriptionBuffer)
+        : new Uint8Array();
+      setDescriptionBinary(decodedSavedDescription);
+    } else {
+      console.log("HTML");
+      const decodedDescriptionHTML = getBinaryDataFromRichTextEditorHTMLString(descriptionHTML ?? "<p></p>");
+      setDescriptionBinary(decodedDescriptionHTML);
+    }
+  }, [descriptionBinary, descriptionHTML, savedDescriptionBinary]);
 
-  useEffect(() => {
-    setDescriptionBinary(null);
-  }, [id]);
+  // useEffect(() => {
+  //   console.log("Setting to null");
+  //   setDescriptionBinary(null);
+  // }, [id]);
+
+  console.log("descriptionBinary", descriptionBinary);
 
   return {
     descriptionBinary,

@@ -23,6 +23,7 @@ const fileService = new FileService();
 
 export type IssueDescriptionInputProps = {
   containerClassName?: string;
+  descriptionBinary: string | null;
   descriptionHTML: string;
   disabled?: boolean;
   fetchDescription: () => Promise<ArrayBuffer>;
@@ -39,6 +40,7 @@ export type IssueDescriptionInputProps = {
 export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((props) => {
   const {
     containerClassName,
+    descriptionBinary: savedDescriptionBinary,
     descriptionHTML,
     disabled,
     fetchDescription,
@@ -57,9 +59,9 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id?.toString() ?? "";
   // use issue description
   const { descriptionBinary, resolveConflictsAndUpdateDescription } = useIssueDescription({
+    descriptionBinary: savedDescriptionBinary,
     descriptionHTML,
     id: issueId,
-    fetchDescription,
     updateDescription,
   });
 

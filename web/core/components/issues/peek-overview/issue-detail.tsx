@@ -12,11 +12,12 @@ import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // plane web components
 import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe";
 import { IssueTypeSwitcher } from "@/plane-web/components/issues";
+// plane web hooks
+import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
 // services
 import { IssueService } from "@/services/issue";
 const issueService = new IssueService();
 // local components
-import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
 import { IssueDescriptionInput } from "../description-input";
 import { IssueReaction } from "../issue-detail/reactions";
 import { IssueTitleInput } from "../title-input";
@@ -101,31 +102,34 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
         containerClassName="-ml-3"
       />
 
-      <IssueDescriptionInput
-        key={issue.id}
-        containerClassName="-ml-3 border-none"
-        descriptionHTML={issue.description_html ?? "<p></p>"}
-        disabled={disabled}
-        fetchDescription={async () => {
-          if (!workspaceSlug || !issue.project_id || !issue.id) {
-            throw new Error("Required fields missing while fetching binary description");
-          }
-          return await issueService.fetchDescriptionBinary(workspaceSlug, issue.project_id, issue.id);
-        }}
-        updateDescription={async (data) => {
-          if (!workspaceSlug || !issue.project_id || !issue.id) {
-            throw new Error("Required fields missing while updating binary description");
-          }
-          return await issueService.updateDescriptionBinary(workspaceSlug, issue.project_id, issue.id, {
-            description_binary: data,
-          });
-        }}
-        issueId={issue.id}
-        issueOperations={issueOperations}
-        projectId={issue.project_id}
-        setIsSubmitting={(value) => setIsSubmitting(value)}
-        workspaceSlug={workspaceSlug}
-      />
+      {issue.description_binary !== undefined && (
+        <IssueDescriptionInput
+          key={issue.id}
+          containerClassName="-ml-3 border-none"
+          descriptionBinary={issue.description_binary}
+          descriptionHTML={issue.description_html ?? "<p></p>"}
+          disabled={disabled}
+          fetchDescription={async () => {
+            if (!workspaceSlug || !issue.project_id || !issue.id) {
+              throw new Error("Required fields missing while fetching binary description");
+            }
+            return await issueService.fetchDescriptionBinary(workspaceSlug, issue.project_id, issue.id);
+          }}
+          updateDescription={async (data) => {
+            if (!workspaceSlug || !issue.project_id || !issue.id) {
+              throw new Error("Required fields missing while updating binary description");
+            }
+            return await issueService.updateDescriptionBinary(workspaceSlug, issue.project_id, issue.id, {
+              description_binary: data,
+            });
+          }}
+          issueId={issue.id}
+          issueOperations={issueOperations}
+          projectId={issue.project_id}
+          setIsSubmitting={(value) => setIsSubmitting(value)}
+          workspaceSlug={workspaceSlug}
+        />
+      )}
 
       {currentUser && (
         <IssueReaction

@@ -15,7 +15,7 @@ export interface IIssueStoreActions {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    issueStatus?: "DEFAULT" | "DRAFT",
+    issueStatus?: "DEFAULT" | "DRAFT"
   ) => Promise<TIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
@@ -156,6 +156,7 @@ export class IssueStore implements IIssueStore {
       id: issue?.id,
       sequence_id: issue?.sequence_id,
       name: issue?.name,
+      description_binary: issue?.description_binary,
       description_html: issue?.description_html,
       sort_order: issue?.sort_order,
       state_id: issue?.state_id,
