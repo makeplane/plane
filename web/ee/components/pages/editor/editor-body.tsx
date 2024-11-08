@@ -143,6 +143,15 @@ export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
     }
   }, [workspaceSlug]);
 
+  const userConfig = useMemo(
+    () => ({
+      id: currentUser?.id ?? "",
+      name: currentUser?.display_name ?? "",
+      color: generateRandomColor(currentUser?.id ?? ""),
+    }),
+    [currentUser]
+  );
+
   const handleIssueSearch = async (searchQuery: string) => {
     const response = await fetchIssues(searchQuery);
     return response;
@@ -241,11 +250,7 @@ export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
               }}
               realtimeConfig={realtimeConfig}
               serverHandler={serverHandler}
-              user={{
-                id: currentUser?.id ?? "",
-                name: currentUser?.display_name ?? "",
-                color: generateRandomColor(currentUser?.id ?? ""),
-              }}
+              user={userConfig}
               disabledExtensions={documentEditor}
               aiHandler={{
                 menu: getAIMenu,
@@ -287,11 +292,7 @@ export const WorkspacePageEditorBody: React.FC<Props> = observer((props) => {
               }}
               realtimeConfig={realtimeConfig}
               serverHandler={serverHandler}
-              user={{
-                id: currentUser?.id ?? "",
-                name: currentUser?.display_name ?? "",
-                color: generateRandomColor(currentUser?.id ?? ""),
-              }}
+              user={userConfig}
             />
           )}
         </div>
