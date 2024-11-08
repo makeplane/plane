@@ -1,3 +1,6 @@
+# Python imports
+import base64
+
 # Django imports
 from django.utils import timezone
 from django.core.validators import URLValidator
@@ -730,9 +733,24 @@ class IssueLiteSerializer(DynamicBaseSerializer):
         read_only_fields = fields
 
 
+class Base64BinaryField(serializers.CharField):
+    def to_representation(self, value):
+        # Encode the binary data to base64 string for JSON response
+        if value:
+            return base64.b64encode(value).decode("utf-8")
+        return None
+
+    def to_internal_value(self, data):
+        # Decode the base64 string to binary data when saving
+        try:
+            return base64.b64decode(data)
+        except (TypeError, ValueError):
+            raise serializers.ValidationError("Invalid base64-encoded data")
+
+
 class IssueDetailSerializer(IssueSerializer):
     description_html = serializers.CharField()
-    description_binary = serializers.CharField()
+    description_binary = Base64BinaryField()
     is_subscribed = serializers.BooleanField(read_only=True)
 
     class Meta(IssueSerializer.Meta):
