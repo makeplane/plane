@@ -10,7 +10,7 @@ import APIService from "./api.service";
  * Provides methods for user authentication, password management, and session handling
  * @extends {APIService}
  */
-export class AuthService extends APIService {
+export default class AuthService extends APIService {
   /**
    * Creates an instance of AuthService
    * Initializes with the base API URL

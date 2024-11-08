@@ -16,7 +16,7 @@ import APIService from "./api.service";
  * Provides methods for fetching, saving, and exporting analytics data
  * @extends {APIService}
  */
-export class AnalyticsService extends APIService {
+export default class AnalyticsService extends APIService {
   /**
    * Creates an instance of AnalyticsService
    * Initializes with the base API URL
@@ -77,7 +77,7 @@ export class AnalyticsService extends APIService {
    * @returns {Promise<any>} The response from saving the analytics view
    * @throws {Error} Throws response data if the request fails
    */
-  async saveAnalytics(workspaceSlug: string, data: ISaveAnalyticsFormData): Promise<any> {
+  async save(workspaceSlug: string, data: ISaveAnalyticsFormData): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/analytic-view/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -92,7 +92,7 @@ export class AnalyticsService extends APIService {
    * @returns {Promise<any>} The exported analytics data
    * @throws {Error} Throws response data if the request fails
    */
-  async exportAnalytics(workspaceSlug: string, data: IExportAnalyticsFormData): Promise<any> {
+  async export(workspaceSlug: string, data: IExportAnalyticsFormData): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/export-analytics/`, data)
       .then((response) => response?.data)
       .catch((error) => {

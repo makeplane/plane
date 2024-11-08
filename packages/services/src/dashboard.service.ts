@@ -7,7 +7,7 @@ import APIService from "./api.service";
  * Service class for managing dashboard operations and widget data
  * @extends {APIService}
  */
-export class DashboardService extends APIService {
+export default class DashboardService extends APIService {
   /**
    * Creates an instance of DashboardService
    * Initializes the service with the base API URL

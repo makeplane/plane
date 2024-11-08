@@ -14,7 +14,7 @@ export class CycleOperationsService extends APIService {
    * @returns {Promise<any>} The response data
    * @throws {Error} If the request fails
    */
-  async addCycleToFavorites(
+  async addToFavorites(
     workspaceSlug: string,
     projectId: string,
     data: {
@@ -36,7 +36,7 @@ export class CycleOperationsService extends APIService {
    * @returns {Promise<any>} The removal response
    * @throws {Error} If the request fails
    */
-  async removeCycleFromFavorites(workspaceSlug: string, projectId: string, cycleId: string): Promise<any> {
+  async removeFromFavorites(workspaceSlug: string, projectId: string, cycleId: string): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-cycles/${cycleId}/`)
       .then((response) => response?.data)
       .catch((error) => {

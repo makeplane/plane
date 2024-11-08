@@ -15,7 +15,7 @@ import APIService from "./api.service";
  * Handles retrieval of instance information and changelog
  * @extends {APIService}
  */
-export class InstanceService extends APIService {
+export default class InstanceService extends APIService {
   /**
    * Creates an instance of InstanceService
    * Initializes the service with the base API URL

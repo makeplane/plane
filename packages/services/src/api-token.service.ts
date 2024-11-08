@@ -7,7 +7,7 @@ import APIService from "./api.service";
  * Provides methods for creating, retrieving, and managing API authentication tokens
  * @extends {APIService}
  */
-export class APITokenService extends APIService {
+export default class APITokenService extends APIService {
   /**
    * Creates an instance of APITokenService
    * Initializes with the base API URL
@@ -22,7 +22,7 @@ export class APITokenService extends APIService {
    * @returns {Promise<IApiToken[]>} Array of API tokens associated with the workspace
    * @throws {Error} Throws response data if the request fails
    */
-  async getApiTokens(workspaceSlug: string): Promise<IApiToken[]> {
+  async list(workspaceSlug: string): Promise<IApiToken[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/api-tokens/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -37,7 +37,7 @@ export class APITokenService extends APIService {
    * @returns {Promise<IApiToken>} The requested API token's details
    * @throws {Error} Throws response data if the request fails
    */
-  async retrieveApiToken(workspaceSlug: string, tokenId: string): Promise<IApiToken> {
+  async retrieve(workspaceSlug: string, tokenId: string): Promise<IApiToken> {
     return this.get(`/api/workspaces/${workspaceSlug}/api-tokens/${tokenId}`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -52,7 +52,7 @@ export class APITokenService extends APIService {
    * @returns {Promise<IApiToken>} The newly created API token
    * @throws {Error} Throws response data if the request fails
    */
-  async createApiToken(workspaceSlug: string, data: Partial<IApiToken>): Promise<IApiToken> {
+  async create(workspaceSlug: string, data: Partial<IApiToken>): Promise<IApiToken> {
     return this.post(`/api/workspaces/${workspaceSlug}/api-tokens/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -67,7 +67,7 @@ export class APITokenService extends APIService {
    * @returns {Promise<IApiToken>} The deleted API token's details
    * @throws {Error} Throws response data if the request fails
    */
-  async deleteApiToken(workspaceSlug: string, tokenId: string): Promise<IApiToken> {
+  async destroy(workspaceSlug: string, tokenId: string): Promise<IApiToken> {
     return this.delete(`/api/workspaces/${workspaceSlug}/api-tokens/${tokenId}`)
       .then((response) => response?.data)
       .catch((error) => {

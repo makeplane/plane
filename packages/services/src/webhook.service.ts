@@ -7,7 +7,7 @@ import APIService from "./api.service";
  * Handles CRUD operations for webhooks and secret key management
  * @extends {APIService}
  */
-export class WebhookService extends APIService {
+export default class WebhookService extends APIService {
   /**
    * Creates an instance of WebhookService
    * Initializes with the base API URL

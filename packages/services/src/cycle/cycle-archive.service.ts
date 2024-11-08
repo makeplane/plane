@@ -26,7 +26,7 @@ export class CycleArchiveService extends APIService {
    * @returns {Promise<ICycle[]>} Array of archived cycles
    * @throws {Error} Throws response data if the request fails
    */
-  async getArchivedCycles(workspaceSlug: string, projectId: string): Promise<ICycle[]> {
+  async list(workspaceSlug: string, projectId: string): Promise<ICycle[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/archived-cycles/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -42,7 +42,7 @@ export class CycleArchiveService extends APIService {
    * @returns {Promise<ICycle>} Details of the archived cycle
    * @throws {Error} Throws response data if the request fails
    */
-  async getArchivedCycleDetails(workspaceSlug: string, projectId: string, cycleId: string): Promise<ICycle> {
+  async retrieve(workspaceSlug: string, projectId: string, cycleId: string): Promise<ICycle> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/archived-cycles/${cycleId}/`)
       .then((res) => res?.data)
       .catch((err) => {
@@ -58,7 +58,7 @@ export class CycleArchiveService extends APIService {
    * @returns {Promise<{archived_at: string}>} Object containing the archive timestamp
    * @throws {Error} Throws response data if the request fails
    */
-  async archiveCycle(
+  async archive(
     workspaceSlug: string,
     projectId: string,
     cycleId: string
@@ -80,7 +80,7 @@ export class CycleArchiveService extends APIService {
    * @returns {Promise<void>} Resolves when the cycle is successfully restored
    * @throws {Error} Throws response data if the request fails
    */
-  async restoreCycle(workspaceSlug: string, projectId: string, cycleId: string): Promise<void> {
+  async restore(workspaceSlug: string, projectId: string, cycleId: string): Promise<void> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/archive/`)
       .then((response) => response?.data)
       .catch((error) => {

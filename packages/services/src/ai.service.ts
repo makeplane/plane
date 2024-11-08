@@ -23,7 +23,7 @@ export type TTaskPayload = {
  * Extends the base APIService class to interact with AI endpoints
  * @extends {APIService}
  */
-export class AIService extends APIService {
+export default class AIService extends APIService {
   /**
    * Creates an instance of AIService
    * Initializes with the base API URL
@@ -41,7 +41,7 @@ export class AIService extends APIService {
    * @returns {Promise<any>} The response data from the GPT task
    * @throws {Error} Throws the response error if the request fails
    */
-  async createGptTask(workspaceSlug: string, data: { prompt: string; task: string }): Promise<any> {
+  async prompt(workspaceSlug: string, data: { prompt: string; task: string }): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/ai-assistant/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -56,7 +56,7 @@ export class AIService extends APIService {
    * @returns {Promise<{response: string}>} The processed text response
    * @throws {Error} Throws the response data if the request fails
    */
-  async performEditorTask(
+  async rephraseGrammar(
     workspaceSlug: string,
     data: TTaskPayload
   ): Promise<{
