@@ -58,8 +58,8 @@ export const InputBox = (props: TProps) => {
         />
         {/* Submit button */}
         <button
-          className={cn("border p-2 my-auto mb-0 rounded-full bg-gradient-to-b from-pi-500 to-pi-600 text-white", {
-            "from-pi-100 to-pi-300 text-pi-400 cursor-not-allowed": isPiTyping,
+          className={cn("p-2 my-auto mb-0 rounded-full bg-pi-700 text-white", {
+            "bg-pi-700/10 cursor-not-allowed": isPiTyping,
           })}
           type="submit"
           onClick={handleSubmit}

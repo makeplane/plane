@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 import { cn } from "@plane/editor";
+import { generateQueryParams } from "@/helpers/router.helper";
 import { useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -26,8 +27,12 @@ export const PiChatBase = observer(() => {
     fetchUserThreads,
     geUserThreads,
     fetchChatById,
+    fetchModels,
+    setActiveModel,
+    getTemplates,
     isNewChat,
     isLoading,
+    models,
   } = usePiChat();
   const { isMobile } = usePlatformOS();
   const { data: currentUser } = useUser();
@@ -42,6 +47,11 @@ export const PiChatBase = observer(() => {
   const userThreads = currentUser && geUserThreads(currentUser?.id);
   const isFullScreen = pathName.includes("pi-chat");
 
+  useSWR(currentUser ? `PI_AI_MODELS` : null, currentUser ? () => fetchModels() : null, {
+    revalidateOnFocus: false,
+    revalidateIfStale: false,
+    errorRetryCount: 0,
+  });
   useSWR(
     currentUser ? `PI_USER_THREADS_${currentUser?.id}` : null,
     currentUser ? () => fetchUserThreads(currentUser?.id) : null,
@@ -52,21 +62,29 @@ export const PiChatBase = observer(() => {
     }
   );
   useSWR(
-    activeChatId && !isNewChat ? `PI_ACTIVE_CHAT_${activeChatId}` : null,
-    activeChatId && !isNewChat ? () => fetchChatById(activeChatId) : null,
+    activeChatId ? `PI_ACTIVE_CHAT_${activeChatId}` : null,
+    activeChatId ? () => fetchChatById(activeChatId) : null,
     {
       revalidateOnFocus: false,
       revalidateIfStale: false,
       errorRetryCount: 0,
     }
   );
+  const { data: templates } = useSWR("PI_TEMPLATES", () => getTemplates(), {
+    revalidateOnFocus: false,
+    revalidateIfStale: false,
+    errorRetryCount: 0,
+  });
 
   useEffect(() => {
     initPiChat(chat_id || undefined);
-  }, [chat_id]);
+  }, []);
 
   useEffect(() => {
-    if (!chat_id) router.push(`?chat_id=${activeChatId}`, {}, { showProgressBar: false });
+    if (!chat_id) {
+      const query = generateQueryParams(searchParams, ["chat_id"]);
+      router.push(`${pathName}?${query && `${query}&`}chat_id=${activeChatId}`);
+    }
   }, [activeChatId]);
 
   const toggleSidePanel = (value: boolean) => setIsSidePanelOpen(value);
@@ -84,11 +102,16 @@ export const PiChatBase = observer(() => {
           isSidePanelOpen={isSidePanelOpen}
           toggleSidePanel={toggleSidePanel}
           isFullScreen={isFullScreen}
+          models={models}
+          setActiveModel={setActiveModel}
+          isNewChat={activeChat?.dialogue?.length === 0}
         />
         <div className="flex flex-col h-full flex-1 align-middle justify-center max-w-[800px] md:m-auto w-full">
           <div className={cn("flex-1 my-auto flex flex-co h-full py-8 ", { "md:px-10": isFullScreen })}>
             {/* New conversation */}
-            {activeChat?.dialogue?.length === 0 && isNewChat && <NewConversation currentUser={currentUser} />}
+            {activeChat?.dialogue?.length === 0 && isNewChat && (
+              <NewConversation currentUser={currentUser} templates={templates} />
+            )}
 
             {/* Current conversation  */}
             {currentUser && activeChat?.dialogue?.length > 0 && !isLoading && (
@@ -119,6 +142,7 @@ export const PiChatBase = observer(() => {
           toggleSidePanel={toggleSidePanel}
           initPiChat={initPiChat}
           isMobile={isMobile}
+          isNewChat={activeChat?.dialogue?.length === 0}
         />
       )}
     </div>

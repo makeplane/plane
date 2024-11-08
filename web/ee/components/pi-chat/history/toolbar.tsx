@@ -10,11 +10,12 @@ import { useAppRouter } from "@/hooks/use-app-router";
 type Props = {
   initPiChat: (chat_id?: string) => void;
   searchQuery: string;
+  isNewChat: boolean;
   updateSearchQuery: (value: string) => void;
 };
 
 export const Toolbar: FC<Props> = observer((props) => {
-  const { initPiChat, searchQuery, updateSearchQuery } = props;
+  const { initPiChat, searchQuery, isNewChat, updateSearchQuery } = props;
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
   // states
@@ -39,14 +40,15 @@ export const Toolbar: FC<Props> = observer((props) => {
       {/* New */}
       <button
         className={cn(
-          "flex items-center justify-center gap-1 border border-pi-200 rounded-lg h-full w-8  bg-pi-100 text-custom-text-400  transition-[width] ease-linear overflow-hidden",
+          "flex items-center justify-center gap-1 border border-custom-border-300 rounded-lg h-full w-8  bg-pi-100 text-custom-text-400  transition-[width] ease-linear overflow-hidden",
           {
             "w-full justify-center": !isSearchOpen,
           }
         )}
         onClick={handleNewConversation}
+        disabled={isNewChat}
       >
-        <SquarePen className="flex-shrink-0 size-4 text-indigo-800" />
+        <SquarePen className="flex-shrink-0 size-4 text-custom-text-300" />
         {!isSearchOpen && (
           <span className="text-custom-text-300 text-xs text-nowrap font-medium">Start a new chat</span>
         )}

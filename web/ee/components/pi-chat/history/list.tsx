@@ -2,6 +2,7 @@
 
 import { useParams } from "next/navigation";
 // ui
+import { PiChatEditor } from "@plane/editor";
 import { ControlLink } from "@plane/ui";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
@@ -14,15 +15,21 @@ import { groupThreadsByDate } from "./helper";
 
 type TProps = {
   userThreads: TUserThreads[];
+  initPiChat: (chat_id?: string) => void;
 };
 const HistoryList = (props: TProps) => {
-  const { userThreads } = props;
+  const { userThreads, initPiChat } = props;
   // router
   const router = useAppRouter();
   const { workspaceSlug } = useParams();
 
   // group threads by date
   const groupedThreads: Record<string, TUserThreads[]> = groupThreadsByDate(userThreads);
+
+  const handleThreadClick = (chat_id: string) => {
+    router.push(`?chat_id=${chat_id}`);
+    initPiChat(chat_id);
+  };
 
   return (
     <div className="flex flex-col gap-4 space-y-2 overflow-hidden overflow-y-auto">
@@ -38,10 +45,14 @@ const HistoryList = (props: TProps) => {
                 <ControlLink
                   key={thread.chat_id}
                   href={`/${workspaceSlug}/pi-chat?chat_id=${thread.chat_id}`}
-                  onClick={() => router.push(`?chat_id=${thread.chat_id}`, {}, { showProgressBar: false })}
-                  className="text-sm font-medium text-custom-text-300 text-left truncate p-2 rounded-lg hover:text-custom-text-200 hover:bg-custom-background-90"
+                  onClick={() => handleThreadClick(thread.chat_id)}
+                  className="p-2 rounded-lg hover:text-custom-text-200 hover:bg-custom-background-90"
                 >
-                  {thread.title}
+                  <PiChatEditor
+                    editable={false}
+                    content={thread.title}
+                    editorClass="!font-medium !text-sm !text-custom-text-300 !text-left !truncate !pointer"
+                  />
                 </ControlLink>
               ))
             ) : (

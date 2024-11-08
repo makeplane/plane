@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { observer } from "mobx-react";
 import smoothScrollIntoView from "smooth-scroll-into-view-if-needed";
 import { cn } from "@plane/editor";
-import { TChatHistory } from "@/plane-web/types";
+import { TChatHistory, TDialogue } from "@/plane-web/types";
 import { AiMessage } from "./ai-message";
 import { MyMessage } from "./my-message";
 
@@ -37,18 +37,16 @@ export const Messages = observer((props: TProps) => {
   return (
     <div
       className={cn("flex flex-col gap-8 max-h-full h-full overflow-y-scroll w-[90%] mx-auto pb-[230px]", {
-        "md:w-[70%]": isFullScreen,
+        "md:w-[80%]": isFullScreen,
       })}
     >
-      {activeChat?.dialogue.map((message: string, index: number) => (
-        <div key={index}>
-          {index % 2 === 0 ? (
-            <MyMessage message={message} currentUser={currentUser} id={index.toString()} />
-          ) : (
-            <AiMessage message={message} id={index.toString()} />
-          )}
+      {activeChat?.dialogue.map((message: TDialogue, index: number) => (
+        <div key={index} className="space-y-4">
+          <MyMessage message={message.query} currentUser={currentUser} id={index.toString()} />
+          {message.answer && <AiMessage message={message.answer} id={index.toString()} />}
         </div>
       ))}
+
       {/* Typing */}
       {isPiTyping && <AiMessage isPiTyping={isPiTyping} id={""} />}
       {isUserTyping && <MyMessage isUserTyping={isUserTyping} currentUser={currentUser} id={""} />}

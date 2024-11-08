@@ -1,22 +1,17 @@
 import React from "react";
-import useSWR from "swr";
 import { BriefcaseIcon, FileText } from "lucide-react";
 import { ContrastIcon, DiceIcon, LayersIcon, Loader, PiChatLogo } from "@plane/ui";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
+import { TTemplate } from "@/plane-web/types";
 
 type TSystemPrompt = {
   userId: string | undefined;
+  templates: TTemplate[] | undefined;
 };
 const SystemPrompts = (props: TSystemPrompt) => {
-  const { userId } = props;
+  const { userId, templates } = props;
   // store hooks
-  const { getTemplates, startChatWithTemplate } = usePiChat();
-
-  const { data: templates } = useSWR("PI_TEMPLATES", () => getTemplates(), {
-    revalidateOnFocus: false,
-    revalidateIfStale: false,
-    errorRetryCount: 0,
-  });
+  const { startChatWithTemplate } = usePiChat();
 
   const getIcon = (type: string) => {
     switch (type) {
@@ -43,7 +38,7 @@ const SystemPrompts = (props: TSystemPrompt) => {
           return (
             <div
               key={index}
-              className="bg-custom-background-100 rounded-lg flex flex-col w-[250px] p-4 border-none shadow-custom cursor-pointer"
+              className="bg-custom-background-100 rounded-lg flex flex-col w-[250px] p-4 border-none cursor-pointer"
               onClick={() => startChatWithTemplate(prompt, userId)}
             >
               <span>

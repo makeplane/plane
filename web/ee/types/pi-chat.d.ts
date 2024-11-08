@@ -15,6 +15,7 @@ export type TQuery = {
   workspace_in_context: boolean;
   workspace_id?: string;
   project_id?: string;
+  llm?: string;
 };
 
 export type TSearchQuery = {
@@ -38,9 +39,16 @@ export type TTemplate = {
   type;
 };
 
+export type TDialogue = {
+  query: string;
+  answer?: string;
+  llm?: string;
+  feedback?: string;
+};
+
 export type TChatHistory = {
   chat_id: string;
-  dialogue: string[];
+  dialogue: TDialogue[];
   title: string;
 };
 
@@ -49,4 +57,12 @@ export type TUserThreads = {
   dialogue: string[];
   title: string;
   last_modified: string;
+};
+
+export type TAiModels = {
+  id: string;
+  name: string;
+  description: string;
+  type: string;
+  is_default: boolean;
 };

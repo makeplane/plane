@@ -181,7 +181,7 @@ const MentionList = forwardRef((props: MentionListProps, ref) => {
     scrollIntoViewHelper(`${selectedSection}-${selectedIndex}`);
   }, [selectedSection, selectedIndex]);
   return (
-    <div className="w-[270px] border rounded p-2 divide-y-[1px] bg-custom-background-100 max-h-full overflow-y-scroll">
+    <div className="w-[270px] border border-custom-border-300 rounded p-2 divide-y-[1px] divide-custom-border-300 bg-custom-background-100 max-h-full overflow-y-scroll">
       {suggestionTypes.map((type, index) => (
         <Suggestions
           key={index}

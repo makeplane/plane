@@ -1,19 +1,22 @@
-import Image from "next/image";
-import { Copy, ThumbsUp, ThumbsDown, Repeat2 } from "lucide-react";
-import { cn } from "@plane/editor";
+import { observer } from "mobx-react";
+import dynamic from "next/dynamic";
+import { Copy, ThumbsUp, ThumbsDown } from "lucide-react";
 import { Loader, PiChatLogo, setToast, TOAST_TYPE } from "@plane/ui";
 import { copyTextToClipboard } from "@/helpers/string.helper";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { EFeedback } from "@/plane-web/types";
-// import PiChatLogo from "@/public/logos/pi.png";
-import Typing from "./typing";
+import { Thinking } from "./thinking";
+const Markdown = dynamic(() => import("markdown-to-jsx"), {
+  loading: () => <Thinking />,
+});
+
 type TProps = {
   id: string;
   message?: string;
   isPiTyping?: boolean;
   isLoading?: boolean;
 };
-export const AiMessage = (props: TProps) => {
+export const AiMessage = observer((props: TProps) => {
   const { message = "", isPiTyping = false, id, isLoading = false } = props;
   const { sendFeedback } = usePiChat();
 
@@ -45,20 +48,15 @@ export const AiMessage = (props: TProps) => {
   return (
     <div className="flex gap-4" id={id}>
       {/* Avatar */}
-      <div className="bg-gradient-to-br from-pi-100 to-pi-200 rounded-full h-9 w-9 flex">
-        <PiChatLogo className="size-6 text-pi-700 fill-current m-auto align-center" />
+      <div className="bg-pi-700 rounded-full h-9 w-9 flex">
+        <PiChatLogo className="size-6 text-white fill-current m-auto align-center" />
       </div>
-      <div className="flex flex-col w-fit">
+      <div className="flex flex-col w-fit text-base break-all">
         {/* Message */}
-        {!isPiTyping && !isLoading && <div className={cn("text-base", {})}>{message}</div>}
+        {!isPiTyping && !isLoading && <Markdown class>{message}</Markdown>}
 
         {/* Typing */}
-        {isPiTyping && (
-          <div className="flex">
-            <span className="text-base">is thinking &nbsp;</span>
-            <Typing />
-          </div>
-        )}
+        {isPiTyping && <Thinking />}
 
         {isLoading && (
           <Loader>
@@ -89,4 +87,4 @@ export const AiMessage = (props: TProps) => {
       </div>
     </div>
   );
-};
+});

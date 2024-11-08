@@ -12,11 +12,12 @@ type TProps = {
   userThreads: TUserThreads[] | undefined;
   isSidePanelOpen: boolean;
   isMobile?: boolean;
+  isNewChat: boolean;
   toggleSidePanel: (value: boolean) => void;
   initPiChat: (chat_id?: string) => void;
 };
 export const History = (props: TProps) => {
-  const { userThreads, isSidePanelOpen, toggleSidePanel, initPiChat, isMobile = false } = props;
+  const { userThreads, isSidePanelOpen, isNewChat, toggleSidePanel, initPiChat, isMobile = false } = props;
   // states
   const [searchQuery, setSearchQuery] = useState("");
   // filter user threads
@@ -47,9 +48,14 @@ export const History = (props: TProps) => {
       </div>
 
       {/* Toolbar */}
-      <Toolbar initPiChat={initPiChat} searchQuery={searchQuery} updateSearchQuery={updateSearchQuery} />
+      <Toolbar
+        initPiChat={initPiChat}
+        searchQuery={searchQuery}
+        updateSearchQuery={updateSearchQuery}
+        isNewChat={isNewChat}
+      />
       {/* History */}
-      <HistoryList userThreads={filteredUserThread ?? []} />
+      <HistoryList userThreads={filteredUserThread ?? []} initPiChat={initPiChat} />
     </Card>
   );
 };

@@ -21,7 +21,7 @@ export const MyMessage = observer((props: TProps) => {
       {!isLoading && (
         <Card className={cn("px-4 py-3 pr-10 w-fit text-base rounded-lg shadow-sm bg-custom-background-100", {})}>
           {/* Message */}
-          {!isUserTyping && <PiChatEditor editable={false} content={message} />}
+          {!isUserTyping && <PiChatEditor editable={false} content={message} editorClass="!break-all" />}
           {/* Typing */}
           {isUserTyping && (
             <div className="flex gap-2">

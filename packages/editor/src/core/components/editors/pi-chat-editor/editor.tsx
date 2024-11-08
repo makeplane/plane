@@ -42,6 +42,7 @@ type PiChatEditorProps = {
   handleSubmit?: (e?: any) => void;
   editable?: boolean;
   content?: string;
+  editorClass?: string;
 };
 
 interface CustomMentionOptions extends MentionOptions {
@@ -49,7 +50,14 @@ interface CustomMentionOptions extends MentionOptions {
   readonly?: boolean;
 }
 export const PiChatEditor = (props: PiChatEditorProps) => {
-  const { setEditorCommand, mentionSuggestions, editable = true, content = "<p></p>", handleSubmit } = props;
+  const {
+    setEditorCommand,
+    mentionSuggestions,
+    editable = true,
+    content = "<p></p>",
+    handleSubmit,
+    editorClass = "",
+  } = props;
   const editor = useEditor({
     editable,
     extensions: [
@@ -168,7 +176,7 @@ export const PiChatEditor = (props: PiChatEditorProps) => {
       }),
       Paragraph.configure({
         HTMLAttributes: {
-          class: "text-[14px] leading-5 font-normal",
+          class: `text-[14px] leading-5 font-normal ${editorClass}`,
         },
       }),
       Extension.create({

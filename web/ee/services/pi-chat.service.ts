@@ -2,7 +2,7 @@
 import { PI_BASE_URL } from "@/helpers/common.helper";
 // services
 import { APIService } from "@/services/api.service";
-import { TFeedback, TQuery, TSearchQuery, TTemplate, TChatHistory, TUserThreads } from "../types";
+import { TFeedback, TQuery, TSearchQuery, TTemplate, TChatHistory, TUserThreads, TAiModels } from "../types";
 
 type TTemplateResponse = {
   templates: TTemplate[];
@@ -18,6 +18,9 @@ type TTitleResponse = {
 };
 type TPlaceholderResponse = {
   placeholder: string;
+};
+type TAiModelsResponse = {
+  models: TAiModels[];
 };
 export class PiChatService extends APIService {
   constructor() {
@@ -82,7 +85,7 @@ export class PiChatService extends APIService {
 
   // get chat by id
   async getChatById(chatId: string): Promise<TChatHistoryResponse> {
-    return this.post(`/api/v1/chat/get-chat-history/`, { chat_id: chatId })
+    return this.post(`/api/v1/chat/get-chat-history-object/`, { chat_id: chatId })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -92,6 +95,15 @@ export class PiChatService extends APIService {
   // get user threads
   async getUserThreads(userId: string): Promise<TUserThreadsResponse> {
     return this.post(`/api/v1/chat/get-user-threads/`, { user_id: userId })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // get models
+  async getAiModels(): Promise<TAiModelsResponse> {
+    return this.get(`/api/v1/chat/get-models/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
