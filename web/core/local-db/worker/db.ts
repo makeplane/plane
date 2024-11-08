@@ -37,7 +37,7 @@ export class DBClass {
       const vfs = await MyVFS.create("plane", m);
       this.sqlite3.vfs_register(vfs, true);
       // Fallback in rare cases where the database is not initialized in time
-      const p = new Promise((resolve) => setTimeout(() => resolve(false), 5000));
+      const p = new Promise((resolve) => setTimeout(() => resolve(false), 2000));
       const dbPromise = this.sqlite3.open_v2(
         `${dbName}.sqlite3`,
         this.sqlite3.OPEN_READWRITE | this.sqlite3.OPEN_CREATE,
