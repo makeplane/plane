@@ -52,9 +52,6 @@ class Page(BaseModel):
     projects = models.ManyToManyField(
         "db.Project", related_name="pages", through="db.ProjectPage"
     )
-    teams = models.ManyToManyField(
-        "db.Team", related_name="pages", through="db.TeamPage"
-    )
 
     class Meta:
         verbose_name = "Page"
@@ -168,33 +165,6 @@ class ProjectPage(BaseModel):
 
     def __str__(self):
         return f"{self.project.name} {self.page.name}"
-
-
-class TeamPage(BaseModel):
-    team = models.ForeignKey(
-        "db.Team", on_delete=models.CASCADE, related_name="team_pages"
-    )
-    page = models.ForeignKey(
-        "db.Page", on_delete=models.CASCADE, related_name="team_pages"
-    )
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="team_pages"
-    )
-
-    class Meta:
-        unique_together = ["team", "page", "deleted_at"]
-        constraints = [
-            models.UniqueConstraint(
-                fields=["team", "page"],
-                condition=models.Q(deleted_at__isnull=True),
-                name="team_page_unique_team_page_when_deleted_at_null",
-            )
-        ]
-        verbose_name = "Team Page"
-        verbose_name_plural = "Team Pages"
-        db_table = "team_pages"
-        ordering = ("-created_at",)
-
 
 class PageVersion(BaseModel):
     workspace = models.ForeignKey(
