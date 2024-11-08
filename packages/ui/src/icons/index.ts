@@ -32,3 +32,4 @@ export * from "./planned-icon";
 export * from "./in-progress-icon";
 export * from "./done-icon";
 export * from "./pending-icon";
+export * from "./pi-chat";
