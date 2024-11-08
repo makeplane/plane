@@ -171,7 +171,7 @@ class EntityAssetEndpoint(BaseAPIView):
     def patch(self, request, anchor, pk):
         # Get the deploy board
         deploy_board = DeployBoard.objects.filter(
-            anchor=anchor, entity_name="project"
+            anchor=anchor
         ).first()
         # Check if the project is published
         if not deploy_board:
