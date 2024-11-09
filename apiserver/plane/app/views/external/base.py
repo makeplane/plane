@@ -80,7 +80,7 @@ class GPTIntegrationEndpoint(BaseAPIView):
         text, error = get_gpt_response(task, request.data.get("prompt", False), OPENAI_API_KEY, GPT_ENGINE)
         if error:
             return Response(
-                {"error": f"LLM API error: {error}"},
+                {"error": "An internal error has occurred."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
@@ -122,7 +122,7 @@ class WorkspaceGPTIntegrationEndpoint(BaseAPIView):
         text, error = get_gpt_response(task, request.data.get("prompt", False), OPENAI_API_KEY, GPT_ENGINE)
         if error:
             return Response(
-                {"error": f"LLM API error: {error}"},
+                {"error": "An internal error has occurred."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
