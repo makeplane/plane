@@ -31,20 +31,17 @@ export const ModuleGanttSidebar: React.FC<Props> = (props) => {
   return (
     <div className="h-full">
       {blockIds ? (
-        blockIds.map((blockId, index) => {
-          const block = getBlockById(blockId);
-          return (
-            <GanttDnDHOC
-              key={block.id}
-              id={block.id}
-              isLastChild={index === blockIds.length - 1}
-              isDragEnabled={enableReorder}
-              onDrop={handleOnDrop}
-            >
-              {(isDragging: boolean) => <ModulesSidebarBlock block={block} isDragging={isDragging} />}
-            </GanttDnDHOC>
-          );
-        })
+        blockIds.map((blockId, index) => (
+          <GanttDnDHOC
+            key={blockId}
+            id={blockId}
+            isLastChild={index === blockIds.length - 1}
+            isDragEnabled={enableReorder}
+            onDrop={handleOnDrop}
+          >
+            {(isDragging: boolean) => <ModulesSidebarBlock blockId={blockId} isDragging={isDragging} />}
+          </GanttDnDHOC>
+        ))
       ) : (
         <Loader className="space-y-3 pr-2">
           <Loader.Item height="34px" />

@@ -1,10 +1,5 @@
+import { TIssueRelationTypes } from "@/plane-web/types";
 import { TIssue } from "./issues";
-
-export type TIssueRelationTypes =
-  | "blocking"
-  | "blocked_by"
-  | "duplicate"
-  | "relates_to";
 
 export type TIssueRelation = Record<TIssueRelationTypes, TIssue[]>;
 

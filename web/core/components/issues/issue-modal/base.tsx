@@ -49,6 +49,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
   const [description, setDescription] = useState<string | undefined>(undefined);
   const [uploadedAssetIds, setUploadedAssetIds] = useState<string[]>([]);
+  const [isDuplicateModalOpen, setIsDuplicateModalOpen] = useState(false);
   // store hooks
   const { captureIssueEvent } = useEventTracker();
   const { workspaceSlug, projectId: routerProjectId, cycleId, moduleId } = useParams();
@@ -139,6 +140,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     setActiveProjectId(null);
     setChangesMade(null);
     onClose();
+    handleDuplicateIssueModal(false);
   };
 
   const handleCreateIssue = async (
@@ -325,6 +327,8 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
 
   const handleUpdateUploadedAssetIds = (assetId: string) => setUploadedAssetIds((prev) => [...prev, assetId]);
 
+  const handleDuplicateIssueModal = (value: boolean) => setIsDuplicateModalOpen(value);
+
   // don't open the modal if there are no projects
   if (!projectIdsWithCreatePermissions || projectIdsWithCreatePermissions.length === 0 || !activeProjectId) return null;
 
@@ -333,7 +337,8 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       isOpen={isOpen}
       handleClose={() => handleClose(true)}
       position={EModalPosition.TOP}
-      width={EModalWidth.XXXXL}
+      width={isDuplicateModalOpen ? EModalWidth.VIXL : EModalWidth.XXXXL}
+      className="!bg-transparent rounded-lg shadow-none transition-[width] ease-linear"
     >
       {withDraftIssueWrapper ? (
         <DraftIssueLayout
@@ -354,6 +359,8 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
           onCreateMoreToggleChange={handleCreateMoreToggleChange}
           isDraft={isDraft}
           moveToIssue={moveToIssue}
+          isDuplicateModalOpen={isDuplicateModalOpen}
+          handleDuplicateIssueModal={handleDuplicateIssueModal}
         />
       ) : (
         <IssueFormRoot
@@ -374,6 +381,8 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
           moveToIssue={moveToIssue}
           modalTitle={modalTitle}
           primaryButtonText={primaryButtonText}
+          isDuplicateModalOpen={isDuplicateModalOpen}
+          handleDuplicateIssueModal={handleDuplicateIssueModal}
         />
       )}
     </ModalCore>

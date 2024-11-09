@@ -24,8 +24,8 @@ interface SQLiteInstance {
 export class DBClass {
   private instance: SQLiteInstance = {} as SQLiteInstance;
   private sqlite3: any;
-  private tp: Promise<any> | null = null;
-  private tpResolver: any;
+  private tp: Promise<any>[] = [];
+  private tpResolver: any = [];
   async init(dbName: string) {
     if (!dbName || typeof dbName !== "string") {
       throw new Error("Invalid database name");
@@ -36,7 +36,20 @@ export class DBClass {
       this.sqlite3 = SQLite.Factory(m);
       const vfs = await MyVFS.create("plane", m);
       this.sqlite3.vfs_register(vfs, true);
-      const db = await this.sqlite3.open_v2(`${dbName}.sqlite3`);
+      // Fallback in rare cases where the database is not initialized in time
+      const p = new Promise((resolve) => setTimeout(() => resolve(false), 2000));
+      const dbPromise = this.sqlite3.open_v2(
+        `${dbName}.sqlite3`,
+        this.sqlite3.OPEN_READWRITE | this.sqlite3.OPEN_CREATE,
+        "plane"
+      );
+
+      const db = await Promise.any([dbPromise, p]);
+
+      if (!db) {
+        throw new Error("Failed to initialize in time");
+      }
+
       this.instance.db = db;
       this.instance.exec = async (sql: string) => {
         const rows: any[] = [];
@@ -53,12 +66,25 @@ export class DBClass {
   }
 
   runQuery(sql: string) {
-    return this.instance.exec(sql);
+    return this.instance?.exec?.(sql);
   }
 
   async exec(props: string | TQueryProps) {
-    if (this.tp && props === "BEGIN;") {
-      await this.tp;
+    // @todo this will fail if the transaction is started any other way
+    // eg:  BEGIN, OR BEGIN TRANSACTION
+    if (props === "BEGIN;") {
+      let promiseToAwait;
+      if (this.tp.length > 0) {
+        promiseToAwait = this.tp.shift();
+      }
+      const p = new Promise((resolve, reject) => {
+        this.tpResolver.push({ resolve, reject });
+      });
+      this.tp.push(p);
+
+      if (promiseToAwait) {
+        await promiseToAwait;
+      }
     }
     let sql: string, bind: any[];
     if (typeof props === "string") {
@@ -84,19 +110,15 @@ export class DBClass {
       }
     }
 
-    if (sql === "BEGIN;") {
-      this.tp = new Promise((resolve, reject) => {
-        this.tpResolver = { resolve, reject };
-      });
-    }
-
     if (sql === "COMMIT;" && this.tp) {
-      await this.instance.exec(sql);
-      this.tpResolver.resolve();
-      this.tp = null;
+      await this.instance?.exec?.(sql);
+      if (this.tp.length > 0) {
+        const { resolve } = this.tpResolver.shift();
+        resolve();
+      }
       return;
     }
-    return await this.instance.exec(sql);
+    return await this.instance?.exec?.(sql);
   }
   async close() {
     try {

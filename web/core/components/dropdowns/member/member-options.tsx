@@ -26,7 +26,7 @@ interface Props {
   isOpen: boolean;
 }
 
-export const MemberOptions = observer((props: Props) => {
+export const MemberOptions: React.FC<Props> = observer((props: Props) => {
   const { projectId, referenceElement, placement, isOpen, optionsClassName = "" } = props;
   // states
   const [query, setQuery] = useState("");

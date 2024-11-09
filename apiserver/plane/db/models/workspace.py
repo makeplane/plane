@@ -1,3 +1,6 @@
+# Python imports
+import pytz
+
 # Django imports
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -117,6 +120,8 @@ def slug_validator(value):
 
 
 class Workspace(BaseModel):
+    TIMEZONE_CHOICES = tuple(zip(pytz.all_timezones, pytz.all_timezones))
+
     name = models.CharField(max_length=80, verbose_name="Workspace Name")
     logo = models.TextField(verbose_name="Logo", blank=True, null=True)
     logo_asset = models.ForeignKey(
@@ -140,6 +145,9 @@ class Workspace(BaseModel):
         ],
     )
     organization_size = models.CharField(max_length=20, blank=True, null=True)
+    timezone = models.CharField(
+        max_length=255, default="UTC", choices=TIMEZONE_CHOICES
+    )
 
     def __str__(self):
         """Return name of the Workspace"""

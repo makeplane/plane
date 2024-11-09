@@ -53,9 +53,9 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
         mentioned = request.GET.get("mentioned", False)
         q_filters = Q()
 
-        inbox_issue = Issue.objects.filter(
+        intake_issue = Issue.objects.filter(
             pk=OuterRef("entity_identifier"),
-            issue_inbox__status__in=[0, 2, -2],
+            issue_intake__status__in=[0, 2, -2],
             workspace__slug=self.kwargs.get("slug"),
         )
 
@@ -64,7 +64,8 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
                 workspace__slug=slug, receiver_id=request.user.id
             )
             .filter(entity_name="issue")
-            .annotate(is_inbox_issue=Exists(inbox_issue))
+            .annotate(is_inbox_issue=Exists(intake_issue))
+            .annotate(is_intake_issue=Exists(intake_issue))
             .annotate(
                 is_mentioned_notification=Case(
                     When(sender__icontains="mentioned", then=True),

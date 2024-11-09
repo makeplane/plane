@@ -1,12 +1,12 @@
 // styles
 // import "./styles/tailwind.css";
 import "prosemirror-flat-list/style.css";
-import "./styles/tailwind.css";
-import "src/styles/variables.css";
-import "src/styles/editor.css";
-import "src/styles/table.css";
-import "src/styles/github-dark.css";
-import "src/styles/drag-drop.css";
+;
+import "./styles/variables.css";
+import "./styles/editor.css";
+import "./styles/table.css";
+import "./styles/github-dark.css";
+import "./styles/drag-drop.css";
 
 // editors
 export {

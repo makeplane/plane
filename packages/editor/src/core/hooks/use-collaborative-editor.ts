@@ -14,6 +14,7 @@ import { TCollaborativeEditorProps } from "@/types";
 
 export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
   const {
+    onTransaction,
     disabledExtensions,
     editorClassName,
     editorProps = {},
@@ -34,28 +35,29 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
   const [hasServerConnectionFailed, setHasServerConnectionFailed] = useState(false);
   const [hasServerSynced, setHasServerSynced] = useState(false);
   // initialize Hocuspocus provider
-  const provider = useMemo(() => {
-    console.log("ran", id, realtimeConfig, serverHandler, user.id);
-    return new HocuspocusProvider({
-      name: id,
-      parameters: realtimeConfig.queryParams,
-      // using user id as a token to verify the user on the server
-      token: user.id,
-      url: realtimeConfig.url,
-      onAuthenticationFailed: () => {
-        serverHandler?.onServerError?.();
-        setHasServerConnectionFailed(true);
-      },
-      onConnect: () => serverHandler?.onConnect?.(),
-      onClose: (data) => {
-        if (data.event.code === 1006) {
+  const provider = useMemo(
+    () =>
+      new HocuspocusProvider({
+        name: id,
+        parameters: realtimeConfig.queryParams,
+        // using user id as a token to verify the user on the server
+        token: JSON.stringify(user),
+        url: realtimeConfig.url,
+        onAuthenticationFailed: () => {
           serverHandler?.onServerError?.();
           setHasServerConnectionFailed(true);
-        }
-      },
-      onSynced: () => setHasServerSynced(true),
-    });
-  }, [id, realtimeConfig, serverHandler, user.id]);
+        },
+        onConnect: () => serverHandler?.onConnect?.(),
+        onClose: (data) => {
+          if (data.event.code === 1006) {
+            serverHandler?.onServerError?.();
+            setHasServerConnectionFailed(true);
+          }
+        },
+        onSynced: () => setHasServerSynced(true),
+      }),
+    [id, realtimeConfig, serverHandler, user]
+  );
 
   // destroy and disconnect connection on unmount
   useEffect(
@@ -77,6 +79,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
 
   const editor = useEditor({
     id,
+    onTransaction,
     editorProps,
     editorClassName,
     enableHistory: false,

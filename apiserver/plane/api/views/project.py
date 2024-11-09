@@ -18,7 +18,7 @@ from plane.app.permissions import ProjectBasePermission
 # Module imports
 from plane.db.models import (
     Cycle,
-    Inbox,
+    Intake,
     IssueUserProperty,
     Module,
     Project,
@@ -285,6 +285,11 @@ class ProjectAPIEndpoint(BaseAPIView):
             current_instance = json.dumps(
                 ProjectSerializer(project).data, cls=DjangoJSONEncoder
             )
+
+            intake_view = request.data.get(
+                "inbox_view", request.data.get("intake_view", False)
+            )
+
             if project.archived_at:
                 return Response(
                     {"error": "Archived project cannot be updated"},
@@ -293,21 +298,24 @@ class ProjectAPIEndpoint(BaseAPIView):
 
             serializer = ProjectSerializer(
                 project,
-                data={**request.data},
+                data={
+                    **request.data,
+                    "intake_view": intake_view,
+                },
                 context={"workspace_id": workspace.id},
                 partial=True,
             )
 
             if serializer.is_valid():
                 serializer.save()
-                if serializer.data["inbox_view"]:
-                    inbox = Inbox.objects.filter(
+                if serializer.data["intake_view"]:
+                    intake = Intake.objects.filter(
                         project=project,
                         is_default=True,
                     ).first()
-                    if not inbox:
-                        Inbox.objects.create(
-                            name=f"{project.name} Inbox",
+                    if not intake:
+                        Intake.objects.create(
+                            name=f"{project.name} Intake",
                             project=project,
                             is_default=True,
                         )
@@ -316,7 +324,7 @@ class ProjectAPIEndpoint(BaseAPIView):
                     State.objects.get_or_create(
                         name="Triage",
                         group="triage",
-                        description="Default state for managing all Inbox Issues",
+                        description="Default state for managing all Intake Issues",
                         project_id=pk,
                         color="#ff7700",
                         is_triage=True,

@@ -107,6 +107,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     # my_issues_prop = models.JSONField(null=True)
 
     is_bot = models.BooleanField(default=False)
+    bot_type = models.CharField(
+        max_length=30,
+        verbose_name="Bot Type",
+        blank=True,
+        null=True,
+    )
 
     # timezone
     USER_TIMEZONE_CHOICES = tuple(zip(pytz.all_timezones, pytz.all_timezones))
@@ -209,6 +215,12 @@ class Profile(TimeAuditModel):
 
 
 class Account(TimeAuditModel):
+    PROVIDER_CHOICES = (
+        ("google", "Google"),
+        ("github", "Github"),
+        ("gitlab", "GitLab"),
+    )
+
     id = models.UUIDField(
         default=uuid.uuid4,
         unique=True,
@@ -221,11 +233,7 @@ class Account(TimeAuditModel):
     )
     provider_account_id = models.CharField(max_length=255)
     provider = models.CharField(
-        choices=(
-            ("google", "Google"),
-            ("github", "Github"),
-            ("gitlab", "GitLab"),
-        ),
+        choices=PROVIDER_CHOICES,
     )
     access_token = models.TextField()
     access_token_expired_at = models.DateTimeField(null=True)

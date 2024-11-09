@@ -19,6 +19,44 @@ export const logError = (e: any) => {
 };
 export const logInfo = console.info;
 
+export const addIssueToPersistanceLayer = async (issue: TIssue) => {
+  try {
+    const issuePartial = pick({ ...JSON.parse(JSON.stringify(issue)) }, [
+      "id",
+      "name",
+      "state_id",
+      "sort_order",
+      "completed_at",
+      "estimate_point",
+      "priority",
+      "start_date",
+      "target_date",
+      "sequence_id",
+      "project_id",
+      "parent_id",
+      "created_at",
+      "updated_at",
+      "created_by",
+      "updated_by",
+      "is_draft",
+      "archived_at",
+      "state__group",
+      "cycle_id",
+      "link_count",
+      "attachment_count",
+      "sub_issues_count",
+      "assignee_ids",
+      "label_ids",
+      "module_ids",
+      "type_id",
+      "description_html",
+    ]);
+    await updateIssue({ ...issuePartial, is_local_update: 1 });
+  } catch (e) {
+    logError("Error while adding issue to db");
+  }
+};
+
 export const updatePersistentLayer = async (issueIds: string | string[]) => {
   if (typeof issueIds === "string") {
     issueIds = [issueIds];
@@ -28,38 +66,7 @@ export const updatePersistentLayer = async (issueIds: string | string[]) => {
     const issue = rootStore.issue.issues.getIssueById(issueId);
 
     if (issue) {
-      // JSON.parse(JSON.stringify(issue)) is used to remove the mobx observables
-      const issuePartial = pick({ ...dbIssue, ...JSON.parse(JSON.stringify(issue)) }, [
-        "id",
-        "name",
-        "state_id",
-        "sort_order",
-        "completed_at",
-        "estimate_point",
-        "priority",
-        "start_date",
-        "target_date",
-        "sequence_id",
-        "project_id",
-        "parent_id",
-        "created_at",
-        "updated_at",
-        "created_by",
-        "updated_by",
-        "is_draft",
-        "archived_at",
-        "state__group",
-        "cycle_id",
-        "link_count",
-        "attachment_count",
-        "sub_issues_count",
-        "assignee_ids",
-        "label_ids",
-        "module_ids",
-        "type_id",
-        "description_html",
-      ]);
-      updateIssue({ ...issuePartial, is_local_update: 1 });
+      addIssueToPersistanceLayer(issue);
     }
   });
 };
