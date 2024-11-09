@@ -38,24 +38,15 @@ export const useIssueDescription = (args: TArgs) => {
     if (descriptionBinary) return;
     if (savedDescriptionBinary) {
       const savedDescriptionBuffer = convertBase64StringToBinaryData(savedDescriptionBinary);
-      console.log("Saved", savedDescriptionBuffer);
       const decodedSavedDescription = savedDescriptionBuffer
         ? new Uint8Array(savedDescriptionBuffer)
         : new Uint8Array();
       setDescriptionBinary(decodedSavedDescription);
     } else {
-      console.log("HTML");
       const decodedDescriptionHTML = getBinaryDataFromRichTextEditorHTMLString(descriptionHTML ?? "<p></p>");
       setDescriptionBinary(decodedDescriptionHTML);
     }
   }, [descriptionBinary, descriptionHTML, savedDescriptionBinary]);
-
-  // useEffect(() => {
-  //   console.log("Setting to null");
-  //   setDescriptionBinary(null);
-  // }, [id]);
-
-  console.log("descriptionBinary", descriptionBinary);
 
   return {
     descriptionBinary,

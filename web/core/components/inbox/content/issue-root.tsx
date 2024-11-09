@@ -77,11 +77,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
 
   const issueOperations: TIssueOperations = useMemo(
     () => ({
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars, arrow-body-style
-      fetch: async (_workspaceSlug: string, _projectId: string, _issueId: string) => {
-        return;
-      },
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars, arrow-body-style
+      fetch: async () => {},
       remove: async (_workspaceSlug: string, _projectId: string, _issueId: string) => {
         try {
           await removeIssue(workspaceSlug, projectId, _issueId);
@@ -121,7 +117,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
             },
             path: pathname,
           });
-        } catch (error) {
+        } catch {
           setToast({
             title: "Issue update failed",
             type: TOAST_TYPE.ERROR,
@@ -156,7 +152,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
         }
       },
     }),
-    [captureIssueEvent, inboxIssue, pathname]
+    [archiveIssue, captureIssueEvent, inboxIssue, pathname, projectId, removeIssue, workspaceSlug]
   );
 
   if (!issue?.project_id || !issue?.id) return <></>;
@@ -186,31 +182,32 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           containerClassName="-ml-3"
         />
 
-        <IssueDescriptionInput
-          key={issue.id}
-          containerClassName="-ml-3 border-none"
-          descriptionHTML={issue.description_html ?? "<p></p>"}
-          disabled={!isEditable}
-          fetchDescription={async () => {
-            if (!workspaceSlug || !projectId || !issue.id) {
-              throw new Error("Required fields missing while fetching binary description");
-            }
-            return await inboxIssueService.fetchDescriptionBinary(workspaceSlug, projectId, issue.id);
-          }}
-          updateDescription={async (data) => {
-            if (!workspaceSlug || !projectId || !issue.id) {
-              throw new Error("Required fields missing while updating binary description");
-            }
-            return await inboxIssueService.updateDescriptionBinary(workspaceSlug, projectId, issue.id, {
-              description_binary: data,
-            });
-          }}
-          issueId={issue.id}
-          issueOperations={issueOperations}
-          projectId={issue.project_id}
-          setIsSubmitting={(value) => setIsSubmitting(value)}
-          workspaceSlug={workspaceSlug}
-        />
+        {issue.description_binary !== undefined && (
+          <IssueDescriptionInput
+            key={issue.id}
+            containerClassName="-ml-3 border-none"
+            descriptionBinary={issue.description_binary}
+            descriptionHTML={issue.description_html ?? "<p></p>"}
+            disabled={!isEditable}
+            fetchDescription={async () => {
+              if (!workspaceSlug || !projectId || !issue.id) {
+                throw new Error("Required fields missing while fetching binary description");
+              }
+              return await inboxIssueService.fetchDescriptionBinary(workspaceSlug, projectId, issue.id);
+            }}
+            updateDescription={async (data) => {
+              if (!workspaceSlug || !projectId || !issue.id) {
+                throw new Error("Required fields missing while updating binary description");
+              }
+              return await inboxIssue.updateIssueDescription(data);
+            }}
+            issueId={issue.id}
+            issueOperations={issueOperations}
+            projectId={issue.project_id}
+            setIsSubmitting={(value) => setIsSubmitting(value)}
+            workspaceSlug={workspaceSlug}
+          />
+        )}
 
         {currentUser && (
           <IssueReaction
