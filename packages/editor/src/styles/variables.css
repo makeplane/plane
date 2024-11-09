@@ -46,8 +46,8 @@
     --font-size-h5: 1.125rem;
     --font-size-h6: 1rem;
     --font-size-regular: 1rem;
+    --font-size-code: 0.85rem;
     --font-size-list: var(--font-size-regular);
-    --font-size-code: var(--font-size-regular);
 
     --line-height-h1: 2.25rem;
     --line-height-h2: 2rem;
@@ -56,8 +56,8 @@
     --line-height-h5: 1.5rem;
     --line-height-h6: 1.5rem;
     --line-height-regular: 1.5rem;
+    --line-height-code: 1.5rem;
     --line-height-list: var(--line-height-regular);
-    --line-height-code: var(--line-height-regular);
   }
   &.small-font {
     --font-size-h1: 1.4rem;
@@ -67,8 +67,8 @@
     --font-size-h5: 0.9rem;
     --font-size-h6: 0.8rem;
     --font-size-regular: 0.8rem;
+    --font-size-code: 0.68rem;
     --font-size-list: var(--font-size-regular);
-    --font-size-code: var(--font-size-regular);
 
     --line-height-h1: 1.8rem;
     --line-height-h2: 1.6rem;
@@ -77,8 +77,8 @@
     --line-height-h5: 1.2rem;
     --line-height-h6: 1.2rem;
     --line-height-regular: 1.2rem;
+    --line-height-code: 1.2rem;
     --line-height-list: var(--line-height-regular);
-    --line-height-code: var(--line-height-regular);
   }
   /* end font sizes and line heights */
 
