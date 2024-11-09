@@ -5,7 +5,6 @@ import os
 import litellm
 import requests
 
-from litellm import completion
 from rest_framework import status
 from rest_framework.response import Response
 
@@ -19,57 +18,79 @@ from plane.license.utils.instance_value import get_configuration_value
 from ..base import BaseAPIView
 
 
+def get_gpt_config():
+    """Helper to get GPT configuration values"""
+    OPENAI_API_KEY, GPT_ENGINE = get_configuration_value([
+        {
+            "key": "OPENAI_API_KEY",
+            "default": os.environ.get("OPENAI_API_KEY", None),
+        },
+        {
+            "key": "GPT_ENGINE", 
+            "default": os.environ.get("GPT_ENGINE", "gpt-4o-mini"),
+        },
+    ])
+    
+    if not OPENAI_API_KEY or not GPT_ENGINE:
+        return None, None
+    return OPENAI_API_KEY, GPT_ENGINE
+
+
+def get_gpt_response(task, prompt, api_key, engine):
+    """Helper to get GPT completion response"""
+    final_text = task + "\n" + prompt
+    try:
+        response = litellm.completion(
+            model=engine,
+            messages=[{"role": "user", "content": final_text}],
+            api_key=api_key,
+        )
+        text = response.choices[0].message.content.strip()
+        return text, None
+    except Exception as e:
+        return None, str(e)
+
+
 class GPTIntegrationEndpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id):
-        OPENAI_API_KEY, GPT_ENGINE = get_configuration_value(
-            [
-                {
-                    "key": "OPENAI_API_KEY",
-                    "default": os.environ.get("OPENAI_API_KEY", None),
-                },
-                {
-                    "key": "GPT_ENGINE",
-                    "default": os.environ.get("GPT_ENGINE", "gpt-4o-mini"),
-                },
-            ]
-        )
+        OPENAI_API_KEY, GPT_ENGINE = get_gpt_config()
+        
+        supported_models = ["gpt-4o-mini", "gpt-4o"]
+        if GPT_ENGINE not in supported_models:
+            return Response(
+                {"error": f"Unsupported model. Please use one of: {', '.join(supported_models)}"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-        # Get the configuration value
-        # Check the keys
         if not OPENAI_API_KEY or not GPT_ENGINE:
             return Response(
                 {"error": "OpenAI API key and engine is required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        prompt = request.data.get("prompt", False)
         task = request.data.get("task", False)
-
         if not task:
             return Response(
                 {"error": "Task is required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        final_text = task + "\n" + prompt
-
-        litellm.api_key = OPENAI_API_KEY
-        response = completion(
-            model=GPT_ENGINE,
-            messages=[{"role": "user", "content": final_text}],
-        )
+        text, error = get_gpt_response(task, request.data.get("prompt", False), OPENAI_API_KEY, GPT_ENGINE)
+        if error:
+            return Response(
+                {"error": f"LLM API error: {error}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
         workspace = Workspace.objects.get(slug=slug)
         project = Project.objects.get(pk=project_id)
 
-        text = response.choices[0].message.content.strip()
-        text_html = text.replace("\n", "<br/>")
         return Response(
             {
                 "response": text,
-                "response_html": text_html,
+                "response_html": text.replace("\n", "<br/>"),
                 "project_detail": ProjectLiteSerializer(project).data,
                 "workspace_detail": WorkspaceLiteSerializer(workspace).data,
             },
@@ -83,50 +104,32 @@ class WorkspaceGPTIntegrationEndpoint(BaseAPIView):
         allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE"
     )
     def post(self, request, slug):
-        OPENAI_API_KEY, GPT_ENGINE = get_configuration_value(
-            [
-                {
-                    "key": "OPENAI_API_KEY",
-                    "default": os.environ.get("OPENAI_API_KEY", None),
-                },
-                {
-                    "key": "GPT_ENGINE",
-                    "default": os.environ.get("GPT_ENGINE", "gpt-4o-mini"),
-                },
-            ]
-        )
-
-        # Get the configuration value
-        # Check the keys
+        OPENAI_API_KEY, GPT_ENGINE = get_gpt_config()
+        
         if not OPENAI_API_KEY or not GPT_ENGINE:
             return Response(
                 {"error": "OpenAI API key and engine is required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        prompt = request.data.get("prompt", False)
         task = request.data.get("task", False)
-
         if not task:
             return Response(
                 {"error": "Task is required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        final_text = task + "\n" + prompt
+        text, error = get_gpt_response(task, request.data.get("prompt", False), OPENAI_API_KEY, GPT_ENGINE)
+        if error:
+            return Response(
+                {"error": f"LLM API error: {error}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
-        litellm.api_key = OPENAI_API_KEY
-        response = completion(
-            model=GPT_ENGINE,
-            messages=[{"role": "user", "content": final_text}],
-        )
-
-        text = response.choices[0].message.content.strip()
-        text_html = text.replace("\n", "<br/>")
         return Response(
             {
                 "response": text,
-                "response_html": text_html,
+                "response_html": text.replace("\n", "<br/>"),
             },
             status=status.HTTP_200_OK,
         )
