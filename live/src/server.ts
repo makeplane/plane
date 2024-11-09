@@ -6,17 +6,12 @@ import * as Sentry from "@sentry/node";
 import compression from "compression";
 import helmet from "helmet";
 import cors from "cors";
-// plane editor
-import {
-  applyUpdates,
-  convertBase64StringToBinaryData,
-  getAllDocumentFormatsFromRichTextEditorBinaryData,
-} from "@plane/editor/lib";
 // core hocuspocus server
 import { getHocusPocusServer } from "@/core/hocuspocus-server.js";
 // helpers
 import { errorHandler } from "@/core/helpers/error-handler.js";
 import { logger, manualLogger } from "@/core/helpers/logger.js";
+import { resolveDocumentConflicts, TResolveConflictsRequestBody } from "@/core/resolve-conflicts.js";
 
 const app = express();
 expressWs(app);
@@ -65,7 +60,7 @@ router.ws("/collaboration", (ws, req) => {
 });
 
 app.post("/resolve-document-conflicts", (req, res) => {
-  const { original_document, updates } = req.body;
+  const { original_document, updates } = req.body as TResolveConflictsRequestBody;
   try {
     if (original_document === undefined || updates === undefined) {
       res.status(400).send({
@@ -73,30 +68,8 @@ app.post("/resolve-document-conflicts", (req, res) => {
       });
       throw new Error("Missing required fields");
     }
-    // convert from base64 to buffer
-    const originalDocumentBuffer = original_document ? convertBase64StringToBinaryData(original_document) : null;
-    const updatesBuffer = updates ? convertBase64StringToBinaryData(updates) : null;
-    // decode req.body
-    const decodedOriginalDocument = originalDocumentBuffer ? new Uint8Array(originalDocumentBuffer) : new Uint8Array();
-    const decodedUpdates = updatesBuffer ? new Uint8Array(updatesBuffer) : new Uint8Array();
-    // resolve conflicts
-    let resolvedDocument: Uint8Array;
-    if (decodedOriginalDocument.length === 0) {
-      // use updates to create the document id original_description is null
-      resolvedDocument = applyUpdates(decodedUpdates);
-    } else {
-      // use original document and updates to resolve conflicts
-      resolvedDocument = applyUpdates(decodedOriginalDocument, decodedUpdates);
-    }
-
-    const { contentBinaryEncoded, contentHTML, contentJSON } =
-      getAllDocumentFormatsFromRichTextEditorBinaryData(resolvedDocument);
-
-    res.status(200).json({
-      description_html: contentHTML,
-      description_binary: contentBinaryEncoded,
-      description: contentJSON,
-    });
+    const resolvedDocument = resolveDocumentConflicts(req.body);
+    res.status(200).json(resolvedDocument);
   } catch (error) {
     console.error("error", error);
     res.status(500).send({

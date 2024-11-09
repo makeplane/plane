@@ -178,10 +178,8 @@ export class InboxIssueStore implements IInboxIssueStore {
   };
 
   updateIssueDescription = async (descriptionBinary: string): Promise<ArrayBuffer> => {
-    const inboxIssue = clone(this.issue);
     try {
       if (!this.issue.id) throw new Error("Issue id is missing");
-      set(this.issue, "description_binary", descriptionBinary);
       const res = await this.inboxIssueService.updateDescriptionBinary(
         this.workspaceSlug,
         this.projectId,
@@ -190,11 +188,11 @@ export class InboxIssueStore implements IInboxIssueStore {
           description_binary: descriptionBinary,
         }
       );
+      set(this.issue, "description_binary", descriptionBinary);
       // fetching activity
       this.fetchIssueActivity();
       return res;
     } catch {
-      set(this.issue, "description_binary", inboxIssue.description_binary);
       throw new Error("Failed to update local issue description");
     }
   };

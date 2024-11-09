@@ -192,7 +192,7 @@ export class IssueDetail implements IIssueDetail {
 
     // store
     this.rootIssueStore = rootStore;
-    this.issue = new IssueStore(this);
+    this.issue = new IssueStore(rootStore);
     this.reaction = new IssueReactionStore(this);
     this.attachment = new IssueAttachmentStore(rootStore);
     this.activity = new IssueActivityStore(rootStore.rootStore as RootStore);
@@ -257,6 +257,12 @@ export class IssueDetail implements IIssueDetail {
   ) => this.issue.fetchIssue(workspaceSlug, projectId, issueId, issueStatus);
   updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) =>
     this.issue.updateIssue(workspaceSlug, projectId, issueId, data);
+  updateIssueDescription = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    descriptionBinary: string
+  ) => this.issue.updateIssueDescription(workspaceSlug, projectId, issueId, descriptionBinary);
   removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
     this.issue.removeIssue(workspaceSlug, projectId, issueId);
   archiveIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>

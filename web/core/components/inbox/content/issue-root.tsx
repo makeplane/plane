@@ -62,7 +62,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
     }
   }, [isSubmitting, setShowAlert, setIsSubmitting]);
 
-  // dervied values
+  // derived values
   const issue = inboxIssue.issue;
   const projectDetails = issue?.project_id ? getProjectById(issue?.project_id) : undefined;
 
@@ -78,7 +78,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
   const issueOperations: TIssueOperations = useMemo(
     () => ({
       fetch: async () => {},
-      remove: async (_workspaceSlug: string, _projectId: string, _issueId: string) => {
+      remove: async (_workspaceSlug, _projectId, _issueId) => {
         try {
           await removeIssue(workspaceSlug, projectId, _issueId);
           setToast({
@@ -105,7 +105,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           });
         }
       },
-      update: async (_workspaceSlug: string, _projectId: string, _issueId: string, data: Partial<TIssue>) => {
+      update: async (_workspaceSlug, _projectId, _issueId, data) => {
         try {
           await inboxIssue.updateIssue(data);
           captureIssueEvent({
@@ -134,7 +134,14 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           });
         }
       },
-      archive: async (workspaceSlug: string, projectId: string, issueId: string) => {
+      updateDescription: async (_workspaceSlug, _projectId, _issueId, descriptionBinary) => {
+        try {
+          return await inboxIssue.updateIssueDescription(descriptionBinary);
+        } catch {
+          throw new Error("Failed to update issue description");
+        }
+      },
+      archive: async (workspaceSlug, projectId, issueId) => {
         try {
           await archiveIssue(workspaceSlug, projectId, issueId);
           captureIssueEvent({
@@ -199,10 +206,9 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
               if (!workspaceSlug || !projectId || !issue.id) {
                 throw new Error("Required fields missing while updating binary description");
               }
-              return await inboxIssue.updateIssueDescription(data);
+              return await issueOperations.updateDescription(workspaceSlug, projectId, issue.id, data);
             }}
             issueId={issue.id}
-            issueOperations={issueOperations}
             projectId={issue.project_id}
             setIsSubmitting={(value) => setIsSubmitting(value)}
             workspaceSlug={workspaceSlug}

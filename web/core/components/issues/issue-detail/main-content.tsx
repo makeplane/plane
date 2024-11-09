@@ -134,12 +134,9 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
               if (!workspaceSlug || !issue.project_id || !issue.id) {
                 throw new Error("Required fields missing while updating binary description");
               }
-              return await issueService.updateDescriptionBinary(workspaceSlug, issue.project_id, issue.id, {
-                description_binary: data,
-              });
+              return await issueOperations.updateDescription(workspaceSlug, issue.project_id, issue.id, data);
             }}
             issueId={issue.id}
-            issueOperations={issueOperations}
             projectId={issue.project_id}
             setIsSubmitting={(value) => setIsSubmitting(value)}
             workspaceSlug={workspaceSlug}
