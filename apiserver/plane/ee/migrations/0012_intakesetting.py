@@ -63,7 +63,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="intake_settings",
-                        to="db.intake",
+                        to="db.inbox",
                     ),
                 ),
                 (
