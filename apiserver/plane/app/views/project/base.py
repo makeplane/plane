@@ -505,6 +505,9 @@ class ProjectViewSet(BaseViewSet):
                 )
 
             workspace = Workspace.objects.get(slug=slug)
+            intake_view = request.data.get(
+                "inbox_view", request.data.get("intake_view", False)
+            )
 
             project = Project.objects.get(pk=pk)
             current_instance = json.dumps(
@@ -518,14 +521,17 @@ class ProjectViewSet(BaseViewSet):
 
             serializer = ProjectSerializer(
                 project,
-                data={**request.data},
+                data={
+                    **request.data,
+                    "intake_view": intake_view,
+                },
                 context={"workspace_id": workspace.id},
                 partial=True,
             )
 
             if serializer.is_valid():
                 serializer.save()
-                if serializer.data["intake_view"] or request.data.get("inbox_view", False):
+                if intake_view:
                     intake = Intake.objects.filter(
                         project=project,
                         is_default=True,
