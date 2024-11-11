@@ -108,9 +108,14 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
 
     const approxRangeLeft = scrollLeft;
     const approxRangeRight = scrollWidth - (scrollLeft + clientWidth);
+    const calculatedRangeRight = itemsContainerWidth - (scrollLeft + clientWidth);
 
-    if (approxRangeRight < clientWidth) updateCurrentViewRenderPayload("right", currentView);
-    if (approxRangeLeft < clientWidth) updateCurrentViewRenderPayload("left", currentView);
+    if (approxRangeRight < clientWidth || calculatedRangeRight < clientWidth) {
+      updateCurrentViewRenderPayload("right", currentView);
+    }
+    if (approxRangeLeft < clientWidth) {
+      updateCurrentViewRenderPayload("left", currentView);
+    }
   };
 
   const handleScrollToBlock = (block: IGanttBlock) => {
