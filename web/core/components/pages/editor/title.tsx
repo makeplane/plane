@@ -23,11 +23,13 @@ export const PageEditorTitle: React.FC<Props> = observer((props) => {
   // states
   const [isLengthVisible, setIsLengthVisible] = useState(false);
   // page filters
-  const { fontSize } = usePageFilters();
+  const { fontSize, fontStyle } = usePageFilters();
   // ui
   const titleClassName = cn("bg-transparent tracking-[-2%] font-semibold", {
     "text-[1.6rem] leading-[1.8rem]": fontSize === "small-font",
     "text-[2rem] leading-[2.25rem]": fontSize === "large-font",
+    "font-serif": fontStyle === "serif",
+    "font-mono": fontStyle === "monospace",
   });
 
   return (

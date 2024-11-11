@@ -84,13 +84,13 @@
 
   /* font styles */
   &.sans-serif {
-    --font-style: "Inter", sans-serif;
+    --font-style: "Inter", ui-sans-serif, sans-serif;
   }
   &.serif {
-    --font-style: serif;
+    --font-style: ui-serif, serif;
   }
   &.monospace {
-    --font-style: monospace;
+    --font-style: ui-monospace, monospace;
   }
   /* end font styles */
 }

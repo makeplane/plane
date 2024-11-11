@@ -435,6 +435,8 @@ module.exports = {
     },
     fontFamily: {
       custom: ["Inter", "sans-serif"],
+      serif: ["ui-serif", "serif"],
+      mono: ["ui-monospace", "monospace"],  
     },
   },
   plugins: [

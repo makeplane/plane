@@ -10,7 +10,10 @@ import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
 import { ArchiveIcon, CustomMenu, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 // components
 import { ExportPageModal } from "@/components/pages";
+// constants
+import { EDITOR_FONT_STYLES } from "@/constants/editor";
 // helpers
+import { cn } from "@/helpers/common.helper";
 import { copyTextToClipboard, copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { usePageFilters } from "@/hooks/use-page-filters";
@@ -47,7 +50,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   // store hooks
   const { workspaceSlug, projectId } = useParams();
   // page filters
-  const { isFullWidth, handleFullWidth } = usePageFilters();
+  const { fontStyle, isFullWidth, handleFullWidth, handleFontStyle } = usePageFilters();
   // update query params
   const { updateQueryParams } = useQueryParams();
 
@@ -180,7 +183,26 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
         onClose={() => setIsExportModalOpen(false)}
         pageTitle={name ?? ""}
       />
-      <CustomMenu maxHeight="lg" placement="bottom-start" verticalEllipsis closeOnSelect>
+      <CustomMenu placement="bottom-start" optionsClassName="max-h-[50vh]" verticalEllipsis closeOnSelect>
+        <div className="flex items-center gap-0.5">
+          {EDITOR_FONT_STYLES.map((style) => (
+            <button
+              key={style.key}
+              type="button"
+              className={cn(
+                "flex-1 flex-shrink-0 flex flex-col items-center gap-1 text-center rounded p-1 text-custom-text-300 hover:bg-custom-background-80 transition-colors",
+                {
+                  "bg-custom-background-80 text-custom-text-100": fontStyle === style.key,
+                }
+              )}
+              onClick={() => handleFontStyle(style.key)}
+            >
+              <style.icon className="size-5" />
+              <span className="text-xs">{style.label}</span>
+            </button>
+          ))}
+        </div>
+        <hr className="my-2 border-custom-border-200" />
         <CustomMenu.MenuItem
           className="hidden md:flex w-full items-center justify-between gap-2"
           onClick={() => handleFullWidth(!isFullWidth)}
@@ -188,6 +210,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
           Full width
           <ToggleSwitch value={isFullWidth} onChange={() => {}} />
         </CustomMenu.MenuItem>
+        <hr className="my-2 border-custom-border-200" />
         {MENU_ITEMS.map((item) => {
           if (!item.shouldRender) return null;
           return (

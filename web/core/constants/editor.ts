@@ -193,7 +193,7 @@ export const EDITOR_FONT_STYLES: {
 }[] = [
   {
     key: "sans-serif",
-    label: "Sans serif",
+    label: "Default",
     icon: SansSerifIcon,
   },
   {
