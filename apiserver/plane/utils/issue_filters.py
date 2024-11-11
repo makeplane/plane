@@ -233,6 +233,7 @@ def filter_assignees(params, issue_filter, method, prefix=""):
             and params.get("assignees") != "null"
         ):
             issue_filter[f"{prefix}assignees__in"] = params.get("assignees")
+    issue_filter[f"{prefix}issue_assignee__deleted_at__isnull"] = True
     return issue_filter
 
 
