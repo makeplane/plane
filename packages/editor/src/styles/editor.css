@@ -395,10 +395,6 @@ p {
     padding-top: 4px;
   }
 
-  & + p {
-    padding-top: 8px;
-  }
-
   &:last-child {
     padding-bottom: 4px;
   }
