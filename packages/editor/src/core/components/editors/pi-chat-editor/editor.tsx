@@ -16,7 +16,6 @@ import tippy from "tippy.js";
 import { IMentionHighlight } from "@/types/mention-suggestion.js";
 import { PiMentionNodeView } from "./mention-node-view.js";
 import { cn, getTrimmedHTML } from "@/helpers/common.js";
-import "./styles.css";
 import { EnterKeyExtension } from "./extensions/enter-key-extension.js";
 
 interface IItem {
