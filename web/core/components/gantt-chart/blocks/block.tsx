@@ -63,7 +63,7 @@ export const GanttChartBlock: React.FC<Props> = observer((props) => {
       ref={resizableRef}
       style={{
         height: `${BLOCK_HEIGHT}px`,
-        transform: `translateX(${block.position?.marginLeft}px)`,
+        marginLeft: `${block.position?.marginLeft}px`,
         width: `${block.position?.width}px`,
       }}
     >
