@@ -91,7 +91,13 @@ def issue_on_results(issues, group_by, sub_group_by):
         "parent_id",
         "cycle_id",
         "created_by",
+        "created_at",
+        "updated_at",
+        "updated_by",
         "state__group",
+        "attachment_count",
+        "link_count",
+        "sub_issues_count",
     ]
 
     if group_by in FIELD_MAPPER:
