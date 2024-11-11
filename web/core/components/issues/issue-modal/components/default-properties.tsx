@@ -262,58 +262,62 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
           )}
         />
       )}
-      {parentId ? (
-        <CustomMenu
-          customButton={
-            <button
-              type="button"
-              className="flex cursor-pointer items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1.5 text-xs hover:bg-custom-background-80"
-            >
-              {selectedParentIssue?.project_id && (
-                <IssueIdentifier
-                  projectId={selectedParentIssue.project_id}
-                  issueTypeId={selectedParentIssue.type_id}
-                  projectIdentifier={selectedParentIssue?.project__identifier}
-                  issueSequenceId={selectedParentIssue.sequence_id}
-                  textContainerClassName="text-xs"
-                />
-              )}
-            </button>
-          }
-          placement="bottom-start"
-          tabIndex={getIndex("parent_id")}
-        >
-          <>
-            <CustomMenu.MenuItem className="!p-1" onClick={() => setParentIssueListModalOpen(true)}>
-              Change parent issue
-            </CustomMenu.MenuItem>
-            <Controller
-              control={control}
-              name="parent_id"
-              render={({ field: { onChange } }) => (
-                <CustomMenu.MenuItem
-                  className="!p-1"
-                  onClick={() => {
-                    onChange(null);
-                    handleFormChange();
-                  }}
-                >
-                  Remove parent issue
-                </CustomMenu.MenuItem>
-              )}
-            />
-          </>
-        </CustomMenu>
-      ) : (
-        <button
-          type="button"
-          className="flex cursor-pointer items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1.5 text-xs hover:bg-custom-background-80"
-          onClick={() => setParentIssueListModalOpen(true)}
-        >
-          <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
-          <span className="whitespace-nowrap">Add parent</span>
-        </button>
-      )}
+      <div className="h-7">
+        {parentId ? (
+          <CustomMenu
+            customButton={
+              <button
+                type="button"
+                className="flex cursor-pointer items-center justify-between gap-1 h-full rounded border-[0.5px] border-custom-border-300 px-2 py-0.5 text-xs hover:bg-custom-background-80"
+              >
+                {selectedParentIssue?.project_id && (
+                  <IssueIdentifier
+                    projectId={selectedParentIssue.project_id}
+                    issueTypeId={selectedParentIssue.type_id}
+                    projectIdentifier={selectedParentIssue?.project__identifier}
+                    issueSequenceId={selectedParentIssue.sequence_id}
+                    textContainerClassName="text-xs"
+                  />
+                )}
+              </button>
+            }
+            placement="bottom-start"
+            className="h-full w-full"
+            customButtonClassName="h-full"
+            tabIndex={getIndex("parent_id")}
+          >
+            <>
+              <CustomMenu.MenuItem className="!p-1" onClick={() => setParentIssueListModalOpen(true)}>
+                Change parent issue
+              </CustomMenu.MenuItem>
+              <Controller
+                control={control}
+                name="parent_id"
+                render={({ field: { onChange } }) => (
+                  <CustomMenu.MenuItem
+                    className="!p-1"
+                    onClick={() => {
+                      onChange(null);
+                      handleFormChange();
+                    }}
+                  >
+                    Remove parent issue
+                  </CustomMenu.MenuItem>
+                )}
+              />
+            </>
+          </CustomMenu>
+        ) : (
+          <button
+            type="button"
+            className="flex cursor-pointer items-center justify-between gap-1 h-full rounded border-[0.5px] border-custom-border-300 px-2 py-0.5 text-xs hover:bg-custom-background-80"
+            onClick={() => setParentIssueListModalOpen(true)}
+          >
+            <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
+            <span className="whitespace-nowrap">Add parent</span>
+          </button>
+        )}
+      </div>
       <Controller
         control={control}
         name="parent_id"

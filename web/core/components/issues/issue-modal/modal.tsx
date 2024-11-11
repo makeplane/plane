@@ -27,6 +27,7 @@ export interface IssuesModalProps {
     default: string;
     loading: string;
   };
+  isProjectSelectionDisabled?: boolean;
 }
 
 export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer(
