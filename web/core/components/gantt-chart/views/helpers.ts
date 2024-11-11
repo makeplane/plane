@@ -1,8 +1,5 @@
 import { addDaysToDate, findTotalDaysInRange, getDate } from "@/helpers/date-time.helper";
 import { ChartDataType, IGanttBlock } from "../types";
-import { IMonthBlock, IMonthView, monthView } from "./month-view";
-import { quarterView } from "./quarter-view";
-import { IWeekBlock, weekView } from "./week-view";
 
 /**
  * Generates Date by using Day, month and Year
@@ -112,4 +109,23 @@ export const getItemPositionWidth = (chartData: ChartDataType, itemData: IGanttB
   scrollWidth = (widthDaysDifference + 1) * chartData.data.dayWidth;
 
   return { marginLeft: scrollPosition, width: scrollWidth };
+};
+
+export const getPositionFromDate = (chartData: ChartDataType, date: string | Date, offsetWidth: number) => {
+  const currDate = getDate(date);
+
+  const { startDate: chartStartDate } = chartData.data;
+
+  if (!currDate || !chartStartDate) return;
+
+  chartStartDate.setHours(0, 0, 0, 0);
+  currDate.setHours(0, 0, 0, 0);
+
+  // get number of days from chart start date to block's start date
+  const positionDaysDifference = Math.round(findTotalDaysInRange(chartStartDate, currDate, false) ?? 0);
+
+  if (!positionDaysDifference) return;
+
+  // get scroll position from the number of days and width of each day
+  return positionDaysDifference * chartData.data.dayWidth + offsetWidth;
 };
