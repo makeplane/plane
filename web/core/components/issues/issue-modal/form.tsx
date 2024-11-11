@@ -71,6 +71,7 @@ export interface IssueFormProps {
   };
   isDuplicateModalOpen: boolean;
   handleDuplicateIssueModal: (isOpen: boolean) => void;
+  isProjectSelectionDisabled?: boolean;
 }
 
 export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
@@ -93,6 +94,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     },
     isDuplicateModalOpen,
     handleDuplicateIssueModal,
+    isProjectSelectionDisabled = false,
   } = props;
 
   // states
@@ -336,7 +338,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                 <div className="flex items-center gap-x-1">
                   <IssueProjectSelect
                     control={control}
-                    disabled={!!data?.id || !!data?.sourceIssueId}
+                    disabled={!!data?.id || !!data?.sourceIssueId || isProjectSelectionDisabled}
                     handleFormChange={handleFormChange}
                   />
                   {projectId && (
@@ -511,7 +513,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
         {shouldRenderDuplicateModal && (
           <div
             ref={modalContainerRef}
-            className="relative flex flex-col gap-2.5 h-full px-3 py-4 rounded-lg shadow-xl bg-pi-50"
+            className="relative flex flex-col gap-2.5 px-3 py-4 rounded-lg shadow-xl bg-pi-50"
             style={{ maxHeight: formRef?.current?.offsetHeight ? `${formRef.current.offsetHeight}px` : "436px" }}
           >
             <DuplicateModalRoot
