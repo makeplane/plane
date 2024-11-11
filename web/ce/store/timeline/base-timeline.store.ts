@@ -191,7 +191,7 @@ export class BaseTimeLineStore implements IBaseTimelineStore {
         start_date: blockData?.start_date ?? undefined,
         target_date: blockData?.target_date ?? undefined,
       };
-      if (this.currentViewData && this.currentViewData?.data?.startDate && this.currentViewData?.data?.dayWidth) {
+      if (this.currentViewData && (this.currentViewData?.data?.startDate || this.currentViewData?.data?.dayWidth)) {
         block.position = getItemPositionWidth(this.currentViewData, block);
       }
 

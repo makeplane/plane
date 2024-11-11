@@ -55,7 +55,7 @@ type Props = {
 export const DateRangeDropdown: React.FC<Props> = (props) => {
   const {
     applyButtonText = "Apply changes",
-    bothRequired = true,
+    bothRequired = false,
     buttonClassName,
     buttonContainerClassName,
     buttonFromDateClassName,

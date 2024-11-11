@@ -1,4 +1,5 @@
 import { addDaysToDate, findTotalDaysInRange, getDate } from "@/helpers/date-time.helper";
+import { DEFAULT_BLOCK_WIDTH } from "../constants";
 import { ChartDataType, IGanttBlock } from "../types";
 
 /**
@@ -81,7 +82,7 @@ export const getDateFromPositionOnGantt = (position: number, chartData: ChartDat
  */
 export const getItemPositionWidth = (chartData: ChartDataType, itemData: IGanttBlock) => {
   let scrollPosition: number = 0;
-  let scrollWidth: number = 0;
+  let scrollWidth: number = DEFAULT_BLOCK_WIDTH;
 
   const { startDate: chartStartDate } = chartData.data;
   const { start_date, target_date } = itemData;
@@ -89,24 +90,23 @@ export const getItemPositionWidth = (chartData: ChartDataType, itemData: IGanttB
   const itemStartDate = getDate(start_date);
   const itemTargetDate = getDate(target_date);
 
-  if (!itemStartDate || !itemTargetDate) return;
-
   chartStartDate.setHours(0, 0, 0, 0);
-  itemStartDate.setHours(0, 0, 0, 0);
-  itemTargetDate.setHours(0, 0, 0, 0);
+  itemStartDate?.setHours(0, 0, 0, 0);
+  itemTargetDate?.setHours(0, 0, 0, 0);
 
-  // get number of days from chart start date to block's start date
-  const positionDaysDifference = Math.round(findTotalDaysInRange(chartStartDate, itemStartDate, false) ?? 0);
-
-  if (!positionDaysDifference) return;
+  if (!itemStartDate && !itemTargetDate) return;
 
   // get scroll position from the number of days and width of each day
-  scrollPosition = positionDaysDifference * chartData.data.dayWidth;
+  scrollPosition = itemStartDate
+    ? getPositionFromDate(chartData, itemStartDate, 0)
+    : getPositionFromDate(chartData, itemTargetDate!, -1 * DEFAULT_BLOCK_WIDTH);
 
-  // get width of block
-  const widthTimeDifference: number = itemStartDate.getTime() - itemTargetDate.getTime();
-  const widthDaysDifference: number = Math.abs(Math.floor(widthTimeDifference / (1000 * 60 * 60 * 24)));
-  scrollWidth = (widthDaysDifference + 1) * chartData.data.dayWidth;
+  if (itemStartDate && itemTargetDate) {
+    // get width of block
+    const widthTimeDifference: number = itemStartDate.getTime() - itemTargetDate.getTime();
+    const widthDaysDifference: number = Math.abs(Math.floor(widthTimeDifference / (1000 * 60 * 60 * 24)));
+    scrollWidth = (widthDaysDifference + 1) * chartData.data.dayWidth;
+  }
 
   return { marginLeft: scrollPosition, width: scrollWidth };
 };
@@ -116,7 +116,7 @@ export const getPositionFromDate = (chartData: ChartDataType, date: string | Dat
 
   const { startDate: chartStartDate } = chartData.data;
 
-  if (!currDate || !chartStartDate) return;
+  if (!currDate || !chartStartDate) return 0;
 
   chartStartDate.setHours(0, 0, 0, 0);
   currDate.setHours(0, 0, 0, 0);
@@ -124,7 +124,7 @@ export const getPositionFromDate = (chartData: ChartDataType, date: string | Dat
   // get number of days from chart start date to block's start date
   const positionDaysDifference = Math.round(findTotalDaysInRange(chartStartDate, currDate, false) ?? 0);
 
-  if (!positionDaysDifference) return;
+  if (!positionDaysDifference) return 0;
 
   // get scroll position from the number of days and width of each day
   return positionDaysDifference * chartData.data.dayWidth + offsetWidth;
