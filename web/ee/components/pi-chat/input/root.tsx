@@ -1,9 +1,13 @@
 import { useCallback, useRef } from "react";
 import { useParams } from "next/navigation";
-import { ArrowUp } from "lucide-react";
+import { ArrowUp, FileText } from "lucide-react";
 import { cn, PiChatEditor } from "@plane/editor";
+import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/ui";
 import { useUser } from "@/hooks/store";
+import { IssueIdentifier } from "@/plane-web/components/issues";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
+
+import { IFormattedValue, IItem } from "@/plane-web/types";
 import { FocusFilter } from "./focus-filter";
 
 type TEditCommands = {
@@ -13,6 +17,7 @@ type TEditCommands = {
 type TProps = {
   isFullScreen: boolean;
 };
+
 export const InputBox = (props: TProps) => {
   const { isFullScreen } = props;
   // store hooks
@@ -36,6 +41,52 @@ export const InputBox = (props: TProps) => {
     [currentUser, editorCommands, getAnswer]
   );
 
+  const getMentionSuggestions = async (query: string) => {
+    const response = await searchCallback(workspaceSlug.toString(), query);
+    return formatSearchQuery(response);
+  };
+
+  const getIcon = (type: string, item: Partial<IItem>) => {
+    switch (type) {
+      case "issue":
+        return (
+          <IssueIdentifier
+            issueTypeId={item.type_id}
+            projectId={item.project_id || ""}
+            projectIdentifier={item.project__identifier || ""}
+            issueSequenceId={item.sequence_id || ""}
+            textContainerClassName="text-custom-sidebar-text-400 text-xs"
+          />
+        );
+      case "cycle":
+        return <ContrastIcon className="w-4 h-4" />;
+      case "module":
+        return <DiceIcon className="w-4 h-4" />;
+      case "page":
+        return <FileText className="w-4 h-4" />;
+      default:
+        return <LayersIcon className="w-4 h-4" />;
+    }
+  };
+
+  const formatSearchQuery = (data: Partial<IFormattedValue>): IFormattedValue => {
+    const parsedResponse: IFormattedValue = {
+      cycle: [],
+      module: [],
+      page: [],
+      issue: [],
+    };
+    Object.keys(data).forEach((type) => {
+      parsedResponse[type] = data[type]?.slice(0, 5).map((item) => ({
+        id: item.id,
+        title: item.name,
+        subTitle: type === "issue" ? `${item.project__identifier}-${item.sequence_id}` : undefined,
+        icon: getIcon(type, item),
+      }));
+    });
+    return parsedResponse;
+  };
+
   return (
     <form
       className={cn(
@@ -51,7 +102,7 @@ export const InputBox = (props: TProps) => {
             setEditorCommands({ ...command });
           }}
           handleSubmit={handleSubmit}
-          mentionSuggestions={async (query: string) => searchCallback(workspaceSlug.toString(), query)}
+          mentionSuggestions={(query: string) => getMentionSuggestions(query)}
         />
         {/* Submit button */}
         <button

@@ -8,6 +8,7 @@ import { PiChatService } from "@/plane-web/services/pi-chat.service";
 import { RootStore } from "@/plane-web/store/root.store";
 import {
   EFeedback,
+  IFormattedValue,
   TAiModels,
   TChatHistory,
   TDialogue,
@@ -16,7 +17,6 @@ import {
   TTemplate,
   TUserThreads,
 } from "@/plane-web/types";
-import { formatSearchQuery, IFormattedValue } from "./helper";
 
 export interface IPiChatStore {
   isInWorkspaceContext: boolean;
@@ -343,7 +343,7 @@ export class PiChatStore implements IPiChatStore {
     }
     const response = await this.workspaceService.searchAcrossWorkspace(workspace, params);
 
-    return formatSearchQuery(response.results);
+    return response.results;
   };
 
   sendFeedback = async (message_index: number, feedback: EFeedback) => {

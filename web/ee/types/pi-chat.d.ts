@@ -67,3 +67,23 @@ export type TAiModels = {
   type: string;
   is_default: boolean;
 };
+
+interface IItem {
+  id: string;
+  label: string;
+  entity_name: string;
+  entity_identifier: string;
+  target: string;
+  redirect_uri: string;
+  name?: string;
+  project__identifier?: string;
+  sequence_id?: string;
+  title: string;
+  subTitle: string | undefined;
+  type_id: string;
+  project_id: string;
+}
+
+export interface IFormattedValue {
+  [key: string]: Partial<IItem>[] | undefined;
+}

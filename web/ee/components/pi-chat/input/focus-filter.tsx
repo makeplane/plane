@@ -28,7 +28,7 @@ export const FocusFilter = observer(() => {
       value={currentFocus}
       label={
         <Tooltip
-          tooltipContent="Turn focus mode on, if you  want plane specific answers"
+          tooltipContent="Turn this on if you want Pi to use your work data from Plane."
           position="top"
           className="ml-4 max-w-[192px] font-medium text-custom-text-300"
           disabled={isInWorkspaceContext}
@@ -91,7 +91,7 @@ export const FocusFilter = observer(() => {
         </div>
         <div className="pt-2 flex justify-between">
           <div className="text-wrap font-medium text-custom-text-350">
-            Turn focus mode off, if you don’t want plane specific answers
+            Turn this off if you don’t want Pi to use your work from Plane.{" "}
           </div>
           <ToggleSwitch
             value={isInWorkspaceContext}
