@@ -46,10 +46,11 @@ export const GanttChartBlock: React.FC<Props> = observer((props) => {
 
   const { isMoving, handleBlockDrag } = useGanttResizable(block, resizableRef, ganttContainerRef, updateBlockDates);
 
-  // hide the block if it doesn't have start and target dates and showAllBlocks is false
-  if (!block || (!showAllBlocks && !(block.start_date && block.target_date))) return null;
+  const isBlockVisibleOnChart = block?.start_date || block?.target_date;
+  const isBlockComplete = block?.start_date && block?.target_date;
 
-  const isBlockVisibleOnChart = block.start_date && block.target_date;
+  // hide the block if it doesn't have start and target dates and showAllBlocks is false
+  if (!block || (!showAllBlocks && !isBlockVisibleOnChart)) return null;
 
   if (!block.data) return null;
 
@@ -88,7 +89,7 @@ export const GanttChartBlock: React.FC<Props> = observer((props) => {
               handleBlockDrag={handleBlockDrag}
               enableBlockLeftResize={enableBlockLeftResize}
               enableBlockRightResize={enableBlockRightResize}
-              enableBlockMove={enableBlockMove}
+              enableBlockMove={enableBlockMove && !!isBlockComplete}
               isMoving={isMoving}
               ganttContainerRef={ganttContainerRef}
             />

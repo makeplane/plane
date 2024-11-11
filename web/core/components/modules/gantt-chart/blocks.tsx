@@ -7,10 +7,9 @@ import { useParams } from "next/navigation";
 import { Tooltip, ModuleStatusIcon } from "@plane/ui";
 // components
 import { SIDEBAR_WIDTH } from "@/components/gantt-chart/constants";
+import { getBlockViewDetails } from "@/components/issues/issue-layouts/utils";
 // constants
 import { MODULE_STATUS } from "@/constants/module";
-// helpers
-import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
 import { useModule } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -32,23 +31,25 @@ export const ModuleGanttBlock: React.FC<Props> = observer((props) => {
   // hooks
   const { isMobile } = usePlatformOS();
 
+  const { message, blockStyle } = getBlockViewDetails(
+    moduleDetails,
+    MODULE_STATUS.find((s) => s.value === moduleDetails?.status)?.color ?? ""
+  );
+
   return (
     <Tooltip
       isMobile={isMobile}
       tooltipContent={
         <div className="space-y-1">
           <h5>{moduleDetails?.name}</h5>
-          <div>
-            {renderFormattedDate(moduleDetails?.start_date ?? "")} to{" "}
-            {renderFormattedDate(moduleDetails?.target_date ?? "")}
-          </div>
+          <div>{message}</div>
         </div>
       }
       position="top-left"
     >
       <div
         className="relative flex h-full w-full cursor-pointer items-center rounded"
-        style={{ backgroundColor: MODULE_STATUS.find((s) => s.value === moduleDetails?.status)?.color }}
+        style={blockStyle}
         onClick={() =>
           router.push(
             `/${workspaceSlug?.toString()}/projects/${moduleDetails?.project_id}/modules/${moduleDetails?.id}`

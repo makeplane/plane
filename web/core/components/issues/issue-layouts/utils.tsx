@@ -1,5 +1,6 @@
 "use client";
 
+import { CSSProperties } from "react";
 import { extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import clone from "lodash/clone";
 import concat from "lodash/concat";
@@ -32,6 +33,7 @@ import { Logo } from "@/components/common";
 import { ISSUE_PRIORITIES, EIssuesStoreType } from "@/constants/issue";
 import { STATE_GROUPS } from "@/constants/state";
 // helpers
+import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
 // store
 import { ICycleStore } from "@/store/cycle.store";
@@ -672,3 +674,39 @@ export function getApproximateCardHeight(displayProperties: IIssueDisplayPropert
 
   return cardHeight;
 }
+
+/**
+ * This Method is used to get Block view details, that returns block style and tooltip message
+ * @param block
+ * @param backgroundColor
+ * @returns
+ */
+export const getBlockViewDetails = (
+  block: { start_date: string | undefined | null; target_date: string | undefined | null } | undefined | null,
+  backgroundColor: string
+) => {
+  const isBlockVisibleOnChart = block?.start_date || block?.target_date;
+  const isBlockComplete = block?.start_date && block?.target_date;
+
+  let message;
+  const blockStyle: CSSProperties = {
+    backgroundColor,
+  };
+
+  if (isBlockVisibleOnChart && !isBlockComplete) {
+    if (block?.start_date) {
+      message = `From ${renderFormattedDate(block.start_date)}`;
+      blockStyle.maskImage = `linear-gradient(to right, ${backgroundColor} 60%, transparent 100%)`;
+    } else if (block?.target_date) {
+      message = `Till ${renderFormattedDate(block.target_date)}`;
+      blockStyle.maskImage = `linear-gradient(to left, ${backgroundColor} 60%, transparent 100%)`;
+    }
+  } else if (isBlockComplete) {
+    message = `${renderFormattedDate(block?.start_date)} to ${renderFormattedDate(block?.target_date)}`;
+  }
+
+  return {
+    message,
+    blockStyle,
+  };
+};
