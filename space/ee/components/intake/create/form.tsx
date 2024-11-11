@@ -1,9 +1,16 @@
+import { observer } from "mobx-react";
+// plane types
 import { IProject } from "@plane/types";
+// plane ui
 import { Button, Input } from "@plane/ui";
+// components
 import { ProjectLogo } from "@/components/common";
 import { RichTextEditor } from "@/components/editor/rich-text-editor";
-import { useIssueDetails } from "@/hooks/store";
+// hooks
+import { useIssueDetails, usePublish } from "@/hooks/store";
+// helpers
 import { getDescriptionPlaceholder } from "@/plane-web/helpers/issue.helper";
+// local types
 import { TFormData } from "./create-issue-modal";
 
 type TProps = {
@@ -19,15 +26,10 @@ type TProps = {
   placeholder?: string | ((isFocused: boolean, value: string) => string);
 };
 
-const IssueForm = ({
-  project,
-  isSubmitting,
-  descriptionEditorRef,
-  anchor,
-  handleFormData,
-  formData,
-  placeholder,
-}: TProps) => {
+const IssueForm = observer((props: TProps) => {
+  const { project, isSubmitting, descriptionEditorRef, anchor, handleFormData, formData, placeholder } = props;
+  // store hooks
+  const { workspace: workspaceID } = usePublish(anchor);
   const { uploadIssueAsset } = useIssueDetails();
 
   return (
@@ -94,6 +96,8 @@ const IssueForm = ({
             const { asset_id } = await uploadIssueAsset(file, anchor);
             return asset_id;
           }}
+          anchor={anchor}
+          workspaceId={workspaceID?.toString() ?? ""}
         />
 
         <Button variant="primary" size="sm" type="submit" loading={isSubmitting} className="mx-auto mr-0">
@@ -102,6 +106,6 @@ const IssueForm = ({
       </div>
     </>
   );
-};
+});
 
 export default IssueForm;
