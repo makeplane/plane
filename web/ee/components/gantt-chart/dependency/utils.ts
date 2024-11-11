@@ -1,7 +1,8 @@
+import { BLOCK_HEIGHT } from "@/components/gantt-chart/constants";
 import { EDependencyPosition } from "@/plane-web/constants";
 
 const minControlX = 50;
-const maxControlX = 500;
+const maxControlX = 250;
 const strokeWidth = 10;
 
 export const getIndicatorBasedOnDependency = (
@@ -48,30 +49,48 @@ export const getSVGPoints = (
   const horizontalDistance = Math.abs(startX - endX);
   const verticalDistance = Math.abs(startY - endY);
   const diagonalDistance = Math.sqrt(Math.pow(horizontalDistance, 2) + Math.pow(verticalDistance, 2));
-  const approxControlDistance = Math.round(diagonalDistance / 4);
+  const approxControlDistance = Math.round(diagonalDistance / 15);
   const controlLengthX = Math.min(Math.max(approxControlDistance, minControlX), maxControlX);
 
   // calculate the control points of the bezier line
-  const controlPointX1 = pathStartX + controlLengthX * originIndicator,
-    controlPointY1 = pathStartY,
-    controlPointX2 = pathEndX + controlLengthX * destinationIndicator,
-    controlPointY2 = pathEndY;
+  const controlStartX = pathStartX + controlLengthX * originIndicator,
+    controlStartY = pathStartY,
+    controlEndX = pathEndX + controlLengthX * destinationIndicator,
+    controlEndY = pathEndY;
 
   // calculate the viewBox of the SVG
-  const viewBoxMinX = Math.min(pathStartX, controlPointX1, controlPointX2, pathEndX),
-    viewBoxMinY = Math.min(pathStartY, controlPointY1, controlPointY2, pathEndY) - strokeWidth / 2,
-    viewBoxMaxX = Math.max(pathStartX, controlPointX1, controlPointX2, pathEndX),
-    viewBoxMaxY = Math.max(pathStartY, controlPointY1, controlPointY2, pathEndY) - strokeWidth / 2;
+  const viewBoxMinX = Math.min(pathStartX, controlStartX, controlEndX, pathEndX),
+    viewBoxMinY = Math.min(pathStartY, controlStartY, controlEndY, pathEndY) - strokeWidth / 2,
+    viewBoxMaxX = Math.max(pathStartX, controlStartX, controlEndX, pathEndX),
+    viewBoxMaxY = Math.max(pathStartY, controlStartY, controlEndY, pathEndY) - strokeWidth / 2;
 
+  let path;
+  if (originIndicator !== destinationIndicator) {
+    // For lines that has to reach a position other than it's own, like start to end or end to start
+    const midX = (controlStartX + controlEndX) / 2;
+    const midY = (controlStartY + controlEndY) / 2;
+
+    if ((controlStartX - controlEndX) * originIndicator < 0) {
+      // For line which has to go forward and doesn't have to curve drastically eg start point is before end point
+      path = `M${pathStartX},${pathStartY} C${midX},${pathStartY} ${midX},${pathEndY} ${pathEndX},${pathEndY} `;
+    } else {
+      // for lines that has to curve drastically eg start point is after end point
+      const controlHeight = Math.min(Math.abs(pathStartY - pathEndY), BLOCK_HEIGHT / 2);
+      const controlY1 = controlStartY < midY ? controlStartY + controlHeight : controlStartY - controlHeight,
+        controlY2 = controlEndY < midY ? controlEndY + controlHeight : controlEndY - controlHeight;
+      path = `M${pathStartX},${pathStartY} C${controlStartX},${controlStartY} ${controlStartX},${controlY1} ${midX},${midY} C${controlEndX},${controlY2} ${controlEndX},${controlEndY} ${pathEndX},${pathEndY} `;
+    }
+  } else {
+    // For lines that has same start and end positions, like start to start or end to end
+    const controlX = originIndicator * Math.max(controlStartX * originIndicator, controlEndX * originIndicator);
+    path = `M${pathStartX},${pathStartY} C${controlX},${controlStartY} ${controlX},${controlEndY} ${pathEndX},${pathEndY} `;
+  }
   // Height and width of the view box
   const width = viewBoxMaxX - viewBoxMinX,
     height = viewBoxMaxY - viewBoxMinY + strokeWidth;
 
   return {
-    pathStart: { x: pathStartX, y: pathStartY },
-    pathEnd: { x: pathEndX, y: pathEndY },
-    cp1: { x: controlPointX1, y: controlPointY1 },
-    cp2: { x: controlPointX2, y: controlPointY2 },
+    path,
     viewBox: {
       minX: viewBoxMinX,
       minY: viewBoxMinY,

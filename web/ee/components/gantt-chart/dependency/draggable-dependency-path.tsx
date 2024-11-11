@@ -11,7 +11,7 @@ export const TimelineDraggablePath = observer(() => {
 
   const { startPosition, dragPosition, draggedFromPosition, draggedOnPosition } = dependencyDraggingDetails;
 
-  const { pathStart, pathEnd, cp1, cp2, viewBox, width, height } = getSVGPoints(
+  const { viewBox, width, height, path } = getSVGPoints(
     startPosition,
     dragPosition,
     draggedFromPosition,
@@ -32,13 +32,7 @@ export const TimelineDraggablePath = observer(() => {
         height={height}
       >
         <g>
-          <path
-            d={`M${pathStart.x},${pathStart.y} C${cp1.x},${cp1.y} ${cp2.x},${cp2.y} ${pathEnd.x - 1},${pathEnd.y} `}
-            stroke={"#3f76ff"}
-            stroke-width={`1.5`}
-            fill="none"
-            markerEnd={`url(#arrowhead)`}
-          />
+          <path d={path} stroke={"#3f76ff"} stroke-width={`1.5`} fill="none" markerEnd={`url(#arrowhead)`} />
         </g>
         <defs>
           <marker markerWidth="7" markerHeight="7" refX="4" refY="2.5" viewBox="0 0 5 5" orient="auto" id={`arrowhead`}>

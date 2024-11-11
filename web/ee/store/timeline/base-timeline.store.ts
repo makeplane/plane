@@ -309,7 +309,6 @@ export class BaseTimeLineStore extends ExtendableTimelineStore implements IBaseT
         !this.dependencyDraggingDetails.draggedOn &&
         !this.dependencyDraggingDetails.draggedOnPosition
       ) {
-        console.log("###", position);
         this.dependencyDraggingDetails.dragPosition = {
           x: position.x,
           y: position.y,

@@ -15,7 +15,7 @@ export const TimelineDependencyPathItem = observer((props: TimelineDependencyPat
   const { id, originDependencyPosition, destinationDependencyPosition, isAdhering, startPosition, endPosition } =
     relation;
 
-  const { pathStart, pathEnd, cp1, cp2, viewBox, width, height } = getSVGPoints(
+  const { viewBox, width, height, path } = getSVGPoints(
     startPosition,
     endPosition,
     originDependencyPosition,
@@ -40,18 +40,12 @@ export const TimelineDependencyPathItem = observer((props: TimelineDependencyPat
         <g className="cursor-pointer pointer-events-auto" onClick={() => onPathClick(relation)}>
           <path
             className="opacity-0 hover:opacity-5"
-            d={`M${pathStart.x},${pathStart.y} C${cp1.x},${cp1.y} ${cp2.x},${cp2.y} ${pathEnd.x},${pathEnd.y} `}
+            d={path}
             stroke={"#3F76FF"}
             stroke-width={`${strokeWidth}`}
             fill="none"
           />
-          <path
-            d={`M${pathStart.x},${pathStart.y} C${cp1.x},${cp1.y} ${cp2.x},${cp2.y} ${pathEnd.x - 1},${pathEnd.y} `}
-            stroke={strokeColor}
-            stroke-width={`1.5`}
-            fill="none"
-            marker-end={`url(#arrowhead-${id})`}
-          />
+          <path d={path} stroke={strokeColor} stroke-width={`1.5`} fill="none" marker-end={`url(#arrowhead-${id})`} />
         </g>
         <defs>
           <marker
