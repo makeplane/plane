@@ -1,5 +1,6 @@
 "use-client";
 
+import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
 import { PiChatEditor } from "@plane/editor";
@@ -17,7 +18,7 @@ type TProps = {
   userThreads: TUserThreads[];
   initPiChat: (chat_id?: string) => void;
 };
-const HistoryList = (props: TProps) => {
+const HistoryList = observer((props: TProps) => {
   const { userThreads, initPiChat } = props;
   // router
   const router = useAppRouter();
@@ -63,5 +64,5 @@ const HistoryList = (props: TProps) => {
       ))}
     </div>
   );
-};
+});
 export default HistoryList;

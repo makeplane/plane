@@ -821,3 +821,9 @@ html.todesktop .header {
 html.todesktop .header button {
   -webkit-app-region: no-drag;
 }
+
+.pi-chat-root li, .pi-chat-root ui{
+  display: list-item;
+  list-style-type: disc;
+  margin-left: 0.9rem;
+}

@@ -19,7 +19,7 @@ type TProps = {
 };
 
 export const Messages = observer((props: TProps) => {
-  const { isPiTyping, activeChat, currentUser, isUserTyping, isFullScreen, isLoading } = props;
+  const { isPiTyping, activeChat, currentUser, isUserTyping, isLoading } = props;
 
   const scrollIntoViewHelper = async (elementId: string) => {
     const sourceElementId = elementId ?? "";
@@ -32,18 +32,16 @@ export const Messages = observer((props: TProps) => {
     //Always scroll to the latest message
     if (!activeChat?.dialogue) return;
     scrollIntoViewHelper((activeChat?.dialogue.length - 1).toString());
-  }, [activeChat]);
+  }, [activeChat?.dialogue?.length]);
 
   return (
     <div
-      className={cn("flex flex-col gap-8 max-h-full h-full overflow-y-scroll w-[90%] mx-auto pb-[230px]", {
-        "md:w-[80%]": isFullScreen,
-      })}
+      className={cn("pi-chat-root flex flex-col gap-8 max-h-full h-full overflow-y-scroll w-full mx-auto pb-[230px]")}
     >
       {activeChat?.dialogue.map((message: TDialogue, index: number) => (
         <div key={index} className="space-y-4">
           <MyMessage message={message.query} currentUser={currentUser} id={index.toString()} />
-          {message.answer && <AiMessage message={message.answer} id={index.toString()} />}
+          {message.answer && <AiMessage message={message.answer} id={index.toString()} feedback={message.feedback} />}
         </div>
       ))}
 

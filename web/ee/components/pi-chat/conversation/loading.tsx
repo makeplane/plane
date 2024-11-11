@@ -19,11 +19,7 @@ export const Loading = observer((props: TProps) => {
   const { isLoading, isFullScreen, currentUser } = props;
 
   return (
-    <div
-      className={cn("flex flex-col gap-8 max-h-full h-full overflow-y-scroll w-[90%] mx-auto pb-[230px]", {
-        "md:w-[70%]": isFullScreen,
-      })}
-    >
+    <div className={cn("flex flex-col gap-8 max-h-full h-full overflow-y-scroll w-full pb-[230px]")}>
       {/* Loading */}
       {isLoading && <MyMessage isLoading={isLoading} currentUser={currentUser} id={""} />}
       {isLoading && <AiMessage isLoading={isLoading} id={""} />}

@@ -25,6 +25,7 @@ export type TSearchQuery = {
 
 export type TFeedback = {
   chat_id: string;
+  message_index: number;
   feedback: EFeedback;
 };
 
@@ -43,7 +44,7 @@ export type TDialogue = {
   query: string;
   answer?: string;
   llm?: string;
-  feedback?: string;
+  feedback?: EFeedback;
 };
 
 export type TChatHistory = {

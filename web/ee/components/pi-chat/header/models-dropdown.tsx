@@ -2,19 +2,20 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
+import { ChevronDown } from "lucide-react";
 import { cn } from "@plane/editor";
-import { CustomMenu } from "@plane/ui";
+import { CustomMenu, PiChatLogo } from "@plane/ui";
 import { TAiModels } from "@/plane-web/types";
 
 export type TModelsDropdown = {
-  customButton: JSX.Element;
   className?: string;
   models: TAiModels[];
+  activeModel: TAiModels | undefined;
   setActiveModel: (model: TAiModels) => void;
 };
 
 export const ModelsDropdown: FC<TModelsDropdown> = observer((props) => {
-  const { className, customButton, models, setActiveModel } = props;
+  const { className, activeModel, models, setActiveModel } = props;
 
   const DropdownOptions = () =>
     models?.map((model) => (
@@ -34,7 +35,13 @@ export const ModelsDropdown: FC<TModelsDropdown> = observer((props) => {
       maxHeight={"md"}
       className={cn("flex justify-center text-xs text-custom-text-200 w-fit ", className)}
       placement="bottom-start"
-      customButton={customButton}
+      customButton={
+        <button className="flex hover:bg-custom-background-80 p-2 rounded gap-1">
+          <PiChatLogo className="size-5 text-custom-text-300 fill-current m-auto align-center" />
+          <span className="font-medium text-sm my-auto"> Pi Chat {activeModel && `(${activeModel?.name})`}</span>
+          <ChevronDown className={cn("size-3 my-auto text-custom-text-300 hover:text-custom-text-200 duration-300")} />
+        </button>
+      }
       customButtonClassName="flex justify-center"
       closeOnSelect
     >

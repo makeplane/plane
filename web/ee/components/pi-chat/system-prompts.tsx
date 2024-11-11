@@ -49,7 +49,7 @@ const SystemPrompts = (props: TSystemPrompt) => {
                       : `flex-shrink-0 size-[20px] stroke-[2] text-pi-400 stroke-current mb-2`,
                 })}
               </span>
-              <span className="text-sm">{prompt.text}</span>
+              <span className="text-sm break-all">{prompt.text}</span>
             </div>
           );
         })

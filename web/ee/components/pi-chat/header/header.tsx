@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { ChevronDown, PanelRight, SquarePen } from "lucide-react";
-import { PiChatLogo } from "@plane/ui";
+import { PanelRight, SquarePen } from "lucide-react";
 import { cn } from "@/helpers/common.helper";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { TAiModels } from "@/plane-web/types";
@@ -14,13 +13,15 @@ type THeaderProps = {
   isFullScreen: boolean;
   models: TAiModels[];
   isNewChat: boolean;
+  activeModel: TAiModels | undefined;
   setActiveModel: (model: TAiModels) => void;
   toggleSidePanel: (value: boolean) => void;
   initPiChat: (chat_id?: string) => void;
 };
 export const Header = observer((props: THeaderProps) => {
   const router = useAppRouter();
-  const { initPiChat, isSidePanelOpen, toggleSidePanel, isFullScreen, models, isNewChat, setActiveModel } = props;
+  const { initPiChat, isSidePanelOpen, toggleSidePanel, isFullScreen, models, isNewChat, activeModel, setActiveModel } =
+    props;
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const handleNewConversation = async () => {
@@ -31,19 +32,7 @@ export const Header = observer((props: THeaderProps) => {
   return (
     <div className="flex justify-between h-8">
       {/* Breadcrumb */}
-      <ModelsDropdown
-        models={models}
-        setActiveModel={setActiveModel}
-        customButton={
-          <button className="flex hover:bg-custom-background-80 p-2 rounded gap-1">
-            <PiChatLogo className="size-5 text-custom-text-300 fill-current m-auto align-center" />
-            <span className="font-medium text-sm my-auto"> Pi Chat</span>
-            <ChevronDown
-              className={cn("ml-2 size-3 my-auto text-custom-text-300 hover:text-custom-text-200 duration-300")}
-            />
-          </button>
-        }
-      />
+      <ModelsDropdown models={models} setActiveModel={setActiveModel} activeModel={activeModel} />
 
       {/* Actions */}
       {!isSidePanelOpen && (

@@ -32,7 +32,7 @@ export const History = (props: TProps) => {
         "h-full text-base",
         "transform transition-all duration-300 ease-in-out",
         "shadow-lg z-20",
-        isSidePanelOpen ? "translate-x-0 w-[260px]" : "translate-x-[100%] w-0",
+        isSidePanelOpen ? "translate-x-0 w-[260px]" : "px-0 translate-x-[100%] w-0",
         isMobile ? "fixed top-0 right-0 h-full" : "absolute right-0 top-0 md:relative"
       )}
     >

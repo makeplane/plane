@@ -1,4 +1,4 @@
-import { set } from "lodash";
+import { isEmpty, set } from "lodash";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { v4 as uuidv4 } from "uuid";
@@ -19,6 +19,7 @@ import {
 import { formatSearchQuery, IFormattedValue } from "./helper";
 
 export interface IPiChatStore {
+  isInWorkspaceContext: boolean;
   isNewChat: boolean;
   isLoading: boolean;
   activeChatId: string;
@@ -39,15 +40,17 @@ export interface IPiChatStore {
   getTemplates: () => Promise<TTemplate[]>;
   fetchUserThreads: (userId: string) => void;
   searchCallback: (workspace: string, query: string) => Promise<IFormattedValue>;
-  sendFeedback: (feedback: EFeedback) => Promise<void>;
+  sendFeedback: (message_index: number, feedback: EFeedback) => Promise<void>;
   setFocus: (chatId: string, entityType: string, entityIdentifier: string) => void;
   startChatWithTemplate: (template: TTemplate, userId: string) => Promise<void>;
   fetchModels: () => Promise<void>;
   setActiveModel: (model: TAiModels) => void;
+  setIsInWorkspaceContext: (value: boolean) => void;
 }
 
 export class PiChatStore implements IPiChatStore {
   activeChatId = "";
+  isInWorkspaceContext = true;
   isNewChat: boolean = true;
   isLoading: boolean = false;
   isPiTyping = false;
@@ -63,6 +66,7 @@ export class PiChatStore implements IPiChatStore {
   threads: Record<string, TUserThreads[]> = {};
 
   //services
+  rootStore;
   piChatService;
   workspaceService;
 
@@ -79,6 +83,7 @@ export class PiChatStore implements IPiChatStore {
       threads: observable,
       models: observable,
       activeModel: observable,
+      isInWorkspaceContext: observable,
       // computed
       currentFocus: computed,
       // actions
@@ -92,9 +97,11 @@ export class PiChatStore implements IPiChatStore {
       startChatWithTemplate: action,
       fetchModels: action,
       setActiveModel: action,
+      setIsInWorkspaceContext: action,
     });
 
     //services
+    this.rootStore = store;
     this.piChatService = new PiChatService();
     this.workspaceService = new WorkspaceService();
   }
@@ -111,6 +118,13 @@ export class PiChatStore implements IPiChatStore {
     this.activeModel = model;
   };
 
+  setIsInWorkspaceContext = (value: boolean) => {
+    this.isInWorkspaceContext = value;
+    if (isEmpty(this.focus[this.activeChatId]) && this.rootStore.workspaceRoot.currentWorkspace?.id) {
+      this.setFocus(this.activeChatId, "workspace_id", this.rootStore.workspaceRoot.currentWorkspace?.id);
+    }
+  };
+
   // computed
   geUserThreads = computedFn((userId: string) => {
     if (!userId) return [];
@@ -119,12 +133,6 @@ export class PiChatStore implements IPiChatStore {
 
   // actions
   initPiChat = (chatId?: string) => {
-    this.activeChat = {
-      chat_id: "",
-      dialogue: [],
-      title: "",
-    };
-
     // Existing chat
     if (chatId) {
       this.activeChatId = chatId;
@@ -132,11 +140,20 @@ export class PiChatStore implements IPiChatStore {
     }
     // New Chat
     else {
+      this.activeChat = {
+        chat_id: "",
+        dialogue: [],
+        title: "",
+      };
       // Generate new chat
       const id = uuidv4();
       this.activeChatId = id;
       this.isNewChat = true;
       this.isLoading = false;
+    }
+    // Set Focus
+    if (isEmpty(this.focus[this.activeChatId]) && this.rootStore.workspaceRoot.currentWorkspace?.id) {
+      this.setFocus(this.activeChatId, "workspace_id", this.rootStore.workspaceRoot.currentWorkspace?.id);
     }
     return this.activeChatId;
   };
@@ -183,7 +200,7 @@ export class PiChatStore implements IPiChatStore {
         is_new: true,
         user_id: userId,
         is_temp: false,
-        workspace_in_context: true,
+        workspace_in_context: this.isInWorkspaceContext,
       };
       payload = this.currentFocus
         ? { ...payload, [this.currentFocus.entityType]: this.currentFocus.entityIdentifier }
@@ -329,8 +346,19 @@ export class PiChatStore implements IPiChatStore {
     return formatSearchQuery(response.results);
   };
 
-  sendFeedback = async (feedback: EFeedback) => {
-    const response = await this.piChatService.postFeedback({ chat_id: this.activeChatId, feedback });
-    return response;
+  sendFeedback = async (message_index: number, feedback: EFeedback) => {
+    const initialState = this.activeChat.dialogue[message_index].feedback;
+    runInAction(() => {
+      set(this.activeChat.dialogue[message_index], "feedback", feedback);
+    });
+    try {
+      const response = await this.piChatService.postFeedback({ message_index, chat_id: this.activeChatId, feedback });
+      return response;
+    } catch (e) {
+      runInAction(() => {
+        set(this.activeChat.dialogue[message_index], "feedback", initialState);
+      });
+      throw e;
+    }
   };
 }

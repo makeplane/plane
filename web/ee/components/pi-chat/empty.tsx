@@ -12,8 +12,8 @@ import { useUserPermissions } from "@/hooks/store";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // assets
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
-import PiDark from "@/public/empty-state/pi/chat-dark.png";
-import PiLight from "@/public/empty-state/pi/chat-light.png";
+import PiDark from "@/public/empty-state/pi/chat-dark.webp";
+import PiLight from "@/public/empty-state/pi/chat-light.webp";
 import PiChatLogo from "@/public/logos/pi.png";
 
 export const EmptyPiChat = observer(() => {
@@ -35,9 +35,7 @@ export const EmptyPiChat = observer(() => {
       </div>
       <div className="flex flex-col flex-1 px-page-x pt-4 pb-8 relative h-full">
         <div className="mx-auto flex h-full flex-col justify-center space-y-4 lg:w-3/5">
-          <h4 className="text-xl font-semibold">
-            Upgrade to Pro for unlimited access to <span className="text-pi-700">Pi Chat</span>
-          </h4>
+          <h4 className="text-xl font-semibold">Upgrade to Pro for unlimited access to Pi Chat</h4>
           <p className="text-custom-text-100">
             Whether you need quick guidance, task updates, or help brainstorming ideas, this intelligent assistant is
             here 24/7 to make managing work easier{" "}

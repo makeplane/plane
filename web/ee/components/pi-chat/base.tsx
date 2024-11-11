@@ -33,6 +33,7 @@ export const PiChatBase = observer(() => {
     isNewChat,
     isLoading,
     models,
+    activeModel,
   } = usePiChat();
   const { isMobile } = usePlatformOS();
   const { data: currentUser } = useUser();
@@ -95,7 +96,7 @@ export const PiChatBase = observer(() => {
         "md:w-[450px] max-w-[450px] max-h-[722px] shadow-2xl rounded-md z-[20]": !isFullScreen,
       })}
     >
-      <div className="flex flex-col flex-1 px-page-x pt-4 pb-8 relative h-full">
+      <div className="flex flex-col flex-1 px-page-x pt-4 h-full">
         {/* Header */}
         <Header
           initPiChat={initPiChat}
@@ -103,14 +104,15 @@ export const PiChatBase = observer(() => {
           toggleSidePanel={toggleSidePanel}
           isFullScreen={isFullScreen}
           models={models}
+          activeModel={activeModel}
           setActiveModel={setActiveModel}
           isNewChat={activeChat?.dialogue?.length === 0}
         />
-        <div className="flex flex-col h-full flex-1 align-middle justify-center max-w-[800px] md:m-auto w-full">
-          <div className={cn("flex-1 my-auto flex flex-co h-full py-8 ", { "md:px-10": isFullScreen })}>
+        <div className="relative flex flex-col h-[90%] flex-1 align-middle justify-center max-w-[700px] md:m-auto w-full">
+          <div className={cn("flex-1 my-auto flex flex-co h-full py-8")}>
             {/* New conversation */}
             {activeChat?.dialogue?.length === 0 && isNewChat && (
-              <NewConversation currentUser={currentUser} templates={templates} />
+              <NewConversation currentUser={currentUser} templates={templates} isFullScreen={isFullScreen} />
             )}
 
             {/* Current conversation  */}
@@ -129,10 +131,11 @@ export const PiChatBase = observer(() => {
             {isLoading && !isNewChat && currentUser && (
               <Loading isLoading={isLoading} isFullScreen={isFullScreen} currentUser={currentUser} />
             )}
+
+            {/* Chat Input */}
+            <InputBox isFullScreen={isFullScreen} />
           </div>
         </div>
-        {/* Chat Input */}
-        <InputBox isFullScreen={isFullScreen} />
       </div>
       {/* History */}
       {isFullScreen && (

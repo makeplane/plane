@@ -17,6 +17,7 @@ interface IItem {
   sequence_id?: string;
   title?: string;
   subTitle?: string;
+  icon?: JSX.Element;
 }
 interface MentionListProps {
   command: (item: IItem) => void;
@@ -67,16 +68,17 @@ const Suggestions = ({ type, data, onClick, key, selectedIndex, isSectionSelecte
                 key={index}
                 onClick={() => onClick(d, type)}
                 className={cn(
-                  "rounded p-1 my-1 cursor-pointer hover:bg-custom-sidebar-background-80/50 text-xs font-medium text-custom-text-200 space-x-1 block",
+                  "gap-1 rounded p-1 my-1 cursor-pointer hover:bg-custom-sidebar-background-80/50 text-xs font-medium text-custom-text-200 space-x-1 flex",
                   {
                     "bg-custom-sidebar-background-80/50": selectedIndex === index && isSectionSelected,
                   }
                 )}
               >
-                {type === "issue" && <span className="text-custom-sidebar-text-400">{d.subTitle}</span>}
-                <span>{d.title}</span>
+                <span className="my-auto"> {d.icon}</span>
+                <span className="truncate max-w-[180px] h-[16px]">{d.title}</span>
               </div>
             ))}
+          {data && data.length === 0 && <div className="text-xs text-custom-text-400">No results found</div>}
         </Disclosure.Panel>
       </Transition>
     </Disclosure>
@@ -152,7 +154,6 @@ const MentionList = forwardRef((props: MentionListProps, ref) => {
       }
 
       if (event.key === "ArrowDown") {
-        console.log("down");
         downHandler();
         return true;
       }
@@ -181,7 +182,7 @@ const MentionList = forwardRef((props: MentionListProps, ref) => {
     scrollIntoViewHelper(`${selectedSection}-${selectedIndex}`);
   }, [selectedSection, selectedIndex]);
   return (
-    <div className="w-[270px] border border-custom-border-300 rounded p-2 divide-y-[1px] divide-custom-border-300 bg-custom-background-100 max-h-full overflow-y-scroll">
+    <div className="w-[270px] border border-custom-border-100 rounded p-2 divide-y-[1px] divide-custom-border-100 bg-custom-background-100 max-h-full overflow-y-scroll">
       {suggestionTypes.map((type, index) => (
         <Suggestions
           key={index}
