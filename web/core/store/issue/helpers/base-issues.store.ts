@@ -164,8 +164,8 @@ const ISSUE_ORDERBY_KEY: Record<TIssueOrderByOptions, keyof TIssue> = {
   "-issue_cycle__cycle__name": "cycle_id",
   target_date: "target_date",
   "-target_date": "target_date",
-  estimate_point: "estimate_point",
-  "-estimate_point": "estimate_point",
+  estimate_point__key: "estimate_point",
+  "-estimate_point__key": "estimate_point",
   start_date: "start_date",
   "-start_date": "start_date",
   link_count: "link_count",
@@ -1853,7 +1853,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       case "-attachment_count":
         return getIssueIds(orderBy(array, "attachment_count", ["desc"]));
 
-      case "estimate_point":
+      case "estimate_point__key":
         return getIssueIds(
           orderBy(array, [
             getSortOrderToFilterEmptyValues.bind(null, "estimate_point"),
@@ -1861,7 +1861,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
               this.populateIssueDataForSorting("estimate_point", issue?.["estimate_point"], issue?.["project_id"]),
           ])
         ); //preferring sorting based on empty values to always keep the empty values below
-      case "-estimate_point":
+      case "-estimate_point__key":
         return getIssueIds(
           orderBy(
             array,
