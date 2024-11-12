@@ -1,5 +1,6 @@
 # Python imports
 import json
+import base64
 
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -480,9 +481,7 @@ class IssueViewSet(BaseViewSet):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
 
         issue = (
-            Issue.objects.filter(
-                project_id=self.kwargs.get("project_id")
-            )
+            Issue.objects.filter(project_id=self.kwargs.get("project_id"))
             .filter(workspace__slug=self.kwargs.get("slug"))
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
@@ -517,7 +516,7 @@ class IssueViewSet(BaseViewSet):
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
-                )
+            )
             .filter(pk=pk)
             .annotate(
                 label_ids=Coalesce(
@@ -852,8 +851,20 @@ class IssuePaginatedViewSet(BaseViewSet):
             )
         ).distinct()
 
-    def process_paginated_result(self, fields, results, timezone):
+    def process_paginated_result(
+        self, fields, results, timezone, description_binary_required=False
+    ):
         paginated_data = results.values(*fields)
+
+        # handling the description binary field
+        if description_binary_required:
+            for item in paginated_data:
+                if item["description_binary"]:
+                    item["description_base64"] = base64.b64encode(
+                        item["description_binary"]
+                    ).decode("utf-8")
+                else:
+                    item["description_base64"] = None
 
         # converting the datetime fields in paginated data
         datetime_fields = ["created_at", "updated_at"]
@@ -867,6 +878,9 @@ class IssuePaginatedViewSet(BaseViewSet):
     def list(self, request, slug, project_id):
         cursor = request.GET.get("cursor", None)
         is_description_required = request.GET.get("description", "false")
+        is_description_binary_required = request.GET.get(
+            "description_binary", "false"
+        )
         updated_at = request.GET.get("updated_at__gt", None)
 
         # required fields
@@ -901,6 +915,9 @@ class IssuePaginatedViewSet(BaseViewSet):
 
         if str(is_description_required).lower() == "true":
             required_fields.append("description_html")
+
+        if str(is_description_binary_required).lower() == "true":
+            required_fields.append("description_binary")
 
         # querying issues
         base_queryset = Issue.issue_objects.filter(
@@ -966,12 +983,21 @@ class IssuePaginatedViewSet(BaseViewSet):
             ),
         )
 
+        is_description_binary_required = (
+            True
+            if required_fields.__contains__("description_binary")
+            else False,
+        )
+
         paginated_data = paginate(
             base_queryset=base_queryset,
             queryset=queryset,
             cursor=cursor,
             on_result=lambda results: self.process_paginated_result(
-                required_fields, results, request.user.user_timezone
+                required_fields,
+                results,
+                request.user.user_timezone,
+                is_description_binary_required,
             ),
         )
 
