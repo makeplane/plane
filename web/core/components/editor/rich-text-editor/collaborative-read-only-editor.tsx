@@ -18,8 +18,8 @@ type RichTextReadOnlyEditorWrapperProps = Omit<
   ICollaborativeRichTextReadOnlyEditor,
   "fileHandler" | "mentionHandler" | "value"
 > & {
+  descriptionBinary: string | null;
   descriptionHTML: string;
-  fetchDescription: () => Promise<any>;
   projectId?: string;
   workspaceSlug: string;
 };
@@ -27,12 +27,12 @@ type RichTextReadOnlyEditorWrapperProps = Omit<
 export const CollaborativeRichTextReadOnlyEditor = React.forwardRef<
   EditorReadOnlyRefApi,
   RichTextReadOnlyEditorWrapperProps
->(({ descriptionHTML, fetchDescription, projectId, workspaceSlug, ...props }, ref) => {
+>(({ descriptionBinary: savedDescriptionBinary, descriptionHTML, projectId, workspaceSlug, ...props }, ref) => {
   const { mentionHighlights } = useMention({});
 
   const { descriptionBinary } = useIssueDescription({
+    descriptionBinary: savedDescriptionBinary,
     descriptionHTML,
-    fetchDescription,
   });
 
   if (!descriptionBinary)

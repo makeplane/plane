@@ -94,6 +94,9 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
         }
       },
       updateDescription: async (workspaceSlug, projectId, issueId, descriptionBinary) => {
+        if (!workspaceSlug || !projectId || !issueId) {
+          throw new Error("Required fields missing while updating binary description");
+        }
         try {
           return await updateIssueDescription(workspaceSlug, projectId, issueId, descriptionBinary);
         } catch {
@@ -326,7 +329,17 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
         }
       },
     }),
-    [fetchIssue, is_draft, issues, fetchActivities, captureIssueEvent, pathname, removeRoutePeekId, restoreIssue]
+    [
+      fetchIssue,
+      is_draft,
+      issues,
+      fetchActivities,
+      captureIssueEvent,
+      pathname,
+      removeRoutePeekId,
+      restoreIssue,
+      updateIssueDescription,
+    ]
   );
 
   useEffect(() => {

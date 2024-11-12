@@ -9,12 +9,11 @@ import {
 type TArgs = {
   descriptionBinary: string | null;
   descriptionHTML: string | null;
-  id: string;
   updateDescription?: (data: string) => Promise<ArrayBuffer>;
 };
 
 export const useIssueDescription = (args: TArgs) => {
-  const { descriptionBinary: savedDescriptionBinary, descriptionHTML, id, updateDescription } = args;
+  const { descriptionBinary: savedDescriptionBinary, descriptionHTML, updateDescription } = args;
   // states
   const [descriptionBinary, setDescriptionBinary] = useState<Uint8Array | null>(null);
   // update description

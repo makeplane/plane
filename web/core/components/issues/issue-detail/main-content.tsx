@@ -24,9 +24,6 @@ import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe";
 import { IssueTypeSwitcher } from "@/plane-web/components/issues";
 // plane web hooks
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
-// services
-import { IssueService } from "@/services/issue";
-const issueService = new IssueService();
 // types
 import { TIssueOperations } from "./root";
 
@@ -124,18 +121,9 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
             descriptionBinary={issue.description_binary}
             descriptionHTML={issue.description_html ?? "<p></p>"}
             disabled={!isEditable}
-            fetchDescription={async () => {
-              if (!workspaceSlug || !projectId || !issueId) {
-                throw new Error("Required fields missing while fetching binary description");
-              }
-              return await issueService.fetchDescriptionBinary(workspaceSlug, projectId, issueId);
-            }}
-            updateDescription={async (data) => {
-              if (!workspaceSlug || !issue.project_id || !issue.id) {
-                throw new Error("Required fields missing while updating binary description");
-              }
-              return await issueOperations.updateDescription(workspaceSlug, issue.project_id, issue.id, data);
-            }}
+            updateDescription={async (data) =>
+              await issueOperations.updateDescription(workspaceSlug, issue.project_id ?? "", issue.id, data)
+            }
             issueId={issue.id}
             projectId={issue.project_id}
             setIsSubmitting={(value) => setIsSubmitting(value)}

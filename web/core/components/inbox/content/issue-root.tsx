@@ -3,8 +3,6 @@
 import { Dispatch, SetStateAction, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
-// plane types
-import { TIssue } from "@plane/types";
 // plane ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
@@ -27,9 +25,7 @@ import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // store types
 import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe";
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
-// services
-import { InboxIssueService } from "@/services/inbox";
-const inboxIssueService = new InboxIssueService();
+// store
 import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
 
 type Props = {
@@ -196,18 +192,9 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
             descriptionBinary={issue.description_binary}
             descriptionHTML={issue.description_html ?? "<p></p>"}
             disabled={!isEditable}
-            fetchDescription={async () => {
-              if (!workspaceSlug || !projectId || !issue.id) {
-                throw new Error("Required fields missing while fetching binary description");
-              }
-              return await inboxIssueService.fetchDescriptionBinary(workspaceSlug, projectId, issue.id);
-            }}
-            updateDescription={async (data) => {
-              if (!workspaceSlug || !projectId || !issue.id) {
-                throw new Error("Required fields missing while updating binary description");
-              }
-              return await issueOperations.updateDescription(workspaceSlug, projectId, issue.id, data);
-            }}
+            updateDescription={async (data) =>
+              await issueOperations.updateDescription(workspaceSlug, projectId, issue.id ?? "", data)
+            }
             issueId={issue.id}
             projectId={issue.project_id}
             setIsSubmitting={(value) => setIsSubmitting(value)}

@@ -25,7 +25,6 @@ export type IssueDescriptionInputProps = {
   descriptionBinary: string | null;
   descriptionHTML: string;
   disabled?: boolean;
-  fetchDescription: () => Promise<ArrayBuffer>;
   issueId: string;
   key: string;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
@@ -41,7 +40,6 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
     descriptionBinary: savedDescriptionBinary,
     descriptionHTML,
     disabled,
-    fetchDescription,
     issueId,
     placeholder,
     projectId,
@@ -59,7 +57,6 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
   const { descriptionBinary, resolveConflictsAndUpdateDescription } = useIssueDescription({
     descriptionBinary: savedDescriptionBinary,
     descriptionHTML,
-    id: issueId,
     updateDescription,
   });
 
@@ -136,8 +133,8 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
       ) : (
         <CollaborativeRichTextReadOnlyEditor
           containerClassName={containerClassName}
+          descriptionBinary={savedDescriptionBinary}
           descriptionHTML={descriptionHTML}
-          fetchDescription={fetchDescription}
           id={issueId}
           projectId={projectId}
           workspaceSlug={workspaceSlug}
