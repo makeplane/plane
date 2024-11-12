@@ -22,6 +22,7 @@ class ProjectSerializer(BaseSerializer):
     workspace_detail = WorkspaceLiteSerializer(
         source="workspace", read_only=True
     )
+    inbox_view = serializers.BooleanField(read_only=True, source="intake_view")
 
     class Meta:
         model = Project
@@ -119,6 +120,7 @@ class ProjectListSerializer(DynamicBaseSerializer):
     anchor = serializers.CharField(read_only=True)
     members = serializers.SerializerMethodField()
     cover_image_url = serializers.CharField(read_only=True)
+    inbox_view = serializers.BooleanField(read_only=True, source="intake_view")
 
     def get_members(self, obj):
         project_members = getattr(obj, "members_list", None)

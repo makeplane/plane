@@ -78,7 +78,7 @@ export const CoreEditorExtensions = (args: TArguments) => {
     DropHandlerExtension(),
     CustomHorizontalRule.configure({
       HTMLAttributes: {
-        class: "my-4 border-custom-border-400",
+        class: "py-4 border-custom-border-400",
       },
     }),
     CustomKeymap,

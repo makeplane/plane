@@ -14,7 +14,7 @@ from .issue import (
     ProjectIssuesPublicEndpoint,
 )
 
-from .inbox import InboxIssuePublicViewSet
+from .intake import IntakeIssuePublicViewSet
 
 from .cycle import ProjectCyclesEndpoint
 

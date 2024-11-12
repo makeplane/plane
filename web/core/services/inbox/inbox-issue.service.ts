@@ -127,7 +127,7 @@ export class InboxIssueService extends APIService {
       });
   }
 
-  async regeneratePublishForm(workspaceSlug: string, projectId: string): Promise<TInboxIssue> {
+  async regeneratePublishForm(workspaceSlug: string, projectId: string): Promise<TInboxForm> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/publish-intake-regenerate/`)
       .then((response) => response?.data)
       .catch((error) => {
