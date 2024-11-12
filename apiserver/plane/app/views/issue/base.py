@@ -770,7 +770,13 @@ class IssueViewSet(BaseViewSet):
             "updates": request.data.get("description_binary"),
         }
         base_url = f"{settings.LIVE_BASE_URL}/resolve-document-conflicts/"
-        response = requests.post(base_url, json=data, headers=None)
+        try:
+            response = requests.post(base_url, json=data, headers=None)
+        except requests.RequestException:
+            return Response(
+                {"error": "Failed to connect to the external service"},
+                status=status.HTTP_502_BAD_GATEWAY,
+            )
 
         if response.status_code == 200:
             issue.description = response.json().get(
