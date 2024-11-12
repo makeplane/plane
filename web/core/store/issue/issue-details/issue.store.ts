@@ -58,14 +58,14 @@ export class IssueStore implements IIssueStore {
   issueArchiveService;
   issueDraftService;
 
-  constructor(rootStore: IIssueRootStore) {
+  constructor(rootStore: IIssueRootStore, rootIssueDetailStore: IIssueDetail) {
     makeObservable(this, {
       fetchingIssueDetails: observable.ref,
       localDBIssueDescription: observable.ref,
     });
     // root store
     this.rootIssueStore = rootStore;
-    this.rootIssueDetailStore = rootStore.issueDetail;
+    this.rootIssueDetailStore = rootIssueDetailStore;
     // services
     this.issueService = new IssueService();
     this.issueArchiveService = new IssueArchiveService();

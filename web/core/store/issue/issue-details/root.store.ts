@@ -192,7 +192,7 @@ export class IssueDetail implements IIssueDetail {
 
     // store
     this.rootIssueStore = rootStore;
-    this.issue = new IssueStore(rootStore);
+    this.issue = new IssueStore(rootStore, this);
     this.reaction = new IssueReactionStore(this);
     this.attachment = new IssueAttachmentStore(rootStore);
     this.activity = new IssueActivityStore(rootStore.rootStore as RootStore);

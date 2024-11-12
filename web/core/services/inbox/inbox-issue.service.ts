@@ -76,22 +76,6 @@ export class InboxIssueService extends APIService {
       });
   }
 
-  async fetchDescriptionBinary(workspaceSlug: string, projectId: string, inboxIssueId: string): Promise<ArrayBuffer> {
-    return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/inbox-issues/${inboxIssueId}/description/`,
-      {
-        headers: {
-          "Content-Type": "application/octet-stream",
-        },
-        responseType: "arraybuffer",
-      }
-    )
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
   async updateDescriptionBinary(
     workspaceSlug: string,
     projectId: string,
