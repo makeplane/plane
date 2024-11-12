@@ -825,22 +825,23 @@ html.todesktop .header button {
   -webkit-app-region: no-drag;
 }
 
-.pi-chat-root li, .pi-chat-root ui{
-  display: list-item;
-  list-style-type: disc;
-  margin-left: 0.9rem;
-}
-.pi-chat-root *{
-  margin: revert;
-  font-size: revert;
-  font-weight: revert;
-  color: revert;
-  text-decoration: revert;
-  text-indent: revert;
-  border-collapse: revert;
-}
 
-.pi-chat-root table, tr, td, th{
-  border-width: revert;
-
+.pi-chat-root {
+  * {
+    margin: revert;
+    font-size: revert;
+    font-weight: revert;
+    color: revert;
+    text-decoration: revert;
+    text-indent: revert;
+    border-collapse: revert;
+  }
+  li, ui{
+    display: list-item;
+    list-style-type: disc;
+    margin-left: 0.9rem;
+  }
+  table, tr, td, th {
+    border-width: revert;
+ }
 }

@@ -176,6 +176,7 @@ export class PiChatStore implements IPiChatStore {
     const dialogueHistory = this.activeChat.dialogue;
     const newDialogue: TDialogue = {
       query,
+      llm: this.activeModel?.id,
     };
 
     try {
@@ -206,6 +207,7 @@ export class PiChatStore implements IPiChatStore {
         is_temp: false,
         workspace_in_context: this.isInWorkspaceContext,
         source: ESource.WEB,
+        llm: this.activeModel?.id,
         context: this.userStore.data
           ? {
               first_name: this.userStore.data.first_name,
@@ -218,10 +220,6 @@ export class PiChatStore implements IPiChatStore {
         ? { ...payload, [this.currentFocus.entityType]: this.currentFocus.entityIdentifier }
         : payload;
 
-      if (isNewChat) {
-        payload.llm = this.activeModel?.id;
-        newDialogue.llm = this.activeModel?.id;
-      }
       // Api call here
       const response = await fetch(`${PI_BASE_URL}/api/v1/chat/get-answer/`, {
         method: "POST",
