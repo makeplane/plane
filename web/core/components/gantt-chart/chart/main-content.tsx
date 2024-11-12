@@ -196,6 +196,7 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
                     style={{
                       width: `${itemsContainerWidth}px`,
                       transform: `translateY(${HEADER_HEIGHT}px)`,
+                      paddingBottom: `${HEADER_HEIGHT}px`,
                     }}
                   >
                     <GanttChartRowList
