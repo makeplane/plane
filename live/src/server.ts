@@ -66,12 +66,12 @@ app.post("/resolve-document-conflicts", (req, res) => {
       res.status(400).send({
         message: "Missing required fields",
       });
-      throw new Error("Missing required fields");
+      return;
     }
     const resolvedDocument = resolveDocumentConflicts(req.body);
     res.status(200).json(resolvedDocument);
   } catch (error) {
-    console.error("error", error);
+    manualLogger.error("Error in /resolve-document-conflicts endpoint:", error);
     res.status(500).send({
       message: "Internal server error",
     });
