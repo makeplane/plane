@@ -300,6 +300,7 @@ export class Storage {
     const { cursor, group_by, sub_group_by } = queries;
 
     const query = issueFilterQueryConstructor(this.workspaceSlug, projectId, queries);
+    log("#### Query", query);
     const countQuery = issueFilterCountQueryConstructor(this.workspaceSlug, projectId, queries);
     const start = performance.now();
     let issuesRaw: any[] = [];
