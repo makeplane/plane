@@ -36,6 +36,7 @@ import { EIssueLayoutTypes, ISSUE_PRIORITIES } from "@/constants/issue";
 // helpers
 import { convertToISODateString } from "@/helpers/date-time.helper";
 // local-db
+import { SPECIAL_ORDER_BY } from "@/local-db/utils/query-constructor";
 import { updatePersistentLayer } from "@/local-db/utils/utils";
 // services
 import { CycleService } from "@/services/cycle.service";
@@ -281,6 +282,19 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   get orderBy() {
     const displayFilters = this.issueFilterStore?.issueFilters?.displayFilters;
     if (!displayFilters) return;
+
+    const layout = displayFilters.layout;
+    const orderBy = displayFilters.order_by;
+
+    // Temporary code to fix no load order by
+    if (
+      this.rootIssueStore.rootStore.user.localDBEnabled &&
+      layout !== EIssueLayoutTypes.SPREADSHEET &&
+      orderBy &&
+      Object.keys(SPECIAL_ORDER_BY).includes(orderBy)
+    ) {
+      return "sort_order";
+    }
 
     return displayFilters?.order_by;
   }
