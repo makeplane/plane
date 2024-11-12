@@ -13,6 +13,7 @@ from .user import (
 from .workspace import (
     WorkSpaceSerializer,
     WorkSpaceMemberSerializer,
+    TeamSerializer,
     WorkSpaceMemberInviteSerializer,
     WorkspaceLiteSerializer,
     WorkspaceThemeSerializer,

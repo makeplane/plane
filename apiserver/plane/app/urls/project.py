@@ -7,6 +7,7 @@ from plane.app.views import (
     ProjectMemberViewSet,
     ProjectMemberUserEndpoint,
     ProjectJoinEndpoint,
+    AddTeamToProjectEndpoint,
     ProjectUserViewsEndpoint,
     ProjectIdentifierEndpoint,
     ProjectFavoritesViewSet,
@@ -114,6 +115,11 @@ urlpatterns = [
             }
         ),
         name="project-member",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/team-invite/",
+        AddTeamToProjectEndpoint.as_view(),
+        name="projects",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/project-views/",
