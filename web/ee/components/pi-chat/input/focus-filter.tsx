@@ -71,7 +71,9 @@ export const FocusFilter = observer(() => {
             <WorkspaceLogo logo={workspace?.logo_url} name={workspace?.name} classNames={"w-4 h-4 text-[9px]"} />
             <span>{workspace?.name}</span>
           </CustomSelect.Option>
-          <span className="text-custom-text-350 font-medium">Projects</span>
+          {workspaceProjectIds && workspaceProjectIds.length > 0 && (
+            <span className="text-custom-text-350 font-medium">Projects</span>
+          )}
           {workspaceProjectIds &&
             workspaceProjectIds.map((id) => {
               const project = getProjectById(id);
@@ -89,7 +91,7 @@ export const FocusFilter = observer(() => {
               );
             })}
         </div>
-        <div className="pt-2 flex justify-between">
+        <div className="pt-2 flex justify-between gap-2">
           <div className="text-wrap font-medium text-custom-text-350">
             Turn this off if you don’t want Pi to use your work from Plane.{" "}
           </div>

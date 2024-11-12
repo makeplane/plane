@@ -6,6 +6,11 @@ export enum EFeedback {
 export enum EChatType {
   THREAD = "threads",
 }
+
+export enum ESource {
+  WEB = "web",
+}
+
 export type TQuery = {
   query: string;
   is_new: boolean;
@@ -16,6 +21,10 @@ export type TQuery = {
   workspace_id?: string;
   project_id?: string;
   llm?: string;
+  source: string;
+  context?: {
+    [key: string]: string;
+  };
 };
 
 export type TSearchQuery = {

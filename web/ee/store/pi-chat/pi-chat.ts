@@ -1,4 +1,5 @@
-import { isEmpty, set } from "lodash";
+import isEmpty from "lodash/isEmpty";
+import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { v4 as uuidv4 } from "uuid";
@@ -8,6 +9,7 @@ import { PiChatService } from "@/plane-web/services/pi-chat.service";
 import { RootStore } from "@/plane-web/store/root.store";
 import {
   EFeedback,
+  ESource,
   IFormattedValue,
   TAiModels,
   TChatHistory,
@@ -66,6 +68,7 @@ export class PiChatStore implements IPiChatStore {
   threads: Record<string, TUserThreads[]> = {};
 
   //services
+  userStore;
   rootStore;
   piChatService;
   workspaceService;
@@ -102,6 +105,7 @@ export class PiChatStore implements IPiChatStore {
 
     //services
     this.rootStore = store;
+    this.userStore = store.user;
     this.piChatService = new PiChatService();
     this.workspaceService = new WorkspaceService();
   }
@@ -201,14 +205,22 @@ export class PiChatStore implements IPiChatStore {
         user_id: userId,
         is_temp: false,
         workspace_in_context: this.isInWorkspaceContext,
+        source: ESource.WEB,
+        context: this.userStore.data
+          ? {
+              first_name: this.userStore.data.first_name,
+              last_name: this.userStore.data.last_name,
+              email: this.userStore.data.email,
+            }
+          : {},
       };
       payload = this.currentFocus
         ? { ...payload, [this.currentFocus.entityType]: this.currentFocus.entityIdentifier }
         : payload;
 
       if (isNewChat) {
-        payload.llm = this.activeModel?.name;
-        newDialogue.llm = this.activeModel?.name;
+        payload.llm = this.activeModel?.id;
+        newDialogue.llm = this.activeModel?.id;
       }
       // Api call here
       const response = await fetch(`${PI_BASE_URL}/api/v1/chat/get-answer/`, {

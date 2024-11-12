@@ -14,7 +14,7 @@ export const NewConversation = (props: TProps) => {
   return (
     <div
       className={cn("m-auto", {
-        "mb-[50%]": !isFullScreen,
+        "mb-[40%]": !isFullScreen,
       })}
     >
       <div className="text-center text-3xl font-bold text-custom-text-400">Hey, {currentUser?.first_name}! </div>

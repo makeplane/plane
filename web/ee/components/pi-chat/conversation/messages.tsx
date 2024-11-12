@@ -35,9 +35,7 @@ export const Messages = observer((props: TProps) => {
   }, [activeChat?.dialogue?.length]);
 
   return (
-    <div
-      className={cn("pi-chat-root flex flex-col gap-8 max-h-full h-full overflow-y-scroll w-full mx-auto pb-[230px]")}
-    >
+    <div className={cn("flex flex-col gap-8 max-h-full h-full overflow-y-scroll w-full mx-auto pb-[230px]")}>
       {activeChat?.dialogue.map((message: TDialogue, index: number) => (
         <div key={index} className="space-y-4">
           <MyMessage message={message.query} currentUser={currentUser} id={index.toString()} />

@@ -55,7 +55,7 @@ export const AiMessage = observer((props: TProps) => {
       </div>
       <div className="flex flex-col w-fit text-base break-all">
         {/* Message */}
-        {!isPiTyping && !isLoading && <Markdown class>{message}</Markdown>}
+        {!isPiTyping && !isLoading && <Markdown className="pi-chat-root">{message}</Markdown>}
 
         {/* Typing */}
         {isPiTyping && <Thinking />}
