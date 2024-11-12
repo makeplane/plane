@@ -44,10 +44,14 @@ class ProjectBasePermission(BasePermission):
 
 class ProjectMemberPermission(BasePermission):
     def has_permission(self, request, view):
+        print("Project ID:: %s" %  view.project_id)
         if request.user.is_anonymous:
             return False
 
+        if request.user.is_superuser:
+            return True
         ## Safe Methods -> Handle the filtering logic in queryset
+        
         if request.method in SAFE_METHODS:
             return ProjectMember.objects.filter(
                 workspace__slug=view.workspace_slug,
@@ -64,6 +68,7 @@ class ProjectMemberPermission(BasePermission):
             ).exists()
 
         ## Only Project Admins can update project attributes
+        
         return ProjectMember.objects.filter(
             workspace__slug=view.workspace_slug,
             member=request.user,

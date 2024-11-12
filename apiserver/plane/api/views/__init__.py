@@ -1,4 +1,8 @@
-from .project import ProjectAPIEndpoint, ProjectArchiveUnarchiveAPIEndpoint
+from .project import (
+    ProjectAPIEndpoint, 
+    ProjectArchiveUnarchiveAPIEndpoint,
+    ProjectCustomPropertyAPIEndpoint
+)
 
 from .state import StateAPIEndpoint
 

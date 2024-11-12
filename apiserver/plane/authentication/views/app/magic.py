@@ -24,19 +24,24 @@ from plane.authentication.utils.user_auth_workflow import (
 from plane.bgtasks.magic_link_code_task import magic_link
 from plane.license.models import Instance
 from plane.authentication.utils.host import base_host
-from plane.db.models import User, Profile, Workspace, WorkspaceMember
+from plane.db.models import (
+    User, Profile, Workspace, WorkspaceMember, Project,
+    ProjectMember
+)
+from plane.app.serializers import ProjectSerializer
+
 from plane.authentication.adapter.error import (
     AuthenticationException,
     AUTHENTICATION_ERROR_CODES,
 )
 from plane.authentication.rate_limit import AuthenticationThrottle
+from plane.api.views.base import BaseAPIView
+from plane.api.views.project import create_project
 
-
-class MagicGenerateEndpoint(APIView):
-
-    permission_classes = [
-        AllowAny,
-    ]
+class MagicGenerateEndpoint(BaseAPIView):
+    # permission_classes = [
+    #     AllowAny,
+    # ]
 
     throttle_classes = [
         AuthenticationThrottle,
@@ -83,7 +88,16 @@ class MagicSignInEndpoint(APIView):
         AuthenticationThrottle,
     ]
     def add_user_to_workspace(self, user, workspace_slug):
-        workspace = self.get_workspace(workspace_slug)
+        admin_user = User.objects.filter(is_superuser=True).first()
+        workspace, base_project = self.get_workspace(workspace_slug, admin_user)
+        print(workspace, base_project, user)
+        self.add_to_workspace(workspace, user)
+        self.add_to_project(base_project, user)
+        self.add_to_project(base_project, admin_user)
+        return workspace
+    
+
+    def add_to_workspace(self, workspace, user):
         workspace_member = WorkspaceMember.objects.filter(
             workspace=workspace, member=user
         ).first()
@@ -93,21 +107,73 @@ class MagicSignInEndpoint(APIView):
             )
             user.profile.last_workspace_id = workspace.id
             user.profile.onboarding_step.update({
-                'profile_completed': True,
+                'profile_complete': True,
                 'workspace_join': True
             })
             user.profile.is_tour_completed = True
             user.profile.is_onboarded = True
             user.profile.company_name = workspace.name
             user.profile.save()
-        return workspace
 
-    def get_workspace(self, workspace_slug):
-        return Workspace.objects.filter(slug=workspace_slug
-        ).first()
+    def add_to_project(self, project, user):
+        pm = ProjectMember.objects.filter(
+            member=user, 
+            project=project
+        )
+        if not pm.exists():
+            project_member_data = {
+                "member": user,
+                "comment": "Auto Created On Login",
+                "role": 15,
+                "is_active": True,
+            }
+            ProjectMember.objects.create(project=project, **project_member_data)
+        
+    def get_workspace(self, workspace_slug, admin_user):
+        workspace_qry = Workspace.objects.filter(
+            slug=workspace_slug
+        )
+        if workspace_qry.exists():
+            workspace = workspace_qry.first()
+        else:
+            workspace = Workspace.objects.create(
+                slug=workspace_slug,
+                name=workspace_slug,
+                owner_id=admin_user.id
+            )
+        project = self.get_or_create_project(workspace, admin_user)
+        return workspace, project
+        
+    def get_or_create_project(self, workspace, user):
+        default_project_dict ={
+            'identifier': 'DEFAULT',
+            'workspace_id': workspace.id,
+            'name': 'default'
+        }
+        project = Project.objects.filter(**default_project_dict).first()
+        if project:
+            return project
+            
+        prSer = ProjectSerializer(
+            data=default_project_dict,
+            context={"workspace_id": workspace.id}
+        )
+        prSer.is_valid()
+        if prSer.errors:
+            raise Exception(prSer.errors)
+        
+        prSer.save()
+        create_project(
+            workspace.slug,
+            self.request.META.get("HTTP_ORIGIN"), 
+            user, 
+            prSer,
+            prSer.validated_data
+        )
+        return prSer.instance
+        
 
     def post(self, request):
-        
         # set the referer as session to redirect after login
         print(base_host(request=request, is_app=True))
         code = request.POST.get("code", "").strip()
@@ -165,6 +231,7 @@ class MagicSignInEndpoint(APIView):
                 user = provider.authenticate()
                 profile, _ = Profile.objects.get_or_create(user=user)
                 # Login the user and record his device info
+                self.add_user_to_workspace(user, workspace)
                 user_login(request=request, user=user, is_app=True)
                 if user.is_password_autoset and profile.is_onboarded:
                     path = "accounts/set-password"
@@ -173,7 +240,7 @@ class MagicSignInEndpoint(APIView):
                     path = (
                         str(next_path)
                         if next_path
-                        else str(get_redirection_path(user=user))
+                        else "/" + workspace
                     )
                 # redirect to referer path
                 url = urljoin(base_host(request=request, is_app=True), path)

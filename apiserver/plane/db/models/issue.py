@@ -709,3 +709,25 @@ class IssueVote(ProjectBaseModel):
 
     def __str__(self):
         return f"{self.issue.name} {self.actor.email}"
+
+
+class IssueCustomProperty(ProjectBaseModel):
+    issue = models.ForeignKey(
+        Issue, on_delete=models.CASCADE, related_name="custom_properties"
+    )
+    key = models.CharField(max_length=255)
+    value = models.JSONField(default=dict)
+    project_custom_property = models.ForeignKey(
+        "db.ProjectCustomProperty",
+        on_delete=models.CASCADE,
+        related_name="issue_custom_properties",
+    )
+
+    class Meta:
+        verbose_name = "Issue Custom Property"
+        verbose_name_plural = "Issue Custom Properties"
+        db_table = "issue_custom_properties"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.issue.name} {self.key}"

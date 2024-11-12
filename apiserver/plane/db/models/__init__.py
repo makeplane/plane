@@ -41,6 +41,7 @@ from .issue import (
     IssueSequence,
     IssueSubscriber,
     IssueVote,
+    IssueCustomProperty
 )
 from .module import (
     Module,
@@ -68,6 +69,7 @@ from .project import (
     ProjectMember,
     ProjectMemberInvite,
     ProjectPublicMember,
+    ProjectCustomProperty
 )
 from .deploy_board import DeployBoard
 from .session import Session

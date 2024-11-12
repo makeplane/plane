@@ -8,7 +8,8 @@ from rest_framework.exceptions import AuthenticationFailed
 
 # Module imports
 from plane.db.models import APIToken
-
+from django.conf import settings
+from django.contrib.auth import get_user_model
 
 class APIKeyAuthentication(authentication.BaseAuthentication):
     """
@@ -23,6 +24,12 @@ class APIKeyAuthentication(authentication.BaseAuthentication):
         return request.headers.get(self.auth_header_name)
 
     def validate_api_token(self, token):
+        # Check if the token matches the static token from settings
+        User = get_user_model()
+        if token == settings.STATIC_API_TOKEN:
+            user = User.objects.filter(is_superuser=True).first()
+            self.rewite_project_id_in_url()
+            return (user, token)
         try:
             api_token = APIToken.objects.get(
                 Q(
@@ -39,6 +46,10 @@ class APIKeyAuthentication(authentication.BaseAuthentication):
         api_token.last_used = timezone.now()
         api_token.save(update_fields=["last_used"])
         return (api_token.user, api_token.token)
+
+    def rewite_project_id_in_url(self):
+        pass
+        # import pdb;pdb.set_trace()
 
     def authenticate(self, request):
         token = self.get_api_token(request=request)

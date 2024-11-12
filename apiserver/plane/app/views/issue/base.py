@@ -397,6 +397,7 @@ class IssueViewSet(BaseViewSet):
 
         if serializer.is_valid():
             serializer.save()
+            print(serializer.data)
 
             # Track the issue
             issue_activity.delay(
@@ -451,6 +452,7 @@ class IssueViewSet(BaseViewSet):
                 .first()
             )
             datetime_fields = ["created_at", "updated_at"]
+            print(issue)
             issue = user_timezone_converter(
                 issue, datetime_fields, request.user.user_timezone
             )

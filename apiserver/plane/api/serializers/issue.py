@@ -19,8 +19,8 @@ from plane.db.models import (
     ProjectMember,
     State,
     User,
+    IssueCustomProperty
 )
-
 from .base import BaseSerializer
 from .cycle import CycleLiteSerializer, CycleSerializer
 from .module import ModuleLiteSerializer, ModuleSerializer
@@ -31,6 +31,21 @@ from .user import UserLiteSerializer
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 
+
+class IssueCustomPropertySerializer(BaseSerializer):
+    class Meta:
+        model = IssueCustomProperty
+        fields = ["id", "key", "value", "project_custom_property"]
+        read_only_fields = [
+            "id",
+            "workspace",
+            "project",
+            "issue",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
 
 class IssueSerializer(BaseSerializer):
     assignees = serializers.ListField(
@@ -54,6 +69,7 @@ class IssueSerializer(BaseSerializer):
         required=False,
         allow_null=True,
     )
+    custom_properties = IssueCustomPropertySerializer(many=True, required=False)
 
     class Meta:
         model = Issue
@@ -132,7 +148,7 @@ class IssueSerializer(BaseSerializer):
     def create(self, validated_data):
         assignees = validated_data.pop("assignees", None)
         labels = validated_data.pop("labels", None)
-
+        custom_properties = validated_data.pop("custom_properties", None)
         project_id = self.context["project_id"]
         workspace_id = self.context["workspace_id"]
         default_assignee_id = self.context["default_assignee_id"]
@@ -198,13 +214,31 @@ class IssueSerializer(BaseSerializer):
                 ],
                 batch_size=10,
             )
+        if custom_properties is not None and len(custom_properties):
+            IssueCustomProperty.objects.bulk_create(
+                [
+                    IssueCustomProperty(
+                        key=custom_property['key'],
+                        value=custom_property['value'],
+                        project_custom_property=custom_property['project_custom_property'],
+                        issue=issue,
+                        project_id=project_id,
+                        workspace_id=workspace_id,
+                        created_by_id=created_by_id,
+                        updated_by_id=updated_by_id,
+                    )
+                    for custom_property in custom_properties
+                ],
+                batch_size=10,
+            )
 
         return issue
 
     def update(self, instance, validated_data):
         assignees = validated_data.pop("assignees", None)
         labels = validated_data.pop("labels", None)
-
+        custom_properties = validated_data.pop("custom_properties", None)
+        
         # Related models
         project_id = instance.project_id
         workspace_id = instance.workspace_id
@@ -244,7 +278,25 @@ class IssueSerializer(BaseSerializer):
                 ],
                 batch_size=10,
             )
-
+        if custom_properties is not None:
+            IssueCustomProperty.objects.filter(issue=instance).delete()
+            IssueCustomProperty.objects.bulk_create(
+                [
+                    IssueCustomProperty(
+                        key=custom_property['key'],
+                        value=custom_property['value'],
+                        project_custom_property= custom_property['project_custom_property'],
+                        project_custom_property__project_id= project_id,
+                        issue=issue,
+                        project_id=project_id,
+                        workspace_id=workspace_id,
+                        created_by_id=created_by_id,
+                        updated_by_id=updated_by_id,
+                    )
+                    for custom_property in custom_properties
+                ],
+                batch_size=10,
+            )
         # Time updation occues even when other related models are updated
         instance.updated_at = timezone.now()
         return super().update(instance, validated_data)

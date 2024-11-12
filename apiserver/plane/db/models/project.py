@@ -350,3 +350,23 @@ class ProjectPublicMember(ProjectBaseModel):
         verbose_name_plural = "Project Public Members"
         db_table = "project_public_members"
         ordering = ("-created_at",)
+
+
+class ProjectCustomProperty(ProjectBaseModel):
+    name = models.CharField(max_length=255)
+    value = models.JSONField()
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        unique_together = ["project", "name", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["project", "name"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="project_custom_property_unique_project_name_when_deleted_at_null",
+            )
+        ]
+        verbose_name = "Project Custom Property"
+        verbose_name_plural = "Project Custom Properties"
+        db_table = "project_custom_properties"
+        ordering = ("-created_at",)

@@ -74,6 +74,7 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
         or re-raising the error.
         """
         try:
+            print(exc)
             response = super().handle_exception(exc)
             return response
         except Exception as e:
@@ -84,6 +85,7 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
                 )
 
             if isinstance(e, ValidationError):
+                print(e)
                 return Response(
                     {"error": "Please provide valid detail"},
                     status=status.HTTP_400_BAD_REQUEST,

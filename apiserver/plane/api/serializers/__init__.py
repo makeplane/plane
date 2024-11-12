@@ -1,6 +1,6 @@
 from .user import UserLiteSerializer
 from .workspace import WorkspaceLiteSerializer
-from .project import ProjectSerializer, ProjectLiteSerializer
+from .project import ProjectSerializer, ProjectLiteSerializer, ProjectCustomPropertySerializer
 from .issue import (
     IssueSerializer,
     LabelSerializer,

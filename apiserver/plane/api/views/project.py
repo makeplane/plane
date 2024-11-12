@@ -12,7 +12,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
-from plane.api.serializers import ProjectSerializer
+from plane.api.serializers import ProjectSerializer, ProjectCustomPropertySerializer
 from plane.app.permissions import ProjectBasePermission
 
 # Module imports
@@ -27,10 +27,100 @@ from plane.db.models import (
     State,
     Workspace,
     UserFavorite,
+    ProjectCustomProperty
 )
 from plane.bgtasks.webhook_task import model_activity
 from .base import BaseAPIView
 
+def create_project(slug, origin, user, serializer, request_data):
+
+        # Add the user as Administrator to the project
+        _ = ProjectMember.objects.create(
+            project_id=serializer.data["id"],
+            member=user,
+            role=20,
+        )
+        # Also create the issue property for the user
+        _ = IssueUserProperty.objects.create(
+            project_id=serializer.data["id"],
+            user=user,
+        )
+
+        if serializer.data["project_lead"] is not None and str(
+            serializer.data["project_lead"]
+        ) != str(user.id):
+            ProjectMember.objects.create(
+                project_id=serializer.data["id"],
+                member_id=serializer.data["project_lead"],
+                role=20,
+            )
+            # Also create the issue property for the user
+            IssueUserProperty.objects.create(
+                project_id=serializer.data["id"],
+                user_id=serializer.data["project_lead"],
+            )
+
+        # Default states
+        states = [
+            {
+                "name": "Backlog",
+                "color": "#A3A3A3",
+                "sequence": 15000,
+                "group": "backlog",
+                "default": True,
+            },
+            {
+                "name": "Todo",
+                "color": "#3A3A3A",
+                "sequence": 25000,
+                "group": "unstarted",
+            },
+            {
+                "name": "In Progress",
+                "color": "#F59E0B",
+                "sequence": 35000,
+                "group": "started",
+            },
+            {
+                "name": "Done",
+                "color": "#16A34A",
+                "sequence": 45000,
+                "group": "completed",
+            },
+            {
+                "name": "Cancelled",
+                "color": "#EF4444",
+                "sequence": 55000,
+                "group": "cancelled",
+            },
+        ]
+
+        State.objects.bulk_create(
+            [
+                State(
+                    name=state["name"],
+                    color=state["color"],
+                    project=serializer.instance,
+                    sequence=state["sequence"],
+                    workspace=serializer.instance.workspace,
+                    group=state["group"],
+                    default=state.get("default", False),
+                    created_by=user,
+                )
+                for state in states
+            ]
+        )
+        # Model activity
+        model_activity.delay(
+            model_name="project",
+            model_id=str(serializer.data["id"]),
+            requested_data=request_data,
+            current_instance=None,
+            actor_id=user.id,
+            slug=slug,
+            origin=origin,
+        )
+        return True
 
 class ProjectAPIEndpoint(BaseAPIView):
     """Project Endpoints to create, update, list, retrieve and delete endpoint"""
@@ -150,6 +240,7 @@ class ProjectAPIEndpoint(BaseAPIView):
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+
     def post(self, request, slug):
         try:
             workspace = Workspace.objects.get(slug=slug)
@@ -158,101 +249,16 @@ class ProjectAPIEndpoint(BaseAPIView):
             )
             if serializer.is_valid():
                 serializer.save()
-
-                # Add the user as Administrator to the project
-                _ = ProjectMember.objects.create(
-                    project_id=serializer.data["id"],
-                    member=request.user,
-                    role=20,
-                )
-                # Also create the issue property for the user
-                _ = IssueUserProperty.objects.create(
-                    project_id=serializer.data["id"],
-                    user=request.user,
-                )
-
-                if serializer.data["project_lead"] is not None and str(
-                    serializer.data["project_lead"]
-                ) != str(request.user.id):
-                    ProjectMember.objects.create(
-                        project_id=serializer.data["id"],
-                        member_id=serializer.data["project_lead"],
-                        role=20,
-                    )
-                    # Also create the issue property for the user
-                    IssueUserProperty.objects.create(
-                        project_id=serializer.data["id"],
-                        user_id=serializer.data["project_lead"],
-                    )
-
-                # Default states
-                states = [
-                    {
-                        "name": "Backlog",
-                        "color": "#A3A3A3",
-                        "sequence": 15000,
-                        "group": "backlog",
-                        "default": True,
-                    },
-                    {
-                        "name": "Todo",
-                        "color": "#3A3A3A",
-                        "sequence": 25000,
-                        "group": "unstarted",
-                    },
-                    {
-                        "name": "In Progress",
-                        "color": "#F59E0B",
-                        "sequence": 35000,
-                        "group": "started",
-                    },
-                    {
-                        "name": "Done",
-                        "color": "#16A34A",
-                        "sequence": 45000,
-                        "group": "completed",
-                    },
-                    {
-                        "name": "Cancelled",
-                        "color": "#EF4444",
-                        "sequence": 55000,
-                        "group": "cancelled",
-                    },
-                ]
-
-                State.objects.bulk_create(
-                    [
-                        State(
-                            name=state["name"],
-                            color=state["color"],
-                            project=serializer.instance,
-                            sequence=state["sequence"],
-                            workspace=serializer.instance.workspace,
-                            group=state["group"],
-                            default=state.get("default", False),
-                            created_by=request.user,
-                        )
-                        for state in states
-                    ]
-                )
-
+                self.create_project(
+                    request.META.get("HTTP_ORIGIN"), 
+                    user, 
+                    serializer
+                ) 
                 project = (
                     self.get_queryset()
                     .filter(pk=serializer.data["id"])
                     .first()
                 )
-
-                # Model activity
-                model_activity.delay(
-                    model_name="project",
-                    model_id=str(project.id),
-                    requested_data=request.data,
-                    current_instance=None,
-                    actor_id=request.user.id,
-                    slug=slug,
-                    origin=request.META.get("HTTP_ORIGIN"),
-                )
-
                 serializer = ProjectSerializer(project)
                 return Response(
                     serializer.data, status=status.HTTP_201_CREATED
@@ -393,3 +399,50 @@ class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
         project.archived_at = None
         project.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ProjectCustomPropertyAPIEndpoint(BaseAPIView):
+    def get(self, request, slug, project_id):
+        workspace = Workspace.objects.get(slug=slug)
+        project = Project.objects.get(pk=project_id, workspace=workspace)
+        properties = ProjectCustomProperty.objects.filter(
+            project=project,
+        )
+        serializer = ProjectCustomPropertySerializer(properties, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, slug, project_id):
+        try:
+            workspace = Workspace.objects.get(slug=slug)
+            serializer = ProjectCustomPropertySerializer(
+                data={**request.data}, context={
+                    "workspace_id": workspace.id,
+                    "project_id": project_id 
+                }
+            )
+            print(serializer.is_valid())
+            if serializer.is_valid():
+                serializer.save()
+                return Response(
+                    serializer.data, status=status.HTTP_201_CREATED
+                )
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except IntegrityError as e:
+            if "already exists" in str(e):
+                return Response(
+                    {"name": "The project name is already taken"},
+                    status=status.HTTP_410_GONE,
+                )
+        except Workspace.DoesNotExist:
+            return Response(
+                {"error": "Workspace does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except ValidationError:
+            return Response(
+                {"identifier": "The project identifier is already taken"},
+                status=status.HTTP_410_GONE,
+            )

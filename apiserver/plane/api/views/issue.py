@@ -51,7 +51,7 @@ from plane.db.models import (
     ProjectMember,
     CycleIssue,
 )
-
+from plane.utils.issue_filters import issue_filters
 from .base import BaseAPIView
 
 
@@ -132,26 +132,31 @@ class IssueAPIEndpoint(BaseAPIView):
     serializer_class = IssueSerializer
 
     def get_queryset(self):
-        return (
-            Issue.issue_objects.annotate(
+        filters = issue_filters(self.request.query_params, "GET")
+        base_filter = filters.pop('base', None)
+        query = (Issue.issue_objects.annotate(
                 sub_issues_count=Issue.issue_objects.filter(
                     parent=OuterRef("id")
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
-            )
-            .filter(project_id=self.kwargs.get("project_id"))
-            .filter(workspace__slug=self.kwargs.get("slug"))
+            ).filter(project_id=self.kwargs.get("project_id"))
+            .filter(workspace__slug=self.kwargs.get("slug")))
+        if base_filter:
+            query = query.filter(base_filter)
+
+        return (query
+            .filter(**filters)
             .select_related("project")
             .select_related("workspace")
             .select_related("state")
             .select_related("parent")
             .prefetch_related("assignees")
             .prefetch_related("labels")
-            .order_by(self.kwargs.get("order_by", "-created_at"))
-        ).distinct()
-
+            .order_by(self.kwargs.get("order_by", "-created_at"))).distinct()
+        
+        
     def get(self, request, slug, project_id, pk=None):
         external_id = request.GET.get("external_id")
         external_source = request.GET.get("external_source")
