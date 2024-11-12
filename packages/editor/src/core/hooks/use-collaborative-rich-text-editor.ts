@@ -40,11 +40,11 @@ export const useCollaborativeRichTextEditor = (props: TCollaborativeRichTextEdit
     if (value && value.length > 0) {
       try {
         Y.applyUpdate(provider.document, value);
+        provider.hasSynced = true;
       } catch (error) {
         console.error("Error applying binary updates to the description", error);
       }
     }
-    provider.hasSynced = true;
   }, [value, provider.document]);
 
   const editor = useEditor({

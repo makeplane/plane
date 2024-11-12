@@ -45,7 +45,6 @@ from plane.bgtasks.issue_activities_task import issue_activity
 
 
 class IntakeViewSet(BaseViewSet):
-
     serializer_class = IntakeSerializer
     model = Intake
 
@@ -94,7 +93,6 @@ class IntakeViewSet(BaseViewSet):
 
 
 class IntakeIssueViewSet(BaseViewSet):
-
     serializer_class = IntakeIssueSerializer
     model = IntakeIssue
 

@@ -11,7 +11,6 @@ import { EFileAssetType } from "@plane/types/src/enums";
 import { Loader } from "@plane/ui";
 // components
 import { CollaborativeRichTextEditor, CollaborativeRichTextReadOnlyEditor } from "@/components/editor";
-import { TIssueOperations } from "@/components/issues/issue-detail";
 // helpers
 import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
 // hooks
@@ -28,7 +27,6 @@ export type IssueDescriptionInputProps = {
   disabled?: boolean;
   fetchDescription: () => Promise<ArrayBuffer>;
   issueId: string;
-  issueOperations: TIssueOperations;
   key: string;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   projectId: string;

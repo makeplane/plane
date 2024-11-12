@@ -21,7 +21,6 @@ from plane.db.models import (
     Project,
     ProjectMember,
     Workspace,
-    TeamMember,
     IssueUserProperty,
     WorkspaceMember,
 )
@@ -342,54 +341,6 @@ class ProjectMemberViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class AddTeamToProjectEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectBasePermission,
-    ]
-
-    def post(self, request, slug, project_id):
-        team_members = TeamMember.objects.filter(
-            workspace__slug=slug, team__in=request.data.get("teams", [])
-        ).values_list("member", flat=True)
-
-        if len(team_members) == 0:
-            return Response(
-                {"error": "No such team exists"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        workspace = Workspace.objects.get(slug=slug)
-
-        project_members = []
-        issue_props = []
-        for member in team_members:
-            project_members.append(
-                ProjectMember(
-                    project_id=project_id,
-                    member_id=member,
-                    workspace=workspace,
-                    created_by=request.user,
-                )
-            )
-            issue_props.append(
-                IssueUserProperty(
-                    project_id=project_id,
-                    user_id=member,
-                    workspace=workspace,
-                    created_by=request.user,
-                )
-            )
-
-        ProjectMember.objects.bulk_create(
-            project_members, batch_size=10, ignore_conflicts=True
-        )
-
-        _ = IssueUserProperty.objects.bulk_create(
-            issue_props, batch_size=10, ignore_conflicts=True
-        )
-
-        serializer = ProjectMemberSerializer(project_members, many=True)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class ProjectMemberUserEndpoint(BaseAPIView):

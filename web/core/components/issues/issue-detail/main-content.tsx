@@ -117,31 +117,31 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           containerClassName="-ml-3"
         />
 
-        <IssueDescriptionInput
-          key={issue.id}
-          containerClassName="-ml-3 border-none"
-          descriptionHTML={issue.description_html ?? "<p></p>"}
-          disabled={!isEditable}
-          fetchDescription={async () => {
-            if (!workspaceSlug || !projectId || !issueId) {
-              throw new Error("Required fields missing while fetching binary description");
-            }
-            return await issueService.fetchDescriptionBinary(workspaceSlug, projectId, issueId);
-          }}
-          updateDescription={async (data) => {
-            if (!workspaceSlug || !issue.project_id || !issue.id) {
-              throw new Error("Required fields missing while updating binary description");
-            }
-            return await issueService.updateDescriptionBinary(workspaceSlug, issue.project_id, issue.id, {
-              description_binary: data,
-            });
-          }}
-          issueId={issue.id}
-          issueOperations={issueOperations}
-          projectId={issue.project_id}
-          setIsSubmitting={(value) => setIsSubmitting(value)}
-          workspaceSlug={workspaceSlug}
-        />
+        {issue.description_binary !== undefined && (
+          <IssueDescriptionInput
+            key={issue.id}
+            containerClassName="-ml-3 border-none"
+            descriptionBinary={issue.description_binary}
+            descriptionHTML={issue.description_html ?? "<p></p>"}
+            disabled={!isEditable}
+            fetchDescription={async () => {
+              if (!workspaceSlug || !projectId || !issueId) {
+                throw new Error("Required fields missing while fetching binary description");
+              }
+              return await issueService.fetchDescriptionBinary(workspaceSlug, projectId, issueId);
+            }}
+            updateDescription={async (data) => {
+              if (!workspaceSlug || !issue.project_id || !issue.id) {
+                throw new Error("Required fields missing while updating binary description");
+              }
+              return await issueOperations.updateDescription(workspaceSlug, issue.project_id, issue.id, data);
+            }}
+            issueId={issue.id}
+            projectId={issue.project_id}
+            setIsSubmitting={(value) => setIsSubmitting(value)}
+            workspaceSlug={workspaceSlug}
+          />
+        )}
 
         {currentUser && (
           <IssueReaction
