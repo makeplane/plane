@@ -24,7 +24,7 @@ export const GanttLayoutLoader = () => (
           </div>
         </Row>
         <Row className="flex flex-col gap-3 h-11 py-4 w-full">
-          {range(6).map((_, index) => (
+          {range(6).map((index) => (
             <div key={index} className="flex items-center gap-3  h-11 w-full">
               <span className="h-6 w-6 bg-custom-background-80 rounded" />
               <span className={`h-6 w-${getRandomLength(["32", "52", "72"])} bg-custom-background-80 rounded`} />
@@ -38,13 +38,13 @@ export const GanttLayoutLoader = () => (
             <span className="h-5 w-20 bg-custom-background-80 rounded" />
           </div>
           <div className="flex items-center gap-3 justify-between w-full">
-            {range(15).map((_, index) => (
+            {range(15).map((index) => (
               <span key={index} className="h-5 w-10 bg-custom-background-80 rounded" />
             ))}
           </div>
         </div>
         <div className="flex flex-col gap-3 h-11 p-4 w-full">
-          {range(6).map((_, index) => (
+          {range(6).map((index) => (
             <div
               key={index}
               className={`flex items-center gap-3 h-11 w-full`}

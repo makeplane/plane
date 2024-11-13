@@ -4,7 +4,7 @@ export const CycleModuleListLayout = () => (
   <div className="h-full overflow-y-auto animate-pulse">
     <div className="flex h-full w-full justify-between">
       <div className="flex h-full w-full flex-col overflow-y-auto">
-        {range(5).map((_, i) => (
+        {range(5).map((i) => (
           <div
             key={i}
             className="flex w-full items-center justify-between gap-5 border-b border-custom-border-100 flex-col sm:flex-row px-5 py-6"

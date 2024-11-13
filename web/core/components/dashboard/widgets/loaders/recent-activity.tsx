@@ -7,7 +7,7 @@ import { Loader } from "@plane/ui";
 export const RecentActivityWidgetLoader = () => (
   <Loader className="bg-custom-background-100 rounded-xl p-6 space-y-6">
     <Loader.Item height="17px" width="35%" />
-    {range(7).map((_, index) => (
+    {range(7).map((index) => (
       <div key={index} className="flex items-start gap-3.5">
         <div className="flex-shrink-0">
           <Loader.Item height="16px" width="16px" />

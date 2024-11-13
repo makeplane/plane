@@ -6,7 +6,7 @@ import { Loader } from "@plane/ui";
 
 export const RecentCollaboratorsWidgetLoader = () => (
   <>
-    {range(8).map((_, index) => (
+    {range(8).map((index) => (
       <Loader key={index} className="bg-custom-background-100 rounded-xl px-6 pb-12">
         <div className="space-y-11 flex flex-col items-center">
           <div className="rounded-full overflow-hidden h-[69px] w-[69px]">

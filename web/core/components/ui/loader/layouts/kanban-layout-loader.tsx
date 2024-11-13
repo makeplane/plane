@@ -33,7 +33,7 @@ export const KanbanColumnLoader = ({
         </div>
       </div>
     )}
-    {range(cardsInColumn).map((_, cardIndex) => (
+    {range(cardsInColumn).map((cardIndex) => (
       <KanbanIssueBlockLoader key={cardIndex} cardHeight={cardHeight} shouldAnimate={shouldAnimate} />
     ))}
   </div>

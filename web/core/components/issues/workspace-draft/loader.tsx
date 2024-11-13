@@ -13,7 +13,7 @@ export const WorkspaceDraftIssuesLoader: FC<TWorkspaceDraftIssuesLoader> = (prop
   const { items = 14 } = props;
   return (
     <div className="relative h-full w-full">
-      {range(items).map((_, index) => (
+      {range(items).map((index) => (
         <ListLoaderItemRow key={index} />
       ))}
     </div>

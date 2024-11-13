@@ -12,7 +12,7 @@ export const SpreadsheetIssueRowLoader = (props: { columnCount: number }) => (
         />
       </Row>
     </td>
-    {range(props.columnCount).map((_, colIndex) => (
+    {range(props.columnCount).map((colIndex) => (
       <td key={colIndex} className="h-11 w-full min-w-[8rem] border-r border-custom-border-200 ">
         <div className="flex items-center justify-center gap-3 px-3">
           <span className="h-5 w-20 bg-custom-background-80 rounded animate-pulse" />
@@ -28,7 +28,7 @@ export const SpreadsheetLayoutLoader = () => (
       <thead>
         <tr>
           <th className="h-11 min-w-[28rem] bg-custom-background-90 border-r border-custom-border-200 animate-pulse" />
-          {range(10).map((_, index) => (
+          {range(10).map((index) => (
             <th
               key={index}
               className="h-11 w-full min-w-[8rem] bg-custom-background-90 border-r border-custom-border-200 animate-pulse"
@@ -37,7 +37,7 @@ export const SpreadsheetLayoutLoader = () => (
         </tr>
       </thead>
       <tbody>
-        {range(16).map((_, rowIndex) => (
+        {range(16).map((rowIndex) => (
           <SpreadsheetIssueRowLoader key={rowIndex} columnCount={10} />
         ))}
       </tbody>

@@ -3,7 +3,7 @@ import range from "lodash/range";
 export const ProjectsLoader = () => (
   <div className="h-full w-full overflow-y-auto p-8 animate-pulse">
     <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
-      {range(3).map((_, i) => (
+      {range(3).map((i) => (
         <div
           key={i}
           className="flex cursor-pointer flex-col rounded border border-custom-border-200 bg-custom-background-100"
