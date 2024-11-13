@@ -5,7 +5,11 @@ import { computedFn } from "mobx-utils";
 // components
 import { ChartDataType, IBlockUpdateDependencyData, IGanttBlock, TGanttViews } from "@/components/gantt-chart";
 import { currentViewDataWithView } from "@/components/gantt-chart/data";
-import { getDateFromPositionOnGantt, getItemPositionWidth } from "@/components/gantt-chart/views/helpers";
+import {
+  getDateFromPositionOnGantt,
+  getItemPositionWidth,
+  getPositionFromDate,
+} from "@/components/gantt-chart/views/helpers";
 // helpers
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // store
@@ -47,6 +51,7 @@ export interface IBaseTimelineStore {
   initGantt: () => void;
 
   getDateFromPositionOnGantt: (position: number, offsetDays: number) => Date | undefined;
+  getPositionFromDateOnGantt: (date: string | Date, offSetWidth: number) => number | undefined;
 }
 
 export class BaseTimeLineStore implements IBaseTimelineStore {
@@ -186,7 +191,7 @@ export class BaseTimeLineStore implements IBaseTimelineStore {
         start_date: blockData?.start_date ?? undefined,
         target_date: blockData?.target_date ?? undefined,
       };
-      if (this.currentViewData && this.currentViewData?.data?.startDate && this.currentViewData?.data?.dayWidth) {
+      if (this.currentViewData && (this.currentViewData?.data?.startDate || this.currentViewData?.data?.dayWidth)) {
         block.position = getItemPositionWidth(this.currentViewData, block);
       }
 
@@ -226,6 +231,15 @@ export class BaseTimeLineStore implements IBaseTimelineStore {
 
     return Math.round(position / this.currentViewData.data.dayWidth);
   };
+
+  /**
+   * returns position of the date on chart
+   */
+  getPositionFromDateOnGantt = computedFn((date: string | Date, offSetWidth: number) => {
+    if (!this.currentViewData) return;
+
+    return getPositionFromDate(this.currentViewData, date, offSetWidth);
+  });
 
   /**
    * returns the date at which the position corresponds to on the timeline chart
