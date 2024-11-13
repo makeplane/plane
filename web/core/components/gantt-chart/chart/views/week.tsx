@@ -13,7 +13,7 @@ export const WeekChartView: FC<any> = observer(() => {
   const weekBlocks: IWeekBlock[] = renderView;
 
   return (
-    <div className={`absolute top-0 left-0 h-max w-max flex`} style={{ minHeight: `calc(100% + ${HEADER_HEIGHT}px` }}>
+    <div className={`absolute top-0 left-0 min-h-full h-max w-max flex`}>
       {currentViewData &&
         weekBlocks?.map((block, rootIndex) => (
           <div
