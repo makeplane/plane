@@ -193,6 +193,19 @@
     --color-toast-warning-border: 255, 247, 194;
     --color-toast-info-border: 210, 222, 255;
     --color-toast-loading-border: 224, 225, 230;
+
+    /* pi */
+    --color-pi-50: 249, 249, 255;
+    --color-pi-100: 245, 245, 255;
+    --color-pi-200: 231, 231, 255;
+    --color-pi-300: 217, 216, 253;
+    --color-pi-400: 202, 201, 252;
+    --color-pi-500: 182, 181, 255;
+    --color-pi-600: 151, 150, 246;
+    --color-pi-700: 107, 106, 209;
+    --color-pi-800: 57, 56, 149;
+    --color-pi-900: 30, 29, 78;
+    --color-pi-950: 14, 14, 37;
   }
 
   [data-theme="light-contrast"] {
@@ -207,6 +220,19 @@
     --color-border-200: 38, 38, 38; /* subtle border- 2 */
     --color-border-300: 46, 46, 46; /* strong border- 1 */
     --color-border-400: 58, 58, 58; /* strong border- 2 */
+
+    /* pi */
+    --color-pi-50: 249, 249, 255;
+    --color-pi-100: 245, 245, 255;
+    --color-pi-200: 231, 231, 255;
+    --color-pi-300: 217, 216, 253;
+    --color-pi-400: 202, 201, 252;
+    --color-pi-500: 182, 181, 255;
+    --color-pi-600: 151, 150, 246;
+    --color-pi-700: 107, 106, 209;
+    --color-pi-800: 57, 56, 149;
+    --color-pi-900: 30, 29, 78;
+    --color-pi-950: 14, 14, 37;
   }
 
   [data-theme="dark"],
@@ -294,6 +320,18 @@
     --color-toast-warning-border: 79, 52, 34;
     --color-toast-info-border: 58, 91, 199;
     --color-toast-loading-border: 96, 100, 108;
+
+    --color-pi-50: 14, 14, 37;
+    --color-pi-100: 30, 29, 78;
+    --color-pi-200: 57, 56, 149;
+    --color-pi-300: 107, 106, 209;
+    --color-pi-400: 151, 150, 246;
+    --color-pi-500: 182, 181, 255;
+    --color-pi-600: 202, 201, 252;
+    --color-pi-700: 217, 216, 253;
+    --color-pi-800: 231, 231, 255;
+    --color-pi-900: 245, 245, 255;
+    --color-pi-950: 249, 249, 255;
   }
 
   [data-theme="dark-contrast"] {
@@ -308,6 +346,18 @@
     --color-border-200: 229, 229, 229; /* subtle border- 2 */
     --color-border-300: 212, 212, 212; /* strong border- 1 */
     --color-border-400: 185, 185, 185; /* strong border- 2 */
+
+    --color-pi-50: 14, 14, 37;
+    --color-pi-100: 30, 29, 78;
+    --color-pi-200: 57, 56, 149;
+    --color-pi-300: 107, 106, 209;
+    --color-pi-400: 151, 150, 246;
+    --color-pi-500: 182, 181, 255;
+    --color-pi-600: 202, 201, 252;
+    --color-pi-700: 217, 216, 253;
+    --color-pi-800: 231, 231, 255;
+    --color-pi-900: 245, 245, 255;
+    --color-pi-950: 249, 249, 255;
   }
 
   [data-theme="light"],

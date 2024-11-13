@@ -33,6 +33,7 @@ from plane.db.models import (
     IssueVote,
     IssueRelation,
     State,
+    IssueType,
 )
 
 
@@ -52,6 +53,7 @@ class IssueFlatSerializer(BaseSerializer):
             "sequence_id",
             "sort_order",
             "is_draft",
+            "type_id",
         ]
 
 
@@ -76,6 +78,12 @@ class IssueCreateSerializer(BaseSerializer):
     state_id = serializers.PrimaryKeyRelatedField(
         source="state",
         queryset=State.objects.all(),
+        required=False,
+        allow_null=True,
+    )
+    type_id = serializers.PrimaryKeyRelatedField(
+        source="type",
+        queryset=IssueType.objects.all(),
         required=False,
         allow_null=True,
     )
@@ -137,10 +145,20 @@ class IssueCreateSerializer(BaseSerializer):
         workspace_id = self.context["workspace_id"]
         default_assignee_id = self.context["default_assignee_id"]
 
+        issue_type = validated_data.pop("type", None)
+
+        if not issue_type:
+            # Get default issue type
+            issue_type = IssueType.objects.filter(
+                project_issue_types__project_id=project_id, is_default=True
+            ).first()
+            issue_type = issue_type
+
         # Create Issue
         issue = Issue.objects.create(
             **validated_data,
             project_id=project_id,
+            type=issue_type,
         )
 
         # Issue Audit Users
@@ -662,6 +680,7 @@ class IssueIntakeSerializer(DynamicBaseSerializer):
             "created_at",
             "label_ids",
             "created_by",
+            "type_id",
         ]
         read_only_fields = fields
 
@@ -717,6 +736,7 @@ class IssueSerializer(DynamicBaseSerializer):
             "link_count",
             "is_draft",
             "archived_at",
+            "type_id",
         ]
         read_only_fields = fields
 
@@ -728,6 +748,7 @@ class IssueLiteSerializer(DynamicBaseSerializer):
             "id",
             "sequence_id",
             "project_id",
+            "type_id",
         ]
         read_only_fields = fields
 
