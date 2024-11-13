@@ -33,7 +33,8 @@ import {
 import { isValidHttpUrl } from "@/helpers/common";
 // types
 import { IMentionHighlight, IMentionSuggestion, TFileHandler } from "@/types";
-import { FlatListExtension } from "./flat-list";
+import { FlatListExtension } from "./flat-list/flat-list";
+import { FlatHeadingListExtension } from "./flat-list/flat-heading-list";
 
 type TArguments = {
   enableHistory: boolean;
@@ -167,5 +168,6 @@ export const CoreEditorExtensions = (args: TArguments) => {
     CustomCalloutExtension,
     CustomColorExtension,
     FlatListExtension,
+    // FlatHeadingListExtension,
   ];
 };

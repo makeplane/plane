@@ -19,7 +19,7 @@ import { TableHeader, TableCell, TableRow, Table } from "./table";
 import { CustomTextAlignExtension } from "./text-align";
 import { CustomCalloutExtensionConfig } from "./callout/extension-config";
 import { CustomColorExtension } from "./custom-color";
-import { FlatListExtension } from "./flat-list";
+import { FlatListExtension } from "./flat-list/flat-list";
 
 export const CoreEditorExtensionsWithoutProps = [
   StarterKit.configure({

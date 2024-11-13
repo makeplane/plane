@@ -10,28 +10,31 @@ import {
   IndentListOptions,
   createIndentListCommand,
   createDedentListCommand,
+  enterWithoutLift,
 } from "prosemirror-flat-list";
 import { keymap } from "@tiptap/pm/keymap";
 import { inputRules } from "@tiptap/pm/inputrules";
+import { createSplitListCommand } from "./commands/split-list";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
-    flatListComponent: {
+    flatHeadingListComponent: {
       createList: (attrs: ListAttributes) => ReturnType;
       indentList: (attrs: IndentListOptions) => ReturnType;
       dedentList: (attrs: DedentListOptions) => ReturnType;
-      // unwrapList: (attrs: UnwrapListOptions) => ReturnType;
+      splitList: () => ReturnType;
+      createHeadedList: (attrs: ListAttributes & { title: string }) => ReturnType;
     };
   }
 }
 
-const { attrs, parseDOM, toDOM, content, group, definingForContent, definingAsContext } = createListSpec();
+const { attrs, parseDOM, toDOM, group, definingForContent, definingAsContext } = createListSpec();
 const listKeymapPlugin = keymap(listKeymap);
 const listInputRulePlugin = inputRules({ rules: listInputRules });
 
-export const FlatListExtension = Node.create({
-  name: "list",
-  content,
+export const FlatHeadingListExtension = Node.create({
+  name: "headingList",
+  content: "heading block*",
   group,
   definingForContent,
   definingAsContext,
@@ -64,6 +67,33 @@ export const FlatListExtension = Node.create({
           const dedentList = createDedentListCommand(attrs);
           return dedentList(state, view.dispatch);
         },
+      splitList:
+        () =>
+        ({ state, view }) => {
+          const splitList = createSplitListCommand();
+          return splitList(state, view.dispatch);
+        },
+      createHeadedList:
+        (attrs: ListAttributes & { title: string }) =>
+        ({ state, chain, commands }) => {
+          try {
+            chain()
+              .focus()
+              .setHeading({ level: 1 })
+              .setTextSelection(state.selection.from - 1)
+              .run();
+
+            return commands.createList({
+              kind: attrs.kind || "bullet",
+              order: attrs.order,
+              checked: attrs.checked,
+              collapsed: attrs.collapsed,
+            });
+          } catch (error) {
+            console.error("Error in creating heading list", error);
+            return false;
+          }
+        },
     };
   },
   addKeyboardShortcuts(this) {
@@ -85,6 +115,38 @@ export const FlatListExtension = Node.create({
           return true;
         }
         return false;
+      },
+      Enter: ({ editor }) => {
+        if (editor.isActive(this.name)) {
+          console.log("called");
+          editor.chain().focus().splitList();
+          return true;
+        }
+        return false;
+      },
+      "Shift-Enter": ({ editor }) => {
+        if (editor.isActive(this.name)) {
+          return enterWithoutLift(editor.state, editor.view.dispatch);
+        }
+        return false;
+      },
+      "Mod-Shift-7": ({ editor }) => {
+        try {
+          console.log("asfd");
+          return editor.commands.createHeadedList({ title: "a", kind: "bullet" });
+        } catch (error) {
+          console.error("Error in creating heading list", error);
+          return false;
+        }
+      },
+      "Mod-Shift-8": ({ editor }) => {
+        try {
+          console.log("asfd");
+          return editor.commands.createHeadedList({ title: "a", kind: "ordered" });
+        } catch (error) {
+          console.error("Error in creating heading list", error);
+          return false;
+        }
       },
     };
   },
