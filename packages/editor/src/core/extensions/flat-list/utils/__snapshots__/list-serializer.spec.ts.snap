@@ -1,0 +1,175 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ListDOMSerializer > can serialize list nodes into <ol> 1`] = `
+<DocumentFragment>
+  <ol>
+    <li
+      class="prosemirror-flat-list"
+      data-list-kind="ordered"
+    >
+      <p>
+        A
+      </p>
+    </li>
+    <li
+      class="prosemirror-flat-list"
+      data-list-kind="ordered"
+    >
+      <p>
+        B
+      </p>
+    </li>
+  </ol>
+</DocumentFragment>
+`;
+
+exports[`ListDOMSerializer > can serialize list nodes into <ul> 1`] = `
+<DocumentFragment>
+  <ul>
+    <li
+      class="prosemirror-flat-list"
+      data-list-kind="bullet"
+    >
+      <p>
+        A
+      </p>
+    </li>
+    <li
+      class="prosemirror-flat-list"
+      data-list-kind="bullet"
+    >
+      <p>
+        B
+      </p>
+    </li>
+  </ul>
+</DocumentFragment>
+`;
+
+exports[`ListDOMSerializer > can serialize list nodes with different types into a single <ul> 1`] = `
+<DocumentFragment>
+  <ul>
+    <li
+      class="prosemirror-flat-list"
+      data-list-kind="bullet"
+    >
+      <p>
+        A
+      </p>
+    </li>
+    <li
+      class="prosemirror-flat-list"
+      data-list-kind="task"
+    >
+      <p>
+        B
+      </p>
+    </li>
+    <li
+      class="prosemirror-flat-list"
+      data-list-kind="toggle"
+    >
+      <p>
+        C
+      </p>
+    </li>
+  </ul>
+  <ol>
+    <li
+      class="prosemirror-flat-list"
+      data-list-kind="ordered"
+    >
+      <p>
+        D
+      </p>
+    </li>
+  </ol>
+  <ul>
+    <li
+      class="prosemirror-flat-list"
+      data-list-kind="bullet"
+    >
+      <p>
+        D
+      </p>
+    </li>
+    <li
+      class="prosemirror-flat-list"
+      data-list-kind="task"
+    >
+      <p>
+        E
+      </p>
+    </li>
+    <li
+      class="prosemirror-flat-list"
+      data-list-kind="toggle"
+    >
+      <p>
+        D
+      </p>
+    </li>
+  </ul>
+</DocumentFragment>
+`;
+
+exports[`ListDOMSerializer > can serialize nested list node  1`] = `
+<DocumentFragment>
+  <ul>
+    <li
+      class="prosemirror-flat-list"
+      data-list-collapsable=""
+      data-list-kind="bullet"
+    >
+      <p>
+        A
+      </p>
+      <ol>
+        <li
+          class="prosemirror-flat-list"
+          data-list-kind="ordered"
+        >
+          <p>
+            B
+          </p>
+        </li>
+        <li
+          class="prosemirror-flat-list"
+          data-list-kind="ordered"
+        >
+          <p>
+            C
+          </p>
+        </li>
+      </ol>
+    </li>
+    <li
+      class="prosemirror-flat-list"
+      data-list-collapsable=""
+      data-list-kind="bullet"
+    >
+      <p>
+        D
+      </p>
+      <ol>
+        <li
+          class="prosemirror-flat-list"
+          data-list-kind="ordered"
+        >
+          <p>
+            E
+          </p>
+        </li>
+        <li
+          class="prosemirror-flat-list"
+          data-list-kind="ordered"
+        >
+          <p>
+            F
+          </p>
+        </li>
+      </ol>
+    </li>
+  </ul>
+</DocumentFragment>
+`;

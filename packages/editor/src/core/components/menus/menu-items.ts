@@ -35,6 +35,10 @@ import {
   toggleBold,
   toggleBulletList,
   toggleCodeBlock,
+  toggleFlatBulletList,
+  toggleFlatOrderedList,
+  toggleFlatTaskList,
+  toggleFlatToggleList,
   toggleHeadingFive,
   toggleHeadingFour,
   toggleHeadingOne,
@@ -152,26 +156,58 @@ export const StrikeThroughItem = (editor: Editor): EditorMenuItem<"strikethrough
 
 export const BulletListItem = (editor: Editor): EditorMenuItem<"bulleted-list"> => ({
   key: "bulleted-list",
-  name: "Bulleted list",
-  isActive: () => editor?.isActive("bulletList"),
-  command: () => toggleBulletList(editor),
+  name: "Flat Bulleted list",
+  isActive: () => editor?.isActive("list", { type: "bullet" }),
+  command: () => toggleFlatBulletList(editor),
   icon: ListIcon,
 });
 
 export const NumberedListItem = (editor: Editor): EditorMenuItem<"numbered-list"> => ({
   key: "numbered-list",
   name: "Numbered list",
-  isActive: () => editor?.isActive("orderedList"),
-  command: () => toggleOrderedList(editor),
-  icon: ListOrderedIcon,
+  isActive: () => editor?.isActive("list", { type: "ordered" }),
+  command: () => toggleFlatOrderedList(editor),
+  icon: ListIcon,
 });
 
 export const TodoListItem = (editor: Editor): EditorMenuItem<"to-do-list"> => ({
   key: "to-do-list",
   name: "To-do list",
-  isActive: () => editor.isActive("taskItem"),
-  command: () => toggleTaskList(editor),
+  isActive: () => editor?.isActive("list", { type: "task" }),
+  command: () => toggleFlatTaskList(editor),
   icon: CheckSquare,
+});
+
+export const FlatBulletListItem = (editor: Editor): EditorMenuItem<"flat-bulleted-list"> => ({
+  key: "flat-bulleted-list",
+  name: "Flat Bulleted list",
+  isActive: () => editor?.isActive("list", { type: "bullet" }),
+  command: () => toggleFlatBulletList(editor),
+  icon: ListIcon,
+});
+
+export const FlatNumberedListItem = (editor: Editor): EditorMenuItem<"flat-numbered-list"> => ({
+  key: "flat-numbered-list",
+  name: "Flat Numbered list",
+  isActive: () => editor?.isActive("list", { type: "ordered" }),
+  command: () => toggleFlatOrderedList(editor),
+  icon: ListIcon,
+});
+
+export const FlatTaskListItem = (editor: Editor): EditorMenuItem<"flat-check-list"> => ({
+  key: "flat-check-list",
+  name: "Flat Check list",
+  isActive: () => editor?.isActive("list", { type: "task" }),
+  command: () => toggleFlatTaskList(editor),
+  icon: ListIcon,
+});
+
+export const FlatToggleListItem = (editor: Editor): EditorMenuItem<"flat-toggle-list"> => ({
+  key: "flat-toggle-list",
+  name: "Flat Toggle list",
+  isActive: () => editor?.isActive("list", { type: "toggle" }),
+  command: () => toggleFlatToggleList(editor),
+  icon: ListIcon,
 });
 
 export const QuoteItem = (editor: Editor): EditorMenuItem<"quote"> => ({
@@ -265,6 +301,10 @@ export const getEditorMenuItems = (editor: Editor | null): EditorMenuItem<TEdito
     HorizontalRuleItem(editor),
     TextColorItem(editor),
     BackgroundColorItem(editor),
+    FlatBulletListItem(editor),
+    FlatNumberedListItem(editor),
+    FlatTaskListItem(editor),
+    FlatToggleListItem(editor),
     TextAlignItem(editor),
   ];
 };

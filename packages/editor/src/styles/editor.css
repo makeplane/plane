@@ -475,6 +475,136 @@ p + p {
   background-color: var(--editor-colors-purple-background);
 }
 /* end background colors */
+
+.prosemirror-flat-list > .list-marker {
+  top: 7px;
+}
+
+.prosemirror-flat-list[data-list-kind="ordered"] {
+  &::before {
+    position: absolute;
+    right: 100%;
+    /* top: 6px; */
+    font-variant-numeric: tabular-nums;
+    content: counter(prosemirror-flat-list-counter, decimal) ". ";
+  }
+
+  /* Second level - lower-alpha */
+  & > .list-content > & {
+    &::before {
+      content: counter(prosemirror-flat-list-counter, lower-alpha) ". ";
+    }
+
+    /* Third level - lower-roman */
+    & > .list-content > & {
+      &::before {
+        content: counter(prosemirror-flat-list-counter, lower-roman) ". ";
+      }
+
+      /* Start repeat pattern */
+      & > .list-content > & {
+        &::before {
+          content: counter(prosemirror-flat-list-counter, decimal) ". ";
+        }
+
+        /* Continue pattern */
+        & > .list-content > & {
+          &::before {
+            content: counter(prosemirror-flat-list-counter, lower-alpha) ". ";
+          }
+
+          & > .list-content > & {
+            &::before {
+              content: counter(prosemirror-flat-list-counter, lower-roman) ". ";
+            }
+
+            /* Pattern repeats again */
+            & > .list-content > & {
+              &::before {
+                content: counter(prosemirror-flat-list-counter, decimal) ". ";
+              }
+
+              & > .list-content > & {
+                &::before {
+                  content: counter(prosemirror-flat-list-counter, lower-alpha) ". ";
+                }
+
+                & > .list-content > & {
+                  &::before {
+                    content: counter(prosemirror-flat-list-counter, lower-roman) ". ";
+                  }
+                }
+
+                & > .list-content > & {
+                  &::before {
+                    content: counter(prosemirror-flat-list-counter, decimal) ". ";
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.prosemirror-flat-list[data-list-kind="bullet"] {
+  list-style: none;
+
+  &::before {
+    position: absolute;
+    right: 100%;
+    top: 6px;
+  }
+
+  /* First level - disc */
+  &::before {
+    content: "•";
+  }
+
+  /* Second level - circle */
+  & > .list-content > & {
+    &::before {
+      content: "○";
+    }
+
+    /* Third level - square */
+    & > .list-content > & {
+      &::before {
+        content: "▪";
+      }
+
+      /* Start repeat pattern */
+      & > .list-content > & {
+        &::before {
+          content: "•";
+        }
+
+        /* Continue pattern */
+        & > .list-content > & {
+          &::before {
+            content: "○";
+          }
+
+          & > .list-content > & {
+            &::before {
+              content: "▪";
+            }
+
+            /* Pattern repeats again */
+            & > .list-content > & {
+              &::before {
+                content: "•";
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
 .ProseMirror .issue-embed img {
   margin: 0 !important;
 }

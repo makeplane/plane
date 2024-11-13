@@ -39,7 +39,11 @@ export type TEditorCommands =
   | "text-color"
   | "background-color"
   | "text-align"
-  | "callout";
+  | "callout"
+  | "flat-toggle-list"
+  | "flat-bulleted-list"
+  | "flat-numbered-list"
+  | "flat-check-list";
 
 export type TCommandExtraProps = {
   image: {

@@ -5,7 +5,7 @@ import {
 } from "@/core/helpers/page.js";
 // services
 import { PageService } from "@/core/services/page.service.js";
-import { manualLogger } from "../helpers/logger.js";
+import { logger } from "../helpers/logger.js";
 const pageService = new PageService();
 
 export const updatePageDescription = async (
@@ -41,7 +41,7 @@ export const updatePageDescription = async (
       cookie,
     );
   } catch (error) {
-    manualLogger.error("Update error:", error);
+    logger.error("Update error:", error);
     throw error;
   }
 };
@@ -66,7 +66,7 @@ const fetchDescriptionHTMLAndTransform = async (
     );
     return contentBinary;
   } catch (error) {
-    manualLogger.error(
+    logger.error(
       "Error while transforming from HTML to Uint8Array",
       error,
     );
@@ -106,7 +106,7 @@ export const fetchPageDescriptionBinary = async (
 
     return binaryData;
   } catch (error) {
-    manualLogger.error("Fetch error:", error);
+    logger.error("Fetch error:", error);
     throw error;
   }
 };

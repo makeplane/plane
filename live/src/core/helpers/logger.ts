@@ -18,7 +18,7 @@ const hooks = {
   },
 };
 
-export const logger = pinoHttp({
+export const coreLogger = pinoHttp({
   level: "info",
   transport: transport,
   hooks: hooks,
@@ -35,4 +35,4 @@ export const logger = pinoHttp({
   },
 });
 
-export const manualLogger = logger.logger;
+export const logger = coreLogger.logger;

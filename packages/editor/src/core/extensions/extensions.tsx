@@ -1,7 +1,5 @@
 import CharacterCount from "@tiptap/extension-character-count";
 import Placeholder from "@tiptap/extension-placeholder";
-import TaskItem from "@tiptap/extension-task-item";
-import TaskList from "@tiptap/extension-task-list";
 import TextStyle from "@tiptap/extension-text-style";
 import TiptapUnderline from "@tiptap/extension-underline";
 import StarterKit from "@tiptap/starter-kit";
@@ -20,10 +18,8 @@ import {
   CustomMention,
   CustomQuoteExtension,
   CustomTextAlignExtension,
-  CustomTypographyExtension,
   DropHandlerExtension,
   ImageExtension,
-  ListKeymap,
   Table,
   TableCell,
   TableHeader,
@@ -33,6 +29,8 @@ import {
 import { isValidHttpUrl } from "@/helpers/common";
 // types
 import { IMentionHighlight, IMentionSuggestion, TFileHandler } from "@/types";
+import { FlatListExtension } from "./flat-list/flat-list";
+import { multipleSelectionExtension } from "./selections/multipleSelections";
 
 type TArguments = {
   enableHistory: boolean;
@@ -50,30 +48,38 @@ export const CoreEditorExtensions = (args: TArguments) => {
 
   return [
     StarterKit.configure({
-      bulletList: {
-        HTMLAttributes: {
-          class: "list-disc pl-7 space-y-2",
-        },
-      },
-      orderedList: {
-        HTMLAttributes: {
-          class: "list-decimal pl-7 space-y-2",
-        },
-      },
-      listItem: {
-        HTMLAttributes: {
-          class: "not-prose space-y-2",
-        },
-      },
+      // bulletList: {
+      //   HTMLAttributes: {
+      //     class: "list-disc pl-7 space-y-2",
+      //   },
+      // },
+      // orderedList: {
+      //   HTMLAttributes: {
+      //     class: "list-decimal pl-7 space-y-2",
+      //   },
+      // },
+      // listItem: {
+      //   HTMLAttributes: {
+      //     class: "not-prose space-y-2",
+      //   },
+      // },
+      bulletList: false,
+      orderedList: false,
+      listItem: false,
       code: false,
       codeBlock: false,
       horizontalRule: false,
       blockquote: false,
+      // dropcursor: false,
       dropcursor: {
         class: "text-custom-text-300",
       },
       ...(enableHistory ? {} : { history: false }),
     }),
+    // dropCursorExtension({
+    //   class: "text-custom-text-300",
+    // }),
+    // CustomDropCursor,
     CustomQuoteExtension,
     DropHandlerExtension(),
     CustomHorizontalRule.configure({
@@ -82,7 +88,7 @@ export const CoreEditorExtensions = (args: TArguments) => {
       },
     }),
     CustomKeymap,
-    ListKeymap({ tabIndex }),
+    // ListKeymap({ tabIndex }),
     CustomLinkExtension.configure({
       openOnClick: true,
       autolink: true,
@@ -94,7 +100,7 @@ export const CoreEditorExtensions = (args: TArguments) => {
           "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
       },
     }),
-    CustomTypographyExtension,
+    // CustomTypographyExtension,
     ImageExtension(fileHandler).configure({
       HTMLAttributes: {
         class: "rounded-md",
@@ -103,17 +109,17 @@ export const CoreEditorExtensions = (args: TArguments) => {
     CustomImageExtension(fileHandler),
     TiptapUnderline,
     TextStyle,
-    TaskList.configure({
-      HTMLAttributes: {
-        class: "not-prose pl-2 space-y-2",
-      },
-    }),
-    TaskItem.configure({
-      HTMLAttributes: {
-        class: "relative",
-      },
-      nested: true,
-    }),
+    // TaskList.configure({
+    //   HTMLAttributes: {
+    //     class: "not-prose pl-2 space-y-2",
+    //   },
+    // }),
+    // TaskItem.configure({
+    //   HTMLAttributes: {
+    //     class: "relative",
+    //   },
+    //   nested: true,
+    // }),
     CustomCodeBlockExtension.configure({
       HTMLAttributes: {
         class: "",
@@ -162,5 +168,8 @@ export const CoreEditorExtensions = (args: TArguments) => {
     CustomTextAlignExtension,
     CustomCalloutExtension,
     CustomColorExtension,
+    FlatListExtension,
+    multipleSelectionExtension,
+    // FlatHeadingListExtension,
   ];
 };

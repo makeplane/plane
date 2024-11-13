@@ -10,6 +10,7 @@ import { useEditor } from "@/hooks/use-editor";
 import { DocumentEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
 import { TCollaborativeEditorProps } from "@/types";
+// import { Collaboration } from "@/extensions/collaboration";
 
 export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
   const {
@@ -66,13 +67,15 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     },
     [provider]
   );
+
+  // const localProvider = useMemo(() => new IndexeddbPersistence(id, provider.document), [id, provider]);
   // indexed db integration for offline support
-  useLayoutEffect(() => {
-    const localProvider = new IndexeddbPersistence(id, provider.document);
-    return () => {
-      localProvider?.destroy();
-    };
-  }, [provider, id]);
+  // useLayoutEffect(
+  //   () => () => {
+  //     localProvider?.destroy();
+  //   },
+  //   [localProvider, id]
+  // );
 
   const editor = useEditor({
     id,
@@ -103,6 +106,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     mentionHandler,
     placeholder,
     provider,
+    // localProvider,
     tabIndex,
   });
 
