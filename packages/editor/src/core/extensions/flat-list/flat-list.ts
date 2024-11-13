@@ -10,6 +10,7 @@ import {
   IndentListOptions,
   createIndentListCommand,
   createDedentListCommand,
+  parseInteger,
   // createSplitListCommand,
 } from "prosemirror-flat-list";
 import { keymap } from "@tiptap/pm/keymap";
@@ -42,9 +43,27 @@ export const FlatListExtension = Node.create({
     return attrs;
   },
   parseHTML() {
-    return parseDOM;
+    return [
+      {
+        tag: "div",
+        getAttrs: (element) => {
+          // console.log("asdf", element);
+          if (typeof element === "string") {
+            return {};
+          }
+          // console.log("element", element.getAttribute("data-list-kind"));
+          return {
+            kind: element.getAttribute("data-list-kind") || "bullet",
+            order: parseInteger(element.getAttribute("data-list-order")),
+            checked: element.hasAttribute("data-list-checked"),
+            collapsed: element.hasAttribute("data-list-collapsed"),
+          };
+        },
+      },
+    ];
   },
   renderHTML({ node }) {
+    // console.log("node", node, node.attrs);
     return toDOM(node);
   },
   addCommands() {
@@ -81,8 +100,9 @@ export const FlatListExtension = Node.create({
         const { selection } = editor.state;
         const { $from } = selection;
         if (editor.isActive(this.name)) {
-          editor.chain().focus().indentList({ from: $from.pos });
-          return true;
+          // return editor.chain().focus().indentList({ from: $from.pos });
+          const indentList = createIndentListCommand({ from: $from.pos });
+          return indentList(editor.state, editor.view.dispatch);
         }
         return false;
       },
@@ -90,15 +110,18 @@ export const FlatListExtension = Node.create({
         const { selection } = editor.state;
         const { $from } = selection;
         if (editor.isActive(this.name)) {
-          editor.chain().focus().dedentList({ from: $from.pos });
-          return true;
+          const dedentList = createDedentListCommand({ from: $from.pos });
+          return dedentList(editor.state, editor.view.dispatch);
         }
         return false;
       },
       Enter: ({ editor }) => {
         if (editor.isActive(this.name)) {
-          editor.chain().focus().splitList();
-          return true;
+          const splitList = createSplitListCommand();
+          const ans = splitList(editor.state, editor.view.dispatch);
+          // __AUTO_GENERATED_PRINT_VAR_START__
+          console.log("addKeyboardShortcuts#(anon)#if ans: %s", ans); // __AUTO_GENERATED_PRINT_VAR_END__
+          return ans;
         }
         return false;
       },

@@ -150,6 +150,7 @@ export const CodeBlock = Node.create<CodeBlockOptions>({
       // exit node on triple enter
       Enter: ({ editor }) => {
         try {
+          console.log("ran in code block");
           if (!this.options.exitOnTripleEnter) {
             return false;
           }

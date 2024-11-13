@@ -470,13 +470,6 @@ ul[data-type="taskList"] ul[data-type="taskList"] {
   top: 7px;
 }
 
-/* .prosemirror-flat-list[data-list-kind="ordered"]::before { */
-/*   position: absolute; */
-/*   top: 6px; */
-/*   font-variant-numeric: tabular-nums; */
-/*   content: counter(prosemirror-flat-list-counter, decimal) ". "; */
-/* } */
-
 .prosemirror-flat-list[data-list-kind="ordered"] {
   &::before {
     position: absolute;
@@ -498,35 +491,40 @@ ul[data-type="taskList"] ul[data-type="taskList"] {
         content: counter(prosemirror-flat-list-counter, lower-roman) ". ";
       }
 
-      /* Fourth level - upper-alpha */
+      /* Start repeat pattern */
       & > .list-content > & {
         &::before {
-          content: counter(prosemirror-flat-list-counter, upper-alpha) ". ";
+          content: counter(prosemirror-flat-list-counter, decimal) ". ";
         }
 
-        /* Start repeat pattern */
+        /* Continue pattern */
         & > .list-content > & {
           &::before {
-            content: counter(prosemirror-flat-list-counter, decimal) ". ";
+            content: counter(prosemirror-flat-list-counter, lower-alpha) ". ";
           }
 
-          /* Continue pattern */
           & > .list-content > & {
             &::before {
-              content: counter(prosemirror-flat-list-counter, lower-alpha) ". ";
+              content: counter(prosemirror-flat-list-counter, lower-roman) ". ";
             }
 
+            /* Pattern repeats again */
             & > .list-content > & {
               &::before {
-                content: counter(prosemirror-flat-list-counter, lower-roman) ". ";
+                content: counter(prosemirror-flat-list-counter, decimal) ". ";
               }
 
               & > .list-content > & {
                 &::before {
-                  content: counter(prosemirror-flat-list-counter, upper-alpha) ". ";
+                  content: counter(prosemirror-flat-list-counter, lower-alpha) ". ";
                 }
 
-                /* Pattern repeats again */
+                & > .list-content > & {
+                  &::before {
+                    content: counter(prosemirror-flat-list-counter, lower-roman) ". ";
+                  }
+                }
+
                 & > .list-content > & {
                   &::before {
                     content: counter(prosemirror-flat-list-counter, decimal) ". ";

@@ -118,7 +118,6 @@ export const FlatHeadingListExtension = Node.create({
       },
       Enter: ({ editor }) => {
         if (editor.isActive(this.name)) {
-          console.log("called");
           editor.chain().focus().splitList();
           return true;
         }
@@ -132,7 +131,6 @@ export const FlatHeadingListExtension = Node.create({
       },
       "Mod-Shift-7": ({ editor }) => {
         try {
-          console.log("asfd");
           return editor.commands.createHeadedList({ title: "a", kind: "bullet" });
         } catch (error) {
           console.error("Error in creating heading list", error);
@@ -141,7 +139,6 @@ export const FlatHeadingListExtension = Node.create({
       },
       "Mod-Shift-8": ({ editor }) => {
         try {
-          console.log("asfd");
           return editor.commands.createHeadedList({ title: "a", kind: "ordered" });
         } catch (error) {
           console.error("Error in creating heading list", error);

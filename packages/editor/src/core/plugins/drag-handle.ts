@@ -44,6 +44,7 @@ export const nodeDOMAtCoords = (coords: { x: number; y: number }) => {
     ".image-component",
     ".image-upload-component",
     ".editor-callout-component",
+    ".prosemirror-flat-list",
   ].join(", ");
 
   for (const elem of elements) {
@@ -130,12 +131,16 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     // Check if nodePos points to the top level node
     if (nodePos.node().type.name === "doc") differentNodeSelected = true;
     else {
-      // TODO FIX ERROR
       const nodeSelection = NodeSelection.create(view.state.doc, nodePos.before());
       // Check if the node where the drag event started is part of the current selection
       differentNodeSelected = !(
         draggedNodePos + 1 >= nodeSelection.$from.pos && draggedNodePos <= nodeSelection.$to.pos
       );
+    }
+
+    if (node.className.includes("prosemirror-flat-list")) {
+      draggedNodePos = draggedNodePos - 1;
+      console.log("draggedNodePos", draggedNodePos);
     }
 
     if (!differentNodeSelected && diff !== 0 && !(view.state.selection instanceof NodeSelection)) {
@@ -212,7 +217,10 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     // Adjust the nodePos to point to the start of the node, ensuring NodeSelection can be applied
     nodePos = calcNodePos(nodePos, view, node);
 
-    // TODO FIX ERROR
+    if (node.className.includes("prosemirror-flat-list")) {
+      nodePos = nodePos - 1;
+    }
+
     // Use NodeSelection to select the node at the calculated position
     const nodeSelection = NodeSelection.create(view.state.doc, nodePos);
 
@@ -309,7 +317,9 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
         droppedNode = view.state.selection.node;
       }
 
+      console.log("droppedNode", droppedNode);
       if (!droppedNode) return;
+      console.log("droppedNode", droppedNode);
 
       const resolvedPos = view.state.doc.resolve(dropPos.pos);
       let isDroppedInsideList = false;

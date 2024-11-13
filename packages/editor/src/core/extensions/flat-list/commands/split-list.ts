@@ -10,11 +10,9 @@ import {
   type Transaction,
 } from "@tiptap/pm/state";
 
-import { enterWithoutLift } from "./enter-without-lift";
-import { NodeType, Attrs, Mark, Fragment, NodeRange, type Node as ProsemirrorNode, Slice } from "@tiptap/pm/model";
+import { NodeType, Attrs, Mark, Fragment, type Node as ProsemirrorNode, Slice } from "@tiptap/pm/model";
 
 import { ListAttributes, isListNode } from "prosemirror-flat-list";
-import { dedentNodeRange } from "./dedent-list";
 
 /**
  * Returns a command that split the current list node.
@@ -35,7 +33,6 @@ const splitBlockNodeSelectionInListCommand: Command = (state, dispatch) => {
   if (!isBlockNodeSelection(state.selection)) {
     return false;
   }
-  console.log("aaya 1");
 
   const selection = state.selection;
   const { $to, node } = selection;
@@ -72,8 +69,8 @@ const splitListCommand: Command = (state, dispatch): boolean => {
   if (isBlockNodeSelection(state.selection)) {
     return false;
   }
+  console.log("aaya 2");
 
-  console.log("sadf");
   const { $from, $to } = state.selection;
 
   if (!$from.sameParent($to)) {
@@ -91,23 +88,7 @@ const splitListCommand: Command = (state, dispatch): boolean => {
     return false;
   }
 
-  const parent = $from.parent;
-
-  const indexInList = $from.index(listDepth);
-  const parentEmpty = parent.content.size === 0;
-
-  // When the cursor is inside the first child of the list:
-  //    If the parent block is empty, dedent the list;
-  //    otherwise split and create a new list node.
-  // When the cursor is inside the second or further children of the list:
-  //    Create a new paragraph.
-
-  if (indexInList === 0) {
-    console.log("running 2");
-    return doSplitList(state, listNode, dispatch);
-  } else {
-    return doSplitList(state, listNode, dispatch);
-  }
+  return doSplitList(state, listNode, dispatch);
 };
 
 /**
@@ -129,9 +110,18 @@ export function doSplitList(
 
   const { parentOffset } = $to;
 
-  const atStart = parentOffset == 0;
+  const atStart = parentOffset == 0 && $from.index($from.depth - 1) === 0;
+
   const atEnd = parentOffset == $to.parent.content.size;
 
+  const currentNode = $from.node($from.depth);
+  // // __AUTO_GENERATED_PRINT_VAR_START__
+  // console.log("doSplitList currentNode: %s", currentNode.ty); // __AUTO_GENERATED_PRINT_VAR_END__
+  if (currentNode.type.name !== "paragraph") {
+    console.log("ran fasle");
+    return false;
+  }
+  // is at start and not the second child of a list
   if (atStart) {
     if (dispatch) {
       const pos = $from.before(-1);
@@ -187,48 +177,3 @@ export function isBlockNodeSelection(selection: Selection): selection is NodeSel
 export function isNodeSelection(selection: Selection): selection is NodeSelection {
   return Boolean((selection as NodeSelection).node);
 }
-
-// const splitListCommand: Command = (state, dispatch): boolean => {
-//   if (isBlockNodeSelection(state.selection)) {
-//     return false;
-//   }
-//   console.log("aaya 2");
-//
-//   const { $from, $to } = state.selection;
-//
-//   if (!$from.sameParent($to)) {
-//     console.log("not same parent");
-//     return false;
-//   }
-//
-//   if ($from.depth < 2) {
-//     console.log("depth is less than 2");
-//     return false;
-//   }
-//
-//   const listDepth = $from.depth - 1;
-//   const listNode = $from.node(listDepth);
-//
-//   if (!isListNode(listNode)) {
-//     console.log("not a list node");
-//     // return enterWithoutLift(state, dispatch);
-//     return false;
-//   }
-//
-//   const parent = $from.parent;
-//
-//   const indexInList = $from.index(listDepth);
-//
-//   // When the cursor is inside the first child of the list:
-//   //    If the parent block is empty, dedent the list;
-//   //    otherwise split and create a new list node.
-//   // When the cursor is inside the second or further children of the list:
-//   //    Create a new paragraph.
-//
-//   if (indexInList === 0) {
-//     console.log("running 2");
-//     return doSplitList(state, listNode, dispatch);
-//   } else {
-//     return doSplitList(state, listNode, dispatch);
-//   }
-// };
