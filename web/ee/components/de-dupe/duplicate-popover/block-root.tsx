@@ -36,6 +36,7 @@ export const DeDupeIssueBlockRoot: FC<TDeDupeIssueBlockRootProps> = (props) => {
   return (
     <DeDupeIssueBlockWrapper workspaceSlug={workspaceSlug} issue={issue} isSelected={isSelected}>
       <DeDupeIssueBlockHeader
+        workspaceSlug={workspaceSlug}
         issue={issue}
         selectionHelpers={selectionHelpers}
         issueOperations={issueOperations}

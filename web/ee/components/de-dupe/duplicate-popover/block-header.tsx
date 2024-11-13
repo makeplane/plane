@@ -20,6 +20,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { IssueIdentifier } from "@/plane-web/components/issues";
 
 type TDeDupeIssueBlockHeaderProps = {
+  workspaceSlug: string;
   issue: TDeDupeIssue;
   selectionHelpers: TSelectionHelper;
   issueOperations?: TIssueOperations;
@@ -30,7 +31,15 @@ type TDeDupeIssueBlockHeaderProps = {
 };
 
 export const DeDupeIssueBlockHeader: FC<TDeDupeIssueBlockHeaderProps> = observer((props) => {
-  const { issue, selectionHelpers, issueOperations, disabled = false, renderDeDupeActionModals, isIntakeIssue } = props;
+  const {
+    workspaceSlug,
+    issue,
+    selectionHelpers,
+    issueOperations,
+    disabled = false,
+    renderDeDupeActionModals,
+    isIntakeIssue,
+  } = props;
   // store
   const { getStateById } = useProjectState();
   const { getProjectById } = useProject();
@@ -54,7 +63,7 @@ export const DeDupeIssueBlockHeader: FC<TDeDupeIssueBlockHeaderProps> = observer
           data={issue}
           onSubmit={async () => {
             if (projectDetails && issueOperations?.archive)
-              await issueOperations.archive(projectDetails?.workspace_detail?.slug, projectDetails?.id, issue.id);
+              await issueOperations.archive(workspaceSlug, projectDetails?.id, issue.id);
           }}
         />
       )}
@@ -67,8 +76,7 @@ export const DeDupeIssueBlockHeader: FC<TDeDupeIssueBlockHeaderProps> = observer
           }}
           data={issue}
           onSubmit={async () => {
-            if (projectDetails)
-              issueOperations?.remove(projectDetails?.workspace_detail?.slug, projectDetails.id, issue.id);
+            if (projectDetails) issueOperations?.remove(workspaceSlug, projectDetails.id, issue.id);
           }}
         />
       )}
