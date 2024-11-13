@@ -46,7 +46,6 @@ export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = observe
 
   const onClose = () => {
     setIssueLinkData(null);
-    reset();
     if (handleOnClose) handleOnClose();
   };
 
