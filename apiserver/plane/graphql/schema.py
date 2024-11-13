@@ -24,7 +24,7 @@ from .queries.issue import (
     IssueCommentActivityQuery,
     IssueTypesTypeQuery,
 )
-from .queries.page import PageQuery, UserPageQuery
+from .queries.page import PageQuery, UserPageQuery, WorkspacePageQuery
 from .queries.cycle import (
     CycleQuery,
     CycleIssuesInformationQuery,
@@ -66,7 +66,11 @@ from .mutations.issue import (
 )
 from .mutations.notification import NotificationMutation
 from .mutations.user import ProfileMutation
-from .mutations.page import PageMutation, PageFavoriteMutation
+from .mutations.page import (
+    PageMutation,
+    PageFavoriteMutation,
+    WorkspacePageMutation,
+)
 from .mutations.cycle import (
     CycleIssueMutation,
     CycleFavoriteMutation,
@@ -135,6 +139,7 @@ class Query(
     ProjectCoversQuery,
     FeatureFlagQuery,
     VersionCheckQuery,
+    WorkspacePageQuery,
 ):
     pass
 
@@ -167,6 +172,7 @@ class Mutation(
     SubIssueMutation,
     PageMutation,
     DeviceInformationMutation,
+    WorkspacePageMutation,
 ):
     pass
 
