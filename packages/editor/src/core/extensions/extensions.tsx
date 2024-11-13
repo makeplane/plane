@@ -1,7 +1,5 @@
 import CharacterCount from "@tiptap/extension-character-count";
 import Placeholder from "@tiptap/extension-placeholder";
-import TaskItem from "@tiptap/extension-task-item";
-import TaskList from "@tiptap/extension-task-list";
 import TextStyle from "@tiptap/extension-text-style";
 import TiptapUnderline from "@tiptap/extension-underline";
 import StarterKit from "@tiptap/starter-kit";
@@ -20,10 +18,8 @@ import {
   CustomMention,
   CustomQuoteExtension,
   CustomTextAlignExtension,
-  CustomTypographyExtension,
   DropHandlerExtension,
   ImageExtension,
-  ListKeymap,
   Table,
   TableCell,
   TableHeader,
@@ -34,7 +30,7 @@ import { isValidHttpUrl } from "@/helpers/common";
 // types
 import { IMentionHighlight, IMentionSuggestion, TFileHandler } from "@/types";
 import { FlatListExtension } from "./flat-list/flat-list";
-import { FlatHeadingListExtension } from "./flat-list/flat-heading-list";
+import { multipleSelectionExtension } from "./selections/multipleSelections";
 
 type TArguments = {
   enableHistory: boolean;
@@ -74,11 +70,16 @@ export const CoreEditorExtensions = (args: TArguments) => {
       codeBlock: false,
       horizontalRule: false,
       blockquote: false,
+      // dropcursor: false,
       dropcursor: {
         class: "text-custom-text-300",
       },
       ...(enableHistory ? {} : { history: false }),
     }),
+    // dropCursorExtension({
+    //   class: "text-custom-text-300",
+    // }),
+    // CustomDropCursor,
     CustomQuoteExtension,
     DropHandlerExtension(),
     CustomHorizontalRule.configure({
@@ -168,6 +169,7 @@ export const CoreEditorExtensions = (args: TArguments) => {
     CustomCalloutExtension,
     CustomColorExtension,
     FlatListExtension,
+    multipleSelectionExtension,
     // FlatHeadingListExtension,
   ];
 };

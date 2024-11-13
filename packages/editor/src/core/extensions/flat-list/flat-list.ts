@@ -39,31 +39,14 @@ export const FlatListExtension = Node.create({
   group,
   definingForContent,
   definingAsContext,
+  disableDropCursor: true,
   addAttributes() {
     return attrs;
   },
   parseHTML() {
-    return [
-      {
-        tag: "div",
-        getAttrs: (element) => {
-          // console.log("asdf", element);
-          if (typeof element === "string") {
-            return {};
-          }
-          // console.log("element", element.getAttribute("data-list-kind"));
-          return {
-            kind: element.getAttribute("data-list-kind") || "bullet",
-            order: parseInteger(element.getAttribute("data-list-order")),
-            checked: element.hasAttribute("data-list-checked"),
-            collapsed: element.hasAttribute("data-list-collapsed"),
-          };
-        },
-      },
-    ];
+    return parseDOM;
   },
   renderHTML({ node }) {
-    // console.log("node", node, node.attrs);
     return toDOM(node);
   },
   addCommands() {
