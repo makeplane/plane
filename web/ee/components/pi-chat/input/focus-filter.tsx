@@ -2,9 +2,11 @@ import { isEmpty } from "lodash";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { cn } from "@plane/editor";
+import { EUserPermissions } from "@plane/types/src/enums";
 import { CustomSelect, Logo, ToggleSwitch, Tooltip } from "@plane/ui";
+import { EUserPermissionsLevel } from "@/ce/constants";
 import { WorkspaceLogo } from "@/components/workspace";
-import { useProject, useWorkspace } from "@/hooks/store";
+import { useProject, useUserPermissions, useWorkspace } from "@/hooks/store";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 
 export const FocusFilter = observer(() => {
@@ -15,6 +17,7 @@ export const FocusFilter = observer(() => {
   const { setFocus, setIsInWorkspaceContext, isInWorkspaceContext, currentFocus, activeChatId } = usePiChat();
   const { getWorkspaceBySlug } = useWorkspace();
   const { workspaceProjectIds, getProjectById } = useProject();
+  const { allowPermissions } = useUserPermissions();
 
   //   derived values
   const workspace = getWorkspaceBySlug(workspaceSlug as string);
@@ -33,10 +36,12 @@ export const FocusFilter = observer(() => {
           className="ml-4 max-w-[192px] font-medium text-custom-text-300"
           disabled={isInWorkspaceContext}
         >
-          <div className="flex rounded-full pl-2 font-medium">
-            <span className="text-sm font-medium text-custom-text-300 my-auto">Focus</span>
+          <div className="flex rounded-full pl-2 font-medium gap-2">
+            <span className="text-sm font-medium text-custom-text-300 my-auto">
+              Focus{!isEmpty(currentFocus) && isInWorkspaceContext && ": "}
+            </span>
             <span className="text-sm my-auto capitalize">
-              {!isEmpty(currentFocus) && isInWorkspaceContext ? `: ${selectedFocus}` : ""}
+              {!isEmpty(currentFocus) && isInWorkspaceContext ? `${selectedFocus}` : ""}
             </span>
             {!isInWorkspaceContext && (
               <ToggleSwitch
@@ -77,18 +82,26 @@ export const FocusFilter = observer(() => {
           {workspaceProjectIds &&
             workspaceProjectIds.map((id) => {
               const project = getProjectById(id);
-              return (
-                <CustomSelect.Option
-                  key={id}
-                  value={`project_id%${id}`}
-                  className="text-sm text-custom-text-200 font-medium"
-                >
-                  <div className="flex flex-start gap-2">
-                    <div className="size-4 m-auto">{project && <Logo logo={project?.logo_props} />}</div>{" "}
-                    <span>{project?.name}</span>
-                  </div>
-                </CustomSelect.Option>
-              );
+              if (
+                allowPermissions(
+                  [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+                  EUserPermissionsLevel.PROJECT,
+                  workspaceSlug.toString(),
+                  project?.id
+                )
+              )
+                return (
+                  <CustomSelect.Option
+                    key={id}
+                    value={`project_id%${id}`}
+                    className="text-sm text-custom-text-200 font-medium"
+                  >
+                    <div className="flex flex-start gap-2">
+                      <div className="size-4 m-auto">{project && <Logo logo={project?.logo_props} />}</div>{" "}
+                      <span>{project?.name}</span>
+                    </div>
+                  </CustomSelect.Option>
+                );
             })}
         </div>
         <div className="pt-2 flex justify-between gap-2">

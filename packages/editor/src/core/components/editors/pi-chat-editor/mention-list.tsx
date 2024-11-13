@@ -87,6 +87,7 @@ const Suggestions = ({ type, data, onClick, key, selectedIndex, isSectionSelecte
 const MentionList = forwardRef((props: MentionListProps, ref) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedSection, setSelectedSection] = useState(0);
+  const [isEmpty, setIsEmpty] = useState(true);
 
   const selectItem = (selectedItem: IItem, type: string) => {
     try {
@@ -142,12 +143,21 @@ const MentionList = forwardRef((props: MentionListProps, ref) => {
   useEffect(() => {
     setSelectedIndex(0);
     setSelectedSection(0);
+    setIsEmpty(true);
+    for (const key in props.items) {
+      if (props.items[key].length > 0) {
+        setIsEmpty(false);
+        return;
+      }
+    }
   }, [props.items]);
 
   // Function to handle keydown events
 
   useImperativeHandle(ref, () => ({
     onKeyDown: ({ event }) => {
+      if (isEmpty) return false;
+
       if (event.key === "ArrowUp") {
         upHandler();
         return true;

@@ -30,7 +30,7 @@ const SystemPrompts = (props: TSystemPrompt) => {
     }
   };
   return (
-    <div className="flex gap-6 max-[755px] flex-wrap m-auto justify-center mt-6">
+    <div className="flex gap-4 flex-wrap m-auto justify-center mt-6">
       {templates && userId ? (
         templates.map((prompt, index) => {
           const promptIcon = getIcon(prompt.type);
@@ -49,7 +49,7 @@ const SystemPrompts = (props: TSystemPrompt) => {
                       : `flex-shrink-0 size-[20px] stroke-[2] text-pi-400 stroke-current mb-2`,
                 })}
               </span>
-              <span className="text-sm break-all">{prompt.text}</span>
+              <span className="text-sm break-words">{prompt.text}</span>
             </div>
           );
         })

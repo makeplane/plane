@@ -202,7 +202,7 @@ export class PiChatStore implements IPiChatStore {
       let payload: TQuery = {
         chat_id: this.activeChatId,
         query,
-        is_new: true,
+        is_new: isNewChat,
         user_id: userId,
         is_temp: false,
         workspace_in_context: this.isInWorkspaceContext,

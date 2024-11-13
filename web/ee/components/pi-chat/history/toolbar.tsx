@@ -4,6 +4,7 @@ import { FC, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Search, SquarePen, X } from "lucide-react";
 // helpers
+import { Button } from "@plane/ui";
 import { cn } from "@/helpers/common.helper";
 import { useAppRouter } from "@/hooks/use-app-router";
 
@@ -38,9 +39,10 @@ export const Toolbar: FC<Props> = observer((props) => {
   return (
     <div className="flex items-center justify-between gap-2 h-8 w-full">
       {/* New */}
-      <button
+      <Button
+        variant="accent-primary"
         className={cn(
-          "flex items-center justify-center gap-1 border border-custom-border-300 rounded-lg h-full w-8  bg-pi-100 text-custom-text-400  transition-[width] ease-linear overflow-hidden",
+          "flex items-center justify-center gap-2 h-8 w-8 rounded-lg shadow-sm transition-[width] ease-linear overflow-hidden disabled:bg-pi-100 disabled:border disabled:border-custom-border-300 disabled:!text-custom-text-300",
           {
             "w-full justify-center": !isSearchOpen,
           }
@@ -48,11 +50,9 @@ export const Toolbar: FC<Props> = observer((props) => {
         onClick={handleNewConversation}
         disabled={isNewChat}
       >
-        <SquarePen className="flex-shrink-0 size-4 text-custom-text-300" />
-        {!isSearchOpen && (
-          <span className="text-custom-text-300 text-xs text-nowrap font-medium">Start a new chat</span>
-        )}
-      </button>
+        <SquarePen className="flex-shrink-0 size-4" />
+        {!isSearchOpen && <span className="text-xs text-nowrap font-medium">Start a new chat</span>}
+      </Button>
       {/* Search */}
       <div className="flex items-center">
         {!isSearchOpen && (

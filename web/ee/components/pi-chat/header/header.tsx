@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { PanelRight, SquarePen } from "lucide-react";
+import { Button } from "@plane/ui";
 import { cn } from "@/helpers/common.helper";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { TAiModels } from "@/plane-web/types";
@@ -37,10 +38,11 @@ export const Header = observer((props: THeaderProps) => {
       {/* Actions */}
       {!isSidePanelOpen && (
         <div className="flex gap-2">
-          <button
-            type="button"
+          <Button
+            tabIndex={-1}
+            variant="accent-primary"
             className={cn(
-              "flex items-center justify-center gap-2 h-8 w-8 rounded-lg shadow-sm bg-pi-100 border border-custom-border-300 transition-[width] ease-linear overflow-hidden",
+              "flex items-center justify-center gap-2 h-8 w-8 rounded-lg shadow-sm transition-[width] ease-linear overflow-hidden disabled:bg-pi-100 disabled:border disabled:border-custom-border-300 disabled:!text-custom-text-300",
               {
                 "w-32": isSearchOpen,
               }
@@ -50,11 +52,9 @@ export const Header = observer((props: THeaderProps) => {
             onMouseLeave={() => setIsSearchOpen(false)}
             onClick={handleNewConversation}
           >
-            <SquarePen className="flex-shrink-0 size-4 text-custom-text-300" />
-            {isSearchOpen && (
-              <span className="text-custom-text-300 text-xs text-nowrap font-medium">Start a new chat</span>
-            )}
-          </button>
+            <SquarePen className="flex-shrink-0 size-4" />
+            {isSearchOpen && <span className="text-xs text-nowrap font-medium">Start a new chat</span>}
+          </Button>
 
           {isFullScreen && (
             <button

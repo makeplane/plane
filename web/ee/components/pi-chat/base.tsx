@@ -108,7 +108,7 @@ export const PiChatBase = observer(() => {
           setActiveModel={setActiveModel}
           isNewChat={activeChat?.dialogue?.length === 0}
         />
-        <div className="relative flex flex-col h-[90%] flex-1 align-middle justify-center max-w-[700px] md:m-auto w-full">
+        <div className="relative flex flex-col h-[90%] flex-1 align-middle justify-center max-w-[780px] md:m-auto w-full">
           <div className={cn("flex-1 my-auto flex flex-co h-full py-8")}>
             {/* New conversation */}
             {activeChat?.dialogue?.length === 0 && isNewChat && (

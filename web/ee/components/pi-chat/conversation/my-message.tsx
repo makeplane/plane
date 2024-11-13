@@ -26,7 +26,7 @@ export const MyMessage = observer((props: TProps) => {
           )}
         >
           {/* Message */}
-          {!isUserTyping && <PiChatEditor editable={false} content={message} editorClass="!break-all" />}
+          {!isUserTyping && <PiChatEditor editable={false} content={message} editorClass="!break-words" />}
           {/* Typing */}
           {isUserTyping && (
             <div className="flex gap-2">

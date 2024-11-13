@@ -53,7 +53,7 @@ export const AiMessage = observer((props: TProps) => {
       <div className="bg-pi-700 rounded-full h-9 w-9 flex">
         <PiChatLogo className="size-6 text-white fill-current m-auto align-center" />
       </div>
-      <div className="flex flex-col w-fit text-base break-all">
+      <div className="flex flex-col w-fit text-base break-words">
         {/* Message */}
         {!isPiTyping && !isLoading && <Markdown className="pi-chat-root">{message}</Markdown>}
 
