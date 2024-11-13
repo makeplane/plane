@@ -3,11 +3,9 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
 import { LogoSpinner } from "@/components/common";
-import { InstanceNotReady } from "@/components/instance";
+import { InstanceNotReady, MaintenanceView } from "@/components/instance";
 // hooks
 import { useInstance } from "@/hooks/store";
-// plane web components
-import { MaintenanceMode } from "@/plane-web/components/maintenance-mode";
 
 type TInstanceWrapper = {
   children: ReactNode;
@@ -32,7 +30,7 @@ export const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
       </div>
     );
 
-  if (instanceSWRError) return <MaintenanceMode />;
+  if (instanceSWRError) return <MaintenanceView />;
 
   // something went wrong while in the request
   if (error && error?.status === "error") return <>{children}</>;
