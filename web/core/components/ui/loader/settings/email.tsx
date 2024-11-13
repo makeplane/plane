@@ -8,7 +8,7 @@ export const EmailSettingsLoader = () => (
       <div className="flex items-center py-3">
         <span className="h-7 w-32 bg-custom-background-80 rounded" />
       </div>
-      {[...Array(4)].map((i) => (
+      {[...Array(4)].map((_, i) => (
         <div key={i} className="flex items-center justify-between">
           <div className="flex flex-col gap-2 py-3">
             <span className="h-6 w-28 bg-custom-background-80 rounded" />

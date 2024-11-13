@@ -1,6 +1,6 @@
 export const ViewListLoader = () => (
   <div className="flex h-full w-full flex-col animate-pulse">
-    {[...Array(8)].map((i) => (
+    {[...Array(8)].map((_, i) => (
       <div key={i} className="group border-b border-custom-border-200">
         <div className="relative flex w-full items-center justify-between rounded p-4">
           <div className="flex items-center gap-4">
