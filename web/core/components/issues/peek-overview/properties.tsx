@@ -135,8 +135,13 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               <span>Created by</span>
             </div>
             <div className="w-full h-full flex items-center gap-1.5 rounded px-2 py-0.5 text-sm justify-between cursor-not-allowed">
-              <ButtonAvatars showTooltip userIds={createdByDetails?.id} />
-              <span className="flex-grow truncate text-xs leading-5">{createdByDetails?.display_name}</span>
+              <ButtonAvatars
+                showTooltip
+                userIds={createdByDetails?.display_name.includes("-intake") ? null : createdByDetails?.id}
+              />
+              <span className="flex-grow truncate text-xs leading-5">
+                {createdByDetails?.display_name.includes("-intake") ? "Plane" : createdByDetails?.display_name}
+              </span>
             </div>
           </div>
         )}
