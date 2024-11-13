@@ -110,11 +110,6 @@ export const PiChatBase = observer(() => {
         />
         <div className="relative flex flex-col h-[90%] flex-1 align-middle justify-center max-w-[780px] md:m-auto w-full">
           <div className={cn("flex-1 my-auto flex flex-co h-full py-8")}>
-            {/* New conversation */}
-            {activeChat?.dialogue?.length === 0 && isNewChat && (
-              <NewConversation currentUser={currentUser} templates={templates} isFullScreen={isFullScreen} />
-            )}
-
             {/* Current conversation  */}
             {currentUser && activeChat?.dialogue?.length > 0 && !isLoading && (
               <Messages
@@ -127,9 +122,13 @@ export const PiChatBase = observer(() => {
               />
             )}
 
-            {/* loading */}
-            {isLoading && !isNewChat && currentUser && (
-              <Loading isLoading={isLoading} isFullScreen={isFullScreen} currentUser={currentUser} />
+            {/* New conversation */}
+            {isLoading && !isNewChat && currentUser ? (
+              <Loading isLoading={isLoading} isFullScreen={isFullScreen} currentUser={currentUser} /> // loading
+            ) : (
+              activeChat?.dialogue?.length === 0 && (
+                <NewConversation currentUser={currentUser} templates={templates} isFullScreen={isFullScreen} />
+              )
             )}
 
             {/* Chat Input */}

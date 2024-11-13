@@ -47,6 +47,9 @@ export const AiMessage = observer((props: TProps) => {
       });
     }
   };
+
+  const handleMessage = () => ((message.match(/```/g) || []).length % 2 !== 0 ? message + "```" : message);
+
   return (
     <div className="flex gap-4 mr-[50px]" id={id}>
       {/* Avatar */}
@@ -55,7 +58,7 @@ export const AiMessage = observer((props: TProps) => {
       </div>
       <div className="flex flex-col w-fit text-base break-words">
         {/* Message */}
-        {!isPiTyping && !isLoading && <Markdown className="pi-chat-root">{message}</Markdown>}
+        {!isPiTyping && !isLoading && <Markdown className="pi-chat-root">{handleMessage()}</Markdown>}
 
         {/* Typing */}
         {isPiTyping && <Thinking />}
