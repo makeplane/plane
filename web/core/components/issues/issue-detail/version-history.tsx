@@ -14,9 +14,9 @@ const issueVersionService = new IssueVersionService();
 
 type Props = {
   disabled: boolean;
-  editorRef: EditorRefApi;
+  editorRef: EditorRefApi | null;
   issueId: string;
-  readOnlyEditorRef: EditorReadOnlyRefApi;
+  readOnlyEditorRef: EditorReadOnlyRefApi | null;
 };
 
 export const IssueVersionHistory: React.FC<Props> = (props) => {

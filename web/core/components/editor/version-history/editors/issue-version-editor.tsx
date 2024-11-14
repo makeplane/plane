@@ -61,8 +61,7 @@ export const IssueVersionEditor: React.FC<TVersionEditorProps> = observer((props
     <RichTextReadOnlyEditor
       id={activeVersion ?? ""}
       initialValue={description ?? "<p></p>"}
-      containerClassName="p-0 pb-64 border-none"
-      editorClassName="pl-10"
+      containerClassName="!px-5 pb-64 border-none"
       workspaceSlug={workspaceSlug?.toString() ?? ""}
       projectId={projectId?.toString() ?? ""}
     />

@@ -9,7 +9,7 @@ import { TIssue } from "@plane/types";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components
 import { EmptyState } from "@/components/common";
-import { IssuePeekOverview, IssueVersionHistory } from "@/components/issues";
+import { IssuePeekOverview } from "@/components/issues";
 // constants
 import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED } from "@/constants/event-tracker";
 import { EIssuesStoreType } from "@/constants/issue";
@@ -344,7 +344,6 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       pathname,
     ]
   );
-
   // issue details
   const issue = getIssueById(issueId);
   // checking if issue is editable, based on user role
@@ -390,8 +389,6 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       )}
       {/* peek overview */}
       <IssuePeekOverview />
-      {/* version history overlay */}
-      <IssueVersionHistory />
     </>
   );
 });

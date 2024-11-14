@@ -3,8 +3,9 @@
 import React, { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
-import { ArchiveIcon, ArchiveRestoreIcon, LinkIcon, Trash2 } from "lucide-react";
-import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import { ArchiveIcon, ArchiveRestoreIcon, History, LinkIcon, Trash2 } from "lucide-react";
+// plane ui
+import { CustomMenu, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
 import { ArchiveIssueModal, DeleteIssueModal, IssueSubscription } from "@/components/issues";
 // constants
@@ -25,6 +26,8 @@ import {
 } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useQueryParams } from "@/hooks/use-query-params";
+// plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
@@ -35,15 +38,12 @@ type Props = {
 
 export const IssueDetailQuickActions: FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, issueId } = props;
-
   // states
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   const [archiveIssueModal, setArchiveIssueModal] = useState(false);
   const [isRestoring, setIsRestoring] = useState(false);
-
   // router
   const router = useAppRouter();
-
   // hooks
   const { data: currentUser } = useUser();
   const { allowPermissions } = useUserPermissions();
@@ -62,13 +62,11 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
   } = useIssues(EIssuesStoreType.ARCHIVED);
   const { captureIssueEvent } = useEventTracker();
   const pathname = usePathname();
-
+  const { updateQueryParams } = useQueryParams();
   // derived values
   const issue = getIssueById(issueId);
   if (!issue) return <></>;
-
   const stateDetails = getStateById(issue.state_id);
-
   // handlers
   const handleCopyText = () => {
     const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
@@ -80,7 +78,6 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
       });
     });
   };
-
   const handleDeleteIssue = async () => {
     try {
       const deleteIssue = issue?.archived_at ? removeArchivedIssue : removeIssue;
@@ -109,7 +106,6 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
       });
     }
   };
-
   const handleArchiveIssue = async () => {
     try {
       await archiveIssue(workspaceSlug, projectId, issueId).then(() => {
@@ -128,7 +124,6 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
       });
     }
   };
-
   const handleRestore = async () => {
     if (!workspaceSlug || !projectId || !issueId) return;
 
@@ -153,6 +148,21 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
       .finally(() => setIsRestoring(false));
   };
 
+  const MENU_ITEMS = [
+    {
+      key: "version-history",
+      action: () => {
+        // add query param, version=current to the route
+        const updatedRoute = updateQueryParams({
+          paramsToAdd: { version: "current" },
+        });
+        router.push(updatedRoute);
+      },
+      label: "Version history",
+      icon: History,
+      shouldRender: true,
+    },
+  ];
   // auth
   const isEditable = allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT);
   const canRestoreIssue = allowPermissions(
@@ -239,7 +249,6 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
                 )}
               </>
             )}
-
             {isEditable && (
               <Tooltip tooltipContent="Delete" isMobile={isMobile}>
                 <button
@@ -251,6 +260,17 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
                 </button>
               </Tooltip>
             )}
+            <CustomMenu maxHeight="lg" placement="bottom-start" verticalEllipsis closeOnSelect>
+              {MENU_ITEMS.map((item) => {
+                if (!item.shouldRender) return null;
+                return (
+                  <CustomMenu.MenuItem key={item.key} onClick={item.action} className="flex items-center gap-2">
+                    <item.icon className="h-3 w-3" />
+                    {item.label}
+                  </CustomMenu.MenuItem>
+                );
+              })}
+            </CustomMenu>
           </div>
         </div>
       </div>

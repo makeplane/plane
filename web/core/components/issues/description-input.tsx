@@ -4,13 +4,14 @@ import { FC, useCallback, useRef } from "react";
 import debounce from "lodash/debounce";
 import { observer } from "mobx-react";
 // plane editor
-import { convertBinaryDataToBase64String, EditorRefApi } from "@plane/editor";
+import { convertBinaryDataToBase64String, EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
 // types
 import { EFileAssetType } from "@plane/types/src/enums";
 // plane ui
 import { Loader } from "@plane/ui";
 // components
 import { CollaborativeRichTextEditor, CollaborativeRichTextReadOnlyEditor } from "@/components/editor";
+import { IssueVersionHistory } from "@/components/issues";
 // helpers
 import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
 // hooks
@@ -49,6 +50,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
   } = props;
   // refs
   const editorRef = useRef<EditorRefApi>(null);
+  const readOnlyEditorRef = useRef<EditorReadOnlyRefApi>(null);
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
   // derived values
@@ -95,7 +97,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
     );
 
   return (
-    <>
+    <div>
       {!disabled ? (
         <CollaborativeRichTextEditor
           key={issueId}
@@ -132,6 +134,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
         />
       ) : (
         <CollaborativeRichTextReadOnlyEditor
+          ref={readOnlyEditorRef}
           containerClassName={containerClassName}
           descriptionBinary={savedDescriptionBinary}
           descriptionHTML={descriptionHTML}
@@ -140,6 +143,13 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
           workspaceSlug={workspaceSlug}
         />
       )}
-    </>
+      {/* version history overlay */}
+      <IssueVersionHistory
+        disabled={!!disabled}
+        editorRef={editorRef.current}
+        issueId={issueId}
+        readOnlyEditorRef={readOnlyEditorRef.current}
+      />
+    </div>
   );
 });
