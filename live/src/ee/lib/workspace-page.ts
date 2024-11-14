@@ -1,5 +1,8 @@
 // helpers
-import { getAllDocumentFormatsFromBinaryData, getBinaryDataFromHTMLString } from "@/core/helpers/page.js";
+import {
+  getAllDocumentFormatsFromDocumentEditorBinaryData,
+  getBinaryDataFromDocumentEditorHTMLString,
+} from "@plane/editor";
 // services
 import { WorkspacePageService } from "../services/workspace-page.service.js";
 const workspacePageService = new WorkspacePageService();
@@ -11,19 +14,14 @@ export const updateWorkspacePageDescription = async (
   cookie: string | undefined
 ) => {
   if (!(updatedDescription instanceof Uint8Array)) {
-    throw new Error(
-      "Invalid updatedDescription: must be an instance of Uint8Array"
-    );
+    throw new Error("Invalid updatedDescription: must be an instance of Uint8Array");
   }
 
   const workspaceSlug = params.get("workspaceSlug")?.toString();
   if (!workspaceSlug || !cookie) return;
 
-  const {
-    contentBinaryEncoded,
-    contentHTML,
-    contentJSON
-  } =  getAllDocumentFormatsFromBinaryData(updatedDescription);
+  const { contentBinaryEncoded, contentHTML, contentJSON } =
+    getAllDocumentFormatsFromDocumentEditorBinaryData(updatedDescription);
   try {
     const payload = {
       description_binary: contentBinaryEncoded,
@@ -31,32 +29,19 @@ export const updateWorkspacePageDescription = async (
       description: contentJSON,
     };
 
-    await workspacePageService.updateDescription(
-      workspaceSlug,
-      pageId,
-      payload,
-      cookie
-    );
+    await workspacePageService.updateDescription(workspaceSlug, pageId, payload, cookie);
   } catch (error) {
     console.error("Update error:", error);
     throw error;
   }
 };
 
-const fetchDescriptionHTMLAndTransform = async (
-  workspaceSlug: string,
-  pageId: string,
-  cookie: string
-) => {
+const fetchDescriptionHTMLAndTransform = async (workspaceSlug: string, pageId: string, cookie: string) => {
   if (!workspaceSlug || !cookie) return;
 
   try {
-    const pageDetails = await workspacePageService.fetchDetails(
-      workspaceSlug,
-      pageId,
-      cookie
-    );
-    const { contentBinary } = getBinaryDataFromHTMLString(pageDetails.description_html ?? "<p></p>")
+    const pageDetails = await workspacePageService.fetchDetails(workspaceSlug, pageId, cookie);
+    const contentBinary = getBinaryDataFromDocumentEditorHTMLString(pageDetails.description_html ?? "<p></p>");
     return contentBinary;
   } catch (error) {
     console.error("Error while transforming from HTML to Uint8Array", error);
@@ -73,19 +58,11 @@ export const fetchWorkspacePageDescriptionBinary = async (
   if (!workspaceSlug || !cookie) return null;
 
   try {
-    const response = await workspacePageService.fetchDescriptionBinary(
-      workspaceSlug,
-      pageId,
-      cookie
-    );
+    const response = await workspacePageService.fetchDescriptionBinary(workspaceSlug, pageId, cookie);
     const binaryData = new Uint8Array(response);
 
     if (binaryData.byteLength === 0) {
-      const binary = await fetchDescriptionHTMLAndTransform(
-        workspaceSlug,
-        pageId,
-        cookie
-      );
+      const binary = await fetchDescriptionHTMLAndTransform(workspaceSlug, pageId, cookie);
       if (binary) {
         return binary;
       }

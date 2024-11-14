@@ -12,8 +12,9 @@ import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // plane web components
 import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe";
 import { IssueTypeSwitcher } from "@/plane-web/components/issues";
-// local components
+// plane web hooks
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
+// local components
 import { IssueDescriptionInput } from "../description-input";
 import { IssueReaction } from "../issue-detail/reactions";
 import { IssueTitleInput } from "../title-input";
@@ -63,13 +64,6 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
 
   if (!issue || !issue.project_id) return <></>;
 
-  const issueDescription =
-    issue.description_html !== undefined || issue.description_html !== null
-      ? issue.description_html != ""
-        ? issue.description_html
-        : "<p></p>"
-      : undefined;
-
   return (
     <div className="space-y-2">
       {issue.parent_id && (
@@ -105,16 +99,22 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
         containerClassName="-ml-3"
       />
 
-      <IssueDescriptionInput
-        workspaceSlug={workspaceSlug}
-        projectId={issue.project_id}
-        issueId={issue.id}
-        initialValue={issueDescription}
-        disabled={disabled}
-        issueOperations={issueOperations}
-        setIsSubmitting={(value) => setIsSubmitting(value)}
-        containerClassName="-ml-3 border-none"
-      />
+      {issue.description_binary !== undefined && (
+        <IssueDescriptionInput
+          key={issue.id}
+          containerClassName="-ml-3 border-none"
+          descriptionBinary={issue.description_binary}
+          descriptionHTML={issue.description_html ?? "<p></p>"}
+          disabled={disabled}
+          updateDescription={async (data) =>
+            await issueOperations.updateDescription(workspaceSlug, issue.project_id ?? "", issue.id, data)
+          }
+          issueId={issue.id}
+          projectId={issue.project_id}
+          setIsSubmitting={(value) => setIsSubmitting(value)}
+          workspaceSlug={workspaceSlug}
+        />
+      )}
 
       {currentUser && (
         <IssueReaction

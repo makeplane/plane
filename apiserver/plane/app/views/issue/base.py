@@ -1,5 +1,7 @@
 # Python imports
 import json
+import requests
+import base64
 
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -20,8 +22,10 @@ from django.db.models import (
 )
 from django.db.models.functions import Coalesce
 from django.utils import timezone
+from django.http import StreamingHttpResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
+from django.conf import settings
 
 # Third Party imports
 from rest_framework import status
@@ -759,6 +763,84 @@ class IssueViewSet(BaseViewSet):
             origin=request.META.get("HTTP_ORIGIN"),
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def retrieve_description(self, request, slug, project_id, pk):
+        issue = Issue.issue_objects.filter(
+            pk=pk, workspace__slug=slug, project_id=project_id
+        ).first()
+        if issue is None:
+            return Response(
+                {"error": "Issue not found"},
+                status=404,
+            )
+        binary_data = issue.description_binary
+
+        def stream_data():
+            if binary_data:
+                yield binary_data
+            else:
+                yield b""
+
+        response = StreamingHttpResponse(
+            stream_data(), content_type="application/octet-stream"
+        )
+        response["Content-Disposition"] = (
+            'attachment; filename="issue_description.bin"'
+        )
+        return response
+
+    def update_description(self, request, slug, project_id, pk):
+        issue = Issue.issue_objects.get(
+            workspace__slug=slug, project_id=project_id, pk=pk
+        )
+        base64_description = issue.description_binary
+        # convert to base64 string
+        if base64_description:
+            base64_description = base64.b64encode(base64_description).decode(
+                "utf-8"
+            )
+        data = {
+            "original_document": base64_description,
+            "updates": request.data.get("description_binary"),
+        }
+        base_url = f"{settings.LIVE_BASE_URL}/resolve-document-conflicts/"
+        try:
+            response = requests.post(base_url, json=data, headers=None)
+        except requests.RequestException:
+            return Response(
+                {"error": "Failed to connect to the external service"},
+                status=status.HTTP_502_BAD_GATEWAY,
+            )
+
+        if response.status_code == 200:
+            issue.description = response.json().get(
+                "description", issue.description
+            )
+            issue.description_html = response.json().get("description_html")
+            response_description_binary = response.json().get(
+                "description_binary"
+            )
+            issue.description_binary = base64.b64decode(
+                response_description_binary
+            )
+            issue.save()
+
+            def stream_data():
+                if issue.description_binary:
+                    yield issue.description_binary
+                else:
+                    yield b""
+
+            response = StreamingHttpResponse(
+                stream_data(), content_type="application/octet-stream"
+            )
+            response["Content-Disposition"] = (
+                'attachment; filename="issue_description.bin"'
+            )
+            return response
+
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class IssueUserDisplayPropertyEndpoint(BaseAPIView):

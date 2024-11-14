@@ -10,6 +10,8 @@ import "./styles/drag-drop.css";
 export {
   CollaborativeDocumentEditorWithRef,
   CollaborativeDocumentReadOnlyEditorWithRef,
+  CollaborativeRichTextEditorWithRef,
+  CollaborativeRichTextReadOnlyEditorWithRef,
   DocumentReadOnlyEditorWithRef,
   LiteTextEditorWithRef,
   LiteTextReadOnlyEditorWithRef,
@@ -26,7 +28,7 @@ export * from "@/constants/common";
 // helpers
 export * from "@/helpers/common";
 export * from "@/helpers/editor-commands";
-export * from "@/helpers/yjs";
+export * from "@/helpers/yjs-utils";
 export * from "@/extensions/table/table";
 
 // components

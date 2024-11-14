@@ -26,6 +26,12 @@ import { IssueDetailsSidebar } from "./sidebar";
 export type TIssueOperations = {
   fetch: (workspaceSlug: string, projectId: string, issueId: string, loader?: boolean) => Promise<void>;
   update: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
+  updateDescription: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    descriptionBinary: string
+  ) => Promise<ArrayBuffer>;
   remove: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   archive?: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   restore?: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
@@ -64,6 +70,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
     issue: { getIssueById },
     fetchIssue,
     updateIssue,
+    updateIssueDescription,
     removeIssue,
     archiveIssue,
     addCycleToIssue,
@@ -116,6 +123,13 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             type: TOAST_TYPE.ERROR,
             message: "Issue update failed",
           });
+        }
+      },
+      updateDescription: async (workspaceSlug, projectId, issueId, descriptionBinary) => {
+        try {
+          return await updateIssueDescription(workspaceSlug, projectId, issueId, descriptionBinary);
+        } catch {
+          throw new Error("Failed to update issue description");
         }
       },
       remove: async (workspaceSlug: string, projectId: string, issueId: string) => {
@@ -317,6 +331,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       is_archived,
       fetchIssue,
       updateIssue,
+      updateIssueDescription,
       removeIssue,
       archiveIssue,
       removeArchivedIssue,

@@ -1,2 +1,1 @@
-export * from "@/extensions/core-without-props";
-export { migrateDocJSON } from "prosemirror-flat-list";
+export * from "@/helpers/yjs-utils";
