@@ -69,6 +69,7 @@ from plane.utils.user_timezone_converter import user_timezone_converter
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.utils.global_paginator import paginate
 from plane.bgtasks.webhook_task import model_activity
+from plane.bgtasks.version_task import version_task
 
 
 class IssueListEndpoint(BaseAPIView):
@@ -488,9 +489,7 @@ class IssueViewSet(BaseViewSet):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
 
         issue = (
-            Issue.objects.filter(
-                project_id=self.kwargs.get("project_id")
-            )
+            Issue.objects.filter(project_id=self.kwargs.get("project_id"))
             .filter(workspace__slug=self.kwargs.get("slug"))
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
@@ -525,7 +524,7 @@ class IssueViewSet(BaseViewSet):
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
-                )
+            )
             .filter(pk=pk)
             .annotate(
                 label_ids=Coalesce(
@@ -791,9 +790,19 @@ class IssueViewSet(BaseViewSet):
         return response
 
     def update_description(self, request, slug, project_id, pk):
+        print("in the update description")
         issue = Issue.issue_objects.get(
             workspace__slug=slug, project_id=project_id, pk=pk
         )
+
+        # Serialize the existing instance
+        existing_instance = json.dumps(
+            {
+                "description_html": issue.description_html,
+            },
+            cls=DjangoJSONEncoder,
+        )
+
         base64_description = issue.description_binary
         # convert to base64 string
         if base64_description:
@@ -825,6 +834,14 @@ class IssueViewSet(BaseViewSet):
                 response_description_binary
             )
             issue.save()
+
+            # Return a success response
+            version_task.delay(
+                entity_type="ISSUE",
+                entity_identifier=pk,
+                existing_instance=existing_instance,
+                user_id=request.user.id,
+            )
 
             def stream_data():
                 if issue.description_binary:

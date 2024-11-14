@@ -32,7 +32,7 @@ from plane.db.models import (
 )
 
 from plane.ee.views.base import BaseViewSet, BaseAPIView
-from plane.bgtasks.page_version_task import page_version
+from plane.bgtasks.version_task import version_task
 from plane.bgtasks.page_transaction_task import page_transaction
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
@@ -423,8 +423,9 @@ class WorkspacePagesDescriptionViewSet(BaseViewSet):
             page.description_html = request.data.get("description_html")
             page.save()
             # Return a success response
-            page_version.delay(
-                page_id=page.id,
+            version_task.delay(
+                entity_type="PAGE",
+                entity_identifier=page.id,
                 existing_instance=existing_instance,
                 user_id=request.user.id,
             )

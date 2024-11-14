@@ -20,7 +20,6 @@ def version_task(
     user_id,
 ):
     try:
-
         # Get the current instance
         current_instance = (
             json.loads(existing_instance)
@@ -80,12 +79,13 @@ def version_task(
                         owned_by_id=user_id,
                         last_saved_at=page.updated_at,
                         description_json=page.description,
+                        created_by_id=user_id,
+                        updated_by_id=user_id,
                     )
 
         if entity_type == "ISSUE":
             # Get the issue
             issue = Issue.objects.get(id=entity_identifier)
-
             # Create a version if description_html is updated
             if (
                 current_instance.get("description_html")
@@ -136,6 +136,9 @@ def version_task(
                         owned_by_id=user_id,
                         last_saved_at=issue.updated_at,
                         description_json=issue.description,
+                        project_id=issue.project_id,
+                        created_by_id=user_id,
+                        updated_by_id=user_id,
                     )
 
         return

@@ -51,7 +51,7 @@ from plane.db.models import (
     ProjectMember,
     CycleIssue,
 )
-
+from plane.bgtasks.version_task import version_task
 from .base import BaseAPIView
 
 
@@ -486,6 +486,13 @@ class IssueAPIEndpoint(BaseAPIView):
         issue = Issue.objects.get(
             workspace__slug=slug, project_id=project_id, pk=pk
         )
+        # Serialize the existing instance
+        existing_instance = json.dumps(
+            {
+                "description_html": issue.description_html,
+            },
+            cls=DjangoJSONEncoder,
+        )
         project = Project.objects.get(pk=project_id)
         current_instance = json.dumps(
             IssueSerializer(issue).data, cls=DjangoJSONEncoder
@@ -522,6 +529,13 @@ class IssueAPIEndpoint(BaseAPIView):
                 )
 
             serializer.save()
+            # Return a success response
+            version_task.delay(
+                entity_type="ISSUE",
+                entity_identifier=pk,
+                existing_instance=existing_instance,
+                user_id=request.user.id,
+            )
             issue_activity.delay(
                 type="issue.activity.updated",
                 requested_data=requested_data,
