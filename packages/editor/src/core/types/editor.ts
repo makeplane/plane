@@ -8,6 +8,7 @@ import {
   IMentionSuggestion,
   TAIHandler,
   TDisplayConfig,
+  TDocumentEventsServer,
   TEmbedConfig,
   TExtensions,
   TFileHandler,
@@ -15,6 +16,7 @@ import {
   TUserDetails,
 } from "@/types";
 import { TTextAlign } from "@/extensions";
+import { HocuspocusProvider } from "@hocuspocus/provider";
 
 export type TEditorCommands =
   | "text"
@@ -88,6 +90,8 @@ export type EditorReadOnlyRefApi = {
   };
   onHeadingChange: (callback: (headings: IMarking[]) => void) => () => void;
   getHeadings: () => IMarking[];
+  emitRealTimeUpdate: (message: TDocumentEventsServer) => void;
+  listenToRealTimeUpdate: () => HocuspocusProvider;
 };
 
 export interface EditorRefApi extends EditorReadOnlyRefApi {
@@ -126,7 +130,7 @@ export interface IEditorProps {
   onEnterKeyPress?: (e?: any) => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
-  value?: string | null; 
+  value?: string | null;
 }
 export interface ILiteTextEditor extends IEditorProps {
   extensions?: any[];

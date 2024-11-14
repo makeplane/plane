@@ -10,7 +10,8 @@ import { IMarking, scrollSummary } from "@/helpers/scroll-to-node";
 // props
 import { CoreReadOnlyEditorProps } from "@/props";
 // types
-import { EditorReadOnlyRefApi, IMentionHighlight, TFileHandler } from "@/types";
+import { TDocumentEventsServer, EditorReadOnlyRefApi, IMentionHighlight, TFileHandler } from "@/types";
+import { HocuspocusProvider } from "@hocuspocus/provider";
 
 interface CustomReadOnlyEditorProps {
   initialValue?: string;
@@ -24,6 +25,7 @@ interface CustomReadOnlyEditorProps {
     highlights: () => Promise<IMentionHighlight[]>;
   };
   providerDocument?: Y.Doc;
+  provider?: HocuspocusProvider;
 }
 
 export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
@@ -37,6 +39,7 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
     handleEditorReady,
     mentionHandler,
     providerDocument,
+    provider,
   } = props;
 
   const editor = useCustomEditor({
@@ -117,6 +120,8 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
       };
     },
     getHeadings: () => editorRef?.current?.storage.headingList.headings,
+    emitRealTimeUpdate: (message: TDocumentEventsServer) => provider?.sendStateless(message),
+    listenToRealTimeUpdate: () => provider,
   }));
 
   if (!editor) {

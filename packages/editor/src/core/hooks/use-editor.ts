@@ -16,8 +16,16 @@ import { IMarking, scrollSummary, scrollToNodeViaDOMCoordinates } from "@/helper
 // props
 import { CoreEditorProps } from "@/props";
 // types
-import { EditorRefApi, IMentionHighlight, IMentionSuggestion, TEditorCommands, TFileHandler } from "@/types";
+import type {
+  TDocumentEventsServer,
+  EditorRefApi,
+  IMentionHighlight,
+  IMentionSuggestion,
+  TEditorCommands,
+  TFileHandler,
+} from "@/types";
 import { migrateDocJSON } from "@/extensions/migrationjson";
+import { HocuspocusProvider } from "@hocuspocus/provider";
 
 export interface CustomEditorProps {
   editorClassName: string;
@@ -39,6 +47,7 @@ export interface CustomEditorProps {
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   providerDocument?: Y.Doc;
   localProvider?: IndexeddbPersistence;
+  provider?: HocuspocusProvider;
   tabIndex?: number;
   // undefined when prop is not passed, null if intentionally passed to stop
   // swr syncing
@@ -61,6 +70,7 @@ export const useEditor = (props: CustomEditorProps) => {
     onTransaction,
     placeholder,
     providerDocument,
+    provider,
     tabIndex,
     value,
     autofocus = false,
@@ -85,7 +95,7 @@ export const useEditor = (props: CustomEditorProps) => {
       const emitUpdate = false;
 
       // Disable further user input
-      // setIsEditorDisabled(true);
+      setIsEditorDisabled(true);
       editor.setEditable(false, emitUpdate);
       console.log("error", error);
     },
@@ -342,6 +352,8 @@ export const useEditor = (props: CustomEditorProps) => {
         if (!document) return;
         Y.applyUpdate(document, value);
       },
+      emitRealTimeUpdate: (message: TDocumentEventsServer) => provider?.sendStateless(message),
+      listenToRealTimeUpdate: () => provider,
     }),
     [editorRef, savedSelection]
   );

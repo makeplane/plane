@@ -70,16 +70,11 @@ export const CoreEditorExtensions = (args: TArguments) => {
       codeBlock: false,
       horizontalRule: false,
       blockquote: false,
-      // dropcursor: false,
       dropcursor: {
         class: "text-custom-text-300",
       },
       ...(enableHistory ? {} : { history: false }),
     }),
-    // dropCursorExtension({
-    //   class: "text-custom-text-300",
-    // }),
-    // CustomDropCursor,
     CustomQuoteExtension,
     DropHandlerExtension(),
     CustomHorizontalRule.configure({

@@ -80,6 +80,7 @@ export const useCollaborativeDocumentReadOnlyEditor = (props: TCollaborativeDocu
     handleEditorReady,
     mentionHandler,
     providerDocument: provider.document,
+    provider,
   });
 
   return {

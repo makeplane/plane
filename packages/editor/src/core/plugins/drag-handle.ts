@@ -30,6 +30,29 @@ const createDragHandleElement = (): HTMLElement => {
   return dragHandleElement;
 };
 
+const isScrollable = (node: HTMLElement | SVGElement) => {
+  if (!(node instanceof HTMLElement || node instanceof SVGElement)) {
+    return false;
+  }
+  const style = getComputedStyle(node);
+  return ["overflow", "overflow-y"].some((propertyName) => {
+    const value = style.getPropertyValue(propertyName);
+    return value === "auto" || value === "scroll";
+  });
+};
+
+const getScrollParent = (node: HTMLElement | SVGElement) => {
+  let currentParent = node.parentElement;
+
+  while (currentParent) {
+    if (isScrollable(currentParent)) {
+      return currentParent;
+    }
+    currentParent = currentParent.parentElement;
+  }
+  return document.scrollingElement || document.documentElement;
+};
+
 export const nodeDOMAtCoords = (coords: { x: number; y: number }) => {
   const elements = document.elementsFromPoint(coords.x, coords.y);
   const generalSelectors = [
@@ -104,9 +127,17 @@ const calcNodePos = (pos: number, view: EditorView, node: Element) => {
 
 export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOptions => {
   let listType = "";
+  let isDragging = false;
+  let lastClientY = 0;
+  let lastClientX = 0;
+  let scrollAnimationFrame = null;
+
   const handleDragStart = (event: DragEvent, view: EditorView) => {
     view.focus();
-
+    isDragging = true;
+    lastClientY = event.clientY;
+    lastClientX = event.clientX;
+    scroll();
     if (!event.dataTransfer) return;
 
     const node = nodeDOMAtCoords({
@@ -185,6 +216,50 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     view.dragging = { slice, move: event.ctrlKey };
   };
 
+  const handleDragEnd = <TEvent extends DragEvent | FocusEvent>(event: TEvent, view: EditorView) => {
+    event.preventDefault();
+    isDragging = false;
+    if (scrollAnimationFrame) {
+      cancelAnimationFrame(scrollAnimationFrame);
+      scrollAnimationFrame = null;
+    }
+
+    view.dom.classList.remove("dragging");
+    // [Existing handleDragEnd logic...]
+  };
+
+  function scroll() {
+    if (!isDragging) {
+      return;
+    }
+
+    const scrollableParent = getScrollParent(dragHandleElement);
+    if (!scrollableParent) return;
+    const scrollThreshold = options.scrollThreshold;
+
+    const maxScrollSpeed = 40;
+    let scrollAmount = 0;
+
+    // Normal scroll behavior when mouse is inside viewport
+    const scrollRegionUp = scrollThreshold.up;
+    const scrollRegionDown = window.innerHeight - scrollThreshold.down;
+
+    if (lastClientY < scrollRegionUp) {
+      const ratio = Math.min(Math.pow((scrollRegionUp - lastClientY) / scrollThreshold.up, 3), 1);
+      scrollAmount = -maxScrollSpeed * ratio;
+    } else if (lastClientY > scrollRegionDown) {
+      // More gradual downward scroll with higher power and dampening
+      const ratio = Math.min(Math.pow((lastClientY - scrollRegionDown) / scrollThreshold.down, 4), 1) * 0.8;
+      scrollAmount = maxScrollSpeed * ratio;
+    }
+
+    if (scrollAmount !== 0) {
+      scrollableParent.scrollBy({ top: scrollAmount });
+    }
+
+    // Continue the scrolling loop
+    scrollAnimationFrame = requestAnimationFrame(scroll);
+  }
   const handleClick = (event: MouseEvent, view: EditorView) => {
     view.focus();
 
@@ -239,51 +314,19 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
   const view = (view: EditorView, sideMenu: HTMLDivElement | null) => {
     dragHandleElement = createDragHandleElement();
     dragHandleElement.addEventListener("dragstart", (e) => handleDragStart(e, view));
-    dragHandleElement.addEventListener("click", (e) => handleClick(e, view));
-    dragHandleElement.addEventListener("contextmenu", (e) => handleClick(e, view));
+    dragHandleElement.addEventListener("dragend", (e) => handleDragEnd(e, view));
 
-    const isScrollable = (node: HTMLElement | SVGElement) => {
-      if (!(node instanceof HTMLElement || node instanceof SVGElement)) {
-        return false;
-      }
-      const style = getComputedStyle(node);
-      return ["overflow", "overflow-y"].some((propertyName) => {
-        const value = style.getPropertyValue(propertyName);
-        return value === "auto" || value === "scroll";
-      });
-    };
+    window.addEventListener("blur", (e) => handleDragEnd(e, view));
 
-    const getScrollParent = (node: HTMLElement | SVGElement) => {
-      let currentParent = node.parentElement;
-      while (currentParent) {
-        if (isScrollable(currentParent)) {
-          return currentParent;
-        }
-        currentParent = currentParent.parentElement;
-      }
-      return document.scrollingElement || document.documentElement;
-    };
-
-    const maxScrollSpeed = 100;
-
-    dragHandleElement.addEventListener("drag", (e) => {
-      hideDragHandle();
-      const scrollableParent = getScrollParent(dragHandleElement);
-      if (!scrollableParent) return;
-      const scrollThreshold = options.scrollThreshold;
-
-      if (e.clientY < scrollThreshold.up) {
-        const overflow = scrollThreshold.up - e.clientY;
-        const ratio = Math.min(overflow / scrollThreshold.up, 1);
-        const scrollAmount = -maxScrollSpeed * ratio;
-        scrollableParent.scrollBy({ top: scrollAmount });
-      } else if (window.innerHeight - e.clientY < scrollThreshold.down) {
-        const overflow = e.clientY - (window.innerHeight - scrollThreshold.down);
-        const ratio = Math.min(overflow / scrollThreshold.down, 1);
-        const scrollAmount = maxScrollSpeed * ratio;
-        scrollableParent.scrollBy({ top: scrollAmount });
+    document.addEventListener("dragover", (event) => {
+      event.preventDefault();
+      if (isDragging) {
+        lastClientY = event.clientY;
       }
     });
+
+    dragHandleElement.addEventListener("click", (e) => handleClick(e, view));
+    dragHandleElement.addEventListener("contextmenu", (e) => handleClick(e, view));
 
     hideDragHandle();
 
@@ -293,6 +336,11 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
       destroy: () => {
         dragHandleElement?.remove?.();
         dragHandleElement = null;
+        isDragging = false;
+        if (scrollAnimationFrame) {
+          cancelAnimationFrame(scrollAnimationFrame);
+          scrollAnimationFrame = null;
+        }
       },
     };
   };
