@@ -61,8 +61,8 @@ class IssuesType:
     is_draft: bool
     external_source: Optional[str]
     external_id: Optional[str]
-    created_by: strawberry.ID
-    updated_by: strawberry.ID
+    created_by: Optional[strawberry.ID]
+    updated_by: Optional[strawberry.ID]
     created_at: datetime
     updated_at: datetime
     cycle: Optional[strawberry.ID]
@@ -89,10 +89,6 @@ class IssuesType:
     @strawberry.field
     def estimate_point(self) -> int:
         return self.estimate_point_id
-
-    @strawberry.field
-    def created_by(self) -> int:
-        return self.created_by_id
 
     @strawberry.field
     def type(self) -> int:

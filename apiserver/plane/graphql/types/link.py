@@ -1,4 +1,5 @@
 # python imports
+from typing import Optional
 from datetime import datetime
 
 # Strawberry imports
@@ -18,8 +19,8 @@ class IssueLinkType:
     title: str
     url: str
     metadata: JSON
-    created_by: strawberry.ID
-    updated_by: strawberry.ID
+    created_by: Optional[strawberry.ID]
+    updated_by: Optional[strawberry.ID]
     project: strawberry.ID
     workspace: strawberry.ID
     issue: strawberry.ID

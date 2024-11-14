@@ -33,8 +33,8 @@ class CycleType:
     logo_props: Optional[JSON]
     project: strawberry.ID
     workspace: strawberry.ID
-    created_by: strawberry.ID
-    updated_by: strawberry.ID
+    created_by: Optional[strawberry.ID]
+    updated_by: Optional[strawberry.ID]
     created_at: datetime
     updated_at: datetime
     total_issues: int
@@ -50,10 +50,6 @@ class CycleType:
     @strawberry.field
     def workspace(self) -> int:
         return self.workspace_id
-
-    @strawberry.field
-    def created_by(self) -> int:
-        return self.created_by_id
 
     @strawberry.field
     async def total_issues(self, info: Info) -> int:
