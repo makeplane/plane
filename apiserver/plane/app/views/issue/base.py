@@ -860,11 +860,11 @@ class IssuePaginatedViewSet(BaseViewSet):
         if description_binary_required:
             for item in paginated_data:
                 if item["description_binary"]:
-                    item["description_base64"] = base64.b64encode(
+                    item["description_binary"] = base64.b64encode(
                         item["description_binary"]
                     ).decode("utf-8")
                 else:
-                    item["description_base64"] = None
+                    item["description_binary"] = None
 
         # converting the datetime fields in paginated data
         datetime_fields = ["created_at", "updated_at"]
@@ -1101,7 +1101,6 @@ class IssueDetailEndpoint(BaseAPIView):
 
 
 class IssueBulkUpdateDateEndpoint(BaseAPIView):
-
     def validate_dates(
         self, current_start, current_target, new_start, new_target
     ):
@@ -1117,7 +1116,6 @@ class IssueBulkUpdateDateEndpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id):
-
         updates = request.data.get("updates", [])
 
         issue_ids = [update["id"] for update in updates]
