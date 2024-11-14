@@ -29,6 +29,7 @@ import {
 import { isValidHttpUrl } from "@/helpers/common";
 // types
 import { IMentionHighlight, TFileHandler } from "@/types";
+import { FlatListExtension } from "./flat-list/flat-list";
 
 type Props = {
   fileHandler: Pick<TFileHandler, "getAssetSrc">;
@@ -128,5 +129,6 @@ export const CoreReadOnlyEditorExtensions = (props: Props) => {
     HeadingListExtension,
     CustomTextAlignExtension,
     CustomCalloutReadOnlyExtension,
+    FlatListExtension,
   ];
 };
