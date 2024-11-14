@@ -2,7 +2,7 @@
 import {
   getAllDocumentFormatsFromDocumentEditorBinaryData,
   getBinaryDataFromDocumentEditorHTMLString,
-} from "@plane/editor";
+} from "@plane/editor/lib";
 // services
 import { WorkspacePageService } from "../services/workspace-page.service.js";
 const workspacePageService = new WorkspacePageService();

@@ -105,6 +105,19 @@ const SideMenu = (options: SideMenuPluginProps) => {
             return;
           }
 
+          // Check if the node is inside a prosemirror-flat-list
+          const flatListNode = node.closest(".prosemirror-flat-list");
+          if (flatListNode && !node.classList.contains("prosemirror-flat-list")) {
+            // If the node is inside a prosemirror-flat-list, show the drag handle for the flat list node
+            const rect = absoluteRect(flatListNode);
+
+            // Adjust the position of the side menu to the flat list node
+            editorSideMenu.style.left = `${rect.left - options.dragHandleWidth - 17}px`;
+            editorSideMenu.style.top = `${rect.top + 5}px`;
+            showSideMenu();
+            return;
+          }
+
           const compStyle = window.getComputedStyle(node);
           const lineHeight = parseInt(compStyle.lineHeight, 10);
           const paddingTop = parseInt(compStyle.paddingTop, 10);
@@ -159,7 +172,6 @@ const SideMenu = (options: SideMenuPluginProps) => {
             aiHandleDOMEvents?.mousemove?.();
           }
         },
-        // keydown: () => hideSideMenu(),
         mousewheel: () => hideSideMenu(),
         dragenter: (view) => {
           if (handlesConfig.dragDrop) {

@@ -476,10 +476,6 @@ p + p {
 }
 /* end background colors */
 
-.prosemirror-flat-list > .list-marker {
-  top: 7px;
-}
-
 .prosemirror-flat-list[data-list-kind="ordered"] {
   &::before {
     position: absolute;
@@ -553,20 +549,15 @@ p + p {
   list-style: none;
 
   &::before {
+    content: "•";
     position: absolute;
     right: 100%;
-    top: 6px;
-  }
-
-  /* First level - disc */
-  &::before {
-    content: "•";
   }
 
   /* Second level - circle */
   & > .list-content > & {
     &::before {
-      content: "○";
+      content: "⚬";
     }
 
     /* Third level - square */
@@ -584,7 +575,7 @@ p + p {
         /* Continue pattern */
         & > .list-content > & {
           &::before {
-            content: "○";
+            content: "⚬";
           }
 
           & > .list-content > & {

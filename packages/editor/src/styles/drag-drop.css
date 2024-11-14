@@ -70,6 +70,26 @@
   }
 }
 
+.prosemirror-flat-list {
+  &.ProseMirror-selectednode {
+    position: relative;
+    cursor: grab;
+    outline: none !important;
+    box-shadow: none;
+
+    &:after {
+      content: "";
+      position: absolute;
+      left: -32px;
+      right: -2px;
+      top: -2px;
+      bottom: -2px;
+      border: 0px;
+      pointer-events: none;
+    }
+  }
+}
+
 /* for targeting the task list items */
 li.ProseMirror-selectednode:not(.dragging)[data-checked]::after {
   margin-left: -5px;
@@ -110,7 +130,7 @@ ol > li:nth-child(n + 100).ProseMirror-selectednode:not(.dragging)::after {
     filter: brightness(90%);
   }
 
-  &.ProseMirror-selectednode {
+  &.prosemirror-selectednode {
     filter: brightness(90%);
   }
 }

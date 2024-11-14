@@ -4,10 +4,9 @@ import { v4 as uuidv4 } from "uuid";
 import { handleAuthentication } from "@/core/lib/authentication.js";
 // extensions
 import { getExtensions } from "@/core/extensions/index.js";
-// editor types
-import { TUserDetails } from "@plane/editor";
 // types
 import { type HocusPocusServerContext } from "@/core/types/common.js";
+import { TUserDetails, DocumentEventResponses, TDocumentEventsServer } from "@plane/editor/lib";
 
 export const getHocusPocusServer = async () => {
   const extensions = await getExtensions();
@@ -53,6 +52,12 @@ export const getHocusPocusServer = async () => {
         });
       } catch (error) {
         throw Error("Authentication unsuccessful!");
+      }
+    },
+    async onStateless({ payload, document }) {
+      const response = DocumentEventResponses[payload as TDocumentEventsServer];
+      if (response) {
+        document.broadcastStateless(response);
       }
     },
     extensions,
