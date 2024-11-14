@@ -33,6 +33,7 @@ from plane.api.serializers import (
     IssueLinkSerializer,
     IssueSerializer,
     LabelSerializer,
+    IssueTypeSerializer
 )
 from plane.app.permissions import (
     ProjectEntityPermission,
@@ -50,6 +51,7 @@ from plane.db.models import (
     Project,
     ProjectMember,
     CycleIssue,
+    IssueType
 )
 from plane.utils.issue_filters import issue_filters
 from .base import BaseAPIView
@@ -306,7 +308,6 @@ class IssueAPIEndpoint(BaseAPIView):
 
     def post(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)
-
         serializer = IssueSerializer(
             data=request.data,
             context={
@@ -340,7 +341,6 @@ class IssueAPIEndpoint(BaseAPIView):
                     },
                     status=status.HTTP_409_CONFLICT,
                 )
-
             serializer.save()
             # Refetch the issue
             issue = Issue.objects.filter(
@@ -1149,3 +1149,5 @@ class IssueAttachmentEndpoint(BaseAPIView):
         )
         serializer = IssueAttachmentSerializer(issue_attachments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+

@@ -35,11 +35,9 @@ from django.core.validators import URLValidator
 class IssueCustomPropertySerializer(BaseSerializer):
     class Meta:
         model = IssueCustomProperty
-        fields = ["id", "key", "value", "project_custom_property"]
+        fields = ["key", "value", "issue_type_custom_property"]
         read_only_fields = [
             "id",
-            "workspace",
-            "project",
             "issue",
             "created_by",
             "updated_by",
@@ -220,7 +218,7 @@ class IssueSerializer(BaseSerializer):
                     IssueCustomProperty(
                         key=custom_property['key'],
                         value=custom_property['value'],
-                        project_custom_property=custom_property['project_custom_property'],
+                        issue_type_custom_property=custom_property['issue_type_custom_property'],
                         issue=issue,
                         project_id=project_id,
                         workspace_id=workspace_id,

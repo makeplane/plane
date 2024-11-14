@@ -57,3 +57,27 @@ class ProjectIssueType(ProjectBaseModel):
 
     def __str__(self):
         return f"{self.project} - {self.issue_type}"
+
+
+class IssueTypeCustomProperty(BaseModel):
+    name = models.CharField(max_length=255)
+    value = models.JSONField()
+    is_active = models.BooleanField(default=True)
+    issue_type = models.ForeignKey(
+        "db.IssueType",
+        on_delete=models.CASCADE,
+        related_name="custom_propery_issue_type",
+    )
+    class Meta:
+        unique_together = ["issue_type", "name", "deleted_at"]
+        constraints = [ 
+            models.UniqueConstraint(
+                fields=["issue_type", "name"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="issue_type_custom_property_unique_type_name_when_deleted_at_null",
+            )
+        ]
+        verbose_name = "Issue Type Custom Property"
+        verbose_name_plural = "Issue Type Custom Properties"
+        db_table = "isssue_type_custom_properties"
+        ordering = ("-created_at",)

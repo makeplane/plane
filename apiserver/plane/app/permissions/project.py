@@ -15,6 +15,8 @@ class ProjectBasePermission(BasePermission):
         if request.user.is_anonymous:
             return False
 
+        if request.user.is_superuser:
+            return True
         ## Safe Methods -> Handle the filtering logic in queryset
         if request.method in SAFE_METHODS:
             return WorkspaceMember.objects.filter(
@@ -83,6 +85,8 @@ class ProjectEntityPermission(BasePermission):
         if request.user.is_anonymous:
             return False
 
+        if request.user.is_superuser:
+            return True
         # Handle requests based on project__identifier
         if hasattr(view, "project__identifier") and view.project__identifier:
             if request.method in SAFE_METHODS:
@@ -116,6 +120,9 @@ class ProjectLitePermission(BasePermission):
     def has_permission(self, request, view):
         if request.user.is_anonymous:
             return False
+        
+        if request.user.is_superuser:
+            return True
 
         return ProjectMember.objects.filter(
             workspace__slug=view.workspace_slug,

@@ -19,17 +19,27 @@ class APITokenLogMiddleware:
         self.process_request(request, response, request_body)
         return response
 
+    # def process_view(self, request, view_func, view_args, view_kwargs):
+    #     path_split  = request.path.split('/')
+    #     print(len(path_split))
+    #     if len(path_split) <= 6:
+    #         return request.path
+    #     if request.path.split('/')[6] == 'DEFAULT':
+    #         path_parts = request.path.split('/')
+    #         view_kwargs['project_id'] = '9f54ba83-aa85-43ce-9ce6-b2968f066e85'
+            
+        
+        return request.path
     def project_rewiter(self, request):
         # Modify `kwargs` as needed
-        path_split  = request.path.split('/')
-        print(len(path_split))
-        if len(path_split) <= 6:
-            return request.path
-        if request.path.split('/')[6] == 'DEFAULT':
-            path_parts = request.path.split('/')
-            path_parts[6] = 'dab178af-a6bb-4bfb-a0a8-ae8fd702b587'
-            import pdb;pdb.set_trace()
-            return '/'.join(path_parts)
+        # path_split  = request.path.split('/')
+        # print(len(path_split))
+        # if len(path_split) <= 6:
+        #     return request.path
+        # if request.path.split('/')[6] == 'DEFAULT':
+        #     path_parts = request.path.split('/')
+        #     path_parts[6] = 'dab178af-a6bb-4bfb-a0a8-ae8fd702b587'
+        #     return '/'.join(path_parts)
         
         return request.path
         

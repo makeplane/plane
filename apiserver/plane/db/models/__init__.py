@@ -68,8 +68,7 @@ from .project import (
     ProjectIdentifier,
     ProjectMember,
     ProjectMemberInvite,
-    ProjectPublicMember,
-    ProjectCustomProperty
+    ProjectPublicMember
 )
 from .deploy_board import DeployBoard
 from .session import Session
@@ -113,7 +112,7 @@ from .dashboard import Dashboard, DashboardWidget, Widget
 
 from .favorite import UserFavorite
 
-from .issue_type import IssueType
+from .issue_type import IssueType, IssueTypeCustomProperty
 
 from .recent_visit import UserRecentVisit
 

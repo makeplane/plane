@@ -110,6 +110,8 @@ services:
     depends_on:
       - plane-db
       - plane-redis
+    stdin_open: true
+    tty: true
 
   worker:
     build:

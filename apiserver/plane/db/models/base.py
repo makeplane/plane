@@ -33,7 +33,8 @@ class BaseModel(AuditModel):
             # Check if the model is being created or updated
             if self._state.adding:
                 # If created only set created_by value: set updated_by to None
-                self.created_by = user
+                if self.created_by is None:
+                    self.created_by = user
                 self.updated_by = None
             # If updated only set updated_by value don't touch created_by
             self.updated_by = user

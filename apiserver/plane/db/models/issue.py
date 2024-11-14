@@ -716,13 +716,15 @@ class IssueCustomProperty(ProjectBaseModel):
         Issue, on_delete=models.CASCADE, related_name="custom_properties"
     )
     key = models.CharField(max_length=255)
-    value = models.JSONField(default=dict)
-    project_custom_property = models.ForeignKey(
-        "db.ProjectCustomProperty",
-        on_delete=models.CASCADE,
-        related_name="issue_custom_properties",
+    value = models.CharField(max_length=255, null=True, blank=True)
+    issue_type_custom_property = models.ForeignKey(
+        "db.IssueTypeCustomProperty",
+        on_delete=models.SET_NULL,
+        related_name="issue_type_custom_property",
+        null=True,
+        blank=True,
     )
-
+    
     class Meta:
         verbose_name = "Issue Custom Property"
         verbose_name_plural = "Issue Custom Properties"

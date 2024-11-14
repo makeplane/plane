@@ -12,7 +12,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
-from plane.api.serializers import ProjectSerializer, ProjectCustomPropertySerializer
+from plane.api.serializers import ProjectSerializer
 from plane.app.permissions import ProjectBasePermission
 
 # Module imports
@@ -26,8 +26,7 @@ from plane.db.models import (
     ProjectMember,
     State,
     Workspace,
-    UserFavorite,
-    ProjectCustomProperty
+    UserFavorite
 )
 from plane.bgtasks.webhook_task import model_activity
 from .base import BaseAPIView
@@ -399,50 +398,3 @@ class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
         project.archived_at = None
         project.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class ProjectCustomPropertyAPIEndpoint(BaseAPIView):
-    def get(self, request, slug, project_id):
-        workspace = Workspace.objects.get(slug=slug)
-        project = Project.objects.get(pk=project_id, workspace=workspace)
-        properties = ProjectCustomProperty.objects.filter(
-            project=project,
-        )
-        serializer = ProjectCustomPropertySerializer(properties, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def post(self, request, slug, project_id):
-        try:
-            workspace = Workspace.objects.get(slug=slug)
-            serializer = ProjectCustomPropertySerializer(
-                data={**request.data}, context={
-                    "workspace_id": workspace.id,
-                    "project_id": project_id 
-                }
-            )
-            print(serializer.is_valid())
-            if serializer.is_valid():
-                serializer.save()
-                return Response(
-                    serializer.data, status=status.HTTP_201_CREATED
-                )
-            return Response(
-                serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        except IntegrityError as e:
-            if "already exists" in str(e):
-                return Response(
-                    {"name": "The project name is already taken"},
-                    status=status.HTTP_410_GONE,
-                )
-        except Workspace.DoesNotExist:
-            return Response(
-                {"error": "Workspace does not exist"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-        except ValidationError:
-            return Response(
-                {"identifier": "The project identifier is already taken"},
-                status=status.HTTP_410_GONE,
-            )

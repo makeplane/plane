@@ -1,7 +1,6 @@
 from .project import (
     ProjectAPIEndpoint, 
-    ProjectArchiveUnarchiveAPIEndpoint,
-    ProjectCustomPropertyAPIEndpoint
+    ProjectArchiveUnarchiveAPIEndpoint
 )
 
 from .state import StateAPIEndpoint
@@ -13,8 +12,9 @@ from .issue import (
     IssueLinkAPIEndpoint,
     IssueCommentAPIEndpoint,
     IssueActivityAPIEndpoint,
-    IssueAttachmentEndpoint,
+    IssueAttachmentEndpoint
 )
+from .issue_type import IssueTypeAPIEndpoint,IssueTypeCustomPropertyAPIEndpoint
 
 from .cycle import (
     CycleAPIEndpoint,

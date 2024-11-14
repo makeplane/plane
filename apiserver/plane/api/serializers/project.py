@@ -6,10 +6,10 @@ from plane.db.models import (
     Project,
     ProjectIdentifier,
     WorkspaceMember,
-    ProjectCustomProperty
 )
 
 from .base import BaseSerializer
+from .issue_type import IssueTypeSerializer
 
 
 class ProjectSerializer(BaseSerializer):
@@ -31,7 +31,6 @@ class ProjectSerializer(BaseSerializer):
             "workspace",
             "created_at",
             "updated_at",
-            "created_by",
             "updated_by",
             "deleted_at",
             "cover_image_url",
@@ -106,24 +105,3 @@ class ProjectLiteSerializer(BaseSerializer):
         ]
         read_only_fields = fields
 
-class ProjectCustomPropertySerializer(BaseSerializer):
-    class Meta:
-        model = ProjectCustomProperty
-        fields = "__all__"
-        read_only_fields = [
-            "id",
-            "workspace",
-            "project",
-            "created_at",
-            "updated_at",
-            "created_by",
-            "updated_by",
-            "deleted_at"
-        ]
-
-    def create(self, validated_data):
-        return ProjectCustomProperty.objects.create(
-            **validated_data,
-            workspace_id=self.context["workspace_id"],
-            project_id=self.context["project_id"]
-        )
