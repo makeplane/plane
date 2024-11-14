@@ -1,35 +1,35 @@
 import { observer } from "mobx-react";
 // plane types
-import { TPageVersion } from "@plane/types";
-// components
-import { PageVersionsMainContent, PageVersionsSidebarRoot, TVersionEditorProps } from "@/components/pages";
+import { TEditorVersion } from "@plane/types";
 // helpers
 import { cn } from "@/helpers/common.helper";
+// local components
+import { EditorVersionHistoryMainContent, EditorVersionHistorySidebarRoot, TVersionEditorProps } from ".";
 
 type Props = {
   activeVersion: string | null;
   currentVersionDescription: string | null;
   editorComponent: React.FC<TVersionEditorProps>;
-  fetchAllVersions: (pageId: string) => Promise<TPageVersion[] | undefined>;
-  fetchVersionDetails: (pageId: string, versionId: string) => Promise<TPageVersion | undefined>;
+  entityId: string;
+  fetchAllVersions: (entityId: string) => Promise<TEditorVersion[] | undefined>;
+  fetchVersionDetails: (entityId: string, versionId: string) => Promise<TEditorVersion | undefined>;
   handleRestore: (descriptionHTML: string) => Promise<void>;
   isOpen: boolean;
   onClose: () => void;
-  pageId: string;
   restoreEnabled: boolean;
 };
 
-export const PageVersionsOverlay: React.FC<Props> = observer((props) => {
+export const EditorVersionHistoryOverlay: React.FC<Props> = observer((props) => {
   const {
     activeVersion,
     currentVersionDescription,
     editorComponent,
+    entityId,
     fetchAllVersions,
     fetchVersionDetails,
     handleRestore,
     isOpen,
     onClose,
-    pageId,
     restoreEnabled,
   } = props;
 
@@ -46,22 +46,22 @@ export const PageVersionsOverlay: React.FC<Props> = observer((props) => {
         }
       )}
     >
-      <PageVersionsMainContent
+      <EditorVersionHistoryMainContent
         activeVersion={activeVersion}
         currentVersionDescription={currentVersionDescription}
         editorComponent={editorComponent}
+        entityId={entityId}
         fetchVersionDetails={fetchVersionDetails}
         handleClose={handleClose}
         handleRestore={handleRestore}
-        pageId={pageId}
         restoreEnabled={restoreEnabled}
       />
-      <PageVersionsSidebarRoot
+      <EditorVersionHistorySidebarRoot
         activeVersion={activeVersion}
+        entityId={entityId}
         fetchAllVersions={fetchAllVersions}
         handleClose={handleClose}
         isOpen={isOpen}
-        pageId={pageId}
       />
     </div>
   );

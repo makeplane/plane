@@ -3,34 +3,34 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 import { TriangleAlert } from "lucide-react";
 // plane types
-import { TPageVersion } from "@plane/types";
+import { TEditorVersion } from "@plane/types";
 // plane ui
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
-// components
-import { TVersionEditorProps } from "@/components/pages";
 // helpers
 import { renderFormattedDate, renderFormattedTime } from "@/helpers/date-time.helper";
+// local types
+import { TVersionEditorProps } from ".";
 
 type Props = {
   activeVersion: string | null;
   currentVersionDescription: string | null;
   editorComponent: React.FC<TVersionEditorProps>;
-  fetchVersionDetails: (pageId: string, versionId: string) => Promise<TPageVersion | undefined>;
+  entityId: string;
+  fetchVersionDetails: (entityId: string, versionId: string) => Promise<TEditorVersion | undefined>;
   handleClose: () => void;
   handleRestore: (descriptionHTML: string) => Promise<void>;
-  pageId: string;
   restoreEnabled: boolean;
 };
 
-export const PageVersionsMainContent: React.FC<Props> = observer((props) => {
+export const EditorVersionHistoryMainContent: React.FC<Props> = observer((props) => {
   const {
     activeVersion,
     currentVersionDescription,
     editorComponent,
+    entityId,
     fetchVersionDetails,
     handleClose,
     handleRestore,
-    pageId,
     restoreEnabled,
   } = props;
   // states
@@ -42,8 +42,8 @@ export const PageVersionsMainContent: React.FC<Props> = observer((props) => {
     error: versionDetailsError,
     mutate: mutateVersionDetails,
   } = useSWR(
-    pageId && activeVersion && activeVersion !== "current" ? `PAGE_VERSION_${activeVersion}` : null,
-    pageId && activeVersion && activeVersion !== "current" ? () => fetchVersionDetails(pageId, activeVersion) : null
+    entityId && activeVersion && activeVersion !== "current" ? `EDITOR_VERSION_${activeVersion}` : null,
+    entityId && activeVersion && activeVersion !== "current" ? () => fetchVersionDetails(entityId, activeVersion) : null
   );
 
   const isCurrentVersionActive = activeVersion === "current";
@@ -55,14 +55,14 @@ export const PageVersionsMainContent: React.FC<Props> = observer((props) => {
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Page version restored.",
+          title: "Version restored.",
         });
         handleClose();
       })
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Failed to restore page version.",
+          title: "Failed to restore version.",
         })
       )
       .finally(() => setIsRestoring(false));
