@@ -91,7 +91,12 @@ export const CustomCodeBlockExtension = CodeBlockLowlight.extend({
             return false;
           }
 
-          const after = $from.after();
+          // if the code block is directly on the root level, then just
+          // find the next node at same depth (basically the root and code block are at the same level)
+          // else it's always to be found at $from.depth - 1 to set the cursor at the next node
+          const parentDepth = $from.depth === 1 ? $from.depth : $from.depth - 1;
+
+          const after = $from.after(parentDepth);
 
           if (after === undefined) {
             return false;

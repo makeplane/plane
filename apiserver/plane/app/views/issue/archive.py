@@ -7,17 +7,18 @@ from django.db.models import F, Func, OuterRef, Q, Prefetch, Exists, Subquery
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
+from django.http import StreamingHttpResponse
+
 
 # Third Party imports
 from rest_framework import status
 from rest_framework.response import Response
 
-from plane.app.permissions import (
-    ProjectEntityPermission,
-)
+# Module imports
+from .. import BaseViewSet, BaseAPIView
 from plane.app.serializers import (
-    IssueFlatSerializer,
     IssueSerializer,
+    IssueFlatSerializer,
     IssueDetailSerializer,
 )
 from plane.bgtasks.issue_activities_task import issue_activity
@@ -27,7 +28,7 @@ from plane.db.models import (
     IssueLink,
     IssueSubscriber,
     IssueReaction,
-    CycleIssue
+    CycleIssue,
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -40,11 +41,12 @@ from plane.utils.paginator import (
     GroupedOffsetPaginator,
     SubGroupedOffsetPaginator,
 )
-from plane.app.permissions import allow_permission, ROLE
+from plane.app.permissions import (
+    allow_permission,
+    ROLE,
+    ProjectEntityPermission,
+)
 from plane.utils.error_codes import ERROR_CODES
-
-# Module imports
-from .. import BaseViewSet, BaseAPIView
 
 
 class IssueArchiveViewSet(BaseViewSet):
@@ -272,7 +274,8 @@ class IssueArchiveViewSet(BaseViewSet):
         if issue.state.group not in ["completed", "cancelled"]:
             return Response(
                 {
-                    "error": "Can only archive completed or cancelled state group issue"
+                    "error_code": ERROR_CODES["INVALID_ARCHIVE_STATE_GROUP"],
+                    "error_message": "INVALID_ARCHIVE_STATE_GROUP",
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
@@ -326,6 +329,32 @@ class IssueArchiveViewSet(BaseViewSet):
         issue.save()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def retrieve_description(self, request, slug, project_id, pk):
+        issue = Issue.objects.filter(
+            pk=pk, workspace__slug=slug, project_id=project_id
+        ).first()
+        if issue is None:
+            return Response(
+                {"error": "Issue not found"},
+                status=404,
+            )
+        binary_data = issue.description_binary
+
+        def stream_data():
+            if binary_data:
+                yield binary_data
+            else:
+                yield b""
+
+        response = StreamingHttpResponse(
+            stream_data(), content_type="application/octet-stream"
+        )
+        response["Content-Disposition"] = (
+            'attachment; filename="issue_description.bin"'
+        )
+        return response
 
 
 class BulkArchiveIssuesEndpoint(BaseAPIView):

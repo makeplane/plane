@@ -18,7 +18,6 @@ from plane.app.views import (
     IssueUserDisplayPropertyEndpoint,
     IssueViewSet,
     LabelViewSet,
-    BulkArchiveIssuesEndpoint,
     DeletedIssuesListViewSet,
     IssuePaginatedViewSet,
     IssueDetailEndpoint,
@@ -68,6 +67,16 @@ urlpatterns = [
         name="project-issue",
     ),
     path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:pk>/description/",
+        IssueViewSet.as_view(
+            {
+                "get": "retrieve_description",
+                "post": "update_description",
+            }
+        ),
+        name="project-issue-description",
+    ),
+    path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issue-labels/",
         LabelViewSet.as_view(
             {
@@ -98,11 +107,6 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-delete-issues/",
         BulkDeleteIssuesEndpoint.as_view(),
         name="project-issues-bulk",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-archive-issues/",
-        BulkArchiveIssuesEndpoint.as_view(),
-        name="bulk-archive-issues",
     ),
     ##
     path(
@@ -288,6 +292,15 @@ urlpatterns = [
             }
         ),
         name="project-issue-archive-unarchive",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/archived-issues/<uuid:pk>/description/",
+        IssueArchiveViewSet.as_view(
+            {
+                "get": "retrieve_description",
+            }
+        ),
+        name="archive-issue-description",
     ),
     ## End Issue Archives
     ## Issue Relation

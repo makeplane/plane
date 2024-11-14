@@ -1,5 +1,7 @@
 # Python imports
 import json
+import requests
+import base64
 
 # Django imports
 from django.utils import timezone
@@ -7,6 +9,7 @@ from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
+from django.http import StreamingHttpResponse
 from django.db.models import (
     Q,
     UUIDField,
@@ -17,6 +20,7 @@ from django.db.models import (
 from django.db.models.functions import Coalesce
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
+from django.conf import settings
 
 # Third Party imports
 from rest_framework import status
@@ -42,6 +46,7 @@ from plane.db.models import (
 from .. import BaseViewSet
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.issue_filters import issue_filters
+from plane.ee.models import IssuePropertyValue, DraftIssuePropertyValue
 
 
 class WorkspaceDraftIssueViewSet(BaseViewSet):
@@ -344,9 +349,111 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                 draft_issue_id=None,
             )
 
+            draft_issue_property_values = (
+                DraftIssuePropertyValue.objects.filter(draft_issue=draft_issue)
+            )
+            IssuePropertyValue.objects.bulk_create(
+                [
+                    IssuePropertyValue(
+                        workspace_id=draft_issue_property_value.workspace_id,
+                        project_id=draft_issue_property_value.project_id,
+                        issue_id=serializer.data.get("id", None),
+                        property_id=draft_issue_property_value.property_id,
+                        value_text=draft_issue_property_value.value_text,
+                        value_boolean=draft_issue_property_value.value_boolean,
+                        value_decimal=draft_issue_property_value.value_decimal,
+                        value_datetime=draft_issue_property_value.value_datetime,
+                        value_uuid=draft_issue_property_value.value_uuid,
+                        value_option=draft_issue_property_value.value_option,
+                    )
+                    for draft_issue_property_value in draft_issue_property_values
+                ],
+                batch_size=10,
+                ignore_conflicts=True,
+            )
+            # TODO: Log the activity for issue property
+
+            draft_issue_property_values.delete()
+
+
             # delete the draft issue
             draft_issue.delete()
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def retrieve_description(self, request, slug, pk):
+        issue = DraftIssue.objects.filter(pk=pk, workspace__slug=slug).first()
+        if issue is None:
+            return Response(
+                {"error": "Issue not found"},
+                status=404,
+            )
+        binary_data = issue.description_binary
+
+        def stream_data():
+            if binary_data:
+                yield binary_data
+            else:
+                yield b""
+
+        response = StreamingHttpResponse(
+            stream_data(), content_type="application/octet-stream"
+        )
+        response["Content-Disposition"] = (
+            'attachment; filename="draft_issue_description.bin"'
+        )
+        return response
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    def update_description(self, request, slug, pk):
+        issue = DraftIssue.objects.get(workspace__slug=slug, pk=pk)
+        base64_description = issue.description_binary
+        # convert to base64 string
+        if base64_description:
+            base64_description = base64.b64encode(base64_description).decode(
+                "utf-8"
+            )
+        data = {
+            "original_document": base64_description,
+            "updates": request.data.get("description_binary"),
+        }
+        base_url = f"{settings.LIVE_BASE_URL}/resolve-document-conflicts/"
+        try:
+            response = requests.post(base_url, json=data, headers=None)
+        except requests.RequestException:
+            return Response(
+                {"error": "Failed to connect to the external service"},
+                status=status.HTTP_502_BAD_GATEWAY,
+            )
+
+        if response.status_code == 200:
+            issue.description = response.json().get(
+                "description", issue.description
+            )
+            issue.description_html = response.json().get("description_html")
+            response_description_binary = response.json().get(
+                "description_binary"
+            )
+            issue.description_binary = base64.b64decode(
+                response_description_binary
+            )
+            issue.save()
+
+            def stream_data():
+                if issue.description_binary:
+                    yield issue.description_binary
+                else:
+                    yield b""
+
+            response = StreamingHttpResponse(
+                stream_data(), content_type="application/octet-stream"
+            )
+            response["Content-Disposition"] = (
+                'attachment; filename="issue_description.bin"'
+            )
+            return response
+
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)

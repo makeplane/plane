@@ -90,14 +90,67 @@ export const toggleOrderedList = (editor: Editor, range?: Range) => {
   else editor.chain().focus().toggleOrderedList().run();
 };
 
+export const toggleFlatOrderedList = (editor: Editor, range?: Range) => {
+  if (range)
+    editor
+      .chain()
+      .focus()
+      .deleteRange(range)
+      .createList({
+        kind: "ordered",
+      })
+      .run();
+  else editor.chain().focus().createList({ kind: "ordered", collapsed: false });
+};
+
 export const toggleBulletList = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).toggleBulletList().run();
   else editor.chain().focus().toggleBulletList().run();
 };
 
+export const toggleFlatBulletList = (editor: Editor, range?: Range) => {
+  if (range)
+    editor
+      .chain()
+      .focus()
+      .deleteRange(range)
+      .createList({
+        kind: "bullet",
+      })
+      .run();
+  else editor.chain().focus().createList({ kind: "bullet", collapsed: false });
+};
+
 export const toggleTaskList = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).toggleTaskList().run();
   else editor.chain().focus().toggleTaskList().run();
+};
+
+export const toggleFlatTaskList = (editor: Editor, range?: Range) => {
+  if (range)
+    editor
+      .chain()
+      .focus()
+      .deleteRange(range)
+      .createList({
+        kind: "task",
+      })
+      .run();
+  else editor.chain().focus().createList({ kind: "task", collapsed: false });
+};
+
+export const toggleFlatToggleList = (editor: Editor, range?: Range) => {
+  if (range)
+    editor
+      .chain()
+      .focus()
+      .deleteRange(range)
+      .createList({
+        kind: "toggle",
+        collapsed: true,
+      })
+      .run();
+  else editor.chain().focus().createList({ kind: "toggle", collapsed: true });
 };
 
 export const toggleStrike = (editor: Editor, range?: Range) => {
@@ -122,8 +175,8 @@ export const insertTableCommand = (editor: Editor, range?: Range) => {
       }
     }
   }
-  if (range) editor.chain().focus().deleteRange(range).clearNodes().insertTable({ rows: 3, cols: 3 }).run();
-  else editor.chain().focus().clearNodes().insertTable({ rows: 3, cols: 3 }).run();
+  if (range) editor.chain().focus().deleteRange(range).insertTable({ rows: 3, cols: 3 }).run();
+  else editor.chain().focus().insertTable({ rows: 3, cols: 3 }).run();
 };
 
 export const insertImage = ({

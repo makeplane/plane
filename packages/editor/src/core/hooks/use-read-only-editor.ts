@@ -1,5 +1,4 @@
 import { useImperativeHandle, useRef, MutableRefObject, useEffect } from "react";
-import { HocuspocusProvider } from "@hocuspocus/provider";
 import { EditorProps } from "@tiptap/pm/view";
 import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
 import * as Y from "yjs";
@@ -11,7 +10,8 @@ import { IMarking, scrollSummary } from "@/helpers/scroll-to-node";
 // props
 import { CoreReadOnlyEditorProps } from "@/props";
 // types
-import { EditorReadOnlyRefApi, IMentionHighlight, TFileHandler } from "@/types";
+import { TDocumentEventsServer, EditorReadOnlyRefApi, IMentionHighlight, TFileHandler } from "@/types";
+import { HocuspocusProvider } from "@hocuspocus/provider";
 
 interface CustomReadOnlyEditorProps {
   initialValue?: string;
@@ -24,6 +24,7 @@ interface CustomReadOnlyEditorProps {
   mentionHandler: {
     highlights: () => Promise<IMentionHighlight[]>;
   };
+  providerDocument?: Y.Doc;
   provider?: HocuspocusProvider;
 }
 
@@ -37,6 +38,7 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
     fileHandler,
     handleEditorReady,
     mentionHandler,
+    providerDocument,
     provider,
   } = props;
 
@@ -86,7 +88,7 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
       return markdownOutput;
     },
     getDocument: () => {
-      const documentBinary = provider?.document ? Y.encodeStateAsUpdate(provider?.document) : null;
+      const documentBinary = providerDocument ? Y.encodeStateAsUpdate(providerDocument) : null;
       const documentHTML = editorRef.current?.getHTML() ?? "<p></p>";
       const documentJSON = editorRef.current?.getJSON() ?? null;
 
@@ -118,6 +120,8 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
       };
     },
     getHeadings: () => editorRef?.current?.storage.headingList.headings,
+    emitRealTimeUpdate: (message: TDocumentEventsServer) => provider?.sendStateless(message),
+    listenToRealTimeUpdate: () => provider,
   }));
 
   if (!editor) {

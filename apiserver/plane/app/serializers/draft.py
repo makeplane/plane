@@ -12,6 +12,7 @@ from plane.db.models import (
     Label,
     State,
     DraftIssue,
+    IssueType,
     DraftIssueAssignee,
     DraftIssueLabel,
     DraftIssueCycle,
@@ -30,6 +31,12 @@ class DraftIssueCreateSerializer(BaseSerializer):
     parent_id = serializers.PrimaryKeyRelatedField(
         source="parent",
         queryset=Issue.objects.all(),
+        required=False,
+        allow_null=True,
+    )
+    type_id = serializers.PrimaryKeyRelatedField(
+        source="type",
+        queryset=IssueType.objects.all(),
         required=False,
         allow_null=True,
     )
@@ -84,11 +91,21 @@ class DraftIssueCreateSerializer(BaseSerializer):
         workspace_id = self.context["workspace_id"]
         project_id = self.context["project_id"]
 
+        issue_type = validated_data.pop("type", None)
+
+        if not issue_type:
+            # Get default issue type
+            issue_type = IssueType.objects.filter(
+                project_issue_types__project_id=project_id, is_default=True
+            ).first()
+            issue_type = issue_type
+
         # Create Issue
         issue = DraftIssue.objects.create(
             **validated_data,
             workspace_id=workspace_id,
             project_id=project_id,
+            type=issue_type,
         )
 
         # Issue Audit Users
@@ -284,9 +301,11 @@ class DraftIssueSerializer(BaseSerializer):
 
 class DraftIssueDetailSerializer(DraftIssueSerializer):
     description_html = serializers.CharField()
+    description_binary = serializers.CharField()
 
     class Meta(DraftIssueSerializer.Meta):
         fields = DraftIssueSerializer.Meta.fields + [
             "description_html",
+            "description_binary",
         ]
         read_only_fields = fields

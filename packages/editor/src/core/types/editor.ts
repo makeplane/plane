@@ -8,12 +8,15 @@ import {
   IMentionSuggestion,
   TAIHandler,
   TDisplayConfig,
+  TDocumentEventsServer,
   TEmbedConfig,
   TExtensions,
   TFileHandler,
   TServerHandler,
+  TUserDetails,
 } from "@/types";
 import { TTextAlign } from "@/extensions";
+import { HocuspocusProvider } from "@hocuspocus/provider";
 
 export type TEditorCommands =
   | "text"
@@ -39,7 +42,11 @@ export type TEditorCommands =
   | "text-color"
   | "background-color"
   | "text-align"
-  | "callout";
+  | "callout"
+  | "flat-toggle-list"
+  | "flat-bulleted-list"
+  | "flat-numbered-list"
+  | "flat-check-list";
 
 export type TCommandExtraProps = {
   image: {
@@ -83,6 +90,8 @@ export type EditorReadOnlyRefApi = {
   };
   onHeadingChange: (callback: (headings: IMarking[]) => void) => () => void;
   getHeadings: () => IMarking[];
+  emitRealTimeUpdate: (message: TDocumentEventsServer) => void;
+  listenToRealTimeUpdate: () => HocuspocusProvider;
 };
 
 export interface EditorRefApi extends EditorReadOnlyRefApi {
@@ -121,7 +130,7 @@ export interface IEditorProps {
   onEnterKeyPress?: (e?: any) => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
-  value?: string | null; 
+  value?: string | null;
 }
 export interface ILiteTextEditor extends IEditorProps {
   extensions?: any[];
@@ -130,6 +139,12 @@ export interface IRichTextEditor extends IEditorProps {
   extensions?: any[];
   bubbleMenuEnabled?: boolean;
   dragDropEnabled?: boolean;
+}
+
+export interface ICollaborativeRichTextEditor extends Omit<IEditorProps, "initialValue" | "onChange" | "value"> {
+  dragDropEnabled?: boolean;
+  onChange: (updatedDescription: Uint8Array) => void;
+  value: Uint8Array;
 }
 
 export interface ICollaborativeDocumentEditor
@@ -161,6 +176,10 @@ export type ILiteTextReadOnlyEditor = IReadOnlyEditorProps;
 
 export type IRichTextReadOnlyEditor = IReadOnlyEditorProps;
 
+export type ICollaborativeRichTextReadOnlyEditor = Omit<IReadOnlyEditorProps, "initialValue"> & {
+  value: Uint8Array;
+};
+
 export interface ICollaborativeDocumentReadOnlyEditor extends Omit<IReadOnlyEditorProps, "initialValue"> {
   embedHandler: TEmbedConfig;
   handleEditorReady?: (value: boolean) => void;
@@ -175,12 +194,7 @@ export interface IDocumentReadOnlyEditor extends IReadOnlyEditorProps {
   handleEditorReady?: (value: boolean) => void;
 }
 
-export type TUserDetails = {
-  color: string;
-  id: string;
-  name: string;
-  cookie?: string;
-};
+
 
 export type TRealtimeConfig = {
   url: string;

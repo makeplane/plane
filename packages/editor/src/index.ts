@@ -1,5 +1,5 @@
 // styles
-// import "./styles/tailwind.css";
+import "prosemirror-flat-list/style.css";
 import "./styles/variables.css";
 import "./styles/editor.css";
 import "./styles/table.css";
@@ -10,11 +10,14 @@ import "./styles/drag-drop.css";
 export {
   CollaborativeDocumentEditorWithRef,
   CollaborativeDocumentReadOnlyEditorWithRef,
+  CollaborativeRichTextEditorWithRef,
+  CollaborativeRichTextReadOnlyEditorWithRef,
   DocumentReadOnlyEditorWithRef,
   LiteTextEditorWithRef,
   LiteTextReadOnlyEditorWithRef,
   RichTextEditorWithRef,
   RichTextReadOnlyEditorWithRef,
+  PiChatEditor,
 } from "@/components/editors";
 
 export { isCellSelection } from "@/extensions/table/table/utilities/is-cell-selection";
@@ -25,7 +28,7 @@ export * from "@/constants/common";
 // helpers
 export * from "@/helpers/common";
 export * from "@/helpers/editor-commands";
-export * from "@/helpers/yjs";
+export * from "@/helpers/yjs-utils";
 export * from "@/extensions/table/table";
 
 // components

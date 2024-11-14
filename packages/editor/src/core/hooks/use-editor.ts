@@ -1,9 +1,9 @@
 import { useImperativeHandle, useRef, MutableRefObject, useState, useEffect } from "react";
-import { HocuspocusProvider } from "@hocuspocus/provider";
 import { DOMSerializer } from "@tiptap/pm/model";
 import { Selection } from "@tiptap/pm/state";
 import { EditorProps } from "@tiptap/pm/view";
-import { useEditor as useTiptapEditor, Editor } from "@tiptap/react";
+import { useEditor as useTiptapEditor, Editor, type JSONContent } from "@tiptap/react";
+import { IndexeddbPersistence } from "y-indexeddb";
 import * as Y from "yjs";
 // components
 import { EditorMenuItem, getEditorMenuItems } from "@/components/menus";
@@ -16,7 +16,16 @@ import { IMarking, scrollSummary, scrollToNodeViaDOMCoordinates } from "@/helper
 // props
 import { CoreEditorProps } from "@/props";
 // types
-import { EditorRefApi, IMentionHighlight, IMentionSuggestion, TEditorCommands, TFileHandler } from "@/types";
+import type {
+  TDocumentEventsServer,
+  EditorRefApi,
+  IMentionHighlight,
+  IMentionSuggestion,
+  TEditorCommands,
+  TFileHandler,
+} from "@/types";
+import { migrateDocJSON } from "@/extensions/migrationjson";
+import { HocuspocusProvider } from "@hocuspocus/provider";
 
 export interface CustomEditorProps {
   editorClassName: string;
@@ -36,6 +45,8 @@ export interface CustomEditorProps {
   onTransaction?: () => void;
   autofocus?: boolean;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
+  providerDocument?: Y.Doc;
+  localProvider?: IndexeddbPersistence;
   provider?: HocuspocusProvider;
   tabIndex?: number;
   // undefined when prop is not passed, null if intentionally passed to stop
@@ -58,6 +69,7 @@ export const useEditor = (props: CustomEditorProps) => {
     onChange,
     onTransaction,
     placeholder,
+    providerDocument,
     provider,
     tabIndex,
     value,
@@ -66,10 +78,28 @@ export const useEditor = (props: CustomEditorProps) => {
   // states
 
   const [savedSelection, setSavedSelection] = useState<Selection | null>(null);
+  const [isEditorDisabled, setIsEditorDisabled] = useState(false);
   // refs
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
   const savedSelectionRef = useRef(savedSelection);
   const editor = useTiptapEditor({
+    immediatelyRender: true,
+    shouldRerenderOnTransaction: false,
+    enableContentCheck: true,
+    onContentError: ({ editor, error, disableCollaboration }) => {
+      // console.log("ran", editor.getJSON());
+      if (disableCollaboration) disableCollaboration();
+      // localProvider.clearData();
+      // localProvider.destroy();
+
+      const emitUpdate = false;
+
+      // Disable further user input
+      setIsEditorDisabled(true);
+      editor.setEditable(false, emitUpdate);
+      console.log("error", error);
+    },
+
     autofocus,
     editorProps: {
       ...CoreEditorProps({
@@ -124,6 +154,40 @@ export const useEditor = (props: CustomEditorProps) => {
       }
     }
   }, [editor, value, id]);
+
+  const [hasMigrated, setHasMigrated] = useState(false);
+
+  useEffect(() => {
+    if (editor && (!hasMigrated || editor.isActive("listItem")) && !isEditorDisabled) {
+      const newJSON = migrateDocJSON(editor.getJSON()) as JSONContent;
+
+      if (newJSON) {
+        // Create a new transaction
+        const transaction = editor.state.tr;
+
+        try {
+          const node = editor.state.schema.nodeFromJSON(newJSON);
+
+          transaction.replaceWith(0, editor.state.doc.content.size, node);
+          transaction.setMeta("addToHistory", false);
+          editor.view.dispatch(transaction);
+          setHasMigrated(true);
+
+          // focus user on the current position
+          const currentSavedSelection = savedSelectionRef.current;
+          if (currentSavedSelection) {
+            const docLength = editor.state.doc.content.size;
+            const relativePosition = Math.min(currentSavedSelection.from, docLength - 1);
+            editor.commands.setTextSelection(relativePosition);
+          }
+
+          console.log("Migration of old lists completed without adding to history");
+        } catch (error) {
+          console.error("Error during migration:", error);
+        }
+      }
+    }
+  }, [editor.getJSON(), editor.isActive("listItem"), hasMigrated]);
 
   useImperativeHandle(
     forwardedRef,
@@ -206,7 +270,7 @@ export const useEditor = (props: CustomEditorProps) => {
         return markdownOutput;
       },
       getDocument: () => {
-        const documentBinary = provider?.document ? Y.encodeStateAsUpdate(provider?.document) : null;
+        const documentBinary = providerDocument ? Y.encodeStateAsUpdate(providerDocument) : null;
         const documentHTML = editorRef.current?.getHTML() ?? "<p></p>";
         const documentJSON = editorRef.current?.getJSON() ?? null;
 
@@ -284,10 +348,12 @@ export const useEditor = (props: CustomEditorProps) => {
         words: editorRef?.current?.storage?.characterCount?.words?.() ?? 0,
       }),
       setProviderDocument: (value) => {
-        const document = provider?.document;
+        const document = providerDocument;
         if (!document) return;
         Y.applyUpdate(document, value);
       },
+      emitRealTimeUpdate: (message: TDocumentEventsServer) => provider?.sendStateless(message),
+      listenToRealTimeUpdate: () => provider,
     }),
     [editorRef, savedSelection]
   );

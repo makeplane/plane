@@ -29,6 +29,7 @@ import {
 import { isValidHttpUrl } from "@/helpers/common";
 // types
 import { IMentionHighlight, TFileHandler } from "@/types";
+import { FlatListExtension } from "./flat-list/flat-list";
 
 type Props = {
   fileHandler: Pick<TFileHandler, "getAssetSrc">;
@@ -42,21 +43,24 @@ export const CoreReadOnlyEditorExtensions = (props: Props) => {
 
   return [
     StarterKit.configure({
-      bulletList: {
-        HTMLAttributes: {
-          class: "list-disc pl-7 space-y-2",
-        },
-      },
-      orderedList: {
-        HTMLAttributes: {
-          class: "list-decimal pl-7 space-y-2",
-        },
-      },
-      listItem: {
-        HTMLAttributes: {
-          class: "not-prose space-y-2",
-        },
-      },
+      // bulletList: {
+      //   HTMLAttributes: {
+      //     class: "list-disc pl-7 space-y-2",
+      //   },
+      // },
+      // orderedList: {
+      //   HTMLAttributes: {
+      //     class: "list-decimal pl-7 space-y-2",
+      //   },
+      // },
+      // listItem: {
+      //   HTMLAttributes: {
+      //     class: "not-prose space-y-2",
+      //   },
+      // },
+      bulletList: false,
+      orderedList: false,
+      listItem: false,
       code: false,
       codeBlock: false,
       horizontalRule: false,
@@ -94,17 +98,17 @@ export const CoreReadOnlyEditorExtensions = (props: Props) => {
     }),
     TiptapUnderline,
     TextStyle,
-    TaskList.configure({
-      HTMLAttributes: {
-        class: "not-prose pl-2 space-y-2",
-      },
-    }),
-    TaskItem.configure({
-      HTMLAttributes: {
-        class: "relative pointer-events-none",
-      },
-      nested: true,
-    }),
+    // TaskList.configure({
+    //   HTMLAttributes: {
+    //     class: "not-prose pl-2 space-y-2",
+    //   },
+    // }),
+    // TaskItem.configure({
+    //   HTMLAttributes: {
+    //     class: "relative pointer-events-none",
+    //   },
+    //   nested: true,
+    // }),
     CustomCodeBlockExtension.configure({
       HTMLAttributes: {
         class: "",
@@ -128,5 +132,6 @@ export const CoreReadOnlyEditorExtensions = (props: Props) => {
     HeadingListExtension,
     CustomTextAlignExtension,
     CustomCalloutReadOnlyExtension,
+    FlatListExtension,
   ];
 };

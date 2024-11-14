@@ -1,18 +1,13 @@
 // types
-import { TDocumentPayload, TPage } from "@plane/types";
+import { TDocumentPayload, TPage, TPageEmbedType } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import { APIService } from "@/services/api.service";
-import { FileUploadService } from "@/services/file-upload.service";
 
 export class ProjectPageService extends APIService {
-  private fileUploadService: FileUploadService;
-
   constructor() {
     super(API_BASE_URL);
-    // upload service
-    this.fileUploadService = new FileUploadService();
   }
 
   async fetchAll(workspaceSlug: string, projectId: string): Promise<TPage[]> {
@@ -133,12 +128,30 @@ export class ProjectPageService extends APIService {
       });
   }
 
-  async fetchDescriptionBinary(workspaceSlug: string, projectId: string, pageId: string): Promise<any> {
+  async fetchDescriptionBinary(workspaceSlug: string, projectId: string, pageId: string): Promise<ArrayBuffer> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/description/`, {
       headers: {
         "Content-Type": "application/octet-stream",
       },
       responseType: "arraybuffer",
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async searchEmbed<T>(
+    workspaceSlug: string,
+    projectId: string,
+    params: {
+      query_type: TPageEmbedType;
+      count?: number;
+      query: string;
+    }
+  ): Promise<T | undefined> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/search/`, {
+      params,
     })
       .then((response) => response?.data)
       .catch((error) => {

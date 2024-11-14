@@ -8,14 +8,14 @@ import { IUserActivityResponse } from "@plane/types";
 // components
 import { ActivityIcon, ActivityMessage, IssueLink } from "@/components/core";
 // editor
-import { RichTextReadOnlyEditor } from "@/components/editor/rich-text-editor/rich-text-read-only-editor";
+import { RichTextReadOnlyEditor } from "@/components/editor";
 // ui
 import { ActivitySettingsLoader } from "@/components/ui";
 // helpers
 import { calculateTimeAgo } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUserProfile } from "@/hooks/store";
 
 type Props = {
   activity: IUserActivityResponse | undefined;
@@ -26,7 +26,7 @@ export const ActivityList: React.FC<Props> = observer((props) => {
   // params
   const { workspaceSlug } = useParams();
   // store hooks
-  const { data: currentUser } = useUser();
+  const { data: currentUser } = useUserProfile();
 
   // TODO: refactor this component
   return (

@@ -11,7 +11,6 @@ from .base import BaseModel
 
 
 def get_upload_path(instance, filename):
-
     if instance.workspace_id is not None:
         return f"{instance.workspace.id}/{uuid4().hex}-{filename}"
     return f"user-{uuid4().hex}-{filename}"
