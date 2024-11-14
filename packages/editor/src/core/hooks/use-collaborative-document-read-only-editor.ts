@@ -57,14 +57,14 @@ export const useCollaborativeDocumentReadOnlyEditor = (props: TCollaborativeDocu
     },
     [provider]
   );
-  // indexed db integration for offline support
-  useLayoutEffect(() => {
-    const localProvider = new IndexeddbPersistence(id, provider.document);
-    return () => {
-      localProvider?.destroy();
-    };
-  }, [provider, id]);
-
+  // // indexed db integration for offline support
+  // useLayoutEffect(() => {
+  //   const localProvider = new IndexeddbPersistence(id, provider.document);
+  //   return () => {
+  //     localProvider?.destroy();
+  //   };
+  // }, [provider, id]);
+  //
   const editor = useReadOnlyEditor({
     editorProps,
     editorClassName,

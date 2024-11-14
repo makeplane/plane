@@ -67,15 +67,15 @@ export const useCollaborativeDocumentEditor = (props: TCollaborativeDocumentEdit
     [provider]
   );
 
-  const localProvider = useMemo(() => new IndexeddbPersistence(id, provider.document), [id, provider]);
-  // indexed db integration for offline support
-  useLayoutEffect(
-    () => () => {
-      localProvider?.destroy();
-    },
-    [localProvider, id]
-  );
-
+  // const localProvider = useMemo(() => new IndexeddbPersistence(id, provider.document), [id, provider]);
+  // // indexed db integration for offline support
+  // useLayoutEffect(
+  //   () => () => {
+  //     localProvider?.destroy();
+  //   },
+  //   [localProvider, id]
+  // );
+  //
   const editor = useEditor({
     id,
     onTransaction,

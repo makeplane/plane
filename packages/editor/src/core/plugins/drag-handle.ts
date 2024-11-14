@@ -237,7 +237,7 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     if (!scrollableParent) return;
     const scrollThreshold = options.scrollThreshold;
 
-    const maxScrollSpeed = 40;
+    const maxScrollSpeed = 10;
     let scrollAmount = 0;
 
     // Normal scroll behavior when mouse is inside viewport
