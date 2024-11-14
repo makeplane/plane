@@ -10,18 +10,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { createRoot } from "react-dom/client";
-import {
-  PenSquare,
-  LinkIcon,
-  Star,
-  FileText,
-  Settings,
-  Share2,
-  LogOut,
-  MoreHorizontal,
-  ChevronRight,
-  Layers,
-} from "lucide-react";
+import { LinkIcon, Star, FileText, Settings, Share2, LogOut, MoreHorizontal, ChevronRight, Layers } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/helpers";
@@ -49,6 +38,7 @@ import { cn } from "@/helpers/common.helper";
 import { useAppTheme, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // constants
+import { PlannerCustomMenu } from "@/plane-web/components/project-planner";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { HIGHLIGHT_CLASS, highlightIssueOnDrop } from "../../issues/issue-layouts/utils";
 
@@ -461,6 +451,8 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                       </div>
                     </Link>
                   </CustomMenu.MenuItem>
+                  <PlannerCustomMenu />
+
                   {/* leave project */}
                   {!isAuthorized && (
                     <CustomMenu.MenuItem onClick={handleLeaveProject}>
