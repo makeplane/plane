@@ -71,7 +71,7 @@ export const useGanttResizable = (
         // calculate new marginLeft and update the initial marginLeft to the newly calculated one
         marginLeft = Math.round(mouseX / dayWidth) * dayWidth;
         // get Dimensions from dom's style
-        const prevMarginLeft = parseFloat(resizableDiv.style.transform.slice(11, -3));
+        const prevMarginLeft = parseFloat(resizableDiv.style.marginLeft.slice(0, -2));
         const prevWidth = parseFloat(resizableDiv.style.width.slice(0, -2));
         // calculate new width
         const marginDelta = prevMarginLeft - marginLeft;
@@ -88,7 +88,7 @@ export const useGanttResizable = (
       if (width < dayWidth) return;
 
       resizableDiv.style.width = `${width}px`;
-      resizableDiv.style.transform = `translateX(${marginLeft}px)`;
+      resizableDiv.style.marginLeft = `${marginLeft}px`;
 
       const deltaLeft = Math.round((marginLeft - (block.position?.marginLeft ?? 0)) / dayWidth) * dayWidth;
       const deltaWidth = Math.round((width - (block.position?.width ?? 0)) / dayWidth) * dayWidth;
