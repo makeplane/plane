@@ -7,7 +7,7 @@ import { IUserLite } from "@plane/types";
 // plane ui
 import { Loader } from "@plane/ui";
 // components
-import { TVersionEditorProps } from "@/components/pages";
+import { TVersionEditorProps } from "@/components/editor";
 // helpers
 import { getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks

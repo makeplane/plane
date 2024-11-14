@@ -1,5 +1,5 @@
 // plane types
-import { TPageVersion } from "@plane/types";
+import { TEditorVersion } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
@@ -10,7 +10,7 @@ export class WorkspacePageVersionService extends APIService {
     super(API_BASE_URL);
   }
 
-  async fetchAllVersions(workspaceSlug: string, pageId: string): Promise<TPageVersion[]> {
+  async fetchAllVersions(workspaceSlug: string, pageId: string): Promise<TEditorVersion[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/pages/${pageId}/versions/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -18,7 +18,7 @@ export class WorkspacePageVersionService extends APIService {
       });
   }
 
-  async fetchVersionById(workspaceSlug: string, pageId: string, versionId: string): Promise<TPageVersion> {
+  async fetchVersionById(workspaceSlug: string, pageId: string, versionId: string): Promise<TEditorVersion> {
     return this.get(`/api/workspaces/${workspaceSlug}/pages/${pageId}/versions/${versionId}/`)
       .then((response) => response?.data)
       .catch((error) => {
