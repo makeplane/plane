@@ -7,7 +7,7 @@ import { ArchiveRestoreIcon, ArrowUpToLine, Clipboard, Copy, History, Link, Lock
 // document editor
 import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
 // ui
-import { ArchiveIcon, CustomMenu, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
+import { ArchiveIcon, CustomMenu, TContextMenuItem, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 // components
 import { ExportPageModal } from "@/components/pages";
 // helpers
@@ -15,6 +15,8 @@ import { copyTextToClipboard, copyUrlToClipboard } from "@/helpers/string.helper
 // hooks
 import { usePageFilters } from "@/hooks/use-page-filters";
 import { useQueryParams } from "@/hooks/use-query-params";
+// plane web components
+import { PAGE_OPTIONS_DROPDOWN_EXTRA_OPTIONS } from "@/plane-web/components/pages";
 // store
 import { IPage } from "@/store/pages/page";
 
@@ -88,13 +90,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     );
 
   // menu items list
-  const MENU_ITEMS: {
-    key: string;
-    action: () => void;
-    label: string;
-    icon: React.FC<any>;
-    shouldRender: boolean;
-  }[] = [
+  const MENU_ITEMS: TContextMenuItem[] = [
     {
       key: "copy-markdown",
       action: () => {
@@ -107,7 +103,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
           })
         );
       },
-      label: "Copy markdown",
+      title: "Copy markdown",
       icon: Clipboard,
       shouldRender: true,
     },
@@ -125,28 +121,28 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
           })
         );
       },
-      label: "Copy page link",
+      title: "Copy page link",
       icon: Link,
       shouldRender: true,
     },
     {
       key: "make-a-copy",
       action: handleDuplicatePage,
-      label: "Make a copy",
+      title: "Make a copy",
       icon: Copy,
       shouldRender: canCurrentUserDuplicatePage,
     },
     {
       key: "lock-unlock-page",
       action: is_locked ? handleUnlockPage : handleLockPage,
-      label: is_locked ? "Unlock page" : "Lock page",
+      title: is_locked ? "Unlock page" : "Lock page",
       icon: is_locked ? LockOpen : Lock,
       shouldRender: canCurrentUserLockPage,
     },
     {
       key: "archive-restore-page",
       action: archived_at ? handleRestorePage : handleArchivePage,
-      label: archived_at ? "Restore page" : "Archive page",
+      title: archived_at ? "Restore page" : "Archive page",
       icon: archived_at ? ArchiveRestoreIcon : ArchiveIcon,
       shouldRender: canCurrentUserArchivePage,
     },
@@ -159,18 +155,24 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
         });
         router.push(updatedRoute);
       },
-      label: "Version history",
+      title: "Version history",
       icon: History,
       shouldRender: true,
     },
     {
       key: "export",
       action: () => setIsExportModalOpen(true),
-      label: "Export",
+      title: "Export",
       icon: ArrowUpToLine,
       shouldRender: true,
     },
   ];
+  // add extra options
+  PAGE_OPTIONS_DROPDOWN_EXTRA_OPTIONS.forEach((item) => {
+    const index = MENU_ITEMS.findIndex((i) => i.key === item.pushAfter);
+    if (index !== -1) MENU_ITEMS.splice(index + 1, 0, item);
+    else MENU_ITEMS.push(item);
+  });
 
   return (
     <>
@@ -192,8 +194,8 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
           if (!item.shouldRender) return null;
           return (
             <CustomMenu.MenuItem key={item.key} onClick={item.action} className="flex items-center gap-2">
-              <item.icon className="h-3 w-3" />
-              {item.label}
+              {item.icon && <item.icon className="size-3" />}
+              {item.title}
             </CustomMenu.MenuItem>
           );
         })}
