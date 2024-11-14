@@ -983,11 +983,9 @@ class IssuePaginatedViewSet(BaseViewSet):
             ),
         )
 
-        is_description_binary_required = (
-            True
-            if required_fields.__contains__("description_binary")
-            else False,
-        )
+        is_description_binary_required = False
+        if required_fields.__contains__("description_binary"):
+            is_description_binary_required = True
 
         paginated_data = paginate(
             base_queryset=base_queryset,
