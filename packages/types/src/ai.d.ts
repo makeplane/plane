@@ -7,3 +7,9 @@ export interface IGptResponse {
   project_detail: IProjectLite;
   workspace_detail: IWorkspaceLite;
 }
+
+export type TProjectPlannerInput = {
+  data: string;
+  workspace_id: string;
+  project_id: string;
+};

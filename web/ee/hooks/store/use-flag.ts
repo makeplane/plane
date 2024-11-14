@@ -33,6 +33,7 @@ export enum E_FEATURE_FLAGS {
   // PI
   PI_CHAT = "PI_CHAT",
   PI_DEDUPE = "PI_DEDUPE",
+  PI_PLANNER = "PI_PLANNER",
 }
 
 export const useFlag = (
