@@ -8,7 +8,8 @@ import { TPage } from "@plane/types";
 // ui
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
-import { PageEditorHeaderRoot, PageEditorBody, PageVersionsOverlay, PagesVersionEditor } from "@/components/pages";
+import { EditorVersionHistoryOverlay, PageVersionEditor } from "@/components/editor";
+import { PageEditorHeaderRoot, PageEditorBody } from "@/components/pages";
 // hooks
 import { useProjectPages } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -107,10 +108,11 @@ export const PageRoot = observer((props: TPageRootProps) => {
 
   return (
     <>
-      <PageVersionsOverlay
+      <EditorVersionHistoryOverlay
         activeVersion={version}
         currentVersionDescription={currentVersionDescription ?? null}
-        editorComponent={PagesVersionEditor}
+        editorComponent={PageVersionEditor}
+        entityId={page.id ?? ""}
         fetchAllVersions={async (pageId) => {
           if (!workspaceSlug || !projectId) return;
           return await projectPageVersionService.fetchAllVersions(
@@ -131,7 +133,6 @@ export const PageRoot = observer((props: TPageRootProps) => {
         handleRestore={handleRestoreVersion}
         isOpen={isVersionsOverlayOpen}
         onClose={handleCloseVersionsOverlay}
-        pageId={page.id ?? ""}
         restoreEnabled={isContentEditable}
       />
       <PageEditorHeaderRoot

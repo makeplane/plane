@@ -3,25 +3,25 @@ import Link from "next/link";
 import useSWR from "swr";
 import { TriangleAlert } from "lucide-react";
 // plane types
-import { TPageVersion } from "@plane/types";
+import { TEditorVersion } from "@plane/types";
 // plane ui
 import { Button, Loader } from "@plane/ui";
-// components
-import { PlaneVersionsSidebarListItem } from "@/components/pages";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useQueryParams } from "@/hooks/use-query-params";
+// local components
+import { EditorVersionHistorySidebarListItem } from ".";
 
 type Props = {
   activeVersion: string | null;
-  fetchAllVersions: (pageId: string) => Promise<TPageVersion[] | undefined>;
+  entityId: string;
+  fetchAllVersions: (entityId: string) => Promise<TEditorVersion[] | undefined>;
   isOpen: boolean;
-  pageId: string;
 };
 
-export const PageVersionsSidebarList: React.FC<Props> = (props) => {
-  const { activeVersion, fetchAllVersions, isOpen, pageId } = props;
+export const EditorVersionHistorySidebarList: React.FC<Props> = (props) => {
+  const { activeVersion, entityId, fetchAllVersions, isOpen } = props;
   // states
   const [isRetrying, setIsRetrying] = useState(false);
   // update query params
@@ -32,8 +32,8 @@ export const PageVersionsSidebarList: React.FC<Props> = (props) => {
     error: versionsListError,
     mutate: mutateVersionsList,
   } = useSWR(
-    pageId && isOpen ? `PAGE_VERSIONS_LIST_${pageId}` : null,
-    pageId && isOpen ? () => fetchAllVersions(pageId) : null
+    entityId && isOpen ? `EDITOR_VERSIONS_LIST_${entityId}` : null,
+    entityId && isOpen ? () => fetchAllVersions(entityId) : null
   );
 
   const handleRetry = async () => {
@@ -78,7 +78,7 @@ export const PageVersionsSidebarList: React.FC<Props> = (props) => {
         </div>
       ) : versionsList ? (
         versionsList.map((version) => (
-          <PlaneVersionsSidebarListItem
+          <EditorVersionHistorySidebarListItem
             key={version.id}
             href={getVersionLink(version.id)}
             isActive={activeVersion === version.id}

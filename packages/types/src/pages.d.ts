@@ -50,7 +50,7 @@ export type TPageFilters = {
 
 export type TPageEmbedType = "mention" | "issue";
 
-export type TPageVersion = {
+export type TEditorVersion = {
   created_at: string;
   created_by: string;
   deleted_at: string | null;
@@ -60,7 +60,6 @@ export type TPageVersion = {
   id: string;
   last_saved_at: string;
   owned_by: string;
-  page: string;
   updated_at: string;
   updated_by: string;
   workspace: string;
