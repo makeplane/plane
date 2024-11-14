@@ -23,3 +23,10 @@ export type TDisplayConfig = {
   fontStyle?: TEditorFontStyle;
   fontSize?: TEditorFontSize;
 };
+
+export type TUserDetails = {
+  color: string;
+  id: string;
+  name: string;
+  cookie?: string;
+};

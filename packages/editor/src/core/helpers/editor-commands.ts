@@ -147,9 +147,10 @@ export const toggleFlatToggleList = (editor: Editor, range?: Range) => {
       .deleteRange(range)
       .createList({
         kind: "toggle",
+        collapsed: true,
       })
       .run();
-  else editor.chain().focus().createList({ kind: "toggle", collapsed: false });
+  else editor.chain().focus().createList({ kind: "toggle", collapsed: true });
 };
 
 export const toggleStrike = (editor: Editor, range?: Range) => {
