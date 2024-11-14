@@ -138,6 +138,8 @@ from .issue.activity import (
     IssueActivityEndpoint,
 )
 
+from .issue.version import IssueVersionEndpoint
+
 from .issue.archive import IssueArchiveViewSet, BulkArchiveIssuesEndpoint
 
 from .issue.attachment import (

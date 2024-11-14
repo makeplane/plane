@@ -24,6 +24,7 @@ from plane.app.views import (
     IssueDetailEndpoint,
     IssueAttachmentV2Endpoint,
     IssueBulkUpdateDateEndpoint,
+    IssueVersionEndpoint,
 )
 
 urlpatterns = [
@@ -320,4 +321,16 @@ urlpatterns = [
         IssueBulkUpdateDateEndpoint.as_view(),
         name="project-issue-dates",
     ),
+    # Issue Description versions
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/versions/",
+        IssueVersionEndpoint.as_view(),
+        name="issue-versions",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/versions/<uuid:pk>/",
+        IssueVersionEndpoint.as_view(),
+        name="issue-versions",
+    ),
+    ## End Issue Description versions
 ]

@@ -274,6 +274,39 @@ class IssueBlocker(ProjectBaseModel):
         return f"{self.block.name} {self.blocked_by.name}"
 
 
+class IssueDescriptionVersion(ProjectBaseModel):
+    issue = models.ForeignKey(
+        "db.Issue",
+        on_delete=models.CASCADE,
+        related_name="issue_description_versions",
+    )
+    last_saved_at = models.DateTimeField(default=timezone.now)
+    owned_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="issue_versions",
+    )
+    description_binary = models.BinaryField(null=True)
+    description_html = models.TextField(blank=True, default="<p></p>")
+    description_stripped = models.TextField(blank=True, null=True)
+    description_json = models.JSONField(default=dict, blank=True)
+    
+    class Meta:
+        verbose_name = "Issue Description Version"
+        verbose_name_plural = "Issue Description Versions"
+        db_table = "issue_description_versions"
+        ordering = ("-created_at",)
+
+    def save(self, *args, **kwargs):
+        # Strip the html tags using html parser
+        self.description_stripped = (
+            None
+            if (self.description_html == "" or self.description_html is None)
+            else strip_tags(self.description_html)
+        )
+        super(IssueDescriptionVersion, self).save(*args, **kwargs)
+
+
 class IssueRelation(ProjectBaseModel):
     RELATION_CHOICES = (
         ("duplicate", "Duplicate"),

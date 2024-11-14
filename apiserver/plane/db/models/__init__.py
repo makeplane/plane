@@ -41,6 +41,7 @@ from .issue import (
     IssueSequence,
     IssueSubscriber,
     IssueVote,
+    IssueDescriptionVersion
 )
 from .module import (
     Module,

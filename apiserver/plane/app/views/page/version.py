@@ -14,9 +14,7 @@ from plane.app.permissions import allow_permission, ROLE
 
 class PageVersionEndpoint(BaseAPIView):
 
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST]
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, page_id, pk=None):
         # Check if pk is provided
         if pk:
@@ -33,7 +31,7 @@ class PageVersionEndpoint(BaseAPIView):
         page_versions = PageVersion.objects.filter(
             workspace__slug=slug,
             page_id=page_id,
-        )
+        ).order_by("-last_saved_at")[:20]
         # Serialize the page versions
         serializer = PageVersionSerializer(page_versions, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

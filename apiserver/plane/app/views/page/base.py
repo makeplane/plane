@@ -37,7 +37,7 @@ from plane.db.models import (
 from plane.utils.error_codes import ERROR_CODES
 from ..base import BaseAPIView, BaseViewSet
 from plane.bgtasks.page_transaction_task import page_transaction
-from plane.bgtasks.page_version_task import page_version
+from plane.bgtasks.version_task import version_task
 from plane.bgtasks.recent_visited_task import recent_visited_task
 
 
@@ -621,8 +621,9 @@ class PagesDescriptionViewSet(BaseViewSet):
             page.description = request.data.get("description")
             page.save()
             # Return a success response
-            page_version.delay(
-                page_id=page.id,
+            version_task.delay(
+                entity_type="PAGE",
+                entity_identifier=page.id,
                 existing_instance=existing_instance,
                 user_id=request.user.id,
             )
