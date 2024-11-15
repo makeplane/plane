@@ -277,6 +277,16 @@ urlpatterns = [
         name="workspace-drafts-issues",
     ),
     path(
+        "workspaces/<str:slug>/draft-issues/<uuid:pk>/description/",
+        WorkspaceDraftIssueViewSet.as_view(
+            {
+                "get": "retrieve_description",
+                "post": "update_description",
+            }
+        ),
+        name="workspace-drafts-issues",
+    ),
+    path(
         "workspaces/<str:slug>/draft-to-issue/<uuid:draft_id>/",
         WorkspaceDraftIssueViewSet.as_view({"post": "create_draft_to_issue"}),
         name="workspace-drafts-issues",

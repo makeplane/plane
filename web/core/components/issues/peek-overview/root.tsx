@@ -39,6 +39,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     setPeekIssue,
     issue: { fetchIssue, getIsFetchingIssueDetails },
     fetchActivities,
+    updateIssueDescription,
   } = useIssueDetail();
 
   const { issues } = useIssuesStore();
@@ -90,6 +91,16 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
                 message: "Issue update failed",
               });
             });
+        }
+      },
+      updateDescription: async (workspaceSlug, projectId, issueId, descriptionBinary) => {
+        if (!workspaceSlug || !projectId || !issueId) {
+          throw new Error("Required fields missing while updating binary description");
+        }
+        try {
+          return await updateIssueDescription(workspaceSlug, projectId, issueId, descriptionBinary);
+        } catch {
+          throw new Error("Failed to update issue description");
         }
       },
       remove: async (workspaceSlug: string, projectId: string, issueId: string) => {
@@ -318,7 +329,17 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
         }
       },
     }),
-    [fetchIssue, is_draft, issues, fetchActivities, captureIssueEvent, pathname, removeRoutePeekId, restoreIssue]
+    [
+      fetchIssue,
+      is_draft,
+      issues,
+      fetchActivities,
+      captureIssueEvent,
+      pathname,
+      removeRoutePeekId,
+      restoreIssue,
+      updateIssueDescription,
+    ]
   );
 
   useEffect(() => {

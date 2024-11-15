@@ -4,6 +4,7 @@ import isEmpty from "lodash/isEmpty";
 import type {
   IIssueDisplayProperties,
   TBulkOperationsPayload,
+  TDocumentPayload,
   TIssue,
   TIssueActivity,
   TIssueLink,
@@ -383,6 +384,21 @@ export class IssueService extends APIService {
 
   async subscribeToIssueNotifications(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/subscribe/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async updateDescriptionBinary(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    data: Pick<TDocumentPayload, "description_binary">
+  ): Promise<ArrayBuffer> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/description/`, data, {
+      responseType: "arraybuffer",
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -7,6 +7,7 @@ import { persistence } from "@/local-db/storage.sqlite";
 // services
 import { IssueArchiveService, IssueDraftService, IssueService } from "@/services/issue";
 // types
+import { IIssueRootStore } from "../root.store";
 import { IIssueDetail } from "./root.store";
 
 export interface IIssueStoreActions {
@@ -15,9 +16,15 @@ export interface IIssueStoreActions {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    issueStatus?: "DEFAULT" | "DRAFT",
+    issueStatus?: "DEFAULT" | "DRAFT"
   ) => Promise<TIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
+  updateIssueDescription: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    descriptionBinary: string
+  ) => Promise<ArrayBuffer>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   addCycleToIssue: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
@@ -44,19 +51,21 @@ export class IssueStore implements IIssueStore {
   fetchingIssueDetails: string | undefined = undefined;
   localDBIssueDescription: string | undefined = undefined;
   // root store
+  rootIssueStore: IIssueRootStore;
   rootIssueDetailStore: IIssueDetail;
   // services
   issueService;
   issueArchiveService;
   issueDraftService;
 
-  constructor(rootStore: IIssueDetail) {
+  constructor(rootStore: IIssueRootStore, rootIssueDetailStore: IIssueDetail) {
     makeObservable(this, {
       fetchingIssueDetails: observable.ref,
       localDBIssueDescription: observable.ref,
     });
     // root store
-    this.rootIssueDetailStore = rootStore;
+    this.rootIssueStore = rootStore;
+    this.rootIssueDetailStore = rootIssueDetailStore;
     // services
     this.issueService = new IssueService();
     this.issueArchiveService = new IssueArchiveService();
@@ -156,6 +165,7 @@ export class IssueStore implements IIssueStore {
       id: issue?.id,
       sequence_id: issue?.sequence_id,
       name: issue?.name,
+      description_binary: issue?.description_binary,
       description_html: issue?.description_html,
       sort_order: issue?.sort_order,
       state_id: issue?.state_id,
@@ -192,6 +202,20 @@ export class IssueStore implements IIssueStore {
   updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
     await this.rootIssueDetailStore.rootIssueStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
     await this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
+  };
+
+  updateIssueDescription = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    descriptionBinary: string
+  ): Promise<ArrayBuffer> => {
+    const res = await this.issueService.updateDescriptionBinary(workspaceSlug, projectId, issueId, {
+      description_binary: descriptionBinary,
+    });
+    this.rootIssueStore.issues.updateIssue(issueId, { description_binary: descriptionBinary });
+    this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
+    return res;
   };
 
   removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>

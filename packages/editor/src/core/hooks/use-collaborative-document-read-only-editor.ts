@@ -3,31 +3,24 @@ import { HocuspocusProvider } from "@hocuspocus/provider";
 import Collaboration from "@tiptap/extension-collaboration";
 import { IndexeddbPersistence } from "y-indexeddb";
 // extensions
-import { HeadingListExtension, SideMenuExtension } from "@/extensions";
+import { HeadingListExtension } from "@/extensions";
 // hooks
-import { useEditor } from "@/hooks/use-editor";
-// plane editor extensions
-import { DocumentEditorAdditionalExtensions } from "@/plane-editor/extensions";
+import { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
 // types
-import { TCollaborativeEditorProps } from "@/types";
+import { TCollaborativeDocumentReadOnlyEditorHookProps } from "@/types";
 
-export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
+export const useCollaborativeDocumentReadOnlyEditor = (props: TCollaborativeDocumentReadOnlyEditorHookProps) => {
   const {
-    onTransaction,
-    disabledExtensions,
     editorClassName,
     editorProps = {},
-    embedHandler,
     extensions,
     fileHandler,
     forwardedRef,
     handleEditorReady,
     id,
     mentionHandler,
-    placeholder,
     realtimeConfig,
     serverHandler,
-    tabIndex,
     user,
   } = props;
   // states
@@ -37,11 +30,10 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
   const provider = useMemo(
     () =>
       new HocuspocusProvider({
-        name: id,
-        parameters: realtimeConfig.queryParams,
-        // using user id as a token to verify the user on the server
-        token: JSON.stringify(user),
         url: realtimeConfig.url,
+        name: id,
+        token: JSON.stringify(user),
+        parameters: realtimeConfig.queryParams,
         onAuthenticationFailed: () => {
           serverHandler?.onServerError?.();
           setHasServerConnectionFailed(true);
@@ -55,9 +47,8 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
         },
         onSynced: () => setHasServerSynced(true),
       }),
-    [id, realtimeConfig, serverHandler, user]
+    [id, realtimeConfig, user]
   );
-
   // destroy and disconnect connection on unmount
   useEffect(
     () => () => {
@@ -74,36 +65,21 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     };
   }, [provider, id]);
 
-  const editor = useEditor({
-    id,
-    onTransaction,
+  const editor = useReadOnlyEditor({
     editorProps,
     editorClassName,
-    enableHistory: false,
     extensions: [
-      SideMenuExtension({
-        aiEnabled: !disabledExtensions?.includes("ai"),
-        dragDropEnabled: true,
-      }),
+      ...(extensions ?? []),
       HeadingListExtension,
       Collaboration.configure({
         document: provider.document,
       }),
-      ...(extensions ?? []),
-      ...DocumentEditorAdditionalExtensions({
-        disabledExtensions,
-        issueEmbedConfig: embedHandler?.issue,
-        provider,
-        userDetails: user,
-      }),
     ],
     fileHandler,
-    handleEditorReady,
     forwardedRef,
+    handleEditorReady,
     mentionHandler,
-    placeholder,
-    provider,
-    tabIndex,
+    providerDocument: provider.document,
   });
 
   return {
