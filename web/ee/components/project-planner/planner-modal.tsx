@@ -3,6 +3,7 @@ import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { Button, EModalPosition, EModalWidth, ModalCore, setToast, TextArea, TOAST_TYPE } from "@plane/ui";
 import { useWorkspace } from "@/hooks/store";
+import useLocalStorage from "@/hooks/use-local-storage";
 import { PIService } from "@/plane-web/services";
 
 // service initialization
@@ -27,6 +28,7 @@ export const ProjectPlannerModal = (props: TProps) => {
 
   // hooks
   const { getWorkspaceBySlug } = useWorkspace();
+  const { setValue } = useLocalStorage<string | null>(`planer_task_id_${projectId}`, null);
 
   // derived values
   const workspace = getWorkspaceBySlug(workspaceSlug as string);
@@ -46,11 +48,12 @@ export const ProjectPlannerModal = (props: TProps) => {
 
     setIsLoading(true);
     try {
-      await piService.createPlanner({
+      const response = await piService.createPlanner({
         data: formData.description,
         workspace_id: workspace?.id,
         project_id: projectId.toString(),
       });
+      if (response?.task_id) setValue(response?.task_id);
       setToast({
         title: "Success",
         message: "Processing started",
@@ -96,7 +99,7 @@ export const ProjectPlannerModal = (props: TProps) => {
                     onChange={onChange}
                     hasError={Boolean(errors.description)}
                     placeholder="Your input"
-                    className="min-h-[102px] w-full rounded-md font-normal text-sm bg-transparent"
+                    className="min-h-[102px] w-full rounded-md font-normal text-sm bg-transparent max-h-[70vh]"
                   />
                 )}
               />
