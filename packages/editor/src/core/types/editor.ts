@@ -132,12 +132,6 @@ export interface IRichTextEditor extends IEditorProps {
   dragDropEnabled?: boolean;
 }
 
-export interface ICollaborativeRichTextEditor extends Omit<IEditorProps, "initialValue" | "onChange" | "value"> {
-  dragDropEnabled?: boolean;
-  onChange: (updatedDescription: Uint8Array) => void;
-  value: Uint8Array;
-}
-
 export interface ICollaborativeDocumentEditor
   extends Omit<IEditorProps, "initialValue" | "onChange" | "onEnterKeyPress" | "value"> {
   aiHandler?: TAIHandler;
@@ -166,10 +160,6 @@ export interface IReadOnlyEditorProps {
 export type ILiteTextReadOnlyEditor = IReadOnlyEditorProps;
 
 export type IRichTextReadOnlyEditor = IReadOnlyEditorProps;
-
-export type ICollaborativeRichTextReadOnlyEditor = Omit<IReadOnlyEditorProps, "initialValue"> & {
-  value: Uint8Array;
-};
 
 export interface ICollaborativeDocumentReadOnlyEditor extends Omit<IReadOnlyEditorProps, "initialValue"> {
   embedHandler: TEmbedConfig;

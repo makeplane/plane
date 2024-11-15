@@ -1,144 +1,157 @@
 "use client";
 
-import { FC, useCallback, useRef } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import debounce from "lodash/debounce";
 import { observer } from "mobx-react";
-// plane editor
-import { convertBinaryDataToBase64String, EditorRefApi } from "@plane/editor";
+import { Controller, useForm } from "react-hook-form";
 // types
+import { TIssue } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
-// plane ui
+// ui
 import { Loader } from "@plane/ui";
 // components
-import { CollaborativeRichTextEditor, CollaborativeRichTextReadOnlyEditor } from "@/components/editor";
+import { RichTextEditor, RichTextReadOnlyEditor } from "@/components/editor";
+import { TIssueOperations } from "@/components/issues/issue-detail";
 // helpers
 import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
 // hooks
 import { useWorkspace } from "@/hooks/store";
-import { useIssueDescription } from "@/hooks/use-issue-description";
 // services
 import { FileService } from "@/services/file.service";
 const fileService = new FileService();
 
 export type IssueDescriptionInputProps = {
   containerClassName?: string;
-  descriptionBinary: string | null;
-  descriptionHTML: string;
-  disabled?: boolean;
-  issueId: string;
-  key: string;
-  placeholder?: string | ((isFocused: boolean, value: string) => string);
-  projectId: string;
-  setIsSubmitting: (initialValue: "submitting" | "submitted" | "saved") => void;
-  updateDescription: (data: string) => Promise<ArrayBuffer>;
   workspaceSlug: string;
+  projectId: string;
+  issueId: string;
+  initialValue: string | undefined;
+  disabled?: boolean;
+  issueOperations: TIssueOperations;
+  placeholder?: string | ((isFocused: boolean, value: string) => string);
+  setIsSubmitting: (initialValue: "submitting" | "submitted" | "saved") => void;
+  swrIssueDescription?: string | null | undefined;
 };
 
 export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((props) => {
   const {
     containerClassName,
-    descriptionBinary: savedDescriptionBinary,
-    descriptionHTML,
-    disabled,
-    issueId,
-    placeholder,
-    projectId,
-    setIsSubmitting,
-    updateDescription,
     workspaceSlug,
+    projectId,
+    issueId,
+    disabled,
+    swrIssueDescription,
+    initialValue,
+    issueOperations,
+    setIsSubmitting,
+    placeholder,
   } = props;
-  // refs
-  const editorRef = useRef<EditorRefApi>(null);
-  // store hooks
-  const { getWorkspaceBySlug } = useWorkspace();
-  // derived values
-  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id?.toString() ?? "";
-  // use issue description
-  const { descriptionBinary, resolveConflictsAndUpdateDescription } = useIssueDescription({
-    descriptionBinary: savedDescriptionBinary,
-    descriptionHTML,
-    updateDescription,
+
+  const { handleSubmit, reset, control } = useForm<TIssue>({
+    defaultValues: {
+      description_html: initialValue,
+    },
   });
 
-  const debouncedDescriptionSave = useCallback(
-    debounce(async (updatedDescription: Uint8Array) => {
-      const editor = editorRef.current;
-      if (!editor) return;
-      const encodedDescription = convertBinaryDataToBase64String(updatedDescription);
-      await resolveConflictsAndUpdateDescription(encodedDescription, editor);
-      setIsSubmitting("submitted");
-    }, 1500),
-    []
+  const [localIssueDescription, setLocalIssueDescription] = useState({
+    id: issueId,
+    description_html: initialValue,
+  });
+
+  const handleDescriptionFormSubmit = useCallback(
+    async (formData: Partial<TIssue>) => {
+      await issueOperations.update(workspaceSlug, projectId, issueId, {
+        description_html: formData.description_html ?? "<p></p>",
+      });
+    },
+    [workspaceSlug, projectId, issueId, issueOperations]
   );
 
-  if (!descriptionBinary)
-    return (
-      <Loader className="min-h-[120px] max-h-64 space-y-2 overflow-hidden rounded-md">
-        <Loader.Item width="100%" height="26px" />
-        <div className="flex items-center gap-2">
-          <Loader.Item width="26px" height="26px" />
-          <Loader.Item width="400px" height="26px" />
-        </div>
-        <div className="flex items-center gap-2">
-          <Loader.Item width="26px" height="26px" />
-          <Loader.Item width="400px" height="26px" />
-        </div>
-        <Loader.Item width="80%" height="26px" />
-        <div className="flex items-center gap-2">
-          <Loader.Item width="50%" height="26px" />
-        </div>
-        <div className="border-0.5 absolute bottom-2 right-3.5 z-10 flex items-center gap-2">
-          <Loader.Item width="100px" height="26px" />
-          <Loader.Item width="50px" height="26px" />
-        </div>
-      </Loader>
-    );
+  const { getWorkspaceBySlug } = useWorkspace();
+  // computed values
+  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id as string;
+
+  // reset form values
+  useEffect(() => {
+    if (!issueId) return;
+    reset({
+      id: issueId,
+      description_html: initialValue === "" ? "<p></p>" : initialValue,
+    });
+    setLocalIssueDescription({
+      id: issueId,
+      description_html: initialValue === "" ? "<p></p>" : initialValue,
+    });
+  }, [initialValue, issueId, reset]);
+
+  // ADDING handleDescriptionFormSubmit TO DEPENDENCY ARRAY PRODUCES ADVERSE EFFECTS
+  // TODO: Verify the exhaustive-deps warning
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedFormSave = useCallback(
+    debounce(async () => {
+      handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
+    }, 1500),
+    [handleSubmit, issueId]
+  );
 
   return (
     <>
-      {!disabled ? (
-        <CollaborativeRichTextEditor
-          key={issueId}
-          containerClassName={containerClassName}
-          value={descriptionBinary}
-          onChange={(val) => {
-            setIsSubmitting("submitting");
-            debouncedDescriptionSave(val);
-          }}
-          dragDropEnabled
-          id={issueId}
-          placeholder={placeholder ? placeholder : (isFocused, value) => getDescriptionPlaceholder(isFocused, value)}
-          projectId={projectId}
-          ref={editorRef}
-          uploadFile={async (file) => {
-            try {
-              const { asset_id } = await fileService.uploadProjectAsset(
-                workspaceSlug,
-                projectId,
-                {
-                  entity_identifier: issueId,
-                  entity_type: EFileAssetType.ISSUE_DESCRIPTION,
-                },
-                file
-              );
-              return asset_id;
-            } catch (error) {
-              console.log("Error in uploading issue asset:", error);
-              throw new Error("Asset upload failed. Please try again later.");
-            }
-          }}
-          workspaceId={workspaceId}
-          workspaceSlug={workspaceSlug}
+      {localIssueDescription.description_html ? (
+        <Controller
+          name="description_html"
+          control={control}
+          render={({ field: { onChange } }) =>
+            !disabled ? (
+              <RichTextEditor
+                id={issueId}
+                initialValue={localIssueDescription.description_html ?? "<p></p>"}
+                value={swrIssueDescription ?? null}
+                workspaceSlug={workspaceSlug}
+                workspaceId={workspaceId}
+                projectId={projectId}
+                dragDropEnabled
+                onChange={(_description: object, description_html: string) => {
+                  setIsSubmitting("submitting");
+                  onChange(description_html);
+                  debouncedFormSave();
+                }}
+                placeholder={
+                  placeholder ? placeholder : (isFocused, value) => getDescriptionPlaceholder(isFocused, value)
+                }
+                containerClassName={containerClassName}
+                uploadFile={async (file) => {
+                  try {
+                    const { asset_id } = await fileService.uploadProjectAsset(
+                      workspaceSlug,
+                      projectId,
+                      {
+                        entity_identifier: issueId,
+                        entity_type: EFileAssetType.ISSUE_DESCRIPTION,
+                      },
+                      file
+                    );
+                    return asset_id;
+                  } catch (error) {
+                    console.log("Error in uploading issue asset:", error);
+                    throw new Error("Asset upload failed. Please try again later.");
+                  }
+                }}
+              />
+            ) : (
+              <RichTextReadOnlyEditor
+                id={issueId}
+                initialValue={localIssueDescription.description_html ?? ""}
+                containerClassName={containerClassName}
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+              />
+            )
+          }
         />
       ) : (
-        <CollaborativeRichTextReadOnlyEditor
-          containerClassName={containerClassName}
-          descriptionBinary={savedDescriptionBinary}
-          descriptionHTML={descriptionHTML}
-          id={issueId}
-          projectId={projectId}
-          workspaceSlug={workspaceSlug}
-        />
+        <Loader>
+          <Loader.Item height="150px" />
+        </Loader>
       )}
     </>
   );

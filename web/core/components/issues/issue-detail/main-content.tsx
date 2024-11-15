@@ -22,7 +22,6 @@ import useSize from "@/hooks/use-window-size";
 // plane web components
 import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe";
 import { IssueTypeSwitcher } from "@/plane-web/components/issues";
-// plane web hooks
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
 // types
 import { TIssueOperations } from "./root";
@@ -114,22 +113,16 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           containerClassName="-ml-3"
         />
 
-        {issue.description_binary !== undefined && (
-          <IssueDescriptionInput
-            key={issue.id}
-            containerClassName="-ml-3 border-none"
-            descriptionBinary={issue.description_binary}
-            descriptionHTML={issue.description_html ?? "<p></p>"}
-            disabled={!isEditable}
-            updateDescription={async (data) =>
-              await issueOperations.updateDescription(workspaceSlug, issue.project_id ?? "", issue.id, data)
-            }
-            issueId={issue.id}
-            projectId={issue.project_id}
-            setIsSubmitting={(value) => setIsSubmitting(value)}
-            workspaceSlug={workspaceSlug}
-          />
-        )}
+        <IssueDescriptionInput
+          workspaceSlug={workspaceSlug}
+          projectId={issue.project_id}
+          issueId={issue.id}
+          initialValue={issue.description_html}
+          disabled={!isEditable}
+          issueOperations={issueOperations}
+          setIsSubmitting={(value) => setIsSubmitting(value)}
+          containerClassName="-ml-3 border-none"
+        />
 
         {currentUser && (
           <IssueReaction

@@ -7,8 +7,6 @@ from django.db.models import F, Func, OuterRef, Q, Prefetch, Exists, Subquery
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
-from django.http import StreamingHttpResponse
-
 
 # Third Party imports
 from rest_framework import status
@@ -29,7 +27,7 @@ from plane.db.models import (
     IssueLink,
     IssueSubscriber,
     IssueReaction,
-    CycleIssue,
+    CycleIssue
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -328,32 +326,6 @@ class IssueArchiveViewSet(BaseViewSet):
         issue.save()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
-    def retrieve_description(self, request, slug, project_id, pk):
-        issue = Issue.objects.filter(
-            pk=pk, workspace__slug=slug, project_id=project_id
-        ).first()
-        if issue is None:
-            return Response(
-                {"error": "Issue not found"},
-                status=404,
-            )
-        binary_data = issue.description_binary
-
-        def stream_data():
-            if binary_data:
-                yield binary_data
-            else:
-                yield b""
-
-        response = StreamingHttpResponse(
-            stream_data(), content_type="application/octet-stream"
-        )
-        response["Content-Disposition"] = (
-            'attachment; filename="issue_description.bin"'
-        )
-        return response
 
 
 class BulkArchiveIssuesEndpoint(BaseAPIView):

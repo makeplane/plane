@@ -26,7 +26,6 @@ export interface IInboxIssueStore {
   updateInboxIssueDuplicateTo: (issueId: string) => Promise<void>; // connecting the inbox issue to the project existing issue
   updateInboxIssueSnoozeTill: (date: Date | undefined) => Promise<void>; // snooze the issue
   updateIssue: (issue: Partial<TIssue>) => Promise<void>; // updating the issue
-  updateIssueDescription: (descriptionBinary: string) => Promise<ArrayBuffer>; // updating the local issue description
   updateProjectIssue: (issue: Partial<TIssue>) => Promise<void>; // updating the issue
   fetchIssueActivity: () => Promise<void>; // fetching the issue activity
 }
@@ -79,7 +78,6 @@ export class InboxIssueStore implements IInboxIssueStore {
       updateInboxIssueDuplicateTo: action,
       updateInboxIssueSnoozeTill: action,
       updateIssue: action,
-      updateIssueDescription: action,
       updateProjectIssue: action,
       fetchIssueActivity: action,
     });
@@ -174,26 +172,6 @@ export class InboxIssueStore implements IInboxIssueStore {
         const issueKey = key as keyof TIssue;
         set(this.issue, issueKey, inboxIssue[issueKey]);
       });
-    }
-  };
-
-  updateIssueDescription = async (descriptionBinary: string): Promise<ArrayBuffer> => {
-    try {
-      if (!this.issue.id) throw new Error("Issue id is missing");
-      const res = await this.inboxIssueService.updateDescriptionBinary(
-        this.workspaceSlug,
-        this.projectId,
-        this.issue.id,
-        {
-          description_binary: descriptionBinary,
-        }
-      );
-      set(this.issue, "description_binary", descriptionBinary);
-      // fetching activity
-      this.fetchIssueActivity();
-      return res;
-    } catch {
-      throw new Error("Failed to update local issue description");
     }
   };
 

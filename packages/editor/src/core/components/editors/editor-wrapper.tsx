@@ -1,4 +1,4 @@
-import { AnyExtension, Editor } from "@tiptap/core";
+import { Editor, Extension } from "@tiptap/core";
 // components
 import { EditorContainer } from "@/components/editors";
 // constants
@@ -12,7 +12,7 @@ import { EditorContentWrapper } from "./editor-content";
 
 type Props = IEditorProps & {
   children?: (editor: Editor) => React.ReactNode;
-  extensions: AnyExtension[];
+  extensions: Extension<any, any>[];
 };
 
 export const EditorWrapper: React.FC<Props> = (props) => {

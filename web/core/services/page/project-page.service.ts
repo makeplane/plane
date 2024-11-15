@@ -4,10 +4,15 @@ import { TDocumentPayload, TPage } from "@plane/types";
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import { APIService } from "@/services/api.service";
+import { FileUploadService } from "@/services/file-upload.service";
 
 export class ProjectPageService extends APIService {
+  private fileUploadService: FileUploadService;
+
   constructor() {
     super(API_BASE_URL);
+    // upload service
+    this.fileUploadService = new FileUploadService();
   }
 
   async fetchAll(workspaceSlug: string, projectId: string): Promise<TPage[]> {
@@ -128,7 +133,7 @@ export class ProjectPageService extends APIService {
       });
   }
 
-  async fetchDescriptionBinary(workspaceSlug: string, projectId: string, pageId: string): Promise<ArrayBuffer> {
+  async fetchDescriptionBinary(workspaceSlug: string, projectId: string, pageId: string): Promise<any> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/description/`, {
       headers: {
         "Content-Type": "application/octet-stream",

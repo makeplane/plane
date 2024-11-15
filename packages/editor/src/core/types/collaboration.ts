@@ -19,7 +19,7 @@ export type TServerHandler = {
   onServerError?: () => void;
 };
 
-type TCollaborativeEditorHookCommonProps = {
+type TCollaborativeEditorHookProps = {
   disabledExtensions?: TExtensions[];
   editorClassName: string;
   editorProps?: EditorProps;
@@ -30,9 +30,12 @@ type TCollaborativeEditorHookCommonProps = {
     highlights: () => Promise<IMentionHighlight[]>;
     suggestions?: () => Promise<IMentionSuggestion[]>;
   };
+  realtimeConfig: TRealtimeConfig;
+  serverHandler?: TServerHandler;
+  user: TUserDetails;
 };
 
-type TCollaborativeEditorHookProps = TCollaborativeEditorHookCommonProps & {
+export type TCollaborativeEditorProps = TCollaborativeEditorHookProps & {
   onTransaction?: () => void;
   embedHandler?: TEmbedConfig;
   fileHandler: TFileHandler;
@@ -41,29 +44,7 @@ type TCollaborativeEditorHookProps = TCollaborativeEditorHookCommonProps & {
   tabIndex?: number;
 };
 
-type TCollaborativeReadOnlyEditorHookProps = TCollaborativeEditorHookCommonProps & {
+export type TReadOnlyCollaborativeEditorProps = TCollaborativeEditorHookProps & {
   fileHandler: Pick<TFileHandler, "getAssetSrc">;
   forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
-};
-
-export type TCollaborativeRichTextEditorHookProps = TCollaborativeEditorHookProps & {
-  onChange: (updatedDescription: Uint8Array) => void;
-  value: Uint8Array;
-};
-
-export type TCollaborativeRichTextReadOnlyEditorHookProps = TCollaborativeReadOnlyEditorHookProps & {
-  value: Uint8Array;
-};
-
-export type TCollaborativeDocumentEditorHookProps = TCollaborativeEditorHookProps & {
-  embedHandler?: TEmbedConfig;
-  realtimeConfig: TRealtimeConfig;
-  serverHandler?: TServerHandler;
-  user: TUserDetails;
-};
-
-export type TCollaborativeDocumentReadOnlyEditorHookProps = TCollaborativeReadOnlyEditorHookProps & {
-  realtimeConfig: TRealtimeConfig;
-  serverHandler?: TServerHandler;
-  user: TUserDetails;
 };
