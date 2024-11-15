@@ -3,8 +3,10 @@
 import { Dispatch, SetStateAction, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
+// plane types
+import { TIssue } from "@plane/types";
 // plane ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { InboxIssueContentProperties } from "@/components/inbox/content";
 import {
@@ -20,12 +22,11 @@ import { ISSUE_ARCHIVED, ISSUE_DELETED } from "@/constants/event-tracker";
 // helpers
 import { getTextContent } from "@/helpers/editor.helper";
 // hooks
-import { useEventTracker, useIssueDetail, useProject, useUser } from "@/hooks/store";
+import { useEventTracker, useIssueDetail, useProject, useProjectInbox, useUser } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // store types
 import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe";
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
-// store
 import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
 
 type Props = {
@@ -44,6 +45,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
   const { data: currentUser } = useUser();
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
   const { captureIssueEvent } = useEventTracker();
+  const { loader } = useProjectInbox();
   const { getProjectById } = useProject();
   const { removeIssue, archiveIssue } = useIssueDetail();
 
@@ -58,7 +60,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
     }
   }, [isSubmitting, setShowAlert, setIsSubmitting]);
 
-  // derived values
+  // dervied values
   const issue = inboxIssue.issue;
   const projectDetails = issue?.project_id ? getProjectById(issue?.project_id) : undefined;
 
@@ -73,8 +75,12 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
 
   const issueOperations: TIssueOperations = useMemo(
     () => ({
-      fetch: async () => {},
-      remove: async (_workspaceSlug, _projectId, _issueId) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars, arrow-body-style
+      fetch: async (_workspaceSlug: string, _projectId: string, _issueId: string) => {
+        return;
+      },
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars, arrow-body-style
+      remove: async (_workspaceSlug: string, _projectId: string, _issueId: string) => {
         try {
           await removeIssue(workspaceSlug, projectId, _issueId);
           setToast({
@@ -101,7 +107,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           });
         }
       },
-      update: async (_workspaceSlug, _projectId, _issueId, data) => {
+      update: async (_workspaceSlug: string, _projectId: string, _issueId: string, data: Partial<TIssue>) => {
         try {
           await inboxIssue.updateIssue(data);
           captureIssueEvent({
@@ -113,7 +119,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
             },
             path: pathname,
           });
-        } catch {
+        } catch (error) {
           setToast({
             title: "Issue update failed",
             type: TOAST_TYPE.ERROR,
@@ -130,14 +136,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           });
         }
       },
-      updateDescription: async (_workspaceSlug, _projectId, _issueId, descriptionBinary) => {
-        try {
-          return await inboxIssue.updateIssueDescription(descriptionBinary);
-        } catch {
-          throw new Error("Failed to update issue description");
-        }
-      },
-      archive: async (workspaceSlug, projectId, issueId) => {
+      archive: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
           await archiveIssue(workspaceSlug, projectId, issueId);
           captureIssueEvent({
@@ -155,7 +154,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
         }
       },
     }),
-    [archiveIssue, captureIssueEvent, inboxIssue, pathname, projectId, removeIssue, workspaceSlug]
+    [inboxIssue]
   );
 
   if (!issue?.project_id || !issue?.id) return <></>;
@@ -185,20 +184,21 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           containerClassName="-ml-3"
         />
 
-        {issue.description_binary !== undefined && (
+        {loader === "issue-loading" ? (
+          <Loader className="min-h-[6rem] rounded-md border border-custom-border-200">
+            <Loader.Item width="100%" height="140px" />
+          </Loader>
+        ) : (
           <IssueDescriptionInput
-            key={issue.id}
-            containerClassName="-ml-3 border-none"
-            descriptionBinary={issue.description_binary}
-            descriptionHTML={issue.description_html ?? "<p></p>"}
-            disabled={!isEditable}
-            updateDescription={async (data) =>
-              await issueOperations.updateDescription(workspaceSlug, projectId, issue.id ?? "", data)
-            }
-            issueId={issue.id}
-            projectId={issue.project_id}
-            setIsSubmitting={(value) => setIsSubmitting(value)}
             workspaceSlug={workspaceSlug}
+            projectId={issue.project_id}
+            issueId={issue.id}
+            swrIssueDescription={issue.description_html ?? "<p></p>"}
+            initialValue={issue.description_html ?? "<p></p>"}
+            disabled={!isEditable}
+            issueOperations={issueOperations}
+            setIsSubmitting={(value) => setIsSubmitting(value)}
+            containerClassName="-ml-3 border-none"
           />
         )}
 

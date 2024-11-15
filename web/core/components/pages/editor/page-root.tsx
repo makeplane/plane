@@ -50,9 +50,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
   usePageFallback({
     editorRef,
     fetchPageDescription: async () => {
-      if (!page.id) {
-        throw new Error("Required fields missing while fetching binary description");
-      }
+      if (!page.id) return;
       return await projectPageService.fetchDescriptionBinary(workspaceSlug, projectId, page.id);
     },
     hasConnectionFailed,

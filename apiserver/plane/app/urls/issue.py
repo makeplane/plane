@@ -67,16 +67,6 @@ urlpatterns = [
         name="project-issue",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:pk>/description/",
-        IssueViewSet.as_view(
-            {
-                "get": "retrieve_description",
-                "post": "update_description",
-            }
-        ),
-        name="project-issue-description",
-    ),
-    path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issue-labels/",
         LabelViewSet.as_view(
             {
@@ -297,15 +287,6 @@ urlpatterns = [
             }
         ),
         name="project-issue-archive-unarchive",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/archived-issues/<uuid:pk>/description/",
-        IssueArchiveViewSet.as_view(
-            {
-                "get": "retrieve_description",
-            }
-        ),
-        name="archive-issue-description",
     ),
     ## End Issue Archives
     ## Issue Relation

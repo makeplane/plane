@@ -10,7 +10,7 @@ import { EFileAssetType } from "@plane/types/src/enums";
 // ui
 import { Loader } from "@plane/ui";
 // components
-import { RichTextEditor } from "@/components/editor";
+import { RichTextEditor } from "@/components/editor/rich-text-editor/rich-text-editor";
 // constants
 import { ETabIndices } from "@/constants/tab-indices";
 // helpers

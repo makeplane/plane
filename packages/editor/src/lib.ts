@@ -1,1 +1,1 @@
-export * from "@/helpers/yjs-utils";
+export * from "@/extensions/core-without-props";

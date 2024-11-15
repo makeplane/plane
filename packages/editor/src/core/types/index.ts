@@ -1,5 +1,5 @@
 export * from "./ai";
-export * from "./collaboration-hook";
+export * from "./collaboration";
 export * from "./config";
 export * from "./editor";
 export * from "./embed";

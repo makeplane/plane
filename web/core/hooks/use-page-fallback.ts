@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from "react";
 // plane editor
-import { convertBinaryDataToBase64String, EditorRefApi } from "@plane/editor";
+import { EditorRefApi } from "@plane/editor";
 // plane types
 import { TDocumentPayload } from "@plane/types";
 // hooks
@@ -8,7 +8,7 @@ import useAutoSave from "@/hooks/use-auto-save";
 
 type TArgs = {
   editorRef: React.RefObject<EditorRefApi>;
-  fetchPageDescription: () => Promise<ArrayBuffer>;
+  fetchPageDescription: () => Promise<any>;
   hasConnectionFailed: boolean;
   updatePageDescription: (data: TDocumentPayload) => Promise<void>;
 };
@@ -29,7 +29,7 @@ export const usePageFallback = (args: TArgs) => {
     editor.setProviderDocument(latestDecodedDescription);
     const { binary, html, json } = editor.getDocument();
     if (!binary || !json) return;
-    const encodedBinary = convertBinaryDataToBase64String(binary);
+    const encodedBinary = Buffer.from(binary).toString("base64");
 
     await updatePageDescription({
       description_binary: encodedBinary,

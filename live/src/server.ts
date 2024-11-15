@@ -5,13 +5,16 @@ import expressWs from "express-ws";
 import * as Sentry from "@sentry/node";
 import compression from "compression";
 import helmet from "helmet";
+
+// cors
 import cors from "cors";
+
 // core hocuspocus server
 import { getHocusPocusServer } from "@/core/hocuspocus-server.js";
+
 // helpers
-import { errorHandler } from "@/core/helpers/error-handler.js";
 import { logger, manualLogger } from "@/core/helpers/logger.js";
-import { resolveDocumentConflicts, TResolveConflictsRequestBody } from "@/core/resolve-conflicts.js";
+import { errorHandler } from "@/core/helpers/error-handler.js";
 
 const app = express();
 expressWs(app);
@@ -26,7 +29,7 @@ app.use(
   compression({
     level: 6,
     threshold: 5 * 1000,
-  })
+  }),
 );
 
 // Logging middleware
@@ -59,25 +62,6 @@ router.ws("/collaboration", (ws, req) => {
   }
 });
 
-app.post("/resolve-document-conflicts", (req, res) => {
-  const { original_document, updates } = req.body as TResolveConflictsRequestBody;
-  try {
-    if (original_document === undefined || updates === undefined) {
-      res.status(400).send({
-        message: "Missing required fields",
-      });
-      return;
-    }
-    const resolvedDocument = resolveDocumentConflicts(req.body);
-    res.status(200).json(resolvedDocument);
-  } catch (error) {
-    manualLogger.error("Error in /resolve-document-conflicts endpoint:", error);
-    res.status(500).send({
-      message: "Internal server error",
-    });
-  }
-});
-
 app.use(process.env.LIVE_BASE_PATH || "/live", router);
 
 app.use((_req, res) => {
@@ -98,7 +82,9 @@ const gracefulShutdown = async () => {
   try {
     // Close the HocusPocus server WebSocket connections
     await HocusPocusServer.destroy();
-    manualLogger.info("HocusPocus server WebSocket connections closed gracefully.");
+    manualLogger.info(
+      "HocusPocus server WebSocket connections closed gracefully.",
+    );
 
     // Close the Express server
     liveServer.close(() => {
