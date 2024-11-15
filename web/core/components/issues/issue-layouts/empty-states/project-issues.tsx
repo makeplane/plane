@@ -3,13 +3,13 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
 import { IIssueFilterOptions } from "@plane/types";
+// components
+import { EmptyState } from "@/components/empty-state";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useCommandPalette, useEventTracker, useIssues } from "@/hooks/store";
-// components
-import { ResolvedProjectEmptyState } from "@/plane-web/components/issues";
 
 export const ProjectEmptyState: React.FC = observer(() => {
   // router
@@ -40,17 +40,23 @@ export const ProjectEmptyState: React.FC = observer(() => {
     });
   };
 
+  const emptyStateType = issueFilterCount > 0 ? EmptyStateType.PROJECT_EMPTY_FILTER : EmptyStateType.PROJECT_NO_ISSUES;
   const additionalPath = issueFilterCount > 0 ? (activeLayout ?? "list") : undefined;
 
   return (
     <div className="relative h-full w-full overflow-y-auto">
-      <ResolvedProjectEmptyState
-        issueFilterCount={issueFilterCount}
+      <EmptyState
+        type={emptyStateType}
         additionalPath={additionalPath}
-        handleClearAllFilters={handleClearAllFilters}
-        toggleCreateIssueModal={toggleCreateIssueModal}
-        setTrackElement={setTrackElement}
-        emptyStateType={issueFilterCount > 0 ? EmptyStateType.PROJECT_EMPTY_FILTER : undefined}
+        primaryButtonOnClick={
+          issueFilterCount > 0
+            ? undefined
+            : () => {
+                setTrackElement("Project issue empty state");
+                toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
+              }
+        }
+        secondaryButtonOnClick={issueFilterCount > 0 ? handleClearAllFilters : undefined}
       />
     </div>
   );

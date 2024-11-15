@@ -1,5 +1,4 @@
 import React from "react";
-import { cn } from "../../helpers";
 
 interface ICircularProgressIndicator {
   size: number;
@@ -7,18 +6,10 @@ interface ICircularProgressIndicator {
   strokeWidth?: number;
   strokeColor?: string;
   children?: React.ReactNode;
-  className?: string;
 }
 
 export const CircularProgressIndicator: React.FC<ICircularProgressIndicator> = (props) => {
-  const {
-    size = 40,
-    percentage = 25,
-    strokeWidth = 6,
-    strokeColor = "stroke-custom-primary-100",
-    children,
-    className = "",
-  } = props;
+  const { size = 40, percentage = 25, strokeWidth = 6, strokeColor = "stroke-custom-primary-100", children } = props;
 
   const sqSize = size;
   const radius = (size - strokeWidth) / 2;
@@ -79,7 +70,7 @@ export const CircularProgressIndicator: React.FC<ICircularProgressIndicator> = (
         />
       </svg>
       <div
-        className={cn("absolute", className)}
+        className="absolute"
         style={{
           top: "50%",
           left: "50%",

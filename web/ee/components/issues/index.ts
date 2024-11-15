@@ -4,4 +4,3 @@ export * from "./issue-modal";
 export * from "./issue-details";
 export * from "./quick-add";
 export * from "./filters";
-export * from "./issue-layouts/empty-states";

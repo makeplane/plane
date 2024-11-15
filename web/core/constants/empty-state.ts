@@ -48,7 +48,6 @@ export enum EmptyStateType {
   PROJECT_SETTINGS_ESTIMATE = "project-settings-estimate",
   PROJECT_CYCLES = "project-cycles",
   PROJECT_CYCLE_NO_ISSUES = "project-cycle-no-issues",
-  PRO_PROJECT_NO_ISSUES = "pro-project-no-issues",
   PROJECT_CYCLE_ACTIVE = "project-cycle-active",
   PROJECT_CYCLE_ALL = "project-cycle-all",
   PROJECT_CYCLE_COMPLETED_NO_ISSUES = "project-cycle-completed-no-issues",
@@ -395,32 +394,6 @@ const emptyStateDetails = {
     path: "/empty-state/onboarding/issues",
     primaryButton: {
       text: "Create your first issue",
-      comicBox: {
-        title: "Issues are building blocks in Plane.",
-        description:
-          "Redesign the Plane UI, Rebrand the company, or Launch the new fuel injection system are examples of issues that likely have sub-issues.",
-      },
-    },
-    accessType: "project",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-  },
-  //  project issues
-  [EmptyStateType.PRO_PROJECT_NO_ISSUES]: {
-    key: EmptyStateType.PROJECT_NO_ISSUES,
-    title: "Create an issue and assign it to someone, even yourself",
-    description:
-      "Think of issues as jobs, tasks, work, or JTBD. Which we like. An issue and its sub-issues are usually time-based actionables assigned to members of your team. Your team creates, assigns, and completes issues to move your project towards its goal.",
-    path: "/empty-state/onboarding/issues",
-    primaryButton: {
-      text: "Create your first issue",
-      comicBox: {
-        title: "Issues are building blocks in Plane.",
-        description:
-          "Redesign the Plane UI, Rebrand the company, or Launch the new fuel injection system are examples of issues that likely have sub-issues.",
-      },
-    },
-    secondaryButton: {
-      text: "Project planner",
       comicBox: {
         title: "Issues are building blocks in Plane.",
         description:

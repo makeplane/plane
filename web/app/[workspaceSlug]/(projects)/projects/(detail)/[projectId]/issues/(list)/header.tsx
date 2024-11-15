@@ -1,13 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import useSWR from "swr";
 import { Briefcase, Circle, ExternalLink } from "lucide-react";
 // ui
-import { Breadcrumbs, Button, LayersIcon, Tooltip, Header, CircularProgressIndicator } from "@plane/ui";
+import { Breadcrumbs, Button, LayersIcon, Tooltip, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink, CountChip, Logo } from "@/components/common";
 // constants
@@ -19,14 +17,8 @@ import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
 import { useEventTracker, useProject, useCommandPalette, useUserPermissions } from "@/hooks/store";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
-import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
-import { PIService } from "@/plane-web/services";
-import { TProject } from "@/plane-web/types";
-
-// service initialization
-const piService = new PIService();
 
 export const ProjectIssuesHeader = observer(() => {
   // router
@@ -38,7 +30,6 @@ export const ProjectIssuesHeader = observer(() => {
   } = useIssues(EIssuesStoreType.PROJECT);
 
   const { currentProjectDetails, loader } = useProject();
-  const { setValue, storedValue: plannerTaskId } = useLocalStorage<string | null>(`planer_task_id_${projectId}`, null);
 
   const { toggleCreateIssueModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
@@ -53,18 +44,6 @@ export const ProjectIssuesHeader = observer(() => {
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.PROJECT
   );
-
-  const { data } = useSWR(
-    plannerTaskId ? `PI_PLANNER_TASK_${plannerTaskId}` : null,
-    plannerTaskId ? () => piService.getPlannerStatusData(plannerTaskId) : null,
-    { refreshInterval: 5000 }
-  );
-
-  useEffect(() => {
-    if (data?.status === "completed") {
-      setValue(null);
-    }
-  }, [data]);
 
   return (
     <Header>
@@ -125,23 +104,10 @@ export const ProjectIssuesHeader = observer(() => {
         )}
       </Header.LeftItem>
       <Header.RightItem>
-        {plannerTaskId && data?.progress !== undefined && (
-          <Tooltip
-            isMobile={isMobile}
-            tooltipContent={`Project planner ${data?.status} ${data?.progress.toFixed(0)}%`}
-            position="bottom"
-          >
-            <div>
-              <CircularProgressIndicator size={28} percentage={data?.progress} strokeWidth={2} className="flex">
-                <span className="text-[9px] my-auto font-medium ">{data?.progress.toFixed(0)}%</span>
-              </CircularProgressIndicator>
-            </div>
-          </Tooltip>
-        )}
         <div className="hidden gap-3 md:flex">
           <HeaderFilters
             projectId={projectId}
-            currentProjectDetails={currentProjectDetails as TProject}
+            currentProjectDetails={currentProjectDetails}
             workspaceSlug={workspaceSlug}
             canUserCreateIssue={canUserCreateIssue}
           />

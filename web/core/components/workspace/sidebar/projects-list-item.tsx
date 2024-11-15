@@ -10,7 +10,18 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { createRoot } from "react-dom/client";
-import { LinkIcon, Star, FileText, Settings, Share2, LogOut, MoreHorizontal, ChevronRight, Layers } from "lucide-react";
+import {
+  PenSquare,
+  LinkIcon,
+  Star,
+  FileText,
+  Settings,
+  Share2,
+  LogOut,
+  MoreHorizontal,
+  ChevronRight,
+  Layers,
+} from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/helpers";
@@ -38,10 +49,7 @@ import { cn } from "@/helpers/common.helper";
 import { useAppTheme, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // constants
-import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
-import { ProjectPlannerModal } from "@/plane-web/components/project-planner";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
-import { E_FEATURE_FLAGS } from "@/plane-web/hooks/store";
 import { HIGHLIGHT_CLASS, highlightIssueOnDrop } from "../../issues/issue-layouts/utils";
 
 type Props = {
@@ -113,7 +121,6 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isProjectListOpen, setIsProjectListOpen] = useState(false);
   const [instruction, setInstruction] = useState<"DRAG_OVER" | "DRAG_BELOW" | undefined>(undefined);
-  const [plannerModalOpen, setPlannerModal] = useState(false);
   // refs
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
   const projectRef = useRef<HTMLDivElement | null>(null);
@@ -289,7 +296,6 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <ProjectPlannerModal isOpen={plannerModalOpen} onClose={() => setPlannerModal(false)} />
       <PublishProjectModal isOpen={publishModalOpen} project={project} onClose={() => setPublishModal(false)} />
       <LeaveProjectModal project={project} isOpen={leaveProjectModalOpen} onClose={() => setLeaveProjectModal(false)} />
       <Disclosure key={`${project.id}_${URLProjectId}`} ref={projectRef} defaultOpen={isProjectListOpen} as="div">
@@ -455,22 +461,6 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                       </div>
                     </Link>
                   </CustomMenu.MenuItem>
-                  <WithFeatureFlagHOC
-                    workspaceSlug={workspaceSlug.toString()}
-                    flag={E_FEATURE_FLAGS.PI_PLANNER}
-                    fallback={null}
-                  >
-                    <CustomMenu.MenuItem onClick={() => setPlannerModal(true)}>
-                      <div className="relative flex flex-shrink-0 items-center justify-start gap-2">
-                        <div className="flex h-4 w-4 cursor-pointer items-center justify-center rounded text-custom-sidebar-text-200 transition-all duration-300 hover:bg-custom-sidebar-background-80">
-                          {/* TODO: Change icon */}
-                          <Share2 className="h-3.5 w-3.5 stroke-[1.5]" />
-                        </div>
-                        <span>Project Planner</span>
-                      </div>
-                    </CustomMenu.MenuItem>
-                  </WithFeatureFlagHOC>
-
                   {/* leave project */}
                   {!isAuthorized && (
                     <CustomMenu.MenuItem onClick={handleLeaveProject}>
