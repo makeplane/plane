@@ -44,7 +44,7 @@
     "react-popper": "^2.3.0",
     "swr": "^2.2.2",
     "tailwind-merge": "^2.0.0",
-    "uuid": "^9.0.0",
+    "uuid": "^11.0.3",
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
