@@ -55,6 +55,7 @@ const IssueForm = observer((props: TProps) => {
             placeholder="Your name"
             className="w-full text-md"
             autoFocus
+            required
           />
         </div>
         <div className="space-y-1 flew-grow w-full">
@@ -67,6 +68,7 @@ const IssueForm = observer((props: TProps) => {
             placeholder="Your email"
             className="w-full text-md"
             autoFocus
+            required
           />
         </div>
 

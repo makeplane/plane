@@ -37,8 +37,6 @@ SECRET_KEY = os.environ.get("SECRET_KEY", get_random_secret_key())
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(os.environ.get("DEBUG", "0"))
 
-# Initialize Django instrumentation
-DjangoInstrumentor().instrument()
 # Configure the tracer provider
 service_name = os.environ.get("SERVICE_NAME", "plane-ee-api")
 resource = Resource.create({"service.name": service_name})
@@ -48,6 +46,8 @@ otel_endpoint = os.environ.get("OTLP_ENDPOINT", "https://telemetry.plane.so")
 otlp_exporter = OTLPSpanExporter(endpoint=otel_endpoint)
 span_processor = BatchSpanProcessor(otlp_exporter)
 trace.get_tracer_provider().add_span_processor(span_processor)
+# Initialize Django instrumentation
+DjangoInstrumentor().instrument()
 
 
 # Allowed Hosts

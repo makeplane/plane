@@ -197,12 +197,28 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
             pk=project_id,
         )
 
+
         # Intake view
         if intake is None and not project.intake_view:
             return Response(
                 {
                     "error": "Intake is not enabled for this project enable it through the project's api"
                 },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        intake_settings = IntakeSetting.objects.filter(
+            workspace__slug=slug,
+            project_id=project_id,
+            intake=intake,
+        ).first()
+
+        if (
+            intake_settings is not None
+            and not intake_settings.is_in_app_enabled
+        ):
+            return Response(
+                {"error": "Creating intake issues is disabled"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
