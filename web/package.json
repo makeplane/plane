@@ -40,7 +40,7 @@
     "clsx": "^2.0.0",
     "cmdk": "^1.0.0",
     "comlink": "^4.4.1",
-    "date-fns": "^2.30.0",
+    "date-fns": "^3.6.0",
     "dotenv": "^16.0.3",
     "isomorphic-dompurify": "^2.12.0",
     "lodash": "^4.17.21",
