@@ -10,6 +10,69 @@ from plane.db.models import (
 )
 
 
+def get_default_properties():
+    return {
+        "assignee": True,
+        "start_date": True,
+        "due_date": True,
+        "labels": True,
+        "key": True,
+        "priority": True,
+        "state": True,
+        "sub_issue_count": True,
+        "link": True,
+        "attachment_count": True,
+        "estimate": True,
+        "created_on": True,
+        "updated_on": True,
+    }
+
+
+def get_default_filters():
+    return {
+        "priority": None,
+        "state": None,
+        "state_group": None,
+        "assignees": None,
+        "created_by": None,
+        "labels": None,
+        "start_date": None,
+        "target_date": None,
+        "subscriber": None,
+    }
+
+
+def get_default_display_filters():
+    return {
+        "group_by": None,
+        "order_by": "-created_at",
+        "type": None,
+        "sub_issue": True,
+        "show_empty_groups": True,
+        "layout": "list",
+        "calendar_date_range": "",
+    }
+
+
+def get_default_display_properties():
+    return {
+        "assignee": True,
+        "attachment_count": True,
+        "created_on": True,
+        "due_date": True,
+        "estimate": True,
+        "key": True,
+        "issue_type": True,
+        "labels": True,
+        "link": True,
+        "priority": True,
+        "start_date": True,
+        "state": True,
+        "sub_issue_count": True,
+        "updated_on": True,
+    }
+
+
 class IssueWorkLog(ProjectBaseModel):
     issue = models.ForeignKey(
         Issue, on_delete=models.CASCADE, related_name="worklogs"
@@ -284,3 +347,34 @@ class UpdateReaction(ProjectBaseModel):
 
     def __str__(self):
         return f"{self.actor.email} <{self.reaction}> <{self.entity_type}>"
+
+
+class EpicUserProperties(ProjectBaseModel):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="epic_property_user",
+    )
+    filters = models.JSONField(default=get_default_filters)
+    display_filters = models.JSONField(default=get_default_display_filters)
+    display_properties = models.JSONField(
+        default=get_default_display_properties
+    )
+
+    class Meta:
+        verbose_name = "Epic User Property"
+        verbose_name_plural = "Epic User Properties"
+        db_table = "epic_user_properties"
+        ordering = ("-created_at",)
+        unique_together = ["user", "project", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "project"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="epic_user_property_unique_user_project_when_deleted_at_null",
+            )
+        ]
+
+    def __str__(self):
+        """Return properties status of the epic"""
+        return str(self.user)

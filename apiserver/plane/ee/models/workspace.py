@@ -13,6 +13,7 @@ class WorkspaceFeature(BaseModel):
         "db.Workspace", on_delete=models.CASCADE, related_name="features"
     )
     is_project_grouping_enabled = models.BooleanField(default=False)
+    is_initiative_enabled = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Workspace Feature"
