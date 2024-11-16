@@ -27,7 +27,7 @@
     "@tiptap/core": "^2.4.0",
     "@tiptap/html": "^2.3.0",
     "axios": "^1.7.2",
-    "compression": "^1.7.4",
+    "compression": "^1.7.5",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.20.0",
