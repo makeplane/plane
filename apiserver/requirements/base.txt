@@ -61,7 +61,7 @@ zxcvbn==4.4.28
 # timezone
 pytz==2024.1
 # jwt
-PyJWT==2.8.0
+PyJWT==2.9.0
 # OpenTelemetry
 opentelemetry-api==1.28.1
 opentelemetry-sdk==1.28.1
