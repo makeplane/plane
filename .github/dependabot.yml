@@ -1,11 +1,120 @@
-# To get started with Dependabot version updates, you'll need to specify which
-# package ecosystems to update and where the package manifests are located.
-# Please see the documentation for all configuration options:
-# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
-
 version: 2
 updates:
+# Root level package.json (Turborepo)
 - package-ecosystem: "npm" # See documentation for possible values
   directory: "/" # Location of package manifests
   schedule:
     interval: "weekly"
+  labels:
+  - "dependencies"
+  - "turbo"
+  commit-message:
+    prefix: "chore(deps)"
+    prefix-development: "chore(deps-dev)"
+  groups:
+    turborepo-deps:
+      patterns:
+      - "turbo"
+      - "@turbo/*"
+
+# Web App
+- package-ecosystem: "npm"
+  directory: "/web"
+  schedule:
+    interval: "weekly"
+  labels:
+  - "dependencies"
+  - "web"
+  groups:
+    next-deps:
+      patterns:
+      - "next"
+      - "@next/*"
+    react-deps:
+      patterns:
+      - "react"
+      - "react-dom"
+
+# Admin App
+- package-ecosystem: "npm"
+  directory: "/admin"
+  schedule:
+    interval: "weekly"
+  labels:
+  - "dependencies"
+  - "admin"
+  groups:
+    next-deps:
+      patterns:
+      - "next"
+      - "@next/*"
+    react-deps:
+      patterns:
+      - "react"
+      - "react-dom"
+
+# Sites App
+- package-ecosystem: "npm"
+  directory: "/space"
+  schedule:
+    interval: "weekly"
+  labels:
+  - "dependencies"
+  - "sites"
+  groups:
+    next-deps:
+      patterns:
+      - "next"
+      - "@next/*"
+    react-deps:
+      patterns:
+      - "react"
+      - "react-dom"
+
+# Live Server
+- package-ecosystem: "npm"
+  directory: "/live" # Adjust path for your Node.js app
+  schedule:
+    interval: "weekly"
+  labels:
+  - "dependencies"
+  - "live"
+  - "nodejs"
+
+# Python service
+- package-ecosystem: "pip"
+  directory: "/apiserver" # Adjust path for your Python app
+  schedule:
+    interval: "weekly"
+  labels:
+  - "dependencies"
+  - "backend"
+  - "python"
+
+# Go service
+- package-ecosystem: "gomod"
+  directory: "/monitor" # Adjust path for your Go app
+  schedule:
+    interval: "weekly"
+  labels:
+  - "dependencies"
+  - "monitor"
+  - "golang"
+
+# GitHub Actions
+- package-ecosystem: "github-actions"
+  directory: "/"
+  schedule:
+    interval: "weekly"
+  labels:
+  - "ci-cd"
+  - "dependencies"
+
+# Docker dependencies
+- package-ecosystem: "docker"
+  directory: "/"
+  schedule:
+    interval: "weekly"
+  labels:
+  - "dependencies"
+  - "docker"
