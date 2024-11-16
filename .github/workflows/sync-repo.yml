@@ -18,7 +18,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
           fetch-depth: 0
