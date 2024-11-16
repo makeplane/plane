@@ -45,7 +45,7 @@
   "devDependencies": {
     "@chromatic-com/storybook": "^1.4.0",
     "@storybook/addon-essentials": "^8.1.1",
-    "@storybook/addon-interactions": "^8.1.1",
+    "@storybook/addon-interactions": "^8.4.4",
     "@storybook/addon-links": "^8.1.1",
     "@storybook/addon-onboarding": "^8.1.1",
     "@storybook/addon-styling-webpack": "^1.0.0",
