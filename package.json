@@ -1,4 +1,5 @@
 {
+  "name": "plane",
   "repository": "https://github.com/makeplane/plane.git",
   "version": "0.23.1",
   "license": "AGPL-3.0",
@@ -8,6 +9,8 @@
     "space",
     "admin",
     "live",
+    "silo",
+    "packages/silo/*",
     "packages/*"
   ],
   "scripts": {
@@ -24,6 +27,5 @@
     "prettier-plugin-tailwindcss": "^0.5.4",
     "turbo": "^2.1.1"
   },
-  "packageManager": "yarn@1.22.22",
-  "name": "plane"
+  "packageManager": "yarn@1.22.22"
 }
