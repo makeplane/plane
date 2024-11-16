@@ -41,7 +41,7 @@ openai==1.25.0
 # slack
 slack-sdk==3.27.1
 # apm
-scout-apm==3.1.0
+scout-apm==3.2.1
 # xlsx generation
 openpyxl==3.1.2
 # logging
