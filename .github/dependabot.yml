@@ -16,9 +16,13 @@ updates:
       patterns:
       - "turbo"
       - "@turbo/*"
+  allow:
+  - dependency-type: "all"
+  security-updates-only: true
 
 # Web App
 - package-ecosystem: "npm"
+  security-updates-only: true
   directory: "/web"
   schedule:
     interval: "weekly"
@@ -37,6 +41,7 @@ updates:
 
 # Admin App
 - package-ecosystem: "npm"
+  security-updates-only: true
   directory: "/admin"
   schedule:
     interval: "weekly"
@@ -55,6 +60,7 @@ updates:
 
 # Sites App
 - package-ecosystem: "npm"
+  security-updates-only: true
   directory: "/space"
   schedule:
     interval: "weekly"
@@ -73,7 +79,8 @@ updates:
 
 # Live Server
 - package-ecosystem: "npm"
-  directory: "/live" # Adjust path for your Node.js app
+  security-updates-only: true
+  directory: "/live"
   schedule:
     interval: "weekly"
   labels:
@@ -83,7 +90,8 @@ updates:
 
 # Python service
 - package-ecosystem: "pip"
-  directory: "/apiserver" # Adjust path for your Python app
+  security-updates-only: true
+  directory: "/apiserver"
   schedule:
     interval: "weekly"
   labels:
@@ -93,6 +101,7 @@ updates:
 
 # GitHub Actions
 - package-ecosystem: "github-actions"
+  security-updates-only: true
   directory: "/"
   schedule:
     interval: "weekly"
@@ -102,6 +111,7 @@ updates:
 
 # Docker dependencies
 - package-ecosystem: "docker"
+  security-updates-only: true
   directory: "/"
   schedule:
     interval: "weekly"
