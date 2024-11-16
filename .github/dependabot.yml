@@ -99,9 +99,19 @@ updates:
   - "backend"
   - "python"
 
+# Go service
+- package-ecosystem: "gomod"
+  security-updates-only: true
+  directory: "/monitor" # Adjust path for your Go app
+  schedule:
+    interval: "weekly"
+  labels:
+  - "dependencies"
+  - "monitor"
+  - "golang"
+
 # GitHub Actions
 - package-ecosystem: "github-actions"
-  security-updates-only: true
   directory: "/"
   schedule:
     interval: "weekly"
