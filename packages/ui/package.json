@@ -52,7 +52,7 @@
     "@storybook/addon-webpack5-compiler-swc": "^1.0.2",
     "@storybook/blocks": "^8.1.1",
     "@storybook/react": "^8.1.1",
-    "@storybook/react-webpack5": "^8.1.1",
+    "@storybook/react-webpack5": "^8.4.4",
     "@storybook/test": "^8.1.1",
     "@types/lodash": "^4.17.6",
     "@types/node": "^20.5.2",
