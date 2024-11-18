@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
-import { cn } from "@plane/editor";
 import { ContentWrapper } from "@plane/ui";
+import { cn } from "@/helpers/common.helper";
 
 export const KanbanIssueBlockLoader = forwardRef<HTMLSpanElement, { cardHeight?: number; shouldAnimate?: boolean }>(
   ({ cardHeight = 100, shouldAnimate = true }, ref) => (
