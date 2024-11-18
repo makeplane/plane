@@ -68,7 +68,7 @@
     "tailwind-merge": "^2.0.0",
     "use-debounce": "^9.0.4",
     "use-font-face-observer": "^1.2.2",
-    "uuid": "^9.0.0",
+    "uuid": "^11.0.3",
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
