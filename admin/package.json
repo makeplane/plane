@@ -34,7 +34,7 @@
     "react-hook-form": "7.51.5",
     "swr": "^2.2.4",
     "tailwindcss": "3.3.2",
-    "uuid": "^9.0.1",
+    "uuid": "^11.0.3",
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
