@@ -30,8 +30,8 @@ from plane.db.models import (
     Page,
     ProjectPage,
     PageLabel,
-    Inbox,
-    InboxIssue,
+    Intake,
+    IntakeIssue,
 )
 
 
@@ -47,7 +47,7 @@ def create_project(workspace, user_id):
             : random.randint(2, 12 if len(name) - 1 >= 12 else len(name) - 1)
         ].upper(),
         created_by_id=user_id,
-        inbox_view=True,
+        intake_view=True,
     )
 
     # Add current member as project member
@@ -406,18 +406,18 @@ def create_issues(workspace, project, user_id, issue_count):
     return issues
 
 
-def create_inbox_issues(workspace, project, user_id, inbox_issue_count):
-    issues = create_issues(workspace, project, user_id, inbox_issue_count)
-    inbox, create = Inbox.objects.get_or_create(
-        name="Inbox",
+def create_intake_issues(workspace, project, user_id, intake_issue_count):
+    issues = create_issues(workspace, project, user_id, intake_issue_count)
+    intake, create = Intake.objects.get_or_create(
+        name="Intake",
         project=project,
         is_default=True,
     )
-    InboxIssue.objects.bulk_create(
+    IntakeIssue.objects.bulk_create(
         [
-            InboxIssue(
+            IntakeIssue(
                 issue=issue,
-                inbox=inbox,
+                intake=intake,
                 status=(status := [-2, -1, 0, 1, 2][random.randint(0, 4)]),
                 snoozed_till=(
                     datetime.now() + timedelta(days=random.randint(1, 30))
@@ -599,7 +599,7 @@ def create_dummy_data(
     cycle_count,
     module_count,
     pages_count,
-    inbox_issue_count,
+    intake_issue_count,
 ):
     workspace = Workspace.objects.get(slug=slug)
 
@@ -660,12 +660,12 @@ def create_dummy_data(
         issue_count=issue_count,
     )
 
-    # create inbox issues
-    create_inbox_issues(
+    # create intake issues
+    create_intake_issues(
         workspace=workspace,
         project=project,
         user_id=user_id,
-        inbox_issue_count=inbox_issue_count,
+        intake_issue_count=intake_issue_count,
     )
 
     # create issue parent

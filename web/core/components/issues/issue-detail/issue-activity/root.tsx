@@ -11,7 +11,7 @@ import { TOAST_TYPE, setToast } from "@plane/ui";
 import { IssueCommentCreate } from "@/components/issues";
 import { IssueActivityCommentRoot } from "@/components/issues/issue-detail";
 // hooks
-import { useIssueDetail, useProject, useUserPermissions } from "@/hooks/store";
+import { useIssueDetail, useProject, useUser, useUserPermissions } from "@/hooks/store";
 // plane web components
 import { ActivityFilterRoot, IssueActivityWorklogCreateButton } from "@/plane-web/components/issues/worklog";
 // plane web constants
@@ -38,15 +38,25 @@ export type TActivityOperations = {
 
 export const IssueActivity: FC<TIssueActivity> = observer((props) => {
   const { workspaceSlug, projectId, issueId, disabled = false, isIntakeIssue = false } = props;
-  // hooks
-  const { createComment, updateComment, removeComment } = useIssueDetail();
-  const { projectPermissionsByWorkspaceSlugAndProjectId } = useUserPermissions();
-  const { getProjectById } = useProject();
-  //derived values
-  const isGuest = (projectPermissionsByWorkspaceSlugAndProjectId(workspaceSlug, projectId) ?? EUserPermissions.GUEST) === EUserPermissions.GUEST;
-  const isWorklogButtonEnabled = !isIntakeIssue && !isGuest;
   // state
   const [selectedFilters, setSelectedFilters] = useState<TActivityFilters[]>(defaultActivityFilters);
+  // hooks
+  const {
+    issue: { getIssueById },
+    createComment,
+    updateComment,
+    removeComment,
+  } = useIssueDetail();
+  const { projectPermissionsByWorkspaceSlugAndProjectId } = useUserPermissions();
+  const { getProjectById } = useProject();
+  const { data: currentUser } = useUser();
+  //derived values
+  const issue = issueId ? getIssueById(issueId) : undefined;
+  const currentUserProjectRole = projectPermissionsByWorkspaceSlugAndProjectId(workspaceSlug, projectId);
+  const isAdmin = (currentUserProjectRole ?? EUserPermissions.GUEST) === EUserPermissions.ADMIN;
+  const isGuest = (currentUserProjectRole ?? EUserPermissions.GUEST) === EUserPermissions.GUEST;
+  const isAssigned = issue?.assignee_ids && currentUser?.id ? issue?.assignee_ids.includes(currentUser?.id) : false;
+  const isWorklogButtonEnabled = !isIntakeIssue && !isGuest && (isAdmin || isAssigned);
   // toggle filter
   const toggleFilter = (filter: TActivityFilters) => {
     setSelectedFilters((prevFilters) => {

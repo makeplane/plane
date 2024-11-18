@@ -34,9 +34,9 @@ class DeployBoard(WorkspaceBaseModel):
     )
     is_comments_enabled = models.BooleanField(default=False)
     is_reactions_enabled = models.BooleanField(default=False)
-    inbox = models.ForeignKey(
-        "db.Inbox",
-        related_name="board_inbox",
+    intake = models.ForeignKey(
+        "db.Intake",
+        related_name="publish_intake",
         on_delete=models.SET_NULL,
         null=True,
     )
