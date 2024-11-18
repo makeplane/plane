@@ -187,6 +187,7 @@ class IssueRelationViewSet(BaseViewSet):
             "created_by",
             "updated_by",
             "relation_type",
+            "type_id",
         ]
 
         response_data = {

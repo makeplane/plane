@@ -95,6 +95,7 @@
     --color-shadow-3xl: 0px 12px 24px 0px rgba(0, 0, 0, 0.12), 0px 16px 32px 0px rgba(0, 0, 0, 0.12),
       0px 1px 48px 0px rgba(16, 24, 40, 0.12);
     --color-shadow-4xl: 0px 8px 40px 0px rgba(0, 0, 61, 0.05), 0px 12px 32px -16px rgba(0, 0, 0, 0.05);
+    --color-shadow-custom: 2px 2px 8px 2px rgba(234, 231, 250, 0.3);
 
     --color-sidebar-background-100: var(--color-background-100); /* primary sidebar bg */
     --color-sidebar-background-90: var(--color-background-90); /* secondary sidebar bg */
@@ -213,6 +214,18 @@
     --color-toast-warning-border: 255, 247, 194;
     --color-toast-info-border: 210, 222, 255;
     --color-toast-loading-border: 224, 225, 230;
+
+    --color-pi-50: var(--color-background-90);
+    --color-pi-100: var(--color-background-90);
+    --color-pi-200: var(--color-primary-200);
+    --color-pi-300: var(--color-primary-200);
+    --color-pi-400: var(--color-primary-200);
+    --color-pi-500: var(--color-primary-200);
+    --color-pi-600: 151, 150, 246;
+    --color-pi-700: var(--color-primary-100);
+    --color-pi-800: 57, 56, 149;
+    --color-pi-900: 30, 29, 78;
+    --color-pi-950: 14, 14, 37;
   }
 
   [data-theme="light-contrast"] {
@@ -228,6 +241,18 @@
     --color-border-200: 38, 38, 38; /* subtle border- 2 */
     --color-border-300: 46, 46, 46; /* strong border- 1 */
     --color-border-400: 58, 58, 58; /* strong border- 2 */
+
+    --color-pi-50: var(--color-background-90);
+    --color-pi-100: var(--color-background-90);
+    --color-pi-200: var(--color-primary-200);
+    --color-pi-300: var(--color-primary-200);
+    --color-pi-400: var(--color-primary-200);
+    --color-pi-500: var(--color-primary-200);
+    --color-pi-600: 151, 150, 246;
+    --color-pi-700: var(--color-primary-100);
+    --color-pi-800: 57, 56, 149;
+    --color-pi-900: 30, 29, 78;
+    --color-pi-950: 14, 14, 37;
   }
 
   [data-theme="dark"],
@@ -326,6 +351,18 @@
     --color-toast-warning-border: 79, 52, 34;
     --color-toast-info-border: 58, 91, 199;
     --color-toast-loading-border: 96, 100, 108;
+
+    --color-pi-50: var(--color-background-90);
+    --color-pi-100: var(--color-background-90);
+    --color-pi-200: var(--color-primary-200);
+    --color-pi-300: var(--color-primary-200);
+    --color-pi-400: var(--color-primary-200);
+    --color-pi-500: var(--color-primary-200);
+    --color-pi-600: 202, 201, 252;
+    --color-pi-700: var(--color-primary-100);
+    --color-pi-800: 231, 231, 255;
+    --color-pi-900: 245, 245, 255;
+    --color-pi-950: 249, 249, 255;
   }
 
   [data-theme="dark-contrast"] {
@@ -340,6 +377,18 @@
     --color-border-200: 229, 229, 229; /* subtle border- 2 */
     --color-border-300: 212, 212, 212; /* strong border- 1 */
     --color-border-400: 185, 185, 185; /* strong border- 2 */
+
+    --color-pi-50: var(--color-background-90);
+    --color-pi-100: var(--color-background-90);
+    --color-pi-200: var(--color-primary-200);
+    --color-pi-300: var(--color-primary-200);
+    --color-pi-400: var(--color-primary-200);
+    --color-pi-500: var(--color-primary-200);
+    --color-pi-600: 202, 201, 252;
+    --color-pi-700: var(--color-primary-100);
+    --color-pi-800: 231, 231, 255;
+    --color-pi-900: 245, 245, 255;
+    --color-pi-950: 249, 249, 255;
   }
 
   [data-theme="light"],
@@ -684,6 +733,14 @@ div.web-view-spinner div.bar12 {
   border: 3px solid rgba(0, 0, 0, 0);
 }
 
+.shadow-custom {
+  box-shadow: 2px 2px 8px 2px rgba(234, 231, 250, 0.3); /* Convert #EAE7FA4D to rgba */
+}
+/* backdrop filter */
+.backdrop-blur-custom {
+  @apply backdrop-filter blur-[9px];
+}
+
 /* scrollbar sm size */
 .scrollbar-sm::-webkit-scrollbar {
   height: 12px;
@@ -739,4 +796,52 @@ div.web-view-spinner div.bar12 {
 
 .epr-search-container > .epr-icn-search {
   color: rgb(var(--color-text-400)) !important;
+}
+
+/* Desktop application */
+html.todesktop body {
+  height: 100vh;
+  width: 100%;
+  padding: 8px;
+  padding-top: 36px;
+}
+
+html.todesktop .app-container {
+  height: 100%;
+  width: 100%;
+  overflow: unset;
+  contain: layout style size;
+  contain-intrinsic-size: 100%;
+  position: relative; /* Ensure it's the containing block */
+  border: 1px solid rgb(var(--color-border-200));
+  border-radius: 6px;
+}
+
+html.todesktop .header {
+  -webkit-app-region: drag;
+}
+
+html.todesktop .header button {
+  -webkit-app-region: no-drag;
+}
+
+
+.pi-chat-root {
+  * {
+    margin: revert;
+    font-size: revert;
+    font-weight: revert;
+    color: revert;
+    text-decoration: revert;
+    text-indent: revert;
+    border-collapse: revert;
+  }
+  li, ui{
+    display: list-item;
+    list-style-type: disc;
+    margin-left: 0.9rem;
+  }
+  table, tr, td, th {
+    border-width: revert;
+ }
 }
