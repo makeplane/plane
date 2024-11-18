@@ -37,7 +37,7 @@
     "lodash": "^4.17.21",
     "morgan": "^1.10.0",
     "pino-http": "^10.3.0",
-    "pino-pretty": "^11.2.2",
+    "pino-pretty": "^13.0.0",
     "uuid": "^10.0.0",
     "y-prosemirror": "^1.2.9",
     "y-protocols": "^1.0.6",
