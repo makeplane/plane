@@ -135,13 +135,6 @@ class EntityIssueStateActivity(BaseModel):
         null=True,
         blank=True,
     )
-    team = models.ForeignKey(
-        "db.Team",
-        on_delete=models.DO_NOTHING,
-        related_name="team_issue_state_progress",
-        null=True,
-        blank=True,
-    )
     entity_type = models.CharField(
         max_length=30,
         choices=EntityTypeEnum.choices,
@@ -197,13 +190,6 @@ class EntityProgress(BaseModel):
         "db.Module",
         on_delete=models.DO_NOTHING,
         related_name="module_progress",
-        null=True,
-        blank=True,
-    )
-    team = models.ForeignKey(
-        "db.Team",
-        on_delete=models.DO_NOTHING,
-        related_name="team_progress",
         null=True,
         blank=True,
     )
@@ -276,13 +262,6 @@ class EntityUpdates(BaseModel):
         "db.Module",
         on_delete=models.DO_NOTHING,
         related_name="module_updates",
-        null=True,
-        blank=True,
-    )
-    team = models.ForeignKey(
-        "db.Team",
-        on_delete=models.DO_NOTHING,
-        related_name="team_updates",
         null=True,
         blank=True,
     )
