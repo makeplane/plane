@@ -5,7 +5,7 @@ Django==4.2.16
 # rest framework
 djangorestframework==3.15.2
 # postgres 
-psycopg==3.1.18
+psycopg==3.2.3
 psycopg-binary==3.1.18
 psycopg-c==3.1.18
 dj-database-url==2.1.0
