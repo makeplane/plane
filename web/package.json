@@ -85,6 +85,6 @@
     "@types/zxcvbn": "^4.4.4",
     "prettier": "^3.2.5",
     "tailwind-config-custom": "*",
-    "typescript": "5.3.3"
+    "typescript": "5.6.3"
   }
 }
