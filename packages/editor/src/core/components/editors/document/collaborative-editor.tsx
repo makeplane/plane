@@ -14,7 +14,6 @@ import { EditorRefApi, ICollaborativeDocumentEditor } from "@/types";
 
 const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
   const {
-    socket,
     onTransaction,
     aiHandler,
     containerClassName,
@@ -50,7 +49,6 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
     editorClassName,
     embedHandler,
     extensions,
-    socket,
     fileHandler,
     forwardedRef,
     handleEditorReady,
