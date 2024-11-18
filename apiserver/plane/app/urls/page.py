@@ -8,6 +8,7 @@ from plane.app.views import (
     SubPagesEndpoint,
     PagesDescriptionViewSet,
     PageVersionEndpoint,
+    PageDuplicateEndpoint,
 )
 
 
@@ -110,5 +111,10 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/versions/<uuid:pk>/",
         PageVersionEndpoint.as_view(),
         name="page-versions",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/duplicate/",
+        PageDuplicateEndpoint.as_view(),
+        name="page-duplicate",
     ),
 ]

@@ -202,6 +202,7 @@ from .page.base import (
     PageLogEndpoint,
     SubPagesEndpoint,
     PagesDescriptionViewSet,
+    PageDuplicateEndpoint,
 )
 from .page.version import PageVersionEndpoint
 

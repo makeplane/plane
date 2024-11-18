@@ -6,7 +6,7 @@ import { Earth, Info, Lock, Minus } from "lucide-react";
 // ui
 import { Avatar, FavoriteStar, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
-import { PageQuickActions } from "@/components/pages/dropdowns";
+import { PageActions } from "@/components/pages";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
@@ -14,14 +14,12 @@ import { getFileURL } from "@/helpers/file.helper";
 import { useMember, usePage } from "@/hooks/store";
 
 type Props = {
-  workspaceSlug: string;
-  projectId: string;
   pageId: string;
   parentRef: React.RefObject<HTMLElement>;
 };
 
 export const BlockItemAction: FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, pageId, parentRef } = props;
+  const { pageId, parentRef } = props;
   // store hooks
   const page = usePage(pageId);
   const { getUserDetails } = useMember();
@@ -94,10 +92,18 @@ export const BlockItemAction: FC<Props> = observer((props) => {
       )}
 
       {/* quick actions dropdown */}
-      <PageQuickActions
+      <PageActions
+        optionsOrder={[
+          "toggle-lock",
+          "toggle-privacy",
+          "open-in-new-tab",
+          "copy-link",
+          "make-a-copy",
+          "archive-restore",
+          "delete",
+        ]}
         parentRef={parentRef}
-        page={page}
-        pageLink={`${workspaceSlug}/projects/${projectId}/pages/${pageId}`}
+        pageId={pageId}
       />
     </>
   );

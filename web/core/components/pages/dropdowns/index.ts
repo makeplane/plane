@@ -1,2 +1,2 @@
+export * from "./actions";
 export * from "./edit-information-popover";
-export * from "./quick-actions";

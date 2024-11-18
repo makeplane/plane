@@ -13,7 +13,6 @@ import { IPage } from "@/store/pages/page";
 type Props = {
   editorReady: boolean;
   editorRef: React.RefObject<EditorRefApi>;
-  handleDuplicatePage: () => void;
   page: IPage;
   readOnlyEditorReady: boolean;
   readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
@@ -22,16 +21,8 @@ type Props = {
 };
 
 export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
-  const {
-    editorReady,
-    editorRef,
-    handleDuplicatePage,
-    page,
-    readOnlyEditorReady,
-    readOnlyEditorRef,
-    setSidePeekVisible,
-    sidePeekVisible,
-  } = props;
+  const { editorReady, editorRef, page, readOnlyEditorReady, readOnlyEditorRef, setSidePeekVisible, sidePeekVisible } =
+    props;
   // derived values
   const { isContentEditable } = page;
   // page filters
@@ -62,12 +53,7 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
             <PageToolbar editorRef={editorRef?.current} />
           )}
         </Header.LeftItem>
-        <PageExtraOptions
-          editorRef={editorRef}
-          handleDuplicatePage={handleDuplicatePage}
-          page={page}
-          readOnlyEditorRef={readOnlyEditorRef}
-        />
+        <PageExtraOptions editorRef={editorRef} page={page} readOnlyEditorRef={readOnlyEditorRef} />
       </Header>
       <div className="md:hidden">
         <PageEditorMobileHeaderRoot
@@ -75,7 +61,6 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
           readOnlyEditorRef={readOnlyEditorRef}
           editorReady={editorReady}
           readOnlyEditorReady={readOnlyEditorReady}
-          handleDuplicatePage={handleDuplicatePage}
           page={page}
           sidePeekVisible={sidePeekVisible}
           setSidePeekVisible={setSidePeekVisible}

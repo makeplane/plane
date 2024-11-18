@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { EditorReadOnlyRefApi, EditorRefApi, IMarking } from "@plane/editor";
+import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
 // components
 import { Header, EHeaderVariant } from "@plane/ui";
 import { PageExtraOptions, PageSummaryPopover, PageToolbar } from "@/components/pages";
@@ -11,7 +11,6 @@ import { IPage } from "@/store/pages/page";
 type Props = {
   editorReady: boolean;
   editorRef: React.RefObject<EditorRefApi>;
-  handleDuplicatePage: () => void;
   page: IPage;
   readOnlyEditorReady: boolean;
   readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
@@ -20,16 +19,8 @@ type Props = {
 };
 
 export const PageEditorMobileHeaderRoot: React.FC<Props> = observer((props) => {
-  const {
-    editorReady,
-    editorRef,
-    handleDuplicatePage,
-    page,
-    readOnlyEditorReady,
-    readOnlyEditorRef,
-    setSidePeekVisible,
-    sidePeekVisible,
-  } = props;
+  const { editorReady, editorRef, page, readOnlyEditorReady, readOnlyEditorRef, setSidePeekVisible, sidePeekVisible } =
+    props;
   // derived values
   const { isContentEditable } = page;
   // page filters
@@ -48,12 +39,7 @@ export const PageEditorMobileHeaderRoot: React.FC<Props> = observer((props) => {
             setSidePeekVisible={setSidePeekVisible}
           />
         </div>
-        <PageExtraOptions
-          editorRef={editorRef}
-          handleDuplicatePage={handleDuplicatePage}
-          page={page}
-          readOnlyEditorRef={readOnlyEditorRef}
-        />
+        <PageExtraOptions editorRef={editorRef} page={page} readOnlyEditorRef={readOnlyEditorRef} />
       </Header>
       <Header variant={EHeaderVariant.TERNARY}>
         {(editorReady || readOnlyEditorReady) && isContentEditable && editorRef.current && (

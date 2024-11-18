@@ -43,6 +43,7 @@ export interface IPage extends TPage {
   updatePageLogo: (logo_props: TLogoProps) => Promise<void>;
   addToFavorites: () => Promise<void>;
   removePageFromFavorites: () => Promise<void>;
+  duplicate: () => Promise<void>;
 }
 
 export class Page implements IPage {
@@ -149,6 +150,7 @@ export class Page implements IPage {
       updatePageLogo: action,
       addToFavorites: action,
       removePageFromFavorites: action,
+      duplicate: action,
     });
 
     this.pageService = new ProjectPageService();
@@ -548,5 +550,14 @@ export class Page implements IPage {
       });
       throw error;
     });
+  };
+
+  /**
+   * @description duplicate the page
+   */
+  duplicate = async () => {
+    const { workspaceSlug, projectId } = this.store.router;
+    if (!workspaceSlug || !projectId || !this.id) return undefined;
+    await this.pageService.duplicate(workspaceSlug, projectId, this.id);
   };
 }

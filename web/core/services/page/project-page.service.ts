@@ -158,4 +158,12 @@ export class ProjectPageService extends APIService {
         throw error;
       });
   }
+
+  async duplicate(workspaceSlug: string, projectId: string, pageId: string): Promise<TPage> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/duplicate/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }

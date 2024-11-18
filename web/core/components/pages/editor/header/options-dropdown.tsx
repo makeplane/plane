@@ -2,95 +2,52 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams, useRouter } from "next/navigation";
-import { ArchiveRestoreIcon, ArrowUpToLine, Clipboard, Copy, History, Link, Lock, LockOpen } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ArrowUpToLine, Clipboard, History } from "lucide-react";
 // document editor
 import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
 // ui
-import { ArchiveIcon, CustomMenu, TContextMenuItem, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
+import { TContextMenuItem, TOAST_TYPE, setToast, ToggleSwitch } from "@plane/ui";
 // components
-import { ExportPageModal } from "@/components/pages";
+import { ExportPageModal, PageActions, TPageActions } from "@/components/pages";
 // helpers
-import { copyTextToClipboard, copyUrlToClipboard } from "@/helpers/string.helper";
+import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
 import { usePageFilters } from "@/hooks/use-page-filters";
 import { useQueryParams } from "@/hooks/use-query-params";
-// plane web components
-import { PAGE_OPTIONS_DROPDOWN_EXTRA_OPTIONS } from "@/plane-web/components/pages";
 // store
 import { IPage } from "@/store/pages/page";
 
 type Props = {
   editorRef: EditorRefApi | EditorReadOnlyRefApi | null;
-  handleDuplicatePage: () => void;
   page: IPage;
 };
 
 export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
-  const { editorRef, handleDuplicatePage, page } = props;
+  const { editorRef, page } = props;
   // router
   const router = useRouter();
   // store values
-  const {
-    name,
-    archived_at,
-    is_locked,
-    id,
-    archive,
-    lock,
-    unlock,
-    canCurrentUserArchivePage,
-    canCurrentUserDuplicatePage,
-    canCurrentUserLockPage,
-    restore,
-  } = page;
+  const { name } = page;
   // states
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
-  // store hooks
-  const { workspaceSlug, projectId } = useParams();
   // page filters
   const { isFullWidth, handleFullWidth } = usePageFilters();
   // update query params
   const { updateQueryParams } = useQueryParams();
-
-  const handleArchivePage = async () =>
-    await archive().catch(() =>
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Page could not be archived. Please try again later.",
-      })
-    );
-
-  const handleRestorePage = async () =>
-    await restore().catch(() =>
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Page could not be restored. Please try again later.",
-      })
-    );
-
-  const handleLockPage = async () =>
-    await lock().catch(() =>
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Page could not be locked. Please try again later.",
-      })
-    );
-
-  const handleUnlockPage = async () =>
-    await unlock().catch(() =>
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Page could not be unlocked. Please try again later.",
-      })
-    );
-
   // menu items list
-  const MENU_ITEMS: TContextMenuItem[] = [
+  const EXTRA_MENU_OPTIONS: (TContextMenuItem & { key: TPageActions })[] = [
+    {
+      key: "full-screen",
+      action: () => handleFullWidth(!isFullWidth),
+      customContent: (
+        <>
+          Full width
+          <ToggleSwitch value={isFullWidth} onChange={() => {}} />
+        </>
+      ),
+      className: "flex items-center justify-between gap-2",
+    },
     {
       key: "copy-markdown",
       action: () => {
@@ -106,45 +63,6 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
       title: "Copy markdown",
       icon: Clipboard,
       shouldRender: true,
-    },
-    {
-      key: "copy-page-link",
-      action: () => {
-        const pageLink = projectId
-          ? `${workspaceSlug?.toString()}/projects/${projectId?.toString()}/pages/${id}`
-          : `${workspaceSlug?.toString()}/pages/${id}`;
-        copyUrlToClipboard(pageLink).then(() =>
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: "Success!",
-            message: "Page link copied to clipboard.",
-          })
-        );
-      },
-      title: "Copy page link",
-      icon: Link,
-      shouldRender: true,
-    },
-    {
-      key: "make-a-copy",
-      action: handleDuplicatePage,
-      title: "Make a copy",
-      icon: Copy,
-      shouldRender: canCurrentUserDuplicatePage,
-    },
-    {
-      key: "lock-unlock-page",
-      action: is_locked ? handleUnlockPage : handleLockPage,
-      title: is_locked ? "Unlock page" : "Lock page",
-      icon: is_locked ? LockOpen : Lock,
-      shouldRender: canCurrentUserLockPage,
-    },
-    {
-      key: "archive-restore-page",
-      action: archived_at ? handleRestorePage : handleArchivePage,
-      title: archived_at ? "Restore page" : "Archive page",
-      icon: archived_at ? ArchiveRestoreIcon : ArchiveIcon,
-      shouldRender: canCurrentUserArchivePage,
     },
     {
       key: "version-history",
@@ -167,12 +85,6 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
       shouldRender: true,
     },
   ];
-  // add extra options
-  PAGE_OPTIONS_DROPDOWN_EXTRA_OPTIONS.forEach((item) => {
-    const index = MENU_ITEMS.findIndex((i) => i.key === item.pushAfter);
-    if (index !== -1) MENU_ITEMS.splice(index + 1, 0, item);
-    else MENU_ITEMS.push(item);
-  });
 
   return (
     <>
@@ -182,24 +94,20 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
         onClose={() => setIsExportModalOpen(false)}
         pageTitle={name ?? ""}
       />
-      <CustomMenu maxHeight="lg" placement="bottom-start" verticalEllipsis closeOnSelect>
-        <CustomMenu.MenuItem
-          className="hidden md:flex w-full items-center justify-between gap-2"
-          onClick={() => handleFullWidth(!isFullWidth)}
-        >
-          Full width
-          <ToggleSwitch value={isFullWidth} onChange={() => {}} />
-        </CustomMenu.MenuItem>
-        {MENU_ITEMS.map((item) => {
-          if (!item.shouldRender) return null;
-          return (
-            <CustomMenu.MenuItem key={item.key} onClick={item.action} className="flex items-center gap-2">
-              {item.icon && <item.icon className="size-3" />}
-              {item.title}
-            </CustomMenu.MenuItem>
-          );
-        })}
-      </CustomMenu>
+      <PageActions
+        extraOptions={EXTRA_MENU_OPTIONS}
+        optionsOrder={[
+          "full-screen",
+          "copy-markdown",
+          "copy-link",
+          "make-a-copy",
+          "archive-restore",
+          "delete",
+          "version-history",
+          "export",
+        ]}
+        pageId={page.id ?? ""}
+      />
     </>
   );
 });

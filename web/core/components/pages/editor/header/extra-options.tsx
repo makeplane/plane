@@ -17,13 +17,12 @@ import { IPage } from "@/store/pages/page";
 
 type Props = {
   editorRef: React.RefObject<EditorRefApi>;
-  handleDuplicatePage: () => void;
   page: IPage;
   readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
 };
 
 export const PageExtraOptions: React.FC<Props> = observer((props) => {
-  const { editorRef, handleDuplicatePage, page, readOnlyEditorRef } = props;
+  const { editorRef, page, readOnlyEditorRef } = props;
   // derived values
   const {
     archived_at,
@@ -86,11 +85,7 @@ export const PageExtraOptions: React.FC<Props> = observer((props) => {
         />
       )}
       <PageInfoPopover editorRef={isContentEditable ? editorRef.current : readOnlyEditorRef.current} />
-      <PageOptionsDropdown
-        editorRef={isContentEditable ? editorRef.current : readOnlyEditorRef.current}
-        handleDuplicatePage={handleDuplicatePage}
-        page={page}
-      />
+      <PageOptionsDropdown editorRef={isContentEditable ? editorRef.current : readOnlyEditorRef.current} page={page} />
     </div>
   );
 });
