@@ -32,7 +32,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.20.0",
     "express-ws": "^5.0.2",
-    "helmet": "^7.1.0",
+    "helmet": "^8.0.0",
     "ioredis": "^5.4.1",
     "lodash": "^4.17.21",
     "morgan": "^1.10.0",
