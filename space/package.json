@@ -17,7 +17,7 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@headlessui/react": "^1.7.13",
-    "@mui/material": "^5.14.1",
+    "@mui/material": "^6.1.7",
     "@plane/constants": "*",
     "@plane/editor": "*",
     "@plane/types": "*",
