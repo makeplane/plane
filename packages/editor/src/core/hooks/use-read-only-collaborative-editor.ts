@@ -22,7 +22,6 @@ export const useReadOnlyCollaborativeEditor = (props: TReadOnlyCollaborativeEdit
     realtimeConfig,
     serverHandler,
     user,
-    socket,
   } = props;
   // states
   const [hasServerConnectionFailed, setHasServerConnectionFailed] = useState(false);
@@ -31,8 +30,8 @@ export const useReadOnlyCollaborativeEditor = (props: TReadOnlyCollaborativeEdit
   const provider = useMemo(
     () =>
       new HocuspocusProvider({
-        websocketProvider: socket,
         name: id,
+        url: realtimeConfig.url,
         token: JSON.stringify(user),
         parameters: realtimeConfig.queryParams,
         onAuthenticationFailed: () => {

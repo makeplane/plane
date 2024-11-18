@@ -29,7 +29,6 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     serverHandler,
     tabIndex,
     user,
-    socket,
   } = props;
   // states
   const [hasServerConnectionFailed, setHasServerConnectionFailed] = useState(false);
@@ -38,7 +37,6 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
   const provider = useMemo(
     () =>
       new HocuspocusProvider({
-        websocketProvider: socket,
         name: id,
         parameters: realtimeConfig.queryParams,
         // using user id as a token to verify the user on the server

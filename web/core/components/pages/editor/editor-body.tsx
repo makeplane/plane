@@ -161,11 +161,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
 
   if (pageId === undefined || !realtimeConfig) return <PageContentLoader />;
 
-  const socket = useMemo(() => getSocketConnection(realtimeConfig, currentUser?.id), [realtimeConfig]);
-
-  if (!socket) return <PageContentLoader />;
-  // console.log("socket connection", socket);
-
   return (
     <div className="flex items-center h-full w-full overflow-y-auto">
       <Row
@@ -196,7 +191,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
           </div>
           {isContentEditable ? (
             <CollaborativeDocumentEditorWithRef
-              socket={socket}
               id={pageId}
               fileHandler={getEditorFileHandlers({
                 maxFileSize,
@@ -238,7 +232,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             />
           ) : (
             <CollaborativeDocumentReadOnlyEditorWithRef
-              socket={socket}
               id={pageId}
               ref={readOnlyEditorRef}
               fileHandler={getReadOnlyEditorFileHandlers({
