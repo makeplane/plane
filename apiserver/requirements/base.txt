@@ -23,7 +23,7 @@ whitenoise==6.6.0
 # fake data
 faker==25.0.0
 # filters
-django-filter==24.2
+django-filter==24.3
 # json model
 jsonmodels==2.7.0
 # sentry
