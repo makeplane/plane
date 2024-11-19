@@ -3,7 +3,7 @@ from celery import shared_task
 from opentelemetry import trace
 
 # Module imports
-from plane.license.models import Instance
+from plane.license.models import Instance, InstanceAdmin
 from plane.db.models import (
     User,
     Workspace,
@@ -25,6 +25,7 @@ def instance_traces():
 
     # Check if the instance is registered
     instance = Instance.objects.first()
+    instance_admin = InstanceAdmin.objects.first()
 
     # If instance is None then return
     if instance is None:
@@ -72,6 +73,13 @@ def instance_traces():
             span.set_attribute("cycle_issue_count", cycle_issue_count)
             span.set_attribute("module_issue_count", module_issue_count)
             span.set_attribute("page_count", page_count)
+
+            if instance_admin:
+                span.set_attribute("admin_email", instance_admin.user.email)
+                span.set_attribute(
+                    "admin_name",
+                    f"{instance_admin.user.first_name} {instance_admin.user.last_name}",
+                )
 
         # Workspace details
         for workspace in Workspace.objects.all():
