@@ -5,8 +5,6 @@ export const DocumentRealtimeEvents = {
   Unlock: { client: "unlocked", server: "Unlock" },
   Archive: { client: "archived", server: "Archive" },
   Unarchive: { client: "unarchived", server: "Unarchive" },
-  Favorite: { client: "favorited", server: "Favorite" },
-  RemoveFavorite: { client: "removed-favorite", server: "RemoveFavorite" },
 } as const;
 
 export type DocumentEventKey = keyof typeof DocumentRealtimeEvents;
