@@ -109,7 +109,7 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
                 <span className="text-xs">Contact sales</span>
               </a>
             </CustomMenu.MenuItem>
-            <div className="my-1 border-t border-custom-border-200" />(
+            <div className="my-1 border-t border-custom-border-200" />
             <CustomMenu.MenuItem>
               <div
                 onClick={(e) => {
@@ -125,7 +125,6 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
                 />
               </div>
             </CustomMenu.MenuItem>
-            )
             <CustomMenu.MenuItem>
               <button
                 type="button"
