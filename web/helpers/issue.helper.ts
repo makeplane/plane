@@ -181,7 +181,7 @@ export const getIssueBlocksStructure = (block: TIssue): IGanttBlock => ({
 });
 
 export function getChangedIssuefields(formData: Partial<TIssue>, dirtyFields: { [key: string]: boolean | undefined }) {
-  const changedFields: Partial<TIssue> = {};
+  const changedFields = {} as any;
 
   const dirtyFieldKeys = Object.keys(dirtyFields) as (keyof TIssue)[];
   for (const dirtyField of dirtyFieldKeys) {
@@ -190,7 +190,7 @@ export function getChangedIssuefields(formData: Partial<TIssue>, dirtyFields: { 
     }
   }
 
-  return changedFields;
+  return changedFields as Partial<TIssue>;
 }
 
 export const formatTextList = (TextArray: string[]): string => {

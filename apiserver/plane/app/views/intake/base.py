@@ -37,10 +37,10 @@ from plane.app.serializers import (
 )
 from plane.utils.issue_filters import issue_filters
 from plane.bgtasks.issue_activities_task import issue_activity
+from plane.ee.models import IntakeSetting
 
 
 class IntakeViewSet(BaseViewSet):
-
     serializer_class = IntakeSerializer
     model = Intake
 
@@ -89,7 +89,6 @@ class IntakeViewSet(BaseViewSet):
 
 
 class IntakeIssueViewSet(BaseViewSet):
-
     serializer_class = IntakeIssueSerializer
     model = IntakeIssue
 
@@ -245,6 +244,25 @@ class IntakeIssueViewSet(BaseViewSet):
         if not request.data.get("issue", {}).get("name", False):
             return Response(
                 {"error": "Name is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        intake = Intake.objects.filter(
+            workspace__slug=slug, project_id=project_id
+        ).first()
+
+        intake_settings = IntakeSetting.objects.filter(
+            workspace__slug=slug,
+            project_id=project_id,
+            intake=intake,
+        ).first()
+
+        if (
+            intake_settings is not None
+            and not intake_settings.is_in_app_enabled
+        ):
+            return Response(
+                {"error": "Creating intake issues is disabled"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

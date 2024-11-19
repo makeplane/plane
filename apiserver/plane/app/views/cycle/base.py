@@ -32,6 +32,7 @@ from plane.app.permissions import allow_permission, ROLE
 from plane.app.serializers import (
     CycleSerializer,
     CycleUserPropertiesSerializer,
+    EntityProgressSerializer,
     CycleWriteSerializer,
 )
 from plane.bgtasks.issue_activities_task import issue_activity
@@ -45,9 +46,16 @@ from plane.db.models import (
     User,
     Project,
     ProjectMember,
+    Workspace,
 )
+from plane.ee.models import EntityIssueStateActivity, EntityProgress
 from plane.utils.analytics_plot import burndown_plot
 from plane.bgtasks.recent_visited_task import recent_visited_task
+from plane.bgtasks.entity_issue_state_progress_task import (
+    track_entity_issue_state_progress,
+)
+from plane.payment.flags.flag import FeatureFlag
+from plane.payment.flags.flag_decorator import check_feature_flag
 
 # Module imports
 from .. import BaseAPIView, BaseViewSet
@@ -1017,9 +1025,68 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                 }
             )
 
-        cycle_issues = CycleIssue.objects.bulk_update(
+        _ = CycleIssue.objects.bulk_update(
             updated_cycles, ["cycle_id"], batch_size=100
         )
+
+        estimate_type = Project.objects.filter(
+            workspace__slug=slug,
+            pk=project_id,
+            estimate__isnull=False,
+            estimate__type="points",
+        ).exists()
+
+        if old_cycle.first().version == 2:
+            EntityIssueStateActivity.objects.bulk_create(
+                [
+                    EntityIssueStateActivity(
+                        cycle_id=cycle_id,
+                        state_id=cycle_issue.issue.state_id,
+                        issue_id=cycle_issue.issue_id,
+                        state_group=cycle_issue.issue.state.group,
+                        action="REMOVED",
+                        entity_type="CYCLE",
+                        estimate_point_id=cycle_issue.issue.estimate_point_id,
+                        estimate_value=(
+                            cycle_issue.issue.estimate_point.value
+                            if estimate_type
+                            and cycle_issue.issue.estimate_point
+                            else None
+                        ),
+                        workspace_id=cycle_issue.workspace_id,
+                        created_by_id=request.user.id,
+                        updated_by_id=request.user.id,
+                    )
+                    for cycle_issue in cycle_issues
+                ],
+                batch_size=10,
+            )
+
+        if new_cycle.version == 2:
+            EntityIssueStateActivity.objects.bulk_create(
+                [
+                    EntityIssueStateActivity(
+                        cycle_id=new_cycle_id,
+                        state_id=cycle_issue.issue.state_id,
+                        issue_id=cycle_issue.issue_id,
+                        state_group=cycle_issue.issue.state.group,
+                        action="ADDED",
+                        entity_type="CYCLE",
+                        estimate_point_id=cycle_issue.issue.estimate_point_id,
+                        estimate_value=(
+                            cycle_issue.issue.estimate_point.value
+                            if estimate_type
+                            and cycle_issue.issue.estimate_point
+                            else None
+                        ),
+                        workspace_id=cycle_issue.workspace_id,
+                        created_by_id=request.user.id,
+                        updated_by_id=request.user.id,
+                    )
+                    for cycle_issue in cycle_issues
+                ],
+                batch_size=10,
+            )
 
         # Capture Issue Activity
         issue_activity.delay(
@@ -1480,5 +1547,33 @@ class CycleAnalyticsEndpoint(BaseAPIView):
                 "labels": label_distribution,
                 "completion_chart": completion_chart,
             },
+            status=status.HTTP_200_OK,
+        )
+
+
+class CycleIssueStateAnalyticsEndpoint(BaseAPIView):
+
+    @check_feature_flag(FeatureFlag.ACTIVE_CYCLE_PRO)
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def get(self, request, slug, project_id, cycle_id):
+        workspace = Workspace.objects.get(slug=slug)
+        cycle_state_progress = EntityProgress.objects.filter(
+            cycle_id=cycle_id,
+            entity_type="CYCLE",
+            workspace__slug=slug,
+        ).order_by("progress_date")
+
+        # Generate today's data
+        today_data = track_entity_issue_state_progress(
+            current_date=timezone.now(),
+            cycles=[(cycle_id, workspace.id)],
+            save=False,
+        )
+
+        # Combine existing data with today's data
+        cycle_state_progress = list(cycle_state_progress) + today_data
+
+        return Response(
+            EntityProgressSerializer(cycle_state_progress, many=True).data,
             status=status.HTTP_200_OK,
         )

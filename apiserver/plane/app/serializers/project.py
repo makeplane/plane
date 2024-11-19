@@ -13,7 +13,6 @@ from plane.db.models import (
     ProjectMember,
     ProjectMemberInvite,
     ProjectIdentifier,
-    DeployBoard,
     ProjectPublicMember,
 )
 
@@ -120,6 +119,12 @@ class ProjectListSerializer(DynamicBaseSerializer):
     anchor = serializers.CharField(read_only=True)
     members = serializers.SerializerMethodField()
     cover_image_url = serializers.CharField(read_only=True)
+    # EE: project_grouping starts
+    state_id = serializers.UUIDField(read_only=True)
+    priority = serializers.CharField(read_only=True)
+    start_date = serializers.DateTimeField(read_only=True)
+    target_date = serializers.DateTimeField(read_only=True)
+    # EE: project_grouping ends
     inbox_view = serializers.BooleanField(read_only=True, source="intake_view")
 
     def get_members(self, obj):
@@ -210,22 +215,6 @@ class ProjectMemberLiteSerializer(BaseSerializer):
         model = ProjectMember
         fields = ["member", "id", "is_subscribed"]
         read_only_fields = fields
-
-
-class DeployBoardSerializer(BaseSerializer):
-    project_details = ProjectLiteSerializer(read_only=True, source="project")
-    workspace_detail = WorkspaceLiteSerializer(
-        read_only=True, source="workspace"
-    )
-
-    class Meta:
-        model = DeployBoard
-        fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "anchor",
-        ]
 
 
 class ProjectPublicMemberSerializer(BaseSerializer):

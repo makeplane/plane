@@ -18,6 +18,7 @@ from plane.api.serializers import IntakeIssueSerializer, IssueSerializer
 from plane.app.permissions import ProjectLitePermission
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
+    IssueType,
     Intake,
     IntakeIssue,
     Issue,
@@ -25,6 +26,7 @@ from plane.db.models import (
     ProjectMember,
     State,
 )
+from plane.ee.models import IntakeSetting
 
 from .base import BaseAPIView
 
@@ -145,6 +147,11 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
             is_triage=True,
         )
 
+        # Get the issue type
+        issue_type = IssueType.objects.filter(
+            project_issue_types__project_id=project_id, is_default=True
+        ).first()
+
         # create an issue
         issue = Issue.objects.create(
             name=request.data.get("issue", {}).get("name"),
@@ -155,6 +162,7 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
             priority=request.data.get("issue", {}).get("priority", "none"),
             project_id=project_id,
             state=state,
+            type=issue_type,
         )
 
         # create an intake issue
@@ -189,12 +197,28 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
             pk=project_id,
         )
 
+
         # Intake view
         if intake is None and not project.intake_view:
             return Response(
                 {
                     "error": "Intake is not enabled for this project enable it through the project's api"
                 },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        intake_settings = IntakeSetting.objects.filter(
+            workspace__slug=slug,
+            project_id=project_id,
+            intake=intake,
+        ).first()
+
+        if (
+            intake_settings is not None
+            and not intake_settings.is_in_app_enabled
+        ):
+            return Response(
+                {"error": "Creating intake issues is disabled"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

@@ -76,7 +76,7 @@ export class UserSettingsStore implements IUserSettingsStore {
         await persistence.clearStorage();
       } else if (workspaceSlug) {
         await persistence.initialize(workspaceSlug);
-        persistence.syncWorkspace();
+        await persistence.syncWorkspace();
         projectId && persistence.syncIssues(projectId);
       }
     } catch (e) {
