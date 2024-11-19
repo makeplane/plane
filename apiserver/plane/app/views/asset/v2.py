@@ -151,7 +151,6 @@ class UserAssetsV2Endpoint(BaseAPIView):
             "image/png",
             "image/webp",
             "image/jpg",
-            "image/gif",
         ]
         if type not in allowed_types:
             return Response(
@@ -393,7 +392,13 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             )
 
         # Check if the file type is allowed
-        allowed_types = ["image/jpeg", "image/png", "image/webp", "image/jpg"]
+        allowed_types = [
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+            "image/jpg",
+            "image/gif",
+        ]
         if type not in allowed_types:
             return Response(
                 {
