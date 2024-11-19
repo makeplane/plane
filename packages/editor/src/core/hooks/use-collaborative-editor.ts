@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import Collaboration from "@tiptap/extension-collaboration";
 import { IndexeddbPersistence } from "y-indexeddb";
@@ -66,7 +66,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     }
   }, [id, provider]);
 
-  // destroy and disconnect connection on unmount
+  // destroy and disconnect all providers connection on unmount
   useEffect(
     () => () => {
       provider?.destroy();

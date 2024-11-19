@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
 import {
@@ -16,9 +16,9 @@ import {
 } from "lucide-react";
 // document editor
 import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
-import { TDocumentEventsClient } from "@plane/editor/lib";
+import { DocumentRealtimeEvents, TDocumentEventsClient, getServerEventName } from "@plane/editor/lib";
 // ui
-import { ArchiveIcon, CustomMenu, ISvgIcons, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
+import { ArchiveIcon, CustomMenu, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 // components
 import { ExportPageModal } from "@/components/pages";
 // helpers
@@ -33,6 +33,11 @@ type Props = {
   editorRef: EditorRefApi | EditorReadOnlyRefApi | null;
   handleDuplicatePage: () => void;
   page: IPage;
+};
+
+type ActionDetails = {
+  action: () => Promise<void>;
+  errorMessage: string;
 };
 
 export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
@@ -65,95 +70,53 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   // update query params
   const { updateQueryParams } = useQueryParams();
 
-  const handleArchivePage = useCallback(
-    async (isPerformedByCurrentUser: boolean = true) => {
-      await archive()
-        .then(() => {
-          if (isPerformedByCurrentUser) {
-            setCurrentUserAction("archived");
-          }
-        })
-        .catch(() => {
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Page could not be archived. Please try again later.",
-          });
+  const EVENT_ACTION_DETAILS_MAP: Record<TDocumentEventsClient, ActionDetails> = useMemo(
+    () => ({
+      [DocumentRealtimeEvents.Lock.client]: {
+        action: lock,
+        errorMessage: "Page could not be locked. Please try again later.",
+      },
+      [DocumentRealtimeEvents.Unlock.client]: {
+        action: unlock,
+        errorMessage: "Page could not be unlocked. Please try again later.",
+      },
+      [DocumentRealtimeEvents.Archive.client]: {
+        action: archive,
+        errorMessage: "Page could not be archived. Please try again later.",
+      },
+      [DocumentRealtimeEvents.Unarchive.client]: {
+        action: restore,
+        errorMessage: "Page could not be restored. Please try again later.",
+      },
+    }),
+    [lock, unlock, archive, restore]
+  );
+
+  const handlePageAction = useCallback(
+    async (actionDetails: ActionDetails, event: TDocumentEventsClient, isPerformedByCurrentUser: boolean = true) => {
+      try {
+        await actionDetails.action();
+        if (isPerformedByCurrentUser) {
+          setCurrentUserAction(event);
+        }
+      } catch {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: actionDetails.errorMessage,
         });
+      }
     },
-    [archive]
+    []
   );
 
-  const handleRestorePage = useCallback(
-    async (isPerformedByCurrentUser: boolean = true) => {
-      await restore()
-        .then(() => {
-          if (isPerformedByCurrentUser) {
-            setCurrentUserAction("unarchived");
-          }
-        })
-        .catch(() =>
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Page could not be restored. Please try again later.",
-          })
-        );
-    },
-    [restore]
-  );
-
-  const handleLockPage = useCallback(
-    async (isPerformedByCurrentUser: boolean = true) => {
-      await lock()
-        .then(() => {
-          if (isPerformedByCurrentUser) {
-            setCurrentUserAction("locked");
-          }
-        })
-        .catch(() =>
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Page could not be locked. Please try again later.",
-          })
-        );
-    },
-    [lock]
-  );
-
-  const handleUnlockPage = useCallback(
-    async (isPerformedByCurrentUser: boolean = true) => {
-      await unlock()
-        .then(() => {
-          if (isPerformedByCurrentUser) {
-            setCurrentUserAction("unlocked");
-          }
-        })
-        .catch(() =>
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Page could not be unlocked. Please try again later.",
-          })
-        );
-    },
-    [unlock]
-  );
-
-  // this is for the emitting real time updates for the current user's action
+  // sending the current user action to the server
   useEffect(() => {
-    if (currentUserAction === "archived") {
-      editorRef?.emitRealTimeUpdate("Archive");
-    }
-    if (currentUserAction === "unarchived") {
-      editorRef?.emitRealTimeUpdate("Unarchive");
-    }
-    if (currentUserAction === "locked") {
-      editorRef?.emitRealTimeUpdate("Lock");
-    }
-    if (currentUserAction === "unlocked") {
-      editorRef?.emitRealTimeUpdate("Unlock");
+    if (currentUserAction) {
+      const serverEventName = getServerEventName(currentUserAction);
+      if (serverEventName) {
+        editorRef?.emitRealTimeUpdate(serverEventName);
+      }
     }
   }, [currentUserAction, editorRef]);
 
@@ -168,19 +131,9 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
         return;
       }
 
-      switch (message.payload) {
-        case "locked":
-          handleLockPage(false);
-          break;
-        case "unlocked":
-          handleUnlockPage(false);
-          break;
-        case "archived":
-          handleArchivePage(false);
-          break;
-        case "unarchived":
-          handleRestorePage(false);
-          break;
+      const eventActions = EVENT_ACTION_DETAILS_MAP[message.payload];
+      if (eventActions) {
+        handlePageAction(eventActions, message.payload, false);
       }
     };
 
@@ -189,14 +142,14 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     return () => {
       provider?.off("stateless", handleStatelessMessage);
     };
-  }, [editorRef, currentUserAction, handleArchivePage, handleRestorePage, handleLockPage, handleUnlockPage]);
+  }, [editorRef, currentUserAction, handlePageAction, EVENT_ACTION_DETAILS_MAP]);
 
   // menu items list
   const MENU_ITEMS: {
     key: string;
     action: () => void;
     label: string;
-    icon: LucideIcon | React.FC<ISvgIcons>;
+    icon: LucideIcon;
     shouldRender: boolean;
   }[] = [
     {
@@ -242,14 +195,32 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     },
     {
       key: "lock-unlock-page",
-      action: is_locked ? handleUnlockPage : handleLockPage,
+      // action: is_locked ? handleUnlockPage : handleLockPage,
+      action: is_locked
+        ? () => {
+            const clientAction = DocumentRealtimeEvents["Unlock"].client;
+            handlePageAction(EVENT_ACTION_DETAILS_MAP[clientAction], clientAction, true);
+          }
+        : () => {
+            const clientAction = DocumentRealtimeEvents["Lock"].client;
+            handlePageAction(EVENT_ACTION_DETAILS_MAP[clientAction], clientAction, true);
+          },
       label: is_locked ? "Unlock page" : "Lock page",
       icon: is_locked ? LockOpen : Lock,
       shouldRender: canCurrentUserLockPage,
     },
     {
       key: "archive-restore-page",
-      action: archived_at ? handleRestorePage : handleArchivePage,
+      // action: archived_at ? handleRestorePage : handleArchivePage,
+      action: archived_at
+        ? () => {
+            const clientAction = DocumentRealtimeEvents["Unarchive"].client;
+            handlePageAction(EVENT_ACTION_DETAILS_MAP[clientAction], clientAction, true);
+          }
+        : () => {
+            const clientAction = DocumentRealtimeEvents["Archive"].client;
+            handlePageAction(EVENT_ACTION_DETAILS_MAP[clientAction], clientAction, true);
+          },
       label: archived_at ? "Restore page" : "Archive page",
       icon: archived_at ? ArchiveRestoreIcon : ArchiveIcon,
       shouldRender: canCurrentUserArchivePage,

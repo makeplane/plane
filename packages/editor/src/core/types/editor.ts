@@ -14,7 +14,8 @@ import {
   TServerHandler,
 } from "@/types";
 import { TTextAlign } from "@/extensions";
-import { HocuspocusProviderWebsocket } from "@hocuspocus/provider";
+import { HocuspocusProvider, HocuspocusProviderWebsocket } from "@hocuspocus/provider";
+import { TDocumentEventsServer } from "src/lib";
 
 export type TEditorCommands =
   | "text"
@@ -84,6 +85,8 @@ export type EditorReadOnlyRefApi = {
   };
   onHeadingChange: (callback: (headings: IMarking[]) => void) => () => void;
   getHeadings: () => IMarking[];
+  emitRealTimeUpdate: (action: TDocumentEventsServer) => void;
+  listenToRealTimeUpdate: () => HocuspocusProvider;
 };
 
 export interface EditorRefApi extends EditorReadOnlyRefApi {

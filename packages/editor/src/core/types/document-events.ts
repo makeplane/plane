@@ -1,4 +1,4 @@
-import { DocumentEventResponses } from "@/helpers/document-events";
+import { DocumentEventKey, DocumentRealtimeEvents } from "@/helpers/document-events";
 
-export type TDocumentEventsServer = keyof typeof DocumentEventResponses;
-export type TDocumentEventsClient = `${DocumentEventResponses}`;
+export type TDocumentEventsClient = (typeof DocumentRealtimeEvents)[DocumentEventKey]["client"];
+export type TDocumentEventsServer = (typeof DocumentRealtimeEvents)[DocumentEventKey]["server"];

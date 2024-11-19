@@ -6,6 +6,7 @@ import { handleAuthentication } from "@/core/lib/authentication.js";
 import { getExtensions } from "@/core/extensions/index.js";
 import {
   DocumentEventResponses,
+  DocumentRealtimeEvents,
   TDocumentEventsServer,
 } from "@plane/editor/lib";
 // editor types
@@ -60,7 +61,8 @@ export const getHocusPocusServer = async () => {
       }
     },
     async onStateless({ payload, document }) {
-      const response = DocumentEventResponses[payload as TDocumentEventsServer];
+      const response =
+        DocumentRealtimeEvents[payload as TDocumentEventsServer].client;
       if (response) {
         document.broadcastStateless(response);
       }
