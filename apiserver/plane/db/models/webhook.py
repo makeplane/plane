@@ -39,7 +39,8 @@ class Webhook(BaseModel):
         validators=[
             validate_schema,
             validate_domain,
-        ]
+        ],
+        max_length=1024,
     )
     is_active = models.BooleanField(default=True)
     secret_key = models.CharField(max_length=255, default=generate_token)

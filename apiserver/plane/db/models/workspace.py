@@ -262,13 +262,6 @@ class WorkspaceMemberInvite(BaseModel):
 class Team(BaseModel):
     name = models.CharField(max_length=255, verbose_name="Team Name")
     description = models.TextField(verbose_name="Team Description", blank=True)
-    members = models.ManyToManyField(
-        settings.AUTH_USER_MODEL,
-        blank=True,
-        related_name="members",
-        through="TeamMember",
-        through_fields=("team", "member"),
-    )
     workspace = models.ForeignKey(
         Workspace, on_delete=models.CASCADE, related_name="workspace_team"
     )
@@ -290,37 +283,6 @@ class Team(BaseModel):
         verbose_name = "Team"
         verbose_name_plural = "Teams"
         db_table = "teams"
-        ordering = ("-created_at",)
-
-
-class TeamMember(BaseModel):
-    workspace = models.ForeignKey(
-        Workspace, on_delete=models.CASCADE, related_name="team_member"
-    )
-    team = models.ForeignKey(
-        Team, on_delete=models.CASCADE, related_name="team_member"
-    )
-    member = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="team_member",
-    )
-
-    def __str__(self):
-        return self.team.name
-
-    class Meta:
-        unique_together = ["team", "member", "deleted_at"]
-        constraints = [
-            models.UniqueConstraint(
-                fields=["team", "member"],
-                condition=models.Q(deleted_at__isnull=True),
-                name="team_member_unique_team_member_when_deleted_at_null",
-            )
-        ]
-        verbose_name = "Team Member"
-        verbose_name_plural = "Team Members"
-        db_table = "team_members"
         ordering = ("-created_at",)
 
 
