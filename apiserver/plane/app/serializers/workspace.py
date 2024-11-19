@@ -6,7 +6,6 @@ from .base import BaseSerializer, DynamicBaseSerializer
 from .user import UserLiteSerializer, UserAdminLiteSerializer
 
 from plane.db.models import (
-    User,
     Workspace,
     WorkspaceMember,
     WorkspaceMemberInvite,

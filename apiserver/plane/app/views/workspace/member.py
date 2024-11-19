@@ -1,6 +1,5 @@
 # Django imports
 from django.db.models import (
-    CharField,
     Count,
     Q,
     OuterRef,
@@ -8,14 +7,12 @@ from django.db.models import (
     IntegerField,
 )
 from django.db.models.functions import Coalesce
-from django.db.models.functions import Cast
 
 # Third party modules
 from rest_framework import status
 from rest_framework.response import Response
 
 from plane.app.permissions import (
-    WorkSpaceAdminPermission,
     WorkspaceEntityPermission,
     allow_permission,
     ROLE,
@@ -24,7 +21,6 @@ from plane.app.permissions import (
 # Module imports
 from plane.app.serializers import (
     ProjectMemberRoleSerializer,
-    UserLiteSerializer,
     WorkspaceMemberAdminSerializer,
     WorkspaceMemberMeSerializer,
     WorkSpaceMemberSerializer,
@@ -33,8 +29,6 @@ from plane.app.views.base import BaseAPIView
 from plane.db.models import (
     Project,
     ProjectMember,
-    User,
-    Workspace,
     WorkspaceMember,
     DraftIssue,
 )

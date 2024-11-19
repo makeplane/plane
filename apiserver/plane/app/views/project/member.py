@@ -11,7 +11,6 @@ from plane.app.serializers import (
 )
 
 from plane.app.permissions import (
-    ProjectBasePermission,
     ProjectMemberPermission,
     ProjectLitePermission,
     WorkspaceUserPermission,
@@ -20,7 +19,6 @@ from plane.app.permissions import (
 from plane.db.models import (
     Project,
     ProjectMember,
-    Workspace,
     IssueUserProperty,
     WorkspaceMember,
 )
