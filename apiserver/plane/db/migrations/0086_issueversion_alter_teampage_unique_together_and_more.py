@@ -242,4 +242,14 @@ class Migration(migrations.Migration):
         migrations.DeleteModel(
             name="TeamPage",
         ),
+        migrations.AddField(
+            model_name="fileasset",
+            name="entity_identifier",
+            field=models.CharField(blank=True, max_length=255, null=True),
+        ),
+        migrations.AlterField(
+            model_name="fileasset",
+            name="entity_type",
+            field=models.CharField(blank=True, max_length=255, null=True),
+        ),
     ]

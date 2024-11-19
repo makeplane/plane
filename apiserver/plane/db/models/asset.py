@@ -88,7 +88,11 @@ class FileAsset(BaseModel):
     )
     entity_type = models.CharField(
         max_length=255,
-        choices=EntityTypeContext.choices,
+        null=True,
+        blank=True,
+    )
+    entity_identifier = models.CharField(
+        max_length=255,
         null=True,
         blank=True,
     )
