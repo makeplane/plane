@@ -44,7 +44,6 @@ from plane.db.models import (
     WorkspaceTheme,
 )
 from plane.app.permissions import ROLE, allow_permission
-from plane.utils.cache import cache_response, invalidate_cache
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
 from django.views.decorators.vary import vary_on_cookie
@@ -99,9 +98,6 @@ class WorkSpaceViewSet(BaseViewSet):
             .select_related("owner")
         )
 
-    @invalidate_cache(path="/api/workspaces/", user=False)
-    @invalidate_cache(path="/api/users/me/workspaces/")
-    @invalidate_cache(path="/api/instances/", user=False)
     def create(self, request):
         try:
             serializer = WorkSpaceSerializer(data=request.data)
@@ -147,7 +143,6 @@ class WorkSpaceViewSet(BaseViewSet):
                     status=status.HTTP_410_GONE,
                 )
 
-    @cache_response(60 * 60 * 2)
     @allow_permission(
         [
             ROLE.ADMIN,
@@ -159,8 +154,6 @@ class WorkSpaceViewSet(BaseViewSet):
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
-    @invalidate_cache(path="/api/workspaces/", user=False)
-    @invalidate_cache(path="/api/users/me/workspaces/")
     @allow_permission(
         [
             ROLE.ADMIN,
@@ -170,13 +163,6 @@ class WorkSpaceViewSet(BaseViewSet):
     def partial_update(self, request, *args, **kwargs):
         return super().partial_update(request, *args, **kwargs)
 
-    @invalidate_cache(path="/api/workspaces/", user=False)
-    @invalidate_cache(
-        path="/api/users/me/workspaces/", multiple=True, user=False
-    )
-    @invalidate_cache(
-        path="/api/users/me/settings/", multiple=True, user=False
-    )
     @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     def destroy(self, request, *args, **kwargs):
         return super().destroy(request, *args, **kwargs)
@@ -190,7 +176,6 @@ class UserWorkSpacesEndpoint(BaseAPIView):
         "owner",
     ]
 
-    @cache_response(60 * 60 * 2)
     @method_decorator(cache_control(private=True, max_age=12))
     @method_decorator(vary_on_cookie)
     def get(self, request):
