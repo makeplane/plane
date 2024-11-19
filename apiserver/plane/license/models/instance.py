@@ -11,8 +11,8 @@ from plane.db.models import BaseModel
 ROLE_CHOICES = ((20, "Admin"),)
 
 
-class EditionTypes(Enum):
-    PLANE_CE = "plane-ce"
+class InstanceEdition(Enum):
+    PLANE_COMMUNITY = "PLANE_COMMUNITY"
 
 
 class Instance(BaseModel):
@@ -23,7 +23,7 @@ class Instance(BaseModel):
     current_version = models.CharField(max_length=255)
     latest_version = models.CharField(max_length=255, null=True, blank=True)
     edition = models.CharField(
-        max_length=255, default=EditionTypes.PLANE_CE.value
+        max_length=255, default=InstanceEdition.PLANE_COMMUNITY.value
     )
     domain = models.TextField(blank=True)
     # Instance specifics
