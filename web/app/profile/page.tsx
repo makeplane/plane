@@ -70,11 +70,15 @@ const ProfileSettingsPage = observer(() => {
       first_name: formData.first_name,
       last_name: formData.last_name,
       avatar_url: formData.avatar_url,
-      cover_image: formData.cover_image_url,
       role: formData.role,
       display_name: formData?.display_name,
       user_timezone: formData.user_timezone,
     };
+    // if unsplash or a pre-defined image is uploaded, delete the old uploaded asset
+    if (formData.cover_image_url?.startsWith("http")) {
+      payload.cover_image = formData.cover_image_url;
+      payload.cover_image_asset = null;
+    }
 
     const updateCurrentUserDetail = updateCurrentUser(payload).finally(() => setIsLoading(false));
     setPromiseToast(updateCurrentUserDetail, {

@@ -144,10 +144,15 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       network: formData.network,
       identifier: formData.identifier,
       description: formData.description,
-      cover_image: formData.cover_image_url,
+
       logo_props: formData.logo_props,
       // timezone: formData.timezone,
     };
+    // if unsplash or a pre-defined image is uploaded, delete the old uploaded asset
+    if (formData.cover_image_url?.startsWith("http")) {
+      payload.cover_image = formData.cover_image_url;
+      payload.cover_image_asset = null;
+    }
 
     if (project.identifier !== formData.identifier)
       await projectService
