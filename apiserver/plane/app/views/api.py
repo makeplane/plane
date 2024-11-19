@@ -92,6 +92,7 @@ class ServiceApiTokenEndpoint(BaseAPIView):
         api_token = APIToken.objects.filter(
             workspace=workspace,
             is_service=True,
+            user=request.user,
         ).first()
 
         if api_token:
@@ -119,4 +120,3 @@ class ServiceApiTokenEndpoint(BaseAPIView):
                 },
                 status=status.HTTP_201_CREATED,
             )
-
