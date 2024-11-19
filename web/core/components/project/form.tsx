@@ -144,7 +144,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       network: formData.network,
       identifier: formData.identifier,
       description: formData.description,
-      cover_image_url: formData.cover_image_url,
+      cover_image: formData.cover_image_url,
       logo_props: formData.logo_props,
       // timezone: formData.timezone,
     };

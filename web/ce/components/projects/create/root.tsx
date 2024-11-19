@@ -73,6 +73,7 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
   const onSubmit = async (formData: Partial<TProject>) => {
     // Upper case identifier
     formData.identifier = formData.identifier?.toUpperCase();
+    formData.cover_image = formData.cover_image_url;
     const coverImage = formData.cover_image_url;
 
     return createProject(workspaceSlug.toString(), formData)

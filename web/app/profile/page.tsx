@@ -70,7 +70,7 @@ const ProfileSettingsPage = observer(() => {
       first_name: formData.first_name,
       last_name: formData.last_name,
       avatar_url: formData.avatar_url,
-      cover_image_url: formData.cover_image_url,
+      cover_image: formData.cover_image_url,
       role: formData.role,
       display_name: formData?.display_name,
       user_timezone: formData.user_timezone,
