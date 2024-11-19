@@ -1,1 +1,7 @@
-from .instance import Instance, InstanceAdmin, InstanceConfiguration, ChangeLog
+from .instance import (
+    Instance,
+    InstanceAdmin,
+    InstanceConfiguration,
+    EditionTypes,
+    ChangeLog
+)
