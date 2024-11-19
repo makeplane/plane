@@ -33,7 +33,6 @@ from plane.db.models import (
     Session,
 )
 from plane.license.models import Instance, InstanceAdmin
-from plane.utils.cache import cache_response, invalidate_cache
 from plane.utils.paginator import BasePaginator
 from plane.authentication.utils.host import user_ip
 from plane.bgtasks.user_deactivation_email_task import user_deactivation_email
@@ -51,7 +50,6 @@ class UserEndpoint(BaseViewSet):
     def get_object(self):
         return self.request.user
 
-    @cache_response(60 * 60)
     @method_decorator(cache_control(private=True, max_age=12))
     @method_decorator(vary_on_cookie)
     def retrieve(self, request):
@@ -61,14 +59,12 @@ class UserEndpoint(BaseViewSet):
             status=status.HTTP_200_OK,
         )
 
-    @cache_response(60 * 60)
     @method_decorator(cache_control(private=True, max_age=12))
     @method_decorator(vary_on_cookie)
     def retrieve_user_settings(self, request):
         serialized_data = UserMeSettingsSerializer(request.user).data
         return Response(serialized_data, status=status.HTTP_200_OK)
 
-    @cache_response(60 * 60)
     def retrieve_instance_admin(self, request):
         instance = Instance.objects.first()
         is_admin = InstanceAdmin.objects.filter(
@@ -78,19 +74,9 @@ class UserEndpoint(BaseViewSet):
             {"is_instance_admin": is_admin}, status=status.HTTP_200_OK
         )
 
-    @invalidate_cache(
-        path="/api/users/me/",
-    )
-    @invalidate_cache(
-        path="/api/users/me/settings/",
-    )
     def partial_update(self, request, *args, **kwargs):
         return super().partial_update(request, *args, **kwargs)
 
-    @invalidate_cache(path="/api/users/me/")
-    @invalidate_cache(
-        path="/api/users/me/workspaces/", multiple=True, user=False
-    )
     def deactivate(self, request):
         # Check all workspace user is active
         user = self.get_object()
@@ -243,7 +229,6 @@ class UserSessionEndpoint(BaseAPIView):
 
 class UpdateUserOnBoardedEndpoint(BaseAPIView):
 
-    @invalidate_cache(path="/api/users/me/")
     def patch(self, request):
         profile = Profile.objects.get(user_id=request.user.id)
         profile.is_onboarded = request.data.get("is_onboarded", False)
@@ -255,7 +240,6 @@ class UpdateUserOnBoardedEndpoint(BaseAPIView):
 
 class UpdateUserTourCompletedEndpoint(BaseAPIView):
 
-    @invalidate_cache(path="/api/users/me/")
     def patch(self, request):
         profile = Profile.objects.get(user_id=request.user.id)
         profile.is_tour_completed = request.data.get(
@@ -313,7 +297,6 @@ class ProfileEndpoint(BaseAPIView):
         serializer = ProfileSerializer(profile)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @invalidate_cache("/api/users/me/settings/")
     def patch(self, request):
         profile = Profile.objects.get(user=request.user)
         serializer = ProfileSerializer(
