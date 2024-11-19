@@ -48,6 +48,7 @@ from plane.db.models import (
 )
 from plane.utils.analytics_plot import burndown_plot
 from plane.bgtasks.recent_visited_task import recent_visited_task
+from plane.utils.user_timezone_converter import user_timezone_converter
 
 # Module imports
 from .. import BaseAPIView, BaseViewSet
@@ -200,6 +201,15 @@ class CycleViewSet(BaseViewSet):
             )
 
             if data:
+                datetime_fields = [
+                    "created_at",
+                    "updated_at",
+                    "start_date",
+                    "end_date",
+                ]
+                data = user_timezone_converter(
+                    data, datetime_fields, request.user.user_timezone
+                )
                 return Response(data, status=status.HTTP_200_OK)
 
         data = queryset.values(
@@ -227,6 +237,15 @@ class CycleViewSet(BaseViewSet):
             "status",
             "version",
             "created_by",
+        )
+        datetime_fields = [
+            "created_at",
+            "updated_at",
+            "start_date",
+            "end_date",
+        ]
+        data = user_timezone_converter(
+            data, datetime_fields, request.user.user_timezone
         )
         return Response(data, status=status.HTTP_200_OK)
 
@@ -275,6 +294,15 @@ class CycleViewSet(BaseViewSet):
                         "created_by",
                     )
                     .first()
+                )
+                datetime_fields = [
+                    "created_at",
+                    "updated_at",
+                    "start_date",
+                    "end_date",
+                ]
+                cycle = user_timezone_converter(
+                    cycle, datetime_fields, request.user.user_timezone
                 )
 
                 # Send the model activity
@@ -365,6 +393,16 @@ class CycleViewSet(BaseViewSet):
                 "created_by",
             ).first()
 
+            datetime_fields = [
+                "created_at",
+                "updated_at",
+                "start_date",
+                "end_date",
+            ]
+            cycle = user_timezone_converter(
+                cycle, datetime_fields, request.user.user_timezone
+            )
+
             # Send the model activity
             model_activity.delay(
                 model_name="cycle",
@@ -439,6 +477,16 @@ class CycleViewSet(BaseViewSet):
                 {"error": "Cycle not found"},
                 status=status.HTTP_404_NOT_FOUND,
             )
+
+        datetime_fields = [
+            "created_at",
+            "updated_at",
+            "start_date",
+            "end_date",
+        ]
+        data = user_timezone_converter(
+            data, datetime_fields, request.user.user_timezone
+        )
 
         queryset = queryset.first()
 

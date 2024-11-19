@@ -69,6 +69,7 @@ class IntakeIssueDetailSerializer(BaseSerializer):
             "duplicate_issue_detail",
             "source",
             "issue",
+            "created_by",
         ]
         read_only_fields = [
             "project",
