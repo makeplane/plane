@@ -4,28 +4,32 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('license', '0004_changelog_deleted_at_instance_deleted_at_and_more'),
+        ("license", "0004_changelog_deleted_at_instance_deleted_at_and_more"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='instance',
-            old_name='product',
-            new_name='edition',
+            model_name="instance",
+            old_name="product",
+            new_name="edition",
         ),
         migrations.RemoveField(
-            model_name='instance',
-            name='license_key',
+            model_name="instance",
+            name="license_key",
         ),
         migrations.RemoveField(
-            model_name='instance',
-            name='user_count',
+            model_name="instance",
+            name="user_count",
         ),
         migrations.AddField(
-            model_name='instance',
-            name='is_test',
+            model_name="instance",
+            name="is_test",
             field=models.BooleanField(default=False),
+        ),
+        migrations.AlterField(
+            model_name="instance",
+            name="edition",
+            field=models.CharField(default="PLANE_COMMUNITY", max_length=255),
         ),
     ]
