@@ -28,7 +28,7 @@ export const IssueUser: FC<TIssueUser> = (props) => {
           href={`/${activity?.workspace_detail?.slug}/profile/${activity?.actor_detail?.id}`}
           className="hover:underline text-custom-text-100 font-medium"
         >
-          {activity.actor_detail?.display_name}
+          {activity.actor_detail?.display_name.includes("-intake") ? "Plane" : activity.actor_detail?.display_name}
         </Link>
       )}
     </>
