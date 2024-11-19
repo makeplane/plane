@@ -146,7 +146,12 @@ class UserAssetsV2Endpoint(BaseAPIView):
             )
 
         # Check if the file type is allowed
-        allowed_types = ["image/jpeg", "image/png", "image/webp", "image/jpg"]
+        allowed_types = [
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+            "image/jpg",
+        ]
         if type not in allowed_types:
             return Response(
                 {
@@ -317,7 +322,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
 
         # Project Cover
         elif entity_type == FileAsset.EntityTypeContext.PROJECT_COVER:
-            project = Project.objects.filter(id=asset.workspace_id).first()
+            project = Project.objects.filter(id=asset.project_id).first()
             if project is None:
                 return
             # Delete the previous cover image
@@ -387,7 +392,13 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             )
 
         # Check if the file type is allowed
-        allowed_types = ["image/jpeg", "image/png", "image/webp", "image/jpg"]
+        allowed_types = [
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+            "image/jpg",
+            "image/gif",
+        ]
         if type not in allowed_types:
             return Response(
                 {
@@ -620,7 +631,13 @@ class ProjectAssetEndpoint(BaseAPIView):
             )
 
         # Check if the file type is allowed
-        allowed_types = ["image/jpeg", "image/png", "image/webp", "image/jpg"]
+        allowed_types = [
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+            "image/jpg",
+            "image/gif",
+        ]
         if type not in allowed_types:
             return Response(
                 {
@@ -738,6 +755,11 @@ class ProjectAssetEndpoint(BaseAPIView):
 
 class ProjectBulkAssetEndpoint(BaseAPIView):
 
+    def save_project_cover(self, asset, project_id):
+        project = Project.objects.get(id=project_id)
+        project.cover_image_asset_id = asset.id
+        project.save()
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def post(self, request, slug, project_id, entity_id):
         asset_ids = request.data.get("asset_ids", [])
@@ -773,6 +795,7 @@ class ProjectBulkAssetEndpoint(BaseAPIView):
             assets.update(
                 project_id=project_id,
             )
+            [self.save_project_cover(asset, project_id) for asset in assets]
 
         if asset.entity_type == FileAsset.EntityTypeContext.ISSUE_DESCRIPTION:
             assets.update(
