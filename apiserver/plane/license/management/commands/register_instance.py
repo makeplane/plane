@@ -9,7 +9,7 @@ from django.utils import timezone
 from django.conf import settings
 
 # Module imports
-from plane.license.models import Instance, EditiontTypes
+from plane.license.models import Instance, EditionTypes
 from plane.license.bgtasks.tracer import instance_traces
 
 
@@ -55,7 +55,7 @@ class Command(BaseCommand):
                 latest_version=payload.get("version"),
                 last_checked_at=timezone.now(),
                 is_test=os.environ.get("IS_TEST", "0") == "1",
-                edition=EditiontTypes.PLANE_CE.value,
+                edition=EditionTypes.PLANE_CE.value,
             )
 
             self.stdout.write(self.style.SUCCESS("Instance registered"))
@@ -69,7 +69,7 @@ class Command(BaseCommand):
             instance.current_version = payload.get("version")
             instance.latest_version = payload.get("version")
             instance.is_test = os.environ.get("IS_TEST", "0") == "1"
-            instance.edition = EditiontTypes.PLANE_CE.value
+            instance.edition = EditionTypes.PLANE_CE.value
             instance.save()
 
         # Call the instance traces task
