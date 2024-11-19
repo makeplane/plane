@@ -13,7 +13,11 @@ export interface IUserLite {
   last_name: string;
 }
 export interface IUser extends IUserLite {
-  cover_image_url: string | null;
+  // only for uploading the cover image
+  cover_image_asset?: string | null;
+  cover_image?: string | null;
+  // only for rendering the cover image
+  cover_image_url: readonly (string | null);
   date_joined: string;
   email: string;
   is_active: boolean;
