@@ -3,4 +3,5 @@ from .instance import (
     InstanceAdmin,
     InstanceConfiguration,
     EditionTypes,
+    ChangeLog
 )
