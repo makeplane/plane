@@ -18,10 +18,10 @@ import {
 import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 // components
 import { DeletePageModal } from "@/components/pages";
-// constants
-import { EPageAccess } from "@/constants/page";
 // helpers
 import { cn } from "@/helpers/common.helper";
+// hooks
+import { TPageOperations } from "@/hooks/use-page-operations";
 // plane web components
 import { MovePageModal } from "@/plane-web/components/pages";
 // store types
@@ -41,57 +41,47 @@ export type TPageActions =
   | "export"
   | "move";
 
-export type TPageOperations = {
-  toggleLock: () => void;
-  toggleAccess: () => void;
-  openInNewTab: () => void;
-  copyLink: () => void;
-  duplicate: () => void;
-  toggleArchive: () => void;
-};
-
-export type TPageConfig = {
-  canArchive: boolean;
-  canDelete: boolean;
-  canDuplicate: boolean;
-  canLock: boolean;
-  canMove: boolean;
-  canToggleAccess: boolean;
-  isArchived: boolean;
-  isLocked: boolean;
-  pageAccess: EPageAccess;
-};
-
 type Props = {
   extraOptions?: (TContextMenuItem & { key: TPageActions })[];
   optionsOrder: TPageActions[];
-  pageConfig: TPageConfig;
   page: IPage;
   pageOperations: TPageOperations;
   parentRef?: React.RefObject<HTMLElement>;
 };
 
 export const PageActions: React.FC<Props> = observer((props) => {
-  const { extraOptions, optionsOrder, pageConfig, page, pageOperations, parentRef } = props;
+  const { extraOptions, optionsOrder, page, pageOperations, parentRef } = props;
   // states
   const [deletePageModal, setDeletePageModal] = useState(false);
   const [movePageModal, setMovePageModal] = useState(false);
-
+  // derived values
+  const {
+    access,
+    archived_at,
+    is_locked,
+    canCurrentUserArchivePage,
+    canCurrentUserChangeAccess,
+    canCurrentUserDeletePage,
+    canCurrentUserDuplicatePage,
+    canCurrentUserLockPage,
+    canCurrentUserMovePage,
+  } = page;
+  // menu items
   const MENU_ITEMS: (TContextMenuItem & { key: TPageActions })[] = useMemo(
     () => [
       {
         key: "toggle-lock",
         action: pageOperations.toggleLock,
-        title: pageConfig.isLocked ? "Unlock page" : "Lock page",
-        icon: pageConfig.isLocked ? LockKeyholeOpen : LockKeyhole,
-        shouldRender: pageConfig.canLock,
+        title: is_locked ? "Unlock page" : "Lock page",
+        icon: is_locked ? LockKeyholeOpen : LockKeyhole,
+        shouldRender: canCurrentUserLockPage,
       },
       {
         key: "toggle-access",
         action: pageOperations.toggleAccess,
-        title: pageConfig.pageAccess === 0 ? "Make private" : "Make public",
-        icon: pageConfig.pageAccess === 0 ? Lock : Globe2,
-        shouldRender: pageConfig.canToggleAccess,
+        title: access === 0 ? "Make private" : "Make public",
+        icon: access === 0 ? Lock : Globe2,
+        shouldRender: canCurrentUserChangeAccess,
       },
       {
         key: "open-in-new-tab",
@@ -112,21 +102,21 @@ export const PageActions: React.FC<Props> = observer((props) => {
         action: pageOperations.duplicate,
         title: "Make a copy",
         icon: Copy,
-        shouldRender: pageConfig.canDuplicate,
+        shouldRender: canCurrentUserDuplicatePage,
       },
       {
         key: "archive-restore",
         action: pageOperations.toggleArchive,
-        title: pageConfig.isArchived ? "Restore" : "Archive",
-        icon: pageConfig.isArchived ? ArchiveRestoreIcon : ArchiveIcon,
-        shouldRender: pageConfig.canArchive,
+        title: !!archived_at ? "Restore" : "Archive",
+        icon: !!archived_at ? ArchiveRestoreIcon : ArchiveIcon,
+        shouldRender: canCurrentUserArchivePage,
       },
       {
         key: "delete",
         action: () => setDeletePageModal(true),
         title: "Delete",
         icon: Trash2,
-        shouldRender: pageConfig.canDelete,
+        shouldRender: canCurrentUserDeletePage,
       },
 
       {
@@ -134,10 +124,21 @@ export const PageActions: React.FC<Props> = observer((props) => {
         action: () => setMovePageModal(true),
         title: "Move",
         icon: FileOutput,
-        shouldRender: pageConfig.canMove,
+        shouldRender: canCurrentUserMovePage,
       },
     ],
-    [pageConfig, pageOperations]
+    [
+      access,
+      archived_at,
+      is_locked,
+      canCurrentUserArchivePage,
+      canCurrentUserChangeAccess,
+      canCurrentUserDeletePage,
+      canCurrentUserDuplicatePage,
+      canCurrentUserLockPage,
+      canCurrentUserMovePage,
+      pageOperations,
+    ]
   );
   if (extraOptions) {
     MENU_ITEMS.push(...extraOptions);
