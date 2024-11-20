@@ -5,7 +5,6 @@ on:
   push:
     branches:
       - "sync/**"
-      - "mobile-sync/**"
 
 env:
   CURRENT_BRANCH: ${{ github.ref_name }}
@@ -43,14 +42,8 @@ jobs:
       - name: Create PR to Target Branch
         run: |
           # Determine target branch based on current branch prefix
-          if [[ "$CURRENT_BRANCH" == "${{vars.SYNC_TARGET_MOBILE_BRANCH_NAME}}" ]]; then
-            TARGET_BRANCH="mobile"
-            PR_TITLE="${{vars.SYNC_MOBILE_PR_TITLE}}"
-          else
-            TARGET_BRANCH="preview"
-            PR_TITLE="${{vars.SYNC_PR_TITLE}}"
-          fi
-
+          TARGET_BRANCH="preview"
+          PR_TITLE="${{vars.SYNC_PR_TITLE}}"
 
           # get all pull requests and check if there is already a PR
           PR_EXISTS=$(gh pr list --base $TARGET_BRANCH --head $CURRENT_BRANCH --state open --json number | jq '.[] | .number')
