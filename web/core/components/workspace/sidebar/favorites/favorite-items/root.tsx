@@ -3,15 +3,17 @@
 import React, { FC, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { attachClosestEdge, extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
-import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
 import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/element/pointer-outside-of-preview";
+import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
+import { attachClosestEdge, extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import { observer } from "mobx-react";
 // plane helpers
+import { createRoot } from "react-dom/client";
 import { useOutsideClickDetector } from "@plane/helpers";
 // ui
 import { IFavorite } from "@plane/types";
 // components
+import { DropIndicator } from "@plane/ui";
 import {
   FavoriteItemDragHandle,
   FavoriteItemQuickAction,
@@ -22,8 +24,6 @@ import {
 import { useAppTheme } from "@/hooks/store";
 import { useFavoriteItemDetails } from "@/hooks/use-favorite-item-details";
 
-import { createRoot } from "react-dom/client";
-import { DropIndicator } from "@plane/ui";
 //constants
 import { getDestinationStateSequence } from "../favorites.helpers";
 
@@ -138,13 +138,12 @@ export const FavoriteRoot: FC<Props> = observer((props) => {
           setIsDraggedOver(false);
           const sourceId = source.data?.id as string | undefined;
           const destinationType = self.data?.type as string | undefined;
-          const sourceType = source.data?.type as string | undefined;
-          
+
           if(!sourceId) return;
 
           if(destinationType === 'NON_PARENT'){
             handleRemoveFromFavoritesFolder(sourceId)
-          } 
+          }
         },
       })
     );

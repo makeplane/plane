@@ -102,7 +102,7 @@ export const SidebarFavoritesMenu = observer(() => {
           message: "Failed to move folder.",
         });
       });
-  } 
+  }
   useEffect(() => {
     if (sidebarCollapsed) toggleFavoriteMenu(true);
   }, [sidebarCollapsed, toggleFavoriteMenu]);
@@ -158,7 +158,7 @@ export const SidebarFavoritesMenu = observer(() => {
                 <FolderPlus
                   onClick={() => {
                     setCreateNewFolder(true);
-                    !isFavoriteMenuOpen && toggleFavoriteMenu(!isFavoriteMenuOpen);
+                    if(!isFavoriteMenuOpen) toggleFavoriteMenu(!isFavoriteMenuOpen);
                   }}
                   className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform")}
                 />

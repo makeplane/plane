@@ -3,15 +3,16 @@
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
 import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/element/pointer-outside-of-preview";
+import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
 
 import { attachClosestEdge, extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
+import orderBy from "lodash/orderBy";
 import uniqBy from "lodash/uniqBy";
 import { useParams } from "next/navigation";
+import { createRoot } from "react-dom/client";
 import { PenSquare, Star, MoreHorizontal, ChevronRight, GripVertical } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
-import { createRoot } from "react-dom/client";
 
 // plane helpers
 import { useOutsideClickDetector } from "@plane/helpers";
@@ -28,7 +29,6 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { FavoriteRoot } from "./favorite-items";
 import { getDestinationStateSequence } from "./favorites.helpers";
 import { NewFavoriteFolder } from "./new-fav-folder";
-import { orderBy } from "lodash";
 
 type Props = {
   isLastChild: boolean;
@@ -57,7 +57,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
   const elementRef = useRef<HTMLDivElement | null>(null);
 
-  !favorite.children && getGroupedFavorites(workspaceSlug.toString(), favorite.id);
+  if(!favorite.children) getGroupedFavorites(workspaceSlug.toString(), favorite.id);
 
   const handleMoveToFolder = (source: string, destination: string) => {
     moveFavoriteToFolder(workspaceSlug.toString(), source, {
@@ -137,7 +137,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
             setIsDraggedOver(true);
             setIsDragging(true);
           };
-          source.data.is_folder && setClosestEdge(extractClosestEdge(self.data));
+          if(source.data.is_folder) setClosestEdge(extractClosestEdge(self.data));
         },
         onDragLeave: () => {
           setIsDragging(false);
@@ -152,7 +152,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
           setIsDraggedOver(false);
           const sourceId = source?.data?.id as string | undefined;
           const destinationId = self?.data?.id as string | undefined;
-          
+
           if (source.data.is_folder) return;
           if (sourceId === destinationId) return;
           if (!sourceId || !destinationId) return;
