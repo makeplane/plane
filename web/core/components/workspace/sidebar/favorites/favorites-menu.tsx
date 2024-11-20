@@ -33,7 +33,7 @@ export const SidebarFavoritesMenu = observer(() => {
 
   // store hooks
   const { sidebarCollapsed } = useAppTheme();
-  const { favoriteIds, groupedFavorites, deleteFavorite, removeFromFavoriteFolder } = useFavorite();
+  const { favoriteIds, groupedFavorites, deleteFavorite, removeFromFavoriteFolder, reOrderFavorite } = useFavorite();
   const { workspaceSlug } = useParams();
 
   const { isMobile } = usePlatformOS();
@@ -83,6 +83,26 @@ export const SidebarFavoritesMenu = observer(() => {
         });
       });
   };
+
+  const handleReorder = (favoriteId: string, sequence: number) => {
+    reOrderFavorite(workspaceSlug.toString(), favoriteId, {
+      sequence: sequence
+    })
+      .then(() => {
+        // setToast({
+        //   type: TOAST_TYPE.SUCCESS,
+        //   title: "Success!",
+        //   message: "Folder moved successfully.",
+        // });
+      })
+      .catch(() => {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Failed to move folder.",
+        });
+      });
+  } 
   useEffect(() => {
     if (sidebarCollapsed) toggleFavoriteMenu(true);
   }, [sidebarCollapsed, toggleFavoriteMenu]);
@@ -194,6 +214,7 @@ export const SidebarFavoritesMenu = observer(() => {
                           isLastChild={index === favoriteIds.length - 1}
                           handleRemoveFromFavorites={handleRemoveFromFavorites}
                           handleRemoveFromFavoritesFolder={handleRemoveFromFavoritesFolder}
+                          handleReorder={handleReorder}
                         />
                       ) : (
                         <FavoriteRoot
@@ -202,6 +223,7 @@ export const SidebarFavoritesMenu = observer(() => {
                           handleRemoveFromFavorites={handleRemoveFromFavorites}
                           handleRemoveFromFavoritesFolder={handleRemoveFromFavoritesFolder}
                           favoriteMap={groupedFavorites}
+                          handleReorder={handleReorder}
                         />
                       )}
                     </Tooltip>
