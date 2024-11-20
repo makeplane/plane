@@ -40,9 +40,7 @@ export const PageListBlock: FC<TPageListBlock> = observer((props) => {
       }
       title={getPageName(name)}
       itemLink={`/${workspaceSlug}/projects/${projectId}/pages/${pageId}`}
-      actionableItems={
-        <BlockItemAction workspaceSlug={workspaceSlug} projectId={projectId} pageId={pageId} parentRef={parentRef} />
-      }
+      actionableItems={<BlockItemAction pageId={pageId} parentRef={parentRef} />}
       isMobile={isMobile}
       parentRef={parentRef}
     />
