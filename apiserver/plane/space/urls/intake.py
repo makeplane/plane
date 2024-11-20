@@ -3,7 +3,6 @@ from django.urls import path
 
 from plane.space.views import (
     IntakeIssuePublicViewSet,
-    IssueVotePublicViewSet,
     WorkspaceProjectDeployBoardEndpoint,
 )
 
