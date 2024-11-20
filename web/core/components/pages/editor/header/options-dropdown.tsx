@@ -14,7 +14,6 @@ import { ExportPageModal, PageActions, TPageActions } from "@/components/pages";
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
 import { usePageFilters } from "@/hooks/use-page-filters";
-import { usePageOperations } from "@/hooks/use-page-operations";
 import { useQueryParams } from "@/hooks/use-query-params";
 // store
 import { IPage } from "@/store/pages/page";
@@ -30,8 +29,6 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   // router
   const router = useRouter();
-  // page actions
-  const { pageOperations } = usePageOperations(page);
   // derived values
   const { name } = page;
   // page filters
@@ -114,7 +111,6 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
           "export",
         ]}
         page={page}
-        pageOperations={pageOperations}
       />
     </>
   );

@@ -24,7 +24,7 @@ export const BlockItemAction: FC<Props> = observer((props) => {
   // store hooks
   const page = usePage(pageId);
   const { getUserDetails } = useMember();
-  // page actions
+  // page operations
   const { pageOperations } = usePageOperations(page);
   // derived values
   const { access, created_at, is_favorite, owned_by, canCurrentUserFavoritePage } = page;
@@ -77,7 +77,6 @@ export const BlockItemAction: FC<Props> = observer((props) => {
           "delete",
         ]}
         page={page}
-        pageOperations={pageOperations}
         parentRef={parentRef}
       />
     </>

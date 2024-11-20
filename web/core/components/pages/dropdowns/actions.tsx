@@ -21,7 +21,7 @@ import { DeletePageModal } from "@/components/pages";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { TPageOperations } from "@/hooks/use-page-operations";
+import { usePageOperations } from "@/hooks/use-page-operations";
 // plane web components
 import { MovePageModal } from "@/plane-web/components/pages";
 // store types
@@ -45,15 +45,16 @@ type Props = {
   extraOptions?: (TContextMenuItem & { key: TPageActions })[];
   optionsOrder: TPageActions[];
   page: IPage;
-  pageOperations: TPageOperations;
   parentRef?: React.RefObject<HTMLElement>;
 };
 
 export const PageActions: React.FC<Props> = observer((props) => {
-  const { extraOptions, optionsOrder, page, pageOperations, parentRef } = props;
+  const { extraOptions, optionsOrder, page, parentRef } = props;
   // states
   const [deletePageModal, setDeletePageModal] = useState(false);
   const [movePageModal, setMovePageModal] = useState(false);
+  // page operations
+  const { pageOperations } = usePageOperations(page);
   // derived values
   const {
     access,
