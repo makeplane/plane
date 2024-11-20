@@ -11,9 +11,7 @@ class InstanceSerializer(BaseSerializer):
 
     class Meta:
         model = Instance
-        exclude = [
-            "license_key",
-        ]
+        fields = "__all__"
         read_only_fields = [
             "id",
             "email",
