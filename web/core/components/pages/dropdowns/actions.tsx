@@ -24,6 +24,8 @@ import { EPageAccess } from "@/constants/page";
 import { cn } from "@/helpers/common.helper";
 // plane web components
 import { MovePageModal } from "@/plane-web/components/pages";
+// store types
+import { IPage } from "@/store/pages/page";
 
 export type TPageActions =
   | "full-screen"
@@ -64,13 +66,13 @@ type Props = {
   extraOptions?: (TContextMenuItem & { key: TPageActions })[];
   optionsOrder: TPageActions[];
   pageConfig: TPageConfig;
-  pageId: string;
+  page: IPage;
   pageOperations: TPageOperations;
   parentRef?: React.RefObject<HTMLElement>;
 };
 
 export const PageActions: React.FC<Props> = observer((props) => {
-  const { extraOptions, optionsOrder, pageConfig, pageId, pageOperations, parentRef } = props;
+  const { extraOptions, optionsOrder, pageConfig, page, pageOperations, parentRef } = props;
   // states
   const [deletePageModal, setDeletePageModal] = useState(false);
   const [movePageModal, setMovePageModal] = useState(false);
@@ -147,8 +149,8 @@ export const PageActions: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <MovePageModal isOpen={movePageModal} onClose={() => setMovePageModal(false)} pageId={pageId} />
-      <DeletePageModal isOpen={deletePageModal} onClose={() => setDeletePageModal(false)} pageId={pageId} />
+      <MovePageModal isOpen={movePageModal} onClose={() => setMovePageModal(false)} page={page} />
+      <DeletePageModal isOpen={deletePageModal} onClose={() => setDeletePageModal(false)} pageId={page.id ?? ""} />
       {parentRef && <ContextMenu parentRef={parentRef} items={arrangedOptions} />}
       <CustomMenu placement="bottom-end" optionsClassName="max-h-[90vh]" ellipsis closeOnSelect>
         {arrangedOptions.map((item) => {

@@ -2,8 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { ArrowUpToLine, Clipboard, History } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
+import { ArrowUpToLine, Clipboard, History } from "lucide-react";
 // document editor
 import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
 // ui
@@ -106,7 +106,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
         shouldRender: true,
       },
     ],
-    [editorRef, isFullWidth, router, updateQueryParams]
+    [editorRef, handleFullWidth, isFullWidth, router, updateQueryParams]
   );
 
   const pageOperations: TPageOperations = useMemo(() => {
@@ -241,8 +241,8 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     unlock,
     workspaceSlug,
   ]);
-  const pageConfig: TPageConfig = useMemo(() => {
-    return {
+  const pageConfig: TPageConfig = useMemo(
+    () => ({
       canArchive: canCurrentUserArchivePage,
       canLock: canCurrentUserLockPage,
       canMove: canCurrentUserMovePage,
@@ -252,15 +252,19 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
       isArchived: !!archived_at,
       isLocked: is_locked,
       pageAccess: access ?? 0,
-    };
-  }, [
-    archived_at,
-    canCurrentUserArchivePage,
-    canCurrentUserChangeAccess,
-    canCurrentUserDeletePage,
-    canCurrentUserDuplicatePage,
-    canCurrentUserLockPage,
-  ]);
+    }),
+    [
+      access,
+      archived_at,
+      canCurrentUserArchivePage,
+      canCurrentUserChangeAccess,
+      canCurrentUserDeletePage,
+      canCurrentUserDuplicatePage,
+      canCurrentUserLockPage,
+      canCurrentUserMovePage,
+      is_locked,
+    ]
+  );
 
   return (
     <>
@@ -284,7 +288,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
           "export",
         ]}
         pageConfig={pageConfig}
-        pageId={page.id ?? ""}
+        page={page}
         pageOperations={pageOperations}
       />
     </>

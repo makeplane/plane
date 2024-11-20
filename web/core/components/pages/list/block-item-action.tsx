@@ -279,7 +279,7 @@ export const BlockItemAction: FC<Props> = observer((props) => {
           "delete",
         ]}
         pageConfig={pageConfig}
-        pageId={pageId}
+        page={page}
         pageOperations={pageOperations}
         parentRef={parentRef}
       />
