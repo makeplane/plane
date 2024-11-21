@@ -145,9 +145,13 @@ export const PageActions: React.FC<Props> = observer((props) => {
     MENU_ITEMS.push(...extraOptions);
   }
   // arrange options
-  const arrangedOptions = optionsOrder
-    .map((key) => MENU_ITEMS.find((item) => item.key === key))
-    .filter((item) => !!item);
+  const arrangedOptions = useMemo(
+    () =>
+      optionsOrder
+        .map((key) => MENU_ITEMS.find((item) => item.key === key))
+        .filter((item) => !!item),
+    [optionsOrder, MENU_ITEMS]
+  );
 
   return (
     <>
