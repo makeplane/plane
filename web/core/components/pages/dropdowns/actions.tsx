@@ -18,6 +18,8 @@ import {
 import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 // components
 import { DeletePageModal } from "@/components/pages";
+// constants
+import { EPageAccess } from "@/constants/page";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -80,8 +82,8 @@ export const PageActions: React.FC<Props> = observer((props) => {
       {
         key: "toggle-access",
         action: pageOperations.toggleAccess,
-        title: access === 0 ? "Make private" : "Make public",
-        icon: access === 0 ? Lock : Globe2,
+        title: access === EPageAccess.PUBLIC ? "Make private" : "Make public",
+        icon: access === EPageAccess.PUBLIC ? Lock : Globe2,
         shouldRender: canCurrentUserChangeAccess,
       },
       {
@@ -146,10 +148,7 @@ export const PageActions: React.FC<Props> = observer((props) => {
   }
   // arrange options
   const arrangedOptions = useMemo(
-    () =>
-      optionsOrder
-        .map((key) => MENU_ITEMS.find((item) => item.key === key))
-        .filter((item) => !!item),
+    () => optionsOrder.map((key) => MENU_ITEMS.find((item) => item.key === key)).filter((item) => !!item),
     [optionsOrder, MENU_ITEMS]
   );
 
