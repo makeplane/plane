@@ -63,14 +63,22 @@ func TcpHealthCheckMethod(ctx context.Context, options HealthCheckMethodOptions)
 			fmt.Sprintf("%s:%s", options.ServiceData.HostName, options.ServiceData.Port),
 			options.TimeoutDuration,
 		)
-		defer conn.Close()
 
 		if err != nil {
 			return
 		}
+
+		// Close the connection if the connection exists
+		defer func() {
+			if conn != nil {
+				conn.Close()
+			}
+		}()
+
 		options.StatusChannel <- &HealthCheckStatus{
 			ServiceName: options.ServiceName,
 		}
+
 	}
 }
 
