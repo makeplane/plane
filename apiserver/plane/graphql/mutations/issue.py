@@ -255,41 +255,41 @@ class IssueMutation:
             await sync_to_async(
                 IssueAssignee.objects.filter(issue=issue).delete
             )()
-            await sync_to_async(IssueAssignee.objects.bulk_create)(
-                [
-                    IssueAssignee(
-                        assignee_id=user,
-                        issue=issue,
-                        workspace=workspace,
-                        project_id=project,
-                        created_by_id=info.context.user.id,
-                        updated_by_id=info.context.user.id,
-                    )
-                    for user in assignees
-                ],
-                batch_size=10,
-            )
+            if len(assignees) > 0:
+                await sync_to_async(IssueAssignee.objects.bulk_create)(
+                    [
+                        IssueAssignee(
+                            assignee_id=user,
+                            issue=issue,
+                            workspace=workspace,
+                            project_id=project,
+                            created_by_id=info.context.user.id,
+                            updated_by_id=info.context.user.id,
+                        )
+                        for user in assignees
+                    ],
+                    batch_size=10,
+                )
 
         # creating or updating the labels
         if labels is not None:
             activity_payload["label_ids"] = labels
-            await sync_to_async(
-                IssueLabel.objects.filter(issue=issue).delete
-            )()
-            await sync_to_async(IssueLabel.objects.bulk_create)(
-                [
-                    IssueLabel(
-                        label_id=label,
-                        issue=issue,
-                        project_id=project,
-                        workspace=workspace,
-                        created_by_id=info.context.user.id,
-                        updated_by_id=info.context.user.id,
-                    )
-                    for label in labels
-                ],
-                batch_size=10,
-            )
+            await sync_to_async(IssueLabel.objects.filter(issue=id).delete)()
+            if len(labels) > 0:
+                await sync_to_async(IssueLabel.objects.bulk_create)(
+                    [
+                        IssueLabel(
+                            label_id=label,
+                            issue=issue,
+                            project_id=project,
+                            workspace=workspace,
+                            created_by_id=info.context.user.id,
+                            updated_by_id=info.context.user.id,
+                        )
+                        for label in labels
+                    ],
+                    batch_size=10,
+                )
 
         # Track the issue
         issue_activity.delay(
