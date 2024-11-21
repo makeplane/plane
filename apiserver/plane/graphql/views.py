@@ -55,7 +55,7 @@ class CustomGraphQLView(AsyncGraphQLView):
                 request.user = user
             else:
                 context.user = None
-        except (InvalidToken, TokenError) as e:
+        except (InvalidToken, TokenError):
             context.user = None
             request.user = None
         return context

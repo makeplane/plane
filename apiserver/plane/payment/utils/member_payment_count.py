@@ -1,5 +1,4 @@
 # Django imports
-from django.utils import timezone
 from django.conf import settings
 
 # Model imports

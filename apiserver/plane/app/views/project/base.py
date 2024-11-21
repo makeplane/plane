@@ -1,6 +1,4 @@
 # Python imports
-import boto3
-from django.conf import settings
 from django.utils import timezone
 import json
 
@@ -54,7 +52,6 @@ from plane.db.models import (
 from plane.utils.cache import cache_response
 from plane.bgtasks.webhook_task import model_activity
 from plane.bgtasks.recent_visited_task import recent_visited_task
-from plane.utils.exception_logger import log_exception
 
 # EE imports
 from plane.ee.models import ProjectState, ProjectAttribute
