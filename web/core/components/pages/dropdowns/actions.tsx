@@ -148,7 +148,10 @@ export const PageActions: React.FC<Props> = observer((props) => {
   }
   // arrange options
   const arrangedOptions = useMemo(
-    () => optionsOrder.map((key) => MENU_ITEMS.find((item) => item.key === key)).filter((item) => !!item),
+    () =>
+      optionsOrder
+        .map((key) => MENU_ITEMS.find((item) => item.key === key))
+        .filter((item) => !!item) as (TContextMenuItem & { key: TPageActions })[],
     [optionsOrder, MENU_ITEMS]
   );
 
