@@ -141,9 +141,17 @@ class IssuesType:
         # Return the module IDs as strings
         return [str(module_id) for module_id in module_issues]
 
-    @strawberry.field
+    @strawberry_django.field
     def project_identifier(self) -> Optional[str]:
         return self.project.identifier
+
+    @strawberry_django.field
+    def parent_project_id(self) -> Optional[str]:
+        return self.parent.project.id if self.parent else None
+
+    @strawberry_django.field
+    def parent_project_identifier(self) -> Optional[str]:
+        return self.parent.project.identifier if self.parent else None
 
 
 @strawberry_django.type(IssueUserProperty)
