@@ -84,7 +84,7 @@ export const PageActions: React.FC<Props> = observer((props) => {
         action: pageOperations.toggleAccess,
         title: access === EPageAccess.PUBLIC ? "Make private" : "Make public",
         icon: access === EPageAccess.PUBLIC ? Lock : Globe2,
-        shouldRender: canCurrentUserChangeAccess,
+        shouldRender: canCurrentUserChangeAccess && !archived_at,
       },
       {
         key: "open-in-new-tab",
@@ -119,7 +119,7 @@ export const PageActions: React.FC<Props> = observer((props) => {
         action: () => setDeletePageModal(true),
         title: "Delete",
         icon: Trash2,
-        shouldRender: canCurrentUserDeletePage,
+        shouldRender: canCurrentUserDeletePage && !!archived_at,
       },
 
       {
