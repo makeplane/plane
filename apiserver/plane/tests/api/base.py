@@ -8,9 +8,7 @@ from plane.app.views.authentication import get_tokens_for_user
 
 class BaseAPITest(APITestCase):
     def setUp(self):
-        self.client = APIClient(
-            HTTP_USER_AGENT="plane/test", REMOTE_ADDR="10.10.10.10"
-        )
+        self.client = APIClient(HTTP_USER_AGENT="plane/test", REMOTE_ADDR="10.10.10.10")
 
 
 class AuthenticatedAPITest(BaseAPITest):

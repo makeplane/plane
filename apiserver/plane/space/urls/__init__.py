@@ -4,9 +4,4 @@ from .project import urlpatterns as project_urls
 from .asset import urlpatterns as asset_urls
 
 
-urlpatterns = [
-    *intake_urls,
-    *issue_urls,
-    *project_urls,
-    *asset_urls,
-]
+urlpatterns = [*intake_urls, *issue_urls, *project_urls, *asset_urls]

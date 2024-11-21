@@ -10,32 +10,18 @@ from plane.space.views import (
 urlpatterns = [
     path(
         "anchor/<str:anchor>/intakes/<uuid:intake_id>/intake-issues/",
-        IntakeIssuePublicViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
+        IntakeIssuePublicViewSet.as_view({"get": "list", "post": "create"}),
         name="intake-issue",
     ),
     path(
         "anchor/<str:anchor>/intakes/<uuid:intake_id>/inbox-issues/",
-        IntakeIssuePublicViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
+        IntakeIssuePublicViewSet.as_view({"get": "list", "post": "create"}),
         name="inbox-issue",
     ),
     path(
         "anchor/<str:anchor>/intakes/<uuid:intake_id>/intake-issues/<uuid:pk>/",
         IntakeIssuePublicViewSet.as_view(
-            {
-                "get": "retrieve",
-                "patch": "partial_update",
-                "delete": "destroy",
-            }
+            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
         ),
         name="intake-issue",
     ),

@@ -22,9 +22,7 @@ def get_configuration_value(keys):
             for item in instance_configuration:
                 if key.get("key") == item.get("key"):
                     if item.get("is_encrypted", False):
-                        environment_list.append(
-                            decrypt_data(item.get("value"))
-                        )
+                        environment_list.append(decrypt_data(item.get("value")))
                     else:
                         environment_list.append(item.get("value"))
 
@@ -34,9 +32,7 @@ def get_configuration_value(keys):
     else:
         # Get the configuration from os
         for key in keys:
-            environment_list.append(
-                os.environ.get(key.get("key"), key.get("default"))
-            )
+            environment_list.append(os.environ.get(key.get("key"), key.get("default")))
 
     return tuple(environment_list)
 
@@ -44,30 +40,15 @@ def get_configuration_value(keys):
 def get_email_configuration():
     return get_configuration_value(
         [
-            {
-                "key": "EMAIL_HOST",
-                "default": os.environ.get("EMAIL_HOST"),
-            },
-            {
-                "key": "EMAIL_HOST_USER",
-                "default": os.environ.get("EMAIL_HOST_USER"),
-            },
+            {"key": "EMAIL_HOST", "default": os.environ.get("EMAIL_HOST")},
+            {"key": "EMAIL_HOST_USER", "default": os.environ.get("EMAIL_HOST_USER")},
             {
                 "key": "EMAIL_HOST_PASSWORD",
                 "default": os.environ.get("EMAIL_HOST_PASSWORD"),
             },
-            {
-                "key": "EMAIL_PORT",
-                "default": os.environ.get("EMAIL_PORT", 587),
-            },
-            {
-                "key": "EMAIL_USE_TLS",
-                "default": os.environ.get("EMAIL_USE_TLS", "1"),
-            },
-            {
-                "key": "EMAIL_USE_SSL",
-                "default": os.environ.get("EMAIL_USE_SSL", "0"),
-            },
+            {"key": "EMAIL_PORT", "default": os.environ.get("EMAIL_PORT", 587)},
+            {"key": "EMAIL_USE_TLS", "default": os.environ.get("EMAIL_USE_TLS", "1")},
+            {"key": "EMAIL_USE_SSL", "default": os.environ.get("EMAIL_USE_SSL", "0")},
             {
                 "key": "EMAIL_FROM",
                 "default": os.environ.get(

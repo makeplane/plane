@@ -10,7 +10,6 @@ class Command(BaseCommand):
     help = "Create dump issues, cycles etc. for a project in a given workspace"
 
     def handle(self, *args: Any, **options: Any) -> str | None:
-
         try:
             workspace_name = input("Workspace Name: ")
             workspace_slug = input("Workspace slug: ")
@@ -23,10 +22,7 @@ class Command(BaseCommand):
 
             creator = input("Your email: ")
 
-            if (
-                creator == ""
-                or not User.objects.filter(email=creator).exists()
-            ):
+            if creator == "" or not User.objects.filter(email=creator).exists():
                 raise CommandError(
                     "User email is required and should have signed in plane"
                 )
@@ -37,23 +33,15 @@ class Command(BaseCommand):
             members = members.split(",") if members != "" else []
             # Create workspace
             workspace = Workspace.objects.create(
-                slug=workspace_slug,
-                name=workspace_name,
-                owner=user,
+                slug=workspace_slug, name=workspace_name, owner=user
             )
             # Create workspace member
-            WorkspaceMember.objects.create(
-                workspace=workspace, role=20, member=user
-            )
+            WorkspaceMember.objects.create(workspace=workspace, role=20, member=user)
             user_ids = User.objects.filter(email__in=members)
 
             _ = WorkspaceMember.objects.bulk_create(
                 [
-                    WorkspaceMember(
-                        workspace=workspace,
-                        member=user_id,
-                        role=20,
-                    )
+                    WorkspaceMember(workspace=workspace, member=user_id, role=20)
                     for user_id in user_ids
                 ],
                 ignore_conflicts=True,
@@ -62,9 +50,7 @@ class Command(BaseCommand):
             project_count = int(input("Number of projects to be created: "))
 
             for i in range(project_count):
-                print(
-                    f"Please provide the following details for project {i+1}:"
-                )
+                print(f"Please provide the following details for project {i+1}:")
                 issue_count = int(input("Number of issues to be created: "))
                 cycle_count = int(input("Number of cycles to be created: "))
                 module_count = int(input("Number of modules to be created: "))
@@ -86,12 +72,8 @@ class Command(BaseCommand):
                     intake_issue_count=intake_issue_count,
                 )
 
-            self.stdout.write(
-                self.style.SUCCESS("Data is pushed to the queue")
-            )
+            self.stdout.write(self.style.SUCCESS("Data is pushed to the queue"))
             return
         except Exception as e:
-            self.stdout.write(
-                self.style.ERROR(f"Command errored out {str(e)}")
-            )
+            self.stdout.write(self.style.ERROR(f"Command errored out {str(e)}"))
             return

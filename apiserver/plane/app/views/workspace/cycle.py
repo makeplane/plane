@@ -1,8 +1,5 @@
 # Django imports
-from django.db.models import (
-    Q,
-    Count,
-)
+from django.db.models import Q, Count
 
 # Third party modules
 from rest_framework import status
@@ -16,9 +13,7 @@ from plane.app.serializers.cycle import CycleSerializer
 
 
 class WorkspaceCyclesEndpoint(BaseAPIView):
-    permission_classes = [
-        WorkspaceViewerPermission,
-    ]
+    permission_classes = [WorkspaceViewerPermission]
 
     def get(self, request, slug):
         cycles = (

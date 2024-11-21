@@ -1,20 +1,8 @@
-from django.db.models import (
-    Case,
-    CharField,
-    Min,
-    Value,
-    When,
-)
+from django.db.models import Case, CharField, Min, Value, When
 
 # Custom ordering for priority and state
 PRIORITY_ORDER = ["urgent", "high", "medium", "low", "none"]
-STATE_ORDER = [
-    "backlog",
-    "unstarted",
-    "started",
-    "completed",
-    "cancelled",
-]
+STATE_ORDER = ["backlog", "unstarted", "started", "completed", "cancelled"]
 
 
 def order_issue_queryset(issue_queryset, order_by_param="-created_at"):
@@ -30,15 +18,10 @@ def order_issue_queryset(issue_queryset, order_by_param="-created_at"):
             )
         ).order_by("priority_order")
         order_by_param = (
-            "priority_order"
-            if order_by_param.startswith("-")
-            else "-priority_order"
+            "priority_order" if order_by_param.startswith("-") else "-priority_order"
         )
     # State Ordering
-    elif order_by_param in [
-        "state__group",
-        "-state__group",
-    ]:
+    elif order_by_param in ["state__group", "-state__group"]:
         state_order = (
             STATE_ORDER
             if order_by_param in ["state__name", "state__group"]
@@ -72,9 +55,7 @@ def order_issue_queryset(issue_queryset, order_by_param="-created_at"):
                 if order_by_param.startswith("-")
                 else order_by_param
             )
-        ).order_by(
-            "-min_values" if order_by_param.startswith("-") else "min_values"
-        )
+        ).order_by("-min_values" if order_by_param.startswith("-") else "min_values")
         order_by_param = (
             "-min_values" if order_by_param.startswith("-") else "min_values"
         )

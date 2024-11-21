@@ -12,14 +12,7 @@ from rest_framework.response import Response
 
 # Module imports
 from .base import BaseViewSet
-from plane.db.models import (
-    IntakeIssue,
-    Issue,
-    State,
-    IssueLink,
-    FileAsset,
-    DeployBoard,
-)
+from plane.db.models import IntakeIssue, Issue, State, IssueLink, FileAsset, DeployBoard
 from plane.app.serializers import (
     IssueSerializer,
     IntakeIssueSerializer,
@@ -34,9 +27,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
     serializer_class = IntakeIssueSerializer
     model = IntakeIssue
 
-    filterset_fields = [
-        "status",
-    ]
+    filterset_fields = ["status"]
 
     def get_queryset(self):
         project_deploy_board = DeployBoard.objects.get(
@@ -48,8 +39,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
                 super()
                 .get_queryset()
                 .filter(
-                    Q(snoozed_till__gte=timezone.now())
-                    | Q(snoozed_till__isnull=True),
+                    Q(snoozed_till__gte=timezone.now()) | Q(snoozed_till__isnull=True),
                     project_id=self.kwargs.get("project_id"),
                     workspace__slug=self.kwargs.get("slug"),
                     intake_id=self.kwargs.get("intake_id"),
@@ -81,9 +71,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
             .prefetch_related("assignees", "labels")
             .order_by("issue_intake__snoozed_till", "issue_intake__status")
             .annotate(
-                sub_issues_count=Issue.issue_objects.filter(
-                    parent=OuterRef("id")
-                )
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -113,10 +101,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
             )
         )
         issues_data = IssueStateIntakeSerializer(issues, many=True).data
-        return Response(
-            issues_data,
-            status=status.HTTP_200_OK,
-        )
+        return Response(issues_data, status=status.HTTP_200_OK)
 
     def create(self, request, anchor, intake_id):
         project_deploy_board = DeployBoard.objects.get(
@@ -130,8 +115,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
 
         if not request.data.get("issue", {}).get("name", False):
             return Response(
-                {"error": "Name is required"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST
             )
 
         # Check for valid priority
@@ -143,8 +127,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
             "none",
         ]:
             return Response(
-                {"error": "Invalid priority"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"error": "Invalid priority"}, status=status.HTTP_400_BAD_REQUEST
             )
 
         # Create or get state
@@ -229,9 +212,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
             "description": issue_data.get("description", issue.description),
         }
 
-        issue_serializer = IssueCreateSerializer(
-            issue, data=issue_data, partial=True
-        )
+        issue_serializer = IssueCreateSerializer(issue, data=issue_data, partial=True)
 
         if issue_serializer.is_valid():
             current_instance = issue
@@ -245,16 +226,13 @@ class IntakeIssuePublicViewSet(BaseViewSet):
                     issue_id=str(issue.id),
                     project_id=str(project_deploy_board.project_id),
                     current_instance=json.dumps(
-                        IssueSerializer(current_instance).data,
-                        cls=DjangoJSONEncoder,
+                        IssueSerializer(current_instance).data, cls=DjangoJSONEncoder
                     ),
                     epoch=int(timezone.now().timestamp()),
                 )
             issue_serializer.save()
             return Response(issue_serializer.data, status=status.HTTP_200_OK)
-        return Response(
-            issue_serializer.errors, status=status.HTTP_400_BAD_REQUEST
-        )
+        return Response(issue_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, anchor, intake_id, pk):
         project_deploy_board = DeployBoard.objects.get(
