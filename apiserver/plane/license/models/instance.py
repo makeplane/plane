@@ -13,6 +13,8 @@ ROLE_CHOICES = ((20, "Admin"),)
 
 class InstanceEdition(Enum):
     PLANE_COMMUNITY = "PLANE_COMMUNITY"
+    PLANE_COMMERCIAL = "PLANE_COMMERCIAL"
+    PLANE_CLOUD = "PLANE_CLOUD"
 
 
 class Instance(BaseModel):

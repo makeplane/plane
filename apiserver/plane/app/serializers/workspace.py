@@ -62,6 +62,7 @@ class WorkSpaceMemberSerializer(DynamicBaseSerializer):
 
 class WorkspaceMemberMeSerializer(BaseSerializer):
     draft_issue_count = serializers.IntegerField(read_only=True)
+    active_cycles_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = WorkspaceMember

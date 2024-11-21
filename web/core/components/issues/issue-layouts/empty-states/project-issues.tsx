@@ -41,7 +41,7 @@ export const ProjectEmptyState: React.FC = observer(() => {
   };
 
   const emptyStateType = issueFilterCount > 0 ? EmptyStateType.PROJECT_EMPTY_FILTER : EmptyStateType.PROJECT_NO_ISSUES;
-  const additionalPath = issueFilterCount > 0 ? activeLayout ?? "list" : undefined;
+  const additionalPath = issueFilterCount > 0 ? (activeLayout ?? "list") : undefined;
 
   return (
     <div className="relative h-full w-full overflow-y-auto">

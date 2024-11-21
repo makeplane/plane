@@ -2,6 +2,9 @@
 from celery import shared_task
 from opentelemetry import trace
 
+# Django imports
+from django.conf import settings
+
 # Module imports
 from plane.license.models import Instance
 from plane.db.models import (
@@ -30,7 +33,8 @@ def instance_traces():
     if instance is None:
         return
 
-    if instance.is_telemetry_enabled:
+    # If not multi-tenant and telemetry is enabled
+    if not settings.IS_MULTI_TENANT and instance.is_telemetry_enabled:
         # Instance details
         with tracer.start_as_current_span("instance_details") as span:
             # Count of all models

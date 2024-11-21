@@ -7,8 +7,11 @@ import { TUserPermissions } from "@plane/types/src/enums";
 // constants
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
+// lib
+import { rootStore } from "@/lib/store-context";
 // local
 import { persistence } from "@/local-db/storage.sqlite";
+// plane web
 import { ENABLE_LOCAL_DB_CACHE } from "@/plane-web/constants/issues";
 import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // services
@@ -18,6 +21,7 @@ import { UserService } from "@/services/user.service";
 import { CoreRootStore } from "@/store/root.store";
 import { IAccountStore } from "@/store/user/account.store";
 import { ProfileStore, IUserProfileStore } from "@/store/user/profile.store";
+//
 import { IUserPermissionStore, UserPermissionStore } from "./permissions.store";
 import { IUserSettingsStore, UserSettingsStore } from "./settings.store";
 
@@ -278,6 +282,10 @@ export class UserStore implements IUserStore {
   }
 
   get localDBEnabled() {
-    return ENABLE_LOCAL_DB_CACHE && this.userSettings.canUseLocalDB;
+    return (
+      ENABLE_LOCAL_DB_CACHE &&
+      rootStore.featureFlags.getFeatureFlagForCurrentWorkspace("NO_LOAD") &&
+      this.userSettings.canUseLocalDB
+    );
   }
 }

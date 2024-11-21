@@ -1,0 +1,26 @@
+{
+  "name": "@silo/core",
+  "version": "0.23.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc && tsc-alias",
+    "lint": "eslint src/**"
+  },
+  "description": "Core functionality and services shared between UI and API",
+  "author": "Plane Engineering",
+  "license": "AGPL",
+  "dependencies": {
+    "csv-string": "^4.1.1",
+    "jira.js": "^4.0.1",
+    "@plane/constants": "*",
+    "@plane/sdk": "*"
+  },
+  "devDependencies": {
+    "@plane/eslint-config": "*",
+    "@plane/typescript-config": "*",
+    "tsc-alias": "^1.8.10"
+  }
+}
