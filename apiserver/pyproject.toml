@@ -1,8 +1,7 @@
 [project]
-name = "your-project-name"
-version = "0.1.0"
-description = "Your project description"
-requires-python = ">=3.8"
+name = "Plane"
+version = "0.24.0"
+description = "Open-source project management that unlocks customer value"
 
 [tool.ruff]
 # Exclude a variety of commonly ignored directories.
