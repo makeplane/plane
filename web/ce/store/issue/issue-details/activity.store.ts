@@ -104,7 +104,7 @@ export class IssueActivityStore implements IIssueActivityStore {
       });
     });
     
-    activityComments = orderBy(activityComments, (e)=>new Date(e.created_at||''), this.sortOrder);
+    activityComments = orderBy(activityComments, (e)=>new Date(e.created_at || 0), this.sortOrder);
 
     return activityComments;
   });
