@@ -42,10 +42,6 @@ class SignOutAuthEndpoint(View):
 
             # Logout user
             logout(request)
-            return HttpResponseRedirect(
-                base_host(request=request, is_app=True)
-            )
+            return HttpResponseRedirect(base_host(request=request, is_app=True))
         except Exception:
-            return HttpResponseRedirect(
-                base_host(request=request, is_app=True)
-            )
+            return HttpResponseRedirect(base_host(request=request, is_app=True))

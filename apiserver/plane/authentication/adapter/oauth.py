@@ -34,10 +34,7 @@ class OauthAdapter(Adapter):
         is_mobile=False,
     ):
         super().__init__(
-            request=request,
-            provider=provider,
-            callback=callback,
-            is_mobile=is_mobile,
+            request=request, provider=provider, callback=callback, is_mobile=is_mobile
         )
         self.client_id = client_id
         self.scope = scope
@@ -88,15 +85,12 @@ class OauthAdapter(Adapter):
         except requests.RequestException:
             code = self.authentication_error_code()
             raise AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[code],
-                error_message=str(code),
+                error_code=AUTHENTICATION_ERROR_CODES[code], error_message=str(code)
             )
 
     def get_user_response(self):
         try:
-            headers = {
-                "Authorization": f"Bearer {self.token_data.get('access_token')}"
-            }
+            headers = {"Authorization": f"Bearer {self.token_data.get('access_token')}"}
             response = requests.get(
                 self.get_user_info_url(),
                 headers=headers,
@@ -107,8 +101,7 @@ class OauthAdapter(Adapter):
         except requests.RequestException:
             code = self.authentication_error_code()
             raise AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[code],
-                error_message=str(code),
+                error_code=AUTHENTICATION_ERROR_CODES[code], error_message=str(code)
             )
 
     def set_user_data(self, data):
@@ -120,16 +113,12 @@ class OauthAdapter(Adapter):
             account = Account.objects.filter(
                 user=user,
                 provider=self.provider,
-                provider_account_id=self.user_data.get("user").get(
-                    "provider_id"
-                ),
+                provider_account_id=self.user_data.get("user").get("provider_id"),
             ).first()
             # Update the account if it exists
             if account:
                 account.access_token = self.token_data.get("access_token")
-                account.refresh_token = self.token_data.get(
-                    "refresh_token", None
-                )
+                account.refresh_token = self.token_data.get("refresh_token", None)
                 account.access_token_expired_at = self.token_data.get(
                     "access_token_expired_at"
                 )

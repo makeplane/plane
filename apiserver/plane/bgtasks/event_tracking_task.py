@@ -16,10 +16,7 @@ def posthogConfiguration():
                 "key": "POSTHOG_API_KEY",
                 "default": os.environ.get("POSTHOG_API_KEY", None),
             },
-            {
-                "key": "POSTHOG_HOST",
-                "default": os.environ.get("POSTHOG_HOST", None),
-            },
+            {"key": "POSTHOG_HOST", "default": os.environ.get("POSTHOG_HOST", None)},
         ]
     )
     if POSTHOG_API_KEY and POSTHOG_HOST:
@@ -35,11 +32,7 @@ def track_event(email, event_name, properties):
 
         if POSTHOG_API_KEY and POSTHOG_HOST:
             posthog = Posthog(POSTHOG_API_KEY, host=POSTHOG_HOST)
-            posthog.capture(
-                email,
-                event=event_name,
-                properties=properties,
-            )
+            posthog.capture(email, event=event_name, properties=properties)
     except Exception as e:
         log_exception(e)
         return

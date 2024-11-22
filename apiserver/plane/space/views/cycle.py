@@ -15,23 +15,17 @@ from django.db.models import (
 
 # Module imports
 from .base import BaseAPIView
-from plane.db.models import (
-    DeployBoard,
-    Cycle,
-)
+from plane.db.models import DeployBoard, Cycle
 
 
 class ProjectCyclesEndpoint(BaseAPIView):
-    permission_classes = [
-        AllowAny,
-    ]
+    permission_classes = [AllowAny]
 
     def get(self, request, anchor):
         deploy_board = DeployBoard.objects.filter(anchor=anchor).first()
         if not deploy_board:
             return Response(
-                {"error": "Invalid anchor"},
-                status=status.HTTP_404_NOT_FOUND,
+                {"error": "Invalid anchor"}, status=status.HTTP_404_NOT_FOUND
             )
 
         cycles = (
@@ -61,7 +55,4 @@ class ProjectCyclesEndpoint(BaseAPIView):
             .values("id", "name", "status")
         )
 
-        return Response(
-            cycles,
-            status=status.HTTP_200_OK,
-        )
+        return Response(cycles, status=status.HTTP_200_OK)

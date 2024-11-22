@@ -40,9 +40,7 @@ def update_mentions_for_issue(issue, project, new_mentions, removed_mention):
         )
 
     IssueMention.objects.bulk_create(aggregated_issue_mentions, batch_size=100)
-    IssueMention.objects.filter(
-        issue=issue, mention__in=removed_mention
-    ).delete()
+    IssueMention.objects.filter(issue=issue, mention__in=removed_mention).delete()
 
 
 def get_new_mentions(requested_instance, current_instance):
@@ -89,14 +87,10 @@ def extract_mentions_as_subscribers(project_id, issue_id, mentions):
         # If the particular mention has not already been subscribed to the issue, he must be sent the mentioned notification
         if (
             not IssueSubscriber.objects.filter(
-                issue_id=issue_id,
-                subscriber_id=mention_id,
-                project_id=project_id,
+                issue_id=issue_id, subscriber_id=mention_id, project_id=project_id
             ).exists()
             and not IssueAssignee.objects.filter(
-                project_id=project_id,
-                issue_id=issue_id,
-                assignee_id=mention_id,
+                project_id=project_id, issue_id=issue_id, assignee_id=mention_id
             ).exists()
             and not Issue.objects.filter(
                 project_id=project_id, pk=issue_id, created_by_id=mention_id
@@ -124,13 +118,9 @@ def extract_mentions(issue_instance):
         data = json.loads(issue_instance)
         html = data.get("description_html")
         soup = BeautifulSoup(html, "html.parser")
-        mention_tags = soup.find_all(
-            "mention-component", attrs={"target": "users"}
-        )
+        mention_tags = soup.find_all("mention-component", attrs={"target": "users"})
 
-        mentions = [
-            mention_tag["entity_identifier"] for mention_tag in mention_tags
-        ]
+        mentions = [mention_tag["entity_identifier"] for mention_tag in mention_tags]
 
         return list(set(mentions))
     except Exception:
@@ -142,9 +132,7 @@ def extract_comment_mentions(comment_value):
     try:
         mentions = []
         soup = BeautifulSoup(comment_value, "html.parser")
-        mentions_tags = soup.find_all(
-            "mention-component", attrs={"target": "users"}
-        )
+        mentions_tags = soup.find_all("mention-component", attrs={"target": "users"})
         for mention_tag in mentions_tags:
             mentions.append(mention_tag["entity_identifier"])
         return list(set(mentions))
@@ -167,13 +155,7 @@ def get_new_comment_mentions(new_value, old_value):
 
 
 def create_mention_notification(
-    project,
-    notification_comment,
-    issue,
-    actor_id,
-    mention_id,
-    issue_id,
-    activity,
+    project, notification_comment, issue, actor_id, mention_id, issue_id, activity
 ):
     return Notification(
         workspace=project.workspace,
@@ -259,25 +241,19 @@ def notifications(
 
             # Get new mentions from the newer instance
             new_mentions = get_new_mentions(
-                requested_instance=requested_data,
-                current_instance=current_instance,
+                requested_instance=requested_data, current_instance=current_instance
             )
             removed_mention = get_removed_mentions(
-                requested_instance=requested_data,
-                current_instance=current_instance,
+                requested_instance=requested_data, current_instance=current_instance
             )
 
             comment_mentions = []
             all_comment_mentions = []
 
             # Get New Subscribers from the mentions of the newer instance
-            requested_mentions = extract_mentions(
-                issue_instance=requested_data
-            )
+            requested_mentions = extract_mentions(issue_instance=requested_data)
             mention_subscribers = extract_mentions_as_subscribers(
-                project_id=project_id,
-                issue_id=issue_id,
-                mentions=requested_mentions,
+                project_id=project_id, issue_id=issue_id, mentions=requested_mentions
             )
 
             for issue_activity in issue_activities_created:
@@ -299,9 +275,7 @@ def notifications(
                     comment_mentions = comment_mentions + new_comment_mentions
 
             comment_mention_subscribers = extract_mentions_as_subscribers(
-                project_id=project_id,
-                issue_id=issue_id,
-                mentions=all_comment_mentions,
+                project_id=project_id, issue_id=issue_id, mentions=all_comment_mentions
             )
             """
             We will not send subscription activity notification to the below mentioned user sets
@@ -312,13 +286,9 @@ def notifications(
 
             # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- #
             issue_subscribers = list(
-                IssueSubscriber.objects.filter(
-                    project_id=project_id, issue_id=issue_id
-                )
+                IssueSubscriber.objects.filter(project_id=project_id, issue_id=issue_id)
                 .exclude(
-                    subscriber_id__in=list(
-                        new_mentions + comment_mentions + [actor_id]
-                    )
+                    subscriber_id__in=list(new_mentions + comment_mentions + [actor_id])
                 )
                 .values_list("subscriber", flat=True)
             )
@@ -329,9 +299,7 @@ def notifications(
                 # add the user to issue subscriber
                 try:
                     _ = IssueSubscriber.objects.get_or_create(
-                        project_id=project_id,
-                        issue_id=issue_id,
-                        subscriber_id=actor_id,
+                        project_id=project_id, issue_id=issue_id, subscriber_id=actor_id
                     )
                 except Exception:
                     pass
@@ -342,9 +310,7 @@ def notifications(
                 issue_id=issue_id, project_id=project_id
             ).values_list("assignee", flat=True)
 
-            issue_subscribers = list(
-                set(issue_subscribers) - {uuid.UUID(actor_id)}
-            )
+            issue_subscribers = list(set(issue_subscribers) - {uuid.UUID(actor_id)})
 
             for subscriber in issue_subscribers:
                 if issue.created_by_id and issue.created_by_id == subscriber:
@@ -357,16 +323,11 @@ def notifications(
                 else:
                     sender = "in_app:issue_activities:subscribed"
 
-                preference = UserNotificationPreference.objects.get(
-                    user_id=subscriber
-                )
+                preference = UserNotificationPreference.objects.get(user_id=subscriber)
 
                 for issue_activity in issue_activities_created:
                     # If activity done in blocking then blocked by email should not go
-                    if (
-                        issue_activity.get("issue_detail").get("id")
-                        != issue_id
-                    ):
+                    if issue_activity.get("issue_detail").get("id") != issue_id:
                         continue
 
                     # Do not send notification for description update
@@ -391,8 +352,7 @@ def notifications(
                     ):
                         send_email = True
                     elif (
-                        issue_activity.get("field") == "comment"
-                        and preference.comment
+                        issue_activity.get("field") == "comment" and preference.comment
                     ):
                         send_email = True
                     elif preference.property_change:
@@ -427,9 +387,7 @@ def notifications(
                                 "issue": {
                                     "id": str(issue_id),
                                     "name": str(issue.name),
-                                    "identifier": str(
-                                        issue.project.identifier
-                                    ),
+                                    "identifier": str(issue.project.identifier),
                                     "sequence_id": issue.sequence_id,
                                     "state_name": issue.state.name,
                                     "state_group": issue.state.group,
@@ -438,35 +396,21 @@ def notifications(
                                     "id": str(issue_activity.get("id")),
                                     "verb": str(issue_activity.get("verb")),
                                     "field": str(issue_activity.get("field")),
-                                    "actor": str(
-                                        issue_activity.get("actor_id")
-                                    ),
-                                    "new_value": str(
-                                        issue_activity.get("new_value")
-                                    ),
-                                    "old_value": str(
-                                        issue_activity.get("old_value")
-                                    ),
+                                    "actor": str(issue_activity.get("actor_id")),
+                                    "new_value": str(issue_activity.get("new_value")),
+                                    "old_value": str(issue_activity.get("old_value")),
                                     "issue_comment": str(
                                         issue_comment.comment_stripped
                                         if issue_comment is not None
                                         else ""
                                     ),
                                     "old_identifier": (
-                                        str(
-                                            issue_activity.get(
-                                                "old_identifier"
-                                            )
-                                        )
+                                        str(issue_activity.get("old_identifier"))
                                         if issue_activity.get("old_identifier")
                                         else None
                                     ),
                                     "new_identifier": (
-                                        str(
-                                            issue_activity.get(
-                                                "new_identifier"
-                                            )
-                                        )
+                                        str(issue_activity.get("new_identifier"))
                                         if issue_activity.get("new_identifier")
                                         else None
                                     ),
@@ -486,9 +430,7 @@ def notifications(
                                     "issue": {
                                         "id": str(issue_id),
                                         "name": str(issue.name),
-                                        "identifier": str(
-                                            issue.project.identifier
-                                        ),
+                                        "identifier": str(issue.project.identifier),
                                         "project_id": str(issue.project.id),
                                         "workspace_slug": str(
                                             issue.project.workspace.slug
@@ -499,15 +441,9 @@ def notifications(
                                     },
                                     "issue_activity": {
                                         "id": str(issue_activity.get("id")),
-                                        "verb": str(
-                                            issue_activity.get("verb")
-                                        ),
-                                        "field": str(
-                                            issue_activity.get("field")
-                                        ),
-                                        "actor": str(
-                                            issue_activity.get("actor_id")
-                                        ),
+                                        "verb": str(issue_activity.get("verb")),
+                                        "field": str(issue_activity.get("field")),
+                                        "actor": str(issue_activity.get("actor_id")),
                                         "new_value": str(
                                             issue_activity.get("new_value")
                                         ),
@@ -520,25 +456,13 @@ def notifications(
                                             else ""
                                         ),
                                         "old_identifier": (
-                                            str(
-                                                issue_activity.get(
-                                                    "old_identifier"
-                                                )
-                                            )
-                                            if issue_activity.get(
-                                                "old_identifier"
-                                            )
+                                            str(issue_activity.get("old_identifier"))
+                                            if issue_activity.get("old_identifier")
                                             else None
                                         ),
                                         "new_identifier": (
-                                            str(
-                                                issue_activity.get(
-                                                    "new_identifier"
-                                                )
-                                            )
-                                            if issue_activity.get(
-                                                "new_identifier"
-                                            )
+                                            str(issue_activity.get("new_identifier"))
+                                            if issue_activity.get("new_identifier")
                                             else None
                                         ),
                                         "activity_time": issue_activity.get(
@@ -594,26 +518,18 @@ def notifications(
                                         "issue": {
                                             "id": str(issue_id),
                                             "name": str(issue.name),
-                                            "identifier": str(
-                                                issue.project.identifier
-                                            ),
+                                            "identifier": str(issue.project.identifier),
                                             "sequence_id": issue.sequence_id,
                                             "state_name": issue.state.name,
                                             "state_group": issue.state.group,
-                                            "project_id": str(
-                                                issue.project.id
-                                            ),
+                                            "project_id": str(issue.project.id),
                                             "workspace_slug": str(
                                                 issue.project.workspace.slug
                                             ),
                                         },
                                         "issue_activity": {
-                                            "id": str(
-                                                issue_activity.get("id")
-                                            ),
-                                            "verb": str(
-                                                issue_activity.get("verb")
-                                            ),
+                                            "id": str(issue_activity.get("id")),
+                                            "verb": str(issue_activity.get("verb")),
                                             "field": str("mention"),
                                             "actor": str(
                                                 issue_activity.get("actor_id")
@@ -626,24 +542,16 @@ def notifications(
                                             ),
                                             "old_identifier": (
                                                 str(
-                                                    issue_activity.get(
-                                                        "old_identifier"
-                                                    )
+                                                    issue_activity.get("old_identifier")
                                                 )
-                                                if issue_activity.get(
-                                                    "old_identifier"
-                                                )
+                                                if issue_activity.get("old_identifier")
                                                 else None
                                             ),
                                             "new_identifier": (
                                                 str(
-                                                    issue_activity.get(
-                                                        "new_identifier"
-                                                    )
+                                                    issue_activity.get("new_identifier")
                                                 )
-                                                if issue_activity.get(
-                                                    "new_identifier"
-                                                )
+                                                if issue_activity.get("new_identifier")
                                                 else None
                                             ),
                                             "activity_time": issue_activity.get(
@@ -679,9 +587,7 @@ def notifications(
                                     "issue": {
                                         "id": str(issue_id),
                                         "name": str(issue.name),
-                                        "identifier": str(
-                                            issue.project.identifier
-                                        ),
+                                        "identifier": str(issue.project.identifier),
                                         "sequence_id": issue.sequence_id,
                                         "state_name": issue.state.name,
                                         "state_group": issue.state.group,
@@ -695,32 +601,16 @@ def notifications(
                                         "verb": str(last_activity.verb),
                                         "field": str(last_activity.field),
                                         "actor": str(last_activity.actor_id),
-                                        "new_value": str(
-                                            last_activity.new_value
-                                        ),
-                                        "old_value": str(
-                                            last_activity.old_value
-                                        ),
+                                        "new_value": str(last_activity.new_value),
+                                        "old_value": str(last_activity.old_value),
                                         "old_identifier": (
-                                            str(
-                                                issue_activity.get(
-                                                    "old_identifier"
-                                                )
-                                            )
-                                            if issue_activity.get(
-                                                "old_identifier"
-                                            )
+                                            str(issue_activity.get("old_identifier"))
+                                            if issue_activity.get("old_identifier")
                                             else None
                                         ),
                                         "new_identifier": (
-                                            str(
-                                                issue_activity.get(
-                                                    "new_identifier"
-                                                )
-                                            )
-                                            if issue_activity.get(
-                                                "new_identifier"
-                                            )
+                                            str(issue_activity.get("new_identifier"))
+                                            if issue_activity.get("new_identifier")
                                             else None
                                         ),
                                     },
@@ -738,9 +628,7 @@ def notifications(
                                         "issue": {
                                             "id": str(issue_id),
                                             "name": str(issue.name),
-                                            "identifier": str(
-                                                issue.project.identifier
-                                            ),
+                                            "identifier": str(issue.project.identifier),
                                             "sequence_id": issue.sequence_id,
                                             "state_name": issue.state.name,
                                             "state_group": issue.state.group,
@@ -749,35 +637,21 @@ def notifications(
                                             "id": str(last_activity.id),
                                             "verb": str(last_activity.verb),
                                             "field": "mention",
-                                            "actor": str(
-                                                last_activity.actor_id
-                                            ),
-                                            "new_value": str(
-                                                last_activity.new_value
-                                            ),
-                                            "old_value": str(
-                                                last_activity.old_value
-                                            ),
+                                            "actor": str(last_activity.actor_id),
+                                            "new_value": str(last_activity.new_value),
+                                            "old_value": str(last_activity.old_value),
                                             "old_identifier": (
                                                 str(
-                                                    issue_activity.get(
-                                                        "old_identifier"
-                                                    )
+                                                    issue_activity.get("old_identifier")
                                                 )
-                                                if issue_activity.get(
-                                                    "old_identifier"
-                                                )
+                                                if issue_activity.get("old_identifier")
                                                 else None
                                             ),
                                             "new_identifier": (
                                                 str(
-                                                    issue_activity.get(
-                                                        "new_identifier"
-                                                    )
+                                                    issue_activity.get("new_identifier")
                                                 )
-                                                if issue_activity.get(
-                                                    "new_identifier"
-                                                )
+                                                if issue_activity.get("new_identifier")
                                                 else None
                                             ),
                                             "activity_time": str(
@@ -817,27 +691,17 @@ def notifications(
                                                 "state_group": issue.state.group,
                                             },
                                             "issue_activity": {
-                                                "id": str(
-                                                    issue_activity.get("id")
-                                                ),
-                                                "verb": str(
-                                                    issue_activity.get("verb")
-                                                ),
+                                                "id": str(issue_activity.get("id")),
+                                                "verb": str(issue_activity.get("verb")),
                                                 "field": str("mention"),
                                                 "actor": str(
-                                                    issue_activity.get(
-                                                        "actor_id"
-                                                    )
+                                                    issue_activity.get("actor_id")
                                                 ),
                                                 "new_value": str(
-                                                    issue_activity.get(
-                                                        "new_value"
-                                                    )
+                                                    issue_activity.get("new_value")
                                                 ),
                                                 "old_value": str(
-                                                    issue_activity.get(
-                                                        "old_value"
-                                                    )
+                                                    issue_activity.get("old_value")
                                                 ),
                                                 "old_identifier": (
                                                     str(
@@ -878,9 +742,7 @@ def notifications(
                 removed_mention=removed_mention,
             )
             # Bulk create notifications
-            Notification.objects.bulk_create(
-                bulk_notifications, batch_size=100
-            )
+            Notification.objects.bulk_create(bulk_notifications, batch_size=100)
             EmailNotificationLog.objects.bulk_create(
                 bulk_email_logs, batch_size=100, ignore_conflicts=True
             )

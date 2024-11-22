@@ -1,39 +1,15 @@
-from .common import (
-    ChangePasswordEndpoint,
-    CSRFTokenEndpoint,
-    SetUserPasswordEndpoint,
-)
+from .common import ChangePasswordEndpoint, CSRFTokenEndpoint, SetUserPasswordEndpoint
 
 from .app.check import EmailCheckEndpoint
 
-from .app.email import (
-    SignInAuthEndpoint,
-    SignUpAuthEndpoint,
-)
-from .app.github import (
-    GitHubCallbackEndpoint,
-    GitHubOauthInitiateEndpoint,
-)
-from .app.gitlab import (
-    GitLabCallbackEndpoint,
-    GitLabOauthInitiateEndpoint,
-)
-from .app.google import (
-    GoogleCallbackEndpoint,
-    GoogleOauthInitiateEndpoint,
-)
-from .app.magic import (
-    MagicGenerateEndpoint,
-    MagicSignInEndpoint,
-    MagicSignUpEndpoint,
-)
+from .app.email import SignInAuthEndpoint, SignUpAuthEndpoint
+from .app.github import GitHubCallbackEndpoint, GitHubOauthInitiateEndpoint
+from .app.gitlab import GitLabCallbackEndpoint, GitLabOauthInitiateEndpoint
+from .app.google import GoogleCallbackEndpoint, GoogleOauthInitiateEndpoint
+from .app.magic import MagicGenerateEndpoint, MagicSignInEndpoint, MagicSignUpEndpoint
 
 
-from .app.oidc import (
-    OIDCAuthInitiateEndpoint,
-    OIDCallbackEndpoint,
-    OIDCLogoutEndpoint,
-)
+from .app.oidc import OIDCAuthInitiateEndpoint, OIDCallbackEndpoint, OIDCLogoutEndpoint
 
 from .app.saml import (
     SAMLAuthInitiateEndpoint,
@@ -47,20 +23,11 @@ from .app.signout import SignOutAuthEndpoint
 
 from .space.email import SignInAuthSpaceEndpoint, SignUpAuthSpaceEndpoint
 
-from .space.github import (
-    GitHubCallbackSpaceEndpoint,
-    GitHubOauthInitiateSpaceEndpoint,
-)
+from .space.github import GitHubCallbackSpaceEndpoint, GitHubOauthInitiateSpaceEndpoint
 
-from .space.gitlab import (
-    GitLabCallbackSpaceEndpoint,
-    GitLabOauthInitiateSpaceEndpoint,
-)
+from .space.gitlab import GitLabCallbackSpaceEndpoint, GitLabOauthInitiateSpaceEndpoint
 
-from .space.google import (
-    GoogleCallbackSpaceEndpoint,
-    GoogleOauthInitiateSpaceEndpoint,
-)
+from .space.google import GoogleCallbackSpaceEndpoint, GoogleOauthInitiateSpaceEndpoint
 
 from .space.magic import (
     MagicGenerateSpaceEndpoint,
@@ -76,10 +43,7 @@ from .space.password_management import (
     ForgotPasswordSpaceEndpoint,
     ResetPasswordSpaceEndpoint,
 )
-from .app.password_management import (
-    ForgotPasswordEndpoint,
-    ResetPasswordEndpoint,
-)
+from .app.password_management import ForgotPasswordEndpoint, ResetPasswordEndpoint
 
 
 # Mobile web view authentication exports
@@ -92,5 +56,11 @@ from .app.mobile.token import (
     MobileRefreshTokenEndpoint,
 )
 from .app.mobile.signout import MobileSignOutAuthEndpoint
-from .app.mobile.google import MobileGoogleOauthInitiateEndpoint, MobileGoogleCallbackEndpoint
-from .app.mobile.github import MobileGitHubOauthInitiateEndpoint, MobileGitHubCallbackEndpoint
+from .app.mobile.google import (
+    MobileGoogleOauthInitiateEndpoint,
+    MobileGoogleCallbackEndpoint,
+)
+from .app.mobile.github import (
+    MobileGitHubOauthInitiateEndpoint,
+    MobileGitHubCallbackEndpoint,
+)

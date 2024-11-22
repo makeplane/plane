@@ -262,32 +262,24 @@ class Command(BaseCommand):
                 )
             else:
                 self.stdout.write(
-                    self.style.WARNING(
-                        f"{obj.key} configuration already exists"
-                    )
+                    self.style.WARNING(f"{obj.key} configuration already exists")
                 )
 
         keys = ["IS_GOOGLE_ENABLED", "IS_GITHUB_ENABLED", "IS_GITLAB_ENABLED"]
         if not InstanceConfiguration.objects.filter(key__in=keys).exists():
             for key in keys:
                 if key == "IS_GOOGLE_ENABLED":
-                    GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET = (
-                        get_configuration_value(
-                            [
-                                {
-                                    "key": "GOOGLE_CLIENT_ID",
-                                    "default": os.environ.get(
-                                        "GOOGLE_CLIENT_ID", ""
-                                    ),
-                                },
-                                {
-                                    "key": "GOOGLE_CLIENT_SECRET",
-                                    "default": os.environ.get(
-                                        "GOOGLE_CLIENT_SECRET", "0"
-                                    ),
-                                },
-                            ]
-                        )
+                    GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET = get_configuration_value(
+                        [
+                            {
+                                "key": "GOOGLE_CLIENT_ID",
+                                "default": os.environ.get("GOOGLE_CLIENT_ID", ""),
+                            },
+                            {
+                                "key": "GOOGLE_CLIENT_SECRET",
+                                "default": os.environ.get("GOOGLE_CLIENT_SECRET", "0"),
+                            },
+                        ]
                     )
                     if bool(GOOGLE_CLIENT_ID) and bool(GOOGLE_CLIENT_SECRET):
                         value = "1"
@@ -305,23 +297,17 @@ class Command(BaseCommand):
                         )
                     )
                 if key == "IS_GITHUB_ENABLED":
-                    GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET = (
-                        get_configuration_value(
-                            [
-                                {
-                                    "key": "GITHUB_CLIENT_ID",
-                                    "default": os.environ.get(
-                                        "GITHUB_CLIENT_ID", ""
-                                    ),
-                                },
-                                {
-                                    "key": "GITHUB_CLIENT_SECRET",
-                                    "default": os.environ.get(
-                                        "GITHUB_CLIENT_SECRET", "0"
-                                    ),
-                                },
-                            ]
-                        )
+                    GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET = get_configuration_value(
+                        [
+                            {
+                                "key": "GITHUB_CLIENT_ID",
+                                "default": os.environ.get("GITHUB_CLIENT_ID", ""),
+                            },
+                            {
+                                "key": "GITHUB_CLIENT_SECRET",
+                                "default": os.environ.get("GITHUB_CLIENT_SECRET", "0"),
+                            },
+                        ]
                     )
                     if bool(GITHUB_CLIENT_ID) and bool(GITHUB_CLIENT_SECRET):
                         value = "1"
@@ -350,9 +336,7 @@ class Command(BaseCommand):
                                 },
                                 {
                                     "key": "GITLAB_CLIENT_ID",
-                                    "default": os.environ.get(
-                                        "GITLAB_CLIENT_ID", ""
-                                    ),
+                                    "default": os.environ.get("GITLAB_CLIENT_ID", ""),
                                 },
                                 {
                                     "key": "GITLAB_CLIENT_SECRET",

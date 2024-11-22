@@ -24,12 +24,8 @@ from django.db import models
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
-from plane.app.permissions import (
-    ProjectEntityPermission,
-)
-from plane.app.serializers import (
-    ModuleDetailSerializer,
-)
+from plane.app.permissions import ProjectEntityPermission
+from plane.app.serializers import ModuleDetailSerializer
 from plane.db.models import Issue, Module, ModuleLink, UserFavorite, Project
 from plane.utils.analytics_plot import burndown_plot
 from plane.utils.user_timezone_converter import user_timezone_converter
@@ -40,10 +36,7 @@ from .. import BaseAPIView
 
 
 class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
-
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
+    permission_classes = [ProjectEntityPermission]
 
     def get_queryset(self):
         favorite_subquery = UserFavorite.objects.filter(
@@ -136,9 +129,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             )
             .values("issue_module__module_id")
             .annotate(
-                total_estimate_points=Sum(
-                    Cast("estimate_point__value", FloatField())
-                )
+                total_estimate_points=Sum(Cast("estimate_point__value", FloatField()))
             )
             .values("total_estimate_points")[:1]
         )
@@ -151,9 +142,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             )
             .values("issue_module__module_id")
             .annotate(
-                backlog_estimate_point=Sum(
-                    Cast("estimate_point__value", FloatField())
-                )
+                backlog_estimate_point=Sum(Cast("estimate_point__value", FloatField()))
             )
             .values("backlog_estimate_point")[:1]
         )
@@ -181,9 +170,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             )
             .values("issue_module__module_id")
             .annotate(
-                started_estimate_point=Sum(
-                    Cast("estimate_point__value", FloatField())
-                )
+                started_estimate_point=Sum(Cast("estimate_point__value", FloatField()))
             )
             .values("started_estimate_point")[:1]
         )
@@ -212,9 +199,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             .prefetch_related(
                 Prefetch(
                     "link_module",
-                    queryset=ModuleLink.objects.select_related(
-                        "module", "created_by"
-                    ),
+                    queryset=ModuleLink.objects.select_related("module", "created_by"),
                 )
             )
             .annotate(
@@ -231,8 +216,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             )
             .annotate(
                 started_issues=Coalesce(
-                    Subquery(started_issues[:1]),
-                    Value(0, output_field=IntegerField()),
+                    Subquery(started_issues[:1]), Value(0, output_field=IntegerField())
                 )
             )
             .annotate(
@@ -243,51 +227,48 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             )
             .annotate(
                 backlog_issues=Coalesce(
-                    Subquery(backlog_issues[:1]),
-                    Value(0, output_field=IntegerField()),
+                    Subquery(backlog_issues[:1]), Value(0, output_field=IntegerField())
                 )
             )
             .annotate(
                 total_issues=Coalesce(
-                    Subquery(total_issues[:1]),
-                    Value(0, output_field=IntegerField()),
+                    Subquery(total_issues[:1]), Value(0, output_field=IntegerField())
                 )
             )
             .annotate(
                 backlog_estimate_points=Coalesce(
                     Subquery(backlog_estimate_point),
                     Value(0, output_field=FloatField()),
-                ),
+                )
             )
             .annotate(
                 unstarted_estimate_points=Coalesce(
                     Subquery(unstarted_estimate_point),
                     Value(0, output_field=FloatField()),
-                ),
+                )
             )
             .annotate(
                 started_estimate_points=Coalesce(
                     Subquery(started_estimate_point),
                     Value(0, output_field=FloatField()),
-                ),
+                )
             )
             .annotate(
                 cancelled_estimate_points=Coalesce(
                     Subquery(cancelled_estimate_point),
                     Value(0, output_field=FloatField()),
-                ),
+                )
             )
             .annotate(
                 completed_estimate_points=Coalesce(
                     Subquery(completed_estimate_point),
                     Value(0, output_field=FloatField()),
-                ),
+                )
             )
             .annotate(
                 total_estimate_points=Coalesce(
-                    Subquery(total_estimate_point),
-                    Value(0, output_field=FloatField()),
-                ),
+                    Subquery(total_estimate_point), Value(0, output_field=FloatField())
+                )
             )
             .annotate(
                 member_ids=Coalesce(
@@ -409,9 +390,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                         "display_name",
                     )
                     .annotate(
-                        total_estimates=Sum(
-                            Cast("estimate_point__value", FloatField())
-                        ),
+                        total_estimates=Sum(Cast("estimate_point__value", FloatField()))
                     )
                     .annotate(
                         completed_estimates=Sum(
@@ -447,9 +426,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                     .annotate(label_id=F("labels__id"))
                     .values("label_name", "color", "label_id")
                     .annotate(
-                        total_estimates=Sum(
-                            Cast("estimate_point__value", FloatField())
-                        ),
+                        total_estimates=Sum(Cast("estimate_point__value", FloatField()))
                     )
                     .annotate(
                         completed_estimates=Sum(
@@ -473,20 +450,16 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                     )
                     .order_by("label_name")
                 )
-                data["estimate_distribution"][
-                    "assignees"
-                ] = assignee_distribution
+                data["estimate_distribution"]["assignees"] = assignee_distribution
                 data["estimate_distribution"]["labels"] = label_distribution
 
                 if modules and modules.start_date and modules.target_date:
-                    data["estimate_distribution"]["completion_chart"] = (
-                        burndown_plot(
-                            queryset=modules,
-                            slug=slug,
-                            project_id=project_id,
-                            plot_type="points",
-                            module_id=pk,
-                        )
+                    data["estimate_distribution"]["completion_chart"] = burndown_plot(
+                        queryset=modules,
+                        slug=slug,
+                        project_id=project_id,
+                        plot_type="points",
+                        module_id=pk,
                     )
 
             assignee_distribution = (
@@ -529,12 +502,8 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                 )
                 .annotate(
                     total_issues=Count(
-                        "id",
-                        filter=Q(
-                            archived_at__isnull=True,
-                            is_draft=False,
-                        ),
-                    ),
+                        "id", filter=Q(archived_at__isnull=True, is_draft=False)
+                    )
                 )
                 .annotate(
                     completed_issues=Count(
@@ -572,12 +541,8 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                 .values("label_name", "color", "label_id")
                 .annotate(
                     total_issues=Count(
-                        "id",
-                        filter=Q(
-                            archived_at__isnull=True,
-                            is_draft=False,
-                        ),
-                    ),
+                        "id", filter=Q(archived_at__isnull=True, is_draft=False)
+                    )
                 )
                 .annotate(
                     completed_issues=Count(
@@ -616,10 +581,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
                     module_id=pk,
                 )
 
-            return Response(
-                data,
-                status=status.HTTP_200_OK,
-            )
+            return Response(data, status=status.HTTP_200_OK)
 
     def post(self, request, slug, project_id, module_id):
         module = Module.objects.get(
@@ -627,9 +589,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
         )
         if module.status not in ["completed", "cancelled"]:
             return Response(
-                {
-                    "error": "Only completed or cancelled modules can be archived"
-                },
+                {"error": "Only completed or cancelled modules can be archived"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         module.archived_at = timezone.now()
@@ -641,8 +601,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             workspace__slug=slug,
         ).delete()
         return Response(
-            {"archived_at": str(module.archived_at)},
-            status=status.HTTP_200_OK,
+            {"archived_at": str(module.archived_at)}, status=status.HTTP_200_OK
         )
 
     def delete(self, request, slug, project_id, module_id):

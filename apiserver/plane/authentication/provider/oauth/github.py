@@ -75,9 +75,7 @@ class GitHubOAuthProvider(OauthAdapter):
             "scope": self.scope,
             "state": state,
         }
-        auth_url = (
-            f"https://github.com/login/oauth/authorize?{urlencode(url_params)}"
-        )
+        auth_url = f"https://github.com/login/oauth/authorize?{urlencode(url_params)}"
         super().__init__(
             request,
             self.provider,
@@ -109,16 +107,14 @@ class GitHubOAuthProvider(OauthAdapter):
                 "refresh_token": token_response.get("refresh_token", None),
                 "access_token_expired_at": (
                     datetime.fromtimestamp(
-                        token_response.get("expires_in"),
-                        tz=pytz.utc,
+                        token_response.get("expires_in"), tz=pytz.utc
                     )
                     if token_response.get("expires_in")
                     else None
                 ),
                 "refresh_token_expired_at": (
                     datetime.fromtimestamp(
-                        token_response.get("refresh_token_expired_at"),
-                        tz=pytz.utc,
+                        token_response.get("refresh_token_expired_at"), tz=pytz.utc
                     )
                     if token_response.get("refresh_token_expired_at")
                     else None
@@ -133,19 +129,12 @@ class GitHubOAuthProvider(OauthAdapter):
             emails_url = "https://api.github.com/user/emails"
             emails_response = requests.get(emails_url, headers=headers).json()
             email = next(
-                (
-                    email["email"]
-                    for email in emails_response
-                    if email["primary"]
-                ),
-                None,
+                (email["email"] for email in emails_response if email["primary"]), None
             )
             return email
         except requests.RequestException:
             raise AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "GITHUB_OAUTH_PROVIDER_ERROR"
-                ],
+                error_code=AUTHENTICATION_ERROR_CODES["GITHUB_OAUTH_PROVIDER_ERROR"],
                 error_message="GITHUB_OAUTH_PROVIDER_ERROR",
             )
 
