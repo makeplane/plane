@@ -18,9 +18,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         # Positional argument
-        parser.add_argument(
-            "machine_signature", type=str, help="Machine signature"
-        )
+        parser.add_argument("machine_signature", type=str, help="Machine signature")
 
     def read_package_json(self):
         with open("package.json", "r") as file:
@@ -39,9 +37,7 @@ class Command(BaseCommand):
 
         # If instance is None then register this instance
         if instance is None:
-            machine_signature = options.get(
-                "machine_signature", "machine-signature"
-            )
+            machine_signature = options.get("machine_signature", "machine-signature")
 
             if not machine_signature:
                 raise CommandError("Machine signature is required")
@@ -60,9 +56,7 @@ class Command(BaseCommand):
 
             self.stdout.write(self.style.SUCCESS("Instance registered"))
         else:
-            self.stdout.write(
-                self.style.SUCCESS("Instance already registered")
-            )
+            self.stdout.write(self.style.SUCCESS("Instance already registered"))
             payload = self.read_package_json()
             # Update the instance details
             instance.last_checked_at = timezone.now()

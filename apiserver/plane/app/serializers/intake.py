@@ -3,11 +3,7 @@ from rest_framework import serializers
 
 # Module imports
 from .base import BaseSerializer
-from .issue import (
-    IssueIntakeSerializer,
-    LabelLiteSerializer,
-    IssueDetailSerializer,
-)
+from .issue import IssueIntakeSerializer, LabelLiteSerializer, IssueDetailSerializer
 from .project import ProjectLiteSerializer
 from .state import StateLiteSerializer
 from .user import UserLiteSerializer
@@ -21,10 +17,7 @@ class IntakeSerializer(BaseSerializer):
     class Meta:
         model = Intake
         fields = "__all__"
-        read_only_fields = [
-            "project",
-            "workspace",
-        ]
+        read_only_fields = ["project", "workspace"]
 
 
 class IntakeIssueSerializer(BaseSerializer):
@@ -41,10 +34,7 @@ class IntakeIssueSerializer(BaseSerializer):
             "issue",
             "created_by",
         ]
-        read_only_fields = [
-            "project",
-            "workspace",
-        ]
+        read_only_fields = ["project", "workspace"]
 
     def to_representation(self, instance):
         # Pass the annotated fields to the Issue instance if they exist
@@ -70,10 +60,7 @@ class IntakeIssueDetailSerializer(BaseSerializer):
             "source",
             "issue",
         ]
-        read_only_fields = [
-            "project",
-            "workspace",
-        ]
+        read_only_fields = ["project", "workspace"]
 
     def to_representation(self, instance):
         # Pass the annotated fields to the Issue instance if they exist
@@ -95,12 +82,8 @@ class IntakeIssueLiteSerializer(BaseSerializer):
 class IssueStateIntakeSerializer(BaseSerializer):
     state_detail = StateLiteSerializer(read_only=True, source="state")
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
-    label_details = LabelLiteSerializer(
-        read_only=True, source="labels", many=True
-    )
-    assignee_details = UserLiteSerializer(
-        read_only=True, source="assignees", many=True
-    )
+    label_details = LabelLiteSerializer(read_only=True, source="labels", many=True)
+    assignee_details = UserLiteSerializer(read_only=True, source="assignees", many=True)
     sub_issues_count = serializers.IntegerField(read_only=True)
     issue_intake = IntakeIssueLiteSerializer(read_only=True, many=True)
 
