@@ -42,11 +42,9 @@ class Command(BaseCommand):
                 instance = Instance.objects.create(
                     instance_name="Plane Cloud",
                     instance_id=secrets.token_hex(12),
-                    license_key=None,
                     current_version="latest",
                     latest_version="latest",
                     last_checked_at=timezone.now(),
-                    user_count=0,
                     is_verified=True,
                     is_setup_done=True,
                     is_signup_screen_visited=True,

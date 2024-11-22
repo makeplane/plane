@@ -1,10 +1,15 @@
 # Third party imports
 from typing import Optional
 
+# Third-party library imports
+from asgiref.sync import sync_to_async
+
+
 # Strawberry imports
 import strawberry
 import strawberry_django
 from strawberry import auto
+from strawberry.types import Info
 
 # Module Imports
 from plane.db.models import Workspace, WorkspaceMember
@@ -24,6 +29,17 @@ class WorkspaceType:
     @strawberry.field
     def owner(self) -> int:
         return self.owner_id
+
+    @strawberry_django.field
+    async def role(self, info: Info) -> Optional[int]:
+        workspace_member = await sync_to_async(
+            WorkspaceMember.objects.filter(
+                workspace=self.id, member=info.context.user.id
+            ).first
+        )()
+        if workspace_member:
+            return str(workspace_member.role)
+        return None
 
 
 @strawberry_django.type(WorkspaceMember)

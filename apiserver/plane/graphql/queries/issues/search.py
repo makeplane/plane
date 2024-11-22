@@ -94,7 +94,7 @@ class IssuesSearchQuery:
             issue_queryset = issue_queryset.filter(
                 Q(parent__isnull=True), ~Q(pk=issue)
             )
-            if current_issue.parent:
+            if current_issue.parent_id:
                 issue_queryset = issue_queryset.filter(
                     ~Q(pk=current_issue.parent_id)
                 )

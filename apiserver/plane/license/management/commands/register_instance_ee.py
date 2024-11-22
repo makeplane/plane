@@ -10,8 +10,8 @@ from django.utils import timezone
 
 # Module imports
 from plane.license.models import Instance, InstanceEdition
-from plane.db.models import User
 from plane.utils.exception_logger import log_exception
+from plane.license.bgtasks.tracer import instance_traces
 
 
 class Command(BaseCommand):
@@ -82,13 +82,12 @@ class Command(BaseCommand):
             instance = Instance.objects.create(
                 instance_name="Plane Commercial Edition",
                 instance_id=data.get("instance_id", secrets.token_hex(12)),
-                license_key=None,
                 current_version=data.get("user_version", app_version),
                 latest_version=data.get("latest_version", app_version),
                 last_checked_at=timezone.now(),
-                user_count=User.objects.filter(is_bot=False).count(),
                 domain=domain,
                 edition=InstanceEdition.PLANE_COMMERCIAL.value,
+                is_test=os.environ.get("IS_TEST", "0") == "1",
             )
 
             self.stdout.write(self.style.SUCCESS("Instance registered"))
@@ -117,6 +116,7 @@ class Command(BaseCommand):
             )
             instance.edition = InstanceEdition.PLANE_COMMERCIAL.value
             instance.last_checked_at = timezone.now()
+            instance.is_test = os.environ.get("IS_TEST", "0") == "1"
             # Save the instance
             instance.save(
                 update_fields=[
@@ -125,8 +125,12 @@ class Command(BaseCommand):
                     "current_version",
                     "last_checked_at",
                     "edition",
+                    "is_test",
                 ]
             )
+
+            # Capture telemetry data
+            instance_traces.delay()
 
             # Print the success message
             self.stdout.write(
