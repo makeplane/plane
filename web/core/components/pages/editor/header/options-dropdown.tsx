@@ -24,6 +24,7 @@ import { ExportPageModal } from "@/components/pages";
 // helpers
 import { copyTextToClipboard, copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
+import { usePageCollaborativeActions } from "@/hooks/use-live-server-realtime";
 import { usePageFilters } from "@/hooks/use-page-filters";
 import { useQueryParams } from "@/hooks/use-query-params";
 // store
@@ -50,13 +51,9 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     archived_at,
     is_locked,
     id,
-    archive,
-    lock,
-    unlock,
     canCurrentUserArchivePage,
     canCurrentUserDuplicatePage,
     canCurrentUserLockPage,
-    restore,
   } = page;
   // states
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
@@ -69,80 +66,8 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   const { isFullWidth, handleFullWidth } = usePageFilters();
   // update query params
   const { updateQueryParams } = useQueryParams();
-
-  const EVENT_ACTION_DETAILS_MAP: Record<TDocumentEventsClient, ActionDetails> = useMemo(
-    () => ({
-      [DocumentRealtimeEvents.Lock.client]: {
-        action: lock,
-        errorMessage: "Page could not be locked. Please try again later.",
-      },
-      [DocumentRealtimeEvents.Unlock.client]: {
-        action: unlock,
-        errorMessage: "Page could not be unlocked. Please try again later.",
-      },
-      [DocumentRealtimeEvents.Archive.client]: {
-        action: archive,
-        errorMessage: "Page could not be archived. Please try again later.",
-      },
-      [DocumentRealtimeEvents.Unarchive.client]: {
-        action: restore,
-        errorMessage: "Page could not be restored. Please try again later.",
-      },
-    }),
-    [lock, unlock, archive, restore]
-  );
-
-  const handlePageAction = useCallback(
-    async (actionDetails: ActionDetails, event: TDocumentEventsClient, isPerformedByCurrentUser: boolean = true) => {
-      try {
-        await actionDetails.action();
-        if (isPerformedByCurrentUser) {
-          setCurrentUserAction(event);
-        }
-      } catch {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: actionDetails.errorMessage,
-        });
-      }
-    },
-    []
-  );
-
-  // sending the current user action to the server
-  useEffect(() => {
-    if (currentUserAction) {
-      const serverEventName = getServerEventName(currentUserAction);
-      if (serverEventName) {
-        editorRef?.emitRealTimeUpdate(serverEventName);
-      }
-    }
-  }, [currentUserAction, editorRef]);
-
-  // this is for listening to real time updates from the live server for remote
-  // users' actions
-  useEffect(() => {
-    const provider = editorRef?.listenToRealTimeUpdate();
-
-    const handleStatelessMessage = (message: { payload: TDocumentEventsClient }) => {
-      if (currentUserAction === message.payload) {
-        setCurrentUserAction(null);
-        return;
-      }
-
-      const eventActions = EVENT_ACTION_DETAILS_MAP[message.payload];
-      if (eventActions) {
-        handlePageAction(eventActions, message.payload, false);
-      }
-    };
-
-    provider?.on("stateless", handleStatelessMessage);
-
-    return () => {
-      provider?.off("stateless", handleStatelessMessage);
-    };
-  }, [editorRef, currentUserAction, handlePageAction, EVENT_ACTION_DETAILS_MAP]);
+  // collaborative actions
+  const { executeCollaborativeAction } = usePageCollaborativeActions(editorRef, page);
 
   // menu items list
   const MENU_ITEMS: {
@@ -195,32 +120,18 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     },
     {
       key: "lock-unlock-page",
-      // action: is_locked ? handleUnlockPage : handleLockPage,
       action: is_locked
-        ? () => {
-            const clientAction = DocumentRealtimeEvents["Unlock"].client;
-            handlePageAction(EVENT_ACTION_DETAILS_MAP[clientAction], clientAction, true);
-          }
-        : () => {
-            const clientAction = DocumentRealtimeEvents["Lock"].client;
-            handlePageAction(EVENT_ACTION_DETAILS_MAP[clientAction], clientAction, true);
-          },
+        ? () => executeCollaborativeAction({ type: "sendToServer", message: "Unlock" })
+        : () => executeCollaborativeAction({ type: "sendToServer", message: "Lock" }),
       label: is_locked ? "Unlock page" : "Lock page",
       icon: is_locked ? LockOpen : Lock,
       shouldRender: canCurrentUserLockPage,
     },
     {
       key: "archive-restore-page",
-      // action: archived_at ? handleRestorePage : handleArchivePage,
       action: archived_at
-        ? () => {
-            const clientAction = DocumentRealtimeEvents["Unarchive"].client;
-            handlePageAction(EVENT_ACTION_DETAILS_MAP[clientAction], clientAction, true);
-          }
-        : () => {
-            const clientAction = DocumentRealtimeEvents["Archive"].client;
-            handlePageAction(EVENT_ACTION_DETAILS_MAP[clientAction], clientAction, true);
-          },
+        ? () => executeCollaborativeAction({ type: "sendToServer", message: "Unarchive" })
+        : () => executeCollaborativeAction({ type: "sendToServer", message: "Archive" }),
       label: archived_at ? "Restore page" : "Archive page",
       icon: archived_at ? ArchiveRestoreIcon : ArchiveIcon,
       shouldRender: canCurrentUserArchivePage,
