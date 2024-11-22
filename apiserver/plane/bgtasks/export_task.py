@@ -156,6 +156,8 @@ def generate_table_row(issue):
         issue["project__name"],
         issue["name"],
         issue["description_stripped"],
+        issue["start_date"],
+        issue["target_date"],
         issue["state__name"],
         dateTimeConverter(issue["start_date"]),
         dateTimeConverter(issue["target_date"]),
@@ -190,6 +192,8 @@ def generate_json_row(issue):
         "Project": issue["project__name"],
         "Name": issue["name"],
         "Description": issue["description_stripped"],
+        "Start Date": issue["start_date"],
+        "Target Date": issue["target_date"],
         "State": issue["state__name"],
         "Priority": issue["priority"],
         "Created By": (
