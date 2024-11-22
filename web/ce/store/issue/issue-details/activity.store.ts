@@ -1,8 +1,8 @@
 /* eslint-disable no-useless-catch */
 
 import concat from "lodash/concat";
-import set from "lodash/set";
 import orderBy from "lodash/orderBy";
+import set from "lodash/set";
 import uniq from "lodash/uniq";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
@@ -103,7 +103,7 @@ export class IssueActivityStore implements IIssueActivityStore {
         created_at: comment.created_at,
       });
     });
-    
+
     activityComments = orderBy(activityComments, (e)=>new Date(e.created_at || 0), this.sortOrder);
 
     return activityComments;
