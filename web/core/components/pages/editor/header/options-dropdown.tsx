@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
 import {
@@ -16,7 +16,6 @@ import {
 } from "lucide-react";
 // document editor
 import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
-import { DocumentRealtimeEvents, TDocumentEventsClient, getServerEventName } from "@plane/editor/lib";
 // ui
 import { ArchiveIcon, CustomMenu, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 // components
@@ -36,11 +35,6 @@ type Props = {
   page: IPage;
 };
 
-type ActionDetails = {
-  action: () => Promise<void>;
-  errorMessage: string;
-};
-
 export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   const { editorRef, handleDuplicatePage, page } = props;
   // router
@@ -57,9 +51,6 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   } = page;
   // states
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
-  // currentUserAction local state to track if the current action is being processed, a
-  // local action is basically the action performed by the current user to avoid double operations
-  const [currentUserAction, setCurrentUserAction] = useState<TDocumentEventsClient | null>(null);
   // store hooks
   const { workspaceSlug, projectId } = useParams();
   // page filters
