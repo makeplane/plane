@@ -5,6 +5,7 @@ import { replaceCodeWithText } from "@/extensions/code/utils/replace-code-block-
 import { findTableAncestor } from "@/helpers/common";
 // types
 import { InsertImageComponentProps } from "@/extensions";
+import { EditorState, NodeSelection, Transaction } from "@tiptap/pm/state";
 
 export const setText = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).setNode("paragraph").run();
@@ -42,9 +43,47 @@ export const toggleHeadingSix = (editor: Editor, range?: Range) => {
 };
 
 export const toggleBold = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).toggleBold().run();
-  else editor.chain().focus().toggleBold().run();
+  const { view } = editor;
+  const { from, to } = view.state.selection;
+  const tr = createNodeSelectionsAtDepth(editor.state, from, to, 1);
+  if (tr) editor.view.dispatch(tr);
+  // if (range) editor.chain().focus().deleteRange(range).toggleBold().run();
+  // else editor.chain().focus().toggleBold().run();
 };
+
+/**
+ * Creates multiple NodeSelections for nodes within a range at a specified depth
+ *
+ * @param state - The current EditorState
+ * @param from - Starting position of the range
+ * @param to - Ending position of the range
+ * @param depth - The depth at which to select nodes (e.g. 1 for direct children of the parent)
+ * @returns Transaction with the NodeSelections or null if invalid
+ */
+function createNodeSelectionsAtDepth(state: EditorState, from: number, to: number, depth: number): Transaction | null {
+  const { doc, tr } = state;
+  let hasSelections = false;
+  console.log("asafdasf", doc, from, to);
+
+  // Collect positions of nodes at specified depth within range
+  doc.nodesBetween(from, to, (node, pos, parent, index) => {
+    console.log("node", node, parent, doc.resolve(pos).depth, depth);
+    // Only process nodes at the specified depth
+    if (parent) {
+      console.log("node inside if", node);
+      // Create a NodeSelection if the node is selectable
+      if (NodeSelection.isSelectable(node)) {
+        console.log("creating node selection", node);
+        tr.setSelection(NodeSelection.create(doc, pos));
+        hasSelections = true;
+      }
+    }
+    // Return true to continue traversing
+    return true;
+  });
+
+  return hasSelections ? tr : null;
+}
 
 export const toggleItalic = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).toggleItalic().run();
