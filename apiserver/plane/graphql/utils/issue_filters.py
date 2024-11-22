@@ -201,6 +201,7 @@ def filter_labels(params, filter, method, prefix=""):
             and params.get("labels") != "null"
         ):
             filter[f"{prefix}labels__in"] = params.get("labels")
+    filter[f"{prefix}label_issue__deleted_at__isnull"] = True
     return filter
 
 
@@ -223,6 +224,7 @@ def filter_assignees(params, filter, method, prefix=""):
             and params.get("assignees") != "null"
         ):
             filter[f"{prefix}assignees__in"] = params.get("assignees")
+    filter[f"{prefix}issue_assignee__deleted_at__isnull"] = True
     return filter
 
 
@@ -426,6 +428,7 @@ def filter_module(params, filter, method, prefix=""):
             filter[f"{prefix}issue_module__module_id__in"] = params.get(
                 "module"
             )
+    filter[f"{prefix}issue_module__deleted_at__isnull"] = True
     return filter
 
 
