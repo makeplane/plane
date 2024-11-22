@@ -156,15 +156,14 @@ def generate_table_row(issue):
         issue["project__name"],
         issue["name"],
         issue["description_stripped"],
-        issue["start_date"],
-        issue["target_date"],
         issue["state__name"],
-        dateTimeConverter(issue["start_date"]),
-        dateTimeConverter(issue["target_date"]),
+        dateConverter(issue["start_date"]),
+        dateConverter(issue["target_date"]),
         issue["priority"],
         (
             f"{issue['created_by__first_name']} {issue['created_by__last_name']}"
-            if issue["created_by__first_name"] and issue["created_by__last_name"]
+            if issue["created_by__first_name"]
+            and issue["created_by__last_name"]
             else ""
         ),
         (
@@ -192,13 +191,14 @@ def generate_json_row(issue):
         "Project": issue["project__name"],
         "Name": issue["name"],
         "Description": issue["description_stripped"],
-        "Start Date": issue["start_date"],
-        "Target Date": issue["target_date"],
         "State": issue["state__name"],
+        "Start Date": dateConverter(issue["start_date"]),
+        "Target Date": dateConverter(issue["target_date"]),
         "Priority": issue["priority"],
         "Created By": (
             f"{issue['created_by__first_name']} {issue['created_by__last_name']}"
-            if issue["created_by__first_name"] and issue["created_by__last_name"]
+            if issue["created_by__first_name"]
+            and issue["created_by__last_name"]
             else ""
         ),
         "Assignee": (
@@ -208,11 +208,17 @@ def generate_json_row(issue):
         ),
         "Labels": issue["labels__name"] if issue["labels__name"] else "",
         "Cycle Name": issue["issue_cycle__cycle__name"],
-        "Cycle Start Date": dateConverter(issue["issue_cycle__cycle__start_date"]),
+        "Cycle Start Date": dateConverter(
+            issue["issue_cycle__cycle__start_date"]
+        ),
         "Cycle End Date": dateConverter(issue["issue_cycle__cycle__end_date"]),
         "Module Name": issue["issue_module__module__name"],
-        "Module Start Date": dateConverter(issue["issue_module__module__start_date"]),
-        "Module Target Date": dateConverter(issue["issue_module__module__target_date"]),
+        "Module Start Date": dateConverter(
+            issue["issue_module__module__start_date"]
+        ),
+        "Module Target Date": dateConverter(
+            issue["issue_module__module__target_date"]
+        ),
         "Created At": dateTimeConverter(issue["created_at"]),
         "Updated At": dateTimeConverter(issue["updated_at"]),
         "Completed At": dateTimeConverter(issue["completed_at"]),
