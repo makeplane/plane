@@ -262,7 +262,7 @@ class PageViewSet(BaseViewSet):
                 status=status.HTTP_200_OK,
             )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @allow_permission([ROLE.ADMIN], model=Page, creator=True)
     def lock(self, request, slug, project_id, pk):
         page = Page.objects.filter(
             pk=pk, workspace__slug=slug, projects__id=project_id
@@ -272,7 +272,7 @@ class PageViewSet(BaseViewSet):
         page.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @allow_permission([ROLE.ADMIN], model=Page, creator=True)
     def unlock(self, request, slug, project_id, pk):
         page = Page.objects.filter(
             pk=pk, workspace__slug=slug, projects__id=project_id
@@ -283,7 +283,7 @@ class PageViewSet(BaseViewSet):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @allow_permission([ROLE.ADMIN], model=Page, creator=True)
     def access(self, request, slug, project_id, pk):
         access = request.data.get("access", 0)
         page = Page.objects.filter(
@@ -330,7 +330,7 @@ class PageViewSet(BaseViewSet):
         pages = PageSerializer(queryset, many=True).data
         return Response(pages, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @allow_permission([ROLE.ADMIN], model=Page, creator=True)
     def archive(self, request, slug, project_id, pk):
         page = Page.objects.get(
             pk=pk, workspace__slug=slug, projects__id=project_id
@@ -365,7 +365,7 @@ class PageViewSet(BaseViewSet):
             status=status.HTTP_200_OK,
         )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @allow_permission([ROLE.ADMIN], model=Page, creator=True)
     def unarchive(self, request, slug, project_id, pk):
         page = Page.objects.get(
             pk=pk, workspace__slug=slug, projects__id=project_id
@@ -438,7 +438,6 @@ class PageViewSet(BaseViewSet):
 
 
 class PageFavoriteViewSet(BaseViewSet):
-
     model = UserFavorite
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
@@ -465,7 +464,6 @@ class PageFavoriteViewSet(BaseViewSet):
 
 
 class PageLogEndpoint(BaseAPIView):
-
     serializer_class = PageLogSerializer
     model = PageLog
 
@@ -504,7 +502,6 @@ class PageLogEndpoint(BaseAPIView):
 
 
 class SubPagesEndpoint(BaseAPIView):
-
     @method_decorator(gzip_page)
     def get(self, request, slug, project_id, page_id):
         pages = (
@@ -522,7 +519,6 @@ class SubPagesEndpoint(BaseAPIView):
 
 
 class PagesDescriptionViewSet(BaseViewSet):
-
     @allow_permission(
         [
             ROLE.ADMIN,

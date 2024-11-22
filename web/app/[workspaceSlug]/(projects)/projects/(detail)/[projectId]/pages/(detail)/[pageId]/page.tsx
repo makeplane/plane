@@ -20,7 +20,7 @@ const PageDetailsPage = observer(() => {
   const { workspaceSlug, projectId, pageId } = useParams();
 
   // store hooks
-  const { getPageById } = useProjectPages();
+  const { fetchPageById } = useProjectPages();
   const page = usePage(pageId?.toString() ?? "");
   const { id, name } = page;
 
@@ -28,7 +28,7 @@ const PageDetailsPage = observer(() => {
   const { error: pageDetailsError } = useSWR(
     workspaceSlug && projectId && pageId ? `PAGE_DETAILS_${pageId}` : null,
     workspaceSlug && projectId && pageId
-      ? () => getPageById(workspaceSlug?.toString(), projectId?.toString(), pageId.toString())
+      ? () => fetchPageById(workspaceSlug?.toString(), projectId?.toString(), pageId.toString())
       : null,
     {
       revalidateIfStale: false,

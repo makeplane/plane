@@ -31,12 +31,8 @@ export interface IProjectPageStore {
   updateFilters: <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => void;
   clearAllFilters: () => void;
   // actions
-  getAllPages: (
-    workspaceSlug: string,
-    projectId: string,
-    pageType: TPageNavigationTabs
-  ) => Promise<TPage[] | undefined>;
-  getPageById: (workspaceSlug: string, projectId: string, pageId: string) => Promise<TPage | undefined>;
+  fetchAllPages: (workspaceSlug: string, projectId: string) => Promise<TPage[]>;
+  fetchPageById: (workspaceSlug: string, projectId: string, pageId: string) => Promise<TPage>;
   createPage: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
   removePage: (pageId: string) => Promise<void>;
 }
@@ -66,8 +62,8 @@ export class ProjectPageStore implements IProjectPageStore {
       updateFilters: action,
       clearAllFilters: action,
       // actions
-      getAllPages: action,
-      getPageById: action,
+      fetchAllPages: action,
+      fetchPageById: action,
       createPage: action,
       removePage: action,
     });
@@ -154,13 +150,14 @@ export class ProjectPageStore implements IProjectPageStore {
   /**
    * @description fetch all the pages
    */
-  getAllPages = async (workspaceSlug: string, projectId: string, pageType: TPageNavigationTabs) => {
+  fetchAllPages = async (workspaceSlug: string, projectId: string) => {
     try {
-      if (!workspaceSlug || !projectId) return undefined;
+      if (!workspaceSlug || !projectId) {
+        throw new Error("workspace slug or project id not provided");
+      }
 
-      const currentPageIds = this.getCurrentProjectPageIds(pageType);
       runInAction(() => {
-        this.loader = currentPageIds && currentPageIds.length > 0 ? `mutation-loader` : `init-loader`;
+        this.loader = this.isAnyPageAvailable ? `mutation-loader` : `init-loader`;
         this.error = undefined;
       });
 
@@ -187,13 +184,15 @@ export class ProjectPageStore implements IProjectPageStore {
    * @description fetch the details of a page
    * @param {string} pageId
    */
-  getPageById = async (workspaceSlug: string, projectId: string, pageId: string) => {
+  fetchPageById = async (workspaceSlug: string, projectId: string, pageId: string) => {
     try {
-      if (!workspaceSlug || !projectId || !pageId) return undefined;
+      if (!workspaceSlug || !projectId || !pageId) {
+        throw new Error("workspace slug, project id or page id not provided");
+      }
 
-      const currentPageId = this.pageById(pageId);
+      const currentPage = this.pageById(pageId);
       runInAction(() => {
-        this.loader = currentPageId ? `mutation-loader` : `init-loader`;
+        this.loader = currentPage ? `mutation-loader` : `init-loader`;
         this.error = undefined;
       });
 

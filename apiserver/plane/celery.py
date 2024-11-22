@@ -40,6 +40,10 @@ app.conf.beat_schedule = {
         "task": "plane.bgtasks.api_logs_task.delete_api_logs",
         "schedule": crontab(hour=0, minute=0),
     },
+    "check-every-day-to-delete-pages-from-trash": {
+        "task": "plane.bgtasks.delete_pages_from_trash.delete_pages_from_trash",
+        "schedule": crontab(hour=0, minute=0),
+    },
     "run-every-6-hours-for-instance-trace": {
         "task": "plane.license.bgtasks.tracer.instance_traces",
         "schedule": crontab(hour="*/6", minute=0),

@@ -303,6 +303,7 @@ CELERY_IMPORTS = (
     "plane.bgtasks.email_notification_task",
     "plane.bgtasks.api_logs_task",
     "plane.license.bgtasks.tracer",
+    "plane.bgtasks.delete_pages_from_trash",
     # management tasks
     "plane.bgtasks.dummy_data_task",
 )
