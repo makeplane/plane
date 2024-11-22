@@ -1,6 +1,7 @@
 import { extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import orderBy from "lodash/orderBy";
 import { IFavorite, InstructionType, IPragmaticPayloadLocation, TDropTarget } from "@plane/types";
+import { result } from "lodash";
 
 export type TargetData = {
   id: string;
@@ -17,6 +18,7 @@ export const getDestinationStateSequence = (
   const defaultSequence = 65535;
   if (!edge) return defaultSequence;
 
+
   const favoriteIds = orderBy(Object.values(favoriteMap), "sequence", "desc")
     .filter((fav: IFavorite) => !fav.parent)
     .map((fav: IFavorite) => fav.id);
@@ -25,21 +27,31 @@ export const getDestinationStateSequence = (
 
   if (!destinationStateSequence) return defaultSequence;
 
+
+  let resultSequence = defaultSequence;
   if (edge === "reorder-above") {
     const prevStateSequence = favoriteMap[favoriteIds[destinationStateIndex - 1]]?.sequence || undefined;
 
     if (prevStateSequence === undefined) {
-      return destinationStateSequence + defaultSequence;
-    }
-    return (destinationStateSequence + prevStateSequence) / 2;
-  } else if (edge === "reorder-below") {
+      resultSequence =  destinationStateSequence + defaultSequence;
+    }else {
+      resultSequence = (destinationStateSequence + prevStateSequence) / 2
+    } 
+  } else if (edge === "reorder-below") { 
     const nextStateSequence = favoriteMap[favoriteIds[destinationStateIndex + 1]]?.sequence || undefined;
 
     if (nextStateSequence === undefined) {
-      return destinationStateSequence - defaultSequence;
+      resultSequence = destinationStateSequence - defaultSequence;
+    } else {
+      resultSequence = (destinationStateSequence + nextStateSequence) / 2;
     }
-    return (destinationStateSequence + nextStateSequence) / 2;
   }
+
+  console.log({resultSequence});
+
+  resultSequence = Math.round(resultSequence)
+
+  return resultSequence;
 };
 
 /**

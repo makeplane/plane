@@ -69,11 +69,11 @@ export const SidebarFavoritesMenu = observer(() => {
       parent: null,
     })
       .then(() => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Favorite moved successfully.",
-        });
+        // setToast({
+        //   type: TOAST_TYPE.SUCCESS,
+        //   title: "Success!",
+        //   message: "Favorite moved successfully.",
+        // });
       })
       .catch(() => {
         setToast({
@@ -89,11 +89,11 @@ export const SidebarFavoritesMenu = observer(() => {
       sequence: sequence
     })
       .then(() => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Reordered successfully.",
-        });
+        // setToast({
+        //   type: TOAST_TYPE.SUCCESS,
+        //   title: "Success!",
+        //   message: "Reordered successfully.",
+        // });
       })
       .catch(() => {
         setToast({

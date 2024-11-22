@@ -38,7 +38,7 @@ type Props = {
 };
 
 export const FavoriteFolder: React.FC<Props> = (props) => {
-  const { favorite, handleRemoveFromFavorites, handleRemoveFromFavoritesFolder, handleReorder, isLastChild } = props;
+  const { favorite, handleRemoveFromFavorites, handleRemoveFromFavoritesFolder, handleReorder, isLastChild} = props;
   // store hooks
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
 
@@ -62,11 +62,11 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
       parent: destination,
     })
       .then(() => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Favorite moved successfully.",
-        });
+        // setToast({
+        //   type: TOAST_TYPE.SUCCESS,
+        //   title: "Success!",
+        //   message: "Favorite moved successfully.",
+        // });
       })
       .catch(() => {
         setToast({
@@ -152,25 +152,22 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
           const droppedFavId = instruction !== "make-child" ? dropTargetData.id : undefined;
           const sourceData = source.data as TargetData;
 
-          if(droppedFavId && sourceData.id){
-            if(!!parentId) return; // skip if reorder is inside folder
+          if(!sourceData.id) return
+          if(parentId){
+            if(parentId !== sourceData.parentId){
+              handleMoveToFolder(sourceData.id,parentId)
+            }
+          } else {
+            if(sourceData.isChild){
+              handleRemoveFromFavoritesFolder(sourceData.id)
+            }
+          }
+          if(droppedFavId){
+            if(instruction === 'make-child') return; /** Reorder iniside the folder skipped here. It is handled in root element */
             const destinationSequence = getDestinationStateSequence(groupedFavorites,droppedFavId,instruction)
             handleReorder(sourceData.id,destinationSequence || 0)
           }
-
-          if(!parentId && !droppedFavId) return
-          if(sourceData.isGroup) return
-          if(sourceData.parentId === parentId) return
-
-          if(!parentId && sourceData.isChild){
-            handleRemoveFromFavoritesFolder(sourceData.id)
-            return
-          }
           
-          if(parentId){
-            handleMoveToFolder(sourceData.id,parentId)
-          }
-
 
           // if(parentId)
           //   handleMoveToFolder(sourceData.id,parentId);
