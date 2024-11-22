@@ -123,9 +123,7 @@ class Issue(ProjectBaseModel):
         related_name="state_issue",
     )
     point = models.IntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(12)],
-        null=True,
-        blank=True,
+        validators=[MinValueValidator(0), MaxValueValidator(12)], null=True, blank=True
     )
     estimate_point = models.ForeignKey(
         "db.EstimatePoint",
@@ -154,9 +152,7 @@ class Issue(ProjectBaseModel):
         through="IssueAssignee",
         through_fields=("issue", "assignee"),
     )
-    sequence_id = models.IntegerField(
-        default=1, verbose_name="Issue Sequence ID"
-    )
+    sequence_id = models.IntegerField(default=1, verbose_name="Issue Sequence ID")
     labels = models.ManyToManyField(
         "db.Label", blank=True, related_name="labels", through="IssueLabel"
     )
@@ -188,9 +184,7 @@ class Issue(ProjectBaseModel):
                 from plane.db.models import State
 
                 default_state = State.objects.filter(
-                    ~models.Q(is_triage=True),
-                    project=self.project,
-                    default=True,
+                    ~models.Q(is_triage=True), project=self.project, default=True
                 ).first()
                 if default_state is None:
                     random_state = State.objects.filter(
@@ -223,10 +217,7 @@ class Issue(ProjectBaseModel):
                 # Strip the html tags using html parser
                 self.description_stripped = (
                     None
-                    if (
-                        self.description_html == ""
-                        or self.description_html is None
-                    )
+                    if (self.description_html == "" or self.description_html is None)
                     else strip_tags(self.description_html)
                 )
                 largest_sort_order = Issue.objects.filter(
@@ -244,10 +235,7 @@ class Issue(ProjectBaseModel):
             # Strip the html tags using html parser
             self.description_stripped = (
                 None
-                if (
-                    self.description_html == ""
-                    or self.description_html is None
-                )
+                if (self.description_html == "" or self.description_html is None)
                 else strip_tags(self.description_html)
             )
             super(Issue, self).save(*args, **kwargs)
@@ -320,9 +308,7 @@ class IssueMention(ProjectBaseModel):
         Issue, on_delete=models.CASCADE, related_name="issue_mention"
     )
     mention = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="issue_mention",
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="issue_mention"
     )
 
     class Meta:
@@ -401,12 +387,7 @@ def file_size(value):
 
 class IssueAttachment(ProjectBaseModel):
     attributes = models.JSONField(default=dict)
-    asset = models.FileField(
-        upload_to=get_upload_path,
-        validators=[
-            file_size,
-        ],
-    )
+    asset = models.FileField(upload_to=get_upload_path, validators=[file_size])
     issue = models.ForeignKey(
         "db.Issue", on_delete=models.CASCADE, related_name="issue_attachment"
     )
@@ -425,28 +406,17 @@ class IssueAttachment(ProjectBaseModel):
 
 class IssueActivity(ProjectBaseModel):
     issue = models.ForeignKey(
-        Issue,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name="issue_activity",
+        Issue, on_delete=models.SET_NULL, null=True, related_name="issue_activity"
     )
-    verb = models.CharField(
-        max_length=255, verbose_name="Action", default="created"
-    )
+    verb = models.CharField(max_length=255, verbose_name="Action", default="created")
     field = models.CharField(
         max_length=255, verbose_name="Field Name", blank=True, null=True
     )
-    old_value = models.TextField(
-        verbose_name="Old Value", blank=True, null=True
-    )
-    new_value = models.TextField(
-        verbose_name="New Value", blank=True, null=True
-    )
+    old_value = models.TextField(verbose_name="Old Value", blank=True, null=True)
+    new_value = models.TextField(verbose_name="New Value", blank=True, null=True)
 
     comment = models.TextField(verbose_name="Comment", blank=True)
-    attachments = ArrayField(
-        models.URLField(), size=10, blank=True, default=list
-    )
+    attachments = ArrayField(models.URLField(), size=10, blank=True, default=list)
     issue_comment = models.ForeignKey(
         "db.IssueComment",
         on_delete=models.SET_NULL,
@@ -478,9 +448,7 @@ class IssueComment(ProjectBaseModel):
     comment_stripped = models.TextField(verbose_name="Comment", blank=True)
     comment_json = models.JSONField(blank=True, default=dict)
     comment_html = models.TextField(blank=True, default="<p></p>")
-    attachments = ArrayField(
-        models.URLField(), size=10, blank=True, default=list
-    )
+    attachments = ArrayField(models.URLField(), size=10, blank=True, default=list)
     issue = models.ForeignKey(
         Issue, on_delete=models.CASCADE, related_name="issue_comments"
     )
@@ -492,10 +460,7 @@ class IssueComment(ProjectBaseModel):
         null=True,
     )
     access = models.CharField(
-        choices=(
-            ("INTERNAL", "INTERNAL"),
-            ("EXTERNAL", "EXTERNAL"),
-        ),
+        choices=(("INTERNAL", "INTERNAL"), ("EXTERNAL", "EXTERNAL")),
         default="INTERNAL",
         max_length=100,
     )
@@ -527,9 +492,7 @@ class IssueUserProperty(ProjectBaseModel):
     )
     filters = models.JSONField(default=get_default_filters)
     display_filters = models.JSONField(default=get_default_display_filters)
-    display_properties = models.JSONField(
-        default=get_default_display_properties
-    )
+    display_properties = models.JSONField(default=get_default_display_properties)
 
     class Meta:
         verbose_name = "Issue User Property"
@@ -649,9 +612,7 @@ class CommentReaction(ProjectBaseModel):
         related_name="comment_reactions",
     )
     comment = models.ForeignKey(
-        IssueComment,
-        on_delete=models.CASCADE,
-        related_name="comment_reactions",
+        IssueComment, on_delete=models.CASCADE, related_name="comment_reactions"
     )
     reaction = models.CharField(max_length=20)
 
@@ -674,28 +635,14 @@ class CommentReaction(ProjectBaseModel):
 
 
 class IssueVote(ProjectBaseModel):
-    issue = models.ForeignKey(
-        Issue, on_delete=models.CASCADE, related_name="votes"
-    )
+    issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name="votes")
     actor = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="votes",
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="votes"
     )
-    vote = models.IntegerField(
-        choices=(
-            (-1, "DOWNVOTE"),
-            (1, "UPVOTE"),
-        ),
-        default=1,
-    )
+    vote = models.IntegerField(choices=((-1, "DOWNVOTE"), (1, "UPVOTE")), default=1)
 
     class Meta:
-        unique_together = [
-            "issue",
-            "actor",
-            "deleted_at",
-        ]
+        unique_together = ["issue", "actor", "deleted_at"]
         constraints = [
             models.UniqueConstraint(
                 fields=["issue", "actor"],

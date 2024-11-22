@@ -13,15 +13,11 @@ from rest_framework import status
 from ..base import BaseAPIView
 from plane.app.permissions import allow_permission, ROLE
 from plane.db.models import Workspace, Project
-from plane.app.serializers import (
-    ProjectLiteSerializer,
-    WorkspaceLiteSerializer,
-)
+from plane.app.serializers import ProjectLiteSerializer, WorkspaceLiteSerializer
 from plane.license.utils.instance_value import get_configuration_value
 
 
 class GPTIntegrationEndpoint(BaseAPIView):
-
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id):
         OPENAI_API_KEY, GPT_ENGINE = get_configuration_value(
@@ -50,19 +46,15 @@ class GPTIntegrationEndpoint(BaseAPIView):
 
         if not task:
             return Response(
-                {"error": "Task is required"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"error": "Task is required"}, status=status.HTTP_400_BAD_REQUEST
             )
 
         final_text = task + "\n" + prompt
 
-        client = OpenAI(
-            api_key=OPENAI_API_KEY,
-        )
+        client = OpenAI(api_key=OPENAI_API_KEY)
 
         response = client.chat.completions.create(
-            model=GPT_ENGINE,
-            messages=[{"role": "user", "content": final_text}],
+            model=GPT_ENGINE, messages=[{"role": "user", "content": final_text}]
         )
 
         workspace = Workspace.objects.get(slug=slug)
@@ -82,10 +74,7 @@ class GPTIntegrationEndpoint(BaseAPIView):
 
 
 class WorkspaceGPTIntegrationEndpoint(BaseAPIView):
-
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE"
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def post(self, request, slug):
         OPENAI_API_KEY, GPT_ENGINE = get_configuration_value(
             [
@@ -113,29 +102,21 @@ class WorkspaceGPTIntegrationEndpoint(BaseAPIView):
 
         if not task:
             return Response(
-                {"error": "Task is required"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"error": "Task is required"}, status=status.HTTP_400_BAD_REQUEST
             )
 
         final_text = task + "\n" + prompt
 
-        client = OpenAI(
-            api_key=OPENAI_API_KEY,
-        )
+        client = OpenAI(api_key=OPENAI_API_KEY)
 
         response = client.chat.completions.create(
-            model=GPT_ENGINE,
-            messages=[{"role": "user", "content": final_text}],
+            model=GPT_ENGINE, messages=[{"role": "user", "content": final_text}]
         )
 
         text = response.choices[0].message.content.strip()
         text_html = text.replace("\n", "<br/>")
         return Response(
-            {
-                "response": text,
-                "response_html": text_html,
-            },
-            status=status.HTTP_200_OK,
+            {"response": text, "response_html": text_html}, status=status.HTTP_200_OK
         )
 
 
@@ -164,9 +145,7 @@ class UnsplashEndpoint(BaseAPIView):
             else f"https://api.unsplash.com/photos/?client_id={UNSPLASH_ACCESS_KEY}&page={page}&per_page={per_page}"
         )
 
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {"Content-Type": "application/json"}
 
         resp = requests.get(url=url, headers=headers)
         return Response(resp.json(), status=resp.status_code)

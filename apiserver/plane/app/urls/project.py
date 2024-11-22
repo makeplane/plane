@@ -20,12 +20,7 @@ from plane.app.views import (
 urlpatterns = [
     path(
         "workspaces/<str:slug>/projects/",
-        ProjectViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
+        ProjectViewSet.as_view({"get": "list", "post": "create"}),
         name="project",
     ),
     path(
@@ -47,32 +42,17 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/invitations/",
-        ProjectInvitationsViewset.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            },
-        ),
+        ProjectInvitationsViewset.as_view({"get": "list", "post": "create"}),
         name="project-member-invite",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/invitations/<uuid:pk>/",
-        ProjectInvitationsViewset.as_view(
-            {
-                "get": "retrieve",
-                "delete": "destroy",
-            }
-        ),
+        ProjectInvitationsViewset.as_view({"get": "retrieve", "delete": "destroy"}),
         name="project-member-invite",
     ),
     path(
         "users/me/workspaces/<str:slug>/projects/invitations/",
-        UserProjectInvitationsViewset.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            },
-        ),
+        UserProjectInvitationsViewset.as_view({"get": "list", "post": "create"}),
         name="user-project-invitations",
     ),
     path(
@@ -87,32 +67,19 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/members/",
-        ProjectMemberViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
+        ProjectMemberViewSet.as_view({"get": "list", "post": "create"}),
         name="project-member",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/members/<uuid:pk>/",
         ProjectMemberViewSet.as_view(
-            {
-                "get": "retrieve",
-                "patch": "partial_update",
-                "delete": "destroy",
-            }
+            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
         ),
         name="project-member",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/members/leave/",
-        ProjectMemberViewSet.as_view(
-            {
-                "post": "leave",
-            }
-        ),
+        ProjectMemberViewSet.as_view({"post": "leave"}),
         name="project-member",
     ),
     path(
@@ -127,21 +94,12 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/user-favorite-projects/",
-        ProjectFavoritesViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
+        ProjectFavoritesViewSet.as_view({"get": "list", "post": "create"}),
         name="project-favorite",
     ),
     path(
         "workspaces/<str:slug>/user-favorite-projects/<uuid:project_id>/",
-        ProjectFavoritesViewSet.as_view(
-            {
-                "delete": "destroy",
-            }
-        ),
+        ProjectFavoritesViewSet.as_view({"delete": "destroy"}),
         name="project-favorite",
     ),
     path(
@@ -151,22 +109,13 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/project-deploy-boards/",
-        DeployBoardViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
+        DeployBoardViewSet.as_view({"get": "list", "post": "create"}),
         name="project-deploy-board",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/project-deploy-boards/<uuid:pk>/",
         DeployBoardViewSet.as_view(
-            {
-                "get": "retrieve",
-                "patch": "partial_update",
-                "delete": "destroy",
-            }
+            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
         ),
         name="project-deploy-board",
     ),

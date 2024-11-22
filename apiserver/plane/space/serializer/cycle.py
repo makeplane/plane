@@ -1,8 +1,6 @@
 # Module imports
 from .base import BaseSerializer
-from plane.db.models import (
-    Cycle,
-)
+from plane.db.models import Cycle
 
 
 class CycleBaseSerializer(BaseSerializer):

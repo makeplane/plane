@@ -42,25 +42,9 @@ from .issue import (
     IssueSubscriber,
     IssueVote,
 )
-from .module import (
-    Module,
-    ModuleIssue,
-    ModuleLink,
-    ModuleMember,
-    ModuleUserProperties,
-)
-from .notification import (
-    EmailNotificationLog,
-    Notification,
-    UserNotificationPreference,
-)
-from .page import (
-    Page,
-    PageLabel,
-    PageLog,
-    ProjectPage,
-    PageVersion,
-)
+from .module import Module, ModuleIssue, ModuleLink, ModuleMember, ModuleUserProperties
+from .notification import EmailNotificationLog, Notification, UserNotificationPreference
+from .page import Page, PageLabel, PageLog, ProjectPage, PageVersion
 from .project import (
     Project,
     ProjectBaseModel,
@@ -95,11 +79,7 @@ from .intake import Intake, IntakeIssue
 
 from .analytic import AnalyticView
 
-from .notification import (
-    Notification,
-    UserNotificationPreference,
-    EmailNotificationLog,
-)
+from .notification import Notification, UserNotificationPreference, EmailNotificationLog
 
 from .exporter import ExporterHistory
 

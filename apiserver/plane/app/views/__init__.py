@@ -57,12 +57,8 @@ from .workspace.invite import (
     WorkspaceJoinEndpoint,
     UserWorkspaceInvitationsViewSet,
 )
-from .workspace.label import (
-    WorkspaceLabelsEndpoint,
-)
-from .workspace.state import (
-    WorkspaceStatesEndpoint,
-)
+from .workspace.label import WorkspaceLabelsEndpoint
+from .workspace.state import WorkspaceStatesEndpoint
 from .workspace.user import (
     UserLastProjectWithWorkspaceEndpoint,
     WorkspaceUserProfileIssuesEndpoint,
@@ -73,15 +69,9 @@ from .workspace.user import (
     UserActivityGraphEndpoint,
     UserIssueCompletedGraphEndpoint,
 )
-from .workspace.estimate import (
-    WorkspaceEstimatesEndpoint,
-)
-from .workspace.module import (
-    WorkspaceModulesEndpoint,
-)
-from .workspace.cycle import (
-    WorkspaceCyclesEndpoint,
-)
+from .workspace.estimate import WorkspaceEstimatesEndpoint
+from .workspace.module import WorkspaceModulesEndpoint
+from .workspace.cycle import WorkspaceCyclesEndpoint
 
 from .state.base import StateViewSet
 from .view.base import (
@@ -101,18 +91,10 @@ from .cycle.base import (
     CycleAnalyticsEndpoint,
     CycleProgressEndpoint,
 )
-from .cycle.issue import (
-    CycleIssueViewSet,
-)
-from .cycle.archive import (
-    CycleArchiveUnarchiveEndpoint,
-)
+from .cycle.issue import CycleIssueViewSet
+from .cycle.archive import CycleArchiveUnarchiveEndpoint
 
-from .asset.base import (
-    FileAssetEndpoint,
-    UserAssetsEndpoint,
-    FileAssetViewSet,
-)
+from .asset.base import FileAssetEndpoint, UserAssetsEndpoint, FileAssetViewSet
 from .asset.v2 import (
     WorkspaceFileAssetEndpoint,
     UserAssetsV2Endpoint,
@@ -132,9 +114,7 @@ from .issue.base import (
     IssueBulkUpdateDateEndpoint,
 )
 
-from .issue.activity import (
-    IssueActivityEndpoint,
-)
+from .issue.activity import IssueActivityEndpoint
 
 from .issue.archive import IssueArchiveViewSet, BulkArchiveIssuesEndpoint
 
@@ -144,35 +124,19 @@ from .issue.attachment import (
     IssueAttachmentV2Endpoint,
 )
 
-from .issue.comment import (
-    IssueCommentViewSet,
-    CommentReactionViewSet,
-)
+from .issue.comment import IssueCommentViewSet, CommentReactionViewSet
 
-from .issue.label import (
-    LabelViewSet,
-    BulkCreateIssueLabelsEndpoint,
-)
+from .issue.label import LabelViewSet, BulkCreateIssueLabelsEndpoint
 
-from .issue.link import (
-    IssueLinkViewSet,
-)
+from .issue.link import IssueLinkViewSet
 
-from .issue.relation import (
-    IssueRelationViewSet,
-)
+from .issue.relation import IssueRelationViewSet
 
-from .issue.reaction import (
-    IssueReactionViewSet,
-)
+from .issue.reaction import IssueReactionViewSet
 
-from .issue.sub_issue import (
-    SubIssuesEndpoint,
-)
+from .issue.sub_issue import SubIssuesEndpoint
 
-from .issue.subscriber import (
-    IssueSubscriberViewSet,
-)
+from .issue.subscriber import IssueSubscriberViewSet
 
 from .module.base import (
     ModuleViewSet,
@@ -181,18 +145,11 @@ from .module.base import (
     ModuleUserPropertiesEndpoint,
 )
 
-from .module.issue import (
-    ModuleIssueViewSet,
-)
+from .module.issue import ModuleIssueViewSet
 
-from .module.archive import (
-    ModuleArchiveUnarchiveEndpoint,
-)
+from .module.archive import ModuleArchiveUnarchiveEndpoint
 
-from .api import (
-    ApiTokenEndpoint,
-    ServiceApiTokenEndpoint,
-)
+from .api import ApiTokenEndpoint, ServiceApiTokenEndpoint
 
 from .page.base import (
     PageViewSet,

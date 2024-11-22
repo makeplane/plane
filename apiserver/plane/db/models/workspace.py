@@ -10,11 +10,7 @@ from django.db import models
 from .base import BaseModel
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 
-ROLE_CHOICES = (
-    (20, "Admin"),
-    (15, "Member"),
-    (5, "Guest"),
-)
+ROLE_CHOICES = ((20, "Admin"), (15, "Member"), (5, "Guest"))
 
 
 def get_default_props():
@@ -81,7 +77,7 @@ def get_default_display_filters():
             "show_empty_groups": True,
             "layout": "list",
             "calendar_date_range": "",
-        },
+        }
     }
 
 
@@ -101,7 +97,7 @@ def get_default_display_properties():
             "state": True,
             "sub_issue_count": True,
             "updated_on": True,
-        },
+        }
     }
 
 
@@ -137,12 +133,7 @@ class Workspace(BaseModel):
         related_name="owner_workspace",
     )
     slug = models.SlugField(
-        max_length=48,
-        db_index=True,
-        unique=True,
-        validators=[
-            slug_validator,
-        ],
+        max_length=48, db_index=True, unique=True, validators=[slug_validator]
     )
     organization_size = models.CharField(max_length=20, blank=True, null=True)
     timezone = models.CharField(

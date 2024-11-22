@@ -13,9 +13,7 @@ from plane.app.permissions import WorkspaceOwnerPermission
 
 
 class ApiTokenEndpoint(BaseAPIView):
-    permission_classes = [
-        WorkspaceOwnerPermission,
-    ]
+    permission_classes = [WorkspaceOwnerPermission]
 
     def post(self, request, slug):
         label = request.data.get("label", str(uuid4().hex))
@@ -37,10 +35,7 @@ class ApiTokenEndpoint(BaseAPIView):
 
         serializer = APITokenSerializer(api_token)
         # Token will be only visible while creating
-        return Response(
-            serializer.data,
-            status=status.HTTP_201_CREATED,
-        )
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def get(self, request, slug, pk=None):
         if pk is None:
@@ -58,23 +53,14 @@ class ApiTokenEndpoint(BaseAPIView):
 
     def delete(self, request, slug, pk):
         api_token = APIToken.objects.get(
-            workspace__slug=slug,
-            user=request.user,
-            pk=pk,
-            is_service=False,
+            workspace__slug=slug, user=request.user, pk=pk, is_service=False
         )
         api_token.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def patch(self, request, slug, pk):
-        api_token = APIToken.objects.get(
-            workspace__slug=slug,
-            user=request.user,
-            pk=pk,
-        )
-        serializer = APITokenSerializer(
-            api_token, data=request.data, partial=True
-        )
+        api_token = APIToken.objects.get(workspace__slug=slug, user=request.user, pk=pk)
+        serializer = APITokenSerializer(api_token, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -82,25 +68,17 @@ class ApiTokenEndpoint(BaseAPIView):
 
 
 class ServiceApiTokenEndpoint(BaseAPIView):
-    permission_classes = [
-        WorkspaceOwnerPermission,
-    ]
+    permission_classes = [WorkspaceOwnerPermission]
 
     def post(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
 
         api_token = APIToken.objects.filter(
-            workspace=workspace,
-            is_service=True,
+            workspace=workspace, is_service=True
         ).first()
 
         if api_token:
-            return Response(
-                {
-                    "token": str(api_token.token),
-                },
-                status=status.HTTP_200_OK,
-            )
+            return Response({"token": str(api_token.token)}, status=status.HTTP_200_OK)
         else:
             # Check the user type
             user_type = 1 if request.user.is_bot else 0
@@ -114,9 +92,5 @@ class ServiceApiTokenEndpoint(BaseAPIView):
                 is_service=True,
             )
             return Response(
-                {
-                    "token": str(api_token.token),
-                },
-                status=status.HTTP_201_CREATED,
+                {"token": str(api_token.token)}, status=status.HTTP_201_CREATED
             )
-

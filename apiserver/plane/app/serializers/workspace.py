@@ -44,11 +44,7 @@ class WorkSpaceSerializer(DynamicBaseSerializer):
 class WorkspaceLiteSerializer(BaseSerializer):
     class Meta:
         model = Workspace
-        fields = [
-            "name",
-            "slug",
-            "id",
-        ]
+        fields = ["name", "slug", "id"]
         read_only_fields = fields
 
 
@@ -102,17 +98,11 @@ class WorkspaceThemeSerializer(BaseSerializer):
     class Meta:
         model = WorkspaceTheme
         fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "actor",
-        ]
+        read_only_fields = ["workspace", "actor"]
 
 
 class WorkspaceUserPropertiesSerializer(BaseSerializer):
     class Meta:
         model = WorkspaceUserProperties
         fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "user",
-        ]
+        read_only_fields = ["workspace", "user"]

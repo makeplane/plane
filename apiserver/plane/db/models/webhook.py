@@ -42,6 +42,7 @@ class Webhook(BaseModel):
         ],
         max_length=1024,
     )
+    url = models.URLField(validators=[validate_schema, validate_domain])
     is_active = models.BooleanField(default=True)
     secret_key = models.CharField(max_length=255, default=generate_token)
     project = models.BooleanField(default=False)

@@ -1,5 +1,6 @@
 import pytz
 
+
 def user_timezone_converter(queryset, datetime_fields, user_timezone):
     # Create a timezone object for the user's timezone
     user_tz = pytz.timezone(user_timezone)

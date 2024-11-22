@@ -6,7 +6,6 @@ from rest_framework import serializers
 
 
 class IntakeIssueSerializer(BaseSerializer):
-
     issue_detail = IssueExpandSerializer(read_only=True, source="issue")
     inbox = serializers.UUIDField(source="intake.id", read_only=True)
 
