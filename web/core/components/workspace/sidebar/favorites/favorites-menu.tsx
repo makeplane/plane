@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import orderBy from "lodash/orderBy";
@@ -84,25 +84,23 @@ export const SidebarFavoritesMenu = observer(() => {
       });
   };
 
-  const handleReorder = (favoriteId: string, sequence: number) => {
-    reOrderFavorite(workspaceSlug.toString(), favoriteId, {
-      sequence: sequence
-    })
-      .then(() => {
-        // setToast({
-        //   type: TOAST_TYPE.SUCCESS,
-        //   title: "Success!",
-        //   message: "Reordered successfully.",
-        // });
+  const handleReorder = useCallback(
+    (favoriteId: string, sequence: number) => {
+      reOrderFavorite(workspaceSlug.toString(), favoriteId, {
+        sequence: sequence,
       })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Failed reorder",
+        .catch(() => {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: "Error!",
+            message: "Failed reorder favorite",
+          });
         });
-      });
-  }
+    },
+    [workspaceSlug,reOrderFavorite]
+  );
+
+
   useEffect(() => {
     if (sidebarCollapsed) toggleFavoriteMenu(true);
   }, [sidebarCollapsed, toggleFavoriteMenu]);

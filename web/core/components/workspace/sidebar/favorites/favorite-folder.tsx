@@ -188,7 +188,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
       })
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [elementRef.current, isDragging, favorite.id, handleMoveToFolder]);
+  }, [isDragging, favorite.id, handleMoveToFolder]);
 
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
