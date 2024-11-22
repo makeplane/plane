@@ -148,12 +148,12 @@ export const FavoriteRoot: FC<Props> = observer((props) => {
           const parentId = instruction === 'make-child' ? dropTargetData.id : dropTargetData.parentId;
           const droppedFavId = instruction !== "make-child" ? dropTargetData.id : undefined;
           const sourceData = source.data as TargetData;
-          
+
           if(droppedFavId && sourceData.id){
             const destinationSequence = getDestinationStateSequence(favoriteMap,droppedFavId,instruction)
             handleReorder(sourceData.id,destinationSequence || 0)
           }
-          
+
           if(!parentId && sourceData.isChild){
             handleRemoveFromFavoritesFolder(sourceData.id)
           }

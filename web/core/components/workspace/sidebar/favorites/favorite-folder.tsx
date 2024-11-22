@@ -167,11 +167,11 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
             const destinationSequence = getDestinationStateSequence(groupedFavorites,droppedFavId,instruction)
             handleReorder(sourceData.id,destinationSequence || 0)
           }
-          
+
 
           // if(parentId)
           //   handleMoveToFolder(sourceData.id,parentId);
-          // else 
+          // else
           //   handleRemoveFromFavoritesFolder(sourceData.id)
 
           // setIsDragging(false);

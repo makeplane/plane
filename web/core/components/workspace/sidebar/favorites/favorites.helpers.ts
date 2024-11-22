@@ -1,7 +1,6 @@
 import { extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import orderBy from "lodash/orderBy";
 import { IFavorite, InstructionType, IPragmaticPayloadLocation, TDropTarget } from "@plane/types";
-import { result } from "lodash";
 
 export type TargetData = {
   id: string;
@@ -36,8 +35,8 @@ export const getDestinationStateSequence = (
       resultSequence =  destinationStateSequence + defaultSequence;
     }else {
       resultSequence = (destinationStateSequence + prevStateSequence) / 2
-    } 
-  } else if (edge === "reorder-below") { 
+    }
+  } else if (edge === "reorder-below") {
     const nextStateSequence = favoriteMap[favoriteIds[destinationStateIndex + 1]]?.sequence || undefined;
 
     if (nextStateSequence === undefined) {
