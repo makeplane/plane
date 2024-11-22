@@ -5,10 +5,9 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/element/pointer-outside-of-preview";
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
+import { attachInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 
-import { attachClosestEdge, extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import orderBy from "lodash/orderBy";
-import uniqBy from "lodash/uniqBy";
 import { useParams } from "next/navigation";
 import { createRoot } from "react-dom/client";
 import { PenSquare, Star, MoreHorizontal, ChevronRight, GripVertical } from "lucide-react";
@@ -17,7 +16,7 @@ import { Disclosure, Transition } from "@headlessui/react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/helpers";
 // ui
-import { IFavorite } from "@plane/types";
+import { IFavorite, InstructionType } from "@plane/types";
 import { CustomMenu, Tooltip, DropIndicator, setToast, TOAST_TYPE, FavoriteFolderIcon, DragHandle } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -27,7 +26,7 @@ import { useFavorite } from "@/hooks/store/use-favorite";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // constants
 import { FavoriteRoot } from "./favorite-items";
-import { getDestinationStateSequence } from "./favorites.helpers";
+import { getCanDrop, TargetData, getInstructionFromPayload, getDestinationStateSequence } from "./favorites.helpers";
 import { NewFavoriteFolder } from "./new-fav-folder";
 
 type Props = {
@@ -39,7 +38,7 @@ type Props = {
 };
 
 export const FavoriteFolder: React.FC<Props> = (props) => {
-  const { favorite, handleRemoveFromFavorites, handleRemoveFromFavoritesFolder, handleReorder } = props;
+  const { favorite, handleRemoveFromFavorites, handleRemoveFromFavoritesFolder, handleReorder, isLastChild } = props;
   // store hooks
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
 
@@ -50,8 +49,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
   const [isMenuActive, setIsMenuActive] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [folderToRename, setFolderToRename] = useState<string | boolean | null>(null);
-  const [isDraggedOver, setIsDraggedOver] = useState(false);
-  const [closestEdge, setClosestEdge] = useState<string | null>(null);
+  const [instruction, setInstruction] = useState<InstructionType | undefined>(undefined);
 
   // refs
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
@@ -79,17 +77,18 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
       });
   };
 
+
   useEffect(() => {
     const element = elementRef.current;
 
     if (!element) return;
-    const initialData = { type: "PARENT", id: favorite.id, is_folder: favorite.is_folder };
+    const initialData = { id: favorite.id, isGroup: true, isChild: false };
 
     return combine(
       draggable({
         element,
         getInitialData: () => initialData,
-        // onDragStart: () => setIsDragging(true),
+        onDragStart: () => setIsDragging(true),
         onGenerateDragPreview: ({ nativeSetDragImage }) =>{
           setCustomNativeDragPreview({
             getOffset: pointerOutsideOfPreview({ x: "0px", y: "0px" }),
@@ -108,62 +107,92 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
             nativeSetDragImage,
           });
         },
-        onDrop: (data) => {
-          setIsDraggedOver(false);
-          if (!data.location.current.dropTargets[0]) return;
-          const destinationData = data.location.current.dropTargets[0].data;
-
-          if (favorite.id && destinationData) {
-            const edge = extractClosestEdge(destinationData) || undefined;
-            const sequence = Math.round(
-              getDestinationStateSequence(groupedFavorites, destinationData.id as string, edge) || 0
-            );
-            handleReorder(favorite.id,sequence);
-          }
+        onDrop: () => {
+          setIsDragging(false)
         }, // canDrag: () => isDraggable,
       }),
       dropTargetForElements({
         element,
-        getData: ({ input, element }) =>
-          attachClosestEdge(initialData, {
+        canDrop: ({ source }) => getCanDrop(source, favorite, false),
+        getData: ({ input, element }) =>{
+
+          const blockedStates: InstructionType[] = [];
+          if(!isLastChild){
+            blockedStates.push('reorder-below');
+          }
+
+          return attachInstruction(initialData,{
             input,
             element,
-            allowedEdges: ["top", "bottom"],
-          }),
-        onDragEnter: ({source,self}) => {
-          const sourceId = source?.data?.id as string;
-          const destinationId = self?.data?.id as string | undefined;
-          if (groupedFavorites[sourceId].parent !== destinationId) {
-            setIsDraggedOver(true);
-            setIsDragging(true);
-          };
-          if(source.data.is_folder) setClosestEdge(extractClosestEdge(self.data));
+            currentLevel: 0,
+            indentPerLevel: 0,
+            mode: isLastChild ? 'last-in-group' : 'standard',
+            block: blockedStates
+          })
+        },
+        onDrag: ({source, self, location}) => {
+          const instruction = getInstructionFromPayload(self,source, location);
+          setInstruction(instruction);
         },
         onDragLeave: () => {
-          setIsDragging(false);
-          setIsDraggedOver(false);
-          setClosestEdge(null);
+          setInstruction(undefined);
         },
-        onDragStart: () => {
-          setIsDragging(true);
-        },
-        onDrop: ({ self, source }) => {
-          setIsDragging(false);
-          setIsDraggedOver(false);
-          const sourceId = source?.data?.id as string | undefined;
-          const destinationId = self?.data?.id as string | undefined;
+        onDrop: ({ source, location }) => {
+          setInstruction(undefined);
 
-          if (source.data.is_folder) return;
-          if (sourceId === destinationId) return;
-          if (!sourceId || !destinationId) return;
-          if (groupedFavorites[sourceId].parent === destinationId) return;
+          const dropTargets = location?.current?.dropTargets ?? []
+          if(!dropTargets || dropTargets.length <= 0) return;
+          const dropTarget = dropTargets.length > 1 ? dropTargets.find(target=>target?.data?.isChild) : dropTargets[0];
 
-          handleMoveToFolder(sourceId, destinationId);
+          const dropTargetData = dropTarget?.data as TargetData;
+
+          if(!dropTarget || !dropTargetData) return;
+          const instruction = getInstructionFromPayload(dropTarget, source, location);
+          const parentId = instruction === 'make-child' ? dropTargetData.id : dropTargetData.parentId;
+          const droppedFavId = instruction !== "make-child" ? dropTargetData.id : undefined;
+          const sourceData = source.data as TargetData;
+
+          if(droppedFavId && sourceData.id){
+            if(!!parentId) return; // skip if reorder is inside folder
+            const destinationSequence = getDestinationStateSequence(groupedFavorites,droppedFavId,instruction)
+            handleReorder(sourceData.id,destinationSequence || 0)
+          }
+
+          if(!parentId && !droppedFavId) return
+          if(sourceData.isGroup) return
+          if(sourceData.parentId === parentId) return
+
+          if(!parentId && sourceData.isChild){
+            handleRemoveFromFavoritesFolder(sourceData.id)
+            return
+          }
+          
+          if(parentId){
+            handleMoveToFolder(sourceData.id,parentId)
+          }
+
+
+          // if(parentId)
+          //   handleMoveToFolder(sourceData.id,parentId);
+          // else 
+          //   handleRemoveFromFavoritesFolder(sourceData.id)
+
+          // setIsDragging(false);
+          // const sourceId = source?.data?.id as string | undefined;
+          // const destinationId = self?.data?.id as string | undefined;
+
+          // if (source.data.is_folder) return;
+          // if (sourceId === destinationId) return;
+          // if (!sourceId || !destinationId) return;
+          // if (groupedFavorites[sourceId].parent === destinationId) return;
+
+          // handleMoveToFolder(sourceId, destinationId);
         },
       })
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [elementRef.current, isDragging, favorite.id, handleMoveToFolder]);
+
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
 
@@ -182,10 +211,11 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
             // id={`sidebar-${projectId}-${projectListType}`}
             className={cn("relative", {
               "bg-custom-sidebar-background-80 opacity-60": isDragging,
+              "border-[2px] border-custom-primary-100" : instruction === 'make-child'
             })}
           >
             {/* draggable drop top indicator */}
-            <DropIndicator isVisible={isDraggedOver && closestEdge === "top"} />
+            <DropIndicator isVisible={instruction === "reorder-above"}/>
             <div
               className={cn(
                 "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-90",
@@ -324,11 +354,13 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                     "px-2": !isSidebarCollapsed,
                   })}
                 >
-                  {orderBy(uniqBy(favorite.children, "id"),'sequence','desc').map((child) => (
+                  {orderBy(favorite.children,'sequence','desc').map((child,index) => (
                     <FavoriteRoot
                       key={child.id}
                       workspaceSlug={workspaceSlug.toString()}
                       favorite={child}
+                      isLastChild={index === favorite.children.length - 1}
+                      parentId={favorite.id}
                       handleRemoveFromFavorites={handleRemoveFromFavorites}
                       handleRemoveFromFavoritesFolder={handleRemoveFromFavoritesFolder}
                       favoriteMap={groupedFavorites}
@@ -339,7 +371,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
               </Transition>
             )}
             {/* draggable drop bottom indicator */}
-            <DropIndicator isVisible={isDraggedOver && closestEdge === "bottom"} />{" "}
+            { isLastChild && <DropIndicator isVisible={instruction === "reorder-below"} />}
           </div>
         )}
       </Disclosure>

@@ -89,17 +89,17 @@ export const SidebarFavoritesMenu = observer(() => {
       sequence: sequence
     })
       .then(() => {
-        // setToast({
-        //   type: TOAST_TYPE.SUCCESS,
-        //   title: "Success!",
-        //   message: "Folder moved successfully.",
-        // });
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: "Reordered successfully.",
+        });
       })
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: "Failed to move folder.",
+          message: "Failed reorder",
         });
       });
   }
@@ -129,7 +129,7 @@ export const SidebarFavoritesMenu = observer(() => {
           const sourceId = source?.data?.id as string | undefined;
           console.log({ sourceId });
           if (!sourceId || !groupedFavorites[sourceId].parent) return;
-          handleRemoveFromFavoritesFolder(sourceId);
+          // handleRemoveFromFavoritesFolder(sourceId);
         },
       })
     );
@@ -199,7 +199,7 @@ export const SidebarFavoritesMenu = observer(() => {
               ) : (
                 orderBy(Object.values(groupedFavorites), "sequence", "desc")
                   .filter((fav) => !fav.parent)
-                  .map((fav, index) => (
+                  .map((fav, index, {length}) => (
                     <Tooltip
                       key={fav.id}
                       tooltipContent={fav?.entity_data ? fav.entity_data?.name : fav?.name}
@@ -211,7 +211,7 @@ export const SidebarFavoritesMenu = observer(() => {
                       {fav.is_folder ? (
                         <FavoriteFolder
                           favorite={fav}
-                          isLastChild={index === favoriteIds.length - 1}
+                          isLastChild={index === length - 1}
                           handleRemoveFromFavorites={handleRemoveFromFavorites}
                           handleRemoveFromFavoritesFolder={handleRemoveFromFavoritesFolder}
                           handleReorder={handleReorder}
@@ -220,6 +220,8 @@ export const SidebarFavoritesMenu = observer(() => {
                         <FavoriteRoot
                           workspaceSlug={workspaceSlug.toString()}
                           favorite={fav}
+                          isLastChild={index === length - 1}
+                          parentId={undefined}
                           handleRemoveFromFavorites={handleRemoveFromFavorites}
                           handleRemoveFromFavoritesFolder={handleRemoveFromFavoritesFolder}
                           favoriteMap={groupedFavorites}
