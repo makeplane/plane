@@ -95,7 +95,7 @@ export class ProjectPageService extends APIService {
       });
   }
 
-  async archive(
+  async moveToTrash(
     workspaceSlug: string,
     projectId: string,
     pageId: string
@@ -109,7 +109,7 @@ export class ProjectPageService extends APIService {
       });
   }
 
-  async restore(workspaceSlug: string, projectId: string, pageId: string): Promise<void> {
+  async restoreFromTrash(workspaceSlug: string, projectId: string, pageId: string): Promise<void> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/archive/`)
       .then((response) => response?.data)
       .catch((error) => {

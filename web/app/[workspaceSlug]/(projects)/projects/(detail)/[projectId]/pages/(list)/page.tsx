@@ -1,7 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useSearchParams, useRouter } from "next/navigation";
 // types
 import { TPageNavigationTabs } from "@plane/types";
 // components
@@ -12,14 +13,18 @@ import { PagesListRoot, PagesListView } from "@/components/pages";
 import { EmptyStateType } from "@/constants/empty-state";
 // hooks
 import { useProject } from "@/hooks/store";
+import { useQueryParams } from "@/hooks/use-query-params";
 
 const ProjectPagesPage = observer(() => {
   // router
+  const router = useRouter();
+  // params
+  const { workspaceSlug, projectId } = useParams();
   const searchParams = useSearchParams();
   const type = searchParams.get("type");
-  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { getProjectById, currentProjectDetails } = useProject();
+  const { updateQueryParams } = useQueryParams();
   // derived values
   const project = projectId ? getProjectById(projectId.toString()) : undefined;
   const pageTitle = project?.name ? `${project?.name} - Pages` : undefined;
@@ -27,9 +32,21 @@ const ProjectPagesPage = observer(() => {
   const currentPageType = (): TPageNavigationTabs => {
     const pageType = type?.toString();
     if (pageType === "private") return "private";
-    if (pageType === "archived") return "archived";
+    if (pageType === "trash") return "trash";
     return "public";
   };
+  // update the route to public pages if the type is invalid
+  useEffect(() => {
+    const pageType = type?.toString();
+    if (pageType !== "public" && pageType !== "private" && pageType !== "trash") {
+      const updatedRoute = updateQueryParams({
+        paramsToAdd: {
+          type: "public",
+        },
+      });
+      router.push(updatedRoute);
+    }
+  }, [router, type, updateQueryParams]);
 
   if (!workspaceSlug || !projectId) return <></>;
 

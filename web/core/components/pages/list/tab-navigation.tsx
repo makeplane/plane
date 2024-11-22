@@ -22,8 +22,8 @@ const pageTabs: { key: TPageNavigationTabs; label: string }[] = [
     label: "Private",
   },
   {
-    key: "archived",
-    label: "Archived",
+    key: "trash",
+    label: "Trash",
   },
 ];
 

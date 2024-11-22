@@ -32,35 +32,35 @@ export const PagesListMainContent: React.FC<Props> = observer((props) => {
   if (loader === "init-loader") return <PageLoader />;
   // if no pages exist in the active page type
   if (!isAnyPageAvailable || pageIds?.length === 0) {
-    if (!isAnyPageAvailable) {
-      return (
-        <EmptyState
-          type={EmptyStateType.PROJECT_PAGE}
-          primaryButtonOnClick={() => {
-            toggleCreatePageModal({ isOpen: true });
-          }}
-        />
-      );
-    }
-    if (pageType === "public")
-      return (
-        <EmptyState
-          type={EmptyStateType.PROJECT_PAGE_PUBLIC}
-          primaryButtonOnClick={() => {
-            toggleCreatePageModal({ isOpen: true, pageAccess: EPageAccess.PUBLIC });
-          }}
-        />
-      );
-    if (pageType === "private")
-      return (
-        <EmptyState
-          type={EmptyStateType.PROJECT_PAGE_PRIVATE}
-          primaryButtonOnClick={() => {
-            toggleCreatePageModal({ isOpen: true, pageAccess: EPageAccess.PRIVATE });
-          }}
-        />
-      );
-    if (pageType === "archived") return <EmptyState type={EmptyStateType.PROJECT_PAGE_ARCHIVED} />;
+    return (
+      <div className="size-full">
+        {!isAnyPageAvailable && (
+          <EmptyState
+            type={EmptyStateType.PROJECT_PAGE}
+            primaryButtonOnClick={() => {
+              toggleCreatePageModal({ isOpen: true });
+            }}
+          />
+        )}
+        {pageType === "public" ? (
+          <EmptyState
+            type={EmptyStateType.PROJECT_PAGE_PUBLIC}
+            primaryButtonOnClick={() => {
+              toggleCreatePageModal({ isOpen: true, pageAccess: EPageAccess.PUBLIC });
+            }}
+          />
+        ) : pageType === "private" ? (
+          <EmptyState
+            type={EmptyStateType.PROJECT_PAGE_PRIVATE}
+            primaryButtonOnClick={() => {
+              toggleCreatePageModal({ isOpen: true, pageAccess: EPageAccess.PRIVATE });
+            }}
+          />
+        ) : pageType === "trash" ? (
+          <EmptyState type={EmptyStateType.PROJECT_PAGE_TRASH} />
+        ) : null}
+      </div>
+    );
   }
   // if no pages match the filter criteria
   if (filteredPageIds?.length === 0)

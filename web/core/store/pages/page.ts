@@ -22,7 +22,7 @@ export interface IPage extends TPage {
   canCurrentUserDuplicatePage: boolean;
   canCurrentUserLockPage: boolean;
   canCurrentUserChangeAccess: boolean;
-  canCurrentUserArchivePage: boolean;
+  canCurrentUserTrashPage: boolean;
   canCurrentUserDeletePage: boolean;
   canCurrentUserFavoritePage: boolean;
   isContentEditable: boolean;
@@ -38,8 +38,8 @@ export interface IPage extends TPage {
   makePrivate: () => Promise<void>;
   lock: () => Promise<void>;
   unlock: () => Promise<void>;
-  archive: () => Promise<void>;
-  restore: () => Promise<void>;
+  moveToTrash: () => Promise<void>;
+  restoreFromTrash: () => Promise<void>;
   updatePageLogo: (logo_props: TLogoProps) => Promise<void>;
   addToFavorites: () => Promise<void>;
   removePageFromFavorites: () => Promise<void>;
@@ -132,7 +132,7 @@ export class Page implements IPage {
       canCurrentUserDuplicatePage: computed,
       canCurrentUserLockPage: computed,
       canCurrentUserChangeAccess: computed,
-      canCurrentUserArchivePage: computed,
+      canCurrentUserTrashPage: computed,
       canCurrentUserDeletePage: computed,
       canCurrentUserFavoritePage: computed,
       isContentEditable: computed,
@@ -144,8 +144,8 @@ export class Page implements IPage {
       makePrivate: action,
       lock: action,
       unlock: action,
-      archive: action,
-      restore: action,
+      moveToTrash: action,
+      restoreFromTrash: action,
       updatePageLogo: action,
       addToFavorites: action,
       removePageFromFavorites: action,
@@ -204,9 +204,11 @@ export class Page implements IPage {
     };
   }
 
+  /**
+   * @description returns true if the current logged in user is the owner of the page
+   */
   get isCurrentUserOwner() {
     const currentUserId = this.store.user.data?.id;
-    if (!currentUserId) return false;
     return this.owned_by === currentUserId;
   }
 
@@ -215,7 +217,6 @@ export class Page implements IPage {
    */
   get canCurrentUserEditPage() {
     const { workspaceSlug, projectId } = this.store.router;
-
     const currentUserProjectRole = this.store.user.permission.projectPermissionsByWorkspaceSlugAndProjectId(
       workspaceSlug?.toString() || "",
       projectId?.toString() || ""
@@ -228,7 +229,6 @@ export class Page implements IPage {
    */
   get canCurrentUserDuplicatePage() {
     const { workspaceSlug, projectId } = this.store.router;
-
     const currentUserProjectRole = this.store.user.permission.projectPermissionsByWorkspaceSlugAndProjectId(
       workspaceSlug?.toString() || "",
       projectId?.toString() || ""
@@ -240,22 +240,31 @@ export class Page implements IPage {
    * @description returns true if the current logged in user can lock the page
    */
   get canCurrentUserLockPage() {
-    return this.isCurrentUserOwner;
+    const { workspaceSlug, projectId } = this.store.router;
+    const currentUserProjectRole = this.store.user.permission.projectPermissionsByWorkspaceSlugAndProjectId(
+      workspaceSlug?.toString() || "",
+      projectId?.toString() || ""
+    );
+    return this.isCurrentUserOwner || currentUserProjectRole === EUserPermissions.ADMIN;
   }
 
   /**
    * @description returns true if the current logged in user can change the access of the page
    */
   get canCurrentUserChangeAccess() {
-    return this.isCurrentUserOwner;
+    const { workspaceSlug, projectId } = this.store.router;
+    const currentUserProjectRole = this.store.user.permission.projectPermissionsByWorkspaceSlugAndProjectId(
+      workspaceSlug?.toString() || "",
+      projectId?.toString() || ""
+    );
+    return this.isCurrentUserOwner || currentUserProjectRole === EUserPermissions.ADMIN;
   }
 
   /**
-   * @description returns true if the current logged in user can archive the page
+   * @description returns true if the current logged in user can trash the page
    */
-  get canCurrentUserArchivePage() {
+  get canCurrentUserTrashPage() {
     const { workspaceSlug, projectId } = this.store.router;
-
     const currentUserProjectRole = this.store.user.permission.projectPermissionsByWorkspaceSlugAndProjectId(
       workspaceSlug?.toString() || "",
       projectId?.toString() || ""
@@ -268,7 +277,6 @@ export class Page implements IPage {
    */
   get canCurrentUserDeletePage() {
     const { workspaceSlug, projectId } = this.store.router;
-
     const currentUserProjectRole = this.store.user.permission.projectPermissionsByWorkspaceSlugAndProjectId(
       workspaceSlug?.toString() || "",
       projectId?.toString() || ""
@@ -281,7 +289,6 @@ export class Page implements IPage {
    */
   get canCurrentUserFavoritePage() {
     const { workspaceSlug, projectId } = this.store.router;
-
     const currentUserProjectRole = this.store.user.permission.projectPermissionsByWorkspaceSlugAndProjectId(
       workspaceSlug?.toString() || "",
       projectId?.toString() || ""
@@ -301,11 +308,11 @@ export class Page implements IPage {
       projectId?.toString() || ""
     );
     const isPublic = this.access === EPageAccess.PUBLIC;
-    const isArchived = this.archived_at;
+    const isTrashed = this.archived_at;
     const isLocked = this.is_locked;
 
     return (
-      !isArchived &&
+      !isTrashed &&
       !isLocked &&
       (isOwner || (isPublic && !!currentUserRole && currentUserRole >= EUserPermissions.MEMBER))
     );
@@ -469,12 +476,12 @@ export class Page implements IPage {
   };
 
   /**
-   * @description archive the page
+   * @description move the page to trash
    */
-  archive = async () => {
+  moveToTrash = async () => {
     const { workspaceSlug, projectId } = this.store.router;
     if (!workspaceSlug || !projectId || !this.id) return undefined;
-    const response = await this.pageService.archive(workspaceSlug, projectId, this.id);
+    const response = await this.pageService.moveToTrash(workspaceSlug, projectId, this.id);
     runInAction(() => {
       this.archived_at = response.archived_at;
     });
@@ -482,12 +489,12 @@ export class Page implements IPage {
   };
 
   /**
-   * @description restore the page
+   * @description restore the page from trash
    */
-  restore = async () => {
+  restoreFromTrash = async () => {
     const { workspaceSlug, projectId } = this.store.router;
     if (!workspaceSlug || !projectId || !this.id) return undefined;
-    await this.pageService.restore(workspaceSlug, projectId, this.id);
+    await this.pageService.restoreFromTrash(workspaceSlug, projectId, this.id);
     runInAction(() => {
       this.archived_at = null;
     });

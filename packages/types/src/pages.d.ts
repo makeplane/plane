@@ -23,7 +23,7 @@ export type TPage = {
 };
 
 // page filters
-export type TPageNavigationTabs = "public" | "private" | "archived";
+export type TPageNavigationTabs = "public" | "private" | "trash";
 
 export type TPageFiltersSortKey =
   | "name"
