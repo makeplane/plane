@@ -19,6 +19,7 @@ import { TActivityFilters, defaultActivityFilters } from "@/plane-web/constants/
 import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // services
 import { FileService } from "@/services/file.service";
+import { ActivitySortRoot } from "@/plane-web/components/issues/worklog/activity/sort-root";
 const fileService = new FileService();
 
 type TIssueActivity = {
@@ -43,6 +44,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
   // hooks
   const {
     issue: { getIssueById },
+    activity: { sortOrder, toggleSortOrder},
     createComment,
     updateComment,
     removeComment,
@@ -162,6 +164,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
               disabled={disabled}
             />
           )}
+          <ActivitySortRoot sortOrder={sortOrder} toggleSort={toggleSortOrder}/>
           <ActivityFilterRoot
             selectedFilters={selectedFilters}
             toggleFilter={toggleFilter}

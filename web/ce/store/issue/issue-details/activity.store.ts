@@ -2,7 +2,7 @@
 
 import concat from "lodash/concat";
 import set from "lodash/set";
-import sortBy from "lodash/sortBy";
+import orderBy from "lodash/orderBy";
 import uniq from "lodash/uniq";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
@@ -29,6 +29,7 @@ export interface IIssueActivityStoreActions {
 
 export interface IIssueActivityStore extends IIssueActivityStoreActions {
   // observables
+  sortOrder: 'asc' | 'desc'
   loader: TActivityLoader;
   activities: TIssueActivityIdMap;
   activityMap: TIssueActivityMap;
@@ -36,10 +37,12 @@ export interface IIssueActivityStore extends IIssueActivityStoreActions {
   getActivitiesByIssueId: (issueId: string) => string[] | undefined;
   getActivityById: (activityId: string) => TIssueActivity | undefined;
   getActivityCommentByIssueId: (issueId: string) => TIssueActivityComment[] | undefined;
+  toggleSortOrder: ()=>void;
 }
 
 export class IssueActivityStore implements IIssueActivityStore {
   // observables
+  sortOrder: "asc" | "desc" = 'asc';
   loader: TActivityLoader = "fetch";
   activities: TIssueActivityIdMap = {};
   activityMap: TIssueActivityMap = {};
@@ -50,11 +53,13 @@ export class IssueActivityStore implements IIssueActivityStore {
   constructor(protected store: CoreRootStore) {
     makeObservable(this, {
       // observables
+      sortOrder: observable.ref,
       loader: observable.ref,
       activities: observable,
       activityMap: observable,
       // actions
       fetchActivities: action,
+      toggleSortOrder: action
     });
     // services
     this.issueActivityService = new IssueActivityService();
@@ -98,11 +103,15 @@ export class IssueActivityStore implements IIssueActivityStore {
         created_at: comment.created_at,
       });
     });
-
-    activityComments = sortBy(activityComments, "created_at");
+    
+    activityComments = orderBy(activityComments, (e)=>new Date(e.created_at||''), this.sortOrder);
 
     return activityComments;
   });
+
+  toggleSortOrder = ()=>{
+    this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+  }
 
   // actions
   public async fetchActivities(
