@@ -24,6 +24,7 @@ import {
   DropHandlerExtension,
   ImageExtension,
   ListKeymap,
+  SmoothCursorExtension,
   Table,
   TableCell,
   TableHeader,
@@ -162,5 +163,6 @@ export const CoreEditorExtensions = (args: TArguments) => {
     CustomTextAlignExtension,
     CustomCalloutExtension,
     CustomColorExtension,
+    SmoothCursorExtension,
   ];
 };

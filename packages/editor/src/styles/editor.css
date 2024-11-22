@@ -1,3 +1,7 @@
+:root {
+  --ease-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
 .ProseMirror {
   position: relative;
   word-wrap: break-word;
@@ -475,3 +479,30 @@ p + p {
   background-color: var(--editor-colors-purple-background);
 }
 /* end background colors */
+@keyframes caret-flash-smooth {
+  0%,
+  100% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.smooth-cursor-enabled {
+  caret-color: transparent;
+}
+
+.prosemirror-smooth-cursor {
+  position: absolute;
+  width: 2px;
+  background-color: currentColor;
+  pointer-events: none;
+  left: 0;
+  top: 0;
+  transition: transform 0.2s var(--ease-out-quart);
+  will-change: transform;
+  opacity: 0.8;
+  animation: cursorPulse 0.8s ease-in-out infinite;
+}
