@@ -157,6 +157,8 @@ def generate_table_row(issue):
         issue["name"],
         issue["description_stripped"],
         issue["state__name"],
+        dateTimeConverter(issue["start_date"]),
+        dateTimeConverter(issue["target_date"]),
         issue["priority"],
         (
             f"{issue['created_by__first_name']} {issue['created_by__last_name']}"
@@ -324,6 +326,8 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
                     "name",
                     "description_stripped",
                     "priority",
+                    "start_date",
+                    "target_date",
                     "state__name",
                     "created_at",
                     "updated_at",
@@ -352,6 +356,8 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
             "Name",
             "Description",
             "State",
+            "Start Date",
+            "Target Date",
             "Priority",
             "Created By",
             "Assignee",

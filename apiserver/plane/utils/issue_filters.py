@@ -185,6 +185,7 @@ def filter_labels(params, issue_filter, method, prefix=""):
             and params.get("labels") != "null"
         ):
             issue_filter[f"{prefix}labels__in"] = params.get("labels")
+    issue_filter[f"{prefix}label_issue__deleted_at__isnull"] = True
     return issue_filter
 
 

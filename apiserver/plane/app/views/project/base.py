@@ -209,6 +209,10 @@ class ProjectViewSet(BaseViewSet):
     def retrieve(self, request, slug, pk):
         project = (
             self.get_queryset()
+            .filter(
+                project_projectmember__member=self.request.user,
+                project_projectmember__is_active=True,
+            )
             .filter(archived_at__isnull=True)
             .filter(pk=pk)
             .annotate(
