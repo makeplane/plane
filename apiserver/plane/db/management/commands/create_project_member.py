@@ -65,12 +65,6 @@ class Command(BaseCommand):
             ).exists():
                 raise CommandError("User not member in workspace")
 
-            # Check if the user is already a member of the project
-            if ProjectMember.objects.filter(
-                project=project, member=user, is_active=True
-            ).exists():
-                raise CommandError("User already a member of the project")
-
             # Get the smallest sort order
             smallest_sort_order = (
                 ProjectMember.objects.filter(
