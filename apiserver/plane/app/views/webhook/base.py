@@ -14,7 +14,6 @@ from plane.app.serializers import WebhookSerializer, WebhookLogSerializer
 
 
 class WebhookEndpoint(BaseAPIView):
-
     @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
     def post(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
@@ -24,12 +23,8 @@ class WebhookEndpoint(BaseAPIView):
             )
             if serializer.is_valid():
                 serializer.save(workspace_id=workspace.id)
-                return Response(
-                    serializer.data, status=status.HTTP_201_CREATED
-                )
-            return Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except IntegrityError as e:
             if "already exists" in str(e):
                 return Response(
@@ -112,7 +107,6 @@ class WebhookEndpoint(BaseAPIView):
 
 
 class WebhookSecretRegenerateEndpoint(BaseAPIView):
-
     @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
     def post(self, request, slug, pk):
         webhook = Webhook.objects.get(workspace__slug=slug, pk=pk)
@@ -123,7 +117,6 @@ class WebhookSecretRegenerateEndpoint(BaseAPIView):
 
 
 class WebhookLogsEndpoint(BaseAPIView):
-
     @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
     def get(self, request, slug, webhook_id):
         webhook_logs = WebhookLog.objects.filter(

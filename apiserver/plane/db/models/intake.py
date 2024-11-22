@@ -7,9 +7,7 @@ from plane.db.models.project import ProjectBaseModel
 
 class Intake(ProjectBaseModel):
     name = models.CharField(max_length=255)
-    description = models.TextField(
-        verbose_name="Intake Description", blank=True
-    )
+    description = models.TextField(verbose_name="Intake Description", blank=True)
     is_default = models.BooleanField(default=False)
     view_props = models.JSONField(default=dict)
     logo_props = models.JSONField(default=dict)
@@ -57,12 +55,7 @@ class IntakeIssue(ProjectBaseModel):
         on_delete=models.SET_NULL,
         null=True,
     )
-    source = models.CharField(
-        max_length=255,
-        default="IN_APP",
-        null=True,
-        blank=True,
-    )
+    source = models.CharField(max_length=255, default="IN_APP", null=True, blank=True)
     source_email = models.TextField(blank=True, null=True)
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)

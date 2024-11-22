@@ -52,10 +52,7 @@ class UserEndpoint(BaseViewSet):
     @method_decorator(vary_on_cookie)
     def retrieve(self, request):
         serialized_data = UserMeSerializer(request.user).data
-        return Response(
-            serialized_data,
-            status=status.HTTP_200_OK,
-        )
+        return Response(serialized_data, status=status.HTTP_200_OK)
 
     @method_decorator(cache_control(private=True, max_age=12))
     @method_decorator(vary_on_cookie)
@@ -68,9 +65,7 @@ class UserEndpoint(BaseViewSet):
         is_admin = InstanceAdmin.objects.filter(
             instance=instance, user=request.user
         ).exists()
-        return Response(
-            {"is_instance_admin": is_admin}, status=status.HTTP_200_OK
-        )
+        return Response({"is_instance_admin": is_admin}, status=status.HTTP_200_OK)
 
     def partial_update(self, request, *args, **kwargs):
         return super().partial_update(request, *args, **kwargs)
@@ -96,10 +91,7 @@ class UserEndpoint(BaseViewSet):
         ).annotate(
             other_admin_exists=Count(
                 Case(
-                    When(
-                        Q(role=20, is_active=True) & ~Q(member=request.user),
-                        then=1,
-                    ),
+                    When(Q(role=20, is_active=True) & ~Q(member=request.user), then=1),
                     default=0,
                     output_field=IntegerField(),
                 )
@@ -124,10 +116,7 @@ class UserEndpoint(BaseViewSet):
         ).annotate(
             other_admin_exists=Count(
                 Case(
-                    When(
-                        Q(role=20, is_active=True) & ~Q(member=request.user),
-                        then=1,
-                    ),
+                    When(Q(role=20, is_active=True) & ~Q(member=request.user), then=1),
                     default=0,
                     output_field=IntegerField(),
                 )
@@ -136,9 +125,7 @@ class UserEndpoint(BaseViewSet):
         )
 
         for workspace in workspaces:
-            if workspace.other_admin_exists > 0 or (
-                workspace.total_members == 1
-            ):
+            if workspace.other_admin_exists > 0 or (workspace.total_members == 1):
                 workspace.is_active = False
                 workspaces_to_deactivate.append(workspace)
             else:
@@ -158,9 +145,7 @@ class UserEndpoint(BaseViewSet):
         )
 
         # Delete all workspace invites
-        WorkspaceMemberInvite.objects.filter(
-            email=user.email,
-        ).delete()
+        WorkspaceMemberInvite.objects.filter(email=user.email).delete()
 
         # Delete all sessions
         Session.objects.filter(user_id=request.user.id).delete()
@@ -191,9 +176,7 @@ class UserEndpoint(BaseViewSet):
         user.save()
 
         # Send an email to the user
-        user_deactivation_email.delay(
-            base_host(request=request, is_app=True), user.id
-        )
+        user_deactivation_email.delay(base_host(request=request, is_app=True), user.id)
 
         # Logout the user
         logout(request)
@@ -201,10 +184,7 @@ class UserEndpoint(BaseViewSet):
 
 
 class UserSessionEndpoint(BaseAPIView):
-
-    permission_classes = [
-        AllowAny,
-    ]
+    permission_classes = [AllowAny]
 
     def get(self, request):
         if request.user.is_authenticated:
@@ -214,41 +194,30 @@ class UserSessionEndpoint(BaseAPIView):
             data["user"] = serializer.data
             return Response(data, status=status.HTTP_200_OK)
         else:
-            return Response(
-                {"is_authenticated": False}, status=status.HTTP_200_OK
-            )
+            return Response({"is_authenticated": False}, status=status.HTTP_200_OK)
 
 
 class UpdateUserOnBoardedEndpoint(BaseAPIView):
-
     def patch(self, request):
         profile = Profile.objects.get(user_id=request.user.id)
         profile.is_onboarded = request.data.get("is_onboarded", False)
         profile.save()
-        return Response(
-            {"message": "Updated successfully"}, status=status.HTTP_200_OK
-        )
+        return Response({"message": "Updated successfully"}, status=status.HTTP_200_OK)
 
 
 class UpdateUserTourCompletedEndpoint(BaseAPIView):
-
     def patch(self, request):
         profile = Profile.objects.get(user_id=request.user.id)
-        profile.is_tour_completed = request.data.get(
-            "is_tour_completed", False
-        )
+        profile.is_tour_completed = request.data.get("is_tour_completed", False)
         profile.save()
-        return Response(
-            {"message": "Updated successfully"}, status=status.HTTP_200_OK
-        )
+        return Response({"message": "Updated successfully"}, status=status.HTTP_200_OK)
 
 
 class UserActivityEndpoint(BaseAPIView, BasePaginator):
-
     def get(self, request):
-        queryset = IssueActivity.objects.filter(
-            actor=request.user
-        ).select_related("actor", "workspace", "issue", "project")
+        queryset = IssueActivity.objects.filter(actor=request.user).select_related(
+            "actor", "workspace", "issue", "project"
+        )
 
         return self.paginate(
             order_by=request.GET.get("order_by", "-created_at"),
@@ -261,7 +230,6 @@ class UserActivityEndpoint(BaseAPIView, BasePaginator):
 
 
 class AccountEndpoint(BaseAPIView):
-
     def get(self, request, pk=None):
         if pk:
             account = Account.objects.get(pk=pk, user=request.user)
@@ -270,10 +238,7 @@ class AccountEndpoint(BaseAPIView):
 
         account = Account.objects.filter(user=request.user)
         serializer = AccountSerializer(account, many=True)
-        return Response(
-            serializer.data,
-            status=status.HTTP_200_OK,
-        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def delete(self, request, pk):
         account = Account.objects.get(pk=pk, user=request.user)
@@ -291,9 +256,7 @@ class ProfileEndpoint(BaseAPIView):
 
     def patch(self, request):
         profile = Profile.objects.get(user=request.user)
-        serializer = ProfileSerializer(
-            profile, data=request.data, partial=True
-        )
+        serializer = ProfileSerializer(profile, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)

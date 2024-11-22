@@ -13,9 +13,5 @@ from .issue import (
 )
 from .state import StateLiteSerializer, StateSerializer
 from .cycle import CycleSerializer, CycleIssueSerializer, CycleLiteSerializer
-from .module import (
-    ModuleSerializer,
-    ModuleIssueSerializer,
-    ModuleLiteSerializer,
-)
+from .module import ModuleSerializer, ModuleIssueSerializer, ModuleLiteSerializer
 from .intake import IntakeIssueSerializer

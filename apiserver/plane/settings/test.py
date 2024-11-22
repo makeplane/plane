@@ -8,5 +8,5 @@ DEBUG = True
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 
 INSTALLED_APPS.append(  # noqa
-    "plane.tests",
+    "plane.tests"
 )

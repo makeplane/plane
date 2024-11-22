@@ -22,15 +22,10 @@ def user_activation_email(current_site, user_id):
         user = User.objects.get(id=user_id)
         subject = f"{user.first_name or user.display_name or user.email} has been activated on Plane"
 
-        context = {
-            "email": str(user.email),
-            "profile_url": current_site + "/profile",
-        }
+        context = {"email": str(user.email), "profile_url": current_site + "/profile"}
 
         # Send email to user
-        html_content = render_to_string(
-            "emails/user/user_activation.html", context
-        )
+        html_content = render_to_string("emails/user/user_activation.html", context)
 
         text_content = strip_tags(html_content)
         # Configure email connection from the database

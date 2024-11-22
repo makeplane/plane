@@ -6,17 +6,13 @@ from plane.app.views import GPTIntegrationEndpoint, WorkspaceGPTIntegrationEndpo
 
 
 urlpatterns = [
-    path(
-        "unsplash/",
-        UnsplashEndpoint.as_view(),
-        name="unsplash",
-    ),
+    path("unsplash/", UnsplashEndpoint.as_view(), name="unsplash"),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/ai-assistant/",
         GPTIntegrationEndpoint.as_view(),
         name="importer",
     ),
-   path(
+    path(
         "workspaces/<str:slug>/ai-assistant/",
         WorkspaceGPTIntegrationEndpoint.as_view(),
         name="importer",
