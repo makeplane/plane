@@ -1,13 +1,19 @@
 import { MQ, Store } from "@/apps/engine/worker/base";
 import { TBatch } from "@/apps/engine/worker/types";
-import { Issue as LinearIssue } from "@linear/sdk";
-import { PlaneEntities } from "@plane/sdk";
+import { Issue, Issue as LinearIssue } from "@linear/sdk";
 import { updateJob } from "@/db/query";
 import { env } from "@/env";
 import { BaseDataMigrator } from "@/etl/base-import-worker";
-import { logger } from "@/logger";
-import { TSyncJobWithConfig } from "@silo/core";
-import { pullComments, pullCycles, pullIssues, pullLabels, pullUsers } from "@silo/linear";
+import { TJobWithConfig, PlaneEntities } from "@silo/core";
+import {
+  pullComments,
+  pullCycles,
+  pullIssues,
+  pullLabels,
+  pullProjects,
+  pullUsers,
+  TLinearIssueWithChildren,
+} from "@silo/linear";
 import { getRandomColor } from "../helpers/generic-helpers";
 import {
   createLinearClient,
@@ -22,6 +28,7 @@ import {
   getTransformedCycles,
   getTransformedIssues,
   getTransformedLabels,
+  getTransformedProjects,
   getTransformedUsers,
 } from "./tranformers/etl";
 
@@ -30,11 +37,11 @@ export class LinearDataMigrator extends BaseDataMigrator<LinearConfig, LinearEnt
     super(mq, store);
   }
 
-  async getJobData(jobId: string): Promise<TSyncJobWithConfig<LinearConfig>> {
+  async getJobData(jobId: string): Promise<TJobWithConfig<LinearConfig>> {
     return getJobData(jobId);
   }
 
-  async pull(job: TSyncJobWithConfig<LinearConfig>): Promise<LinearEntity[]> {
+  async pull(job: TJobWithConfig<LinearConfig>): Promise<LinearEntity[]> {
     await resetJobIfStarted(job.id, job);
     const credentials = await getJobCredentials(job);
     const client = createLinearClient(credentials);
@@ -47,6 +54,7 @@ export class LinearDataMigrator extends BaseDataMigrator<LinearConfig, LinearEnt
     const labels = await pullLabels(client);
     const issues = await pullIssues(client, job.config.meta.teamId);
     const cycles = await pullCycles(client, job.config.meta.teamId);
+    const projects = await pullProjects(client, job.config.meta.teamId);
     const comments = await pullComments(issues, client);
 
     await updateJob(job.id, {
@@ -59,12 +67,13 @@ export class LinearDataMigrator extends BaseDataMigrator<LinearConfig, LinearEnt
         labels,
         issues,
         cycles,
+        projects,
         issue_comments: comments,
       },
     ];
   }
 
-  async transform(job: TSyncJobWithConfig<LinearConfig>, data: LinearEntity[]): Promise<PlaneEntities[]> {
+  async transform(job: TJobWithConfig<LinearConfig>, data: LinearEntity[]): Promise<PlaneEntities[]> {
     if (data.length < 1) {
       return [];
     }
@@ -76,8 +85,9 @@ export class LinearDataMigrator extends BaseDataMigrator<LinearConfig, LinearEnt
       color: getRandomColor(),
     });
     const transformedUsers = getTransformedUsers(job, entities);
-    const transformedCycles = await getTransformedCycles(job, entities);
+    const transformedCycles = getTransformedCycles(job, entities);
     const transformedComments = getTransformedComments(job, entities);
+    const transformedModules = getTransformedProjects(job, entities);
 
     return [
       {
@@ -86,79 +96,97 @@ export class LinearDataMigrator extends BaseDataMigrator<LinearConfig, LinearEnt
         users: transformedUsers,
         cycles: transformedCycles,
         issue_comments: transformedComments,
-        modules: [],
+        modules: transformedModules,
       },
     ];
   }
 
-  async batches(job: TSyncJobWithConfig<LinearConfig>): Promise<TBatch<LinearEntity>[]> {
+  async batches(job: TJobWithConfig<LinearConfig>): Promise<TBatch<LinearEntity>[]> {
     const sourceData = await this.pull(job);
     const batchSize = env.BATCH_SIZE ? parseInt(env.BATCH_SIZE) : 40;
 
     const data = sourceData[0];
 
-    // Create a map of issues by their external_id for quick lookup
-    const issueMap = new Map<string, LinearIssue>(data.issues.map((issue: LinearIssue) => [issue.id, issue]));
+    // Build a tree structure of issues, where each issue has a parent and children
+    const buildIssueTree = (issues: LinearIssue[]) => {
+      // Create a map of issues by their external_id for quick lookup
+      const issueMap = new Map<string, TLinearIssueWithChildren>(
+        data.issues.map((issue: LinearIssue) => [
+          issue.id,
+          { ...issue, children: [] } as unknown as TLinearIssueWithChildren,
+        ])
+      );
 
-    // Get all the related issues for a given issue, with DFS. Traverse the
-    // issues and search for the parent and children of the issue, if the parent
-    // is found then add it to the related issues, and if the children are
-    // found, then add them to the related issues too, and mark them as visited.
-    const getRelatedIssues = async (issue: LinearIssue, visited: Set<string>) => {
-      const relatedIssues = new Set([issue]);
-      const stack = [issue];
-
-      while (stack.length > 0) {
-        const currentIssue = stack.pop();
-        if (!currentIssue || visited.has(currentIssue.id)) continue;
-
-        visited.add(currentIssue.id);
-
-        if (issue.parent) {
-          const parent = await issue.parent;
-          if (parent && issueMap.has(parent.id)) {
-            const parentIssue = issueMap.get(parent.id);
-            if (parentIssue && !visited.has(parentIssue.id)) {
-              relatedIssues.add(parentIssue);
-              stack.push(parentIssue);
-            }
-          }
-        }
-
-        for (const [_id, potentialChild] of issueMap) {
-          if (potentialChild.parent) {
-            const parent = await potentialChild.parent;
-            if (parent.id === currentIssue.id && !visited.has(potentialChild.id)) {
-              relatedIssues.add(potentialChild);
-              stack.push(potentialChild);
-            }
+      // Build the tree structure
+      const rootIssues: TLinearIssueWithChildren[] = [];
+      // For each issue, find its parent and add it to the parent's children
+      for (const issue of issues) {
+        const node = issueMap.get(issue.id);
+        // Find the parent of the issue
+        const parent = breakAndGetParent(issue);
+        // If the issue has no parent, it is a root issue
+        if (parent === undefined) {
+          if (node) rootIssues.push(node);
+        } else {
+          // If the issue has a parent, add it to the parent's children
+          const parentNode = parent && issueMap.get(parent);
+          if (parentNode) {
+            if (node && parentNode.children) parentNode.children.push(node);
           }
         }
       }
-
-      return Array.from(relatedIssues);
+      return rootIssues;
     };
 
-    const visited = new Set<string>();
-    const batches: any[][] = [];
-    let currentBatch: any[] = [];
+    // Flatten a single tree branch and its children
+    const flattenSingleTree = (root: TLinearIssueWithChildren): LinearIssue[] => {
+      // BFS to flatten the tree
+      const result: LinearIssue[] = [];
+      const queue: { node: TLinearIssueWithChildren; level: number }[] = [{ node: root, level: 0 }];
+      // BFS
+      while (queue.length > 0) {
+        const { node, level } = queue.shift()!;
+        const { children, ...issueWithoutChildren } = node;
+        result.push(issueWithoutChildren as LinearIssue);
 
-    // For each issue, get the related issues and add them to the current batch
-    for (const issue of data.issues) {
-      if (visited.has(issue.id)) continue;
-
-      const relatedIssues = await getRelatedIssues(issue, visited);
-      currentBatch.push(...relatedIssues);
-
-      if (currentBatch.length >= batchSize) {
-        batches.push(currentBatch);
-        currentBatch = [];
+        if (children && children.length > 0) {
+          children.forEach((child) => {
+            queue.push({ node: child, level: level + 1 });
+          });
+        }
       }
-    }
+      // Return the flattened tree
+      return result;
+    };
 
-    if (currentBatch.length > 0) {
-      batches.push(currentBatch);
-    }
+    // Batch root level issues and flatten each batch
+    const batchIssues = (issues: LinearIssue[], batchSize: number): LinearIssue[][] => {
+      // First build the tree
+      const rootIssues = buildIssueTree(issues);
+      // Batch the root level issues
+      if (batchSize <= 0) throw new Error("Batch size must be greater than 0");
+      if (rootIssues.length === 0) return [];
+
+      // Split the root issues into batches
+      const batches: LinearIssue[][] = [];
+      const numBatches = Math.ceil(rootIssues.length / batchSize);
+
+      // For each batch of root issues, flatten their trees
+      for (let i = 0; i < numBatches; i++) {
+        const startIndex = i * batchSize;
+        const rootBatch = rootIssues.slice(startIndex, startIndex + batchSize);
+        // Flatten each root issue and its children, then combine them
+        const flattenedBatch = rootBatch.reduce((acc: LinearIssue[], rootIssue) => {
+          return acc.concat(flattenSingleTree(rootIssue));
+        }, []);
+        // Add the flattened batch to the batches
+        batches.push(flattenedBatch);
+      }
+      // Return the batches
+      return batches;
+    };
+
+    const batches = batchIssues(data.issues, batchSize);
 
     const finalBatches: TBatch<LinearEntity>[] = [];
 
@@ -188,6 +216,7 @@ export class LinearDataMigrator extends BaseDataMigrator<LinearConfig, LinearEnt
             users: data.users.length,
             issue_comments: data.issue_comments.length,
             cycles: data.cycles.length,
+            projects: data.projects.length,
           },
         },
         data: [
@@ -197,6 +226,7 @@ export class LinearDataMigrator extends BaseDataMigrator<LinearConfig, LinearEnt
             cycles: cycles,
             labels: data.labels,
             users: data.users,
+            projects: data.projects,
           },
         ],
       });
@@ -205,3 +235,11 @@ export class LinearDataMigrator extends BaseDataMigrator<LinearConfig, LinearEnt
     return finalBatches;
   }
 }
+
+const breakAndGetParent = (issue: Issue): string | undefined => {
+  // @ts-ignore
+  const parent = issue._parent;
+  if (parent) {
+    return parent.id;
+  }
+};

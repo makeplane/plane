@@ -1,21 +1,32 @@
 // sentry
 import * as Sentry from "@sentry/node";
 import { nodeProfilingIntegration } from "@sentry/profiling-node";
+import cors from "cors";
 import dotenv from "dotenv";
 import express, { Application } from "express";
-import cors from "cors";
 // lib
 import { registerControllers } from "./lib/controller";
 // controllers
-import { JobConfigController, JobController, CredentialController } from "@/apps/engine/controllers";
-
+import AsanaController from "@/apps/asana-importer/controllers";
+import { CredentialController, JobConfigController, JobController } from "@/apps/engine/controllers";
+import { ConnectionsController } from "@/apps/engine/controllers/connection.controller";
+import GithubController from "@/apps/github/controllers";
 import JiraController from "@/apps/jira-importer/controllers";
 import LinearController from "@/apps/linear-importer/controllers";
+import { GitlabController } from "./apps/gitlab";
+import { SlackController } from "./apps/slack/controllers";
 import { env } from "./env";
 import { logger } from "./logger";
 
-const controllers = [JobController, JobConfigController, CredentialController];
-const appControllers = [JiraController, LinearController];
+const controllers = [JobController, JobConfigController, CredentialController, ConnectionsController];
+const appControllers = [
+  JiraController,
+  LinearController,
+  GithubController,
+  GitlabController,
+  AsanaController,
+  SlackController,
+];
 
 export class Server {
   app: Application;
@@ -23,10 +34,12 @@ export class Server {
 
   constructor() {
     this.app = express();
-    this.app.use(express.json());
     this.port = Number(env.PORT);
     // cors
     this.app.use(cors());
+    this.app.use(express.json());
+    this.app.use(express.urlencoded({ extended: true }));
+
     // set up dotenv
     dotenv.config();
     // set up controllers

@@ -35,6 +35,12 @@ class JiraController {
 
   @Post("/auth/url")
   async getAuthURL(req: Request, res: Response) {
+    if (env.JIRA_OAUTH_ENABLED === "0") {
+      return res.status(400).send({
+        message: "Bad Request, OAuth is not enabled for Jira.",
+      });
+    }
+
     const body: JiraAuthState = req.body;
     if (!body.workspaceId || !body.apiToken) {
       return res.status(400).send({
@@ -48,6 +54,11 @@ class JiraController {
 
   @Get("/auth/callback")
   async authCallback(req: Request, res: Response) {
+    if (env.JIRA_OAUTH_ENABLED === "0") {
+      return res.status(400).send({
+        message: "Invalid Callback, OAuth is not enabled for Jira.",
+      });
+    }
     const query: JiraAuthPayload | any = req.query;
     if (!query.code) {
       return res.status(400).send("code not found in the query params");
@@ -90,6 +101,11 @@ class JiraController {
 
   @Post("/auth/refresh")
   async refreshAccessToken(req: Request, res: Response) {
+    if (env.JIRA_OAUTH_ENABLED === "0") {
+      return res.status(400).send({
+        message: "Invalid Callback, OAuth is not enabled for Jira.",
+      });
+    }
     const { refreshToken, workspaceId, userId } = req.body;
     if (!refreshToken || !workspaceId) {
       return res.status(400).send({ message: "Bad Request" });
@@ -114,9 +130,74 @@ class JiraController {
     }
   }
 
+  @Post("/auth/pat")
+  async upsertCredentials(req: Request, res: Response) {
+    try {
+      const { workspaceId, userId, apiToken, personalAccessToken, userEmail, hostname } = req.body;
+      if (!workspaceId || !userId || !apiToken || !personalAccessToken) {
+        res.status(400).json({ message: "Workspace ID, User ID, API Token and Personal Access Token are required" });
+      }
+
+      try {
+        const jiraService = createJiraService({
+          isPAT: true,
+          patToken: personalAccessToken,
+          userEmail: userEmail,
+          hostname: hostname,
+        });
+
+        await jiraService.getResourceProjects();
+      } catch (error: any) {
+        return res.status(401).send({ message: "Invalid personal access token" });
+      }
+
+      // Create or update the credentials
+      const credential = await createOrUpdateCredentials(workspaceId, userId, {
+        source_access_token: personalAccessToken,
+        target_access_token: apiToken,
+        user_email: userEmail,
+        source_hostname: hostname,
+        source: "JIRA",
+        workspace_id: workspaceId,
+        isPAT: true,
+      });
+
+      res.status(200).json(credential);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
   @Post("/resources")
   async getResources(req: Request, res: Response) {
     try {
+      if (env.JIRA_OAUTH_ENABLED === "0") {
+        const { workspaceId, userId } = req.body;
+        const credentials = await validateAndGetCredentials(workspaceId, userId);
+        const jiraHostName = credentials?.source_hostname;
+        if (jiraHostName) {
+          try {
+            const JIRA_CLOUD_INFO_URL = new URL(jiraHostName);
+            JIRA_CLOUD_INFO_URL.protocol = "https";
+            JIRA_CLOUD_INFO_URL.pathname = `/_edge/tenant_info`;
+            const cloudResponse = await axios.get(JIRA_CLOUD_INFO_URL.toString());
+            const cloudId = cloudResponse.data.cloudId;
+            const resource = {
+              id: cloudId,
+              url: jiraHostName,
+              name: jiraHostName,
+              scopes: [],
+              avatarUrl: null,
+            };
+            return res.json([resource]);
+          } catch (error: any) {
+            console.error(error);
+            return res.sendStatus(400);
+          }
+        }
+        return res.sendStatus(400);
+      }
+
       const { workspaceId, userId } = req.body;
       const credentials = await validateAndGetCredentials(workspaceId, userId);
       const axiosInstance = createAxiosInstance();
@@ -140,7 +221,9 @@ class JiraController {
       const projects: JiraProject[] = [];
       await fetchPaginatedData(
         (startAt) => jiraClient.getResourceProjects(startAt),
-        (values) => projects.push(...(values as JiraProject[])),
+        (values) => {
+          projects.push(...(values as JiraProject[]));
+        },
         "values"
       );
       return res.json(projects);
@@ -216,7 +299,7 @@ class JiraController {
   }
 }
 
-const createJiraClient = async (workspaceId: string, userId: string, cloudId: string): Promise<JiraService> => {
+const createJiraClient = async (workspaceId: string, userId: string, cloudId?: string): Promise<JiraService> => {
   const credentials = await getCredentialsByWorkspaceId(workspaceId, userId, "JIRA");
 
   if (!credentials || credentials.length === 0) {
@@ -224,14 +307,6 @@ const createJiraClient = async (workspaceId: string, userId: string, cloudId: st
   }
 
   const jiraCredentials = credentials[0];
-
-  if (
-    !jiraCredentials.source_access_token ||
-    !jiraCredentials.source_refresh_token ||
-    !jiraCredentials.target_access_token
-  ) {
-    throw new Error("No jira credentials available for the given workspaceId and userId");
-  }
 
   const refreshTokenCallback = async ({
     access_token,
@@ -248,13 +323,38 @@ const createJiraClient = async (workspaceId: string, userId: string, cloudId: st
     });
   };
 
-  return createJiraService({
-    cloudId: cloudId,
-    accessToken: jiraCredentials.source_access_token,
-    refreshToken: jiraCredentials.source_refresh_token,
-    refreshTokenFunc: jiraAuth.getRefreshToken,
-    refreshTokenCallback: refreshTokenCallback,
-  });
+  if (env.JIRA_OAUTH_ENABLED === "1") {
+    if (
+      !jiraCredentials.source_access_token ||
+      !jiraCredentials.source_refresh_token ||
+      !jiraCredentials.target_access_token
+    ) {
+      throw new Error("No jira credentials available for the given workspaceId and userId");
+    }
+    if (!cloudId) {
+      throw new Error("Cloud ID is required");
+    }
+
+    return createJiraService({
+      isPAT: false,
+      cloudId: cloudId,
+      accessToken: jiraCredentials.source_access_token,
+      refreshToken: jiraCredentials.source_refresh_token,
+      refreshTokenFunc: jiraAuth.getRefreshToken,
+      refreshTokenCallback: refreshTokenCallback,
+    });
+  } else {
+    if (!jiraCredentials.source_hostname || !jiraCredentials.source_access_token || !jiraCredentials.user_email) {
+      throw new Error("Invalid Jira credentials");
+    }
+
+    return createJiraService({
+      isPAT: true,
+      hostname: jiraCredentials.source_hostname,
+      userEmail: jiraCredentials.user_email,
+      patToken: jiraCredentials.source_access_token,
+    });
+  }
 };
 
 async function validateAndGetCredentials(workspaceId: string, userId: string) {
@@ -264,8 +364,14 @@ async function validateAndGetCredentials(workspaceId: string, userId: string) {
   }
 
   const credential = credentials[0];
-  if (!credential.source_access_token || !credential.source_refresh_token || !credential.target_access_token) {
-    throw new JiraApiError("Incomplete Jira credentials for the given workspaceId and userId", 401);
+  if (env.JIRA_OAUTH_ENABLED === "0") {
+    if (!credential.source_access_token || !credential.target_access_token || !credential.source_hostname) {
+      throw new JiraApiError("Incomplete Jira credentials for the given workspaceId and userId", 401);
+    }
+  } else {
+    if (!credential.source_access_token || !credential.source_refresh_token || !credential.target_access_token) {
+      throw new JiraApiError("Incomplete Jira credentials for the given workspaceId and userId", 401);
+    }
   }
 
   return credential;

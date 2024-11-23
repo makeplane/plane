@@ -2,7 +2,7 @@
 
 import { FC, useEffect } from "react";
 import { Button } from "@plane/ui";
-import { TSyncJob, TSyncJobStatus } from "@silo/core";
+import { TJob, TJobStatus } from "@silo/core";
 import { JiraConfig } from "@silo/jira";
 // silo hooks
 import { useBaseImporter } from "@/plane-web/silo/hooks";
@@ -21,7 +21,7 @@ import { StepperNavigation } from "@/plane-web/silo/ui";
 
 export const SummaryRoot: FC = () => {
   // hooks
-  const { workspaceSlug, workspaceId, userId, userEmail, apiBaseUrl } = useBaseImporter();
+  const { workspaceSlug, workspaceId, userId, userEmail } = useBaseImporter();
   const {
     importerData,
     currentStep,
@@ -53,7 +53,7 @@ export const SummaryRoot: FC = () => {
       try {
         const importerConfig = await createJobConfiguration(syncJobConfig as JiraConfig);
         if (importerConfig && importerConfig?.insertedId) {
-          const syncJobPayload: Partial<TSyncJob> = {
+          const syncJobPayload: Partial<TJob> = {
             workspace_slug: workspaceSlug,
             workspace_id: workspaceId,
             project_id: planeProjectId,
@@ -61,8 +61,7 @@ export const SummaryRoot: FC = () => {
             initiator_email: userEmail,
             config: importerConfig?.insertedId,
             migration_type: "JIRA",
-            target_hostname: apiBaseUrl,
-            status: "" as TSyncJobStatus,
+            status: "" as TJobStatus,
           };
           const importerCreateJob = await createJob(planeProjectId, syncJobPayload);
           if (importerCreateJob && importerCreateJob?.insertedId) {

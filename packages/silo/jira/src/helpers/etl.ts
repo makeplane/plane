@@ -1,10 +1,24 @@
-import { IPriorityConfig, IStateConfig, PaginatedResponse } from "@/types";
-import { ExIssueAttachment, ExState } from "@plane/sdk";
+import {
+  IPriorityConfig,
+  IStateConfig,
+  JiraCustomFieldKeys,
+  JiraIssueField,
+  PaginatedResponse,
+} from "@/types";
+import {
+  ExIssueAttachment,
+  ExState,
+  ExIssueProperty,
+  ExIssuePropertyValue,
+  TPropertyValue,
+} from "@plane/sdk";
 import {
   Attachment as JiraAttachment,
   Priority as JiraPriority,
   StatusDetails as JiraState,
 } from "jira.js/out/version3/models";
+import { SUPPORTED_CUSTOM_FIELD_ATTRIBUTES } from "./custom-field-etl";
+import { getFormattedDate } from "./date";
 
 export const getTargetState = (
   stateMap: IStateConfig[],
@@ -80,4 +94,150 @@ export const fetchPaginatedData = async <T>(
       }
     }
   }
+};
+
+export const getPropertyAttributes = (
+  jiraIssueField: JiraIssueField
+): Partial<ExIssueProperty> => {
+  if (!jiraIssueField.schema || !jiraIssueField.schema.custom) {
+    return {};
+  }
+
+  return {
+    ...SUPPORTED_CUSTOM_FIELD_ATTRIBUTES[
+      jiraIssueField.schema.custom as JiraCustomFieldKeys
+    ],
+  };
+};
+
+export const getPropertyValues = (
+  customFieldType: JiraCustomFieldKeys,
+  value: any,
+  renderedValue: any
+): ExIssuePropertyValue => {
+  const propertyValues: ExIssuePropertyValue = [];
+  const commonPropertyProp: Partial<TPropertyValue> = {
+    external_source: "JIRA",
+    external_id: undefined,
+  };
+
+  if (!value) return [];
+
+  switch (customFieldType) {
+    case "com.atlassian.jira.plugin.system.customfieldtypes:textfield":
+      // Handle textfield
+      propertyValues.push({
+        ...commonPropertyProp,
+        value: value,
+      });
+      break;
+    case "com.atlassian.jira.plugin.system.customfieldtypes:url":
+      // Handle url
+      propertyValues.push({
+        ...commonPropertyProp,
+        value: value,
+      });
+      break;
+    case "com.atlassian.jira.plugin.system.customfieldtypes:userpicker":
+      // Handle userpicker
+      if (value.accountId && value.displayName) {
+        propertyValues.push({
+          ...commonPropertyProp,
+          external_id: value.accountId,
+          value: value.displayName,
+        });
+      }
+      break;
+    case "com.atlassian.jira.plugin.system.customfieldtypes:select":
+      // Handle single select
+      propertyValues.push({
+        ...commonPropertyProp,
+        external_id: value.id,
+        value: value.id,
+      });
+      break;
+    case "com.atlassian.jira.plugin.system.customfieldtypes:float":
+      // Handle float
+      propertyValues.push({
+        ...commonPropertyProp,
+        value: value,
+      });
+      break;
+    case "com.atlassian.jira.plugin.system.customfieldtypes:textarea":
+      // Handle textarea
+      if (renderedValue) {
+        propertyValues.push({
+          ...commonPropertyProp,
+          value: renderedValue,
+        });
+      }
+      break;
+    case "com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes":
+      // Handle multicheckboxes
+      if (Array.isArray(value)) {
+        value.forEach((val) => {
+          propertyValues.push({
+            ...commonPropertyProp,
+            external_id: val.id,
+            value: val.id,
+          });
+        });
+      }
+      break;
+    case "com.atlassian.jira.plugin.system.customfieldtypes:datetime":
+      // Handle datetime
+      const formattedDate = getFormattedDate(value); // Format it to datetime format
+      if (formattedDate) {
+        propertyValues.push({
+          ...commonPropertyProp,
+          value: formattedDate,
+        });
+      }
+      break;
+    case "com.atlassian.jira.plugin.system.customfieldtypes:radiobuttons":
+      // Handle radiobuttons
+      propertyValues.push({
+        ...commonPropertyProp,
+        external_id: value.id,
+        value: value.id,
+      });
+      break;
+    case "com.atlassian.jira.plugin.system.customfieldtypes:multiselect":
+      // Handle multiselect
+      if (Array.isArray(value)) {
+        value.forEach((val) => {
+          propertyValues.push({
+            ...commonPropertyProp,
+            external_id: val.id,
+            value: val.id,
+          });
+        });
+      }
+      break;
+    case "com.atlassian.jira.plugin.system.customfieldtypes:datepicker":
+      // Handle datepicker
+      propertyValues.push({
+        ...commonPropertyProp,
+        value: value,
+      });
+      break;
+    case "com.atlassian.jira.plugin.system.customfieldtypes:multiuserpicker":
+      // Handle multiuserpicker
+      if (Array.isArray(value)) {
+        value.forEach((val) => {
+          if (val.accountId && val.displayName) {
+            propertyValues.push({
+              ...commonPropertyProp,
+              external_id: val.accountId,
+              value: val.displayName,
+            });
+          }
+        });
+      }
+      break;
+    default:
+      console.warn(`Unhandled custom field type: ${customFieldType}`);
+  }
+
+  return propertyValues;
 };

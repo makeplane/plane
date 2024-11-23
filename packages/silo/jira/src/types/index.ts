@@ -8,23 +8,33 @@ import {
   FieldDetails,
   Issue,
   IssueTypeWithStatus as JiraStates,
+  IssueTypeDetails as JiraIssueTypeDetails,
+  CustomFieldContextOption,
 } from "jira.js/out/version3/models";
 
-export type JiraProps = {
-  cloudId: string;
-  accessToken: string;
-  refreshToken: string;
-  refreshTokenFunc: (refreshToken: string) => Promise<{
-    access_token: string;
-    refresh_token: string;
-    expires_in: number;
-  }>;
-  refreshTokenCallback: (arg0: {
-    access_token: string;
-    refresh_token: string;
-    expires_in: number;
-  }) => Promise<void>;
-};
+export type JiraProps =
+  | {
+      isPAT: false;
+      cloudId: string;
+      accessToken: string;
+      refreshToken: string;
+      refreshTokenFunc: (refreshToken: string) => Promise<{
+        access_token: string;
+        refresh_token: string;
+        expires_in: number;
+      }>;
+      refreshTokenCallback: (arg0: {
+        access_token: string;
+        refresh_token: string;
+        expires_in: number;
+      }) => Promise<void>;
+    }
+  | {
+      isPAT: true;
+      hostname: string;
+      userEmail: string;
+      patToken: string;
+    };
 
 export type JiraResource = {
   id: string;
@@ -78,7 +88,8 @@ export type JiraEntity = {
   issue_comments: JiraComment[];
   sprints: JiraSprint[];
   components: JiraComponent[];
-  customFields: FieldDetails[];
+  issueTypes: JiraIssueTypeDetails[];
+  issueFields: JiraIssueField[];
 };
 
 export interface IResource {
@@ -117,7 +128,7 @@ export type JiraConfig = {
   issues: number;
   // Users are string, as not we are saving the csv string into the config
   users: string;
-  resource: IResource;
+  resource?: IResource;
   project: JiraProject;
   planeProject: ExProject;
   issueType: string;
@@ -133,6 +144,15 @@ export type JiraAuthState = {
   userId: string;
 };
 
+export type JiraPATAuthState = {
+  workspaceId: string;
+  userId: string;
+  apiToken: string;
+  personalAccessToken: string;
+  userEmail: string;
+  hostname: string;
+};
+
 export type JiraAuthPayload = {
   state: string;
   code: string;
@@ -146,6 +166,21 @@ export type JiraAuthProps = {
   tokenURL: string;
 };
 
+export type JiraIssueField = FieldDetails & {
+  options?: JiraIssueFieldOptions[];
+};
+
+export type JiraIssueFieldOptions = CustomFieldContextOption & {
+  fieldId: string;
+};
+
+// Define the Jira migrator class
+export type TJiraIssueWithChildren = IJiraIssue & {
+  children?: TJiraIssueWithChildren[];
+};
+
 export type IJiraIssue = Issue;
 
 export type { JiraProject, JiraStates, JiraStatus, JiraPriority };
+
+export type { JiraCustomFieldKeys } from "./custom-fields";

@@ -1,12 +1,242 @@
 {
-  "id": "e33e62d7-44ed-4345-9d3c-1a966e7a0bba",
+  "id": "8258e4cf-1c30-4820-a3d4-b2d4a4222079",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.credentials": {
+    "silo.entity_connections": {
+      "name": "entity_connections",
+      "schema": "silo",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "entity_id": {
+          "name": "entity_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "entity_slug": {
+          "name": "entity_slug",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "entity_data": {
+          "name": "entity_data",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'{}'::jsonb"
+        },
+        "project_id": {
+          "name": "project_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "workspace_id": {
+          "name": "workspace_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "workspace_slug": {
+          "name": "workspace_slug",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "workspace_connection_id": {
+          "name": "workspace_connection_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "config": {
+          "name": "config",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'{}'::jsonb"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "entity_connections_workspace_id_idx": {
+          "name": "entity_connections_workspace_id_idx",
+          "columns": [
+            {
+              "expression": "workspace_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "entity_connections_workspace_connection_id_workspace_connections_id_fk": {
+          "name": "entity_connections_workspace_connection_id_workspace_connections_id_fk",
+          "tableFrom": "entity_connections",
+          "tableTo": "workspace_connections",
+          "schemaTo": "silo",
+          "columnsFrom": [
+            "workspace_connection_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "silo.workspace_connections": {
+      "name": "workspace_connections",
+      "schema": "silo",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "workspace_id": {
+          "name": "workspace_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "workspace_slug": {
+          "name": "workspace_slug",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "target_hostname": {
+          "name": "target_hostname",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "source_hostname": {
+          "name": "source_hostname",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "connection_type": {
+          "name": "connection_type",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "connection_id": {
+          "name": "connection_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "connection_data": {
+          "name": "connection_data",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'{}'::jsonb"
+        },
+        "credentials_id": {
+          "name": "credentials_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "config": {
+          "name": "config",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'{}'::jsonb"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "workspace_connections_workspace_id_idx": {
+          "name": "workspace_connections_workspace_id_idx",
+          "columns": [
+            {
+              "expression": "workspace_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "workspace_connections_credentials_id_credentials_id_fk": {
+          "name": "workspace_connections_credentials_id_credentials_id_fk",
+          "tableFrom": "workspace_connections",
+          "tableTo": "credentials",
+          "schemaTo": "silo",
+          "columnsFrom": [
+            "credentials_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "silo.credentials": {
       "name": "credentials",
-      "schema": "",
+      "schema": "silo",
       "columns": {
         "id": {
           "name": "id",
@@ -33,6 +263,12 @@
           "primaryKey": false,
           "notNull": false
         },
+        "user_email": {
+          "name": "user_email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "source_access_token": {
           "name": "source_access_token",
           "type": "text",
@@ -45,11 +281,31 @@
           "primaryKey": false,
           "notNull": false
         },
+        "source_hostname": {
+          "name": "source_hostname",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "target_access_token": {
           "name": "target_access_token",
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "is_pat": {
+          "name": "is_pat",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "is_active": {
+          "name": "is_active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
         }
       },
       "indexes": {
@@ -73,9 +329,9 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "public.job_configs": {
+    "silo.job_configs": {
       "name": "job_configs",
-      "schema": "",
+      "schema": "silo",
       "columns": {
         "id": {
           "name": "id",
@@ -97,9 +353,9 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "public.jobs": {
+    "silo.jobs": {
       "name": "jobs",
-      "schema": "",
+      "schema": "silo",
       "columns": {
         "id": {
           "name": "id",
@@ -171,12 +427,6 @@
           "notNull": false,
           "default": 0
         },
-        "target_hostname": {
-          "name": "target_hostname",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
         "start_time": {
           "name": "start_time",
           "type": "timestamp",
@@ -194,7 +444,7 @@
           "type": "varchar",
           "primaryKey": false,
           "notNull": false,
-          "default": "'INITIATED'"
+          "default": "'CREATED'"
         },
         "created_at": {
           "name": "created_at",
@@ -240,6 +490,7 @@
           "name": "jobs_config_id_job_configs_id_fk",
           "tableFrom": "jobs",
           "tableTo": "job_configs",
+          "schemaTo": "silo",
           "columnsFrom": [
             "config_id"
           ],
@@ -255,7 +506,9 @@
     }
   },
   "enums": {},
-  "schemas": {},
+  "schemas": {
+    "silo": "silo"
+  },
   "_meta": {
     "columns": {},
     "schemas": {},

@@ -16,7 +16,8 @@
     "csv-string": "^4.1.1",
     "jira.js": "^4.0.1",
     "@plane/constants": "*",
-    "@plane/sdk": "*"
+    "@plane/sdk": "*",
+    "@silo/core": "*"
   },
   "devDependencies": {
     "typescript": "^5.3.3",

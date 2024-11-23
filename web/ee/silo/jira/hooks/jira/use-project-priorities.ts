@@ -15,10 +15,10 @@ export const useJiraProjectPriorities = (resourceId: string | undefined, project
   const [jiraProjectPriorities, setJiraProjectPriorities] = useState<JiraPriority[] | undefined>(undefined);
 
   const { data, isLoading, error, mutate } = useSWR(
-    workspaceId && userId && resourceId && projectId
+    workspaceId && userId && projectId
       ? `JIRA_PROJECT_PRIORITIES_${workspaceId}_${userId}_${resourceId}_${projectId}`
       : null,
-    workspaceId && userId && resourceId && projectId
+    workspaceId && userId && projectId
       ? async () => await jiraService.getProjectPriorities(workspaceId, userId, resourceId, projectId)
       : null
   );

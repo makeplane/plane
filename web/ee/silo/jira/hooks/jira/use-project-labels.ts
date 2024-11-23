@@ -15,10 +15,10 @@ export const useJiraProjectLabels = (resourceId: string | undefined, projectId: 
   const [jiraProjectLabels, setJiraProjectLabels] = useState<ILabelConfig[] | undefined>(undefined);
 
   const { data, isLoading, error, mutate } = useSWR(
-    workspaceId && userId && resourceId && projectId
+    workspaceId && userId && projectId
       ? `JIRA_PROJECT_LABELS_${workspaceId}_${userId}_${resourceId}_${projectId}`
       : null,
-    workspaceId && userId && resourceId && projectId
+    workspaceId && userId && projectId
       ? async () => await jiraService.getProjectLabels(workspaceId, userId, resourceId, projectId)
       : null
   );

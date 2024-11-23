@@ -17,7 +17,7 @@ export class ImporterAuthService {
    */
   async linearAuthentication(payload: LinearAuthState) {
     return this.axiosInstance
-      .post(`/silo/api/linear/auth/url`, payload)
+      .post(`/api/linear/auth/url`, payload)
       .then((res) => res.data)
       .catch((error) => {
         throw error?.response?.data;

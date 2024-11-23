@@ -17,13 +17,22 @@ export class ProjectService extends APIService {
     return this.get(`/api/v1/workspaces/${slug}/projects/`)
       .then((response) => response.data)
       .catch((error) => {
+        console.log(error);
+        throw error?.response?.data;
+      });
+  }
+
+  async getProject(slug: string, id: string): Promise<ExProject> {
+    return this.get(`/api/v1/workspaces/${slug}/projects/${id}`)
+      .then((response) => response.data)
+      .catch((error) => {
         throw error?.response?.data;
       });
   }
 
   async create(
     slug: string,
-    payload: Omit<Optional<ExProject>, ExcludedProps>
+    payload: Omit<Optional<ExProject>, ExcludedProps>,
   ) {
     return this.post(`/api/v1/workspaces/${slug}/projects/`, payload)
       .then((response) => response.data)

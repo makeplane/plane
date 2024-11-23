@@ -15,11 +15,11 @@ export class UserService extends APIService {
   async create(
     workspaceSlug: string,
     projectId: string,
-    payload: UserCreatePayload
+    payload: UserCreatePayload,
   ): Promise<UserResponsePayload> {
     return this.post(
       `/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/members/`,
-      payload
+      payload,
     )
       .then((response) => response.data)
       .catch((error) => {
@@ -29,10 +29,11 @@ export class UserService extends APIService {
 
   async list(workspaceSlug: string, projectId: string): Promise<PlaneUser[]> {
     return this.get(
-      `/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/members/`
+      `/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/members/`,
     )
       .then((response) => response.data)
       .catch((error) => {
+        console.log(error);
         throw error?.response?.data;
       });
   }

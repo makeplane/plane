@@ -13,10 +13,10 @@ export const useJiraProjectIssuesCount = (resourceId: string | undefined, projec
   const [jiraProjectIssueCount, setJiraProjectIssueCount] = useState<number | undefined>(undefined);
 
   const { data, isLoading, error, mutate } = useSWR(
-    workspaceId && userId && resourceId && projectId
+    workspaceId && userId && projectId
       ? `JIRA_PROJECT_ISSUE_COUNT_${workspaceId}_${userId}_${resourceId}_${projectId}`
       : null,
-    workspaceId && userId && resourceId && projectId
+    workspaceId && userId && projectId
       ? async () => await jiraService.getProjectIssuesCount(workspaceId, userId, resourceId, projectId)
       : null
   );

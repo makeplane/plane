@@ -1,3 +1,11 @@
+import {
+  // issue types
+  ExIssueType,
+  ExIssueProperty,
+  ExIssuePropertyOption,
+  ExIssuePropertyValue,
+} from "./issue-types";
+
 // service types
 export type ClientOptions = {
   baseURL: string;
@@ -38,12 +46,7 @@ export type Paginated<T> = {
   results: T[];
 };
 
-export type ExcludedProps =
-  | "id"
-  | "created_at"
-  | "created_by"
-  | "updated_at"
-  | "updated_by";
+export type ExcludedProps = "id" | "created_at" | "updated_at" | "updated_by";
 
 /* ----------------- Base Types --------------------- */
 type IIssueLabel = {
@@ -59,6 +62,7 @@ export type IIssueComment = {
   issue: string;
   actor: string;
   comment_html: string;
+  comment_stripped: string;
   access: string;
   is_member: boolean;
 };
@@ -69,6 +73,7 @@ type IIsssue = {
   point: any;
   name: string;
   description_html: string;
+  description_stripped: string;
   description_binary: any;
   priority: string;
   start_date: string;
@@ -82,6 +87,7 @@ type IIsssue = {
   estimate_point: any;
   assignees: string[];
   labels: string[];
+  type_id: string | undefined;
 };
 
 export type TStateGroups =
@@ -165,15 +171,6 @@ export interface ICycle {
   owned_by: string;
 }
 
-export type PlaneEntities = {
-  labels: Optional<ExIssueLabel>[];
-  issues: Optional<ExIssue>[];
-  users: Optional<PlaneUser>[];
-  issue_comments: Optional<ExIssueComment>[];
-  cycles: Optional<ExCycle>[];
-  modules: Optional<ExModule>[];
-};
-
 export type ExIssueAttachment = {
   id: string;
   attributes: {
@@ -215,6 +212,7 @@ type IProject = {
   page_view: boolean;
   inbox_view: boolean;
   is_time_tracking_enabled: boolean;
+  is_issue_type_enabled: boolean;
   cover_image: string;
   archive_in: number;
   close_in: number;
@@ -254,6 +252,7 @@ export type ExCycle = ICycle &
   ExBase & {
     issues: string[];
   };
+
 type ExUser = {
   id: string;
   first_name: string;
@@ -275,3 +274,58 @@ export type UserCreatePayload = Omit<Optional<ExUser>, "id"> &
   };
 
 export type UserResponsePayload = ExUser & UserMandatePayload;
+
+export interface Attributes {
+  name: string;
+  type: string;
+  size: number;
+}
+
+export interface StorageMetadata {
+  // Empty object in this case, but we'll define it for completeness
+  [key: string]: any;
+}
+
+export interface Attachment {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at: null | string;
+  attributes: Attributes;
+  asset: string;
+  entity_type: string;
+  is_deleted: boolean;
+  is_archived: boolean;
+  external_id: null | string;
+  external_source: null | string;
+  size: number;
+  is_uploaded: boolean;
+  storage_metadata: StorageMetadata;
+  created_by: string;
+  updated_by: string;
+  user: null | string;
+  workspace: string;
+  draft_issue: null | string;
+  project: string;
+  issue: string;
+  comment: null | string;
+  page: null | string;
+}
+
+export interface AttachmentResponse {
+  asset_id: string;
+  upload_data: {
+    url: string;
+    fields: {
+      "Content-Type": string;
+      key: string;
+      "x-amz-algorithm": string;
+      "x-amz-credential": string;
+      "x-amz-date": string;
+      policy: string;
+      "x-amz-signature": string;
+    };
+  };
+  attachment: Attachment;
+  asset_url: string;
+}

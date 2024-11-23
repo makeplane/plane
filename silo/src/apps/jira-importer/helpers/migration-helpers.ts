@@ -1,4 +1,4 @@
-import { TSyncServiceCredentials, TSyncJobWithConfig } from "@silo/core";
+import { TServiceCredentials, TJobWithConfig } from "@silo/core";
 import { IPriorityConfig, IStateConfig, JiraComponent, JiraConfig, JiraSprint } from "@silo/jira";
 
 import { ExIssueAttachment, ExState } from "@plane/sdk";
@@ -11,17 +11,18 @@ import {
   StatusDetails as JiraState,
 } from "jira.js/out/version3/models";
 import { jiraAuth } from "../auth/auth";
+import { env } from "@/env";
 
-export async function getJobData(jobId: string): Promise<TSyncJobWithConfig<JiraConfig>> {
+export async function getJobData(jobId: string): Promise<TJobWithConfig<JiraConfig>> {
   const [jobData] = await getJobById(jobId);
   if (!jobData) {
     throw new Error(`[${jobId.slice(0, 7)}] No job data or metadata found. Exiting...`);
   }
-  validateJobData(jobData as TSyncJobWithConfig<JiraConfig>, jobId);
-  return jobData as TSyncJobWithConfig<JiraConfig>;
+  validateJobData(jobData as TJobWithConfig<JiraConfig>, jobId);
+  return jobData as TJobWithConfig<JiraConfig>;
 }
 
-export function validateJobData(jobData: TSyncJobWithConfig<JiraConfig>, jobId: string): void {
+export function validateJobData(jobData: TJobWithConfig<JiraConfig>, jobId: string): void {
   if (!jobData.workspace_id || !jobData.migration_type) {
     throw new Error(`[${jobId.slice(0, 7)}] Missing workspace id. Exiting...`);
   }
@@ -33,7 +34,7 @@ export function validateJobData(jobData: TSyncJobWithConfig<JiraConfig>, jobId: 
   }
 }
 
-export const getTargetState = (job: TSyncJobWithConfig<JiraConfig>, sourceState: JiraState): ExState | undefined => {
+export const getTargetState = (job: TJobWithConfig<JiraConfig>, sourceState: JiraState): ExState | undefined => {
   /* TODO: Gracefully handle the case */
   if (!job.config) {
     return undefined;
@@ -52,7 +53,7 @@ export const getTargetState = (job: TSyncJobWithConfig<JiraConfig>, sourceState:
 };
 
 export const getTargetAttachments = (
-  _job: TSyncJobWithConfig<JiraConfig>,
+  _job: TJobWithConfig<JiraConfig>,
   attachments?: JiraAttachment[]
 ): Partial<ExIssueAttachment[]> => {
   if (!attachments) {
@@ -76,7 +77,7 @@ export const getTargetAttachments = (
 };
 
 export const getTargetPriority = (
-  job: TSyncJobWithConfig<JiraConfig>,
+  job: TJobWithConfig<JiraConfig>,
   sourcePriority: JiraPriority
 ): string | undefined => {
   if (!job.config) {
@@ -110,7 +111,7 @@ export const filterComponentsForIssues = (issues: IJiraIssue[], components: Jira
     }));
 };
 
-export const resetJobIfStarted = async (jobId: string, job: TSyncJobWithConfig<JiraConfig>) => {
+export const resetJobIfStarted = async (jobId: string, job: TJobWithConfig<JiraConfig>) => {
   if (job.start_time) {
     await updateJob(jobId, {
       total_batch_count: 0,
@@ -122,15 +123,18 @@ export const resetJobIfStarted = async (jobId: string, job: TSyncJobWithConfig<J
   }
 };
 
-export const getJobCredentials = async (job: TSyncJobWithConfig<JiraConfig>): Promise<TSyncServiceCredentials> => {
+export const getJobCredentials = async (job: TJobWithConfig<JiraConfig>): Promise<TServiceCredentials> => {
   const credentials = await getCredentialsByWorkspaceId(job.workspace_id!, job.initiator_id!, "JIRA");
   if (!credentials || credentials.length === 0) {
     throw new Error(`Credentials not available for job ${job.workspace_id}`);
   }
-  return credentials[0] as TSyncServiceCredentials;
+  return credentials[0] as TServiceCredentials;
 };
 
-export const createJiraClient = (job: TSyncJobWithConfig<JiraConfig>, credentials: any): JiraService => {
+export const createJiraClient = (
+  job: TJobWithConfig<JiraConfig>,
+  credentials: Partial<TServiceCredentials>
+): JiraService => {
   const refreshTokenCallback = async ({
     access_token,
     refresh_token,
@@ -145,11 +149,28 @@ export const createJiraClient = (job: TSyncJobWithConfig<JiraConfig>, credential
     });
   };
 
-  return new JiraService({
-    accessToken: credentials.source_access_token!,
-    refreshToken: credentials.source_refresh_token!,
-    cloudId: job.config?.meta.resource.id as string,
-    refreshTokenFunc: jiraAuth.getRefreshToken.bind(jiraAuth),
-    refreshTokenCallback: refreshTokenCallback,
-  });
+  if (env.JIRA_OAUTH_ENABLED === "1") {
+    if (!job.config?.meta.resource || !job.config?.meta.resource.id) {
+      throw new Error(`Missing resource details in job config for job ${job.id}`);
+    }
+
+    return new JiraService({
+      isPAT: false,
+      accessToken: credentials.source_access_token!,
+      refreshToken: credentials.source_refresh_token!,
+      cloudId: job.config?.meta.resource.id as string,
+      refreshTokenFunc: jiraAuth.getRefreshToken.bind(jiraAuth),
+      refreshTokenCallback: refreshTokenCallback,
+    });
+  } else {
+    if (!credentials.source_access_token || !credentials.source_hostname || !credentials.user_email) {
+      throw new Error(`Missing credentials in job config for job ${job.id}`);
+    }
+    return new JiraService({
+      isPAT: true,
+      patToken: credentials.source_access_token!,
+      hostname: credentials.source_hostname,
+      userEmail: credentials.user_email!,
+    });
+  }
 };

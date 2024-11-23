@@ -2,12 +2,17 @@
 
 import { FC } from "react";
 import { Button } from "@plane/ui";
-import { TSyncJob } from "@silo/core";
+import { TJob } from "@silo/core";
 import { LinearConfig } from "@silo/linear";
 // silo hooks
 import { useBaseImporter } from "@/plane-web/silo/hooks";
 import { useLinearSyncJobs } from "@/plane-web/silo/hooks/context/use-linear-sync-jobs";
-import { useImporter, useLinearTeamIssueCount, useLinearTeamStates } from "@/plane-web/silo/linear/hooks";
+import {
+  useImporter,
+  useLinearTeamIssueCount,
+  useLinearTeams,
+  useLinearTeamStates,
+} from "@/plane-web/silo/linear/hooks";
 // silo types
 import { E_IMPORTER_STEPS } from "@/plane-web/silo/linear/types";
 // silo ui components
@@ -21,7 +26,8 @@ export const SummaryRoot: FC = () => {
   const planeProjectId = importerData[E_IMPORTER_STEPS.SELECT_PLANE_PROJECT]?.projectId;
   const linearTeamId = importerData[E_IMPORTER_STEPS.CONFIGURE_LINEAR]?.teamId;
   const { data: linearTeamStates } = useLinearTeamStates(linearTeamId);
-  const { data: linearTeamIssueCount } = useLinearTeamIssueCount(linearTeamId);
+  // const { data: linearTeamIssueCount } = useLinearTeamIssueCount(linearTeamId);
+  const { data: linearTeams, getById } = useLinearTeams();
   const { createJobConfiguration, createJob, startJob } = useLinearSyncJobs();
 
   const handleOnClickNext = async () => {
@@ -30,15 +36,16 @@ export const SummaryRoot: FC = () => {
       try {
         const importerConfig = await createJobConfiguration(syncJobConfig as LinearConfig);
         if (importerConfig && importerConfig?.insertedId) {
-          const syncJobPayload: Partial<TSyncJob> = {
+          const syncJobPayload: Partial<TJob> = {
             workspace_slug: workspaceSlug,
             workspace_id: workspaceId,
+            // @ts-ignore
+            status: "",
             project_id: planeProjectId,
             initiator_id: userId,
             initiator_email: userEmail,
             config: importerConfig?.insertedId,
             migration_type: "LINEAR",
-            target_hostname: apiBaseUrl,
           };
           const importerCreateJob = await createJob(planeProjectId, syncJobPayload);
           if (importerCreateJob && importerCreateJob?.insertedId) {
@@ -66,8 +73,12 @@ export const SummaryRoot: FC = () => {
         </div>
         <div className="divide-y divide-custom-border-200">
           <div className="relative grid grid-cols-2 items-center p-3 text-sm">
+            <div className="text-custom-text-200">Team</div>
+            <div>{linearTeamId ? getById(linearTeamId)?.name : 0} issues</div>
+          </div>
+          <div className="relative grid grid-cols-2 items-center p-3 text-sm">
             <div className="text-custom-text-200">Issues</div>
-            <div>{linearTeamIssueCount || 0} issues</div>
+            <div>{linearTeamId ? getById(linearTeamId)?.issueCount : 0} issues</div>
           </div>
           <div className="relative grid grid-cols-2 items-center p-3 text-sm">
             <div className="text-custom-text-200">States</div>

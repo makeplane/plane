@@ -1,16 +1,23 @@
 import { useEffect, useState } from "react";
 import useSWR from "swr";
-import { SyncCredService, TSyncServiceConfigured, TSyncServices } from "@silo/core";
+import { CredentialService, TServiceAuthConfiguration, TImporterKeys } from "@silo/core";
 // silo hooks
 import { useBaseImporter } from "@/plane-web/silo/hooks";
 
-export const useSyncConfig = (service: TSyncServices) => {
+type TUseSyncConfig = {
+  data: TServiceAuthConfiguration | undefined;
+  isLoading: boolean;
+  error: Error | undefined;
+  mutate: (data?: TServiceAuthConfiguration | undefined) => Promise<TServiceAuthConfiguration | undefined>;
+};
+
+export const useSyncConfig = (service: TImporterKeys): TUseSyncConfig => {
   // hooks
   const { workspaceId, userId, siloBaseUrl } = useBaseImporter();
   // service instance
-  const syncService = new SyncCredService(siloBaseUrl);
+  const syncService = new CredentialService(siloBaseUrl);
   // states
-  const [config, setConfig] = useState<TSyncServiceConfigured | undefined>(undefined);
+  const [config, setConfig] = useState<TServiceAuthConfiguration | undefined>(undefined);
 
   // fetch service config
   const { data, isLoading, error, mutate } = useSWR(

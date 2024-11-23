@@ -2,7 +2,7 @@
 
 import { FC, useEffect, useState } from "react";
 import isEqual from "lodash/isEqual";
-import { Button } from "@plane/ui";
+import { Button, Loader } from "@plane/ui";
 import { IPriorityConfig, JiraPriority } from "@silo/jira";
 // silo constants
 import { PLANE_PRIORITIES } from "@/plane-web/silo/constants/priority";
@@ -24,10 +24,11 @@ export const MapPriorityRoot: FC = () => {
   const { importerData, handleImporterData, handleSyncJobConfig, currentStep, handleStepper } = useImporter();
   const jiraResourceId = importerData[E_IMPORTER_STEPS.CONFIGURE_JIRA]?.resourceId;
   const jiraProjectId = importerData[E_IMPORTER_STEPS.CONFIGURE_JIRA]?.projectId;
-  const { data: jiraProjectPriorities, getById: getJiraPriorityById } = useJiraProjectPriorities(
-    jiraResourceId,
-    jiraProjectId
-  );
+  const {
+    data: jiraProjectPriorities,
+    getById: getJiraPriorityById,
+    isLoading: isJiraProjectPrioritiesLoading,
+  } = useJiraProjectPriorities(jiraResourceId, jiraProjectId);
   // states
   const [formData, setFormData] = useState<TFormData>({});
   // derived values
@@ -84,7 +85,17 @@ export const MapPriorityRoot: FC = () => {
           <div>Plane Priorities</div>
         </div>
         <div className="divide-y divide-custom-border-200">
-          {jiraProjectPriorities &&
+          {isJiraProjectPrioritiesLoading ? (
+            <Loader className="relative w-full grid grid-cols-2 items-center py-4 gap-4">
+              <Loader.Item height="35px" width="100%" />
+              <Loader.Item height="35px" width="100%" />
+              <Loader.Item height="35px" width="100%" />
+              <Loader.Item height="35px" width="100%" />
+              <Loader.Item height="35px" width="100%" />
+              <Loader.Item height="35px" width="100%" />
+            </Loader>
+          ) : (
+            jiraProjectPriorities &&
             PLANE_PRIORITIES &&
             jiraProjectPriorities.map(
               (jiraPriority: JiraPriority) =>
@@ -99,7 +110,8 @@ export const MapPriorityRoot: FC = () => {
                     planePriorities={PLANE_PRIORITIES}
                   />
                 )
-            )}
+            )
+          )}
         </div>
       </div>
 

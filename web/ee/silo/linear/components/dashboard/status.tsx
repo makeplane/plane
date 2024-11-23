@@ -2,15 +2,16 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { E_JOB_STATUS, TSyncJobStatus } from "@silo/core";
+import { E_JOB_STATUS, TJobStatus } from "@silo/core";
 // helpers
 import { cn } from "@/helpers/common.helper";
 
 type TSyncJobStatusProps = {
-  status: TSyncJobStatus;
+  status: TJobStatus;
 };
 
-const STATUS_CLASSNAMES: { [key in TSyncJobStatus]: string } = {
+const STATUS_CLASSNAMES: { [key in TJobStatus]: string } = {
+  [E_JOB_STATUS.CREATED]: "text-gray-500 border border-gray-500 bg-gray-500/10",
   [E_JOB_STATUS.INITIATED]: "text-gray-500 border border-gray-500 bg-gray-500/10",
   [E_JOB_STATUS.PULLING]: "text-yellow-500 border border-yellow-500 bg-yellow-500/10",
   [E_JOB_STATUS.PULLED]: "text-yellow-500 border border-yellow-500 bg-yellow-500/10",

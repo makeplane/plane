@@ -5,7 +5,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.app.permissions import ProjectEntityPermission
 from plane.db.models import Workspace, Project, IssueType
-from plane.ee.models import IssueProperty
+from plane.ee.models import IssueProperty, PropertyTypeEnum, RelationTypeEnum
 from plane.ee.serializers.api import IssuePropertyAPISerializer
 from plane.api.views.base import BaseAPIView
 from plane.payment.flags.flag_decorator import check_feature_flag
@@ -39,6 +39,59 @@ class IssuePropertyAPIEndpoint(BaseAPIView):
     @property
     def property_id(self):
         return self.kwargs.get("property_id", None)
+
+    type_logo_props = {
+        PropertyTypeEnum.TEXT: {
+            "in_use": "icon",
+            "icon": {
+                "name": "AlignLeft",
+                "color": "#6d7b8a",
+            },
+        },
+        PropertyTypeEnum.DECIMAL: {
+            "in_use": "icon",
+            "icon": {
+                "name": "Hash",
+                "color": "#6d7b8a",
+            },
+        },
+        PropertyTypeEnum.OPTION: {
+            "in_use": "icon",
+            "icon": {
+                "name": "CircleChevronDown",
+                "color": "#6d7b8a",
+            },
+        },
+        PropertyTypeEnum.BOOLEAN: {
+            "in_use": "icon",
+            "icon": {
+                "name": "ToggleLeft",
+                "color": "#6d7b8a",
+            },
+        },
+        PropertyTypeEnum.DATETIME: {
+            "in_use": "icon",
+            "icon": {
+                "name": "Calendar",
+                "color": "#6d7b8a",
+            },
+        },
+        f"{PropertyTypeEnum.RELATION}_{RelationTypeEnum.USER}": {
+            "in_use": "icon",
+            "icon": {
+                "name": "UsersRound",
+                "color": "#6d7b8a",
+            },
+        },
+    }
+
+    def get_logo_props(self, property_type, relation_type=None):
+        """Get logo properties for issue property"""
+        if property_type == PropertyTypeEnum.RELATION:
+            return self.type_logo_props.get(
+                f"{PropertyTypeEnum.RELATION}_{relation_type}"
+            )
+        return self.type_logo_props.get(property_type)
 
     # list issue properties and get issue property by id
     @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
@@ -105,7 +158,12 @@ class IssuePropertyAPIEndpoint(BaseAPIView):
             issue_property_serializer = self.serializer_class(data=data)
             issue_property_serializer.is_valid(raise_exception=True)
             issue_property_serializer.save(
-                workspace=workspace, project=project, issue_type=issue_type
+                workspace=workspace,
+                project=project,
+                issue_type=issue_type,
+                logo_props=self.get_logo_props(
+                    data.get("property_type"), data.get("relation_type")
+                ),
             )
 
             # getting the issue property

@@ -3,10 +3,16 @@ import {
   Issue as IJiraIssue,
   ComponentWithIssueCount,
   Comment as JComment,
+  IssueTypeDetails as JiraIssueTypeDetails,
+  FieldDetails,
+  CustomFieldContextProjectMapping,
+  IssueTypeToContextMapping,
+  CustomFieldContextOption,
 } from "jira.js/out/version3/models";
 import {
   fetchPaginatedData,
   formatDateStringForHHMM,
+  OPTION_CUSTOM_FIELD_TYPES,
   removeArrayObjSpaces,
 } from "../helpers";
 import { JiraService } from "@/services";
@@ -16,6 +22,9 @@ import {
   JiraComponent,
   JiraSprint,
   PaginatedResponse,
+  JiraIssueField,
+  JiraIssueFieldOptions,
+  JiraCustomFieldKeys,
 } from "@/types";
 
 export function pullUsers(users: string): ImportedJiraUser[] {
@@ -84,8 +93,11 @@ export async function pullSprints(
       }
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch (e) {
-    throw new Error(`Could not fetch sprints, something went wrong`);
+  } catch (e: any) {
+    console.error(
+      "Could not fetch sprints, something went wrong",
+      e.response?.data
+    );
   }
   return jiraSprints;
 }
@@ -105,8 +117,11 @@ export async function pullComponents(
       }
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch (e) {
-    throw new Error(`Could not fetch components, something went wrong`);
+  } catch (e: any) {
+    console.error(
+      "Could not fetch components, something went wrong",
+      e.response?.data
+    );
   }
   return jiraComponents;
 }
@@ -146,4 +161,136 @@ export const pullCommentsInBatches = async (
     comments.push(...batchComments.flat());
   }
   return comments;
+};
+
+export const pullIssueTypes = async (
+  client: JiraService,
+  projectId: string
+): Promise<JiraIssueTypeDetails[]> => {
+  return await client.getProjectIssueTypes(projectId);
+};
+
+export const pullIssueFields = async (
+  client: JiraService,
+  issueTypes: JiraIssueTypeDetails[],
+  projectId: string
+): Promise<JiraIssueField[]> => {
+  // initialize custom fields
+  const customFields: JiraIssueField[] = [];
+  try {
+    // initialize fields
+    const fields: FieldDetails[] = await client.getCustomFields();
+
+    // get all field contexts
+    for (const field of fields) {
+      // skip if field has no id
+      if (!field.id) continue;
+
+      // Get project contexts for each field
+      const projectPageFieldContexts: CustomFieldContextProjectMapping[] = [];
+
+      try {
+        await fetchPaginatedData(
+          (startAt) =>
+            client.getProjectFieldContexts(field.id as string, startAt),
+          (values) =>
+            projectPageFieldContexts.push(
+              ...(values as CustomFieldContextProjectMapping[])
+            ),
+          "values"
+        );
+      } catch (e: any) {
+        console.error(
+          `Could not fetch field contexts for field ${field.id}`,
+          e.response?.data
+        );
+      }
+
+      // get field values for each issue
+      const fieldProjectContext = projectPageFieldContexts?.filter(
+        (context) => context?.projectId === projectId
+      );
+
+      // get field values for each issue type
+      if (fieldProjectContext?.length) {
+        // get context ids
+        const contextIds: number[] = fieldProjectContext
+          .filter((context) => !!context?.contextId)
+          .map((context) => Number(context?.contextId));
+
+        const issueTypeContexts: IssueTypeToContextMapping[] = [];
+
+        // get issue type contexts
+        try {
+          await fetchPaginatedData(
+            (startAt) =>
+              client.getIssueTypeFieldContexts(
+                field.id as string,
+                contextIds,
+                startAt
+              ),
+            (values) =>
+              issueTypeContexts.push(
+                ...(values as IssueTypeToContextMapping[])
+              ),
+            "values"
+          );
+        } catch (e: any) {
+          console.error(
+            `Could not fetch issue type contexts for field ${field.id}`,
+            e.response?.data
+          );
+        }
+
+        // get issue type for each issue type context
+        if (!issueTypeContexts) continue;
+
+        for (const issueTypeContext of issueTypeContexts) {
+          const issueType = issueTypes.find(
+            (issueType) => issueType.id === issueTypeContext.issueTypeId
+          );
+
+          if (!issueType) continue;
+
+          const fieldOptions: JiraIssueFieldOptions[] = [];
+          if (
+            OPTION_CUSTOM_FIELD_TYPES.includes(
+              field.schema?.custom as JiraCustomFieldKeys
+            )
+          ) {
+            // get field options
+            await fetchPaginatedData(
+              (startAt) =>
+                client.getIssueFieldOptions(
+                  field.id as string,
+                  Number(issueTypeContext.contextId),
+                  startAt
+                ),
+              (values: CustomFieldContextOption[]) => {
+                values.map((value) => {
+                  if (field.id)
+                    fieldOptions.push({ ...value, fieldId: field.id });
+                });
+              },
+              "values"
+            );
+          }
+
+          // add field to custom fields
+          customFields.push({
+            ...field,
+            scope: {
+              project: { id: projectId },
+              type: issueType.id,
+            },
+            options: fieldOptions,
+          });
+        }
+      }
+    }
+  } catch (e: any) {
+    console.error(e.response?.data);
+  }
+  // return custom fields
+  return customFields;
 };

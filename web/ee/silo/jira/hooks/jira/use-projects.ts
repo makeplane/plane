@@ -16,10 +16,8 @@ export const useJiraProjects = (resourceId: string | undefined) => {
 
   // fetch jira projects
   const { data, isLoading, error, mutate } = useSWR(
-    workspaceId && userId && resourceId ? `JIRA_PROJECTS_${workspaceId}_${userId}_${resourceId}` : null,
-    workspaceId && userId && resourceId
-      ? async () => await jiraService.getProjects(workspaceId, userId, resourceId)
-      : null
+    workspaceId && userId ? `JIRA_PROJECTS_${workspaceId}_${userId}_${resourceId}` : null,
+    workspaceId && userId ? async () => await jiraService.getProjects(workspaceId, userId, resourceId) : null
   );
 
   useEffect(() => {

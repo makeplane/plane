@@ -18,7 +18,6 @@ class IssuePropertyAPISerializer(BaseSerializer):
             "name",
             "logo_props",
             "sort_order",
-            "settings",
             "issue_type",
             "deleted_at",
             "created_at",

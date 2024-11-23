@@ -1,3 +1,6 @@
+# Python imports
+import random
+
 # Django imports
 from django.db.models import OuterRef, Subquery
 from django.db.models.functions import Coalesce
@@ -26,6 +29,41 @@ class IssueTypeAPIEndpoint(BaseAPIView):
 
     """
 
+    logo_icons = [
+        "Activity",
+        "AlertCircle",
+        "Archive",
+        "Bell",
+        "Calendar",
+        "Camera",
+        "Check",
+        "Clock",
+        "Code",
+        "Database",
+        "Download",
+        "Edit",
+        "File",
+        "Folder",
+        "Globe",
+        "Heart",
+        "Home",
+        "Mail",
+        "Search",
+        "User",
+    ]
+
+    logo_backgrounds = [
+        "#EF5974",
+        "#FF7474",
+        "#FC964D",
+        "#1FA191",
+        "#6DBCF5",
+        "#748AFF",
+        "#4C49F8",
+        "#5D407A",
+        "#999AA0",
+    ]
+
     model = IssueType
     serializer_class = IssueTypeAPISerializer
     permission_classes = [ProjectEntityPermission]
@@ -43,43 +81,59 @@ class IssueTypeAPIEndpoint(BaseAPIView):
     def type_id(self):
         return self.kwargs.get("type_id", None)
 
+    def generate_logo_prop(self):
+        return {
+            "in_use": "icon",
+            "icon": {
+                "name": self.logo_icons[
+                    random.randint(0, len(self.logo_icons) - 1)
+                ],
+                "background_color": self.logo_backgrounds[
+                    random.randint(0, len(self.logo_backgrounds) - 1)
+                ],
+            },
+        }
+
     # list issue types and get issue type by id
     @check_feature_flag(FeatureFlag.ISSUE_TYPE_DISPLAY)
     def get(self, request, slug, project_id, type_id=None):
-        if self.workspace_slug and self.project_id:
-            # list of issue types
-            if self.type_id is None:
-                issue_types = self.model.objects.filter(
-                    workspace__slug=self.workspace_slug,
-                    project_issue_types__project_id=self.project_id,
-                ).annotate(
-                    project_ids=Coalesce(
-                        Subquery(
-                            ProjectIssueType.objects.filter(
-                                issue_type=OuterRef("pk"), workspace__slug=slug
-                            )
-                            .values("issue_type")
-                            .annotate(
-                                project_ids=ArrayAgg(
-                                    "project_id", distinct=True
-                                )
-                            )
-                            .values("project_ids")
-                        ),
-                        [],
-                    )
-                )
-                serializer = self.serializer_class(issue_types, many=True)
-                return Response(serializer.data, status=status.HTTP_200_OK)
-
-            # getting issue type by id
-            issue_type = self.model.objects.get(
+        # list of issue types
+        if self.type_id is None:
+            issue_types = self.model.objects.filter(
                 workspace__slug=self.workspace_slug,
                 project_issue_types__project_id=self.project_id,
-                pk=self.type_id,
+            ).annotate(
+                project_ids=Coalesce(
+                    Subquery(
+                        ProjectIssueType.objects.filter(
+                            issue_type=OuterRef("pk"), workspace__slug=slug
+                        )
+                        .values("issue_type")
+                        .annotate(
+                            project_ids=ArrayAgg("project_id", distinct=True)
+                        )
+                        .values("project_ids")
+                    ),
+                    [],
+                )
             )
-            serializer = self.serializer_class(issue_type)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return self.paginate(
+                request=request,
+                queryset=(issue_types),
+                on_results=lambda issues: IssueTypeAPISerializer(
+                    issues,
+                    many=True,
+                ).data,
+            )
+
+        # getting issue type by id
+        issue_type = self.model.objects.get(
+            workspace__slug=self.workspace_slug,
+            project_issue_types__project_id=self.project_id,
+            pk=self.type_id,
+        )
+        serializer = self.serializer_class(issue_type)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     # create issue type
     @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)
@@ -116,10 +170,11 @@ class IssueTypeAPIEndpoint(BaseAPIView):
                 )
 
             # creating issue type
-            data = request.data
-            issue_type_serializer = self.serializer_class(data=data)
+            issue_type_serializer = self.serializer_class(data=request.data)
             issue_type_serializer.is_valid(raise_exception=True)
-            issue_type_serializer.save(workspace=workspace)
+            issue_type_serializer.save(
+                workspace=workspace, logo_props=self.generate_logo_prop()
+            )
 
             # adding the issue type to the project
             project_issue_type_serializer = ProjectIssueTypeAPISerializer(

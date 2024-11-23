@@ -1,11 +1,10 @@
 import { MQ, Store } from "@/apps/engine/worker/base";
 import { TBatch, UpdateEventType } from "@/apps/engine/worker/types";
-import { PlaneEntities } from "@plane/sdk";
 import { updateJob } from "@/db/query";
 import { wait } from "@/helpers/delay";
 import { logger } from "@/logger";
 import { TaskHandler, TaskHeaders } from "@/types";
-import { TSyncJobWithConfig, TSyncJobStatus } from "@silo/core";
+import { TJobWithConfig, TJobStatus, PlaneEntities } from "@silo/core";
 import { getJobForMigration, migrateToPlane } from "./migrator";
 
 export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements TaskHandler {
@@ -17,9 +16,9 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
     this.store = store;
   }
 
-  abstract batches(job: TSyncJobWithConfig<TJobConfig>): Promise<TBatch<TSourceEntity>[]>;
-  abstract transform(job: TSyncJobWithConfig<TJobConfig>, data: TSourceEntity[], meta: any): Promise<PlaneEntities[]>;
-  abstract getJobData(jobId: string): Promise<TSyncJobWithConfig<TJobConfig>>;
+  abstract batches(job: TJobWithConfig<TJobConfig>): Promise<TBatch<TSourceEntity>[]>;
+  abstract transform(job: TJobWithConfig<TJobConfig>, data: TSourceEntity[], meta: any): Promise<PlaneEntities[]>;
+  abstract getJobData(jobId: string): Promise<TJobWithConfig<TJobConfig>>;
 
   async handleTask(headers: TaskHeaders, data: any): Promise<boolean> {
     try {
@@ -36,7 +35,7 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
         processingBatch != "initiate" &&
         data.meta &&
         data.meta.batchId &&
-        processingBatch !== data.meta.batchId
+        processingBatch != data.meta.batchId
       ) {
         /* To Be Solved:
          * Say if there is only one job with n number of batches,
@@ -106,6 +105,9 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
           await this.update(headers.jobId, "TRANSFORMED", {});
           return true;
         case "push":
+          logger.info(
+            `[${headers.route.toUpperCase()}][${headers.jobId.slice(0, 7)}] Pushing data for batch 🧹 ------------------- [${data.meta.batchId}]`
+          );
           await this.update(headers.jobId, "PUSHING", {});
           await migrateToPlane(job, data.data, data.meta);
           await this.update(headers.jobId, "FINISHED", {});
@@ -122,7 +124,6 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
       return true;
     } catch (error) {
       logger.error("got error while iterating", error);
-      console.trace(error);
       await this.update(headers.jobId, "ERROR", {
         error: "Something went wrong while pushing data to plane, ERROR:" + error,
       });
@@ -153,7 +154,6 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
         if (data.total_batch_count) {
           await updateJob(jobId, {
             total_batch_count: data.total_batch_count,
-            completed_batch_count: 0,
             status: "PULLED",
           });
         }
@@ -184,7 +184,7 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
 
       case "FINISHED":
         if (job.completed_batch_count != null && job.total_batch_count != null) {
-          if (job.completed_batch_count + 1 === job.total_batch_count) {
+          if (job.completed_batch_count + 1 >= job.total_batch_count) {
             await updateJob(jobId, {
               status: "FINISHED",
               end_time: new Date(),
@@ -207,7 +207,7 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
 
       default:
         await updateJob(jobId, {
-          status: stage as any as TSyncJobStatus,
+          status: stage as any as TJobStatus,
         });
         break;
     }

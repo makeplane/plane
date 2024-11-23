@@ -17,6 +17,22 @@ export class StateService extends APIService {
     return this.get(`/api/v1/workspaces/${slug}/projects/${projectId}/states/`)
       .then((response) => response.data)
       .catch((error) => {
+        console.log(error);
+        throw error?.response?.data;
+      });
+  }
+
+  async getState(
+    slug: string,
+    projectId: string,
+    stateId: string,
+  ): Promise<ExState> {
+    return this.get(
+      `/api/v1/workspaces/${slug}/projects/${projectId}/states/${stateId}/`,
+    )
+      .then((response) => response.data)
+      .catch((error) => {
+        console.log(error);
         throw error?.response?.data;
       });
   }
@@ -24,11 +40,11 @@ export class StateService extends APIService {
   async create(
     slug: string,
     projectId: string,
-    payload: Omit<Optional<ExState>, ExcludedProps>
+    payload: Omit<Optional<ExState>, ExcludedProps>,
   ): Promise<ExState> {
     return this.post(
       `/api/v1/workspaces/${slug}/projects/${projectId}/states/`,
-      payload
+      payload,
     )
       .then((response) => response.data)
       .catch((error) => {
@@ -40,11 +56,11 @@ export class StateService extends APIService {
     slug: string,
     projectId: string,
     stateId: string,
-    payload: Omit<Optional<ExState>, ExcludedProps>
+    payload: Omit<Optional<ExState>, ExcludedProps>,
   ) {
     return this.patch(
       `/api/v1/workspaces/${slug}/projects/${projectId}/states/${stateId}/`,
-      payload
+      payload,
     )
       .then((response) => response.data)
       .catch((error) => {
@@ -54,7 +70,7 @@ export class StateService extends APIService {
 
   async destroy(slug: string, projectId: string, stateId: string) {
     return this.delete(
-      `/api/v1/workspaces/${slug}/projects/${projectId}/states/${stateId}/`
+      `/api/v1/workspaces/${slug}/projects/${projectId}/states/${stateId}/`,
     )
       .then((response) => response.data)
       .catch((error) => {

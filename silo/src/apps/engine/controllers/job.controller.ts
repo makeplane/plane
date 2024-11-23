@@ -19,7 +19,7 @@ import {
 } from "@/db/query";
 import { Request, Response } from "express";
 import taskManager from "@/apps/engine/worker";
-import { TSyncServices } from "@silo/core";
+import { TImporterKeys } from "@silo/core";
 
 @Controller("/jobs")
 export class JobController {
@@ -64,7 +64,7 @@ export class JobController {
         const credentials = await getCredentialsByTargetToken((token as string).trim());
 
         if (credentials.length == 0) {
-          res.status(400).json({ message: "No migration jobs available for this token" });
+          res.status(200).json([]);
           return;
         }
 
@@ -76,7 +76,7 @@ export class JobController {
         // Find the jobs based on the workspace ID of the credentials
         let jobs = {};
         if (req.query.source) {
-          jobs = await getJobByWorkspaceIdAndSource(targetCredentials.workspace_id, req.query.source as TSyncServices);
+          jobs = await getJobByWorkspaceIdAndSource(targetCredentials.workspace_id, req.query.source as TImporterKeys);
         } else {
           jobs = await getJobByWorkspaceId(targetCredentials.workspace_id);
         }
@@ -154,7 +154,7 @@ export class JobController {
       const job = jobs[0];
       // If the job is not finished or error, just send 400 OK, and don't do
       // anything
-      if (job.status && job.status != "FINISHED" && job.status != "ERROR") {
+      if (job.status && job.status != "CREATED" && job.status != "FINISHED" && job.status != "ERROR") {
         res.status(400).json({ message: "Job already in progress, can't instantiate again" });
         return;
       }

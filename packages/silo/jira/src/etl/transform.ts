@@ -1,10 +1,14 @@
+import { IssueTypeDetails as JiraIssueTypeDetails } from "jira.js/out/version3/models";
 import {
   ExCycle,
   ExIssueComment,
   ExIssueLabel,
+  ExIssueType,
   ExModule,
   ExIssue as PlaneIssue,
+  ExIssueProperty,
   PlaneUser,
+  ExIssuePropertyOption,
 } from "@plane/sdk";
 import {
   IJiraIssue,
@@ -14,20 +18,27 @@ import {
   JiraComment,
   JiraComponent,
   JiraSprint,
+  JiraCustomFieldKeys,
+  JiraIssueField,
+  JiraIssueFieldOptions,
 } from "@/types";
 import {
   getFormattedDate,
+  getPropertyAttributes,
+  getPropertyValues,
   getRandomColor,
   getTargetAttachments,
   getTargetPriority,
   getTargetState,
+  SUPPORTED_CUSTOM_FIELD_ATTRIBUTES,
 } from "../helpers";
+import { TPropertyValuesPayload } from "@silo/core";
 
 export const transformIssue = (
   issue: IJiraIssue,
   resourceUrl: string,
   stateMap: IStateConfig[],
-  priorityMap: IPriorityConfig[],
+  priorityMap: IPriorityConfig[]
 ): Partial<PlaneIssue> => {
   const targetState = getTargetState(stateMap, issue.fields.status);
   const targetPriority = getTargetPriority(priorityMap, issue.fields.priority);
@@ -67,6 +78,7 @@ export const transformIssue = (
     priority: targetPriority ?? "none",
     labels: issue.fields.labels,
     parent: issue.fields.parent?.id,
+    type_id: issue.fields.issuetype?.id,
   } as unknown as PlaneIssue;
 };
 
@@ -78,7 +90,7 @@ export const transformLabel = (label: string): Partial<ExIssueLabel> => {
 };
 
 export const transformComment = (
-  comment: JiraComment,
+  comment: JiraComment
 ): Partial<ExIssueComment> => {
   return {
     external_id: comment.id,
@@ -118,7 +130,7 @@ export const transformSprint = (sprint: JiraSprint): Partial<ExCycle> => {
 };
 
 export const transformComponent = (
-  component: JiraComponent,
+  component: JiraComponent
 ): Partial<ExModule> => {
   return {
     external_id: component.component.id ?? "",
@@ -126,4 +138,77 @@ export const transformComponent = (
     name: component.component.name,
     issues: component.issues.map((issue) => issue.id),
   };
+};
+
+export const transformIssueType = (
+  issueType: JiraIssueTypeDetails
+): Partial<ExIssueType> => {
+  return {
+    name: issueType.name,
+    description: issueType.description,
+    is_active: true,
+    external_id: issueType.id,
+    external_source: "JIRA",
+  };
+};
+
+export const transformIssueFields = (
+  issueField: JiraIssueField
+): Partial<ExIssueProperty> | undefined => {
+  if (
+    !issueField.schema ||
+    !issueField.schema.custom ||
+    !issueField.scope?.type ||
+    !SUPPORTED_CUSTOM_FIELD_ATTRIBUTES[
+      issueField.schema.custom as JiraCustomFieldKeys
+    ]
+  ) {
+    return undefined;
+  }
+
+  return {
+    external_id: issueField.id,
+    external_source: "JIRA",
+    display_name: issueField.name,
+    type_id: issueField.scope?.type,
+    is_required: false,
+    is_active: true,
+    ...getPropertyAttributes(issueField),
+  };
+};
+
+export const transformIssueFieldOptions = (
+  issueFieldOption: JiraIssueFieldOptions
+): Partial<ExIssuePropertyOption> => {
+  return {
+    external_id: issueFieldOption.id,
+    external_source: "JIRA",
+    name: issueFieldOption.value,
+    is_active: issueFieldOption.disabled ? false : true,
+    property_id: issueFieldOption.fieldId,
+  };
+};
+
+export const transformIssuePropertyValues = (
+  issue: IJiraIssue,
+  planeIssueProperties: Map<string, Partial<ExIssueProperty>>,
+  jiraCustomFieldMap: Map<string, string>
+): TPropertyValuesPayload => {
+  // Get all custom fields that are present in the issue and are also present in the plane issue properties
+  const customFieldKeysToTransform = Object.keys(issue.fields).filter(
+    (key) => key.startsWith("customfield_") && planeIssueProperties.has(key)
+  );
+  // Get transformed values for property_id -> property_values
+  const propertyValuesPayload: TPropertyValuesPayload = {};
+  customFieldKeysToTransform.forEach((key) => {
+    const property = planeIssueProperties.get(key);
+    if (property && property.external_id && jiraCustomFieldMap.has(key)) {
+      propertyValuesPayload[property.external_id] = getPropertyValues(
+        jiraCustomFieldMap.get(key) as JiraCustomFieldKeys,
+        issue.fields[key],
+        (issue.renderedFields as any)?.[key]
+      );
+    }
+  });
+  return propertyValuesPayload;
 };

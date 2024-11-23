@@ -32,8 +32,13 @@ import {
 } from "@/plane-web/store/workspace-worklog";
 // store
 import { CoreRootStore } from "@/store/root.store";
+// importers
+import { IJiraStore, JiraStore, ILinearStore, LinearStore, IAsanaStore, AsanaStore } from "./importers";
+// integrations
+import { ISlackStore, SlackStore } from "./integrations";
+// pi chat
 import { IPiChatStore, PiChatStore } from "./pi-chat/pi-chat";
-//
+// timeline
 import { ITimelineStore, TimeLineStore } from "./timeline";
 
 export class RootStore extends CoreRootStore {
@@ -52,6 +57,12 @@ export class RootStore extends CoreRootStore {
   cycle: ICycleStore;
   piChat: IPiChatStore;
   timelineStore: ITimelineStore;
+  // importers
+  jiraImporter: IJiraStore;
+  linearImporter: ILinearStore;
+  asanaImporter: IAsanaStore;
+  // integrations
+  slackIntegration: ISlackStore;
 
   constructor() {
     super();
@@ -70,6 +81,12 @@ export class RootStore extends CoreRootStore {
     this.cycle = new CycleStore(this);
     this.piChat = new PiChatStore(this);
     this.timelineStore = new TimeLineStore(this);
+    // importers
+    this.jiraImporter = new JiraStore(this);
+    this.linearImporter = new LinearStore(this);
+    this.asanaImporter = new AsanaStore(this);
+    // integrations
+    this.slackIntegration = new SlackStore(this);
   }
 
   resetOnSignOut() {
@@ -88,5 +105,12 @@ export class RootStore extends CoreRootStore {
     this.projectFilter = new ProjectFilterStore(this);
     this.cycle = new CycleStore(this);
     this.piChat = new PiChatStore(this);
+    this.timelineStore = new TimeLineStore(this);
+    // importers
+    this.jiraImporter = new JiraStore(this);
+    this.linearImporter = new LinearStore(this);
+    this.asanaImporter = new AsanaStore(this);
+    // integrations
+    this.slackIntegration = new SlackStore(this);
   }
 }

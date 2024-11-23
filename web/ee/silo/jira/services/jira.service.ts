@@ -18,7 +18,7 @@ export class JiraService {
    */
   async getResources(workspaceId: string, userId: string): Promise<JiraResource[] | undefined> {
     return this.axiosInstance
-      .post(`/silo/api/jira/resources`, { workspaceId, userId })
+      .post(`/api/jira/resources`, { workspaceId, userId })
       .then((res) => res.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -32,9 +32,13 @@ export class JiraService {
    * @property resourceId: string
    * @returns projects | undefined
    */
-  async getProjects(workspaceId: string, userId: string, resourceId: string): Promise<JiraProject[] | undefined> {
+  async getProjects(
+    workspaceId: string,
+    userId: string,
+    resourceId: string | undefined
+  ): Promise<JiraProject[] | undefined> {
     return this.axiosInstance
-      .post(`/silo/api/jira/projects/`, { workspaceId, userId, cloudId: resourceId })
+      .post(`/api/jira/projects/`, { workspaceId, userId, cloudId: resourceId })
       .then((res) => res.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -52,11 +56,11 @@ export class JiraService {
   async getProjectStates(
     workspaceId: string,
     userId: string,
-    resourceId: string,
+    resourceId: string | undefined,
     projectId: string
   ): Promise<JiraStates[] | undefined> {
     return this.axiosInstance
-      .post(`/silo/api/jira/states/`, { workspaceId, userId, cloudId: resourceId, projectId })
+      .post(`/api/jira/states/`, { workspaceId, userId, cloudId: resourceId, projectId })
       .then((res) => res.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -74,11 +78,11 @@ export class JiraService {
   async getProjectPriorities(
     workspaceId: string,
     userId: string,
-    resourceId: string,
+    resourceId: string | undefined,
     projectId: string
   ): Promise<JiraPriority[] | undefined> {
     return this.axiosInstance
-      .post(`/silo/api/jira/priorities/`, { workspaceId, userId, cloudId: resourceId, projectId })
+      .post(`/api/jira/priorities/`, { workspaceId, userId, cloudId: resourceId, projectId })
       .then((res) => res.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -96,11 +100,11 @@ export class JiraService {
   async getProjectLabels(
     workspaceId: string,
     userId: string,
-    resourceId: string,
+    resourceId: string | undefined,
     projectId: string
   ): Promise<ILabelConfig[] | undefined> {
     return this.axiosInstance
-      .post(`/silo/api/jira/labels/`, { workspaceId, userId, cloudId: resourceId, projectId })
+      .post(`/api/jira/labels/`, { workspaceId, userId, cloudId: resourceId, projectId })
       .then((res) => res.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -118,11 +122,11 @@ export class JiraService {
   async getProjectIssuesCount(
     workspaceId: string,
     userId: string,
-    resourceId: string,
+    resourceId: string | undefined,
     projectId: string
   ): Promise<number | undefined> {
     return this.axiosInstance
-      .post(`/silo/api/jira/issue-count`, { workspaceId, userId, cloudId: resourceId, projectId })
+      .post(`/api/jira/issue-count`, { workspaceId, userId, cloudId: resourceId, projectId })
       .then((res) => res.data)
       .catch((error) => {
         throw error?.response?.data;

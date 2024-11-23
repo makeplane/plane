@@ -16,10 +16,10 @@ export const useJiraProjectStates = (resourceId: string | undefined, projectId: 
 
   // fetch jira project states
   const { data, isLoading, error, mutate } = useSWR(
-    workspaceId && userId && resourceId && projectId
+    workspaceId && userId && projectId
       ? `JIRA_PROJECT_STATES_${workspaceId}_${userId}_${resourceId}_${projectId}`
       : null,
-    workspaceId && userId && resourceId && projectId
+    workspaceId && userId && projectId
       ? async () => await jiraService.getProjectStates(workspaceId, userId, resourceId, projectId)
       : null
   );

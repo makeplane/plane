@@ -1,13 +1,12 @@
 "use client";
 
-import { Dispatch, FC, SetStateAction } from "react";
+import { RefreshCcw } from "lucide-react";
 import Image from "next/image";
-import { Briefcase, RefreshCcw } from "lucide-react";
-import { TLogoProps } from "@plane/types";
+import { Dispatch, FC, SetStateAction } from "react";
+// ui
 import { Button } from "@plane/ui";
-// components
-import { Logo } from "@/components/common";
 // silo context
+import { usePlaneProjects } from "@/plane-web/silo/hooks";
 import { useLinearSyncJobs } from "@/plane-web/silo/hooks/context/use-linear-sync-jobs";
 // silo components
 import { IconFieldRender, SyncJobStatus } from "@/plane-web/silo/linear/components";
@@ -23,6 +22,7 @@ export const Dashboard: FC<TDashboard> = (props) => {
   const { setIsDashboardView } = props;
   // hooks
   const { allSyncJobs, startJob } = useLinearSyncJobs();
+  const { getById: getProjectById } = usePlaneProjects();
 
   return (
     <div className="space-y-6 relative w-full h-full overflow-hidden flex flex-col">
@@ -52,11 +52,13 @@ export const Dashboard: FC<TDashboard> = (props) => {
             <thead>
               <tr className="bg-custom-background-90 text-sm !font-medium text-left rounded-t">
                 <td className="p-3 whitespace-nowrap">Sr No.</td>
-                <td className="p-3 whitespace-nowrap">Migration Id</td>
                 <td className="p-3 whitespace-nowrap">Plane Project</td>
                 <td className="p-3 whitespace-nowrap">Linear Workspace</td>
                 <td className="p-3 whitespace-nowrap">Linear Project</td>
                 <td className="p-3 whitespace-nowrap text-center">Status</td>
+                <td className="p-3 whitespace-nowrap">Total Batches</td>
+                <td className="p-3 whitespace-nowrap">Transformed Batched</td>
+                <td className="p-3 whitespace-nowrap">Completed Batched</td>
                 <td className="p-3 whitespace-nowrap text-center">Re Run</td>
                 <td className="p-3 whitespace-nowrap text-center">Start Time</td>
               </tr>
@@ -67,45 +69,26 @@ export const Dashboard: FC<TDashboard> = (props) => {
                 allSyncJobs.map((job, index) => (
                   <tr key={job.id} className="text-sm text-custom-text-200">
                     <td className="p-3 whitespace-nowrap">{index + 1}</td>
-                    <td className="p-3 whitespace-nowrap">{job.id}</td>
                     <td className="p-3 whitespace-nowrap">
-                      {/* <IconFieldRender
-                        icon={
-                          job?.config?.meta?.planeProject && job?.config?.meta?.planeProject?.logo_props ? (
-                            <Logo logo={job?.config?.meta?.planeProject?.logo_props as TLogoProps} size={16} />
-                          ) : (
-                            <Briefcase className="w-4 h-4" />
-                          )
-                        }
-                        title={job?.config?.meta?.planeProject?.name}
-                      /> */}
+                      <IconFieldRender title={getProjectById(job?.project_id)?.name} />
                     </td>
                     <td className="p-3 whitespace-nowrap">
-                      {/* <IconFieldRender
-                        icon={
-                          <img
-                            src={job?.config?.meta?.resource.avatarUrl}
-                            alt={job?.config?.meta?.resource.name}
-                            className="w-full h-full object-contain object-center"
-                          />
-                        }
-                        title={job?.config?.meta?.resource?.name}
-                      /> */}
+                      <IconFieldRender title={job?.config?.meta?.workspace} />
                     </td>
                     <td className="p-3 whitespace-nowrap">
-                      {/* <IconFieldRender
-                        icon={
-                          <img
-                            src={job?.config?.meta?.project.avatarUrls?.["48x48"]}
-                            alt={job?.config?.meta?.project.name}
-                            className="w-full h-full object-contain object-center"
-                          />
-                        }
-                        title={job?.config?.meta?.project?.name}
-                      /> */}
+                      <IconFieldRender title={job?.config?.meta?.teamName} />
                     </td>
                     <td className="p-3 whitespace-nowrap text-center">
                       <SyncJobStatus status={job?.status} />
+                    </td>
+                    <td className="p-3 whitespace-nowrap">
+                      <IconFieldRender title={job?.total_batch_count.toString()} />
+                    </td>
+                    <td className="p-3 whitespace-nowrap">
+                      <IconFieldRender title={job?.transformed_batch_count.toString()} />
+                    </td>
+                    <td className="p-3 whitespace-nowrap">
+                      <IconFieldRender title={job?.completed_batch_count.toString()} />
                     </td>
                     <td className="p-3 whitespace-nowrap text-center">
                       <Button

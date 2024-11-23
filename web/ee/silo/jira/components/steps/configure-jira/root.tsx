@@ -3,6 +3,9 @@
 import { FC, useEffect, useState } from "react";
 import isEqual from "lodash/isEqual";
 import { Button } from "@plane/ui";
+import { E_IMPORTER_KEYS } from "@silo/core";
+// plane web hooks
+import { useSyncConfig } from "@/plane-web/silo/hooks";
 // silo components
 import {
   ConfigureJiraSelectResource,
@@ -22,6 +25,7 @@ const currentStepKey = E_IMPORTER_STEPS.CONFIGURE_JIRA;
 
 export const ConfigureJiraRoot: FC = () => {
   // hooks
+  const { data: syncConfigData } = useSyncConfig(E_IMPORTER_KEYS.JIRA);
   const { importerData, handleImporterData, currentStep, handleStepper } = useImporter();
   // states
   const [formData, setFormData] = useState<TFormData>({
@@ -30,7 +34,11 @@ export const ConfigureJiraRoot: FC = () => {
     issueType: E_FORM_RADIO_DATA.CREATE_AS_LABEL,
   });
   // derived values
-  const isNextButtonDisabled = !formData?.resourceId || !formData?.projectId || !formData?.issueType;
+  const isOAuthEnabled = syncConfigData?.isOAuthEnabled;
+  const isResourceFieldRequired = isOAuthEnabled ? !!formData.resourceId : true;
+  const isNextButtonDisabled = !isResourceFieldRequired || !formData?.projectId || !formData?.issueType;
+  const shouldShowProjectSelector = isResourceFieldRequired;
+  const shouldShowIssueTypeSelector = formData.projectId && isResourceFieldRequired;
   // handlers
   const handleFormData = <T extends keyof TFormData>(key: T, value: TFormData[T]) => {
     setFormData((prevData) => ({ ...prevData, [key]: value }));
@@ -58,12 +66,14 @@ export const ConfigureJiraRoot: FC = () => {
       <div className="w-full min-h-44 max-h-full overflow-y-auto space-y-8 divide-y divide-custom-border-100">
         {/* section handled jira workspace and projects */}
         <div className="space-y-4">
-          <ConfigureJiraSelectResource
-            value={formData.resourceId}
-            handleFormData={(value: string | undefined) => handleFormData("resourceId", value)}
-          />
+          {isOAuthEnabled ? (
+            <ConfigureJiraSelectResource
+              value={formData.resourceId}
+              handleFormData={(value: string | undefined) => handleFormData("resourceId", value)}
+            />
+          ) : null}
 
-          {formData.resourceId && (
+          {shouldShowProjectSelector && (
             <ConfigureJiraSelectProject
               resourceId={formData.resourceId}
               value={formData.projectId}
@@ -73,7 +83,7 @@ export const ConfigureJiraRoot: FC = () => {
         </div>
 
         {/* Managing issue types as labels or adding them in the issue title */}
-        {formData.resourceId && formData.projectId && (
+        {shouldShowIssueTypeSelector && (
           <ConfigureJiraSelectIssueType
             value={formData.issueType}
             handleFormData={(value: TFormRadioData) => handleFormData("issueType", value)}

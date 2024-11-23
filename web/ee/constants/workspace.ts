@@ -3,10 +3,6 @@ import { WORKSPACE_SETTINGS as WORKSPACE_SETTINGS_CE } from "@/ce/constants/work
 // components
 import { SettingIcon } from "@/components/icons/attachment";
 // constants
-import { E_FEATURE_FLAGS } from "@/plane-web/hooks/store";
-// logos
-import JiraLogo from "@/public/services/jira.svg";
-import LinearLogo from "@/public/services/linear.svg";
 import { EUserPermissions } from "./user-permissions";
 
 export const WORKSPACE_SETTINGS = {
@@ -16,7 +12,7 @@ export const WORKSPACE_SETTINGS = {
     label: "Integrations",
     href: `/settings/integrations`,
     access: [EUserPermissions.ADMIN],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/integrations/`,
+    highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/settings/integrations/`),
     Icon: SettingIcon,
   },
   import: {
@@ -56,23 +52,4 @@ export const WORKSPACE_SETTINGS_LINKS = [
   WORKSPACE_SETTINGS["webhooks"],
   WORKSPACE_SETTINGS["api-tokens"],
   WORKSPACE_SETTINGS["worklogs"],
-];
-
-export const IMPORTERS_LIST = [
-  {
-    key: E_FEATURE_FLAGS.SILO_JIRA_INTEGRATION,
-    provider: "jira",
-    type: "Import",
-    title: "Jira",
-    description: "Import your Jira data into Plane projects.",
-    logo: JiraLogo,
-  },
-  {
-    key: E_FEATURE_FLAGS.SILO_LINEAR_INTEGRATION,
-    provider: "linear",
-    type: "Import",
-    title: "Linear",
-    description: "Import your Linear data into Plane projects.",
-    logo: LinearLogo,
-  },
 ];

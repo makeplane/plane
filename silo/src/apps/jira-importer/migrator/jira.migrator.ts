@@ -1,16 +1,19 @@
 import { TBatch } from "@/apps/engine/worker/types";
-import { PlaneEntities } from "@plane/sdk";
+import { PlaneEntities } from "@silo/core";
 import { updateJob } from "@/db/query";
 import { env } from "@/env";
 import { BaseDataMigrator } from "@/etl/base-import-worker";
 import { logger } from "@/logger";
-import { TSyncJobWithConfig } from "@silo/core";
+import { TJobWithConfig } from "@silo/core";
 import {
   JiraConfig,
   JiraEntity,
+  TJiraIssueWithChildren,
   pullComments,
   pullComponents,
+  pullIssueFields,
   pullIssues,
+  pullIssueTypes,
   pullLabels,
   pullSprints,
   pullUsers,
@@ -27,7 +30,11 @@ import {
 import {
   getTransformedComments,
   getTransformedComponents,
+  getTransformedIssueFieldOptions,
+  getTransformedIssueFields,
+  getTransformedIssuePropertyValues,
   getTransformedIssues,
+  getTransformedIssueTypes,
   getTransformedLabels,
   getTransformedSprints,
   getTransformedUsers,
@@ -38,11 +45,11 @@ export class JiraDataMigrator extends BaseDataMigrator<JiraConfig, JiraEntity> {
     super(mq, store);
   }
 
-  async getJobData(jobId: string): Promise<TSyncJobWithConfig<JiraConfig>> {
+  async getJobData(jobId: string): Promise<TJobWithConfig<JiraConfig>> {
     return getJobData(jobId);
   }
 
-  async pull(job: TSyncJobWithConfig<JiraConfig>): Promise<JiraEntity[]> {
+  async pull(job: TJobWithConfig<JiraConfig>): Promise<JiraEntity[]> {
     // Retrieve and validate the job data
     await resetJobIfStarted(job.id, job);
 
@@ -61,11 +68,12 @@ export class JiraDataMigrator extends BaseDataMigrator<JiraConfig, JiraEntity> {
     /* -------------- Pull Jira Data --------------- */
     const users = pullUsers(job.config.meta.users);
     const labels = await pullLabels(client);
-    const issues = await pullIssues(client, projectKey, job.start_time);
+    const issues = await pullIssues(client, projectKey);
     const sprints = await pullSprints(client, projectId);
     const comments = await pullComments(issues, client);
     const components = await pullComponents(client, projectKey);
-    const customFields = await client.getFields();
+    const issueTypes = await pullIssueTypes(client, projectId);
+    const issueFields = await pullIssueFields(client, issueTypes, projectId);
     /* -------------- Pull Jira Data --------------- */
 
     // Update Job for the actual start time of the migration
@@ -78,21 +86,26 @@ export class JiraDataMigrator extends BaseDataMigrator<JiraConfig, JiraEntity> {
         labels,
         sprints,
         components,
-        customFields,
+        issueTypes,
         issue_comments: comments,
+        issueFields,
       },
     ];
   }
 
   // NOOP, as transform will be done as the integration level
   // Transforms all the details from Jira to Plane
-  transform = async (job: TSyncJobWithConfig<JiraConfig>, data: JiraEntity[]): Promise<PlaneEntities[]> => {
+  transform = async (job: TJobWithConfig<JiraConfig>, data: JiraEntity[]): Promise<PlaneEntities[]> => {
     // Get the job by the job configuration
     if (data.length < 1) {
       return [];
     }
     const entities = data[0];
-    const transformedIssue = getTransformedIssues(job, entities);
+
+    const credentials = await getJobCredentials(job);
+
+    const resourceUrl = job.config?.meta.resource?.url || credentials.source_hostname;
+    const transformedIssue = getTransformedIssues(job, entities, resourceUrl);
 
     /* Todo: Remove this antipattern logic when issue types come to plane */
     if (job.config?.meta.issueType) {
@@ -120,6 +133,10 @@ export class JiraDataMigrator extends BaseDataMigrator<JiraConfig, JiraEntity> {
     const transformedModules = getTransformedComponents(job, entities);
     const transformedComments = getTransformedComments(job, entities);
     const transformedSprintsAsCycles = getTransformedSprints(job, entities);
+    const transformedIssueTypes = getTransformedIssueTypes(job, entities);
+    const transformedIssueFields = getTransformedIssueFields(job, entities);
+    const transformedIssueFieldOptions = getTransformedIssueFieldOptions(job, entities);
+    const transformedIssuePropertyValues = getTransformedIssuePropertyValues(job, entities, transformedIssueFields);
 
     // Return the transformed data
     return [
@@ -130,80 +147,96 @@ export class JiraDataMigrator extends BaseDataMigrator<JiraConfig, JiraEntity> {
         cycles: transformedSprintsAsCycles,
         modules: transformedModules,
         issue_comments: transformedComments,
+        issue_types: transformedIssueTypes,
+        issue_properties: transformedIssueFields,
+        issue_property_options: transformedIssueFieldOptions,
+        issue_property_values: transformedIssuePropertyValues,
       },
     ];
   };
 
-  async batches(job: TSyncJobWithConfig<JiraConfig>): Promise<TBatch<JiraEntity>[]> {
+  async batches(job: TJobWithConfig<JiraConfig>): Promise<TBatch<JiraEntity>[]> {
     const sourceData = await this.pull(job);
     const batchSize = env.BATCH_SIZE ? parseInt(env.BATCH_SIZE) : 40;
 
     const data = sourceData[0];
 
-    // Create a map of issues by their external_id for quick lookup
-    const issueMap = new Map(data.issues.map((issue: any) => [issue.id, issue]));
-
-    // Get all the related issues for a given issue, with DFS. Traverse the
-    // issues and search for the parent and children of the issue, if the parent
-    // is found then add it to the related issues, and if the children are
-    // found, then add them to the related issues too, and mark them as visited.
-    const getRelatedIssues = (issue: IJiraIssue, visited: Set<string>) => {
-      const relatedIssues = new Set([issue]);
-      const stack = [issue];
-
-      while (stack.length > 0) {
-        const currentIssue = stack.pop();
-        if (!currentIssue || visited.has(currentIssue.id)) continue;
-
-        visited.add(currentIssue.id);
-
-        if (currentIssue.fields.parent?.id && issueMap.has(currentIssue.fields.parent?.id)) {
-          const parentIssue = issueMap.get(currentIssue.fields.parent?.id);
-          if (!visited.has(parentIssue.id)) {
-            relatedIssues.add(parentIssue);
-            stack.push(parentIssue);
-          }
-        }
-
-        for (const [_id, potentialChild] of issueMap) {
-          if (potentialChild.fields.parent?.id === currentIssue.id && !visited.has(potentialChild.id)) {
-            relatedIssues.add(potentialChild);
-            stack.push(potentialChild);
+    // Build a tree structure of issues, where each issue has a parent and children
+    const buildIssueTree = (issues: IJiraIssue[]) => {
+      const issueMap = new Map(
+        issues.map((issue: IJiraIssue) => [issue.id, { ...issue, children: [] } as TJiraIssueWithChildren])
+      );
+      const rootIssues: TJiraIssueWithChildren[] = [];
+      for (const issue of issues) {
+        const node = issueMap.get(issue.id);
+        if (issue.fields.parent?.id === undefined) {
+          if (node) rootIssues.push(node);
+        } else {
+          const parentNode = issue?.fields.parent?.id && issueMap.get(issue.fields.parent?.id);
+          if (parentNode) {
+            if (node && parentNode.children) parentNode.children.push(node);
           }
         }
       }
-
-      return Array.from(relatedIssues);
+      return rootIssues;
     };
 
-    const visited = new Set<string>();
-    const batches: any[][] = [];
-    let currentBatch: any[] = [];
+    // Flatten a single tree branch and its children
+    const flattenSingleTree = (root: TJiraIssueWithChildren): IJiraIssue[] => {
+      // BFS to flatten the tree
+      const result: IJiraIssue[] = [];
+      const queue: { node: TJiraIssueWithChildren; level: number }[] = [{ node: root, level: 0 }];
+      // BFS
+      while (queue.length > 0) {
+        const { node, level } = queue.shift()!;
+        const { children, ...issueWithoutChildren } = node;
+        result.push(issueWithoutChildren);
 
-    // For each issue, get the related issues and add them to the current batch
-    for (const issue of data.issues) {
-      if (visited.has(issue.id)) continue;
-
-      const relatedIssues = getRelatedIssues(issue, visited);
-      currentBatch.push(...relatedIssues);
-
-      if (currentBatch.length >= batchSize) {
-        batches.push(currentBatch);
-        currentBatch = [];
+        if (children && children.length > 0) {
+          children.forEach((child) => {
+            queue.push({ node: child, level: level + 1 });
+          });
+        }
       }
-    }
+      // Return the flattened tree
+      return result;
+    };
 
-    if (currentBatch.length > 0) {
-      batches.push(currentBatch);
-    }
+    // Batch root level issues and flatten each batch
+    const batchIssues = (issues: IJiraIssue[], batchSize: number): IJiraIssue[][] => {
+      // First build the tree
+      const rootIssues = buildIssueTree(issues);
+      // Batch the root level issues
+      if (batchSize <= 0) throw new Error("Batch size must be greater than 0");
+      if (rootIssues.length === 0) return [];
 
-    const finalBatches: TBatch<JiraEntity>[] = [];
+      // Split the root issues into batches
+      const batches: IJiraIssue[][] = [];
+      const numBatches = Math.ceil(rootIssues.length / batchSize);
+
+      // For each batch of root issues, flatten their trees
+      for (let i = 0; i < numBatches; i++) {
+        const startIndex = i * batchSize;
+        const rootBatch = rootIssues.slice(startIndex, startIndex + batchSize);
+        // Flatten each root issue and its children, then combine them
+        const flattenedBatch = rootBatch.reduce((acc: IJiraIssue[], rootIssue) => {
+          return acc.concat(flattenSingleTree(rootIssue));
+        }, []);
+        // Add the flattened batch to the batches
+        batches.push(flattenedBatch);
+      }
+      // Return the batches
+      return batches;
+    };
+
+    const batches = batchIssues(data.issues, batchSize);
 
     // Now for every batch we need to figure out the associations, such as
     // comments, sprints and components and push that all to the final batch. Do
     // understand that sprint and components are linked to issues, so there is a
     // possibility that the same sprint or component can be present in multiple
     // batches.
+    const finalBatches: TBatch<JiraEntity>[] = [];
     for (const [i, batch] of batches.entries()) {
       let random = Math.floor(Math.random() * 10000);
       const sprints = filterSprintsForIssues(batch, data.sprints);
@@ -221,24 +254,26 @@ export class JiraDataMigrator extends BaseDataMigrator<JiraConfig, JiraEntity> {
           batch_size: batch.length,
           batch_end: i * batchSize + batch.length,
           total: {
-            customFields: data.customFields.length,
             issues: data.issues.length,
             labels: data.labels.length,
             users: data.users.length,
             issue_comments: data.issue_comments.length,
             sprints: data.sprints.length,
             components: data.components.length,
+            issueTypes: data.issueTypes.length,
+            issueFields: data.issueFields.length,
           },
         },
         data: [
           {
-            customFields: data.customFields,
             issues: batch,
             issue_comments: associatedComments,
             sprints: sprints,
             components: components,
             labels: data.labels,
             users: data.users,
+            issueTypes: data.issueTypes,
+            issueFields: data.issueFields,
           },
         ],
       });

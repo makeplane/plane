@@ -1,22 +1,21 @@
 import { IStateConfig, LinearComment, LinearCycle } from "@/types";
+import { Issue, IssueLabel, User } from "@linear/sdk";
 import {
-  ExIssue as PlaneIssue,
-  ExIssueComment,
-  PlaneUser,
   ExCycle,
   ExIssueAttachment,
+  ExIssueComment,
+  ExIssue as PlaneIssue,
+  PlaneUser,
 } from "@plane/sdk";
-import { getTargetState, getFormattedDate } from "../helpers";
-import { Issue, Comment, User, IssueLabel } from "@linear/sdk";
+import { getFormattedDate, getTargetState } from "../helpers";
 
 export const transformIssue = async (
   issue: Issue,
   teamUrl: string,
   users: User[],
   labels: IssueLabel[],
-  stateMap: IStateConfig[],
+  stateMap: IStateConfig[]
 ): Promise<Partial<PlaneIssue>> => {
-  let state;
   let resolvedLabels: string[] = [];
   await issue.assignee;
 
@@ -28,9 +27,11 @@ export const transformIssue = async (
   }
 
   const assignee = await breakAndGetAssignee(issue, users);
-  const parent = await breakAndGetParent(issue);
-  const creator = await breakAndGetCreator(issue, users);
+  const parent = breakAndGetParent(issue);
+  const creator = breakAndGetCreator(issue, users);
+  const state = breakAndGetState(issue);
   const targetState = state && getTargetState(stateMap, state);
+
   const links = [
     {
       name: "Linked Linear Issue",
@@ -39,7 +40,7 @@ export const transformIssue = async (
   ];
 
   const attachments = extractAttachmentsFromDescription(
-    issue.description || "",
+    issue.description || ""
   );
 
   return {
@@ -57,7 +58,8 @@ export const transformIssue = async (
     target_date: getFormattedDate(issue.dueDate?.toString()),
     start_date: getFormattedDate(issue.startedAt?.toString()),
     created_at: issue.createdAt,
-    // state: targetState?.id ?? "",
+    // @ts-ignore
+    state: targetState.id ?? "",
     // external_source_state_id: targetState?.external_id ?? "",
     priority: issue.priority == 0 ? "none" : issue.priorityLabel.toLowerCase(),
     labels: resolvedLabels,
@@ -66,35 +68,40 @@ export const transformIssue = async (
 };
 
 export const extractAttachmentsFromDescription = (
-  description: string,
+  description: string
 ): Partial<ExIssueAttachment>[] => {
-  const imageRegex = /!\[([^\]]*)\]\(([^)]+)\)/g;
-  const images: Partial<ExIssueAttachment>[] = [];
+  // Match both image syntax ![alt](url) and link syntax [text](url)
+  const attachmentRegex = /(?:!\[([^\]]*)\]|\[([^\]]+)\])\(([^)]+)\)/g;
+  const attachments: Partial<ExIssueAttachment>[] = [];
   let match;
 
-  while ((match = imageRegex.exec(description)) !== null) {
-    const [, title, url] = match;
-    // Get the last part of the url
-    const id = url.split("/").pop();
-    const attachment: Partial<ExIssueAttachment> = {
-      external_id: id ?? "",
-      external_source: "LINEAR",
-      attributes: {
-        name: title,
-        size: 0,
-      },
-      asset: url ?? "",
-    };
+  while ((match = attachmentRegex.exec(description)) !== null) {
+    const [fullMatch, imageTitle, linkText, url] = match;
+    // Check if it's from Linear uploads
+    if (url.includes("uploads.linear.app")) {
+      // Get the last part of the url as the ID
+      const id = url.split("/").pop() || "";
+      const title = imageTitle || linkText || ""; // Use imageTitle for images, linkText for links
+      const attachment: Partial<ExIssueAttachment> = {
+        external_id: id,
+        external_source: "LINEAR",
+        attributes: {
+          name: title,
+          size: 0,
+        },
+        asset: url,
+      };
 
-    images.push(attachment);
+      attachments.push(attachment);
+    }
   }
 
-  return images;
+  return attachments;
 };
 
 export const transformComment = (
   comment: LinearComment,
-  users: User[],
+  users: User[]
 ): Partial<ExIssueComment> => {
   const creator = users.find((u) => u.id === comment.user_id);
 
@@ -124,9 +131,7 @@ export const transformUser = (user: User): Partial<PlaneUser> => {
   };
 };
 
-export const transformCycle = async (
-  cycle: LinearCycle,
-): Promise<Partial<ExCycle>> => {
+export const transformCycle = (cycle: LinearCycle): Partial<ExCycle> => {
   return {
     external_id: cycle.cycle.id,
     external_source: "LINEAR",
@@ -140,22 +145,25 @@ export const transformCycle = async (
 
 const breakAndGetAssignee = async (
   issue: Issue,
-  users: User[],
+  users: User[]
 ): Promise<string | undefined> => {
+  // @ts-ignore
+  if (issue._assignee) {
+    // @ts-ignore
+    const assigneeId = issue._assignee.id;
+    const user = users.find((u) => u.id === assigneeId);
+    if (user) {
+      return user.displayName;
+    }
+  }
+
   if (issue.assignee) {
     const assignee = await issue.assignee;
     return assignee.displayName;
   }
-
-  // @ts-ignore
-  const assigneeId = issue._assignee.id;
-  const user = users.find((u) => u.id === assigneeId);
-  if (user) {
-    return user.displayName;
-  }
 };
 
-const breakAndGetParent = async (issue: Issue): Promise<string | undefined> => {
+const breakAndGetParent = (issue: Issue): string | undefined => {
   // @ts-ignore
   const parent = issue._parent;
   if (parent) {
@@ -163,12 +171,23 @@ const breakAndGetParent = async (issue: Issue): Promise<string | undefined> => {
   }
 };
 
-const breakAndGetCreator = async (
+const breakAndGetCreator = (
   issue: Issue,
-  users: User[],
-): Promise<string | undefined> => {
+  users: User[]
+): string | undefined => {
   // @ts-ignore
-  const creatorId = issue._creator.id;
-  const user = users.find((u) => u.id === creatorId);
-  return user?.displayName;
+  if (issue._creator) {
+    // @ts-ignore
+    const creatorId = issue._creator.id;
+    const user = users.find((u) => u.id === creatorId);
+    return user?.displayName;
+  }
+};
+
+const breakAndGetState = (issue: Issue): string | undefined => {
+  // @ts-ignore
+  if (issue._state) {
+    // @ts-ignore
+    return issue._state.id;
+  }
 };
