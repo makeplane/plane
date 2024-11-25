@@ -32,7 +32,7 @@ export const DuplicateModalRoot: FC<TDuplicateModalRootProps> = (props) => {
         <div className="flex gap-1.5 w-80 flex-shrink-0">
           <PlaneAIIcon className="size-4 flex-shrink-0" />
           <p className="text-left text-xs text-custom-text-200 flex-grow">
-            Below are the listed issues that seems to be similar or are duplicate of issue that you are trying to create
+            {`Below are the listed issues that seem${issues?.length > 1 ? "" : "s"} to be similar or are duplicate of issue that you are trying to create.`}
           </p>
         </div>
       </div>

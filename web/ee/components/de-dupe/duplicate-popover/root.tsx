@@ -127,8 +127,7 @@ export const DeDupeIssuePopoverRoot: FC<TDeDupeIssuePopoverRootProps> = observer
                 >
                   <div className="flex gap-1.5 w-80 flex-shrink-0">
                     <p className="text-left text-xs text-custom-text-200">
-                      {`Hey, ${issues?.length} issue${issues?.length > 1 ? "s" : ""} listed below seems to be duplicate of this issue.`}
-                      Select if only some of them are helpful.
+                      {`Hey, ${issues?.length} issue${issues?.length > 1 ? "s" : ""} listed below seem${issues?.length > 1 ? "" : "s"} to be duplicate of this issue. Select if only some of them are helpful.`}
                     </p>
                   </div>
                   <div className="flex flex-col gap-2 overflow-hidden overflow-y-auto flex-grow pb-1 w-80">
