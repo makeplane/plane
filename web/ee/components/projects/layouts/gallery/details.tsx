@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { ArchiveRestoreIcon, LinkIcon, Lock, MoreHorizontal, PenSquare, Settings, Trash2 } from "lucide-react";
 // ui
 import { cn } from "@plane/editor";
+import { useOutsideClickDetector } from "@plane/helpers";
 import {
   TOAST_TYPE,
   setToast,
@@ -129,6 +130,10 @@ const Details: React.FC<Props> = observer((props) => {
     },
   ];
 
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const ref = React.useRef<HTMLDivElement | null>(null);
+  useOutsideClickDetector(ref, () => setIsOpen(false));
+
   return (
     <div className="w-full rounded-t ">
       <div className="relative ">
@@ -147,21 +152,32 @@ const Details: React.FC<Props> = observer((props) => {
               e.stopPropagation();
             }}
           />
-          <div className="hidden rounded absolute group-hover/project-card:flex inset-0 z-[1] bg-gradient-to-t to-black/60 from-transparent" />
+          <div
+            className={cn(
+              "hidden rounded absolute group-hover/project-card:flex inset-0 z-[1] bg-gradient-to-t to-black/60 from-transparent ",
+              { "flex ": isOpen }
+            )}
+          />
         </div>
         <div className="flex gap-2 absolute top-2 right-2" data-prevent-nprogress>
           {(isOwner || !isArchived) && (
             <CustomMenu
               customButton={
-                <span className="grid place-items-center p-0.5 text-white rounded my-auto">
+                <span
+                  className="grid place-items-center p-0.5 text-white rounded my-auto"
+                  ref={ref}
+                  onClick={() => setIsOpen(!isOpen)}
+                >
                   <MoreHorizontal className="size-4" />
                 </span>
               }
               className={cn(
-                "flex justify-center items-center opacity-0 z-20 pointer-events-none flex-shrink-0 group-hover/project-card:opacity-100 group-hover/project-card:pointer-events-auto my-auto bg-white/30 rounded h-6 w-6 "
+                "flex justify-center items-center opacity-0 z-[10] pointer-events-none flex-shrink-0 group-hover/project-card:opacity-100 group-hover/project-card:pointer-events-auto my-auto bg-white/30 rounded h-6 w-6 ",
+                { "opacity-100 pointer-events-auto": isOpen }
               )}
               customButtonClassName="grid place-items-center"
               placement="bottom-start"
+              useCaptureForOutsideClick
             >
               {MENU_ITEMS.filter((item) => item.shouldRender).map((item) => (
                 <CustomMenu.MenuItem
@@ -188,7 +204,7 @@ const Details: React.FC<Props> = observer((props) => {
                 buttonClassName={cn(
                   "relative flex justify-center items-center opacity-0 z-[2] pointer-events-none flex-shrink-0 group-hover/project-card:opacity-100 group-hover/project-card:pointer-events-auto my-auto bg-white/30 rounded h-6 w-6",
                   {
-                    "opacity-100 pointer-events-auto": project.is_favorite,
+                    "opacity-100 pointer-events-auto": project.is_favorite || isOpen,
                   }
                 )}
                 iconClassName="text-white"

@@ -9,13 +9,44 @@ from asgiref.sync import sync_to_async
 from typing import Optional
 
 # Module imports
-from plane.graphql.permissions.project import (
-    ProjectBasePermission,
-)
+from plane.graphql.permissions.workspace import WorkspaceBasePermission
+from plane.graphql.permissions.project import ProjectBasePermission
 from plane.graphql.types.page import PageType
 from plane.db.models import Page, ProjectPage, UserFavorite, Workspace, Project
 
 
+# workspace level mutations
+@strawberry.type
+class WorkspacePageMutation:
+    @strawberry.mutation(
+        extensions=[
+            PermissionExtension(permissions=[WorkspaceBasePermission()])
+        ]
+    )
+    async def updateWorkspacePage(
+        self,
+        info: Info,
+        slug: str,
+        id: strawberry.ID,
+        name: Optional[str] = None,
+        description_html: Optional[str] = None,
+        logo_props: Optional[JSON] = None,
+        access: Optional[int] = None,
+    ) -> PageType:
+        page = await sync_to_async(Page.objects.get)(id=id)
+        if name is not None:
+            page.name = name
+        if description_html is not None:
+            page.description_html = description_html
+        if logo_props is not None:
+            page.logo_props = logo_props
+        if access is not None:
+            page.access = access
+        await sync_to_async(page.save)()
+        return page
+
+
+# project level mutations
 @strawberry.type
 class PageMutation:
     @strawberry.mutation(

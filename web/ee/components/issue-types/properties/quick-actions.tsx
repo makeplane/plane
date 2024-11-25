@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Check, Pencil, Trash2, X } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 // ui
-import { Spinner, Tooltip } from "@plane/ui";
+import { CustomMenu, TContextMenuItem } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // plane web components
@@ -11,29 +11,31 @@ import { DeleteConfirmationModal } from "@/plane-web/components/issue-types";
 import { TOperationMode } from "@/plane-web/types";
 
 type TIssuePropertyQuickActions = {
-  currentOperationMode: TOperationMode | null;
   isPropertyDisabled: boolean;
-  isSubmitting: boolean;
-  onCreateUpdate: () => Promise<void>;
-  onDiscard: () => void;
   onDisable: () => Promise<void>;
   onDelete: () => Promise<void>;
   onIssuePropertyOperationMode: (mode: TOperationMode) => void;
 };
 
 export const IssuePropertyQuickActions = observer((props: TIssuePropertyQuickActions) => {
-  const {
-    currentOperationMode,
-    isPropertyDisabled,
-    isSubmitting,
-    onCreateUpdate,
-    onDiscard,
-    onDisable,
-    onDelete,
-    onIssuePropertyOperationMode,
-  } = props;
+  const { isPropertyDisabled, onDisable, onDelete, onIssuePropertyOperationMode } = props;
   // states
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const MENU_ITEMS: TContextMenuItem[] = [
+    {
+      key: "edit",
+      action: () => onIssuePropertyOperationMode("update"),
+      title: "Edit",
+      icon: Pencil,
+    },
+    {
+      key: "delete",
+      action: () => setIsDeleteModalOpen(true),
+      title: "Delete",
+      icon: Trash2,
+    },
+  ];
 
   return (
     <>
@@ -44,61 +46,24 @@ export const IssuePropertyQuickActions = observer((props: TIssuePropertyQuickAct
         onDisable={onDisable}
         onDelete={onDelete}
       />
-      <div
-        className={cn("items-center justify-end gap-1.5", {
-          "hidden group-hover:flex": !currentOperationMode,
-          flex: currentOperationMode,
-        })}
-      >
-        {currentOperationMode ? (
-          <>
-            <Tooltip className="w-full shadow" tooltipContent="Confirm" position="bottom">
-              <button
-                className={cn(
-                  "p-1 border-[0.5px] border-custom-border-300 rounded bg-custom-background-100 hover:bg-custom-background-90"
-                )}
-                onClick={onCreateUpdate}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? <Spinner width="16px" height="16px" /> : <Check size={16} className="text-green-600" />}
-              </button>
-            </Tooltip>
-            <Tooltip className="w-full shadow" tooltipContent="Discard" position="bottom">
-              <button
-                className={cn(
-                  "p-1 border-[0.5px] border-custom-border-300 rounded bg-custom-background-100 hover:bg-custom-background-90",
-                  {
-                    "bg-custom-background-80": isSubmitting,
-                  }
-                )}
-                onClick={onDiscard}
-                disabled={isSubmitting}
-              >
-                <X size={16} className="text-red-500" />
-              </button>
-            </Tooltip>
-          </>
-        ) : (
-          <>
-            <Tooltip className="w-full shadow" tooltipContent="Edit" position="bottom">
-              <button
-                className="p-1 border-[0.5px] border-custom-border-300 rounded bg-custom-background-100 hover:bg-custom-background-90"
-                onClick={() => onIssuePropertyOperationMode("update")}
-              >
-                <Pencil size={16} className="text-custom-text-300" />
-              </button>
-            </Tooltip>
-            <Tooltip className="w-full shadow" tooltipContent="Delete" position="bottom">
-              <button
-                className="p-1 border-[0.5px] border-custom-border-300 rounded bg-custom-background-100 hover:bg-custom-background-90"
-                onClick={() => setIsDeleteModalOpen(true)}
-              >
-                <Trash2 size={16} className="text-red-500" />
-              </button>
-            </Tooltip>
-          </>
-        )}
-      </div>
+      <CustomMenu placement="bottom-end" menuItemsClassName="z-20" buttonClassName="!p-0.5" closeOnSelect ellipsis>
+        {MENU_ITEMS.map((item) => (
+          <CustomMenu.MenuItem
+            key={item.key}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              item.action();
+            }}
+            className={cn("flex items-center gap-2")}
+          >
+            {item.icon && <item.icon className={cn("h-3 w-3")} />}
+            <div>
+              <h5>{item.title}</h5>
+            </div>
+          </CustomMenu.MenuItem>
+        ))}
+      </CustomMenu>
     </>
   );
 });

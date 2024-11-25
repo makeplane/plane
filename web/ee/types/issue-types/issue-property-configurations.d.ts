@@ -14,7 +14,7 @@ export type TIssuePropertyTypeKeys =
   | `${EIssuePropertyType.RELATION}_${EIssuePropertyRelationType}`;
 
 // Issue property type details
-export type TissuePropertyTypeDetails<T extends EIssuePropertyType> = {
+export type TIssuePropertyTypeDetails<T extends EIssuePropertyType> = {
   displayName: string;
   icon: LucideIcon;
   dataToUpdate: {
@@ -64,6 +64,7 @@ export type TConfigurationDetails = {
     label: string;
     value: string;
   }[];
+  verticalLayout: boolean;
 };
 
 export type TSettingsConfigurations = {

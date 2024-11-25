@@ -8,7 +8,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.utils import timezone
 
 # Module imports
-from plane.license.models import Instance, InstanceAdmin
+from plane.license.models import Instance, InstanceAdmin, InstanceEdition
 from plane.db.models import User, Profile
 
 
@@ -42,15 +42,13 @@ class Command(BaseCommand):
                 instance = Instance.objects.create(
                     instance_name="Plane Cloud",
                     instance_id=secrets.token_hex(12),
-                    license_key=None,
                     current_version="latest",
                     latest_version="latest",
                     last_checked_at=timezone.now(),
-                    user_count=0,
                     is_verified=True,
                     is_setup_done=True,
                     is_signup_screen_visited=True,
-                    product="plane-cloud",
+                    edition=InstanceEdition.PLANE_CLOUD.value,
                 )
 
             # Get or create an instance admin

@@ -14,12 +14,8 @@ class Command(BaseCommand):
     def get_s3_client(self):
         s3_client = boto3.client(
             "s3",
-            endpoint_url=os.environ.get(
-                "AWS_S3_ENDPOINT_URL"
-            ),  # MinIO endpoint
-            aws_access_key_id=os.environ.get(
-                "AWS_ACCESS_KEY_ID"
-            ),  # MinIO access key
+            endpoint_url=os.environ.get("AWS_S3_ENDPOINT_URL"),  # MinIO endpoint
+            aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),  # MinIO access key
             aws_secret_access_key=os.environ.get(
                 "AWS_SECRET_ACCESS_KEY"
             ),  # MinIO secret key
@@ -64,9 +60,7 @@ class Command(BaseCommand):
         # 3. Test s3:PutObject (attempt to upload an object)
         try:
             s3_client.put_object(
-                Bucket=bucket_name,
-                Key="test_permission_check.txt",
-                Body=b"Test",
+                Bucket=bucket_name, Key="test_permission_check.txt", Body=b"Test"
             )
             permissions["s3:PutObject"] = True
             # Clean up
@@ -78,9 +72,7 @@ class Command(BaseCommand):
 
         # Clean up
         try:
-            s3_client.delete_object(
-                Bucket=bucket_name, Key="test_permission_check.txt"
-            )
+            s3_client.delete_object(Bucket=bucket_name, Key="test_permission_check.txt")
         except ClientError:
             self.stdout.write("Coudn't delete test object")
 
@@ -97,9 +89,7 @@ class Command(BaseCommand):
                     }
                 ],
             }
-            s3_client.put_bucket_policy(
-                Bucket=bucket_name, Policy=json.dumps(policy)
-            )
+            s3_client.put_bucket_policy(Bucket=bucket_name, Policy=json.dumps(policy))
             permissions["s3:PutBucketPolicy"] = True
         except ClientError as e:
             if e.response["Error"]["Code"] == "AccessDenied":
@@ -142,9 +132,7 @@ class Command(BaseCommand):
             Bucket=bucket_name, Policy=json.dumps(bucket_policy)
         )
         # Print a success message
-        self.stdout.write(
-            "Bucket is private, but existing objects remain public."
-        )
+        self.stdout.write("Bucket is private, but existing objects remain public.")
         return
 
     def handle(self, *args, **options):
@@ -177,9 +165,7 @@ class Command(BaseCommand):
             else:
                 self.stdout.write(f"Error: {e}")
         # If the bucket exists, print a success message
-        self.stdout.write(
-            self.style.SUCCESS(f"Bucket '{bucket_name}' exists.")
-        )
+        self.stdout.write(self.style.SUCCESS(f"Bucket '{bucket_name}' exists."))
 
         try:
             # Check the permissions of the access key
@@ -192,9 +178,7 @@ class Command(BaseCommand):
         try:
             if all(permissions.values()):
                 self.stdout.write(
-                    self.style.SUCCESS(
-                        "Access key has the required permissions."
-                    )
+                    self.style.SUCCESS("Access key has the required permissions.")
                 )
                 # Making the existing objects public
                 self.make_objects_public(bucket_name)
@@ -213,9 +197,7 @@ class Command(BaseCommand):
             with open("permissions.json", "w") as f:
                 f.write(json.dumps(self.generate_bucket_policy(bucket_name)))
             self.stdout.write(
-                self.style.WARNING(
-                    "Permissions have been written to permissions.json."
-                )
+                self.style.WARNING("Permissions have been written to permissions.json.")
             )
             return
         except IOError as e:

@@ -66,7 +66,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   // remove peek id
   const removeRoutePeekId = () => {
     setPeekIssue(undefined);
-    if (embedIssue) embedRemoveCurrentNotification && embedRemoveCurrentNotification();
+    if (embedIssue && embedRemoveCurrentNotification) embedRemoveCurrentNotification();
   };
 
   const isLocalDBIssueDescription = getIsLocalDBIssueDescription(issueId);
@@ -244,8 +244,9 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         </div>
                       </div>
                       <div
-                        className={`h-full !w-[400px] flex-shrink-0 border-l border-custom-border-200 p-4 py-5 overflow-hidden vertical-scrollbar scrollbar-sm ${is_archived ? "pointer-events-none" : ""
-                          }`}
+                        className={`h-full !w-[400px] flex-shrink-0 border-l border-custom-border-200 p-4 py-5 overflow-hidden vertical-scrollbar scrollbar-sm ${
+                          is_archived ? "pointer-events-none" : ""
+                        }`}
                       >
                         <PeekOverviewProperties
                           workspaceSlug={workspaceSlug}

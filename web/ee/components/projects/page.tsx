@@ -29,15 +29,16 @@ export const ProjectPageRoot = observer(() => {
   const isProjectGroupingEnabled =
     isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) &&
     useFlag(workspaceSlug.toString(), E_FEATURE_FLAGS.PROJECT_GROUPING);
+  const isArchived = pathname.includes("/archives");
 
   useEffect(() => {
-    if (pathname.includes("/archives")) {
-      updateAttributes(workspaceSlug.toString(), "archived", true);
-      updateLayout(workspaceSlug.toString(), EProjectLayouts.GALLERY);
+    if (isArchived) {
+      updateAttributes(workspaceSlug.toString(), "archived", true, isArchived);
+      updateLayout(workspaceSlug.toString(), EProjectLayouts.GALLERY, isArchived);
     } else {
-      updateAttributes(workspaceSlug.toString(), "archived", false);
+      updateAttributes(workspaceSlug.toString(), "archived", false, isArchived);
     }
-  }, [pathname]);
+  }, [isArchived, updateAttributes, updateLayout, workspaceSlug]);
 
   if (!currentWorkspaceId || !workspaceSlug) return <></>;
   return (
@@ -46,7 +47,11 @@ export const ProjectPageRoot = observer(() => {
 
       {isProjectGroupingEnabled ? (
         <div className="h-full w-full overflow-hidden">
-          <WorkspaceProjectsRoot workspaceSlug={workspaceSlug.toString()} workspaceId={currentWorkspaceId} />
+          <WorkspaceProjectsRoot
+            workspaceSlug={workspaceSlug.toString()}
+            workspaceId={currentWorkspaceId}
+            isArchived={isArchived}
+          />
         </div>
       ) : (
         <Root />

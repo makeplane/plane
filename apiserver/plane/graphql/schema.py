@@ -24,7 +24,7 @@ from .queries.issue import (
     IssueCommentActivityQuery,
     IssueTypesTypeQuery,
 )
-from .queries.page import PageQuery, UserPageQuery
+from .queries.page import PageQuery, UserPageQuery, WorkspacePageQuery
 from .queries.cycle import (
     CycleQuery,
     CycleIssuesInformationQuery,
@@ -48,6 +48,8 @@ from .queries.issues import (
 )
 from .queries.dashboard import userInformationQuery
 from .queries.external import UnsplashImagesQuery, ProjectCoversQuery
+from .queries.feature_flag import FeatureFlagQuery
+from .queries.version_check import VersionCheckQuery
 
 # mutations
 from .mutations.workspace import WorkspaceMutation, WorkspaceInviteMutation
@@ -64,7 +66,11 @@ from .mutations.issue import (
 )
 from .mutations.notification import NotificationMutation
 from .mutations.user import ProfileMutation
-from .mutations.page import PageMutation, PageFavoriteMutation
+from .mutations.page import (
+    PageMutation,
+    PageFavoriteMutation,
+    WorkspacePageMutation,
+)
 from .mutations.cycle import (
     CycleIssueMutation,
     CycleFavoriteMutation,
@@ -82,6 +88,7 @@ from .mutations.issues import (
     IssueCommentMutation,
     SubIssueMutation,
 )
+from .mutations.device import DeviceInformationMutation
 
 
 # combined query class for all
@@ -130,6 +137,9 @@ class Query(
     userInformationQuery,
     UnsplashImagesQuery,
     ProjectCoversQuery,
+    FeatureFlagQuery,
+    VersionCheckQuery,
+    WorkspacePageQuery,
 ):
     pass
 
@@ -161,6 +171,8 @@ class Mutation(
     IssueCommentMutation,
     SubIssueMutation,
     PageMutation,
+    DeviceInformationMutation,
+    WorkspacePageMutation,
 ):
     pass
 

@@ -21,6 +21,8 @@ import {
   CustomMention,
   HeadingListExtension,
   CustomReadOnlyImageExtension,
+  CustomTextAlignExtension,
+  CustomCalloutReadOnlyExtension,
   CustomColorExtension,
 } from "@/extensions";
 // helpers
@@ -65,7 +67,7 @@ export const CoreReadOnlyEditorExtensions = (props: Props) => {
     CustomQuoteExtension,
     CustomHorizontalRule.configure({
       HTMLAttributes: {
-        class: "my-4 border-custom-border-400",
+        class: "py-4 border-custom-border-400",
       },
     }),
     CustomLinkExtension.configure({
@@ -124,5 +126,7 @@ export const CoreReadOnlyEditorExtensions = (props: Props) => {
     CharacterCount,
     CustomColorExtension,
     HeadingListExtension,
+    CustomTextAlignExtension,
+    CustomCalloutReadOnlyExtension,
   ];
 };

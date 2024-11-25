@@ -14,11 +14,7 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.http import HttpResponseRedirect
-from django.utils.encoding import (
-    DjangoUnicodeDecodeError,
-    smart_bytes,
-    smart_str,
-)
+from django.utils.encoding import DjangoUnicodeDecodeError, smart_bytes, smart_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views import View
 
@@ -43,13 +39,9 @@ def generate_password_token(user):
 
 
 class ForgotPasswordSpaceEndpoint(APIView):
-    permission_classes = [
-        AllowAny,
-    ]
+    permission_classes = [AllowAny]
 
-    throttle_classes = [
-        AuthenticationThrottle,
-    ]
+    throttle_classes = [AuthenticationThrottle]
 
     def post(self, request):
         email = request.data.get("email")
@@ -58,33 +50,23 @@ class ForgotPasswordSpaceEndpoint(APIView):
         instance = Instance.objects.first()
         if instance is None or not instance.is_setup_done:
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "INSTANCE_NOT_CONFIGURED"
-                ],
+                error_code=AUTHENTICATION_ERROR_CODES["INSTANCE_NOT_CONFIGURED"],
                 error_message="INSTANCE_NOT_CONFIGURED",
             )
-            return Response(
-                exc.get_error_dict(),
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return Response(exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST)
 
-        (EMAIL_HOST, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD) = (
-            get_configuration_value(
-                [
-                    {
-                        "key": "EMAIL_HOST",
-                        "default": os.environ.get("EMAIL_HOST"),
-                    },
-                    {
-                        "key": "EMAIL_HOST_USER",
-                        "default": os.environ.get("EMAIL_HOST_USER"),
-                    },
-                    {
-                        "key": "EMAIL_HOST_PASSWORD",
-                        "default": os.environ.get("EMAIL_HOST_PASSWORD"),
-                    },
-                ]
-            )
+        (EMAIL_HOST, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD) = get_configuration_value(
+            [
+                {"key": "EMAIL_HOST", "default": os.environ.get("EMAIL_HOST")},
+                {
+                    "key": "EMAIL_HOST_USER",
+                    "default": os.environ.get("EMAIL_HOST_USER"),
+                },
+                {
+                    "key": "EMAIL_HOST_PASSWORD",
+                    "default": os.environ.get("EMAIL_HOST_PASSWORD"),
+                },
+            ]
         )
 
         if not (EMAIL_HOST):
@@ -92,10 +74,7 @@ class ForgotPasswordSpaceEndpoint(APIView):
                 error_message="SMTP_NOT_CONFIGURED",
                 error_code=AUTHENTICATION_ERROR_CODES["SMTP_NOT_CONFIGURED"],
             )
-            return Response(
-                exc.get_error_dict(),
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return Response(exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST)
 
         try:
             validate_email(email)
@@ -104,10 +83,7 @@ class ForgotPasswordSpaceEndpoint(APIView):
                 error_code=AUTHENTICATION_ERROR_CODES["INVALID_EMAIL"],
                 error_message="INVALID_EMAIL",
             )
-            return Response(
-                exc.get_error_dict(),
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return Response(exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST)
 
         # Get the user
         user = User.objects.filter(email=email).first()
@@ -127,14 +103,10 @@ class ForgotPasswordSpaceEndpoint(APIView):
             error_code=AUTHENTICATION_ERROR_CODES["USER_DOES_NOT_EXIST"],
             error_message="USER_DOES_NOT_EXIST",
         )
-        return Response(
-            exc.get_error_dict(),
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        return Response(exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST)
 
 
 class ResetPasswordSpaceEndpoint(View):
-
     def post(self, request, uidb64, token):
         try:
             # Decode the id from the uidb64
@@ -144,9 +116,7 @@ class ResetPasswordSpaceEndpoint(View):
             # check if the token is valid for the user
             if not PasswordResetTokenGenerator().check_token(user, token):
                 exc = AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES[
-                        "INVALID_PASSWORD_TOKEN"
-                    ],
+                    error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD_TOKEN"],
                     error_message="INVALID_PASSWORD_TOKEN",
                 )
                 params = exc.get_error_dict()
@@ -178,14 +148,10 @@ class ResetPasswordSpaceEndpoint(View):
             user.is_password_autoset = False
             user.save()
 
-            return HttpResponseRedirect(
-                base_host(request=request, is_space=True)
-            )
+            return HttpResponseRedirect(base_host(request=request, is_space=True))
         except DjangoUnicodeDecodeError:
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "EXPIRED_PASSWORD_TOKEN"
-                ],
+                error_code=AUTHENTICATION_ERROR_CODES["EXPIRED_PASSWORD_TOKEN"],
                 error_message="EXPIRED_PASSWORD_TOKEN",
             )
             url = f"{base_host(request=request, is_space=True)}/accounts/reset-password/?{urlencode(exc.get_error_dict())}"

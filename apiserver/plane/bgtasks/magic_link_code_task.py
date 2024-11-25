@@ -32,9 +32,7 @@ def magic_link(email, key, token, current_site):
         subject = f"Your unique Plane login code is {token}"
         context = {"code": token, "email": email}
 
-        html_content = render_to_string(
-            "emails/auth/magic_signin.html", context
-        )
+        html_content = render_to_string("emails/auth/magic_signin.html", context)
         text_content = strip_tags(html_content)
 
         connection = get_connection(

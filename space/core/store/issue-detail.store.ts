@@ -36,6 +36,7 @@ export interface IIssueDetailStore {
   updateIssueComment: (anchor: string, issueID: string, commentID: string, data: any) => Promise<any>;
   deleteIssueComment: (anchor: string, issueID: string, commentID: string) => void;
   uploadCommentAsset: (file: File, anchor: string, commentID?: string) => Promise<TFileSignedURLResponse>;
+  uploadIssueAsset: (file: File, anchor: string, commentID?: string) => Promise<TFileSignedURLResponse>;
   addCommentReaction: (anchor: string, issueID: string, commentID: string, reactionHex: string) => void;
   removeCommentReaction: (anchor: string, issueID: string, commentID: string, reactionHex: string) => void;
   // reaction actions
@@ -79,6 +80,7 @@ export class IssueDetailStore implements IIssueDetailStore {
       updateIssueComment: action,
       deleteIssueComment: action,
       uploadCommentAsset: action,
+      uploadIssueAsset: action,
       addCommentReaction: action,
       removeCommentReaction: action,
       // reaction actions
@@ -235,6 +237,23 @@ export class IssueDetailStore implements IIssueDetailStore {
         {
           entity_identifier: commentID ?? "",
           entity_type: EFileAssetType.COMMENT_DESCRIPTION,
+        },
+        file
+      );
+      return res;
+    } catch (error) {
+      console.log("Error in uploading comment asset:", error);
+      throw new Error("Asset upload failed. Please try again later.");
+    }
+  };
+
+  uploadIssueAsset = async (file: File, anchor: string, commentID?: string) => {
+    try {
+      const res = await this.fileService.uploadAsset(
+        anchor,
+        {
+          entity_identifier: commentID ?? "",
+          entity_type: EFileAssetType.ISSUE_DESCRIPTION,
         },
         file
       );

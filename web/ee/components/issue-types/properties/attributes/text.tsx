@@ -42,26 +42,25 @@ export const TextAttributes = observer((props: TTextAttributesProps) => {
   };
 
   return (
-    <>
-      <div className="px-1">
-        {ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS?.TEXT?.map((configurations, index) => (
-          <PropertySettingsConfiguration
-            key={index}
-            settings={textPropertyDetail.settings}
-            settingsConfigurations={configurations}
-            onChange={(value) => {
-              onTextDetailChange("settings", value as TIssueProperty<EIssuePropertyType.TEXT>["settings"]);
-              onTextDetailChange("default_value", []);
-              if (value?.display_format === "readonly") {
-                onTextDetailChange("is_required", false);
-              }
-            }}
-            isDisabled={!configurations.allowedEditingModes.includes(currentOperationMode) && isAnyIssueAttached}
-          />
-        ))}
-      </div>
+    <div>
+      <span className="text-xs text-custom-text-300 font-medium">Attributes</span>
+      {ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS?.TEXT?.map((configurations, index) => (
+        <PropertySettingsConfiguration
+          key={index}
+          settings={textPropertyDetail.settings}
+          settingsConfigurations={configurations}
+          onChange={(value) => {
+            onTextDetailChange("settings", value as TIssueProperty<EIssuePropertyType.TEXT>["settings"]);
+            onTextDetailChange("default_value", []);
+            if (value?.display_format === "readonly") {
+              onTextDetailChange("is_required", false);
+            }
+          }}
+          isDisabled={!configurations.allowedEditingModes.includes(currentOperationMode) && isAnyIssueAttached}
+        />
+      ))}
       {textPropertyDetail.settings?.display_format === "readonly" && (
-        <div className="pt-4">
+        <div className="pt-2">
           <div className="text-xs font-medium text-custom-text-300">Read only data</div>
           <TextArea
             id="default_value"
@@ -76,6 +75,6 @@ export const TextAttributes = observer((props: TTextAttributesProps) => {
           />
         </div>
       )}
-    </>
+    </div>
   );
 });

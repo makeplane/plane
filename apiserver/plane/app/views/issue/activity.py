@@ -2,10 +2,7 @@
 from itertools import chain
 
 # Django imports
-from django.db.models import (
-    Prefetch,
-    Q,
-)
+from django.db.models import Prefetch, Q
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
 
@@ -15,37 +12,18 @@ from rest_framework import status
 
 # Module imports
 from .. import BaseAPIView
-from plane.app.serializers import (
-    IssueActivitySerializer,
-    IssueCommentSerializer,
-)
-from plane.app.permissions import (
-    ProjectEntityPermission,
-    allow_permission,
-    ROLE,
-)
-from plane.db.models import (
-    IssueActivity,
-    IssueComment,
-    CommentReaction,
-)
+from plane.app.serializers import IssueActivitySerializer, IssueCommentSerializer
+from plane.app.permissions import ProjectEntityPermission, allow_permission, ROLE
+from plane.db.models import IssueActivity, IssueComment, CommentReaction
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 
 
 class IssueActivityEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
+    permission_classes = [ProjectEntityPermission]
 
     @method_decorator(gzip_page)
-    @allow_permission(
-        [
-            ROLE.ADMIN,
-            ROLE.MEMBER,
-            ROLE.GUEST,
-        ]
-    )
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, issue_id):
         filters = {}
         if request.GET.get("created_at__gt", None) is not None:
@@ -65,8 +43,7 @@ class IssueActivityEndpoint(BaseAPIView):
         ).order_by("created_at")
 
         if not check_workspace_feature_flag(
-            feature_key=FeatureFlag.ISSUE_TYPE_DISPLAY,
-            slug=slug,
+            feature_key=FeatureFlag.ISSUE_TYPE_DISPLAY, slug=slug
         ):
             issue_activities = issue_activities.filter(~Q(field="type"))
 
@@ -88,9 +65,7 @@ class IssueActivityEndpoint(BaseAPIView):
                 )
             )
         )
-        issue_activities = IssueActivitySerializer(
-            issue_activities, many=True
-        ).data
+        issue_activities = IssueActivitySerializer(issue_activities, many=True).data
         issue_comments = IssueCommentSerializer(issue_comments, many=True).data
 
         if request.GET.get("activity_type", None) == "issue-property":

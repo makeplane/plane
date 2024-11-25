@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
@@ -10,6 +11,7 @@ import { TSelectionHelper } from "@/hooks/use-multiple-select";
 // plane-web
 import { BulkOperationsActionsRoot, IssueBulkOperationsProperties } from "@/plane-web/components/issues";
 import { UpgradeToast } from "@/plane-web/components/workspace";
+import { hideFloatingBot, showFloatingBot } from "@/plane-web/helpers/pi-chat.helper";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
@@ -29,6 +31,15 @@ export const IssueBulkOperationsRoot: React.FC<Props> = observer((props) => {
   // derived values
   const isBulkOpsEnabled = useFlag(workspaceSlug?.toString(), "BULK_OPS");
   const { handleClearSelection } = selectionHelpers;
+
+  useEffect(() => {
+    if (isSelectionActive) {
+      hideFloatingBot();
+    }
+    if (!isSelectionActive) {
+      showFloatingBot();
+    }
+  }, [isSelectionActive]);
 
   if (!isSelectionActive || selectionHelpers.isSelectionDisabled) return null;
 

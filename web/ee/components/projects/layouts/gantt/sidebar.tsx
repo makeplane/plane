@@ -4,12 +4,12 @@ import { RefObject } from "react";
 import { observer } from "mobx-react";
 // plane
 import { Loader } from "@plane/ui";
+// hooks
+import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 //
-import { IGanttBlock } from "@/components/gantt-chart";
 import { ProjectGanttSidebarBlock } from "./blocks";
 
 type Props = {
-  getBlockById: (id: string) => IGanttBlock;
   canLoadMoreBlocks?: boolean;
   loadMoreBlocks?: () => void;
   ganttContainerRef: RefObject<HTMLDivElement>;
@@ -18,7 +18,9 @@ type Props = {
 };
 
 export const ProjectGanttSidebar: React.FC<Props> = observer((props) => {
-  const { blockIds, getBlockById, canLoadMoreBlocks, showAllBlocks = false } = props;
+  const { blockIds, canLoadMoreBlocks, showAllBlocks = false } = props;
+
+  const { getBlockById } = useTimeLineChartStore();
 
   return (
     <div>

@@ -9,7 +9,7 @@ import {
   TDropdownAttributeOptions,
   TIssuePropertySettingsConfigurationsDetails,
   TIssuePropertySettingsMap,
-  TissuePropertyTypeDetails,
+  TIssuePropertyTypeDetails,
   TIssuePropertyTypeKeys,
   TTextAttributeDisplayOptions,
 } from "@/plane-web/types";
@@ -47,7 +47,7 @@ export const getDateAttributeDisplayName = (display_format: TDateAttributeDispla
 // }
 
 export const ISSUE_PROPERTY_TYPE_DETAILS: Partial<
-  Record<TIssuePropertyTypeKeys, TissuePropertyTypeDetails<EIssuePropertyType>>
+  Record<TIssuePropertyTypeKeys, TIssuePropertyTypeDetails<EIssuePropertyType>>
 > = {
   TEXT: {
     displayName: "Text",
@@ -216,6 +216,7 @@ export const ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS: Partial<TIssuePropertySetti
             value: "readonly",
           },
         ],
+        verticalLayout: false,
       },
     },
   ],
@@ -243,6 +244,7 @@ export const ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS: Partial<TIssuePropertySetti
             value: "yyyy/MM/dd",
           },
         ],
+        verticalLayout: false,
       },
     },
   ],

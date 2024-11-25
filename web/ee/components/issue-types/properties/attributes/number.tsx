@@ -27,9 +27,9 @@ export const NumberAttributes = observer((props: TNumberAttributesProps) => {
   const isAnyIssueAttached = issueType?.issue_exists;
 
   return (
-    <>
+    <div>
       {ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS?.DECIMAL?.length && (
-        <div className="pb-4">
+        <div className="pb-2">
           {ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS?.DECIMAL?.map((configurations, index) => (
             <PropertySettingsConfiguration
               key={index}
@@ -43,7 +43,9 @@ export const NumberAttributes = observer((props: TNumberAttributesProps) => {
           ))}
         </div>
       )}
-      <div className="text-xs font-medium text-custom-text-300">Default • Optional</div>
+      <div className="text-xs font-medium text-custom-text-300">
+        Default <span className="font-normal italic">(optional)</span>
+      </div>
       <NumberValueInput
         propertyDetail={numberPropertyDetail}
         value={numberPropertyDetail.default_value ?? []}
@@ -53,6 +55,6 @@ export const NumberAttributes = observer((props: TNumberAttributesProps) => {
         numberInputSize="xs"
         isDisabled={!!numberPropertyDetail.is_required}
       />
-    </>
+    </div>
   );
 });

@@ -37,7 +37,8 @@ export const MemberPickerAttributes = observer((props: TMemberPickerAttributesPr
 
   return (
     <>
-      <div className="px-1">
+      <div>
+        <span className="text-xs text-custom-text-300 font-medium">Attributes</span>
         <PropertyMultiSelect
           value={memberPickerPropertyDetail.is_multi}
           variant="RELATION_USER"
@@ -68,8 +69,10 @@ export const MemberPickerAttributes = observer((props: TMemberPickerAttributesPr
           ))}
         </div>
       )}
-      <div className="pt-4">
-        <div className="text-xs font-medium text-custom-text-300">Default • Optional</div>
+      <div>
+        <div className="text-xs font-medium text-custom-text-300">
+          Default <span className="font-normal italic">(optional)</span>
+        </div>
         <MemberValueSelect
           propertyDetail={memberPickerPropertyDetail}
           value={memberPickerPropertyDetail.default_value ?? []}

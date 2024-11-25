@@ -55,7 +55,8 @@ export const DropdownAttributes = observer((props: TDropdownAttributesProps) => 
 
   return (
     <>
-      <div className="px-1">
+      <div>
+        <span className="text-xs text-custom-text-300 font-medium">Attributes</span>
         <PropertyMultiSelect
           value={dropdownPropertyDetail.is_multi}
           variant="OPTION"
@@ -69,7 +70,7 @@ export const DropdownAttributes = observer((props: TDropdownAttributesProps) => 
         />
       </div>
       {ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS?.OPTION?.length && (
-        <div className="pt-4">
+        <div>
           {ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS?.OPTION?.map((configurations, index) => (
             <PropertySettingsConfiguration
               key={index}
@@ -84,8 +85,10 @@ export const DropdownAttributes = observer((props: TDropdownAttributesProps) => 
         </div>
       )}
       <IssuePropertyOptionsRoot issuePropertyId={dropdownPropertyDetail.id} error={error?.options} />
-      <div className="pt-2 px-1">
-        <div className="text-xs font-medium text-custom-text-300">Default • Optional</div>
+      <div>
+        <div className="text-xs font-medium text-custom-text-300">
+          Default <span className="font-normal italic">(optional)</span>
+        </div>
         <DefaultOptionSelect isMultiSelect={dropdownPropertyDetail.is_multi} isDisabled={isOptionDefaultDisabled} />
       </div>
     </>

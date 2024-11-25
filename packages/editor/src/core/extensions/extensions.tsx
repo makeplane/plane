@@ -8,6 +8,7 @@ import StarterKit from "@tiptap/starter-kit";
 import { Markdown } from "tiptap-markdown";
 // extensions
 import {
+  CustomCalloutExtension,
   CustomCodeBlockExtension,
   CustomCodeInlineExtension,
   CustomCodeMarkPlugin,
@@ -18,6 +19,7 @@ import {
   CustomLinkExtension,
   CustomMention,
   CustomQuoteExtension,
+  CustomTextAlignExtension,
   CustomTypographyExtension,
   DropHandlerExtension,
   ImageExtension,
@@ -76,7 +78,7 @@ export const CoreEditorExtensions = (args: TArguments) => {
     DropHandlerExtension(),
     CustomHorizontalRule.configure({
       HTMLAttributes: {
-        class: "my-4 border-custom-border-400",
+        class: "py-4 border-custom-border-400",
       },
     }),
     CustomKeymap,
@@ -157,6 +159,8 @@ export const CoreEditorExtensions = (args: TArguments) => {
       includeChildren: true,
     }),
     CharacterCount,
+    CustomTextAlignExtension,
+    CustomCalloutExtension,
     CustomColorExtension,
   ];
 };

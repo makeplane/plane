@@ -23,22 +23,13 @@ from plane.db.models import (
 class DraftIssueCreateSerializer(BaseSerializer):
     # ids
     state_id = serializers.PrimaryKeyRelatedField(
-        source="state",
-        queryset=State.objects.all(),
-        required=False,
-        allow_null=True,
+        source="state", queryset=State.objects.all(), required=False, allow_null=True
     )
     parent_id = serializers.PrimaryKeyRelatedField(
-        source="parent",
-        queryset=Issue.objects.all(),
-        required=False,
-        allow_null=True,
+        source="parent", queryset=Issue.objects.all(), required=False, allow_null=True
     )
     type_id = serializers.PrimaryKeyRelatedField(
-        source="type",
-        queryset=IssueType.objects.all(),
-        required=False,
-        allow_null=True,
+        source="type", queryset=IssueType.objects.all(), required=False, allow_null=True
     )
     label_ids = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(queryset=Label.objects.all()),
@@ -76,9 +67,7 @@ class DraftIssueCreateSerializer(BaseSerializer):
             and data.get("target_date", None) is not None
             and data.get("start_date", None) > data.get("target_date", None)
         ):
-            raise serializers.ValidationError(
-                "Start date cannot exceed target date"
-            )
+            raise serializers.ValidationError("Start date cannot exceed target date")
         return data
 
     def create(self, validated_data):
@@ -256,20 +245,11 @@ class DraftIssueCreateSerializer(BaseSerializer):
 class DraftIssueSerializer(BaseSerializer):
     # ids
     cycle_id = serializers.PrimaryKeyRelatedField(read_only=True)
-    module_ids = serializers.ListField(
-        child=serializers.UUIDField(),
-        required=False,
-    )
+    module_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
 
     # Many to many
-    label_ids = serializers.ListField(
-        child=serializers.UUIDField(),
-        required=False,
-    )
-    assignee_ids = serializers.ListField(
-        child=serializers.UUIDField(),
-        required=False,
-    )
+    label_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
+    assignee_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
 
     class Meta:
         model = DraftIssue
@@ -303,7 +283,5 @@ class DraftIssueDetailSerializer(DraftIssueSerializer):
     description_html = serializers.CharField()
 
     class Meta(DraftIssueSerializer.Meta):
-        fields = DraftIssueSerializer.Meta.fields + [
-            "description_html",
-        ]
+        fields = DraftIssueSerializer.Meta.fields + ["description_html"]
         read_only_fields = fields

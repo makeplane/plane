@@ -1,9 +1,11 @@
 # Python imports
 from datetime import datetime
 import json
+import requests
 
 # Django imports
 from django.utils import timezone
+from django.conf import settings
 
 # Strawberry imports
 import strawberry
@@ -30,11 +32,29 @@ from plane.db.models import (
     Workspace,
     FileAsset,
     IssueSubscriber,
+    IssueType,
 )
 from plane.graphql.bgtasks.issue_activity_task import issue_activity
 from plane.graphql.utils.issue_activity import (
     convert_issue_properties_to_activity_dict,
 )
+
+
+@sync_to_async
+def get_feature_flag(workspace_slug: str, user_id: str, flag_key: str):
+    url = f"{settings.FEATURE_FLAG_SERVER_BASE_URL}/api/feature-flags/"
+    json = {
+        "workspace_slug": workspace_slug,
+        "user_id": user_id,
+        "flag_key": flag_key,
+    }
+    headers = {
+        "content-type": "application/json",
+        "x-api-key": settings.FEATURE_FLAG_SERVER_AUTH_TOKEN,
+    }
+    response = requests.post(url, json=json, headers=headers)
+    response.raise_for_status()
+    return response.json().get("value", False)
 
 
 @strawberry.type
@@ -61,6 +81,27 @@ class IssueMutation:
         targetDate: Optional[datetime] = None,
     ) -> IssuesType:
         workspace = await sync_to_async(Workspace.objects.get)(slug=slug)
+
+        issue_type_id = None
+        # validating issue type and assigning thr default issue type
+        is_feature_flagged = await get_feature_flag(
+            workspace.slug,
+            str(info.context.user.id),
+            "ISSUE_TYPE_DISPLAY",
+        )
+
+        if is_feature_flagged:
+            try:
+                issue_type = await sync_to_async(IssueType.objects.get)(
+                    workspace__slug=slug,
+                    project_issue_types__project=project,
+                    is_default=True,
+                )
+                if issue_type is not None:
+                    issue_type_id = issue_type.id
+            except IssueType.DoesNotExist:
+                pass
+
         issue = await sync_to_async(Issue.objects.create)(
             name=name,
             project_id=project,
@@ -74,6 +115,7 @@ class IssueMutation:
             start_date=startDate,
             target_date=targetDate,
             workspace=workspace,
+            type_id=issue_type_id,
         )
 
         if assignees is not None and len(assignees):
@@ -213,41 +255,41 @@ class IssueMutation:
             await sync_to_async(
                 IssueAssignee.objects.filter(issue=issue).delete
             )()
-            await sync_to_async(IssueAssignee.objects.bulk_create)(
-                [
-                    IssueAssignee(
-                        assignee_id=user,
-                        issue=issue,
-                        workspace=workspace,
-                        project_id=project,
-                        created_by_id=info.context.user.id,
-                        updated_by_id=info.context.user.id,
-                    )
-                    for user in assignees
-                ],
-                batch_size=10,
-            )
+            if len(assignees) > 0:
+                await sync_to_async(IssueAssignee.objects.bulk_create)(
+                    [
+                        IssueAssignee(
+                            assignee_id=user,
+                            issue=issue,
+                            workspace=workspace,
+                            project_id=project,
+                            created_by_id=info.context.user.id,
+                            updated_by_id=info.context.user.id,
+                        )
+                        for user in assignees
+                    ],
+                    batch_size=10,
+                )
 
         # creating or updating the labels
         if labels is not None:
             activity_payload["label_ids"] = labels
-            await sync_to_async(
-                IssueLabel.objects.filter(issue=issue).delete
-            )()
-            await sync_to_async(IssueLabel.objects.bulk_create)(
-                [
-                    IssueLabel(
-                        label_id=label,
-                        issue=issue,
-                        project_id=project,
-                        workspace=workspace,
-                        created_by_id=info.context.user.id,
-                        updated_by_id=info.context.user.id,
-                    )
-                    for label in labels
-                ],
-                batch_size=10,
-            )
+            await sync_to_async(IssueLabel.objects.filter(issue=id).delete)()
+            if len(labels) > 0:
+                await sync_to_async(IssueLabel.objects.bulk_create)(
+                    [
+                        IssueLabel(
+                            label_id=label,
+                            issue=issue,
+                            project_id=project,
+                            workspace=workspace,
+                            created_by_id=info.context.user.id,
+                            updated_by_id=info.context.user.id,
+                        )
+                        for label in labels
+                    ],
+                    batch_size=10,
+                )
 
         # Track the issue
         issue_activity.delay(

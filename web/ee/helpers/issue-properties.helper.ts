@@ -12,6 +12,7 @@ import {
   EIssuePropertyType,
   TDateAttributeDisplayOptions,
   TIssueProperty,
+  TIssuePropertyTypeDetails,
   TIssuePropertyTypeKeys,
   TIssuePropertyValues,
   TTextAttributeDisplayOptions,
@@ -25,17 +26,17 @@ export const getIssuePropertyTypeKey = (
   `${issuePropertyType}${issuePropertyRelationType ? `_${issuePropertyRelationType}` : ""}` as TIssuePropertyTypeKeys;
 
 // Get the display name for the issue property type based on the property type and relation type
-export const getIssuePropertyTypeDisplayName = (
+export const getIssuePropertyTypeDetails = (
   issuePropertyType: EIssuePropertyType | undefined,
   issuePropertyRelationType: EIssuePropertyRelationType | null | undefined
-) => {
+): TIssuePropertyTypeDetails<EIssuePropertyType> | undefined => {
   const propertyTypeKey = getIssuePropertyTypeKey(issuePropertyType, issuePropertyRelationType);
-  return ISSUE_PROPERTY_TYPE_DETAILS[propertyTypeKey]?.displayName || "--";
+  return ISSUE_PROPERTY_TYPE_DETAILS[propertyTypeKey];
 };
 
 // Get the display name for the number attribute based on the default value
-export const getNumberAttributeDisplayName = (default_value: string | undefined) =>
-  default_value ? "Default: " + default_value : "No default value";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const getNumberAttributeDisplayName = (default_value: string | undefined) => undefined;
 
 // Get the display name for multi select attribute based on the is_multi property
 export const getMultiSelectAttributeDisplayName = (

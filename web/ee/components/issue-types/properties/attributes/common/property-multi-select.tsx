@@ -38,9 +38,8 @@ export const PropertyMultiSelect = observer((props: TPropertyMultiSelectProps) =
       onChange={(value) => onChange(value === "multi_select")}
       className="z-10"
       buttonClassName="size-3"
-      fieldClassName="text-sm"
-      wrapperClassName="gap-1"
-      vertical
+      fieldClassName="text-sm gap-1"
+      wrapperClassName="gap-3"
     />
   );
 });

@@ -5,7 +5,6 @@ on:
   push:
     branches:
       - preview
-      - mobile
 
 env:
   SOURCE_BRANCH_NAME: ${{ github.ref_name }}
@@ -18,7 +17,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
           fetch-depth: 0
@@ -38,12 +37,7 @@ jobs:
         run: |
           TARGET_REPO="${{ vars.SYNC_TARGET_REPO }}"
           SOURCE_BRANCH="${{ env.SOURCE_BRANCH_NAME }}"
-
-          if [ "$SOURCE_BRANCH" = "mobile" ]; then
-            TARGET_BRANCH="${{ vars.SYNC_TARGET_MOBILE_BRANCH_NAME }}"
-          else
-            TARGET_BRANCH="${{ vars.SYNC_TARGET_BRANCH_NAME }}"
-          fi
+          TARGET_BRANCH="${{ vars.SYNC_TARGET_BRANCH_NAME }}"
 
           git checkout $SOURCE_BRANCH
           git remote add target-origin-a "https://$GH_TOKEN@github.com/$TARGET_REPO.git"

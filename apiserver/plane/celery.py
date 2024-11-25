@@ -42,7 +42,7 @@ app.conf.beat_schedule = {
     },
     "run-every-6-hours-for-instance-trace": {
         "task": "plane.license.bgtasks.tracer.instance_traces",
-        "schedule": crontab(hour="*/6"),
+        "schedule": crontab(hour="*/6", minute=0),
     },
     "track-entity-issue-state-progress": {
         "task": "plane.bgtasks.entity_issue_state_progress_task.track_entity_issue_state_progress",

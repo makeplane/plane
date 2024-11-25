@@ -1,4 +1,4 @@
-import * as Sentry from "@sentry/nextjs";
+import { captureException } from "@sentry/nextjs";
 import pick from "lodash/pick";
 import { TIssue } from "@plane/types";
 import { rootStore } from "@/lib/store-context";
@@ -14,10 +14,48 @@ export const logError = (e: any) => {
   if (e?.result?.errorClass === "SQLite3Error") {
     e = parseSQLite3Error(e);
   }
-  Sentry.captureException(e);
-  console.log(e);
+  console.error(e);
+  captureException(e);
 };
 export const logInfo = console.info;
+
+export const addIssueToPersistanceLayer = async (issue: TIssue) => {
+  try {
+    const issuePartial = pick({ ...JSON.parse(JSON.stringify(issue)) }, [
+      "id",
+      "name",
+      "state_id",
+      "sort_order",
+      "completed_at",
+      "estimate_point",
+      "priority",
+      "start_date",
+      "target_date",
+      "sequence_id",
+      "project_id",
+      "parent_id",
+      "created_at",
+      "updated_at",
+      "created_by",
+      "updated_by",
+      "is_draft",
+      "archived_at",
+      "state__group",
+      "cycle_id",
+      "link_count",
+      "attachment_count",
+      "sub_issues_count",
+      "assignee_ids",
+      "label_ids",
+      "module_ids",
+      "type_id",
+      "description_html",
+    ]);
+    await updateIssue({ ...issuePartial, is_local_update: 1 });
+  } catch (e) {
+    logError("Error while adding issue to db");
+  }
+};
 
 export const updatePersistentLayer = async (issueIds: string | string[]) => {
   if (typeof issueIds === "string") {
@@ -28,38 +66,7 @@ export const updatePersistentLayer = async (issueIds: string | string[]) => {
     const issue = rootStore.issue.issues.getIssueById(issueId);
 
     if (issue) {
-      // JSON.parse(JSON.stringify(issue)) is used to remove the mobx observables
-      const issuePartial = pick({ ...dbIssue, ...JSON.parse(JSON.stringify(issue)) }, [
-        "id",
-        "name",
-        "state_id",
-        "sort_order",
-        "completed_at",
-        "estimate_point",
-        "priority",
-        "start_date",
-        "target_date",
-        "sequence_id",
-        "project_id",
-        "parent_id",
-        "created_at",
-        "updated_at",
-        "created_by",
-        "updated_by",
-        "is_draft",
-        "archived_at",
-        "state__group",
-        "cycle_id",
-        "link_count",
-        "attachment_count",
-        "sub_issues_count",
-        "assignee_ids",
-        "label_ids",
-        "module_ids",
-        "type_id",
-        "description_html",
-      ]);
-      updateIssue({ ...issuePartial, is_local_update: 1 });
+      addIssueToPersistanceLayer(issue);
     }
   });
 };
@@ -151,4 +158,26 @@ export const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve
 const parseSQLite3Error = (error: any) => {
   error.result = JSON.stringify(error.result);
   return error;
+};
+
+export const clearOPFS = async () => {
+  const storageManager = window.navigator.storage;
+  const fileSystemDirectoryHandle = await storageManager.getDirectory();
+  const userAgent = navigator.userAgent;
+  const isChrome = userAgent.includes("Chrome") && !userAgent.includes("Edg") && !userAgent.includes("OPR");
+
+  if (isChrome) {
+    await (fileSystemDirectoryHandle as any).remove({ recursive: true });
+    return;
+  }
+
+  const entries = await (fileSystemDirectoryHandle as any).entries();
+  for await (const entry of entries) {
+    const [name] = entry;
+    try {
+      await fileSystemDirectoryHandle.removeEntry(name);
+    } catch (e) {
+      console.log("Error", e);
+    }
+  }
 };

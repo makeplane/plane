@@ -26,7 +26,7 @@ export const ReadOnlyImageExtension = (props: Pick<TFileHandler, "getAssetSrc">)
 
     addCommands() {
       return {
-        getImageSource: (path: string) => () => getAssetSrc(path),
+        getImageSource: (path: string) => async () => await getAssetSrc(path),
       };
     },
 

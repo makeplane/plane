@@ -6,6 +6,7 @@ export * from "./property-list-item";
 export * from "./property-create-list-item";
 export * from "./dropdowns";
 export * from "./attributes";
-export * from "./mandatory-field-toggle";
+export * from "./mandatory-field";
+export * from "./active-checkbox";
 export * from "./quick-actions";
 export * from "./delete-confirmation-modal";

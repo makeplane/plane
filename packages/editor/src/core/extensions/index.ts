@@ -1,3 +1,4 @@
+export * from "./callout";
 export * from "./code";
 export * from "./code-inline";
 export * from "./custom-image";
@@ -15,10 +16,10 @@ export * from "./custom-color";
 export * from "./drop";
 export * from "./enter-key-extension";
 export * from "./extensions";
+export * from "./headers";
 export * from "./horizontal-rule";
 export * from "./keymap";
 export * from "./quote";
 export * from "./read-only-extensions";
 export * from "./side-menu";
-export * from "./slash-commands";
-export * from "./headers";
+export * from "./text-align";

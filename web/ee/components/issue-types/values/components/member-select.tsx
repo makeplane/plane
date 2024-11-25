@@ -87,7 +87,7 @@ export const MemberValueSelect = observer((props: TMemberValueSelectProps) => {
                 : "transparent-with-text"
               : "border-with-text"
           }
-          className="w-full flex-grow group"
+          className="h-auto w-full flex-grow group"
           multiple
         />
       ) : (
@@ -107,7 +107,7 @@ export const MemberValueSelect = observer((props: TMemberValueSelectProps) => {
                 : "transparent-with-text"
               : "border-with-text"
           }
-          className="w-full flex-grow group"
+          className="h-auto w-full flex-grow group"
           multiple={false}
         />
       )}

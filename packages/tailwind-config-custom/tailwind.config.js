@@ -26,6 +26,7 @@ module.exports = {
   theme: {
     extend: {
       boxShadow: {
+        "custom-shadow": "var(--color-shadow-custom)",
         "custom-shadow-2xs": "var(--color-shadow-2xs)",
         "custom-shadow-xs": "var(--color-shadow-xs)",
         "custom-shadow-sm": "var(--color-shadow-sm)",
@@ -49,6 +50,19 @@ module.exports = {
         "onboarding-shadow-sm": "var(--color-onboarding-shadow-sm)",
       },
       colors: {
+        pi: {
+          50: convertToRGB("--color-pi-50"),
+          100: convertToRGB("--color-pi-100"),
+          200: convertToRGB("--color-pi-200"),
+          300: convertToRGB("--color-pi-300"),
+          400: convertToRGB("--color-pi-400"),
+          500: convertToRGB("--color-pi-500"),
+          600: convertToRGB("--color-pi-600"),
+          700: convertToRGB("--color-pi-700"),
+          800: convertToRGB("--color-pi-800"),
+          900: convertToRGB("--color-pi-900"),
+          950: convertToRGB("--color-pi-950"),
+        },
         custom: {
           primary: {
             0: "rgb(255, 255, 255)",
@@ -289,6 +303,7 @@ module.exports = {
       },
       // scale down font sizes to 90% of default
       fontSize: {
+        "2xs": "0.5625rem",
         xs: "0.675rem",
         sm: "0.7875rem",
         base: "0.9rem",

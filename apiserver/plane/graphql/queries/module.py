@@ -8,7 +8,7 @@ import strawberry
 from asgiref.sync import sync_to_async
 
 # Django Imports
-from django.db.models import Exists, OuterRef
+from django.db.models import Exists, OuterRef, Subquery
 
 # Strawberry Imports
 from strawberry.types import Info
@@ -42,6 +42,7 @@ class ModuleQuery:
         slug: str,
         project: strawberry.ID,
         cursor: Optional[str] = None,
+        ids: Optional[list[strawberry.ID]] = None,
     ) -> PaginatorResponse[ModuleType]:
         subquery = UserFavorite.objects.filter(
             user=info.context.user,
@@ -50,14 +51,18 @@ class ModuleQuery:
             project_id=project,
         )
 
+        module_query = Module.objects.filter(
+            workspace__slug=slug,
+            project_id=project,
+            project__project_projectmember__member=info.context.user,
+            project__project_projectmember__is_active=True,
+        )
+
+        if ids:
+            module_query = module_query.filter(id__in=ids)
+
         modules = await sync_to_async(list)(
-            Module.objects.filter(workspace__slug=slug)
-            .filter(project_id=project)
-            .filter(
-                project__project_projectmember__member=info.context.user,
-                project__project_projectmember__is_active=True,
-            )
-            .annotate(is_favorite=Exists(subquery))
+            module_query.annotate(is_favorite=Exists(subquery))
         )
 
         return paginate(results_object=modules, cursor=cursor)
@@ -72,13 +77,27 @@ class ModuleQuery:
         project: strawberry.ID,
         module: strawberry.ID,
     ) -> ModuleType:
-        module_details = await sync_to_async(Module.objects.get)(
+        fav_subquery = UserFavorite.objects.filter(
             workspace__slug=slug,
             project_id=project,
-            id=module,
-            project__project_projectmember__member=info.context.user,
-            project__project_projectmember__is_active=True,
+            user=info.context.user,
+            entity_type="module",
+            entity_identifier=OuterRef("pk"),
+        ).values("id")
+
+        module_query = (
+            Module.objects.filter(
+                workspace__slug=slug,
+                project_id=project,
+                id=module,
+                project__project_projectmember__member=info.context.user,
+                project__project_projectmember__is_active=True,
+            )
+            .annotate(is_favorite=Exists(fav_subquery))
+            .annotate(favorite_id=Subquery(fav_subquery[:1]))
         )
+
+        module_details = await sync_to_async(module_query.first)()
 
         # Background task to update recent visited project
         user_id = info.context.user.id
@@ -91,29 +110,6 @@ class ModuleQuery:
         )
 
         return module_details
-
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def moduleIds(
-        self,
-        info: Info,
-        slug: str,
-        project: strawberry.ID,
-        moduleIds: list[strawberry.ID],
-    ) -> list[ModuleType]:
-        modules = await sync_to_async(list)(
-            Module.objects.filter(workspace__slug=slug)
-            .filter(
-                project_id=project,
-                id__in=moduleIds,
-            )
-            .filter(
-                project__project_projectmember__member=info.context.user,
-                project__project_projectmember__is_active=True,
-            )
-        )
-        return modules
 
 
 # module issue user properties

@@ -6,19 +6,23 @@ import omitBy from "lodash/omitBy";
 import uniqBy from "lodash/uniqBy";
 import { observer } from "mobx-react";
 // ui
-import { TOAST_TYPE, ToggleSwitch, Tooltip, setPromiseToast, setToast } from "@plane/ui";
+import { Button, InfoIcon, TOAST_TYPE, Tooltip, setPromiseToast, setToast } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // plane web components
 import {
+  AttributePill,
   IssuePropertyLogo,
   IssuePropertyQuickActions,
-  PropertyAttributesDropdown,
-  PropertyMandatoryFieldToggle,
-  PropertyTitleDropdown,
+  PropertyActiveCheckbox,
+  PropertyAttributes,
+  PropertyMandatoryFieldCheckbox,
+  PropertyTitleDescriptionInput,
   PropertyTypeDropdown,
   TIssuePropertyCreateList,
 } from "@/plane-web/components/issue-types";
+// plane web helpers
+import { getIssuePropertyAttributeDisplayName } from "@/plane-web/helpers/issue-properties.helper";
 // plane web hooks
 import { useIssueProperty, useIssueType, usePropertyOptions } from "@/plane-web/hooks/store";
 // plane web types
@@ -195,7 +199,9 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
         .filter((item) => !!item.name && !isEmpty(item))
         .map((option) => {
           delete option.key;
-          const originalOption = originalOptionsData?.find((optionData) => optionData.id === option.id);
+          const originalOption = originalOptionsData?.find(
+            (optionData: TIssuePropertyOptionCreateUpdateData) => optionData.id === option.id
+          );
           // If the option is new, include the entire object
           if (!originalOption) {
             return option;
@@ -323,8 +329,7 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
       }
       handlePropertyDataChange("default_value", []);
     }
-    // sync with server only if operation mode is not create/ update
-    handlePropertyDataChange("is_required", value, !issuePropertyOperationMode);
+    handlePropertyDataChange("is_required", value);
   };
 
   const handleEnableDisable = async (isActive: boolean) => {
@@ -352,81 +357,120 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
     });
   };
 
+  if (!issuePropertyOperationMode) {
+    const attributeDisplayName = getIssuePropertyAttributeDisplayName(issuePropertyData);
+    return (
+      <div
+        className={cn(
+          "w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 group p-3 my-2.5 rounded-lg bg-custom-background-100 border border-custom-border-100 cursor-default overflow-hidden"
+        )}
+        onDoubleClick={() => setIssuePropertyOperationMode("update")}
+      >
+        <div className="flex items-center gap-1 text-sm font-medium">
+          {issuePropertyData?.logo_props && (
+            <div className="flex-shrink-0 size-5 grid place-items-center">
+              <IssuePropertyLogo
+                icon_props={issuePropertyData.logo_props.icon}
+                colorClassName={issuePropertyData.is_active ? "text-custom-text-200" : "text-custom-text-300"}
+              />
+            </div>
+          )}
+          <div className="flex gap-1 w-full max-w-48 sm:max-w-[30vw] items-center">
+            <span
+              className={cn(
+                "px-1 truncate",
+                issuePropertyData.is_active ? "text-custom-text-200" : "text-custom-text-300"
+              )}
+            >
+              {issuePropertyData.display_name ?? ""}
+            </span>
+            {issuePropertyData.description && (
+              <Tooltip tooltipContent={issuePropertyData.description} position="right">
+                <span className="flex-shrink-0">
+                  <InfoIcon className="size-3 stroke-black cursor-help outline-none" stroke="black" />
+                </span>
+              </Tooltip>
+            )}
+          </div>
+        </div>
+        <div className="flex flex-shrink-0 items-center justify-end gap-2.5 transition-all duration-200">
+          <div className="flex items-center gap-2.5 select-none">
+            {attributeDisplayName && <AttributePill data={attributeDisplayName} />}
+            {issuePropertyData.is_required && <AttributePill data="Mandatory" />}
+            {issuePropertyData.default_value && issuePropertyData.default_value.length > 0 && (
+              <AttributePill data="Default" />
+            )}
+            {issuePropertyData.is_active && <AttributePill data="Active" className="bg-green-500/15 text-green-600" />}
+            {!issuePropertyData.is_active && <AttributePill data="Disabled" className="bg-red-500/15 text-red-600" />}
+          </div>
+          <div
+            className="flex-shrink-0 border-l border-custom-border-100 pl-2"
+            onDoubleClick={(e) => e.stopPropagation()}
+          >
+            <IssuePropertyQuickActions
+              isPropertyDisabled={!issuePropertyData.is_active}
+              onDisable={async () => handlePropertyDataChange("is_active", false, true)}
+              onDelete={handleDelete}
+              onIssuePropertyOperationMode={(mode) => setIssuePropertyOperationMode(mode)}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       className={cn(
-        "w-full h-8 flex items-center gap-2 group px-2 py-3 my-2 text-sm rounded hover:bg-custom-background-90 cursor-default",
-        {
-          "bg-yellow-500/15 hover:bg-yellow-500/15": issuePropertyOperationMode,
-        }
+        "w-full flex flex-col items-center justify-center my-2.5 rounded-lg bg-custom-background-100 border border-custom-border-100 divide-y divide-custom-border-100 cursor-default"
       )}
     >
-      <div className="whitespace-nowrap w-48 grow flex items-center gap-2 text-sm font-medium">
-        {issuePropertyData?.logo_props && (
-          <div className="flex-shrink-0 size-5 grid place-items-center">
-            <IssuePropertyLogo icon_props={issuePropertyData.logo_props.icon} colorClassName="text-custom-text-200" />
-          </div>
-        )}
-        <div className="w-full truncate overflow-hidden">
-          <PropertyTitleDropdown
+      <div className="w-full grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-x sm:divide-y-0 divide-custom-border-100 ease-out transition-all duration-500">
+        <div className="p-3">
+          <PropertyTitleDescriptionInput
             propertyDetail={issuePropertyData}
-            currentOperationMode={issuePropertyOperationMode}
             error={issuePropertyError.display_name}
             onPropertyDetailChange={handlePropertyDataChange}
           />
         </div>
-      </div>
-      <div className="whitespace-nowrap w-36 text-sm">
-        <PropertyTypeDropdown
-          issueTypeId={issueTypeId}
-          propertyType={issuePropertyData.property_type}
-          propertyRelationType={issuePropertyData.relation_type}
-          currentOperationMode={issuePropertyOperationMode}
-          handlePropertyObjectChange={handlePropertyObjectChange}
-          error={issuePropertyError.property_type}
-        />
-      </div>
-      <div className="whitespace-nowrap w-36 text-sm">
-        <PropertyAttributesDropdown
-          issueTypeId={issueTypeId}
-          propertyDetail={issuePropertyData}
-          currentOperationMode={issuePropertyOperationMode}
-          onPropertyDetailChange={handlePropertyDataChange}
-          disabled={!issuePropertyData.property_type}
-          error={issuePropertyError}
-        />
-      </div>
-      <div className="w-20 text-center">
-        <PropertyMandatoryFieldToggle
-          value={!!issuePropertyData.is_required}
-          defaultValue={getDefaultValues()}
-          onMandatoryFieldChange={handleMandatoryFieldChange}
-          isDisabled={isMandatoryFieldDisabled}
-        />
-      </div>
-      <Tooltip
-        className="shadow"
-        tooltipContent={!!issuePropertyData.is_active ? "Click to disable" : "Click to enable"}
-        position="bottom"
-      >
-        <div className="w-20 text-center whitespace-nowrap">
-          <ToggleSwitch
-            value={!!issuePropertyData.is_active}
-            onChange={() => handleEnableDisable(!issuePropertyData.is_active)}
-          />
+        <div className="px-1 py-2">
+          <div className="flex flex-col gap-3 px-2 pb-2 max-h-72 overflow-scroll vertical-scrollbar scrollbar-xs">
+            <PropertyTypeDropdown
+              issueTypeId={issueTypeId}
+              propertyType={issuePropertyData.property_type}
+              propertyRelationType={issuePropertyData.relation_type}
+              currentOperationMode={issuePropertyOperationMode}
+              handlePropertyObjectChange={handlePropertyObjectChange}
+              error={issuePropertyError.property_type}
+            />
+            <PropertyAttributes
+              issueTypeId={issueTypeId}
+              propertyDetail={issuePropertyData}
+              currentOperationMode={issuePropertyOperationMode}
+              onPropertyDetailChange={handlePropertyDataChange}
+              error={issuePropertyError}
+            />
+          </div>
         </div>
-      </Tooltip>
-      <div className="relative w-16 whitespace-nowrap text-right text-sm font-medium">
-        <IssuePropertyQuickActions
-          currentOperationMode={issuePropertyOperationMode}
-          isPropertyDisabled={!issuePropertyData.is_active}
-          isSubmitting={isSubmitting}
-          onCreateUpdate={handleCreateUpdate}
-          onDiscard={handleDiscard}
-          onDelete={handleDelete}
-          onDisable={async () => handlePropertyDataChange("is_active", false, true)}
-          onIssuePropertyOperationMode={(mode) => setIssuePropertyOperationMode(mode)}
-        />
+      </div>
+      <div className="w-full flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-4 py-3">
+        <div className="flex gap-4">
+          <PropertyMandatoryFieldCheckbox
+            value={!!issuePropertyData.is_required}
+            defaultValue={getDefaultValues()}
+            onMandatoryFieldChange={handleMandatoryFieldChange}
+            isDisabled={isMandatoryFieldDisabled}
+          />
+          <PropertyActiveCheckbox value={!!issuePropertyData.is_active} onEnableDisable={handleEnableDisable} />
+        </div>
+        <div className="flex items-center justify-end gap-2">
+          <Button variant="neutral-primary" size="sm" onClick={handleDiscard} disabled={isSubmitting} className="py-1">
+            {issuePropertyOperationMode === "create" ? "Cancel" : "Discard"}
+          </Button>
+          <Button variant="primary" size="sm" onClick={handleCreateUpdate} disabled={isSubmitting} className="py-1">
+            {isSubmitting ? "Confirming" : issuePropertyOperationMode === "create" ? "Create" : "Update"}
+          </Button>
+        </div>
       </div>
     </div>
   );

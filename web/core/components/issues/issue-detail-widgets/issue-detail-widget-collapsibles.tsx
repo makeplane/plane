@@ -10,6 +10,8 @@ import {
 } from "@/components/issues/issue-detail-widgets";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
+// Plane-web
+import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
 
 type Props = {
   workspaceSlug: string;
@@ -24,19 +26,23 @@ export const IssueDetailWidgetCollapsibles: FC<Props> = observer((props) => {
   const {
     issue: { getIssueById },
     subIssues: { subIssuesByIssueId },
-    relation: { getRelationsByIssueId },
+    attachment: { getAttachmentsUploadStatusByIssueId },
+    relation: { getRelationCountByIssueId },
   } = useIssueDetail();
 
   // derived values
   const issue = getIssueById(issueId);
   const subIssues = subIssuesByIssueId(issueId);
-  const issueRelations = getRelationsByIssueId(issueId);
+  const ISSUE_RELATION_OPTIONS = useTimeLineRelationOptions();
+  const issueRelationsCount = getRelationCountByIssueId(issueId, ISSUE_RELATION_OPTIONS);
 
   // render conditions
   const shouldRenderSubIssues = !!subIssues && subIssues.length > 0;
-  const shouldRenderRelations = Object.values(issueRelations ?? {}).some((relation) => relation.length > 0);
+  const shouldRenderRelations = issueRelationsCount > 0;
   const shouldRenderLinks = !!issue?.link_count && issue?.link_count > 0;
-  const shouldRenderAttachments = !!issue?.attachment_count && issue?.attachment_count > 0;
+  const attachmentUploads = getAttachmentsUploadStatusByIssueId(issueId);
+  const shouldRenderAttachments =
+    (!!issue?.attachment_count && issue?.attachment_count > 0) || (!!attachmentUploads && attachmentUploads.length > 0);
 
   return (
     <div className="flex flex-col">

@@ -1,5 +1,6 @@
 "use client";
 import React, { FC } from "react";
+import { observer } from "mobx-react";
 // components
 import { IssueAttachmentItemList } from "@/components/issues/attachment";
 // helper
@@ -12,16 +13,17 @@ type Props = {
   disabled: boolean;
 };
 
-export const IssueAttachmentsCollapsibleContent: FC<Props> = (props) => {
+export const IssueAttachmentsCollapsibleContent: FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, issueId, disabled } = props;
   // helper
-  const handleAttachmentOperations = useAttachmentOperations(workspaceSlug, projectId, issueId);
+  const attachmentHelpers = useAttachmentOperations(workspaceSlug, projectId, issueId);
   return (
     <IssueAttachmentItemList
       workspaceSlug={workspaceSlug}
+      projectId={projectId}
       issueId={issueId}
       disabled={disabled}
-      handleAttachmentOperations={handleAttachmentOperations}
+      attachmentHelpers={attachmentHelpers}
     />
   );
-};
+});

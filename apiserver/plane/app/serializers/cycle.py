@@ -5,11 +5,7 @@ from rest_framework import serializers
 from .base import BaseSerializer
 
 from .issue import IssueStateSerializer
-from plane.db.models import (
-    Cycle,
-    CycleIssue,
-    CycleUserProperties,
-)
+from plane.db.models import Cycle, CycleIssue, CycleUserProperties
 from plane.ee.models import EntityProgress
 
 
@@ -20,20 +16,13 @@ class CycleWriteSerializer(BaseSerializer):
             and data.get("end_date", None) is not None
             and data.get("start_date", None) > data.get("end_date", None)
         ):
-            raise serializers.ValidationError(
-                "Start date cannot exceed end date"
-            )
+            raise serializers.ValidationError("Start date cannot exceed end date")
         return data
 
     class Meta:
         model = Cycle
         fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "owned_by",
-            "archived_at",
-        ]
+        read_only_fields = ["workspace", "project", "owned_by", "archived_at"]
 
 
 class CycleSerializer(BaseSerializer):
@@ -89,22 +78,14 @@ class CycleIssueSerializer(BaseSerializer):
     class Meta:
         model = CycleIssue
         fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "cycle",
-        ]
+        read_only_fields = ["workspace", "project", "cycle"]
 
 
 class CycleUserPropertiesSerializer(BaseSerializer):
     class Meta:
         model = CycleUserProperties
         fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "cycle" "user",
-        ]
+        read_only_fields = ["workspace", "project", "cycle", "user"]
 
 
 class EntityProgressSerializer(BaseSerializer):

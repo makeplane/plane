@@ -2,8 +2,6 @@
 import strawberry
 
 # Python Standard Library Imports
-import boto3
-from django.conf import settings
 
 # Strawberry Imports
 from strawberry.types import Info

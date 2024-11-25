@@ -65,9 +65,9 @@ export const ProjectsListHeader = observer(() => {
             {/* layout selection */}
             {!isArchived && <ProjectLayoutSelection workspaceSlug={workspaceSlug.toString()} />}{" "}
             {/* attributes dropdown */}
-            <ProjectAttributesDropdown workspaceSlug={workspaceSlug.toString()} workspaceId={workspaceId} />
+            <ProjectAttributesDropdown workspaceSlug={workspaceSlug.toString()} workspaceId={workspaceId} isArchived={isArchived}/>
             {/* display filters dropdown */}
-            <ProjectDisplayFiltersDropdown workspaceSlug={workspaceSlug.toString()} />
+            <ProjectDisplayFiltersDropdown workspaceSlug={workspaceSlug.toString()} isArchived={isArchived} />
           </div>
           {/* create project button */}
           {!isArchived && <ProjectCreateButton />}

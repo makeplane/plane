@@ -15,6 +15,8 @@ from strawberry.types import Info
 # Module Imports
 from plane.db.models import (
     Issue,
+    IssueLabel,
+    IssueAssignee,
     IssueUserProperty,
     IssueActivity,
     IssueComment,
@@ -61,8 +63,8 @@ class IssuesType:
     is_draft: bool
     external_source: Optional[str]
     external_id: Optional[str]
-    created_by: strawberry.ID
-    updated_by: strawberry.ID
+    created_by: Optional[strawberry.ID]
+    updated_by: Optional[strawberry.ID]
     created_at: datetime
     updated_at: datetime
     cycle: Optional[strawberry.ID]
@@ -91,22 +93,30 @@ class IssuesType:
         return self.estimate_point_id
 
     @strawberry.field
-    def created_by(self) -> int:
-        return self.created_by_id
-
-    @strawberry.field
     def type(self) -> int:
         return self.type_id
 
     @strawberry.field
     async def assignees(self) -> Optional[list[strawberry.ID]]:
-        assignees = await sync_to_async(list)(self.assignees.all())
-        return [assignee.id for assignee in assignees]
+        assignee_ids = await sync_to_async(
+            lambda: list(
+                IssueAssignee.objects.filter(issue_id=self.id, deleted_at=None)
+                .order_by("created_at")
+                .values_list("assignee_id", flat=True)
+            )
+        )()
+        return [str(assignee_id) for assignee_id in assignee_ids]
 
     @strawberry.field
     async def labels(self) -> Optional[list[strawberry.ID]]:
-        labels = await sync_to_async(list)(self.labels.all())
-        return [label.id for label in labels]
+        label_ids = await sync_to_async(
+            lambda: list(
+                IssueLabel.objects.filter(issue_id=self.id, deleted_at=None)
+                .order_by("created_at")
+                .values_list("label_id", flat=True)
+            )
+        )()
+        return [str(label_id) for label_id in label_ids]
 
     @strawberry.field
     async def cycle(self, info: Info) -> strawberry.ID:
@@ -131,9 +141,17 @@ class IssuesType:
         # Return the module IDs as strings
         return [str(module_id) for module_id in module_issues]
 
-    @strawberry.field
+    @strawberry_django.field
     def project_identifier(self) -> Optional[str]:
         return self.project.identifier
+
+    @strawberry_django.field
+    def parent_project_id(self) -> Optional[str]:
+        return self.parent.project.id if self.parent else None
+
+    @strawberry_django.field
+    def parent_project_identifier(self) -> Optional[str]:
+        return self.parent.project.identifier if self.parent else None
 
 
 @strawberry_django.type(IssueUserProperty)

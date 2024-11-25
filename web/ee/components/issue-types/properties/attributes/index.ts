@@ -6,3 +6,4 @@ export * from "./dropdown";
 export * from "./boolean";
 export * from "./date-picker";
 export * from "./member-picker";
+export * from "./attribute-pill";

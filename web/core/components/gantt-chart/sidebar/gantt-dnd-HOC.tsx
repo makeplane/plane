@@ -34,7 +34,7 @@ export const GanttDnDHOC = observer((props: Props) => {
       draggable({
         element,
         canDrag: () => isDragEnabled,
-        getInitialData: () => ({ id }),
+        getInitialData: () => ({ id, dragInstanceId: "GANTT_REORDER" }),
         onDragStart: () => {
           setIsDragging(true);
         },
@@ -44,7 +44,7 @@ export const GanttDnDHOC = observer((props: Props) => {
       }),
       dropTargetForElements({
         element,
-        canDrop: ({ source }) => source?.data?.id !== id,
+        canDrop: ({ source }) => source?.data?.id !== id && source?.data?.dragInstanceId === "GANTT_REORDER",
         getData: ({ input, element }) => {
           const data = { id };
 

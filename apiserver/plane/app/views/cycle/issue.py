@@ -12,11 +12,10 @@ from django.views.decorators.gzip import gzip_page
 from rest_framework import status
 from rest_framework.response import Response
 
+
 # Module imports
 from .. import BaseViewSet
-from plane.app.serializers import (
-    CycleIssueSerializer,
-)
+from plane.app.serializers import CycleIssueSerializer
 from plane.db.models import (
     Cycle,
     Issue,
@@ -35,10 +34,7 @@ from plane.utils.grouper import (
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
-from plane.utils.paginator import (
-    GroupedOffsetPaginator,
-    SubGroupedOffsetPaginator,
-)
+from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 from plane.app.permissions import allow_permission, ROLE
 
 
@@ -49,19 +45,14 @@ class CycleIssueViewSet(BaseViewSet):
     webhook_event = "cycle_issue"
     bulk = True
 
-    filterset_fields = [
-        "issue__labels__id",
-        "issue__assignees__id",
-    ]
+    filterset_fields = ["issue__labels__id", "issue__assignees__id"]
 
     def get_queryset(self):
         return self.filter_queryset(
             super()
             .get_queryset()
             .annotate(
-                sub_issues_count=Issue.issue_objects.filter(
-                    parent=OuterRef("issue_id")
-                )
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("issue_id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -83,29 +74,20 @@ class CycleIssueViewSet(BaseViewSet):
         )
 
     @method_decorator(gzip_page)
-    @allow_permission(
-        [
-            ROLE.ADMIN,
-            ROLE.MEMBER,
-        ]
-    )
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def list(self, request, slug, project_id, cycle_id):
         order_by_param = request.GET.get("order_by", "created_at")
         filters = issue_filters(request.query_params, "GET")
         issue_queryset = (
             Issue.issue_objects.filter(
-                issue_cycle__cycle_id=cycle_id,
-                issue_cycle__deleted_at__isnull=True,
+                issue_cycle__cycle_id=cycle_id, issue_cycle__deleted_at__isnull=True
             )
             .filter(project_id=project_id)
             .filter(workspace__slug=slug)
             .filter(**filters)
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related(
-                "assignees",
-                "labels",
-                "issue_module__module",
-                "issue_cycle__cycle",
+                "assignees", "labels", "issue_module__module", "issue_cycle__cycle"
             )
             .filter(**filters)
             .annotate(
@@ -131,9 +113,7 @@ class CycleIssueViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
-                sub_issues_count=Issue.issue_objects.filter(
-                    parent=OuterRef("id")
-                )
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -145,8 +125,7 @@ class CycleIssueViewSet(BaseViewSet):
         issue_queryset = issue_queryset.filter(**filters)
         # Issue queryset
         issue_queryset, order_by_param = order_issue_queryset(
-            issue_queryset=issue_queryset,
-            order_by_param=order_by_param,
+            issue_queryset=issue_queryset, order_by_param=order_by_param
         )
 
         # Group by
@@ -155,9 +134,7 @@ class CycleIssueViewSet(BaseViewSet):
 
         # issue queryset
         issue_queryset = issue_queryset_grouper(
-            queryset=issue_queryset,
-            group_by=group_by,
-            sub_group_by=sub_group_by,
+            queryset=issue_queryset, group_by=group_by, sub_group_by=sub_group_by
         )
 
         if group_by:
@@ -177,9 +154,7 @@ class CycleIssueViewSet(BaseViewSet):
                         order_by=order_by_param,
                         queryset=issue_queryset,
                         on_results=lambda issues: issue_on_results(
-                            group_by=group_by,
-                            issues=issues,
-                            sub_group_by=sub_group_by,
+                            group_by=group_by, issues=issues, sub_group_by=sub_group_by
                         ),
                         paginator_cls=SubGroupedOffsetPaginator,
                         group_by_fields=issue_group_values(
@@ -197,10 +172,10 @@ class CycleIssueViewSet(BaseViewSet):
                         group_by_field_name=group_by,
                         sub_group_by_field_name=sub_group_by,
                         count_filter=Q(
-                            Q(issue_inbox__status=1)
-                            | Q(issue_inbox__status=-1)
-                            | Q(issue_inbox__status=2)
-                            | Q(issue_inbox__isnull=True),
+                            Q(issue_intake__status=1)
+                            | Q(issue_intake__status=-1)
+                            | Q(issue_intake__status=2)
+                            | Q(issue_intake__isnull=True),
                             archived_at__isnull=True,
                             is_draft=False,
                         ),
@@ -213,9 +188,7 @@ class CycleIssueViewSet(BaseViewSet):
                     order_by=order_by_param,
                     queryset=issue_queryset,
                     on_results=lambda issues: issue_on_results(
-                        group_by=group_by,
-                        issues=issues,
-                        sub_group_by=sub_group_by,
+                        group_by=group_by, issues=issues, sub_group_by=sub_group_by
                     ),
                     paginator_cls=GroupedOffsetPaginator,
                     group_by_fields=issue_group_values(
@@ -226,10 +199,10 @@ class CycleIssueViewSet(BaseViewSet):
                     ),
                     group_by_field_name=group_by,
                     count_filter=Q(
-                        Q(issue_inbox__status=1)
-                        | Q(issue_inbox__status=-1)
-                        | Q(issue_inbox__status=2)
-                        | Q(issue_inbox__isnull=True),
+                        Q(issue_intake__status=1)
+                        | Q(issue_intake__status=-1)
+                        | Q(issue_intake__status=2)
+                        | Q(issue_intake__isnull=True),
                         archived_at__isnull=True,
                         is_draft=False,
                     ),
@@ -251,8 +224,7 @@ class CycleIssueViewSet(BaseViewSet):
 
         if not issues:
             return Response(
-                {"error": "Issues are required"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"error": "Issues are required"}, status=status.HTTP_400_BAD_REQUEST
             )
 
         cycle = Cycle.objects.get(
@@ -269,13 +241,9 @@ class CycleIssueViewSet(BaseViewSet):
 
         # Get all CycleIssues already created
         cycle_issues = list(
-            CycleIssue.objects.filter(
-                ~Q(cycle_id=cycle_id), issue_id__in=issues
-            )
+            CycleIssue.objects.filter(~Q(cycle_id=cycle_id), issue_id__in=issues)
         )
-        existing_issues = [
-            str(cycle_issue.issue_id) for cycle_issue in cycle_issues
-        ]
+        existing_issues = [str(cycle_issue.issue_id) for cycle_issue in cycle_issues]
         new_issues = list(set(issues) - set(existing_issues))
 
         # Fetch issue details
@@ -320,8 +288,7 @@ class CycleIssueViewSet(BaseViewSet):
                         estimate_point_id=issue_dict[issue_id].estimate_point_id,
                         estimate_value=(
                             issue_dict[issue_id].estimate_point.value
-                            if estimate_type
-                            and issue_dict[issue_id].estimate_point
+                            if estimate_type and issue_dict[issue_id].estimate_point
                             else None
                         ),
                         workspace_id=cycle.workspace_id,
@@ -345,8 +312,7 @@ class CycleIssueViewSet(BaseViewSet):
                         estimate_point_id=issue_dict[issue_id].estimate_point_id,
                         estimate_value=(
                             issue_dict[issue_id].estimate_point.value
-                            if estimate_type
-                            and issue_dict[issue_id].estimate_point
+                            if estimate_type and issue_dict[issue_id].estimate_point
                             else None
                         ),
                         workspace_id=cycle.workspace_id,
@@ -377,9 +343,7 @@ class CycleIssueViewSet(BaseViewSet):
             )
 
         # Update the cycle issues
-        CycleIssue.objects.bulk_update(
-            updated_records, ["cycle_id"], batch_size=100
-        )
+        CycleIssue.objects.bulk_update(updated_records, ["cycle_id"], batch_size=100)
         # Capture Issue Activity
         issue_activity.delay(
             type="cycle.activity.created",

@@ -76,7 +76,7 @@ export const ImageExtension = (fileHandler: TFileHandler) => {
 
     addCommands() {
       return {
-        getImageSource: (path: string) => () => getAssetSrc(path),
+        getImageSource: (path: string) => async () => await getAssetSrc(path),
       };
     },
 

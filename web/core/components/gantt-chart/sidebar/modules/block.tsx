@@ -1,28 +1,29 @@
 import { observer } from "mobx-react";
-// hooks
+// Plane
 import { Row } from "@plane/ui";
-import { BLOCK_HEIGHT } from "@/components/gantt-chart/constants";
-import { useGanttChart } from "@/components/gantt-chart/hooks";
 // components
-import { IGanttBlock } from "@/components/gantt-chart/types";
+import { BLOCK_HEIGHT } from "@/components/gantt-chart/constants";
 import { ModuleGanttSidebarBlock } from "@/components/modules";
 // helpers
 import { cn } from "@/helpers/common.helper";
-import { findTotalDaysInRange } from "@/helpers/date-time.helper";
-// types
-// constants
+// hooks
+import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 
 type Props = {
-  block: IGanttBlock;
+  blockId: string;
   isDragging: boolean;
 };
 
 export const ModulesSidebarBlock: React.FC<Props> = observer((props) => {
-  const { block, isDragging } = props;
+  const { blockId, isDragging } = props;
   // store hooks
-  const { updateActiveBlockId, isBlockActive } = useGanttChart();
+  const { getBlockById, updateActiveBlockId, isBlockActive, getNumberOfDaysFromPosition } = useTimeLineChartStore();
+  const block = getBlockById(blockId);
 
-  const duration = findTotalDaysInRange(block.start_date, block.target_date);
+  if (!block) return <></>;
+
+  const isBlockComplete = !!block.start_date && !!block.target_date;
+  const duration = isBlockComplete ? getNumberOfDaysFromPosition(block?.position?.width) : undefined;
 
   return (
     <div

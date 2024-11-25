@@ -13,21 +13,18 @@ from rest_framework.response import Response
 
 # Module imports
 from .base import BaseAPIView
-from plane.db.models import DeployBoard, FileAsset
+from plane.db.models import DeployBoard, FileAsset, Project
 from plane.settings.storage import S3Storage
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
+from plane.ee.models import IntakeSetting
 
 
 class EntityAssetEndpoint(BaseAPIView):
     def get_permissions(self):
         if self.request.method == "GET":
-            permission_classes = [
-                AllowAny,
-            ]
+            permission_classes = [AllowAny]
         else:
-            permission_classes = [
-                IsAuthenticated,
-            ]
+            permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
 
     def get(self, request, anchor, pk):
@@ -54,32 +51,42 @@ class EntityAssetEndpoint(BaseAPIView):
         # Check if the asset is uploaded
         if not asset.is_uploaded:
             return Response(
-                {
-                    "error": "The requested asset could not be found.",
-                },
+                {"error": "The requested asset could not be found."},
                 status=status.HTTP_404_NOT_FOUND,
             )
 
         # Get the presigned URL
         storage = S3Storage(request=request)
         # Generate a presigned URL to share an S3 object
-        signed_url = storage.generate_presigned_url(
-            object_name=asset.asset.name,
-        )
+        signed_url = storage.generate_presigned_url(object_name=asset.asset.name)
         # Redirect to the signed URL
         return HttpResponseRedirect(signed_url)
 
     def post(self, request, anchor):
         # Get the deploy board
-        deploy_board = DeployBoard.objects.filter(
-            anchor=anchor, entity_name="project"
-        ).first()
+        deploy_board = DeployBoard.objects.filter(anchor=anchor).first()
+
         # Check if the project is published
         if not deploy_board:
             return Response(
-                {"error": "Project is not published"},
-                status=status.HTTP_404_NOT_FOUND,
+                {"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND
             )
+
+        # if deploy board is not found
+        if deploy_board.entity_name == "intake":
+            # check if the intake is enabled and intake form is enabled
+            if not (
+                IntakeSetting.objects.filter(
+                    intake=deploy_board.entity_identifier, is_form_enabled=True
+                ).exists()
+                and Project.objects.filter(
+                    pk=deploy_board.project_id, intake_view=True
+                ).exists()
+            ):
+                return Response(
+                    {"error": "Intake is not enabled"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
 
         # Get the asset
         name = request.data.get("name")
@@ -91,15 +98,18 @@ class EntityAssetEndpoint(BaseAPIView):
         # Check if the entity type is allowed
         if entity_type not in FileAsset.EntityTypeContext.values:
             return Response(
-                {
-                    "error": "Invalid entity type.",
-                    "status": False,
-                },
+                {"error": "Invalid entity type.", "status": False},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         # Check if the file type is allowed
-        allowed_types = ["image/jpeg", "image/png", "image/webp"]
+        allowed_types = [
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+            "image/jpg",
+            "image/gif",
+        ]
         if type not in allowed_types:
             return Response(
                 {
@@ -114,11 +124,7 @@ class EntityAssetEndpoint(BaseAPIView):
 
         # Create a File Asset
         asset = FileAsset.objects.create(
-            attributes={
-                "name": name,
-                "type": type,
-                "size": size,
-            },
+            attributes={"name": name, "type": type, "size": size},
             asset=asset_key,
             size=size,
             workspace=deploy_board.workspace,
@@ -132,9 +138,7 @@ class EntityAssetEndpoint(BaseAPIView):
         storage = S3Storage(request=request)
         # Generate a presigned URL to share an S3 object
         presigned_url = storage.generate_presigned_post(
-            object_name=asset_key,
-            file_type=type,
-            file_size=size,
+            object_name=asset_key, file_type=type, file_size=size
         )
         # Return the presigned URL
         return Response(
@@ -149,13 +153,12 @@ class EntityAssetEndpoint(BaseAPIView):
     def patch(self, request, anchor, pk):
         # Get the deploy board
         deploy_board = DeployBoard.objects.filter(
-            anchor=anchor, entity_name="project"
+            anchor=anchor
         ).first()
         # Check if the project is published
         if not deploy_board:
             return Response(
-                {"error": "Project is not published"},
-                status=status.HTTP_404_NOT_FOUND,
+                {"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND
             )
 
         # get the asset id
@@ -169,8 +172,7 @@ class EntityAssetEndpoint(BaseAPIView):
         # update the attributes
         asset.attributes = request.data.get("attributes", asset.attributes)
         # save the asset
-        asset.created_by = request.user
-        asset.save()
+        asset.save(update_fields=["attributes", "is_uploaded"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def delete(self, request, anchor, pk):
@@ -181,20 +183,17 @@ class EntityAssetEndpoint(BaseAPIView):
         # Check if the project is published
         if not deploy_board:
             return Response(
-                {"error": "Project is not published"},
-                status=status.HTTP_404_NOT_FOUND,
+                {"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND
             )
         # Get the asset
         asset = FileAsset.objects.get(
-            id=pk,
-            workspace=deploy_board.workspace,
-            project_id=deploy_board.project_id,
+            id=pk, workspace=deploy_board.workspace, project_id=deploy_board.project_id
         )
         # Check deleted assets
         asset.is_deleted = True
         asset.deleted_at = timezone.now()
         # Save the asset
-        asset.save()
+        asset.save(update_fields=["is_deleted", "deleted_at"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -209,17 +208,14 @@ class AssetRestoreEndpoint(BaseAPIView):
         # Check if the project is published
         if not deploy_board:
             return Response(
-                {"error": "Project is not published"},
-                status=status.HTTP_404_NOT_FOUND,
+                {"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND
             )
 
         # Get the asset
-        asset = FileAsset.all_objects.get(
-            id=asset_id, workspace=deploy_board.workspace
-        )
+        asset = FileAsset.all_objects.get(id=asset_id, workspace=deploy_board.workspace)
         asset.is_deleted = False
         asset.deleted_at = None
-        asset.save()
+        asset.save(update_fields=["is_deleted", "deleted_at"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -234,8 +230,7 @@ class EntityBulkAssetEndpoint(BaseAPIView):
         # Check if the project is published
         if not deploy_board:
             return Response(
-                {"error": "Project is not published"},
-                status=status.HTTP_404_NOT_FOUND,
+                {"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND
             )
 
         asset_ids = request.data.get("asset_ids", [])
@@ -243,10 +238,7 @@ class EntityBulkAssetEndpoint(BaseAPIView):
         # Check if the asset ids are provided
         if not asset_ids:
             return Response(
-                {
-                    "error": "No asset ids provided.",
-                },
-                status=status.HTTP_400_BAD_REQUEST,
+                {"error": "No asset ids provided."}, status=status.HTTP_400_BAD_REQUEST
             )
 
         # get the asset id
@@ -261,19 +253,12 @@ class EntityBulkAssetEndpoint(BaseAPIView):
         # Check if the asset is uploaded
         if not asset:
             return Response(
-                {
-                    "error": "The requested asset could not be found.",
-                },
+                {"error": "The requested asset could not be found."},
                 status=status.HTTP_404_NOT_FOUND,
             )
 
         # Check if the entity type is allowed
-        if (
-            asset.entity_type
-            == FileAsset.EntityTypeContext.COMMENT_DESCRIPTION
-        ):
+        if asset.entity_type == FileAsset.EntityTypeContext.COMMENT_DESCRIPTION:
             # update the attributes
-            assets.update(
-                comment_id=entity_id,
-            )
+            assets.update(comment_id=entity_id)
         return Response(status=status.HTTP_204_NO_CONTENT)

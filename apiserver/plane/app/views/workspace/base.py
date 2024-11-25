@@ -7,14 +7,7 @@ from dateutil.relativedelta import relativedelta
 
 # Django imports
 from django.db import IntegrityError
-from django.db.models import (
-    Count,
-    F,
-    Func,
-    OuterRef,
-    Prefetch,
-    Q,
-)
+from django.db.models import Count, F, Func, OuterRef, Prefetch, Q
 from django.db.models.fields import DateField
 from django.db.models.functions import Cast, ExtractDay, ExtractWeek
 from django.http import HttpResponse
@@ -31,10 +24,7 @@ from plane.app.permissions import (
 )
 
 # Module imports
-from plane.app.serializers import (
-    WorkSpaceSerializer,
-    WorkspaceThemeSerializer,
-)
+from plane.app.serializers import WorkSpaceSerializer, WorkspaceThemeSerializer
 from plane.app.views.base import BaseAPIView, BaseViewSet
 from plane.db.models import (
     Issue,
@@ -44,7 +34,6 @@ from plane.db.models import (
     WorkspaceTheme,
 )
 from plane.app.permissions import ROLE, allow_permission
-from plane.utils.cache import cache_response, invalidate_cache
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
 from django.views.decorators.vary import vary_on_cookie
@@ -56,25 +45,17 @@ from django.conf import settings
 class WorkSpaceViewSet(BaseViewSet):
     model = Workspace
     serializer_class = WorkSpaceSerializer
-    permission_classes = [
-        WorkSpaceBasePermission,
-    ]
+    permission_classes = [WorkSpaceBasePermission]
 
-    search_fields = [
-        "name",
-    ]
-    filterset_fields = [
-        "owner",
-    ]
+    search_fields = ["name"]
+    filterset_fields = ["owner"]
 
     lookup_field = "slug"
 
     def get_queryset(self):
         member_count = (
             WorkspaceMember.objects.filter(
-                workspace=OuterRef("id"),
-                member__is_bot=False,
-                is_active=True,
+                workspace=OuterRef("id"), member__is_bot=False, is_active=True
             )
             .order_by()
             .annotate(count=Func(F("id"), function="Count"))
@@ -88,9 +69,7 @@ class WorkSpaceViewSet(BaseViewSet):
             .values("count")
         )
         return (
-            self.filter_queryset(
-                super().get_queryset().select_related("owner")
-            )
+            self.filter_queryset(super().get_queryset().select_related("owner"))
             .order_by("name")
             .filter(
                 workspace_member__member=self.request.user,
@@ -101,9 +80,6 @@ class WorkSpaceViewSet(BaseViewSet):
             .select_related("owner")
         )
 
-    @invalidate_cache(path="/api/workspaces/", user=False)
-    @invalidate_cache(path="/api/users/me/workspaces/")
-    @invalidate_cache(path="/api/instances/", user=False)
     def create(self, request):
         try:
             serializer = WorkSpaceSerializer(data=request.data)
@@ -119,9 +95,7 @@ class WorkSpaceViewSet(BaseViewSet):
 
             if len(name) > 80 or len(slug) > 48:
                 return Response(
-                    {
-                        "error": "The maximum length for name is 80 and for slug is 48"
-                    },
+                    {"error": "The maximum length for name is 80 and for slug is 48"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -138,9 +112,7 @@ class WorkSpaceViewSet(BaseViewSet):
                 # Sync workspace members
                 member_sync_task.delay(slug)
 
-                return Response(
-                    serializer.data, status=status.HTTP_201_CREATED
-                )
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(
                 [serializer.errors[error][0] for error in serializer.errors],
                 status=status.HTTP_400_BAD_REQUEST,
@@ -153,36 +125,14 @@ class WorkSpaceViewSet(BaseViewSet):
                     status=status.HTTP_410_GONE,
                 )
 
-    @cache_response(60 * 60 * 2)
-    @allow_permission(
-        [
-            ROLE.ADMIN,
-            ROLE.MEMBER,
-            ROLE.GUEST,
-        ],
-        level="WORKSPACE",
-    )
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
-    @invalidate_cache(path="/api/workspaces/", user=False)
-    @invalidate_cache(path="/api/users/me/workspaces/")
-    @allow_permission(
-        [
-            ROLE.ADMIN,
-        ],
-        level="WORKSPACE",
-    )
+    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     def partial_update(self, request, *args, **kwargs):
         return super().partial_update(request, *args, **kwargs)
 
-    @invalidate_cache(path="/api/workspaces/", user=False)
-    @invalidate_cache(
-        path="/api/users/me/workspaces/", multiple=True, user=False
-    )
-    @invalidate_cache(
-        path="/api/users/me/settings/", multiple=True, user=False
-    )
     @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     def destroy(self, request, *args, **kwargs):
         # Get the workspace
@@ -216,27 +166,16 @@ class WorkSpaceViewSet(BaseViewSet):
 
 
 class UserWorkSpacesEndpoint(BaseAPIView):
-    search_fields = [
-        "name",
-    ]
-    filterset_fields = [
-        "owner",
-    ]
+    search_fields = ["name"]
+    filterset_fields = ["owner"]
 
-    @cache_response(60 * 60 * 2)
     @method_decorator(cache_control(private=True, max_age=12))
     @method_decorator(vary_on_cookie)
     def get(self, request):
-        fields = [
-            field
-            for field in request.GET.get("fields", "").split(",")
-            if field
-        ]
+        fields = [field for field in request.GET.get("fields", "").split(",") if field]
         member_count = (
             WorkspaceMember.objects.filter(
-                workspace=OuterRef("id"),
-                member__is_bot=False,
-                is_active=True,
+                workspace=OuterRef("id"), member__is_bot=False, is_active=True
             )
             .order_by()
             .annotate(count=Func(F("id"), function="Count"))
@@ -263,8 +202,7 @@ class UserWorkSpacesEndpoint(BaseAPIView):
             .annotate(total_members=member_count)
             .annotate(total_issues=issue_count)
             .filter(
-                workspace_member__member=request.user,
-                workspace_member__is_active=True,
+                workspace_member__member=request.user, workspace_member__is_active=True
             )
             .distinct()
         )
@@ -339,15 +277,12 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
         ).count()
 
         completed_issues_count = Issue.issue_objects.filter(
-            workspace__slug=slug,
-            assignees__in=[request.user],
-            state__group="completed",
+            workspace__slug=slug, assignees__in=[request.user], state__group="completed"
         ).count()
 
         issues_due_week = (
             Issue.issue_objects.filter(
-                workspace__slug=slug,
-                assignees__in=[request.user],
+                workspace__slug=slug, assignees__in=[request.user]
             )
             .annotate(target_week=ExtractWeek("target_date"))
             .filter(target_week=timezone.now().date().isocalendar()[1])
@@ -397,18 +332,12 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
 
 
 class WorkspaceThemeViewSet(BaseViewSet):
-    permission_classes = [
-        WorkSpaceAdminPermission,
-    ]
+    permission_classes = [WorkSpaceAdminPermission]
     model = WorkspaceTheme
     serializer_class = WorkspaceThemeSerializer
 
     def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .filter(workspace__slug=self.kwargs.get("slug"))
-        )
+        return super().get_queryset().filter(workspace__slug=self.kwargs.get("slug"))
 
     def create(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
@@ -420,9 +349,7 @@ class WorkspaceThemeViewSet(BaseViewSet):
 
 
 class ExportWorkspaceUserActivityEndpoint(BaseAPIView):
-    permission_classes = [
-        WorkspaceEntityPermission,
-    ]
+    permission_classes = [WorkspaceEntityPermission]
 
     def generate_csv_from_rows(self, rows):
         """Generate CSV buffer from rows."""
@@ -435,8 +362,7 @@ class ExportWorkspaceUserActivityEndpoint(BaseAPIView):
     def post(self, request, slug, user_id):
         if not request.data.get("date"):
             return Response(
-                {"error": "Date is required"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"error": "Date is required"}, status=status.HTTP_400_BAD_REQUEST
             )
 
         user_activities = IssueActivity.objects.filter(

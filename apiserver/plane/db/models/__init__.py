@@ -5,11 +5,17 @@ from .base import BaseModel
 from .cycle import Cycle, CycleIssue, CycleUserProperties
 from .dashboard import Dashboard, DashboardWidget, Widget
 from .deploy_board import DeployBoard
-from .draft import DraftIssue, DraftIssueAssignee, DraftIssueLabel, DraftIssueModule, DraftIssueCycle
+from .draft import (
+    DraftIssue,
+    DraftIssueAssignee,
+    DraftIssueLabel,
+    DraftIssueModule,
+    DraftIssueCycle,
+)
 from .estimate import Estimate, EstimatePoint
 from .exporter import ExporterHistory
 from .importer import Importer
-from .inbox import Inbox, InboxIssue
+from .intake import Intake, IntakeIssue
 from .integration import (
     GithubCommentSync,
     GithubIssueSync,
@@ -35,27 +41,10 @@ from .issue import (
     IssueSequence,
     IssueSubscriber,
     IssueVote,
-    Label,
 )
-from .module import (
-    Module,
-    ModuleIssue,
-    ModuleLink,
-    ModuleMember,
-    ModuleUserProperties,
-)
-from .notification import (
-    EmailNotificationLog,
-    Notification,
-    UserNotificationPreference,
-)
-from .page import (
-    Page,
-    PageLabel,
-    PageLog,
-    ProjectPage,
-    PageVersion,
-)
+from .module import Module, ModuleIssue, ModuleLink, ModuleMember, ModuleUserProperties
+from .notification import EmailNotificationLog, Notification, UserNotificationPreference
+from .page import Page, PageLabel, PageLog, ProjectPage, PageVersion
 from .project import (
     Project,
     ProjectBaseModel,
@@ -89,15 +78,11 @@ from .page import Page, PageLog, PageLabel, ProjectPage, TeamPage
 
 from .estimate import Estimate, EstimatePoint
 
-from .inbox import Inbox, InboxIssue
+from .intake import Intake, IntakeIssue
 
 from .analytic import AnalyticView
 
-from .notification import (
-    Notification,
-    UserNotificationPreference,
-    EmailNotificationLog,
-)
+from .notification import Notification, UserNotificationPreference, EmailNotificationLog
 
 from .exporter import ExporterHistory
 
@@ -110,3 +95,7 @@ from .favorite import UserFavorite
 from .issue_type import IssueType, ProjectIssueType
 
 from .recent_visit import UserRecentVisit
+
+from .label import Label
+
+from .device import Device, DeviceSession

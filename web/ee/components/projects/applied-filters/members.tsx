@@ -11,12 +11,12 @@ import { useMember } from "@/hooks/store";
 
 type Props = {
   handleRemove: (val: string) => void;
-  values: string[];
+  appliedFilters: string[];
   editable: boolean | undefined;
 };
 
 export const AppliedMembersFilters: React.FC<Props> = observer((props) => {
-  const { handleRemove, values, editable } = props;
+  const { handleRemove, appliedFilters, editable } = props;
   // store hooks
   const {
     workspace: { getWorkspaceMemberDetails },
@@ -24,7 +24,7 @@ export const AppliedMembersFilters: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      {values.map((memberId) => {
+      {appliedFilters.map((memberId) => {
         const memberDetails = getWorkspaceMemberDetails(memberId)?.member;
 
         if (!memberDetails) return null;

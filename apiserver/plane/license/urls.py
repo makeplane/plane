@@ -17,31 +17,11 @@ from plane.license.api.views import (
 )
 
 urlpatterns = [
-    path(
-        "",
-        InstanceEndpoint.as_view(),
-        name="instance",
-    ),
-    path(
-        "changelog/",
-        ChangeLogEndpoint.as_view(),
-        name="instance-changelog",
-    ),
-    path(
-        "check-updates/",
-        CheckUpdateEndpoint.as_view(),
-        name="check-update",
-    ),
-    path(
-        "admins/",
-        InstanceAdminEndpoint.as_view(),
-        name="instance-admins",
-    ),
-    path(
-        "admins/me/",
-        InstanceAdminUserMeEndpoint.as_view(),
-        name="instance-admins",
-    ),
+    path("", InstanceEndpoint.as_view(), name="instance"),
+    path("changelog/", ChangeLogEndpoint.as_view(), name="instance-changelog"),
+    path("check-updates/", CheckUpdateEndpoint.as_view(), name="check-update"),
+    path("admins/", InstanceAdminEndpoint.as_view(), name="instance-admins"),
+    path("admins/me/", InstanceAdminUserMeEndpoint.as_view(), name="instance-admins"),
     path(
         "admins/session/",
         InstanceAdminUserSessionEndpoint.as_view(),
@@ -52,11 +32,7 @@ urlpatterns = [
         InstanceAdminSignOutEndpoint.as_view(),
         name="instance-admins",
     ),
-    path(
-        "admins/<uuid:pk>/",
-        InstanceAdminEndpoint.as_view(),
-        name="instance-admins",
-    ),
+    path("admins/<uuid:pk>/", InstanceAdminEndpoint.as_view(), name="instance-admins"),
     path(
         "configurations/",
         InstanceConfigurationEndpoint.as_view(),

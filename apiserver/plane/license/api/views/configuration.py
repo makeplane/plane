@@ -10,11 +10,7 @@ import requests
 import os
 
 # Django imports
-from django.core.mail import (
-    BadHeaderError,
-    EmailMultiAlternatives,
-    get_connection,
-)
+from django.core.mail import BadHeaderError, EmailMultiAlternatives, get_connection
 from django.conf import settings
 
 # Third party imports
@@ -36,16 +32,12 @@ from plane.payment.flags.flag import AdminFeatureFlag
 
 
 class InstanceConfigurationEndpoint(BaseAPIView):
-    permission_classes = [
-        InstanceAdminPermission,
-    ]
+    permission_classes = [InstanceAdminPermission]
 
     @cache_response(60 * 60 * 2, user=False)
     def get(self, request):
         instance_configurations = InstanceConfiguration.objects.all()
-        serializer = InstanceConfigurationSerializer(
-            instance_configurations, many=True
-        )
+        serializer = InstanceConfigurationSerializer(instance_configurations, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @invalidate_cache(path="/api/instances/configurations/", user=False)
@@ -74,7 +66,6 @@ class InstanceConfigurationEndpoint(BaseAPIView):
 
 
 class EmailCredentialCheckEndpoint(BaseAPIView):
-
     def post(self, request):
         receiver_email = request.data.get("receiver_email", False)
         if not receiver_email:
@@ -104,9 +95,7 @@ class EmailCredentialCheckEndpoint(BaseAPIView):
         )
         # Prepare email details
         subject = "Email Notification from Plane"
-        message = (
-            "This is a sample email notification sent from Plane application."
-        )
+        message = "This is a sample email notification sent from Plane application."
         # Send the email
         try:
             msg = EmailMultiAlternatives(
@@ -118,13 +107,11 @@ class EmailCredentialCheckEndpoint(BaseAPIView):
             )
             msg.send(fail_silently=False)
             return Response(
-                {"message": "Email successfully sent."},
-                status=status.HTTP_200_OK,
+                {"message": "Email successfully sent."}, status=status.HTTP_200_OK
             )
         except BadHeaderError:
             return Response(
-                {"error": "Invalid email header."},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"error": "Invalid email header."}, status=status.HTTP_400_BAD_REQUEST
             )
         except SMTPAuthenticationError:
             return Response(
@@ -153,9 +140,7 @@ class EmailCredentialCheckEndpoint(BaseAPIView):
             )
         except TimeoutError:
             return Response(
-                {
-                    "error": "Timeout error while trying to connect to the SMTP server."
-                },
+                {"error": "Timeout error while trying to connect to the SMTP server."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except ConnectionError:
@@ -167,18 +152,13 @@ class EmailCredentialCheckEndpoint(BaseAPIView):
             )
         except Exception:
             return Response(
-                {
-                    "error": "Could not send email. Please check your configuration"
-                },
+                {"error": "Could not send email. Please check your configuration"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
 
 class AdminFeatureFlagEndpoint(BaseAPIView):
-
-    permission_classes = [
-        InstanceAdminPermission,
-    ]
+    permission_classes = [InstanceAdminPermission]
 
     def get(self, request):
         try:
@@ -194,10 +174,7 @@ class AdminFeatureFlagEndpoint(BaseAPIView):
 
             value = response.json().get("values", False)
             ## Check if the configuration is already initialized
-            (
-                IS_OIDC_ENABLED,
-                IS_SAML_ENABLED,
-            ) = get_configuration_value(
+            (IS_OIDC_ENABLED, IS_SAML_ENABLED) = get_configuration_value(
                 [
                     {
                         "key": "IS_OIDC_ENABLED",
@@ -211,18 +188,13 @@ class AdminFeatureFlagEndpoint(BaseAPIView):
             )
 
             # If any of the configuration in enabled or the feature flag is enabled then return True
-            flag_value = (
-                value or IS_OIDC_ENABLED == "1" or IS_SAML_ENABLED == "1"
-            )
+            flag_value = value or IS_OIDC_ENABLED == "1" or IS_SAML_ENABLED == "1"
 
             data = {flag.value: flag_value for flag in AdminFeatureFlag}
             return Response(data, status=response.status_code)
         except requests.exceptions.RequestException:
             ## Check if the configuration is already initialized
-            (
-                IS_OIDC_ENABLED,
-                IS_SAML_ENABLED,
-            ) = get_configuration_value(
+            (IS_OIDC_ENABLED, IS_SAML_ENABLED) = get_configuration_value(
                 [
                     {
                         "key": "IS_OIDC_ENABLED",

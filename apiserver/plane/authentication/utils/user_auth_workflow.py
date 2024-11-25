@@ -6,11 +6,7 @@ from .workspace_project_join import process_workspace_project_invitations
 from plane.bgtasks.event_tracking_task import track_event
 
 
-def post_user_auth_workflow(
-    user,
-    is_signup,
-    request,
-):
+def post_user_auth_workflow(user, is_signup, request):
     # Process workspace project invitations
     process_workspace_project_invitations(user=user)
     # track events

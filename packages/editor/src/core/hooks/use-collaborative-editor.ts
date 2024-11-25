@@ -13,6 +13,7 @@ import { TCollaborativeEditorProps } from "@/types";
 
 export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
   const {
+    onTransaction,
     disabledExtensions,
     editorClassName,
     editorProps = {},
@@ -39,7 +40,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
         name: id,
         parameters: realtimeConfig.queryParams,
         // using user id as a token to verify the user on the server
-        token: user.id,
+        token: JSON.stringify(user),
         url: realtimeConfig.url,
         onAuthenticationFailed: () => {
           serverHandler?.onServerError?.();
@@ -54,7 +55,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
         },
         onSynced: () => setHasServerSynced(true),
       }),
-    [id, realtimeConfig, serverHandler, user.id]
+    [id, realtimeConfig, serverHandler, user]
   );
 
   // destroy and disconnect connection on unmount
@@ -75,6 +76,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
 
   const editor = useEditor({
     id,
+    onTransaction,
     editorProps,
     editorClassName,
     enableHistory: false,

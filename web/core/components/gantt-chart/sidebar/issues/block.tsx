@@ -2,14 +2,13 @@ import { observer } from "mobx-react";
 // components
 import { Row } from "@plane/ui";
 import { MultipleSelectEntityAction } from "@/components/core";
-import { useGanttChart } from "@/components/gantt-chart/hooks";
 import { IssueGanttSidebarBlock } from "@/components/issues";
 // helpers
 import { cn } from "@/helpers/common.helper";
-import { findTotalDaysInRange } from "@/helpers/date-time.helper";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
+import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 // constants
 import { BLOCK_HEIGHT, GANTT_SELECT_GROUP } from "../../constants";
 // types
@@ -25,12 +24,13 @@ type Props = {
 export const IssuesSidebarBlock = observer((props: Props) => {
   const { block, enableSelection, isDragging, selectionHelpers } = props;
   // store hooks
-  const { updateActiveBlockId, isBlockActive } = useGanttChart();
+  const { updateActiveBlockId, isBlockActive, getNumberOfDaysFromPosition } = useTimeLineChartStore();
   const { getIsIssuePeeked } = useIssueDetail();
 
-  const duration = findTotalDaysInRange(block.start_date, block.target_date);
+  const isBlockComplete = !!block?.start_date && !!block?.target_date;
+  const duration = isBlockComplete ? getNumberOfDaysFromPosition(block?.position?.width) : undefined;
 
-  if (!block.data) return null;
+  if (!block?.data) return null;
 
   const isIssueSelected = selectionHelpers?.getIsEntitySelected(block.id);
   const isIssueFocused = selectionHelpers?.getIsEntityActive(block.id);

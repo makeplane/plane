@@ -39,57 +39,30 @@ class FileAsset(BaseModel):
         DRAFT_ISSUE_DESCRIPTION = "DRAFT_ISSUE_DESCRIPTION"
 
     attributes = models.JSONField(default=dict)
-    asset = models.FileField(
-        upload_to=get_upload_path,
-        max_length=800,
-    )
+    asset = models.FileField(upload_to=get_upload_path, max_length=800)
     user = models.ForeignKey(
-        "db.User",
-        on_delete=models.CASCADE,
-        null=True,
-        related_name="assets",
+        "db.User", on_delete=models.CASCADE, null=True, related_name="assets"
     )
     workspace = models.ForeignKey(
-        "db.Workspace",
-        on_delete=models.CASCADE,
-        null=True,
-        related_name="assets",
+        "db.Workspace", on_delete=models.CASCADE, null=True, related_name="assets"
     )
     draft_issue = models.ForeignKey(
-        "db.DraftIssue",
-        on_delete=models.CASCADE,
-        null=True,
-        related_name="assets",
+        "db.DraftIssue", on_delete=models.CASCADE, null=True, related_name="assets"
     )
     project = models.ForeignKey(
-        "db.Project",
-        on_delete=models.CASCADE,
-        null=True,
-        related_name="assets",
+        "db.Project", on_delete=models.CASCADE, null=True, related_name="assets"
     )
     issue = models.ForeignKey(
-        "db.Issue",
-        on_delete=models.CASCADE,
-        null=True,
-        related_name="assets",
+        "db.Issue", on_delete=models.CASCADE, null=True, related_name="assets"
     )
     comment = models.ForeignKey(
-        "db.IssueComment",
-        on_delete=models.CASCADE,
-        null=True,
-        related_name="assets",
+        "db.IssueComment", on_delete=models.CASCADE, null=True, related_name="assets"
     )
     page = models.ForeignKey(
-        "db.Page",
-        on_delete=models.CASCADE,
-        null=True,
-        related_name="assets",
+        "db.Page", on_delete=models.CASCADE, null=True, related_name="assets"
     )
     entity_type = models.CharField(
-        max_length=255,
-        choices=EntityTypeContext.choices,
-        null=True,
-        blank=True,
+        max_length=255, choices=EntityTypeContext.choices, null=True, blank=True
     )
     is_deleted = models.BooleanField(default=False)
     is_archived = models.BooleanField(default=False)

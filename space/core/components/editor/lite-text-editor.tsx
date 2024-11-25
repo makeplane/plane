@@ -1,6 +1,6 @@
 import React from "react";
 // editor
-import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef, TNonColorEditorCommands } from "@plane/editor";
+import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef } from "@plane/editor";
 // components
 import { IssueCommentToolbar } from "@/components/editor";
 // helpers
@@ -30,11 +30,12 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   } = props;
   // use-mention
   const { mentionHighlights } = useMention();
-
   function isMutableRefObject<T>(ref: React.ForwardedRef<T>): ref is React.MutableRefObject<T | null> {
     return !!ref && typeof ref === "object" && "current" in ref;
   }
+  // derived values
   const isEmpty = isCommentEmpty(props.initialValue);
+  const editorRef = isMutableRefObject<EditorRefApi>(ref) ? ref.current : null;
 
   return (
     <div className="border border-custom-border-200 rounded p-3 space-y-3">
@@ -54,18 +55,19 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
         containerClassName={cn(containerClassName, "relative")}
       />
       <IssueCommentToolbar
-        executeCommand={(key) => {
-          if (isMutableRefObject<EditorRefApi>(ref)) {
-            ref.current?.executeMenuItemCommand({
-              itemKey: key as TNonColorEditorCommands,
-            });
-          }
+        executeCommand={(item) => {
+          // TODO: update this while toolbar homogenization
+          // @ts-expect-error type mismatch here
+          editorRef?.executeMenuItemCommand({
+            itemKey: item.itemKey,
+            ...item.extraProps,
+          });
         }}
         isSubmitting={isSubmitting}
         showSubmitButton={showSubmitButton}
         handleSubmit={(e) => rest.onEnterKeyPress?.(e)}
         isCommentEmpty={isEmpty}
-        editorRef={isMutableRefObject<EditorRefApi>(ref) ? ref : null}
+        editorRef={editorRef}
       />
     </div>
   );
