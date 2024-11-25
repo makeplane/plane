@@ -68,13 +68,6 @@ export const SidebarFavoritesMenu = observer(() => {
       id: favoriteId,
       parent: null,
     })
-      .then(() => {
-        // setToast({
-        //   type: TOAST_TYPE.SUCCESS,
-        //   title: "Success!",
-        //   message: "Favorite moved successfully.",
-        // });
-      })
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
@@ -127,7 +120,6 @@ export const SidebarFavoritesMenu = observer(() => {
           const sourceId = source?.data?.id as string | undefined;
           console.log({ sourceId });
           if (!sourceId || !groupedFavorites[sourceId].parent) return;
-          // handleRemoveFromFavoritesFolder(sourceId);
         },
       })
     );

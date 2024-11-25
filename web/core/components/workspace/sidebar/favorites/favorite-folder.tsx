@@ -61,13 +61,6 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
     moveFavoriteToFolder(workspaceSlug.toString(), source, {
       parent: destination,
     })
-      .then(() => {
-        // setToast({
-        //   type: TOAST_TYPE.SUCCESS,
-        //   title: "Success!",
-        //   message: "Favorite moved successfully.",
-        // });
-      })
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
@@ -167,23 +160,6 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
             const destinationSequence = getDestinationStateSequence(groupedFavorites,droppedFavId,instruction)
             handleReorder(sourceData.id,destinationSequence || 0)
           }
-
-
-          // if(parentId)
-          //   handleMoveToFolder(sourceData.id,parentId);
-          // else
-          //   handleRemoveFromFavoritesFolder(sourceData.id)
-
-          // setIsDragging(false);
-          // const sourceId = source?.data?.id as string | undefined;
-          // const destinationId = self?.data?.id as string | undefined;
-
-          // if (source.data.is_folder) return;
-          // if (sourceId === destinationId) return;
-          // if (!sourceId || !destinationId) return;
-          // if (groupedFavorites[sourceId].parent === destinationId) return;
-
-          // handleMoveToFolder(sourceId, destinationId);
         },
       })
     );
