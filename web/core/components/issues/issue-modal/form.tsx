@@ -113,7 +113,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
 
   // store hooks
   const { getProjectById } = useProject();
-  const { getIssueTypeIdOnProjectChange, getActiveAdditionalPropertiesLength, handlePropertyValuesValidation } =
+  const { getIssueTypeIdOnProjectChange, getActiveAdditionalPropertiesLength, handlePropertyValuesValidation, handleCreateUpdatePropertyValues } =
     useIssueModal();
   const { isMobile } = usePlatformOS();
   const { moveIssue } = useWorkspaceDraftIssues();
@@ -235,6 +235,23 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
         console.error(error);
       });
   };
+
+  const handleMoveToProjects = async () => {
+    if( !data?.id ||!data?.project_id || !data) return
+    await handleCreateUpdatePropertyValues({
+      issueId: data.id,
+      issueTypeId: data.type_id,
+      projectId: data.project_id,
+      workspaceSlug: workspaceSlug.toString(),
+      isDraft: true
+    })
+
+    moveIssue(workspaceSlug.toString(), data.id, {
+      ...data,
+      ...getValues(),
+    } as TWorkspaceDraftIssue);
+
+  }
 
   const condition =
     (watch("name") && watch("name") !== "") || (watch("description_html") && watch("description_html") !== "<p></p>");
@@ -493,14 +510,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                       type="button"
                       size="sm"
                       loading={isSubmitting}
-                      onClick={() => {
-                        if (data?.id && data) {
-                          moveIssue(workspaceSlug.toString(), data?.id, {
-                            ...data,
-                            ...getValues(),
-                          } as TWorkspaceDraftIssue);
-                        }
-                      }}
+                      onClick={handleMoveToProjects}
                     >
                       Add to project
                     </Button>
