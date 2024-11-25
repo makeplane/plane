@@ -136,6 +136,12 @@ class UserProjectInvitationsViewset(BaseViewSet):
             member=request.user, workspace__slug=slug, is_active=True
         )
 
+        if workspace_member.role != ROLE.ADMIN:
+            return Response(
+                {"error": "You do not have permission to join the project"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         workspace_role = workspace_member.role
         workspace = workspace_member.workspace
 
