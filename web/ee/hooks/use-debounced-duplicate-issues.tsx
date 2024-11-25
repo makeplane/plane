@@ -8,15 +8,20 @@ import { getTextContent } from "@/helpers/editor.helper";
 import useDebounce from "@/hooks/use-debounce";
 // services
 import { PIService } from "@/plane-web/services";
+import { E_FEATURE_FLAGS, useFlag } from "./store";
 
 const piService = new PIService();
 
 export const useDebouncedDuplicateIssues = (
+  workspaceSlug: string | undefined,
   workspaceId: string | undefined,
   projectId: string | undefined,
   formData: { name: string | undefined; description_html?: string | undefined; issueId?: string | undefined }
 ) => {
   const [debouncedFormData, setDebouncedFormData] = useState(formData);
+
+  // Check if the feature flag is enabled
+  const isFeatureEnabled = workspaceSlug ? useFlag(workspaceSlug, E_FEATURE_FLAGS.PI_DEDUPE) : false;
 
   // Debounce the name and description
   const debouncedName = useDebounce(formData?.name, 3000);
@@ -30,7 +35,8 @@ export const useDebouncedDuplicateIssues = (
     });
   }, [debouncedName, debouncedDescription]);
 
-  const shouldFetch = workspaceId && projectId && debouncedFormData.name && debouncedFormData.name.trim() !== "";
+  const shouldFetch =
+    workspaceId && projectId && debouncedFormData.name && debouncedFormData.name.trim() !== "" && isFeatureEnabled;
 
   // Fetch duplicate issues
   const { data: issues } = useSWR(
