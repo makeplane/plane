@@ -13,6 +13,7 @@ import {
   CustomCodeInlineExtension,
   CustomCodeMarkPlugin,
   CustomColorExtension,
+  CustomEmbedExtension,
   CustomHorizontalRule,
   CustomImageExtension,
   CustomKeymap,
@@ -162,5 +163,6 @@ export const CoreEditorExtensions = (args: TArguments) => {
     CustomTextAlignExtension,
     CustomCalloutExtension,
     CustomColorExtension,
+    CustomEmbedExtension,
   ];
 };

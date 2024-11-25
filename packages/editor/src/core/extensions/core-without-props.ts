@@ -19,6 +19,7 @@ import { TableHeader, TableCell, TableRow, Table } from "./table";
 import { CustomTextAlignExtension } from "./text-align";
 import { CustomCalloutExtensionConfig } from "./callout/extension-config";
 import { CustomColorExtension } from "./custom-color";
+import { CustomEmbedExtensionConfig } from "./embed/extension-config";
 
 export const CoreEditorExtensionsWithoutProps = [
   StarterKit.configure({
@@ -89,6 +90,7 @@ export const CoreEditorExtensionsWithoutProps = [
   CustomTextAlignExtension,
   CustomCalloutExtensionConfig,
   CustomColorExtension,
+  CustomEmbedExtensionConfig,
 ];
 
 export const DocumentEditorExtensionsWithoutProps = [IssueWidgetWithoutProps()];

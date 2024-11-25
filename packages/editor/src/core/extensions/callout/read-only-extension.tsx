@@ -1,6 +1,6 @@
 import { ReactNodeViewRenderer } from "@tiptap/react";
-// extensions
-import { CustomCalloutBlock } from "@/extensions";
+// block
+import { CustomCalloutBlock } from "./block";
 // config
 import { CustomCalloutExtensionConfig } from "./extension-config";
 

@@ -1,10 +1,12 @@
 import { findParentNodeClosestToPos, Predicate, ReactNodeViewRenderer } from "@tiptap/react";
-// extensions
-import { CustomCalloutBlock } from "@/extensions";
 // helpers
 import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
+// block
+import { CustomCalloutBlock } from "./block";
 // config
 import { CustomCalloutExtensionConfig } from "./extension-config";
+// types
+import { ECalloutAttributeNames } from "./types";
 // utils
 import { getStoredBackgroundColor, getStoredLogo } from "./utils";
 
@@ -30,7 +32,7 @@ export const CustomCalloutExtension = CustomCalloutExtensionConfig.extend({
             ],
             attrs: {
               ...storedLogoValues,
-              "data-background": storedBackgroundValue,
+              [ECalloutAttributeNames.BACKGROUND]: storedBackgroundValue,
             },
           });
         },

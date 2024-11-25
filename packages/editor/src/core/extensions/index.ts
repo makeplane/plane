@@ -4,6 +4,7 @@ export * from "./code-inline";
 export * from "./custom-image";
 export * from "./custom-link";
 export * from "./custom-list-keymap";
+export * from "./embed";
 export * from "./image";
 export * from "./issue-embed";
 export * from "./mentions";

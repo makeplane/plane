@@ -14,6 +14,7 @@ import {
   ListTodo,
   MessageSquareText,
   MinusSquare,
+  ScreenShare,
   Table,
   TextQuote,
 } from "lucide-react";
@@ -37,6 +38,7 @@ import {
   insertImage,
   insertCallout,
   setText,
+  insertEmbed,
 } from "@/helpers/editor-commands";
 // types
 import { CommandProps, ISlashCommandItem } from "@/types";
@@ -188,6 +190,15 @@ export const getSlashCommandFilteredSections =
             description: "Insert callout",
             searchTerms: ["callout", "comment", "message", "info", "alert"],
             command: ({ editor, range }: CommandProps) => insertCallout(editor, range),
+          },
+          {
+            commandKey: "embed",
+            key: "embed",
+            title: "Embed",
+            icon: <ScreenShare className="size-3.5" />,
+            description: "Insert embed",
+            searchTerms: ["embed", "hyperlink", "video", "pdf"],
+            command: ({ editor, range }) => insertEmbed(editor, range),
           },
           {
             commandKey: "divider",

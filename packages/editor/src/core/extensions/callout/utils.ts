@@ -4,7 +4,7 @@ import { sanitizeHTML } from "@plane/helpers";
 import { TEmojiLogoProps } from "@plane/ui";
 // types
 import {
-  EAttributeNames,
+  ECalloutAttributeNames,
   TCalloutBlockAttributes,
   TCalloutBlockEmojiAttributes,
   TCalloutBlockIconAttributes,
@@ -20,7 +20,7 @@ export const DEFAULT_CALLOUT_BLOCK_ATTRIBUTES: TCalloutBlockAttributes = {
   "data-block-type": "callout-component",
 };
 
-type TStoredLogoValue = Pick<TCalloutBlockAttributes, EAttributeNames.LOGO_IN_USE> &
+type TStoredLogoValue = Pick<TCalloutBlockAttributes, ECalloutAttributeNames.LOGO_IN_USE> &
   (TCalloutBlockEmojiAttributes | TCalloutBlockIconAttributes);
 
 // function to get the stored logo from local storage
