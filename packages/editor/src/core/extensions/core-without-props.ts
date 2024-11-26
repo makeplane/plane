@@ -1,3 +1,4 @@
+import { Extensions } from "@tiptap/core";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import TextStyle from "@tiptap/extension-text-style";
@@ -17,11 +18,11 @@ import { CustomMentionWithoutProps } from "./mentions/mentions-without-props";
 import { CustomQuoteExtension } from "./quote";
 import { TableHeader, TableCell, TableRow, Table } from "./table";
 import { CustomTextAlignExtension } from "./text-align";
-import { CustomCalloutExtensionConfig } from "./callout/extension-config";
 import { CustomColorExtension } from "./custom-color";
 import { FlatListExtension } from "./flat-list/flat-list";
+import { CoreEditorAdditionalExtensionsWithoutProps } from "@/plane-editor/extensions/core/without-props";
 
-export const CoreEditorExtensionsWithoutProps = [
+export const CoreEditorExtensionsWithoutProps: Extensions = [
   StarterKit.configure({
     bulletList: {
       HTMLAttributes: {
@@ -47,7 +48,7 @@ export const CoreEditorExtensionsWithoutProps = [
   CustomQuoteExtension,
   CustomHorizontalRule.configure({
     HTMLAttributes: {
-      class: "my-4 border-custom-border-400",
+      class: "py-4 border-custom-border-400",
     },
   }),
   CustomLinkExtension.configure({
@@ -88,9 +89,9 @@ export const CoreEditorExtensionsWithoutProps = [
   TableRow,
   CustomMentionWithoutProps(),
   CustomTextAlignExtension,
-  CustomCalloutExtensionConfig,
   CustomColorExtension,
   FlatListExtension,
+  ...CoreEditorAdditionalExtensionsWithoutProps,
 ];
 
 export const DocumentEditorExtensionsWithoutProps = [IssueWidgetWithoutProps()];

@@ -21,7 +21,7 @@ import { clearOPFS, getGroupedIssueResults, getSubGroupedIssueResults, log, logE
 
 const DB_VERSION = 1;
 const PAGE_SIZE = 500;
-const BATCH_SIZE = 500;
+const BATCH_SIZE = 50;
 
 type TProjectStatus = {
   issues: { status: undefined | "loading" | "ready" | "error" | "syncing"; sync: Promise<void> | undefined };
@@ -300,6 +300,7 @@ export class Storage {
     const { cursor, group_by, sub_group_by } = queries;
 
     const query = issueFilterQueryConstructor(this.workspaceSlug, projectId, queries);
+    log("#### Query", query);
     const countQuery = issueFilterCountQueryConstructor(this.workspaceSlug, projectId, queries);
     const start = performance.now();
     let issuesRaw: any[] = [];
@@ -381,10 +382,10 @@ export class Storage {
 
   getIssue = async (issueId: string) => {
     try {
-      if (!rootStore.user.localDBEnabled) return;
+      if (!rootStore.user.localDBEnabled || this.status !== "ready") return;
 
       const issues = await runQuery(`select * from issues where id='${issueId}'`);
-      if (issues.length) {
+      if (Array.isArray(issues) && issues.length) {
         return formatLocalIssue(issues[0]);
       }
     } catch (err) {

@@ -1,10 +1,7 @@
 from django.urls import path
 
 
-from plane.app.views import (
-    GlobalSearchEndpoint,
-    IssueSearchEndpoint,
-)
+from plane.app.views import GlobalSearchEndpoint, IssueSearchEndpoint
 
 
 urlpatterns = [

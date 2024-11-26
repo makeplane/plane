@@ -45,7 +45,7 @@ export const translateQueryParams = (queries: any) => {
   }
 
   // Fix invalid orderby when switching from spreadsheet layout
-  if (layout === "spreadsheet" && Object.keys(SPECIAL_ORDER_BY).includes(order_by)) {
+  if (layout !== "spreadsheet" && Object.keys(SPECIAL_ORDER_BY).includes(order_by)) {
     otherProps.order_by = "sort_order";
   }
   // For each property value, replace None with empty string
@@ -335,6 +335,9 @@ const getSingleFilterFields = (queries: any) => {
   }
   if (state_group) {
     fields.add("states.'group' as state_group");
+  }
+  if (order_by?.includes("estimate_point__key")) {
+    fields.add("estimate_point");
   }
   return Array.from(fields);
 };

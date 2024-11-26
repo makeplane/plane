@@ -1,3 +1,4 @@
+import { Extensions } from "@tiptap/core";
 import CharacterCount from "@tiptap/extension-character-count";
 import Placeholder from "@tiptap/extension-placeholder";
 import TextStyle from "@tiptap/extension-text-style";
@@ -6,7 +7,6 @@ import StarterKit from "@tiptap/starter-kit";
 import { Markdown } from "tiptap-markdown";
 // extensions
 import {
-  CustomCalloutExtension,
   CustomCodeBlockExtension,
   CustomCodeInlineExtension,
   CustomCodeMarkPlugin,
@@ -31,6 +31,8 @@ import { isValidHttpUrl } from "@/helpers/common";
 import { IMentionHighlight, IMentionSuggestion, TFileHandler } from "@/types";
 import { FlatListExtension } from "./flat-list/flat-list";
 import { multipleSelectionExtension } from "./selections/multipleSelections";
+// plane editor extensions
+import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
 
 type TArguments = {
   enableHistory: boolean;
@@ -43,7 +45,7 @@ type TArguments = {
   tabIndex?: number;
 };
 
-export const CoreEditorExtensions = (args: TArguments) => {
+export const CoreEditorExtensions = (args: TArguments): Extensions => {
   const { enableHistory, fileHandler, mentionConfig, placeholder, tabIndex } = args;
 
   return [
@@ -84,7 +86,7 @@ export const CoreEditorExtensions = (args: TArguments) => {
     DropHandlerExtension(),
     CustomHorizontalRule.configure({
       HTMLAttributes: {
-        class: "my-4 border-custom-border-400",
+        class: "py-4 border-custom-border-400",
       },
     }),
     CustomKeymap,
@@ -166,10 +168,10 @@ export const CoreEditorExtensions = (args: TArguments) => {
     }),
     CharacterCount,
     CustomTextAlignExtension,
-    CustomCalloutExtension,
     CustomColorExtension,
     FlatListExtension,
     multipleSelectionExtension,
     // FlatHeadingListExtension,
+    ...CoreEditorAdditionalExtensions(),
   ];
 };

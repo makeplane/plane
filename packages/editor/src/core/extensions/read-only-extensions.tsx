@@ -1,3 +1,4 @@
+import { Extensions } from "@tiptap/core";
 import CharacterCount from "@tiptap/extension-character-count";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
@@ -22,13 +23,14 @@ import {
   HeadingListExtension,
   CustomReadOnlyImageExtension,
   CustomTextAlignExtension,
-  CustomCalloutReadOnlyExtension,
   CustomColorExtension,
 } from "@/extensions";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
 // types
 import { IMentionHighlight, TFileHandler } from "@/types";
+// plane editor extensions
+import { CoreReadOnlyEditorAdditionalExtensions } from "@/plane-editor/extensions";
 
 type Props = {
   fileHandler: Pick<TFileHandler, "getAssetSrc">;
@@ -37,7 +39,7 @@ type Props = {
   };
 };
 
-export const CoreReadOnlyEditorExtensions = (props: Props) => {
+export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
   const { fileHandler, mentionConfig } = props;
 
   return [
@@ -67,7 +69,7 @@ export const CoreReadOnlyEditorExtensions = (props: Props) => {
     CustomQuoteExtension,
     CustomHorizontalRule.configure({
       HTMLAttributes: {
-        class: "my-4 border-custom-border-400",
+        class: "py-4 border-custom-border-400",
       },
     }),
     CustomLinkExtension.configure({
@@ -127,6 +129,6 @@ export const CoreReadOnlyEditorExtensions = (props: Props) => {
     CustomColorExtension,
     HeadingListExtension,
     CustomTextAlignExtension,
-    CustomCalloutReadOnlyExtension,
+    ...CoreReadOnlyEditorAdditionalExtensions(),
   ];
 };
