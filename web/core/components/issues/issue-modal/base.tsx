@@ -37,6 +37,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     moveToIssue = false,
     modalTitle,
     primaryButtonText,
+    isProjectSelectionDisabled = false,
   } = props;
   const issueStoreType = useIssueStoreType();
 
@@ -361,6 +362,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
           moveToIssue={moveToIssue}
           isDuplicateModalOpen={isDuplicateModalOpen}
           handleDuplicateIssueModal={handleDuplicateIssueModal}
+          isProjectSelectionDisabled={isProjectSelectionDisabled}
         />
       ) : (
         <IssueFormRoot
@@ -383,6 +385,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
           primaryButtonText={primaryButtonText}
           isDuplicateModalOpen={isDuplicateModalOpen}
           handleDuplicateIssueModal={handleDuplicateIssueModal}
+          isProjectSelectionDisabled={isProjectSelectionDisabled}
         />
       )}
     </ModalCore>

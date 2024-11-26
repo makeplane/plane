@@ -1,15 +1,10 @@
 from django.urls import path
 
-from plane.api.views import (
-    ProjectAPIEndpoint,
-    ProjectArchiveUnarchiveAPIEndpoint,
-)
+from plane.api.views import ProjectAPIEndpoint, ProjectArchiveUnarchiveAPIEndpoint
 
 urlpatterns = [
     path(
-        "workspaces/<str:slug>/projects/",
-        ProjectAPIEndpoint.as_view(),
-        name="project",
+        "workspaces/<str:slug>/projects/", ProjectAPIEndpoint.as_view(), name="project"
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:pk>/",

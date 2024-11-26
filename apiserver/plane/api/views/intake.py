@@ -14,60 +14,47 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.api.serializers import InboxIssueSerializer, IssueSerializer
+from plane.api.serializers import IntakeIssueSerializer, IssueSerializer
 from plane.app.permissions import ProjectLitePermission
 from plane.bgtasks.issue_activities_task import issue_activity
-from plane.db.models import (
-    Inbox,
-    InboxIssue,
-    Issue,
-    Project,
-    ProjectMember,
-    State,
-)
+from plane.db.models import Intake, IntakeIssue, Issue, Project, ProjectMember, State
 
 from .base import BaseAPIView
 
 
-class InboxIssueAPIEndpoint(BaseAPIView):
+class IntakeIssueAPIEndpoint(BaseAPIView):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions related to inbox issues.
+    `update` and `destroy` actions related to intake issues.
 
     """
 
-    permission_classes = [
-        ProjectLitePermission,
-    ]
+    permission_classes = [ProjectLitePermission]
 
-    serializer_class = InboxIssueSerializer
-    model = InboxIssue
+    serializer_class = IntakeIssueSerializer
+    model = IntakeIssue
 
-    filterset_fields = [
-        "status",
-    ]
+    filterset_fields = ["status"]
 
     def get_queryset(self):
-        inbox = Inbox.objects.filter(
+        intake = Intake.objects.filter(
             workspace__slug=self.kwargs.get("slug"),
             project_id=self.kwargs.get("project_id"),
         ).first()
 
         project = Project.objects.get(
-            workspace__slug=self.kwargs.get("slug"),
-            pk=self.kwargs.get("project_id"),
+            workspace__slug=self.kwargs.get("slug"), pk=self.kwargs.get("project_id")
         )
 
-        if inbox is None and not project.inbox_view:
-            return InboxIssue.objects.none()
+        if intake is None and not project.intake_view:
+            return IntakeIssue.objects.none()
 
         return (
-            InboxIssue.objects.filter(
-                Q(snoozed_till__gte=timezone.now())
-                | Q(snoozed_till__isnull=True),
+            IntakeIssue.objects.filter(
+                Q(snoozed_till__gte=timezone.now()) | Q(snoozed_till__isnull=True),
                 workspace__slug=self.kwargs.get("slug"),
                 project_id=self.kwargs.get("project_id"),
-                inbox_id=inbox.id,
+                intake_id=intake.id,
             )
             .select_related("issue", "workspace", "project")
             .order_by(self.kwargs.get("order_by", "-created_at"))
@@ -75,49 +62,37 @@ class InboxIssueAPIEndpoint(BaseAPIView):
 
     def get(self, request, slug, project_id, issue_id=None):
         if issue_id:
-            inbox_issue_queryset = self.get_queryset().get(issue_id=issue_id)
-            inbox_issue_data = InboxIssueSerializer(
-                inbox_issue_queryset,
-                fields=self.fields,
-                expand=self.expand,
+            intake_issue_queryset = self.get_queryset().get(issue_id=issue_id)
+            intake_issue_data = IntakeIssueSerializer(
+                intake_issue_queryset, fields=self.fields, expand=self.expand
             ).data
-            return Response(
-                inbox_issue_data,
-                status=status.HTTP_200_OK,
-            )
+            return Response(intake_issue_data, status=status.HTTP_200_OK)
         issue_queryset = self.get_queryset()
         return self.paginate(
             request=request,
             queryset=(issue_queryset),
-            on_results=lambda inbox_issues: InboxIssueSerializer(
-                inbox_issues,
-                many=True,
-                fields=self.fields,
-                expand=self.expand,
+            on_results=lambda intake_issues: IntakeIssueSerializer(
+                intake_issues, many=True, fields=self.fields, expand=self.expand
             ).data,
         )
 
     def post(self, request, slug, project_id):
         if not request.data.get("issue", {}).get("name", False):
             return Response(
-                {"error": "Name is required"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        inbox = Inbox.objects.filter(
+        intake = Intake.objects.filter(
             workspace__slug=slug, project_id=project_id
         ).first()
 
-        project = Project.objects.get(
-            workspace__slug=slug,
-            pk=project_id,
-        )
+        project = Project.objects.get(workspace__slug=slug, pk=project_id)
 
-        # Inbox view
-        if inbox is None and not project.inbox_view:
+        # Intake view
+        if intake is None and not project.intake_view:
             return Response(
                 {
-                    "error": "Inbox is not enabled for this project enable it through the project's api"
+                    "error": "Intake is not enabled for this project enable it through the project's api"
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
@@ -131,15 +106,14 @@ class InboxIssueAPIEndpoint(BaseAPIView):
             "none",
         ]:
             return Response(
-                {"error": "Invalid priority"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"error": "Invalid priority"}, status=status.HTTP_400_BAD_REQUEST
             )
 
         # Create or get state
         state, _ = State.objects.get_or_create(
             name="Triage",
             group="triage",
-            description="Default state for managing all Inbox Issues",
+            description="Default state for managing all Intake Issues",
             project_id=project_id,
             color="#ff7700",
             is_triage=True,
@@ -157,12 +131,12 @@ class InboxIssueAPIEndpoint(BaseAPIView):
             state=state,
         )
 
-        # create an inbox issue
-        inbox_issue = InboxIssue.objects.create(
-            inbox_id=inbox.id,
+        # create an intake issue
+        intake_issue = IntakeIssue.objects.create(
+            intake_id=intake.id,
             project_id=project_id,
             issue=issue,
-            source=request.data.get("source", "in-app"),
+            source=request.data.get("source", "IN-APP"),
         )
         # Create an Issue Activity
         issue_activity.delay(
@@ -173,32 +147,34 @@ class InboxIssueAPIEndpoint(BaseAPIView):
             project_id=str(project_id),
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
-            inbox=str(inbox_issue.id),
+            intake=str(intake_issue.id),
         )
 
-        serializer = InboxIssueSerializer(inbox_issue)
+        serializer = IntakeIssueSerializer(intake_issue)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def patch(self, request, slug, project_id, issue_id):
-        inbox = Inbox.objects.filter(
+        intake = Intake.objects.filter(
             workspace__slug=slug, project_id=project_id
         ).first()
 
-        # Inbox view
-        if inbox is None:
+        project = Project.objects.get(workspace__slug=slug, pk=project_id)
+
+        # Intake view
+        if intake is None and not project.intake_view:
             return Response(
                 {
-                    "error": "Inbox is not enabled for this project enable it through the project's api"
+                    "error": "Intake is not enabled for this project enable it through the project's api"
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Get the inbox issue
-        inbox_issue = InboxIssue.objects.get(
+        # Get the intake issue
+        intake_issue = IntakeIssue.objects.get(
             issue_id=issue_id,
             workspace__slug=slug,
             project_id=project_id,
-            inbox_id=inbox.id,
+            intake_id=intake.id,
         )
 
         # Get the project member
@@ -210,11 +186,11 @@ class InboxIssueAPIEndpoint(BaseAPIView):
         )
 
         # Only project members admins and created_by users can access this endpoint
-        if project_member.role <= 5 and str(inbox_issue.created_by_id) != str(
+        if project_member.role <= 5 and str(intake_issue.created_by_id) != str(
             request.user.id
         ):
             return Response(
-                {"error": "You cannot edit inbox issues"},
+                {"error": "You cannot edit intake issues"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -229,7 +205,7 @@ class InboxIssueAPIEndpoint(BaseAPIView):
                         distinct=True,
                         filter=Q(
                             ~Q(labels__id__isnull=True)
-                            & Q(label_issue__deleted_at__isnull=True),
+                            & Q(label_issue__deleted_at__isnull=True)
                         ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
@@ -246,11 +222,7 @@ class InboxIssueAPIEndpoint(BaseAPIView):
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
-            ).get(
-                pk=issue_id,
-                workspace__slug=slug,
-                project_id=project_id,
-            )
+            ).get(pk=issue_id, workspace__slug=slug, project_id=project_id)
             # Only allow guests to edit name and description
             if project_member.role <= 5:
                 issue_data = {
@@ -258,14 +230,10 @@ class InboxIssueAPIEndpoint(BaseAPIView):
                     "description_html": issue_data.get(
                         "description_html", issue.description_html
                     ),
-                    "description": issue_data.get(
-                        "description", issue.description
-                    ),
+                    "description": issue_data.get("description", issue.description),
                 }
 
-            issue_serializer = IssueSerializer(
-                issue, data=issue_data, partial=True
-            )
+            issue_serializer = IssueSerializer(issue, data=issue_data, partial=True)
 
             if issue_serializer.is_valid():
                 current_instance = issue
@@ -283,7 +251,7 @@ class InboxIssueAPIEndpoint(BaseAPIView):
                             cls=DjangoJSONEncoder,
                         ),
                         epoch=int(timezone.now().timestamp()),
-                        inbox=(inbox_issue.id),
+                        intake=(intake_issue.id),
                     )
                 issue_serializer.save()
             else:
@@ -291,13 +259,13 @@ class InboxIssueAPIEndpoint(BaseAPIView):
                     issue_serializer.errors, status=status.HTTP_400_BAD_REQUEST
                 )
 
-        # Only project admins and members can edit inbox issue attributes
+        # Only project admins and members can edit intake issue attributes
         if project_member.role > 15:
-            serializer = InboxIssueSerializer(
-                inbox_issue, data=request.data, partial=True
+            serializer = IntakeIssueSerializer(
+                intake_issue, data=request.data, partial=True
             )
             current_instance = json.dumps(
-                InboxIssueSerializer(inbox_issue).data, cls=DjangoJSONEncoder
+                IntakeIssueSerializer(intake_issue).data, cls=DjangoJSONEncoder
             )
 
             if serializer.is_valid():
@@ -305,14 +273,10 @@ class InboxIssueAPIEndpoint(BaseAPIView):
                 # Update the issue state if the issue is rejected or marked as duplicate
                 if serializer.data["status"] in [-1, 2]:
                     issue = Issue.objects.get(
-                        pk=issue_id,
-                        workspace__slug=slug,
-                        project_id=project_id,
+                        pk=issue_id, workspace__slug=slug, project_id=project_id
                     )
                     state = State.objects.filter(
-                        group="cancelled",
-                        workspace__slug=slug,
-                        project_id=project_id,
+                        group="cancelled", workspace__slug=slug, project_id=project_id
                     ).first()
                     if state is not None:
                         issue.state = state
@@ -321,18 +285,14 @@ class InboxIssueAPIEndpoint(BaseAPIView):
                 # Update the issue state if it is accepted
                 if serializer.data["status"] in [1]:
                     issue = Issue.objects.get(
-                        pk=issue_id,
-                        workspace__slug=slug,
-                        project_id=project_id,
+                        pk=issue_id, workspace__slug=slug, project_id=project_id
                     )
 
                     # Update the issue state only if it is in triage state
                     if issue.state.is_triage:
                         # Move to default state
                         state = State.objects.filter(
-                            workspace__slug=slug,
-                            project_id=project_id,
-                            default=True,
+                            workspace__slug=slug, project_id=project_id, default=True
                         ).first()
                         if state is not None:
                             issue.state = state
@@ -340,10 +300,8 @@ class InboxIssueAPIEndpoint(BaseAPIView):
 
                 # create a activity for status change
                 issue_activity.delay(
-                    type="inbox.activity.created",
-                    requested_data=json.dumps(
-                        request.data, cls=DjangoJSONEncoder
-                    ),
+                    type="intake.activity.created",
+                    requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
                     actor_id=str(request.user.id),
                     issue_id=str(issue_id),
                     project_id=str(project_id),
@@ -351,48 +309,42 @@ class InboxIssueAPIEndpoint(BaseAPIView):
                     epoch=int(timezone.now().timestamp()),
                     notification=False,
                     origin=request.META.get("HTTP_ORIGIN"),
-                    inbox=str(inbox_issue.id),
+                    intake=str(intake_issue.id),
                 )
 
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(
-                InboxIssueSerializer(inbox_issue).data,
-                status=status.HTTP_200_OK,
+                IntakeIssueSerializer(intake_issue).data, status=status.HTTP_200_OK
             )
 
     def delete(self, request, slug, project_id, issue_id):
-        inbox = Inbox.objects.filter(
+        intake = Intake.objects.filter(
             workspace__slug=slug, project_id=project_id
         ).first()
 
-        project = Project.objects.get(
-            workspace__slug=slug,
-            pk=project_id,
-        )
+        project = Project.objects.get(workspace__slug=slug, pk=project_id)
 
-        # Inbox view
-        if inbox is None and not project.inbox_view:
+        # Intake view
+        if intake is None and not project.intake_view:
             return Response(
                 {
-                    "error": "Inbox is not enabled for this project enable it through the project's api"
+                    "error": "Intake is not enabled for this project enable it through the project's api"
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Get the inbox issue
-        inbox_issue = InboxIssue.objects.get(
+        # Get the intake issue
+        intake_issue = IntakeIssue.objects.get(
             issue_id=issue_id,
             workspace__slug=slug,
             project_id=project_id,
-            inbox_id=inbox.id,
+            intake_id=intake.id,
         )
 
         # Check the issue status
-        if inbox_issue.status in [-2, -1, 0, 2]:
+        if intake_issue.status in [-2, -1, 0, 2]:
             # Delete the issue also
             issue = Issue.objects.filter(
                 workspace__slug=slug, project_id=project_id, pk=issue_id
@@ -412,5 +364,5 @@ class InboxIssueAPIEndpoint(BaseAPIView):
                 )
             issue.delete()
 
-        inbox_issue.delete()
+        intake_issue.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

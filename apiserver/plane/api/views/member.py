@@ -13,24 +13,14 @@ from rest_framework import status
 # Module imports
 from .base import BaseAPIView
 from plane.api.serializers import UserLiteSerializer
-from plane.db.models import (
-    User,
-    Workspace,
-    Project,
-    WorkspaceMember,
-    ProjectMember,
-)
+from plane.db.models import User, Workspace, Project, WorkspaceMember, ProjectMember
 
-from plane.app.permissions import (
-    ProjectMemberPermission,
-)
+from plane.app.permissions import ProjectMemberPermission
 
 
 # API endpoint to get and insert users inside the workspace
 class ProjectMemberAPIEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectMemberPermission,
-    ]
+    permission_classes = [ProjectMemberPermission]
 
     # Get all the users that are present inside the workspace
     def get(self, request, slug, project_id):
@@ -48,10 +38,7 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
 
         # Get all the users that are present inside the workspace
         users = UserLiteSerializer(
-            User.objects.filter(
-                id__in=project_members,
-            ),
-            many=True,
+            User.objects.filter(id__in=project_members), many=True
         ).data
 
         return Response(users, status=status.HTTP_200_OK)
@@ -78,8 +65,7 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
             validate_email(email)
         except ValidationError:
             return Response(
-                {"error": "Invalid email provided"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"error": "Invalid email provided"}, status=status.HTTP_400_BAD_REQUEST
             )
 
         workspace = Workspace.objects.filter(slug=slug).first()
@@ -108,9 +94,7 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
                 ).first()
                 if project_member:
                     return Response(
-                        {
-                            "error": "User is already part of the workspace and project"
-                        },
+                        {"error": "User is already part of the workspace and project"},
                         status=status.HTTP_400_BAD_REQUEST,
                     )
 
@@ -131,18 +115,14 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
         # Create a workspace member for the user if not already a member
         if not workspace_member:
             workspace_member = WorkspaceMember.objects.create(
-                workspace=workspace,
-                member=user,
-                role=request.data.get("role", 5),
+                workspace=workspace, member=user, role=request.data.get("role", 5)
             )
             workspace_member.save()
 
         # Create a project member for the user if not already a member
         if not project_member:
             project_member = ProjectMember.objects.create(
-                project=project,
-                member=user,
-                role=request.data.get("role", 5),
+                project=project, member=user, role=request.data.get("role", 5)
             )
             project_member.save()
 
@@ -150,4 +130,3 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
         user_data = UserLiteSerializer(user).data
 
         return Response(user_data, status=status.HTTP_201_CREATED)
-

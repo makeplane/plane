@@ -41,18 +41,11 @@ class TimezoneMixin:
 class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
     model = None
 
-    permission_classes = [
-        IsAuthenticated,
-    ]
+    permission_classes = [IsAuthenticated]
 
-    filter_backends = (
-        DjangoFilterBackend,
-        SearchFilter,
-    )
+    filter_backends = (DjangoFilterBackend, SearchFilter)
 
-    authentication_classes = [
-        BaseSessionAuthentication,
-    ]
+    authentication_classes = [BaseSessionAuthentication]
 
     filterset_fields = []
 
@@ -63,9 +56,7 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
             return self.model.objects.all()
         except Exception as e:
             log_exception(e)
-            raise APIException(
-                "Please check the view", status.HTTP_400_BAD_REQUEST
-            )
+            raise APIException("Please check the view", status.HTTP_400_BAD_REQUEST)
 
     def handle_exception(self, exc):
         """
@@ -138,22 +129,15 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
 
 
 class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
-    permission_classes = [
-        IsAuthenticated,
-    ]
+    permission_classes = [IsAuthenticated]
 
-    filter_backends = (
-        DjangoFilterBackend,
-        SearchFilter,
-    )
+    filter_backends = (DjangoFilterBackend, SearchFilter)
 
     filterset_fields = []
 
     search_fields = []
 
-    authentication_classes = [
-        BaseSessionAuthentication,
-    ]
+    authentication_classes = [BaseSessionAuthentication]
 
     def filter_queryset(self, queryset):
         for backend in list(self.filter_backends):

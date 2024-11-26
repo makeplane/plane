@@ -13,9 +13,7 @@ from plane.authentication.utils.login import user_login
 from plane.license.models import Instance
 from plane.authentication.utils.host import base_host
 from plane.authentication.utils.redirection_path import get_redirection_path
-from plane.authentication.utils.user_auth_workflow import (
-    post_user_auth_workflow,
-)
+from plane.authentication.utils.user_auth_workflow import post_user_auth_workflow
 from plane.db.models import User
 from plane.authentication.adapter.error import (
     AuthenticationException,
@@ -24,7 +22,6 @@ from plane.authentication.adapter.error import (
 
 
 class SignInAuthEndpoint(View):
-
     def post(self, request):
         next_path = request.POST.get("next_path")
         # Check instance configuration
@@ -32,9 +29,7 @@ class SignInAuthEndpoint(View):
         if instance is None or not instance.is_setup_done:
             # Redirection params
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "INSTANCE_NOT_CONFIGURED"
-                ],
+                error_code=AUTHENTICATION_ERROR_CODES["INSTANCE_NOT_CONFIGURED"],
                 error_message="INSTANCE_NOT_CONFIGURED",
             )
             params = exc.get_error_dict()
@@ -42,8 +37,7 @@ class SignInAuthEndpoint(View):
                 params["next_path"] = str(next_path)
             # Base URL join
             url = urljoin(
-                base_host(request=request, is_app=True),
-                "sign-in?" + urlencode(params),
+                base_host(request=request, is_app=True), "sign-in?" + urlencode(params)
             )
             return HttpResponseRedirect(url)
 
@@ -66,8 +60,7 @@ class SignInAuthEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request, is_app=True),
-                "sign-in?" + urlencode(params),
+                base_host(request=request, is_app=True), "sign-in?" + urlencode(params)
             )
             return HttpResponseRedirect(url)
 
@@ -85,8 +78,7 @@ class SignInAuthEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request, is_app=True),
-                "sign-in?" + urlencode(params),
+                base_host(request=request, is_app=True), "sign-in?" + urlencode(params)
             )
             return HttpResponseRedirect(url)
 
@@ -102,8 +94,7 @@ class SignInAuthEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request, is_app=True),
-                "sign-in?" + urlencode(params),
+                base_host(request=request, is_app=True), "sign-in?" + urlencode(params)
             )
             return HttpResponseRedirect(url)
 
@@ -132,14 +123,12 @@ class SignInAuthEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request, is_app=True),
-                "sign-in?" + urlencode(params),
+                base_host(request=request, is_app=True), "sign-in?" + urlencode(params)
             )
             return HttpResponseRedirect(url)
 
 
 class SignUpAuthEndpoint(View):
-
     def post(self, request):
         next_path = request.POST.get("next_path")
         # Check instance configuration
@@ -147,17 +136,14 @@ class SignUpAuthEndpoint(View):
         if instance is None or not instance.is_setup_done:
             # Redirection params
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "INSTANCE_NOT_CONFIGURED"
-                ],
+                error_code=AUTHENTICATION_ERROR_CODES["INSTANCE_NOT_CONFIGURED"],
                 error_message="INSTANCE_NOT_CONFIGURED",
             )
             params = exc.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request, is_app=True),
-                "?" + urlencode(params),
+                base_host(request=request, is_app=True), "?" + urlencode(params)
             )
             return HttpResponseRedirect(url)
 
@@ -177,8 +163,7 @@ class SignUpAuthEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request, is_app=True),
-                "?" + urlencode(params),
+                base_host(request=request, is_app=True), "?" + urlencode(params)
             )
             return HttpResponseRedirect(url)
         # Validate the email
@@ -196,8 +181,7 @@ class SignUpAuthEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request, is_app=True),
-                "?" + urlencode(params),
+                base_host(request=request, is_app=True), "?" + urlencode(params)
             )
             return HttpResponseRedirect(url)
 
@@ -215,8 +199,7 @@ class SignUpAuthEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request, is_app=True),
-                "?" + urlencode(params),
+                base_host(request=request, is_app=True), "?" + urlencode(params)
             )
             return HttpResponseRedirect(url)
 
@@ -244,7 +227,6 @@ class SignUpAuthEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request, is_app=True),
-                "?" + urlencode(params),
+                base_host(request=request, is_app=True), "?" + urlencode(params)
             )
             return HttpResponseRedirect(url)

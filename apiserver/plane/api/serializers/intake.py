@@ -1,15 +1,16 @@
 # Module improts
 from .base import BaseSerializer
 from .issue import IssueExpandSerializer
-from plane.db.models import InboxIssue
+from plane.db.models import IntakeIssue
+from rest_framework import serializers
 
 
-class InboxIssueSerializer(BaseSerializer):
-
+class IntakeIssueSerializer(BaseSerializer):
     issue_detail = IssueExpandSerializer(read_only=True, source="issue")
+    inbox = serializers.UUIDField(source="intake.id", read_only=True)
 
     class Meta:
-        model = InboxIssue
+        model = IntakeIssue
         fields = "__all__"
         read_only_fields = [
             "id",

@@ -28,9 +28,7 @@ class SignInEndpointTests(BaseAPITest):
     def test_email_validity(self):
         url = reverse("sign-in")
         response = self.client.post(
-            url,
-            {"email": "useremail.com", "password": "user@123"},
-            format="json",
+            url, {"email": "useremail.com", "password": "user@123"}, format="json"
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
@@ -40,9 +38,7 @@ class SignInEndpointTests(BaseAPITest):
     def test_password_validity(self):
         url = reverse("sign-in")
         response = self.client.post(
-            url,
-            {"email": "user@plane.so", "password": "user123"},
-            format="json",
+            url, {"email": "user@plane.so", "password": "user123"}, format="json"
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(
@@ -55,9 +51,7 @@ class SignInEndpointTests(BaseAPITest):
     def test_user_exists(self):
         url = reverse("sign-in")
         response = self.client.post(
-            url,
-            {"email": "user@email.so", "password": "user123"},
-            format="json",
+            url, {"email": "user@email.so", "password": "user123"}, format="json"
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(
@@ -71,16 +65,11 @@ class SignInEndpointTests(BaseAPITest):
         url = reverse("sign-in")
 
         response = self.client.post(
-            url,
-            {"email": "user@plane.so", "password": "user@123"},
-            format="json",
+            url, {"email": "user@plane.so", "password": "user@123"}, format="json"
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(
-            response.data.get("user").get("email"),
-            "user@plane.so",
-        )
+        self.assertEqual(response.data.get("user").get("email"), "user@plane.so")
 
 
 class MagicLinkGenerateEndpointTests(BaseAPITest):
@@ -97,9 +86,7 @@ class MagicLinkGenerateEndpointTests(BaseAPITest):
 
     def test_email_validity(self):
         url = reverse("magic-generate")
-        response = self.client.post(
-            url, {"email": "useremail.com"}, format="json"
-        )
+        response = self.client.post(url, {"email": "useremail.com"}, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             response.data, {"error": "Please provide a valid email address."}
@@ -111,9 +98,7 @@ class MagicLinkGenerateEndpointTests(BaseAPITest):
         ri = redis_instance()
         ri.delete("magic_user@plane.so")
 
-        response = self.client.post(
-            url, {"email": "user@plane.so"}, format="json"
-        )
+        response = self.client.post(url, {"email": "user@plane.so"}, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_max_generate_attempt(self):
@@ -123,22 +108,13 @@ class MagicLinkGenerateEndpointTests(BaseAPITest):
         ri.delete("magic_user@plane.so")
 
         for _ in range(4):
-            response = self.client.post(
-                url,
-                {"email": "user@plane.so"},
-                format="json",
-            )
+            response = self.client.post(url, {"email": "user@plane.so"}, format="json")
 
-        response = self.client.post(
-            url,
-            {"email": "user@plane.so"},
-            format="json",
-        )
+        response = self.client.post(url, {"email": "user@plane.so"}, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            response.data,
-            {"error": "Max attempts exhausted. Please try again later."},
+            response.data, {"error": "Max attempts exhausted. Please try again later."}
         )
 
 
@@ -153,9 +129,7 @@ class MagicSignInEndpointTests(BaseAPITest):
         url = reverse("magic-sign-in")
         response = self.client.post(url, {}, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(
-            response.data, {"error": "User token and key are required"}
-        )
+        self.assertEqual(response.data, {"error": "User token and key are required"})
 
     def test_expired_invalid_magic_link(self):
         ri = redis_instance()
@@ -169,8 +143,7 @@ class MagicSignInEndpointTests(BaseAPITest):
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            response.data,
-            {"error": "The magic code/link has expired please try again"},
+            response.data, {"error": "The magic code/link has expired please try again"}
         )
 
     def test_invalid_magic_code(self):
@@ -188,8 +161,7 @@ class MagicSignInEndpointTests(BaseAPITest):
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            response.data,
-            {"error": "Your login code was incorrect. Please try again."},
+            response.data, {"error": "Your login code was incorrect. Please try again."}
         )
 
     def test_magic_code_sign_in(self):
@@ -205,12 +177,7 @@ class MagicSignInEndpointTests(BaseAPITest):
 
         url = reverse("magic-sign-in")
         response = self.client.post(
-            url,
-            {"key": "magic_user@plane.so", "token": token},
-            format="json",
+            url, {"key": "magic_user@plane.so", "token": token}, format="json"
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(
-            response.data.get("user").get("email"),
-            "user@plane.so",
-        )
+        self.assertEqual(response.data.get("user").get("email"), "user@plane.so")

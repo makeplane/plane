@@ -52,15 +52,11 @@ class Command(BaseCommand):
         results = zxcvbn(password)
 
         if results["score"] < 3:
-            raise CommandError(
-                "Password is too common please set a complex password"
-            )
+            raise CommandError("Password is too common please set a complex password")
 
         # Set user password
         user.set_password(password)
         user.is_password_autoset = False
         user.save()
 
-        self.stdout.write(
-            self.style.SUCCESS("User password updated succesfully")
-        )
+        self.stdout.write(self.style.SUCCESS("User password updated succesfully"))

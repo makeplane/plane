@@ -14,9 +14,7 @@ from .base import BaseAPIView
 
 
 class ChangeLogEndpoint(BaseAPIView):
-    permission_classes = [
-        AllowAny,
-    ]
+    permission_classes = [AllowAny]
 
     def fetch_change_logs(self):
         response = requests.get(settings.INSTANCE_CHANGELOG_URL)
