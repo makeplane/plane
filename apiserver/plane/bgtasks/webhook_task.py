@@ -131,12 +131,7 @@ def webhook_task(self, webhook, slug, event, event_data, action, current_site):
             headers["X-Plane-Signature"] = signature
 
         # Send the webhook event
-        response = requests.post(
-            webhook.url,
-            headers=headers,
-            json=payload,
-            timeout=30,
-        )
+        response = requests.post(webhook.url, headers=headers, json=payload, timeout=30)
 
         # Log the webhook request
         WebhookLog.objects.create(
@@ -190,9 +185,7 @@ def webhook_task(self, webhook, slug, event, event_data, action, current_site):
 
 
 @shared_task
-def send_webhook_deactivation_email(
-    webhook_id, receiver_id, current_site, reason
-):
+def send_webhook_deactivation_email(webhook_id, receiver_id, current_site, reason):
     # Get email configurations
     (
         EMAIL_HOST,
@@ -207,9 +200,7 @@ def send_webhook_deactivation_email(
     receiver = User.objects.get(pk=receiver_id)
     webhook = Webhook.objects.get(pk=webhook_id)
     subject = "Webhook Deactivated"
-    message = (
-        f"Webhook {webhook.url} has been deactivated due to failed requests."
-    )
+    message = f"Webhook {webhook.url} has been deactivated due to failed requests."
 
     # Send the mail
     context = {
@@ -256,14 +247,7 @@ def send_webhook_deactivation_email(
     retry_jitter=True,
 )
 def webhook_send_task(
-    self,
-    webhook,
-    slug,
-    event,
-    event_data,
-    action,
-    current_site,
-    activity,
+    self, webhook, slug, event, event_data, action, current_site, activity
 ):
     try:
         webhook = Webhook.objects.get(id=webhook, workspace__slug=slug)
@@ -315,12 +299,7 @@ def webhook_send_task(
             headers["X-Plane-Signature"] = signature
 
         # Send the webhook event
-        response = requests.post(
-            webhook.url,
-            headers=headers,
-            json=payload,
-            timeout=30,
-        )
+        response = requests.post(webhook.url, headers=headers, json=payload, timeout=30)
 
         # Log the webhook request
         WebhookLog.objects.create(
@@ -408,10 +387,7 @@ def webhook_activity(
                 webhook=webhook.id,
                 slug=slug,
                 event=event,
-                event_data=get_model_data(
-                    event=event,
-                    event_id=event_id,
-                ),
+                event_data=get_model_data(event=event, event_id=event_id),
                 action=verb,
                 current_site=current_site,
                 activity={
@@ -436,13 +412,7 @@ def webhook_activity(
 
 @shared_task
 def model_activity(
-    model_name,
-    model_id,
-    requested_data,
-    current_instance,
-    actor_id,
-    slug,
-    origin=None,
+    model_name, model_id, requested_data, current_instance, actor_id, slug, origin=None
 ):
     """Function takes in two json and computes differences between keys of both the json"""
     if current_instance is None:

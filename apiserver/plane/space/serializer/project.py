@@ -1,8 +1,6 @@
 # Module imports
 from .base import BaseSerializer
-from plane.db.models import (
-    Project,
-)
+from plane.db.models import Project
 
 
 class ProjectLiteSerializer(BaseSerializer):

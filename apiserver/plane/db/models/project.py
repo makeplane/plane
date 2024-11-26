@@ -14,11 +14,7 @@ from plane.db.mixins import AuditModel
 # Module imports
 from .base import BaseModel
 
-ROLE_CHOICES = (
-    (20, "Admin"),
-    (15, "Member"),
-    (5, "Guest"),
-)
+ROLE_CHOICES = ((20, "Admin"), (15, "Member"), (5, "Guest"))
 
 
 def get_default_props():
@@ -53,27 +49,19 @@ def get_default_preferences():
 class Project(BaseModel):
     NETWORK_CHOICES = ((0, "Secret"), (2, "Public"))
     name = models.CharField(max_length=255, verbose_name="Project Name")
-    description = models.TextField(
-        verbose_name="Project Description", blank=True
-    )
+    description = models.TextField(verbose_name="Project Description", blank=True)
     description_text = models.JSONField(
         verbose_name="Project Description RT", blank=True, null=True
     )
     description_html = models.JSONField(
         verbose_name="Project Description HTML", blank=True, null=True
     )
-    network = models.PositiveSmallIntegerField(
-        default=2, choices=NETWORK_CHOICES
-    )
+    network = models.PositiveSmallIntegerField(default=2, choices=NETWORK_CHOICES)
     workspace = models.ForeignKey(
-        "db.WorkSpace",
-        on_delete=models.CASCADE,
-        related_name="workspace_project",
+        "db.WorkSpace", on_delete=models.CASCADE, related_name="workspace_project"
     )
     identifier = models.CharField(
-        max_length=12,
-        verbose_name="Project Identifier",
-        db_index=True,
+        max_length=12, verbose_name="Project Identifier", db_index=True
     )
     default_assignee = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -108,10 +96,7 @@ class Project(BaseModel):
         related_name="project_cover_image",
     )
     estimate = models.ForeignKey(
-        "db.Estimate",
-        on_delete=models.SET_NULL,
-        related_name="projects",
-        null=True,
+        "db.Estimate", on_delete=models.SET_NULL, related_name="projects", null=True
     )
     archive_in = models.IntegerField(
         default=0, validators=[MinValueValidator(0), MaxValueValidator(12)]
@@ -121,17 +106,12 @@ class Project(BaseModel):
     )
     logo_props = models.JSONField(default=dict)
     default_state = models.ForeignKey(
-        "db.State",
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name="default_state",
+        "db.State", on_delete=models.SET_NULL, null=True, related_name="default_state"
     )
     archived_at = models.DateTimeField(null=True)
     # timezone
     TIMEZONE_CHOICES = tuple(zip(pytz.all_timezones, pytz.all_timezones))
-    timezone = models.CharField(
-        max_length=255, default="UTC", choices=TIMEZONE_CHOICES
-    )
+    timezone = models.CharField(max_length=255, default="UTC", choices=TIMEZONE_CHOICES)
 
     @property
     def cover_image_url(self):
@@ -181,9 +161,7 @@ class ProjectBaseModel(BaseModel):
         Project, on_delete=models.CASCADE, related_name="project_%(class)s"
     )
     workspace = models.ForeignKey(
-        "db.Workspace",
-        on_delete=models.CASCADE,
-        related_name="workspace_%(class)s",
+        "db.Workspace", on_delete=models.CASCADE, related_name="workspace_%(class)s"
     )
 
     class Meta:
@@ -262,10 +240,7 @@ class ProjectMember(ProjectBaseModel):
 # TODO: Remove workspace relation later
 class ProjectIdentifier(AuditModel):
     workspace = models.ForeignKey(
-        "db.Workspace",
-        models.CASCADE,
-        related_name="project_identifiers",
-        null=True,
+        "db.Workspace", models.CASCADE, related_name="project_identifiers", null=True
     )
     project = models.OneToOneField(
         Project, on_delete=models.CASCADE, related_name="project_identifier"
@@ -310,10 +285,7 @@ class ProjectDeployBoard(ProjectBaseModel):
     comments = models.BooleanField(default=False)
     reactions = models.BooleanField(default=False)
     intake = models.ForeignKey(
-        "db.Intake",
-        related_name="board_intake",
-        on_delete=models.SET_NULL,
-        null=True,
+        "db.Intake", related_name="board_intake", on_delete=models.SET_NULL, null=True
     )
     votes = models.BooleanField(default=False)
     views = models.JSONField(default=get_default_views)

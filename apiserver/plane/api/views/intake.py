@@ -17,14 +17,7 @@ from rest_framework.response import Response
 from plane.api.serializers import IntakeIssueSerializer, IssueSerializer
 from plane.app.permissions import ProjectLitePermission
 from plane.bgtasks.issue_activities_task import issue_activity
-from plane.db.models import (
-    Intake,
-    IntakeIssue,
-    Issue,
-    Project,
-    ProjectMember,
-    State,
-)
+from plane.db.models import Intake, IntakeIssue, Issue, Project, ProjectMember, State
 
 from .base import BaseAPIView
 
@@ -36,16 +29,12 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
 
     """
 
-    permission_classes = [
-        ProjectLitePermission,
-    ]
+    permission_classes = [ProjectLitePermission]
 
     serializer_class = IntakeIssueSerializer
     model = IntakeIssue
 
-    filterset_fields = [
-        "status",
-    ]
+    filterset_fields = ["status"]
 
     def get_queryset(self):
         intake = Intake.objects.filter(
@@ -54,8 +43,7 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
         ).first()
 
         project = Project.objects.get(
-            workspace__slug=self.kwargs.get("slug"),
-            pk=self.kwargs.get("project_id"),
+            workspace__slug=self.kwargs.get("slug"), pk=self.kwargs.get("project_id")
         )
 
         if intake is None and not project.intake_view:
@@ -63,8 +51,7 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
 
         return (
             IntakeIssue.objects.filter(
-                Q(snoozed_till__gte=timezone.now())
-                | Q(snoozed_till__isnull=True),
+                Q(snoozed_till__gte=timezone.now()) | Q(snoozed_till__isnull=True),
                 workspace__slug=self.kwargs.get("slug"),
                 project_id=self.kwargs.get("project_id"),
                 intake_id=intake.id,
@@ -77,41 +64,29 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
         if issue_id:
             intake_issue_queryset = self.get_queryset().get(issue_id=issue_id)
             intake_issue_data = IntakeIssueSerializer(
-                intake_issue_queryset,
-                fields=self.fields,
-                expand=self.expand,
+                intake_issue_queryset, fields=self.fields, expand=self.expand
             ).data
-            return Response(
-                intake_issue_data,
-                status=status.HTTP_200_OK,
-            )
+            return Response(intake_issue_data, status=status.HTTP_200_OK)
         issue_queryset = self.get_queryset()
         return self.paginate(
             request=request,
             queryset=(issue_queryset),
             on_results=lambda intake_issues: IntakeIssueSerializer(
-                intake_issues,
-                many=True,
-                fields=self.fields,
-                expand=self.expand,
+                intake_issues, many=True, fields=self.fields, expand=self.expand
             ).data,
         )
 
     def post(self, request, slug, project_id):
         if not request.data.get("issue", {}).get("name", False):
             return Response(
-                {"error": "Name is required"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST
             )
 
         intake = Intake.objects.filter(
             workspace__slug=slug, project_id=project_id
         ).first()
 
-        project = Project.objects.get(
-            workspace__slug=slug,
-            pk=project_id,
-        )
+        project = Project.objects.get(workspace__slug=slug, pk=project_id)
 
         # Intake view
         if intake is None and not project.intake_view:
@@ -131,8 +106,7 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
             "none",
         ]:
             return Response(
-                {"error": "Invalid priority"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"error": "Invalid priority"}, status=status.HTTP_400_BAD_REQUEST
             )
 
         # Create or get state
@@ -184,10 +158,7 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
             workspace__slug=slug, project_id=project_id
         ).first()
 
-        project = Project.objects.get(
-            workspace__slug=slug,
-            pk=project_id,
-        )
+        project = Project.objects.get(workspace__slug=slug, pk=project_id)
 
         # Intake view
         if intake is None and not project.intake_view:
@@ -234,7 +205,7 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
                         distinct=True,
                         filter=Q(
                             ~Q(labels__id__isnull=True)
-                            & Q(label_issue__deleted_at__isnull=True),
+                            & Q(label_issue__deleted_at__isnull=True)
                         ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
@@ -251,11 +222,7 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
-            ).get(
-                pk=issue_id,
-                workspace__slug=slug,
-                project_id=project_id,
-            )
+            ).get(pk=issue_id, workspace__slug=slug, project_id=project_id)
             # Only allow guests to edit name and description
             if project_member.role <= 5:
                 issue_data = {
@@ -263,14 +230,10 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
                     "description_html": issue_data.get(
                         "description_html", issue.description_html
                     ),
-                    "description": issue_data.get(
-                        "description", issue.description
-                    ),
+                    "description": issue_data.get("description", issue.description),
                 }
 
-            issue_serializer = IssueSerializer(
-                issue, data=issue_data, partial=True
-            )
+            issue_serializer = IssueSerializer(issue, data=issue_data, partial=True)
 
             if issue_serializer.is_valid():
                 current_instance = issue
@@ -310,14 +273,10 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
                 # Update the issue state if the issue is rejected or marked as duplicate
                 if serializer.data["status"] in [-1, 2]:
                     issue = Issue.objects.get(
-                        pk=issue_id,
-                        workspace__slug=slug,
-                        project_id=project_id,
+                        pk=issue_id, workspace__slug=slug, project_id=project_id
                     )
                     state = State.objects.filter(
-                        group="cancelled",
-                        workspace__slug=slug,
-                        project_id=project_id,
+                        group="cancelled", workspace__slug=slug, project_id=project_id
                     ).first()
                     if state is not None:
                         issue.state = state
@@ -326,18 +285,14 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
                 # Update the issue state if it is accepted
                 if serializer.data["status"] in [1]:
                     issue = Issue.objects.get(
-                        pk=issue_id,
-                        workspace__slug=slug,
-                        project_id=project_id,
+                        pk=issue_id, workspace__slug=slug, project_id=project_id
                     )
 
                     # Update the issue state only if it is in triage state
                     if issue.state.is_triage:
                         # Move to default state
                         state = State.objects.filter(
-                            workspace__slug=slug,
-                            project_id=project_id,
-                            default=True,
+                            workspace__slug=slug, project_id=project_id, default=True
                         ).first()
                         if state is not None:
                             issue.state = state
@@ -346,9 +301,7 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
                 # create a activity for status change
                 issue_activity.delay(
                     type="intake.activity.created",
-                    requested_data=json.dumps(
-                        request.data, cls=DjangoJSONEncoder
-                    ),
+                    requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
                     actor_id=str(request.user.id),
                     issue_id=str(issue_id),
                     project_id=str(project_id),
@@ -360,13 +313,10 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
                 )
 
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(
-                IntakeIssueSerializer(intake_issue).data,
-                status=status.HTTP_200_OK,
+                IntakeIssueSerializer(intake_issue).data, status=status.HTTP_200_OK
             )
 
     def delete(self, request, slug, project_id, issue_id):
@@ -374,10 +324,7 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
             workspace__slug=slug, project_id=project_id
         ).first()
 
-        project = Project.objects.get(
-            workspace__slug=slug,
-            pk=project_id,
-        )
+        project = Project.objects.get(workspace__slug=slug, pk=project_id)
 
         # Intake view
         if intake is None and not project.intake_view:

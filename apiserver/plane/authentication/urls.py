@@ -40,64 +40,20 @@ from .views import (
 
 urlpatterns = [
     # credentials
-    path(
-        "sign-in/",
-        SignInAuthEndpoint.as_view(),
-        name="sign-in",
-    ),
-    path(
-        "sign-up/",
-        SignUpAuthEndpoint.as_view(),
-        name="sign-up",
-    ),
-    path(
-        "spaces/sign-in/",
-        SignInAuthSpaceEndpoint.as_view(),
-        name="sign-in",
-    ),
-    path(
-        "spaces/sign-up/",
-        SignUpAuthSpaceEndpoint.as_view(),
-        name="sign-in",
-    ),
+    path("sign-in/", SignInAuthEndpoint.as_view(), name="sign-in"),
+    path("sign-up/", SignUpAuthEndpoint.as_view(), name="sign-up"),
+    path("spaces/sign-in/", SignInAuthSpaceEndpoint.as_view(), name="sign-in"),
+    path("spaces/sign-up/", SignUpAuthSpaceEndpoint.as_view(), name="sign-in"),
     # signout
-    path(
-        "sign-out/",
-        SignOutAuthEndpoint.as_view(),
-        name="sign-out",
-    ),
-    path(
-        "spaces/sign-out/",
-        SignOutAuthSpaceEndpoint.as_view(),
-        name="sign-out",
-    ),
+    path("sign-out/", SignOutAuthEndpoint.as_view(), name="sign-out"),
+    path("spaces/sign-out/", SignOutAuthSpaceEndpoint.as_view(), name="sign-out"),
     # csrf token
-    path(
-        "get-csrf-token/",
-        CSRFTokenEndpoint.as_view(),
-        name="get_csrf_token",
-    ),
+    path("get-csrf-token/", CSRFTokenEndpoint.as_view(), name="get_csrf_token"),
     # Magic sign in
-    path(
-        "magic-generate/",
-        MagicGenerateEndpoint.as_view(),
-        name="magic-generate",
-    ),
-    path(
-        "magic-sign-in/",
-        MagicSignInEndpoint.as_view(),
-        name="magic-sign-in",
-    ),
-    path(
-        "magic-sign-up/",
-        MagicSignUpEndpoint.as_view(),
-        name="magic-sign-up",
-    ),
-    path(
-        "get-csrf-token/",
-        CSRFTokenEndpoint.as_view(),
-        name="get_csrf_token",
-    ),
+    path("magic-generate/", MagicGenerateEndpoint.as_view(), name="magic-generate"),
+    path("magic-sign-in/", MagicSignInEndpoint.as_view(), name="magic-sign-in"),
+    path("magic-sign-up/", MagicSignUpEndpoint.as_view(), name="magic-sign-up"),
+    path("get-csrf-token/", CSRFTokenEndpoint.as_view(), name="get_csrf_token"),
     path(
         "spaces/magic-generate/",
         MagicGenerateSpaceEndpoint.as_view(),
@@ -114,16 +70,8 @@ urlpatterns = [
         name="magic-sign-up",
     ),
     ## Google Oauth
-    path(
-        "google/",
-        GoogleOauthInitiateEndpoint.as_view(),
-        name="google-initiate",
-    ),
-    path(
-        "google/callback/",
-        GoogleCallbackEndpoint.as_view(),
-        name="google-callback",
-    ),
+    path("google/", GoogleOauthInitiateEndpoint.as_view(), name="google-initiate"),
+    path("google/callback/", GoogleCallbackEndpoint.as_view(), name="google-callback"),
     path(
         "spaces/google/",
         GoogleOauthInitiateSpaceEndpoint.as_view(),
@@ -135,16 +83,8 @@ urlpatterns = [
         name="google-callback",
     ),
     ## Github Oauth
-    path(
-        "github/",
-        GitHubOauthInitiateEndpoint.as_view(),
-        name="github-initiate",
-    ),
-    path(
-        "github/callback/",
-        GitHubCallbackEndpoint.as_view(),
-        name="github-callback",
-    ),
+    path("github/", GitHubOauthInitiateEndpoint.as_view(), name="github-initiate"),
+    path("github/callback/", GitHubCallbackEndpoint.as_view(), name="github-callback"),
     path(
         "spaces/github/",
         GitHubOauthInitiateSpaceEndpoint.as_view(),
@@ -156,16 +96,8 @@ urlpatterns = [
         name="github-callback",
     ),
     ## Gitlab Oauth
-    path(
-        "gitlab/",
-        GitLabOauthInitiateEndpoint.as_view(),
-        name="gitlab-initiate",
-    ),
-    path(
-        "gitlab/callback/",
-        GitLabCallbackEndpoint.as_view(),
-        name="gitlab-callback",
-    ),
+    path("gitlab/", GitLabOauthInitiateEndpoint.as_view(), name="gitlab-initiate"),
+    path("gitlab/callback/", GitLabCallbackEndpoint.as_view(), name="gitlab-callback"),
     path(
         "spaces/gitlab/",
         GitLabOauthInitiateSpaceEndpoint.as_view(),
@@ -177,22 +109,10 @@ urlpatterns = [
         name="gitlab-callback",
     ),
     # Email Check
-    path(
-        "email-check/",
-        EmailCheckEndpoint.as_view(),
-        name="email-check",
-    ),
-    path(
-        "spaces/email-check/",
-        EmailCheckSpaceEndpoint.as_view(),
-        name="email-check",
-    ),
+    path("email-check/", EmailCheckEndpoint.as_view(), name="email-check"),
+    path("spaces/email-check/", EmailCheckSpaceEndpoint.as_view(), name="email-check"),
     # Password
-    path(
-        "forgot-password/",
-        ForgotPasswordEndpoint.as_view(),
-        name="forgot-password",
-    ),
+    path("forgot-password/", ForgotPasswordEndpoint.as_view(), name="forgot-password"),
     path(
         "reset-password/<uidb64>/<token>/",
         ResetPasswordEndpoint.as_view(),
@@ -208,14 +128,6 @@ urlpatterns = [
         ResetPasswordSpaceEndpoint.as_view(),
         name="forgot-password",
     ),
-    path(
-        "change-password/",
-        ChangePasswordEndpoint.as_view(),
-        name="forgot-password",
-    ),
-    path(
-        "set-password/",
-        SetUserPasswordEndpoint.as_view(),
-        name="set-password",
-    ),
+    path("change-password/", ChangePasswordEndpoint.as_view(), name="forgot-password"),
+    path("set-password/", SetUserPasswordEndpoint.as_view(), name="set-password"),
 ]

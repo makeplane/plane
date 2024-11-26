@@ -28,18 +28,6 @@ const ProjectViewsPage = observer(() => {
   const project = projectId ? getProjectById(projectId.toString()) : undefined;
   const pageTitle = project?.name ? `${project?.name} - Views` : undefined;
 
-  if (!workspaceSlug || !projectId) return <></>;
-
-  // No access to
-  if (currentProjectDetails?.issue_views_view === false)
-    return (
-      <div className="flex items-center justify-center h-full w-full">
-        <EmptyState
-          type={EmptyStateType.DISABLED_PROJECT_VIEW}
-          primaryButtonLink={`/${workspaceSlug}/projects/${projectId}/settings/features`}
-        />
-      </div>
-    );
   const handleRemoveFilter = useCallback(
     (key: keyof TViewFilterProps, value: string | EViewAccess | null) => {
       let newValues = filters.filters?.[key];
@@ -58,6 +46,19 @@ const ProjectViewsPage = observer(() => {
   );
 
   const isFiltersApplied = calculateTotalFilters(filters?.filters ?? {}) !== 0;
+
+  if (!workspaceSlug || !projectId) return <></>;
+
+  // No access to
+  if (currentProjectDetails?.issue_views_view === false)
+    return (
+      <div className="flex items-center justify-center h-full w-full">
+        <EmptyState
+          type={EmptyStateType.DISABLED_PROJECT_VIEW}
+          primaryButtonLink={`/${workspaceSlug}/projects/${projectId}/settings/features`}
+        />
+      </div>
+    );
 
   return (
     <>
