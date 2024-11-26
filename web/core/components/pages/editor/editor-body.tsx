@@ -35,7 +35,6 @@ import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 import { FileService } from "@/services/file.service";
 // store
 import { IPage } from "@/store/pages/page";
-import { getSocketConnection } from "./socket";
 
 // services init
 const fileService = new FileService();

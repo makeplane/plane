@@ -118,7 +118,7 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
       };
     },
     emitRealTimeUpdate: (message: TDocumentEventsServer) => provider?.sendStateless(message),
-    listenToRealTimeUpdate: () => provider,
+    listenToRealTimeUpdate: () => provider && { on: provider.on.bind(provider), off: provider.off.bind(provider) },
     getHeadings: () => editorRef?.current?.storage.headingList.headings,
   }));
 

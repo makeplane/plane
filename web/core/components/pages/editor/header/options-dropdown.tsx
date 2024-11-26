@@ -23,7 +23,7 @@ import { ExportPageModal } from "@/components/pages";
 // helpers
 import { copyTextToClipboard, copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useCollaborativePageActions } from "@/hooks/use-live-server-realtime";
+import { useCollaborativePageActions } from "@/hooks/use-collaborative-page-actions";
 import { usePageFilters } from "@/hooks/use-page-filters";
 import { useQueryParams } from "@/hooks/use-query-params";
 // store

@@ -23,6 +23,7 @@ import type {
   IMentionSuggestion,
   TEditorCommands,
   TFileHandler,
+  TDocumentEventEmitter,
 } from "@/types";
 
 export interface CustomEditorProps {
@@ -296,7 +297,7 @@ export const useEditor = (props: CustomEditorProps) => {
         Y.applyUpdate(document, value);
       },
       emitRealTimeUpdate: (message: TDocumentEventsServer) => provider?.sendStateless(message),
-      listenToRealTimeUpdate: () => provider,
+      listenToRealTimeUpdate: () => provider && { on: provider.on.bind(provider), off: provider.off.bind(provider) },
     }),
     [editorRef, savedSelection]
   );

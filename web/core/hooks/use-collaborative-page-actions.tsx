@@ -73,7 +73,7 @@ export const useCollaborativePageActions = (editorRef: EditorRefApi | EditorRead
   }, [currentActionBeingProcessed, editorRef]);
 
   useEffect(() => {
-    const provider = editorRef?.listenToRealTimeUpdate();
+    const realTimeStatelessMessageListener = editorRef?.listenToRealTimeUpdate();
 
     const handleStatelessMessage = (message: { payload: TDocumentEventsClient }) => {
       if (currentActionBeingProcessed === message.payload) {
@@ -86,10 +86,10 @@ export const useCollaborativePageActions = (editorRef: EditorRefApi | EditorRead
       }
     };
 
-    provider?.on("stateless", handleStatelessMessage);
+    realTimeStatelessMessageListener?.on("stateless", handleStatelessMessage);
 
     return () => {
-      provider?.off("stateless", handleStatelessMessage);
+      realTimeStatelessMessageListener?.off("stateless", handleStatelessMessage);
     };
   }, [editorRef, currentActionBeingProcessed, executeCollaborativeAction, actionHandlerMap]);
 
