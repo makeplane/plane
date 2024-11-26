@@ -60,7 +60,7 @@ const InstanceAuthenticationPage = observer(() => {
         <div className="border-b border-custom-border-100 mx-4 py-4 space-y-1 flex-shrink-0">
           <div className="text-xl font-medium text-custom-text-100">Manage authentication modes for your instance</div>
           <div className="text-sm font-normal text-custom-text-300">
-            Configure authentication modes for your team and restrict sign ups to be invite only.
+            Configure authentication modes for your team and restrict sign-ups to be invite only.
           </div>
         </div>
         <div className="flex-grow overflow-hidden overflow-y-scroll vertical-scrollbar scrollbar-md px-4">
@@ -80,9 +80,11 @@ const InstanceAuthenticationPage = observer(() => {
                     <ToggleSwitch
                       value={Boolean(parseInt(enableSignUpConfig))}
                       onChange={() => {
-                        Boolean(parseInt(enableSignUpConfig)) === true
-                          ? updateConfig("ENABLE_SIGNUP", "0")
-                          : updateConfig("ENABLE_SIGNUP", "1");
+                        if (Boolean(parseInt(enableSignUpConfig)) === true) {
+                          updateConfig("ENABLE_SIGNUP", "0");
+                        } else {
+                          updateConfig("ENABLE_SIGNUP", "1");
+                        }
                       }}
                       size="sm"
                       disabled={isSubmitting}
@@ -90,7 +92,7 @@ const InstanceAuthenticationPage = observer(() => {
                   </div>
                 </div>
               </div>
-              <div className="text-lg font-medium pt-6">Authentication modes</div>
+              <div className="text-lg font-medium pt-6">Available authentication modes</div>
               <AuthenticationModes disabled={isSubmitting} updateConfig={updateConfig} />
             </div>
           ) : (
