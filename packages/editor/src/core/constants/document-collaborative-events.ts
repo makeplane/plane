@@ -1,6 +1,6 @@
 export const DocumentCollaborativeEvents = {
-  Lock: { client: "locked", server: "Lock" },
-  Unlock: { client: "unlocked", server: "Unlock" },
-  Archive: { client: "archived", server: "Archive" },
-  Unarchive: { client: "unarchived", server: "Unarchive" },
+  lock: { client: "locked", server: "lock" },
+  unlock: { client: "unlocked", server: "unlock" },
+  archive: { client: "archived", server: "archive" },
+  unarchive: { client: "unarchived", server: "unarchive" },
 } as const;

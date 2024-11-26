@@ -112,8 +112,8 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     {
       key: "lock-unlock-page",
       action: is_locked
-        ? () => executeCollaborativeAction({ type: "sendMessageToServer", message: "Unlock" })
-        : () => executeCollaborativeAction({ type: "sendMessageToServer", message: "Lock" }),
+        ? () => executeCollaborativeAction({ type: "sendMessageToServer", message: "unlock" })
+        : () => executeCollaborativeAction({ type: "sendMessageToServer", message: "lock" }),
       label: is_locked ? "Unlock page" : "Lock page",
       icon: is_locked ? LockOpen : Lock,
       shouldRender: canCurrentUserLockPage,
@@ -121,8 +121,8 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     {
       key: "archive-restore-page",
       action: archived_at
-        ? () => executeCollaborativeAction({ type: "sendMessageToServer", message: "Unarchive" })
-        : () => executeCollaborativeAction({ type: "sendMessageToServer", message: "Archive" }),
+        ? () => executeCollaborativeAction({ type: "sendMessageToServer", message: "unarchive" })
+        : () => executeCollaborativeAction({ type: "sendMessageToServer", message: "archive" }),
       label: archived_at ? "Restore page" : "Archive page",
       icon: archived_at ? ArchiveRestoreIcon : ArchiveIcon,
       shouldRender: canCurrentUserArchivePage,

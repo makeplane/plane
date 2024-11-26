@@ -6,7 +6,7 @@ import { IPage } from "@/store/pages/page";
 
 // Better type naming and structure
 type CollaborativeAction = {
-  execute: () => Promise<void>;
+  execute: (shouldSync?: boolean) => Promise<void>;
   errorMessage: string;
 };
 
@@ -21,24 +21,24 @@ export const useCollaborativePageActions = (editorRef: EditorRefApi | EditorRead
 
   const actionHandlerMap: Record<TDocumentEventsClient, CollaborativeAction> = useMemo(
     () => ({
-      [DocumentCollaborativeEvents.Lock.client]: {
-        execute: page.lock,
+      [DocumentCollaborativeEvents.lock.client]: {
+        execute: (shouldSync) => page.lock(shouldSync),
         errorMessage: "Page could not be locked. Please try again later.",
       },
-      [DocumentCollaborativeEvents.Unlock.client]: {
-        execute: page.unlock,
+      [DocumentCollaborativeEvents.unlock.client]: {
+        execute: (shouldSync) => page.unlock(shouldSync),
         errorMessage: "Page could not be unlocked. Please try again later.",
       },
-      [DocumentCollaborativeEvents.Archive.client]: {
-        execute: page.archive,
+      [DocumentCollaborativeEvents.archive.client]: {
+        execute: (shouldSync) => page.archive(shouldSync),
         errorMessage: "Page could not be archived. Please try again later.",
       },
-      [DocumentCollaborativeEvents.Unarchive.client]: {
-        execute: page.restore,
+      [DocumentCollaborativeEvents.unarchive.client]: {
+        execute: (shouldSync) => page.restore(shouldSync),
         errorMessage: "Page could not be restored. Please try again later.",
       },
     }),
-    [page.lock, page.unlock, page.archive, page.restore]
+    [page]
   );
 
   const executeCollaborativeAction = useCallback(
@@ -48,7 +48,7 @@ export const useCollaborativePageActions = (editorRef: EditorRefApi | EditorRead
       const actionDetails = actionHandlerMap[clientAction];
 
       try {
-        await actionDetails.execute();
+        await actionDetails.execute(isPerformedByCurrentUser);
         if (isPerformedByCurrentUser) {
           setCurrentActionBeingProcessed(clientAction);
         }
