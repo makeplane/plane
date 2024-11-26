@@ -11,10 +11,10 @@ type CollaborativeAction = {
 };
 
 type CollaborativeActionEvent =
-  | { type: "sendToServer"; message: TDocumentEventsServer }
-  | { type: "fromServer"; message: TDocumentEventsClient };
+  | { type: "sendMessageToServer"; message: TDocumentEventsServer }
+  | { type: "receivedMessageFromServer"; message: TDocumentEventsClient };
 
-export const usePageCollaborativeActions = (editorRef: EditorRefApi | EditorReadOnlyRefApi | null, page: IPage) => {
+export const useCollaborativePageActions = (editorRef: EditorRefApi | EditorReadOnlyRefApi | null, page: IPage) => {
   // currentUserAction local state to track if the current action is being processed, a
   // local action is basically the action performed by the current user to avoid double operations
   const [currentActionBeingProcessed, setCurrentActionBeingProcessed] = useState<TDocumentEventsClient | null>(null);
@@ -43,7 +43,7 @@ export const usePageCollaborativeActions = (editorRef: EditorRefApi | EditorRead
 
   const executeCollaborativeAction = useCallback(
     async (event: CollaborativeActionEvent) => {
-      const isPerformedByCurrentUser = event.type === "sendToServer";
+      const isPerformedByCurrentUser = event.type === "sendMessageToServer";
       const clientAction = isPerformedByCurrentUser ? DocumentRealtimeEvents[event.message].client : event.message;
       const actionDetails = actionHandlerMap[clientAction];
 
@@ -82,7 +82,7 @@ export const usePageCollaborativeActions = (editorRef: EditorRefApi | EditorRead
       }
 
       if (message.payload) {
-        executeCollaborativeAction({ type: "fromServer", message: message.payload });
+        executeCollaborativeAction({ type: "receivedMessageFromServer", message: message.payload });
       }
     };
 

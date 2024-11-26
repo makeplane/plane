@@ -23,7 +23,7 @@ import { ExportPageModal } from "@/components/pages";
 // helpers
 import { copyTextToClipboard, copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { usePageCollaborativeActions } from "@/hooks/use-live-server-realtime";
+import { useCollaborativePageActions } from "@/hooks/use-live-server-realtime";
 import { usePageFilters } from "@/hooks/use-page-filters";
 import { useQueryParams } from "@/hooks/use-query-params";
 // store
@@ -58,7 +58,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   // update query params
   const { updateQueryParams } = useQueryParams();
   // collaborative actions
-  const { executeCollaborativeAction } = usePageCollaborativeActions(editorRef, page);
+  const { executeCollaborativeAction } = useCollaborativePageActions(editorRef, page);
 
   // menu items list
   const MENU_ITEMS: {
@@ -112,8 +112,8 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     {
       key: "lock-unlock-page",
       action: is_locked
-        ? () => executeCollaborativeAction({ type: "sendToServer", message: "Unlock" })
-        : () => executeCollaborativeAction({ type: "sendToServer", message: "Lock" }),
+        ? () => executeCollaborativeAction({ type: "sendMessageToServer", message: "Unlock" })
+        : () => executeCollaborativeAction({ type: "sendMessageToServer", message: "Lock" }),
       label: is_locked ? "Unlock page" : "Lock page",
       icon: is_locked ? LockOpen : Lock,
       shouldRender: canCurrentUserLockPage,
@@ -121,8 +121,8 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     {
       key: "archive-restore-page",
       action: archived_at
-        ? () => executeCollaborativeAction({ type: "sendToServer", message: "Unarchive" })
-        : () => executeCollaborativeAction({ type: "sendToServer", message: "Archive" }),
+        ? () => executeCollaborativeAction({ type: "sendMessageToServer", message: "Unarchive" })
+        : () => executeCollaborativeAction({ type: "sendMessageToServer", message: "Archive" }),
       label: archived_at ? "Restore page" : "Archive page",
       icon: archived_at ? ArchiveRestoreIcon : ArchiveIcon,
       shouldRender: canCurrentUserArchivePage,
