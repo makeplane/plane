@@ -7,7 +7,7 @@ from opentelemetry.instrumentation.django import DjangoInstrumentor
 import os
 
 
-def init_telemetry():
+def init_tracer():
     """Initialize OpenTelemetry with proper shutdown handling"""
 
     # Check if already initialized to prevent double initialization
@@ -32,7 +32,7 @@ def init_telemetry():
     return tracer_provider
 
 
-def shutdown_telemetry():
+def shutdown_tracer():
     """Shutdown OpenTelemetry tracers and processors"""
     provider = trace.get_tracer_provider()
 
