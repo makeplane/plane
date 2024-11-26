@@ -55,10 +55,6 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
   const elementRef = useRef<HTMLDivElement | null>(null);
 
-  // if(!favorite.children) getGroupedFavorites(workspaceSlug.toString(), favorite.id);
-
-
-
   useEffect(() => {
     const element = elementRef.current;
 
