@@ -51,12 +51,10 @@ export const useReadOnlyCollaborativeEditor = (props: TReadOnlyCollaborativeEdit
   );
 
   // indexed db integration for offline support
-  const localProvider = useMemo(() => {
-    if (id) {
-      const localProvider = new IndexeddbPersistence(id, provider.document);
-      return localProvider;
-    }
-  }, [id, provider]);
+  const localProvider = useMemo(
+    () => (id ? new IndexeddbPersistence(id, provider.document) : undefined),
+    [id, provider]
+  );
 
   // destroy and disconnect connection on unmount
   useEffect(
