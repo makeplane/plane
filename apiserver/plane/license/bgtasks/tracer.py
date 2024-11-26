@@ -1,6 +1,5 @@
 # Third party imports
 from celery import shared_task
-from opentelemetry import trace
 
 # Module imports
 from plane.license.models import Instance
@@ -16,13 +15,11 @@ from plane.db.models import (
     Page,
     WorkspaceMember,
 )
+from plane.utils.telemetry import init_telemetry
 
 
 @shared_task
 def instance_traces():
-    # Get the tracer
-    tracer = trace.get_tracer(__name__)
-
     # Check if the instance is registered
     instance = Instance.objects.first()
 
@@ -31,6 +28,8 @@ def instance_traces():
         return
 
     if instance.is_telemetry_enabled:
+        # Get the tracer
+        tracer = init_telemetry()
         # Instance details
         with tracer.start_as_current_span("instance_details") as span:
             # Count of all models
