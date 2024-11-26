@@ -8,7 +8,9 @@ import { IWorkspaceMemberInvitation, TOnboardingSteps } from "@plane/types";
 // components
 import { Invitations, OnboardingHeader, SwitchAccountDropdown, CreateWorkspace } from "@/components/onboarding";
 // hooks
-import { useInstance, useUser } from "@/hooks/store";
+import { useUser } from "@/hooks/store";
+// plane web helpers
+import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
 // assets
 import CreateJoinWorkspaceDark from "@/public/onboarding/create-join-workspace-dark.webp";
 import CreateJoinWorkspace from "@/public/onboarding/create-join-workspace-light.webp";
@@ -32,11 +34,10 @@ export const CreateOrJoinWorkspaces: React.FC<Props> = observer((props) => {
   const [currentView, setCurrentView] = useState<ECreateOrJoinWorkspaceViews | null>(null);
   // store hooks
   const { data: user } = useUser();
-  const { config } = useInstance();
   // hooks
   const { resolvedTheme } = useTheme();
   // derived values
-  const isWorkspaceCreationEnabled = config?.is_workspace_creation_disabled === false;
+  const isWorkspaceCreationEnabled = getIsWorkspaceCreationDisabled() === false;
 
   useEffect(() => {
     if (invitations.length > 0) {

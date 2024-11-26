@@ -84,18 +84,19 @@ export const WorkspaceCreateForm = () => {
     <div className="space-y-8">
       <div className="grid-col grid w-full max-w-4xl grid-cols-1 items-start justify-between gap-x-10 gap-y-6 lg:grid-cols-2">
         <div className="flex flex-col gap-1">
-          <h4 className="text-sm text-custom-text-300">Workspace Name</h4>
+          <h4 className="text-sm text-custom-text-300">Name your workspace</h4>
           <div className="flex flex-col gap-1">
             <Controller
               control={control}
               name="name"
               rules={{
-                required: "Workspace name is required",
+                required: "This is a required field.",
                 validate: (value) =>
-                  /^[\w\s-]*$/.test(value) || `Name can only contain (" "), ( - ), ( _ ) & alphanumeric characters.`,
+                  /^[\w\s-]*$/.test(value) ||
+                  `Workspaces names can contain only (" "), ( - ), ( _ ) and alphanumeric characters.`,
                 maxLength: {
                   value: 80,
-                  message: "Workspace name should not exceed 80 characters",
+                  message: "Limit your name to 80 characters.",
                 },
               }}
               render={({ field: { value, ref, onChange } }) => (
@@ -112,7 +113,7 @@ export const WorkspaceCreateForm = () => {
                   }}
                   ref={ref}
                   hasError={Boolean(errors.name)}
-                  placeholder="Enter workspace name..."
+                  placeholder="Something familiar and recognizable is always best."
                   className="w-full"
                 />
               )}
@@ -121,17 +122,17 @@ export const WorkspaceCreateForm = () => {
           </div>
         </div>
         <div className="flex flex-col gap-1">
-          <h4 className="text-sm text-custom-text-300">Workspace URL</h4>
+          <h4 className="text-sm text-custom-text-300">Set your workspace&apos;s URL</h4>
           <div className="flex gap-0.5 w-full items-center rounded-md border-[0.5px] border-custom-border-200 px-3">
             <span className="whitespace-nowrap text-sm text-custom-text-200">{WEB_BASE_URL}/</span>
             <Controller
               control={control}
               name="slug"
               rules={{
-                required: "Workspace slug is required",
+                required: "The URL is a required field.",
                 maxLength: {
                   value: 48,
-                  message: "Workspace slug should not exceed 48 characters",
+                  message: "Limit your URL to 48 characters.",
                 },
               }}
               render={({ field: { onChange, value, ref } }) => (
@@ -146,32 +147,32 @@ export const WorkspaceCreateForm = () => {
                   }}
                   ref={ref}
                   hasError={Boolean(errors.slug)}
-                  placeholder="Enter workspace url"
+                  placeholder="workspace-name"
                   className="block w-full rounded-md border-none bg-transparent !px-0 py-2 text-sm"
                 />
               )}
             />
           </div>
-          {slugError && <p className="text-sm text-red-500">Workspace URL is already taken!</p>}
+          {slugError && <p className="text-sm text-red-500">This URL is taken. Try something else.</p>}
           {invalidSlug && (
-            <p className="text-sm text-red-500">{`URL can only contain ( - ), ( _ ) & alphanumeric characters.`}</p>
+            <p className="text-sm text-red-500">{`URLs can contain only ( - ), ( _ ) and alphanumeric characters.`}</p>
           )}
           {errors.slug && <span className="text-xs text-red-500">{errors.slug.message}</span>}
         </div>
         <div className="flex flex-col gap-1">
-          <h4 className="text-sm text-custom-text-300">What size is your organization?</h4>
+          <h4 className="text-sm text-custom-text-300">How many people will use this workspace?</h4>
           <div className="w-full">
             <Controller
               name="organization_size"
               control={control}
-              rules={{ required: "This field is required" }}
+              rules={{ required: "This is a required field." }}
               render={({ field: { value, onChange } }) => (
                 <CustomSelect
                   value={value}
                   onChange={onChange}
                   label={
                     ORGANIZATION_SIZE.find((c) => c === value) ?? (
-                      <span className="text-custom-text-400">Select organization size</span>
+                      <span className="text-custom-text-400">Select a range</span>
                     )
                   }
                   buttonClassName="!border-[0.5px] !border-custom-border-200 !shadow-none"
@@ -200,9 +201,9 @@ export const WorkspaceCreateForm = () => {
           disabled={!isValid}
           loading={isSubmitting}
         >
-          {isSubmitting ? "Creating" : "Create Workspace"}
+          {isSubmitting ? "Creating workspace" : "Create workspace"}
         </Button>
-        <Link className={getButtonStyling("link-neutral", "sm")} href="/workspace">
+        <Link className={getButtonStyling("neutral-primary", "sm")} href="/workspace">
           Go back
         </Link>
       </div>

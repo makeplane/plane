@@ -44,8 +44,8 @@ export const WorkspaceListItem = observer(({ workspaceId }: TWorkspaceListItemPr
         </span>
         <div className="flex flex-col items-start gap-1">
           <div className="flex flex-wrap w-full items-center gap-2.5">
-            <h3 className={`text-base font-medium capitalize`}>{workspace.name}</h3>
-            <Tooltip tooltipContent="Your workspace slug">
+            <h3 className={`text-base font-medium capitalize`}>{workspace.name}</h3>/
+            <Tooltip tooltipContent="The unique URL of your workspace">
               <h4 className="text-sm text-custom-text-300">[{workspace.slug}]</h4>
             </Tooltip>
           </div>
@@ -63,10 +63,13 @@ export const WorkspaceListItem = observer(({ workspaceId }: TWorkspaceListItemPr
               </span>
             )}
             {workspace.total_members !== null && (
-              <span className="flex items-center gap-1">
-                <h3 className="text-custom-text-200 font-medium">Total members:</h3>
-                <h4 className="text-custom-text-300">{workspace.total_members}</h4>
-              </span>
+              <>
+                •
+                <span className="flex items-center gap-1">
+                  <h3 className="text-custom-text-200 font-medium">Total members:</h3>
+                  <h4 className="text-custom-text-300">{workspace.total_members}</h4>
+                </span>
+              </>
             )}
           </div>
         </div>

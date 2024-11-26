@@ -17,9 +17,12 @@ import { GOD_MODE_URL, cn } from "@/helpers/common.helper";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
-import { useAppTheme, useInstance, useUser, useUserPermissions, useUserProfile, useWorkspace } from "@/hooks/store";
+import { useAppTheme, useUser, useUserPermissions, useUserProfile, useWorkspace } from "@/hooks/store";
 // plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+// plane web helpers
+import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
+// components
 import { WorkspaceLogo } from "../logo";
 
 // Static Data
@@ -46,7 +49,6 @@ export const SidebarDropdown = observer(() => {
   // store hooks
   const { sidebarCollapsed, toggleSidebar } = useAppTheme();
   const { data: currentUser } = useUser();
-  const { config } = useInstance();
   const {
     // updateCurrentUser,
     // isUserInstanceAdmin,
@@ -55,7 +57,7 @@ export const SidebarDropdown = observer(() => {
   const { updateUserProfile } = useUserProfile();
   const { allowPermissions } = useUserPermissions();
   // derived values
-  const isWorkspaceCreationEnabled = config?.is_workspace_creation_disabled === false;
+  const isWorkspaceCreationEnabled = getIsWorkspaceCreationDisabled() === false;
 
   const isUserInstanceAdmin = false;
   const { currentWorkspace: activeWorkspace, workspaces } = useWorkspace();

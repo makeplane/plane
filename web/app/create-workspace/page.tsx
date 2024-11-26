@@ -9,10 +9,12 @@ import { IWorkspace } from "@plane/types";
 // components
 import { CreateWorkspaceForm } from "@/components/workspace";
 // hooks
-import { useInstance, useUser, useUserProfile } from "@/hooks/store";
+import { useUser, useUserProfile } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers";
+// plane web helpers
+import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
 // images
 import BlackHorizontalLogo from "@/public/plane-logos/black-horizontal-with-blue-logo.png";
 import WhiteHorizontalLogo from "@/public/plane-logos/white-horizontal-with-blue-logo.png";
@@ -23,7 +25,6 @@ const CreateWorkspacePage = observer(() => {
   // store hooks
   const { data: currentUser } = useUser();
   const { updateUserProfile } = useUserProfile();
-  const { config } = useInstance();
   // states
   const [defaultValues, setDefaultValues] = useState({
     name: "",
@@ -33,7 +34,7 @@ const CreateWorkspacePage = observer(() => {
   // hooks
   const { resolvedTheme } = useTheme();
   // derived values
-  const isWorkspaceCreationDisabled = config?.is_workspace_creation_disabled;
+  const isWorkspaceCreationDisabled = getIsWorkspaceCreationDisabled();
 
   const onSubmit = async (workspace: IWorkspace) => {
     await updateUserProfile({ last_workspace_id: workspace.id }).then(() => router.push(`/${workspace.slug}`));

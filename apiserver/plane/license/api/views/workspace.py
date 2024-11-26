@@ -69,8 +69,8 @@ class InstanceWorkSpaceEndpoint(BaseAPIView):
             on_results=lambda results: WorkspaceSerializer(
                 results, many=True,
             ).data,
-            max_per_page=5,
-            default_per_page=5,
+            max_per_page=10,
+            default_per_page=10,
         )
 
     def post(self, request):
