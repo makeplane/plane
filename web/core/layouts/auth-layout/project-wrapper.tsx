@@ -162,7 +162,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // check if the project info is not found.
   if (!loader && !projectExists && projectId && !!hasPermissionToCurrentProject === false)
     return (
-      <div className="container grid h-screen place-items-center bg-custom-background-100">
+      <div className="grid h-screen place-items-center bg-custom-background-100">
         <EmptyState
           title="No such project exists"
           description="Try creating a new project"

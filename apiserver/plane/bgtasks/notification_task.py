@@ -16,6 +16,7 @@ from plane.db.models import (
     IssueComment,
     IssueActivity,
     UserNotificationPreference,
+    ProjectMember
 )
 
 # Third Party imports
@@ -94,6 +95,8 @@ def extract_mentions_as_subscribers(project_id, issue_id, mentions):
             ).exists()
             and not Issue.objects.filter(
                 project_id=project_id, pk=issue_id, created_by_id=mention_id
+            ).exists() and ProjectMember.objects.filter(
+                project_id=project_id, member_id=mention_id, is_active=True
             ).exists()
         ):
             project = Project.objects.get(pk=project_id)
@@ -243,6 +246,10 @@ def notifications(
             new_mentions = get_new_mentions(
                 requested_instance=requested_data, current_instance=current_instance
             )
+            new_mentions = list(ProjectMember.objects.filter(
+                project_id=project_id, member_id__in=new_mentions, is_active=True
+            ).values_list("member_id", flat=True))
+            new_mentions = [str(member_id) for member_id in new_mentions]
             removed_mention = get_removed_mentions(
                 requested_instance=requested_data, current_instance=current_instance
             )
@@ -286,7 +293,7 @@ def notifications(
 
             # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- #
             issue_subscribers = list(
-                IssueSubscriber.objects.filter(project_id=project_id, issue_id=issue_id)
+                IssueSubscriber.objects.filter(project_id=project_id, issue_id=issue_id, project__project_projectmember__is_active=True,)
                 .exclude(
                     subscriber_id__in=list(new_mentions + comment_mentions + [actor_id])
                 )
