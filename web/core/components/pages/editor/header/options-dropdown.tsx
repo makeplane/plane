@@ -17,7 +17,7 @@ import {
 // document editor
 import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
 // ui
-import { ArchiveIcon, CustomMenu, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
+import { ArchiveIcon, CustomMenu, type ISvgIcons, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 // components
 import { ExportPageModal } from "@/components/pages";
 // helpers
@@ -65,7 +65,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
     key: string;
     action: () => void;
     label: string;
-    icon: LucideIcon;
+    icon: LucideIcon | React.FC<ISvgIcons>;
     shouldRender: boolean;
   }[] = [
     {
