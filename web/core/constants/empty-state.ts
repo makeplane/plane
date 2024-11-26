@@ -35,7 +35,7 @@ export enum EmptyStateType {
   WORKSPACE_SUBSCRIBED = "workspace-subscribed",
   WORKSPACE_CUSTOM_VIEW = "workspace-custom-view",
   WORKSPACE_NO_PROJECTS = "workspace-no-projects",
-  WORKSPACE_PROJECT_NOT_FOUND = "workspave-project-no-found",
+  WORKSPACE_PROJECT_NOT_FOUND = "workspave-project-not-found",
   WORKSPACE_SETTINGS_API_TOKENS = "workspace-settings-api-tokens",
   WORKSPACE_SETTINGS_WEBHOOKS = "workspace-settings-webhooks",
   WORKSPACE_SETTINGS_EXPORT = "workspace-settings-export",
