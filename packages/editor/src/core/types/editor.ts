@@ -8,14 +8,14 @@ import {
   IMentionSuggestion,
   TAIHandler,
   TDisplayConfig,
+  TDocumentEventEmitter,
+  TDocumentEventsServer,
   TEmbedConfig,
   TExtensions,
   TFileHandler,
   TServerHandler,
 } from "@/types";
 import { TTextAlign } from "@/extensions";
-import { HocuspocusProviderWebsocket } from "@hocuspocus/provider";
-import { TDocumentEventsServer, TDocumentEventEmitter } from "src/lib";
 
 export type TEditorCommands =
   | "text"
@@ -145,7 +145,6 @@ export interface ICollaborativeDocumentEditor
   realtimeConfig: TRealtimeConfig;
   serverHandler?: TServerHandler;
   user: TUserDetails;
-  socket: HocuspocusProviderWebsocket;
 }
 
 // read only editor props
@@ -173,7 +172,6 @@ export interface ICollaborativeDocumentReadOnlyEditor extends Omit<IReadOnlyEdit
   realtimeConfig: TRealtimeConfig;
   serverHandler?: TServerHandler;
   user: TUserDetails;
-  socket: HocuspocusProviderWebsocket;
 }
 
 export interface IDocumentReadOnlyEditor extends IReadOnlyEditorProps {

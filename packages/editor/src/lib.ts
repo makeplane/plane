@@ -1,3 +1,4 @@
 export * from "@/extensions/core-without-props";
-export * from "@/helpers/document-events";
-export * from "@/types/document-events";
+export * from "@/constants/document-collaborative-events";
+export * from "@/helpers/get-document-server-event";
+export * from "@/types/document-collaborative-events";

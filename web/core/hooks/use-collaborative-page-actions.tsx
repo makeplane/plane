@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { EditorReadOnlyRefApi, EditorRefApi, TDocumentEventsServer } from "@plane/editor";
-import { DocumentRealtimeEvents, TDocumentEventsClient, getServerEventName } from "@plane/editor/lib";
+import { DocumentCollaborativeEvents, TDocumentEventsClient, getServerEventName } from "@plane/editor/lib";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 import { IPage } from "@/store/pages/page";
 
@@ -21,19 +21,19 @@ export const useCollaborativePageActions = (editorRef: EditorRefApi | EditorRead
 
   const actionHandlerMap: Record<TDocumentEventsClient, CollaborativeAction> = useMemo(
     () => ({
-      [DocumentRealtimeEvents.Lock.client]: {
+      [DocumentCollaborativeEvents.Lock.client]: {
         execute: page.lock,
         errorMessage: "Page could not be locked. Please try again later.",
       },
-      [DocumentRealtimeEvents.Unlock.client]: {
+      [DocumentCollaborativeEvents.Unlock.client]: {
         execute: page.unlock,
         errorMessage: "Page could not be unlocked. Please try again later.",
       },
-      [DocumentRealtimeEvents.Archive.client]: {
+      [DocumentCollaborativeEvents.Archive.client]: {
         execute: page.archive,
         errorMessage: "Page could not be archived. Please try again later.",
       },
-      [DocumentRealtimeEvents.Unarchive.client]: {
+      [DocumentCollaborativeEvents.Unarchive.client]: {
         execute: page.restore,
         errorMessage: "Page could not be restored. Please try again later.",
       },
@@ -44,7 +44,7 @@ export const useCollaborativePageActions = (editorRef: EditorRefApi | EditorRead
   const executeCollaborativeAction = useCallback(
     async (event: CollaborativeActionEvent) => {
       const isPerformedByCurrentUser = event.type === "sendMessageToServer";
-      const clientAction = isPerformedByCurrentUser ? DocumentRealtimeEvents[event.message].client : event.message;
+      const clientAction = isPerformedByCurrentUser ? DocumentCollaborativeEvents[event.message].client : event.message;
       const actionDetails = actionHandlerMap[clientAction];
 
       try {
@@ -91,7 +91,7 @@ export const useCollaborativePageActions = (editorRef: EditorRefApi | EditorRead
     return () => {
       realTimeStatelessMessageListener?.off("stateless", handleStatelessMessage);
     };
-  }, [editorRef, currentActionBeingProcessed, executeCollaborativeAction, actionHandlerMap]);
+  }, [editorRef, currentActionBeingProcessed, executeCollaborativeAction]);
 
   return {
     executeCollaborativeAction,

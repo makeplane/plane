@@ -5,7 +5,7 @@ import { handleAuthentication } from "@/core/lib/authentication.js";
 // extensions
 import { getExtensions } from "@/core/extensions/index.js";
 import {
-  DocumentRealtimeEvents,
+  DocumentCollaborativeEvents,
   TDocumentEventsServer,
 } from "@plane/editor/lib";
 // editor types
@@ -62,7 +62,7 @@ export const getHocusPocusServer = async () => {
     async onStateless({ payload, document }) {
       // broadcast the client event (derived from the server event) to all the clients so that they can update their state
       const response =
-        DocumentRealtimeEvents[payload as TDocumentEventsServer].client;
+        DocumentCollaborativeEvents[payload as TDocumentEventsServer].client;
       if (response) {
         document.broadcastStateless(response);
       }

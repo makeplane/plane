@@ -179,7 +179,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
           "md:w-[90%]": isFullWidth,
         })}
       >
-        <div className="print-container h-full w-full flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden">
+        <div className="h-full w-full flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden">
           <div className="relative w-full flex-shrink-0 md:pl-5 px-4">
             <PageEditorTitle
               editorRef={editorRef}

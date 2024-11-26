@@ -62,7 +62,7 @@ export const useReadOnlyCollaborativeEditor = (props: TReadOnlyCollaborativeEdit
       provider.destroy();
       localProvider?.destroy();
     },
-    [provider]
+    [provider, localProvider]
   );
 
   const editor = useReadOnlyEditor({

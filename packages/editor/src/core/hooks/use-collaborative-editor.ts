@@ -69,7 +69,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
       provider?.destroy();
       localProvider?.destroy();
     },
-    [provider]
+    [provider, localProvider]
   );
 
   const editor = useEditor({
