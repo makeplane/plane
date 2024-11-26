@@ -7,8 +7,11 @@ import useSWR from "swr";
 
 // components
 import { JoinProject } from "@/components/auth-screens";
-import { EmptyState, LogoSpinner } from "@/components/common";
+import { LogoSpinner } from "@/components/common";
+import { EmptyState } from "@/components/empty-state";
 import { ETimeLineTypeType } from "@/components/gantt-chart/contexts";
+//constants
+import { EmptyStateType } from "@/constants/empty-state";
 // hooks
 import {
   useCommandPalette,
@@ -28,8 +31,6 @@ import { useTimeLineChart } from "@/hooks/use-timeline-chart";
 import { persistence } from "@/local-db/storage.sqlite";
 // plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
-// images
-import emptyProject from "@/public/empty-state/onboarding/dashboard-light.webp";
 
 interface IProjectAuthWrapper {
   children: ReactNode;
@@ -164,15 +165,11 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     return (
       <div className="grid h-screen place-items-center bg-custom-background-100">
         <EmptyState
-          title="No such project exists"
-          description="Try creating a new project"
-          image={emptyProject}
-          primaryButton={{
-            text: "Create Project",
-            onClick: () => {
-              setTrackElement("Projects page empty state");
-              toggleCreateProjectModal(true);
-            },
+          type={EmptyStateType.WORKSPACE_PROJECT_NOT_FOUND}
+          layout="screen-detailed"
+          primaryButtonOnClick={() => {
+            setTrackElement("Projects page empty state");
+            toggleCreateProjectModal(true)
           }}
         />
       </div>
