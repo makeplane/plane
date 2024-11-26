@@ -3,13 +3,18 @@ import { ReactRenderer } from "@tiptap/react";
 import Suggestion, { SuggestionOptions } from "@tiptap/suggestion";
 import tippy from "tippy.js";
 // types
-import { ISlashCommandItem } from "@/types";
+import { ISlashCommandItem, TEditorCommands, TSlashCommandSectionKeys } from "@/types";
 // components
 import { getSlashCommandFilteredSections } from "./command-items-list";
 import { SlashCommandsMenu, SlashCommandsMenuProps } from "./command-menu";
 
 export type SlashCommandOptions = {
   suggestion: Omit<SuggestionOptions, "editor">;
+};
+
+export type TSlashCommandAdditionalOption = ISlashCommandItem & {
+  section: TSlashCommandSectionKeys;
+  pushAfter: TEditorCommands;
 };
 
 const Command = Extension.create<SlashCommandOptions>({
@@ -102,7 +107,7 @@ const renderItems = () => {
   };
 };
 
-export const SlashCommands = (additionalOptions?: ISlashCommandItem[]) =>
+export const SlashCommands = (additionalOptions?: TSlashCommandAdditionalOption[]) =>
   Command.configure({
     suggestion: {
       items: getSlashCommandFilteredSections(additionalOptions),

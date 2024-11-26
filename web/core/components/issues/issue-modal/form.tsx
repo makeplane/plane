@@ -101,6 +101,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const [labelModal, setLabelModal] = useState(false);
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
+  const [isMoving, setIsMoving] = useState<boolean>(false);
 
   // refs
   const editorRef = useRef<EditorRefApi>(null);
@@ -113,8 +114,12 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
 
   // store hooks
   const { getProjectById } = useProject();
-  const { getIssueTypeIdOnProjectChange, getActiveAdditionalPropertiesLength, handlePropertyValuesValidation } =
-    useIssueModal();
+  const {
+    getIssueTypeIdOnProjectChange,
+    getActiveAdditionalPropertiesLength,
+    handlePropertyValuesValidation,
+    handleCreateUpdatePropertyValues,
+  } = useIssueModal();
   const { isMobile } = usePlatformOS();
   const { moveIssue } = useWorkspaceDraftIssues();
 
@@ -234,6 +239,33 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
       .catch((error) => {
         console.error(error);
       });
+  };
+
+  const handleMoveToProjects = async () => {
+    if (!data?.id || !data?.project_id || !data) return;
+    setIsMoving(true);
+    try {
+      await handleCreateUpdatePropertyValues({
+        issueId: data.id,
+        issueTypeId: data.type_id,
+        projectId: data.project_id,
+        workspaceSlug: workspaceSlug.toString(),
+        isDraft: true,
+      });
+
+      await moveIssue(workspaceSlug.toString(), data.id, {
+        ...data,
+        ...getValues(),
+      } as TWorkspaceDraftIssue);
+    } catch (error) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Failed to move issue to project. Please try again.",
+      });
+    } finally {
+      setIsMoving(false);
+    }
   };
 
   const condition =
@@ -493,15 +525,9 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                       variant="primary"
                       type="button"
                       size="sm"
-                      loading={isSubmitting}
-                      onClick={() => {
-                        if (data?.id && data) {
-                          moveIssue(workspaceSlug.toString(), data?.id, {
-                            ...data,
-                            ...getValues(),
-                          } as TWorkspaceDraftIssue);
-                        }
-                      }}
+                      loading={isMoving}
+                      onClick={handleMoveToProjects}
+                      disabled={isMoving}
                     >
                       Add to project
                     </Button>

@@ -1,4 +1,5 @@
 import differenceInCalendarDays from "date-fns/differenceInCalendarDays";
+import isEmpty from "lodash/isEmpty";
 import set from "lodash/set";
 import { v4 as uuidv4 } from "uuid";
 // types
@@ -308,3 +309,17 @@ export const getComputedDisplayProperties = (
   cycle: displayProperties?.cycle ?? true,
   issue_type: displayProperties?.issue_type ?? true,
 });
+
+/**
+ * This is to check if the issues list api should fall back to server or use local db
+ * @param queries
+ * @returns
+ */
+export const getIssuesShouldFallbackToServer = (queries: any) => {
+  // If there is expand query and is not grouped then fallback to server
+  if (!isEmpty(queries.expand as string) && !queries.group_by) return true;
+  // If query has mentions then fallback to server
+  if (!isEmpty(queries.mentions)) return true;
+
+  return false;
+};

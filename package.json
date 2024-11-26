@@ -25,7 +25,7 @@
   "devDependencies": {
     "prettier": "latest",
     "prettier-plugin-tailwindcss": "^0.5.4",
-    "turbo": "^2.3.0"
+    "turbo": "^2.3.2"
   },
   "packageManager": "yarn@1.22.22"
 }
