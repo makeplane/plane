@@ -14,6 +14,7 @@ import { IssueActivityCommentRoot } from "@/components/issues/issue-detail";
 import { useIssueDetail, useProject, useUser, useUserPermissions } from "@/hooks/store";
 // plane web components
 import { ActivityFilterRoot, IssueActivityWorklogCreateButton } from "@/plane-web/components/issues/worklog";
+import { ActivitySortRoot } from "@/plane-web/components/issues/worklog/activity/sort-root";
 // plane web constants
 import { TActivityFilters, defaultActivityFilters } from "@/plane-web/constants/issues";
 import { EUserPermissions } from "@/plane-web/constants/user-permissions";
@@ -43,6 +44,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
   // hooks
   const {
     issue: { getIssueById },
+    activity: { sortOrder, toggleSortOrder},
     createComment,
     updateComment,
     removeComment,
@@ -162,6 +164,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
               disabled={disabled}
             />
           )}
+          <ActivitySortRoot sortOrder={sortOrder} toggleSort={toggleSortOrder}/>
           <ActivityFilterRoot
             selectedFilters={selectedFilters}
             toggleFilter={toggleFilter}

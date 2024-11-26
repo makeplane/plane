@@ -16,6 +16,8 @@ import {
   TServerHandler,
 } from "@/types";
 import { TTextAlign } from "@/extensions";
+// plane editor types
+import { TEditorAdditionalCommands } from "@/plane-editor/types";
 
 export type TEditorCommands =
   | "text"
@@ -41,7 +43,7 @@ export type TEditorCommands =
   | "text-color"
   | "background-color"
   | "text-align"
-  | "callout";
+  | TEditorAdditionalCommands;
 
 export type TCommandExtraProps = {
   image: {
