@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import { DragLocationHistory, ElementDragPayload, DropTargetRecord } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/element/pointer-outside-of-preview";
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
@@ -17,16 +18,15 @@ import { Disclosure, Transition } from "@headlessui/react";
 import { useOutsideClickDetector } from "@plane/helpers";
 // ui
 import { IFavorite, InstructionType } from "@plane/types";
-import { CustomMenu, Tooltip, DropIndicator, setToast, TOAST_TYPE, FavoriteFolderIcon, DragHandle } from "@plane/ui";
+import { CustomMenu, Tooltip, DropIndicator, FavoriteFolderIcon, DragHandle } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme } from "@/hooks/store";
-import { useFavorite } from "@/hooks/store/use-favorite";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // constants
 import { FavoriteRoot } from "./favorite-items";
-import { getCanDrop, TargetData, getInstructionFromPayload, getDestinationStateSequence } from "./favorites.helpers";
+import { getCanDrop, getInstructionFromPayload } from "./favorites.helpers";
 import { NewFavoriteFolder } from "./new-fav-folder";
 
 type Props = {
@@ -35,15 +35,15 @@ type Props = {
   handleRemoveFromFavorites: (favorite: IFavorite) => void;
   handleRemoveFromFavoritesFolder: (favoriteId: string) => void;
   handleReorder: (favoriteId: string, sequence: number) => void;
+  handleDrop: (self: DropTargetRecord,source: ElementDragPayload, location: DragLocationHistory) => void;
 };
 
 export const FavoriteFolder: React.FC<Props> = (props) => {
-  const { favorite, handleRemoveFromFavorites, handleRemoveFromFavoritesFolder, handleReorder, isLastChild} = props;
+  const { favorite, handleRemoveFromFavorites, isLastChild, handleDrop } = props;
   // store hooks
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
 
   const { isMobile } = usePlatformOS();
-  const { getGroupedFavorites, groupedFavorites, moveFavoriteToFolder } = useFavorite();
   const { workspaceSlug } = useParams();
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
@@ -55,20 +55,8 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
   const elementRef = useRef<HTMLDivElement | null>(null);
 
-  if(!favorite.children) getGroupedFavorites(workspaceSlug.toString(), favorite.id);
+  // if(!favorite.children) getGroupedFavorites(workspaceSlug.toString(), favorite.id);
 
-  const handleMoveToFolder = (source: string, destination: string) => {
-    moveFavoriteToFolder(workspaceSlug.toString(), source, {
-      parent: destination,
-    })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Failed to move favorite.",
-        });
-      });
-  };
 
 
   useEffect(() => {
@@ -130,41 +118,14 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
         onDragLeave: () => {
           setInstruction(undefined);
         },
-        onDrop: ({ source, location }) => {
+        onDrop: ({ self, source, location})=>{
           setInstruction(undefined);
-
-          const dropTargets = location?.current?.dropTargets ?? []
-          if(!dropTargets || dropTargets.length <= 0) return;
-          const dropTarget = dropTargets.length > 1 ? dropTargets.find(target=>target?.data?.isChild) : dropTargets[0];
-
-          const dropTargetData = dropTarget?.data as TargetData;
-
-          if(!dropTarget || !dropTargetData) return;
-          const instruction = getInstructionFromPayload(dropTarget, source, location);
-          const parentId = instruction === 'make-child' ? dropTargetData.id : dropTargetData.parentId;
-          const droppedFavId = instruction !== "make-child" ? dropTargetData.id : undefined;
-          const sourceData = source.data as TargetData;
-
-          if(!sourceData.id) return
-          if(parentId){
-            if(parentId !== sourceData.parentId){
-              handleMoveToFolder(sourceData.id,parentId)
-            }
-          } else {
-            if(sourceData.isChild){
-              handleRemoveFromFavoritesFolder(sourceData.id)
-            }
-          }
-          if(droppedFavId){
-            if(instruction === 'make-child') return; /** Reorder iniside the folder skipped here. It is handled in root element */
-            const destinationSequence = getDestinationStateSequence(groupedFavorites,droppedFavId,instruction)
-            handleReorder(sourceData.id,destinationSequence || 0)
-          }
-        },
+          handleDrop(self, source,location);
+        }
       })
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDragging, favorite.id, handleMoveToFolder]);
+  }, [isDragging, favorite.id ]);
 
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
@@ -335,9 +296,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                       isLastChild={index === favorite.children.length - 1}
                       parentId={favorite.id}
                       handleRemoveFromFavorites={handleRemoveFromFavorites}
-                      handleRemoveFromFavoritesFolder={handleRemoveFromFavoritesFolder}
-                      favoriteMap={groupedFavorites}
-                      handleReorder={handleReorder}
+                      handleDrop={handleDrop}
                     />
                   ))}
                 </Disclosure.Panel>

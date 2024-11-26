@@ -45,9 +45,6 @@ export const getDestinationStateSequence = (
       resultSequence = (destinationStateSequence + nextStateSequence) / 2;
     }
   }
-
-  console.log({resultSequence});
-
   resultSequence = Math.round(resultSequence)
 
   return resultSequence;

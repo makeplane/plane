@@ -2,7 +2,8 @@
 
 import React, { FC, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
-import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { DropTargetRecord, DragLocationHistory } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
+import { draggable, dropTargetForElements, ElementDragPayload } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/element/pointer-outside-of-preview";
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
 import { attachInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
@@ -25,7 +26,7 @@ import {
 import { useAppTheme } from "@/hooks/store";
 import { useFavoriteItemDetails } from "@/hooks/use-favorite-item-details";
 //helpers
-import { getCanDrop, TargetData , getInstructionFromPayload, getDestinationStateSequence} from "../favorites.helpers";
+import { getCanDrop, getInstructionFromPayload} from "../favorites.helpers";
 
 
 type Props = {
@@ -33,10 +34,8 @@ type Props = {
   parentId: string | undefined;
   workspaceSlug: string;
   favorite: IFavorite;
-  favoriteMap: Record<string, IFavorite>;
   handleRemoveFromFavorites: (favorite: IFavorite) => void;
-  handleRemoveFromFavoritesFolder: (favoriteId: string) => void;
-  handleReorder: (favoriteId: string, sequence: number) => void;
+  handleDrop: (self: DropTargetRecord,source: ElementDragPayload, location: DragLocationHistory) => void;
 };
 
 export const FavoriteRoot: FC<Props> = observer((props) => {
@@ -46,10 +45,8 @@ export const FavoriteRoot: FC<Props> = observer((props) => {
     parentId,
     workspaceSlug,
     favorite,
-    favoriteMap,
     handleRemoveFromFavorites,
-    handleRemoveFromFavoritesFolder,
-    handleReorder,
+    handleDrop,
   } = props;
   // store hooks
   const { sidebarCollapsed } = useAppTheme();
@@ -133,30 +130,9 @@ export const FavoriteRoot: FC<Props> = observer((props) => {
         onDragLeave: () => {
           setInstruction(undefined);
         },
-        onDrop: ({  source, location }) => {
+        onDrop: ({  self, source, location }) => {
           setInstruction(undefined);
-          const dropTargets = location?.current?.dropTargets ?? []
-          if(!dropTargets || dropTargets.length <= 0) return;
-
-          const dropTarget = dropTargets.length > 1 ? dropTargets.find(target=>target?.data?.isChild) : dropTargets[0];
-
-          const dropTargetData = dropTarget?.data as TargetData;
-
-          if(!dropTarget || !dropTargetData) return;
-
-          const instruction = getInstructionFromPayload(dropTarget, source, location);
-          const parentId = instruction === 'make-child' ? dropTargetData.id : dropTargetData.parentId;
-          const droppedFavId = instruction !== "make-child" ? dropTargetData.id : undefined;
-          const sourceData = source.data as TargetData;
-
-          if(droppedFavId && sourceData.id){
-            const destinationSequence = getDestinationStateSequence(favoriteMap,droppedFavId,instruction)
-            handleReorder(sourceData.id,destinationSequence || 0)
-          }
-
-          if(!parentId && sourceData.isChild){
-            handleRemoveFromFavoritesFolder(sourceData.id)
-          }
+          handleDrop(self,source,location)
         },
       })
     );

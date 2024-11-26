@@ -29,7 +29,7 @@ export interface IFavoriteStore {
   moveFavoriteToFolder: (workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>) => Promise<void>;
   removeFavoriteEntity: (workspaceSlug: string, entityId: string) => Promise<void>;
   reOrderFavorite: (workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>) => Promise<void>;
-  removeFromFavoriteFolder: (workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>) => Promise<void>;
+  removeFromFavoriteFolder: (workspaceSlug: string, favoriteId: string) => Promise<void>;
   removeFavoriteFromStore: (entity_identifier: string) => void;
 }
 
@@ -207,14 +207,15 @@ export class FavoriteStore implements IFavoriteStore {
     }
   };
 
-  removeFromFavoriteFolder = async (workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>) => {
+  removeFromFavoriteFolder = async (workspaceSlug: string, favoriteId: string) => {
     const parent = this.favoriteMap[favoriteId].parent;
     try {
       runInAction(() => {
         //remove parent
         set(this.favoriteMap, [favoriteId, "parent"], null);
       });
-      await this.favoriteService.updateFavorite(workspaceSlug, favoriteId, data);
+      await this.favoriteService.updateFavorite(workspaceSlug, favoriteId, { parent: null});
+
     } catch (error) {
       console.error("Failed to move favorite");
       runInAction(() => {
