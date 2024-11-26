@@ -1,57 +1,34 @@
-"use client";
-
-import { Dispatch, SetStateAction, useEffect, useState, FC } from "react";
-import { observer } from "mobx-react";
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 // constants
 import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@plane/constants";
 // types
 import { IWorkspace } from "@plane/types";
-// ui
-import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
-// constants
-import { WORKSPACE_CREATED } from "@/constants/event-tracker";
+// components
+import { Button, CustomSelect, getButtonStyling, Input, setToast, TOAST_TYPE } from "@plane/ui";
+// helpers
+import { WEB_BASE_URL } from "@/helpers/common.helper";
 // hooks
-import { useEventTracker, useWorkspace } from "@/hooks/store";
-import { useAppRouter } from "@/hooks/use-app-router";
+import { useWorkspace } from "@/hooks/store";
 // services
-import { WorkspaceService } from "@/plane-web/services";
-
-type Props = {
-  onSubmit?: (res: IWorkspace) => Promise<void>;
-  defaultValues: {
-    name: string;
-    slug: string;
-    organization_size: string;
-  };
-  setDefaultValues: Dispatch<SetStateAction<IWorkspace>>;
-  secondaryButton?: React.ReactNode;
-  primaryButtonText?: {
-    loading: string;
-    default: string;
-  };
-};
+import { WorkspaceService } from "@/services/workspace.service";
 
 const workspaceService = new WorkspaceService();
 
-export const CreateWorkspaceForm: FC<Props> = observer((props) => {
-  const {
-    onSubmit,
-    defaultValues,
-    setDefaultValues,
-    secondaryButton,
-    primaryButtonText = {
-      loading: "Creating...",
-      default: "Create Workspace",
-    },
-  } = props;
+export const WorkspaceCreateForm = () => {
+  // router
+  const router = useRouter();
   // states
   const [slugError, setSlugError] = useState(false);
   const [invalidSlug, setInvalidSlug] = useState(false);
-  // router
-  const router = useAppRouter();
+  const [defaultValues, setDefaultValues] = useState<Partial<IWorkspace>>({
+    name: "",
+    slug: "",
+    organization_size: "",
+  });
   // store hooks
-  const { captureWorkspaceEvent } = useEventTracker();
   const { createWorkspace } = useWorkspace();
   // form info
   const {
@@ -68,33 +45,16 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
       .then(async (res) => {
         if (res.status === true && !RESTRICTED_URLS.includes(formData.slug)) {
           setSlugError(false);
-
           await createWorkspace(formData)
-            .then(async (res) => {
-              captureWorkspaceEvent({
-                eventName: WORKSPACE_CREATED,
-                payload: {
-                  ...res,
-                  state: "SUCCESS",
-                  element: "Create workspace page",
-                },
-              });
+            .then(async () => {
               setToast({
                 type: TOAST_TYPE.SUCCESS,
                 title: "Success!",
                 message: "Workspace created successfully.",
               });
-
-              if (onSubmit) await onSubmit(res);
+              router.push(`/workspace`);
             })
             .catch(() => {
-              captureWorkspaceEvent({
-                eventName: WORKSPACE_CREATED,
-                payload: {
-                  state: "FAILED",
-                  element: "Create workspace page",
-                },
-              });
               setToast({
                 type: TOAST_TYPE.ERROR,
                 title: "Error!",
@@ -121,13 +81,10 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
   );
 
   return (
-    <form className="space-y-6 sm:space-y-9" onSubmit={handleSubmit(handleCreateWorkspace)}>
-      <div className="space-y-6 sm:space-y-7">
-        <div className="space-y-1 text-sm">
-          <label htmlFor="workspaceName">
-            Workspace Name
-            <span className="ml-0.5 text-red-500">*</span>
-          </label>
+    <div className="space-y-8">
+      <div className="grid-col grid w-full max-w-4xl grid-cols-1 items-start justify-between gap-x-10 gap-y-6 lg:grid-cols-2">
+        <div className="flex flex-col gap-1">
+          <h4 className="text-sm text-custom-text-300">Workspace Name</h4>
           <div className="flex flex-col gap-1">
             <Controller
               control={control}
@@ -163,13 +120,10 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
             <span className="text-xs text-red-500">{errors?.name?.message}</span>
           </div>
         </div>
-        <div className="space-y-1 text-sm">
-          <label htmlFor="workspaceUrl">
-            Workspace URL
-            <span className="ml-0.5 text-red-500">*</span>
-          </label>
-          <div className="flex w-full items-center rounded-md border-[0.5px] border-custom-border-200 px-3">
-            <span className="whitespace-nowrap text-sm text-custom-text-200">{window && window.location.host}/</span>
+        <div className="flex flex-col gap-1">
+          <h4 className="text-sm text-custom-text-300">Workspace URL</h4>
+          <div className="flex gap-0.5 w-full items-center rounded-md border-[0.5px] border-custom-border-200 px-3">
+            <span className="whitespace-nowrap text-sm text-custom-text-200">{WEB_BASE_URL}/</span>
             <Controller
               control={control}
               name="slug"
@@ -186,27 +140,26 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
                   type="text"
                   value={value.toLocaleLowerCase().trim().replace(/ /g, "-")}
                   onChange={(e) => {
-                    /^[a-zA-Z0-9_-]+$/.test(e.target.value) ? setInvalidSlug(false) : setInvalidSlug(true);
+                    if (/^[a-zA-Z0-9_-]+$/.test(e.target.value)) setInvalidSlug(false);
+                    else setInvalidSlug(true);
                     onChange(e.target.value.toLowerCase());
                   }}
                   ref={ref}
                   hasError={Boolean(errors.slug)}
-                  placeholder="Enter workspace url..."
+                  placeholder="Enter workspace url"
                   className="block w-full rounded-md border-none bg-transparent !px-0 py-2 text-sm"
                 />
               )}
             />
           </div>
-          {slugError && <p className="-mt-3 text-sm text-red-500">Workspace URL is already taken!</p>}
+          {slugError && <p className="text-sm text-red-500">Workspace URL is already taken!</p>}
           {invalidSlug && (
             <p className="text-sm text-red-500">{`URL can only contain ( - ), ( _ ) & alphanumeric characters.`}</p>
           )}
           {errors.slug && <span className="text-xs text-red-500">{errors.slug.message}</span>}
         </div>
-        <div className="space-y-1 text-sm">
-          <span>
-            What size is your organization?<span className="ml-0.5 text-red-500">*</span>
-          </span>
+        <div className="flex flex-col gap-1">
+          <h4 className="text-sm text-custom-text-300">What size is your organization?</h4>
           <div className="w-full">
             <Controller
               name="organization_size"
@@ -239,18 +192,20 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
           </div>
         </div>
       </div>
-
-      <div className="flex items-center gap-4">
-        {secondaryButton}
-        <Button variant="primary" type="submit" size="md" disabled={!isValid} loading={isSubmitting}>
-          {isSubmitting ? primaryButtonText.loading : primaryButtonText.default}
+      <div className="flex max-w-4xl items-center py-1 gap-4">
+        <Button
+          variant="primary"
+          size="sm"
+          onClick={handleSubmit(handleCreateWorkspace)}
+          disabled={!isValid}
+          loading={isSubmitting}
+        >
+          {isSubmitting ? "Creating" : "Create Workspace"}
         </Button>
-        {!secondaryButton && (
-          <Button variant="neutral-primary" type="button" size="md" onClick={() => router.back()}>
-            Go back
-          </Button>
-        )}
+        <Link className={getButtonStyling("link-neutral", "sm")} href="/workspace">
+          Go back
+        </Link>
       </div>
-    </form>
+    </div>
   );
-});
+};

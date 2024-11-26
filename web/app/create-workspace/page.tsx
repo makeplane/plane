@@ -9,7 +9,7 @@ import { IWorkspace } from "@plane/types";
 // components
 import { CreateWorkspaceForm } from "@/components/workspace";
 // hooks
-import { useUser, useUserProfile } from "@/hooks/store";
+import { useInstance, useUser, useUserProfile } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers";
@@ -23,6 +23,7 @@ const CreateWorkspacePage = observer(() => {
   // store hooks
   const { data: currentUser } = useUser();
   const { updateUserProfile } = useUserProfile();
+  const { config } = useInstance();
   // states
   const [defaultValues, setDefaultValues] = useState({
     name: "",
@@ -31,12 +32,22 @@ const CreateWorkspacePage = observer(() => {
   });
   // hooks
   const { resolvedTheme } = useTheme();
+  // derived values
+  const isWorkspaceCreationDisabled = config?.is_workspace_creation_disabled;
 
   const onSubmit = async (workspace: IWorkspace) => {
     await updateUserProfile({ last_workspace_id: workspace.id }).then(() => router.push(`/${workspace.slug}`));
   };
 
   const logo = resolvedTheme === "light" ? BlackHorizontalLogo : WhiteHorizontalLogo;
+
+  if (isWorkspaceCreationDisabled) {
+    return (
+      <div className="w-full h-screen p-12 flex items-center justify-center text-lg font-medium">
+        Workspace creation is disabled. Please contact your instance admin.
+      </div>
+    );
+  }
 
   return (
     <AuthenticationWrapper>

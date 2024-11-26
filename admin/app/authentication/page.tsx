@@ -80,9 +80,11 @@ const InstanceAuthenticationPage = observer(() => {
                     <ToggleSwitch
                       value={Boolean(parseInt(enableSignUpConfig))}
                       onChange={() => {
-                        Boolean(parseInt(enableSignUpConfig)) === true
-                          ? updateConfig("ENABLE_SIGNUP", "0")
-                          : updateConfig("ENABLE_SIGNUP", "1");
+                        if (Boolean(parseInt(enableSignUpConfig)) === true) {
+                          updateConfig("ENABLE_SIGNUP", "0");
+                        } else {
+                          updateConfig("ENABLE_SIGNUP", "1");
+                        }
                       }}
                       size="sm"
                       disabled={isSubmitting}

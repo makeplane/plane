@@ -17,7 +17,7 @@ import { GOD_MODE_URL, cn } from "@/helpers/common.helper";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
-import { useAppTheme, useUser, useUserPermissions, useUserProfile, useWorkspace } from "@/hooks/store";
+import { useAppTheme, useInstance, useUser, useUserPermissions, useUserProfile, useWorkspace } from "@/hooks/store";
 // plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { WorkspaceLogo } from "../logo";
@@ -46,6 +46,7 @@ export const SidebarDropdown = observer(() => {
   // store hooks
   const { sidebarCollapsed, toggleSidebar } = useAppTheme();
   const { data: currentUser } = useUser();
+  const { config } = useInstance();
   const {
     // updateCurrentUser,
     // isUserInstanceAdmin,
@@ -53,6 +54,8 @@ export const SidebarDropdown = observer(() => {
   } = useUser();
   const { updateUserProfile } = useUserProfile();
   const { allowPermissions } = useUserPermissions();
+  // derived values
+  const isWorkspaceCreationEnabled = config?.is_workspace_creation_disabled === false;
 
   const isUserInstanceAdmin = false;
   const { currentWorkspace: activeWorkspace, workspaces } = useWorkspace();
@@ -205,15 +208,17 @@ export const SidebarDropdown = observer(() => {
                     )}
                   </div>
                   <div className="w-full flex flex-col items-start justify-start gap-2 px-4 py-2 text-sm">
-                    <Link href="/create-workspace" className="w-full">
-                      <Menu.Item
-                        as="div"
-                        className="flex items-center gap-2 rounded px-2 py-1 text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
-                      >
-                        <PlusSquare strokeWidth={1.75} className="h-4 w-4 flex-shrink-0" />
-                        Create workspace
-                      </Menu.Item>
-                    </Link>
+                    {isWorkspaceCreationEnabled && (
+                      <Link href="/create-workspace" className="w-full">
+                        <Menu.Item
+                          as="div"
+                          className="flex items-center gap-2 rounded px-2 py-1 text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
+                        >
+                          <PlusSquare strokeWidth={1.75} className="h-4 w-4 flex-shrink-0" />
+                          Create workspace
+                        </Menu.Item>
+                      </Link>
+                    )}
                     {userLinks(workspaceSlug?.toString() ?? "").map(
                       (link, index) =>
                         allowPermissions(link.access, EUserPermissionsLevel.WORKSPACE) && (

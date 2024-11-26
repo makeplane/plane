@@ -3,7 +3,7 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Image, BrainCog, Cog, Lock, Mail } from "lucide-react";
+import { Image, BrainCog, Cog, Lock, Mail, Globe } from "lucide-react";
 import { Tooltip } from "@plane/ui";
 // hooks
 import { cn } from "@/helpers/common.helper";
@@ -16,6 +16,12 @@ const INSTANCE_ADMIN_LINKS = [
     name: "General",
     description: "Identify your instances and get key details",
     href: `/general/`,
+  },
+  {
+    Icon: Globe,
+    name: "Workspace",
+    description: "Manage your workspaces",
+    href: `/workspace/`,
   },
   {
     Icon: Mail,

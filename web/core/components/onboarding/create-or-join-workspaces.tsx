@@ -8,7 +8,7 @@ import { IWorkspaceMemberInvitation, TOnboardingSteps } from "@plane/types";
 // components
 import { Invitations, OnboardingHeader, SwitchAccountDropdown, CreateWorkspace } from "@/components/onboarding";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useInstance, useUser } from "@/hooks/store";
 // assets
 import CreateJoinWorkspaceDark from "@/public/onboarding/create-join-workspace-dark.webp";
 import CreateJoinWorkspace from "@/public/onboarding/create-join-workspace-light.webp";
@@ -32,8 +32,11 @@ export const CreateOrJoinWorkspaces: React.FC<Props> = observer((props) => {
   const [currentView, setCurrentView] = useState<ECreateOrJoinWorkspaceViews | null>(null);
   // store hooks
   const { data: user } = useUser();
+  const { config } = useInstance();
   // hooks
   const { resolvedTheme } = useTheme();
+  // derived values
+  const isWorkspaceCreationEnabled = config?.is_workspace_creation_disabled === false;
 
   useEffect(() => {
     if (invitations.length > 0) {
@@ -66,12 +69,19 @@ export const CreateOrJoinWorkspaces: React.FC<Props> = observer((props) => {
               handleCurrentViewChange={() => setCurrentView(ECreateOrJoinWorkspaceViews.WORKSPACE_CREATE)}
             />
           ) : currentView === ECreateOrJoinWorkspaceViews.WORKSPACE_CREATE ? (
-            <CreateWorkspace
-              stepChange={stepChange}
-              user={user ?? undefined}
-              invitedWorkspaces={invitations.length}
-              handleCurrentViewChange={() => setCurrentView(ECreateOrJoinWorkspaceViews.WORKSPACE_JOIN)}
-            />
+            isWorkspaceCreationEnabled ? (
+              <CreateWorkspace
+                stepChange={stepChange}
+                user={user ?? undefined}
+                invitedWorkspaces={invitations.length}
+                handleCurrentViewChange={() => setCurrentView(ECreateOrJoinWorkspaceViews.WORKSPACE_JOIN)}
+              />
+            ) : (
+              <div className="flex h-96 w-full items-center justify-center text-center">
+                Workspace creation is disabled. Please complete onboarding through an invite or contact your instance
+                admin.
+              </div>
+            )
           ) : (
             <div className="flex h-96 w-full items-center justify-center">
               <LogoSpinner />

@@ -3,13 +3,14 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
+// constants
+import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@plane/constants";
 // types
 import { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 // ui
 import { Button, CustomSelect, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { E_ONBOARDING, WORKSPACE_CREATED } from "@/constants/event-tracker";
-import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@/constants/workspace";
 // hooks
 import { useEventTracker, useUserProfile, useUserSettings, useWorkspace } from "@/hooks/store";
 // services
