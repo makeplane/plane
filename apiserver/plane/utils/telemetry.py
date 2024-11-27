@@ -15,7 +15,7 @@ def init_tracer():
         return
 
     # Configure the tracer provider
-    service_name = os.environ.get("SERVICE_NAME", "plane-ce-api")
+    service_name = os.environ.get("SERVICE_NAME", "plane-ee-api")
     resource = Resource.create({"service.name": service_name})
     tracer_provider = TracerProvider(resource=resource)
     trace.set_tracer_provider(tracer_provider)
