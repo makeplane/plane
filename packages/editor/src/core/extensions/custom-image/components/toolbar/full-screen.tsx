@@ -13,13 +13,16 @@ type Props = {
   toggleFullScreenMode: (val: boolean) => void;
 };
 
-const MAGNIFICATION_VALUES = [0.5, 0.75, 1, 1.5, 1.75, 2] as const;
+const MIN_ZOOM = 0.5;
+const MAX_ZOOM = 2;
+const ZOOM_SPEED = 0.05;
+const ZOOM_STEPS = [0.5, 1, 1.5, 2];
 
 export const ImageFullScreenAction: React.FC<Props> = (props) => {
   const { image, isOpen: isFullScreenEnabled, toggleFullScreenMode } = props;
   const { src, width, aspectRatio } = image;
 
-  const [magnification, setMagnification] = useState<(typeof MAGNIFICATION_VALUES)[number]>(1);
+  const [magnification, setMagnification] = useState<number>(1);
   const [initialMagnification, setInitialMagnification] = useState(1);
   const [isDragging, setIsDragging] = useState(false);
   const dragStart = useRef({ x: 0, y: 0 });
@@ -63,14 +66,22 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
 
   const handleMagnification = useCallback((direction: "increase" | "decrease") => {
     setMagnification((prev) => {
-      const currentIndex = MAGNIFICATION_VALUES.indexOf(prev);
-      if (direction === "increase" && currentIndex < MAGNIFICATION_VALUES.length - 1) {
-        return MAGNIFICATION_VALUES[currentIndex + 1];
+      // Find the appropriate target zoom level based on current magnification
+      let targetZoom: number;
+      if (direction === "increase") {
+        targetZoom = ZOOM_STEPS.find((step) => step > prev) ?? MAX_ZOOM;
+      } else {
+        // Reverse the array to find the next lower step
+        targetZoom = [...ZOOM_STEPS].reverse().find((step) => step < prev) ?? MIN_ZOOM;
       }
-      if (direction === "decrease" && currentIndex > 0) {
-        return MAGNIFICATION_VALUES[currentIndex - 1];
+
+      // Reset position when zoom matches initial magnification
+      if (targetZoom === 1 && imgRef.current) {
+        imgRef.current.style.left = "0px";
+        imgRef.current.style.top = "0px";
       }
-      return prev;
+
+      return targetZoom;
     });
   }, []);
 
@@ -130,6 +141,33 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
     setIsDragging(false);
   }, [isDragging]);
 
+  const handleWheel = useCallback(
+    (e: WheelEvent) => {
+      if (!imgRef.current || !isFullScreenEnabled) return;
+
+      e.preventDefault();
+
+      // Handle pinch-to-zoom
+      if (e.ctrlKey) {
+        const delta = e.deltaY;
+        setMagnification((prev) => {
+          const newZoom = prev * (1 - delta * ZOOM_SPEED);
+          const clampedZoom = Math.min(Math.max(newZoom, MIN_ZOOM), MAX_ZOOM);
+
+          // Reset position when zoom matches initial magnification
+          if (clampedZoom === 1 && imgRef.current) {
+            imgRef.current.style.left = "0px";
+            imgRef.current.style.top = "0px";
+          }
+
+          return clampedZoom;
+        });
+        return;
+      }
+    },
+    [isFullScreenEnabled, magnification]
+  );
+
   // Event listeners
   useEffect(() => {
     if (!isFullScreenEnabled) return;
@@ -137,13 +175,15 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
     document.addEventListener("keydown", handleKeyDown);
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
+    window.addEventListener("wheel", handleWheel, { passive: false });
 
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("wheel", handleWheel);
     };
-  }, [isFullScreenEnabled, handleKeyDown, handleMouseMove, handleMouseUp]);
+  }, [isFullScreenEnabled, handleKeyDown, handleMouseMove, handleMouseUp, handleWheel]);
 
   return (
     <>
@@ -188,16 +228,16 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
                 type="button"
                 onClick={() => handleMagnification("decrease")}
                 className="size-6 grid place-items-center text-white/60 hover:text-white disabled:text-white/30 transition-colors duration-200"
-                disabled={magnification === MAGNIFICATION_VALUES[0]}
+                disabled={magnification <= MIN_ZOOM}
               >
                 <Minus className="size-4" />
               </button>
-              <span className="text-sm w-12 text-center text-white">{(100 * magnification).toFixed(0)}%</span>
+              <span className="text-sm w-12 text-center text-white">{Math.round(100 * magnification)}%</span>
               <button
                 type="button"
                 onClick={() => handleMagnification("increase")}
                 className="size-6 grid place-items-center text-white/60 hover:text-white disabled:text-white/30 transition-colors duration-200"
-                disabled={magnification === MAGNIFICATION_VALUES[MAGNIFICATION_VALUES.length - 1]}
+                disabled={magnification >= MAX_ZOOM}
               >
                 <Plus className="size-4" />
               </button>
