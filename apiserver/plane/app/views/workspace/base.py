@@ -387,6 +387,7 @@ class ExportWorkspaceUserActivityEndpoint(BaseAPIView):
             workspace__slug=slug,
             created_at__date=request.data.get("date"),
             project__project_projectmember__member=request.user,
+            project__project_projectmember__is_active=True,
             actor_id=user_id,
         ).select_related("actor", "workspace", "issue", "project")[:10000]
 
