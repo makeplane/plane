@@ -76,8 +76,8 @@ export const ProjectGanttSidebarBlock: React.FC<SidebarProps> = observer((props)
 
   // derived values
   const projectDetails = block.data;
-  const duration = findTotalDaysInRange(projectDetails.start_date, projectDetails.target_date) || 0;
-  console.log("projectDetails", projectDetails, duration);
+  const duration = findTotalDaysInRange(projectDetails.start_date, projectDetails.target_date);
+
   const { isMobile } = usePlatformOS();
   const children = (
     <>
@@ -91,9 +91,11 @@ export const ProjectGanttSidebarBlock: React.FC<SidebarProps> = observer((props)
         </Tooltip>
       </div>
       {filters?.scope === EProjectScope.ALL_PROJECTS && <JoinButton project={projectDetails} />}
-      <div className="flex-shrink-0 h-full text-sm font-medium py-3 ml-2">
-        {duration} day{duration > 1 ? "s" : ""}
-      </div>
+      {duration && (
+        <div className="flex-shrink-0 h-full text-sm font-medium py-3 ml-2">
+          {duration} day{duration > 1 ? "s" : ""}
+        </div>
+      )}
     </>
   );
   return projectDetails.is_member ? (
