@@ -1,6 +1,7 @@
 # Python imports
 import csv
 import io
+import os
 from datetime import date
 import requests
 from dateutil.relativedelta import relativedelta
@@ -38,6 +39,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
 from django.views.decorators.vary import vary_on_cookie
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
+from plane.license.utils.instance_value import get_configuration_value
 from plane.payment.bgtasks.member_sync_task import member_sync_task
 from django.conf import settings
 
@@ -82,6 +84,21 @@ class WorkSpaceViewSet(BaseViewSet):
 
     def create(self, request):
         try:
+            (DISABLE_WORKSPACE_CREATION,) = get_configuration_value(
+                [
+                    {
+                        "key": "DISABLE_WORKSPACE_CREATION",
+                        "default": os.environ.get("DISABLE_WORKSPACE_CREATION", "0"),
+                    }
+                ]
+            )
+
+            if DISABLE_WORKSPACE_CREATION == "1":
+                return Response(
+                    {"error": "Workspace creation is not allowed"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
             serializer = WorkSpaceSerializer(data=request.data)
 
             slug = request.data.get("slug", False)

@@ -12,6 +12,8 @@ from plane.license.api.views import (
     InstanceAdminSignOutEndpoint,
     InstanceAdminUserSessionEndpoint,
     ChangeLogEndpoint,
+    InstanceWorkSpaceAvailabilityCheckEndpoint,
+    InstanceWorkSpaceEndpoint,
     AdminFeatureFlagEndpoint,
     CheckUpdateEndpoint,
 )
@@ -58,6 +60,12 @@ urlpatterns = [
         EmailCredentialCheckEndpoint.as_view(),
         name="email-credential-check",
     ),
+    path(
+        "workspace-slug-check/",
+        InstanceWorkSpaceAvailabilityCheckEndpoint.as_view(),
+        name="instance-workspace-availability",
+    ),
+    path("workspaces/", InstanceWorkSpaceEndpoint.as_view(), name="instance-workspace"),
     path(
         "admins/feature-flags/",
         AdminFeatureFlagEndpoint.as_view(),

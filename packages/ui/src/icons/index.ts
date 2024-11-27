@@ -36,4 +36,5 @@ export * from "./done-icon";
 export * from "./pending-icon";
 export * from "./slack-icon";
 export * from "./pi-chat";
+export * from "./workspace-icon";
 export * from "./plane-ai-icon";
