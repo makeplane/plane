@@ -12,6 +12,7 @@ import {
   List,
   ListOrdered,
   ListTodo,
+  MessageSquareText,
   MinusSquare,
   Table,
   TextQuote,
@@ -34,20 +35,20 @@ import {
   toggleTextColor,
   toggleBackgroundColor,
   insertImage,
+  insertCallout,
   setText,
 } from "@/helpers/editor-commands";
 // types
-import { CommandProps, ISlashCommandItem, TSlashCommandSectionKeys } from "@/types";
-import { TSlashCommandAdditionalOption } from "./root";
+import { CommandProps, ISlashCommandItem } from "@/types";
 
 export type TSlashCommandSection = {
-  key: TSlashCommandSectionKeys;
+  key: string;
   title?: string;
   items: ISlashCommandItem[];
 };
 
 export const getSlashCommandFilteredSections =
-  (additionalOptions?: TSlashCommandAdditionalOption[]) =>
+  (additionalOptions?: ISlashCommandItem[]) =>
   ({ query }: { query: string }): TSlashCommandSection[] => {
     const SLASH_COMMAND_SECTIONS: TSlashCommandSection[] = [
       {
@@ -180,6 +181,15 @@ export const getSlashCommandFilteredSections =
             command: ({ editor, range }: CommandProps) => insertImage({ editor, event: "insert", range }),
           },
           {
+            commandKey: "callout",
+            key: "callout",
+            title: "Callout",
+            icon: <MessageSquareText className="size-3.5" />,
+            description: "Insert callout",
+            searchTerms: ["callout", "comment", "message", "info", "alert"],
+            command: ({ editor, range }: CommandProps) => insertCallout(editor, range),
+          },
+          {
             commandKey: "divider",
             key: "divider",
             title: "Divider",
@@ -191,7 +201,7 @@ export const getSlashCommandFilteredSections =
         ],
       },
       {
-        key: "text-colors",
+        key: "text-color",
         title: "Colors",
         items: [
           {
@@ -232,7 +242,7 @@ export const getSlashCommandFilteredSections =
         ],
       },
       {
-        key: "background-colors",
+        key: "background-color",
         title: "Background colors",
         items: [
           {
@@ -269,18 +279,8 @@ export const getSlashCommandFilteredSections =
       },
     ];
 
-    additionalOptions?.forEach((item) => {
-      const sectionToPushTo = SLASH_COMMAND_SECTIONS.find((s) => s.key === item.section) ?? SLASH_COMMAND_SECTIONS[0];
-      const itemIndexToPushAfter = sectionToPushTo.items.findIndex((i) => i.commandKey === item.pushAfter);
-      if (itemIndexToPushAfter !== undefined) {
-        const resolvedIndex =
-          itemIndexToPushAfter + 1 < sectionToPushTo.items.length
-            ? itemIndexToPushAfter + 1
-            : sectionToPushTo.items.length - 1;
-        sectionToPushTo.items.splice(resolvedIndex, 0, item);
-      } else {
-        sectionToPushTo.items.push(item);
-      }
+    additionalOptions?.map((item) => {
+      SLASH_COMMAND_SECTIONS?.[0]?.items.push(item);
     });
 
     const filteredSlashSections = SLASH_COMMAND_SECTIONS.map((section) => ({

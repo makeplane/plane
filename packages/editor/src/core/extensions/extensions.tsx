@@ -1,4 +1,3 @@
-import { Extensions } from "@tiptap/core";
 import CharacterCount from "@tiptap/extension-character-count";
 import Placeholder from "@tiptap/extension-placeholder";
 import TaskItem from "@tiptap/extension-task-item";
@@ -9,6 +8,7 @@ import StarterKit from "@tiptap/starter-kit";
 import { Markdown } from "tiptap-markdown";
 // extensions
 import {
+  CustomCalloutExtension,
   CustomCodeBlockExtension,
   CustomCodeInlineExtension,
   CustomCodeMarkPlugin,
@@ -33,8 +33,6 @@ import {
 import { isValidHttpUrl } from "@/helpers/common";
 // types
 import { IMentionHighlight, IMentionSuggestion, TFileHandler } from "@/types";
-// plane editor extensions
-import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
 
 type TArguments = {
   enableHistory: boolean;
@@ -47,7 +45,7 @@ type TArguments = {
   tabIndex?: number;
 };
 
-export const CoreEditorExtensions = (args: TArguments): Extensions => {
+export const CoreEditorExtensions = (args: TArguments) => {
   const { enableHistory, fileHandler, mentionConfig, placeholder, tabIndex } = args;
 
   return [
@@ -162,7 +160,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     }),
     CharacterCount,
     CustomTextAlignExtension,
+    CustomCalloutExtension,
     CustomColorExtension,
-    ...CoreEditorAdditionalExtensions(),
   ];
 };
