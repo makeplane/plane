@@ -3,7 +3,7 @@ import { Extensions } from "@tiptap/core";
 // ui
 import { LayersIcon } from "@plane/ui";
 // extensions
-import { SlashCommands } from "@/extensions";
+import { SlashCommands, TSlashCommandAdditionalOption } from "@/extensions";
 // plane editor extensions
 import { IssueEmbedSuggestions, IssueListRenderer } from "@/plane-editor/extensions";
 // plane editor types
@@ -27,25 +27,30 @@ export const DocumentEditorAdditionalExtensions = (props: Props) => {
   const isCollaborationCursorDisabled = !!disabledExtensions?.includes("collaboration-cursor");
 
   const extensions: Extensions = [];
+  const additionalSlashCommandOptions: TSlashCommandAdditionalOption[] = [];
 
   if (!isIssueEmbedDisabled) {
-    const slashCommandAdditionalOptions: ISlashCommandItem[] = [
-      {
-        commandKey: "issue-embed",
-        key: "issue-embed",
-        title: "Issue embed",
-        description: "Embed an issue from the project.",
-        searchTerms: ["issue", "link", "embed"],
-        icon: <LayersIcon className="size-3.5" />,
-        command: ({ editor, range }) => {
-          editor.chain().focus().insertContentAt(range, "<p>#issue_</p>").run();
-        },
+    const issueEmbedOption: TSlashCommandAdditionalOption = {
+      commandKey: "issue-embed",
+      key: "issue-embed",
+      title: "Issue embed",
+      description: "Embed an issue from the project.",
+      searchTerms: ["issue", "link", "embed"],
+      icon: <LayersIcon className="size-3.5" />,
+      command: ({ editor, range }) => {
+        editor.chain().focus().insertContentAt(range, "<p>#issue_</p>").run();
       },
-    ];
-    extensions.push(SlashCommands(slashCommandAdditionalOptions));
-  } else {
-    extensions.push(SlashCommands());
+      section: "general",
+      pushAfter: "callout",
+    };
+    additionalSlashCommandOptions.push(issueEmbedOption);
   }
+  extensions.push(
+    SlashCommands({
+      additionalOptions: additionalSlashCommandOptions,
+      disabledExtensions,
+    })
+  );
 
   if (issueEmbedConfig && !isIssueEmbedDisabled) {
     extensions.push(
