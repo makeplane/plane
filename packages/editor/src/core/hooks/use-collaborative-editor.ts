@@ -75,6 +75,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
   }, [provider, id]);
 
   const editor = useEditor({
+    disabledExtensions,
     id,
     onTransaction,
     editorProps,

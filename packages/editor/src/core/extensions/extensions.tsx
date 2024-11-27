@@ -32,11 +32,12 @@ import {
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
 // types
-import { IMentionHighlight, IMentionSuggestion, TFileHandler } from "@/types";
+import { IMentionHighlight, IMentionSuggestion, TExtensions, TFileHandler } from "@/types";
 // plane editor extensions
 import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
 
 type TArguments = {
+  disabledExtensions: TExtensions[];
   enableHistory: boolean;
   fileHandler: TFileHandler;
   mentionConfig: {
@@ -48,7 +49,7 @@ type TArguments = {
 };
 
 export const CoreEditorExtensions = (args: TArguments): Extensions => {
-  const { enableHistory, fileHandler, mentionConfig, placeholder, tabIndex } = args;
+  const { disabledExtensions, enableHistory, fileHandler, mentionConfig, placeholder, tabIndex } = args;
 
   return [
     StarterKit.configure({
@@ -163,6 +164,8 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     CharacterCount,
     CustomTextAlignExtension,
     CustomColorExtension,
-    ...CoreEditorAdditionalExtensions(),
+    ...CoreEditorAdditionalExtensions({
+      disabledExtensions,
+    }),
   ];
 };
