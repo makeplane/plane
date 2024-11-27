@@ -1,0 +1,16 @@
+{
+  "extends": "@plane/typescript-config/base.json",
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "rootDir": "./src",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "module": "ESNext",
+    "target": "ES6",
+    "moduleResolution": "node"
+  },
+  "include": ["src/*"],
+  "exclude": ["dist", "build", "node_modules"]
+}

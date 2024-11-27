@@ -13,9 +13,10 @@ from rest_framework.response import Response
 
 # Module imports
 from .base import BaseAPIView
-from plane.db.models import DeployBoard, FileAsset
+from plane.db.models import DeployBoard, FileAsset, Project
 from plane.settings.storage import S3Storage
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
+from plane.ee.models import IntakeSetting
 
 
 class EntityAssetEndpoint(BaseAPIView):
@@ -43,6 +44,7 @@ class EntityAssetEndpoint(BaseAPIView):
             entity_type__in=[
                 FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
                 FileAsset.EntityTypeContext.COMMENT_DESCRIPTION,
+                FileAsset.EntityTypeContext.PAGE_DESCRIPTION,
             ],
         )
 
@@ -62,14 +64,29 @@ class EntityAssetEndpoint(BaseAPIView):
 
     def post(self, request, anchor):
         # Get the deploy board
-        deploy_board = DeployBoard.objects.filter(
-            anchor=anchor, entity_name="project"
-        ).first()
+        deploy_board = DeployBoard.objects.filter(anchor=anchor).first()
+
         # Check if the project is published
         if not deploy_board:
             return Response(
                 {"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND
             )
+
+        # if deploy board is not found
+        if deploy_board.entity_name == "intake":
+            # check if the intake is enabled and intake form is enabled
+            if not (
+                IntakeSetting.objects.filter(
+                    intake=deploy_board.entity_identifier, is_form_enabled=True
+                ).exists()
+                and Project.objects.filter(
+                    pk=deploy_board.project_id, intake_view=True
+                ).exists()
+            ):
+                return Response(
+                    {"error": "Intake is not enabled"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
 
         # Get the asset
         name = request.data.get("name")
@@ -86,7 +103,13 @@ class EntityAssetEndpoint(BaseAPIView):
             )
 
         # Check if the file type is allowed
-        allowed_types = ["image/jpeg", "image/png", "image/webp"]
+        allowed_types = [
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+            "image/jpg",
+            "image/gif",
+        ]
         if type not in allowed_types:
             return Response(
                 {
@@ -130,7 +153,7 @@ class EntityAssetEndpoint(BaseAPIView):
     def patch(self, request, anchor, pk):
         # Get the deploy board
         deploy_board = DeployBoard.objects.filter(
-            anchor=anchor, entity_name="project"
+            anchor=anchor
         ).first()
         # Check if the project is published
         if not deploy_board:

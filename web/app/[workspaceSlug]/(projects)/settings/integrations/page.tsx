@@ -1,31 +1,30 @@
 "use client";
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import useSWR from "swr";
 // components
 import { PageHead } from "@/components/core";
-import { SingleIntegrationCard } from "@/components/integration";
-import { IntegrationAndImportExportBanner, IntegrationsSettingsLoader } from "@/components/ui";
-// constants
-import { APP_INTEGRATIONS } from "@/constants/fetch-keys";
+import { IntegrationsEmptyState } from "@/components/integration";
 // hooks
-import { useUserPermissions, useWorkspace } from "@/hooks/store";
+import { useUserPermissions, useUserProfile, useWorkspace } from "@/hooks/store";
+// plane web components
+import { IntegrationsList } from "@/plane-web/components/integrations";
+// plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
-// services
-import { IntegrationService } from "@/services/integrations";
-
-const integrationService = new IntegrationService();
+// plane web hooks
+import { useFlag } from "@/plane-web/hooks/store";
 
 const WorkspaceIntegrationsPage = observer(() => {
   // router
   const { workspaceSlug } = useParams();
   // store hooks
+  const { data: currentUserProfile } = useUserProfile();
   const { currentWorkspace } = useWorkspace();
   const { allowPermissions } = useUserPermissions();
-
   // derived values
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Integrations` : undefined;
+  const integrationsEnabled = useFlag(workspaceSlug?.toString(), "SILO_INTEGRATIONS");
 
   if (!isAdmin)
     return (
@@ -37,24 +36,22 @@ const WorkspaceIntegrationsPage = observer(() => {
       </>
     );
 
-  const { data: appIntegrations } = useSWR(workspaceSlug && isAdmin ? APP_INTEGRATIONS : null, () =>
-    workspaceSlug && isAdmin ? integrationService.getAppIntegrationsList() : null
-  );
+  if (!integrationsEnabled)
+    return (
+      <>
+        <PageHead title={pageTitle} />
+        <IntegrationsEmptyState theme={currentUserProfile?.theme.theme || "light"} />
+      </>
+    );
 
   return (
     <>
       <PageHead title={pageTitle} />
       <section className="w-full overflow-y-auto">
-        <IntegrationAndImportExportBanner bannerName="Integrations" />
-        <div>
-          {appIntegrations ? (
-            appIntegrations.map((integration) => (
-              <SingleIntegrationCard key={integration.id} integration={integration} />
-            ))
-          ) : (
-            <IntegrationsSettingsLoader />
-          )}
+        <div className="flex items-center border-b border-custom-border-100 pb-3.5">
+          <h3 className="text-xl font-medium">Integrations</h3>
         </div>
+        {workspaceSlug && <IntegrationsList workspaceSlug={workspaceSlug.toString()} />}
       </section>
     </>
   );

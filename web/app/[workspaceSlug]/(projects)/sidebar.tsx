@@ -75,7 +75,7 @@ export const AppSidebar: FC = observer(() => {
         >
           <SidebarDropdown />
           <div className="flex-shrink-0 h-4" />
-          <SidebarAppSwitcher />
+          {canPerformWorkspaceMemberActions && <SidebarAppSwitcher />}
           <SidebarQuickActions />
         </div>
         <hr

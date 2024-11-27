@@ -73,7 +73,8 @@ from .workspace import (
 
 from .importer import Importer
 
-from .page import Page, PageLog, PageLabel
+from .page import Page, PageLog, PageLabel, ProjectPage, TeamPage
+
 
 from .estimate import Estimate, EstimatePoint
 
@@ -91,7 +92,7 @@ from .dashboard import Dashboard, DashboardWidget, Widget
 
 from .favorite import UserFavorite
 
-from .issue_type import IssueType
+from .issue_type import IssueType, ProjectIssueType
 
 from .recent_visit import UserRecentVisit
 

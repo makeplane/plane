@@ -8,6 +8,7 @@ export class RootStore extends CoreRootStore {
   constructor() {
     super();
 
+    //@ts-expect-error type-mismatch
     this.timelineStore = new TimeLineStore(this);
   }
 }
