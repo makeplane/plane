@@ -59,6 +59,7 @@ export const ProductUpdatesModal: FC<ProductUpdatesModalProps> = observer((props
             {data?.id && (
               <DocumentReadOnlyEditorWithRef
                 ref={editorRef}
+                disabledExtensions={[]}
                 id={data.id}
                 initialValue={data.description_html ?? "<p></p>"}
                 containerClassName="p-0 border-none"
