@@ -45,6 +45,7 @@ class InstanceEndpoint(BaseAPIView):
         # Get all the configuration
         (
             ENABLE_SIGNUP,
+            DISABLE_WORKSPACE_CREATION,
             IS_GOOGLE_ENABLED,
             IS_GITHUB_ENABLED,
             GITHUB_APP_NAME,
@@ -64,6 +65,10 @@ class InstanceEndpoint(BaseAPIView):
                 {
                     "key": "ENABLE_SIGNUP",
                     "default": os.environ.get("ENABLE_SIGNUP", "0"),
+                },
+                {
+                    "key": "DISABLE_WORKSPACE_CREATION",
+                    "default": os.environ.get("DISABLE_WORKSPACE_CREATION", "0"),
                 },
                 {
                     "key": "IS_GOOGLE_ENABLED",
@@ -125,6 +130,7 @@ class InstanceEndpoint(BaseAPIView):
         data = {}
         # Authentication
         data["enable_signup"] = ENABLE_SIGNUP == "1"
+        data["is_workspace_creation_disabled"] = DISABLE_WORKSPACE_CREATION == "1"
         data["is_google_enabled"] = IS_GOOGLE_ENABLED == "1"
         data["is_github_enabled"] = IS_GITHUB_ENABLED == "1"
         data["is_gitlab_enabled"] = IS_GITLAB_ENABLED == "1"

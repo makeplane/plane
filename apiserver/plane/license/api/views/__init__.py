@@ -14,3 +14,5 @@ from .admin import (
 )
 
 from .changelog import ChangeLogEndpoint
+
+from .workspace import InstanceWorkSpaceAvailabilityCheckEndpoint, InstanceWorkSpaceEndpoint

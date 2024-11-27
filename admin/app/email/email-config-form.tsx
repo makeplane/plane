@@ -72,7 +72,7 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
     {
       key: "EMAIL_FROM",
       type: "text",
-      label: "Sender email address",
+      label: "Sender's email address",
       description:
         "This is the email address your users will see when getting emails from this instance. You will need to verify this address.",
       placeholder: "no-reply@projectplane.so",
@@ -174,12 +174,12 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
           </div>
         </div>
         <div className="flex flex-col gap-6 my-6 pt-4 border-t border-custom-border-100">
-          <div className="flex w-full max-w-md flex-col gap-y-10 px-1">
+          <div className="flex w-full max-w-xl flex-col gap-y-10 px-1">
             <div className="mr-8 flex items-center gap-10 pt-4">
               <div className="grow">
-                <div className="text-sm font-medium text-custom-text-100">Authentication (optional)</div>
+                <div className="text-sm font-medium text-custom-text-100">Authentication</div>
                 <div className="text-xs font-normal text-custom-text-300">
-                  We recommend setting up a username password for your SMTP server
+                  This is optional, but we recommend setting up a username and a password for your SMTP server.
                 </div>
               </div>
             </div>

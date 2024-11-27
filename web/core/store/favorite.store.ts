@@ -26,10 +26,10 @@ export interface IFavoriteStore {
   updateFavorite: (workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>) => Promise<IFavorite>;
   deleteFavorite: (workspaceSlug: string, favoriteId: string) => Promise<void>;
   getGroupedFavorites: (workspaceSlug: string, favoriteId: string) => Promise<IFavorite[]>;
-  moveFavorite: (workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>) => Promise<void>;
+  moveFavoriteToFolder: (workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>) => Promise<void>;
   removeFavoriteEntity: (workspaceSlug: string, entityId: string) => Promise<void>;
-  moveFavoriteFolder: (workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>) => Promise<void>;
-  removeFromFavoriteFolder: (workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>) => Promise<void>;
+  reOrderFavorite: (workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>) => Promise<void>;
+  removeFromFavoriteFolder: (workspaceSlug: string, favoriteId: string) => Promise<void>;
   removeFavoriteFromStore: (entity_identifier: string) => void;
 }
 
@@ -64,9 +64,9 @@ export class FavoriteStore implements IFavoriteStore {
       // CRUD actions
       addFavorite: action,
       getGroupedFavorites: action,
-      moveFavorite: action,
+      moveFavoriteToFolder: action,
       removeFavoriteEntity: action,
-      moveFavoriteFolder: action,
+      reOrderFavorite: action,
       removeFavoriteEntityFromStore: action,
       removeFromFavoriteFolder: action,
     });
@@ -168,7 +168,7 @@ export class FavoriteStore implements IFavoriteStore {
    * @param data
    * @returns Promise<void>
    */
-  moveFavorite = async (workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>) => {
+  moveFavoriteToFolder = async (workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>) => {
     const oldParent = this.favoriteMap[favoriteId].parent;
     try {
       runInAction(() => {
@@ -190,7 +190,7 @@ export class FavoriteStore implements IFavoriteStore {
     }
   };
 
-  moveFavoriteFolder = async (workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>) => {
+  reOrderFavorite = async (workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>) => {
     const initialSequence = this.favoriteMap[favoriteId].sequence;
     try {
       runInAction(() => {
@@ -207,14 +207,15 @@ export class FavoriteStore implements IFavoriteStore {
     }
   };
 
-  removeFromFavoriteFolder = async (workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>) => {
+  removeFromFavoriteFolder = async (workspaceSlug: string, favoriteId: string) => {
     const parent = this.favoriteMap[favoriteId].parent;
     try {
       runInAction(() => {
         //remove parent
         set(this.favoriteMap, [favoriteId, "parent"], null);
       });
-      await this.favoriteService.updateFavorite(workspaceSlug, favoriteId, data);
+      await this.favoriteService.updateFavorite(workspaceSlug, favoriteId, { parent: null});
+
     } catch (error) {
       console.error("Failed to move favorite");
       runInAction(() => {
