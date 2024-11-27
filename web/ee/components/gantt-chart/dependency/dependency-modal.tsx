@@ -1,11 +1,12 @@
 import { useState } from "react";
+import { CalendarCheck2, CalendarClock, Trash2Icon } from "lucide-react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // Plane
-import { Button, ControlLink, EModalPosition, EModalWidth, ModalCore, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
+import { ControlLink, EModalPosition, EModalWidth, ModalCore, setToast, Spinner, TOAST_TYPE, Tooltip } from "@plane/ui";
 import { TIssue } from "@plane/types";
-// helpers
-import { renderFormattedDate } from "@/helpers/date-time.helper";
+// components
+import { DateDropdown } from "@/components/dropdowns";
 // hooks
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -18,15 +19,17 @@ import { Relation } from "@/plane-web/types";
 //
 import { IssueIdentifier } from "../../issues/issue-details";
 import { useTimeLineRelationOptions } from "../../relations";
+import { DependencyLineSVG } from "./dependency-line-svg";
 
 type IssueBlockProps = {
   blockId: string;
   dependencyPosition: EDependencyPosition;
+  className?: string;
   handleClose: () => void;
 };
 
 const IssueBlock = observer((props: IssueBlockProps) => {
-  const { blockId, dependencyPosition, handleClose } = props;
+  const { blockId, handleClose, className = "" } = props;
   // hooks
   const { workspaceSlug } = useParams();
   const { isMobile } = usePlatformOS();
@@ -44,39 +47,46 @@ const IssueBlock = observer((props: IssueBlockProps) => {
     handleRedirection(workspaceSlug.toString(), issueData, isMobile);
   };
 
-  let relatedDate, relatedDateTitle;
-  if (dependencyPosition === EDependencyPosition.START) {
-    relatedDate = renderFormattedDate(issueBlock.start_date);
-    relatedDateTitle = "Start Date";
-  } else if (dependencyPosition === EDependencyPosition.END) {
-    relatedDate = renderFormattedDate(issueBlock.target_date);
-    relatedDateTitle = "End Date";
-  }
-
   return (
     <ControlLink
       id={`issue-${blockId}`}
       href={`/${workspaceSlug}/projects/${issueData?.project_id}/issues/${issueData?.id}`}
       onClick={handleIssuePeekOverview}
-      className="relative flex flex-col gap-2 m-2 p-1 px-2 w-auto cursor-pointer  rounded text-custom-text-100 border-[0.5px] border-custom-border-800 bg-custom-background-100 hover:bg-custom-background-90"
+      className={`relative flex justify-between gap-3 mx-2 p-2 w-auto cursor-pointer overflow-hidden rounded text-custom-text-100 border-[1px] border-custom-border-800 bg-custom-background-100 hover:bg-custom-background-90 ${className}`}
     >
-      <div className="h-12 w-full cursor-pointer items-center ">
+      <div className="h-8 flex gap-3 cursor-pointer items-center flex-shrink-1">
         {issueData?.project_id && (
-          <IssueIdentifier
-            size="xs"
-            issueId={blockId}
-            projectId={issueData.project_id}
-            textContainerClassName="text-2xs text-custom-text-300 font-normal"
-          />
-        )}
-        <Tooltip tooltipContent={issueData?.name} isMobile={isMobile}>
-          <span className="line-clamp-1 truncate text-sm font-medium">{issueData?.name}</span>
-        </Tooltip>
-        {relatedDateTitle && relatedDate && (
-          <div className="text-2xs font-medium text-custom-text-400">
-            {relatedDateTitle}: {relatedDate}
+          <div className="flex-shrink-0">
+            <IssueIdentifier
+              size="xs"
+              issueId={blockId}
+              projectId={issueData.project_id}
+              textContainerClassName="line-clamp-1 w-auto text-xs text-custom-text-300 font-normal"
+            />
           </div>
         )}
+        <Tooltip tooltipContent={issueData?.name} isMobile={isMobile}>
+          <span className="line-clamp-1 text-sm font-medium flex-shrink-1">{issueData?.name}</span>
+        </Tooltip>
+      </div>
+      <div className="flex items-center text-custom-text-300 flex-shrink-0 pointer-events-none">
+        <DateDropdown
+          buttonVariant="transparent-with-text"
+          icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
+          placeholder="--"
+          onChange={() => {}}
+          value={issueBlock.start_date ?? null}
+          disabled
+        />{" "}
+        -{" "}
+        <DateDropdown
+          buttonVariant="transparent-with-text"
+          icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
+          placeholder="--"
+          onChange={() => {}}
+          value={issueBlock.target_date ?? null}
+          disabled
+        />
       </div>
     </ControlLink>
   );
@@ -134,43 +144,51 @@ export const DependencyPathModal = observer((props: DependencyPathProps) => {
     }
   };
 
+  const strokeColor = relation?.isAdhering ? "#3f76ff" : "#dc3e3e";
+
   return (
     <ModalCore
       isOpen={!!relation}
       handleClose={() => handleClose()}
       position={EModalPosition.CENTER}
-      width={EModalWidth.MD}
+      width={EModalWidth.LG}
     >
       {relation && (
         <>
-          <div className="relative flex flex-col gap-2">
-            <div className="h-6 text-lg flex px-2 mt-2 items-center font-medium">
+          <div className="relative flex flex-col py-2">
+            <div className="h-6 text-lg flex px-2 mt-2 items-end font-medium">
               <span>Timeline Relation</span>
             </div>
             <IssueBlock
               blockId={relation.originBlock}
               dependencyPosition={relation.originDependencyPosition}
+              className="mt-2"
               handleClose={handleClose}
             />
 
-            <div className={`flex items-center gap-1 py-1 mx-2 px-2 h-9 rounded w-auto ${relationObject?.className}`}>
-              <span>{relationObject?.icon ? relationObject.icon(14) : null}</span>
-              <span className="text-sm font-medium leading-5">{relationObject?.label}</span>
+            <div
+              className={`relative flex items-center justify-between gap-1 mx-2 px-2 h-14 rounded w-auto !bg-custom-background-100 ${relationObject?.className}`}
+            >
+              <div className="flex items-center gap-1 h-full">
+                <DependencyLineSVG strokeColor={strokeColor} />
+                <span className="text-sm font-medium leading-5">{relationObject?.label}</span>
+              </div>
+
+              {isRemoving ? (
+                <Spinner />
+              ) : (
+                <Tooltip tooltipContent="Remove relation">
+                  <Trash2Icon className="h-5 w-5 cursor-pointer text-custom-text-400" onClick={handleRemoveRelation} />
+                </Tooltip>
+              )}
             </div>
 
             <IssueBlock
               blockId={relation.destinationBlock}
               dependencyPosition={relation.destinationDependencyPosition}
+              className="mb-2"
               handleClose={handleClose}
             />
-            <Button
-              className="w-auto h-8 m-2 rounded"
-              variant="accent-danger"
-              loading={isRemoving}
-              onClick={handleRemoveRelation}
-            >
-              Remove relation
-            </Button>
           </div>
         </>
       )}

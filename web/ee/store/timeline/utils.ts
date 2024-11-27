@@ -60,6 +60,8 @@ const RELATION_IDENTIFIER_MAP: {
     | {
         originDependencyPosition: EDependencyPosition;
         destinationDependencyPosition: EDependencyPosition;
+        originDependencyKey: keyof IGanttBlock;
+        destinationDependencyKey: keyof IGanttBlock;
         relationType: ETimelineRelation;
         isParentOriginBlock: boolean;
       }
@@ -68,36 +70,48 @@ const RELATION_IDENTIFIER_MAP: {
   blocked_by: {
     originDependencyPosition: EDependencyPosition.END,
     destinationDependencyPosition: EDependencyPosition.START,
+    originDependencyKey: "target_date",
+    destinationDependencyKey: "start_date",
     relationType: ETimelineRelation.FS,
     isParentOriginBlock: false,
   },
   blocking: {
     originDependencyPosition: EDependencyPosition.END,
     destinationDependencyPosition: EDependencyPosition.START,
+    originDependencyKey: "target_date",
+    destinationDependencyKey: "start_date",
     relationType: ETimelineRelation.FS,
     isParentOriginBlock: true,
   },
   start_before: {
     originDependencyPosition: EDependencyPosition.START,
     destinationDependencyPosition: EDependencyPosition.START,
+    originDependencyKey: "start_date",
+    destinationDependencyKey: "start_date",
     relationType: ETimelineRelation.SS,
     isParentOriginBlock: true,
   },
   start_after: {
     originDependencyPosition: EDependencyPosition.START,
     destinationDependencyPosition: EDependencyPosition.START,
+    originDependencyKey: "start_date",
+    destinationDependencyKey: "start_date",
     relationType: ETimelineRelation.SS,
     isParentOriginBlock: false,
   },
   finish_before: {
     originDependencyPosition: EDependencyPosition.END,
     destinationDependencyPosition: EDependencyPosition.END,
+    originDependencyKey: "target_date",
+    destinationDependencyKey: "target_date",
     relationType: ETimelineRelation.FF,
     isParentOriginBlock: true,
   },
   finish_after: {
     originDependencyPosition: EDependencyPosition.END,
     destinationDependencyPosition: EDependencyPosition.END,
+    originDependencyKey: "target_date",
+    destinationDependencyKey: "target_date",
     relationType: ETimelineRelation.FF,
     isParentOriginBlock: false,
   },
@@ -126,7 +140,7 @@ export function getNewRelationsMap(
     const currBlock = blocksMap[blockId];
     const relation = relationsMap[blockId];
 
-    const isCurrBlockVisible = !!currBlock?.start_date && !!currBlock?.target_date;
+    const isCurrBlockVisible = !!currBlock?.start_date || !!currBlock?.target_date;
 
     // if the blocks has no relations, and block not visible on the chart then return
     if (!relation || currBlockIndex < 0 || !isCurrBlockVisible) return;
@@ -141,15 +155,21 @@ export function getNewRelationsMap(
       // if there are no related block Ids of the type the return
       if (!relatingIds || !Array.isArray(relatingIds) || !currRelationData) continue;
 
-      const { originDependencyPosition, destinationDependencyPosition, relationType, isParentOriginBlock } =
-        currRelationData;
+      const {
+        originDependencyPosition,
+        destinationDependencyPosition,
+        originDependencyKey,
+        destinationDependencyKey,
+        relationType,
+        isParentOriginBlock,
+      } = currRelationData;
 
       // Loop through all the related block Ids of the current relation
       for (const blockId of relatingIds) {
         const relatingBlock = blocksMap[blockId];
         const relatingBlockIndex = allBlockIds.indexOf(blockId);
 
-        const isRelatingBlockVisible = !!relatingBlock?.start_date && !!relatingBlock?.target_date;
+        const isRelatingBlockVisible = !!relatingBlock?.start_date || !!relatingBlock?.target_date;
 
         // if block data does not exist and block not visible on the chart then return
         if (!relatingBlock || relatingBlockIndex < 0 || !isRelatingBlockVisible) continue;
@@ -168,6 +188,8 @@ export function getNewRelationsMap(
           originBlockIndex = relatingBlockIndex;
           destinationBlockIndex = currBlockIndex;
         }
+
+        if (!originBlock[originDependencyKey] || !destinationBlock[destinationDependencyKey]) continue;
 
         const relationId = `${originBlock.id}_${destinationBlock.id}`;
 
