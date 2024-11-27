@@ -1,4 +1,3 @@
-import { logger } from "@sentry/utils";
 import { SlackAuthService } from "./auth.service";
 import axios, { AxiosInstance } from "axios";
 import {
@@ -18,7 +17,7 @@ export class SlackService {
     authCallback: ({
       isBotToken,
       tokenResponse,
-    }: SlackUpdateCredential) => Promise<void>,
+    }: SlackUpdateCredential) => Promise<void>
   ) {
     this.client = axios.create({
       baseURL: "https://slack.com/api/",
@@ -57,7 +56,7 @@ export class SlackService {
     userId: string,
     text: string,
     channelId: string,
-    threadTs?: string, // Optional parameter for thread timestamp
+    threadTs?: string // Optional parameter for thread timestamp
   ) {
     try {
       const payload: any = {
@@ -73,7 +72,7 @@ export class SlackService {
 
       await this.client.post("chat.postEphemeral", payload);
     } catch (error) {
-      logger.error(error);
+      console.error(error);
     }
   }
 
@@ -85,7 +84,7 @@ export class SlackService {
 
       return response.data;
     } catch (error) {
-      logger.error(error);
+      console.error(error);
     }
   }
 
@@ -94,7 +93,7 @@ export class SlackService {
     threadTs: string,
     message: string | { text?: string; blocks?: any[] },
     userToken: string, // Add a parameter for the user token
-    metadata?: any,
+    metadata?: any
   ): Promise<SlackMessageResponse> {
     try {
       const payload =
@@ -124,7 +123,7 @@ export class SlackService {
 
       return response.data;
     } catch (error) {
-      logger.error("Error sending thread message:", error);
+      console.error("Error sending thread message:", error);
       throw error;
     }
   }
@@ -133,7 +132,7 @@ export class SlackService {
     channelId: string,
     threadTs: string,
     message: string | { text?: string; blocks?: any[] },
-    metadata?: any,
+    metadata?: any
   ): Promise<SlackMessageResponse> {
     try {
       const payload =
@@ -157,14 +156,14 @@ export class SlackService {
       const response = await this.client.post("chat.postMessage", payload);
       return response.data;
     } catch (error) {
-      logger.error("Error sending thread message:", error);
+      console.error("Error sending thread message:", error);
       throw error;
     }
   }
 
   async sendMessage(
     webhookUrl: string,
-    template: { text: string; blocks: any[] },
+    template: { text: string; blocks: any[] }
   ) {
     try {
       await axios.post(webhookUrl, template, {
@@ -173,7 +172,7 @@ export class SlackService {
         },
       });
     } catch (error) {
-      logger.error(error);
+      console.error(error);
     }
   }
 
@@ -185,7 +184,7 @@ export class SlackService {
       });
       return res.data;
     } catch (error) {
-      logger.error(error);
+      console.error(error);
     }
   }
 
@@ -198,7 +197,7 @@ export class SlackService {
 
       return res.data;
     } catch (error) {
-      logger.error(error);
+      console.error(error);
     }
   }
 }
