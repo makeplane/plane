@@ -16,12 +16,20 @@ import { IMarking, scrollSummary, scrollToNodeViaDOMCoordinates } from "@/helper
 // props
 import { CoreEditorProps } from "@/props";
 // types
-import { EditorRefApi, IMentionHighlight, IMentionSuggestion, TEditorCommands, TFileHandler } from "@/types";
+import {
+  EditorRefApi,
+  IMentionHighlight,
+  IMentionSuggestion,
+  TEditorCommands,
+  TExtensions,
+  TFileHandler,
+} from "@/types";
 
 export interface CustomEditorProps {
   editorClassName: string;
   editorProps?: EditorProps;
   enableHistory: boolean;
+  disabledExtensions: TExtensions[];
   extensions?: any;
   fileHandler: TFileHandler;
   forwardedRef?: MutableRefObject<EditorRefApi | null>;
@@ -45,6 +53,7 @@ export interface CustomEditorProps {
 
 export const useEditor = (props: CustomEditorProps) => {
   const {
+    disabledExtensions,
     editorClassName,
     editorProps = {},
     enableHistory,
@@ -79,6 +88,7 @@ export const useEditor = (props: CustomEditorProps) => {
     },
     extensions: [
       ...CoreEditorExtensions({
+        disabledExtensions,
         enableHistory,
         fileHandler,
         mentionConfig: {

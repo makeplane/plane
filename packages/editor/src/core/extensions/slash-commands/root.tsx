@@ -3,7 +3,7 @@ import { ReactRenderer } from "@tiptap/react";
 import Suggestion, { SuggestionOptions } from "@tiptap/suggestion";
 import tippy from "tippy.js";
 // types
-import { ISlashCommandItem, TEditorCommands, TSlashCommandSectionKeys } from "@/types";
+import { ISlashCommandItem, TEditorCommands, TExtensions, TSlashCommandSectionKeys } from "@/types";
 // components
 import { getSlashCommandFilteredSections } from "./command-items-list";
 import { SlashCommandsMenu, SlashCommandsMenuProps } from "./command-menu";
@@ -107,10 +107,15 @@ const renderItems = () => {
   };
 };
 
-export const SlashCommands = (additionalOptions?: TSlashCommandAdditionalOption[]) =>
+type TExtensionProps = {
+  additionalOptions?: TSlashCommandAdditionalOption[];
+  disabledExtensions: TExtensions[];
+};
+
+export const SlashCommands = (props: TExtensionProps) =>
   Command.configure({
     suggestion: {
-      items: getSlashCommandFilteredSections(additionalOptions),
+      items: getSlashCommandFilteredSections(props),
       render: renderItems,
     },
   });
