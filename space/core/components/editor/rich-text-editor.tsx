@@ -4,7 +4,8 @@ import { EditorRefApi, IMentionHighlight, IRichTextEditor, RichTextEditorWithRef
 // helpers
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
 
-interface RichTextEditorWrapperProps extends Omit<IRichTextEditor, "fileHandler" | "mentionHandler"> {
+interface RichTextEditorWrapperProps
+  extends Omit<IRichTextEditor, "disabledExtensions" | "fileHandler" | "mentionHandler"> {
   anchor: string;
   uploadFile: (file: File) => Promise<string>;
   workspaceId: string;
@@ -15,6 +16,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
 
   return (
     <RichTextEditorWithRef
+      disabledExtensions={[]}
       mentionHandler={{
         highlights: function (): Promise<IMentionHighlight[]> {
           throw new Error("Function not implemented.");
