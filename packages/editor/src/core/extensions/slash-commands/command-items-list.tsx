@@ -37,7 +37,10 @@ import {
   setText,
 } from "@/helpers/editor-commands";
 // types
-import { CommandProps, ISlashCommandItem, TSlashCommandSectionKeys } from "@/types";
+import { CommandProps, ISlashCommandItem, TExtensions, TSlashCommandSectionKeys } from "@/types";
+// plane editor extensions
+import { coreEditorAdditionalSlashCommandOptions } from "@/plane-editor/extensions";
+// local types
 import { TSlashCommandAdditionalOption } from "./root";
 
 export type TSlashCommandSection = {
@@ -46,9 +49,15 @@ export type TSlashCommandSection = {
   items: ISlashCommandItem[];
 };
 
+type TArgs = {
+  additionalOptions?: TSlashCommandAdditionalOption[];
+  disabledExtensions: TExtensions[];
+};
+
 export const getSlashCommandFilteredSections =
-  (additionalOptions?: TSlashCommandAdditionalOption[]) =>
+  (args: TArgs) =>
   ({ query }: { query: string }): TSlashCommandSection[] => {
+    const { additionalOptions, disabledExtensions } = args;
     const SLASH_COMMAND_SECTIONS: TSlashCommandSection[] = [
       {
         key: "general",
@@ -269,7 +278,12 @@ export const getSlashCommandFilteredSections =
       },
     ];
 
-    additionalOptions?.forEach((item) => {
+    [
+      ...(additionalOptions ?? []),
+      ...coreEditorAdditionalSlashCommandOptions({
+        disabledExtensions,
+      }),
+    ]?.forEach((item) => {
       const sectionToPushTo = SLASH_COMMAND_SECTIONS.find((s) => s.key === item.section) ?? SLASH_COMMAND_SECTIONS[0];
       const itemIndexToPushAfter = sectionToPushTo.items.findIndex((i) => i.commandKey === item.pushAfter);
       if (itemIndexToPushAfter !== undefined) {

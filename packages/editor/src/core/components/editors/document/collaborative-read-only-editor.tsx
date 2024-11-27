@@ -15,6 +15,7 @@ import { EditorReadOnlyRefApi, ICollaborativeDocumentReadOnlyEditor } from "@/ty
 const CollaborativeDocumentReadOnlyEditor = (props: ICollaborativeDocumentReadOnlyEditor) => {
   const {
     containerClassName,
+    disabledExtensions,
     displayConfig = DEFAULT_DISPLAY_CONFIG,
     editorClassName = "",
     embedHandler,
@@ -37,6 +38,7 @@ const CollaborativeDocumentReadOnlyEditor = (props: ICollaborativeDocumentReadOn
   }
 
   const { editor, hasServerConnectionFailed, hasServerSynced } = useReadOnlyCollaborativeEditor({
+    disabledExtensions,
     editorClassName,
     extensions,
     fileHandler,
