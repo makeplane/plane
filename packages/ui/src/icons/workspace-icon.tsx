@@ -9,7 +9,7 @@ export const WorkspaceIcon: React.FC<ISvgIcons> = ({ className }) => (
     xmlns="http://www.w3.org/2000/svg"
     className={className}
     role="img"
-    aria-abel="Workspace icon"
+    aria-label="Workspace icon"
   >
     <path
       fillRule="evenodd"
