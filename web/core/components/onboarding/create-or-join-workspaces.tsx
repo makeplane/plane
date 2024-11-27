@@ -4,11 +4,14 @@ import Image from "next/image";
 // icons
 import { useTheme } from "next-themes";
 // types
+import { OctagonAlert } from "lucide-react";
 import { IWorkspaceMemberInvitation, TOnboardingSteps } from "@plane/types";
 // components
 import { Invitations, OnboardingHeader, SwitchAccountDropdown, CreateWorkspace } from "@/components/onboarding";
 // hooks
 import { useUser } from "@/hooks/store";
+// plane web helpers
+import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
 // assets
 import CreateJoinWorkspaceDark from "@/public/onboarding/create-join-workspace-dark.webp";
 import CreateJoinWorkspace from "@/public/onboarding/create-join-workspace-light.webp";
@@ -34,6 +37,8 @@ export const CreateOrJoinWorkspaces: React.FC<Props> = observer((props) => {
   const { data: user } = useUser();
   // hooks
   const { resolvedTheme } = useTheme();
+  // derived values
+  const isWorkspaceCreationEnabled = getIsWorkspaceCreationDisabled() === false;
 
   useEffect(() => {
     if (invitations.length > 0) {
@@ -66,12 +71,25 @@ export const CreateOrJoinWorkspaces: React.FC<Props> = observer((props) => {
               handleCurrentViewChange={() => setCurrentView(ECreateOrJoinWorkspaceViews.WORKSPACE_CREATE)}
             />
           ) : currentView === ECreateOrJoinWorkspaceViews.WORKSPACE_CREATE ? (
-            <CreateWorkspace
-              stepChange={stepChange}
-              user={user ?? undefined}
-              invitedWorkspaces={invitations.length}
-              handleCurrentViewChange={() => setCurrentView(ECreateOrJoinWorkspaceViews.WORKSPACE_JOIN)}
-            />
+            isWorkspaceCreationEnabled ? (
+              <CreateWorkspace
+                stepChange={stepChange}
+                user={user ?? undefined}
+                invitedWorkspaces={invitations.length}
+                handleCurrentViewChange={() => setCurrentView(ECreateOrJoinWorkspaceViews.WORKSPACE_JOIN)}
+              />
+            ) : (
+              <div className="flex h-96 w-full items-center justify-center">
+                <div className="flex gap-2.5 w-full items-start justify-center text-sm leading-5 mt-4 px-6 py-4 rounded border border-custom-primary-100/20 bg-custom-primary-100/10 text-custom-primary-200">
+                  <OctagonAlert className="flex-shrink-0 size-5 mt-1" />
+                  <span>
+                    You don&apos;t seem to have any invites to a workspace and your instance admin has restricted
+                    creation of new workspaces. Please ask a workspace owner or admin to invite you to a workspace first
+                    and come back to this screen to join.
+                  </span>
+                </div>
+              </div>
+            )
           ) : (
             <div className="flex h-96 w-full items-center justify-center">
               <LogoSpinner />

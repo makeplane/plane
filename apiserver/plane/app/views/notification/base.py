@@ -62,6 +62,10 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
             Notification.objects.filter(
                 workspace__slug=slug, receiver_id=request.user.id
             )
+            .filter(
+                project__project_projectmember__member=request.user,
+                project__project_projectmember__is_active=True,
+            )
             .filter(entity_name="issue")
             .annotate(is_inbox_issue=Exists(intake_issue))
             .annotate(is_intake_issue=Exists(intake_issue))

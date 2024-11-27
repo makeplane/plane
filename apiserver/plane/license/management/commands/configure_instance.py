@@ -30,6 +30,12 @@ class Command(BaseCommand):
                 "is_encrypted": False,
             },
             {
+                "key": "DISABLE_WORKSPACE_CREATION",
+                "value": os.environ.get("DISABLE_WORKSPACE_CREATION", "0"),
+                "category": "WORKSPACE_MANAGEMENT",
+                "is_encrypted": False,
+            },
+            {
                 "key": "ENABLE_EMAIL_PASSWORD",
                 "value": os.environ.get("ENABLE_EMAIL_PASSWORD", "1"),
                 "category": "AUTHENTICATION",
