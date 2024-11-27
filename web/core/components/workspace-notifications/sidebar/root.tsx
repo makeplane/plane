@@ -11,7 +11,6 @@ import {
   NotificationEmptyState,
   NotificationSidebarHeader,
   AppliedFilters,
-  NotificationCardListRoot,
 } from "@/components/workspace-notifications";
 // constants
 import { NOTIFICATION_TABS } from "@/constants/notification";
@@ -20,6 +19,8 @@ import { cn } from "@/helpers/common.helper";
 import { getNumberCount } from "@/helpers/string.helper";
 // hooks
 import { useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
+
+import { NotificationCardListRoot } from "@/plane-web/components/workspace-notifications";
 
 export const NotificationsSidebar: FC = observer(() => {
   const { workspaceSlug } = useParams();

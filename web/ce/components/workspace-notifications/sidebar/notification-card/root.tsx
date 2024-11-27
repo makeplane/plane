@@ -2,12 +2,12 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-// components
-import { NotificationItem } from "@/components/workspace-notifications";
 // constants
 import { ENotificationLoader, ENotificationQueryParamType } from "@/constants/notification";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store";
+// components
+import { NotificationItem } from "@/plane-web/components/workspace-notifications";
 
 type TNotificationCardListRoot = {
   workspaceSlug: string;

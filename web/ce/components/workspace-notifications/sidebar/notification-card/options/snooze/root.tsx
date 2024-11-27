@@ -5,16 +5,16 @@ import { observer } from "mobx-react";
 import { Clock } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
 import { Tooltip, setToast, TOAST_TYPE } from "@plane/ui";
-// components
-import { NotificationSnoozeModal } from "@/components/workspace-notifications";
 // constants
 import { NOTIFICATION_SNOOZE_OPTIONS } from "@/constants/notification";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// components
+import { NotificationSnoozeModal } from "@/plane-web/components/workspace-notifications";
 // store
-import { INotification } from "@/store/notifications/notification";
+import { INotification } from "@/plane-web/store/notifications/notification";
 
 type TNotificationItemSnoozeOption = {
   workspaceSlug: string;

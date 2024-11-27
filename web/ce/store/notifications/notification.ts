@@ -2,10 +2,11 @@
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { IUserLite, TNotification, TNotificationData } from "@plane/types";
+// store
+import { RootStore } from "@/plane-web/store/root.store";
 // services
 import workspaceNotificationService from "@/services/workspace-notification.service";
-// store
-import { CoreRootStore } from "../root.store";
+
 
 export interface INotification extends TNotification {
   // observables
@@ -51,7 +52,7 @@ export class Notification implements INotification {
   updated_by: string | undefined = undefined;
 
   constructor(
-    private store: CoreRootStore,
+    private store: RootStore,
     private notification: TNotification
   ) {
     makeObservable(this, {

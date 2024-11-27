@@ -4,14 +4,14 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { MessageSquare } from "lucide-react";
 import { TOAST_TYPE, setToast } from "@plane/ui";
-// components
-import { NotificationItemOptionButton } from "@/components/workspace-notifications";
 // constants
 import { NOTIFICATIONS_READ } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker, useWorkspaceNotifications } from "@/hooks/store";
+// components
+import { NotificationItemOptionButton } from "@/plane-web/components/workspace-notifications";
 // store
-import { INotification } from "@/store/notifications/notification";
+import { INotification } from "@/plane-web/store/notifications/notification";
 
 type TNotificationItemReadOption = {
   workspaceSlug: string;

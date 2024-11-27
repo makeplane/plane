@@ -5,7 +5,6 @@ import { observer } from "mobx-react";
 import { Clock } from "lucide-react";
 import { Avatar, Row } from "@plane/ui";
 // components
-import { NotificationOption } from "@/components/workspace-notifications";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { calculateTimeAgo, renderFormattedDate, renderFormattedTime } from "@/helpers/date-time.helper";
@@ -14,6 +13,7 @@ import { sanitizeCommentForNotification } from "@/helpers/notification.helper";
 import { replaceUnderscoreIfSnakeCase, stripAndTruncateHTML } from "@/helpers/string.helper";
 // hooks
 import { useIssueDetail, useNotification, useWorkspaceNotifications } from "@/hooks/store";
+import { NotificationOption } from "@/plane-web/components/workspace-notifications";
 
 type TNotificationItem = {
   workspaceSlug: string;

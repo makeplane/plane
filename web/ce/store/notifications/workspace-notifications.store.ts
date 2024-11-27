@@ -21,11 +21,11 @@ import {
 } from "@/constants/notification";
 // helpers
 import { convertToEpoch } from "@/helpers/date-time.helper";
+// store
+import { Notification, INotification } from "@/plane-web/store/notifications/notification";
 // services
 import workspaceNotificationService from "@/services/workspace-notification.service";
-// store
-import { Notification, INotification } from "@/store/notifications/notification";
-import { CoreRootStore } from "@/store/root.store";
+import { RootStore } from "../root.store";
 
 type TNotificationLoader = ENotificationLoader | undefined;
 type TNotificationQueryParamType = ENotificationQueryParamType;
@@ -84,7 +84,7 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
     read: false,
   };
 
-  constructor(private store: CoreRootStore) {
+  constructor(private store: RootStore) {
     makeObservable(this, {
       // observables
       loader: observable.ref,
