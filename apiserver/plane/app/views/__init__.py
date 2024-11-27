@@ -86,8 +86,6 @@ from .cycle.base import (
     CycleFavoriteViewSet,
     TransferCycleIssueEndpoint,
     CycleUserPropertiesEndpoint,
-    CycleViewSet,
-    TransferCycleIssueEndpoint,
     CycleAnalyticsEndpoint,
     CycleProgressEndpoint,
 )
@@ -204,6 +202,5 @@ from .dashboard.base import DashboardEndpoint, WidgetsEndpoint
 
 from .error_404 import custom_404_view
 
-from .exporter.base import ExportIssuesEndpoint
 from .notification.base import MarkAllReadNotificationViewSet
 from .user.base import AccountEndpoint, ProfileEndpoint, UserSessionEndpoint
