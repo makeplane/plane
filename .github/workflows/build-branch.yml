@@ -25,9 +25,6 @@ on:
         required: false
         default: false
         type: boolean
-  # push:
-  #   branches:
-  #     - master
 
 env:
   TARGET_BRANCH: ${{ github.ref_name }}
@@ -354,6 +351,7 @@ jobs:
         branch_build_push_live,
         branch_build_push_apiserver,
         branch_build_push_proxy,
+        attach_assets_to_build,
       ]
     env:
       REL_VERSION: ${{ needs.branch_build_setup.outputs.release_version }}

@@ -120,12 +120,28 @@ export const loadWorkSpaceData = async (workspaceSlug: string) => {
   const start = performance.now();
   await persistence.db.exec("BEGIN;");
   await batchInserts(labels, "labels", labelSchema);
+  await persistence.db.exec("COMMIT;");
+
+  await persistence.db.exec("BEGIN;");
   await batchInserts(modules, "modules", moduleSchema);
+  await persistence.db.exec("COMMIT;");
+
+  await persistence.db.exec("BEGIN;");
   await batchInserts(cycles, "cycles", cycleSchema);
+  await persistence.db.exec("COMMIT;");
+
+  await persistence.db.exec("BEGIN;");
   await batchInserts(states, "states", stateSchema);
+  await persistence.db.exec("COMMIT;");
+
+  await persistence.db.exec("BEGIN;");
   await batchInserts(estimates, "estimate_points", estimatePointSchema);
+  await persistence.db.exec("COMMIT;");
+
+  await persistence.db.exec("BEGIN;");
   await batchInserts(members, "members", memberSchema);
   await persistence.db.exec("COMMIT;");
+
   const end = performance.now();
   log("Time taken to load workspace data", end - start);
 };

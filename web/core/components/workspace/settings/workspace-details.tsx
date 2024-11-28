@@ -4,6 +4,9 @@ import { useEffect, useState, FC } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Pencil } from "lucide-react";
+// constants
+import { ORGANIZATION_SIZE } from "@plane/constants";
+// types
 import { IWorkspace } from "@plane/types";
 // ui
 import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
@@ -12,7 +15,6 @@ import { LogoSpinner } from "@/components/common";
 import { WorkspaceImageUploadModal } from "@/components/core";
 // constants
 import { WORKSPACE_UPDATED } from "@/constants/event-tracker";
-import { ORGANIZATION_SIZE } from "@/constants/workspace";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
