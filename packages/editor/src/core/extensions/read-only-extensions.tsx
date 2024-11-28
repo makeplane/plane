@@ -23,6 +23,7 @@ import {
   HeadingListExtension,
   CustomReadOnlyImageExtension,
   CustomTextAlignExtension,
+  CustomCalloutReadOnlyExtension,
   CustomColorExtension,
 } from "@/extensions";
 // helpers
@@ -130,6 +131,7 @@ export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
     CustomColorExtension,
     HeadingListExtension,
     CustomTextAlignExtension,
+    CustomCalloutReadOnlyExtension,
     ...CoreReadOnlyEditorAdditionalExtensions({
       disabledExtensions,
     }),

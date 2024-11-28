@@ -7,7 +7,6 @@ from plane.app.views import (
     ProjectMemberViewSet,
     ProjectMemberUserEndpoint,
     ProjectJoinEndpoint,
-    AddTeamToProjectEndpoint,
     ProjectUserViewsEndpoint,
     ProjectIdentifierEndpoint,
     ProjectFavoritesViewSet,
@@ -82,11 +81,6 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/members/leave/",
         ProjectMemberViewSet.as_view({"post": "leave"}),
         name="project-member",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/team-invite/",
-        AddTeamToProjectEndpoint.as_view(),
-        name="projects",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/project-views/",

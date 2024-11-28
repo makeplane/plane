@@ -29,9 +29,13 @@ def validate_domain(value):
 
 class Webhook(BaseModel):
     workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="workspace_webhooks"
+        "db.Workspace",
+        on_delete=models.CASCADE,
+        related_name="workspace_webhooks",
     )
-    url = models.URLField(validators=[validate_schema, validate_domain])
+    url = models.URLField(
+        validators=[validate_schema, validate_domain], max_length=1024
+    )
     is_active = models.BooleanField(default=True)
     secret_key = models.CharField(max_length=255, default=generate_token)
     project = models.BooleanField(default=False)
@@ -39,6 +43,7 @@ class Webhook(BaseModel):
     module = models.BooleanField(default=False)
     cycle = models.BooleanField(default=False)
     issue_comment = models.BooleanField(default=False)
+    is_internal = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.workspace.slug} {self.url}"

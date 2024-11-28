@@ -9,6 +9,7 @@ import StarterKit from "@tiptap/starter-kit";
 import { Markdown } from "tiptap-markdown";
 // extensions
 import {
+  CustomCalloutExtension,
   CustomCodeBlockExtension,
   CustomCodeInlineExtension,
   CustomCodeMarkPlugin,
@@ -163,6 +164,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     }),
     CharacterCount,
     CustomTextAlignExtension,
+    CustomCalloutExtension,
     CustomColorExtension,
     ...CoreEditorAdditionalExtensions({
       disabledExtensions,

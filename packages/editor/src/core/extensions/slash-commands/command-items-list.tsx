@@ -12,6 +12,7 @@ import {
   List,
   ListOrdered,
   ListTodo,
+  MessageSquareText,
   MinusSquare,
   Table,
   TextQuote,
@@ -34,6 +35,7 @@ import {
   toggleTextColor,
   toggleBackgroundColor,
   insertImage,
+  insertCallout,
   setText,
 } from "@/helpers/editor-commands";
 // types
@@ -187,6 +189,15 @@ export const getSlashCommandFilteredSections =
             description: "Insert an image",
             searchTerms: ["img", "photo", "picture", "media", "upload"],
             command: ({ editor, range }: CommandProps) => insertImage({ editor, event: "insert", range }),
+          },
+          {
+            commandKey: "callout",
+            key: "callout",
+            title: "Callout",
+            icon: <MessageSquareText className="size-3.5" />,
+            description: "Insert callout",
+            searchTerms: ["callout", "comment", "message", "info", "alert"],
+            command: ({ editor, range }: CommandProps) => insertCallout(editor, range),
           },
           {
             commandKey: "divider",
