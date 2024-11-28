@@ -268,12 +268,8 @@ class DraftIssueDetailSerializer(DraftIssueSerializer):
     description_binary = serializers.CharField()
 
     class Meta(DraftIssueSerializer.Meta):
-<<<<<<< HEAD
         fields = DraftIssueSerializer.Meta.fields + [
             "description_html",
             "description_binary",
         ]
-=======
-        fields = DraftIssueSerializer.Meta.fields + ["description_html"]
->>>>>>> 378e896bf063546518aa7bc96a0d8f55d49703db
         read_only_fields = fields

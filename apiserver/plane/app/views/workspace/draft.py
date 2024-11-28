@@ -9,18 +9,8 @@ from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
-<<<<<<< HEAD
 from django.http import StreamingHttpResponse
-from django.db.models import (
-    Q,
-    UUIDField,
-    Value,
-    Subquery,
-    OuterRef,
-)
-=======
 from django.db.models import Q, UUIDField, Value, Subquery, OuterRef
->>>>>>> 378e896bf063546518aa7bc96a0d8f55d49703db
 from django.db.models.functions import Coalesce
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
@@ -338,10 +328,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
     def retrieve_description(self, request, slug, pk):
         issue = DraftIssue.objects.filter(pk=pk, workspace__slug=slug).first()
         if issue is None:
-            return Response(
-                {"error": "Issue not found"},
-                status=404,
-            )
+            return Response({"error": "Issue not found"}, status=404)
         binary_data = issue.description_binary
 
         def stream_data():
@@ -364,9 +351,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
         base64_description = issue.description_binary
         # convert to base64 string
         if base64_description:
-            base64_description = base64.b64encode(base64_description).decode(
-                "utf-8"
-            )
+            base64_description = base64.b64encode(base64_description).decode("utf-8")
         data = {
             "original_document": base64_description,
             "updates": request.data.get("description_binary"),
@@ -381,16 +366,10 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
             )
 
         if response.status_code == 200:
-            issue.description = response.json().get(
-                "description", issue.description
-            )
+            issue.description = response.json().get("description", issue.description)
             issue.description_html = response.json().get("description_html")
-            response_description_binary = response.json().get(
-                "description_binary"
-            )
-            issue.description_binary = base64.b64decode(
-                response_description_binary
-            )
+            response_description_binary = response.json().get("description_binary")
+            issue.description_binary = base64.b64decode(response_description_binary)
             issue.save()
 
             def stream_data():
