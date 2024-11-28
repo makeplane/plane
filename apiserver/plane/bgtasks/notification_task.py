@@ -1,6 +1,8 @@
 # Python imports
 import json
 import uuid
+from uuid import UUID
+
 
 # Module imports
 from plane.db.models import (
@@ -255,7 +257,7 @@ def notifications(
             )
 
             new_mentions = [
-                str(mention) for mention in new_mentions if mention in new_mentions
+                str(mention) for mention in new_mentions if mention in set(project_members)
             ]
             removed_mention = get_removed_mentions(
                 requested_instance=requested_data, current_instance=current_instance
@@ -287,6 +289,11 @@ def notifications(
                         new_value=issue_comment_new_value,
                     )
                     comment_mentions = comment_mentions + new_comment_mentions
+                    comment_mentions = [
+                        mention
+                        for mention in comment_mentions
+                        if UUID(mention) in set(project_members)
+                    ]
 
             comment_mention_subscribers = extract_mentions_as_subscribers(
                 project_id=project_id, issue_id=issue_id, mentions=all_comment_mentions
