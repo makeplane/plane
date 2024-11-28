@@ -5,7 +5,7 @@ from .cycle import urlpatterns as cycle_urls
 from .dashboard import urlpatterns as dashboard_urls
 from .estimate import urlpatterns as estimate_urls
 from .external import urlpatterns as external_urls
-from .inbox import urlpatterns as inbox_urls
+from .intake import urlpatterns as intake_urls
 from .issue import urlpatterns as issue_urls
 from .module import urlpatterns as module_urls
 from .notification import urlpatterns as notification_urls
@@ -25,7 +25,7 @@ urlpatterns = [
     *dashboard_urls,
     *estimate_urls,
     *external_urls,
-    *inbox_urls,
+    *intake_urls,
     *issue_urls,
     *module_urls,
     *notification_urls,

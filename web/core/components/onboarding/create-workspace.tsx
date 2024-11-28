@@ -3,13 +3,14 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
+// constants
+import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@plane/constants";
 // types
 import { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 // ui
 import { Button, CustomSelect, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { E_ONBOARDING, WORKSPACE_CREATED } from "@/constants/event-tracker";
-import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@/constants/workspace";
 // hooks
 import { useEventTracker, useUserProfile, useUserSettings, useWorkspace } from "@/hooks/store";
 // services
@@ -154,18 +155,19 @@ export const CreateWorkspace: React.FC<Props> = observer((props) => {
             className="text-sm text-onboarding-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
             htmlFor="name"
           >
-            Workspace name
+            Name your workspace
           </label>
           <Controller
             control={control}
             name="name"
             rules={{
-              required: "Workspace name is required",
+              required: "This is a required field.",
               validate: (value) =>
-                /^[\w\s-]*$/.test(value) || `Name can only contain (" "), ( - ), ( _ ) & alphanumeric characters.`,
+                /^[\w\s-]*$/.test(value) ||
+                `Workspaces names can contain only (" "), ( - ), ( _ ) and alphanumeric characters.`,
               maxLength: {
                 value: 80,
-                message: "Workspace name should not exceed 80 characters",
+                message: "Limit your name to 80 characters.",
               },
             }}
             render={({ field: { value, ref, onChange } }) => (
@@ -182,7 +184,7 @@ export const CreateWorkspace: React.FC<Props> = observer((props) => {
                       shouldValidate: true,
                     });
                   }}
-                  placeholder="Enter workspace name..."
+                  placeholder="Something familiar and recognizable is always best."
                   ref={ref}
                   hasError={Boolean(errors.name)}
                   className="w-full border-onboarding-border-100 placeholder:text-custom-text-400"
@@ -198,16 +200,16 @@ export const CreateWorkspace: React.FC<Props> = observer((props) => {
             className="text-sm text-onboarding-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
             htmlFor="slug"
           >
-            Workspace URL
+            Set your workspace&apos;s URL
           </label>
           <Controller
             control={control}
             name="slug"
             rules={{
-              required: "Workspace slug is required",
+              required: "This is a required field.",
               maxLength: {
                 value: 48,
-                message: "Workspace slug should not exceed 48 characters",
+                message: "Limit your URL to 48 characters.",
               },
             }}
             render={({ field: { value, ref, onChange } }) => (
@@ -223,20 +225,22 @@ export const CreateWorkspace: React.FC<Props> = observer((props) => {
                   type="text"
                   value={value.toLocaleLowerCase().trim().replace(/ /g, "-")}
                   onChange={(e) => {
-                    /^[a-zA-Z0-9_-]+$/.test(e.target.value) ? setInvalidSlug(false) : setInvalidSlug(true);
+                    if (/^[a-zA-Z0-9_-]+$/.test(e.target.value)) setInvalidSlug(false);
+                    else setInvalidSlug(true);
                     onChange(e.target.value.toLowerCase());
                   }}
                   ref={ref}
                   hasError={Boolean(errors.slug)}
+                  placeholder="workspace-name"
                   className="w-full border-none !px-0"
                 />
               </div>
             )}
           />
           <p className="text-sm text-onboarding-text-300">You can only edit the slug of the URL</p>
-          {slugError && <p className="-mt-3 text-sm text-red-500">Workspace URL is already taken!</p>}
+          {slugError && <p className="-mt-3 text-sm text-red-500">This URL is taken. Try something else.</p>}
           {invalidSlug && (
-            <p className="text-sm text-red-500">{`URL can only contain ( - ), ( _ ) & alphanumeric characters.`}</p>
+            <p className="text-sm text-red-500">{`URLs can contain only ( - ), ( _ ) and alphanumeric characters.`}</p>
           )}
           {errors.slug && <span className="text-sm text-red-500">{errors.slug.message}</span>}
         </div>
@@ -246,20 +250,20 @@ export const CreateWorkspace: React.FC<Props> = observer((props) => {
             className="text-sm text-onboarding-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
             htmlFor="organization_size"
           >
-            Company size
+            How many people will use this workspace?
           </label>
           <div className="w-full">
             <Controller
               name="organization_size"
               control={control}
-              rules={{ required: "This field is required" }}
+              rules={{ required: "This is a required field." }}
               render={({ field: { value, onChange } }) => (
                 <CustomSelect
                   value={value}
                   onChange={onChange}
                   label={
                     ORGANIZATION_SIZE.find((c) => c === value) ?? (
-                      <span className="text-custom-text-400">Select organization size</span>
+                      <span className="text-custom-text-400">Select a range</span>
                     )
                   }
                   buttonClassName="!border-[0.5px] !border-onboarding-border-100 !shadow-none !rounded-md"

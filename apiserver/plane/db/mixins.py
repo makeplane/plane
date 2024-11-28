@@ -9,13 +9,8 @@ from plane.bgtasks.deletion_task import soft_delete_related_objects
 class TimeAuditModel(models.Model):
     """To path when the record was created and last modified"""
 
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name="Created At",
-    )
-    updated_at = models.DateTimeField(
-        auto_now=True, verbose_name="Last Modified At"
-    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Created At")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Last Modified At")
 
     class Meta:
         abstract = True
@@ -61,11 +56,7 @@ class SoftDeletionManager(models.Manager):
 class SoftDeleteModel(models.Model):
     """To soft delete records"""
 
-    deleted_at = models.DateTimeField(
-        verbose_name="Deleted At",
-        null=True,
-        blank=True,
-    )
+    deleted_at = models.DateTimeField(verbose_name="Deleted At", null=True, blank=True)
 
     objects = SoftDeletionManager()
     all_objects = models.Manager()
@@ -80,10 +71,7 @@ class SoftDeleteModel(models.Model):
             self.save(using=using)
 
             soft_delete_related_objects.delay(
-                self._meta.app_label,
-                self._meta.model_name,
-                self.pk,
-                using=using,
+                self._meta.app_label, self._meta.model_name, self.pk, using=using
             )
 
         else:

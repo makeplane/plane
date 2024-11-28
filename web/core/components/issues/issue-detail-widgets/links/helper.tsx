@@ -27,6 +27,7 @@ export const useLinkOperations = (workspaceSlug: string, projectId: string, issu
             type: TOAST_TYPE.ERROR,
             title: "Link not created",
           });
+          throw error;
         }
       },
       update: async (linkId: string, data: Partial<TIssueLink>) => {
@@ -44,6 +45,7 @@ export const useLinkOperations = (workspaceSlug: string, projectId: string, issu
             type: TOAST_TYPE.ERROR,
             title: "Link not updated",
           });
+          throw error;
         }
       },
       remove: async (linkId: string) => {

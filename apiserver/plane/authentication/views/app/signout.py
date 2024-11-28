@@ -10,7 +10,6 @@ from plane.db.models import User
 
 
 class SignOutAuthEndpoint(View):
-
     def post(self, request):
         # Get user
         try:
@@ -20,10 +19,6 @@ class SignOutAuthEndpoint(View):
             user.save()
             # Log the user out
             logout(request)
-            return HttpResponseRedirect(
-                base_host(request=request, is_app=True)
-            )
+            return HttpResponseRedirect(base_host(request=request, is_app=True))
         except Exception:
-            return HttpResponseRedirect(
-                base_host(request=request, is_app=True)
-            )
+            return HttpResponseRedirect(base_host(request=request, is_app=True))

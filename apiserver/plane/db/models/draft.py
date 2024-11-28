@@ -61,10 +61,7 @@ class DraftIssue(WorkspaceBaseModel):
         through_fields=("draft_issue", "assignee"),
     )
     labels = models.ManyToManyField(
-        "db.Label",
-        blank=True,
-        related_name="draft_labels",
-        through="DraftIssueLabel",
+        "db.Label", blank=True, related_name="draft_labels", through="DraftIssueLabel"
     )
     sort_order = models.FloatField(default=65535)
     completed_at = models.DateTimeField(null=True)
@@ -90,9 +87,7 @@ class DraftIssue(WorkspaceBaseModel):
                 from plane.db.models import State
 
                 default_state = State.objects.filter(
-                    ~models.Q(is_triage=True),
-                    project=self.project,
-                    default=True,
+                    ~models.Q(is_triage=True), project=self.project, default=True
                 ).first()
                 if default_state is None:
                     random_state = State.objects.filter(
@@ -118,10 +113,7 @@ class DraftIssue(WorkspaceBaseModel):
             # Strip the html tags using html parser
             self.description_stripped = (
                 None
-                if (
-                    self.description_html == ""
-                    or self.description_html is None
-                )
+                if (self.description_html == "" or self.description_html is None)
                 else strip_tags(self.description_html)
             )
             largest_sort_order = DraftIssue.objects.filter(
@@ -136,10 +128,7 @@ class DraftIssue(WorkspaceBaseModel):
             # Strip the html tags using html parser
             self.description_stripped = (
                 None
-                if (
-                    self.description_html == ""
-                    or self.description_html is None
-                )
+                if (self.description_html == "" or self.description_html is None)
                 else strip_tags(self.description_html)
             )
             super(DraftIssue, self).save(*args, **kwargs)
@@ -151,9 +140,7 @@ class DraftIssue(WorkspaceBaseModel):
 
 class DraftIssueAssignee(WorkspaceBaseModel):
     draft_issue = models.ForeignKey(
-        DraftIssue,
-        on_delete=models.CASCADE,
-        related_name="draft_issue_assignee",
+        DraftIssue, on_delete=models.CASCADE, related_name="draft_issue_assignee"
     )
     assignee = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -181,9 +168,7 @@ class DraftIssueAssignee(WorkspaceBaseModel):
 
 class DraftIssueLabel(WorkspaceBaseModel):
     draft_issue = models.ForeignKey(
-        "db.DraftIssue",
-        on_delete=models.CASCADE,
-        related_name="draft_label_issue",
+        "db.DraftIssue", on_delete=models.CASCADE, related_name="draft_label_issue"
     )
     label = models.ForeignKey(
         "db.Label", on_delete=models.CASCADE, related_name="draft_label_issue"
@@ -201,14 +186,10 @@ class DraftIssueLabel(WorkspaceBaseModel):
 
 class DraftIssueModule(WorkspaceBaseModel):
     module = models.ForeignKey(
-        "db.Module",
-        on_delete=models.CASCADE,
-        related_name="draft_issue_module",
+        "db.Module", on_delete=models.CASCADE, related_name="draft_issue_module"
     )
     draft_issue = models.ForeignKey(
-        "db.DraftIssue",
-        on_delete=models.CASCADE,
-        related_name="draft_issue_module",
+        "db.DraftIssue", on_delete=models.CASCADE, related_name="draft_issue_module"
     )
 
     class Meta:
@@ -235,9 +216,7 @@ class DraftIssueCycle(WorkspaceBaseModel):
     """
 
     draft_issue = models.ForeignKey(
-        "db.DraftIssue",
-        on_delete=models.CASCADE,
-        related_name="draft_issue_cycle",
+        "db.DraftIssue", on_delete=models.CASCADE, related_name="draft_issue_cycle"
     )
     cycle = models.ForeignKey(
         "db.Cycle", on_delete=models.CASCADE, related_name="draft_issue_cycle"

@@ -87,10 +87,10 @@ export const getStates = async (workspaceSlug: string) => {
 export const getEstimatePoints = async (workspaceSlug: string) => {
   const estimateService = new EstimateService();
   const estimates = await estimateService.fetchWorkspaceEstimates(workspaceSlug);
-  const objects: IEstimatePoint[] = [];
+  let objects: IEstimatePoint[] = [];
   (estimates || []).forEach((estimate: IEstimate) => {
     if (estimate?.points) {
-      objects.concat(estimate.points);
+      objects = objects.concat(estimate.points);
     }
   });
   return objects;
@@ -104,6 +104,9 @@ export const getMembers = async (workspaceSlug: string) => {
 };
 
 export const loadWorkSpaceData = async (workspaceSlug: string) => {
+  if (!persistence.db || !persistence.db.exec) {
+    return;
+  }
   log("Loading workspace data");
   const promises = [];
   promises.push(getLabels(workspaceSlug));
@@ -112,17 +115,33 @@ export const loadWorkSpaceData = async (workspaceSlug: string) => {
   promises.push(getStates(workspaceSlug));
   promises.push(getEstimatePoints(workspaceSlug));
   promises.push(getMembers(workspaceSlug));
-  const [labels, modules, cycles, states, estimates, memebers] = await Promise.all(promises);
+  const [labels, modules, cycles, states, estimates, members] = await Promise.all(promises);
 
   const start = performance.now();
   await persistence.db.exec("BEGIN;");
   await batchInserts(labels, "labels", labelSchema);
-  await batchInserts(modules, "modules", moduleSchema);
-  await batchInserts(cycles, "cycles", cycleSchema);
-  await batchInserts(states, "states", stateSchema);
-  await batchInserts(estimates, "estimate_points", estimatePointSchema);
-  await batchInserts(memebers, "members", memberSchema);
   await persistence.db.exec("COMMIT;");
+
+  await persistence.db.exec("BEGIN;");
+  await batchInserts(modules, "modules", moduleSchema);
+  await persistence.db.exec("COMMIT;");
+
+  await persistence.db.exec("BEGIN;");
+  await batchInserts(cycles, "cycles", cycleSchema);
+  await persistence.db.exec("COMMIT;");
+
+  await persistence.db.exec("BEGIN;");
+  await batchInserts(states, "states", stateSchema);
+  await persistence.db.exec("COMMIT;");
+
+  await persistence.db.exec("BEGIN;");
+  await batchInserts(estimates, "estimate_points", estimatePointSchema);
+  await persistence.db.exec("COMMIT;");
+
+  await persistence.db.exec("BEGIN;");
+  await batchInserts(members, "members", memberSchema);
+  await persistence.db.exec("COMMIT;");
+
   const end = performance.now();
   log("Time taken to load workspace data", end - start);
 };

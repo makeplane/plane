@@ -71,6 +71,7 @@ export interface IssueFormProps {
   };
   isDuplicateModalOpen: boolean;
   handleDuplicateIssueModal: (isOpen: boolean) => void;
+  isProjectSelectionDisabled?: boolean;
 }
 
 export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
@@ -93,12 +94,14 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     },
     isDuplicateModalOpen,
     handleDuplicateIssueModal,
+    isProjectSelectionDisabled = false,
   } = props;
 
   // states
   const [labelModal, setLabelModal] = useState(false);
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
+  const [isMoving, setIsMoving] = useState<boolean>(false);
 
   // refs
   const editorRef = useRef<EditorRefApi>(null);
@@ -111,8 +114,12 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
 
   // store hooks
   const { getProjectById } = useProject();
-  const { getIssueTypeIdOnProjectChange, getActiveAdditionalPropertiesLength, handlePropertyValuesValidation } =
-    useIssueModal();
+  const {
+    getIssueTypeIdOnProjectChange,
+    getActiveAdditionalPropertiesLength,
+    handlePropertyValuesValidation,
+    handleCreateUpdatePropertyValues,
+  } = useIssueModal();
   const { isMobile } = usePlatformOS();
   const { moveIssue } = useWorkspaceDraftIssues();
 
@@ -234,6 +241,33 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
       });
   };
 
+  const handleMoveToProjects = async () => {
+    if (!data?.id || !data?.project_id || !data) return;
+    setIsMoving(true);
+    try {
+      await handleCreateUpdatePropertyValues({
+        issueId: data.id,
+        issueTypeId: data.type_id,
+        projectId: data.project_id,
+        workspaceSlug: workspaceSlug.toString(),
+        isDraft: true,
+      });
+
+      await moveIssue(workspaceSlug.toString(), data.id, {
+        ...data,
+        ...getValues(),
+      } as TWorkspaceDraftIssue);
+    } catch (error) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Failed to move issue to project. Please try again.",
+      });
+    } finally {
+      setIsMoving(false);
+    }
+  };
+
   const condition =
     (watch("name") && watch("name") !== "") || (watch("description_html") && watch("description_html") !== "<p></p>");
 
@@ -336,7 +370,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                 <div className="flex items-center gap-x-1">
                   <IssueProjectSelect
                     control={control}
-                    disabled={!!data?.id || !!data?.sourceIssueId}
+                    disabled={!!data?.id || !!data?.sourceIssueId || isProjectSelectionDisabled}
                     handleFormChange={handleFormChange}
                   />
                   {projectId && (
@@ -490,15 +524,9 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                       variant="primary"
                       type="button"
                       size="sm"
-                      loading={isSubmitting}
-                      onClick={() => {
-                        if (data?.id && data) {
-                          moveIssue(workspaceSlug.toString(), data?.id, {
-                            ...data,
-                            ...getValues(),
-                          } as TWorkspaceDraftIssue);
-                        }
-                      }}
+                      loading={isMoving}
+                      onClick={handleMoveToProjects}
+                      disabled={isMoving}
                     >
                       Add to project
                     </Button>
@@ -511,7 +539,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
         {shouldRenderDuplicateModal && (
           <div
             ref={modalContainerRef}
-            className="relative flex flex-col gap-2.5 h-full px-3 py-4 rounded-lg shadow-xl bg-pi-50"
+            className="relative flex flex-col gap-2.5 px-3 py-4 rounded-lg shadow-xl bg-pi-50"
             style={{ maxHeight: formRef?.current?.offsetHeight ? `${formRef.current.offsetHeight}px` : "436px" }}
           >
             <DuplicateModalRoot

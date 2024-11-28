@@ -12,9 +12,7 @@ class Device(BaseModel):
         DESKTOP = "DESKTOP", "Desktop"
 
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="devices",
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="devices"
     )
     device_id = models.CharField(max_length=255, blank=True, null=True)
     device_type = models.CharField(max_length=255, choices=DeviceType.choices)
@@ -29,14 +27,10 @@ class Device(BaseModel):
 
 class DeviceSession(BaseModel):
     device = models.ForeignKey(
-        Device,
-        on_delete=models.CASCADE,
-        related_name="sessions",
+        Device, on_delete=models.CASCADE, related_name="sessions"
     )
     session = models.ForeignKey(
-        "db.Session",
-        on_delete=models.CASCADE,
-        related_name="device_sessions",
+        "db.Session", on_delete=models.CASCADE, related_name="device_sessions"
     )
     is_active = models.BooleanField(default=True)
     user_agent = models.CharField(max_length=255, null=True, blank=True)
