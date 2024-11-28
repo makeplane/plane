@@ -452,11 +452,9 @@ class ProjectViewSet(BaseViewSet):
                 )
 
             workspace = Workspace.objects.get(slug=slug)
-            intake_view = request.data.get(
-                "inbox_view", request.data.get("intake_view", False)
-            )
 
             project = Project.objects.get(pk=pk)
+            intake_view = request.data.get("inbox_view", project.intake_view)
             current_instance = json.dumps(
                 ProjectSerializer(project).data, cls=DjangoJSONEncoder
             )
