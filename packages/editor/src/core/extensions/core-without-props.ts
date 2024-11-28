@@ -16,6 +16,8 @@ import { IssueWidgetWithoutProps } from "./issue-embed/issue-embed-without-props
 import { CustomMentionWithoutProps } from "./mentions/mentions-without-props";
 import { CustomQuoteExtension } from "./quote";
 import { TableHeader, TableCell, TableRow, Table } from "./table";
+import { CustomTextAlignExtension } from "./text-align";
+import { CustomCalloutExtensionConfig } from "./callout/extension-config";
 import { CustomColorExtension } from "./custom-color";
 
 export const CoreEditorExtensionsWithoutProps = [
@@ -44,7 +46,7 @@ export const CoreEditorExtensionsWithoutProps = [
   CustomQuoteExtension,
   CustomHorizontalRule.configure({
     HTMLAttributes: {
-      class: "my-4 border-custom-border-400",
+      class: "py-4 border-custom-border-400",
     },
   }),
   CustomLinkExtension.configure({
@@ -84,6 +86,8 @@ export const CoreEditorExtensionsWithoutProps = [
   TableCell,
   TableRow,
   CustomMentionWithoutProps(),
+  CustomTextAlignExtension,
+  CustomCalloutExtensionConfig,
   CustomColorExtension,
 ];
 

@@ -1,54 +1,93 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
+// Plane
+import { cn } from "@plane/editor";
 // hooks
-import { useGanttChart } from "@/components/gantt-chart/hooks/use-gantt-chart";
+import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
+//
+import { HEADER_HEIGHT, SIDEBAR_WIDTH } from "../../constants";
+import { IWeekBlock } from "../../views";
 
 export const WeekChartView: FC<any> = observer(() => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { currentViewData, renderView } = useGanttChart();
+  const { currentViewData, renderView } = useTimeLineChartStore();
+  const weekBlocks: IWeekBlock[] = renderView;
 
   return (
-    <>
-      <div className="absolute flex h-full flex-grow divide-x divide-custom-border-200">
-        {renderView &&
-          renderView.length > 0 &&
-          renderView.map((_itemRoot: any, _idxRoot: any) => (
-            <div key={`title-${_idxRoot}`} className="relative flex flex-col">
-              <div className="relative border-b border-custom-border-200">
-                <div className="sticky left-0 inline-flex whitespace-nowrap px-2 py-1 text-sm font-medium capitalize">
-                  {_itemRoot?.title}
+    <div className={`absolute top-0 left-0 min-h-full h-max w-max flex`}>
+      {currentViewData &&
+        weekBlocks?.map((block, rootIndex) => (
+          <div
+            key={`month-${block?.startDate}-${block?.endDate}`}
+            className="relative flex flex-col outline-[0.25px] outline outline-custom-border-200"
+          >
+            {/** Header Div */}
+            <div
+              className="w-full sticky top-0 z-[5] bg-custom-background-100 flex-shrink-0 outline-[1px] outline outline-custom-border-200"
+              style={{
+                height: `${HEADER_HEIGHT}px`,
+              }}
+            >
+              {/** Main Months Title */}
+              <div className="w-full inline-flex h-7 justify-between">
+                <div
+                  className="sticky flex items-center font-normal z-[1] m-1 whitespace-nowrap px-3 py-1 text-sm capitalize bg-custom-background-100 text-custom-text-200"
+                  style={{
+                    left: `${SIDEBAR_WIDTH}px`,
+                  }}
+                >
+                  {block?.title}
+                </div>
+                <div className="sticky whitespace-nowrap px-3 py-2 text-xs capitalize text-custom-text-400">
+                  {block?.weekData?.title}
                 </div>
               </div>
-
-              <div className="flex h-full w-full divide-x divide-custom-border-200">
-                {_itemRoot.children &&
-                  _itemRoot.children.length > 0 &&
-                  _itemRoot.children.map((_item: any, _idx: any) => (
-                    <div
-                      key={`sub-title-${_idxRoot}-${_idx}`}
-                      className="relative flex h-full flex-col overflow-hidden whitespace-nowrap"
-                      style={{ width: `${currentViewData?.data.width}px` }}
-                    >
-                      <div
-                        className={`flex-shrink-0 border-b py-1 text-center text-sm font-medium capitalize ${
-                          _item?.today ? `border-red-500 text-red-500` : `border-custom-border-200`
-                        }`}
-                      >
-                        <div>{_item.title}</div>
-                      </div>
-                      <div
-                        className={`relative flex h-full w-full flex-1 justify-center ${
-                          ["sat", "sun"].includes(_item?.dayData?.shortTitle || "") ? `bg-custom-background-80` : ``
-                        }`}
-                      >
-                        {_item?.today && <div className="absolute bottom-0 top-0 border border-red-500"> </div>}
-                      </div>
+              {/** Days Sub title */}
+              <div className="h-5 w-full flex">
+                {block?.children?.map((weekDay, index) => (
+                  <div
+                    key={`sub-title-${rootIndex}-${index}`}
+                    className={cn(
+                      "flex flex-shrink-0 p-1 text-center capitalize justify-between outline-[0.25px] outline outline-custom-border-200",
+                      {
+                        "bg-custom-primary-100/20": weekDay.today,
+                      }
+                    )}
+                    style={{ width: `${currentViewData?.data.dayWidth}px` }}
+                  >
+                    <div className="space-x-1 text-xs font-medium text-custom-text-400">
+                      {weekDay.dayData.abbreviation}
                     </div>
-                  ))}
+                    <div className="space-x-1 text-xs font-medium">
+                      <span
+                        className={cn({
+                          "rounded bg-custom-primary-100 px-1 text-white": weekDay.today,
+                        })}
+                      >
+                        {weekDay.date.getDate()}
+                      </span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-          ))}
-      </div>
-    </>
+            {/** Day Columns */}
+            <div className="h-full w-full flex-grow flex bg-custom-background-100">
+              {block?.children?.map((weekDay, index) => (
+                <div
+                  key={`column-${rootIndex}-${index}`}
+                  className={cn("h-full overflow-hidden outline-[0.25px] outline outline-custom-border-100", {
+                    "bg-custom-primary-100/20": weekDay.today,
+                  })}
+                  style={{ width: `${currentViewData?.data.dayWidth}px` }}
+                >
+                  {["sat", "sun"].includes(weekDay?.dayData?.shortTitle) && (
+                    <div className="h-full bg-custom-background-90 outline-[0.25px] outline outline-custom-border-300" />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+    </div>
   );
 });

@@ -51,9 +51,7 @@ class ExportIssuesEndpoint(BaseAPIView):
                 slug=slug,
             )
             return Response(
-                {
-                    "message": "Once the export is ready you will be able to download it"
-                },
+                {"message": "Once the export is ready you will be able to download it"},
                 status=status.HTTP_200_OK,
             )
         else:
@@ -62,18 +60,13 @@ class ExportIssuesEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE"
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def get(self, request, slug):
         exporter_history = ExporterHistory.objects.filter(
-            workspace__slug=slug,
-            type="issue_exports",
+            workspace__slug=slug, type="issue_exports"
         ).select_related("workspace", "initiated_by")
 
-        if request.GET.get("per_page", False) and request.GET.get(
-            "cursor", False
-        ):
+        if request.GET.get("per_page", False) and request.GET.get("cursor", False):
             return self.paginate(
                 order_by=request.GET.get("order_by", "-created_at"),
                 request=request,

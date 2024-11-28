@@ -1,13 +1,13 @@
 "use client";
 
 import React from "react";
+import { resolveGeneralTheme } from "helpers/common.helper";
 import { observer } from "mobx-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useTheme as nextUseTheme } from "next-themes";
 // ui
 import { Button, getButtonStyling } from "@plane/ui";
-// helpers
-import { WEB_BASE_URL, resolveGeneralTheme } from "helpers/common.helper";
 // hooks
 import { useTheme } from "@/hooks/store";
 // icons
@@ -20,8 +20,6 @@ export const NewUserPopup: React.FC = observer(() => {
   // theme
   const { resolvedTheme } = nextUseTheme();
 
-  const redirectionLink = encodeURI(WEB_BASE_URL + "/create-workspace");
-
   if (!isNewUserPopup) return <></>;
   return (
     <div className="absolute bottom-8 right-8 p-6 w-96 border border-custom-border-100 shadow-md rounded-lg bg-custom-background-100">
@@ -30,12 +28,12 @@ export const NewUserPopup: React.FC = observer(() => {
           <div className="text-base font-semibold">Create workspace</div>
           <div className="py-2 text-sm font-medium text-custom-text-300">
             Instance setup done! Welcome to Plane instance portal. Start your journey with by creating your first
-            workspace, you will need to login again.
+            workspace.
           </div>
           <div className="flex items-center gap-4 pt-2">
-            <a href={redirectionLink} className={getButtonStyling("primary", "sm")}>
+            <Link href="/workspace/create" className={getButtonStyling("primary", "sm")}>
               Create workspace
-            </a>
+            </Link>
             <Button variant="neutral-primary" size="sm" onClick={toggleNewUserPopup}>
               Close
             </Button>

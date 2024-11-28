@@ -40,8 +40,8 @@ export type TIssueOrderByOptions =
   | "-issue_cycle__cycle__name"
   | "target_date"
   | "-target_date"
-  | "estimate_point"
-  | "-estimate_point"
+  | "estimate_point__key"
+  | "-estimate_point__key"
   | "start_date"
   | "-start_date"
   | "link_count"
@@ -77,7 +77,9 @@ export type TIssueParams =
   | "show_empty_groups"
   | "cursor"
   | "per_page"
-  | "issue_type";
+  | "issue_type"
+  | "layout"
+  | "expand";
 
 export type TCalendarLayouts = "month" | "week";
 

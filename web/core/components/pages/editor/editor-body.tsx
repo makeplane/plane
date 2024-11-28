@@ -149,6 +149,15 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     }
   }, [projectId, workspaceSlug]);
 
+  const userConfig = useMemo(
+    () => ({
+      id: currentUser?.id ?? "",
+      name: currentUser?.display_name ?? "",
+      color: generateRandomColor(currentUser?.id ?? ""),
+    }),
+    [currentUser]
+  );
+
   if (pageId === undefined || !realtimeConfig) return <PageContentLoader />;
 
   return (
@@ -214,11 +223,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               }}
               realtimeConfig={realtimeConfig}
               serverHandler={serverHandler}
-              user={{
-                id: currentUser?.id ?? "",
-                name: currentUser?.display_name ?? "",
-                color: generateRandomColor(currentUser?.id ?? ""),
-              }}
+              user={userConfig}
               disabledExtensions={documentEditor}
               aiHandler={{
                 menu: getAIMenu,
@@ -245,11 +250,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                 },
               }}
               realtimeConfig={realtimeConfig}
-              user={{
-                id: currentUser?.id ?? "",
-                name: currentUser?.display_name ?? "",
-                color: generateRandomColor(currentUser?.id ?? ""),
-              }}
+              user={userConfig}
             />
           )}
         </div>

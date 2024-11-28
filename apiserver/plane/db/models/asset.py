@@ -11,7 +11,6 @@ from .base import BaseModel
 
 
 def get_upload_path(instance, filename):
-
     if instance.workspace_id is not None:
         return f"{instance.workspace.id}/{uuid4().hex}-{filename}"
     return f"user-{uuid4().hex}-{filename}"
@@ -40,15 +39,9 @@ class FileAsset(BaseModel):
         DRAFT_ISSUE_DESCRIPTION = "DRAFT_ISSUE_DESCRIPTION"
 
     attributes = models.JSONField(default=dict)
-    asset = models.FileField(
-        upload_to=get_upload_path,
-        max_length=800,
-    )
+    asset = models.FileField(upload_to=get_upload_path, max_length=800)
     user = models.ForeignKey(
-        "db.User",
-        on_delete=models.CASCADE,
-        null=True,
-        related_name="assets",
+        "db.User", on_delete=models.CASCADE, null=True, related_name="assets"
     )
     workspace = models.ForeignKey(
         "db.Workspace",
@@ -69,10 +62,7 @@ class FileAsset(BaseModel):
         related_name="assets",
     )
     issue = models.ForeignKey(
-        "db.Issue",
-        on_delete=models.CASCADE,
-        null=True,
-        related_name="assets",
+        "db.Issue", on_delete=models.CASCADE, null=True, related_name="assets"
     )
     comment = models.ForeignKey(
         "db.IssueComment",
@@ -81,14 +71,15 @@ class FileAsset(BaseModel):
         related_name="assets",
     )
     page = models.ForeignKey(
-        "db.Page",
-        on_delete=models.CASCADE,
-        null=True,
-        related_name="assets",
+        "db.Page", on_delete=models.CASCADE, null=True, related_name="assets"
     )
     entity_type = models.CharField(
         max_length=255,
-        choices=EntityTypeContext.choices,
+        null=True,
+        blank=True,
+    )
+    entity_identifier = models.CharField(
+        max_length=255,
         null=True,
         blank=True,
     )

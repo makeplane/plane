@@ -6,13 +6,13 @@ import { EditorProps } from "@tiptap/pm/view";
 import { useEditor as useTiptapEditor, Editor } from "@tiptap/react";
 import * as Y from "yjs";
 // components
-import { getEditorMenuItems } from "@/components/menus";
+import { EditorMenuItem, getEditorMenuItems } from "@/components/menus";
 // extensions
 import { CoreEditorExtensions } from "@/extensions";
 // helpers
 import { getParagraphCount } from "@/helpers/common";
 import { insertContentAtSavedSelection } from "@/helpers/insert-content-at-cursor-position";
-import { IMarking, scrollSummary } from "@/helpers/scroll-to-node";
+import { IMarking, scrollSummary, scrollToNodeViaDOMCoordinates } from "@/helpers/scroll-to-node";
 // props
 import { CoreEditorProps } from "@/props";
 // types
@@ -33,6 +33,8 @@ export interface CustomEditorProps {
     suggestions?: () => Promise<IMentionSuggestion[]>;
   };
   onChange?: (json: object, html: string) => void;
+  onTransaction?: () => void;
+  autofocus?: boolean;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   provider?: HocuspocusProvider;
   tabIndex?: number;
@@ -54,10 +56,12 @@ export const useEditor = (props: CustomEditorProps) => {
     initialValue,
     mentionHandler,
     onChange,
+    onTransaction,
     placeholder,
     provider,
     tabIndex,
     value,
+    autofocus = false,
   } = props;
   // states
 
@@ -66,6 +70,7 @@ export const useEditor = (props: CustomEditorProps) => {
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
   const savedSelectionRef = useRef(savedSelection);
   const editor = useTiptapEditor({
+    autofocus,
     editorProps: {
       ...CoreEditorProps({
         editorClassName,
@@ -87,7 +92,10 @@ export const useEditor = (props: CustomEditorProps) => {
     ],
     content: typeof initialValue === "string" && initialValue.trim() !== "" ? initialValue : "<p></p>",
     onCreate: () => handleEditorReady?.(true),
-    onTransaction: ({ editor }) => setSavedSelection(editor.state.selection),
+    onTransaction: ({ editor }) => {
+      setSavedSelection(editor.state.selection);
+      onTransaction?.();
+    },
     onUpdate: ({ editor }) => onChange?.(editor.getJSON(), editor.getHTML()),
     onDestroy: () => handleEditorReady?.(false),
   });
@@ -120,6 +128,13 @@ export const useEditor = (props: CustomEditorProps) => {
   useImperativeHandle(
     forwardedRef,
     () => ({
+      blur: () => editorRef.current?.commands.blur(),
+      scrollToNodeViaDOMCoordinates(behavior?: ScrollBehavior, pos?: number) {
+        const resolvedPos = pos ?? savedSelection?.from;
+        if (!editorRef.current || !resolvedPos) return;
+        scrollToNodeViaDOMCoordinates(editorRef.current, resolvedPos, behavior);
+      },
+      getCurrentCursorPosition: () => savedSelection?.from,
       clearEditor: (emitUpdate = false) => {
         editorRef.current?.chain().setMeta("skipImageDeletion", true).clearContent(emitUpdate).run();
       },
@@ -140,11 +155,11 @@ export const useEditor = (props: CustomEditorProps) => {
         const item = getEditorMenuItem(itemKey);
         if (item) {
           if (item.key === "image") {
-            item.command(savedSelectionRef.current);
-          } else if (itemKey === "text-color" || itemKey === "background-color") {
-            item.command(props.color);
+            (item as EditorMenuItem<"image">).command({
+              savedSelection: savedSelectionRef.current,
+            });
           } else {
-            item.command();
+            item.command(props);
           }
         } else {
           console.warn(`No command found for item: ${itemKey}`);
@@ -158,11 +173,7 @@ export const useEditor = (props: CustomEditorProps) => {
         const item = getEditorMenuItem(itemKey);
         if (!item) return false;
 
-        if (itemKey === "text-color" || itemKey === "background-color") {
-          return item.isActive(props.color);
-        } else {
-          return item.isActive("");
-        }
+        return item.isActive(props);
       },
       onHeadingChange: (callback: (headings: IMarking[]) => void) => {
         // Subscribe to update event emitted from headers extension

@@ -13,11 +13,13 @@ import {
   TStaticViewTypes,
 } from "@plane/types";
 // constants
-import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { getComputedDisplayFilters, getComputedDisplayProperties } from "@/helpers/issue.helper";
 // lib
 import { storage } from "@/lib/local-storage";
+// plane-web
+import { ENABLE_ISSUE_DEPENDENCIES } from "@/plane-web/constants";
 
 interface ILocalStoreIssueFilters {
   key: EIssuesStoreType;
@@ -113,6 +115,11 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
           ? nonEmptyArrayValue.join(",")
           : nonEmptyArrayValue;
     });
+
+    if (displayFilters?.layout) issueFiltersParams.layout = displayFilters?.layout;
+
+    if (ENABLE_ISSUE_DEPENDENCIES && displayFilters.layout === EIssueLayoutTypes.GANTT)
+      issueFiltersParams["expand"] = "issue_relation,issue_related";
 
     return issueFiltersParams;
   };

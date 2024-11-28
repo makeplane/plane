@@ -172,7 +172,12 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                           className="group flex cursor-pointer items-center justify-between gap-2 rounded-md hover:bg-custom-background-90 p-1"
                           onClick={() => {
                             if (issue.id) {
-                              setPeekIssue({ workspaceSlug, projectId, issueId: issue.id });
+                              setPeekIssue({
+                                workspaceSlug,
+                                projectId,
+                                issueId: issue.id,
+                                isArchived: !!issue.archived_at,
+                              });
                               handleFiltersUpdate("priority", ["urgent", "high"], true);
                             }
                           }}

@@ -30,8 +30,8 @@ from plane.db.models import (
     Page,
     ProjectPage,
     PageLabel,
-    Inbox,
-    InboxIssue,
+    Intake,
+    IntakeIssue,
 )
 
 
@@ -47,15 +47,11 @@ def create_project(workspace, user_id):
             : random.randint(2, 12 if len(name) - 1 >= 12 else len(name) - 1)
         ].upper(),
         created_by_id=user_id,
-        inbox_view=True,
+        intake_view=True,
     )
 
     # Add current member as project member
-    _ = ProjectMember.objects.create(
-        project=project,
-        member_id=user_id,
-        role=20,
-    )
+    _ = ProjectMember.objects.create(project=project, member_id=user_id, role=20)
 
     return project
 
@@ -88,24 +84,14 @@ def create_states(workspace, project, user_id):
             "group": "backlog",
             "default": True,
         },
-        {
-            "name": "Todo",
-            "color": "#3A3A3A",
-            "sequence": 25000,
-            "group": "unstarted",
-        },
+        {"name": "Todo", "color": "#3A3A3A", "sequence": 25000, "group": "unstarted"},
         {
             "name": "In Progress",
             "color": "#F59E0B",
             "sequence": 35000,
             "group": "started",
         },
-        {
-            "name": "Done",
-            "color": "#16A34A",
-            "sequence": 45000,
-            "group": "completed",
-        },
+        {"name": "Done", "color": "#16A34A", "sequence": 45000, "group": "completed"},
         {
             "name": "Cancelled",
             "color": "#EF4444",
@@ -177,8 +163,7 @@ def create_cycles(workspace, project, user_id, cycle_count):
 
         # Ensure end_date is strictly after start_date if start_date is not None
         while start_date is not None and (
-            end_date <= start_date
-            or (start_date, end_date) in used_date_ranges
+            end_date <= start_date or (start_date, end_date) in used_date_ranges
         ):
             end_date = fake.date_this_year()
 
@@ -259,11 +244,7 @@ def create_pages(workspace, project, user_id, pages_count):
     # Add Page to project
     ProjectPage.objects.bulk_create(
         [
-            ProjectPage(
-                page=page,
-                project=project,
-                workspace=workspace,
-            )
+            ProjectPage(page=page, project=project, workspace=workspace)
             for page in pages
         ],
         batch_size=1000,
@@ -274,26 +255,16 @@ def create_page_labels(workspace, project, user_id, pages_count):
     # labels
     labels = Label.objects.filter(project=project).values_list("id", flat=True)
     pages = random.sample(
-        list(
-            Page.objects.filter(projects__id=project.id).values_list(
-                "id", flat=True
-            )
-        ),
+        list(Page.objects.filter(projects__id=project.id).values_list("id", flat=True)),
         int(pages_count / 2),
     )
 
     # Bulk page labels
     bulk_page_labels = []
     for page in pages:
-        for label in random.sample(
-            list(labels), random.randint(0, len(labels) - 1)
-        ):
+        for label in random.sample(list(labels), random.randint(0, len(labels) - 1)):
             bulk_page_labels.append(
-                PageLabel(
-                    page_id=page,
-                    label_id=label,
-                    workspace=workspace,
-                )
+                PageLabel(page_id=page, label_id=label, workspace=workspace)
             )
 
     # Page labels
@@ -318,9 +289,7 @@ def create_issues(workspace, project, user_id, issue_count):
     issues = []
 
     # Get the maximum sequence_id
-    last_id = IssueSequence.objects.filter(
-        project=project,
-    ).aggregate(
+    last_id = IssueSequence.objects.filter(project=project).aggregate(
         largest=Max("sequence")
     )["largest"]
 
@@ -328,8 +297,7 @@ def create_issues(workspace, project, user_id, issue_count):
 
     # Get the maximum sort order
     largest_sort_order = Issue.objects.filter(
-        project=project,
-        state_id=states[random.randint(0, len(states) - 1)],
+        project=project, state_id=states[random.randint(0, len(states) - 1)]
     ).aggregate(largest=Max("sort_order"))["largest"]
 
     largest_sort_order = (
@@ -370,9 +338,7 @@ def create_issues(workspace, project, user_id, issue_count):
         largest_sort_order = largest_sort_order + random.randint(0, 1000)
         last_id = last_id + 1
 
-    issues = Issue.objects.bulk_create(
-        issues, ignore_conflicts=True, batch_size=1000
-    )
+    issues = Issue.objects.bulk_create(issues, ignore_conflicts=True, batch_size=1000)
     # Sequences
     _ = IssueSequence.objects.bulk_create(
         [
@@ -406,18 +372,16 @@ def create_issues(workspace, project, user_id, issue_count):
     return issues
 
 
-def create_inbox_issues(workspace, project, user_id, inbox_issue_count):
-    issues = create_issues(workspace, project, user_id, inbox_issue_count)
-    inbox, create = Inbox.objects.get_or_create(
-        name="Inbox",
-        project=project,
-        is_default=True,
+def create_intake_issues(workspace, project, user_id, intake_issue_count):
+    issues = create_issues(workspace, project, user_id, intake_issue_count)
+    intake, create = Intake.objects.get_or_create(
+        name="Intake", project=project, is_default=True
     )
-    InboxIssue.objects.bulk_create(
+    IntakeIssue.objects.bulk_create(
         [
-            InboxIssue(
+            IntakeIssue(
                 issue=issue,
-                inbox=inbox,
+                intake=intake,
                 status=(status := [-2, -1, 0, 1, 2][random.randint(0, 4)]),
                 snoozed_till=(
                     datetime.now() + timedelta(days=random.randint(1, 30))
@@ -435,21 +399,18 @@ def create_inbox_issues(workspace, project, user_id, inbox_issue_count):
 
 
 def create_issue_parent(workspace, project, user_id, issue_count):
-
     parent_count = issue_count / 4
 
-    parent_issues = Issue.objects.filter(project=project).values_list(
-        "id", flat=True
-    )[: int(parent_count)]
-    sub_issues = Issue.objects.filter(project=project).exclude(
-        pk__in=parent_issues
-    )[: int(issue_count / 2)]
+    parent_issues = Issue.objects.filter(project=project).values_list("id", flat=True)[
+        : int(parent_count)
+    ]
+    sub_issues = Issue.objects.filter(project=project).exclude(pk__in=parent_issues)[
+        : int(issue_count / 2)
+    ]
 
     bulk_sub_issues = []
     for sub_issue in sub_issues:
-        sub_issue.parent_id = parent_issues[
-            random.randint(0, int(parent_count - 1))
-        ]
+        sub_issue.parent_id = parent_issues[random.randint(0, int(parent_count - 1))]
 
     Issue.objects.bulk_update(bulk_sub_issues, ["parent"], batch_size=1000)
 
@@ -460,9 +421,7 @@ def create_issue_assignees(workspace, project, user_id, issue_count):
         "member_id", flat=True
     )
     issues = random.sample(
-        list(
-            Issue.objects.filter(project=project).values_list("id", flat=True)
-        ),
+        list(Issue.objects.filter(project=project).values_list("id", flat=True)),
         int(issue_count / 2),
     )
 
@@ -496,24 +455,17 @@ def create_issue_labels(workspace, project, user_id, issue_count):
     #     ),
     #     int(issue_count / 2),
     # )
-    issues = list(
-            Issue.objects.filter(project=project).values_list("id", flat=True)
-        ) 
+    issues = list(Issue.objects.filter(project=project).values_list("id", flat=True))
     shuffled_labels = list(labels)
 
     # Bulk issue
     bulk_issue_labels = []
     for issue in issues:
         random.shuffle(shuffled_labels)
-        for label in random.sample(
-            shuffled_labels, random.randint(0, 5)
-        ):
+        for label in random.sample(shuffled_labels, random.randint(0, 5)):
             bulk_issue_labels.append(
                 IssueLabel(
-                    issue_id=issue,
-                    label_id=label,
-                    project=project,
-                    workspace=workspace,
+                    issue_id=issue, label_id=label, project=project, workspace=workspace
                 )
             )
 
@@ -527,9 +479,7 @@ def create_cycle_issues(workspace, project, user_id, issue_count):
     # assignees
     cycles = Cycle.objects.filter(project=project).values_list("id", flat=True)
     issues = random.sample(
-        list(
-            Issue.objects.filter(project=project).values_list("id", flat=True)
-        ),
+        list(Issue.objects.filter(project=project).values_list("id", flat=True)),
         int(issue_count / 2),
     )
 
@@ -539,10 +489,7 @@ def create_cycle_issues(workspace, project, user_id, issue_count):
         cycle = cycles[random.randint(0, len(cycles) - 1)]
         bulk_cycle_issues.append(
             CycleIssue(
-                cycle_id=cycle,
-                issue_id=issue,
-                project=project,
-                workspace=workspace,
+                cycle_id=cycle, issue_id=issue, project=project, workspace=workspace
             )
         )
 
@@ -554,18 +501,14 @@ def create_cycle_issues(workspace, project, user_id, issue_count):
 
 def create_module_issues(workspace, project, user_id, issue_count):
     # assignees
-    modules = Module.objects.filter(project=project).values_list(
-        "id", flat=True
-    )
+    modules = Module.objects.filter(project=project).values_list("id", flat=True)
     # issues = random.sample(
     #     list(
     #         Issue.objects.filter(project=project).values_list("id", flat=True)
     #     ),
     #     int(issue_count / 2),
     # )
-    issues = list(
-            Issue.objects.filter(project=project).values_list("id", flat=True)
-        ) 
+    issues = list(Issue.objects.filter(project=project).values_list("id", flat=True))
 
     shuffled_modules = list(modules)
 
@@ -573,9 +516,7 @@ def create_module_issues(workspace, project, user_id, issue_count):
     bulk_module_issues = []
     for issue in issues:
         random.shuffle(shuffled_modules)
-        for module in random.sample(
-            shuffled_modules, random.randint(0, 5)
-        ):
+        for module in random.sample(shuffled_modules, random.randint(0, 5)):
             bulk_module_issues.append(
                 ModuleIssue(
                     module_id=module,
@@ -599,7 +540,7 @@ def create_dummy_data(
     cycle_count,
     module_count,
     pages_count,
-    inbox_issue_count,
+    intake_issue_count,
 ):
     workspace = Workspace.objects.get(slug=slug)
 
@@ -610,9 +551,7 @@ def create_dummy_data(
     project = create_project(workspace=workspace, user_id=user_id)
 
     # create project members
-    create_project_members(
-        workspace=workspace, project=project, members=members
-    )
+    create_project_members(workspace=workspace, project=project, members=members)
 
     # Create states
     create_states(workspace=workspace, project=project, user_id=user_id)
@@ -622,90 +561,60 @@ def create_dummy_data(
 
     # create cycles
     create_cycles(
-        workspace=workspace,
-        project=project,
-        user_id=user_id,
-        cycle_count=cycle_count,
+        workspace=workspace, project=project, user_id=user_id, cycle_count=cycle_count
     )
 
     # create modules
     create_modules(
-        workspace=workspace,
-        project=project,
-        user_id=user_id,
-        module_count=module_count,
+        workspace=workspace, project=project, user_id=user_id, module_count=module_count
     )
 
     # create pages
     create_pages(
-        workspace=workspace,
-        project=project,
-        user_id=user_id,
-        pages_count=pages_count,
+        workspace=workspace, project=project, user_id=user_id, pages_count=pages_count
     )
 
     # create page labels
     create_page_labels(
-        workspace=workspace,
-        project=project,
-        user_id=user_id,
-        pages_count=pages_count,
+        workspace=workspace, project=project, user_id=user_id, pages_count=pages_count
     )
 
     # create issues
     create_issues(
-        workspace=workspace,
-        project=project,
-        user_id=user_id,
-        issue_count=issue_count,
+        workspace=workspace, project=project, user_id=user_id, issue_count=issue_count
     )
 
-    # create inbox issues
-    create_inbox_issues(
+    # create intake issues
+    create_intake_issues(
         workspace=workspace,
         project=project,
         user_id=user_id,
-        inbox_issue_count=inbox_issue_count,
+        intake_issue_count=intake_issue_count,
     )
 
     # create issue parent
     create_issue_parent(
-        workspace=workspace,
-        project=project,
-        user_id=user_id,
-        issue_count=issue_count,
+        workspace=workspace, project=project, user_id=user_id, issue_count=issue_count
     )
 
     # create issue assignees
     create_issue_assignees(
-        workspace=workspace,
-        project=project,
-        user_id=user_id,
-        issue_count=issue_count,
+        workspace=workspace, project=project, user_id=user_id, issue_count=issue_count
     )
 
     # create issue labels
     create_issue_labels(
-        workspace=workspace,
-        project=project,
-        user_id=user_id,
-        issue_count=issue_count,
+        workspace=workspace, project=project, user_id=user_id, issue_count=issue_count
     )
 
     # create cycle issues
     create_cycle_issues(
-        workspace=workspace,
-        project=project,
-        user_id=user_id,
-        issue_count=issue_count,
+        workspace=workspace, project=project, user_id=user_id, issue_count=issue_count
     )
 
     # create module issues
     create_module_issues(
-        workspace=workspace,
-        project=project,
-        user_id=user_id,
-        issue_count=issue_count,
+        workspace=workspace, project=project, user_id=user_id, issue_count=issue_count
     )
 
     return

@@ -22,14 +22,8 @@ class PageSerializer(BaseSerializer):
         required=False,
     )
     # Many to many
-    label_ids = serializers.ListField(
-        child=serializers.UUIDField(),
-        required=False,
-    )
-    project_ids = serializers.ListField(
-        child=serializers.UUIDField(),
-        required=False,
-    )
+    label_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
+    project_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
 
     class Meta:
         model = Page
@@ -54,10 +48,7 @@ class PageSerializer(BaseSerializer):
             "label_ids",
             "project_ids",
         ]
-        read_only_fields = [
-            "workspace",
-            "owned_by",
-        ]
+        read_only_fields = ["workspace", "owned_by"]
 
     def create(self, validated_data):
         labels = validated_data.pop("labels", None)
@@ -127,9 +118,7 @@ class PageDetailSerializer(PageSerializer):
     description_html = serializers.CharField()
 
     class Meta(PageSerializer.Meta):
-        fields = PageSerializer.Meta.fields + [
-            "description_html",
-        ]
+        fields = PageSerializer.Meta.fields + ["description_html"]
 
 
 class SubPageSerializer(BaseSerializer):
@@ -138,10 +127,7 @@ class SubPageSerializer(BaseSerializer):
     class Meta:
         model = PageLog
         fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "page",
-        ]
+        read_only_fields = ["workspace", "page"]
 
     def get_entity_details(self, obj):
         entity_name = obj.entity_name
@@ -158,10 +144,7 @@ class PageLogSerializer(BaseSerializer):
     class Meta:
         model = PageLog
         fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "page",
-        ]
+        read_only_fields = ["workspace", "page"]
 
 
 class PageVersionSerializer(BaseSerializer):
@@ -178,10 +161,7 @@ class PageVersionSerializer(BaseSerializer):
             "created_by",
             "updated_by",
         ]
-        read_only_fields = [
-            "workspace",
-            "page",
-        ]
+        read_only_fields = ["workspace", "page"]
 
 
 class PageVersionDetailSerializer(BaseSerializer):
@@ -201,7 +181,4 @@ class PageVersionDetailSerializer(BaseSerializer):
             "created_by",
             "updated_by",
         ]
-        read_only_fields = [
-            "workspace",
-            "page",
-        ]
+        read_only_fields = ["workspace", "page"]

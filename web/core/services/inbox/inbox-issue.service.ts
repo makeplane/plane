@@ -77,24 +77,22 @@ export class InboxIssueService extends APIService {
   }
 
   async retrievePublishForm(workspaceSlug: string, projectId: string): Promise<TInboxForm> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/publish-intake/`)
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/intake-settings/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async updatePublishForm(workspaceSlug: string, projectId: string, is_disabled: boolean): Promise<TInboxIssue> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/publish-intake/`, {
-      is_disabled,
-    })
+  async updatePublishForm(workspaceSlug: string, projectId: string, data: Partial<TInboxForm>): Promise<TInboxForm> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/intake-settings/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async regeneratePublishForm(workspaceSlug: string, projectId: string): Promise<TInboxIssue> {
+  async regeneratePublishForm(workspaceSlug: string, projectId: string): Promise<TInboxForm> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/publish-intake-regenerate/`)
       .then((response) => response?.data)
       .catch((error) => {

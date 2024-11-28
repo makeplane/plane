@@ -21,10 +21,7 @@ from plane.db.models import (
 
 class ModuleWriteSerializer(BaseSerializer):
     lead_id = serializers.PrimaryKeyRelatedField(
-        source="lead",
-        queryset=User.objects.all(),
-        required=False,
-        allow_null=True,
+        source="lead", queryset=User.objects.all(), required=False, allow_null=True
     )
     member_ids = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
@@ -48,9 +45,7 @@ class ModuleWriteSerializer(BaseSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data["member_ids"] = [
-            str(member.id) for member in instance.members.all()
-        ]
+        data["member_ids"] = [str(member.id) for member in instance.members.all()]
         return data
 
     def validate(self, data):
@@ -59,9 +54,7 @@ class ModuleWriteSerializer(BaseSerializer):
             and data.get("target_date", None) is not None
             and data.get("start_date", None) > data.get("target_date", None)
         ):
-            raise serializers.ValidationError(
-                "Start date cannot exceed target date"
-            )
+            raise serializers.ValidationError("Start date cannot exceed target date")
         return data
 
     def create(self, validated_data):
@@ -71,9 +64,7 @@ class ModuleWriteSerializer(BaseSerializer):
         module_name = validated_data.get("name")
         if module_name:
             # Lookup for the module name in the module table for that project
-            if Module.objects.filter(
-                name=module_name, project=project
-            ).exists():
+            if Module.objects.filter(name=module_name, project=project).exists():
                 raise serializers.ValidationError(
                     {"error": "Module with this name already exists"}
                 )
@@ -104,9 +95,7 @@ class ModuleWriteSerializer(BaseSerializer):
         if module_name:
             # Lookup for the module name in the module table for that project
             if (
-                Module.objects.filter(
-                    name=module_name, project=instance.project
-                )
+                Module.objects.filter(name=module_name, project=instance.project)
                 .exclude(id=instance.id)
                 .exists()
             ):
@@ -203,8 +192,7 @@ class ModuleLinkSerializer(BaseSerializer):
     def create(self, validated_data):
         validated_data["url"] = self.validate_url(validated_data.get("url"))
         if ModuleLink.objects.filter(
-            url=validated_data.get("url"),
-            module_id=validated_data.get("module_id"),
+            url=validated_data.get("url"), module_id=validated_data.get("module_id")
         ).exists():
             raise serializers.ValidationError({"error": "URL already exists."})
         return super().create(validated_data)
@@ -213,8 +201,7 @@ class ModuleLinkSerializer(BaseSerializer):
         validated_data["url"] = self.validate_url(validated_data.get("url"))
         if (
             ModuleLink.objects.filter(
-                url=validated_data.get("url"),
-                module_id=instance.module_id,
+                url=validated_data.get("url"), module_id=instance.module_id
             )
             .exclude(pk=instance.id)
             .exists()
