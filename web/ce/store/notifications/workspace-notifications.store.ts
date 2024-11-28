@@ -23,9 +23,9 @@ import {
 import { convertToEpoch } from "@/helpers/date-time.helper";
 // store
 import { Notification, INotification } from "@/plane-web/store/notifications/notification";
+import { RootStore } from "@/plane-web/store/root.store";
 // services
 import workspaceNotificationService from "@/services/workspace-notification.service";
-import { RootStore } from "../root.store";
 
 type TNotificationLoader = ENotificationLoader | undefined;
 type TNotificationQueryParamType = ENotificationQueryParamType;
