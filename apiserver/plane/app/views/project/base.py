@@ -6,15 +6,7 @@ import json
 
 # Django imports
 from django.db import IntegrityError
-from django.db.models import (
-    Exists,
-    F,
-    Func,
-    OuterRef,
-    Prefetch,
-    Q,
-    Subquery,
-)
+from django.db.models import Exists, F, Func, OuterRef, Prefetch, Q, Subquery
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Third Party imports
@@ -30,11 +22,7 @@ from plane.app.serializers import (
     DeployBoardSerializer,
 )
 
-from plane.app.permissions import (
-    ProjectMemberPermission,
-    allow_permission,
-    ROLE,
-)
+from plane.app.permissions import ProjectMemberPermission, allow_permission, ROLE
 from plane.db.models import (
     UserFavorite,
     Cycle,
@@ -73,10 +61,7 @@ class ProjectViewSet(BaseViewSet):
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
             .select_related(
-                "workspace",
-                "workspace__owner",
-                "default_assignee",
-                "project_lead",
+                "workspace", "workspace__owner", "default_assignee", "project_lead"
             )
             .annotate(
                 is_favorite=Exists(
@@ -100,9 +85,7 @@ class ProjectViewSet(BaseViewSet):
             )
             .annotate(
                 total_members=ProjectMember.objects.filter(
-                    project_id=OuterRef("id"),
-                    member__is_bot=False,
-                    is_active=True,
+                    project_id=OuterRef("id"), member__is_bot=False, is_active=True
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -139,8 +122,7 @@ class ProjectViewSet(BaseViewSet):
                 Prefetch(
                     "project_projectmember",
                     queryset=ProjectMember.objects.filter(
-                        workspace__slug=self.kwargs.get("slug"),
-                        is_active=True,
+                        workspace__slug=self.kwargs.get("slug"), is_active=True
                     ).select_related("member"),
                     to_attr="members_list",
                 )
@@ -149,21 +131,13 @@ class ProjectViewSet(BaseViewSet):
         )
 
     @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST],
-        level="WORKSPACE",
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
     )
     def list(self, request, slug):
-        fields = [
-            field
-            for field in request.GET.get("fields", "").split(",")
-            if field
-        ]
+        fields = [field for field in request.GET.get("fields", "").split(",") if field]
         projects = self.get_queryset().order_by("sort_order", "name")
         if WorkspaceMember.objects.filter(
-            member=request.user,
-            workspace__slug=slug,
-            is_active=True,
-            role=5,
+            member=request.user, workspace__slug=slug, is_active=True, role=5
         ).exists():
             projects = projects.filter(
                 project_projectmember__member=self.request.user,
@@ -171,10 +145,7 @@ class ProjectViewSet(BaseViewSet):
             )
 
         if WorkspaceMember.objects.filter(
-            member=request.user,
-            workspace__slug=slug,
-            is_active=True,
-            role=15,
+            member=request.user, workspace__slug=slug, is_active=True, role=15
         ).exists():
             projects = projects.filter(
                 Q(
@@ -184,9 +155,7 @@ class ProjectViewSet(BaseViewSet):
                 | Q(network=2)
             )
 
-        if request.GET.get("per_page", False) and request.GET.get(
-            "cursor", False
-        ):
+        if request.GET.get("per_page", False) and request.GET.get("cursor", False):
             return self.paginate(
                 order_by=request.GET.get("order_by", "-created_at"),
                 request=request,
@@ -202,17 +171,20 @@ class ProjectViewSet(BaseViewSet):
         return Response(projects, status=status.HTTP_200_OK)
 
     @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST],
-        level="WORKSPACE",
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
     )
     def retrieve(self, request, slug, pk):
         project = (
             self.get_queryset()
+            .filter(
+                project_projectmember__member=self.request.user,
+                project_projectmember__is_active=True,
+            )
             .filter(archived_at__isnull=True)
             .filter(pk=pk)
             .annotate(
                 total_issues=Issue.issue_objects.filter(
-                    project_id=self.kwargs.get("pk"),
+                    project_id=self.kwargs.get("pk")
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -220,8 +192,7 @@ class ProjectViewSet(BaseViewSet):
             )
             .annotate(
                 sub_issues=Issue.issue_objects.filter(
-                    project_id=self.kwargs.get("pk"),
-                    parent__isnull=False,
+                    project_id=self.kwargs.get("pk"), parent__isnull=False
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -229,8 +200,7 @@ class ProjectViewSet(BaseViewSet):
             )
             .annotate(
                 archived_issues=Issue.objects.filter(
-                    project_id=self.kwargs.get("pk"),
-                    archived_at__isnull=False,
+                    project_id=self.kwargs.get("pk"), archived_at__isnull=False
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -248,8 +218,7 @@ class ProjectViewSet(BaseViewSet):
             )
             .annotate(
                 draft_issues=Issue.objects.filter(
-                    project_id=self.kwargs.get("pk"),
-                    is_draft=True,
+                    project_id=self.kwargs.get("pk"), is_draft=True
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -269,8 +238,7 @@ class ProjectViewSet(BaseViewSet):
 
         if project is None:
             return Response(
-                {"error": "Project does not exist"},
-                status=status.HTTP_404_NOT_FOUND,
+                {"error": "Project does not exist"}, status=status.HTTP_404_NOT_FOUND
             )
 
         recent_visited_task.delay(
@@ -297,14 +265,11 @@ class ProjectViewSet(BaseViewSet):
 
                 # Add the user as Administrator to the project
                 _ = ProjectMember.objects.create(
-                    project_id=serializer.data["id"],
-                    member=request.user,
-                    role=20,
+                    project_id=serializer.data["id"], member=request.user, role=20
                 )
                 # Also create the issue property for the user
                 _ = IssueUserProperty.objects.create(
-                    project_id=serializer.data["id"],
-                    user=request.user,
+                    project_id=serializer.data["id"], user=request.user
                 )
 
                 if serializer.data["project_lead"] is not None and str(
@@ -372,11 +337,7 @@ class ProjectViewSet(BaseViewSet):
                     ]
                 )
 
-                project = (
-                    self.get_queryset()
-                    .filter(pk=serializer.data["id"])
-                    .first()
-                )
+                project = self.get_queryset().filter(pk=serializer.data["id"]).first()
 
                 # Create the model activity
                 model_activity.delay(
@@ -390,13 +351,8 @@ class ProjectViewSet(BaseViewSet):
                 )
 
                 serializer = ProjectListSerializer(project)
-                return Response(
-                    serializer.data, status=status.HTTP_201_CREATED
-                )
-            return Response(
-                serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except IntegrityError as e:
             if "already exists" in str(e):
                 return Response(
@@ -405,8 +361,7 @@ class ProjectViewSet(BaseViewSet):
                 )
         except Workspace.DoesNotExist:
             return Response(
-                {"error": "Workspace does not exist"},
-                status=status.HTTP_404_NOT_FOUND,
+                {"error": "Workspace does not exist"}, status=status.HTTP_404_NOT_FOUND
             )
         except serializers.ValidationError:
             return Response(
@@ -445,10 +400,7 @@ class ProjectViewSet(BaseViewSet):
 
             serializer = ProjectSerializer(
                 project,
-                data={
-                    **request.data,
-                    "intake_view": intake_view,
-                },
+                data={**request.data, "intake_view": intake_view},
                 context={"workspace_id": workspace.id},
                 partial=True,
             )
@@ -457,8 +409,7 @@ class ProjectViewSet(BaseViewSet):
                 serializer.save()
                 if intake_view:
                     intake = Intake.objects.filter(
-                        project=project,
-                        is_default=True,
+                        project=project, is_default=True
                     ).first()
                     if not intake:
                         Intake.objects.create(
@@ -477,11 +428,7 @@ class ProjectViewSet(BaseViewSet):
                         is_triage=True,
                     )
 
-                project = (
-                    self.get_queryset()
-                    .filter(pk=serializer.data["id"])
-                    .first()
-                )
+                project = self.get_queryset().filter(pk=serializer.data["id"]).first()
 
                 model_activity.delay(
                     model_name="project",
@@ -494,9 +441,7 @@ class ProjectViewSet(BaseViewSet):
                 )
                 serializer = ProjectListSerializer(project)
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         except IntegrityError as e:
             if "already exists" in str(e):
@@ -506,8 +451,7 @@ class ProjectViewSet(BaseViewSet):
                 )
         except (Project.DoesNotExist, Workspace.DoesNotExist):
             return Response(
-                {"error": "Project does not exist"},
-                status=status.HTTP_404_NOT_FOUND,
+                {"error": "Project does not exist"}, status=status.HTTP_404_NOT_FOUND
             )
         except serializers.ValidationError:
             return Response(
@@ -518,10 +462,7 @@ class ProjectViewSet(BaseViewSet):
     def destroy(self, request, slug, pk):
         if (
             WorkspaceMember.objects.filter(
-                member=request.user,
-                workspace__slug=slug,
-                is_active=True,
-                role=20,
+                member=request.user, workspace__slug=slug, is_active=True, role=20
             ).exists()
             or ProjectMember.objects.filter(
                 member=request.user,
@@ -535,16 +476,10 @@ class ProjectViewSet(BaseViewSet):
             project.delete()
 
             # Delete the project members
-            DeployBoard.objects.filter(
-                project_id=pk,
-                workspace__slug=slug,
-            ).delete()
+            DeployBoard.objects.filter(project_id=pk, workspace__slug=slug).delete()
 
             # Delete the user favorite
-            UserFavorite.objects.filter(
-                project_id=pk,
-                workspace__slug=slug,
-            ).delete()
+            UserFavorite.objects.filter(project_id=pk, workspace__slug=slug).delete()
 
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
@@ -555,19 +490,14 @@ class ProjectViewSet(BaseViewSet):
 
 
 class ProjectArchiveUnarchiveEndpoint(BaseAPIView):
-
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
         project.archived_at = timezone.now()
         project.save()
-        UserFavorite.objects.filter(
-            workspace__slug=slug,
-            project=project_id,
-        ).delete()
+        UserFavorite.objects.filter(workspace__slug=slug, project=project_id).delete()
         return Response(
-            {"archived_at": str(project.archived_at)},
-            status=status.HTTP_200_OK,
+            {"archived_at": str(project.archived_at)}, status=status.HTTP_200_OK
         )
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
@@ -585,8 +515,7 @@ class ProjectIdentifierEndpoint(BaseAPIView):
 
         if name == "":
             return Response(
-                {"error": "Name is required"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST
             )
 
         exists = ProjectIdentifier.objects.filter(
@@ -594,8 +523,7 @@ class ProjectIdentifierEndpoint(BaseAPIView):
         ).values("id", "name", "project")
 
         return Response(
-            {"exists": len(exists), "identifiers": exists},
-            status=status.HTTP_200_OK,
+            {"exists": len(exists), "identifiers": exists}, status=status.HTTP_200_OK
         )
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
@@ -604,27 +532,18 @@ class ProjectIdentifierEndpoint(BaseAPIView):
 
         if name == "":
             return Response(
-                {"error": "Name is required"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        if Project.objects.filter(
-            identifier=name, workspace__slug=slug
-        ).exists():
+        if Project.objects.filter(identifier=name, workspace__slug=slug).exists():
             return Response(
-                {
-                    "error": "Cannot delete an identifier of an existing project"
-                },
+                {"error": "Cannot delete an identifier of an existing project"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        ProjectIdentifier.objects.filter(
-            name=name, workspace__slug=slug
-        ).delete()
+        ProjectIdentifier.objects.filter(name=name, workspace__slug=slug).delete()
 
-        return Response(
-            status=status.HTTP_204_NO_CONTENT,
-        )
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ProjectUserViewsEndpoint(BaseAPIView):
@@ -632,15 +551,11 @@ class ProjectUserViewsEndpoint(BaseAPIView):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
 
         project_member = ProjectMember.objects.filter(
-            member=request.user,
-            project=project,
-            is_active=True,
+            member=request.user, project=project, is_active=True
         ).first()
 
         if project_member is None:
-            return Response(
-                {"error": "Forbidden"}, status=status.HTTP_403_FORBIDDEN
-            )
+            return Response({"error": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
 
         view_props = project_member.view_props
         default_props = project_member.default_props
@@ -648,12 +563,8 @@ class ProjectUserViewsEndpoint(BaseAPIView):
         sort_order = project_member.sort_order
 
         project_member.view_props = request.data.get("view_props", view_props)
-        project_member.default_props = request.data.get(
-            "default_props", default_props
-        )
-        project_member.preferences = request.data.get(
-            "preferences", preferences
-        )
+        project_member.default_props = request.data.get("default_props", default_props)
+        project_member.preferences = request.data.get("preferences", preferences)
         project_member.sort_order = request.data.get("sort_order", sort_order)
 
         project_member.save()
@@ -701,9 +612,7 @@ class ProjectFavoritesViewSet(BaseViewSet):
 
 
 class ProjectPublicCoverImagesEndpoint(BaseAPIView):
-    permission_classes = [
-        AllowAny,
-    ]
+    permission_classes = [AllowAny]
 
     # Cache the below api for 24 hours
     @cache_response(60 * 60 * 24, user=False)
@@ -746,17 +655,13 @@ class ProjectPublicCoverImagesEndpoint(BaseAPIView):
 
 
 class DeployBoardViewSet(BaseViewSet):
-    permission_classes = [
-        ProjectMemberPermission,
-    ]
+    permission_classes = [ProjectMemberPermission]
     serializer_class = DeployBoardSerializer
     model = DeployBoard
 
     def list(self, request, slug, project_id):
         project_deploy_board = DeployBoard.objects.filter(
-            entity_name="project",
-            entity_identifier=project_id,
-            workspace__slug=slug,
+            entity_name="project", entity_identifier=project_id, workspace__slug=slug
         ).first()
 
         serializer = DeployBoardSerializer(project_deploy_board)
@@ -779,9 +684,7 @@ class DeployBoardViewSet(BaseViewSet):
         )
 
         project_deploy_board, _ = DeployBoard.objects.get_or_create(
-            entity_name="project",
-            entity_identifier=project_id,
-            project_id=project_id,
+            entity_name="project", entity_identifier=project_id, project_id=project_id
         )
         project_deploy_board.intake = intake
         project_deploy_board.view_props = views

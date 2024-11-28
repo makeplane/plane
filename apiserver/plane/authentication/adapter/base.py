@@ -11,11 +11,7 @@ from django.core.exceptions import ValidationError
 from zxcvbn import zxcvbn
 
 # Module imports
-from plane.db.models import (
-    Profile,
-    User,
-    WorkspaceMemberInvite,
-)
+from plane.db.models import Profile, User, WorkspaceMemberInvite
 from plane.license.utils.instance_value import get_configuration_value
 from .error import AuthenticationException, AUTHENTICATION_ERROR_CODES
 from plane.bgtasks.user_activation_email_task import user_activation_email
@@ -90,20 +86,13 @@ class Adapter:
 
         # Get configuration value
         (ENABLE_SIGNUP,) = get_configuration_value(
-            [
-                {
-                    "key": "ENABLE_SIGNUP",
-                    "default": os.environ.get("ENABLE_SIGNUP", "1"),
-                },
-            ]
+            [{"key": "ENABLE_SIGNUP", "default": os.environ.get("ENABLE_SIGNUP", "1")}]
         )
 
         # Check if sign up is disabled and invite is present or not
         if (
             ENABLE_SIGNUP == "0"
-            and not WorkspaceMemberInvite.objects.filter(
-                email=email,
-            ).exists()
+            and not WorkspaceMemberInvite.objects.filter(email=email).exists()
         ):
             # Raise exception
             raise AuthenticationException(
@@ -124,9 +113,7 @@ class Adapter:
         user.token_updated_at = timezone.now()
         # If user is not active, send the activation email and set the user as active
         if not user.is_active:
-            user_activation_email.delay(
-                base_host(request=self.request), user.id
-            )
+            user_activation_email.delay(base_host(request=self.request), user.id)
         # Set user as active
         user.is_active = True
         user.save()
@@ -182,11 +169,7 @@ class Adapter:
 
         # Call callback if present
         if self.callback:
-            self.callback(
-                user,
-                is_signup,
-                self.request,
-            )
+            self.callback(user, is_signup, self.request)
 
         # Create or update account if token data is present
         if self.token_data:

@@ -15,7 +15,7 @@ export const addIssue = async (issue: any) => {
   await persistence.db.exec("COMMIT;");
 };
 
-export const addIssuesBulk = async (issues: any, batchSize = 100) => {
+export const addIssuesBulk = async (issues: any, batchSize = 50) => {
   if (!rootStore.user.localDBEnabled || !persistence.db) return;
   if (!issues.length) return;
   const insertStart = performance.now();
@@ -24,18 +24,20 @@ export const addIssuesBulk = async (issues: any, batchSize = 100) => {
   for (let i = 0; i < issues.length; i += batchSize) {
     const batch = issues.slice(i, i + batchSize);
 
+    const promises = [];
     for (let j = 0; j < batch.length; j++) {
       const issue = batch[j];
       if (!issue.type_id) {
         issue.type_id = "";
       }
-      await stageIssueInserts(issue);
+      promises.push(stageIssueInserts(issue));
     }
+    await Promise.all(promises);
   }
   await persistence.db.exec("COMMIT;");
 
   const insertEnd = performance.now();
-  log("Inserted issues in ", `${insertEnd - insertStart}ms`);
+  log("Inserted issues in ", `${insertEnd - insertStart}ms`, batchSize, issues.length);
 };
 export const deleteIssueFromLocal = async (issue_id: any) => {
   if (!rootStore.user.localDBEnabled || !persistence.db) return;

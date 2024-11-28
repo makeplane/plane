@@ -20,9 +20,7 @@ class Dashboard(BaseModel):
     description_html = models.TextField(blank=True, default="<p></p>")
     identifier = models.UUIDField(null=True)
     owned_by = models.ForeignKey(
-        "db.User",
-        on_delete=models.CASCADE,
-        related_name="dashboards",
+        "db.User", on_delete=models.CASCADE, related_name="dashboards"
     )
     is_default = models.BooleanField(default=False)
     type_identifier = models.CharField(
@@ -46,11 +44,7 @@ class Dashboard(BaseModel):
 
 class Widget(TimeAuditModel):
     id = models.UUIDField(
-        default=uuid.uuid4,
-        unique=True,
-        editable=False,
-        db_index=True,
-        primary_key=True,
+        default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True
     )
     key = models.CharField(max_length=255)
     filters = models.JSONField(default=dict)
@@ -69,14 +63,10 @@ class Widget(TimeAuditModel):
 
 class DashboardWidget(BaseModel):
     widget = models.ForeignKey(
-        Widget,
-        on_delete=models.CASCADE,
-        related_name="dashboard_widgets",
+        Widget, on_delete=models.CASCADE, related_name="dashboard_widgets"
     )
     dashboard = models.ForeignKey(
-        Dashboard,
-        on_delete=models.CASCADE,
-        related_name="dashboard_widgets",
+        Dashboard, on_delete=models.CASCADE, related_name="dashboard_widgets"
     )
     is_visible = models.BooleanField(default=True)
     sort_order = models.FloatField(default=65535)
