@@ -9,7 +9,7 @@ import { TIssue } from "@plane/types";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components
 import { EmptyState } from "@/components/common";
-import { IssuePeekOverview, IssueVersionHistory } from "@/components/issues";
+import { IssuePeekOverview } from "@/components/issues";
 // constants
 import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED } from "@/constants/event-tracker";
 import { EIssuesStoreType } from "@/constants/issue";
@@ -175,7 +175,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             },
             path: pathname,
           });
-        } catch (error) {
+        } catch {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Error!",
@@ -204,7 +204,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             },
             path: pathname,
           });
-        } catch (error) {
+        } catch {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Error!",
@@ -245,7 +245,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             },
             path: pathname,
           });
-        } catch (error) {
+        } catch {
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { state: "FAILED", element: "Issue detail page" },
@@ -281,7 +281,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             },
             path: pathname,
           });
-        } catch (error) {
+        } catch {
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
@@ -375,8 +375,6 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       )}
       {/* peek overview */}
       <IssuePeekOverview />
-      {/* version history overlay */}
-      <IssueVersionHistory />
     </>
   );
 });
