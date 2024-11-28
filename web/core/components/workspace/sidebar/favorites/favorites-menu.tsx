@@ -94,7 +94,7 @@ export const SidebarFavoritesMenu = observer(() => {
         handleMoveToFolder(sourceData.id, parentId);
       }
       //handle remove from folder if dropped outside of the folder
-      if (parentId && sourceData.isChild) {
+      if (parentId && parentId !== sourceData.parentId && sourceData.isChild) {
         handleRemoveFromFavoritesFolder(sourceData.id);
       }
 
