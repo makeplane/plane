@@ -42,10 +42,7 @@ export type TEditorCommands =
   | "background-color"
   | "text-align"
   | "callout"
-  | "flat-toggle-list"
-  | "flat-bulleted-list"
-  | "flat-numbered-list"
-  | "flat-check-list";
+  | "toggle-list"
   | TEditorAdditionalCommands;
 
 export type TCommandExtraProps = {

@@ -4,6 +4,8 @@ import Placeholder from "@tiptap/extension-placeholder";
 import TextStyle from "@tiptap/extension-text-style";
 import TiptapUnderline from "@tiptap/extension-underline";
 import StarterKit from "@tiptap/starter-kit";
+import BulletList from "@tiptap/extension-bullet-list";
+import OrderedList from "@tiptap/extension-ordered-list";
 import { Markdown } from "tiptap-markdown";
 // extensions
 import {
@@ -18,6 +20,7 @@ import {
   CustomMention,
   CustomQuoteExtension,
   CustomTextAlignExtension,
+  CustomTypographyExtension,
   DropHandlerExtension,
   ImageExtension,
   Table,
@@ -33,6 +36,9 @@ import { FlatListExtension } from "./flat-list/flat-list";
 import { multipleSelectionExtension } from "./selections/multipleSelections";
 // plane editor extensions
 import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
+import TaskItem from "@tiptap/extension-task-item";
+import TaskList from "@tiptap/extension-task-list";
+import ListItem from "@tiptap/extension-list-item";
 
 type TArguments = {
   enableHistory: boolean;
@@ -46,25 +52,10 @@ type TArguments = {
 };
 
 export const CoreEditorExtensions = (args: TArguments): Extensions => {
-  const { enableHistory, fileHandler, mentionConfig, placeholder, tabIndex } = args;
+  const { enableHistory, fileHandler, mentionConfig, placeholder } = args;
 
   return [
     StarterKit.configure({
-      // bulletList: {
-      //   HTMLAttributes: {
-      //     class: "list-disc pl-7 space-y-2",
-      //   },
-      // },
-      // orderedList: {
-      //   HTMLAttributes: {
-      //     class: "list-decimal pl-7 space-y-2",
-      //   },
-      // },
-      // listItem: {
-      //   HTMLAttributes: {
-      //     class: "not-prose space-y-2",
-      //   },
-      // },
       bulletList: false,
       orderedList: false,
       listItem: false,
@@ -78,10 +69,35 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       },
       ...(enableHistory ? {} : { history: false }),
     }),
-    // dropCursorExtension({
-    //   class: "text-custom-text-300",
-    // }),
-    // CustomDropCursor,
+    BulletList.extend({
+      addInputRules() {
+        return [];
+      },
+      addKeyboardShortcuts() {
+        return {};
+      },
+    }).configure({
+      HTMLAttributes: {
+        class: "list-disc pl-7 space-y-2",
+      },
+    }),
+    OrderedList.extend({
+      addInputRules() {
+        return [];
+      },
+      addKeyboardShortcuts() {
+        return {};
+      },
+    }).configure({
+      HTMLAttributes: {
+        class: "list-decimal pl-7 space-y-2",
+      },
+    }),
+    ListItem.configure({
+      HTMLAttributes: {
+        class: "not-prose space-y-2",
+      },
+    }),
     CustomQuoteExtension,
     DropHandlerExtension(),
     CustomHorizontalRule.configure({
@@ -90,7 +106,6 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       },
     }),
     CustomKeymap,
-    // ListKeymap({ tabIndex }),
     CustomLinkExtension.configure({
       openOnClick: true,
       autolink: true,
@@ -102,7 +117,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
           "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
       },
     }),
-    // CustomTypographyExtension,
+    CustomTypographyExtension,
     ImageExtension(fileHandler).configure({
       HTMLAttributes: {
         class: "rounded-md",
@@ -111,17 +126,17 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     CustomImageExtension(fileHandler),
     TiptapUnderline,
     TextStyle,
-    // TaskList.configure({
-    //   HTMLAttributes: {
-    //     class: "not-prose pl-2 space-y-2",
-    //   },
-    // }),
-    // TaskItem.configure({
-    //   HTMLAttributes: {
-    //     class: "relative",
-    //   },
-    //   nested: true,
-    // }),
+    TaskList.configure({
+      HTMLAttributes: {
+        class: "not-prose pl-2 space-y-2",
+      },
+    }),
+    TaskItem.configure({
+      HTMLAttributes: {
+        class: "relative",
+      },
+      nested: true,
+    }),
     CustomCodeBlockExtension.configure({
       HTMLAttributes: {
         class: "",

@@ -1,10 +1,11 @@
-import type { ListAttributes, ListKind, ProsemirrorNodeJSON } from "./types";
+import type { ListAttributes, ListKind, ProsemirrorNodeJSON } from "prosemirror-flat-list";
 
 function migrateNodes(nodes: ProsemirrorNodeJSON[]): [ProsemirrorNodeJSON[], boolean] {
   const content: ProsemirrorNodeJSON[] = [];
   let updated = false;
 
   for (const node of nodes) {
+    console.log("node", node.type);
     if (node.type === "bullet_list" || node.type === "bulletList") {
       updated = true;
       for (const child of node.content ?? []) {
@@ -45,7 +46,7 @@ function migrateNodes(nodes: ProsemirrorNodeJSON[]): [ProsemirrorNodeJSON[], boo
 
 function migrateNode(node: ProsemirrorNodeJSON, { kind }: { kind?: ListKind } = {}): [ProsemirrorNodeJSON, boolean] {
   // Check if the node is a list item
-  if (node.type === "list_item" || node.type === "listItem" || node.type === "taskListItem") {
+  if (node.type === "list_item" || node.type === "listItem" || node.type === "taskItem") {
     const [content, updated] = migrateNodes(node.content ?? []);
     return [
       {

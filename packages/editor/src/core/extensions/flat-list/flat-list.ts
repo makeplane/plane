@@ -10,8 +10,6 @@ import {
   IndentListOptions,
   createIndentListCommand,
   createDedentListCommand,
-  parseInteger,
-  // createSplitListCommand,
 } from "prosemirror-flat-list";
 import { keymap } from "@tiptap/pm/keymap";
 import { inputRules } from "@tiptap/pm/inputrules";
@@ -102,8 +100,6 @@ export const FlatListExtension = Node.create({
         if (editor.isActive(this.name)) {
           const splitList = createSplitListCommand();
           const ans = splitList(editor.state, editor.view.dispatch);
-          // __AUTO_GENERATED_PRINT_VAR_START__
-          console.log("addKeyboardShortcuts#(anon)#if ans: %s", ans); // __AUTO_GENERATED_PRINT_VAR_END__
           return ans;
         }
         return false;

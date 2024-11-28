@@ -79,19 +79,19 @@ export const useEditor = (props: CustomEditorProps) => {
     immediatelyRender: true,
     shouldRerenderOnTransaction: false,
     enableContentCheck: true,
-    onContentError: ({ editor, error, disableCollaboration }) => {
-      // console.log("ran", editor.getJSON());
-      if (disableCollaboration) disableCollaboration();
-      // localProvider.clearData();
-      // localProvider.destroy();
-
-      const emitUpdate = false;
-
-      // Disable further user input
-      // setIsEditorDisabled(true);
-      editor.setEditable(false, emitUpdate);
-      console.log("error", error);
-    },
+    // onContentError: ({ editor, error, disableCollaboration }) => {
+    //   // console.log("ran", editor.getJSON());
+    //   if (disableCollaboration) disableCollaboration();
+    //   // localProvider.clearData();
+    //   // localProvider.destroy();
+    //
+    //   const emitUpdate = false;
+    //
+    //   // Disable further user input
+    //   // setIsEditorDisabled(true);
+    //   editor.setEditable(false, emitUpdate);
+    //   console.log("error", error);
+    // },
 
     autofocus,
     editorProps: {
