@@ -13,7 +13,6 @@ from .user import (
 from .workspace import (
     WorkSpaceSerializer,
     WorkSpaceMemberSerializer,
-    TeamSerializer,
     WorkSpaceMemberInviteSerializer,
     WorkspaceLiteSerializer,
     WorkspaceThemeSerializer,
@@ -36,9 +35,7 @@ from .project import (
     ProjectMemberRoleSerializer,
 )
 from .state import StateSerializer, StateLiteSerializer
-from .view import (
-    IssueViewSerializer,
-)
+from .view import IssueViewSerializer
 from .cycle import (
     CycleSerializer,
     CycleIssueSerializer,
@@ -112,10 +109,7 @@ from .intake import (
 
 from .analytic import AnalyticViewSerializer
 
-from .notification import (
-    NotificationSerializer,
-    UserNotificationPreferenceSerializer,
-)
+from .notification import NotificationSerializer, UserNotificationPreferenceSerializer
 
 from .exporter import ExporterHistorySerializer
 

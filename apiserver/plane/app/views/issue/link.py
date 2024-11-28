@@ -18,9 +18,7 @@ from plane.bgtasks.issue_activities_task import issue_activity
 
 
 class IssueLinkViewSet(BaseViewSet):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
+    permission_classes = [ProjectEntityPermission]
 
     model = IssueLink
     serializer_class = IssueLinkSerializer
@@ -44,15 +42,10 @@ class IssueLinkViewSet(BaseViewSet):
     def create(self, request, slug, project_id, issue_id):
         serializer = IssueLinkSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(
-                project_id=project_id,
-                issue_id=issue_id,
-            )
+            serializer.save(project_id=project_id, issue_id=issue_id)
             issue_activity.delay(
                 type="link.activity.created",
-                requested_data=json.dumps(
-                    serializer.data, cls=DjangoJSONEncoder
-                ),
+                requested_data=json.dumps(serializer.data, cls=DjangoJSONEncoder),
                 actor_id=str(self.request.user.id),
                 issue_id=str(self.kwargs.get("issue_id")),
                 project_id=str(self.kwargs.get("project_id")),
@@ -66,19 +59,13 @@ class IssueLinkViewSet(BaseViewSet):
 
     def partial_update(self, request, slug, project_id, issue_id, pk):
         issue_link = IssueLink.objects.get(
-            workspace__slug=slug,
-            project_id=project_id,
-            issue_id=issue_id,
-            pk=pk,
+            workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk
         )
         requested_data = json.dumps(request.data, cls=DjangoJSONEncoder)
         current_instance = json.dumps(
-            IssueLinkSerializer(issue_link).data,
-            cls=DjangoJSONEncoder,
+            IssueLinkSerializer(issue_link).data, cls=DjangoJSONEncoder
         )
-        serializer = IssueLinkSerializer(
-            issue_link, data=request.data, partial=True
-        )
+        serializer = IssueLinkSerializer(issue_link, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             issue_activity.delay(
@@ -97,14 +84,10 @@ class IssueLinkViewSet(BaseViewSet):
 
     def destroy(self, request, slug, project_id, issue_id, pk):
         issue_link = IssueLink.objects.get(
-            workspace__slug=slug,
-            project_id=project_id,
-            issue_id=issue_id,
-            pk=pk,
+            workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk
         )
         current_instance = json.dumps(
-            IssueLinkSerializer(issue_link).data,
-            cls=DjangoJSONEncoder,
+            IssueLinkSerializer(issue_link).data, cls=DjangoJSONEncoder
         )
         issue_activity.delay(
             type="link.activity.deleted",

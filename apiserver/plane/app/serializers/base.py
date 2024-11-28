@@ -178,15 +178,10 @@ class DynamicBaseSerializer(BaseSerializer):
                         response[expand] = exp_serializer.data
                     else:
                         # You might need to handle this case differently
-                        response[expand] = getattr(
-                            instance, f"{expand}_id", None
-                        )
+                        response[expand] = getattr(instance, f"{expand}_id", None)
 
             # Check if issue_attachments is in fields or expand
-            if (
-                "issue_attachments" in self.fields
-                or "issue_attachments" in self.expand
-            ):
+            if "issue_attachments" in self.fields or "issue_attachments" in self.expand:
                 # Import the model here to avoid circular imports
                 from plane.db.models import FileAsset
 
@@ -199,11 +194,9 @@ class DynamicBaseSerializer(BaseSerializer):
                         entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                     )
                     # Serialize issue_attachments and add them to the response
-                    response["issue_attachments"] = (
-                        IssueAttachmentLiteSerializer(
-                            issue_attachments, many=True
-                        ).data
-                    )
+                    response["issue_attachments"] = IssueAttachmentLiteSerializer(
+                        issue_attachments, many=True
+                    ).data
                 else:
                     response["issue_attachments"] = []
 

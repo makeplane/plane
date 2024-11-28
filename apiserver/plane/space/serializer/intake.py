@@ -7,10 +7,7 @@ from .user import UserLiteSerializer
 from .state import StateLiteSerializer
 from .project import ProjectLiteSerializer
 from .issue import IssueFlatSerializer, LabelLiteSerializer
-from plane.db.models import (
-    Issue,
-    IntakeIssue,
-)
+from plane.db.models import Issue, IntakeIssue
 
 
 class IntakeIssueSerializer(BaseSerializer):
@@ -20,10 +17,7 @@ class IntakeIssueSerializer(BaseSerializer):
     class Meta:
         model = IntakeIssue
         fields = "__all__"
-        read_only_fields = [
-            "project",
-            "workspace",
-        ]
+        read_only_fields = ["project", "workspace"]
 
 
 class IntakeIssueLiteSerializer(BaseSerializer):
@@ -36,12 +30,8 @@ class IntakeIssueLiteSerializer(BaseSerializer):
 class IssueStateIntakeSerializer(BaseSerializer):
     state_detail = StateLiteSerializer(read_only=True, source="state")
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
-    label_details = LabelLiteSerializer(
-        read_only=True, source="labels", many=True
-    )
-    assignee_details = UserLiteSerializer(
-        read_only=True, source="assignees", many=True
-    )
+    label_details = LabelLiteSerializer(read_only=True, source="labels", many=True)
+    assignee_details = UserLiteSerializer(read_only=True, source="assignees", many=True)
     sub_issues_count = serializers.IntegerField(read_only=True)
     bridge_id = serializers.UUIDField(read_only=True)
     issue_intake = IntakeIssueLiteSerializer(read_only=True, many=True)

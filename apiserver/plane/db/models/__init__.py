@@ -42,25 +42,9 @@ from .issue import (
     IssueSubscriber,
     IssueVote,
 )
-from .module import (
-    Module,
-    ModuleIssue,
-    ModuleLink,
-    ModuleMember,
-    ModuleUserProperties,
-)
-from .notification import (
-    EmailNotificationLog,
-    Notification,
-    UserNotificationPreference,
-)
-from .page import (
-    Page,
-    PageLabel,
-    PageLog,
-    ProjectPage,
-    PageVersion,
-)
+from .module import Module, ModuleIssue, ModuleLink, ModuleMember, ModuleUserProperties
+from .notification import EmailNotificationLog, Notification, UserNotificationPreference
+from .page import Page, PageLabel, PageLog, ProjectPage, PageVersion
 from .project import (
     Project,
     ProjectBaseModel,
@@ -77,8 +61,6 @@ from .user import Account, Profile, User
 from .view import IssueView
 from .webhook import Webhook, WebhookLog
 from .workspace import (
-    Team,
-    TeamMember,
     Workspace,
     WorkspaceBaseModel,
     WorkspaceMember,
@@ -97,11 +79,7 @@ from .intake import Intake, IntakeIssue
 
 from .analytic import AnalyticView
 
-from .notification import (
-    Notification,
-    UserNotificationPreference,
-    EmailNotificationLog,
-)
+from .notification import Notification, UserNotificationPreference, EmailNotificationLog
 
 from .exporter import ExporterHistory
 

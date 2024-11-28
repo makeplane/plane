@@ -43,18 +43,11 @@ class TimezoneMixin:
 class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
     model = None
 
-    permission_classes = [
-        IsAuthenticated,
-    ]
+    permission_classes = [IsAuthenticated]
 
-    filter_backends = (
-        DjangoFilterBackend,
-        SearchFilter,
-    )
+    filter_backends = (DjangoFilterBackend, SearchFilter)
 
-    authentication_classes = [
-        BaseSessionAuthentication,
-    ]
+    authentication_classes = [BaseSessionAuthentication]
 
     filterset_fields = []
 
@@ -65,9 +58,7 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
             return self.model.objects.all()
         except Exception as e:
             log_exception(e)
-            raise APIException(
-                "Please check the view", status.HTTP_400_BAD_REQUEST
-            )
+            raise APIException("Please check the view", status.HTTP_400_BAD_REQUEST)
 
     def handle_exception(self, exc):
         """
@@ -146,35 +137,24 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
     @property
     def fields(self):
         fields = [
-            field
-            for field in self.request.GET.get("fields", "").split(",")
-            if field
+            field for field in self.request.GET.get("fields", "").split(",") if field
         ]
         return fields if fields else None
 
     @property
     def expand(self):
         expand = [
-            expand
-            for expand in self.request.GET.get("expand", "").split(",")
-            if expand
+            expand for expand in self.request.GET.get("expand", "").split(",") if expand
         ]
         return expand if expand else None
 
 
 class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
-    permission_classes = [
-        IsAuthenticated,
-    ]
+    permission_classes = [IsAuthenticated]
 
-    filter_backends = (
-        DjangoFilterBackend,
-        SearchFilter,
-    )
+    filter_backends = (DjangoFilterBackend, SearchFilter)
 
-    authentication_classes = [
-        BaseSessionAuthentication,
-    ]
+    authentication_classes = [BaseSessionAuthentication]
 
     filterset_fields = []
 
@@ -251,17 +231,13 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
     @property
     def fields(self):
         fields = [
-            field
-            for field in self.request.GET.get("fields", "").split(",")
-            if field
+            field for field in self.request.GET.get("fields", "").split(",") if field
         ]
         return fields if fields else None
 
     @property
     def expand(self):
         expand = [
-            expand
-            for expand in self.request.GET.get("expand", "").split(",")
-            if expand
+            expand for expand in self.request.GET.get("expand", "").split(",") if expand
         ]
         return expand if expand else None

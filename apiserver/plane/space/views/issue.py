@@ -42,10 +42,7 @@ from plane.space.utils.grouper import (
 
 
 from plane.utils.order_queryset import order_issue_queryset
-from plane.utils.paginator import (
-    GroupedOffsetPaginator,
-    SubGroupedOffsetPaginator,
-)
+from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 from plane.app.serializers import (
     CommentReactionSerializer,
     IssueCommentSerializer,
@@ -70,9 +67,7 @@ from plane.utils.issue_filters import issue_filters
 
 
 class ProjectIssuesPublicEndpoint(BaseAPIView):
-    permission_classes = [
-        AllowAny,
-    ]
+    permission_classes = [AllowAny]
 
     def get(self, request, anchor):
         filters = issue_filters(request.query_params, "GET")
@@ -83,17 +78,14 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
         ).first()
         if not deploy_board:
             return Response(
-                {"error": "Project is not published"},
-                status=status.HTTP_404_NOT_FOUND,
+                {"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND
             )
 
         project_id = deploy_board.entity_identifier
         slug = deploy_board.workspace.slug
 
         issue_queryset = (
-            Issue.issue_objects.filter(
-                workspace__slug=slug, project_id=project_id
-            )
+            Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id)
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
             .prefetch_related(
@@ -103,10 +95,7 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
                 )
             )
             .prefetch_related(
-                Prefetch(
-                    "votes",
-                    queryset=IssueVote.objects.select_related("actor"),
-                )
+                Prefetch("votes", queryset=IssueVote.objects.select_related("actor"))
             )
             .annotate(
                 cycle_id=Subquery(
@@ -131,9 +120,7 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
                 .values("count")
             )
             .annotate(
-                sub_issues_count=Issue.issue_objects.filter(
-                    parent=OuterRef("id")
-                )
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -144,8 +131,7 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
 
         # Issue queryset
         issue_queryset, order_by_param = order_issue_queryset(
-            issue_queryset=issue_queryset,
-            order_by_param=order_by_param,
+            issue_queryset=issue_queryset, order_by_param=order_by_param
         )
 
         # Group by
@@ -154,9 +140,7 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
 
         # issue queryset
         issue_queryset = issue_queryset_grouper(
-            queryset=issue_queryset,
-            group_by=group_by,
-            sub_group_by=sub_group_by,
+            queryset=issue_queryset, group_by=group_by, sub_group_by=sub_group_by
         )
 
         if group_by:
@@ -174,9 +158,7 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
                         order_by=order_by_param,
                         queryset=issue_queryset,
                         on_results=lambda issues: issue_on_results(
-                            group_by=group_by,
-                            issues=issues,
-                            sub_group_by=sub_group_by,
+                            group_by=group_by, issues=issues, sub_group_by=sub_group_by
                         ),
                         paginator_cls=SubGroupedOffsetPaginator,
                         group_by_fields=issue_group_values(
@@ -209,9 +191,7 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
                     order_by=order_by_param,
                     queryset=issue_queryset,
                     on_results=lambda issues: issue_on_results(
-                        group_by=group_by,
-                        issues=issues,
-                        sub_group_by=sub_group_by,
+                        group_by=group_by, issues=issues, sub_group_by=sub_group_by
                     ),
                     paginator_cls=GroupedOffsetPaginator,
                     group_by_fields=issue_group_values(
@@ -236,9 +216,7 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
                 request=request,
                 queryset=issue_queryset,
                 on_results=lambda issues: issue_on_results(
-                    group_by=group_by,
-                    issues=issues,
-                    sub_group_by=sub_group_by,
+                    group_by=group_by, issues=issues, sub_group_by=sub_group_by
                 ),
             )
 
@@ -247,28 +225,20 @@ class IssueCommentPublicViewSet(BaseViewSet):
     serializer_class = IssueCommentSerializer
     model = IssueComment
 
-    filterset_fields = [
-        "issue__id",
-        "workspace__id",
-    ]
+    filterset_fields = ["issue__id", "workspace__id"]
 
     def get_permissions(self):
         if self.action in ["list", "retrieve"]:
-            self.permission_classes = [
-                AllowAny,
-            ]
+            self.permission_classes = [AllowAny]
         else:
-            self.permission_classes = [
-                IsAuthenticated,
-            ]
+            self.permission_classes = [IsAuthenticated]
 
         return super(IssueCommentPublicViewSet, self).get_permissions()
 
     def get_queryset(self):
         try:
             project_deploy_board = DeployBoard.objects.get(
-                anchor=self.kwargs.get("anchor"),
-                entity_name="project",
+                anchor=self.kwargs.get("anchor"), entity_name="project"
             )
             if project_deploy_board.is_comments_enabled:
                 return self.filter_queryset(
@@ -317,9 +287,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
             )
             issue_activity.delay(
                 type="comment.activity.created",
-                requested_data=json.dumps(
-                    serializer.data, cls=DjangoJSONEncoder
-                ),
+                requested_data=json.dumps(serializer.data, cls=DjangoJSONEncoder),
                 actor_id=str(request.user.id),
                 issue_id=str(issue_id),
                 project_id=str(project_deploy_board.project_id),
@@ -333,8 +301,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
             ).exists():
                 # Add the user for workspace tracking
                 _ = ProjectPublicMember.objects.get_or_create(
-                    project_id=project_deploy_board.project_id,
-                    member=request.user,
+                    project_id=project_deploy_board.project_id, member=request.user
                 )
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -351,9 +318,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         comment = IssueComment.objects.get(pk=pk, actor=request.user)
-        serializer = IssueCommentSerializer(
-            comment, data=request.data, partial=True
-        )
+        serializer = IssueCommentSerializer(comment, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             issue_activity.delay(
@@ -363,8 +328,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
                 issue_id=str(issue_id),
                 project_id=str(project_deploy_board.project_id),
                 current_instance=json.dumps(
-                    IssueCommentSerializer(comment).data,
-                    cls=DjangoJSONEncoder,
+                    IssueCommentSerializer(comment).data, cls=DjangoJSONEncoder
                 ),
                 epoch=int(timezone.now().timestamp()),
             )
@@ -381,10 +345,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
                 {"error": "Comments are not enabled for this project"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        comment = IssueComment.objects.get(
-            pk=pk,
-            actor=request.user,
-        )
+        comment = IssueComment.objects.get(pk=pk, actor=request.user)
         issue_activity.delay(
             type="comment.activity.deleted",
             requested_data=json.dumps({"comment_id": str(pk)}),
@@ -392,8 +353,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
             issue_id=str(issue_id),
             project_id=str(project_deploy_board.project_id),
             current_instance=json.dumps(
-                IssueCommentSerializer(comment).data,
-                cls=DjangoJSONEncoder,
+                IssueCommentSerializer(comment).data, cls=DjangoJSONEncoder
             ),
             epoch=int(timezone.now().timestamp()),
         )
@@ -450,14 +410,11 @@ class IssueReactionPublicViewSet(BaseViewSet):
             ).exists():
                 # Add the user for workspace tracking
                 _ = ProjectPublicMember.objects.get_or_create(
-                    project_id=project_deploy_board.project_id,
-                    member=request.user,
+                    project_id=project_deploy_board.project_id, member=request.user
                 )
             issue_activity.delay(
                 type="issue_reaction.activity.created",
-                requested_data=json.dumps(
-                    self.request.data, cls=DjangoJSONEncoder
-                ),
+                requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
                 actor_id=str(self.request.user.id),
                 issue_id=str(self.kwargs.get("issue_id", None)),
                 project_id=str(project_deploy_board.project_id),
@@ -490,10 +447,7 @@ class IssueReactionPublicViewSet(BaseViewSet):
             issue_id=str(self.kwargs.get("issue_id", None)),
             project_id=str(project_deploy_board.project_id),
             current_instance=json.dumps(
-                {
-                    "reaction": str(reaction_code),
-                    "identifier": str(issue_reaction.id),
-                }
+                {"reaction": str(reaction_code), "identifier": str(issue_reaction.id)}
             ),
             epoch=int(timezone.now().timestamp()),
         )
@@ -549,14 +503,11 @@ class CommentReactionPublicViewSet(BaseViewSet):
             ).exists():
                 # Add the user for workspace tracking
                 _ = ProjectPublicMember.objects.get_or_create(
-                    project_id=project_deploy_board.project_id,
-                    member=request.user,
+                    project_id=project_deploy_board.project_id, member=request.user
                 )
             issue_activity.delay(
                 type="comment_reaction.activity.created",
-                requested_data=json.dumps(
-                    self.request.data, cls=DjangoJSONEncoder
-                ),
+                requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
                 actor_id=str(self.request.user.id),
                 issue_id=None,
                 project_id=str(self.kwargs.get("project_id", None)),
@@ -609,8 +560,7 @@ class IssueVotePublicViewSet(BaseViewSet):
     def get_queryset(self):
         try:
             project_deploy_board = DeployBoard.objects.get(
-                workspace__slug=self.kwargs.get("anchor"),
-                entity_name="project",
+                workspace__slug=self.kwargs.get("anchor"), entity_name="project"
             )
             if project_deploy_board.is_votes_enabled:
                 return (
@@ -640,16 +590,13 @@ class IssueVotePublicViewSet(BaseViewSet):
             is_active=True,
         ).exists():
             _ = ProjectPublicMember.objects.get_or_create(
-                project_id=project_deploy_board.project_id,
-                member=request.user,
+                project_id=project_deploy_board.project_id, member=request.user
             )
         issue_vote.vote = request.data.get("vote", 1)
         issue_vote.save()
         issue_activity.delay(
             type="issue_vote.activity.created",
-            requested_data=json.dumps(
-                self.request.data, cls=DjangoJSONEncoder
-            ),
+            requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
             actor_id=str(self.request.user.id),
             issue_id=str(self.kwargs.get("issue_id", None)),
             project_id=str(project_deploy_board.project_id),
@@ -676,10 +623,7 @@ class IssueVotePublicViewSet(BaseViewSet):
             issue_id=str(self.kwargs.get("issue_id", None)),
             project_id=str(project_deploy_board.project_id),
             current_instance=json.dumps(
-                {
-                    "vote": str(issue_vote.vote),
-                    "identifier": str(issue_vote.id),
-                }
+                {"vote": str(issue_vote.vote), "identifier": str(issue_vote.id)}
             ),
             epoch=int(timezone.now().timestamp()),
         )
@@ -688,9 +632,7 @@ class IssueVotePublicViewSet(BaseViewSet):
 
 
 class IssueRetrievePublicEndpoint(BaseAPIView):
-    permission_classes = [
-        AllowAny,
-    ]
+    permission_classes = [AllowAny]
 
     def get(self, request, anchor, issue_id):
         deploy_board = DeployBoard.objects.get(anchor=anchor)
@@ -717,7 +659,7 @@ class IssueRetrievePublicEndpoint(BaseAPIView):
                         distinct=True,
                         filter=Q(
                             ~Q(labels__id__isnull=True)
-                            & Q(label_issue__deleted_at__isnull=True),
+                            & Q(label_issue__deleted_at__isnull=True)
                         ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
@@ -748,16 +690,11 @@ class IssueRetrievePublicEndpoint(BaseAPIView):
             .prefetch_related(
                 Prefetch(
                     "issue_reactions",
-                    queryset=IssueReaction.objects.select_related(
-                        "issue", "actor"
-                    ),
+                    queryset=IssueReaction.objects.select_related("issue", "actor"),
                 )
             )
             .prefetch_related(
-                Prefetch(
-                    "votes",
-                    queryset=IssueVote.objects.select_related("actor"),
-                )
+                Prefetch("votes", queryset=IssueVote.objects.select_related("actor"))
             )
             .annotate(
                 vote_items=ArrayAgg(
@@ -775,12 +712,8 @@ class IssueRetrievePublicEndpoint(BaseAPIView):
                                         When(
                                             votes__actor__avatar_asset__isnull=False,
                                             then=Concat(
-                                                Value(
-                                                    "/api/assets/v2/static/"
-                                                ),
-                                                F(
-                                                    "votes__actor__avatar_asset"
-                                                ),
+                                                Value("/api/assets/v2/static/"),
+                                                F("votes__actor__avatar_asset"),
                                                 Value("/"),
                                             ),
                                         ),
@@ -791,9 +724,7 @@ class IssueRetrievePublicEndpoint(BaseAPIView):
                                         default=Value(None),
                                         output_field=CharField(),
                                     ),
-                                    display_name=F(
-                                        "votes__actor__display_name"
-                                    ),
+                                    display_name=F("votes__actor__display_name"),
                                 ),
                             ),
                         ),
@@ -815,23 +746,15 @@ class IssueRetrievePublicEndpoint(BaseAPIView):
                                 reaction=F("issue_reactions__reaction"),
                                 actor_details=JSONObject(
                                     id=F("issue_reactions__actor__id"),
-                                    first_name=F(
-                                        "issue_reactions__actor__first_name"
-                                    ),
-                                    last_name=F(
-                                        "issue_reactions__actor__last_name"
-                                    ),
+                                    first_name=F("issue_reactions__actor__first_name"),
+                                    last_name=F("issue_reactions__actor__last_name"),
                                     avatar=F("issue_reactions__actor__avatar"),
                                     avatar_url=Case(
                                         When(
                                             votes__actor__avatar_asset__isnull=False,
                                             then=Concat(
-                                                Value(
-                                                    "/api/assets/v2/static/"
-                                                ),
-                                                F(
-                                                    "votes__actor__avatar_asset"
-                                                ),
+                                                Value("/api/assets/v2/static/"),
+                                                F("votes__actor__avatar_asset"),
                                                 Value("/"),
                                             ),
                                         ),
