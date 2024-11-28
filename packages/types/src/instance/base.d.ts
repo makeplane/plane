@@ -5,7 +5,11 @@ import {
   TInstanceImageConfigurationKeys,
   TInstanceAuthenticationKeys,
   TInstanceWorkspaceConfigurationKeys,
+  // enterprise
+  TInstanceEnterpriseAuthenticationKeys,
 } from "./";
+
+type TProductType = "plane-ce" | "plane-one";
 
 export interface IInstanceInfo {
   instance: IInstance;
@@ -22,6 +26,8 @@ export interface IInstance {
   license_key: string | undefined;
   current_version: string | undefined;
   latest_version: string | undefined;
+  product: TProductType;
+  domain: string | undefined;
   last_checked_at: string | undefined;
   namespace: string | undefined;
   is_telemetry_enabled: boolean;
@@ -57,6 +63,21 @@ export interface IInstanceConfig {
   // intercom
   is_intercom_enabled: boolean;
   intercom_app_id: string | undefined;
+  // enterprise
+  is_oidc_enabled: boolean;
+  oidc_provider_name: string | undefined;
+  is_saml_enabled: boolean;
+  saml_provider_name: string | undefined;
+  payment_server_base_url?: string;
+  prime_server_base_url?: string;
+  feature_flag_server_base_url?: string;
+  // silo
+  silo_base_url: string | undefined;
+}
+
+export interface IInstanceUpdate {
+  current_version: string;
+  latest_version: string;
 }
 
 export interface IInstanceAdmin {
@@ -81,7 +102,8 @@ export type TInstanceConfigurationKeys =
   | TInstanceImageConfigurationKeys
   | TInstanceAuthenticationKeys
   | TInstanceIntercomConfigurationKeys
-  | TInstanceWorkspaceConfigurationKeys;
+  | TInstanceWorkspaceConfigurationKeys
+  | TInstanceEnterpriseAuthenticationKeys; // enterprise
 
 export interface IInstanceConfiguration {
   id: string;

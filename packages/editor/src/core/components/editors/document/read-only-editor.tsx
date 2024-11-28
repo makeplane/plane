@@ -9,6 +9,8 @@ import { IssueWidget } from "@/extensions";
 import { getEditorClassNames } from "@/helpers/common";
 // hooks
 import { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
+// plane web types
+import { TReadOnlyEmbedConfig } from "@/plane-editor/types";
 // types
 import { EditorReadOnlyRefApi, IMentionHighlight, TDisplayConfig, TFileHandler } from "@/types";
 
@@ -18,7 +20,7 @@ interface IDocumentReadOnlyEditor {
   containerClassName: string;
   displayConfig?: TDisplayConfig;
   editorClassName?: string;
-  embedHandler: any;
+  embedHandler: TReadOnlyEmbedConfig;
   fileHandler: Pick<TFileHandler, "getAssetSrc">;
   tabIndex?: number;
   handleEditorReady?: (value: boolean) => void;

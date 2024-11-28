@@ -65,11 +65,16 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
   const projectDetails = issue?.project_id ? getProjectById(issue?.project_id) : undefined;
 
   // debounced duplicate issues swr
-  const { duplicateIssues } = useDebouncedDuplicateIssues(projectDetails?.workspace.toString(), projectId, {
-    name: issue?.name,
-    description_html: getTextContent(issue?.description_html),
-    issueId: issue?.id,
-  });
+  const { duplicateIssues } = useDebouncedDuplicateIssues(
+    workspaceSlug?.toString(),
+    projectDetails?.workspace.toString(),
+    projectId,
+    {
+      name: issue?.name,
+      description_html: getTextContent(issue?.description_html),
+      issueId: issue?.id,
+    }
+  );
 
   if (!issue) return <></>;
 
