@@ -114,3 +114,14 @@ ol > li:nth-child(n + 100).ProseMirror-selectednode:not(.dragging)::after {
     filter: brightness(90%);
   }
 }
+
+.drag-ghost {
+  pointer-events: none;
+  position: fixed;
+  z-index: 1000;
+  opacity: 0.8;
+  transform: translate(-50%, -50%);
+  background: var(--color-background-100);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}

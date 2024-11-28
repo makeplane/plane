@@ -130,7 +130,6 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
   let lastClientY = 0;
   let scrollAnimationFrame = null;
   let ghostElement: HTMLElement | null = null;
-  let initialMouseOffset = { x: 0, y: 0 };
   let mouseDownTime = 0;
 
   const createGhostElement = (view: EditorView, slice: Slice) => {
@@ -163,54 +162,6 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     let draggedNodePos = nodePosAtDOM(node, view, options);
     if (draggedNodePos == null || draggedNodePos < 0) return;
     draggedNodePos = calcNodePos(draggedNodePos, view, node);
-
-    // Start scroll handling when drag begins
-    const scroll = () => {
-      if (!isDragging) return;
-
-      const scrollableParent = getScrollParent(view.dom);
-      const scrollThreshold = {
-        up: 100,
-        down: 100,
-      };
-      const maxScrollSpeed = 10;
-      let scrollAmount = 0;
-
-      const scrollRegionUp = scrollThreshold.up;
-      const scrollRegionDown = window.innerHeight - scrollThreshold.down;
-
-      // Calculate scroll amount based on mouse position
-      if (lastClientY < scrollRegionUp) {
-        const overflow = scrollRegionUp - lastClientY;
-        const ratio = Math.min(Math.pow(overflow / scrollThreshold.up, 2), 1);
-        const speed = maxScrollSpeed * ratio;
-        scrollAmount = -speed;
-      } else if (lastClientY > scrollRegionDown) {
-        const overflow = lastClientY - scrollRegionDown;
-        const ratio = Math.min(Math.pow(overflow / scrollThreshold.down, 2), 1);
-        const speed = maxScrollSpeed * ratio;
-        scrollAmount = speed;
-      }
-
-      // Handle cases when mouse is outside the window
-      if (lastClientY <= 0) {
-        const overflow = scrollThreshold.up + Math.abs(lastClientY);
-        const ratio = Math.min(Math.pow(overflow / (scrollThreshold.up + 100), 2), 1);
-        const speed = maxScrollSpeed * ratio;
-        scrollAmount = -speed;
-      } else if (lastClientY >= window.innerHeight) {
-        const overflow = lastClientY - window.innerHeight + scrollThreshold.down;
-        const ratio = Math.min(Math.pow(overflow / (scrollThreshold.down + 100), 2), 1);
-        const speed = maxScrollSpeed * ratio;
-        scrollAmount = speed;
-      }
-
-      if (scrollAmount !== 0) {
-        scrollableParent.scrollBy({ top: scrollAmount });
-      }
-
-      scrollAnimationFrame = requestAnimationFrame(scroll);
-    };
 
     const handleMouseMove = (e: MouseEvent) => {
       if (Date.now() - mouseDownTime < 200) return;
@@ -270,9 +221,6 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
 
         // Set dragging state for ProseMirror
         view.dragging = { slice, move: event.ctrlKey };
-
-        // Start scroll handling when drag begins
-        scroll();
       }
 
       if (!ghostElement) return;
@@ -293,35 +241,32 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     };
 
     const handleMouseUp = (e: MouseEvent) => {
-      if (!isDragging) return;
+      const dragDuration = Date.now() - mouseDownTime;
 
-      // Cancel scroll animation
-      if (scrollAnimationFrame) {
-        cancelAnimationFrame(scrollAnimationFrame);
-        scrollAnimationFrame = null;
+      if (dragDuration < 200 || !isDragging) {
+        // This was a click, not a drag
+        handleClick(event, view);
+      } else if (isDragging) {
+        // Handle drop
+        const dropEvent = new DragEvent("drop", {
+          clientX: e.clientX,
+          clientY: e.clientY,
+          bubbles: true,
+          dataTransfer: new DataTransfer(),
+        });
+
+        const slice = view.state.selection.content();
+        const { dom, text } = __serializeForClipboard(view, slice);
+        dropEvent.dataTransfer?.setData("text/html", dom.innerHTML);
+        dropEvent.dataTransfer?.setData("text/plain", text);
+
+        view.dom.dispatchEvent(dropEvent);
       }
-
-      // Create drop event with proper data transfer
-      const dropEvent = new DragEvent("drop", {
-        clientX: e.clientX,
-        clientY: e.clientY,
-        bubbles: true,
-        dataTransfer: new DataTransfer(),
-      });
-
-      // Set the same data that we set in the initial selection
-      const slice = view.state.selection.content();
-      const { dom, text } = __serializeForClipboard(view, slice);
-      dropEvent.dataTransfer?.setData("text/html", dom.innerHTML);
-      dropEvent.dataTransfer?.setData("text/plain", text);
 
       // Cleanup
       isDragging = false;
       ghostElement?.remove();
       ghostElement = null;
-
-      // Trigger ProseMirror's drop handling
-      view.dom.dispatchEvent(dropEvent);
 
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
@@ -370,6 +315,81 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     // Dispatch the transaction to update the selection
     view.dispatch(view.state.tr.setSelection(nodeSelection));
   };
+
+  function scroll() {
+    if (!isDragging) {
+      return;
+    }
+
+    const scrollableParent = getScrollParent(dragHandleElement);
+    if (!scrollableParent) return;
+    const scrollThreshold = options.scrollThreshold;
+
+    const maxScrollSpeed = 20;
+    const clientY = lastClientY; // Use the last known clientY
+    let scrollAmount = 0;
+
+    // Define the upper and lower scroll regions
+    const scrollRegionUp = scrollThreshold.up;
+    const scrollRegionDown = window.innerHeight - scrollThreshold.down;
+
+    // Calculate scroll amount when mouse is near the top
+    if (clientY < scrollRegionUp) {
+      const overflow = scrollRegionUp - clientY;
+      const ratio = Math.min(Math.pow(overflow / scrollThreshold.up, 2), 1);
+      const speed = maxScrollSpeed * ratio;
+      scrollAmount = -speed;
+    }
+
+    // Calculate scroll amount when mouse is near the bottom
+    else if (clientY > scrollRegionDown) {
+      const overflow = clientY - scrollRegionDown;
+      const ratio = Math.min(Math.pow(overflow / scrollThreshold.down, 2), 1);
+      const speed = maxScrollSpeed * ratio;
+      scrollAmount = speed;
+    }
+
+    // Handle cases when mouse is outside the window (above or below)
+    if (clientY <= 0) {
+      console.log("ran above");
+      const overflow = scrollThreshold.up + Math.abs(clientY);
+      const ratio = Math.min(Math.pow(overflow / (scrollThreshold.up + 100), 2), 1);
+      const speed = maxScrollSpeed * ratio;
+      scrollAmount = -speed;
+    } else if (clientY >= window.innerHeight) {
+      console.log("ran below");
+      const overflow = clientY - window.innerHeight + scrollThreshold.down;
+      const ratio = Math.min(Math.pow(overflow / (scrollThreshold.down + 100), 2), 1);
+      const speed = maxScrollSpeed * ratio;
+      scrollAmount = speed;
+    }
+
+    document.addEventListener("mouseout", function (event) {
+      // Check if the mouse has left the window from the top or bottom
+      if (event.clientY <= 0) {
+        console.log("Mouse left from the top");
+        // Handle the logic for when the mouse leaves from the top
+        const overflow = scrollThreshold.up + Math.abs(event.clientY);
+        const ratio = Math.min(Math.pow(overflow / (scrollThreshold.up + 100), 2), 1);
+        const speed = maxScrollSpeed * ratio;
+        scrollAmount = -speed;
+      } else if (event.clientY >= window.innerHeight) {
+        console.log("Mouse left from the bottom");
+        // Handle the logic for when the mouse leaves from the bottom
+        const overflow = event.clientY - window.innerHeight + scrollThreshold.down;
+        const ratio = Math.min(Math.pow(overflow / (scrollThreshold.down + 100), 2), 1);
+        const speed = maxScrollSpeed * ratio;
+        scrollAmount = speed;
+      }
+    });
+
+    if (scrollAmount !== 0) {
+      scrollableParent.scrollBy({ top: scrollAmount });
+    }
+
+    // Continue the scrolling loop
+    scrollAnimationFrame = requestAnimationFrame(scroll);
+  }
 
   let dragHandleElement: HTMLElement | null = null;
   // drag handle view actions
