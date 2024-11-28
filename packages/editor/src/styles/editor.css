@@ -494,3 +494,17 @@ p + p {
   will-change: transform;
   opacity: 0.8;
 }
+
+.prosemirror-smooth-cursor--blinking {
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  from,
+  to {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}

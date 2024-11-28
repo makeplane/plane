@@ -2,11 +2,14 @@ import { type Selection, Plugin, PluginKey, TextSelection } from "@tiptap/pm/sta
 import { type EditorView, Decoration, DecorationSet } from "@tiptap/pm/view";
 
 export const PROSEMIRROR_SMOOTH_CURSOR_CLASS = "prosemirror-smooth-cursor";
+const BLINK_DELAY = 750;
 
 export function smoothCursorPlugin(): Plugin {
   let smoothCursor: HTMLElement | null = typeof document === "undefined" ? null : document.createElement("div");
   let rafId: number | undefined;
+  let blinkTimeoutId: number | undefined;
   let isEditorFocused = false;
+  let lastCursorPosition = { x: 0, y: 0 };
 
   function updateCursor(view?: EditorView, cursor?: HTMLElement) {
     if (!view || !view.dom || view.isDestroyed || !cursor) return;
@@ -30,12 +33,30 @@ export function smoothCursorPlugin(): Plugin {
 
     const className = PROSEMIRROR_SMOOTH_CURSOR_CLASS;
 
-    cursor.className = className;
-    cursor.style.height = `${cursorRect.bottom - cursorRect.top}px`;
-
     // Calculate the exact position
     const x = cursorRect.left - editorRect.left;
     const y = cursorRect.top - editorRect.top;
+
+    // Check if cursor position has changed
+    if (x !== lastCursorPosition.x || y !== lastCursorPosition.y) {
+      lastCursorPosition = { x, y };
+      cursor.classList.remove(`${className}--blinking`);
+
+      // Clear existing timeout
+      if (blinkTimeoutId) {
+        window.clearTimeout(blinkTimeoutId);
+      }
+
+      // Set new timeout for blinking
+      blinkTimeoutId = window.setTimeout(() => {
+        if (cursor && isEditorFocused) {
+          cursor.classList.add(`${className}--blinking`);
+        }
+      }, BLINK_DELAY);
+    }
+
+    cursor.className = className;
+    cursor.style.height = `${cursorRect.bottom - cursorRect.top}px`;
 
     rafId = requestAnimationFrame(() => {
       cursor.style.transform = `translate3d(${x}px, ${y}px, 0)`;
@@ -63,6 +84,10 @@ export function smoothCursorPlugin(): Plugin {
 
       const handleBlur = () => {
         isEditorFocused = false;
+        if (blinkTimeoutId) {
+          window.clearTimeout(blinkTimeoutId);
+        }
+        cursor.classList.remove(`${PROSEMIRROR_SMOOTH_CURSOR_CLASS}--blinking`);
         update();
       };
 
@@ -83,9 +108,11 @@ export function smoothCursorPlugin(): Plugin {
           view.dom.removeEventListener("focus", handleFocus);
           view.dom.removeEventListener("blur", handleBlur);
           observer?.unobserve(view.dom);
-          // Clean up any pending animation frame
           if (rafId !== undefined) {
             cancelAnimationFrame(rafId);
+          }
+          if (blinkTimeoutId) {
+            window.clearTimeout(blinkTimeoutId);
           }
         },
       };
