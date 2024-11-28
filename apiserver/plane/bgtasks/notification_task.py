@@ -1,6 +1,8 @@
 # Python imports
 import json
 import uuid
+from uuid import UUID
+
 
 # Module imports
 from plane.db.models import (
@@ -16,8 +18,9 @@ from plane.db.models import (
     IssueComment,
     IssueActivity,
     UserNotificationPreference,
-    ProjectMember
+    ProjectMember,
 )
+from django.db.models import Subquery
 
 # Third Party imports
 from celery import shared_task
@@ -95,7 +98,8 @@ def extract_mentions_as_subscribers(project_id, issue_id, mentions):
             ).exists()
             and not Issue.objects.filter(
                 project_id=project_id, pk=issue_id, created_by_id=mention_id
-            ).exists() and ProjectMember.objects.filter(
+            ).exists()
+            and ProjectMember.objects.filter(
                 project_id=project_id, member_id=mention_id, is_active=True
             ).exists()
         ):
@@ -242,14 +246,19 @@ def notifications(
             2. From the latest set of mentions, extract the users which are not a subscribers & make them subscribers
             """
 
+            # get the list of active project members
+            project_members = ProjectMember.objects.filter(
+                project_id=project_id, is_active=True
+            ).values_list("member_id", flat=True)
+
             # Get new mentions from the newer instance
             new_mentions = get_new_mentions(
                 requested_instance=requested_data, current_instance=current_instance
             )
-            new_mentions = list(ProjectMember.objects.filter(
-                project_id=project_id, member_id__in=new_mentions, is_active=True
-            ).values_list("member_id", flat=True))
-            new_mentions = [str(member_id) for member_id in new_mentions]
+
+            new_mentions = [
+                str(mention) for mention in new_mentions if mention in set(project_members)
+            ]
             removed_mention = get_removed_mentions(
                 requested_instance=requested_data, current_instance=current_instance
             )
@@ -280,6 +289,11 @@ def notifications(
                         new_value=issue_comment_new_value,
                     )
                     comment_mentions = comment_mentions + new_comment_mentions
+                    comment_mentions = [
+                        mention
+                        for mention in comment_mentions
+                        if UUID(mention) in set(project_members)
+                    ]
 
             comment_mention_subscribers = extract_mentions_as_subscribers(
                 project_id=project_id, issue_id=issue_id, mentions=all_comment_mentions
@@ -293,7 +307,11 @@ def notifications(
 
             # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- #
             issue_subscribers = list(
-                IssueSubscriber.objects.filter(project_id=project_id, issue_id=issue_id, project__project_projectmember__is_active=True,)
+                IssueSubscriber.objects.filter(
+                    project_id=project_id,
+                    issue_id=issue_id,
+                    subscriber__in=Subquery(project_members),
+                )
                 .exclude(
                     subscriber_id__in=list(new_mentions + comment_mentions + [actor_id])
                 )
@@ -314,7 +332,9 @@ def notifications(
             project = Project.objects.get(pk=project_id)
 
             issue_assignees = IssueAssignee.objects.filter(
-                issue_id=issue_id, project_id=project_id
+                issue_id=issue_id,
+                project_id=project_id,
+                assignee__in=Subquery(project_members),
             ).values_list("assignee", flat=True)
 
             issue_subscribers = list(set(issue_subscribers) - {uuid.UUID(actor_id)})
