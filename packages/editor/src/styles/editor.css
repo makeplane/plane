@@ -478,17 +478,6 @@ p + p {
 [data-background-color="purple"] {
   background-color: var(--editor-colors-purple-background);
 }
-/* end background colors */
-@keyframes caret-flash-smooth {
-  0%,
-  100% {
-    opacity: 0;
-  }
-
-  50% {
-    opacity: 1;
-  }
-}
 
 .smooth-cursor-enabled {
   caret-color: transparent;
@@ -504,5 +493,4 @@ p + p {
   transition: transform 0.2s var(--ease-out-quart);
   will-change: transform;
   opacity: 0.8;
-  animation: cursorPulse 0.8s ease-in-out infinite;
 }

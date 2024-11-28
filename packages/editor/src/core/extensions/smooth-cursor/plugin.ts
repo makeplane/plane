@@ -6,9 +6,17 @@ export const PROSEMIRROR_SMOOTH_CURSOR_CLASS = "prosemirror-smooth-cursor";
 export function smoothCursorPlugin(): Plugin {
   let smoothCursor: HTMLElement | null = typeof document === "undefined" ? null : document.createElement("div");
   let rafId: number | undefined;
+  let isEditorFocused = false;
 
   function updateCursor(view?: EditorView, cursor?: HTMLElement) {
     if (!view || !view.dom || view.isDestroyed || !cursor) return;
+
+    // Hide cursor if editor is not focused
+    if (!isEditorFocused) {
+      cursor.style.display = "none";
+      return;
+    }
+    cursor.style.display = "block";
 
     const { state, dom } = view;
     const { selection } = state;
@@ -43,10 +51,19 @@ export function smoothCursorPlugin(): Plugin {
 
       const update = () => {
         if (rafId !== undefined) {
-          console.log("cleaning up 1: " + rafId);
           cancelAnimationFrame(rafId);
         }
         updateCursor(view, cursor);
+      };
+
+      const handleFocus = () => {
+        isEditorFocused = true;
+        update();
+      };
+
+      const handleBlur = () => {
+        isEditorFocused = false;
+        update();
       };
 
       let observer: ResizeObserver | undefined;
@@ -56,15 +73,18 @@ export function smoothCursorPlugin(): Plugin {
       }
 
       doc.addEventListener("selectionchange", update);
+      view.dom.addEventListener("focus", handleFocus);
+      view.dom.addEventListener("blur", handleBlur);
 
       return {
         update,
         destroy: () => {
           doc.removeEventListener("selectionchange", update);
+          view.dom.removeEventListener("focus", handleFocus);
+          view.dom.removeEventListener("blur", handleBlur);
           observer?.unobserve(view.dom);
           // Clean up any pending animation frame
           if (rafId !== undefined) {
-            console.log("cleaning up 2: " + rafId);
             cancelAnimationFrame(rafId);
           }
         },
@@ -81,9 +101,9 @@ export function smoothCursorPlugin(): Plugin {
         ]);
       },
 
-      attributes: {
-        class: "smooth-cursor-enabled",
-      },
+      attributes: () => ({
+        class: isEditorFocused ? "smooth-cursor-enabled" : "",
+      }),
     },
   });
 }
