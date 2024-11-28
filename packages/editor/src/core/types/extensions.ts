@@ -1,1 +1,1 @@
-export type TExtensions = "ai" | "collaboration-cursor" | "issue-embed" | "slash-commands" | "enter-key" | "callout";
+export type TExtensions = "ai" | "collaboration-cursor" | "issue-embed" | "slash-commands" | "enter-key";

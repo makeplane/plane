@@ -25,7 +25,7 @@ export const LiteTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, Lit
       user: currentUser,
     });
     // editor flaggings
-    const { documentEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
+    const { liteTextEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
 
     return (
       <LiteTextReadOnlyEditorWithRef
