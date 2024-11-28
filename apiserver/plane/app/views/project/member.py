@@ -11,7 +11,6 @@ from plane.app.serializers import (
 )
 
 from plane.app.permissions import (
-    ProjectBasePermission,
     ProjectMemberPermission,
     ProjectLitePermission,
     WorkspaceUserPermission,
@@ -20,8 +19,6 @@ from plane.app.permissions import (
 from plane.db.models import (
     Project,
     ProjectMember,
-    Workspace,
-    TeamMember,
     IssueUserProperty,
     WorkspaceMember,
 )
@@ -86,7 +83,10 @@ class ProjectMemberViewSet(BaseViewSet):
             workspace_member_role = WorkspaceMember.objects.get(
                 workspace__slug=slug, member=member, is_active=True
             ).role
-            if workspace_member_role in [20] and member_roles.get(member) in [5, 15]:
+            if workspace_member_role in [20] and member_roles.get(member) in [
+                5,
+                15,
+            ]:
                 return Response(
                     {
                         "error": "You cannot add a user with role lower than the workspace role"
@@ -94,7 +94,10 @@ class ProjectMemberViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            if workspace_member_role in [5] and member_roles.get(member) in [15, 20]:
+            if workspace_member_role in [5] and member_roles.get(member) in [
+                15,
+                20,
+            ]:
                 return Response(
                     {
                         "error": "You cannot add a user with role higher than the workspace role"
@@ -132,7 +135,8 @@ class ProjectMemberViewSet(BaseViewSet):
             sort_order = [
                 project_member.get("sort_order")
                 for project_member in project_members
-                if str(project_member.get("member_id")) == str(member.get("member_id"))
+                if str(project_member.get("member_id"))
+                == str(member.get("member_id"))
             ]
             # Create a new project member
             bulk_project_members.append(
@@ -141,7 +145,9 @@ class ProjectMemberViewSet(BaseViewSet):
                     role=member.get("role", 5),
                     project_id=project_id,
                     workspace_id=project.workspace_id,
-                    sort_order=(sort_order[0] - 10000 if len(sort_order) else 65535),
+                    sort_order=(
+                        sort_order[0] - 10000 if len(sort_order) else 65535
+                    ),
                 )
             )
             # Create a new issue property
@@ -232,7 +238,9 @@ class ProjectMemberViewSet(BaseViewSet):
             > requested_project_member.role
         ):
             return Response(
-                {"error": "You cannot update a role that is higher than your own role"},
+                {
+                    "error": "You cannot update a role that is higher than your own role"
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -272,7 +280,9 @@ class ProjectMemberViewSet(BaseViewSet):
         # User cannot deactivate higher role
         if requesting_project_member.role < project_member.role:
             return Response(
-                {"error": "You cannot remove a user having role higher than you"},
+                {
+                    "error": "You cannot remove a user having role higher than you"
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -293,7 +303,10 @@ class ProjectMemberViewSet(BaseViewSet):
         if (
             project_member.role == 20
             and not ProjectMember.objects.filter(
-                workspace__slug=slug, project_id=project_id, role=20, is_active=True
+                workspace__slug=slug,
+                project_id=project_id,
+                role=20,
+                is_active=True,
             ).count()
             > 1
         ):
@@ -307,53 +320,6 @@ class ProjectMemberViewSet(BaseViewSet):
         project_member.is_active = False
         project_member.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class AddTeamToProjectEndpoint(BaseAPIView):
-    permission_classes = [ProjectBasePermission]
-
-    def post(self, request, slug, project_id):
-        team_members = TeamMember.objects.filter(
-            workspace__slug=slug, team__in=request.data.get("teams", [])
-        ).values_list("member", flat=True)
-
-        if len(team_members) == 0:
-            return Response(
-                {"error": "No such team exists"}, status=status.HTTP_400_BAD_REQUEST
-            )
-
-        workspace = Workspace.objects.get(slug=slug)
-
-        project_members = []
-        issue_props = []
-        for member in team_members:
-            project_members.append(
-                ProjectMember(
-                    project_id=project_id,
-                    member_id=member,
-                    workspace=workspace,
-                    created_by=request.user,
-                )
-            )
-            issue_props.append(
-                IssueUserProperty(
-                    project_id=project_id,
-                    user_id=member,
-                    workspace=workspace,
-                    created_by=request.user,
-                )
-            )
-
-        ProjectMember.objects.bulk_create(
-            project_members, batch_size=10, ignore_conflicts=True
-        )
-
-        _ = IssueUserProperty.objects.bulk_create(
-            issue_props, batch_size=10, ignore_conflicts=True
-        )
-
-        serializer = ProjectMemberSerializer(project_members, many=True)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class ProjectMemberUserEndpoint(BaseAPIView):
@@ -378,6 +344,7 @@ class UserProjectRolesEndpoint(BaseAPIView):
         ).values("project_id", "role")
 
         project_members = {
-            str(member["project_id"]): member["role"] for member in project_members
+            str(member["project_id"]): member["role"]
+            for member in project_members
         }
         return Response(project_members, status=status.HTTP_200_OK)

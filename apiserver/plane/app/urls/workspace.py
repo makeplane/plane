@@ -10,7 +10,6 @@ from plane.app.views import (
     WorkspaceMemberUserEndpoint,
     WorkspaceMemberUserViewsEndpoint,
     WorkSpaceAvailabilityCheckEndpoint,
-    TeamMemberViewSet,
     UserLastProjectWithWorkspaceEndpoint,
     WorkspaceThemeViewSet,
     WorkspaceUserProfileStatsEndpoint,
@@ -69,7 +68,9 @@ urlpatterns = [
     # user workspace invitations
     path(
         "users/me/workspaces/invitations/",
-        UserWorkspaceInvitationsViewSet.as_view({"get": "list", "post": "create"}),
+        UserWorkspaceInvitationsViewSet.as_view(
+            {"get": "list", "post": "create"}
+        ),
         name="user-workspace-invitations",
     ),
     path(
@@ -99,23 +100,6 @@ urlpatterns = [
         "workspaces/<str:slug>/members/leave/",
         WorkSpaceMemberViewSet.as_view({"post": "leave"}),
         name="leave-workspace-members",
-    ),
-    path(
-        "workspaces/<str:slug>/teams/",
-        TeamMemberViewSet.as_view({"get": "list", "post": "create"}),
-        name="workspace-team-members",
-    ),
-    path(
-        "workspaces/<str:slug>/teams/<uuid:pk>/",
-        TeamMemberViewSet.as_view(
-            {
-                "put": "update",
-                "patch": "partial_update",
-                "delete": "destroy",
-                "get": "retrieve",
-            }
-        ),
-        name="workspace-team-members",
     ),
     path(
         "users/last-visited-workspace/",
