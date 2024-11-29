@@ -1,4 +1,4 @@
-import { Fragment, Slice, Node } from "@tiptap/pm/model";
+import { Fragment, Slice, Node, DOMSerializer } from "@tiptap/pm/model";
 import { NodeSelection, TextSelection } from "@tiptap/pm/state";
 // @ts-expect-error __serializeForClipboard's is not exported
 import { __serializeForClipboard, EditorView } from "@tiptap/pm/view";
@@ -134,17 +134,31 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
   let mouseDownTime = 0;
 
   const createGhostElement = (view: EditorView, slice: Slice) => {
-    const { dom } = __serializeForClipboard(view, slice);
-    dom.classList.add("drag-ghost");
-    dom.style.position = "fixed";
-    dom.style.pointerEvents = "none";
-    dom.style.zIndex = "1000";
-    dom.style.opacity = "0.8";
-    dom.style.background = "var(--custom-background-100)";
-    dom.style.padding = "8px";
-    dom.style.borderRadius = "4px";
-    dom.style.boxShadow = "0 2px 8px rgba(0, 0, 0, 0.1)";
-    return dom;
+    let contentNode;
+    if (view.state.selection instanceof NodeSelection) {
+      const node = view.state.selection.node;
+      const fragment = Fragment.from(node);
+      
+      const schema = view.state.schema;
+      const serializer = DOMSerializer.fromSchema(schema);
+      contentNode = serializer.serializeFragment(fragment);
+    } else {
+      const { dom } = __serializeForClipboard(view, slice);
+      contentNode = dom;
+    }
+
+    const ghost = document.createElement('div');
+    ghost.classList.add('drag-ghost');
+    ghost.appendChild(contentNode);
+    ghost.style.position = 'fixed';
+    ghost.style.pointerEvents = 'none';
+    ghost.style.zIndex = '1000';
+    ghost.style.opacity = '0.8';
+    ghost.style.background = 'var(--custom-background-100)';
+    ghost.style.padding = '8px';
+    ghost.style.borderRadius = '4px';
+    ghost.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)';
+    return ghost;
   };
 
   const handleMouseDown = (event: MouseEvent, view: EditorView) => {
