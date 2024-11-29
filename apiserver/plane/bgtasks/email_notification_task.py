@@ -38,6 +38,22 @@ def release_lock(lock_id):
     redis_client = redis_instance()
     redis_client.delete(lock_id)
 
+def is_valid_url(url: str) -> bool:
+    """Check if URL starts with http:// or https://"""
+    return url.startswith(("http://", "https://"))
+
+
+def get_avatar_url(base_host, actor):
+    # Check if avatar_url is present
+    if not actor.avatar_url:
+        return ""
+
+    # Check if avatar_url is a valid URL
+    if is_valid_url(actor.avatar_url):
+        return actor.avatar_url
+
+    # Return the full URL
+    return f"{base_host}/{actor.avatar_url}"
 
 @shared_task
 def stack_email_notification():
@@ -218,7 +234,7 @@ def send_email_notification(
                         {
                             "actor_comments": comment,
                             "actor_detail": {
-                                "avatar_url": f"{base_api}{actor.avatar_url}",
+                                "avatar_url": get_avatar_url(base_api, actor),
                                 "first_name": actor.first_name,
                                 "last_name": actor.last_name,
                             },
@@ -235,7 +251,7 @@ def send_email_notification(
                         {
                             "actor_comments": mention,
                             "actor_detail": {
-                                "avatar_url": f"{base_api}{actor.avatar_url}",
+                                "avatar_url": get_avatar_url(base_api, actor),
                                 "first_name": actor.first_name,
                                 "last_name": actor.last_name,
                             },
@@ -251,7 +267,7 @@ def send_email_notification(
                     template_data.append(
                         {
                             "actor_detail": {
-                                "avatar_url": f"{base_api}{actor.avatar_url}",
+                                "avatar_url": get_avatar_url(base_api, actor),
                                 "first_name": actor.first_name,
                                 "last_name": actor.last_name,
                             },
