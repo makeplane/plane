@@ -3,7 +3,14 @@ import * as React from "react";
 import { ISvgIcons } from "./type";
 
 export const WorkspaceIcon: React.FC<ISvgIcons> = ({ className }) => (
-  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+    role="img"
+    aria-label="Workspace icon"
+  >
     <path
       fillRule="evenodd"
       clipRule="evenodd"
