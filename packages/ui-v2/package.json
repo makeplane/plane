@@ -1,0 +1,40 @@
+{
+  "name": "@plane/ui-v2",
+  "version": "1.0.0",
+  "description": "Revamped UI components built using Radix, shared across multiple apps internally",
+  "main": "index.js",
+  "author": "Plane",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --external react --minify",
+    "dev": "tsup src/index.ts --format esm --watch --dts --external react",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "postcss": "postcss styles/globals.css -o styles/output.css --watch",
+    "lint": "eslint src --ext .ts,.tsx",
+    "tcss": "tailwindcss -i ./styles/globals.css -o ./styles/output.css --watch",
+    "start": "yarn dev & yarn storybook & yarn tcss"
+  },
+  "devDependencies": {
+    "@chromatic-com/storybook": "^3.2.2",
+    "@storybook/addon-essentials": "^8.4.5",
+    "@storybook/addon-interactions": "^8.4.5",
+    "@storybook/addon-onboarding": "^8.4.5",
+    "@storybook/blocks": "^8.4.5",
+    "@storybook/react": "^8.4.5",
+    "@storybook/react-vite": "^8.4.5",
+    "@storybook/test": "^8.4.5",
+    "@testing-library/react": "^16.0.1",
+    "@types/jest": "^29.5.14",
+    "autoprefixer": "^10.4.20",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "storybook": "^8.4.5",
+    "tailwindcss": "^3.4.15",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.1"
+  }
+}
