@@ -1,7 +1,7 @@
 {
   "name": "@plane/eslint-config",
   "private": true,
-  "version": "0.23.1",
+  "version": "0.24.0",
   "files": [
     "library.js",
     "next.js",
