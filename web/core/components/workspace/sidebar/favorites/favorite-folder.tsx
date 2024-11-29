@@ -34,7 +34,6 @@ type Props = {
   favorite: IFavorite;
   handleRemoveFromFavorites: (favorite: IFavorite) => void;
   handleRemoveFromFavoritesFolder: (favoriteId: string) => void;
-  handleReorder: (favoriteId: string, sequence: number) => void;
   handleDrop: (self: DropTargetRecord,source: ElementDragPayload, location: DragLocationHistory) => void;
 };
 
