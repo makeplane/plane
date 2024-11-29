@@ -21,7 +21,7 @@ import { Request, Response } from "express";
 import taskManager from "@/apps/engine/worker";
 import { TImporterKeys } from "@silo/core";
 
-@Controller("/jobs")
+@Controller("/api/jobs")
 export class JobController {
   @Post("/")
   async createJob(req: Request, res: Response) {

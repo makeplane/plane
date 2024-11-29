@@ -7,6 +7,7 @@ import express, { Application } from "express";
 // lib
 import { registerControllers } from "./lib/controller";
 // controllers
+import { HomeController } from "@/controllers";
 import AsanaController from "@/apps/asana-importer/controllers";
 import { CredentialController, JobConfigController, JobController } from "@/apps/engine/controllers";
 import { ConnectionsController } from "@/apps/engine/controllers/connection.controller";
@@ -18,8 +19,9 @@ import { SlackController } from "./apps/slack/controllers";
 import { env } from "./env";
 import { logger } from "./logger";
 
-const controllers = [JobController, JobConfigController, CredentialController, ConnectionsController];
-const appControllers = [
+const PING_CONTROLLERS = [HomeController];
+const ENGINE_CONTROLLERS = [JobController, JobConfigController, CredentialController, ConnectionsController];
+const APP_CONTROLLERS = [
   JiraController,
   LinearController,
   GithubController,
@@ -27,6 +29,8 @@ const appControllers = [
   AsanaController,
   SlackController,
 ];
+
+const controllers = [...PING_CONTROLLERS, ...ENGINE_CONTROLLERS, ...APP_CONTROLLERS];
 
 export class Server {
   app: Application;
@@ -49,10 +53,9 @@ export class Server {
   }
 
   setupControllers() {
-    // Setup app controllers
-    controllers.forEach((controller) => registerControllers(this.app, controller));
-    // Setup controllers for importers
-    appControllers.forEach((controller) => registerControllers(this.app, controller));
+    const router = express.Router();
+    controllers.forEach((controller) => registerControllers(router, controller));
+    this.app.use(process.env.SILO_BASE_PATH || "/", router); // Adding base route
   }
 
   setupSentry() {

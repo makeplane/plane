@@ -26,7 +26,7 @@ const createWorkspaceConnectionSchema = z.object({
   connectionData: z.object({}),
 });
 
-@Controller("/connections")
+@Controller("/api/connections")
 export class ConnectionsController {
   @Get("/workspace/:workspaceId")
   async getWorkspaceConnections(req: Request, res: Response) {

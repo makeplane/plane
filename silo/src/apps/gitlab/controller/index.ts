@@ -8,7 +8,7 @@ import { verifyGitlabToken } from "../helpers";
 import { createOrUpdateCredentials } from "@/db/query";
 import { createWorkspaceConnection, getWorkspaceConnections, updateWorkspaceConnection } from "@/db/query/connection";
 
-@Controller("/gitlab")
+@Controller("/api/gitlab")
 export class GitlabController {
   /* -------------------- Auth Endpoints -------------------- */
   @Post("/auth/url")

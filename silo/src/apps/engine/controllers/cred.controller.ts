@@ -8,7 +8,7 @@ import {
 import { Request, Response } from "express";
 import { env } from "@/env";
 
-@Controller("/credentials")
+@Controller("/api/credentials")
 export class CredentialController {
   @Post("/:workspaceId/:userId")
   async upsertCredentials(req: Request, res: Response) {

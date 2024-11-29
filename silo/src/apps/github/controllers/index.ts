@@ -22,7 +22,7 @@ export const githubAuthService = createGithubAuth(
   `${env.SILO_API_BASE_URL}/silo/api/github/auth/user/callback`
 );
 
-@Controller("/github")
+@Controller("/api/github")
 class GithubController {
   @Post("/auth/user/url")
   async getUserAuthUrl(req: Request, res: Response) {

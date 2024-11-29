@@ -26,7 +26,7 @@ class JiraApiError extends Error {
   }
 }
 
-@Controller("/jira")
+@Controller("/api/jira")
 class JiraController {
   @Get("/ping")
   async ping(_req: Request, res: Response) {

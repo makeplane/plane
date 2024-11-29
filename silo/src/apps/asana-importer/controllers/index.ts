@@ -17,7 +17,7 @@ import { createOrUpdateCredentials, deactivateCredentials, getCredentialsByWorks
 // silo asana auth
 import { asanaAuth } from "../auth/auth";
 
-@Controller("/asana")
+@Controller("/api/asana")
 class AsanaController {
   @Get("/ping")
   async ping(_req: Request, res: Response) {

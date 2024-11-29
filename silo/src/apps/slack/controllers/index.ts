@@ -19,7 +19,7 @@ import {
 import { PlaneWebhookData } from "@plane/sdk";
 import { env } from "@/env";
 
-@Controller("/slack")
+@Controller("/api/slack")
 export class SlackController {
   @Get("/ping")
   async ping(_req: Request, res: Response) {

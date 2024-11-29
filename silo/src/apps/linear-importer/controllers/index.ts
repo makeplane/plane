@@ -7,7 +7,7 @@ import { LinearAuthPayload, LinearAuthState } from "@silo/linear";
 import { linearAuth } from "../auth/auth";
 import { TServiceCredentials } from "@silo/core";
 
-@Controller("/linear")
+@Controller("/api/linear")
 class LinearController {
   @Get("/ping")
   async ping(_req: Request, res: Response) {
