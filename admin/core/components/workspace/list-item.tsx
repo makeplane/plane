@@ -22,7 +22,7 @@ export const WorkspaceListItem = observer(({ workspaceId }: TWorkspaceListItemPr
   return (
     <Link
       key={workspaceId}
-      href={encodeURI(WEB_BASE_URL + "/" + workspace.slug)}
+      href={`${WEB_BASE_URL}/${encodeURIComponent(workspace.slug)}`}
       target="_blank"
       className="group flex items-center justify-between p-4 gap-2.5 truncate border border-custom-border-200/70 hover:border-custom-border-200 hover:bg-custom-background-90 rounded-md"
     >

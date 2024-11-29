@@ -25,7 +25,7 @@ class InstanceWorkSpaceAvailabilityCheckEndpoint(BaseAPIView):
             )
 
         workspace = (
-            Workspace.objects.filter(slug=slug).exists()
+            Workspace.objects.filter(slug__iexact=slug).exists()
             or slug in RESTRICTED_WORKSPACE_SLUGS
         )
         return Response({"status": not workspace}, status=status.HTTP_200_OK)
