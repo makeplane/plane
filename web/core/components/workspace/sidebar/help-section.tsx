@@ -16,6 +16,8 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { PlaneVersionNumber } from "@/plane-web/components/global";
 import { WorkspaceEditionBadge } from "@/plane-web/components/workspace";
+import { ENABLE_LOCAL_DB_CACHE } from "@/plane-web/constants/issues";
+import { useFlag } from "@/plane-web/hooks/store";
 
 export interface WorkspaceHelpSectionProps {
   setSidebarActive?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -30,6 +32,7 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
   const { config } = useInstance();
   const { isIntercomToggle, toggleIntercom } = useTransient();
   const { canUseLocalDB, toggleLocalDB } = useUserSettings();
+  const isLocalDBCacheEnabled = useFlag(workspaceSlug?.toString(), "NO_LOAD");
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
   const [isChangeLogOpen, setIsChangeLogOpen] = useState(false);
@@ -110,21 +113,23 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
               </a>
             </CustomMenu.MenuItem>
             <div className="my-1 border-t border-custom-border-200" />
-            <CustomMenu.MenuItem>
-              <div
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                }}
-                className="flex w-full items-center justify-between text-xs hover:bg-custom-background-80"
-              >
-                <span className="racking-tight">Hyper Mode</span>
-                <ToggleSwitch
-                  value={canUseLocalDB}
-                  onChange={() => toggleLocalDB(workspaceSlug?.toString(), projectId?.toString())}
-                />
-              </div>
-            </CustomMenu.MenuItem>
+            {ENABLE_LOCAL_DB_CACHE && isLocalDBCacheEnabled && (
+              <CustomMenu.MenuItem>
+                <div
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                  className="flex w-full items-center justify-between text-xs hover:bg-custom-background-80"
+                >
+                  <span className="racking-tight">Local Cache</span>
+                  <ToggleSwitch
+                    value={canUseLocalDB}
+                    onChange={() => toggleLocalDB(workspaceSlug?.toString(), projectId?.toString())}
+                  />
+                </div>
+              </CustomMenu.MenuItem>
+            )}
             <CustomMenu.MenuItem>
               <button
                 type="button"
