@@ -1,4 +1,3 @@
-import { Extensions } from "@tiptap/core";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import TextStyle from "@tiptap/extension-text-style";
@@ -18,10 +17,10 @@ import { CustomMentionWithoutProps } from "./mentions/mentions-without-props";
 import { CustomQuoteExtension } from "./quote";
 import { TableHeader, TableCell, TableRow, Table } from "./table";
 import { CustomTextAlignExtension } from "./text-align";
+import { CustomCalloutExtensionConfig } from "./callout/extension-config";
 import { CustomColorExtension } from "./custom-color";
-import { CoreEditorAdditionalExtensionsWithoutProps } from "@/plane-editor/extensions/core/without-props";
 
-export const CoreEditorExtensionsWithoutProps: Extensions = [
+export const CoreEditorExtensionsWithoutProps = [
   StarterKit.configure({
     bulletList: {
       HTMLAttributes: {
@@ -88,8 +87,8 @@ export const CoreEditorExtensionsWithoutProps: Extensions = [
   TableRow,
   CustomMentionWithoutProps(),
   CustomTextAlignExtension,
+  CustomCalloutExtensionConfig,
   CustomColorExtension,
-  ...CoreEditorAdditionalExtensionsWithoutProps,
 ];
 
 export const DocumentEditorExtensionsWithoutProps = [IssueWidgetWithoutProps()];

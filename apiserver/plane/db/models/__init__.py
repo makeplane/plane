@@ -61,8 +61,6 @@ from .user import Account, Profile, User
 from .view import IssueView
 from .webhook import Webhook, WebhookLog
 from .workspace import (
-    Team,
-    TeamMember,
     Workspace,
     WorkspaceBaseModel,
     WorkspaceMember,
