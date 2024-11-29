@@ -135,13 +135,14 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
               </button>
             </CustomMenu.MenuItem>
             <CustomMenu.MenuItem>
-              <button
+              <a
+                target="_blank"
                 type="button"
-                onClick={() => setIsChangeLogOpen(true)}
+                href="https://plane.so/changelog/community"
                 className="flex w-full items-center justify-start text-xs hover:bg-custom-background-80"
               >
                 <span className="text-xs">What&apos;s new</span>
-              </button>
+              </a>
             </CustomMenu.MenuItem>
             <CustomMenu.MenuItem>
               <a
