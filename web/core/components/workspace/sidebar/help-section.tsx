@@ -118,7 +118,7 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
                 }}
                 className="flex w-full items-center justify-between text-xs hover:bg-custom-background-80"
               >
-                <span className="racking-tight">Local Cache</span>
+                <span className="racking-tight">Hyper Mode</span>
                 <ToggleSwitch
                   value={canUseLocalDB}
                   onChange={() => toggleLocalDB(workspaceSlug?.toString(), projectId?.toString())}
