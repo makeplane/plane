@@ -205,7 +205,7 @@ export class FavoriteStore implements IFavoriteStore {
     try {
       let resultSequence = 10000;
       if (edge) {
-        const sortedIds = orderBy(this.favoriteMap, "sequence", "desc").map((fav: IFavorite) => fav.id);
+        const sortedIds = orderBy(Object.values(this.favoriteMap), "sequence", "desc").map((fav: IFavorite) => fav.id);
         const destinationSequence = this.favoriteMap[destinationId]?.sequence || undefined;
         if (destinationSequence) {
           const destinationIndex = sortedIds.findIndex((id) => id === destinationId);
