@@ -61,10 +61,12 @@ export const ConfirmIssueDiscard: React.FC<Props> = (props) => {
                   <div className="sm:flex sm:items-start">
                     <div className="mt-3 text-center sm:mt-0 sm:text-left">
                       <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
-                        Draft Issue
+                        Save this draft?
                       </Dialog.Title>
                       <div className="mt-2">
-                        <p className="text-sm text-custom-text-200">Would you like to save this issue in drafts?</p>
+                        <p className="text-sm text-custom-text-200">
+                          You can save this issue to Drafts so you can come back to it later.{" "}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -80,7 +82,7 @@ export const ConfirmIssueDiscard: React.FC<Props> = (props) => {
                       Cancel
                     </Button>
                     <Button variant="primary" size="sm" onClick={handleDeletion} loading={isLoading}>
-                      {isLoading ? "Saving" : "Save draft"}
+                      {isLoading ? "Saving" : "Save to Drafts"}
                     </Button>
                   </div>
                 </div>

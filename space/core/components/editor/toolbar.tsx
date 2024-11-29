@@ -2,21 +2,21 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 // editor
-import { EditorRefApi, TEditorCommands } from "@plane/editor";
+import { EditorRefApi } from "@plane/editor";
 // ui
 import { Button, Tooltip } from "@plane/ui";
 // constants
-import { TOOLBAR_ITEMS } from "@/constants/editor";
+import { TOOLBAR_ITEMS, ToolbarMenuItem } from "@/constants/editor";
 // helpers
 import { cn } from "@/helpers/common.helper";
 
 type Props = {
-  executeCommand: (commandKey: TEditorCommands) => void;
+  executeCommand: (item: ToolbarMenuItem) => void;
   handleSubmit: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   isCommentEmpty: boolean;
   isSubmitting: boolean;
   showSubmitButton: boolean;
-  editorRef: React.MutableRefObject<EditorRefApi | null> | null;
+  editorRef: EditorRefApi | null;
 };
 
 const toolbarItems = TOOLBAR_ITEMS.lite;
@@ -28,22 +28,25 @@ export const IssueCommentToolbar: React.FC<Props> = (props) => {
 
   // Function to update active states
   const updateActiveStates = useCallback(() => {
-    if (editorRef?.current) {
-      const newActiveStates: Record<string, boolean> = {};
-      Object.values(toolbarItems)
-        .flat()
-        .forEach((item) => {
-          // Assert that editorRef.current is not null
-          newActiveStates[item.key] = (editorRef.current as EditorRefApi).isMenuItemActive(item.key);
+    if (!editorRef) return;
+    const newActiveStates: Record<string, boolean> = {};
+    Object.values(toolbarItems)
+      .flat()
+      .forEach((item) => {
+        // TODO: update this while toolbar homogenization
+        // @ts-expect-error type mismatch here
+        newActiveStates[item.renderKey] = editorRef.isMenuItemActive({
+          itemKey: item.itemKey,
+          ...item.extraProps,
         });
-      setActiveStates(newActiveStates);
-    }
+      });
+    setActiveStates(newActiveStates);
   }, [editorRef]);
 
   // useEffect to call updateActiveStates when isActive prop changes
   useEffect(() => {
-    if (!editorRef?.current) return;
-    const unsubscribe = editorRef.current.onStateChange(updateActiveStates);
+    if (!editorRef) return;
+    const unsubscribe = editorRef.onStateChange(updateActiveStates);
     updateActiveStates();
     return () => unsubscribe();
   }, [editorRef, updateActiveStates]);
@@ -59,35 +62,39 @@ export const IssueCommentToolbar: React.FC<Props> = (props) => {
                 "pl-0": index === 0,
               })}
             >
-              {toolbarItems[key].map((item) => (
-                <Tooltip
-                  key={item.key}
-                  tooltipContent={
-                    <p className="flex flex-col gap-1 text-center text-xs">
-                      <span className="font-medium">{item.name}</span>
-                      {item.shortcut && <kbd className="text-custom-text-400">{item.shortcut.join(" + ")}</kbd>}
-                    </p>
-                  }
-                >
-                  <button
-                    type="button"
-                    onClick={() => executeCommand(item.key)}
-                    className={cn(
-                      "grid place-items-center aspect-square rounded-sm p-0.5 text-custom-text-400 hover:bg-custom-background-80",
-                      {
-                        "bg-custom-background-80 text-custom-text-100": activeStates[item.key],
-                      }
-                    )}
+              {toolbarItems[key].map((item) => {
+                const isItemActive = activeStates[item.renderKey];
+
+                return (
+                  <Tooltip
+                    key={item.renderKey}
+                    tooltipContent={
+                      <p className="flex flex-col gap-1 text-center text-xs">
+                        <span className="font-medium">{item.name}</span>
+                        {item.shortcut && <kbd className="text-custom-text-400">{item.shortcut.join(" + ")}</kbd>}
+                      </p>
+                    }
                   >
-                    <item.icon
-                      className={cn("h-3.5 w-3.5", {
-                        "text-custom-text-100": activeStates[item.key],
-                      })}
-                      strokeWidth={2.5}
-                    />
-                  </button>
-                </Tooltip>
-              ))}
+                    <button
+                      type="button"
+                      onClick={() => executeCommand(item)}
+                      className={cn(
+                        "grid place-items-center aspect-square rounded-sm p-0.5 text-custom-text-400 hover:bg-custom-background-80",
+                        {
+                          "bg-custom-background-80 text-custom-text-100": isItemActive,
+                        }
+                      )}
+                    >
+                      <item.icon
+                        className={cn("h-3.5 w-3.5", {
+                          "text-custom-text-100": isItemActive,
+                        })}
+                        strokeWidth={2.5}
+                      />
+                    </button>
+                  </Tooltip>
+                );
+              })}
             </div>
           ))}
         </div>

@@ -16,9 +16,7 @@ from plane.utils.issue_search import search_issues
 class IssueSearchEndpoint(BaseAPIView):
     def get(self, request, slug, project_id):
         query = request.query_params.get("search", False)
-        workspace_search = request.query_params.get(
-            "workspace_search", "false"
-        )
+        workspace_search = request.query_params.get("workspace_search", "false")
         parent = request.query_params.get("parent", "false")
         issue_relation = request.query_params.get("issue_relation", "false")
         cycle = request.query_params.get("cycle", "false")
@@ -42,47 +40,50 @@ class IssueSearchEndpoint(BaseAPIView):
             issues = search_issues(query, issues)
 
         if parent == "true" and issue_id:
-            issue = Issue.issue_objects.get(pk=issue_id)
-            issues = issues.filter(
-                ~Q(pk=issue_id), ~Q(pk=issue.parent_id), ~Q(parent_id=issue_id)
-            )
+            issue = Issue.issue_objects.filter(pk=issue_id).first()
+            if issue:
+                issues = issues.filter(
+                    ~Q(pk=issue_id), ~Q(pk=issue.parent_id), ~Q(parent_id=issue_id)
+                )
         if issue_relation == "true" and issue_id:
-            issue = Issue.issue_objects.get(pk=issue_id)
-            issues = issues.filter(
-                ~Q(pk=issue_id),
-                ~Q(
-                    issue_related__issue=issue,
-                    issue_related__deleted_at__isnull=True,
-                ),
-                ~Q(
-                    issue_relation__related_issue=issue,
-                    issue_related__deleted_at__isnull=True,
-                ),
-            )
+            issue = Issue.issue_objects.filter(pk=issue_id).first()
+            if issue:
+                issues = issues.filter(
+                    ~Q(pk=issue_id),
+                    ~(
+                        Q(issue_related__issue=issue)
+                        & Q(issue_related__deleted_at__isnull=True)
+                    ),
+                    ~(
+                        Q(issue_relation__related_issue=issue)
+                        & Q(issue_relation__deleted_at__isnull=True)
+                    ),
+                )
         if sub_issue == "true" and issue_id:
-            issue = Issue.issue_objects.get(pk=issue_id)
-            issues = issues.filter(~Q(pk=issue_id), parent__isnull=True)
+            issue = Issue.issue_objects.filter(pk=issue_id).first()
+            if issue:
+                issues = issues.filter(~Q(pk=issue_id), parent__isnull=True)
             if issue.parent:
                 issues = issues.filter(~Q(pk=issue.parent_id))
 
         if cycle == "true":
-            issues = issues.exclude(issue_cycle__isnull=False)
+            issues = issues.exclude(
+                Q(issue_cycle__isnull=False) & Q(issue_cycle__deleted_at__isnull=True)
+            )
 
         if module:
-            issues = issues.exclude(issue_module__module=module)
+            issues = issues.exclude(
+                Q(issue_module__module=module)
+                & Q(issue_module__deleted_at__isnull=True)
+            )
 
         if target_date == "none":
             issues = issues.filter(target_date__isnull=True)
-        
+
         if ProjectMember.objects.filter(
-            project_id=project_id,
-            member=self.request.user,
-            is_active=True,
-            role=5
+            project_id=project_id, member=self.request.user, is_active=True, role=5
         ).exists():
-            issues = issues.filter(
-                created_by=self.request.user
-        )
+            issues = issues.filter(created_by=self.request.user)
 
         return Response(
             issues.values(

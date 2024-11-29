@@ -1,42 +1,36 @@
 import { ChangeEvent, useCallback, useEffect, useMemo, useRef } from "react";
-import { Node as ProsemirrorNode } from "@tiptap/pm/model";
-import { Editor } from "@tiptap/core";
 import { ImageIcon } from "lucide-react";
 // helpers
 import { cn } from "@/helpers/common";
 // hooks
 import { useUploader, useDropZone, uploadFirstImageAndInsertRemaining } from "@/hooks/use-file-upload";
 // extensions
-import { getImageComponentImageFileMap, ImageAttributes } from "@/extensions/custom-image";
+import { CustoBaseImageNodeViewProps, getImageComponentImageFileMap } from "@/extensions/custom-image";
 
-export const CustomImageUploader = (props: {
-  failedToLoadImage: boolean;
-  editor: Editor;
-  selected: boolean;
+type CustomImageUploaderProps = CustoBaseImageNodeViewProps & {
+  maxFileSize: number;
   loadImageFromFileSystem: (file: string) => void;
+  failedToLoadImage: boolean;
   setIsUploaded: (isUploaded: boolean) => void;
-  node: ProsemirrorNode & {
-    attrs: ImageAttributes;
-  };
-  updateAttributes: (attrs: Record<string, any>) => void;
-  getPos: () => number;
-}) => {
+};
+
+export const CustomImageUploader = (props: CustomImageUploaderProps) => {
   const {
-    selected,
-    failedToLoadImage,
     editor,
+    failedToLoadImage,
+    getPos,
     loadImageFromFileSystem,
+    maxFileSize,
     node,
+    selected,
     setIsUploaded,
     updateAttributes,
-    getPos,
   } = props;
-  // ref
+  // refs
   const fileInputRef = useRef<HTMLInputElement>(null);
-
   const hasTriggeredFilePickerRef = useRef(false);
-  const imageEntityId = node.attrs.id;
-
+  const { id: imageEntityId } = node.attrs;
+  // derived values
   const imageComponentImageFileMap = useMemo(() => getImageComponentImageFileMap(editor), [editor]);
 
   const onUpload = useCallback(
@@ -71,11 +65,17 @@ export const CustomImageUploader = (props: {
     [imageComponentImageFileMap, imageEntityId, updateAttributes, getPos]
   );
   // hooks
-  const { uploading: isImageBeingUploaded, uploadFile } = useUploader({ onUpload, editor, loadImageFromFileSystem });
-  const { draggedInside, onDrop, onDragEnter, onDragLeave } = useDropZone({
-    uploader: uploadFile,
+  const { uploading: isImageBeingUploaded, uploadFile } = useUploader({
     editor,
+    loadImageFromFileSystem,
+    maxFileSize,
+    onUpload,
+  });
+  const { draggedInside, onDrop, onDragEnter, onDragLeave } = useDropZone({
+    editor,
+    maxFileSize,
     pos: getPos(),
+    uploader: uploadFile,
   });
 
   // the meta data of the image component
@@ -102,11 +102,17 @@ export const CustomImageUploader = (props: {
   const onFileChange = useCallback(
     async (e: ChangeEvent<HTMLInputElement>) => {
       e.preventDefault();
-      const fileList = e.target.files;
-      if (!fileList) {
+      const filesList = e.target.files;
+      if (!filesList) {
         return;
       }
-      await uploadFirstImageAndInsertRemaining(editor, fileList, getPos(), uploadFile);
+      await uploadFirstImageAndInsertRemaining({
+        editor,
+        filesList,
+        maxFileSize,
+        pos: getPos(),
+        uploader: uploadFile,
+      });
     },
     [uploadFile, editor, getPos]
   );

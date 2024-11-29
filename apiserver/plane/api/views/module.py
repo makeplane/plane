@@ -21,7 +21,7 @@ from plane.app.permissions import ProjectEntityPermission
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
-    IssueAttachment,
+    FileAsset,
     IssueLink,
     Module,
     ModuleIssue,
@@ -43,9 +43,7 @@ class ModuleAPIEndpoint(BaseAPIView):
     """
 
     model = Module
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
+    permission_classes = [ProjectEntityPermission]
     serializer_class = ModuleSerializer
     webhook_event = "module"
 
@@ -60,9 +58,7 @@ class ModuleAPIEndpoint(BaseAPIView):
             .prefetch_related(
                 Prefetch(
                     "link_module",
-                    queryset=ModuleLink.objects.select_related(
-                        "module", "created_by"
-                    ),
+                    queryset=ModuleLink.objects.select_related("module", "created_by"),
                 )
             )
             .annotate(
@@ -71,9 +67,10 @@ class ModuleAPIEndpoint(BaseAPIView):
                     filter=Q(
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
-                ),
+                )
             )
             .annotate(
                 completed_issues=Count(
@@ -82,6 +79,7 @@ class ModuleAPIEndpoint(BaseAPIView):
                         issue_module__issue__state__group="completed",
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 )
@@ -93,6 +91,7 @@ class ModuleAPIEndpoint(BaseAPIView):
                         issue_module__issue__state__group="cancelled",
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 )
@@ -104,6 +103,7 @@ class ModuleAPIEndpoint(BaseAPIView):
                         issue_module__issue__state__group="started",
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 )
@@ -115,6 +115,7 @@ class ModuleAPIEndpoint(BaseAPIView):
                         issue_module__issue__state__group="unstarted",
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 )
@@ -126,6 +127,7 @@ class ModuleAPIEndpoint(BaseAPIView):
                         issue_module__issue__state__group="backlog",
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 )
@@ -137,10 +139,7 @@ class ModuleAPIEndpoint(BaseAPIView):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
         serializer = ModuleSerializer(
             data=request.data,
-            context={
-                "project_id": project_id,
-                "workspace_id": project.workspace_id,
-            },
+            context={"project_id": project_id, "workspace_id": project.workspace_id},
         )
         if serializer.is_valid():
             if (
@@ -183,9 +182,7 @@ class ModuleAPIEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def patch(self, request, slug, project_id, pk):
-        module = Module.objects.get(
-            pk=pk, project_id=project_id, workspace__slug=slug
-        )
+        module = Module.objects.get(pk=pk, project_id=project_id, workspace__slug=slug)
 
         current_instance = json.dumps(
             ModuleSerializer(module).data, cls=DjangoJSONEncoder
@@ -197,10 +194,7 @@ class ModuleAPIEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         serializer = ModuleSerializer(
-            module,
-            data=request.data,
-            context={"project_id": project_id},
-            partial=True,
+            module, data=request.data, context={"project_id": project_id}, partial=True
         )
         if serializer.is_valid():
             if (
@@ -240,33 +234,21 @@ class ModuleAPIEndpoint(BaseAPIView):
 
     def get(self, request, slug, project_id, pk=None):
         if pk:
-            queryset = (
-                self.get_queryset().filter(archived_at__isnull=True).get(pk=pk)
-            )
+            queryset = self.get_queryset().filter(archived_at__isnull=True).get(pk=pk)
             data = ModuleSerializer(
-                queryset,
-                fields=self.fields,
-                expand=self.expand,
+                queryset, fields=self.fields, expand=self.expand
             ).data
-            return Response(
-                data,
-                status=status.HTTP_200_OK,
-            )
+            return Response(data, status=status.HTTP_200_OK)
         return self.paginate(
             request=request,
             queryset=(self.get_queryset().filter(archived_at__isnull=True)),
             on_results=lambda modules: ModuleSerializer(
-                modules,
-                many=True,
-                fields=self.fields,
-                expand=self.expand,
+                modules, many=True, fields=self.fields, expand=self.expand
             ).data,
         )
 
     def delete(self, request, slug, project_id, pk):
-        module = Module.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=pk
-        )
+        module = Module.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
         if module.created_by_id != request.user.id and (
             not ProjectMember.objects.filter(
                 workspace__slug=slug,
@@ -282,9 +264,7 @@ class ModuleAPIEndpoint(BaseAPIView):
             )
 
         module_issues = list(
-            ModuleIssue.objects.filter(module_id=pk).values_list(
-                "issue", flat=True
-            )
+            ModuleIssue.objects.filter(module_id=pk).values_list("issue", flat=True)
         )
         issue_activity.delay(
             type="module.activity.deleted",
@@ -298,24 +278,15 @@ class ModuleAPIEndpoint(BaseAPIView):
             actor_id=str(request.user.id),
             issue_id=None,
             project_id=str(project_id),
-            current_instance=json.dumps(
-                {
-                    "module_name": str(module.name),
-                }
-            ),
+            current_instance=json.dumps({"module_name": str(module.name)}),
             epoch=int(timezone.now().timestamp()),
         )
         module.delete()
         # Delete the module issues
-        ModuleIssue.objects.filter(
-            module=pk,
-            project_id=project_id,
-        ).delete()
+        ModuleIssue.objects.filter(module=pk, project_id=project_id).delete()
         # Delete the user favorite module
         UserFavorite.objects.filter(
-            entity_type="module",
-            entity_identifier=pk,
-            project_id=project_id,
+            entity_type="module", entity_identifier=pk, project_id=project_id
         ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -332,16 +303,12 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
     webhook_event = "module_issue"
     bulk = True
 
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
+    permission_classes = [ProjectEntityPermission]
 
     def get_queryset(self):
         return (
             ModuleIssue.objects.annotate(
-                sub_issues_count=Issue.issue_objects.filter(
-                    parent=OuterRef("issue")
-                )
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("issue"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -367,11 +334,11 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
     def get(self, request, slug, project_id, module_id):
         order_by = request.GET.get("order_by", "created_at")
         issues = (
-            Issue.issue_objects.filter(issue_module__module_id=module_id)
+            Issue.issue_objects.filter(
+                issue_module__module_id=module_id, issue_module__deleted_at__isnull=True
+            )
             .annotate(
-                sub_issues_count=Issue.issue_objects.filter(
-                    parent=OuterRef("id")
-                )
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -393,8 +360,9 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -405,10 +373,7 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
             request=request,
             queryset=(issues),
             on_results=lambda issues: IssueSerializer(
-                issues,
-                many=True,
-                fields=self.fields,
-                expand=self.expand,
+                issues, many=True, fields=self.fields, expand=self.expand
             ).data,
         )
 
@@ -416,8 +381,7 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
         issues = request.data.get("issues", [])
         if not len(issues):
             return Response(
-                {"error": "Issues are required"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"error": "Issues are required"}, status=status.HTTP_400_BAD_REQUEST
             )
         module = Module.objects.get(
             workspace__slug=slug, project_id=project_id, pk=module_id
@@ -464,16 +428,10 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
                 )
 
         ModuleIssue.objects.bulk_create(
-            record_to_create,
-            batch_size=10,
-            ignore_conflicts=True,
+            record_to_create, batch_size=10, ignore_conflicts=True
         )
 
-        ModuleIssue.objects.bulk_update(
-            records_to_update,
-            ["module"],
-            batch_size=10,
-        )
+        ModuleIssue.objects.bulk_update(records_to_update, ["module"], batch_size=10)
 
         # Capture Issue Activity
         issue_activity.delay(
@@ -509,10 +467,7 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
         issue_activity.delay(
             type="module.activity.deleted",
             requested_data=json.dumps(
-                {
-                    "module_id": str(module_id),
-                    "issues": [str(module_issue.issue_id)],
-                }
+                {"module_id": str(module_id), "issues": [str(module_issue.issue_id)]}
             ),
             actor_id=str(request.user.id),
             issue_id=str(issue_id),
@@ -524,9 +479,7 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
 
 
 class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
+    permission_classes = [ProjectEntityPermission]
 
     def get_queryset(self):
         return (
@@ -540,9 +493,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             .prefetch_related(
                 Prefetch(
                     "link_module",
-                    queryset=ModuleLink.objects.select_related(
-                        "module", "created_by"
-                    ),
+                    queryset=ModuleLink.objects.select_related("module", "created_by"),
                 )
             )
             .annotate(
@@ -551,9 +502,10 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                     filter=Q(
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
-                ),
+                )
             )
             .annotate(
                 completed_issues=Count(
@@ -562,6 +514,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                         issue_module__issue__state__group="completed",
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 )
@@ -573,6 +526,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                         issue_module__issue__state__group="cancelled",
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 )
@@ -584,6 +538,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                         issue_module__issue__state__group="started",
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 )
@@ -595,6 +550,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                         issue_module__issue__state__group="unstarted",
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 )
@@ -606,6 +562,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                         issue_module__issue__state__group="backlog",
                         issue_module__issue__archived_at__isnull=True,
                         issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
                     ),
                     distinct=True,
                 )
@@ -618,22 +575,15 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             request=request,
             queryset=(self.get_queryset()),
             on_results=lambda modules: ModuleSerializer(
-                modules,
-                many=True,
-                fields=self.fields,
-                expand=self.expand,
+                modules, many=True, fields=self.fields, expand=self.expand
             ).data,
         )
 
     def post(self, request, slug, project_id, pk):
-        module = Module.objects.get(
-            pk=pk, project_id=project_id, workspace__slug=slug
-        )
+        module = Module.objects.get(pk=pk, project_id=project_id, workspace__slug=slug)
         if module.status not in ["completed", "cancelled"]:
             return Response(
-                {
-                    "error": "Only completed or cancelled modules can be archived"
-                },
+                {"error": "Only completed or cancelled modules can be archived"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         module.archived_at = timezone.now()
@@ -647,9 +597,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def delete(self, request, slug, project_id, pk):
-        module = Module.objects.get(
-            pk=pk, project_id=project_id, workspace__slug=slug
-        )
+        module = Module.objects.get(pk=pk, project_id=project_id, workspace__slug=slug)
         module.archived_at = None
         module.save()
         return Response(status=status.HTTP_204_NO_CONTENT)

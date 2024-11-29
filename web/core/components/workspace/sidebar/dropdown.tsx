@@ -14,9 +14,15 @@ import { IWorkspace } from "@plane/types";
 // plane ui
 import { Avatar, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 import { GOD_MODE_URL, cn } from "@/helpers/common.helper";
+// helpers
+import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useAppTheme, useUser, useUserPermissions, useUserProfile, useWorkspace } from "@/hooks/store";
+// plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+// plane web helpers
+import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
+// components
 import { WorkspaceLogo } from "../logo";
 
 // Static Data
@@ -50,6 +56,8 @@ export const SidebarDropdown = observer(() => {
   } = useUser();
   const { updateUserProfile } = useUserProfile();
   const { allowPermissions } = useUserPermissions();
+  // derived values
+  const isWorkspaceCreationEnabled = getIsWorkspaceCreationDisabled() === false;
 
   const isUserInstanceAdmin = false;
   const { currentWorkspace: activeWorkspace, workspaces } = useWorkspace();
@@ -110,7 +118,7 @@ export const SidebarDropdown = observer(() => {
               )}
             >
               <div className="flex-grow flex items-center gap-2 truncate">
-                <WorkspaceLogo logo={activeWorkspace?.logo} name={activeWorkspace?.name} />
+                <WorkspaceLogo logo={activeWorkspace?.logo_url} name={activeWorkspace?.name} />
                 {!sidebarCollapsed && (
                   <h4 className="truncate text-base font-medium text-custom-text-100">
                     {activeWorkspace?.name ?? "Loading..."}
@@ -162,17 +170,17 @@ export const SidebarDropdown = observer(() => {
                               <div className="flex items-center justify-start gap-2.5 truncate">
                                 <span
                                   className={`relative flex h-6 w-6 flex-shrink-0 items-center  justify-center p-2 text-xs uppercase ${
-                                    !workspace?.logo && "rounded bg-custom-primary-500 text-white"
+                                    !workspace?.logo_url && "rounded bg-custom-primary-500 text-white"
                                   }`}
                                 >
-                                  {workspace?.logo && workspace.logo !== "" ? (
+                                  {workspace?.logo_url && workspace.logo_url !== "" ? (
                                     <img
-                                      src={workspace.logo}
+                                      src={getFileURL(workspace.logo_url)}
                                       className="absolute left-0 top-0 h-full w-full rounded object-cover"
                                       alt="Workspace Logo"
                                     />
                                   ) : (
-                                    (workspace?.name?.charAt(0) ?? "...")
+                                    (workspace?.name?.[0] ?? "...")
                                   )}
                                 </span>
                                 <h5
@@ -202,15 +210,17 @@ export const SidebarDropdown = observer(() => {
                     )}
                   </div>
                   <div className="w-full flex flex-col items-start justify-start gap-2 px-4 py-2 text-sm">
-                    <Link href="/create-workspace" className="w-full">
-                      <Menu.Item
-                        as="div"
-                        className="flex items-center gap-2 rounded px-2 py-1 text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
-                      >
-                        <PlusSquare strokeWidth={1.75} className="h-4 w-4 flex-shrink-0" />
-                        Create workspace
-                      </Menu.Item>
-                    </Link>
+                    {isWorkspaceCreationEnabled && (
+                      <Link href="/create-workspace" className="w-full">
+                        <Menu.Item
+                          as="div"
+                          className="flex items-center gap-2 rounded px-2 py-1 text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
+                        >
+                          <PlusSquare strokeWidth={1.75} className="h-4 w-4 flex-shrink-0" />
+                          Create workspace
+                        </Menu.Item>
+                      </Link>
+                    )}
                     {userLinks(workspaceSlug?.toString() ?? "").map(
                       (link, index) =>
                         allowPermissions(link.access, EUserPermissionsLevel.WORKSPACE) && (
@@ -255,7 +265,7 @@ export const SidebarDropdown = observer(() => {
           <Menu.Button className="grid place-items-center outline-none" ref={setReferenceElement}>
             <Avatar
               name={currentUser?.display_name}
-              src={currentUser?.avatar || undefined}
+              src={getFileURL(currentUser?.avatar_url ?? "")}
               size={24}
               shape="square"
               className="!text-base"

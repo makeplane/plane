@@ -96,3 +96,17 @@ export type TInboxIssuePaginationInfo = TPaginationInfo & {
 export type TInboxIssueWithPagination = TInboxIssuePaginationInfo & {
   results: TInboxIssue[];
 };
+
+export type TInboxForm = {
+  anchor: string;
+  id: string;
+  is_in_app_enabled: boolean;
+  is_form_enabled: boolean;
+};
+
+export type TInboxIssueForm = {
+  name: string;
+  description: string;
+  username: string;
+  email: string;
+};

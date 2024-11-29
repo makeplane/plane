@@ -49,7 +49,7 @@ export interface IList {
   isCompletedCycle?: boolean;
   loadMoreIssues: (groupId?: string) => void;
   handleCollapsedGroups: (value: string) => void;
-  collapsedGroups : TIssueKanbanFilters;
+  collapsedGroups: TIssueKanbanFilters;
 }
 
 export const List: React.FC<IList> = observer((props) => {
@@ -71,7 +71,7 @@ export const List: React.FC<IList> = observer((props) => {
     isCompletedCycle = false,
     loadMoreIssues,
     handleCollapsedGroups,
-    collapsedGroups
+    collapsedGroups,
   } = props;
 
   const storeType = useIssueStoreType();
@@ -133,7 +133,6 @@ export const List: React.FC<IList> = observer((props) => {
   } else {
     entities = orderedGroups;
   }
-
   return (
     <div className="relative size-full flex flex-col">
       {groups && (

@@ -8,11 +8,11 @@ import { Plus } from "lucide-react";
 import { Tooltip } from "@plane/ui";
 // helpers
 import { renderFormattedDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-// types
-import { usePlatformOS } from "@/hooks/use-platform-os";
-import { useGanttChart } from "../hooks/use-gantt-chart";
-import { IBlockUpdateData, IGanttBlock } from "../types";
 // hooks
+import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
+//
+import { IBlockUpdateData, IGanttBlock } from "../types";
 
 type Props = {
   block: IGanttBlock;
@@ -30,16 +30,20 @@ export const ChartAddBlock: React.FC<Props> = observer((props) => {
   // hooks
   const { isMobile } = usePlatformOS();
   // chart hook
-  const { currentViewData } = useGanttChart();
+  const { currentViewData, currentView } = useTimeLineChartStore();
 
   const handleButtonClick = () => {
     if (!currentViewData) return;
 
-    const { startDate: chartStartDate, width } = currentViewData.data;
-    const columnNumber = buttonXPosition / width;
+    const { startDate: chartStartDate, dayWidth } = currentViewData.data;
+    const columnNumber = buttonXPosition / dayWidth;
+
+    let numberOfDays = 1;
+
+    if (currentView === "quarter") numberOfDays = 7;
 
     const startDate = addDays(chartStartDate, columnNumber);
-    const endDate = addDays(startDate, 1);
+    const endDate = addDays(startDate, numberOfDays);
 
     blockUpdateHandler(block.data, {
       start_date: renderFormattedPayloadDate(startDate) ?? undefined,
@@ -57,8 +61,8 @@ export const ChartAddBlock: React.FC<Props> = observer((props) => {
 
       setButtonXPosition(e.offsetX);
 
-      const { startDate: chartStartDate, width } = currentViewData.data;
-      const columnNumber = buttonXPosition / width;
+      const { startDate: chartStartDate, dayWidth } = currentViewData.data;
+      const columnNumber = buttonXPosition / dayWidth;
 
       const startDate = addDays(chartStartDate, columnNumber);
       setButtonStartDate(startDate);

@@ -25,24 +25,24 @@ app.conf.beat_schedule = {
         "schedule": crontab(hour=0, minute=0),
     },
     "check-every-day-to-delete-file-asset": {
-        "task": "plane.bgtasks.file_asset_task.delete_file_asset",
+        "task": "plane.bgtasks.file_asset_task.delete_unuploaded_file_asset",
         "schedule": crontab(hour=0, minute=0),
     },
     "check-every-five-minutes-to-send-email-notifications": {
         "task": "plane.bgtasks.email_notification_task.stack_email_notification",
         "schedule": crontab(minute="*/5"),
     },
-    "check-every-day-to-delete-api-logs": {
-        "task": "plane.bgtasks.api_logs_task.delete_api_logs",
-        "schedule": crontab(hour=0, minute=0),
-    },
     "check-every-day-to-delete-hard-delete": {
         "task": "plane.bgtasks.deletion_task.hard_delete",
         "schedule": crontab(hour=0, minute=0),
     },
+    "check-every-day-to-delete-api-logs": {
+        "task": "plane.bgtasks.api_logs_task.delete_api_logs",
+        "schedule": crontab(hour=0, minute=0),
+    },
     "run-every-6-hours-for-instance-trace": {
         "task": "plane.license.bgtasks.tracer.instance_traces",
-        "schedule": crontab(hour="*/6"),
+        "schedule": crontab(hour="*/6", minute=0),
     },
 }
 

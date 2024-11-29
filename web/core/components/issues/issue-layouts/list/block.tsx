@@ -77,7 +77,13 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
     issue.project_id &&
     issue.id &&
     !getIsIssuePeeked(issue.id) &&
-    setPeekIssue({ workspaceSlug, projectId: issue.project_id, issueId: issue.id, nestingLevel: nestingLevel });
+    setPeekIssue({
+      workspaceSlug,
+      projectId: issue.project_id,
+      issueId: issue.id,
+      nestingLevel: nestingLevel,
+      isArchived: !!issue.archived_at,
+    });
 
   const issue = issuesMap[issueId];
   const subIssuesCount = issue?.sub_issues_count ?? 0;

@@ -12,6 +12,7 @@ import { ActivitySettingsLoader } from "@/components/ui";
 import { USER_ACTIVITY } from "@/constants/fetch-keys";
 // helpers
 import { calculateTimeAgo } from "@/helpers/date-time.helper";
+import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useUser } from "@/hooks/store";
 // services
@@ -66,9 +67,9 @@ export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
                     <div className="relative px-1">
                       {activityItem.field ? (
                         activityItem.new_value === "restore" && <History className="h-3.5 w-3.5 text-custom-text-200" />
-                      ) : activityItem.actor_detail.avatar && activityItem.actor_detail.avatar !== "" ? (
+                      ) : activityItem.actor_detail.avatar_url && activityItem.actor_detail.avatar_url !== "" ? (
                         <img
-                          src={activityItem.actor_detail.avatar}
+                          src={getFileURL(activityItem.actor_detail.avatar_url)}
                           alt={activityItem.actor_detail.display_name}
                           height={30}
                           width={30}
@@ -102,6 +103,8 @@ export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
                             activityItem?.new_value !== "" ? activityItem.new_value : activityItem.old_value
                           }
                           containerClassName="text-xs bg-custom-background-100"
+                          workspaceSlug={activityItem?.workspace_detail?.slug.toString() ?? ""}
+                          projectId={activityItem.project ?? ""}
                         />
                       </div>
                     </div>
@@ -136,9 +139,10 @@ export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
                                   ) : (
                                     <ActivityIcon activity={activityItem} />
                                   )
-                                ) : activityItem.actor_detail.avatar && activityItem.actor_detail.avatar !== "" ? (
+                                ) : activityItem.actor_detail.avatar_url &&
+                                  activityItem.actor_detail.avatar_url !== "" ? (
                                   <img
-                                    src={activityItem.actor_detail.avatar}
+                                    src={getFileURL(activityItem.actor_detail.avatar_url)}
                                     alt={activityItem.actor_detail.display_name}
                                     height={24}
                                     width={24}

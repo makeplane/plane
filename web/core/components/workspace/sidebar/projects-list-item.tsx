@@ -287,7 +287,6 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
 
   useEffect(() => {
     if (URLProjectId === project.id) setIsProjectListOpen(true);
-    else setIsProjectListOpen(false);
   }, [URLProjectId]);
 
   const handleItemClick = () => {
@@ -299,12 +298,13 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
     <>
       <PublishProjectModal isOpen={publishModalOpen} project={project} onClose={() => setPublishModal(false)} />
       <LeaveProjectModal project={project} isOpen={leaveProjectModalOpen} onClose={() => setLeaveProjectModal(false)} />
-      <Disclosure key={`${project.id}_${URLProjectId}`} ref={projectRef} defaultOpen={isProjectListOpen} as="div">
+      <Disclosure key={`${project.id}_${URLProjectId}`}  defaultOpen={isProjectListOpen} as="div">
         <div
           id={`sidebar-${projectId}-${projectListType}`}
           className={cn("relative", {
             "bg-custom-sidebar-background-80 opacity-60": isDragging,
           })}
+          ref={projectRef}
         >
           <DropIndicator classNames="absolute top-0" isVisible={instruction === "DRAG_OVER"} />
           <div
@@ -428,7 +428,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                       </div>
                     </CustomMenu.MenuItem>
                   )}
-                  {isAuthorized && (
+                  {/* {isAuthorized && (
                     <CustomMenu.MenuItem>
                       <Link href={`/${workspaceSlug}/projects/${project?.id}/draft-issues/`}>
                         <div className="flex items-center justify-start gap-2">
@@ -437,7 +437,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                         </div>
                       </Link>
                     </CustomMenu.MenuItem>
-                  )}
+                  )} */}
                   <CustomMenu.MenuItem onClick={handleCopyText}>
                     <span className="flex items-center justify-start gap-2">
                       <LinkIcon className="h-3.5 w-3.5 stroke-[1.5]" />

@@ -1,10 +1,9 @@
 import isEmpty from "lodash/isEmpty";
 import { autorun, makeObservable, observable } from "mobx";
 import { ICycle, IIssueLabel, IModule, IProject, IState, IUserLite } from "@plane/types";
-// plane web root store
-import { RootStore } from "@/plane-web/store/root.store";
 // root store
 import { IWorkspaceMembership } from "@/store/member/workspace-member.store";
+import { CoreRootStore } from "../root.store";
 import { IStateStore, StateStore } from "../state.store";
 // issues data store
 import { IArchivedIssuesFilter, ArchivedIssuesFilter, IArchivedIssues, ArchivedIssues } from "./archived";
@@ -23,7 +22,13 @@ import {
   IProjectViewIssues,
   ProjectViewIssues,
 } from "./project-views";
-import { IWorkspaceIssuesFilter, WorkspaceIssuesFilter, IWorkspaceIssues, WorkspaceIssues } from "./workspace";
+import { WorkspaceIssuesFilter, IWorkspaceIssues, WorkspaceIssues, IWorkspaceIssuesFilter } from "./workspace";
+import {
+  IWorkspaceDraftIssues,
+  IWorkspaceDraftIssuesFilter,
+  WorkspaceDraftIssues,
+  WorkspaceDraftIssuesFilter,
+} from "./workspace-draft";
 
 export interface IIssueRootStore {
   currentUserId: string | undefined;
@@ -44,7 +49,7 @@ export interface IIssueRootStore {
   moduleMap: Record<string, IModule> | undefined;
   cycleMap: Record<string, ICycle> | undefined;
 
-  rootStore: RootStore;
+  rootStore: CoreRootStore;
 
   issues: IIssueStore;
 
@@ -54,6 +59,9 @@ export interface IIssueRootStore {
 
   workspaceIssuesFilter: IWorkspaceIssuesFilter;
   workspaceIssues: IWorkspaceIssues;
+
+  workspaceDraftIssuesFilter: IWorkspaceDraftIssuesFilter;
+  workspaceDraftIssues: IWorkspaceDraftIssues;
 
   profileIssuesFilter: IProfileIssuesFilter;
   profileIssues: IProfileIssues;
@@ -99,7 +107,7 @@ export class IssueRootStore implements IIssueRootStore {
   moduleMap: Record<string, IModule> | undefined = undefined;
   cycleMap: Record<string, ICycle> | undefined = undefined;
 
-  rootStore: RootStore;
+  rootStore: CoreRootStore;
 
   issues: IIssueStore;
 
@@ -109,6 +117,9 @@ export class IssueRootStore implements IIssueRootStore {
 
   workspaceIssuesFilter: IWorkspaceIssuesFilter;
   workspaceIssues: IWorkspaceIssues;
+
+  workspaceDraftIssuesFilter: IWorkspaceDraftIssuesFilter;
+  workspaceDraftIssues: IWorkspaceDraftIssues;
 
   profileIssuesFilter: IProfileIssuesFilter;
   profileIssues: IProfileIssues;
@@ -134,7 +145,7 @@ export class IssueRootStore implements IIssueRootStore {
   issueKanBanView: IIssueKanBanViewStore;
   issueCalendarView: ICalendarStore;
 
-  constructor(rootStore: RootStore) {
+  constructor(rootStore: CoreRootStore) {
     makeObservable(this, {
       workspaceSlug: observable.ref,
       projectId: observable.ref,
@@ -189,6 +200,9 @@ export class IssueRootStore implements IIssueRootStore {
 
     this.profileIssuesFilter = new ProfileIssuesFilter(this);
     this.profileIssues = new ProfileIssues(this, this.profileIssuesFilter);
+
+    this.workspaceDraftIssuesFilter = new WorkspaceDraftIssuesFilter(this);
+    this.workspaceDraftIssues = new WorkspaceDraftIssues(this);
 
     this.projectIssuesFilter = new ProjectIssuesFilter(this);
     this.projectIssues = new ProjectIssues(this, this.projectIssuesFilter);

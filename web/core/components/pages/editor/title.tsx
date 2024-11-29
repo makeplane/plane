@@ -1,6 +1,6 @@
 "use client";
 
-import { CSSProperties, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 // editor
 import { EditorRefApi } from "@plane/editor";
@@ -23,27 +23,21 @@ export const PageEditorTitle: React.FC<Props> = observer((props) => {
   // states
   const [isLengthVisible, setIsLengthVisible] = useState(false);
   // page filters
-  const { fontSize, fontStyle } = usePageFilters();
+  const { fontSize } = usePageFilters();
   // ui
-  const titleClassName = cn("bg-transparent tracking-[-2%] font-semibold", {
-    "text-[1.6rem] leading-[1.8rem]": fontSize === "small-font",
-    "text-[2rem] leading-[2.25rem]": fontSize === "large-font",
+  const titleClassName = cn("bg-transparent tracking-[-2%] font-bold", {
+    "text-[1.6rem] leading-[1.9rem]": fontSize === "small-font",
+    "text-[2rem] leading-[2.375rem]": fontSize === "large-font",
   });
-  const titleStyle: CSSProperties = {
-    fontFamily: fontStyle,
-  };
 
   return (
     <>
       {readOnly ? (
-        <h6 className={cn(titleClassName, "break-words")} style={titleStyle}>
-          {title}
-        </h6>
+        <h6 className={cn(titleClassName, "break-words")}>{title}</h6>
       ) : (
         <>
           <TextArea
             className={cn(titleClassName, "w-full outline-none p-0 border-none resize-none rounded-none")}
-            style={titleStyle}
             placeholder="Untitled"
             onKeyDown={(e) => {
               if (e.key === "Enter") {

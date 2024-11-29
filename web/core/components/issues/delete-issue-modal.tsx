@@ -2,19 +2,21 @@
 
 import { useEffect, useState } from "react";
 // types
-import { TIssue } from "@plane/types";
+import { TDeDupeIssue, TIssue } from "@plane/types";
 // ui
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 import { PROJECT_ERROR_MESSAGES } from "@/constants/project";
 // hooks
 import { useIssues, useProject, useUser, useUserPermissions } from "@/hooks/store";
+// plane-web
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
   dataId?: string | null | undefined;
-  data?: TIssue;
+  data?: TIssue | TDeDupeIssue;
   isSubIssue?: boolean;
   onSubmit?: () => Promise<void>;
 };

@@ -2,10 +2,10 @@
 
 import { FC, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-// icons
 import { Info, Lock } from "lucide-react";
+// plane types
 import { IProject, IWorkspace } from "@plane/types";
-// ui
+// plane ui
 import {
   Button,
   CustomSelect,
@@ -16,6 +16,7 @@ import {
   CustomEmojiIconPicker,
   EmojiIconPickerTypes,
   Tooltip,
+  // CustomSearchSelect,
 } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
@@ -24,14 +25,15 @@ import { ImagePickerPopover } from "@/components/core";
 import { PROJECT_UPDATED } from "@/constants/event-tracker";
 import { NETWORK_CHOICES } from "@/constants/project";
 // helpers
+// import { TTimezone, TIME_ZONES } from "@/constants/timezones";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
-// hooks
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
+import { getFileURL } from "@/helpers/file.helper";
+// hooks
 import { useEventTracker, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
 import { ProjectService } from "@/services/project";
-// types
 export interface IProjectDetailsForm {
   project: IProject;
   workspaceSlug: string;
@@ -64,6 +66,23 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       workspace: (project.workspace as IWorkspace).id,
     },
   });
+  // derived values
+  const currentNetwork = NETWORK_CHOICES.find((n) => n.key === project?.network);
+  // const getTimeZoneLabel = (timezone: TTimezone | undefined) => {
+  //   if (!timezone) return undefined;
+  //   return (
+  //     <div className="flex gap-1.5">
+  //       <span className="text-custom-text-400">{timezone.gmtOffset}</span>
+  //       <span className="text-custom-text-200">{timezone.name}</span>
+  //     </div>
+  //   );
+  // };
+  // const timeZoneOptions = TIME_ZONES.map((timeZone) => ({
+  //   value: timeZone.value,
+  //   query: timeZone.name + " " + timeZone.gmtOffset + " " + timeZone.value,
+  //   content: getTimeZoneLabel(timeZone),
+  // }));
+  const coverImage = watch("cover_image_url");
 
   useEffect(() => {
     if (project && projectId !== getValues("id")) {
@@ -74,12 +93,15 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [project, projectId]);
+
+  // handlers
   const handleIdentifierChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     const alphanumericValue = value.replace(/[^a-zA-Z0-9]/g, "");
     const formattedValue = alphanumericValue.toUpperCase();
     setValue("identifier", formattedValue);
   };
+
   const handleUpdateChange = async (payload: Partial<IProject>) => {
     if (!workspaceSlug || !project) return;
     return updateProject(workspaceSlug.toString(), project.id, payload)
@@ -113,6 +135,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
         });
       });
   };
+
   const onSubmit = async (formData: IProject) => {
     if (!workspaceSlug) return;
     setIsLoading(true);
@@ -121,9 +144,15 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       network: formData.network,
       identifier: formData.identifier,
       description: formData.description,
-      cover_image: formData.cover_image,
+
       logo_props: formData.logo_props,
+      // timezone: formData.timezone,
     };
+    // if unsplash or a pre-defined image is uploaded, delete the old uploaded asset
+    if (formData.cover_image_url?.startsWith("http")) {
+      payload.cover_image = formData.cover_image_url;
+      payload.cover_image_asset = null;
+    }
 
     if (project.identifier !== formData.identifier)
       await projectService
@@ -137,13 +166,16 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       setIsLoading(false);
     }, 300);
   };
-  const currentNetwork = NETWORK_CHOICES.find((n) => n.key === project?.network);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="relative h-44 w-full">
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-        <img src={watch("cover_image")!} alt={watch("cover_image")!} className="h-44 w-full rounded-md object-cover" />
+        <img
+          src={getFileURL(coverImage ?? "")}
+          alt="Project cover image"
+          className="h-44 w-full rounded-md object-cover"
+        />
         <div className="z-5 absolute bottom-4 flex w-full items-end justify-between gap-3 px-4">
           <div className="flex flex-grow gap-3 truncate">
             <Controller
@@ -196,14 +228,15 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
             <div>
               <Controller
                 control={control}
-                name="cover_image"
+                name="cover_image_url"
                 render={({ field: { value, onChange } }) => (
                   <ImagePickerPopover
-                    label={"Change cover"}
+                    label="Change cover"
                     control={control}
                     onChange={onChange}
                     value={value}
                     disabled={!isAdmin}
+                    projectId={project.id}
                   />
                 )}
               />
@@ -260,8 +293,8 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
             )}
           />
         </div>
-        <div className="flex w-full justify-between gap-10">
-          <div className="flex w-1/2 flex-col gap-1">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="flex flex-col gap-1">
             <h4 className="text-sm">Project ID</h4>
             <div className="relative">
               <Controller
@@ -309,14 +342,13 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
               <>{errors?.identifier?.message}</>
             </span>
           </div>
-          <div className="flex w-1/2 flex-col gap-1">
+          <div className="flex flex-col gap-1">
             <h4 className="text-sm">Network</h4>
             <Controller
               name="network"
               control={control}
               render={({ field: { value, onChange } }) => {
                 const selectedNetwork = NETWORK_CHOICES.find((n) => n.key === value);
-
                 return (
                   <CustomSelect
                     value={value}
@@ -354,6 +386,31 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
               }}
             />
           </div>
+          {/* <div className="flex flex-col gap-1 col-span-1 sm:col-span-2 xl:col-span-1">
+            <h4 className="text-sm">Project Timezone</h4>
+            <Controller
+              name="timezone"
+              control={control}
+              rules={{ required: "Please select a timezone" }}
+              render={({ field: { value, onChange } }) => (
+                <CustomSearchSelect
+                  value={value}
+                  label={
+                    value
+                      ? (getTimeZoneLabel(TIME_ZONES.find((t) => t.value === value)) ?? value)
+                      : "Select a timezone"
+                  }
+                  options={timeZoneOptions}
+                  onChange={onChange}
+                  buttonClassName={errors.timezone ? "border-red-500" : "border-none"}
+                  className="rounded-md border-[0.5px] !border-custom-border-200"
+                  optionsClassName="w-72"
+                  input
+                />
+              )}
+            />
+            {errors.timezone && <span className="text-xs text-red-500">{errors.timezone.message}</span>}
+          </div> */}
         </div>
         <div className="flex items-center justify-between py-2">
           <>

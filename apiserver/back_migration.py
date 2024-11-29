@@ -26,9 +26,7 @@ def update_description():
             updated_issues.append(issue)
 
         Issue.objects.bulk_update(
-            updated_issues,
-            ["description_html", "description_stripped"],
-            batch_size=100,
+            updated_issues, ["description_html", "description_stripped"], batch_size=100
         )
         print("Success")
     except Exception as e:
@@ -42,9 +40,7 @@ def update_comments():
         updated_issue_comments = []
 
         for issue_comment in issue_comments:
-            issue_comment.comment_html = (
-                f"<p>{issue_comment.comment_stripped}</p>"
-            )
+            issue_comment.comment_html = f"<p>{issue_comment.comment_stripped}</p>"
             updated_issue_comments.append(issue_comment)
 
         IssueComment.objects.bulk_update(
@@ -103,9 +99,7 @@ def updated_issue_sort_order():
             issue.sort_order = issue.sequence_id * random.randint(100, 500)
             updated_issues.append(issue)
 
-        Issue.objects.bulk_update(
-            updated_issues, ["sort_order"], batch_size=100
-        )
+        Issue.objects.bulk_update(updated_issues, ["sort_order"], batch_size=100)
         print("Success")
     except Exception as e:
         print(e)
@@ -143,9 +137,7 @@ def update_project_cover_images():
             project.cover_image = project_cover_images[random.randint(0, 19)]
             updated_projects.append(project)
 
-        Project.objects.bulk_update(
-            updated_projects, ["cover_image"], batch_size=100
-        )
+        Project.objects.bulk_update(updated_projects, ["cover_image"], batch_size=100)
         print("Success")
     except Exception as e:
         print(e)
@@ -194,9 +186,7 @@ def update_label_color():
 
 def create_slack_integration():
     try:
-        _ = Integration.objects.create(
-            provider="slack", network=2, title="Slack"
-        )
+        _ = Integration.objects.create(provider="slack", network=2, title="Slack")
         print("Success")
     except Exception as e:
         print(e)
@@ -222,16 +212,12 @@ def update_integration_verified():
 
 def update_start_date():
     try:
-        issues = Issue.objects.filter(
-            state__group__in=["started", "completed"]
-        )
+        issues = Issue.objects.filter(state__group__in=["started", "completed"])
         updated_issues = []
         for issue in issues:
             issue.start_date = issue.created_at.date()
             updated_issues.append(issue)
-        Issue.objects.bulk_update(
-            updated_issues, ["start_date"], batch_size=500
-        )
+        Issue.objects.bulk_update(updated_issues, ["start_date"], batch_size=500)
         print("Success")
     except Exception as e:
         print(e)

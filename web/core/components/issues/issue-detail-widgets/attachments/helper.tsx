@@ -1,26 +1,42 @@
 "use client";
 import { useMemo } from "react";
+// plane ui
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
-// type
-import { TAttachmentOperations } from "@/components/issues/attachment";
 // hooks
 import { useEventTracker, useIssueDetail } from "@/hooks/store";
+// types
+import { TAttachmentUploadStatus } from "@/store/issue/issue-details/attachment.store";
+
+export type TAttachmentOperations = {
+  create: (file: File) => Promise<void>;
+  remove: (attachmentId: string) => Promise<void>;
+};
+
+export type TAttachmentSnapshot = {
+  uploadStatus: TAttachmentUploadStatus[] | undefined;
+};
+
+export type TAttachmentHelpers = {
+  operations: TAttachmentOperations;
+  snapshot: TAttachmentSnapshot;
+};
 
 export const useAttachmentOperations = (
   workspaceSlug: string,
   projectId: string,
   issueId: string
-): TAttachmentOperations => {
-  const { createAttachment, removeAttachment } = useIssueDetail();
+): TAttachmentHelpers => {
+  const {
+    attachment: { createAttachment, removeAttachment, getAttachmentsUploadStatusByIssueId },
+  } = useIssueDetail();
   const { captureIssueEvent } = useEventTracker();
 
-  const handleAttachmentOperations: TAttachmentOperations = useMemo(
+  const attachmentOperations: TAttachmentOperations = useMemo(
     () => ({
-      create: async (data: FormData) => {
+      create: async (file) => {
         try {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
-
-          const attachmentUploadPromise = createAttachment(workspaceSlug, projectId, issueId, data);
+          const attachmentUploadPromise = createAttachment(workspaceSlug, projectId, issueId, file);
           setPromiseToast(attachmentUploadPromise, {
             loading: "Uploading attachment...",
             success: {
@@ -47,9 +63,10 @@ export const useAttachmentOperations = (
             eventName: "Issue attachment added",
             payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
           });
+          throw error;
         }
       },
-      remove: async (attachmentId: string) => {
+      remove: async (attachmentId) => {
         try {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
           await removeAttachment(workspaceSlug, projectId, issueId, attachmentId);
@@ -83,8 +100,12 @@ export const useAttachmentOperations = (
         }
       },
     }),
-    [workspaceSlug, projectId, issueId, createAttachment, removeAttachment]
+    [captureIssueEvent, workspaceSlug, projectId, issueId, createAttachment, removeAttachment]
   );
+  const attachmentsUploadStatus = getAttachmentsUploadStatusByIssueId(issueId);
 
-  return handleAttachmentOperations;
+  return {
+    operations: attachmentOperations,
+    snapshot: { uploadStatus: attachmentsUploadStatus },
+  };
 };

@@ -5,7 +5,7 @@ import { computedFn } from "mobx-utils";
 // helpers
 import { orderProjects, shouldFilterProject } from "@/helpers/project.helper";
 // services
-import { TProject } from "@/plane-web/types/projects/projects";
+import { TProject } from "@/plane-web/types/projects";
 import { IssueLabelService, IssueService } from "@/services/issue";
 import { ProjectService, ProjectStateService, ProjectArchiveService } from "@/services/project";
 // store
@@ -13,6 +13,7 @@ import { CoreRootStore } from "../root.store";
 
 export interface IProjectStore {
   // observables
+  isUpdatingProject: boolean;
   loader: boolean;
   projectMap: {
     [projectId: string]: TProject; // projectId: project Info
@@ -47,6 +48,7 @@ export interface IProjectStore {
 
 export class ProjectStore implements IProjectStore {
   // observables
+  isUpdatingProject: boolean = false;
   loader: boolean = false;
   projectMap: {
     [projectId: string]: TProject; // projectId: project Info
@@ -63,6 +65,7 @@ export class ProjectStore implements IProjectStore {
   constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
       // observables
+      isUpdatingProject: observable,
       loader: observable.ref,
       projectMap: observable,
       // computed
@@ -380,13 +383,20 @@ export class ProjectStore implements IProjectStore {
       const projectDetails = this.getProjectById(projectId);
       runInAction(() => {
         set(this.projectMap, [projectId], { ...projectDetails, ...data });
+        this.isUpdatingProject = true;
       });
       const response = await this.projectService.updateProject(workspaceSlug, projectId, data);
+      runInAction(() => {
+        this.isUpdatingProject = false;
+      });
       return response;
     } catch (error) {
       console.log("Failed to create project from project store");
       this.fetchProjects(workspaceSlug);
       this.fetchProjectDetails(workspaceSlug, projectId);
+      runInAction(() => {
+        this.isUpdatingProject = false;
+      });
       throw error;
     }
   };
@@ -404,6 +414,7 @@ export class ProjectStore implements IProjectStore {
       runInAction(() => {
         delete this.projectMap[projectId];
         if (this.rootStore.favorite.entityMap[projectId]) this.rootStore.favorite.removeFavoriteFromStore(projectId);
+        delete this.rootStore.user.permission.workspaceProjectsPermissions[workspaceSlug][projectId];
       });
     } catch (error) {
       console.log("Failed to delete project from project store");

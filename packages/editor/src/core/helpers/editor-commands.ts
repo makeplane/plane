@@ -7,8 +7,8 @@ import { findTableAncestor } from "@/helpers/common";
 import { InsertImageComponentProps } from "@/extensions";
 
 export const setText = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).clearNodes().run();
-  else editor.chain().focus().clearNodes().run();
+  if (range) editor.chain().focus().deleteRange(range).setNode("paragraph").run();
+  else editor.chain().focus().setNode("paragraph").run();
 };
 
 export const toggleHeadingOne = (editor: Editor, range?: Range) => {
@@ -153,4 +153,43 @@ export const unsetLinkEditor = (editor: Editor) => {
 
 export const setLinkEditor = (editor: Editor, url: string) => {
   editor.chain().focus().setLink({ href: url }).run();
+};
+
+export const toggleTextColor = (color: string | undefined, editor: Editor, range?: Range) => {
+  if (color) {
+    if (range) editor.chain().focus().deleteRange(range).setTextColor(color).run();
+    else editor.chain().focus().setTextColor(color).run();
+  } else {
+    if (range) editor.chain().focus().deleteRange(range).unsetTextColor().run();
+    else editor.chain().focus().unsetTextColor().run();
+  }
+};
+
+export const toggleBackgroundColor = (color: string | undefined, editor: Editor, range?: Range) => {
+  if (color) {
+    if (range) {
+      editor.chain().focus().deleteRange(range).setBackgroundColor(color).run();
+    } else {
+      editor.chain().focus().setBackgroundColor(color).run();
+    }
+  } else {
+    if (range) {
+      editor.chain().focus().deleteRange(range).unsetBackgroundColor().run();
+    } else {
+      editor.chain().focus().unsetBackgroundColor().run();
+    }
+  }
+};
+
+export const setTextAlign = (alignment: string, editor: Editor) => {
+  editor.chain().focus().setTextAlign(alignment).run();
+};
+
+export const insertHorizontalRule = (editor: Editor, range?: Range) => {
+  if (range) editor.chain().focus().deleteRange(range).setHorizontalRule().run();
+  else editor.chain().focus().setHorizontalRule().run();
+};
+export const insertCallout = (editor: Editor, range?: Range) => {
+  if (range) editor.chain().focus().deleteRange(range).insertCallout().run();
+  else editor.chain().focus().insertCallout().run();
 };

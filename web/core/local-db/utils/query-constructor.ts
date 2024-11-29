@@ -18,6 +18,8 @@ export const SPECIAL_ORDER_BY = {
   "-issue_cycle__cycle__name": "cycles",
   state__name: "states",
   "-state__name": "states",
+  estimate_point__key: "estimate_point",
+  "-estimate_point__key": "estimate_point",
 };
 export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: string, queries: any) => {
   const {
@@ -25,7 +27,7 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
     per_page,
     group_by,
     sub_group_by,
-    order_by = "created_at",
+    order_by = "-created_at",
     ...otherProps
   } = translateQueryParams(queries);
 
@@ -48,8 +50,6 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
 
     `;
 
-    log("###", sql);
-
     return sql;
   }
   if (group_by) {
@@ -64,8 +64,6 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
         WHERE rank <= ${per_page}
     `;
 
-    log("###", sql);
-
     return sql;
   }
 
@@ -78,8 +76,10 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
     sql += `SELECT fi.* , `;
     if (order_by.includes("assignee")) {
       sql += ` s.first_name as ${name} `;
+    } else if (order_by.includes("estimate")) {
+      sql += ` s.key as ${name} `;
     } else {
-      sql += `  s.name as ${name} `;
+      sql += ` s.name as ${name} `;
     }
     sql += `FROM fi `;
     if (order_by && Object.keys(SPECIAL_ORDER_BY).includes(order_by)) {
@@ -87,7 +87,7 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
         sql += ` 
         LEFT JOIN cycles s on fi.cycle_id = s.id`;
       }
-      if (order_by.includes("estimate_point")) {
+      if (order_by.includes("estimate_point__key")) {
         sql += `
         LEFT JOIN estimate_points s on fi.estimate_point = s.id`;
       }
@@ -120,7 +120,6 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
     `;
     sql += ` group by i.id ${orderByString} LIMIT ${pageSize} OFFSET ${offset * 1 + page * pageSize};`;
 
-    log("######$$$", sql);
     return sql;
   }
 
@@ -149,7 +148,6 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
   // Add offset and paging to query
   sql += ` LIMIT  ${pageSize} OFFSET ${offset * 1 + page * pageSize};`;
 
-  log("$$$", sql);
   return sql;
 };
 

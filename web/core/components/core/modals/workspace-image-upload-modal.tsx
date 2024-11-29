@@ -1,23 +1,27 @@
 "use client";
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useDropzone } from "react-dropzone";
 import { UserCircle2 } from "lucide-react";
 import { Transition, Dialog } from "@headlessui/react";
+// plane types
+import { EFileAssetType } from "@plane/types/src/enums";
 // hooks
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button } from "@plane/ui";
 // constants
-import { MAX_FILE_SIZE } from "@/constants/common";
+import { MAX_STATIC_FILE_SIZE } from "@/constants/common";
+// helpers
+import { getAssetIdFromUrl, getFileURL } from "@/helpers/file.helper";
+import { checkURLValidity } from "@/helpers/string.helper";
 // hooks
-import { useWorkspace, useInstance } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store";
 // services
 import { FileService } from "@/services/file.service";
 
 type Props = {
-  handleRemove?: () => void;
+  handleRemove: () => Promise<void>;
   isOpen: boolean;
-  isRemoving: boolean;
   onClose: () => void;
   onSuccess: (url: string) => void;
   value: string | null;
@@ -27,16 +31,15 @@ type Props = {
 const fileService = new FileService();
 
 export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
-  const { value, onSuccess, isOpen, onClose, isRemoving, handleRemove } = props;
+  const { handleRemove, isOpen, onClose, onSuccess, value } = props;
   // states
   const [image, setImage] = useState<File | null>(null);
+  const [isRemoving, setIsRemoving] = useState(false);
   const [isImageUploading, setIsImageUploading] = useState(false);
   // router
   const { workspaceSlug } = useParams();
-  const pathname = usePathname();
   // store hooks
-  const { config } = useInstance();
-  const { currentWorkspace } = useWorkspace();
+  const { currentWorkspace, updateWorkspaceLogo } = useWorkspace();
 
   const onDrop = (acceptedFiles: File[]) => setImage(acceptedFiles[0]);
 
@@ -45,45 +48,58 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
     accept: {
       "image/*": [".png", ".jpg", ".jpeg", ".webp"],
     },
-    maxSize: config?.file_size_limit ?? MAX_FILE_SIZE,
+    maxSize: MAX_STATIC_FILE_SIZE,
     multiple: false,
   });
 
   const handleClose = () => {
-    setImage(null);
     setIsImageUploading(false);
     onClose();
+    setTimeout(() => {
+      setImage(null);
+    }, 300);
   };
 
   const handleSubmit = async () => {
-    if (!image || (!workspaceSlug && pathname !== "/onboarding")) return;
-
+    if (!image || !workspaceSlug || !currentWorkspace) return;
     setIsImageUploading(true);
 
-    const formData = new FormData();
-    formData.append("asset", image);
-    formData.append("attributes", JSON.stringify({}));
+    try {
+      const { asset_url } = await fileService.uploadWorkspaceAsset(
+        workspaceSlug.toString(),
+        {
+          entity_identifier: currentWorkspace.id,
+          entity_type: EFileAssetType.WORKSPACE_LOGO,
+        },
+        image
+      );
+      updateWorkspaceLogo(workspaceSlug.toString(), asset_url);
+      onSuccess(asset_url);
+    } catch (error) {
+      console.log("error", error);
+      throw new Error("Error in uploading file.");
+    } finally {
+      setIsImageUploading(false);
+    }
+  };
 
-    if (!workspaceSlug) return;
-
-    fileService
-      .uploadFile(workspaceSlug.toString(), formData)
-      .then((res) => {
-        const imageUrl = res.asset;
-
-        onSuccess(imageUrl);
-        setImage(null);
-
-        if (value && currentWorkspace) fileService.deleteFile(currentWorkspace.id, value);
-      })
-      .catch((err) =>
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: err?.error ?? "Something went wrong. Please try again.",
-        })
-      )
-      .finally(() => setIsImageUploading(false));
+  const handleImageRemove = async () => {
+    if (!workspaceSlug || !value) return;
+    setIsRemoving(true);
+    try {
+      if (checkURLValidity(value)) {
+        await fileService.deleteOldWorkspaceAsset(currentWorkspace?.id ?? "", value);
+      } else {
+        const assetId = getAssetIdFromUrl(value);
+        await fileService.deleteWorkspaceAsset(workspaceSlug.toString(), assetId);
+      }
+      await handleRemove();
+      handleClose();
+    } catch (error) {
+      console.log("Error in removing workspace asset:", error);
+    } finally {
+      setIsRemoving(false);
+    }
   };
 
   return (
@@ -115,7 +131,7 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-xl sm:p-6">
                 <div className="space-y-5">
                   <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
-                    Upload Image
+                    Upload image
                   </Dialog.Title>
                   <div className="space-y-3">
                     <div className="flex items-center justify-center gap-3">
@@ -136,7 +152,7 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
                               Edit
                             </button>
                             <img
-                              src={image ? URL.createObjectURL(image) : value ? value : ""}
+                              src={image ? URL.createObjectURL(image) : value ? getFileURL(value) : ""}
                               alt="image"
                               className="absolute left-0 top-0 h-full w-full rounded-md object-cover"
                             />
@@ -164,11 +180,9 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
                 </div>
                 <p className="my-4 text-sm text-custom-text-200">File formats supported- .jpeg, .jpg, .png, .webp</p>
                 <div className="flex items-center justify-between">
-                  {handleRemove && (
-                    <Button variant="danger" size="sm" onClick={handleRemove} disabled={!value}>
-                      {isRemoving ? "Removing..." : "Remove"}
-                    </Button>
-                  )}
+                  <Button variant="danger" size="sm" onClick={handleImageRemove} disabled={!value} loading={isRemoving}>
+                    {isRemoving ? "Removing" : "Remove"}
+                  </Button>
                   <div className="flex items-center gap-2">
                     <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                       Cancel
@@ -180,7 +194,7 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
                       disabled={!image}
                       loading={isImageUploading}
                     >
-                      {isImageUploading ? "Uploading..." : "Upload & Save"}
+                      {isImageUploading ? "Uploading" : "Upload & Save"}
                     </Button>
                   </div>
                 </div>

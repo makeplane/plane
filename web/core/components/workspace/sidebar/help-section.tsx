@@ -5,16 +5,17 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FileText, HelpCircle, MessagesSquare, MoveLeft, User } from "lucide-react";
 // ui
-import { CustomMenu, ToggleSwitch, Tooltip } from "@plane/ui";
+import { CustomMenu, Tooltip, ToggleSwitch } from "@plane/ui";
+// components
+import { ProductUpdatesModal } from "@/components/global";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useCommandPalette, useInstance, useTransient, useUserSettings } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
-import { PlaneVersionNumber, ProductUpdates, ProductUpdatesModal } from "@/plane-web/components/global";
+import { PlaneVersionNumber } from "@/plane-web/components/global";
 import { WorkspaceEditionBadge } from "@/plane-web/components/workspace";
-import { ENABLE_LOCAL_DB_CACHE } from "@/plane-web/constants/issues";
 
 export interface WorkspaceHelpSectionProps {
   setSidebarActive?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -109,23 +110,21 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
               </a>
             </CustomMenu.MenuItem>
             <div className="my-1 border-t border-custom-border-200" />
-            {ENABLE_LOCAL_DB_CACHE && (
-              <CustomMenu.MenuItem>
-                <div
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                  }}
-                  className="flex w-full items-center justify-between text-xs hover:bg-custom-background-80"
-                >
-                  <span className="racking-tight">Local Cache</span>
-                  <ToggleSwitch
-                    value={canUseLocalDB}
-                    onChange={() => toggleLocalDB(workspaceSlug?.toString(), projectId?.toString())}
-                  />
-                </div>
-              </CustomMenu.MenuItem>
-            )}
+            <CustomMenu.MenuItem>
+              <div
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+                className="flex w-full items-center justify-between text-xs hover:bg-custom-background-80"
+              >
+                <span className="racking-tight">Hyper Mode</span>
+                <ToggleSwitch
+                  value={canUseLocalDB}
+                  onChange={() => toggleLocalDB(workspaceSlug?.toString(), projectId?.toString())}
+                />
+              </div>
+            </CustomMenu.MenuItem>
             <CustomMenu.MenuItem>
               <button
                 type="button"
@@ -135,7 +134,16 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
                 <span className="text-xs">Keyboard shortcuts</span>
               </button>
             </CustomMenu.MenuItem>
-            <ProductUpdates setIsChangeLogOpen={setIsChangeLogOpen} />
+            <CustomMenu.MenuItem>
+              <a
+                target="_blank"
+                type="button"
+                href="https://plane.so/changelog/community"
+                className="flex w-full items-center justify-start text-xs hover:bg-custom-background-80"
+              >
+                <span className="text-xs">What&apos;s new</span>
+              </a>
+            </CustomMenu.MenuItem>
             <CustomMenu.MenuItem>
               <a
                 href="https://go.plane.so/p-discord"

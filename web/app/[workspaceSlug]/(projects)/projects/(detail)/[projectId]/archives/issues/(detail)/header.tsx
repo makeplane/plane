@@ -13,9 +13,9 @@ import { ISSUE_DETAILS } from "@/constants/fetch-keys";
 // hooks
 import { useProject } from "@/hooks/store";
 // services
-import { IssueArchiveService } from "@/services/issue";
+import { IssueService } from "@/services/issue";
 
-const issueArchiveService = new IssueArchiveService();
+const issueService = new IssueService();
 
 export const ProjectArchivedIssueDetailsHeader = observer(() => {
   // router
@@ -24,14 +24,9 @@ export const ProjectArchivedIssueDetailsHeader = observer(() => {
   const { currentProjectDetails, loader } = useProject();
 
   const { data: issueDetails } = useSWR(
-    workspaceSlug && projectId && archivedIssueId ? ISSUE_DETAILS(archivedIssueId as string) : null,
+    workspaceSlug && projectId && archivedIssueId ? ISSUE_DETAILS(archivedIssueId.toString()) : null,
     workspaceSlug && projectId && archivedIssueId
-      ? () =>
-          issueArchiveService.retrieveArchivedIssue(
-            workspaceSlug as string,
-            projectId as string,
-            archivedIssueId as string
-          )
+      ? () => issueService.retrieve(workspaceSlug.toString(), projectId.toString(), archivedIssueId.toString())
       : null
   );
 
@@ -43,7 +38,6 @@ export const ProjectArchivedIssueDetailsHeader = observer(() => {
             type="text"
             link={
               <BreadcrumbLink
-                href={`/${workspaceSlug}/projects`}
                 label={currentProjectDetails?.name ?? "Project"}
                 icon={
                   currentProjectDetails && (

@@ -25,28 +25,30 @@ def issue_queryset_grouper(queryset, group_by, sub_group_by):
     }
 
     annotations_map = {
-        "assignee_ids": ("assignees__id", ~Q(assignees__id__isnull=True)),
-        "label_ids": ("labels__id", ~Q(labels__id__isnull=True)),
+        "assignee_ids": (
+            "assignees__id",
+            ~Q(assignees__id__isnull=True) & Q(issue_assignee__deleted_at__isnull=True),
+        ),
+        "label_ids": (
+            "labels__id",
+            ~Q(labels__id__isnull=True) & Q(label_issue__deleted_at__isnull=True),
+        ),
         "module_ids": (
             "issue_module__module_id",
             (
                 ~Q(issue_module__module_id__isnull=True)
                 & Q(issue_module__module__archived_at__isnull=True)
+                & Q(issue_module__deleted_at__isnull=True)
             ),
         ),
     }
     default_annotations = {
         key: Coalesce(
-            ArrayAgg(
-                field,
-                distinct=True,
-                filter=condition,
-            ),
+            ArrayAgg(field, distinct=True, filter=condition),
             Value([], output_field=ArrayField(UUIDField())),
         )
         for key, (field, condition) in annotations_map.items()
-        if FIELD_MAPPER.get(key) != group_by
-        or FIELD_MAPPER.get(key) != sub_group_by
+        if FIELD_MAPPER.get(key) != group_by or FIELD_MAPPER.get(key) != sub_group_by
     }
 
     return queryset.annotate(**default_annotations)
@@ -102,8 +104,7 @@ def issue_on_results(issues, group_by, sub_group_by):
 def issue_group_values(field, slug, project_id=None, filters=dict):
     if field == "state_id":
         queryset = State.objects.filter(
-            is_triage=False,
-            workspace__slug=slug,
+            is_triage=False, workspace__slug=slug
         ).values_list("id", flat=True)
         if project_id:
             return list(queryset.filter(project_id=project_id))
@@ -120,9 +121,7 @@ def issue_group_values(field, slug, project_id=None, filters=dict):
     if field == "assignees__id":
         if project_id:
             return ProjectMember.objects.filter(
-                workspace__slug=slug,
-                project_id=project_id,
-                is_active=True,
+                workspace__slug=slug, project_id=project_id, is_active=True
             ).values_list("member_id", flat=True)
         else:
             return list(
@@ -131,17 +130,17 @@ def issue_group_values(field, slug, project_id=None, filters=dict):
                 ).values_list("member_id", flat=True)
             )
     if field == "issue_module__module_id":
-        queryset = Module.objects.filter(
-            workspace__slug=slug,
-        ).values_list("id", flat=True)
+        queryset = Module.objects.filter(workspace__slug=slug).values_list(
+            "id", flat=True
+        )
         if project_id:
             return list(queryset.filter(project_id=project_id)) + ["None"]
         else:
             return list(queryset) + ["None"]
     if field == "cycle_id":
-        queryset = Cycle.objects.filter(
-            workspace__slug=slug,
-        ).values_list("id", flat=True)
+        queryset = Cycle.objects.filter(workspace__slug=slug).values_list(
+            "id", flat=True
+        )
         if project_id:
             return list(queryset.filter(project_id=project_id)) + ["None"]
         else:
@@ -152,21 +151,9 @@ def issue_group_values(field, slug, project_id=None, filters=dict):
         )
         return list(queryset)
     if field == "priority":
-        return [
-            "low",
-            "medium",
-            "high",
-            "urgent",
-            "none",
-        ]
+        return ["low", "medium", "high", "urgent", "none"]
     if field == "state__group":
-        return [
-            "backlog",
-            "unstarted",
-            "started",
-            "completed",
-            "cancelled",
-        ]
+        return ["backlog", "unstarted", "started", "completed", "cancelled"]
     if field == "target_date":
         queryset = (
             Issue.issue_objects.filter(workspace__slug=slug)

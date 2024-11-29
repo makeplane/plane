@@ -14,6 +14,7 @@ export const useReadOnlyCollaborativeEditor = (props: TReadOnlyCollaborativeEdit
     editorClassName,
     editorProps = {},
     extensions,
+    fileHandler,
     forwardedRef,
     handleEditorReady,
     id,
@@ -31,7 +32,7 @@ export const useReadOnlyCollaborativeEditor = (props: TReadOnlyCollaborativeEdit
       new HocuspocusProvider({
         url: realtimeConfig.url,
         name: id,
-        token: user.id,
+        token: JSON.stringify(user),
         parameters: realtimeConfig.queryParams,
         onAuthenticationFailed: () => {
           serverHandler?.onServerError?.();
@@ -46,7 +47,7 @@ export const useReadOnlyCollaborativeEditor = (props: TReadOnlyCollaborativeEdit
         },
         onSynced: () => setHasServerSynced(true),
       }),
-    [id, realtimeConfig, user.id]
+    [id, realtimeConfig, user]
   );
   // destroy and disconnect connection on unmount
   useEffect(
@@ -74,6 +75,7 @@ export const useReadOnlyCollaborativeEditor = (props: TReadOnlyCollaborativeEdit
         document: provider.document,
       }),
     ],
+    fileHandler,
     forwardedRef,
     handleEditorReady,
     mentionHandler,

@@ -73,62 +73,27 @@ export const SidebarQuickActions = observer(() => {
           "flex-col gap-0": isSidebarCollapsed,
         })}
       >
-        <div
+        <button
+          type="button"
           className={cn(
-            "relative flex-grow flex items-center justify-between gap-1 rounded h-8 hover:bg-custom-sidebar-background-90",
+            "relative flex flex-shrink-0 flex-grow items-center gap-2 h-8 text-custom-sidebar-text-300 rounded outline-none hover:bg-custom-sidebar-background-90",
             {
-              "size-8 aspect-square": isSidebarCollapsed,
+              "justify-center size-8 aspect-square": isSidebarCollapsed,
+              "cursor-not-allowed opacity-50 ": disabled,
               "px-3 border-[0.5px] border-custom-sidebar-border-300": !isSidebarCollapsed,
             }
           )}
+          onClick={() => {
+            setTrackElement("APP_SIDEBAR_QUICK_ACTIONS");
+            toggleCreateIssueModal(true);
+          }}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
+          disabled={disabled}
         >
-          <button
-            type="button"
-            className={cn(
-              "relative flex flex-shrink-0 flex-grow items-center gap-2 text-custom-sidebar-text-300 rounded outline-none",
-              {
-                "justify-center": isSidebarCollapsed,
-                "cursor-not-allowed opacity-50": disabled,
-              }
-            )}
-            onClick={() => {
-              setTrackElement("APP_SIDEBAR_QUICK_ACTIONS");
-              toggleCreateIssueModal(true);
-            }}
-            disabled={disabled}
-          >
-            <PenSquare className="size-4" />
-            {!isSidebarCollapsed && <span className="text-sm font-medium">New issue</span>}
-          </button>
-          {!disabled && workspaceDraftIssue && (
-            <>
-              {!isSidebarCollapsed && (
-                <button type="button" className="grid place-items-center">
-                  <ChevronUp
-                    className={cn("size-4 transform !text-custom-sidebar-text-300 transition-transform duration-300", {
-                      "rotate-180": isDraftButtonOpen,
-                    })}
-                  />
-                </button>
-              )}
-              {isDraftButtonOpen && (
-                <div className="absolute  mt-0 h-10 w-[220px] pt-2 z-[16] top-8 left-0">
-                  <div className="h-full w-full">
-                    <button
-                      onClick={() => setIsDraftIssueModalOpen(true)}
-                      className="flex w-full flex-shrink-0 items-center rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-3 py-[10px] text-sm text-custom-text-300 shadow"
-                    >
-                      <PenSquare size={16} className="mr-2 !text-lg !leading-4 text-custom-sidebar-text-300" />
-                      Last drafted issue
-                    </button>
-                  </div>
-                </div>
-              )}
-            </>
-          )}
-        </div>
+          <PenSquare className="size-4" />
+          {!isSidebarCollapsed && <span className="text-sm font-medium">New issue</span>}
+        </button>
         <button
           className={cn(
             "flex-shrink-0 size-8 aspect-square grid place-items-center rounded hover:bg-custom-sidebar-background-90 outline-none",

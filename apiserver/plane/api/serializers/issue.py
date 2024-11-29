@@ -11,7 +11,7 @@ from plane.db.models import (
     IssueType,
     IssueActivity,
     IssueAssignee,
-    IssueAttachment,
+    FileAsset,
     IssueComment,
     IssueLabel,
     IssueLink,
@@ -31,6 +31,7 @@ from .user import UserLiteSerializer
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 
+
 class IssueSerializer(BaseSerializer):
     assignees = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(
@@ -48,25 +49,13 @@ class IssueSerializer(BaseSerializer):
         required=False,
     )
     type_id = serializers.PrimaryKeyRelatedField(
-        source="type",
-        queryset=IssueType.objects.all(),
-        required=False,
-        allow_null=True,
+        source="type", queryset=IssueType.objects.all(), required=False, allow_null=True
     )
 
     class Meta:
         model = Issue
-        read_only_fields = [
-            "id",
-            "workspace",
-            "project",
-            "updated_by",
-            "updated_at",
-        ]
-        exclude = [
-            "description",
-            "description_stripped",
-        ]
+        read_only_fields = ["id", "workspace", "project", "updated_by", "updated_at"]
+        exclude = ["description", "description_stripped"]
 
     def validate(self, data):
         if (
@@ -74,9 +63,7 @@ class IssueSerializer(BaseSerializer):
             and data.get("target_date", None) is not None
             and data.get("start_date", None) > data.get("target_date", None)
         ):
-            raise serializers.ValidationError(
-                "Start date cannot exceed target date"
-            )
+            raise serializers.ValidationError("Start date cannot exceed target date")
 
         try:
             if data.get("description_html", None) is not None:
@@ -98,16 +85,14 @@ class IssueSerializer(BaseSerializer):
         # Validate labels are from project
         if data.get("labels", []):
             data["labels"] = Label.objects.filter(
-                project_id=self.context.get("project_id"),
-                id__in=data["labels"],
+                project_id=self.context.get("project_id"), id__in=data["labels"]
             ).values_list("id", flat=True)
 
         # Check state is from the project only else raise validation error
         if (
             data.get("state")
             and not State.objects.filter(
-                project_id=self.context.get("project_id"),
-                pk=data.get("state").id,
+                project_id=self.context.get("project_id"), pk=data.get("state").id
             ).exists()
         ):
             raise serializers.ValidationError(
@@ -118,8 +103,7 @@ class IssueSerializer(BaseSerializer):
         if (
             data.get("parent")
             and not Issue.objects.filter(
-                workspace_id=self.context.get("workspace_id"),
-                pk=data.get("parent").id,
+                workspace_id=self.context.get("workspace_id"), pk=data.get("parent").id
             ).exists()
         ):
             raise serializers.ValidationError(
@@ -146,9 +130,7 @@ class IssueSerializer(BaseSerializer):
             issue_type = issue_type
 
         issue = Issue.objects.create(
-            **validated_data,
-            project_id=project_id,
-            type=issue_type,
+            **validated_data, project_id=project_id, type=issue_type
         )
 
         # Issue Audit Users
@@ -263,13 +245,9 @@ class IssueSerializer(BaseSerializer):
                 ]
         if "labels" in self.fields:
             if "labels" in self.expand:
-                data["labels"] = LabelSerializer(
-                    instance.labels.all(), many=True
-                ).data
+                data["labels"] = LabelSerializer(instance.labels.all(), many=True).data
             else:
-                data["labels"] = [
-                    str(label.id) for label in instance.labels.all()
-                ]
+                data["labels"] = [str(label.id) for label in instance.labels.all()]
 
         return data
 
@@ -277,11 +255,7 @@ class IssueSerializer(BaseSerializer):
 class IssueLiteSerializer(BaseSerializer):
     class Meta:
         model = Issue
-        fields = [
-            "id",
-            "sequence_id",
-            "project_id",
-        ]
+        fields = ["id", "sequence_id", "project_id"]
         read_only_fields = fields
 
 
@@ -315,7 +289,7 @@ class IssueLinkSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
-    
+
     def validate_url(self, value):
         # Check URL format
         validate_url = URLValidator()
@@ -333,8 +307,7 @@ class IssueLinkSerializer(BaseSerializer):
     # Validation if url already exists
     def create(self, validated_data):
         if IssueLink.objects.filter(
-            url=validated_data.get("url"),
-            issue_id=validated_data.get("issue_id"),
+            url=validated_data.get("url"), issue_id=validated_data.get("issue_id")
         ).exists():
             raise serializers.ValidationError(
                 {"error": "URL already exists for this Issue"}
@@ -344,8 +317,7 @@ class IssueLinkSerializer(BaseSerializer):
     def update(self, instance, validated_data):
         if (
             IssueLink.objects.filter(
-                url=validated_data.get("url"),
-                issue_id=instance.issue_id,
+                url=validated_data.get("url"), issue_id=instance.issue_id
             )
             .exclude(pk=instance.id)
             .exists()
@@ -359,7 +331,7 @@ class IssueLinkSerializer(BaseSerializer):
 
 class IssueAttachmentSerializer(BaseSerializer):
     class Meta:
-        model = IssueAttachment
+        model = FileAsset
         fields = "__all__"
         read_only_fields = [
             "id",
@@ -386,10 +358,7 @@ class IssueCommentSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
-        exclude = [
-            "comment_stripped",
-            "comment_json",
-        ]
+        exclude = ["comment_stripped", "comment_json"]
 
     def validate(self, data):
         try:
@@ -406,38 +375,27 @@ class IssueCommentSerializer(BaseSerializer):
 class IssueActivitySerializer(BaseSerializer):
     class Meta:
         model = IssueActivity
-        exclude = [
-            "created_by",
-            "updated_by",
-        ]
+        exclude = ["created_by", "updated_by"]
 
 
 class CycleIssueSerializer(BaseSerializer):
     cycle = CycleSerializer(read_only=True)
 
     class Meta:
-        fields = [
-            "cycle",
-        ]
+        fields = ["cycle"]
 
 
 class ModuleIssueSerializer(BaseSerializer):
     module = ModuleSerializer(read_only=True)
 
     class Meta:
-        fields = [
-            "module",
-        ]
+        fields = ["module"]
 
 
 class LabelLiteSerializer(BaseSerializer):
     class Meta:
         model = Label
-        fields = [
-            "id",
-            "name",
-            "color",
-        ]
+        fields = ["id", "name", "color"]
 
 
 class IssueExpandSerializer(BaseSerializer):

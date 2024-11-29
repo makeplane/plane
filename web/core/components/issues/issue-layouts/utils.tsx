@@ -1,5 +1,6 @@
 "use client";
 
+import { CSSProperties } from "react";
 import { extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import clone from "lodash/clone";
 import concat from "lodash/concat";
@@ -9,7 +10,7 @@ import pull from "lodash/pull";
 import uniq from "lodash/uniq";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
 import { ContrastIcon } from "lucide-react";
-// types
+// plane types
 import {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -24,14 +25,17 @@ import {
   TGroupedIssues,
   IWorkspaceView,
 } from "@plane/types";
-// ui
+// plane ui
 import { Avatar, CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
 // constants
 import { ISSUE_PRIORITIES, EIssuesStoreType } from "@/constants/issue";
 import { STATE_GROUPS } from "@/constants/state";
-// stores
+// helpers
+import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { getFileURL } from "@/helpers/file.helper";
+// store
 import { ICycleStore } from "@/store/cycle.store";
 import { ISSUE_FILTER_DEFAULT_DATA } from "@/store/issue/helpers/base-issues.store";
 import { ILabelStore } from "@/store/label.store";
@@ -257,7 +261,7 @@ const getAssigneeColumns = (member: IMemberRootStore) => {
     return {
       id: memberId,
       name: member?.display_name || "",
-      icon: <Avatar name={member?.display_name} src={member?.avatar} size="md" />,
+      icon: <Avatar name={member?.display_name} src={getFileURL(member?.avatar_url ?? "")} size="md" />,
       payload: { assignee_ids: [memberId] },
     };
   });
@@ -280,7 +284,7 @@ const getCreatedByColumns = (member: IMemberRootStore) => {
     return {
       id: memberId,
       name: member?.display_name || "",
-      icon: <Avatar name={member?.display_name} src={member?.avatar} size="md" />,
+      icon: <Avatar name={member?.display_name} src={getFileURL(member?.avatar_url ?? "")} size="md" />,
       payload: {},
     };
   });
@@ -670,3 +674,39 @@ export function getApproximateCardHeight(displayProperties: IIssueDisplayPropert
 
   return cardHeight;
 }
+
+/**
+ * This Method is used to get Block view details, that returns block style and tooltip message
+ * @param block
+ * @param backgroundColor
+ * @returns
+ */
+export const getBlockViewDetails = (
+  block: { start_date: string | undefined | null; target_date: string | undefined | null } | undefined | null,
+  backgroundColor: string
+) => {
+  const isBlockVisibleOnChart = block?.start_date || block?.target_date;
+  const isBlockComplete = block?.start_date && block?.target_date;
+
+  let message;
+  const blockStyle: CSSProperties = {
+    backgroundColor,
+  };
+
+  if (isBlockVisibleOnChart && !isBlockComplete) {
+    if (block?.start_date) {
+      message = `From ${renderFormattedDate(block.start_date)}`;
+      blockStyle.maskImage = `linear-gradient(to right, ${backgroundColor} 50%, transparent 95%)`;
+    } else if (block?.target_date) {
+      message = `Till ${renderFormattedDate(block.target_date)}`;
+      blockStyle.maskImage = `linear-gradient(to left, ${backgroundColor} 50%, transparent 95%)`;
+    }
+  } else if (isBlockComplete) {
+    message = `${renderFormattedDate(block?.start_date)} to ${renderFormattedDate(block?.target_date)}`;
+  }
+
+  return {
+    message,
+    blockStyle,
+  };
+};

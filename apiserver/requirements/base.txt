@@ -63,7 +63,7 @@ pytz==2024.1
 # jwt
 PyJWT==2.8.0
 # OpenTelemetry
-opentelemetry-api==1.27.0
-opentelemetry-sdk==1.27.0
-opentelemetry-instrumentation-django==0.48b0
-opentelemetry-exporter-otlp==1.27.0
+opentelemetry-api==1.28.1
+opentelemetry-sdk==1.28.1
+opentelemetry-instrumentation-django==0.49b1
+opentelemetry-exporter-otlp==1.28.1

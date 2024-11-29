@@ -1,6 +1,6 @@
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import { Extensions } from "@tiptap/core";
-import { SlashCommand } from "@/extensions";
+import { SlashCommands } from "@/extensions";
 // plane editor types
 import { TIssueEmbedConfig } from "@/plane-editor/types";
 // types
@@ -14,7 +14,8 @@ type Props = {
 };
 
 export const DocumentEditorAdditionalExtensions = (_props: Props) => {
-  const extensions: Extensions = [SlashCommand()];
+  const { disabledExtensions } = _props;
+  const extensions: Extensions = disabledExtensions?.includes("slash-commands") ? [] : [SlashCommands()];
 
   return extensions;
 };

@@ -41,8 +41,7 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
         )
 
     @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST],
-        level="WORKSPACE",
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
     )
     def list(self, request, slug):
         # Get query parameters
@@ -53,9 +52,9 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
         mentioned = request.GET.get("mentioned", False)
         q_filters = Q()
 
-        inbox_issue = Issue.objects.filter(
+        intake_issue = Issue.objects.filter(
             pk=OuterRef("entity_identifier"),
-            issue_inbox__status__in=[0, 2, -2],
+            issue_intake__status__in=[0, 2, -2],
             workspace__slug=self.kwargs.get("slug"),
         )
 
@@ -64,7 +63,8 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
                 workspace__slug=slug, receiver_id=request.user.id
             )
             .filter(entity_name="issue")
-            .annotate(is_inbox_issue=Exists(inbox_issue))
+            .annotate(is_inbox_issue=Exists(intake_issue))
+            .annotate(is_intake_issue=Exists(intake_issue))
             .annotate(
                 is_mentioned_notification=Case(
                     When(sender__icontains="mentioned", then=True),
@@ -78,10 +78,8 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
 
         # Filters based on query parameters
         snoozed_filters = {
-            "true": Q(snoozed_till__lt=timezone.now())
-            | Q(snoozed_till__isnull=False),
-            "false": Q(snoozed_till__gte=timezone.now())
-            | Q(snoozed_till__isnull=True),
+            "true": Q(snoozed_till__lt=timezone.now()) | Q(snoozed_till__isnull=False),
+            "false": Q(snoozed_till__gte=timezone.now()) | Q(snoozed_till__isnull=True),
         }
 
         notifications = notifications.filter(snoozed_filters[snoozed])
@@ -102,9 +100,7 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
         if mentioned:
             notifications = notifications.filter(sender__icontains="mentioned")
         else:
-            notifications = notifications.exclude(
-                sender__icontains="mentioned"
-            )
+            notifications = notifications.exclude(sender__icontains="mentioned")
 
         type = type.split(",")
         # Subscribed issues
@@ -142,10 +138,7 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
         # Created issues
         if "created" in type:
             if WorkspaceMember.objects.filter(
-                workspace__slug=slug,
-                member=request.user,
-                role__lt=15,
-                is_active=True,
+                workspace__slug=slug, member=request.user, role__lt=15, is_active=True
             ).exists():
                 notifications = notifications.none()
             else:
@@ -158,9 +151,7 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
         notifications = notifications.filter(q_filters)
 
         # Pagination
-        if request.GET.get("per_page", False) and request.GET.get(
-            "cursor", False
-        ):
+        if request.GET.get("per_page", False) and request.GET.get("cursor", False):
             return self.paginate(
                 order_by=request.GET.get("order_by", "-created_at"),
                 request=request,
@@ -174,17 +165,14 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST],
-        level="WORKSPACE",
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
     )
     def partial_update(self, request, slug, pk):
         notification = Notification.objects.get(
             workspace__slug=slug, pk=pk, receiver=request.user
         )
         # Only read_at and snoozed_till can be updated
-        notification_data = {
-            "snoozed_till": request.data.get("snoozed_till", None),
-        }
+        notification_data = {"snoozed_till": request.data.get("snoozed_till", None)}
         serializer = NotificationSerializer(
             notification, data=notification_data, partial=True
         )
@@ -245,8 +233,7 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
 
 class UnreadNotificationEndpoint(BaseAPIView):
     @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST],
-        level="WORKSPACE",
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
     )
     def get(self, request, slug):
         # Watching Issues Count
@@ -273,12 +260,8 @@ class UnreadNotificationEndpoint(BaseAPIView):
 
         return Response(
             {
-                "total_unread_notifications_count": int(
-                    unread_notifications_count
-                ),
-                "mention_unread_notifications_count": int(
-                    mention_notifications_count
-                ),
+                "total_unread_notifications_count": int(unread_notifications_count),
+                "mention_unread_notifications_count": int(mention_notifications_count),
             },
             status=status.HTTP_200_OK,
         )
@@ -295,9 +278,7 @@ class MarkAllReadNotificationViewSet(BaseViewSet):
 
         notifications = (
             Notification.objects.filter(
-                workspace__slug=slug,
-                receiver_id=request.user.id,
-                read_at__isnull=True,
+                workspace__slug=slug, receiver_id=request.user.id, read_at__isnull=True
             )
             .select_related("workspace", "project", "triggered_by", "receiver")
             .order_by("snoozed_till", "-created_at")
@@ -306,13 +287,11 @@ class MarkAllReadNotificationViewSet(BaseViewSet):
         # Filter for snoozed notifications
         if snoozed:
             notifications = notifications.filter(
-                Q(snoozed_till__lt=timezone.now())
-                | Q(snoozed_till__isnull=False)
+                Q(snoozed_till__lt=timezone.now()) | Q(snoozed_till__isnull=False)
             )
         else:
             notifications = notifications.filter(
-                Q(snoozed_till__gte=timezone.now())
-                | Q(snoozed_till__isnull=True),
+                Q(snoozed_till__gte=timezone.now()) | Q(snoozed_till__isnull=True)
             )
 
         # Filter for archived or unarchive
@@ -326,35 +305,26 @@ class MarkAllReadNotificationViewSet(BaseViewSet):
             issue_ids = IssueSubscriber.objects.filter(
                 workspace__slug=slug, subscriber_id=request.user.id
             ).values_list("issue_id", flat=True)
-            notifications = notifications.filter(
-                entity_identifier__in=issue_ids
-            )
+            notifications = notifications.filter(entity_identifier__in=issue_ids)
 
         # Assigned Issues
         if type == "assigned":
             issue_ids = IssueAssignee.objects.filter(
                 workspace__slug=slug, assignee_id=request.user.id
             ).values_list("issue_id", flat=True)
-            notifications = notifications.filter(
-                entity_identifier__in=issue_ids
-            )
+            notifications = notifications.filter(entity_identifier__in=issue_ids)
 
         # Created issues
         if type == "created":
             if WorkspaceMember.objects.filter(
-                workspace__slug=slug,
-                member=request.user,
-                role__lt=15,
-                is_active=True,
+                workspace__slug=slug, member=request.user, role__lt=15, is_active=True
             ).exists():
                 notifications = Notification.objects.none()
             else:
                 issue_ids = Issue.objects.filter(
                     workspace__slug=slug, created_by=request.user
                 ).values_list("pk", flat=True)
-                notifications = notifications.filter(
-                    entity_identifier__in=issue_ids
-                )
+                notifications = notifications.filter(entity_identifier__in=issue_ids)
 
         updated_notifications = []
         for notification in notifications:
@@ -375,9 +345,7 @@ class UserNotificationPreferenceEndpoint(BaseAPIView):
         user_notification_preference = UserNotificationPreference.objects.get(
             user=request.user
         )
-        serializer = UserNotificationPreferenceSerializer(
-            user_notification_preference
-        )
+        serializer = UserNotificationPreferenceSerializer(user_notification_preference)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # update the object

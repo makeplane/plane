@@ -85,7 +85,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
         try {
           await fetchIssue(workspaceSlug, projectId, issueId);
         } catch (error) {
-          console.error("Error fetching the parent issue");
+          console.error("Error fetching the parent issue:", error);
         }
       },
       update: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
@@ -101,6 +101,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             path: pathname,
           });
         } catch (error) {
+          console.log("Error in updating issue:", error);
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { state: "FAILED", element: "Issue detail page" },
@@ -132,6 +133,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             path: pathname,
           });
         } catch (error) {
+          console.log("Error in deleting issue:", error);
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
@@ -153,6 +155,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             path: pathname,
           });
         } catch (error) {
+          console.log("Error in archiving issue:", error);
           captureIssueEvent({
             eventName: ISSUE_ARCHIVED,
             payload: { id: issueId, state: "FAILED", element: "Issue details page" },
@@ -318,6 +321,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       archiveIssue,
       removeArchivedIssue,
       addIssueToCycle,
+      addCycleToIssue,
       removeIssueFromCycle,
       changeModulesInIssue,
       removeIssueFromModule,
@@ -356,7 +360,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             />
           </div>
           <div
-            className="fixed right-0 z-[5] h-full w-full min-w-[300px] overflow-hidden border-l border-custom-border-200 bg-custom-sidebar-background-100 pb-5 sm:w-1/2 md:relative md:w-1/3 lg:min-w-80 xl:min-w-96"
+            className="fixed right-0 z-[5] h-full w-full min-w-[300px] overflow-hidden border-l border-custom-border-200 bg-custom-sidebar-background-100 py-5 sm:w-1/2 md:relative md:w-1/3 lg:min-w-80 xl:min-w-96"
             style={issueDetailSidebarCollapsed ? { right: `-${window?.innerWidth || 0}px` } : {}}
           >
             <IssueDetailsSidebar

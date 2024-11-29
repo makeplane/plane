@@ -3,14 +3,7 @@ import json
 
 # Django imports
 from django.utils import timezone
-from django.db.models import (
-    OuterRef,
-    Func,
-    F,
-    Q,
-    Value,
-    UUIDField,
-)
+from django.db.models import OuterRef, Func, F, Q, Value, UUIDField, Subquery
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -25,30 +18,28 @@ from rest_framework import status
 from .. import BaseAPIView
 from plane.app.serializers import IssueSerializer
 from plane.app.permissions import ProjectEntityPermission
-from plane.db.models import (
-    Issue,
-    IssueLink,
-    IssueAttachment,
-)
+from plane.db.models import Issue, IssueLink, FileAsset, CycleIssue
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.user_timezone_converter import user_timezone_converter
 from collections import defaultdict
 
 
 class SubIssuesEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
+    permission_classes = [ProjectEntityPermission]
 
     @method_decorator(gzip_page)
     def get(self, request, slug, project_id, issue_id):
         sub_issues = (
-            Issue.issue_objects.filter(
-                parent_id=issue_id, workspace__slug=slug
-            )
+            Issue.issue_objects.filter(parent_id=issue_id, workspace__slug=slug)
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
-            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(
+                        issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("cycle_id")[:1]
+                )
+            )
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -56,17 +47,16 @@ class SubIssuesEndpoint(BaseAPIView):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
             .annotate(
-                sub_issues_count=Issue.issue_objects.filter(
-                    parent=OuterRef("id")
-                )
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -76,7 +66,10 @@ class SubIssuesEndpoint(BaseAPIView):
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=~Q(labels__id__isnull=True),
+                        filter=Q(
+                            ~Q(labels__id__isnull=True)
+                            & Q(label_issue__deleted_at__isnull=True)
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -84,8 +77,11 @@ class SubIssuesEndpoint(BaseAPIView):
                     ArrayAgg(
                         "assignees__id",
                         distinct=True,
-                        filter=~Q(assignees__id__isnull=True)
-                        & Q(assignees__member_project__is_active=True),
+                        filter=Q(
+                            ~Q(assignees__id__isnull=True)
+                            & Q(assignees__member_project__is_active=True)
+                            & Q(issue_assignee__deleted_at__isnull=True)
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -93,7 +89,11 @@ class SubIssuesEndpoint(BaseAPIView):
                     ArrayAgg(
                         "issue_module__module_id",
                         distinct=True,
-                        filter=~Q(issue_module__module_id__isnull=True),
+                        filter=Q(
+                            ~Q(issue_module__module_id__isnull=True)
+                            & Q(issue_module__module__archived_at__isnull=True)
+                            & Q(issue_module__deleted_at__isnull=True)
+                        ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -139,10 +139,7 @@ class SubIssuesEndpoint(BaseAPIView):
             sub_issues, datetime_fields, request.user.user_timezone
         )
         return Response(
-            {
-                "sub_issues": sub_issues,
-                "state_distribution": result,
-            },
+            {"sub_issues": sub_issues, "state_distribution": result},
             status=status.HTTP_200_OK,
         )
 
@@ -164,9 +161,9 @@ class SubIssuesEndpoint(BaseAPIView):
 
         _ = Issue.objects.bulk_update(sub_issues, ["parent"], batch_size=10)
 
-        updated_sub_issues = Issue.issue_objects.filter(
-            id__in=sub_issue_ids
-        ).annotate(state_group=F("state__group"))
+        updated_sub_issues = Issue.issue_objects.filter(id__in=sub_issue_ids).annotate(
+            state_group=F("state__group")
+        )
 
         # Track the issue
         _ = [
@@ -189,14 +186,8 @@ class SubIssuesEndpoint(BaseAPIView):
         for sub_issue in updated_sub_issues:
             result[sub_issue.state_group].append(str(sub_issue.id))
 
-        serializer = IssueSerializer(
-            updated_sub_issues,
-            many=True,
-        )
+        serializer = IssueSerializer(updated_sub_issues, many=True)
         return Response(
-            {
-                "sub_issues": serializer.data,
-                "state_distribution": result,
-            },
+            {"sub_issues": serializer.data, "state_distribution": result},
             status=status.HTTP_200_OK,
         )

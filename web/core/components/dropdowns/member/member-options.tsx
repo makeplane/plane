@@ -8,15 +8,17 @@ import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
 import { Check, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
-//components
-import { cn } from "@plane/editor";
+// plane ui
 import { Avatar } from "@plane/ui";
-//store
+// helpers
+import { cn } from "@/helpers/common.helper";
+import { getFileURL } from "@/helpers/file.helper";
+// hooks
 import { useUser, useMember } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 interface Props {
-  className? : string;
+  className?: string;
   optionsClassName?: string;
   projectId?: string;
   referenceElement: HTMLButtonElement | null;
@@ -24,8 +26,8 @@ interface Props {
   isOpen: boolean;
 }
 
-export const MemberOptions = observer((props: Props) => {
-  const { projectId, referenceElement, placement, isOpen, optionsClassName="" } = props;
+export const MemberOptions: React.FC<Props> = observer((props: Props) => {
+  const { projectId, referenceElement, placement, isOpen, optionsClassName = "" } = props;
   // states
   const [query, setQuery] = useState("");
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -82,7 +84,7 @@ export const MemberOptions = observer((props: Props) => {
       query: `${userDetails?.display_name} ${userDetails?.first_name} ${userDetails?.last_name}`,
       content: (
         <div className="flex items-center gap-2">
-          <Avatar name={userDetails?.display_name} src={userDetails?.avatar} />
+          <Avatar name={userDetails?.display_name} src={getFileURL(userDetails?.avatar_url ?? "")} />
           <span className="flex-grow truncate">{currentUser?.id === userId ? "You" : userDetails?.display_name}</span>
         </div>
       ),
@@ -95,8 +97,10 @@ export const MemberOptions = observer((props: Props) => {
   return createPortal(
     <Combobox.Options data-prevent-outside-click static>
       <div
-        className={cn("my-1 w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none z-20",
-          optionsClassName)}
+        className={cn(
+          "my-1 w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none z-20",
+          optionsClassName
+        )}
         ref={setPopperElement}
         style={{
           ...styles.popper,

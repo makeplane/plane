@@ -14,9 +14,7 @@ import { ConfirmIssueDiscard } from "@/components/issues";
 import { isEmptyHtmlString } from "@/helpers/string.helper";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
-import { useEventTracker } from "@/hooks/store";
-// services
-import { IssueDraftService } from "@/services/issue";
+import { useEventTracker, useWorkspaceDraftIssues } from "@/hooks/store";
 // local components
 import { IssueFormRoot } from "./form";
 
@@ -25,21 +23,30 @@ export interface DraftIssueProps {
   data?: Partial<TIssue>;
   issueTitleRef: React.MutableRefObject<HTMLInputElement | null>;
   isCreateMoreToggleEnabled: boolean;
+  onAssetUpload: (assetId: string) => void;
   onCreateMoreToggleChange: (value: boolean) => void;
   onChange: (formData: Partial<TIssue> | null) => void;
   onClose: (saveDraftIssueInLocalStorage?: boolean) => void;
   onSubmit: (formData: Partial<TIssue>, is_draft_issue?: boolean) => Promise<void>;
   projectId: string;
   isDraft: boolean;
+  moveToIssue?: boolean;
+  modalTitle?: string;
+  primaryButtonText?: {
+    default: string;
+    loading: string;
+  };
+  isDuplicateModalOpen: boolean;
+  handleDuplicateIssueModal: (isOpen: boolean) => void;
+  isProjectSelectionDisabled?: boolean;
 }
-
-const issueDraftService = new IssueDraftService();
 
 export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
   const {
     changesMade,
     data,
     issueTitleRef,
+    onAssetUpload,
     onChange,
     onClose,
     onSubmit,
@@ -47,6 +54,12 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
     isCreateMoreToggleEnabled,
     onCreateMoreToggleChange,
     isDraft,
+    moveToIssue = false,
+    modalTitle,
+    primaryButtonText,
+    isDuplicateModalOpen,
+    handleDuplicateIssueModal,
+    isProjectSelectionDisabled = false,
   } = props;
   // states
   const [issueDiscardModal, setIssueDiscardModal] = useState(false);
@@ -57,6 +70,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
   // store hooks
   const { captureIssueEvent } = useEventTracker();
   const { handleCreateUpdatePropertyValues } = useIssueModal();
+  const { createIssue } = useWorkspaceDraftIssues();
 
   const handleClose = () => {
     if (data?.id) {
@@ -95,15 +109,15 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
     const payload = {
       ...changesMade,
       name: changesMade?.name && changesMade?.name?.trim() !== "" ? changesMade.name?.trim() : "Untitled",
+      project_id: projectId,
     };
 
-    const response = await issueDraftService
-      .createDraftIssue(workspaceSlug.toString(), projectId.toString(), payload)
+    const response = await createIssue(workspaceSlug.toString(), payload)
       .then((res) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
-          message: "Draft Issue created successfully.",
+          message: "Draft created.",
         });
         captureIssueEvent({
           eventName: "Draft issue created",
@@ -131,8 +145,10 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
     if (response && handleCreateUpdatePropertyValues) {
       handleCreateUpdatePropertyValues({
         issueId: response.id,
+        issueTypeId: response.type_id,
         projectId,
         workspaceSlug: workspaceSlug?.toString(),
+        isDraft: true,
       });
     }
   };
@@ -154,11 +170,18 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
         onCreateMoreToggleChange={onCreateMoreToggleChange}
         data={data}
         issueTitleRef={issueTitleRef}
+        onAssetUpload={onAssetUpload}
         onChange={onChange}
         onClose={handleClose}
         onSubmit={onSubmit}
         projectId={projectId}
         isDraft={isDraft}
+        moveToIssue={moveToIssue}
+        modalTitle={modalTitle}
+        primaryButtonText={primaryButtonText}
+        isDuplicateModalOpen={isDuplicateModalOpen}
+        handleDuplicateIssueModal={handleDuplicateIssueModal}
+        isProjectSelectionDisabled={isProjectSelectionDisabled}
       />
     </>
   );

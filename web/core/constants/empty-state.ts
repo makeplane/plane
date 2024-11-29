@@ -35,6 +35,7 @@ export enum EmptyStateType {
   WORKSPACE_SUBSCRIBED = "workspace-subscribed",
   WORKSPACE_CUSTOM_VIEW = "workspace-custom-view",
   WORKSPACE_NO_PROJECTS = "workspace-no-projects",
+  WORKSPACE_PROJECT_NOT_FOUND = "workspace-project-not-found",
   WORKSPACE_SETTINGS_API_TOKENS = "workspace-settings-api-tokens",
   WORKSPACE_SETTINGS_WEBHOOKS = "workspace-settings-webhooks",
   WORKSPACE_SETTINGS_EXPORT = "workspace-settings-export",
@@ -105,6 +106,8 @@ export enum EmptyStateType {
   INBOX_SIDEBAR_CLOSED_TAB = "inbox-sidebar-closed-tab",
   INBOX_SIDEBAR_FILTER_EMPTY_STATE = "inbox-sidebar-filter-empty-state",
   INBOX_DETAIL_EMPTY_STATE = "inbox-detail-empty-state",
+
+  WORKSPACE_DRAFT_ISSUES = "workspace-draft-issues",
 }
 
 const emptyStateDetails = {
@@ -205,6 +208,22 @@ const emptyStateDetails = {
     title: "No issues yet",
     description: "Issues that applies to the filters, track all of them here.",
     path: "/empty-state/all-issues/custom-view",
+  },
+  [EmptyStateType.WORKSPACE_PROJECT_NOT_FOUND]: {
+    key: EmptyStateType.WORKSPACE_PROJECT_NOT_FOUND,
+    title: "No such project exists",
+    description: 'To create issues or manage your work, you need to create a project or be a part of one.',
+    path: "/empty-state/onboarding/projects",
+    primaryButton: {
+      text: "Create Project",
+      comicBox: {
+        title: "Everything starts with a project in Plane",
+        description: "A project could be a product’s roadmap, a marketing campaign, or launching a new car.",
+      },
+    },
+
+    accessType: "workspace",
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   [EmptyStateType.WORKSPACE_NO_PROJECTS]: {
     key: EmptyStateType.WORKSPACE_NO_PROJECTS,
@@ -756,6 +775,17 @@ const emptyStateDetails = {
     key: EmptyStateType.INBOX_DETAIL_EMPTY_STATE,
     title: "Select an issue to view its details.",
     path: "/empty-state/intake/issue-detail",
+  },
+  [EmptyStateType.WORKSPACE_DRAFT_ISSUES]: {
+    key: EmptyStateType.WORKSPACE_DRAFT_ISSUES,
+    title: "Half-written issues, and soon, comments will show up here.",
+    description: "To try this out, start adding an issue and leave it mid-way or create your first draft below. 😉",
+    path: "/empty-state/workspace-draft/issue",
+    primaryButton: {
+      text: "Create your first draft",
+    },
+    accessType: "workspace",
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
 } as const;
 

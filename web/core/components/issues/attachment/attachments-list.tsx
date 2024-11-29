@@ -2,38 +2,40 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
+// types
+import { TAttachmentHelpers } from "../issue-detail-widgets/attachments/helper";
 // components
 import { IssueAttachmentsDetail } from "./attachment-detail";
-// types
-import { TAttachmentOperations } from "./root";
-
-type TAttachmentOperationsRemoveModal = Exclude<TAttachmentOperations, "create">;
+import { IssueAttachmentsUploadDetails } from "./attachment-upload-details";
 
 type TIssueAttachmentsList = {
   issueId: string;
-  handleAttachmentOperations: TAttachmentOperationsRemoveModal;
+  attachmentHelpers: TAttachmentHelpers;
   disabled?: boolean;
 };
 
 export const IssueAttachmentsList: FC<TIssueAttachmentsList> = observer((props) => {
-  const { issueId, handleAttachmentOperations, disabled } = props;
+  const { issueId, attachmentHelpers, disabled } = props;
   // store hooks
   const {
     attachment: { getAttachmentsByIssueId },
   } = useIssueDetail();
   // derived values
+  const { snapshot: attachmentSnapshot } = attachmentHelpers;
+  const { uploadStatus } = attachmentSnapshot;
   const issueAttachments = getAttachmentsByIssueId(issueId);
-
-  if (!issueAttachments) return <></>;
 
   return (
     <>
+      {uploadStatus?.map((uploadStatus) => (
+        <IssueAttachmentsUploadDetails key={uploadStatus.id} uploadStatus={uploadStatus} />
+      ))}
       {issueAttachments?.map((attachmentId) => (
         <IssueAttachmentsDetail
           key={attachmentId}
           attachmentId={attachmentId}
           disabled={disabled}
-          handleAttachmentOperations={handleAttachmentOperations}
+          attachmentHelpers={attachmentHelpers}
         />
       ))}
     </>

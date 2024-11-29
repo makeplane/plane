@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 // types
-import type { TIssue } from "@plane/types";
+import type { TBaseIssue, TIssue } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 import { CreateIssueToastActionItems, IssuesModalProps } from "@/components/issues";
@@ -16,7 +16,9 @@ import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useEventTracker, useCycle, useIssues, useModule, useIssueDetail, useUser } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
-import useLocalStorage from "@/hooks/use-local-storage";
+// services
+import { FileService } from "@/services/file.service";
+const fileService = new FileService();
 // local components
 import { DraftIssueLayout } from "./draft-issue-layout";
 import { IssueFormRoot } from "./form";
@@ -26,11 +28,16 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     data,
     isOpen,
     onClose,
+    beforeFormSubmit,
     onSubmit,
     withDraftIssueWrapper = true,
     storeType: issueStoreFromProps,
     isDraft = false,
     fetchIssueDetails = true,
+    moveToIssue = false,
+    modalTitle,
+    primaryButtonText,
+    isProjectSelectionDisabled = false,
   } = props;
   const issueStoreType = useIssueStoreType();
 
@@ -42,6 +49,8 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   const [createMore, setCreateMore] = useState(false);
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
   const [description, setDescription] = useState<string | undefined>(undefined);
+  const [uploadedAssetIds, setUploadedAssetIds] = useState<string[]>([]);
+  const [isDuplicateModalOpen, setIsDuplicateModalOpen] = useState(false);
   // store hooks
   const { captureIssueEvent } = useEventTracker();
   const { workspaceSlug, projectId: routerProjectId, cycleId, moduleId } = useParams();
@@ -50,15 +59,11 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   const { fetchModuleDetails } = useModule();
   const { issues } = useIssues(storeType);
   const { issues: projectIssues } = useIssues(EIssuesStoreType.PROJECT);
-  const { issues: draftIssues } = useIssues(EIssuesStoreType.DRAFT);
+  const { issues: draftIssues } = useIssues(EIssuesStoreType.WORKSPACE_DRAFT);
   const { fetchIssue } = useIssueDetail();
   const { handleCreateUpdatePropertyValues } = useIssueModal();
   // pathname
   const pathname = usePathname();
-  // local storage
-  const { storedValue: localStorageDraftIssues, setValue: setLocalStorageDraftIssue } = useLocalStorage<
-    Record<string, Partial<TIssue>>
-  >("draftedIssue", {});
   // current store details
   const { createIssue, updateIssue } = useIssuesActions(storeType);
   // derived values
@@ -70,7 +75,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     if (!workspaceSlug) return;
 
     if (!projectId || issueId === undefined || !fetchIssueDetails) {
-    // Set description to the issue description from the props if available
+      // Set description to the issue description from the props if available
       setDescription(data?.description_html || "<p></p>");
       return;
     }
@@ -128,19 +133,15 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     setCreateMore(value);
   };
 
-  const handleClose = (saveDraftIssueInLocalStorage?: boolean) => {
-    if (changesMade && saveDraftIssueInLocalStorage) {
-      // updating the current edited issue data in the local storage
-      let draftIssues = localStorageDraftIssues ? localStorageDraftIssues : {};
-      if (workspaceSlug) {
-        draftIssues = { ...draftIssues, [workspaceSlug.toString()]: changesMade };
-        setLocalStorageDraftIssue(draftIssues);
-      }
+  const handleClose = (saveAsDraft?: boolean) => {
+    if (changesMade && saveAsDraft && !data) {
+      handleCreateIssue(changesMade, true);
     }
 
     setActiveProjectId(null);
     setChangesMade(null);
     onClose();
+    handleDuplicateIssueModal(false);
   };
 
   const handleCreateIssue = async (
@@ -150,11 +151,10 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     if (!workspaceSlug || !payload.project_id) return;
 
     try {
-      let response;
-
+      let response: TIssue | undefined;
       // if draft issue, use draft issue store to create issue
       if (is_draft_issue) {
-        response = await draftIssues.createIssue(workspaceSlug.toString(), payload.project_id, payload);
+        response = (await draftIssues.createIssue(workspaceSlug.toString(), payload)) as TIssue;
       }
       // if cycle id in payload does not match the cycleId in url
       // or if the moduleIds in Payload does not match the moduleId in url
@@ -167,6 +167,19 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       } // else just use the existing store type's create method
       else if (createIssue) {
         response = await createIssue(payload.project_id, payload);
+      }
+
+      // update uploaded assets' status
+      if (uploadedAssetIds.length > 0) {
+        await fileService.updateBulkProjectAssetsUploadStatus(
+          workspaceSlug?.toString() ?? "",
+          activeProjectId ?? "",
+          response?.id ?? "",
+          {
+            asset_ids: uploadedAssetIds,
+          }
+        );
+        setUploadedAssetIds([]);
       }
 
       if (!response) throw new Error();
@@ -191,15 +204,17 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       if (response.id && response.project_id) {
         await handleCreateUpdatePropertyValues({
           issueId: response.id,
+          issueTypeId: response.type_id,
           projectId: response.project_id,
           workspaceSlug: workspaceSlug.toString(),
+          isDraft: is_draft_issue,
         });
       }
 
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success!",
-        message: `${is_draft_issue ? "Draft issue" : "Issue"} created successfully.`,
+        message: `${is_draft_issue ? "Draft created." : "Issue created successfully."} `,
         actionItems: !is_draft_issue && response?.project_id && (
           <CreateIssueToastActionItems
             workspaceSlug={workspaceSlug.toString()}
@@ -213,8 +228,8 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
         payload: { ...response, state: "SUCCESS" },
         path: pathname,
       });
-      !createMore && handleClose();
-      if (createMore) issueTitleRef && issueTitleRef?.current?.focus();
+      if (!createMore) handleClose();
+      if (createMore && issueTitleRef) issueTitleRef?.current?.focus();
       setDescription("<p></p>");
       setChangesMade(null);
       return response;
@@ -237,15 +252,32 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     if (!workspaceSlug || !payload.project_id || !data?.id) return;
 
     try {
-      isDraft
-        ? await draftIssues.updateIssue(workspaceSlug.toString(), payload.project_id, data.id, payload)
-        : updateIssue && (await updateIssue(payload.project_id, data.id, payload));
+      if (isDraft) await draftIssues.updateIssue(workspaceSlug.toString(), data.id, payload);
+      else if (updateIssue) await updateIssue(payload.project_id, data.id, payload);
+
+      // check if we should add issue to cycle/module
+      if (
+        payload.cycle_id &&
+        payload.cycle_id !== "" &&
+        (payload.cycle_id !== cycleId || storeType !== EIssuesStoreType.CYCLE)
+      ) {
+        await addIssueToCycle(data as TBaseIssue, payload.cycle_id);
+      }
+      if (
+        payload.module_ids &&
+        payload.module_ids.length > 0 &&
+        (!payload.module_ids.includes(moduleId?.toString()) || storeType !== EIssuesStoreType.MODULE)
+      ) {
+        await addIssueToModule(data as TBaseIssue, payload.module_ids);
+      }
 
       // add other property values
       await handleCreateUpdatePropertyValues({
         issueId: data.id,
+        issueTypeId: payload.type_id,
         projectId: payload.project_id,
         workspaceSlug: workspaceSlug.toString(),
+        isDraft: isDraft,
       });
 
       setToast({
@@ -260,6 +292,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       });
       handleClose();
     } catch (error) {
+      console.error(error);
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
@@ -281,6 +314,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     let response: TIssue | undefined = undefined;
 
     try {
+      if (beforeFormSubmit) await beforeFormSubmit();
       if (!data?.id) response = await handleCreateIssue(payload, is_draft_issue);
       else response = await handleUpdateIssue(payload);
     } catch (error) {
@@ -292,6 +326,10 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
 
   const handleFormChange = (formData: Partial<TIssue> | null) => setChangesMade(formData);
 
+  const handleUpdateUploadedAssetIds = (assetId: string) => setUploadedAssetIds((prev) => [...prev, assetId]);
+
+  const handleDuplicateIssueModal = (value: boolean) => setIsDuplicateModalOpen(value);
+
   // don't open the modal if there are no projects
   if (!projectIdsWithCreatePermissions || projectIdsWithCreatePermissions.length === 0 || !activeProjectId) return null;
 
@@ -300,7 +338,8 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       isOpen={isOpen}
       handleClose={() => handleClose(true)}
       position={EModalPosition.TOP}
-      width={EModalWidth.XXXXL}
+      width={isDuplicateModalOpen ? EModalWidth.VIXL : EModalWidth.XXXXL}
+      className="!bg-transparent rounded-lg shadow-none transition-[width] ease-linear"
     >
       {withDraftIssueWrapper ? (
         <DraftIssueLayout
@@ -312,13 +351,18 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
             module_ids: data?.module_ids ? data?.module_ids : moduleId ? [moduleId.toString()] : null,
           }}
           issueTitleRef={issueTitleRef}
+          onAssetUpload={handleUpdateUploadedAssetIds}
           onChange={handleFormChange}
           onClose={handleClose}
-          onSubmit={handleFormSubmit}
+          onSubmit={(payload) => handleFormSubmit(payload, isDraft)}
           projectId={activeProjectId}
           isCreateMoreToggleEnabled={createMore}
           onCreateMoreToggleChange={handleCreateMoreToggleChange}
           isDraft={isDraft}
+          moveToIssue={moveToIssue}
+          isDuplicateModalOpen={isDuplicateModalOpen}
+          handleDuplicateIssueModal={handleDuplicateIssueModal}
+          isProjectSelectionDisabled={isProjectSelectionDisabled}
         />
       ) : (
         <IssueFormRoot
@@ -329,12 +373,19 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
             cycle_id: data?.cycle_id ? data?.cycle_id : cycleId ? cycleId.toString() : null,
             module_ids: data?.module_ids ? data?.module_ids : moduleId ? [moduleId.toString()] : null,
           }}
-          onClose={() => handleClose(false)}
+          onAssetUpload={handleUpdateUploadedAssetIds}
+          onClose={handleClose}
           isCreateMoreToggleEnabled={createMore}
           onCreateMoreToggleChange={handleCreateMoreToggleChange}
-          onSubmit={handleFormSubmit}
+          onSubmit={(payload) => handleFormSubmit(payload, isDraft)}
           projectId={activeProjectId}
           isDraft={isDraft}
+          moveToIssue={moveToIssue}
+          modalTitle={modalTitle}
+          primaryButtonText={primaryButtonText}
+          isDuplicateModalOpen={isDuplicateModalOpen}
+          handleDuplicateIssueModal={handleDuplicateIssueModal}
+          isProjectSelectionDisabled={isProjectSelectionDisabled}
         />
       )}
     </ModalCore>

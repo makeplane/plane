@@ -4,19 +4,20 @@ import { useParams } from "next/navigation";
 // plane constants
 import { ALL_ISSUES } from "@plane/constants";
 import { TIssue } from "@plane/types";
+import { setToast, TOAST_TYPE } from "@plane/ui";
 // hooks
-import { ChartDataType, GanttChartRoot, IBlockUpdateData, IssueGanttSidebar } from "@/components/gantt-chart";
-import { getMonthChartItemPositionWidthInMonth } from "@/components/gantt-chart/views";
+import { GanttChartRoot, IBlockUpdateData, IssueGanttSidebar } from "@/components/gantt-chart";
+import { ETimeLineTypeType, TimeLineTypeContext } from "@/components/gantt-chart/contexts";
 import { QuickAddIssueRoot, IssueGanttBlock, GanttQuickAddIssueButton } from "@/components/issues";
 //constants
 import { EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-import { getIssueBlocksStructure } from "@/helpers/issue.helper";
 //hooks
 import { useIssues, useUserPermissions } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
+import { useTimeLineChart } from "@/hooks/use-timeline-chart";
 // plane web hooks
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { useBulkOperationStatus } from "@/plane-web/hooks/use-bulk-operation-status";
@@ -37,11 +38,12 @@ export type GanttStoreType =
 export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGanttRoot) => {
   const { viewId, isCompletedCycle = false } = props;
   // router
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug, projectId } = useParams();
 
   const storeType = useIssueStoreType() as GanttStoreType;
-  const { issues, issuesFilter, issueMap } = useIssues(storeType);
+  const { issues, issuesFilter } = useIssues(storeType);
   const { fetchIssues, fetchNextIssues, updateIssue, quickAddIssue } = useIssuesActions(storeType);
+  const { initGantt } = useTimeLineChart(ETimeLineTypeType.ISSUE);
   // store hooks
   const { allowPermissions } = useUserPermissions();
 
@@ -56,6 +58,10 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
     fetchIssues("init-loader", { canGroup: false, perPageCount: 100 }, viewId);
   }, [fetchIssues, storeType, viewId]);
 
+  useEffect(() => {
+    initGantt();
+  }, []);
+
   const issuesIds = (issues.groupedIssueIds?.[ALL_ISSUES] as string[]) ?? [];
   const nextPageResults = issues.getPaginationData(undefined, undefined)?.nextPageResults;
 
@@ -64,21 +70,6 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
   const loadMoreIssues = useCallback(() => {
     fetchNextIssues();
   }, [fetchNextIssues]);
-
-  const getBlockById = useCallback(
-    (id: string, currentViewData?: ChartDataType | undefined) => {
-      const issue = issueMap[id];
-      const block = getIssueBlocksStructure(issue);
-      if (currentViewData) {
-        return {
-          ...block,
-          position: getMonthChartItemPositionWidthInMonth(currentViewData, block),
-        };
-      }
-      return block;
-    },
-    [issueMap]
-  );
 
   const updateIssueBlockStructure = async (issue: TIssue, data: IBlockUpdateData) => {
     if (!workspaceSlug) return;
@@ -90,6 +81,23 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
   };
 
   const isAllowed = allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT);
+  const updateBlockDates = useCallback(
+    (
+      updates: {
+        id: string;
+        start_date?: string;
+        target_date?: string;
+      }[]
+    ) =>
+      issues.updateIssueDates(workspaceSlug.toString(), projectId.toString(), updates).catch(() => {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Error while updating Issue Dates, Please try again Later",
+        });
+      }),
+    [issues]
+  );
 
   const quickAdd =
     enableIssueCreation && isAllowed && !isCompletedCycle ? (
@@ -107,28 +115,30 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
 
   return (
     <IssueLayoutHOC layout={EIssueLayoutTypes.GANTT}>
-      <div className="h-full w-full">
-        <GanttChartRoot
-          border={false}
-          title="Issues"
-          loaderTitle="Issues"
-          blockIds={issuesIds}
-          getBlockById={getBlockById}
-          blockUpdateHandler={updateIssueBlockStructure}
-          blockToRender={(data: TIssue) => <IssueGanttBlock issueId={data.id} />}
-          sidebarToRender={(props) => <IssueGanttSidebar {...props} showAllBlocks />}
-          enableBlockLeftResize={isAllowed}
-          enableBlockRightResize={isAllowed}
-          enableBlockMove={isAllowed}
-          enableReorder={appliedDisplayFilters?.order_by === "sort_order" && isAllowed}
-          enableAddBlock={isAllowed}
-          enableSelection={isBulkOperationsEnabled && isAllowed}
-          quickAdd={quickAdd}
-          loadMoreBlocks={loadMoreIssues}
-          canLoadMoreBlocks={nextPageResults}
-          showAllBlocks
-        />
-      </div>
+      <TimeLineTypeContext.Provider value={ETimeLineTypeType.ISSUE}>
+        <div className="h-full w-full">
+          <GanttChartRoot
+            border={false}
+            title="Issues"
+            loaderTitle="Issues"
+            blockIds={issuesIds}
+            blockUpdateHandler={updateIssueBlockStructure}
+            blockToRender={(data: TIssue) => <IssueGanttBlock issueId={data.id} />}
+            sidebarToRender={(props) => <IssueGanttSidebar {...props} showAllBlocks />}
+            enableBlockLeftResize={isAllowed}
+            enableBlockRightResize={isAllowed}
+            enableBlockMove={isAllowed}
+            enableReorder={appliedDisplayFilters?.order_by === "sort_order" && isAllowed}
+            enableAddBlock={isAllowed}
+            enableSelection={isBulkOperationsEnabled && isAllowed}
+            quickAdd={quickAdd}
+            loadMoreBlocks={loadMoreIssues}
+            canLoadMoreBlocks={nextPageResults}
+            updateBlockDates={updateBlockDates}
+            showAllBlocks
+          />
+        </div>
+      </TimeLineTypeContext.Provider>
     </IssueLayoutHOC>
   );
 });

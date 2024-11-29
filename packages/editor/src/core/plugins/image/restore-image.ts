@@ -25,6 +25,9 @@ export const TrackImageRestorationPlugin = (editor: Editor, restoreImage: Restor
           if (node.type.name !== nodeType) return;
           if (pos < 0 || pos > newState.doc.content.size) return;
           if (oldImageSources.has(node.attrs.src)) return;
+          // if the src is just a id (private bucket), then we don't need to handle restore from here but
+          // only while it fails to load
+          if (!node.attrs.src?.startsWith("http")) return;
           addedImages.push(node as ImageNode);
         });
 
@@ -48,10 +51,9 @@ export const TrackImageRestorationPlugin = (editor: Editor, restoreImage: Restor
   });
 
 async function onNodeRestored(src: string, restoreImage: RestoreImage): Promise<void> {
+  if (!src) return;
   try {
-    if (!src) return;
-    const assetUrlWithWorkspaceId = new URL(src).pathname.substring(1);
-    await restoreImage(assetUrlWithWorkspaceId);
+    await restoreImage(src);
   } catch (error) {
     console.error("Error restoring image: ", error);
     throw error;

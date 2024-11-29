@@ -9,14 +9,17 @@ import { Tooltip } from "@plane/ui";
 import { SidebarNavItem } from "@/components/sidebar";
 import { NotificationAppSidebarOption } from "@/components/workspace-notifications";
 // constants
-import { SIDEBAR_USER_MENU_ITEMS } from "@/constants/dashboard";
 import { SIDEBAR_CLICKED } from "@/constants/event-tracker";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useEventTracker, useUser, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web constants
+import { SIDEBAR_USER_MENU_ITEMS } from "@/plane-web/constants/dashboard";
 import { EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+// plane web helpers
+import { isUserFeatureEnabled } from "@/plane-web/helpers/dashboard.helper";
 
 export const SidebarUserMenu = observer(() => {
   // store hooks
@@ -24,7 +27,7 @@ export const SidebarUserMenu = observer(() => {
   const { captureEvent } = useEventTracker();
   const { isMobile } = usePlatformOS();
   const { data: currentUser } = useUser();
-  const { allowPermissions } = useUserPermissions();
+  const { allowPermissions, workspaceUserInfo } = useUserPermissions();
   // router params
   const { workspaceSlug } = useParams();
   // pathname
@@ -50,14 +53,18 @@ export const SidebarUserMenu = observer(() => {
     />
   );
 
+  const draftIssueCount = workspaceUserInfo[workspaceSlug.toString()]?.draft_issue_count;
+
   return (
     <div
       className={cn("flex flex-col gap-0.5", {
         "space-y-0": sidebarCollapsed,
       })}
     >
-      {SIDEBAR_USER_MENU_ITEMS.map(
-        (link) =>
+      {SIDEBAR_USER_MENU_ITEMS.map((link) => {
+        if (link.key === "drafts" && draftIssueCount === 0) return null;
+        if (!isUserFeatureEnabled(link.key)) return null;
+        return (
           allowPermissions(link.access, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString()) && (
             <Tooltip
               key={link.key}
@@ -81,7 +88,8 @@ export const SidebarUserMenu = observer(() => {
               </Link>
             </Tooltip>
           )
-      )}
+        );
+      })}
     </div>
   );
 });
