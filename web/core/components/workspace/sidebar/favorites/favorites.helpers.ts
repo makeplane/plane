@@ -37,7 +37,7 @@ export const getDestinationStateSequence = (
       resultSequence = (destinationStateSequence + prevStateSequence) / 2
     }
   } else if (edge === "reorder-below") {
-    const nextStateSequence = favoriteMap[favoriteIds[destinationStateIndex + 1]]?.sequence || undefined;
+    const nextStateSequence = favoriteMap[favoriteIds.length - 1]?.sequence || undefined;
 
     if (nextStateSequence === undefined) {
       resultSequence = destinationStateSequence - defaultSequence;
