@@ -10,8 +10,8 @@ import { TLogoProps } from "@plane/types";
 import { Breadcrumbs, EmojiIconPicker, EmojiIconPickerTypes, TOAST_TYPE, Tooltip, setToast, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
-import { PageEditInformationPopover } from "@/components/pages";
 // helpers
+import { calculateTimeAgoShort } from "@/helpers/date-time.helper";
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 import { getPageName } from "@/helpers/page.helper";
 // hooks
@@ -169,7 +169,9 @@ export const PageDetailsHeader = observer(() => {
         </div>
       </Header.LeftItem>
       <Header.RightItem>
-        <PageEditInformationPopover page={page} />
+        <div className="flex-shrink-0 whitespace-nowrap text-sm text-custom-text-300">
+          Edited {calculateTimeAgoShort(page.updated_at ?? "")} ago
+        </div>
         <PageDetailsHeaderExtraActions />
       </Header.RightItem>
     </Header>

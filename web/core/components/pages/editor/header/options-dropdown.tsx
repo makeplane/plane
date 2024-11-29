@@ -180,7 +180,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
         onClose={() => setIsExportModalOpen(false)}
         pageTitle={name ?? ""}
       />
-      <CustomMenu maxHeight="lg" placement="bottom-start" verticalEllipsis closeOnSelect>
+      <CustomMenu maxHeight="lg" placement="bottom-start" buttonClassName="size-6" ellipsis closeOnSelect>
         <CustomMenu.MenuItem
           className="hidden md:flex w-full items-center justify-between gap-2"
           onClick={() => handleFullWidth(!isFullWidth)}
