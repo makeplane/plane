@@ -167,11 +167,13 @@ export const DependencyPathModal = observer((props: DependencyPathProps) => {
             />
 
             <div
-              className={`relative flex items-center justify-between gap-1 mx-2 px-2 h-14 rounded w-auto !bg-custom-background-100 ${relationObject?.className}`}
+              className={`relative flex items-center justify-between gap-1 mx-2 px-2 h-14 rounded w-auto !bg-custom-background-100`}
             >
               <div className="flex items-center gap-1 h-full">
                 <DependencyLineSVG strokeColor={strokeColor} />
-                <span className="text-sm font-medium leading-5">{relationObject?.label}</span>
+                <span className="text-sm font-medium leading-5" style={{ color: strokeColor }}>
+                  {relationObject?.label}
+                </span>
               </div>
 
               {isRemoving ? (
