@@ -60,7 +60,7 @@ from plane.utils.user_timezone_converter import user_timezone_converter
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.utils.global_paginator import paginate
 from plane.bgtasks.webhook_task import model_activity
-
+from plane.bgtasks.issue_version_task import issue_version_task
 
 class IssueListEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
@@ -652,6 +652,9 @@ class IssueViewSet(BaseViewSet):
                 actor_id=request.user.id,
                 slug=slug,
                 origin=request.META.get("HTTP_ORIGIN"),
+            )
+            issue_version_task.delay(
+                issue_id=pk, existing_instance=current_instance, user_id=request.user.id
             )
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

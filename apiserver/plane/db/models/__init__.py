@@ -41,6 +41,7 @@ from .issue import (
     IssueSequence,
     IssueSubscriber,
     IssueVote,
+    IssueVersion,
 )
 from .module import Module, ModuleIssue, ModuleLink, ModuleMember, ModuleUserProperties
 from .notification import EmailNotificationLog, Notification, UserNotificationPreference
@@ -53,7 +54,6 @@ from .project import (
     ProjectMemberInvite,
     ProjectPublicMember,
 )
-from .deploy_board import DeployBoard
 from .session import Session
 from .social_connection import SocialLoginConnection
 from .state import State
@@ -68,7 +68,6 @@ from .workspace import (
     WorkspaceTheme,
     WorkspaceUserProperties,
 )
-
 from .importer import Importer
 
 from .page import Page, PageLog, PageLabel
