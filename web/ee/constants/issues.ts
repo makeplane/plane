@@ -47,6 +47,4 @@ export const filterActivityOnSelectedFilters = (
 
 export { EActivityFilterType };
 
-export const ENABLE_LOCAL_DB_CACHE = true;
-
 export const ENABLE_ISSUE_DEPENDENCIES = true;
