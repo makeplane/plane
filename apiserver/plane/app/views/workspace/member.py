@@ -1,5 +1,5 @@
 # Django imports
-from django.db.models import CharField, Count, Q, OuterRef, Subquery, IntegerField
+from django.db.models import Count, Q, OuterRef, Subquery, IntegerField
 from django.utils import timezone
 from django.db.models.functions import Coalesce
 
@@ -7,11 +7,7 @@ from django.db.models.functions import Coalesce
 from rest_framework import status
 from rest_framework.response import Response
 
-from plane.app.permissions import (
-    WorkspaceEntityPermission,
-    allow_permission,
-    ROLE,
-)
+from plane.app.permissions import WorkspaceEntityPermission, allow_permission, ROLE
 
 # Module imports
 from plane.app.serializers import (
@@ -21,13 +17,7 @@ from plane.app.serializers import (
     WorkSpaceMemberSerializer,
 )
 from plane.app.views.base import BaseAPIView
-from plane.db.models import (
-    Project,
-    ProjectMember,
-    WorkspaceMember,
-    DraftIssue,
-    Cycle,
-)
+from plane.db.models import Project, ProjectMember, WorkspaceMember, DraftIssue, Cycle
 
 from plane.utils.cache import invalidate_cache
 from plane.payment.bgtasks.member_sync_task import member_sync_task
@@ -134,9 +124,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
         if requesting_workspace_member.role < workspace_member.role:
             return Response(
-                {
-                    "error": "You cannot remove a user having role higher than you"
-                },
+                {"error": "You cannot remove a user having role higher than you"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -163,9 +151,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
         # Deactivate the users from the projects where the user is part of
         _ = ProjectMember.objects.filter(
-            workspace__slug=slug,
-            member_id=workspace_member.member_id,
-            is_active=True,
+            workspace__slug=slug, member_id=workspace_member.member_id, is_active=True
         ).update(is_active=False)
 
         workspace_member.is_active = False
@@ -183,9 +169,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         multiple=True,
     )
     @invalidate_cache(path="/api/users/me/settings/")
-    @invalidate_cache(
-        path="api/users/me/workspaces/", user=False, multiple=True
-    )
+    @invalidate_cache(path="api/users/me/workspaces/", user=False, multiple=True)
     @allow_permission(
         allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
     )
@@ -232,9 +216,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
         # # Deactivate the users from the projects where the user is part of
         _ = ProjectMember.objects.filter(
-            workspace__slug=slug,
-            member_id=workspace_member.member_id,
-            is_active=True,
+            workspace__slug=slug, member_id=workspace_member.member_id, is_active=True
         ).update(is_active=False)
 
         # # Deactivate the user
@@ -322,9 +304,7 @@ class WorkspaceProjectMemberEndpoint(BaseAPIView):
         project_members = ProjectMember.objects.filter(
             workspace__slug=slug, project_id__in=project_ids, is_active=True
         ).select_related("project", "member", "workspace")
-        project_members = ProjectMemberRoleSerializer(
-            project_members, many=True
-        ).data
+        project_members = ProjectMemberRoleSerializer(project_members, many=True).data
 
         project_members_dict = dict()
 

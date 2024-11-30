@@ -7,6 +7,7 @@ from plane.db.models.base import BaseModel
 from plane.db.models.project import ProjectBaseModel
 from plane.utils.html_processor import strip_tags
 
+
 class GroupChoices(models.TextChoices):
     DRAFT = "draft", "Draft"
     PLANNING = "planning", "Planning"
@@ -93,8 +94,8 @@ class ProjectAttribute(ProjectBaseModel):
 
 
 class ProjectFeature(ProjectBaseModel):
-    is_project_updates_enabled = models.BooleanField(default=True)
-    is_epic_enabled = models.BooleanField(default=True)
+    is_project_updates_enabled = models.BooleanField(default=False)
+    is_epic_enabled = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Project Feature"
@@ -200,6 +201,14 @@ class ProjectCommentReaction(ProjectBaseModel):
     )
 
     class Meta:
+        unique_together = ["comment", "actor", "reaction", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["comment", "actor", "reaction"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="project_comment_reaction_unique_comment_actor_reaction_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Project Comment Reaction"
         verbose_name_plural = "Project Comment Reactions"
         db_table = "project_comment_reactions"

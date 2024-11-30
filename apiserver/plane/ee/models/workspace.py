@@ -14,6 +14,7 @@ class WorkspaceFeature(BaseModel):
     )
     is_project_grouping_enabled = models.BooleanField(default=False)
     is_initiative_enabled = models.BooleanField(default=False)
+    is_teams_enabled = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Workspace Feature"
@@ -23,10 +24,12 @@ class WorkspaceFeature(BaseModel):
 
 
 class WorkspaceLicense(BaseModel):
+
     class PlanChoice(models.TextChoices):
         FREE = "FREE", "Free"
         PRO = "PRO", "Pro"
         ONE = "ONE", "One"
+        BUSINESS = "BUSINESS", "Business"
         ENTERPRISE = "ENTERPRISE", "Enterprise"
 
     class RecurringIntervalChoice(models.TextChoices):
@@ -61,6 +64,12 @@ class WorkspaceLicense(BaseModel):
     has_added_payment_method = models.BooleanField(default=False)
     # subscription
     subscription = models.CharField(max_length=255, null=True, blank=True)
+    # last payment failed date
+    last_payment_failed_date = models.DateTimeField(null=True, blank=True)
+    # last payment failed count
+    last_payment_failed_count = models.IntegerField(default=0)
+    # last license validity check date
+    last_verified_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         verbose_name = "Workspace License"
@@ -100,4 +109,4 @@ class WorkspaceActivity(WorkspaceBaseModel):
         ordering = ("-created_at",)
 
     def __str__(self):
-        return f"{self.project.name} {self.verb}"
+        return f"{self.workspace.name} {self.verb}"
