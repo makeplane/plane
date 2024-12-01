@@ -9,7 +9,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models, transaction
 from django.utils import timezone
 from django.db.models import Q
-from django import apps
+from django.apps import apps
 
 # Module imports
 from plane.utils.html_processor import strip_tags
@@ -738,7 +738,7 @@ class IssueVersion(ProjectBaseModel):
             Log the issue version
             """
 
-            Module = apps.get_model("db.Module")
+            ModuleIssue = apps.get_model("db.ModuleIssue")
             CycleIssue = apps.get_model("db.CycleIssue")
 
             cycle_issue = CycleIssue.objects.filter(
@@ -747,10 +747,10 @@ class IssueVersion(ProjectBaseModel):
 
             cls.objects.create(
                 issue=issue,
-                parent=issue.parent,
-                state=issue.state,
-                point=issue.point,
-                estimate_point=issue.estimate_point,
+                project_id=issue.project_id,
+                parent=issue.parent_id,
+                state=issue.state_id,
+                estimate_point=issue.estimate_point_id,
                 name=issue.name,
                 description=issue.description,
                 description_html=issue.description_html,
@@ -767,12 +767,12 @@ class IssueVersion(ProjectBaseModel):
                 external_source=issue.external_source,
                 external_id=issue.external_id,
                 type=issue.type,
-                last_saved_at=issue.last_saved_at,
-                assignees=issue.assignees,
-                labels=issue.labels,
-                cycle=cycle_issue.cycle if cycle_issue else None,
-                modules=Module.objects.filter(issue=issue).values_list(
-                    "id", flat=True
+                last_saved_at=timezone.now(),
+                assignees=list(issue.assignees.values_list("id", flat=True)),
+                labels=list(issue.labels.values_list("id", flat=True)),
+                cycle=cycle_issue.cycle_id if cycle_issue else None,
+                modules=list(ModuleIssue.objects.filter(issue=issue).values_list(
+                    "id", flat=True)
                 ),
                 owned_by=user,
             )

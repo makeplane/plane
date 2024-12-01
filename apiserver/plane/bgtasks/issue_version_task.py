@@ -60,21 +60,7 @@ def issue_version_task(
                 )
             else:
                 # Create a new issue version
-                IssueVersion.objects.create(
-                    issue_id=issue_id,
-                    workspace_id=issue.workspace_id,
-                    description=issue.description,
-                    description_html=issue.description_html,
-                    description_binary=issue.description_binary,
-                    description_stripped=issue.description_stripped,
-                    owned_by=user_id,
-                    last_saved_at=issue.updated_at,
-                    project_id=issue.project_id,
-                    created_by_id=issue.created_by_id,
-                    updated_by_id=issue.updated_by_id,
-                    priority=issue.priority,
-
-                )
+                IssueVersion.log_issue_version(issue, user_id)
         return
     except Issue.DoesNotExist:
         return
