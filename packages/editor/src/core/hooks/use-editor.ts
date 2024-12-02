@@ -1,4 +1,5 @@
 import { useImperativeHandle, useRef, MutableRefObject, useState, useEffect } from "react";
+import { HocuspocusProvider } from "@hocuspocus/provider";
 import { DOMSerializer } from "@tiptap/pm/model";
 import { Selection } from "@tiptap/pm/state";
 import { EditorProps } from "@tiptap/pm/view";
@@ -15,12 +16,21 @@ import { IMarking, scrollSummary, scrollToNodeViaDOMCoordinates } from "@/helper
 // props
 import { CoreEditorProps } from "@/props";
 // types
-import { EditorRefApi, IMentionHighlight, IMentionSuggestion, TEditorCommands, TFileHandler } from "@/types";
+import type {
+  TDocumentEventsServer,
+  EditorRefApi,
+  IMentionHighlight,
+  IMentionSuggestion,
+  TEditorCommands,
+  TFileHandler,
+  TExtensions,
+} from "@/types";
 
 export interface CustomEditorProps {
   editorClassName: string;
   editorProps?: EditorProps;
   enableHistory: boolean;
+  disabledExtensions: TExtensions[];
   extensions?: any;
   fileHandler: TFileHandler;
   forwardedRef?: MutableRefObject<EditorRefApi | null>;
@@ -35,6 +45,7 @@ export interface CustomEditorProps {
   onTransaction?: () => void;
   autofocus?: boolean;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
+  provider?: HocuspocusProvider;
   providerDocument?: Y.Doc;
   tabIndex?: number;
   // undefined when prop is not passed, null if intentionally passed to stop
@@ -44,6 +55,7 @@ export interface CustomEditorProps {
 
 export const useEditor = (props: CustomEditorProps) => {
   const {
+    disabledExtensions,
     editorClassName,
     editorProps = {},
     enableHistory,
@@ -57,6 +69,7 @@ export const useEditor = (props: CustomEditorProps) => {
     onChange,
     onTransaction,
     placeholder,
+    provider,
     providerDocument,
     tabIndex,
     value,
@@ -78,6 +91,7 @@ export const useEditor = (props: CustomEditorProps) => {
     },
     extensions: [
       ...CoreEditorExtensions({
+        disabledExtensions,
         enableHistory,
         fileHandler,
         mentionConfig: {
@@ -246,7 +260,7 @@ export const useEditor = (props: CustomEditorProps) => {
         if (empty) return null;
 
         const nodesArray: string[] = [];
-        state.doc.nodesBetween(from, to, (node, pos, parent) => {
+        state.doc.nodesBetween(from, to, (node, _pos, parent) => {
           if (parent === state.doc && editorRef.current) {
             const serializer = DOMSerializer.fromSchema(editorRef.current?.schema);
             const dom = serializer.serializeNode(node);
@@ -287,6 +301,8 @@ export const useEditor = (props: CustomEditorProps) => {
         if (!document) return;
         Y.applyUpdate(document, value);
       },
+      emitRealTimeUpdate: (message: TDocumentEventsServer) => provider?.sendStateless(message),
+      listenToRealTimeUpdate: () => provider && { on: provider.on.bind(provider), off: provider.off.bind(provider) },
     }),
     [editorRef, savedSelection]
   );

@@ -12,6 +12,7 @@ import { TCollaborativeRichTextEditorHookProps } from "@/types";
 
 export const useCollaborativeRichTextEditor = (props: TCollaborativeRichTextEditorHookProps) => {
   const {
+    disabledExtensions,
     editorClassName,
     editorProps = {},
     extensions,
@@ -49,6 +50,7 @@ export const useCollaborativeRichTextEditor = (props: TCollaborativeRichTextEdit
 
   const editor = useEditor({
     id,
+    disabledExtensions,
     editorProps,
     editorClassName,
     enableHistory: false,

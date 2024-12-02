@@ -1,5 +1,6 @@
 "use client";
 
+import range from "lodash/range";
 // ui
 import { Loader } from "@plane/ui";
 
@@ -14,7 +15,7 @@ export const IssuesByStateGroupWidgetLoader = () => (
         </div>
       </div>
       <div className="w-1/2 space-y-7 flex-shrink-0">
-        {Array.from({ length: 5 }).map((_, index) => (
+        {range(5).map((index) => (
           <Loader.Item key={index} height="11px" width="100%" />
         ))}
       </div>

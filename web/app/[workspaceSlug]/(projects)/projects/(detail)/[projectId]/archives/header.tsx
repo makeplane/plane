@@ -46,7 +46,6 @@ export const ProjectArchivesHeader: FC<TProps> = observer((props: TProps) => {
               type="text"
               link={
                 <BreadcrumbLink
-                  href={`/${workspaceSlug}/projects`}
                   label={currentProjectDetails?.name ?? "Project"}
                   icon={
                     currentProjectDetails && (

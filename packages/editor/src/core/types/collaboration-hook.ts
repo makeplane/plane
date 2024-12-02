@@ -20,7 +20,7 @@ export type TServerHandler = {
 };
 
 type TCollaborativeEditorHookCommonProps = {
-  disabledExtensions?: TExtensions[];
+  disabledExtensions: TExtensions[];
   editorClassName: string;
   editorProps?: EditorProps;
   extensions?: Extensions;

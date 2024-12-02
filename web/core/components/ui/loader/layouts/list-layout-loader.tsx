@@ -1,4 +1,5 @@
 import { Fragment, forwardRef } from "react";
+import range from "lodash/range";
 import { cn } from "@plane/editor";
 import { Row } from "@plane/ui";
 import { getRandomInt, getRandomLength } from "../utils";
@@ -29,7 +30,7 @@ export const ListLoaderItemRow = forwardRef<
       />
     </div>
     <div className="flex items-center gap-2">
-      {[...Array(defaultPropertyCount)].map((_, index) => (
+      {range(defaultPropertyCount).map((index) => (
         <Fragment key={index}>
           {getRandomInt(1, 2) % 2 === 0 ? (
             <span
@@ -64,7 +65,7 @@ const ListSection = ({ itemCount }: { itemCount: number }) => (
       </div>
     </Row>
     <div className="relative h-full w-full">
-      {[...Array(itemCount)].map((_, index) => (
+      {range(itemCount).map((index) => (
         <ListLoaderItemRow key={index} />
       ))}
     </div>

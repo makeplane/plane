@@ -1,12 +1,11 @@
 import React, { forwardRef } from "react";
 // editor
 import { EditorRefApi, IMentionHighlight, IRichTextEditor, RichTextEditorWithRef } from "@plane/editor";
-// types
 // helpers
-import { cn } from "@/helpers/common.helper";
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
 
-interface RichTextEditorWrapperProps extends Omit<IRichTextEditor, "fileHandler" | "mentionHandler"> {
+interface RichTextEditorWrapperProps
+  extends Omit<IRichTextEditor, "disabledExtensions" | "fileHandler" | "mentionHandler"> {
   uploadFile: (file: File) => Promise<string>;
 }
 
@@ -27,6 +26,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
         suggestions: undefined,
       }}
       ref={ref}
+      disabledExtensions={[]}
       fileHandler={getEditorFileHandlers({
         uploadFile,
         workspaceId: "",

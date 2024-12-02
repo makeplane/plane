@@ -9,9 +9,10 @@ import { getEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
 import { useMember, useMention, useUser } from "@/hooks/store";
 // plane web hooks
+import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
 
-interface Props extends Omit<ICollaborativeRichTextEditor, "fileHandler" | "mentionHandler"> {
+interface Props extends Omit<ICollaborativeRichTextEditor, "disabledExtensions" | "fileHandler" | "mentionHandler"> {
   key: string;
   projectId: string;
   uploadFile: (file: File) => Promise<string>;
@@ -27,6 +28,8 @@ export const CollaborativeRichTextEditor = forwardRef<EditorRefApi, Props>((prop
     getUserDetails,
     project: { getProjectMemberIds },
   } = useMember();
+  // editor flaggings
+  const { richTextEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
   // derived values
   const projectMemberIds = getProjectMemberIds(projectId);
   const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
@@ -43,6 +46,7 @@ export const CollaborativeRichTextEditor = forwardRef<EditorRefApi, Props>((prop
   return (
     <CollaborativeRichTextEditorWithRef
       ref={ref}
+      disabledExtensions={disabledExtensions}
       fileHandler={getEditorFileHandlers({
         maxFileSize,
         projectId,

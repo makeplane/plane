@@ -13,10 +13,12 @@ import { getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
 import { useMention } from "@/hooks/store";
 import { useIssueDescription } from "@/hooks/use-issue-description";
+// plane web hooks
+import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 
 type RichTextReadOnlyEditorWrapperProps = Omit<
   ICollaborativeRichTextReadOnlyEditor,
-  "fileHandler" | "mentionHandler" | "value"
+  "disabledExtensions" | "fileHandler" | "mentionHandler" | "value"
 > & {
   descriptionBinary: string | null;
   descriptionHTML: string;
@@ -28,7 +30,10 @@ export const CollaborativeRichTextReadOnlyEditor = React.forwardRef<
   EditorReadOnlyRefApi,
   RichTextReadOnlyEditorWrapperProps
 >(({ descriptionBinary: savedDescriptionBinary, descriptionHTML, projectId, workspaceSlug, ...props }, ref) => {
+  // store hooks
   const { mentionHighlights } = useMention({});
+  // editor flaggings
+  const { richTextEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
 
   const { descriptionBinary } = useIssueDescription({
     descriptionBinary: savedDescriptionBinary,
@@ -45,6 +50,7 @@ export const CollaborativeRichTextReadOnlyEditor = React.forwardRef<
   return (
     <CollaborativeRichTextReadOnlyEditorWithRef
       ref={ref}
+      disabledExtensions={disabledExtensions}
       value={descriptionBinary}
       fileHandler={getReadOnlyEditorFileHandlers({
         projectId,

@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 // icons
 import { History, MessageSquare } from "lucide-react";
@@ -31,8 +30,6 @@ type Props = {
 
 export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
   const { cursor, perPage, updateResultsCount, updateTotalPages, updateEmptyState } = props;
-  // params
-  const { workspaceSlug } = useParams();
   // store hooks
   const { data: currentUser } = useUser();
 
@@ -106,7 +103,7 @@ export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
                             activityItem?.new_value !== "" ? activityItem.new_value : activityItem.old_value
                           }
                           containerClassName="text-xs bg-custom-background-100"
-                          workspaceSlug={workspaceSlug?.toString() ?? ""}
+                          workspaceSlug={activityItem?.workspace_detail?.slug.toString() ?? ""}
                           projectId={activityItem.project ?? ""}
                         />
                       </div>

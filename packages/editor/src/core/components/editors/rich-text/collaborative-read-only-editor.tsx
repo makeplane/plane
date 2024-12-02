@@ -14,6 +14,7 @@ import { EditorReadOnlyRefApi, ICollaborativeRichTextReadOnlyEditor } from "@/ty
 const CollaborativeRichTextReadOnlyEditor = (props: ICollaborativeRichTextReadOnlyEditor) => {
   const {
     containerClassName,
+    disabledExtensions,
     displayConfig = DEFAULT_DISPLAY_CONFIG,
     editorClassName,
     fileHandler,
@@ -24,6 +25,7 @@ const CollaborativeRichTextReadOnlyEditor = (props: ICollaborativeRichTextReadOn
   } = props;
 
   const { editor } = useCollaborativeRichTextReadOnlyEditor({
+    disabledExtensions,
     editorClassName,
     fileHandler,
     forwardedRef,

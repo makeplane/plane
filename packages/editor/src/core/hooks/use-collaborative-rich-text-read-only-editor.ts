@@ -12,6 +12,7 @@ import { TCollaborativeRichTextReadOnlyEditorHookProps } from "@/types";
 
 export const useCollaborativeRichTextReadOnlyEditor = (props: TCollaborativeRichTextReadOnlyEditorHookProps) => {
   const {
+    disabledExtensions,
     editorClassName,
     editorProps = {},
     extensions,
@@ -38,6 +39,7 @@ export const useCollaborativeRichTextReadOnlyEditor = (props: TCollaborativeRich
   }, [value, provider.document]);
 
   const editor = useReadOnlyEditor({
+    disabledExtensions,
     editorProps,
     editorClassName,
     extensions: [

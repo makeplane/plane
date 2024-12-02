@@ -14,6 +14,7 @@ import { EditorRefApi, ICollaborativeRichTextEditor } from "@/types";
 const CollaborativeRichTextEditor = (props: ICollaborativeRichTextEditor) => {
   const {
     containerClassName,
+    disabledExtensions,
     displayConfig = DEFAULT_DISPLAY_CONFIG,
     editorClassName,
     fileHandler,
@@ -27,6 +28,7 @@ const CollaborativeRichTextEditor = (props: ICollaborativeRichTextEditor) => {
   } = props;
 
   const { editor } = useCollaborativeRichTextEditor({
+    disabledExtensions,
     editorClassName,
     fileHandler,
     forwardedRef,

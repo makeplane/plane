@@ -8,3 +8,4 @@ export * from "./image";
 export * from "./mention-suggestion";
 export * from "./slash-commands-suggestion";
 export * from "@/plane-editor/types";
+export * from "./document-collaborative-events";
