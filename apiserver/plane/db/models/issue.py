@@ -660,10 +660,14 @@ class IssueVote(ProjectBaseModel):
 
 
 class IssueVersion(ProjectBaseModel):
-    issue = models.ForeignKey(
-        "db.Issue",
-        on_delete=models.CASCADE,
+    activity = models.ForeignKey(
+        "db.IssueActivity",
+        on_delete=models.SET_NULL,
+        null=True,
         related_name="versions",
+    )
+    issue = models.ForeignKey(
+        "db.Issue", on_delete=models.CASCADE, related_name="versions"
     )
     PRIORITY_CHOICES = (
         ("urgent", "Urgent"),
@@ -676,9 +680,6 @@ class IssueVersion(ProjectBaseModel):
     state = models.UUIDField(blank=True, null=True)
     estimate_point = models.UUIDField(blank=True, null=True)
     name = models.CharField(max_length=255, verbose_name="Issue Name")
-    description = models.JSONField(blank=True, default=dict)
-    description_html = models.TextField(blank=True, default="<p></p>")
-    description_stripped = models.TextField(blank=True, null=True)
     description_binary = models.BinaryField(null=True)
     priority = models.CharField(
         max_length=30,
@@ -688,9 +689,7 @@ class IssueVersion(ProjectBaseModel):
     )
     start_date = models.DateField(null=True, blank=True)
     target_date = models.DateField(null=True, blank=True)
-    sequence_id = models.IntegerField(
-        default=1, verbose_name="Issue Sequence ID"
-    )
+    sequence_id = models.IntegerField(default=1, verbose_name="Issue Sequence ID")
     sort_order = models.FloatField(default=65535)
     completed_at = models.DateTimeField(null=True)
     archived_at = models.DateField(null=True)
@@ -700,25 +699,10 @@ class IssueVersion(ProjectBaseModel):
     type = models.UUIDField(blank=True, null=True)
     last_saved_at = models.DateTimeField(default=timezone.now)
     owned_by = models.UUIDField()
-    assignees = ArrayField(
-        models.UUIDField(),
-        blank=True,
-        default=list,
-    )
-    labels = ArrayField(
-        models.UUIDField(),
-        blank=True,
-        default=list,
-    )
-    cycle = models.UUIDField(
-        null=True,
-        blank=True,
-    )
-    modules = ArrayField(
-        models.UUIDField(),
-        blank=True,
-        default=list,
-    )
+    assignees = ArrayField(models.UUIDField(), blank=True, default=list)
+    labels = ArrayField(models.UUIDField(), blank=True, default=list)
+    cycle = models.UUIDField(null=True, blank=True)
+    modules = ArrayField(models.UUIDField(), blank=True, default=list)
     properties = models.JSONField(default=dict)
     meta = models.JSONField(default=dict)
 
@@ -741,16 +725,14 @@ class IssueVersion(ProjectBaseModel):
             Module = apps.get_model("db.Module")
             CycleIssue = apps.get_model("db.CycleIssue")
 
-            cycle_issue = CycleIssue.objects.filter(
-                issue=issue,
-            ).first()
+            cycle_issue = CycleIssue.objects.filter(issue=issue).first()
 
             cls.objects.create(
                 issue=issue,
-                parent=issue.parent,
-                state=issue.state,
+                parent=issue.parent_id,
+                state=issue.state_id,
                 point=issue.point,
-                estimate_point=issue.estimate_point,
+                estimate_point=issue.estimate_point_id,
                 name=issue.name,
                 description=issue.description,
                 description_html=issue.description_html,
@@ -766,17 +748,36 @@ class IssueVersion(ProjectBaseModel):
                 is_draft=issue.is_draft,
                 external_source=issue.external_source,
                 external_id=issue.external_id,
-                type=issue.type,
+                type=issue.type_id,
                 last_saved_at=issue.last_saved_at,
                 assignees=issue.assignees,
                 labels=issue.labels,
                 cycle=cycle_issue.cycle if cycle_issue else None,
-                modules=Module.objects.filter(issue=issue).values_list(
-                    "id", flat=True
-                ),
+                modules=Module.objects.filter(issue=issue).values_list("id", flat=True),
                 owned_by=user,
             )
             return True
         except Exception as e:
             log_exception(e)
             return False
+
+
+class IssueDescriptionVersion(ProjectBaseModel):
+    issue = models.ForeignKey(
+        "db.Issue", on_delete=models.CASCADE, related_name="description_versions"
+    )
+    description_binary = models.BinaryField(null=True)
+    description_html = models.TextField(blank=True, default="<p></p>")
+    description_stripped = models.TextField(blank=True, null=True)
+    description_json = models.JSONField(default=dict, blank=True)
+    last_saved_at = models.DateTimeField(default=timezone.now)
+    owned_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="description_versions",
+    )
+
+    class Meta:
+        verbose_name = "Issue Description Version"
+        verbose_name_plural = "Issue Description Versions"
+        db_table = "issue_description_versions"
