@@ -153,51 +153,61 @@ export class BaseTimeLineStore extends ExtendableTimelineStore implements IBaseT
   /**
    * returns updates dates of blocks post drag.
    * @param id
+   * @param shouldUpdateHalfBlock if is a half block then update the incomplete block only if this is true
    * @returns
    */
-  getUpdatedPositionAfterDrag = action((id: string, shouldIgnoreDependencies = false) => {
-    if (!this.currentViewData) return [];
+  getUpdatedPositionAfterDrag = action(
+    (id: string, shouldUpdateHalfBlock: boolean, shouldIgnoreDependencies = false) => {
+      if (!this.currentViewData) return [];
 
-    const ignoreDependencies = !this.isDependencyEnabled || shouldIgnoreDependencies;
+      const ignoreDependencies = !this.isDependencyEnabled || shouldIgnoreDependencies;
 
-    // Create a dependency tree with breadth first approach
-    const dependencyTree = buildDependencyTree(
-      id,
-      this.blocksMap,
-      this.rootStore.issue.issueDetail.relation.relationMap,
-      this.currentViewData,
-      ignoreDependencies
-    );
+      // Create a dependency tree with breadth first approach
+      const dependencyTree = buildDependencyTree(
+        id,
+        this.blocksMap,
+        this.rootStore.issue.issueDetail.relation.relationMap,
+        this.currentViewData,
+        ignoreDependencies
+      );
 
-    // get position updates by traversing the above tree
-    const blockUpdates = dependencyTree ? getBlockUpdates(dependencyTree, 0, 0) : [];
+      // get position updates by traversing the above tree
+      const blockUpdates = dependencyTree ? getBlockUpdates(dependencyTree, 0, 0) : [];
 
-    const blockNewDates: IBlockUpdateDependencyData[] = [];
+      const blockNewDates: IBlockUpdateDependencyData[] = [];
 
-    for (const blockUpdate of blockUpdates) {
-      const block = this.blocksMap[blockUpdate.blockId];
+      for (const blockUpdate of blockUpdates) {
+        const block = this.blocksMap[blockUpdate.blockId];
 
-      if (!block) continue;
+        if (!block) continue;
 
-      const newBlock: IBlockUpdateDependencyData = {
-        id: block.id,
-        start_date: renderFormattedPayloadDate(
-          getDateFromPositionOnGantt(blockUpdate.marginLeft, this.currentViewData)
-        ),
-        target_date: renderFormattedPayloadDate(
-          getDateFromPositionOnGantt(
-            blockUpdate.marginLeft + (blockUpdate?.width ?? block?.position?.width ?? 0),
-            this.currentViewData,
-            -1
-          )
-        ),
-      };
+        const newBlock: IBlockUpdateDependencyData = {
+          id: block.id,
+        };
 
-      blockNewDates.push(newBlock);
+        // If shouldUpdateHalfBlock or the start date is available then update start date only for the dragging block
+        if ((shouldUpdateHalfBlock && block.id === id) || block.start_date) {
+          newBlock.start_date = renderFormattedPayloadDate(
+            getDateFromPositionOnGantt(blockUpdate.marginLeft, this.currentViewData)
+          );
+        }
+        // If shouldUpdateHalfBlock or the target date is available then update target date only for the dragging block
+        if ((shouldUpdateHalfBlock && block.id === id) || block.target_date) {
+          newBlock.target_date = renderFormattedPayloadDate(
+            getDateFromPositionOnGantt(
+              blockUpdate.marginLeft + (blockUpdate?.width ?? block?.position?.width ?? 0),
+              this.currentViewData,
+              -1
+            )
+          );
+        }
+
+        blockNewDates.push(newBlock);
+      }
+
+      return blockNewDates;
     }
-
-    return blockNewDates;
-  });
+  );
 
   /**
    * updates the block's position such as marginLeft and width wile dragging
