@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import Collaboration from "@tiptap/extension-collaboration";
 import { IndexeddbPersistence } from "y-indexeddb";
@@ -11,6 +11,7 @@ import { TReadOnlyCollaborativeEditorProps } from "@/types";
 
 export const useReadOnlyCollaborativeEditor = (props: TReadOnlyCollaborativeEditorProps) => {
   const {
+    disabledExtensions,
     editorClassName,
     editorProps = {},
     extensions,
@@ -30,8 +31,8 @@ export const useReadOnlyCollaborativeEditor = (props: TReadOnlyCollaborativeEdit
   const provider = useMemo(
     () =>
       new HocuspocusProvider({
-        url: realtimeConfig.url,
         name: id,
+        url: realtimeConfig.url,
         token: JSON.stringify(user),
         parameters: realtimeConfig.queryParams,
         onAuthenticationFailed: () => {
@@ -47,25 +48,26 @@ export const useReadOnlyCollaborativeEditor = (props: TReadOnlyCollaborativeEdit
         },
         onSynced: () => setHasServerSynced(true),
       }),
-    [id, realtimeConfig, user]
+    [id, realtimeConfig, serverHandler, user]
   );
+
+  // indexed db integration for offline support
+  const localProvider = useMemo(
+    () => (id ? new IndexeddbPersistence(id, provider.document) : undefined),
+    [id, provider]
+  );
+
   // destroy and disconnect connection on unmount
   useEffect(
     () => () => {
       provider.destroy();
-      provider.disconnect();
-    },
-    [provider]
-  );
-  // indexed db integration for offline support
-  useLayoutEffect(() => {
-    const localProvider = new IndexeddbPersistence(id, provider.document);
-    return () => {
       localProvider?.destroy();
-    };
-  }, [provider, id]);
+    },
+    [provider, localProvider]
+  );
 
   const editor = useReadOnlyEditor({
+    disabledExtensions,
     editorProps,
     editorClassName,
     extensions: [

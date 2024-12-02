@@ -17,14 +17,23 @@ import { IMarking, scrollSummary, scrollToNodeViaDOMCoordinates } from "@/helper
 // props
 import { CoreEditorProps } from "@/props";
 // types
-import { EditorRefApi, IMentionHighlight, IMentionSuggestion, TEditorCommands, TFileHandler } from "@/types";
-import { migrateDocJSON } from "@/extensions/migrationjson";
-import { type ProsemirrorNodeJSON } from "prosemirror-flat-list";
+import {
+  EditorRefApi,
+  IMentionHighlight,
+  IMentionSuggestion,
+  TEditorCommands,
+  TFileHandler,
+  TDocumentEventsServer,
+  TExtensions,
+} from "@/types";
+import { migrateDocJSON } from "@/extensions/flat-list/migrate-lists";
+import type { ProsemirrorNodeJSON } from "prosemirror-flat-list";
 
 export interface CustomEditorProps {
   editorClassName: string;
   editorProps?: EditorProps;
   enableHistory: boolean;
+  disabledExtensions: TExtensions[];
   extensions?: any;
   fileHandler: TFileHandler;
   forwardedRef?: MutableRefObject<EditorRefApi | null>;
@@ -49,6 +58,7 @@ export interface CustomEditorProps {
 
 export const useEditor = (props: CustomEditorProps) => {
   const {
+    disabledExtensions,
     editorClassName,
     editorProps = {},
     enableHistory,
@@ -102,6 +112,7 @@ export const useEditor = (props: CustomEditorProps) => {
     },
     extensions: [
       ...CoreEditorExtensions({
+        disabledExtensions,
         enableHistory,
         fileHandler,
         mentionConfig: {
@@ -152,7 +163,7 @@ export const useEditor = (props: CustomEditorProps) => {
 
   useEffect(() => {
     if (editor && (!hasMigrated || editor.isActive("listItem")) && !isEditorDisabled) {
-      const newJSON = migrateDocJSON(editor.getJSON()) as JSONContent;
+      const newJSON = migrateDocJSON(editor.getJSON() as ProsemirrorNodeJSON) as JSONContent;
 
       if (newJSON) {
         // Create a new transaction
@@ -304,7 +315,7 @@ export const useEditor = (props: CustomEditorProps) => {
         if (empty) return null;
 
         const nodesArray: string[] = [];
-        state.doc.nodesBetween(from, to, (node, pos, parent) => {
+        state.doc.nodesBetween(from, to, (node, _pos, parent) => {
           if (parent === state.doc && editorRef.current) {
             const serializer = DOMSerializer.fromSchema(editorRef.current?.schema);
             const dom = serializer.serializeNode(node);
@@ -345,6 +356,8 @@ export const useEditor = (props: CustomEditorProps) => {
         if (!document) return;
         Y.applyUpdate(document, value);
       },
+      emitRealTimeUpdate: (message: TDocumentEventsServer) => provider?.sendStateless(message),
+      listenToRealTimeUpdate: () => provider && { on: provider.on.bind(provider), off: provider.off.bind(provider) },
     }),
     [editorRef, savedSelection]
   );

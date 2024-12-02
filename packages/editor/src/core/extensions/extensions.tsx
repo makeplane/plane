@@ -9,6 +9,7 @@ import OrderedList from "@tiptap/extension-ordered-list";
 import { Markdown } from "tiptap-markdown";
 // extensions
 import {
+  CustomCalloutExtension,
   CustomCodeBlockExtension,
   CustomCodeInlineExtension,
   CustomCodeMarkPlugin,
@@ -31,7 +32,8 @@ import {
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
 // types
-import { IMentionHighlight, IMentionSuggestion, TFileHandler } from "@/types";
+import { IMentionHighlight, IMentionSuggestion, TExtensions, TFileHandler } from "@/types";
+
 import { FlatListExtension } from "./flat-list/flat-list";
 import { multipleSelectionExtension } from "./selections/multipleSelections";
 // plane editor extensions
@@ -41,6 +43,7 @@ import TaskList from "@tiptap/extension-task-list";
 import ListItem from "@tiptap/extension-list-item";
 
 type TArguments = {
+  disabledExtensions: TExtensions[];
   enableHistory: boolean;
   fileHandler: TFileHandler;
   mentionConfig: {
@@ -52,7 +55,7 @@ type TArguments = {
 };
 
 export const CoreEditorExtensions = (args: TArguments): Extensions => {
-  const { enableHistory, fileHandler, mentionConfig, placeholder } = args;
+  const { disabledExtensions, enableHistory, fileHandler, mentionConfig, placeholder, tabIndex } = args;
 
   return [
     StarterKit.configure({
@@ -183,10 +186,13 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     }),
     CharacterCount,
     CustomTextAlignExtension,
+    CustomCalloutExtension,
     CustomColorExtension,
     FlatListExtension,
     multipleSelectionExtension,
     // FlatHeadingListExtension,
-    ...CoreEditorAdditionalExtensions(),
+    ...CoreEditorAdditionalExtensions({
+      disabledExtensions,
+    }),
   ];
 };

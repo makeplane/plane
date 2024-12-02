@@ -54,7 +54,6 @@ export const ProjectIssuesHeader = observer(() => {
               type="text"
               link={
                 <BreadcrumbLink
-                  href={`/${workspaceSlug}/projects`}
                   label={currentProjectDetails?.name ?? "Project"}
                   icon={
                     currentProjectDetails ? (

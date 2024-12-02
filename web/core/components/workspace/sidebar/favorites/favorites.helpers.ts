@@ -9,47 +9,6 @@ export type TargetData = {
   isChild: boolean;
 }
 
-export const getDestinationStateSequence = (
-  favoriteMap: Record<string, IFavorite>,
-  destinationId: string,
-  edge: string | undefined
-) => {
-  const defaultSequence = 65535;
-  if (!edge) return defaultSequence;
-
-
-  const favoriteIds = orderBy(Object.values(favoriteMap), "sequence", "desc")
-    .filter((fav: IFavorite) => !fav.parent)
-    .map((fav: IFavorite) => fav.id);
-  const destinationStateIndex = favoriteIds.findIndex((id) => id === destinationId);
-  const destinationStateSequence = favoriteMap[destinationId]?.sequence || undefined;
-
-  if (!destinationStateSequence) return defaultSequence;
-
-
-  let resultSequence = defaultSequence;
-  if (edge === "reorder-above") {
-    const prevStateSequence = favoriteMap[favoriteIds[destinationStateIndex - 1]]?.sequence || undefined;
-
-    if (prevStateSequence === undefined) {
-      resultSequence =  destinationStateSequence + defaultSequence;
-    }else {
-      resultSequence = (destinationStateSequence + prevStateSequence) / 2
-    }
-  } else if (edge === "reorder-below") {
-    const nextStateSequence = favoriteMap[favoriteIds[destinationStateIndex + 1]]?.sequence || undefined;
-
-    if (nextStateSequence === undefined) {
-      resultSequence = destinationStateSequence - defaultSequence;
-    } else {
-      resultSequence = (destinationStateSequence + nextStateSequence) / 2;
-    }
-  }
-  resultSequence = Math.round(resultSequence)
-
-  return resultSequence;
-};
-
 /**
  * extracts the Payload and translates the instruction for the current dropTarget based on drag and drop payload
  * @param dropTarget dropTarget for which the instruction is required

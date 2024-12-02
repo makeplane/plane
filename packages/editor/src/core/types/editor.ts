@@ -8,14 +8,14 @@ import {
   IMentionSuggestion,
   TAIHandler,
   TDisplayConfig,
+  TDocumentEventEmitter,
+  TDocumentEventsServer,
   TEmbedConfig,
   TExtensions,
   TFileHandler,
   TServerHandler,
 } from "@/types";
 import { TTextAlign } from "@/extensions";
-// plane editor types
-import { TEditorAdditionalCommands } from "@/plane-editor/types";
 
 export type TEditorCommands =
   | "text"
@@ -42,8 +42,7 @@ export type TEditorCommands =
   | "background-color"
   | "text-align"
   | "callout"
-  | "toggle-list"
-  | TEditorAdditionalCommands;
+  | "toggle-list";
 
 export type TCommandExtraProps = {
   image: {
@@ -87,6 +86,8 @@ export type EditorReadOnlyRefApi = {
   };
   onHeadingChange: (callback: (headings: IMarking[]) => void) => () => void;
   getHeadings: () => IMarking[];
+  emitRealTimeUpdate: (action: TDocumentEventsServer) => void;
+  listenToRealTimeUpdate: () => TDocumentEventEmitter | undefined;
 };
 
 export interface EditorRefApi extends EditorReadOnlyRefApi {
@@ -108,7 +109,7 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
 export interface IEditorProps {
   containerClassName?: string;
   displayConfig?: TDisplayConfig;
-  disabledExtensions?: TExtensions[];
+  disabledExtensions: TExtensions[];
   editorClassName?: string;
   fileHandler: TFileHandler;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
@@ -150,6 +151,7 @@ export interface ICollaborativeDocumentEditor
 // read only editor props
 export interface IReadOnlyEditorProps {
   containerClassName?: string;
+  disabledExtensions: TExtensions[];
   displayConfig?: TDisplayConfig;
   editorClassName?: string;
   fileHandler: Pick<TFileHandler, "getAssetSrc">;
