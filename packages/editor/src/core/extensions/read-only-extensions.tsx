@@ -1,3 +1,4 @@
+import { Extensions } from "@tiptap/core";
 import CharacterCount from "@tiptap/extension-character-count";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
@@ -28,17 +29,20 @@ import {
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
 // types
-import { IMentionHighlight, TFileHandler } from "@/types";
+import { IMentionHighlight, TExtensions, TFileHandler } from "@/types";
+// plane editor extensions
+import { CoreReadOnlyEditorAdditionalExtensions } from "@/plane-editor/extensions";
 
 type Props = {
+  disabledExtensions: TExtensions[];
   fileHandler: Pick<TFileHandler, "getAssetSrc">;
   mentionConfig: {
     mentionHighlights?: () => Promise<IMentionHighlight[]>;
   };
 };
 
-export const CoreReadOnlyEditorExtensions = (props: Props) => {
-  const { fileHandler, mentionConfig } = props;
+export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
+  const { disabledExtensions, fileHandler, mentionConfig } = props;
 
   return [
     StarterKit.configure({
@@ -128,5 +132,8 @@ export const CoreReadOnlyEditorExtensions = (props: Props) => {
     HeadingListExtension,
     CustomTextAlignExtension,
     CustomCalloutReadOnlyExtension,
+    ...CoreReadOnlyEditorAdditionalExtensions({
+      disabledExtensions,
+    }),
   ];
 };

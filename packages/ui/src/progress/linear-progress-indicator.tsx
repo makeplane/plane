@@ -6,7 +6,9 @@ type Props = {
   data: any;
   noTooltip?: boolean;
   inPercentage?: boolean;
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "xl";
+  className?: string;
+  barClassName?: string;
 };
 
 export const LinearProgressIndicator: React.FC<Props> = ({
@@ -14,6 +16,8 @@ export const LinearProgressIndicator: React.FC<Props> = ({
   noTooltip = false,
   inPercentage = false,
   size = "sm",
+  className = "",
+  barClassName = "",
 }) => {
   const total = data.reduce((acc: any, cur: any) => acc + cur.value, 0);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -31,7 +35,7 @@ export const LinearProgressIndicator: React.FC<Props> = ({
     else
       return (
         <Tooltip key={item.id} tooltipContent={`${item.name} ${Math.round(item.value)}${inPercentage ? "%" : ""}`}>
-          <div style={style} className="first:rounded-l-sm last:rounded-r-sm" />
+          <div style={style} className={cn("first:rounded-l-sm last:rounded-r-sm", barClassName)} />
         </Tooltip>
       );
   });
@@ -42,13 +46,12 @@ export const LinearProgressIndicator: React.FC<Props> = ({
         "h-2": size === "sm",
         "h-3": size === "md",
         "h-3.5": size === "lg",
+        "h-[14px]": size === "xl",
       })}
     >
-      {total === 0 ? (
-        <div className="flex h-full w-full gap-[1.5px] p-[2px] bg-custom-background-90 rounded-sm">{bars}</div>
-      ) : (
-        <div className="flex h-full w-full gap-[1.5px] p-[2px] bg-custom-background-90 rounded-sm">{bars}</div>
-      )}
+      <div className={cn("flex h-full w-full gap-[1.5px] p-[2px] bg-custom-background-90 rounded-sm", className)}>
+        {bars}
+      </div>
     </div>
   );
 };
