@@ -23,8 +23,7 @@ import type {
   IMentionSuggestion,
   TEditorCommands,
   TFileHandler,
-  TDocumentEventEmitter,
-  TExtensions
+  TExtensions,
 } from "@/types";
 
 export interface CustomEditorProps {

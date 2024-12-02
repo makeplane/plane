@@ -11,7 +11,13 @@ import { IMarking, scrollSummary } from "@/helpers/scroll-to-node";
 // props
 import { CoreReadOnlyEditorProps } from "@/props";
 // types
-import type { EditorReadOnlyRefApi, IMentionHighlight, TExtensions, TDocumentEventsServer, TFileHandler } from "@/types";
+import type {
+  EditorReadOnlyRefApi,
+  IMentionHighlight,
+  TExtensions,
+  TDocumentEventsServer,
+  TFileHandler,
+} from "@/types";
 
 interface CustomReadOnlyEditorProps {
   disabledExtensions: TExtensions[];
