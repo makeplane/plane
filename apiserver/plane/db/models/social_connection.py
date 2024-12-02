@@ -10,7 +10,12 @@ from .base import BaseModel
 class SocialLoginConnection(BaseModel):
     medium = models.CharField(
         max_length=20,
-        choices=(("Google", "google"), ("Github", "github"), ("GitLab", "gitlab"), ("Jira", "jira")),
+        choices=(
+            ("Google", "google"),
+            ("Github", "github"),
+            ("GitLab", "gitlab"),
+            ("Jira", "jira"),
+        ),
         default=None,
     )
     last_login_at = models.DateTimeField(default=timezone.now, null=True)

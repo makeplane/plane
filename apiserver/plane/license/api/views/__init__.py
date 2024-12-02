@@ -1,13 +1,7 @@
-from .instance import (
-    InstanceEndpoint,
-    SignUpScreenVisitedEndpoint,
-)
+from .instance import InstanceEndpoint, SignUpScreenVisitedEndpoint
 
 
-from .configuration import (
-    EmailCredentialCheckEndpoint,
-    InstanceConfigurationEndpoint,
-)
+from .configuration import EmailCredentialCheckEndpoint, InstanceConfigurationEndpoint
 
 
 from .admin import (
@@ -20,3 +14,5 @@ from .admin import (
 )
 
 from .changelog import ChangeLogEndpoint
+
+from .workspace import InstanceWorkSpaceAvailabilityCheckEndpoint, InstanceWorkSpaceEndpoint

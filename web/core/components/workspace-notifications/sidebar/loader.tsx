@@ -1,6 +1,8 @@
+import range from "lodash/range";
+
 export const NotificationsLoader = () => (
   <div className="divide-y divide-custom-border-100 animate-pulse overflow-hidden">
-    {[...Array(8)].map((i) => (
+    {range(8).map((i) => (
       <div key={i} className="flex w-full items-center gap-4 p-3">
         <span className="min-h-12 min-w-12 bg-custom-background-80 rounded-full" />
         <div className="flex flex-col gap-2.5 w-full">

@@ -55,7 +55,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
         },
         onSynced: () => setHasServerSynced(true),
       }),
-    [id, realtimeConfig, serverHandler, user.id]
+    [id, realtimeConfig, serverHandler, user]
   );
 
   // destroy and disconnect connection on unmount
@@ -75,6 +75,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
   }, [provider, id]);
 
   const editor = useEditor({
+    disabledExtensions,
     id,
     onTransaction,
     editorProps,

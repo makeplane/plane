@@ -6,8 +6,13 @@ import { cn } from "@/helpers/common.helper";
 import { getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
 import { useMention } from "@/hooks/store";
+// plane web hooks
+import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 
-type RichTextReadOnlyEditorWrapperProps = Omit<IRichTextReadOnlyEditor, "fileHandler" | "mentionHandler"> & {
+type RichTextReadOnlyEditorWrapperProps = Omit<
+  IRichTextReadOnlyEditor,
+  "disabledExtensions" | "fileHandler" | "mentionHandler"
+> & {
   workspaceSlug: string;
   projectId?: string;
 };
@@ -15,10 +20,13 @@ type RichTextReadOnlyEditorWrapperProps = Omit<IRichTextReadOnlyEditor, "fileHan
 export const RichTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, RichTextReadOnlyEditorWrapperProps>(
   ({ workspaceSlug, projectId, ...props }, ref) => {
     const { mentionHighlights } = useMention({});
+    // editor flaggings
+    const { richTextEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
 
     return (
       <RichTextReadOnlyEditorWithRef
         ref={ref}
+        disabledExtensions={disabledExtensions}
         fileHandler={getReadOnlyEditorFileHandlers({
           projectId,
           workspaceSlug,

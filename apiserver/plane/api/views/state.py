@@ -16,9 +16,7 @@ from .base import BaseAPIView
 class StateAPIEndpoint(BaseAPIView):
     serializer_class = StateSerializer
     model = State
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
+    permission_classes = [ProjectEntityPermission]
 
     def get_queryset(self):
         return (
@@ -67,9 +65,7 @@ class StateAPIEndpoint(BaseAPIView):
 
                 serializer.save(project_id=project_id)
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except IntegrityError:
             state = State.objects.filter(
                 workspace__slug=slug,
@@ -96,19 +92,13 @@ class StateAPIEndpoint(BaseAPIView):
             request=request,
             queryset=(self.get_queryset()),
             on_results=lambda states: StateSerializer(
-                states,
-                many=True,
-                fields=self.fields,
-                expand=self.expand,
+                states, many=True, fields=self.fields, expand=self.expand
             ).data,
         )
 
     def delete(self, request, slug, project_id, state_id):
         state = State.objects.get(
-            is_triage=False,
-            pk=state_id,
-            project_id=project_id,
-            workspace__slug=slug,
+            is_triage=False, pk=state_id, project_id=project_id, workspace__slug=slug
         )
 
         if state.default:
@@ -122,9 +112,7 @@ class StateAPIEndpoint(BaseAPIView):
 
         if issue_exist:
             return Response(
-                {
-                    "error": "The state is not empty, only empty states can be deleted"
-                },
+                {"error": "The state is not empty, only empty states can be deleted"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

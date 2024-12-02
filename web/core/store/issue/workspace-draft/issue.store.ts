@@ -22,6 +22,8 @@ import {
 import { EDraftIssuePaginationType } from "@/constants/workspace-drafts";
 // helpers
 import { getCurrentDateTimeInISO, convertToISODateString } from "@/helpers/date-time.helper";
+// local-db
+import { addIssueToPersistanceLayer } from "@/local-db/utils/utils";
 // services
 import workspaceDraftService from "@/services/issue/workspace_draft.service";
 // types
@@ -59,7 +61,7 @@ export interface IWorkspaceDraftIssues {
     payload: Partial<TWorkspaceDraftIssue | TIssue>
   ) => Promise<TWorkspaceDraftIssue | undefined>;
   deleteIssue: (workspaceSlug: string, issueId: string) => Promise<void>;
-  moveIssue: (workspaceSlug: string, issueId: string, payload: Partial<TWorkspaceDraftIssue>) => Promise<void>;
+  moveIssue: (workspaceSlug: string, issueId: string, payload: Partial<TWorkspaceDraftIssue>) => Promise<TIssue>;
   addCycleToIssue: (
     workspaceSlug: string,
     issueId: string,
@@ -348,6 +350,10 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
             total_count: this.paginationInfo.total_count - 1,
           });
         }
+
+        // sync issue to local db
+        addIssueToPersistanceLayer(response);
+
         // Update draft issue count in workspaceUserInfo
         this.updateWorkspaceUserDraftIssueCount(workspaceSlug, -1);
       });
