@@ -41,7 +41,7 @@ export const SlashCommandsMenu = (props: SlashCommandsMenuProps) => {
           if (nextItem < 0) {
             nextSection = currentSection - 1;
             if (nextSection < 0) nextSection = sections.length - 1;
-            nextItem = sections[nextSection].items.length - 1;
+            nextItem = sections[nextSection]?.items.length - 1;
           }
         }
         if (e.key === "ArrowDown") {

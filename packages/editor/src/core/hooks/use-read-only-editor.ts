@@ -11,7 +11,13 @@ import { IMarking, scrollSummary } from "@/helpers/scroll-to-node";
 // props
 import { CoreReadOnlyEditorProps } from "@/props";
 // types
-import { EditorReadOnlyRefApi, IMentionHighlight, TExtensions, TFileHandler } from "@/types";
+import type {
+  EditorReadOnlyRefApi,
+  IMentionHighlight,
+  TExtensions,
+  TDocumentEventsServer,
+  TFileHandler,
+} from "@/types";
 
 interface CustomReadOnlyEditorProps {
   disabledExtensions: TExtensions[];
@@ -120,6 +126,8 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
         editorRef.current?.off("update");
       };
     },
+    emitRealTimeUpdate: (message: TDocumentEventsServer) => provider?.sendStateless(message),
+    listenToRealTimeUpdate: () => provider && { on: provider.on.bind(provider), off: provider.off.bind(provider) },
     getHeadings: () => editorRef?.current?.storage.headingList.headings,
   }));
 

@@ -8,6 +8,8 @@ import {
   IMentionSuggestion,
   TAIHandler,
   TDisplayConfig,
+  TDocumentEventEmitter,
+  TDocumentEventsServer,
   TEmbedConfig,
   TExtensions,
   TFileHandler,
@@ -83,6 +85,8 @@ export type EditorReadOnlyRefApi = {
   };
   onHeadingChange: (callback: (headings: IMarking[]) => void) => () => void;
   getHeadings: () => IMarking[];
+  emitRealTimeUpdate: (action: TDocumentEventsServer) => void;
+  listenToRealTimeUpdate: () => TDocumentEventEmitter | undefined;
 };
 
 export interface EditorRefApi extends EditorReadOnlyRefApi {

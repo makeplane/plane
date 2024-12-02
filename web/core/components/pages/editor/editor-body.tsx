@@ -123,7 +123,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
       onConnect: handleServerConnect,
       onServerError: handleServerError,
     }),
-    []
+    [handleServerConnect, handleServerError]
   );
 
   const realtimeConfig: TRealtimeConfig | undefined = useMemo(() => {
