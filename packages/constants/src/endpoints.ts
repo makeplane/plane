@@ -8,10 +8,12 @@ export const GOD_MODE_URL = encodeURI(`${ADMIN_BASE_URL}${ADMIN_BASE_PATH}/`);
 // Publish App Base Url
 export const SPACE_BASE_URL = process.env.NEXT_PUBLIC_SPACE_BASE_URL || "";
 export const SPACE_BASE_PATH = process.env.NEXT_PUBLIC_SPACE_BASE_PATH || "";
+export const SITES_URL = encodeURI(`${SPACE_BASE_URL}${SPACE_BASE_PATH}/`);
 // Live App Base Url
 export const LIVE_BASE_URL = process.env.NEXT_PUBLIC_LIVE_BASE_URL || "";
 export const LIVE_BASE_PATH = process.env.NEXT_PUBLIC_LIVE_BASE_PATH || "";
-export const LIVE_URL = `${LIVE_BASE_URL}${LIVE_BASE_PATH}`;
+export const LIVE_URL = encodeURI(`${LIVE_BASE_URL}${LIVE_BASE_PATH}/`);
 // Silo Base Url
 export const SILO_BASE_URL = process.env.NEXT_PUBLIC_SILO_BASE_URL || "";
 export const SILO_BASE_PATH = process.env.NEXT_PUBLIC_SILO_BASE_PATH || "";
+export const SILO_URL = encodeURI(`${SILO_BASE_URL}${SILO_BASE_PATH}/`);
