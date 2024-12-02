@@ -1,4 +1,4 @@
-import { isFuture, isPast, isToday } from "date-fns";
+import { isPast, isToday } from "date-fns";
 import isEmpty from "lodash/isEmpty";
 import set from "lodash/set";
 import sortBy from "lodash/sortBy";
@@ -7,16 +7,14 @@ import { computedFn } from "mobx-utils";
 // types
 import {
   ICycle,
-  CycleDateCheckData,
   TCyclePlotType,
   TProgressSnapshot,
   TCycleEstimateDistribution,
   TCycleDistribution,
   TCycleEstimateType,
-  TCycleProgress,
 } from "@plane/types";
 // helpers
-import { orderCycles, shouldFilterCycle, formatActiveCycle } from "@/helpers/cycle.helper";
+import { orderCycles, shouldFilterCycle } from "@/helpers/cycle.helper";
 import { getDate } from "@/helpers/date-time.helper";
 import { DistributionUpdates, updateDistribution } from "@/helpers/distribution-update.helper";
 // services
@@ -41,21 +39,18 @@ export interface ICycleStore {
   // computed
   currentProjectCycleIds: string[] | null;
   currentProjectCompletedCycleIds: string[] | null;
-  currentProjectUpcomingCycleIds: string[] | null;
   currentProjectIncompleteCycleIds: string[] | null;
-  currentProjectDraftCycleIds: string[] | null;
   currentProjectActiveCycleId: string | null;
   currentProjectArchivedCycleIds: string[] | null;
   currentProjectActiveCycle: ICycle | null;
 
   // computed actions
-  getActiveCycleProgress: (cycleId?: string) => { cycle: ICycle; isBurnDown: boolean; isTypeIssue: boolean } | null;
   getFilteredCycleIds: (projectId: string, sortByManual: boolean) => string[] | null;
   getFilteredCompletedCycleIds: (projectId: string) => string[] | null;
   getFilteredArchivedCycleIds: (projectId: string) => string[] | null;
   getCycleById: (cycleId: string) => ICycle | null;
   getCycleNameById: (cycleId: string) => string | undefined;
-  getActiveCycleById: (cycleId: string) => ICycle | null;
+  getProjectCycleDetails: (projectId: string) => ICycle[] | null;
   getProjectCycleIds: (projectId: string) => string[] | null;
   getPlotTypeByCycleId: (cycleId: string) => TCyclePlotType;
   getEstimateTypeByCycleId: (cycleId: string) => TCycleEstimateType;
@@ -63,8 +58,6 @@ export interface ICycleStore {
 
   // actions
   updateCycleDistribution: (distributionUpdates: DistributionUpdates, cycleId: string) => void;
-  validateDate: (workspaceSlug: string, projectId: string, payload: CycleDateCheckData) => Promise<any>;
-  setPlotType: (cycleId: string, plotType: TCyclePlotType) => void;
   setEstimateType: (cycleId: string, estimateType: TCycleEstimateType) => void;
   // fetch
   fetchWorkspaceCycles: (workspaceSlug: string) => Promise<ICycle[]>;
@@ -129,15 +122,12 @@ export class CycleStore implements ICycleStore {
       // computed
       currentProjectCycleIds: computed,
       currentProjectCompletedCycleIds: computed,
-      currentProjectUpcomingCycleIds: computed,
       currentProjectIncompleteCycleIds: computed,
-      currentProjectDraftCycleIds: computed,
       currentProjectActiveCycleId: computed,
       currentProjectArchivedCycleIds: computed,
       currentProjectActiveCycle: computed,
 
       // actions
-      setPlotType: action,
       setEstimateType: action,
       fetchWorkspaceCycles: action,
       fetchAllCycles: action,
@@ -195,22 +185,6 @@ export class CycleStore implements ICycleStore {
   }
 
   /**
-   * returns all upcoming cycle ids for a project
-   */
-  get currentProjectUpcomingCycleIds() {
-    const projectId = this.rootStore.router.projectId;
-    if (!projectId || !this.fetchedMap[projectId]) return null;
-    let upcomingCycles = Object.values(this.cycleMap ?? {}).filter((c) => {
-      const startDate = getDate(c.start_date);
-      const isStartDateUpcoming = startDate && isFuture(startDate);
-      return c.project_id === projectId && isStartDateUpcoming && !c?.archived_at;
-    });
-    upcomingCycles = sortBy(upcomingCycles, [(c) => c.sort_order]);
-    const upcomingCycleIds = upcomingCycles.map((c) => c.id);
-    return upcomingCycleIds;
-  }
-
-  /**
    * returns all incomplete cycle ids for a project
    */
   get currentProjectIncompleteCycleIds() {
@@ -224,20 +198,6 @@ export class CycleStore implements ICycleStore {
     incompleteCycles = sortBy(incompleteCycles, [(c) => c.sort_order]);
     const incompleteCycleIds = incompleteCycles.map((c) => c.id);
     return incompleteCycleIds;
-  }
-
-  /**
-   * returns all draft cycle ids for a project
-   */
-  get currentProjectDraftCycleIds() {
-    const projectId = this.rootStore.router.projectId;
-    if (!projectId || !this.fetchedMap[projectId]) return null;
-    let draftCycles = Object.values(this.cycleMap ?? {}).filter(
-      (c) => c.project_id === projectId && !c.start_date && !c.end_date && !c?.archived_at
-    );
-    draftCycles = sortBy(draftCycles, [(c) => c.sort_order]);
-    const draftCycleIds = draftCycles.map((c) => c.id);
-    return draftCycleIds;
   }
 
   /**
@@ -282,19 +242,6 @@ export class CycleStore implements ICycleStore {
       const completionChart = cycle.estimate_distribution?.completion_chart || {};
       return !isEmpty(completionChart) && Object.keys(completionChart).some((p) => completionChart[p]! > 0);
     } else return false;
-  });
-
-  /**
-   * returns active cycle progress for a project
-   */
-  getActiveCycleProgress = computedFn((cycleId?: string) => {
-    const cycle = cycleId ? this.cycleMap[cycleId] : this.currentProjectActiveCycle;
-    if (!cycle) return null;
-
-    const isTypeIssue = this.getEstimateTypeByCycleId(cycle.id) === "issues";
-    const isBurnDown = this.getPlotTypeByCycleId(cycle.id) === "burndown";
-
-    return { cycle, isTypeIssue, isBurnDown };
   });
 
   /**
@@ -378,36 +325,27 @@ export class CycleStore implements ICycleStore {
   getCycleNameById = computedFn((cycleId: string): string => this.cycleMap?.[cycleId]?.name);
 
   /**
-   * @description returns active cycle details by cycle id
-   * @param cycleId
-   * @returns
+   * @description returns list of cycle details of the project id passed as argument
+   * @param projectId
    */
-  getActiveCycleById = computedFn((cycleId: string): ICycle | null =>
-    this.activeCycleIdMap?.[cycleId] && this.cycleMap?.[cycleId] ? this.cycleMap?.[cycleId] : null
-  );
+  getProjectCycleDetails = computedFn((projectId: string): ICycle[] | null => {
+    if (!this.fetchedMap[projectId]) return null;
+
+    let cycles = Object.values(this.cycleMap ?? {}).filter((c) => c.project_id === projectId && !c?.archived_at);
+    cycles = sortBy(cycles, [(c) => c.sort_order]);
+    return cycles || null;
+  });
 
   /**
    * @description returns list of cycle ids of the project id passed as argument
    * @param projectId
    */
   getProjectCycleIds = computedFn((projectId: string): string[] | null => {
-    if (!this.fetchedMap[projectId]) return null;
-
-    let cycles = Object.values(this.cycleMap ?? {}).filter((c) => c.project_id === projectId && !c?.archived_at);
-    cycles = sortBy(cycles, [(c) => c.sort_order]);
+    const cycles = this.getProjectCycleDetails(projectId);
+    if (!cycles) return null;
     const cycleIds = cycles.map((c) => c.id);
     return cycleIds || null;
   });
-
-  /**
-   * @description validates cycle dates
-   * @param workspaceSlug
-   * @param projectId
-   * @param payload
-   * @returns
-   */
-  validateDate = async (workspaceSlug: string, projectId: string, payload: CycleDateCheckData) =>
-    await this.cycleService.cycleDateCheck(workspaceSlug, projectId, payload);
 
   /**
    * @description gets the plot type for the cycle store
@@ -426,14 +364,6 @@ export class CycleStore implements ICycleStore {
       ? this.estimatedType[cycleId] || "issues"
       : "issues";
   });
-
-  /**
-   * @description updates the plot type for the cycle store
-   * @param {TCyclePlotType} plotType
-   */
-  setPlotType = (cycleId: string, plotType: TCyclePlotType) => {
-    set(this.plotType, [cycleId], plotType);
-  };
 
   /**
    * @description updates the estimate type for the cycle store
@@ -472,14 +402,16 @@ export class CycleStore implements ICycleStore {
         runInAction(() => {
           response.forEach((cycle) => {
             set(this.cycleMap, [cycle.id], cycle);
-            cycle.status?.toLowerCase() === "current" && set(this.activeCycleIdMap, [cycle.id], true);
+            if (cycle.status?.toLowerCase() === "current") {
+              set(this.activeCycleIdMap, [cycle.id], true);
+            }
           });
           set(this.fetchedMap, projectId, true);
           this.loader = false;
         });
         return response;
       });
-    } catch (error) {
+    } catch {
       this.loader = false;
       return undefined;
     }
@@ -552,6 +484,7 @@ export class CycleStore implements ICycleStore {
    * @param cycleId
    *  @returns
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   fetchActiveCycleProgressPro = action(async (workspaceSlug: string, projectId: string, cycleId: string) => {});
 
   /**

@@ -15,7 +15,6 @@ import {
 // UI
 import { Row } from "@plane/ui";
 // hooks
-import { useCycle, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // components
 import { TRenderQuickActions } from "../list/list-view-types";
@@ -261,38 +260,19 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     quickAddCallback,
     scrollableContainerRef,
   } = props;
-
+  // store hooks
   const storeType = useIssueStoreType();
-
-  const member = useMember();
-  const project = useProject();
-  const label = useLabel();
-  const cycle = useCycle();
-  const projectModule = useModule();
-  const projectState = useProjectState();
-
-  const groupByList = getGroupByColumns(
-    group_by as GroupByColumnTypes,
-    project,
-    cycle,
-    projectModule,
-    label,
-    projectState,
-    member,
-    true,
-    isWorkspaceLevel(storeType)
-  );
-  const subGroupByList = getGroupByColumns(
-    sub_group_by as GroupByColumnTypes,
-    project,
-    cycle,
-    projectModule,
-    label,
-    projectState,
-    member,
-    true,
-    isWorkspaceLevel(storeType)
-  );
+  // derived values
+  const groupByList = getGroupByColumns({
+    groupBy: group_by as GroupByColumnTypes,
+    includeNone: true,
+    isWorkspaceLevel: isWorkspaceLevel(storeType),
+  });
+  const subGroupByList = getGroupByColumns({
+    groupBy: sub_group_by as GroupByColumnTypes,
+    includeNone: true,
+    isWorkspaceLevel: isWorkspaceLevel(storeType),
+  });
 
   if (!groupByList || !subGroupByList) return null;
 

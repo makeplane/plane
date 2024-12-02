@@ -216,7 +216,7 @@ export type GroupByColumnTypes =
 export interface IGroupByColumn {
   id: string;
   name: string;
-  icon: ReactElement | undefined;
+  icon?: ReactElement | undefined;
   payload: Partial<TIssue>;
   isDropDisabled?: boolean;
   dropErrorMessage?: string;
