@@ -1,1 +1,2 @@
-export * from "ce/components/workspace-notifications";
+export * from "./root";
+export * from "./notification-card";

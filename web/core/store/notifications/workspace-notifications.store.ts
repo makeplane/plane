@@ -27,8 +27,8 @@ import workspaceNotificationService from "@/services/workspace-notification.serv
 import { Notification, INotification } from "@/store/notifications/notification";
 import { CoreRootStore } from "@/store/root.store";
 
-type TNotificationLoader = ENotificationLoader | undefined;
-type TNotificationQueryParamType = ENotificationQueryParamType;
+export type TNotificationLoader = ENotificationLoader | undefined;
+export type TNotificationQueryParamType = ENotificationQueryParamType;
 
 export interface IWorkspaceNotificationStore {
   // observables
@@ -104,7 +104,7 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
       updateBulkFilters: action,
       // actions
       getUnreadNotificationsCount: action,
-      getNotifications: action,
+      // getNotifications: action,
       markAllNotificationsAsRead: action,
     });
   }
