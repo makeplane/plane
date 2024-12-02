@@ -21,6 +21,8 @@ from plane.bgtasks.issue_activities_task import issue_activity
 from plane.app.permissions import allow_permission, ROLE
 from plane.settings.storage import S3Storage
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.payment.flags.flag import FeatureFlag
 
 
 class IssueAttachmentEndpoint(BaseAPIView):
@@ -69,7 +71,6 @@ class IssueAttachmentEndpoint(BaseAPIView):
             notification=True,
             origin=request.META.get("HTTP_ORIGIN"),
         )
-
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
@@ -89,7 +90,27 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
     def post(self, request, slug, project_id, issue_id):
         name = request.data.get("name")
         type = request.data.get("type", False)
-        size = int(request.data.get("size", settings.FILE_SIZE_LIMIT))
+        size = request.data.get("size")
+
+        # Check if the request is valid
+        if not name or not size:
+            return Response(
+                {
+                    "error": "Invalid request.",
+                    "status": False,
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Check if the file size is greater than the limit
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.FILE_SIZE_LIMIT_PRO,
+            slug=slug,
+            user_id=str(request.user.id),
+        ):
+            size_limit = min(size, settings.PRO_FILE_SIZE_LIMIT)
+        else:
+            size_limit = min(size, settings.FILE_SIZE_LIMIT)
 
         if not type or type not in settings.ATTACHMENT_MIME_TYPES:
             return Response(
@@ -102,9 +123,6 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
 
         # asset key
         asset_key = f"{workspace.id}/{uuid.uuid4().hex}-{name}"
-
-        # Get the size limit
-        size_limit = min(size, settings.FILE_SIZE_LIMIT)
 
         # Create a File Asset
         asset = FileAsset.objects.create(

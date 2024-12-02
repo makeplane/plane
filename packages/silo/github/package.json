@@ -1,0 +1,27 @@
+{
+  "name": "@silo/github",
+  "version": "0.23.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "description": "Github package used by silo for importers and integrations",
+  "scripts": {
+    "dev": "tsup --watch",
+    "build": "tsup",
+    "lint": "eslint --ext .ts src"
+  },
+  "author": "Plane Engineering",
+  "license": "AGPL",
+  "dependencies": {
+    "@plane/constants": "*",
+    "@plane/sdk": "*",
+    "axios": "^1.7.2"
+  },
+  "devDependencies": {
+    "@octokit/auth-app": "^7.1.0",
+    "@octokit/rest": "^21.0.2",
+    "@octokit/openapi-webhooks-types": "^8.3.0",
+    "@plane/eslint-config": "*",
+    "@plane/typescript-config": "*",
+    "tsc-alias": "^1.8.10"
+  }
+}
