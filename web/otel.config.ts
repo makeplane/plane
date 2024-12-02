@@ -14,7 +14,7 @@ const sdk = new NodeSDK({
     new OTLPTraceExporter({
       url: process.env.OTEL_COLLECTOR_URL || "https://telemetry.plane.so/v1/traces",
     })
-  ),
+  ) as any,
 });
 
 // Handle shutdown gracefully
