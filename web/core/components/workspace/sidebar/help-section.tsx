@@ -16,6 +16,8 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { PlaneVersionNumber } from "@/plane-web/components/global";
 import { WorkspaceEditionBadge } from "@/plane-web/components/workspace";
+// plane web helpers
+import { getProductUpdatesLink } from "@/plane-web/helpers/dashboard.helper";
 
 export interface WorkspaceHelpSectionProps {
   setSidebarActive?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -33,6 +35,8 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
   const [isChangeLogOpen, setIsChangeLogOpen] = useState(false);
+  // derived values
+  const productUpdatesLink = getProductUpdatesLink();
 
   const handleCrispWindowShow = () => {
     toggleIntercom(!isIntercomToggle);
@@ -138,7 +142,7 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
               <a
                 target="_blank"
                 type="button"
-                href="https://plane.so/changelog/community"
+                href={productUpdatesLink}
                 className="flex w-full items-center justify-start text-xs hover:bg-custom-background-80"
               >
                 <span className="text-xs">What&apos;s new</span>
