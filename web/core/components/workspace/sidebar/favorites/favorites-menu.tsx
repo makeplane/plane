@@ -101,14 +101,12 @@ export const SidebarFavoritesMenu = observer(() => {
       // handle reordering at root level
       if (droppedFavId) {
         if (instruction != "make-child") {
-          // const destinationSequence = getgetDestinationSequence(droppedFavId, instruction);
           handleReorder(sourceData.id, droppedFavId, instruction);
         }
       }
     } else {
       //handling reordering for favorites
       if (droppedFavId) {
-        // const destinationSequence = getgetDestinationSequence(droppedFavId, instruction);
         handleReorder(sourceData.id, droppedFavId, instruction);
       }
 
