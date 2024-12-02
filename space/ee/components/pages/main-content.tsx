@@ -63,6 +63,7 @@ export const PageDetailsMainContent: React.FC<Props> = observer((props) => {
           <DocumentReadOnlyEditorWithRef
             ref={editorRef}
             id={pageDetails.id}
+            disabledExtensions={[]}
             initialValue={pageDetails.description_html ?? "<p></p>"}
             containerClassName="p-0 pb-64 border-none"
             fileHandler={getReadOnlyEditorFileHandlers({

@@ -10,6 +10,7 @@ export const useEditorFlagging = (
   workspaceSlug: string
 ): {
   documentEditor: TExtensions[];
+  liteTextEditor: TExtensions[];
   richTextEditor: TExtensions[];
 } => {
   const isIssueEmbedEnabled = useFlag(workspaceSlug, "PAGE_ISSUE_EMBEDS");
@@ -23,6 +24,7 @@ export const useEditorFlagging = (
 
   return {
     documentEditor,
+    liteTextEditor: [],
     richTextEditor: [],
   };
 };

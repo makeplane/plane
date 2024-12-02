@@ -16,6 +16,7 @@ import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web components
 import { IssueEmbedCard } from "@/plane-web/components/pages";
 // plane web hooks
+import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useWorkspaceMention } from "@/plane-web/hooks/use-workspace-mention";
 
 export const WorkspacePagesVersionEditor: React.FC<TVersionEditorProps> = observer((props) => {
@@ -28,6 +29,7 @@ export const WorkspacePagesVersionEditor: React.FC<TVersionEditorProps> = observ
     getUserDetails,
     workspace: { workspaceMemberIds },
   } = useMember();
+  const { documentEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString() ?? "");
   // derived values
   const workspaceMemberDetails = workspaceMemberIds?.map((id) => getUserDetails(id) as IUserLite);
   // use-mention
@@ -94,6 +96,7 @@ export const WorkspacePagesVersionEditor: React.FC<TVersionEditorProps> = observ
       id={activeVersion ?? ""}
       initialValue={description ?? "<p></p>"}
       containerClassName="p-0 pb-64 border-none"
+      disabledExtensions={disabledExtensions}
       displayConfig={displayConfig}
       editorClassName="pl-10"
       fileHandler={getReadOnlyEditorFileHandlers({
