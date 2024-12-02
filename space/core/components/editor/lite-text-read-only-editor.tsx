@@ -7,7 +7,10 @@ import { getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
 import { useMention } from "@/hooks/use-mention";
 
-type LiteTextReadOnlyEditorWrapperProps = Omit<ILiteTextReadOnlyEditor, "fileHandler" | "mentionHandler"> & {
+type LiteTextReadOnlyEditorWrapperProps = Omit<
+  ILiteTextReadOnlyEditor,
+  "disabledExtensions" | "fileHandler" | "mentionHandler"
+> & {
   anchor: string;
 };
 
@@ -18,6 +21,7 @@ export const LiteTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, Lit
     return (
       <LiteTextReadOnlyEditorWithRef
         ref={ref}
+        disabledExtensions={[]}
         fileHandler={getReadOnlyEditorFileHandlers({
           anchor,
         })}

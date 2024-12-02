@@ -1,3 +1,4 @@
+export type { ISvgIcons } from "./type";
 export * from "./cycle";
 export * from "./module";
 export * from "./state";
@@ -7,9 +8,11 @@ export * from "./blocker-icon";
 export * from "./calendar-after-icon";
 export * from "./calendar-before-icon";
 export * from "./center-panel-icon";
+export * from "./comment-fill-icon";
 export * from "./create-icon";
 export * from "./dice-icon";
 export * from "./discord-icon";
+export * from "./epic-icon";
 export * from "./full-screen-panel-icon";
 export * from "./github-icon";
 export * from "./gitlab-icon";

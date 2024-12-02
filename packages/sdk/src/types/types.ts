@@ -312,20 +312,22 @@ export interface Attachment {
   page: null | string;
 }
 
+export interface UploadData {
+  url: string;
+  fields: {
+    "Content-Type": string;
+    key: string;
+    "x-amz-algorithm": string;
+    "x-amz-credential": string;
+    "x-amz-date": string;
+    policy: string;
+    "x-amz-signature": string;
+  };
+}
+
 export interface AttachmentResponse {
   asset_id: string;
-  upload_data: {
-    url: string;
-    fields: {
-      "Content-Type": string;
-      key: string;
-      "x-amz-algorithm": string;
-      "x-amz-credential": string;
-      "x-amz-date": string;
-      policy: string;
-      "x-amz-signature": string;
-    };
-  };
+  upload_data: UploadData;
   attachment: Attachment;
   asset_url: string;
 }

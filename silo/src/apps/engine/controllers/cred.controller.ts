@@ -35,12 +35,14 @@ export class CredentialController {
       // Fetch all the credentials
       const credentials = await getCredentialsByWorkspaceId(workspaceId, userId, source);
 
-      let isOAuthEnabled = true;
+      let isOAuthEnabled = false;
 
       if (source.toLowerCase() === "linear") {
         isOAuthEnabled = env.LINEAR_OAUTH_ENABLED === "1";
       } else if (source.toLowerCase() === "jira") {
         isOAuthEnabled = env.JIRA_OAUTH_ENABLED === "1";
+      } else if (source.toLowerCase() === "jira_server") {
+        isOAuthEnabled = env.JIRA_SERVER_OAUTH_ENABLED === "1";
       } else if (source.toLowerCase() === "asana") {
         isOAuthEnabled = env.ASANA_OAUTH_ENABLED === "1";
       }

@@ -47,8 +47,8 @@ export const PageDetailsMainContent: React.FC<Props> = observer((props) => {
   if (!publishSettings || !pageDetails || !pageDetails.id) return null;
 
   return (
-    <div className="size-full flex justify-center overflow-y-auto vertical-scrollbar scrollbar-md">
-      <div className="xl:w-1/2 mt-6 xl:mt-20 px-5 md:px-10 xl:p-0 space-y-4">
+    <div className="size-full flex justify-center overflow-y-auto overflow-x-hidden vertical-scrollbar scrollbar-md">
+      <div className="flex flex-col size-full xl:w-1/2 mt-6 xl:mt-20 px-5 md:px-10 xl:p-0 space-y-4">
         <div className="space-y-2">
           <div className="size-[60px] bg-custom-background-80 rounded grid place-items-center">
             {pageDetails.logo_props?.in_use ? (
@@ -59,10 +59,11 @@ export const PageDetailsMainContent: React.FC<Props> = observer((props) => {
           </div>
           <h1 className="text-4xl font-semibold break-words">{pageDetails.name}</h1>
         </div>
-        <div className="ml-5">
+        <div className="size-full ml-5">
           <DocumentReadOnlyEditorWithRef
             ref={editorRef}
             id={pageDetails.id}
+            disabledExtensions={[]}
             initialValue={pageDetails.description_html ?? "<p></p>"}
             containerClassName="p-0 pb-64 border-none"
             fileHandler={getReadOnlyEditorFileHandlers({

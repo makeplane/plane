@@ -18,10 +18,10 @@ export class IssueService extends APIService {
   async getIssueByIdentifier(
     workspaceSlug: string,
     projectIdentifier: string,
-    issueSequence: number
+    issueSequence: number,
   ): Promise<ExIssue> {
     return this.get(
-      `/api/v1/workspaces/${workspaceSlug}/issues/${projectIdentifier}-${issueSequence.toString()}/`
+      `/api/v1/workspaces/${workspaceSlug}/issues/${projectIdentifier}-${issueSequence.toString()}/`,
     )
       .then((response) => response.data)
       .catch((error) => {
@@ -40,11 +40,11 @@ export class IssueService extends APIService {
   async create(
     slug: string,
     projectId: string,
-    payload: Omit<Optional<ExIssue>, ExcludedProps>
+    payload: Omit<Optional<ExIssue>, ExcludedProps>,
   ): Promise<ExIssue> {
     return this.post(
       `/api/v1/workspaces/${slug}/projects/${projectId}/issues/`,
-      payload
+      payload,
     )
       .then((response) => response.data)
       .catch((error) => {
@@ -56,11 +56,11 @@ export class IssueService extends APIService {
     slug: string,
     projectId: string,
     issueId: string,
-    payload: Omit<Optional<ExIssue>, ExcludedProps>
+    payload: Omit<Optional<ExIssue>, ExcludedProps>,
   ) {
     return this.patch(
       `/api/v1/workspaces/${slug}/projects/${projectId}/issues/${issueId}/`,
-      payload
+      payload,
     )
       .then((response) => response.data)
       .catch((error) => {
@@ -70,7 +70,7 @@ export class IssueService extends APIService {
 
   async destroy(slug: string, projectId: string, issueId: string) {
     return this.delete(
-      `/api/v1/workspaces/${slug}/projects/${projectId}/issues/${issueId}/`
+      `/api/v1/workspaces/${slug}/projects/${projectId}/issues/${issueId}/`,
     )
       .then((response) => response.data)
       .catch((error) => {
@@ -83,14 +83,14 @@ export class IssueService extends APIService {
     projectId: string,
     issueId: string,
     title: string,
-    url: string
+    url: string,
   ) {
     return this.post(
       `/api/v1/workspaces/${slug}/projects/${projectId}/issues/${issueId}/links/`,
       {
         title: title,
         url: url,
-      }
+      },
     )
       .then((response) => response.data)
       .catch((error) => {
@@ -106,17 +106,17 @@ export class IssueService extends APIService {
     size: number,
     type: string,
     external_source: string,
-    external_id: string
+    external_id: string,
   ): Promise<AttachmentResponse> {
     return this.post(
-      `/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-attachments/`,
+      `/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-attachments/server/`,
       {
         name,
         size,
         type,
         external_source,
         external_id,
-      }
+      },
     )
       .then((response) => response?.data)
       .catch((error) => {
@@ -129,11 +129,11 @@ export class IssueService extends APIService {
     projectId: string,
     issueId: string,
     attachmentId: string,
-    payload: Omit<Optional<ExIssueAttachment>, ExcludedProps>
+    payload: Omit<Optional<ExIssueAttachment>, ExcludedProps>,
   ) {
     return this.patch(
-      `/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-attachments/${attachmentId}/`,
-      payload
+      `/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-attachments/${attachmentId}/server/`,
+      payload,
     )
       .then((response) => response.data)
       .catch((error) => {
@@ -145,10 +145,10 @@ export class IssueService extends APIService {
     workspaceSlug: string,
     projectId: string,
     externalId: string,
-    externalSource: string
+    externalSource: string,
   ): Promise<ExIssue> {
     return this.get(
-      `/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issues/?external_id=${externalId}&external_source=${externalSource}`
+      `/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issues/?external_id=${externalId}&external_source=${externalSource}`,
     )
       .then((response) => response?.data)
       .catch((error) => {
@@ -159,10 +159,10 @@ export class IssueService extends APIService {
   async getIssue(
     workspaceSlug: string,
     projectId: string,
-    issueId: string
+    issueId: string,
   ): Promise<ExIssue> {
     return this.get(
-      `/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/`
+      `/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/`,
     )
       .then((response) => response?.data)
       .catch((error) => {
@@ -173,10 +173,10 @@ export class IssueService extends APIService {
   async getIssueAttachments(
     workspaceSlug: string,
     projectId: string,
-    issueId: string
+    issueId: string,
   ): Promise<ExIssueAttachment[]> {
     return this.get(
-      `/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-attachments/`
+      `/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-attachments/server/`,
     )
       .then((response) => response?.data)
       .catch((error) => {

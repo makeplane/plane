@@ -179,13 +179,26 @@ ul[data-type="taskList"] li > label input[type="checkbox"] {
   }
 }
 
-ul[data-type="taskList"] li > div > p {
-  margin-top: 10px;
+ul[data-type="taskList"] li > div {
+  & > p {
+    margin-top: 10px;
+    transition: color 0.2s ease;
+  }
+
+  [data-text-color] {
+    transition: opacity 0.2s ease;
+  }
 }
 
-ul[data-type="taskList"] li[data-checked="true"] > div > p {
-  color: rgb(var(--color-text-400));
-  transition: color 0.2s ease;
+ul[data-type="taskList"] li[data-checked="true"] {
+  & > div > p {
+    color: rgb(var(--color-text-400));
+  }
+
+  [data-text-color] {
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+  }
 }
 /* end to-do list */
 

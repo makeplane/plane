@@ -29,6 +29,14 @@ export const IMPORTERS_LIST: ImporterProps[] = [
     beta: true,
   },
   {
+    flag: E_FEATURE_FLAGS.JIRA_SERVER_IMPORTER,
+    key: "jira-server",
+    title: "Jira Server",
+    description: "Import your Jira server data into Plane projects.",
+    logo: JiraLogo,
+    beta: true,
+  },
+  {
     flag: E_FEATURE_FLAGS.LINEAR_IMPORTER,
     key: "linear",
     title: "Linear",

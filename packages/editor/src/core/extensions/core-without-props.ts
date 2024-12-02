@@ -19,6 +19,8 @@ import { TableHeader, TableCell, TableRow, Table } from "./table";
 import { CustomTextAlignExtension } from "./text-align";
 import { CustomCalloutExtensionConfig } from "./callout/extension-config";
 import { CustomColorExtension } from "./custom-color";
+// plane editor extensions
+import { CoreEditorAdditionalExtensionsWithoutProps } from "@/plane-editor/extensions/core/without-props";
 
 export const CoreEditorExtensionsWithoutProps = [
   StarterKit.configure({
@@ -89,6 +91,7 @@ export const CoreEditorExtensionsWithoutProps = [
   CustomTextAlignExtension,
   CustomCalloutExtensionConfig,
   CustomColorExtension,
+  ...CoreEditorAdditionalExtensionsWithoutProps,
 ];
 
 export const DocumentEditorExtensionsWithoutProps = [IssueWidgetWithoutProps()];

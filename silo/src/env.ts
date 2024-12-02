@@ -25,6 +25,7 @@ const envSchema = z.object({
   JIRA_OAUTH_ENABLED: z.string().default("0"),
   JIRA_CLIENT_ID: z.string().optional(),
   JIRA_CLIENT_SECRET: z.string().optional(),
+  JIRA_SERVER_OAUTH_ENABLED: z.string().default("0"),
   // Linear Env Variables
   LINEAR_OAUTH_ENABLED: z.string().default("0"),
   LINEAR_CLIENT_ID: z.string().optional(),

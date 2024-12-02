@@ -1,7 +1,7 @@
 import { db } from "@/db/config/db.config";
 import { and, eq, desc } from "drizzle-orm";
 import * as schema from "../schema";
-import { TImporterKeys } from "@silo/core";
+import { TImporterKeys, TIntegrationKeys } from "@silo/core";
 
 /* ------------------- Create Job ------------------- */
 // Create the job based on the data that defined
@@ -26,7 +26,7 @@ export const getJobById = async (id: string) => {
 };
 
 // Fetch the job and jobconfig from the given workspaceslug
-export const getJobByWorkspaceIdAndSource = async (workspaceId: string, source: TImporterKeys) => {
+export const getJobByWorkspaceIdAndSource = async (workspaceId: string, source: TImporterKeys & TIntegrationKeys) => {
   // Get the job with the workspace slug
   const jobs = await db
     .select()
