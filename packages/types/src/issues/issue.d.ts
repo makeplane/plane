@@ -95,6 +95,7 @@ export type TIssuesResponse = {
   total_pages: number;
   extra_stats: null;
   results: TIssueResponseResults;
+  total_results: number;
 };
 
 export type TBulkIssueProperties = Pick<

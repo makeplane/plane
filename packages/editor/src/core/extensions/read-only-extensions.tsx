@@ -23,16 +23,18 @@ import {
   HeadingListExtension,
   CustomReadOnlyImageExtension,
   CustomTextAlignExtension,
+  CustomCalloutReadOnlyExtension,
   CustomColorExtension,
 } from "@/extensions";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
 // types
-import { IMentionHighlight, TFileHandler } from "@/types";
+import { IMentionHighlight, TExtensions, TFileHandler } from "@/types";
 // plane editor extensions
 import { CoreReadOnlyEditorAdditionalExtensions } from "@/plane-editor/extensions";
 
 type Props = {
+  disabledExtensions: TExtensions[];
   fileHandler: Pick<TFileHandler, "getAssetSrc">;
   mentionConfig: {
     mentionHighlights?: () => Promise<IMentionHighlight[]>;
@@ -40,7 +42,7 @@ type Props = {
 };
 
 export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
-  const { fileHandler, mentionConfig } = props;
+  const { disabledExtensions, fileHandler, mentionConfig } = props;
 
   return [
     StarterKit.configure({
@@ -129,6 +131,9 @@ export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
     CustomColorExtension,
     HeadingListExtension,
     CustomTextAlignExtension,
-    ...CoreReadOnlyEditorAdditionalExtensions(),
+    CustomCalloutReadOnlyExtension,
+    ...CoreReadOnlyEditorAdditionalExtensions({
+      disabledExtensions,
+    }),
   ];
 };

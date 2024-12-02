@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import range from "lodash/range";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
@@ -29,7 +30,7 @@ export const ProjectSettingsSidebar = observer(() => {
         <div className="flex flex-col gap-2">
           <span className="text-xs font-semibold text-custom-sidebar-text-400">SETTINGS</span>
           <Loader className="flex w-full flex-col gap-2">
-            {[...Array(8)].map((index) => (
+            {range(8).map((index) => (
               <Loader.Item key={index} height="34px" />
             ))}
           </Loader>

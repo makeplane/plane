@@ -1,11 +1,13 @@
 import set from "lodash/set";
 import unset from "lodash/unset";
-import { makeObservable, observable, runInAction, action, reaction } from "mobx";
+import { makeObservable, observable, runInAction, action, reaction, computed } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
 import { TPage, TPageFilters, TPageNavigationTabs } from "@plane/types";
 // helpers
 import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@/helpers/page.helper";
+// plane web constants
+import { EUserPermissions } from "@/plane-web/constants";
 // services
 import { ProjectPageService } from "@/services/page";
 // store
@@ -24,6 +26,7 @@ export interface IProjectPageStore {
   filters: TPageFilters;
   // computed
   isAnyPageAvailable: boolean;
+  canCurrentUserCreatePage: boolean;
   // helper actions
   getCurrentProjectPageIds: (pageType: TPageNavigationTabs) => string[] | undefined;
   getCurrentProjectFilteredPageIds: (pageType: TPageNavigationTabs) => string[] | undefined;
@@ -62,6 +65,9 @@ export class ProjectPageStore implements IProjectPageStore {
       data: observable,
       error: observable,
       filters: observable,
+      // computed
+      isAnyPageAvailable: computed,
+      canCurrentUserCreatePage: computed,
       // helper actions
       updateFilters: action,
       clearAllFilters: action,
@@ -90,6 +96,18 @@ export class ProjectPageStore implements IProjectPageStore {
   get isAnyPageAvailable() {
     if (this.loader) return true;
     return Object.keys(this.data).length > 0;
+  }
+
+  /**
+   * @description returns true if the current logged in user can create a page
+   */
+  get canCurrentUserCreatePage() {
+    const { workspaceSlug, projectId } = this.store.router;
+    const currentUserProjectRole = this.store.user.permission.projectPermissionsByWorkspaceSlugAndProjectId(
+      workspaceSlug?.toString() || "",
+      projectId?.toString() || ""
+    );
+    return !!currentUserProjectRole && currentUserProjectRole >= EUserPermissions.MEMBER;
   }
 
   /**

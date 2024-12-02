@@ -16,8 +16,6 @@ import {
   TServerHandler,
 } from "@/types";
 import { TTextAlign } from "@/extensions";
-// plane editor types
-import { TEditorAdditionalCommands } from "@/plane-editor/types";
 
 export type TEditorCommands =
   | "text"
@@ -43,7 +41,7 @@ export type TEditorCommands =
   | "text-color"
   | "background-color"
   | "text-align"
-  | TEditorAdditionalCommands;
+  | "callout";
 
 export type TCommandExtraProps = {
   image: {
@@ -110,7 +108,7 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
 export interface IEditorProps {
   containerClassName?: string;
   displayConfig?: TDisplayConfig;
-  disabledExtensions?: TExtensions[];
+  disabledExtensions: TExtensions[];
   editorClassName?: string;
   fileHandler: TFileHandler;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
@@ -127,7 +125,7 @@ export interface IEditorProps {
   onEnterKeyPress?: (e?: any) => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
-  value?: string | null;
+  value?: string | null; 
 }
 export interface ILiteTextEditor extends IEditorProps {
   extensions?: any[];
@@ -152,6 +150,7 @@ export interface ICollaborativeDocumentEditor
 // read only editor props
 export interface IReadOnlyEditorProps {
   containerClassName?: string;
+  disabledExtensions: TExtensions[];
   displayConfig?: TDisplayConfig;
   editorClassName?: string;
   fileHandler: Pick<TFileHandler, "getAssetSrc">;

@@ -11,14 +11,15 @@ import { IMarking, scrollSummary } from "@/helpers/scroll-to-node";
 // props
 import { CoreReadOnlyEditorProps } from "@/props";
 // types
-import { EditorReadOnlyRefApi, IMentionHighlight, TDocumentEventsServer, TFileHandler } from "@/types";
+import type { EditorReadOnlyRefApi, IMentionHighlight, TExtensions, TDocumentEventsServer, TFileHandler } from "@/types";
 
 interface CustomReadOnlyEditorProps {
-  initialValue?: string;
+  disabledExtensions: TExtensions[];
   editorClassName: string;
-  forwardedRef?: MutableRefObject<EditorReadOnlyRefApi | null>;
-  extensions?: any;
   editorProps?: EditorProps;
+  extensions?: any;
+  forwardedRef?: MutableRefObject<EditorReadOnlyRefApi | null>;
+  initialValue?: string;
   fileHandler: Pick<TFileHandler, "getAssetSrc">;
   handleEditorReady?: (value: boolean) => void;
   mentionHandler: {
@@ -29,6 +30,7 @@ interface CustomReadOnlyEditorProps {
 
 export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
   const {
+    disabledExtensions,
     initialValue,
     editorClassName,
     forwardedRef,
@@ -54,6 +56,7 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
     },
     extensions: [
       ...CoreReadOnlyEditorExtensions({
+        disabledExtensions,
         mentionConfig: {
           mentionHighlights: mentionHandler.highlights,
         },

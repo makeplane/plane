@@ -9,11 +9,12 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models, transaction
 from django.utils import timezone
 from django.db.models import Q
+from django import apps
 
 # Module imports
 from plane.utils.html_processor import strip_tags
 from plane.db.mixins import SoftDeletionManager
-
+from plane.utils.exception_logger import log_exception
 from .project import ProjectBaseModel
 
 
@@ -656,3 +657,126 @@ class IssueVote(ProjectBaseModel):
 
     def __str__(self):
         return f"{self.issue.name} {self.actor.email}"
+
+
+class IssueVersion(ProjectBaseModel):
+    issue = models.ForeignKey(
+        "db.Issue",
+        on_delete=models.CASCADE,
+        related_name="versions",
+    )
+    PRIORITY_CHOICES = (
+        ("urgent", "Urgent"),
+        ("high", "High"),
+        ("medium", "Medium"),
+        ("low", "Low"),
+        ("none", "None"),
+    )
+    parent = models.UUIDField(blank=True, null=True)
+    state = models.UUIDField(blank=True, null=True)
+    estimate_point = models.UUIDField(blank=True, null=True)
+    name = models.CharField(max_length=255, verbose_name="Issue Name")
+    description = models.JSONField(blank=True, default=dict)
+    description_html = models.TextField(blank=True, default="<p></p>")
+    description_stripped = models.TextField(blank=True, null=True)
+    description_binary = models.BinaryField(null=True)
+    priority = models.CharField(
+        max_length=30,
+        choices=PRIORITY_CHOICES,
+        verbose_name="Issue Priority",
+        default="none",
+    )
+    start_date = models.DateField(null=True, blank=True)
+    target_date = models.DateField(null=True, blank=True)
+    sequence_id = models.IntegerField(
+        default=1, verbose_name="Issue Sequence ID"
+    )
+    sort_order = models.FloatField(default=65535)
+    completed_at = models.DateTimeField(null=True)
+    archived_at = models.DateField(null=True)
+    is_draft = models.BooleanField(default=False)
+    external_source = models.CharField(max_length=255, null=True, blank=True)
+    external_id = models.CharField(max_length=255, blank=True, null=True)
+    type = models.UUIDField(blank=True, null=True)
+    last_saved_at = models.DateTimeField(default=timezone.now)
+    owned_by = models.UUIDField()
+    assignees = ArrayField(
+        models.UUIDField(),
+        blank=True,
+        default=list,
+    )
+    labels = ArrayField(
+        models.UUIDField(),
+        blank=True,
+        default=list,
+    )
+    cycle = models.UUIDField(
+        null=True,
+        blank=True,
+    )
+    modules = ArrayField(
+        models.UUIDField(),
+        blank=True,
+        default=list,
+    )
+    properties = models.JSONField(default=dict)
+    meta = models.JSONField(default=dict)
+
+    class Meta:
+        verbose_name = "Issue Version"
+        verbose_name_plural = "Issue Versions"
+        db_table = "issue_versions"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.name} <{self.project.name}>"
+
+    @classmethod
+    def log_issue_version(cls, issue, user):
+        try:
+            """
+            Log the issue version
+            """
+
+            Module = apps.get_model("db.Module")
+            CycleIssue = apps.get_model("db.CycleIssue")
+
+            cycle_issue = CycleIssue.objects.filter(
+                issue=issue,
+            ).first()
+
+            cls.objects.create(
+                issue=issue,
+                parent=issue.parent,
+                state=issue.state,
+                point=issue.point,
+                estimate_point=issue.estimate_point,
+                name=issue.name,
+                description=issue.description,
+                description_html=issue.description_html,
+                description_stripped=issue.description_stripped,
+                description_binary=issue.description_binary,
+                priority=issue.priority,
+                start_date=issue.start_date,
+                target_date=issue.target_date,
+                sequence_id=issue.sequence_id,
+                sort_order=issue.sort_order,
+                completed_at=issue.completed_at,
+                archived_at=issue.archived_at,
+                is_draft=issue.is_draft,
+                external_source=issue.external_source,
+                external_id=issue.external_id,
+                type=issue.type,
+                last_saved_at=issue.last_saved_at,
+                assignees=issue.assignees,
+                labels=issue.labels,
+                cycle=cycle_issue.cycle if cycle_issue else None,
+                modules=Module.objects.filter(issue=issue).values_list(
+                    "id", flat=True
+                ),
+                owned_by=user,
+            )
+            return True
+        except Exception as e:
+            log_exception(e)
+            return False

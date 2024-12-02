@@ -1,6 +1,7 @@
 # Python imports
 import csv
 import io
+import os
 from datetime import date
 
 from dateutil.relativedelta import relativedelta
@@ -38,7 +39,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
 from django.views.decorators.vary import vary_on_cookie
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
-
+from plane.license.utils.instance_value import get_configuration_value
 
 class WorkSpaceViewSet(BaseViewSet):
     model = Workspace
@@ -80,6 +81,21 @@ class WorkSpaceViewSet(BaseViewSet):
 
     def create(self, request):
         try:
+            DISABLE_WORKSPACE_CREATION, = get_configuration_value(
+                [
+                    {
+                        "key": "DISABLE_WORKSPACE_CREATION",
+                        "default": os.environ.get("DISABLE_WORKSPACE_CREATION", "0"),
+                    },
+                ]
+            )
+
+            if DISABLE_WORKSPACE_CREATION == "1":
+                return Response(
+                    {"error": "Workspace creation is not allowed"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
             serializer = WorkSpaceSerializer(data=request.data)
 
             slug = request.data.get("slug", False)
@@ -337,6 +353,7 @@ class ExportWorkspaceUserActivityEndpoint(BaseAPIView):
             workspace__slug=slug,
             created_at__date=request.data.get("date"),
             project__project_projectmember__member=request.user,
+            project__project_projectmember__is_active=True,
             actor_id=user_id,
         ).select_related("actor", "workspace", "issue", "project")[:10000]
 
