@@ -104,7 +104,7 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
 export interface IEditorProps {
   containerClassName?: string;
   displayConfig?: TDisplayConfig;
-  disabledExtensions?: TExtensions[];
+  disabledExtensions: TExtensions[];
   editorClassName?: string;
   fileHandler: TFileHandler;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
@@ -146,6 +146,7 @@ export interface ICollaborativeDocumentEditor
 // read only editor props
 export interface IReadOnlyEditorProps {
   containerClassName?: string;
+  disabledExtensions: TExtensions[];
   displayConfig?: TDisplayConfig;
   editorClassName?: string;
   fileHandler: Pick<TFileHandler, "getAssetSrc">;

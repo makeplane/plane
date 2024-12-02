@@ -11,6 +11,7 @@ import { TReadOnlyCollaborativeEditorProps } from "@/types";
 
 export const useReadOnlyCollaborativeEditor = (props: TReadOnlyCollaborativeEditorProps) => {
   const {
+    disabledExtensions,
     editorClassName,
     editorProps = {},
     extensions,
@@ -66,6 +67,7 @@ export const useReadOnlyCollaborativeEditor = (props: TReadOnlyCollaborativeEdit
   }, [provider, id]);
 
   const editor = useReadOnlyEditor({
+    disabledExtensions,
     editorProps,
     editorClassName,
     extensions: [

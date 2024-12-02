@@ -39,17 +39,27 @@ import {
   setText,
 } from "@/helpers/editor-commands";
 // types
-import { CommandProps, ISlashCommandItem } from "@/types";
+import { CommandProps, ISlashCommandItem, TExtensions, TSlashCommandSectionKeys } from "@/types";
+// plane editor extensions
+import { coreEditorAdditionalSlashCommandOptions } from "@/plane-editor/extensions";
+// local types
+import { TSlashCommandAdditionalOption } from "./root";
 
 export type TSlashCommandSection = {
-  key: string;
+  key: TSlashCommandSectionKeys;
   title?: string;
   items: ISlashCommandItem[];
 };
 
+type TArgs = {
+  additionalOptions?: TSlashCommandAdditionalOption[];
+  disabledExtensions: TExtensions[];
+};
+
 export const getSlashCommandFilteredSections =
-  (additionalOptions?: ISlashCommandItem[]) =>
+  (args: TArgs) =>
   ({ query }: { query: string }): TSlashCommandSection[] => {
+    const { additionalOptions, disabledExtensions } = args;
     const SLASH_COMMAND_SECTIONS: TSlashCommandSection[] = [
       {
         key: "general",
@@ -201,7 +211,7 @@ export const getSlashCommandFilteredSections =
         ],
       },
       {
-        key: "text-color",
+        key: "text-colors",
         title: "Colors",
         items: [
           {
@@ -242,7 +252,7 @@ export const getSlashCommandFilteredSections =
         ],
       },
       {
-        key: "background-color",
+        key: "background-colors",
         title: "Background colors",
         items: [
           {
@@ -279,8 +289,19 @@ export const getSlashCommandFilteredSections =
       },
     ];
 
-    additionalOptions?.map((item) => {
-      SLASH_COMMAND_SECTIONS?.[0]?.items.push(item);
+    [
+      ...(additionalOptions ?? []),
+      ...coreEditorAdditionalSlashCommandOptions({
+        disabledExtensions,
+      }),
+    ]?.forEach((item) => {
+      const sectionToPushTo = SLASH_COMMAND_SECTIONS.find((s) => s.key === item.section) ?? SLASH_COMMAND_SECTIONS[0];
+      const itemIndexToPushAfter = sectionToPushTo.items.findIndex((i) => i.commandKey === item.pushAfter);
+      if (itemIndexToPushAfter !== -1) {
+        sectionToPushTo.items.splice(itemIndexToPushAfter + 1, 0, item);
+      } else {
+        sectionToPushTo.items.push(item);
+      }
     });
 
     const filteredSlashSections = SLASH_COMMAND_SECTIONS.map((section) => ({

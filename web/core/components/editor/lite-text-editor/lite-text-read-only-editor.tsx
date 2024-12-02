@@ -6,8 +6,13 @@ import { cn } from "@/helpers/common.helper";
 import { getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
 import { useMention, useUser } from "@/hooks/store";
+// plane web hooks
+import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 
-type LiteTextReadOnlyEditorWrapperProps = Omit<ILiteTextReadOnlyEditor, "fileHandler" | "mentionHandler"> & {
+type LiteTextReadOnlyEditorWrapperProps = Omit<
+  ILiteTextReadOnlyEditor,
+  "disabledExtensions" | "fileHandler" | "mentionHandler"
+> & {
   workspaceSlug: string;
   projectId: string;
 };
@@ -19,10 +24,13 @@ export const LiteTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, Lit
     const { mentionHighlights } = useMention({
       user: currentUser,
     });
+    // editor flaggings
+    const { liteTextEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
 
     return (
       <LiteTextReadOnlyEditorWithRef
         ref={ref}
+        disabledExtensions={disabledExtensions}
         fileHandler={getReadOnlyEditorFileHandlers({
           projectId,
           workspaceSlug,
