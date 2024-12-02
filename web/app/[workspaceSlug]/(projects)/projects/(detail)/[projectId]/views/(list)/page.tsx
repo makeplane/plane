@@ -4,13 +4,13 @@ import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
+import { EmptyStateType } from "@plane/constants";
 import { TViewFilterProps } from "@plane/types";
 import { Header, EHeaderVariant } from "@plane/ui";
 import { PageHead } from "@/components/core";
 import { EmptyState } from "@/components/empty-state";
 import { ProjectViewsList } from "@/components/views";
 import { ViewAppliedFiltersList } from "@/components/views/applied-filters";
-import { EmptyStateType } from "@/constants/empty-state";
 // constants
 import { EViewAccess } from "@/constants/views";
 // helpers

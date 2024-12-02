@@ -2,13 +2,13 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 import { useParams, useSearchParams } from "next/navigation";
 // components
+import { EmptyStateType } from "@plane/constants";
 import { ContentWrapper, Row, ERowVariant } from "@plane/ui";
 import { ListLayout } from "@/components/core/list";
 import { EmptyState } from "@/components/empty-state";
 import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "@/components/modules";
 import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "@/components/ui";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
 // hooks
 import { useCommandPalette, useEventTracker, useModule, useModuleFilter } from "@/hooks/store";
 import AllFiltersImage from "@/public/empty-state/module/all-filters.svg";

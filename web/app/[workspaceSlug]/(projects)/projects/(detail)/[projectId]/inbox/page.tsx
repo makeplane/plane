@@ -2,11 +2,11 @@
 import { observer } from "mobx-react";
 // components
 import { useParams, useSearchParams } from "next/navigation";
+import { EmptyStateType } from "@plane/constants";
 import { PageHead } from "@/components/core";
 import { EmptyState } from "@/components/empty-state";
 import { InboxIssueRoot } from "@/components/inbox";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
 // helpers
 import { EInboxIssueCurrentTab } from "@/helpers/inbox.helper";
 // hooks

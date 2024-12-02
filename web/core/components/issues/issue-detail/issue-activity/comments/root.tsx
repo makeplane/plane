@@ -1,9 +1,9 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // components
+import { EmptyStateType } from "@plane/constants";
 import { EmptyState } from "@/components/empty-state";
 // hooks
-import { EmptyStateType } from "@/constants/empty-state";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // components

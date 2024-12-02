@@ -3,9 +3,9 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // components
+import { EmptyStateType } from "@plane/constants";
 import { EmptyState } from "@/components/empty-state";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
 import { ENotificationTab } from "@/constants/notification";
 
 export const NotificationEmptyState: FC = observer(() => {

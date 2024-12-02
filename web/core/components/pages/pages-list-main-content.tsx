@@ -1,12 +1,12 @@
 import { observer } from "mobx-react";
 import Image from "next/image";
 // types
+import { EmptyStateType } from "@plane/constants";
 import { TPageNavigationTabs } from "@plane/types";
 // components
 import { EmptyState } from "@/components/empty-state";
 import { PageLoader } from "@/components/pages";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
 // hooks
 import { EPageAccess } from "@/constants/page";
 import { useCommandPalette, useProjectPages } from "@/hooks/store";

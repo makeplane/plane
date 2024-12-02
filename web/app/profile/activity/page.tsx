@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
+import { EmptyStateType } from "@plane/constants";
 import { Button } from "@plane/ui";
 // components
 import { PageHead } from "@/components/core";
@@ -13,7 +14,6 @@ import {
   ProfileSettingContentWrapper,
 } from "@/components/profile";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
 
 const PER_PAGE = 100;
 

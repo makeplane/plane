@@ -1,0 +1,10 @@
+{
+  "extends": "@plane/typescript-config/base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/core/*"],
+      "@/plane-constants/*": ["src/ce/*"]
+    }
+  }
+}

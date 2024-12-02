@@ -4,6 +4,7 @@ import React, { Fragment } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import { Tab } from "@headlessui/react";
+import { EmptyStateType } from "@plane/constants";
 // components
 import { Header, EHeaderVariant } from "@plane/ui";
 import { CustomAnalytics, ScopeAndDemand } from "@/components/analytics";
@@ -11,7 +12,6 @@ import { PageHead } from "@/components/core";
 import { EmptyState } from "@/components/empty-state";
 // constants
 import { ANALYTICS_TABS } from "@/constants/analytics";
-import { EmptyStateType } from "@/constants/empty-state";
 // hooks
 import { useCommandPalette, useEventTracker, useProject, useWorkspace } from "@/hooks/store";
 

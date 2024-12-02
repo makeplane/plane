@@ -7,6 +7,7 @@ import { CalendarCheck } from "lucide-react";
 // headless ui
 import { Tab } from "@headlessui/react";
 // types
+import { EmptyStateType } from "@plane/constants";
 import { ICycle, IIssueFilterOptions } from "@plane/types";
 // ui
 import { Tooltip, Loader, PriorityIcon, Avatar } from "@plane/ui";
@@ -15,7 +16,6 @@ import { SingleProgressStats } from "@/components/core";
 import { StateDropdown } from "@/components/dropdowns";
 import { EmptyState } from "@/components/empty-state";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
 import { EIssuesStoreType } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";

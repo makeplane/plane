@@ -1,9 +1,9 @@
 import React from "react";
 // components
+import { EmptyStateType, TEmptyStateType } from "@plane/constants";
 import { ISearchIssueResponse } from "@plane/types";
 import { EmptyState } from "@/components/empty-state";
 // types
-import { EmptyStateType } from "@/constants/empty-state";
 // constants
 
 interface EmptyStateProps {
@@ -19,7 +19,7 @@ export const IssueSearchModalEmptyState: React.FC<EmptyStateProps> = ({
   debouncedSearchTerm,
   isSearching,
 }) => {
-  const renderEmptyState = (type: EmptyStateType) => (
+  const renderEmptyState = (type: TEmptyStateType) => (
     <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
       <EmptyState type={type} layout="screen-simple" />
     </div>

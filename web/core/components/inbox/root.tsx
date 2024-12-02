@@ -1,13 +1,13 @@
 import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { PanelLeft } from "lucide-react";
+import { EmptyStateType } from "@plane/constants";
 import { Intake } from "@plane/ui";
 // components
 import { EmptyState } from "@/components/empty-state";
 import { InboxSidebar, InboxContentRoot } from "@/components/inbox";
 import { InboxLayoutLoader } from "@/components/ui";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { EInboxIssueCurrentTab } from "@/helpers/inbox.helper";

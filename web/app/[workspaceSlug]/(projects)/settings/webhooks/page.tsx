@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // ui
+import { EmptyStateType } from "@plane/constants";
 import { Button } from "@plane/ui";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens";
@@ -13,7 +14,6 @@ import { EmptyState } from "@/components/empty-state";
 import { WebhookSettingsLoader } from "@/components/ui";
 import { WebhooksList, CreateWebhookModal } from "@/components/web-hooks";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
 // hooks
 import { useUserPermissions, useWebhook, useWorkspace } from "@/hooks/store";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";

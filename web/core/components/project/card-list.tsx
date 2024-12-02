@@ -1,12 +1,12 @@
 import { observer } from "mobx-react";
 import Image from "next/image";
 // components
+import { EmptyStateType } from "@plane/constants";
 import { ContentWrapper } from "@plane/ui";
 import { EmptyState } from "@/components/empty-state";
 import { ProjectCard } from "@/components/project";
 import { ProjectsLoader } from "@/components/ui";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
 // hooks
 import { useCommandPalette, useEventTracker, useProject, useProjectFilter } from "@/hooks/store";
 // assets

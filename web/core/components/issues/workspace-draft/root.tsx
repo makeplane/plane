@@ -4,9 +4,9 @@ import { FC, Fragment } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
+import { EmptyStateType } from "@plane/constants";
 import { EmptyState } from "@/components/empty-state";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
 import { EDraftIssuePaginationType } from "@/constants/workspace-drafts";
 // helpers
 import { cn } from "@/helpers/common.helper";

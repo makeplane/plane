@@ -2,6 +2,7 @@
 
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
+import { EmptyStateType } from "@plane/constants";
 import { TInboxIssueCurrentTab } from "@plane/types";
 import { Header, Loader, EHeaderVariant } from "@plane/ui";
 // components
@@ -9,7 +10,6 @@ import { EmptyState } from "@/components/empty-state";
 import { FiltersRoot, InboxIssueAppliedFilters, InboxIssueList } from "@/components/inbox";
 import { InboxSidebarLoader } from "@/components/ui";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { EInboxIssueCurrentTab } from "@/helpers/inbox.helper";

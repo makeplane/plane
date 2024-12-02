@@ -88,5 +88,17 @@ module.exports = {
         },
       },
     ],
+    "no-restricted-imports": [
+      "warn",
+      {
+        patterns: [
+          {
+            group: ["@/constants/*", "@/*/constants"],
+            message:
+              "Please use @plane/constants package instead and move existing constants there.",
+          },
+        ],
+      },
+    ],
   },
 };

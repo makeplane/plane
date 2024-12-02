@@ -4,21 +4,19 @@ import React from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
-
 import { useTheme } from "next-themes";
+// constant
+import { EMPTY_STATE_DETAILS, EUserPermissionsLevel, TEmptyStateType } from "@plane/constants";
 // hooks
 // components
 import { Button, TButtonVariant } from "@plane/ui";
-// constant
-import { EMPTY_STATE_DETAILS, EmptyStateType } from "@/constants/empty-state";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { useUserPermissions } from "@/hooks/store";
-import { EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { ComicBoxButton } from "./comic-box-button";
 
 export type EmptyStateProps = {
-  type: EmptyStateType;
+  type: TEmptyStateType;
   size?: "sm" | "md" | "lg";
   layout?: "screen-detailed" | "screen-simple";
   additionalPath?: string;
@@ -136,7 +134,7 @@ export const EmptyState: React.FC<EmptyStateProps> = observer((props) => {
             {path && (
               <Image
                 src={resolvedEmptyStatePath}
-                alt={key || "button image"}
+                alt={(key as string) || "button image"}
                 width={384}
                 height={250}
                 layout="responsive"
@@ -160,7 +158,7 @@ export const EmptyState: React.FC<EmptyStateProps> = observer((props) => {
           <div className={`${size === "sm" ? "h-24 w-24" : "h-28 w-28"}`}>
             <Image
               src={resolvedEmptyStatePath}
-              alt={key || "button image"}
+              alt={(key as string) || "button image"}
               width={size === "sm" ? 78 : 96}
               height={size === "sm" ? 78 : 96}
               layout="responsive"

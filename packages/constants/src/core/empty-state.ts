@@ -1,7 +1,8 @@
-import { EUserPermissions } from "ee/constants/user-permissions";
+// types
+import { EUserPermissions } from "../ce/user-permissions";
 
-export interface EmptyStateDetails {
-  key: EmptyStateType;
+export interface EmptyStateDetails<T> {
+  key: T;
   title?: string;
   description?: string;
   path?: string;
@@ -22,10 +23,10 @@ export interface EmptyStateDetails {
     };
   };
   accessType?: "workspace" | "project";
-  access?: any;
+  access?: EUserPermissions[];
 }
 
-export enum EmptyStateType {
+export enum ECoreEmptyState {
   WORKSPACE_DASHBOARD = "workspace-dashboard",
   WORKSPACE_ANALYTICS = "workspace-analytics",
   WORKSPACE_PROJECTS = "workspace-projects",
@@ -110,10 +111,13 @@ export enum EmptyStateType {
   WORKSPACE_DRAFT_ISSUES = "workspace-draft-issues",
 }
 
-const emptyStateDetails = {
+export const coreEmptyStateDetails: Record<
+  ECoreEmptyState,
+  EmptyStateDetails<ECoreEmptyState>
+> = {
   // workspace
-  [EmptyStateType.WORKSPACE_DASHBOARD]: {
-    key: EmptyStateType.WORKSPACE_DASHBOARD,
+  [ECoreEmptyState.WORKSPACE_DASHBOARD]: {
+    key: ECoreEmptyState.WORKSPACE_DASHBOARD,
     title: "Overview of your projects, activity, and metrics",
     description:
       " Welcome to Plane, we are excited to have you here. Create your first project and track your issues, and this page will transform into a space that helps you progress. Admins will also see items which help their team progress.",
@@ -123,16 +127,18 @@ const emptyStateDetails = {
       text: "Build your first project",
       comicBox: {
         title: "Everything starts with a project in Plane",
-        description: "A project could be a product’s roadmap, a marketing campaign, or launching a new car.",
+        description:
+          "A project could be a product’s roadmap, a marketing campaign, or launching a new car.",
       },
     },
 
     accessType: "workspace",
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
-  [EmptyStateType.WORKSPACE_ANALYTICS]: {
-    key: EmptyStateType.WORKSPACE_ANALYTICS,
-    title: "Track progress, workloads, and allocations. Spot trends, remove blockers, and move work faster",
+  [ECoreEmptyState.WORKSPACE_ANALYTICS]: {
+    key: ECoreEmptyState.WORKSPACE_ANALYTICS,
+    title:
+      "Track progress, workloads, and allocations. Spot trends, remove blockers, and move work faster",
     description:
       "See scope versus demand, estimates, and scope creep. Get performance by team members and teams, and make sure your project runs on time.",
     path: "/empty-state/onboarding/analytics",
@@ -147,8 +153,8 @@ const emptyStateDetails = {
     accessType: "workspace",
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
-  [EmptyStateType.WORKSPACE_PROJECTS]: {
-    key: EmptyStateType.WORKSPACE_PROJECTS,
+  [ECoreEmptyState.WORKSPACE_PROJECTS]: {
+    key: ECoreEmptyState.WORKSPACE_PROJECTS,
     title: "No active projects",
     description:
       "Think of each project as the parent for goal-oriented work. Projects are where Jobs, Cycles, and Modules live and, along with your colleagues, help you achieve that goal. Create a new project or filter for archived projects.",
@@ -157,17 +163,19 @@ const emptyStateDetails = {
       text: "Start your first project",
       comicBox: {
         title: "Everything starts with a project in Plane",
-        description: "A project could be a product’s roadmap, a marketing campaign, or launching a new car.",
+        description:
+          "A project could be a product’s roadmap, a marketing campaign, or launching a new car.",
       },
     },
     accessType: "workspace",
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   // all-issues
-  [EmptyStateType.WORKSPACE_ALL_ISSUES]: {
-    key: EmptyStateType.WORKSPACE_ALL_ISSUES,
+  [ECoreEmptyState.WORKSPACE_ALL_ISSUES]: {
+    key: ECoreEmptyState.WORKSPACE_ALL_ISSUES,
     title: "No issues in the project",
-    description: "First project done! Now, slice your work into trackable pieces with issues. Let's go!",
+    description:
+      "First project done! Now, slice your work into trackable pieces with issues. Let's go!",
     path: "/empty-state/all-issues/all-issues",
     primaryButton: {
       text: "Create new issue",
@@ -175,8 +183,8 @@ const emptyStateDetails = {
     accessType: "workspace",
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
-  [EmptyStateType.WORKSPACE_ASSIGNED]: {
-    key: EmptyStateType.WORKSPACE_ASSIGNED,
+  [ECoreEmptyState.WORKSPACE_ASSIGNED]: {
+    key: ECoreEmptyState.WORKSPACE_ASSIGNED,
     title: "No issues yet",
     description: "Issues assigned to you can be tracked from here.",
     path: "/empty-state/all-issues/assigned",
@@ -186,10 +194,11 @@ const emptyStateDetails = {
     accessType: "workspace",
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
-  [EmptyStateType.WORKSPACE_CREATED]: {
-    key: EmptyStateType.WORKSPACE_CREATED,
+  [ECoreEmptyState.WORKSPACE_CREATED]: {
+    key: ECoreEmptyState.WORKSPACE_CREATED,
     title: "No issues yet",
-    description: "All issues created by you come here, track them here directly.",
+    description:
+      "All issues created by you come here, track them here directly.",
     path: "/empty-state/all-issues/created",
     primaryButton: {
       text: "Create new issue",
@@ -197,123 +206,135 @@ const emptyStateDetails = {
     accessType: "workspace",
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
-  [EmptyStateType.WORKSPACE_SUBSCRIBED]: {
-    key: EmptyStateType.WORKSPACE_SUBSCRIBED,
+  [ECoreEmptyState.WORKSPACE_SUBSCRIBED]: {
+    key: ECoreEmptyState.WORKSPACE_SUBSCRIBED,
     title: "No issues yet",
-    description: "Subscribe to issues you are interested in, track all of them here.",
+    description:
+      "Subscribe to issues you are interested in, track all of them here.",
     path: "/empty-state/all-issues/subscribed",
   },
-  [EmptyStateType.WORKSPACE_CUSTOM_VIEW]: {
-    key: EmptyStateType.WORKSPACE_CUSTOM_VIEW,
+  [ECoreEmptyState.WORKSPACE_CUSTOM_VIEW]: {
+    key: ECoreEmptyState.WORKSPACE_CUSTOM_VIEW,
     title: "No issues yet",
     description: "Issues that applies to the filters, track all of them here.",
     path: "/empty-state/all-issues/custom-view",
   },
-  [EmptyStateType.WORKSPACE_PROJECT_NOT_FOUND]: {
-    key: EmptyStateType.WORKSPACE_PROJECT_NOT_FOUND,
+  [ECoreEmptyState.WORKSPACE_PROJECT_NOT_FOUND]: {
+    key: ECoreEmptyState.WORKSPACE_PROJECT_NOT_FOUND,
     title: "No such project exists",
-    description: 'To create issues or manage your work, you need to create a project or be a part of one.',
+    description:
+      "To create issues or manage your work, you need to create a project or be a part of one.",
     path: "/empty-state/onboarding/projects",
     primaryButton: {
       text: "Create Project",
       comicBox: {
         title: "Everything starts with a project in Plane",
-        description: "A project could be a product’s roadmap, a marketing campaign, or launching a new car.",
+        description:
+          "A project could be a product’s roadmap, a marketing campaign, or launching a new car.",
       },
     },
 
     accessType: "workspace",
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
-  [EmptyStateType.WORKSPACE_NO_PROJECTS]: {
-    key: EmptyStateType.WORKSPACE_NO_PROJECTS,
+  [ECoreEmptyState.WORKSPACE_NO_PROJECTS]: {
+    key: ECoreEmptyState.WORKSPACE_NO_PROJECTS,
     title: "No project",
-    description: "To create issues or manage your work, you need to create a project or be a part of one.",
+    description:
+      "To create issues or manage your work, you need to create a project or be a part of one.",
     path: "/empty-state/onboarding/projects",
     primaryButton: {
       text: "Start your first project",
       comicBox: {
         title: "Everything starts with a project in Plane",
-        description: "A project could be a product’s roadmap, a marketing campaign, or launching a new car.",
+        description:
+          "A project could be a product’s roadmap, a marketing campaign, or launching a new car.",
       },
     },
     accessType: "workspace",
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   // workspace settings
-  [EmptyStateType.WORKSPACE_SETTINGS_API_TOKENS]: {
-    key: EmptyStateType.WORKSPACE_SETTINGS_API_TOKENS,
+  [ECoreEmptyState.WORKSPACE_SETTINGS_API_TOKENS]: {
+    key: ECoreEmptyState.WORKSPACE_SETTINGS_API_TOKENS,
     title: "No API tokens created",
     description:
       "Plane APIs can be used to integrate your data in Plane with any external system. Create a token to get started.",
     path: "/empty-state/workspace-settings/api-tokens",
   },
-  [EmptyStateType.WORKSPACE_SETTINGS_WEBHOOKS]: {
-    key: EmptyStateType.WORKSPACE_SETTINGS_WEBHOOKS,
+  [ECoreEmptyState.WORKSPACE_SETTINGS_WEBHOOKS]: {
+    key: ECoreEmptyState.WORKSPACE_SETTINGS_WEBHOOKS,
     title: "No webhooks added",
-    description: "Create webhooks to receive real-time updates and automate actions.",
+    description:
+      "Create webhooks to receive real-time updates and automate actions.",
     path: "/empty-state/workspace-settings/webhooks",
   },
-  [EmptyStateType.WORKSPACE_SETTINGS_EXPORT]: {
-    key: EmptyStateType.WORKSPACE_SETTINGS_EXPORT,
+  [ECoreEmptyState.WORKSPACE_SETTINGS_EXPORT]: {
+    key: ECoreEmptyState.WORKSPACE_SETTINGS_EXPORT,
     title: "No previous exports yet",
-    description: "Anytime you export, you will also have a copy here for reference.",
+    description:
+      "Anytime you export, you will also have a copy here for reference.",
     path: "/empty-state/workspace-settings/exports",
   },
-  [EmptyStateType.WORKSPACE_SETTINGS_IMPORT]: {
-    key: EmptyStateType.WORKSPACE_SETTINGS_IMPORT,
+  [ECoreEmptyState.WORKSPACE_SETTINGS_IMPORT]: {
+    key: ECoreEmptyState.WORKSPACE_SETTINGS_IMPORT,
     title: "No previous imports yet",
     description: "Find all your previous imports here and download them.",
     path: "/empty-state/workspace-settings/imports",
   },
   // profile
-  [EmptyStateType.PROFILE_ACTIVITY]: {
-    key: EmptyStateType.PROFILE_ASSIGNED,
+  [ECoreEmptyState.PROFILE_ACTIVITY]: {
+    key: ECoreEmptyState.PROFILE_ASSIGNED,
     title: "No activities yet",
     description:
       "Get started by creating a new issue! Add details and properties to it. Explore more in Plane to see your activity.",
     path: "/empty-state/profile/activity",
   },
-  [EmptyStateType.PROFILE_ASSIGNED]: {
-    key: EmptyStateType.PROFILE_ASSIGNED,
+  [ECoreEmptyState.PROFILE_ASSIGNED]: {
+    key: ECoreEmptyState.PROFILE_ASSIGNED,
     title: "No issues are assigned to you",
     description: "Issues assigned to you can be tracked from here.",
     path: "/empty-state/profile/assigned",
   },
-  [EmptyStateType.PROFILE_CREATED]: {
-    key: EmptyStateType.PROFILE_CREATED,
+  [ECoreEmptyState.PROFILE_CREATED]: {
+    key: ECoreEmptyState.PROFILE_CREATED,
     title: "No issues yet",
-    description: "All issues created by you come here, track them here directly.",
+    description:
+      "All issues created by you come here, track them here directly.",
     path: "/empty-state/profile/created",
   },
-  [EmptyStateType.PROFILE_SUBSCRIBED]: {
-    key: EmptyStateType.PROFILE_SUBSCRIBED,
+  [ECoreEmptyState.PROFILE_SUBSCRIBED]: {
+    key: ECoreEmptyState.PROFILE_SUBSCRIBED,
     title: "No issues yet",
-    description: "Subscribe to issues you are interested in, track all of them here.",
+    description:
+      "Subscribe to issues you are interested in, track all of them here.",
     path: "/empty-state/profile/subscribed",
   },
   // project settings
-  [EmptyStateType.PROJECT_SETTINGS_LABELS]: {
-    key: EmptyStateType.PROJECT_SETTINGS_LABELS,
+  [ECoreEmptyState.PROJECT_SETTINGS_LABELS]: {
+    key: ECoreEmptyState.PROJECT_SETTINGS_LABELS,
     title: "No labels yet",
-    description: "Create labels to help organize and filter issues in you project.",
+    description:
+      "Create labels to help organize and filter issues in you project.",
     path: "/empty-state/project-settings/labels",
   },
-  [EmptyStateType.PROJECT_SETTINGS_INTEGRATIONS]: {
-    key: EmptyStateType.PROJECT_SETTINGS_INTEGRATIONS,
+  [ECoreEmptyState.PROJECT_SETTINGS_INTEGRATIONS]: {
+    key: ECoreEmptyState.PROJECT_SETTINGS_INTEGRATIONS,
     title: "No integrations configured",
-    description: "Configure GitHub and other integrations to sync your project issues.",
+    description:
+      "Configure GitHub and other integrations to sync your project issues.",
     path: "/empty-state/project-settings/integrations",
   },
-  [EmptyStateType.PROJECT_SETTINGS_ESTIMATE]: {
-    key: EmptyStateType.PROJECT_SETTINGS_ESTIMATE,
+  [ECoreEmptyState.PROJECT_SETTINGS_ESTIMATE]: {
+    key: ECoreEmptyState.PROJECT_SETTINGS_ESTIMATE,
     title: "No estimates added",
-    description: "Create a set of estimates to communicate the amount of work per issue.",
+    description:
+      "Create a set of estimates to communicate the amount of work per issue.",
     path: "/empty-state/project-settings/estimates",
   },
   // project cycles
-  [EmptyStateType.PROJECT_CYCLES]: {
-    key: EmptyStateType.PROJECT_CYCLES,
+  [ECoreEmptyState.PROJECT_CYCLES]: {
+    key: ECoreEmptyState.PROJECT_CYCLES,
     title: "Group and timebox your work in Cycles.",
     description:
       "Break work down by timeboxed chunks, work backwards from your project deadline to set dates, and make tangible progress as a team.",
@@ -329,10 +350,11 @@ const emptyStateDetails = {
     accessType: "project",
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
-  [EmptyStateType.PROJECT_CYCLE_NO_ISSUES]: {
-    key: EmptyStateType.PROJECT_CYCLE_NO_ISSUES,
+  [ECoreEmptyState.PROJECT_CYCLE_NO_ISSUES]: {
+    key: ECoreEmptyState.PROJECT_CYCLE_NO_ISSUES,
     title: "No issues added to the cycle",
-    description: "Add or create issues you wish to timebox and deliver within this cycle",
+    description:
+      "Add or create issues you wish to timebox and deliver within this cycle",
     path: "/empty-state/cycle-issues/",
     primaryButton: {
       text: "Create new issue ",
@@ -343,36 +365,37 @@ const emptyStateDetails = {
     accessType: "project",
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
-  [EmptyStateType.PROJECT_CYCLE_ACTIVE]: {
-    key: EmptyStateType.PROJECT_CYCLE_ACTIVE,
+  [ECoreEmptyState.PROJECT_CYCLE_ACTIVE]: {
+    key: ECoreEmptyState.PROJECT_CYCLE_ACTIVE,
     title: "No active cycle",
     description:
       "An active cycle includes any period that encompasses today's date within its range. Find the progress and details of the active cycle here.",
     path: "/empty-state/cycle/active",
   },
-  [EmptyStateType.PROJECT_CYCLE_COMPLETED_NO_ISSUES]: {
-    key: EmptyStateType.PROJECT_CYCLE_COMPLETED_NO_ISSUES,
+  [ECoreEmptyState.PROJECT_CYCLE_COMPLETED_NO_ISSUES]: {
+    key: ECoreEmptyState.PROJECT_CYCLE_COMPLETED_NO_ISSUES,
     title: "No issues in the cycle",
     description:
       "No issues in the cycle. Issues are either transferred or hidden. To see hidden issues if any, update your display properties accordingly.",
     path: "/empty-state/cycle/completed-no-issues",
   },
-  [EmptyStateType.PROJECT_ARCHIVED_NO_CYCLES]: {
-    key: EmptyStateType.PROJECT_ARCHIVED_NO_CYCLES,
+  [ECoreEmptyState.PROJECT_ARCHIVED_NO_CYCLES]: {
+    key: ECoreEmptyState.PROJECT_ARCHIVED_NO_CYCLES,
     title: "No archived cycles yet",
-    description: "To tidy up your project, archive completed cycles. Find them here once archived.",
+    description:
+      "To tidy up your project, archive completed cycles. Find them here once archived.",
     path: "/empty-state/archived/empty-cycles",
   },
-  [EmptyStateType.PROJECT_CYCLE_ALL]: {
-    key: EmptyStateType.PROJECT_CYCLE_ALL,
+  [ECoreEmptyState.PROJECT_CYCLE_ALL]: {
+    key: ECoreEmptyState.PROJECT_CYCLE_ALL,
     title: "No cycles",
     description:
       "An active cycle includes any period that encompasses today's date within its range. Find the progress and details of the active cycle here.",
     path: "/empty-state/cycle/active",
   },
   // empty filters
-  [EmptyStateType.PROJECT_EMPTY_FILTER]: {
-    key: EmptyStateType.PROJECT_EMPTY_FILTER,
+  [ECoreEmptyState.PROJECT_EMPTY_FILTER]: {
+    key: ECoreEmptyState.PROJECT_EMPTY_FILTER,
     title: "No issues found matching the filters applied",
     path: "/empty-state/empty-filters/",
     secondaryButton: {
@@ -381,8 +404,8 @@ const emptyStateDetails = {
     accessType: "project",
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
-  [EmptyStateType.PROJECT_ARCHIVED_EMPTY_FILTER]: {
-    key: EmptyStateType.PROJECT_ARCHIVED_EMPTY_FILTER,
+  [ECoreEmptyState.PROJECT_ARCHIVED_EMPTY_FILTER]: {
+    key: ECoreEmptyState.PROJECT_ARCHIVED_EMPTY_FILTER,
     title: "No issues found matching the filters applied",
     path: "/empty-state/empty-filters/",
     secondaryButton: {
@@ -391,8 +414,8 @@ const emptyStateDetails = {
     accessType: "project",
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
-  [EmptyStateType.PROJECT_DRAFT_EMPTY_FILTER]: {
-    key: EmptyStateType.PROJECT_DRAFT_EMPTY_FILTER,
+  [ECoreEmptyState.PROJECT_DRAFT_EMPTY_FILTER]: {
+    key: ECoreEmptyState.PROJECT_DRAFT_EMPTY_FILTER,
     title: "No issues found matching the filters applied",
     path: "/empty-state/empty-filters/",
     secondaryButton: {
@@ -402,8 +425,8 @@ const emptyStateDetails = {
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   //  project issues
-  [EmptyStateType.PROJECT_NO_ISSUES]: {
-    key: EmptyStateType.PROJECT_NO_ISSUES,
+  [ECoreEmptyState.PROJECT_NO_ISSUES]: {
+    key: ECoreEmptyState.PROJECT_NO_ISSUES,
     title: "Create an issue and assign it to someone, even yourself",
     description:
       "Think of issues as jobs, tasks, work, or JTBD. Which we like. An issue and its sub-issues are usually time-based actionables assigned to members of your team. Your team creates, assigns, and completes issues to move your project towards its goal.",
@@ -419,8 +442,8 @@ const emptyStateDetails = {
     accessType: "project",
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
-  [EmptyStateType.PROJECT_ARCHIVED_NO_ISSUES]: {
-    key: EmptyStateType.PROJECT_ARCHIVED_NO_ISSUES,
+  [ECoreEmptyState.PROJECT_ARCHIVED_NO_ISSUES]: {
+    key: ECoreEmptyState.PROJECT_ARCHIVED_NO_ISSUES,
     title: "No archived issues yet",
     description:
       "Manually or through automation, you can archive issues that are completed or cancelled. Find them here once archived.",
@@ -431,36 +454,40 @@ const emptyStateDetails = {
     accessType: "project",
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
-  [EmptyStateType.PROJECT_DRAFT_NO_ISSUES]: {
-    key: EmptyStateType.PROJECT_DRAFT_NO_ISSUES,
+  [ECoreEmptyState.PROJECT_DRAFT_NO_ISSUES]: {
+    key: ECoreEmptyState.PROJECT_DRAFT_NO_ISSUES,
     title: "No draft issues yet",
     description:
       "Quickly stepping away but want to keep your place? No worries – save a draft now. Your issues will be right here waiting for you.",
     path: "/empty-state/draft/draft-issues-empty",
   },
-  [EmptyStateType.VIEWS_EMPTY_SEARCH]: {
-    key: EmptyStateType.VIEWS_EMPTY_SEARCH,
+  [ECoreEmptyState.VIEWS_EMPTY_SEARCH]: {
+    key: ECoreEmptyState.VIEWS_EMPTY_SEARCH,
     title: "No matching views",
-    description: "No views match the search criteria. \n Create a new view instead.",
+    description:
+      "No views match the search criteria. \n Create a new view instead.",
     path: "/empty-state/search/views",
   },
-  [EmptyStateType.PROJECTS_EMPTY_SEARCH]: {
-    key: EmptyStateType.PROJECTS_EMPTY_SEARCH,
+  [ECoreEmptyState.PROJECTS_EMPTY_SEARCH]: {
+    key: ECoreEmptyState.PROJECTS_EMPTY_SEARCH,
     title: "No matching projects",
-    description: "No projects detected with the matching criteria. Create a new project instead.",
+    description:
+      "No projects detected with the matching criteria. Create a new project instead.",
     path: "/empty-state/search/project",
   },
-  [EmptyStateType.MEMBERS_EMPTY_SEARCH]: {
-    key: EmptyStateType.MEMBERS_EMPTY_SEARCH,
+  [ECoreEmptyState.MEMBERS_EMPTY_SEARCH]: {
+    key: ECoreEmptyState.MEMBERS_EMPTY_SEARCH,
     title: "No matching members",
-    description: "Add them to the project if they are already a part of the workspace",
+    description:
+      "Add them to the project if they are already a part of the workspace",
     path: "/empty-state/search/member",
   },
   // project module
-  [EmptyStateType.PROJECT_MODULE_ISSUES]: {
-    key: EmptyStateType.PROJECT_MODULE_ISSUES,
+  [ECoreEmptyState.PROJECT_MODULE_ISSUES]: {
+    key: ECoreEmptyState.PROJECT_MODULE_ISSUES,
     title: "No issues in the module",
-    description: "Create or add issues which you want to accomplish as part of this module",
+    description:
+      "Create or add issues which you want to accomplish as part of this module",
     path: "/empty-state/module-issues/",
     primaryButton: {
       text: "Create new issue ",
@@ -471,9 +498,10 @@ const emptyStateDetails = {
     accessType: "project",
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
-  [EmptyStateType.PROJECT_MODULE]: {
-    key: EmptyStateType.PROJECT_MODULE,
-    title: "Map your project milestones to Modules and track aggregated work easily.",
+  [ECoreEmptyState.PROJECT_MODULE]: {
+    key: ECoreEmptyState.PROJECT_MODULE,
+    title:
+      "Map your project milestones to Modules and track aggregated work easily.",
     description:
       "A group of issues that belong to a logical, hierarchical parent form a module. Think of them as a way to track work by project milestones. They have their own periods and deadlines as well as analytics to help you see how close or far you are from a milestone.",
     path: "/empty-state/onboarding/modules",
@@ -481,21 +509,23 @@ const emptyStateDetails = {
       text: "Build your first module",
       comicBox: {
         title: "Modules help group work by hierarchy.",
-        description: "A cart module, a chassis module, and a warehouse module are all good example of this grouping.",
+        description:
+          "A cart module, a chassis module, and a warehouse module are all good example of this grouping.",
       },
     },
     accessType: "project",
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
-  [EmptyStateType.PROJECT_ARCHIVED_NO_MODULES]: {
-    key: EmptyStateType.PROJECT_ARCHIVED_NO_MODULES,
+  [ECoreEmptyState.PROJECT_ARCHIVED_NO_MODULES]: {
+    key: ECoreEmptyState.PROJECT_ARCHIVED_NO_MODULES,
     title: "No archived Modules yet",
-    description: "To tidy up your project, archive completed or cancelled modules. Find them here once archived.",
+    description:
+      "To tidy up your project, archive completed or cancelled modules. Find them here once archived.",
     path: "/empty-state/archived/empty-modules",
   },
   // project views
-  [EmptyStateType.PROJECT_VIEW]: {
-    key: EmptyStateType.PROJECT_VIEW,
+  [ECoreEmptyState.PROJECT_VIEW]: {
+    key: ECoreEmptyState.PROJECT_VIEW,
     title: "Save filtered views for your project. Create as many as you need",
     description:
       "Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a project can see everyone’s views and choose whichever suits their needs best.",
@@ -504,16 +534,22 @@ const emptyStateDetails = {
       text: "Create your first view",
       comicBox: {
         title: "Views work atop Issue properties.",
-        description: "You can create a view from here with as many properties as filters as you see fit.",
+        description:
+          "You can create a view from here with as many properties as filters as you see fit.",
       },
     },
     accessType: "project",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    access: [
+      EUserPermissions.ADMIN,
+      EUserPermissions.MEMBER,
+      EUserPermissions.GUEST,
+    ],
   },
   // project pages
-  [EmptyStateType.PROJECT_PAGE]: {
-    key: EmptyStateType.PROJECT_PAGE,
-    title: "Write a note, a doc, or a full knowledge base. Get Galileo, Plane’s AI assistant, to help you get started",
+  [ECoreEmptyState.PROJECT_PAGE]: {
+    key: ECoreEmptyState.PROJECT_PAGE,
+    title:
+      "Write a note, a doc, or a full knowledge base. Get Galileo, Plane’s AI assistant, to help you get started",
     description:
       "Pages are thoughts potting space in Plane. Take down meeting notes, format them easily, embed issues, lay them out using a library of components, and keep them all in your project’s context. To make short work of any doc, invoke Galileo, Plane’s AI, with a shortcut or the click of a button.",
     path: "/empty-state/onboarding/pages",
@@ -521,21 +557,30 @@ const emptyStateDetails = {
       text: "Create your first page",
     },
     accessType: "project",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    access: [
+      EUserPermissions.ADMIN,
+      EUserPermissions.MEMBER,
+      EUserPermissions.GUEST,
+    ],
   },
-  [EmptyStateType.PROJECT_PAGE_PRIVATE]: {
-    key: EmptyStateType.PROJECT_PAGE_PRIVATE,
+  [ECoreEmptyState.PROJECT_PAGE_PRIVATE]: {
+    key: ECoreEmptyState.PROJECT_PAGE_PRIVATE,
     title: "No private pages yet",
-    description: "Keep your private thoughts here. When you're ready to share, the team's just a click away.",
+    description:
+      "Keep your private thoughts here. When you're ready to share, the team's just a click away.",
     path: "/empty-state/pages/private",
     primaryButton: {
       text: "Create your first page",
     },
     accessType: "project",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    access: [
+      EUserPermissions.ADMIN,
+      EUserPermissions.MEMBER,
+      EUserPermissions.GUEST,
+    ],
   },
-  [EmptyStateType.PROJECT_PAGE_PUBLIC]: {
-    key: EmptyStateType.PROJECT_PAGE_PUBLIC,
+  [ECoreEmptyState.PROJECT_PAGE_PUBLIC]: {
+    key: ECoreEmptyState.PROJECT_PAGE_PUBLIC,
     title: "No public pages yet",
     description: "See pages shared with everyone in your project right here.",
     path: "/empty-state/pages/public",
@@ -543,17 +588,23 @@ const emptyStateDetails = {
       text: "Create your first page",
     },
     accessType: "project",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    access: [
+      EUserPermissions.ADMIN,
+      EUserPermissions.MEMBER,
+      EUserPermissions.GUEST,
+    ],
   },
-  [EmptyStateType.PROJECT_PAGE_ARCHIVED]: {
-    key: EmptyStateType.PROJECT_PAGE_ARCHIVED,
+  [ECoreEmptyState.PROJECT_PAGE_ARCHIVED]: {
+    key: ECoreEmptyState.PROJECT_PAGE_ARCHIVED,
     title: "No archived pages yet",
-    description: "Archive pages not on your radar. Access them here when needed.",
+    description:
+      "Archive pages not on your radar. Access them here when needed.",
     path: "/empty-state/pages/archived",
   },
-  [EmptyStateType.WORKSPACE_PAGE]: {
-    key: EmptyStateType.WORKSPACE_PAGE,
-    title: "Write a note, a doc, or a full knowledge base. Get Galileo, Plane’s AI assistant, to help you get started",
+  [ECoreEmptyState.WORKSPACE_PAGE]: {
+    key: ECoreEmptyState.WORKSPACE_PAGE,
+    title:
+      "Write a note, a doc, or a full knowledge base. Get Galileo, Plane’s AI assistant, to help you get started",
     description:
       "Pages are thoughts potting space in Plane. Take down meeting notes, format them easily, embed issues, lay them out using a library of components, and keep them all in your project’s context. To make short work of any doc, invoke Galileo, Plane’s AI, with a shortcut or the click of a button.",
     path: "/empty-state/onboarding/pages",
@@ -561,21 +612,30 @@ const emptyStateDetails = {
       text: "Create your first page",
     },
     accessType: "workspace",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    access: [
+      EUserPermissions.ADMIN,
+      EUserPermissions.MEMBER,
+      EUserPermissions.GUEST,
+    ],
   },
-  [EmptyStateType.WORKSPACE_PAGE_PRIVATE]: {
-    key: EmptyStateType.WORKSPACE_PAGE_PRIVATE,
+  [ECoreEmptyState.WORKSPACE_PAGE_PRIVATE]: {
+    key: ECoreEmptyState.WORKSPACE_PAGE_PRIVATE,
     title: "No private pages yet",
-    description: "Keep your private thoughts here. When you're ready to share, the team's just a click away.",
+    description:
+      "Keep your private thoughts here. When you're ready to share, the team's just a click away.",
     path: "/empty-state/pages/private",
     primaryButton: {
       text: "Create your first page",
     },
     accessType: "workspace",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    access: [
+      EUserPermissions.ADMIN,
+      EUserPermissions.MEMBER,
+      EUserPermissions.GUEST,
+    ],
   },
-  [EmptyStateType.WORKSPACE_PAGE_PUBLIC]: {
-    key: EmptyStateType.WORKSPACE_PAGE_PUBLIC,
+  [ECoreEmptyState.WORKSPACE_PAGE_PUBLIC]: {
+    key: ECoreEmptyState.WORKSPACE_PAGE_PUBLIC,
     title: "No public pages yet",
     description: "See pages shared with everyone in your workspace right here.",
     path: "/empty-state/pages/public",
@@ -583,118 +643,129 @@ const emptyStateDetails = {
       text: "Create your first page",
     },
     accessType: "workspace",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    access: [
+      EUserPermissions.ADMIN,
+      EUserPermissions.MEMBER,
+      EUserPermissions.GUEST,
+    ],
   },
-  [EmptyStateType.WORKSPACE_PAGE_ARCHIVED]: {
-    key: EmptyStateType.WORKSPACE_PAGE_ARCHIVED,
+  [ECoreEmptyState.WORKSPACE_PAGE_ARCHIVED]: {
+    key: ECoreEmptyState.WORKSPACE_PAGE_ARCHIVED,
     title: "No archived pages yet",
-    description: "Archive pages not on your radar. Access them here when needed.",
+    description:
+      "Archive pages not on your radar. Access them here when needed.",
     path: "/empty-state/pages/archived",
   },
 
-  [EmptyStateType.COMMAND_K_SEARCH_EMPTY_STATE]: {
-    key: EmptyStateType.COMMAND_K_SEARCH_EMPTY_STATE,
+  [ECoreEmptyState.COMMAND_K_SEARCH_EMPTY_STATE]: {
+    key: ECoreEmptyState.COMMAND_K_SEARCH_EMPTY_STATE,
     title: "No results found",
     path: "/empty-state/search/search",
   },
-  [EmptyStateType.ISSUE_RELATION_SEARCH_EMPTY_STATE]: {
-    key: EmptyStateType.ISSUE_RELATION_SEARCH_EMPTY_STATE,
+  [ECoreEmptyState.ISSUE_RELATION_SEARCH_EMPTY_STATE]: {
+    key: ECoreEmptyState.ISSUE_RELATION_SEARCH_EMPTY_STATE,
     title: "No maching issues found",
     path: "/empty-state/search/search",
   },
-  [EmptyStateType.ISSUE_RELATION_EMPTY_STATE]: {
-    key: EmptyStateType.ISSUE_RELATION_EMPTY_STATE,
+  [ECoreEmptyState.ISSUE_RELATION_EMPTY_STATE]: {
+    key: ECoreEmptyState.ISSUE_RELATION_EMPTY_STATE,
     title: "No issues found",
     path: "/empty-state/search/issues",
   },
-  [EmptyStateType.ISSUE_COMMENT_EMPTY_STATE]: {
-    key: EmptyStateType.ISSUE_COMMENT_EMPTY_STATE,
+  [ECoreEmptyState.ISSUE_COMMENT_EMPTY_STATE]: {
+    key: ECoreEmptyState.ISSUE_COMMENT_EMPTY_STATE,
     title: "No comments yet",
-    description: "Comments can be used as a discussion and \n follow-up space for the issues",
+    description:
+      "Comments can be used as a discussion and \n follow-up space for the issues",
     path: "/empty-state/search/comments",
   },
 
-  [EmptyStateType.NOTIFICATION_DETAIL_EMPTY_STATE]: {
-    key: EmptyStateType.INBOX_DETAIL_EMPTY_STATE,
+  [ECoreEmptyState.NOTIFICATION_DETAIL_EMPTY_STATE]: {
+    key: ECoreEmptyState.INBOX_DETAIL_EMPTY_STATE,
     title: "Select to view details.",
     path: "/empty-state/intake/issue-detail",
   },
-  [EmptyStateType.NOTIFICATION_ALL_EMPTY_STATE]: {
-    key: EmptyStateType.NOTIFICATION_ALL_EMPTY_STATE,
+  [ECoreEmptyState.NOTIFICATION_ALL_EMPTY_STATE]: {
+    key: ECoreEmptyState.NOTIFICATION_ALL_EMPTY_STATE,
     title: "No issues assigned",
     description: "Updates for issues assigned to you can be \n seen here",
     path: "/empty-state/search/notification",
   },
-  [EmptyStateType.NOTIFICATION_MENTIONS_EMPTY_STATE]: {
-    key: EmptyStateType.NOTIFICATION_MENTIONS_EMPTY_STATE,
+  [ECoreEmptyState.NOTIFICATION_MENTIONS_EMPTY_STATE]: {
+    key: ECoreEmptyState.NOTIFICATION_MENTIONS_EMPTY_STATE,
     title: "No issues assigned",
     description: "Updates for issues assigned to you can be \n seen here",
     path: "/empty-state/search/notification",
   },
-  [EmptyStateType.NOTIFICATION_MY_ISSUE_EMPTY_STATE]: {
-    key: EmptyStateType.NOTIFICATION_MY_ISSUE_EMPTY_STATE,
+  [ECoreEmptyState.NOTIFICATION_MY_ISSUE_EMPTY_STATE]: {
+    key: ECoreEmptyState.NOTIFICATION_MY_ISSUE_EMPTY_STATE,
     title: "No issues assigned",
     description: "Updates for issues assigned to you can be \n seen here",
     path: "/empty-state/search/notification",
   },
-  [EmptyStateType.NOTIFICATION_CREATED_EMPTY_STATE]: {
-    key: EmptyStateType.NOTIFICATION_CREATED_EMPTY_STATE,
+  [ECoreEmptyState.NOTIFICATION_CREATED_EMPTY_STATE]: {
+    key: ECoreEmptyState.NOTIFICATION_CREATED_EMPTY_STATE,
     title: "No updates to issues",
     description: "Updates to issues created by you can be \n seen here",
     path: "/empty-state/search/notification",
   },
-  [EmptyStateType.NOTIFICATION_SUBSCRIBED_EMPTY_STATE]: {
-    key: EmptyStateType.NOTIFICATION_SUBSCRIBED_EMPTY_STATE,
+  [ECoreEmptyState.NOTIFICATION_SUBSCRIBED_EMPTY_STATE]: {
+    key: ECoreEmptyState.NOTIFICATION_SUBSCRIBED_EMPTY_STATE,
     title: "No updates to issues",
-    description: "Updates to any issue you are \n subscribed to can be seen here",
+    description:
+      "Updates to any issue you are \n subscribed to can be seen here",
     path: "/empty-state/search/notification",
   },
-  [EmptyStateType.NOTIFICATION_UNREAD_EMPTY_STATE]: {
-    key: EmptyStateType.NOTIFICATION_UNREAD_EMPTY_STATE,
+  [ECoreEmptyState.NOTIFICATION_UNREAD_EMPTY_STATE]: {
+    key: ECoreEmptyState.NOTIFICATION_UNREAD_EMPTY_STATE,
     title: "No unread notifications",
-    description: "Congratulations, you are up-to-date \n with everything happening in the issues \n you care about",
+    description:
+      "Congratulations, you are up-to-date \n with everything happening in the issues \n you care about",
     path: "/empty-state/search/notification",
   },
-  [EmptyStateType.NOTIFICATION_SNOOZED_EMPTY_STATE]: {
-    key: EmptyStateType.NOTIFICATION_SNOOZED_EMPTY_STATE,
+  [ECoreEmptyState.NOTIFICATION_SNOOZED_EMPTY_STATE]: {
+    key: ECoreEmptyState.NOTIFICATION_SNOOZED_EMPTY_STATE,
     title: "No snoozed notifications yet",
-    description: "Any notification you snooze for later will \n be available here to act upon",
+    description:
+      "Any notification you snooze for later will \n be available here to act upon",
     path: "/empty-state/search/snooze",
   },
-  [EmptyStateType.NOTIFICATION_ARCHIVED_EMPTY_STATE]: {
-    key: EmptyStateType.NOTIFICATION_ARCHIVED_EMPTY_STATE,
+  [ECoreEmptyState.NOTIFICATION_ARCHIVED_EMPTY_STATE]: {
+    key: ECoreEmptyState.NOTIFICATION_ARCHIVED_EMPTY_STATE,
     title: "No archived notifications yet",
-    description: "Any notification you archive will be \n available here to help you focus",
+    description:
+      "Any notification you archive will be \n available here to help you focus",
     path: "/empty-state/search/archive",
   },
 
-  [EmptyStateType.ACTIVE_CYCLE_PROGRESS_EMPTY_STATE]: {
-    key: EmptyStateType.ACTIVE_CYCLE_PROGRESS_EMPTY_STATE,
+  [ECoreEmptyState.ACTIVE_CYCLE_PROGRESS_EMPTY_STATE]: {
+    key: ECoreEmptyState.ACTIVE_CYCLE_PROGRESS_EMPTY_STATE,
     title: "Add issues to the cycle to view it's \n progress",
     path: "/empty-state/active-cycle/progress",
   },
-  [EmptyStateType.ACTIVE_CYCLE_CHART_EMPTY_STATE]: {
-    key: EmptyStateType.ACTIVE_CYCLE_CHART_EMPTY_STATE,
+  [ECoreEmptyState.ACTIVE_CYCLE_CHART_EMPTY_STATE]: {
+    key: ECoreEmptyState.ACTIVE_CYCLE_CHART_EMPTY_STATE,
     title: "Add issues to the cycle to view the \n burndown chart.",
     path: "/empty-state/active-cycle/chart",
   },
-  [EmptyStateType.ACTIVE_CYCLE_PRIORITY_ISSUE_EMPTY_STATE]: {
-    key: EmptyStateType.ACTIVE_CYCLE_PRIORITY_ISSUE_EMPTY_STATE,
+  [ECoreEmptyState.ACTIVE_CYCLE_PRIORITY_ISSUE_EMPTY_STATE]: {
+    key: ECoreEmptyState.ACTIVE_CYCLE_PRIORITY_ISSUE_EMPTY_STATE,
     title: "Observe high priority issues tackled in \n the cycle at a glance.",
     path: "/empty-state/active-cycle/priority",
   },
-  [EmptyStateType.ACTIVE_CYCLE_ASSIGNEE_EMPTY_STATE]: {
-    key: EmptyStateType.ACTIVE_CYCLE_ASSIGNEE_EMPTY_STATE,
-    title: "Add assignees to issues to see a \n breakdown of work by assignees.",
+  [ECoreEmptyState.ACTIVE_CYCLE_ASSIGNEE_EMPTY_STATE]: {
+    key: ECoreEmptyState.ACTIVE_CYCLE_ASSIGNEE_EMPTY_STATE,
+    title:
+      "Add assignees to issues to see a \n breakdown of work by assignees.",
     path: "/empty-state/active-cycle/assignee",
   },
-  [EmptyStateType.ACTIVE_CYCLE_LABEL_EMPTY_STATE]: {
-    key: EmptyStateType.ACTIVE_CYCLE_LABEL_EMPTY_STATE,
+  [ECoreEmptyState.ACTIVE_CYCLE_LABEL_EMPTY_STATE]: {
+    key: ECoreEmptyState.ACTIVE_CYCLE_LABEL_EMPTY_STATE,
     title: "Add labels to issues to see the \n breakdown of work by labels.",
     path: "/empty-state/active-cycle/label",
   },
-  [EmptyStateType.DISABLED_PROJECT_INBOX]: {
-    key: EmptyStateType.DISABLED_PROJECT_INBOX,
+  [ECoreEmptyState.DISABLED_PROJECT_INBOX]: {
+    key: ECoreEmptyState.DISABLED_PROJECT_INBOX,
     title: "Intake is not enabled for the project.",
     description:
       "Intake helps you manage incoming requests to your project and add them as issues in your workflow. Enable intake \n from project settings to manage requests.",
@@ -705,8 +776,8 @@ const emptyStateDetails = {
       text: "Manage features",
     },
   },
-  [EmptyStateType.DISABLED_PROJECT_CYCLE]: {
-    key: EmptyStateType.DISABLED_PROJECT_CYCLE,
+  [ECoreEmptyState.DISABLED_PROJECT_CYCLE]: {
+    key: ECoreEmptyState.DISABLED_PROJECT_CYCLE,
     title: "Cycles is not enabled for this project.",
     description:
       "Break work down by timeboxed chunks, work backwards from your project deadline to set dates, and make tangible progress as a team. Enable the cycles feature for your project to start using them.",
@@ -717,8 +788,8 @@ const emptyStateDetails = {
       text: "Manage features",
     },
   },
-  [EmptyStateType.DISABLED_PROJECT_MODULE]: {
-    key: EmptyStateType.DISABLED_PROJECT_MODULE,
+  [ECoreEmptyState.DISABLED_PROJECT_MODULE]: {
+    key: ECoreEmptyState.DISABLED_PROJECT_MODULE,
     title: "Modules are not enabled for the project.",
     description:
       "A group of issues that belong to a logical, hierarchical parent form a module. Think of them as a way to track work by project milestones. Enable modules from project settings.",
@@ -729,8 +800,8 @@ const emptyStateDetails = {
       text: "Manage features",
     },
   },
-  [EmptyStateType.DISABLED_PROJECT_PAGE]: {
-    key: EmptyStateType.DISABLED_PROJECT_PAGE,
+  [ECoreEmptyState.DISABLED_PROJECT_PAGE]: {
+    key: ECoreEmptyState.DISABLED_PROJECT_PAGE,
     title: "Pages are not enabled for the project.",
     description:
       "Pages are thought spotting space in Plane. Take down meeting notes, format them easily, embed issues, lay them out using a library of components, and keep them all in your project’s context. Enable the pages feature to start creating them in your project.",
@@ -741,8 +812,8 @@ const emptyStateDetails = {
       text: "Manage features",
     },
   },
-  [EmptyStateType.DISABLED_PROJECT_VIEW]: {
-    key: EmptyStateType.DISABLED_PROJECT_VIEW,
+  [ECoreEmptyState.DISABLED_PROJECT_VIEW]: {
+    key: ECoreEmptyState.DISABLED_PROJECT_VIEW,
     title: "Views is not enabled for this project.",
     description:
       "Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a project can see everyone’s views and choose whichever suits their needs best. Enable views in the project settings to start using them.",
@@ -753,33 +824,36 @@ const emptyStateDetails = {
       text: "Manage features",
     },
   },
-  [EmptyStateType.INBOX_SIDEBAR_OPEN_TAB]: {
-    key: EmptyStateType.INBOX_SIDEBAR_OPEN_TAB,
+  [ECoreEmptyState.INBOX_SIDEBAR_OPEN_TAB]: {
+    key: ECoreEmptyState.INBOX_SIDEBAR_OPEN_TAB,
     title: "No open issues",
     description: "Find open issues here. Create new issue.",
     path: "/empty-state/intake/intake-issue",
   },
-  [EmptyStateType.INBOX_SIDEBAR_CLOSED_TAB]: {
-    key: EmptyStateType.INBOX_SIDEBAR_CLOSED_TAB,
+  [ECoreEmptyState.INBOX_SIDEBAR_CLOSED_TAB]: {
+    key: ECoreEmptyState.INBOX_SIDEBAR_CLOSED_TAB,
     title: "No closed issues",
-    description: "All the issues whether accepted or \n declined can be found here.",
+    description:
+      "All the issues whether accepted or \n declined can be found here.",
     path: "/empty-state/intake/intake-issue",
   },
-  [EmptyStateType.INBOX_SIDEBAR_FILTER_EMPTY_STATE]: {
-    key: EmptyStateType.INBOX_SIDEBAR_FILTER_EMPTY_STATE,
+  [ECoreEmptyState.INBOX_SIDEBAR_FILTER_EMPTY_STATE]: {
+    key: ECoreEmptyState.INBOX_SIDEBAR_FILTER_EMPTY_STATE,
     title: "No  matching issues",
-    description: "No issue matches filter applied in intake. \n Create a new issue.",
+    description:
+      "No issue matches filter applied in intake. \n Create a new issue.",
     path: "/empty-state/intake/filter-issue",
   },
-  [EmptyStateType.INBOX_DETAIL_EMPTY_STATE]: {
-    key: EmptyStateType.INBOX_DETAIL_EMPTY_STATE,
+  [ECoreEmptyState.INBOX_DETAIL_EMPTY_STATE]: {
+    key: ECoreEmptyState.INBOX_DETAIL_EMPTY_STATE,
     title: "Select an issue to view its details.",
     path: "/empty-state/intake/issue-detail",
   },
-  [EmptyStateType.WORKSPACE_DRAFT_ISSUES]: {
-    key: EmptyStateType.WORKSPACE_DRAFT_ISSUES,
+  [ECoreEmptyState.WORKSPACE_DRAFT_ISSUES]: {
+    key: ECoreEmptyState.WORKSPACE_DRAFT_ISSUES,
     title: "Half-written issues, and soon, comments will show up here.",
-    description: "To try this out, start adding an issue and leave it mid-way or create your first draft below. 😉",
+    description:
+      "To try this out, start adding an issue and leave it mid-way or create your first draft below. 😉",
     path: "/empty-state/workspace-draft/issue",
     primaryButton: {
       text: "Create your first draft",
@@ -788,5 +862,3 @@ const emptyStateDetails = {
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
 } as const;
-
-export const EMPTY_STATE_DETAILS: Record<EmptyStateType, EmptyStateDetails> = emptyStateDetails;

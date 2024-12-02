@@ -4,13 +4,13 @@ import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
+import { EmptyStateType } from "@plane/constants";
 import { TModuleFilters } from "@plane/types";
 // components
 import { PageHead } from "@/components/core";
 import { EmptyState } from "@/components/empty-state";
 import { ModuleAppliedFiltersList, ModulesListView } from "@/components/modules";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks

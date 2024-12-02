@@ -3,6 +3,7 @@
 import React, { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { EmptyStateType } from "@plane/constants";
 import { IIssueLabel } from "@plane/types";
 // hooks
 import { Button, Loader } from "@plane/ui";
@@ -13,7 +14,6 @@ import {
   ProjectSettingLabelGroup,
   ProjectSettingLabelItem,
 } from "@/components/labels";
-import { EmptyStateType } from "@/constants/empty-state";
 import { useLabel, useUserPermissions } from "@/hooks/store";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // components

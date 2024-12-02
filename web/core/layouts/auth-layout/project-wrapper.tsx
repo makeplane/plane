@@ -6,12 +6,12 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 
 // components
+import { EmptyStateType } from "@plane/constants";
 import { JoinProject } from "@/components/auth-screens";
 import { LogoSpinner } from "@/components/common";
 import { EmptyState } from "@/components/empty-state";
 import { ETimeLineTypeType } from "@/components/gantt-chart/contexts";
 //constants
-import { EmptyStateType } from "@/constants/empty-state";
 // hooks
 import {
   useCommandPalette,

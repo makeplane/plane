@@ -3,13 +3,13 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // types
+import { EmptyStateType } from "@plane/constants";
 import { TModuleFilters } from "@plane/types";
 // components
 import { EmptyState } from "@/components/empty-state";
 import { ArchivedModulesView, ModuleAppliedFiltersList } from "@/components/modules";
 import { CycleModuleListLayout } from "@/components/ui";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks

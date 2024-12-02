@@ -4,6 +4,7 @@ import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
+import { EmptyStateType } from "@plane/constants";
 // components
 import { LogoSpinner } from "@/components/common";
 import { PageHead } from "@/components/core";
@@ -11,7 +12,6 @@ import { EmptyState } from "@/components/empty-state";
 import { InboxContentRoot } from "@/components/inbox";
 import { IssuePeekOverview } from "@/components/issues";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
 import { ENotificationLoader, ENotificationQueryParamType } from "@/constants/notification";
 // hooks
 import { useIssueDetail, useUserPermissions, useWorkspace, useWorkspaceNotifications } from "@/hooks/store";

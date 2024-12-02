@@ -1,10 +1,9 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane constants
+import { EMPTY_STATE_DETAILS, EmptyStateType, EIssuesStoreType } from "@plane/constants";
 // components
 import { EmptyState } from "@/components/empty-state";
-// constants
-import { EMPTY_STATE_DETAILS, EmptyStateType } from "@/constants/empty-state";
-import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useCommandPalette, useEventTracker, useProject } from "@/hooks/store";
 // assets

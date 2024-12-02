@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // ui
+import { EmptyStateType } from "@plane/constants";
 import { Button } from "@plane/ui";
 // component
 import { ApiTokenListItem, CreateApiTokenModal } from "@/components/api-token";
@@ -13,7 +14,6 @@ import { PageHead } from "@/components/core";
 import { EmptyState } from "@/components/empty-state";
 import { APITokenSettingsLoader } from "@/components/ui";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
 import { API_TOKENS_LIST } from "@/constants/fetch-keys";
 // store hooks
 import { useUserPermissions, useWorkspace } from "@/hooks/store";

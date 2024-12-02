@@ -3,6 +3,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // types
+import { EmptyStateType } from "@plane/constants";
 import { ICycle, IIssueFilterOptions } from "@plane/types";
 // ui
 import { LinearProgressIndicator, Loader } from "@plane/ui";
@@ -10,7 +11,6 @@ import { LinearProgressIndicator, Loader } from "@plane/ui";
 import { EmptyState } from "@/components/empty-state";
 // constants
 import { PROGRESS_STATE_GROUPS_DETAILS } from "@/constants/common";
-import { EmptyStateType } from "@/constants/empty-state";
 // hooks
 import { useProjectState } from "@/hooks/store";
 

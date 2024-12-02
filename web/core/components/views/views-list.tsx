@@ -1,12 +1,12 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
+import { EmptyStateType } from "@plane/constants";
 import { ListLayout } from "@/components/core/list";
 import { EmptyState } from "@/components/empty-state";
 import { ViewListLoader } from "@/components/ui";
 import { ProjectViewListItem } from "@/components/views";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
 // hooks
 import { useCommandPalette, useProjectView } from "@/hooks/store";
 // assets

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
+import { EmptyStateType } from "@plane/constants";
 import { TCycleFilters } from "@plane/types";
 // components
 import { Header, EHeaderVariant } from "@plane/ui";
@@ -12,7 +13,6 @@ import { CyclesView, CycleCreateUpdateModal, CycleAppliedFiltersList } from "@/c
 import { EmptyState } from "@/components/empty-state";
 import { CycleModuleListLayout } from "@/components/ui";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
 // helpers
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks

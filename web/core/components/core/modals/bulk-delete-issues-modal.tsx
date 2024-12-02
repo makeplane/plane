@@ -7,13 +7,13 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Search } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // types
+import { EmptyStateType } from "@plane/constants";
 import { ISearchIssueResponse, IUser } from "@plane/types";
 // ui
 import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { EmptyState } from "@/components/empty-state";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
 import { EIssuesStoreType } from "@/constants/issue";
 // hooks
 import { useIssues } from "@/hooks/store";

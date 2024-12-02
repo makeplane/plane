@@ -8,6 +8,7 @@ import useSWR from "swr";
 import { FolderPlus, Search, Settings } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // types
+import { EmptyStateType } from "@plane/constants";
 import { IWorkspaceSearchResults } from "@plane/types";
 // ui
 import { LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
@@ -25,7 +26,6 @@ import {
 } from "@/components/command-palette";
 import { EmptyState } from "@/components/empty-state";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
 // fetch-keys
 import { ISSUE_DETAILS } from "@/constants/fetch-keys";
 // helpers

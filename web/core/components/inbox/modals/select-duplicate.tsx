@@ -7,12 +7,12 @@ import { Combobox, Dialog, Transition } from "@headlessui/react";
 // icons
 // components
 // types
+import { EmptyStateType } from "@plane/constants";
 import { ISearchIssueResponse } from "@plane/types";
 // ui
 import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
 import { EmptyState } from "@/components/empty-state";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
 // hooks
 import { useProject } from "@/hooks/store";
 import useDebounce from "@/hooks/use-debounce";

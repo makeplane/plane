@@ -3,13 +3,13 @@
 import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
 // types
+import { EmptyStateType } from "@plane/constants";
 import { TPageNavigationTabs } from "@plane/types";
 // components
 import { PageHead } from "@/components/core";
 import { EmptyState } from "@/components/empty-state";
 import { PagesListRoot, PagesListView } from "@/components/pages";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
 // hooks
 import { useProject } from "@/hooks/store";
 

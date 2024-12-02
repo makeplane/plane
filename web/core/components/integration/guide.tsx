@@ -9,6 +9,7 @@ import useSWR, { mutate } from "swr";
 // icons
 import { RefreshCw } from "lucide-react";
 // types
+import { EmptyStateType } from "@plane/constants";
 import { IImporterService } from "@plane/types";
 // ui
 import { Button } from "@plane/ui";
@@ -17,7 +18,6 @@ import { EmptyState } from "@/components/empty-state";
 import { DeleteImportModal, GithubImporterRoot, JiraImporterRoot, SingleImport } from "@/components/integration";
 import { ImportExportSettingsLoader } from "@/components/ui";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
 import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
 import { IMPORTERS_LIST } from "@/constants/workspace";
 // hooks

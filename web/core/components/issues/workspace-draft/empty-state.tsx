@@ -2,10 +2,10 @@
 
 import { FC, Fragment, useState } from "react";
 // components
+import { EmptyStateType } from "@plane/constants";
 import { EmptyState } from "@/components/empty-state";
 import { CreateUpdateIssueModal } from "@/components/issues";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
 import { EIssuesStoreType } from "@/constants/issue";
 
 export const WorkspaceDraftEmptyState: FC = () => {

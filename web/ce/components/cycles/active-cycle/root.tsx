@@ -3,6 +3,7 @@
 import { observer } from "mobx-react";
 import { Disclosure } from "@headlessui/react";
 // ui
+import { EmptyStateType } from "@plane/constants";
 import { Row } from "@plane/ui";
 // components
 import {
@@ -15,7 +16,6 @@ import {
 import useCyclesDetails from "@/components/cycles/active-cycle/use-cycles-details";
 import { EmptyState } from "@/components/empty-state";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
 import { useCycle } from "@/hooks/store";
 import { ActiveCycleIssueDetails } from "@/store/issue/cycle";
 
