@@ -8,6 +8,7 @@ from plane.api.views import (
     IssueActivityAPIEndpoint,
     WorkspaceIssueAPIEndpoint,
     IssueAttachmentEndpoint,
+    IssueAttachmentServerEndpoint,
 )
 
 urlpatterns = [
@@ -74,6 +75,16 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/<uuid:pk>/",
         IssueAttachmentEndpoint.as_view(),
+        name="attachment",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/server/",
+        IssueAttachmentServerEndpoint.as_view(),
+        name="attachment",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/<uuid:pk>/server/",
+        IssueAttachmentServerEndpoint.as_view(),
         name="attachment",
     ),
 ]

@@ -111,6 +111,7 @@ export async function migrateToPlane(job: TJobWithConfig, data: PlaneEntities[],
     );
     planeLabels = response.results;
     planeUsers = await protect(planeClient.users.list.bind(planeClient.users), job.workspace_slug, job.project_id);
+    console.log(planeUsers);
     shouldContinue = false;
   } catch (error) {
     logger.error(
@@ -138,7 +139,14 @@ export async function migrateToPlane(job: TJobWithConfig, data: PlaneEntities[],
   /* ------------------- Append Labels and Users -------------------- */
   const usersToAppend = users.filter((user) => !planeUsers.find((planeUser) => planeUser.email === user.email));
   planeUsers.push(
-    ...(await createUsers(job.id, usersToAppend as PlaneUser[], planeClient, job.workspace_slug, job.project_id))
+    ...(await createUsers(
+      job.id,
+      usersToAppend as PlaneUser[],
+      planeClient,
+      credentials,
+      job.workspace_slug,
+      job.project_id
+    ))
   );
   const labelsToAppend = labels.filter((label) => !planeLabels.find((planeLabel) => planeLabel.name === label.name));
   planeLabels.push(
@@ -152,11 +160,7 @@ export async function migrateToPlane(job: TJobWithConfig, data: PlaneEntities[],
   );
 
   /* ------------------- Issue Types -------------------- */
-  const isIssueTypeFeatureEnabled = await featureFlagService.featureFlags({
-    workspace_slug: job.workspace_slug,
-    user_id: job.initiator_id,
-    flag_key: E_FEATURE_FLAGS.ISSUE_TYPE_SETTINGS,
-  });
+  const isIssueTypeFeatureEnabled = true;
 
   if (isIssueTypeFeatureEnabled) {
     // 2. Check if issue type is enabled for the project or not.

@@ -18,6 +18,7 @@ import {
   TIssuePropertyRelationType,
   TIssuePropertyType,
   TIssuePropertyTypeKeys,
+  UploadData,
 } from "@plane/sdk";
 import { TPropertyValuesPayload, TServiceCredentials } from "@silo/core";
 import { HTMLElement, parse } from "node-html-parser";
@@ -321,11 +322,11 @@ const createIssueAttachments = async (
             attachment.attributes.name,
             blob.size,
             blob.type,
-            attachment.external_id,
-            attachment.external_source
+            attachment.external_source,
+            attachment.external_id
           );
 
-          const data = generateFileUploadPayload(response, blob, attachment.attributes.name);
+          const data = generateFileUploadPayload(response.upload_data, blob, attachment.attributes.name);
 
           const upload = await uploadFile({
             url: response.upload_data.url,
@@ -357,16 +358,19 @@ const createIssueAttachments = async (
             if (url.pathname.includes("rest")) {
               sourceAttachmentPathname = splitStringTillPart(new URL(attachment.asset).pathname, "rest");
             } else {
-              sourceAttachmentPathname = attachment.asset;
+              if (credentials.source === "JIRA_SERVER") {
+                sourceAttachmentPathname = convertJiraImageURL(attachment.asset);
+              } else {
+                sourceAttachmentPathname = attachment.asset;
+              }
             }
-            console.log("BEFORE", issue.description_html);
+
             issue.description_html = replaceImageComponent(
               issue.description_html,
               response.asset_id,
               sourceAttachmentPathname,
               credentials.source
             );
-            console.log("AFTER", issue.description_html);
           }
         } catch (error) {
           if (AssertAPIErrorResponse(error)) {
@@ -383,10 +387,18 @@ const createIssueAttachments = async (
                   if (url.pathname.includes("rest")) {
                     sourceAttachmentPathname = splitStringTillPart(new URL(attachment.asset).pathname, "rest");
                   } else {
-                    sourceAttachmentPathname = attachment.asset;
+                    if (credentials.source === "JIRA_SERVER") {
+                      sourceAttachmentPathname = convertJiraImageURL(attachment.asset);
+                    } else {
+                      sourceAttachmentPathname = attachment.asset;
+                    }
                   }
-                  issue.description_html = removeSpanAroundImg(
-                    issue.description_html.replace(sourceAttachmentPathname, attachmentUrl)
+
+                  issue.description_html = replaceImageComponent(
+                    issue.description_html,
+                    existingAttachment.id,
+                    sourceAttachmentPathname,
+                    credentials.source
                   );
                 }
               });
@@ -531,13 +543,9 @@ const getIssueAssignees = (issue: ExIssue, users: any[]): string[] => {
   return assignedUsers.filter((user) => user !== undefined) as string[];
 };
 
-export const generateFileUploadPayload = (
-  signedURLResponse: AttachmentResponse,
-  blob: Blob,
-  name: string
-): FormData => {
+export const generateFileUploadPayload = (uploadData: UploadData, blob: Blob, name: string): FormData => {
   const formData = new FormData();
-  Object.entries(signedURLResponse.upload_data.fields).forEach(([key, value]) => formData.append(key, value));
+  Object.entries(uploadData.fields).forEach(([key, value]) => formData.append(key, value));
   formData.append("file", blob, name);
   return formData;
 };
@@ -589,6 +597,85 @@ const generatePropertyValuesPayload = (
   }
 };
 
+// const replaceImageComponent = (
+//   description_html: string,
+//   assetId: string,
+//   existingURL: string,
+//   source: string
+// ): string => {
+//   if (!description_html || !assetId || !existingURL) {
+//     return description_html;
+//   }
+//
+//   if (source === "LINEAR") {
+//     // Handle Linear's markdown image format
+//     const imageRegex = /!\[(.*?)\]\((.*?)\)/g;
+//
+//     return description_html.replace(imageRegex, (match, altText, url) => {
+//       // Check if this is the image we want to replace
+//       if (url === existingURL) {
+//         return `<image-component src="${assetId}" alt="${altText}"/>`;
+//       }
+//       return match;
+//     });
+//   } else {
+//     try {
+//       console.log("=========================================");
+//       // Parse the HTML string
+//       const root = parse(description_html);
+//       console.log("ROOT", root.toString());
+//
+//       // Remove surrounding <p> tags if present
+//       const pTag = root.querySelector("p");
+//       if (pTag && pTag.childNodes.length === 1 && pTag.parentNode === root) {
+//         root.innerHTML = pTag.innerHTML;
+//       }
+//
+//       const spanTag = root.querySelector("span");
+//       console.log("ROOTTTTTTTTTT", root);
+//       console.log("SPAN TAG", spanTag);
+//       if (spanTag && spanTag.childNodes.length === 1 && spanTag.parentNode === root) {
+//         root.innerHTML = spanTag.innerHTML;
+//         console.log("SPAN TAG", spanTag);
+//       }
+//
+//       console.log("ROOT AFTER", root.toString());
+//       // Find all img tags
+//       const imgTags = root.querySelectorAll("img");
+//       console.log("IMG TAGS", imgTags);
+//       console.log("EXISTING URL", existingURL);
+//
+//       // Replace only img tags that match the existingURL
+//       imgTags.forEach((img: HTMLElement) => {
+//         const imgSrc = img.getAttribute("src");
+//         console.log("IMG SRC", imgSrc);
+//         console.log("EXISTING URL", existingURL);
+//
+//         // Check if the image source matches the existing URL
+//         if (imgSrc === existingURL) {
+//           // Get height and width from original img tag
+//           const height = img.getAttribute("height");
+//           const width = img.getAttribute("width");
+//
+//           // Build attributes string
+//           const heightAttr = height ? ` height="${height}"` : "";
+//           const widthAttr = width ? ` width="${width}"` : "";
+//
+//           // Create new component with preserved dimensions
+//           const imageComponent = `<image-component src=${assetId} ${heightAttr}${widthAttr}/>`;
+//           console.log("IMAGE COMPONENT", imageComponent);
+//           img.replaceWith(imageComponent);
+//         }
+//       });
+//
+//       console.log("=========================================");
+//       return root.toString();
+//     } catch (error) {
+//       return description_html;
+//     }
+//   }
+// };
+
 const replaceImageComponent = (
   description_html: string,
   assetId: string,
@@ -602,7 +689,6 @@ const replaceImageComponent = (
   if (source === "LINEAR") {
     // Handle Linear's markdown image format
     const imageRegex = /!\[(.*?)\]\((.*?)\)/g;
-
     return description_html.replace(imageRegex, (match, altText, url) => {
       // Check if this is the image we want to replace
       if (url === existingURL) {
@@ -615,20 +701,9 @@ const replaceImageComponent = (
       // Parse the HTML string
       const root = parse(description_html);
 
-      // Remove surrounding <p> tags if present
-      const pTag = root.querySelector("p");
-      if (pTag && pTag.childNodes.length === 1 && pTag.parentNode === root) {
-        root.innerHTML = pTag.innerHTML;
-      }
-
-      const spanTag = root.querySelector("span");
-      if (spanTag && spanTag.childNodes.length === 1 && spanTag.parentNode === root) {
-        root.innerHTML = spanTag.innerHTML;
-      }
-      // Find all img tags
+      // Find img tags
       const imgTags = root.querySelectorAll("img");
 
-      // Replace only img tags that match the existingURL
       imgTags.forEach((img: HTMLElement) => {
         const imgSrc = img.getAttribute("src");
 
@@ -643,14 +718,50 @@ const replaceImageComponent = (
           const widthAttr = width ? ` width="${width}"` : "";
 
           // Create new component with preserved dimensions
-          const imageComponent = `<image-component src=${assetId} ${heightAttr}${widthAttr}/>`;
-          img.replaceWith(imageComponent);
+          const imageComponent = `<image-component src="${assetId}"${heightAttr}${widthAttr}/>`;
+
+          // Find the parent span
+          const parentSpan = img.closest("span.image-wrap");
+
+          // Replace the span if it exists, otherwise replace the img
+          if (parentSpan) {
+            parentSpan.replaceWith(imageComponent);
+          } else {
+            img.replaceWith(imageComponent);
+          }
         }
       });
 
       return root.toString();
     } catch (error) {
+      console.error("Error in replaceImageComponent:", error);
       return description_html;
     }
   }
 };
+
+function convertJiraImageURL(originalURL: string): string {
+  try {
+    const url = new URL(originalURL);
+    const pathParts = url.pathname.split("/");
+
+    // If the URL already matches the desired format, return it as is
+    if (pathParts[pathParts.length - 1].startsWith(`${pathParts[pathParts.length - 2]}_`)) {
+      return originalURL;
+    }
+
+    // Insert the second-to-last path segment before the filename
+    const filename = pathParts[pathParts.length - 1];
+    const secondToLastSegment = pathParts[pathParts.length - 2];
+
+    pathParts[pathParts.length - 1] = `${secondToLastSegment}_${filename}`;
+
+    // Reconstruct the URL
+    url.pathname = pathParts.join("/");
+
+    return url.toString();
+  } catch (error) {
+    console.error("Error converting URL:", error);
+    return originalURL;
+  }
+}

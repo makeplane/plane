@@ -10,12 +10,15 @@ import { logger } from "@/logger";
 import { TaskHandler, TaskHeaders } from "@/types";
 import { MQ, Store } from "./base";
 import { TMQEntityOptions } from "./base/types";
+import { JiraDataCenterMigrator } from "@/apps/jira-server-importer/migrator";
 
 class WorkerFactory {
   static createWorker(type: string, mq: MQ, store: Store): TaskHandler {
     switch (type) {
       case "jira":
         return new JiraDataMigrator(mq, store);
+      case "jira_server":
+        return new JiraDataCenterMigrator(mq, store);
       case "linear":
         return new LinearDataMigrator(mq, store);
       case "asana":
@@ -71,6 +74,7 @@ export class TaskManager {
     try {
       this.mq = new MQ(options);
       await this.mq.connect();
+      logger.info("Message Queue connected successfully 🐇🐇🐰");
     } catch (error) {
       throw error;
     }
@@ -80,6 +84,7 @@ export class TaskManager {
     try {
       this.store = new Store();
       await this.store.connect();
+      logger.info("Redis Store connected successfully 📚🫙🫙");
     } catch (error) {
       throw error;
     }
@@ -112,7 +117,12 @@ export class TaskManager {
             headers: headers.headers,
             data: data,
           };
-          await this.handleTask(props);
+          try {
+            await this.handleTask(props);
+          } catch (error) {
+            await this.handleError(msg, error);
+            console.log("Error handling task", error);
+          }
           await this.mq?.ackMessage(msg);
         } catch (error) {
           logger.error("Error processing message:");

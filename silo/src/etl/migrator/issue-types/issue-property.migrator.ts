@@ -84,7 +84,7 @@ export const createOrUpdateIssuePropertiesOptions = async (
     try {
       let createdUpdatedIssuePropertyOption: ExIssuePropertyOption | undefined;
 
-      const issueProperty = issuePropertyMap.get(issuePropertyOption.property_id || "");
+      const issueProperty = issuePropertyMap.get(`customfield_${issuePropertyOption.property_id}` || "");
       if (!issueProperty) {
         logger.error(
           `[${jobId.slice(0, 7)}] Issue property not found for the issue property option: ${issuePropertyOption.name}`

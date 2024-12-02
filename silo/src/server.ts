@@ -4,6 +4,7 @@ import { nodeProfilingIntegration } from "@sentry/profiling-node";
 import cors from "cors";
 import dotenv from "dotenv";
 import express, { Application } from "express";
+
 // lib
 import { registerControllers } from "./lib/controller";
 // controllers
@@ -17,7 +18,9 @@ import LinearController from "@/apps/linear-importer/controllers";
 import { GitlabController } from "./apps/gitlab";
 import { SlackController } from "./apps/slack/controllers";
 import { env } from "./env";
-import { logger } from "./logger";
+import { expressLogger, logger } from "./logger";
+import expressWinston from "express-winston";
+import JiraDataCenterController from "./apps/jira-server-importer/controllers";
 
 const PING_CONTROLLERS = [HomeController];
 const ENGINE_CONTROLLERS = [JobController, JobConfigController, CredentialController, ConnectionsController];
@@ -28,6 +31,7 @@ const APP_CONTROLLERS = [
   GitlabController,
   AsanaController,
   SlackController,
+  JiraDataCenterController,
 ];
 
 const controllers = [...PING_CONTROLLERS, ...ENGINE_CONTROLLERS, ...APP_CONTROLLERS];
@@ -43,6 +47,20 @@ export class Server {
     this.app.use(cors());
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
+    this.app.use(
+      expressWinston.logger({
+        winstonInstance: expressLogger,
+        msg: '"{req.method} {req.url}" {req.httpVersion}',
+        expressFormat: true,
+        colorize: true,
+        requestWhitelist: [],
+        responseWhitelist: ["statusCode"],
+        bodyBlacklist: ["password", "authorization"],
+        ignoreRoute: function (req, res) {
+          return false;
+        },
+      })
+    );
 
     // set up dotenv
     dotenv.config();

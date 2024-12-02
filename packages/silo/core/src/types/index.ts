@@ -33,6 +33,7 @@ export type TServiceAuthConfiguration = {
 // importer types
 export enum E_IMPORTER_KEYS {
   JIRA = "JIRA",
+  JIRA_SERVER = "JIRA_SERVER",
   ASANA = "ASANA",
   LINEAR = "LINEAR",
   TRELLO = "TRELLO",

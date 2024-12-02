@@ -19,7 +19,7 @@ import {
 } from "@/db/query";
 import { Request, Response } from "express";
 import taskManager from "@/apps/engine/worker";
-import { TImporterKeys } from "@silo/core";
+import { TImporterKeys, TIntegrationKeys } from "@silo/core";
 
 @Controller("/api/jobs")
 export class JobController {
@@ -76,7 +76,10 @@ export class JobController {
         // Find the jobs based on the workspace ID of the credentials
         let jobs = {};
         if (req.query.source) {
-          jobs = await getJobByWorkspaceIdAndSource(targetCredentials.workspace_id, req.query.source as TImporterKeys);
+          jobs = await getJobByWorkspaceIdAndSource(
+            targetCredentials.workspace_id,
+            req.query.source as TImporterKeys & TIntegrationKeys
+          );
         } else {
           jobs = await getJobByWorkspaceId(targetCredentials.workspace_id);
         }
@@ -181,7 +184,7 @@ export class JobController {
   }
 }
 
-@Controller("/job-configs")
+@Controller("/api/job-configs")
 export class JobConfigController {
   @Post("/")
   async createJobConfig(req: Request, res: Response) {

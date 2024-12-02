@@ -5,6 +5,7 @@ const taskManager = new TaskManager({
     jira: "jira",
     linear: "linear",
     asana: "asana",
+    jira_server: "jira_server",
     "slack-interaction": "slack-interaction",
     "github-webhook": "github-webhook",
     "gitlab-webhook": "gitlab-webhook",

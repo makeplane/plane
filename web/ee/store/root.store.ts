@@ -33,7 +33,16 @@ import {
 // store
 import { CoreRootStore } from "@/store/root.store";
 // importers
-import { IJiraStore, JiraStore, ILinearStore, LinearStore, IAsanaStore, AsanaStore } from "./importers";
+import {
+  IJiraStore,
+  JiraStore,
+  IJiraServerStore,
+  JiraServerStore,
+  ILinearStore,
+  LinearStore,
+  IAsanaStore,
+  AsanaStore,
+} from "./importers";
 // integrations
 import { ISlackStore, SlackStore } from "./integrations";
 // pi chat
@@ -59,6 +68,7 @@ export class RootStore extends CoreRootStore {
   timelineStore: ITimelineStore;
   // importers
   jiraImporter: IJiraStore;
+  jiraServerImporter: IJiraServerStore;
   linearImporter: ILinearStore;
   asanaImporter: IAsanaStore;
   // integrations
@@ -83,6 +93,7 @@ export class RootStore extends CoreRootStore {
     this.timelineStore = new TimeLineStore(this);
     // importers
     this.jiraImporter = new JiraStore(this);
+    this.jiraServerImporter = new JiraServerStore(this);
     this.linearImporter = new LinearStore(this);
     this.asanaImporter = new AsanaStore(this);
     // integrations
@@ -108,6 +119,7 @@ export class RootStore extends CoreRootStore {
     this.timelineStore = new TimeLineStore(this);
     // importers
     this.jiraImporter = new JiraStore(this);
+    this.jiraServerImporter = new JiraServerStore(this);
     this.linearImporter = new LinearStore(this);
     this.asanaImporter = new AsanaStore(this);
     // integrations
