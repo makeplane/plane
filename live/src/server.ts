@@ -59,7 +59,7 @@ router.ws("/collaboration", (ws, req) => {
   }
 });
 
-app.post("/resolve-document-conflicts", (req, res) => {
+router.post("/resolve-document-conflicts", (req, res) => {
   const { original_document, updates } = req.body as TResolveConflictsRequestBody;
   try {
     if (original_document === undefined || updates === undefined) {
