@@ -175,7 +175,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             },
             path: pathname,
           });
-        } catch (error) {
+        } catch {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Error!",
@@ -204,7 +204,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             },
             path: pathname,
           });
-        } catch (error) {
+        } catch {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Error!",
@@ -245,7 +245,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             },
             path: pathname,
           });
-        } catch (error) {
+        } catch {
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { state: "FAILED", element: "Issue detail page" },
@@ -281,7 +281,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             },
             path: pathname,
           });
-        } catch (error) {
+        } catch {
           captureIssueEvent({
             eventName: ISSUE_UPDATED,
             payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
@@ -373,7 +373,6 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           </div>
         </div>
       )}
-
       {/* peek overview */}
       <IssuePeekOverview />
     </>

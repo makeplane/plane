@@ -1,19 +1,19 @@
 import { X } from "lucide-react";
 // plane types
-import { TPageVersion } from "@plane/types";
-// components
-import { PageVersionsSidebarList } from "@/components/pages";
+import { TEditorVersion } from "@plane/types";
+// local components
+import { EditorVersionHistorySidebarList } from ".";
 
 type Props = {
   activeVersion: string | null;
-  fetchAllVersions: (pageId: string) => Promise<TPageVersion[] | undefined>;
+  entityId: string;
+  fetchAllVersions: (entityId: string) => Promise<TEditorVersion[] | undefined>;
   handleClose: () => void;
   isOpen: boolean;
-  pageId: string;
 };
 
-export const PageVersionsSidebarRoot: React.FC<Props> = (props) => {
-  const { activeVersion, fetchAllVersions, handleClose, isOpen, pageId } = props;
+export const EditorVersionHistorySidebarRoot: React.FC<Props> = (props) => {
+  const { activeVersion, entityId, fetchAllVersions, handleClose, isOpen } = props;
 
   return (
     <div className="flex-shrink-0 py-4 border-l border-custom-border-200 flex flex-col">
@@ -27,11 +27,11 @@ export const PageVersionsSidebarRoot: React.FC<Props> = (props) => {
           <X className="size-4" />
         </button>
       </div>
-      <PageVersionsSidebarList
+      <EditorVersionHistorySidebarList
         activeVersion={activeVersion}
+        entityId={entityId}
         fetchAllVersions={fetchAllVersions}
         isOpen={isOpen}
-        pageId={pageId}
       />
     </div>
   );

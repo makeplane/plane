@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 // plane types
-import { TPageVersion } from "@plane/types";
+import { TEditorVersion } from "@plane/types";
 // plane ui
 import { Avatar } from "@plane/ui";
 // helpers
@@ -14,10 +14,10 @@ import { useMember } from "@/hooks/store";
 type Props = {
   href: string;
   isActive: boolean;
-  version: TPageVersion;
+  version: TEditorVersion;
 };
 
-export const PlaneVersionsSidebarListItem: React.FC<Props> = observer((props) => {
+export const EditorVersionHistorySidebarListItem: React.FC<Props> = observer((props) => {
   const { href, isActive, version } = props;
   // store hooks
   const { getUserDetails } = useMember();

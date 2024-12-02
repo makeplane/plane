@@ -1,0 +1,106 @@
+import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
+// plane editor
+import { DocumentReadOnlyEditorWithRef } from "@plane/editor";
+// plane types
+import { IUserLite } from "@plane/types";
+// plane ui
+import { Loader } from "@plane/ui";
+// helpers
+import { getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
+// hooks
+import { useMember, useMention, useUser } from "@/hooks/store";
+// plane web hooks
+import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
+// local types
+import { TVersionEditorProps } from ".";
+
+export const PageVersionEditor: React.FC<TVersionEditorProps> = observer((props) => {
+  const { activeVersion, currentVersionDescription, isCurrentVersionActive, versionDetails } = props;
+  // params
+  const { workspaceSlug, projectId } = useParams();
+  // store hooks
+  const { data: currentUser } = useUser();
+  const {
+    getUserDetails,
+    project: { getProjectMemberIds },
+  } = useMember();
+  // derived values
+  const projectMemberIds = projectId ? getProjectMemberIds(projectId.toString()) : [];
+  const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
+  // issue-embed
+  const { issueEmbedProps } = useIssueEmbed(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "");
+  // use-mention
+  const { mentionHighlights } = useMention({
+    workspaceSlug: workspaceSlug?.toString() ?? "",
+    projectId: projectId?.toString() ?? "",
+    members: projectMemberDetails,
+    user: currentUser ?? undefined,
+  });
+
+  if (!isCurrentVersionActive && !versionDetails)
+    return (
+      <div className="size-full px-5">
+        <Loader className="relative space-y-4">
+          <Loader.Item width="50%" height="36px" />
+          <div className="space-y-2">
+            <div className="py-2">
+              <Loader.Item width="100%" height="36px" />
+            </div>
+            <Loader.Item width="80%" height="22px" />
+            <div className="relative flex items-center gap-2">
+              <Loader.Item width="30px" height="30px" />
+              <Loader.Item width="30%" height="22px" />
+            </div>
+            <div className="py-2">
+              <Loader.Item width="60%" height="36px" />
+            </div>
+            <Loader.Item width="70%" height="22px" />
+            <Loader.Item width="30%" height="22px" />
+            <div className="relative flex items-center gap-2">
+              <Loader.Item width="30px" height="30px" />
+              <Loader.Item width="30%" height="22px" />
+            </div>
+            <div className="py-2">
+              <Loader.Item width="50%" height="30px" />
+            </div>
+            <Loader.Item width="100%" height="22px" />
+            <div className="py-2">
+              <Loader.Item width="30%" height="30px" />
+            </div>
+            <Loader.Item width="30%" height="22px" />
+            <div className="relative flex items-center gap-2">
+              <div className="py-2">
+                <Loader.Item width="30px" height="30px" />
+              </div>
+              <Loader.Item width="30%" height="22px" />
+            </div>
+          </div>
+        </Loader>
+      </div>
+    );
+
+  const description = isCurrentVersionActive ? currentVersionDescription : versionDetails?.description_html;
+  if (description === undefined || description?.trim() === "") return null;
+
+  return (
+    <DocumentReadOnlyEditorWithRef
+      id={activeVersion ?? ""}
+      initialValue={description ?? "<p></p>"}
+      containerClassName="p-0 pb-64 border-none"
+      editorClassName="pl-10"
+      fileHandler={getReadOnlyEditorFileHandlers({
+        projectId: projectId?.toString() ?? "",
+        workspaceSlug: workspaceSlug?.toString() ?? "",
+      })}
+      mentionHandler={{
+        highlights: mentionHighlights,
+      }}
+      embedHandler={{
+        issue: {
+          widgetCallback: issueEmbedProps.widgetCallback,
+        },
+      }}
+    />
+  );
+});
