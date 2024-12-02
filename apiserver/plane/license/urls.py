@@ -14,11 +14,14 @@ from plane.license.api.views import (
     ChangeLogEndpoint,
     InstanceWorkSpaceAvailabilityCheckEndpoint,
     InstanceWorkSpaceEndpoint,
+    AdminFeatureFlagEndpoint,
+    CheckUpdateEndpoint,
 )
 
 urlpatterns = [
     path("", InstanceEndpoint.as_view(), name="instance"),
     path("changelog/", ChangeLogEndpoint.as_view(), name="instance-changelog"),
+    path("check-updates/", CheckUpdateEndpoint.as_view(), name="check-update"),
     path("admins/", InstanceAdminEndpoint.as_view(), name="instance-admins"),
     path("admins/me/", InstanceAdminUserMeEndpoint.as_view(), name="instance-admins"),
     path(
@@ -62,9 +65,10 @@ urlpatterns = [
         InstanceWorkSpaceAvailabilityCheckEndpoint.as_view(),
         name="instance-workspace-availability",
     ),
+    path("workspaces/", InstanceWorkSpaceEndpoint.as_view(), name="instance-workspace"),
     path(
-        "workspaces/",
-        InstanceWorkSpaceEndpoint.as_view(),
-        name="instance-workspace",
+        "admins/feature-flags/",
+        AdminFeatureFlagEndpoint.as_view(),
+        name="admin-feature-flags",
     ),
 ]
