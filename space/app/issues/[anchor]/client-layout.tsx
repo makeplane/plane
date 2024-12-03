@@ -3,7 +3,7 @@
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
-import { LogoSpinner, PoweredBy } from "@/components/common";
+import { LogoSpinner } from "@/components/common";
 import { IssuesNavbarRoot } from "@/components/issues";
 import { SomethingWentWrongError } from "@/components/issues/issue-layouts/error";
 // hooks
@@ -49,7 +49,6 @@ export const IssuesClientLayout = observer((props: Props) => {
         <IssuesNavbarRoot publishSettings={publishSettings} />
       </div>
       <div className="relative h-full w-full overflow-hidden bg-custom-background-90">{children}</div>
-      <PoweredBy />
     </div>
   );
 });

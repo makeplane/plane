@@ -8,8 +8,8 @@ import { usePopper } from "react-popper";
 import { LogOut } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
 import { Avatar, Button } from "@plane/ui";
+import { API_BASE_URL } from "@plane/constants";
 // helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
 import { getFileURL } from "@/helpers/file.helper";
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks

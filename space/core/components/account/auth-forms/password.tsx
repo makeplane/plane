@@ -4,10 +4,10 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Eye, EyeOff, XCircle } from "lucide-react";
 import { Button, Input, Spinner } from "@plane/ui";
+import { API_BASE_URL } from "@plane/constants";
 // components
 import { PasswordStrengthMeter } from "@/components/account";
 // helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
 import { E_PASSWORD_STRENGTH, getPasswordStrength } from "@/helpers/password.helper";
 // services
 import { AuthService } from "@/services/auth.service";
