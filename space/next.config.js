@@ -28,14 +28,13 @@ const nextConfig = {
   },
 };
 
-
 const sentryConfig = {
   // For all available options, see:
   // https://github.com/getsentry/sentry-webpack-plugin#options
 
   org: process.env.SENTRY_ORG_ID || "plane-hq",
   project: process.env.SENTRY_PROJECT_ID || "plane-space",
-  authToken: process.env.SENTRY_AUTH_TOKEN,
+  // authToken: process.env.SENTRY_AUTH_TOKEN,
   // Only print logs for uploading source maps in CI
   silent: true,
 
@@ -62,12 +61,6 @@ const sentryConfig = {
   // https://docs.sentry.io/product/crons/
   // https://vercel.com/docs/cron-jobs
   automaticVercelMonitors: true,
-}
+};
 
-
-if (parseInt(process.env.SENTRY_MONITORING_ENABLED || "0", 10)) {
-  module.exports = withSentryConfig(nextConfig, sentryConfig);
-} else {
-  module.exports = nextConfig;
-}
-
+module.exports = withSentryConfig(nextConfig, sentryConfig);

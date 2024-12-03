@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /** @type {import("next").NextConfig} */
 require("dotenv").config({ path: ".env" });
-// const path = require("path");
-
 const { withSentryConfig } = require("@sentry/nextjs");
 
 const nextConfig = {
@@ -14,28 +12,13 @@ const nextConfig = {
     return [
       {
         source: "/(.*)?",
-        headers: [
-          { key: "X-Frame-Options", value: "SAMEORIGIN" },
-          // {
-          //   key: "Referrer-Policy",
-          //   value: "origin-when-cross-origin",
-          // },
-          // { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
-          // { key: "Cross-Origin-Embedder-Policy", value: "credentialless" },
-        ],
+        headers: [{ key: "X-Frame-Options", value: "SAMEORIGIN" }],
       },
     ];
   },
   images: {
     unoptimized: true,
   },
-  // webpack: (config, { isServer }) => {
-  //   if (!isServer) {
-  //     // Ensure that all imports of 'yjs' resolve to the same instance
-  //     config.resolve.alias["yjs"] = path.resolve(__dirname, "node_modules/yjs");
-  //   }
-  //   return config;
-  // },
   async redirects() {
     return [
       {
@@ -67,7 +50,6 @@ const nextConfig = {
   },
   async rewrites() {
     const posthogHost = process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://app.posthog.com";
-    const uploadsBaseURL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
     const rewrites = [
       {
         source: "/ingest/static/:path*",
@@ -100,7 +82,7 @@ const sentryConfig = {
   // https://github.com/getsentry/sentry-webpack-plugin#options
   org: process.env.SENTRY_ORG_ID || "plane-hq",
   project: process.env.SENTRY_PROJECT_ID || "plane-web",
-  authToken: process.env.SENTRY_AUTH_TOKEN,
+  // authToken: process.env.SENTRY_AUTH_TOKEN,
   // Only print logs for uploading source maps in CI
   silent: true,
 
@@ -126,8 +108,4 @@ const sentryConfig = {
   automaticVercelMonitors: true,
 };
 
-if (parseInt(process.env.SENTRY_MONITORING_ENABLED || "0", 10)) {
-  module.exports = withSentryConfig(nextConfig, sentryConfig);
-} else {
-  module.exports = nextConfig;
-}
+module.exports = withSentryConfig(nextConfig, sentryConfig);
