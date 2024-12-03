@@ -146,8 +146,9 @@ class WorkSpaceViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     def destroy(self, request, slug):
-        workspace = Workspace.objects.get(slug=slug)
-        if workspace is None:
+        try:
+            workspace = Workspace.objects.get(slug=slug)
+        except Workspace.DoesNotExist:
             return Response(
                 {"error": "Workspace not found"}, status=status.HTTP_404_NOT_FOUND
             )
