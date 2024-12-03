@@ -5,11 +5,16 @@ import { computedFn } from "mobx-utils";
 import { TNotification, TNotificationPaginatedInfo } from "@plane/types";
 import { ENotificationLoader, ENotificationQueryParamType } from "@/constants/notification";
 import { convertToEpoch } from "@/helpers/date-time.helper";
-import {RootStore} from '@/plane-web/store/root.store'
+import { RootStore } from "@/plane-web/store/root.store";
 import workspaceNotificationService from "@/services/workspace-notification.service";
-import { IWorkspaceNotificationStore as IWorkspaceNotificationStoreCore , TNotificationLoader, TNotificationQueryParamType, WorkspaceNotificationStore as WorkspaceNotificationStoreCore } from "@/store/notifications/workspace-notifications.store";
+import {
+  IWorkspaceNotificationStore as IWorkspaceNotificationStoreCore,
+  TNotificationLoader,
+  TNotificationQueryParamType,
+  WorkspaceNotificationStore as WorkspaceNotificationStoreCore,
+} from "@/store/notifications/workspace-notifications.store";
 
-export type TGroupedNotifications = Record<string,TNotification[]>
+export type TGroupedNotifications = Record<string, TNotification[]>;
 
 export interface IWorkspaceNotificationStore extends IWorkspaceNotificationStoreCore {
   // observales
@@ -37,25 +42,24 @@ export class WorkspaceNotificationStore extends WorkspaceNotificationStoreCore i
    * @param { INotification[] } notifications
    */
   groupNotificationsById = action((notifications: TNotification[]) => {
-    this.groupedNotifications = groupBy(notifications, (n) => n.data?.issue?.id);
+    this.groupedNotifications = groupBy(notifications, (n) => n.entity_identifier);
   });
 
-  notificationIssueIdsByWorkspaceId = computedFn((workspaceId: string)=>{
-    if(!workspaceId || Object.keys(this.groupedNotifications).length === 0) return undefined;
+  notificationIssueIdsByWorkspaceId = computedFn((workspaceId: string) => {
+    if (!workspaceId || Object.keys(this.groupedNotifications).length === 0) return undefined;
 
     const groupedNotificationIssueIds = orderBy(
       Object.keys(this.groupedNotifications),
       (issueId) => {
         const notifications = this.groupedNotifications[issueId];
-        const latestNotification = orderBy(notifications,(n)=>convertToEpoch(n.created_at),'desc')[0];
-        return convertToEpoch(latestNotification.created_at)
+        const latestNotification = orderBy(notifications, (n) => convertToEpoch(n.created_at), "desc")[0];
+        return convertToEpoch(latestNotification.created_at);
       },
-      'desc'
-    )
+      "desc"
+    );
 
     return groupedNotificationIssueIds;
-  })
-
+  });
 
   /**
    * @description get all workspace notification
@@ -77,7 +81,7 @@ export class WorkspaceNotificationStore extends WorkspaceNotificationStoreCore i
         const { results, ...paginationInfo } = notificationResponse;
         runInAction(() => {
           if (results) {
-            this.groupNotificationsById(results)
+            this.groupNotificationsById(results);
           }
           set(this, "paginationInfo", paginationInfo);
         });
@@ -91,5 +95,3 @@ export class WorkspaceNotificationStore extends WorkspaceNotificationStoreCore i
     }
   };
 }
-
-

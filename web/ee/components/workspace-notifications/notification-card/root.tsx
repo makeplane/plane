@@ -17,7 +17,7 @@ type TNotificationCardListRoot = {
 export const NotificationCardListRoot: FC<TNotificationCardListRoot> = observer((props) => {
   const { workspaceSlug, workspaceId } = props;
   // hooks
-  const { loader, paginationInfo, getNotifications, notificationIssueIdsByWorkspaceId, groupedNotifications } = useWorkspaceNotifications();
+  const { loader, paginationInfo, getNotifications, notificationIssueIdsByWorkspaceId } = useWorkspaceNotifications();
   const notificationIssueIds = notificationIssueIdsByWorkspaceId(workspaceId);
 
   const getNextNotifications = async () => {
@@ -30,10 +30,10 @@ export const NotificationCardListRoot: FC<TNotificationCardListRoot> = observer(
 
   if (!workspaceSlug || !workspaceId || !notificationIssueIds) return <></>;
   return (
-    <div>
+    <>
       {notificationIssueIds.map((issueId: string) => (
         // <NotificationItem key={notificationId} workspaceSlug={workspaceSlug} notificationId={notificationId} />
-        <NotificationItem issueId={issueId} key={issueId} notificationsCount={groupedNotifications[issueId].length}/>
+        <NotificationItem issueId={issueId} key={issueId} />
       ))}
 
       {/* fetch next page notifications */}
@@ -52,6 +52,6 @@ export const NotificationCardListRoot: FC<TNotificationCardListRoot> = observer(
           )}
         </>
       )}
-    </div>
+    </>
   );
 });
