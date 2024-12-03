@@ -13,14 +13,22 @@ class ProjectMetaDataEndpoint(BaseAPIView):
     permission_classes = [AllowAny]
 
     def get(self, request, anchor):
-        deploy_board = DeployBoard.objects.filter(
-            anchor=anchor, entity_name="project"
-        ).first()
-        if not deploy_board:
+        try:
+            deploy_board = DeployBoard.objects.filter(
+                anchor=anchor, entity_name="project"
+            ).first()
+        except DeployBoard.DoesNotExist:
             return Response(
                 {"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND
             )
 
-        project_id = deploy_board.entity_identifier
-        serializer = ProjectLiteSerializer(Project.objects.get(id=project_id))
+        try:
+            project_id = deploy_board.entity_identifier
+            project = Project.objects.get(id=project_id)
+        except Project.DoesNotExist:
+            return Response(
+                {"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        serializer = ProjectLiteSerializer(project)
         return Response(serializer.data, status=status.HTTP_200_OK)

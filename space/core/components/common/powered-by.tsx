@@ -2,6 +2,7 @@
 
 import { FC } from "react";
 import Image from "next/image";
+import { WEBSITE_URL } from "@plane/constants";
 // assets
 import planeLogo from "@/public/plane-logo.svg";
 
@@ -13,10 +14,11 @@ export const PoweredBy: FC<TPoweredBy> = (props) => {
   // props
   const { disabled = false } = props;
 
-  if (disabled) return null;
+  if (disabled || !WEBSITE_URL) return null;
+
   return (
     <a
-      href="https://plane.so"
+      href={WEBSITE_URL}
       className="fixed bottom-2.5 right-5 !z-[999999] flex items-center gap-1 rounded border border-custom-border-200 bg-custom-background-100 px-2 py-1 shadow-custom-shadow-2xs"
       target="_blank"
       rel="noreferrer noopener"

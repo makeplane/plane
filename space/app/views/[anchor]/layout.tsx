@@ -1,7 +1,6 @@
 "use client";
 
 import { observer } from "mobx-react";
-import Image from "next/image";
 import useSWR from "swr";
 // components
 import { LogoSpinner } from "@/components/common";
@@ -11,8 +10,6 @@ import { usePublish, usePublishList } from "@/hooks/store";
 // Plane web
 import { ViewNavbarRoot } from "@/plane-web/components/navbar";
 import { useView } from "@/plane-web/hooks/store";
-// assets
-import planeLogo from "@/public/plane-logo.svg";
 
 type Props = {
   children: React.ReactNode;

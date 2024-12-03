@@ -6,7 +6,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
-// plane constants
 import { SPACE_BASE_PATH } from "@plane/constants";
 // components
 import { LogoSpinner, PoweredBy } from "@/components/common";

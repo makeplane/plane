@@ -4,7 +4,6 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
-// plane constants
 import { SPACE_BASE_PATH } from "@plane/constants";
 // components
 import { AuthRoot } from "@/components/account";

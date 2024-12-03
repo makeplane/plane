@@ -3,8 +3,8 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Eye, EyeOff, XCircle } from "lucide-react";
-import { Button, Input, Spinner } from "@plane/ui";
 import { API_BASE_URL } from "@plane/constants";
+import { Button, Input, Spinner } from "@plane/ui";
 // components
 import { PasswordStrengthMeter } from "@/components/account";
 // helpers
