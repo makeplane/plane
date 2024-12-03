@@ -44,6 +44,7 @@ export const nodeDOMAtCoords = (coords: { x: number; y: number }) => {
     ".image-component",
     ".image-upload-component",
     ".editor-callout-component",
+    ".prosemirror-flat-list",
   ].join(", ");
 
   for (const elem of elements) {
@@ -138,6 +139,11 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
       );
     }
 
+    // if (node.className.includes("prosemirror-flat-list")) {
+    //   draggedNodePos = draggedNodePos - 1;
+    //   console.log("draggedNodePos", draggedNodePos);
+    // }
+
     if (!differentNodeSelected && diff !== 0 && !(view.state.selection instanceof NodeSelection)) {
       const endSelection = NodeSelection.create(view.state.doc, to - 1);
       const multiNodeSelection = TextSelection.create(view.state.doc, draggedNodePos, endSelection.$to.pos);
@@ -211,6 +217,11 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
 
     // Adjust the nodePos to point to the start of the node, ensuring NodeSelection can be applied
     nodePos = calcNodePos(nodePos, view, node);
+
+    // if (node.className.includes("prosemirror-flat-list")) {
+    //   console.log("nodePos", nodePos);
+    //   nodePos = nodePos - 1;
+    // }
 
     // TODO FIX ERROR
     // Use NodeSelection to select the node at the calculated position

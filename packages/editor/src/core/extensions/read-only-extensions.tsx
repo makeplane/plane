@@ -32,6 +32,7 @@ import { isValidHttpUrl } from "@/helpers/common";
 import { IMentionHighlight, TExtensions, TFileHandler } from "@/types";
 // plane editor extensions
 import { CoreReadOnlyEditorAdditionalExtensions } from "@/plane-editor/extensions";
+import { FlatListExtension } from "./flat-list/list-extension";
 
 type Props = {
   disabledExtensions: TExtensions[];
@@ -135,5 +136,6 @@ export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
     ...CoreReadOnlyEditorAdditionalExtensions({
       disabledExtensions,
     }),
+    FlatListExtension,
   ];
 };

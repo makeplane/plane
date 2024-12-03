@@ -122,9 +122,16 @@ const SideMenu = (options: SideMenuPluginProps) => {
             if (node.matches("ul:not([data-type=taskList]) li, ol li")) {
               rect.left -= 5;
             }
+            if (node.classList.contains("prosemirror-flat-list")) {
+              rect.left -= 5;
+              rect.top += 6;
+            }
           } else {
             // Li markers
             if (node.matches("ul:not([data-type=taskList]) li, ol li")) {
+              rect.left -= 18;
+            }
+            if (node.classList.contains("prosemirror-flat-list")) {
               rect.left -= 18;
             }
           }

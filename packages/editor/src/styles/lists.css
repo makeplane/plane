@@ -1,0 +1,178 @@
+.prosemirror-flat-list {
+  &:not(:first-child) {
+    padding-top: 4px !important;
+  }
+
+  padding-bottom: 4px !important;
+  margin: 0 0 0 24px !important;
+
+  &::before {
+    position: absolute;
+    top: 2px;
+    right: 100%;
+  }
+
+  &::before,
+  .list-marker {
+    display: grid;
+    place-items: center;
+    width: 24px !important;
+    height: 28px !important;
+    aspect-ratio: 1 !important;
+  }
+
+  .list-content {
+    .prosemirror-flat-list:first-child {
+      padding-top: 0 !important;
+    }
+
+    .prosemirror-flat-list:last-child {
+      padding-bottom: 0 !important;
+    }
+
+    & > *:first-child {
+      padding-bottom: 0 !important;
+    }
+  }
+
+  &[data-list-kind="ordered"] {
+    list-style: none;
+
+    &::before {
+      font-variant-numeric: tabular-nums;
+      content: counter(prosemirror-flat-list-counter, decimal) ".";
+    }
+
+    /* Second level - lower-alpha */
+    & > .list-content > & {
+      &::before {
+        content: counter(prosemirror-flat-list-counter, lower-alpha) ".";
+      }
+
+      /* Third level - lower-roman */
+      & > .list-content > & {
+        &::before {
+          content: counter(prosemirror-flat-list-counter, lower-roman) ".";
+        }
+
+        /* Start repeat pattern */
+        & > .list-content > & {
+          &::before {
+            content: counter(prosemirror-flat-list-counter, decimal) ".";
+          }
+
+          /* Continue pattern */
+          & > .list-content > & {
+            &::before {
+              content: counter(prosemirror-flat-list-counter, lower-alpha) ".";
+            }
+
+            & > .list-content > & {
+              &::before {
+                content: counter(prosemirror-flat-list-counter, lower-roman) ".";
+              }
+
+              /* Pattern repeats again */
+              & > .list-content > & {
+                &::before {
+                  content: counter(prosemirror-flat-list-counter, decimal) ".";
+                }
+
+                & > .list-content > & {
+                  &::before {
+                    content: counter(prosemirror-flat-list-counter, lower-alpha) ".";
+                  }
+
+                  & > .list-content > & {
+                    &::before {
+                      content: counter(prosemirror-flat-list-counter, lower-roman) ".";
+                    }
+                  }
+
+                  & > .list-content > & {
+                    &::before {
+                      content: counter(prosemirror-flat-list-counter, decimal) ".";
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  &[data-list-kind="bullet"] {
+    list-style: none;
+
+    &::before {
+      content: "•";
+    }
+
+    /* Second level - circle */
+    & > .list-content > & {
+      &::before {
+        content: "⚬";
+      }
+
+      /* Third level - square */
+      & > .list-content > & {
+        &::before {
+          content: "▪";
+        }
+
+        /* Start repeat pattern */
+        & > .list-content > & {
+          &::before {
+            content: "•";
+          }
+
+          /* Continue pattern */
+          & > .list-content > & {
+            &::before {
+              content: "⚬";
+            }
+
+            & > .list-content > & {
+              &::before {
+                content: "▪";
+              }
+
+              /* Pattern repeats again */
+              & > .list-content > & {
+                &::before {
+                  content: "•";
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+p + .prosemirror-flat-list {
+  &:not(:first-child) {
+    padding-top: 8px !important;
+
+    &::before {
+      top: 6px !important;
+    }
+  }
+}
+
+.list-content p + .prosemirror-flat-list {
+  &:not(:first-child) {
+    padding-top: 4px !important;
+
+    &::before {
+      top: 2px !important;
+    }
+  }
+}
+
+.ProseMirror .issue-embed img {
+  margin: 0 !important;
+}

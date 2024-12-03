@@ -3,9 +3,12 @@ import CharacterCount from "@tiptap/extension-character-count";
 import Placeholder from "@tiptap/extension-placeholder";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
+import ListItem from "@tiptap/extension-list-item";
 import TextStyle from "@tiptap/extension-text-style";
 import TiptapUnderline from "@tiptap/extension-underline";
 import StarterKit from "@tiptap/starter-kit";
+import BulletList from "@tiptap/extension-bullet-list";
+import OrderedList from "@tiptap/extension-ordered-list";
 import { Markdown } from "tiptap-markdown";
 // extensions
 import {
@@ -36,6 +39,7 @@ import { isValidHttpUrl } from "@/helpers/common";
 import { IMentionHighlight, IMentionSuggestion, TExtensions, TFileHandler } from "@/types";
 // plane editor extensions
 import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
+import { FlatListExtension } from "./flat-list/list-extension";
 
 type TArguments = {
   disabledExtensions: TExtensions[];
@@ -54,29 +58,47 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
 
   return [
     StarterKit.configure({
-      bulletList: {
-        HTMLAttributes: {
-          class: "list-disc pl-7 space-y-2",
-        },
-      },
-      orderedList: {
-        HTMLAttributes: {
-          class: "list-decimal pl-7 space-y-2",
-        },
-      },
-      listItem: {
-        HTMLAttributes: {
-          class: "not-prose space-y-2",
-        },
-      },
+      bulletList: false,
+      orderedList: false,
+      listItem: false,
       code: false,
       codeBlock: false,
       horizontalRule: false,
       blockquote: false,
       dropcursor: {
-        class: "text-custom-text-300",
+        width: 2,
+        class: "transition-all duration-200 ease-[cubic-bezier(0.165, 0.84, 0.44, 1)] text-custom-text-300",
       },
       ...(enableHistory ? {} : { history: false }),
+    }),
+    BulletList.extend({
+      addInputRules() {
+        return [];
+      },
+      addKeyboardShortcuts() {
+        return {};
+      },
+    }).configure({
+      HTMLAttributes: {
+        class: "list-disc pl-7 space-y-2",
+      },
+    }),
+    OrderedList.extend({
+      addInputRules() {
+        return [];
+      },
+      addKeyboardShortcuts() {
+        return {};
+      },
+    }).configure({
+      HTMLAttributes: {
+        class: "list-decimal pl-7 space-y-2",
+      },
+    }),
+    ListItem.configure({
+      HTMLAttributes: {
+        class: "not-prose space-y-2",
+      },
     }),
     CustomQuoteExtension,
     DropHandlerExtension(),
@@ -107,7 +129,14 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     CustomImageExtension(fileHandler),
     TiptapUnderline,
     TextStyle,
-    TaskList.configure({
+    TaskList.extend({
+      addInputRules() {
+        return [];
+      },
+      addKeyboardShortcuts() {
+        return {};
+      },
+    }).configure({
       HTMLAttributes: {
         class: "not-prose pl-2 space-y-2",
       },
@@ -169,5 +198,6 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     ...CoreEditorAdditionalExtensions({
       disabledExtensions,
     }),
+    FlatListExtension,
   ];
 };

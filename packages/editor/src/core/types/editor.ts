@@ -32,6 +32,7 @@ export type TEditorCommands =
   | "bulleted-list"
   | "numbered-list"
   | "to-do-list"
+  | "toggle-list"
   | "quote"
   | "code"
   | "table"
@@ -125,7 +126,7 @@ export interface IEditorProps {
   onEnterKeyPress?: (e?: any) => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
-  value?: string | null; 
+  value?: string | null;
 }
 export interface ILiteTextEditor extends IEditorProps {
   extensions?: any[];
