@@ -42,6 +42,7 @@ export interface IProjectIssues extends IBaseIssuesStore {
   quickAddIssue: (workspaceSlug: string, projectId: string, data: TIssue) => Promise<TIssue | undefined>;
   removeBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
   archiveBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
+  subscribeBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
   bulkUpdateProperties: (workspaceSlug: string, projectId: string, data: TBulkOperationsPayload) => Promise<void>;
 }
 
@@ -60,9 +61,10 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
     super(_rootStore, issueFilterStore);
     makeObservable(this, {
       fetchIssues: action,
+      subscribeBulkIssues: action,
+      archiveBulkIssues: action,
       fetchNextIssues: action,
       fetchIssuesWithExistingPagination: action,
-
       quickAddIssue: action,
     });
     // filter store
@@ -188,6 +190,14 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
   override createIssue = async (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => {
     const response = await super.createIssue(workspaceSlug, projectId, data, "", projectId === this.router.projectId);
     return response;
+  };
+
+  subscribeBulkIssues = async (workspaceSlug: string, projectId: string, issueIds: string[]) => {
+    try {
+      await this.issueService.bulkSubscribeIssues(workspaceSlug, projectId, { issue_ids: issueIds });
+    } catch (error) {
+      throw error;
+    }
   };
 
   // Using aliased names as they cannot be overridden in other stores
