@@ -1,11 +1,9 @@
 import { Editor, mergeAttributes } from "@tiptap/core";
 import { Image } from "@tiptap/extension-image";
-import { MarkdownSerializerState } from "@tiptap/pm/markdown";
-import { Node } from "@tiptap/pm/model";
 import { ReactNodeViewRenderer } from "@tiptap/react";
 import { v4 as uuidv4 } from "uuid";
 // extensions
-import { CustomImageNode, ImageAttributes } from "@/extensions/custom-image";
+import { CustomImageNode } from "@/extensions/custom-image";
 // plugins
 import { TrackImageDeletionPlugin, TrackImageRestorationPlugin, isFileValid } from "@/plugins/image";
 // types
@@ -126,14 +124,9 @@ export const CustomImageExtension = (props: TFileHandler) => {
         deletedImageSet: new Map<string, boolean>(),
         uploadInProgress: false,
         maxFileSize,
+        // escape markdown for images
         markdown: {
-          serialize(state: MarkdownSerializerState, node: Node) {
-            const attrs = node.attrs as ImageAttributes;
-            const imageSource = state.esc(this?.editor?.commands?.getImageSource?.(attrs.src) || attrs.src);
-            const imageWidth = state.esc(attrs.width?.toString());
-            state.write(`<img src="${state.esc(imageSource)}" width="${imageWidth}" />`);
-            state.closeBlock(node);
-          },
+          serialize() {},
         },
       };
     },
