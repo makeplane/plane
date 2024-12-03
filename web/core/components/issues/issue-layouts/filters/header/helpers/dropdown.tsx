@@ -85,7 +85,8 @@ export const FiltersDropdown: React.FC<Props> = (props) => {
               leaveFrom="opacity-100 translate-y-0"
               leaveTo="opacity-0 translate-y-1"
             >
-              <Popover.Panel className="fixed z-10">
+              {/** translate-y-0 is a hack to create new stacking context. Required for safari  */}
+              <Popover.Panel className="fixed z-10 translate-y-0">
                 <div
                   className="overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 shadow-custom-shadow-rg my-1"
                   ref={setPopperElement}
