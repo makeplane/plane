@@ -13,6 +13,8 @@ from .admin import (
     InstanceAdminUserSessionEndpoint,
 )
 
-from .changelog import ChangeLogEndpoint
 
-from .workspace import InstanceWorkSpaceAvailabilityCheckEndpoint, InstanceWorkSpaceEndpoint
+from .workspace import (
+    InstanceWorkSpaceAvailabilityCheckEndpoint,
+    InstanceWorkSpaceEndpoint,
+)
