@@ -41,6 +41,7 @@ from django.views.decorators.vary import vary_on_cookie
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 from plane.license.utils.instance_value import get_configuration_value
 
+
 class WorkSpaceViewSet(BaseViewSet):
     model = Workspace
     serializer_class = WorkSpaceSerializer
@@ -81,12 +82,12 @@ class WorkSpaceViewSet(BaseViewSet):
 
     def create(self, request):
         try:
-            DISABLE_WORKSPACE_CREATION, = get_configuration_value(
+            (DISABLE_WORKSPACE_CREATION,) = get_configuration_value(
                 [
                     {
                         "key": "DISABLE_WORKSPACE_CREATION",
                         "default": os.environ.get("DISABLE_WORKSPACE_CREATION", "0"),
-                    },
+                    }
                 ]
             )
 
@@ -144,8 +145,23 @@ class WorkSpaceViewSet(BaseViewSet):
         return super().partial_update(request, *args, **kwargs)
 
     @allow_permission([ROLE.ADMIN], level="WORKSPACE")
-    def destroy(self, request, *args, **kwargs):
-        return super().destroy(request, *args, **kwargs)
+    def destroy(self, request, slug):
+        workspace = Workspace.objects.get(slug=slug)
+        if workspace is None:
+            return Response(
+                {"error": "Workspace not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        # Trash the workspace by appending the epoch and `trash` to the slug
+        epoch = int(timezone.now().timestamp())
+        updated_workspace_slug = f"trash-{epoch}-{workspace.slug}"
+        if len(updated_workspace_slug) > 48:
+            updated_workspace_slug = updated_workspace_slug[:48]
+
+        workspace.slug = updated_workspace_slug
+        workspace.save()
+        workspace.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class UserWorkSpacesEndpoint(BaseAPIView):
