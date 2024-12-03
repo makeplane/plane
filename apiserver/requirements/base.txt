@@ -77,3 +77,5 @@ openfeature-sdk==0.7.0
 strawberry-graphql-django==0.48.0
 # django rest framework jwt
 djangorestframework-simplejwt==5.3.1
+# firebase admin
+firebase-admin==6.6.0

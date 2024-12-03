@@ -66,11 +66,7 @@ from .mutations.issue import (
 )
 from .mutations.notification import NotificationMutation
 from .mutations.user import ProfileMutation
-from .mutations.page import (
-    PageMutation,
-    PageFavoriteMutation,
-    WorkspacePageMutation,
-)
+from .mutations.page import PageMutation, PageFavoriteMutation, WorkspacePageMutation
 from .mutations.cycle import (
     CycleIssueMutation,
     CycleFavoriteMutation,
@@ -178,7 +174,5 @@ class Mutation(
 
 
 schema = strawberry.Schema(
-    query=Query,
-    mutation=Mutation,
-    extensions=[DjangoOptimizerExtension],
+    query=Query, mutation=Mutation, extensions=[DjangoOptimizerExtension]
 )

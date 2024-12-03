@@ -462,3 +462,15 @@ SIMPLE_JWT = {
     "USER_ID_FIELD": "id",
     "USER_ID_CLAIM": "user_id",
 }
+
+
+# firebase settings
+IS_MOBILE_PUSH_NOTIFICATION_ENABLED = (
+    os.environ.get("IS_MOBILE_PUSH_NOTIFICATION_ENABLED", "0") == "1"
+)
+FIREBASE_PROJECT_ID = os.environ.get("FIREBASE_PROJECT_ID", "")
+FIREBASE_PRIVATE_KEY_ID = os.environ.get("FIREBASE_PRIVATE_KEY_ID", "")
+FIREBASE_PRIVATE_KEY = os.environ.get("FIREBASE_PRIVATE_KEY", "")
+FIREBASE_CLIENT_EMAIL = os.environ.get("FIREBASE_CLIENT_EMAIL", "")
+FIREBASE_CLIENT_ID = os.environ.get("FIREBASE_CLIENT_ID", "")
+FIREBASE_CLIENT_CERT_URL = os.environ.get("FIREBASE_CLIENT_CERT_URL", "")
