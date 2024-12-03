@@ -53,9 +53,9 @@ class ProjectState(BaseModel):
     def save(self, *args, **kwargs):
         if self._state.adding:
             # Get the maximum sequence value from the database
-            last_id = ProjectState.objects.filter(
-                workspace=self.workspace
-            ).aggregate(largest=models.Max("sequence"))["largest"]
+            last_id = ProjectState.objects.filter(workspace=self.workspace).aggregate(
+                largest=models.Max("sequence")
+            )["largest"]
             # if last_id is not None
             if last_id is not None:
                 self.sequence = last_id + 15000
@@ -73,9 +73,7 @@ class PriorityChoices(models.TextChoices):
 
 class ProjectAttribute(ProjectBaseModel):
     priority = models.CharField(
-        max_length=50,
-        choices=PriorityChoices.choices,
-        default=PriorityChoices.NONE,
+        max_length=50, choices=PriorityChoices.choices, default=PriorityChoices.NONE
     )
     state = models.ForeignKey(
         ProjectState,
@@ -96,6 +94,7 @@ class ProjectAttribute(ProjectBaseModel):
 class ProjectFeature(ProjectBaseModel):
     is_project_updates_enabled = models.BooleanField(default=False)
     is_epic_enabled = models.BooleanField(default=False)
+    is_workflow_enabled = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Project Feature"
@@ -160,10 +159,7 @@ class ProjectComment(ProjectBaseModel):
         null=True,
     )
     access = models.CharField(
-        choices=(
-            ("INTERNAL", "INTERNAL"),
-            ("EXTERNAL", "EXTERNAL"),
-        ),
+        choices=(("INTERNAL", "INTERNAL"), ("EXTERNAL", "EXTERNAL")),
         default="INTERNAL",
         max_length=100,
     )
@@ -190,9 +186,7 @@ class ProjectComment(ProjectBaseModel):
 class ProjectCommentReaction(ProjectBaseModel):
     reaction = models.CharField(max_length=255)
     comment = models.ForeignKey(
-        "ee.ProjectComment",
-        on_delete=models.CASCADE,
-        related_name="project_reactions",
+        "ee.ProjectComment", on_delete=models.CASCADE, related_name="project_reactions"
     )
     actor = models.ForeignKey(
         settings.AUTH_USER_MODEL,

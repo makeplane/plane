@@ -62,6 +62,7 @@ from plane.utils.user_timezone_converter import user_timezone_converter
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.utils.global_paginator import paginate
 from plane.bgtasks.webhook_task import model_activity
+from plane.ee.utils.workflow import WorkflowStateManager
 
 
 class IssueListEndpoint(BaseAPIView):
@@ -637,6 +638,20 @@ class IssueViewSet(BaseViewSet):
             estimate__type="points",
         ).exists()
 
+        # Check if state is updated then is the transition allowed
+        workflow_state_manager = WorkflowStateManager(project_id=project_id, slug=slug)
+        if request.data.get(
+            "state_id"
+        ) and not workflow_state_manager.validate_state_transition(
+            issue=issue,
+            new_state_id=request.data.get("state_id"),
+            user_id=request.user.id,
+        ):
+            return Response(
+                {"error": "State transition is not allowed"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         serializer = IssueCreateSerializer(issue, data=request.data, partial=True)
         if serializer.is_valid():
@@ -654,8 +669,7 @@ class IssueViewSet(BaseViewSet):
             )
 
             if issue.cycle_id and (
-                request.data.get("state_id")
-                or request.data.get("estimate_point")
+                request.data.get("state_id") or request.data.get("estimate_point")
             ):
                 cycle = Cycle.objects.get(pk=issue.cycle_id)
                 if cycle.version == 2:

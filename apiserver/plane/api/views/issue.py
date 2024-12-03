@@ -58,6 +58,7 @@ from .base import BaseAPIView
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
+from plane.ee.utils.workflow import WorkflowStateManager
 
 
 class WorkspaceIssueAPIEndpoint(BaseAPIView):
@@ -363,6 +364,23 @@ class IssueAPIEndpoint(BaseAPIView):
                     },
                     partial=True,
                 )
+
+                # Check if state is updated then is the transition allowed
+                workflow_state_manager = WorkflowStateManager(
+                    project_id=project_id, slug=slug
+                )
+                if request.data.get(
+                    "state_id"
+                ) and not workflow_state_manager.validate_state_transition(
+                    issue=issue,
+                    new_state_id=request.data.get("state_id"),
+                    user_id=request.user.id,
+                ):
+                    return Response(
+                        {"error": "State transition is not allowed"},
+                        status=status.HTTP_403_FORBIDDEN,
+                    )
+
                 if serializer.is_valid():
                     # If the serializer is valid, save the issue and dispatch
                     # the update issue activity worker event.
@@ -449,6 +467,21 @@ class IssueAPIEndpoint(BaseAPIView):
             context={"project_id": project_id, "workspace_id": project.workspace_id},
             partial=True,
         )
+
+        # Check if state is updated then is the transition allowed
+        workflow_state_manager = WorkflowStateManager(project_id=project_id, slug=slug)
+        if request.data.get(
+            "state_id"
+        ) and not workflow_state_manager.validate_state_transition(
+            issue=issue,
+            new_state_id=request.data.get("state_id"),
+            user_id=request.user.id,
+        ):
+            return Response(
+                {"error": "State transition is not allowed"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         if serializer.is_valid():
             if (
                 request.data.get("external_id")

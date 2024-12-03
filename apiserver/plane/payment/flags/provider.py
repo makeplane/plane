@@ -30,7 +30,7 @@ class FlagProvider(AbstractProvider):
                     },
                     json={
                         "workspace_slug": slug,
-                        "user_id": user_id,
+                        "user_id": str(user_id),
                         "flag_key": feature_key,
                     },
                 )
@@ -47,12 +47,7 @@ class FlagProvider(AbstractProvider):
                 return default_value
         return default_value
 
-    def resolve_boolean_details(
-        self,
-        flag_key,
-        default_value,
-        evaluation_context,
-    ):
+    def resolve_boolean_details(self, flag_key, default_value, evaluation_context):
         # Get the targeting key and attributes from the evaluation context
         targeting_key = evaluation_context.targeting_key
         attributes = evaluation_context.attributes
@@ -67,34 +62,14 @@ class FlagProvider(AbstractProvider):
         # Return the value of the feature flag
         return FlagResolutionDetails(value=value)
 
-    def resolve_string_details(
-        self,
-        flag_key,
-        default_value,
-        evaluation_context,
-    ):
+    def resolve_string_details(self, flag_key, default_value, evaluation_context):
         pass
 
-    def resolve_integer_details(
-        self,
-        flag_key,
-        default_value,
-        evaluation_context,
-    ):
+    def resolve_integer_details(self, flag_key, default_value, evaluation_context):
         pass
 
-    def resolve_float_details(
-        self,
-        flag_key,
-        default_value,
-        evaluation_context,
-    ):
+    def resolve_float_details(self, flag_key, default_value, evaluation_context):
         pass
 
-    def resolve_object_details(
-        self,
-        flag_key,
-        default_value,
-        evaluation_context,
-    ):
+    def resolve_object_details(self, flag_key, default_value, evaluation_context):
         pass

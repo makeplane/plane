@@ -32,8 +32,7 @@ def check_feature_flag(feature_key, default_value=False):
                 flag_key=feature_key.value,
                 default_value=default_value,
                 evaluation_context=EvaluationContext(
-                    str(request.user.id),
-                    {"slug": kwargs.get("slug")},
+                    str(request.user.id), {"slug": kwargs.get("slug")}
                 ),
             ):
                 response = view_func(instance, request, *args, **kwargs)
@@ -52,9 +51,7 @@ def check_feature_flag(feature_key, default_value=False):
     return decorator
 
 
-def check_workspace_feature_flag(
-    feature_key, slug, user_id=None, default_value=False
-):
+def check_workspace_feature_flag(feature_key, slug, user_id=None, default_value=False):
     """Function to check workspace feature flag"""
     # Function to generate cache key
     openfeature.api.set_provider(FlagProvider())
@@ -64,10 +61,7 @@ def check_workspace_feature_flag(
     flag = client.get_boolean_value(
         flag_key=feature_key.value,
         default_value=default_value,
-        evaluation_context=EvaluationContext(
-            user_id,
-            {"slug": slug},
-        ),
+        evaluation_context=EvaluationContext(user_id, {"slug": slug}),
     )
     # Return the flag
     return flag

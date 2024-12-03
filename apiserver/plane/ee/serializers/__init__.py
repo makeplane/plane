@@ -1,8 +1,4 @@
-from plane.app.serializers import (
-    BaseSerializer,
-    ProjectLiteSerializer,
-    IssueSerializer,
-)
+from plane.app.serializers import BaseSerializer, ProjectLiteSerializer, IssueSerializer
 
 from .app.issue import IssueLiteSerializer
 from .app.active_cycle import WorkspaceActiveCycleSerializer
@@ -29,6 +25,11 @@ from .app.intake import IntakeSettingSerializer
 
 from .app.initiative import InitiativeSerializer
 
+from .app.workflow import (
+    WorkflowSerializer,
+    WorkflowTransitionSerializer,
+    WorkflowTransitionActorSerializer,
+)
 
 # Space imports
 from .space.page import PagePublicSerializer
