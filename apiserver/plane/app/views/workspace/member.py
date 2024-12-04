@@ -1,22 +1,13 @@
 # Django imports
-from django.db.models import (
-    Count,
-    Q,
-    OuterRef,
-    Subquery,
-    IntegerField,
-)
+from django.db.models import Count, Q, OuterRef, Subquery, IntegerField
+from django.utils import timezone
 from django.db.models.functions import Coalesce
 
 # Third party modules
 from rest_framework import status
 from rest_framework.response import Response
 
-from plane.app.permissions import (
-    WorkspaceEntityPermission,
-    allow_permission,
-    ROLE,
-)
+from plane.app.permissions import WorkspaceEntityPermission, allow_permission, ROLE
 
 # Module imports
 from plane.app.serializers import (
@@ -26,15 +17,12 @@ from plane.app.serializers import (
     WorkSpaceMemberSerializer,
 )
 from plane.app.views.base import BaseAPIView
-from plane.db.models import (
-    Project,
-    ProjectMember,
-    WorkspaceMember,
-    DraftIssue,
-)
-from plane.utils.cache import invalidate_cache
+from plane.db.models import Project, ProjectMember, WorkspaceMember, DraftIssue, Cycle
 
+from plane.utils.cache import invalidate_cache
+from plane.payment.bgtasks.member_sync_task import member_sync_task
 from .. import BaseViewSet
+from plane.payment.utils.member_payment_count import workspace_member_check
 
 
 class WorkSpaceMemberViewSet(BaseViewSet):
@@ -88,12 +76,29 @@ class WorkSpaceMemberViewSet(BaseViewSet):
                 workspace__slug=slug, member_id=workspace_member.member_id
             ).update(role=int(request.data.get("role")))
 
+        if "role" in request.data:
+            allowed, _, _ = workspace_member_check(
+                slug=slug,
+                requested_role=request.data.get("role"),
+                current_role=workspace_member.role,
+                requested_invite_list=[],
+            )
+            if not allowed:
+                return Response(
+                    {
+                        "error": "Cannot update the role as it exceeds the purchased seat limit"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
         serializer = WorkSpaceMemberSerializer(
             workspace_member, data=request.data, partial=True
         )
 
         if serializer.is_valid():
             serializer.save()
+            # Sync workspace members
+            member_sync_task.delay(slug)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -119,9 +124,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
         if requesting_workspace_member.role < workspace_member.role:
             return Response(
-                {
-                    "error": "You cannot remove a user having role higher than you"
-                },
+                {"error": "You cannot remove a user having role higher than you"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -148,13 +151,15 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
         # Deactivate the users from the projects where the user is part of
         _ = ProjectMember.objects.filter(
-            workspace__slug=slug,
-            member_id=workspace_member.member_id,
-            is_active=True,
+            workspace__slug=slug, member_id=workspace_member.member_id, is_active=True
         ).update(is_active=False)
 
         workspace_member.is_active = False
         workspace_member.save()
+
+        # Sync workspace members
+        member_sync_task.delay(slug)
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @invalidate_cache(
@@ -164,9 +169,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         multiple=True,
     )
     @invalidate_cache(path="/api/users/me/settings/")
-    @invalidate_cache(
-        path="api/users/me/workspaces/", user=False, multiple=True
-    )
+    @invalidate_cache(path="api/users/me/workspaces/", user=False, multiple=True)
     @allow_permission(
         allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
     )
@@ -213,14 +216,15 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
         # # Deactivate the users from the projects where the user is part of
         _ = ProjectMember.objects.filter(
-            workspace__slug=slug,
-            member_id=workspace_member.member_id,
-            is_active=True,
+            workspace__slug=slug, member_id=workspace_member.member_id, is_active=True
         ).update(is_active=False)
 
         # # Deactivate the user
         workspace_member.is_active = False
         workspace_member.save()
+
+        # # Sync workspace members
+        member_sync_task.delay(slug)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -239,10 +243,26 @@ class WorkspaceMemberUserEndpoint(BaseAPIView):
     def get(self, request, slug):
         draft_issue_count = (
             DraftIssue.objects.filter(
-                created_by=request.user, workspace_id=OuterRef("workspace_id")
+                created_by=OuterRef("member"),
+                workspace_id=OuterRef("workspace_id"),
+                project__project_projectmember__member=OuterRef("member"),
+                project__project_projectmember__is_active=True,
             )
             .values("workspace_id")
-            .annotate(count=Count("id"))
+            .annotate(count=Count("id", distinct=True))
+            .values("count")
+        )
+        active_cycles_count = (
+            Cycle.objects.filter(
+                workspace__slug=OuterRef("workspace__slug"),
+                project__project_projectmember__role__gt=5,
+                project__project_projectmember__member=OuterRef("member"),
+                project__project_projectmember__is_active=True,
+                start_date__lte=timezone.now(),
+                end_date__gte=timezone.now(),
+            )
+            .values("workspace__slug")
+            .annotate(count=Count("id", distinct=True))
             .values("count")
         )
 
@@ -253,6 +273,11 @@ class WorkspaceMemberUserEndpoint(BaseAPIView):
             .annotate(
                 draft_issue_count=Coalesce(
                     Subquery(draft_issue_count, output_field=IntegerField()), 0
+                )
+            )
+            .annotate(
+                active_cycles_count=Coalesce(
+                    Subquery(active_cycles_count, output_field=IntegerField()), 0
                 )
             )
             .first()
@@ -279,9 +304,7 @@ class WorkspaceProjectMemberEndpoint(BaseAPIView):
         project_members = ProjectMember.objects.filter(
             workspace__slug=slug, project_id__in=project_ids, is_active=True
         ).select_related("project", "member", "workspace")
-        project_members = ProjectMemberRoleSerializer(
-            project_members, many=True
-        ).data
+        project_members = ProjectMemberRoleSerializer(project_members, many=True).data
 
         project_members_dict = dict()
 
