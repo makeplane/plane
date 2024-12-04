@@ -1,5 +1,5 @@
-import { IIssueLabel } from "@plane/types";
 import { API_BASE_URL } from "@plane/constants";
+import { IIssueLabel } from "@plane/types";
 // services
 import { APIService } from "./api.service";
 
