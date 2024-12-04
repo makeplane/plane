@@ -52,4 +52,7 @@ from plane.ee.views.space.views import (
     IssueViewsPublicEndpoint,
     ViewsMetaDataEndpoint,
 )
-from plane.ee.views.space.intake import IntakePublishedIssueEndpoint
+from plane.ee.views.space.intake import (
+    IntakePublishedIssueEndpoint,
+    IntakeMetaPublishedIssueEndpoint,
+)
