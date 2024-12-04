@@ -13,3 +13,6 @@ export const SITES_URL = encodeURI(`${SPACE_BASE_URL}${SPACE_BASE_PATH}/`);
 export const LIVE_BASE_URL = process.env.NEXT_PUBLIC_LIVE_BASE_URL || "";
 export const LIVE_BASE_PATH = process.env.NEXT_PUBLIC_LIVE_BASE_PATH || "";
 export const LIVE_URL = encodeURI(`${LIVE_BASE_URL}${LIVE_BASE_PATH}/`);
+// plane website url
+export const WEBSITE_URL =
+  process.env.NEXT_PUBLIC_WEBSITE_URL || "https://plane.so";

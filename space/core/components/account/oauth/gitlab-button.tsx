@@ -2,8 +2,7 @@ import { FC } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { useTheme } from "next-themes";
-// helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
+import { API_BASE_URL } from "@plane/constants";
 // images
 import GitlabLogo from "/public/logos/gitlab-logo.svg";
 

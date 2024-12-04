@@ -43,6 +43,16 @@ export const CoreEditorExtensionsWithoutProps = [
     codeBlock: false,
     horizontalRule: false,
     blockquote: false,
+    paragraph: {
+      HTMLAttributes: {
+        class: "editor-paragraph-block",
+      },
+    },
+    heading: {
+      HTMLAttributes: {
+        class: "editor-heading-block",
+      },
+    },
     dropcursor: false,
   }),
   CustomQuoteExtension,
