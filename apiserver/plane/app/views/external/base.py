@@ -28,7 +28,7 @@ class GPTIntegrationEndpoint(BaseAPIView):
                 },
                 {
                     "key": "GPT_ENGINE",
-                    "default": os.environ.get("GPT_ENGINE", "gpt-3.5-turbo"),
+                    "default": os.environ.get("GPT_ENGINE", "gpt-4o-mini"),
                 },
             ]
         )
@@ -84,7 +84,7 @@ class WorkspaceGPTIntegrationEndpoint(BaseAPIView):
                 },
                 {
                     "key": "GPT_ENGINE",
-                    "default": os.environ.get("GPT_ENGINE", "gpt-3.5-turbo"),
+                    "default": os.environ.get("GPT_ENGINE", "gpt-4o-mini"),
                 },
             ]
         )

@@ -12,14 +12,12 @@ from plane.app.serializers import DeployBoardSerializer
 from plane.db.models import Project, DeployBoard, ProjectMember
 
 
-class ProjectDeployBoardPublicSettingsEndpoint(BaseAPIView):
+class DeployBoardPublicSettingsEndpoint(BaseAPIView):
     permission_classes = [AllowAny]
 
     def get(self, request, anchor):
-        project_deploy_board = DeployBoard.objects.get(
-            anchor=anchor, entity_name="project"
-        )
-        serializer = DeployBoardSerializer(project_deploy_board)
+        deploy_board = DeployBoard.objects.get(anchor=anchor)
+        serializer = DeployBoardSerializer(deploy_board)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -69,6 +67,10 @@ class ProjectMembersEndpoint(BaseAPIView):
 
     def get(self, request, anchor):
         deploy_board = DeployBoard.objects.filter(anchor=anchor).first()
+        if not deploy_board:
+            return Response(
+                {"error": "Invalid anchor"}, status=status.HTTP_404_NOT_FOUND
+            )
 
         members = ProjectMember.objects.filter(
             project=deploy_board.project,
@@ -80,6 +82,7 @@ class ProjectMembersEndpoint(BaseAPIView):
             "member__first_name",
             "member__last_name",
             "member__display_name",
+            "member__avatar",
             "project",
             "workspace",
         )

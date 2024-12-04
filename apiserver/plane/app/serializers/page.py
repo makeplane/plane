@@ -24,6 +24,7 @@ class PageSerializer(BaseSerializer):
     # Many to many
     label_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
     project_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
+    anchor = serializers.CharField(read_only=True)
 
     class Meta:
         model = Page
@@ -47,8 +48,9 @@ class PageSerializer(BaseSerializer):
             "logo_props",
             "label_ids",
             "project_ids",
+            "anchor",
         ]
-        read_only_fields = ["workspace", "owned_by"]
+        read_only_fields = ["workspace", "owned_by", "anchor"]
 
     def create(self, validated_data):
         labels = validated_data.pop("labels", None)
@@ -116,6 +118,7 @@ class PageSerializer(BaseSerializer):
 
 class PageDetailSerializer(PageSerializer):
     description_html = serializers.CharField()
+    is_favorite = serializers.BooleanField(read_only=True)
 
     class Meta(PageSerializer.Meta):
         fields = PageSerializer.Meta.fields + ["description_html"]

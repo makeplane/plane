@@ -18,7 +18,7 @@ class GitLabOAuthProvider(OauthAdapter):
     provider = "gitlab"
     scope = "read_user"
 
-    def __init__(self, request, code=None, state=None, callback=None):
+    def __init__(self, request, code=None, state=None, callback=None, is_mobile=False):
         GITLAB_CLIENT_ID, GITLAB_CLIENT_SECRET, GITLAB_HOST = get_configuration_value(
             [
                 {
@@ -70,6 +70,7 @@ class GitLabOAuthProvider(OauthAdapter):
             client_secret,
             code,
             callback=callback,
+            is_mobile=is_mobile,
         )
 
     def set_token_data(self):
