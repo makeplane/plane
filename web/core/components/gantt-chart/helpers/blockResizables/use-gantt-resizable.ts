@@ -103,7 +103,7 @@ export const useGanttResizable = (
       const deltaWidth = Math.round((width - (block.position?.width ?? 0)) / dayWidth) * dayWidth;
 
       // call update blockPosition
-      if (deltaWidth || deltaLeft) updateBlockPosition(block.id, deltaLeft, deltaWidth, dragDirection !== "move");
+      if (deltaWidth || deltaLeft) updateBlockPosition(block.id, deltaLeft, deltaWidth);
     };
 
     // remove event listeners and call updateBlockDates
@@ -119,7 +119,7 @@ export const useGanttResizable = (
         (dragDirection === "left" && !block.start_date) || (dragDirection === "right" && !block.target_date);
 
       try {
-        const blockUpdates = getUpdatedPositionAfterDrag(block.id, shouldUpdateHalfBlock, dragDirection !== "move");
+        const blockUpdates = getUpdatedPositionAfterDrag(block.id, shouldUpdateHalfBlock);
         updateBlockDates && updateBlockDates(blockUpdates);
       } catch (e) {
         setToast;
