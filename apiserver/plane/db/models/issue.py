@@ -661,9 +661,7 @@ class IssueVote(ProjectBaseModel):
 
 class IssueVersion(ProjectBaseModel):
     issue = models.ForeignKey(
-        "db.Issue",
-        on_delete=models.CASCADE,
-        related_name="versions",
+        "db.Issue", on_delete=models.CASCADE, related_name="versions"
     )
     PRIORITY_CHOICES = (
         ("urgent", "Urgent"),
@@ -688,9 +686,7 @@ class IssueVersion(ProjectBaseModel):
     )
     start_date = models.DateField(null=True, blank=True)
     target_date = models.DateField(null=True, blank=True)
-    sequence_id = models.IntegerField(
-        default=1, verbose_name="Issue Sequence ID"
-    )
+    sequence_id = models.IntegerField(default=1, verbose_name="Issue Sequence ID")
     sort_order = models.FloatField(default=65535)
     completed_at = models.DateTimeField(null=True)
     archived_at = models.DateField(null=True)
@@ -700,25 +696,10 @@ class IssueVersion(ProjectBaseModel):
     type = models.UUIDField(blank=True, null=True)
     last_saved_at = models.DateTimeField(default=timezone.now)
     owned_by = models.UUIDField()
-    assignees = ArrayField(
-        models.UUIDField(),
-        blank=True,
-        default=list,
-    )
-    labels = ArrayField(
-        models.UUIDField(),
-        blank=True,
-        default=list,
-    )
-    cycle = models.UUIDField(
-        null=True,
-        blank=True,
-    )
-    modules = ArrayField(
-        models.UUIDField(),
-        blank=True,
-        default=list,
-    )
+    assignees = ArrayField(models.UUIDField(), blank=True, default=list)
+    labels = ArrayField(models.UUIDField(), blank=True, default=list)
+    cycle = models.UUIDField(null=True, blank=True)
+    modules = ArrayField(models.UUIDField(), blank=True, default=list)
     properties = models.JSONField(default=dict)
     meta = models.JSONField(default=dict)
 
@@ -741,9 +722,7 @@ class IssueVersion(ProjectBaseModel):
             Module = apps.get_model("db.Module")
             CycleIssue = apps.get_model("db.CycleIssue")
 
-            cycle_issue = CycleIssue.objects.filter(
-                issue=issue,
-            ).first()
+            cycle_issue = CycleIssue.objects.filter(issue=issue).first()
 
             cls.objects.create(
                 issue=issue,
@@ -771,9 +750,7 @@ class IssueVersion(ProjectBaseModel):
                 assignees=issue.assignees,
                 labels=issue.labels,
                 cycle=cycle_issue.cycle if cycle_issue else None,
-                modules=Module.objects.filter(issue=issue).values_list(
-                    "id", flat=True
-                ),
+                modules=Module.objects.filter(issue=issue).values_list("id", flat=True),
                 owned_by=user,
             )
             return True

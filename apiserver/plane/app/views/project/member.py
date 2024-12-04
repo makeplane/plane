@@ -16,12 +16,7 @@ from plane.app.permissions import (
     WorkspaceUserPermission,
 )
 
-from plane.db.models import (
-    Project,
-    ProjectMember,
-    IssueUserProperty,
-    WorkspaceMember,
-)
+from plane.db.models import Project, ProjectMember, IssueUserProperty, WorkspaceMember
 from plane.bgtasks.project_add_user_email_task import project_add_user_email
 from plane.utils.host import base_host
 from plane.app.permissions.base import allow_permission, ROLE
@@ -83,10 +78,7 @@ class ProjectMemberViewSet(BaseViewSet):
             workspace_member_role = WorkspaceMember.objects.get(
                 workspace__slug=slug, member=member, is_active=True
             ).role
-            if workspace_member_role in [20] and member_roles.get(member) in [
-                5,
-                15,
-            ]:
+            if workspace_member_role in [20] and member_roles.get(member) in [5, 15]:
                 return Response(
                     {
                         "error": "You cannot add a user with role lower than the workspace role"
@@ -94,10 +86,7 @@ class ProjectMemberViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            if workspace_member_role in [5] and member_roles.get(member) in [
-                15,
-                20,
-            ]:
+            if workspace_member_role in [5] and member_roles.get(member) in [15, 20]:
                 return Response(
                     {
                         "error": "You cannot add a user with role higher than the workspace role"
@@ -135,8 +124,7 @@ class ProjectMemberViewSet(BaseViewSet):
             sort_order = [
                 project_member.get("sort_order")
                 for project_member in project_members
-                if str(project_member.get("member_id"))
-                == str(member.get("member_id"))
+                if str(project_member.get("member_id")) == str(member.get("member_id"))
             ]
             # Create a new project member
             bulk_project_members.append(
@@ -145,9 +133,7 @@ class ProjectMemberViewSet(BaseViewSet):
                     role=member.get("role", 5),
                     project_id=project_id,
                     workspace_id=project.workspace_id,
-                    sort_order=(
-                        sort_order[0] - 10000 if len(sort_order) else 65535
-                    ),
+                    sort_order=(sort_order[0] - 10000 if len(sort_order) else 65535),
                 )
             )
             # Create a new issue property
@@ -238,9 +224,7 @@ class ProjectMemberViewSet(BaseViewSet):
             > requested_project_member.role
         ):
             return Response(
-                {
-                    "error": "You cannot update a role that is higher than your own role"
-                },
+                {"error": "You cannot update a role that is higher than your own role"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -280,9 +264,7 @@ class ProjectMemberViewSet(BaseViewSet):
         # User cannot deactivate higher role
         if requesting_project_member.role < project_member.role:
             return Response(
-                {
-                    "error": "You cannot remove a user having role higher than you"
-                },
+                {"error": "You cannot remove a user having role higher than you"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -303,10 +285,7 @@ class ProjectMemberViewSet(BaseViewSet):
         if (
             project_member.role == 20
             and not ProjectMember.objects.filter(
-                workspace__slug=slug,
-                project_id=project_id,
-                role=20,
-                is_active=True,
+                workspace__slug=slug, project_id=project_id, role=20, is_active=True
             ).count()
             > 1
         ):
@@ -344,7 +323,6 @@ class UserProjectRolesEndpoint(BaseAPIView):
         ).values("project_id", "role")
 
         project_members = {
-            str(member["project_id"]): member["role"]
-            for member in project_members
+            str(member["project_id"]): member["role"] for member in project_members
         }
         return Response(project_members, status=status.HTTP_200_OK)
