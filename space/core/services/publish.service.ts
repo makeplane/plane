@@ -1,5 +1,5 @@
-import { TProjectPublishSettings } from "@plane/types";
 import { API_BASE_URL } from "@plane/constants";
+import { TProjectPublishSettings } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
 

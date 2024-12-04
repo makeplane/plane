@@ -1,5 +1,5 @@
-import { IUser, TUserProfile } from "@plane/types";
 import { API_BASE_URL } from "@plane/constants";
+import { IUser, TUserProfile } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
 
