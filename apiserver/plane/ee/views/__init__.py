@@ -8,9 +8,7 @@ from plane.ee.views.api import (
 
 # App imports
 from plane.ee.views.app.ai import RephraseGrammarEndpoint
-from plane.ee.views.app.cycle import (
-    WorkspaceActiveCycleEndpoint,
-)
+from plane.ee.views.app.cycle import WorkspaceActiveCycleEndpoint
 from plane.ee.views.app.issue import (
     BulkIssueOperationsEndpoint,
     BulkArchiveIssuesEndpoint,
@@ -47,9 +45,11 @@ from plane.ee.views.app.intake import IntakeSettingEndpoint
 from plane.ee.views.space.page import (
     PagePublicEndpoint,
     PagePublicIssuesEndpoint,
+    PageMetaDataEndpoint,
 )
 from plane.ee.views.space.views import (
     ViewsPublicEndpoint,
     IssueViewsPublicEndpoint,
+    ViewsMetaDataEndpoint,
 )
 from plane.ee.views.space.intake import IntakePublishedIssueEndpoint

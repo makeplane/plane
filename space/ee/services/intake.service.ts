@@ -1,8 +1,8 @@
-// types
 import { API_BASE_URL } from "@plane/constants";
+// services
 import { APIService } from "@/services/api.service";
+// types
 import { TIntakeIssueForm } from "@/types/intake";
-// helpers
 
 export class IntakeService extends APIService {
   constructor() {

@@ -3,8 +3,13 @@ from plane.ee.serializers import BaseSerializer
 from plane.db.models import IssueView
 
 
-class ViewsPublicSerializer(BaseSerializer):
+class ViewsPublicMetaSerializer(BaseSerializer):
+    class Meta:
+        model = IssueView
+        fields = ["id", "name", "description"]
 
+
+class ViewsPublicSerializer(BaseSerializer):
     class Meta:
         model = IssueView
         fields = [

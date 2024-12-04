@@ -32,6 +32,6 @@ from .app.workflow import (
 )
 
 # Space imports
-from .space.page import PagePublicSerializer
-from .space.views import ViewsPublicSerializer
+from .space.page import PagePublicSerializer, PagePublicMetaSerializer
+from .space.views import ViewsPublicSerializer, ViewsPublicMetaSerializer
 from .space.issue import IssueCreateSerializer

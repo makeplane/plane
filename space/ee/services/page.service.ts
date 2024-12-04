@@ -1,6 +1,4 @@
-// helpers
 import { API_BASE_URL } from "@plane/constants";
-// plane web types
 import { TPageResponse } from "@/plane-web/types";
 // services
 import { APIService } from "@/services/api.service";

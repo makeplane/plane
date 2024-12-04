@@ -7,41 +7,58 @@ from rest_framework import status
 from .base import BaseAPIView
 from django.db.models import OuterRef, Func, F, Prefetch
 
-from plane.db.models import (
-    DeployBoard,
-    Page,
-    PageLog,
-    Issue,
-    IssueReaction,
-    IssueVote,
-)
-from plane.ee.serializers import (
-    PagePublicSerializer,
-)
-from plane.app.serializers import (
-    IssuePublicSerializer,
-)
+from plane.db.models import DeployBoard, Page, PageLog, Issue, IssueReaction, IssueVote
+from plane.ee.serializers import PagePublicSerializer, PagePublicMetaSerializer
+from plane.app.serializers import IssuePublicSerializer
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import ErrorCodes
 
 
-class PagePublicEndpoint(BaseAPIView):
+class PageMetaDataEndpoint(BaseAPIView):
+    permission_classes = [AllowAny]
 
-    permission_classes = [
-        AllowAny,
-    ]
+    def get(self, request, anchor):
+        try:
+            deploy_board = DeployBoard.objects.get(anchor=anchor, entity_name="page")
+        except DeployBoard.DoesNotExist:
+            return Response(
+                {"error": "Page is not published"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.PAGE_PUBLISH, slug=deploy_board.workspace.slug
+        ):
+            try:
+                page_id = deploy_board.entity_identifier
+                page = Page.objects.get(id=page_id)
+            except Page.DoesNotExist:
+                return Response(
+                    {"error": "Page is not published"}, status=status.HTTP_404_NOT_FOUND
+                )
+
+            serializer = PagePublicMetaSerializer(page)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(
+                {
+                    "error": "Payment required",
+                    "error_code": ErrorCodes.PAYMENT_REQUIRED.value,
+                },
+                status=status.HTTP_402_PAYMENT_REQUIRED,
+            )
+
+
+class PagePublicEndpoint(BaseAPIView):
+    permission_classes = [AllowAny]
 
     def get(self, request, anchor):
         # Get the deploy board object
-        deploy_board = DeployBoard.objects.get(
-            anchor=anchor, entity_name="page"
-        )
+        deploy_board = DeployBoard.objects.get(anchor=anchor, entity_name="page")
 
         # Check if the workspace has access to feature
         if check_workspace_feature_flag(
-            feature_key=FeatureFlag.PAGE_PUBLISH,
-            slug=deploy_board.workspace.slug,
+            feature_key=FeatureFlag.PAGE_PUBLISH, slug=deploy_board.workspace.slug
         ):
             # Get the page object
             page = Page.objects.get(pk=deploy_board.entity_identifier)
@@ -58,22 +75,15 @@ class PagePublicEndpoint(BaseAPIView):
 
 
 class PagePublicIssuesEndpoint(BaseAPIView):
-
-    permission_classes = [
-        AllowAny,
-    ]
+    permission_classes = [AllowAny]
 
     def get(self, request, anchor):
         # Get the deploy board object
-        deploy_board = DeployBoard.objects.get(
-            anchor=anchor, entity_name="page"
-        )
+        deploy_board = DeployBoard.objects.get(anchor=anchor, entity_name="page")
 
         if check_workspace_feature_flag(
-            feature_key=FeatureFlag.PAGE_PUBLISH,
-            slug=deploy_board.workspace.slug,
+            feature_key=FeatureFlag.PAGE_PUBLISH, slug=deploy_board.workspace.slug
         ):
-
             # Get the issue's embedded inside the page
             page_issues = PageLog.objects.filter(
                 page_id=deploy_board.entity_identifier, entity_name="issue"
@@ -81,9 +91,7 @@ class PagePublicIssuesEndpoint(BaseAPIView):
 
             issue_queryset = (
                 Issue.issue_objects.annotate(
-                    sub_issues_count=Issue.issue_objects.filter(
-                        parent=OuterRef("id")
-                    )
+                    sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
                     .order_by()
                     .annotate(count=Func(F("id"), function="Count"))
                     .values("count")
@@ -99,8 +107,7 @@ class PagePublicIssuesEndpoint(BaseAPIView):
                 )
                 .prefetch_related(
                     Prefetch(
-                        "votes",
-                        queryset=IssueVote.objects.select_related("actor"),
+                        "votes", queryset=IssueVote.objects.select_related("actor")
                     )
                 )
             )

@@ -1,16 +1,9 @@
-"use client";
+"use server";
 
-import { observer } from "mobx-react-lite";
-import Image from "next/image";
-import useSWR from "swr";
+// helpers
+import { stripString } from "@/plane-web/helpers/string.helper";
 // components
-import { LogoSpinner } from "@/components/common";
-// hooks
-import { usePublish, usePublishList } from "@/hooks/store";
-// plane web components
-import { PageDetailsError } from "@/plane-web/components/pages";
-// assets
-import PlaneLogo from "@/public/plane-logo.svg";
+import { PagesClientLayout } from "./client-layout";
 
 type Props = {
   children: React.ReactNode;
@@ -19,41 +12,35 @@ type Props = {
   };
 };
 
-const IssuesLayout = observer((props: Props) => {
-  const { children, params } = props;
-  // params
+export async function generateMetadata({ params }: Props) {
   const { anchor } = params;
-  // store hooks
-  const { fetchPublishSettings } = usePublishList();
-  const { entity_identifier } = usePublish(anchor);
-  // fetch publish settings
-  const { error } = useSWR(
-    anchor ? `PUBLISH_SETTINGS_${anchor}` : null,
-    anchor ? () => fetchPublishSettings(anchor) : null
-  );
+  const DEFAULT_TITLE = "Plane";
+  const DEFAULT_DESCRIPTION = "Made with Plane, an AI-powered work management platform with publishing capabilities.";
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/public/anchor/${anchor}/pages/meta/`);
+    const data = await response.json();
+    return {
+      title: data?.name || DEFAULT_TITLE,
+      description: stripString(data?.description_stripped || "", 150) || DEFAULT_DESCRIPTION,
+      openGraph: {
+        title: data?.name || DEFAULT_TITLE,
+        description: stripString(data?.description_stripped || "", 150) || DEFAULT_DESCRIPTION,
+        type: "website",
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: data?.name || DEFAULT_TITLE,
+        description: stripString(data?.description_stripped || "", 150) || DEFAULT_DESCRIPTION,
+      },
+    };
+  } catch {
+    return { title: DEFAULT_TITLE, description: DEFAULT_DESCRIPTION };
+  }
+}
 
-  if (!entity_identifier && !error) return <LogoSpinner />;
+export default async function IssuesLayout(props: Props) {
+  const { children, params } = props;
+  const { anchor } = params;
 
-  if (error) return <PageDetailsError />;
-
-  return (
-    <div className="size-full flex flex-col">
-      <a
-        href="https://plane.so"
-        className="fixed bottom-2.5 right-5 !z-[999999] flex items-center gap-1 rounded border border-custom-border-200 bg-custom-background-100 px-2 py-1 shadow-custom-shadow-2xs"
-        target="_blank"
-        rel="noreferrer noopener"
-      >
-        <div className="relative grid h-6 w-6 place-items-center">
-          <Image src={PlaneLogo} alt="Plane logo" className="h-6 w-6" height="24" width="24" />
-        </div>
-        <div className="text-xs">
-          Powered by <span className="font-semibold">Plane Publish</span>
-        </div>
-      </a>
-      {children}
-    </div>
-  );
-});
-
-export default IssuesLayout;
+  return <PagesClientLayout anchor={anchor}>{children}</PagesClientLayout>;
+}
