@@ -1,4 +1,4 @@
-import { orderBy, groupBy } from "lodash";
+import { orderBy, uniqBy } from "lodash";
 import { action, makeObservable, observable, runInAction, set } from "mobx";
 //store
 import { computedFn } from "mobx-utils";
@@ -42,7 +42,17 @@ export class WorkspaceNotificationStore extends WorkspaceNotificationStoreCore i
    * @param { INotification[] } notifications
    */
   groupNotificationsById = action((notifications: TNotification[]) => {
-    this.groupedNotifications = groupBy(notifications, (n) => n.entity_identifier);
+    notifications.forEach((notification) => {
+      if (!notification.entity_identifier) return;
+      /**
+       * Apply filters here and then add to group
+       */
+      const existingNotifications = this.groupedNotifications[notification.entity_identifier] || [];
+      this.groupedNotifications[notification.entity_identifier] = uniqBy(
+        [...existingNotifications, notification],
+        "id"
+      );
+    });
   });
 
   notificationIssueIdsByWorkspaceId = computedFn((workspaceId: string) => {

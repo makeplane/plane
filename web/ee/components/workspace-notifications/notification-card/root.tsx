@@ -32,8 +32,7 @@ export const NotificationCardListRoot: FC<TNotificationCardListRoot> = observer(
   return (
     <>
       {notificationIssueIds.map((issueId: string) => (
-        // <NotificationItem key={notificationId} workspaceSlug={workspaceSlug} notificationId={notificationId} />
-        <NotificationItem issueId={issueId} key={issueId} />
+        <NotificationItem issueId={issueId} key={issueId} workspaceSlug={workspaceSlug} />
       ))}
 
       {/* fetch next page notifications */}

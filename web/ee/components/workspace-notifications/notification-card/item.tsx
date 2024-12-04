@@ -1,32 +1,34 @@
-import { FC, useMemo, useState } from "react";
+import { FC, useMemo, useState, Fragment } from "react";
 import orderBy from "lodash/orderBy";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
-import { Popover } from "@headlessui/react";
+import { Popover, Transition } from "@headlessui/react";
 import { Row } from "@plane/ui";
 import { MemberDropdown } from "@/components/dropdowns";
+//helpers
+import { cn } from "@/helpers/common.helper";
 import { calculateTimeAgo, convertToEpoch } from "@/helpers/date-time.helper";
 //store
 import { useWorkspaceNotifications } from "@/hooks/store";
 //components
 import { NotificationCardPreview } from "@/plane-web/components/workspace-notifications";
+import { uniq } from "lodash";
 export interface INotificationItem {
   issueId: string;
+  workspaceSlug: string;
 }
 export const NotificationItem: FC<INotificationItem> = observer((props) => {
-  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  const { issueId, workspaceSlug } = props;
 
-  const { issueId } = props;
+  const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const { groupedNotifications } = useWorkspaceNotifications();
   const notificationGroup = groupedNotifications[issueId];
   const issue = notificationGroup[0].data?.issue;
   const unreadCount = notificationGroup.filter((e) => !e.read_at).length;
-  const authorIds = notificationGroup
-    .map((e) => e.triggered_by)
-    .filter((id) => id != undefined && id != null) as string[];
+  const projectId = notificationGroup[0].project;
 
-  if (!notificationGroup || !issue || !authorIds) return <></>;
+  const authorIds = uniq(notificationGroup.map((e) => e.triggered_by).filter((id) => id != undefined && id != null));
 
   const latestNotificationTime = useMemo(() => {
     const latestNotification = orderBy(notificationGroup, (n) => convertToEpoch(n.created_at), "desc")[0];
@@ -34,15 +36,26 @@ export const NotificationItem: FC<INotificationItem> = observer((props) => {
   }, [notificationGroup]);
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "right-end",
+    placement: "right-start",
   });
+
+  // states
+  const [openState, setOpenState] = useState<boolean>(false);
+
+  if (!notificationGroup || !issue || !authorIds || !projectId) return <></>;
 
   return (
     <Popover as="div" className={""}>
-      <Popover.Button className="w-full">
+      <Popover.Button as={Fragment}>
         <div
-          className="border-b transition-all py-4 border-custom-border-200 cursor-pointer group w-full"
+          className={cn(
+            "border-b transition-all py-4 border-custom-border-200 cursor-pointer group w-full",
+            unreadCount > 0 ? "bg-custom-primary-100/5" : ""
+          )}
           ref={setReferenceElement}
+          onClick={() => {}}
+          onMouseEnter={() => setOpenState(true)}
+          onMouseLeave={() => setOpenState(false)}
         >
           {/* Issue card header */}
           <Row className="flex items-center gap-1">
@@ -50,11 +63,11 @@ export const NotificationItem: FC<INotificationItem> = observer((props) => {
               {issue.sequence_id}-{issue.identifier}
             </span>
             <div className="flex-1 flex gap-2 justify-between items-center">
-              <span className="overflow-hidden whitespace-normal break-all truncate line-clamp-1 text-sm text-custom-text-100">
+              <span className="overflow-hidden whitespace-normal text-sm break-all truncate line-clamp-1 text-custom-text-100">
                 {issue.name}
               </span>
               {unreadCount > 0 && (
-                <span className="text-xs px-2 font-medium py-1 text-white bg-custom-primary-300 rounded-lg">
+                <span className="text-xs px-2 font-bold py-1 text-white bg-custom-primary-300 rounded-lg">
                   {unreadCount}
                 </span>
               )}
@@ -80,11 +93,23 @@ export const NotificationItem: FC<INotificationItem> = observer((props) => {
           </Row>
         </div>
       </Popover.Button>
-      <Popover.Panel {...attributes.popper} className={""}>
-        <div ref={setPopperElement} className={"absolute z-10 right-0 translate-x-[100%]"}>
-          <NotificationCardPreview notificationGroup={notificationGroup} />
-        </div>
-      </Popover.Panel>
+      <Transition
+        as={"div"}
+        enter="transition ease-out duration-200"
+        show={openState && unreadCount > 0}
+        onMouseEnter={() => setOpenState(true)}
+        onMouseLeave={() => setOpenState(false)}
+      >
+        <Popover.Panel {...attributes.popper} className={""}>
+          <div ref={setPopperElement} className={"absolute z-10"} style={styles.popper}>
+            <NotificationCardPreview
+              notificationGroup={notificationGroup}
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+            />
+          </div>
+        </Popover.Panel>
+      </Transition>
     </Popover>
   );
 });
