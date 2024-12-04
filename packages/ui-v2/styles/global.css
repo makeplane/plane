@@ -2,3 +2,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --white: hsl(0, 0%, 100%);
+  --grey-50: hsl(222, 20%, 96%);
+  --grey-100: hsl(222, 20%, 94%);
+  --grey-200: hsl(222, 20%, 86%);
+  --grey-300: hsl(222, 20%, 80%);
+  --grey-400: hsl(222, 20%, 60%);
+  --grey-500: hsl(222, 20%, 50%);
+  --grey-600: hsl(222, 20%, 40%);
+  --grey-700: hsl(222, 20%, 34%);
+  --grey-800: hsl(222, 20%, 20%);
+  --grey-900: hsl(222, 20%, 10%);
+  --grey-950: hsl(222, 20%, 8%);
+  --black: hsl(222, 20%, 6%);
+}
