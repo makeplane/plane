@@ -30,7 +30,7 @@ class FlagProvider(AbstractProvider):
                     },
                     json={
                         "workspace_slug": slug,
-                        "user_id": str(user_id),
+                        "user_id": str(user_id) if user_id else None,
                         "flag_key": feature_key,
                     },
                 )
