@@ -22,4 +22,4 @@ from .workspace import (
     InstanceWorkSpaceEndpoint,
 )
 
-from .changelog import ChangeLogEndpoint, CheckUpdateEndpoint
+from .changelog import CheckUpdateEndpoint

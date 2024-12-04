@@ -11,7 +11,6 @@ from plane.license.api.views import (
     InstanceAdminUserMeEndpoint,
     InstanceAdminSignOutEndpoint,
     InstanceAdminUserSessionEndpoint,
-    ChangeLogEndpoint,
     InstanceWorkSpaceAvailabilityCheckEndpoint,
     InstanceWorkSpaceEndpoint,
     AdminFeatureFlagEndpoint,
@@ -20,7 +19,6 @@ from plane.license.api.views import (
 
 urlpatterns = [
     path("", InstanceEndpoint.as_view(), name="instance"),
-    path("changelog/", ChangeLogEndpoint.as_view(), name="instance-changelog"),
     path("check-updates/", CheckUpdateEndpoint.as_view(), name="check-update"),
     path("admins/", InstanceAdminEndpoint.as_view(), name="instance-admins"),
     path("admins/me/", InstanceAdminUserMeEndpoint.as_view(), name="instance-admins"),
