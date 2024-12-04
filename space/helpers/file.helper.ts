@@ -1,7 +1,5 @@
-// plane types
 import { TFileMetaDataLite, TFileSignedURLResponse } from "@plane/types";
-// helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
+import { API_BASE_URL } from "@plane/constants";
 
 /**
  * @description from the provided signed URL response, generate a payload to be used to upload the file
