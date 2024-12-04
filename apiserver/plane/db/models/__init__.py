@@ -42,8 +42,18 @@ from .issue import (
     IssueSubscriber,
     IssueVote,
 )
-from .module import Module, ModuleIssue, ModuleLink, ModuleMember, ModuleUserProperties
-from .notification import EmailNotificationLog, Notification, UserNotificationPreference
+from .module import (
+    Module,
+    ModuleIssue,
+    ModuleLink,
+    ModuleMember,
+    ModuleUserProperties,
+)
+from .notification import (
+    EmailNotificationLog,
+    Notification,
+    UserNotificationPreference,
+)
 from .page import Page, PageLabel, PageLog, ProjectPage, PageVersion
 from .project import (
     Project,
@@ -71,7 +81,8 @@ from .workspace import (
 
 from .importer import Importer
 
-from .page import Page, PageLog, PageLabel
+from .page import Page, PageLog, PageLabel, ProjectPage
+
 
 from .estimate import Estimate, EstimatePoint
 
@@ -79,7 +90,11 @@ from .intake import Intake, IntakeIssue
 
 from .analytic import AnalyticView
 
-from .notification import Notification, UserNotificationPreference, EmailNotificationLog
+from .notification import (
+    Notification,
+    UserNotificationPreference,
+    EmailNotificationLog,
+)
 
 from .exporter import ExporterHistory
 
@@ -89,7 +104,7 @@ from .dashboard import Dashboard, DashboardWidget, Widget
 
 from .favorite import UserFavorite
 
-from .issue_type import IssueType
+from .issue_type import IssueType, ProjectIssueType
 
 from .recent_visit import UserRecentVisit
 

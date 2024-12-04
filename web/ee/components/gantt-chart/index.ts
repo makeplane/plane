@@ -1,1 +1,1 @@
-export * from "ce/components/gantt-chart";
+export * from "./dependency";

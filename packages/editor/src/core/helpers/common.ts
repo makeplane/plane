@@ -43,8 +43,13 @@ export const findTableAncestor = (node: Node | null): HTMLTableElement | null =>
 };
 
 export const getTrimmedHTML = (html: string) => {
-  html = html.replace(/^(<p><\/p>)+/, "");
-  html = html.replace(/(<p><\/p>)+$/, "");
+  // Trim leading/trailing whitespace
+  html = html.trim();
+
+  // Remove empty <p> tags at the start and end, accounting for any attributes in the <p> tag
+  html = html.replace(/^(<p[^>]*><\/p>)+/, "");
+  html = html.replace(/(<p[^>]*><\/p>)+$/, "");
+
   return html;
 };
 

@@ -1,9 +1,10 @@
 # Python imports
 import json
-
-from django.core.serializers.json import DjangoJSONEncoder
+import uuid
 
 # Django imports
+from django.http import HttpResponseRedirect
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import IntegrityError
 from django.db.models import (
     Case,
@@ -19,11 +20,11 @@ from django.db.models import (
     Subquery,
 )
 from django.utils import timezone
+from django.conf import settings
 
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.parsers import MultiPartParser, FormParser
 
 # Module imports
 from plane.api.serializers import (
@@ -50,9 +51,14 @@ from plane.db.models import (
     Project,
     ProjectMember,
     CycleIssue,
+    Workspace,
 )
-
+from plane.settings.storage import S3Storage
 from .base import BaseAPIView
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.payment.flags.flag import FeatureFlag
+from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
+from plane.ee.utils.workflow import WorkflowStateManager
 
 
 class WorkspaceIssueAPIEndpoint(BaseAPIView):
@@ -358,6 +364,23 @@ class IssueAPIEndpoint(BaseAPIView):
                     },
                     partial=True,
                 )
+
+                # Check if state is updated then is the transition allowed
+                workflow_state_manager = WorkflowStateManager(
+                    project_id=project_id, slug=slug
+                )
+                if request.data.get(
+                    "state_id"
+                ) and not workflow_state_manager.validate_state_transition(
+                    issue=issue,
+                    new_state_id=request.data.get("state_id"),
+                    user_id=request.user.id,
+                ):
+                    return Response(
+                        {"error": "State transition is not allowed"},
+                        status=status.HTTP_403_FORBIDDEN,
+                    )
+
                 if serializer.is_valid():
                     # If the serializer is valid, save the issue and dispatch
                     # the update issue activity worker event.
@@ -444,6 +467,21 @@ class IssueAPIEndpoint(BaseAPIView):
             context={"project_id": project_id, "workspace_id": project.workspace_id},
             partial=True,
         )
+
+        # Check if state is updated then is the transition allowed
+        workflow_state_manager = WorkflowStateManager(project_id=project_id, slug=slug)
+        if request.data.get(
+            "state_id"
+        ) and not workflow_state_manager.validate_state_transition(
+            issue=issue,
+            new_state_id=request.data.get("state_id"),
+            user_id=request.user.id,
+        ):
+            return Response(
+                {"error": "State transition is not allowed"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         if serializer.is_valid():
             if (
                 request.data.get("external_id")
@@ -773,12 +811,39 @@ class IssueCommentAPIEndpoint(BaseAPIView):
         )
 
     def get(self, request, slug, project_id, issue_id, pk=None):
+        external_id = request.GET.get("external_id")
+        external_source = request.GET.get("external_source")
+
+        if external_id and external_source:
+            try:
+                issue_comment = IssueComment.objects.get(
+                    external_id=external_id,
+                    external_source=external_source,
+                    workspace__slug=slug,
+                    project_id=project_id,
+                    issue_id=issue_id,
+                )
+                serializer = IssueCommentSerializer(
+                    issue_comment, fields=self.fields, expand=self.expand
+                )
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except IssueComment.DoesNotExist:
+                return Response(
+                    {"error": "Comment not found"}, status=status.HTTP_404_NOT_FOUND
+                )
+
         if pk:
-            issue_comment = self.get_queryset().get(pk=pk)
-            serializer = IssueCommentSerializer(
-                issue_comment, fields=self.fields, expand=self.expand
-            )
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            try:
+                issue_comment = self.get_queryset().get(pk=pk)
+                serializer = IssueCommentSerializer(
+                    issue_comment, fields=self.fields, expand=self.expand
+                )
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except IssueComment.DoesNotExist:
+                return Response(
+                    {"error": "Comment not found"}, status=status.HTTP_404_NOT_FOUND
+                )
+
         return self.paginate(
             request=request,
             queryset=(self.get_queryset()),
@@ -824,7 +889,8 @@ class IssueCommentAPIEndpoint(BaseAPIView):
             issue_comment.created_by_id = request.data.get(
                 "created_by", request.user.id
             )
-            issue_comment.save(update_fields=["created_at", "created_by"])
+            issue_comment.actor_id = request.data.get("created_by", request.user.id)
+            issue_comment.save(update_fields=["created_at", "created_by", "actor"])
 
             issue_activity.delay(
                 type="comment.activity.created",
@@ -940,37 +1006,166 @@ class IssueAttachmentEndpoint(BaseAPIView):
     serializer_class = IssueAttachmentSerializer
     permission_classes = [ProjectEntityPermission]
     model = FileAsset
-    parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request, slug, project_id, issue_id):
-        serializer = IssueAttachmentSerializer(data=request.data)
+        name = request.data.get("name")
+        type = request.data.get("type", False)
+        size = request.data.get("size")
+        external_id = request.data.get("external_id")
+        external_source = request.data.get("external_source")
+
+        # Check if the request is valid
+        if not name or not size:
+            return Response(
+                {"error": "Invalid request.", "status": False},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Check if the file size is greater than the limit
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.FILE_SIZE_LIMIT_PRO,
+            slug=slug,
+            user_id=str(request.user.id),
+        ):
+            size_limit = min(size, settings.PRO_FILE_SIZE_LIMIT)
+        else:
+            size_limit = min(size, settings.FILE_SIZE_LIMIT)
+
+        if not type or type not in settings.ATTACHMENT_MIME_TYPES:
+            return Response(
+                {"error": "Invalid file type.", "status": False},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Get the workspace
+        workspace = Workspace.objects.get(slug=slug)
+
+        # asset key
+        asset_key = f"{workspace.id}/{uuid.uuid4().hex}-{name}"
+
         if (
             request.data.get("external_id")
             and request.data.get("external_source")
             and FileAsset.objects.filter(
                 project_id=project_id,
                 workspace__slug=slug,
-                issue_id=issue_id,
                 external_source=request.data.get("external_source"),
                 external_id=request.data.get("external_id"),
+                issue_id=issue_id,
+                entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
             ).exists()
         ):
-            issue_attachment = FileAsset.objects.filter(
-                workspace__slug=slug,
+            asset = FileAsset.objects.filter(
                 project_id=project_id,
-                external_id=request.data.get("external_id"),
+                workspace__slug=slug,
                 external_source=request.data.get("external_source"),
+                external_id=request.data.get("external_id"),
+                issue_id=issue_id,
+                entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
             ).first()
             return Response(
                 {
-                    "error": "Issue attachment with the same external id and external source already exists",
-                    "id": str(issue_attachment.id),
+                    "error": "Issue with the same external id and external source already exists",
+                    "id": str(asset.id),
                 },
                 status=status.HTTP_409_CONFLICT,
             )
 
-        if serializer.is_valid():
-            serializer.save(project_id=project_id, issue_id=issue_id)
+        # Create a File Asset
+        asset = FileAsset.objects.create(
+            attributes={"name": name, "type": type, "size": size_limit},
+            asset=asset_key,
+            size=size_limit,
+            workspace_id=workspace.id,
+            created_by=request.user,
+            issue_id=issue_id,
+            project_id=project_id,
+            entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+            external_id=external_id,
+            external_source=external_source,
+        )
+
+        # Get the presigned URL
+        storage = S3Storage(request=request)
+        # Generate a presigned URL to share an S3 object
+        presigned_url = storage.generate_presigned_post(
+            object_name=asset_key, file_type=type, file_size=size_limit
+        )
+        # Return the presigned URL
+        return Response(
+            {
+                "upload_data": presigned_url,
+                "asset_id": str(asset.id),
+                "attachment": IssueAttachmentSerializer(asset).data,
+                "asset_url": asset.asset_url,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+    def delete(self, request, slug, project_id, issue_id, pk):
+        issue_attachment = FileAsset.objects.get(
+            pk=pk, workspace__slug=slug, project_id=project_id
+        )
+        issue_attachment.is_deleted = True
+        issue_attachment.deleted_at = timezone.now()
+        issue_attachment.save()
+
+        issue_activity.delay(
+            type="attachment.activity.deleted",
+            requested_data=None,
+            actor_id=str(self.request.user.id),
+            issue_id=str(issue_id),
+            project_id=str(project_id),
+            current_instance=None,
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
+        )
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def get(self, request, slug, project_id, issue_id, pk=None):
+        if pk:
+            # Get the asset
+            asset = FileAsset.objects.get(
+                id=pk, workspace__slug=slug, project_id=project_id
+            )
+
+            # Check if the asset is uploaded
+            if not asset.is_uploaded:
+                return Response(
+                    {"error": "The asset is not uploaded.", "status": False},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            storage = S3Storage(request=request)
+            presigned_url = storage.generate_presigned_url(
+                object_name=asset.asset.name,
+                disposition="attachment",
+                filename=asset.attributes.get("name"),
+            )
+            return HttpResponseRedirect(presigned_url)
+
+        # Get all the attachments
+        issue_attachments = FileAsset.objects.filter(
+            issue_id=issue_id,
+            entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+            workspace__slug=slug,
+            project_id=project_id,
+            is_uploaded=True,
+        )
+        # Serialize the attachments
+        serializer = IssueAttachmentSerializer(issue_attachments, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def patch(self, request, slug, project_id, issue_id, pk):
+        issue_attachment = FileAsset.objects.get(
+            pk=pk, workspace__slug=slug, project_id=project_id
+        )
+        serializer = IssueAttachmentSerializer(issue_attachment)
+
+        # Send this activity only if the attachment is not uploaded before
+        if not issue_attachment.is_uploaded:
             issue_activity.delay(
                 type="attachment.activity.created",
                 requested_data=None,
@@ -982,19 +1177,132 @@ class IssueAttachmentEndpoint(BaseAPIView):
                 notification=True,
                 origin=request.META.get("HTTP_ORIGIN"),
             )
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            # Update the attachment
+            issue_attachment.is_uploaded = True
+            issue_attachment.created_by = request.user
+
+        # Get the storage metadata
+        if not issue_attachment.storage_metadata:
+            get_asset_object_metadata.delay(str(issue_attachment.id))
+        issue_attachment.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class IssueAttachmentServerEndpoint(BaseAPIView):
+    serializer_class = IssueAttachmentSerializer
+    permission_classes = [ProjectEntityPermission]
+    model = FileAsset
+
+    def post(self, request, slug, project_id, issue_id):
+        name = request.data.get("name")
+        type = request.data.get("type", False)
+        size = request.data.get("size")
+        external_id = request.data.get("external_id")
+        external_source = request.data.get("external_source")
+
+        # Check if the request is valid
+        if not name or not size:
+            return Response(
+                {"error": "Invalid request.", "status": False},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Check if the file size is greater than the limit
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.FILE_SIZE_LIMIT_PRO,
+            slug=slug,
+            user_id=str(request.user.id),
+        ):
+            size_limit = min(size, settings.PRO_FILE_SIZE_LIMIT)
+        else:
+            size_limit = min(size, settings.FILE_SIZE_LIMIT)
+
+        if not type or type not in settings.ATTACHMENT_MIME_TYPES:
+            return Response(
+                {"error": "Invalid file type.", "status": False},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Get the workspace
+        workspace = Workspace.objects.get(slug=slug)
+
+        # asset key
+        asset_key = f"{workspace.id}/{uuid.uuid4().hex}-{name}"
+
+        if (
+            request.data.get("external_id")
+            and request.data.get("external_source")
+            and FileAsset.objects.filter(
+                project_id=project_id,
+                workspace__slug=slug,
+                external_source=request.data.get("external_source"),
+                external_id=request.data.get("external_id"),
+                issue_id=issue_id,
+                entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+            ).exists()
+        ):
+            asset = FileAsset.objects.filter(
+                project_id=project_id,
+                workspace__slug=slug,
+                external_source=request.data.get("external_source"),
+                external_id=request.data.get("external_id"),
+                issue_id=issue_id,
+                entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+            ).first()
+            return Response(
+                {
+                    "error": "Issue with the same external id and external source already exists",
+                    "id": str(asset.id),
+                },
+                status=status.HTTP_409_CONFLICT,
+            )
+
+        # Create a File Asset
+        asset = FileAsset.objects.create(
+            attributes={"name": name, "type": type, "size": size_limit},
+            asset=asset_key,
+            size=size_limit,
+            workspace_id=workspace.id,
+            created_by=request.user,
+            issue_id=issue_id,
+            project_id=project_id,
+            entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+            external_id=external_id,
+            external_source=external_source,
+        )
+
+        # Get the presigned URL
+        storage = S3Storage(request=request, is_server=True)
+        # Generate a presigned URL to share an S3 object
+        presigned_url = storage.generate_presigned_post(
+            object_name=asset_key, file_type=type, file_size=size_limit
+        )
+        # Return the presigned URL
+        return Response(
+            {
+                "upload_data": presigned_url,
+                "asset_id": str(asset.id),
+                "attachment": IssueAttachmentSerializer(asset).data,
+                "asset_url": asset.asset_url,
+            },
+            status=status.HTTP_200_OK,
+        )
 
     def delete(self, request, slug, project_id, issue_id, pk):
-        issue_attachment = FileAsset.objects.get(pk=pk)
-        issue_attachment.asset.delete(save=False)
-        issue_attachment.delete()
+        issue_attachment = FileAsset.objects.get(
+            pk=pk, workspace__slug=slug, project_id=project_id
+        )
+        issue_attachment.is_deleted = True
+        issue_attachment.deleted_at = timezone.now()
+        issue_attachment.save()
+
         issue_activity.delay(
             type="attachment.activity.deleted",
             requested_data=None,
             actor_id=str(self.request.user.id),
-            issue_id=str(self.kwargs.get("issue_id", None)),
-            project_id=str(self.kwargs.get("project_id", None)),
+            issue_id=str(issue_id),
+            project_id=str(project_id),
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
             notification=True,
@@ -1003,9 +1311,66 @@ class IssueAttachmentEndpoint(BaseAPIView):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    def get(self, request, slug, project_id, issue_id):
+    def get(self, request, slug, project_id, issue_id, pk=None):
+        if pk:
+            # Get the asset
+            asset = FileAsset.objects.get(
+                id=pk, workspace__slug=slug, project_id=project_id
+            )
+
+            # Check if the asset is uploaded
+            if not asset.is_uploaded:
+                return Response(
+                    {"error": "The asset is not uploaded.", "status": False},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            storage = S3Storage(request=request)
+            presigned_url = storage.generate_presigned_url(
+                object_name=asset.asset.name,
+                disposition="attachment",
+                filename=asset.attributes.get("name"),
+            )
+            return HttpResponseRedirect(presigned_url)
+
+        # Get all the attachments
         issue_attachments = FileAsset.objects.filter(
-            issue_id=issue_id, workspace__slug=slug, project_id=project_id
+            issue_id=issue_id,
+            entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+            workspace__slug=slug,
+            project_id=project_id,
+            is_uploaded=True,
         )
+        # Serialize the attachments
         serializer = IssueAttachmentSerializer(issue_attachments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def patch(self, request, slug, project_id, issue_id, pk):
+        issue_attachment = FileAsset.objects.get(
+            pk=pk, workspace__slug=slug, project_id=project_id
+        )
+        serializer = IssueAttachmentSerializer(issue_attachment)
+
+        # Send this activity only if the attachment is not uploaded before
+        if not issue_attachment.is_uploaded:
+            issue_activity.delay(
+                type="attachment.activity.created",
+                requested_data=None,
+                actor_id=str(self.request.user.id),
+                issue_id=str(self.kwargs.get("issue_id", None)),
+                project_id=str(self.kwargs.get("project_id", None)),
+                current_instance=json.dumps(serializer.data, cls=DjangoJSONEncoder),
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=request.META.get("HTTP_ORIGIN"),
+            )
+
+            # Update the attachment
+            issue_attachment.is_uploaded = True
+            issue_attachment.created_by = request.user
+
+        # Get the storage metadata
+        if not issue_attachment.storage_metadata:
+            get_asset_object_metadata.delay(str(issue_attachment.id))
+        issue_attachment.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
