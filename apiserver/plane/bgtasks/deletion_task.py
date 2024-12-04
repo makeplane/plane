@@ -10,7 +10,9 @@ from celery import shared_task
 
 
 @shared_task
-def soft_delete_related_objects(app_label, model_name, instance_pk, using=None):
+def soft_delete_related_objects(
+    app_label, model_name, instance_pk, using=None
+):
     model_class = apps.get_model(app_label, model_name)
     instance = model_class.all_objects.get(pk=instance_pk)
     related_fields = instance._meta.get_fields()
@@ -19,16 +21,17 @@ def soft_delete_related_objects(app_label, model_name, instance_pk, using=None):
             try:
                 # Check if the field has CASCADE on delete
                 if (
-                    hasattr(field, "remote_field")
-                    and hasattr(field.remote_field, "on_delete")
-                    and field.remote_field.on_delete == models.CASCADE
+                    not hasattr(field.remote_field, "on_delete")
+                    or field.remote_field.on_delete == models.CASCADE
                 ):
                     if field.one_to_many:
                         related_objects = getattr(instance, field.name).all()
                     elif field.one_to_one:
                         related_object = getattr(instance, field.name)
                         related_objects = (
-                            [related_object] if related_object is not None else []
+                            [related_object]
+                            if related_object is not None
+                            else []
                         )
 
                     for obj in related_objects:
@@ -46,6 +49,7 @@ def restore_related_objects(app_label, model_name, instance_pk, using=None):
 
 @shared_task
 def hard_delete():
+
     from plane.db.models import (
         Workspace,
         Project,
