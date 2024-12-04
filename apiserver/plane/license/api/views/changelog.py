@@ -4,7 +4,6 @@ import os
 
 # Django imports
 from django.utils import timezone
-from django.conf import settings
 
 # Third party imports
 from rest_framework.response import Response
@@ -18,31 +17,8 @@ from .base import BaseAPIView
 from plane.license.models import Instance
 
 
-class ChangeLogEndpoint(BaseAPIView):
-    permission_classes = [AllowAny]
-
-    def fetch_change_logs(self):
-        response = requests.get(settings.INSTANCE_CHANGELOG_URL)
-        response.raise_for_status()
-        return response.json()
-
-    def get(self, request):
-        # Fetch the changelog
-        if settings.INSTANCE_CHANGELOG_URL:
-            data = self.fetch_change_logs()
-            return Response(data, status=status.HTTP_200_OK)
-        else:
-            return Response(
-                {"error": "could not fetch changelog please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-
 class CheckUpdateEndpoint(BaseAPIView):
-
-    permission_classes = [
-        AllowAny,
-    ]
+    permission_classes = [AllowAny]
 
     def get_instance_me(self):
         # Get the prime host, license key and machine signature
@@ -68,12 +44,8 @@ class CheckUpdateEndpoint(BaseAPIView):
 
     def update_instance(self, instance, data):
         instance.last_checked_at = timezone.now()
-        instance.current_version = data.get(
-            "user_version", instance.current_version
-        )
-        instance.latest_version = data.get(
-            "latest_version", instance.latest_version
-        )
+        instance.current_version = data.get("user_version", instance.current_version)
+        instance.latest_version = data.get("latest_version", instance.latest_version)
         instance.save()
 
     def get(self, request):
@@ -96,8 +68,6 @@ class CheckUpdateEndpoint(BaseAPIView):
         except Exception as e:
             print(e)
             return Response(
-                {
-                    "error": "could not fetch new release please try again later"
-                },
+                {"error": "could not fetch new release please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
