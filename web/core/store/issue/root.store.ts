@@ -53,8 +53,6 @@ export interface IIssueRootStore {
 
   issues: IIssueStore;
 
-  state: IStateStore;
-
   issueDetail: IIssueDetail;
 
   workspaceIssuesFilter: IWorkspaceIssuesFilter;
@@ -110,8 +108,6 @@ export class IssueRootStore implements IIssueRootStore {
   rootStore: CoreRootStore;
 
   issues: IIssueStore;
-
-  state: IStateStore;
 
   issueDetail: IIssueDetail;
 
@@ -190,8 +186,6 @@ export class IssueRootStore implements IIssueRootStore {
     });
 
     this.issues = new IssueStore();
-
-    this.state = new StateStore(rootStore);
 
     this.issueDetail = new IssueDetail(this);
 

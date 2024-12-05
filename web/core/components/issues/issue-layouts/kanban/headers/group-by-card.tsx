@@ -15,7 +15,8 @@ import { CreateUpdateIssueModal } from "@/components/issues";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
-// types
+// Plane-web
+import { WorkFlowGroupTree } from "@/plane-web/components/workflow";
 
 interface IHeaderGroupByCard {
   sub_group_by: TIssueGroupByOptions | undefined;
@@ -33,6 +34,7 @@ interface IHeaderGroupByCard {
 
 export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
   const {
+    group_by,
     sub_group_by,
     column_id,
     icon,
@@ -129,6 +131,8 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
             {count || 0}
           </div>
         </div>
+
+        <WorkFlowGroupTree groupBy={group_by} groupId={column_id} />
 
         {sub_group_by === null && (
           <div
