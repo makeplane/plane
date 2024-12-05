@@ -1,1 +1,1 @@
-export * from "./Components/DropdownMenu/DropdownMenu";
+export * from "./components/SelectMenu/SelectMenu";

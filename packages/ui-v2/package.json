@@ -16,7 +16,9 @@
     "postcss": "postcss styles/globals.css -o styles/output.css --watch",
     "lint": "eslint src --ext .ts,.tsx",
     "tcss": "tailwindcss -i ./styles/global.css -o ./styles/output.css --watch",
-    "start": "yarn dev & yarn storybook & yarn tcss"
+    "start": "yarn dev & yarn storybook & yarn tcss",
+    "test": "vitest",
+    "test:ui": "vitest --ui"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.2",
@@ -27,16 +29,20 @@
     "@storybook/react": "^8.4.5",
     "@storybook/react-vite": "^8.4.5",
     "@storybook/test": "^8.4.5",
+    "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.0.1",
     "@types/jest": "^29.5.14",
+    "@vitest/ui": "2.1.8",
     "autoprefixer": "^10.4.20",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
+    "jsdom": "^25.0.1",
     "storybook": "^8.4.5",
     "tailwindcss": "^3.4.15",
     "tsup": "^8.3.5",
     "typescript": "^5.7.2",
-    "vite": "^6.0.1"
+    "vite": "^6.0.1",
+    "vitest": "^2.1.8"
   },
   "dependencies": {
     "@radix-ui/react-dropdown-menu": "^2.1.2",

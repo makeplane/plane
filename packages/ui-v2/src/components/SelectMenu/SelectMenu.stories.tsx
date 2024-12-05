@@ -6,7 +6,7 @@ import {
   SelectContent,
   SelectDropdown,
   SelectOption,
-} from "./DropdownMenu";
+} from "./SelectMenu";
 // import { SelectDropdown } from "./DropdownMenu-copy";
 const fruits = [
   {
@@ -212,7 +212,7 @@ export const MultiSelect = () => {
       onSelect={undefined}
       onChange={(value: any) => setValue(value)}
       value={value}
-      multiple={true}
+      // multiple={true}
       open={false}
       renderItem={(item) => <Fruit fruit={item} />}
     >
