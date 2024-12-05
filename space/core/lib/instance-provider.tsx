@@ -8,7 +8,7 @@ import { useTheme } from "next-themes";
 import useSWR from "swr";
 import { SPACE_BASE_PATH } from "@plane/constants";
 // components
-import { LogoSpinner, PoweredBy } from "@/components/common";
+import { LogoSpinner } from "@/components/common";
 import { InstanceFailureView } from "@/components/instance";
 // hooks
 import { useInstance, useUser } from "@/hooks/store";
@@ -68,10 +68,5 @@ export const InstanceProvider = observer(({ children }: { children: ReactNode })
     );
   }
 
-  return (
-    <>
-      {children}
-      <PoweredBy />
-    </>
-  );
+  return children;
 });
