@@ -7,6 +7,10 @@ import {
   IssuePropertiesActivityStore,
   IssueTypes,
 } from "@/plane-web/store/issue-types";
+import {
+  IWorkspaceNotificationStore,
+  WorkspaceNotificationStore,
+} from "@/plane-web/store/notifications/notifications.store";
 import { IPublishPageStore, PublishPageStore } from "@/plane-web/store/pages/publish-page.store";
 import { IWorkspacePageStore, WorkspacePageStore } from "@/plane-web/store/pages/workspace-page.store";
 import {
@@ -18,7 +22,6 @@ import {
   WorkspaceSubscriptionStore,
 } from "@/plane-web/store/subscription/subscription.store";
 import { IWorkspaceFeatureStore, WorkspaceFeatureStore } from "@/plane-web/store/workspace-feature.store";
-import { IWorkspaceNotificationStore, WorkspaceNotificationStore } from "@/plane-web/store/workspace-notifications/notifications.store";
 import {
   IProjectFilterStore,
   ProjectFilterStore,
