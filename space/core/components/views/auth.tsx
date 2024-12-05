@@ -7,6 +7,7 @@ import { useTheme } from "next-themes";
 import { SPACE_BASE_PATH } from "@plane/constants";
 // components
 import { AuthRoot } from "@/components/account";
+import { PoweredBy } from "@/components/common";
 // images
 import PlaneBackgroundPatternDark from "@/public/auth/background-pattern-dark.svg";
 import PlaneBackgroundPattern from "@/public/auth/background-pattern.svg";
@@ -40,6 +41,7 @@ export const AuthView = observer(() => {
           <AuthRoot />
         </div>
       </div>
+      <PoweredBy />
     </div>
   );
 });
