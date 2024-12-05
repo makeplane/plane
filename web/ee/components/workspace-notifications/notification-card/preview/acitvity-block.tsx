@@ -2,9 +2,6 @@
 
 import { FC, ReactElement, ReactNode } from "react";
 // hooks
-import { DiceIcon, LayersIcon, Tooltip, ContrastIcon, ArchiveIcon, Intake, Avatar } from "@plane/ui";
-import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@/helpers/date-time.helper";
-import { usePlatformOS } from "@/hooks/use-platform-os";
 import {
   ArrowRightLeft,
   CalendarDays,
@@ -16,9 +13,11 @@ import {
   Triangle,
   Users,
 } from "lucide-react";
-import { TSvgIcons } from "@/plane-web/components/workspace-project-states";
 import { IUserLite } from "@plane/types";
+import { DiceIcon, LayersIcon, Tooltip, ContrastIcon, ArchiveIcon, Intake, Avatar } from "@plane/ui";
+import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // ui
 // components
 // helpers
@@ -26,7 +25,7 @@ import { getFileURL } from "@/helpers/file.helper";
 type TIssueActivityBlock = {
   createdAt: string | undefined;
   notificationField: string;
-  ends: "top" | "bottom" | undefined;
+  ends: "top" | "bottom" | "single" | undefined;
   children: ReactNode;
   triggeredBy: IUserLite | undefined;
 };
@@ -56,25 +55,21 @@ export const IssueActivityBlock: FC<TIssueActivityBlock> = (props) => {
   const { isMobile } = usePlatformOS();
   return (
     <div
-      className={`relative flex w-full items-center gap-3 text-xs ${
-        ends === "top" ? `pb-2` : ends === "bottom" ? `pt-2` : `py-2`
-      }`}
+      className={`relative flex w-full gap-3 text-xs ${ends === "top" ? `pb-2` : ends === "bottom" ? `pt-2` : `py-2`}`}
     >
-      <div className="absolute left-[13px] top-0 bottom-0 w-0.5 bg-custom-background-80" aria-hidden />
-      {notificationField !== "comment" ? (
-        <div className="flex-shrink-0 ring-6 w-7 h-7 rounded-full overflow-hidden flex justify-center items-center z-[4] bg-custom-background-80 text-custom-text-200">
-          {acitvityIconsMap[notificationField]}
-        </div>
-      ) : triggeredBy ? (
-        <div className="z-[4]">
-          <Avatar src={getFileURL(triggeredBy.avatar_url)} name={triggeredBy.display_name} size={28} />
-        </div>
-      ) : (
-        <></>
+      {ends !== "single" && (
+        <div className="absolute left-[13px] top-0 bottom-0 w-0.5 bg-custom-background-80" aria-hidden />
       )}
-      <div className="w-full truncate text-custom-text-200 flex gap-2">
-        <span className=""> {children} </span>
-        <span className="text-custom-text-100">
+      <div className="flex-shrink-0 ring-6 w-7 h-7 rounded-full overflow-hidden flex justify-center items-center z-[4] bg-custom-background-80 text-custom-text-200">
+        {notificationField !== "comment"
+          ? acitvityIconsMap[notificationField]
+          : triggeredBy && (
+              <Avatar src={getFileURL(triggeredBy.avatar_url)} name={triggeredBy.display_name} size={28} />
+            )}
+      </div>
+      <div className="w-full text-custom-text-200 flex gap-2">
+        <span className="truncate"> {children} </span>
+        <span className="text-custom-text-300">
           {createdAt && (
             <Tooltip
               isMobile={isMobile}

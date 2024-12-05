@@ -3,19 +3,22 @@
 import { FC, Dispatch, SetStateAction } from "react";
 import { observer } from "mobx-react";
 // components
-import {
-  NotificationItemReadOption,
-  NotificationItemArchiveOption,
-  NotificationItemSnoozeOption,
-} from "@/components/workspace-notifications";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useNotification } from "@/hooks/store";
+import {
+  NotificationItemReadOption,
+  NotificationItemArchiveOption,
+  NotificationItemSnoozeOption,
+} from "@/plane-web/components/workspace-notifications";
+import { INotification } from "@/store/notifications/notification";
 
 type TNotificationOption = {
   workspaceSlug: string;
-  notificationId: string;
+  notificationGroup: INotification[];
+  issueId: string;
+  unreadCount: number;
   isSnoozeStateModalOpen: boolean;
   setIsSnoozeStateModalOpen: Dispatch<SetStateAction<boolean>>;
   customSnoozeModal: boolean;
@@ -25,28 +28,37 @@ type TNotificationOption = {
 export const NotificationOption: FC<TNotificationOption> = observer((props) => {
   const {
     workspaceSlug,
-    notificationId,
+    notificationGroup,
+    issueId,
+    unreadCount,
     isSnoozeStateModalOpen,
     setIsSnoozeStateModalOpen,
     customSnoozeModal,
     setCustomSnoozeModal,
   } = props;
-  // hooks
-  const notification = useNotification(notificationId);
 
   return (
     <div className={cn("flex-shrink-0 hidden group-hover:block text-sm", isSnoozeStateModalOpen ? `!block` : ``)}>
       <div className="relative flex justify-center items-center gap-2">
         {/* read */}
-        <NotificationItemReadOption workspaceSlug={workspaceSlug} notification={notification} />
+        <NotificationItemReadOption
+          workspaceSlug={workspaceSlug}
+          notificationGroup={notificationGroup}
+          unreadCount={unreadCount}
+          issueId={issueId}
+        />
 
         {/* archive */}
-        <NotificationItemArchiveOption workspaceSlug={workspaceSlug} notification={notification} />
+        <NotificationItemArchiveOption
+          workspaceSlug={workspaceSlug}
+          notificationGroup={notificationGroup}
+          issueId={issueId}
+        />
 
         {/* snooze notification */}
         <NotificationItemSnoozeOption
           workspaceSlug={workspaceSlug}
-          notification={notification}
+          notificationGroup={notificationGroup}
           setIsSnoozeStateModalOpen={setIsSnoozeStateModalOpen}
           customSnoozeModal={customSnoozeModal}
           setCustomSnoozeModal={setCustomSnoozeModal}

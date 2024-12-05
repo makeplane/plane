@@ -1,67 +1,61 @@
 import { orderBy, uniqBy } from "lodash";
-import { action, makeObservable, observable, runInAction, set } from "mobx";
+import { runInAction } from "mobx";
 //store
 import { computedFn } from "mobx-utils";
-import { TNotification, TNotificationPaginatedInfo } from "@plane/types";
-import { ENotificationLoader, ENotificationQueryParamType } from "@/constants/notification";
+import { TNotification } from "@plane/types";
 import { convertToEpoch } from "@/helpers/date-time.helper";
 import { RootStore } from "@/plane-web/store/root.store";
-import workspaceNotificationService from "@/services/workspace-notification.service";
+import { INotification } from "@/store/notifications/notification";
 import {
   IWorkspaceNotificationStore as IWorkspaceNotificationStoreCore,
-  TNotificationLoader,
-  TNotificationQueryParamType,
   WorkspaceNotificationStore as WorkspaceNotificationStoreCore,
 } from "@/store/notifications/workspace-notifications.store";
 
 export type TGroupedNotifications = Record<string, TNotification[]>;
 
 export interface IWorkspaceNotificationStore extends IWorkspaceNotificationStoreCore {
-  // observales
-  groupedNotifications: Record<string, TNotification[]>;
-  // actions
-  groupNotificationsById: (notifications: TNotification[]) => void;
+  groupedNotificationsByIssueId: (workspaceId: string) => Record<string, INotification[]>;
   notificationIssueIdsByWorkspaceId: (workspaceId: string) => string[] | undefined;
+  markNotificationGroupRead: (notificationGroup: INotification[], workspaceSlug: string) => Promise<void>;
+  markNotificationGroupUnRead: (notificationGroup: INotification[], workspaceSlug: string) => Promise<void>;
+  archiveNotificationGroup: (notificationGroup: INotification[], workspaceSlug: string) => Promise<void>;
+  unArchiveNotificationGroup: (notificationGroup: INotification[], workspaceSlug: string) => Promise<void>;
+  snoozeNotificationGroup: (
+    notificationGroup: INotification[],
+    workspaceSlug: string,
+    snoozeTill: Date
+  ) => Promise<void>;
+  unSnoozeNotificationGroup: (notificationGroup: INotification[], workspaceSlug: string) => Promise<void>;
+  hasInboxIssue: (notificationGroup: INotification[]) => boolean;
 }
 
 export class WorkspaceNotificationStore extends WorkspaceNotificationStoreCore implements IWorkspaceNotificationStore {
-  // observables
-  groupedNotifications: Record<string, TNotification[]> = {};
-
   constructor(protected store: RootStore) {
     super(store);
-    makeObservable(this, {
-      groupedNotifications: observable,
-      groupNotificationsById: action,
-    });
   }
+  groupedNotificationsByIssueId = computedFn((workspaceId: string) => {
+    const filteredNotificationsIds = this.notificationIdsByWorkspaceId(workspaceId);
+    if (!filteredNotificationsIds) return {};
 
-  // actions
-  /**
-   * @description Execute when notifications are fetched
-   * @param { INotification[] } notifications
-   */
-  groupNotificationsById = action((notifications: TNotification[]) => {
-    notifications.forEach((notification) => {
-      if (!notification.entity_identifier) return;
-      /**
-       * Apply filters here and then add to group
-       */
-      const existingNotifications = this.groupedNotifications[notification.entity_identifier] || [];
-      this.groupedNotifications[notification.entity_identifier] = uniqBy(
-        [...existingNotifications, notification],
-        "id"
-      );
+    const groupedNotifications: Record<string, INotification[]> = {};
+
+    filteredNotificationsIds.forEach((id) => {
+      const entityId = this.notifications[id].entity_identifier;
+      if (!entityId) return;
+      const existingNotifications = groupedNotifications[entityId] || [];
+      groupedNotifications[entityId] = uniqBy([...existingNotifications, this.notifications[id]], "id");
     });
+
+    return groupedNotifications;
   });
 
   notificationIssueIdsByWorkspaceId = computedFn((workspaceId: string) => {
-    if (!workspaceId || Object.keys(this.groupedNotifications).length === 0) return undefined;
+    const groupedNotifications: Record<string, INotification[]> = this.groupedNotificationsByIssueId(workspaceId);
 
     const groupedNotificationIssueIds = orderBy(
-      Object.keys(this.groupedNotifications),
+      Object.keys(groupedNotifications),
       (issueId) => {
-        const notifications = this.groupedNotifications[issueId];
+        const notifications = groupedNotifications[issueId];
         const latestNotification = orderBy(notifications, (n) => convertToEpoch(n.created_at), "desc")[0];
         return convertToEpoch(latestNotification.created_at);
       },
@@ -72,36 +66,84 @@ export class WorkspaceNotificationStore extends WorkspaceNotificationStoreCore i
   });
 
   /**
-   * @description get all workspace notification
-   * @param { string } workspaceSlug,
-   * @param { TNotificationLoader } loader,
-   * @returns { TNotification | undefined }
+   *
+   * @param notificationGroup : INotification[]
    */
-  getNotifications = async (
-    workspaceSlug: string,
-    loader: TNotificationLoader = ENotificationLoader.INIT_LOADER,
-    queryParamType: TNotificationQueryParamType = ENotificationQueryParamType.INIT
-  ): Promise<TNotificationPaginatedInfo | undefined> => {
-    this.loader = loader;
+  markNotificationGroupRead = async (notificationGroup: INotification[], workspaceSlug: string) => {
+    const unreadNotificationGroup = notificationGroup.filter((n) => !n.read_at);
     try {
-      const queryParams = this.generateNotificationQueryParams(queryParamType);
-      await this.getUnreadNotificationsCount(workspaceSlug);
-      const notificationResponse = await workspaceNotificationService.fetchNotifications(workspaceSlug, queryParams);
-      if (notificationResponse) {
-        const { results, ...paginationInfo } = notificationResponse;
-        runInAction(() => {
-          if (results) {
-            this.groupNotificationsById(results);
-          }
-          set(this, "paginationInfo", paginationInfo);
-        });
-      }
-      return notificationResponse;
+      Object.values(unreadNotificationGroup).forEach((notification) => {
+        if (!notification.read_at) {
+          notification.markNotificationAsRead(workspaceSlug);
+        }
+      });
     } catch (error) {
-      console.error("WorkspaceNotificationStore -> getNotifications -> error", error);
+      console.error("WorkspaceNotificationStore -> markNotificationGroupRead -> error", error);
       throw error;
-    } finally {
-      runInAction(() => (this.loader = undefined));
     }
+  };
+
+  markNotificationGroupUnRead = async (notificationGroup: INotification[], workspaceSlug: string) => {
+    const readNotificationsGroup = notificationGroup.filter((n) => n.read_at);
+    try {
+      Object.values(readNotificationsGroup).forEach((notification) => {
+        if (notification.read_at) {
+          notification.markNotificationAsUnRead(workspaceSlug);
+        }
+      });
+    } catch (error) {
+      console.error("WorkspaceNotificationStore -> markNotificationGroupRead -> error", error);
+      throw error;
+    }
+  };
+
+  archiveNotificationGroup = async (notificationGroup: INotification[], workspaceSlug: string) => {
+    try {
+      Object.values(notificationGroup).forEach((notification) => {
+        notification.archiveNotification(workspaceSlug);
+      });
+    } catch (error) {
+      console.error("WorkspaceNotificationStore -> archiveNotificationGroup -> error", error);
+      throw error;
+    }
+  };
+
+  unArchiveNotificationGroup = async (notificationGroup: INotification[], workspaceSlug: string) => {
+    try {
+      Object.values(notificationGroup).forEach((notification) => {
+        notification.unArchiveNotification(workspaceSlug);
+      });
+    } catch (error) {
+      console.error("WorkspaceNotificationStore -> unArchiveNotificationGroup -> error", error);
+      throw error;
+    }
+  };
+
+  snoozeNotificationGroup = async (notificationGroup: INotification[], workspaceSlug: string, snoozeTill: Date) => {
+    try {
+      Object.values(notificationGroup).forEach((notification) => {
+        notification.snoozeNotification(workspaceSlug, snoozeTill);
+      });
+    } catch (error) {
+      console.error("WorkspaceNotificationStore -> unArchiveNotificationGroup -> error", error);
+      throw error;
+    }
+  };
+
+  unSnoozeNotificationGroup = async (notificationGroup: INotification[], workspaceSlug: string) => {
+    try {
+      Object.values(notificationGroup).forEach((notification) => {
+        notification.unSnoozeNotification(workspaceSlug);
+      });
+    } catch (error) {
+      console.error("WorkspaceNotificationStore -> unArchiveNotificationGroup -> error", error);
+      throw error;
+    }
+  };
+
+  hasInboxIssue = (notificationGroup: INotification[]) => {
+    const inbox_issue = notificationGroup.find((notification) => notification.is_inbox_issue);
+    if (inbox_issue) return true;
+    return false;
   };
 }

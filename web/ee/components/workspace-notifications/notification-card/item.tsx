@@ -1,4 +1,5 @@
 import { FC, useMemo, useState, Fragment } from "react";
+import { uniq } from "lodash";
 import orderBy from "lodash/orderBy";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
@@ -9,20 +10,29 @@ import { MemberDropdown } from "@/components/dropdowns";
 import { cn } from "@/helpers/common.helper";
 import { calculateTimeAgo, convertToEpoch } from "@/helpers/date-time.helper";
 //store
-import { useWorkspaceNotifications } from "@/hooks/store";
+import { useIssueDetail, useWorkspaceNotifications } from "@/hooks/store";
 //components
-import { NotificationCardPreview } from "@/plane-web/components/workspace-notifications";
-import { uniq } from "lodash";
+import { NotificationCardPreview, NotificationOption } from "@/plane-web/components/workspace-notifications";
 export interface INotificationItem {
   issueId: string;
   workspaceSlug: string;
+  workspaceId: string;
 }
 export const NotificationItem: FC<INotificationItem> = observer((props) => {
-  const { issueId, workspaceSlug } = props;
+  const { issueId, workspaceSlug, workspaceId } = props;
 
+  //states
   const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-  const { groupedNotifications } = useWorkspaceNotifications();
+  const [isSnoozeStateModalOpen, setIsSnoozeStateModalOpen] = useState(false);
+  const [customSnoozeModal, setCustomSnoozeModal] = useState(false);
+  //hooks
+  const { groupedNotificationsByIssueId, markNotificationGroupRead, hasInboxIssue, setCurrentSelectedNotificationId } =
+    useWorkspaceNotifications();
+  const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
+
+  //derived values
+  const groupedNotifications = groupedNotificationsByIssueId(workspaceId);
   const notificationGroup = groupedNotifications[issueId];
   const issue = notificationGroup[0].data?.issue;
   const unreadCount = notificationGroup.filter((e) => !e.read_at).length;
@@ -39,26 +49,53 @@ export const NotificationItem: FC<INotificationItem> = observer((props) => {
     placement: "right-start",
   });
 
-  // states
-  const [openState, setOpenState] = useState<boolean>(false);
+  const handleNotificationIssuePeekOverview = async () => {
+    if (workspaceSlug && projectId && issueId && !isSnoozeStateModalOpen && !customSnoozeModal) {
+      setPeekIssue(undefined);
+      setCurrentSelectedNotificationId(notificationGroup[0].id);
 
-  if (!notificationGroup || !issue || !authorIds || !projectId) return <></>;
+      // make the notification as read
+      if (unreadCount > 0) {
+        try {
+          await markNotificationGroupRead(notificationGroup, workspaceSlug);
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      if (!hasInboxIssue(notificationGroup)) {
+        if (!getIsIssuePeeked(issueId)) setPeekIssue({ workspaceSlug, projectId, issueId });
+      }
+    }
+  };
+
+  // states
+  const [showPreview, setShowPreview] = useState<boolean>(false);
+
+  if (!notificationGroup || !issue || !issue.id || !authorIds || !projectId) return <></>;
 
   return (
     <Popover as="div" className={""}>
       <Popover.Button as={Fragment}>
         <div
           className={cn(
-            "border-b transition-all py-4 border-custom-border-200 cursor-pointer group w-full",
+            "border-b relative transition-all py-4 border-custom-border-200 cursor-pointer group w-full",
+            getIsIssuePeeked(issue.id) && "bg-custom-background-80/30",
             unreadCount > 0 ? "bg-custom-primary-100/5" : ""
           )}
           ref={setReferenceElement}
-          onClick={() => {}}
-          onMouseEnter={() => setOpenState(true)}
-          onMouseLeave={() => setOpenState(false)}
+          onClick={(e) => {
+            e.preventDefault();
+            handleNotificationIssuePeekOverview();
+          }}
+          onMouseEnter={() => setShowPreview(true)}
+          onMouseLeave={() => setShowPreview(false)}
         >
           {/* Issue card header */}
           <Row className="flex items-center gap-1">
+            {unreadCount > 0 && (
+              <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-custom-primary-100 absolute top-[50%] left-2" />
+            )}
             <span className="text-sm font-semibold break-words">
               {issue.sequence_id}-{issue.identifier}
             </span>
@@ -66,17 +103,26 @@ export const NotificationItem: FC<INotificationItem> = observer((props) => {
               <span className="overflow-hidden whitespace-normal text-sm break-all truncate line-clamp-1 text-custom-text-100">
                 {issue.name}
               </span>
-              {unreadCount > 0 && (
-                <span className="text-xs px-2 font-bold py-1 text-white bg-custom-primary-300 rounded-lg">
-                  {unreadCount}
-                </span>
-              )}
             </div>
+            <NotificationOption
+              workspaceSlug={workspaceSlug}
+              issueId={issueId}
+              unreadCount={unreadCount}
+              notificationGroup={notificationGroup}
+              isSnoozeStateModalOpen={isSnoozeStateModalOpen}
+              setIsSnoozeStateModalOpen={setIsSnoozeStateModalOpen}
+              customSnoozeModal={customSnoozeModal}
+              setCustomSnoozeModal={setCustomSnoozeModal}
+            />
+            {unreadCount > 0 && (
+              <span className="text-xs px-[5px] font-medium group-hover:hidden py-[1px] text-white bg-custom-primary-300 rounded-md">
+                {unreadCount}
+              </span>
+            )}
           </Row>
-          <Row className="flex items-center justify-between">
-            {/* Assignesss avatars / author avatars */}
+          <Row className="flex items-center justify-between mt-2">
+            {/* Author avatars */}
             <MemberDropdown
-              //   projectId={issue?.project}
               value={authorIds}
               onChange={() => {}}
               disabled
@@ -95,10 +141,9 @@ export const NotificationItem: FC<INotificationItem> = observer((props) => {
       </Popover.Button>
       <Transition
         as={"div"}
-        enter="transition ease-out duration-200"
-        show={openState && unreadCount > 0}
-        onMouseEnter={() => setOpenState(true)}
-        onMouseLeave={() => setOpenState(false)}
+        show={showPreview}
+        onMouseEnter={() => setShowPreview(true)}
+        onMouseLeave={() => setShowPreview(false)}
       >
         <Popover.Panel {...attributes.popper} className={""}>
           <div ref={setPopperElement} className={"absolute z-10"} style={styles.popper}>
@@ -106,6 +151,7 @@ export const NotificationItem: FC<INotificationItem> = observer((props) => {
               notificationGroup={notificationGroup}
               workspaceSlug={workspaceSlug}
               projectId={projectId}
+              issueData={issue}
             />
           </div>
         </Popover.Panel>
