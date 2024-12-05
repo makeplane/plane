@@ -70,6 +70,7 @@ var rootCmd = &cobra.Command{
 					setupResponse, err := api.InitializeInstance(prime_api.CredentialsPayload{
 						ServerId: MACHINE_SIGNATURE,
 						Domain:   APP_DOMAIN,
+						AppVersion: APP_VERSION,
 					})
 
 					if err != nil {

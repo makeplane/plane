@@ -43,6 +43,7 @@ type PrimeMonitorApi struct {
 type CredentialsPayload struct {
 	ServerId string
 	Domain   string
+	AppVersion string
 }
 
 type WorkspaceSubscriptionPayload struct {
@@ -254,6 +255,7 @@ func (api *PrimeMonitorApi) InitializeInstance(payload CredentialsPayload) (Setu
 	resp, err := api.post(api.host+SETUP_ENDPOINT, map[string]string{
 		"machine_signature": payload.ServerId,
 		"domain":            payload.Domain,
+		"app_version":       payload.AppVersion,
 		"deploy_platform":   "KUBERNETES",
 	})
 
