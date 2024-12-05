@@ -62,7 +62,7 @@ mkdir plane-selfhost
 
 cd plane-selfhost
 
-curl -fsSL -o setup.sh https://raw.githubusercontent.com/makeplane/plane/master/deploy/selfhost/install.sh
+curl -fsSL -o setup.sh https://github.com/makeplane/plane/releases/latest/download/setup.sh
 
 chmod +x setup.sh
 ```

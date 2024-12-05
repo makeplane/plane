@@ -7,8 +7,9 @@ PLANE_INSTALL_DIR=$PWD/$SERVICE_FOLDER
 export APP_RELEASE=stable
 export DOCKERHUB_USER=makeplane
 export PULL_POLICY=${PULL_POLICY:-if_not_present}
-export RELEASE_DOWNLOAD_URL="https://github.com/makeplane/plane/releases/download"
-export FALLBACK_DOWNLOAD_URL="https://raw.githubusercontent.com/makeplane/plane/$BRANCH/deploy/selfhost"
+export GH_REPO=makeplane/plane
+export RELEASE_DOWNLOAD_URL="https://github.com/$GH_REPO/releases/download"
+export FALLBACK_DOWNLOAD_URL="https://raw.githubusercontent.com/$GH_REPO/$BRANCH/deploy/selfhost"
 
 CPU_ARCH=$(uname -m)
 OS_NAME=$(uname)
@@ -56,7 +57,7 @@ function spinner() {
 
 function checkLatestRelease(){
     echo "Checking for the latest release..." >&2
-    local latest_release=$(curl -s https://api.github.com/repos/makeplane/plane/releases/latest |  grep -o '"tag_name": "[^"]*"' | sed 's/"tag_name": "//;s/"//g')
+    local latest_release=$(curl -s https://api.github.com/repos/$GH_REPO/releases/latest |  grep -o '"tag_name": "[^"]*"' | sed 's/"tag_name": "//;s/"//g')
     if [ -z "$latest_release" ]; then
         echo "Failed to check for the latest release. Exiting..." >&2
         exit 1
@@ -200,7 +201,7 @@ function buildYourOwnImage(){
     local PLANE_TEMP_CODE_DIR=~/tmp/plane
     rm -rf $PLANE_TEMP_CODE_DIR
     mkdir -p $PLANE_TEMP_CODE_DIR
-    REPO=https://github.com/makeplane/plane.git
+    REPO=https://github.com/$GH_REPO.git
     git clone "$REPO" "$PLANE_TEMP_CODE_DIR"  --branch "$BRANCH" --single-branch --depth 1
 
     cp "$PLANE_TEMP_CODE_DIR/deploy/selfhost/build.yml" "$PLANE_TEMP_CODE_DIR/build.yml"
@@ -221,6 +222,10 @@ function buildYourOwnImage(){
 function install() {
     echo "Begin Installing Plane"
     echo ""
+
+    if [ "$APP_RELEASE" == "stable" ]; then
+        export APP_RELEASE=$(checkLatestRelease)
+    fi
 
     local build_image=$(initialize)
 
