@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: Props) {
   }
 }
 
-export default async function IssuesLayout(props: Props) {
+export default async function ViewsLayout(props: Props) {
   const { children, params } = props;
   const { anchor } = params;
 
