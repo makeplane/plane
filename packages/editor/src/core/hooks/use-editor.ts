@@ -46,6 +46,7 @@ export interface CustomEditorProps {
   autofocus?: boolean;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   provider?: HocuspocusProvider;
+  providerDocument?: Y.Doc;
   tabIndex?: number;
   // undefined when prop is not passed, null if intentionally passed to stop
   // swr syncing
@@ -68,9 +69,10 @@ export const useEditor = (props: CustomEditorProps) => {
     onChange,
     onTransaction,
     placeholder,
+    provider,
+    providerDocument,
     tabIndex,
     value,
-    provider,
     autofocus = false,
   } = props;
   // states
@@ -217,7 +219,7 @@ export const useEditor = (props: CustomEditorProps) => {
         return markdownOutput;
       },
       getDocument: () => {
-        const documentBinary = provider?.document ? Y.encodeStateAsUpdate(provider?.document) : null;
+        const documentBinary = providerDocument ? Y.encodeStateAsUpdate(providerDocument) : null;
         const documentHTML = editorRef.current?.getHTML() ?? "<p></p>";
         const documentJSON = editorRef.current?.getJSON() ?? null;
 
@@ -295,7 +297,7 @@ export const useEditor = (props: CustomEditorProps) => {
         words: editorRef?.current?.storage?.characterCount?.words?.() ?? 0,
       }),
       setProviderDocument: (value) => {
-        const document = provider?.document;
+        const document = providerDocument;
         if (!document) return;
         Y.applyUpdate(document, value);
       },

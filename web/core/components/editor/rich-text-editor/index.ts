@@ -1,2 +1,4 @@
-export * from "./rich-text-editor";
-export * from "./rich-text-read-only-editor";
+export * from "./collaborative-editor";
+export * from "./collaborative-read-only-editor";
+export * from "./editor";
+export * from "./read-only-editor";

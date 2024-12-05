@@ -7,9 +7,9 @@ import { HeadingListExtension } from "@/extensions";
 // hooks
 import { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
 // types
-import { TReadOnlyCollaborativeEditorProps } from "@/types";
+import { TCollaborativeDocumentReadOnlyEditorHookProps } from "@/types";
 
-export const useReadOnlyCollaborativeEditor = (props: TReadOnlyCollaborativeEditorProps) => {
+export const useCollaborativeDocumentReadOnlyEditor = (props: TCollaborativeDocumentReadOnlyEditorHookProps) => {
   const {
     disabledExtensions,
     editorClassName,
@@ -82,6 +82,7 @@ export const useReadOnlyCollaborativeEditor = (props: TReadOnlyCollaborativeEdit
     handleEditorReady,
     mentionHandler,
     provider,
+    providerDocument: provider.document,
   });
 
   return {

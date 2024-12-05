@@ -53,4 +53,14 @@ urlpatterns = [
         ),
         name="inbox-issue",
     ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/inbox-issues/<uuid:pk>/description/",
+        IntakeIssueViewSet.as_view(
+            {
+                "get": "retrieve_description",
+                "post": "update_description",
+            }
+        ),
+        name="inbox-issue-description",
+    ),
 ]

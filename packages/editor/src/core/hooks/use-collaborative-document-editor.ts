@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useImperativeHandle, useMemo, useState } from "react";
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import Collaboration from "@tiptap/extension-collaboration";
 import { IndexeddbPersistence } from "y-indexeddb";
@@ -9,9 +9,9 @@ import { useEditor } from "@/hooks/use-editor";
 // plane editor extensions
 import { DocumentEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
-import { TCollaborativeEditorProps } from "@/types";
+import { TCollaborativeDocumentEditorHookProps } from "@/types";
 
-export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
+export const useCollaborativeDocumentEditor = (props: TCollaborativeDocumentEditorHookProps) => {
   const {
     onTransaction,
     disabledExtensions,
@@ -102,6 +102,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     mentionHandler,
     placeholder,
     provider,
+    providerDocument: provider.document,
     tabIndex,
   });
 

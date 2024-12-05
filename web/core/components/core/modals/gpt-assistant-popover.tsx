@@ -9,7 +9,7 @@ import { Popover, Transition } from "@headlessui/react";
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { RichTextReadOnlyEditor } from "@/components/editor/rich-text-editor/rich-text-read-only-editor";
+import { RichTextReadOnlyEditor } from "@/components/editor";
 // services
 import { AIService } from "@/services/ai.service";
 

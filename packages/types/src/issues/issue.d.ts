@@ -50,6 +50,7 @@ export type IssueRelation = {
 };
 
 export type TIssue = TBaseIssue & {
+  description_binary?: string;
   description_html?: string;
   is_subscribed?: boolean;
   parent?: Partial<TBaseIssue>;

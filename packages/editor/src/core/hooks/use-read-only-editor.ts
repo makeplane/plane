@@ -32,6 +32,7 @@ interface CustomReadOnlyEditorProps {
     highlights: () => Promise<IMentionHighlight[]>;
   };
   provider?: HocuspocusProvider;
+  providerDocument?: Y.Doc;
 }
 
 export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
@@ -46,6 +47,7 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
     handleEditorReady,
     mentionHandler,
     provider,
+    providerDocument,
   } = props;
 
   const editor = useCustomEditor({
@@ -95,7 +97,7 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
       return markdownOutput;
     },
     getDocument: () => {
-      const documentBinary = provider?.document ? Y.encodeStateAsUpdate(provider?.document) : null;
+      const documentBinary = providerDocument ? Y.encodeStateAsUpdate(providerDocument) : null;
       const documentHTML = editorRef.current?.getHTML() ?? "<p></p>";
       const documentJSON = editorRef.current?.getJSON() ?? null;
 
