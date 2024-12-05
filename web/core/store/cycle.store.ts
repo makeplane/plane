@@ -66,6 +66,7 @@ export interface ICycleStore {
   validateDate: (workspaceSlug: string, projectId: string, payload: CycleDateCheckData) => Promise<any>;
   setPlotType: (cycleId: string, plotType: TCyclePlotType) => void;
   setEstimateType: (cycleId: string, estimateType: TCycleEstimateType) => void;
+  updateWorkspaceUserActiveCycleCount: (workspaceSlug: string, increment: number) => void;
   // fetch
   fetchWorkspaceCycles: (workspaceSlug: string) => Promise<ICycle[]>;
   fetchAllCycles: (workspaceSlug: string, projectId: string) => Promise<undefined | ICycle[]>;
@@ -153,6 +154,7 @@ export class CycleStore implements ICycleStore {
       removeCycleFromFavorites: action,
       archiveCycle: action,
       restoreCycle: action,
+      updateWorkspaceUserActiveCycleCount: action,
     });
 
     this.rootStore = _rootStore;
@@ -277,7 +279,7 @@ export class CycleStore implements ICycleStore {
   getIsPointsDataAvailable = computedFn((cycleId: string) => {
     const cycle = this.cycleMap[cycleId];
     if (!cycle) return false;
-    if (this.cycleMap[cycleId].version === 2) return cycle.progress.some((p) => p.total_estimate_points > 0);
+    if (this.cycleMap[cycleId].version === 2) return cycle.progress?.some((p) => p.total_estimate_points > 0);
     else if (this.cycleMap[cycleId].version === 1) {
       const completionChart = cycle.estimate_distribution?.completion_chart || {};
       return !isEmpty(completionChart) && Object.keys(completionChart).some((p) => completionChart[p]! > 0);
@@ -442,6 +444,13 @@ export class CycleStore implements ICycleStore {
   setEstimateType = (cycleId: string, estimateType: TCycleEstimateType) => {
     set(this.estimatedType, [cycleId], estimateType);
   };
+
+  updateWorkspaceUserActiveCycleCount(workspaceSlug: string, increment: number) {
+    const workspaceUserInfo = this.rootStore.user.permission.workspaceUserInfo;
+    const currentCount = workspaceUserInfo[workspaceSlug]?.active_cycles_count ?? 0;
+
+    set(workspaceUserInfo, [workspaceSlug, "active_cycles_count"], currentCount + increment);
+  }
 
   /**
    * @description fetch all cycles
@@ -634,6 +643,10 @@ export class CycleStore implements ICycleStore {
       await this.cycleService.createCycle(workspaceSlug, projectId, data).then((response) => {
         runInAction(() => {
           set(this.cycleMap, [response.id], response);
+          if (response.status?.toLowerCase() === "current") {
+            // Update workspace active cycle count in workspaceUserInfo
+            this.updateWorkspaceUserActiveCycleCount(workspaceSlug, 1);
+          }
         });
         return response;
       })
@@ -672,6 +685,10 @@ export class CycleStore implements ICycleStore {
   deleteCycle = async (workspaceSlug: string, projectId: string, cycleId: string) =>
     await this.cycleService.deleteCycle(workspaceSlug, projectId, cycleId).then(() => {
       runInAction(() => {
+        if (this.cycleMap[cycleId].status?.toLowerCase() === "current") {
+          // Update workspace active cycle count in workspaceUserInfo
+          this.updateWorkspaceUserActiveCycleCount(workspaceSlug, -1);
+        }
         delete this.cycleMap[cycleId];
         delete this.activeCycleIdMap[cycleId];
         if (this.rootStore.favorite.entityMap[cycleId]) this.rootStore.favorite.removeFavoriteFromStore(cycleId);

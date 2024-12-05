@@ -16,3 +16,7 @@ export const LIVE_URL = encodeURI(`${LIVE_BASE_URL}${LIVE_BASE_PATH}/`);
 // plane website url
 export const WEBSITE_URL =
   process.env.NEXT_PUBLIC_WEBSITE_URL || "https://plane.so";
+// Silo Base Url
+export const SILO_BASE_URL = process.env.NEXT_PUBLIC_SILO_BASE_URL || "";
+export const SILO_BASE_PATH = process.env.NEXT_PUBLIC_SILO_BASE_PATH || "";
+export const SILO_URL = encodeURI(`${SILO_BASE_URL}${SILO_BASE_PATH}/`);

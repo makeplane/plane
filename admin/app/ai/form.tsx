@@ -49,7 +49,7 @@ export const InstanceAIForm: FC<IInstanceAIForm> = (props) => {
           </a>
         </>
       ),
-      placeholder: "gpt-3.5-turbo",
+      placeholder: "gpt-4o-mini",
       error: Boolean(errors.GPT_ENGINE),
       required: false,
     },
