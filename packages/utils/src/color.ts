@@ -1,32 +1,53 @@
 /**
  * Represents an RGB color with numeric values for red, green, and blue components
- * @typedef {Object} TRgb
+ * @typedef {Object} RGB
  * @property {number} r - Red component (0-255)
  * @property {number} g - Green component (0-255)
  * @property {number} b - Blue component (0-255)
  */
-export type TRgb = { r: number; g: number; b: number };
+export type RGB = { r: number; g: number; b: number };
+
+/**
+ * Validates and clamps color values to RGB range (0-255)
+ * @param {number} value - The color value to validate
+ * @returns {number} Clamped and floored value between 0-255
+ */
+export const validateColor = (value: number) => {
+  if (value < 0) return 0;
+  if (value > 255) return 255;
+  return Math.floor(value);
+};
+
+/**
+ * Converts a decimal color value to two-character hex
+ * @param {number} value - Decimal color value (0-255)
+ * @returns {string} Two-character hex value with leading zero if needed
+ */
+export const toHex = (value: number) => validateColor(value).toString(16).padStart(2, "0");
 
 /**
  * Converts a hexadecimal color code to RGB values
  * @param {string} hex - The hexadecimal color code (e.g., "#ff0000" for red)
- * @returns {TRgb} An object containing the RGB values
+ * @returns {RGB} An object containing the RGB values
  * @example
  * hexToRgb("#ff0000") // returns { r: 255, g: 0, b: 0 }
  * hexToRgb("#00ff00") // returns { r: 0, g: 255, b: 0 }
  * hexToRgb("#0000ff") // returns { r: 0, g: 0, b: 255 }
  */
-export const hexToRgb = (hex: string): TRgb => {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-
-  return { r, g, b };
+export const hexToRgb = (hex: string): RGB => {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex.trim());
+  return result
+    ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16),
+      }
+    : { r: 0, g: 0, b: 0 };
 };
 
 /**
  * Converts RGB values to a hexadecimal color code
- * @param {TRgb} rgb - An object containing RGB values
+ * @param {RGB} rgb - An object containing RGB values
  * @param {number} rgb.r - Red component (0-255)
  * @param {number} rgb.g - Green component (0-255)
  * @param {number} rgb.b - Blue component (0-255)
@@ -36,12 +57,4 @@ export const hexToRgb = (hex: string): TRgb => {
  * rgbToHex({ r: 0, g: 255, b: 0 }) // returns "#00ff00"
  * rgbToHex({ r: 0, g: 0, b: 255 }) // returns "#0000ff"
  */
-export const rgbToHex = (rgb: TRgb): string => {
-  const { r, g, b } = rgb;
-
-  const hexR = r.toString(16).padStart(2, "0");
-  const hexG = g.toString(16).padStart(2, "0");
-  const hexB = b.toString(16).padStart(2, "0");
-
-  return `#${hexR}${hexG}${hexB}`;
-};
+export const rgbToHex = ({ r, g, b }: RGB): string => `#${toHex(r)}${toHex(g)}${toHex(b)}`;
