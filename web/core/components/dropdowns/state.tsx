@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { ReactNode, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
@@ -124,11 +124,6 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
     setIsOpen,
     setQuery,
   });
-
-  useEffect(() => {
-    if (projectId) onOpen();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectId]);
 
   const dropdownOnChange = (val: string) => {
     onChange(val);
