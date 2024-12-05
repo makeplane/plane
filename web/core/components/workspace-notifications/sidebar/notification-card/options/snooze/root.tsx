@@ -34,7 +34,7 @@ export const NotificationItemSnoozeOption: FC<TNotificationItemSnoozeOption> = o
   const handleNotificationSnoozeDate = async (snoozeTill: Date | undefined) => {
     if (snoozeTill) {
       try {
-        snoozeNotification(workspaceSlug, snoozeTill);
+        await snoozeNotification(workspaceSlug, snoozeTill);
         setToast({
           title: "Success!",
           message: "Notification snoozed successfully",
