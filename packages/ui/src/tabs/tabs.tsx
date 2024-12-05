@@ -2,7 +2,7 @@ import React, { FC, Fragment } from "react";
 import { Tab } from "@headlessui/react";
 import { LucideProps } from "lucide-react";
 // helpers
-import { useLocalStorage } from "@plane/helpers";
+import { useLocalStorage } from "@plane/hooks";
 import { cn } from "../../helpers";
 
 type TabItem = {

@@ -2,7 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
-import { DragLocationHistory, ElementDragPayload, DropTargetRecord } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
+import {
+  DragLocationHistory,
+  ElementDragPayload,
+  DropTargetRecord,
+} from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/element/pointer-outside-of-preview";
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
@@ -15,7 +19,7 @@ import { PenSquare, Star, MoreHorizontal, ChevronRight, GripVertical } from "luc
 import { Disclosure, Transition } from "@headlessui/react";
 
 // plane helpers
-import { useOutsideClickDetector } from "@plane/helpers";
+import { useOutsideClickDetector } from "@plane/hooks";
 // ui
 import { IFavorite, InstructionType } from "@plane/types";
 import { CustomMenu, Tooltip, DropIndicator, FavoriteFolderIcon, DragHandle } from "@plane/ui";
@@ -34,7 +38,7 @@ type Props = {
   favorite: IFavorite;
   handleRemoveFromFavorites: (favorite: IFavorite) => void;
   handleRemoveFromFavoritesFolder: (favoriteId: string) => void;
-  handleDrop: (self: DropTargetRecord,source: ElementDragPayload, location: DragLocationHistory) => void;
+  handleDrop: (self: DropTargetRecord, source: ElementDragPayload, location: DragLocationHistory) => void;
 };
 
 export const FavoriteFolder: React.FC<Props> = (props) => {
@@ -65,7 +69,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
         element,
         getInitialData: () => initialData,
         onDragStart: () => setIsDragging(true),
-        onGenerateDragPreview: ({ nativeSetDragImage }) =>{
+        onGenerateDragPreview: ({ nativeSetDragImage }) => {
           setCustomNativeDragPreview({
             getOffset: pointerOutsideOfPreview({ x: "0px", y: "0px" }),
             render: ({ container }) => {
@@ -84,44 +88,42 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
           });
         },
         onDrop: () => {
-          setIsDragging(false)
+          setIsDragging(false);
         }, // canDrag: () => isDraggable,
       }),
       dropTargetForElements({
         element,
         canDrop: ({ source }) => getCanDrop(source, favorite, false),
-        getData: ({ input, element }) =>{
-
+        getData: ({ input, element }) => {
           const blockedStates: InstructionType[] = [];
-          if(!isLastChild){
-            blockedStates.push('reorder-below');
+          if (!isLastChild) {
+            blockedStates.push("reorder-below");
           }
 
-          return attachInstruction(initialData,{
+          return attachInstruction(initialData, {
             input,
             element,
             currentLevel: 0,
             indentPerLevel: 0,
-            mode: isLastChild ? 'last-in-group' : 'standard',
-            block: blockedStates
-          })
+            mode: isLastChild ? "last-in-group" : "standard",
+            block: blockedStates,
+          });
         },
-        onDrag: ({source, self, location}) => {
-          const instruction = getInstructionFromPayload(self,source, location);
+        onDrag: ({ source, self, location }) => {
+          const instruction = getInstructionFromPayload(self, source, location);
           setInstruction(instruction);
         },
         onDragLeave: () => {
           setInstruction(undefined);
         },
-        onDrop: ({ self, source, location})=>{
+        onDrop: ({ self, source, location }) => {
           setInstruction(undefined);
-          handleDrop(self, source,location);
-        }
+          handleDrop(self, source, location);
+        },
       })
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDragging, favorite.id ]);
-
+  }, [isDragging, favorite.id]);
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
 
@@ -140,11 +142,11 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
             // id={`sidebar-${projectId}-${projectListType}`}
             className={cn("relative", {
               "bg-custom-sidebar-background-80 opacity-60": isDragging,
-              "border-[2px] border-custom-primary-100" : instruction === 'make-child'
+              "border-[2px] border-custom-primary-100": instruction === "make-child",
             })}
           >
             {/* draggable drop top indicator */}
-            <DropIndicator isVisible={instruction === "reorder-above"}/>
+            <DropIndicator isVisible={instruction === "reorder-above"} />
             <div
               className={cn(
                 "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-90",
@@ -283,7 +285,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                     "px-2": !isSidebarCollapsed,
                   })}
                 >
-                  {orderBy(favorite.children,'sequence','desc').map((child,index) => (
+                  {orderBy(favorite.children, "sequence", "desc").map((child, index) => (
                     <FavoriteRoot
                       key={child.id}
                       workspaceSlug={workspaceSlug.toString()}
@@ -298,7 +300,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
               </Transition>
             )}
             {/* draggable drop bottom indicator */}
-            { isLastChild && <DropIndicator isVisible={instruction === "reorder-below"} />}
+            {isLastChild && <DropIndicator isVisible={instruction === "reorder-below"} />}
           </div>
         )}
       </Disclosure>

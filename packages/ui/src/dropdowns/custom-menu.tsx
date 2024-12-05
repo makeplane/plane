@@ -4,7 +4,7 @@ import { Menu } from "@headlessui/react";
 import { usePopper } from "react-popper";
 import { ChevronDown, MoreHorizontal } from "lucide-react";
 // plane helpers
-import { useOutsideClickDetector } from "@plane/helpers";
+import { useOutsideClickDetector } from "@plane/hooks";
 // hooks
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 // helpers
