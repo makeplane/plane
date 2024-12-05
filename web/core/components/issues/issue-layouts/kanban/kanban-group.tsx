@@ -26,6 +26,9 @@ import { cn } from "@/helpers/common.helper";
 import { useProjectState } from "@/hooks/store";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
+// Plane-web
+import { useWorkFlowFDragNDrop } from "@/plane-web/components/workflow";
+//
 import { GroupDragOverlay } from "../group-drag-overlay";
 import { TRenderQuickActions } from "../list/list-view-types";
 import { GroupDropLocation, getSourceFromDropPayload, getDestinationFromDropPayload, getIssueBlockId } from "../utils";
@@ -103,6 +106,11 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
   );
   const [isDraggingOverColumn, setIsDraggingOverColumn] = useState(false);
 
+  const { workflowDisabledSource, isWorkflowDropDisabled, handleWorkFlowState } = useWorkFlowFDragNDrop(
+    group_by,
+    sub_group_by
+  );
+
   // Enable Kanban Columns as Drop Targets
   useEffect(() => {
     const element = columnRef.current;
@@ -113,14 +121,24 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
       dropTargetForElements({
         element,
         getData: () => ({ groupId, subGroupId: sub_group_id, columnId: `${groupId}__${sub_group_id}`, type: "COLUMN" }),
-        onDragEnter: () => {
+        onDragEnter: (payload) => {
+          const source = getSourceFromDropPayload(payload);
           setIsDraggingOverColumn(true);
+          // handle if dragging a workflowState
+          if (source) {
+            handleWorkFlowState(source?.groupId, groupId, source?.subGroupId, sub_group_id);
+          }
         },
         onDragLeave: () => {
           setIsDraggingOverColumn(false);
         },
-        onDragStart: () => {
+        onDragStart: (payload) => {
+          const source = getSourceFromDropPayload(payload);
           setIsDraggingOverColumn(true);
+          // handle if dragging a workflowState
+          if (source) {
+            handleWorkFlowState(source?.groupId, groupId, source?.subGroupId, sub_group_id);
+          }
         },
         onDrop: (payload) => {
           setIsDraggingOverColumn(false);
@@ -129,7 +147,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
 
           if (!source || !destination) return;
 
-          if (isDropDisabled) {
+          if (isWorkflowDropDisabled || isDropDisabled) {
             dropErrorMessage &&
               setToast({
                 type: TOAST_TYPE.WARNING,
@@ -158,6 +176,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
     setIsDraggingOverColumn,
     orderBy,
     isDropDisabled,
+    isWorkflowDropDisabled,
     dropErrorMessage,
     handleOnDrop,
   ]);
@@ -237,7 +256,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
   );
 
   const shouldLoadMore = nextPageResults === undefined ? issueIds?.length < groupIssueCount : !!nextPageResults;
-  const canOverlayBeVisible = orderBy !== "sort_order" || isDropDisabled;
+  const canOverlayBeVisible = isWorkflowDropDisabled || orderBy !== "sort_order" || isDropDisabled;
   const shouldOverlayBeVisible = isDraggingOverColumn && canOverlayBeVisible;
 
   return (
@@ -253,7 +272,8 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
       <GroupDragOverlay
         dragColumnOrientation={sub_group_by ? "justify-start" : "justify-center"}
         canOverlayBeVisible={canOverlayBeVisible}
-        isDropDisabled={isDropDisabled}
+        isDropDisabled={isWorkflowDropDisabled || isDropDisabled}
+        workflowDisabledSource={workflowDisabledSource}
         dropErrorMessage={dropErrorMessage}
         orderBy={orderBy}
         isDraggingOverColumn={isDraggingOverColumn}
