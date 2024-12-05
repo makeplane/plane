@@ -39,7 +39,7 @@ export interface IModuleStore {
   updateModuleDistribution: (distributionUpdates: DistributionUpdates, moduleId: string) => void;
   fetchWorkspaceModules: (workspaceSlug: string) => Promise<IModule[]>;
   fetchModules: (workspaceSlug: string, projectId: string) => Promise<undefined | IModule[]>;
-  fetchModulesSlim: (workspaceSlug: string, projectId: string) => Promise<undefined  | IModule[]>
+  fetchModulesSlim: (workspaceSlug: string, projectId: string) => Promise<undefined | IModule[]>;
   fetchArchivedModules: (workspaceSlug: string, projectId: string) => Promise<undefined | IModule[]>;
   fetchArchivedModuleDetails: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<IModule>;
   fetchModuleDetails: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<IModule>;
@@ -252,6 +252,11 @@ export class ModulesStore implements IModuleStore {
       runInAction(() => {
         response.forEach((module) => {
           set(this.moduleMap, [module.id], { ...this.moduleMap[module.id], ...module });
+        });
+        // check for all unique project ids and update the fetchedMap
+        const uniqueProjectIds = new Set(response.map((module) => module.project_id));
+        uniqueProjectIds.forEach((projectId) => {
+          set(this.fetchedMap, projectId, true);
         });
       });
       return response;
