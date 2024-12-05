@@ -1,44 +1,49 @@
 import ImageExt from "@tiptap/extension-image";
+import { ReactNodeViewRenderer } from "@tiptap/react";
 // helpers
 import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
 // plugins
-import {
-  IMAGE_NODE_TYPE,
-  ImageExtensionStorage,
-  TrackImageDeletionPlugin,
-  TrackImageRestorationPlugin,
-  UploadImagesPlugin,
-} from "@/plugins/image";
+import { ImageExtensionStorage, TrackImageDeletionPlugin, TrackImageRestorationPlugin } from "@/plugins/image";
 // types
-import { DeleteImage, RestoreImage } from "@/types";
+import { TFileHandler } from "@/types";
+// extensions
+import { CustomImageNode } from "@/extensions";
 
-export const ImageExtension = (deleteImage: DeleteImage, restoreImage: RestoreImage, cancelUploadImage?: () => void) =>
-  ImageExt.extend<any, ImageExtensionStorage>({
+export const ImageExtension = (fileHandler: TFileHandler) => {
+  const {
+    getAssetSrc,
+    delete: deleteImageFn,
+    restore: restoreImageFn,
+    validation: { maxFileSize },
+  } = fileHandler;
+
+  return ImageExt.extend<any, ImageExtensionStorage>({
     addKeyboardShortcuts() {
       return {
-        ArrowDown: insertEmptyParagraphAtNodeBoundaries("down", "image"),
-        ArrowUp: insertEmptyParagraphAtNodeBoundaries("up", "image"),
+        ArrowDown: insertEmptyParagraphAtNodeBoundaries("down", this.name),
+        ArrowUp: insertEmptyParagraphAtNodeBoundaries("up", this.name),
       };
     },
+
     addProseMirrorPlugins() {
       return [
-        UploadImagesPlugin(this.editor, cancelUploadImage),
-        TrackImageDeletionPlugin(this.editor, deleteImage),
-        TrackImageRestorationPlugin(this.editor, restoreImage),
+        TrackImageDeletionPlugin(this.editor, deleteImageFn, this.name),
+        TrackImageRestorationPlugin(this.editor, restoreImageFn, this.name),
       ];
     },
 
     onCreate(this) {
       const imageSources = new Set<string>();
       this.editor.state.doc.descendants((node) => {
-        if (node.type.name === IMAGE_NODE_TYPE) {
+        if (node.type.name === this.name) {
+          if (!node.attrs.src?.startsWith("http")) return;
+
           imageSources.add(node.attrs.src);
         }
       });
       imageSources.forEach(async (src) => {
         try {
-          const assetUrlWithWorkspaceId = new URL(src).pathname.substring(1);
-          await restoreImage(assetUrlWithWorkspaceId);
+          await restoreImageFn(src);
         } catch (error) {
           console.error("Error restoring image: ", error);
         }
@@ -50,6 +55,7 @@ export const ImageExtension = (deleteImage: DeleteImage, restoreImage: RestoreIm
       return {
         deletedImageSet: new Map<string, boolean>(),
         uploadInProgress: false,
+        maxFileSize,
       };
     },
 
@@ -62,6 +68,21 @@ export const ImageExtension = (deleteImage: DeleteImage, restoreImage: RestoreIm
         height: {
           default: null,
         },
+        aspectRatio: {
+          default: null,
+        },
       };
     },
+
+    addCommands() {
+      return {
+        getImageSource: (path: string) => async () => await getAssetSrc(path),
+      };
+    },
+
+    // render custom image node
+    addNodeView() {
+      return ReactNodeViewRenderer(CustomImageNode);
+    },
   });
+};

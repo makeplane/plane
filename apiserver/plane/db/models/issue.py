@@ -9,10 +9,12 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models, transaction
 from django.utils import timezone
 from django.db.models import Q
+from django import apps
 
 # Module imports
 from plane.utils.html_processor import strip_tags
-
+from plane.db.mixins import SoftDeletionManager
+from plane.utils.exception_logger import log_exception
 from .project import ProjectBaseModel
 
 
@@ -79,16 +81,16 @@ def get_default_display_properties():
 
 
 # TODO: Handle identifiers for Bulk Inserts - nk
-class IssueManager(models.Manager):
+class IssueManager(SoftDeletionManager):
     def get_queryset(self):
         return (
             super()
             .get_queryset()
             .filter(
-                models.Q(issue_inbox__status=1)
-                | models.Q(issue_inbox__status=-1)
-                | models.Q(issue_inbox__status=2)
-                | models.Q(issue_inbox__isnull=True)
+                models.Q(issue_intake__status=1)
+                | models.Q(issue_intake__status=-1)
+                | models.Q(issue_intake__status=2)
+                | models.Q(issue_intake__isnull=True)
             )
             .filter(deleted_at__isnull=True)
             .filter(state__is_triage=False)
@@ -121,9 +123,7 @@ class Issue(ProjectBaseModel):
         related_name="state_issue",
     )
     point = models.IntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(12)],
-        null=True,
-        blank=True,
+        validators=[MinValueValidator(0), MaxValueValidator(12)], null=True, blank=True
     )
     estimate_point = models.ForeignKey(
         "db.EstimatePoint",
@@ -152,9 +152,7 @@ class Issue(ProjectBaseModel):
         through="IssueAssignee",
         through_fields=("issue", "assignee"),
     )
-    sequence_id = models.IntegerField(
-        default=1, verbose_name="Issue Sequence ID"
-    )
+    sequence_id = models.IntegerField(default=1, verbose_name="Issue Sequence ID")
     labels = models.ManyToManyField(
         "db.Label", blank=True, related_name="labels", through="IssueLabel"
     )
@@ -172,7 +170,6 @@ class Issue(ProjectBaseModel):
         blank=True,
     )
 
-    objects = models.Manager()
     issue_objects = IssueManager()
 
     class Meta:
@@ -187,9 +184,7 @@ class Issue(ProjectBaseModel):
                 from plane.db.models import State
 
                 default_state = State.objects.filter(
-                    ~models.Q(is_triage=True),
-                    project=self.project,
-                    default=True,
+                    ~models.Q(is_triage=True), project=self.project, default=True
                 ).first()
                 if default_state is None:
                     random_state = State.objects.filter(
@@ -222,10 +217,7 @@ class Issue(ProjectBaseModel):
                 # Strip the html tags using html parser
                 self.description_stripped = (
                     None
-                    if (
-                        self.description_html == ""
-                        or self.description_html is None
-                    )
+                    if (self.description_html == "" or self.description_html is None)
                     else strip_tags(self.description_html)
                 )
                 largest_sort_order = Issue.objects.filter(
@@ -243,10 +235,7 @@ class Issue(ProjectBaseModel):
             # Strip the html tags using html parser
             self.description_stripped = (
                 None
-                if (
-                    self.description_html == ""
-                    or self.description_html is None
-                )
+                if (self.description_html == "" or self.description_html is None)
                 else strip_tags(self.description_html)
             )
             super(Issue, self).save(*args, **kwargs)
@@ -279,6 +268,8 @@ class IssueRelation(ProjectBaseModel):
         ("duplicate", "Duplicate"),
         ("relates_to", "Relates To"),
         ("blocked_by", "Blocked By"),
+        ("start_before", "Start Before"),
+        ("finish_before", "Finish Before"),
     )
 
     issue = models.ForeignKey(
@@ -317,9 +308,7 @@ class IssueMention(ProjectBaseModel):
         Issue, on_delete=models.CASCADE, related_name="issue_mention"
     )
     mention = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="issue_mention",
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="issue_mention"
     )
 
     class Meta:
@@ -398,12 +387,7 @@ def file_size(value):
 
 class IssueAttachment(ProjectBaseModel):
     attributes = models.JSONField(default=dict)
-    asset = models.FileField(
-        upload_to=get_upload_path,
-        validators=[
-            file_size,
-        ],
-    )
+    asset = models.FileField(upload_to=get_upload_path, validators=[file_size])
     issue = models.ForeignKey(
         "db.Issue", on_delete=models.CASCADE, related_name="issue_attachment"
     )
@@ -422,28 +406,17 @@ class IssueAttachment(ProjectBaseModel):
 
 class IssueActivity(ProjectBaseModel):
     issue = models.ForeignKey(
-        Issue,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name="issue_activity",
+        Issue, on_delete=models.SET_NULL, null=True, related_name="issue_activity"
     )
-    verb = models.CharField(
-        max_length=255, verbose_name="Action", default="created"
-    )
+    verb = models.CharField(max_length=255, verbose_name="Action", default="created")
     field = models.CharField(
         max_length=255, verbose_name="Field Name", blank=True, null=True
     )
-    old_value = models.TextField(
-        verbose_name="Old Value", blank=True, null=True
-    )
-    new_value = models.TextField(
-        verbose_name="New Value", blank=True, null=True
-    )
+    old_value = models.TextField(verbose_name="Old Value", blank=True, null=True)
+    new_value = models.TextField(verbose_name="New Value", blank=True, null=True)
 
     comment = models.TextField(verbose_name="Comment", blank=True)
-    attachments = ArrayField(
-        models.URLField(), size=10, blank=True, default=list
-    )
+    attachments = ArrayField(models.URLField(), size=10, blank=True, default=list)
     issue_comment = models.ForeignKey(
         "db.IssueComment",
         on_delete=models.SET_NULL,
@@ -475,9 +448,7 @@ class IssueComment(ProjectBaseModel):
     comment_stripped = models.TextField(verbose_name="Comment", blank=True)
     comment_json = models.JSONField(blank=True, default=dict)
     comment_html = models.TextField(blank=True, default="<p></p>")
-    attachments = ArrayField(
-        models.URLField(), size=10, blank=True, default=list
-    )
+    attachments = ArrayField(models.URLField(), size=10, blank=True, default=list)
     issue = models.ForeignKey(
         Issue, on_delete=models.CASCADE, related_name="issue_comments"
     )
@@ -489,10 +460,7 @@ class IssueComment(ProjectBaseModel):
         null=True,
     )
     access = models.CharField(
-        choices=(
-            ("INTERNAL", "INTERNAL"),
-            ("EXTERNAL", "EXTERNAL"),
-        ),
+        choices=(("INTERNAL", "INTERNAL"), ("EXTERNAL", "EXTERNAL")),
         default="INTERNAL",
         max_length=100,
     )
@@ -524,9 +492,7 @@ class IssueUserProperty(ProjectBaseModel):
     )
     filters = models.JSONField(default=get_default_filters)
     display_filters = models.JSONField(default=get_default_display_filters)
-    display_properties = models.JSONField(
-        default=get_default_display_properties
-    )
+    display_properties = models.JSONField(default=get_default_display_properties)
 
     class Meta:
         verbose_name = "Issue User Property"
@@ -545,51 +511,6 @@ class IssueUserProperty(ProjectBaseModel):
     def __str__(self):
         """Return properties status of the issue"""
         return str(self.user)
-
-
-class Label(ProjectBaseModel):
-    parent = models.ForeignKey(
-        "self",
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name="parent_label",
-    )
-    name = models.CharField(max_length=255)
-    description = models.TextField(blank=True)
-    color = models.CharField(max_length=255, blank=True)
-    sort_order = models.FloatField(default=65535)
-    external_source = models.CharField(max_length=255, null=True, blank=True)
-    external_id = models.CharField(max_length=255, blank=True, null=True)
-
-    class Meta:
-        unique_together = ["name", "project", "deleted_at"]
-        constraints = [
-            models.UniqueConstraint(
-                fields=["name", "project"],
-                condition=Q(deleted_at__isnull=True),
-                name="label_unique_name_project_when_deleted_at_null",
-            )
-        ]
-        verbose_name = "Label"
-        verbose_name_plural = "Labels"
-        db_table = "labels"
-        ordering = ("-created_at",)
-
-    def save(self, *args, **kwargs):
-        if self._state.adding:
-            # Get the maximum sequence value from the database
-            last_id = Label.objects.filter(project=self.project).aggregate(
-                largest=models.Max("sort_order")
-            )["largest"]
-            # if last_id is not None
-            if last_id is not None:
-                self.sort_order = last_id + 10000
-
-        super(Label, self).save(*args, **kwargs)
-
-    def __str__(self):
-        return str(self.name)
 
 
 class IssueLabel(ProjectBaseModel):
@@ -691,9 +612,7 @@ class CommentReaction(ProjectBaseModel):
         related_name="comment_reactions",
     )
     comment = models.ForeignKey(
-        IssueComment,
-        on_delete=models.CASCADE,
-        related_name="comment_reactions",
+        IssueComment, on_delete=models.CASCADE, related_name="comment_reactions"
     )
     reaction = models.CharField(max_length=20)
 
@@ -716,28 +635,14 @@ class CommentReaction(ProjectBaseModel):
 
 
 class IssueVote(ProjectBaseModel):
-    issue = models.ForeignKey(
-        Issue, on_delete=models.CASCADE, related_name="votes"
-    )
+    issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name="votes")
     actor = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="votes",
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="votes"
     )
-    vote = models.IntegerField(
-        choices=(
-            (-1, "DOWNVOTE"),
-            (1, "UPVOTE"),
-        ),
-        default=1,
-    )
+    vote = models.IntegerField(choices=((-1, "DOWNVOTE"), (1, "UPVOTE")), default=1)
 
     class Meta:
-        unique_together = [
-            "issue",
-            "actor",
-            "deleted_at",
-        ]
+        unique_together = ["issue", "actor", "deleted_at"]
         constraints = [
             models.UniqueConstraint(
                 fields=["issue", "actor"],
@@ -752,3 +657,103 @@ class IssueVote(ProjectBaseModel):
 
     def __str__(self):
         return f"{self.issue.name} {self.actor.email}"
+
+
+class IssueVersion(ProjectBaseModel):
+    issue = models.ForeignKey(
+        "db.Issue", on_delete=models.CASCADE, related_name="versions"
+    )
+    PRIORITY_CHOICES = (
+        ("urgent", "Urgent"),
+        ("high", "High"),
+        ("medium", "Medium"),
+        ("low", "Low"),
+        ("none", "None"),
+    )
+    parent = models.UUIDField(blank=True, null=True)
+    state = models.UUIDField(blank=True, null=True)
+    estimate_point = models.UUIDField(blank=True, null=True)
+    name = models.CharField(max_length=255, verbose_name="Issue Name")
+    description = models.JSONField(blank=True, default=dict)
+    description_html = models.TextField(blank=True, default="<p></p>")
+    description_stripped = models.TextField(blank=True, null=True)
+    description_binary = models.BinaryField(null=True)
+    priority = models.CharField(
+        max_length=30,
+        choices=PRIORITY_CHOICES,
+        verbose_name="Issue Priority",
+        default="none",
+    )
+    start_date = models.DateField(null=True, blank=True)
+    target_date = models.DateField(null=True, blank=True)
+    sequence_id = models.IntegerField(default=1, verbose_name="Issue Sequence ID")
+    sort_order = models.FloatField(default=65535)
+    completed_at = models.DateTimeField(null=True)
+    archived_at = models.DateField(null=True)
+    is_draft = models.BooleanField(default=False)
+    external_source = models.CharField(max_length=255, null=True, blank=True)
+    external_id = models.CharField(max_length=255, blank=True, null=True)
+    type = models.UUIDField(blank=True, null=True)
+    last_saved_at = models.DateTimeField(default=timezone.now)
+    owned_by = models.UUIDField()
+    assignees = ArrayField(models.UUIDField(), blank=True, default=list)
+    labels = ArrayField(models.UUIDField(), blank=True, default=list)
+    cycle = models.UUIDField(null=True, blank=True)
+    modules = ArrayField(models.UUIDField(), blank=True, default=list)
+    properties = models.JSONField(default=dict)
+    meta = models.JSONField(default=dict)
+
+    class Meta:
+        verbose_name = "Issue Version"
+        verbose_name_plural = "Issue Versions"
+        db_table = "issue_versions"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.name} <{self.project.name}>"
+
+    @classmethod
+    def log_issue_version(cls, issue, user):
+        try:
+            """
+            Log the issue version
+            """
+
+            Module = apps.get_model("db.Module")
+            CycleIssue = apps.get_model("db.CycleIssue")
+
+            cycle_issue = CycleIssue.objects.filter(issue=issue).first()
+
+            cls.objects.create(
+                issue=issue,
+                parent=issue.parent,
+                state=issue.state,
+                point=issue.point,
+                estimate_point=issue.estimate_point,
+                name=issue.name,
+                description=issue.description,
+                description_html=issue.description_html,
+                description_stripped=issue.description_stripped,
+                description_binary=issue.description_binary,
+                priority=issue.priority,
+                start_date=issue.start_date,
+                target_date=issue.target_date,
+                sequence_id=issue.sequence_id,
+                sort_order=issue.sort_order,
+                completed_at=issue.completed_at,
+                archived_at=issue.archived_at,
+                is_draft=issue.is_draft,
+                external_source=issue.external_source,
+                external_id=issue.external_id,
+                type=issue.type,
+                last_saved_at=issue.last_saved_at,
+                assignees=issue.assignees,
+                labels=issue.labels,
+                cycle=cycle_issue.cycle if cycle_issue else None,
+                modules=Module.objects.filter(issue=issue).values_list("id", flat=True),
+                owned_by=user,
+            )
+            return True
+        except Exception as e:
+            log_exception(e)
+            return False

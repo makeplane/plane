@@ -79,7 +79,7 @@ export class UserStore implements IUserStore {
       first_name: this.data?.first_name,
       last_name: this.data?.last_name,
       display_name: this.data?.display_name,
-      avatar: this.data?.avatar || undefined,
+      avatar_url: this.data?.avatar_url || undefined,
       is_bot: false,
     };
   }

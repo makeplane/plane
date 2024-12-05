@@ -1,0 +1,96 @@
+:root {
+  /* text colors */
+  --editor-colors-gray-text: #5c5e63;
+  --editor-colors-peach-text: #ff5b59;
+  --editor-colors-pink-text: #f65385;
+  --editor-colors-orange-text: #fd9038;
+  --editor-colors-green-text: #0fc27b;
+  --editor-colors-light-blue-text: #17bee9;
+  --editor-colors-dark-blue-text: #266df0;
+  --editor-colors-purple-text: #9162f9;
+  /* end text colors */
+}
+
+/* text background colors */
+[data-theme="light"],
+[data-theme="light-contrast"] {
+  --editor-colors-gray-background: #d6d6d8;
+  --editor-colors-peach-background: #ffd5d7;
+  --editor-colors-pink-background: #fdd4e3;
+  --editor-colors-orange-background: #ffe3cd;
+  --editor-colors-green-background: #c3f0de;
+  --editor-colors-light-blue-background: #c5eff9;
+  --editor-colors-dark-blue-background: #c9dafb;
+  --editor-colors-purple-background: #e3d8fd;
+}
+[data-theme="dark"],
+[data-theme="dark-contrast"] {
+  --editor-colors-gray-background: #404144;
+  --editor-colors-peach-background: #593032;
+  --editor-colors-pink-background: #562e3d;
+  --editor-colors-orange-background: #583e2a;
+  --editor-colors-green-background: #1d4a3b;
+  --editor-colors-light-blue-background: #1f495c;
+  --editor-colors-dark-blue-background: #223558;
+  --editor-colors-purple-background: #3d325a;
+}
+/* end text background colors */
+
+.editor-container {
+  /* font sizes and line heights */
+  &.large-font {
+    --font-size-h1: 1.75rem;
+    --font-size-h2: 1.5rem;
+    --font-size-h3: 1.375rem;
+    --font-size-h4: 1.25rem;
+    --font-size-h5: 1.125rem;
+    --font-size-h6: 1rem;
+    --font-size-regular: 1rem;
+    --font-size-code: 0.85rem;
+    --font-size-list: var(--font-size-regular);
+
+    --line-height-h1: 2.25rem;
+    --line-height-h2: 2rem;
+    --line-height-h3: 1.75rem;
+    --line-height-h4: 1.5rem;
+    --line-height-h5: 1.5rem;
+    --line-height-h6: 1.5rem;
+    --line-height-regular: 1.5rem;
+    --line-height-code: 1.5rem;
+    --line-height-list: var(--line-height-regular);
+  }
+  &.small-font {
+    --font-size-h1: 1.4rem;
+    --font-size-h2: 1.2rem;
+    --font-size-h3: 1.1rem;
+    --font-size-h4: 1rem;
+    --font-size-h5: 0.9rem;
+    --font-size-h6: 0.8rem;
+    --font-size-regular: 0.8rem;
+    --font-size-code: 0.8rem;
+    --font-size-list: var(--font-size-regular);
+
+    --line-height-h1: 1.8rem;
+    --line-height-h2: 1.6rem;
+    --line-height-h3: 1.4rem;
+    --line-height-h4: 1.2rem;
+    --line-height-h5: 1.2rem;
+    --line-height-h6: 1.2rem;
+    --line-height-regular: 1.2rem;
+    --line-height-code: 1.2rem;
+    --line-height-list: var(--line-height-regular);
+  }
+  /* end font sizes and line heights */
+
+  /* font styles */
+  &.sans-serif {
+    --font-style: "Inter", sans-serif;
+  }
+  &.serif {
+    --font-style: serif;
+  }
+  &.monospace {
+    --font-style: monospace;
+  }
+  /* end font styles */
+}

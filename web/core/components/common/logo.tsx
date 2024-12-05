@@ -1,13 +1,13 @@
 "use client";
 
 import { FC } from "react";
-// emoji-picker-react
 import { Emoji } from "emoji-picker-react";
-// import { icons } from "lucide-react";
 import useFontFaceObserver from "use-font-face-observer";
+// types
 import { TLogoProps } from "@plane/types";
-// helpers
+// ui
 import { LUCIDE_ICONS_LIST } from "@plane/ui";
+// helpers
 import { emojiCodeToUnicode } from "@/helpers/emoji.helper";
 
 type Props = {

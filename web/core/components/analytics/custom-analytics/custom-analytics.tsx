@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -5,13 +6,13 @@ import useSWR from "swr";
 import { IAnalyticsParams } from "@plane/types";
 // services
 // components
-import { ContentWrapper } from "@plane/ui";
 import { CustomAnalyticsSelectBar, CustomAnalyticsMainContent, CustomAnalyticsSidebar } from "@/components/analytics";
 // types
 // fetch-keys
 import { ANALYTICS } from "@/constants/fetch-keys";
 import { cn } from "@/helpers/common.helper";
 import { useAppTheme } from "@/hooks/store";
+import { hideFloatingBot, showFloatingBot } from "@/plane-web/helpers/pi-chat.helper";
 import { AnalyticsService } from "@/services/analytics.service";
 
 type Props = {
@@ -52,9 +53,16 @@ export const CustomAnalytics: React.FC<Props> = observer((props) => {
 
   const isProjectLevel = projectId ? true : false;
 
+  useEffect(() => {
+    hideFloatingBot();
+    return () => {
+      showFloatingBot();
+    };
+  }, []);
+
   return (
     <div className={cn("relative flex h-full w-full overflow-hidden", isProjectLevel ? "flex-col-reverse" : "")}>
-      <ContentWrapper>
+      <div className="flex h-full w-full flex-col overflow-hidden">
         <CustomAnalyticsSelectBar
           control={control}
           setValue={setValue}
@@ -68,7 +76,7 @@ export const CustomAnalytics: React.FC<Props> = observer((props) => {
           params={params}
           fullScreen={fullScreen}
         />
-      </ContentWrapper>
+      </div>
 
       <div
         className={cn(

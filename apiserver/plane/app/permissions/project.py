@@ -7,7 +7,6 @@ from plane.db.models import ProjectMember, WorkspaceMember
 # Permission Mappings
 Admin = 20
 Member = 15
-Viewer = 10
 Guest = 5
 
 
@@ -19,9 +18,7 @@ class ProjectBasePermission(BasePermission):
         ## Safe Methods -> Handle the filtering logic in queryset
         if request.method in SAFE_METHODS:
             return WorkspaceMember.objects.filter(
-                workspace__slug=view.workspace_slug,
-                member=request.user,
-                is_active=True,
+                workspace__slug=view.workspace_slug, member=request.user, is_active=True
             ).exists()
 
         ## Only workspace owners or admins can create the projects
@@ -51,9 +48,7 @@ class ProjectMemberPermission(BasePermission):
         ## Safe Methods -> Handle the filtering logic in queryset
         if request.method in SAFE_METHODS:
             return ProjectMember.objects.filter(
-                workspace__slug=view.workspace_slug,
-                member=request.user,
-                is_active=True,
+                workspace__slug=view.workspace_slug, member=request.user, is_active=True
             ).exists()
         ## Only workspace owners or admins can create the projects
         if request.method == "POST":

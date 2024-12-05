@@ -33,6 +33,7 @@ export interface IArchivedIssuesFilter extends IBaseIssueFilterStore {
     groupId: string | undefined,
     subGroupId: string | undefined
   ) => Partial<Record<TIssueParams, string | boolean>>;
+  getIssueFilters(projectId: string): IIssueFilters | undefined;
   // action
   fetchFilters: (workspaceSlug: string, projectId: string) => Promise<void>;
   updateFilters: (
@@ -124,36 +125,27 @@ export class ArchivedIssuesFilter extends IssueFilterHelperStore implements IArc
   );
 
   fetchFilters = async (workspaceSlug: string, projectId: string) => {
-    try {
-      const _filters = this.handleIssuesLocalFilters.get(
-        EIssuesStoreType.ARCHIVED,
-        workspaceSlug,
-        projectId,
-        undefined
-      );
+    const _filters = this.handleIssuesLocalFilters.get(EIssuesStoreType.ARCHIVED, workspaceSlug, projectId, undefined);
 
-      const filters: IIssueFilterOptions = this.computedFilters(_filters?.filters);
-      const displayFilters: IIssueDisplayFilterOptions = this.computedDisplayFilters({
-        ..._filters?.display_filters,
-        sub_issue: true,
-      });
-      const displayProperties: IIssueDisplayProperties = this.computedDisplayProperties(_filters?.display_properties);
-      const kanbanFilters = {
-        group_by: [],
-        sub_group_by: [],
-      };
-      kanbanFilters.group_by = _filters?.kanban_filters?.group_by || [];
-      kanbanFilters.sub_group_by = _filters?.kanban_filters?.sub_group_by || [];
+    const filters: IIssueFilterOptions = this.computedFilters(_filters?.filters);
+    const displayFilters: IIssueDisplayFilterOptions = this.computedDisplayFilters({
+      ..._filters?.display_filters,
+      sub_issue: true,
+    });
+    const displayProperties: IIssueDisplayProperties = this.computedDisplayProperties(_filters?.display_properties);
+    const kanbanFilters = {
+      group_by: [],
+      sub_group_by: [],
+    };
+    kanbanFilters.group_by = _filters?.kanban_filters?.group_by || [];
+    kanbanFilters.sub_group_by = _filters?.kanban_filters?.sub_group_by || [];
 
-      runInAction(() => {
-        set(this.filters, [projectId, "filters"], filters);
-        set(this.filters, [projectId, "displayFilters"], displayFilters);
-        set(this.filters, [projectId, "displayProperties"], displayProperties);
-        set(this.filters, [projectId, "kanbanFilters"], kanbanFilters);
-      });
-    } catch (error) {
-      throw error;
-    }
+    runInAction(() => {
+      set(this.filters, [projectId, "filters"], filters);
+      set(this.filters, [projectId, "displayFilters"], displayFilters);
+      set(this.filters, [projectId, "displayProperties"], displayProperties);
+      set(this.filters, [projectId, "kanbanFilters"], kanbanFilters);
+    });
   };
 
   updateFilters = async (
@@ -263,7 +255,7 @@ export class ArchivedIssuesFilter extends IssueFilterHelperStore implements IArc
 
           const currentUserId = this.rootIssueStore.currentUserId;
           if (currentUserId)
-            this.handleIssuesLocalFilters.set(EIssuesStoreType.PROJECT, type, workspaceSlug, projectId, undefined, {
+            this.handleIssuesLocalFilters.set(EIssuesStoreType.ARCHIVED, type, workspaceSlug, projectId, undefined, {
               kanban_filters: _filters.kanbanFilters,
             });
 

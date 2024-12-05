@@ -2,7 +2,7 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 // plane types
-import { ILinkDetails, UserAuth } from "@plane/types";
+import { ILinkDetails } from "@plane/types";
 // components
 import { ModulesLinksListItem } from "@/components/modules";
 // hooks
@@ -13,11 +13,10 @@ type Props = {
   handleDeleteLink: (linkId: string) => void;
   handleEditLink: (link: ILinkDetails) => void;
   moduleId: string;
-  userAuth: UserAuth;
 };
 
 export const ModuleLinksList: React.FC<Props> = observer((props) => {
-  const { moduleId, handleDeleteLink, handleEditLink, userAuth, disabled } = props;
+  const { moduleId, handleDeleteLink, handleEditLink, disabled } = props;
   // store hooks
   const { getModuleById } = useModule();
   // derived values
@@ -36,7 +35,7 @@ export const ModuleLinksList: React.FC<Props> = observer((props) => {
           key={link.id}
           handleDeleteLink={() => memoizedDeleteLink(link.id)}
           handleEditLink={() => memoizedEditLink(link)}
-          isEditingAllowed={(userAuth.isMember || userAuth.isOwner) && !disabled}
+          isEditingAllowed={!disabled}
           link={link}
         />
       ))}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -14,7 +14,7 @@ import { IssuePeekOverview } from "@/components/issues";
 import { EmptyStateType } from "@/constants/empty-state";
 import { ENotificationLoader, ENotificationQueryParamType } from "@/constants/notification";
 // hooks
-import { useIssueDetail, useUser, useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
+import { useIssueDetail, useUserPermissions, useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 
 const WorkspaceDashboardPage = observer(() => {
@@ -28,9 +28,7 @@ const WorkspaceDashboardPage = observer(() => {
     notificationIdsByWorkspaceId,
     getNotifications,
   } = useWorkspaceNotifications();
-  const {
-    membership: { fetchUserProjectInfo },
-  } = useUser();
+  const { fetchUserProjectInfo } = useUserPermissions();
   const { setPeekIssue } = useIssueDetail();
   // derived values
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Inbox` : undefined;
@@ -62,6 +60,11 @@ const WorkspaceDashboardPage = observer(() => {
       ? `PROJECT_MEMBER_PERMISSION_INFO_${workspace_slug}_${project_id}`
       : null,
     workspace_slug && project_id && is_inbox_issue ? () => fetchUserProjectInfo(workspace_slug, project_id) : null
+  );
+
+  const embedRemoveCurrentNotification = useCallback(
+    () => setCurrentSelectedNotificationId(undefined),
+    [setCurrentSelectedNotificationId]
   );
 
   // clearing up the selected notifications when unmounting the page
@@ -97,15 +100,12 @@ const WorkspaceDashboardPage = observer(() => {
                     projectId={project_id}
                     inboxIssueId={issue_id}
                     isNotificationEmbed
-                    embedRemoveCurrentNotification={() => setCurrentSelectedNotificationId(undefined)}
+                    embedRemoveCurrentNotification={embedRemoveCurrentNotification}
                   />
                 )}
               </>
             ) : (
-              <IssuePeekOverview
-                embedIssue
-                embedRemoveCurrentNotification={() => setCurrentSelectedNotificationId(undefined)}
-              />
+              <IssuePeekOverview embedIssue embedRemoveCurrentNotification={embedRemoveCurrentNotification} />
             )}
           </>
         )}

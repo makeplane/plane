@@ -14,7 +14,7 @@ from .issue import (
     ProjectIssuesPublicEndpoint,
 )
 
-from .inbox import InboxIssuePublicViewSet
+from .intake import IntakeIssuePublicViewSet
 
 from .cycle import ProjectCyclesEndpoint
 
@@ -23,3 +23,7 @@ from .module import ProjectModulesEndpoint
 from .state import ProjectStatesEndpoint
 
 from .label import ProjectLabelsEndpoint
+
+from .asset import EntityAssetEndpoint, AssetRestoreEndpoint, EntityBulkAssetEndpoint
+
+from .meta import ProjectMetaDataEndpoint

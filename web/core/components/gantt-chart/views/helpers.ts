@@ -1,17 +1,33 @@
-// Generating the date by using the year, month, and day
+import { addDaysToDate, findTotalDaysInRange, getDate } from "@/helpers/date-time.helper";
+import { DEFAULT_BLOCK_WIDTH } from "../constants";
+import { ChartDataType, IGanttBlock } from "../types";
+
+/**
+ * Generates Date by using Day, month and Year
+ * @param day
+ * @param month
+ * @param year
+ * @returns
+ */
 export const generateDate = (day: number, month: number, year: number) => new Date(year, month, day);
 
-// Getting the number of days in a month
+/**
+ * Returns number of days in month
+ * @param month
+ * @param year
+ * @returns
+ */
 export const getNumberOfDaysInMonth = (month: number, year: number) => {
-  const date = new Date(year, month, 1);
-
-  date.setMonth(date.getMonth() + 1);
-  date.setDate(date.getDate() - 1);
+  const date = new Date(year, month + 1, 0);
 
   return date.getDate();
 };
 
-// Getting the week number by date
+/**
+ * Returns week number from date
+ * @param date
+ * @returns
+ */
 export const getWeekNumberByDate = (date: Date) => {
   const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
   const daysOffset = firstDayOfYear.getDay();
@@ -24,67 +40,92 @@ export const getWeekNumberByDate = (date: Date) => {
   return weekNumber;
 };
 
-// Getting all weeks between two dates
-export const getWeeksByMonthAndYear = (month: number, year: number) => {
-  const weeks = [];
-  const startDate = new Date(year, month, 1);
-  const endDate = new Date(year, month + 1, 0);
-  const currentDate = new Date(startDate.getTime());
+/**
+ * Returns number of days between two dates
+ * @param startDate
+ * @param endDate
+ * @returns
+ */
+export const getNumberOfDaysBetweenTwoDates = (startDate: Date, endDate: Date) => {
+  let daysDifference: number = 0;
+  startDate.setHours(0, 0, 0, 0);
+  endDate.setHours(0, 0, 0, 0);
 
-  currentDate.setDate(currentDate.getDate() + ((7 - currentDate.getDay()) % 7));
+  const timeDifference: number = startDate.getTime() - endDate.getTime();
+  daysDifference = Math.round(timeDifference / (1000 * 60 * 60 * 24));
 
-  while (currentDate <= endDate) {
-    weeks.push({
-      year: year,
-      month: month,
-      weekNumber: getWeekNumberByDate(currentDate),
-      startDate: new Date(currentDate.getTime()),
-      endDate: new Date(currentDate.getTime() + 6 * 24 * 60 * 60 * 1000),
-    });
-    currentDate.setDate(currentDate.getDate() + 7);
-  }
-
-  return weeks;
+  return daysDifference;
 };
 
-// Getting all dates in a week by week number and year
-export const getAllDatesInWeekByWeekNumber = (weekNumber: number, year: number) => {
-  const januaryFirst = new Date(year, 0, 1);
-  const firstDayOfYear =
-    januaryFirst.getDay() === 0 ? januaryFirst : new Date(year, 0, 1 + (7 - januaryFirst.getDay()));
+/**
+ * returns a date corresponding to the position on the timeline chart
+ * @param position
+ * @param chartData
+ * @param offsetDays
+ * @returns
+ */
+export const getDateFromPositionOnGantt = (position: number, chartData: ChartDataType, offsetDays = 0) => {
+  const numberOfDaysSinceStart = Math.round(position / chartData.data.dayWidth) + offsetDays;
 
-  const startDate = new Date(firstDayOfYear.getTime());
-  startDate.setDate(startDate.getDate() + 7 * (weekNumber - 1));
+  const newDate = addDaysToDate(chartData.data.startDate, numberOfDaysSinceStart);
 
-  const datesInWeek = [];
-  for (let i = 0; i < 7; i++) {
-    const currentDate = new Date(startDate.getTime());
-    currentDate.setDate(currentDate.getDate() + i);
-    datesInWeek.push(currentDate);
-  }
+  if (!newDate) undefined;
 
-  return datesInWeek;
+  return newDate;
 };
 
-// Getting the dates between two dates
-export const getDatesBetweenTwoDates = (startDate: Date, endDate: Date) => {
-  const dates = [];
+/**
+ * returns the  position and width of the block on the timeline chart from startDate and EndDate
+ * @param chartData
+ * @param itemData
+ * @returns
+ */
+export const getItemPositionWidth = (chartData: ChartDataType, itemData: IGanttBlock) => {
+  let scrollPosition: number = 0;
+  let scrollWidth: number = DEFAULT_BLOCK_WIDTH;
 
-  const startYear = startDate.getFullYear();
-  const startMonth = startDate.getMonth();
+  const { startDate: chartStartDate } = chartData.data;
+  const { start_date, target_date } = itemData;
 
-  const endYear = endDate.getFullYear();
-  const endMonth = endDate.getMonth();
+  const itemStartDate = getDate(start_date);
+  const itemTargetDate = getDate(target_date);
 
-  const currentDate = new Date(startYear, startMonth);
+  chartStartDate.setHours(0, 0, 0, 0);
+  itemStartDate?.setHours(0, 0, 0, 0);
+  itemTargetDate?.setHours(0, 0, 0, 0);
 
-  while (currentDate <= endDate) {
-    const currentYear = currentDate.getFullYear();
-    const currentMonth = currentDate.getMonth();
-    dates.push(new Date(currentYear, currentMonth));
-    currentDate.setMonth(currentDate.getMonth() + 1);
+  if (!itemStartDate && !itemTargetDate) return;
+
+  // get scroll position from the number of days and width of each day
+  scrollPosition = itemStartDate
+    ? getPositionFromDate(chartData, itemStartDate, 0)
+    : getPositionFromDate(chartData, itemTargetDate!, -1 * DEFAULT_BLOCK_WIDTH + chartData.data.dayWidth);
+
+  if (itemStartDate && itemTargetDate) {
+    // get width of block
+    const widthTimeDifference: number = itemStartDate.getTime() - itemTargetDate.getTime();
+    const widthDaysDifference: number = Math.abs(Math.floor(widthTimeDifference / (1000 * 60 * 60 * 24)));
+    scrollWidth = (widthDaysDifference + 1) * chartData.data.dayWidth;
   }
-  if (endYear === currentDate.getFullYear() && endMonth === currentDate.getMonth()) dates.push(endDate);
 
-  return dates;
+  return { marginLeft: scrollPosition, width: scrollWidth };
+};
+
+export const getPositionFromDate = (chartData: ChartDataType, date: string | Date, offsetWidth: number) => {
+  const currDate = getDate(date);
+
+  const { startDate: chartStartDate } = chartData.data;
+
+  if (!currDate || !chartStartDate) return 0;
+
+  chartStartDate.setHours(0, 0, 0, 0);
+  currDate.setHours(0, 0, 0, 0);
+
+  // get number of days from chart start date to block's start date
+  const positionDaysDifference = Math.round(findTotalDaysInRange(chartStartDate, currDate, false) ?? 0);
+
+  if (!positionDaysDifference) return 0;
+
+  // get scroll position from the number of days and width of each day
+  return positionDaysDifference * chartData.data.dayWidth + offsetWidth;
 };

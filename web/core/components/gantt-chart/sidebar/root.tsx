@@ -21,7 +21,6 @@ type Props = {
   enableSelection: boolean | ((blockId: string) => boolean);
   sidebarToRender: (props: any) => React.ReactNode;
   title: string;
-  getBlockById: (id: string, currentViewData?: ChartDataType | undefined) => IGanttBlock;
   quickAdd?: React.JSX.Element | undefined;
   selectionHelpers: TSelectionHelper;
 };
@@ -33,7 +32,6 @@ export const GanttChartSidebar: React.FC<Props> = observer((props) => {
     enableReorder,
     enableSelection,
     sidebarToRender,
-    getBlockById,
     loadMoreBlocks,
     canLoadMoreBlocks,
     ganttContainerRef,
@@ -86,7 +84,6 @@ export const GanttChartSidebar: React.FC<Props> = observer((props) => {
             title,
             blockUpdateHandler,
             blockIds,
-            getBlockById,
             enableReorder,
             enableSelection,
             canLoadMoreBlocks,

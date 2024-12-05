@@ -3,12 +3,16 @@ import set from "lodash/set";
 import { makeObservable, observable, action, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { v4 as uuidv4 } from "uuid";
+// plane types
+import { TFileSignedURLResponse } from "@plane/types";
+import { EFileAssetType } from "@plane/types/src/enums";
 // services
+import { FileService } from "@/services/file.service";
 import IssueService from "@/services/issue.service";
 // store
 import { CoreRootStore } from "@/store/root.store";
 // types
-import { IIssue, IPeekMode, IVote } from "@/types/issue";
+import { Comment, IIssue, IPeekMode, IVote } from "@/types/issue";
 
 export interface IIssueDetailStore {
   loader: boolean;
@@ -28,9 +32,11 @@ export interface IIssueDetailStore {
   // issue actions
   fetchIssueDetails: (anchor: string, issueID: string) => void;
   // comment actions
-  addIssueComment: (anchor: string, issueID: string, data: any) => Promise<void>;
+  addIssueComment: (anchor: string, issueID: string, data: any) => Promise<Comment>;
   updateIssueComment: (anchor: string, issueID: string, commentID: string, data: any) => Promise<any>;
   deleteIssueComment: (anchor: string, issueID: string, commentID: string) => void;
+  uploadCommentAsset: (file: File, anchor: string, commentID?: string) => Promise<TFileSignedURLResponse>;
+  uploadIssueAsset: (file: File, anchor: string, commentID?: string) => Promise<TFileSignedURLResponse>;
   addCommentReaction: (anchor: string, issueID: string, commentID: string, reactionHex: string) => void;
   removeCommentReaction: (anchor: string, issueID: string, commentID: string, reactionHex: string) => void;
   // reaction actions
@@ -54,6 +60,7 @@ export class IssueDetailStore implements IIssueDetailStore {
   rootStore: CoreRootStore;
   // services
   issueService: IssueService;
+  fileService: FileService;
 
   constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
@@ -72,6 +79,8 @@ export class IssueDetailStore implements IIssueDetailStore {
       addIssueComment: action,
       updateIssueComment: action,
       deleteIssueComment: action,
+      uploadCommentAsset: action,
+      uploadIssueAsset: action,
       addCommentReaction: action,
       removeCommentReaction: action,
       // reaction actions
@@ -83,6 +92,7 @@ export class IssueDetailStore implements IIssueDetailStore {
     });
     this.rootStore = _rootStore;
     this.issueService = new IssueService();
+    this.fileService = new FileService();
   }
 
   setPeekId = (issueID: string | null) => {
@@ -217,6 +227,40 @@ export class IssueDetailStore implements IIssueDetailStore {
       });
     } catch (error) {
       console.log("Failed to add issue vote");
+    }
+  };
+
+  uploadCommentAsset = async (file: File, anchor: string, commentID?: string) => {
+    try {
+      const res = await this.fileService.uploadAsset(
+        anchor,
+        {
+          entity_identifier: commentID ?? "",
+          entity_type: EFileAssetType.COMMENT_DESCRIPTION,
+        },
+        file
+      );
+      return res;
+    } catch (error) {
+      console.log("Error in uploading comment asset:", error);
+      throw new Error("Asset upload failed. Please try again later.");
+    }
+  };
+
+  uploadIssueAsset = async (file: File, anchor: string, commentID?: string) => {
+    try {
+      const res = await this.fileService.uploadAsset(
+        anchor,
+        {
+          entity_identifier: commentID ?? "",
+          entity_type: EFileAssetType.ISSUE_DESCRIPTION,
+        },
+        file
+      );
+      return res;
+    } catch (error) {
+      console.log("Error in uploading comment asset:", error);
+      throw new Error("Asset upload failed. Please try again later.");
     }
   };
 

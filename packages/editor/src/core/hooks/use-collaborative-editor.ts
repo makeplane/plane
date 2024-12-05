@@ -1,9 +1,9 @@
-import { useEffect, useLayoutEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import Collaboration from "@tiptap/extension-collaboration";
 import { IndexeddbPersistence } from "y-indexeddb";
 // extensions
-import { SideMenuExtension } from "@/extensions";
+import { HeadingListExtension, SideMenuExtension } from "@/extensions";
 // hooks
 import { useEditor } from "@/hooks/use-editor";
 // plane editor extensions
@@ -13,6 +13,7 @@ import { TCollaborativeEditorProps } from "@/types";
 
 export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
   const {
+    onTransaction,
     disabledExtensions,
     editorClassName,
     editorProps = {},
@@ -29,6 +30,9 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     tabIndex,
     user,
   } = props;
+  // states
+  const [hasServerConnectionFailed, setHasServerConnectionFailed] = useState(false);
+  const [hasServerSynced, setHasServerSynced] = useState(false);
   // initialize Hocuspocus provider
   const provider = useMemo(
     () =>
@@ -36,62 +40,74 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
         name: id,
         parameters: realtimeConfig.queryParams,
         // using user id as a token to verify the user on the server
-        token: user.id,
+        token: JSON.stringify(user),
         url: realtimeConfig.url,
-        onAuthenticationFailed: () => serverHandler?.onServerError?.(),
+        onAuthenticationFailed: () => {
+          serverHandler?.onServerError?.();
+          setHasServerConnectionFailed(true);
+        },
         onConnect: () => serverHandler?.onConnect?.(),
         onClose: (data) => {
-          if (data.event.code === 1006) serverHandler?.onServerError?.();
+          if (data.event.code === 1006) {
+            serverHandler?.onServerError?.();
+            setHasServerConnectionFailed(true);
+          }
         },
+        onSynced: () => setHasServerSynced(true),
       }),
-    [id, realtimeConfig, serverHandler, user.id]
+    [id, realtimeConfig, serverHandler, user]
   );
 
-  // destroy and disconnect connection on unmount
+  const localProvider = useMemo(
+    () => (id ? new IndexeddbPersistence(id, provider.document) : undefined),
+    [id, provider]
+  );
+
+  // destroy and disconnect all providers connection on unmount
   useEffect(
     () => () => {
-      provider.destroy();
-      provider.disconnect();
-    },
-    [provider]
-  );
-  // indexed db integration for offline support
-  useLayoutEffect(() => {
-    const localProvider = new IndexeddbPersistence(id, provider.document);
-    return () => {
+      provider?.destroy();
       localProvider?.destroy();
-    };
-  }, [provider, id]);
+    },
+    [provider, localProvider]
+  );
 
   const editor = useEditor({
+    disabledExtensions,
     id,
+    onTransaction,
     editorProps,
     editorClassName,
     enableHistory: false,
-    fileHandler,
-    handleEditorReady,
-    forwardedRef,
-    mentionHandler,
     extensions: [
       SideMenuExtension({
         aiEnabled: !disabledExtensions?.includes("ai"),
         dragDropEnabled: true,
       }),
+      HeadingListExtension,
       Collaboration.configure({
         document: provider.document,
       }),
       ...(extensions ?? []),
       ...DocumentEditorAdditionalExtensions({
         disabledExtensions,
-        fileHandler,
         issueEmbedConfig: embedHandler?.issue,
         provider,
         userDetails: user,
       }),
     ],
+    fileHandler,
+    handleEditorReady,
+    forwardedRef,
+    mentionHandler,
     placeholder,
+    provider,
     tabIndex,
   });
 
-  return { editor };
+  return {
+    editor,
+    hasServerConnectionFailed,
+    hasServerSynced,
+  };
 };

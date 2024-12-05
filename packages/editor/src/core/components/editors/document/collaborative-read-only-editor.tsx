@@ -1,6 +1,6 @@
 import { forwardRef, MutableRefObject } from "react";
 // components
-import { PageRenderer } from "@/components/editors";
+import { DocumentContentLoader, PageRenderer } from "@/components/editors";
 // constants
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 // extensions
@@ -15,9 +15,11 @@ import { EditorReadOnlyRefApi, ICollaborativeDocumentReadOnlyEditor } from "@/ty
 const CollaborativeDocumentReadOnlyEditor = (props: ICollaborativeDocumentReadOnlyEditor) => {
   const {
     containerClassName,
+    disabledExtensions,
     displayConfig = DEFAULT_DISPLAY_CONFIG,
     editorClassName = "",
     embedHandler,
+    fileHandler,
     forwardedRef,
     handleEditorReady,
     id,
@@ -35,9 +37,11 @@ const CollaborativeDocumentReadOnlyEditor = (props: ICollaborativeDocumentReadOn
     );
   }
 
-  const { editor } = useReadOnlyCollaborativeEditor({
+  const { editor, hasServerConnectionFailed, hasServerSynced } = useReadOnlyCollaborativeEditor({
+    disabledExtensions,
     editorClassName,
     extensions,
+    fileHandler,
     forwardedRef,
     handleEditorReady,
     id,
@@ -52,6 +56,9 @@ const CollaborativeDocumentReadOnlyEditor = (props: ICollaborativeDocumentReadOn
   });
 
   if (!editor) return null;
+
+  if (!hasServerSynced && !hasServerConnectionFailed) return <DocumentContentLoader />;
+
   return (
     <PageRenderer
       displayConfig={displayConfig}

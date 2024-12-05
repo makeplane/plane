@@ -6,21 +6,24 @@ import { DocumentReadOnlyEditorWithRef, TDisplayConfig } from "@plane/editor";
 import { IUserLite, TPageVersion } from "@plane/types";
 // plane ui
 import { Loader } from "@plane/ui";
+// helpers
+import { getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
-import { useMember, useMention, usePage, useUser } from "@/hooks/store";
+import { useMember, useMention, useUser } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web hooks
+import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 
-type Props = {
+export type TVersionEditorProps = {
   activeVersion: string | null;
+  currentVersionDescription: string | null;
   isCurrentVersionActive: boolean;
-  pageId: string;
   versionDetails: TPageVersion | undefined;
 };
 
-export const PagesVersionEditor: React.FC<Props> = observer((props) => {
-  const { activeVersion, isCurrentVersionActive, pageId, versionDetails } = props;
+export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props) => {
+  const { activeVersion, currentVersionDescription, isCurrentVersionActive, versionDetails } = props;
   // params
   const { workspaceSlug, projectId } = useParams();
   // store hooks
@@ -29,7 +32,8 @@ export const PagesVersionEditor: React.FC<Props> = observer((props) => {
     getUserDetails,
     project: { getProjectMemberIds },
   } = useMember();
-  const currentPageDetails = usePage(pageId);
+  // editor flaggings
+  const { documentEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString() ?? "");
   // derived values
   const projectMemberIds = projectId ? getProjectMemberIds(projectId.toString()) : [];
   const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
@@ -92,7 +96,7 @@ export const PagesVersionEditor: React.FC<Props> = observer((props) => {
       </div>
     );
 
-  const description = isCurrentVersionActive ? currentPageDetails.description_html : versionDetails?.description_html;
+  const description = isCurrentVersionActive ? currentVersionDescription : versionDetails?.description_html;
   if (description === undefined || description?.trim() === "") return null;
 
   return (
@@ -100,8 +104,13 @@ export const PagesVersionEditor: React.FC<Props> = observer((props) => {
       id={activeVersion ?? ""}
       initialValue={description ?? "<p></p>"}
       containerClassName="p-0 pb-64 border-none"
+      disabledExtensions={disabledExtensions}
       displayConfig={displayConfig}
       editorClassName="pl-10"
+      fileHandler={getReadOnlyEditorFileHandlers({
+        projectId: projectId?.toString() ?? "",
+        workspaceSlug: workspaceSlug?.toString() ?? "",
+      })}
       mentionHandler={{
         highlights: mentionHighlights,
       }}

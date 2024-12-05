@@ -4,16 +4,7 @@ from itertools import groupby
 
 # Django import
 from django.db import models
-from django.db.models import (
-    Case,
-    CharField,
-    Count,
-    F,
-    Sum,
-    Value,
-    When,
-    FloatField,
-)
+from django.db.models import Case, CharField, Count, F, Sum, Value, When, FloatField
 from django.db.models.functions import (
     Coalesce,
     Concat,
@@ -41,9 +32,7 @@ def annotate_with_monthly_dimension(queryset, field_name, attribute):
 def extract_axis(queryset, x_axis):
     # Format the dimension when the axis is in date
     if x_axis in ["created_at", "start_date", "target_date", "completed_at"]:
-        queryset = annotate_with_monthly_dimension(
-            queryset, x_axis, "dimension"
-        )
+        queryset = annotate_with_monthly_dimension(queryset, x_axis, "dimension")
         return queryset, "dimension"
     else:
         return queryset.annotate(dimension=F(x_axis)), "dimension"
@@ -68,9 +57,7 @@ def build_graph_plot(queryset, x_axis, y_axis, segment=None):
 
     #
     if segment in ["created_at", "start_date", "target_date", "completed_at"]:
-        queryset = annotate_with_monthly_dimension(
-            queryset, segment, "segmented"
-        )
+        queryset = annotate_with_monthly_dimension(queryset, segment, "segmented")
         segment = "segmented"
 
     queryset = queryset.values(x_axis)
@@ -85,9 +72,7 @@ def build_graph_plot(queryset, x_axis, y_axis, segment=None):
             ),
             dimension_ex=Coalesce("dimension", Value("null")),
         ).values("dimension")
-        queryset = (
-            queryset.annotate(segment=F(segment)) if segment else queryset
-        )
+        queryset = queryset.annotate(segment=F(segment)) if segment else queryset
         queryset = (
             queryset.values("dimension", "segment")
             if segment
@@ -100,9 +85,7 @@ def build_graph_plot(queryset, x_axis, y_axis, segment=None):
         queryset = queryset.annotate(
             estimate=Sum(Cast("estimate_point__value", FloatField()))
         ).order_by(x_axis)
-        queryset = (
-            queryset.annotate(segment=F(segment)) if segment else queryset
-        )
+        queryset = queryset.annotate(segment=F(segment)) if segment else queryset
         queryset = (
             queryset.values("dimension", "segment", "estimate")
             if segment
@@ -112,22 +95,13 @@ def build_graph_plot(queryset, x_axis, y_axis, segment=None):
     result_values = list(queryset)
     grouped_data = {
         str(key): list(items)
-        for key, items in groupby(
-            result_values, key=lambda x: x[str("dimension")]
-        )
+        for key, items in groupby(result_values, key=lambda x: x[str("dimension")])
     }
 
     return sort_data(grouped_data, temp_axis)
 
 
-def burndown_plot(
-    queryset,
-    slug,
-    project_id,
-    plot_type,
-    cycle_id=None,
-    module_id=None,
-):
+def burndown_plot(queryset, slug, project_id, plot_type, cycle_id=None, module_id=None):
     # Total Issues in Cycle or Module
     total_issues = queryset.total_issues
     # check whether the estimate is a point or not
@@ -138,10 +112,11 @@ def burndown_plot(
         estimate__type="points",
     ).exists()
     if estimate_type and plot_type == "points" and cycle_id:
-        issue_estimates = Issue.objects.filter(
+        issue_estimates = Issue.issue_objects.filter(
             workspace__slug=slug,
             project_id=project_id,
             issue_cycle__cycle_id=cycle_id,
+            issue_cycle__deleted_at__isnull=True,
             estimate_point__isnull=False,
         ).values_list("estimate_point__value", flat=True)
 
@@ -149,10 +124,11 @@ def burndown_plot(
         total_estimate_points = sum(issue_estimates)
 
     if estimate_type and plot_type == "points" and module_id:
-        issue_estimates = Issue.objects.filter(
+        issue_estimates = Issue.issue_objects.filter(
             workspace__slug=slug,
             project_id=project_id,
             issue_module__module_id=module_id,
+            issue_module__deleted_at__isnull=True,
             estimate_point__isnull=False,
         ).values_list("estimate_point__value", flat=True)
 
@@ -163,10 +139,8 @@ def burndown_plot(
         if queryset.end_date and queryset.start_date:
             # Get all dates between the two dates
             date_range = [
-                queryset.start_date + timedelta(days=x)
-                for x in range(
-                    (queryset.end_date - queryset.start_date).days + 1
-                )
+                (queryset.start_date + timedelta(days=x)).date()
+                for x in range((queryset.end_date - queryset.start_date).days + 1)
             ]
         else:
             date_range = []
@@ -179,6 +153,7 @@ def burndown_plot(
                     workspace__slug=slug,
                     project_id=project_id,
                     issue_cycle__cycle_id=cycle_id,
+                    issue_cycle__deleted_at__isnull=True,
                     estimate_point__isnull=False,
                 )
                 .annotate(date=TruncDate("completed_at"))
@@ -192,6 +167,7 @@ def burndown_plot(
                     workspace__slug=slug,
                     project_id=project_id,
                     issue_cycle__cycle_id=cycle_id,
+                    issue_cycle__deleted_at__isnull=True,
                 )
                 .annotate(date=TruncDate("completed_at"))
                 .values("date")
@@ -203,10 +179,8 @@ def burndown_plot(
     if module_id:
         # Get all dates between the two dates
         date_range = [
-            queryset.start_date + timedelta(days=x)
-            for x in range(
-                (queryset.target_date - queryset.start_date).days + 1
-            )
+            (queryset.start_date + timedelta(days=x))
+            for x in range((queryset.target_date - queryset.start_date).days + 1)
         ]
 
         chart_data = {str(date): 0 for date in date_range}
@@ -217,6 +191,7 @@ def burndown_plot(
                     workspace__slug=slug,
                     project_id=project_id,
                     issue_module__module_id=module_id,
+                    issue_module__deleted_at__isnull=True,
                     estimate_point__isnull=False,
                 )
                 .annotate(date=TruncDate("completed_at"))
@@ -230,6 +205,7 @@ def burndown_plot(
                     workspace__slug=slug,
                     project_id=project_id,
                     issue_module__module_id=module_id,
+                    issue_module__deleted_at__isnull=True,
                 )
                 .annotate(date=TruncDate("completed_at"))
                 .values("date")

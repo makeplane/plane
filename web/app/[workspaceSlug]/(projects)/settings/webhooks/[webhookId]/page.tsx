@@ -12,7 +12,8 @@ import { LogoSpinner } from "@/components/common";
 import { PageHead } from "@/components/core";
 import { DeleteWebhookModal, WebhookDeleteSection, WebhookForm } from "@/components/web-hooks";
 // hooks
-import { useUser, useWebhook, useWorkspace } from "@/hooks/store";
+import { useUserPermissions, useWebhook, useWorkspace } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const WebhookDetailsPage = observer(() => {
   // states
@@ -20,18 +21,17 @@ const WebhookDetailsPage = observer(() => {
   // router
   const { workspaceSlug, webhookId } = useParams();
   // mobx store
-  const {
-    membership: { currentWorkspaceRole },
-  } = useUser();
   const { currentWebhook, fetchWebhookById, updateWebhook } = useWebhook();
   const { currentWorkspace } = useWorkspace();
+  const { allowPermissions } = useUserPermissions();
 
   // TODO: fix this error
   // useEffect(() => {
   //   if (isCreated !== "true") clearSecretKey();
   // }, [clearSecretKey, isCreated]);
 
-  const isAdmin = currentWorkspaceRole === 20;
+  // derived values
+  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Webhook` : undefined;
 
   useSWR(

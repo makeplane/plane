@@ -17,15 +17,17 @@ import { EmptyState } from "@/components/empty-state";
 // constants
 import { EmptyStateType } from "@/constants/empty-state";
 import { EIssuesStoreType } from "@/constants/issue";
-// helper
+// helpers
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate, renderFormattedDateWithoutYear } from "@/helpers/date-time.helper";
+import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useIssueDetail, useIssues } from "@/hooks/store";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import useLocalStorage from "@/hooks/use-local-storage";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
+// store
 import { ActiveCycleIssueDetails } from "@/store/issue/cycle";
 
 export type ActiveCycleStatsProps = {
@@ -170,7 +172,12 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                           className="group flex cursor-pointer items-center justify-between gap-2 rounded-md hover:bg-custom-background-90 p-1"
                           onClick={() => {
                             if (issue.id) {
-                              setPeekIssue({ workspaceSlug, projectId, issueId: issue.id });
+                              setPeekIssue({
+                                workspaceSlug,
+                                projectId,
+                                issueId: issue.id,
+                                isArchived: !!issue.archived_at,
+                              });
                               handleFiltersUpdate("priority", ["urgent", "high"], true);
                             }
                           }}
@@ -250,7 +257,10 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                         key={assignee.assignee_id}
                         title={
                           <div className="flex items-center gap-2">
-                            <Avatar name={assignee?.display_name ?? undefined} src={assignee?.avatar ?? undefined} />
+                            <Avatar
+                              name={assignee?.display_name ?? undefined}
+                              src={getFileURL(assignee?.avatar_url ?? "")}
+                            />
 
                             <span>{assignee.display_name}</span>
                           </div>

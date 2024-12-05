@@ -9,10 +9,10 @@ import { ProfileSidebar } from "@/components/profile";
 // constants
 import { USER_PROFILE_PROJECT_SEGREGATION } from "@/constants/fetch-keys";
 import { PROFILE_ADMINS_TAB, PROFILE_VIEWER_TAB } from "@/constants/profile";
-import { EUserWorkspaceRoles } from "@/constants/workspace";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store";
 import useSize from "@/hooks/use-window-size";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // local components
 import { UserService } from "@/services/user.service";
 import { UserProfileHeader } from "./header";
@@ -25,17 +25,18 @@ type Props = {
   children: React.ReactNode;
 };
 
-const AUTHORIZED_ROLES = [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.VIEWER];
-
 const UseProfileLayout: React.FC<Props> = observer((props) => {
   const { children } = props;
   // router
   const { workspaceSlug, userId } = useParams();
   const pathname = usePathname();
   // store hooks
-  const {
-    membership: { currentWorkspaceRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
+  // derived values
+  const isAuthorized = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
 
   const windowSize = useSize();
   const isSmallerScreen = windowSize[0] >= 768;
@@ -47,7 +48,6 @@ const UseProfileLayout: React.FC<Props> = observer((props) => {
       : null
   );
   // derived values
-  const isAuthorized = currentWorkspaceRole && AUTHORIZED_ROLES.includes(currentWorkspaceRole);
   const isAuthorizedPath =
     pathname.includes("assigned") || pathname.includes("created") || pathname.includes("subscribed");
   const isIssuesTab = pathname.includes("assigned") || pathname.includes("created") || pathname.includes("subscribed");

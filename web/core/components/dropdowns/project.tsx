@@ -3,8 +3,6 @@ import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
-// types
-import { IProject } from "@plane/types";
 // ui
 import { ComboDropDown } from "@plane/ui";
 // components
@@ -14,6 +12,8 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useProject } from "@/hooks/store";
 import { useDropdown } from "@/hooks/use-dropdown";
+// plane web types
+import { TProject } from "@/plane-web/types";
 // components
 import { DropdownButton } from "./buttons";
 // constants
@@ -27,7 +27,7 @@ type Props = TDropdownProps & {
   dropdownArrowClassName?: string;
   onChange: (val: string) => void;
   onClose?: () => void;
-  renderCondition?: (project: IProject) => boolean;
+  renderCondition?: (project: TProject) => boolean;
   value: string | null;
   renderByDefault?: boolean;
 };
@@ -124,6 +124,7 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
           type="button"
           className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
           onClick={handleOnClick}
+          disabled={disabled}
         >
           {button}
         </button>
@@ -140,6 +141,7 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
             buttonContainerClassName
           )}
           onClick={handleOnClick}
+          disabled={disabled}
         >
           <DropdownButton
             className={buttonClassName}
@@ -148,6 +150,7 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
             tooltipContent={selectedProject?.name ?? placeholder}
             showTooltip={showTooltip}
             variant={buttonVariant}
+            renderToolTipByDefault={renderByDefault}
           >
             {!hideIcon && selectedProject && (
               <span className="grid place-items-center flex-shrink-0 h-4 w-4">

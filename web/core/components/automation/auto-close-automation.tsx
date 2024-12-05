@@ -11,9 +11,10 @@ import { CustomSelect, CustomSearchSelect, ToggleSwitch, StateGroupIcon, DoubleC
 // component
 import { SelectMonthModal } from "@/components/automation";
 // constants
-import { EUserProjectRoles, PROJECT_AUTOMATION_MONTHS } from "@/constants/project";
+import { PROJECT_AUTOMATION_MONTHS } from "@/constants/project";
 // hooks
-import { useProject, useProjectState, useUser } from "@/hooks/store";
+import { useProject, useProjectState, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   handleChange: (formData: Partial<IProject>) => Promise<void>;
@@ -24,11 +25,9 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
   // states
   const [monthModal, setmonthModal] = useState(false);
   // store hooks
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
   const { currentProjectDetails } = useProject();
   const { projectStates } = useProjectState();
+  const { allowPermissions } = useUserPermissions();
 
   // const stateGroups = projectStateStore.groupedProjectStates ?? undefined;
 
@@ -49,7 +48,7 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
 
   const defaultState = projectStates?.find((s) => s.group === "cancelled")?.id || null;
 
-  const selectedOption = projectStates?.find((s) => s.id === currentProjectDetails?.default_state ?? defaultState);
+  const selectedOption = projectStates?.find((s) => s.id === (currentProjectDetails?.default_state ?? defaultState));
   const currentDefaultState = projectStates?.find((s) => s.id === defaultState);
 
   const initialValues: Partial<IProject> = {
@@ -57,7 +56,12 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
     default_state: defaultState,
   };
 
-  const isAdmin = currentProjectRole === EUserProjectRoles.ADMIN;
+  const isAdmin = allowPermissions(
+    [EUserPermissions.ADMIN],
+    EUserPermissionsLevel.PROJECT,
+    currentProjectDetails?.workspace_detail?.slug,
+    currentProjectDetails?.id
+  );
 
   return (
     <>
@@ -77,7 +81,7 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
             <div className="">
               <h4 className="text-sm font-medium">Auto-close issues</h4>
               <p className="text-sm tracking-tight text-custom-text-200">
-                Plane will automatically close issue that haven{"'"}t been completed or canceled.
+                Plane will automatically close issues that haven{"'"}t been completed or canceled.
               </p>
             </div>
           </div>
@@ -130,7 +134,7 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
                 </div>
 
                 <div className="flex w-full items-center justify-between gap-2 px-5 py-4">
-                  <div className="w-1/2 text-sm font-medium">Auto-close Status</div>
+                  <div className="w-1/2 text-sm font-medium">Auto-close status</div>
                   <div className="w-1/2 ">
                     <CustomSearchSelect
                       value={currentProjectDetails?.default_state ?? defaultState}

@@ -10,9 +10,15 @@ from plane.space.views import (
     ProjectStatesEndpoint,
     ProjectLabelsEndpoint,
     ProjectMembersEndpoint,
+    ProjectMetaDataEndpoint,
 )
 
 urlpatterns = [
+    path(
+        "anchor/<str:anchor>/meta/",
+        ProjectMetaDataEndpoint.as_view(),
+        name="project-meta",
+    ),
     path(
         "anchor/<str:anchor>/settings/",
         ProjectDeployBoardPublicSettingsEndpoint.as_view(),

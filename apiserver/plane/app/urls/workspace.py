@@ -10,7 +10,6 @@ from plane.app.views import (
     WorkspaceMemberUserEndpoint,
     WorkspaceMemberUserViewsEndpoint,
     WorkSpaceAvailabilityCheckEndpoint,
-    TeamMemberViewSet,
     UserLastProjectWithWorkspaceEndpoint,
     WorkspaceThemeViewSet,
     WorkspaceUserProfileStatsEndpoint,
@@ -27,6 +26,7 @@ from plane.app.views import (
     WorkspaceCyclesEndpoint,
     WorkspaceFavoriteEndpoint,
     WorkspaceFavoriteGroupEndpoint,
+    WorkspaceDraftIssueViewSet,
 )
 
 
@@ -38,12 +38,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/",
-        WorkSpaceViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
+        WorkSpaceViewSet.as_view({"get": "list", "post": "create"}),
         name="workspace",
     ),
     path(
@@ -60,34 +55,20 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/invitations/",
-        WorkspaceInvitationsViewset.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            },
-        ),
+        WorkspaceInvitationsViewset.as_view({"get": "list", "post": "create"}),
         name="workspace-invitations",
     ),
     path(
         "workspaces/<str:slug>/invitations/<uuid:pk>/",
         WorkspaceInvitationsViewset.as_view(
-            {
-                "delete": "destroy",
-                "get": "retrieve",
-                "patch": "partial_update",
-            }
+            {"delete": "destroy", "get": "retrieve", "patch": "partial_update"}
         ),
         name="workspace-invitations",
     ),
     # user workspace invitations
     path(
         "users/me/workspaces/invitations/",
-        UserWorkspaceInvitationsViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            },
-        ),
+        UserWorkspaceInvitationsViewSet.as_view({"get": "list", "post": "create"}),
         name="user-workspace-invitations",
     ),
     path(
@@ -109,44 +90,14 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/members/<uuid:pk>/",
         WorkSpaceMemberViewSet.as_view(
-            {
-                "patch": "partial_update",
-                "delete": "destroy",
-                "get": "retrieve",
-            }
+            {"patch": "partial_update", "delete": "destroy", "get": "retrieve"}
         ),
         name="workspace-member",
     ),
     path(
         "workspaces/<str:slug>/members/leave/",
-        WorkSpaceMemberViewSet.as_view(
-            {
-                "post": "leave",
-            },
-        ),
+        WorkSpaceMemberViewSet.as_view({"post": "leave"}),
         name="leave-workspace-members",
-    ),
-    path(
-        "workspaces/<str:slug>/teams/",
-        TeamMemberViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
-        name="workspace-team-members",
-    ),
-    path(
-        "workspaces/<str:slug>/teams/<uuid:pk>/",
-        TeamMemberViewSet.as_view(
-            {
-                "put": "update",
-                "patch": "partial_update",
-                "delete": "destroy",
-                "get": "retrieve",
-            }
-        ),
-        name="workspace-team-members",
     ),
     path(
         "users/last-visited-workspace/",
@@ -165,22 +116,13 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/workspace-themes/",
-        WorkspaceThemeViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
+        WorkspaceThemeViewSet.as_view({"get": "list", "post": "create"}),
         name="workspace-themes",
     ),
     path(
         "workspaces/<str:slug>/workspace-themes/<uuid:pk>/",
         WorkspaceThemeViewSet.as_view(
-            {
-                "get": "retrieve",
-                "patch": "partial_update",
-                "delete": "destroy",
-            }
+            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
         ),
         name="workspace-themes",
     ),
@@ -253,5 +195,22 @@ urlpatterns = [
         "workspaces/<str:slug>/user-favorites/<uuid:favorite_id>/group/",
         WorkspaceFavoriteGroupEndpoint.as_view(),
         name="workspace-user-favorites-groups",
+    ),
+    path(
+        "workspaces/<str:slug>/draft-issues/",
+        WorkspaceDraftIssueViewSet.as_view({"get": "list", "post": "create"}),
+        name="workspace-draft-issues",
+    ),
+    path(
+        "workspaces/<str:slug>/draft-issues/<uuid:pk>/",
+        WorkspaceDraftIssueViewSet.as_view(
+            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
+        ),
+        name="workspace-drafts-issues",
+    ),
+    path(
+        "workspaces/<str:slug>/draft-to-issue/<uuid:draft_id>/",
+        WorkspaceDraftIssueViewSet.as_view({"post": "create_draft_to_issue"}),
+        name="workspace-drafts-issues",
     ),
 ]

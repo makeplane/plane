@@ -1,33 +1,55 @@
 "use client";
 
+import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { FileText } from "lucide-react";
-// ui
-import { Breadcrumbs, Button, Header } from "@plane/ui";
+// plane types
+import { TPage } from "@plane/types";
+// plane ui
+import { Breadcrumbs, Button, Header, setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
 import { BreadcrumbLink, Logo } from "@/components/common";
 // constants
 import { EPageAccess } from "@/constants/page";
-import { EUserProjectRoles } from "@/constants/project";
 // hooks
-import { useCommandPalette, useEventTracker, useProject, useUser } from "@/hooks/store";
+import { useEventTracker, useProject, useProjectPages } from "@/hooks/store";
 
 export const PagesListHeader = observer(() => {
+  // states
+  const [isCreatingPage, setIsCreatingPage] = useState(false);
   // router
+  const router = useRouter();
   const { workspaceSlug } = useParams();
   const searchParams = useSearchParams();
   const pageType = searchParams.get("type");
   // store hooks
-  const { toggleCreatePageModal } = useCommandPalette();
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
   const { currentProjectDetails, loader } = useProject();
+  const { canCurrentUserCreatePage, createPage } = useProjectPages();
   const { setTrackElement } = useEventTracker();
+  // handle page create
+  const handleCreatePage = async () => {
+    setIsCreatingPage(true);
+    setTrackElement("Project pages page");
 
-  const canUserCreatePage =
-    currentProjectRole && [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER].includes(currentProjectRole);
+    const payload: Partial<TPage> = {
+      access: pageType === "private" ? EPageAccess.PRIVATE : EPageAccess.PUBLIC,
+    };
+
+    await createPage(payload)
+      .then((res) => {
+        const pageId = `/${workspaceSlug}/projects/${currentProjectDetails?.id}/pages/${res?.id}`;
+        router.push(pageId);
+      })
+      .catch((err) =>
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: err?.data?.error || "Page could not be created. Please try again.",
+        })
+      )
+      .finally(() => setIsCreatingPage(false));
+  };
 
   return (
     <Header>
@@ -38,7 +60,6 @@ export const PagesListHeader = observer(() => {
               type="text"
               link={
                 <BreadcrumbLink
-                  href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
                   label={currentProjectDetails?.name ?? "Project"}
                   icon={
                     currentProjectDetails && (
@@ -57,20 +78,10 @@ export const PagesListHeader = observer(() => {
           </Breadcrumbs>
         </div>
       </Header.LeftItem>
-      {canUserCreatePage ? (
+      {canCurrentUserCreatePage ? (
         <Header.RightItem>
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => {
-              setTrackElement("Project pages page");
-              toggleCreatePageModal({
-                isOpen: true,
-                pageAccess: pageType === "private" ? EPageAccess.PRIVATE : EPageAccess.PUBLIC,
-              });
-            }}
-          >
-            Add page
+          <Button variant="primary" size="sm" onClick={handleCreatePage} loading={isCreatingPage}>
+            {isCreatingPage ? "Adding" : "Add page"}
           </Button>
         </Header.RightItem>
       ) : (

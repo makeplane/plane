@@ -8,6 +8,7 @@ import { TIssue, TWidgetIssue } from "@plane/types";
 import { Avatar, AvatarGroup, ControlLink, PriorityIcon } from "@plane/ui";
 // helpers
 import { findTotalDaysInRange, getDate, renderFormattedDate } from "@/helpers/date-time.helper";
+import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useIssueDetail, useMember, useProject } from "@/hooks/store";
 // plane web components
@@ -56,7 +57,7 @@ export const AssignedUpcomingIssueListItem: React.FC<IssueListItemProps> = obser
         )}
         <h6 className="flex-grow truncate text-sm">{issueDetails.name}</h6>
       </div>
-      <div className="flex justify-center col-span-1">
+      <div className="flex justify-center col-span-1 items-center">
         <PriorityIcon priority={issueDetails.priority} size={12} withContainer />
       </div>
       <div className="text-center text-xs col-span-2">
@@ -71,7 +72,6 @@ export const AssignedUpcomingIssueListItem: React.FC<IssueListItemProps> = obser
                   projectIdentifier={blockedByIssueProjectDetails?.identifier}
                   projectId={blockedByIssueProjectDetails?.id}
                   issueSequenceId={blockedByIssues[0]?.sequence_id}
-                  issueTypeId={blockedByIssues[0]?.type_id}
                   textContainerClassName="text-xs text-custom-text-200 font-medium"
                 />
               )
@@ -117,7 +117,7 @@ export const AssignedOverdueIssueListItem: React.FC<IssueListItemProps> = observ
         )}
         <h6 className="flex-grow truncate text-sm">{issueDetails.name}</h6>
       </div>
-      <div className="flex justify-center col-span-1">
+      <div className="flex justify-center col-span-1 items-center">
         <PriorityIcon priority={issueDetails.priority} size={12} withContainer />
       </div>
       <div className="text-center text-xs col-span-2">
@@ -128,12 +128,12 @@ export const AssignedOverdueIssueListItem: React.FC<IssueListItemProps> = observ
           ? blockedByIssues.length > 1
             ? `${blockedByIssues.length} blockers`
             : blockedByIssueProjectDetails && (
-              <IssueIdentifier
-                issueId={blockedByIssues[0]?.id}
-                projectId={blockedByIssueProjectDetails?.id}
-                textContainerClassName="text-xs text-custom-text-200 font-medium"
-              />
-            )
+                <IssueIdentifier
+                  issueId={blockedByIssues[0]?.id}
+                  projectId={blockedByIssueProjectDetails?.id}
+                  textContainerClassName="text-xs text-custom-text-200 font-medium"
+                />
+              )
           : "-"}
       </div>
     </ControlLink>
@@ -170,7 +170,7 @@ export const AssignedCompletedIssueListItem: React.FC<IssueListItemProps> = obse
         )}
         <h6 className="flex-grow truncate text-sm">{issueDetails.name}</h6>
       </div>
-      <div className="flex justify-center col-span-1">
+      <div className="flex justify-center col-span-1 items-center">
         <PriorityIcon priority={issueDetails.priority} size={12} withContainer />
       </div>
     </ControlLink>
@@ -209,7 +209,7 @@ export const CreatedUpcomingIssueListItem: React.FC<IssueListItemProps> = observ
         )}
         <h6 className="flex-grow truncate text-sm">{issue.name}</h6>
       </div>
-      <div className="flex justify-center col-span-1">
+      <div className="flex justify-center col-span-1 items-center">
         <PriorityIcon priority={issue.priority} size={12} withContainer />
       </div>
       <div className="text-center text-xs col-span-2">
@@ -223,7 +223,9 @@ export const CreatedUpcomingIssueListItem: React.FC<IssueListItemProps> = observ
 
               if (!userDetails) return null;
 
-              return <Avatar key={assigneeId} src={userDetails.avatar} name={userDetails.display_name} />;
+              return (
+                <Avatar key={assigneeId} src={getFileURL(userDetails.avatar_url)} name={userDetails.display_name} />
+              );
             })}
           </AvatarGroup>
         ) : (
@@ -267,7 +269,7 @@ export const CreatedOverdueIssueListItem: React.FC<IssueListItemProps> = observe
         )}
         <h6 className="flex-grow truncate text-sm">{issue.name}</h6>
       </div>
-      <div className="flex justify-center col-span-1">
+      <div className="flex justify-center col-span-1 items-center">
         <PriorityIcon priority={issue.priority} size={12} withContainer />
       </div>
       <div className="text-center text-xs col-span-2">
@@ -281,7 +283,9 @@ export const CreatedOverdueIssueListItem: React.FC<IssueListItemProps> = observe
 
               if (!userDetails) return null;
 
-              return <Avatar key={assigneeId} src={userDetails.avatar} name={userDetails.display_name} />;
+              return (
+                <Avatar key={assigneeId} src={getFileURL(userDetails.avatar_url)} name={userDetails.display_name} />
+              );
             })}
           </AvatarGroup>
         ) : (
@@ -323,7 +327,7 @@ export const CreatedCompletedIssueListItem: React.FC<IssueListItemProps> = obser
         )}
         <h6 className="flex-grow truncate text-sm">{issue.name}</h6>
       </div>
-      <div className="flex justify-center col-span-1">
+      <div className="flex justify-center col-span-1 items-center">
         <PriorityIcon priority={issue.priority} size={12} withContainer />
       </div>
       <div className="flex justify-center text-xs col-span-2">
@@ -334,7 +338,9 @@ export const CreatedCompletedIssueListItem: React.FC<IssueListItemProps> = obser
 
               if (!userDetails) return null;
 
-              return <Avatar key={assigneeId} src={userDetails.avatar} name={userDetails.display_name} />;
+              return (
+                <Avatar key={assigneeId} src={getFileURL(userDetails.avatar_url)} name={userDetails.display_name} />
+              );
             })}
           </AvatarGroup>
         ) : (

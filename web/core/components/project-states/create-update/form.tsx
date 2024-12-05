@@ -94,7 +94,7 @@ export const StateForm: FC<TStateForm> = (props) => {
       />
 
       <Button type="button" variant="neutral-primary" size="sm" disabled={buttonDisabled} onClick={onCancel}>
-        cancel
+        Cancel
       </Button>
 
       <Button type="submit" variant="primary" size="sm" disabled={buttonDisabled}>

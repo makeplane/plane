@@ -1,5 +1,6 @@
 // types
 import { TStaticViewTypes } from "@plane/types";
+import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // services images
 import CSVLogo from "@/public/services/csv.svg";
 import ExcelLogo from "@/public/services/excel.svg";
@@ -7,40 +8,26 @@ import GithubLogo from "@/public/services/github.png";
 import JiraLogo from "@/public/services/jira.svg";
 import JSONLogo from "@/public/services/json.svg";
 
-export enum EUserWorkspaceRoles {
-  GUEST = 5,
-  VIEWER = 10,
-  MEMBER = 15,
-  ADMIN = 20,
-}
-
 export const ROLE = {
-  5: "Guest",
-  10: "Viewer",
-  15: "Member",
-  20: "Admin",
+  [EUserPermissions.GUEST]: "Guest",
+  [EUserPermissions.MEMBER]: "Member",
+  [EUserPermissions.ADMIN]: "Admin",
 };
 
 export const ROLE_DETAILS = {
-  5: {
+  [EUserPermissions.GUEST]: {
     title: "Guest",
     description: "External members of organizations can be invited as guests.",
   },
-  10: {
-    title: "Viewer",
-    description: "External members of organizations can be invited as guests.",
-  },
-  15: {
+  [EUserPermissions.MEMBER]: {
     title: "Member",
     description: "Ability to read, write, edit, and delete entities inside projects, cycles, and modules",
   },
-  20: {
+  [EUserPermissions.ADMIN]: {
     title: "Admin",
     description: "All permissions set to true within the workspace.",
   },
 };
-
-export const ORGANIZATION_SIZE = ["Just myself", "2-10", "11-50", "51-200", "201-500", "500+"];
 
 export const USER_ROLES = [
   { value: "Product / Project Manager", label: "Product / Project Manager" },
@@ -116,19 +103,4 @@ export const DEFAULT_GLOBAL_VIEWS_LIST: {
     key: "subscribed",
     label: "Subscribed",
   },
-];
-
-export const RESTRICTED_URLS = [
-  "404",
-  "accounts",
-  "api",
-  "create-workspace",
-  "error",
-  "god-mode",
-  "installations",
-  "invitations",
-  "onboarding",
-  "profile",
-  "spaces",
-  "workspace-invitations",
 ];

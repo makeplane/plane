@@ -1,38 +1,22 @@
-import { ReactNode } from "react";
+import { CSSProperties } from "react";
 import { Editor, Range } from "@tiptap/core";
-
-export type TEditorCommands =
-  | "text"
-  | "h1"
-  | "h2"
-  | "h3"
-  | "h4"
-  | "h5"
-  | "h6"
-  | "bold"
-  | "italic"
-  | "underline"
-  | "strikethrough"
-  | "bulleted-list"
-  | "numbered-list"
-  | "to-do-list"
-  | "quote"
-  | "code"
-  | "table"
-  | "image"
-  | "divider"
-  | "issue-embed";
+// types
+import { TEditorCommands } from "@/types";
 
 export type CommandProps = {
   editor: Editor;
   range: Range;
 };
 
+export type TSlashCommandSectionKeys = "general" | "text-colors" | "background-colors";
+
 export type ISlashCommandItem = {
-  key: TEditorCommands;
+  commandKey: TEditorCommands;
+  key: string;
   title: string;
   description: string;
   searchTerms: string[];
-  icon: ReactNode;
+  icon: React.ReactNode;
+  iconContainerStyle?: CSSProperties;
   command: ({ editor, range }: CommandProps) => void;
 };

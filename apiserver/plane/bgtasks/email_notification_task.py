@@ -75,9 +75,7 @@ def stack_email_notification():
         for receiver_notification in receiver_notifications:
             payload.setdefault(
                 receiver_notification.get("entity_identifier"), {}
-            ).setdefault(
-                str(receiver_notification.get("triggered_by_id")), []
-            ).append(
+            ).setdefault(str(receiver_notification.get("triggered_by_id")), []).append(
                 receiver_notification.get("data")
             )
             # append processed notifications
@@ -184,11 +182,7 @@ def send_email_notification(
         if acquire_lock(lock_id=lock_id):
             # get the redis instance
             ri = redis_instance()
-            base_api = (
-                ri.get(str(issue_id)).decode()
-                if ri.get(str(issue_id))
-                else None
-            )
+            base_api = ri.get(str(issue_id)).decode() if ri.get(str(issue_id)) else None
 
             # Skip if base api is not present
             if not base_api:
@@ -224,7 +218,7 @@ def send_email_notification(
                         {
                             "actor_comments": comment,
                             "actor_detail": {
-                                "avatar_url": actor.avatar,
+                                "avatar_url": f"{base_api}{actor.avatar_url}",
                                 "first_name": actor.first_name,
                                 "last_name": actor.last_name,
                             },
@@ -241,7 +235,7 @@ def send_email_notification(
                         {
                             "actor_comments": mention,
                             "actor_detail": {
-                                "avatar_url": actor.avatar,
+                                "avatar_url": f"{base_api}{actor.avatar_url}",
                                 "first_name": actor.first_name,
                                 "last_name": actor.last_name,
                             },
@@ -257,7 +251,7 @@ def send_email_notification(
                     template_data.append(
                         {
                             "actor_detail": {
-                                "avatar_url": actor.avatar,
+                                "avatar_url": f"{base_api}{actor.avatar_url}",
                                 "first_name": actor.first_name,
                                 "last_name": actor.last_name,
                             },
@@ -283,9 +277,7 @@ def send_email_notification(
                     "name": issue.name,
                     "issue_url": f"{base_api}/{str(issue.project.workspace.slug)}/projects/{str(issue.project.id)}/issues/{str(issue.id)}",
                 },
-                "receiver": {
-                    "email": receiver.email,
-                },
+                "receiver": {"email": receiver.email},
                 "issue_url": f"{base_api}/{str(issue.project.workspace.slug)}/projects/{str(issue.project.id)}/issues/{str(issue.id)}",
                 "project_url": f"{base_api}/{str(issue.project.workspace.slug)}/projects/{str(issue.project.id)}/issues/",
                 "workspace": str(issue.project.workspace.slug),
@@ -333,9 +325,7 @@ def send_email_notification(
                 release_lock(lock_id=lock_id)
                 return
         else:
-            logging.getLogger("plane").info(
-                "Duplicate email received skipping"
-            )
+            logging.getLogger("plane").info("Duplicate email received skipping")
             return
     except (Issue.DoesNotExist, User.DoesNotExist):
         release_lock(lock_id=lock_id)

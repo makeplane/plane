@@ -12,7 +12,7 @@ from rest_framework import status
 # Module imports
 from .. import BaseViewSet
 from plane.app.serializers import IssueReactionSerializer
-from plane.app.permissions import ProjectLitePermission
+from plane.app.permissions import allow_permission, ROLE
 from plane.db.models import IssueReaction
 from plane.bgtasks.issue_activities_task import issue_activity
 
@@ -20,9 +20,6 @@ from plane.bgtasks.issue_activities_task import issue_activity
 class IssueReactionViewSet(BaseViewSet):
     serializer_class = IssueReactionSerializer
     model = IssueReaction
-    permission_classes = [
-        ProjectLitePermission,
-    ]
 
     def get_queryset(self):
         return (
@@ -40,13 +37,12 @@ class IssueReactionViewSet(BaseViewSet):
             .distinct()
         )
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def create(self, request, slug, project_id, issue_id):
         serializer = IssueReactionSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(
-                issue_id=issue_id,
-                project_id=project_id,
-                actor=request.user,
+                issue_id=issue_id, project_id=project_id, actor=request.user
             )
             issue_activity.delay(
                 type="issue_reaction.activity.created",
@@ -62,6 +58,7 @@ class IssueReactionViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def destroy(self, request, slug, project_id, issue_id, reaction_code):
         issue_reaction = IssueReaction.objects.get(
             workspace__slug=slug,
@@ -77,10 +74,7 @@ class IssueReactionViewSet(BaseViewSet):
             issue_id=str(self.kwargs.get("issue_id", None)),
             project_id=str(self.kwargs.get("project_id", None)),
             current_instance=json.dumps(
-                {
-                    "reaction": str(reaction_code),
-                    "identifier": str(issue_reaction.id),
-                }
+                {"reaction": str(reaction_code), "identifier": str(issue_reaction.id)}
             ),
             epoch=int(timezone.now().timestamp()),
             notification=True,

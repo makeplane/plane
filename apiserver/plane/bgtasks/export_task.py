@@ -69,7 +69,9 @@ def create_zip_file(files):
 
 
 def upload_to_s3(zip_file, workspace_id, token_id, slug):
-    file_name = f"{workspace_id}/export-{slug}-{token_id[:6]}-{str(timezone.now().date())}.zip"
+    file_name = (
+        f"{workspace_id}/export-{slug}-{token_id[:6]}-{str(timezone.now().date())}.zip"
+    )
     expires_in = 7 * 24 * 60 * 60
 
     if settings.USE_MINIO:
@@ -98,14 +100,10 @@ def upload_to_s3(zip_file, workspace_id, token_id, slug):
 
         presigned_url = presign_s3.generate_presigned_url(
             "get_object",
-            Params={
-                "Bucket": settings.AWS_STORAGE_BUCKET_NAME,
-                "Key": file_name,
-            },
+            Params={"Bucket": settings.AWS_STORAGE_BUCKET_NAME, "Key": file_name},
             ExpiresIn=expires_in,
         )
     else:
-
         # If endpoint url is present, use it
         if settings.AWS_S3_ENDPOINT_URL:
             s3 = boto3.client(
@@ -129,16 +127,13 @@ def upload_to_s3(zip_file, workspace_id, token_id, slug):
             zip_file,
             settings.AWS_STORAGE_BUCKET_NAME,
             file_name,
-            ExtraArgs={"ACL": "public-read", "ContentType": "application/zip"},
+            ExtraArgs={"ContentType": "application/zip"},
         )
 
         # Generate presigned url for the uploaded file
         presigned_url = s3.generate_presigned_url(
             "get_object",
-            Params={
-                "Bucket": settings.AWS_STORAGE_BUCKET_NAME,
-                "Key": file_name,
-            },
+            Params={"Bucket": settings.AWS_STORAGE_BUCKET_NAME, "Key": file_name},
             ExpiresIn=expires_in,
         )
 
@@ -162,11 +157,12 @@ def generate_table_row(issue):
         issue["name"],
         issue["description_stripped"],
         issue["state__name"],
+        dateConverter(issue["start_date"]),
+        dateConverter(issue["target_date"]),
         issue["priority"],
         (
             f"{issue['created_by__first_name']} {issue['created_by__last_name']}"
-            if issue["created_by__first_name"]
-            and issue["created_by__last_name"]
+            if issue["created_by__first_name"] and issue["created_by__last_name"]
             else ""
         ),
         (
@@ -195,11 +191,12 @@ def generate_json_row(issue):
         "Name": issue["name"],
         "Description": issue["description_stripped"],
         "State": issue["state__name"],
+        "Start Date": dateConverter(issue["start_date"]),
+        "Target Date": dateConverter(issue["target_date"]),
         "Priority": issue["priority"],
         "Created By": (
             f"{issue['created_by__first_name']} {issue['created_by__last_name']}"
-            if issue["created_by__first_name"]
-            and issue["created_by__last_name"]
+            if issue["created_by__first_name"] and issue["created_by__last_name"]
             else ""
         ),
         "Assignee": (
@@ -209,17 +206,11 @@ def generate_json_row(issue):
         ),
         "Labels": issue["labels__name"] if issue["labels__name"] else "",
         "Cycle Name": issue["issue_cycle__cycle__name"],
-        "Cycle Start Date": dateConverter(
-            issue["issue_cycle__cycle__start_date"]
-        ),
+        "Cycle Start Date": dateConverter(issue["issue_cycle__cycle__start_date"]),
         "Cycle End Date": dateConverter(issue["issue_cycle__cycle__end_date"]),
         "Module Name": issue["issue_module__module__name"],
-        "Module Start Date": dateConverter(
-            issue["issue_module__module__start_date"]
-        ),
-        "Module Target Date": dateConverter(
-            issue["issue_module__module__target_date"]
-        ),
+        "Module Start Date": dateConverter(issue["issue_module__module__start_date"]),
+        "Module Target Date": dateConverter(issue["issue_module__module__target_date"]),
         "Created At": dateTimeConverter(issue["created_at"]),
         "Updated At": dateTimeConverter(issue["updated_at"]),
         "Completed At": dateTimeConverter(issue["completed_at"]),
@@ -244,9 +235,13 @@ def update_json_row(rows, row):
         )
         assignee, label = row["Assignee"], row["Labels"]
 
-        if assignee is not None and assignee not in existing_assignees:
+        if assignee is not None and (
+            existing_assignees is None or label not in existing_assignees
+        ):
             rows[matched_index]["Assignee"] += f", {assignee}"
-        if label is not None and label not in existing_labels:
+        if label is not None and (
+            existing_labels is None or label not in existing_labels
+        ):
             rows[matched_index]["Labels"] += f", {label}"
     else:
         rows.append(row)
@@ -254,11 +249,7 @@ def update_json_row(rows, row):
 
 def update_table_row(rows, row):
     matched_index = next(
-        (
-            index
-            for index, existing_row in enumerate(rows)
-            if existing_row[0] == row[0]
-        ),
+        (index for index, existing_row in enumerate(rows) if existing_row[0] == row[0]),
         None,
     )
 
@@ -266,9 +257,13 @@ def update_table_row(rows, row):
         existing_assignees, existing_labels = rows[matched_index][7:9]
         assignee, label = row[7:9]
 
-        if assignee is not None and assignee not in existing_assignees:
-            rows[matched_index][7] += f", {assignee}"
-        if label is not None and label not in existing_labels:
+        if assignee is not None and (
+            existing_assignees is None or label not in existing_assignees
+        ):
+            rows[matched_index][8] += f", {assignee}"
+        if label is not None and (
+            existing_labels is None or label not in existing_labels
+        ):
             rows[matched_index][8] += f", {label}"
     else:
         rows.append(row)
@@ -278,9 +273,7 @@ def generate_csv(header, project_id, issues, files):
     """
     Generate CSV export for all the passed issues.
     """
-    rows = [
-        header,
-    ]
+    rows = [header]
     for issue in issues:
         row = generate_table_row(issue)
         update_table_row(rows, row)
@@ -307,9 +300,7 @@ def generate_xlsx(header, project_id, issues, files):
 
 
 @shared_task
-def issue_export_task(
-    provider, workspace_id, project_ids, token_id, multiple, slug
-):
+def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, slug):
     try:
         exporter_instance = ExporterHistory.objects.get(token=token_id)
         exporter_instance.status = "processing"
@@ -324,14 +315,9 @@ def issue_export_task(
                     project__project_projectmember__is_active=True,
                     project__archived_at__isnull=True,
                 )
-                .select_related(
-                    "project", "workspace", "state", "parent", "created_by"
-                )
+                .select_related("project", "workspace", "state", "parent", "created_by")
                 .prefetch_related(
-                    "assignees",
-                    "labels",
-                    "issue_cycle__cycle",
-                    "issue_module__module",
+                    "assignees", "labels", "issue_cycle__cycle", "issue_module__module"
                 )
                 .values(
                     "id",
@@ -342,6 +328,8 @@ def issue_export_task(
                     "name",
                     "description_stripped",
                     "priority",
+                    "start_date",
+                    "target_date",
                     "state__name",
                     "created_at",
                     "updated_at",
@@ -370,6 +358,8 @@ def issue_export_task(
             "Name",
             "Description",
             "State",
+            "Start Date",
+            "Target Date",
             "Priority",
             "Created By",
             "Assignee",
@@ -398,22 +388,12 @@ def issue_export_task(
                 issues = workspace_issues.filter(project__id=project_id)
                 exporter = EXPORTER_MAPPER.get(provider)
                 if exporter is not None:
-                    exporter(
-                        header,
-                        project_id,
-                        issues,
-                        files,
-                    )
+                    exporter(header, project_id, issues, files)
 
         else:
             exporter = EXPORTER_MAPPER.get(provider)
             if exporter is not None:
-                exporter(
-                    header,
-                    workspace_id,
-                    workspace_issues,
-                    files,
-                )
+                exporter(header, workspace_id, workspace_issues, files)
 
         zip_buffer = create_zip_file(files)
         upload_to_s3(zip_buffer, workspace_id, token_id, slug)

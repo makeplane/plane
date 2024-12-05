@@ -4,19 +4,18 @@ import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
-import debounce from "lodash/debounce";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { DeleteIssueModal } from "@/components/issues";
 //constants
 import { ISSUE_DELETED } from "@/constants/event-tracker";
 import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
-import { EUserProjectRoles } from "@/constants/project";
 //hooks
-import { useEventTracker, useIssueDetail, useIssues, useKanbanView, useUser } from "@/hooks/store";
+import { useEventTracker, useIssueDetail, useIssues, useKanbanView, useUserPermissions } from "@/hooks/store";
 import { useGroupIssuesDragNDrop } from "@/hooks/use-group-dragndrop";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // store
 // ui
 // types
@@ -49,9 +48,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const pathname = usePathname();
   // store hooks
   const storeType = useIssueStoreType() as KanbanStoreType;
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
   const { captureIssueEvent } = useEventTracker();
   const { issueMap, issuesFilter, issues } = useIssues(storeType);
   const {
@@ -95,12 +92,6 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     [fetchNextIssues]
   );
 
-  const debouncedFetchMoreIssues = debounce(
-    (groupId?: string, subgroupId?: string) => fetchMoreIssues(groupId, subgroupId),
-    300,
-    { leading: true, trailing: false }
-  );
-
   const groupedIssueIds = issues?.groupedIssueIds;
 
   const userDisplayFilters = displayFilters || null;
@@ -115,7 +106,10 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const [draggedIssueId, setDraggedIssueId] = useState<string | undefined>(undefined);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
 
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditingAllowed = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
 
   const handleOnDrop = useGroupIssuesDragNDrop(storeType, orderBy, group_by, sub_group_by);
 
@@ -205,21 +199,24 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     });
   };
 
-  const handleKanbanFilters = (toggle: "group_by" | "sub_group_by", value: string) => {
-    if (workspaceSlug) {
-      let kanbanFilters = issuesFilter?.issueFilters?.kanbanFilters?.[toggle] || [];
-      if (kanbanFilters.includes(value)) {
-        kanbanFilters = kanbanFilters.filter((_value) => _value != value);
-      } else {
-        kanbanFilters.push(value);
+  const handleCollapsedGroups = useCallback(
+    (toggle: "group_by" | "sub_group_by", value: string) => {
+      if (workspaceSlug) {
+        let collapsedGroups = issuesFilter?.issueFilters?.kanbanFilters?.[toggle] || [];
+        if (collapsedGroups.includes(value)) {
+          collapsedGroups = collapsedGroups.filter((_value) => _value != value);
+        } else {
+          collapsedGroups.push(value);
+        }
+        updateFilters(projectId?.toString() ?? "", EIssueFilterType.KANBAN_FILTERS, {
+          [toggle]: collapsedGroups,
+        });
       }
-      updateFilters(projectId?.toString() ?? "", EIssueFilterType.KANBAN_FILTERS, {
-        [toggle]: kanbanFilters,
-      });
-    }
-  };
+    },
+    [workspaceSlug, issuesFilter, projectId, updateFilters]
+  );
 
-  const kanbanFilters = issuesFilter?.issueFilters?.kanbanFilters || { group_by: [], sub_group_by: [] };
+  const collapsedGroups = issuesFilter?.issueFilters?.kanbanFilters || { group_by: [], sub_group_by: [] };
 
   return (
     <IssueLayoutHOC layout={EIssueLayoutTypes.KANBAN}>
@@ -264,8 +261,8 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               orderBy={orderBy}
               updateIssue={updateIssue}
               quickActions={renderQuickActions}
-              handleKanbanFilters={handleKanbanFilters}
-              kanbanFilters={kanbanFilters}
+              handleCollapsedGroups={handleCollapsedGroups}
+              collapsedGroups={collapsedGroups}
               enableQuickIssueCreate={enableQuickAdd}
               showEmptyGroup={userDisplayFilters?.show_empty_groups ?? true}
               quickAddCallback={quickAddIssue}
@@ -274,7 +271,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               addIssuesToView={addIssuesToView}
               scrollableContainerRef={scrollableContainerRef}
               handleOnDrop={handleOnDrop}
-              loadMoreIssues={debouncedFetchMoreIssues}
+              loadMoreIssues={fetchMoreIssues}
             />
           </div>
         </div>

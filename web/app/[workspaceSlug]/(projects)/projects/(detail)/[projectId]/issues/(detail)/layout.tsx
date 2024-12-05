@@ -8,7 +8,7 @@ export default function ProjectIssueDetailsLayout({ children }: { children: Reac
   return (
     <>
       <AppHeader header={<ProjectIssueDetailsHeader />} />
-      <ContentWrapper>{children}</ContentWrapper>
+      <ContentWrapper className="overflow-hidden">{children}</ContentWrapper>
     </>
   );
 }

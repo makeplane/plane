@@ -4,19 +4,21 @@ import { useEffect } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
-// types
+// plane types
 import { TRecentProjectsWidgetResponse } from "@plane/types";
-// ui
+// plane ui
 import { Avatar, AvatarGroup, Card } from "@plane/ui";
-
 // components
 import { Logo } from "@/components/common";
 import { WidgetLoader, WidgetProps } from "@/components/dashboard/widgets";
 // constants
 import { PROJECT_BACKGROUND_COLORS } from "@/constants/dashboard";
-import { EUserWorkspaceRoles } from "@/constants/workspace";
+// helpers
+import { getFileURL } from "@/helpers/file.helper";
 // hooks
-import { useEventTracker, useDashboard, useProject, useUser, useCommandPalette } from "@/hooks/store";
+import { useEventTracker, useDashboard, useProject, useCommandPalette, useUserPermissions } from "@/hooks/store";
+// plane web constants
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const WIDGET_KEY = "recent_projects";
 
@@ -51,7 +53,11 @@ const ProjectListItem: React.FC<ProjectListItemProps> = observer((props) => {
         <div className="mt-2">
           <AvatarGroup>
             {projectDetails.members?.map((member) => (
-              <Avatar key={member.member_id} src={member.member__avatar} name={member.member__display_name} />
+              <Avatar
+                key={member.member_id}
+                src={getFileURL(member.member__avatar_url)}
+                name={member.member__display_name}
+              />
             ))}
           </AvatarGroup>
         </div>
@@ -65,13 +71,14 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
   // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
-  const {
-    membership: { currentWorkspaceRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
   const { fetchWidgetStats, getWidgetStats } = useDashboard();
   // derived values
   const widgetStats = getWidgetStats<TRecentProjectsWidgetResponse>(workspaceSlug, dashboardId, WIDGET_KEY);
-  const canCreateProject = currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+  const canCreateProject = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
 
   useEffect(() => {
     fetchWidgetStats(workspaceSlug, dashboardId, {

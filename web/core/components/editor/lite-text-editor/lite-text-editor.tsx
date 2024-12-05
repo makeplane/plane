@@ -9,13 +9,16 @@ import { IssueCommentToolbar } from "@/components/editor";
 import { EIssueCommentAccessSpecifier } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { getEditorFileHandlers } from "@/helpers/editor.helper";
 import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks
 import { useMember, useMention, useUser } from "@/hooks/store";
-// services
-import { FileService } from "@/services/file.service";
+// plane web hooks
+import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
+import { useFileSize } from "@/plane-web/hooks/use-file-size";
 
-interface LiteTextEditorWrapperProps extends Omit<ILiteTextEditor, "fileHandler" | "mentionHandler"> {
+interface LiteTextEditorWrapperProps
+  extends Omit<ILiteTextEditor, "disabledExtensions" | "fileHandler" | "mentionHandler"> {
   workspaceSlug: string;
   workspaceId: string;
   projectId: string;
@@ -24,9 +27,8 @@ interface LiteTextEditorWrapperProps extends Omit<ILiteTextEditor, "fileHandler"
   showAccessSpecifier?: boolean;
   showSubmitButton?: boolean;
   isSubmitting?: boolean;
+  uploadFile: (file: File) => Promise<string>;
 }
-
-const fileService = new FileService();
 
 export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapperProps>((props, ref) => {
   const {
@@ -40,6 +42,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     showSubmitButton = true,
     isSubmitting = false,
     placeholder = "Add comment...",
+    uploadFile,
     ...rest
   } = props;
   // store hooks
@@ -48,6 +51,8 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     getUserDetails,
     project: { getProjectMemberIds },
   } = useMember();
+  // editor flaggings
+  const { liteTextEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
   // derived values
   const projectMemberIds = getProjectMemberIds(projectId);
   const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
@@ -58,23 +63,27 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     members: projectMemberDetails,
     user: currentUser ?? undefined,
   });
-
-  const isEmpty = isCommentEmpty(props.initialValue);
-
+  // file size
+  const { maxFileSize } = useFileSize();
   function isMutableRefObject<T>(ref: React.ForwardedRef<T>): ref is React.MutableRefObject<T | null> {
     return !!ref && typeof ref === "object" && "current" in ref;
   }
+  // derived values
+  const isEmpty = isCommentEmpty(props.initialValue);
+  const editorRef = isMutableRefObject<EditorRefApi>(ref) ? ref.current : null;
 
   return (
     <div className="border border-custom-border-200 rounded p-3 space-y-3">
       <LiteTextEditorWithRef
         ref={ref}
-        fileHandler={{
-          upload: fileService.getUploadFileFunction(workspaceSlug),
-          delete: fileService.getDeleteImageFunction(workspaceId),
-          restore: fileService.getRestoreImageFunction(workspaceId),
-          cancel: fileService.cancelUpload,
-        }}
+        disabledExtensions={disabledExtensions}
+        fileHandler={getEditorFileHandlers({
+          maxFileSize,
+          projectId,
+          uploadFile,
+          workspaceId,
+          workspaceSlug,
+        })}
         mentionHandler={{
           highlights: mentionHighlights,
           suggestions: mentionSuggestions,
@@ -85,17 +94,20 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
       />
       <IssueCommentToolbar
         accessSpecifier={accessSpecifier}
-        executeCommand={(key) => {
-          if (isMutableRefObject<EditorRefApi>(ref)) {
-            ref.current?.executeMenuItemCommand(key);
-          }
+        executeCommand={(item) => {
+          // TODO: update this while toolbar homogenization
+          // @ts-expect-error type mismatch here
+          editorRef?.executeMenuItemCommand({
+            itemKey: item.itemKey,
+            ...item.extraProps,
+          });
         }}
         handleAccessChange={handleAccessChange}
         handleSubmit={(e) => rest.onEnterKeyPress?.(e)}
         isCommentEmpty={isEmpty}
         isSubmitting={isSubmitting}
         showAccessSpecifier={showAccessSpecifier}
-        editorRef={isMutableRefObject<EditorRefApi>(ref) ? ref : null}
+        editorRef={editorRef}
         showSubmitButton={showSubmitButton}
       />
     </div>

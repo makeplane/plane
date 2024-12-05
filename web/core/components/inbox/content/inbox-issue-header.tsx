@@ -21,21 +21,19 @@ import {
   DeclineIssueModal,
   DeleteInboxIssueModal,
   InboxIssueActionsMobileHeader,
-  InboxIssueCreateEditModalRoot,
   InboxIssueSnoozeModal,
   InboxIssueStatus,
   SelectDuplicateInboxIssueModal,
 } from "@/components/inbox";
-import { IssueUpdateStatus } from "@/components/issues";
-// constants
-import { EUserProjectRoles } from "@/constants/project";
+import { CreateUpdateIssueModal, IssueUpdateStatus } from "@/components/issues";
 // helpers
 import { findHowManyDaysLeft } from "@/helpers/date-time.helper";
 import { EInboxIssueStatus } from "@/helpers/inbox.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useUser, useProjectInbox, useProject } from "@/hooks/store";
+import { useUser, useProjectInbox, useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // store types
 import type { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
 
@@ -70,23 +68,33 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   // store
   const { currentTab, deleteInboxIssue, filteredInboxIssueIds } = useProjectInbox();
   const { data: currentUser } = useUser();
-  const {
-    membership: { currentProjectRoleByProjectId },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
+  const { currentProjectDetails } = useProject();
 
   const router = useAppRouter();
   const { getProjectById } = useProject();
 
   const issue = inboxIssue?.issue;
   // derived values
-  const currentProjectRole = currentProjectRoleByProjectId(projectId) || undefined;
-  const isAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isAllowed = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug,
+    projectId
+  );
   const canMarkAsDuplicate = isAllowed && (inboxIssue?.status === 0 || inboxIssue?.status === -2);
   const canMarkAsAccepted = isAllowed && (inboxIssue?.status === 0 || inboxIssue?.status === -2);
   const canMarkAsDeclined = isAllowed && (inboxIssue?.status === 0 || inboxIssue?.status === -2);
   // can delete only if admin or is creator of the issue
   const canDelete =
-    (!!currentProjectRole && currentProjectRole >= EUserProjectRoles.ADMIN) || issue?.created_by === currentUser?.id;
+    allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId) ||
+    issue?.created_by === currentUser?.id;
+  const isProjectAdmin = allowPermissions(
+    [EUserPermissions.ADMIN],
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug,
+    projectId
+  );
   const isAcceptedOrDeclined = inboxIssue?.status ? [-1, 1, 2].includes(inboxIssue.status) : undefined;
   // days left for snooze
   const numberOfDaysLeft = findHowManyDaysLeft(inboxIssue?.snoozed_till);
@@ -197,12 +205,24 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
     [handleInboxIssueNavigation]
   );
 
+  const handleActionWithPermission = (isAdmin: boolean, action: () => void, errorMessage: string) => {
+    if (isAdmin) action();
+    else {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Permission denied",
+        message: errorMessage,
+      });
+    }
+  };
+
   useEffect(() => {
+    if (isSubmitting === "submitting") return;
     if (!isNotificationEmbed) document.addEventListener("keydown", onKeyDown);
     return () => {
       if (!isNotificationEmbed) document.removeEventListener("keydown", onKeyDown);
     };
-  }, [onKeyDown, isNotificationEmbed]);
+  }, [onKeyDown, isNotificationEmbed, isSubmitting]);
 
   if (!inboxIssue) return null;
 
@@ -215,16 +235,19 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
           value={inboxIssue?.duplicate_to}
           onSubmit={handleInboxIssueDuplicate}
         />
-
-        <InboxIssueCreateEditModalRoot
-          workspaceSlug={workspaceSlug.toString()}
-          projectId={projectId.toString()}
-          modalState={acceptIssueModal}
-          handleModalClose={() => setAcceptIssueModal(false)}
-          issue={inboxIssue?.issue}
-          onSubmit={handleInboxIssueAccept}
+        <CreateUpdateIssueModal
+          data={inboxIssue?.issue}
+          isOpen={acceptIssueModal}
+          onClose={() => setAcceptIssueModal(false)}
+          beforeFormSubmit={handleInboxIssueAccept}
+          withDraftIssueWrapper={false}
+          fetchIssueDetails={false}
+          modalTitle={`Move ${currentProjectDetails?.identifier}-${issue?.sequence_id} to project issues`}
+          primaryButtonText={{
+            default: "Add to project",
+            loading: "Adding",
+          }}
         />
-
         <DeclineIssueModal
           data={inboxIssue?.issue || {}}
           isOpen={declineIssueModal}
@@ -245,7 +268,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
         />
       </>
 
-      <Row className="hidden relative lg:flex h-full w-full items-center justify-between gap-2">
+      <Row className="hidden relative lg:flex h-full w-full items-center justify-between gap-2 bg-custom-background-100 z-[15] border-b border-custom-border-200">
         <div className="flex items-center gap-4">
           {isNotificationEmbed && (
             <button onClick={embedRemoveCurrentNotification}>
@@ -291,7 +314,13 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                   size="sm"
                   prependIcon={<CircleCheck className="w-3 h-3" />}
                   className="text-green-500 border-0.5 border-green-500 bg-green-500/20 focus:bg-green-500/20 focus:text-green-500 hover:bg-green-500/40 bg-opacity-20"
-                  onClick={() => setAcceptIssueModal(true)}
+                  onClick={() =>
+                    handleActionWithPermission(
+                      isProjectAdmin,
+                      () => setAcceptIssueModal(true),
+                      "Only project admins can accept issues"
+                    )
+                  }
                 >
                   Accept
                 </Button>
@@ -305,7 +334,13 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                   size="sm"
                   prependIcon={<CircleX className="w-3 h-3" />}
                   className="text-red-500 border-0.5 border-red-500 bg-red-500/20 focus:bg-red-500/20 focus:text-red-500 hover:bg-red-500/40 bg-opacity-20"
-                  onClick={() => setDeclineIssueModal(true)}
+                  onClick={() =>
+                    handleActionWithPermission(
+                      isProjectAdmin,
+                      () => setDeclineIssueModal(true),
+                      "Only project admins can deny issues"
+                    )
+                  }
                 >
                   Decline
                 </Button>
@@ -339,7 +374,15 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                 {isAllowed && (
                   <CustomMenu verticalEllipsis placement="bottom-start">
                     {canMarkAsAccepted && (
-                      <CustomMenu.MenuItem onClick={handleIssueSnoozeAction}>
+                      <CustomMenu.MenuItem
+                        onClick={() =>
+                          handleActionWithPermission(
+                            isProjectAdmin,
+                            handleIssueSnoozeAction,
+                            "Only project admins can snooze/Un-snooze issues"
+                          )
+                        }
+                      >
                         <div className="flex items-center gap-2">
                           <Clock size={14} strokeWidth={2} />
                           {inboxIssue?.snoozed_till && numberOfDaysLeft && numberOfDaysLeft > 0
@@ -349,7 +392,15 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                       </CustomMenu.MenuItem>
                     )}
                     {canMarkAsDuplicate && (
-                      <CustomMenu.MenuItem onClick={() => setSelectDuplicateIssue(true)}>
+                      <CustomMenu.MenuItem
+                        onClick={() =>
+                          handleActionWithPermission(
+                            isProjectAdmin,
+                            () => setSelectDuplicateIssue(true),
+                            "Only project admins can mark issues as duplicate"
+                          )
+                        }
+                      >
                         <div className="flex items-center gap-2">
                           <FileStack size={14} strokeWidth={2} />
                           Mark as duplicate
@@ -399,6 +450,8 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
           setIsMobileSidebar={setIsMobileSidebar}
           isNotificationEmbed={isNotificationEmbed}
           embedRemoveCurrentNotification={embedRemoveCurrentNotification}
+          isProjectAdmin={isProjectAdmin}
+          handleActionWithPermission={handleActionWithPermission}
         />
       </div>
     </>

@@ -1,16 +1,20 @@
 // types
 import type {
-  TIssue,
   IIssueDisplayProperties,
-  TIssueLink,
-  TIssueSubIssues,
-  TIssueActivity,
-  TIssuesResponse,
   TBulkOperationsPayload,
+  TIssue,
+  TIssueActivity,
+  TIssueLink,
+  TIssuesResponse,
+  TIssueSubIssues,
 } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
+import { getIssuesShouldFallbackToServer } from "@/helpers/issue.helper";
+import { persistence } from "@/local-db/storage.sqlite";
 // services
+
+import { addIssuesBulk, deleteIssueFromLocal, updateIssue } from "@/local-db/utils/load-issues";
 import { APIService } from "@/services/api.service";
 
 export class IssueService extends APIService {
@@ -26,14 +30,54 @@ export class IssueService extends APIService {
       });
   }
 
-  async getIssues(workspaceSlug: string, projectId: string, queries?: any, config = {}): Promise<TIssuesResponse> {
+  async getIssuesFromServer(
+    workspaceSlug: string,
+    projectId: string,
+    queries?: any,
+    config = {}
+  ): Promise<TIssuesResponse> {
+    const path =
+      (queries.expand as string)?.includes("issue_relation") && !queries.group_by
+        ? `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues-detail/`
+        : `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/`;
     return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/`,
+      path,
       {
         params: queries,
       },
       config
     )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getIssuesForSync(
+    workspaceSlug: string,
+    projectId: string,
+    queries?: any,
+    config = {}
+  ): Promise<TIssuesResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/v2/issues/`, { params: queries }, config)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getIssues(workspaceSlug: string, projectId: string, queries?: any, config = {}): Promise<TIssuesResponse> {
+    if (getIssuesShouldFallbackToServer(queries))
+      return await this.getIssuesFromServer(workspaceSlug, projectId, queries, config);
+
+    const response = await persistence.getIssues(workspaceSlug, projectId, queries, config);
+    return response as TIssuesResponse;
+  }
+
+  async getDeletedIssues(workspaceSlug: string, projectId: string, queries?: any): Promise<TIssuesResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/deleted-issues/`, {
+      params: queries,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -58,7 +102,12 @@ export class IssueService extends APIService {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/`, {
       params: queries,
     })
-      .then((response) => response?.data)
+      .then((response) => {
+        if (response.data) {
+          updateIssue({ ...response.data, is_local_update: 1 });
+        }
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -68,7 +117,12 @@ export class IssueService extends APIService {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/list/`, {
       params: { issues: issueIds.join(",") },
     })
-      .then((response) => response?.data)
+      .then((response) => {
+        if (response?.data && Array.isArray(response?.data)) {
+          addIssuesBulk(response.data);
+        }
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -167,7 +221,20 @@ export class IssueService extends APIService {
   }
 
   async deleteIssue(workspaceSlug: string, projectId: string, issuesId: string): Promise<any> {
+    deleteIssueFromLocal(issuesId);
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issuesId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async updateIssueDates(
+    workspaceSlug: string,
+    projectId: string,
+    updates: { id: string; start_date?: string; target_date?: string }[]
+  ): Promise<void> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-dates/`, { updates })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -245,7 +312,10 @@ export class IssueService extends APIService {
 
   async bulkOperations(workspaceSlug: string, projectId: string, data: TBulkOperationsPayload): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/bulk-operation-issues/`, data)
-      .then((response) => response?.data)
+      .then((response) => {
+        persistence.syncIssues(projectId);
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -259,7 +329,10 @@ export class IssueService extends APIService {
     }
   ): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/bulk-delete-issues/`, data)
-      .then((response) => response?.data)
+      .then((response) => {
+        persistence.syncIssues(projectId);
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -275,7 +348,10 @@ export class IssueService extends APIService {
     archived_at: string;
   }> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/bulk-archive-issues/`, data)
-      .then((response) => response?.data)
+      .then((response) => {
+        persistence.syncIssues(projectId);
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });

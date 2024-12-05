@@ -30,3 +30,5 @@ export const filterActivityOnSelectedFilters = (
   filter: TActivityFilters[]
 ): TIssueActivityComment[] =>
   activity.filter((activity) => filter.includes(activity.activity_type as TActivityFilters));
+
+export const ENABLE_ISSUE_DEPENDENCIES = false;

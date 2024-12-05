@@ -4,11 +4,7 @@ import string
 import uuid
 
 import pytz
-from django.contrib.auth.models import (
-    AbstractBaseUser,
-    PermissionsMixin,
-    UserManager,
-)
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager
 
 # Django imports
 from django.db import models
@@ -17,6 +13,7 @@ from django.dispatch import receiver
 from django.utils import timezone
 
 # Module imports
+from plane.db.models import FileAsset
 from ..mixins import TimeAuditModel
 
 
@@ -31,36 +28,40 @@ def get_default_onboarding():
 
 class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(
-        default=uuid.uuid4,
-        unique=True,
-        editable=False,
-        db_index=True,
-        primary_key=True,
+        default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True
     )
     username = models.CharField(max_length=128, unique=True)
     # user fields
     mobile_number = models.CharField(max_length=255, blank=True, null=True)
-    email = models.CharField(
-        max_length=255, null=True, blank=True, unique=True
-    )
+    email = models.CharField(max_length=255, null=True, blank=True, unique=True)
 
     # identity
     display_name = models.CharField(max_length=255, default="")
     first_name = models.CharField(max_length=255, blank=True)
     last_name = models.CharField(max_length=255, blank=True)
+    # avatar
     avatar = models.TextField(blank=True)
+    avatar_asset = models.ForeignKey(
+        FileAsset,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="user_avatar",
+    )
+    # cover image
     cover_image = models.URLField(blank=True, null=True, max_length=800)
+    cover_image_asset = models.ForeignKey(
+        FileAsset,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="user_cover_image",
+    )
 
     # tracking metrics
-    date_joined = models.DateTimeField(
-        auto_now_add=True, verbose_name="Created At"
-    )
-    created_at = models.DateTimeField(
-        auto_now_add=True, verbose_name="Created At"
-    )
-    updated_at = models.DateTimeField(
-        auto_now=True, verbose_name="Last Modified At"
-    )
+    date_joined = models.DateTimeField(auto_now_add=True, verbose_name="Created At")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Created At")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Last Modified At")
     last_location = models.CharField(max_length=255, blank=True)
     created_location = models.CharField(max_length=255, blank=True)
 
@@ -81,15 +82,15 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_logout_time = models.DateTimeField(null=True)
     last_login_ip = models.CharField(max_length=255, blank=True)
     last_logout_ip = models.CharField(max_length=255, blank=True)
-    last_login_medium = models.CharField(
-        max_length=20,
-        default="email",
-    )
+    last_login_medium = models.CharField(max_length=20, default="email")
     last_login_uagent = models.TextField(blank=True)
     token_updated_at = models.DateTimeField(null=True)
     # my_issues_prop = models.JSONField(null=True)
 
     is_bot = models.BooleanField(default=False)
+    bot_type = models.CharField(
+        max_length=30, verbose_name="Bot Type", blank=True, null=True
+    )
 
     # timezone
     USER_TIMEZONE_CHOICES = tuple(zip(pytz.all_timezones, pytz.all_timezones))
@@ -111,6 +112,28 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return f"{self.username} <{self.email}>"
 
+    @property
+    def avatar_url(self):
+        # Return the logo asset url if it exists
+        if self.avatar_asset:
+            return self.avatar_asset.asset_url
+
+        # Return the logo url if it exists
+        if self.avatar:
+            return self.avatar
+        return None
+
+    @property
+    def cover_image_url(self):
+        # Return the logo asset url if it exists
+        if self.cover_image_asset:
+            return self.cover_image_asset.asset_url
+
+        # Return the logo url if it exists
+        if self.cover_image:
+            return self.cover_image
+        return None
+
     def save(self, *args, **kwargs):
         self.email = self.email.lower().strip()
         self.mobile_number = self.mobile_number
@@ -123,9 +146,7 @@ class User(AbstractBaseUser, PermissionsMixin):
             self.display_name = (
                 self.email.split("@")[0]
                 if len(self.email.split("@"))
-                else "".join(
-                    random.choice(string.ascii_letters) for _ in range(6)
-                )
+                else "".join(random.choice(string.ascii_letters) for _ in range(6))
             )
 
         if self.is_superuser:
@@ -136,11 +157,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Profile(TimeAuditModel):
     id = models.UUIDField(
-        default=uuid.uuid4,
-        unique=True,
-        editable=False,
-        db_index=True,
-        primary_key=True,
+        default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True
     )
     # User
     user = models.OneToOneField(
@@ -170,20 +187,20 @@ class Profile(TimeAuditModel):
 
 
 class Account(TimeAuditModel):
+    PROVIDER_CHOICES = (
+        ("google", "Google"),
+        ("github", "Github"),
+        ("gitlab", "GitLab"),
+    )
+
     id = models.UUIDField(
-        default=uuid.uuid4,
-        unique=True,
-        editable=False,
-        db_index=True,
-        primary_key=True,
+        default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True
     )
     user = models.ForeignKey(
         "db.User", on_delete=models.CASCADE, related_name="accounts"
     )
     provider_account_id = models.CharField(max_length=255)
-    provider = models.CharField(
-        choices=(("google", "Google"), ("github", "Github"), ("gitlab", "GitLab")),
-    )
+    provider = models.CharField(choices=PROVIDER_CHOICES)
     access_token = models.TextField()
     access_token_expired_at = models.DateTimeField(null=True)
     refresh_token = models.TextField(null=True, blank=True)

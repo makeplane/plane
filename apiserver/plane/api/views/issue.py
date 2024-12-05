@@ -16,6 +16,7 @@ from django.db.models import (
     Q,
     Value,
     When,
+    Subquery,
 )
 from django.utils import timezone
 
@@ -42,12 +43,13 @@ from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
     IssueActivity,
-    IssueAttachment,
+    FileAsset,
     IssueComment,
     IssueLink,
     Label,
     Project,
     ProjectMember,
+    CycleIssue,
 )
 
 from .base import BaseAPIView
@@ -71,9 +73,7 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
     def get_queryset(self):
         return (
             Issue.issue_objects.annotate(
-                sub_issues_count=Issue.issue_objects.filter(
-                    parent=OuterRef("id")
-                )
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -89,14 +89,10 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
             .order_by(self.kwargs.get("order_by", "-created_at"))
         ).distinct()
 
-    def get(
-        self, request, slug, project__identifier=None, issue__identifier=None
-    ):
+    def get(self, request, slug, project__identifier=None, issue__identifier=None):
         if issue__identifier and project__identifier:
             issue = Issue.issue_objects.annotate(
-                sub_issues_count=Issue.issue_objects.filter(
-                    parent=OuterRef("id")
-                )
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -106,11 +102,7 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
                 sequence_id=issue__identifier,
             )
             return Response(
-                IssueSerializer(
-                    issue,
-                    fields=self.fields,
-                    expand=self.expand,
-                ).data,
+                IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
                 status=status.HTTP_200_OK,
             )
 
@@ -124,17 +116,13 @@ class IssueAPIEndpoint(BaseAPIView):
 
     model = Issue
     webhook_event = "issue"
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
+    permission_classes = [ProjectEntityPermission]
     serializer_class = IssueSerializer
 
     def get_queryset(self):
         return (
             Issue.issue_objects.annotate(
-                sub_issues_count=Issue.issue_objects.filter(
-                    parent=OuterRef("id")
-                )
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -162,47 +150,37 @@ class IssueAPIEndpoint(BaseAPIView):
                 project_id=project_id,
             )
             return Response(
-                IssueSerializer(
-                    issue,
-                    fields=self.fields,
-                    expand=self.expand,
-                ).data,
+                IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
                 status=status.HTTP_200_OK,
             )
 
         if pk:
             issue = Issue.issue_objects.annotate(
-                sub_issues_count=Issue.issue_objects.filter(
-                    parent=OuterRef("id")
-                )
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             ).get(workspace__slug=slug, project_id=project_id, pk=pk)
             return Response(
-                IssueSerializer(
-                    issue,
-                    fields=self.fields,
-                    expand=self.expand,
-                ).data,
+                IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
                 status=status.HTTP_200_OK,
             )
 
         # Custom ordering for priority and state
         priority_order = ["urgent", "high", "medium", "low", "none"]
-        state_order = [
-            "backlog",
-            "unstarted",
-            "started",
-            "completed",
-            "cancelled",
-        ]
+        state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
 
         order_by_param = request.GET.get("order_by", "-created_at")
 
         issue_queryset = (
             self.get_queryset()
-            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(
+                        issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("cycle_id")[:1]
+                )
+            )
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -210,8 +188,9 @@ class IssueAPIEndpoint(BaseAPIView):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -222,9 +201,7 @@ class IssueAPIEndpoint(BaseAPIView):
         # Priority Ordering
         if order_by_param == "priority" or order_by_param == "-priority":
             priority_order = (
-                priority_order
-                if order_by_param == "priority"
-                else priority_order[::-1]
+                priority_order if order_by_param == "priority" else priority_order[::-1]
             )
             issue_queryset = issue_queryset.annotate(
                 priority_order=Case(
@@ -272,9 +249,7 @@ class IssueAPIEndpoint(BaseAPIView):
                     else order_by_param
                 )
             ).order_by(
-                "-max_values"
-                if order_by_param.startswith("-")
-                else "max_values"
+                "-max_values" if order_by_param.startswith("-") else "max_values"
             )
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
@@ -283,10 +258,7 @@ class IssueAPIEndpoint(BaseAPIView):
             request=request,
             queryset=(issue_queryset),
             on_results=lambda issues: IssueSerializer(
-                issues,
-                many=True,
-                fields=self.fields,
-                expand=self.expand,
+                issues, many=True, fields=self.fields, expand=self.expand
             ).data,
         )
 
@@ -330,22 +302,16 @@ class IssueAPIEndpoint(BaseAPIView):
             serializer.save()
             # Refetch the issue
             issue = Issue.objects.filter(
-                workspace__slug=slug,
-                project_id=project_id,
-                pk=serializer.data["id"],
+                workspace__slug=slug, project_id=project_id, pk=serializer.data["id"]
             ).first()
             issue.created_at = request.data.get("created_at", timezone.now())
-            issue.created_by_id = request.data.get(
-                "created_by", request.user.id
-            )
+            issue.created_by_id = request.data.get("created_by", request.user.id)
             issue.save(update_fields=["created_at", "created_by"])
 
             # Track the issue
             issue_activity.delay(
                 type="issue.activity.created",
-                requested_data=json.dumps(
-                    self.request.data, cls=DjangoJSONEncoder
-                ),
+                requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
                 actor_id=str(request.user.id),
                 issue_id=str(serializer.data.get("id", None)),
                 project_id=str(project_id),
@@ -382,9 +348,7 @@ class IssueAPIEndpoint(BaseAPIView):
 
                 # Get the requested data, encode it as django object and pass it
                 # to serializer to validation
-                requested_data = json.dumps(
-                    self.request.data, cls=DjangoJSONEncoder
-                )
+                requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
                 serializer = IssueSerializer(
                     issue,
                     data=request.data,
@@ -442,9 +406,7 @@ class IssueAPIEndpoint(BaseAPIView):
                     # If any of the created_at or created_by is present, update
                     # the issue with the provided data, else return with the
                     # default states given.
-                    issue.created_at = request.data.get(
-                        "created_at", timezone.now()
-                    )
+                    issue.created_at = request.data.get("created_at", timezone.now())
                     issue.created_by_id = request.data.get(
                         "created_by", request.user.id
                     )
@@ -461,12 +423,8 @@ class IssueAPIEndpoint(BaseAPIView):
                         current_instance=None,
                         epoch=int(timezone.now().timestamp()),
                     )
-                    return Response(
-                        serializer.data, status=status.HTTP_201_CREATED
-                    )
-                return Response(
-                    serializer.errors, status=status.HTTP_400_BAD_REQUEST
-                )
+                    return Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(
                 {"error": "external_id and external_source are required"},
@@ -474,9 +432,7 @@ class IssueAPIEndpoint(BaseAPIView):
             )
 
     def patch(self, request, slug, project_id, pk=None):
-        issue = Issue.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=pk
-        )
+        issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
         project = Project.objects.get(pk=project_id)
         current_instance = json.dumps(
             IssueSerializer(issue).data, cls=DjangoJSONEncoder
@@ -485,10 +441,7 @@ class IssueAPIEndpoint(BaseAPIView):
         serializer = IssueSerializer(
             issue,
             data=request.data,
-            context={
-                "project_id": project_id,
-                "workspace_id": project.workspace_id,
-            },
+            context={"project_id": project_id, "workspace_id": project.workspace_id},
             partial=True,
         )
         if serializer.is_valid():
@@ -526,9 +479,7 @@ class IssueAPIEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, slug, project_id, pk=None):
-        issue = Issue.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=pk
-        )
+        issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
         if issue.created_by_id != request.user.id and (
             not ProjectMember.objects.filter(
                 workspace__slug=slug,
@@ -567,9 +518,7 @@ class LabelAPIEndpoint(BaseAPIView):
 
     serializer_class = LabelSerializer
     model = Label
-    permission_classes = [
-        ProjectMemberPermission,
-    ]
+    permission_classes = [ProjectMemberPermission]
 
     def get_queryset(self):
         return (
@@ -616,12 +565,8 @@ class LabelAPIEndpoint(BaseAPIView):
                     )
 
                 serializer.save(project_id=project_id)
-                return Response(
-                    serializer.data, status=status.HTTP_201_CREATED
-                )
-            return Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except IntegrityError:
             label = Label.objects.filter(
                 workspace__slug=slug,
@@ -642,18 +587,11 @@ class LabelAPIEndpoint(BaseAPIView):
                 request=request,
                 queryset=(self.get_queryset()),
                 on_results=lambda labels: LabelSerializer(
-                    labels,
-                    many=True,
-                    fields=self.fields,
-                    expand=self.expand,
+                    labels, many=True, fields=self.fields, expand=self.expand
                 ).data,
             )
         label = self.get_queryset().get(pk=pk)
-        serializer = LabelSerializer(
-            label,
-            fields=self.fields,
-            expand=self.expand,
-        )
+        serializer = LabelSerializer(label, fields=self.fields, expand=self.expand)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def patch(self, request, slug, project_id, pk=None):
@@ -696,9 +634,7 @@ class IssueLinkAPIEndpoint(BaseAPIView):
 
     """
 
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
+    permission_classes = [ProjectEntityPermission]
 
     model = IssueLink
     serializer_class = IssueLinkSerializer
@@ -721,46 +657,32 @@ class IssueLinkAPIEndpoint(BaseAPIView):
         if pk is None:
             issue_links = self.get_queryset()
             serializer = IssueLinkSerializer(
-                issue_links,
-                fields=self.fields,
-                expand=self.expand,
+                issue_links, fields=self.fields, expand=self.expand
             )
             return self.paginate(
                 request=request,
                 queryset=(self.get_queryset()),
                 on_results=lambda issue_links: IssueLinkSerializer(
-                    issue_links,
-                    many=True,
-                    fields=self.fields,
-                    expand=self.expand,
+                    issue_links, many=True, fields=self.fields, expand=self.expand
                 ).data,
             )
         issue_link = self.get_queryset().get(pk=pk)
         serializer = IssueLinkSerializer(
-            issue_link,
-            fields=self.fields,
-            expand=self.expand,
+            issue_link, fields=self.fields, expand=self.expand
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, slug, project_id, issue_id):
         serializer = IssueLinkSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(
-                project_id=project_id,
-                issue_id=issue_id,
-            )
+            serializer.save(project_id=project_id, issue_id=issue_id)
 
             link = IssueLink.objects.get(pk=serializer.data["id"])
-            link.created_by_id = request.data.get(
-                "created_by", request.user.id
-            )
+            link.created_by_id = request.data.get("created_by", request.user.id)
             link.save(update_fields=["created_by"])
             issue_activity.delay(
                 type="link.activity.created",
-                requested_data=json.dumps(
-                    serializer.data, cls=DjangoJSONEncoder
-                ),
+                requested_data=json.dumps(serializer.data, cls=DjangoJSONEncoder),
                 issue_id=str(self.kwargs.get("issue_id")),
                 project_id=str(self.kwargs.get("project_id")),
                 actor_id=str(link.created_by_id),
@@ -772,19 +694,13 @@ class IssueLinkAPIEndpoint(BaseAPIView):
 
     def patch(self, request, slug, project_id, issue_id, pk):
         issue_link = IssueLink.objects.get(
-            workspace__slug=slug,
-            project_id=project_id,
-            issue_id=issue_id,
-            pk=pk,
+            workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk
         )
         requested_data = json.dumps(request.data, cls=DjangoJSONEncoder)
         current_instance = json.dumps(
-            IssueLinkSerializer(issue_link).data,
-            cls=DjangoJSONEncoder,
+            IssueLinkSerializer(issue_link).data, cls=DjangoJSONEncoder
         )
-        serializer = IssueLinkSerializer(
-            issue_link, data=request.data, partial=True
-        )
+        serializer = IssueLinkSerializer(issue_link, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             issue_activity.delay(
@@ -801,14 +717,10 @@ class IssueLinkAPIEndpoint(BaseAPIView):
 
     def delete(self, request, slug, project_id, issue_id, pk):
         issue_link = IssueLink.objects.get(
-            workspace__slug=slug,
-            project_id=project_id,
-            issue_id=issue_id,
-            pk=pk,
+            workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk
         )
         current_instance = json.dumps(
-            IssueLinkSerializer(issue_link).data,
-            cls=DjangoJSONEncoder,
+            IssueLinkSerializer(issue_link).data, cls=DjangoJSONEncoder
         )
         issue_activity.delay(
             type="link.activity.deleted",
@@ -833,15 +745,11 @@ class IssueCommentAPIEndpoint(BaseAPIView):
     serializer_class = IssueCommentSerializer
     model = IssueComment
     webhook_event = "issue_comment"
-    permission_classes = [
-        ProjectLitePermission,
-    ]
+    permission_classes = [ProjectLitePermission]
 
     def get_queryset(self):
         return (
-            IssueComment.objects.filter(
-                workspace__slug=self.kwargs.get("slug")
-            )
+            IssueComment.objects.filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(issue_id=self.kwargs.get("issue_id"))
             .filter(
@@ -868,19 +776,14 @@ class IssueCommentAPIEndpoint(BaseAPIView):
         if pk:
             issue_comment = self.get_queryset().get(pk=pk)
             serializer = IssueCommentSerializer(
-                issue_comment,
-                fields=self.fields,
-                expand=self.expand,
+                issue_comment, fields=self.fields, expand=self.expand
             )
             return Response(serializer.data, status=status.HTTP_200_OK)
         return self.paginate(
             request=request,
             queryset=(self.get_queryset()),
             on_results=lambda issue_comment: IssueCommentSerializer(
-                issue_comment,
-                many=True,
-                fields=self.fields,
-                expand=self.expand,
+                issue_comment, many=True, fields=self.fields, expand=self.expand
             ).data,
         )
 
@@ -913,17 +816,11 @@ class IssueCommentAPIEndpoint(BaseAPIView):
         serializer = IssueCommentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(
-                project_id=project_id,
-                issue_id=issue_id,
-                actor=request.user,
+                project_id=project_id, issue_id=issue_id, actor=request.user
             )
-            issue_comment = IssueComment.objects.get(
-                pk=serializer.data.get("id")
-            )
+            issue_comment = IssueComment.objects.get(pk=serializer.data.get("id"))
             # Update the created_at and the created_by and save the comment
-            issue_comment.created_at = request.data.get(
-                "created_at", timezone.now()
-            )
+            issue_comment.created_at = request.data.get("created_at", timezone.now())
             issue_comment.created_by_id = request.data.get(
                 "created_by", request.user.id
             )
@@ -931,9 +828,7 @@ class IssueCommentAPIEndpoint(BaseAPIView):
 
             issue_activity.delay(
                 type="comment.activity.created",
-                requested_data=json.dumps(
-                    serializer.data, cls=DjangoJSONEncoder
-                ),
+                requested_data=json.dumps(serializer.data, cls=DjangoJSONEncoder),
                 actor_id=str(issue_comment.created_by_id),
                 issue_id=str(self.kwargs.get("issue_id")),
                 project_id=str(self.kwargs.get("project_id")),
@@ -945,24 +840,17 @@ class IssueCommentAPIEndpoint(BaseAPIView):
 
     def patch(self, request, slug, project_id, issue_id, pk):
         issue_comment = IssueComment.objects.get(
-            workspace__slug=slug,
-            project_id=project_id,
-            issue_id=issue_id,
-            pk=pk,
+            workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk
         )
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         current_instance = json.dumps(
-            IssueCommentSerializer(issue_comment).data,
-            cls=DjangoJSONEncoder,
+            IssueCommentSerializer(issue_comment).data, cls=DjangoJSONEncoder
         )
 
         # Validation check if the issue already exists
         if (
             request.data.get("external_id")
-            and (
-                issue_comment.external_id
-                != str(request.data.get("external_id"))
-            )
+            and (issue_comment.external_id != str(request.data.get("external_id")))
             and IssueComment.objects.filter(
                 project_id=project_id,
                 workspace__slug=slug,
@@ -999,14 +887,10 @@ class IssueCommentAPIEndpoint(BaseAPIView):
 
     def delete(self, request, slug, project_id, issue_id, pk):
         issue_comment = IssueComment.objects.get(
-            workspace__slug=slug,
-            project_id=project_id,
-            issue_id=issue_id,
-            pk=pk,
+            workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk
         )
         current_instance = json.dumps(
-            IssueCommentSerializer(issue_comment).data,
-            cls=DjangoJSONEncoder,
+            IssueCommentSerializer(issue_comment).data, cls=DjangoJSONEncoder
         )
         issue_comment.delete()
         issue_activity.delay(
@@ -1022,9 +906,7 @@ class IssueCommentAPIEndpoint(BaseAPIView):
 
 
 class IssueActivityAPIEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
+    permission_classes = [ProjectEntityPermission]
 
     def get(self, request, slug, project_id, issue_id, pk=None):
         issue_activities = (
@@ -1049,20 +931,15 @@ class IssueActivityAPIEndpoint(BaseAPIView):
             request=request,
             queryset=(issue_activities),
             on_results=lambda issue_activity: IssueActivitySerializer(
-                issue_activity,
-                many=True,
-                fields=self.fields,
-                expand=self.expand,
+                issue_activity, many=True, fields=self.fields, expand=self.expand
             ).data,
         )
 
 
 class IssueAttachmentEndpoint(BaseAPIView):
     serializer_class = IssueAttachmentSerializer
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
-    model = IssueAttachment
+    permission_classes = [ProjectEntityPermission]
+    model = FileAsset
     parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request, slug, project_id, issue_id):
@@ -1070,7 +947,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
         if (
             request.data.get("external_id")
             and request.data.get("external_source")
-            and IssueAttachment.objects.filter(
+            and FileAsset.objects.filter(
                 project_id=project_id,
                 workspace__slug=slug,
                 issue_id=issue_id,
@@ -1078,7 +955,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
                 external_id=request.data.get("external_id"),
             ).exists()
         ):
-            issue_attachment = IssueAttachment.objects.filter(
+            issue_attachment = FileAsset.objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
                 external_id=request.data.get("external_id"),
@@ -1100,10 +977,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
                 actor_id=str(self.request.user.id),
                 issue_id=str(self.kwargs.get("issue_id", None)),
                 project_id=str(self.kwargs.get("project_id", None)),
-                current_instance=json.dumps(
-                    serializer.data,
-                    cls=DjangoJSONEncoder,
-                ),
+                current_instance=json.dumps(serializer.data, cls=DjangoJSONEncoder),
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
                 origin=request.META.get("HTTP_ORIGIN"),
@@ -1112,7 +986,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, slug, project_id, issue_id, pk):
-        issue_attachment = IssueAttachment.objects.get(pk=pk)
+        issue_attachment = FileAsset.objects.get(pk=pk)
         issue_attachment.asset.delete(save=False)
         issue_attachment.delete()
         issue_activity.delay(
@@ -1130,7 +1004,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def get(self, request, slug, project_id, issue_id):
-        issue_attachments = IssueAttachment.objects.filter(
+        issue_attachments = FileAsset.objects.filter(
             issue_id=issue_id, workspace__slug=slug, project_id=project_id
         )
         serializer = IssueAttachmentSerializer(issue_attachments, many=True)

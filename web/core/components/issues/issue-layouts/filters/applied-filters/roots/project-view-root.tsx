@@ -15,9 +15,9 @@ import { UpdateViewComponent } from "@/components/views/update-view-component";
 // constants
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 import { EViewAccess } from "@/constants/views";
-import { EUserWorkspaceRoles } from "@/constants/workspace";
 // hooks
-import { useIssues, useLabel, useProjectState, useProjectView, useUser } from "@/hooks/store";
+import { useIssues, useLabel, useProjectState, useProjectView, useUser, useUserPermissions } from "@/hooks/store";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { getAreFiltersEqual } from "../../../utils";
 
 export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
@@ -30,10 +30,8 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   const { projectLabels } = useLabel();
   const { projectStates } = useProjectState();
   const { viewMap, updateView } = useProjectView();
-  const {
-    data,
-    membership: { currentWorkspaceRole },
-  } = useUser();
+  const { data } = useUser();
+  const { allowPermissions } = useUserPermissions();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   // derived values
@@ -108,7 +106,10 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
     updateView(workspaceSlug.toString(), projectId.toString(), viewId.toString(), viewFilters);
   };
 
-  const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+  const isAuthorizedUser = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
 
   const isLocked = !!viewDetails?.is_locked;
   const isOwner = viewDetails?.owned_by === data?.id;

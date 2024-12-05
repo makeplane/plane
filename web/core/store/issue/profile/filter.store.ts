@@ -1,6 +1,4 @@
-import isArray from "lodash/isArray";
 import isEmpty from "lodash/isEmpty";
-import pickBy from "lodash/pickBy";
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // base class
@@ -180,13 +178,7 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
             });
           });
 
-          const appliedFilters = _filters.filters || {};
-          const filteredFilters = pickBy(appliedFilters, (value) => value && isArray(value) && value.length > 0);
-          this.rootIssueStore.profileIssues.fetchIssuesWithExistingPagination(
-            workspaceSlug,
-            userId,
-            isEmpty(filteredFilters) ? "init-loader" : "mutation"
-          );
+          this.rootIssueStore.profileIssues.fetchIssuesWithExistingPagination(workspaceSlug, userId, "mutation");
 
           this.handleIssuesLocalFilters.set(EIssuesStoreType.PROFILE, type, workspaceSlug, userId, undefined, {
             filters: _filters.filters,
@@ -260,7 +252,7 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
 
           const currentUserId = this.rootIssueStore.currentUserId;
           if (currentUserId)
-            this.handleIssuesLocalFilters.set(EIssuesStoreType.PROJECT, type, workspaceSlug, userId, undefined, {
+            this.handleIssuesLocalFilters.set(EIssuesStoreType.PROFILE, type, workspaceSlug, userId, undefined, {
               kanban_filters: _filters.kanbanFilters,
             });
 

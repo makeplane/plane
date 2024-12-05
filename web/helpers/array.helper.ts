@@ -1,3 +1,4 @@
+import isEmpty from "lodash/isEmpty";
 import { IIssueLabel, IIssueLabelTree } from "@plane/types";
 
 export const groupBy = (array: any[], key: string) => {
@@ -89,4 +90,30 @@ export const buildTree = (array: IIssueLabel[], parent = null) => {
   });
 
   return tree;
+};
+
+/**
+ * Returns Valid keys from object whose value is not falsy
+ * @param obj
+ * @returns
+ */
+export const getValidKeysFromObject = (obj: any) => {
+  if (!obj || isEmpty(obj) || typeof obj !== "object" || Array.isArray(obj)) return [];
+
+  return Object.keys(obj).filter((key) => !!obj[key]);
+};
+
+/**
+ * Convert an array into an object of keys and boolean strue
+ * @param arrayStrings
+ * @returns
+ */
+export const convertStringArrayToBooleanObject = (arrayStrings: string[]) => {
+  const obj: { [key: string]: boolean } = {};
+
+  for (const arrayString of arrayStrings) {
+    obj[arrayString] = true;
+  }
+
+  return obj;
 };

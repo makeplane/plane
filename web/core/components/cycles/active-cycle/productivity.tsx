@@ -1,8 +1,8 @@
 import { FC, Fragment } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { ICycle, TCyclePlotType } from "@plane/types";
-import { CustomSelect, Loader } from "@plane/ui";
+import { ICycle, TCycleEstimateType } from "@plane/types";
+import { Loader } from "@plane/ui";
 // components
 import ProgressChart from "@/components/core/sidebar/progress-chart";
 import { EmptyState } from "@/components/empty-state";
@@ -11,6 +11,7 @@ import { EmptyStateType } from "@/constants/empty-state";
 import { useCycle, useProjectEstimates } from "@/hooks/store";
 // plane web constants
 import { EEstimateSystem } from "@/plane-web/constants/estimates";
+import { EstimateTypeDropdown } from "../dropdowns/estimate-type-dropdown";
 
 export type ActiveCycleProductivityProps = {
   workspaceSlug: string;
@@ -18,32 +19,21 @@ export type ActiveCycleProductivityProps = {
   cycle: ICycle | null;
 };
 
-const cycleBurnDownChartOptions = [
-  { value: "burndown", label: "Issues" },
-  { value: "points", label: "Points" },
-];
-
 export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observer((props) => {
   const { workspaceSlug, projectId, cycle } = props;
   // hooks
-  const { getPlotTypeByCycleId, setPlotType } = useCycle();
-  const { currentActiveEstimateId, areEstimateEnabledByProjectId, estimateById } = useProjectEstimates();
+  const { getEstimateTypeByCycleId, setEstimateType } = useCycle();
 
   // derived values
-  const plotType: TCyclePlotType = (cycle && getPlotTypeByCycleId(cycle.id)) || "burndown";
+  const estimateType: TCycleEstimateType = (cycle && getEstimateTypeByCycleId(cycle.id)) || "issues";
 
-  const onChange = async (value: TCyclePlotType) => {
+  const onChange = async (value: TCycleEstimateType) => {
     if (!workspaceSlug || !projectId || !cycle || !cycle.id) return;
-    setPlotType(cycle.id, value);
+    setEstimateType(cycle.id, value);
   };
 
-  const isCurrentProjectEstimateEnabled = projectId && areEstimateEnabledByProjectId(projectId) ? true : false;
-  const estimateDetails =
-    isCurrentProjectEstimateEnabled && currentActiveEstimateId && estimateById(currentActiveEstimateId);
-  const isCurrentEstimateTypeIsPoints = estimateDetails && estimateDetails?.type === EEstimateSystem.POINTS;
-
   const chartDistributionData =
-    cycle && plotType === "points" ? cycle?.estimate_distribution : cycle?.distribution || undefined;
+    cycle && estimateType === "points" ? cycle?.estimate_distribution : cycle?.distribution || undefined;
   const completionChartDistributionData = chartDistributionData?.completion_chart || undefined;
 
   return cycle && completionChartDistributionData ? (
@@ -52,22 +42,7 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
         <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle?.id}`}>
           <h3 className="text-base text-custom-text-300 font-semibold">Issue burndown</h3>
         </Link>
-        {isCurrentEstimateTypeIsPoints && (
-          <div className="relative flex items-center gap-2">
-            <CustomSelect
-              value={plotType}
-              label={<span>{cycleBurnDownChartOptions.find((v) => v.value === plotType)?.label ?? "None"}</span>}
-              onChange={onChange}
-              maxHeight="lg"
-            >
-              {cycleBurnDownChartOptions.map((item) => (
-                <CustomSelect.Option key={item.value} value={item.value}>
-                  {item.label}
-                </CustomSelect.Option>
-              ))}
-            </CustomSelect>
-          </div>
-        )}
+        <EstimateTypeDropdown value={estimateType} onChange={onChange} cycleId={cycle.id} projectId={projectId} />
       </div>
 
       <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle?.id}`}>
@@ -85,7 +60,7 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
                     <span>Current</span>
                   </div>
                 </div>
-                {plotType === "points" ? (
+                {estimateType === "points" ? (
                   <span>{`Pending points - ${cycle.backlog_estimate_points + cycle.unstarted_estimate_points + cycle.started_estimate_points}`}</span>
                 ) : (
                   <span>{`Pending issues - ${cycle.backlog_issues + cycle.unstarted_issues + cycle.started_issues}`}</span>
@@ -95,7 +70,7 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
               <div className="relative  h-full">
                 {completionChartDistributionData && (
                   <Fragment>
-                    {plotType === "points" ? (
+                    {estimateType === "points" ? (
                       <ProgressChart
                         distribution={completionChartDistributionData}
                         startDate={cycle.start_date ?? ""}

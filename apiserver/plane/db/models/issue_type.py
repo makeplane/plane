@@ -9,16 +9,17 @@ from .base import BaseModel
 
 class IssueType(BaseModel):
     workspace = models.ForeignKey(
-        "db.Workspace",
-        related_name="issue_types",
-        on_delete=models.CASCADE,
+        "db.Workspace", related_name="issue_types", on_delete=models.CASCADE
     )
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     logo_props = models.JSONField(default=dict)
+    is_epic = models.BooleanField(default=False)
     is_default = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
-    level = models.PositiveIntegerField(default=0)
+    level = models.FloatField(default=0)
+    external_source = models.CharField(max_length=255, null=True, blank=True)
+    external_id = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         verbose_name = "Issue Type"
@@ -31,9 +32,7 @@ class IssueType(BaseModel):
 
 class ProjectIssueType(ProjectBaseModel):
     issue_type = models.ForeignKey(
-        "db.IssueType",
-        related_name="project_issue_types",
-        on_delete=models.CASCADE,
+        "db.IssueType", related_name="project_issue_types", on_delete=models.CASCADE
     )
     level = models.PositiveIntegerField(default=0)
     is_default = models.BooleanField(default=False)

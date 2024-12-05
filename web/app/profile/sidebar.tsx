@@ -6,6 +6,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 // icons
 import { ChevronLeft, LogOut, MoveLeft, Plus, UserPlus } from "lucide-react";
+// plane helpers
+import { useOutsideClickDetector } from "@plane/helpers";
 // ui
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components
@@ -14,9 +16,9 @@ import { SidebarNavItem } from "@/components/sidebar";
 import { PROFILE_ACTION_LINKS } from "@/constants/profile";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useAppTheme, useUser, useUserSettings, useWorkspace } from "@/hooks/store";
-import useOutsideClickDetector from "@/hooks/use-outside-click-detector";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 const WORKSPACE_ACTION_LINKS = [
@@ -179,17 +181,17 @@ export const ProfileLayoutSidebar = observer(() => {
                   >
                     <span
                       className={`relative flex h-6 w-6 flex-shrink-0 items-center  justify-center p-2 text-xs uppercase ${
-                        !workspace?.logo && "rounded bg-custom-primary-500 text-white"
+                        !workspace?.logo_url && "rounded bg-custom-primary-500 text-white"
                       }`}
                     >
-                      {workspace?.logo && workspace.logo !== "" ? (
+                      {workspace?.logo_url && workspace.logo_url !== "" ? (
                         <img
-                          src={workspace.logo}
+                          src={getFileURL(workspace.logo_url)}
                           className="absolute left-0 top-0 h-full w-full rounded object-cover"
                           alt="Workspace Logo"
                         />
                       ) : (
-                        workspace?.name?.charAt(0) ?? "..."
+                        (workspace?.name?.charAt(0) ?? "...")
                       )}
                     </span>
                     {!sidebarCollapsed && (

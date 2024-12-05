@@ -2,6 +2,7 @@ import { TIssuePriorities } from "../issues";
 import { TIssueAttachment } from "./issue_attachment";
 import { TIssueLink } from "./issue_link";
 import { TIssueReaction } from "./issue_reaction";
+import { TIssueRelationTypes } from "@/plane-web/types";
 
 // new issue structure types
 
@@ -40,13 +41,23 @@ export type TBaseIssue = {
   is_draft: boolean;
 };
 
+export type IssueRelation = {
+  id: string;
+  name: string;
+  project_id: string;
+  relation_type: TIssueRelationTypes;
+  sequence_id: number;
+};
+
 export type TIssue = TBaseIssue & {
   description_html?: string;
   is_subscribed?: boolean;
   parent?: Partial<TBaseIssue>;
   issue_reactions?: TIssueReaction[];
-  issue_attachment?: TIssueAttachment[];
+  issue_attachments?: TIssueAttachment[];
   issue_link?: TIssueLink[];
+  issue_relation?: IssueRelation[];
+  issue_related?: IssueRelation[];
   // tempId is used for optimistic updates. It is not a part of the API response.
   tempId?: string;
   // sourceIssueId is used to store the original issue id when creating a copy of an issue. Used in cloning property values. It is not a part of the API response.
@@ -84,6 +95,7 @@ export type TIssuesResponse = {
   total_pages: number;
   extra_stats: null;
   results: TIssueResponseResults;
+  total_results: number;
 };
 
 export type TBulkIssueProperties = Pick<

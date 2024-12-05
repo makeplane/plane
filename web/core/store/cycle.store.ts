@@ -1,4 +1,5 @@
 import { isFuture, isPast, isToday } from "date-fns";
+import isEmpty from "lodash/isEmpty";
 import set from "lodash/set";
 import sortBy from "lodash/sortBy";
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
@@ -11,9 +12,11 @@ import {
   TProgressSnapshot,
   TCycleEstimateDistribution,
   TCycleDistribution,
+  TCycleEstimateType,
+  TCycleProgress,
 } from "@plane/types";
 // helpers
-import { orderCycles, shouldFilterCycle } from "@/helpers/cycle.helper";
+import { orderCycles, shouldFilterCycle, formatActiveCycle } from "@/helpers/cycle.helper";
 import { getDate } from "@/helpers/date-time.helper";
 import { DistributionUpdates, updateDistribution } from "@/helpers/distribution-update.helper";
 // services
@@ -27,11 +30,14 @@ import { CoreRootStore } from "./root.store";
 export interface ICycleStore {
   // loaders
   loader: boolean;
+  progressLoader: boolean;
   // observables
   fetchedMap: Record<string, boolean>;
   cycleMap: Record<string, ICycle>;
   plotType: Record<string, TCyclePlotType>;
+  estimatedType: Record<string, TCycleEstimateType>;
   activeCycleIdMap: Record<string, boolean>;
+
   // computed
   currentProjectCycleIds: string[] | null;
   currentProjectCompletedCycleIds: string[] | null;
@@ -43,6 +49,7 @@ export interface ICycleStore {
   currentProjectActiveCycle: ICycle | null;
 
   // computed actions
+  getActiveCycleProgress: (cycleId?: string) => { cycle: ICycle; isBurnDown: boolean; isTypeIssue: boolean } | null;
   getFilteredCycleIds: (projectId: string, sortByManual: boolean) => string[] | null;
   getFilteredCompletedCycleIds: (projectId: string) => string[] | null;
   getFilteredArchivedCycleIds: (projectId: string) => string[] | null;
@@ -51,10 +58,14 @@ export interface ICycleStore {
   getActiveCycleById: (cycleId: string) => ICycle | null;
   getProjectCycleIds: (projectId: string) => string[] | null;
   getPlotTypeByCycleId: (cycleId: string) => TCyclePlotType;
+  getEstimateTypeByCycleId: (cycleId: string) => TCycleEstimateType;
+  getIsPointsDataAvailable: (cycleId: string) => boolean;
+
   // actions
   updateCycleDistribution: (distributionUpdates: DistributionUpdates, cycleId: string) => void;
   validateDate: (workspaceSlug: string, projectId: string, payload: CycleDateCheckData) => Promise<any>;
   setPlotType: (cycleId: string, plotType: TCyclePlotType) => void;
+  setEstimateType: (cycleId: string, estimateType: TCycleEstimateType) => void;
   // fetch
   fetchWorkspaceCycles: (workspaceSlug: string) => Promise<ICycle[]>;
   fetchAllCycles: (workspaceSlug: string, projectId: string) => Promise<undefined | ICycle[]>;
@@ -63,6 +74,7 @@ export interface ICycleStore {
   fetchArchivedCycleDetails: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<ICycle>;
   fetchCycleDetails: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<ICycle>;
   fetchActiveCycleProgress: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<TProgressSnapshot>;
+  fetchActiveCycleProgressPro: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<void>;
   fetchActiveCycleAnalytics: (
     workspaceSlug: string,
     projectId: string,
@@ -89,8 +101,10 @@ export interface ICycleStore {
 export class CycleStore implements ICycleStore {
   // observables
   loader: boolean = false;
+  progressLoader: boolean = false;
   cycleMap: Record<string, ICycle> = {};
   plotType: Record<string, TCyclePlotType> = {};
+  estimatedType: Record<string, TCycleEstimateType> = {};
   activeCycleIdMap: Record<string, boolean> = {};
   //loaders
   fetchedMap: Record<string, boolean> = {};
@@ -106,8 +120,10 @@ export class CycleStore implements ICycleStore {
     makeObservable(this, {
       // observables
       loader: observable.ref,
+      progressLoader: observable,
       cycleMap: observable,
       plotType: observable,
+      estimatedType: observable,
       activeCycleIdMap: observable,
       fetchedMap: observable,
       // computed
@@ -122,6 +138,7 @@ export class CycleStore implements ICycleStore {
 
       // actions
       setPlotType: action,
+      setEstimateType: action,
       fetchWorkspaceCycles: action,
       fetchAllCycles: action,
       fetchActiveCycle: action,
@@ -130,7 +147,6 @@ export class CycleStore implements ICycleStore {
       fetchActiveCycleProgress: action,
       fetchActiveCycleAnalytics: action,
       fetchCycleDetails: action,
-      createCycle: action,
       updateCycleDetails: action,
       deleteCycle: action,
       addCycleToFavorites: action,
@@ -258,6 +274,29 @@ export class CycleStore implements ICycleStore {
     return this.cycleMap?.[this.currentProjectActiveCycleId!] ?? null;
   }
 
+  getIsPointsDataAvailable = computedFn((cycleId: string) => {
+    const cycle = this.cycleMap[cycleId];
+    if (!cycle) return false;
+    if (this.cycleMap[cycleId].version === 2) return cycle.progress.some((p) => p.total_estimate_points > 0);
+    else if (this.cycleMap[cycleId].version === 1) {
+      const completionChart = cycle.estimate_distribution?.completion_chart || {};
+      return !isEmpty(completionChart) && Object.keys(completionChart).some((p) => completionChart[p]! > 0);
+    } else return false;
+  });
+
+  /**
+   * returns active cycle progress for a project
+   */
+  getActiveCycleProgress = computedFn((cycleId?: string) => {
+    const cycle = cycleId ? this.cycleMap[cycleId] : this.currentProjectActiveCycle;
+    if (!cycle) return null;
+
+    const isTypeIssue = this.getEstimateTypeByCycleId(cycle.id) === "issues";
+    const isBurnDown = this.getPlotTypeByCycleId(cycle.id) === "burndown";
+
+    return { cycle, isTypeIssue, isBurnDown };
+  });
+
   /**
    * @description returns filtered cycle ids based on display filters and filters
    * @param {TCycleDisplayFilters} displayFilters
@@ -371,23 +410,37 @@ export class CycleStore implements ICycleStore {
     await this.cycleService.cycleDateCheck(workspaceSlug, projectId, payload);
 
   /**
-   * @description gets the plot type for the module store
+   * @description gets the plot type for the cycle store
    * @param {TCyclePlotType} plotType
    */
-  getPlotTypeByCycleId = (cycleId: string) => {
+  getPlotTypeByCycleId = computedFn((cycleId: string) => this.plotType[cycleId] || "burndown");
+
+  /**
+   * @description gets the estimate type for the cycle store
+   * @param {TCycleEstimateType} estimateType
+   */
+  getEstimateTypeByCycleId = computedFn((cycleId: string) => {
     const { projectId } = this.rootStore.router;
 
     return projectId && this.rootStore.projectEstimate.areEstimateEnabledByProjectId(projectId)
-      ? this.plotType[cycleId] || "burndown"
-      : "burndown";
-  };
+      ? this.estimatedType[cycleId] || "issues"
+      : "issues";
+  });
 
   /**
-   * @description updates the plot type for the module store
+   * @description updates the plot type for the cycle store
    * @param {TCyclePlotType} plotType
    */
   setPlotType = (cycleId: string, plotType: TCyclePlotType) => {
     set(this.plotType, [cycleId], plotType);
+  };
+
+  /**
+   * @description updates the estimate type for the cycle store
+   * @param {TCycleEstimateType} estimateType
+   */
+  setEstimateType = (cycleId: string, estimateType: TCycleEstimateType) => {
+    set(this.estimatedType, [cycleId], estimateType);
   };
 
   /**
@@ -481,13 +534,25 @@ export class CycleStore implements ICycleStore {
    * @param cycleId
    *  @returns
    */
-  fetchActiveCycleProgress = async (workspaceSlug: string, projectId: string, cycleId: string) =>
-    await this.cycleService.workspaceActiveCyclesProgress(workspaceSlug, projectId, cycleId).then((progress) => {
+  fetchActiveCycleProgress = async (workspaceSlug: string, projectId: string, cycleId: string) => {
+    this.progressLoader = true;
+    return await this.cycleService.workspaceActiveCyclesProgress(workspaceSlug, projectId, cycleId).then((progress) => {
       runInAction(() => {
         set(this.cycleMap, [cycleId], { ...this.cycleMap[cycleId], ...progress });
+        this.progressLoader = false;
       });
       return progress;
     });
+  };
+
+  /**
+   * @description fetches active cycle progress for pro users
+   * @param workspaceSlug
+   * @param projectId
+   * @param cycleId
+   *  @returns
+   */
+  fetchActiveCycleProgressPro = action(async (workspaceSlug: string, projectId: string, cycleId: string) => {});
 
   /**
    * @description fetches active cycle analytics
@@ -564,13 +629,15 @@ export class CycleStore implements ICycleStore {
    * @param data
    * @returns
    */
-  createCycle = async (workspaceSlug: string, projectId: string, data: Partial<ICycle>) =>
-    await this.cycleService.createCycle(workspaceSlug, projectId, data).then((response) => {
-      runInAction(() => {
-        set(this.cycleMap, [response.id], response);
-      });
-      return response;
-    });
+  createCycle = action(
+    async (workspaceSlug: string, projectId: string, data: Partial<ICycle>) =>
+      await this.cycleService.createCycle(workspaceSlug, projectId, data).then((response) => {
+        runInAction(() => {
+          set(this.cycleMap, [response.id], response);
+        });
+        return response;
+      })
+  );
 
   /**
    * @description updates cycle details

@@ -1,5 +1,5 @@
 // types
-import type { IInstanceInfo } from "@plane/types";
+import type { IInstanceInfo, TPage } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services

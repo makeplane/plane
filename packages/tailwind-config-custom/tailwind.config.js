@@ -18,8 +18,8 @@ module.exports = {
       "./pages/**/*.tsx",
       "./app/**/*.tsx",
       "./ui/**/*.tsx",
-      "../packages/ui/**/*.{js,ts,jsx,tsx}",
-      "../packages/editor/**/src/**/*.{js,ts,jsx,tsx}",
+      "../packages/ui/src/**/*.{js,ts,jsx,tsx}",
+      "../packages/editor/src/**/*.{js,ts,jsx,tsx}",
       "!../packages/ui/**/*.stories{js,ts,jsx,tsx}",
     ],
   },
@@ -289,6 +289,7 @@ module.exports = {
       },
       // scale down font sizes to 90% of default
       fontSize: {
+        "2xs": "0.5625rem",
         xs: "0.675rem",
         sm: "0.7875rem",
         base: "0.9rem",
@@ -334,7 +335,7 @@ module.exports = {
         80: "18rem",
         96: "21.6rem",
         "page-x": "1.35rem",
-        "page-y": "1.35rem"
+        "page-y": "1.35rem",
       },
       margin: {
         0: "0",
@@ -436,23 +437,26 @@ module.exports = {
       custom: ["Inter", "sans-serif"],
     },
   },
-  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography"), function({ addUtilities }) {
-    const newUtilities = {
-      // Mobile screens
-      '.px-page-x': {
-        paddingLeft: '1.25rem',
-        paddingRight: '1.25rem',
-      },
-      // Medium screens (768px and up)
-      '@media (min-width: 768px)': {
-        '.px-page-x': {
-          paddingLeft: '1.35rem',
-          paddingRight: '1.35rem',
+  plugins: [
+    require("tailwindcss-animate"),
+    require("@tailwindcss/typography"),
+    function ({ addUtilities }) {
+      const newUtilities = {
+        // Mobile screens
+        ".px-page-x": {
+          paddingLeft: "1.25rem",
+          paddingRight: "1.25rem",
         },
-      }
-    };
+        // Medium screens (768px and up)
+        "@media (min-width: 768px)": {
+          ".px-page-x": {
+            paddingLeft: "1.35rem",
+            paddingRight: "1.35rem",
+          },
+        },
+      };
 
-    addUtilities(newUtilities, ['responsive']);
-  },
-],
+      addUtilities(newUtilities, ["responsive"]);
+    },
+  ],
 };

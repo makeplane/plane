@@ -1,13 +1,18 @@
 // types
-import { TPage } from "@plane/types";
+import { TDocumentPayload, TPage } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import { APIService } from "@/services/api.service";
+import { FileUploadService } from "@/services/file-upload.service";
 
 export class ProjectPageService extends APIService {
+  private fileUploadService: FileUploadService;
+
   constructor() {
     super(API_BASE_URL);
+    // upload service
+    this.fileUploadService = new FileUploadService();
   }
 
   async fetchAll(workspaceSlug: string, projectId: string): Promise<TPage[]> {
@@ -128,7 +133,7 @@ export class ProjectPageService extends APIService {
       });
   }
 
-  async fetchDescriptionYJS(workspaceSlug: string, projectId: string, pageId: string): Promise<any> {
+  async fetchDescriptionBinary(workspaceSlug: string, projectId: string, pageId: string): Promise<any> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/description/`, {
       headers: {
         "Content-Type": "application/octet-stream",
@@ -145,10 +150,7 @@ export class ProjectPageService extends APIService {
     workspaceSlug: string,
     projectId: string,
     pageId: string,
-    data: {
-      description_binary: string;
-      description_html: string;
-    }
+    data: TDocumentPayload
   ): Promise<any> {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/description/`, data)
       .then((response) => response?.data)

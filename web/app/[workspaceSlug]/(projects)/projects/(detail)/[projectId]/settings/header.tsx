@@ -9,24 +9,20 @@ import { Breadcrumbs, CustomMenu, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 // constants
-import { EUserProjectRoles } from "@/constants/project";
 // hooks
-import { useProject, useUser } from "@/hooks/store";
+import { useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web constants
 import { PROJECT_SETTINGS_LINKS } from "@/plane-web/constants/project";
+import { EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const ProjectSettingHeader: FC = observer(() => {
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();
   // store hooks
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
   const { currentProjectDetails, loader } = useProject();
-
-  const projectMemberInfo = currentProjectRole || EUserProjectRoles.GUEST;
 
   return (
     <Header>
@@ -38,7 +34,6 @@ export const ProjectSettingHeader: FC = observer(() => {
                 type="text"
                 link={
                   <BreadcrumbLink
-                    href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
                     label={currentProjectDetails?.name ?? "Project"}
                     icon={
                       currentProjectDetails && (
@@ -74,7 +69,12 @@ export const ProjectSettingHeader: FC = observer(() => {
         >
           {PROJECT_SETTINGS_LINKS.map(
             (item) =>
-              projectMemberInfo >= item.access && (
+              allowPermissions(
+                item.access,
+                EUserPermissionsLevel.PROJECT,
+                workspaceSlug.toString(),
+                projectId.toString()
+              ) && (
                 <CustomMenu.MenuItem
                   key={item.key}
                   onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}${item.href}`)}

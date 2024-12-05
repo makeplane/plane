@@ -6,11 +6,11 @@ import { ALL_ISSUES } from "@plane/constants";
 import { IIssueDisplayFilterOptions } from "@plane/types";
 // hooks
 import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
-import { EUserProjectRoles } from "@/constants/project";
 // hooks
-import { useIssues, useUser } from "@/hooks/store";
+import { useIssues, useUserPermissions } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
+import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // views
 // stores
 // components
@@ -38,9 +38,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
   const { projectId } = useParams();
   // store hooks
   const storeType = useIssueStoreType() as SpreadsheetStoreType;
-  const {
-    membership: { currentProjectRole },
-  } = useUser();
+  const { allowPermissions } = useUserPermissions();
   const { issues, issuesFilter } = useIssues(storeType);
   const {
     fetchIssues,
@@ -56,7 +54,10 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
   // derived values
   const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issues?.viewFlags || {};
   // user role validation
-  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserProjectRoles.MEMBER;
+  const isEditingAllowed = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
 
   useEffect(() => {
     fetchIssues("init-loader", { canGroup: false, perPageCount: 100 }, viewId);

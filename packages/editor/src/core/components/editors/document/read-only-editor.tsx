@@ -10,15 +10,17 @@ import { getEditorClassNames } from "@/helpers/common";
 // hooks
 import { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
 // types
-import { EditorReadOnlyRefApi, IMentionHighlight, TDisplayConfig } from "@/types";
+import { EditorReadOnlyRefApi, IMentionHighlight, TDisplayConfig, TExtensions, TFileHandler } from "@/types";
 
 interface IDocumentReadOnlyEditor {
+  disabledExtensions: TExtensions[];
   id: string;
   initialValue: string;
   containerClassName: string;
   displayConfig?: TDisplayConfig;
   editorClassName?: string;
   embedHandler: any;
+  fileHandler: Pick<TFileHandler, "getAssetSrc">;
   tabIndex?: number;
   handleEditorReady?: (value: boolean) => void;
   mentionHandler: {
@@ -30,9 +32,11 @@ interface IDocumentReadOnlyEditor {
 const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
   const {
     containerClassName,
+    disabledExtensions,
     displayConfig = DEFAULT_DISPLAY_CONFIG,
     editorClassName = "",
     embedHandler,
+    fileHandler,
     id,
     forwardedRef,
     handleEditorReady,
@@ -49,8 +53,10 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
   }
 
   const editor = useReadOnlyEditor({
+    disabledExtensions,
     editorClassName,
     extensions,
+    fileHandler,
     forwardedRef,
     handleEditorReady,
     initialValue,

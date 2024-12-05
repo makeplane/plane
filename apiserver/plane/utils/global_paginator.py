@@ -1,3 +1,6 @@
+# python imports
+from math import ceil
+
 # constants
 PAGINATOR_MAX_LIMIT = 1000
 
@@ -17,9 +20,7 @@ class PaginateCursor:
         try:
             bits = value.split(":")
             if len(bits) != 3:
-                raise ValueError(
-                    "Cursor must be in the format 'value:offset:is_prev'"
-                )
+                raise ValueError("Cursor must be in the format 'value:offset:is_prev'")
             return self(int(bits[0]), int(bits[1]), int(bits[2]))
         except (TypeError, ValueError) as e:
             raise ValueError(f"Invalid cursor format: {e}")
@@ -35,6 +36,9 @@ def paginate(base_queryset, queryset, cursor, on_result):
     # getting the issues count
     total_results = base_queryset.count()
     page_size = min(cursor_object.current_page_size, PAGINATOR_MAX_LIMIT)
+
+    # getting the total pages available based on the page size
+    total_pages = ceil(total_results / page_size)
 
     # Calculate the start and end index for the paginated data
     start_index = 0
@@ -72,6 +76,7 @@ def paginate(base_queryset, queryset, cursor, on_result):
         "next_page_results": next_page_results,
         "page_count": len(paginated_data),
         "total_results": total_results,
+        "total_pages": total_pages,
         "results": paginated_data,
     }
 

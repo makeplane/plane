@@ -17,9 +17,7 @@ def generate_token():
 def validate_schema(value):
     parsed_url = urlparse(value)
     if parsed_url.scheme not in ["http", "https"]:
-        raise ValidationError(
-            "Invalid schema. Only HTTP and HTTPS are allowed."
-        )
+        raise ValidationError("Invalid schema. Only HTTP and HTTPS are allowed.")
 
 
 def validate_domain(value):
@@ -31,15 +29,10 @@ def validate_domain(value):
 
 class Webhook(BaseModel):
     workspace = models.ForeignKey(
-        "db.Workspace",
-        on_delete=models.CASCADE,
-        related_name="workspace_webhooks",
+        "db.Workspace", on_delete=models.CASCADE, related_name="workspace_webhooks"
     )
     url = models.URLField(
-        validators=[
-            validate_schema,
-            validate_domain,
-        ]
+        validators=[validate_schema, validate_domain], max_length=1024
     )
     is_active = models.BooleanField(default=True)
     secret_key = models.CharField(max_length=255, default=generate_token)
@@ -48,6 +41,7 @@ class Webhook(BaseModel):
     module = models.BooleanField(default=False)
     cycle = models.BooleanField(default=False)
     issue_comment = models.BooleanField(default=False)
+    is_internal = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.workspace.slug} {self.url}"
@@ -65,9 +59,7 @@ class WebhookLog(BaseModel):
         "db.Workspace", on_delete=models.CASCADE, related_name="webhook_logs"
     )
     # Associated webhook
-    webhook = models.ForeignKey(
-        Webhook, on_delete=models.CASCADE, related_name="logs"
-    )
+    webhook = models.ForeignKey(Webhook, on_delete=models.CASCADE, related_name="logs")
 
     # Basic request details
     event_type = models.CharField(max_length=255, blank=True, null=True)
