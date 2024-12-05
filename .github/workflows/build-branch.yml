@@ -314,7 +314,7 @@ jobs:
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
 
   attach_assets_to_build:
-    if: ${{ needs.branch_build_setup.outputs.build_type == 'Build' }}
+    if: ${{ needs.branch_build_setup.outputs.build_type == 'Release' }}
     name: Attach Assets to Build
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
