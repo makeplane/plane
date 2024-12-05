@@ -3,7 +3,7 @@
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
-import { LogoSpinner } from "@/components/common";
+import { LogoSpinner, PoweredBy } from "@/components/common";
 import { IssuesNavbarRoot } from "@/components/issues";
 import { SomethingWentWrongError } from "@/components/issues/issue-layouts/error";
 // hooks
@@ -44,11 +44,14 @@ export const IssuesClientLayout = observer((props: Props) => {
   if (error) return <SomethingWentWrongError />;
 
   return (
-    <div className="relative flex h-screen min-h-[500px] w-screen flex-col overflow-hidden">
-      <div className="relative flex h-[60px] flex-shrink-0 select-none items-center border-b border-custom-border-300 bg-custom-sidebar-background-100">
-        <IssuesNavbarRoot publishSettings={publishSettings} />
+    <>
+      <div className="relative flex h-screen min-h-[500px] w-screen flex-col overflow-hidden">
+        <div className="relative flex h-[60px] flex-shrink-0 select-none items-center border-b border-custom-border-300 bg-custom-sidebar-background-100">
+          <IssuesNavbarRoot publishSettings={publishSettings} />
+        </div>
+        <div className="relative h-full w-full overflow-hidden bg-custom-background-90">{children}</div>
       </div>
-      <div className="relative h-full w-full overflow-hidden bg-custom-background-90">{children}</div>
-    </div>
+      <PoweredBy />
+    </>
   );
 });
