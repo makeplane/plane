@@ -4,6 +4,8 @@ import { observer } from "mobx-react";
 import { IState } from "@plane/types";
 // components
 import { StateItemTitle } from "@/components/project-states/state-item-title";
+// constants
+import { DISPLAY_WORKFLOW_PRO_CTA } from "@/constants/state";
 //
 import { AddStateTransition } from "./add-state-transition";
 
@@ -29,7 +31,9 @@ export const StateItemChild = observer((props: StateItemChildProps) => {
         disabled={disabled}
         state={state}
       />
-      <AddStateTransition workspaceSlug={workspaceSlug} projectId={projectId} parentStateId={state.id} />
+      {DISPLAY_WORKFLOW_PRO_CTA && (
+        <AddStateTransition workspaceSlug={workspaceSlug} projectId={projectId} parentStateId={state.id} />
+      )}
     </div>
   );
 });
