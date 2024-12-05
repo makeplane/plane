@@ -67,14 +67,6 @@ function checkLatestRelease(){
 }
 
 function initialize(){
-    if [ -z "$APP_RELEASE" ]; then
-        export APP_RELEASE=stable
-    fi
-
-    if [ "$APP_RELEASE" == "stable" ]; then
-        export APP_RELEASE=$(checkLatestRelease)
-    fi
-
     printf "Please wait while we check the availability of Docker images for the selected release ($APP_RELEASE) with ${UPPER_CPU_ARCH} support." >&2
 
     if [ "$CUSTOM_BUILD" == "true" ]; then
@@ -401,13 +393,17 @@ function restartServices() {
 function upgrade() {
     local latest_release=$(checkLatestRelease)
 
-    echo "Latest release: $latest_release"
+    echo ""
     echo "Current release: $APP_RELEASE"
 
     if [ "$latest_release" == "$APP_RELEASE" ]; then
+        echo ""
         echo "You are already using the latest release"
         exit 0
     fi
+
+    echo "Latest release: $latest_release"
+    echo ""
 
     # Check for confirmation to upgrade
     echo "Do you want to upgrade to the latest release ($latest_release)?"
