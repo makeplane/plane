@@ -84,7 +84,7 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
     read: false,
   };
 
-  constructor(private store: CoreRootStore) {
+  constructor(protected store: CoreRootStore) {
     makeObservable(this, {
       // observables
       loader: observable.ref,
