@@ -1,9 +1,7 @@
 import { TServiceCredentials, TJobWithConfig } from "@silo/core";
-import { IPriorityConfig, IStateConfig, JiraComponent, JiraConfig, JiraSprint } from "@silo/jira";
-
+import { IPriorityConfig, IStateConfig, JiraComponent, JiraConfig, JiraSprint, JiraService } from "@silo/jira";
 import { ExIssueAttachment, ExState } from "@plane/sdk";
 import { createOrUpdateCredentials, getCredentialsByWorkspaceId, getJobById, updateJob } from "@/db/query";
-import { JiraService } from "@silo/jira";
 import {
   Issue as IJiraIssue,
   Attachment as JiraAttachment,
@@ -60,8 +58,8 @@ export const getTargetAttachments = (
     return [];
   }
   const attachmentArray = attachments
-    .map((attachment: JiraAttachment): Partial<ExIssueAttachment> => {
-      return {
+    .map(
+      (attachment: JiraAttachment): Partial<ExIssueAttachment> => ({
         external_id: attachment.id ?? "",
         external_source: "JIRA",
         attributes: {
@@ -69,8 +67,8 @@ export const getTargetAttachments = (
           size: attachment.size ?? 0,
         },
         asset: attachment.content ?? "",
-      };
-    })
+      })
+    )
     .filter((attachment) => attachment !== undefined) as ExIssueAttachment[];
 
   return attachmentArray;

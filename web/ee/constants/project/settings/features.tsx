@@ -1,10 +1,10 @@
+import { ListTodo, Zap } from "lucide-react";
 import {
   TFeatureList,
   TProjectFeatures,
   PROJECT_FEATURES_LIST,
   TProperties,
-} from "ce/constants/project/settings/features";
-import { ListTodo, Zap } from "lucide-react";
+} from "@/ce/constants/project/settings/features";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import IntakeSubFeatures from "@/plane-web/components/projects/settings/intake/intake-sub-features";
 

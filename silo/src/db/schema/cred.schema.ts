@@ -1,6 +1,5 @@
-import { text, uuid, index } from "drizzle-orm/pg-core";
+import { text, uuid, index, boolean } from "drizzle-orm/pg-core";
 import { schema } from "./schema";
-import { boolean } from "drizzle-orm/pg-core";
 
 export const credentials = schema.table(
   "credentials",
@@ -17,10 +16,8 @@ export const credentials = schema.table(
     isPAT: boolean("is_pat").default(false),
     is_active: boolean("is_active").default(true),
   },
-  (table) => {
-    return {
-      // Add indexes on projectId and workspaceSlug, as those would be used mostly for querying jobs
-      workspaceIdIndex: index("workspace_id_idx").on(table.workspace_id),
-    };
-  }
+  (table) => ({
+    // Add indexes on projectId and workspaceSlug, as those would be used mostly for querying jobs
+    workspaceIdIndex: index("workspace_id_idx").on(table.workspace_id),
+  })
 );

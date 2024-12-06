@@ -36,11 +36,9 @@ export const workspaceConnections = schema.table(
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow(),
   },
-  (table) => {
-    return {
-      workspaceIdIdx: index("workspace_connections_workspace_id_idx").on(table.workspaceId),
-    };
-  }
+  (table) => ({
+    workspaceIdIdx: index("workspace_connections_workspace_id_idx").on(table.workspaceId),
+  })
 );
 
 // Entity Type can be a secondary entity for a platform, such as for github
@@ -73,9 +71,7 @@ export const entityConnections = schema.table(
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow(),
   },
-  (table) => {
-    return {
-      workspaceIdIdx: index("entity_connections_workspace_id_idx").on(table.workspaceId),
-    };
-  }
+  (table) => ({
+    workspaceIdIdx: index("entity_connections_workspace_id_idx").on(table.workspaceId),
+  })
 );

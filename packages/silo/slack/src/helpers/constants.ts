@@ -22,18 +22,8 @@ const workspaceScopes: string[] = [
   "im:write",
 ];
 
-export const getWorkspaceAuthScopes = () => {
-  return workspaceScopes.join(",");
-};
+export const getWorkspaceAuthScopes = () => workspaceScopes.join(",");
 
-const userScopes: string[] = [
-  "chat:write",
-  "links:write",
-  "identify",
-  "im:read",
-  "im:write",
-];
+const userScopes: string[] = ["chat:write", "links:write", "identify", "im:read", "im:write"];
 
-export const getUserAuthScopes = () => {
-  return userScopes.join(",");
-};
+export const getUserAuthScopes = () => userScopes.join(",");

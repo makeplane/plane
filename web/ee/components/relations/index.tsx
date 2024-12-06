@@ -1,14 +1,14 @@
-import { CircleDot, CopyPlus, XCircle } from "lucide-react";
 import { useParams } from "next/navigation";
+import { CircleDot, CopyPlus, XCircle } from "lucide-react";
 // Plane
 import { RelatedIcon } from "@plane/ui";
+//
+import { ISSUE_RELATION_OPTIONS as CE_ISSUE_RELATION_OPTIONS } from "@/ce/components/relations";
 // components
 import { TRelationObject } from "@/components/issues";
 // Plane-web
 import { E_FEATURE_FLAGS, useFlag } from "@/plane-web/hooks/store";
 import { TIssueRelationTypes } from "@/plane-web/types";
-//
-import { ISSUE_RELATION_OPTIONS as CE_ISSUE_RELATION_OPTIONS } from "ce/components/relations";
 
 export * from "./activity";
 

@@ -3,11 +3,7 @@ import { Version3Client } from "jira.js/out/version3";
 import axios, { AxiosError } from "axios";
 import { Board } from "jira.js/out/agile";
 import { JiraProps, JiraResource } from "@/types";
-import {
-  FieldDetails,
-  PageString,
-  PageProject,
-} from "jira.js/out/version3/models";
+import { FieldDetails, PageString } from "jira.js/out/version3/models";
 
 export class JiraService {
   private jiraClient: Version3Client;
@@ -31,8 +27,7 @@ export class JiraService {
         const error = request as AxiosError;
         if (error.response?.status === 401) {
           try {
-            const { access_token, refresh_token, expires_in } =
-              await props.refreshTokenFunc(this.refreshToken);
+            const { access_token, refresh_token, expires_in } = await props.refreshTokenFunc(this.refreshToken);
             this.refreshToken = refresh_token;
             this.jiraClient = new Version3Client({
               host: `https://api.atlassian.com/ex/jira/${props.cloudId}`,
@@ -127,11 +122,7 @@ export class JiraService {
     });
   }
 
-  async getBoardSprintsIssues(
-    boardId: number,
-    sprintId: number,
-    startAt: number
-  ) {
+  async getBoardSprintsIssues(boardId: number, sprintId: number, startAt: number) {
     const board = new Board(this.jiraClient);
     return board.getBoardIssuesForSprint({
       boardId: boardId,
@@ -177,11 +168,8 @@ export class JiraService {
   }
 
   async getCustomFields() {
-    const fields: FieldDetails[] =
-      await this.jiraClient.issueFields.getFields();
-    const customFields: FieldDetails[] = fields.filter(
-      (field) => field.schema?.custom
-    );
+    const fields: FieldDetails[] = await this.jiraClient.issueFields.getFields();
+    const customFields: FieldDetails[] = fields.filter((field) => field.schema?.custom);
     return customFields;
   }
 
@@ -192,18 +180,12 @@ export class JiraService {
     });
   }
 
-  async getIssueTypeFieldContexts(
-    fieldId: string,
-    contextIds: number[],
-    startAt = 0
-  ) {
-    return this.jiraClient.issueCustomFieldContexts.getIssueTypeMappingsForContexts(
-      {
-        fieldId: fieldId,
-        contextId: contextIds,
-        startAt: startAt,
-      }
-    );
+  async getIssueTypeFieldContexts(fieldId: string, contextIds: number[], startAt = 0) {
+    return this.jiraClient.issueCustomFieldContexts.getIssueTypeMappingsForContexts({
+      fieldId: fieldId,
+      contextId: contextIds,
+      startAt: startAt,
+    });
   }
 
   async getIssueFieldOptions(fieldId: string, contextId: number, startAt = 0) {
@@ -221,11 +203,7 @@ export class JiraService {
     });
   }
 
-  async getProjectIssues(
-    projectKey: string,
-    startAt = 0,
-    createdAfter?: string
-  ) {
+  async getProjectIssues(projectKey: string, startAt = 0, createdAfter?: string) {
     return this.jiraClient.issueSearch.searchForIssuesUsingJql({
       jql: createdAfter
         ? `project = ${projectKey} AND (created >= "${createdAfter}" OR updated >= "${createdAfter}")`
@@ -290,14 +268,10 @@ export class JiraService {
         config.headers.Authorization = `Bearer ${this.accessToken}`;
         return config;
       },
-      (error) => {
-        return Promise.reject(error);
-      }
+      (error) => Promise.reject(error)
     );
 
-    const response = await axiosInstance.get(
-      "/oauth/token/accessible-resources"
-    );
+    const response = await axiosInstance.get("/oauth/token/accessible-resources");
 
     return response.data;
   }

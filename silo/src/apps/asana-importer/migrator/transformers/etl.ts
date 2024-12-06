@@ -40,8 +40,8 @@ export const getTransformedTasks = async (
   const stateMap = job.config?.meta.state || [];
   const prioritySettings = job.config?.meta.priority || {};
 
-  const issuePromises = entities.tasks.map((task: AsanaTask) => {
-    return transformTask(
+  const issuePromises = entities.tasks.map((task: AsanaTask) =>
+    transformTask(
       task,
       projectGid,
       entities.users,
@@ -49,19 +49,17 @@ export const getTransformedTasks = async (
       entities.attachments[task.gid],
       stateMap,
       prioritySettings
-    );
-  });
+    )
+  );
 
   return Promise.all(issuePromises);
 };
 
 export const getTransformedTags = (entities: AsanaEntity): Partial<ExIssueLabel>[] => {
-  const labels = entities.tags.map((tag) => {
-    return {
-      name: tag.name,
-      color: getRandomColor(),
-    };
-  });
+  const labels = entities.tags.map((tag) => ({
+    name: tag.name,
+    color: getRandomColor(),
+  }));
 
   labels.push({
     name: "Asana Imported",
@@ -71,9 +69,7 @@ export const getTransformedTags = (entities: AsanaEntity): Partial<ExIssueLabel>
   return labels;
 };
 
-export const getTransformedUsers = (entities: AsanaEntity): Partial<PlaneUser>[] => {
-  return entities.users.map(transformUser);
-};
+export const getTransformedUsers = (entities: AsanaEntity): Partial<PlaneUser>[] => entities.users.map(transformUser);
 
 export const getTransformedCustomFields = (
   job: TJobWithConfig<AsanaConfig>,

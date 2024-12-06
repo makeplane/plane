@@ -1,8 +1,8 @@
 import { createOrUpdateCredentials } from "@/db/query";
 import { SlackUpdateCredential } from "@silo/slack";
 
-export const getRefreshCredentialHandler = (workspaceId: string, userId: string, targetAccessToken: string) => {
-  return async (response: SlackUpdateCredential) => {
+export const getRefreshCredentialHandler =
+  (workspaceId: string, userId: string, targetAccessToken: string) => async (response: SlackUpdateCredential) => {
     let sourceAccessToken: string;
     let sourceRefreshToken: string;
 
@@ -22,4 +22,3 @@ export const getRefreshCredentialHandler = (workspaceId: string, userId: string,
       source_refresh_token: sourceRefreshToken,
     });
   };
-};

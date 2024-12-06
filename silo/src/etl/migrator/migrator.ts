@@ -85,9 +85,9 @@ export async function migrateToPlane(job: TJobWithConfig, data: PlaneEntities[],
     // after creating the states above
     if (issue.state === "") {
       // put the newly created Plane state's id in the issue
-      issue.state = planeStates.find((state) => {
-        return state.source_state.id === issue.external_source_state_id;
-      })?.target_state.id;
+      issue.state = planeStates.find(
+        (state) => state.source_state.id === issue.external_source_state_id
+      )?.target_state.id;
     }
     return issue;
   });
@@ -95,9 +95,9 @@ export async function migrateToPlane(job: TJobWithConfig, data: PlaneEntities[],
   // Create the data required for the workspace
   let planeLabels: ExIssueLabel[] = [];
   let planeUsers: PlaneUser[] = [];
-  let planeIssueTypes: ExIssueType[] = [];
-  let planeIssueProperties: ExIssueProperty[] = [];
-  let planeIssuePropertiesOptions: ExIssuePropertyOption[] = [];
+  const planeIssueTypes: ExIssueType[] = [];
+  const planeIssueProperties: ExIssueProperty[] = [];
+  const planeIssuePropertiesOptions: ExIssuePropertyOption[] = [];
   let defaultIssueType: ExIssueType | undefined = undefined;
 
   let shouldContinue = true;
@@ -367,7 +367,7 @@ export async function migrateToPlane(job: TJobWithConfig, data: PlaneEntities[],
 
   /* ------------------- Start Creating the Issues -------------------- */
   // Batch Start Index
-  let issueProcessIndex = meta.batch_start;
+  const issueProcessIndex = meta.batch_start;
 
   const createdIssues = await createIssues({
     jobId: job.id,

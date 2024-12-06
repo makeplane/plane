@@ -5,8 +5,8 @@ import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 // Plane-web
 import { Relation } from "@/plane-web/types";
 //
-import { TimelineDependencyPathItem } from "./dependency-path-item";
 import { DependencyPathModal } from "./dependency-modal";
+import { TimelineDependencyPathItem } from "./dependency-path-item";
 
 export const TimelineDependencyPaths = observer(() => {
   const { isDependencyEnabled, relations } = useTimeLineChartStore();
@@ -24,6 +24,7 @@ export const TimelineDependencyPaths = observer(() => {
       <div>
         {relations.map((relation) => (
           <TimelineDependencyPathItem
+            key={relation.id}
             relation={relation}
             onPathClick={(relation: Relation) => {
               setSelectedRelation(relation);

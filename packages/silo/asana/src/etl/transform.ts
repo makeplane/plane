@@ -49,15 +49,10 @@ export const transformTask = (
   const state = mapAsanaState(task, projectGid);
   const targetAttachments = getTargetAttachments(attachments);
   const targetState = state && getTargetState(stateMap, state);
-  const {
-    custom_field_id: priorityCustomFieldId,
-    priority_config: priorityMap,
-  } = prioritySettings;
+  const { custom_field_id: priorityCustomFieldId, priority_config: priorityMap } = prioritySettings;
   let targetPriority = undefined;
   if (priorityCustomFieldId && priorityMap && priorityMap.length) {
-    const priorityFieldValue = task.custom_fields.find(
-      (field) => field.gid === priorityCustomFieldId
-    )?.enum_value;
+    const priorityFieldValue = task.custom_fields.find((field) => field.gid === priorityCustomFieldId)?.enum_value;
     targetPriority = getTargetPriority(priorityMap, priorityFieldValue);
   }
   const parent = task.parent ? task.parent.gid : undefined;
@@ -87,8 +82,7 @@ export const transformTask = (
     attachments: targetAttachments as ExIssueAttachment[], // TODO: Fix this type
     state: targetState ? targetState.id : "",
     priority: targetPriority,
-    description_html:
-      !task.html_notes || task.html_notes == "" ? "<p></p>" : task.html_notes,
+    description_html: !task.html_notes || task.html_notes == "" ? "<p></p>" : task.html_notes,
     start_date: getFormattedDate(task.start_on),
     target_date: getFormattedDate(task.due_on),
     created_at: task.created_at,
@@ -126,8 +120,7 @@ export const transformCustomFields = (
     return undefined;
   }
   // Get the property attributes
-  const propertyAttributes =
-    CUSTOM_FIELD_ATTRIBUTES[fieldSettings.custom_field.type];
+  const propertyAttributes = CUSTOM_FIELD_ATTRIBUTES[fieldSettings.custom_field.type];
   if (!propertyAttributes) {
     return undefined;
   }
@@ -146,44 +139,33 @@ export const transformCustomFields = (
 export const transformCustomFieldOptions = (
   customFieldGid: string,
   customFieldOption: AsanaEnumOption
-): Partial<ExIssuePropertyOption> => {
-  return {
-    external_id: customFieldOption.gid,
-    external_source: "ASANA",
-    name: customFieldOption.name,
-    is_active: customFieldOption.enabled,
-    property_id: customFieldGid,
-  };
-};
+): Partial<ExIssuePropertyOption> => ({
+  external_id: customFieldOption.gid,
+  external_source: "ASANA",
+  name: customFieldOption.name,
+  is_active: customFieldOption.enabled,
+  property_id: customFieldGid,
+});
 
 export const transformCustomFieldValues = (
   task: AsanaTask,
-  planeIssueProperties: Map<string, Partial<ExIssueProperty>>,
-  asanaUsersMap: Map<string, AsanaUser>
+  // eslint-disable-next-line no-undef
+  planeIssueProperties: Map<string, Partial<ExIssueProperty>>, // TODO: Replace Map with Record<string, Partial<ExIssueProperty>> in the future
+  // eslint-disable-next-line no-undef
+  asanaUsersMap: Map<string, AsanaUser> // TODO: Replace Map with Record<string, AsanaUser> in the future
 ): TPropertyValuesPayload => {
   // Get transformed values for property_id -> property_values
   const propertyValuesPayload: TPropertyValuesPayload = {};
   task.custom_fields.forEach((customField) => {
     const property = planeIssueProperties.get(customField.gid);
-    if (
-      property &&
-      property.external_id &&
-      customField.gid &&
-      customField.type
-    ) {
-      propertyValuesPayload[property.external_id] = getPropertyValues(
-        customField,
-        asanaUsersMap
-      );
+    if (property && property.external_id && customField.gid && customField.type) {
+      propertyValuesPayload[property.external_id] = getPropertyValues(customField, asanaUsersMap);
     }
   });
   return propertyValuesPayload;
 };
 
-export const transformComments = (
-  comment: AsanaTaskComment,
-  users: AsanaUser[]
-): Partial<ExIssueComment> => {
+export const transformComments = (comment: AsanaTaskComment, users: AsanaUser[]): Partial<ExIssueComment> => {
   const creator = mapAsanaCommentCreator(comment, users);
   return {
     external_id: comment.gid,

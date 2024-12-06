@@ -13,7 +13,7 @@ type TCreateOrUpdateIssueTypes = {
 
 export const createOrUpdateIssueTypes = async (props: TCreateOrUpdateIssueTypes): Promise<ExIssueType[]> => {
   const { jobId, issueTypes, planeClient, workspaceSlug, projectId, method } = props;
-  let createdUpdatedIssueTypes: ExIssueType[] = [];
+  const createdUpdatedIssueTypes: ExIssueType[] = [];
 
   const issueTypePromises = issueTypes.map(async (issueType) => {
     try {

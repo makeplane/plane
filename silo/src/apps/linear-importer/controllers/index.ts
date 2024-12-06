@@ -1,9 +1,8 @@
 import { env } from "@/env";
 import { Controller, Get, Post } from "@/lib";
 import { Request, Response } from "express";
-import { LinearTokenResponse, createLinearService } from "@silo/linear";
+import { LinearTokenResponse, createLinearService, LinearAuthPayload, LinearAuthState } from "@silo/linear";
 import { createOrUpdateCredentials, getCredentialsByWorkspaceId } from "@/db/query";
-import { LinearAuthPayload, LinearAuthState } from "@silo/linear";
 import { linearAuth } from "../auth/auth";
 import { TServiceCredentials } from "@silo/core";
 

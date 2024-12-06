@@ -1,17 +1,17 @@
 import { useState } from "react";
-import { CalendarCheck2, CalendarClock, Trash2Icon } from "lucide-react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { CalendarCheck2, CalendarClock, Trash2Icon } from "lucide-react";
 // Plane
-import { ControlLink, EModalPosition, EModalWidth, ModalCore, setToast, Spinner, TOAST_TYPE, Tooltip } from "@plane/ui";
 import { TIssue } from "@plane/types";
+import { ControlLink, EModalPosition, EModalWidth, ModalCore, setToast, Spinner, TOAST_TYPE, Tooltip } from "@plane/ui";
 // components
 import { DateDropdown } from "@/components/dropdowns";
 // hooks
+import { useIssueDetail } from "@/hooks/store";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
-import { useIssueDetail } from "@/hooks/store";
 // Plane-web
 import { EDependencyPosition } from "@/plane-web/constants";
 import { getRelationType } from "@/plane-web/store/timeline/utils";

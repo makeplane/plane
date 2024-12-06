@@ -1,7 +1,6 @@
 export const removeArrayObjSpaces = (arr: any[]) => {
-  return arr.map((obj) => {
-    return removeSpacesFromKeys(obj);
-  });
+  const results = arr.map((obj) => removeSpacesFromKeys(obj));
+  return results;
 };
 
 export const removeSpacesFromKeys = (obj: any) => {
@@ -27,6 +26,4 @@ export const formatDateStringForHHMM = (inputDate: Date): string => {
   return formattedDate;
 };
 
-export const getRandomColor = () => {
-  return "#" + Math.floor(Math.random() * 16777215).toString(16);
-};
+export const getRandomColor = () => "#" + Math.floor(Math.random() * 16777215).toString(16);

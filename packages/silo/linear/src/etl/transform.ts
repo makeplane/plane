@@ -1,12 +1,6 @@
 import { IStateConfig, LinearComment, LinearCycle } from "@/types";
 import { Issue, IssueLabel, User } from "@linear/sdk";
-import {
-  ExCycle,
-  ExIssueAttachment,
-  ExIssueComment,
-  ExIssue as PlaneIssue,
-  PlaneUser,
-} from "@plane/sdk";
+import { ExCycle, ExIssueAttachment, ExIssueComment, ExIssue as PlaneIssue, PlaneUser } from "@plane/sdk";
 import { getFormattedDate, getTargetState } from "../helpers";
 
 export const transformIssue = async (
@@ -39,9 +33,7 @@ export const transformIssue = async (
     },
   ];
 
-  const attachments = extractAttachmentsFromDescription(
-    issue.description || ""
-  );
+  const attachments = extractAttachmentsFromDescription(issue.description || "");
 
   return {
     assignees: assignee ? [assignee] : [],
@@ -51,10 +43,7 @@ export const transformIssue = async (
     external_source: "LINEAR",
     created_by: creator,
     name: issue.title,
-    description_html:
-      !issue.description || issue.description == ""
-        ? "<p></p>"
-        : issue.description,
+    description_html: !issue.description || issue.description == "" ? "<p></p>" : issue.description,
     target_date: getFormattedDate(issue.dueDate?.toString()),
     start_date: getFormattedDate(issue.startedAt?.toString()),
     created_at: issue.createdAt,
@@ -67,9 +56,7 @@ export const transformIssue = async (
   } as unknown as PlaneIssue;
 };
 
-export const extractAttachmentsFromDescription = (
-  description: string
-): Partial<ExIssueAttachment>[] => {
+export const extractAttachmentsFromDescription = (description: string): Partial<ExIssueAttachment>[] => {
   // Match both image syntax ![alt](url) and link syntax [text](url)
   const attachmentRegex = /(?:!\[([^\]]*)\]|\[([^\]]+)\])\(([^)]+)\)/g;
   const attachments: Partial<ExIssueAttachment>[] = [];
@@ -99,10 +86,7 @@ export const extractAttachmentsFromDescription = (
   return attachments;
 };
 
-export const transformComment = (
-  comment: LinearComment,
-  users: User[]
-): Partial<ExIssueComment> => {
+export const transformComment = (comment: LinearComment, users: User[]): Partial<ExIssueComment> => {
   const creator = users.find((u) => u.id === comment.user_id);
 
   return {
@@ -119,9 +103,7 @@ export const transformComment = (
 export const transformUser = (user: User): Partial<PlaneUser> => {
   const [first_name, ...lastNameParts] = user.name.split(" ");
   const last_name = lastNameParts.join(" ");
-
-  let role = user.admin ? 20 : 15;
-
+  const role = user.admin ? 20 : 15;
   return {
     email: user.email,
     display_name: user.displayName,
@@ -131,22 +113,17 @@ export const transformUser = (user: User): Partial<PlaneUser> => {
   };
 };
 
-export const transformCycle = (cycle: LinearCycle): Partial<ExCycle> => {
-  return {
-    external_id: cycle.cycle.id,
-    external_source: "LINEAR",
-    name: cycle.cycle.name ?? `Cycle ${cycle.cycle.number}`,
-    start_date: getFormattedDate(cycle.cycle.startsAt.toString()),
-    end_date: getFormattedDate(cycle.cycle.endsAt.toString()),
-    created_at: getFormattedDate(cycle.cycle.createdAt.toString()),
-    issues: cycle.issues.map((issue) => issue.id),
-  };
-};
+export const transformCycle = (cycle: LinearCycle): Partial<ExCycle> => ({
+  external_id: cycle.cycle.id,
+  external_source: "LINEAR",
+  name: cycle.cycle.name ?? `Cycle ${cycle.cycle.number}`,
+  start_date: getFormattedDate(cycle.cycle.startsAt.toString()),
+  end_date: getFormattedDate(cycle.cycle.endsAt.toString()),
+  created_at: getFormattedDate(cycle.cycle.createdAt.toString()),
+  issues: cycle.issues.map((issue) => issue.id),
+});
 
-const breakAndGetAssignee = async (
-  issue: Issue,
-  users: User[]
-): Promise<string | undefined> => {
+const breakAndGetAssignee = async (issue: Issue, users: User[]): Promise<string | undefined> => {
   // @ts-ignore
   if (issue._assignee) {
     // @ts-ignore
@@ -171,10 +148,7 @@ const breakAndGetParent = (issue: Issue): string | undefined => {
   }
 };
 
-const breakAndGetCreator = (
-  issue: Issue,
-  users: User[]
-): string | undefined => {
+const breakAndGetCreator = (issue: Issue, users: User[]): string | undefined => {
   // @ts-ignore
   if (issue._creator) {
     // @ts-ignore

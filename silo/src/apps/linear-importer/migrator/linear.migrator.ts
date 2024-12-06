@@ -13,6 +13,8 @@ import {
   pullProjects,
   pullUsers,
   TLinearIssueWithChildren,
+  LinearConfig,
+  LinearEntity,
 } from "@silo/linear";
 import { getRandomColor } from "../helpers/generic-helpers";
 import {
@@ -22,7 +24,6 @@ import {
   getJobData,
   resetJobIfStarted,
 } from "../helpers/migration-helpers";
-import { LinearConfig, LinearEntity } from "@silo/linear";
 import {
   getTransformedComments,
   getTransformedCycles,
@@ -176,9 +177,10 @@ export class LinearDataMigrator extends BaseDataMigrator<LinearConfig, LinearEnt
         const startIndex = i * batchSize;
         const rootBatch = rootIssues.slice(startIndex, startIndex + batchSize);
         // Flatten each root issue and its children, then combine them
-        const flattenedBatch = rootBatch.reduce((acc: LinearIssue[], rootIssue) => {
-          return acc.concat(flattenSingleTree(rootIssue));
-        }, []);
+        const flattenedBatch = rootBatch.reduce(
+          (acc: LinearIssue[], rootIssue) => acc.concat(flattenSingleTree(rootIssue)),
+          []
+        );
         // Add the flattened batch to the batches
         batches.push(flattenedBatch);
       }
@@ -196,7 +198,7 @@ export class LinearDataMigrator extends BaseDataMigrator<LinearConfig, LinearEnt
     // possibility that the same sprint or component can be present in multiple
     // batches.
     for (const [i, batch] of batches.entries()) {
-      let random = Math.floor(Math.random() * 10000);
+      const random = Math.floor(Math.random() * 10000);
       const cycles = filterCyclesForIssues(batch, data.cycles);
       const associatedComments = data.issue_comments.filter((comment: any) =>
         batch.some((issue: any) => issue.id === comment.issue_id)

@@ -26,6 +26,7 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 export class LinearService {
   private linearClient: LinearClient;
   private rateLimitDelay: number = 1000; // 1 second delay between requests
+  // eslint-disable-next-line no-undef
   private teamCache: Map<string, Team> = new Map();
 
   constructor(props: LinearProps) {
@@ -121,9 +122,7 @@ export class LinearService {
     if (this.teamCache.has(teamId)) {
       return this.teamCache.get(teamId)!;
     }
-    const team = await this.rateLimitedRequest(() =>
-      this.linearClient.team(teamId)
-    );
+    const team = await this.rateLimitedRequest(() => this.linearClient.team(teamId));
     this.teamCache.set(teamId, team);
     return team;
   }
@@ -203,16 +202,14 @@ export class LinearService {
       })
     );
 
-    const linearCommentPromises = comments.nodes.map(
-      async (comment): Promise<LinearComment> => {
-        const brokenIds = this.breakAndGetIds(comment);
-        return {
-          ...comment,
-          issue_id: brokenIds?.issue_id,
-          user_id: brokenIds?.user_id,
-        } as LinearComment;
-      }
-    );
+    const linearCommentPromises = comments.nodes.map(async (comment): Promise<LinearComment> => {
+      const brokenIds = this.breakAndGetIds(comment);
+      return {
+        ...comment,
+        issue_id: brokenIds?.issue_id,
+        user_id: brokenIds?.user_id,
+      } as LinearComment;
+    });
 
     const linearComments = await Promise.all(linearCommentPromises);
     return linearComments;

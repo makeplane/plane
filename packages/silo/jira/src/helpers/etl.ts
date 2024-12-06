@@ -1,17 +1,5 @@
-import {
-  IPriorityConfig,
-  IStateConfig,
-  JiraCustomFieldKeys,
-  JiraIssueField,
-  PaginatedResponse,
-} from "@/types";
-import {
-  ExIssueAttachment,
-  ExState,
-  ExIssueProperty,
-  ExIssuePropertyValue,
-  TPropertyValue,
-} from "@plane/sdk";
+import { IPriorityConfig, IStateConfig, JiraCustomFieldKeys, JiraIssueField, PaginatedResponse } from "@/types";
+import { ExIssueAttachment, ExState, ExIssueProperty, ExIssuePropertyValue, TPropertyValue } from "@plane/sdk";
 import {
   Attachment as JiraAttachment,
   Priority as JiraPriority,
@@ -20,10 +8,7 @@ import {
 import { SUPPORTED_CUSTOM_FIELD_ATTRIBUTES } from "./custom-field-etl";
 import { getFormattedDate } from "./date";
 
-export const getTargetState = (
-  stateMap: IStateConfig[],
-  sourceState: JiraState
-): ExState | undefined => {
+export const getTargetState = (stateMap: IStateConfig[], sourceState: JiraState): ExState | undefined => {
   // Assign the external source and external id from jira and return the target state
   const targetState = stateMap.find((state: IStateConfig) => {
     if (state.source_state.id === sourceState.id) {
@@ -36,15 +21,13 @@ export const getTargetState = (
   return targetState?.target_state;
 };
 
-export const getTargetAttachments = (
-  attachments?: JiraAttachment[]
-): Partial<ExIssueAttachment[]> => {
+export const getTargetAttachments = (attachments?: JiraAttachment[]): Partial<ExIssueAttachment[]> => {
   if (!attachments) {
     return [];
   }
   const attachmentArray = attachments
-    .map((attachment: JiraAttachment): Partial<ExIssueAttachment> => {
-      return {
+    .map(
+      (attachment: JiraAttachment): Partial<ExIssueAttachment> => ({
         external_id: attachment.id ?? "",
         external_source: "JIRA",
         attributes: {
@@ -52,20 +35,16 @@ export const getTargetAttachments = (
           size: attachment.size ?? 0,
         },
         asset: attachment.content ?? "",
-      };
-    })
+      })
+    )
     .filter((attachment) => attachment !== undefined) as ExIssueAttachment[];
 
   return attachmentArray;
 };
 
-export const getTargetPriority = (
-  priorityMap: IPriorityConfig[],
-  sourcePriority: JiraPriority
-): string | undefined => {
+export const getTargetPriority = (priorityMap: IPriorityConfig[], sourcePriority: JiraPriority): string | undefined => {
   const targetPriority = priorityMap.find(
-    (priority: IPriorityConfig) =>
-      priority.source_priority.name === sourcePriority.name
+    (priority: IPriorityConfig) => priority.source_priority.name === sourcePriority.name
   );
   return targetPriority?.target_priority;
 };
@@ -96,17 +75,13 @@ export const fetchPaginatedData = async <T>(
   }
 };
 
-export const getPropertyAttributes = (
-  jiraIssueField: JiraIssueField
-): Partial<ExIssueProperty> => {
+export const getPropertyAttributes = (jiraIssueField: JiraIssueField): Partial<ExIssueProperty> => {
   if (!jiraIssueField.schema || !jiraIssueField.schema.custom) {
     return {};
   }
 
   return {
-    ...SUPPORTED_CUSTOM_FIELD_ATTRIBUTES[
-      jiraIssueField.schema.custom as JiraCustomFieldKeys
-    ],
+    ...SUPPORTED_CUSTOM_FIELD_ATTRIBUTES[jiraIssueField.schema.custom as JiraCustomFieldKeys],
   };
 };
 
@@ -184,7 +159,7 @@ export const getPropertyValues = (
         });
       }
       break;
-    case "com.atlassian.jira.plugin.system.customfieldtypes:datetime":
+    case "com.atlassian.jira.plugin.system.customfieldtypes:datetime": {
       // Handle datetime
       const formattedDate = getFormattedDate(value); // Format it to datetime format
       if (formattedDate) {
@@ -194,6 +169,8 @@ export const getPropertyValues = (
         });
       }
       break;
+    }
+
     case "com.atlassian.jira.plugin.system.customfieldtypes:radiobuttons":
       // Handle radiobuttons
       propertyValues.push({

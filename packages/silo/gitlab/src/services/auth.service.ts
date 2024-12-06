@@ -1,19 +1,7 @@
 import axios from "axios";
-import {
-  GitLabAuthConfig,
-  GitLabAuthorizeState,
-  GitLabAuthPayload,
-  GitLabTokenResponse,
-} from "../types/auth";
+import { GitLabAuthConfig, GitLabAuthorizeState, GitLabAuthPayload, GitLabTokenResponse } from "../types/auth";
 
-const DEFAULT_SCOPES = [
-  "api",
-  "read_api",
-  "read_user",
-  "read_repository",
-  "profile",
-  "email",
-];
+const DEFAULT_SCOPES = ["api", "read_api", "read_user", "read_repository", "profile", "email"];
 
 export class GitLabAuthService {
   config: GitLabAuthConfig;
@@ -36,7 +24,7 @@ export class GitLabAuthService {
   getAuthUrl(state: GitLabAuthorizeState): string {
     const stateString = JSON.stringify(state);
     const encodedState = Buffer.from(stateString).toString("base64");
-    let hostname = this.config.host || "gitlab.com";
+    const hostname = this.config.host || "gitlab.com";
     return `https://${hostname}/oauth/authorize?client_id=${this.config.clientId}&redirect_uri=${this.config.redirectUri}&response_type=code&state=${encodedState}&scope=${this.getScopesString()}`;
   }
 
@@ -51,20 +39,15 @@ export class GitLabAuthService {
   }> {
     const { code, state } = payload;
 
-    const { data: response } = await axios.post<GitLabTokenResponse>(
-      "https://gitlab.com/oauth/token",
-      {
-        client_id: this.config.clientId,
-        client_secret: this.config.clientSecret,
-        code,
-        grant_type: "authorization_code",
-        redirect_uri: this.config.redirectUri,
-      },
-    );
+    const { data: response } = await axios.post<GitLabTokenResponse>("https://gitlab.com/oauth/token", {
+      client_id: this.config.clientId,
+      client_secret: this.config.clientSecret,
+      code,
+      grant_type: "authorization_code",
+      redirect_uri: this.config.redirectUri,
+    });
 
-    const decodedState = JSON.parse(
-      Buffer.from(state, "base64").toString(),
-    ) as GitLabAuthorizeState;
+    const decodedState = JSON.parse(Buffer.from(state, "base64").toString()) as GitLabAuthorizeState;
 
     return { response, state: decodedState };
   }

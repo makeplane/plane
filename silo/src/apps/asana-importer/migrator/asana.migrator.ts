@@ -165,9 +165,10 @@ export class AsanaDataMigrator extends BaseDataMigrator<AsanaConfig, AsanaEntity
         const startIndex = i * batchSize;
         const rootBatch = rootTasks.slice(startIndex, startIndex + batchSize);
         // Flatten each root issue and its children, then combine them
-        const flattenedBatch = rootBatch.reduce((acc: AsanaTask[], rootTask) => {
-          return acc.concat(flattenSingleTree(rootTask));
-        }, []);
+        const flattenedBatch = rootBatch.reduce(
+          (acc: AsanaTask[], rootTask) => acc.concat(flattenSingleTree(rootTask)),
+          []
+        );
         // Add the flattened batch to the batches
         batches.push(flattenedBatch);
       }
@@ -178,7 +179,7 @@ export class AsanaDataMigrator extends BaseDataMigrator<AsanaConfig, AsanaEntity
     const batches = batchTasks(data.tasks, batchSize);
     const finalBatches: TBatch<AsanaEntity>[] = [];
     for (const [i, batch] of batches.entries()) {
-      let random = Math.floor(Math.random() * 10000);
+      const random = Math.floor(Math.random() * 10000);
       finalBatches.push({
         id: random,
         jobId: job.id,

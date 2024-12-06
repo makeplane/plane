@@ -5,11 +5,7 @@ import {
   IssueTypeDetails as JiraIssueTypeDetails,
   FieldDetails,
 } from "jira.js/out/version2/models";
-import {
-  fetchPaginatedData,
-  formatDateStringForHHMM,
-  OPTION_CUSTOM_FIELD_TYPES,
-} from "../helpers";
+import { fetchPaginatedData, formatDateStringForHHMM, OPTION_CUSTOM_FIELD_TYPES } from "../helpers";
 import {
   ImportedJiraUser,
   JiraComment,
@@ -22,9 +18,7 @@ import {
   JiraV2Service,
 } from "..";
 
-export async function pullUsers(
-  client: JiraV2Service,
-): Promise<ImportedJiraUser[]> {
+export async function pullUsers(client: JiraV2Service): Promise<ImportedJiraUser[]> {
   const jiraUsers = await client.getJiraUsers();
   const users: ImportedJiraUser[] = jiraUsers
     .map((user): ImportedJiraUser | undefined => {
@@ -47,44 +41,26 @@ export async function pullUsers(
   return users;
 }
 
-export async function pullLabels(
-  client: JiraV2Service,
-  projectId: string,
-): Promise<string[]> {
+export async function pullLabels(client: JiraV2Service, projectId: string): Promise<string[]> {
   const labels: string[] = await client.getAllProjectLabels(projectId);
   return labels;
 }
 
-export async function pullIssues(
-  client: JiraV2Service,
-  projectKey: string,
-  from?: Date,
-): Promise<IJiraIssue[]> {
+export async function pullIssues(client: JiraV2Service, projectKey: string, from?: Date): Promise<IJiraIssue[]> {
   const issues: IJiraIssue[] = [];
   await fetchPaginatedData(
-    (startAt) =>
-      client.getProjectIssues(
-        projectKey,
-        startAt,
-        from ? formatDateStringForHHMM(from) : "",
-      ),
+    (startAt) => client.getProjectIssues(projectKey, startAt, from ? formatDateStringForHHMM(from) : ""),
     (values) => issues.push(...(values as IJiraIssue[])),
-    "issues",
+    "issues"
   );
   return issues;
 }
 
-export async function pullComments(
-  issues: IJiraIssue[],
-  client: JiraV2Service,
-): Promise<any[]> {
+export async function pullComments(issues: IJiraIssue[], client: JiraV2Service): Promise<any[]> {
   return await pullCommentsInBatches(issues, 20, client);
 }
 
-export async function pullSprints(
-  client: JiraV2Service,
-  projectId: string,
-): Promise<JiraSprint[]> {
+export async function pullSprints(client: JiraV2Service, projectId: string): Promise<JiraSprint[]> {
   const jiraSprints: JiraSprint[] = [];
   try {
     const boards = await client.getProjectBoards(projectId);
@@ -97,32 +73,25 @@ export async function pullSprints(
             client.getBoardSprintsIssues(
               board.id as number,
               sprint.id as number,
-              startAt,
+              startAt
             ) as Promise<PaginatedResponse>,
           (values) => boardIssues.push(...(values as IJiraIssue[])),
-          "issues",
+          "issues"
         );
         jiraSprints.push({ sprint, issues: boardIssues as IJiraIssue[] });
       }
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e: any) {
-    console.error(
-      "Could not fetch sprints, something went wrong",
-      e.response?.data,
-    );
+    console.error("Could not fetch sprints, something went wrong", e.response?.data);
   }
   return jiraSprints;
 }
 
-export async function pullComponents(
-  client: JiraV2Service,
-  projectKey: string,
-): Promise<JiraComponent[]> {
+export async function pullComponents(client: JiraV2Service, projectKey: string): Promise<JiraComponent[]> {
   const jiraComponents: JiraComponent[] = [];
   try {
-    const jiraComponentObjects: ComponentWithIssueCount[] =
-      await client.getProjectComponents(projectKey);
+    const jiraComponentObjects: ComponentWithIssueCount[] = await client.getProjectComponents(projectKey);
     for (const component of jiraComponentObjects) {
       const issues = await client.getProjectComponentIssues(component.id!);
       if (issues.issues) {
@@ -131,18 +100,12 @@ export async function pullComponents(
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e: any) {
-    console.error(
-      "Could not fetch components, something went wrong",
-      e.response?.data,
-    );
+    console.error("Could not fetch components, something went wrong", e.response?.data);
   }
   return jiraComponents;
 }
 
-export const pullCommentsForIssue = async (
-  issue: IJiraIssue,
-  client: JiraV2Service,
-): Promise<JiraComment[]> => {
+export const pullCommentsForIssue = async (issue: IJiraIssue, client: JiraV2Service): Promise<JiraComment[]> => {
   const comments: JiraComment[] = [];
   await fetchPaginatedData(
     (startAt) => client.getIssueComments(issue.id, startAt),
@@ -151,11 +114,11 @@ export const pullCommentsForIssue = async (
         (comment): JiraComment => ({
           ...(comment as JComment),
           issue_id: issue.id,
-        }),
+        })
       );
       comments.push(...jiraComments);
     },
-    "comments",
+    "comments"
   );
   return comments;
 };
@@ -163,30 +126,21 @@ export const pullCommentsForIssue = async (
 export const pullCommentsInBatches = async (
   issues: IJiraIssue[],
   batchSize: number,
-  client: JiraV2Service,
+  client: JiraV2Service
 ): Promise<JiraComment[]> => {
   const comments: JiraComment[] = [];
   for (let i = 0; i < issues.length; i += batchSize) {
     const batch = issues.slice(i, i + batchSize);
-    const batchComments = await Promise.all(
-      batch.map((issue) => pullCommentsForIssue(issue, client)),
-    );
+    const batchComments = await Promise.all(batch.map((issue) => pullCommentsForIssue(issue, client)));
     comments.push(...batchComments.flat());
   }
   return comments;
 };
 
-export const pullIssueTypes = async (
-  client: JiraV2Service,
-  projectId: string,
-): Promise<JiraIssueTypeDetails[]> => {
-  return await client.getProjectIssueTypes(projectId);
-};
+export const pullIssueTypes = async (client: JiraV2Service, projectId: string): Promise<JiraIssueTypeDetails[]> =>
+  await client.getProjectIssueTypes(projectId);
 
-export const pullIssueFields = async (
-  client: JiraV2Service,
-  projectId: string,
-): Promise<JiraIssueField[]> => {
+export const pullIssueFields = async (client: JiraV2Service, projectId: string): Promise<JiraIssueField[]> => {
   const customFields: JiraIssueField[] = [];
 
   try {
@@ -196,54 +150,37 @@ export const pullIssueFields = async (
     const projectIssueTypes = await client.getProjectIssueTypes(projectId);
 
     const mappedFields = fieldsWithCtx
-      .map((field) => {
-        return {
-          ...field,
-          fieldInfo: fields.find((f) => f.id === field.id),
-        };
-      })
-      .filter(
-        (field) =>
-          field.isAllProjects || field.projectIds.includes(Number(projectId)),
-      );
+      .map((field) => ({
+        ...field,
+        fieldInfo: fields.find((f) => f.id === field.id),
+      }))
+      .filter((field) => field.isAllProjects || field.projectIds.includes(Number(projectId)));
 
     for (const field of mappedFields) {
       if (!field.fieldInfo) continue;
 
-      const resolveFieldPromises = field.issueTypeIds.map(
-        async (issueTypeId) => {
-          const issueType = projectIssueTypes.find(
-            (type) => type.id === issueTypeId,
-          );
+      const resolveFieldPromises = field.issueTypeIds.map(async (issueTypeId) => {
+        const issueType = projectIssueTypes.find((type) => type.id === issueTypeId);
 
-          if (!issueType) return;
+        if (!issueType) return;
 
-          const fieldOptions: JiraIssueFieldOptions[] =
-            OPTION_CUSTOM_FIELD_TYPES.includes(
-              field.fieldInfo?.schema?.custom as JiraCustomFieldKeys,
-            )
-              ? await getFieldOptions(
-                  client,
-                  field.numericId.toString(),
-                  projectId,
-                  issueTypeId,
-                )
-              : [];
+        const fieldOptions: JiraIssueFieldOptions[] = OPTION_CUSTOM_FIELD_TYPES.includes(
+          field.fieldInfo?.schema?.custom as JiraCustomFieldKeys
+        )
+          ? await getFieldOptions(client, field.numericId.toString(), projectId, issueTypeId)
+          : [];
 
-          return {
-            ...field.fieldInfo,
-            scope: {
-              project: { id: projectId },
-              type: issueTypeId,
-            },
-            options: fieldOptions,
-          };
-        },
-      );
+        return {
+          ...field.fieldInfo,
+          scope: {
+            project: { id: projectId },
+            type: issueTypeId,
+          },
+          options: fieldOptions,
+        };
+      });
 
-      const resolvedFields = (await Promise.all(resolveFieldPromises)).filter(
-        (field) => field !== undefined,
-      );
+      const resolvedFields: any = (await Promise.all(resolveFieldPromises)).filter((field) => field !== undefined);
       customFields.push(...resolvedFields);
     }
   } catch (e: any) {
@@ -258,17 +195,13 @@ async function getFieldOptions(
   client: JiraV2Service,
   fieldId: string,
   projectId: string,
-  issueTypeId: string,
+  issueTypeId: string
 ): Promise<JiraIssueFieldOptions[]> {
   const fieldOptions: JiraIssueFieldOptions[] = [];
 
   try {
     // We'll use a single context approach
-    const options = await client.getIssueFieldOptions(
-      fieldId,
-      projectId,
-      issueTypeId,
-    );
+    const options = await client.getIssueFieldOptions(fieldId, projectId, issueTypeId);
 
     if (options) {
       options.forEach((value) => {
@@ -279,10 +212,7 @@ async function getFieldOptions(
       });
     }
   } catch (e: any) {
-    console.error(
-      `Could not fetch field options for field ${fieldId}`,
-      e.response?.data,
-    );
+    console.error(`Could not fetch field options for field ${fieldId}`, e.response?.data);
   }
 
   return fieldOptions;

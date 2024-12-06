@@ -1,5 +1,5 @@
-import set from "lodash/set";
 import isNil from "lodash/isNil";
+import set from "lodash/set";
 // Plane
 import { TIssueRelationMap } from "@plane/types";
 // components

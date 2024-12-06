@@ -1,16 +1,5 @@
-import {
-  ExCycle,
-  ExIssueComment,
-  ExIssueLabel,
-  ExIssue as PlaneIssue,
-  PlaneUser,
-} from "@plane/sdk";
-import {
-  GitlabIssue,
-  GitlabLabel,
-  GitlabMilestone,
-  GitlabNote,
-} from "../types";
+import { ExCycle, ExIssueComment, ExIssueLabel, ExIssue as PlaneIssue, PlaneUser } from "@plane/sdk";
+import { GitlabIssue, GitlabLabel, GitlabMilestone, GitlabNote } from "../types";
 import { replaceIssueNumber, replaceMentionedGlUsers } from "../helpers";
 
 export const transformGitlabIssue = (
@@ -19,7 +8,7 @@ export const transformGitlabIssue = (
   userMap: Record<string, string>,
   workspaceSlug: string,
   planeUsers: PlaneUser[],
-  isUpdate: boolean = false,
+  isUpdate: boolean = false
 ): Partial<PlaneIssue> => {
   const links = [
     {
@@ -42,8 +31,7 @@ export const transformGitlabIssue = (
     const issueBody = issue.description || "";
     const currentUserReference = `<a href="${issue.author?.web_url}">${issue.author?.name}</a>`;
 
-    const creatorReferenceRegex =
-      /Issue (created|updated) on GitLab By <a href="[^"]*">[^<]*<\/a>/;
+    const creatorReferenceRegex = /Issue (created|updated) on GitLab By <a href="[^"]*">[^<]*<\/a>/;
 
     if (creatorReferenceRegex.test(issueBody)) {
       const updatedBody = issueBody.replace(creatorReferenceRegex, "");
@@ -53,12 +41,7 @@ export const transformGitlabIssue = (
     }
   }
 
-  issue_html = replaceMentionedGlUsers(
-    issue_html,
-    workspaceSlug,
-    userMap,
-    planeUsers,
-  );
+  issue_html = replaceMentionedGlUsers(issue_html, workspaceSlug, userMap, planeUsers);
 
   issue_html = replaceIssueNumber(issue_html, projectId.toString());
 
@@ -87,16 +70,12 @@ export const transformGitlabIssue = (
   };
 };
 
-export const transformGitlabLabel = (
-  label: GitlabLabel,
-): Partial<ExIssueLabel> => {
-  return {
-    name: label.name,
-    color: label.color,
-    external_id: label.id.toString(),
-    external_source: "GITLAB",
-  };
-};
+export const transformGitlabLabel = (label: GitlabLabel): Partial<ExIssueLabel> => ({
+  name: label.name,
+  color: label.color,
+  external_id: label.id.toString(),
+  external_source: "GITLAB",
+});
 
 export const transformGitlabComment = (
   comment: GitlabNote,
@@ -105,7 +84,7 @@ export const transformGitlabComment = (
   workspaceSlug: string,
   userMap: Record<string, string>,
   planeUsers: PlaneUser[],
-  isUpdate: boolean = false,
+  isUpdate: boolean = false
 ): Partial<ExIssueComment> => {
   let creator: string | undefined;
 
@@ -120,8 +99,7 @@ export const transformGitlabComment = (
     // const currentUserReference = `<a href="${comment.author?.web_url}">${comment.author?.name}</a>`;
     const currentUserReference = `<a href="${"https://gitlab.com"}">${comment.author?.name}</a>`;
 
-    const creatorReferenceRegex =
-      /Comment (created|updated) on GitLab By <a href="[^"]*">[^<]*<\/a>_/;
+    const creatorReferenceRegex = /Comment (created|updated) on GitLab By <a href="[^"]*">[^<]*<\/a>_/;
 
     let updatedBody: string;
     if (creatorReferenceRegex.test(commentBody)) {
@@ -142,12 +120,7 @@ export const transformGitlabComment = (
     }
   }
 
-  comment_html = replaceMentionedGlUsers(
-    comment_html,
-    workspaceSlug,
-    userMap,
-    planeUsers,
-  );
+  comment_html = replaceMentionedGlUsers(comment_html, workspaceSlug, userMap, planeUsers);
   comment_html = replaceIssueNumber(comment_html!, projectId.toString());
 
   return {
@@ -161,15 +134,11 @@ export const transformGitlabComment = (
   };
 };
 
-export const transformGitlabMilestone = (
-  milestone: GitlabMilestone,
-): Partial<ExCycle> => {
-  return {
-    external_id: milestone.id.toString(),
-    external_source: "GITLAB",
-    name: milestone.title,
-    description: milestone.description || undefined,
-    start_date: milestone.start_date || milestone.created_at,
-    end_date: milestone.due_date || undefined,
-  };
-};
+export const transformGitlabMilestone = (milestone: GitlabMilestone): Partial<ExCycle> => ({
+  external_id: milestone.id.toString(),
+  external_source: "GITLAB",
+  name: milestone.title,
+  description: milestone.description || undefined,
+  start_date: milestone.start_date || milestone.created_at,
+  end_date: milestone.due_date || undefined,
+});

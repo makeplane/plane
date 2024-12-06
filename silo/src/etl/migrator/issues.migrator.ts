@@ -1,7 +1,7 @@
 /* ----------------------------- Issue Creation Utilities ----------------------------- */
 import { env } from "@/env";
 import { wait } from "@/helpers/delay";
-import { downloadFile, removeSpanAroundImg, splitStringTillPart, uploadFile } from "@/helpers/utils";
+import { downloadFile, splitStringTillPart, uploadFile } from "@/helpers/utils";
 import { AssertAPIErrorResponse, protect } from "@/lib";
 import { logger } from "@/logger";
 import {
@@ -25,9 +25,8 @@ import { HTMLElement, parse } from "node-html-parser";
 import { IssueCreatePayload, IssueWithParentPayload } from "./types";
 
 // A wrapper for better readability
-export const createOrphanIssues = async (payload: IssueCreatePayload): Promise<ExIssue[]> => {
-  return await createIssues(payload);
-};
+export const createOrphanIssues = async (payload: IssueCreatePayload): Promise<ExIssue[]> =>
+  await createIssues(payload);
 
 // Attaches parent to the issues and creates them
 export const createIssuesWithParent = async (payload: IssueWithParentPayload): Promise<ExIssue[]> => {
@@ -45,7 +44,7 @@ export const createIssuesWithParent = async (payload: IssueWithParentPayload): P
     planeIssuePropertiesOptions,
     planeIssuePropertyValues,
   } = payload;
-  let issueProcessIndex = payload.issueProcessIndex;
+  const issueProcessIndex = payload.issueProcessIndex;
   let result: ExIssue[] = [];
 
   for (const issue of issuesWithParent) {
@@ -116,7 +115,7 @@ export const createIssues = async (payload: IssueCreatePayload): Promise<ExIssue
   } = payload;
   let issueProcessIndex = payload.issueProcessIndex;
 
-  let result = [];
+  const result = [];
 
   const issueWaitTime = Number(process.env.REQUEST_INTERVAL) || 400;
 
@@ -529,9 +528,8 @@ const getPlaneIssueLabels = (issue: ExIssue, planeLabels: ExIssueLabel[]): strin
   return [];
 };
 
-const getIssueCreatedBy = (issue: ExIssue, users: any[]): string | undefined => {
-  return users.find((user) => user.display_name === issue.created_by)?.id;
-};
+const getIssueCreatedBy = (issue: ExIssue, users: any[]): string | undefined =>
+  users.find((user) => user.display_name === issue.created_by)?.id;
 
 const getIssueAssignees = (issue: ExIssue, users: any[]): string[] => {
   const assignedUsers = issue.assignees.map((assignee) => {

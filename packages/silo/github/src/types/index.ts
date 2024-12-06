@@ -1,7 +1,8 @@
 import { components } from "@octokit/openapi-webhooks-types";
 import { RestEndpointMethodTypes } from "@octokit/rest";
 
-export type GithubEntity = {};
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export type GithubEntity = {}; // TODO: add expected type
 
 export type GithubConfig = {
   usermap: Record<string, string>;

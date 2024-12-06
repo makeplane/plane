@@ -66,6 +66,7 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
             `[${headers.route.toUpperCase()}][${headers.type.toUpperCase()}] Initiating job 🐼------------------- [${job.id.slice(0, 7)}]`
           );
           await this.update(headers.jobId, "PULLING", {});
+          // eslint-disable-next-line no-case-declarations
           const batches = await this.batches(job);
           await this.update(headers.jobId, "PULLED", {
             total_batch_count: batches.length,
@@ -92,6 +93,7 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
             `[${headers.route.toUpperCase()}][${headers.jobId.slice(0, 7)}] Transforming data for batch 🧹 ------------------- [${data.meta.batchId}]`
           );
           this.update(headers.jobId, "TRANSFORMING", {});
+          // eslint-disable-next-line no-case-declarations
           const transformedData = await this.transform(job, data.data, data.meta);
           if (transformedData.length !== 0) {
             headers.type = "push";

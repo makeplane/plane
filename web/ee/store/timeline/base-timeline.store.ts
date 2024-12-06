@@ -4,6 +4,11 @@ import set from "lodash/set";
 import uniq from "lodash/uniq";
 import { action, autorun, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
+//
+import {
+  BaseTimeLineStore as ExtendableTimelineStore,
+  IBaseTimelineStore as IExtendableTimelineStore,
+} from "@/ce/store/timeline/base-timeline.store";
 // components
 import { IBlockUpdateDependencyData } from "@/components/gantt-chart";
 import { getDateFromPositionOnGantt } from "@/components/gantt-chart/views";
@@ -13,11 +18,6 @@ import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { EDependencyPosition } from "@/plane-web/constants";
 import { E_FEATURE_FLAGS } from "@/plane-web/hooks/store";
 import { DependencyDraggingDetails, Relation } from "@/plane-web/types";
-//
-import {
-  BaseTimeLineStore as ExtendableTimelineStore,
-  IBaseTimelineStore as IExtendableTimelineStore,
-} from "ce/store/timeline/base-timeline.store";
 import { RootStore } from "../root.store";
 import { buildDependencyTree, getBlockUpdates, getNewRelationsMap, getPositionOfBlock, getRelationType } from "./utils";
 
@@ -102,9 +102,9 @@ export class BaseTimeLineStore extends ExtendableTimelineStore implements IBaseT
   /**
    * returns If the current Dependency is dragging
    */
-  getIsCurrentDependencyDragging = computedFn((blockId: string) => {
-    return blockId === this.dependencyDraggingDetails?.draggedFrom;
-  });
+  getIsCurrentDependencyDragging = computedFn(
+    (blockId: string) => blockId === this.dependencyDraggingDetails?.draggedFrom
+  );
 
   /**
    * Adds width on Chart position change while the blocks are being dragged

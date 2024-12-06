@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import useSWR from "swr";
 import isEqual from "lodash/isEqual";
+import useSWR from "swr";
+// silo imports
+import { LinearOrganization } from "@silo/linear";
 // hooks
 import { useBaseImporter } from "@/plane-web/silo/hooks";
 import { useImporter } from "@/plane-web/silo/linear/hooks";
-import { LinearOrganization } from "@silo/linear";
 
 export const useLinearOrg = () => {
   // hooks

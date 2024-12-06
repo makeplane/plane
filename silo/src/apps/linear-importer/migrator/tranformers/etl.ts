@@ -1,9 +1,15 @@
 import { Issue, IssueLabel } from "@linear/sdk";
 import { ExCycle, ExIssueComment, ExIssueLabel, ExModule, ExIssue as PlaneIssue, PlaneUser } from "@plane/sdk";
 import { TJobWithConfig } from "@silo/core";
-import { transformComment, transformCycle, transformIssue, transformUser } from "@silo/linear";
+import {
+  transformComment,
+  transformCycle,
+  transformIssue,
+  transformUser,
+  LinearConfig,
+  LinearEntity,
+} from "@silo/linear";
 import { getRandomColor } from "../../helpers/generic-helpers";
-import { LinearConfig, LinearEntity } from "@silo/linear";
 
 /* ------------------ Transformers ----------------------
 This file contains transformers for Linear entities, responsible
@@ -38,31 +44,24 @@ export const getTransformedIssues = async (
 export const getTransformedLabels = (
   _job: TJobWithConfig<LinearConfig>,
   entities: LinearEntity
-): Partial<ExIssueLabel>[] => {
-  return entities.labels.map((label: IssueLabel): Partial<ExIssueLabel> => {
-    return {
+): Partial<ExIssueLabel>[] =>
+  entities.labels.map(
+    (label: IssueLabel): Partial<ExIssueLabel> => ({
       name: label.name,
       color: label.color ?? getRandomColor(),
-    };
-  });
-};
+    })
+  );
 
 export const getTransformedComments = (
   _job: TJobWithConfig<LinearConfig>,
   entities: LinearEntity
 ): Partial<ExIssueComment>[] => {
-  const commentPromises = entities.issue_comments.map((comment) => {
-    return transformComment(comment, entities.users);
-  });
+  const commentPromises = entities.issue_comments.map((comment) => transformComment(comment, entities.users));
   return commentPromises;
 };
 
-export const getTransformedUsers = (
-  _job: TJobWithConfig<LinearConfig>,
-  entities: LinearEntity
-): Partial<PlaneUser>[] => {
-  return entities.users.map(transformUser);
-};
+export const getTransformedUsers = (_job: TJobWithConfig<LinearConfig>, entities: LinearEntity): Partial<PlaneUser>[] =>
+  entities.users.map(transformUser);
 
 export const getTransformedCycles = (
   _job: TJobWithConfig<LinearConfig>,
@@ -97,9 +96,7 @@ export const getTransformedProjects = (
 ): Partial<ExModule>[] => {
   const modules = entities.projects.map((project): Partial<ExModule> => {
     const issues = project.issues;
-    const transformedIssues = issues.map((issue: Issue) => {
-      return issue.id;
-    });
+    const transformedIssues = issues.map((issue: Issue) => issue.id);
 
     return {
       external_id: project.project.id,

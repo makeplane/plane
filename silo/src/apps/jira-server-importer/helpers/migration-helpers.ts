@@ -57,8 +57,8 @@ export const getTargetAttachments = (
     return [];
   }
   const attachmentArray = attachments
-    .map((attachment: JiraAttachment): Partial<ExIssueAttachment> => {
-      return {
+    .map(
+      (attachment: JiraAttachment): Partial<ExIssueAttachment> => ({
         external_id: attachment.id ?? "",
         external_source: "JIRA_SERVER",
         attributes: {
@@ -66,8 +66,8 @@ export const getTargetAttachments = (
           size: attachment.size ?? 0,
         },
         asset: attachment.content ?? "",
-      };
-    })
+      })
+    )
     .filter((attachment) => attachment !== undefined) as ExIssueAttachment[];
 
   return attachmentArray;

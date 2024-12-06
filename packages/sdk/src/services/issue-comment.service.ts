@@ -1,27 +1,14 @@
-import { APIService } from '@/services/api.service';
+import { APIService } from "@/services/api.service";
 // types
-import {
-  ClientOptions,
-  ExcludedProps,
-  ExIssueComment,
-  ExIssueLabel,
-  Optional,
-  Paginated,
-} from '@/types/types';
+import { ClientOptions, ExcludedProps, ExIssueComment, ExIssueLabel, Optional, Paginated } from "@/types/types";
 
 export class IssueCommentService extends APIService {
   constructor(options: ClientOptions) {
     super(options);
   }
 
-  async list(
-    slug: string,
-    projectId: string,
-    issueId: string,
-  ): Promise<Paginated<ExIssueLabel>> {
-    return this.get(
-      `/api/v1/workspaces/${slug}/projects/${projectId}/issues/${issueId}/comments/`,
-    )
+  async list(slug: string, projectId: string, issueId: string): Promise<Paginated<ExIssueLabel>> {
+    return this.get(`/api/v1/workspaces/${slug}/projects/${projectId}/issues/${issueId}/comments/`)
       .then((response) => response.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -32,12 +19,9 @@ export class IssueCommentService extends APIService {
     slug: string,
     projectId: string,
     issueId: string,
-    payload: Omit<Optional<ExIssueComment>, ExcludedProps>,
+    payload: Omit<Optional<ExIssueComment>, ExcludedProps>
   ) {
-    return this.post(
-      `/api/v1/workspaces/${slug}/projects/${projectId}/issues/${issueId}/comments/`,
-      payload,
-    )
+    return this.post(`/api/v1/workspaces/${slug}/projects/${projectId}/issues/${issueId}/comments/`, payload)
       .then((response) => response.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -80,11 +64,11 @@ export class IssueCommentService extends APIService {
     projectId: string,
     issueId: string,
     commentId: string,
-    payload: Omit<Optional<ExIssueComment>, ExcludedProps>,
+    payload: Omit<Optional<ExIssueComment>, ExcludedProps>
   ) {
     return this.patch(
       `/api/v1/workspaces/${slug}/projects/${projectId}/issues/${issueId}/comments/${commentId}/`,
-      payload,
+      payload
     )
       .then((response) => response.data)
       .catch((error) => {
@@ -92,15 +76,8 @@ export class IssueCommentService extends APIService {
       });
   }
 
-  async destroy(
-    slug: string,
-    projectId: string,
-    issueId: string,
-    commentId: string,
-  ) {
-    return this.delete(
-      `/api/v1/workspaces/${slug}/projects/${projectId}/issues/${issueId}/comments/${commentId}/`,
-    )
+  async destroy(slug: string, projectId: string, issueId: string, commentId: string) {
+    return this.delete(`/api/v1/workspaces/${slug}/projects/${projectId}/issues/${issueId}/comments/${commentId}/`)
       .then((response) => response.data)
       .catch((error) => {
         throw error?.response?.data;

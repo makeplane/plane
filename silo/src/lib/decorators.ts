@@ -1,5 +1,9 @@
-import "reflect-metadata"
-import { RequestHandler } from "express"
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-wrapper-object-types */
+/* eslint-disable @typescript-eslint/no-unsafe-function-type */
+import "reflect-metadata";
+import { RequestHandler } from "express";
 
 /**
  * Controller decorator
@@ -8,8 +12,8 @@ import { RequestHandler } from "express"
  */
 export function Controller(baseRoute: string = ""): ClassDecorator {
   return function (target: Function) {
-    Reflect.defineMetadata("baseRoute", baseRoute, target)
-  }
+    Reflect.defineMetadata("baseRoute", baseRoute, target);
+  };
 }
 
 /**
@@ -19,9 +23,9 @@ export function Controller(baseRoute: string = ""): ClassDecorator {
  */
 export function Get(route: string): any {
   return function (target: Object, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
-    Reflect.defineMetadata("method", "get", target, propertyKey)
-    Reflect.defineMetadata("route", route, target, propertyKey)
-  }
+    Reflect.defineMetadata("method", "get", target, propertyKey);
+    Reflect.defineMetadata("route", route, target, propertyKey);
+  };
 }
 /**
  * Controller POST method decorator
@@ -30,9 +34,9 @@ export function Get(route: string): any {
  */
 export function Post(route: string): any {
   return function (target: Object, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
-    Reflect.defineMetadata("method", "post", target, propertyKey)
-    Reflect.defineMetadata("route", route, target, propertyKey)
-  }
+    Reflect.defineMetadata("method", "post", target, propertyKey);
+    Reflect.defineMetadata("route", route, target, propertyKey);
+  };
 }
 
 /**
@@ -42,9 +46,9 @@ export function Post(route: string): any {
  */
 export function Patch(route: string): any {
   return function (target: Object, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
-    Reflect.defineMetadata("method", "patch", target, propertyKey)
-    Reflect.defineMetadata("route", route, target, propertyKey)
-  }
+    Reflect.defineMetadata("method", "patch", target, propertyKey);
+    Reflect.defineMetadata("route", route, target, propertyKey);
+  };
 }
 
 /**
@@ -54,9 +58,9 @@ export function Patch(route: string): any {
  */
 export function Put(route: string): any {
   return function (target: Object, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
-    Reflect.defineMetadata("method", "put", target, propertyKey)
-    Reflect.defineMetadata("route", route, target, propertyKey)
-  }
+    Reflect.defineMetadata("method", "put", target, propertyKey);
+    Reflect.defineMetadata("route", route, target, propertyKey);
+  };
 }
 
 /**
@@ -66,9 +70,9 @@ export function Put(route: string): any {
  */
 export function Delete(route: string): any {
   return function (target: Object, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
-    Reflect.defineMetadata("method", "delete", target, propertyKey)
-    Reflect.defineMetadata("route", route, target, propertyKey)
-  }
+    Reflect.defineMetadata("method", "delete", target, propertyKey);
+    Reflect.defineMetadata("route", route, target, propertyKey);
+  };
 }
 
 /**
@@ -78,8 +82,8 @@ export function Delete(route: string): any {
  */
 export function Middleware(middleware: RequestHandler): any {
   return function (target: Object, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
-    const middlewares = Reflect.getMetadata("middlewares", target, propertyKey) || []
-    middlewares.push(middleware)
-    Reflect.defineMetadata("middlewares", middlewares, target, propertyKey)
-  }
+    const middlewares = Reflect.getMetadata("middlewares", target, propertyKey) || [];
+    middlewares.push(middleware);
+    Reflect.defineMetadata("middlewares", middlewares, target, propertyKey);
+  };
 }

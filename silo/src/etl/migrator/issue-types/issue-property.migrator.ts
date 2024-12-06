@@ -28,12 +28,12 @@ export const createOrUpdateIssueProperties = async (
 ): Promise<ExIssueProperty[]> => {
   const { jobId, issueTypesMap, defaultIssueType, issueProperties, planeClient, workspaceSlug, projectId, method } =
     props;
-  let createdUpdatedIssueProperties: ExIssueProperty[] = [];
+  const createdUpdatedIssueProperties: ExIssueProperty[] = [];
 
   const issuePropertyPromises = issueProperties.map(async (issueProperty) => {
     try {
       let createdUpdatedIssueProperty: ExIssueProperty | undefined;
-      let issueType = issueTypesMap.get(issueProperty.type_id || "") || defaultIssueType;
+      const issueType = issueTypesMap.get(issueProperty.type_id || "") || defaultIssueType;
       if (!issueType) {
         logger.error(
           `[${jobId.slice(0, 7)}] Issue type not found for the issue property: ${issueProperty.display_name}`
@@ -78,7 +78,7 @@ export const createOrUpdateIssuePropertiesOptions = async (
   props: TCreateOrUpdateIssuePropertiesOptions
 ): Promise<ExIssuePropertyOption[]> => {
   const { jobId, issuePropertyMap, issuePropertiesOptions, planeClient, workspaceSlug, projectId, method } = props;
-  let createdUpdatedIssuePropertiesOptions: ExIssuePropertyOption[] = [];
+  const createdUpdatedIssuePropertiesOptions: ExIssuePropertyOption[] = [];
 
   const issuePropertyOptionsPromises = issuePropertiesOptions.map(async (issuePropertyOption) => {
     try {

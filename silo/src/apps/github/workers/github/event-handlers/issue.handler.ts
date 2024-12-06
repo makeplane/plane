@@ -46,9 +46,8 @@ export const handleIssueEvents = async (store: Store, action: IssueWebhookAction
   return true;
 };
 
-export const shouldSync = (labels: { name: string }[]): boolean => {
-  return labels.some((label) => label.name.toLowerCase() === SYNC_LABEL);
-};
+export const shouldSync = (labels: { name: string }[]): boolean =>
+  labels.some((label) => label.name.toLowerCase() === SYNC_LABEL);
 
 export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPayload) => {
   try {
@@ -117,11 +116,9 @@ export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPay
         Array.isArray(ghIssue.data.labels) &&
         ghIssue.data.labels.every((label) => typeof label !== "string")
       ) {
-        const labelsToCreate = ghIssue.data.labels.filter((label) => {
-          return !labels.find((l) => l.name === label.name);
-        });
+        const labelsToCreate = ghIssue.data.labels.filter((label: any) => !labels.find((l) => l.name === label.name));
 
-        const labelPromises = labelsToCreate.map(async (label) => {
+        const labelPromises = labelsToCreate.map(async (label: any) => {
           const createdLabel = await planeClient.label.create(
             entityConnection.workspaceSlug,
             entityConnection.projectId,

@@ -60,9 +60,7 @@ export const transformIssue = (
   issue.fields.labels.push("JIRA IMPORTED");
 
   return {
-    assignees: issue.fields.assignee?.displayName
-      ? [issue.fields.assignee.displayName]
-      : [],
+    assignees: issue.fields.assignee?.displayName ? [issue.fields.assignee.displayName] : [],
     links,
     external_id: issue.id,
     external_source: "JIRA",
@@ -82,31 +80,24 @@ export const transformIssue = (
   } as unknown as PlaneIssue;
 };
 
-export const transformLabel = (label: string): Partial<ExIssueLabel> => {
-  return {
-    name: label,
-    color: getRandomColor(),
-  };
-};
+export const transformLabel = (label: string): Partial<ExIssueLabel> => ({
+  name: label,
+  color: getRandomColor(),
+});
 
-export const transformComment = (
-  comment: JiraComment
-): Partial<ExIssueComment> => {
-  return {
-    external_id: comment.id,
-    external_source: "JIRA",
-    created_at: getFormattedDate(comment.created),
-    created_by: comment.author?.displayName,
-    comment_html: comment.renderedBody ?? "<p></p>",
-    actor: comment.author?.displayName,
-    issue: comment.issue_id,
-  };
-};
+export const transformComment = (comment: JiraComment): Partial<ExIssueComment> => ({
+  external_id: comment.id,
+  external_source: "JIRA",
+  created_at: getFormattedDate(comment.created),
+  created_by: comment.author?.displayName,
+  comment_html: comment.renderedBody ?? "<p></p>",
+  actor: comment.author?.displayName,
+  issue: comment.issue_id,
+});
 
 export const transformUser = (user: ImportedJiraUser): Partial<PlaneUser> => {
   const [first_name, last_name] = user.user_name.split(" ");
-  const role =
-    user.org_role && user.org_role.toLowerCase().includes("admin") ? 20 : 15;
+  const role = user.org_role && user.org_role.toLowerCase().includes("admin") ? 20 : 15;
 
   return {
     email: user.email,
@@ -117,51 +108,37 @@ export const transformUser = (user: ImportedJiraUser): Partial<PlaneUser> => {
   };
 };
 
-export const transformSprint = (sprint: JiraSprint): Partial<ExCycle> => {
-  return {
-    external_id: sprint.sprint.id.toString(),
-    external_source: "JIRA",
-    name: sprint.sprint.name,
-    start_date: getFormattedDate(sprint.sprint.startDate),
-    end_date: getFormattedDate(sprint.sprint.endDate),
-    created_at: getFormattedDate(sprint.sprint.createdDate),
-    issues: sprint.issues.map((issue) => issue.id),
-  };
-};
+export const transformSprint = (sprint: JiraSprint): Partial<ExCycle> => ({
+  external_id: sprint.sprint.id.toString(),
+  external_source: "JIRA",
+  name: sprint.sprint.name,
+  start_date: getFormattedDate(sprint.sprint.startDate),
+  end_date: getFormattedDate(sprint.sprint.endDate),
+  created_at: getFormattedDate(sprint.sprint.createdDate),
+  issues: sprint.issues.map((issue) => issue.id),
+});
 
-export const transformComponent = (
-  component: JiraComponent
-): Partial<ExModule> => {
-  return {
-    external_id: component.component.id ?? "",
-    external_source: "JIRA",
-    name: component.component.name,
-    issues: component.issues.map((issue) => issue.id),
-  };
-};
+export const transformComponent = (component: JiraComponent): Partial<ExModule> => ({
+  external_id: component.component.id ?? "",
+  external_source: "JIRA",
+  name: component.component.name,
+  issues: component.issues.map((issue) => issue.id),
+});
 
-export const transformIssueType = (
-  issueType: JiraIssueTypeDetails
-): Partial<ExIssueType> => {
-  return {
-    name: issueType.name,
-    description: issueType.description,
-    is_active: true,
-    external_id: issueType.id,
-    external_source: "JIRA",
-  };
-};
+export const transformIssueType = (issueType: JiraIssueTypeDetails): Partial<ExIssueType> => ({
+  name: issueType.name,
+  description: issueType.description,
+  is_active: true,
+  external_id: issueType.id,
+  external_source: "JIRA",
+});
 
-export const transformIssueFields = (
-  issueField: JiraIssueField
-): Partial<ExIssueProperty> | undefined => {
+export const transformIssueFields = (issueField: JiraIssueField): Partial<ExIssueProperty> | undefined => {
   if (
     !issueField.schema ||
     !issueField.schema.custom ||
     !issueField.scope?.type ||
-    !SUPPORTED_CUSTOM_FIELD_ATTRIBUTES[
-      issueField.schema.custom as JiraCustomFieldKeys
-    ]
+    !SUPPORTED_CUSTOM_FIELD_ATTRIBUTES[issueField.schema.custom as JiraCustomFieldKeys]
   ) {
     return undefined;
   }
@@ -179,19 +156,19 @@ export const transformIssueFields = (
 
 export const transformIssueFieldOptions = (
   issueFieldOption: JiraIssueFieldOptions
-): Partial<ExIssuePropertyOption> => {
-  return {
-    external_id: issueFieldOption.id,
-    external_source: "JIRA",
-    name: issueFieldOption.value,
-    is_active: issueFieldOption.disabled ? false : true,
-    property_id: issueFieldOption.fieldId,
-  };
-};
+): Partial<ExIssuePropertyOption> => ({
+  external_id: issueFieldOption.id,
+  external_source: "JIRA",
+  name: issueFieldOption.value,
+  is_active: issueFieldOption.disabled ? false : true,
+  property_id: issueFieldOption.fieldId,
+});
 
 export const transformIssuePropertyValues = (
   issue: IJiraIssue,
+  // eslint-disable-next-line no-undef
   planeIssueProperties: Map<string, Partial<ExIssueProperty>>,
+  // eslint-disable-next-line no-undef
   jiraCustomFieldMap: Map<string, string>
 ): TPropertyValuesPayload => {
   // Get all custom fields that are present in the issue and are also present in the plane issue properties

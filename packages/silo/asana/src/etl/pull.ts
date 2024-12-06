@@ -58,30 +58,20 @@ async function getAllProjectTasks(
   return allTasks;
 }
 
-async function processBatch(
-  tasks: AsanaTask[],
-  client: AsanaService,
-  options: TaskPullOptions
-): Promise<AsanaTask[]> {
+async function processBatch(tasks: AsanaTask[], client: AsanaService, options: TaskPullOptions): Promise<AsanaTask[]> {
   const results: AsanaTask[] = [];
 
   // Process tasks in smaller concurrent groups
   for (let i = 0; i < tasks.length; i += options.maxConcurrent!) {
     const concurrent = tasks.slice(i, i + options.maxConcurrent!);
-    const concurrentResults = await Promise.all(
-      concurrent.map((task) => processTask(task, client, options))
-    );
+    const concurrentResults = await Promise.all(concurrent.map((task) => processTask(task, client, options)));
     results.push(...concurrentResults.flat());
   }
 
   return results;
 }
 
-async function processTask(
-  task: AsanaTask,
-  client: AsanaService,
-  options: TaskPullOptions
-): Promise<AsanaTask[]> {
+async function processTask(task: AsanaTask, client: AsanaService, options: TaskPullOptions): Promise<AsanaTask[]> {
   const results = [task];
 
   if (task.num_subtasks > 0) {
@@ -92,11 +82,7 @@ async function processTask(
   return results;
 }
 
-async function getAllSubtasks(
-  client: AsanaService,
-  taskGid: string,
-  options: TaskPullOptions
-): Promise<AsanaTask[]> {
+async function getAllSubtasks(client: AsanaService, taskGid: string, options: TaskPullOptions): Promise<AsanaTask[]> {
   const allSubtasks: AsanaTask[] = [];
   let offset = "";
 
@@ -119,12 +105,9 @@ async function getAllSubtasks(
   return allSubtasks;
 }
 
-export async function pullUsers(
-  client: AsanaService,
-  workspaceGId: string
-): Promise<AsanaUser[]> {
+export async function pullUsers(client: AsanaService, workspaceGId: string): Promise<AsanaUser[]> {
   const users: AsanaUser[] = [];
-  let pagination: PaginationPayload = {
+  const pagination: PaginationPayload = {
     limit: DEFAULT_PAGINATION_LIMIT,
     offset: "",
   };
@@ -138,12 +121,9 @@ export async function pullUsers(
   return users;
 }
 
-export async function pullTags(
-  client: AsanaService,
-  workspaceGid: string
-): Promise<AsanaTag[]> {
+export async function pullTags(client: AsanaService, workspaceGid: string): Promise<AsanaTag[]> {
   const tags: AsanaTag[] = [];
-  let pagination: PaginationPayload = {
+  const pagination: PaginationPayload = {
     limit: DEFAULT_PAGINATION_LIMIT,
     offset: "",
   };
@@ -157,21 +137,15 @@ export async function pullTags(
   return tags;
 }
 
-export async function pullCustomFields(
-  client: AsanaService,
-  projectGid: string
-): Promise<AsanaCustomFieldSettings[]> {
+export async function pullCustomFields(client: AsanaService, projectGid: string): Promise<AsanaCustomFieldSettings[]> {
   const customFields: AsanaCustomFieldSettings[] = [];
-  let pagination: PaginationPayload = {
+  const pagination: PaginationPayload = {
     limit: DEFAULT_PAGINATION_LIMIT,
     offset: "",
   };
 
   do {
-    const response = await client.getProjectCustomFieldSettings(
-      projectGid,
-      pagination
-    );
+    const response = await client.getProjectCustomFieldSettings(projectGid, pagination);
     customFields.push(...response.data);
     pagination.offset = response._response.next_page?.offset || "";
   } while (pagination.offset);
@@ -187,15 +161,12 @@ export async function pullAttachments(
 
   for (const task of tasks) {
     if (!task.gid) continue;
-    let pagination: PaginationPayload = {
+    const pagination: PaginationPayload = {
       limit: DEFAULT_PAGINATION_LIMIT,
       offset: "",
     };
     do {
-      const response = await client.getResourceAttachments(
-        task.gid,
-        pagination
-      );
+      const response = await client.getResourceAttachments(task.gid, pagination);
       if (!attachments[task.gid]) {
         attachments[task.gid] = [];
       }
@@ -205,15 +176,12 @@ export async function pullAttachments(
   return attachments;
 }
 
-export async function pullComments(
-  client: AsanaService,
-  tasks: AsanaTask[]
-): Promise<AsanaTaskComment[]> {
+export async function pullComments(client: AsanaService, tasks: AsanaTask[]): Promise<AsanaTaskComment[]> {
   // Fetch comments for each task
   const comments: AsanaTaskComment[] = [];
 
   // Pagination for comments
-  let pagination: PaginationPayload = {
+  const pagination: PaginationPayload = {
     limit: DEFAULT_PAGINATION_LIMIT,
     offset: "",
   };
@@ -226,9 +194,7 @@ export async function pullComments(
       comments.push(
         ...response.data
           .filter((story) => story.type && story.type === "comment")
-          .map(
-            (story) => ({ ...story, task_gid: task.gid }) as AsanaTaskComment
-          )
+          .map((story) => ({ ...story, task_gid: task.gid }) as AsanaTaskComment)
       );
 
       // Update pagination

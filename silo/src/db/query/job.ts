@@ -82,13 +82,10 @@ export const getJobByProjectId = async (workspaceId: string, projectId: string) 
 
 /* --------------------- Update Job --------------------- */
 // Fetch the job and jobconfig from the given workspaceslug and projectid
-export const updateJob = async (id: string, jobData: any) => {
-  return await db.update(schema.jobs).set(jobData).where(eq(schema.jobs.id, id));
-};
+export const updateJob = async (id: string, jobData: any) =>
+  await db.update(schema.jobs).set(jobData).where(eq(schema.jobs.id, id));
 
-export const deleteJob = async (id: string) => {
-  return await db.delete(schema.jobs).where(eq(schema.jobs.id, id));
-};
+export const deleteJob = async (id: string) => await db.delete(schema.jobs).where(eq(schema.jobs.id, id));
 
 /* --------------------- Create Job Config --------------------- */
 // Creates the job config based on the data that defined

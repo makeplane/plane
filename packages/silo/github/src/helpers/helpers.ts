@@ -4,7 +4,7 @@ export const replaceMentionedGhUsers = (
   html: string,
   workspaceSlug: string,
   userMap: Record<string, string>,
-  planeUsers: PlaneUser[],
+  planeUsers: PlaneUser[]
 ) => {
   // Check if there is an @Pattern in there if there is a @Pattern, replace that
   // with the github url of that user
@@ -18,10 +18,7 @@ export const replaceMentionedGhUsers = (
 
       // Only add link if the user does not exists in the userMap
       if (!userMap[username]) {
-        html = html.replace(
-          match,
-          `<a href=https://github.com/${username}>From GitHub: ${username}</a>`,
-        );
+        html = html.replace(match, `<a href=https://github.com/${username}>From GitHub: ${username}</a>`);
       } else {
         // Get the user from the planeUsers
         const user = planeUsers.find((user) => user.id === userMap[username]);
@@ -31,10 +28,7 @@ export const replaceMentionedGhUsers = (
           const component = createMentionComponent(workspaceSlug, user);
           html = html.replace(match, component);
         } else {
-          html = html.replace(
-            match,
-            `<a href=https://github.com/${username}>From GitHub: ${username}</a>`,
-          );
+          html = html.replace(match, `<a href=https://github.com/${username}>From GitHub: ${username}</a>`);
         }
       }
     });
@@ -44,11 +38,7 @@ export const replaceMentionedGhUsers = (
   return html;
 };
 
-export const createMentionComponent = (
-  workspaceSlug: string,
-  user: PlaneUser,
-): string => {
-  return `<mention-component
+export const createMentionComponent = (workspaceSlug: string, user: PlaneUser): string => `<mention-component
     entity_name="user_mention"
 		label="${user.display_name}"
     entity_identifier="${user.id}"
@@ -59,7 +49,6 @@ export const createMentionComponent = (
 		avatar="${user.avatar}"
     redirect_uri="/${workspaceSlug}/profile/${user.id}"
   ></mention-component>`;
-};
 
 export const replaceIssueNumber = (html: string, repo: string) => {
   const pattern = /#(\d+)/g;
@@ -69,7 +58,7 @@ export const replaceIssueNumber = (html: string, repo: string) => {
       const issueNumber = match.slice(1);
       html = html.replace(
         match,
-        `<a href=https://github.com/${repo}/issues/${issueNumber}>${repo} #${issueNumber}</a>`,
+        `<a href=https://github.com/${repo}/issues/${issueNumber}>${repo} #${issueNumber}</a>`
       );
     });
     return html;

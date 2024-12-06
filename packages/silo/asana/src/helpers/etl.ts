@@ -1,9 +1,4 @@
-import {
-  ExIssueAttachment,
-  ExIssuePropertyValue,
-  ExState,
-  TPropertyValue,
-} from "@plane/sdk";
+import { ExIssueAttachment, ExIssuePropertyValue, ExState, TPropertyValue } from "@plane/sdk";
 import {
   AsanaAttachment,
   AsanaCustomField,
@@ -16,9 +11,7 @@ import {
 } from "@/types";
 import { getFormattedDate } from "./date";
 
-export const getTargetAttachments = (
-  attachments: AsanaAttachment[]
-): Partial<ExIssueAttachment>[] => {
+export const getTargetAttachments = (attachments: AsanaAttachment[]): Partial<ExIssueAttachment>[] => {
   if (!attachments) return [];
   return attachments.map((attachment) => ({
     external_id: attachment.gid ?? "",
@@ -31,10 +24,7 @@ export const getTargetAttachments = (
   }));
 };
 
-export const getTargetState = (
-  stateMap: StateConfig[],
-  sourceState: string
-): ExState | undefined => {
+export const getTargetState = (stateMap: StateConfig[], sourceState: string): ExState | undefined => {
   const targetState = stateMap.find((s) => s.source_state.id === sourceState);
   if (targetState) {
     targetState.target_state.external_source = "ASANA";
@@ -47,16 +37,11 @@ export const getTargetPriority = (
   priorityMap: PriorityConfig[],
   priorityFieldValue: AsanaEnumOption | null | undefined
 ): string | undefined => {
-  const targetPriority = priorityMap.find(
-    (p) => p.source_priority.id === priorityFieldValue?.gid
-  );
+  const targetPriority = priorityMap.find((p) => p.source_priority.id === priorityFieldValue?.gid);
   return targetPriority?.target_priority;
 };
 
-export const mapAsanaAssignee = (
-  task: AsanaTask,
-  users: AsanaUser[]
-): string | undefined => {
+export const mapAsanaAssignee = (task: AsanaTask, users: AsanaUser[]): string | undefined => {
   if (task.assignee) {
     const assignee = users.find((u) => u.gid === task.assignee?.gid);
     if (assignee) {
@@ -66,10 +51,7 @@ export const mapAsanaAssignee = (
   }
 };
 
-export const mapAsanaCreator = (
-  task: AsanaTask,
-  users: AsanaUser[]
-): string | undefined => {
+export const mapAsanaCreator = (task: AsanaTask, users: AsanaUser[]): string | undefined => {
   if (task.created_by) {
     const creator = users.find((u) => u.gid === task.created_by?.gid);
     if (creator) {
@@ -79,10 +61,7 @@ export const mapAsanaCreator = (
   }
 };
 
-export const mapAsanaState = (
-  task: AsanaTask,
-  projectGid: string
-): string | undefined => {
+export const mapAsanaState = (task: AsanaTask, projectGid: string): string | undefined => {
   if (task.memberships) {
     const state = task.memberships.find((m) => m.project.gid === projectGid);
     return state?.section.gid;
@@ -91,6 +70,7 @@ export const mapAsanaState = (
 
 export const getPropertyValues = (
   customField: AsanaCustomField,
+  // eslint-disable-next-line no-undef
   asanaUsersMap: Map<string, AsanaUser>
 ): ExIssuePropertyValue => {
   const propertyValues: ExIssuePropertyValue = [];
@@ -120,7 +100,7 @@ export const getPropertyValues = (
         });
       }
       break;
-    case "date":
+    case "date": {
       // Handle date field
       const dateTimeValue = getFormattedDate(customField.date_value?.date_time);
       const dateValue = getFormattedDate(customField.date_value?.date);
@@ -136,6 +116,7 @@ export const getPropertyValues = (
         });
       }
       break;
+    }
     case "enum":
       // Handle enum field
       if (customField.enum_value?.gid) {
@@ -185,10 +166,7 @@ export const getPropertyValues = (
   return propertyValues;
 };
 
-export const mapAsanaCommentCreator = (
-  comment: AsanaTaskComment,
-  users: AsanaUser[]
-): string | undefined => {
+export const mapAsanaCommentCreator = (comment: AsanaTaskComment, users: AsanaUser[]): string | undefined => {
   if (comment.created_by) {
     const creator = users.find((u) => u.gid === comment.created_by?.gid);
     if (creator) {

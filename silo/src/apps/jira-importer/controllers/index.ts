@@ -10,8 +10,8 @@ import {
   JiraProject,
   JiraResource,
   JiraService,
+  JiraTokenResponse,
 } from "@silo/jira";
-import { JiraTokenResponse } from "@silo/jira";
 import { createOrUpdateCredentials, getCredentialsByWorkspaceId } from "@/db/query";
 import axios, { AxiosInstance } from "axios";
 import { Credentials } from "@/types";

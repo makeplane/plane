@@ -18,7 +18,7 @@ export const createModules = async (
     let moduleId = "";
     /* TODO: User may have changed the module name, in that case taking this
      * name won't be appropriate */
-    let moduleName = module.name;
+    const moduleName = module.name;
     try {
       const createdModule: any = await protect(
         planeClient.modules.create.bind(planeClient.modules),

@@ -91,7 +91,7 @@ export class JiraV2Service {
             headers: {
               Authorization: `Bearer ${this.patToken}`,
             },
-          },
+          }
         );
 
         const data = response.data as Paginated<JiraStatus>;
@@ -138,11 +138,7 @@ export class JiraV2Service {
   }
 
   // Verified
-  async getBoardSprintsIssues(
-    boardId: number,
-    sprintId: number,
-    startAt: number,
-  ) {
+  async getBoardSprintsIssues(boardId: number, sprintId: number, startAt: number) {
     const board = new BoardClient(this.jiraClient);
     return board.getBoardIssuesForSprint({
       boardId: boardId,
@@ -198,7 +194,7 @@ export class JiraV2Service {
     await fetchPaginatedData(
       (startAt) => this.getProjectLabels(projectId, startAt),
       (values) => labels.push(...(values as string[])),
-      "labels",
+      "labels"
     );
     return labels;
   }
@@ -218,6 +214,7 @@ export class JiraV2Service {
 
     const data = response.data;
     const issues = data.issues as Issue[];
+    // eslint-disable-next-line no-undef
     const allLabels = new Set();
     issues.forEach((issue) => {
       if (issue.fields.labels) {
@@ -249,7 +246,7 @@ export class JiraV2Service {
             headers: {
               Authorization: `Bearer ${this.patToken}`,
             },
-          },
+          }
         );
 
         const data = response.data as Paginated<IssueTypeDetails>;
@@ -270,11 +267,8 @@ export class JiraV2Service {
 
   // Verified
   async getCustomFields() {
-    const fields: FieldDetails[] =
-      await this.jiraClient.issueFields.getFields();
-    const customFields: FieldDetails[] = fields.filter(
-      (field) => field.custom === true,
-    );
+    const fields: FieldDetails[] = await this.jiraClient.issueFields.getFields();
+    const customFields: FieldDetails[] = fields.filter((field) => field.custom === true);
     return customFields;
   }
 
@@ -291,7 +285,7 @@ export class JiraV2Service {
             headers: {
               Authorization: `Bearer ${this.patToken}`,
             },
-          },
+          }
         );
 
         const data = response.data as Paginated<JiraCustomFieldWithCtx>;
@@ -317,37 +311,24 @@ export class JiraV2Service {
     });
   }
 
-  async getIssueTypeFieldContexts(
-    fieldId: string,
-    contextIds: number[],
-    startAt = 0,
-  ) {
-    return this.jiraClient.issueCustomFieldContexts.getIssueTypeMappingsForContexts(
-      {
-        fieldId: fieldId,
-        contextId: contextIds,
-        startAt: startAt,
-      },
-    );
+  async getIssueTypeFieldContexts(fieldId: string, contextIds: number[], startAt = 0) {
+    return this.jiraClient.issueCustomFieldContexts.getIssueTypeMappingsForContexts({
+      fieldId: fieldId,
+      contextId: contextIds,
+      startAt: startAt,
+    });
   }
 
-  async getIssueFieldOptions(
-    fieldId: string,
-    projectId: string,
-    issueTypeId: string,
-  ) {
-    const response = await axios.get(
-      `${this.hostname}/rest/api/2/customFields/${fieldId}/options`,
-      {
-        params: {
-          projectIds: projectId,
-          issueTypeIds: issueTypeId,
-        },
-        headers: {
-          Authorization: `Bearer ${this.patToken}`,
-        },
+  async getIssueFieldOptions(fieldId: string, projectId: string, issueTypeId: string) {
+    const response = await axios.get(`${this.hostname}/rest/api/2/customFields/${fieldId}/options`, {
+      params: {
+        projectIds: projectId,
+        issueTypeIds: issueTypeId,
       },
-    );
+      headers: {
+        Authorization: `Bearer ${this.patToken}`,
+      },
+    });
 
     const data = response.data;
     const options = data.options as CustomFieldContextOption[];
@@ -362,11 +343,7 @@ export class JiraV2Service {
     });
   }
 
-  async getProjectIssues(
-    projectKey: string,
-    startAt = 0,
-    createdAfter?: string,
-  ) {
+  async getProjectIssues(projectKey: string, startAt = 0, createdAfter?: string) {
     return this.jiraClient.issueSearch.searchForIssuesUsingJql({
       jql: createdAfter
         ? `project = ${projectKey} AND (created >= "${createdAfter}" OR updated >= "${createdAfter}")`

@@ -18,7 +18,7 @@ export const expressLogger = createLogger({
       format: "DD/MMM/YYYY HH:mm:ss",
     }),
     format.printf(({ timestamp, level, message, ...metadata }) => {
-      let msg = `[${timestamp}] "${level}" ${message}`;
+      const msg = `[${timestamp}] "${level}" ${message}`;
       const metaString = Object.keys(metadata).length ? ` ${JSON.stringify(metadata)}` : "";
       return msg + metaString;
     })

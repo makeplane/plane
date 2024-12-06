@@ -79,14 +79,12 @@ export const transformGitHubIssue = (
   };
 };
 
-export const transformGitHubLabel = (label: WebhookGitHubLabel): Partial<ExIssueLabel> => {
-  return {
-    name: label.name,
-    color: `#${label.color}`,
-    external_id: label.id.toString(),
-    external_source: "GITHUB",
-  };
-};
+export const transformGitHubLabel = (label: WebhookGitHubLabel): Partial<ExIssueLabel> => ({
+  name: label.name,
+  color: `#${label.color}`,
+  external_id: label.id.toString(),
+  external_source: "GITHUB",
+});
 
 export const transformGitHubComment = (
   comment: WebhookGitHubComment,
@@ -150,13 +148,11 @@ export const transformGitHubComment = (
   };
 };
 
-export const transformGitHubMilestone = (milestone: WebhookGitHubMilestone): Partial<ExCycle> => {
-  return {
-    external_id: milestone.id.toString(),
-    external_source: "GITHUB",
-    name: milestone.title,
-    description: milestone.description || undefined,
-    start_date: milestone.created_at,
-    end_date: milestone.due_on || undefined,
-  };
-};
+export const transformGitHubMilestone = (milestone: WebhookGitHubMilestone): Partial<ExCycle> => ({
+  external_id: milestone.id.toString(),
+  external_source: "GITHUB",
+  name: milestone.title,
+  description: milestone.description || undefined,
+  start_date: milestone.created_at,
+  end_date: milestone.due_on || undefined,
+});

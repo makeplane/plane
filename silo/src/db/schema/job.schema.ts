@@ -34,10 +34,8 @@ export const jobs = schema.table(
     updated_at: timestamp("updated_at").defaultNow(),
     error: text("error").default(""),
   },
-  (table) => {
-    return {
-      // Add indexes on projectId and workspaceSlug, as those would be used mostly for querying jobs
-      projectIdx: index("project_idx").on(table.project_id),
-    };
-  }
+  (table) => ({
+    // Add indexes on projectId and workspaceSlug, as those would be used mostly for querying jobs
+    projectIdx: index("project_idx").on(table.project_id),
+  })
 );

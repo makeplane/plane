@@ -1,4 +1,4 @@
-const Asana = require("asana");
+import Asana from "asana";
 // types
 import {
   AsanaAttachment,
@@ -41,12 +41,8 @@ export class AsanaService {
   private customFieldSettingsApiInstance: any;
   private attachmentsApiInstance: any;
   private rateLimiter: RateLimiter;
-  private refreshTokenFunc?: (
-    refreshToken: string
-  ) => Promise<TokenRefreshResponse>;
-  private refreshTokenCallback?: (
-    response: TokenRefreshResponse
-  ) => Promise<void>;
+  private refreshTokenFunc?: (refreshToken: string) => Promise<TokenRefreshResponse>;
+  private refreshTokenCallback?: (response: TokenRefreshResponse) => Promise<void>;
   private refreshTokenRejectCallback?: () => Promise<void>;
 
   constructor(props: AsanaServiceProps) {
@@ -76,11 +72,7 @@ export class AsanaService {
   }
 
   private async refreshAccessToken(): Promise<FetchRefreshTokenProps> {
-    if (
-      !this.refreshToken ||
-      !this.refreshTokenFunc ||
-      !this.refreshTokenCallback
-    ) {
+    if (!this.refreshToken || !this.refreshTokenFunc || !this.refreshTokenCallback) {
       return {
         isRefreshed: false,
         isRejected: true,
@@ -114,10 +106,7 @@ export class AsanaService {
     }
   }
 
-  private async makeRequest<T>(
-    requestFn: () => Promise<T>,
-    retryCount = 3
-  ): Promise<T> {
+  private async makeRequest<T>(requestFn: () => Promise<T>, retryCount = 3): Promise<T> {
     let lastError: any;
 
     for (let attempt = 0; attempt < retryCount; attempt++) {
@@ -129,13 +118,8 @@ export class AsanaService {
 
         // Handle rate limiting (429)
         if (error.response?.status === 429) {
-          const retryAfter = parseInt(
-            error.response.headers["retry-after"] || "60",
-            10
-          );
-          await new Promise((resolve) =>
-            setTimeout(resolve, retryAfter * 1000)
-          );
+          const retryAfter = parseInt(error.response.headers["retry-after"] || "60", 10);
+          await new Promise((resolve) => setTimeout(resolve, retryAfter * 1000));
           continue;
         }
 
@@ -154,18 +138,13 @@ export class AsanaService {
 
         // For other errors or if token refresh failed, use exponential backoff
         if (attempt === retryCount - 1) throw error;
-        await new Promise((resolve) =>
-          setTimeout(resolve, 1000 * Math.pow(2, attempt))
-        );
+        await new Promise((resolve) => setTimeout(resolve, 1000 * Math.pow(2, attempt)));
       }
     }
     throw lastError || new Error("All retry attempts failed");
   }
 
-  async getWorkspaceUsers(
-    workspaceGId: string,
-    pagination: PaginationPayload
-  ): Promise<PaginatedResponse<AsanaUser>> {
+  async getWorkspaceUsers(workspaceGId: string, pagination: PaginationPayload): Promise<PaginatedResponse<AsanaUser>> {
     return await this.makeRequest(() =>
       this.usersApiInstance.getUsersForWorkspace(workspaceGId, {
         limit: pagination.limit,
@@ -175,10 +154,7 @@ export class AsanaService {
     );
   }
 
-  async getProjectTasks(
-    projectGid: string,
-    pagination: PaginationPayload
-  ): Promise<PaginatedResponse<AsanaTask>> {
+  async getProjectTasks(projectGid: string, pagination: PaginationPayload): Promise<PaginatedResponse<AsanaTask>> {
     return await this.makeRequest(() =>
       this.tasksApiInstance.getTasks({
         project: projectGid,
@@ -189,10 +165,7 @@ export class AsanaService {
     );
   }
 
-  async getTaskSubtasks(
-    taskGid: string,
-    pagination: PaginationPayload
-  ): Promise<PaginatedResponse<AsanaTask>> {
+  async getTaskSubtasks(taskGid: string, pagination: PaginationPayload): Promise<PaginatedResponse<AsanaTask>> {
     return await this.makeRequest(() =>
       this.tasksApiInstance.getSubtasksForTask(taskGid, {
         limit: pagination.limit,
@@ -202,10 +175,7 @@ export class AsanaService {
     );
   }
 
-  async getWorkspaceTags(
-    workspaceGid: string,
-    pagination: PaginationPayload
-  ): Promise<PaginatedResponse<AsanaTag>> {
+  async getWorkspaceTags(workspaceGid: string, pagination: PaginationPayload): Promise<PaginatedResponse<AsanaTag>> {
     return await this.makeRequest(() =>
       this.tagsApiInstance.getTagsForWorkspace(workspaceGid, {
         limit: pagination.limit,
@@ -219,25 +189,15 @@ export class AsanaService {
     return this.makeRequest(() => this.workspacesApiInstance.getWorkspaces());
   }
 
-  async getWorkspaceProjects(
-    workspaceGid: string
-  ): Promise<PaginatedResponse<AsanaProject>> {
-    return this.makeRequest(() =>
-      this.projectsApiInstance.getProjectsForWorkspace(workspaceGid)
-    );
+  async getWorkspaceProjects(workspaceGid: string): Promise<PaginatedResponse<AsanaProject>> {
+    return this.makeRequest(() => this.projectsApiInstance.getProjectsForWorkspace(workspaceGid));
   }
 
-  async getProjectSections(
-    projectGid: string
-  ): Promise<PaginatedResponse<AsanaSection>> {
-    return this.makeRequest(() =>
-      this.sectionsApiInstance.getSectionsForProject(projectGid)
-    );
+  async getProjectSections(projectGid: string): Promise<PaginatedResponse<AsanaSection>> {
+    return this.makeRequest(() => this.sectionsApiInstance.getSectionsForProject(projectGid));
   }
 
-  async getProjectTaskCount(
-    projectGid: string
-  ): Promise<PaginatedResponse<AsanaProjectTaskCount>> {
+  async getProjectTaskCount(projectGid: string): Promise<PaginatedResponse<AsanaProjectTaskCount>> {
     return this.makeRequest(() =>
       this.projectsApiInstance.getTaskCountsForProject(projectGid, {
         opt_fields: "num_tasks",
@@ -250,15 +210,12 @@ export class AsanaService {
     pagination: PaginationPayload
   ): Promise<PaginatedResponse<AsanaCustomFieldSettings>> {
     return this.makeRequest<PaginatedResponse<AsanaCustomFieldSettings>>(() =>
-      this.customFieldSettingsApiInstance.getCustomFieldSettingsForProject(
-        projectGid,
-        {
-          opt_fields:
-            "project,parent,custom_field,custom_field.name,custom_field.description,custom_field.type,custom_field.is_formula_field,custom_field.is_value_read_only,custom_field.enum_options",
-          limit: pagination.limit,
-          offset: pagination.offset || undefined,
-        }
-      )
+      this.customFieldSettingsApiInstance.getCustomFieldSettingsForProject(projectGid, {
+        opt_fields:
+          "project,parent,custom_field,custom_field.name,custom_field.description,custom_field.type,custom_field.is_formula_field,custom_field.is_value_read_only,custom_field.enum_options",
+        limit: pagination.limit,
+        offset: pagination.offset || undefined,
+      })
     );
   }
 
@@ -275,10 +232,7 @@ export class AsanaService {
     );
   }
 
-  async getTaskComments(
-    taskGid: string,
-    pagination: PaginationPayload
-  ): Promise<PaginatedResponse<AsanaTaskComment>> {
+  async getTaskComments(taskGid: string, pagination: PaginationPayload): Promise<PaginatedResponse<AsanaTaskComment>> {
     return this.makeRequest(() =>
       this.storiesApiInstance.getStoriesForTask(taskGid, {
         opt_fields: "text,created_at,created_by,type,html_text,task",

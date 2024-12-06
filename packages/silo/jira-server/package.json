@@ -9,7 +9,7 @@
     "build": "tsc && tsc-alias",
     "lint": "eslint src --ext .ts"
   },
-  "description": "Jira Selfhosted package used by silo for importers and integrations",
+  "description": "Jira Self hosted package used by silo for importers and integrations",
   "author": "Plane Engineering",
   "license": "AGPL",
   "dependencies": {

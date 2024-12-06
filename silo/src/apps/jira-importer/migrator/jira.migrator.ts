@@ -1,10 +1,9 @@
 import { TBatch } from "@/apps/engine/worker/types";
-import { PlaneEntities } from "@silo/core";
+import { PlaneEntities, TJobWithConfig } from "@silo/core";
 import { updateJob } from "@/db/query";
 import { env } from "@/env";
 import { BaseDataMigrator } from "@/etl/base-import-worker";
 import { logger } from "@/logger";
-import { TJobWithConfig } from "@silo/core";
 import {
   JiraConfig,
   JiraEntity,
@@ -219,9 +218,10 @@ export class JiraDataMigrator extends BaseDataMigrator<JiraConfig, JiraEntity> {
         const startIndex = i * batchSize;
         const rootBatch = rootIssues.slice(startIndex, startIndex + batchSize);
         // Flatten each root issue and its children, then combine them
-        const flattenedBatch = rootBatch.reduce((acc: IJiraIssue[], rootIssue) => {
-          return acc.concat(flattenSingleTree(rootIssue));
-        }, []);
+        const flattenedBatch = rootBatch.reduce(
+          (acc: IJiraIssue[], rootIssue) => acc.concat(flattenSingleTree(rootIssue)),
+          []
+        );
         // Add the flattened batch to the batches
         batches.push(flattenedBatch);
       }
@@ -238,7 +238,7 @@ export class JiraDataMigrator extends BaseDataMigrator<JiraConfig, JiraEntity> {
     // batches.
     const finalBatches: TBatch<JiraEntity>[] = [];
     for (const [i, batch] of batches.entries()) {
-      let random = Math.floor(Math.random() * 10000);
+      const random = Math.floor(Math.random() * 10000);
       const sprints = filterSprintsForIssues(batch, data.sprints);
       const components = filterComponentsForIssues(batch, data.components);
       const associatedComments = data.issue_comments.filter((comment: any) =>

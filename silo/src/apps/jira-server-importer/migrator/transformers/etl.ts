@@ -9,9 +9,11 @@ import {
   ExIssue as PlaneIssue,
   PlaneUser,
 } from "@plane/sdk";
-import { JiraCustomFieldKeys, OPTION_CUSTOM_FIELD_TYPES, transformIssueFieldOptions } from "@silo/jira-server";
 import { TIssuePropertyValuesPayload, TJobWithConfig } from "@silo/core";
 import {
+  JiraCustomFieldKeys,
+  OPTION_CUSTOM_FIELD_TYPES,
+  transformIssueFieldOptions,
   IJiraIssue,
   IPriorityConfig,
   IStateConfig,
@@ -61,51 +63,39 @@ export const getTransformedIssues = (
   });
 };
 
-export const getTransformedLabels = (_job: TJobWithConfig<JiraConfig>, labels: string[]): Partial<ExIssueLabel>[] => {
-  return labels.map(transformLabel);
-};
+export const getTransformedLabels = (_job: TJobWithConfig<JiraConfig>, labels: string[]): Partial<ExIssueLabel>[] =>
+  labels.map(transformLabel);
 
 export const getTransformedComments = (
   _job: TJobWithConfig<JiraConfig>,
   entities: JiraEntity
-): Partial<ExIssueComment>[] => {
-  return entities.issue_comments.map(transformComment);
-};
+): Partial<ExIssueComment>[] => entities.issue_comments.map(transformComment);
 
-export const getTransformedUsers = (_job: TJobWithConfig<JiraConfig>, entities: JiraEntity): Partial<PlaneUser>[] => {
-  return entities.users.map(transformUser);
-};
+export const getTransformedUsers = (_job: TJobWithConfig<JiraConfig>, entities: JiraEntity): Partial<PlaneUser>[] =>
+  entities.users.map(transformUser);
 
-export const getTransformedSprints = (_job: TJobWithConfig<JiraConfig>, entities: JiraEntity): Partial<ExCycle>[] => {
-  return entities.sprints.map(transformSprint);
-};
+export const getTransformedSprints = (_job: TJobWithConfig<JiraConfig>, entities: JiraEntity): Partial<ExCycle>[] =>
+  entities.sprints.map(transformSprint);
 
-export const getTransformedComponents = (
-  _job: TJobWithConfig<JiraConfig>,
-  entities: JiraEntity
-): Partial<ExModule>[] => {
-  return entities.components.map(transformComponent);
-};
+export const getTransformedComponents = (_job: TJobWithConfig<JiraConfig>, entities: JiraEntity): Partial<ExModule>[] =>
+  entities.components.map(transformComponent);
 
 export const getTransformedIssueTypes = (
   _job: TJobWithConfig<JiraConfig>,
   entities: JiraEntity
-): Partial<ExIssueType>[] => {
-  return entities.issueTypes.map(transformIssueType);
-};
+): Partial<ExIssueType>[] => entities.issueTypes.map(transformIssueType);
 
 export const getTransformedIssueFields = (
   _job: TJobWithConfig<JiraConfig>,
   entities: JiraEntity
-): Partial<ExIssueProperty>[] => {
-  return entities.issueFields.map(transformIssueFields).filter(Boolean) as Partial<ExIssueProperty>[];
-};
+): Partial<ExIssueProperty>[] =>
+  entities.issueFields.map(transformIssueFields).filter(Boolean) as Partial<ExIssueProperty>[];
 
 export const getTransformedIssueFieldOptions = (
   _job: TJobWithConfig<JiraConfig>,
   entities: JiraEntity
-): Partial<ExIssuePropertyOption>[] => {
-  return entities.issueFields
+): Partial<ExIssuePropertyOption>[] =>
+  entities.issueFields
     .filter(
       (issueField) =>
         issueField.schema?.custom &&
@@ -113,7 +103,6 @@ export const getTransformedIssueFieldOptions = (
     )
     .flatMap((issueField) => issueField?.options && issueField?.options?.map(transformIssueFieldOptions))
     .filter(Boolean) as Partial<ExIssuePropertyOption>[];
-};
 
 export const getTransformedIssuePropertyValues = (
   _job: TJobWithConfig<JiraConfig>,

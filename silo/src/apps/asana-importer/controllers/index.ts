@@ -188,7 +188,7 @@ class AsanaController {
       }
       const asanaServiceInstance = await asanaService(workspaceId?.toString(), userId?.toString());
       const enumCustomFields: AsanaCustomField[] = [];
-      let pagination: PaginationPayload = {
+      const pagination: PaginationPayload = {
         limit: 100,
         offset: "",
       };
