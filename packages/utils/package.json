@@ -11,8 +11,8 @@
   ],
   "scripts": {
     "build": "tsup ./src/index.ts --format esm,cjs --dts --external react --minify",
-    "lint": "eslint . --ext .ts,.tsx",
-    "lint:errors": "eslint . --ext .ts,.tsx --quiet"
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:errors": "eslint src --ext .ts,.tsx --quiet"
   },
   "dependencies": {
     "isomorphic-dompurify": "^2.16.0",

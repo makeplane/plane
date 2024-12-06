@@ -6,11 +6,11 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "dev": "concurrently \"babel src --out-dir dist --extensions '.ts,.js' --watch\" \"nodemon dist/server.js\"",
     "build": "babel src --out-dir dist --extensions \".ts,.js\"",
     "start": "node dist/server.js",
-    "lint": "eslint . --ext .ts,.tsx",
-    "dev": "concurrently \"babel src --out-dir dist --extensions '.ts,.js' --watch\" \"nodemon dist/server.js\"",
-    "lint:errors": "eslint . --ext .ts,.tsx --quiet"
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:errors": "eslint src --ext .ts,.tsx --quiet"
   },
   "keywords": [],
   "author": "",
