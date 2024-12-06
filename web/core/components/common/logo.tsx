@@ -1,14 +1,17 @@
 "use client";
 
 import { FC } from "react";
-// emoji-picker-react
 import { Emoji } from "emoji-picker-react";
-import { TLogoProps } from "@plane/types";
-// helpers
-import { LUCIDE_ICONS_LIST } from "@plane/ui";
-import { emojiCodeToUnicode } from "@/helpers/emoji.helper";
-// import { icons } from "lucide-react";
+// Due to some weird issue with the import order, the import of useFontFaceObserver
+// should be after the imported here rather than some below helper functions as it is in the original file
+// eslint-disable-next-line import/order
 import useFontFaceObserver from "use-font-face-observer";
+// types
+import { TLogoProps } from "@plane/types";
+// ui
+import { LUCIDE_ICONS_LIST } from "@plane/ui";
+// helpers
+import { emojiCodeToUnicode } from "@/helpers/emoji.helper";
 
 type Props = {
   logo: TLogoProps;

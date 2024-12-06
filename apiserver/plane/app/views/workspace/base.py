@@ -41,6 +41,7 @@ from django.views.decorators.vary import vary_on_cookie
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 from plane.license.utils.instance_value import get_configuration_value
 
+
 class WorkSpaceViewSet(BaseViewSet):
     model = Workspace
     serializer_class = WorkSpaceSerializer
@@ -81,12 +82,12 @@ class WorkSpaceViewSet(BaseViewSet):
 
     def create(self, request):
         try:
-            DISABLE_WORKSPACE_CREATION, = get_configuration_value(
+            (DISABLE_WORKSPACE_CREATION,) = get_configuration_value(
                 [
                     {
                         "key": "DISABLE_WORKSPACE_CREATION",
                         "default": os.environ.get("DISABLE_WORKSPACE_CREATION", "0"),
-                    },
+                    }
                 ]
             )
 

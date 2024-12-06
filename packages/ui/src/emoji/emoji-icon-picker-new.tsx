@@ -3,7 +3,7 @@ import { usePopper } from "react-popper";
 import { Popover, Tab } from "@headlessui/react";
 import EmojiPicker from "emoji-picker-react";
 // plane helpers
-import { useOutsideClickDetector } from "@plane/helpers";
+import { useOutsideClickDetector } from "@plane/hooks";
 // helpers
 import { cn } from "../../helpers";
 // hooks

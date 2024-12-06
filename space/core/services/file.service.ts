@@ -1,7 +1,6 @@
-// plane types
+import { API_BASE_URL } from "@plane/constants";
 import { TFileEntityInfo, TFileSignedURLResponse } from "@plane/types";
 // helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
 import { generateFileUploadPayload, getAssetIdFromUrl, getFileMetaDataForUpload } from "@/helpers/file.helper";
 // services
 import { APIService } from "@/services/api.service";

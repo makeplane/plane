@@ -51,7 +51,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const {
     project: { fetchProjectMembers },
   } = useMember();
-  const { fetchProjectStates } = useProjectState();
+  const { fetchProjectStates, fetchProjectStateTransitions } = useProjectState();
   const { fetchProjectLabels } = useLabel();
   const { getProjectEstimates } = useProjectEstimates();
   // router
@@ -105,7 +105,12 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // fetching project states
   useSWR(
     workspaceSlug && projectId ? `PROJECT_STATES_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchProjectStates(workspaceSlug.toString(), projectId.toString()) : null,
+    workspaceSlug && projectId
+      ? () => {
+          fetchProjectStates(workspaceSlug.toString(), projectId.toString());
+          fetchProjectStateTransitions(workspaceSlug.toString(), projectId.toString());
+        }
+      : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching project estimates
@@ -169,7 +174,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
           layout="screen-detailed"
           primaryButtonOnClick={() => {
             setTrackElement("Projects page empty state");
-            toggleCreateProjectModal(true)
+            toggleCreateProjectModal(true);
           }}
         />
       </div>
