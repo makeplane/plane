@@ -40,6 +40,7 @@ import { IMentionHighlight, IMentionSuggestion, TExtensions, TFileHandler } from
 // plane editor extensions
 import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
 import { FlatListExtension } from "./flat-list/list-extension";
+import { DropCursorExtension } from "./drop-cursor";
 
 type TArguments = {
   disabledExtensions: TExtensions[];
@@ -65,12 +66,14 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       codeBlock: false,
       horizontalRule: false,
       blockquote: false,
-      dropcursor: {
-        width: 2,
-        class: "transition-all duration-200 ease-[cubic-bezier(0.165, 0.84, 0.44, 1)] text-custom-text-300",
-      },
+      dropcursor: false,
+      // dropcursor: {
+      //   width: 2,
+      //   class: "transition-all duration-200 ease-[cubic-bezier(0.165, 0.84, 0.44, 1)] text-custom-text-300",
+      // },
       ...(enableHistory ? {} : { history: false }),
     }),
+    DropCursorExtension,
     BulletList.extend({
       addInputRules() {
         return [];

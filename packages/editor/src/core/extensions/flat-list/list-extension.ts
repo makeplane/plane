@@ -36,7 +36,8 @@ export const FlatListExtension = Node.create({
   group,
   definingForContent,
   definingAsContext,
-  disableDropCursor: true,
+  selectable: true,
+  draggable: true,
   addAttributes() {
     return attrs;
   },
