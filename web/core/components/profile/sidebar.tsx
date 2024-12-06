@@ -9,7 +9,7 @@ import { ChevronDown, Pencil } from "lucide-react";
 // headless ui
 import { Disclosure, Transition } from "@headlessui/react";
 // plane helpers
-import { useOutsideClickDetector } from "@plane/helpers";
+import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { IUserProfileProjectSegregation } from "@plane/types";
 // plane ui

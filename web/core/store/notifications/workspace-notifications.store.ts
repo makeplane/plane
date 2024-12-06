@@ -62,7 +62,7 @@ export interface IWorkspaceNotificationStore {
 
 export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
   // constants
-  paginatedCount = 30;
+  paginatedCount = 300;
   // observables
   loader: TNotificationLoader = undefined;
   unreadNotificationsCount: TUnreadNotificationsCount = {
@@ -84,7 +84,7 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
     read: false,
   };
 
-  constructor(private store: CoreRootStore) {
+  constructor(protected store: CoreRootStore) {
     makeObservable(this, {
       // observables
       loader: observable.ref,

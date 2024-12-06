@@ -121,8 +121,6 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
         });
       });
       return workspaceResponse;
-    } catch (e) {
-      throw e;
     } finally {
       this.loader = false;
     }

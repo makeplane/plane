@@ -142,7 +142,11 @@ export const issueFilterQueryConstructor = (workspaceSlug: string, projectId: st
     `;
   });
 
-  sql += ` WHERE i.project_id = '${projectId}'    ${singleFilterConstructor(otherProps)} group by i.id  `;
+  sql += ` WHERE 1=1  `;
+  if (projectId) {
+    sql += ` AND i.project_id = '${projectId}'    `;
+  }
+  sql += ` ${singleFilterConstructor(otherProps)} group by i.id  `;
   sql += orderByString;
 
   // Add offset and paging to query

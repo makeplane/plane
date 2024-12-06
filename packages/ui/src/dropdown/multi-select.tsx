@@ -5,7 +5,7 @@ import { Combobox } from "@headlessui/react";
 // popper-js
 import { usePopper } from "react-popper";
 // plane helpers
-import { useOutsideClickDetector } from "@plane/helpers";
+import { useOutsideClickDetector } from "@plane/hooks";
 // components
 import { DropdownButton } from "./common";
 import { DropdownOptions } from "./common/options";

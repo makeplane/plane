@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane helpers
-import { useOutsideClickDetector } from "@plane/helpers";
+import { useOutsideClickDetector } from "@plane/hooks";
 // ui
 import {
   CustomMenu,
@@ -298,7 +298,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
     <>
       <PublishProjectModal isOpen={publishModalOpen} project={project} onClose={() => setPublishModal(false)} />
       <LeaveProjectModal project={project} isOpen={leaveProjectModalOpen} onClose={() => setLeaveProjectModal(false)} />
-      <Disclosure key={`${project.id}_${URLProjectId}`}  defaultOpen={isProjectListOpen} as="div">
+      <Disclosure key={`${project.id}_${URLProjectId}`} defaultOpen={isProjectListOpen} as="div">
         <div
           id={`sidebar-${projectId}-${projectListType}`}
           className={cn("relative", {

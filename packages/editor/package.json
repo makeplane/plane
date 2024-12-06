@@ -27,6 +27,7 @@
     "dev": "tsup --watch",
     "check-types": "tsc --noEmit",
     "lint": "eslint src --ext .ts,.tsx",
+    "lint:errors": "eslint src --ext .ts,.tsx --quiet",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "peerDependencies": {
@@ -36,8 +37,8 @@
   "dependencies": {
     "@floating-ui/react": "^0.26.4",
     "@hocuspocus/provider": "^2.13.5",
-    "@plane/helpers": "*",
     "@plane/ui": "*",
+    "@plane/utils": "*",
     "@tiptap/core": "^2.1.13",
     "@tiptap/extension-blockquote": "^2.1.13",
     "@tiptap/extension-character-count": "^2.6.5",
