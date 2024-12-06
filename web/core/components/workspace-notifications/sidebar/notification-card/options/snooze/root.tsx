@@ -34,25 +34,23 @@ export const NotificationItemSnoozeOption: FC<TNotificationItemSnoozeOption> = o
   const handleNotificationSnoozeDate = async (snoozeTill: Date | undefined) => {
     if (snoozeTill) {
       try {
-        const response = await snoozeNotification(workspaceSlug, snoozeTill);
+        await snoozeNotification(workspaceSlug, snoozeTill);
         setToast({
           title: "Success!",
           message: "Notification snoozed successfully",
           type: TOAST_TYPE.SUCCESS,
         });
-        return response;
       } catch (e) {
         console.error(e);
       }
     } else {
       try {
-        const response = await unSnoozeNotification(workspaceSlug);
+        await unSnoozeNotification(workspaceSlug);
         setToast({
           title: "Success!",
           message: "Notification un snoozed successfully",
           type: TOAST_TYPE.SUCCESS,
         });
-        return response;
       } catch (e) {
         console.error(e);
       }
