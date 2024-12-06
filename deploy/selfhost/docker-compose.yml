@@ -53,6 +53,8 @@ x-app-env: &app-env
   ADMIN_BASE_URL: ${ADMIN_BASE_URL}
   SPACE_BASE_URL: ${SPACE_BASE_URL}
   APP_BASE_URL: ${APP_BASE_URL}
+  AMQP_URL: ${AMQP_URL:-amqp://plane:plane@plane-mq:5672/plane}
+
 
 services:
   web:
@@ -92,8 +94,21 @@ services:
       - api
       - web
 
+  live:
+    image: ${DOCKERHUB_USER:-makeplane}/plane-live:${APP_RELEASE:-stable}
+    platform: ${DOCKER_PLATFORM:-}
+    pull_policy: if_not_present
+    restart: unless-stopped
+    command: node live/dist/server.js live
+    environment:
+      <<: [ *live-env ]
+    deploy:
+      replicas: ${LIVE_REPLICAS:-1}
+    depends_on:
+      - api
+      - web
+
   api:
-    <<: *app-env
     image: ${DOCKERHUB_USER:-makeplane}/plane-backend:${APP_RELEASE:-stable}
     platform: ${DOCKER_PLATFORM:-}
     pull_policy: if_not_present
@@ -109,7 +124,6 @@ services:
       - plane-db
       - plane-redis
       - plane-mq
-
 
   worker:
     image: ${DOCKERHUB_USER:-makeplane}/plane-backend:${APP_RELEASE:-stable}
@@ -183,7 +197,6 @@ services:
       - rabbitmq_data:/var/lib/rabbitmq
 
   plane-minio:
-    <<: *app-env
     image: minio/minio:latest
     pull_policy: if_not_present
     restart: unless-stopped
