@@ -8,7 +8,7 @@ import { ListFilter, Search, X } from "lucide-react";
 // editor
 import { cn } from "@plane/editor";
 // plane helpers
-import { useOutsideClickDetector } from "@plane/helpers";
+import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { TModuleFilters } from "@plane/types";
 // ui

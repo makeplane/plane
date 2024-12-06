@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronRight, MoreHorizontal } from "lucide-react";
 // plane helpers
-import { useOutsideClickDetector } from "@plane/helpers";
+import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { IIssueDisplayProperties, TIssue } from "@plane/types";
 // ui

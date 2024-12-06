@@ -3,7 +3,7 @@ import { usePopper } from "react-popper";
 import { Listbox } from "@headlessui/react";
 import { Check, ChevronDown } from "lucide-react";
 // plane helpers
-import { useOutsideClickDetector } from "@plane/helpers";
+import { useOutsideClickDetector } from "@plane/hooks";
 // hooks
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 // helpers

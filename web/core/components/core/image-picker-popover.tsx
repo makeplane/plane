@@ -9,7 +9,7 @@ import { Control, Controller } from "react-hook-form";
 import useSWR from "swr";
 import { Tab, Popover } from "@headlessui/react";
 // plane helpers
-import { useOutsideClickDetector } from "@plane/helpers";
+import { useOutsideClickDetector } from "@plane/hooks";
 // plane types
 import { EFileAssetType } from "@plane/types/src/enums";
 // ui
