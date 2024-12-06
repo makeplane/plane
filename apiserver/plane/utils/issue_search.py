@@ -17,6 +17,4 @@ def search_issues(query, queryset):
                 q |= Q(**{"sequence_id": sequence_id})
         else:
             q |= Q(**{f"{field}__icontains": query})
-    return queryset.filter(
-        q,
-    ).distinct()
+    return queryset.filter(q).distinct()

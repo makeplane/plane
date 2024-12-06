@@ -55,15 +55,9 @@ def get_default_display_properties():
 
 class Cycle(ProjectBaseModel):
     name = models.CharField(max_length=255, verbose_name="Cycle Name")
-    description = models.TextField(
-        verbose_name="Cycle Description", blank=True
-    )
-    start_date = models.DateTimeField(
-        verbose_name="Start Date", blank=True, null=True
-    )
-    end_date = models.DateTimeField(
-        verbose_name="End Date", blank=True, null=True
-    )
+    description = models.TextField(verbose_name="Cycle Description", blank=True)
+    start_date = models.DateTimeField(verbose_name="Start Date", blank=True, null=True)
+    end_date = models.DateTimeField(verbose_name="End Date", blank=True, null=True)
     owned_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -78,9 +72,7 @@ class Cycle(ProjectBaseModel):
     logo_props = models.JSONField(default=dict)
     # timezone
     TIMEZONE_CHOICES = tuple(zip(pytz.all_timezones, pytz.all_timezones))
-    timezone = models.CharField(
-        max_length=255, default="UTC", choices=TIMEZONE_CHOICES
-    )
+    timezone = models.CharField(max_length=255, default="UTC", choices=TIMEZONE_CHOICES)
     version = models.IntegerField(default=1)
 
     class Meta:
@@ -91,9 +83,9 @@ class Cycle(ProjectBaseModel):
 
     def save(self, *args, **kwargs):
         if self._state.adding:
-            smallest_sort_order = Cycle.objects.filter(
-                project=self.project
-            ).aggregate(smallest=models.Min("sort_order"))["smallest"]
+            smallest_sort_order = Cycle.objects.filter(project=self.project).aggregate(
+                smallest=models.Min("sort_order")
+            )["smallest"]
 
             if smallest_sort_order is not None:
                 self.sort_order = smallest_sort_order - 10000
@@ -137,9 +129,7 @@ class CycleIssue(ProjectBaseModel):
 
 class CycleUserProperties(ProjectBaseModel):
     cycle = models.ForeignKey(
-        "db.Cycle",
-        on_delete=models.CASCADE,
-        related_name="cycle_user_properties",
+        "db.Cycle", on_delete=models.CASCADE, related_name="cycle_user_properties"
     )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -148,9 +138,7 @@ class CycleUserProperties(ProjectBaseModel):
     )
     filters = models.JSONField(default=get_default_filters)
     display_filters = models.JSONField(default=get_default_display_filters)
-    display_properties = models.JSONField(
-        default=get_default_display_properties
-    )
+    display_properties = models.JSONField(default=get_default_display_properties)
 
     class Meta:
         unique_together = ["cycle", "user", "deleted_at"]

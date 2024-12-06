@@ -2,11 +2,7 @@
 from rest_framework import serializers
 
 # Module imports
-from plane.db.models import (
-    Project,
-    ProjectIdentifier,
-    WorkspaceMember,
-)
+from plane.db.models import Project, ProjectIdentifier, WorkspaceMember
 
 from .base import BaseSerializer
 
@@ -20,6 +16,7 @@ class ProjectSerializer(BaseSerializer):
     member_role = serializers.IntegerField(read_only=True)
     is_deployed = serializers.BooleanField(read_only=True)
     cover_image_url = serializers.CharField(read_only=True)
+    inbox_view = serializers.BooleanField(read_only=True, source="intake_view")
 
     class Meta:
         model = Project
@@ -66,16 +63,12 @@ class ProjectSerializer(BaseSerializer):
     def create(self, validated_data):
         identifier = validated_data.get("identifier", "").strip().upper()
         if identifier == "":
-            raise serializers.ValidationError(
-                detail="Project Identifier is required"
-            )
+            raise serializers.ValidationError(detail="Project Identifier is required")
 
         if ProjectIdentifier.objects.filter(
             name=identifier, workspace_id=self.context["workspace_id"]
         ).exists():
-            raise serializers.ValidationError(
-                detail="Project Identifier is taken"
-            )
+            raise serializers.ValidationError(detail="Project Identifier is taken")
 
         project = Project.objects.create(
             **validated_data, workspace_id=self.context["workspace_id"]

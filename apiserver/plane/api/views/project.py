@@ -18,7 +18,7 @@ from plane.app.permissions import ProjectBasePermission
 # Module imports
 from plane.db.models import (
     Cycle,
-    Inbox,
+    Intake,
     IssueUserProperty,
     Module,
     Project,
@@ -39,9 +39,7 @@ class ProjectAPIEndpoint(BaseAPIView):
     model = Project
     webhook_event = "project"
 
-    permission_classes = [
-        ProjectBasePermission,
-    ]
+    permission_classes = [ProjectBasePermission]
 
     def get_queryset(self):
         return (
@@ -54,10 +52,7 @@ class ProjectAPIEndpoint(BaseAPIView):
                 | Q(network=2)
             )
             .select_related(
-                "workspace",
-                "workspace__owner",
-                "default_assignee",
-                "project_lead",
+                "workspace", "workspace__owner", "default_assignee", "project_lead"
             )
             .annotate(
                 is_member=Exists(
@@ -71,9 +66,7 @@ class ProjectAPIEndpoint(BaseAPIView):
             )
             .annotate(
                 total_members=ProjectMember.objects.filter(
-                    project_id=OuterRef("id"),
-                    member__is_bot=False,
-                    is_active=True,
+                    project_id=OuterRef("id"), member__is_bot=False, is_active=True
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -125,8 +118,7 @@ class ProjectAPIEndpoint(BaseAPIView):
                     Prefetch(
                         "project_projectmember",
                         queryset=ProjectMember.objects.filter(
-                            workspace__slug=slug,
-                            is_active=True,
+                            workspace__slug=slug, is_active=True
                         ).select_related("member"),
                     )
                 )
@@ -136,18 +128,11 @@ class ProjectAPIEndpoint(BaseAPIView):
                 request=request,
                 queryset=(projects),
                 on_results=lambda projects: ProjectSerializer(
-                    projects,
-                    many=True,
-                    fields=self.fields,
-                    expand=self.expand,
+                    projects, many=True, fields=self.fields, expand=self.expand
                 ).data,
             )
         project = self.get_queryset().get(workspace__slug=slug, pk=pk)
-        serializer = ProjectSerializer(
-            project,
-            fields=self.fields,
-            expand=self.expand,
-        )
+        serializer = ProjectSerializer(project, fields=self.fields, expand=self.expand)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, slug):
@@ -161,14 +146,11 @@ class ProjectAPIEndpoint(BaseAPIView):
 
                 # Add the user as Administrator to the project
                 _ = ProjectMember.objects.create(
-                    project_id=serializer.data["id"],
-                    member=request.user,
-                    role=20,
+                    project_id=serializer.data["id"], member=request.user, role=20
                 )
                 # Also create the issue property for the user
                 _ = IssueUserProperty.objects.create(
-                    project_id=serializer.data["id"],
-                    user=request.user,
+                    project_id=serializer.data["id"], user=request.user
                 )
 
                 if serializer.data["project_lead"] is not None and str(
@@ -236,11 +218,7 @@ class ProjectAPIEndpoint(BaseAPIView):
                     ]
                 )
 
-                project = (
-                    self.get_queryset()
-                    .filter(pk=serializer.data["id"])
-                    .first()
-                )
+                project = self.get_queryset().filter(pk=serializer.data["id"]).first()
 
                 # Model activity
                 model_activity.delay(
@@ -254,13 +232,8 @@ class ProjectAPIEndpoint(BaseAPIView):
                 )
 
                 serializer = ProjectSerializer(project)
-                return Response(
-                    serializer.data, status=status.HTTP_201_CREATED
-                )
-            return Response(
-                serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except IntegrityError as e:
             if "already exists" in str(e):
                 return Response(
@@ -269,8 +242,7 @@ class ProjectAPIEndpoint(BaseAPIView):
                 )
         except Workspace.DoesNotExist:
             return Response(
-                {"error": "Workspace does not exist"},
-                status=status.HTTP_404_NOT_FOUND,
+                {"error": "Workspace does not exist"}, status=status.HTTP_404_NOT_FOUND
             )
         except ValidationError:
             return Response(
@@ -285,6 +257,9 @@ class ProjectAPIEndpoint(BaseAPIView):
             current_instance = json.dumps(
                 ProjectSerializer(project).data, cls=DjangoJSONEncoder
             )
+
+            intake_view = request.data.get("inbox_view", project.intake_view)
+
             if project.archived_at:
                 return Response(
                     {"error": "Archived project cannot be updated"},
@@ -293,21 +268,20 @@ class ProjectAPIEndpoint(BaseAPIView):
 
             serializer = ProjectSerializer(
                 project,
-                data={**request.data},
+                data={**request.data, "intake_view": intake_view},
                 context={"workspace_id": workspace.id},
                 partial=True,
             )
 
             if serializer.is_valid():
                 serializer.save()
-                if serializer.data["inbox_view"]:
-                    inbox = Inbox.objects.filter(
-                        project=project,
-                        is_default=True,
+                if serializer.data["intake_view"]:
+                    intake = Intake.objects.filter(
+                        project=project, is_default=True
                     ).first()
-                    if not inbox:
-                        Inbox.objects.create(
-                            name=f"{project.name} Inbox",
+                    if not intake:
+                        Intake.objects.create(
+                            name=f"{project.name} Intake",
                             project=project,
                             is_default=True,
                         )
@@ -316,17 +290,13 @@ class ProjectAPIEndpoint(BaseAPIView):
                     State.objects.get_or_create(
                         name="Triage",
                         group="triage",
-                        description="Default state for managing all Inbox Issues",
+                        description="Default state for managing all Intake Issues",
                         project_id=pk,
                         color="#ff7700",
                         is_triage=True,
                     )
 
-                project = (
-                    self.get_queryset()
-                    .filter(pk=serializer.data["id"])
-                    .first()
-                )
+                project = self.get_queryset().filter(pk=serializer.data["id"]).first()
 
                 model_activity.delay(
                     model_name="project",
@@ -340,9 +310,7 @@ class ProjectAPIEndpoint(BaseAPIView):
 
                 serializer = ProjectSerializer(project)
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except IntegrityError as e:
             if "already exists" in str(e):
                 return Response(
@@ -351,8 +319,7 @@ class ProjectAPIEndpoint(BaseAPIView):
                 )
         except (Project.DoesNotExist, Workspace.DoesNotExist):
             return Response(
-                {"error": "Project does not exist"},
-                status=status.HTTP_404_NOT_FOUND,
+                {"error": "Project does not exist"}, status=status.HTTP_404_NOT_FOUND
             )
         except ValidationError:
             return Response(
@@ -364,28 +331,20 @@ class ProjectAPIEndpoint(BaseAPIView):
         project = Project.objects.get(pk=pk, workspace__slug=slug)
         # Delete the user favorite cycle
         UserFavorite.objects.filter(
-            entity_type="project",
-            entity_identifier=pk,
-            project_id=pk,
+            entity_type="project", entity_identifier=pk, project_id=pk
         ).delete()
         project.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
-
-    permission_classes = [
-        ProjectBasePermission,
-    ]
+    permission_classes = [ProjectBasePermission]
 
     def post(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
         project.archived_at = timezone.now()
         project.save()
-        UserFavorite.objects.filter(
-            workspace__slug=slug,
-            project=project_id,
-        ).delete()
+        UserFavorite.objects.filter(workspace__slug=slug, project=project_id).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def delete(self, request, slug, project_id):

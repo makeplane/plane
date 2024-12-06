@@ -287,7 +287,6 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
 
   useEffect(() => {
     if (URLProjectId === project.id) setIsProjectListOpen(true);
-    else setIsProjectListOpen(false);
   }, [URLProjectId]);
 
   const handleItemClick = () => {
@@ -299,12 +298,13 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
     <>
       <PublishProjectModal isOpen={publishModalOpen} project={project} onClose={() => setPublishModal(false)} />
       <LeaveProjectModal project={project} isOpen={leaveProjectModalOpen} onClose={() => setLeaveProjectModal(false)} />
-      <Disclosure key={`${project.id}_${URLProjectId}`} ref={projectRef} defaultOpen={isProjectListOpen} as="div">
+      <Disclosure key={`${project.id}_${URLProjectId}`}  defaultOpen={isProjectListOpen} as="div">
         <div
           id={`sidebar-${projectId}-${projectListType}`}
           className={cn("relative", {
             "bg-custom-sidebar-background-80 opacity-60": isDragging,
           })}
+          ref={projectRef}
         >
           <DropIndicator classNames="absolute top-0" isVisible={instruction === "DRAG_OVER"} />
           <div

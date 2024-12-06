@@ -1,46 +1,23 @@
 # Django imports
-from django.db.models import (
-    CharField,
-    Count,
-    Q,
-    OuterRef,
-    Subquery,
-    IntegerField,
-)
+from django.db.models import Count, Q, OuterRef, Subquery, IntegerField
 from django.db.models.functions import Coalesce
-from django.db.models.functions import Cast
 
 # Third party modules
 from rest_framework import status
 from rest_framework.response import Response
 
-from plane.app.permissions import (
-    WorkSpaceAdminPermission,
-    WorkspaceEntityPermission,
-    allow_permission,
-    ROLE,
-)
+from plane.app.permissions import WorkspaceEntityPermission, allow_permission, ROLE
 
 # Module imports
 from plane.app.serializers import (
     ProjectMemberRoleSerializer,
-    TeamSerializer,
-    UserLiteSerializer,
     WorkspaceMemberAdminSerializer,
     WorkspaceMemberMeSerializer,
     WorkSpaceMemberSerializer,
 )
 from plane.app.views.base import BaseAPIView
-from plane.db.models import (
-    Project,
-    ProjectMember,
-    Team,
-    User,
-    Workspace,
-    WorkspaceMember,
-    DraftIssue,
-)
-from plane.utils.cache import cache_response, invalidate_cache
+from plane.db.models import Project, ProjectMember, WorkspaceMember, DraftIssue
+from plane.utils.cache import invalidate_cache
 
 from .. import BaseViewSet
 
@@ -49,63 +26,41 @@ class WorkSpaceMemberViewSet(BaseViewSet):
     serializer_class = WorkspaceMemberAdminSerializer
     model = WorkspaceMember
 
-    search_fields = [
-        "member__display_name",
-        "member__first_name",
-    ]
+    search_fields = ["member__display_name", "member__first_name"]
 
     def get_queryset(self):
         return self.filter_queryset(
             super()
             .get_queryset()
-            .filter(
-                workspace__slug=self.kwargs.get("slug"),
-                is_active=True,
-            )
+            .filter(workspace__slug=self.kwargs.get("slug"), is_active=True)
             .select_related("workspace", "workspace__owner")
             .select_related("member")
         )
 
-    @cache_response(60 * 60 * 2)
     @allow_permission(
         allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
     )
     def list(self, request, slug):
         workspace_member = WorkspaceMember.objects.get(
-            member=request.user,
-            workspace__slug=slug,
-            is_active=True,
+            member=request.user, workspace__slug=slug, is_active=True
         )
 
         # Get all active workspace members
         workspace_members = self.get_queryset()
         if workspace_member.role > 5:
             serializer = WorkspaceMemberAdminSerializer(
-                workspace_members,
-                fields=("id", "member", "role"),
-                many=True,
+                workspace_members, fields=("id", "member", "role"), many=True
             )
         else:
             serializer = WorkSpaceMemberSerializer(
-                workspace_members,
-                fields=("id", "member", "role"),
-                many=True,
+                workspace_members, fields=("id", "member", "role"), many=True
             )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @invalidate_cache(
-        path="/api/workspaces/:slug/members/",
-        url_params=True,
-        user=False,
-        multiple=True,
-    )
     @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
     def partial_update(self, request, slug, pk):
         workspace_member = WorkspaceMember.objects.get(
-            pk=pk,
-            workspace__slug=slug,
-            member__is_bot=False,
-            is_active=True,
+            pk=pk, workspace__slug=slug, member__is_bot=False, is_active=True
         )
         if request.user.id == workspace_member.member_id:
             return Response(
@@ -127,31 +82,16 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @invalidate_cache(
-        path="/api/workspaces/:slug/members/",
-        url_params=True,
-        user=False,
-        multiple=True,
-    )
-    @invalidate_cache(path="/api/users/me/settings/", multiple=True)
-    @invalidate_cache(
-        path="/api/users/me/workspaces/", user=False, multiple=True
-    )
     @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
     def destroy(self, request, slug, pk):
         # Check the user role who is deleting the user
         workspace_member = WorkspaceMember.objects.get(
-            workspace__slug=slug,
-            pk=pk,
-            member__is_bot=False,
-            is_active=True,
+            workspace__slug=slug, pk=pk, member__is_bot=False, is_active=True
         )
 
         # check requesting user role
         requesting_workspace_member = WorkspaceMember.objects.get(
-            workspace__slug=slug,
-            member=request.user,
-            is_active=True,
+            workspace__slug=slug, member=request.user, is_active=True
         )
 
         if str(workspace_member.id) == str(requesting_workspace_member.id):
@@ -164,9 +104,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
         if requesting_workspace_member.role < workspace_member.role:
             return Response(
-                {
-                    "error": "You cannot remove a user having role higher than you"
-                },
+                {"error": "You cannot remove a user having role higher than you"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -193,9 +131,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
         # Deactivate the users from the projects where the user is part of
         _ = ProjectMember.objects.filter(
-            workspace__slug=slug,
-            member_id=workspace_member.member_id,
-            is_active=True,
+            workspace__slug=slug, member_id=workspace_member.member_id, is_active=True
         ).update(is_active=False)
 
         workspace_member.is_active = False
@@ -209,26 +145,20 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         multiple=True,
     )
     @invalidate_cache(path="/api/users/me/settings/")
-    @invalidate_cache(
-        path="api/users/me/workspaces/", user=False, multiple=True
-    )
+    @invalidate_cache(path="api/users/me/workspaces/", user=False, multiple=True)
     @allow_permission(
         allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
     )
     def leave(self, request, slug):
         workspace_member = WorkspaceMember.objects.get(
-            workspace__slug=slug,
-            member=request.user,
-            is_active=True,
+            workspace__slug=slug, member=request.user, is_active=True
         )
 
         # Check if the leaving user is the only admin of the workspace
         if (
             workspace_member.role == 20
             and not WorkspaceMember.objects.filter(
-                workspace__slug=slug,
-                role=20,
-                is_active=True,
+                workspace__slug=slug, role=20, is_active=True
             ).count()
             > 1
         ):
@@ -262,9 +192,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
         # # Deactivate the users from the projects where the user is part of
         _ = ProjectMember.objects.filter(
-            workspace__slug=slug,
-            member_id=workspace_member.member_id,
-            is_active=True,
+            workspace__slug=slug, member_id=workspace_member.member_id, is_active=True
         ).update(is_active=False)
 
         # # Deactivate the user
@@ -276,9 +204,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 class WorkspaceMemberUserViewsEndpoint(BaseAPIView):
     def post(self, request, slug):
         workspace_member = WorkspaceMember.objects.get(
-            workspace__slug=slug,
-            member=request.user,
-            is_active=True,
+            workspace__slug=slug, member=request.user, is_active=True
         )
         workspace_member.view_props = request.data.get("view_props", {})
         workspace_member.save()
@@ -290,8 +216,7 @@ class WorkspaceMemberUserEndpoint(BaseAPIView):
     def get(self, request, slug):
         draft_issue_count = (
             DraftIssue.objects.filter(
-                created_by=request.user,
-                workspace_id=OuterRef("workspace_id"),
+                created_by=request.user, workspace_id=OuterRef("workspace_id")
             )
             .values("workspace_id")
             .annotate(count=Count("id"))
@@ -317,30 +242,21 @@ class WorkspaceProjectMemberEndpoint(BaseAPIView):
     serializer_class = ProjectMemberRoleSerializer
     model = ProjectMember
 
-    permission_classes = [
-        WorkspaceEntityPermission,
-    ]
+    permission_classes = [WorkspaceEntityPermission]
 
     def get(self, request, slug):
         # Fetch all project IDs where the user is involved
         project_ids = (
-            ProjectMember.objects.filter(
-                member=request.user,
-                is_active=True,
-            )
+            ProjectMember.objects.filter(member=request.user, is_active=True)
             .values_list("project_id", flat=True)
             .distinct()
         )
 
         # Get all the project members in which the user is involved
         project_members = ProjectMember.objects.filter(
-            workspace__slug=slug,
-            project_id__in=project_ids,
-            is_active=True,
+            workspace__slug=slug, project_id__in=project_ids, is_active=True
         ).select_related("project", "member", "workspace")
-        project_members = ProjectMemberRoleSerializer(
-            project_members, many=True
-        ).data
+        project_members = ProjectMemberRoleSerializer(project_members, many=True).data
 
         project_members_dict = dict()
 
@@ -352,62 +268,3 @@ class WorkspaceProjectMemberEndpoint(BaseAPIView):
             project_members_dict[str(project_id)].append(project_member)
 
         return Response(project_members_dict, status=status.HTTP_200_OK)
-
-
-class TeamMemberViewSet(BaseViewSet):
-    serializer_class = TeamSerializer
-    model = Team
-    permission_classes = [
-        WorkSpaceAdminPermission,
-    ]
-
-    search_fields = [
-        "member__display_name",
-        "member__first_name",
-    ]
-
-    def get_queryset(self):
-        return self.filter_queryset(
-            super()
-            .get_queryset()
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .select_related("workspace", "workspace__owner")
-            .prefetch_related("members")
-        )
-
-    def create(self, request, slug):
-        members = list(
-            WorkspaceMember.objects.filter(
-                workspace__slug=slug,
-                member__id__in=request.data.get("members", []),
-                is_active=True,
-            )
-            .annotate(member_str_id=Cast("member", output_field=CharField()))
-            .distinct()
-            .values_list("member_str_id", flat=True)
-        )
-
-        if len(members) != len(request.data.get("members", [])):
-            users = list(
-                set(request.data.get("members", [])).difference(members)
-            )
-            users = User.objects.filter(pk__in=users)
-
-            serializer = UserLiteSerializer(users, many=True)
-            return Response(
-                {
-                    "error": f"{len(users)} of the member(s) are not a part of the workspace",
-                    "members": serializer.data,
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        workspace = Workspace.objects.get(slug=slug)
-
-        serializer = TeamSerializer(
-            data=request.data, context={"workspace": workspace}
-        )
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

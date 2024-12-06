@@ -1,7 +1,7 @@
 "use client";
 
 // components
-import { NotificationsSidebar } from "@/components/workspace-notifications";
+import { NotificationsSidebar } from "@/plane-web/components/workspace-notifications";
 
 export default function ProjectInboxIssuesLayout({ children }: { children: React.ReactNode }) {
   return (

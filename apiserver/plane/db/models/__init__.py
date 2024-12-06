@@ -15,7 +15,7 @@ from .draft import (
 from .estimate import Estimate, EstimatePoint
 from .exporter import ExporterHistory
 from .importer import Importer
-from .inbox import Inbox, InboxIssue
+from .intake import Intake, IntakeIssue
 from .integration import (
     GithubCommentSync,
     GithubIssueSync,
@@ -42,25 +42,9 @@ from .issue import (
     IssueSubscriber,
     IssueVote,
 )
-from .module import (
-    Module,
-    ModuleIssue,
-    ModuleLink,
-    ModuleMember,
-    ModuleUserProperties,
-)
-from .notification import (
-    EmailNotificationLog,
-    Notification,
-    UserNotificationPreference,
-)
-from .page import (
-    Page,
-    PageLabel,
-    PageLog,
-    ProjectPage,
-    PageVersion,
-)
+from .module import Module, ModuleIssue, ModuleLink, ModuleMember, ModuleUserProperties
+from .notification import EmailNotificationLog, Notification, UserNotificationPreference
+from .page import Page, PageLabel, PageLog, ProjectPage, PageVersion
 from .project import (
     Project,
     ProjectBaseModel,
@@ -77,8 +61,6 @@ from .user import Account, Profile, User
 from .view import IssueView
 from .webhook import Webhook, WebhookLog
 from .workspace import (
-    Team,
-    TeamMember,
     Workspace,
     WorkspaceBaseModel,
     WorkspaceMember,
@@ -93,15 +75,11 @@ from .page import Page, PageLog, PageLabel
 
 from .estimate import Estimate, EstimatePoint
 
-from .inbox import Inbox, InboxIssue
+from .intake import Intake, IntakeIssue
 
 from .analytic import AnalyticView
 
-from .notification import (
-    Notification,
-    UserNotificationPreference,
-    EmailNotificationLog,
-)
+from .notification import Notification, UserNotificationPreference, EmailNotificationLog
 
 from .exporter import ExporterHistory
 

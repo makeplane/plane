@@ -35,6 +35,7 @@ export enum EmptyStateType {
   WORKSPACE_SUBSCRIBED = "workspace-subscribed",
   WORKSPACE_CUSTOM_VIEW = "workspace-custom-view",
   WORKSPACE_NO_PROJECTS = "workspace-no-projects",
+  WORKSPACE_PROJECT_NOT_FOUND = "workspace-project-not-found",
   WORKSPACE_SETTINGS_API_TOKENS = "workspace-settings-api-tokens",
   WORKSPACE_SETTINGS_WEBHOOKS = "workspace-settings-webhooks",
   WORKSPACE_SETTINGS_EXPORT = "workspace-settings-export",
@@ -207,6 +208,22 @@ const emptyStateDetails = {
     title: "No issues yet",
     description: "Issues that applies to the filters, track all of them here.",
     path: "/empty-state/all-issues/custom-view",
+  },
+  [EmptyStateType.WORKSPACE_PROJECT_NOT_FOUND]: {
+    key: EmptyStateType.WORKSPACE_PROJECT_NOT_FOUND,
+    title: "No such project exists",
+    description: "To create issues or manage your work, you need to create a project or be a part of one.",
+    path: "/empty-state/onboarding/projects",
+    primaryButton: {
+      text: "Create Project",
+      comicBox: {
+        title: "Everything starts with a project in Plane",
+        description: "A project could be a product’s roadmap, a marketing campaign, or launching a new car.",
+      },
+    },
+
+    accessType: "workspace",
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   [EmptyStateType.WORKSPACE_NO_PROJECTS]: {
     key: EmptyStateType.WORKSPACE_NO_PROJECTS,
@@ -504,7 +521,7 @@ const emptyStateDetails = {
       text: "Create your first page",
     },
     accessType: "project",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   [EmptyStateType.PROJECT_PAGE_PRIVATE]: {
     key: EmptyStateType.PROJECT_PAGE_PRIVATE,
@@ -515,7 +532,7 @@ const emptyStateDetails = {
       text: "Create your first page",
     },
     accessType: "project",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   [EmptyStateType.PROJECT_PAGE_PUBLIC]: {
     key: EmptyStateType.PROJECT_PAGE_PUBLIC,
@@ -526,7 +543,7 @@ const emptyStateDetails = {
       text: "Create your first page",
     },
     accessType: "project",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   [EmptyStateType.PROJECT_PAGE_ARCHIVED]: {
     key: EmptyStateType.PROJECT_PAGE_ARCHIVED,
@@ -544,7 +561,7 @@ const emptyStateDetails = {
       text: "Create your first page",
     },
     accessType: "workspace",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   [EmptyStateType.WORKSPACE_PAGE_PRIVATE]: {
     key: EmptyStateType.WORKSPACE_PAGE_PRIVATE,
@@ -555,7 +572,7 @@ const emptyStateDetails = {
       text: "Create your first page",
     },
     accessType: "workspace",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   [EmptyStateType.WORKSPACE_PAGE_PUBLIC]: {
     key: EmptyStateType.WORKSPACE_PAGE_PUBLIC,
@@ -566,7 +583,7 @@ const emptyStateDetails = {
       text: "Create your first page",
     },
     accessType: "workspace",
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
   },
   [EmptyStateType.WORKSPACE_PAGE_ARCHIVED]: {
     key: EmptyStateType.WORKSPACE_PAGE_ARCHIVED,

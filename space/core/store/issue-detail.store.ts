@@ -253,7 +253,7 @@ export class IssueDetailStore implements IIssueDetailStore {
         anchor,
         {
           entity_identifier: commentID ?? "",
-          entity_type: EFileAssetType.ISSUE_ATTACHMENT,
+          entity_type: EFileAssetType.ISSUE_DESCRIPTION,
         },
         file
       );

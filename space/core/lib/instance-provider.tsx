@@ -6,18 +6,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
+import { SPACE_BASE_PATH } from "@plane/constants";
 // components
 import { LogoSpinner } from "@/components/common";
 import { InstanceFailureView } from "@/components/instance";
-// helpers
-import { SPACE_BASE_PATH } from "@/helpers/common.helper";
 // hooks
 import { useInstance, useUser } from "@/hooks/store";
 // assets
-import PlaneBackgroundPatternDark from "public/auth/background-pattern-dark.svg";
-import PlaneBackgroundPattern from "public/auth/background-pattern.svg";
-import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.png";
-import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.png";
+import PlaneBackgroundPatternDark from "@/public/auth/background-pattern-dark.svg";
+import PlaneBackgroundPattern from "@/public/auth/background-pattern.svg";
+import BlackHorizontalLogo from "@/public/plane-logos/black-horizontal-with-blue-logo.png";
+import WhiteHorizontalLogo from "@/public/plane-logos/white-horizontal-with-blue-logo.png";
 
 export const InstanceProvider = observer(({ children }: { children: ReactNode }) => {
   const { fetchInstanceInfo, instance, error } = useInstance();
@@ -69,5 +68,5 @@ export const InstanceProvider = observer(({ children }: { children: ReactNode })
     );
   }
 
-  return <>{children}</>;
+  return children;
 });

@@ -11,30 +11,14 @@ from plane.license.api.views import (
     InstanceAdminUserMeEndpoint,
     InstanceAdminSignOutEndpoint,
     InstanceAdminUserSessionEndpoint,
-    ChangeLogEndpoint
+    InstanceWorkSpaceAvailabilityCheckEndpoint,
+    InstanceWorkSpaceEndpoint,
 )
 
 urlpatterns = [
-    path(
-        "",
-        InstanceEndpoint.as_view(),
-        name="instance",
-    ),
-    path(
-        "changelog/",
-        ChangeLogEndpoint.as_view(),
-        name="instance-changelog",
-    ),
-    path(
-        "admins/",
-        InstanceAdminEndpoint.as_view(),
-        name="instance-admins",
-    ),
-    path(
-        "admins/me/",
-        InstanceAdminUserMeEndpoint.as_view(),
-        name="instance-admins",
-    ),
+    path("", InstanceEndpoint.as_view(), name="instance"),
+    path("admins/", InstanceAdminEndpoint.as_view(), name="instance-admins"),
+    path("admins/me/", InstanceAdminUserMeEndpoint.as_view(), name="instance-admins"),
     path(
         "admins/session/",
         InstanceAdminUserSessionEndpoint.as_view(),
@@ -45,11 +29,7 @@ urlpatterns = [
         InstanceAdminSignOutEndpoint.as_view(),
         name="instance-admins",
     ),
-    path(
-        "admins/<uuid:pk>/",
-        InstanceAdminEndpoint.as_view(),
-        name="instance-admins",
-    ),
+    path("admins/<uuid:pk>/", InstanceAdminEndpoint.as_view(), name="instance-admins"),
     path(
         "configurations/",
         InstanceConfigurationEndpoint.as_view(),
@@ -75,4 +55,10 @@ urlpatterns = [
         EmailCredentialCheckEndpoint.as_view(),
         name="email-credential-check",
     ),
+    path(
+        "workspace-slug-check/",
+        InstanceWorkSpaceAvailabilityCheckEndpoint.as_view(),
+        name="instance-workspace-availability",
+    ),
+    path("workspaces/", InstanceWorkSpaceEndpoint.as_view(), name="instance-workspace"),
 ]

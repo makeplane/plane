@@ -21,6 +21,7 @@ export interface IWorkspace {
   readonly updated_by: string;
   organization_size: string;
   total_issues: number;
+  total_projects?: number;
 }
 
 export interface IWorkspaceLite {
@@ -222,3 +223,7 @@ export interface IWorkspaceProgressResponse {
 export interface IWorkspaceAnalyticsResponse {
   completion_chart: any;
 }
+
+export type TWorkspacePaginationInfo = TPaginationInfo & {
+  results: IWorkspace[];
+};

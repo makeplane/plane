@@ -53,8 +53,6 @@ export interface IIssueRootStore {
 
   issues: IIssueStore;
 
-  state: IStateStore;
-
   issueDetail: IIssueDetail;
 
   workspaceIssuesFilter: IWorkspaceIssuesFilter;
@@ -110,8 +108,6 @@ export class IssueRootStore implements IIssueRootStore {
   rootStore: CoreRootStore;
 
   issues: IIssueStore;
-
-  state: IStateStore;
 
   issueDetail: IIssueDetail;
 
@@ -169,13 +165,13 @@ export class IssueRootStore implements IIssueRootStore {
 
     autorun(() => {
       if (rootStore?.user?.data?.id) this.currentUserId = rootStore?.user?.data?.id;
-      if (rootStore.router.workspaceSlug) this.workspaceSlug = rootStore.router.workspaceSlug;
-      if (rootStore.router.projectId) this.projectId = rootStore.router.projectId;
-      if (rootStore.router.cycleId) this.cycleId = rootStore.router.cycleId;
-      if (rootStore.router.moduleId) this.moduleId = rootStore.router.moduleId;
-      if (rootStore.router.viewId) this.viewId = rootStore.router.viewId;
-      if (rootStore.router.globalViewId) this.globalViewId = rootStore.router.globalViewId;
-      if (rootStore.router.userId) this.userId = rootStore.router.userId;
+      if (this.workspaceSlug !== rootStore.router.workspaceSlug) this.workspaceSlug = rootStore.router.workspaceSlug;
+      if (this.projectId !== rootStore.router.projectId) this.projectId = rootStore.router.projectId;
+      if (this.cycleId !== rootStore.router.cycleId) this.cycleId = rootStore.router.cycleId;
+      if (this.moduleId !== rootStore.router.moduleId) this.moduleId = rootStore.router.moduleId;
+      if (this.viewId !== rootStore.router.viewId) this.viewId = rootStore.router.viewId;
+      if (this.globalViewId !== rootStore.router.globalViewId) this.globalViewId = rootStore.router.globalViewId;
+      if (this.userId !== rootStore.router.userId) this.userId = rootStore.router.userId;
       if (!isEmpty(rootStore?.state?.stateMap)) this.stateMap = rootStore?.state?.stateMap;
       if (!isEmpty(rootStore?.state?.projectStates)) this.stateDetails = rootStore?.state?.projectStates;
       if (!isEmpty(rootStore?.state?.workspaceStates)) this.workspaceStateDetails = rootStore?.state?.workspaceStates;
@@ -190,8 +186,6 @@ export class IssueRootStore implements IIssueRootStore {
     });
 
     this.issues = new IssueStore();
-
-    this.state = new StateStore(rootStore);
 
     this.issueDetail = new IssueDetail(this);
 

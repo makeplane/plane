@@ -4,15 +4,15 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
+import { SPACE_BASE_PATH } from "@plane/constants";
 // components
 import { AuthRoot } from "@/components/account";
-// helpers
-import { SPACE_BASE_PATH } from "@/helpers/common.helper";
+import { PoweredBy } from "@/components/common";
 // images
 import PlaneBackgroundPatternDark from "@/public/auth/background-pattern-dark.svg";
 import PlaneBackgroundPattern from "@/public/auth/background-pattern.svg";
-import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.png";
-import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.png";
+import BlackHorizontalLogo from "@/public/plane-logos/black-horizontal-with-blue-logo.png";
+import WhiteHorizontalLogo from "@/public/plane-logos/white-horizontal-with-blue-logo.png";
 
 export const AuthView = observer(() => {
   // hooks
@@ -41,6 +41,7 @@ export const AuthView = observer(() => {
           <AuthRoot />
         </div>
       </div>
+      <PoweredBy />
     </div>
   );
 });
