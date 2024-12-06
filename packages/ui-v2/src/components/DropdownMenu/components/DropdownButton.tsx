@@ -1,7 +1,7 @@
 import * as RadixDropdownMenu from "@radix-ui/react-dropdown-menu";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
 import React, { createContext, useState, useEffect, useContext } from "react";
-import { DropdownMenuContext } from "./DropdownMenu";
+import { DropdownMenuContext } from "../DropdownMenu";
 
 type DropdownButtonProps = {
   children: React.ReactNode;

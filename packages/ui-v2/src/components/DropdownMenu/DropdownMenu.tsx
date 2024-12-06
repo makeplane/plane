@@ -1,18 +1,18 @@
 import * as RadixDropdownMenu from "@radix-ui/react-dropdown-menu";
 import React, { createContext, useState } from "react";
-import { DropdownContent } from "./DropdownContent";
+import { DropdownContent } from "./components/DropdownContent";
 
 type DropdownMenuProps = {
   children: React.ReactNode;
-  items: any[];
-  onSelect: (value: any) => void;
-  renderItem: (item: any) => React.ReactNode;
+  items?: any[];
+  onSelect?: (e, value: any) => void;
+  renderItem?: (item: any) => React.ReactNode;
   defaultOpen?: boolean;
 };
 
 export const DropdownMenuContext = createContext({
   items: [],
-  onSelect: (value: any) => {},
+  onSelect: (e, value: any) => {},
   renderItem: (item: any) => <></>,
 });
 
@@ -36,8 +36,7 @@ export const DropdownMenu = ({
     >
       <RadixDropdownMenu.Root open={open} onOpenChange={handleOpenChange}>
         {children}
-
-        <DropdownContent />
+        {items && <DropdownContent />}
       </RadixDropdownMenu.Root>
     </DropdownMenuContext.Provider>
   );

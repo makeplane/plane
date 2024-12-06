@@ -2,8 +2,9 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
 import React, { useState } from "react";
 import { DropdownMenu } from "./DropdownMenu";
-import { DropdownButton } from "./DropdownButton";
-import { DropdownContent } from "./DropdownContent";
+import { DropdownButton } from "./components/DropdownButton";
+import { DropdownContent } from "./components/DropdownContent";
+import { DropdownItem } from "./components/DropdownItem";
 
 // import { SelectDropdown } from "./DropdownMenu-copy";
 const fruits = [
@@ -82,7 +83,9 @@ const fruits = [
     name: "Mango",
     emoji: "🥭",
   },
+];
 
+const vegetables = [
   // Add 10 vegetables
   {
     id: 12,
@@ -156,6 +159,10 @@ const fruits = [
   },
 ];
 
+const fruitsAndVegetables = {
+  fruits,
+  vegetables,
+};
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
   title: "Example/DropdownMenu",
@@ -171,36 +178,49 @@ const meta = {
     items: [1, 2, 3, 4],
   },
   // Use `fn` to spy on the onClick arg, which will appear in the actions panel once invoked: https://storybook.js.org/docs/essentials/actions#action-args
-  args: { onChange: fn() },
+  args: {},
 } satisfies Meta<typeof DropdownMenu>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+export const DefaultDropdown = () => {
+  return (
+    <DropdownMenu defaultOpen={true}>
+      <DropdownButton>
+        <button>Click me!!</button>
+      </DropdownButton>
+      <DropdownContent>
+        <div>
+          <h1>Hello</h1>
+          <p>How are you today?</p>
+          <DropdownItem onSelect={(e) => console.log(e)}>
+            Click me again
+          </DropdownItem>
+        </div>
+      </DropdownContent>
+    </DropdownMenu>
+  );
+};
 
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
 export const MultiSelect = () => {
   const [value, setValue] = useState([fruits[6]]);
   return (
     <DropdownMenu
-      items={fruits}
-      onSelect={undefined}
-      onChange={(value: any) => setValue(value)}
-      value={value}
-      multiple={true}
-      defaultOpen={true}
+      items={fruitsAndVegetables.fruits}
+      onSelect={(e, value) => {
+        e.preventDefault();
+        console.log(e, value);
+      }}
       renderItem={(item) => <Fruit fruit={item} />}
+      defaultOpen={true}
     >
       <DropdownButton showIcon>
         <div className="flex items-center gap-2 justify-between">
           <Fruit fruit={fruits[1]} />({value.length})
         </div>
       </DropdownButton>
-      {/* <DropdownContent>
-        <input
-          type="text"
-          className="w-full border border-cyan-500 rounded mb-2"
-        />
-      </DropdownContent> */}
     </DropdownMenu>
   );
 };
