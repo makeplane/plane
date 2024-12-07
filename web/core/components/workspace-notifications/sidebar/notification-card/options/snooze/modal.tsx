@@ -17,7 +17,7 @@ import { getDate } from "@/helpers/date-time.helper";
 type TNotificationSnoozeModal = {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (dateTime?: Date | undefined) => Promise<TNotification | undefined>;
+  onSubmit: (dateTime?: Date | undefined) => Promise<void>;
 };
 
 type FormValues = {

@@ -20,6 +20,7 @@ import { orderCycles, shouldFilterCycle, formatActiveCycle } from "@/helpers/cyc
 import { getDate } from "@/helpers/date-time.helper";
 import { DistributionUpdates, updateDistribution } from "@/helpers/distribution-update.helper";
 // services
+import { syncIssuesWithDeletedCycles } from "@/local-db/utils/load-workspace";
 import { CycleService } from "@/services/cycle.service";
 import { CycleArchiveService } from "@/services/cycle_archive.service";
 import { IssueService } from "@/services/issue";
@@ -675,6 +676,7 @@ export class CycleStore implements ICycleStore {
         delete this.cycleMap[cycleId];
         delete this.activeCycleIdMap[cycleId];
         if (this.rootStore.favorite.entityMap[cycleId]) this.rootStore.favorite.removeFavoriteFromStore(cycleId);
+        syncIssuesWithDeletedCycles([cycleId]);
       });
     });
 
