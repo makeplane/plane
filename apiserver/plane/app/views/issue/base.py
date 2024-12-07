@@ -15,8 +15,6 @@ from django.db.models import (
     UUIDField,
     Value,
     Subquery,
-    Case,
-    When,
 )
 from django.db.models.functions import Coalesce
 from django.utils import timezone
