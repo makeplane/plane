@@ -3,6 +3,7 @@
 from django.conf import settings
 from django.urls import include, path, re_path
 from django.views.generic import TemplateView
+from plane.app.views.timezone import TimezoneEndpoint
 
 handler404 = "plane.app.views.error_404.custom_404_view"
 
@@ -14,6 +15,7 @@ urlpatterns = [
     path("api/v1/", include("plane.api.urls")),
     path("auth/", include("plane.authentication.urls")),
     path("", include("plane.web.urls")),
+    path("api/timezones/", TimezoneEndpoint.as_view(), name="timezones"),
 ]
 
 
