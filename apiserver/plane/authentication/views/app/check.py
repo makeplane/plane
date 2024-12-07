@@ -60,6 +60,9 @@ class EmailCheckEndpoint(APIView):
             )
             return Response(exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST)
 
+        # Lower the email
+        email = str(email).lower().strip()
+
         # Validate email
         try:
             validate_email(email)
