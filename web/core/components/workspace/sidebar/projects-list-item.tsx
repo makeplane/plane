@@ -8,46 +8,24 @@ import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/el
 import { attachInstruction, extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { createRoot } from "react-dom/client";
-import {
-  PenSquare,
-  LinkIcon,
-  Star,
-  FileText,
-  Settings,
-  Share2,
-  LogOut,
-  MoreHorizontal,
-  ChevronRight,
-  Layers,
-} from "lucide-react";
+import { LinkIcon, Star, Settings, Share2, LogOut, MoreHorizontal, ChevronRight } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane helpers
-import { useOutsideClickDetector } from "@plane/hooks";
+import { useOutsideClickDetector } from "@plane/helpers";
 // ui
-import {
-  CustomMenu,
-  Tooltip,
-  ArchiveIcon,
-  DiceIcon,
-  ContrastIcon,
-  LayersIcon,
-  setPromiseToast,
-  DropIndicator,
-  DragHandle,
-  Intake,
-  ControlLink,
-} from "@plane/ui";
+import { CustomMenu, Tooltip, ArchiveIcon, setPromiseToast, DropIndicator, DragHandle, ControlLink } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
 import { LeaveProjectModal, PublishProjectModal } from "@/components/project";
-import { SidebarNavItem } from "@/components/sidebar";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane-web components
+import { ProjectNavigationRoot } from "@/plane-web/components/sidebar";
 // constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { HIGHLIGHT_CLASS, highlightIssueOnDrop } from "../../issues/issue-layouts/utils";
@@ -66,50 +44,11 @@ type Props = {
   isLastChild: boolean;
 };
 
-const navigation = (workspaceSlug: string, projectId: string) => [
-  {
-    name: "Issues",
-    href: `/${workspaceSlug}/projects/${projectId}/issues`,
-    Icon: LayersIcon,
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
-  },
-  {
-    name: "Cycles",
-    href: `/${workspaceSlug}/projects/${projectId}/cycles`,
-    Icon: ContrastIcon,
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-  },
-  {
-    name: "Modules",
-    href: `/${workspaceSlug}/projects/${projectId}/modules`,
-    Icon: DiceIcon,
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-  },
-  {
-    name: "Views",
-    href: `/${workspaceSlug}/projects/${projectId}/views`,
-    Icon: Layers,
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
-  },
-  {
-    name: "Pages",
-    href: `/${workspaceSlug}/projects/${projectId}/pages`,
-    Icon: FileText,
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
-  },
-  {
-    name: "Intake",
-    href: `/${workspaceSlug}/projects/${projectId}/inbox`,
-    Icon: Intake,
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
-  },
-];
-
 export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
   const { projectId, handleCopyText, disableDrag, disableDrop, isLastChild, handleOnProjectDrop, projectListType } =
     props;
   // store hooks
-  const { sidebarCollapsed: isSidebarCollapsed, toggleSidebar } = useAppTheme();
+  const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
   const { setTrackElement } = useEventTracker();
   const { addProjectToFavorites, removeProjectFromFavorites, getProjectById } = useProject();
   const { isMobile } = usePlatformOS();
@@ -128,8 +67,6 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId: URLProjectId } = useParams();
-  // pathname
-  const pathname = usePathname();
   // derived values
   const project = getProjectById(projectId);
   // auth
@@ -183,12 +120,6 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
   const handleLeaveProject = () => {
     setTrackElement("APP_SIDEBAR_PROJECT_DROPDOWN");
     setLeaveProjectModal(true);
-  };
-
-  const handleProjectClick = () => {
-    if (window.innerWidth < 768) {
-      toggleSidebar();
-    }
   };
 
   useEffect(() => {
@@ -503,50 +434,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
           >
             {isProjectListOpen && (
               <Disclosure.Panel as="div" className="flex flex-col gap-0.5 mt-1">
-                {navigation(workspaceSlug?.toString(), project?.id).map((item) => {
-                  if (
-                    (item.name === "Cycles" && !project.cycle_view) ||
-                    (item.name === "Modules" && !project.module_view) ||
-                    (item.name === "Views" && !project.issue_views_view) ||
-                    (item.name === "Pages" && !project.page_view) ||
-                    (item.name === "Intake" && !project.inbox_view)
-                  )
-                    return;
-                  return (
-                    <>
-                      {allowPermissions(
-                        item.access,
-                        EUserPermissionsLevel.PROJECT,
-                        workspaceSlug.toString(),
-                        project.id
-                      ) && (
-                        <Tooltip
-                          key={item.name}
-                          isMobile={isMobile}
-                          tooltipContent={`${project?.name}: ${item.name}`}
-                          position="right"
-                          className="ml-2"
-                          disabled={!isSidebarCollapsed}
-                        >
-                          <Link key={item.name} href={item.href} onClick={handleProjectClick}>
-                            <SidebarNavItem
-                              key={item.name}
-                              className={`pl-[18px]  ${isSidebarCollapsed ? "p-0 size-7 justify-center mx-auto" : ""}`}
-                              isActive={pathname.includes(item.href)}
-                            >
-                              <div className="flex items-center gap-1.5 py-[1px]">
-                                <item.Icon
-                                  className={`flex-shrink-0 size-4 ${item.name === "Intake" ? "stroke-1" : "stroke-[1.5]"}`}
-                                />
-                                {!isSidebarCollapsed && <span className="text-xs font-medium">{item.name}</span>}
-                              </div>
-                            </SidebarNavItem>
-                          </Link>
-                        </Tooltip>
-                      )}
-                    </>
-                  );
-                })}
+                <ProjectNavigationRoot workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
               </Disclosure.Panel>
             )}
           </Transition>
