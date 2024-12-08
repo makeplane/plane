@@ -13,7 +13,7 @@ import { createRoot } from "react-dom/client";
 import { LinkIcon, Star, Settings, Share2, LogOut, MoreHorizontal, ChevronRight } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane helpers
-import { useOutsideClickDetector } from "@plane/helpers";
+import { useOutsideClickDetector } from "@plane/hooks";
 // ui
 import { CustomMenu, Tooltip, ArchiveIcon, setPromiseToast, DropIndicator, DragHandle, ControlLink } from "@plane/ui";
 // components
