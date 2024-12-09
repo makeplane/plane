@@ -29,7 +29,7 @@ app.use(
   compression({
     level: 6,
     threshold: 5 * 1000,
-  }),
+  })
 );
 
 // Logging middleware
@@ -83,7 +83,7 @@ const gracefulShutdown = async () => {
     // Close the HocusPocus server WebSocket connections
     await HocusPocusServer.destroy();
     manualLogger.info(
-      "HocusPocus server WebSocket connections closed gracefully.",
+      "HocusPocus server WebSocket connections closed gracefully."
     );
 
     // Close the Express server

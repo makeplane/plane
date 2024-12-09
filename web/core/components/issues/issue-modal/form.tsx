@@ -280,6 +280,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
 
   // debounced duplicate issues swr
   const { duplicateIssues } = useDebouncedDuplicateIssues(
+    workspaceSlug?.toString(),
     projectDetails?.workspace.toString(),
     projectId ?? undefined,
     {
