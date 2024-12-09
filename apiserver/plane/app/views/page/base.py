@@ -527,29 +527,26 @@ class PagesDescriptionViewSet(BaseViewSet):
             {"description_html": page.description_html}, cls=DjangoJSONEncoder
         )
 
-        # Get the base64 data from the request
-        base64_data = request.data.get("description_binary")
-
-        # If base64 data is provided
-        if base64_data:
-            # Decode the base64 data to bytes
-            new_binary_data = base64.b64decode(base64_data)
-            # capture the page transaction
-            if request.data.get("description_html"):
-                page_transaction.delay(
-                    new_value=request.data, old_value=existing_instance, page_id=pk
-                )
-            # Store the updated binary data
-            page.description_binary = new_binary_data
-            page.description_html = request.data.get("description_html")
-            page.description = request.data.get("description")
-            page.save()
-            # Return a success response
-            page_version.delay(
-                page_id=page.id,
-                existing_instance=existing_instance,
-                user_id=request.user.id,
+        # capture the page transaction
+        if request.data.get("description_html"):
+            page_transaction.delay(
+                new_value=request.data, old_value=existing_instance, page_id=pk
             )
-            return Response({"message": "Updated successfully"})
-        else:
+
+        if not request.data.get("description_binary"):
             return Response({"error": "No binary data provided"})
+
+        # Store the updated binary data
+        page.description_binary = request.data.get(
+            "description_binary", page.description_binary
+        )
+        page.description_html = request.data.get("description_html", page.description_html)
+        page.description = request.data.get("description", page.description)
+        page.save()
+        # Return a success response
+        page_version.delay(
+            page_id=page.id,
+            existing_instance=existing_instance,
+            user_id=request.user.id,
+        )
+        return Response({"message": "Updated successfully"})
