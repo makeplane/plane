@@ -8,12 +8,7 @@ import { MentionNodeView } from "./mention-node-view";
 // utils
 import { renderMentionsDropdown } from "./utils";
 
-type Props = {
-  searchCallback?: TMentionHandler["searchCallback"];
-  renderComponent: TMentionHandler["renderComponent"];
-};
-
-export const CustomMentionExtension = (props: Props) => {
+export const CustomMentionExtension = (props: TMentionHandler) => {
   const { searchCallback, renderComponent } = props;
   return CustomMentionExtensionConfig.extend({
     addOptions(this) {

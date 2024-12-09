@@ -1,18 +1,14 @@
 import { Editor } from "@tiptap/core";
+import { SuggestionOptions } from "@tiptap/suggestion";
 import { ReactRenderer } from "@tiptap/react";
 import tippy from "tippy.js";
-// types
-import { TMentionHandler } from "@/types";
 // local components
 import { MentionListDropdown } from "./mentions-list-dropdown";
-import { SuggestionOptions } from "@tiptap/suggestion";
-
-type Props = {
-  searchCallback?: TMentionHandler["searchCallback"];
-};
+// types
+import { TMentionHandler } from "@/types";
 
 export const renderMentionsDropdown =
-  (props: Props): SuggestionOptions["render"] =>
+  (props: Pick<TMentionHandler, "searchCallback">): SuggestionOptions["render"] =>
   // @ts-expect-error - Tiptap types are incorrect
   () => {
     const { searchCallback } = props;

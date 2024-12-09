@@ -72,7 +72,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const pageId = page?.id;
   const pageTitle = page?.name ?? "";
   const { isContentEditable, updateTitle } = page;
-  // use mention
+  // use editor mention
   const { fetchMentions } = useEditorMention({
     projectId: projectId?.toString() ?? "",
     workspaceSlug: workspaceSlug?.toString() ?? "",

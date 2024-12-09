@@ -17,5 +17,5 @@ export type TReadOnlyMentionHandler = {
 };
 
 export type TMentionHandler = TReadOnlyMentionHandler & {
-  searchCallback: (query: string) => Promise<TMentionSuggestion[]>;
+  searchCallback?: (query: string) => Promise<TMentionSuggestion[]>;
 };
