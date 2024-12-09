@@ -17,7 +17,7 @@ export const NotificationsSidebarRoot = () => {
                 default: module["NotificationsSidebar"],
               }))
             : import("ce/components/workspace-notifications/root").then((module) => ({
-                default: module["NotificationsSidebar"],
+                default: module["NotificationsSidebarRoot"],
               })),
         {
           // TODO: Add loading component
