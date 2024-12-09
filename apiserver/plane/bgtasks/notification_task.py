@@ -21,6 +21,8 @@ from plane.db.models import (
     ProjectMember,
 )
 from django.db.models import Subquery
+from plane.app.serializers import NotificationSerializer
+from plane.graphql.bgtasks.push_notification import issue_push_notifications
 
 # Third Party imports
 from celery import shared_task
@@ -771,10 +773,33 @@ def notifications(
                 removed_mention=removed_mention,
             )
             # Bulk create notifications
-            Notification.objects.bulk_create(bulk_notifications, batch_size=100)
+            notifications = Notification.objects.bulk_create(
+                bulk_notifications, batch_size=100
+            )
             EmailNotificationLog.objects.bulk_create(
                 bulk_email_logs, batch_size=100, ignore_conflicts=True
             )
+
+            """
+            # Send Mobile Push Notifications for state, assignee, priority,
+            # start_date, target_date, and parent issue changes
+            """
+            if notifications and len(notifications) > 0:
+                serialized_notifications = NotificationSerializer(
+                    notifications, many=True
+                ).data
+
+                # converting the uuid to string
+                for notification in serialized_notifications:
+                    if notification is not None:
+                        for key in ["id", "workspace", "project", "receiver"]:
+                            if key in notification:
+                                notification[key] = str(notification[key])
+                        if "triggered_by_details" in notification:
+                            notification["triggered_by_details"]["id"] = str(
+                                notification["triggered_by_details"]["id"]
+                            )
+                        issue_push_notifications.delay(notification)
         return
     except Exception as e:
         print(e)

@@ -30,6 +30,17 @@ urlpatterns = [
         PageFavoriteViewSet.as_view({"post": "create", "delete": "destroy"}),
         name="user-favorite-pages",
     ),
+    # Lock
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/lock/",
+        PageViewSet.as_view(
+            {
+                "post": "lock",
+                "delete": "unlock",
+            }
+        ),
+        name="project-page-lock-unlock",
+    ),
     # archived pages
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/archive/",
