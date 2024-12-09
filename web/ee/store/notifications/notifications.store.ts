@@ -1,10 +1,9 @@
 import orderBy from "lodash/orderBy";
 import uniqBy from "lodash/uniqBy";
-import update from "lodash/update";
 import { runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { TNotification } from "@plane/types";
-import { ENotificationLoader, ENotificationTab } from "@/constants/notification";
+import { ENotificationLoader } from "@/constants/notification";
 //helpers
 import { convertToEpoch } from "@/helpers/date-time.helper";
 //services
@@ -103,6 +102,8 @@ export class WorkspaceNotificationStore extends WorkspaceNotificationStoreCore i
     } catch (error) {
       console.error("WorkspaceNotificationStore -> markNotificationGroupRead -> error", error);
       throw error;
+    } finally {
+      this.loader = undefined;
     }
   };
 
@@ -132,8 +133,10 @@ export class WorkspaceNotificationStore extends WorkspaceNotificationStoreCore i
         });
       });
     } catch (error) {
-      console.error("WorkspaceNotificationStore -> markNotificationGroupRead -> error", error);
+      console.error("WorkspaceNotificationStore -> markNotificationGroupUnRead -> error", error);
       throw error;
+    } finally {
+      this.loader = undefined;
     }
   };
 
@@ -176,7 +179,7 @@ export class WorkspaceNotificationStore extends WorkspaceNotificationStoreCore i
         notification.mutateNotification({ archived_at: undefined });
       });
     } catch (error) {
-      console.error("WorkspaceNotificationStore -> archiveNotificationGroup -> error", error);
+      console.error("WorkspaceNotificationStore -> unArchiveNotificationGroup -> error", error);
       throw error;
     }
   };
@@ -185,7 +188,7 @@ export class WorkspaceNotificationStore extends WorkspaceNotificationStoreCore i
    * @description Snoozes group of notifications unitl the provided date and time
    * @param notificationGroup : INotification[]
    * @param workspaceSlug : string
-   * @param snoozeTill : Date
+   * @param snoozed_till : Date
    */
   snoozeNotificationGroup = async (notificationGroup: INotification[], workspaceSlug: string, snoozeTill: Date) => {
     try {
@@ -195,7 +198,7 @@ export class WorkspaceNotificationStore extends WorkspaceNotificationStoreCore i
 
       await inboxService.updateNotficationGroup(workspaceSlug, {
         notification_ids,
-        snoozeTill: snoozeTill.toISOString(),
+        snoozed_till: snoozeTill.toISOString(),
       });
 
       runInAction(() => {
@@ -204,7 +207,7 @@ export class WorkspaceNotificationStore extends WorkspaceNotificationStoreCore i
         });
       });
     } catch (error) {
-      console.error("WorkspaceNotificationStore -> unArchiveNotificationGroup -> error", error);
+      console.error("WorkspaceNotificationStore -> snoozeNotificationGroup -> error", error);
       throw error;
     }
   };
@@ -213,7 +216,7 @@ export class WorkspaceNotificationStore extends WorkspaceNotificationStoreCore i
    * @description Un Snoozes group of notifications unitl the provided date and time
    * @param notificationGroup : INotification[]
    * @param workspaceSlug : string
-   * @param snoozeTill : Date
+   * @param snoozed_till : Date
    */
   unSnoozeNotificationGroup = async (notificationGroup: INotification[], workspaceSlug: string) => {
     try {
@@ -223,7 +226,7 @@ export class WorkspaceNotificationStore extends WorkspaceNotificationStoreCore i
 
       await inboxService.updateNotficationGroup(workspaceSlug, {
         notification_ids,
-        snoozeTill: undefined,
+        snoozed_till: undefined,
       });
 
       runInAction(() => {
@@ -232,7 +235,7 @@ export class WorkspaceNotificationStore extends WorkspaceNotificationStoreCore i
         });
       });
     } catch (error) {
-      console.error("WorkspaceNotificationStore -> unArchiveNotificationGroup -> error", error);
+      console.error("WorkspaceNotificationStore -> unSnoozeNotificationGroup -> error", error);
       throw error;
     }
   };

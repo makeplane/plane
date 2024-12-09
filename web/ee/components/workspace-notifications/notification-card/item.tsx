@@ -38,7 +38,9 @@ export const NotificationItem: FC<INotificationItem> = observer((props) => {
   const unreadCount = notificationGroup.filter((e) => !e.read_at).length;
   const projectId = notificationGroup[0].project;
 
-  const authorIds = uniq(notificationGroup.map((e) => e.triggered_by).filter((id) => id != undefined && id != null));
+  const authorIds: string[] = uniq(
+    notificationGroup.map((e) => e.triggered_by).filter((id): id is string => id != undefined && id != null)
+  );
 
   const latestNotificationTime = useMemo(() => {
     const latestNotification = orderBy(notificationGroup, (n) => convertToEpoch(n.created_at), "desc")[0];

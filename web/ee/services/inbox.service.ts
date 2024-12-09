@@ -19,7 +19,7 @@ export class InboxService extends WorkspaceNotificationService {
 
   async updateNotficationGroup(
     workspaceSlug: string,
-    payload: { notification_ids: string[]; snoozeTill: string | undefined }
+    payload: { notification_ids: string[]; snoozed_till: string | undefined }
   ) {
     await this.patch(`/api/workspaces/${workspaceSlug}/inbox/`, payload);
   }
