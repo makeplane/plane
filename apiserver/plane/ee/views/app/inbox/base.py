@@ -60,8 +60,7 @@ class InboxViewSet(BaseViewSet, BasePaginator):
                     return Response(
                         serializer.errors, status=status.HTTP_400_BAD_REQUEST
                     )
-            serializer = NotificationSerializer(notifications, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_204_NO_CONTENT)
         notification = Notification.objects.get(
             workspace__slug=slug, receiver=request.user
         )
@@ -75,7 +74,7 @@ class InboxViewSet(BaseViewSet, BasePaginator):
 
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.INBOX_STACKING)
@@ -93,15 +92,13 @@ class InboxViewSet(BaseViewSet, BasePaginator):
             for notification in notifications:
                 notification.read_at = timezone.now()
                 notification.save()
-            serializer = NotificationSerializer(notifications, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_204_NO_CONTENT)
         notification = Notification.objects.get(
             receiver=request.user, workspace__slug=slug
         )
         notification.read_at = timezone.now()
         notification.save()
-        serializer = NotificationSerializer(notification)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @check_feature_flag(FeatureFlag.INBOX_STACKING)
     @allow_permission(
@@ -118,15 +115,13 @@ class InboxViewSet(BaseViewSet, BasePaginator):
             for notification in notifications:
                 notification.read_at = None
                 notification.save()
-            serializer = NotificationSerializer(notifications, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_204_NO_CONTENT)
         notification = Notification.objects.get(
             receiver=request.user, workspace__slug=slug
         )
         notification.read_at = None
         notification.save()
-        serializer = NotificationSerializer(notification)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @allow_permission(
         allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
@@ -142,15 +137,13 @@ class InboxViewSet(BaseViewSet, BasePaginator):
             for notification in notifications:
                 notification.archived_at = timezone.now()
                 notification.save()
-            serializer = NotificationSerializer(notifications, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_204_NO_CONTENT)
         notification = Notification.objects.get(
             receiver=request.user, workspace__slug=slug
         )
         notification.archived_at = timezone.now()
         notification.save()
-        serializer = NotificationSerializer(notification)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @allow_permission(
         allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
@@ -166,12 +159,10 @@ class InboxViewSet(BaseViewSet, BasePaginator):
             for notification in notifications:
                 notification.archived_at = None
                 notification.save()
-            serializer = NotificationSerializer(notifications, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_204_NO_CONTENT)
         notification = Notification.objects.get(
             receiver=request.user, workspace__slug=slug
         )
         notification.archived_at = None
         notification.save()
-        serializer = NotificationSerializer(notification)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_204_NO_CONTENT)
