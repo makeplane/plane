@@ -50,7 +50,7 @@ export interface IWorkspaceNotificationStore {
   // actions
   setCurrentNotificationTab: (tab: TNotificationTab) => void;
   setCurrentSelectedNotificationId: (notificationId: string | undefined) => void;
-  setUnreadNotificationsCount: (type: "increment" | "decrement") => void;
+  setUnreadNotificationsCount: (type: "increment" | "decrement", newCount?: number) => void;
   getUnreadNotificationsCount: (workspaceSlug: string) => Promise<TUnreadNotificationsCount | undefined>;
   getNotifications: (
     workspaceSlug: string,
@@ -285,16 +285,16 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
    * @param { "increment" | "decrement" } type
    * @returns { void }
    */
-  setUnreadNotificationsCount = (type: "increment" | "decrement"): void => {
+  setUnreadNotificationsCount = (type: "increment" | "decrement", newCount: number = 1): void => {
     switch (this.currentNotificationTab) {
       case ENotificationTab.ALL:
         update(this.unreadNotificationsCount, "total_unread_notifications_count", (count: 0) =>
-          type === "increment" ? count + 1 : count - 1
+          type === "increment" ? count + newCount : count - newCount
         );
         break;
       case ENotificationTab.MENTIONS:
         update(this.unreadNotificationsCount, "mention_unread_notifications_count", (count: 0) =>
-          type === "increment" ? count + 1 : count - 1
+          type === "increment" ? count + newCount : count - newCount
         );
         break;
       default:
