@@ -117,15 +117,17 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
       return navItems;
     };
 
-    return navigationItems(workspaceSlug, projectId);
-  }, [workspaceSlug, projectId, baseNavigation, additionalNavigationItems]);
+    // sort navigation items by sortOrder
+    const sortedNavigationItems = navigationItems(workspaceSlug, projectId).sort(
+      (a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)
+    );
 
-  // sort navigation items by sortOrder
-  const sortedNavigationItems = navigationItemsMemo.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+    return sortedNavigationItems;
+  }, [workspaceSlug, projectId, baseNavigation, additionalNavigationItems]);
 
   return (
     <>
-      {sortedNavigationItems.map((item) => {
+      {navigationItemsMemo.map((item) => {
         if (!item.shouldRender) return;
 
         const hasAccess = allowPermissions(item.access, EUserPermissionsLevel.PROJECT, workspaceSlug, project.id);
