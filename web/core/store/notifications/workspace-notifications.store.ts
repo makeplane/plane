@@ -286,15 +286,21 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
    * @returns { void }
    */
   setUnreadNotificationsCount = (type: "increment" | "decrement", newCount: number = 1): void => {
+    const validCount = Math.max(0, Math.abs(newCount));
+
     switch (this.currentNotificationTab) {
       case ENotificationTab.ALL:
-        update(this.unreadNotificationsCount, "total_unread_notifications_count", (count: 0) =>
-          type === "increment" ? count + newCount : count - newCount
+        update(
+          this.unreadNotificationsCount,
+          "total_unread_notifications_count",
+          (count: number) => +Math.max(0, type === "increment" ? count + validCount : count - validCount)
         );
         break;
       case ENotificationTab.MENTIONS:
-        update(this.unreadNotificationsCount, "mention_unread_notifications_count", (count: 0) =>
-          type === "increment" ? count + newCount : count - newCount
+        update(
+          this.unreadNotificationsCount,
+          "mention_unread_notifications_count",
+          (count: number) => +Math.max(0, type === "increment" ? count + validCount : count - validCount)
         );
         break;
       default:
