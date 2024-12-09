@@ -15,7 +15,7 @@ import {
   LucideIcon,
 } from "lucide-react";
 // document editor
-import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
+import { EditorRefApi } from "@plane/editor";
 // ui
 import { ArchiveIcon, CustomMenu, type ISvgIcons, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 // components
@@ -30,7 +30,7 @@ import { useQueryParams } from "@/hooks/use-query-params";
 import { IPage } from "@/store/pages/page";
 
 type Props = {
-  editorRef: EditorRefApi | EditorReadOnlyRefApi | null;
+  editorRef: EditorRefApi | null;
   handleDuplicatePage: () => void;
   page: IPage;
 };

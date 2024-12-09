@@ -106,6 +106,7 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
 
 // editor props
 export interface IEditorProps {
+  editable: boolean;
   containerClassName?: string;
   displayConfig?: TDisplayConfig;
   disabledExtensions: TExtensions[];

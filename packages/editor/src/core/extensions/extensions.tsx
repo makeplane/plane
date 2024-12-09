@@ -47,10 +47,11 @@ type TArguments = {
   };
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
+  editable?: boolean;
 };
 
 export const CoreEditorExtensions = (args: TArguments): Extensions => {
-  const { disabledExtensions, enableHistory, fileHandler, mentionConfig, placeholder, tabIndex } = args;
+  const { disabledExtensions, enableHistory, fileHandler, mentionConfig, placeholder, tabIndex, editable } = args;
 
   return [
     StarterKit.configure({
@@ -89,7 +90,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       ...(enableHistory ? {} : { history: false }),
     }),
     CustomQuoteExtension,
-    DropHandlerExtension(),
+    DropHandlerExtension,
     CustomHorizontalRule.configure({
       HTMLAttributes: {
         class: "py-4 border-custom-border-400",
@@ -145,9 +146,9 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     TableCell,
     TableRow,
     CustomMention({
-      mentionSuggestions: mentionConfig.mentionSuggestions,
+      mentionSuggestions: editable ? mentionConfig.mentionSuggestions : undefined,
       mentionHighlights: mentionConfig.mentionHighlights,
-      readonly: false,
+      readonly: !editable,
     }),
     Placeholder.configure({
       placeholder: ({ editor, node }) => {

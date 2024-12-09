@@ -129,6 +129,7 @@ export const PageRenderer = (props: IPageRenderer) => {
     [editor, cleanup]
   );
 
+  console.log("rendered");
   return (
     <>
       <div className="frame-renderer flex-grow w-full -mx-5" onMouseOver={handleLinkHover}>
@@ -139,12 +140,12 @@ export const PageRenderer = (props: IPageRenderer) => {
           id={id}
         >
           <EditorContentWrapper editor={editor} id={id} tabIndex={tabIndex} />
-          {editor.isEditable && (
-            <>
-              <BlockMenu editor={editor} />
-              <AIFeaturesMenu menu={aiHandler?.menu} />
-            </>
-          )}
+          {/* {editor.isEditable && ( */}
+          {/*   <> */}
+          {/*     <BlockMenu editor={editor} /> */}
+          {/*     <AIFeaturesMenu menu={aiHandler?.menu} /> */}
+          {/*   </> */}
+          {/* )} */}
         </EditorContainer>
       </div>
       {isOpen && linkViewProps && coordinates && (

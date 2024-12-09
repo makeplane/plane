@@ -21,6 +21,7 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     containerClassName,
     disabledExtensions,
     displayConfig = DEFAULT_DISPLAY_CONFIG,
+    editable,
     editorClassName = "",
     extensions,
     id,
@@ -38,6 +39,7 @@ export const EditorWrapper: React.FC<Props> = (props) => {
   } = props;
 
   const editor = useEditor({
+    editable,
     disabledExtensions,
     editorClassName,
     enableHistory: true,

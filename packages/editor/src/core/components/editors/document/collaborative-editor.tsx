@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 // components
 import { DocumentContentLoader, PageRenderer } from "@/components/editors";
 // constants
@@ -19,6 +19,7 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
     containerClassName,
     disabledExtensions,
     displayConfig = DEFAULT_DISPLAY_CONFIG,
+    editable,
     editorClassName = "",
     embedHandler,
     fileHandler,
@@ -43,23 +44,25 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
   }
 
   // use document editor
-  const { editor, hasServerConnectionFailed, hasServerSynced } = useCollaborativeEditor({
-    onTransaction,
-    disabledExtensions,
-    editorClassName,
-    embedHandler,
-    extensions,
-    fileHandler,
-    forwardedRef,
-    handleEditorReady,
-    id,
-    mentionHandler,
-    placeholder,
-    realtimeConfig,
-    serverHandler,
-    tabIndex,
-    user,
-  });
+  const { editor, hasServerConnectionFailed, hasServerSynced, localProvider, hasIndexedDbSynced } =
+    useCollaborativeEditor({
+      disabledExtensions,
+      editable,
+      editorClassName,
+      embedHandler,
+      extensions,
+      fileHandler,
+      forwardedRef,
+      handleEditorReady,
+      id,
+      mentionHandler,
+      onTransaction,
+      placeholder,
+      realtimeConfig,
+      serverHandler,
+      tabIndex,
+      user,
+    });
 
   const editorContainerClassNames = getEditorClassNames({
     noBorder: true,
@@ -67,9 +70,30 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
     containerClassName,
   });
 
+  const [hasIndexedDbEntry, setHasIndexedDbEntry] = useState(null);
+
+  useEffect(() => {
+    async function documentIndexedDbEntry(dbName: string) {
+      try {
+        const databases = await indexedDB.databases();
+        const hasEntry = databases.some((db) => db.name === dbName);
+        setHasIndexedDbEntry(hasEntry);
+      } catch (error) {
+        console.error("Error checking database existence:", error);
+        return false;
+      }
+    }
+    documentIndexedDbEntry(id);
+  }, [id, localProvider]);
+
   if (!editor) return null;
 
-  if (!hasServerSynced && !hasServerConnectionFailed) return <DocumentContentLoader />;
+  // Wait until we know about IndexedDB status
+  if (hasIndexedDbEntry === null) return null;
+
+  if (hasServerConnectionFailed || (!hasIndexedDbEntry && !hasServerSynced) || !hasIndexedDbSynced) {
+    return <DocumentContentLoader />;
+  }
 
   return (
     <PageRenderer

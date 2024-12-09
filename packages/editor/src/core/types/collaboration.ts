@@ -17,10 +17,12 @@ import {
 export type TServerHandler = {
   onConnect?: () => void;
   onServerError?: () => void;
+  onServerSync?: () => void;
 };
 
 type TCollaborativeEditorHookProps = {
   disabledExtensions: TExtensions[];
+  editable?: boolean;
   editorClassName: string;
   editorProps?: EditorProps;
   extensions?: Extensions;
