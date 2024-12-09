@@ -31,9 +31,9 @@
     "@blueprintjs/core": "^4.16.3",
     "@blueprintjs/popover2": "^1.13.3",
     "@headlessui/react": "^1.7.3",
-    "@popperjs/core": "^2.11.8",
     "@plane/hooks": "*",
     "@plane/utils": "*",
+    "@popperjs/core": "^2.11.8",
     "clsx": "^2.0.0",
     "emoji-picker-react": "^4.5.16",
     "lodash": "^4.17.21",
@@ -46,6 +46,8 @@
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^1.4.0",
+    "@plane/eslint-config": "*",
+    "@plane/typescript-config": "*",
     "@storybook/addon-essentials": "^8.1.1",
     "@storybook/addon-interactions": "^8.1.1",
     "@storybook/addon-links": "^8.1.1",
@@ -59,18 +61,19 @@
     "@types/lodash": "^4.17.6",
     "@types/node": "^20.5.2",
     "@types/react": "^18.3.11",
-    "@types/react-color": "^3.0.9",
+    "@types/react-color": "^3.0.12",
     "@types/react-dom": "^18.2.18",
     "autoprefixer": "^10.4.19",
     "classnames": "^2.3.2",
-    "@plane/eslint-config": "*",
     "postcss-cli": "^11.0.0",
     "postcss-nested": "^6.0.1",
     "storybook": "^8.1.1",
     "tailwind-config-custom": "*",
     "tailwindcss": "^3.4.3",
-    "@plane/typescript-config": "*",
     "tsup": "^7.2.0",
     "typescript": "5.3.3"
+  },
+  "resolutions": {
+    "@types/react": "^18.0.0"
   }
 }
