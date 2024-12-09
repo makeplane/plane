@@ -24,7 +24,7 @@ export const DropdownButton = ({
     >
       <button>
         {children}
-        {showIcon && <ChevronDownIcon />}
+        {showIcon && <ChevronDownIcon data-testid="dropdown-arrow" />}
       </button>
     </RadixDropdownMenu.Trigger>
   );

@@ -5,8 +5,10 @@ import { DropdownItem } from "./DropdownItem";
 
 export const DropdownContent = ({
   children,
+  container,
 }: {
   children?: React.ReactNode;
+  container?: HTMLElement;
 }) => {
   const { items, renderItem, onSelect } = useContext(DropdownMenuContext);
 
@@ -26,7 +28,7 @@ export const DropdownContent = ({
   }, [open]);
 
   return (
-    <RadixDropdownMenu.Portal>
+    <RadixDropdownMenu.Portal container={container}>
       <RadixDropdownMenu.Content className="p-3 rounded-md bg-white border border-border-neutral">
         {children}
         {items &&
