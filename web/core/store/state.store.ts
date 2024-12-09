@@ -1,6 +1,6 @@
 import groupBy from "lodash/groupBy";
 import set from "lodash/set";
-import { makeObservable, observable, computed, action, runInAction } from "mobx";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
 import { IState } from "@plane/types";
@@ -8,6 +8,7 @@ import { IState } from "@plane/types";
 import { convertStringArrayToBooleanObject } from "@/helpers/array.helper";
 import { sortStates } from "@/helpers/state.helper";
 // plane web
+import { syncIssuesWithDeletedStates } from "@/local-db/utils/load-workspace";
 import { ProjectStateService } from "@/plane-web/services/project/project-state.service";
 import { RootStore } from "@/plane-web/store/root.store";
 
@@ -228,6 +229,7 @@ export class StateStore implements IStateStore {
     await this.stateService.deleteState(workspaceSlug, projectId, stateId).then(() => {
       runInAction(() => {
         delete this.stateMap[stateId];
+        syncIssuesWithDeletedStates([stateId]);
       });
     });
   };

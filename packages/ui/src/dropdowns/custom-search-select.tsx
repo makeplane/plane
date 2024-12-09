@@ -4,7 +4,7 @@ import { Combobox } from "@headlessui/react";
 import { Check, ChevronDown, Info, Search } from "lucide-react";
 import { createPortal } from "react-dom";
 // plane helpers
-import { useOutsideClickDetector } from "@plane/helpers";
+import { useOutsideClickDetector } from "@plane/hooks";
 // hooks
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 // helpers
@@ -97,10 +97,11 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
                 <button
                   ref={setReferenceElement}
                   type="button"
-                  className={`flex w-full items-center justify-between gap-1 text-xs ${disabled
-                    ? "cursor-not-allowed text-custom-text-200"
-                    : "cursor-pointer hover:bg-custom-background-80"
-                    }  ${customButtonClassName}`}
+                  className={`flex w-full items-center justify-between gap-1 text-xs ${
+                    disabled
+                      ? "cursor-not-allowed text-custom-text-200"
+                      : "cursor-pointer hover:bg-custom-background-80"
+                  }  ${customButtonClassName}`}
                   onClick={toggleDropdown}
                 >
                   {customButton}
@@ -186,15 +187,13 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
                                   {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
                                   {option.tooltip && (
                                     <>
-                                      {
-                                        typeof option.tooltip === "string" ? (
-                                          <Tooltip tooltipContent={option.tooltip}>
-                                            <Info className="h-3.5 w-3.5 flex-shrink-0 cursor-pointer text-custom-text-200" />
-                                          </Tooltip>
-                                        ) : (
-                                            option.tooltip
-                                        )
-                                      }
+                                      {typeof option.tooltip === "string" ? (
+                                        <Tooltip tooltipContent={option.tooltip}>
+                                          <Info className="h-3.5 w-3.5 flex-shrink-0 cursor-pointer text-custom-text-200" />
+                                        </Tooltip>
+                                      ) : (
+                                        option.tooltip
+                                      )}
                                     </>
                                   )}
                                 </>

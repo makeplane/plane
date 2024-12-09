@@ -34,7 +34,7 @@
     "mobx": "^6.10.0",
     "mobx-react": "^9.1.1",
     "mobx-utils": "^6.0.8",
-    "next": "^14.2.12",
+    "next": "^14.2.20",
     "next-themes": "^0.2.1",
     "nprogress": "^0.2.0",
     "react": "^18.3.1",

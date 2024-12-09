@@ -121,7 +121,10 @@ export const IssueDetailWidgetModals: FC<Props> = observer((props) => {
   };
 
   // helpers
-  const createUpdateModalData = { parent_id: issueCrudOperationState?.create?.parentIssueId };
+  const createUpdateModalData: Partial<TIssue> = {
+    parent_id: issueCrudOperationState?.create?.parentIssueId,
+    project_id: projectId,
+  };
 
   const existingIssuesModalSearchParams = {
     sub_issue: true,
