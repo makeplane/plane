@@ -1,9 +1,15 @@
-import { orderBy, uniqBy } from "lodash";
+import orderBy from "lodash/orderBy";
+import uniqBy from "lodash/uniqBy";
+import update from "lodash/update";
 import { runInAction } from "mobx";
-//store
 import { computedFn } from "mobx-utils";
 import { TNotification } from "@plane/types";
+import { ENotificationLoader, ENotificationTab } from "@/constants/notification";
+//helpers
 import { convertToEpoch } from "@/helpers/date-time.helper";
+//services
+import inboxService from "@/plane-web/services/inbox.service";
+//store
 import { RootStore } from "@/plane-web/store/root.store";
 import { INotification } from "@/store/notifications/notification";
 import {
@@ -49,6 +55,11 @@ export class WorkspaceNotificationStore extends WorkspaceNotificationStoreCore i
     return groupedNotifications;
   });
 
+  /**
+   * @description Sorts issues by latest notificaion and returns the sorted ids.
+   * @param workspaceId: string
+   * @returns string[]
+   */
   notificationIssueIdsByWorkspaceId = computedFn((workspaceId: string) => {
     const groupedNotifications: Record<string, INotification[]> = this.groupedNotificationsByIssueId(workspaceId);
 
@@ -66,16 +77,28 @@ export class WorkspaceNotificationStore extends WorkspaceNotificationStoreCore i
   });
 
   /**
-   *
+   * @description Marks a group of notificaitons read
    * @param notificationGroup : INotification[]
    */
   markNotificationGroupRead = async (notificationGroup: INotification[], workspaceSlug: string) => {
     const unreadNotificationGroup = notificationGroup.filter((n) => !n.read_at);
+    if (unreadNotificationGroup.length === 0) return;
     try {
-      Object.values(unreadNotificationGroup).forEach((notification) => {
-        if (!notification.read_at) {
-          notification.markNotificationAsRead(workspaceSlug);
-        }
+      this.loader = ENotificationLoader.MUTATION_LOADER;
+
+      const notification_ids: string[] = unreadNotificationGroup
+        .filter((n): n is INotification & { id: string } => !!n.id)
+        .map((n) => n.id);
+
+      await inboxService.markNotificationGroupRead(workspaceSlug, {
+        notification_ids,
+      });
+
+      runInAction(() => {
+        this.setUnreadNotificationsCount("decrement", notification_ids.length);
+        Object.values(unreadNotificationGroup).forEach((notification) => {
+          notification.mutateNotification({ read_at: new Date().toISOString() });
+        });
       });
     } catch (error) {
       console.error("WorkspaceNotificationStore -> markNotificationGroupRead -> error", error);
@@ -83,13 +106,30 @@ export class WorkspaceNotificationStore extends WorkspaceNotificationStoreCore i
     }
   };
 
+  /**
+   * @description Marks group of notifications unread
+   * @param notificationGroup : INotification[]
+   * @param workspaceSlug : string
+   */
   markNotificationGroupUnRead = async (notificationGroup: INotification[], workspaceSlug: string) => {
-    const readNotificationsGroup = notificationGroup.filter((n) => n.read_at);
+    const readNotificationGroup = notificationGroup.filter((n) => n.read_at);
+    if (readNotificationGroup.length === 0) return;
     try {
-      Object.values(readNotificationsGroup).forEach((notification) => {
-        if (notification.read_at) {
-          notification.markNotificationAsUnRead(workspaceSlug);
-        }
+      this.loader = ENotificationLoader.MUTATION_LOADER;
+
+      const notification_ids: string[] = readNotificationGroup
+        .filter((n): n is INotification & { id: string } => !!n.id)
+        .map((n) => n.id);
+
+      await inboxService.markNotificationGroupUnRead(workspaceSlug, {
+        notification_ids,
+      });
+
+      runInAction(() => {
+        this.setUnreadNotificationsCount("increment", notification_ids.length);
+        Object.values(readNotificationGroup).forEach((notification) => {
+          notification.mutateNotification({ read_at: undefined });
+        });
       });
     } catch (error) {
       console.error("WorkspaceNotificationStore -> markNotificationGroupRead -> error", error);
@@ -97,10 +137,21 @@ export class WorkspaceNotificationStore extends WorkspaceNotificationStoreCore i
     }
   };
 
+  /**
+   * @description Archives group of notifications
+   * @param notificationGroup : INotification[]
+   * @param workspaceSlug : string
+   */
   archiveNotificationGroup = async (notificationGroup: INotification[], workspaceSlug: string) => {
     try {
+      const notification_ids: string[] = notificationGroup
+        .filter((n): n is INotification & { id: string } => !!n.id)
+        .map((n) => n.id);
+
+      await inboxService.archiveNotificationGroup(workspaceSlug, { notification_ids });
+
       Object.values(notificationGroup).forEach((notification) => {
-        notification.archiveNotification(workspaceSlug);
+        notification.mutateNotification({ archived_at: new Date().toISOString() });
       });
     } catch (error) {
       console.error("WorkspaceNotificationStore -> archiveNotificationGroup -> error", error);
@@ -108,21 +159,49 @@ export class WorkspaceNotificationStore extends WorkspaceNotificationStoreCore i
     }
   };
 
+  /**
+   * @description Un archives group of notifications
+   * @param notificationGroup: INotification[]
+   * @param workspaceSlug: string
+   */
   unArchiveNotificationGroup = async (notificationGroup: INotification[], workspaceSlug: string) => {
     try {
+      const notification_ids: string[] = notificationGroup
+        .filter((n): n is INotification & { id: string } => !!n.id)
+        .map((n) => n.id);
+
+      await inboxService.unArchiveNotificationGroup(workspaceSlug, { notification_ids });
+
       Object.values(notificationGroup).forEach((notification) => {
-        notification.unArchiveNotification(workspaceSlug);
+        notification.mutateNotification({ archived_at: undefined });
       });
     } catch (error) {
-      console.error("WorkspaceNotificationStore -> unArchiveNotificationGroup -> error", error);
+      console.error("WorkspaceNotificationStore -> archiveNotificationGroup -> error", error);
       throw error;
     }
   };
 
+  /**
+   * @description Snoozes group of notifications unitl the provided date and time
+   * @param notificationGroup : INotification[]
+   * @param workspaceSlug : string
+   * @param snoozeTill : Date
+   */
   snoozeNotificationGroup = async (notificationGroup: INotification[], workspaceSlug: string, snoozeTill: Date) => {
     try {
-      Object.values(notificationGroup).forEach((notification) => {
-        notification.snoozeNotification(workspaceSlug, snoozeTill);
+      const notification_ids: string[] = notificationGroup
+        .filter((n): n is INotification & { id: string } => !!n.id)
+        .map((n) => n.id);
+
+      await inboxService.updateNotficationGroup(workspaceSlug, {
+        notification_ids,
+        snoozeTill: snoozeTill.toISOString(),
+      });
+
+      runInAction(() => {
+        Object.values(notificationGroup).forEach((notification) => {
+          notification.mutateNotification({ snoozed_till: snoozeTill.toISOString() });
+        });
       });
     } catch (error) {
       console.error("WorkspaceNotificationStore -> unArchiveNotificationGroup -> error", error);
@@ -130,10 +209,27 @@ export class WorkspaceNotificationStore extends WorkspaceNotificationStoreCore i
     }
   };
 
+  /**
+   * @description Un Snoozes group of notifications unitl the provided date and time
+   * @param notificationGroup : INotification[]
+   * @param workspaceSlug : string
+   * @param snoozeTill : Date
+   */
   unSnoozeNotificationGroup = async (notificationGroup: INotification[], workspaceSlug: string) => {
     try {
-      Object.values(notificationGroup).forEach((notification) => {
-        notification.unSnoozeNotification(workspaceSlug);
+      const notification_ids: string[] = notificationGroup
+        .filter((n): n is INotification & { id: string } => !!n.id)
+        .map((n) => n.id);
+
+      await inboxService.updateNotficationGroup(workspaceSlug, {
+        notification_ids,
+        snoozeTill: undefined,
+      });
+
+      runInAction(() => {
+        Object.values(notificationGroup).forEach((notification) => {
+          notification.mutateNotification({ snoozed_till: undefined });
+        });
       });
     } catch (error) {
       console.error("WorkspaceNotificationStore -> unArchiveNotificationGroup -> error", error);
@@ -141,6 +237,11 @@ export class WorkspaceNotificationStore extends WorkspaceNotificationStoreCore i
     }
   };
 
+  /**
+   * Checks if notification group has an inbox issue
+   * @param notificationGroup : INotification[]
+   * @returns boolean
+   */
   hasInboxIssue = (notificationGroup: INotification[]) => {
     const inbox_issue = notificationGroup.find((notification) => notification.is_inbox_issue);
     if (inbox_issue) return true;
