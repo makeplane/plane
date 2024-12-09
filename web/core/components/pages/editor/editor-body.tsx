@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from "react";
+import debounce from "lodash/debounce";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // document-editor
@@ -13,17 +14,18 @@ import {
   TServerHandler,
 } from "@plane/editor";
 // types
-import { IUserLite } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 // components
 import { Row } from "@plane/ui";
+import { EditorMentionsRoot } from "@/components/editor";
 import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
 // helpers
 import { cn, LIVE_BASE_PATH, LIVE_BASE_URL } from "@/helpers/common.helper";
 import { getEditorFileHandlers, getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
 import { generateRandomColor } from "@/helpers/string.helper";
 // hooks
-import { useMember, useMention, useUser, useWorkspace } from "@/hooks/store";
+import { useUser, useWorkspace } from "@/hooks/store";
+import { useEditorMention } from "@/hooks/use-editor-mention";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web components
 import { EditorAIMenu } from "@/plane-web/components/pages";
@@ -65,24 +67,20 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   // store hooks
   const { data: currentUser } = useUser();
   const { getWorkspaceBySlug } = useWorkspace();
-  const {
-    getUserDetails,
-    project: { getProjectMemberIds },
-  } = useMember();
   // derived values
   const workspaceId = workspaceSlug ? (getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "") : "";
   const pageId = page?.id;
   const pageTitle = page?.name ?? "";
   const { isContentEditable, updateTitle } = page;
-  const projectMemberIds = projectId ? getProjectMemberIds(projectId.toString()) : [];
-  const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
-  // use-mention
-  const { mentionHighlights, mentionSuggestions } = useMention({
-    workspaceSlug: workspaceSlug?.toString() ?? "",
+  // use mention
+  const { fetchMentions } = useEditorMention({
     projectId: projectId?.toString() ?? "",
-    members: projectMemberDetails,
-    user: currentUser ?? undefined,
+    workspaceSlug: workspaceSlug?.toString() ?? "",
   });
+  const debouncedFetchMentions = debounce(async (query: string) => {
+    const res = await fetchMentions(query, "user_mention");
+    return res;
+  }, 200);
   // editor flaggings
   const { documentEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
   // page filters
@@ -215,8 +213,12 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               displayConfig={displayConfig}
               editorClassName="pl-10"
               mentionHandler={{
-                highlights: mentionHighlights,
-                suggestions: mentionSuggestions,
+                searchCallback: async (query) => {
+                  const res = await debouncedFetchMentions(query);
+                  if (!res) throw new Error("Failed in fetching mentions");
+                  return res;
+                },
+                renderComponent: (props) => <EditorMentionsRoot {...props} />,
               }}
               embedHandler={{
                 issue: issueEmbedProps,
@@ -243,7 +245,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               displayConfig={displayConfig}
               editorClassName="pl-10"
               mentionHandler={{
-                highlights: mentionHighlights,
+                renderComponent: (props) => <EditorMentionsRoot {...props} />,
               }}
               embedHandler={{
                 issue: {

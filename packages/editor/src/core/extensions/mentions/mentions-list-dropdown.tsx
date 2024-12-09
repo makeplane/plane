@@ -3,60 +3,48 @@
 import { forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 import { Editor } from "@tiptap/react";
 import { v4 as uuidv4 } from "uuid";
-// ui
-import { Avatar } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common";
 // types
-import { IMentionSuggestion } from "@/types";
+import { TMentionHandler, TMentionSuggestion } from "@/types";
+import { TMentionComponentAttributes } from "./types";
 
-interface MentionListProps {
-  command: (item: {
-    id: string;
-    label: string;
-    entity_name: string;
-    entity_identifier: string;
-    target: string;
-    redirect_uri: string;
-  }) => void;
+type Props = {
+  command: (item: TMentionComponentAttributes) => void;
   query: string;
   editor: Editor;
-  mentionSuggestions: () => Promise<IMentionSuggestion[]>;
-}
+} & Pick<TMentionHandler, "searchCallback">;
 
-export const MentionList = forwardRef((props: MentionListProps, ref) => {
-  const { query, mentionSuggestions } = props;
-  const [items, setItems] = useState<IMentionSuggestion[]>([]);
+export const MentionListDropdown = forwardRef((props: Props, ref) => {
+  const { query, searchCallback } = props;
+  // states
+  const [items, setItems] = useState<TMentionSuggestion[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  // refs
+  const commandListContainer = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchSuggestions = async () => {
       setIsLoading(true);
       try {
-        const suggestions = await mentionSuggestions();
-        const mappedSuggestions: IMentionSuggestion[] = suggestions.map((suggestion): IMentionSuggestion => {
+        const suggestions = await searchCallback?.(query);
+        const mappedSuggestions: TMentionSuggestion[] = suggestions.map((suggestion) => {
           const transactionId = uuidv4();
           return {
             ...suggestion,
             id: transactionId,
           };
         });
-
-        const filteredSuggestions = mappedSuggestions.filter((suggestion) =>
-          suggestion.title.toLowerCase().startsWith(query.toLowerCase())
-        );
-
-        setItems(filteredSuggestions);
+        setItems(mappedSuggestions);
       } catch (error) {
         console.error("Failed to fetch suggestions:", error);
       } finally {
         setIsLoading(false);
       }
     };
-
     fetchSuggestions();
-  }, [query, mentionSuggestions]);
+  }, [query, searchCallback]);
 
   const selectItem = (index: number) => {
     try {
@@ -65,11 +53,8 @@ export const MentionList = forwardRef((props: MentionListProps, ref) => {
       if (item) {
         props.command({
           id: item.id,
-          label: item.title,
           entity_identifier: item.entity_identifier,
           entity_name: item.entity_name,
-          target: "users",
-          redirect_uri: item.redirect_uri,
         });
       }
     } catch (error) {
@@ -77,13 +62,9 @@ export const MentionList = forwardRef((props: MentionListProps, ref) => {
     }
   };
 
-  const commandListContainer = useRef<HTMLDivElement>(null);
-
   useLayoutEffect(() => {
     const container = commandListContainer?.current;
-
     const item = container?.children[selectedIndex] as HTMLElement;
-
     if (item && container) updateScrollView(container, item);
   }, [selectedIndex]);
 
@@ -100,17 +81,6 @@ export const MentionList = forwardRef((props: MentionListProps, ref) => {
       container.scrollTop += bottom - containerHeight - container.scrollTop + 5;
     }
   };
-  const upHandler = () => {
-    setSelectedIndex((selectedIndex + items.length - 1) % items.length);
-  };
-
-  const downHandler = () => {
-    setSelectedIndex((selectedIndex + 1) % items.length);
-  };
-
-  const enterHandler = () => {
-    selectItem(selectedIndex);
-  };
 
   useEffect(() => {
     setSelectedIndex(0);
@@ -119,17 +89,17 @@ export const MentionList = forwardRef((props: MentionListProps, ref) => {
   useImperativeHandle(ref, () => ({
     onKeyDown: ({ event }: { event: KeyboardEvent }) => {
       if (event.key === "ArrowUp") {
-        upHandler();
+        setSelectedIndex((selectedIndex + items.length - 1) % items.length);
         return true;
       }
 
       if (event.key === "ArrowDown") {
-        downHandler();
+        setSelectedIndex((selectedIndex + 1) % items.length);
         return true;
       }
 
       if (event.key === "Enter") {
-        enterHandler();
+        selectItem(selectedIndex);
         return true;
       }
 
@@ -157,7 +127,7 @@ export const MentionList = forwardRef((props: MentionListProps, ref) => {
             )}
             onClick={() => selectItem(index)}
           >
-            <Avatar name={item?.title} src={item?.avatar} />
+            {item.icon}
             <span className="flex-grow truncate">{item.title}</span>
           </button>
         ))
@@ -168,4 +138,4 @@ export const MentionList = forwardRef((props: MentionListProps, ref) => {
   );
 });
 
-MentionList.displayName = "MentionList";
+MentionListDropdown.displayName = "MentionListDropdown";

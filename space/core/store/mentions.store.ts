@@ -6,7 +6,7 @@ import { CoreRootStore } from "@/store/root.store";
 
 export interface IMentionsStore {
   // mentionSuggestions: IMentionSuggestion[];
-  mentionHighlights: IMentionHighlight[];
+  mentionHighlights: IMentionHighlight;
 }
 
 export class MentionsStore implements IMentionsStore {

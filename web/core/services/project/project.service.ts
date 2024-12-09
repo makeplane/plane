@@ -2,6 +2,8 @@ import type {
   GithubRepositoriesResponse,
   ISearchIssueResponse,
   TProjectIssuesSearchParams,
+  TSearchEntities,
+  TSearchResponse,
 } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
@@ -153,6 +155,24 @@ export class ProjectService extends APIService {
     params: TProjectIssuesSearchParams
   ): Promise<ISearchIssueResponse[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/search-issues/`, {
+      params,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async searchEntity<T extends TSearchEntities>(
+    workspaceSlug: string,
+    projectId: string,
+    params: {
+      query_type: T;
+      count?: number;
+      query: string;
+    }
+  ): Promise<TSearchResponse[T]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/search/`, {
       params,
     })
       .then((response) => response?.data)
