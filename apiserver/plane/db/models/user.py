@@ -26,6 +26,14 @@ def get_default_onboarding():
     }
 
 
+def get_mobile_default_onboarding():
+    return {
+        "profile_complete": False,
+        "workspace_create": False,
+        "workspace_join": False,
+    }
+
+
 class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(
         default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True
@@ -178,6 +186,10 @@ class Profile(TimeAuditModel):
     billing_address = models.JSONField(null=True)
     has_billing_address = models.BooleanField(default=False)
     company_name = models.CharField(max_length=255, blank=True)
+    # mobile
+    is_mobile_onboarded = models.BooleanField(default=False)
+    mobile_onboarding_step = models.JSONField(default=get_mobile_default_onboarding)
+    mobile_timezone_auto_set = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Profile"

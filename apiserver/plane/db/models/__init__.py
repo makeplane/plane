@@ -41,6 +41,8 @@ from .issue import (
     IssueSequence,
     IssueSubscriber,
     IssueVote,
+    IssueVersion,
+    IssueDescriptionVersion,
 )
 from .module import Module, ModuleIssue, ModuleLink, ModuleMember, ModuleUserProperties
 from .notification import EmailNotificationLog, Notification, UserNotificationPreference
