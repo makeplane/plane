@@ -20,7 +20,7 @@ import { getNumberCount } from "@/helpers/string.helper";
 // hooks
 import { useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
 
-import { NotificationCardListRoot } from "@/plane-web/components/workspace-notifications/root";
+import { NotificationCardListRoot } from "@/plane-web/components/workspace-notifications";
 
 export const NotificationsSidebarRoot: FC = observer(() => {
   const { workspaceSlug } = useParams();
