@@ -21,7 +21,7 @@ import { getNumberCount } from "@/helpers/string.helper";
 // hooks
 import { useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
 
-export const NotificationsSidebar: FC = observer(() => {
+export const NotificationsSidebarRoot: FC = observer(() => {
   const { workspaceSlug } = useParams();
   // hooks
   const { getWorkspaceBySlug } = useWorkspace();
@@ -65,7 +65,7 @@ export const NotificationsSidebar: FC = observer(() => {
             <div
               key={tab.value}
               className="h-full px-3 relative cursor-pointer"
-              onClick={()=>handleTabClick(tab.value)}
+              onClick={() => handleTabClick(tab.value)}
             >
               <div
                 className={cn(

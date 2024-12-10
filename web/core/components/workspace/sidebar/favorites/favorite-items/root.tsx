@@ -3,7 +3,11 @@
 import React, { FC, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { DropTargetRecord, DragLocationHistory } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
-import { draggable, dropTargetForElements, ElementDragPayload } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import {
+  draggable,
+  dropTargetForElements,
+  ElementDragPayload,
+} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/element/pointer-outside-of-preview";
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
 import { attachInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
@@ -11,7 +15,7 @@ import { attachInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree
 import { observer } from "mobx-react";
 // plane helpers
 import { createRoot } from "react-dom/client";
-import { useOutsideClickDetector } from "@plane/helpers";
+import { useOutsideClickDetector } from "@plane/hooks";
 // ui
 import { IFavorite, InstructionType } from "@plane/types";
 // components
@@ -26,8 +30,7 @@ import {
 import { useAppTheme } from "@/hooks/store";
 import { useFavoriteItemDetails } from "@/hooks/use-favorite-item-details";
 //helpers
-import { getCanDrop, getInstructionFromPayload} from "../favorites.helpers";
-
+import { getCanDrop, getInstructionFromPayload } from "../favorites.helpers";
 
 type Props = {
   isLastChild: boolean;
@@ -35,19 +38,12 @@ type Props = {
   workspaceSlug: string;
   favorite: IFavorite;
   handleRemoveFromFavorites: (favorite: IFavorite) => void;
-  handleDrop: (self: DropTargetRecord,source: ElementDragPayload, location: DragLocationHistory) => void;
+  handleDrop: (self: DropTargetRecord, source: ElementDragPayload, location: DragLocationHistory) => void;
 };
 
 export const FavoriteRoot: FC<Props> = observer((props) => {
   // props
-  const {
-    isLastChild,
-    parentId,
-    workspaceSlug,
-    favorite,
-    handleRemoveFromFavorites,
-    handleDrop,
-  } = props;
+  const { isLastChild, parentId, workspaceSlug, favorite, handleRemoveFromFavorites, handleDrop } = props;
   // store hooks
   const { sidebarCollapsed } = useAppTheme();
   const { itemLink, itemIcon, itemTitle } = useFavoriteItemDetails(workspaceSlug, favorite);
@@ -61,7 +57,6 @@ export const FavoriteRoot: FC<Props> = observer((props) => {
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
 
   const handleQuickAction = (value: boolean) => setIsMenuActive(value);
-
 
   // drag and drop
   useEffect(() => {
@@ -107,21 +102,20 @@ export const FavoriteRoot: FC<Props> = observer((props) => {
         onDragStart: () => {
           setIsDragging(true);
         },
-        getData: ({ input, element }) =>{
-
-          const blockedStates: InstructionType[] = ['make-child'];
-          if(!isLastChild){
-            blockedStates.push('reorder-below');
+        getData: ({ input, element }) => {
+          const blockedStates: InstructionType[] = ["make-child"];
+          if (!isLastChild) {
+            blockedStates.push("reorder-below");
           }
 
-          return attachInstruction(initialData,{
+          return attachInstruction(initialData, {
             input,
             element,
             currentLevel: 1,
             indentPerLevel: 0,
-            mode: isLastChild ? 'last-in-group' : 'standard',
-            block: blockedStates
-          })
+            mode: isLastChild ? "last-in-group" : "standard",
+            block: blockedStates,
+          });
         },
         onDrag: ({ self, source, location }) => {
           const instruction = getInstructionFromPayload(self, source, location);
@@ -130,9 +124,9 @@ export const FavoriteRoot: FC<Props> = observer((props) => {
         onDragLeave: () => {
           setInstruction(undefined);
         },
-        onDrop: ({  self, source, location }) => {
+        onDrop: ({ self, source, location }) => {
           setInstruction(undefined);
-          handleDrop(self,source,location)
+          handleDrop(self, source, location);
         },
       })
     );
@@ -143,7 +137,7 @@ export const FavoriteRoot: FC<Props> = observer((props) => {
 
   return (
     <>
-      <DropIndicator isVisible={instruction === "reorder-above"}/>
+      <DropIndicator isVisible={instruction === "reorder-above"} />
       <FavoriteItemWrapper elementRef={elementRef} isMenuActive={isMenuActive} sidebarCollapsed={sidebarCollapsed}>
         {!sidebarCollapsed && <FavoriteItemDragHandle isDragging={isDragging} sort_order={favorite.sort_order} />}
         <FavoriteItemTitle href={itemLink} icon={itemIcon} title={itemTitle} isSidebarCollapsed={!!sidebarCollapsed} />
@@ -157,7 +151,7 @@ export const FavoriteRoot: FC<Props> = observer((props) => {
           />
         )}
       </FavoriteItemWrapper>
-      { isLastChild && <DropIndicator isVisible={instruction === "reorder-below"} />}
+      {isLastChild && <DropIndicator isVisible={instruction === "reorder-below"} />}
     </>
   );
 });

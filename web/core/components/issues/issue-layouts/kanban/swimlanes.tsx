@@ -169,6 +169,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                     count={issueCount}
                     collapsedGroups={collapsedGroups}
                     handleCollapsedGroups={handleCollapsedGroups}
+                    sub_group_by={sub_group_by}
                   />
                 </Row>
               </div>

@@ -73,6 +73,16 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       codeBlock: false,
       horizontalRule: false,
       blockquote: false,
+      paragraph: {
+        HTMLAttributes: {
+          class: "editor-paragraph-block",
+        },
+      },
+      heading: {
+        HTMLAttributes: {
+          class: "editor-heading-block",
+        },
+      },
       dropcursor: {
         class: "text-custom-text-300",
       },

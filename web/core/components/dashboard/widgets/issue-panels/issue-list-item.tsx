@@ -57,7 +57,7 @@ export const AssignedUpcomingIssueListItem: React.FC<IssueListItemProps> = obser
         )}
         <h6 className="flex-grow truncate text-sm">{issueDetails.name}</h6>
       </div>
-      <div className="flex justify-center col-span-1">
+      <div className="flex justify-center col-span-1 items-center">
         <PriorityIcon priority={issueDetails.priority} size={12} withContainer />
       </div>
       <div className="text-center text-xs col-span-2">
@@ -117,7 +117,7 @@ export const AssignedOverdueIssueListItem: React.FC<IssueListItemProps> = observ
         )}
         <h6 className="flex-grow truncate text-sm">{issueDetails.name}</h6>
       </div>
-      <div className="flex justify-center col-span-1">
+      <div className="flex justify-center col-span-1 items-center">
         <PriorityIcon priority={issueDetails.priority} size={12} withContainer />
       </div>
       <div className="text-center text-xs col-span-2">
@@ -170,7 +170,7 @@ export const AssignedCompletedIssueListItem: React.FC<IssueListItemProps> = obse
         )}
         <h6 className="flex-grow truncate text-sm">{issueDetails.name}</h6>
       </div>
-      <div className="flex justify-center col-span-1">
+      <div className="flex justify-center col-span-1 items-center">
         <PriorityIcon priority={issueDetails.priority} size={12} withContainer />
       </div>
     </ControlLink>
@@ -209,7 +209,7 @@ export const CreatedUpcomingIssueListItem: React.FC<IssueListItemProps> = observ
         )}
         <h6 className="flex-grow truncate text-sm">{issue.name}</h6>
       </div>
-      <div className="flex justify-center col-span-1">
+      <div className="flex justify-center col-span-1 items-center">
         <PriorityIcon priority={issue.priority} size={12} withContainer />
       </div>
       <div className="text-center text-xs col-span-2">
@@ -269,7 +269,7 @@ export const CreatedOverdueIssueListItem: React.FC<IssueListItemProps> = observe
         )}
         <h6 className="flex-grow truncate text-sm">{issue.name}</h6>
       </div>
-      <div className="flex justify-center col-span-1">
+      <div className="flex justify-center col-span-1 items-center">
         <PriorityIcon priority={issue.priority} size={12} withContainer />
       </div>
       <div className="text-center text-xs col-span-2">
@@ -327,7 +327,7 @@ export const CreatedCompletedIssueListItem: React.FC<IssueListItemProps> = obser
         )}
         <h6 className="flex-grow truncate text-sm">{issue.name}</h6>
       </div>
-      <div className="flex justify-center col-span-1">
+      <div className="flex justify-center col-span-1 items-center">
         <PriorityIcon priority={issue.priority} size={12} withContainer />
       </div>
       <div className="flex justify-center text-xs col-span-2">
