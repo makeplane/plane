@@ -2,8 +2,8 @@
 from django.core.management.base import BaseCommand
 
 # Module imports
-from plane.bgtasks.issue_version_task import (
-    schedule_issue_description_management_command_task,
+from plane.bgtasks.issue_description_version_sync import (
+    schedule_issue_description_version,
 )
 
 
@@ -14,7 +14,7 @@ class Command(BaseCommand):
         batch_size = input("Enter the batch size: ")
         batch_countdown = input("Enter the batch countdown: ")
 
-        schedule_issue_description_management_command_task.delay(
+        schedule_issue_description_version.delay(
             batch_size=int(batch_size), countdown=int(batch_countdown)
         )
 
