@@ -1,42 +1,84 @@
 "use client";
 
-import { forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 import { Editor } from "@tiptap/react";
 import { v4 as uuidv4 } from "uuid";
 // helpers
 import { cn } from "@/helpers/common";
+import { DROPDOWN_NAVIGATION_KEYS, getNextValidIndex } from "@/helpers/tippy";
 // types
-import { TMentionHandler, TMentionSuggestion } from "@/types";
-import { TMentionComponentAttributes } from "./types";
+import { TMentionHandler, TMentionSection, TMentionSuggestion } from "@/types";
 
-type Props = {
-  command: (item: TMentionComponentAttributes) => void;
+export type MentionsListDropdownProps = {
+  command: (item: TMentionSuggestion) => void;
   query: string;
   editor: Editor;
 } & Pick<TMentionHandler, "searchCallback">;
 
-export const MentionListDropdown = forwardRef((props: Props, ref) => {
-  const { query, searchCallback } = props;
+export const MentionsListDropdown = forwardRef((props: MentionsListDropdownProps, ref) => {
+  const { command, query, searchCallback } = props;
   // states
-  const [items, setItems] = useState<TMentionSuggestion[]>([]);
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [sections, setSections] = useState<TMentionSection[]>([]);
+  const [selectedIndex, setSelectedIndex] = useState({
+    section: 0,
+    item: 0,
+  });
   const [isLoading, setIsLoading] = useState(false);
   // refs
   const commandListContainer = useRef<HTMLDivElement>(null);
 
+  const selectItem = useCallback(
+    (sectionIndex: number, itemIndex: number) => {
+      try {
+        const item = sections?.[sectionIndex]?.items?.[itemIndex];
+        const transactionId = uuidv4();
+        if (item) {
+          command({
+            ...item,
+            id: transactionId,
+          });
+        }
+      } catch (error) {
+        console.error("Error selecting mention item:", error);
+      }
+    },
+    [command, sections]
+  );
+
+  useImperativeHandle(ref, () => ({
+    onKeyDown: ({ event }: { event: KeyboardEvent }) => {
+      if (!DROPDOWN_NAVIGATION_KEYS.includes(event.key)) return;
+      event.preventDefault();
+
+      if (event.key === "Enter") {
+        selectItem(selectedIndex.section, selectedIndex.item);
+        return;
+      }
+
+      const newIndex = getNextValidIndex({
+        event,
+        sections,
+        selectedIndex,
+      });
+      setSelectedIndex(newIndex);
+    },
+  }));
+
+  // initialize the select index to 0 by default
+  useEffect(() => {
+    setSelectedIndex({
+      section: 0,
+      item: 0,
+    });
+  }, [sections]);
+
+  // fetch mention sections based on query
   useEffect(() => {
     const fetchSuggestions = async () => {
       setIsLoading(true);
       try {
-        const suggestions = await searchCallback?.(query);
-        const mappedSuggestions: TMentionSuggestion[] = suggestions.map((suggestion) => {
-          const transactionId = uuidv4();
-          return {
-            ...suggestion,
-            id: transactionId,
-          };
-        });
-        setItems(mappedSuggestions);
+        const sectionsResponse = await searchCallback?.(query);
+        setSections(sectionsResponse);
       } catch (error) {
         console.error("Failed to fetch suggestions:", error);
       } finally {
@@ -46,96 +88,75 @@ export const MentionListDropdown = forwardRef((props: Props, ref) => {
     fetchSuggestions();
   }, [query, searchCallback]);
 
-  const selectItem = (index: number) => {
-    try {
-      const item = items[index];
-
-      if (item) {
-        props.command({
-          id: item.id,
-          entity_identifier: item.entity_identifier,
-          entity_name: item.entity_name,
-        });
-      }
-    } catch (error) {
-      console.error("Error selecting item:", error);
-    }
-  };
-
+  // scroll to the dropdown item when navigating via keyboard
   useLayoutEffect(() => {
     const container = commandListContainer?.current;
-    const item = container?.children[selectedIndex] as HTMLElement;
-    if (item && container) updateScrollView(container, item);
-  }, [selectedIndex]);
+    if (!container) return;
 
-  const updateScrollView = (container: HTMLElement, item: HTMLElement) => {
-    const containerHeight = container.offsetHeight;
-    const itemHeight = item ? item.offsetHeight : 0;
+    const item = container.querySelector(`#mention-item-${selectedIndex.section}-${selectedIndex.item}`) as HTMLElement;
+    if (item) {
+      const containerRect = container.getBoundingClientRect();
+      const itemRect = item.getBoundingClientRect();
 
-    const top = item.offsetTop;
-    const bottom = top + itemHeight;
+      const isItemInView = itemRect.top >= containerRect.top && itemRect.bottom <= containerRect.bottom;
 
-    if (top < container.scrollTop) {
-      container.scrollTop -= container.scrollTop - top + 5;
-    } else if (bottom > containerHeight + container.scrollTop) {
-      container.scrollTop += bottom - containerHeight - container.scrollTop + 5;
+      if (!isItemInView) {
+        item.scrollIntoView({ block: "nearest" });
+      }
     }
-  };
-
-  useEffect(() => {
-    setSelectedIndex(0);
-  }, [items]);
-
-  useImperativeHandle(ref, () => ({
-    onKeyDown: ({ event }: { event: KeyboardEvent }) => {
-      if (event.key === "ArrowUp") {
-        setSelectedIndex((selectedIndex + items.length - 1) % items.length);
-        return true;
-      }
-
-      if (event.key === "ArrowDown") {
-        setSelectedIndex((selectedIndex + 1) % items.length);
-        return true;
-      }
-
-      if (event.key === "Enter") {
-        selectItem(selectedIndex);
-        return true;
-      }
-
-      return false;
-    },
-  }));
+  }, [selectedIndex]);
 
   return (
     <div
       ref={commandListContainer}
-      className="mentions max-h-48 min-w-[12rem] rounded-md bg-custom-background-100 border-[0.5px] border-custom-border-300 px-2 py-2.5 text-xs shadow-custom-shadow-rg overflow-y-scroll"
+      className="z-10 max-h-[90vh] w-[14rem] overflow-y-auto rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg space-y-2"
     >
       {isLoading ? (
-        <div className="text-center text-custom-text-400">Loading...</div>
-      ) : items.length ? (
-        items.map((item, index) => (
-          <button
-            key={item.id}
-            type="button"
-            className={cn(
-              "w-full text-left flex cursor-pointer items-center gap-2 rounded px-1 py-1.5 hover:bg-custom-background-80 text-custom-text-200",
-              {
-                "bg-custom-background-80": index === selectedIndex,
-              }
-            )}
-            onClick={() => selectItem(index)}
-          >
-            {item.icon}
-            <span className="flex-grow truncate">{item.title}</span>
-          </button>
+        <div className="text-center text-sm text-custom-text-400">Loading...</div>
+      ) : sections.length ? (
+        sections.map((section, sectionIndex) => (
+          <div key={section.key} className="space-y-2">
+            {section.title && <h6 className="text-xs font-semibold text-custom-text-300">{section.title}</h6>}
+            {section.items.map((item, itemIndex) => {
+              const isSelected = sectionIndex === selectedIndex.section && itemIndex === selectedIndex.item;
+
+              return (
+                <button
+                  key={item.id}
+                  id={`mention-item-${sectionIndex}-${itemIndex}`}
+                  type="button"
+                  className={cn(
+                    "flex items-center gap-2 w-full rounded px-1 py-1.5 text-xs text-left truncate text-custom-text-200",
+                    {
+                      "bg-custom-background-80": isSelected,
+                    }
+                  )}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    selectItem(sectionIndex, itemIndex);
+                  }}
+                  onMouseEnter={() =>
+                    setSelectedIndex({
+                      section: sectionIndex,
+                      item: itemIndex,
+                    })
+                  }
+                >
+                  <span className="size-5 grid place-items-center flex-shrink-0">{item.icon}</span>
+                  {item.subTitle && (
+                    <h5 className="whitespace-nowrap text-xs text-custom-text-300 flex-shrink-0">{item.subTitle}</h5>
+                  )}
+                  <p className="flex-grow truncate">{item.title}</p>
+                </button>
+              );
+            })}
+          </div>
         ))
       ) : (
-        <div className="text-center text-custom-text-400">No results</div>
+        <div className="text-center text-sm text-custom-text-400">No results</div>
       )}
     </div>
   );
 });
 
-MentionListDropdown.displayName = "MentionListDropdown";
+MentionsListDropdown.displayName = "MentionsListDropdown";

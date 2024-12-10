@@ -2,25 +2,26 @@ import { Editor } from "@tiptap/core";
 import { SuggestionOptions } from "@tiptap/suggestion";
 import { ReactRenderer } from "@tiptap/react";
 import tippy from "tippy.js";
-// local components
-import { MentionListDropdown } from "./mentions-list-dropdown";
+// helpers
+import { CommandListInstance } from "@/helpers/tippy";
 // types
 import { TMentionHandler } from "@/types";
+// local components
+import { MentionsListDropdown, MentionsListDropdownProps } from "./mentions-list-dropdown";
 
 export const renderMentionsDropdown =
   (props: Pick<TMentionHandler, "searchCallback">): SuggestionOptions["render"] =>
   // @ts-expect-error - Tiptap types are incorrect
   () => {
     const { searchCallback } = props;
-
-    let component: ReactRenderer | null = null;
+    let component: ReactRenderer<CommandListInstance, MentionsListDropdownProps> | null = null;
     let popup: any | null = null;
 
     return {
       onStart: (props: { editor: Editor; clientRect: DOMRect }) => {
         if (!searchCallback) return;
         if (!props.clientRect) return;
-        component = new ReactRenderer(MentionListDropdown, {
+        component = new ReactRenderer<CommandListInstance, MentionsListDropdownProps>(MentionsListDropdown, {
           props: {
             ...props,
             searchCallback,
@@ -51,11 +52,7 @@ export const renderMentionsDropdown =
           popup?.[0]?.hide();
           return true;
         }
-        const navigationKeys = ["ArrowUp", "ArrowDown", "Enter"];
-        if (navigationKeys.includes(props.event.key)) {
-          // @ts-expect-error - Tippy types are incorrect
-          component?.ref?.onKeyDown(props);
-          event?.stopPropagation();
+        if (component?.ref?.onKeyDown(props)) {
           return true;
         }
         return false;

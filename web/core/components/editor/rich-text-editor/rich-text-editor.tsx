@@ -1,5 +1,4 @@
 import React, { forwardRef } from "react";
-import debounce from "lodash/debounce";
 // editor
 import { EditorRefApi, IRichTextEditor, RichTextEditorWithRef } from "@plane/editor";
 // components
@@ -30,10 +29,6 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
     projectId: projectId?.toString() ?? "",
     workspaceSlug: workspaceSlug?.toString() ?? "",
   });
-  const debouncedFetchMentions = debounce(async (query: string) => {
-    const res = await fetchMentions(query, "user_mention");
-    return res;
-  }, 200);
   // file size
   const { maxFileSize } = useFileSize();
 
@@ -50,7 +45,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
       })}
       mentionHandler={{
         searchCallback: async (query) => {
-          const res = await debouncedFetchMentions(query);
+          const res = await fetchMentions(query);
           if (!res) throw new Error("Failed in fetching mentions");
           return res;
         },

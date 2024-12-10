@@ -1,5 +1,4 @@
 import { useCallback, useMemo } from "react";
-import debounce from "lodash/debounce";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // document-editor
@@ -77,10 +76,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     projectId: projectId?.toString() ?? "",
     workspaceSlug: workspaceSlug?.toString() ?? "",
   });
-  const debouncedFetchMentions = debounce(async (query: string) => {
-    const res = await fetchMentions(query, "user_mention");
-    return res;
-  }, 200);
   // editor flaggings
   const { documentEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
   // page filters
@@ -214,7 +209,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               editorClassName="pl-10"
               mentionHandler={{
                 searchCallback: async (query) => {
-                  const res = await debouncedFetchMentions(query);
+                  const res = await fetchMentions(query);
                   if (!res) throw new Error("Failed in fetching mentions");
                   return res;
                 },

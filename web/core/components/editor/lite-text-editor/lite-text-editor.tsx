@@ -1,5 +1,4 @@
 import React from "react";
-import debounce from "lodash/debounce";
 // editor
 import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef } from "@plane/editor";
 // components
@@ -51,10 +50,6 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     projectId: projectId?.toString() ?? "",
     workspaceSlug: workspaceSlug?.toString() ?? "",
   });
-  const debouncedFetchMentions = debounce(async (query: string) => {
-    const res = await fetchMentions(query, "user_mention");
-    return res;
-  }, 200);
   // file size
   const { maxFileSize } = useFileSize();
   function isMutableRefObject<T>(ref: React.ForwardedRef<T>): ref is React.MutableRefObject<T | null> {
@@ -78,7 +73,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
         })}
         mentionHandler={{
           searchCallback: async (query) => {
-            const res = await debouncedFetchMentions(query);
+            const res = await fetchMentions(query);
             if (!res) throw new Error("Failed in fetching mentions");
             return res;
           },

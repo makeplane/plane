@@ -163,17 +163,20 @@ export class ProjectService extends APIService {
       });
   }
 
-  async searchEntity<T extends TSearchEntities>(
+  async searchEntity(
     workspaceSlug: string,
     projectId: string,
     params: {
-      query_type: T;
+      query_type: TSearchEntities[];
       count?: number;
       query: string;
     }
-  ): Promise<TSearchResponse[T]> {
+  ): Promise<TSearchResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/search/`, {
-      params,
+      params: {
+        ...params,
+        query_type: params.query_type.join(","),
+      },
     })
       .then((response) => response?.data)
       .catch((error) => {

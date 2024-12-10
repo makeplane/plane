@@ -10,6 +10,12 @@ export type TMentionSuggestion = {
   title: string;
 };
 
+export type TMentionSection = {
+  key: string;
+  title?: string;
+  items: TMentionSuggestion[];
+};
+
 export type TMentionComponentProps = Pick<TMentionSuggestion, "entity_identifier" | "entity_name">;
 
 export type TReadOnlyMentionHandler = {
@@ -17,5 +23,5 @@ export type TReadOnlyMentionHandler = {
 };
 
 export type TMentionHandler = TReadOnlyMentionHandler & {
-  searchCallback?: (query: string) => Promise<TMentionSuggestion[]>;
+  searchCallback?: (query: string) => Promise<TMentionSection[]>;
 };

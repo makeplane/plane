@@ -38,6 +38,7 @@ export type TCycleSearchResponse = {
   id: ICycle["id"];
   project_id: ICycle["project_id"];
   project__identifier: IProject["identifier"];
+  status: ICycle["status"];
   workspace__slug: IWorkspace["slug"];
 };
 
@@ -59,17 +60,10 @@ export type TPageSearchResponse = {
 };
 
 export type TSearchResponse = {
-  [K in TSearchEntities]: K extends "user_mention"
-    ? TUserSearchResponse[]
-    : K extends "issue"
-      ? TIssueSearchResponse[]
-      : K extends "project"
-        ? TProjectSearchResponse[]
-        : K extends "cycle"
-          ? TCycleSearchResponse[]
-          : K extends "module"
-            ? TModuleSearchResponse[]
-            : K extends "page"
-              ? TPageSearchResponse[]
-              : never;
+  cycle?: TCycleSearchResponse[];
+  issue?: TIssueSearchResponse[];
+  module?: TModuleSearchResponse[];
+  page?: TPageSearchResponse[];
+  project?: TProjectSearchResponse[];
+  user_mention?: TUserSearchResponse[];
 };
