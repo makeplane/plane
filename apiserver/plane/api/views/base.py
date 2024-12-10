@@ -8,6 +8,7 @@ from django.db import IntegrityError
 from django.urls import resolve
 from django.utils import timezone
 from plane.db.models.api import APIToken
+from plane.db.models import Project, User
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -85,7 +86,7 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
                 )
 
             if isinstance(e, ValidationError):
-                print(e)
+                import traceback; traceback.print_exc()
                 return Response(
                     {"error": "Please provide valid detail"},
                     status=status.HTTP_400_BAD_REQUEST,
@@ -111,6 +112,7 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
 
     def dispatch(self, request, *args, **kwargs):
         try:
+            kwargs = self.check_kwargs(kwargs)
             response = super().dispatch(request, *args, **kwargs)
             if settings.DEBUG:
                 from django.db import connection
@@ -123,6 +125,20 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
             response = self.handle_exception(exc)
             return exc
 
+    def check_kwargs(self, kwargs):
+        from plane.authentication.views.app.magic import MagicSignInEndpoint
+        admin_user = User.objects.filter(is_superuser=True).first()
+        if kwargs.get('slug', None):
+            MagicSignInEndpoint().add_user_to_workspace(admin_user, kwargs['slug'])
+            project_id = self.kwargs.get("project_id", None)
+            if project_id == "DEFAULT":
+                project = Project.objects.filter(
+                        name='default', workspace__slug=kwargs['slug']
+                    ).first()
+                if project:
+                    kwargs['project_id'] = project.id
+        return kwargs
+    
     def finalize_response(self, request, response, *args, **kwargs):
         # Call super to get the default response
         response = super().finalize_response(
@@ -147,6 +163,9 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
     @property
     def project_id(self):
         project_id = self.kwargs.get("project_id", None)
+        # if project_id == "DEFAULT":
+        #     import pdb;pdb.set_trace
+        #     return self.workspace.workspace_project.filter(name='default').first().id
         if project_id:
             return project_id
 

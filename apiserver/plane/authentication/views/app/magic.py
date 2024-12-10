@@ -63,6 +63,11 @@ class MagicGenerateEndpoint(BaseAPIView):
 
         origin = request.META.get("HTTP_ORIGIN", "/")
         email = request.data.get("email", False)
+        if not email:
+            username = request.data.get("username", False)
+            if username:
+                email = username + "@plane-shipsy.com"
+        print(email)
         try:
             # Clean up the email
             email = email.strip().lower()
@@ -105,15 +110,18 @@ class MagicSignInEndpoint(APIView):
             workspace_member = WorkspaceMember.objects.create(
                 workspace=workspace, member=user, is_active=True
             )
-            user.profile.last_workspace_id = workspace.id
-            user.profile.onboarding_step.update({
-                'profile_complete': True,
-                'workspace_join': True
-            })
-            user.profile.is_tour_completed = True
-            user.profile.is_onboarded = True
-            user.profile.company_name = workspace.name
-            user.profile.save()
+            try:
+                user.profile.last_workspace_id = workspace.id
+                user.profile.onboarding_step.update({
+                    'profile_complete': True,
+                    'workspace_join': True
+                })
+                user.profile.is_tour_completed = True
+                user.profile.is_onboarded = True
+                user.profile.company_name = workspace.name
+                user.profile.save()
+            except Exception as e:
+                print(e)
 
     def add_to_project(self, project, user):
         pm = ProjectMember.objects.filter(
@@ -165,7 +173,7 @@ class MagicSignInEndpoint(APIView):
         prSer.save()
         create_project(
             workspace.slug,
-            self.request.META.get("HTTP_ORIGIN"), 
+            '', 
             user, 
             prSer,
             prSer.validated_data

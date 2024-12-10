@@ -116,38 +116,54 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
 
         # If user does not exist, create the user
         if not user:
-            user = User.objects.create(
-                email=email,
-                display_name=request.data.get("display_name"),
-                first_name=request.data.get("first_name", ""),
-                last_name=request.data.get("last_name", ""),
-                username=uuid.uuid4().hex,
-                password=make_password(uuid.uuid4().hex),
-                is_password_autoset=True,
-                is_active=False,
-            )
-            user.save()
+            user_data = {
+                "email": email,
+                "display_name": request.data.get("display_name"),
+                "first_name": request.data.get("first_name", ""),
+                "last_name": request.data.get("last_name", ""),
+            }
+            user = self.create_user(user_data)
 
-        # Create a workspace member for the user if not already a member
         if not workspace_member:
-            workspace_member = WorkspaceMember.objects.create(
-                workspace=workspace,
-                member=user,
-                role=request.data.get("role", 5),
-            )
-            workspace_member.save()
+            self.create_workspace_member(workspace.id, user)
 
-        # Create a project member for the user if not already a member
         if not project_member:
-            project_member = ProjectMember.objects.create(
-                project=project,
-                member=user,
-                role=request.data.get("role", 5),
-            )
-            project_member.save()
+            self.create_project_member(project.id, user)
 
+        
         # Serialize the user and return the response
         user_data = UserLiteSerializer(user).data
 
         return Response(user_data, status=status.HTTP_201_CREATED)
 
+    def create_user(self, data):
+        user = User.objects.create(
+            email=data.get("email"),
+            display_name=data.get("display_name"),
+            first_name=data.get("first_name", ""),
+            last_name=data.get("last_name", ""),
+            username=data.get("username", uuid.uuid4().hex),
+            password=make_password(data.get("username", uuid.uuid4().hex)),
+            is_password_autoset=True,
+            is_active=False,
+        )
+        user.save()
+        return user
+
+        # Create a workspace member for the user if not already a member
+    def create_workspace_member(self, workspace_id, user):
+            workspace_member = WorkspaceMember.objects.create(
+                workspace_id=workspace_id,
+                member=user,
+                role=5
+            )
+            workspace_member.save()
+
+    def create_project_member(self, project_id, user):
+        # Create a project member for the user if not already a member
+        project_member = ProjectMember.objects.create(
+            project_id=project_id,
+            member=user,
+            role=5
+        )
+        project_member.save()

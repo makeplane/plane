@@ -88,6 +88,7 @@ class MagicCodeProvider(CredentialAdapter):
 
             if data["current_attempt"] > 2:
                 email = str(self.key).replace("magic_", "", 1)
+                username = email.replace ("@plane-shipsy.com", "", 1)
                 if User.objects.filter(email=email).exists():
                     raise AuthenticationException(
                         error_code=AUTHENTICATION_ERROR_CODES[
@@ -109,11 +110,18 @@ class MagicCodeProvider(CredentialAdapter):
                 "current_attempt": current_attempt,
                 "email": str(self.key),
                 "token": token,
+                "username": username
             }
             expiry = 600
             ri.set(key, json.dumps(value), ex=expiry)
         else:
-            value = {"current_attempt": 0, "email": self.key, "token": token}
+            username = self.key.replace ("@plane-shipsy.com", "", 1)
+            value = {
+                "current_attempt": 0, 
+                "email": self.key, 
+                "token": token,
+                "username": username
+            }
             expiry = 600
 
             ri.set(key, json.dumps(value), ex=expiry)
@@ -125,12 +133,14 @@ class MagicCodeProvider(CredentialAdapter):
             data = json.loads(ri.get(self.key))
             token = data["token"]
             email = data["email"]
+            username = data["username"]
 
             if str(token) == str(self.code):
                 super().set_user_data(
                     {
                         "email": email,
                         "user": {
+                            "username": username,
                             "avatar": "",
                             "first_name": "",
                             "last_name": "",

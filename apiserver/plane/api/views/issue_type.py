@@ -72,7 +72,6 @@ class IssueTypeAPIEndpoint(BaseAPIView):
                 fields=self.fields,
                 expand=self.expand,
             )
-            import pdb;pdb.set_trace()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return self.paginate(
             request=request,

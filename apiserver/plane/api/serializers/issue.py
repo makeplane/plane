@@ -1,6 +1,7 @@
 # Django imports
 from django.utils import timezone
 from lxml import html
+import uuid
 
 #  Third party imports
 from rest_framework import serializers
@@ -31,6 +32,13 @@ from .user import UserLiteSerializer
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 
+
+def is_uuid(value):
+    try:
+        uuid_obj = uuid.UUID(str(value))  # Convert to string in case it's not already
+        return True
+    except (ValueError, TypeError):
+        return False
 
 class IssueCustomPropertySerializer(BaseSerializer):
     class Meta:
@@ -68,6 +76,8 @@ class IssueSerializer(BaseSerializer):
         allow_null=True,
     )
     custom_properties = IssueCustomPropertySerializer(many=True, required=False)
+
+    created_by = serializers.CharField(required=False)
 
     class Meta:
         model = Issue
@@ -141,7 +151,25 @@ class IssueSerializer(BaseSerializer):
                 "Parent is not valid issue_id please pass a valid issue_id"
             )
 
+        if not is_uuid(data['created_by']):
+            if User.objects.filter(username=data['created_by']).exists():
+                data['created_by']= User.objects.get(username=data['created_by'])
+            else:
+                user_data = {
+                    "email": data['created_by'] + '@plane-shipsy.com',
+                    "username": data['created_by'],
+                }
+                from plane.api.views import ProjectMemberAPIEndpoint
+                PMObj = ProjectMemberAPIEndpoint()
+                user = PMObj.create_user(user_data)
+                PMObj.create_workspace_member(self.context.get("workspace_id") ,user_data)
+                PMObj.create_project_member(self.context.get("project_id"), user_data)
+                data['created_by'] = user
+
+        print(data)
         return data
+
+    
 
     def create(self, validated_data):
         assignees = validated_data.pop("assignees", None)
@@ -283,9 +311,8 @@ class IssueSerializer(BaseSerializer):
                     IssueCustomProperty(
                         key=custom_property['key'],
                         value=custom_property['value'],
-                        project_custom_property= custom_property['project_custom_property'],
-                        project_custom_property__project_id= project_id,
-                        issue=issue,
+                        issue_type_custom_property=custom_property['issue_type_custom_property'],
+                        issue=instance,
                         project_id=project_id,
                         workspace_id=workspace_id,
                         created_by_id=created_by_id,
@@ -413,18 +440,20 @@ class IssueAttachmentSerializer(BaseSerializer):
         model = FileAsset
         fields = "__all__"
         read_only_fields = [
-            "id",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
             "workspace",
             "project",
             "issue",
-            "updated_by",
-            "updated_at",
         ]
 
 
 class IssueCommentSerializer(BaseSerializer):
     is_member = serializers.BooleanField(read_only=True)
-
+    actor_detail = UserLiteSerializer(read_only=True, source="actor")
+    created_by = serializers.CharField(required=False)
     class Meta:
         model = IssueComment
         read_only_fields = [
@@ -432,7 +461,6 @@ class IssueCommentSerializer(BaseSerializer):
             "workspace",
             "project",
             "issue",
-            "created_by",
             "updated_by",
             "created_at",
             "updated_at",
@@ -448,13 +476,32 @@ class IssueCommentSerializer(BaseSerializer):
                 parsed = html.fromstring(data["comment_html"])
                 parsed_str = html.tostring(parsed, encoding="unicode")
                 data["comment_html"] = parsed_str
+            # if not is_uuid(data['created_by']):
+            #     if User.objects.filter(username=data['created_by']).exists():
+            #         data['created_by']= User.objects.get(username=data['created_by'])
+            #     else:
+            #         user_data = {
+            #             "email": data['created_by'] + '@plane-shipsy.com',
+            #             "username": data['created_by'],
+            #         }
+            #         from plane.api.views import ProjectMemberAPIEndpoint
+            #         PMObj = ProjectMemberAPIEndpoint()
+            #         user = PMObj.create_user(user_data)
+            #         PMObj.create_workspace_member(self.context.get("workspace_id") ,user_data)
+            #         PMObj.create_project_member(self.context.get("project_id"), user_data)
+            #         data['created_by'] = user
 
-        except Exception:
+            print(data)
+        except Exception as e:
+            print(e)
             raise serializers.ValidationError("Invalid HTML passed")
         return data
 
 
 class IssueActivitySerializer(BaseSerializer):
+    actor_detail = UserLiteSerializer(read_only=True, source="actor")
+    # issue_detail = IssueFlatSerializer(read_only=True, source="issue")
+    # project_detail = ProjectLiteSerializer(read_only=True, source="project")
     class Meta:
         model = IssueActivity
         exclude = [

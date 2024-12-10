@@ -15,7 +15,7 @@ from .issue import (
     IssueAttachmentEndpoint
 )
 from .issue_type import IssueTypeAPIEndpoint,IssueTypeCustomPropertyAPIEndpoint
-
+from .attachment import IssueAttachmentV2Endpoint
 from .cycle import (
     CycleAPIEndpoint,
     CycleIssueAPIEndpoint,
@@ -33,3 +33,4 @@ from .member import ProjectMemberAPIEndpoint
 
 from .inbox import InboxIssueAPIEndpoint
 
+from .search import GlobalSearchEndpoint

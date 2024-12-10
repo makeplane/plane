@@ -6,7 +6,7 @@ from .cycle import urlpatterns as cycle_patterns
 from .module import urlpatterns as module_patterns
 from .inbox import urlpatterns as inbox_patterns
 from .member import urlpatterns as member_patterns
-from plane.app.urls.search import urlpatterns as search_patters
+from .search import urlpatterns as search_patters
 
 urlpatterns = [
     *project_patterns,

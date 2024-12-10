@@ -13,10 +13,17 @@ from storages.backends.s3boto3 import S3Boto3Storage
 
 class S3Storage(S3Boto3Storage):
 
+    file_overwrite = False
+    location = ''
     def url(self, name, parameters=None, expire=None, http_method=None):
         return name
 
     """S3 storage class to generate presigned URLs for S3 objects"""
+    def get_available_name(self, name, max_length=None):
+        # TODO: something with max_length?
+        if self.file_overwrite:
+            return name
+        return super().get_available_name(name, max_length=max_length)
 
     def __init__(self, request=None):
         # Get the AWS credentials and bucket name from the environment

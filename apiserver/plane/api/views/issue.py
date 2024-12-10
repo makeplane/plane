@@ -349,9 +349,10 @@ class IssueAPIEndpoint(BaseAPIView):
                 pk=serializer.data["id"],
             ).first()
             issue.created_at = request.data.get("created_at", timezone.now())
-            issue.created_by_id = request.data.get(
-                "created_by", request.user.id
-            )
+            if not issue.created_by:
+                issue.created_by_id = request.data.get(
+                    "created_by", request.user.id
+                )
             issue.save(update_fields=["created_at", "created_by"])
 
             # Track the issue
@@ -1107,6 +1108,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
             )
 
         if serializer.is_valid():
+            # import pdb;pdb.set_trace()
             serializer.save(project_id=project_id, issue_id=issue_id)
             issue_activity.delay(
                 type="attachment.activity.created",

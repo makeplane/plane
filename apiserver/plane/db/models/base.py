@@ -35,6 +35,7 @@ class BaseModel(AuditModel):
                 # If created only set created_by value: set updated_by to None
                 if self.created_by is None:
                     self.created_by = user
+                    
                 self.updated_by = None
             # If updated only set updated_by value don't touch created_by
             self.updated_by = user
@@ -42,3 +43,6 @@ class BaseModel(AuditModel):
 
     def __str__(self):
         return str(self.id)
+
+
+    
