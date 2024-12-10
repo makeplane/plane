@@ -58,6 +58,7 @@ export interface ICycleStore {
 
   // actions
   updateCycleDistribution: (distributionUpdates: DistributionUpdates, cycleId: string) => void;
+  setPlotType: (cycleId: string, plotType: TCyclePlotType) => void;
   setEstimateType: (cycleId: string, estimateType: TCycleEstimateType) => void;
   // fetch
   fetchWorkspaceCycles: (workspaceSlug: string) => Promise<ICycle[]>;
@@ -364,6 +365,14 @@ export class CycleStore implements ICycleStore {
       ? this.estimatedType[cycleId] || "issues"
       : "issues";
   });
+
+  /**
+   * @description updates the plot type for the cycle store
+   * @param {TCyclePlotType} plotType
+   */
+  setPlotType = (cycleId: string, plotType: TCyclePlotType) => {
+    set(this.plotType, [cycleId], plotType);
+  };
 
   /**
    * @description updates the estimate type for the cycle store

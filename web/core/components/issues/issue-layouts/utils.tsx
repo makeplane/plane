@@ -126,7 +126,7 @@ const getProjectColumns = (): IGroupByColumn[] | undefined => {
         payload: { project_id: project.id },
       };
     })
-    .filter((column) => column !== undefined);
+    .filter((column) => column !== undefined) as IGroupByColumn[];
 };
 
 const getCycleColumns = (): IGroupByColumn[] | undefined => {
