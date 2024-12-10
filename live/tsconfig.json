@@ -3,16 +3,23 @@
   "compilerOptions": {
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "lib": ["ES2015"],
+    "lib": [
+      "ES2015"
+    ],
     "outDir": "./dist",
     "rootDir": ".",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@/plane-live/*": ["./src/ce/*"]
+      "@/*": [
+        "./src/*"
+      ],
+      "@/plane-live/*": [
+        "./src/ce/*"
+      ]
     },
     "removeComments": true,
     "esModuleInterop": true,
+    "experimentalDecorators": true,
     "skipLibCheck": true,
     "sourceMap": true,
     "inlineSources": true,
@@ -21,6 +28,13 @@
     // This improves issue grouping in Sentry.
     "sourceRoot": "/"
   },
-  "include": ["src/**/*.ts", "tsup.config.ts"],
-  "exclude": ["./dist", "./build", "./node_modules"]
+  "include": [
+    "src/**/*.ts",
+    "tsup.config.ts"
+  ],
+  "exclude": [
+    "./dist",
+    "./build",
+    "./node_modules"
+  ]
 }
