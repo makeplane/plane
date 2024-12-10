@@ -95,9 +95,6 @@ export const NotificationItem: FC<INotificationItem> = observer((props) => {
         >
           {/* Issue card header */}
           <Row className="flex items-center gap-1">
-            {unreadCount > 0 && (
-              <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-custom-primary-100 absolute top-[50%] left-2" />
-            )}
             <span className="text-sm font-semibold break-words">
               {issue.sequence_id}-{issue.identifier}
             </span>
