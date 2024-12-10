@@ -27,7 +27,9 @@ from plane.db.models import (
     State,
     User,
     EstimatePoint,
+    IssueType,
 )
+from plane.db.models.workspace import Workspace
 from plane.settings.redis import redis_instance
 from plane.utils.exception_logger import log_exception
 from plane.bgtasks.webhook_task import webhook_activity
@@ -88,6 +90,27 @@ def track_description(
         ):
             last_activity.created_at = timezone.now()
             last_activity.save(update_fields=["created_at"])
+
+            # Get the current origin from redis
+            ri = redis_instance()
+            origin = ri.get(str(issue_id))
+
+            workspace = Workspace.objects.get(pk=workspace_id)
+
+            if workspace:
+                webhook_activity.delay(
+                    event="issue",
+                    event_id=issue_id,
+                    verb="updated",
+                    field="description",
+                    old_value=current_instance.get("description_html"),
+                    new_value=requested_data.get("description_html"),
+                    current_site=origin,
+                    actor_id=actor_id,
+                    slug=workspace.slug,
+                    old_identifier=last_activity.old_identifier,
+                    new_identifier=last_activity.new_identifier,
+                )
         else:
             issue_activities.append(
                 IssueActivity(
@@ -193,9 +216,12 @@ def track_state(
     issue_activities,
     epoch,
 ):
-    if current_instance.get("state_id") != requested_data.get("state_id"):
-        new_state = State.objects.get(pk=requested_data.get("state_id", None))
-        old_state = State.objects.get(pk=current_instance.get("state_id", None))
+    current_state_id = current_instance.get("state_id") or current_instance.get("state")
+    requested_state_id = requested_data.get("state_id") or requested_data.get("state")
+
+    if current_state_id != requested_state_id:
+        new_state = State.objects.get(pk=requested_state_id)
+        old_state = State.objects.get(pk=current_state_id)
 
         issue_activities.append(
             IssueActivity(
@@ -555,6 +581,46 @@ def track_closed_to(
         )
 
 
+def track_type(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    new_type_id = requested_data.get("type_id")
+    old_type_id = current_instance.get("type_id")
+
+    if new_type_id != old_type_id:
+        verb = "updated" if new_type_id else "deleted"
+        old_type_id = (
+            IssueType.objects.filter(pk=old_type_id).first() if old_type_id else None
+        )
+        new_type_id = (
+            IssueType.objects.filter(pk=new_type_id).first() if new_type_id else None
+        )
+
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor_id=actor_id,
+                verb=verb,
+                old_value=old_type_id.name if old_type_id else None,
+                new_value=new_type_id.name if new_type_id else None,
+                field="type",
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment="",
+                old_identifier=old_type_id.id if old_type_id else None,
+                new_identifier=new_type_id.id if new_type_id else None,
+                epoch=epoch,
+            )
+        )
+
+
 def create_issue_activity(
     requested_data,
     current_instance,
@@ -607,6 +673,7 @@ def update_issue_activity(
         "parent_id": track_parent,
         "priority": track_priority,
         "state_id": track_state,
+        "state": track_state,
         "description_html": track_description,
         "target_date": track_target_date,
         "start_date": track_start_date,
@@ -615,6 +682,7 @@ def update_issue_activity(
         "estimate_point": track_estimate_points,
         "archived_at": track_archive_at,
         "closed_to": track_closed_to,
+        "type_id": track_type,
     }
 
     requested_data = json.loads(requested_data) if requested_data is not None else None
