@@ -47,3 +47,5 @@ export const PENDING_STATE_GROUPS = [
   STATE_GROUPS.started.key,
   STATE_GROUPS.cancelled.key,
 ];
+
+export const DISPLAY_WORKFLOW_PRO_CTA = false;

@@ -31,9 +31,9 @@ const PageDetailsPage = observer(() => {
       ? () => getPageById(workspaceSlug?.toString(), projectId?.toString(), pageId.toString())
       : null,
     {
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
+      revalidateIfStale: true,
+      revalidateOnFocus: true,
+      revalidateOnReconnect: true,
     }
   );
 

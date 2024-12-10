@@ -1,8 +1,8 @@
 import { useContext } from "react";
 // mobx store
 import { StoreContext } from "@/lib/store-context";
-// types
-import { IStateStore } from "@/store/state.store";
+// Plane-web
+import { IStateStore } from "@/plane-web/store/state.store";
 
 export const useProjectState = (): IStateStore => {
   const context = useContext(StoreContext);

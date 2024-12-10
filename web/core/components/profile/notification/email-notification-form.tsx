@@ -4,7 +4,7 @@ import React, { FC, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { IUserEmailNotificationSettings } from "@plane/types";
 // ui
-import { Button, Checkbox, TOAST_TYPE, setToast } from "@plane/ui";
+import { ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 // services
 import { UserService } from "@/services/user.service";
 // types
@@ -20,35 +20,32 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
   const { data } = props;
   // form data
   const {
-    handleSubmit,
     control,
     reset,
-    formState: { isSubmitting, dirtyFields },
   } = useForm<IUserEmailNotificationSettings>({
     defaultValues: {
       ...data,
     },
   });
 
-  const onSubmit = async (formData: IUserEmailNotificationSettings) => {
-    // Get the dirty fields from the form data and create a payload
-    let payload = {};
-    Object.keys(dirtyFields).forEach((key) => {
-      payload = {
-        ...payload,
-        [key]: formData[key as keyof IUserEmailNotificationSettings],
-      };
-    });
-    await userService
-      .updateCurrentUserEmailNotificationSettings(payload)
-      .then(() =>
-        setToast({
-          title: "Success!",
-          type: TOAST_TYPE.SUCCESS,
-          message: "Email Notification Settings updated successfully",
-        })
-      )
-      .catch((err) => console.error(err));
+  const handleSettingChange = async (key: keyof IUserEmailNotificationSettings, value: boolean) => {
+    try {
+      await userService.updateCurrentUserEmailNotificationSettings({
+        [key]: value,
+      });
+      setToast({
+        title: "Success!",
+        type: TOAST_TYPE.SUCCESS,
+        message: "Email notification setting updated successfully",
+      });
+    } catch (err) {
+      console.error(err);
+      setToast({
+        title: "Error!",
+        type: TOAST_TYPE.ERROR,
+        message: "Failed to update email notification setting",
+      });
+    }
   };
 
   useEffect(() => {
@@ -64,7 +61,7 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
           <div className="grow">
             <div className="pb-1 text-base font-medium text-custom-text-100">Property changes</div>
             <div className="text-sm font-normal text-custom-text-300">
-              Notify me when issue’s properties like assignees, priority, estimates or anything else changes.
+              Notify me when issue's properties like assignees, priority, estimates or anything else changes.
             </div>
           </div>
           <div className="shrink-0">
@@ -72,7 +69,14 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
               control={control}
               name="property_change"
               render={({ field: { value, onChange } }) => (
-                <Checkbox checked={value} onChange={() => onChange(!value)} containerClassName="mx-2" />
+                <ToggleSwitch
+                  value={value}
+                  onChange={(newValue) => {
+                    onChange(newValue);
+                    handleSettingChange("property_change", newValue);
+                  }}
+                  size="sm"
+                />
               )}
             />
           </div>
@@ -89,12 +93,13 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
               control={control}
               name="state_change"
               render={({ field: { value, onChange } }) => (
-                <Checkbox
-                  checked={value}
-                  onChange={() => {
-                    onChange(!value);
+                <ToggleSwitch
+                  value={value}
+                  onChange={(newValue) => {
+                    onChange(newValue);
+                    handleSettingChange("state_change", newValue);
                   }}
-                  containerClassName="mx-2"
+                  size="sm"
                 />
               )}
             />
@@ -110,7 +115,14 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
               control={control}
               name="issue_completed"
               render={({ field: { value, onChange } }) => (
-                <Checkbox checked={value} onChange={() => onChange(!value)} containerClassName="mx-2" />
+                <ToggleSwitch
+                  value={value}
+                  onChange={(newValue) => {
+                    onChange(newValue);
+                    handleSettingChange("issue_completed", newValue);
+                  }}
+                  size="sm"
+                />
               )}
             />
           </div>
@@ -127,7 +139,14 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
               control={control}
               name="comment"
               render={({ field: { value, onChange } }) => (
-                <Checkbox checked={value} onChange={() => onChange(!value)} containerClassName="mx-2" />
+                <ToggleSwitch
+                  value={value}
+                  onChange={(newValue) => {
+                    onChange(newValue);
+                    handleSettingChange("comment", newValue);
+                  }}
+                  size="sm"
+                />
               )}
             />
           </div>
@@ -144,16 +163,18 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
               control={control}
               name="mention"
               render={({ field: { value, onChange } }) => (
-                <Checkbox checked={value} onChange={() => onChange(!value)} containerClassName="mx-2" />
+                <ToggleSwitch
+                  value={value}
+                  onChange={(newValue) => {
+                    onChange(newValue);
+                    handleSettingChange("mention", newValue);
+                  }}
+                  size="sm"
+                />
               )}
             />
           </div>
         </div>
-      </div>
-      <div className="flex items-center py-12">
-        <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
-          {isSubmitting ? "Saving..." : "Save changes"}
-        </Button>
       </div>
     </>
   );

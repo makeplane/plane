@@ -1,4 +1,4 @@
-import { uniqBy } from "lodash";
+import { orderBy, result, uniqBy } from "lodash";
 import set from "lodash/set";
 import { action, observable, makeObservable, runInAction, computed } from "mobx";
 import { v4 as uuidv4 } from "uuid";
@@ -28,7 +28,12 @@ export interface IFavoriteStore {
   getGroupedFavorites: (workspaceSlug: string, favoriteId: string) => Promise<IFavorite[]>;
   moveFavoriteToFolder: (workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>) => Promise<void>;
   removeFavoriteEntity: (workspaceSlug: string, entityId: string) => Promise<void>;
-  reOrderFavorite: (workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>) => Promise<void>;
+  reOrderFavorite: (
+    workspaceSlug: string,
+    favoriteId: string,
+    destinationId: string,
+    edge: string | undefined
+  ) => Promise<void>;
   removeFromFavoriteFolder: (workspaceSlug: string, favoriteId: string) => Promise<void>;
   removeFavoriteFromStore: (entity_identifier: string) => void;
 }
@@ -190,14 +195,37 @@ export class FavoriteStore implements IFavoriteStore {
     }
   };
 
-  reOrderFavorite = async (workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>) => {
+  reOrderFavorite = async (
+    workspaceSlug: string,
+    favoriteId: string,
+    destinationId: string,
+    edge: string | undefined
+  ) => {
     const initialSequence = this.favoriteMap[favoriteId].sequence;
     try {
+      let resultSequence = 10000;
+      if (edge) {
+        const sortedIds = orderBy(Object.values(this.favoriteMap), "sequence", "desc").map((fav: IFavorite) => fav.id);
+        const destinationSequence = this.favoriteMap[destinationId]?.sequence || undefined;
+        if (destinationSequence) {
+          const destinationIndex = sortedIds.findIndex((id) => id === destinationId);
+          if (edge === "reorder-above") {
+            const prevSequence = this.favoriteMap[sortedIds[destinationIndex - 1]]?.sequence || undefined;
+            if (prevSequence) {
+              resultSequence = (destinationSequence + prevSequence) / 2;
+            } else {
+              resultSequence = destinationSequence + resultSequence;
+            }
+          } else {
+            resultSequence = destinationSequence - resultSequence;
+          }
+        }
+      }
       runInAction(() => {
-        set(this.favoriteMap, [favoriteId, "sequence"], data.sequence);
+        set(this.favoriteMap, [favoriteId, "sequence"], resultSequence);
       });
 
-      await this.favoriteService.updateFavorite(workspaceSlug, favoriteId, data);
+      await this.favoriteService.updateFavorite(workspaceSlug, favoriteId, { sequence: resultSequence });
     } catch (error) {
       console.error("Failed to move favorite folder");
       runInAction(() => {
@@ -214,8 +242,7 @@ export class FavoriteStore implements IFavoriteStore {
         //remove parent
         set(this.favoriteMap, [favoriteId, "parent"], null);
       });
-      await this.favoriteService.updateFavorite(workspaceSlug, favoriteId, { parent: null});
-
+      await this.favoriteService.updateFavorite(workspaceSlug, favoriteId, { parent: null });
     } catch (error) {
       console.error("Failed to move favorite");
       runInAction(() => {
