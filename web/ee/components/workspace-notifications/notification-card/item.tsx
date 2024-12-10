@@ -115,7 +115,7 @@ export const NotificationItem: FC<INotificationItem> = observer((props) => {
             />
             {unreadCount > 0 && (
               <span className="text-xs px-[5px] font-medium group-hover:hidden py-[1px] text-white bg-custom-primary-300 rounded-md">
-                {unreadCount}
+                {unreadCount <= 20 ? unreadCount : `20+`}
               </span>
             )}
           </Row>
