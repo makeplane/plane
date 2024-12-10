@@ -35,7 +35,7 @@ export type TNotificationData = {
 };
 
 export type TNotification = {
-  id: string;
+  id: string | undefined;
   title: string | undefined;
   data: TNotificationData | undefined;
   entity_identifier: string | undefined;

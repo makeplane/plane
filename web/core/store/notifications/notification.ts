@@ -26,7 +26,7 @@ export interface INotification extends TNotification {
 
 export class Notification implements INotification {
   // observables
-  id: string;
+  id: string | undefined = undefined;
   title: string | undefined = undefined;
   data: TNotificationData | undefined = undefined;
   entity_identifier: string | undefined = undefined;
