@@ -102,12 +102,7 @@ def get_default_display_properties():
 
 
 def get_issue_props():
-    return {
-        "subscribed": True,
-        "assigned": True,
-        "created": True,
-        "all_issues": True,
-    }
+    return {"subscribed": True, "assigned": True, "created": True, "all_issues": True}
 
 
 def slug_validator(value):
@@ -136,9 +131,7 @@ class Workspace(BaseModel):
         max_length=48, db_index=True, unique=True, validators=[slug_validator]
     )
     organization_size = models.CharField(max_length=20, blank=True, null=True)
-    timezone = models.CharField(
-        max_length=255, default="UTC", choices=TIMEZONE_CHOICES
-    )
+    timezone = models.CharField(max_length=255, default="UTC", choices=TIMEZONE_CHOICES)
 
     def __str__(self):
         """Return name of the Workspace"""
@@ -167,10 +160,7 @@ class WorkspaceBaseModel(BaseModel):
         "db.Workspace", models.CASCADE, related_name="workspace_%(class)s"
     )
     project = models.ForeignKey(
-        "db.Project",
-        models.CASCADE,
-        related_name="project_%(class)s",
-        null=True,
+        "db.Project", models.CASCADE, related_name="project_%(class)s", null=True
     )
 
     class Meta:
@@ -184,9 +174,7 @@ class WorkspaceBaseModel(BaseModel):
 
 class WorkspaceMember(BaseModel):
     workspace = models.ForeignKey(
-        "db.Workspace",
-        on_delete=models.CASCADE,
-        related_name="workspace_member",
+        "db.Workspace", on_delete=models.CASCADE, related_name="workspace_member"
     )
     member = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -221,9 +209,7 @@ class WorkspaceMember(BaseModel):
 
 class WorkspaceMemberInvite(BaseModel):
     workspace = models.ForeignKey(
-        "db.Workspace",
-        on_delete=models.CASCADE,
-        related_name="workspace_member_invite",
+        "db.Workspace", on_delete=models.CASCADE, related_name="workspace_member_invite"
     )
     email = models.CharField(max_length=255)
     accepted = models.BooleanField(default=False)
@@ -283,9 +269,7 @@ class WorkspaceTheme(BaseModel):
     )
     name = models.CharField(max_length=300)
     actor = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="themes",
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="themes"
     )
     colors = models.JSONField(default=dict)
 
@@ -320,9 +304,7 @@ class WorkspaceUserProperties(BaseModel):
     )
     filters = models.JSONField(default=get_default_filters)
     display_filters = models.JSONField(default=get_default_display_filters)
-    display_properties = models.JSONField(
-        default=get_default_display_properties
-    )
+    display_properties = models.JSONField(default=get_default_display_properties)
 
     class Meta:
         unique_together = ["workspace", "user", "deleted_at"]

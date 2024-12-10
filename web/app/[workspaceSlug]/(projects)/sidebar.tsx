@@ -2,7 +2,7 @@ import { FC, useEffect, useRef } from "react";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 // plane helpers
-import { useOutsideClickDetector } from "@plane/helpers";
+import { useOutsideClickDetector } from "@plane/hooks";
 // components
 import {
   SidebarDropdown,

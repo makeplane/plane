@@ -4,6 +4,6 @@
     "jsx": "react",
     "lib": ["esnext", "dom"]
   },
-  "include": ["."],
+  "include": ["./src"],
   "exclude": ["dist", "build", "node_modules"]
 }

@@ -125,7 +125,7 @@ export interface IEditorProps {
   onEnterKeyPress?: (e?: any) => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
-  value?: string | null; 
+  value?: string | null;
 }
 export interface ILiteTextEditor extends IEditorProps {
   extensions?: any[];

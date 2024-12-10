@@ -257,7 +257,9 @@ def notifications(
             )
 
             new_mentions = [
-                str(mention) for mention in new_mentions if mention in set(project_members)
+                str(mention)
+                for mention in new_mentions
+                if mention in set(project_members)
             ]
             removed_mention = get_removed_mentions(
                 requested_instance=requested_data, current_instance=current_instance
