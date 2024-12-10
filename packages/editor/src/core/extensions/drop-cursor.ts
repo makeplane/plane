@@ -294,31 +294,21 @@ function isBetweenNodesOfType($pos: ResolvedPos, nodeTypeName: string) {
   let isDirectlyBetweenNodes = false;
   let positionToShowAndDrop: number | null = null;
 
-  // If not found inside a list item, check if we are directly between list nodes
   const nodeBefore = $pos.nodeBefore;
   const nodeAfter = $pos.nodeAfter;
   const nodeBeforeIsType = isNodeType(nodeBefore, nodeType);
   const nodeAfterIsType = isNodeType(nodeAfter, nodeType);
 
-  console.log("nodeBeforeIsType", nodeBeforeIsType, nodeBefore);
-  console.log("nodeAfterIsType", nodeAfterIsType, nodeAfter);
   if (nodeBeforeIsType && nodeAfterIsType) {
-    // Cursor is directly between two list nodes
     isBetweenNodesOfType = true;
     isDirectlyBetweenNodes = true;
     positionToShowAndDrop = $pos.pos;
-    console.log("exact between");
   } else if (nodeBeforeIsType || nodeAfterIsType) {
     isBetweenNodesOfType = true;
     isDirectlyBetweenNodes = false;
     positionToShowAndDrop = $pos.pos;
-    console.log("not between", $pos.pos);
   } else {
-    console.log("aaya in last case");
-    // If not between lists or inside a list item, look ahead for the next list
     const nextListPos = findNextNodeOfType($pos, nodeType);
-    // __AUTO_GENERATED_PRINT_VAR_START__
-    console.log("isBetweenNodesOfType#if#if nextListPos: %s", nextListPos); // __AUTO_GENERATED_PRINT_VAR_END__
     if (nextListPos != null) {
       isBetweenNodesOfType = true;
       isDirectlyBetweenNodes = false;
