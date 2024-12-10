@@ -174,11 +174,16 @@ export class FavoriteStore implements IFavoriteStore {
    * @returns Promise<void>
    */
   moveFavoriteToFolder = async (workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>) => {
-    await this.favoriteService.updateFavorite(workspaceSlug, favoriteId, data);
-    runInAction(() => {
-      // add parent of the favorite
-      set(this.favoriteMap, [favoriteId, "parent"], data.parent);
-    });
+    try {
+      await this.favoriteService.updateFavorite(workspaceSlug, favoriteId, data);
+      runInAction(() => {
+        // add parent of the favorite
+        set(this.favoriteMap, [favoriteId, "parent"], data.parent);
+      });
+    } catch (error) {
+      console.error("Failed to move favorite to folder", error);
+      throw error;
+    }
   };
 
   reOrderFavorite = async (
