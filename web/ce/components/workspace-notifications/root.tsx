@@ -1,114 +1,56 @@
 "use client";
 
-import { FC, useCallback } from "react";
+import { FC } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // components
-import { Header, Row, ERowVariant, EHeaderVariant, ContentWrapper } from "@plane/ui";
-import { CountChip } from "@/components/common";
-import {
-  NotificationsLoader,
-  NotificationEmptyState,
-  NotificationSidebarHeader,
-  AppliedFilters,
-  NotificationCardListRoot,
-} from "@/components/workspace-notifications";
+import { NotificationItem } from "@/components/workspace-notifications";
 // constants
-import { NOTIFICATION_TABS, TNotificationTab } from "@/constants/notification";
-// helpers
-import { cn } from "@/helpers/common.helper";
-import { getNumberCount } from "@/helpers/string.helper";
+import { ENotificationLoader, ENotificationQueryParamType } from "@/constants/notification";
 // hooks
-import { useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
+import { useWorkspaceNotifications } from "@/hooks/store";
 
-export const NotificationsSidebarRoot: FC = observer(() => {
-  const { workspaceSlug } = useParams();
+type TNotificationCardListRoot = {
+  workspaceSlug: string;
+  workspaceId: string;
+};
+
+export const NotificationCardListRoot: FC<TNotificationCardListRoot> = observer((props) => {
+  const { workspaceSlug, workspaceId } = props;
   // hooks
-  const { getWorkspaceBySlug } = useWorkspace();
-  const {
-    currentSelectedNotificationId,
-    unreadNotificationsCount,
-    loader,
-    notificationIdsByWorkspaceId,
-    currentNotificationTab,
-    setCurrentNotificationTab,
-  } = useWorkspaceNotifications();
-  // derived values
-  const workspace = workspaceSlug ? getWorkspaceBySlug(workspaceSlug.toString()) : undefined;
-  const notificationIds = workspace ? notificationIdsByWorkspaceId(workspace.id) : undefined;
+  const { loader, paginationInfo, getNotifications, notificationIdsByWorkspaceId } = useWorkspaceNotifications();
+  const notificationIds = notificationIdsByWorkspaceId(workspaceId);
 
-  const handleTabClick = useCallback(
-    (tabValue: TNotificationTab) => {
-      if (currentNotificationTab !== tabValue) {
-        setCurrentNotificationTab(tabValue);
-      }
-    },
-    [currentNotificationTab, setCurrentNotificationTab]
-  );
+  const getNextNotifications = async () => {
+    try {
+      await getNotifications(workspaceSlug, ENotificationLoader.PAGINATION_LOADER, ENotificationQueryParamType.NEXT);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-  if (!workspaceSlug || !workspace) return <></>;
-
+  if (!workspaceSlug || !workspaceId || !notificationIds) return <></>;
   return (
-    <div
-      className={cn(
-        "relative border-0 md:border-r border-custom-border-200 z-[10] flex-shrink-0 bg-custom-background-100 h-full transition-all overflow-hidden",
-        currentSelectedNotificationId ? "w-0 md:w-2/6" : "w-full md:w-2/6"
-      )}
-    >
-      <div className="relative w-full h-full overflow-hidden flex flex-col">
-        <Row className="h-[3.75rem] border-b border-custom-border-200 flex">
-          <NotificationSidebarHeader workspaceSlug={workspaceSlug.toString()} />
-        </Row>
+    <div>
+      {notificationIds.map((notificationId: string) => (
+        <NotificationItem key={notificationId} workspaceSlug={workspaceSlug} notificationId={notificationId} />
+      ))}
 
-        <Header variant={EHeaderVariant.SECONDARY} className="justify-start">
-          {NOTIFICATION_TABS.map((tab) => (
-            <div
-              key={tab.value}
-              className="h-full px-3 relative cursor-pointer"
-              onClick={() => handleTabClick(tab.value)}
-            >
-              <div
-                className={cn(
-                  `relative h-full flex justify-center items-center gap-1 text-sm transition-all`,
-                  currentNotificationTab === tab.value
-                    ? "text-custom-primary-100"
-                    : "text-custom-text-100 hover:text-custom-text-200"
-                )}
-              >
-                <div className="font-medium">{tab.label}</div>
-                {tab.count(unreadNotificationsCount) > 0 && (
-                  <CountChip count={getNumberCount(tab.count(unreadNotificationsCount))} />
-                )}
-              </div>
-              {currentNotificationTab === tab.value && (
-                <div className="border absolute bottom-0 right-0 left-0 rounded-t-md border-custom-primary-100" />
-              )}
+      {/* fetch next page notifications */}
+      {paginationInfo && paginationInfo?.next_page_results && (
+        <>
+          {loader === ENotificationLoader.PAGINATION_LOADER ? (
+            <div className="py-4 flex justify-center items-center text-sm font-medium">
+              <div className="text-custom-primary-90">Loading...</div>
             </div>
-          ))}
-        </Header>
-
-        {/* applied filters */}
-        <AppliedFilters workspaceSlug={workspaceSlug.toString()} />
-
-        {/* rendering notifications */}
-        {loader === "init-loader" ? (
-          <div className="relative w-full h-full overflow-hidden">
-            <NotificationsLoader />
-          </div>
-        ) : (
-          <>
-            {notificationIds && notificationIds.length > 0 ? (
-              <ContentWrapper variant={ERowVariant.HUGGING}>
-                <NotificationCardListRoot workspaceSlug={workspaceSlug.toString()} workspaceId={workspace?.id} />
-              </ContentWrapper>
-            ) : (
-              <div className="relative w-full h-full flex justify-center items-center">
-                <NotificationEmptyState />
+          ) : (
+            <div className="py-4 flex justify-center items-center text-sm font-medium" onClick={getNextNotifications}>
+              <div className="text-custom-primary-90 hover:text-custom-primary-100 transition-all cursor-pointer">
+                Load more
               </div>
-            )}
-          </>
-        )}
-      </div>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 });
