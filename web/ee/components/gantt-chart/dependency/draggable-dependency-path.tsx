@@ -36,7 +36,7 @@ export const TimelineDraggablePath = observer(() => {
         </g>
         <defs>
           <marker markerWidth="7" markerHeight="7" refX="4" refY="2.5" viewBox="0 0 5 5" orient="auto" id={`arrowhead`}>
-            <polygon points="0,5 1.6666666666666667,2.5 0,0 5,2.5" fill={"#3f76ff"}></polygon>
+            <polygon points="0,5 1.6666666666666667,2.5 0,0 5,2.5" fill={"#3f76ff"} />
           </marker>
         </defs>
       </svg>

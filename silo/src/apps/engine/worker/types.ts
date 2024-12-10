@@ -1,4 +1,4 @@
-import { TSyncJobWithConfig } from "@silo/core";
+import { TJobWithConfig } from "@silo/core";
 
 export type WorkerEventType = "initiate" | "transform" | "push" | "finished";
 export type UpdateEventType =
@@ -29,7 +29,7 @@ export type TBatch<TSource> = {
 // Interface for the transformer, used by the worker to pull, transform and push the data
 export interface Migrator<TSource, TTarget, TJobConfig> {
   // Pull the data from the source, taking the configuration of the job
-  pull: (job: TSyncJobWithConfig<TJobConfig>) => Promise<TSource[]>;
+  pull: (job: TJobWithConfig<TJobConfig>) => Promise<TSource[]>;
   // Batches can be understood as chunks of data, which can be processed in
   // parallel, while you keep in mind the performance of the system, it's also
   // necessary to keep in mind the relation between the data. For such cases,
@@ -39,9 +39,9 @@ export interface Migrator<TSource, TTarget, TJobConfig> {
   // users, states, labels etc, while associations are relations that are tied
   // like, issue_comments are tied with issues, and issues are tied with cycles
   // and modules etc.
-  batches: (job: TSyncJobWithConfig<TJobConfig>) => Promise<TBatch<TSource>[]>;
+  batches: (job: TJobWithConfig<TJobConfig>) => Promise<TBatch<TSource>[]>;
   // Transform the data from the source to the target
-  transform: (job: TSyncJobWithConfig<TJobConfig>, data: TSource[], meta: any) => Promise<TTarget[]>;
+  transform: (job: TJobWithConfig<TJobConfig>, data: TSource[], meta: any) => Promise<TTarget[]>;
   // Push the data to the target system
   // Should be a NOOP in case of integrations, and should only be used inside
   // the API, to get the data from the queue and push it to the target system

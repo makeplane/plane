@@ -1,37 +1,32 @@
 "use client";
 
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useParams } from "next/navigation";
-import { getButtonStyling } from "@plane/ui";
 // components
 import { PageHead } from "@/components/core";
-// helpers
-import { cn } from "@/helpers/common.helper";
+import { ImportersEmptyState } from "@/components/importers";
 // hooks
-import { useInstance, useUserPermissions, useWorkspace } from "@/hooks/store";
+import { useUserPermissions, useWorkspace } from "@/hooks/store";
 import { useUserProfile } from "@/hooks/store/use-user-profile";
 // plane web components
-import IntegrationGuide from "@/plane-web/components/integration/guide";
+import { ImportersList } from "@/plane-web/components/importers";
 // plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web hooks
 import { useFlag } from "@/plane-web/hooks/store";
+import { E_FEATURE_FLAGS } from "@/plane-web/types/feature-flag";
 
 const ImportsPage = observer(() => {
   // router
   const { workspaceSlug } = useParams();
   // store hooks
   const { data: currentUserProfile } = useUserProfile();
-  const { config } = useInstance();
   const { currentWorkspace } = useWorkspace();
   const { allowPermissions } = useUserPermissions();
   // derived values
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
-  const isDarkMode = currentUserProfile?.theme.theme === "dark";
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Imports` : undefined;
-  const isSiloIntegrationEnabled = useFlag(workspaceSlug?.toString(), "SILO_INTEGRATION");
-  const siloBaseUrl = config?.silo_base_url;
+  const importersEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.SILO_IMPORTERS);
 
   if (!isAdmin)
     return (
@@ -43,59 +38,11 @@ const ImportsPage = observer(() => {
       </>
     );
 
-  if (!isSiloIntegrationEnabled || !siloBaseUrl)
+  if (!importersEnabled)
     return (
       <>
         <PageHead title={pageTitle} />
-        <div className="flex h-full flex-col gap-10 rounded-xl">
-          <div className="flex items-center border-b border-custom-border-100 py-3.5">
-            <h3 className="text-xl font-medium">Imports</h3>
-          </div>
-          <div
-            className={cn("item-center flex min-h-[25rem] justify-between rounded-xl", {
-              "bg-gradient-to-l from-[#343434] via-[#484848]  to-[#1E1E1E]": currentUserProfile?.theme.theme === "dark",
-              "bg-gradient-to-l from-[#3b5ec6] to-[#f5f7fe]": currentUserProfile?.theme.theme === "light",
-            })}
-          >
-            <div className="relative flex flex-col justify-center gap-7 pl-8 lg:w-1/2">
-              <div className="flex max-w-[26rem] flex-col gap-2">
-                <h2 className="text-2xl font-semibold">Imports are coming soon!</h2>
-                <p className="text-base font-medium text-custom-text-300 break-keep">
-                  Get your issues, sprints, components, docs, and anything else with imports from Jira, GitHub, and
-                  more—coming very soon to all editions and plans.
-                </p>
-              </div>
-              <div className="flex items-center gap-3">
-                <a
-                  className={`${getButtonStyling("primary", "md")} cursor-pointer`}
-                  href="https://ece39166.sibforms.com/serve/MUIFAPPLJk02NaZT7ZOinKdoKPL351GVFpEmit1jpJixcLlqd3TaulIT9Czmu0yDy_5bqzuVmEu6Y6oUc09X2NIhI88jplFs0G6ARQa6NxHxACHAUtKNQhOmyI7zpC4MLV_E3kkwlwbzguZyKKURADedKgRarGu77LFz6f9CH-DUDntNbrooJhU1-vndV1EyWNrFgvjMDjz2wSat"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Stay in loop
-                </a>
-              </div>
-            </div>
-            <div className="relative hidden w-1/2 lg:block">
-              <span className="absolute bottom-0 right-0">
-                <Image
-                  src={`/upcoming-features/imports-cta-1-${isDarkMode ? "dark" : "light"}.png`}
-                  height={420}
-                  width={420}
-                  alt="cta-1"
-                />
-              </span>
-              <span className="absolute -bottom-16 right-1/2 rounded-xl">
-                <Image
-                  src={`/upcoming-features/imports-cta-2-${isDarkMode ? "dark" : "light"}.png`}
-                  height={210}
-                  width={280}
-                  alt="cta-2"
-                />
-              </span>
-            </div>
-          </div>
-        </div>
+        <ImportersEmptyState theme={currentUserProfile?.theme.theme || "light"} />
       </>
     );
 
@@ -106,7 +53,7 @@ const ImportsPage = observer(() => {
         <div className="flex items-center border-b border-custom-border-100 pb-3.5">
           <h3 className="text-xl font-medium">Imports</h3>
         </div>
-        <IntegrationGuide />
+        {workspaceSlug && <ImportersList workspaceSlug={workspaceSlug.toString()} />}
       </section>
     </>
   );

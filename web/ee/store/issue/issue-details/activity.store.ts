@@ -1,4 +1,4 @@
-import sortBy from "lodash/sortBy";
+import orderBy from "lodash/orderBy";
 import { makeObservable } from "mobx";
 import { computedFn } from "mobx-utils";
 import { TIssueActivityComment } from "@plane/types";
@@ -86,7 +86,7 @@ export class IssueActivityStore extends IssueActivityStoreCe implements IIssueAc
       });
     });
 
-    activityComments = sortBy(activityComments, "created_at");
+    activityComments = orderBy(activityComments, (e)=>new Date(e.created_at || 0), this.sortOrder);
 
     return activityComments;
   });

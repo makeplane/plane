@@ -3,53 +3,64 @@ import { Version3Client } from "jira.js/out/version3";
 import axios, { AxiosError } from "axios";
 import { Board } from "jira.js/out/agile";
 import { JiraProps, JiraResource } from "@/types";
-import { PageString } from "jira.js/out/version3/models";
+import { FieldDetails, PageString } from "jira.js/out/version3/models";
 
 export class JiraService {
   private jiraClient: Version3Client;
-  private accessToken: string;
-  private refreshToken: string;
+  private accessToken: string = "";
+  private refreshToken: string = "";
 
   constructor(props: JiraProps) {
-    this.accessToken = props.accessToken;
-    this.jiraClient = new Version3Client({
-      host: `https://api.atlassian.com/ex/jira/${props.cloudId}`,
-      authentication: {
-        oauth2: {
-          accessToken: props.accessToken,
+    if (props.isPAT === false) {
+      this.accessToken = props.accessToken;
+      this.jiraClient = new Version3Client({
+        host: `https://api.atlassian.com/ex/jira/${props.cloudId}`,
+        authentication: {
+          oauth2: {
+            accessToken: props.accessToken,
+          },
         },
-      },
-    });
+      });
 
-    this.refreshToken = props.refreshToken as string;
-    this.jiraClient.handleFailedResponse = async (request) => {
-      const error = request as AxiosError;
-      if (error.response?.status === 401) {
-        try {
-          const { access_token, refresh_token, expires_in } =
-            await props.refreshTokenFunc(this.refreshToken);
-          this.refreshToken = refresh_token;
-          this.jiraClient = new Version3Client({
-            host: `https://api.atlassian.com/ex/jira/${props.cloudId}`,
-            authentication: {
-              oauth2: {
-                accessToken: access_token,
+      this.refreshToken = props.refreshToken as string;
+      this.jiraClient.handleFailedResponse = async (request) => {
+        const error = request as AxiosError;
+        if (error.response?.status === 401) {
+          try {
+            const { access_token, refresh_token, expires_in } = await props.refreshTokenFunc(this.refreshToken);
+            this.refreshToken = refresh_token;
+            this.jiraClient = new Version3Client({
+              host: `https://api.atlassian.com/ex/jira/${props.cloudId}`,
+              authentication: {
+                oauth2: {
+                  accessToken: access_token,
+                },
               },
-            },
-          });
-          await props.refreshTokenCallback({
-            access_token,
-            refresh_token,
-            expires_in,
-          });
-          return request;
-        } catch (error) {
-          console.log("Error while refreshing token");
-          console.log(error);
+            });
+            await props.refreshTokenCallback({
+              access_token,
+              refresh_token,
+              expires_in,
+            });
+            return request;
+          } catch (error) {
+            console.log("Error while refreshing token");
+            console.log(error);
+          }
         }
-      }
-      throw error;
-    };
+        throw error;
+      };
+    } else {
+      this.jiraClient = new Version3Client({
+        host: props.hostname,
+        authentication: {
+          basic: {
+            email: props.userEmail,
+            apiToken: props.patToken,
+          },
+        },
+      });
+    }
   }
 
   async getCurrentUser() {
@@ -66,6 +77,10 @@ export class JiraService {
 
   async getIssueFields() {
     return this.jiraClient.issueFields.getFields();
+  }
+
+  async getCurrentResource() {
+    return this.jiraClient.projects;
   }
 
   async getResourceStatuses() {
@@ -107,11 +122,7 @@ export class JiraService {
     });
   }
 
-  async getBoardSprintsIssues(
-    boardId: number,
-    sprintId: number,
-    startAt: number,
-  ) {
+  async getBoardSprintsIssues(boardId: number, sprintId: number, startAt: number) {
     const board = new Board(this.jiraClient);
     return board.getBoardIssuesForSprint({
       boardId: boardId,
@@ -150,18 +161,49 @@ export class JiraService {
     });
   }
 
-  /* TODO: Confirm the endpoint */
   async getProjectIssueTypes(projectId: string) {
     return this.jiraClient.issueTypes.getIssueTypesForProject({
       projectId: projectId as unknown as number,
     });
   }
 
-  async getProjectIssues(
-    projectKey: string,
-    startAt = 0,
-    createdAfter?: string,
-  ) {
+  async getCustomFields() {
+    const fields: FieldDetails[] = await this.jiraClient.issueFields.getFields();
+    const customFields: FieldDetails[] = fields.filter((field) => field.schema?.custom);
+    return customFields;
+  }
+
+  async getProjectFieldContexts(fieldId: string, startAt = 0) {
+    return this.jiraClient.issueCustomFieldContexts.getProjectContextMapping({
+      fieldId: fieldId,
+      startAt: startAt,
+    });
+  }
+
+  async getIssueTypeFieldContexts(fieldId: string, contextIds: number[], startAt = 0) {
+    return this.jiraClient.issueCustomFieldContexts.getIssueTypeMappingsForContexts({
+      fieldId: fieldId,
+      contextId: contextIds,
+      startAt: startAt,
+    });
+  }
+
+  async getIssueFieldOptions(fieldId: string, contextId: number, startAt = 0) {
+    return this.jiraClient.issueCustomFieldOptions.getOptionsForContext({
+      fieldId: fieldId,
+      contextId: contextId,
+      startAt: startAt,
+    });
+  }
+
+  async getProjectIssueCreateMeta(projectId: string) {
+    return this.jiraClient.issues.getCreateIssueMeta({
+      projectIds: [projectId],
+      expand: "projects.issuetypes.fields",
+    });
+  }
+
+  async getProjectIssues(projectKey: string, startAt = 0, createdAfter?: string) {
     return this.jiraClient.issueSearch.searchForIssuesUsingJql({
       jql: createdAfter
         ? `project = ${projectKey} AND (created >= "${createdAfter}" OR updated >= "${createdAfter}")`
@@ -226,14 +268,10 @@ export class JiraService {
         config.headers.Authorization = `Bearer ${this.accessToken}`;
         return config;
       },
-      (error) => {
-        return Promise.reject(error);
-      },
+      (error) => Promise.reject(error)
     );
 
-    const response = await axiosInstance.get(
-      "/oauth/token/accessible-resources",
-    );
+    const response = await axiosInstance.get("/oauth/token/accessible-resources");
 
     return response.data;
   }

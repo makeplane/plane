@@ -7,7 +7,7 @@ import { useImporter, useJiraProjects } from "@/plane-web/silo/jira/hooks";
 import { Dropdown } from "@/plane-web/silo/ui";
 
 type TConfigureJiraSelectProject = {
-  resourceId: string;
+  resourceId: string | undefined;
   value: string | undefined;
   handleFormData: (value: string | undefined) => void;
 };

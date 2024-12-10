@@ -1,45 +1,27 @@
 # Django imports
-from django.db.models import CharField, Count, Q, OuterRef, Subquery, IntegerField
+from django.db.models import Count, Q, OuterRef, Subquery, IntegerField
 from django.utils import timezone
 from django.db.models.functions import Coalesce
-from django.db.models.functions import Cast
 
 # Third party modules
 from rest_framework import status
 from rest_framework.response import Response
 
-from plane.app.permissions import (
-    WorkSpaceAdminPermission,
-    WorkspaceEntityPermission,
-    allow_permission,
-    ROLE,
-)
+from plane.app.permissions import WorkspaceEntityPermission, allow_permission, ROLE
 
 # Module imports
 from plane.app.serializers import (
     ProjectMemberRoleSerializer,
-    TeamSerializer,
-    UserLiteSerializer,
     WorkspaceMemberAdminSerializer,
     WorkspaceMemberMeSerializer,
     WorkSpaceMemberSerializer,
 )
 from plane.app.views.base import BaseAPIView
-from plane.db.models import (
-    Project,
-    ProjectMember,
-    Team,
-    User,
-    Workspace,
-    WorkspaceMember,
-    DraftIssue,
-    Cycle,
-)
-
 from plane.utils.cache import invalidate_cache
+from plane.db.models import Project, ProjectMember, WorkspaceMember, DraftIssue, Cycle
 from plane.payment.bgtasks.member_sync_task import member_sync_task
-from .. import BaseViewSet
 from plane.payment.utils.member_payment_count import workspace_member_check
+from .. import BaseViewSet
 
 
 class WorkSpaceMemberViewSet(BaseViewSet):
@@ -333,53 +315,3 @@ class WorkspaceProjectMemberEndpoint(BaseAPIView):
             project_members_dict[str(project_id)].append(project_member)
 
         return Response(project_members_dict, status=status.HTTP_200_OK)
-
-
-class TeamMemberViewSet(BaseViewSet):
-    serializer_class = TeamSerializer
-    model = Team
-    permission_classes = [WorkSpaceAdminPermission]
-
-    search_fields = ["member__display_name", "member__first_name"]
-
-    def get_queryset(self):
-        return self.filter_queryset(
-            super()
-            .get_queryset()
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .select_related("workspace", "workspace__owner")
-            .prefetch_related("members")
-        )
-
-    def create(self, request, slug):
-        members = list(
-            WorkspaceMember.objects.filter(
-                workspace__slug=slug,
-                member__id__in=request.data.get("members", []),
-                is_active=True,
-            )
-            .annotate(member_str_id=Cast("member", output_field=CharField()))
-            .distinct()
-            .values_list("member_str_id", flat=True)
-        )
-
-        if len(members) != len(request.data.get("members", [])):
-            users = list(set(request.data.get("members", [])).difference(members))
-            users = User.objects.filter(pk__in=users)
-
-            serializer = UserLiteSerializer(users, many=True)
-            return Response(
-                {
-                    "error": f"{len(users)} of the member(s) are not a part of the workspace",
-                    "members": serializer.data,
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        workspace = Workspace.objects.get(slug=slug)
-
-        serializer = TeamSerializer(data=request.data, context={"workspace": workspace})
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

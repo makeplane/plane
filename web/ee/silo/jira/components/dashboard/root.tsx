@@ -7,6 +7,8 @@ import { TLogoProps } from "@plane/types";
 import { Button } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
+// helpers
+import { renderFormattedDate, renderFormattedTime } from "@/helpers/date-time.helper";
 // silo context
 import { useJiraSyncJobs } from "@/plane-web/silo/hooks/context/use-jira-sync-jobs";
 // silo components
@@ -25,7 +27,7 @@ export const Dashboard: FC<TDashboard> = (props) => {
   const { allSyncJobs, startJob } = useJiraSyncJobs();
 
   return (
-    <div className="space-y-6 relative w-full h-full overflow-hidden flex flex-col">
+    <div className="space-y-6 relative w-full h-full overflow-auto flex flex-col">
       <div className="flex-shrink-0 text-lg font-medium">Imports</div>
 
       {/* header */}
@@ -56,9 +58,9 @@ export const Dashboard: FC<TDashboard> = (props) => {
                 <td className="p-3 whitespace-nowrap">Jira Workspace</td>
                 <td className="p-3 whitespace-nowrap">Jira Project</td>
                 <td className="p-3 whitespace-nowrap text-center">Status</td>
-                <td className="p-3 whitespace-nowrap text-center">Total Issues</td>
-                <td className="p-3 whitespace-nowrap text-center">Transformed Issues</td>
-                <td className="p-3 whitespace-nowrap text-center">Completed Issues</td>
+                <td className="p-3 whitespace-nowrap text-center">Total Batches</td>
+                <td className="p-3 whitespace-nowrap text-center">Transformed Batches</td>
+                <td className="p-3 whitespace-nowrap text-center">Completed Batches</td>
                 <td className="p-3 whitespace-nowrap text-center">Re Run</td>
                 <td className="p-3 whitespace-nowrap text-center">Start Time</td>
               </tr>
@@ -81,18 +83,22 @@ export const Dashboard: FC<TDashboard> = (props) => {
                         title={job?.config?.meta?.planeProject?.name}
                       />
                     </td>
-                    <td className="p-3 whitespace-nowrap">
-                      <IconFieldRender
-                        icon={
-                          <img
-                            src={job?.config?.meta?.resource.avatarUrl}
-                            alt={job?.config?.meta?.resource.name}
-                            className="w-full h-full object-contain object-center"
-                          />
-                        }
-                        title={job?.config?.meta?.resource?.name}
-                      />
-                    </td>
+                    {job?.config?.meta?.resource ? (
+                      <td className="p-3 whitespace-nowrap">
+                        <IconFieldRender
+                          icon={
+                            <img
+                              src={job?.config?.meta?.resource?.avatarUrl}
+                              alt={job?.config?.meta?.resource?.name}
+                              className="w-full h-full object-contain object-center"
+                            />
+                          }
+                          title={job?.config?.meta?.resource?.name}
+                        />
+                      </td>
+                    ) : (
+                      <td className="p-3 whitespace-nowrap text-center">-</td>
+                    )}
                     <td className="p-3 whitespace-nowrap">
                       <IconFieldRender
                         icon={
@@ -121,7 +127,11 @@ export const Dashboard: FC<TDashboard> = (props) => {
                         Re Run
                       </Button>
                     </td>
-                    <td className="p-3 whitespace-nowrap text-center">{job?.start_time?.toString() || "-"}</td>
+                    <td className="p-3 whitespace-nowrap text-center">
+                      {job?.start_time
+                        ? `${renderFormattedTime(job?.start_time, "12-hour")}, ${renderFormattedDate(job?.start_time)}`
+                        : "-"}
+                    </td>
                   </tr>
                 ))}
             </tbody>

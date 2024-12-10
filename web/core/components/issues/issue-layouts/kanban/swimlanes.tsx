@@ -54,7 +54,7 @@ const visibilitySubGroupByGroupCount = (subGroupIssueCount: number, showEmptyGro
 
 const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = observer(
   ({ getGroupIssueCount, sub_group_by, group_by, list, collapsedGroups, handleCollapsedGroups, showEmptyGroup }) => (
-    <div className="relative flex h-max min-h-full w-full items-center gap-2">
+    <div className="relative flex h-max min-h-full w-full items-center gap-4">
       {list &&
         list.length > 0 &&
         list.map((_list: IGroupByColumn) => {
@@ -170,6 +170,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                     count={issueCount}
                     collapsedGroups={collapsedGroups}
                     handleCollapsedGroups={handleCollapsedGroups}
+                    sub_group_by={sub_group_by}
                   />
                 </Row>
               </div>

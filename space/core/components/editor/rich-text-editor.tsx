@@ -4,7 +4,8 @@ import { EditorRefApi, IMentionHighlight, IRichTextEditor, RichTextEditorWithRef
 // helpers
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
 
-interface RichTextEditorWrapperProps extends Omit<IRichTextEditor, "fileHandler" | "mentionHandler"> {
+interface RichTextEditorWrapperProps
+  extends Omit<IRichTextEditor, "disabledExtensions" | "fileHandler" | "mentionHandler"> {
   anchor: string;
   uploadFile: (file: File) => Promise<string>;
   workspaceId: string;
@@ -22,6 +23,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
         suggestions: undefined,
       }}
       ref={ref}
+      disabledExtensions={[]}
       fileHandler={getEditorFileHandlers({
         uploadFile,
         workspaceId,

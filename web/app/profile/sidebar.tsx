@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 // icons
 import { ChevronLeft, LogOut, MoveLeft, Plus, UserPlus } from "lucide-react";
 // plane helpers
-import { useOutsideClickDetector } from "@plane/helpers";
+import { useOutsideClickDetector } from "@plane/hooks";
 // ui
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // components

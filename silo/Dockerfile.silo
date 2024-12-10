@@ -40,6 +40,7 @@ COPY --from=installer /app/silo/package.json ./silo/package.json
 COPY --from=installer /app/silo/src/db/migrations ./silo/src/db/migrations
 COPY --from=installer /app/silo/src/db/config ./silo/src/db/config
 COPY --from=installer /app/silo/drizzle.config.js ./silo/drizzle.config.js
+COPY --from=installer /app/silo/wait_db.js ./silo/wait_db.js
 COPY --from=installer /app/node_modules ./node_modules
 
 ENV TURBO_TELEMETRY_DISABLED 1

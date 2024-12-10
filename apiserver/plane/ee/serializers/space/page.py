@@ -3,8 +3,13 @@ from plane.ee.serializers import BaseSerializer
 from plane.db.models import Page
 
 
-class PagePublicSerializer(BaseSerializer):
+class PagePublicMetaSerializer(BaseSerializer):
+    class Meta:
+        model = Page
+        fields = ["id", "name", "description_stripped"]
 
+
+class PagePublicSerializer(BaseSerializer):
     class Meta:
         model = Page
         fields = [

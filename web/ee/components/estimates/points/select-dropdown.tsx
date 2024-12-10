@@ -4,7 +4,7 @@ import { FC, useRef, Fragment, useState } from "react";
 import { usePopper } from "react-popper";
 import { Info, Check, ChevronDown } from "lucide-react";
 import { Listbox, Transition } from "@headlessui/react";
-import { useOutsideClickDetector } from "@plane/helpers";
+import { useOutsideClickDetector } from "@plane/hooks";
 import { TEstimatePointsObject } from "@plane/types";
 import { Tooltip } from "@plane/ui";
 // helpers

@@ -118,7 +118,6 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
         height: `${Math.round(initialHeight)}px` satisfies Pixel,
         aspectRatio: aspectRatioCalculated,
       };
-
       setSize(initialComputedSize);
       updateAttributesSafely(
         initialComputedSize,

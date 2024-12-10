@@ -1,5 +1,4 @@
 # Python imports
-import json
 import secrets
 import os
 import requests
@@ -19,20 +18,15 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         # Positional argument
-        parser.add_argument(
-            "machine_signature", type=str, help="Machine signature"
-        )
+        parser.add_argument("machine_signature", type=str, help="Machine signature")
 
-    def get_instance_from_prime(
-        self, machine_signature, instance_id, prime_host
-    ):
+    def get_instance_from_prime(self, machine_signature, prime_host):
         try:
             response = requests.get(
                 f"{prime_host}/api/v2/instances/me/",
                 headers={
                     "Content-Type": "application/json",
                     "X-Machine-Signature": str(machine_signature),
-                    "x-instance-id": str(instance_id),
                 },
             )
             response.raise_for_status()
@@ -42,42 +36,32 @@ class Command(BaseCommand):
             log_exception(e)
             return {}
 
-    def get_fallback_version(self):
-        with open("package.json", "r") as file:
-            # Load JSON content from the file
-            data = json.load(file)
-            return data.get("version", 0.1)
-
     def handle(self, *args, **options):
         # Check if the instance is registered
         instance = Instance.objects.first()
 
-        # Get the environment variables
-        app_version = os.environ.get("APP_VERSION", False)
-        prime_host = os.environ.get("PRIME_HOST", False)
         domain = os.environ.get("APP_DOMAIN", False)
-        instance_id = os.environ.get("INSTANCE_ID", False)
-        # Get the machine signature from the options
-        machine_signature = options.get(
-            "machine_signature", "machine-signature"
-        )
+        if not domain:
+            raise CommandError("App domain is required")
 
+        app_version = os.environ.get("APP_VERSION", False)
+        if not app_version:
+            raise CommandError("App version is required")
+
+        prime_host = os.environ.get("PRIME_HOST", False)
+        if not prime_host:
+            raise CommandError("Prime host is required")
+
+        machine_signature = options.get("machine_signature", "machine-signature")
         if not machine_signature:
             raise CommandError("Machine signature is required")
 
+        data = self.get_instance_from_prime(
+            machine_signature=machine_signature, prime_host=prime_host
+        )
+
         # If instance is None then register this instance
         if instance is None:
-            # If license version is not provided then read from package.json
-            if app_version and prime_host and instance_id:
-                data = self.get_instance_from_prime(
-                    machine_signature=machine_signature,
-                    instance_id=instance_id,
-                    prime_host=prime_host,
-                )
-            else:
-                data = {}
-                app_version = self.get_fallback_version()
-
             # Make a call to the Prime Server to get the instance
             instance = Instance.objects.create(
                 instance_name="Plane Commercial Edition",
@@ -91,23 +75,10 @@ class Command(BaseCommand):
             )
 
             self.stdout.write(self.style.SUCCESS("Instance registered"))
+            return
         else:
-            data = {}
-            # Fetch the instance from the Prime Server
-            if app_version and instance_id and prime_host:
-                data = self.get_instance_from_prime(
-                    machine_signature=machine_signature,
-                    instance_id=instance_id,
-                    prime_host=prime_host,
-                )
-                data["user_version"] = app_version
-            else:
-                app_version = self.get_fallback_version()
-
             # Update the instance
-            instance.instance_id = data.get(
-                "instance_id", instance.instance_id
-            )
+            instance.instance_id = data.get("instance_id", instance.instance_id)
             instance.latest_version = data.get(
                 "latest_version", instance.latest_version
             )
@@ -133,7 +104,5 @@ class Command(BaseCommand):
             instance_traces.delay()
 
             # Print the success message
-            self.stdout.write(
-                self.style.SUCCESS("Instance already registered")
-            )
+            self.stdout.write(self.style.SUCCESS("Instance already registered"))
             return

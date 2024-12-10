@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import dynamic from "next/dynamic";
+import Markdown from "react-markdown";
 import { Copy, ThumbsDown, ThumbsUp } from "lucide-react";
 import { cn } from "@plane/editor";
 import { Loader, PiChatLogo, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
@@ -7,9 +7,6 @@ import { copyTextToClipboard } from "@/helpers/string.helper";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { EFeedback } from "@/plane-web/types";
 import { Thinking } from "./thinking";
-const Markdown = dynamic(() => import("markdown-to-jsx"), {
-  loading: () => <Thinking />,
-});
 
 type TProps = {
   id: string;
@@ -56,7 +53,7 @@ export const AiMessage = observer((props: TProps) => {
       <div className="bg-pi-700 rounded-full h-9 w-9 flex">
         <PiChatLogo className="size-6 text-white fill-current m-auto align-center" />
       </div>
-      <div className="flex flex-col w-fit text-base break-words">
+      <div className="flex flex-col text-base break-words w-full">
         {/* Message */}
         {!isPiTyping && !isLoading && <Markdown className="pi-chat-root">{handleMessage()}</Markdown>}
 

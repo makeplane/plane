@@ -12,7 +12,7 @@ export class WorkspaceService extends CoreWorkspaceService {
     super(API_BASE_URL);
   }
 
-  async updateViewAccess(workspaceSlug: string, viewId: string, access: EViewAccess) {
+  async updateViewAccess(workspaceSlug: string, viewId: string, access: EViewAccess): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/views/${viewId}/access/`, {
       access,
     }).catch((error) => {
@@ -20,13 +20,13 @@ export class WorkspaceService extends CoreWorkspaceService {
     });
   }
 
-  async lockView(workspaceSlug: string, viewId: string) {
+  async lockView(workspaceSlug: string, viewId: string): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/views/${viewId}/lock/`).catch((error) => {
       throw error?.response?.data;
     });
   }
 
-  async unLockView(workspaceSlug: string, viewId: string) {
+  async unLockView(workspaceSlug: string, viewId: string): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/views/${viewId}/lock/`).catch((error) => {
       throw error?.response?.data;
     });

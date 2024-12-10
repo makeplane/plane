@@ -57,7 +57,7 @@ export const TimelineDependencyPathItem = observer((props: TimelineDependencyPat
             orient="auto"
             id={`arrowhead-${id}`}
           >
-            <polygon points="0,5 1.6666666666666667,2.5 0,0 5,2.5" fill={strokeColor}></polygon>
+            <polygon points="0,5 1.6666666666666667,2.5 0,0 5,2.5" fill={strokeColor} />
           </marker>
         </defs>
       </svg>

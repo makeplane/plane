@@ -1,10 +1,15 @@
 import { LinearService } from "@/services";
+import {
+  LinearComment,
+  LinearCycle,
+  LinearIssueAttachment,
+  LinearProject,
+} from "@/types";
 import { Issue, IssueLabel, User } from "@linear/sdk";
-import { LinearComment, LinearCycle, LinearIssueAttachment } from "@/types";
 
 export async function pullUsers(
   client: LinearService,
-  teamId: string,
+  teamId: string
 ): Promise<User[]> {
   const members = await client.getTeamMembers(teamId);
   return members.nodes;
@@ -17,7 +22,7 @@ export async function pullLabels(client: LinearService): Promise<IssueLabel[]> {
 
 export async function pullIssues(
   client: LinearService,
-  teamId: string,
+  teamId: string
 ): Promise<Issue[]> {
   const issues: Issue[] = [];
   let cursor: string | undefined;
@@ -33,16 +38,19 @@ export async function pullIssues(
 
 export async function pullAttachments(
   issues: Issue[],
-  client: LinearService,
-): Promise<LinearIssueAttachment[]> {
-  const issueIds = issues.map((issue) => issue.id);
-  const attachments = await client.getIssuesAttachments(issueIds, client);
+  client: LinearService
+): Promise<Record<string, LinearIssueAttachment[]>> {
+  const attachments: Record<string, LinearIssueAttachment[]> = {};
+  for (const issue of issues) {
+    const attachments = await client.getIssuesAttachments(issue);
+    attachments[issue.id] = attachments;
+  }
   return attachments;
 }
 
 export async function pullComments(
   issues: Issue[],
-  client: LinearService,
+  client: LinearService
 ): Promise<LinearComment[]> {
   const issueIds = issues.map((issue) => issue.id);
   const comments = await client.getIssuesComments(issueIds);
@@ -51,24 +59,37 @@ export async function pullComments(
 
 export async function pullCycles(
   client: LinearService,
-  teamId: string,
+  teamId: string
 ): Promise<LinearCycle[]> {
   const cycles: LinearCycle[] = [];
   try {
     const teamCycles = await client.getTeamCycles(teamId);
     for (const cycle of teamCycles.nodes) {
-      const cycleIssues = await client.linearClient.issues({
-        filter: {
-          cycle: { id: { eq: cycle.id } },
-          team: { id: { eq: teamId } },
-        },
-      });
-      cycles.push({ cycle, issues: cycleIssues.nodes });
+      const cycleIssues = await client.getCycleIssues(cycle.id, teamId);
+      cycles.push({ cycle, issues: cycleIssues });
     }
   } catch (e) {
     throw Error(`Could not fetch cycles, something went wrong`);
   }
   return cycles;
+}
+
+export async function pullProjects(
+  client: LinearService,
+  teamId: string
+): Promise<LinearProject[]> {
+  const projects: LinearProject[] = [];
+  try {
+    const teamProjects = await client.getTeamProjects(teamId);
+    for (const project of teamProjects.nodes) {
+      const projectIssues = await client.getProjectIssues(project.id);
+      projects.push({ project, issues: projectIssues.nodes });
+    }
+  } catch (e) {
+    console.log(e);
+    throw Error(`Could not fetch projects, something went wrong`);
+  }
+  return projects;
 }
 
 // export const pullCommentsForIssue = async (

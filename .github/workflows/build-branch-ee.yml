@@ -422,7 +422,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Generate Keypair
         run: |
-          if [ "${{ env.TARGET_BRANCH }}" == "master" ] || [ "${{ env.BUILD_TYPE }}" == "Release" ]; then 
+          if [ "${{ env.TARGET_BRANCH }}" == "master" ] || [ "${{ env.BUILD_TYPE }}" == "Release" ]; then
             openssl genrsa -out private_key.pem 2048
           else
             echo "${{ secrets.DEFAULT_PRIME_PRIVATE_KEY }}" > private_key.pem

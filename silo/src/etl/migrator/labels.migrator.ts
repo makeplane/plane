@@ -11,7 +11,7 @@ export const createLabelsForIssues = async (
   projectId: string
 ): Promise<ExIssueLabel[]> => {
   // TODO: May hit race conditions
-  let createdLabels: ExIssueLabel[] = [];
+  const createdLabels: ExIssueLabel[] = [];
 
   const labelPromises = labels.map(async (label) => {
     try {

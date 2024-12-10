@@ -154,6 +154,10 @@ class IssuePropertyOptionAPIEndpoint(BaseAPIView):
                 return Response(
                     serializer.data, status=status.HTTP_201_CREATED
                 )
+            return Response(
+                {"error": "Issue Property type is not OPTION"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     # update issue property option by id
     @check_feature_flag(FeatureFlag.ISSUE_TYPE_SETTINGS)

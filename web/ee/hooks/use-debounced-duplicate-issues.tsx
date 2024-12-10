@@ -20,7 +20,9 @@ export const useDebouncedDuplicateIssues = (
 ) => {
   const [debouncedFormData, setDebouncedFormData] = useState(formData);
 
+  // TODO: Conditional rendering of hooks is not a good idea. This should be refactored.
   // Check if the feature flag is enabled
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const isFeatureEnabled = workspaceSlug ? useFlag(workspaceSlug, E_FEATURE_FLAGS.PI_DEDUPE) : false;
 
   // Debounce the name and description

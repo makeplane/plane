@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Image, BrainCog, Cog, Lock, Mail } from "lucide-react";
-import { Tooltip } from "@plane/ui";
+import { Tooltip, WorkspaceIcon } from "@plane/ui";
 // hooks
 import { cn } from "@/helpers/common.helper";
 import { useTheme } from "@/hooks/store";
@@ -14,31 +14,37 @@ const INSTANCE_ADMIN_LINKS = [
   {
     Icon: Cog,
     name: "General",
-    description: "Identify your instances and get key details",
+    description: "Identify your instances and get key details.",
     href: `/general/`,
+  },
+  {
+    Icon: WorkspaceIcon,
+    name: "Workspaces",
+    description: "Manage all workspaces on this instance.",
+    href: `/workspace/`,
   },
   {
     Icon: Mail,
     name: "Email",
-    description: "Set up emails to your users",
+    description: "Configure your SMTP controls.",
     href: `/email/`,
   },
   {
     Icon: Lock,
     name: "Authentication",
-    description: "Configure authentication modes",
+    description: "Configure authentication modes.",
     href: `/authentication/`,
   },
   {
     Icon: BrainCog,
     name: "Artificial intelligence",
-    description: "Configure your OpenAI creds",
+    description: "Configure your OpenAI creds.",
     href: `/ai/`,
   },
   {
     Icon: Image,
     name: "Images in Plane",
-    description: "Allow third-party image libraries",
+    description: "Allow third-party image libraries.",
     href: `/image/`,
   },
 ];

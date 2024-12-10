@@ -1,21 +1,40 @@
 // sentry
 import * as Sentry from "@sentry/node";
 import { nodeProfilingIntegration } from "@sentry/profiling-node";
+import cors from "cors";
 import dotenv from "dotenv";
 import express, { Application } from "express";
-import cors from "cors";
+
 // lib
 import { registerControllers } from "./lib/controller";
 // controllers
-import { JobConfigController, JobController, CredentialController } from "@/apps/engine/controllers";
-
+import { HomeController } from "@/controllers";
+import AsanaController from "@/apps/asana-importer/controllers";
+import { CredentialController, JobConfigController, JobController } from "@/apps/engine/controllers";
+import { ConnectionsController } from "@/apps/engine/controllers/connection.controller";
+import GithubController from "@/apps/github/controllers";
 import JiraController from "@/apps/jira-importer/controllers";
 import LinearController from "@/apps/linear-importer/controllers";
+import { GitlabController } from "./apps/gitlab";
+import { SlackController } from "./apps/slack/controllers";
 import { env } from "./env";
-import { logger } from "./logger";
+import { expressLogger, logger } from "./logger";
+import expressWinston from "express-winston";
+import JiraDataCenterController from "./apps/jira-server-importer/controllers";
 
-const controllers = [JobController, JobConfigController, CredentialController];
-const appControllers = [JiraController, LinearController];
+const PING_CONTROLLERS = [HomeController];
+const ENGINE_CONTROLLERS = [JobController, JobConfigController, CredentialController, ConnectionsController];
+const APP_CONTROLLERS = [
+  JiraController,
+  LinearController,
+  GithubController,
+  GitlabController,
+  AsanaController,
+  SlackController,
+  JiraDataCenterController,
+];
+
+const controllers = [...PING_CONTROLLERS, ...ENGINE_CONTROLLERS, ...APP_CONTROLLERS];
 
 export class Server {
   app: Application;
@@ -23,10 +42,26 @@ export class Server {
 
   constructor() {
     this.app = express();
-    this.app.use(express.json());
     this.port = Number(env.PORT);
     // cors
     this.app.use(cors());
+    this.app.use(express.json());
+    this.app.use(express.urlencoded({ extended: true }));
+    this.app.use(
+      expressWinston.logger({
+        winstonInstance: expressLogger,
+        msg: '"{req.method} {req.url}" {req.httpVersion}',
+        expressFormat: true,
+        colorize: true,
+        requestWhitelist: [],
+        responseWhitelist: ["statusCode"],
+        bodyBlacklist: ["password", "authorization"],
+        ignoreRoute: function (req, res) {
+          return false;
+        },
+      })
+    );
+
     // set up dotenv
     dotenv.config();
     // set up controllers
@@ -36,10 +71,9 @@ export class Server {
   }
 
   setupControllers() {
-    // Setup app controllers
-    controllers.forEach((controller) => registerControllers(this.app, controller));
-    // Setup controllers for importers
-    appControllers.forEach((controller) => registerControllers(this.app, controller));
+    const router = express.Router();
+    controllers.forEach((controller) => registerControllers(router, controller));
+    this.app.use(process.env.SILO_BASE_PATH || "/", router); // Adding base route
   }
 
   setupSentry() {

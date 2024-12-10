@@ -39,10 +39,8 @@ class MagicGenerateSpaceEndpoint(APIView):
             return Response(exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST)
 
         origin = base_host(request=request, is_space=True)
-        email = request.data.get("email", False)
+        email = request.data.get("email", "").strip().lower()
         try:
-            # Clean up the email
-            email = email.strip().lower()
             validate_email(email)
             adapter = MagicCodeProvider(request=request, key=email)
             key, token = adapter.initiate()

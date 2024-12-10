@@ -5,6 +5,7 @@ import { FC } from "react";
 import { useImporter, useLinearTeams } from "@/plane-web/silo/linear/hooks";
 // silo ui components
 import { Dropdown } from "@/plane-web/silo/ui";
+import { useLinearOrg } from "../../../hooks/linear/use-org";
 
 type TConfigureLinearSelectTeam = {
   value: string | undefined;
@@ -17,13 +18,18 @@ export const ConfigureLinearSelectTeam: FC<TConfigureLinearSelectTeam> = (props)
   // hooks
   const { handleSyncJobConfig } = useImporter();
   const { data: linearTeams, getById: getTeamById } = useLinearTeams();
+  const { data: linearOrg } = useLinearOrg();
 
   const handelData = (value: string | undefined) => {
     handleFormData(value);
     // updating the config data
     if (value) {
       const teamData = getTeamById(value);
-      if (teamData && teamData.id) handleSyncJobConfig("teamId", teamData.id);
+      if (teamData && teamData.id && linearOrg && linearOrg.name) {
+        handleSyncJobConfig("teamId", teamData.id);
+        handleSyncJobConfig("teamName", teamData.name);
+        handleSyncJobConfig("workspace", linearOrg.name);
+      }
       // if (teamData) handleSyncJobConfig("teamUrl", teamData.);
     }
   };

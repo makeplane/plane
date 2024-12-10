@@ -16,4 +16,10 @@ from .admin import (
     InstanceAdminUserSessionEndpoint,
 )
 
-from .changelog import ChangeLogEndpoint, CheckUpdateEndpoint
+
+from .workspace import (
+    InstanceWorkSpaceAvailabilityCheckEndpoint,
+    InstanceWorkSpaceEndpoint,
+)
+
+from .changelog import CheckUpdateEndpoint

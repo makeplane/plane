@@ -7,8 +7,11 @@ import useSWR from "swr";
 
 // components
 import { JoinProject } from "@/components/auth-screens";
-import { EmptyState, LogoSpinner } from "@/components/common";
+import { LogoSpinner } from "@/components/common";
+import { EmptyState } from "@/components/empty-state";
 import { ETimeLineTypeType } from "@/components/gantt-chart/contexts";
+//constants
+import { EmptyStateType } from "@/constants/empty-state";
 // hooks
 import {
   useCommandPalette,
@@ -30,8 +33,6 @@ import { persistence } from "@/local-db/storage.sqlite";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web hooks
 import { useIssueTypes } from "@/plane-web/hooks/store";
-// images
-import emptyProject from "@/public/empty-state/onboarding/dashboard-light.webp";
 
 interface IProjectAuthWrapper {
   children: ReactNode;
@@ -52,7 +53,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const {
     project: { fetchProjectMembers },
   } = useMember();
-  const { fetchProjectStates } = useProjectState();
+  const { fetchProjectStates, fetchProjectStateTransitions } = useProjectState();
   const { fetchProjectLabels } = useLabel();
   const { getProjectEstimates } = useProjectEstimates();
   const { isIssueTypeEnabledForProject, fetchAllPropertiesAndOptions } = useIssueTypes();
@@ -107,7 +108,12 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // fetching project states
   useSWR(
     workspaceSlug && projectId ? `PROJECT_STATES_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchProjectStates(workspaceSlug.toString(), projectId.toString()) : null,
+    workspaceSlug && projectId
+      ? () => {
+          fetchProjectStates(workspaceSlug.toString(), projectId.toString());
+          fetchProjectStateTransitions(workspaceSlug.toString(), projectId.toString());
+        }
+      : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching project estimates
@@ -183,15 +189,11 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     return (
       <div className="grid h-screen place-items-center bg-custom-background-100">
         <EmptyState
-          title="No such project exists"
-          description="Try creating a new project"
-          image={emptyProject}
-          primaryButton={{
-            text: "Create Project",
-            onClick: () => {
-              setTrackElement("Projects page empty state");
-              toggleCreateProjectModal(true);
-            },
+          type={EmptyStateType.WORKSPACE_PROJECT_NOT_FOUND}
+          layout="screen-detailed"
+          primaryButtonOnClick={() => {
+            setTrackElement("Projects page empty state");
+            toggleCreateProjectModal(true);
           }}
         />
       </div>

@@ -10,7 +10,7 @@ export const createStates = async (
   workspaceSlug: string,
   projectId: string
 ) => {
-  let createdStates: { source_state: any; target_state: ExState }[] = [];
+  const createdStates: { source_state: any; target_state: ExState }[] = [];
 
   const statePromises = states.map(async (state) => {
     try {

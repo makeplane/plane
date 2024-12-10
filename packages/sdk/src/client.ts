@@ -6,6 +6,12 @@ import { ModuleService } from "@/services/module.service";
 import { ProjectService } from "@/services/project.service";
 import { StateService } from "@/services/state.service";
 import { UserService } from "@/services/user.service";
+import {
+  IssueTypeService,
+  IssuePropertyService,
+  IssuePropertyOptionService,
+  IssuePropertyValueService,
+} from "@/services/issue-types";
 // types
 import { ClientOptions } from "@/types/types";
 
@@ -19,6 +25,11 @@ export class Client {
   modules: ModuleService;
   project: ProjectService;
   issueComment: IssueCommentService;
+  // issue types
+  issueType: IssueTypeService;
+  issueProperty: IssuePropertyService;
+  issuePropertyOption: IssuePropertyOptionService;
+  issuePropertyValue: IssuePropertyValueService;
 
   constructor(options: ClientOptions) {
     this.options = options;
@@ -30,5 +41,10 @@ export class Client {
     this.issueComment = new IssueCommentService(options);
     this.cycles = new CycleService(options);
     this.modules = new ModuleService(options);
+    // issue types
+    this.issueType = new IssueTypeService(options);
+    this.issueProperty = new IssuePropertyService(options);
+    this.issuePropertyOption = new IssuePropertyOptionService(options);
+    this.issuePropertyValue = new IssuePropertyValueService(options);
   }
 }

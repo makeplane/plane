@@ -825,7 +825,6 @@ html.todesktop .header button {
   -webkit-app-region: no-drag;
 }
 
-
 .pi-chat-root {
   * {
     margin: revert;
@@ -836,12 +835,24 @@ html.todesktop .header button {
     text-indent: revert;
     border-collapse: revert;
   }
-  li, ui{
+  li,
+  ui {
     display: list-item;
     list-style-type: disc;
     margin-left: 0.9rem;
   }
-  table, tr, td, th {
+  table,
+  tr,
+  td,
+  th {
     border-width: revert;
- }
+  }
+  pre {
+    width: 100%;
+    overflow-x: auto;
+    background-color: rgb(var(--color-background-80));
+    border-radius: 10px;
+    padding: 20px;
+    font-family: inherit;
+  }
 }

@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { ArchiveRestoreIcon, LinkIcon, Lock, MoreHorizontal, PenSquare, Settings, Trash2 } from "lucide-react";
+import { ArchiveRestoreIcon, LinkIcon, Lock, MoreHorizontal, Settings, Trash2 } from "lucide-react";
 // ui
 import { cn } from "@plane/editor";
-import { useOutsideClickDetector } from "@plane/helpers";
+import { useOutsideClickDetector } from "@plane/hooks";
 import {
   TOAST_TYPE,
   setToast,

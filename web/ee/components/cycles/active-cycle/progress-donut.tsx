@@ -1,4 +1,4 @@
-import { use, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { TCycleProgress } from "@plane/types";
 import { CircularProgressIndicator } from "@plane/ui";
 

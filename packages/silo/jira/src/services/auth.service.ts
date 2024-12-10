@@ -1,6 +1,6 @@
 import { JiraAuthProps, JiraAuthState } from "@/types";
 import axios from "axios";
-import { JIRA_SCOPES } from "@plane/constants";
+import { JIRA_SCOPES } from "../helpers";
 
 export type JiraTokenResponse = {
   access_token: string;

@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from "axios";
-import { JiraAuthState } from "@silo/jira";
+import { JiraAuthState, JiraPATAuthState } from "@silo/jira";
 
 export class ImporterAuthService {
   protected baseURL: string;
@@ -17,10 +17,19 @@ export class ImporterAuthService {
    */
   async jiraAuthentication(payload: JiraAuthState) {
     return this.axiosInstance
-      .post(`/silo/api/jira/auth/url`, payload)
+      .post(`/api/jira/auth/url`, payload)
       .then((res) => res.data)
       .catch((error) => {
-        throw error?.response?.data;
+        throw error?.message;
+      });
+  }
+
+  async jiraPATAuthentication(payload: JiraPATAuthState) {
+    return this.axiosInstance
+      .post(`/api/jira/auth/pat`, payload)
+      .then((res) => res.data)
+      .catch((error) => {
+        throw error?.message;
       });
   }
 }

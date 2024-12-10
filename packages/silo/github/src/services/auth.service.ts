@@ -1,5 +1,10 @@
-import { GithubAuthConfig, GithubAuthorizeState, GithubAuthPayload, TokenResponse } from "@/types";
+import { GithubAuthConfig, GithubAuthorizeState, GithubUserAuthPayload, GithubUserAuthState } from "@/types";
 import axios from "axios";
+
+export type GithubTokenResponse = {
+  access_token: string;
+  scope: string;
+};
 
 export class GithubAuthService {
   config: GithubAuthConfig;
@@ -15,7 +20,14 @@ export class GithubAuthService {
    */
   getAuthUrl(state: GithubAuthorizeState): string {
     const stateString = JSON.stringify(state);
-    return `https://github.com/apps/${this.config.appName}/installations/select_target?state=${stateString}`;
+    const encodedState = Buffer.from(stateString).toString("base64");
+    return `https://github.com/apps/${this.config.appName}/installations/select_target?state=${encodedState}`;
+  }
+
+  getUserAuthUrl(state: GithubUserAuthState): string {
+    const stateString = JSON.stringify(state);
+    const encodedState = Buffer.from(stateString).toString("base64");
+    return `https://github.com/login/oauth/authorize?client_id=${this.config.clientId}&redirect_uri=${this.config.callbackUrl}&state=${encodedState}`;
   }
 
   /**
@@ -23,34 +35,17 @@ export class GithubAuthService {
    * @param payload An object containing the authorization code and state
    * @returns A promise that resolves to an object containing the token response and state
    */
-  async getAccessToken(payload: GithubAuthPayload): Promise<{
-    response: TokenResponse;
-    state: GithubAuthorizeState;
+  async getUserAccessToken(payload: GithubUserAuthPayload): Promise<{
+    response: string;
+    state: GithubUserAuthState;
   }> {
     const { code, state } = payload;
 
-    const data = {
+    const { data: response } = await axios.post("https://github.com/login/oauth/access_token", {
+      client_id: this.config.clientId,
+      client_secret: this.config.clientSecret,
       code,
-      redirect_uri: this.config.callbackUrl,
-    };
-
-    const { data: response } = await axios.post(this.config.tokenUrl, data);
+    });
     return { response, state };
-  }
-
-  /**
-   * Refreshes an existing access token using a refresh token
-   * @param refresh_token The refresh token to use for obtaining a new access token
-   * @returns A promise that resolves to the new token response
-   */
-  async getRefreshToken(refresh_token: string): Promise<TokenResponse> {
-    const data = {
-      refresh_token: refresh_token,
-      grant_type: "refresh_token",
-    };
-
-    const { data: response } = await axios.post(this.config.tokenUrl, data);
-
-    return response;
   }
 }

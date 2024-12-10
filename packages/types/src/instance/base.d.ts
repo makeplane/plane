@@ -4,6 +4,7 @@ import {
   TInstanceEmailConfigurationKeys,
   TInstanceImageConfigurationKeys,
   TInstanceAuthenticationKeys,
+  TInstanceWorkspaceConfigurationKeys,
   // enterprise
   TInstanceEnterpriseAuthenticationKeys,
 } from "./";
@@ -42,6 +43,7 @@ export interface IInstance {
 }
 
 export interface IInstanceConfig {
+  is_workspace_creation_disabled: boolean;
   is_google_enabled: boolean;
   is_github_enabled: boolean;
   is_gitlab_enabled: boolean;
@@ -61,6 +63,7 @@ export interface IInstanceConfig {
   // intercom
   is_intercom_enabled: boolean;
   intercom_app_id: string | undefined;
+  instance_changelog_url?: string;
   // enterprise
   is_oidc_enabled: boolean;
   oidc_provider_name: string | undefined;
@@ -100,8 +103,8 @@ export type TInstanceConfigurationKeys =
   | TInstanceImageConfigurationKeys
   | TInstanceAuthenticationKeys
   | TInstanceIntercomConfigurationKeys
-  // enterprise
-  | TInstanceEnterpriseAuthenticationKeys;
+  | TInstanceWorkspaceConfigurationKeys
+  | TInstanceEnterpriseAuthenticationKeys; // enterprise
 
 export interface IInstanceConfiguration {
   id: string;

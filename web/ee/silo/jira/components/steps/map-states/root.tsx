@@ -3,7 +3,7 @@
 import { FC, useEffect, useState } from "react";
 import isEqual from "lodash/isEqual";
 import { ExState } from "@plane/sdk";
-import { Button } from "@plane/ui";
+import { Button, Loader } from "@plane/ui";
 import { IStateConfig, JiraStatus } from "@silo/jira";
 // silo hooks
 import { usePlaneProjectStates } from "@/plane-web/silo/hooks";
@@ -26,12 +26,21 @@ export const MapStatesRoot: FC = () => {
   const planeProjectId = importerData[E_IMPORTER_STEPS.SELECT_PLANE_PROJECT]?.projectId;
   const jiraResourceId = importerData[E_IMPORTER_STEPS.CONFIGURE_JIRA]?.resourceId;
   const jiraProjectId = importerData[E_IMPORTER_STEPS.CONFIGURE_JIRA]?.projectId;
-  const { data: jiraProjectStates, getById: getJiraStateById } = useJiraProjectStates(jiraResourceId, jiraProjectId);
-  const { data: planeProjectStates, getById: getPlaneStateById } = usePlaneProjectStates(planeProjectId);
+  const {
+    data: jiraProjectStates,
+    getById: getJiraStateById,
+    isLoading: isJiraProjectStatesLoading,
+  } = useJiraProjectStates(jiraResourceId, jiraProjectId);
+  const {
+    data: planeProjectStates,
+    getById: getPlaneStateById,
+    isLoading: isPlaneProjectStatesLoading,
+  } = usePlaneProjectStates(planeProjectId);
   // states
   const [formData, setFormData] = useState<TFormData>({});
   // derived values
   const isNextButtonDisabled = jiraProjectStates?.length === Object.keys(formData).length ? false : true;
+  const isStatesLoading = isJiraProjectStatesLoading || isPlaneProjectStatesLoading;
   // handlers
   const handleFormData = <T extends keyof TFormData>(key: T, value: TFormData[T]) => {
     setFormData((prevData) => ({ ...prevData, [key]: value }));
@@ -85,7 +94,17 @@ export const MapStatesRoot: FC = () => {
           <div>Plane States</div>
         </div>
         <div className="divide-y divide-custom-border-200">
-          {jiraProjectStates &&
+          {isStatesLoading ? (
+            <Loader className="relative w-full grid grid-cols-2 items-center py-4 gap-4">
+              <Loader.Item height="35px" width="100%" />
+              <Loader.Item height="35px" width="100%" />
+              <Loader.Item height="35px" width="100%" />
+              <Loader.Item height="35px" width="100%" />
+              <Loader.Item height="35px" width="100%" />
+              <Loader.Item height="35px" width="100%" />
+            </Loader>
+          ) : (
+            jiraProjectStates &&
             planeProjectStates &&
             jiraProjectStates.map(
               (jiraState: JiraStatus) =>
@@ -98,7 +117,8 @@ export const MapStatesRoot: FC = () => {
                     planeStates={planeProjectStates}
                   />
                 )
-            )}
+            )
+          )}
         </div>
       </div>
 

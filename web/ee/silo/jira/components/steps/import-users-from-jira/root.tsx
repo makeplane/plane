@@ -4,8 +4,10 @@ import { FC, useEffect, useState } from "react";
 import isEqual from "lodash/isEqual";
 import { Button } from "@plane/ui";
 // helpers
+import { E_IMPORTER_KEYS } from "@silo/core";
 import { cn } from "@/helpers/common.helper";
 // silo components
+import { useSyncConfig } from "@/plane-web/silo/hooks";
 import { ImportUsersFromJiraUploader } from "@/plane-web/silo/jira/components";
 // silo hooks
 import { useImporter } from "@/plane-web/silo/jira/hooks";
@@ -20,6 +22,7 @@ const currentStepKey = E_IMPORTER_STEPS.IMPORT_USERS_FROM_JIRA;
 
 export const ImportUsersFromJira: FC = () => {
   // hooks
+  const { data: syncConfigData } = useSyncConfig(E_IMPORTER_KEYS.JIRA);
   const { importerData, handleImporterData, handleSyncJobConfig, currentStep, handleStepper } = useImporter();
   // states
   const [formData, setFormData] = useState<TFormData>({
@@ -30,6 +33,8 @@ export const ImportUsersFromJira: FC = () => {
   const isNextButtonDisabled =
     formData.userSkipToggle || (formData.userSkipToggle === false && formData?.userData ? false : true);
   const jiraResourceId = importerData[E_IMPORTER_STEPS.CONFIGURE_JIRA]?.resourceId;
+  const isOAuthEnabled = syncConfigData?.isOAuthEnabled;
+  const isResourceFiledRequired = isOAuthEnabled ? !!jiraResourceId : true;
   // handlers
   const handleFormData = <T extends keyof TFormData>(key: T, value: TFormData[T]) => {
     setFormData((prevData) => ({ ...prevData, [key]: value }));
@@ -91,7 +96,7 @@ export const ImportUsersFromJira: FC = () => {
         </div>
 
         {/* uploading the users from jira */}
-        {!formData.userSkipToggle && jiraResourceId && (
+        {!formData.userSkipToggle && isResourceFiledRequired && (
           <div className="space-y-4">
             <div className="text-sm">
               Upload a CSV file to import user data&nbsp;
