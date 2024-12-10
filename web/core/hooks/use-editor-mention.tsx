@@ -2,7 +2,7 @@ import { useCallback } from "react";
 // plane editor
 import { TMentionSection, TMentionSuggestion } from "@plane/editor";
 // plane types
-import { TSearchEntities } from "@plane/types";
+import { TSearchEntities, TUserSearchResponse } from "@plane/types";
 // plane ui
 import { Avatar } from "@plane/ui";
 // helpers
@@ -39,8 +39,9 @@ export const useEditorMention = (args: TArgs) => {
         }
         Object.keys(res).map((key) => {
           const responseKey = key as TSearchEntities;
-          if (responseKey === "user_mention" && res[responseKey] && res[responseKey].length > 0) {
-            const items: TMentionSuggestion[] = res[responseKey].map((user) => ({
+          const response = res[responseKey];
+          if (responseKey === "user_mention" && response && response.length > 0) {
+            const items: TMentionSuggestion[] = (response as TUserSearchResponse[]).map((user) => ({
               icon: (
                 <Avatar
                   className="flex-shrink-0"
