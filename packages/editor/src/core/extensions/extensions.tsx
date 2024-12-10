@@ -144,7 +144,14 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
         class: "not-prose pl-2 space-y-2",
       },
     }),
-    TaskItem.configure({
+    TaskItem.extend({
+      addInputRules() {
+        return [];
+      },
+      addKeyboardShortcuts() {
+        return {};
+      },
+    }).configure({
       HTMLAttributes: {
         class: "relative",
       },

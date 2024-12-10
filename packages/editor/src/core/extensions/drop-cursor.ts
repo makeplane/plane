@@ -45,30 +45,38 @@ export function dropCursor(options: DropCursorOptions = {}, tiptapEditorOptions:
     },
     props: {
       handleDrop(view, event, slice, moved) {
-        console.log("aaya");
         const coordinates = { left: event.clientX, top: event.clientY };
         const pos = view.posAtCoords(coordinates);
 
-        // if (!pos) return false;
+        if (!pos) return false;
 
         const $pos = view.state.doc.resolve(pos.pos);
-        const { isBetweenNodesOfType: isBetweenLists } = isBetweenNodesOfType($pos, "list");
+        const { isBetweenNodesOfType: isBetweenLists, position } = isBetweenNodesOfType($pos, "list");
 
-        if (isBetweenLists) {
-          console.log("asdff");
+        if (isBetweenLists && position !== null) {
           const state = pluginKey.getState(view.state);
-          const dropPosByDropCursorPos = state?.dropPosByDropCursorPos;
-          // __AUTO_GENERATED_PRINT_VAR_START__
-          console.log("dropCursor#handleDrop#if dropPosByDropCursorPos: %s", dropPosByDropCursorPos); // __AUTO_GENERATED_PRINT_VAR_END__
+          let dropPosByDropCursorPos = state?.dropPosByDropCursorPos;
+
           if (dropPosByDropCursorPos != null) {
             const tr = view.state.tr;
+
             if (moved) {
+              // Get the size of content to be deleted
+              const selection = tr.selection;
+              const deleteSize = selection.to - selection.from;
+
+              // Adjust drop position if it's after the deletion point
+              if (dropPosByDropCursorPos > selection.from) {
+                dropPosByDropCursorPos -= deleteSize;
+              }
+
               tr.deleteSelection();
             }
+
             tr.insert(dropPosByDropCursorPos, slice.content);
             view.dispatch(tr);
+            return true;
           }
-          return true;
         }
         return false;
       },
@@ -283,11 +291,8 @@ function isBetweenNodesOfType($pos: ResolvedPos, nodeTypeName: string) {
   }
 
   let isBetweenNodesOfType = false;
-  let isDirectlyBetweenLists = false;
-  let position: number | null = null;
-
-  // Check if we are inside a list item
-  let foundListItem = false;
+  let isDirectlyBetweenNodes = false;
+  let positionToShowAndDrop: number | null = null;
 
   // If not found inside a list item, check if we are directly between list nodes
   const nodeBefore = $pos.nodeBefore;
@@ -295,29 +300,36 @@ function isBetweenNodesOfType($pos: ResolvedPos, nodeTypeName: string) {
   const nodeBeforeIsType = isNodeType(nodeBefore, nodeType);
   const nodeAfterIsType = isNodeType(nodeAfter, nodeType);
 
+  console.log("nodeBeforeIsType", nodeBeforeIsType, nodeBefore);
+  console.log("nodeAfterIsType", nodeAfterIsType, nodeAfter);
   if (nodeBeforeIsType && nodeAfterIsType) {
     // Cursor is directly between two list nodes
     isBetweenNodesOfType = true;
-    isDirectlyBetweenLists = true;
-    position = $pos.pos;
+    isDirectlyBetweenNodes = true;
+    positionToShowAndDrop = $pos.pos;
+    console.log("exact between");
   } else if (nodeBeforeIsType || nodeAfterIsType) {
     isBetweenNodesOfType = true;
-    isDirectlyBetweenLists = false;
-    position = $pos.pos;
-  } else if (!foundListItem) {
+    isDirectlyBetweenNodes = false;
+    positionToShowAndDrop = $pos.pos;
+    console.log("not between", $pos.pos);
+  } else {
+    console.log("aaya in last case");
     // If not between lists or inside a list item, look ahead for the next list
     const nextListPos = findNextNodeOfType($pos, nodeType);
+    // __AUTO_GENERATED_PRINT_VAR_START__
+    console.log("isBetweenNodesOfType#if#if nextListPos: %s", nextListPos); // __AUTO_GENERATED_PRINT_VAR_END__
     if (nextListPos != null) {
       isBetweenNodesOfType = true;
-      isDirectlyBetweenLists = false;
-      position = nextListPos;
+      isDirectlyBetweenNodes = false;
+      positionToShowAndDrop = nextListPos;
     }
   }
 
   return {
     isBetweenNodesOfType,
-    isDirectlyBetweenLists,
-    position,
+    isDirectlyBetweenLists: isDirectlyBetweenNodes,
+    position: positionToShowAndDrop,
   };
 }
 
