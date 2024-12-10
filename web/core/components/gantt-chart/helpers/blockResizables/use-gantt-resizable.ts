@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 // Plane
-import { setToast } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/ui";
 // hooks
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 //
@@ -120,9 +120,13 @@ export const useGanttResizable = (
 
       try {
         const blockUpdates = getUpdatedPositionAfterDrag(block.id, shouldUpdateHalfBlock);
-        updateBlockDates && updateBlockDates(blockUpdates);
-      } catch (e) {
-        setToast;
+        if (updateBlockDates) updateBlockDates(blockUpdates);
+      } catch {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error",
+          message: "Something went wrong while updating block dates",
+        });
       }
 
       setIsDragging(false);
