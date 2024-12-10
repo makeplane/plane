@@ -12,7 +12,7 @@ export class PageService extends APIService {
     workspaceSlug: string,
     projectId: string,
     pageId: string,
-    cookie: string
+    cookie: string,
   ): Promise<TPage> {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/`,
@@ -20,7 +20,7 @@ export class PageService extends APIService {
         headers: {
           Cookie: cookie,
         },
-      }
+      },
     )
       .then((response) => response?.data)
       .catch((error) => {
@@ -32,7 +32,7 @@ export class PageService extends APIService {
     workspaceSlug: string,
     projectId: string,
     pageId: string,
-    cookie: string
+    cookie: string,
   ): Promise<any> {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/description/`,
@@ -42,7 +42,7 @@ export class PageService extends APIService {
           Cookie: cookie,
         },
         responseType: "arraybuffer",
-      }
+      },
     )
       .then((response) => response?.data)
       .catch((error) => {
@@ -54,21 +54,19 @@ export class PageService extends APIService {
     workspaceSlug: string,
     projectId: string,
     pageId: string,
-    data: {
-      description_binary: string;
-      description_html: string;
-      description: object;
-    },
-    cookie: string
+    formData: string,
+    boundary: string,
+    cookie: string,
   ): Promise<any> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/description/`,
-      data,
+      formData,
       {
         headers: {
+          "Content-Type": `multipart/form-data; boundary=${boundary}`,
           Cookie: cookie,
         },
-      }
+      },
     )
       .then((response) => response?.data)
       .catch((error) => {

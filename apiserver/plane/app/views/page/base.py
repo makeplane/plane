@@ -39,6 +39,7 @@ from ..base import BaseAPIView, BaseViewSet
 from plane.bgtasks.page_transaction_task import page_transaction
 from plane.bgtasks.page_version_task import page_version
 from plane.bgtasks.recent_visited_task import recent_visited_task
+from rest_framework.parsers import MultiPartParser, FormParser
 
 
 def unarchive_archive_page_and_descendants(page_id, archived_at):
@@ -470,6 +471,8 @@ class SubPagesEndpoint(BaseAPIView):
 
 
 class PagesDescriptionViewSet(BaseViewSet):
+    parser_classes = [MultiPartParser]
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def retrieve(self, request, slug, project_id, pk):
         page = (
@@ -526,6 +529,7 @@ class PagesDescriptionViewSet(BaseViewSet):
         existing_instance = json.dumps(
             {"description_html": page.description_html}, cls=DjangoJSONEncoder
         )
+        print("before the variables")
 
         # capture the page transaction
         if request.data.get("description_html"):
@@ -537,11 +541,16 @@ class PagesDescriptionViewSet(BaseViewSet):
             return Response({"error": "No binary data provided"})
 
         # Store the updated binary data
-        page.description_binary = request.data.get(
-            "description_binary", page.description_binary
+        page.description_html = request.data.get(
+            "description_html", page.description_html
         )
-        page.description_html = request.data.get("description_html", page.description_html)
         page.description = request.data.get("description", page.description)
+        page.description_binary = request.POST.get("description_binary")
+
+        page.description_binary = base64.b64decode(
+            request.POST.get("description_binary")
+        )
+        print("before the ssssave")
         page.save()
         # Return a success response
         page_version.delay(

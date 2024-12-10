@@ -26,18 +26,41 @@ export const updatePageDescription = async (
 
   const { contentBinaryEncoded, contentHTML, contentJSON } =
     getAllDocumentFormatsFromBinaryData(updatedDescription);
+
   try {
-    const payload = {
-      description_binary: contentBinaryEncoded,
-      description_html: contentHTML,
-      description: contentJSON,
-    };
+    // Generate a unique boundary
+    const boundary = `----FormBoundary${Date.now().toString()}`;
+
+    // Construct the multipart form data manually
+    let formData = "";
+
+    // Add binary content
+    formData += `--${boundary}\r\n`;
+    formData += 'Content-Disposition: form-data; name="description_binary"\r\n';
+    formData += "Content-Type: application/octet-stream\r\n\r\n";
+    formData += updatedDescription + "\r\n";
+
+    // Add HTML content
+    formData += `--${boundary}\r\n`;
+    formData += 'Content-Disposition: form-data; name="description_html"\r\n';
+    formData += "Content-Type: text/html\r\n\r\n";
+    formData += contentHTML + "\r\n";
+
+    // Add JSON content
+    formData += `--${boundary}\r\n`;
+    formData += 'Content-Disposition: form-data; name="description"\r\n';
+    formData += "Content-Type: application/json\r\n\r\n";
+    formData += JSON.stringify(contentJSON) + "\r\n";
+
+    // End boundary
+    formData += `--${boundary}--\r\n`;
 
     await pageService.updateDescription(
       workspaceSlug,
       projectId,
       pageId,
-      payload,
+      formData,
+      boundary,
       cookie,
     );
   } catch (error) {
@@ -45,6 +68,8 @@ export const updatePageDescription = async (
     throw error;
   }
 };
+
+// Update the service method
 
 const fetchDescriptionHTMLAndTransform = async (
   workspaceSlug: string,
@@ -90,7 +115,9 @@ export const fetchPageDescriptionBinary = async (
       pageId,
       cookie,
     );
+    console.log("response", response);
     const binaryData = new Uint8Array(response);
+    console.log("binaryData", binaryData);
 
     if (binaryData.byteLength === 0) {
       const binary = await fetchDescriptionHTMLAndTransform(
