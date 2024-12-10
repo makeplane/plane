@@ -43,12 +43,12 @@ export const NotificationsSidebar: FC = observer(() => {
   return (
     <div
       className={cn(
-        "relative border-0 md:border-r border-custom-border-200 z-[10] flex-shrink-0 bg-custom-background-100 h-full transition-all",
+        "relative border-0 md:border-r max-md:overflow-hidden border-custom-border-200 z-[10] flex-shrink-0 bg-custom-background-100 h-full transition-all",
         currentSelectedNotificationId ? "w-0 md:w-2/6" : "w-full md:w-2/6"
       )}
     >
       <div className="relative w-full h-full flex flex-col">
-        <Row className="h-[3.75rem] border-b border-custom-border-200 flex">
+        <Row className="h-[3.75rem] border-b border-custom-border-200 flex overflow-hidden">
           <NotificationSidebarHeader workspaceSlug={workspaceSlug.toString()} />
         </Row>
 

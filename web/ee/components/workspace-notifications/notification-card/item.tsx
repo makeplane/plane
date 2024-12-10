@@ -95,11 +95,11 @@ export const NotificationItem: FC<INotificationItem> = observer((props) => {
         >
           {/* Issue card header */}
           <Row className="flex items-center gap-1">
-            <span className="text-sm font-semibold break-words">
+            <span className="text-sm font-medium break-words">
               {issue.sequence_id}-{issue.identifier}
             </span>
             <div className="flex-1 flex gap-2 justify-between items-center">
-              <span className="overflow-hidden whitespace-normal text-sm break-all truncate line-clamp-1 text-custom-text-100">
+              <span className="overflow-hidden whitespace-normal text-sm break-all truncate line-clamp-1 text-custom-text-00">
                 {issue.name}
               </span>
             </div>
