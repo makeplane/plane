@@ -20,6 +20,7 @@ import {
 } from "@plane/types";
 // helpers
 import { getDistributionPathsPostUpdate } from "@/helpers/distribution-update.helper";
+import { storage } from "@/lib/local-storage";
 import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
 //
 import { IIssueRootStore } from "../root.store";
@@ -140,8 +141,12 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
 
     projectId && cycleId && this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
     // fetch cycle progress
+    const isSidebarCollapsed = storage.get("cycle_sidebar_collapsed");
     projectId &&
       cycleId &&
+      this.rootIssueStore.rootStore.cycle.cycleMap[cycleId].version === 2 &&
+      isSidebarCollapsed &&
+      JSON.parse(isSidebarCollapsed) === "false" &&
       this.rootIssueStore.rootStore.cycle.fetchActiveCycleProgressPro(workspaceSlug, projectId, cycleId);
   };
 

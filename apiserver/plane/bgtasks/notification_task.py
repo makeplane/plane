@@ -21,6 +21,8 @@ from plane.db.models import (
     ProjectMember,
 )
 from django.db.models import Subquery
+from plane.app.serializers import NotificationSerializer
+from plane.graphql.bgtasks.push_notification import issue_push_notifications
 
 # Third Party imports
 from celery import shared_task
@@ -181,6 +183,7 @@ def create_mention_notification(
                 "sequence_id": issue.sequence_id,
                 "state_name": issue.state.name,
                 "state_group": issue.state.group,
+                "type_id": issue.type_id,
             },
             "issue_activity": {
                 "id": str(activity.get("id")),
@@ -420,6 +423,7 @@ def notifications(
                                     "sequence_id": issue.sequence_id,
                                     "state_name": issue.state.name,
                                     "state_group": issue.state.group,
+                                    "type_id": issue.type_id,
                                 },
                                 "issue_activity": {
                                     "id": str(issue_activity.get("id")),
@@ -459,7 +463,9 @@ def notifications(
                                     "issue": {
                                         "id": str(issue_id),
                                         "name": str(issue.name),
-                                        "identifier": str(issue.project.identifier),
+                                        "identifier": str(
+                                            issue.project.identifier
+                                        ),
                                         "project_id": str(issue.project.id),
                                         "workspace_slug": str(
                                             issue.project.workspace.slug
@@ -467,12 +473,19 @@ def notifications(
                                         "sequence_id": issue.sequence_id,
                                         "state_name": issue.state.name,
                                         "state_group": issue.state.group,
+                                        "type_id": issue.type_id,
                                     },
                                     "issue_activity": {
                                         "id": str(issue_activity.get("id")),
-                                        "verb": str(issue_activity.get("verb")),
-                                        "field": str(issue_activity.get("field")),
-                                        "actor": str(issue_activity.get("actor_id")),
+                                        "verb": str(
+                                            issue_activity.get("verb")
+                                        ),
+                                        "field": str(
+                                            issue_activity.get("field")
+                                        ),
+                                        "actor": str(
+                                            issue_activity.get("actor_id")
+                                        ),
                                         "new_value": str(
                                             issue_activity.get("new_value")
                                         ),
@@ -485,13 +498,25 @@ def notifications(
                                             else ""
                                         ),
                                         "old_identifier": (
-                                            str(issue_activity.get("old_identifier"))
-                                            if issue_activity.get("old_identifier")
+                                            str(
+                                                issue_activity.get(
+                                                    "old_identifier"
+                                                )
+                                            )
+                                            if issue_activity.get(
+                                                "old_identifier"
+                                            )
                                             else None
                                         ),
                                         "new_identifier": (
-                                            str(issue_activity.get("new_identifier"))
-                                            if issue_activity.get("new_identifier")
+                                            str(
+                                                issue_activity.get(
+                                                    "new_identifier"
+                                                )
+                                            )
+                                            if issue_activity.get(
+                                                "new_identifier"
+                                            )
                                             else None
                                         ),
                                         "activity_time": issue_activity.get(
@@ -547,18 +572,27 @@ def notifications(
                                         "issue": {
                                             "id": str(issue_id),
                                             "name": str(issue.name),
-                                            "identifier": str(issue.project.identifier),
+                                            "identifier": str(
+                                                issue.project.identifier
+                                            ),
                                             "sequence_id": issue.sequence_id,
                                             "state_name": issue.state.name,
                                             "state_group": issue.state.group,
-                                            "project_id": str(issue.project.id),
+                                            "project_id": str(
+                                                issue.project.id
+                                            ),
                                             "workspace_slug": str(
                                                 issue.project.workspace.slug
                                             ),
+                                            "type_id": issue.type_id,
                                         },
                                         "issue_activity": {
-                                            "id": str(issue_activity.get("id")),
-                                            "verb": str(issue_activity.get("verb")),
+                                            "id": str(
+                                                issue_activity.get("id")
+                                            ),
+                                            "verb": str(
+                                                issue_activity.get("verb")
+                                            ),
                                             "field": str("mention"),
                                             "actor": str(
                                                 issue_activity.get("actor_id")
@@ -571,16 +605,24 @@ def notifications(
                                             ),
                                             "old_identifier": (
                                                 str(
-                                                    issue_activity.get("old_identifier")
+                                                    issue_activity.get(
+                                                        "old_identifier"
+                                                    )
                                                 )
-                                                if issue_activity.get("old_identifier")
+                                                if issue_activity.get(
+                                                    "old_identifier"
+                                                )
                                                 else None
                                             ),
                                             "new_identifier": (
                                                 str(
-                                                    issue_activity.get("new_identifier")
+                                                    issue_activity.get(
+                                                        "new_identifier"
+                                                    )
                                                 )
-                                                if issue_activity.get("new_identifier")
+                                                if issue_activity.get(
+                                                    "new_identifier"
+                                                )
                                                 else None
                                             ),
                                             "activity_time": issue_activity.get(
@@ -616,7 +658,9 @@ def notifications(
                                     "issue": {
                                         "id": str(issue_id),
                                         "name": str(issue.name),
-                                        "identifier": str(issue.project.identifier),
+                                        "identifier": str(
+                                            issue.project.identifier
+                                        ),
                                         "sequence_id": issue.sequence_id,
                                         "state_name": issue.state.name,
                                         "state_group": issue.state.group,
@@ -624,22 +668,39 @@ def notifications(
                                         "workspace_slug": str(
                                             issue.project.workspace.slug
                                         ),
+                                        "type_id": issue.type_id,
                                     },
                                     "issue_activity": {
                                         "id": str(last_activity.id),
                                         "verb": str(last_activity.verb),
                                         "field": str(last_activity.field),
                                         "actor": str(last_activity.actor_id),
-                                        "new_value": str(last_activity.new_value),
-                                        "old_value": str(last_activity.old_value),
+                                        "new_value": str(
+                                            last_activity.new_value
+                                        ),
+                                        "old_value": str(
+                                            last_activity.old_value
+                                        ),
                                         "old_identifier": (
-                                            str(issue_activity.get("old_identifier"))
-                                            if issue_activity.get("old_identifier")
+                                            str(
+                                                issue_activity.get(
+                                                    "old_identifier"
+                                                )
+                                            )
+                                            if issue_activity.get(
+                                                "old_identifier"
+                                            )
                                             else None
                                         ),
                                         "new_identifier": (
-                                            str(issue_activity.get("new_identifier"))
-                                            if issue_activity.get("new_identifier")
+                                            str(
+                                                issue_activity.get(
+                                                    "new_identifier"
+                                                )
+                                            )
+                                            if issue_activity.get(
+                                                "new_identifier"
+                                            )
                                             else None
                                         ),
                                     },
@@ -657,30 +718,47 @@ def notifications(
                                         "issue": {
                                             "id": str(issue_id),
                                             "name": str(issue.name),
-                                            "identifier": str(issue.project.identifier),
+                                            "identifier": str(
+                                                issue.project.identifier
+                                            ),
                                             "sequence_id": issue.sequence_id,
                                             "state_name": issue.state.name,
                                             "state_group": issue.state.group,
+                                            "type_id": issue.type_id,
                                         },
                                         "issue_activity": {
                                             "id": str(last_activity.id),
                                             "verb": str(last_activity.verb),
                                             "field": "mention",
-                                            "actor": str(last_activity.actor_id),
-                                            "new_value": str(last_activity.new_value),
-                                            "old_value": str(last_activity.old_value),
+                                            "actor": str(
+                                                last_activity.actor_id
+                                            ),
+                                            "new_value": str(
+                                                last_activity.new_value
+                                            ),
+                                            "old_value": str(
+                                                last_activity.old_value
+                                            ),
                                             "old_identifier": (
                                                 str(
-                                                    issue_activity.get("old_identifier")
+                                                    issue_activity.get(
+                                                        "old_identifier"
+                                                    )
                                                 )
-                                                if issue_activity.get("old_identifier")
+                                                if issue_activity.get(
+                                                    "old_identifier"
+                                                )
                                                 else None
                                             ),
                                             "new_identifier": (
                                                 str(
-                                                    issue_activity.get("new_identifier")
+                                                    issue_activity.get(
+                                                        "new_identifier"
+                                                    )
                                                 )
-                                                if issue_activity.get("new_identifier")
+                                                if issue_activity.get(
+                                                    "new_identifier"
+                                                )
                                                 else None
                                             ),
                                             "activity_time": str(
@@ -718,19 +796,30 @@ def notifications(
                                                 "sequence_id": issue.sequence_id,
                                                 "state_name": issue.state.name,
                                                 "state_group": issue.state.group,
+                                                "type_id": issue.type_id,
                                             },
                                             "issue_activity": {
-                                                "id": str(issue_activity.get("id")),
-                                                "verb": str(issue_activity.get("verb")),
+                                                "id": str(
+                                                    issue_activity.get("id")
+                                                ),
+                                                "verb": str(
+                                                    issue_activity.get("verb")
+                                                ),
                                                 "field": str("mention"),
                                                 "actor": str(
-                                                    issue_activity.get("actor_id")
+                                                    issue_activity.get(
+                                                        "actor_id"
+                                                    )
                                                 ),
                                                 "new_value": str(
-                                                    issue_activity.get("new_value")
+                                                    issue_activity.get(
+                                                        "new_value"
+                                                    )
                                                 ),
                                                 "old_value": str(
-                                                    issue_activity.get("old_value")
+                                                    issue_activity.get(
+                                                        "old_value"
+                                                    )
                                                 ),
                                                 "old_identifier": (
                                                     str(
@@ -771,10 +860,33 @@ def notifications(
                 removed_mention=removed_mention,
             )
             # Bulk create notifications
-            Notification.objects.bulk_create(bulk_notifications, batch_size=100)
+            notifications = Notification.objects.bulk_create(
+                bulk_notifications, batch_size=100
+            )
             EmailNotificationLog.objects.bulk_create(
                 bulk_email_logs, batch_size=100, ignore_conflicts=True
             )
+
+            """
+            # Send Mobile Push Notifications for state, assignee, priority,
+            # start_date, target_date, and parent issue changes
+            """
+            if notifications and len(notifications) > 0:
+                serialized_notifications = NotificationSerializer(
+                    notifications, many=True
+                ).data
+
+                # converting the uuid to string
+                for notification in serialized_notifications:
+                    if notification is not None:
+                        for key in ["id", "workspace", "project", "receiver"]:
+                            if key in notification:
+                                notification[key] = str(notification[key])
+                        if "triggered_by_details" in notification:
+                            notification["triggered_by_details"]["id"] = str(
+                                notification["triggered_by_details"]["id"]
+                            )
+                        issue_push_notifications.delay(notification)
         return
     except Exception as e:
         print(e)
