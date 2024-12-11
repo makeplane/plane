@@ -1,0 +1,29 @@
+{
+  "name": "@plane/logger",
+  "version": "1.0.0",
+  "description": "Logger shared across multiple apps internally",
+  "private": true,
+  "main": "./dist/index.js",
+  "type":"module",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "tsup ./src/index.ts --format esm,cjs --dts --external react --minify",
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:errors": "eslint src --ext .ts,.tsx --quiet"
+  },
+  "dependencies": {
+    "winston": "^3.17.0",
+    "winston-daily-rotate-file": "^5.0.0"
+  },
+  "devDependencies": {
+    "@plane/eslint-config": "*",
+    "@types/node": "^22.5.4",
+    "@types/react": "^18.3.11",
+    "tsup": "^7.2.0",
+    "typescript": "^5.3.3"
+  }
+}
