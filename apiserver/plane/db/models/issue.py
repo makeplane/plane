@@ -731,6 +731,8 @@ class IssueVersion(ProjectBaseModel):
 
             Module = apps.get_model("db.Module")
             CycleIssue = apps.get_model("db.CycleIssue")
+            IssueAssignee = apps.get_model("db.IssueAssignee")
+            IssueLabel = apps.get_model("db.IssueLabel")
 
             cycle_issue = CycleIssue.objects.filter(issue=issue).first()
 
@@ -744,9 +746,17 @@ class IssueVersion(ProjectBaseModel):
                 priority=issue.priority,
                 start_date=issue.start_date,
                 target_date=issue.target_date,
-                assignees=issue.assignees,
+                assignees=list(
+                    IssueAssignee.objects.filter(issue=issue).values_list(
+                        "assignee_id", flat=True
+                    )
+                ),
                 sequence_id=issue.sequence_id,
-                labels=issue.labels,
+                labels=list(
+                    IssueLabel.objects.filter(issue=issue).values_list(
+                        "label_id", flat=True
+                    )
+                ),
                 sort_order=issue.sort_order,
                 completed_at=issue.completed_at,
                 archived_at=issue.archived_at,
@@ -754,8 +764,10 @@ class IssueVersion(ProjectBaseModel):
                 external_source=issue.external_source,
                 external_id=issue.external_id,
                 type=issue.type_id,
-                cycle=cycle_issue.cycle if cycle_issue else None,
-                modules=Module.objects.filter(issue=issue).values_list("id", flat=True),
+                cycle=cycle_issue.cycle_id if cycle_issue else None,
+                modules=list(
+                    Module.objects.filter(issue=issue).values_list("id", flat=True)
+                ),
                 properties={},
                 meta={},
                 last_saved_at=timezone.now(),
