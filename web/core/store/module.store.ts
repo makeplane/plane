@@ -32,6 +32,7 @@ export interface IModuleStore {
   getFilteredArchivedModuleIds: (projectId: string) => string[] | null;
   getModuleById: (moduleId: string) => IModule | null;
   getModuleNameById: (moduleId: string) => string;
+  getProjectModuleDetails: (projectId: string) => IModule[] | null;
   getProjectModuleIds: (projectId: string) => string[] | null;
   getPlotTypeByModuleId: (moduleId: string) => TModulePlotType;
   // actions
@@ -211,14 +212,23 @@ export class ModulesStore implements IModuleStore {
   getModuleNameById = computedFn((moduleId: string) => this.moduleMap?.[moduleId]?.name);
 
   /**
+   * @description returns list of module details of the project id passed as argument
+   * @param projectId
+   */
+  getProjectModuleDetails = computedFn((projectId: string) => {
+    if (!this.fetchedMap[projectId]) return null;
+    let projectModules = Object.values(this.moduleMap).filter((m) => m.project_id === projectId && !m.archived_at);
+    projectModules = sortBy(projectModules, [(m) => m.sort_order]);
+    return projectModules;
+  });
+
+  /**
    * @description returns list of module ids of the project id passed as argument
    * @param projectId
    */
   getProjectModuleIds = computedFn((projectId: string) => {
-    if (!this.fetchedMap[projectId]) return null;
-
-    let projectModules = Object.values(this.moduleMap).filter((m) => m.project_id === projectId && !m.archived_at);
-    projectModules = sortBy(projectModules, [(m) => m.sort_order]);
+    const projectModules = this.getProjectModuleDetails(projectId);
+    if (!projectModules) return null;
     const projectModuleIds = projectModules.map((m) => m.id);
     return projectModuleIds;
   });
@@ -282,7 +292,7 @@ export class ModulesStore implements IModuleStore {
         });
         return response;
       });
-    } catch (error) {
+    } catch {
       this.loader = false;
       return undefined;
     }
@@ -308,7 +318,7 @@ export class ModulesStore implements IModuleStore {
         });
         return projectModules;
       });
-    } catch (error) {
+    } catch {
       this.loader = false;
       return undefined;
     }
