@@ -60,9 +60,9 @@ export const IntercomConfig: FC<TIntercomConfig> = observer((props) => {
           </div>
 
           <div className="grow">
-            <div className="text-sm font-medium text-custom-text-100 leading-5">Talk to Plane</div>
+            <div className="text-sm font-medium text-custom-text-100 leading-5">Chat with us</div>
             <div className="text-xs font-normal text-custom-text-300 leading-5">
-              Let your members chat with us via Intercom or another service. Toggling Telemetry off turns this off
+              Let your users chat with us via Intercom or another service. Toggling Telemetry off turns this off
               automatically.
             </div>
           </div>

@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 import { Search, Briefcase, X } from "lucide-react";
 // plane helpers
-import { useOutsideClickDetector } from "@plane/helpers";
+import { useOutsideClickDetector } from "@plane/hooks";
 // ui
 import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components

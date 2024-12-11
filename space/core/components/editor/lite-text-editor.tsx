@@ -10,7 +10,8 @@ import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks
 import { useMention } from "@/hooks/use-mention";
 
-interface LiteTextEditorWrapperProps extends Omit<ILiteTextEditor, "fileHandler" | "mentionHandler"> {
+interface LiteTextEditorWrapperProps
+  extends Omit<ILiteTextEditor, "disabledExtensions" | "fileHandler" | "mentionHandler"> {
   anchor: string;
   workspaceId: string;
   isSubmitting?: boolean;
@@ -41,6 +42,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     <div className="border border-custom-border-200 rounded p-3 space-y-3">
       <LiteTextEditorWithRef
         ref={ref}
+        disabledExtensions={[]}
         fileHandler={getEditorFileHandlers({
           anchor,
           uploadFile,

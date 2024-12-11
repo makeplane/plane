@@ -61,9 +61,8 @@ class FileAsset(BaseModel):
     page = models.ForeignKey(
         "db.Page", on_delete=models.CASCADE, null=True, related_name="assets"
     )
-    entity_type = models.CharField(
-        max_length=255, choices=EntityTypeContext.choices, null=True, blank=True
-    )
+    entity_type = models.CharField(max_length=255, null=True, blank=True)
+    entity_identifier = models.CharField(max_length=255, null=True, blank=True)
     is_deleted = models.BooleanField(default=False)
     is_archived = models.BooleanField(default=False)
     external_id = models.CharField(max_length=255, null=True, blank=True)

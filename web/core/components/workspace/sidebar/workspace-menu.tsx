@@ -7,7 +7,7 @@ import { useParams, usePathname } from "next/navigation";
 import { ArchiveIcon, ChevronRight, MoreHorizontal, Settings } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane helpers
-import { useOutsideClickDetector } from "@plane/helpers";
+import { useOutsideClickDetector } from "@plane/hooks";
 // ui
 import { CustomMenu, Tooltip } from "@plane/ui";
 // components

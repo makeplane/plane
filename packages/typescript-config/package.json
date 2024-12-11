@@ -1,6 +1,6 @@
 {
   "name": "@plane/typescript-config",
-  "version": "0.23.1",
+  "version": "0.24.1",
   "private": true,
   "files": [
     "base.json",
