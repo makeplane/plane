@@ -1,7 +1,6 @@
 "use client";
 
 import { FC } from "react";
-import { isDesktopApp } from "@todesktop/client-core/platform/todesktop";
 import { observer } from "mobx-react";
 import { Inbox } from "lucide-react";
 import { Breadcrumbs, Header } from "@plane/ui";
@@ -9,6 +8,8 @@ import { Breadcrumbs, Header } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common";
 import { SidebarHamburgerToggle } from "@/components/core";
 import { NotificationSidebarHeaderOptions } from "@/components/workspace-notifications";
+// plane web components
+import { isSidebarToggleVisible } from "@/plane-web/components/desktop";
 
 type TNotificationSidebarHeader = {
   workspaceSlug: string;
@@ -21,7 +22,7 @@ export const NotificationSidebarHeader: FC<TNotificationSidebarHeader> = observe
   return (
     <Header className="my-auto">
       <Header.LeftItem>
-        {!isDesktopApp() && (
+        {isSidebarToggleVisible() && (
           <div className="block bg-custom-sidebar-background-100 md:hidden">
             <SidebarHamburgerToggle />
           </div>
