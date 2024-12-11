@@ -39,7 +39,6 @@ export const ProjectInboxHeader: FC = observer(() => {
               type="text"
               link={
                 <BreadcrumbLink
-                  href={`/${workspaceSlug}/projects`}
                   label={currentProjectDetails?.name ?? "Project"}
                   icon={
                     currentProjectDetails && (

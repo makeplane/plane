@@ -5,7 +5,11 @@ import { computedFn } from "mobx-utils";
 // components
 import { ChartDataType, IBlockUpdateDependencyData, IGanttBlock, TGanttViews } from "@/components/gantt-chart";
 import { currentViewDataWithView } from "@/components/gantt-chart/data";
-import { getDateFromPositionOnGantt, getItemPositionWidth } from "@/components/gantt-chart/views/helpers";
+import {
+  getDateFromPositionOnGantt,
+  getItemPositionWidth,
+  getPositionFromDate,
+} from "@/components/gantt-chart/views/helpers";
 // helpers
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // store
@@ -15,7 +19,7 @@ import { RootStore } from "@/plane-web/store/root.store";
 type BlockData = {
   id: string;
   name: string;
-  sort_order: number;
+  sort_order: number | null;
   start_date: string | undefined | null;
   target_date: string | undefined | null;
 };
@@ -27,6 +31,7 @@ export interface IBaseTimelineStore {
   activeBlockId: string | null;
   renderView: any;
   isDragging: boolean;
+  isDependencyEnabled: boolean;
   //
   setBlockIds: (ids: string[]) => void;
   getBlockById: (blockId: string) => IGanttBlock;
@@ -39,13 +44,18 @@ export interface IBaseTimelineStore {
   updateActiveBlockId: (blockId: string | null) => void;
   updateRenderView: (data: any) => void;
   updateAllBlocksOnChartChangeWhileDragging: (addedWidth: number) => void;
-  getUpdatedPositionAfterDrag: (id: string, ignoreDependencies?: boolean) => IBlockUpdateDependencyData[];
+  getUpdatedPositionAfterDrag: (
+    id: string,
+    shouldUpdateHalfBlock: boolean,
+    ignoreDependencies?: boolean
+  ) => IBlockUpdateDependencyData[];
   updateBlockPosition: (id: string, deltaLeft: number, deltaWidth: number, ignoreDependencies?: boolean) => void;
   getNumberOfDaysFromPosition: (position: number | undefined) => number | undefined;
   setIsDragging: (isDragging: boolean) => void;
   initGantt: () => void;
 
   getDateFromPositionOnGantt: (position: number, offsetDays: number) => Date | undefined;
+  getPositionFromDateOnGantt: (date: string | Date, offSetWidth: number) => number | undefined;
 }
 
 export class BaseTimeLineStore implements IBaseTimelineStore {
@@ -59,6 +69,8 @@ export class BaseTimeLineStore implements IBaseTimelineStore {
   renderView: any = [];
 
   rootStore: RootStore;
+
+  isDependencyEnabled = false;
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
@@ -179,11 +191,11 @@ export class BaseTimeLineStore implements IBaseTimelineStore {
         data: blockData,
         id: blockData?.id,
         name: blockData.name,
-        sort_order: blockData?.sort_order,
+        sort_order: blockData?.sort_order ?? undefined,
         start_date: blockData?.start_date ?? undefined,
         target_date: blockData?.target_date ?? undefined,
       };
-      if (this.currentViewData && this.currentViewData?.data?.startDate && this.currentViewData?.data?.dayWidth) {
+      if (this.currentViewData && (this.currentViewData?.data?.startDate || this.currentViewData?.data?.dayWidth)) {
         block.position = getItemPositionWidth(this.currentViewData, block);
       }
 
@@ -225,6 +237,15 @@ export class BaseTimeLineStore implements IBaseTimelineStore {
   };
 
   /**
+   * returns position of the date on chart
+   */
+  getPositionFromDateOnGantt = computedFn((date: string | Date, offSetWidth: number) => {
+    if (!this.currentViewData) return;
+
+    return getPositionFromDate(this.currentViewData, date, offSetWidth);
+  });
+
+  /**
    * returns the date at which the position corresponds to on the timeline chart
    */
   getDateFromPositionOnGantt = computedFn((position: number, offsetDays: number) => {
@@ -254,24 +275,30 @@ export class BaseTimeLineStore implements IBaseTimelineStore {
   /**
    * returns updates dates of blocks post drag.
    * @param id
+   * @param shouldUpdateHalfBlock if is a half block then update the incomplete block only if this is true
    * @returns
    */
-  getUpdatedPositionAfterDrag = action((id: string) => {
+  getUpdatedPositionAfterDrag = action((id: string, shouldUpdateHalfBlock: boolean) => {
     const currBlock = this.blocksMap[id];
 
     if (!currBlock?.position || !this.currentViewData) return [];
 
-    return [
-      {
-        id,
-        start_date: renderFormattedPayloadDate(
-          getDateFromPositionOnGantt(currBlock.position.marginLeft, this.currentViewData)
-        ),
-        target_date: renderFormattedPayloadDate(
-          getDateFromPositionOnGantt(currBlock.position.marginLeft + currBlock.position.width, this.currentViewData, -1)
-        ),
-      },
-    ] as IBlockUpdateDependencyData[];
+    const updatePayload: IBlockUpdateDependencyData = { id };
+
+    // If shouldUpdateHalfBlock or the start date is available then update start date
+    if (shouldUpdateHalfBlock || currBlock.start_date) {
+      updatePayload.start_date = renderFormattedPayloadDate(
+        getDateFromPositionOnGantt(currBlock.position.marginLeft, this.currentViewData)
+      );
+    }
+    // If shouldUpdateHalfBlock or the target date is available then update target date
+    if (shouldUpdateHalfBlock || currBlock.target_date) {
+      updatePayload.target_date = renderFormattedPayloadDate(
+        getDateFromPositionOnGantt(currBlock.position.marginLeft + currBlock.position.width, this.currentViewData, -1)
+      );
+    }
+
+    return [updatePayload];
   });
 
   /**

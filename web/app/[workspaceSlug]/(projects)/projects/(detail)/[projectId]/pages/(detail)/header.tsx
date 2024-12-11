@@ -77,7 +77,6 @@ export const PageDetailsHeader = observer(() => {
                 <span>
                   <span className="hidden md:block">
                     <BreadcrumbLink
-                      href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
                       label={currentProjectDetails?.name ?? "Project"}
                       icon={
                         currentProjectDetails && (

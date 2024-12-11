@@ -2,16 +2,16 @@
 
 import { useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { TIssue } from "@plane/types";
-// hooks
+// types
+import { TDeDupeIssue, TIssue } from "@plane/types";
+// ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+// hooks
 import { useProject } from "@/hooks/store";
 import { useIssues } from "@/hooks/store/use-issues";
-// ui
-// types
 
 type Props = {
-  data?: TIssue;
+  data?: TIssue | TDeDupeIssue;
   dataId?: string | null | undefined;
   handleClose: () => void;
   isOpen: boolean;

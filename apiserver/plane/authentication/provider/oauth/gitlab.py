@@ -15,31 +15,25 @@ from plane.authentication.adapter.error import (
 
 
 class GitLabOAuthProvider(OauthAdapter):
-
     provider = "gitlab"
     scope = "read_user"
 
     def __init__(self, request, code=None, state=None, callback=None):
-
-        GITLAB_CLIENT_ID, GITLAB_CLIENT_SECRET, GITLAB_HOST = (
-            get_configuration_value(
-                [
-                    {
-                        "key": "GITLAB_CLIENT_ID",
-                        "default": os.environ.get("GITLAB_CLIENT_ID"),
-                    },
-                    {
-                        "key": "GITLAB_CLIENT_SECRET",
-                        "default": os.environ.get("GITLAB_CLIENT_SECRET"),
-                    },
-                    {
-                        "key": "GITLAB_HOST",
-                        "default": os.environ.get(
-                            "GITLAB_HOST", "https://gitlab.com"
-                        ),
-                    },
-                ]
-            )
+        GITLAB_CLIENT_ID, GITLAB_CLIENT_SECRET, GITLAB_HOST = get_configuration_value(
+            [
+                {
+                    "key": "GITLAB_CLIENT_ID",
+                    "default": os.environ.get("GITLAB_CLIENT_ID"),
+                },
+                {
+                    "key": "GITLAB_CLIENT_SECRET",
+                    "default": os.environ.get("GITLAB_CLIENT_SECRET"),
+                },
+                {
+                    "key": "GITLAB_HOST",
+                    "default": os.environ.get("GITLAB_HOST", "https://gitlab.com"),
+                },
+            ]
         )
 
         self.host = GITLAB_HOST
@@ -104,8 +98,7 @@ class GitLabOAuthProvider(OauthAdapter):
                 ),
                 "refresh_token_expired_at": (
                     datetime.fromtimestamp(
-                        token_response.get("refresh_token_expired_at"),
-                        tz=pytz.utc,
+                        token_response.get("refresh_token_expired_at"), tz=pytz.utc
                     )
                     if token_response.get("refresh_token_expired_at")
                     else None

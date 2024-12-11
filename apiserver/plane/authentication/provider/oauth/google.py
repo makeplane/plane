@@ -53,7 +53,9 @@ class GoogleOAuthProvider(OauthAdapter):
             "prompt": "consent",
             "state": state,
         }
-        auth_url = f"https://accounts.google.com/o/oauth2/v2/auth?{urlencode(url_params)}"
+        auth_url = (
+            f"https://accounts.google.com/o/oauth2/v2/auth?{urlencode(url_params)}"
+        )
 
         super().__init__(
             request,
@@ -84,16 +86,14 @@ class GoogleOAuthProvider(OauthAdapter):
                 "refresh_token": token_response.get("refresh_token", None),
                 "access_token_expired_at": (
                     datetime.fromtimestamp(
-                        token_response.get("expires_in"),
-                        tz=pytz.utc,
+                        token_response.get("expires_in"), tz=pytz.utc
                     )
                     if token_response.get("expires_in")
                     else None
                 ),
                 "refresh_token_expired_at": (
                     datetime.fromtimestamp(
-                        token_response.get("refresh_token_expired_at"),
-                        tz=pytz.utc,
+                        token_response.get("refresh_token_expired_at"), tz=pytz.utc
                     )
                     if token_response.get("refresh_token_expired_at")
                     else None

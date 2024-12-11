@@ -57,18 +57,14 @@ class IssueView(WorkspaceBaseModel):
     query = models.JSONField(verbose_name="View Query")
     filters = models.JSONField(default=dict)
     display_filters = models.JSONField(default=get_default_display_filters)
-    display_properties = models.JSONField(
-        default=get_default_display_properties
-    )
+    display_properties = models.JSONField(default=get_default_display_properties)
     access = models.PositiveSmallIntegerField(
         default=1, choices=((0, "Private"), (1, "Public"))
     )
     sort_order = models.FloatField(default=65535)
     logo_props = models.JSONField(default=dict)
     owned_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="views",
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="views"
     )
     is_locked = models.BooleanField(default=False)
 
@@ -80,9 +76,7 @@ class IssueView(WorkspaceBaseModel):
 
     def save(self, *args, **kwargs):
         query_params = self.filters
-        self.query = (
-            issue_filters(query_params, "POST") if query_params else {}
-        )
+        self.query = issue_filters(query_params, "POST") if query_params else {}
 
         if self._state.adding:
             if self.project:

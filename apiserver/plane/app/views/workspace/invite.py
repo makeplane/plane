@@ -24,12 +24,7 @@ from plane.app.serializers import (
 from plane.app.views.base import BaseAPIView
 from plane.bgtasks.event_tracking_task import workspace_invite_event
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
-from plane.db.models import (
-    User,
-    Workspace,
-    WorkspaceMember,
-    WorkspaceMemberInvite,
-)
+from plane.db.models import User, Workspace, WorkspaceMember, WorkspaceMemberInvite
 from plane.utils.cache import invalidate_cache, invalidate_cache_directly
 
 from .. import BaseViewSet
@@ -41,9 +36,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
     serializer_class = WorkSpaceMemberInviteSerializer
     model = WorkspaceMemberInvite
 
-    permission_classes = [
-        WorkSpaceAdminPermission,
-    ]
+    permission_classes = [WorkSpaceAdminPermission]
 
     def get_queryset(self):
         return self.filter_queryset(
@@ -58,15 +51,12 @@ class WorkspaceInvitationsViewset(BaseViewSet):
         # Check if email is provided
         if not emails:
             return Response(
-                {"error": "Emails are required"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"error": "Emails are required"}, status=status.HTTP_400_BAD_REQUEST
             )
 
         # check for role level of the requesting user
         requesting_user = WorkspaceMember.objects.get(
-            workspace__slug=slug,
-            member=request.user,
-            is_active=True,
+            workspace__slug=slug, member=request.user, is_active=True
         )
 
         # Check if any invited user has an higher role
@@ -112,10 +102,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
                         email=email.get("email").strip().lower(),
                         workspace_id=workspace.id,
                         token=jwt.encode(
-                            {
-                                "email": email,
-                                "timestamp": datetime.now().timestamp(),
-                            },
+                            {"email": email, "timestamp": datetime.now().timestamp()},
                             settings.SECRET_KEY,
                             algorithm="HS256",
                         ),
@@ -148,10 +135,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
             )
 
         return Response(
-            {
-                "message": "Emails sent successfully",
-            },
-            status=status.HTTP_200_OK,
+            {"message": "Emails sent successfully"}, status=status.HTTP_200_OK
         )
 
     def destroy(self, request, slug, pk):
@@ -163,9 +147,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
 
 
 class WorkspaceJoinEndpoint(BaseAPIView):
-    permission_classes = [
-        AllowAny,
-    ]
+    permission_classes = [AllowAny]
     """Invitation response endpoint the user can respond to the invitation"""
 
     @invalidate_cache(path="/api/workspaces/", user=False)

@@ -5,23 +5,17 @@ from rest_framework.response import Response
 
 # Module imports
 from .base import BaseAPIView
-from plane.db.models import (
-    DeployBoard,
-    Module,
-)
+from plane.db.models import DeployBoard, Module
 
 
 class ProjectModulesEndpoint(BaseAPIView):
-    permission_classes = [
-        AllowAny,
-    ]
+    permission_classes = [AllowAny]
 
     def get(self, request, anchor):
         deploy_board = DeployBoard.objects.filter(anchor=anchor).first()
         if not deploy_board:
             return Response(
-                {"error": "Invalid anchor"},
-                status=status.HTTP_404_NOT_FOUND,
+                {"error": "Invalid anchor"}, status=status.HTTP_404_NOT_FOUND
             )
 
         modules = Module.objects.filter(
@@ -29,7 +23,4 @@ class ProjectModulesEndpoint(BaseAPIView):
             project_id=deploy_board.project_id,
         ).values("id", "name")
 
-        return Response(
-            modules,
-            status=status.HTTP_200_OK,
-        )
+        return Response(modules, status=status.HTTP_200_OK)

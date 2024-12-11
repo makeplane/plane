@@ -43,7 +43,7 @@ export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
   const { maxFileSize, projectId, uploadFile, workspaceId, workspaceSlug } = args;
 
   return {
-    getAssetSrc: (path) => {
+    getAssetSrc: async (path) => {
       if (!path) return "";
       if (path?.startsWith("http")) {
         return path;
@@ -94,7 +94,7 @@ export const getReadOnlyEditorFileHandlers = (
   const { projectId, workspaceSlug } = args;
 
   return {
-    getAssetSrc: (path) => {
+    getAssetSrc: async (path) => {
       if (!path) return "";
       if (path?.startsWith("http")) {
         return path;
@@ -264,4 +264,12 @@ export const replaceCustomComponentsFromMarkdownContent = (props: {
   const issueEmbedRegex = /<issue-embed-component[^>]*>[^]*<\/issue-embed-component>/g;
   parsedMarkdownContent = parsedMarkdownContent.replace(issueEmbedRegex, "");
   return parsedMarkdownContent;
+};
+
+export const getTextContent = (jsx: JSX.Element | React.ReactNode | null | undefined): string => {
+  if (!jsx) return "";
+
+  const div = document.createElement("div");
+  div.innerHTML = jsx.toString();
+  return div.textContent?.trim() ?? "";
 };

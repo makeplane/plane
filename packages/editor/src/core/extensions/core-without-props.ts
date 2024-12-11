@@ -16,8 +16,11 @@ import { IssueWidgetWithoutProps } from "./issue-embed/issue-embed-without-props
 import { CustomMentionWithoutProps } from "./mentions/mentions-without-props";
 import { CustomQuoteExtension } from "./quote";
 import { TableHeader, TableCell, TableRow, Table } from "./table";
+import { CustomTextAlignExtension } from "./text-align";
 import { CustomCalloutExtensionConfig } from "./callout/extension-config";
 import { CustomColorExtension } from "./custom-color";
+// plane editor extensions
+import { CoreEditorAdditionalExtensionsWithoutProps } from "@/plane-editor/extensions/core/without-props";
 
 export const CoreEditorExtensionsWithoutProps = [
   StarterKit.configure({
@@ -40,12 +43,22 @@ export const CoreEditorExtensionsWithoutProps = [
     codeBlock: false,
     horizontalRule: false,
     blockquote: false,
+    paragraph: {
+      HTMLAttributes: {
+        class: "editor-paragraph-block",
+      },
+    },
+    heading: {
+      HTMLAttributes: {
+        class: "editor-heading-block",
+      },
+    },
     dropcursor: false,
   }),
   CustomQuoteExtension,
   CustomHorizontalRule.configure({
     HTMLAttributes: {
-      class: "my-4 border-custom-border-400",
+      class: "py-4 border-custom-border-400",
     },
   }),
   CustomLinkExtension.configure({
@@ -85,8 +98,10 @@ export const CoreEditorExtensionsWithoutProps = [
   TableCell,
   TableRow,
   CustomMentionWithoutProps(),
+  CustomTextAlignExtension,
   CustomCalloutExtensionConfig,
   CustomColorExtension,
+  ...CoreEditorAdditionalExtensionsWithoutProps,
 ];
 
 export const DocumentEditorExtensionsWithoutProps = [IssueWidgetWithoutProps()];

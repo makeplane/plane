@@ -19,19 +19,19 @@ import { truncateText } from "@/helpers/string.helper";
 import { useIssueDetail, useMember } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
-import { TAttachmentOperations } from "./root";
+import { TAttachmentHelpers } from "../issue-detail-widgets/attachments/helper";
 
-type TAttachmentOperationsRemoveModal = Exclude<TAttachmentOperations, "create">;
+type TAttachmentOperationsRemoveModal = Exclude<TAttachmentHelpers, "create">;
 
 type TIssueAttachmentsDetail = {
   attachmentId: string;
-  handleAttachmentOperations: TAttachmentOperationsRemoveModal;
+  attachmentHelpers: TAttachmentOperationsRemoveModal;
   disabled?: boolean;
 };
 
 export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = observer((props) => {
   // props
-  const { attachmentId, handleAttachmentOperations, disabled } = props;
+  const { attachmentId, attachmentHelpers, disabled } = props;
   // store hooks
   const { getUserDetails } = useMember();
   const {
@@ -56,7 +56,7 @@ export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = observer((pro
         <IssueAttachmentDeleteModal
           isOpen={isDeleteIssueAttachmentModalOpen}
           onClose={() => setIsDeleteIssueAttachmentModalOpen(false)}
-          handleAttachmentOperations={handleAttachmentOperations}
+          attachmentOperations={attachmentHelpers.operations}
           attachmentId={attachmentId}
         />
       )}

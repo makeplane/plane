@@ -1,16 +1,16 @@
 {
   "name": "live",
-  "version": "0.23.1",
+  "version": "0.24.1",
   "description": "",
   "main": "./src/server.ts",
   "private": true,
   "type": "module",
   "scripts": {
+    "dev": "concurrently \"babel src --out-dir dist --extensions '.ts,.js' --watch\" \"nodemon dist/server.js\"",
     "build": "babel src --out-dir dist --extensions \".ts,.js\"",
     "start": "node dist/server.js",
-    "lint": "eslint . --ext .ts,.tsx",
-    "dev": "concurrently \"babel src --out-dir dist --extensions '.ts,.js' --watch\" \"nodemon dist/server.js\"",
-    "lint:errors": "eslint . --ext .ts,.tsx --quiet"
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:errors": "eslint src --ext .ts,.tsx --quiet"
   },
   "keywords": [],
   "author": "",
@@ -30,7 +30,7 @@
     "compression": "^1.7.4",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "express": "^4.20.0",
+    "express": "^4.21.2",
     "express-ws": "^5.0.2",
     "helmet": "^7.1.0",
     "ioredis": "^5.4.1",

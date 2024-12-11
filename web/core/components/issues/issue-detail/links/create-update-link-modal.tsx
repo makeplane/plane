@@ -7,8 +7,6 @@ import { Controller, useForm } from "react-hook-form";
 import type { TIssueLinkEditableFields } from "@plane/types";
 // plane ui
 import { Button, Input, ModalCore } from "@plane/ui";
-// helpers
-import { checkURLValidity } from "@/helpers/string.helper";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // types
@@ -48,14 +46,18 @@ export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = observe
 
   const onClose = () => {
     setIssueLinkData(null);
-    reset();
     if (handleOnClose) handleOnClose();
   };
 
   const handleFormSubmit = async (formData: TIssueLinkCreateFormFieldOptions) => {
-    if (!formData || !formData.id) await linkOperations.create({ title: formData.title, url: formData.url });
-    else await linkOperations.update(formData.id as string, { title: formData.title, url: formData.url });
-    onClose();
+    const parsedUrl = formData.url.startsWith("http") ? formData.url : `http://${formData.url}`;
+    try {
+      if (!formData || !formData.id) await linkOperations.create({ title: formData.title, url: parsedUrl });
+      else await linkOperations.update(formData.id, { title: formData.title, url: parsedUrl });
+      onClose();
+    } catch (error) {
+      console.error("error", error);
+    }
   };
 
   useEffect(() => {
@@ -77,7 +79,6 @@ export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = observe
                 name="url"
                 rules={{
                   required: "URL is required",
-                  validate: (value) => checkURLValidity(value) || "URL is invalid",
                 }}
                 render={({ field: { value, onChange, ref } }) => (
                   <Input

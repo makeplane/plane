@@ -53,14 +53,11 @@ class ModuleSerializer(BaseSerializer):
             and data.get("target_date", None) is not None
             and data.get("start_date", None) > data.get("target_date", None)
         ):
-            raise serializers.ValidationError(
-                "Start date cannot exceed target date"
-            )
+            raise serializers.ValidationError("Start date cannot exceed target date")
 
         if data.get("members", []):
             data["members"] = ProjectMember.objects.filter(
-                project_id=self.context.get("project_id"),
-                member_id__in=data["members"],
+                project_id=self.context.get("project_id"), member_id__in=data["members"]
             ).values_list("member_id", flat=True)
 
         return data
@@ -74,9 +71,7 @@ class ModuleSerializer(BaseSerializer):
         module_name = validated_data.get("name")
         if module_name:
             # Lookup for the module name in the module table for that project
-            if Module.objects.filter(
-                name=module_name, project_id=project_id
-            ).exists():
+            if Module.objects.filter(name=module_name, project_id=project_id).exists():
                 raise serializers.ValidationError(
                     {"error": "Module with this name already exists"}
                 )
@@ -107,9 +102,7 @@ class ModuleSerializer(BaseSerializer):
         if module_name:
             # Lookup for the module name in the module table for that project
             if (
-                Module.objects.filter(
-                    name=module_name, project=instance.project
-                )
+                Module.objects.filter(name=module_name, project=instance.project)
                 .exclude(id=instance.id)
                 .exists()
             ):
@@ -172,8 +165,7 @@ class ModuleLinkSerializer(BaseSerializer):
     # Validation if url already exists
     def create(self, validated_data):
         if ModuleLink.objects.filter(
-            url=validated_data.get("url"),
-            module_id=validated_data.get("module_id"),
+            url=validated_data.get("url"), module_id=validated_data.get("module_id")
         ).exists():
             raise serializers.ValidationError(
                 {"error": "URL already exists for this Issue"}

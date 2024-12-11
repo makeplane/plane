@@ -19,6 +19,7 @@ export const EditorWrapper: React.FC<Props> = (props) => {
   const {
     children,
     containerClassName,
+    disabledExtensions,
     displayConfig = DEFAULT_DISPLAY_CONFIG,
     editorClassName = "",
     extensions,
@@ -28,12 +29,16 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     forwardedRef,
     mentionHandler,
     onChange,
+    onTransaction,
+    handleEditorReady,
+    autofocus,
     placeholder,
     tabIndex,
     value,
   } = props;
 
   const editor = useEditor({
+    disabledExtensions,
     editorClassName,
     enableHistory: true,
     extensions,
@@ -43,6 +48,9 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     initialValue,
     mentionHandler,
     onChange,
+    onTransaction,
+    handleEditorReady,
+    autofocus,
     placeholder,
     tabIndex,
     value,

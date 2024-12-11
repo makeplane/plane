@@ -22,60 +22,30 @@ urlpatterns = [
     path(
         "users/me/",
         UserEndpoint.as_view(
-            {
-                "get": "retrieve",
-                "patch": "partial_update",
-                "delete": "deactivate",
-            }
+            {"get": "retrieve", "patch": "partial_update", "delete": "deactivate"}
         ),
         name="users",
     ),
-    path(
-        "users/session/",
-        UserSessionEndpoint.as_view(),
-        name="user-session",
-    ),
+    path("users/session/", UserSessionEndpoint.as_view(), name="user-session"),
     path(
         "users/me/settings/",
-        UserEndpoint.as_view(
-            {
-                "get": "retrieve_user_settings",
-            }
-        ),
+        UserEndpoint.as_view({"get": "retrieve_user_settings"}),
         name="users",
     ),
     # Profile
-    path(
-        "users/me/profile/",
-        ProfileEndpoint.as_view(),
-        name="accounts",
-    ),
+    path("users/me/profile/", ProfileEndpoint.as_view(), name="accounts"),
     # End profile
     # Accounts
-    path(
-        "users/me/accounts/",
-        AccountEndpoint.as_view(),
-        name="accounts",
-    ),
-    path(
-        "users/me/accounts/<uuid:pk>/",
-        AccountEndpoint.as_view(),
-        name="accounts",
-    ),
+    path("users/me/accounts/", AccountEndpoint.as_view(), name="accounts"),
+    path("users/me/accounts/<uuid:pk>/", AccountEndpoint.as_view(), name="accounts"),
     ## End Accounts
     path(
         "users/me/instance-admin/",
-        UserEndpoint.as_view(
-            {
-                "get": "retrieve_instance_admin",
-            }
-        ),
+        UserEndpoint.as_view({"get": "retrieve_instance_admin"}),
         name="users",
     ),
     path(
-        "users/me/onboard/",
-        UpdateUserOnBoardedEndpoint.as_view(),
-        name="user-onboard",
+        "users/me/onboard/", UpdateUserOnBoardedEndpoint.as_view(), name="user-onboard"
     ),
     path(
         "users/me/tour-completed/",
@@ -83,15 +53,11 @@ urlpatterns = [
         name="user-tour",
     ),
     path(
-        "users/me/activities/",
-        UserActivityEndpoint.as_view(),
-        name="user-activities",
+        "users/me/activities/", UserActivityEndpoint.as_view(), name="user-activities"
     ),
     # user workspaces
     path(
-        "users/me/workspaces/",
-        UserWorkSpacesEndpoint.as_view(),
-        name="user-workspace",
+        "users/me/workspaces/", UserWorkSpacesEndpoint.as_view(), name="user-workspace"
     ),
     # User Graphs
     path(

@@ -19,42 +19,27 @@ from plane.authentication.adapter.error import (
     AUTHENTICATION_ERROR_CODES,
 )
 from plane.authentication.rate_limit import AuthenticationThrottle
-from plane.license.utils.instance_value import (
-    get_configuration_value,
-)
+from plane.license.utils.instance_value import get_configuration_value
 
 
 class EmailCheckEndpoint(APIView):
+    permission_classes = [AllowAny]
 
-    permission_classes = [
-        AllowAny,
-    ]
-
-    throttle_classes = [
-        AuthenticationThrottle,
-    ]
+    throttle_classes = [AuthenticationThrottle]
 
     def post(self, request):
         # Check instance configuration
         instance = Instance.objects.first()
         if instance is None or not instance.is_setup_done:
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "INSTANCE_NOT_CONFIGURED"
-                ],
+                error_code=AUTHENTICATION_ERROR_CODES["INSTANCE_NOT_CONFIGURED"],
                 error_message="INSTANCE_NOT_CONFIGURED",
             )
-            return Response(
-                exc.get_error_dict(),
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return Response(exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST)
 
         (EMAIL_HOST, ENABLE_MAGIC_LINK_LOGIN) = get_configuration_value(
             [
-                {
-                    "key": "EMAIL_HOST",
-                    "default": os.environ.get("EMAIL_HOST", ""),
-                },
+                {"key": "EMAIL_HOST", "default": os.environ.get("EMAIL_HOST", "")},
                 {
                     "key": "ENABLE_MAGIC_LINK_LOGIN",
                     "default": os.environ.get("ENABLE_MAGIC_LINK_LOGIN", "1"),
@@ -73,10 +58,10 @@ class EmailCheckEndpoint(APIView):
                 error_code=AUTHENTICATION_ERROR_CODES["EMAIL_REQUIRED"],
                 error_message="EMAIL_REQUIRED",
             )
-            return Response(
-                exc.get_error_dict(),
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return Response(exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST)
+
+        # Lower the email
+        email = str(email).lower().strip()
 
         # Validate email
         try:
@@ -86,10 +71,7 @@ class EmailCheckEndpoint(APIView):
                 error_code=AUTHENTICATION_ERROR_CODES["INVALID_EMAIL"],
                 error_message="INVALID_EMAIL",
             )
-            return Response(
-                exc.get_error_dict(),
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return Response(exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST)
         # Check if a user already exists with the given email
         existing_user = User.objects.filter(email=email).first()
 

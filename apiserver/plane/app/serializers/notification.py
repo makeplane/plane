@@ -8,10 +8,9 @@ from rest_framework import serializers
 
 
 class NotificationSerializer(BaseSerializer):
-    triggered_by_details = UserLiteSerializer(
-        read_only=True, source="triggered_by"
-    )
+    triggered_by_details = UserLiteSerializer(read_only=True, source="triggered_by")
     is_inbox_issue = serializers.BooleanField(read_only=True)
+    is_intake_issue = serializers.BooleanField(read_only=True)
     is_mentioned_notification = serializers.BooleanField(read_only=True)
 
     class Meta:

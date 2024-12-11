@@ -25,9 +25,9 @@ export const PageEditorTitle: React.FC<Props> = observer((props) => {
   // page filters
   const { fontSize } = usePageFilters();
   // ui
-  const titleClassName = cn("bg-transparent tracking-[-2%] font-semibold", {
-    "text-[1.6rem] leading-[1.8rem]": fontSize === "small-font",
-    "text-[2rem] leading-[2.25rem]": fontSize === "large-font",
+  const titleClassName = cn("bg-transparent tracking-[-2%] font-bold", {
+    "text-[1.6rem] leading-[1.9rem]": fontSize === "small-font",
+    "text-[2rem] leading-[2.375rem]": fontSize === "large-font",
   });
 
   return (

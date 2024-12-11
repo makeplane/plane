@@ -9,9 +9,7 @@ from .project import ProjectBaseModel
 
 class State(ProjectBaseModel):
     name = models.CharField(max_length=255, verbose_name="State Name")
-    description = models.TextField(
-        verbose_name="State Description", blank=True
-    )
+    description = models.TextField(verbose_name="State Description", blank=True)
     color = models.CharField(max_length=255, verbose_name="State Color")
     slug = models.SlugField(max_length=100, blank=True)
     sequence = models.FloatField(default=65535)
@@ -22,7 +20,7 @@ class State(ProjectBaseModel):
             ("started", "Started"),
             ("completed", "Completed"),
             ("cancelled", "Cancelled"),
-            ("triage", "Triage")
+            ("triage", "Triage"),
         ),
         default="backlog",
         max_length=20,

@@ -102,8 +102,6 @@ class BaseSerializer(serializers.ModelSerializer):
                         response[expand] = exp_serializer.data
                     else:
                         # You might need to handle this case differently
-                        response[expand] = getattr(
-                            instance, f"{expand}_id", None
-                        )
+                        response[expand] = getattr(instance, f"{expand}_id", None)
 
         return response

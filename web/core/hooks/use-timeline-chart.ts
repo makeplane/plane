@@ -1,8 +1,9 @@
 import { useContext } from "react";
-// mobx store
-// types
+// lib
 import { StoreContext } from "@/lib/store-context";
-import { IBaseTimelineStore } from "ee/store/timeline/base-timeline.store";
+// Plane-web
+import { IBaseTimelineStore } from "@/plane-web/store/timeline/base-timeline.store";
+//
 import { ETimeLineTypeType, useTimeLineType } from "../components/gantt-chart/contexts";
 
 export const useTimeLineChart = (timeLineType: ETimeLineTypeType): IBaseTimelineStore => {
@@ -13,7 +14,9 @@ export const useTimeLineChart = (timeLineType: ETimeLineTypeType): IBaseTimeline
     case ETimeLineTypeType.ISSUE:
       return context.timelineStore.issuesTimeLineStore;
     case ETimeLineTypeType.MODULE:
-      return context.timelineStore.modulesTimeLineStore;
+      return context.timelineStore.modulesTimeLineStore as IBaseTimelineStore;
+    case ETimeLineTypeType.PROJECT:
+      return context.timelineStore.projectTimeLineStore as IBaseTimelineStore;
   }
 };
 

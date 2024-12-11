@@ -30,18 +30,13 @@ class APIToken(BaseModel):
 
     # User Information
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="bot_tokens",
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="bot_tokens"
     )
     user_type = models.PositiveSmallIntegerField(
         choices=((0, "Human"), (1, "Bot")), default=0
     )
     workspace = models.ForeignKey(
-        "db.Workspace",
-        related_name="api_tokens",
-        on_delete=models.CASCADE,
-        null=True,
+        "db.Workspace", related_name="api_tokens", on_delete=models.CASCADE, null=True
     )
     expired_at = models.DateTimeField(blank=True, null=True)
     is_service = models.BooleanField(default=False)

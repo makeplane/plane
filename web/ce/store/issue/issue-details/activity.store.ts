@@ -1,8 +1,8 @@
 /* eslint-disable no-useless-catch */
 
 import concat from "lodash/concat";
+import orderBy from "lodash/orderBy";
 import set from "lodash/set";
-import sortBy from "lodash/sortBy";
 import uniq from "lodash/uniq";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
@@ -10,10 +10,10 @@ import { computedFn } from "mobx-utils";
 import { TIssueActivityComment, TIssueActivity, TIssueActivityMap, TIssueActivityIdMap } from "@plane/types";
 // plane web constants
 import { EActivityFilterType } from "@/plane-web/constants/issues";
-// plane web store types
-import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { IssueActivityService } from "@/services/issue";
+// store
+import { CoreRootStore } from "@/store/root.store";
 
 export type TActivityLoader = "fetch" | "mutate" | undefined;
 
@@ -29,6 +29,7 @@ export interface IIssueActivityStoreActions {
 
 export interface IIssueActivityStore extends IIssueActivityStoreActions {
   // observables
+  sortOrder: 'asc' | 'desc'
   loader: TActivityLoader;
   activities: TIssueActivityIdMap;
   activityMap: TIssueActivityMap;
@@ -36,10 +37,12 @@ export interface IIssueActivityStore extends IIssueActivityStoreActions {
   getActivitiesByIssueId: (issueId: string) => string[] | undefined;
   getActivityById: (activityId: string) => TIssueActivity | undefined;
   getActivityCommentByIssueId: (issueId: string) => TIssueActivityComment[] | undefined;
+  toggleSortOrder: ()=>void;
 }
 
 export class IssueActivityStore implements IIssueActivityStore {
   // observables
+  sortOrder: "asc" | "desc" = 'asc';
   loader: TActivityLoader = "fetch";
   activities: TIssueActivityIdMap = {};
   activityMap: TIssueActivityMap = {};
@@ -47,14 +50,16 @@ export class IssueActivityStore implements IIssueActivityStore {
   // services
   issueActivityService;
 
-  constructor(protected store: RootStore) {
+  constructor(protected store: CoreRootStore) {
     makeObservable(this, {
       // observables
+      sortOrder: observable.ref,
       loader: observable.ref,
       activities: observable,
       activityMap: observable,
       // actions
       fetchActivities: action,
+      toggleSortOrder: action
     });
     // services
     this.issueActivityService = new IssueActivityService();
@@ -99,10 +104,14 @@ export class IssueActivityStore implements IIssueActivityStore {
       });
     });
 
-    activityComments = sortBy(activityComments, "created_at");
+    activityComments = orderBy(activityComments, (e)=>new Date(e.created_at || 0), this.sortOrder);
 
     return activityComments;
   });
+
+  toggleSortOrder = ()=>{
+    this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+  }
 
   // actions
   public async fetchActivities(

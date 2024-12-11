@@ -6,7 +6,7 @@ import { CustomMenu } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // Plane-web
-import { ISSUE_RELATION_OPTIONS } from "@/plane-web/components/relations";
+import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
 import { TIssueRelationTypes } from "@/plane-web/types";
 
 type Props = {
@@ -19,6 +19,8 @@ export const RelationActionButton: FC<Props> = observer((props) => {
   const { customButton, issueId, disabled = false } = props;
   // store hooks
   const { toggleRelationModal, setRelationKey } = useIssueDetail();
+
+  const ISSUE_RELATION_OPTIONS = useTimeLineRelationOptions();
 
   // handlers
   const handleOnClick = (relationKey: TIssueRelationTypes) => {
@@ -37,21 +39,25 @@ export const RelationActionButton: FC<Props> = observer((props) => {
       maxHeight="lg"
       closeOnSelect
     >
-      {Object.values(ISSUE_RELATION_OPTIONS).map((item, index) => (
-        <CustomMenu.MenuItem
-          key={index}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            handleOnClick(item.key as TIssueRelationTypes);
-          }}
-        >
-          <div className="flex items-center gap-2">
-            {item.icon(12)}
-            <span>{item.label}</span>
-          </div>
-        </CustomMenu.MenuItem>
-      ))}
+      {Object.values(ISSUE_RELATION_OPTIONS).map((item, index) => {
+        if (!item) return <></>;
+
+        return (
+          <CustomMenu.MenuItem
+            key={index}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleOnClick(item.key as TIssueRelationTypes);
+            }}
+          >
+            <div className="flex items-center gap-2">
+              {item.icon(12)}
+              <span>{item.label}</span>
+            </div>
+          </CustomMenu.MenuItem>
+        );
+      })}
     </CustomMenu>
   );
 });

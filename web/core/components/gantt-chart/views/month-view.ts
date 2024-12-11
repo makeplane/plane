@@ -30,7 +30,7 @@ export interface IMonthView {
  * @param side
  * @returns
  */
-const generateMonthChart = (monthPayload: ChartDataType, side: null | "left" | "right") => {
+const generateMonthChart = (monthPayload: ChartDataType, side: null | "left" | "right", targetDate?: Date) => {
   let renderState = cloneDeep(monthPayload);
 
   const range: number = renderState.data.approxFilterRange || 6;
@@ -63,15 +63,16 @@ const generateMonthChart = (monthPayload: ChartDataType, side: null | "left" | "
   }
   // When side is left, generate more months on the left side of the start date
   else if (side === "left") {
-    const currentDate = renderState.data.startDate;
+    const chartStartDate = renderState.data.startDate;
+    const currentDate = targetDate ? targetDate : chartStartDate;
 
-    minusDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - range, currentDate.getDate());
-    plusDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - 1);
+    minusDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - range, 1);
+    plusDate = new Date(chartStartDate.getFullYear(), chartStartDate.getMonth(), chartStartDate.getDate() - 1);
 
     if (minusDate && plusDate) filteredDates = getMonthsViewBetweenTwoDates(minusDate, plusDate);
 
     startDate = filteredDates.weeks[0]?.startDate;
-    endDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - 1);
+    endDate = new Date(chartStartDate.getFullYear(), chartStartDate.getMonth(), chartStartDate.getDate() - 1);
     renderState = {
       ...renderState,
       data: { ...renderState.data, startDate },
@@ -79,14 +80,15 @@ const generateMonthChart = (monthPayload: ChartDataType, side: null | "left" | "
   }
   // When side is right, generate more months on the right side of the end date
   else if (side === "right") {
-    const currentDate = renderState.data.endDate;
+    const chartEndDate = renderState.data.endDate;
+    const currentDate = targetDate ? targetDate : chartEndDate;
 
-    minusDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1);
-    plusDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + range, currentDate.getDate());
+    minusDate = new Date(chartEndDate.getFullYear(), chartEndDate.getMonth(), chartEndDate.getDate() + 1);
+    plusDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + range, 1);
 
     if (minusDate && plusDate) filteredDates = getMonthsViewBetweenTwoDates(minusDate, plusDate);
 
-    startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1);
+    startDate = new Date(chartEndDate.getFullYear(), chartEndDate.getMonth(), chartEndDate.getDate() + 1);
     endDate = filteredDates.weeks[filteredDates.weeks.length - 1]?.endDate;
     renderState = {
       ...renderState,

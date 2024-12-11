@@ -20,9 +20,7 @@ class PaginateCursor:
         try:
             bits = value.split(":")
             if len(bits) != 3:
-                raise ValueError(
-                    "Cursor must be in the format 'value:offset:is_prev'"
-                )
+                raise ValueError("Cursor must be in the format 'value:offset:is_prev'")
             return self(int(bits[0]), int(bits[1]), int(bits[2]))
         except (TypeError, ValueError) as e:
             raise ValueError(f"Invalid cursor format: {e}")

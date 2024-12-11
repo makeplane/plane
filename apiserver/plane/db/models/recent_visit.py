@@ -17,10 +17,7 @@ class EntityNameEnum(models.TextChoices):
 
 class UserRecentVisit(WorkspaceBaseModel):
     entity_identifier = models.UUIDField(null=True)
-    entity_name = models.CharField(
-        max_length=30,
-        choices=EntityNameEnum.choices,
-    )
+    entity_name = models.CharField(max_length=30, choices=EntityNameEnum.choices)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

@@ -4,13 +4,19 @@ import { memo } from "react";
 import { ALargeSmall, Ban } from "lucide-react";
 import { Popover } from "@headlessui/react";
 // plane editor
-import { COLORS_LIST, TColorEditorCommands } from "@plane/editor";
+import { COLORS_LIST, TEditorCommands } from "@plane/editor";
 // helpers
 import { cn } from "@/helpers/common.helper";
 
 type Props = {
-  handleColorSelect: (key: TColorEditorCommands, color: string | undefined) => void;
-  isColorActive: (key: TColorEditorCommands, color: string | undefined) => boolean;
+  handleColorSelect: (
+    key: Extract<TEditorCommands, "text-color" | "background-color">,
+    color: string | undefined
+  ) => void;
+  isColorActive: (
+    key: Extract<TEditorCommands, "text-color" | "background-color">,
+    color: string | undefined
+  ) => boolean;
 };
 
 export const ColorDropdown: React.FC<Props> = memo((props) => {

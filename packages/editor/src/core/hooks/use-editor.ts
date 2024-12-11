@@ -6,22 +6,31 @@ import { EditorProps } from "@tiptap/pm/view";
 import { useEditor as useTiptapEditor, Editor } from "@tiptap/react";
 import * as Y from "yjs";
 // components
-import { getEditorMenuItems } from "@/components/menus";
+import { EditorMenuItem, getEditorMenuItems } from "@/components/menus";
 // extensions
 import { CoreEditorExtensions } from "@/extensions";
 // helpers
 import { getParagraphCount } from "@/helpers/common";
 import { insertContentAtSavedSelection } from "@/helpers/insert-content-at-cursor-position";
-import { IMarking, scrollSummary } from "@/helpers/scroll-to-node";
+import { IMarking, scrollSummary, scrollToNodeViaDOMCoordinates } from "@/helpers/scroll-to-node";
 // props
 import { CoreEditorProps } from "@/props";
 // types
-import { EditorRefApi, IMentionHighlight, IMentionSuggestion, TEditorCommands, TFileHandler } from "@/types";
+import type {
+  TDocumentEventsServer,
+  EditorRefApi,
+  IMentionHighlight,
+  IMentionSuggestion,
+  TEditorCommands,
+  TFileHandler,
+  TExtensions,
+} from "@/types";
 
 export interface CustomEditorProps {
   editorClassName: string;
   editorProps?: EditorProps;
   enableHistory: boolean;
+  disabledExtensions: TExtensions[];
   extensions?: any;
   fileHandler: TFileHandler;
   forwardedRef?: MutableRefObject<EditorRefApi | null>;
@@ -33,6 +42,8 @@ export interface CustomEditorProps {
     suggestions?: () => Promise<IMentionSuggestion[]>;
   };
   onChange?: (json: object, html: string) => void;
+  onTransaction?: () => void;
+  autofocus?: boolean;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   provider?: HocuspocusProvider;
   tabIndex?: number;
@@ -43,6 +54,7 @@ export interface CustomEditorProps {
 
 export const useEditor = (props: CustomEditorProps) => {
   const {
+    disabledExtensions,
     editorClassName,
     editorProps = {},
     enableHistory,
@@ -54,10 +66,12 @@ export const useEditor = (props: CustomEditorProps) => {
     initialValue,
     mentionHandler,
     onChange,
+    onTransaction,
     placeholder,
-    provider,
     tabIndex,
     value,
+    provider,
+    autofocus = false,
   } = props;
   // states
 
@@ -66,6 +80,7 @@ export const useEditor = (props: CustomEditorProps) => {
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
   const savedSelectionRef = useRef(savedSelection);
   const editor = useTiptapEditor({
+    autofocus,
     editorProps: {
       ...CoreEditorProps({
         editorClassName,
@@ -74,6 +89,7 @@ export const useEditor = (props: CustomEditorProps) => {
     },
     extensions: [
       ...CoreEditorExtensions({
+        disabledExtensions,
         enableHistory,
         fileHandler,
         mentionConfig: {
@@ -87,7 +103,10 @@ export const useEditor = (props: CustomEditorProps) => {
     ],
     content: typeof initialValue === "string" && initialValue.trim() !== "" ? initialValue : "<p></p>",
     onCreate: () => handleEditorReady?.(true),
-    onTransaction: ({ editor }) => setSavedSelection(editor.state.selection),
+    onTransaction: ({ editor }) => {
+      setSavedSelection(editor.state.selection);
+      onTransaction?.();
+    },
     onUpdate: ({ editor }) => onChange?.(editor.getJSON(), editor.getHTML()),
     onDestroy: () => handleEditorReady?.(false),
   });
@@ -120,6 +139,13 @@ export const useEditor = (props: CustomEditorProps) => {
   useImperativeHandle(
     forwardedRef,
     () => ({
+      blur: () => editorRef.current?.commands.blur(),
+      scrollToNodeViaDOMCoordinates(behavior?: ScrollBehavior, pos?: number) {
+        const resolvedPos = pos ?? savedSelection?.from;
+        if (!editorRef.current || !resolvedPos) return;
+        scrollToNodeViaDOMCoordinates(editorRef.current, resolvedPos, behavior);
+      },
+      getCurrentCursorPosition: () => savedSelection?.from,
       clearEditor: (emitUpdate = false) => {
         editorRef.current?.chain().setMeta("skipImageDeletion", true).clearContent(emitUpdate).run();
       },
@@ -140,11 +166,11 @@ export const useEditor = (props: CustomEditorProps) => {
         const item = getEditorMenuItem(itemKey);
         if (item) {
           if (item.key === "image") {
-            item.command(savedSelectionRef.current);
-          } else if (itemKey === "text-color" || itemKey === "background-color") {
-            item.command(props.color);
+            (item as EditorMenuItem<"image">).command({
+              savedSelection: savedSelectionRef.current,
+            });
           } else {
-            item.command();
+            item.command(props);
           }
         } else {
           console.warn(`No command found for item: ${itemKey}`);
@@ -158,11 +184,7 @@ export const useEditor = (props: CustomEditorProps) => {
         const item = getEditorMenuItem(itemKey);
         if (!item) return false;
 
-        if (itemKey === "text-color" || itemKey === "background-color") {
-          return item.isActive(props.color);
-        } else {
-          return item.isActive("");
-        }
+        return item.isActive(props);
       },
       onHeadingChange: (callback: (headings: IMarking[]) => void) => {
         // Subscribe to update event emitted from headers extension
@@ -236,7 +258,7 @@ export const useEditor = (props: CustomEditorProps) => {
         if (empty) return null;
 
         const nodesArray: string[] = [];
-        state.doc.nodesBetween(from, to, (node, pos, parent) => {
+        state.doc.nodesBetween(from, to, (node, _pos, parent) => {
           if (parent === state.doc && editorRef.current) {
             const serializer = DOMSerializer.fromSchema(editorRef.current?.schema);
             const dom = serializer.serializeNode(node);
@@ -277,6 +299,8 @@ export const useEditor = (props: CustomEditorProps) => {
         if (!document) return;
         Y.applyUpdate(document, value);
       },
+      emitRealTimeUpdate: (message: TDocumentEventsServer) => provider?.sendStateless(message),
+      listenToRealTimeUpdate: () => provider && { on: provider.on.bind(provider), off: provider.off.bind(provider) },
     }),
     [editorRef, savedSelection]
   );

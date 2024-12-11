@@ -13,7 +13,7 @@ export const WeekChartView: FC<any> = observer(() => {
   const weekBlocks: IWeekBlock[] = renderView;
 
   return (
-    <div className={`absolute top-0 left-0 h-max w-max flex`} style={{ minHeight: `calc(100% + ${HEADER_HEIGHT}px` }}>
+    <div className={`absolute top-0 left-0 min-h-full h-max w-max flex`}>
       {currentViewData &&
         weekBlocks?.map((block, rootIndex) => (
           <div
@@ -49,7 +49,7 @@ export const WeekChartView: FC<any> = observer(() => {
                     className={cn(
                       "flex flex-shrink-0 p-1 text-center capitalize justify-between outline-[0.25px] outline outline-custom-border-200",
                       {
-                        "bg-custom-primary-10": weekDay.today,
+                        "bg-custom-primary-100/20": weekDay.today,
                       }
                     )}
                     style={{ width: `${currentViewData?.data.dayWidth}px` }}
@@ -71,12 +71,12 @@ export const WeekChartView: FC<any> = observer(() => {
               </div>
             </div>
             {/** Day Columns */}
-            <div className="h-full w-full flex-grow flex">
+            <div className="h-full w-full flex-grow flex bg-custom-background-100">
               {block?.children?.map((weekDay, index) => (
                 <div
                   key={`column-${rootIndex}-${index}`}
                   className={cn("h-full overflow-hidden outline-[0.25px] outline outline-custom-border-100", {
-                    "bg-custom-primary-10": weekDay.today,
+                    "bg-custom-primary-100/20": weekDay.today,
                   })}
                   style={{ width: `${currentViewData?.data.dayWidth}px` }}
                 >

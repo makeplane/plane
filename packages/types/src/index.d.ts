@@ -2,6 +2,7 @@ export * from "./users";
 export * from "./workspace";
 export * from "./cycle";
 export * from "./dashboard";
+export * from "./de-dupe";
 export * from "./project";
 export * from "./state";
 export * from "./issues";

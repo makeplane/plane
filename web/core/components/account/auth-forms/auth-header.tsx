@@ -21,30 +21,30 @@ type TAuthHeader = {
 const Titles = {
   [EAuthModes.SIGN_IN]: {
     [EAuthSteps.EMAIL]: {
-      header: "Log in or Sign up",
+      header: "Log in or sign up",
       subHeader: "",
     },
     [EAuthSteps.PASSWORD]: {
-      header: "Log in or Sign up",
-      subHeader: "Log in using your password.",
+      header: "Log in or sign up",
+      subHeader: "Use your email-password combination to log in.",
     },
     [EAuthSteps.UNIQUE_CODE]: {
       header: "Log in or Sign up",
-      subHeader: "Log in using your unique code.",
+      subHeader: "Log in using a unique code sent to the email address above.",
     },
   },
   [EAuthModes.SIGN_UP]: {
     [EAuthSteps.EMAIL]: {
-      header: "Sign up or Log in",
+      header: "Sign up",
       subHeader: "",
     },
     [EAuthSteps.PASSWORD]: {
-      header: "Sign up or Log in",
-      subHeader: "Sign up using your password",
+      header: "Sign up",
+      subHeader: "Sign up using an email-password combination.",
     },
     [EAuthSteps.UNIQUE_CODE]: {
-      header: "Sign up or Log in",
-      subHeader: "Sign up using your unique code",
+      header: "Sign up",
+      subHeader: "Sign up using a unique code sent to the email address above.",
     },
   },
 };

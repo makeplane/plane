@@ -20,7 +20,7 @@ export type TServerHandler = {
 };
 
 type TCollaborativeEditorHookProps = {
-  disabledExtensions?: TExtensions[];
+  disabledExtensions: TExtensions[];
   editorClassName: string;
   editorProps?: EditorProps;
   extensions?: Extensions;
@@ -36,6 +36,7 @@ type TCollaborativeEditorHookProps = {
 };
 
 export type TCollaborativeEditorProps = TCollaborativeEditorHookProps & {
+  onTransaction?: () => void;
   embedHandler?: TEmbedConfig;
   fileHandler: TFileHandler;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;

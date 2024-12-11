@@ -13,14 +13,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 # Module imports
-from plane.authentication.provider.credentials.magic_code import (
-    MagicCodeProvider,
-)
+from plane.authentication.provider.credentials.magic_code import MagicCodeProvider
 from plane.authentication.utils.login import user_login
 from plane.authentication.utils.redirection_path import get_redirection_path
-from plane.authentication.utils.user_auth_workflow import (
-    post_user_auth_workflow,
-)
+from plane.authentication.utils.user_auth_workflow import post_user_auth_workflow
 from plane.bgtasks.magic_link_code_task import magic_link
 from plane.license.models import Instance
 from plane.authentication.utils.host import base_host
@@ -33,34 +29,23 @@ from plane.authentication.rate_limit import AuthenticationThrottle
 
 
 class MagicGenerateEndpoint(APIView):
+    permission_classes = [AllowAny]
 
-    permission_classes = [
-        AllowAny,
-    ]
-
-    throttle_classes = [
-        AuthenticationThrottle,
-    ]
+    throttle_classes = [AuthenticationThrottle]
 
     def post(self, request):
         # Check if instance is configured
         instance = Instance.objects.first()
         if instance is None or not instance.is_setup_done:
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "INSTANCE_NOT_CONFIGURED"
-                ],
+                error_code=AUTHENTICATION_ERROR_CODES["INSTANCE_NOT_CONFIGURED"],
                 error_message="INSTANCE_NOT_CONFIGURED",
             )
-            return Response(
-                exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response(exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST)
 
         origin = request.META.get("HTTP_ORIGIN", "/")
-        email = request.data.get("email", False)
+        email = request.data.get("email", "").strip().lower()
         try:
-            # Clean up the email
-            email = email.strip().lower()
             validate_email(email)
             adapter = MagicCodeProvider(request=request, key=email)
             key, token = adapter.initiate()
@@ -69,16 +54,11 @@ class MagicGenerateEndpoint(APIView):
             return Response({"key": str(key)}, status=status.HTTP_200_OK)
         except AuthenticationException as e:
             params = e.get_error_dict()
-            return Response(
-                params,
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return Response(params, status=status.HTTP_400_BAD_REQUEST)
 
 
 class MagicSignInEndpoint(View):
-
     def post(self, request):
-
         # set the referer as session to redirect after login
         code = request.POST.get("code", "").strip()
         email = request.POST.get("email", "").strip().lower()
@@ -95,8 +75,7 @@ class MagicSignInEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request, is_app=True),
-                "sign-in?" + urlencode(params),
+                base_host(request=request, is_app=True), "sign-in?" + urlencode(params)
             )
             return HttpResponseRedirect(url)
 
@@ -112,8 +91,7 @@ class MagicSignInEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request, is_app=True),
-                "sign-in?" + urlencode(params),
+                base_host(request=request, is_app=True), "sign-in?" + urlencode(params)
             )
             return HttpResponseRedirect(url)
 
@@ -146,16 +124,13 @@ class MagicSignInEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request, is_app=True),
-                "sign-in?" + urlencode(params),
+                base_host(request=request, is_app=True), "sign-in?" + urlencode(params)
             )
             return HttpResponseRedirect(url)
 
 
 class MagicSignUpEndpoint(View):
-
     def post(self, request):
-
         # set the referer as session to redirect after login
         code = request.POST.get("code", "").strip()
         email = request.POST.get("email", "").strip().lower()
@@ -172,8 +147,7 @@ class MagicSignUpEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request, is_app=True),
-                "?" + urlencode(params),
+                base_host(request=request, is_app=True), "?" + urlencode(params)
             )
             return HttpResponseRedirect(url)
         # Existing user
@@ -187,8 +161,7 @@ class MagicSignUpEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request, is_app=True),
-                "?" + urlencode(params),
+                base_host(request=request, is_app=True), "?" + urlencode(params)
             )
             return HttpResponseRedirect(url)
 
@@ -216,7 +189,6 @@ class MagicSignUpEndpoint(View):
             if next_path:
                 params["next_path"] = str(next_path)
             url = urljoin(
-                base_host(request=request, is_app=True),
-                "?" + urlencode(params),
+                base_host(request=request, is_app=True), "?" + urlencode(params)
             )
             return HttpResponseRedirect(url)

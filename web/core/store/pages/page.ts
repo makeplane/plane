@@ -36,10 +36,10 @@ export interface IPage extends TPage {
   updateDescription: (document: TDocumentPayload) => Promise<void>;
   makePublic: () => Promise<void>;
   makePrivate: () => Promise<void>;
-  lock: () => Promise<void>;
-  unlock: () => Promise<void>;
-  archive: () => Promise<void>;
-  restore: () => Promise<void>;
+  lock: (shouldSync?: boolean) => Promise<void>;
+  unlock: (shouldSync?: boolean) => Promise<void>;
+  archive: (shouldSync?: boolean) => Promise<void>;
+  restore: (shouldSync?: boolean) => Promise<void>;
   updatePageLogo: (logo_props: TLogoProps) => Promise<void>;
   addToFavorites: () => Promise<void>;
   removePageFromFavorites: () => Promise<void>;
@@ -215,12 +215,15 @@ export class Page implements IPage {
    */
   get canCurrentUserEditPage() {
     const { workspaceSlug, projectId } = this.store.router;
-
     const currentUserProjectRole = this.store.user.permission.projectPermissionsByWorkspaceSlugAndProjectId(
       workspaceSlug?.toString() || "",
       projectId?.toString() || ""
     );
-    return this.isCurrentUserOwner || (!!currentUserProjectRole && currentUserProjectRole >= EUserPermissions.MEMBER);
+    const isPagePublic = this.access === EPageAccess.PUBLIC;
+    return (
+      (isPagePublic && !!currentUserProjectRole && currentUserProjectRole >= EUserPermissions.MEMBER) ||
+      (!isPagePublic && this.isCurrentUserOwner)
+    );
   }
 
   /**
@@ -228,26 +231,35 @@ export class Page implements IPage {
    */
   get canCurrentUserDuplicatePage() {
     const { workspaceSlug, projectId } = this.store.router;
-
     const currentUserProjectRole = this.store.user.permission.projectPermissionsByWorkspaceSlugAndProjectId(
       workspaceSlug?.toString() || "",
       projectId?.toString() || ""
     );
-    return this.isCurrentUserOwner || (!!currentUserProjectRole && currentUserProjectRole >= EUserPermissions.MEMBER);
+    return !!currentUserProjectRole && currentUserProjectRole >= EUserPermissions.MEMBER;
   }
 
   /**
    * @description returns true if the current logged in user can lock the page
    */
   get canCurrentUserLockPage() {
-    return this.isCurrentUserOwner;
+    const { workspaceSlug, projectId } = this.store.router;
+    const currentUserProjectRole = this.store.user.permission.projectPermissionsByWorkspaceSlugAndProjectId(
+      workspaceSlug?.toString() || "",
+      projectId?.toString() || ""
+    );
+    return this.isCurrentUserOwner || currentUserProjectRole === EUserPermissions.ADMIN;
   }
 
   /**
    * @description returns true if the current logged in user can change the access of the page
    */
   get canCurrentUserChangeAccess() {
-    return this.isCurrentUserOwner;
+    const { workspaceSlug, projectId } = this.store.router;
+    const currentUserProjectRole = this.store.user.permission.projectPermissionsByWorkspaceSlugAndProjectId(
+      workspaceSlug?.toString() || "",
+      projectId?.toString() || ""
+    );
+    return this.isCurrentUserOwner || currentUserProjectRole === EUserPermissions.ADMIN;
   }
 
   /**
@@ -255,7 +267,6 @@ export class Page implements IPage {
    */
   get canCurrentUserArchivePage() {
     const { workspaceSlug, projectId } = this.store.router;
-
     const currentUserProjectRole = this.store.user.permission.projectPermissionsByWorkspaceSlugAndProjectId(
       workspaceSlug?.toString() || "",
       projectId?.toString() || ""
@@ -268,7 +279,6 @@ export class Page implements IPage {
    */
   get canCurrentUserDeletePage() {
     const { workspaceSlug, projectId } = this.store.router;
-
     const currentUserProjectRole = this.store.user.permission.projectPermissionsByWorkspaceSlugAndProjectId(
       workspaceSlug?.toString() || "",
       projectId?.toString() || ""
@@ -281,7 +291,6 @@ export class Page implements IPage {
    */
   get canCurrentUserFavoritePage() {
     const { workspaceSlug, projectId } = this.store.router;
-
     const currentUserProjectRole = this.store.user.permission.projectPermissionsByWorkspaceSlugAndProjectId(
       workspaceSlug?.toString() || "",
       projectId?.toString() || ""
@@ -435,62 +444,94 @@ export class Page implements IPage {
   /**
    * @description lock the page
    */
-  lock = async () => {
+  lock = async (shouldSync: boolean = true) => {
     const { workspaceSlug, projectId } = this.store.router;
     if (!workspaceSlug || !projectId || !this.id) return undefined;
 
     const pageIsLocked = this.is_locked;
     runInAction(() => (this.is_locked = true));
 
-    await this.pageService.lock(workspaceSlug, projectId, this.id).catch((error) => {
-      runInAction(() => {
-        this.is_locked = pageIsLocked;
+    if (shouldSync) {
+      await this.pageService.lock(workspaceSlug, projectId, this.id).catch((error) => {
+        runInAction(() => {
+          this.is_locked = pageIsLocked;
+        });
+        throw error;
       });
-      throw error;
-    });
+    }
   };
 
   /**
    * @description unlock the page
    */
-  unlock = async () => {
+  unlock = async (shouldSync: boolean = true) => {
     const { workspaceSlug, projectId } = this.store.router;
     if (!workspaceSlug || !projectId || !this.id) return undefined;
 
     const pageIsLocked = this.is_locked;
     runInAction(() => (this.is_locked = false));
 
-    await this.pageService.unlock(workspaceSlug, projectId, this.id).catch((error) => {
-      runInAction(() => {
-        this.is_locked = pageIsLocked;
+    if (shouldSync) {
+      await this.pageService.unlock(workspaceSlug, projectId, this.id).catch((error) => {
+        runInAction(() => {
+          this.is_locked = pageIsLocked;
+        });
+        throw error;
       });
-      throw error;
-    });
+    }
   };
 
   /**
    * @description archive the page
    */
-  archive = async () => {
+  archive = async (shouldSync: boolean = true) => {
     const { workspaceSlug, projectId } = this.store.router;
     if (!workspaceSlug || !projectId || !this.id) return undefined;
-    const response = await this.pageService.archive(workspaceSlug, projectId, this.id);
-    runInAction(() => {
-      this.archived_at = response.archived_at;
-    });
-    if (this.rootStore.favorite.entityMap[this.id]) this.rootStore.favorite.removeFavoriteFromStore(this.id);
+
+    try {
+      runInAction(() => {
+        this.archived_at = new Date().toISOString();
+      });
+
+      if (this.rootStore.favorite.entityMap[this.id]) this.rootStore.favorite.removeFavoriteFromStore(this.id);
+
+      if (shouldSync) {
+        const response = await this.pageService.archive(workspaceSlug, projectId, this.id);
+        runInAction(() => {
+          this.archived_at = response.archived_at;
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      runInAction(() => {
+        this.archived_at = null;
+      });
+    }
   };
 
   /**
    * @description restore the page
    */
-  restore = async () => {
+  restore = async (shouldSync: boolean = true) => {
     const { workspaceSlug, projectId } = this.store.router;
     if (!workspaceSlug || !projectId || !this.id) return undefined;
-    await this.pageService.restore(workspaceSlug, projectId, this.id);
-    runInAction(() => {
-      this.archived_at = null;
-    });
+
+    const archivedAtBeforeRestore = this.archived_at;
+
+    try {
+      runInAction(() => {
+        this.archived_at = null;
+      });
+
+      if (shouldSync) {
+        await this.pageService.restore(workspaceSlug, projectId, this.id);
+      }
+    } catch (error) {
+      console.error(error);
+      runInAction(() => {
+        this.archived_at = archivedAtBeforeRestore;
+      });
+    }
   };
 
   updatePageLogo = async (logo_props: TLogoProps) => {

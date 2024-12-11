@@ -11,12 +11,9 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         # Positional argument
-        parser.add_argument(
-            "admin_email", type=str, help="Instance Admin Email"
-        )
+        parser.add_argument("admin_email", type=str, help="Instance Admin Email")
 
     def handle(self, *args, **options):
-
         admin_email = options.get("admin_email", False)
 
         if not admin_email:
@@ -36,13 +33,9 @@ class Command(BaseCommand):
             )
 
             if not created:
-                raise CommandError(
-                    "The provided email is already an instance admin."
-                )
+                raise CommandError("The provided email is already an instance admin.")
 
-            self.stdout.write(
-                self.style.SUCCESS("Successfully created the admin")
-            )
+            self.stdout.write(self.style.SUCCESS("Successfully created the admin"))
         except Exception as e:
             print(e)
             raise CommandError("Failed to create the instance admin.")

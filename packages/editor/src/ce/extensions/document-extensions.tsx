@@ -14,7 +14,14 @@ type Props = {
 };
 
 export const DocumentEditorAdditionalExtensions = (_props: Props) => {
-  const extensions: Extensions = [SlashCommands()];
+  const { disabledExtensions } = _props;
+  const extensions: Extensions = disabledExtensions?.includes("slash-commands")
+    ? []
+    : [
+        SlashCommands({
+          disabledExtensions,
+        }),
+      ];
 
   return extensions;
 };

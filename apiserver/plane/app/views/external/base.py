@@ -52,7 +52,6 @@ def get_gpt_response(task, prompt, api_key, engine):
 
 
 class GPTIntegrationEndpoint(BaseAPIView):
-
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id):
         OPENAI_API_KEY, GPT_ENGINE = get_gpt_config()
@@ -73,8 +72,7 @@ class GPTIntegrationEndpoint(BaseAPIView):
         task = request.data.get("task", False)
         if not task:
             return Response(
-                {"error": "Task is required"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"error": "Task is required"}, status=status.HTTP_400_BAD_REQUEST
             )
 
         text, error = get_gpt_response(task, request.data.get("prompt", False), OPENAI_API_KEY, GPT_ENGINE)
@@ -99,10 +97,7 @@ class GPTIntegrationEndpoint(BaseAPIView):
 
 
 class WorkspaceGPTIntegrationEndpoint(BaseAPIView):
-
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE"
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def post(self, request, slug):
         OPENAI_API_KEY, GPT_ENGINE = get_gpt_config()
         
@@ -115,8 +110,7 @@ class WorkspaceGPTIntegrationEndpoint(BaseAPIView):
         task = request.data.get("task", False)
         if not task:
             return Response(
-                {"error": "Task is required"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"error": "Task is required"}, status=status.HTTP_400_BAD_REQUEST
             )
 
         text, error = get_gpt_response(task, request.data.get("prompt", False), OPENAI_API_KEY, GPT_ENGINE)
@@ -160,9 +154,7 @@ class UnsplashEndpoint(BaseAPIView):
             else f"https://api.unsplash.com/photos/?client_id={UNSPLASH_ACCESS_KEY}&page={page}&per_page={per_page}"
         )
 
-        headers = {
-            "Content-Type": "application/json",
-        }
+        headers = {"Content-Type": "application/json"}
 
         resp = requests.get(url=url, headers=headers)
         return Response(resp.json(), status=resp.status_code)

@@ -106,10 +106,7 @@ def get_assignee_details(slug, filters):
                     ),
                 ),
                 # If `avatar_asset` is None, fall back to using `avatar` field directly
-                When(
-                    assignees__avatar_asset__isnull=True,
-                    then="assignees__avatar",
-                ),
+                When(assignees__avatar_asset__isnull=True, then="assignees__avatar"),
                 default=Value(None),
                 output_field=models.CharField(),
             )
@@ -143,10 +140,7 @@ def get_label_details(slug, filters):
 
 def get_state_details(slug, filters):
     return (
-        Issue.issue_objects.filter(
-            workspace__slug=slug,
-            **filters,
-        )
+        Issue.issue_objects.filter(workspace__slug=slug, **filters)
         .distinct("state_id")
         .order_by("state_id")
         .values("state_id", "state__name", "state__color")
@@ -163,10 +157,7 @@ def get_module_details(slug, filters):
         )
         .distinct("issue_module__module_id")
         .order_by("issue_module__module_id")
-        .values(
-            "issue_module__module_id",
-            "issue_module__module__name",
-        )
+        .values("issue_module__module_id", "issue_module__module__name")
     )
 
 
@@ -180,10 +171,7 @@ def get_cycle_details(slug, filters):
         )
         .distinct("issue_cycle__cycle_id")
         .order_by("issue_cycle__cycle_id")
-        .values(
-            "issue_cycle__cycle_id",
-            "issue_cycle__cycle__name",
-        )
+        .values("issue_cycle__cycle_id", "issue_cycle__cycle__name")
     )
 
 
@@ -209,9 +197,7 @@ def generate_segmented_rows(
 ):
     segment_zero = list(
         set(
-            item.get("segment")
-            for sublist in distribution.values()
-            for item in sublist
+            item.get("segment") for sublist in distribution.values() for item in sublist
         )
     )
 
@@ -230,9 +216,7 @@ def generate_segmented_rows(
         ]
 
         for segment in segment_zero:
-            value = next(
-                (x.get(key) for x in data if x.get("segment") == segment), "0"
-            )
+            value = next((x.get(key) for x in data if x.get("segment") == segment), "0")
             generated_row.append(value)
 
         if x_axis == ASSIGNEE_ID:
@@ -251,12 +235,7 @@ def generate_segmented_rows(
 
         if x_axis == LABEL_ID:
             label = next(
-                (
-                    lab
-                    for lab in label_details
-                    if str(lab[LABEL_ID]) == str(item)
-                ),
-                None,
+                (lab for lab in label_details if str(lab[LABEL_ID]) == str(item)), None
             )
 
             if label:
@@ -264,12 +243,7 @@ def generate_segmented_rows(
 
         if x_axis == STATE_ID:
             state = next(
-                (
-                    sta
-                    for sta in state_details
-                    if str(sta[STATE_ID]) == str(item)
-                ),
-                None,
+                (sta for sta in state_details if str(sta[STATE_ID]) == str(item)), None
             )
 
             if state:
@@ -277,12 +251,7 @@ def generate_segmented_rows(
 
         if x_axis == CYCLE_ID:
             cycle = next(
-                (
-                    cyc
-                    for cyc in cycle_details
-                    if str(cyc[CYCLE_ID]) == str(item)
-                ),
-                None,
+                (cyc for cyc in cycle_details if str(cyc[CYCLE_ID]) == str(item)), None
             )
 
             if cycle:
@@ -290,11 +259,7 @@ def generate_segmented_rows(
 
         if x_axis == MODULE_ID:
             module = next(
-                (
-                    mod
-                    for mod in module_details
-                    if str(mod[MODULE_ID]) == str(item)
-                ),
+                (mod for mod in module_details if str(mod[MODULE_ID]) == str(item)),
                 None,
             )
 
@@ -321,12 +286,7 @@ def generate_segmented_rows(
     if segmented == LABEL_ID:
         for index, segm in enumerate(row_zero[2:]):
             label = next(
-                (
-                    lab
-                    for lab in label_details
-                    if str(lab[LABEL_ID]) == str(segm)
-                ),
-                None,
+                (lab for lab in label_details if str(lab[LABEL_ID]) == str(segm)), None
             )
             if label:
                 row_zero[index + 2] = label["labels__name"]
@@ -334,12 +294,7 @@ def generate_segmented_rows(
     if segmented == STATE_ID:
         for index, segm in enumerate(row_zero[2:]):
             state = next(
-                (
-                    sta
-                    for sta in state_details
-                    if str(sta[STATE_ID]) == str(segm)
-                ),
-                None,
+                (sta for sta in state_details if str(sta[STATE_ID]) == str(segm)), None
             )
             if state:
                 row_zero[index + 2] = state["state__name"]
@@ -347,12 +302,7 @@ def generate_segmented_rows(
     if segmented == MODULE_ID:
         for index, segm in enumerate(row_zero[2:]):
             module = next(
-                (
-                    mod
-                    for mod in label_details
-                    if str(mod[MODULE_ID]) == str(segm)
-                ),
-                None,
+                (mod for mod in label_details if str(mod[MODULE_ID]) == str(segm)), None
             )
             if module:
                 row_zero[index + 2] = module["issue_module__module__name"]
@@ -360,12 +310,7 @@ def generate_segmented_rows(
     if segmented == CYCLE_ID:
         for index, segm in enumerate(row_zero[2:]):
             cycle = next(
-                (
-                    cyc
-                    for cyc in cycle_details
-                    if str(cyc[CYCLE_ID]) == str(segm)
-                ),
-                None,
+                (cyc for cyc in cycle_details if str(cyc[CYCLE_ID]) == str(segm)), None
             )
             if cycle:
                 row_zero[index + 2] = cycle["issue_cycle__cycle__name"]
@@ -386,10 +331,7 @@ def generate_non_segmented_rows(
 ):
     rows = []
     for item, data in distribution.items():
-        row = [
-            item,
-            data[0].get("count" if y_axis == "issue_count" else "estimate"),
-        ]
+        row = [item, data[0].get("count" if y_axis == "issue_count" else "estimate")]
 
         if x_axis == ASSIGNEE_ID:
             assignee = next(
@@ -407,12 +349,7 @@ def generate_non_segmented_rows(
 
         if x_axis == LABEL_ID:
             label = next(
-                (
-                    lab
-                    for lab in label_details
-                    if str(lab[LABEL_ID]) == str(item)
-                ),
-                None,
+                (lab for lab in label_details if str(lab[LABEL_ID]) == str(item)), None
             )
 
             if label:
@@ -420,12 +357,7 @@ def generate_non_segmented_rows(
 
         if x_axis == STATE_ID:
             state = next(
-                (
-                    sta
-                    for sta in state_details
-                    if str(sta[STATE_ID]) == str(item)
-                ),
-                None,
+                (sta for sta in state_details if str(sta[STATE_ID]) == str(item)), None
             )
 
             if state:
@@ -433,12 +365,7 @@ def generate_non_segmented_rows(
 
         if x_axis == CYCLE_ID:
             cycle = next(
-                (
-                    cyc
-                    for cyc in cycle_details
-                    if str(cyc[CYCLE_ID]) == str(item)
-                ),
-                None,
+                (cyc for cyc in cycle_details if str(cyc[CYCLE_ID]) == str(item)), None
             )
 
             if cycle:
@@ -446,11 +373,7 @@ def generate_non_segmented_rows(
 
         if x_axis == MODULE_ID:
             module = next(
-                (
-                    mod
-                    for mod in module_details
-                    if str(mod[MODULE_ID]) == str(item)
-                ),
+                (mod for mod in module_details if str(mod[MODULE_ID]) == str(item)),
                 None,
             )
 
@@ -459,10 +382,7 @@ def generate_non_segmented_rows(
 
         rows.append(tuple(row))
 
-    row_zero = [
-        row_mapping.get(x_axis, "X-Axis"),
-        row_mapping.get(y_axis, "Y-Axis"),
-    ]
+    row_zero = [row_mapping.get(x_axis, "X-Axis"), row_mapping.get(y_axis, "Y-Axis")]
     return [tuple(row_zero)] + rows
 
 

@@ -23,13 +23,9 @@ class APITokenLogMiddleware:
                     method=request.method,
                     query_params=request.META.get("QUERY_STRING", ""),
                     headers=str(request.headers),
-                    body=(
-                        request_body.decode("utf-8") if request_body else None
-                    ),
+                    body=(request_body.decode("utf-8") if request_body else None),
                     response_body=(
-                        response.content.decode("utf-8")
-                        if response.content
-                        else None
+                        response.content.decode("utf-8") if response.content else None
                     ),
                     response_code=response.status_code,
                     ip_address=request.META.get("REMOTE_ADDR", None),

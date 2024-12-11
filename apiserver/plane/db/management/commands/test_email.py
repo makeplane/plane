@@ -53,9 +53,7 @@ class Command(BaseCommand):
                 subject=subject,
                 body=text_content,
                 from_email=EMAIL_FROM,
-                to=[
-                    receiver_email,
-                ],
+                to=[receiver_email],
                 connection=connection,
             )
             msg.attach_alternative(html_content, "text/html")
@@ -63,7 +61,5 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS("Email successfully sent"))
         except Exception as e:
             self.stdout.write(
-                self.style.ERROR(
-                    f"Error: Email could not be delivered due to {e}"
-                )
+                self.style.ERROR(f"Error: Email could not be delivered due to {e}")
             )

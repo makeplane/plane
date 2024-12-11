@@ -28,16 +28,16 @@ def cache_response(timeout=60 * 60, path=None, user=True):
             auth_header = (
                 None
                 if request.user.is_anonymous
-                else str(request.user.id) if user else None
+                else str(request.user.id)
+                if user
+                else None
             )
             custom_path = path if path is not None else request.get_full_path()
             key = generate_cache_key(custom_path, auth_header)
             cached_result = cache.get(key)
 
             if cached_result is not None:
-                return Response(
-                    cached_result["data"], status=cached_result["status"]
-                )
+                return Response(cached_result["data"], status=cached_result["status"])
             response = view_func(instance, request, *args, **kwargs)
             if response.status_code == 200 and not settings.DEBUG:
                 cache.set(
@@ -67,7 +67,9 @@ def invalidate_cache_directly(
     auth_header = (
         None
         if request and request.user.is_anonymous
-        else str(request.user.id) if user else None
+        else str(request.user.id)
+        if user
+        else None
     )
     key = generate_cache_key(custom_path, auth_header)
 

@@ -1,7 +1,12 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import {
+  DragLocationHistory,
+  DropTargetRecord,
+  ElementDragPayload,
+} from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import orderBy from "lodash/orderBy";
 import { observer } from "mobx-react";
@@ -23,6 +28,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { FavoriteFolder } from "./favorite-folder";
 import { FavoriteRoot } from "./favorite-items";
+import { getInstructionFromPayload, TargetData } from "./favorites.helpers";
 import { NewFavoriteFolder } from "./new-fav-folder";
 
 export const SidebarFavoritesMenu = observer(() => {
@@ -33,7 +39,14 @@ export const SidebarFavoritesMenu = observer(() => {
 
   // store hooks
   const { sidebarCollapsed } = useAppTheme();
-  const { favoriteIds, groupedFavorites, deleteFavorite, removeFromFavoriteFolder } = useFavorite();
+  const {
+    favoriteIds,
+    groupedFavorites,
+    deleteFavorite,
+    removeFromFavoriteFolder,
+    reOrderFavorite,
+    moveFavoriteToFolder,
+  } = useFavorite();
   const { workspaceSlug } = useParams();
 
   const { isMobile } = usePlatformOS();
@@ -45,6 +58,64 @@ export const SidebarFavoritesMenu = observer(() => {
   // refs
   const containerRef = useRef<HTMLDivElement | null>(null);
   const elementRef = useRef(null);
+
+  const handleMoveToFolder = (sourceId: string, destinationId: string) => {
+    moveFavoriteToFolder(workspaceSlug.toString(), sourceId, {
+      parent: destinationId,
+    }).catch(() => {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Failed to move favorite.",
+      });
+    });
+  };
+
+  const handleDrop = (self: DropTargetRecord, source: ElementDragPayload, location: DragLocationHistory) => {
+    const isFolder = self.data?.isGroup;
+    const dropTargets = location?.current?.dropTargets ?? [];
+    if (!dropTargets || dropTargets.length <= 0) return;
+    const dropTarget =
+      dropTargets.length > 1 ? dropTargets.find((target: DropTargetRecord) => target?.data?.isChild) : dropTargets[0];
+
+    const dropTargetData = dropTarget?.data as TargetData;
+
+    if (!dropTarget || !dropTargetData) return;
+    const instruction = getInstructionFromPayload(dropTarget, source, location);
+    const parentId = instruction === "make-child" ? dropTargetData.id : dropTargetData.parentId;
+    const droppedFavId = instruction !== "make-child" ? dropTargetData.id : undefined;
+    const sourceData = source.data as TargetData;
+
+    if (!sourceData.id) return;
+
+    if (isFolder) {
+      // handle move to a new parent folder if dropped on a folder
+      if (parentId && parentId !== sourceData.parentId) {
+        handleMoveToFolder(sourceData.id, parentId);
+      }
+      //handle remove from folder if dropped outside of the folder
+      if (parentId && parentId !== sourceData.parentId && sourceData.isChild) {
+        handleRemoveFromFavoritesFolder(sourceData.id);
+      }
+
+      // handle reordering at root level
+      if (droppedFavId) {
+        if (instruction != "make-child") {
+          handleReorder(sourceData.id, droppedFavId, instruction);
+        }
+      }
+    } else {
+      //handling reordering for favorites
+      if (droppedFavId) {
+        handleReorder(sourceData.id, droppedFavId, instruction);
+      }
+
+      // handle removal from folder if dropped outside a folder
+      if (!parentId && sourceData.isChild) {
+        handleRemoveFromFavoritesFolder(sourceData.id);
+      }
+    }
+  };
 
   const handleRemoveFromFavorites = (favorite: IFavorite) => {
     deleteFavorite(workspaceSlug.toString(), favorite.id)
@@ -64,25 +135,28 @@ export const SidebarFavoritesMenu = observer(() => {
       });
   };
   const handleRemoveFromFavoritesFolder = (favoriteId: string) => {
-    removeFromFavoriteFolder(workspaceSlug.toString(), favoriteId, {
-      id: favoriteId,
-      parent: null,
-    })
-      .then(() => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Favorite moved successfully.",
-        });
-      })
-      .catch(() => {
+    removeFromFavoriteFolder(workspaceSlug.toString(), favoriteId).catch(() => {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Failed to move favorite.",
+      });
+    });
+  };
+
+  const handleReorder = useCallback(
+    (favoriteId: string, droppedFavId: string, edge: string | undefined) => {
+      reOrderFavorite(workspaceSlug.toString(), favoriteId, droppedFavId, edge).catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: "Failed to move favorite.",
+          message: "Failed reorder favorite",
         });
       });
-  };
+    },
+    [workspaceSlug, reOrderFavorite]
+  );
+
   useEffect(() => {
     if (sidebarCollapsed) toggleFavoriteMenu(true);
   }, [sidebarCollapsed, toggleFavoriteMenu]);
@@ -109,7 +183,6 @@ export const SidebarFavoritesMenu = observer(() => {
           const sourceId = source?.data?.id as string | undefined;
           console.log({ sourceId });
           if (!sourceId || !groupedFavorites[sourceId].parent) return;
-          handleRemoveFromFavoritesFolder(sourceId);
         },
       })
     );
@@ -138,7 +211,7 @@ export const SidebarFavoritesMenu = observer(() => {
                 <FolderPlus
                   onClick={() => {
                     setCreateNewFolder(true);
-                    !isFavoriteMenuOpen && toggleFavoriteMenu(!isFavoriteMenuOpen);
+                    if (!isFavoriteMenuOpen) toggleFavoriteMenu(!isFavoriteMenuOpen);
                   }}
                   className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform")}
                 />
@@ -179,7 +252,7 @@ export const SidebarFavoritesMenu = observer(() => {
               ) : (
                 orderBy(Object.values(groupedFavorites), "sequence", "desc")
                   .filter((fav) => !fav.parent)
-                  .map((fav, index) => (
+                  .map((fav, index, { length }) => (
                     <Tooltip
                       key={fav.id}
                       tooltipContent={fav?.entity_data ? fav.entity_data?.name : fav?.name}
@@ -191,17 +264,19 @@ export const SidebarFavoritesMenu = observer(() => {
                       {fav.is_folder ? (
                         <FavoriteFolder
                           favorite={fav}
-                          isLastChild={index === favoriteIds.length - 1}
+                          isLastChild={index === length - 1}
                           handleRemoveFromFavorites={handleRemoveFromFavorites}
                           handleRemoveFromFavoritesFolder={handleRemoveFromFavoritesFolder}
+                          handleDrop={handleDrop}
                         />
                       ) : (
                         <FavoriteRoot
                           workspaceSlug={workspaceSlug.toString()}
                           favorite={fav}
+                          isLastChild={index === length - 1}
+                          parentId={undefined}
                           handleRemoveFromFavorites={handleRemoveFromFavorites}
-                          handleRemoveFromFavoritesFolder={handleRemoveFromFavoritesFolder}
-                          favoriteMap={groupedFavorites}
+                          handleDrop={handleDrop}
                         />
                       )}
                     </Tooltip>

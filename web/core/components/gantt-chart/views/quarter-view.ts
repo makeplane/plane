@@ -19,7 +19,7 @@ export interface IQuarterMonthBlock {
  * @param side
  * @returns
  */
-const generateQuarterChart = (quarterPayload: ChartDataType, side: null | "left" | "right") => {
+const generateQuarterChart = (quarterPayload: ChartDataType, side: null | "left" | "right", targetDate?: Date) => {
   let renderState = quarterPayload;
 
   const range: number = renderState.data.approxFilterRange || 12;
@@ -55,16 +55,17 @@ const generateQuarterChart = (quarterPayload: ChartDataType, side: null | "left"
   }
   // When side is left, generate more months on the left side of the start date
   else if (side === "left") {
-    const currentDate = renderState.data.startDate;
+    const chartStartDate = renderState.data.startDate;
+    const currentDate = targetDate ? targetDate : chartStartDate;
 
     minusDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - range / 2, 1);
-    plusDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
+    plusDate = new Date(chartStartDate.getFullYear(), chartStartDate.getMonth() - 1, 1);
 
     if (minusDate && plusDate) filteredDates = getMonthsBetweenTwoDates(minusDate, plusDate);
 
     const startMonthBlock = filteredDates[0];
     startDate = new Date(startMonthBlock.year, startMonthBlock.month, 1);
-    endDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - 1);
+    endDate = new Date(chartStartDate.getFullYear(), chartStartDate.getMonth(), chartStartDate.getDate() - 1);
     renderState = {
       ...renderState,
       data: { ...renderState.data, startDate },
@@ -72,15 +73,16 @@ const generateQuarterChart = (quarterPayload: ChartDataType, side: null | "left"
   }
   // When side is right, generate more months on the right side of the end date
   else if (side === "right") {
-    const currentDate = renderState.data.endDate;
+    const chartEndDate = renderState.data.endDate;
+    const currentDate = targetDate ? targetDate : chartEndDate;
 
-    minusDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
+    minusDate = new Date(chartEndDate.getFullYear(), chartEndDate.getMonth() + 1, 1);
     plusDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + range / 2, 1);
 
     if (minusDate && plusDate) filteredDates = getMonthsBetweenTwoDates(minusDate, plusDate);
 
     const endMonthBlock = filteredDates[filteredDates.length - 1];
-    startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1);
+    startDate = new Date(chartEndDate.getFullYear(), chartEndDate.getMonth(), chartEndDate.getDate() + 1);
     endDate = new Date(endMonthBlock.year, endMonthBlock.month + 1, 0);
     renderState = {
       ...renderState,

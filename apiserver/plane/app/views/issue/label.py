@@ -12,19 +12,14 @@ from rest_framework import status
 from .. import BaseViewSet, BaseAPIView
 from plane.app.serializers import LabelSerializer
 from plane.app.permissions import allow_permission, ProjectBasePermission, ROLE
-from plane.db.models import (
-    Project,
-    Label,
-)
+from plane.db.models import Project, Label
 from plane.utils.cache import invalidate_cache
 
 
 class LabelViewSet(BaseViewSet):
     serializer_class = LabelSerializer
     model = Label
-    permission_classes = [
-        ProjectBasePermission,
-    ]
+    permission_classes = [ProjectBasePermission]
 
     def get_queryset(self):
         return self.filter_queryset(
@@ -40,39 +35,27 @@ class LabelViewSet(BaseViewSet):
             .order_by("sort_order")
         )
 
-    @invalidate_cache(
-        path="/api/workspaces/:slug/labels/", url_params=True, user=False
-    )
+    @invalidate_cache(path="/api/workspaces/:slug/labels/", url_params=True, user=False)
     @allow_permission([ROLE.ADMIN])
     def create(self, request, slug, project_id):
         try:
             serializer = LabelSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save(project_id=project_id)
-                return Response(
-                    serializer.data, status=status.HTTP_201_CREATED
-                )
-            return Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except IntegrityError:
             return Response(
-                {
-                    "error": "Label with the same name already exists in the project"
-                },
+                {"error": "Label with the same name already exists in the project"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    @invalidate_cache(
-        path="/api/workspaces/:slug/labels/", url_params=True, user=False
-    )
+    @invalidate_cache(path="/api/workspaces/:slug/labels/", url_params=True, user=False)
     @allow_permission([ROLE.ADMIN])
     def partial_update(self, request, *args, **kwargs):
         return super().partial_update(request, *args, **kwargs)
 
-    @invalidate_cache(
-        path="/api/workspaces/:slug/labels/", url_params=True, user=False
-    )
+    @invalidate_cache(path="/api/workspaces/:slug/labels/", url_params=True, user=False)
     @allow_permission([ROLE.ADMIN])
     def destroy(self, request, *args, **kwargs):
         return super().destroy(request, *args, **kwargs)

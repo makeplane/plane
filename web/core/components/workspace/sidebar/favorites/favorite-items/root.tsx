@@ -2,13 +2,24 @@
 
 import React, { FC, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
-import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { DropTargetRecord, DragLocationHistory } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
+import {
+  draggable,
+  dropTargetForElements,
+  ElementDragPayload,
+} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/element/pointer-outside-of-preview";
+import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
+import { attachInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
+
 import { observer } from "mobx-react";
 // plane helpers
-import { useOutsideClickDetector } from "@plane/helpers";
+import { createRoot } from "react-dom/client";
+import { useOutsideClickDetector } from "@plane/hooks";
 // ui
-import { IFavorite } from "@plane/types";
+import { IFavorite, InstructionType } from "@plane/types";
 // components
+import { DropIndicator } from "@plane/ui";
 import {
   FavoriteItemDragHandle,
   FavoriteItemQuickAction,
@@ -18,67 +29,104 @@ import {
 // hooks
 import { useAppTheme } from "@/hooks/store";
 import { useFavoriteItemDetails } from "@/hooks/use-favorite-item-details";
+//helpers
+import { getCanDrop, getInstructionFromPayload } from "../favorites.helpers";
 
 type Props = {
+  isLastChild: boolean;
+  parentId: string | undefined;
   workspaceSlug: string;
   favorite: IFavorite;
-  favoriteMap: Record<string, IFavorite>;
   handleRemoveFromFavorites: (favorite: IFavorite) => void;
-  handleRemoveFromFavoritesFolder: (favoriteId: string) => void;
+  handleDrop: (self: DropTargetRecord, source: ElementDragPayload, location: DragLocationHistory) => void;
 };
 
 export const FavoriteRoot: FC<Props> = observer((props) => {
   // props
-  const { workspaceSlug, favorite, favoriteMap, handleRemoveFromFavorites, handleRemoveFromFavoritesFolder } = props;
+  const { isLastChild, parentId, workspaceSlug, favorite, handleRemoveFromFavorites, handleDrop } = props;
   // store hooks
   const { sidebarCollapsed } = useAppTheme();
-
+  const { itemLink, itemIcon, itemTitle } = useFavoriteItemDetails(workspaceSlug, favorite);
   //state
   const [isDragging, setIsDragging] = useState(false);
   const [isMenuActive, setIsMenuActive] = useState(false);
+  const [instruction, setInstruction] = useState<InstructionType | undefined>(undefined);
+
   //ref
   const elementRef = useRef<HTMLDivElement>(null);
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
 
   const handleQuickAction = (value: boolean) => setIsMenuActive(value);
 
-  const { itemLink, itemIcon, itemTitle } = useFavoriteItemDetails(workspaceSlug, favorite);
-
   // drag and drop
   useEffect(() => {
     const element = elementRef.current;
 
     if (!element) return;
-
+    const initialData = { id: favorite.id, isGroup: false, isChild: !!parentId, parentId };
     return combine(
       draggable({
         element,
         dragHandle: elementRef.current,
-        canDrag: () => true,
-        getInitialData: () => ({ id: favorite.id, type: "CHILD" }),
+        getInitialData: () => initialData,
         onDragStart: () => {
           setIsDragging(true);
         },
         onDrop: () => {
           setIsDragging(false);
         },
+        onGenerateDragPreview: ({ nativeSetDragImage }) => {
+          setCustomNativeDragPreview({
+            getOffset: pointerOutsideOfPreview({ x: "0px", y: "0px" }),
+            render: ({ container }) => {
+              const root = createRoot(container);
+              root.render(
+                <div className="rounded bg-custom-background-100 text-sm p-1 pr-2">
+                  <FavoriteItemTitle
+                    href={itemLink}
+                    icon={itemIcon}
+                    title={itemTitle}
+                    isSidebarCollapsed={!!sidebarCollapsed}
+                  />
+                </div>
+              );
+              return () => root.unmount();
+            },
+            nativeSetDragImage,
+          });
+        },
       }),
       dropTargetForElements({
         element,
+        canDrop: ({ source }) => getCanDrop(source, favorite, !!parentId),
         onDragStart: () => {
           setIsDragging(true);
         },
-        onDragEnter: () => {
-          setIsDragging(true);
+        getData: ({ input, element }) => {
+          const blockedStates: InstructionType[] = ["make-child"];
+          if (!isLastChild) {
+            blockedStates.push("reorder-below");
+          }
+
+          return attachInstruction(initialData, {
+            input,
+            element,
+            currentLevel: 1,
+            indentPerLevel: 0,
+            mode: isLastChild ? "last-in-group" : "standard",
+            block: blockedStates,
+          });
+        },
+        onDrag: ({ self, source, location }) => {
+          const instruction = getInstructionFromPayload(self, source, location);
+          setInstruction(instruction);
         },
         onDragLeave: () => {
-          setIsDragging(false);
+          setInstruction(undefined);
         },
-        onDrop: ({ source }) => {
-          setIsDragging(false);
-          const sourceId = source?.data?.id as string | undefined;
-          if (!sourceId || !favoriteMap[sourceId].parent) return;
-          handleRemoveFromFavoritesFolder(sourceId);
+        onDrop: ({ self, source, location }) => {
+          setInstruction(undefined);
+          handleDrop(self, source, location);
         },
       })
     );
@@ -89,15 +137,10 @@ export const FavoriteRoot: FC<Props> = observer((props) => {
 
   return (
     <>
+      <DropIndicator isVisible={instruction === "reorder-above"} />
       <FavoriteItemWrapper elementRef={elementRef} isMenuActive={isMenuActive} sidebarCollapsed={sidebarCollapsed}>
         {!sidebarCollapsed && <FavoriteItemDragHandle isDragging={isDragging} sort_order={favorite.sort_order} />}
-        <FavoriteItemTitle
-          href={itemLink}
-          projectId={favorite.project_id}
-          icon={itemIcon}
-          title={itemTitle}
-          isSidebarCollapsed={!!sidebarCollapsed}
-        />
+        <FavoriteItemTitle href={itemLink} icon={itemIcon} title={itemTitle} isSidebarCollapsed={!!sidebarCollapsed} />
         {!sidebarCollapsed && (
           <FavoriteItemQuickAction
             favorite={favorite}
@@ -108,6 +151,7 @@ export const FavoriteRoot: FC<Props> = observer((props) => {
           />
         )}
       </FavoriteItemWrapper>
+      {isLastChild && <DropIndicator isVisible={instruction === "reorder-below"} />}
     </>
   );
 });

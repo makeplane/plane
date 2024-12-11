@@ -13,6 +13,7 @@ import { CoreRootStore } from "../root.store";
 
 export interface IProjectStore {
   // observables
+  isUpdatingProject: boolean;
   loader: boolean;
   projectMap: {
     [projectId: string]: TProject; // projectId: project Info
@@ -47,6 +48,7 @@ export interface IProjectStore {
 
 export class ProjectStore implements IProjectStore {
   // observables
+  isUpdatingProject: boolean = false;
   loader: boolean = false;
   projectMap: {
     [projectId: string]: TProject; // projectId: project Info
@@ -63,6 +65,7 @@ export class ProjectStore implements IProjectStore {
   constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
       // observables
+      isUpdatingProject: observable,
       loader: observable.ref,
       projectMap: observable,
       // computed
@@ -380,13 +383,20 @@ export class ProjectStore implements IProjectStore {
       const projectDetails = this.getProjectById(projectId);
       runInAction(() => {
         set(this.projectMap, [projectId], { ...projectDetails, ...data });
+        this.isUpdatingProject = true;
       });
       const response = await this.projectService.updateProject(workspaceSlug, projectId, data);
+      runInAction(() => {
+        this.isUpdatingProject = false;
+      });
       return response;
     } catch (error) {
       console.log("Failed to create project from project store");
       this.fetchProjects(workspaceSlug);
       this.fetchProjectDetails(workspaceSlug, projectId);
+      runInAction(() => {
+        this.isUpdatingProject = false;
+      });
       throw error;
     }
   };

@@ -5,10 +5,12 @@ import { observer } from "mobx-react";
 // components
 import { MultipleSelectGroup } from "@/components/core";
 import {
+  ChartDataType,
   GanttChartBlocksList,
   GanttChartSidebar,
   IBlockUpdateData,
   IBlockUpdateDependencyData,
+  IGanttBlock,
   MonthChartView,
   QuarterChartView,
   TGanttViews,
@@ -16,6 +18,7 @@ import {
 } from "@/components/gantt-chart";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { getDate } from "@/helpers/date-time.helper";
 // hooks
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 // plane web components
@@ -25,7 +28,8 @@ import { IssueBulkOperationsRoot } from "@/plane-web/components/issues";
 import { useBulkOperationStatus } from "@/plane-web/hooks/use-bulk-operation-status";
 //
 import { GanttChartRowList } from "../blocks/block-row-list";
-import { GANTT_SELECT_GROUP, HEADER_HEIGHT } from "../constants";
+import { DEFAULT_BLOCK_WIDTH, GANTT_SELECT_GROUP, HEADER_HEIGHT } from "../constants";
+import { getItemPositionWidth } from "../views";
 import { TimelineDragHelper } from "./timeline-drag-helper";
 
 type Props = {
@@ -46,7 +50,11 @@ type Props = {
   showAllBlocks: boolean;
   sidebarToRender: (props: any) => React.ReactNode;
   title: string;
-  updateCurrentViewRenderPayload: (direction: "left" | "right", currentView: TGanttViews) => void;
+  updateCurrentViewRenderPayload: (
+    direction: "left" | "right",
+    currentView: TGanttViews,
+    targetDate?: Date
+  ) => ChartDataType | undefined;
   quickAdd?: React.JSX.Element | undefined;
 };
 
@@ -100,9 +108,36 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
 
     const approxRangeLeft = scrollLeft;
     const approxRangeRight = scrollWidth - (scrollLeft + clientWidth);
+    const calculatedRangeRight = itemsContainerWidth - (scrollLeft + clientWidth);
 
-    if (approxRangeRight < clientWidth) updateCurrentViewRenderPayload("right", currentView);
-    if (approxRangeLeft < clientWidth) updateCurrentViewRenderPayload("left", currentView);
+    if (approxRangeRight < clientWidth || calculatedRangeRight < clientWidth) {
+      updateCurrentViewRenderPayload("right", currentView);
+    }
+    if (approxRangeLeft < clientWidth) {
+      updateCurrentViewRenderPayload("left", currentView);
+    }
+  };
+
+  const handleScrollToBlock = (block: IGanttBlock) => {
+    const scrollContainer = ganttContainerRef.current as HTMLDivElement;
+    const scrollToEndDate = !block.start_date && block.target_date;
+    const scrollToDate = block.start_date ? getDate(block.start_date) : getDate(block.target_date);
+    let chartData;
+
+    if (!scrollContainer || !currentViewData || !scrollToDate) return;
+
+    if (scrollToDate.getTime() < currentViewData.data.startDate.getTime()) {
+      chartData = updateCurrentViewRenderPayload("left", currentView, scrollToDate);
+    } else if (scrollToDate.getTime() > currentViewData.data.endDate.getTime()) {
+      chartData = updateCurrentViewRenderPayload("right", currentView, scrollToDate);
+    }
+    // update container's scroll position to the block's position
+    const updatedPosition = getItemPositionWidth(chartData ?? currentViewData, block);
+
+    setTimeout(() => {
+      if (updatedPosition)
+        scrollContainer.scrollLeft = updatedPosition.marginLeft - 4 - (scrollToEndDate ? DEFAULT_BLOCK_WIDTH : 0);
+    });
   };
 
   const CHART_VIEW_COMPONENTS: {
@@ -161,11 +196,13 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
                     style={{
                       width: `${itemsContainerWidth}px`,
                       transform: `translateY(${HEADER_HEIGHT}px)`,
+                      paddingBottom: `${HEADER_HEIGHT}px`,
                     }}
                   >
                     <GanttChartRowList
                       blockIds={blockIds}
                       blockUpdateHandler={blockUpdateHandler}
+                      handleScrollToBlock={handleScrollToBlock}
                       enableAddBlock={enableAddBlock}
                       showAllBlocks={showAllBlocks}
                       selectionHelpers={helpers}

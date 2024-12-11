@@ -1,4 +1,7 @@
 import { enableStaticRendering } from "mobx-react";
+// plane web store
+import { RootStore } from "@/plane-web/store/root.store";
+import { IStateStore, StateStore } from "@/plane-web/store/state.store";
 // stores
 import { CommandPaletteStore, ICommandPaletteStore } from "./command-palette.store";
 import { CycleStore, ICycleStore } from "./cycle.store";
@@ -21,9 +24,7 @@ import { IProjectPageStore, ProjectPageStore } from "./pages/project-page.store"
 import { IProjectRootStore, ProjectRootStore } from "./project";
 import { IProjectViewStore, ProjectViewStore } from "./project-view.store";
 import { RouterStore, IRouterStore } from "./router.store";
-import { IStateStore, StateStore } from "./state.store";
 import { ThemeStore, IThemeStore } from "./theme.store";
-import { ITimelineStore, TimeLineStore } from "./timeline";
 import { ITransientStore, TransientStore } from "./transient.store";
 import { IUserStore, UserStore } from "./user";
 import { IWorkspaceRootStore, WorkspaceRootStore } from "./workspace";
@@ -57,7 +58,6 @@ export class CoreRootStore {
   workspaceNotification: IWorkspaceNotificationStore;
   favorite: IFavoriteStore;
   transient: ITransientStore;
-  timelineStore: ITimelineStore;
 
   constructor() {
     this.router = new RouterStore();
@@ -74,8 +74,8 @@ export class CoreRootStore {
     this.moduleFilter = new ModuleFilterStore(this);
     this.projectView = new ProjectViewStore(this);
     this.globalView = new GlobalViewStore(this);
-    this.issue = new IssueRootStore(this);
-    this.state = new StateStore(this);
+    this.issue = new IssueRootStore(this as unknown as RootStore);
+    this.state = new StateStore(this as unknown as RootStore);
     this.label = new LabelStore(this);
     this.dashboard = new DashboardStore(this);
     this.eventTracker = new EventTrackerStore(this);
@@ -86,7 +86,6 @@ export class CoreRootStore {
     this.workspaceNotification = new WorkspaceNotificationStore(this);
     this.favorite = new FavoriteStore(this);
     this.transient = new TransientStore();
-    this.timelineStore = new TimeLineStore(this);
   }
 
   resetOnSignOut() {
@@ -106,8 +105,8 @@ export class CoreRootStore {
     this.moduleFilter = new ModuleFilterStore(this);
     this.projectView = new ProjectViewStore(this);
     this.globalView = new GlobalViewStore(this);
-    this.issue = new IssueRootStore(this);
-    this.state = new StateStore(this);
+    this.issue = new IssueRootStore(this as unknown as RootStore);
+    this.state = new StateStore(this as unknown as RootStore);
     this.label = new LabelStore(this);
     this.dashboard = new DashboardStore(this);
     this.eventTracker = new EventTrackerStore(this);

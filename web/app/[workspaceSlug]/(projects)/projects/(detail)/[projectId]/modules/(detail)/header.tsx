@@ -171,7 +171,6 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                   <span className="hidden md:block">
                     <BreadcrumbLink
                       label={currentProjectDetails?.name ?? "Project"}
-                      href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
                       icon={
                         currentProjectDetails && (
                           <span className="grid h-4 w-4 flex-shrink-0 place-items-center">

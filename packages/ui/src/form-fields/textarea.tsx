@@ -5,7 +5,7 @@ import { cn } from "../../helpers";
 import { useAutoResizeTextArea } from "../hooks/use-auto-resize-textarea";
 
 export interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
-  mode?: "primary" | "transparent";
+  mode?: "primary" | "transparent" | "true-transparent";
   textAreaSize?: "xs" | "sm" | "md";
   hasError?: boolean;
   className?: string;
@@ -39,6 +39,7 @@ const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>((props, re
           "rounded-md border-[0.5px] border-custom-border-200": mode === "primary",
           "focus:ring-theme rounded border-none bg-transparent ring-0 transition-all focus:ring-1":
             mode === "transparent",
+          "rounded border-none bg-transparent ring-0": mode === "true-transparent",
           "px-1.5 py-1": textAreaSize === "xs",
           "px-3 py-2": textAreaSize === "sm",
           "p-3": textAreaSize === "md",

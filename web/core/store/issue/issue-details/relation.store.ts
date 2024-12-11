@@ -5,8 +5,9 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 // Plane
 import { TIssueRelationIdMap, TIssueRelationMap, TIssueRelation, TIssue } from "@plane/types";
+// components
+import { TRelationObject } from "@/components/issues";
 // Plane-web
-import { ISSUE_RELATION_OPTIONS } from "@/plane-web/components/relations";
 import { REVERSE_RELATIONS } from "@/plane-web/constants";
 import { TIssueRelationTypes } from "@/plane-web/types";
 // services
@@ -39,7 +40,10 @@ export interface IIssueRelationStore extends IIssueRelationStoreActions {
   issueRelations: TIssueRelationIdMap | undefined;
   // helper methods
   getRelationsByIssueId: (issueId: string) => TIssueRelationIdMap | undefined;
-  getRelationCountByIssueId: (issueId: string) => number;
+  getRelationCountByIssueId: (
+    issueId: string,
+    ISSUE_RELATION_OPTIONS: { [key in TIssueRelationTypes]?: TRelationObject }
+  ) => number;
   getRelationByIssueIdRelationType: (issueId: string, relationType: TIssueRelationTypes) => string[] | undefined;
   extractRelationsFromIssues: (issues: TIssue[]) => void;
   createCurrentRelation: (issueId: string, relationType: TIssueRelationTypes, relatedIssueId: string) => Promise<void>;
@@ -85,15 +89,17 @@ export class IssueRelationStore implements IIssueRelationStore {
     return this.relationMap?.[issueId] ?? undefined;
   };
 
-  getRelationCountByIssueId = computedFn((issueId: string) => {
-    const issueRelations = this.getRelationsByIssueId(issueId);
+  getRelationCountByIssueId = computedFn(
+    (issueId: string, ISSUE_RELATION_OPTIONS: { [key in TIssueRelationTypes]?: TRelationObject }) => {
+      const issueRelations = this.getRelationsByIssueId(issueId);
 
-    const issueRelationKeys = (Object.keys(issueRelations ?? {}) as TIssueRelationTypes[]).filter(
-      (relationKey) => !!ISSUE_RELATION_OPTIONS[relationKey]
-    );
+      const issueRelationKeys = (Object.keys(issueRelations ?? {}) as TIssueRelationTypes[]).filter(
+        (relationKey) => !!ISSUE_RELATION_OPTIONS[relationKey]
+      );
 
-    return issueRelationKeys.reduce((acc, curr) => acc + (issueRelations?.[curr]?.length ?? 0), 0);
-  });
+      return issueRelationKeys.reduce((acc, curr) => acc + (issueRelations?.[curr]?.length ?? 0), 0);
+    }
+  );
 
   getRelationByIssueIdRelationType = (issueId: string, relationType: TIssueRelationTypes) => {
     if (!issueId || !relationType) return undefined;

@@ -7,14 +7,10 @@ from rest_framework import serializers
 
 
 class EstimateSerializer(BaseSerializer):
-
     class Meta:
         model = Estimate
         fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-        ]
+        read_only_fields = ["workspace", "project"]
 
 
 class EstimatePointSerializer(BaseSerializer):
@@ -23,19 +19,13 @@ class EstimatePointSerializer(BaseSerializer):
             raise serializers.ValidationError("Estimate points are required")
         value = data.get("value")
         if value and len(value) > 20:
-            raise serializers.ValidationError(
-                "Value can't be more than 20 characters"
-            )
+            raise serializers.ValidationError("Value can't be more than 20 characters")
         return data
 
     class Meta:
         model = EstimatePoint
         fields = "__all__"
-        read_only_fields = [
-            "estimate",
-            "workspace",
-            "project",
-        ]
+        read_only_fields = ["estimate", "workspace", "project"]
 
 
 class EstimateReadSerializer(BaseSerializer):
@@ -44,11 +34,7 @@ class EstimateReadSerializer(BaseSerializer):
     class Meta:
         model = Estimate
         fields = "__all__"
-        read_only_fields = [
-            "points",
-            "name",
-            "description",
-        ]
+        read_only_fields = ["points", "name", "description"]
 
 
 class WorkspaceEstimateSerializer(BaseSerializer):
@@ -57,8 +43,4 @@ class WorkspaceEstimateSerializer(BaseSerializer):
     class Meta:
         model = Estimate
         fields = "__all__"
-        read_only_fields = [
-            "points",
-            "name",
-            "description",
-        ]
+        read_only_fields = ["points", "name", "description"]

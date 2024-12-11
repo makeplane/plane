@@ -4,6 +4,8 @@ import { makeObservable, observable, runInAction, action } from "mobx";
 import { TIssue, TInboxIssue, TInboxIssueStatus, TInboxDuplicateIssueDetails } from "@plane/types";
 // helpers
 import { EInboxIssueStatus } from "@/helpers/inbox.helper";
+// local db
+import { addIssueToPersistanceLayer } from "@/local-db/utils/utils";
 // services
 import { InboxIssueService } from "@/services/inbox";
 import { IssueService } from "@/services/issue";
@@ -88,10 +90,16 @@ export class InboxIssueStore implements IInboxIssueStore {
 
     try {
       if (!this.issue.id) return;
+
       const inboxIssue = await this.inboxIssueService.update(this.workspaceSlug, this.projectId, this.issue.id, {
         status: status,
       });
       runInAction(() => set(this, "status", inboxIssue?.status));
+
+      // If issue accepted sync issue to local db
+      if (status === EInboxIssueStatus.ACCEPTED) {
+        addIssueToPersistanceLayer({ ...this.issue, ...inboxIssue.issue });
+      }
     } catch {
       runInAction(() => set(this, "status", previousData.status));
     }

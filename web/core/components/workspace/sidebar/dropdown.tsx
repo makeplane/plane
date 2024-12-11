@@ -20,6 +20,9 @@ import { getFileURL } from "@/helpers/file.helper";
 import { useAppTheme, useUser, useUserPermissions, useUserProfile, useWorkspace } from "@/hooks/store";
 // plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+// plane web helpers
+import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
+// components
 import { WorkspaceLogo } from "../logo";
 
 // Static Data
@@ -53,6 +56,8 @@ export const SidebarDropdown = observer(() => {
   } = useUser();
   const { updateUserProfile } = useUserProfile();
   const { allowPermissions } = useUserPermissions();
+  // derived values
+  const isWorkspaceCreationEnabled = getIsWorkspaceCreationDisabled() === false;
 
   const isUserInstanceAdmin = false;
   const { currentWorkspace: activeWorkspace, workspaces } = useWorkspace();
@@ -205,15 +210,17 @@ export const SidebarDropdown = observer(() => {
                     )}
                   </div>
                   <div className="w-full flex flex-col items-start justify-start gap-2 px-4 py-2 text-sm">
-                    <Link href="/create-workspace" className="w-full">
-                      <Menu.Item
-                        as="div"
-                        className="flex items-center gap-2 rounded px-2 py-1 text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
-                      >
-                        <PlusSquare strokeWidth={1.75} className="h-4 w-4 flex-shrink-0" />
-                        Create workspace
-                      </Menu.Item>
-                    </Link>
+                    {isWorkspaceCreationEnabled && (
+                      <Link href="/create-workspace" className="w-full">
+                        <Menu.Item
+                          as="div"
+                          className="flex items-center gap-2 rounded px-2 py-1 text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
+                        >
+                          <PlusSquare strokeWidth={1.75} className="h-4 w-4 flex-shrink-0" />
+                          Create workspace
+                        </Menu.Item>
+                      </Link>
+                    )}
                     {userLinks(workspaceSlug?.toString() ?? "").map(
                       (link, index) =>
                         allowPermissions(link.access, EUserPermissionsLevel.WORKSPACE) && (

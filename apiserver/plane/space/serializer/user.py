@@ -1,8 +1,6 @@
 # Module imports
 from .base import BaseSerializer
-from plane.db.models import (
-    User,
-)
+from plane.db.models import User
 
 
 class UserLiteSerializer(BaseSerializer):
@@ -17,7 +15,4 @@ class UserLiteSerializer(BaseSerializer):
             "is_bot",
             "display_name",
         ]
-        read_only_fields = [
-            "id",
-            "is_bot",
-        ]
+        read_only_fields = ["id", "is_bot"]

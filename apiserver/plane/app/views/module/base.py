@@ -164,9 +164,7 @@ class ModuleViewSet(BaseViewSet):
             )
             .values("issue_module__module_id")
             .annotate(
-                total_estimate_points=Sum(
-                    Cast("estimate_point__value", FloatField())
-                )
+                total_estimate_points=Sum(Cast("estimate_point__value", FloatField()))
             )
             .values("total_estimate_points")[:1]
         )
@@ -179,9 +177,7 @@ class ModuleViewSet(BaseViewSet):
             )
             .values("issue_module__module_id")
             .annotate(
-                backlog_estimate_point=Sum(
-                    Cast("estimate_point__value", FloatField())
-                )
+                backlog_estimate_point=Sum(Cast("estimate_point__value", FloatField()))
             )
             .values("backlog_estimate_point")[:1]
         )
@@ -209,9 +205,7 @@ class ModuleViewSet(BaseViewSet):
             )
             .values("issue_module__module_id")
             .annotate(
-                started_estimate_point=Sum(
-                    Cast("estimate_point__value", FloatField())
-                )
+                started_estimate_point=Sum(Cast("estimate_point__value", FloatField()))
             )
             .values("started_estimate_point")[:1]
         )
@@ -243,9 +237,7 @@ class ModuleViewSet(BaseViewSet):
             .prefetch_related(
                 Prefetch(
                     "link_module",
-                    queryset=ModuleLink.objects.select_related(
-                        "module", "created_by"
-                    ),
+                    queryset=ModuleLink.objects.select_related("module", "created_by"),
                 )
             )
             .annotate(
@@ -262,8 +254,7 @@ class ModuleViewSet(BaseViewSet):
             )
             .annotate(
                 started_issues=Coalesce(
-                    Subquery(started_issues[:1]),
-                    Value(0, output_field=IntegerField()),
+                    Subquery(started_issues[:1]), Value(0, output_field=IntegerField())
                 )
             )
             .annotate(
@@ -274,51 +265,48 @@ class ModuleViewSet(BaseViewSet):
             )
             .annotate(
                 backlog_issues=Coalesce(
-                    Subquery(backlog_issues[:1]),
-                    Value(0, output_field=IntegerField()),
+                    Subquery(backlog_issues[:1]), Value(0, output_field=IntegerField())
                 )
             )
             .annotate(
                 total_issues=Coalesce(
-                    Subquery(total_issues[:1]),
-                    Value(0, output_field=IntegerField()),
+                    Subquery(total_issues[:1]), Value(0, output_field=IntegerField())
                 )
             )
             .annotate(
                 backlog_estimate_points=Coalesce(
                     Subquery(backlog_estimate_point),
                     Value(0, output_field=FloatField()),
-                ),
+                )
             )
             .annotate(
                 unstarted_estimate_points=Coalesce(
                     Subquery(unstarted_estimate_point),
                     Value(0, output_field=FloatField()),
-                ),
+                )
             )
             .annotate(
                 started_estimate_points=Coalesce(
                     Subquery(started_estimate_point),
                     Value(0, output_field=FloatField()),
-                ),
+                )
             )
             .annotate(
                 cancelled_estimate_points=Coalesce(
                     Subquery(cancelled_estimate_point),
                     Value(0, output_field=FloatField()),
-                ),
+                )
             )
             .annotate(
                 completed_estimate_points=Coalesce(
                     Subquery(completed_estimate_point),
                     Value(0, output_field=FloatField()),
-                ),
+                )
             )
             .annotate(
                 total_estimate_points=Coalesce(
-                    Subquery(total_estimate_point),
-                    Value(0, output_field=FloatField()),
-                ),
+                    Subquery(total_estimate_point), Value(0, output_field=FloatField())
+                )
             )
             .annotate(
                 member_ids=Coalesce(
@@ -333,12 +321,7 @@ class ModuleViewSet(BaseViewSet):
             .order_by("-is_favorite", "-created_at")
         )
 
-    @allow_permission(
-        [
-            ROLE.ADMIN,
-            ROLE.MEMBER,
-        ]
-    )
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def create(self, request, slug, project_id):
         project = Project.objects.get(workspace__slug=slug, pk=project_id)
         serializer = ModuleWriteSerializer(
@@ -405,11 +388,7 @@ class ModuleViewSet(BaseViewSet):
     def list(self, request, slug, project_id):
         queryset = self.get_queryset().filter(archived_at__isnull=True)
         if self.fields:
-            modules = ModuleSerializer(
-                queryset,
-                many=True,
-                fields=self.fields,
-            ).data
+            modules = ModuleSerializer(queryset, many=True, fields=self.fields).data
         else:
             modules = queryset.values(  # Required fields
                 "id",
@@ -470,8 +449,7 @@ class ModuleViewSet(BaseViewSet):
 
         if not queryset.exists():
             return Response(
-                {"error": "Module not found"},
-                status=status.HTTP_404_NOT_FOUND,
+                {"error": "Module not found"}, status=status.HTTP_404_NOT_FOUND
             )
 
         estimate_type = Project.objects.filter(
@@ -526,9 +504,7 @@ class ModuleViewSet(BaseViewSet):
                     "display_name",
                 )
                 .annotate(
-                    total_estimates=Sum(
-                        Cast("estimate_point__value", FloatField())
-                    ),
+                    total_estimates=Sum(Cast("estimate_point__value", FloatField()))
                 )
                 .annotate(
                     completed_estimates=Sum(
@@ -565,9 +541,7 @@ class ModuleViewSet(BaseViewSet):
                 .annotate(label_id=F("labels__id"))
                 .values("label_name", "color", "label_id")
                 .annotate(
-                    total_estimates=Sum(
-                        Cast("estimate_point__value", FloatField())
-                    ),
+                    total_estimates=Sum(Cast("estimate_point__value", FloatField()))
                 )
                 .annotate(
                     completed_estimates=Sum(
@@ -595,14 +569,12 @@ class ModuleViewSet(BaseViewSet):
             data["estimate_distribution"]["labels"] = label_distribution
 
             if modules and modules.start_date and modules.target_date:
-                data["estimate_distribution"]["completion_chart"] = (
-                    burndown_plot(
-                        queryset=modules,
-                        slug=slug,
-                        project_id=project_id,
-                        plot_type="points",
-                        module_id=pk,
-                    )
+                data["estimate_distribution"]["completion_chart"] = burndown_plot(
+                    queryset=modules,
+                    slug=slug,
+                    project_id=project_id,
+                    plot_type="points",
+                    module_id=pk,
                 )
 
         assignee_distribution = (
@@ -629,28 +601,19 @@ class ModuleViewSet(BaseViewSet):
                     ),
                     # If `avatar_asset` is None, fall back to using `avatar` field directly
                     When(
-                        assignees__avatar_asset__isnull=True,
-                        then="assignees__avatar",
+                        assignees__avatar_asset__isnull=True, then="assignees__avatar"
                     ),
                     default=Value(None),
                     output_field=models.CharField(),
                 )
             )
             .values(
-                "first_name",
-                "last_name",
-                "assignee_id",
-                "avatar_url",
-                "display_name",
+                "first_name", "last_name", "assignee_id", "avatar_url", "display_name"
             )
             .annotate(
                 total_issues=Count(
-                    "id",
-                    filter=Q(
-                        archived_at__isnull=True,
-                        is_draft=False,
-                    ),
-                ),
+                    "id", filter=Q(archived_at__isnull=True, is_draft=False)
+                )
             )
             .annotate(
                 completed_issues=Count(
@@ -688,12 +651,8 @@ class ModuleViewSet(BaseViewSet):
             .values("label_name", "color", "label_id")
             .annotate(
                 total_issues=Count(
-                    "id",
-                    filter=Q(
-                        archived_at__isnull=True,
-                        is_draft=False,
-                    ),
-                ),
+                    "id", filter=Q(archived_at__isnull=True, is_draft=False)
+                )
             )
             .annotate(
                 completed_issues=Count(
@@ -746,10 +705,7 @@ class ModuleViewSet(BaseViewSet):
             project_id=project_id,
         )
 
-        return Response(
-            data,
-            status=status.HTTP_200_OK,
-        )
+        return Response(data, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def partial_update(self, request, slug, project_id, pk):
@@ -823,14 +779,10 @@ class ModuleViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN], creator=True, model=Module)
     def destroy(self, request, slug, project_id, pk):
-        module = Module.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=pk
-        )
+        module = Module.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
 
         module_issues = list(
-            ModuleIssue.objects.filter(module_id=pk).values_list(
-                "issue", flat=True
-            )
+            ModuleIssue.objects.filter(module_id=pk).values_list("issue", flat=True)
         )
         _ = [
             issue_activity.delay(
@@ -848,10 +800,7 @@ class ModuleViewSet(BaseViewSet):
         ]
         module.delete()
         # Delete the module issues
-        ModuleIssue.objects.filter(
-            module=pk,
-            project_id=project_id,
-        ).delete()
+        ModuleIssue.objects.filter(module=pk, project_id=project_id).delete()
         # Delete the user favorite module
         UserFavorite.objects.filter(
             user=request.user,
@@ -863,9 +812,7 @@ class ModuleViewSet(BaseViewSet):
 
 
 class ModuleLinkViewSet(BaseViewSet):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
+    permission_classes = [ProjectEntityPermission]
 
     model = ModuleLink
     serializer_class = ModuleLinkSerializer
@@ -895,9 +842,7 @@ class ModuleLinkViewSet(BaseViewSet):
 
 class ModuleFavoriteViewSet(BaseViewSet):
     model = UserFavorite
-    permission_classes = [
-        ProjectLitePermission,
-    ]
+    permission_classes = [ProjectLitePermission]
 
     def get_queryset(self):
         return self.filter_queryset(
@@ -930,7 +875,6 @@ class ModuleFavoriteViewSet(BaseViewSet):
 
 
 class ModuleUserPropertiesEndpoint(BaseAPIView):
-
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def patch(self, request, slug, project_id, module_id):
         module_properties = ModuleUserProperties.objects.get(

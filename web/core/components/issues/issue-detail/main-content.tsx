@@ -13,12 +13,16 @@ import {
   IssueDetailWidgets,
   PeekOverviewProperties,
 } from "@/components/issues";
+// helpers
+import { getTextContent } from "@/helpers/editor.helper";
 // hooks
-import { useIssueDetail, useUser } from "@/hooks/store";
+import { useIssueDetail, useProject, useUser } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 import useSize from "@/hooks/use-window-size";
 // plane web components
+import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe";
 import { IssueTypeSwitcher } from "@/plane-web/components/issues";
+import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
 // types
 import { TIssueOperations } from "./root";
 
@@ -42,7 +46,19 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
     issue: { getIssueById },
     peekIssue,
   } = useIssueDetail();
+  const { getProjectById } = useProject();
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
+
+  // derived values
+  const projectDetails = getProjectById(projectId);
+  const issue = issueId ? getIssueById(issueId) : undefined;
+
+  // debounced duplicate issues swr
+  const { duplicateIssues } = useDebouncedDuplicateIssues(projectDetails?.workspace.toString(), projectDetails?.id, {
+    name: issue?.name,
+    description_html: getTextContent(issue?.description_html),
+    issueId: issue?.id,
+  });
 
   useEffect(() => {
     if (isSubmitting === "submitted") {
@@ -51,7 +67,6 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
     } else if (isSubmitting === "submitting") setShowAlert(true);
   }, [isSubmitting, setShowAlert, setIsSubmitting]);
 
-  const issue = issueId ? getIssueById(issueId) : undefined;
   if (!issue || !issue.project_id) return <></>;
 
   const isPeekModeActive = Boolean(peekIssue);
@@ -71,7 +86,19 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
 
         <div className="mb-2.5 flex items-center justify-between gap-4">
           <IssueTypeSwitcher issueId={issueId} disabled={isArchived || !isEditable} />
-          <IssueUpdateStatus isSubmitting={isSubmitting} />
+          <div className="flex items-center gap-3">
+            <IssueUpdateStatus isSubmitting={isSubmitting} />
+            {duplicateIssues?.length > 0 && (
+              <DeDupeIssuePopoverRoot
+                workspaceSlug={workspaceSlug}
+                projectId={issue.project_id}
+                rootIssueId={issueId}
+                issues={duplicateIssues}
+                issueOperations={issueOperations}
+                renderDeDupeActionModals={!isPeekModeActive}
+              />
+            )}
+          </div>
         </div>
 
         <IssueTitleInput
