@@ -247,8 +247,12 @@ class CycleIssueViewSet(BaseViewSet):
         new_issues = list(set(issues) - set(existing_issues))
 
         # Fetch issue details
-        issue_objects = Issue.objects.filter(id__in=issues).annotate(
-            cycle_id=F("issue_cycle__cycle_id")
+        issue_objects = (
+            Issue.objects.filter(id__in=issues)
+            .filter(
+                type__is_epic=False,
+            )
+            .annotate(cycle_id=F("issue_cycle__cycle_id"))
         )
         issue_dict = {str(issue.id): issue for issue in issue_objects}
 
@@ -285,7 +289,9 @@ class CycleIssueViewSet(BaseViewSet):
                         state_group=issue_dict[issue_id].state.group,
                         action="ADDED",
                         entity_type="CYCLE",
-                        estimate_point_id=issue_dict[issue_id].estimate_point_id,
+                        estimate_point_id=issue_dict[
+                            issue_id
+                        ].estimate_point_id,
                         estimate_value=(
                             issue_dict[issue_id].estimate_point.value
                             if estimate_type and issue_dict[issue_id].estimate_point
@@ -309,7 +315,9 @@ class CycleIssueViewSet(BaseViewSet):
                         state_group=issue_dict[issue_id].state.group,
                         action="REMOVED",
                         entity_type="CYCLE",
-                        estimate_point_id=issue_dict[issue_id].estimate_point_id,
+                        estimate_point_id=issue_dict[
+                            issue_id
+                        ].estimate_point_id,
                         estimate_value=(
                             issue_dict[issue_id].estimate_point.value
                             if estimate_type and issue_dict[issue_id].estimate_point

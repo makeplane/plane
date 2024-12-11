@@ -24,7 +24,10 @@ class IssuePropertyOptionEndpoint(BaseAPIView):
         # Get a single issue property option
         if pk:
             issue_property_option = IssuePropertyOption.objects.get(
-                workspace__slug=slug, project_id=project_id, pk=pk
+                workspace__slug=slug,
+                project_id=project_id,
+                pk=pk,
+                property__issue_type__is_epic=False,
             )
             serializer = IssuePropertyOptionSerializer(issue_property_option)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -35,6 +38,7 @@ class IssuePropertyOptionEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 project_id=project_id,
                 property_id=issue_property_id,
+                property__issue_type__is_epic=False,
             )
             serializer = IssuePropertyOptionSerializer(
                 issue_property_options, many=True
@@ -43,7 +47,9 @@ class IssuePropertyOptionEndpoint(BaseAPIView):
 
         # Get all issue property options for the project_id in the form of property_id: options[]
         issue_property_options = IssuePropertyOption.objects.filter(
-            workspace__slug=slug, project_id=project_id
+            workspace__slug=slug,
+            project_id=project_id,
+            property__issue_type__is_epic=False,
         )
 
         serializer = IssuePropertyOptionSerializer(
@@ -64,7 +70,10 @@ class IssuePropertyOptionEndpoint(BaseAPIView):
         # Create a new issue property option
         # Only allow when property type is option
         issue_property = IssueProperty.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=issue_property_id
+            workspace__slug=slug,
+            project_id=project_id,
+            pk=issue_property_id,
+            issue_type__is_epic=False,
         )
 
         # Check if the property type is option
@@ -75,7 +84,9 @@ class IssuePropertyOptionEndpoint(BaseAPIView):
             )
 
         last_id = IssuePropertyOption.objects.filter(
-            project=project_id, property_id=issue_property_id
+            project=project_id,
+            property_id=issue_property_id,
+            property__issue_type__is_epic=False,
         ).aggregate(largest=models.Max("sort_order"))["largest"]
 
         # Set the sort order for the new option
@@ -112,11 +123,15 @@ class IssuePropertyOptionEndpoint(BaseAPIView):
             project_id=project_id,
             property_id=issue_property_id,
             pk=pk,
+            property__issue_type__is_epic=False,
         )
 
         # Fetch the issue property
         issue_property = IssueProperty.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=issue_property_id
+            workspace__slug=slug,
+            project_id=project_id,
+            pk=issue_property_id,
+            issue_type__is_epic=False,
         )
 
         # Check if the property type is option
@@ -145,6 +160,7 @@ class IssuePropertyOptionEndpoint(BaseAPIView):
             project_id=project_id,
             property_id=issue_property_id,
             pk=pk,
+            property__issue_type__is_epic=False,
         )
         issue_property_option.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

@@ -1,7 +1,8 @@
 import orderBy from "lodash/orderBy";
 import { makeObservable } from "mobx";
 import { computedFn } from "mobx-utils";
-import { TIssueActivityComment } from "@plane/types";
+import { EIssueServiceType } from "@plane/constants";
+import { TIssueActivityComment, TIssueServiceType } from "@plane/types";
 // ce store
 import {
   IIssueActivityStoreActions as IIssueActivityStoreActionsCe,
@@ -25,23 +26,29 @@ export class IssueActivityStore extends IssueActivityStoreCe implements IIssueAc
   // services
   issueActivityService;
 
-  constructor(protected store: RootStore) {
+  constructor(
+    protected store: RootStore,
+    serviceType: TIssueServiceType = EIssueServiceType.ISSUES
+  ) {
     super(store);
     makeObservable(this, {
       // actions
     });
     // services
-    this.issueActivityService = new IssueActivityService();
+    this.serviceType = serviceType;
+    this.issueActivityService = new IssueActivityService(this.serviceType);
   }
 
   getActivityCommentByIssueId = computedFn((issueId: string) => {
     const workspace = this.store.workspaceRoot.currentWorkspace;
     if (!workspace?.id || !issueId) return undefined;
 
+    const currentStore = this.serviceType === EIssueServiceType.EPICS ? this.store.epic : this.store.issue;
+
     let activityComments: TIssueActivityComment[] = [];
 
     const activities = this.getActivitiesByIssueId(issueId) || [];
-    const comments = this.store.issue.issueDetail.comment.getCommentsByIssueId(issueId) || [];
+    const comments = currentStore.issueDetail.comment.getCommentsByIssueId(issueId) || [];
     const worklogs = this.store.workspaceWorklogs.worklogIdsByIssueId(workspace?.id, issueId) || [];
     const additionalPropertiesActivities =
       this.store.issuePropertiesActivity.getPropertyActivityIdsByIssueId(issueId) || [];
@@ -57,7 +64,7 @@ export class IssueActivityStore extends IssueActivityStoreCe implements IIssueAc
     });
 
     comments.forEach((commentId) => {
-      const comment = this.store.issue.issueDetail.comment.getCommentById(commentId);
+      const comment = currentStore.issueDetail.comment.getCommentById(commentId);
       if (!comment) return;
       activityComments.push({
         id: comment.id,

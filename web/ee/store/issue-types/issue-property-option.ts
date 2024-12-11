@@ -2,8 +2,6 @@ import set from "lodash/set";
 import { action, computed, makeObservable, observable } from "mobx";
 // types
 import { TLogoProps } from "@plane/types";
-// plane web services
-import { IssuePropertyOptionsService } from "@/plane-web/services/issue-types";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
 // plane web types
@@ -31,8 +29,6 @@ export class IssuePropertyOption implements IIssuePropertyOption {
   created_by: string | undefined = undefined;
   updated_at: Date | undefined = undefined;
   updated_by: string | undefined = undefined;
-  // service
-  service: IssuePropertyOptionsService;
 
   constructor(
     private store: RootStore,
@@ -71,8 +67,6 @@ export class IssuePropertyOption implements IIssuePropertyOption {
     this.created_by = propertyOptionData.created_by;
     this.updated_at = propertyOptionData.updated_at;
     this.updated_by = propertyOptionData.updated_by;
-    // service
-    this.service = new IssuePropertyOptionsService();
   }
 
   // computed

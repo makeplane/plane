@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { FC, useState } from "react";
 import { observer } from "mobx-react";
 // hooks
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
@@ -8,9 +8,16 @@ import { Relation } from "@/plane-web/types";
 import { DependencyPathModal } from "./dependency-modal";
 import { TimelineDependencyPathItem } from "./dependency-path-item";
 
-export const TimelineDependencyPaths = observer(() => {
-  const { isDependencyEnabled, relations } = useTimeLineChartStore();
+type Props = {
+  isEpic?: boolean;
+};
+
+export const TimelineDependencyPaths: FC<Props> = observer((props) => {
+  const { isEpic = false } = props;
+  // state
   const [selectedRelation, setSelectedRelation] = useState<Relation | undefined>();
+  // store hooks
+  const { isDependencyEnabled, relations } = useTimeLineChartStore();
 
   if (!isDependencyEnabled) return <></>;
 
@@ -20,7 +27,7 @@ export const TimelineDependencyPaths = observer(() => {
 
   return (
     <>
-      <DependencyPathModal relation={selectedRelation} handleClose={handleClose} />
+      <DependencyPathModal relation={selectedRelation} handleClose={handleClose} isEpic={isEpic} />
       <div>
         {relations.map((relation) => (
           <TimelineDependencyPathItem

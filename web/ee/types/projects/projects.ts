@@ -7,4 +7,5 @@ export type TProject = IProject & {
   priority: TProjectPriority | undefined;
   start_date: string | undefined;
   target_date: string | undefined;
+  is_epic_enabled: boolean;
 };

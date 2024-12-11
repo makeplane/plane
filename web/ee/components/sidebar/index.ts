@@ -1,2 +1,2 @@
 export * from "./app-switcher";
-export * from "@/ce/components/sidebar/project-navigation-root";
+export * from "./project-navigation-root";

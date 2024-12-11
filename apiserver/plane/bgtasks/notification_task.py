@@ -323,7 +323,7 @@ def notifications(
                 .values_list("subscriber", flat=True)
             )
 
-            issue = Issue.objects.filter(pk=issue_id).first()
+            issue = Issue.objects.filter(pk=issue_id).filter(type__is_epic=False).first()
 
             if subscriber:
                 # add the user to issue subscriber

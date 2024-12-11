@@ -11,6 +11,7 @@ import {
   TIssueSubIssuesStateDistributionMap,
   TIssueSubIssuesIdMap,
   TSubIssuesStateDistribution,
+  TIssueServiceType,
 } from "@plane/types";
 // services
 import { updatePersistentLayer } from "@/local-db/utils/utils";
@@ -65,7 +66,7 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
   // services
   issueService;
 
-  constructor(rootStore: IIssueDetail) {
+  constructor(rootStore: IIssueDetail, serviceType: TIssueServiceType) {
     makeObservable(this, {
       // observables
       subIssuesStateDistribution: observable,
@@ -83,7 +84,7 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
     // root store
     this.rootIssueDetailStore = rootStore;
     // services
-    this.issueService = new IssueService();
+    this.issueService = new IssueService(serviceType);
   }
 
   // helper methods

@@ -1,16 +1,24 @@
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // plane web types
-import { TIssueType } from "@/plane-web/types";
+import {
+  IIssueTypesService,
+  TFetchIssueTypesPayload,
+  TCreateIssueTypePayload,
+  TIssueType,
+  TUpdateIssueTypePayload,
+  TDeleteIssueTypePayload,
+  TEnableIssueTypePayload,
+} from "@/plane-web/types";
 // services
 import { APIService } from "@/services/api.service";
 
-export class IssueTypesService extends APIService {
+class IssueTypesService extends APIService implements IIssueTypesService {
   constructor() {
     super(API_BASE_URL);
   }
 
-  async fetchAll(workspaceSlug: string): Promise<TIssueType[]> {
+  async fetchAll({ workspaceSlug }: TFetchIssueTypesPayload): Promise<TIssueType[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/issue-types/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -18,15 +26,15 @@ export class IssueTypesService extends APIService {
       });
   }
 
-  async fetchAllProjectIssueTypes(workspaceSlug: string, projectId: string): Promise<TIssueType[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/`)
+  async fetchAllEpic({ workspaceSlug }: TFetchIssueTypesPayload): Promise<TIssueType[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/epics/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async create(workspaceSlug: string, projectId: string, data: Partial<TIssueType>): Promise<TIssueType> {
+  async create({ workspaceSlug, projectId, data }: TCreateIssueTypePayload): Promise<TIssueType> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -34,12 +42,7 @@ export class IssueTypesService extends APIService {
       });
   }
 
-  async update(
-    workspaceSlug: string,
-    projectId: string,
-    issueTypeId: string,
-    data: Partial<TIssueType>
-  ): Promise<TIssueType> {
+  async update({ workspaceSlug, projectId, issueTypeId, data }: TUpdateIssueTypePayload): Promise<TIssueType> {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${issueTypeId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -47,7 +50,7 @@ export class IssueTypesService extends APIService {
       });
   }
 
-  async deleteType(workspaceSlug: string, projectId: string, issueTypeId: string): Promise<void> {
+  async deleteType({ workspaceSlug, projectId, issueTypeId }: TDeleteIssueTypePayload): Promise<void> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${issueTypeId}/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -55,7 +58,7 @@ export class IssueTypesService extends APIService {
       });
   }
 
-  async enableIssueTypes(workspaceSlug: string, projectId: string): Promise<TIssueType> {
+  async enable({ workspaceSlug, projectId }: TEnableIssueTypePayload): Promise<TIssueType> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/default-issue-types/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -63,3 +66,5 @@ export class IssueTypesService extends APIService {
       });
   }
 }
+
+export const issueTypeService = new IssueTypesService();

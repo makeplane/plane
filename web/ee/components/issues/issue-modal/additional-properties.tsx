@@ -2,6 +2,8 @@
 
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
+import { EIssueServiceType } from "@plane/constants";
+import { TIssueServiceType } from "@plane/types";
 // ui
 import { Loader } from "@plane/ui";
 // hooks
@@ -17,16 +19,29 @@ type TIssueAdditionalPropertiesProps = {
   projectId: string;
   workspaceSlug: string;
   isDraft?: boolean;
+  issueServiceType?: TIssueServiceType;
 };
 
 export const IssueAdditionalProperties: React.FC<TIssueAdditionalPropertiesProps> = observer((props) => {
-  const { issueId, issueTypeId, projectId, workspaceSlug, isDraft = false } = props;
+  const {
+    issueId,
+    issueTypeId,
+    projectId,
+    workspaceSlug,
+    isDraft = false,
+    issueServiceType = EIssueServiceType.ISSUES,
+  } = props;
   // store hooks
   const { issuePropertyValues, setIssuePropertyValues } = useIssueModal();
-  const { isIssueTypeEnabledForProject, getProjectIssuePropertiesLoader, fetchAllPropertiesAndOptions } =
+  const { isIssueTypeOrEpicEnabledForProject, getProjectIssuePropertiesLoader, fetchAllPropertiesAndOptions } =
     useIssueTypes();
   // derived values
-  const isIssueTypeDisplayEnabled = isIssueTypeEnabledForProject(workspaceSlug, projectId, "ISSUE_TYPE_DISPLAY");
+  const isIssueTypeDisplayEnabled = isIssueTypeOrEpicEnabledForProject(
+    workspaceSlug,
+    projectId,
+    "ISSUE_TYPE_DISPLAY",
+    "EPICS_DISPLAY"
+  );
   const issuePropertiesLoader = getProjectIssuePropertiesLoader(projectId);
 
   // This has to be on root level because of global level issue update, where we haven't fetch the details yet.
@@ -58,6 +73,7 @@ export const IssueAdditionalProperties: React.FC<TIssueAdditionalPropertiesProps
                   projectId={projectId}
                   workspaceSlug={workspaceSlug}
                   isDraft={isDraft}
+                  issueServiceType={issueServiceType}
                 />
               )}
             </>

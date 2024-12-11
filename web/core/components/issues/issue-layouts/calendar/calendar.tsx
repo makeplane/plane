@@ -38,9 +38,15 @@ import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 import { IssueLayoutHOC } from "../issue-layout-HOC";
 import { TRenderQuickActions } from "../list/list-view-types";
 import type { ICalendarWeek } from "./types";
+import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
 
 type Props = {
-  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
+  issuesFilterStore:
+    | IProjectIssuesFilter
+    | IModuleIssuesFilter
+    | ICycleIssuesFilter
+    | IProjectViewIssuesFilter
+    | IProjectEpicsFilter;
   issues: TIssueMap | undefined;
   groupedIssueIds: TGroupedIssues;
   layout: "month" | "week" | undefined;
@@ -63,6 +69,7 @@ type Props = {
     filterType: EIssueFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
   ) => Promise<void>;
+  isEpic?: boolean;
 };
 
 export const CalendarChart: React.FC<Props> = observer((props) => {
@@ -82,6 +89,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
     getGroupIssueCount,
     updateFilters,
     readOnly = false,
+    isEpic = false,
   } = props;
   // states
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -169,6 +177,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
                         quickAddCallback={quickAddCallback}
                         addIssuesToView={addIssuesToView}
                         readOnly={readOnly}
+                        isEpic={isEpic}
                       />
                     ))}
                 </div>
@@ -191,6 +200,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
                   quickAddCallback={quickAddCallback}
                   addIssuesToView={addIssuesToView}
                   readOnly={readOnly}
+                  isEpic={isEpic}
                 />
               )}
             </div>
@@ -216,6 +226,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
                 readOnly={readOnly}
                 isDragDisabled
                 isMobileView
+                isEpic={isEpic}
               />
             </div>
           </div>
@@ -242,6 +253,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
             readOnly={readOnly}
             isDragDisabled
             isMobileView
+            isEpic={isEpic}
           />
         </div>
       </div>

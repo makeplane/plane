@@ -26,10 +26,11 @@ type IssueBlockProps = {
   dependencyPosition: EDependencyPosition;
   className?: string;
   handleClose: () => void;
+  isEpic?: boolean;
 };
 
 const IssueBlock = observer((props: IssueBlockProps) => {
-  const { blockId, handleClose, className = "" } = props;
+  const { blockId, handleClose, className = "", isEpic = false } = props;
   // hooks
   const { workspaceSlug } = useParams();
   const { isMobile } = usePlatformOS();
@@ -40,7 +41,7 @@ const IssueBlock = observer((props: IssueBlockProps) => {
   if (!issueBlock || !issueBlock.data) return <></>;
 
   const issueData = issueBlock.data as TIssue;
-  const { handleRedirection } = useIssuePeekOverviewRedirection();
+  const { handleRedirection } = useIssuePeekOverviewRedirection(isEpic);
 
   const handleIssuePeekOverview = () => {
     handleClose();
@@ -50,7 +51,7 @@ const IssueBlock = observer((props: IssueBlockProps) => {
   return (
     <ControlLink
       id={`issue-${blockId}`}
-      href={`/${workspaceSlug}/projects/${issueData?.project_id}/issues/${issueData?.id}`}
+      href={`/${workspaceSlug}/projects/${issueData?.project_id}/${isEpic ? "epics" : "issues"}/${issueData?.id}`}
       onClick={handleIssuePeekOverview}
       className={`relative flex justify-between gap-3 mx-2 p-2 w-auto cursor-pointer overflow-hidden rounded text-custom-text-100 border-[1px] border-custom-border-800 bg-custom-background-100 hover:bg-custom-background-90 ${className}`}
     >
@@ -95,10 +96,11 @@ const IssueBlock = observer((props: IssueBlockProps) => {
 type DependencyPathProps = {
   relation: Relation | undefined;
   handleClose: () => void;
+  isEpic?: boolean;
 };
 
 export const DependencyPathModal = observer((props: DependencyPathProps) => {
-  const { relation, handleClose } = props;
+  const { relation, handleClose, isEpic = false } = props;
 
   const { workspaceSlug, projectId } = useParams();
   const [isRemoving, setIsRemoving] = useState(false);
@@ -164,6 +166,7 @@ export const DependencyPathModal = observer((props: DependencyPathProps) => {
               dependencyPosition={relation.originDependencyPosition}
               className="mt-2"
               handleClose={handleClose}
+              isEpic={isEpic}
             />
 
             <div
@@ -190,6 +193,7 @@ export const DependencyPathModal = observer((props: DependencyPathProps) => {
               dependencyPosition={relation.destinationDependencyPosition}
               className="mb-2"
               handleClose={handleClose}
+              isEpic={isEpic}
             />
           </div>
         </>

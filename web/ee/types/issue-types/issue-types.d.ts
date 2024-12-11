@@ -11,6 +11,7 @@ export type TIssueType = {
   is_default: boolean | undefined;
   issue_exists: boolean | undefined;
   level: number | undefined;
+  is_epic: boolean | undefined;
   project_ids: string[] | undefined;
   workspace: string | undefined;
   created_at: Date | undefined;

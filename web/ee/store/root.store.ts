@@ -13,6 +13,7 @@ import {
 } from "@/plane-web/store/notifications/notifications.store";
 import { IPublishPageStore, PublishPageStore } from "@/plane-web/store/pages/publish-page.store";
 import { IWorkspacePageStore, WorkspacePageStore } from "@/plane-web/store/pages/workspace-page.store";
+import { IPiChatStore, PiChatStore } from "@/plane-web/store/pi-chat/pi-chat";
 import {
   ISelfHostedSubscriptionStore,
   SelfHostedSubscriptionStore,
@@ -21,6 +22,7 @@ import {
   IWorkspaceSubscriptionStore,
   WorkspaceSubscriptionStore,
 } from "@/plane-web/store/subscription/subscription.store";
+import { ITimelineStore, TimeLineStore } from "@/plane-web/store/timeline";
 import { IWorkspaceFeatureStore, WorkspaceFeatureStore } from "@/plane-web/store/workspace-feature.store";
 import {
   IProjectFilterStore,
@@ -49,10 +51,6 @@ import {
 } from "./importers";
 // integrations
 import { ISlackStore, SlackStore } from "./integrations";
-// pi chat
-import { IPiChatStore, PiChatStore } from "./pi-chat/pi-chat";
-// timeline
-import { ITimelineStore, TimeLineStore } from "./timeline";
 
 export class RootStore extends CoreRootStore {
   workspacePages: IWorkspacePageStore;

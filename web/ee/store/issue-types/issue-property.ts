@@ -5,8 +5,6 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 // types
 import { computedFn } from "mobx-utils";
 import { TLogoProps } from "@plane/types";
-// plane web services
-import { IssuePropertiesService, IssuePropertyOptionsService } from "@/plane-web/services/issue-types";
 // plane web store
 import { IIssuePropertyOption, IssuePropertyOption } from "@/plane-web/store/issue-types";
 import { RootStore } from "@/plane-web/store/root.store";
@@ -18,7 +16,16 @@ import {
   TIssueProperty,
   TIssuePropertyOption,
   TIssuePropertySettingsMap,
+  IIssuePropertyOptionsService,
+  IIssuePropertiesService,
+  TIssueTypeStoreServices,
 } from "@/plane-web/types";
+
+type TIssuePropertyStore<T extends EIssuePropertyType> = {
+  root: RootStore;
+  services: TIssueTypeStoreServices;
+  propertyData: TIssueProperty<T>;
+};
 
 export interface IIssueProperty<T extends EIssuePropertyType> extends TIssueProperty<T> {
   propertyOptions: IIssuePropertyOption[];
@@ -58,14 +65,13 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
   updated_by: string | undefined = undefined;
   // property options
   propertyOptions: IIssuePropertyOption[] = [];
+  // root store
+  rootStore: RootStore;
   // service
-  service: IssuePropertiesService;
-  propertyOptionService: IssuePropertyOptionsService;
+  service: IIssuePropertiesService;
+  propertyOptionService: IIssuePropertyOptionsService;
 
-  constructor(
-    private store: RootStore,
-    propertyData: TIssueProperty<T>
-  ) {
+  constructor(protected store: TIssuePropertyStore<T>) {
     makeObservable(this, {
       id: observable.ref,
       name: observable.ref,
@@ -96,6 +102,10 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
       deletePropertyOption: action,
     });
 
+    const { root, propertyData, services } = store;
+    // root store
+    this.rootStore = root;
+    // properties
     this.id = propertyData.id;
     this.name = propertyData.name;
     this.display_name = propertyData.display_name;
@@ -115,8 +125,8 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
     this.updated_at = propertyData.updated_at;
     this.updated_by = propertyData.updated_by;
     // service
-    this.service = new IssuePropertiesService();
-    this.propertyOptionService = new IssuePropertyOptionsService();
+    this.service = services.issueProperties;
+    this.propertyOptionService = services.issuePropertyOptions;
   }
 
   // computed
@@ -199,7 +209,7 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
           // update the existing property option
           existingPropertyOption.updateOptionData(option);
         } else {
-          const issuePropertyOption = new IssuePropertyOption(this.store, option);
+          const issuePropertyOption = new IssuePropertyOption(this.rootStore, option);
           const updatedPropertyOptions = uniq(concat(this.propertyOptions, issuePropertyOption));
           // add or update property option
           runInAction(() => {
@@ -219,16 +229,16 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
    * @param {Partial<TIssuePropertyOption>} propertyOption
    */
   createPropertyOption = async (propertyOption: Partial<TIssuePropertyOption>) => {
-    const { workspaceSlug, projectId } = this.store.router;
+    const { workspaceSlug, projectId } = this.rootStore.router;
     if (!workspaceSlug || !projectId || !this.id) return undefined;
 
     try {
-      const issuePropertyOption = await this.propertyOptionService.create(
+      const issuePropertyOption = await this.propertyOptionService.create({
         workspaceSlug,
         projectId,
-        this.id,
-        propertyOption
-      );
+        issuePropertyId: this.id,
+        data: propertyOption,
+      });
       runInAction(() => {
         this.addOrUpdatePropertyOptions([issuePropertyOption]);
       });
@@ -245,17 +255,17 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
    * @param {TIssuePropertyPayload} propertyData
    */
   updateProperty = async (issueTypeId: string, propertyData: TIssuePropertyPayload) => {
-    const { workspaceSlug, projectId } = this.store.router;
+    const { workspaceSlug, projectId } = this.rootStore.router;
     if (!workspaceSlug || !projectId || !issueTypeId || !this.id) return undefined;
 
     try {
-      const issuePropertyResponse = await this.service.update(
+      const issuePropertyResponse = await this.service.update({
         workspaceSlug,
         projectId,
         issueTypeId,
-        this.id,
-        propertyData
-      );
+        issuePropertyId: this.id,
+        data: propertyData,
+      });
       runInAction(() => {
         const { options, ...issuePropertyData } = issuePropertyResponse;
         this.updatePropertyData(issuePropertyData);
@@ -274,11 +284,16 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
    * @param {string} propertyOptionId
    */
   deletePropertyOption = async (propertyOptionId: string) => {
-    const { workspaceSlug, projectId } = this.store.router;
+    const { workspaceSlug, projectId } = this.rootStore.router;
     if (!workspaceSlug || !projectId || !this.id) return;
 
     try {
-      await this.propertyOptionService.deleteOption(workspaceSlug, projectId, this.id, propertyOptionId);
+      await this.propertyOptionService.deleteOption({
+        workspaceSlug,
+        projectId,
+        issuePropertyId: this.id,
+        issuePropertyOptionId: propertyOptionId,
+      });
       runInAction(() => {
         const updatedPropertyOptions = this.propertyOptions.filter((option) => option.id !== propertyOptionId);
         set(this, "propertyOptions", updatedPropertyOptions);

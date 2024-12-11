@@ -56,6 +56,7 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
             pk=OuterRef("entity_identifier"),
             issue_intake__status__in=[0, 2, -2],
             workspace__slug=self.kwargs.get("slug"),
+            type__is_epic=False,
         )
 
         notifications = (
@@ -112,7 +113,9 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
                 .annotate(
                     created=Exists(
                         Issue.objects.filter(
-                            created_by=request.user, pk=OuterRef("issue_id")
+                            created_by=request.user,
+                            pk=OuterRef("issue_id"),
+                            type__is_epic=False,
                         )
                     )
                 )
@@ -143,7 +146,9 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
                 notifications = notifications.none()
             else:
                 issue_ids = Issue.objects.filter(
-                    workspace__slug=slug, created_by=request.user
+                    workspace__slug=slug,
+                    created_by=request.user,
+                    type__is_epic=False,
                 ).values_list("pk", flat=True)
                 q_filters |= Q(entity_identifier__in=issue_ids)
 
@@ -322,7 +327,9 @@ class MarkAllReadNotificationViewSet(BaseViewSet):
                 notifications = Notification.objects.none()
             else:
                 issue_ids = Issue.objects.filter(
-                    workspace__slug=slug, created_by=request.user
+                    workspace__slug=slug,
+                    created_by=request.user,
+                    type__is_epic=False,
                 ).values_list("pk", flat=True)
                 notifications = notifications.filter(entity_identifier__in=issue_ids)
 

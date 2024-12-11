@@ -314,6 +314,7 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
                     project__project_projectmember__member=exporter_instance.initiated_by_id,
                     project__project_projectmember__is_active=True,
                     project__archived_at__isnull=True,
+                    type__is_epic=False,
                 )
                 .select_related("project", "workspace", "state", "parent", "created_by")
                 .prefetch_related(

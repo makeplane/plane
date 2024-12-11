@@ -129,6 +129,7 @@ class IssuePropertyValueAPIEndpoint(BaseAPIView):
                 project_id=self.project_id,
                 issue_id=self.issue_id,
                 property_id=self.property_id,
+                property__issue_type__is_epic=False,
             )
             issue_property_values = self.query_annotator(
                 issue_property_values
@@ -153,6 +154,7 @@ class IssuePropertyValueAPIEndpoint(BaseAPIView):
                 project_id=self.project_id,
                 issue_id=self.issue_id,
                 property_id=self.property_id,
+                property__issue_type__is_epic=False,
             )
 
             issue_property_values = request.data.get("values", [])
@@ -207,6 +209,7 @@ class IssuePropertyValueAPIEndpoint(BaseAPIView):
                 project_id=self.project_id,
                 issue_id=self.issue_id,
                 property=issue_property,
+                property__issue_type__is_epic=False,
             )
             issue_property_values = self.query_annotator(
                 issue_property_values

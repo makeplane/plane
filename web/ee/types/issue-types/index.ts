@@ -4,3 +4,4 @@ export * from "./issue-property-values.d";
 export * from "./issue-properties.d";
 export * from "./issue-properties-activity.d";
 export * from "./issue-types.d";
+export * from "./services.d";

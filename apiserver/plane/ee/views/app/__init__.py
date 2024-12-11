@@ -16,3 +16,20 @@ from plane.ee.views.app.initiative import (
     InitiativeProjectEndpoint,
     InitiativeLabelEndpoint,
 )
+
+from plane.ee.views.app.project import ProjectFeatureEndpoint
+from plane.ee.views.app.epic import (
+    EpicViewSet,
+    EpicLinkViewSet,
+    EpicArchiveViewSet,
+    EpicCommentViewSet,
+    EpicActivityEndpoint,
+    EpicReactionViewSet,
+)
+from plane.ee.views.app.epic_property import (
+    EpicPropertyEndpoint,
+    EpicPropertyOptionEndpoint,
+    EpicPropertyValueEndpoint,
+    EpicPropertyActivityEndpoint,
+    WorkspaceEpicEndpoint
+)

@@ -1,6 +1,6 @@
 # Module imports
 from plane.app.serializers.base import BaseSerializer
-from plane.ee.models import ProjectAttribute
+from plane.ee.models import ProjectFeature, ProjectAttribute
 from rest_framework import serializers
 
 
@@ -14,4 +14,17 @@ class ProjectAttributeSerializer(BaseSerializer):
             "priority",
             "start_date",
             "target_date",
+        ]
+
+
+class ProjectFeatureSerializer(BaseSerializer):
+    class Meta:
+        model = ProjectFeature
+        fields = "__all__"
+        read_only_fields = [
+            "created_at",
+            "updated_at",
+            "workspace",
+            "project",
+            "created_by",
         ]

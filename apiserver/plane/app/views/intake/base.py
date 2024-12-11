@@ -96,6 +96,7 @@ class IntakeIssueViewSet(BaseViewSet):
                 project_id=self.kwargs.get("project_id"),
                 workspace__slug=self.kwargs.get("slug"),
             )
+            .filter(type__is_epic=False)
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
             .prefetch_related(

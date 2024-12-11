@@ -53,6 +53,7 @@ class IssuePropertyOptionAPIEndpoint(BaseAPIView):
                     workspace__slug=self.workspace_slug,
                     project_id=self.project_id,
                     property_id=self.property_id,
+                    property__issue_type__is_epic=False,
                 )
                 serializer = self.serializer_class(issue_properties, many=True)
                 return Response(serializer.data, status=status.HTTP_200_OK)
@@ -63,6 +64,7 @@ class IssuePropertyOptionAPIEndpoint(BaseAPIView):
                 project_id=self.project_id,
                 property_id=self.property_id,
                 pk=self.option_id,
+                property__issue_type__is_epic=False,
             )
             serializer = self.serializer_class(issue_property)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -85,6 +87,7 @@ class IssuePropertyOptionAPIEndpoint(BaseAPIView):
                     property_id=self.property_id,
                     external_source=request.data.get("external_source"),
                     external_id=request.data.get("external_id"),
+                    property__issue_type__is_epic=False,
                 )
                 if (
                     external_id
@@ -97,6 +100,7 @@ class IssuePropertyOptionAPIEndpoint(BaseAPIView):
                         property_id=self.property_id,
                         external_source=request.data.get("external_source"),
                         external_id=external_id,
+                        property__issue_type__is_epic=False,
                     ).first()
                     return Response(
                         {
@@ -112,6 +116,7 @@ class IssuePropertyOptionAPIEndpoint(BaseAPIView):
                     project_id=self.project_id,
                     property_id=self.property_id,
                     is_default=True,
+                    property__issue_type__is_epic=False,
                 )
                 if (
                     default_option_exists.exists()
@@ -125,7 +130,9 @@ class IssuePropertyOptionAPIEndpoint(BaseAPIView):
 
                 # getting the last sort order from the database
                 last_sort_order = self.model.objects.filter(
-                    project=project, property=issue_property
+                    project=project,
+                    property=issue_property,
+                    property__issue_type__is_epic=False,
                 ).aggregate(largest=models.Max("sort_order"))["largest"]
 
                 # Set the sort order for the new option
@@ -149,6 +156,7 @@ class IssuePropertyOptionAPIEndpoint(BaseAPIView):
                     project_id=self.project_id,
                     property_id=self.property_id,
                     pk=property_option_serializer.data["id"],
+                    property__issue_type__is_epic=False,
                 )
                 serializer = self.serializer_class(property_option)
                 return Response(
@@ -174,6 +182,7 @@ class IssuePropertyOptionAPIEndpoint(BaseAPIView):
                 project_id=self.project_id,
                 property_id=self.property_id,
                 is_default=True,
+                property__issue_type__is_epic=False,
             )
             if (
                 default_option_exists.exists()
@@ -190,6 +199,7 @@ class IssuePropertyOptionAPIEndpoint(BaseAPIView):
                 project_id=self.project_id,
                 property_id=self.property_id,
                 pk=self.option_id,
+                property__issue_type__is_epic=False,
             )
 
             data = request.data
@@ -208,6 +218,7 @@ class IssuePropertyOptionAPIEndpoint(BaseAPIView):
                     "external_source", property_option.external_source
                 ),
                 external_id=external_id,
+                property__issue_type__is_epic=False,
             )
             if (
                 external_id
@@ -243,6 +254,7 @@ class IssuePropertyOptionAPIEndpoint(BaseAPIView):
                 project_id=self.project_id,
                 property_id=self.property_id,
                 pk=self.option_id,
+                property__issue_type__is_epic=False,
             )
             property_option.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)

@@ -1,6 +1,5 @@
 import differenceInCalendarDays from "date-fns/differenceInCalendarDays";
 import isEmpty from "lodash/isEmpty";
-import set from "lodash/set";
 import { v4 as uuidv4 } from "uuid";
 // types
 import {
@@ -180,19 +179,6 @@ export const getIssueBlocksStructure = (block: TIssue): IGanttBlock => ({
   start_date: block?.start_date ?? undefined,
   target_date: block?.target_date ?? undefined,
 });
-
-export function getChangedIssuefields(formData: Partial<TIssue>, dirtyFields: { [key: string]: boolean | undefined }) {
-  const changedFields = {} as any;
-
-  const dirtyFieldKeys = Object.keys(dirtyFields) as (keyof TIssue)[];
-  for (const dirtyField of dirtyFieldKeys) {
-    if (!!dirtyFields[dirtyField]) {
-      set(changedFields, [dirtyField], formData[dirtyField]);
-    }
-  }
-
-  return changedFields as Partial<TIssue>;
-}
 
 export const formatTextList = (TextArray: string[]): string => {
   const count = TextArray.length;

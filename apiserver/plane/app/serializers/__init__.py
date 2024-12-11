@@ -1,4 +1,4 @@
-from .base import BaseSerializer
+from .base import BaseSerializer, DynamicBaseSerializer
 from .user import (
     UserSerializer,
     UserLiteSerializer,

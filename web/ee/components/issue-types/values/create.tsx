@@ -3,6 +3,8 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
+import { EIssueServiceType } from "@plane/constants";
+import { TIssueServiceType } from "@plane/types";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 // helpers
@@ -20,14 +22,21 @@ type TIssueAdditionalPropertyValuesCreateProps = {
   projectId: string;
   workspaceSlug: string;
   isDraft?: boolean;
+  issueServiceType?: TIssueServiceType;
 };
 
-const issuePropertyValuesService = new IssuePropertyValuesService();
 const draftIssuePropertyValuesService = new DraftIssuePropertyValuesService();
 
 export const IssueAdditionalPropertyValuesCreate: React.FC<TIssueAdditionalPropertyValuesCreateProps> = observer(
   (props) => {
-    const { issueId, issueTypeId, projectId, workspaceSlug, isDraft = false } = props;
+    const {
+      issueId,
+      issueTypeId,
+      projectId,
+      workspaceSlug,
+      isDraft = false,
+      issueServiceType = EIssueServiceType.ISSUES,
+    } = props;
     // states
     const [issuePropertyValues, setIssuePropertyValues] = React.useState({});
     // store hooks
@@ -37,14 +46,17 @@ export const IssueAdditionalPropertyValuesCreate: React.FC<TIssueAdditionalPrope
       setIssuePropertyValues: handleIssuePropertyValueUpdate,
     } = useIssueModal();
     const issueType = useIssueType(issueTypeId);
-    const { isIssueTypeEnabledForProject } = useIssueTypes();
+    const { isIssueTypeOrEpicEnabledForProject } = useIssueTypes();
+    // services
+    const issuePropertyValuesService = new IssuePropertyValuesService(issueServiceType);
     // derived values
     const issueTypeDetail = issueType?.asJSON;
     const activeProperties = issueType?.activeProperties;
-    const isIssueTypeDisplayEnabled = isIssueTypeEnabledForProject(
+    const isIssueTypeDisplayEnabled = isIssueTypeOrEpicEnabledForProject(
       workspaceSlug?.toString(),
       projectId,
-      "ISSUE_TYPE_DISPLAY"
+      "ISSUE_TYPE_DISPLAY",
+      "EPICS_DISPLAY"
     );
     // fetch issue property values
     const { data, isLoading } = useSWR(

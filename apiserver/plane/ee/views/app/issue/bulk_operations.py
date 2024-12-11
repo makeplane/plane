@@ -64,6 +64,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
             project_id=project_id,
             issue__type_id=type_id,
             issue__in=issues,
+            property__issue_type__is_epic=False,
         ).values("property_id", "issue_id")
 
         if issue_properties_with_default_values:

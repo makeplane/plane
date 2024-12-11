@@ -6,11 +6,13 @@ export interface IThemeStore {
   profileSidebarCollapsed: boolean | undefined;
   workspaceAnalyticsSidebarCollapsed: boolean | undefined;
   issueDetailSidebarCollapsed: boolean | undefined;
+  epicDetailSidebarCollapsed: boolean | undefined;
   // actions
   toggleSidebar: (collapsed?: boolean) => void;
   toggleProfileSidebar: (collapsed?: boolean) => void;
   toggleWorkspaceAnalyticsSidebar: (collapsed?: boolean) => void;
   toggleIssueDetailSidebar: (collapsed?: boolean) => void;
+  toggleEpicDetailSidebar: (collapsed?: boolean) => void;
 }
 
 export class ThemeStore implements IThemeStore {
@@ -19,6 +21,7 @@ export class ThemeStore implements IThemeStore {
   profileSidebarCollapsed: boolean | undefined = undefined;
   workspaceAnalyticsSidebarCollapsed: boolean | undefined = undefined;
   issueDetailSidebarCollapsed: boolean | undefined = undefined;
+  epicDetailSidebarCollapsed: boolean | undefined = undefined;
 
   constructor() {
     makeObservable(this, {
@@ -27,11 +30,13 @@ export class ThemeStore implements IThemeStore {
       profileSidebarCollapsed: observable.ref,
       workspaceAnalyticsSidebarCollapsed: observable.ref,
       issueDetailSidebarCollapsed: observable.ref,
+      epicDetailSidebarCollapsed: observable.ref,
       // action
       toggleSidebar: action,
       toggleProfileSidebar: action,
       toggleWorkspaceAnalyticsSidebar: action,
       toggleIssueDetailSidebar: action,
+      toggleEpicDetailSidebar: action,
     });
   }
 
@@ -81,5 +86,14 @@ export class ThemeStore implements IThemeStore {
       this.issueDetailSidebarCollapsed = collapsed;
     }
     localStorage.setItem("issue_detail_sidebar_collapsed", this.issueDetailSidebarCollapsed.toString());
+  };
+
+  toggleEpicDetailSidebar = (collapsed?: boolean) => {
+    if (collapsed === undefined) {
+      this.epicDetailSidebarCollapsed = !this.epicDetailSidebarCollapsed;
+    } else {
+      this.epicDetailSidebarCollapsed = collapsed;
+    }
+    localStorage.setItem("epic_detail_sidebar_collapsed", this.epicDetailSidebarCollapsed.toString());
   };
 }

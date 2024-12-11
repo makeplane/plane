@@ -1,5 +1,7 @@
 // plane types
 import { EUserPermissions } from "@plane/types/src/enums";
+// ui
+import { EpicIcon } from "@plane/ui";
 // ce constants
 import { PROJECT_SETTINGS as PROJECT_SETTINGS_CE } from "@/ce/constants/project";
 // icons
@@ -16,6 +18,14 @@ export const PROJECT_SETTINGS = {
     access: [EUserPermissions.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/issue-types/`,
     Icon: SettingIcon,
+  },
+  epics: {
+    key: "epics",
+    label: "Epics",
+    href: `/settings/epics/`,
+    access: [EUserPermissions.ADMIN],
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/epics/`,
+    Icon: EpicIcon,
   },
 };
 
@@ -35,4 +45,5 @@ export const PROJECT_SETTINGS_LINKS: {
   PROJECT_SETTINGS["estimates"],
   PROJECT_SETTINGS["automations"],
   PROJECT_SETTINGS["issue-types"],
+  PROJECT_SETTINGS["epics"],
 ];

@@ -28,7 +28,7 @@ export const FilterIssueTypes: React.FC<Props> = observer((props) => {
   const [previewEnabled, setPreviewEnabled] = useState(true);
   // hooks
   const { workspaceSlug, projectId: routerProjectId } = useParams();
-  const { data: workspaceIssueTypes, isIssueTypeEnabledForProject, getProjectIssueTypes } = useIssueTypes();
+  const { issueTypes: workspaceIssueTypes, isIssueTypeEnabledForProject, getProjectIssueTypes } = useIssueTypes();
   const { getProjectById } = useProject();
   // derived values
   const projectId = routerProjectId?.toString();

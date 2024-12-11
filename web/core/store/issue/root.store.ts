@@ -1,9 +1,13 @@
 import isEmpty from "lodash/isEmpty";
 import { autorun, makeObservable, observable } from "mobx";
-import { ICycle, IIssueLabel, IModule, IProject, IState, IUserLite } from "@plane/types";
+import { EIssueServiceType } from "@plane/constants";
+// types
+import { ICycle, IIssueLabel, IModule, IProject, IState, IUserLite, TIssueServiceType } from "@plane/types";
+// plane web root store
+import { IProjectEpics, IProjectEpicsFilter, ProjectEpics, ProjectEpicsFilter } from "@/plane-web/store/issue/epic";
+import { RootStore } from "@/plane-web/store/root.store";
 // root store
 import { IWorkspaceMembership } from "@/store/member/workspace-member.store";
-import { CoreRootStore } from "../root.store";
 import { IStateStore, StateStore } from "../state.store";
 // issues data store
 import { IArchivedIssuesFilter, ArchivedIssuesFilter, IArchivedIssues, ArchivedIssues } from "./archived";
@@ -49,7 +53,8 @@ export interface IIssueRootStore {
   moduleMap: Record<string, IModule> | undefined;
   cycleMap: Record<string, ICycle> | undefined;
 
-  rootStore: CoreRootStore;
+  rootStore: RootStore;
+  serviceType: TIssueServiceType;
 
   issues: IIssueStore;
 
@@ -84,6 +89,9 @@ export interface IIssueRootStore {
 
   issueKanBanView: IIssueKanBanViewStore;
   issueCalendarView: ICalendarStore;
+
+  projectEpicsFilter: IProjectEpicsFilter;
+  projectEpics: IProjectEpics;
 }
 
 export class IssueRootStore implements IIssueRootStore {
@@ -105,7 +113,8 @@ export class IssueRootStore implements IIssueRootStore {
   moduleMap: Record<string, IModule> | undefined = undefined;
   cycleMap: Record<string, ICycle> | undefined = undefined;
 
-  rootStore: CoreRootStore;
+  rootStore: RootStore;
+  serviceType: TIssueServiceType;
 
   issues: IIssueStore;
 
@@ -141,7 +150,10 @@ export class IssueRootStore implements IIssueRootStore {
   issueKanBanView: IIssueKanBanViewStore;
   issueCalendarView: ICalendarStore;
 
-  constructor(rootStore: CoreRootStore) {
+  projectEpicsFilter: IProjectEpicsFilter;
+  projectEpics: IProjectEpics;
+
+  constructor(rootStore: RootStore, serviceType: TIssueServiceType = EIssueServiceType.ISSUES) {
     makeObservable(this, {
       workspaceSlug: observable.ref,
       projectId: observable.ref,
@@ -161,6 +173,7 @@ export class IssueRootStore implements IIssueRootStore {
       cycleMap: observable,
     });
 
+    this.serviceType = serviceType;
     this.rootStore = rootStore;
 
     autorun(() => {
@@ -185,9 +198,9 @@ export class IssueRootStore implements IIssueRootStore {
       if (!isEmpty(rootStore?.cycle?.cycleMap)) this.cycleMap = rootStore?.cycle?.cycleMap;
     });
 
-    this.issues = new IssueStore();
+    this.issues = new IssueStore(this.serviceType);
 
-    this.issueDetail = new IssueDetail(this);
+    this.issueDetail = new IssueDetail(this, this.serviceType);
 
     this.workspaceIssuesFilter = new WorkspaceIssuesFilter(this);
     this.workspaceIssues = new WorkspaceIssues(this, this.workspaceIssuesFilter);
@@ -218,5 +231,8 @@ export class IssueRootStore implements IIssueRootStore {
 
     this.issueKanBanView = new IssueKanBanViewStore(this);
     this.issueCalendarView = new CalendarStore();
+
+    this.projectEpicsFilter = new ProjectEpicsFilter(this);
+    this.projectEpics = new ProjectEpics(this, this.projectEpicsFilter);
   }
 }

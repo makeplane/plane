@@ -103,6 +103,7 @@ class IssuePropertyAPIEndpoint(BaseAPIView):
                     workspace__slug=self.workspace_slug,
                     project_id=self.project_id,
                     issue_type_id=self.type_id,
+                    issue_type__is_epic=False,
                 )
                 serializer = self.serializer_class(issue_properties, many=True)
                 return Response(serializer.data, status=status.HTTP_200_OK)
@@ -113,6 +114,7 @@ class IssuePropertyAPIEndpoint(BaseAPIView):
                 project_id=self.project_id,
                 issue_type_id=self.type_id,
                 pk=self.property_id,
+                issue_type__is_epic=False,
             )
             serializer = self.serializer_class(issue_property)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -131,6 +133,7 @@ class IssuePropertyAPIEndpoint(BaseAPIView):
                 workspace__slug=self.workspace_slug,
                 project_id=self.project_id,
                 issue_type_id=self.type_id,
+                issue_type__is_epic=False,
                 external_source=request.data.get("external_source"),
                 external_id=request.data.get("external_id"),
             )
@@ -145,6 +148,7 @@ class IssuePropertyAPIEndpoint(BaseAPIView):
                     issue_type_id=self.type_id,
                     external_source=request.data.get("external_source"),
                     external_id=external_id,
+                    issue_type__is_epic=False,
                 ).first()
                 return Response(
                     {
@@ -172,6 +176,7 @@ class IssuePropertyAPIEndpoint(BaseAPIView):
                 project_id=self.project_id,
                 issue_type_id=self.type_id,
                 pk=issue_property_serializer.data["id"],
+                issue_type__is_epic=False,
             )
             serializer = self.serializer_class(issue_property)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -190,6 +195,7 @@ class IssuePropertyAPIEndpoint(BaseAPIView):
                 project_id=self.project_id,
                 issue_type_id=self.type_id,
                 pk=self.property_id,
+                issue_type__is_epic=False,
             )
 
             data = request.data
@@ -208,6 +214,7 @@ class IssuePropertyAPIEndpoint(BaseAPIView):
                     "external_source", issue_property.external_source
                 ),
                 external_id=external_id,
+                issue_type__is_epic=False,
             )
             if (
                 external_id
@@ -242,6 +249,7 @@ class IssuePropertyAPIEndpoint(BaseAPIView):
                 project_id=self.project_id,
                 issue_type_id=self.type_id,
                 pk=self.property_id,
+                issue_type__is_epic=False,
             )
             issue_property.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)

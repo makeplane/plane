@@ -20,11 +20,23 @@ from .app.exporter import ExporterHistorySerializer
 
 from .app.workspace.feature import WorkspaceFeatureSerializer
 from .app.workspace.project_state import ProjectStateSerializer
-
+from .app.project import ProjectFeatureSerializer
 from .app.intake import IntakeSettingSerializer
 
 from .app.initiative import InitiativeSerializer
 
+from .app.epic import (
+    EpicSerializer,
+    EpicDetailSerializer,
+    EpicCreateSerializer,
+    EpicLinkSerializer,
+    EpicCommentSerializer,
+    EpicAttachmentSerializer,
+    EpicActivitySerializer,
+    EpicTypeSerializer,
+    EpicUserPropertySerializer,
+    EpicReactionSerializer,
+)
 from .app.workflow import (
     WorkflowSerializer,
     WorkflowTransitionSerializer,

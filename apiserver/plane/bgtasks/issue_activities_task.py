@@ -170,8 +170,12 @@ def track_parent(
                 project_id=project_id,
                 workspace_id=workspace_id,
                 comment="updated the parent issue to",
-                old_identifier=(old_parent.id if old_parent is not None else None),
-                new_identifier=(new_parent.id if new_parent is not None else None),
+                old_identifier=(
+                    old_parent.id if old_parent is not None else None
+                ),
+                new_identifier=(
+                    new_parent.id if new_parent is not None else None
+                ),
                 epoch=epoch,
             )
         )
@@ -216,8 +220,12 @@ def track_state(
     issue_activities,
     epoch,
 ):
-    current_state_id = current_instance.get("state_id") or current_instance.get("state")
-    requested_state_id = requested_data.get("state_id") or requested_data.get("state")
+    current_state_id = current_instance.get(
+        "state_id"
+    ) or current_instance.get("state")
+    requested_state_id = requested_data.get("state_id") or requested_data.get(
+        "state"
+    )
 
     if current_state_id != requested_state_id:
         new_state = State.objects.get(pk=requested_state_id)
@@ -252,7 +260,9 @@ def track_target_date(
     issue_activities,
     epoch,
 ):
-    if current_instance.get("target_date") != requested_data.get("target_date"):
+    if current_instance.get("target_date") != requested_data.get(
+        "target_date"
+    ):
         issue_activities.append(
             IssueActivity(
                 issue_id=issue_id,
@@ -324,8 +334,12 @@ def track_labels(
     issue_activities,
     epoch,
 ):
-    requested_labels = set([str(lab) for lab in requested_data.get("label_ids", [])])
-    current_labels = set([str(lab) for lab in current_instance.get("label_ids", [])])
+    requested_labels = set(
+        [str(lab) for lab in requested_data.get("label_ids", [])]
+    )
+    current_labels = set(
+        [str(lab) for lab in current_instance.get("label_ids", [])]
+    )
 
     added_labels = requested_labels - current_labels
     dropped_labels = current_labels - requested_labels
@@ -459,7 +473,9 @@ def track_estimate_points(
     issue_activities,
     epoch,
 ):
-    if current_instance.get("estimate_point") != requested_data.get("estimate_point"):
+    if current_instance.get("estimate_point") != requested_data.get(
+        "estimate_point"
+    ):
         old_estimate = (
             EstimatePoint.objects.filter(
                 pk=current_instance.get("estimate_point")
@@ -510,7 +526,9 @@ def track_archive_at(
     issue_activities,
     epoch,
 ):
-    if current_instance.get("archived_at") != requested_data.get("archived_at"):
+    if current_instance.get("archived_at") != requested_data.get(
+        "archived_at"
+    ):
         if requested_data.get("archived_at") is None:
             issue_activities.append(
                 IssueActivity(
@@ -597,10 +615,14 @@ def track_type(
     if new_type_id != old_type_id:
         verb = "updated" if new_type_id else "deleted"
         old_type_id = (
-            IssueType.objects.filter(pk=old_type_id).first() if old_type_id else None
+            IssueType.objects.filter(pk=old_type_id).first()
+            if old_type_id
+            else None
         )
         new_type_id = (
-            IssueType.objects.filter(pk=new_type_id).first() if new_type_id else None
+            IssueType.objects.filter(pk=new_type_id).first()
+            if new_type_id
+            else None
         )
 
         issue_activities.append(
@@ -621,7 +643,7 @@ def track_type(
         )
 
 
-def create_issue_activity(
+def create_epic_activity(
     requested_data,
     current_instance,
     issue_id,
@@ -631,31 +653,20 @@ def create_issue_activity(
     issue_activities,
     epoch,
 ):
-    issue = Issue.objects.get(pk=issue_id)
+    epic = Issue.objects.get(pk=issue_id)
     issue_activity = IssueActivity.objects.create(
         issue_id=issue_id,
         project_id=project_id,
         workspace_id=workspace_id,
-        comment="created the issue",
+        comment="created the epic",
         verb="created",
+        field="epic",
         actor_id=actor_id,
         epoch=epoch,
     )
-    issue_activity.created_at = issue.created_at
-    issue_activity.actor_id = issue.created_by_id
+    issue_activity.created_at = epic.created_at
+    issue_activity.actor_id = epic.created_by_id
     issue_activity.save(update_fields=["created_at", "actor_id"])
-    requested_data = json.loads(requested_data) if requested_data is not None else None
-    if requested_data.get("assignee_ids") is not None:
-        track_assignees(
-            requested_data,
-            current_instance,
-            issue_id,
-            project_id,
-            workspace_id,
-            actor_id,
-            issue_activities,
-            epoch,
-        )
 
 
 def update_issue_activity(
@@ -685,7 +696,9 @@ def update_issue_activity(
         "type_id": track_type,
     }
 
-    requested_data = json.loads(requested_data) if requested_data is not None else None
+    requested_data = (
+        json.loads(requested_data) if requested_data is not None else None
+    )
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
     )
@@ -739,7 +752,9 @@ def create_comment_activity(
     issue_activities,
     epoch,
 ):
-    requested_data = json.loads(requested_data) if requested_data is not None else None
+    requested_data = (
+        json.loads(requested_data) if requested_data is not None else None
+    )
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
     )
@@ -771,12 +786,16 @@ def update_comment_activity(
     issue_activities,
     epoch,
 ):
-    requested_data = json.loads(requested_data) if requested_data is not None else None
+    requested_data = (
+        json.loads(requested_data) if requested_data is not None else None
+    )
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
     )
 
-    if current_instance.get("comment_html") != requested_data.get("comment_html"):
+    if current_instance.get("comment_html") != requested_data.get(
+        "comment_html"
+    ):
         issue_activities.append(
             IssueActivity(
                 issue_id=issue_id,
@@ -830,14 +849,18 @@ def create_cycle_issue_activity(
     issue_activities,
     epoch,
 ):
-    requested_data = json.loads(requested_data) if requested_data is not None else None
+    requested_data = (
+        json.loads(requested_data) if requested_data is not None else None
+    )
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
     )
 
     # Updated Records:
     updated_records = current_instance.get("updated_cycle_issues", [])
-    created_records = json.loads(current_instance.get("created_cycle_issues", []))
+    created_records = json.loads(
+        current_instance.get("created_cycle_issues", [])
+    )
 
     for updated_record in updated_records:
         old_cycle = Cycle.objects.filter(
@@ -906,7 +929,9 @@ def delete_cycle_issue_activity(
     issue_activities,
     epoch,
 ):
-    requested_data = json.loads(requested_data) if requested_data is not None else None
+    requested_data = (
+        json.loads(requested_data) if requested_data is not None else None
+    )
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
     )
@@ -947,7 +972,9 @@ def create_module_issue_activity(
     issue_activities,
     epoch,
 ):
-    requested_data = json.loads(requested_data) if requested_data is not None else None
+    requested_data = (
+        json.loads(requested_data) if requested_data is not None else None
+    )
     module = Module.objects.filter(pk=requested_data.get("module_id")).first()
     issue = Issue.objects.filter(pk=issue_id).first()
     if issue:
@@ -980,7 +1007,9 @@ def delete_module_issue_activity(
     issue_activities,
     epoch,
 ):
-    requested_data = json.loads(requested_data) if requested_data is not None else None
+    requested_data = (
+        json.loads(requested_data) if requested_data is not None else None
+    )
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
     )
@@ -1020,7 +1049,9 @@ def create_link_activity(
     issue_activities,
     epoch,
 ):
-    requested_data = json.loads(requested_data) if requested_data is not None else None
+    requested_data = (
+        json.loads(requested_data) if requested_data is not None else None
+    )
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
     )
@@ -1051,7 +1082,9 @@ def update_link_activity(
     issue_activities,
     epoch,
 ):
-    requested_data = json.loads(requested_data) if requested_data is not None else None
+    requested_data = (
+        json.loads(requested_data) if requested_data is not None else None
+    )
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
     )
@@ -1115,7 +1148,9 @@ def create_attachment_activity(
     issue_activities,
     epoch,
 ):
-    requested_data = json.loads(requested_data) if requested_data is not None else None
+    requested_data = (
+        json.loads(requested_data) if requested_data is not None else None
+    )
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
     )
@@ -1170,7 +1205,9 @@ def create_issue_reaction_activity(
     issue_activities,
     epoch,
 ):
-    requested_data = json.loads(requested_data) if requested_data is not None else None
+    requested_data = (
+        json.loads(requested_data) if requested_data is not None else None
+    )
     if requested_data and requested_data.get("reaction") is not None:
         issue_reaction = (
             IssueReaction.objects.filter(
@@ -1242,7 +1279,9 @@ def create_comment_reaction_activity(
     issue_activities,
     epoch,
 ):
-    requested_data = json.loads(requested_data) if requested_data is not None else None
+    requested_data = (
+        json.loads(requested_data) if requested_data is not None else None
+    )
     if requested_data and requested_data.get("reaction") is not None:
         comment_reaction_id, comment_id = (
             CommentReaction.objects.filter(
@@ -1253,7 +1292,9 @@ def create_comment_reaction_activity(
             .values_list("id", "comment__id")
             .first()
         )
-        comment = IssueComment.objects.get(pk=comment_id, project_id=project_id)
+        comment = IssueComment.objects.get(
+            pk=comment_id, project_id=project_id
+        )
         if (
             comment is not None
             and comment_reaction_id is not None
@@ -1327,7 +1368,9 @@ def create_issue_vote_activity(
     issue_activities,
     epoch,
 ):
-    requested_data = json.loads(requested_data) if requested_data is not None else None
+    requested_data = (
+        json.loads(requested_data) if requested_data is not None else None
+    )
     if requested_data and requested_data.get("vote") is not None:
         issue_activities.append(
             IssueActivity(
@@ -1389,7 +1432,9 @@ def create_issue_relation_activity(
     issue_activities,
     epoch,
 ):
-    requested_data = json.loads(requested_data) if requested_data is not None else None
+    requested_data = (
+        json.loads(requested_data) if requested_data is not None else None
+    )
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
     )
@@ -1411,7 +1456,9 @@ def create_issue_relation_activity(
                     epoch=epoch,
                 )
             )
-            inverse_relation = get_inverse_relation(requested_data.get("relation_type"))
+            inverse_relation = get_inverse_relation(
+                requested_data.get("relation_type")
+            )
             issue = Issue.objects.get(pk=issue_id)
             issue_activities.append(
                 IssueActivity(
@@ -1440,7 +1487,9 @@ def delete_issue_relation_activity(
     issue_activities,
     epoch,
 ):
-    requested_data = json.loads(requested_data) if requested_data is not None else None
+    requested_data = (
+        json.loads(requested_data) if requested_data is not None else None
+    )
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
     )
@@ -1520,7 +1569,9 @@ def update_draft_issue_activity(
     issue_activities,
     epoch,
 ):
-    requested_data = json.loads(requested_data) if requested_data is not None else None
+    requested_data = (
+        json.loads(requested_data) if requested_data is not None else None
+    )
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
     )
@@ -1587,7 +1638,9 @@ def create_intake_activity(
     issue_activities,
     epoch,
 ):
-    requested_data = json.loads(requested_data) if requested_data is not None else None
+    requested_data = (
+        json.loads(requested_data) if requested_data is not None else None
+    )
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
     )
@@ -1615,6 +1668,45 @@ def create_intake_activity(
         )
 
 
+def create_issue_activity(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    issue = Issue.objects.get(pk=issue_id)
+    issue_activity = IssueActivity.objects.create(
+        issue_id=issue_id,
+        project_id=project_id,
+        workspace_id=workspace_id,
+        comment="created the issue",
+        verb="created",
+        actor_id=actor_id,
+        epoch=epoch,
+    )
+    issue_activity.created_at = issue.created_at
+    issue_activity.actor_id = issue.created_by_id
+    issue_activity.save(update_fields=["created_at", "actor_id"])
+    requested_data = (
+        json.loads(requested_data) if requested_data is not None else None
+    )
+    if requested_data.get("assignee_ids") is not None:
+        track_assignees(
+            requested_data,
+            current_instance,
+            issue_id,
+            project_id,
+            workspace_id,
+            actor_id,
+            issue_activities,
+            epoch,
+        )
+
+
 # Receive message from room group
 @shared_task
 def issue_activity(
@@ -1637,11 +1729,17 @@ def issue_activity(
         workspace_id = project.workspace_id
 
         if issue_id is not None:
-            if origin:
+            issue = (
+                Issue.objects.filter(pk=issue_id)
+                .filter(
+                    type__is_epic=False,
+                )
+                .first()
+            )
+            if origin and issue:
                 ri = redis_instance()
                 # set the request origin in redis
                 ri.set(str(issue_id), origin, ex=600)
-            issue = Issue.objects.filter(pk=issue_id).first()
             if issue:
                 try:
                     issue.updated_at = timezone.now()
@@ -1677,6 +1775,7 @@ def issue_activity(
             "issue_draft.activity.updated": update_draft_issue_activity,
             "issue_draft.activity.deleted": delete_draft_issue_activity,
             "intake.activity.created": create_intake_activity,
+            "epic.activity.created": create_epic_activity,
         }
 
         func = ACTIVITY_MAPPER.get(type)
@@ -1693,7 +1792,9 @@ def issue_activity(
             )
 
         # Save all the values to database
-        issue_activities_created = IssueActivity.objects.bulk_create(issue_activities)
+        issue_activities_created = IssueActivity.objects.bulk_create(
+            issue_activities
+        )
         # Post the updates to segway for integrations and webhooks
         if len(issue_activities_created):
             for activity in issue_activities_created:
@@ -1701,26 +1802,28 @@ def issue_activity(
                     event=(
                         "issue_comment"
                         if activity.field == "comment"
-                        else "intake_issue"
-                        if intake
-                        else "issue"
+                        else "intake_issue" if intake else "issue"
                     ),
                     event_id=(
                         activity.issue_comment_id
                         if activity.field == "comment"
-                        else intake
-                        if intake
-                        else activity.issue_id
+                        else intake if intake else activity.issue_id
                     ),
                     verb=activity.verb,
                     field=(
-                        "description" if activity.field == "comment" else activity.field
+                        "description"
+                        if activity.field == "comment"
+                        else activity.field
                     ),
                     old_value=(
-                        activity.old_value if activity.old_value != "" else None
+                        activity.old_value
+                        if activity.old_value != ""
+                        else None
                     ),
                     new_value=(
-                        activity.new_value if activity.new_value != "" else None
+                        activity.new_value
+                        if activity.new_value != ""
+                        else None
                     ),
                     actor_id=activity.actor_id,
                     current_site=origin,
@@ -1737,7 +1840,9 @@ def issue_activity(
                 project_id=project_id,
                 subscriber=subscriber,
                 issue_activities_created=json.dumps(
-                    IssueActivitySerializer(issue_activities_created, many=True).data,
+                    IssueActivitySerializer(
+                        issue_activities_created, many=True
+                    ).data,
                     cls=DjangoJSONEncoder,
                 ),
                 requested_data=requested_data,

@@ -99,6 +99,7 @@ class IssuePropertyValueEndpoint(BaseAPIView):
                 project_id=project_id,
                 issue_id=issue_id,
                 property_id=issue_property_id,
+                property__issue_type__is_epic=False,
             )
 
             issue_property_value = self.query_annotator(
@@ -113,6 +114,7 @@ class IssuePropertyValueEndpoint(BaseAPIView):
             project_id=project_id,
             issue_id=issue_id,
             property__is_active=True,
+            property__issue_type__is_epic=False,
         )
 
         # Annotate the query
@@ -144,6 +146,7 @@ class IssuePropertyValueEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 project_id=project_id,
                 issue_id=issue_id,
+                property__issue_type__is_epic=False,
             )
 
             # Get all issue property values
@@ -166,6 +169,7 @@ class IssuePropertyValueEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 project_id=project_id,
                 issue_type_id=issue_type_id,
+                issue_type__is_epic=False,
             )
 
             # Validate the data
@@ -221,6 +225,7 @@ class IssuePropertyValueEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 project_id=project_id,
                 pk=property_id,
+                issue_type__is_epic=False,
             )
 
             existing_prop_queryset = IssuePropertyValue.objects.filter(

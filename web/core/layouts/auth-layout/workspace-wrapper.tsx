@@ -51,7 +51,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const { fetchWorkspaceFeatures, workspaceFeatures } = useWorkspaceFeatures();
   const { fetchProjectStates } = useWorkspaceProjectStates();
 
-  const { fetchAllIssueTypes } = useIssueTypes();
+  const { fetchAll } = useIssueTypes();
   const { isMobile } = usePlatformOS();
   const { loader, workspaceInfoBySlug, fetchUserWorkspaceInfo, fetchUserProjectPermissions, allowPermissions } =
     useUserPermissions();
@@ -138,10 +138,13 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   );
 
   const isIssueTypesEnabled = useFlag(workspaceSlug?.toString(), "ISSUE_TYPE_DISPLAY", false);
-  // fetching all issue types for the workspace
+  const isEpicsEnabled = useFlag(workspaceSlug?.toString(), "EPICS_DISPLAY", false);
+  // fetching all issue types and epics for the workspace
   useSWR(
-    workspaceSlug && isIssueTypesEnabled ? `WORKSPACE_ISSUE_TYPES_${workspaceSlug}_${isIssueTypesEnabled}` : null,
-    workspaceSlug && isIssueTypesEnabled ? () => fetchAllIssueTypes(workspaceSlug.toString()) : null,
+    workspaceSlug && (isIssueTypesEnabled || isEpicsEnabled)
+      ? `WORKSPACE_ISSUE_TYPES_${workspaceSlug}_${isIssueTypesEnabled}_${isEpicsEnabled}`
+      : null,
+    workspaceSlug && (isIssueTypesEnabled || isEpicsEnabled) ? () => fetchAll(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 

@@ -75,6 +75,7 @@ class IssuePropertyEndpoint(BaseAPIView):
                     project_id=project_id,
                     property_id=issue_property.id,
                     pk=option["id"],
+                    property__issue_type__is_epic=False,
                 )
                 option_serializer = IssuePropertyOptionSerializer(
                     issue_property_option, data=option, partial=True
@@ -92,6 +93,7 @@ class IssuePropertyEndpoint(BaseAPIView):
             workspace_id=issue_property.workspace_id,
             project_id=issue_property.project_id,
             is_default=True,
+            property__issue_type__is_epic=False,
         ).update(is_default=False)
 
     def update_property_default_options(self, issue_property):
@@ -101,6 +103,7 @@ class IssuePropertyEndpoint(BaseAPIView):
             workspace_id=issue_property.workspace_id,
             project_id=issue_property.project_id,
             is_default=True,
+            property__issue_type__is_epic=False,
         ).values_list("id", flat=True)
 
         # Save the default value
@@ -114,6 +117,7 @@ class IssuePropertyEndpoint(BaseAPIView):
             property_id=issue_property.id,
             workspace__slug=slug,
             project_id=project_id,
+            property__issue_type__is_epic=False,
         )
         options_serializer = IssuePropertyOptionSerializer(options, many=True)
         return options_serializer.data
@@ -123,7 +127,10 @@ class IssuePropertyEndpoint(BaseAPIView):
         # Get a single issue property
         if pk:
             issue_property = IssueProperty.objects.get(
-                workspace__slug=slug, project_id=project_id, pk=pk
+                workspace__slug=slug,
+                project_id=project_id,
+                issue_type__is_epic=False,
+                pk=pk,
             )
             serializer = IssuePropertySerializer(issue_property)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -134,13 +141,16 @@ class IssuePropertyEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 project_id=project_id,
                 issue_type_id=issue_type_id,
+                issue_type__is_epic=False,
             )
             serializer = IssuePropertySerializer(issue_properties, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         # Get all issue properties
         issue_types = IssueProperty.objects.filter(
-            workspace__slug=slug, project_id=project_id
+            workspace__slug=slug,
+            project_id=project_id,
+            issue_type__is_epic=False,
         )
         serializer = IssuePropertySerializer(issue_types, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -188,6 +198,7 @@ class IssuePropertyEndpoint(BaseAPIView):
             issue_property = IssueProperty.objects.get(
                 project_id=project_id,
                 issue_type_id=issue_type_id,
+                issue_type__is_epic=False,
                 pk=serializer.data["id"],
             )
 
@@ -199,12 +210,17 @@ class IssuePropertyEndpoint(BaseAPIView):
                     if issue_property.is_required:
                         self.reset_options_default(issue_property)
                     # Reset the default options if property is not multi and more than one default value
-                    if not issue_property.is_multi and IssuePropertyOption.objects.filter(
-                        property_id=issue_property.id,
-                        workspace_id=issue_property.workspace_id,
-                        project_id=issue_property.project_id,
-                        is_default=True,
-                        ).count() > 1:
+                    if (
+                        not issue_property.is_multi
+                        and IssuePropertyOption.objects.filter(
+                            property_id=issue_property.id,
+                            workspace_id=issue_property.workspace_id,
+                            project_id=issue_property.project_id,
+                            is_default=True,
+                            property__issue_type__is_epic=False,
+                        ).count()
+                        > 1
+                    ):
                         self.reset_options_default(issue_property)
                     self.update_property_default_options(issue_property)
 
@@ -240,6 +256,7 @@ class IssuePropertyEndpoint(BaseAPIView):
             workspace__slug=slug,
             project_id=project_id,
             issue_type_id=issue_type_id,
+            issue_type__is_epic=False,
             pk=pk,
         )
 
@@ -306,12 +323,17 @@ class IssuePropertyEndpoint(BaseAPIView):
                 if issue_property.is_required:
                     self.reset_options_default(issue_property)
                 # Reset the default options if property is not multi and more than one default value
-                if not issue_property.is_multi and IssuePropertyOption.objects.filter(
-                    property_id=issue_property.id,
-                    workspace_id=issue_property.workspace_id,
-                    project_id=issue_property.project_id,
-                    is_default=True,
-                    ).count() > 1:
+                if (
+                    not issue_property.is_multi
+                    and IssuePropertyOption.objects.filter(
+                        property_id=issue_property.id,
+                        workspace_id=issue_property.workspace_id,
+                        project_id=issue_property.project_id,
+                        is_default=True,
+                        property__issue_type__is_epic=False,
+                    ).count()
+                    > 1
+                ):
                     self.reset_options_default(issue_property)
                 self.update_property_default_options(issue_property)
 
@@ -338,6 +360,7 @@ class IssuePropertyEndpoint(BaseAPIView):
             workspace__slug=slug,
             project_id=project_id,
             issue_type_id=issue_type_id,
+            issue_type__is_epic=False,
             pk=pk,
         )
         issue_property.delete()

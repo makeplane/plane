@@ -45,7 +45,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
   const { fetchUserProjectInfo, allowPermissions, projectUserInfo } = useUserPermissions();
-  const { loader, getProjectById, fetchProjectDetails } = useProject();
+  const { loader, getProjectById, fetchProjectDetails, fetchProjectEpicProperties } = useProject();
   const { fetchAllCycles } = useCycle();
   const { fetchModulesSlim, fetchModules } = useModule();
   const { initGantt } = useTimeLineChart(ETimeLineTypeType.MODULE);
@@ -56,11 +56,13 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { fetchProjectStates, fetchProjectStateTransitions } = useProjectState();
   const { fetchProjectLabels } = useLabel();
   const { getProjectEstimates } = useProjectEstimates();
-  const { isIssueTypeEnabledForProject, fetchAllPropertiesAndOptions } = useIssueTypes();
+  const { isIssueTypeOrEpicEnabledForProject, fetchAllPropertiesAndOptions } = useIssueTypes();
   // router
   const { workspaceSlug, projectId } = useParams();
 
   const projectMemberInfo = projectUserInfo?.[workspaceSlug?.toString()]?.[projectId?.toString()];
+
+  const isProjectEpicEnabled = getProjectById(projectId.toString())?.is_epic_enabled;
 
   // Initialize module timeline chart
   useEffect(() => {
@@ -148,10 +150,11 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
 
   // derived values
 
-  const isIssueTypeEnabled = isIssueTypeEnabledForProject(
+  const isIssueTypeEnabled = isIssueTypeOrEpicEnabledForProject(
     workspaceSlug?.toString(),
     projectId?.toString(),
-    "ISSUE_TYPE_DISPLAY"
+    "ISSUE_TYPE_DISPLAY",
+    "EPICS_DISPLAY"
   );
   // fetching all issue types and properties
   useSWR(
@@ -163,6 +166,18 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
       : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
+
+  // fetch epic properties
+  useSWR(
+    workspaceSlug && projectId && isProjectEpicEnabled
+      ? `PROJECT_EPIC_PROPERTIES_${workspaceSlug}_${projectId}_`
+      : null,
+    workspaceSlug && projectId && isProjectEpicEnabled
+      ? () => fetchProjectEpicProperties(workspaceSlug.toString(), projectId.toString())
+      : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+
   const hasPermissionToCurrentProject = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
     EUserPermissionsLevel.PROJECT,

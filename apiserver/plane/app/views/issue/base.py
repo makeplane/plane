@@ -445,6 +445,7 @@ class IssueViewSet(BaseViewSet):
         issue = (
             Issue.objects.filter(project_id=self.kwargs.get("project_id"))
             .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(Q(type__is_epic=False) | Q(type__isnull=True))
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
             .annotate(
@@ -703,7 +704,12 @@ class IssueViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN], creator=True, model=Issue)
     def destroy(self, request, slug, project_id, pk=None):
-        issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
+        issue = Issue.objects.get(
+            Q(type__is_epic=False) | Q(type__isnull=True),
+            workspace__slug=slug,
+            project_id=project_id,
+            pk=pk,
+        )
 
         issue.delete()
         issue_activity.delay(

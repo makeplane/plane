@@ -40,6 +40,7 @@ from plane.ee.views.app.workspace import (
 
 from plane.ee.views.app.issue_property import IssuePropertyEndpoint
 from plane.ee.views.app.intake import IntakeSettingEndpoint
+from plane.ee.views.app.epic import EpicViewSet, EpicLinkViewSet
 from plane.ee.views.app.inbox import InboxViewSet
 
 # Space imports

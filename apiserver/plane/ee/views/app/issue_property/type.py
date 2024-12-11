@@ -32,6 +32,7 @@ class WorkspaceIssueTypeEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 project_issue_types__project__project_projectmember__member=request.user,
                 project_issue_types__project__project_projectmember__is_active=True,
+                is_epic=False,
             )
             .annotate(
                 issue_exists=Exists(
@@ -86,6 +87,7 @@ class IssueTypeEndpoint(BaseAPIView):
             IssueType.objects.filter(
                 workspace__slug=slug,
                 project_issue_types__project_id=project_id,
+                is_epic=False,
             )
             .annotate(
                 issue_exists=Exists(
@@ -140,6 +142,7 @@ class IssueTypeEndpoint(BaseAPIView):
             IssueType.objects.filter(
                 workspace__slug=slug,
                 project_issue_types__project_id=project_id,
+                is_epic=False,
                 pk=serializer.data["id"],
             )
             .annotate(
@@ -177,6 +180,7 @@ class IssueTypeEndpoint(BaseAPIView):
         issue_type = IssueType.objects.get(
             workspace__slug=slug,
             project_issue_types__project_id=project_id,
+            is_epic=False,
             pk=pk,
         )
 
@@ -200,6 +204,7 @@ class IssueTypeEndpoint(BaseAPIView):
             IssueType.objects.filter(
                 workspace__slug=slug,
                 project_issue_types__project_id=project_id,
+                is_epic=False,
                 pk=serializer.data["id"],
             )
             .annotate(
@@ -237,6 +242,7 @@ class IssueTypeEndpoint(BaseAPIView):
         issue_type = IssueType.objects.get(
             workspace__slug=slug,
             project_issue_types__project_id=project_id,
+            is_epic=False,
             pk=pk,
         )
 
@@ -272,6 +278,7 @@ class DefaultIssueTypeEndpoint(BaseAPIView):
         if IssueType.objects.filter(
             workspace__slug=slug,
             project_issue_types__project_id=project_id,
+            is_epic=False,
             is_default=True,
         ).exists():
             return Response(
@@ -327,6 +334,7 @@ class DefaultIssueTypeEndpoint(BaseAPIView):
             IssueType.objects.filter(
                 workspace__slug=slug,
                 project_issue_types__project_id=project_id,
+                is_epic=False,
                 pk=issue_type.id,
             )
             .annotate(

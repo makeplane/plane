@@ -93,6 +93,7 @@ class IssueManager(SoftDeletionManager):
                 | models.Q(issue_intake__status=2)
                 | models.Q(issue_intake__isnull=True)
             )
+            .filter(Q(type__is_epic=False) | Q(type__isnull=True))
             .filter(deleted_at__isnull=True)
             .filter(state__is_triage=False)
             .exclude(archived_at__isnull=False)

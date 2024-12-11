@@ -169,6 +169,7 @@ class DraftIssuePropertyValueEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 project_id=project_id,
                 issue_type_id=issue_type_id,
+                issue_type__is_epic=False,
             )
 
             # Validate the data
@@ -212,6 +213,7 @@ class DraftIssuePropertyValueEndpoint(BaseAPIView):
             issue_property = IssueProperty.objects.get(
                 workspace__slug=slug,
                 project_id=project_id,
+                issue_type__is_epic=False,
                 pk=property_id,
             )
 
@@ -220,6 +222,7 @@ class DraftIssuePropertyValueEndpoint(BaseAPIView):
                 project_id=project_id,
                 draft_issue_id=draft_issue_id,
                 property_id=property_id,
+                property__issue_type__is_epic=False,
             )
 
             # Get the value
