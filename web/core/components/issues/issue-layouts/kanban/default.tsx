@@ -18,7 +18,7 @@ import { ContentWrapper } from "@plane/ui";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { KanbanColumnLoader } from "@/components/ui";
 // hooks
-import { useCycle, useKanbanView, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
+import { useKanbanView } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // types
 // parent components
@@ -87,30 +87,16 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     dropErrorMessage,
     subGroupIndex = 0,
   } = props;
-
+  // store hooks
   const storeType = useIssueStoreType();
-
-  const member = useMember();
-  const project = useProject();
-  const label = useLabel();
-  const cycle = useCycle();
-  const moduleInfo = useModule();
-  const projectState = useProjectState();
   const issueKanBanView = useKanbanView();
-
+  // derived values
   const isDragDisabled = !issueKanBanView?.getCanUserDragDrop(group_by, sub_group_by);
-
-  const list = getGroupByColumns(
-    group_by as GroupByColumnTypes,
-    project,
-    cycle,
-    moduleInfo,
-    label,
-    projectState,
-    member,
-    true,
-    isWorkspaceLevel(storeType)
-  );
+  const list = getGroupByColumns({
+    groupBy: group_by as GroupByColumnTypes,
+    includeNone: true,
+    isWorkspaceLevel: isWorkspaceLevel(storeType),
+  });
 
   if (!list) return null;
 
