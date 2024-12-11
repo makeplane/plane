@@ -84,7 +84,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     user: currentUser ?? undefined,
   });
   // editor flaggings
-  const { documentEditor } = useEditorFlagging();
+  const { documentEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
   // page filters
   const { fontSize, fontStyle, isFullWidth } = usePageFilters();
   // issue-embed
@@ -123,7 +123,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
       onConnect: handleServerConnect,
       onServerError: handleServerError,
     }),
-    []
+    [handleServerConnect, handleServerError]
   );
 
   const realtimeConfig: TRealtimeConfig | undefined = useMemo(() => {
@@ -224,7 +224,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               realtimeConfig={realtimeConfig}
               serverHandler={serverHandler}
               user={userConfig}
-              disabledExtensions={documentEditor}
+              disabledExtensions={disabledExtensions}
               aiHandler={{
                 menu: getAIMenu,
               }}
@@ -233,6 +233,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             <CollaborativeDocumentReadOnlyEditorWithRef
               id={pageId}
               ref={readOnlyEditorRef}
+              disabledExtensions={disabledExtensions}
               fileHandler={getReadOnlyEditorFileHandlers({
                 projectId: projectId?.toString() ?? "",
                 workspaceSlug: workspaceSlug?.toString() ?? "",

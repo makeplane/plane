@@ -38,6 +38,8 @@ export const WorkspaceCreateForm = () => {
     getValues,
     formState: { errors, isSubmitting, isValid },
   } = useForm<IWorkspace>({ defaultValues, mode: "onChange" });
+  // derived values
+  const workspaceBaseURL = encodeURI(WEB_BASE_URL || window.location.origin + "/");
 
   const handleCreateWorkspace = async (formData: IWorkspace) => {
     await workspaceService
@@ -124,7 +126,7 @@ export const WorkspaceCreateForm = () => {
         <div className="flex flex-col gap-1">
           <h4 className="text-sm text-custom-text-300">Set your workspace&apos;s URL</h4>
           <div className="flex gap-0.5 w-full items-center rounded-md border-[0.5px] border-custom-border-200 px-3">
-            <span className="whitespace-nowrap text-sm text-custom-text-200">{WEB_BASE_URL}/</span>
+            <span className="whitespace-nowrap text-sm text-custom-text-200">{workspaceBaseURL}</span>
             <Controller
               control={control}
               name="slug"

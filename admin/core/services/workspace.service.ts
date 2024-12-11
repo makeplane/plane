@@ -30,7 +30,8 @@ export class WorkspaceService extends APIService {
    * @returns Promise<any>
    */
   async workspaceSlugCheck(slug: string): Promise<any> {
-    return this.get(`/api/instances/workspace-slug-check/?slug=${slug}`)
+    const params = new URLSearchParams({ slug });
+    return this.get(`/api/instances/workspace-slug-check/?${params.toString()}`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

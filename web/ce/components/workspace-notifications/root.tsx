@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import { FC, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
@@ -14,14 +14,14 @@ import {
   NotificationCardListRoot,
 } from "@/components/workspace-notifications";
 // constants
-import { NOTIFICATION_TABS } from "@/constants/notification";
+import { NOTIFICATION_TABS, TNotificationTab } from "@/constants/notification";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getNumberCount } from "@/helpers/string.helper";
 // hooks
 import { useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
 
-export const NotificationsSidebar: FC = observer(() => {
+export const NotificationsSidebarRoot: FC = observer(() => {
   const { workspaceSlug } = useParams();
   // hooks
   const { getWorkspaceBySlug } = useWorkspace();
@@ -36,6 +36,15 @@ export const NotificationsSidebar: FC = observer(() => {
   // derived values
   const workspace = workspaceSlug ? getWorkspaceBySlug(workspaceSlug.toString()) : undefined;
   const notificationIds = workspace ? notificationIdsByWorkspaceId(workspace.id) : undefined;
+
+  const handleTabClick = useCallback(
+    (tabValue: TNotificationTab) => {
+      if (currentNotificationTab !== tabValue) {
+        setCurrentNotificationTab(tabValue);
+      }
+    },
+    [currentNotificationTab, setCurrentNotificationTab]
+  );
 
   if (!workspaceSlug || !workspace) return <></>;
 
@@ -56,7 +65,7 @@ export const NotificationsSidebar: FC = observer(() => {
             <div
               key={tab.value}
               className="h-full px-3 relative cursor-pointer"
-              onClick={() => currentNotificationTab != tab.value && setCurrentNotificationTab(tab.value)}
+              onClick={() => handleTabClick(tab.value)}
             >
               <div
                 className={cn(

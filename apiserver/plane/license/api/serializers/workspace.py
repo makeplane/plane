@@ -18,6 +18,9 @@ class WorkspaceSerializer(BaseSerializer):
         # Check if the slug is restricted
         if value in RESTRICTED_WORKSPACE_SLUGS:
             raise serializers.ValidationError("Slug is not valid")
+        # Check uniqueness case-insensitively
+        if Workspace.objects.filter(slug__iexact=value).exists():
+            raise serializers.ValidationError("Slug is already in use")
         return value
 
     class Meta:

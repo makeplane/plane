@@ -44,45 +44,25 @@ class FileAsset(BaseModel):
         "db.User", on_delete=models.CASCADE, null=True, related_name="assets"
     )
     workspace = models.ForeignKey(
-        "db.Workspace",
-        on_delete=models.CASCADE,
-        null=True,
-        related_name="assets",
+        "db.Workspace", on_delete=models.CASCADE, null=True, related_name="assets"
     )
     draft_issue = models.ForeignKey(
-        "db.DraftIssue",
-        on_delete=models.CASCADE,
-        null=True,
-        related_name="assets",
+        "db.DraftIssue", on_delete=models.CASCADE, null=True, related_name="assets"
     )
     project = models.ForeignKey(
-        "db.Project",
-        on_delete=models.CASCADE,
-        null=True,
-        related_name="assets",
+        "db.Project", on_delete=models.CASCADE, null=True, related_name="assets"
     )
     issue = models.ForeignKey(
         "db.Issue", on_delete=models.CASCADE, null=True, related_name="assets"
     )
     comment = models.ForeignKey(
-        "db.IssueComment",
-        on_delete=models.CASCADE,
-        null=True,
-        related_name="assets",
+        "db.IssueComment", on_delete=models.CASCADE, null=True, related_name="assets"
     )
     page = models.ForeignKey(
         "db.Page", on_delete=models.CASCADE, null=True, related_name="assets"
     )
-    entity_type = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
-    )
-    entity_identifier = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
-    )
+    entity_type = models.CharField(max_length=255, null=True, blank=True)
+    entity_identifier = models.CharField(max_length=255, null=True, blank=True)
     is_deleted = models.BooleanField(default=False)
     is_archived = models.BooleanField(default=False)
     external_id = models.CharField(max_length=255, null=True, blank=True)

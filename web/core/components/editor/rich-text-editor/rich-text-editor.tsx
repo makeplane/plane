@@ -9,9 +9,11 @@ import { getEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
 import { useMember, useMention, useUser } from "@/hooks/store";
 // plane web hooks
+import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
 
-interface RichTextEditorWrapperProps extends Omit<IRichTextEditor, "fileHandler" | "mentionHandler"> {
+interface RichTextEditorWrapperProps
+  extends Omit<IRichTextEditor, "disabledExtensions" | "fileHandler" | "mentionHandler"> {
   workspaceSlug: string;
   workspaceId: string;
   projectId: string;
@@ -26,6 +28,8 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
     getUserDetails,
     project: { getProjectMemberIds },
   } = useMember();
+  // editor flaggings
+  const { richTextEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
   // derived values
   const projectMemberIds = getProjectMemberIds(projectId);
   const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
@@ -42,6 +46,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
   return (
     <RichTextEditorWithRef
       ref={ref}
+      disabledExtensions={disabledExtensions}
       fileHandler={getEditorFileHandlers({
         maxFileSize,
         projectId,

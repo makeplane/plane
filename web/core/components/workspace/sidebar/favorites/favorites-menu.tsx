@@ -28,7 +28,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { FavoriteFolder } from "./favorite-folder";
 import { FavoriteRoot } from "./favorite-items";
-import { getDestinationStateSequence, getInstructionFromPayload, TargetData } from "./favorites.helpers";
+import { getInstructionFromPayload, TargetData } from "./favorites.helpers";
 import { NewFavoriteFolder } from "./new-fav-folder";
 
 export const SidebarFavoritesMenu = observer(() => {
@@ -94,22 +94,20 @@ export const SidebarFavoritesMenu = observer(() => {
         handleMoveToFolder(sourceData.id, parentId);
       }
       //handle remove from folder if dropped outside of the folder
-      if (parentId && sourceData.isChild) {
+      if (parentId && parentId !== sourceData.parentId && sourceData.isChild) {
         handleRemoveFromFavoritesFolder(sourceData.id);
       }
 
       // handle reordering at root level
       if (droppedFavId) {
         if (instruction != "make-child") {
-          const destinationSequence = getDestinationStateSequence(groupedFavorites, droppedFavId, instruction);
-          handleReorder(sourceData.id, destinationSequence || 0);
+          handleReorder(sourceData.id, droppedFavId, instruction);
         }
       }
     } else {
       //handling reordering for favorites
       if (droppedFavId) {
-        const destinationSequence = getDestinationStateSequence(groupedFavorites, droppedFavId, instruction);
-        handleReorder(sourceData.id, destinationSequence || 0);
+        handleReorder(sourceData.id, droppedFavId, instruction);
       }
 
       // handle removal from folder if dropped outside a folder
@@ -147,10 +145,8 @@ export const SidebarFavoritesMenu = observer(() => {
   };
 
   const handleReorder = useCallback(
-    (favoriteId: string, sequence: number) => {
-      reOrderFavorite(workspaceSlug.toString(), favoriteId, {
-        sequence: sequence,
-      }).catch(() => {
+    (favoriteId: string, droppedFavId: string, edge: string | undefined) => {
+      reOrderFavorite(workspaceSlug.toString(), favoriteId, droppedFavId, edge).catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
@@ -271,7 +267,6 @@ export const SidebarFavoritesMenu = observer(() => {
                           isLastChild={index === length - 1}
                           handleRemoveFromFavorites={handleRemoveFromFavorites}
                           handleRemoveFromFavoritesFolder={handleRemoveFromFavoritesFolder}
-                          handleReorder={handleReorder}
                           handleDrop={handleDrop}
                         />
                       ) : (
