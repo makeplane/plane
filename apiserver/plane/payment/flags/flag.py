@@ -38,6 +38,8 @@ class FeatureFlag(Enum):
     INTAKE_SETTINGS = "INTAKE_SETTINGS"
     # Workflows
     WORKFLOWS = "WORKFLOWS"
+    # Inbox Stacking
+    INBOX_STACKING = "INBOX_STACKING"
 
 
 class AdminFeatureFlag(Enum):

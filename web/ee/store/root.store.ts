@@ -7,6 +7,10 @@ import {
   IssuePropertiesActivityStore,
   IssueTypes,
 } from "@/plane-web/store/issue-types";
+import {
+  IWorkspaceNotificationStore,
+  WorkspaceNotificationStore,
+} from "@/plane-web/store/notifications/notifications.store";
 import { IPublishPageStore, PublishPageStore } from "@/plane-web/store/pages/publish-page.store";
 import { IWorkspacePageStore, WorkspacePageStore } from "@/plane-web/store/pages/workspace-page.store";
 import {
@@ -66,6 +70,7 @@ export class RootStore extends CoreRootStore {
   cycle: ICycleStore;
   piChat: IPiChatStore;
   timelineStore: ITimelineStore;
+  workspaceNotification: IWorkspaceNotificationStore;
   // importers
   jiraImporter: IJiraStore;
   jiraServerImporter: IJiraServerStore;
@@ -91,6 +96,7 @@ export class RootStore extends CoreRootStore {
     this.cycle = new CycleStore(this);
     this.piChat = new PiChatStore(this);
     this.timelineStore = new TimeLineStore(this);
+    this.workspaceNotification = new WorkspaceNotificationStore(this);
     // importers
     this.jiraImporter = new JiraStore(this);
     this.jiraServerImporter = new JiraServerStore(this);
