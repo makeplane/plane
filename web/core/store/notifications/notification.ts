@@ -26,7 +26,7 @@ export interface INotification extends TNotification {
 
 export class Notification implements INotification {
   // observables
-  id: string | undefined = undefined;
+  id: string;
   title: string | undefined = undefined;
   data: TNotificationData | undefined = undefined;
   entity_identifier: string | undefined = undefined;
@@ -54,6 +54,7 @@ export class Notification implements INotification {
     private store: CoreRootStore,
     private notification: TNotification
   ) {
+    this.id = this.notification.id;
     makeObservable(this, {
       // observables
       id: observable.ref,
@@ -90,7 +91,6 @@ export class Notification implements INotification {
       snoozeNotification: action,
       unSnoozeNotification: action,
     });
-    this.id = this.notification.id;
     this.title = this.notification.title;
     this.data = this.notification.data;
     this.entity_identifier = this.notification.entity_identifier;
