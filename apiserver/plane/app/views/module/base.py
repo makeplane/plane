@@ -56,7 +56,7 @@ from plane.db.models import (
     Project,
 )
 from plane.utils.analytics_plot import burndown_plot
-from plane.utils.user_timezone_converter import user_timezone_converter
+from plane.utils.timezone_converter import user_timezone_converter
 from plane.bgtasks.webhook_task import model_activity
 from .. import BaseAPIView, BaseViewSet
 from plane.bgtasks.recent_visited_task import recent_visited_task

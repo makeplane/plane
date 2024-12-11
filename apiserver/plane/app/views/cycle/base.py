@@ -1,5 +1,7 @@
 # Python imports
 import json
+import pytz
+
 
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -52,6 +54,11 @@ from plane.bgtasks.recent_visited_task import recent_visited_task
 # Module imports
 from .. import BaseAPIView, BaseViewSet
 from plane.bgtasks.webhook_task import model_activity
+from plane.utils.timezone_converter import (
+    convert_utc_to_project_timezone,
+    convert_to_utc,
+    user_timezone_converter,
+)
 
 
 class CycleViewSet(BaseViewSet):
@@ -67,6 +74,19 @@ class CycleViewSet(BaseViewSet):
             project_id=self.kwargs.get("project_id"),
             workspace__slug=self.kwargs.get("slug"),
         )
+
+        project = Project.objects.get(id=self.kwargs.get("project_id"))
+
+        # Fetch project for the specific record or pass project_id dynamically
+        project_timezone = project.timezone
+
+        # Convert the current time (timezone.now()) to the project's timezone
+        local_tz = pytz.timezone(project_timezone)
+        current_time_in_project_tz = timezone.now().astimezone(local_tz)
+
+        # Convert project local time back to UTC for comparison (start_date is stored in UTC)
+        current_time_in_utc = current_time_in_project_tz.astimezone(pytz.utc)
+
         return self.filter_queryset(
             super()
             .get_queryset()
@@ -119,12 +139,15 @@ class CycleViewSet(BaseViewSet):
             .annotate(
                 status=Case(
                     When(
-                        Q(start_date__lte=timezone.now())
-                        & Q(end_date__gte=timezone.now()),
+                        Q(start_date__lte=current_time_in_utc)
+                        & Q(end_date__gte=current_time_in_utc),
                         then=Value("CURRENT"),
                     ),
-                    When(start_date__gt=timezone.now(), then=Value("UPCOMING")),
-                    When(end_date__lt=timezone.now(), then=Value("COMPLETED")),
+                    When(
+                        start_date__gt=current_time_in_utc,
+                        then=Value("UPCOMING"),
+                    ),
+                    When(end_date__lt=current_time_in_utc, then=Value("COMPLETED")),
                     When(
                         Q(start_date__isnull=True) & Q(end_date__isnull=True),
                         then=Value("DRAFT"),
@@ -160,10 +183,22 @@ class CycleViewSet(BaseViewSet):
         # Update the order by
         queryset = queryset.order_by("-is_favorite", "-created_at")
 
+        project = Project.objects.get(id=self.kwargs.get("project_id"))
+
+        # Fetch project for the specific record or pass project_id dynamically
+        project_timezone = project.timezone
+
+        # Convert the current time (timezone.now()) to the project's timezone
+        local_tz = pytz.timezone(project_timezone)
+        current_time_in_project_tz = timezone.now().astimezone(local_tz)
+
+        # Convert project local time back to UTC for comparison (start_date is stored in UTC)
+        current_time_in_utc = current_time_in_project_tz.astimezone(pytz.utc)
+
         # Current Cycle
         if cycle_view == "current":
             queryset = queryset.filter(
-                start_date__lte=timezone.now(), end_date__gte=timezone.now()
+                start_date__lte=current_time_in_utc, end_date__gte=current_time_in_utc
             )
 
             data = queryset.values(
@@ -191,6 +226,8 @@ class CycleViewSet(BaseViewSet):
                 "version",
                 "created_by",
             )
+            datetime_fields = ["start_date", "end_date"]
+            data = user_timezone_converter(data, datetime_fields, project_timezone)
 
             if data:
                 return Response(data, status=status.HTTP_200_OK)
@@ -221,6 +258,8 @@ class CycleViewSet(BaseViewSet):
             "version",
             "created_by",
         )
+        datetime_fields = ["start_date", "end_date"]
+        data = user_timezone_converter(data, datetime_fields, project_timezone)
         return Response(data, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
@@ -365,6 +404,7 @@ class CycleViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def retrieve(self, request, slug, project_id, pk):
+        project = Project.objects.get(id=project_id)
         queryset = self.get_queryset().filter(archived_at__isnull=True).filter(pk=pk)
         data = (
             self.get_queryset()
@@ -417,6 +457,8 @@ class CycleViewSet(BaseViewSet):
             )
 
         queryset = queryset.first()
+        datetime_fields = ["start_date", "end_date"]
+        data = user_timezone_converter(data, datetime_fields, project.timezone)
 
         recent_visited_task.delay(
             slug=slug,
@@ -491,6 +533,9 @@ class CycleDateCheckEndpoint(BaseAPIView):
                 {"error": "Start date and end date both are required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        start_date = convert_to_utc(str(start_date), project_id)
+        end_date = convert_to_utc(str(end_date), project_id, is_end_date=True)
 
         # Check if any cycle intersects in the given interval
         cycles = Cycle.objects.filter(
