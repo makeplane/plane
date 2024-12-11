@@ -2,6 +2,7 @@ import { Plugin, EditorState, PluginKey } from "@tiptap/pm/state";
 import { EditorView } from "@tiptap/pm/view";
 import { dropPoint } from "@tiptap/pm/transform";
 import { Editor, Extension } from "@tiptap/core";
+import { NodeType, Node as ProseMirrorNode, ResolvedPos } from "@tiptap/pm/model";
 
 interface DropCursorOptions {
   /// The color of the cursor. Defaults to `black`. Use `false` to apply no color and rely only on class.
@@ -22,7 +23,7 @@ interface DropCursorOptions {
 /// control the showing of a drop cursor inside them. This may be a
 /// boolean or a function, which will be called with a view and a
 /// position, and should return a boolean.
-export function dropCursor(options: DropCursorOptions = {}, tiptapEditorOptions: { editor: Editor }): Plugin {
+export function dropCursor(options: DropCursorOptions = {}, tiptapEditorOptions: any): Plugin {
   const pluginKey = new PluginKey("dropCursor");
   return new Plugin({
     key: pluginKey,
@@ -44,12 +45,20 @@ export function dropCursor(options: DropCursorOptions = {}, tiptapEditorOptions:
     },
     props: {
       handleDrop(view, event, slice, moved) {
-        const { isBetweenFlatLists } = isBetweenFlatListsFn(event, tiptapEditorOptions.editor);
+        const coordinates = { left: event.clientX, top: event.clientY };
+        const pos = view.posAtCoords(coordinates);
 
+        if (!pos) return false;
+
+        const $pos = view.state.doc.resolve(pos.pos);
+
+        // const { isBetweenNodesOfType: isBetweenLists, position } = isBetweenNodesOfType($pos, "list");
+
+        // if (isBetweenLists && position !== null) {
         const state = pluginKey.getState(view.state);
         let dropPosByDropCursorPos = state?.dropPosByDropCursorPos;
 
-        if (isBetweenFlatLists && dropPosByDropCursorPos) {
+        if (dropPosByDropCursorPos != null) {
           const tr = view.state.tr;
 
           if (moved) {
@@ -69,6 +78,7 @@ export function dropCursor(options: DropCursorOptions = {}, tiptapEditorOptions:
           view.dispatch(tr);
           return true;
         }
+        // }
         return false;
       },
     },
@@ -118,6 +128,64 @@ class DropCursorView {
     this.handlers.forEach(({ name, handler }) => this.editorView.dom.removeEventListener(name, handler));
   }
 
+  isBetweenNodesOfType($pos: ResolvedPos, nodeTypeName: string) {
+    const { doc } = $pos;
+    const nodeType = doc.type.schema.nodes[nodeTypeName];
+
+    function isNodeType(node: ProseMirrorNode | null, type: NodeType) {
+      return node && node.type === type;
+    }
+
+    let finalPos: number | null = null;
+    let isBetweenNodesOfType = false;
+    const listDomNode = this.editorView.nodeDOM($pos.pos);
+    if (listDomNode) {
+      const listElement = (listDomNode as HTMLElement)?.closest(".prosemirror-flat-list");
+      if (listElement) {
+        isBetweenNodesOfType = true;
+      }
+
+      // __AUTO_GENERATED_PRINT_VAR_START__
+      console.log("DropCursorView#isBetweenNodesOfType#if listElement: s", listElement); // __AUTO_GENERATED_PRINT_VAR_END__
+      finalPos = this.editorView.posAtDOM(listElement, 0);
+      if (listElement.nextElementSibling === null) {
+      // const
+      // if (listElement) {
+      //   const nextListElement = listElement.nextElementSibling;
+      //   // __AUTO_GENERATED_PRINT_VAR_START__
+      //   console.log("DropCursorView#isBetweenNodesOfType#if#if nextListElement: s", nextListElement); // __AUTO_GENERATED_PRINT_VAR_END__
+      // }
+      // __AUTO_GENERATED_PRINT_VAR_START__
+      console.log("DropCursorView#isBetweenNodesOfType#if finalPos: %s", finalPos); // __AUTO_GENERATED_PRINT_VAR_END__
+    }
+    // let isBetweenNodesOfType = false;
+    // let positionToShowAndDrop: number | null = null;
+    //
+    // const nodeBefore = $pos.nodeBefore;
+    // const nodeAfter = $pos.nodeAfter;
+    // const nodeBeforeIsType = isNodeType(nodeBefore, nodeType);
+    // const nodeAfterIsType = isNodeType(nodeAfter, nodeType);
+
+    // if (nodeBeforeIsType || nodeAfterIsType) {
+    //   isBetweenNodesOfType = true;
+    //   positionToShowAndDrop = $pos.pos;
+    // } else {
+    // const nextListPos = findNextNodeOfType($pos, nodeType);
+    // if (nextListPos != null) {
+    //   isBetweenNodesOfType = true;
+    //   positionToShowAndDrop = nextListPos;
+    // }
+    // }
+
+    // const node = this.editorView.nodeDOM(positionToShowAndDrop);
+    // const listElement = (node as HTMLElement)?.closest(".prosemirror-flat-list");
+    // const finalPos = this.editorView.posAtDOM(listElement, 0);
+    return {
+      isBetweenNodesOfType,
+      position: finalPos - 1,
+    };
+  }
+
   update(editorView: EditorView, prevState: EditorState) {
     if (this.cursorPos != null && prevState.doc != editorView.state.doc) {
       if (this.cursorPos > editorView.state.doc.content.size) this.setCursor(null);
@@ -139,7 +207,7 @@ class DropCursorView {
   updateOverlay() {
     const $pos = this.editorView.state.doc.resolve(this.cursorPos!);
     const isBlock = !$pos.parent.inlineContent;
-    // const isSpecialCase = isNodeAtDepthAndItsParentIsParagraphWhoseParentIsList($pos);
+    const isSpecialCase = isNodeAtDepthAndItsParentIsParagraphWhoseParentIsList($pos);
     let rect: Partial<DOMRect>;
     const editorDOM = this.editorView.dom;
     const editorRect = editorDOM.getBoundingClientRect();
@@ -206,24 +274,28 @@ class DropCursorView {
     if (!this.editorView.editable) return;
     const pos = this.editorView.posAtCoords({ left: event.clientX, top: event.clientY });
 
-    const { isBetweenFlatLists, pos: posList } = isBetweenFlatListsFn(event, this.editor);
-    if (isBetweenFlatLists) {
-      pos.pos = posList;
-    }
-
     if (pos) {
+      const $pos = this.editorView.state.doc.resolve(pos.pos);
+
       const node = pos.inside >= 0 && this.editorView.state.doc.nodeAt(pos.inside);
       const disableDropCursor = node && node.type.spec.disableDropCursor;
       const disabled =
         typeof disableDropCursor == "function" ? disableDropCursor(this.editorView, pos, event) : disableDropCursor;
 
       if (!disabled) {
+        const { isBetweenNodesOfType: isBetweenNodesOfTypeLists, position } = this.isBetweenNodesOfType($pos, "list");
+
+        if (isBetweenNodesOfTypeLists && position !== undefined) {
+          this.dropPosByDropCursorPos = position;
+          this.setCursor(position);
+          return;
+        }
+
         let target = pos.pos;
         if (this.editorView.dragging && this.editorView.dragging.slice) {
           const point = dropPoint(this.editorView.state.doc, target, this.editorView.dragging.slice);
           if (point != null) target = point;
         }
-        this.dropPosByDropCursorPos = target;
         this.setCursor(target);
         this.scheduleRemoval(5000);
       }
@@ -271,24 +343,22 @@ export const DropCursorExtension = Extension.create({
   },
 });
 
-function isBetweenFlatListsFn(event: DragEvent, editor: Editor) {
-  const elementUnderDrag = document.elementFromPoint(event.clientX, event.clientY);
-
-  let pos = editor.view.posAtCoords({ left: event.clientX, top: event.clientY });
-  // Check if element or any of its ancestors has the class
-  const hasFlatListAncestor = elementUnderDrag?.closest(".prosemirror-flat-list");
-  if (hasFlatListAncestor) {
-    const sibling = hasFlatListAncestor.nextElementSibling;
-    const rect = sibling.getBoundingClientRect();
-
-    pos = editor.view.posAtCoords({
-      left: rect.left,
-      top: rect.top,
-    });
+function findNextNodeOfType($pos: ResolvedPos, nodeType: NodeType): number | null {
+  for (let i = $pos.pos; i < $pos.doc.content.size; i++) {
+    const node = $pos.doc.nodeAt(i);
+    if (node && node.type === nodeType) {
+      return i;
+    }
   }
+  return null;
+}
 
-  return {
-    isBetweenFlatLists: hasFlatListAncestor,
-    pos: pos.pos - 1,
-  };
+function isNodeAtDepthAndItsParentIsParagraphWhoseParentIsList($pos: ResolvedPos): boolean {
+  const depth = $pos.depth;
+  if (depth >= 0) {
+    const parent = $pos.node(depth);
+    const grandParent = $pos.node(depth - 1);
+    return parent.type.name === "paragraph" && grandParent.type.name === "list";
+  }
+  return false;
 }

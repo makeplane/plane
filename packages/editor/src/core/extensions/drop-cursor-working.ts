@@ -1,7 +1,8 @@
-import { Plugin, EditorState, PluginKey } from "@tiptap/pm/state";
+import { Plugin, EditorState, NodeSelection, PluginKey } from "@tiptap/pm/state";
 import { EditorView } from "@tiptap/pm/view";
 import { dropPoint } from "@tiptap/pm/transform";
 import { Editor, Extension } from "@tiptap/core";
+import { NodeType, Node as ProseMirrorNode, ResolvedPos } from "@tiptap/pm/model";
 
 interface DropCursorOptions {
   /// The color of the cursor. Defaults to `black`. Use `false` to apply no color and rely only on class.
@@ -22,7 +23,7 @@ interface DropCursorOptions {
 /// control the showing of a drop cursor inside them. This may be a
 /// boolean or a function, which will be called with a view and a
 /// position, and should return a boolean.
-export function dropCursor(options: DropCursorOptions = {}, tiptapEditorOptions: { editor: Editor }): Plugin {
+export function dropCursor(options: DropCursorOptions = {}, tiptapEditorOptions: any): Plugin {
   const pluginKey = new PluginKey("dropCursor");
   return new Plugin({
     key: pluginKey,
@@ -44,30 +45,38 @@ export function dropCursor(options: DropCursorOptions = {}, tiptapEditorOptions:
     },
     props: {
       handleDrop(view, event, slice, moved) {
-        const { isBetweenFlatLists } = isBetweenFlatListsFn(event, tiptapEditorOptions.editor);
+        const coordinates = { left: event.clientX, top: event.clientY };
+        const pos = view.posAtCoords(coordinates);
 
-        const state = pluginKey.getState(view.state);
-        let dropPosByDropCursorPos = state?.dropPosByDropCursorPos;
+        if (!pos) return false;
 
-        if (isBetweenFlatLists && dropPosByDropCursorPos) {
-          const tr = view.state.tr;
+        const $pos = view.state.doc.resolve(pos.pos);
+        const { isBetweenNodesOfType: isBetweenLists, position } = isBetweenNodesOfType($pos, "list");
 
-          if (moved) {
-            // Get the size of content to be deleted
-            const selection = tr.selection;
-            const deleteSize = selection.to - selection.from;
+        if (isBetweenLists && position !== null) {
+          const state = pluginKey.getState(view.state);
+          let dropPosByDropCursorPos = state?.dropPosByDropCursorPos;
 
-            // Adjust drop position if it's after the deletion point
-            if (dropPosByDropCursorPos > selection.from) {
-              dropPosByDropCursorPos -= deleteSize;
+          if (dropPosByDropCursorPos != null) {
+            const tr = view.state.tr;
+
+            if (moved) {
+              // Get the size of content to be deleted
+              const selection = tr.selection;
+              const deleteSize = selection.to - selection.from;
+
+              // Adjust drop position if it's after the deletion point
+              if (dropPosByDropCursorPos > selection.from) {
+                dropPosByDropCursorPos -= deleteSize;
+              }
+
+              tr.deleteSelection();
             }
 
-            tr.deleteSelection();
+            tr.insert(dropPosByDropCursorPos, slice.content);
+            view.dispatch(tr);
+            return true;
           }
-
-          tr.insert(dropPosByDropCursorPos, slice.content);
-          view.dispatch(tr);
-          return true;
         }
         return false;
       },
@@ -139,7 +148,7 @@ class DropCursorView {
   updateOverlay() {
     const $pos = this.editorView.state.doc.resolve(this.cursorPos!);
     const isBlock = !$pos.parent.inlineContent;
-    // const isSpecialCase = isNodeAtDepthAndItsParentIsParagraphWhoseParentIsList($pos);
+    const isSpecialCase = isNodeAtDepthAndItsParentIsParagraphWhoseParentIsList($pos);
     let rect: Partial<DOMRect>;
     const editorDOM = this.editorView.dom;
     const editorRect = editorDOM.getBoundingClientRect();
@@ -206,24 +215,38 @@ class DropCursorView {
     if (!this.editorView.editable) return;
     const pos = this.editorView.posAtCoords({ left: event.clientX, top: event.clientY });
 
-    const { isBetweenFlatLists, pos: posList } = isBetweenFlatListsFn(event, this.editor);
-    if (isBetweenFlatLists) {
-      pos.pos = posList;
-    }
-
     if (pos) {
+      const $pos = this.editorView.state.doc.resolve(pos.pos);
+
       const node = pos.inside >= 0 && this.editorView.state.doc.nodeAt(pos.inside);
       const disableDropCursor = node && node.type.spec.disableDropCursor;
       const disabled =
         typeof disableDropCursor == "function" ? disableDropCursor(this.editorView, pos, event) : disableDropCursor;
 
+      let finalPos: number | null = null;
       if (!disabled) {
+        const {
+          isBetweenNodesOfType: isBetweenNodesOfTypeLists,
+          position,
+          isSpecialCase,
+        } = isBetweenNodesOfType($pos, "list");
+
+        const node = this.editorView.nodeDOM(position);
+        const listElement = (node as HTMLElement).closest(".prosemirror-flat-list");
+        finalPos = this.editorView.posAtDOM(listElement, 0);
+        const $pos1 = this.editorView.state.doc.resolve(finalPos);
+        console.log("asfd", $pos1);
+        if (isBetweenNodesOfTypeLists && position !== undefined) {
+          this.dropPosByDropCursorPos = finalPos - 1;
+          this.setCursor(finalPos - 1);
+          return;
+        }
+
         let target = pos.pos;
         if (this.editorView.dragging && this.editorView.dragging.slice) {
           const point = dropPoint(this.editorView.state.doc, target, this.editorView.dragging.slice);
           if (point != null) target = point;
         }
-        this.dropPosByDropCursorPos = target;
         this.setCursor(target);
         this.scheduleRemoval(5000);
       }
@@ -271,24 +294,66 @@ export const DropCursorExtension = Extension.create({
   },
 });
 
-function isBetweenFlatListsFn(event: DragEvent, editor: Editor) {
-  const elementUnderDrag = document.elementFromPoint(event.clientX, event.clientY);
+function isBetweenNodesOfType($pos: ResolvedPos, nodeTypeName: string) {
+  const { doc } = $pos;
+  const nodeType = doc.type.schema.nodes[nodeTypeName];
 
-  let pos = editor.view.posAtCoords({ left: event.clientX, top: event.clientY });
-  // Check if element or any of its ancestors has the class
-  const hasFlatListAncestor = elementUnderDrag?.closest(".prosemirror-flat-list");
-  if (hasFlatListAncestor) {
-    const sibling = hasFlatListAncestor.nextElementSibling;
-    const rect = sibling.getBoundingClientRect();
+  function isNodeType(node: ProseMirrorNode | null, type: NodeType) {
+    return node && node.type === type;
+  }
 
-    pos = editor.view.posAtCoords({
-      left: rect.left,
-      top: rect.top,
-    });
+  let isBetweenNodesOfType = false;
+  let isDirectlyBetweenNodes = false;
+  let positionToShowAndDrop: number | null = null;
+
+  const isSpecialCase = isNodeAtDepthAndItsParentIsParagraphWhoseParentIsList($pos);
+
+  const nodeBefore = $pos.nodeBefore;
+  const nodeAfter = $pos.nodeAfter;
+  const nodeBeforeIsType = isNodeType(nodeBefore, nodeType);
+  const nodeAfterIsType = isNodeType(nodeAfter, nodeType);
+
+  if (nodeBeforeIsType && nodeAfterIsType) {
+    isBetweenNodesOfType = true;
+    isDirectlyBetweenNodes = true;
+    positionToShowAndDrop = $pos.pos;
+  } else if (nodeBeforeIsType || nodeAfterIsType) {
+    isBetweenNodesOfType = true;
+    isDirectlyBetweenNodes = false;
+    positionToShowAndDrop = $pos.pos;
+  } else {
+    const nextListPos = findNextNodeOfType($pos, nodeType);
+    if (nextListPos != null) {
+      isBetweenNodesOfType = true;
+      isDirectlyBetweenNodes = false;
+      positionToShowAndDrop = nextListPos;
+    }
   }
 
   return {
-    isBetweenFlatLists: hasFlatListAncestor,
-    pos: pos.pos - 1,
+    isBetweenNodesOfType,
+    isDirectlyBetweenLists: isDirectlyBetweenNodes,
+    position: positionToShowAndDrop,
+    isSpecialCase,
   };
+}
+
+function findNextNodeOfType($pos: ResolvedPos, nodeType: NodeType): number | null {
+  for (let i = $pos.pos; i < $pos.doc.content.size; i++) {
+    const node = $pos.doc.nodeAt(i);
+    if (node && node.type === nodeType) {
+      return i;
+    }
+  }
+  return null;
+}
+
+function isNodeAtDepthAndItsParentIsParagraphWhoseParentIsList($pos: ResolvedPos): boolean {
+  const depth = $pos.depth;
+  if (depth >= 0) {
+    const parent = $pos.node(depth);
+    const grandParent = $pos.node(depth - 1);
+    return parent.type.name === "paragraph" && grandParent.type.name === "list";
+  }
+  return false;
 }
