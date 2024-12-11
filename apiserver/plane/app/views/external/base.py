@@ -14,6 +14,7 @@ from plane.app.serializers import (ProjectLiteSerializer,
                                    WorkspaceLiteSerializer)
 from plane.db.models import Project, Workspace
 from plane.license.utils.instance_value import get_configuration_value
+from plane.utils.exception_logger import log_exception
 
 from ..base import BaseAPIView
 
@@ -48,7 +49,8 @@ def get_gpt_response(task, prompt, api_key, engine):
         text = response.choices[0].message.content.strip()
         return text, None
     except Exception as e:
-        return None, str(e)
+        log_exception(e)
+        return None, "Error has occurred while generating reponse from OpenAI GPT"
 
 
 class GPTIntegrationEndpoint(BaseAPIView):
