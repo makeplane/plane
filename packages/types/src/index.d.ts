@@ -32,3 +32,4 @@ export * from "./workspace-notifications";
 export * from "./favorite";
 export * from "./file";
 export * from "./workspace-draft-issues/base";
+export * from "./command-palette";
