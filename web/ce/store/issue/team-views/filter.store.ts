@@ -1,12 +1,12 @@
+import { IProjectViewIssuesFilter, ProjectViewIssuesFilter } from "@/store/issue/project-views";
 import { IIssueRootStore } from "@/store/issue/root.store";
 
-export type ITeamViewIssuesFilter = object;
+// @ts-nocheck - This class will never be used, extending similar class to avoid type errors
+export type ITeamViewIssuesFilter = IProjectViewIssuesFilter;
 
-export class TeamViewIssuesFilter {
-  // root store
-  rootIssueStore: IIssueRootStore;
-
+// @ts-nocheck - This class will never be used, extending similar class to avoid type errors
+export class TeamViewIssuesFilter extends ProjectViewIssuesFilter implements IProjectViewIssuesFilter {
   constructor(_rootStore: IIssueRootStore) {
-    this.rootIssueStore = _rootStore;
+    super(_rootStore);
   }
 }
