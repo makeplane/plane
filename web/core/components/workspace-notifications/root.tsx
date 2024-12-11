@@ -11,7 +11,6 @@ import {
   NotificationEmptyState,
   NotificationSidebarHeader,
   AppliedFilters,
-  NotificationCardListRoot,
 } from "@/components/workspace-notifications";
 // constants
 import { NOTIFICATION_TABS, TNotificationTab } from "@/constants/notification";
@@ -21,7 +20,9 @@ import { getNumberCount } from "@/helpers/string.helper";
 // hooks
 import { useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
 
-export const NotificationsSidebar: FC = observer(() => {
+import { NotificationCardListRoot } from "@/plane-web/components/workspace-notifications";
+
+export const NotificationsSidebarRoot: FC = observer(() => {
   const { workspaceSlug } = useParams();
   // hooks
   const { getWorkspaceBySlug } = useWorkspace();
@@ -65,7 +66,7 @@ export const NotificationsSidebar: FC = observer(() => {
             <div
               key={tab.value}
               className="h-full px-3 relative cursor-pointer"
-              onClick={()=>handleTabClick(tab.value)}
+              onClick={() => handleTabClick(tab.value)}
             >
               <div
                 className={cn(

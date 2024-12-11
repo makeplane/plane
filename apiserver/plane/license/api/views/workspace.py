@@ -43,19 +43,19 @@ class InstanceWorkSpaceEndpoint(BaseAPIView):
             .annotate(count=Func(F("id"), function="Count"))
             .values("count")
         )
-        
+
         member_count = (
             WorkspaceMember.objects.filter(
                 workspace=OuterRef("id"), member__is_bot=False, is_active=True
-            ).select_related("owner")
+            )
+            .select_related("owner")
             .order_by()
             .annotate(count=Func(F("id"), function="Count"))
             .values("count")
         )
 
         workspaces = Workspace.objects.annotate(
-            total_projects=project_count,
-            total_members=member_count,
+            total_projects=project_count, total_members=member_count
         )
 
         # Add search functionality
@@ -66,16 +66,14 @@ class InstanceWorkSpaceEndpoint(BaseAPIView):
         return self.paginate(
             request=request,
             queryset=workspaces,
-            on_results=lambda results: WorkspaceSerializer(
-                results, many=True,
-            ).data,
+            on_results=lambda results: WorkspaceSerializer(results, many=True).data,
             max_per_page=10,
             default_per_page=10,
         )
 
     def post(self, request):
         try:
-            serializer = WorkspaceSerializer	(data=request.data)
+            serializer = WorkspaceSerializer(data=request.data)
 
             slug = request.data.get("slug", False)
             name = request.data.get("name", False)

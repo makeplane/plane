@@ -57,6 +57,7 @@ export interface IInstanceConfig {
   // intercom
   is_intercom_enabled: boolean;
   intercom_app_id: string | undefined;
+  instance_changelog_url?: string;
 }
 
 export interface IInstanceAdmin {

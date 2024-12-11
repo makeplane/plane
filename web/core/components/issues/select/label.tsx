@@ -5,7 +5,7 @@ import { usePopper } from "react-popper";
 import { Check, Component, Plus, Search, Tag } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane helpers
-import { useOutsideClickDetector } from "@plane/helpers";
+import { useOutsideClickDetector } from "@plane/hooks";
 // components
 import { IssueLabelsList } from "@/components/ui";
 // helpers
