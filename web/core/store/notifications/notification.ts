@@ -169,8 +169,6 @@ export class Notification implements INotification {
     workspaceSlug: string,
     payload: Partial<TNotification>
   ): Promise<TNotification | undefined> => {
-    if (!this.id) return undefined;
-
     try {
       const notification = await workspaceNotificationService.updateNotificationById(workspaceSlug, this.id, payload);
       if (notification) {
@@ -188,8 +186,6 @@ export class Notification implements INotification {
    * @returns { TNotification | undefined }
    */
   markNotificationAsRead = async (workspaceSlug: string): Promise<TNotification | undefined> => {
-    if (!this.id) return undefined;
-
     const currentNotificationReadAt = this.read_at;
     try {
       const payload: Partial<TNotification> = {
@@ -215,8 +211,6 @@ export class Notification implements INotification {
    * @returns { TNotification | undefined }
    */
   markNotificationAsUnRead = async (workspaceSlug: string): Promise<TNotification | undefined> => {
-    if (!this.id) return undefined;
-
     const currentNotificationReadAt = this.read_at;
     try {
       const payload: Partial<TNotification> = {
@@ -242,8 +236,6 @@ export class Notification implements INotification {
    * @returns { TNotification | undefined }
    */
   archiveNotification = async (workspaceSlug: string): Promise<TNotification | undefined> => {
-    if (!this.id) return undefined;
-
     const currentNotificationArchivedAt = this.archived_at;
     try {
       const payload: Partial<TNotification> = {
@@ -267,8 +259,6 @@ export class Notification implements INotification {
    * @returns { TNotification | undefined }
    */
   unArchiveNotification = async (workspaceSlug: string): Promise<TNotification | undefined> => {
-    if (!this.id) return undefined;
-
     const currentNotificationArchivedAt = this.archived_at;
     try {
       const payload: Partial<TNotification> = {
@@ -293,8 +283,6 @@ export class Notification implements INotification {
    * @returns { TNotification | undefined }
    */
   snoozeNotification = async (workspaceSlug: string, snoozeTill: Date): Promise<TNotification | undefined> => {
-    if (!this.id) return undefined;
-
     const currentNotificationSnoozeTill = this.snoozed_till;
     try {
       const payload: Partial<TNotification> = {
@@ -315,8 +303,6 @@ export class Notification implements INotification {
    * @returns { TNotification | undefined }
    */
   unSnoozeNotification = async (workspaceSlug: string): Promise<TNotification | undefined> => {
-    if (!this.id) return undefined;
-
     const currentNotificationSnoozeTill = this.snoozed_till;
     try {
       const payload: Partial<TNotification> = {
