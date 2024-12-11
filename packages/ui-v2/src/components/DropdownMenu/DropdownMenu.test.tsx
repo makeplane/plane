@@ -1,6 +1,5 @@
 import { it, expect, describe } from "vitest";
 import { render, screen } from "@testing-library/react";
-import "@testing-library/jest-dom";
 import React from "react";
 import { DropdownButton } from "./components/DropdownButton";
 import { DropdownMenu } from "./DropdownMenu";

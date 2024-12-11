@@ -14,6 +14,7 @@ const fruits = [
     emoji: "🍎",
     description:
       "A sweet and crisp fruit, often red or green, great for snacking and baking.",
+    // disabled: true,
   },
   {
     id: 2,
@@ -28,6 +29,7 @@ const fruits = [
     emoji: "🍒",
     description:
       "Small, round, and juicy fruits with a sweet or tart flavor, often used in desserts.",
+    // disabled: true,
   },
   {
     id: 4,
@@ -82,6 +84,21 @@ const fruits = [
     id: 11,
     name: "Mango",
     emoji: "🥭",
+  },
+  {
+    id: 12,
+    name: "Gooseberry",
+    emoji: "🍇",
+  },
+  {
+    id: 13,
+    name: "Grapefruit",
+    emoji: "🍊",
+  },
+  {
+    id: 14,
+    name: "Guava",
+    emoji: "🍈",
   },
 ];
 
@@ -197,6 +214,9 @@ export const DefaultDropdown = () => {
           <DropdownItem onSelect={(e) => console.log(e)}>
             Click me again
           </DropdownItem>
+          <DropdownItem onSelect={(e) => e.preventDefault()}>
+            Click me, I won't close
+          </DropdownItem>
         </div>
       </DropdownContent>
     </DropdownMenu>
@@ -206,22 +226,74 @@ export const DefaultDropdown = () => {
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
 export const MultiSelect = () => {
   const [value, setValue] = useState([fruits[6]]);
+  const [items, setItems] = useState([
+    ...fruitsAndVegetables.fruits,
+    ...fruitsAndVegetables.vegetables,
+  ]);
+
+  const handleSearch = async (query: String) => {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    // Filters items on the name
+    const filteredItems = fruitsAndVegetables.fruits.filter((item) =>
+      item.name.toLowerCase().includes(query.toLowerCase())
+    );
+    setItems(filteredItems);
+  };
+
   return (
     <DropdownMenu
-      items={fruitsAndVegetables.fruits}
+      items={items}
       onSelect={(e, value) => {
         e.preventDefault();
         console.log(e, value);
       }}
       renderItem={(item) => <Fruit fruit={item} />}
       defaultOpen={true}
+      onSearch={handleSearch}
+      // isItemDisabled={(item) => item.id % 2 === 0}
     >
       <DropdownButton showIcon>
         <div className="flex items-center gap-2 justify-between">
           <Fruit fruit={fruits[1]} />({value.length})
         </div>
       </DropdownButton>
+
+      {items.length === 0 && (
+        <DropdownContent>
+          <div>No items found</div>
+        </DropdownContent>
+      )}
     </DropdownMenu>
+  );
+};
+
+export const NestedDropdown = () => {
+  const items = [
+    {
+      name: "Vegetables",
+      children: fruitsAndVegetables.vegetables,
+      emoji: "🥦",
+    },
+    {
+      name: "Fruits",
+      children: fruitsAndVegetables.fruits,
+      emoji: "🍎",
+    },
+  ];
+  return (
+    <div>
+      <DropdownMenu
+        defaultOpen={true}
+        items={items}
+        renderItem={(item) => <Fruit fruit={item} />}
+      >
+        <DropdownButton>
+          <button className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+            Select
+          </button>
+        </DropdownButton>
+      </DropdownMenu>
+    </div>
   );
 };
 const Fruit = ({ fruit }) => {

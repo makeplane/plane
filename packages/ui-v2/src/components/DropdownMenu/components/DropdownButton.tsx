@@ -1,6 +1,6 @@
 import * as RadixDropdownMenu from "@radix-ui/react-dropdown-menu";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
-import React, { createContext, useState, useEffect, useContext } from "react";
+import React, { useContext } from "react";
 import { DropdownMenuContext } from "../DropdownMenu";
 
 type DropdownButtonProps = {
@@ -22,10 +22,10 @@ export const DropdownButton = ({
       asChild
       //   onClick={() => setOpen(true)}
     >
-      <button>
+      <div>
         {children}
         {showIcon && <ChevronDownIcon data-testid="dropdown-arrow" />}
-      </button>
+      </div>
     </RadixDropdownMenu.Trigger>
   );
 };

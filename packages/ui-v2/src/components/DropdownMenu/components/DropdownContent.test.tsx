@@ -1,4 +1,3 @@
-import { it, expect, describe } from "vitest";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import React from "react";
@@ -11,12 +10,16 @@ if (!portalRoot) {
   portalRoot = document.createElement("div");
   portalRoot.setAttribute("id", "portal");
   document.body.appendChild(portalRoot);
+  console.log("Added");
 }
 
+const Item = ({ item }: { item: any }) => {
+  return <div>{item.label}</div>;
+};
 describe("DropdownContent", () => {
   it("should render the dropdown content", () => {
     render(
-      <DropdownMenu open>
+      <DropdownMenu defaultOpen>
         <DropdownButton>Click me</DropdownButton>
         <DropdownContent
           container={document.getElementById("portal") || undefined}
@@ -25,7 +28,25 @@ describe("DropdownContent", () => {
         </DropdownContent>
       </DropdownMenu>
     );
+    expect(screen.getByRole("menu")).toHaveTextContent("Content");
+  });
+
+  it("should render dropdown items", () => {
+    const items = [
+      { label: "Item 1", value: "item-1" },
+      { label: "Item 2", value: "item-2" },
+    ];
+    render(
+      <DropdownMenu
+        defaultOpen
+        items={items}
+        renderItem={(item) => <Item item={item} />}
+      >
+        <DropdownButton>Click me</DropdownButton>
+        <DropdownContent></DropdownContent>
+      </DropdownMenu>
+    );
+
     console.log(screen.debug());
-    // expect(screen.getByText("Content")).toHaveTextContent("Content");
   });
 });

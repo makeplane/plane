@@ -27,6 +27,13 @@ module.exports = {
             emphasis: "var(--grey-300)",
           },
         },
+        bg: {
+          neutral: {
+            subtle: "var(--grey-100)",
+            DEFAULT: "var(--grey-200)",
+            emphasis: "var(--grey-300)",
+          },
+        },
       },
     },
   },
