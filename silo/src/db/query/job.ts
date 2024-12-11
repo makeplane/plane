@@ -86,6 +86,8 @@ export const updateJob = async (id: string, jobData: any) =>
   await db.update(schema.jobs).set(jobData).where(eq(schema.jobs.id, id));
 
 export const deleteJob = async (id: string) => await db.delete(schema.jobs).where(eq(schema.jobs.id, id));
+export const cancelJob = async (id: string) =>
+  await db.update(schema.jobs).set({ is_cancelled: true, status: "CANCELLED" }).where(eq(schema.jobs.id, id));
 
 /* --------------------- Create Job Config --------------------- */
 // Creates the job config based on the data that defined

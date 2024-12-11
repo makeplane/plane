@@ -119,4 +119,19 @@ export class JobService<TSyncJobConfig extends object> {
         throw error?.response?.data;
       });
   }
+
+  /**
+   * @description Cancels a job.
+   * @param jobId - Unique identifier of the job to start
+   * @param migrationType - Type of migration
+   * @returns Promise resolving to an array of Job objects
+   */
+  async cancel(jobId: string, migrationType: TImporterKeys): Promise<TJobWithConfig<TSyncJobConfig>[]> {
+    return this.axiosInstance
+      .post(`/api/jobs/cancel`, { jobId, migrationType })
+      .then((res) => res.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }

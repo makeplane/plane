@@ -20,6 +20,7 @@ const STATUS_CLASSNAMES: { [key in TJobStatus]: string } = {
   [E_JOB_STATUS.PUSHING]: "text-green-500 border border-green-500 bg-green-500/10",
   [E_JOB_STATUS.FINISHED]: "text-green-500 border border-green-500 bg-green-500/10",
   [E_JOB_STATUS.ERROR]: "text-red-500 border border-red-500 bg-red-500/10",
+  [E_JOB_STATUS.CANCELLED]: "text-red-500 border border-red-500 bg-red-500/10",
 };
 
 export const SyncJobStatus: FC<TSyncJobStatusProps> = observer((props) => {

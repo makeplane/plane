@@ -52,6 +52,7 @@ export type TIntegrationKeys = keyof typeof E_INTEGRATION_KEYS;
 export enum E_JOB_STATUS {
   CREATED = "CREATED",
   INITIATED = "INITIATED",
+  CANCELLED = "CANCELLED",
   PULLING = "PULLING",
   PULLED = "PULLED",
   TRANSFORMING = "TRANSFORMING",
@@ -75,6 +76,7 @@ export type TJob = {
   source_user_email: string;
   source_hostname: string;
   source_task_count: number;
+  is_cancelled: boolean;
   start_time?: Date;
   end_time?: Date;
   status: TJobStatus;

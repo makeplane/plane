@@ -8,6 +8,7 @@
 
 import { Controller, Delete, Get, Post, Put } from "@/lib";
 import {
+  cancelJob,
   createJob,
   createJobConfig,
   deleteJob,
@@ -127,6 +128,40 @@ export class JobController {
     }
   }
 
+  @Post("/cancel")
+  async cancelJob(req: Request, res: Response) {
+    try {
+      const body = req.body;
+      if (!body || !body.jobId || body.jobId == "" || body.jobId == null) {
+        res.status(400).json({
+          message: "Invalid request, expecting (jobId) to be passed",
+        });
+        return;
+      }
+
+      // Get the job from the given job id
+      const jobs = await getJobById(body.jobId);
+      if (jobs.length == 0) {
+        res.status(404).json({
+          message: `No job with id ${body.jobId} is available to cancel`,
+        });
+        return;
+      }
+
+      const job = jobs[0];
+
+      if ((job.status && job.status === "FINISHED") || job.status === "ERROR") {
+        res.status(400).json({ message: "Job already finished or errored out, can't cancel" });
+        return;
+      }
+
+      await cancelJob(body.jobId);
+      res.status(200).json({ message: "Job cancelled successfully" });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
   @Post("/run")
   async runJob(req: Request, res: Response) {
     try {
@@ -157,7 +192,13 @@ export class JobController {
       const job = jobs[0];
       // If the job is not finished or error, just send 400 OK, and don't do
       // anything
-      if (job.status && job.status != "CREATED" && job.status != "FINISHED" && job.status != "ERROR") {
+      if (
+        job.status &&
+        job.status != "CREATED" &&
+        job.status != "FINISHED" &&
+        job.status != "ERROR" &&
+        job.status != "CANCELLED"
+      ) {
         res.status(400).json({ message: "Job already in progress, can't instantiate again" });
         return;
       }
@@ -168,6 +209,15 @@ export class JobController {
         });
         return;
       }
+
+      await updateJob(job.id, {
+        status: "CREATED",
+        is_cancelled: false,
+        total_batch_count: 0,
+        transformed_batch_count: 0,
+        completed_batch_count: 0,
+        error: "",
+      });
 
       await taskManager.registerTask(
         {

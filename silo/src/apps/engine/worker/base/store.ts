@@ -41,15 +41,23 @@ export class Store extends EventEmitter {
     return await this.client.get(key);
   }
 
-  public async set(key: string, value: string, ttl?: number): Promise<string | null> {
+  public async set(key: string, value: string, ttl?: number): Promise<boolean> {
     this.jobs.push(key);
 
     if (ttl !== undefined) {
-      return await this.client.set(key, value, {
+      const acquired = await this.client.set(key, value, {
+        NX: true,
         EX: ttl,
       });
+      if (!acquired) return false;
+      return true;
     } else {
-      return await this.client.set(key, value);
+      const acquired = await this.client.set(key, value, {
+        NX: true,
+      });
+
+      if (!acquired) return false;
+      return true;
     }
   }
 

@@ -25,6 +25,7 @@ export interface IImporterJobStore<T> {
   getJobById: (id: string) => Promise<TJobWithConfig<T> | undefined>;
   createJob: (projectId: string, jobPayload: Partial<TJob>) => Promise<TJobConfigResponse | undefined>;
   startJob: (jobId: string) => Promise<void>;
+  cancelJob: (jobId: string) => Promise<void>;
   createJobConfig: (configPayload: object) => Promise<TJobConfigResponse | undefined>;
 }
 
@@ -195,6 +196,28 @@ export class ImporterJobStore<T extends object> implements IImporterJobStore<T> 
 
       this.loader = "start";
       await this.service.start(jobId, this.source);
+      await this.fetchJobs();
+      this.loader = undefined;
+    } catch (error) {
+      runInAction(() => {
+        this.error = error as unknown as object;
+        this.loader = undefined;
+        throw error;
+      });
+    }
+  };
+
+  /**
+   * @description Cancels a job
+   * @param { string } jobId
+   * @returns { Promise<void> }
+   */
+  cancelJob = async (jobId: string): Promise<void> => {
+    try {
+      if (!this.workspaceId || !this.externalApiToken || !this.service) return undefined;
+
+      this.loader = "start";
+      await this.service.cancel(jobId, this.source);
       await this.fetchJobs();
       this.loader = undefined;
     } catch (error) {

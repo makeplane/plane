@@ -1,5 +1,6 @@
 import { text, varchar, uuid, timestamp, json, integer, index } from "drizzle-orm/pg-core";
 import { schema } from "./schema";
+import { boolean } from "drizzle-orm/pg-core";
 
 export const jobConfigs = schema.table("job_configs", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -27,8 +28,9 @@ export const jobs = schema.table(
     start_time: timestamp("start_time"),
     end_time: timestamp("end_time"),
     status: varchar("status", {
-      enum: ["CREATED", "INITIATED", "PULLING", "TRANSFORMING", "PUSHING", "FINISHED", "ERROR"],
+      enum: ["CREATED", "INITIATED", "PULLING", "TRANSFORMING", "PUSHING", "FINISHED", "ERROR", "CANCELLED"],
     }).default("CREATED"),
+    is_cancelled: boolean("is_cancelled").default(false),
     // trackers
     created_at: timestamp("created_at").defaultNow(),
     updated_at: timestamp("updated_at").defaultNow(),

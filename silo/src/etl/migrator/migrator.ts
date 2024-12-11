@@ -111,7 +111,6 @@ export async function migrateToPlane(job: TJobWithConfig, data: PlaneEntities[],
     );
     planeLabels = response.results;
     planeUsers = await protect(planeClient.users.list.bind(planeClient.users), job.workspace_slug, job.project_id);
-    console.log(planeUsers);
     shouldContinue = false;
   } catch (error) {
     logger.error(

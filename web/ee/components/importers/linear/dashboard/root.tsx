@@ -4,7 +4,7 @@ import { FC, Fragment, useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import useSWR from "swr";
-import { Briefcase, Loader, RefreshCcw } from "lucide-react";
+import { Briefcase, CircleX, Loader, RefreshCcw } from "lucide-react";
 import { TLogoProps } from "@plane/types";
 import { Button, ModalCore } from "@plane/ui";
 import { E_JOB_STATUS, TJobWithConfig } from "@silo/core";
@@ -25,12 +25,14 @@ export const Dashboard: FC = observer(() => {
   const {
     auth: { currentAuth, deactivateAuth, apiTokenVerification },
     handleDashboardView,
-    job: { loader, jobIds, jobById, startJob, fetchJobs },
+    job: { loader, jobIds, jobById, startJob, cancelJob, fetchJobs },
   } = useLinearImporter();
   // states
   const [deactivateLoader, setDeactivateLoader] = useState<boolean>(false);
   const [reRunJobId, setReRunJobId] = useState<string | undefined>(undefined);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [cancelJobId, setCancelJobId] = useState<string | undefined>(undefined);
+  const [isRerunModalOpen, setIsRerunModalOpen] = useState<boolean>(false);
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState<boolean>(false);
   const [modalLoader, setModalLoader] = useState<boolean>(false);
 
   // fetching jobs
@@ -44,18 +46,35 @@ export const Dashboard: FC = observer(() => {
   const isReRunDisabled = (job: TJobWithConfig<LinearConfig>) => {
     if (!job || !job?.status) return true;
 
-    return ![E_JOB_STATUS.CREATED, E_JOB_STATUS.FINISHED, E_JOB_STATUS.ERROR].includes(job?.status as E_JOB_STATUS);
+    return ![E_JOB_STATUS.CREATED, E_JOB_STATUS.FINISHED, E_JOB_STATUS.ERROR, E_JOB_STATUS.CANCELLED].includes(
+      job?.status as E_JOB_STATUS
+    );
   };
 
   // handlers
-  const handleOpen = (jobId: string) => {
+  const isCancelDisabled = (job: TJobWithConfig<LinearConfig>) => {
+    if (!job || !job?.status) return true;
+
+    // If the job is in created or finished or error state, then disable the cancel button
+    return [E_JOB_STATUS.FINISHED, E_JOB_STATUS.ERROR, E_JOB_STATUS.CANCELLED].includes(job?.status as E_JOB_STATUS);
+  };
+
+  // handlers
+  const handleRerunOpen = (jobId: string) => {
     setReRunJobId(jobId);
-    setIsModalOpen(true);
+    setIsRerunModalOpen(true);
+  };
+
+  const handleCancelOpen = (jobId: string) => {
+    setCancelJobId(jobId);
+    setIsCancelModalOpen(true);
   };
 
   const handleClose = () => {
     setReRunJobId(undefined);
-    setIsModalOpen(false);
+    setCancelJobId(undefined);
+    setIsRerunModalOpen(false);
+    setIsCancelModalOpen(false);
   };
 
   const handleReRunJob = async () => {
@@ -73,6 +92,21 @@ export const Dashboard: FC = observer(() => {
     }
   };
 
+  const handleCancelJob = async () => {
+    try {
+      if (currentAuth?.isAuthenticated && cancelJobId) {
+        setModalLoader(true);
+        await cancelJob(cancelJobId);
+        await handleJobsRefresh();
+        handleClose();
+      }
+    } catch (error) {
+      console.error("Error while cancelling Jira job", error);
+    } finally {
+      setModalLoader(false);
+    }
+  };
+
   const handleJobsRefresh = async () => {
     try {
       if (currentAuth?.isAuthenticated) {
@@ -80,7 +114,7 @@ export const Dashboard: FC = observer(() => {
         await fetchJobs("re-fetch");
       }
     } catch (error) {
-      console.error("Error while refreshing Linear jobs", error);
+      console.error("Error while refreshing Jira jobs", error);
     }
   };
 
@@ -100,7 +134,7 @@ export const Dashboard: FC = observer(() => {
   return (
     <Fragment>
       {/* rerun job confirm modal */}
-      <ModalCore isOpen={isModalOpen} handleClose={handleClose}>
+      <ModalCore isOpen={isRerunModalOpen} handleClose={handleClose}>
         <div className="space-y-5 p-5">
           <div className="space-y-2">
             <div className="text-xl font-medium text-custom-text-200">Re Run Import Job</div>
@@ -114,6 +148,25 @@ export const Dashboard: FC = observer(() => {
             </Button>
             <Button variant="primary" size="sm" onClick={handleReRunJob} loading={modalLoader} disabled={modalLoader}>
               {modalLoader ? "Processing" : "Continue"}
+            </Button>
+          </div>
+        </div>
+      </ModalCore>
+
+      <ModalCore isOpen={isCancelModalOpen} handleClose={handleClose}>
+        <div className="space-y-5 p-5">
+          <div className="space-y-2">
+            <div className="text-xl font-medium text-custom-text-200">Cancel Import Job</div>
+            <div className="text-sm text-custom-text-300">
+              Are you sure you want to cancel this job? This will stop the import process for this project.
+            </div>
+          </div>
+          <div className="relative flex justify-end items-center gap-2">
+            <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+              Cancel
+            </Button>
+            <Button variant="primary" size="sm" onClick={handleCancelJob} loading={modalLoader} disabled={modalLoader}>
+              {modalLoader ? "Cancelling" : "Continue"}
             </Button>
           </div>
         </div>
@@ -174,7 +227,11 @@ export const Dashboard: FC = observer(() => {
                   <td className="p-3 whitespace-nowrap">Linear Workspace</td>
                   <td className="p-3 whitespace-nowrap">Linear Project</td>
                   <td className="p-3 whitespace-nowrap text-center">Status</td>
+                  <td className="p-3 whitespace-nowrap text-center">Total Batches</td>
+                  <td className="p-3 whitespace-nowrap text-center">Transformed Batches</td>
+                  <td className="p-3 whitespace-nowrap text-center">Completed Batches</td>
                   <td className="p-3 whitespace-nowrap text-center">Re Run</td>
+                  <td className="p-3 whitespace-nowrap text-center">Cancel</td>
                   <td className="p-3 whitespace-nowrap text-center">Start Time</td>
                 </tr>
               </thead>
@@ -209,15 +266,29 @@ export const Dashboard: FC = observer(() => {
                         <td className="p-3 whitespace-nowrap text-center">
                           <SyncJobStatus status={job?.status} />
                         </td>
+                        <td className="p-3 whitespace-nowrap text-center">{job.total_batch_count}</td>
+                        <td className="p-3 whitespace-nowrap text-center">{job.transformed_batch_count}</td>
+                        <td className="p-3 whitespace-nowrap text-center">{job.completed_batch_count}</td>
                         <td className="p-3 whitespace-nowrap relative flex justify-center items-center">
                           <Button
                             variant="link-primary"
                             size="sm"
                             prependIcon={<RefreshCcw className="w-3 h-3" />}
-                            onClick={() => handleOpen(job.id)}
+                            onClick={() => handleRerunOpen(job.id)}
                             disabled={isReRunDisabled(job)}
                           >
                             Re Run
+                          </Button>
+                        </td>
+                        <td className="p-3 whitespace-nowrap relative flex justify-center items-center">
+                          <Button
+                            variant="danger"
+                            size="sm"
+                            prependIcon={<CircleX className="w-3 h-3" />}
+                            onClick={() => handleCancelOpen(job.id)}
+                            disabled={isCancelDisabled(job)}
+                          >
+                            Cancel
                           </Button>
                         </td>
                         <td className="p-3 whitespace-nowrap text-center">
