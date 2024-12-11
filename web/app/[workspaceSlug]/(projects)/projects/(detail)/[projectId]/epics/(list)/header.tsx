@@ -103,6 +103,7 @@ export const EpicsHeader = observer(() => {
               projectId={projectId?.toString()}
               currentProjectDetails={currentProjectDetails}
               workspaceSlug={workspaceSlug?.toString()}
+              canUserCreateIssue={canUserCreateIssue}
             />
           </div>
           {canUserCreateIssue && (
