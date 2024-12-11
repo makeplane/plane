@@ -15,23 +15,23 @@ import { INotification } from "@/store/notifications/notification";
 
 type TNotificationItemReadOption = {
   workspaceSlug: string;
-  notificationGroup: INotification[];
+  notificationList: INotification[];
   issueId: string;
-  unreadCount: number
+  unreadCount: number;
 };
 
 export const NotificationItemReadOption: FC<TNotificationItemReadOption> = observer((props) => {
-  const { workspaceSlug, notificationGroup, issueId, unreadCount } = props;
+  const { workspaceSlug, notificationList, issueId, unreadCount } = props;
   // hooks
   const { captureEvent } = useEventTracker();
   const { currentNotificationTab } = useWorkspaceNotifications();
 
-  const { markNotificationGroupRead, markNotificationGroupUnRead } = useWorkspaceNotifications();
+  const { markBulkNotificationsAsRead, markBulkNotificationsAsUnread } = useWorkspaceNotifications();
 
   const handleNotificationUpdate = async () => {
     try {
-      const request = unreadCount === 0 ?  markNotificationGroupUnRead : markNotificationGroupRead;
-      await request(notificationGroup,workspaceSlug);
+      const request = unreadCount === 0 ? markBulkNotificationsAsUnread : markBulkNotificationsAsRead;
+      await request(notificationList, workspaceSlug);
       captureEvent(NOTIFICATIONS_READ, {
         issue_id: issueId,
         tab: currentNotificationTab,

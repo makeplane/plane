@@ -1,23 +1,23 @@
 import { WorkspaceNotificationService } from "@/services/workspace-notification.service";
 
 export class InboxService extends WorkspaceNotificationService {
-  async markNotificationGroupRead(workspaceSlug: string, payload: { notification_ids: string[] }) {
+  async markBulkNotificationsAsRead(workspaceSlug: string, payload: { notification_ids: string[] }) {
     await this.post(`/api/workspaces/${workspaceSlug}/inbox/read/`, payload);
   }
 
-  async markNotificationGroupUnRead(workspaceSlug: string, payload: { notification_ids: string[] }) {
+  async markBulkNotificationsAsUnread(workspaceSlug: string, payload: { notification_ids: string[] }) {
     await this.delete(`/api/workspaces/${workspaceSlug}/inbox/read/`, payload);
   }
 
-  async archiveNotificationGroup(workspaceSlug: string, payload: { notification_ids: string[] }) {
+  async archiveNotificationList(workspaceSlug: string, payload: { notification_ids: string[] }) {
     await this.post(`/api/workspaces/${workspaceSlug}/inbox/archive/`, payload);
   }
 
-  async unArchiveNotificationGroup(workspaceSlug: string, payload: { notification_ids: string[] }) {
+  async unArchiveNotificationList(workspaceSlug: string, payload: { notification_ids: string[] }) {
     await this.delete(`/api/workspaces/${workspaceSlug}/inbox/archive/`, payload);
   }
 
-  async updateNotficationGroup(
+  async updateNotficationList(
     workspaceSlug: string,
     payload: { notification_ids: string[]; snoozed_till: string | undefined }
   ) {

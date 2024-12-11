@@ -30,28 +30,29 @@ type TIssueActivityBlock = {
   triggeredBy: IUserLite | undefined;
 };
 
+export const acitvityIconsMap: Record<string, ReactElement> = {
+  state: <LayersIcon width={14} height={14} className="text-custom-text-200" aria-hidden="true" />,
+  name: <MessageSquare size={14} className="text-custom-text-200" aria-hidden="true" />,
+  description: <MessageSquare size={14} className="text-custom-text-200" aria-hidden="true" />,
+  assignees: <Users className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-200" />,
+  priority: <Signal size={14} className="text-custom-text-200" aria-hidden="true" />,
+  estimate_point: <Triangle size={14} className="text-custom-text-200" aria-hidden="true" />,
+  parent: <LayoutPanelTop size={14} className="text-custom-text-200" aria-hidden="true" />,
+  start_date: <CalendarDays size={14} className="text-custom-text-200" aria-hidden="true" />,
+  target_date: <CalendarDays size={14} className="text-custom-text-200" aria-hidden="true" />,
+  cycles: <ContrastIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
+  modules: <DiceIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
+  labels: <Tag size={14} className="text-custom-text-200" aria-hidden="true" />,
+  link: <MessageSquare size={14} className="text-custom-text-200" aria-hidden="true" />,
+  attachment: <Paperclip size={14} className="text-custom-text-200" aria-hidden="true" />,
+  archived_at: <ArchiveIcon className="h-3.5 w-3.5 text-custom-text-200" aria-hidden="true" />,
+  inbox: <Intake className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
+  type: <ArrowRightLeft className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-200" />,
+};
+
 export const IssueActivityBlock: FC<TIssueActivityBlock> = (props) => {
   const { ends, children, createdAt, notificationField, triggeredBy } = props;
 
-  const acitvityIconsMap: Record<string, ReactElement> = {
-    state: <LayersIcon width={14} height={14} className="text-custom-text-200" aria-hidden="true" />,
-    name: <MessageSquare size={14} className="text-custom-text-200" aria-hidden="true" />,
-    description: <MessageSquare size={14} className="text-custom-text-200" aria-hidden="true" />,
-    assignees: <Users className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-200" />,
-    priority: <Signal size={14} className="text-custom-text-200" aria-hidden="true" />,
-    estimate_point: <Triangle size={14} className="text-custom-text-200" aria-hidden="true" />,
-    parent: <LayoutPanelTop size={14} className="text-custom-text-200" aria-hidden="true" />,
-    start_date: <CalendarDays size={14} className="text-custom-text-200" aria-hidden="true" />,
-    target_date: <CalendarDays size={14} className="text-custom-text-200" aria-hidden="true" />,
-    cycles: <ContrastIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
-    modules: <DiceIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
-    labels: <Tag size={14} className="text-custom-text-200" aria-hidden="true" />,
-    link: <MessageSquare size={14} className="text-custom-text-200" aria-hidden="true" />,
-    attachment: <Paperclip size={14} className="text-custom-text-200" aria-hidden="true" />,
-    archived_at: <ArchiveIcon className="h-3.5 w-3.5 text-custom-text-200" aria-hidden="true" />,
-    inbox: <Intake className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
-    type: <ArrowRightLeft className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-200" />,
-  };
   const { isMobile } = usePlatformOS();
   return (
     <div

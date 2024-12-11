@@ -6,7 +6,6 @@ import { observer } from "mobx-react";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useNotification } from "@/hooks/store";
 import {
   NotificationItemReadOption,
   NotificationItemArchiveOption,
@@ -16,7 +15,7 @@ import { INotification } from "@/store/notifications/notification";
 
 type TNotificationOption = {
   workspaceSlug: string;
-  notificationGroup: INotification[];
+  notificationList: INotification[];
   issueId: string;
   unreadCount: number;
   isSnoozeStateModalOpen: boolean;
@@ -28,7 +27,7 @@ type TNotificationOption = {
 export const NotificationOption: FC<TNotificationOption> = observer((props) => {
   const {
     workspaceSlug,
-    notificationGroup,
+    notificationList,
     issueId,
     unreadCount,
     isSnoozeStateModalOpen,
@@ -43,7 +42,7 @@ export const NotificationOption: FC<TNotificationOption> = observer((props) => {
         {/* read */}
         <NotificationItemReadOption
           workspaceSlug={workspaceSlug}
-          notificationGroup={notificationGroup}
+          notificationList={notificationList}
           unreadCount={unreadCount}
           issueId={issueId}
         />
@@ -51,14 +50,14 @@ export const NotificationOption: FC<TNotificationOption> = observer((props) => {
         {/* archive */}
         <NotificationItemArchiveOption
           workspaceSlug={workspaceSlug}
-          notificationGroup={notificationGroup}
+          notificationList={notificationList}
           issueId={issueId}
         />
 
         {/* snooze notification */}
         <NotificationItemSnoozeOption
           workspaceSlug={workspaceSlug}
-          notificationGroup={notificationGroup}
+          notificationList={notificationList}
           setIsSnoozeStateModalOpen={setIsSnoozeStateModalOpen}
           customSnoozeModal={customSnoozeModal}
           setCustomSnoozeModal={setCustomSnoozeModal}

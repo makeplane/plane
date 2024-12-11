@@ -18,25 +18,24 @@ import { INotification } from "@/store/notifications/notification";
 
 type TNotificationItemSnoozeOption = {
   workspaceSlug: string;
-  notificationGroup: INotification[];
+  notificationList: INotification[];
   setIsSnoozeStateModalOpen: Dispatch<SetStateAction<boolean>>;
   customSnoozeModal: boolean;
   setCustomSnoozeModal: Dispatch<SetStateAction<boolean>>;
 };
 
 export const NotificationItemSnoozeOption: FC<TNotificationItemSnoozeOption> = observer((props) => {
-  const { workspaceSlug, notificationGroup, setIsSnoozeStateModalOpen, customSnoozeModal, setCustomSnoozeModal } =
-    props;
+  const { workspaceSlug, notificationList, setIsSnoozeStateModalOpen, customSnoozeModal, setCustomSnoozeModal } = props;
   // hooks
   const { isMobile } = usePlatformOS();
-  const { snoozeNotificationGroup, unSnoozeNotificationGroup } = useWorkspaceNotifications();
+  const { snoozeNotificationList, unSnoozeNotificationList } = useWorkspaceNotifications();
 
-  const snoozedCount = notificationGroup.filter((n) => !!n.snoozed_till).length;
+  const snoozedCount = notificationList.filter((n) => !!n.snoozed_till).length;
 
   const handleNotificationSnoozeDate = async (snoozeTill: Date | undefined) => {
     if (snoozedCount === 0 && snoozeTill) {
       try {
-        await snoozeNotificationGroup(notificationGroup, workspaceSlug, snoozeTill);
+        await snoozeNotificationList(notificationList, workspaceSlug, snoozeTill);
         setToast({
           title: "Success!",
           message: "Notification(s) snoozed successfully",
@@ -47,7 +46,7 @@ export const NotificationItemSnoozeOption: FC<TNotificationItemSnoozeOption> = o
       }
     } else {
       try {
-        await unSnoozeNotificationGroup(notificationGroup, workspaceSlug);
+        await unSnoozeNotificationList(notificationList, workspaceSlug);
         setToast({
           title: "Success!",
           message: "Notification(s) un snoozed successfully",

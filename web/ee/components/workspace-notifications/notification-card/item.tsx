@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, useMemo, useState, Fragment } from "react";
 import { uniq } from "lodash";
 import orderBy from "lodash/orderBy";
@@ -27,25 +29,29 @@ export const NotificationItem: FC<INotificationItem> = observer((props) => {
   const [isSnoozeStateModalOpen, setIsSnoozeStateModalOpen] = useState(false);
   const [customSnoozeModal, setCustomSnoozeModal] = useState(false);
   //hooks
-  const { groupedNotificationsByIssueId, markNotificationGroupRead, hasInboxIssue, setCurrentSelectedNotificationId } =
-    useWorkspaceNotifications();
+  const {
+    getNotificationsGroupedByIssue,
+    markBulkNotificationsAsRead,
+    containsInboxIssue,
+    setCurrentSelectedNotificationId,
+  } = useWorkspaceNotifications();
   const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
 
   //derived values
-  const groupedNotifications = groupedNotificationsByIssueId(workspaceId);
-  const notificationGroup = groupedNotifications[issueId];
-  const issue = notificationGroup[0].data?.issue;
-  const unreadCount = notificationGroup.filter((e) => !e.read_at).length;
-  const projectId = notificationGroup[0].project;
+  const groupedNotifications = getNotificationsGroupedByIssue(workspaceId);
+  const notificationList = groupedNotifications[issueId];
+  const issue = notificationList[0].data?.issue;
+  const unreadCount = notificationList.filter((e) => !e.read_at).length;
+  const projectId = notificationList[0].project;
 
   const authorIds: string[] = uniq(
-    notificationGroup.map((e) => e.triggered_by).filter((id): id is string => id != undefined && id != null)
+    notificationList.map((e) => e.triggered_by).filter((id): id is string => id != undefined && id != null)
   );
 
   const latestNotificationTime = useMemo(() => {
-    const latestNotification = orderBy(notificationGroup, (n) => convertToEpoch(n.created_at), "desc")[0];
+    const latestNotification = orderBy(notificationList, (n) => convertToEpoch(n.created_at), "desc")[0];
     if (latestNotification.created_at) return calculateTimeAgo(latestNotification.created_at);
-  }, [notificationGroup]);
+  }, [notificationList]);
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: "right-start",
@@ -54,18 +60,18 @@ export const NotificationItem: FC<INotificationItem> = observer((props) => {
   const handleNotificationIssuePeekOverview = async () => {
     if (workspaceSlug && projectId && issueId && !isSnoozeStateModalOpen && !customSnoozeModal) {
       setPeekIssue(undefined);
-      setCurrentSelectedNotificationId(notificationGroup[0].id);
+      setCurrentSelectedNotificationId(notificationList[0].id);
 
       // make the notification as read
       if (unreadCount > 0) {
         try {
-          await markNotificationGroupRead(notificationGroup, workspaceSlug);
+          await markBulkNotificationsAsRead(notificationList, workspaceSlug);
         } catch (error) {
           console.error(error);
         }
       }
 
-      if (!hasInboxIssue(notificationGroup)) {
+      if (!containsInboxIssue(notificationList)) {
         if (!getIsIssuePeeked(issueId)) setPeekIssue({ workspaceSlug, projectId, issueId });
       }
     }
@@ -74,7 +80,7 @@ export const NotificationItem: FC<INotificationItem> = observer((props) => {
   // states
   const [showPreview, setShowPreview] = useState<boolean>(false);
 
-  if (!notificationGroup || !issue || !issue.id || !authorIds || !projectId) return <></>;
+  if (!notificationList || !issue || !issue.id || !authorIds || !projectId) return <></>;
 
   return (
     <Popover as="div" className={""}>
@@ -107,7 +113,7 @@ export const NotificationItem: FC<INotificationItem> = observer((props) => {
               workspaceSlug={workspaceSlug}
               issueId={issueId}
               unreadCount={unreadCount}
-              notificationGroup={notificationGroup}
+              notificationList={notificationList}
               isSnoozeStateModalOpen={isSnoozeStateModalOpen}
               setIsSnoozeStateModalOpen={setIsSnoozeStateModalOpen}
               customSnoozeModal={customSnoozeModal}
@@ -147,7 +153,7 @@ export const NotificationItem: FC<INotificationItem> = observer((props) => {
         <Popover.Panel {...attributes.popper} className={""}>
           <div ref={setPopperElement} className={"absolute z-10"} style={styles.popper}>
             <NotificationCardPreview
-              notificationGroup={notificationGroup}
+              notificationList={notificationList}
               workspaceSlug={workspaceSlug}
               projectId={projectId}
               issueData={issue}

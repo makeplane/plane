@@ -15,25 +15,25 @@ import { INotification } from "@/store/notifications/notification";
 
 type TNotificationItemArchiveOption = {
   workspaceSlug: string;
-  notificationGroup: INotification[];
+  notificationList: INotification[];
   issueId: string;
 };
 
 export const NotificationItemArchiveOption: FC<TNotificationItemArchiveOption> = observer((props) => {
-  const { workspaceSlug, notificationGroup, issueId } = props;
+  const { workspaceSlug, notificationList, issueId } = props;
   // hooks
   const { captureEvent } = useEventTracker();
   const { currentNotificationTab } = useWorkspaceNotifications();
 
   //derived values
-  const archivedCount = notificationGroup.filter(n=>!!n.archived_at).length;
+  const archivedCount = notificationList.filter((n) => !!n.archived_at).length;
 
-  const { archiveNotificationGroup, unArchiveNotificationGroup } = useWorkspaceNotifications()
+  const { archiveNotificationList, unArchiveNotificationList } = useWorkspaceNotifications();
 
   const handleNotificationUpdate = async () => {
     try {
-      const request = archivedCount > 0 ? unArchiveNotificationGroup : archiveNotificationGroup;
-      await request(notificationGroup,workspaceSlug);
+      const request = archivedCount > 0 ? unArchiveNotificationList : archiveNotificationList;
+      await request(notificationList, workspaceSlug);
       captureEvent(NOTIFICATION_ARCHIVED, {
         issue_id: issueId,
         tab: currentNotificationTab,

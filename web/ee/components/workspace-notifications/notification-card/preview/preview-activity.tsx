@@ -1,3 +1,5 @@
+"use client";
+
 import { FC } from "react";
 import { TNotification } from "@plane/types";
 import { LiteTextReadOnlyEditor } from "@/components/editor";

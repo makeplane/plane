@@ -17,8 +17,9 @@ type TNotificationCardListRoot = {
 export const NotificationCardListRoot: FC<TNotificationCardListRoot> = observer((props) => {
   const { workspaceSlug, workspaceId } = props;
   // hooks
-  const { loader, paginationInfo, getNotifications, notificationIssueIdsByWorkspaceId } = useWorkspaceNotifications();
-  const notificationIssueIds = notificationIssueIdsByWorkspaceId(workspaceId);
+  const { loader, paginationInfo, getNotifications, getIssueIdsSortedByLatestNotification } =
+    useWorkspaceNotifications();
+  const notificationIssueIds = getIssueIdsSortedByLatestNotification(workspaceId);
 
   const getNextNotifications = async () => {
     try {

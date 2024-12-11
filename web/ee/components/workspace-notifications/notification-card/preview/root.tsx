@@ -1,3 +1,5 @@
+"use client";
+
 import { FC } from "react";
 import orderBy from "lodash/orderBy";
 import { TNotification, TNotificationIssueLite } from "@plane/types";
@@ -6,14 +8,14 @@ import { IssueTypeLogo } from "@/plane-web/components/issue-types";
 import { NotificationPreviewActivity } from "@/plane-web/components/workspace-notifications";
 import { useIssueType } from "@/plane-web/hooks/store";
 export type TNotificationCardPreview = {
-  notificationGroup: TNotification[];
+  notificationList: TNotification[];
   workspaceSlug: string;
   projectId: string;
   issueData: TNotificationIssueLite;
 };
 export const NotificationCardPreview: FC<TNotificationCardPreview> = (props) => {
-  const { notificationGroup, workspaceSlug, projectId, issueData } = props;
-  const unreadCount = notificationGroup.filter((e) => !e.read_at).length;
+  const { notificationList, workspaceSlug, projectId, issueData } = props;
+  const unreadCount = notificationList.filter((e) => !e.read_at).length;
 
   const issueType = useIssueType(issueData.id);
 
@@ -36,7 +38,7 @@ export const NotificationCardPreview: FC<TNotificationCardPreview> = (props) => 
         <p className="font-medium">{issueData.name}</p>
       </div>
       <div className="max-h-60 overflow-y-scroll vertical-scrollbar scrollbar-sm">
-        {orderBy(notificationGroup, (n) => convertToEpoch(n.created_at), "desc")
+        {orderBy(notificationList, (n) => convertToEpoch(n.created_at), "desc")
           .filter((n) => !!n)
           .map((notification, index, { length }) => (
             <NotificationPreviewActivity
