@@ -756,7 +756,6 @@ class IssueVersion(ProjectBaseModel):
                 type=issue.type_id,
                 cycle=cycle_issue.cycle if cycle_issue else None,
                 modules=Module.objects.filter(issue=issue).values_list("id", flat=True),
-                # activity=issue.activity_id,
                 properties={},
                 meta={},
                 last_saved_at=timezone.now(),

@@ -102,7 +102,12 @@ def sync_issue_description_version(batch_size=5000, offset=0, countdown=300):
             # Schedule next batch if needed
             if end_offset < total_issues_count:
                 sync_issue_description_version.apply_async(
-                    args=[batch_size, end_offset], countdown=countdown
+                    kwargs={
+                        "batch_size": batch_size,
+                        "offset": end_offset,
+                        "countdown": countdown,
+                    },
+                    countdown=countdown,
                 )
         return
     except Exception as e:
