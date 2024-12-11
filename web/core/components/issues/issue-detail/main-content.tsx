@@ -54,11 +54,16 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
   const issue = issueId ? getIssueById(issueId) : undefined;
 
   // debounced duplicate issues swr
-  const { duplicateIssues } = useDebouncedDuplicateIssues(projectDetails?.workspace.toString(), projectDetails?.id, {
-    name: issue?.name,
-    description_html: getTextContent(issue?.description_html),
-    issueId: issue?.id,
-  });
+  const { duplicateIssues } = useDebouncedDuplicateIssues(
+    workspaceSlug?.toString(),
+    projectDetails?.workspace.toString(),
+    projectDetails?.id,
+    {
+      name: issue?.name,
+      description_html: getTextContent(issue?.description_html),
+      issueId: issue?.id,
+    }
+  );
 
   useEffect(() => {
     if (isSubmitting === "submitted") {

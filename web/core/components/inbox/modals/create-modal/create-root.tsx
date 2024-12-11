@@ -87,10 +87,15 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
   const { getIndex } = getTabIndex(ETabIndices.INTAKE_ISSUE_FORM, isMobile);
 
   // debounced duplicate issues swr
-  const { duplicateIssues } = useDebouncedDuplicateIssues(projectDetails?.workspace.toString(), projectId, {
-    name: formData?.name,
-    description_html: formData?.description_html,
-  });
+  const { duplicateIssues } = useDebouncedDuplicateIssues(
+    workspaceSlug?.toString(),
+    projectDetails?.workspace.toString(),
+    projectId,
+    {
+      name: formData?.name,
+      description_html: formData?.description_html,
+    }
+  );
 
   const handleEscKeyDown = (event: KeyboardEvent) => {
     if (descriptionEditorRef.current?.isEditorReadyToDiscard()) {
