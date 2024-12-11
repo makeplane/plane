@@ -23,7 +23,7 @@ export interface IBaseCommandPaletteStore {
   isBulkDeleteIssueModalOpen: boolean;
   createIssueStoreType: TCreateModalStoreTypes;
   // computed
-  isAnyBaseModalOpen: boolean;
+  isAnyModalOpen: boolean;
   // toggle actions
   toggleCommandPaletteModal: (value?: boolean) => void;
   toggleShortcutModal: (value?: boolean) => void;
@@ -66,7 +66,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       createPageModal: observable,
       createIssueStoreType: observable,
       // computed
-      isAnyBaseModalOpen: computed,
+      isAnyModalOpen: computed,
       // projectPages: computed,
       // toggle actions
       toggleCommandPaletteModal: action,
@@ -86,7 +86,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
    * Checks whether any modal is open or not in the base command palette.
    * @returns boolean
    */
-  get isAnyBaseModalOpen() {
+  get isAnyModalOpen() {
     return Boolean(
       this.isCreateIssueModalOpen ||
       this.isCreateCycleModalOpen ||
