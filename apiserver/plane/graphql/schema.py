@@ -90,6 +90,7 @@ from .mutations.device import DeviceInformationMutation
 from .mutations.asset import UserAssetMutation, ProjectAssetMutation
 
 
+
 # combined query class for all
 @strawberry.type
 class Query(
