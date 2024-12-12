@@ -134,8 +134,32 @@ class Command(BaseCommand):
             {
                 "key": "OPENAI_API_KEY",
                 "value": os.environ.get("OPENAI_API_KEY"),
-                "category": "OPENAI",
+                "category": "AI",
                 "is_encrypted": True,
+            },
+            {
+                "key": "ANTHROPIC_API_KEY",
+                "value": os.environ.get("ANTHROPIC_API_KEY"),
+                "category": "AI",
+                "is_encrypted": True,
+            },
+            {
+                "key": "GEMINI_API_KEY",
+                "value": os.environ.get("GEMINI_API_KEY"),
+                "category": "AI",
+                "is_encrypted": True,
+            },
+            {
+                "key": "LLM_PROVIDER",
+                "value": os.environ.get("LLM_PROVIDER", "openai"),
+                "category": "AI",
+                "is_encrypted": False,
+            },
+            {
+                "key": "LLM_MODEL",
+                "value": os.environ.get("LLM_MODEL", "gpt-4o-mini"),
+                "category": "AI",
+                "is_encrypted": False,
             },
             {
                 "key": "GPT_ENGINE",
@@ -145,7 +169,7 @@ class Command(BaseCommand):
             },
             {
                 "key": "UNSPLASH_ACCESS_KEY",
-                "value": os.environ.get("UNSPLASH_ACESS_KEY", ""),
+                "value": os.environ.get("UNSPLASH_ACCESS_KEY", ""),
                 "category": "UNSPLASH",
                 "is_encrypted": True,
             },
