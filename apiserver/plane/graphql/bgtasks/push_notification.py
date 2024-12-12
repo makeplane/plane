@@ -127,23 +127,36 @@ class PushNotification:
             return {"status": "error", "error": str(e)}
 
 
+def fetch_device_tokens(user_id):
+    """Fetch device tokens for the user."""
+    device_tokens = []
+
+    try:
+        devices = Device.objects.filter(
+            user_id=user_id, is_active=True, push_token__isnull=False
+        )
+
+        for device in devices:
+            device_tokens.append(device.push_token)
+
+        return device_tokens
+    except Exception as e:
+        print(f"Error fetching device tokens: {e}")
+        return device_tokens
+
+
 @shared_task
 def construct_issue_push_notification(notification):
     """Construct the issue push notification."""
     # getting the push token from the device with receiver_id
 
     receiver_id = notification.get("receiver", None)
-    receiver_push_token = None
+    receiver_push_tokens = []
 
     if receiver_id is not None:
-        device_info = Device.objects.filter(
-            user_id=str(receiver_id), is_active=True, push_token__isnull=False
-        ).first()
+        receiver_push_tokens = fetch_device_tokens(receiver_id)
 
-    if device_info:
-        receiver_push_token = device_info.push_token
-
-    if receiver_push_token is None:
+    if len(receiver_push_tokens) == 0:
         print("Receiver push token is not available")
         return
 
@@ -171,7 +184,7 @@ def construct_issue_push_notification(notification):
         workspace_slug = workspace.slug
 
     push_notification = {
-        "receiver": {"id": receiver_id, "push_token": receiver_push_token},
+        "receiver": {"id": receiver_id, "push_tokens": receiver_push_tokens},
         "actor": {"id": actor_id, "name": actor_name},
         "issue": {
             "workspace_id": workspace_id,
@@ -226,7 +239,7 @@ def issue_push_notifications(notification):
     issue_sequence_id = notification_issue.get("sequence_id", "")
 
     receiver_id = notification_receiver.get("id", "")
-    receiver_push_token = notification_receiver.get("push_token", "")
+    receiver_push_tokens = notification_receiver.get("push_tokens", "")
 
     title = f"{project_identifier}-" f"{issue_sequence_id} - " f"{issue_name}"
     data = {
@@ -258,9 +271,8 @@ def issue_push_notifications(notification):
         body = f"{actor_name} set the {property_key} to {new_value}"
 
     push_notification = PushNotification()
-    push_notification.send(
-        title=title, body=body, device_token_id=receiver_push_token, data=data
-    )
+    for token in receiver_push_tokens:
+        push_notification.send(title=title, body=body, device_token_id=token, data=data)
 
     print(
         "===== sending issue properties push notification to mobile is successful ====="
