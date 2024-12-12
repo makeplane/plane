@@ -56,6 +56,7 @@ interface IKanbanGroup {
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
   handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   orderBy: TIssueOrderByOptions | undefined;
+  isEpic?: boolean;
 }
 
 export const KanbanGroup = observer((props: IKanbanGroup) => {
@@ -79,6 +80,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
     quickAddCallback,
     scrollableContainerRef,
     handleOnDrop,
+    isEpic =false
   } = props;
   // hooks
   const projectState = useProjectState();
@@ -289,6 +291,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
         canEditProperties={canEditProperties}
         scrollableContainerRef={scrollableContainerRef}
         canDropOverIssue={!canOverlayBeVisible}
+        isEpic={isEpic}
       />
 
       {shouldLoadMore && (isSubGroup ? <>{loadMore}</> : <KanbanIssueBlockLoader ref={setIntersectionElement} />)}

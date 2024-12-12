@@ -17,6 +17,7 @@ interface IssueBlocksListProps {
   canEditProperties: (projectId: string | undefined) => boolean;
   canDropOverIssue: boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
+  isEpic?: boolean;
 }
 
 export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = observer((props) => {
@@ -31,6 +32,7 @@ export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = observer((p
     quickActions,
     canEditProperties,
     scrollableContainerRef,
+    isEpic = false,
   } = props;
 
   return (
@@ -59,6 +61,7 @@ export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = observer((p
                 canDropOverIssue={canDropOverIssue}
                 canEditProperties={canEditProperties}
                 scrollableContainerRef={scrollableContainerRef}
+                isEpic={isEpic}
               />
             );
           })}

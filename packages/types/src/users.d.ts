@@ -31,6 +31,7 @@ export interface IUser extends IUserLite {
   username: string;
   last_login_medium: TLoginMediums;
   theme: IUserTheme;
+  avatar: string;
 }
 
 export interface IUserAccount {

@@ -3,7 +3,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { ChevronRight, X, Pencil, Trash, Link as LinkIcon, Loader } from "lucide-react";
-import { TIssue } from "@plane/types";
+import { TIssue, TIssueServiceType } from "@plane/types";
 // ui
 import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
 // helpers
@@ -36,6 +36,7 @@ export interface ISubIssues {
   ) => void;
   subIssueOperations: TSubIssueOperations;
   issueId: string;
+  issueServiceType?: TIssueServiceType;
 }
 
 export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
