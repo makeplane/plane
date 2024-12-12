@@ -54,7 +54,7 @@ from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 from .. import BaseAPIView, BaseViewSet
-from plane.utils.user_timezone_converter import user_timezone_converter
+from plane.utils.timezone_converter import user_timezone_converter
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.utils.global_paginator import paginate
 from plane.bgtasks.webhook_task import model_activity
