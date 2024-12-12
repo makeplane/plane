@@ -78,6 +78,9 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       addInputRules() {
         return [];
       },
+      addPasteRules() {
+        return [];
+      },
       addKeyboardShortcuts() {
         return {};
       },
@@ -90,6 +93,9 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       addInputRules() {
         return [];
       },
+      addPasteRules() {
+        return [];
+      },
       addKeyboardShortcuts() {
         return {};
       },
@@ -98,7 +104,11 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
         class: "list-decimal pl-7 space-y-2",
       },
     }),
-    ListItem.configure({
+    ListItem.extend({
+      addPasteRules() {
+        return [];
+      },
+    }).configure({
       HTMLAttributes: {
         class: "not-prose space-y-2",
       },

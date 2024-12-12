@@ -10,21 +10,6 @@
     list-style: none;
   }
 
-  &.ProseMirror-selectednode {
-    outline: none;
-
-    &:after {
-      content: "";
-      position: absolute;
-      left: -32px;
-      right: -2px;
-      top: -2px;
-      bottom: -2px;
-      border: 2px solid #8cf;
-      pointer-events: none;
-    }
-  }
-
   &[data-list-kind="bullet"] {
     list-style: disc;
   }

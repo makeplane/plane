@@ -5,14 +5,14 @@ import {
   joinTextblockForward,
   selectNodeBackward,
   selectNodeForward,
-} from 'prosemirror-commands'
+} from "prosemirror-commands";
 
-import { createDedentListCommand } from './dedent-list'
-import { createIndentListCommand } from './indent-list'
-import { joinCollapsedListBackward } from './join-collapsed-backward'
-import { joinListUp } from './join-list-up'
-import { protectCollapsed } from './protect-collapsed'
-import { createSplitListCommand } from './split-list'
+import { createDedentListCommand } from "./dedent-list";
+import { createIndentListCommand } from "./indent-list";
+import { joinCollapsedListBackward } from "./join-collapsed-backward";
+import { joinListUp } from "./join-list-up";
+import { protectCollapsed } from "./protect-collapsed";
+import { createSplitListCommand } from "./split-list";
 
 /**
  * Keybinding for `Enter`. It's chained with following commands:
@@ -22,10 +22,7 @@ import { createSplitListCommand } from './split-list'
  *
  * @public @group Commands
  */
-export const enterCommand = chainCommands(
-  protectCollapsed,
-  createSplitListCommand(),
-)
+export const enterCommand = chainCommands(protectCollapsed, createSplitListCommand());
 
 /**
  * Keybinding for `Backspace`. It's chained with following commands:
@@ -46,8 +43,8 @@ export const backspaceCommand = chainCommands(
   joinListUp,
   joinCollapsedListBackward,
   joinTextblockBackward,
-  selectNodeBackward,
-)
+  selectNodeBackward
+);
 
 /**
  * Keybinding for `Delete`. It's chained with following commands:
@@ -60,12 +57,7 @@ export const backspaceCommand = chainCommands(
  * @public @group Commands
  *
  */
-export const deleteCommand = chainCommands(
-  protectCollapsed,
-  deleteSelection,
-  joinTextblockForward,
-  selectNodeForward,
-)
+export const deleteCommand = chainCommands(protectCollapsed, deleteSelection, joinTextblockForward, selectNodeForward);
 
 /**
  * Returns an object containing the keymap for the list commands.
@@ -85,7 +77,7 @@ export const listKeymap = {
 
   Delete: deleteCommand,
 
-  'Mod-[': createDedentListCommand(),
+  "Mod-[": createDedentListCommand(),
 
-  'Mod-]': createIndentListCommand(),
-}
+  "Mod-]": createIndentListCommand(),
+};

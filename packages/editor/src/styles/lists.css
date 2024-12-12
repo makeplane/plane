@@ -3,7 +3,7 @@
     padding-top: 4px !important;
   }
 
-  padding-bottom: 4px !important;
+  /* padding-bottom: 4px !important; */
   margin: 0 0 0 24px !important;
 
   &::before {
@@ -171,8 +171,4 @@ p + .prosemirror-flat-list {
       top: 2px !important;
     }
   }
-}
-
-.ProseMirror .issue-embed img {
-  margin: 0 !important;
 }
