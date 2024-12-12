@@ -95,7 +95,5 @@ class WorkspaceCyclesEndpoint(BaseAPIView):
             .order_by(self.kwargs.get("order_by", "-created_at"))
             .distinct()
         )
-        datetime_fields = ["start_date", "end_date"]
-        cycles = user_timezone_converter(cycles, datetime_fields, request.user.timezone)
         serializer = CycleSerializer(cycles, many=True).data
         return Response(serializer, status=status.HTTP_200_OK)
