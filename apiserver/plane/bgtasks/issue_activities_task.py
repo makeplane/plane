@@ -8,6 +8,7 @@ from celery import shared_task
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
+from django.db.models import Q
 
 from plane.app.serializers import IssueActivitySerializer
 from plane.bgtasks.notification_task import notifications
@@ -1664,7 +1665,9 @@ def issue_activity(
 
         if issue_id is not None:
             issue = (
-                Issue.objects.filter(pk=issue_id).filter(type__is_epic=False).first()
+                Issue.objects.filter(pk=issue_id)
+                .filter(Q(type__isnull=True) | Q(type__is_epic=False))
+                .first()
             )
             if origin and issue:
                 ri = redis_instance()
@@ -1676,7 +1679,6 @@ def issue_activity(
                     issue.save(update_fields=["updated_at"])
                 except Exception:
                     pass
-
         ACTIVITY_MAPPER = {
             "issue.activity.created": create_issue_activity,
             "issue.activity.updated": update_issue_activity,

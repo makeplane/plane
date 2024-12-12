@@ -20,7 +20,7 @@ from plane.db.models import (
     UserNotificationPreference,
     ProjectMember,
 )
-from django.db.models import Subquery
+from django.db.models import Subquery, Q
 from plane.app.serializers import NotificationSerializer
 from plane.graphql.bgtasks.push_notification import issue_push_notifications
 
@@ -324,7 +324,9 @@ def notifications(
             )
 
             issue = (
-                Issue.objects.filter(pk=issue_id).filter(type__is_epic=False).first()
+                Issue.objects.filter(pk=issue_id)
+                .filter(Q(type__isnull=True) | Q(type__is_epic=False))
+                .first()
             )
 
             if subscriber:

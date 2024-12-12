@@ -243,8 +243,8 @@ class ProjectViewSet(BaseViewSet):
                 archived_issues=Issue.objects.filter(
                     project_id=self.kwargs.get("pk"),
                     archived_at__isnull=False,
-                    type__is_epic=False,
                 )
+                .filter(Q(type__isnull=True) | Q(type__is_epic=False))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -254,16 +254,18 @@ class ProjectViewSet(BaseViewSet):
                     project_id=self.kwargs.get("pk"),
                     archived_at__isnull=False,
                     parent__isnull=False,
-                    type__is_epic=False,
                 )
+                .filter(Q(type__isnull=True) | Q(type__is_epic=False))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
             .annotate(
                 draft_issues=Issue.objects.filter(
-                    project_id=self.kwargs.get("pk"), is_draft=True, type__is_epic=False
+                    project_id=self.kwargs.get("pk"),
+                    is_draft=True,
                 )
+                .filter(Q(type__isnull=True) | Q(type__is_epic=False))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -273,8 +275,8 @@ class ProjectViewSet(BaseViewSet):
                     project_id=self.kwargs.get("pk"),
                     is_draft=True,
                     parent__isnull=False,
-                    type__is_epic=False,
                 )
+                .filter(Q(type__isnull=True) | Q(type__is_epic=False))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")

@@ -249,7 +249,7 @@ class CycleIssueViewSet(BaseViewSet):
         # Fetch issue details
         issue_objects = (
             Issue.objects.filter(id__in=issues)
-            .filter(type__is_epic=False)
+            .filter(Q(type__isnull=True) | Q(type__is_epic=False))
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
         )
         issue_dict = {str(issue.id): issue for issue in issue_objects}

@@ -51,7 +51,7 @@ class EpicViewSet(BaseViewSet):
     def get_queryset(self):
         return (
             Issue.objects.filter(project_id=self.kwargs.get("project_id"))
-            .filter(type__is_epic=True)
+            .filter(Q(type__isnull=False) & Q(type__is_epic=True))
             .filter(workspace__slug=self.kwargs.get("slug"))
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels")
@@ -80,7 +80,9 @@ class EpicViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
-                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("id")
+                )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")

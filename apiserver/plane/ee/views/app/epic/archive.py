@@ -54,7 +54,7 @@ class EpicArchiveViewSet(BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
-            .filter(type__is_epic=True)
+            .filter(Q(type__isnull=False) & Q(type__is_epic=True))
             .filter(deleted_at__isnull=True)
             .filter(archived_at__isnull=False)
             .filter(project_id=self.kwargs.get("project_id"))
@@ -283,7 +283,6 @@ class EpicArchiveViewSet(BaseViewSet):
             project_id=project_id,
             archived_at__isnull=False,
             pk=pk,
-            type__is_epic=True,
         )
         issue_activity.delay(
             type="issue.activity.updated",
