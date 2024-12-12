@@ -86,6 +86,7 @@ def get_llm_config() -> Tuple[str | None, str | None, str | None]:
 
     provider = SUPPORTED_PROVIDERS.get(provider_key.lower())
     if not provider:
+        log_exception(ValueError(f"Unsupported provider: {provider_key}"))
         return None, None, None
 
     api_key, _ = get_configuration_value([
@@ -96,16 +97,19 @@ def get_llm_config() -> Tuple[str | None, str | None, str | None]:
     ])
 
     if not api_key:
+        log_exception(ValueError(f"Missing API key for provider: {provider.name}"))
         return None, None, None
 
-    # If no model specified, use provider's default
+     # If no model specified, use provider's default
     if not model:
         model = provider.default_model
 
-    # Validate model is supported by provider
+     # Validate model is supported by provider
     if model not in provider.models:
-        return None, None, None
-
+        log_exception(ValueError(
+            f"Model {model} not supported by {provider.name}. "
+            f"Supported models: {', '.join(provider.models)}"
+        ))
     return api_key, model, provider_key
 
 
@@ -126,8 +130,13 @@ def get_llm_response(task, prompt, api_key: str, model: str, provider: str) -> T
         return text, None
     except Exception as e:
         log_exception(e)
-        return None, "Error has occurred while generating reponse from OpenAI GPT"
-
+        error_type = e.__class__.__name__
+        if error_type == "AuthenticationError":
+            return None, f"Invalid API key for {provider}"
+        elif error_type == "RateLimitError":
+            return None, f"Rate limit exceeded for {provider}"
+        else:
+            return None, f"Error occurred while generating response from {provider}"
 
 class GPTIntegrationEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
