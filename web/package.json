@@ -102,5 +102,8 @@
   },
   "resolutions": {
     "nanoid": "^3.3.8"
+  },
+  "peerDependencies": {
+    "nanoid": "^3.3.8"
   }
 }
