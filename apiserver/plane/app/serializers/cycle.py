@@ -22,10 +22,10 @@ class CycleWriteSerializer(BaseSerializer):
         ):
             project_id = self.initial_data.get("project_id") or self.instance.project_id
             data["start_date"] = convert_to_utc(
-                str(data.get("start_date").date()), project_id
+                str(data.get("start_date").date()), project_id, is_start_date=True
             )
             data["end_date"] = convert_to_utc(
-                str(data.get("end_date", None).date()), project_id, is_end_date=True
+                str(data.get("end_date", None).date()), project_id
             )
         return data
 

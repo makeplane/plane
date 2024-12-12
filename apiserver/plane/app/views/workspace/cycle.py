@@ -10,7 +10,7 @@ from plane.app.views.base import BaseAPIView
 from plane.db.models import Cycle
 from plane.app.permissions import WorkspaceViewerPermission
 from plane.app.serializers.cycle import CycleSerializer
-
+from plane.utils.timezone_converter import user_timezone_converter
 
 class WorkspaceCyclesEndpoint(BaseAPIView):
     permission_classes = [WorkspaceViewerPermission]
@@ -95,5 +95,7 @@ class WorkspaceCyclesEndpoint(BaseAPIView):
             .order_by(self.kwargs.get("order_by", "-created_at"))
             .distinct()
         )
+        datetime_fields = ["start_date", "end_date"]
+        cycles = user_timezone_converter(cycles, datetime_fields, request.user.timezone)
         serializer = CycleSerializer(cycles, many=True).data
         return Response(serializer, status=status.HTTP_200_OK)
