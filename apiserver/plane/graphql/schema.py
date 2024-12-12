@@ -65,7 +65,7 @@ from .mutations.issue import (
     IssueSubscriptionMutation,
 )
 from .mutations.notification import NotificationMutation
-from .mutations.user import ProfileMutation
+from .mutations.user import ProfileMutation, UserMutation
 from .mutations.page import PageMutation, PageFavoriteMutation, WorkspacePageMutation
 from .mutations.cycle import (
     CycleIssueMutation,
@@ -85,6 +85,7 @@ from .mutations.issues import (
     SubIssueMutation,
 )
 from .mutations.device import DeviceInformationMutation
+from .mutations.asset import UserAssetMutation, ProjectAssetMutation
 
 
 # combined query class for all
@@ -169,6 +170,9 @@ class Mutation(
     PageMutation,
     DeviceInformationMutation,
     WorkspacePageMutation,
+    UserAssetMutation,
+    UserMutation,
+    ProjectAssetMutation,
 ):
     pass
 
